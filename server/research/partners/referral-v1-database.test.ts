@@ -137,6 +137,9 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
     expect(value(await store.getBinding({ actorAuthUserId })).binding).toEqual(winner);
     await sql("update public.research_partners set state='suspended' where id=$1", [winner.partnerId]);
     expect(value(await store.getBinding({ actorAuthUserId })).availability).toBe("partner_inactive");
+    expect(value(await store.bindingAt({ actorAuthUserId, occurredAt: winner.effectiveAt! }))).toEqual({
+      binding: winner, created: false, availability: "ready",
+    });
   });
 
   it("preserves the first binding and appends CAS-protected future-only admin transfers", async () => {
@@ -304,6 +307,9 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
         await expect(sql(`select * from public.${name}`, [], role)).rejects.toThrow(/permission denied/);
         await expect(sql(`truncate public.${name}`, [], role)).rejects.toThrow(/permission denied/);
       }
+      for (const name of ["research_partners", "research_members"]) {
+        await expect(sql(`truncate public.${name}`, [], role)).rejects.toThrow(/permission denied/);
+      }
     }
     await expect(sql("select public.research_referral_v1_link_json($1)", [randomUUID()], "service_role")).rejects.toThrow(/permission denied/);
     const partner = await seedPartner(), issued = await issue(partner);
@@ -339,6 +345,21 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
     await sql("alter table public.research_partner_links disable trigger referral_v1_links_guard");
     try { expect(await store.authority()).toEqual({ ok: false, reason: "unavailable" }); }
     finally { await sql("alter table public.research_partner_links enable trigger referral_v1_links_guard"); }
+    await sql("alter table public.research_partners disable trigger referral_v1_partner_identity_guard");
+    try { expect(await store.authority()).toEqual({ ok: false, reason: "unavailable" }); }
+    finally { await sql("alter table public.research_partners enable trigger referral_v1_partner_identity_guard"); }
+    await sql("drop trigger referral_v1_partner_identity_guard on public.research_partners; create trigger referral_v1_partner_identity_guard before update of id or delete on public.research_members for each row execute function public.research_referral_v1_identity_guard()");
+    try { expect(await store.authority()).toEqual({ ok: false, reason: "unavailable" }); }
+    finally {
+      await sql("drop trigger referral_v1_partner_identity_guard on public.research_members; create trigger referral_v1_partner_identity_guard before insert or update of id,member_id or delete on public.research_partners for each row execute function public.research_referral_v1_identity_guard()");
+    }
+    await sql("grant truncate on public.research_partners to service_role");
+    try { expect(await store.authority()).toEqual({ ok: false, reason: "unavailable" }); }
+    finally { await sql("revoke truncate on public.research_partners from service_role"); }
+    const identityGuardDefinition = (await sql("select pg_get_functiondef('public.research_referral_v1_identity_guard()'::regprocedure) definition")).rows[0].definition as string;
+    await sql("create or replace function public.research_referral_v1_identity_guard() returns trigger language plpgsql security definer set search_path='' as $$ begin if tg_op='DELETE' then return old; end if; return new; end $$");
+    try { expect(await store.authority()).toEqual({ ok: false, reason: "unavailable" }); }
+    finally { await sql(identityGuardDefinition); }
     expect((await store.authority()).ok).toBe(true);
     await sql("alter function public.research_referral_v1_execute(text,jsonb) set search_path='public'");
     try { expect(await store.authority()).toEqual({ ok: false, reason: "unavailable" }); }
@@ -349,19 +370,73 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
     expect((await store.authority()).ok).toBe(true);
   });
 
-  it("denies new work for unknown or closed Auth membership without erasing durable replay", async () => {
+  it("makes established partner identity immutable and preserves replay after account closure", async () => {
     expect(await store.getBinding({ actorAuthUserId: randomUUID() })).toEqual({ ok: false, reason: "not_eligible" });
     const partner = await seedPartner(), issued = await issue(partner);
     const replacement = await seedPartner();
-    // Synthetic account ownership remap does not rewrite the actor-scoped,
-    // guarded idempotency fact that already committed.
-    await sql("update public.research_partners set member_id=$1 where id=$2", [randomUUID(), partner.partnerId]);
-    await sql("update public.research_partners set member_id=$1 where id=$2", [partner.memberId, replacement.partnerId]);
+    await expect(sql("update public.research_partners set member_id=$1 where id=$2", [replacement.memberId, partner.partnerId]))
+      .rejects.toThrow(/partner identity is immutable/i);
+    await expect(sql("update public.research_members set auth_user_id=$1 where id=$2", [randomUUID(), partner.memberId]))
+      .rejects.toThrow(/partner Auth identity is immutable/i);
+    await expect(sql("delete from public.research_partners where id=$1", [partner.partnerId]))
+      .rejects.toThrow(/partner identity is immutable/i);
+    await expect(sql("delete from public.research_members where id=$1", [partner.memberId]))
+      .rejects.toThrow(/partner Auth identity is immutable/i);
+    await expect(sql("insert into public.research_partners(id,member_id,role,state,legal_name,contact_email) values($1,$2,'affiliate','application','Synthetic Invalid Identity','synthetic@example.invalid')", [randomUUID(), randomUUID()]))
+      .rejects.toThrow(/partner member identity is invalid/i);
+    for (const name of ["research_partners", "research_members"]) {
+      const owner = await connection();
+      try { await expect(owner.query(`truncate public.${name} cascade`)).rejects.toThrow(/identity cannot be truncated/i); }
+      finally { await owner.end(); }
+    }
+    expect(value(await store.listOwn({ actorAuthUserId: partner.actorAuthUserId })).partnerId).toBe(partner.partnerId);
     expect(value(await store.issue(issued.input))).toMatchObject({ created: false, link: { id: issued.link.id } });
     await sql("update public.research_members set status='closed' where id=$1", [partner.memberId]);
     expect(await store.getBinding({ actorAuthUserId: partner.actorAuthUserId })).toEqual({ ok: false, reason: "not_eligible" });
     expect(value(await store.issue(issued.input))).toMatchObject({ created: false, link: { id: issued.link.id } });
     expect(await store.issue({ ...issued.input, idempotencyKey: randomUUID() })).toEqual({ ok: false, reason: "not_eligible" });
+  });
+
+  it("allows only a canonical first Auth claim for a partner-linked null identity", async () => {
+    await sql("alter table public.research_members alter column auth_user_id drop not null");
+    const applicationId = randomUUID(), memberId = randomUUID(), partnerId = randomUUID();
+    const validAuthUserId = randomUUID(), replacementAuthUserId = randomUUID();
+    await sql("insert into public.research_applications(id) values($1)", [applicationId]);
+    await sql("insert into public.research_members(id,application_id,auth_user_id,email,first_name,status) values($1,$2,null,$3,'Synthetic','active')", [memberId, applicationId, `${randomUUID()}@example.invalid`]);
+    await sql("insert into public.research_partners(id,member_id,role,state,legal_name,contact_email) values($1,$2,'affiliate','application','Synthetic Null Claim',$3)", [partnerId, memberId, `${randomUUID()}@example.invalid`]);
+    await expect(sql("update public.research_members set auth_user_id=$1 where id=$2", [randomUUID(), memberId]))
+      .rejects.toThrow(/partner Auth identity is invalid/i);
+    await sql("insert into auth.users(id) values($1),($2)", [validAuthUserId, replacementAuthUserId]);
+    await expect(sql("update public.research_members set auth_user_id=$1 where id=$2", [validAuthUserId, memberId])).resolves.toBeDefined();
+    await expect(sql("update public.research_members set auth_user_id=$1 where id=$2", [replacementAuthUserId, memberId]))
+      .rejects.toThrow(/partner Auth identity is immutable/i);
+    await sql("alter table public.research_members alter column auth_user_id set not null");
+    expect((await store.authority()).ok).toBe(true);
+  });
+
+  it("serializes direct partner creation against concurrent member deletion", async () => {
+    const applicationId = randomUUID(), memberId = randomUUID(), partnerId = randomUUID(), authUserId = randomUUID();
+    await sql("insert into auth.users(id) values($1)", [authUserId]);
+    await sql("insert into public.research_applications(id) values($1)", [applicationId]);
+    await sql("insert into public.research_members(id,application_id,auth_user_id,email,first_name,status) values($1,$2,$3,$4,'Synthetic','active')", [memberId, applicationId, authUserId, `${randomUUID()}@example.invalid`]);
+    const creator = await connection(), deleter = await connection();
+    try {
+      await creator.query("begin");
+      await deleter.query("begin");
+      await creator.query("insert into public.research_partners(id,member_id,role,state,legal_name,contact_email) values($1,$2,'affiliate','application','Synthetic Serialized Identity',$3)", [partnerId, memberId, `${randomUUID()}@example.invalid`]);
+      const pendingDelete = deleter.query("delete from public.research_members where id=$1", [memberId]);
+      await new Promise((resolve) => setTimeout(resolve, 75));
+      await creator.query("commit");
+      await expect(pendingDelete).rejects.toThrow(/partner Auth identity is immutable/i);
+      await deleter.query("rollback");
+    } finally {
+      await creator.query("rollback").catch(() => undefined);
+      await deleter.query("rollback").catch(() => undefined);
+      await creator.end();
+      await deleter.end();
+    }
+    expect((await sql("select member_id from public.research_partners where id=$1", [partnerId])).rows[0].member_id).toBe(memberId);
+    expect((await store.authority()).ok).toBe(true);
   });
 
   it("returns bounded internal admin lineage without raw subject hashes, names or emails", async () => {
@@ -421,6 +496,22 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
       await fresh.sql("alter table public.research_members rename column auth_user_id to synthetic_schema_drift");
       try { await expect(fresh.sql(candidate)).rejects.toThrow(/Canonical dependency column drift/); }
       finally { await fresh.sql("alter table public.research_members rename column synthetic_schema_drift to auth_user_id"); }
+    } finally { await fresh.stop(); }
+  });
+
+  it("refuses malformed baseline partner/member/Auth identity before installing irreversible guards", async () => {
+    const fresh = await startReferralRehearsalDatabase({ applyReferralCandidate: false, includeLineageSources: false });
+    const orphanPartnerId = randomUUID();
+    try {
+      await fresh.sql("insert into public.research_partners(id,member_id,role,state,legal_name,contact_email) values($1,$2,'affiliate','application','Synthetic Orphan','synthetic@example.invalid')", [orphanPartnerId, randomUUID()]);
+      await expect(fresh.sql(candidate)).rejects.toThrow(/partner member identity is orphaned/i);
+      await fresh.sql("delete from public.research_partners where id=$1", [orphanPartnerId]);
+
+      const applicationId = randomUUID(), memberId = randomUUID(), authUserId = randomUUID();
+      await fresh.sql("insert into public.research_applications(id) values($1)", [applicationId]);
+      await fresh.sql("insert into public.research_members(id,application_id,auth_user_id,email,first_name,status) values($1,$2,$3,$4,'Synthetic','active')", [memberId, applicationId, authUserId, `${randomUUID()}@example.invalid`]);
+      await fresh.sql("insert into public.research_partners(id,member_id,role,state,legal_name,contact_email) values($1,$2,'affiliate','application','Synthetic Auth Orphan',$3)", [randomUUID(), memberId, `${randomUUID()}@example.invalid`]);
+      await expect(fresh.sql(candidate)).rejects.toThrow(/partner Auth identity is orphaned/i);
     } finally { await fresh.stop(); }
   });
 });

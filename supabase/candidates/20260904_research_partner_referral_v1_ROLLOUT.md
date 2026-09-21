@@ -19,9 +19,12 @@ canonical Auth account key is `auth:<verified Auth UUID>`. A legacy account winn
 is not silently replaced or reclassified. There are no commission, credit, payout,
 entitlement, order or clinical writes. `program_state` stays `pending_program`.
 
-Prerequisites must be inspected in the actual target: canonical members, partners,
-links, touches, idempotency table, activation constraints, uniqueness, object owner,
-roles and existing binding table. The owner must have BYPASSRLS/superuser authority
+Prerequisites must be inspected in the actual target: canonical Auth users, members,
+partners, links, touches, idempotency table, activation constraints, uniqueness,
+object owner, roles and existing binding table. The preflight refuses any partner
+whose member edge is orphaned or whose established member Auth UUID does not exist
+in `auth.users`; the read-only precheck reports both counts and both must be zero.
+The owner must have BYPASSRLS/superuser authority
 for the reviewed security-definer functions; it must not be a browser/service role.
 Unexpected shapes or a previous V1 object abort the entire transaction. The source
 files are not proof that any corresponding object exists in production.
@@ -55,6 +58,18 @@ files are not proof that any corresponding object exists in production.
 - Bind revalidates the touch, current link/partner, self-referral and expiry.
   Binding and binding reads require an existing canonical member whose status is
   not `closed`; Auth UUID existence alone does not create a Research membership.
+- The candidate validates every new partner member/Auth edge under a member-row
+  lock, so concurrent member delete/re-key/Auth mutation cannot create an orphan.
+  It makes `research_partners.member_id` immutable and, once set for
+  a partner-linked member, makes `research_members.auth_user_id` immutable. This
+  turns the bind/transfer self-referral decision into a durable identity fact
+  while preserving ordinary lifecycle-state updates and the initial null-to-Auth
+  account claim after locking and validating the canonical `auth.users` row.
+  Partner/member identity rows also cannot be inserted with an orphan edge,
+  re-keyed, deleted or truncated around the guard. The authority binds each
+  identity trigger to its exact table/event/column topology and detects guard-body
+  drift. Any legitimate identity correction must be designed as a
+  new reviewed append-only authority; direct ownership remapping is refused.
   One Auth account keeps one winner; one capture may bind to only one account.
   On a shared browser, a second account cannot inherit that first account's capture.
   Existing bindings remain immutable if the link is revoked/expired later; reads
@@ -128,9 +143,11 @@ It is not imported into production composition.
 
 Local verification counts for this revision are recorded in the production-completion
 qualification evidence after each disposable rehearsal. The database checks cover
-both absent binding-table creation and prior-candidate adoption, independent
+both absent binding-table creation and prior-candidate adoption, malformed baseline
+identity refusal, independent
 connection concurrency, exact retries, audit-failure rollback, current revocation/
-suspension/self checks, Auth ownership/closed-member refusal, immutable evidence,
+suspension/self checks, locked insert/delete identity races, canonical first-Auth
+claim, immutable partner/member/Auth ownership, closed-member refusal, immutable evidence,
 role/search-path/entrypoint-grant drift, and the separate lineage candidate's
 post-bind/own-member filtering, source caps and missing-schema refusal. This is not
 proof of the target production PostgreSQL version/schema or a release authorization.

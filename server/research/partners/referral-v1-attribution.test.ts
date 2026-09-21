@@ -132,8 +132,14 @@ describe("authenticated account ownership", () => {
     expect(await resolve(resolverWith(store), undefined, ACTOR)).toBe(PARTNER);
   });
 
-  it.each(["partner_inactive", "self_referral"] as const)("denies current %s binding eligibility", async (availability) => {
-    const { store, touchCalls } = boundStore(availability);
+  it("does not let a current partner suspension rewrite the structural account owner", async () => {
+    const { store, touchCalls } = boundStore("partner_inactive");
+    expect(await resolve(resolverWith(store), cookiesFor(), ACTOR)).toBe(PARTNER);
+    expect(touchCalls).toHaveLength(0);
+  });
+
+  it("fails closed if the authority reports self-referral", async () => {
+    const { store, touchCalls } = boundStore("self_referral");
     expect(await resolve(resolverWith(store), cookiesFor(), ACTOR)).toBeNull();
     expect(touchCalls).toHaveLength(0);
   });

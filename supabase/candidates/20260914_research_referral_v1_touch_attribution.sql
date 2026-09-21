@@ -43,7 +43,7 @@
 --
 -- ROLLBACK: restore the prior body of research_referral_v1_execute from the
 -- reviewed 20260904 candidate, then drop research_referral_v1_touch_attribution
--- (uuid,text). No application data is written. The helper is internal-only.
+-- (uuid,text,uuid). No application data is written. The helper is internal-only.
 -- The guarded dispatcher edit and helper creation commit atomically; unexpected
 -- dispatcher-seam drift or replay refuses the entire transaction. The whole
 -- predecessor must still be compared to the reviewed base before managed use.

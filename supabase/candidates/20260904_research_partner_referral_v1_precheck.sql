@@ -7,6 +7,16 @@ select object_name,to_regclass('public.'||object_name) as existing_object
 from unnest(array['research_members','research_partners','research_partner_links','research_attribution_touches',
   'research_idempotency_keys','research_affiliate_customer_bindings','research_partner_referral_events',
   'research_referral_binding_transfer_events']) object_name;
+select to_regclass('auth.users') as canonical_auth_users;
+select count(*)::bigint as partner_member_identity_orphan_count
+from public.research_partners p
+left join public.research_members m on m.id=p.member_id
+where m.id is null;
+select count(*)::bigint as partner_auth_identity_orphan_count
+from public.research_partners p
+join public.research_members m on m.id=p.member_id
+left join auth.users u on u.id=m.auth_user_id
+where m.auth_user_id is not null and u.id is null;
 select table_name,column_name,data_type,is_nullable,column_default
 from information_schema.columns where table_schema='public' and table_name in
  ('research_members','research_partners','research_partner_links','research_attribution_touches','research_idempotency_keys',

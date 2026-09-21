@@ -84,7 +84,10 @@ export async function deriveReferralV1EarlyAccessGrant(
     if (!resolved.ok) return { ok: false, reason: resolved.reason === "unavailable" ? "binding_unavailable" : "binding_ineligible" };
     const binding = resolved.value.binding;
     if (!binding) return { ok: false, reason: "binding_missing" };
-    if (resolved.value.availability !== "ready") return { ok: false, reason: "binding_ineligible" };
+    if (resolved.value.availability === "self_referral") return { ok: false, reason: "binding_ineligible" };
+    // `bindingAt` is structural history. Never let a current availability
+    // marker erase an earlier owner during exact replay; the schedule authority
+    // decides whether that partner could earn at this event occurrence.
     if (binding.accountKey !== `auth:${canonicalAuthUserId}` || !UUID.test(binding.partnerId) || !UUID.test(binding.linkId)
       || !binding.revisionId || !UUID.test(binding.revisionId) || !binding.effectiveAt || !binding.source) {
       return { ok: false, reason: "binding_unavailable" };

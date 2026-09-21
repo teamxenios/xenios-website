@@ -71,19 +71,55 @@ describe("Referral V1 canonical Early Access grant derivation", () => {
     }));
   });
 
-  it("refuses missing or ineligible bindings before customer, schedule, or writer work", async () => {
-    for (const value of [
-      { binding: null, created: false, availability: "none" as const },
-      { binding: { accountKey: `auth:${authUserId}`, partnerId, linkId, touchId, boundAt: effectiveAt,
-        revisionId: touchId, effectiveAt, source: "capture" as const }, created: false, availability: "partner_inactive" as const },
-    ]) {
-      const deps = fixture();
-      vi.mocked(deps.bindings.bindingAt).mockResolvedValue({ ok: true, value });
-      expect((await deriveReferralV1EarlyAccessGrant(grantInput, deps)).ok).toBe(false);
-      expect(deps.customers.findOwnedCustomerByAuthUserId).not.toHaveBeenCalled();
-      expect(deps.schedules.resolveForPartner).not.toHaveBeenCalled();
-      expect(deps.writer.recordIfAbsent).not.toHaveBeenCalled();
-    }
+  it("refuses a missing binding before customer, schedule, or writer work", async () => {
+    const deps = fixture();
+    vi.mocked(deps.bindings.bindingAt).mockResolvedValue({ ok: true, value: {
+      binding: null, created: false, availability: "none",
+    } });
+    expect(await deriveReferralV1EarlyAccessGrant(grantInput, deps)).toEqual({ ok: false, reason: "binding_missing" });
+    expect(deps.customers.findOwnedCustomerByAuthUserId).not.toHaveBeenCalled();
+    expect(deps.schedules.resolveForPartner).not.toHaveBeenCalled();
+    expect(deps.writer.recordIfAbsent).not.toHaveBeenCalled();
+  });
+
+  it("replays an earlier structural owner after later suspension when the as-of schedule remains valid", async () => {
+    const deps = fixture();
+    vi.mocked(deps.bindings.bindingAt).mockResolvedValue({ ok: true, value: { binding: {
+      accountKey: `auth:${authUserId}`, partnerId, linkId, touchId, boundAt: effectiveAt,
+      revisionId: touchId, effectiveAt, source: "capture",
+    }, created: false, availability: "partner_inactive" } });
+    vi.mocked(deps.writer.recordIfAbsent).mockResolvedValue("already_recorded");
+
+    expect(await deriveReferralV1EarlyAccessGrant(grantInput, deps)).toEqual({
+      ok: true, state: "already_recorded", schedule,
+    });
+    expect(deps.schedules.resolveForPartner).toHaveBeenCalledWith({ partnerId, occurredAt });
+    expect(deps.writer.recordIfAbsent).toHaveBeenCalledTimes(1);
+  });
+
+  it("lets as-of schedule authority reject a structurally bound but ineligible partner", async () => {
+    const deps = fixture();
+    vi.mocked(deps.bindings.bindingAt).mockResolvedValue({ ok: true, value: { binding: {
+      accountKey: `auth:${authUserId}`, partnerId, linkId, touchId, boundAt: effectiveAt,
+      revisionId: touchId, effectiveAt, source: "capture",
+    }, created: false, availability: "partner_inactive" } });
+    vi.mocked(deps.schedules.resolveForPartner).mockResolvedValue({ ok: false, code: "partner_inactive_at_occurrence" });
+
+    expect(await deriveReferralV1EarlyAccessGrant(grantInput, deps)).toEqual({ ok: false, reason: "schedule_unavailable" });
+    expect(deps.writer.recordIfAbsent).not.toHaveBeenCalled();
+  });
+
+  it("fails closed if the binding authority reports self-referral", async () => {
+    const deps = fixture();
+    vi.mocked(deps.bindings.bindingAt).mockResolvedValue({ ok: true, value: { binding: {
+      accountKey: `auth:${authUserId}`, partnerId, linkId, touchId, boundAt: effectiveAt,
+      revisionId: touchId, effectiveAt, source: "capture",
+    }, created: false, availability: "self_referral" } });
+
+    expect(await deriveReferralV1EarlyAccessGrant(grantInput, deps)).toEqual({ ok: false, reason: "binding_ineligible" });
+    expect(deps.customers.findOwnedCustomerByAuthUserId).not.toHaveBeenCalled();
+    expect(deps.schedules.resolveForPartner).not.toHaveBeenCalled();
+    expect(deps.writer.recordIfAbsent).not.toHaveBeenCalled();
   });
 
   it("fails closed for predecessor bindings without a canonical revision and for unavailable schedules", async () => {

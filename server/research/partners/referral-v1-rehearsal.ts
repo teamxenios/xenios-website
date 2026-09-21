@@ -51,6 +51,8 @@ export async function startReferralRehearsalDatabase(options: {
   legacyBindingFixture?: boolean;
   /** Base-only downgrade fixture. Normal rehearsal applies the final touch capability. */
   includeTouchAttribution?: boolean;
+  /** Preflight-only fixture. Leaves Referral V1 unapplied for malformed-baseline tests. */
+  applyReferralCandidate?: boolean;
   /** Used by preview socket fences: called only after this owned server starts. */
   onPortReady?: (port: number) => void;
 } = {}): Promise<ReferralRehearsalDatabase> {
@@ -104,7 +106,7 @@ export async function startReferralRehearsalDatabase(options: {
       try { await sql("select 1"); ready = true; break; } catch { await new Promise((resolve) => setTimeout(resolve, 200)); }
     }
     if (!ready) throw new Error("Disposable PostgreSQL startup deadline");
-    await sql("create role anon login; create role authenticated login; create role service_role login noinherit bypassrls; create extension pgcrypto; create table public.research_applications(id uuid primary key)");
+    await sql("create role anon login; create role authenticated login; create role service_role login noinherit bypassrls; create extension pgcrypto; create schema auth; create table auth.users(id uuid primary key); create table public.research_applications(id uuid primary key)");
     const production = read("supabase/production/research-full-production.sql");
     await sql(read("supabase/research-members.sql"));
     for (const name of ["research_partners", "research_partner_links", "research_attribution_touches"]) await sql(referralRehearsalTableDDL(production, name));
@@ -114,10 +116,12 @@ export async function startReferralRehearsalDatabase(options: {
       await sql(read("supabase/candidates/20260819_research_affiliate_customer_bindings.sql"));
       await sql("insert into public.research_affiliate_customer_bindings(customer_key,partner_id,code,subject_key,captured_at,bound_at,program_state,method) values('legacy:synthetic','legacy-partner','legacy-code','legacy-subject',now(),now(),'pending_program','attribution_cookie')");
     }
-    await sql(read("supabase/candidates/20260904_research_partner_referral_v1.sql"));
-    await sql(read("supabase/candidates/20260904_research_partner_referral_v1_lineage.sql"));
-    if (options.includeTouchAttribution !== false) {
-      await sql(read("supabase/candidates/20260914_research_referral_v1_touch_attribution.sql"));
+    if (options.applyReferralCandidate !== false) {
+      await sql(read("supabase/candidates/20260904_research_partner_referral_v1.sql"));
+      await sql(read("supabase/candidates/20260904_research_partner_referral_v1_lineage.sql"));
+      if (options.includeTouchAttribution !== false) {
+        await sql(read("supabase/candidates/20260914_research_referral_v1_touch_attribution.sql"));
+      }
     }
     if (options.includeLineageSources !== false) {
       await sql(referralRehearsalTableDDL(read("supabase/migrations/20260815150000_research_assisted_order_bridge.sql"), "research_assisted_order_requests"));
@@ -135,6 +139,7 @@ export async function startReferralRehearsalDatabase(options: {
     } };
     async function seedPartner(state = "active") {
       const actorAuthUserId = randomUUID(), memberId = randomUUID(), partnerId = randomUUID(), applicationId = randomUUID();
+      await sql("insert into auth.users(id) values($1)", [actorAuthUserId]);
       await sql("insert into public.research_applications(id) values($1)", [applicationId]);
       await sql("insert into public.research_members(id,application_id,auth_user_id,email,first_name,status) values($1,$2,$3,$4,'Synthetic','active')", [memberId, applicationId, actorAuthUserId, `${randomUUID()}@example.invalid`]);
       await sql("insert into public.research_partners(id,member_id,role,state,legal_name,contact_email,identity_verified,tax_status,payout_status,certified_at,certified_by_admin_id,activated_at,activated_by_admin_id) values($1,$2,'affiliate',$3,'Synthetic Local Fixture',$4,true,'verified','verified',now(),'synthetic-local-admin',now(),'synthetic-local-admin')", [partnerId, memberId, state, `${randomUUID()}@example.invalid`]);

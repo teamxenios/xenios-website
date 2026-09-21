@@ -10,6 +10,10 @@ begin
   if current_user in ('anon','authenticated','service_role') or not exists(select 1 from pg_catalog.pg_roles where rolname = current_user and (rolsuper or rolbypassrls)) then
     raise exception 'Referral candidate requires a reviewed BYPASSRLS owner';
   end if;
+  if pg_catalog.to_regclass('auth.users') is null
+    or not exists(select 1 from information_schema.columns where table_schema='auth' and table_name='users' and column_name='id' and data_type='uuid') then
+    raise exception 'Missing canonical Auth user identity source';
+  end if;
   foreach v_name in array array['research_members','research_partners','research_partner_links','research_attribution_touches','research_idempotency_keys'] loop
     if pg_catalog.to_regclass('public.' || v_name) is null then raise exception 'Missing canonical dependency: %', v_name; end if;
   end loop;
@@ -33,10 +37,21 @@ begin
     or not exists(select 1 from pg_catalog.pg_indexes where schemaname='public' and tablename='research_idempotency_keys' and indexdef like 'CREATE UNIQUE INDEX% (scope, key)') then
     raise exception 'Canonical ownership or idempotency uniqueness missing';
   end if;
+  if exists(select 1 from public.research_partners p left join public.research_members m on m.id=p.member_id where m.id is null) then
+    raise exception 'Canonical partner member identity is orphaned';
+  end if;
+  if exists(select 1 from public.research_partners p join public.research_members m on m.id=p.member_id
+    left join auth.users u on u.id=m.auth_user_id where m.auth_user_id is not null and u.id is null) then
+    raise exception 'Canonical partner Auth identity is orphaned';
+  end if;
   if pg_catalog.to_regclass('public.research_partner_referral_events') is not null
     or pg_catalog.to_regclass('public.research_referral_binding_transfer_events') is not null
     or exists(select 1 from information_schema.columns where table_schema='public' and table_name='research_partner_links' and column_name='referral_version')
-    or pg_catalog.to_regprocedure('public.research_referral_v1_execute(text,jsonb)') is not null then
+    or pg_catalog.to_regprocedure('public.research_referral_v1_execute(text,jsonb)') is not null
+    or pg_catalog.to_regprocedure('public.research_referral_v1_identity_guard()') is not null
+    or exists(select 1 from pg_catalog.pg_trigger where tgname in
+      ('referral_v1_partner_identity_guard','referral_v1_member_auth_identity_guard',
+       'referral_v1_partner_identity_no_truncate','referral_v1_member_auth_identity_no_truncate')) then
     raise exception 'Referral V1 already exists or drifted; do not silently adopt';
   end if;
   -- Adopt only the exact legacy binding candidate column shape. Never drop/cast old data.
@@ -164,6 +179,56 @@ begin
   end if;
   raise exception 'Referral evidence is immutable' using errcode='55000';
 end $guard$;
+
+-- A successful self-referral check is durable only if the identity edges used
+-- by that check cannot later be rewritten. Partner lifecycle operations update
+-- state and review facts, never member ownership. A partner-linked member may
+-- acquire its first Auth UUID (account claim), but an established Auth identity
+-- and a partner's owning member are immutable after this authority is installed.
+create function public.research_referral_v1_identity_guard() returns trigger
+language plpgsql security definer set search_path='' as $identity_guard$
+declare v_old jsonb; v_new jsonb; v_member_auth uuid;
+begin
+  if tg_op='TRUNCATE' then
+    raise exception 'Referral identity cannot be truncated' using errcode='55000';
+  end if;
+  if tg_op<>'INSERT' then v_old:=to_jsonb(old); end if;
+  if tg_op<>'DELETE' then v_new:=to_jsonb(new); end if;
+  if tg_table_name='research_partners' and tg_op='INSERT' then
+    select m.auth_user_id into v_member_auth from public.research_members m
+      where m.id=(v_new->>'member_id')::uuid for update;
+    if not found then
+      raise exception 'Referral partner member identity is invalid' using errcode='23503';
+    end if;
+    if v_member_auth is not null then
+      perform 1 from auth.users u where u.id=v_member_auth for key share;
+      if not found then
+        raise exception 'Referral partner Auth identity is invalid' using errcode='23503';
+      end if;
+    end if;
+    return new;
+  end if;
+  if tg_table_name='research_partners' and (tg_op='DELETE'
+    or v_new->>'id' is distinct from v_old->>'id'
+    or v_new->>'member_id' is distinct from v_old->>'member_id') then
+    raise exception 'Referral partner identity is immutable' using errcode='55000';
+  end if;
+  if tg_table_name='research_members'
+    and exists(select 1 from public.research_partners where member_id=(v_old->>'id')::uuid) then
+    if tg_op='DELETE' or v_new->>'id' is distinct from v_old->>'id'
+      or (v_new->>'auth_user_id' is distinct from v_old->>'auth_user_id' and v_old->>'auth_user_id' is not null) then
+      raise exception 'Referral partner Auth identity is immutable' using errcode='55000';
+    end if;
+    if v_new->>'auth_user_id' is distinct from v_old->>'auth_user_id' then
+      perform 1 from auth.users u where u.id=(v_new->>'auth_user_id')::uuid for key share;
+      if not found then
+        raise exception 'Referral partner Auth identity is invalid' using errcode='23503';
+      end if;
+    end if;
+  end if;
+  if tg_op='DELETE' then return old; end if;
+  return new;
+end $identity_guard$;
 
 -- Durable claimed bindings depend on canonical partner eligibility, not the
 -- later lifecycle of the link that was valid when the claim was made.
@@ -476,8 +541,14 @@ begin
     v_result:=public.research_referral_v1_binding_at_json(v_key,v_occurred_at);
     if v_result is null then return jsonb_build_object('ok',true,'value',jsonb_build_object(
       'binding',null,'created',false,'availability','none')); end if;
-    return jsonb_build_object('ok',true,'value',jsonb_build_object('binding',v_result,'created',false,
-      'availability',public.research_referral_v1_partner_availability((v_result->>'partnerId')::uuid,a)));
+    -- bindingAt is an immutable ownership projection at p_input.occurredAt.
+    -- Current partner state cannot rewrite that historical fact: a later
+    -- suspension must not make an exact economic-event replay disappear.
+    -- Earning eligibility belongs to the schedule/partner-state authority at
+    -- the same occurrence instant. Self-referral was already refused when the
+    -- initial binding or future-only transfer was committed.
+    return jsonb_build_object('ok',true,'value',jsonb_build_object(
+      'binding',v_result,'created',false,'availability','ready'));
   end if;
 
   if p_operation in ('bind','getBinding') then
@@ -549,6 +620,10 @@ create trigger referral_v1_bindings_guard before insert or update or delete on p
 create trigger referral_v1_transfers_guard before insert or update or delete on public.research_referral_binding_transfer_events for each row execute function public.research_referral_v1_guard();
 create trigger referral_v1_events_guard before insert or update or delete on public.research_partner_referral_events for each row execute function public.research_referral_v1_guard();
 create trigger referral_v1_idempotency_guard before insert or update or delete on public.research_idempotency_keys for each row execute function public.research_referral_v1_guard();
+create trigger referral_v1_partner_identity_guard before insert or update of id,member_id or delete on public.research_partners for each row execute function public.research_referral_v1_identity_guard();
+create trigger referral_v1_member_auth_identity_guard before update of id,auth_user_id or delete on public.research_members for each row execute function public.research_referral_v1_identity_guard();
+create trigger referral_v1_partner_identity_no_truncate before truncate on public.research_partners for each statement execute function public.research_referral_v1_identity_guard();
+create trigger referral_v1_member_auth_identity_no_truncate before truncate on public.research_members for each statement execute function public.research_referral_v1_identity_guard();
 create trigger referral_v1_links_no_truncate before truncate on public.research_partner_links for each statement execute function public.research_referral_v1_guard();
 create trigger referral_v1_touches_no_truncate before truncate on public.research_attribution_touches for each statement execute function public.research_referral_v1_guard();
 create trigger referral_v1_bindings_no_truncate before truncate on public.research_affiliate_customer_bindings for each statement execute function public.research_referral_v1_guard();
@@ -567,20 +642,21 @@ revoke all on public.research_affiliate_customer_bindings,public.research_partne
 -- Preserve old canonical access, but no untrusted browser table access or truncate.
 revoke all on public.research_partner_links,public.research_attribution_touches,public.research_idempotency_keys from public,anon,authenticated;
 revoke truncate on public.research_partner_links,public.research_attribution_touches,public.research_idempotency_keys from service_role;
+revoke truncate on public.research_partners,public.research_members from public,anon,authenticated,service_role;
 
 create function public.research_referral_v1_authority() returns jsonb
 language plpgsql security definer set search_path='' as $authority$
-declare v_role text; v_table text; v_fn record; v_probe jsonb; v_execute_body text;
+declare v_role text; v_table text; v_fn record; v_probe jsonb; v_execute_body text; v_identity_body text;
   v_schema text:='gen2_referral_v1_transfer_base_20260921';
 begin
   if current_user in ('anon','authenticated','service_role') or not exists(select 1 from pg_catalog.pg_roles where rolname=current_user and (rolsuper or rolbypassrls)) then raise exception 'Referral owner capability drift'; end if;
-  if (select pg_catalog.count(*) from pg_catalog.unnest(array['public.research_referral_v1_guard()','public.research_referral_v1_partner_availability(uuid,uuid)',
+  if (select pg_catalog.count(*) from pg_catalog.unnest(array['public.research_referral_v1_guard()','public.research_referral_v1_identity_guard()','public.research_referral_v1_partner_availability(uuid,uuid)',
     'public.research_referral_v1_availability(uuid,uuid)',
     'public.research_referral_v1_link_json(uuid)','public.research_referral_v1_binding_json(text)',
     'public.research_referral_v1_effective_binding_json(text)','public.research_referral_v1_transfer_json(uuid)',
     'public.research_referral_v1_transfer_binding_json(uuid)','public.research_referral_v1_binding_availability(text,uuid)',
     'public.research_referral_v1_binding_at_json(text,timestamp with time zone)',
-    'public.research_referral_v1_execute(text,jsonb)','public.research_referral_v1_authority()']) f where pg_catalog.to_regprocedure(f) is not null)<>12 then raise exception 'Referral function inventory drift'; end if;
+    'public.research_referral_v1_execute(text,jsonb)','public.research_referral_v1_authority()']) f where pg_catalog.to_regprocedure(f) is not null)<>13 then raise exception 'Referral function inventory drift'; end if;
   foreach v_table in array array['research_affiliate_customer_bindings','research_partner_referral_events','research_referral_binding_transfer_events'] loop
     if not exists(select 1 from pg_catalog.pg_class where oid=pg_catalog.to_regclass('public.'||v_table) and relrowsecurity and relforcerowsecurity)
       or exists(select 1 from pg_catalog.pg_policy where polrelid=pg_catalog.to_regclass('public.'||v_table)) then raise exception 'Referral RLS drift'; end if;
@@ -599,6 +675,32 @@ begin
   if (select pg_catalog.count(*) from pg_catalog.pg_trigger where tgname in ('referral_v1_links_guard','referral_v1_touches_guard','referral_v1_bindings_guard','referral_v1_transfers_guard','referral_v1_events_guard','referral_v1_idempotency_guard',
     'referral_v1_links_no_truncate','referral_v1_touches_no_truncate','referral_v1_bindings_no_truncate','referral_v1_transfers_no_truncate','referral_v1_events_no_truncate','referral_v1_idempotency_no_truncate')
     and tgenabled='O' and tgfoid='public.research_referral_v1_guard()'::pg_catalog.regprocedure)<>12 then raise exception 'Referral trigger drift'; end if;
+  if pg_catalog.to_regclass('auth.users') is null
+    or exists(select 1 from public.research_partners p left join public.research_members m on m.id=p.member_id where m.id is null)
+    or exists(select 1 from public.research_partners p join public.research_members m on m.id=p.member_id
+      left join auth.users u on u.id=m.auth_user_id where m.auth_user_id is not null and u.id is null) then
+    raise exception 'Referral identity source drift';
+  end if;
+  if (select pg_catalog.count(*) from pg_catalog.pg_trigger t
+    where t.tgenabled='O' and t.tgfoid='public.research_referral_v1_identity_guard()'::pg_catalog.regprocedure and (
+      (t.tgname='referral_v1_partner_identity_guard' and t.tgrelid='public.research_partners'::pg_catalog.regclass and t.tgtype=31 and t.tgattr::text='1 2')
+      or (t.tgname='referral_v1_member_auth_identity_guard' and t.tgrelid='public.research_members'::pg_catalog.regclass and t.tgtype=27 and t.tgattr::text='1 3')
+      or (t.tgname='referral_v1_partner_identity_no_truncate' and t.tgrelid='public.research_partners'::pg_catalog.regclass and t.tgtype=34 and t.tgattr::text='')
+      or (t.tgname='referral_v1_member_auth_identity_no_truncate' and t.tgrelid='public.research_members'::pg_catalog.regclass and t.tgtype=34 and t.tgattr::text='')
+    ))<>4 then raise exception 'Referral identity trigger drift'; end if;
+  select p.prosrc into v_identity_body from pg_catalog.pg_proc p
+    where p.oid='public.research_referral_v1_identity_guard()'::pg_catalog.regprocedure;
+  if pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(
+      pg_catalog.regexp_replace(v_identity_body,'[[:space:]]+',' ','g'),'UTF8')),'hex')
+      <> 'bdd78aab1c8647a57dbb5c4bf13f5f7bb65ad030f19b2f37c0ff296bb2a0671c' then
+    raise exception 'Referral identity guard body drift';
+  end if;
+  foreach v_role in array array['anon','authenticated','service_role'] loop
+    if pg_catalog.has_table_privilege(v_role,'public.research_partners','TRUNCATE')
+      or pg_catalog.has_table_privilege(v_role,'public.research_members','TRUNCATE') then
+      raise exception 'Referral identity table privilege drift';
+    end if;
+  end loop;
   if (select pg_catalog.count(*) from pg_catalog.pg_index where indexrelid in (pg_catalog.to_regclass('public.referral_v1_token_hash_unique'),pg_catalog.to_regclass('public.referral_v1_first_subject_unique'),
     pg_catalog.to_regclass('public.referral_v1_touch_binding_unique'),pg_catalog.to_regclass('public.referral_v1_transfer_previous_unique')) and indisunique and indisvalid)<>4 then raise exception 'Referral uniqueness drift'; end if;
   if (select pg_catalog.count(*) from pg_catalog.pg_constraint where conname in ('referral_v1_link_shape','referral_v1_touch_shape','referral_v1_binding_shape') and convalidated)<>3 then raise exception 'Referral shape drift'; end if;
@@ -626,7 +728,7 @@ begin
   return pg_catalog.jsonb_build_object('ok',true,'value',pg_catalog.jsonb_build_object('schemaVersion',v_schema));
 end $authority$;
 
-revoke all on function public.research_referral_v1_guard(),public.research_referral_v1_partner_availability(uuid,uuid),
+revoke all on function public.research_referral_v1_guard(),public.research_referral_v1_identity_guard(),public.research_referral_v1_partner_availability(uuid,uuid),
   public.research_referral_v1_availability(uuid,uuid),public.research_referral_v1_link_json(uuid),
   public.research_referral_v1_binding_json(text),public.research_referral_v1_effective_binding_json(text),
   public.research_referral_v1_binding_at_json(text,timestamp with time zone),

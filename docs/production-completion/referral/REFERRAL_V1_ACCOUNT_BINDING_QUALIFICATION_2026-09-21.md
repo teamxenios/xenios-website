@@ -17,10 +17,19 @@ not deployed, and not authorized for production activation.
   and the server reads `bindingAt({ actorAuthUserId, occurredAt })`. It never
   falls back to, or lets a conflicting cookie replace, the first-valid account
   winner. Guests alone use the sealed touch cookie as provisional attribution.
-- A claimed binding no longer inherits later link expiry or revocation. Those
-  remain capture/link admission rules; after a valid claim, current canonical
-  partner activation and self-referral checks govern binding eligibility. Program
-  attribution windows remain commission-schedule authority, not link policy.
+- A claimed binding no longer inherits later link expiry, revocation, or partner
+  suspension. Those are admission or earning rules, not mutable ownership rules:
+  `bindingAt` projects the immutable revision effective at the requested instant.
+  Self-referral was refused when the initial binding or future-only transfer was
+  committed. The candidate preflight refuses orphan member/Auth baselines; database
+  triggers lock and validate each new partner identity edge, validate a first Auth
+  claim against `auth.users`, and make the established edge immutable (including
+  re-key/delete/truncate bypasses) so that proof cannot be invalidated by remapping.
+  Authority checks bind those triggers to their exact table/event/column topology
+  and fingerprint the identity guard body.
+  Downstream commission schedule/partner-state authority decides
+  earning eligibility at the same economic-event occurrence; current state can
+  never erase an earlier owner during exact replay.
 - An admin transfer is an append-only immutable event. The guarded server route
   supplies the verified admin subject and only accepts account Auth UUID, expected
   revision, target link UUID, a closed reason, a hashed authorization reference,
@@ -82,10 +91,10 @@ or production data was used.
 
 - `npx tsc --noEmit`: passed.
 - Focused Referral V1 plus assisted-order caller/runtime suite: 11 files,
-  195 tests passed.
+  216 tests passed.
 - Full base → lineage → touch disposable PostgreSQL chain and read-only final
-  postcheck: 2 files, 35 tests passed.
-- Total executed assertions in the non-overlapping focused suites above: 230
+  postcheck: 2 files, 38 tests passed.
+- Total executed assertions in the non-overlapping focused suites above: 254
   passed, 0 failed, 0 skipped.
 
 The database rehearsal covers concurrent first-valid capture/bind, explicit
@@ -93,6 +102,9 @@ conflict preservation, immutable initial rows, future-only transfer timing,
 revision CAS, exact replay and conflicting replay, self-referral, target-link
 derivation, safe admin projection, RLS/ACL/helper grants, immutable transfer
 events, pre/post-transfer as-of projection, post-claim link expiry/revocation,
+later-suspension historical replay, malformed baseline identity refusal, locked
+partner-insert/member-delete serialization, canonical null-to-first-Auth claim,
+exact identity-trigger/body drift, immutable partner/member/Auth identity,
 authenticated cross-device/conflicting-cookie behavior, base-only readiness
 refusal, candidate replay refusal, and the exact touch-attribution installer seam.
 It also creates caller-controlled `pg_temp` shadows of catalog relations as

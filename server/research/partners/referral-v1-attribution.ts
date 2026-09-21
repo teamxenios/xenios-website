@@ -35,7 +35,9 @@ export type ReferralAttributionDeps = Readonly<{
  *
  * Note what is absent: no branch returns anything derived from the cookie
  * itself. The only value that can be returned is a partner id the durable
- * authority produced and marked eligible in the same answer.
+ * authority produced. Guest touches also require current eligibility; a
+ * claimed account binding is immutable ownership and later eligibility is a
+ * commission/schedule decision at the economic-event instant.
  */
 export function createReferralV1AttributionResolver(deps: ReferralAttributionDeps) {
   return {
@@ -55,7 +57,7 @@ export function createReferralV1AttributionResolver(deps: ReferralAttributionDep
           actorAuthUserId,
           occurredAt: new Date(now).toISOString(),
         });
-        if (!binding.ok || binding.value.availability !== "ready" || !binding.value.binding) return null;
+        if (!binding.ok || binding.value.availability === "self_referral" || !binding.value.binding) return null;
         return binding.value.binding.partnerId;
       }
 
