@@ -13,7 +13,7 @@
       "blocker": "Fresh trusted release/ownership inputs and production evidence; exact managed SQL and hosted checkout qualification; canonical EA grant mapping and hold-rate/idempotence authority.",
       "handoff": {
         "session": "codex-native-closeout-20260921",
-        "sha": "c559c4e7795fb211b082cf12bd791f93c1cd3851",
+        "sha": "0d05bffda7cae48a1524eaf73c955ca0dfd020c1",
         "file": ".xenios/handoffs/2026-09-21-XENIOS-NATIVE-FINISH-LOCAL-CLOSEOUT.md",
         "at": "2026-09-21T16:38:05.000Z"
       },
