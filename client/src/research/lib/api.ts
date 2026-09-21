@@ -39,11 +39,50 @@ export async function apiDelete<T>(path: string, token?: string | null, body?: u
   return request<T>("DELETE", path, body, token);
 }
 
+const UNUSED_BODY_BYTE_LIMIT = 64 * 1024;
+const UNUSED_BODY_DRAIN_BUDGET_MS = 250;
+
 async function releaseUnusedBody(response: Response): Promise<void> {
-  // These responses intentionally do not enter a DTO. Release the unread
-  // stream so an unavailable page does not leave its fetch alive indefinitely.
-  // Cancellation neither changes the denial nor interprets its body as truth.
-  try { await response.body?.cancel(); } catch { /* Preserve the original status. */ }
+  // Discard a small finite body without parsing or trusting it. Cancelling a
+  // normal error response aborts its transport; draining lets it finish cleanly.
+  // A broken/oversized stream must not delay the already-known unavailable state.
+  let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let completed = false;
+  let stopped = false;
+  try {
+    if (!response.body) return;
+    const bodyReader = response.body.getReader();
+    reader = bodyReader;
+    const startedAt = performance.now();
+    const drain = async () => {
+      let bytes = 0;
+      // Check elapsed time inside the loop too: a stream of immediately ready
+      // empty chunks must not starve the timer by perpetually queuing microtasks.
+      while (!stopped && performance.now() - startedAt < UNUSED_BODY_DRAIN_BUDGET_MS) {
+        const { done, value } = await bodyReader.read();
+        if (done) { completed = true; return; }
+        bytes += value.byteLength;
+        if (bytes > UNUSED_BODY_BYTE_LIMIT) return;
+      }
+    };
+    await Promise.race([
+      drain(),
+      new Promise<void>((resolve) => { timer = setTimeout(resolve, UNUSED_BODY_DRAIN_BUDGET_MS); }),
+    ]);
+  } catch { /* Cleanup never changes the original response status. */ }
+  finally {
+    stopped = true;
+    if (timer !== undefined) clearTimeout(timer);
+    if (reader) {
+      if (!completed) {
+        // Underlying cancellation is allowed to stall or reject. Observe its
+        // rejection, but do not wait on it before returning the original status.
+        try { void reader.cancel().catch(() => {}); } catch { /* Preserve status. */ }
+      }
+      try { reader.releaseLock(); } catch { /* Preserve status. */ }
+    }
+  }
 }
 
 async function request<T>(method: string, path: string, body: unknown, token?: string | null, knownNotFoundDenials: readonly string[] = []): Promise<ApiResult<T>> {

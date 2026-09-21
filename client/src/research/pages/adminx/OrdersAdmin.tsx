@@ -68,7 +68,7 @@ function OrdersBody({ token }: { token: string }) {
   const clamped = Math.min(page, pageCount);
 
   return (
-    <div className="grid gap-6">
+    <div className="grid min-w-0 gap-6 [&_.ra-tabs_button]:min-h-11 [&_.ra-tabs_button]:min-w-11">
       <ResearchTabs
         tabs={ORDER_QUEUES}
         active={queue}
@@ -105,7 +105,7 @@ function OrdersBody({ token }: { token: string }) {
               key: "reference",
               header: "Order",
               render: (o) => (
-                <Link href={`${ADMIN_ROUTES.orders}/${encodeURIComponent(o.orderId)}`} className="font-700 underline" style={{ overflowWrap: "anywhere" }}>
+                <Link href={`${ADMIN_ROUTES.orders}/${encodeURIComponent(o.orderId)}`} className="inline-flex min-h-11 min-w-11 items-center font-700 underline" style={{ overflowWrap: "anywhere" }}>
                   {o.orderId}
                 </Link>
               ),

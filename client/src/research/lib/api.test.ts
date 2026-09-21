@@ -30,6 +30,8 @@ function stubFetch(status: number, body: unknown, contentType = "application/jso
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
+  vi.useRealTimers();
 });
 
 const headers = () => calls[0].init.headers as Record<string, string>;
@@ -105,24 +107,125 @@ describe("shared request guards (unchanged behavior)", () => {
     expect(await apiGet("/api/research/partner/me", "tok", ["partner_not_found"])).toEqual({ kind: "unavailable" });
   });
 
-  it.each([404, 501, 503, 200])("releases an unused %i response stream without changing unavailable semantics", async (status) => {
+  it.each([404, 501, 503, 200])("drains a finite unused %i body without cancelling or promoting its contents", async (status) => {
     const cancel = vi.fn();
     const stream = new ReadableStream({
-      start(controller) { controller.enqueue(new TextEncoder().encode("untrusted unavailable response")); },
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode('{"ok":true,"private":"untrusted body"}'));
+        controller.close();
+      },
       cancel,
     });
     const response = new Response(stream, { status, headers: { "content-type": status === 200 ? "text/html" : "application/json" } });
     vi.stubGlobal("fetch", vi.fn(async () => response));
     expect(await apiGet("/api/unpublished", "synthetic-token")).toEqual({ kind: "unavailable" });
-    expect(cancel).toHaveBeenCalledOnce();
+    expect(cancel).not.toHaveBeenCalled();
     expect(response.bodyUsed).toBe(true);
+    expect(response.body!.locked).toBe(false);
   });
 
-  it("retains the original unavailable result if stream cleanup fails", async () => {
-    const cancel = vi.fn(async () => { throw new Error("synthetic cleanup failure"); });
-    vi.stubGlobal("fetch", vi.fn(async () => ({ status: 503, body: { cancel } })));
+  it.each([[64 * 1024 + 1], [32 * 1024, 32 * 1024, 1]])("cancels an oversized unused body across chunks %j", async (...sizes) => {
+    const cancel = vi.fn();
+    const stream = new ReadableStream({
+      start(controller) { for (const size of sizes) controller.enqueue(new Uint8Array(size)); },
+      cancel,
+    });
+    const response = new Response(stream, { status: 503 });
+    vi.stubGlobal("fetch", vi.fn(async () => response));
     expect(await apiGet("/api/unpublished")).toEqual({ kind: "unavailable" });
     expect(cancel).toHaveBeenCalledOnce();
+    expect(response.body!.locked).toBe(false);
+  });
+
+  it("allows a finite body exactly at the byte limit to complete", async () => {
+    const cancel = vi.fn();
+    const response = new Response(new ReadableStream({
+      start(controller) {
+        controller.enqueue(new Uint8Array(64 * 1024));
+        controller.close();
+      },
+      cancel,
+    }), { status: 503 });
+    vi.stubGlobal("fetch", vi.fn(async () => response));
+    expect(await apiGet("/api/unpublished")).toEqual({ kind: "unavailable" });
+    expect(cancel).not.toHaveBeenCalled();
+    expect(response.body!.locked).toBe(false);
+  });
+
+  it("bounds a stalled read even when underlying cancellation never settles", async () => {
+    vi.useFakeTimers();
+    const cancel = vi.fn(() => new Promise<void>(() => {}));
+    const response = new Response(new ReadableStream({ cancel }), { status: 503 });
+    vi.stubGlobal("fetch", vi.fn(async () => response));
+    const result = apiGet("/api/unpublished");
+    await vi.advanceTimersByTimeAsync(250);
+    expect(await result).toEqual({ kind: "unavailable" });
+    expect(cancel).toHaveBeenCalledOnce();
+    expect(response.body!.locked).toBe(false);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it("applies one total time budget rather than restarting it for each chunk", async () => {
+    vi.useFakeTimers();
+    const cancel = vi.fn();
+    let controller: ReadableStreamDefaultController<Uint8Array>;
+    const response = new Response(new ReadableStream<Uint8Array>({
+      start(value) { controller = value; },
+      cancel,
+    }), { status: 503 });
+    vi.stubGlobal("fetch", vi.fn(async () => response));
+    const result = apiGet("/api/unpublished");
+    await vi.advanceTimersByTimeAsync(100);
+    controller!.enqueue(new Uint8Array(1));
+    await vi.advanceTimersByTimeAsync(100);
+    controller!.enqueue(new Uint8Array(1));
+    await vi.advanceTimersByTimeAsync(50);
+    expect(await result).toEqual({ kind: "unavailable" });
+    expect(cancel).toHaveBeenCalledOnce();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it("also bounds immediately ready empty chunks that could starve the timer", async () => {
+    vi.spyOn(performance, "now").mockReturnValueOnce(0).mockReturnValueOnce(0).mockReturnValue(251);
+    const cancel = vi.fn();
+    const response = new Response(new ReadableStream({
+      pull(controller) { controller.enqueue(new Uint8Array(0)); },
+      cancel,
+    }), { status: 503 });
+    vi.stubGlobal("fetch", vi.fn(async () => response));
+    expect(await apiGet("/api/unpublished")).toEqual({ kind: "unavailable" });
+    expect(cancel).toHaveBeenCalledOnce();
+  });
+
+  it("does not wait for oversized-body cancellation to settle", async () => {
+    const cancel = vi.fn(() => new Promise<void>(() => {}));
+    const response = new Response(new ReadableStream({
+      start(controller) { controller.enqueue(new Uint8Array(64 * 1024 + 1)); },
+      cancel,
+    }), { status: 501 });
+    vi.stubGlobal("fetch", vi.fn(async () => response));
+    expect(await apiGet("/api/unpublished")).toEqual({ kind: "unavailable" });
+    expect(cancel).toHaveBeenCalledOnce();
+  });
+
+  it("retains the original unavailable result if cancellation rejects", async () => {
+    const cancel = vi.fn(async () => { throw new Error("synthetic cleanup failure"); });
+    const response = new Response(new ReadableStream({
+      start(controller) { controller.enqueue(new Uint8Array(64 * 1024 + 1)); },
+      cancel,
+    }), { status: 503 });
+    vi.stubGlobal("fetch", vi.fn(async () => response));
+    expect(await apiGet("/api/unpublished")).toEqual({ kind: "unavailable" });
+    expect(cancel).toHaveBeenCalledOnce();
+  });
+
+  it("retains the original unavailable result if reading the body fails", async () => {
+    const response = new Response(new ReadableStream({
+      pull(controller) { controller.error(new Error("synthetic stream failure")); },
+    }), { status: 503 });
+    vi.stubGlobal("fetch", vi.fn(async () => response));
+    expect(await apiGet("/api/unpublished")).toEqual({ kind: "unavailable" });
+    expect(response.body!.locked).toBe(false);
   });
 
   it("still consumes a successful DTO instead of discarding it", async () => {

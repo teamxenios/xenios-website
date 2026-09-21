@@ -74,7 +74,7 @@ function QuestionsBody({ token }: { token: string }) {
   const clamped = Math.min(page, pageCount);
 
   return (
-    <div className="grid gap-6">
+    <div className="grid min-w-0 gap-6 [&_.ra-tabs_button]:min-h-11 [&_.ra-tabs_button]:min-w-11">
       <ResearchTabs
         tabs={QUESTION_QUEUES}
         active={queue}
@@ -111,7 +111,7 @@ function QuestionsBody({ token }: { token: string }) {
               key: "member",
               header: "Member",
               render: (r) => (
-                <Link href={`${ADMIN_ROUTES.questions}/${r.id}`} className="font-700 underline">
+                <Link href={`${ADMIN_ROUTES.questions}/${r.id}`} className="inline-flex min-h-11 min-w-11 items-center font-700 underline">
                   <span style={{ overflowWrap: "anywhere" }}>{r.member_email}</span>
                 </Link>
               ),

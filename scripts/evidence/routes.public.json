@@ -819,6 +819,42 @@
       }
     },
     {
+      "path": "/care/how-it-works",
+      "surface": "care",
+      "state": "default",
+      "indexable": false,
+      "public": true,
+      "label": "how-it-works",
+      "semanticContract": {
+        "requiredSelectors": [
+          "#care-page-title",
+          "#care-process-title"
+        ],
+        "requiredText": [
+          "From a Care request to the right secure next step.",
+          "Four separate checkpoints."
+        ]
+      }
+    },
+    {
+      "path": "/care/provider-review",
+      "surface": "care",
+      "state": "default",
+      "indexable": false,
+      "public": true,
+      "label": "provider-review",
+      "semanticContract": {
+        "requiredSelectors": [
+          "#care-page-title",
+          "#provider-review-boundaries"
+        ],
+        "requiredText": [
+          "Your clinician makes the medical decision.",
+          "What never establishes approval."
+        ]
+      }
+    },
+    {
       "path": "/care/schedule",
       "surface": "care-manual-access",
       "state": "availability-checked",

@@ -86,7 +86,7 @@ function OrderDetailBody({ token, id }: { token: string; id: string }) {
   const [notice, setNotice] = useState<string | null>(null);
 
   return (
-    <div className="grid gap-8">
+    <div className="grid min-w-0 grid-cols-1 gap-8">
       {notice && (
         <p className="body-s text-ink-2" role="status" aria-live="polite" data-testid="order-action-notice">
           {notice}
@@ -134,17 +134,17 @@ function OrderView({
   onChanged: (text: string) => void;
 }) {
   return (
-    <div className="grid gap-8">
-      <section aria-label="Order summary" data-testid="order-summary">
+    <div className="grid min-w-0 grid-cols-1 gap-8">
+      <section className="min-w-0" aria-label="Order summary" data-testid="order-summary">
         <div className="flex items-baseline justify-between gap-4 flex-wrap mb-3">
-          <h2 className="body-l font-700" data-testid="order-id">
+          <h2 className="body-l font-700" style={{ overflowWrap: "anywhere" }} data-testid="order-id">
             {order.orderId}
           </h2>
           <span data-testid="order-state">
             <ResearchStatusBadge tone={orderTone(order.state)} label={stateLabel(order.state)} />
           </span>
         </div>
-        <dl className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+        <dl className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 220px), 1fr))" }}>
           <Fact label="Placed" value={fmtDateTime(order.placedAt)} />
           <Fact label="Last change" value={fmtDateTime(order.updatedAt)} />
           <Fact label="Order total" value={formatCents(order.totalCents)} testId="order-total" />
@@ -172,7 +172,7 @@ function OrderView({
         )}
       </section>
 
-      <section aria-label="Items">
+      <section className="min-w-0" aria-label="Items">
         <h2 className="body-l font-700 mb-3">Items</h2>
         <ResearchDataTable<AdminOrderDetailDto["lines"][number]>
           caption="Order items"
@@ -191,7 +191,7 @@ function OrderView({
         />
       </section>
 
-      <section aria-label="Shipments" data-testid="order-shipments">
+      <section className="min-w-0" aria-label="Shipments" data-testid="order-shipments">
         <h2 className="body-l font-700 mb-3">Shipments</h2>
         {order.shipmentsSource === "unavailable" ? (
           <p className="body-s text-ink-2" role="status">
@@ -230,9 +230,9 @@ function OrderView({
 
 function Fact({ label, value, testId }: { label: string; value: string; testId?: string }) {
   return (
-    <div>
+    <div className="min-w-0">
       <dt className="mono-label text-ink-mute">{label}</dt>
-      <dd className="body-m tabular" data-testid={testId}>
+      <dd className="body-m tabular m-0" style={{ overflowWrap: "anywhere" }} data-testid={testId}>
         {value}
       </dd>
     </div>
@@ -281,7 +281,7 @@ function OrderActions({
   }
 
   return (
-    <section aria-label="What can be done next" data-testid="order-actions">
+    <section className="min-w-0" aria-label="What can be done next" data-testid="order-actions">
       <h2 className="body-l font-700 mb-3">What can be done next</h2>
       {order.availableActions.length === 0 ? (
         <p className="body-s text-ink-2" data-testid="order-no-actions">
@@ -343,19 +343,19 @@ function OrderActions({
                 has actually gone.
               </p>
               <div className="flex gap-3 flex-wrap items-end">
-                <label className="grid gap-1">
+                <label className="grid min-w-0 max-w-full gap-1">
                   <span className="mono-label text-ink-mute">Carrier</span>
                   <input
-                    className="input"
+                    className="input-field min-w-0"
                     value={carrier}
                     onChange={(event) => setCarrier(event.target.value)}
                     data-testid="order-tracking-carrier"
                   />
                 </label>
-                <label className="grid gap-1">
+                <label className="grid min-w-0 max-w-full gap-1">
                   <span className="mono-label text-ink-mute">Tracking number</span>
                   <input
-                    className="input"
+                    className="input-field min-w-0"
                     value={trackingNumber}
                     onChange={(event) => setTrackingNumber(event.target.value)}
                     data-testid="order-tracking-number"
@@ -384,10 +384,10 @@ function OrderActions({
 
           {can("cancel") && (
             <div className="flex gap-3 flex-wrap items-end" data-testid="order-cancel-form">
-              <label className="grid gap-1">
+              <label className="grid min-w-0 max-w-full gap-1">
                 <span className="mono-label text-ink-mute">Reason for cancelling</span>
                 <input
-                  className="input"
+                  className="input-field min-w-0"
                   value={reason}
                   onChange={(event) => setReason(event.target.value)}
                   data-testid="order-cancel-reason"
