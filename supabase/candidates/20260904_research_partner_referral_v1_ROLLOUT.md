@@ -59,6 +59,16 @@ files are not proof that any corresponding object exists in production.
   On a shared browser, a second account cannot inherit that first account's capture.
   Existing bindings remain immutable if the link is revoked/expired later; reads
   return current availability separately. These facts alone authorize no economics.
+- A later valid capture or bind attempt never replaces either winner. The RPC
+  returns a bounded `conflictPreserved` signal while retaining the original
+  touch/account binding. No rejected partner UUID becomes an authority fact.
+- An admin transfer is a distinct append-only event, not an UPDATE or correction
+  of the first binding. The canonical HTTP admin guard supplies the actor; SQL
+  derives the target partner from a current V1 link, assigns `effective_at` with
+  the database clock, and compare-and-swaps an expected binding revision. It
+  accepts no caller timestamp, partner UUID, customer reference, rate, hold, or
+  ownership assertion. Replay is idempotent; a stale revision is refused. The
+  original touch and binding row remain immutable provenance.
 - Mutations initially share one transaction advisory lock, and eligibility takes
   partner/link row locks. This is deliberately conservative, not a throughput
   certification. Rate limits and deadlines belong to HTTP composition. A future
@@ -71,9 +81,20 @@ files are not proof that any corresponding object exists in production.
   A privileged database operator can still change DDL; this is not an assertion
   of resistance to a compromised database owner.
 - Admin reads are bounded to 100 rows per collection. Links have totals; events,
-  touches and bindings are explicit projections. They expose no raw visitor hash,
-  customer email/name, or clinical details. Account UUID-based keys are internal
-  identifiers and must remain in authorized operator responses, never public URLs.
+  touches, bindings and transfer events are explicit projections. They expose no
+  raw visitor hash, transfer authorization-reference hash/actor, customer email/name,
+  or clinical details. Account UUID-based keys are internal identifiers and must
+  remain in authorized operator responses, never public URLs.
+  `bindings` reports the effective revision while retaining the original touch and
+  bind instant as provenance. HTTP reports arbitrary/backdated corrections as
+  unsupported, separately from the append-only `future_only` transfer capability;
+  this does not claim that an operator transfer UI is deployed or enabled.
+- The rate-free Early Access derivation consumes only a guard-verified Auth UUID.
+  It resolves the effective binding, canonical owned Early Access customer, and
+  the canonical signed commission-schedule identity on the server. Its proposed
+  writer shape contains schedule program/version/hash but no rate or hold. It is
+  intentionally not mounted until a reviewed canonical writer/customer-directory
+  composition exists; the predecessor hold-rate writer is not an acceptable bridge.
 
 ## Rehearsal
 
@@ -105,8 +126,8 @@ database URL/host/port. Teardown stops that exact cluster; synthetic logs and da
 are retained for local review. The same helper supports the local browser preview.
 It is not imported into production composition.
 
-Local verification at this implementation checkpoint: 33 strict RPC adapter checks
-and 15 real PostgreSQL checks passed together (48 total). The database checks cover
+Local verification counts for this revision are recorded in the production-completion
+qualification evidence after each disposable rehearsal. The database checks cover
 both absent binding-table creation and prior-candidate adoption, independent
 connection concurrency, exact retries, audit-failure rollback, current revocation/
 suspension/self checks, Auth ownership/closed-member refusal, immutable evidence,
@@ -132,8 +153,8 @@ reviewed lineage candidate, if that candidate is included.
    binding, redaction, revoked/expired handling and admin scopes with authorized
    synthetic data. Do not use real customers as fixtures.
 5. On failure, switch the referral feature off and roll back application activation
-   first. Preserve the additive columns, links, touches, bindings, idempotency and
-   audit evidence. A dark service safely returns unavailable; do not erase facts to
+  first. Preserve the additive columns, links, touches, bindings, idempotency,
+  audit and transfer evidence. A dark service safely returns unavailable; do not erase facts to
    make the UI look clean. Database removal after data exists is NOT the routine
    rollback. Any destructive schema reversal requires a reviewed backup, exact
    target inventory, explicit approval and a separately rehearsed plan.

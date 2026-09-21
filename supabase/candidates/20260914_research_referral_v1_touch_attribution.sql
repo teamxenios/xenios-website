@@ -122,8 +122,8 @@ revoke all on function public.research_referral_v1_touch_attribution(uuid, text)
 do $install$
 declare
   v_body text := pg_get_functiondef('public.research_referral_v1_execute(text,jsonb)'::regprocedure);
-  v_allowlist text := $old$if jsonb_typeof(p_input)<>'object' or p_operation not in ('issue','revoke','listOwn','resolve','capture','bind','getBinding','listAdmin') then$old$;
-  v_actor text := $old$  if p_operation in ('issue','revoke','listOwn','bind','getBinding','listAdmin') or p_input ? 'actorAuthUserId' then$old$;
+  v_allowlist text := $old$if jsonb_typeof(p_input)<>'object' or p_operation not in ('issue','revoke','listOwn','resolve','capture','bind','getBinding','transferBinding','listAdmin') then$old$;
+  v_actor text := $old$  if p_operation in ('issue','revoke','listOwn','bind','getBinding','transferBinding','listAdmin') or p_input ? 'actorAuthUserId' then$old$;
   v_branch text := $new$  if p_operation='attributionForTouch' then
     if jsonb_typeof(p_input) is distinct from 'object'
       or (p_input - 'touchId' - 'subjectKeyHash') <> '{}'::jsonb
@@ -142,7 +142,7 @@ begin
     raise exception 'referral dispatcher drift or replay; review predecessor before applying';
   end if;
   v_body := replace(v_body,v_allowlist,
-    $new$if jsonb_typeof(p_input)<>'object' or p_operation not in ('issue','revoke','listOwn','resolve','capture','bind','getBinding','listAdmin','attributionForTouch') then$new$);
+    $new$if jsonb_typeof(p_input)<>'object' or p_operation not in ('issue','revoke','listOwn','resolve','capture','bind','getBinding','transferBinding','listAdmin','attributionForTouch') then$new$);
   v_body := replace(v_body,v_actor,v_branch || v_actor);
   execute v_body;
 end

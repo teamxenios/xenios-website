@@ -10,6 +10,11 @@ const link: ReferralV1Link = {
 };
 const issue = { actorAuthUserId: actor, idempotencyKey: "synthetic_request_01", linkId: link.id, tokenHashHex: "a".repeat(64), tokenKeyVersion: 1, destinationPath: "/health", expiresInDays: 30 as const };
 const authority = { ok: true, value: { schemaVersion: REFERRAL_V1_SCHEMA_VERSION } };
+const accountAuthUserId = "00000000-0000-4000-8000-000000000004";
+const touchId = "00000000-0000-4000-8000-000000000005";
+const targetLinkId = "00000000-0000-4000-8000-000000000006";
+const targetPartnerId = "00000000-0000-4000-8000-000000000007";
+const transferId = "00000000-0000-4000-8000-000000000008";
 function transport(data: unknown) {
   const rpc = vi.fn().mockResolvedValueOnce({ data: authority, error: null }).mockResolvedValue({ data, error: null });
   return { rpc, store: createSupabaseReferralV1Store({ rpc }) };
@@ -56,7 +61,7 @@ describe("Gen2 referral durable RPC adapter", () => {
   it.each([
     { rawToken: "never-allowed" }, { customerEmail: "synthetic@example.invalid" },
     { internalCode: actor }, { destinationPath: "https://evil.invalid" }, { captureCount: -1 },
-    { bindingCount: 1 }, { createdAt: "yesterday" }, { expiresAt: "2027-01-01T00:00:00Z" },
+    { bindingCount: 1.5 }, { createdAt: "yesterday" }, { expiresAt: "2027-01-01T00:00:00Z" },
   ])("refuses malformed or expanded database link projection %j", async (change) => {
     const { store } = transport({ ok: true, value: { link: { ...link, ...change }, created: true } });
     expect(await store.issue(issue)).toEqual({ ok: false, reason: "unavailable" });
@@ -87,6 +92,52 @@ describe("Gen2 referral durable RPC adapter", () => {
     expect(await store.getBinding({ actorAuthUserId: actor })).toEqual({ ok: false, reason: "unavailable" });
   });
 
+  it("submits a closed future-only transfer shape and validates the derived durable result", async () => {
+    const input = { adminAuthUserId: actor, accountAuthUserId, expectedRevisionId: touchId, targetLinkId,
+      idempotencyKey: "synthetic_transfer_01", reasonCode: "customer_request" as const,
+      authorizationReferenceHash: "b".repeat(64) };
+    const effectiveAt = "2026-09-05T00:00:00+00:00";
+    const binding = { accountKey: `auth:${accountAuthUserId}`, linkId: targetLinkId, touchId,
+      partnerId: targetPartnerId, boundAt: link.createdAt, revisionId: transferId, effectiveAt, source: "admin_transfer" };
+    const transfer = { id: transferId, accountKey: binding.accountKey, previousRevisionId: touchId,
+      previousPartnerId: link.partnerId, previousLinkId: link.id, nextPartnerId: targetPartnerId,
+      nextLinkId: targetLinkId, reasonCode: input.reasonCode, authorizationReferenceHash: input.authorizationReferenceHash, effectiveAt };
+    const { store, rpc } = transport({ ok: true, value: { binding, transfer, created: true } });
+    expect(await store.transferBinding(input)).toEqual({ ok: true, value: { binding, transfer, created: true } });
+    expect(rpc.mock.calls[1]).toEqual(["research_referral_v1_execute", { p_operation: "transferBinding", p_input: {
+      actorAuthUserId: actor, accountAuthUserId, expectedRevisionId: touchId, targetLinkId,
+      idempotencyKey: input.idempotencyKey, reasonCode: input.reasonCode,
+      authorizationReferenceHash: input.authorizationReferenceHash,
+    } }]);
+  });
+
+  it.each([
+    { partnerId: targetPartnerId }, { customerRef: "eac_0123456789abcdef0123456789abcdef" },
+    { effectiveAt: "2020-01-01T00:00:00Z" }, { holdBasisPoints: 2_500 },
+    { commissionRateBasisPoints: 2_500 }, { patientCondition: "never accepted" },
+  ])("rejects expanded transfer authority without an RPC call %j", async (injected) => {
+    const { store, rpc } = transport(null);
+    const input = { adminAuthUserId: actor, accountAuthUserId, expectedRevisionId: touchId, targetLinkId,
+      idempotencyKey: "synthetic_transfer_01", reasonCode: "customer_request" as const,
+      authorizationReferenceHash: "b".repeat(64), ...injected };
+    expect(await store.transferBinding(input)).toEqual({ ok: false, reason: "invalid_input" });
+    expect(rpc).not.toHaveBeenCalled();
+  });
+
+  it("fails closed when transfer output disagrees with the account, link, partner, or revision", async () => {
+    const input = { adminAuthUserId: actor, accountAuthUserId, expectedRevisionId: touchId, targetLinkId,
+      idempotencyKey: "synthetic_transfer_01", reasonCode: "customer_request" as const,
+      authorizationReferenceHash: "b".repeat(64) };
+    const effectiveAt = "2026-09-05T00:00:00+00:00";
+    const transfer = { id: transferId, accountKey: `auth:${accountAuthUserId}`, previousRevisionId: touchId,
+      previousPartnerId: link.partnerId, previousLinkId: link.id, nextPartnerId: targetPartnerId,
+      nextLinkId: targetLinkId, reasonCode: input.reasonCode, authorizationReferenceHash: input.authorizationReferenceHash, effectiveAt };
+    const binding = { accountKey: `auth:${actor}`, linkId: targetLinkId, touchId, partnerId: targetPartnerId,
+      boundAt: link.createdAt, revisionId: transferId, effectiveAt, source: "admin_transfer" };
+    const { store } = transport({ ok: true, value: { binding, transfer, created: true } });
+    expect(await store.transferBinding(input)).toEqual({ ok: false, reason: "unavailable" });
+  });
+
   it("projects admin actor under trusted server input and bounds each lineage collection", async () => {
     const data = { ok: true, value: { links: [], events: [], touches: [], bindings: [] } };
     const { store, rpc } = transport(data);
@@ -94,6 +145,8 @@ describe("Gen2 referral durable RPC adapter", () => {
     expect(rpc.mock.calls[1][1]).toEqual({ p_operation: "listAdmin", p_input: { actorAuthUserId: actor, limit: 20 } });
     const unsafe = transport({ ok: true, value: { ...data.value, touches: [{ subjectKeyHash: "a".repeat(64) }] } });
     expect(await unsafe.store.listAdmin({ adminAuthUserId: actor })).toEqual({ ok: false, reason: "unavailable" });
+    const leakedTransfer = transport({ ok: true, value: { ...data.value, transfers: [{ authorizationReferenceHash: "b".repeat(64) }] } });
+    expect(await leakedTransfer.store.listAdmin({ adminAuthUserId: actor })).toEqual({ ok: false, reason: "unavailable" });
   });
 
   it("reprobes authority for each operation rather than caching a prior positive", async () => {

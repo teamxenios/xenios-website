@@ -90,7 +90,8 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
     await store.revoke({ actorAuthUserId: winner.input.actorAuthUserId, idempotencyKey: randomUUID(), linkId: winner.link.id });
     const other = winner === one ? two : one;
     const retained = value(await store.capture({ tokenHashHex: other.input.tokenHashHex, subjectKeyHash }));
-    expect(retained).toMatchObject({ created: false, availability: "revoked", touch: { touchId: results[0].touch.touchId } });
+    expect(retained).toMatchObject({ created: false, availability: "revoked", conflictPreserved: true,
+      touch: { touchId: results[0].touch.touchId } });
     expect(await store.capture({ tokenHashHex: winner.input.tokenHashHex, subjectKeyHash: hash() })).toEqual({ ok: false, reason: "invalid_link" });
   });
 
@@ -107,11 +108,72 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
     const subjectKeyHash = winner.touchId === t1.touchId ? s1 : s2;
     expect(await store.bind({ actorAuthUserId: (await seedPartner()).actorAuthUserId, touchId: winner.touchId, subjectKeyHash })).toEqual({ ok: false, reason: "capture_claimed" });
     expect(value(await store.getBinding({ actorAuthUserId })).binding).toEqual(winner);
+    expect(bound.some((result) => result.conflictPreserved === true)).toBe(true);
     expect((await sql("select count(*)::int n from public.research_partner_referral_events where event_type='account_bound' and actor_auth_user_id=$1", [actorAuthUserId])).rows[0].n).toBe(1);
     const winningLink = winner.linkId === first.link.id ? first : second;
     await store.revoke({ actorAuthUserId: winningLink.input.actorAuthUserId, idempotencyKey: randomUUID(), linkId: winner.linkId });
     expect(value(await store.getBinding({ actorAuthUserId })).availability).toBe("revoked");
     expect(value(await store.getBinding({ actorAuthUserId })).binding).toEqual(winner);
+  });
+
+  it("preserves the first binding and appends CAS-protected future-only admin transfers", async () => {
+    const original = await issue(await seedPartner());
+    const target = await issue(await seedPartner());
+    const laterTarget = await issue(await seedPartner());
+    const account = await seedPartner();
+    const subjectKeyHash = hash();
+    const touch = value(await store.capture({ tokenHashHex: original.input.tokenHashHex, subjectKeyHash })).touch;
+    const initial = value(await store.bind({ actorAuthUserId: account.actorAuthUserId, touchId: touch.touchId, subjectKeyHash })).binding!;
+    expect(initial).toMatchObject({ revisionId: touch.touchId, source: "capture", partnerId: original.link.partnerId, linkId: original.link.id });
+    const adminAuthUserId = randomUUID();
+    const input = { adminAuthUserId, accountAuthUserId: account.actorAuthUserId, expectedRevisionId: initial.revisionId!,
+      targetLinkId: target.link.id, idempotencyKey: randomUUID(), reasonCode: "customer_request" as const,
+      authorizationReferenceHash: hash() };
+    const transferred = value(await store.transferBinding(input));
+    expect(transferred).toMatchObject({ created: true, binding: { source: "admin_transfer", partnerId: target.link.partnerId,
+      linkId: target.link.id, touchId: touch.touchId }, transfer: { previousRevisionId: touch.touchId,
+      previousPartnerId: original.link.partnerId, previousLinkId: original.link.id, nextPartnerId: target.link.partnerId,
+      nextLinkId: target.link.id, reasonCode: "customer_request" } });
+    expect(transferred.binding.revisionId).toBe(transferred.transfer.id);
+    expect(transferred.binding.effectiveAt).toBe(transferred.transfer.effectiveAt);
+    expect(Date.parse(transferred.transfer.effectiveAt)).toBeGreaterThanOrEqual(Date.parse(initial.effectiveAt!));
+    expect(value(await store.getBinding({ actorAuthUserId: account.actorAuthUserId })).binding).toEqual(transferred.binding);
+    expect((await sql("select partner_id,referral_link_id,referral_touch_id from public.research_affiliate_customer_bindings where customer_key=$1",
+      [initial.accountKey])).rows[0]).toEqual({ partner_id: original.link.partnerId, referral_link_id: original.link.id, referral_touch_id: touch.touchId });
+    expect((await sql("select actor_auth_user_id,authorization_reference_hash from public.research_referral_binding_transfer_events where id=$1",
+      [transferred.transfer.id])).rows[0]).toEqual({ actor_auth_user_id: adminAuthUserId, authorization_reference_hash: input.authorizationReferenceHash });
+
+    const replayed = value(await store.transferBinding(input));
+    expect(replayed).toEqual({ ...transferred, created: false });
+    expect(await store.transferBinding({ ...input, idempotencyKey: randomUUID() })).toEqual({ ok: false, reason: "stale_binding" });
+    expect(await store.transferBinding({ ...input, reasonCode: "compliance_action" })).toEqual({ ok: false, reason: "idempotency_conflict" });
+    const accountOwnedLink = await issue(account);
+    expect(await store.transferBinding({ ...input, expectedRevisionId: transferred.transfer.id, targetLinkId: accountOwnedLink.link.id,
+      idempotencyKey: randomUUID() })).toEqual({ ok: false, reason: "self_referral" });
+
+    const rawBackdate = await database.rpc.rpc("research_referral_v1_execute", { p_operation: "transferBinding", p_input: {
+      actorAuthUserId: adminAuthUserId, accountAuthUserId: account.actorAuthUserId,
+      expectedRevisionId: transferred.transfer.id, targetLinkId: laterTarget.link.id,
+      idempotencyKey: randomUUID(), reasonCode: "documented_correction",
+      authorizationReferenceHash: hash(), effectiveAt: "2020-01-01T00:00:00Z",
+    } });
+    expect(rawBackdate.error).toBeNull();
+    expect(rawBackdate.data).toEqual({ ok: false, reason: "invalid_input" });
+
+    const second = value(await store.transferBinding({ ...input, expectedRevisionId: transferred.transfer.id,
+      targetLinkId: laterTarget.link.id, idempotencyKey: randomUUID(), reasonCode: "documented_correction" }));
+    expect(second.transfer.previousRevisionId).toBe(transferred.transfer.id);
+    expect(second.binding).toMatchObject({ revisionId: second.transfer.id, partnerId: laterTarget.link.partnerId, linkId: laterTarget.link.id });
+    expect((await sql("select count(*)::int n from public.research_referral_binding_transfer_events where account_key=$1", [initial.accountKey])).rows[0].n).toBe(2);
+    const lifecycle = value(await store.listAdmin({ adminAuthUserId, partnerId: laterTarget.link.partnerId, limit: 10 }));
+    expect(lifecycle.bindings).toContainEqual({ ...second.binding, availability: "ready" });
+    expect(lifecycle.transfers).toContainEqual({
+      id: second.transfer.id, accountKey: second.transfer.accountKey, previousRevisionId: second.transfer.previousRevisionId,
+      previousPartnerId: second.transfer.previousPartnerId, previousLinkId: second.transfer.previousLinkId,
+      nextPartnerId: second.transfer.nextPartnerId, nextLinkId: second.transfer.nextLinkId,
+      reasonCode: second.transfer.reasonCode, effectiveAt: second.transfer.effectiveAt,
+    });
+    expect(JSON.stringify(lifecycle)).not.toMatch(/authorizationReferenceHash|authorization_reference_hash|actorAuthUserId|actor_auth_user_id/);
   });
 
   it("rejects self referral at signed capture and at later Auth binding", async () => {
@@ -183,7 +245,7 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
       await expect(sql("select public.research_referral_v1_execute('listAdmin','{}')", [], role)).rejects.toThrow(/permission denied/);
     }
     for (const role of ["anon", "authenticated", "service_role"] as const) {
-      for (const name of ["research_partner_referral_events", "research_affiliate_customer_bindings"]) {
+      for (const name of ["research_partner_referral_events", "research_affiliate_customer_bindings", "research_referral_binding_transfer_events"]) {
         await expect(sql(`select * from public.${name}`, [], role)).rejects.toThrow(/permission denied/);
         await expect(sql(`truncate public.${name}`, [], role)).rejects.toThrow(/permission denied/);
       }
@@ -194,6 +256,7 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
     await expect(sql("delete from public.research_partner_links where id=$1", [issued.link.id])).rejects.toThrow(/immutable/);
     await expect(sql("update public.research_partner_links set destination_path='/care' where id=$1", [issued.link.id])).rejects.toThrow(/immutable/);
     await expect(sql("delete from public.research_partner_referral_events where link_id=$1", [issued.link.id])).rejects.toThrow(/immutable/);
+    await expect(sql("update public.research_referral_binding_transfer_events set reason_code='compliance_action'")).rejects.toThrow(/immutable/);
     await expect(sql("delete from public.research_idempotency_keys where key=$1", [issued.input.idempotencyKey], "service_role")).rejects.toThrow(/authority RPC/);
     // Ordinary legacy operations retain their original service permissions.
     await sql("insert into public.research_partner_links(partner_id,code,channel) values($1,$2,'code')", [partner.partnerId, `legacy-${randomUUID()}`], "service_role");
@@ -232,8 +295,8 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
   it("returns bounded internal admin lineage without raw subject hashes, names or emails", async () => {
     const admin = value(await store.listAdmin({ adminAuthUserId: randomUUID(), limit: 3 }));
     for (const items of Object.values(admin)) expect(items.length).toBeLessThanOrEqual(3);
-    expect(Object.keys(admin)).toEqual(["links", "events", "touches", "bindings"]);
-    expect(JSON.stringify(admin)).not.toMatch(/subjectKeyHash|subject_key|email|legal_name|contact_email|actor_auth_user_id/);
+    expect(Object.keys(admin)).toEqual(["links", "events", "touches", "bindings", "transfers"]);
+    expect(JSON.stringify(admin)).not.toMatch(/subjectKeyHash|subject_key|email|legal_name|contact_email|actor_auth_user_id|authorizationReferenceHash|authorization_reference_hash/);
     expect(admin.bindings.length).toBeGreaterThan(0);
   });
 

@@ -34,6 +34,7 @@ begin
     raise exception 'Canonical ownership or idempotency uniqueness missing';
   end if;
   if to_regclass('public.research_partner_referral_events') is not null
+    or to_regclass('public.research_referral_binding_transfer_events') is not null
     or exists(select 1 from information_schema.columns where table_schema='public' and table_name='research_partner_links' and column_name='referral_version')
     or to_regprocedure('public.research_referral_v1_execute(text,jsonb)') is not null then
     raise exception 'Referral V1 already exists or drifted; do not silently adopt';
@@ -105,6 +106,28 @@ alter table public.research_affiliate_customer_bindings
 -- A browser capture can bind once, even if its signed cookie is copied to another account.
 create unique index referral_v1_touch_binding_unique on public.research_affiliate_customer_bindings(referral_touch_id) where referral_version=1;
 
+-- The first capture binding never changes. An authorized future-only transfer
+-- is a new immutable event whose effective time is assigned by the database.
+-- No email, name, address, health fact, rate or money field belongs here.
+create table public.research_referral_binding_transfer_events (
+  id uuid primary key default gen_random_uuid(),
+  account_key text not null references public.research_affiliate_customer_bindings(customer_key),
+  previous_revision_id uuid not null,
+  previous_partner_id uuid not null references public.research_partners(id),
+  previous_link_id uuid not null references public.research_partner_links(id),
+  next_partner_id uuid not null references public.research_partners(id),
+  next_link_id uuid not null references public.research_partner_links(id),
+  actor_auth_user_id uuid not null,
+  reason_code text not null check(reason_code in ('customer_request','documented_correction','compliance_action')),
+  authorization_reference_hash text not null check(authorization_reference_hash ~ '^[a-f0-9]{64}$'),
+  effective_at timestamptz not null default clock_timestamp(),
+  check(account_key ~ '^auth:[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'),
+  check(previous_partner_id<>next_partner_id and previous_link_id<>next_link_id)
+);
+create index referral_v1_transfers_account_time on public.research_referral_binding_transfer_events(account_key,effective_at desc,id desc);
+create index referral_v1_transfers_partner_time on public.research_referral_binding_transfer_events(next_partner_id,effective_at desc,id desc);
+create unique index referral_v1_transfer_previous_unique on public.research_referral_binding_transfer_events(account_key,previous_revision_id);
+
 create table public.research_partner_referral_events (
   id uuid primary key default gen_random_uuid(),
   event_type text not null check(event_type in ('link_issued','link_revoked','capture_recorded','account_bound')),
@@ -130,7 +153,7 @@ begin
     where p.oid='public.research_referral_v1_execute(text,jsonb)'::regprocedure;
   if tg_op<>'INSERT' then v_old:=to_jsonb(old); end if;
   if tg_op<>'DELETE' then v_new:=to_jsonb(new); end if;
-  v_protected:=tg_table_name in ('research_partner_referral_events','research_affiliate_customer_bindings')
+  v_protected:=tg_table_name in ('research_partner_referral_events','research_affiliate_customer_bindings','research_referral_binding_transfer_events')
     or coalesce(v_old->>'referral_version','')='1' or coalesce(v_new->>'referral_version','')='1'
     or coalesce(v_old->>'scope','') like 'referral-v1:%' or coalesce(v_new->>'scope','') like 'referral-v1:%';
   if not v_protected then if tg_op='DELETE' then return old; else return new; end if; end if;
@@ -165,7 +188,10 @@ language sql security definer set search_path='' as $link$
     'tokenKeyVersion',l.token_key_version,'tokenHashHex',l.token_hash_hex,'destinationPath',l.destination_path,'createdAt',l.created_at,
     'expiresAt',l.expires_at,'revokedAt',l.revoked_at,'availability',public.research_referral_v1_availability(l.id),
     'captureCount',(select count(*) from public.research_attribution_touches t where t.referral_link_id=l.id and t.referral_version=1),
-    'bindingCount',(select count(*) from public.research_affiliate_customer_bindings b where b.referral_link_id=l.id and b.referral_version=1))
+    'bindingCount',(select count(*) from public.research_affiliate_customer_bindings b
+      left join lateral (select x.next_link_id from public.research_referral_binding_transfer_events x
+        where x.account_key=b.customer_key order by x.effective_at desc,x.id desc limit 1) current on true
+      where coalesce(current.next_link_id,b.referral_link_id)=l.id and b.referral_version=1))
   from public.research_partner_links l where l.id=p_id and l.referral_version=1;
 $link$;
 
@@ -176,25 +202,70 @@ language sql security definer set search_path='' as $binding$
   from public.research_affiliate_customer_bindings where customer_key=p_key and referral_version=1;
 $binding$;
 
+create function public.research_referral_v1_effective_binding_json(p_key text) returns jsonb
+language plpgsql security definer set search_path='' as $effective_binding$
+declare
+  b public.research_affiliate_customer_bindings;
+  x public.research_referral_binding_transfer_events;
+begin
+  select * into b from public.research_affiliate_customer_bindings where customer_key=p_key and referral_version=1;
+  if not found then return null; end if;
+  select * into x from public.research_referral_binding_transfer_events where account_key=p_key order by effective_at desc,id desc limit 1;
+  if found then
+    return jsonb_build_object('accountKey',b.customer_key,'linkId',x.next_link_id,'touchId',b.referral_touch_id,
+      'partnerId',x.next_partner_id,'boundAt',b.bound_at,'revisionId',x.id,'effectiveAt',x.effective_at,'source','admin_transfer');
+  end if;
+  return jsonb_build_object('accountKey',b.customer_key,'linkId',b.referral_link_id,'touchId',b.referral_touch_id,
+    'partnerId',b.partner_id,'boundAt',b.bound_at,'revisionId',b.referral_touch_id,'effectiveAt',b.bound_at,'source','capture');
+end $effective_binding$;
+
+create function public.research_referral_v1_transfer_json(p_id uuid) returns jsonb
+language sql security definer set search_path='' as $transfer$
+  select jsonb_build_object('id',x.id,'accountKey',x.account_key,'previousRevisionId',x.previous_revision_id,
+    'previousPartnerId',x.previous_partner_id,'previousLinkId',x.previous_link_id,'nextPartnerId',x.next_partner_id,
+    'nextLinkId',x.next_link_id,'reasonCode',x.reason_code,'authorizationReferenceHash',x.authorization_reference_hash,
+    'effectiveAt',x.effective_at)
+  from public.research_referral_binding_transfer_events x where x.id=p_id;
+$transfer$;
+
+create function public.research_referral_v1_transfer_binding_json(p_id uuid) returns jsonb
+language sql security definer set search_path='' as $transfer_binding$
+  select jsonb_build_object('accountKey',b.customer_key,'linkId',x.next_link_id,'touchId',b.referral_touch_id,
+    'partnerId',x.next_partner_id,'boundAt',b.bound_at,'revisionId',x.id,'effectiveAt',x.effective_at,'source','admin_transfer')
+  from public.research_referral_binding_transfer_events x
+  join public.research_affiliate_customer_bindings b on b.customer_key=x.account_key and b.referral_version=1
+  where x.id=p_id;
+$transfer_binding$;
+
+create function public.research_referral_v1_binding_availability(p_key text,p_actor uuid) returns text
+language plpgsql security definer set search_path='' as $binding_availability$
+declare v_binding jsonb;
+begin
+  v_binding:=public.research_referral_v1_effective_binding_json(p_key);
+  if v_binding is null then return 'partner_inactive'; end if;
+  return public.research_referral_v1_availability((v_binding->>'linkId')::uuid,p_actor);
+end $binding_availability$;
+
 create function public.research_referral_v1_execute(p_operation text,p_input jsonb default '{}'::jsonb) returns jsonb
 language plpgsql security definer set search_path='' as $execute$
 declare
   a uuid; p public.research_partners; l public.research_partner_links; t public.research_attribution_touches;
   b public.research_affiliate_customer_bindings; v_now timestamptz; v_id uuid; v_subject text;
   v_key text; v_scope text; v_fingerprint jsonb; v_replay jsonb; v_created boolean:=false;
-  v_availability text; v_result jsonb; v_links jsonb; v_events jsonb; v_touches jsonb; v_bindings jsonb; v_limit int;
+  v_availability text; v_result jsonb; v_links jsonb; v_events jsonb; v_touches jsonb; v_bindings jsonb; v_transfers jsonb; v_limit int;
+  v_account_actor uuid; v_target_link public.research_partner_links; v_transfer public.research_referral_binding_transfer_events;
 begin
-  if jsonb_typeof(p_input)<>'object' or p_operation not in ('issue','revoke','listOwn','resolve','capture','bind','getBinding','listAdmin') then
+  if jsonb_typeof(p_input)<>'object' or p_operation not in ('issue','revoke','listOwn','resolve','capture','bind','getBinding','transferBinding','listAdmin') then
     return jsonb_build_object('ok',false,'reason','invalid_input');
   end if;
-  if p_operation in ('issue','revoke','listOwn','bind','getBinding','listAdmin') or p_input ? 'actorAuthUserId' then
+  if p_operation in ('issue','revoke','listOwn','bind','getBinding','transferBinding','listAdmin') or p_input ? 'actorAuthUserId' then
     if coalesce(p_input->>'actorAuthUserId','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$' then
       return jsonb_build_object('ok',false,'reason','invalid_input'); end if;
     a:=(p_input->>'actorAuthUserId')::uuid;
   end if;
   -- Deliberately bounded V1 serialization. Row locks also fence external lifecycle
   -- writes. This favors correctness over throughput; do not claim load certification.
-  if p_operation in ('issue','revoke','capture','bind') then perform pg_advisory_xact_lock(9042026,1); end if;
+  if p_operation in ('issue','revoke','capture','bind','transferBinding') then perform pg_advisory_xact_lock(9042026,1); end if;
   v_now:=clock_timestamp();
 
   if p_operation in ('issue','revoke','listOwn') then
@@ -272,24 +343,98 @@ begin
     v_availability:=public.research_referral_v1_availability(t.referral_link_id,a);
     if t.referral_expires_at<=clock_timestamp() and v_availability='ready' then v_availability:='expired'; end if;
     return jsonb_build_object('ok',true,'value',jsonb_build_object('touch',jsonb_build_object('touchId',t.id,'linkId',t.referral_link_id,'partnerId',t.partner_id,
-      'subjectKeyHash',t.subject_key,'capturedAt',t.occurred_at,'expiresAt',t.referral_expires_at),'created',v_created,'availability',v_availability));
+      'subjectKeyHash',t.subject_key,'capturedAt',t.occurred_at,'expiresAt',t.referral_expires_at),'created',v_created,'availability',v_availability,
+      'conflictPreserved',not v_created and t.referral_link_id<>l.id));
+  end if;
+
+  -- A canonical admin-authenticated server route is the only caller. This RPC
+  -- records the asserted admin UUID as provenance, while the target partner is
+  -- derived exclusively from a canonical V1 link. No caller may set an
+  -- effective time, partner UUID, customer key, rate, hold or ownership fact.
+  if p_operation='transferBinding' then
+    if (p_input - 'actorAuthUserId' - 'accountAuthUserId' - 'expectedRevisionId' - 'targetLinkId'
+        - 'idempotencyKey' - 'reasonCode' - 'authorizationReferenceHash')<>'{}'::jsonb
+      or coalesce(p_input->>'accountAuthUserId','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'
+      or coalesce(p_input->>'expectedRevisionId','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'
+      or coalesce(p_input->>'targetLinkId','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'
+      or coalesce(p_input->>'idempotencyKey','') !~ '^[A-Za-z0-9_-]{16,128}$'
+      or coalesce(p_input->>'reasonCode','') not in ('customer_request','documented_correction','compliance_action')
+      or coalesce(p_input->>'authorizationReferenceHash','') !~ '^[a-f0-9]{64}$' then
+      return jsonb_build_object('ok',false,'reason','invalid_input');
+    end if;
+    v_account_actor:=(p_input->>'accountAuthUserId')::uuid;
+    v_key:='auth:'||v_account_actor::text;
+    perform 1 from public.research_members where auth_user_id=v_account_actor and status<>'closed' for share;
+    if not found then return jsonb_build_object('ok',false,'reason','not_eligible'); end if;
+    select * into b from public.research_affiliate_customer_bindings where customer_key=v_key for share;
+    if not found then return jsonb_build_object('ok',false,'reason','not_found'); end if;
+    if b.referral_version is distinct from 1 then return jsonb_build_object('ok',false,'reason','capture_claimed'); end if;
+
+    v_fingerprint:=jsonb_build_object(
+      'actorAuthUserId',a,'accountAuthUserId',v_account_actor,
+      'expectedRevisionId',p_input->>'expectedRevisionId','targetLinkId',p_input->>'targetLinkId',
+      'reasonCode',p_input->>'reasonCode','authorizationReferenceHash',p_input->>'authorizationReferenceHash');
+    v_scope:='referral-v1:transferBinding:'||v_key;
+    select result into v_replay from public.research_idempotency_keys
+      where scope=v_scope and key=p_input->>'idempotencyKey';
+    if found then
+      if v_replay->'fingerprint' is distinct from v_fingerprint or v_replay->>'transferId' is null then
+        return jsonb_build_object('ok',false,'reason','idempotency_conflict');
+      end if;
+      v_id:=(v_replay->>'transferId')::uuid;
+      v_result:=public.research_referral_v1_transfer_binding_json(v_id);
+      if v_result is null or public.research_referral_v1_transfer_json(v_id) is null then
+        raise exception 'Missing durable transfer idempotency result';
+      end if;
+      return jsonb_build_object('ok',true,'value',jsonb_build_object(
+        'binding',v_result,'transfer',public.research_referral_v1_transfer_json(v_id),'created',false));
+    end if;
+
+    v_result:=public.research_referral_v1_effective_binding_json(v_key);
+    if v_result->>'revisionId' is distinct from p_input->>'expectedRevisionId' then
+      return jsonb_build_object('ok',false,'reason','stale_binding');
+    end if;
+    select * into v_target_link from public.research_partner_links
+      where id=(p_input->>'targetLinkId')::uuid and referral_version=1;
+    if not found then return jsonb_build_object('ok',false,'reason','invalid_link'); end if;
+    v_availability:=public.research_referral_v1_availability(v_target_link.id,v_account_actor);
+    if v_availability='self_referral' then return jsonb_build_object('ok',false,'reason','self_referral'); end if;
+    if v_availability<>'ready' then return jsonb_build_object('ok',false,'reason','invalid_link'); end if;
+    if v_result->>'partnerId'=v_target_link.partner_id::text or v_result->>'linkId'=v_target_link.id::text then
+      return jsonb_build_object('ok',false,'reason','invalid_input');
+    end if;
+
+    insert into public.research_referral_binding_transfer_events(
+      account_key,previous_revision_id,previous_partner_id,previous_link_id,next_partner_id,next_link_id,
+      actor_auth_user_id,reason_code,authorization_reference_hash,effective_at)
+    values(v_key,(v_result->>'revisionId')::uuid,(v_result->>'partnerId')::uuid,(v_result->>'linkId')::uuid,
+      v_target_link.partner_id,v_target_link.id,a,p_input->>'reasonCode',p_input->>'authorizationReferenceHash',
+      greatest(clock_timestamp(),(v_result->>'effectiveAt')::timestamptz+interval '1 microsecond'))
+    returning * into v_transfer;
+    insert into public.research_idempotency_keys(scope,key,result,settled_at)
+      values(v_scope,p_input->>'idempotencyKey',jsonb_build_object('fingerprint',v_fingerprint,'transferId',v_transfer.id),v_now);
+    return jsonb_build_object('ok',true,'value',jsonb_build_object(
+      'binding',public.research_referral_v1_transfer_binding_json(v_transfer.id),
+      'transfer',public.research_referral_v1_transfer_json(v_transfer.id),'created',true));
   end if;
 
   if p_operation in ('bind','getBinding') then
     perform 1 from public.research_members where auth_user_id=a and status<>'closed' for share;
     if not found then return jsonb_build_object('ok',false,'reason','not_eligible'); end if;
     v_key:='auth:'||a::text;
+    if p_operation='bind' and (coalesce(p_input->>'subjectKeyHash','') !~ '^[a-f0-9]{64}$'
+      or coalesce(p_input->>'touchId','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$') then
+      return jsonb_build_object('ok',false,'reason','invalid_input');
+    end if;
     select * into b from public.research_affiliate_customer_bindings where customer_key=v_key;
     if found then
       -- Do not overwrite any legacy winner or represent it as verified V1 lineage.
       if b.referral_version is distinct from 1 then return jsonb_build_object('ok',false,'reason','capture_claimed'); end if;
-      return jsonb_build_object('ok',true,'value',jsonb_build_object('binding',public.research_referral_v1_binding_json(v_key),'created',false,
-        'availability',public.research_referral_v1_availability(b.referral_link_id,a)));
+      return jsonb_build_object('ok',true,'value',jsonb_build_object('binding',public.research_referral_v1_effective_binding_json(v_key),'created',false,
+        'availability',public.research_referral_v1_binding_availability(v_key,a),
+        'conflictPreserved',p_operation='bind' and b.referral_touch_id<>(p_input->>'touchId')::uuid));
     end if;
     if p_operation='getBinding' then return jsonb_build_object('ok',true,'value',jsonb_build_object('binding',null,'created',false,'availability','none')); end if;
-    if coalesce(p_input->>'subjectKeyHash','') !~ '^[a-f0-9]{64}$'
-      or coalesce(p_input->>'touchId','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$' then
-      return jsonb_build_object('ok',false,'reason','invalid_input'); end if;
     select * into t from public.research_attribution_touches where id=(p_input->>'touchId')::uuid and subject_key=p_input->>'subjectKeyHash' and referral_version=1;
     if not found then return jsonb_build_object('ok',false,'reason','capture_missing'); end if;
     v_availability:=public.research_referral_v1_availability(t.referral_link_id,a);
@@ -299,7 +444,8 @@ begin
     insert into public.research_affiliate_customer_bindings(customer_key,partner_id,code,subject_key,captured_at,bound_at,program_state,method,referral_version,referral_link_id,referral_touch_id)
       values(v_key,t.partner_id::text,t.referral_link_id::text,t.subject_key,t.occurred_at,v_now,'pending_program','attribution_cookie',1,t.referral_link_id,t.id);
     insert into public.research_partner_referral_events(event_type,partner_id,link_id,touch_id,actor_auth_user_id) values('account_bound',t.partner_id,t.referral_link_id,t.id,a);
-    return jsonb_build_object('ok',true,'value',jsonb_build_object('binding',public.research_referral_v1_binding_json(v_key),'created',true,'availability','ready'));
+    return jsonb_build_object('ok',true,'value',jsonb_build_object('binding',public.research_referral_v1_effective_binding_json(v_key),
+      'created',true,'availability','ready','conflictPreserved',false));
   end if;
 
   -- Service-only entry point; canonical HTTP requireSupabaseAdmin runs before it.
@@ -315,10 +461,20 @@ begin
     select coalesce(jsonb_agg(jsonb_build_object('touchId',q.id,'linkId',q.referral_link_id,'partnerId',q.partner_id,'capturedAt',q.occurred_at,
       'expiresAt',q.referral_expires_at,'availability',public.research_referral_v1_availability(q.referral_link_id))),'[]'::jsonb) into v_touches
       from (select * from public.research_attribution_touches where referral_version=1 and (v_id is null or partner_id=v_id) order by occurred_at desc,id limit v_limit) q;
-    select coalesce(jsonb_agg(public.research_referral_v1_binding_json(q.customer_key)||jsonb_build_object('availability',
-      public.research_referral_v1_availability(q.referral_link_id,substring(q.customer_key from 6)::uuid))),'[]'::jsonb) into v_bindings
-      from (select * from public.research_affiliate_customer_bindings where referral_version=1 and (v_id is null or partner_id=v_id::text) order by bound_at desc,customer_key limit v_limit) q;
-    return jsonb_build_object('ok',true,'value',jsonb_build_object('links',v_links,'events',v_events,'touches',v_touches,'bindings',v_bindings));
+    select coalesce(jsonb_agg(public.research_referral_v1_effective_binding_json(q.customer_key)||jsonb_build_object('availability',
+      public.research_referral_v1_binding_availability(q.customer_key,substring(q.customer_key from 6)::uuid))),'[]'::jsonb) into v_bindings
+      from (select binding_row.* from public.research_affiliate_customer_bindings binding_row
+        left join lateral (select x.next_partner_id from public.research_referral_binding_transfer_events x
+          where x.account_key=binding_row.customer_key order by x.effective_at desc,x.id desc limit 1) current on true
+        where binding_row.referral_version=1 and (v_id is null or coalesce(current.next_partner_id,binding_row.partner_id::uuid)=v_id)
+        order by binding_row.bound_at desc,binding_row.customer_key limit v_limit) q;
+    select coalesce(jsonb_agg(jsonb_build_object('id',q.id,'accountKey',q.account_key,'previousRevisionId',q.previous_revision_id,
+      'previousPartnerId',q.previous_partner_id,'previousLinkId',q.previous_link_id,'nextPartnerId',q.next_partner_id,
+      'nextLinkId',q.next_link_id,'reasonCode',q.reason_code,'effectiveAt',q.effective_at)),'[]'::jsonb) into v_transfers
+      from (select * from public.research_referral_binding_transfer_events
+        where v_id is null or previous_partner_id=v_id or next_partner_id=v_id order by effective_at desc,id limit v_limit) q;
+    return jsonb_build_object('ok',true,'value',jsonb_build_object('links',v_links,'events',v_events,'touches',v_touches,
+      'bindings',v_bindings,'transfers',v_transfers));
   end if;
   return jsonb_build_object('ok',false,'reason','invalid_input');
 exception when invalid_text_representation or numeric_value_out_of_range then
@@ -328,11 +484,13 @@ end $execute$;
 create trigger referral_v1_links_guard before insert or update or delete on public.research_partner_links for each row execute function public.research_referral_v1_guard();
 create trigger referral_v1_touches_guard before insert or update or delete on public.research_attribution_touches for each row execute function public.research_referral_v1_guard();
 create trigger referral_v1_bindings_guard before insert or update or delete on public.research_affiliate_customer_bindings for each row execute function public.research_referral_v1_guard();
+create trigger referral_v1_transfers_guard before insert or update or delete on public.research_referral_binding_transfer_events for each row execute function public.research_referral_v1_guard();
 create trigger referral_v1_events_guard before insert or update or delete on public.research_partner_referral_events for each row execute function public.research_referral_v1_guard();
 create trigger referral_v1_idempotency_guard before insert or update or delete on public.research_idempotency_keys for each row execute function public.research_referral_v1_guard();
 create trigger referral_v1_links_no_truncate before truncate on public.research_partner_links for each statement execute function public.research_referral_v1_guard();
 create trigger referral_v1_touches_no_truncate before truncate on public.research_attribution_touches for each statement execute function public.research_referral_v1_guard();
 create trigger referral_v1_bindings_no_truncate before truncate on public.research_affiliate_customer_bindings for each statement execute function public.research_referral_v1_guard();
+create trigger referral_v1_transfers_no_truncate before truncate on public.research_referral_binding_transfer_events for each statement execute function public.research_referral_v1_guard();
 create trigger referral_v1_events_no_truncate before truncate on public.research_partner_referral_events for each statement execute function public.research_referral_v1_guard();
 create trigger referral_v1_idempotency_no_truncate before truncate on public.research_idempotency_keys for each statement execute function public.research_referral_v1_guard();
 
@@ -340,7 +498,10 @@ alter table public.research_affiliate_customer_bindings enable row level securit
 alter table public.research_affiliate_customer_bindings force row level security;
 alter table public.research_partner_referral_events enable row level security;
 alter table public.research_partner_referral_events force row level security;
-revoke all on public.research_affiliate_customer_bindings,public.research_partner_referral_events from public,anon,authenticated,service_role;
+alter table public.research_referral_binding_transfer_events enable row level security;
+alter table public.research_referral_binding_transfer_events force row level security;
+revoke all on public.research_affiliate_customer_bindings,public.research_partner_referral_events,
+  public.research_referral_binding_transfer_events from public,anon,authenticated,service_role;
 -- Preserve old canonical access, but no untrusted browser table access or truncate.
 revoke all on public.research_partner_links,public.research_attribution_touches,public.research_idempotency_keys from public,anon,authenticated;
 revoke truncate on public.research_partner_links,public.research_attribution_touches,public.research_idempotency_keys from service_role;
@@ -352,8 +513,10 @@ begin
   if current_user in ('anon','authenticated','service_role') or not exists(select 1 from pg_roles where rolname=current_user and (rolsuper or rolbypassrls)) then raise exception 'Referral owner capability drift'; end if;
   if (select count(*) from unnest(array['public.research_referral_v1_guard()','public.research_referral_v1_availability(uuid,uuid)',
     'public.research_referral_v1_link_json(uuid)','public.research_referral_v1_binding_json(text)',
-    'public.research_referral_v1_execute(text,jsonb)','public.research_referral_v1_authority()']) f where to_regprocedure(f) is not null)<>6 then raise exception 'Referral function inventory drift'; end if;
-  foreach v_table in array array['research_affiliate_customer_bindings','research_partner_referral_events'] loop
+    'public.research_referral_v1_effective_binding_json(text)','public.research_referral_v1_transfer_json(uuid)',
+    'public.research_referral_v1_transfer_binding_json(uuid)','public.research_referral_v1_binding_availability(text,uuid)',
+    'public.research_referral_v1_execute(text,jsonb)','public.research_referral_v1_authority()']) f where to_regprocedure(f) is not null)<>10 then raise exception 'Referral function inventory drift'; end if;
+  foreach v_table in array array['research_affiliate_customer_bindings','research_partner_referral_events','research_referral_binding_transfer_events'] loop
     if not exists(select 1 from pg_class where oid=to_regclass('public.'||v_table) and relrowsecurity and relforcerowsecurity)
       or exists(select 1 from pg_policy where polrelid=to_regclass('public.'||v_table)) then raise exception 'Referral RLS drift'; end if;
     foreach v_role in array array['anon','authenticated','service_role'] loop
@@ -368,16 +531,20 @@ begin
     if v_fn.proowner<>current_user::regrole::oid or v_fn.proconfig is distinct from array['search_path=""']::text[] then raise exception 'Referral function owner or search_path drift'; end if;
     if v_fn.proname<>'research_referral_v1_guard' and not v_fn.prosecdef then raise exception 'Referral owner drift'; end if;
   end loop;
-  if (select count(*) from pg_trigger where tgname in ('referral_v1_links_guard','referral_v1_touches_guard','referral_v1_bindings_guard','referral_v1_events_guard','referral_v1_idempotency_guard',
-    'referral_v1_links_no_truncate','referral_v1_touches_no_truncate','referral_v1_bindings_no_truncate','referral_v1_events_no_truncate','referral_v1_idempotency_no_truncate')
-    and tgenabled='O' and tgfoid='public.research_referral_v1_guard()'::regprocedure)<>10 then raise exception 'Referral trigger drift'; end if;
-  if (select count(*) from pg_index where indexrelid in (to_regclass('public.referral_v1_token_hash_unique'),to_regclass('public.referral_v1_first_subject_unique'),to_regclass('public.referral_v1_touch_binding_unique')) and indisunique and indisvalid)<>3 then raise exception 'Referral uniqueness drift'; end if;
+  if (select count(*) from pg_trigger where tgname in ('referral_v1_links_guard','referral_v1_touches_guard','referral_v1_bindings_guard','referral_v1_transfers_guard','referral_v1_events_guard','referral_v1_idempotency_guard',
+    'referral_v1_links_no_truncate','referral_v1_touches_no_truncate','referral_v1_bindings_no_truncate','referral_v1_transfers_no_truncate','referral_v1_events_no_truncate','referral_v1_idempotency_no_truncate')
+    and tgenabled='O' and tgfoid='public.research_referral_v1_guard()'::regprocedure)<>12 then raise exception 'Referral trigger drift'; end if;
+  if (select count(*) from pg_index where indexrelid in (to_regclass('public.referral_v1_token_hash_unique'),to_regclass('public.referral_v1_first_subject_unique'),
+    to_regclass('public.referral_v1_touch_binding_unique'),to_regclass('public.referral_v1_transfer_previous_unique')) and indisunique and indisvalid)<>4 then raise exception 'Referral uniqueness drift'; end if;
   if (select count(*) from pg_constraint where conname in ('referral_v1_link_shape','referral_v1_touch_shape','referral_v1_binding_shape') and convalidated)<>3 then raise exception 'Referral shape drift'; end if;
   return jsonb_build_object('ok',true,'value',jsonb_build_object('schemaVersion','gen2_referral_v1_20260904'));
 end $authority$;
 
 revoke all on function public.research_referral_v1_guard(),public.research_referral_v1_availability(uuid,uuid),public.research_referral_v1_link_json(uuid),
-  public.research_referral_v1_binding_json(text),public.research_referral_v1_execute(text,jsonb),public.research_referral_v1_authority() from public,anon,authenticated,service_role;
+  public.research_referral_v1_binding_json(text),public.research_referral_v1_effective_binding_json(text),
+  public.research_referral_v1_transfer_json(uuid),public.research_referral_v1_transfer_binding_json(uuid),
+  public.research_referral_v1_binding_availability(text,uuid),public.research_referral_v1_execute(text,jsonb),
+  public.research_referral_v1_authority() from public,anon,authenticated,service_role;
 grant execute on function public.research_referral_v1_execute(text,jsonb),public.research_referral_v1_authority() to service_role;
 select public.research_referral_v1_authority();
 commit;

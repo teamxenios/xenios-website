@@ -29,6 +29,7 @@ export const REFERRAL_API = {
   capture: "/api/research/referral/capture",
   bind: "/api/research/referral/bind",
   admin: "/api/admin/research/referral-lifecycle",
+  adminTransfer: "/api/admin/research/referral-lifecycle/transfer",
 } as const;
 
 export type RecommendationState = "ready" | "revoked" | "expired" | "partner_inactive" | "unavailable";
@@ -57,6 +58,10 @@ export interface RecommendationCapture {
   destinationPath: string;
   attribution: "recognized" | "retained_ineligible" | "self_referral" | "unavailable";
   accountBinding: "bound" | "sign_in_required" | "not_bound";
+  /** True when a later referral was refused and the first valid touch stayed authoritative. */
+  conflictPreserved?: boolean;
+  /** True when account binding kept an earlier winner instead of the presented touch. */
+  bindingConflictPreserved?: boolean;
 }
 export interface ReferralLifecycleLink extends Omit<RecommendationLink, "url"> { partnerId: string }
 export interface ReferralLifecycleEvent {
@@ -72,7 +77,22 @@ export interface ReferralLifecycleBinding {
   linkId: string;
   touchId: string;
   boundAt: string;
+  /** Present on the qualified future-transfer authority; optional for dark predecessor fixtures. */
+  revisionId?: string;
+  effectiveAt?: string;
+  source?: "capture" | "admin_transfer";
   availability: "ready" | "revoked" | "expired" | "partner_inactive" | "self_referral";
+}
+export interface ReferralLifecycleTransfer {
+  id: string;
+  accountKey: string;
+  previousRevisionId: string;
+  previousPartnerId: string;
+  previousLinkId: string;
+  nextPartnerId: string;
+  nextLinkId: string;
+  reasonCode: "customer_request" | "documented_correction" | "compliance_action";
+  effectiveAt: string;
 }
 export interface ReferralLifecycle {
   links: ReferralLifecycleLink[];
@@ -83,5 +103,11 @@ export interface ReferralLifecycle {
     state: "available" | "unavailable";
     records: { accountKey: string; type: "request" | "order"; reference: string; state: string; occurredAt: string; attribution: "account_binding_only" }[];
   };
+  /** Future-only changes; absent on predecessor database/runtime versions. */
+  transfers?: ReferralLifecycleTransfer[];
+  /** Arbitrary/backdated corrections remain forbidden. */
   correctionsSupported: false;
+  /** A separate append-only CAS transfer command exists; no transfer UI is implied. */
+  transfersSupported?: true;
+  transferPolicy?: "future_only";
 }

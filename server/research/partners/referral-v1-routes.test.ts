@@ -12,6 +12,9 @@ const linkId = "20000000-0000-4000-8000-000000000002";
 const partnerId = "30000000-0000-4000-8000-000000000003";
 const touchId = "40000000-0000-4000-8000-000000000004";
 const key = "50000000-0000-4000-8000-000000000005";
+const targetLinkId = "60000000-0000-4000-8000-000000000006";
+const targetPartnerId = "70000000-0000-4000-8000-000000000007";
+const transferId = "80000000-0000-4000-8000-000000000008";
 const now = Date.parse("2026-09-04T00:00:00Z");
 const token = referralPublicToken(secret, linkId, 1)!;
 const canonicalLink: ReferralV1Link = { id: linkId, partnerId, internalCode: linkId, tokenKeyVersion: 1, tokenHashHex: referralDigest(token), destinationPath: "/health", createdAt: new Date(now).toISOString(), expiresAt: new Date(now + 30 * 86400000).toISOString(), revokedAt: null, availability: "ready", captureCount: 1, bindingCount: 0 };
@@ -21,7 +24,8 @@ afterEach(async () => { await Promise.all(servers.splice(0).map((server) => new 
 async function fixture(overrides: Partial<ReferralV1Dependencies> = {}) {
   const link = { ...canonicalLink };
   let winner: { touchId: string; linkId: string; partnerId: string; subjectKeyHash: string; capturedAt: string; expiresAt: string } | null = null;
-  const binding = { accountKey: `auth:${actor}`, linkId, partnerId, touchId, boundAt: new Date(now).toISOString() };
+  const binding = { accountKey: `auth:${actor}`, linkId, partnerId, touchId, boundAt: new Date(now).toISOString(),
+    revisionId: touchId, effectiveAt: new Date(now).toISOString(), source: "capture" as const };
   const store: ReferralV1Store = {
     authority: vi.fn(async () => ({ ok: true as const, value: { schemaVersion: REFERRAL_V1_SCHEMA_VERSION } })),
     listOwn: vi.fn(async () => ({ ok: true as const, value: { eligible: true, partnerId, partnerState: "active", links: [link] } })),
@@ -35,6 +39,15 @@ async function fixture(overrides: Partial<ReferralV1Dependencies> = {}) {
     }),
     bind: vi.fn(async () => ({ ok: true as const, value: { binding, created: true, availability: "ready" as const } })),
     getBinding: vi.fn(async () => ({ ok: true as const, value: { binding, created: false, availability: "ready" as const } })),
+    transferBinding: vi.fn(async () => ({ ok: true as const, value: {
+      binding: { ...binding, linkId: targetLinkId, partnerId: targetPartnerId, revisionId: transferId,
+        effectiveAt: new Date(now + 1).toISOString(), source: "admin_transfer" as const },
+      transfer: { id: transferId, accountKey: binding.accountKey, previousRevisionId: touchId,
+        previousPartnerId: partnerId, previousLinkId: linkId, nextPartnerId: targetPartnerId,
+        nextLinkId: targetLinkId, reasonCode: "customer_request" as const,
+        authorizationReferenceHash: "b".repeat(64), effectiveAt: new Date(now + 1).toISOString() },
+      created: true,
+    } })),
     listAdmin: vi.fn(async () => ({ ok: true as const, value: { links: [link], events: [{ id: key, eventType: "account_bound" as const, partnerId, linkId, occurredAt: new Date(now).toISOString() }], bindings: [{ ...binding, availability: "ready" as const }], touches: [] } })),
   };
   const app = express(); app.use(express.json());
@@ -95,7 +108,8 @@ describe("composed Referral V1 HTTP authority (synthetic guards, no external ser
     expect((await f.request(REFERRAL_API.resolve, { method: "POST", body: { code: token } })).body).toEqual({ ok: true, valid: true, destinationPath: "/health", sharedBy: "an approved Xenios partner" });
     const headers = await f.bootstrap();
     const captured = await f.request(REFERRAL_API.capture, { method: "POST", body: { code: token }, headers });
-    expect(captured.body).toEqual({ ok: true, destinationPath: "/health", attribution: "recognized", accountBinding: "sign_in_required" });
+    expect(captured.body).toEqual({ ok: true, destinationPath: "/health", attribution: "recognized", accountBinding: "sign_in_required",
+      conflictPreserved: false, bindingConflictPreserved: false });
     const cookie = `${headers.Cookie}; ${captured.headers.get("set-cookie")!.split(";", 1)[0]}`;
     expect(f.store.capture).toHaveBeenCalledTimes(1);
     const bound = await f.request(REFERRAL_API.bind, { method: "POST", auth: true, body: {}, headers: { ...headers, Cookie: cookie } });
@@ -136,11 +150,43 @@ describe("composed Referral V1 HTTP authority (synthetic guards, no external ser
     const f = await fixture();
     expect((await f.request(REFERRAL_API.admin, { auth: true })).status).toBe(403);
     const result = await f.request(REFERRAL_API.admin, { admin: true });
-    expect(result.status).toBe(200); expect(result.body.correctionsSupported).toBe(false);
+    expect(result.status).toBe(200);
+    expect(result.body).toMatchObject({ correctionsSupported: false, transfersSupported: true, transferPolicy: "future_only" });
     expect(result.body.bindings[0].accountKey).toBe(`auth:${actor}`);
+    expect(result.body.bindings[0]).toMatchObject({ revisionId: touchId, effectiveAt: new Date(now).toISOString(), source: "capture" });
     expect(result.body.lineage.state).toBe("unavailable");
     for (const forbidden of [token, "tokenHashHex", "subjectKeyHash", "internalCode", "commission", "email", "medical"]) expect(JSON.stringify(result.body)).not.toContain(forbidden);
     expect((await f.request(REFERRAL_API.admin + "?limit=999", { admin: true })).status).toBe(400);
+  });
+  it("allows only the guarded future-only transfer command and redacts its authorization reference", async () => {
+    const f = await fixture();
+    const body = { accountAuthUserId: actor, expectedRevisionId: touchId, targetLinkId,
+      reasonCode: "customer_request", authorizationReferenceHash: "b".repeat(64) };
+    expect((await f.request(REFERRAL_API.adminTransfer, { method: "POST", auth: true, body,
+      headers: { "Idempotency-Key": key } })).status).toBe(403);
+    const result = await f.request(REFERRAL_API.adminTransfer, { method: "POST", admin: true, body,
+      headers: { "Idempotency-Key": key } });
+    expect(result.status).toBe(200);
+    expect(result.body).toMatchObject({ ok: true, created: true, policy: "future_only",
+      binding: { accountKey: `auth:${actor}`, partnerId: targetPartnerId, linkId: targetLinkId, revisionId: transferId },
+      transfer: { id: transferId, previousRevisionId: touchId, nextPartnerId: targetPartnerId, nextLinkId: targetLinkId } });
+    expect(JSON.stringify(result.body)).not.toContain("authorizationReferenceHash");
+    expect(f.store.transferBinding).toHaveBeenCalledWith({ adminAuthUserId: actor, idempotencyKey: key, ...body });
+  });
+  it("rejects browser-supplied partner, customer, economics, timing, and health facts on transfer", async () => {
+    const f = await fixture();
+    const base = { accountAuthUserId: actor, expectedRevisionId: touchId, targetLinkId,
+      reasonCode: "documented_correction", authorizationReferenceHash: "c".repeat(64) };
+    for (const injected of [
+      { partnerId: targetPartnerId }, { customerRef: "eac_0123456789abcdef0123456789abcdef" },
+      { commissionRateBasisPoints: 2_500 }, { holdBasisPoints: 2_500 },
+      { effectiveAt: "2020-01-01T00:00:00Z" }, { diagnosis: "not accepted" },
+    ]) {
+      const response = await f.request(REFERRAL_API.adminTransfer, { method: "POST", admin: true,
+        body: { ...base, ...injected }, headers: { "Idempotency-Key": key } });
+      expect(response.status).toBe(400);
+    }
+    expect(f.store.transferBinding).not.toHaveBeenCalled();
   });
   it("capability or durable-budget absence fails closed", async () => {
     const disabled = await fixture({ enabled: false });

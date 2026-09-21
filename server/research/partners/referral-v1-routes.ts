@@ -25,13 +25,21 @@ const uuid = z.string().uuid();
 const codeBody = z.object({ code: z.string().regex(REFERRAL_TOKEN_PATTERN) }).strict();
 const emptyBody = z.object({}).strict();
 const issueBody = z.object({ destinationPath: z.string().max(240).refine((value) => safeReferralDestination(value) !== null) }).strict();
+const transferBody = z.object({
+  accountAuthUserId: uuid,
+  expectedRevisionId: uuid,
+  targetLinkId: uuid,
+  reasonCode: z.enum(["customer_request", "documented_correction", "compliance_action"]),
+  /** Digest of the separately controlled case/reference; never free-text PII. */
+  authorizationReferenceHash: z.string().regex(/^[a-f0-9]{64}$/),
+}).strict();
 
 function secure(res: Response): Response {
   return res.set({ "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow" });
 }
 function deny(res: Response, reason: string): void {
   const status = reason === "unavailable" ? 503 : reason === "not_found" || reason === "invalid_link" ? 404
-    : reason === "idempotency_conflict" || reason === "capture_claimed" ? 409 : reason === "rate_limited" ? 429
+    : reason === "idempotency_conflict" || reason === "capture_claimed" || reason === "stale_binding" ? 409 : reason === "rate_limited" ? 429
     : reason === "invalid_input" ? 400 : 403;
   secure(res).status(status).json({ ok: false, code: reason, message: reason === "unavailable"
     ? "Recommendations are temporarily unavailable. You can still explore Xenios."
@@ -77,19 +85,25 @@ export function createReferralV1Service(deps: ReferralV1Dependencies) {
   // unrelated member hydration. The existing guard supplies canonical identity;
   // the signed cookie remains only a locator, never database authority.
   function canBindMember(req: Request): boolean { return memberCapture(req) !== null; }
-  async function bindMember(req: Request): Promise<"bound" | "sign_in_required" | "not_bound"> {
-    if (!authId(req)) return "sign_in_required";
+  async function bindMemberResult(req: Request): Promise<{ state: "bound" | "sign_in_required" | "not_bound"; conflictPreserved: boolean }> {
+    if (!authId(req)) return { state: "sign_in_required", conflictPreserved: false };
     const capture = memberCapture(req);
-    if (!capture) return "not_bound";
+    if (!capture) return { state: "not_bound", conflictPreserved: false };
     const { actorAuthUserId, claim } = capture;
     // The RPC re-reads link/partner state and touch ownership atomically. A signed
     // cookie is only a locator, never sufficient authority for a verified referrer.
     try {
       const result = await deps.store.bind({ actorAuthUserId, touchId: claim.touchId, subjectKeyHash: claim.subjectKeyHash });
-      return result.ok && result.value.binding && result.value.availability === "ready" ? "bound" : "not_bound";
-    } catch { return "not_bound"; }
+      return {
+        state: result.ok && result.value.binding && result.value.availability === "ready" ? "bound" : "not_bound",
+        conflictPreserved: result.ok && result.value.conflictPreserved === true,
+      };
+    } catch { return { state: "not_bound", conflictPreserved: false }; }
   }
-  return { configured, ready, linkDto, canBindMember, bindMember, origin, now };
+  async function bindMember(req: Request): Promise<"bound" | "sign_in_required" | "not_bound"> {
+    return (await bindMemberResult(req)).state;
+  }
+  return { configured, ready, linkDto, canBindMember, bindMember, bindMemberResult, origin, now };
 }
 
 export function registerReferralV1Api(app: Express, deps: ReferralV1Dependencies, guards: {
@@ -169,7 +183,9 @@ export function registerReferralV1Api(app: Express, deps: ReferralV1Dependencies
     const result = await deps.store.capture({ tokenHashHex, subjectKeyHash: referralSubject(deps.secret!, visitor), ...(actorAuthUserId ? { actorAuthUserId } : {}) });
     if (!result.ok) return deny(res, result.reason);
     const { touch, availability } = result.value;
+    const conflictPreserved = result.value.conflictPreserved === true;
     let accountBinding: "bound" | "sign_in_required" | "not_bound" = actorAuthUserId ? "not_bound" : "sign_in_required";
+    let bindingConflictPreserved = false;
     if (availability === "ready") {
       const expiresAt = Math.min(Date.parse(touch.expiresAt), visitor.expiresAt);
       // Exactly the durable winning touch is signed; never the proposed link.
@@ -178,16 +194,30 @@ export function registerReferralV1Api(app: Express, deps: ReferralV1Dependencies
       if (actorAuthUserId) {
         const binding = await deps.store.bind({ actorAuthUserId, touchId: touch.touchId, subjectKeyHash: touch.subjectKeyHash });
         if (binding.ok && binding.value.binding && binding.value.availability === "ready") accountBinding = "bound";
+        bindingConflictPreserved = binding.ok && binding.value.conflictPreserved === true;
       }
     }
     res.json({ ok: true, destinationPath, accountBinding,
-      attribution: availability === "ready" ? "recognized" : availability === "self_referral" ? "self_referral" : "retained_ineligible" });
+      attribution: availability === "ready" ? "recognized" : availability === "self_referral" ? "self_referral" : "retained_ineligible",
+      conflictPreserved, bindingConflictPreserved });
   }));
   app.post(REFERRAL_API.bind, guards.requireMember, handler("capture", async (req, res) => {
     if (!emptyBody.safeParse(req.body).success) return deny(res, "invalid_input");
     const visitor = readReferralVisitor(deps.secret!, req.headers.cookie, service.now());
     if (!visitor || !validReferralCsrf(deps.secret!, visitor, req.get("X-Xenios-Referral-CSRF"))) return deny(res, "forbidden");
-    res.json({ ok: true, accountBinding: await service.bindMember(req) });
+    const binding = await service.bindMemberResult(req);
+    res.json({ ok: true, accountBinding: binding.state, conflictPreserved: binding.conflictPreserved });
+  }));
+  app.post(REFERRAL_API.adminTransfer, guards.requireAdmin, handler("write", async (req, res) => {
+    const input = transferBody.safeParse(req.body);
+    const idempotencyKey = uuid.safeParse(req.get("Idempotency-Key"));
+    const jwt = req.headers.authorization?.slice(7) ?? "";
+    const adminAuthUserId = decodeJwtClaims(jwt)?.sub;
+    if (!input.success || !idempotencyKey.success || !uuid.safeParse(adminAuthUserId).success) return deny(res, "invalid_input");
+    const result = await deps.store.transferBinding({ adminAuthUserId: adminAuthUserId as string, idempotencyKey: idempotencyKey.data, ...input.data });
+    if (!result.ok) return deny(res, result.reason);
+    const { authorizationReferenceHash: _privateReference, ...transfer } = result.value.transfer;
+    res.json({ ok: true, binding: result.value.binding, transfer, created: result.value.created, policy: "future_only" });
   }));
   app.get(REFERRAL_API.admin, guards.requireAdmin, handler("read", async (req, res) => {
     // The canonical guard already verified this JWT with Supabase. Its signed
@@ -201,10 +231,14 @@ export function registerReferralV1Api(app: Express, deps: ReferralV1Dependencies
     if (!result.ok) return deny(res, result.reason);
     const value = result.value;
     const links = value.links.map((link) => { const { url: _url, ...safe } = service.linkDto(link); return { ...safe, partnerId: link.partnerId }; });
-    const bindings = value.bindings.map(({ accountKey, partnerId, linkId, touchId, boundAt, availability }) => ({ accountKey, partnerId, linkId, touchId, boundAt, availability }));
+    const bindings = value.bindings.map(({ accountKey, partnerId, linkId, touchId, boundAt, revisionId, effectiveAt, source, availability }) =>
+      ({ accountKey, partnerId, linkId, touchId, boundAt, revisionId, effectiveAt, source, availability }));
     const touches = value.touches.map(({ touchId, linkId, partnerId, capturedAt, expiresAt, availability }) => ({ touchId, linkId, partnerId, capturedAt, expiresAt, availability }));
     const events = value.events.map(({ id, eventType, partnerId, linkId, occurredAt }) => ({ id, eventType, partnerId, linkId, occurredAt }));
-    res.json({ ok: true, links, bindings, touches, events, lineage: await deps.lineage(bindings), correctionsSupported: false });
+    const transfers = (value.transfers ?? []).map(({ id, accountKey, previousRevisionId, previousPartnerId, previousLinkId, nextPartnerId, nextLinkId, reasonCode, effectiveAt }) =>
+      ({ id, accountKey, previousRevisionId, previousPartnerId, previousLinkId, nextPartnerId, nextLinkId, reasonCode, effectiveAt }));
+    res.json({ ok: true, links, bindings, touches, events, transfers, lineage: await deps.lineage(bindings),
+      correctionsSupported: false, transfersSupported: true, transferPolicy: "future_only" });
   }));
   return service;
 }
