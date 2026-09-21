@@ -174,7 +174,7 @@ function harness() {
   // The exact resolver shape the composition root wires: the cookie verify
   // helper over the link secret and the request clock.
   const resolver: AssistedOrderAttributionResolver = {
-    resolve: (cookieHeader) =>
+    resolve: ({ cookieHeader }) =>
       verifiedAttributionRefFromCookieHeader(SECRET, cookieHeader, NOW),
   };
   const routes = createAssistedOrderRouteTable(

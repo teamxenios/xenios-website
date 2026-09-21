@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { createSupabaseReferralV1Store, REFERRAL_V1_SCHEMA_VERSION, type ReferralV1Link } from "./referral-v1-store";
+import { createSupabaseReferralV1Store, REFERRAL_V1_BASE_SCHEMA_VERSION, REFERRAL_V1_SCHEMA_VERSION, type ReferralV1Link } from "./referral-v1-store";
 
 const actor = "00000000-0000-4000-8000-000000000001";
 const link: ReferralV1Link = {
@@ -30,7 +30,9 @@ describe("Gen2 referral durable RPC adapter", () => {
     ]);
   });
 
-  it.each([null, {}, { ok: true, value: { schemaVersion: "stale" } }, { ...authority, secret: "never expose" }])("fails closed on missing/drifted authority %j", async (data) => {
+  it.each([null, {}, { ok: true, value: { schemaVersion: "stale" } },
+    { ok: true, value: { schemaVersion: REFERRAL_V1_BASE_SCHEMA_VERSION } },
+    { ...authority, secret: "never expose" }])("fails closed on missing/drifted authority %j", async (data) => {
     const rpc = vi.fn().mockResolvedValue({ data, error: null });
     expect(await createSupabaseReferralV1Store({ rpc }).issue(issue)).toEqual({ ok: false, reason: "unavailable" });
     expect(rpc).toHaveBeenCalledTimes(1);
@@ -90,6 +92,34 @@ describe("Gen2 referral durable RPC adapter", () => {
   it("requires explicit none for absent account binding", async () => {
     const { store } = transport({ ok: true, value: { binding: null, created: false, availability: "ready" } });
     expect(await store.getBinding({ actorAuthUserId: actor })).toEqual({ ok: false, reason: "unavailable" });
+  });
+
+  it("sends a closed as-of binding request and rejects future or foreign projections", async () => {
+    const occurredAt = "2026-09-05T00:00:00+00:00";
+    const binding = { accountKey: `auth:${actor}`, linkId: link.id, touchId,
+      partnerId: link.partnerId, boundAt: link.createdAt, revisionId: touchId,
+      effectiveAt: link.createdAt, source: "capture" as const };
+    const { store, rpc } = transport({ ok: true, value: { binding, created: false, availability: "ready" } });
+    expect(await store.bindingAt({ actorAuthUserId: actor, occurredAt })).toEqual({
+      ok: true, value: { binding, created: false, availability: "ready" },
+    });
+    expect(rpc.mock.calls[1]).toEqual(["research_referral_v1_execute", {
+      p_operation: "bindingAt", p_input: { actorAuthUserId: actor, occurredAt },
+    }]);
+    const future = transport({ ok: true, value: { binding: { ...binding, effectiveAt: "2026-09-06T00:00:00+00:00" }, created: false, availability: "ready" } });
+    expect(await future.store.bindingAt({ actorAuthUserId: actor, occurredAt })).toEqual({ ok: false, reason: "unavailable" });
+    const malformed = transport(null);
+    expect(await malformed.store.bindingAt({ actorAuthUserId: actor, occurredAt: "not-a-time" })).toEqual({ ok: false, reason: "invalid_input" });
+    expect(malformed.rpc).not.toHaveBeenCalled();
+  });
+
+  it("passes only an optional verified actor into touch attribution", async () => {
+    const input = { touchId, subjectKeyHash: "b".repeat(64), actorAuthUserId: actor };
+    const { store, rpc } = transport({ ok: true, value: { partnerId: null, eligible: false } });
+    expect(await store.attributionForTouch(input)).toEqual({ ok: true, value: { partnerId: null, eligible: false } });
+    expect(rpc.mock.calls[1]).toEqual(["research_referral_v1_execute", { p_operation: "attributionForTouch", p_input: input }]);
+    expect(await transport(null).store.attributionForTouch({ ...input, partnerId: link.partnerId } as typeof input))
+      .toEqual({ ok: false, reason: "invalid_input" });
   });
 
   it("submits a closed future-only transfer shape and validates the derived durable result", async () => {

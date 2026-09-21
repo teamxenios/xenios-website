@@ -27,11 +27,12 @@ import {
 } from "./express";
 import { createAssistedOrderRouteTable } from "./http";
 import { InMemoryAssistedOrderRepository } from "./memory-repository";
-import type { AssistedOrderDocumentStore } from "./ports";
+import type { AssistedOrderAttributionResolver, AssistedOrderDocumentStore } from "./ports";
 import { createAssistedOrderProductionComposition } from "./production";
 import type { EarlyAccessCustomer } from "../early-access/routes/ports";
 
 const MEMBER_ID = "11111111-1111-4111-8111-111111111111";
+const AUTH_USER_ID = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const OTHER_MEMBER_ID = "22222222-2222-4222-8222-222222222222";
 const ADMIN_BEARER = "Bearer admin-test";
 const EARLY_ACCESS_COOKIE = "x-ea-session=valid";
@@ -130,8 +131,10 @@ function buildApp(
     earlyAccessSessionAuthenticated?: boolean;
     onBindingResolve?: () => void;
     onIdentityResolve?: () => void;
+    onMemberResolve?: () => void;
     onNotification?: () => void;
     onStandingViewer?: (customerRef: string | null) => void;
+    attribution?: AssistedOrderAttributionResolver;
   }> = {},
 ) {
   const repository = new InMemoryAssistedOrderRepository();
@@ -205,14 +208,17 @@ function buildApp(
   const viewers = createAssistedOrderViewerResolvers({
     // The member resolves from a header only this test sends; the pricing
     // viewer rides along exactly as the production resolver carries it.
-    resolveMember: async (req) =>
-      req.headers["x-test-member"] === "1"
+    resolveMember: async (req) => {
+      options.onMemberResolve?.();
+      return req.headers["x-test-member"] === "1"
         ? {
             id: MEMBER_ID,
+            authUserId: AUTH_USER_ID,
             email: "member@example.com",
             pricingViewer: { audience: "member", email: "member@example.com" },
           }
-        : null,
+        : null;
+    },
     earlyAccess: () => ({
       resolveSession: async (cookieHeader) => ({
         authenticated:
@@ -249,6 +255,7 @@ function buildApp(
   const routes = createAssistedOrderRouteTable<ExpressAssistedOrderRequest>(
     composition.service!,
     viewers,
+    options.attribution,
   );
   const door = (method: "GET" | "POST" | "PATCH", path: string): RequestHandler => {
     const descriptor = routes.find(
@@ -286,6 +293,28 @@ function readAdminQueue(app: ReturnType<typeof buildApp>) {
 }
 
 describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> admin queue", () => {
+  it("resolves the submit viewer once and passes only its canonical Auth UUID to attribution", async () => {
+    let memberResolveCount = 0;
+    const attributionInputs: Array<{ cookieHeader: string | undefined; actorAuthUserId: string | null }> = [];
+    const app = buildApp(undefined, {
+      onMemberResolve: () => { memberResolveCount += 1; },
+      attribution: {
+        resolve: async (input) => {
+          attributionInputs.push(input);
+          return null;
+        },
+      },
+    });
+    const submitted = await request(app)
+      .post("/api/research/early-access/assisted-orders")
+      .set("x-test-member", "1")
+      .set("Cookie", EARLY_ACCESS_COOKIE)
+      .send(submitInput());
+    expect(submitted.status).toBe(201);
+    expect(memberResolveCount).toBe(1);
+    expect(attributionInputs).toEqual([{ cookieHeader: EARLY_ACCESS_COOKIE, actorAuthUserId: AUTH_USER_ID }]);
+  });
+
   it("parses the structured customer Action group without deriving button copy", async () => {
     let observed: AssistedOrderCatalogQuery | undefined;
     const app = buildApp((query) => {

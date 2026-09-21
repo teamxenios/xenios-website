@@ -5,6 +5,7 @@ const UUID = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const CUSTOMER_REF = /^eac_[a-f0-9]{32}$/;
 const PROGRAM_ID = /^[a-z][a-z0-9_]{2,127}$/;
 const SHA256 = /^[a-f0-9]{64}$/;
+const OFFSET_TIMESTAMP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/;
 
 /** PII-free ownership projection from the canonical account/customer directory. */
 export interface ReferralV1EarlyAccessCustomerDirectory {
@@ -31,6 +32,7 @@ export type ReferralV1EarlyAccessGrant = Readonly<{
   referralLinkId: string;
   bindingRevisionId: string;
   bindingEffectiveAt: string;
+  occurredAt: string;
   commissionProgramId: string;
   commissionScheduleVersion: number;
   commissionScheduleHash: string;
@@ -47,7 +49,7 @@ export type ReferralV1EarlyAccessGrantResult =
   | Readonly<{ ok: false; reason: "invalid_identity" | "binding_unavailable" | "binding_missing" | "binding_ineligible" | "customer_unmapped" | "schedule_unavailable" | "writer_refused" | "unavailable" }>;
 
 export interface ReferralV1EarlyAccessGrantDependencies {
-  bindings: Pick<ReferralV1Store, "getBinding">;
+  bindings: Pick<ReferralV1Store, "bindingAt">;
   customers: ReferralV1EarlyAccessCustomerDirectory;
   schedules: ReferralV1CommissionScheduleAuthority;
   writer: ReferralV1EarlyAccessGrantWriter;
@@ -57,7 +59,7 @@ function idempotencyKey(input: Omit<ReferralV1EarlyAccessGrant, "idempotencyKey"
   const canonical = [
     input.schemaVersion, input.customerRef, input.partnerId, input.referralLinkId,
     input.bindingRevisionId, input.bindingEffectiveAt, input.commissionProgramId,
-    input.commissionScheduleVersion, input.commissionScheduleHash,
+    input.occurredAt, input.commissionScheduleVersion, input.commissionScheduleHash,
   ].join("\n");
   return `rvea_${createHash("sha256").update(canonical, "utf8").digest("hex")}`;
 }
@@ -69,12 +71,16 @@ function idempotencyKey(input: Omit<ReferralV1EarlyAccessGrant, "idempotencyKey"
  * ownership assertion, program, commission rate, or hold rate.
  */
 export async function deriveReferralV1EarlyAccessGrant(
-  canonicalAuthUserId: string,
+  input: Readonly<{ canonicalAuthUserId: string; occurredAt: string }>,
   deps: ReferralV1EarlyAccessGrantDependencies,
 ): Promise<ReferralV1EarlyAccessGrantResult> {
+  const { canonicalAuthUserId, occurredAt } = input;
   if (!UUID.test(canonicalAuthUserId)) return { ok: false, reason: "invalid_identity" };
+  if (!OFFSET_TIMESTAMP.test(occurredAt) || !Number.isFinite(Date.parse(occurredAt))) {
+    return { ok: false, reason: "invalid_identity" };
+  }
   try {
-    const resolved = await deps.bindings.getBinding({ actorAuthUserId: canonicalAuthUserId });
+    const resolved = await deps.bindings.bindingAt({ actorAuthUserId: canonicalAuthUserId, occurredAt });
     if (!resolved.ok) return { ok: false, reason: resolved.reason === "unavailable" ? "binding_unavailable" : "binding_ineligible" };
     const binding = resolved.value.binding;
     if (!binding) return { ok: false, reason: "binding_missing" };
@@ -90,7 +96,7 @@ export async function deriveReferralV1EarlyAccessGrant(
 
     const customer = await deps.customers.findOwnedCustomerByAuthUserId(canonicalAuthUserId);
     if (!customer || !CUSTOMER_REF.test(customer.customerRef)) return { ok: false, reason: "customer_unmapped" };
-    const scheduleResult = await deps.schedules.resolveForPartner({ partnerId: binding.partnerId, occurredAt: binding.effectiveAt });
+    const scheduleResult = await deps.schedules.resolveForPartner({ partnerId: binding.partnerId, occurredAt });
     if (!scheduleResult.ok) return { ok: false, reason: "schedule_unavailable" };
     const schedule = {
       programId: scheduleResult.value.snapshot.definition.programId,
@@ -107,6 +113,7 @@ export async function deriveReferralV1EarlyAccessGrant(
       referralLinkId: binding.linkId,
       bindingRevisionId: binding.revisionId,
       bindingEffectiveAt: binding.effectiveAt,
+      occurredAt,
       commissionProgramId: schedule.programId,
       commissionScheduleVersion: schedule.version,
       commissionScheduleHash: schedule.scheduleHash,

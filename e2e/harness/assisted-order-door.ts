@@ -222,6 +222,9 @@ export function buildDoor(items: readonly AssistedOrderCatalogItem[] = [catalogI
       if (!id) return null;
       return {
         id,
+        authUserId: key === "a"
+          ? "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"
+          : "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
         email: `${key}@example.com`,
         pricingViewer: { audience: "member", email: `${key}@example.com` },
       };

@@ -6,13 +6,14 @@ import { randomUUID, createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createSupabaseReferralV1Store, type ReferralV1Result, type ReferralV1RpcClient } from "./referral-v1-store";
+import { createSupabaseReferralV1Store, REFERRAL_V1_SCHEMA_VERSION, type ReferralV1Result, type ReferralV1RpcClient } from "./referral-v1-store";
 import { readReferralV1Lineage } from "./referral-v1-lineage";
 import { startReferralRehearsalDatabase, referralRehearsalTableDDL as table, type ReferralRehearsalDatabase } from "./referral-v1-rehearsal";
 
 const enabled = process.env.XENIOS_REFERRAL_V1_DISPOSABLE_PG === "1";
 const root = process.cwd();
 const candidate = readFileSync(path.join(root, "supabase/candidates/20260904_research_partner_referral_v1.sql"), "utf8");
+const postcheck = readFileSync(path.join(root, "supabase/candidates/20260904_research_partner_referral_v1_postcheck.sql"), "utf8");
 let database: ReferralRehearsalDatabase;
 const sql: ReferralRehearsalDatabase["sql"] = (...args) => database.sql(...args);
 const connection: ReferralRehearsalDatabase["connection"] = (...args) => database.connection(...args);
@@ -29,7 +30,7 @@ async function issue(partner: { actorAuthUserId: string }, extra = {}) {
 describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
   beforeAll(async () => {
     database = await startReferralRehearsalDatabase({ includeLineageSources: false, legacyBindingFixture: true });
-    expect(value(await store.authority()).schemaVersion).toBe("gen2_referral_v1_20260904");
+    expect(value(await store.authority()).schemaVersion).toBe(REFERRAL_V1_SCHEMA_VERSION);
   }, 120000);
 
   afterAll(async () => { if (database) await database.stop(); }, 60000);
@@ -65,6 +66,24 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
     const replay = value(await createSupabaseReferralV1Store(rpc).issue({ ...input, linkId: randomUUID(), tokenHashHex: hash() }));
     expect(replay.link.id).toBe(values[0].link.id);
     expect(replay.created).toBe(false);
+  });
+
+  it("passes the final read-only transfer plus touch capability postcheck", async () => {
+    await expect(sql(postcheck)).resolves.toBeDefined();
+  });
+
+  it("resolves exact issue and revoke replays before mutable account eligibility", async () => {
+    const partner = await seedPartner();
+    const issued = await issue(partner);
+    const revokeInput = { actorAuthUserId: partner.actorAuthUserId, idempotencyKey: randomUUID(), linkId: issued.link.id };
+    expect(value(await store.revoke(revokeInput)).created).toBe(true);
+    await sql("update public.research_members set status='closed' where id=$1", [partner.memberId]);
+    expect(value(await store.issue(issued.input))).toMatchObject({ created: false, link: { id: issued.link.id } });
+    expect(value(await store.revoke(revokeInput))).toMatchObject({ created: false, link: { id: issued.link.id } });
+    expect(await store.issue({ ...issued.input, destinationPath: "/care" })).toEqual({ ok: false, reason: "idempotency_conflict" });
+    expect(await store.revoke({ ...revokeInput, linkId: randomUUID() })).toEqual({ ok: false, reason: "idempotency_conflict" });
+    expect(await store.issue({ ...issued.input, idempotencyKey: randomUUID(), linkId: randomUUID(), tokenHashHex: hash() }))
+      .toEqual({ ok: false, reason: "not_eligible" });
   });
 
   it("rolls back link, audit and idempotency together when audit insertion fails; retry recovers", async () => {
@@ -112,8 +131,12 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
     expect((await sql("select count(*)::int n from public.research_partner_referral_events where event_type='account_bound' and actor_auth_user_id=$1", [actorAuthUserId])).rows[0].n).toBe(1);
     const winningLink = winner.linkId === first.link.id ? first : second;
     await store.revoke({ actorAuthUserId: winningLink.input.actorAuthUserId, idempotencyKey: randomUUID(), linkId: winner.linkId });
-    expect(value(await store.getBinding({ actorAuthUserId })).availability).toBe("revoked");
+    // The claim was valid when made. Later link revocation does not truncate a
+    // durable account binding; canonical partner eligibility remains current.
+    expect(value(await store.getBinding({ actorAuthUserId })).availability).toBe("ready");
     expect(value(await store.getBinding({ actorAuthUserId })).binding).toEqual(winner);
+    await sql("update public.research_partners set state='suspended' where id=$1", [winner.partnerId]);
+    expect(value(await store.getBinding({ actorAuthUserId })).availability).toBe("partner_inactive");
   });
 
   it("preserves the first binding and appends CAS-protected future-only admin transfers", async () => {
@@ -142,11 +165,26 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
       [initial.accountKey])).rows[0]).toEqual({ partner_id: original.link.partnerId, referral_link_id: original.link.id, referral_touch_id: touch.touchId });
     expect((await sql("select actor_auth_user_id,authorization_reference_hash from public.research_referral_binding_transfer_events where id=$1",
       [transferred.transfer.id])).rows[0]).toEqual({ actor_auth_user_id: adminAuthUserId, authorization_reference_hash: input.authorizationReferenceHash });
+    expect(value(await store.bindingAt({ actorAuthUserId: account.actorAuthUserId, occurredAt: initial.effectiveAt! })).binding)
+      .toEqual(initial);
+    expect(value(await store.bindingAt({ actorAuthUserId: account.actorAuthUserId,
+      occurredAt: new Date(Date.parse(initial.boundAt) - 1).toISOString() }))).toEqual({
+      binding: null, created: false, availability: "none",
+    });
+    expect(value(await store.bindingAt({ actorAuthUserId: account.actorAuthUserId, occurredAt: transferred.transfer.effectiveAt })).binding)
+      .toEqual(transferred.binding);
 
+    await sql("update public.research_members set status='closed' where id=$1", [account.memberId]);
     const replayed = value(await store.transferBinding(input));
     expect(replayed).toEqual({ ...transferred, created: false });
-    expect(await store.transferBinding({ ...input, idempotencyKey: randomUUID() })).toEqual({ ok: false, reason: "stale_binding" });
     expect(await store.transferBinding({ ...input, reasonCode: "compliance_action" })).toEqual({ ok: false, reason: "idempotency_conflict" });
+    // Historical reconciliation is durable even when the current member door
+    // is closed; only a new mutation remains ineligible.
+    expect(value(await store.bindingAt({ actorAuthUserId: account.actorAuthUserId, occurredAt: transferred.transfer.effectiveAt })).binding)
+      .toEqual(transferred.binding);
+    expect(await store.transferBinding({ ...input, idempotencyKey: randomUUID() })).toEqual({ ok: false, reason: "not_eligible" });
+    await sql("update public.research_members set status='active' where id=$1", [account.memberId]);
+    expect(await store.transferBinding({ ...input, idempotencyKey: randomUUID() })).toEqual({ ok: false, reason: "stale_binding" });
     const accountOwnedLink = await issue(account);
     expect(await store.transferBinding({ ...input, expectedRevisionId: transferred.transfer.id, targetLinkId: accountOwnedLink.link.id,
       idempotencyKey: randomUUID() })).toEqual({ ok: false, reason: "self_referral" });
@@ -164,6 +202,10 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
       targetLinkId: laterTarget.link.id, idempotencyKey: randomUUID(), reasonCode: "documented_correction" }));
     expect(second.transfer.previousRevisionId).toBe(transferred.transfer.id);
     expect(second.binding).toMatchObject({ revisionId: second.transfer.id, partnerId: laterTarget.link.partnerId, linkId: laterTarget.link.id });
+    expect(value(await store.bindingAt({ actorAuthUserId: account.actorAuthUserId, occurredAt: transferred.transfer.effectiveAt })).binding)
+      .toEqual(transferred.binding);
+    expect(value(await store.bindingAt({ actorAuthUserId: account.actorAuthUserId, occurredAt: second.transfer.effectiveAt })).binding)
+      .toEqual(second.binding);
     expect((await sql("select count(*)::int n from public.research_referral_binding_transfer_events where account_key=$1", [initial.accountKey])).rows[0].n).toBe(2);
     const lifecycle = value(await store.listAdmin({ adminAuthUserId, partnerId: laterTarget.link.partnerId, limit: 10 }));
     expect(lifecycle.bindings).toContainEqual({ ...second.binding, availability: "ready" });
@@ -174,6 +216,19 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
       reasonCode: second.transfer.reasonCode, effectiveAt: second.transfer.effectiveAt,
     });
     expect(JSON.stringify(lifecycle)).not.toMatch(/authorizationReferenceHash|authorization_reference_hash|actorAuthUserId|actor_auth_user_id/);
+  });
+
+  it("keeps a valid historical claim eligible after link expiry while partner state remains authoritative", async () => {
+    const publisher = await seedPartner(), account = await seedPartner();
+    const linkId = randomUUID(), touchId = randomUUID(), subjectKeyHash = hash();
+    await sql("insert into public.research_partner_links(id,partner_id,code,channel,created_at,referral_version,token_hash_hex,token_key_version,destination_path,expires_at) values($1::uuid,$2,$1::uuid::text,'signed_link',now()-interval '60 days',1,$3,1,'/health',now()-interval '30 days')", [linkId, publisher.partnerId, hash()]);
+    await sql("insert into public.research_attribution_touches(id,subject_key,partner_id,channel,occurred_at,referral_version,referral_link_id,referral_expires_at) select $1,$2,partner_id,'signed_link',created_at+interval '1 day',1,id,expires_at from public.research_partner_links where id=$3", [touchId, subjectKeyHash, linkId]);
+    await sql("insert into public.research_affiliate_customer_bindings(customer_key,partner_id,code,subject_key,captured_at,bound_at,program_state,method,referral_version,referral_link_id,referral_touch_id) select $1,$2::text,$3::text,subject_key,occurred_at,occurred_at+interval '1 day','pending_program','attribution_cookie',1,$3::uuid,id from public.research_attribution_touches where id=$4", [`auth:${account.actorAuthUserId}`, publisher.partnerId, linkId, touchId]);
+    expect(value(await store.getBinding({ actorAuthUserId: account.actorAuthUserId }))).toMatchObject({
+      availability: "ready", binding: { linkId, touchId, partnerId: publisher.partnerId },
+    });
+    await sql("update public.research_partners set state='suspended' where id=$1", [publisher.partnerId]);
+    expect(value(await store.getBinding({ actorAuthUserId: account.actorAuthUserId })).availability).toBe("partner_inactive");
   });
 
   it("rejects self referral at signed capture and at later Auth binding", async () => {
@@ -262,6 +317,21 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
     await sql("insert into public.research_partner_links(partner_id,code,channel) values($1,$2,'code')", [partner.partnerId, `legacy-${randomUUID()}`], "service_role");
   });
 
+  it("ignores service-role pg_temp catalog shadows in authority and mutation guards", async () => {
+    const partner = await seedPartner(), issued = await issue(partner);
+    const attacker = await connection("service_role");
+    try {
+      await attacker.query("create temp table pg_proc(oid oid,proowner oid); create temp table pg_roles(rolname name,rolsuper boolean,rolbypassrls boolean); create temp table pg_class(oid oid,relrowsecurity boolean,relforcerowsecurity boolean); create temp table pg_policy(polrelid oid); create temp table pg_trigger(tgname name,tgenabled char,tgfoid oid); create temp table pg_index(indexrelid oid,indisunique boolean,indisvalid boolean); create temp table pg_constraint(conname name,convalidated boolean)");
+      await attacker.query("insert into pg_temp.pg_proc values(pg_catalog.to_regprocedure('public.research_referral_v1_execute(text,jsonb)')::oid,'service_role'::pg_catalog.regrole::oid)");
+      expect((await attacker.query("select public.research_referral_v1_authority() result")).rows[0].result)
+        .toEqual({ ok: true, value: { schemaVersion: REFERRAL_V1_SCHEMA_VERSION } });
+      await expect(attacker.query("update public.research_partner_links set revoked_at=clock_timestamp() where id=$1", [issued.link.id]))
+        .rejects.toThrow(/authority RPC/);
+    } finally {
+      await attacker.end();
+    }
+  });
+
   it("fails authority closed after privilege or guard drift", async () => {
     await sql("grant select on public.research_partner_referral_events to service_role");
     try { expect(await store.authority()).toEqual({ ok: false, reason: "unavailable" }); }
@@ -279,16 +349,18 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
     expect((await store.authority()).ok).toBe(true);
   });
 
-  it("denies unknown or closed Auth membership and cross-partner idempotency replay", async () => {
+  it("denies new work for unknown or closed Auth membership without erasing durable replay", async () => {
     expect(await store.getBinding({ actorAuthUserId: randomUUID() })).toEqual({ ok: false, reason: "not_eligible" });
     const partner = await seedPartner(), issued = await issue(partner);
     const replacement = await seedPartner();
-    // Synthetic account ownership remap illustrates why idempotency is not ownership.
+    // Synthetic account ownership remap does not rewrite the actor-scoped,
+    // guarded idempotency fact that already committed.
     await sql("update public.research_partners set member_id=$1 where id=$2", [randomUUID(), partner.partnerId]);
     await sql("update public.research_partners set member_id=$1 where id=$2", [partner.memberId, replacement.partnerId]);
-    expect(await store.issue(issued.input)).toEqual({ ok: false, reason: "not_found" });
+    expect(value(await store.issue(issued.input))).toMatchObject({ created: false, link: { id: issued.link.id } });
     await sql("update public.research_members set status='closed' where id=$1", [partner.memberId]);
     expect(await store.getBinding({ actorAuthUserId: partner.actorAuthUserId })).toEqual({ ok: false, reason: "not_eligible" });
+    expect(value(await store.issue(issued.input))).toMatchObject({ created: false, link: { id: issued.link.id } });
     expect(await store.issue({ ...issued.input, idempotencyKey: randomUUID() })).toEqual({ ok: false, reason: "not_eligible" });
   });
 
@@ -343,7 +415,7 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
   it("also installs cleanly without a legacy binding table using the reusable preview runtime", async () => {
     const fresh = await startReferralRehearsalDatabase();
     try {
-      expect(value(await createSupabaseReferralV1Store(fresh.rpc).authority()).schemaVersion).toBe("gen2_referral_v1_20260904");
+      expect(value(await createSupabaseReferralV1Store(fresh.rpc).authority()).schemaVersion).toBe(REFERRAL_V1_SCHEMA_VERSION);
       expect((await fresh.sql("select count(*)::int n from public.research_affiliate_customer_bindings")).rows[0].n).toBe(0);
       expect(await readReferralV1Lineage([], fresh.rpc)).toEqual({ state: "available", records: [] });
       await fresh.sql("alter table public.research_members rename column auth_user_id to synthetic_schema_drift");

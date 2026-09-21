@@ -12,6 +12,15 @@ not deployed, and not authorized for production activation.
   `auth:<canonical Supabase Auth user UUID>`. A later device/touch cannot replace
   the winner and receives `conflictPreserved`. The original binding row is never
   updated, including after an admin transfer.
+- Authenticated assisted-order attribution is account-first and cross-device: the
+  route resolves the verified viewer once, passes only the canonical Auth UUID,
+  and the server reads `bindingAt({ actorAuthUserId, occurredAt })`. It never
+  falls back to, or lets a conflicting cookie replace, the first-valid account
+  winner. Guests alone use the sealed touch cookie as provisional attribution.
+- A claimed binding no longer inherits later link expiry or revocation. Those
+  remain capture/link admission rules; after a valid claim, current canonical
+  partner activation and self-referral checks govern binding eligibility. Program
+  attribution windows remain commission-schedule authority, not link policy.
 - An admin transfer is an append-only immutable event. The guarded server route
   supplies the verified admin subject and only accepts account Auth UUID, expected
   revision, target link UUID, a closed reason, a hashed authorization reference,
@@ -28,11 +37,16 @@ not deployed, and not authorized for production activation.
   Browser/public surfaces never receive a partner UUID as an ownership choice,
   visitor hash, customer identity, commission/hold rate, or health fact.
 - The rate-free Early Access seam accepts only a guard-verified Auth UUID. It
-  derives the effective Referral V1 binding, owned canonical Early Access customer,
-  and signed commission schedule on the server. The proposed writer input contains
-  only opaque customer/binding provenance plus schedule program/version/hash; it
-  has no rate or hold field and is not mounted to the predecessor rate-bearing
-  writer.
+  takes an explicit server event occurrence, derives the as-of Referral V1
+  revision at that same instant, then resolves the owned canonical Early Access
+  customer and signed commission schedule for that occurrence. The proposed
+  writer input contains only opaque customer/binding/event provenance plus schedule
+  program/version/hash; it has no rate or hold field and is not mounted to the
+  predecessor rate-bearing writer.
+- Exact idempotent issue, revoke, and transfer replays are resolved from guarded
+  durable facts before mutable account/partner eligibility. A closed account can
+  retry a committed request, while a changed fingerprint conflicts and a new
+  mutation remains ineligible.
 
 ## Exact reviewed candidate order
 
@@ -45,9 +59,15 @@ canonical predecessor shapes match, the reviewed order is:
 3. `20260904_research_partner_referral_v1_lineage.sql` — service-only account
    lineage read, if its optional canonical sources are part of the rollout.
 4. `20260914_research_referral_v1_touch_attribution.sql` — exact guarded dispatcher
-   extension for server-side anonymous-touch attribution.
+   extension for server-side guest-touch attribution and authenticated self-check.
 5. `20260904_research_partner_referral_v1_postcheck.sql` plus the service-role
-   authority probe — read-only verification.
+   authority probe — read-only verification of both transfer and touch operations.
+
+The base alone advertises only
+`gen2_referral_v1_transfer_base_20260921`. Application readiness requires the
+complete `gen2_referral_v1_transfer_touch_20260921` capability, which the authority
+returns only when the exact three-argument touch helper and guarded dispatcher
+operation are present. A base-only/downgraded database therefore fails closed.
 
 This is candidate order, not permission to run it. If preflight finds any prior V1
 object or dispatcher drift, stop. The foundational candidate deliberately refuses
@@ -60,19 +80,24 @@ task-owned PostgreSQL clusters. The portable runtime reported PostgreSQL 18.3
 (Ubuntu 18.3-1). No database URL, managed Supabase project, external integration,
 or production data was used.
 
-- `npm run check`: passed (`tsc`).
-- Focused Referral V1 TypeScript/runtime suite: 6 files, 143 tests passed.
-- Foundational candidate disposable PostgreSQL suite: 1 file, 17 tests passed.
-- Base + touch-attribution candidate disposable PostgreSQL suite: 1 file,
-  12 tests passed.
-- Total executed assertions in the non-overlapping focused suites above: 172
+- `npx tsc --noEmit`: passed.
+- Focused Referral V1 plus assisted-order caller/runtime suite: 11 files,
+  195 tests passed.
+- Full base → lineage → touch disposable PostgreSQL chain and read-only final
+  postcheck: 2 files, 35 tests passed.
+- Total executed assertions in the non-overlapping focused suites above: 230
   passed, 0 failed, 0 skipped.
 
 The database rehearsal covers concurrent first-valid capture/bind, explicit
 conflict preservation, immutable initial rows, future-only transfer timing,
 revision CAS, exact replay and conflicting replay, self-referral, target-link
 derivation, safe admin projection, RLS/ACL/helper grants, immutable transfer
-events, candidate replay refusal, and the exact touch-attribution installer seam.
+events, pre/post-transfer as-of projection, post-claim link expiry/revocation,
+authenticated cross-device/conflicting-cookie behavior, base-only readiness
+refusal, candidate replay refusal, and the exact touch-attribution installer seam.
+It also creates caller-controlled `pg_temp` shadows of catalog relations as
+`service_role`; fully qualified `pg_catalog` authority/guard lookups still return
+the reviewed capability and deny direct V1 mutation.
 
 ## Remaining external blockers
 
@@ -85,7 +110,8 @@ events, candidate replay refusal, and the exact touch-attribution installer seam
    rate-free schedule identity. The existing writer requires a caller-supplied
    `holdBasisPoints` value and must not be used as an adapter for this seam.
 4. Signed partner-to-program bindings and the canonical schedule authority must
-   be present for the binding effective instant; absence or ambiguity fails closed.
+   be deployed and populated for each event occurrence; absence or ambiguity
+   fails closed. Local commission authority code is not managed-state evidence.
 5. The service-role SQL entrypoint records an asserted admin subject but cannot
    independently prove an admin role. The canonical Supabase admin guard must
    remain mandatory at the HTTP boundary.

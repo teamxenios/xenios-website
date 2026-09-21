@@ -23,6 +23,8 @@ import type {
 export type AssistedOrderViewer = Readonly<{
   actorType: "member" | "early_access_session" | "admin";
   memberId: string | null;
+  /** Canonical verified Supabase Auth UUID. Never accepted from request data. */
+  authUserId?: string | null;
   earlyAccessSessionHash: string | null;
   /**
    * Opaque customer handle resolved by the Early Access identity directory.
@@ -395,7 +397,11 @@ export type AssistedOrderRouteViewerResolver<Request> = Readonly<{
  * problem and never attributed on a guess.
  */
 export type AssistedOrderAttributionResolver = Readonly<{
-  resolve(cookieHeader: string | undefined): Promise<string | null>;
+  resolve(input: Readonly<{
+    cookieHeader: string | undefined;
+    /** Present only for a canonically authenticated member submission. */
+    actorAuthUserId: string | null;
+  }>): Promise<string | null>;
 }>;
 
 export type AssistedOrderStatusTransition = Readonly<{

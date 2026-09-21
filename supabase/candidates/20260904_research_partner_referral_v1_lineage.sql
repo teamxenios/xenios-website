@@ -48,7 +48,7 @@ begin
     return v_unavailable;
   end if;
   v_authority := public.research_referral_v1_authority();
-  if v_authority is distinct from '{"ok":true,"value":{"schemaVersion":"gen2_referral_v1_20260904"}}'::jsonb then
+  if v_authority is distinct from '{"ok":true,"value":{"schemaVersion":"gen2_referral_v1_transfer_touch_20260921"}}'::jsonb then
     return v_unavailable;
   end if;
 

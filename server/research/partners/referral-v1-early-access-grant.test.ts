@@ -8,11 +8,13 @@ const touchId = "40000000-0000-4000-8000-000000000004";
 const transferId = "50000000-0000-4000-8000-000000000005";
 const customerRef = "eac_0123456789abcdef0123456789abcdef";
 const effectiveAt = "2026-09-21T12:00:00.000Z";
+const occurredAt = "2026-09-21T13:00:00.000Z";
+const grantInput = { canonicalAuthUserId: authUserId, occurredAt };
 const schedule = { programId: "xenios_standard_rep_2026_09", version: 1, scheduleHash: "a".repeat(64) };
 
 function fixture(): ReferralV1EarlyAccessGrantDependencies {
   return {
-    bindings: { getBinding: vi.fn(async () => ({ ok: true as const, value: { binding: {
+    bindings: { bindingAt: vi.fn(async () => ({ ok: true as const, value: { binding: {
       accountKey: `auth:${authUserId}`, partnerId, linkId, touchId, boundAt: "2026-09-20T12:00:00.000Z",
       revisionId: transferId, effectiveAt, source: "admin_transfer" as const,
     }, created: false, availability: "ready" as const } })) },
@@ -28,14 +30,14 @@ function fixture(): ReferralV1EarlyAccessGrantDependencies {
 describe("Referral V1 canonical Early Access grant derivation", () => {
   it("derives every grant fact from server-owned binding, customer, and schedule authorities", async () => {
     const deps = fixture();
-    const result = await deriveReferralV1EarlyAccessGrant(authUserId, deps);
+    const result = await deriveReferralV1EarlyAccessGrant(grantInput, deps);
     expect(result).toEqual({ ok: true, state: "recorded", schedule });
-    expect(deps.bindings.getBinding).toHaveBeenCalledWith({ actorAuthUserId: authUserId });
+    expect(deps.bindings.bindingAt).toHaveBeenCalledWith({ actorAuthUserId: authUserId, occurredAt });
     expect(deps.customers.findOwnedCustomerByAuthUserId).toHaveBeenCalledWith(authUserId);
-    expect(deps.schedules.resolveForPartner).toHaveBeenCalledWith({ partnerId, occurredAt: effectiveAt });
+    expect(deps.schedules.resolveForPartner).toHaveBeenCalledWith({ partnerId, occurredAt });
     expect(deps.writer.recordIfAbsent).toHaveBeenCalledWith(expect.objectContaining({
       schemaVersion: 1, customerRef, partnerId, referralLinkId: linkId, bindingRevisionId: transferId,
-      bindingEffectiveAt: effectiveAt, commissionProgramId: schedule.programId,
+      bindingEffectiveAt: effectiveAt, occurredAt, commissionProgramId: schedule.programId,
       commissionScheduleVersion: schedule.version, commissionScheduleHash: schedule.scheduleHash,
       idempotencyKey: expect.stringMatching(/^rvea_[a-f0-9]{64}$/),
     }));
@@ -46,9 +48,27 @@ describe("Referral V1 canonical Early Access grant derivation", () => {
 
   it("uses the effective transfer revision and timestamp, not the original captured partner", async () => {
     const deps = fixture();
-    await deriveReferralV1EarlyAccessGrant(authUserId, deps);
-    expect(deps.schedules.resolveForPartner).toHaveBeenCalledWith({ partnerId, occurredAt: effectiveAt });
+    await deriveReferralV1EarlyAccessGrant(grantInput, deps);
+    expect(deps.schedules.resolveForPartner).toHaveBeenCalledWith({ partnerId, occurredAt });
     expect(deps.writer.recordIfAbsent).toHaveBeenCalledWith(expect.objectContaining({ bindingRevisionId: transferId, partnerId }));
+  });
+
+  it("asks for the binding and commission schedule at the economic event instant", async () => {
+    const deps = fixture();
+    const beforeTransfer = "2026-09-21T11:59:59.000Z";
+    const originalPartnerId = "60000000-0000-4000-8000-000000000006";
+    const originalLinkId = "70000000-0000-4000-8000-000000000007";
+    vi.mocked(deps.bindings.bindingAt).mockResolvedValue({ ok: true, value: { binding: {
+      accountKey: `auth:${authUserId}`, partnerId: originalPartnerId, linkId: originalLinkId, touchId,
+      boundAt: "2026-09-20T12:00:00.000Z", revisionId: touchId,
+      effectiveAt: "2026-09-20T12:00:00.000Z", source: "capture",
+    }, created: false, availability: "ready" } });
+    await deriveReferralV1EarlyAccessGrant({ canonicalAuthUserId: authUserId, occurredAt: beforeTransfer }, deps);
+    expect(deps.bindings.bindingAt).toHaveBeenCalledWith({ actorAuthUserId: authUserId, occurredAt: beforeTransfer });
+    expect(deps.schedules.resolveForPartner).toHaveBeenCalledWith({ partnerId: originalPartnerId, occurredAt: beforeTransfer });
+    expect(deps.writer.recordIfAbsent).toHaveBeenCalledWith(expect.objectContaining({
+      partnerId: originalPartnerId, referralLinkId: originalLinkId, bindingRevisionId: touchId, occurredAt: beforeTransfer,
+    }));
   });
 
   it("refuses missing or ineligible bindings before customer, schedule, or writer work", async () => {
@@ -58,8 +78,8 @@ describe("Referral V1 canonical Early Access grant derivation", () => {
         revisionId: touchId, effectiveAt, source: "capture" as const }, created: false, availability: "partner_inactive" as const },
     ]) {
       const deps = fixture();
-      vi.mocked(deps.bindings.getBinding).mockResolvedValue({ ok: true, value });
-      expect((await deriveReferralV1EarlyAccessGrant(authUserId, deps)).ok).toBe(false);
+      vi.mocked(deps.bindings.bindingAt).mockResolvedValue({ ok: true, value });
+      expect((await deriveReferralV1EarlyAccessGrant(grantInput, deps)).ok).toBe(false);
       expect(deps.customers.findOwnedCustomerByAuthUserId).not.toHaveBeenCalled();
       expect(deps.schedules.resolveForPartner).not.toHaveBeenCalled();
       expect(deps.writer.recordIfAbsent).not.toHaveBeenCalled();
@@ -68,22 +88,22 @@ describe("Referral V1 canonical Early Access grant derivation", () => {
 
   it("fails closed for predecessor bindings without a canonical revision and for unavailable schedules", async () => {
     const predecessor = fixture();
-    vi.mocked(predecessor.bindings.getBinding).mockResolvedValue({ ok: true, value: { binding: {
+    vi.mocked(predecessor.bindings.bindingAt).mockResolvedValue({ ok: true, value: { binding: {
       accountKey: `auth:${authUserId}`, partnerId, linkId, touchId, boundAt: effectiveAt,
     }, created: false, availability: "ready" } });
-    expect(await deriveReferralV1EarlyAccessGrant(authUserId, predecessor)).toEqual({ ok: false, reason: "binding_unavailable" });
+    expect(await deriveReferralV1EarlyAccessGrant(grantInput, predecessor)).toEqual({ ok: false, reason: "binding_unavailable" });
     expect(predecessor.customers.findOwnedCustomerByAuthUserId).not.toHaveBeenCalled();
 
     const noSchedule = fixture();
     vi.mocked(noSchedule.schedules.resolveForPartner).mockResolvedValue({ ok: false, code: "program_binding_not_found" });
-    expect(await deriveReferralV1EarlyAccessGrant(authUserId, noSchedule)).toEqual({ ok: false, reason: "schedule_unavailable" });
+    expect(await deriveReferralV1EarlyAccessGrant(grantInput, noSchedule)).toEqual({ ok: false, reason: "schedule_unavailable" });
     expect(noSchedule.writer.recordIfAbsent).not.toHaveBeenCalled();
   });
 
   it("has no call surface for browser-provided ownership, customer, program, rate, hold, or health facts", async () => {
     const deps = fixture();
-    expect(await deriveReferralV1EarlyAccessGrant("not-an-auth-id", deps)).toEqual({ ok: false, reason: "invalid_identity" });
-    expect(deps.bindings.getBinding).not.toHaveBeenCalled();
+    expect(await deriveReferralV1EarlyAccessGrant({ ...grantInput, canonicalAuthUserId: "not-an-auth-id" }, deps)).toEqual({ ok: false, reason: "invalid_identity" });
+    expect(deps.bindings.bindingAt).not.toHaveBeenCalled();
     expect(deps.customers.findOwnedCustomerByAuthUserId).not.toHaveBeenCalled();
     expect(deps.schedules.resolveForPartner).not.toHaveBeenCalled();
     expect(deps.writer.recordIfAbsent).not.toHaveBeenCalled();
@@ -92,8 +112,8 @@ describe("Referral V1 canonical Early Access grant derivation", () => {
   it("produces a stable retry key and accepts an idempotent existing grant", async () => {
     const deps = fixture();
     vi.mocked(deps.writer.recordIfAbsent).mockResolvedValue("already_recorded");
-    const first = await deriveReferralV1EarlyAccessGrant(authUserId, deps);
-    const second = await deriveReferralV1EarlyAccessGrant(authUserId, deps);
+    const first = await deriveReferralV1EarlyAccessGrant(grantInput, deps);
+    const second = await deriveReferralV1EarlyAccessGrant(grantInput, deps);
     expect(first).toMatchObject({ ok: true, state: "already_recorded" });
     expect(second).toEqual(first);
     expect(vi.mocked(deps.writer.recordIfAbsent).mock.calls[0][0].idempotencyKey)

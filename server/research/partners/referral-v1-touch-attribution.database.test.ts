@@ -2,7 +2,7 @@
 import { randomUUID, createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createSupabaseReferralV1Store, type ReferralV1Result } from "./referral-v1-store";
+import { createSupabaseReferralV1Store, REFERRAL_V1_BASE_SCHEMA_VERSION, REFERRAL_V1_SCHEMA_VERSION, type ReferralV1Result } from "./referral-v1-store";
 import { startReferralRehearsalDatabase, type ReferralRehearsalDatabase } from "./referral-v1-rehearsal";
 
 const candidate = readFileSync("supabase/candidates/20260914_research_referral_v1_touch_attribution.sql", "utf8");
@@ -17,14 +17,22 @@ function value<T>(result: ReferralV1Result<T>): T {
 describe.skipIf(!enabled)("executable referral touch attribution candidate", () => {
   let db: ReferralRehearsalDatabase;
   let store: ReturnType<typeof createSupabaseReferralV1Store>;
+  let baseRawAuthority: unknown;
+  let baseStoreAuthority: unknown;
   beforeAll(async () => {
-    db = await startReferralRehearsalDatabase({ includeLineageSources: false });
+    db = await startReferralRehearsalDatabase({ includeLineageSources: false, includeTouchAttribution: false });
     store = createSupabaseReferralV1Store(db.rpc);
-    expect(value(await store.authority()).schemaVersion).toBe("gen2_referral_v1_20260904");
+    baseRawAuthority = (await db.sql("select public.research_referral_v1_authority() result", [], "service_role")).rows[0].result;
+    baseStoreAuthority = await store.authority();
     await db.sql(candidate);
-    expect(value(await store.authority()).schemaVersion).toBe("gen2_referral_v1_20260904");
+    expect(value(await store.authority()).schemaVersion).toBe(REFERRAL_V1_SCHEMA_VERSION);
   }, 120000);
   afterAll(async () => { if (db) await db.stop(); }, 60000);
+
+  it("refuses the transfer-capable base until the exact touch operation upgrades readiness", () => {
+    expect(baseRawAuthority).toEqual({ ok: true, value: { schemaVersion: REFERRAL_V1_BASE_SCHEMA_VERSION } });
+    expect(baseStoreAuthority).toEqual({ ok: false, reason: "unavailable" });
+  });
 
   async function captured() {
     const partner = await db.seedPartner();
@@ -49,10 +57,19 @@ describe.skipIf(!enabled)("executable referral touch attribution candidate", () 
     expect(await store.attributionForTouch({ ...input, touchId: randomUUID() })).toEqual(none);
   });
 
-  it.each(["actorAuthUserId", "partnerId"])("rejects extra %s at the actual RPC boundary", async (key) => {
+  it.each(["partnerId", "commissionRateBasisPoints"])("rejects extra %s at the actual RPC boundary", async (key) => {
     const { input } = await captured();
     const result = await db.rpc.rpc("research_referral_v1_execute", { p_operation: "attributionForTouch", p_input: { ...input, [key]: randomUUID() } });
     expect(result.data).toEqual({ ok: false, reason: "invalid_input" });
+  });
+
+  it("rechecks authenticated self-referral at submission while guest attribution stays provisional", async () => {
+    const { partner, input } = await captured();
+    expect(value(await store.attributionForTouch(input))).toEqual({ partnerId: partner.partnerId, eligible: true });
+    expect(value(await store.attributionForTouch({ ...input, actorAuthUserId: partner.actorAuthUserId })))
+      .toEqual({ partnerId: null, eligible: false });
+    expect(value(await store.attributionForTouch({ ...input, actorAuthUserId: randomUUID() })))
+      .toEqual({ partnerId: partner.partnerId, eligible: true });
   });
 
   it.each([null, [], {}, { touchId: "bad", subjectKeyHash: "short" }])("rejects malformed payload %j without throwing", async (p_input) => {
@@ -80,7 +97,7 @@ describe.skipIf(!enabled)("executable referral touch attribution candidate", () 
 
   it("keeps the helper internal and denies anonymous/authenticated RPC execution", async () => {
     for (const role of ["anon", "authenticated", "service_role"] as const) {
-      await expect(db.sql("select public.research_referral_v1_touch_attribution($1,$2)", [randomUUID(), hash()], role)).rejects.toThrow(/permission denied/);
+      await expect(db.sql("select public.research_referral_v1_touch_attribution($1,$2,$3)", [randomUUID(), hash(), null], role)).rejects.toThrow(/permission denied/);
       if (role !== "service_role") await expect(db.sql("select public.research_referral_v1_execute('attributionForTouch','{}')", [], role)).rejects.toThrow(/permission denied/);
     }
   });

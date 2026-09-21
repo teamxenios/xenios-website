@@ -44,6 +44,7 @@ const ADMIN_CAPABILITIES: ReadonlySet<string> = new Set([
 export type AssistedOrderViewerWiring = Readonly<{
   resolveMember(req: Request): Promise<{
     id: string;
+    authUserId: string;
     email: string | null;
     /**
      * Opaque server-derived pricing viewer for the canonical master-offerings
@@ -137,6 +138,7 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
         return Object.freeze({
           actorType: "member",
           memberId: member.id,
+          authUserId: member.authUserId,
           earlyAccessSessionHash:
             identitiesBound && sessionId
               ? createHash("sha256").update(sessionId, "utf8").digest("hex")
@@ -157,6 +159,7 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
           return Object.freeze({
             actorType: "early_access_session",
             memberId: null,
+            authUserId: null,
             earlyAccessSessionHash: createHash("sha256")
               .update(sessionId, "utf8")
               .digest("hex"),
@@ -176,6 +179,7 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
       return Object.freeze({
         actorType: "early_access_session",
         memberId: null,
+        authUserId: null,
         earlyAccessSessionHash: null,
         earlyAccessCustomerRef: null,
         normalizedEmail: null,
@@ -190,6 +194,7 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
       return Object.freeze({
         actorType: "admin",
         memberId: null,
+        authUserId: null,
         earlyAccessSessionHash: null,
         earlyAccessCustomerRef: null,
         normalizedEmail: wiring.adminEmail() || null,

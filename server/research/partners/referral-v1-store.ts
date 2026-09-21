@@ -1,7 +1,10 @@
 import { z } from "zod";
 
 /** Durable Gen2 referral authority. No in-memory fallback or browser identity input. */
-export const REFERRAL_V1_SCHEMA_VERSION = "gen2_referral_v1_20260904";
+/** Base candidate capability before the guarded touch-attribution installer. */
+export const REFERRAL_V1_BASE_SCHEMA_VERSION = "gen2_referral_v1_transfer_base_20260921" as const;
+/** Complete runtime capability: transfer + authenticated touch attribution. */
+export const REFERRAL_V1_SCHEMA_VERSION = "gen2_referral_v1_transfer_touch_20260921" as const;
 export const REFERRAL_V1_EXPIRES_IN_DAYS = 30 as const;
 
 export type ReferralV1Availability = "ready" | "revoked" | "expired" | "partner_inactive" | "self_referral";
@@ -76,6 +79,8 @@ export interface ReferralV1Store {
   capture(input: { tokenHashHex: string; subjectKeyHash: string; actorAuthUserId?: string }): Promise<ReferralV1Result<{ touch: ReferralV1Touch; created: boolean; availability: ReferralV1Availability; conflictPreserved?: boolean }>>;
   bind(input: { actorAuthUserId: string; touchId: string; subjectKeyHash: string }): Promise<ReferralV1Result<{ binding: ReferralV1Binding | null; created: boolean; availability: ReferralV1Availability | "none"; conflictPreserved?: boolean }>>;
   getBinding(input: { actorAuthUserId: string }): Promise<ReferralV1Result<{ binding: ReferralV1Binding | null; created: boolean; availability: ReferralV1Availability | "none"; conflictPreserved?: boolean }>>;
+  /** Server-only historical projection for the exact economic event instant. */
+  bindingAt(input: { actorAuthUserId: string; occurredAt: string }): Promise<ReferralV1Result<{ binding: ReferralV1Binding | null; created: false; availability: ReferralV1Availability | "none" }>>;
   /** Canonical admin guard must run before this future-only, append-only transfer. */
   transferBinding(input: { adminAuthUserId: string; accountAuthUserId: string; expectedRevisionId: string; targetLinkId: string; idempotencyKey: string; reasonCode: ReferralV1Transfer["reasonCode"]; authorizationReferenceHash: string }): Promise<ReferralV1Result<{ binding: ReferralV1Binding; transfer: ReferralV1Transfer; created: boolean }>>;
   /**
@@ -93,7 +98,7 @@ export interface ReferralV1Store {
    * Until it is installed the RPC refuses the unknown operation and this read
    * answers `unavailable`, which every caller treats as no attribution.
    */
-  attributionForTouch(input: { touchId: string; subjectKeyHash: string }): Promise<ReferralV1Result<{ partnerId: string | null; eligible: boolean }>>;
+  attributionForTouch(input: { touchId: string; subjectKeyHash: string; actorAuthUserId?: string }): Promise<ReferralV1Result<{ partnerId: string | null; eligible: boolean }>>;
   /** The HTTP caller must already have passed the canonical Supabase admin guard. */
   listAdmin(input: { adminAuthUserId: string; partnerId?: string; limit?: number }): Promise<ReferralV1Result<{ links: ReferralV1Link[]; events: ReferralV1Event[]; touches: ReferralV1AdminTouch[]; bindings: ReferralV1AdminBinding[]; transfers?: ReferralV1AdminTransfer[] }>>;
 }
@@ -132,6 +137,8 @@ const bindingSchema = z.object({
   (v.effectiveAt === undefined || Date.parse(v.effectiveAt) >= Date.parse(v.boundAt)));
 const bindingResultSchema = z.object({ binding: bindingSchema.nullable(), created: z.boolean(), availability: z.enum(["ready", "revoked", "expired", "partner_inactive", "self_referral", "none"]), conflictPreserved: z.boolean().optional() }).strict()
   .refine((v) => v.binding === null ? v.availability === "none" && !v.created : v.availability !== "none" && (!v.created || v.availability === "ready"));
+const bindingAtResultSchema = z.object({ binding: bindingSchema.nullable(), created: z.literal(false), availability: z.enum(["ready", "revoked", "expired", "partner_inactive", "self_referral", "none"]) }).strict()
+  .refine((v) => v.binding === null ? v.availability === "none" : v.availability !== "none");
 const eventSchema = z.object({ id: uuid, eventType: z.enum(["link_issued", "link_revoked", "capture_recorded", "account_bound"]), partnerId: uuid, linkId: uuid, occurredAt: timestamp }).strict();
 const adminTouchSchema = z.object({ touchId: uuid, linkId: uuid, partnerId: uuid, capturedAt: timestamp, expiresAt: timestamp, availability }).strict();
 const adminBindingSchema = z.object({ accountKey, linkId: uuid, touchId: uuid, partnerId: uuid, boundAt: timestamp,
@@ -191,6 +198,14 @@ export function createSupabaseReferralV1Store(rpc: ReferralV1RpcClient): Referra
     capture: (input) => execute("capture", input, z.object({ tokenHashHex: hex, subjectKeyHash: hex, actorAuthUserId: uuid.optional() }).strict(), z.object({ touch: touchSchema, created: z.boolean(), availability, conflictPreserved: z.boolean().optional() }).strict().refine((v) => v.touch.subjectKeyHash === input.subjectKeyHash && (!v.created || v.availability === "ready") && (!v.created || v.conflictPreserved !== true))),
     bind: (input) => execute("bind", input, actorSchema.extend({ touchId: uuid, subjectKeyHash: hex }).strict(), bindingResultSchema.refine((v) => v.binding === null || v.binding.accountKey === `auth:${input.actorAuthUserId}`)),
     getBinding: (input) => execute("getBinding", input, actorSchema, bindingResultSchema.refine((v) => v.binding === null || v.binding.accountKey === `auth:${input.actorAuthUserId}`)),
+    bindingAt: (input) => execute(
+      "bindingAt",
+      input,
+      actorSchema.extend({ occurredAt: timestamp }).strict(),
+      bindingAtResultSchema
+        .refine((v) => v.binding === null || v.binding.accountKey === `auth:${input.actorAuthUserId}`)
+        .refine((v) => v.binding === null || Date.parse(v.binding.effectiveAt ?? "") <= Date.parse(input.occurredAt)),
+    ),
     transferBinding: ({ adminAuthUserId, ...input }) => execute(
       "transferBinding",
       { actorAuthUserId: adminAuthUserId, ...input },
@@ -201,7 +216,7 @@ export function createSupabaseReferralV1Store(rpc: ReferralV1RpcClient): Referra
     attributionForTouch: (input) => execute(
       "attributionForTouch",
       input,
-      z.object({ touchId: uuid, subjectKeyHash: hex }).strict(),
+      z.object({ touchId: uuid, subjectKeyHash: hex, actorAuthUserId: uuid.optional() }).strict(),
       // An eligible answer must name the partner it is eligible for. A true
       // with a null partner would be an attribution to nobody.
       z.object({ partnerId: uuid.nullable(), eligible: z.boolean() }).strict()

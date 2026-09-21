@@ -49,6 +49,8 @@ export async function startReferralRehearsalDatabase(options: {
   includeLineageSources?: boolean;
   /** Explicit old-candidate adoption branch used only by the database tests. */
   legacyBindingFixture?: boolean;
+  /** Base-only downgrade fixture. Normal rehearsal applies the final touch capability. */
+  includeTouchAttribution?: boolean;
   /** Used by preview socket fences: called only after this owned server starts. */
   onPortReady?: (port: number) => void;
 } = {}): Promise<ReferralRehearsalDatabase> {
@@ -114,6 +116,9 @@ export async function startReferralRehearsalDatabase(options: {
     }
     await sql(read("supabase/candidates/20260904_research_partner_referral_v1.sql"));
     await sql(read("supabase/candidates/20260904_research_partner_referral_v1_lineage.sql"));
+    if (options.includeTouchAttribution !== false) {
+      await sql(read("supabase/candidates/20260914_research_referral_v1_touch_attribution.sql"));
+    }
     if (options.includeLineageSources !== false) {
       await sql(referralRehearsalTableDDL(read("supabase/migrations/20260815150000_research_assisted_order_bridge.sql"), "research_assisted_order_requests"));
       await sql(referralRehearsalTableDDL(read("supabase/research-orders.sql"), "research_orders"));

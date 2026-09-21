@@ -242,11 +242,17 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
           // supply one: the service ignores any body-carried value outright.
           // Awaited because the partner behind the cookie is re-read from the
           // durable authority, not taken from the cookie itself.
+          const resolvedViewer = await viewer(request);
           const affiliateAttributionRef = attribution
-            ? await attribution.resolve(request.headers.cookie)
+            ? await attribution.resolve({
+                cookieHeader: request.headers.cookie,
+                actorAuthUserId: resolvedViewer.actorType === "member"
+                  ? resolvedViewer.authUserId ?? null
+                  : null,
+              })
             : null;
           const receipt = await service.submit(
-            await viewer(request),
+            resolvedViewer,
             request.body as AssistedOrderSubmitInput,
             affiliateAttributionRef,
           );

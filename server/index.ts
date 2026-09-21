@@ -944,6 +944,7 @@ async function composeAssistedOrderBridge(): Promise<
       if (!member) return null;
       return {
         id: member.id,
+        authUserId: member.auth_user_id,
         email: member.email ?? null,
         // The SAME derivation the v2 catalog doors price through, from the
         // SAME member row this resolver authenticated. Never browser input.

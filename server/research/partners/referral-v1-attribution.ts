@@ -39,10 +39,29 @@ export type ReferralAttributionDeps = Readonly<{
  */
 export function createReferralV1AttributionResolver(deps: ReferralAttributionDeps) {
   return {
-    async resolve(cookieHeader: string | undefined): Promise<string | null> {
+    async resolve(input: Readonly<{
+      cookieHeader: string | undefined;
+      actorAuthUserId: string | null;
+    }>): Promise<string | null> {
       if (!deps.enabled) return null;
-      if (!referralSecretReady(deps.secret)) return null;
       const now = (deps.now ?? Date.now)();
+      const { cookieHeader, actorAuthUserId } = input;
+
+      // Authenticated ownership is the durable first-valid account binding.
+      // It works cross-device and deliberately ignores any conflicting cookie:
+      // a later browser touch cannot replace the account's canonical winner.
+      if (actorAuthUserId) {
+        const binding = await deps.store.bindingAt({
+          actorAuthUserId,
+          occurredAt: new Date(now).toISOString(),
+        });
+        if (!binding.ok || binding.value.availability !== "ready" || !binding.value.binding) return null;
+        return binding.value.binding.partnerId;
+      }
+
+      // A guest has no account binding. Their sealed touch remains provisional
+      // and must be bound/revalidated if they later authenticate.
+      if (!referralSecretReady(deps.secret)) return null;
 
       // The visitor cookie is what binds the capture claim to this browser. A
       // claim lifted from somewhere else has no matching visitor and fails the

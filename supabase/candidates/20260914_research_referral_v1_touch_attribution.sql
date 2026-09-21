@@ -56,10 +56,10 @@ set local statement_timeout = '60s';
 -- Guard: the operation allowlist and the availability helper must already exist.
 do $$
 begin
-  if to_regprocedure('public.research_referral_v1_execute(text,jsonb)') is null then
+  if pg_catalog.to_regprocedure('public.research_referral_v1_execute(text,jsonb)') is null then
     raise exception 'research_referral_v1_execute is absent; apply 20260904_research_partner_referral_v1.sql first';
   end if;
-  if to_regprocedure('public.research_referral_v1_availability(uuid,uuid)') is null then
+  if pg_catalog.to_regprocedure('public.research_referral_v1_availability(uuid,uuid)') is null then
     raise exception 'research_referral_v1_availability is absent; apply 20260904_research_partner_referral_v1.sql first';
   end if;
 end
@@ -71,7 +71,8 @@ $$;
 -- that can carry this behaviour, and it can be reviewed on its own.
 create or replace function public.research_referral_v1_touch_attribution(
   p_touch_id uuid,
-  p_subject_key_hash text
+  p_subject_key_hash text,
+  p_actor_auth_user_id uuid
 ) returns jsonb
 language plpgsql
 -- The canonical authority probe requires all internal read helpers to retain
@@ -98,12 +99,11 @@ begin
     return jsonb_build_object('partnerId', null, 'eligible', false);
   end if;
 
-  -- Eligibility is re-read, never inherited from the touch. The second
-  -- argument is the acting auth user; there is none here, and self-referral is
-  -- therefore not decidable at this point, which is correct: the anonymous
-  -- submit path has no account to compare against, and the bind path re-checks
-  -- self-referral when the visitor later signs in.
-  v_availability := public.research_referral_v1_availability(t.referral_link_id, null);
+  -- Eligibility is re-read, never inherited from the touch. Authenticated
+  -- submissions carry the canonical verified Auth UUID so self-referral is
+  -- refused before an assisted order records attribution. Guests pass null and
+  -- remain provisional until the later account-binding check.
+  v_availability := public.research_referral_v1_availability(t.referral_link_id, p_actor_auth_user_id);
   if v_availability <> 'ready' or t.referral_expires_at <= clock_timestamp() then
     return jsonb_build_object('partnerId', null, 'eligible', false);
   end if;
@@ -112,7 +112,7 @@ begin
 end
 $$;
 
-revoke all on function public.research_referral_v1_touch_attribution(uuid, text) from public, anon, authenticated, service_role;
+revoke all on function public.research_referral_v1_touch_attribution(uuid, text, uuid) from public, anon, authenticated, service_role;
 
 -- ==========================================================================
 -- Retain the existing dispatcher body and ACLs byte-for-byte apart from the
@@ -121,18 +121,20 @@ revoke all on function public.research_referral_v1_touch_attribution(uuid, text)
 -- ==========================================================================
 do $install$
 declare
-  v_body text := pg_get_functiondef('public.research_referral_v1_execute(text,jsonb)'::regprocedure);
-  v_allowlist text := $old$if jsonb_typeof(p_input)<>'object' or p_operation not in ('issue','revoke','listOwn','resolve','capture','bind','getBinding','transferBinding','listAdmin') then$old$;
-  v_actor text := $old$  if p_operation in ('issue','revoke','listOwn','bind','getBinding','transferBinding','listAdmin') or p_input ? 'actorAuthUserId' then$old$;
+  v_body text := pg_catalog.pg_get_functiondef('public.research_referral_v1_execute(text,jsonb)'::pg_catalog.regprocedure);
+  v_allowlist text := $old$if jsonb_typeof(p_input)<>'object' or p_operation not in ('issue','revoke','listOwn','resolve','capture','bind','getBinding','bindingAt','transferBinding','listAdmin') then$old$;
+  v_actor text := $old$  if p_operation in ('issue','revoke','listOwn','bind','getBinding','bindingAt','transferBinding','listAdmin') or p_input ? 'actorAuthUserId' then$old$;
   v_branch text := $new$  if p_operation='attributionForTouch' then
     if jsonb_typeof(p_input) is distinct from 'object'
-      or (p_input - 'touchId' - 'subjectKeyHash') <> '{}'::jsonb
+      or (p_input - 'touchId' - 'subjectKeyHash' - 'actorAuthUserId') <> '{}'::jsonb
       or coalesce(p_input->>'touchId','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'
-      or coalesce(p_input->>'subjectKeyHash','') !~ '^[a-f0-9]{64}$' then
+      or coalesce(p_input->>'subjectKeyHash','') !~ '^[a-f0-9]{64}$'
+      or (p_input ? 'actorAuthUserId' and coalesce(p_input->>'actorAuthUserId','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$') then
       return jsonb_build_object('ok',false,'reason','invalid_input');
     end if;
     return jsonb_build_object('ok',true,'value',
-      public.research_referral_v1_touch_attribution((p_input->>'touchId')::uuid,p_input->>'subjectKeyHash'));
+      public.research_referral_v1_touch_attribution((p_input->>'touchId')::uuid,p_input->>'subjectKeyHash',
+        case when p_input ? 'actorAuthUserId' then (p_input->>'actorAuthUserId')::uuid else null end));
   end if;
 $new$;
 begin
@@ -142,7 +144,7 @@ begin
     raise exception 'referral dispatcher drift or replay; review predecessor before applying';
   end if;
   v_body := replace(v_body,v_allowlist,
-    $new$if jsonb_typeof(p_input)<>'object' or p_operation not in ('issue','revoke','listOwn','resolve','capture','bind','getBinding','transferBinding','listAdmin','attributionForTouch') then$new$);
+    $new$if jsonb_typeof(p_input)<>'object' or p_operation not in ('issue','revoke','listOwn','resolve','capture','bind','getBinding','bindingAt','transferBinding','listAdmin','attributionForTouch') then$new$);
   v_body := replace(v_body,v_actor,v_branch || v_actor);
   execute v_body;
 end
@@ -153,25 +155,31 @@ $install$;
 do $postcheck$
 declare
   v_input jsonb := jsonb_build_object('touchId','00000000-0000-4000-8000-000000000000','subjectKeyHash',repeat('a',64));
+  v_transfer_input jsonb := jsonb_build_object(
+    'actorAuthUserId','00000000-0000-4000-8000-000000000001','accountAuthUserId','00000000-0000-4000-8000-000000000002',
+    'expectedRevisionId','00000000-0000-4000-8000-000000000003','targetLinkId','00000000-0000-4000-8000-000000000004',
+    'idempotencyKey','postcheck_probe_01','reasonCode','compliance_action','authorizationReferenceHash',repeat('0',64));
 begin
   if public.research_referral_v1_authority()
-    <> '{"ok":true,"value":{"schemaVersion":"gen2_referral_v1_20260904"}}'::jsonb then
+    <> '{"ok":true,"value":{"schemaVersion":"gen2_referral_v1_transfer_touch_20260921"}}'::jsonb then
     raise exception 'referral authority postcheck failed';
   end if;
   if public.research_referral_v1_execute('attributionForTouch',v_input)
     <> '{"ok":true,"value":{"partnerId":null,"eligible":false}}'::jsonb
     or public.research_referral_v1_execute('attributionForTouch','{"touchId":"not-a-uuid","subjectKeyHash":"short"}')
     <> '{"ok":false,"reason":"invalid_input"}'::jsonb
-    or public.research_referral_v1_execute('attributionForTouch',v_input || '{"actorAuthUserId":"00000000-0000-4000-8000-000000000000"}')
-    <> '{"ok":false,"reason":"invalid_input"}'::jsonb then
+    or public.research_referral_v1_execute('attributionForTouch',v_input || '{"partnerId":"00000000-0000-4000-8000-000000000000"}')
+    <> '{"ok":false,"reason":"invalid_input"}'::jsonb
+    or public.research_referral_v1_execute('transferBinding',v_transfer_input)
+    <> '{"ok":false,"reason":"not_eligible"}'::jsonb then
     raise exception 'referral touch attribution postcheck failed';
   end if;
-  if has_function_privilege('anon','public.research_referral_v1_execute(text,jsonb)','execute')
-    or has_function_privilege('authenticated','public.research_referral_v1_execute(text,jsonb)','execute')
-    or not has_function_privilege('service_role','public.research_referral_v1_execute(text,jsonb)','execute')
-    or has_function_privilege('anon','public.research_referral_v1_touch_attribution(uuid,text)','execute')
-    or has_function_privilege('authenticated','public.research_referral_v1_touch_attribution(uuid,text)','execute')
-    or has_function_privilege('service_role','public.research_referral_v1_touch_attribution(uuid,text)','execute') then
+  if pg_catalog.has_function_privilege('anon','public.research_referral_v1_execute(text,jsonb)','execute')
+    or pg_catalog.has_function_privilege('authenticated','public.research_referral_v1_execute(text,jsonb)','execute')
+    or not pg_catalog.has_function_privilege('service_role','public.research_referral_v1_execute(text,jsonb)','execute')
+    or pg_catalog.has_function_privilege('anon','public.research_referral_v1_touch_attribution(uuid,text,uuid)','execute')
+    or pg_catalog.has_function_privilege('authenticated','public.research_referral_v1_touch_attribution(uuid,text,uuid)','execute')
+    or pg_catalog.has_function_privilege('service_role','public.research_referral_v1_touch_attribution(uuid,text,uuid)','execute') then
     raise exception 'referral touch attribution privilege boundary failed';
   end if;
 end
