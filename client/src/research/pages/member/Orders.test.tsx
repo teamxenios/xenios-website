@@ -19,6 +19,13 @@ const response = (body: unknown, status = 200, type = "application/json") => new
   status, headers: { "content-type": type },
 });
 const listed = (orders: unknown = [order()]) => response({ ok: true, orders });
+const assistedRequest = () => ({
+  kind: "assisted_request", requestId: "11111111-1111-4111-8111-111111111111",
+  publicReference: "XRR-20260921-ABCDEF1234", status: "submitted",
+  createdAt: "2026-09-21T12:00:00Z", updatedAt: "2026-09-21T12:00:00Z",
+  estimatedTotalCents: null, currency: "USD", trackingReference: null,
+  lines: [{ productName: "Synthetic requested material", specification: null, quantity: 1, lineEstimateCents: null }],
+});
 const enabled = () => response({ ok: true, capabilities: { product_commerce: { enabled: true } } });
 const disabled = () => response({ ok: true, capabilities: {} });
 function deferred<T>() {
@@ -147,6 +154,49 @@ describe("member order history uses the current canonical account", () => {
 });
 
 describe("truthful order-source and failure presentation", () => {
+  it("renders XRR requests separately from paid-order rows and keeps nullable estimates", async () => {
+    serve(() => response({ ok: true, orders: [order()], requests: [assistedRequest()], requestsSource: { connected: true, complete: true } }));
+    await render();
+    const requests = host.querySelector('[data-testid="assisted-request-history"]')!;
+    expect(requests.textContent).toContain("Assisted request");
+    expect(requests.textContent).toContain("Request status: submitted");
+    expect(requests.textContent).toContain("Estimate: Price on request");
+    expect(requests.textContent).not.toContain("$0.00");
+    expect(requests.querySelector("a")?.getAttribute("href")).toBe("/research/early-access/order-request/XRR-20260921-ABCDEF1234");
+    expect(requests.querySelector("a")?.className).toContain("min-h-11");
+    expect(host.querySelector("table")?.textContent).toContain("ord-a");
+    expect(host.querySelector("table")?.textContent).not.toContain("XRR-");
+    expect(host.querySelector('a[aria-label="View record ord-a"]')?.className).toContain("min-h-11");
+  });
+  it("does not hide known request history when new commerce is disabled", async () => {
+    serve(() => response({ ok: true, orders: [], requests: [{ ...assistedRequest(), estimatedTotalCents: 0 }], requestsSource: { connected: true, complete: true } }), disabled);
+    await render();
+    expect(text()).toContain("XRR-20260921-ABCDEF1234");
+    expect(host.querySelector('[data-testid="assisted-request-estimate"]')?.textContent).toBe("Estimate: $0.00");
+  });
+  it.each([undefined, { connected: false, complete: false }])("keeps missing/unavailable XRR history separate from order-source emptiness (%j)", async (requestsSource) => {
+    serve(() => response({ ok: true, orders: [], requests: requestsSource ? [] : undefined, requestsSource }));
+    await render();
+    expect(text()).toContain("Assisted request history is unavailable.");
+    expect(text()).not.toContain("No assisted order requests were returned");
+  });
+  it("reports XRR empty only for an explicit connected complete request read", async () => {
+    serve(() => response({ ok: true, orders: [], requests: [], requestsSource: { connected: true, complete: true } }));
+    await render(); expect(text()).toContain("No assisted order requests were returned for this account.");
+  });
+  it("refuses cross-lineage request rows without hiding verified orders", async () => {
+    serve(() => response({ ok: true, orders: [order()], requests: [{ ...assistedRequest(), kind: "order" }], requestsSource: { connected: true, complete: true } }));
+    await render(); expect(text()).toContain("ord-a"); expect(text()).not.toContain("XRR-20260921-ABCDEF1234");
+    expect(text()).toContain("Assisted request history is unavailable.");
+  });
+  it("clears A's requests on an account change and ignores A's late response", async () => {
+    const pending = deferred<Response>(); serve(() => pending.promise); await render();
+    serve(() => response({ ok: true, orders: [], requests: [], requestsSource: { connected: true, complete: true } }));
+    session.token = "synthetic-customer-b"; await render();
+    await act(async () => pending.resolve(response({ ok: true, orders: [], requests: [assistedRequest()], requestsSource: { connected: true, complete: true } })));
+    expect(text()).not.toContain("XRR-20260921-ABCDEF1234");
+    expect(text()).toContain("No assisted order requests were returned for this account.");
+  });
   it.each([undefined, "unavailable"])("does not turn unknown shipment completeness into no shipments (%s)", async (source) => {
     serve(() => listed([{ ...order(), shipmentsSource: source }])); await render();
     expect(text()).toContain("Shipment details unavailable"); expect(text()).not.toContain("No shipments yet");

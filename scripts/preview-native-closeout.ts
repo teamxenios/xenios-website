@@ -17,12 +17,15 @@ export const FIXTURE = Object.freeze({
   password: "native-preview-password", adminEmail: "admin@preview.invalid",
   memberEmail: "member@preview.invalid", otherEmail: "other@preview.invalid",
   questionId: "question-preview-one", orderId: "order-preview-one",
+  memberId: "11111111-1111-4111-8111-111111111111",
+  requestReference: "XRR-20260921-ABCDEF1234",
+  shippedRequestReference: "XRR-20260921-ABCDEF5678",
 });
 const STAMP = "2026-09-14T12:00:00.000Z";
 const PERSONAS = [
-  { email: FIXTURE.adminEmail, token: "native-preview-admin", id: "preview-auth-admin", member: "preview-member-admin" },
-  { email: FIXTURE.memberEmail, token: "native-preview-member", id: "preview-auth-member", member: "preview-member-one" },
-  { email: FIXTURE.otherEmail, token: "native-preview-other", id: "preview-auth-other", member: "preview-member-other" },
+  { email: FIXTURE.adminEmail, token: "native-preview-admin", id: "preview-auth-admin", member: "55555555-5555-4555-8555-555555555555" },
+  { email: FIXTURE.memberEmail, token: "native-preview-member", id: "preview-auth-member", member: FIXTURE.memberId },
+  { email: FIXTURE.otherEmail, token: "native-preview-other", id: "preview-auth-other", member: "44444444-4444-4444-8444-444444444444" },
 ];
 
 export async function buildNativeCloseoutPreview(port: number, distDir?: string) {
@@ -61,10 +64,15 @@ export async function buildNativeCloseoutPreview(port: number, distDir?: string)
   } as typeof originalConnect;
 
   const [{ requireSupabaseAdmin }, { requireActiveMember, requireMember }, { registerQuestionsApi },
-    { registerCommerceApi }, { createOrderService }, { DisabledPaymentProvider }, { createInMemoryAdminQueuesStore }] = await Promise.all([
+    { registerCommerceApi }, { createOrderService }, { DisabledPaymentProvider }, { createInMemoryAdminQueuesStore },
+    { createAssistedMemberHistoryReader, withAssistedOrderRequestHistory }, { getSupabaseAdmin },
+    { registerCustomerAccountApi }, { buildProductionCustomerAccountPorts }, { createCommerceOrdersPort }] = await Promise.all([
     import("../server/routes"), import("../server/research/member-auth"), import("../server/research/questions"),
     import("../server/research/commerce/routes"), import("../server/research/commerce/orders"),
     import("../server/research/providers/payment"), import("../server/research/commerce/persistence/admin-queues-store"),
+    import("../server/research/assisted-order/member-order-history"), import("../server/supabase"),
+    import("../server/research/customer-account/routes"), import("../server/research/customer-account/production"),
+    import("../server/research/customer-account/orders-projection"),
   ]);
   const app = express();
   app.use(express.json({ limit: "64kb" }));
@@ -77,7 +85,8 @@ export async function buildNativeCloseoutPreview(port: number, distDir?: string)
   const members = PERSONAS.map((p) => ({ id: p.member, auth_user_id: p.id, email: p.email, first_name: "Preview", status: "active", application_id: `application-${p.member}`, created_at: STAMP }));
   let questionsUnavailable = false;
   let ordersUnavailable = false;
-  const questions: Record<string, unknown>[] = [{ id: FIXTURE.questionId, member_id: "preview-member-one", category: "general", status: "pending", source: "web", body_text: "Synthetic QA question: where can I find my order tracking?", answer_text: null, answered_at: null, answered_by: null, rating: null, follow_up_of_question_id: null, sla_target_at: null, created_at: STAMP, updated_at: STAMP }];
+  let requestsUnavailable = false;
+  const questions: Record<string, unknown>[] = [{ id: FIXTURE.questionId, member_id: FIXTURE.memberId, category: "general", status: "pending", source: "web", body_text: "Synthetic QA question: where can I find my order tracking?", answer_text: null, answered_at: null, answered_by: null, rating: null, follow_up_of_question_id: null, sla_target_at: null, created_at: STAMP, updated_at: STAMP }];
   const notifications: string[] = [];
   app.get("/api/config", (_req, res) => res.json({ metaPixelId: null, turnstileSiteKey: null, calendlyUrl: null, supabaseUrl: `${origin}/preview-backend`, supabaseAnonKey: "native-preview-anon" }));
   app.post("/preview-backend/auth/v1/token", (req, res) => {
@@ -93,6 +102,22 @@ export async function buildNativeCloseoutPreview(port: number, distDir?: string)
   });
   app.post("/preview-backend/auth/v1/logout", (req, res) => { activeTokens.delete(bearer(req)); res.status(204).end(); });
   app.get("/preview-backend/auth/v1/admin/users", (req, res) => bearer(req) === "native-preview-service" ? res.json({ users: [], aud: "authenticated", next_page: null }) : res.status(403).json({ message: "Forbidden" }));
+  // Synthetic database facts enter through the REAL strict RPC reader. This is
+  // not evidence that a managed function exists or that any request was paid.
+  app.post("/preview-backend/rest/v1/rpc/research_assisted_order_member_history", (req, res) => {
+    if (bearer(req) !== "native-preview-service") return res.status(403).json({ message: "Forbidden" });
+    if (requestsUnavailable) return res.status(503).json({ message: "Synthetic request source unavailable" });
+    const memberId = req.body.p_member_id;
+    const requests = memberId === FIXTURE.memberId ? [
+      { actorMemberId: memberId, kind: "assisted_request", requestId: "22222222-2222-4222-8222-222222222222",
+        publicReference: FIXTURE.requestReference, status: "submitted", createdAt: STAMP, updatedAt: STAMP,
+        estimatedTotalCents: null, currency: "USD", lines: [{ productName: "Synthetic unpriced request", specification: null, quantity: 1, lineEstimateCents: null }], trackingReference: null },
+      { actorMemberId: memberId, kind: "assisted_request", requestId: "33333333-3333-4333-8333-333333333333",
+        publicReference: FIXTURE.shippedRequestReference, status: "shipped", createdAt: STAMP, updatedAt: STAMP,
+        estimatedTotalCents: 25000, currency: "USD", lines: [{ productName: "Synthetic shipped request", specification: null, quantity: 1, lineEstimateCents: 25000 }], trackingReference: "SYNTHETIC-OPAQUE-TRACKING" },
+    ] : [];
+    return res.json({ schemaVersion: "assisted_member_history_v1", memberId, complete: true, requests });
+  });
   // The real SDK queries this local-only table adapter. Filtering and guarded
   // PATCH are applied, including member ownership and prior status predicates.
   app.all("/preview-backend/rest/v1/:table", (req, res) => {
@@ -114,7 +139,7 @@ export async function buildNativeCloseoutPreview(port: number, distDir?: string)
     return res.json(selected);
   });
   const order: OrderRecord = {
-    orderId: FIXTURE.orderId, memberId: "preview-member-one", state: "payment_captured",
+    orderId: FIXTURE.orderId, memberId: FIXTURE.memberId, state: "payment_captured",
     lines: [{ sku: "PREVIEW-ONLY", displayName: "Synthetic QA product", quantity: 2, lineTotalCents: 19800 }],
     totals: { subtotalCents: 19800, shippingCents: 1295, storeCreditAppliedCents: 0, totalCents: 21095 },
     providerReference: "synthetic-seeded-payment-not-real", capturedAmountCents: 21095, refundedCents: 0,
@@ -131,13 +156,22 @@ export async function buildNativeCloseoutPreview(port: number, distDir?: string)
     findByIdempotencyKey: async (id, key) => [...orders.values()].find((row) => row.memberId === id && row.lastIdempotencyKey === key) ?? null,
   };
   const service = createOrderService({ repository, payment: new DisabledPaymentProvider(), commerceEnabled: true, durablePaymentExecutionAvailable: false });
+  const memberHistory = withAssistedOrderRequestHistory({
+    ...service,
+    historySources: { commerce: { connected: true, complete: true },
+      xea: { connected: false, complete: false }, xec: { connected: false, complete: false },
+      xrr: { connected: false, complete: false } },
+  }, createAssistedMemberHistoryReader(getSupabaseAdmin()));
   app.get("/api/admin/me", requireSupabaseAdmin, (_req, res) => res.json({ success: true, email: FIXTURE.adminEmail }));
   app.get("/api/research/me", (_req, res) => res.json({ ok: true, authenticated: true }));
   app.get("/api/research/member/me", requireActiveMember, (req, res) => res.json({ ok: true, member: { firstName: "Preview", status: "active", applicationStatus: "approved", id: (req as express.Request & { researchMember: { id: string } }).researchMember.id } }));
   app.get("/api/research/catalog", requireActiveMember, (_req, res) => res.json({ products: [], commerce: { research: false, consumer: false }, email: "research@preview.invalid" }));
+  app.get("/api/research/capabilities", requireMember, (_req, res) => res.json({ ok: true, capabilities: { product_commerce: { enabled: false }, questions: { enabled: true } } }));
+  app.get("/api/research/partner/me", requireMember, (_req, res) => res.status(404).json({ ok: false, code: "partner_not_found" }));
   app.get("/__native_preview", (_req, res) => res.json({ kind: "native-closeout-synthetic", scope: "LOCAL_SYNTHETIC_ONLY", externalMutations: 0, blockedExternalRequests, notificationIntents: notifications.length }));
   app.post("/__native_preview/questions-source", requireSupabaseAdmin, (req, res) => { questionsUnavailable = req.body.available !== true; res.json({ ok: true }); });
   app.post("/__native_preview/orders-source", requireSupabaseAdmin, (req, res) => { ordersUnavailable = req.body.available !== true; res.json({ ok: true }); });
+  app.post("/__native_preview/requests-source", requireSupabaseAdmin, (req, res) => { requestsUnavailable = req.body.available !== true; res.json({ ok: true }); });
   // Only these workflow doors may reach production registrars. No checkout,
   // refund, capture, authorization, generic table write or provider webhook.
   app.use("/api", (req, res, next) => {
@@ -145,13 +179,14 @@ export async function buildNativeCloseoutPreview(port: number, distDir?: string)
     if (/^GET \/(?:admin\/)?research\/(?:questions|orders)(?:\/[A-Za-z0-9-]+)?$/.test(key)
       || /^POST \/admin\/research\/questions\/[A-Za-z0-9-]+\/answer$/.test(key)
       || /^POST \/admin\/research\/orders\/[A-Za-z0-9-]+\/(?:processing|fulfilled|shipments)$/.test(key)
-      || key === "GET /admin/research/commerce/queues") return next();
+      || key === "GET /admin/research/commerce/queues"
+      || key === "GET /research/customer-account/orders") return next();
     return res.status(404).json({ code: "native_preview_route_not_admitted" });
   });
   registerQuestionsApi(app, { clock: { now: () => new Date("2026-09-21T12:00:00Z") }, notifier: { notify: async (input) => { notifications.push(input.eventType); return true; } } });
   // Other injected surfaces are unreachable through the closed wall above.
   const deps = {
-    orders: service,
+    orders: memberHistory,
     ordersAdmin: {
       roster: () => service.adminRoster(), detail: (id: string) => service.adminDetail(id),
       beginProcessing: (id: string, _actor: string, now: Date) => service.beginProcessing(id, "admin", now),
@@ -161,6 +196,10 @@ export async function buildNativeCloseoutPreview(port: number, distDir?: string)
     adminQueues: createInMemoryAdminQueuesStore(), now: () => new Date("2026-09-21T12:00:00Z"),
   } as unknown as CommerceDependencies;
   registerCommerceApi(app, deps, { requireAdmin: requireSupabaseAdmin, requireActiveMember, requireMember });
+  registerCustomerAccountApi(app, buildProductionCustomerAccountPorts(
+    async (memberKey) => members.find((row) => row.id === memberKey) ?? null,
+    { orders: createCommerceOrdersPort(memberHistory) },
+  ), { requireMember, requireActiveMember });
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   const distribution = path.resolve(distDir ?? path.join(root, "dist"));
   const provenanceFile = path.join(distribution, "evidence-provenance.json");

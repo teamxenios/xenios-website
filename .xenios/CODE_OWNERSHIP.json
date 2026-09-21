@@ -1475,6 +1475,10 @@
         "server/research/resource-access-wall.test.ts",
         "docs/revenue-launch/20260907/**",
         "client/src/research/ui/kit.tsx",
+        "client/src/research/ui/shells.tsx",
+        "client/src/research/ui/admin-shell.test.tsx",
+        "client/src/research/pages/adminx/MemberAccessDiagnosisPanel.tsx",
+        "client/src/research/pages/adminx/MemberAccessDiagnosisPanel.test.tsx",
         "supabase/candidates/20260906120000_research_resource_library.precheck.sql",
         "supabase/candidates/20260906120000_research_resource_library.postcheck.sql",
         "supabase/candidates/20260906120000_research_resource_library.rollback.md",
@@ -1854,6 +1858,7 @@
         "server/research/commerce/**",
         "client/src/research/pages/adminx/OrdersAdmin*",
         "client/src/research/pages/adminx/OrderAdminDetail*",
+        "client/src/research/ui/kit.tsx",
         "client/src/research/pages/adminx/QuestionsAdmin*",
         "client/src/research/adapters/admin*",
         "client/src/research/lib/api.ts",
@@ -1862,7 +1867,15 @@
         "client/src/research/pages/member/Orders*",
         "client/src/research/account-portal/**",
         "client/src/research/pages/AssistedOrderStatusPage*",
+        "client/src/research/assisted-order/api*",
+        "client/src/research/assisted-order/AssistedOrderStatusPage*",
+        "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+        "client/src/research/assisted-order/SecureDocumentUpload.tsx",
         "shared/research/assisted-order/member-history.ts",
+        "shared/research/assisted-order/contract.ts",
+        "server/research/assisted-order/supabase-repository.ts",
+        "server/research/assisted-order/memory-repository.ts",
+        "server/research/assisted-order/member-history-status.test.ts",
         "shared/research/customer-account/contract.ts",
         "server/research/assisted-order/member-order-history*",
         "server/research/customer-account/orders-projection*",
@@ -1907,7 +1920,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-21T14:38:50.597Z",
-      "heartbeatAt": "2026-09-21T15:02:06.199Z"
+      "heartbeatAt": "2026-09-21T15:32:39.939Z"
     }
   ],
   "rules": [

@@ -30,6 +30,7 @@ import type {
 import { orderHistoryAvailability } from "@shared/research/customer-account/contract";
 import { ORDER_STATES, type OrderState } from "@shared/research/commerce";
 import type { CustomerOrdersPort } from "./ports";
+import type { AssistedOrderHistoryRequest } from "@shared/research/assisted-order/member-history";
 
 /**
  * The commerce lane types its wire dependencies as unknown on purpose, so
@@ -46,6 +47,7 @@ export type CommerceOrdersSource = Readonly<{
    */
   listForMemberWithHistory?(memberId: string): Promise<Readonly<{
     rows: unknown[];
+    requests?: readonly AssistedOrderHistoryRequest[];
     historySources: Readonly<Record<OrderHistorySourceKey, OrderSourceStateDto>>;
   }>>;
   getForMember(memberId: string, orderId: string): Promise<unknown>;
@@ -450,6 +452,7 @@ export function createCommerceOrdersPort(
           };
       if (!Array.isArray(read.rows)) throw new Error("order_history_rows_unavailable");
       const rows = read.rows;
+      const requests = "requests" in read && Array.isArray(read.requests) ? read.requests : [];
       const prepared = rows.map((row) => ({ row, summary: asSummary(row) }));
       const declaredSources = normalizedHistorySources(read.historySources);
       const referenceCounts = new Map<string, number>();
@@ -522,10 +525,11 @@ export function createCommerceOrdersPort(
         : declaredSources;
       const history = historyOf(
         historySources,
-        research.length,
+        research.length + requests.length,
       );
       return {
         research,
+        requests,
         carePharmacy: [],
         carePharmacyHistory: {
           availability: "unavailable",

@@ -28,7 +28,7 @@ afterEach(() => {
 });
 
 describe("ResearchAdminShell grouped navigation", () => {
-  it("groups every existing admin destination instead of rendering a horizontal link strip", () => {
+  it("groups supported admin destinations instead of advertising unmounted read surfaces", () => {
     const view = renderAt("/admin/research");
     const nav = view.host.querySelector('nav[aria-label="Research operations areas"]');
 
@@ -44,12 +44,16 @@ describe("ResearchAdminShell grouped navigation", () => {
     // Fulfillment's screen belongs to the independent engine that is superseded
     // and unmounted for this release. A nav entry to a surface with no backend
     // teaches an operator to distrust the whole nav.
-    expect(nav?.querySelectorAll("a")).toHaveLength(27);
-    for (const dead of ["/admin/research/fulfillment", "/admin/research/guides", "/admin/research/audit"]) {
+    // 2026-09-21: Plans and Privacy also have no mounted GET endpoint.
+    expect(nav?.querySelectorAll("a")).toHaveLength(25);
+    for (const dead of ["/admin/research/fulfillment", "/admin/research/guides", "/admin/research/audit", "/admin/research/plans", "/admin/research/privacy"]) {
       expect(
         Array.from(nav?.querySelectorAll("a") ?? []).filter((link) => link.getAttribute("href") === dead),
       ).toEqual([]);
     }
+    expect(nav?.querySelector('a[href="/admin/research/members"]')?.textContent).toBe("Account inspection");
+    expect(nav?.querySelector('a[href="/admin/research/partners"]')?.textContent).toBe("Referral integrity");
+    expect(nav?.querySelector('a[href="/admin/research/blueprint-review"]')?.textContent).toBe("Plan review");
     expect(
       Array.from(nav?.querySelectorAll("a") ?? []).filter((link) =>
         link.getAttribute("href") === "/admin/research/command-center",

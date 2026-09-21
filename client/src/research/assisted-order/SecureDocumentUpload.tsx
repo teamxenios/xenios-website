@@ -18,6 +18,7 @@ export function SecureDocumentUpload(props: {
   requestId: string;
   publicReference: string;
   statusToken?: string;
+  memberToken?: string | null;
   onUploaded: () => void;
 }) {
   const [documentType, setDocumentType] =
@@ -51,12 +52,14 @@ export function SecureDocumentUpload(props: {
           sizeBytes: file.size,
         },
         props.statusToken,
+        props.memberToken,
       );
       await uploadAssistedOrderDocument(
         ticket,
         file,
         { publicReference: props.publicReference },
         props.statusToken,
+        props.memberToken,
       );
       setMessage({ tone: "success", text: "Document received securely." });
       setFile(null);

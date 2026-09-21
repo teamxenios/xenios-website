@@ -138,6 +138,7 @@ import {
   resolvePartnerPortalPort,
 } from "./research/partners/portal-production";
 import { buildAssistedOrderProduction } from "./research/assisted-order/production-deps";
+import { createAssistedMemberHistoryReader, withAssistedOrderRequestHistory } from "./research/assisted-order/member-order-history";
 import { assistedOrderAuditLogLine } from "./research/assisted-order/audit-observability";
 import { resolveAssistedOrderAuditAuthority } from "./research/assisted-order/audit-store";
 import {
@@ -170,7 +171,6 @@ import {
 import { registerCustomerAccountApi } from "./research/customer-account/routes";
 import { buildProductionCustomerAccountPorts } from "./research/customer-account/production";
 import { createCommerceOrdersPort } from "./research/customer-account/orders-projection";
-import { orderHistoryAvailability } from "@shared/research/customer-account/contract";
 import { createSupabaseMemberQuestionsSupportSource } from "./research/customer-account/production-support";
 import { createSupabasePlanDocumentsSource } from "./research/customer-account/production-documents";
 import { createCatalogPriorityPort } from "./research/product-activation/catalog-projection";
@@ -511,6 +511,13 @@ const commerceDependencies = buildCommerceDependencies(
   earlyAccessPersistence.orderHistory === undefined
     ? undefined
     : { earlyAccessOrderHistory: earlyAccessPersistence.orderHistory },
+);
+// Historical requests remain readable independently of purchasing capability.
+// One canonical M71 reader; no admin scan, email join or second order store.
+// The additive candidate RPC proves its own availability on every read.
+commerceDependencies.orders = withAssistedOrderRequestHistory(
+  commerceDependencies.orders,
+  createAssistedMemberHistoryReader(supabaseConfigured() ? getSupabaseAdmin() : null),
 );
 registerMemberPlatformApi(app, {
   ...defaultMemberPlatformDeps(),
@@ -1157,8 +1164,8 @@ registerFoundingActivationApi(app, { state: "disabled" }, {
 // Graduated sources: orders reshape the ONE decorated member orders service
 // composed above (commerce + Early Access history — no second order system);
 // support rides research_member_questions; documents ride
-// research_plan_documents (no production byte reader exists yet, so download
-// paths ship empty and stay honestly unavailable); catalog-priority serves
+// research_plan_documents with the shared private byte reader configured above;
+// unavailable storage remains an explicit failure; catalog-priority serves
 // the audited activation-overlay projection, statuses only, and sits behind
 // requireActiveMember (P1-2, 2026-08-27): global availability-pipeline data
 // carries the member-catalog door, while the seven per-member paths stay on
@@ -1176,33 +1183,9 @@ registerCustomerAccountApi(
       return error ? null : ((data as MemberRow | null) ?? null);
     },
     {
-      // P1-B: the projection DECLARES per-source availability, computed from
-      // the same wiring facts used above — never assumed complete. XRR has no
-      // list-by-member read anywhere yet, so availability is at best
-      // "partial" in every deployment today; the discriminant itself is
-      // derived by the shared helper so it can never disagree with the
-      // per-source truth.
-      orders: createCommerceOrdersPort(
-        commerceDependencies.orders,
-        (() => {
-          const sources = {
-            commerce: {
-              connected: process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true",
-              complete: process.env.NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED === "true",
-            },
-            xea: {
-              connected: earlyAccessPersistence.orderHistory !== undefined,
-              complete: earlyAccessPersistence.orderHistory !== undefined,
-            },
-            xec: {
-              connected: process.env.RESEARCH_EARLY_ACCESS_CART_HISTORY_ENABLED === "true",
-              complete: process.env.RESEARCH_EARLY_ACCESS_CART_HISTORY_ENABLED === "true",
-            },
-            xrr: { connected: false, complete: false },
-          };
-          return { availability: orderHistoryAvailability(sources), sources };
-        })(),
-      ),
+      // Source availability is measured by the exact decorated reader; config
+      // flags cannot upgrade missing SQL or a bounded partial read.
+      orders: createCommerceOrdersPort(commerceDependencies.orders),
       support: createSupabaseMemberQuestionsSupportSource(),
       documents: createSupabasePlanDocumentsSource(),
       catalogPriority: createCatalogPriorityPort(process.cwd()),

@@ -7,6 +7,8 @@ import {
 import { ResearchStatusBadge } from "../../ui/kit";
 import { ACCOUNT_PORTAL_ROUTES } from "../../lib/routes";
 import { accountOrderDetailPath } from "../routes";
+import { AssistedRequests } from "../../member-orders/AssistedRequests";
+import { readAssistedRequestHistory } from "../../member-orders/request-read";
 import {
   authoritativeCarePharmacyCount,
   authoritativeOrderCount,
@@ -23,9 +25,11 @@ import {
 } from "../format";
 
 export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
+  const requests = readAssistedRequestHistory(data.requests, data.history.sources.xrr);
   const authoritativeResearchCount = authoritativeOrderCount(data.history);
   const rowProjectionComplete = authoritativeResearchCount !== null
-    && authoritativeResearchCount === data.research.length;
+    && authoritativeResearchCount === data.research.length + (requests?.requests.length ?? 0)
+    && (data.requests === undefined || requests !== null);
   const researchCountLabel = authoritativeResearchCount !== null
     ? `${authoritativeResearchCount} ${authoritativeResearchCount === 1 ? "record" : "records"}`
     : data.history.availability === "partial"
@@ -49,7 +53,7 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
     .filter((key) => !data.history.sources[key].connected || !data.history.sources[key].complete)
     .map((key) => ORDER_HISTORY_SOURCE_LABELS[key]);
   return (
-    <div className="account-grid">
+    <div className="account-grid min-w-0 grid-cols-1">
       <section className="account-surface" aria-labelledby="research-orders-heading">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -110,6 +114,8 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
               );
             })}
           </div>
+        ) : requests?.requests.length ? (
+          <p className="body-s text-ink-2 mt-6">No order records were returned; assisted requests are listed separately below.</p>
         ) : (
           <div className="account-empty mt-6">
             {authoritativeResearchCount === 0
@@ -120,6 +126,8 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
           </div>
         )}
       </section>
+
+      <AssistedRequests history={requests} />
 
       <section className="account-surface account-surface-warm" aria-labelledby="care-fulfillment-heading">
         <div className="flex flex-wrap items-start justify-between gap-4">

@@ -162,6 +162,11 @@ function decodeReceipt(value: unknown, rawStatusToken: string): AssistedOrderRec
 
 function decodeStatusView(value: unknown): AssistedOrderStatusView {
   const item = assertObject(value, "status view");
+  const trackingReference = nullableText(item, "trackingReference");
+  if (trackingReference !== null && (trackingReference.length === 0 || trackingReference.length > 500
+    || trackingReference.trim() !== trackingReference || /[\u0000-\u001f\u007f]/u.test(trackingReference))) {
+    throw new Error("Invalid tracking reference.");
+  }
   return Object.freeze({
     requestId: text(item, "requestId"),
     publicReference: text(item, "publicReference"),
@@ -174,6 +179,7 @@ function decodeStatusView(value: unknown): AssistedOrderStatusView {
     timeline: decodeTimeline(item.timeline),
     documents: decodeDocuments(item.documents),
     actionRequired: nullableText(item, "actionRequired"),
+    ...(item.trackingReference === undefined ? {} : { trackingReference }),
   });
 }
 
@@ -300,16 +306,25 @@ export class SupabaseAssistedOrderRepository implements AssistedOrderRepository 
   public async getStatus(
     authorization: AssistedOrderStatusAuthorization,
   ): Promise<AssistedOrderStatusView | null> {
-    const response = await this.client.rpc("research_assisted_order_status", {
+    const args = {
       p_public_reference: authorization.publicReference,
       p_member_id: authorization.memberId,
       p_early_access_session_hash: authorization.earlyAccessSessionHash,
       p_status_token_hash: authorization.statusTokenHash,
-    });
+    };
+    // Never fall back to the old projection: the candidate also fixes its
+    // nullable-boolean authorization guard. Without the candidate, even a
+    // missing-function error must remain unavailable rather than expose the
+    // legacy NULL authorization defect reproduced in the disposable SQL test.
+    const response = await this.client.rpc("research_assisted_order_customer_status", args);
     if (response.error) {
-      fail(response, "research_assisted_order_status");
+      fail(response, "research_assisted_order_customer_status");
     }
-    return response.data === null ? null : decodeStatusView(response.data);
+    if (response.data === null) return null;
+    if (!Object.prototype.hasOwnProperty.call(response.data, "trackingReference")) throw new Error("Status projection unavailable.");
+    const view = decodeStatusView(response.data);
+    if (view.publicReference !== authorization.publicReference) throw new Error("Status reference mismatch.");
+    return view;
   }
 
   public async getAdmin(requestId: string): Promise<AssistedOrderAdminDetail | null> {

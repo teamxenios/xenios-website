@@ -173,8 +173,9 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     label: "Members",
     items: [
       { href: ADMIN_ROUTES.applications, label: "Applications" },
-      { href: ADMIN_ROUTES.members, label: "Members" },
-      { href: ADMIN_ROUTES.plans, label: "Plans" },
+      { href: ADMIN_ROUTES.members, label: "Account inspection" },
+      // The plan roster has no mounted GET endpoint. Account inspection and
+      // human plan review below have separate, working authorities.
       { href: ADMIN_ROUTES.blueprintReview, label: "Plan review" },
       { href: ADMIN_ROUTES.questions, label: "Questions" },
     ],
@@ -209,7 +210,7 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     label: "Content & partners",
     items: [
       // Guides has no admin read behind it in this deployment.
-      { href: ADMIN_ROUTES.partners, label: "Partners" },
+      { href: ADMIN_ROUTES.partners, label: "Referral integrity" },
       { href: ADMIN_ROUTES.referralLifecycle, label: "Referral lifecycle" },
       { href: ADMIN_ROUTES.resourceHub, label: "Resource Hub" },
     ],
@@ -218,7 +219,8 @@ const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
     label: "Governance",
     items: [
       { href: ADMIN_ROUTES.security, label: "Security" },
-      { href: ADMIN_ROUTES.privacy, label: "Privacy" },
+      // The privacy queue has no mounted read; do not advertise it as an
+      // operational destination. Its stable deep route remains fail-closed.
       { href: ADMIN_ROUTES.capabilities, label: "Capabilities" },
       { href: ADMIN_ROUTES.requiredInputs, label: "Required inputs" },
       // Audit has no admin read behind it in this deployment. The release and

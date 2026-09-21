@@ -67,6 +67,12 @@ describe("native operations responsive layout choices", () => {
       expect(grid.classList.contains("grid-cols-1")).toBe(true);
     }
     for (const section of view.querySelectorAll("section")) expect(section.classList.contains("min-w-0")).toBe(true);
+    const scrollRegions = view.querySelectorAll('.ra-table-wrap[role="region"][tabindex="0"]');
+    expect(scrollRegions).toHaveLength(2);
+    for (const region of scrollRegions) {
+      expect(region.getAttribute("aria-label")).toBeTruthy();
+      expect(region.classList.contains("focus-visible:outline-2")).toBe(true);
+    }
     const inputs = view.querySelectorAll("input");
     expect(inputs).toHaveLength(3);
     for (const input of inputs) {

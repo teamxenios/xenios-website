@@ -176,6 +176,7 @@ function OrderView({
         <h2 className="body-l font-700 mb-3">Items</h2>
         <ResearchDataTable<AdminOrderDetailDto["lines"][number]>
           caption="Order items"
+          keyboardScroll
           columns={[
             { key: "name", header: "Item", render: (line) => line.displayName },
             { key: "sku", header: "SKU", render: (line) => <span className="mono-label">{line.sku}</span> },
@@ -202,6 +203,7 @@ function OrderView({
         ) : (
           <ResearchDataTable<AdminOrderDetailDto["shipments"][number]>
             caption="Shipments"
+            keyboardScroll
             columns={[
               { key: "owner", header: "Fulfilled by", render: (s) => s.owner },
               { key: "status", header: "Status", render: (s) => stateLabel(s.status) },

@@ -123,7 +123,10 @@ describe("read-only exact-email account diagnosis", () => {
       ["Recorded partner role", "member_referral"], ["Recorded partner state", "certification_pending"],
       ["Organization ID", ids.organization], ["Recorded organization roles", "organization_member"],
     ]));
-    expect(links()).toEqual([appHref, memberHref, appHref]);
+    expect(links()).toEqual([appHref, appHref]);
+    expect(facts()).toContainEqual(["Customer record ID", ids.member]);
+    expect(host.textContent).toContain("Customer record details are unavailable.");
+    expect(host.textContent).not.toContain("Open customer record");
     expect(host.textContent).toContain(consequence);
     expect(host.textContent).toContain("Notification classification: application_email");
     expect(host.textContent).toContain("opening a record sends no email");
@@ -294,7 +297,7 @@ describe("read-only exact-email account diagnosis", () => {
     expect(host.textContent).toContain("reported link is outside the allowed local record paths");
   });
 
-  it("allows only the known application entry plus exact returned record links, without email or action execution", async () => {
+  it("preserves application links and next-step facts but suppresses unavailable customer detail even when the server supplies it", async () => {
     api.inspect.mockResolvedValue(success(fixture({ nextActions: [
       { label: "Application entry", href: "/research/apply", consequence: "Server-provided application consequence.", notification: "application_email" },
       { label: "Resolve binding", href: null, consequence: "Server-provided manual review consequence.", notification: "none" },
@@ -302,7 +305,10 @@ describe("read-only exact-email account diagnosis", () => {
       { label: "Review customer", href: memberHref, consequence: "Open the exact customer record.", notification: "none" },
     ] })));
     await render(); await inspect();
-    expect(links()).toEqual([appHref, memberHref, "/research/apply", memberHref]);
+    expect(links()).toEqual([appHref, "/research/apply"]);
+    expect(links()).not.toContain(memberHref);
+    expect(host.textContent).toContain("Customer record details are unavailable; no navigation is enabled for this step.");
+    expect(host.textContent).toContain("Open the exact customer record.");
     expect(host.textContent).toContain("No navigation link was provided for this step");
     expect(host.textContent).toContain("notification workflow is not available; no delivery is confirmed");
     expect(api.inspect).toHaveBeenCalledTimes(1);

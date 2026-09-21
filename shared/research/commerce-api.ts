@@ -353,7 +353,11 @@ export interface AdminShipmentTrackingInput {
 }
 
 export type CheckoutResponse = Api<{ order: OrderSummaryDto }>;
-export type OrdersResponse = Api<{ orders: OrderSummaryDto[] }>;
+export type OrdersResponse = Api<{
+  orders: OrderSummaryDto[];
+  requests?: readonly import("./assisted-order/member-history").AssistedOrderHistoryRequest[];
+  requestsSource?: import("./customer-account/contract").OrderSourceStateDto;
+}>;
 export type OrderDetailResponse = Api<{ order: OrderDetailDto }>;
 
 export interface SubscriptionDto {

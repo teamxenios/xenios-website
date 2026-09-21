@@ -78,7 +78,10 @@ const focusWalk = async () => {
 async function capture(name, path, config, expectedText, expectedHttpFailures = []) {
   await page.setViewport({ width: config.width, height: config.width < 769 ? 844 : 900, deviceScaleFactor: config.deviceScaleFactor, mobile: config.width < 769 });
   await page.setMedia({ reducedMotion: config.variant === "reduced-motion", forcedColors: config.variant === "forced-colors" });
-  if (path) await page.navigate(origin + path);
+  // The real PostgREST SDK retries synthetic 503 reads (1+2+4 seconds).
+  // Leave time for that bounded retry plus the unchanged quiet/paint checks;
+  // exact URL/status/count/body-hash assertions below remain mandatory.
+  if (path) await page.navigate(origin + path, { maxSettleMs: expectedHttpFailures.length ? 15000 : 8000 });
   await waitFor(`document.body.innerText.toLowerCase().includes(${JSON.stringify(expectedText.toLowerCase())})`, name);
   await page.evaluate("(() => { sessionStorage.setItem('xenios-pwa-hint-dismissed','1'); document.querySelector('[aria-label=\"Dismiss\"]')?.click(); return true; })()");
   await page.settle({ quietMs: 300, maxSettleMs: 4000 });
@@ -165,6 +168,39 @@ try {
   await waitFor("Boolean(document.querySelector('#adminx-email'))", "UI logout");
   assert.equal((await api("/api/admin/research/orders", admin)).status, 401);
   journey.push({ step: "source-unavailable-not-empty-and-ui-logout", passed: true });
+  await page.navigate(origin + "/research/sign-in?returnTo=%2Fresearch%2Fmember%2Forders");
+  await waitFor("Boolean(document.querySelector('#ms-email'))", "member sign-in");
+  await fill("#ms-email", "member@preview.invalid"); await fill("#ms-password", "native-preview-password");
+  await click('[data-testid="button-member-signin"]');
+  await waitFor("Boolean(document.querySelector('[data-testid=\"assisted-request-history\"]'))", "member request history");
+  const partnerMissing = await api("/api/research/partner/me", member);
+  assert.equal(partnerMissing.status, 404);
+  const accountExpectedFailures = [{ url: origin + "/api/research/partner/me", method: "GET", status: 404,
+    responseBodySha256: partnerMissing.bodySha256, resourceType: "Fetch", count: 1, consoleCount: 1,
+    consoleText: "Failed to load resource: the server responded with a status of 404 (Not Found)" }];
+  for (const configuration of configurations) {
+    await capture("member-request-history", "/research/member/orders", configuration, "Synthetic unpriced request");
+    assert.equal(await page.evaluate("document.querySelectorAll('[data-testid=\"assisted-request-record\"]').length"), 2);
+    assert.ok(await page.evaluate("document.querySelector('[data-testid=\"assisted-request-estimate\"]').innerText.includes('Price on request')"));
+    await capture("account-request-history", "/research/account/orders", configuration, "SYNTHETIC-OPAQUE-TRACKING", accountExpectedFailures);
+    assert.equal(await page.evaluate("document.querySelectorAll('[data-testid=\"assisted-request-record\"]').length"), 2);
+  }
+  const nativeRequests = (await api("/api/research/orders", member)).body;
+  const accountRequests = (await api("/api/research/customer-account/orders", member)).body.data;
+  assert.deepEqual(nativeRequests.requests, accountRequests.requests);
+  assert.deepEqual((await api("/api/research/orders", other)).body.requests, []);
+  assert.deepEqual((await api("/api/research/customer-account/orders", other)).body.data.requests, []);
+  const freshAdmin = await loginApi("admin@preview.invalid");
+  await api("/__native_preview/requests-source", freshAdmin, "POST", { available: false });
+  await capture("member-requests-unavailable", "/research/member/orders", config, "Assisted request history is unavailable.");
+  assert.equal(await page.evaluate("document.querySelectorAll('[data-testid=\"assisted-request-record\"]').length"), 0);
+  await capture("account-requests-unavailable", "/research/account/orders", config, "Assisted request history is unavailable.", accountExpectedFailures);
+  assert.equal(await page.evaluate("document.querySelectorAll('[data-testid=\"assisted-request-record\"]').length"), 0);
+  await api("/__native_preview/requests-source", freshAdmin, "POST", { available: true });
+  await page.evaluate("(() => { const button=[...document.querySelectorAll('button')].find(el=>el.textContent.trim()==='Sign out'); if(!button) throw new Error('member logout missing'); button.click(); return true; })()");
+  await waitFor("!document.querySelector('[data-testid=\"assisted-request-history\"]')", "member logout removes history");
+  assert.equal((await api("/api/research/orders", member)).status, 401);
+  journey.push({ step: "member-and-account-request-history-price-tracking-isolation-unavailable-logout", passed: true });
 } catch (error) {
   failure = error?.stack ?? String(error); console.error(failure);
   if (page) {

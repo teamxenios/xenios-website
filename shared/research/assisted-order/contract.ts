@@ -263,6 +263,8 @@ export type AssistedOrderStatusView = Readonly<{
   timeline: readonly AssistedOrderStatusEventView[];
   documents: readonly AssistedOrderDocumentView[];
   actionRequired: string | null;
+  /** Legacy producers may omit it; the new production reader requires this narrow field. Never a carrier URL. */
+  trackingReference?: string | null;
 }>;
 
 export type AssistedOrderCatalogItem = Readonly<{

@@ -454,8 +454,8 @@
       "branch": "codex/xenios-native-closeout-20260921",
       "state": "active",
       "startedAt": "2026-09-21T14:38:16.503Z",
-      "heartbeatAt": "2026-09-21T15:02:06.199Z",
-      "note": "Exact candidate authenticated browser audit found scoped admin target/overflow defects; fixing before final closeout. Managed qualification and production effects remain unauthorized."
+      "heartbeatAt": "2026-09-21T15:32:39.939Z",
+      "note": "XRR history and SQL authorization patch frozen, local PostgreSQL 13/13 and focused tests pass. Final navigation trim and exact candidate gates in progress; no production effects."
     }
   ],
   "updatedAt": "2026-09-08T16:02:50.489072Z"

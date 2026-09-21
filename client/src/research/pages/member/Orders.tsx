@@ -18,6 +18,8 @@ import {
   ResearchStatusBadge,
 } from "../../ui/kit";
 import { memberShipmentSummary, readMemberOrders } from "../../member-orders/read";
+import { AssistedRequests } from "../../member-orders/AssistedRequests";
+import { readMemberOrderRequests, type AssistedRequestHistory } from "../../member-orders/request-read";
 import { formatCents, formatDate, orderStateMeta } from "./commerce-presentation";
 
 // ---------------------------------------------------------------------------
@@ -31,7 +33,7 @@ import { formatCents, formatDate, orderStateMeta } from "./commerce-presentation
 
 type PageState =
   | { phase: "loading" }
-  | { phase: "ok"; orders: OrderSummaryDto[] }
+  | { phase: "ok"; orders: OrderSummaryDto[]; requests: AssistedRequestHistory | null }
   | { phase: "denied"; code: string }
   | { phase: "unavailable" }
   | { phase: "unauthorized" }
@@ -67,7 +69,7 @@ function OwnedOrders({ token }: { token: string }) {
       switch (result.kind) {
       case "ok": {
         const orders = readMemberOrders(result.data);
-        setState(orders === null ? { phase: "error" } : { phase: "ok", orders });
+        setState(orders === null ? { phase: "error" } : { phase: "ok", orders, requests: readMemberOrderRequests(result.data) });
         return;
       }
       case "denied":
@@ -119,7 +121,7 @@ function OwnedOrders({ token }: { token: string }) {
       header: "Record",
       render: (order: OrderSummaryDto) => (
         <div>
-          <Link href={orderHref(order.orderId)} className="body-s font-700" aria-label={`View ${order.recordKind ?? "record"} ${order.orderId}`}>
+          <Link href={orderHref(order.orderId)} className="body-s font-700 inline-flex min-h-11 min-w-11 items-center" style={{ overflowWrap: "anywhere" }} aria-label={`View ${order.recordKind ?? "record"} ${order.orderId}`}>
             {order.orderId}
           </Link>
           <span className="body-xs text-ink-2 block">{order.recordKind === "request" ? "Request record"
@@ -164,7 +166,7 @@ function OwnedOrders({ token }: { token: string }) {
             : "ok";
 
   return (
-    <>
+    <div className="min-w-0">
       <div className="mb-4 flex justify-end">
         <button type="button" className="btn btn-ghost" onClick={() => void load()}>Refresh order history</button>
       </div>
@@ -204,6 +206,7 @@ function OwnedOrders({ token }: { token: string }) {
             )}
             <ResearchDataTable
               caption="Your orders: id, date placed, status, shipments, and total"
+              keyboardScroll
               columns={columns}
               rows={orders}
               rowKey={(order) => order.orderId}
@@ -218,7 +221,8 @@ function OwnedOrders({ token }: { token: string }) {
             </div>
           </>
         )}
+        {state.phase === "ok" ? <AssistedRequests history={state.requests} /> : null}
       </ResearchRouteBoundary>
-    </>
+    </div>
   );
 }

@@ -15,17 +15,18 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 // A server href is still navigation data, not permission to open an arbitrary
 // URL. Only an exact observed record identity or the known application entry
 // can become a link here. Never normalize queries, escapes or outside URLs.
-function recordHref(kind: "application" | "member", id: string, href: string): string | null {
+function applicationRecordHref(id: string, href: string): string | null {
   if (!UUID.test(id)) return null;
-  const expected = (kind === "application" ? ADMIN_ROUTES.application : ADMIN_ROUTES.member).replace(":id", id);
+  const expected = ADMIN_ROUTES.application.replace(":id", id);
   return href === expected ? expected : null;
 }
 
 function nextActionHref(href: string | null, inspection: ApprovedUserAccess): string | null {
   if (href === ACCESS_ROUTES.apply) return href;
   if (href === null) return null;
-  return inspection.applications.some((item) => recordHref("application", item.id, item.href) === href)
-    || inspection.members.some((item) => recordHref("member", item.id, item.href) === href) ? href : null;
+  // Customer detail has no mounted GET endpoint. An observed identity and
+  // server href do not make that destination operational.
+  return inspection.applications.some((item) => applicationRecordHref(item.id, item.href) === href) ? href : null;
 }
 
 function Fact({ label, children }: { label: string; children: ReactNode }) {
@@ -91,7 +92,7 @@ function InspectionResult({ inspection, id, token, diagnosisPending, approvalPen
                   <Fact label="Application ID">{application.id}</Fact>
                   <Fact label="Recorded application status">{application.status}</Fact>
                 </dl>
-                <RecordLink href={recordHref("application", application.id, application.href)} disabled={diagnosisPending}>Open application record</RecordLink>
+                <RecordLink href={applicationRecordHref(application.id, application.href)} disabled={diagnosisPending}>Open application record</RecordLink>
               </li>
             ))}
           </ul>
@@ -110,7 +111,7 @@ function InspectionResult({ inspection, id, token, diagnosisPending, approvalPen
                   <Fact label="Bound authentication account ID">{member.authUserId ?? "No authentication account bound"}</Fact>
                   <Fact label="Identity binding">{member.binding}</Fact>
                 </dl>
-                <RecordLink href={recordHref("member", member.id, member.href)} disabled={diagnosisPending}>Open customer record</RecordLink>
+                <p className="body-s text-ink-mute mt-3">Customer record details are unavailable. The inspected identity facts remain visible here.</p>
               </li>
             ))}
           </ul>
@@ -191,13 +192,17 @@ function InspectionResult({ inspection, id, token, diagnosisPending, approvalPen
           <ol className="grid min-w-0 gap-3 mt-3">
             {inspection.nextActions.map((action, index) => {
               const href = nextActionHref(action.href, inspection);
+              const unavailableCustomerRecord = inspection.members.some((member) => UUID.test(member.id)
+                && action.href === ADMIN_ROUTES.member.replace(":id", member.id));
               return (
                 <li key={index} className="card min-w-0">
                   <h4 className="body-s font-700">{action.label}</h4>
                   <p className="body-s whitespace-pre-wrap mt-2">{action.consequence}</p>
                   <p className="body-s text-ink-mute mt-2">Notification classification: {action.notification}</p>
                   <p className="body-s mt-2">{NOTIFICATION_WARNING[action.notification]}</p>
-                  {href ? <RecordLink href={href} disabled={diagnosisPending}>Open related page</RecordLink> : action.href !== null ? (
+                  {href ? <RecordLink href={href} disabled={diagnosisPending}>Open related page</RecordLink> : unavailableCustomerRecord ? (
+                    <p className="body-s text-ink-mute mt-3">Customer record details are unavailable; no navigation is enabled for this step.</p>
+                  ) : action.href !== null ? (
                     <p className="body-s text-ink-mute mt-3">The reported link is outside the allowed local record paths and is not enabled.</p>
                   ) : <p className="body-s text-ink-mute mt-3">No navigation link was provided for this step.</p>}
                 </li>

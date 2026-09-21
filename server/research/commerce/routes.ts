@@ -41,6 +41,7 @@ import type {
 } from "@shared/research/commerce-api";
 import { PARTNER_ROLES, type PartnerRole, type PartnerState } from "@shared/research/distribution";
 import type { WebhookResult } from "./webhooks";
+import type { CommerceOrdersSource } from "../customer-account/orders-projection";
 
 // ---------------------------------------------------------------------------
 // Injected surface
@@ -69,10 +70,7 @@ export interface CommerceDependencies {
   checkout: {
     submit(memberId: string, req: CheckoutRequest, asOf: Date): Promise<unknown>;
   };
-  orders: {
-    listForMember(memberId: string): Promise<unknown[]>;
-    getForMember(memberId: string, orderId: string): Promise<unknown | null>;
-  };
+  orders: CommerceOrdersSource;
   subscriptions: {
     listForMember(memberId: string): Promise<unknown[]>;
     apply(memberId: string, subscriptionId: string, req: SubscriptionActionRequest, asOf: Date): Promise<unknown>;
@@ -524,7 +522,12 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
     "/api/research/orders",
     active,
     withSubject(async (memberId, _req, res) => {
-      ok(res, { orders: await deps.orders.listForMember(memberId) });
+      if (deps.orders.listForMemberWithHistory) {
+        const read = await deps.orders.listForMemberWithHistory(memberId);
+        ok(res, { orders: read.rows, requests: read.requests ?? [], requestsSource: read.historySources.xrr });
+      } else {
+        ok(res, { orders: await deps.orders.listForMember(memberId), requests: [], requestsSource: { connected: false, complete: false } });
+      }
     }),
   );
 

@@ -22,6 +22,7 @@ export class InMemoryAssistedOrderRepository implements AssistedOrderRepository 
   private readonly requests = new Map<string, AssistedOrderCreateRecord>();
   private readonly tokens = new Map<string, string>();
   private readonly statuses = new Map<string, AssistedOrderStatus>();
+  private readonly trackingReferences = new Map<string, string>();
   private readonly events = new Map<string, AssistedOrderStatusEventView[]>();
   private readonly documents = new Map<string, AssistedOrderDocumentRecord>();
 
@@ -159,6 +160,9 @@ export class InMemoryAssistedOrderRepository implements AssistedOrderRepository 
       throw new Error("concurrent status update");
     }
     this.statuses.set(input.requestId, input.toStatus);
+    if (input.toStatus === "shipped" && typeof input.evidence.trackingId === "string") {
+      this.trackingReferences.set(input.requestId, input.evidence.trackingId.trim());
+    }
     const timeline = this.events.get(input.requestId) ?? [];
     timeline.push(
       Object.freeze({
@@ -224,6 +228,7 @@ export class InMemoryAssistedOrderRepository implements AssistedOrderRepository 
       timeline,
       documents: this.documentViews(record.requestId),
       actionRequired: null,
+      trackingReference: this.trackingReferences.get(record.requestId) ?? null,
     });
   }
 

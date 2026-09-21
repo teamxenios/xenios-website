@@ -346,6 +346,8 @@ export type CarePharmacyHistoryAvailabilityDto =
 
 export type CustomerOrdersDto = Readonly<{
   research: readonly OrderSummaryDto[];
+  /** Legacy absence is unavailable; mounted XRR readers always include this collection. */
+  requests?: readonly import("../assisted-order/member-history").AssistedOrderHistoryRequest[];
   carePharmacy: readonly CareFulfillmentDto[];
   carePharmacyHistory: CarePharmacyHistoryAvailabilityDto;
   history: OrderHistoryAvailabilityDto;

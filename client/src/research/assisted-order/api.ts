@@ -20,6 +20,12 @@ import {
 export const ASSISTED_ORDER_STATUS_TOKEN_HEADER =
   "x-xenios-order-status-token";
 
+function requestOwnerHeaders(statusToken?: string, memberToken?: string | null): Record<string, string> {
+  // Never combine a signed-in principal with a prior visitor's guest capability.
+  return memberToken ? { Authorization: `Bearer ${memberToken}` }
+    : statusToken ? { [ASSISTED_ORDER_STATUS_TOKEN_HEADER]: statusToken } : {};
+}
+
 export class AssistedOrderApiError extends Error {
   public constructor(
     public readonly status: number,
@@ -170,14 +176,19 @@ export function submitAssistedOrder(
 export function loadAssistedOrderStatus(
   publicReference: string,
   statusToken?: string,
+  memberToken?: string | null,
 ): Promise<AssistedOrderStatusView> {
   return request(
     `/api/research/early-access/assisted-orders/${encodeURIComponent(
       publicReference,
     )}`,
-    statusToken
-      ? { headers: { [ASSISTED_ORDER_STATUS_TOKEN_HEADER]: statusToken } }
-      : {},
+    {
+      cache: "no-store",
+      redirect: "error",
+      // A signed-in owner read must not inherit another visitor's stored
+      // guest status capability. Neither credential ever enters the URL.
+      headers: requestOwnerHeaders(statusToken, memberToken),
+    },
   );
 }
 
@@ -185,6 +196,7 @@ export function createAssistedOrderUploadTicket(
   requestId: string,
   input: AssistedOrderUploadRequest,
   statusToken?: string,
+  memberToken?: string | null,
 ): Promise<AssistedOrderUploadTicket> {
   return request(
     `/api/research/early-access/assisted-orders/${encodeURIComponent(
@@ -192,10 +204,10 @@ export function createAssistedOrderUploadTicket(
     )}/documents/upload-url`,
     {
       method: "POST",
+      cache: "no-store",
+      redirect: "error",
       body: JSON.stringify(input),
-      ...(statusToken
-        ? { headers: { [ASSISTED_ORDER_STATUS_TOKEN_HEADER]: statusToken } }
-        : {}),
+      headers: requestOwnerHeaders(statusToken, memberToken),
     },
   );
 }
@@ -205,13 +217,19 @@ export async function uploadAssistedOrderDocument(
   file: File,
   completion: AssistedOrderUploadCompleteInput,
   statusToken?: string,
+  memberToken?: string | null,
 ): Promise<void> {
+  const storageHeaders = new Headers(ticket.requiredHeaders);
+  // A presigned storage capability is distinct from Research identity, even
+  // if a malformed ticket accidentally includes an application credential.
+  storageHeaders.delete("Authorization");
+  storageHeaders.delete(ASSISTED_ORDER_STATUS_TOKEN_HEADER);
+  storageHeaders.set("content-type", file.type);
   const response = await fetch(ticket.uploadUrl, {
     method: "PUT",
-    headers: {
-      ...ticket.requiredHeaders,
-      "content-type": file.type,
-    },
+    credentials: "omit",
+    redirect: "error",
+    headers: storageHeaders,
     body: file,
   });
   if (!response.ok) {
@@ -227,10 +245,10 @@ export async function uploadAssistedOrderDocument(
     )}/documents/${encodeURIComponent(ticket.documentId)}/complete`,
     {
       method: "POST",
+      cache: "no-store",
+      redirect: "error",
       body: JSON.stringify(completion),
-      ...(statusToken
-        ? { headers: { [ASSISTED_ORDER_STATUS_TOKEN_HEADER]: statusToken } }
-        : {}),
+      headers: requestOwnerHeaders(statusToken, memberToken),
     },
   );
 }

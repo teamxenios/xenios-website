@@ -285,16 +285,20 @@ export function ResearchDataTable<T>({
   rows,
   rowKey,
   empty,
+  keyboardScroll = false,
 }: {
   caption: string;
   columns: Array<{ key: string; header: string; render: (row: T) => ReactNode }>;
   rows: T[];
   rowKey: (row: T) => string;
   empty?: string;
+  /** Give wide, non-interactive tables an explicitly labelled keyboard scroll region. */
+  keyboardScroll?: boolean;
 }) {
   if (!rows.length) return <ResearchEmptyState title={empty ?? "Nothing here yet."} />;
   return (
-    <div className="ra-table-wrap" data-testid="ra-table">
+    <div className={`ra-table-wrap${keyboardScroll ? " focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ra-focus)]" : ""}`} data-testid="ra-table"
+      role={keyboardScroll ? "region" : undefined} aria-label={keyboardScroll ? caption : undefined} tabIndex={keyboardScroll ? 0 : undefined}>
       <table className="ra-table">
         <caption className="sr-only">{caption}</caption>
         <thead>

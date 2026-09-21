@@ -15,6 +15,8 @@ const api = vi.hoisted(() => ({
   loadAssistedOrderStatus: vi.fn(),
   submitAssistedOrder: vi.fn(),
 }));
+const statusSession = vi.hoisted(() => ({ memberToken: null as string | null, memberChecking: false }));
+vi.mock("../core", () => ({ useResearch: () => statusSession }));
 
 vi.mock("./api", async (importOriginal) => {
   const actual = await importOriginal<typeof import("./api")>();
@@ -238,6 +240,8 @@ function checkAllAcknowledgments() {
 }
 
 beforeEach(() => {
+  statusSession.memberToken = null;
+  statusSession.memberChecking = false;
   sessionStorage.clear();
   window.history.replaceState({}, "", "/research/early-access/order-request");
   api.loadAssistedOrderCatalog.mockReset();
@@ -1000,6 +1004,47 @@ describe("AssistedOrderStatusPage verified identity", () => {
     root = createRoot(host);
     act(() => root!.render(<AssistedOrderStatusPage />));
   }
+
+  it("reads owner-linked requests with the current bearer and renders nullable estimates and opaque tracking", async () => {
+    statusSession.memberToken = "synthetic-member-a";
+    storeAssistedOrderReceipt(receipt);
+    api.loadAssistedOrderStatus.mockResolvedValue({ ...statusView, estimatedTotalCents: null, trackingReference: "OPAQUE-TRACKING-REF" });
+    window.history.replaceState({}, "", `/research/early-access/order-request/${receipt.publicReference}`);
+    renderStatus(); await settle(20);
+    expect(api.loadAssistedOrderStatus).toHaveBeenCalledWith(receipt.publicReference, undefined, "synthetic-member-a");
+    expect(byTestId("assisted-request-status-estimate")?.textContent).toBe("Estimate: Price on request");
+    expect(byTestId("assisted-request-status-tracking")?.textContent).toContain("OPAQUE-TRACKING-REF");
+    expect(host!.querySelector('a[href*="OPAQUE-TRACKING"]')).toBeNull();
+    expect(host!.textContent).not.toContain("$0.00");
+  });
+
+  it("removes A's request during a B identity read and rejects A's late refresh", async () => {
+    statusSession.memberToken = "synthetic-member-a";
+    const a = deferred<AssistedOrderStatusView>();
+    api.loadAssistedOrderStatus.mockReturnValueOnce(a.promise);
+    window.history.replaceState({}, "", `/research/early-access/order-request/${receipt.publicReference}`);
+    renderStatus();
+    statusSession.memberToken = "synthetic-member-b";
+    api.loadAssistedOrderStatus.mockRejectedValueOnce(new AssistedOrderApiError(404, "not_found", "PRIVATE"));
+    act(() => root!.render(<AssistedOrderStatusPage />)); await settle(20);
+    a.resolve(statusView); await settle(20);
+    expect(host!.textContent).not.toContain(receipt.publicReference);
+    expect(host!.textContent).not.toContain("Request received for review.");
+    expect(host!.textContent).toContain("not valid or has expired");
+    expect(api.loadAssistedOrderStatus).toHaveBeenLastCalledWith(receipt.publicReference, undefined, "synthetic-member-b");
+  });
+
+  it("hides ready request details during member verification without making a new read", async () => {
+    statusSession.memberToken = "synthetic-member-a";
+    api.loadAssistedOrderStatus.mockResolvedValue(statusView);
+    window.history.replaceState({}, "", `/research/early-access/order-request/${receipt.publicReference}`);
+    renderStatus(); await settle(20); expect(host!.textContent).toContain(receipt.publicReference);
+    statusSession.memberChecking = true;
+    act(() => root!.render(<AssistedOrderStatusPage />));
+    expect(host!.textContent).not.toContain(receipt.publicReference);
+    expect(api.loadAssistedOrderStatus).toHaveBeenCalledTimes(1);
+    expect(host!.textContent).toContain("Checking request");
+  });
 
   it("does not echo an arbitrary reference before the server verifies it", async () => {
     const pending = deferred<AssistedOrderStatusView>();
