@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-09-21",
+  "scope": "canonical_catalog_plus_2026_09_15_commercial_intake",
+  "declaredLiveProductionVariantCount": 439,
+  "liveProductionCountSource": "production completion sprint prompt; exact 439-row live snapshot not supplied to this lane",
+  "mode": "dry_run_only",
+  "launchMarginFloor": "0.35",
+  "launchMarginFloorEvidence": {
+    "source": "septemberCatalog",
+    "sheet": "Executive Summary",
+    "row": 11,
+    "range": "A11:C11",
+    "metric": "Low margin below 35%",
+    "meaning": "Requires commercial review before activation"
+  },
+  "sourceFiles": {
+    "septemberCatalog": {
+      "filename": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx",
+      "sha256": "4875c2b4cd32bc5ee084255c44ed985d0aa4619bdabf72915692b6ccca2556fc"
+    },
+    "sethPricing": {
+      "filename": "XENIOS_SETH_PRICING_REVIEW_FORM_2026-09-04.xlsx",
+      "sha256": "6839254cc0080435e3886463ae06e60fcbc948125697b700731415bae55bede3"
+    },
+    "financialModel": {
+      "filename": "XENIOS_RESEARCH_MASTER_FINANCIAL_PRODUCT_AFFILIATE_MODEL.xlsx",
+      "sha256": "80fb6e6fb63ae3b72f337f443185b86d1c8e58e04b32baffaba1114b8855cf89"
+    },
+    "vendorRfq": {
+      "filename": "XENIOS_VENDOR_PEPTIDE_SOURCING_RFQ_AND_DEMAND_MASTER_2026-09-15(1).xlsx",
+      "sha256": "aa54c5eb6c4a47170d0cf6a4cde68f1abf3079c84c3d9fcb7fe63ccdcf91264e"
+    }
+  },
+  "canonicalArtifacts": {
+    "catalog": {
+      "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+      "sha256": "cb938e446b1eab03b9e5721437890fd580c67245e9598408cc4356048a8ab59f"
+    },
+    "bindings": {
+      "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+      "sha256": "e49a8d74daed1553e567962c8e6e8d9b1c7029fe3e83ef665c7bafc72242b1f9"
+    }
+  },
+  "classification": {
+    "direct_buy": "Never emitted by this evidence set: no row has a completed supplier response, current inventory/capacity, quality and lot documentation, geography, policy, payment, and downstream order evidence.",
+    "assisted_order": "Exact canonical variant and Product Control binding, explicit RUO Research lane, positive candidate retail, canonical request-access state, and gross margin at or above the configured floor. Price remains a pending candidate, never an active-price assertion.",
+    "care_required": "Existing canonical 503A clinical formulation only. A legacy care_pathway display flag on a shipping or supply row is not sufficient.",
+    "unavailable": "Everything else, including unresolved canonical identity, approval-required state, missing Product Control binding, price/cost gap, sub-floor economics, nonclinical canonical rows absent from current intake, and non-product service rows."
+  },
+  "privacy": {
+    "excludeSupplierIdentity": true,
+    "excludeWholesaleValues": true,
+    "excludeRawNotes": true,
+    "excludeClientDemandCounts": true
+  },
+  "mutation": {
+    "productionWritesAllowed": false,
+    "databaseWritesAllowed": false,
+    "catalogRuntimeWritesAllowed": false,
+    "productControlWritesAllowed": false
+  }
+}

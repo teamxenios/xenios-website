@@ -1,0 +1,2519 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-09-21",
+  "mode": "DRY_RUN",
+  "sourceScope": "canonical_catalog_plus_2026_09_15_commercial_intake",
+  "coverageStatus": "repo_canonical_plus_intake_only_not_full_live_snapshot",
+  "productionCoverageComplete": false,
+  "unreconciledLiveVariantDelta": 19,
+  "externalBlockers": [
+    {
+      "code": "exact_live_variant_snapshot_missing",
+      "declaredLiveVariantCount": 439,
+      "repoCanonicalVariantCount": 420,
+      "unreconciledVariantDelta": 19,
+      "effect": "The 19 unidentified live-only variants cannot be assigned an action. Batches are exact only for the stated repo-canonical-plus-intake union scope and must not be represented as complete live mutation coverage."
+    }
+  ],
+  "conflictEventCount": 310,
+  "affectedUnitCount": 158,
+  "countsByCode": {
+    "below_launch_margin_floor": 26,
+    "canonical_approval_required": 2,
+    "canonical_identity_missing": 71,
+    "identity_or_lane_verification_required": 52,
+    "lane_requires_verification": 49,
+    "negative_gross_margin": 23,
+    "non_product_service_row": 2,
+    "not_in_current_september_intake": 73,
+    "product_control_binding_missing": 1,
+    "retail_amount_not_cent_exact": 5,
+    "retail_price_missing": 2,
+    "wholesale_quote_required": 4
+  },
+  "containsSupplierIdentity": false,
+  "containsWholesaleValues": false,
+  "containsRawNotes": false,
+  "conflicts": [
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "canonical:mov_0c4a5438cc87ab9d85b6",
+      "candidateSku": "EXP-041",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!31",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "canonical:mov_0d00b80820b69cc39796",
+      "candidateSku": "EXP-046",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!110",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "canonical:mov_257330ea83ecbfc45fae",
+      "candidateSku": "EXP-044",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!44",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "canonical:mov_35b19a790d7a247210c9",
+      "candidateSku": "EXP-054",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!49",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "canonical:mov_50c16caf05daa93ef289",
+      "candidateSku": "EXP-056",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!98",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "canonical:mov_95104bb0edee8e97a3a6",
+      "candidateSku": "EXP-057",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!57",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-048",
+      "candidateSku": "EXP-048",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!61",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-051",
+      "candidateSku": "EXP-051",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!96",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-060",
+      "candidateSku": "EXP-060",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!149",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-062",
+      "candidateSku": "EXP-062",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!68",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-063",
+      "candidateSku": "EXP-063",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!174",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-066",
+      "candidateSku": "EXP-066",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!40",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-071",
+      "candidateSku": "EXP-071",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!14",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-073",
+      "candidateSku": "EXP-073",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!175",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-074",
+      "candidateSku": "EXP-074",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!66",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-075",
+      "candidateSku": "EXP-075",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!65",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-076",
+      "candidateSku": "EXP-076",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!53",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-077",
+      "candidateSku": "EXP-077",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!25",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-080",
+      "candidateSku": "EXP-080",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!10",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-081",
+      "candidateSku": "EXP-081",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!119",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-083",
+      "candidateSku": "EXP-083",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!167",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-084",
+      "candidateSku": "EXP-084",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!176",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-088",
+      "candidateSku": "EXP-088",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!170",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-089",
+      "candidateSku": "EXP-089",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!102",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-097",
+      "candidateSku": "EXP-097",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!123",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "below_launch_margin_floor",
+      "severity": "blocking",
+      "unitId": "intake:EXP-099",
+      "candidateSku": "EXP-099",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!100",
+      "remediation": "Obtain explicit commercial approval or revise supported cost/retail evidence."
+    },
+    {
+      "code": "canonical_approval_required",
+      "severity": "blocking",
+      "unitId": "canonical:mov_256cb0423eb6d2a77f65",
+      "candidateSku": "XRUO-037",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!152",
+      "remediation": "Resolve the existing canonical approval gate before activation."
+    },
+    {
+      "code": "canonical_approval_required",
+      "severity": "blocking",
+      "unitId": "canonical:mov_7c55d415a9574e9ebda7",
+      "candidateSku": "XRUO-038",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!137",
+      "remediation": "Resolve the existing canonical approval gate before activation."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-040",
+      "candidateSku": "EXP-040",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!163",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-042",
+      "candidateSku": "EXP-042",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!83",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-043",
+      "candidateSku": "EXP-043",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!84",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-045",
+      "candidateSku": "EXP-045",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!118",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-047",
+      "candidateSku": "EXP-047",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!60",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-048",
+      "candidateSku": "EXP-048",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!61",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-049",
+      "candidateSku": "EXP-049",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!62",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-050",
+      "candidateSku": "EXP-050",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!95",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-051",
+      "candidateSku": "EXP-051",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!96",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-052",
+      "candidateSku": "EXP-052",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!97",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-053",
+      "candidateSku": "EXP-053",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!125",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-055",
+      "candidateSku": "EXP-055",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!133",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-059",
+      "candidateSku": "EXP-059",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!148",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-060",
+      "candidateSku": "EXP-060",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!149",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-061",
+      "candidateSku": "EXP-061",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!158",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-062",
+      "candidateSku": "EXP-062",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!68",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-063",
+      "candidateSku": "EXP-063",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!174",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-064",
+      "candidateSku": "EXP-064",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!173",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-065",
+      "candidateSku": "EXP-065",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!169",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-066",
+      "candidateSku": "EXP-066",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!40",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-067",
+      "candidateSku": "EXP-067",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!41",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-068",
+      "candidateSku": "EXP-068",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!72",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-069",
+      "candidateSku": "EXP-069",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!178",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-070",
+      "candidateSku": "EXP-070",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!26",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-071",
+      "candidateSku": "EXP-071",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!14",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-072",
+      "candidateSku": "EXP-072",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!29",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-073",
+      "candidateSku": "EXP-073",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!175",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-074",
+      "candidateSku": "EXP-074",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!66",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-075",
+      "candidateSku": "EXP-075",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!65",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-076",
+      "candidateSku": "EXP-076",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!53",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-077",
+      "candidateSku": "EXP-077",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!25",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-078",
+      "candidateSku": "EXP-078",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!19",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-079",
+      "candidateSku": "EXP-079",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!30",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-080",
+      "candidateSku": "EXP-080",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!10",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-081",
+      "candidateSku": "EXP-081",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!119",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-082",
+      "candidateSku": "EXP-082",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!7",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-083",
+      "candidateSku": "EXP-083",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!167",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-084",
+      "candidateSku": "EXP-084",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!176",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-085",
+      "candidateSku": "EXP-085",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!108",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-086",
+      "candidateSku": "EXP-086",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!74",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-087",
+      "candidateSku": "EXP-087",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!104",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-088",
+      "candidateSku": "EXP-088",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!170",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-089",
+      "candidateSku": "EXP-089",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!102",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-090",
+      "candidateSku": "EXP-090",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!69",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-091",
+      "candidateSku": "EXP-091",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!55",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-092",
+      "candidateSku": "EXP-092",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!51",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-093",
+      "candidateSku": "EXP-093",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!46",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-094",
+      "candidateSku": "EXP-094",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!47",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-095",
+      "candidateSku": "EXP-095",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!11",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-096",
+      "candidateSku": "EXP-096",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!6",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-097",
+      "candidateSku": "EXP-097",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!123",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-098",
+      "candidateSku": "EXP-098",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!122",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-099",
+      "candidateSku": "EXP-099",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!100",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-100",
+      "candidateSku": "EXP-100",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!99",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-101",
+      "candidateSku": "EXP-101",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!142",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-102",
+      "candidateSku": "EXP-102",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!143",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-103",
+      "candidateSku": "EXP-103",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!144",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-104",
+      "candidateSku": "EXP-104",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!101",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-105",
+      "candidateSku": "EXP-105",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!103",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-106",
+      "candidateSku": "EXP-106",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!52",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-107",
+      "candidateSku": "EXP-107",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!124",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-007",
+      "candidateSku": "XRUO-007",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!34",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-009",
+      "candidateSku": "XRUO-009",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!8",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-010",
+      "candidateSku": "XRUO-010",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!9",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-013",
+      "candidateSku": "XRUO-013",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!17",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-014",
+      "candidateSku": "XRUO-014",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!18",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-024",
+      "candidateSku": "XRUO-024",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!28",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-025",
+      "candidateSku": "XRUO-025",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!12",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-026",
+      "candidateSku": "XRUO-026",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!130",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-035",
+      "candidateSku": "XRUO-035",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!141",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "canonical_identity_missing",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-039",
+      "candidateSku": "XRUO-039",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!22",
+      "remediation": "Create or approve an exact canonical Product Control identity; do not fuzzy-match."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-040",
+      "candidateSku": "EXP-040",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!163",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-042",
+      "candidateSku": "EXP-042",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!83",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-043",
+      "candidateSku": "EXP-043",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!84",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-045",
+      "candidateSku": "EXP-045",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!118",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-047",
+      "candidateSku": "EXP-047",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!60",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-048",
+      "candidateSku": "EXP-048",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!61",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-049",
+      "candidateSku": "EXP-049",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!62",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-050",
+      "candidateSku": "EXP-050",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!95",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-051",
+      "candidateSku": "EXP-051",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!96",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-052",
+      "candidateSku": "EXP-052",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!97",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-053",
+      "candidateSku": "EXP-053",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!125",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-055",
+      "candidateSku": "EXP-055",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!133",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-059",
+      "candidateSku": "EXP-059",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!148",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-060",
+      "candidateSku": "EXP-060",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!149",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-061",
+      "candidateSku": "EXP-061",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!158",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-062",
+      "candidateSku": "EXP-062",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!68",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-063",
+      "candidateSku": "EXP-063",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!174",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-064",
+      "candidateSku": "EXP-064",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!173",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-065",
+      "candidateSku": "EXP-065",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!169",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-066",
+      "candidateSku": "EXP-066",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!40",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-067",
+      "candidateSku": "EXP-067",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!41",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-068",
+      "candidateSku": "EXP-068",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!72",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-070",
+      "candidateSku": "EXP-070",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!26",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-071",
+      "candidateSku": "EXP-071",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!14",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-072",
+      "candidateSku": "EXP-072",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!29",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-073",
+      "candidateSku": "EXP-073",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!175",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-075",
+      "candidateSku": "EXP-075",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!65",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-077",
+      "candidateSku": "EXP-077",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!25",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-078",
+      "candidateSku": "EXP-078",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!19",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-082",
+      "candidateSku": "EXP-082",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!7",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-083",
+      "candidateSku": "EXP-083",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!167",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-084",
+      "candidateSku": "EXP-084",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!176",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-085",
+      "candidateSku": "EXP-085",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!108",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-094",
+      "candidateSku": "EXP-094",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!47",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-096",
+      "candidateSku": "EXP-096",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!6",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-097",
+      "candidateSku": "EXP-097",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!123",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-098",
+      "candidateSku": "EXP-098",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!122",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-099",
+      "candidateSku": "EXP-099",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!100",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-100",
+      "candidateSku": "EXP-100",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!99",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-101",
+      "candidateSku": "EXP-101",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!142",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-102",
+      "candidateSku": "EXP-102",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!143",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-103",
+      "candidateSku": "EXP-103",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!144",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-105",
+      "candidateSku": "EXP-105",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!103",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-106",
+      "candidateSku": "EXP-106",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!52",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-107",
+      "candidateSku": "EXP-107",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!124",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-009",
+      "candidateSku": "XRUO-009",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!8",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-010",
+      "candidateSku": "XRUO-010",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!9",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-013",
+      "candidateSku": "XRUO-013",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!17",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-014",
+      "candidateSku": "XRUO-014",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!18",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-025",
+      "candidateSku": "XRUO-025",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!12",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-035",
+      "candidateSku": "XRUO-035",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!141",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "identity_or_lane_verification_required",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-039",
+      "candidateSku": "XRUO-039",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!22",
+      "remediation": "Confirm exact formulation, unit of sale, and lane."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-040",
+      "candidateSku": "EXP-040",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!163",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-042",
+      "candidateSku": "EXP-042",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!83",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-043",
+      "candidateSku": "EXP-043",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!84",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-045",
+      "candidateSku": "EXP-045",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!118",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-047",
+      "candidateSku": "EXP-047",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!60",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-048",
+      "candidateSku": "EXP-048",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!61",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-049",
+      "candidateSku": "EXP-049",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!62",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-050",
+      "candidateSku": "EXP-050",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!95",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-051",
+      "candidateSku": "EXP-051",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!96",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-052",
+      "candidateSku": "EXP-052",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!97",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-053",
+      "candidateSku": "EXP-053",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!125",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-055",
+      "candidateSku": "EXP-055",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!133",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-059",
+      "candidateSku": "EXP-059",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!148",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-060",
+      "candidateSku": "EXP-060",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!149",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-061",
+      "candidateSku": "EXP-061",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!158",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-062",
+      "candidateSku": "EXP-062",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!68",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-063",
+      "candidateSku": "EXP-063",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!174",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-064",
+      "candidateSku": "EXP-064",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!173",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-065",
+      "candidateSku": "EXP-065",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!169",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-066",
+      "candidateSku": "EXP-066",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!40",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-067",
+      "candidateSku": "EXP-067",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!41",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-068",
+      "candidateSku": "EXP-068",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!72",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-070",
+      "candidateSku": "EXP-070",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!26",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-071",
+      "candidateSku": "EXP-071",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!14",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-072",
+      "candidateSku": "EXP-072",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!29",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-073",
+      "candidateSku": "EXP-073",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!175",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-075",
+      "candidateSku": "EXP-075",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!65",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-077",
+      "candidateSku": "EXP-077",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!25",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-078",
+      "candidateSku": "EXP-078",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!19",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-082",
+      "candidateSku": "EXP-082",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!7",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-083",
+      "candidateSku": "EXP-083",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!167",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-084",
+      "candidateSku": "EXP-084",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!176",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-085",
+      "candidateSku": "EXP-085",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!108",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-094",
+      "candidateSku": "EXP-094",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!47",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-096",
+      "candidateSku": "EXP-096",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!6",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-097",
+      "candidateSku": "EXP-097",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!123",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-098",
+      "candidateSku": "EXP-098",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!122",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-099",
+      "candidateSku": "EXP-099",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!100",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-100",
+      "candidateSku": "EXP-100",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!99",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-101",
+      "candidateSku": "EXP-101",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!142",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-102",
+      "candidateSku": "EXP-102",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!143",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-103",
+      "candidateSku": "EXP-103",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!144",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-105",
+      "candidateSku": "EXP-105",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!103",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-106",
+      "candidateSku": "EXP-106",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!52",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:EXP-107",
+      "candidateSku": "EXP-107",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!124",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-013",
+      "candidateSku": "XRUO-013",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!17",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-025",
+      "candidateSku": "XRUO-025",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!12",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-035",
+      "candidateSku": "XRUO-035",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!141",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "lane_requires_verification",
+      "severity": "blocking",
+      "unitId": "intake:XRUO-039",
+      "candidateSku": "XRUO-039",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!22",
+      "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-040",
+      "candidateSku": "EXP-040",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!163",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-047",
+      "candidateSku": "EXP-047",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!60",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-050",
+      "candidateSku": "EXP-050",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!95",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-059",
+      "candidateSku": "EXP-059",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!148",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-064",
+      "candidateSku": "EXP-064",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!173",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-067",
+      "candidateSku": "EXP-067",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!41",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-070",
+      "candidateSku": "EXP-070",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!26",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-072",
+      "candidateSku": "EXP-072",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!29",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-079",
+      "candidateSku": "EXP-079",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!30",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-086",
+      "candidateSku": "EXP-086",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!74",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-087",
+      "candidateSku": "EXP-087",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!104",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-090",
+      "candidateSku": "EXP-090",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!69",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-091",
+      "candidateSku": "EXP-091",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!55",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-092",
+      "candidateSku": "EXP-092",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!51",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-093",
+      "candidateSku": "EXP-093",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!46",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-094",
+      "candidateSku": "EXP-094",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!47",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-095",
+      "candidateSku": "EXP-095",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!11",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-098",
+      "candidateSku": "EXP-098",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!122",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-100",
+      "candidateSku": "EXP-100",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!99",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-104",
+      "candidateSku": "EXP-104",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!101",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-105",
+      "candidateSku": "EXP-105",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!103",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-106",
+      "candidateSku": "EXP-106",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!52",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "negative_gross_margin",
+      "severity": "blocking",
+      "unitId": "intake:EXP-107",
+      "candidateSku": "EXP-107",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!124",
+      "remediation": "Renegotiate cost or explicitly approve a different retail; do not silently activate the recommendation."
+    },
+    {
+      "code": "non_product_service_row",
+      "severity": "blocking",
+      "unitId": "canonical:mov_512ed6b875c04eee4753",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Model as an order service or included supply, not a standalone sellable product."
+    },
+    {
+      "code": "non_product_service_row",
+      "severity": "blocking",
+      "unitId": "canonical:mov_9b65ad5bb184691e19e0",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Model as an order service or included supply, not a standalone sellable product."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_06849c26f971f74805ef",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_07317a1fe77fe228b793",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_0a8df59fa70328b1c1ca",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_0ba805e868711366428d",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_0f3fa003c76aadef763c",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_11b73649761a6d35f28c",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_120b19d12e869b0070ff",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_13073979f2da65f4e160",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_199a0126b086cc43cb1b",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_1f87878d1e95e525b15d",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_235641a298fed1c2637e",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_257fd9d66f6284e3570e",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_287c60ca423250ef75d6",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_2a06e3a4fa8fb02b64cf",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_2de19f71e09e8bc3febb",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_32c1c33224d5fca42b1e",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_361af70608afc9c98ec0",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_395e7047e013e2074f6a",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_3e4c0914851a77ba8763",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_43ff04d9edfcdb5543a4",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_451f34fca5c1a293b145",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_457168650622c3647dc9",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_4a105b161858064229f3",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_512ed6b875c04eee4753",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_548802074a4f9ca45f5d",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_554ae2758dbe92e4baa6",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_5e74aacac728cfcbd11f",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_64db7bf766cd1d66694d",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_69a9f7466c5385ab9811",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_6f2d07f881d861bf3991",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_7502e2415b8757cad0eb",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_753d3f94385adf791d1e",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_7871c059b8a970a5b3d1",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_7c6e65b041ae3bfe5262",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_80916d9782f415a13ad3",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_8293d0baa21eb4d561f8",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_845dc69ae9dd6cd6ba34",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_8578e13fb8475e39f618",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_862b99ce1c9f144086dd",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_867e32ca427228fdd87e",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_8af22768144442c60424",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_8bec8068d30d6f928040",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_8df703ff84f1bb8e1662",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_8e11e063f79d56a3a946",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_904af0a54faddfe2f21f",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_96f011e65e7b6a72f8c9",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_973154f49c156dcf7a72",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_9813dabbc127f6b382fb",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_9a217007a7fb93111200",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_9b65ad5bb184691e19e0",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_9e34d0c1acde46249621",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_a254cb6fc62c40bf975d",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_a2d32f69681dca2b17fb",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_b303ae9f0574c2d83337",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_b67ab9e8cd671273f3c1",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_b90f51978a7223e9fc58",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_b96d05f393b7e3fb6a3f",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_c58b682a44514760a74f",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_cdfb19499637f274f271",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_ce2fc5bcfb622d8de591",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_d2bd32bf961854a033b1",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_d6a8b2cd129bda39d8fa",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_d91d7248ed06d7280a2d",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_d97f1f887a86b0c31947",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_dbb59b83827a556051da",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_dc26bcbba0510c5bb57b",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_dc6c3bf9bc23dd55adc1",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_dd8bb706cb498b40864d",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_e74adec4c45f9c9db404",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_ea6077e070c07548c709",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_f5d63d95caa3d6d0a7a0",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_fe292b5f03527ec13e5e",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "not_in_current_september_intake",
+      "severity": "blocking",
+      "unitId": "canonical:mov_ffe0eef7766200ac8c53",
+      "candidateSku": null,
+      "sourcePointer": null,
+      "remediation": "Confirm current commercial source and exact identity; absence is not treated as retirement."
+    },
+    {
+      "code": "product_control_binding_missing",
+      "severity": "blocking",
+      "unitId": "canonical:mov_038386172c35c2ad8cca",
+      "candidateSku": "MASTER-109",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!109",
+      "remediation": "Create a reviewed Product Control binding in a separately authorized production change."
+    },
+    {
+      "code": "retail_amount_not_cent_exact",
+      "severity": "review_required",
+      "unitId": "canonical:mov_017febfdb0edf96366f4",
+      "candidateSku": "MASTER-126",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!91",
+      "remediation": "Approve an exact currency rounding decision; the source amount is preserved without silently rounding."
+    },
+    {
+      "code": "retail_amount_not_cent_exact",
+      "severity": "review_required",
+      "unitId": "canonical:mov_02ca369a8834ebeb0b3b",
+      "candidateSku": "MASTER-171",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!79",
+      "remediation": "Approve an exact currency rounding decision; the source amount is preserved without silently rounding."
+    },
+    {
+      "code": "retail_amount_not_cent_exact",
+      "severity": "review_required",
+      "unitId": "canonical:mov_52fd0b8a213ee19e40e8",
+      "candidateSku": "MASTER-166",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!42",
+      "remediation": "Approve an exact currency rounding decision; the source amount is preserved without silently rounding."
+    },
+    {
+      "code": "retail_amount_not_cent_exact",
+      "severity": "review_required",
+      "unitId": "canonical:mov_9262033fe69a14a50f1c",
+      "candidateSku": "MASTER-111",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!106",
+      "remediation": "Approve an exact currency rounding decision; the source amount is preserved without silently rounding."
+    },
+    {
+      "code": "retail_amount_not_cent_exact",
+      "severity": "review_required",
+      "unitId": "canonical:mov_cd50ffa15bc031572636",
+      "candidateSku": "MASTER-141",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!21",
+      "remediation": "Approve an exact currency rounding decision; the source amount is preserved without silently rounding."
+    },
+    {
+      "code": "retail_price_missing",
+      "severity": "blocking",
+      "unitId": "canonical:mov_038386172c35c2ad8cca",
+      "candidateSku": "MASTER-109",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!109",
+      "remediation": "Keep Price on request; obtain and approve a supported retail price."
+    },
+    {
+      "code": "retail_price_missing",
+      "severity": "blocking",
+      "unitId": "intake:EXP-085",
+      "candidateSku": "EXP-085",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!108",
+      "remediation": "Keep Price on request; obtain and approve a supported retail price."
+    },
+    {
+      "code": "wholesale_quote_required",
+      "severity": "blocking",
+      "unitId": "canonical:mov_038386172c35c2ad8cca",
+      "candidateSku": "MASTER-109",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!109",
+      "remediation": "Obtain a supported current landed cost; do not invent wholesale."
+    },
+    {
+      "code": "wholesale_quote_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-043",
+      "candidateSku": "EXP-043",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!84",
+      "remediation": "Obtain a supported current landed cost; do not invent wholesale."
+    },
+    {
+      "code": "wholesale_quote_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-061",
+      "candidateSku": "EXP-061",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!158",
+      "remediation": "Obtain a supported current landed cost; do not invent wholesale."
+    },
+    {
+      "code": "wholesale_quote_required",
+      "severity": "blocking",
+      "unitId": "intake:EXP-085",
+      "candidateSku": "EXP-085",
+      "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!108",
+      "remediation": "Obtain a supported current landed cost; do not invent wholesale."
+    }
+  ]
+}

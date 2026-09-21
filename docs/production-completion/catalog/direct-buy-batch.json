@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-09-21",
+  "mode": "DRY_RUN",
+  "sourceScope": "canonical_catalog_plus_2026_09_15_commercial_intake",
+  "coverageStatus": "repo_canonical_plus_intake_only_not_full_live_snapshot",
+  "productionCoverageComplete": false,
+  "unreconciledLiveVariantDelta": 19,
+  "globalDirectBuyBlockers": [
+    "exact_live_439_variant_snapshot_not_supplied_to_catalog_lane",
+    "no_completed_vendor_rfq_response",
+    "supplier_fulfillment_entity_not_verified",
+    "inventory_or_capacity_not_verified",
+    "quality_lot_coa_documentation_not_verified",
+    "storage_shipping_and_geography_not_verified",
+    "return_replacement_recall_policy_not_verified",
+    "supported_payment_not_verified_by_source_set",
+    "complete_downstream_order_flow_not_verified_by_source_set",
+    "approved_active_retail_not_verified_by_source_set"
+  ],
+  "action": "direct_buy",
+  "rowCount": 0,
+  "productionMutated": false,
+  "rows": []
+}
