@@ -263,9 +263,22 @@ describe("quoteShipping consent boundary through the real fetch adapter", () => 
   });
 
   it("preserves HTML/unpublished and network failure semantics", async () => {
-    const html = stubFetch(200, "<html>Unavailable</html>", "text/html");
+    const cancel = vi.fn();
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode("<html>Unavailable</html>"));
+        controller.close();
+      },
+      cancel,
+    });
+    const html = new Response(stream, { status: 200, headers: { "content-type": "text/html" } });
+    const json = vi.spyOn(html, "json");
+    vi.stubGlobal("fetch", vi.fn(async () => html));
     expect(await quoteShipping("synthetic-member-a", request)).toEqual({ kind: "unavailable" });
-    expect(html.cancel).toHaveBeenCalledOnce();
+    expect(html.bodyUsed).toBe(true);
+    expect(stream.locked).toBe(false);
+    expect(json).not.toHaveBeenCalled();
+    expect(cancel).not.toHaveBeenCalled();
     vi.stubGlobal("fetch", vi.fn(async () => { throw new Error("synthetic transport failure"); }));
     expect(await quoteShipping("synthetic-member-a", request)).toEqual({ kind: "error", message: "The connection failed. Please try again." });
   });
