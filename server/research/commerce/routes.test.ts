@@ -154,6 +154,29 @@ function route(routes: Registered[], method: string, path: string): Registered {
   return found;
 }
 
+describe("admin order roster availability", () => {
+  it("retains a real empty result only after a successful read", async () => {
+    const d = deps();
+    d.ordersAdmin.roster = async () => [];
+    const { res, captured } = fakeRes();
+    await route(build(d), "get", "/api/admin/research/orders").handler(reqWith(undefined), res);
+    expect(captured.status).toBe(200);
+    expect(captured.body).toEqual({ ok: true, orders: [] });
+  });
+
+  it.each(["throws", "malformed"])("fails closed when the roster %s, without leaking storage details", async (failure) => {
+    const d = deps();
+    d.ordersAdmin.roster = async () => {
+      if (failure === "throws") throw new Error("private table RLS provider diagnostics");
+      return null as never;
+    };
+    const { res, captured } = fakeRes();
+    await route(build(d), "get", "/api/admin/research/orders").handler(reqWith(undefined), res);
+    expect(captured.status).toBe(503);
+    expect(captured.body).toEqual({ ok: false, code: "capability_disabled", message: "Order history is temporarily unavailable. Try again shortly." });
+  });
+});
+
 // ---------------------------------------------------------------------------
 
 describe("subjectOf, the viewer-enforcement boundary", () => {

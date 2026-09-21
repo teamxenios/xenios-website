@@ -82,6 +82,12 @@ describe("production commerce dependencies", () => {
     expect(deps.partners.readAvailable?.()).toBe(false);
     expect(await deps.partners.findByMemberId("mem_1")).toBeNull();
   });
+
+  it("does not report an empty admin roster without a configured reader", async () => {
+    await expect(deps.ordersAdmin.roster()).rejects.toThrow("order_roster_unavailable");
+    const unconfigured = buildCommerceDependencies(() => new Date(), { NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true" });
+    await expect(unconfigured.ordersAdmin.roster()).rejects.toThrow("order_roster_unavailable");
+  });
 });
 
 // ---------------------------------------------------------------------------

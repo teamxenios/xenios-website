@@ -432,10 +432,9 @@ function ordersAdminFailClosed(denial: {
     // A detail read with no commerce storage behind it has no order to report.
     // Null is the honest answer; the route turns it into a 404, and the screen
     // says the order could not be found rather than rendering an empty one.
-    // No commerce storage, so no orders to list and none to report. An empty
-    // roster here is a fact about a deployment with no order store, not a
-    // failed read pretending to be one.
-    roster: () => Promise.resolve([]),
+    // An unconfigured reader cannot establish that the durable roster is empty.
+    // The route converts this refusal to a sanitized unavailable response.
+    roster: async () => { throw new Error("order_roster_unavailable"); },
     detail: () => Promise.resolve(null),
     approve: () => Promise.resolve(denial),
     capture: () => Promise.resolve(denial),

@@ -41,11 +41,17 @@
 -- research_referral_v1_execute, research_referral_v1_availability and
 -- research_attribution_touches.
 --
--- ROLLBACK: restore the prior body of research_referral_v1_execute. This file
--- adds a branch to an existing function and creates no object, so reverting is
--- a function replacement and nothing else. No data is written, so no data can
--- be stranded by the revert.
+-- ROLLBACK: restore the prior body of research_referral_v1_execute from the
+-- reviewed 20260904 candidate, then drop research_referral_v1_touch_attribution
+-- (uuid,text). No application data is written. The helper is internal-only.
+-- The guarded dispatcher edit and helper creation commit atomically; unexpected
+-- dispatcher-seam drift or replay refuses the entire transaction. The whole
+-- predecessor must still be compared to the reviewed base before managed use.
 -- ==========================================================================
+
+begin;
+set local lock_timeout = '5s';
+set local statement_timeout = '60s';
 
 -- Guard: the operation allowlist and the availability helper must already exist.
 do $$
@@ -68,8 +74,11 @@ create or replace function public.research_referral_v1_touch_attribution(
   p_subject_key_hash text
 ) returns jsonb
 language plpgsql
+-- The canonical authority probe requires all internal read helpers to retain
+-- the same reviewed owner/definer contract. No role can invoke this helper
+-- directly: only the service-role dispatcher delegates after closed validation.
 security definer
-set search_path = public
+set search_path = ''
 as $$
 declare
   t public.research_attribution_touches%rowtype;
@@ -103,41 +112,69 @@ begin
 end
 $$;
 
-revoke all on function public.research_referral_v1_touch_attribution(uuid, text) from public, anon, authenticated;
-grant execute on function public.research_referral_v1_touch_attribution(uuid, text) to service_role;
+revoke all on function public.research_referral_v1_touch_attribution(uuid, text) from public, anon, authenticated, service_role;
 
 -- ==========================================================================
--- The execute-function change, stated for the reviewer rather than applied
--- blind. Two edits to the existing body:
---
---   1. add 'attributionForTouch' to the operation allowlist on the line that
---      reads: if jsonb_typeof(p_input)<>'object' or p_operation not in (...)
---
---   2. add this branch, which must sit BEFORE the actor resolution block,
---      because this operation has no actor:
---
---        if p_operation='attributionForTouch' then
---          return jsonb_build_object('ok',true,'value',
---            public.research_referral_v1_touch_attribution(
---              nullif(p_input->>'touchId','')::uuid,
---              p_input->>'subjectKeyHash'));
---        end if;
---
--- The branch is placed before actor resolution on purpose. Every other
--- operation either requires an actorAuthUserId or accepts one; this one must
--- refuse to take an actor at all, so that an actor cannot be smuggled in to
--- influence an availability answer.
---
--- POSTCHECK, after applying:
---
---   select public.research_referral_v1_execute('attributionForTouch',
---     jsonb_build_object('touchId','00000000-0000-4000-8000-000000000000',
---                        'subjectKeyHash', repeat('a',64)));
---   -- expect: {"ok":true,"value":{"partnerId":null,"eligible":false}}
---
---   select public.research_referral_v1_execute('attributionForTouch',
---     jsonb_build_object('touchId','not-a-uuid','subjectKeyHash','short'));
---   -- expect: an invalid_input denial, not a crash
---
--- Both postchecks read only and create nothing.
+-- Retain the existing dispatcher body and ACLs byte-for-byte apart from the
+-- two exact, uniquely occurring seams below. Refuse an unknown predecessor;
+-- never ask an operator to hand-edit a privileged function after applying SQL.
 -- ==========================================================================
+do $install$
+declare
+  v_body text := pg_get_functiondef('public.research_referral_v1_execute(text,jsonb)'::regprocedure);
+  v_allowlist text := $old$if jsonb_typeof(p_input)<>'object' or p_operation not in ('issue','revoke','listOwn','resolve','capture','bind','getBinding','listAdmin') then$old$;
+  v_actor text := $old$  if p_operation in ('issue','revoke','listOwn','bind','getBinding','listAdmin') or p_input ? 'actorAuthUserId' then$old$;
+  v_branch text := $new$  if p_operation='attributionForTouch' then
+    if jsonb_typeof(p_input) is distinct from 'object'
+      or (p_input - 'touchId' - 'subjectKeyHash') <> '{}'::jsonb
+      or coalesce(p_input->>'touchId','') !~ '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'
+      or coalesce(p_input->>'subjectKeyHash','') !~ '^[a-f0-9]{64}$' then
+      return jsonb_build_object('ok',false,'reason','invalid_input');
+    end if;
+    return jsonb_build_object('ok',true,'value',
+      public.research_referral_v1_touch_attribution((p_input->>'touchId')::uuid,p_input->>'subjectKeyHash'));
+  end if;
+$new$;
+begin
+  if position('attributionForTouch' in v_body)>0
+    or (length(v_body)-length(replace(v_body,v_allowlist,'')))/length(v_allowlist) <> 1
+    or (length(v_body)-length(replace(v_body,v_actor,'')))/length(v_actor) <> 1 then
+    raise exception 'referral dispatcher drift or replay; review predecessor before applying';
+  end if;
+  v_body := replace(v_body,v_allowlist,
+    $new$if jsonb_typeof(p_input)<>'object' or p_operation not in ('issue','revoke','listOwn','resolve','capture','bind','getBinding','listAdmin','attributionForTouch') then$new$);
+  v_body := replace(v_body,v_actor,v_branch || v_actor);
+  execute v_body;
+end
+$install$;
+
+-- Executable read-only postconditions: missing touch, malformed input and
+-- actor/partner injection are not allowed to produce an attributed partner.
+do $postcheck$
+declare
+  v_input jsonb := jsonb_build_object('touchId','00000000-0000-4000-8000-000000000000','subjectKeyHash',repeat('a',64));
+begin
+  if public.research_referral_v1_authority()
+    <> '{"ok":true,"value":{"schemaVersion":"gen2_referral_v1_20260904"}}'::jsonb then
+    raise exception 'referral authority postcheck failed';
+  end if;
+  if public.research_referral_v1_execute('attributionForTouch',v_input)
+    <> '{"ok":true,"value":{"partnerId":null,"eligible":false}}'::jsonb
+    or public.research_referral_v1_execute('attributionForTouch','{"touchId":"not-a-uuid","subjectKeyHash":"short"}')
+    <> '{"ok":false,"reason":"invalid_input"}'::jsonb
+    or public.research_referral_v1_execute('attributionForTouch',v_input || '{"actorAuthUserId":"00000000-0000-4000-8000-000000000000"}')
+    <> '{"ok":false,"reason":"invalid_input"}'::jsonb then
+    raise exception 'referral touch attribution postcheck failed';
+  end if;
+  if has_function_privilege('anon','public.research_referral_v1_execute(text,jsonb)','execute')
+    or has_function_privilege('authenticated','public.research_referral_v1_execute(text,jsonb)','execute')
+    or not has_function_privilege('service_role','public.research_referral_v1_execute(text,jsonb)','execute')
+    or has_function_privilege('anon','public.research_referral_v1_touch_attribution(uuid,text)','execute')
+    or has_function_privilege('authenticated','public.research_referral_v1_touch_attribution(uuid,text)','execute')
+    or has_function_privilege('service_role','public.research_referral_v1_touch_attribution(uuid,text)','execute') then
+    raise exception 'referral touch attribution privilege boundary failed';
+  end if;
+end
+$postcheck$;
+
+commit;

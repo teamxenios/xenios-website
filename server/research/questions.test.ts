@@ -650,6 +650,19 @@ describe("GET /api/admin/research/questions", () => {
     expect(res.status).toBe(400);
     expect(res.body.code).toBe("validation_failed");
   });
+
+  it.each(["toString", "constructor", "__proto__", "hasOwnProperty"])(
+    "refuses inherited object key %s as a queue name",
+    async (status) => {
+      seedQuestion();
+      const res = await request(makeApp())
+        .get("/api/admin/research/questions")
+        .query({ status });
+      expect(res.status).toBe(400);
+      expect(res.body.code).toBe("validation_failed");
+      expect(res.body.questions).toBeUndefined();
+    },
+  );
 });
 
 describe("GET /api/admin/research/questions/:questionId", () => {

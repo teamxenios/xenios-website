@@ -1,5 +1,7 @@
-import { useCallback, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "wouter";
+import type { OrderState } from "@shared/research/commerce";
+import type { AdminOrderSummaryDto } from "@shared/research/commerce-api";
 import { listOrders } from "../../adapters/adminOps";
 import {
   ResearchDataTable,
@@ -15,6 +17,7 @@ import {
 import { ADMIN_ROUTES } from "../../lib/routes";
 import { fmtDate, useAdminResource } from "./auth";
 import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
+import { formatCents, orderStateMeta } from "../member/commerce-presentation";
 
 // ---------------------------------------------------------------------------
 // /admin/research/orders: the order queue. Publishes with the commerce
@@ -22,38 +25,25 @@ import { AdminBoundary, AdminScreen } from "./AdminResearchHome";
 // client-side over whatever the API returns. Rows show order metadata only.
 // ---------------------------------------------------------------------------
 
-export type AdminOrderRow = {
-  id: string;
-  reference: string;
-  member_email: string;
-  status: string;
-  total_cents: number;
-  item_count: number;
-  placed_at: string;
-};
-
 const ORDER_QUEUES = [
-  { key: "all", label: "All" },
-  { key: "pending", label: "Pending" },
-  { key: "paid", label: "Paid" },
-  { key: "fulfilling", label: "Fulfilling" },
-  { key: "shipped", label: "Shipped" },
-  { key: "cancelled", label: "Cancelled" },
-];
+  { key: "all", label: "All", states: [] },
+  { key: "pending", label: "Awaiting payment", states: ["draft", "checkout_pending", "payment_authorized", "approved"] },
+  { key: "review", label: "Needs review", states: ["manual_review", "exception"] },
+  { key: "paid", label: "Paid", states: ["payment_captured"] },
+  { key: "fulfilling", label: "Fulfilling", states: ["processing", "partially_fulfilled"] },
+  { key: "shipped", label: "Shipped", states: ["fulfilled", "delivered"] },
+  { key: "closed", label: "Closed", states: ["cancelled", "refunded", "replaced"] },
+] satisfies Array<{ key: string; label: string; states: OrderState[] }>;
 
 const PAGE_SIZE = 20;
 
 export function orderTone(status: string): BadgeTone {
-  if (status === "shipped" || status === "delivered") return "success";
-  if (status === "cancelled" || status === "failed") return "danger";
-  if (status === "pending") return "warning";
-  if (status === "paid" || status === "fulfilling") return "info";
-  return "neutral";
+  return orderStateMeta(status).tone;
 }
 
 export default function OrdersAdmin() {
   return (
-    <AdminScreen title="Orders" lead="Every order, by status. Open a row for items, payment state, and fulfillment.">
+    <AdminScreen title="Orders" lead="Native commerce orders, by status. Open a row for items, payment state, and fulfillment.">
       {(token) => <OrdersBody token={token} />}
     </AdminScreen>
   );
@@ -64,18 +54,15 @@ function OrdersBody({ token }: { token: string }) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const debounced = useDebounced(search);
-  const loadOrdersQueue = useCallback(
-    (t: string) => listOrders<{ ok: boolean; orders: AdminOrderRow[] }>(t, queue === "all" ? "" : queue),
-    [queue],
-  );
-  const resource = useAdminResource(token, loadOrdersQueue);
+  const resource = useAdminResource(token, listOrders);
 
   const filtered = useMemo(() => {
-    const list = resource.data?.orders ?? [];
+    const states = ORDER_QUEUES.find((entry) => entry.key === queue)?.states as OrderState[] | undefined;
+    const list = (resource.data?.orders ?? []).filter((order) => queue === "all" || states?.includes(order.state));
     const q = debounced.trim().toLowerCase();
     if (!q) return list;
-    return list.filter((o) => o.reference.toLowerCase().includes(q) || o.member_email.toLowerCase().includes(q));
-  }, [resource.data, debounced]);
+    return list.filter((o) => o.orderId.toLowerCase().includes(q) || o.memberId.toLowerCase().includes(q));
+  }, [resource.data, debounced, queue]);
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const clamped = Math.min(page, pageCount);
@@ -99,7 +86,7 @@ function OrdersBody({ token }: { token: string }) {
             setPage(1);
           }}
           label="Search orders"
-          placeholder="Order reference or member email"
+          placeholder="Order reference or member ID"
         />
       </ResearchFilterBar>
 
@@ -108,41 +95,41 @@ function OrdersBody({ token }: { token: string }) {
         message={resource.message}
         deniedCode={resource.deniedCode}
         onRetry={resource.reload}
-        unavailableTitle="The order queue publishes with the commerce backend."
-        unavailableBody="Ordering is not open to members yet, so there are no orders to show. This queue renders live the moment the commerce backend connects."
+        unavailableTitle="The order queue is unavailable."
+        unavailableBody="The order records could not be read. This does not mean there are no orders; retry to check their current state."
       >
-        <ResearchDataTable<AdminOrderRow>
+        <ResearchDataTable<AdminOrderSummaryDto>
           caption="Orders"
           columns={[
             {
               key: "reference",
               header: "Order",
               render: (o) => (
-                <Link href={`${ADMIN_ROUTES.orders}/${o.id}`} className="font-700 underline">
-                  {o.reference}
+                <Link href={`${ADMIN_ROUTES.orders}/${encodeURIComponent(o.orderId)}`} className="font-700 underline" style={{ overflowWrap: "anywhere" }}>
+                  {o.orderId}
                 </Link>
               ),
             },
-            { key: "member", header: "Member", render: (o) => <span style={{ overflowWrap: "anywhere" }}>{o.member_email}</span> },
-            { key: "items", header: "Items", render: (o) => <span className="tabular">{o.item_count}</span> },
-            { key: "total", header: "Total", render: (o) => `$${(o.total_cents / 100).toFixed(2)}` },
+            { key: "member", header: "Member ID", render: (o) => <span style={{ overflowWrap: "anywhere" }}>{o.memberId}</span> },
+            { key: "total", header: "Total", render: (o) => formatCents(o.totalCents) },
+            { key: "captured", header: "Captured", render: (o) => o.capturedAmountCents === null ? "Not recorded" : formatCents(o.capturedAmountCents) },
             {
               key: "status",
               header: "Status",
-              render: (o) => <ResearchStatusBadge label={o.status} tone={orderTone(o.status)} />,
+              render: (o) => <ResearchStatusBadge label={orderStateMeta(o.state).label} tone={orderTone(o.state)} />,
             },
-            { key: "placed", header: "Placed", render: (o) => fmtDate(o.placed_at) },
+            { key: "placed", header: "Placed", render: (o) => fmtDate(o.placedAt) },
           ]}
           rows={filtered.slice((clamped - 1) * PAGE_SIZE, clamped * PAGE_SIZE)}
-          rowKey={(o) => o.id}
+          rowKey={(o) => o.orderId}
           empty="No orders in this queue."
         />
         <ResearchPagination page={clamped} pageCount={pageCount} onPage={setPage} />
       </AdminBoundary>
 
       <ResearchSecureNotice>
-        Order rows show commerce metadata only: reference, member email, totals, and status. Nothing here reads from a
-        member's health record.
+        Order rows show native commerce metadata only: reference, member ID, recorded amounts, and status. Other
+        ordering lanes have their own queues. Nothing here reads from a member's health record.
       </ResearchSecureNotice>
     </div>
   );

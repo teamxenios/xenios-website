@@ -688,6 +688,7 @@
   },
   "seamBaselineHashes": {
     "$comment": [
+      "2026-09-21, native closeout lease XENIOS-NATIVE-FINISH-20260910: server/index.ts old sha256:99e9134b5ba0391084467cc355dd1a21182d502c2101f607295bfb47affeb497, new sha256:6552eb001fe7f8ba97a325af1241dc845d79249ab8f7d09229bdf429980d0c7c. Pass the existing Referral V1 dependency bundle, including its enabled flag, to the assisted-order attribution resolver. This restores disabled-flag refusal for already-issued cookies. No route, guard, middleware, provider, or non-Research behavior changes. Resolver disabled-cookie regression and disposable PostgreSQL extension tests pass. Local source only; no production effect.",
       "2026-09-14, P1 closeout, lease XENIOS-NATIVE-FINISH-20260910: server/index.ts old sha256:19be62a6ee9ccc2857230ed86633b14f618dd882e598f1f50d28df3599a35583, new sha256:99e9134b5ba0391084467cc355dd1a21182d502c2101f607295bfb47affeb497. ONE seam change: the assisted-order affiliate attribution resolver now reads Referral V1 instead of the legacy xa1 format, and is awaited because the partner behind the cookie is re-read from the durable authority rather than taken from the cookie. The legacy import is replaced by createReferralV1AttributionResolver; no route registration, guard, provider or ordering changes. Both formats shared the xr_aff cookie name and the only xa1 writer is contractually forbidden to mount, so the previous seam resolved null on every request. Focused: server/research/partners and server/research/assisted-order, 40 files, 789 passed.",
       "Baselines for the permitted seam files. A mismatch here is NOT a hard fail, because",
       "a leased seam edit is legitimate. The gate REPORTS it so review always sees which",
@@ -1221,7 +1222,7 @@
     ],
     "files": {
       "client/src/App.tsx": "sha256:0a9e1c970b721f0aacbc3f375988d67ea5c4cc8a81186e97b70d56283bc9b912",
-      "server/index.ts": "sha256:99e9134b5ba0391084467cc355dd1a21182d502c2101f607295bfb47affeb497",
+      "server/index.ts": "sha256:6552eb001fe7f8ba97a325af1241dc845d79249ab8f7d09229bdf429980d0c7c",
       "server/research/index.ts": "sha256:b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070",
       "server/care/index.ts": "sha256:c902efc3ca97affb55692a06c3c249cd84e336caa3ec6e8f79462a1cf5460b0c",
       "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3"

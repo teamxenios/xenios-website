@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { inspectApprovedUserAccess, approveCustomerAccess, performPartnerOperation } from "./adminOps";
+import { inspectApprovedUserAccess, approveCustomerAccess, performPartnerOperation, listOrders } from "./adminOps";
 import type { CustomerApprovalInput } from "@shared/research/approved-customer-access";
 import type { ApprovedUserAccess } from "@shared/research/approved-user-access";
 import type { PartnerOperation } from "@shared/research/partner-lifecycle";
@@ -18,6 +18,45 @@ function stub(body: unknown, status = 200, contentType = "application/json") {
   return fetch;
 }
 afterEach(() => vi.unstubAllGlobals());
+
+describe("native admin order roster adapter", () => {
+  const order = {
+    orderId: "synthetic-order-1", memberId: "synthetic-member-1", state: "payment_captured",
+    placedAt: "2026-09-21T12:00:00.000Z", updatedAt: "2026-09-21T12:00:00.000Z",
+    totalCents: 12345, capturedAmountCents: null, reviewTriggers: [],
+  };
+
+  it("does not read private order metadata without a credential", async () => {
+    const fetch = stub({ ok: true, orders: [order] });
+    expect(await listOrders("")).toEqual({ kind: "unauthorized" });
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { ok: true },
+    { orders: [] },
+    { ok: true, orders: null },
+    { ok: true, orders: [{ ...order, state: "paid" }] },
+    { ok: true, orders: [{ ...order, totalCents: "12345" }] },
+    { ok: true, orders: [{ ...order, capturedAmountCents: undefined }] },
+    { ok: true, orders: [{ ...order, orderId: "" }] },
+  ])("fails closed on a malformed roster %j", async (body) => {
+    stub(body);
+    expect(await listOrders("synthetic-admin")).toEqual({ kind: "error", message: "The order queue could not be verified. Please retry." });
+  });
+
+  it("preserves recorded zero separately from an unknown capture", async () => {
+    stub({ ok: true, orders: [order, { ...order, orderId: "synthetic-order-2", capturedAmountCents: 0 }] });
+    const result = await listOrders("synthetic-admin");
+    expect(result.kind).toBe("ok");
+    if (result.kind === "ok") expect(result.data.orders.map((row) => row.capturedAmountCents)).toEqual([null, 0]);
+  });
+
+  it.each([401, 403, 503])("preserves the server boundary for HTTP %i", async (status) => {
+    stub({ ok: false, code: "capability_disabled" }, status);
+    expect((await listOrders("synthetic-admin")).kind).toBe(status === 401 ? "unauthorized" : status === 503 ? "unavailable" : "denied");
+  });
+});
 
 describe("read-only approved-user access inspection adapter", () => {
   it("uses canonical exact-email POST body, bearer, and no-store without putting the address in the URL", async () => {

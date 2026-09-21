@@ -726,10 +726,24 @@ async function earlyAccessShipmentFacts(
   try {
     const dispatch = await deps.store.dispatch(orderNumber);
     if (!dispatch) return null;
-    // The newest recorded tracking entry is the one a customer is following.
-    const latest = [...dispatch.tracking].sort((a, b) =>
-      a.recordedAt === b.recordedAt ? 0 : a.recordedAt < b.recordedAt ? 1 : -1,
-    )[0];
+    // The requested order is the boundary even if the storage port returns
+    // another order's facts. Do not disclose a partial, apparently valid view.
+    if (
+      !Array.isArray(dispatch.events) ||
+      !Array.isArray(dispatch.tracking) ||
+      dispatch.events.some((event) => event.orderNumber !== orderNumber) ||
+      dispatch.tracking.some((record) =>
+        record.orderId !== orderNumber ||
+        !Number.isSafeInteger(record.sequence) || record.sequence < 1,
+      ) ||
+      (dispatch.fulfillment !== null && dispatch.fulfillment.orderId !== orderNumber)
+    ) return null;
+    if (new Set(dispatch.tracking.map((record) => record.sequence)).size !== dispatch.tracking.length) {
+      return null;
+    }
+    // Corrections append with a higher canonical sequence. Timestamps can tie
+    // (or clocks can drift), so wall-clock sorting can resurrect old tracking.
+    const latest = [...dispatch.tracking].sort((a, b) => b.sequence - a.sequence)[0];
     return {
       carrier: latest?.carrier ?? null,
       trackingNumber: latest?.trackingNumber ?? null,

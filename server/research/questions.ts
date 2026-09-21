@@ -629,7 +629,7 @@ export function registerQuestionsApi(app: Express, deps: MemberPlatformDeps) {
   app.get("/api/admin/research/questions", requireSupabaseAdmin, async (req, res) => {
     setPrivacyHeaders(res);
     const requested = typeof req.query.status === "string" ? req.query.status : "";
-    if (requested !== "" && !(requested in ADMIN_QUESTION_QUEUES)) {
+    if (requested !== "" && !Object.hasOwn(ADMIN_QUESTION_QUEUES, requested)) {
       return sendValidation(res, {
         status: [`status must be one of: ${Object.keys(ADMIN_QUESTION_QUEUES).join(", ")}`],
       });

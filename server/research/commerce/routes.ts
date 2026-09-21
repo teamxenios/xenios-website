@@ -866,7 +866,13 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
   // approved, is bounded by the recorded authorization, and marks nothing paid
   // without provider proof.
   app.get("/api/admin/research/orders", admin, async (_req, res) => {
-    ok(res, { orders: await deps.ordersAdmin.roster() });
+    try {
+      const orders = await deps.ordersAdmin.roster();
+      if (!Array.isArray(orders)) throw new Error("order_roster_unavailable");
+      ok(res, { orders });
+    } catch {
+      deny(res, 503, "capability_disabled", "Order history is temporarily unavailable. Try again shortly.");
+    }
   });
 
   // The read the whole loop hangs on. Approve, capture and cancel were mounted

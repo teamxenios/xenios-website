@@ -963,10 +963,7 @@ async function composeAssistedOrderBridge(): Promise<
     // resolved null on every request while claiming to be the only source of
     // attribution. Referral V1 is now the one authority: the cookie names a
     // touch, and the partner behind it is re-read durably on each submit.
-    createReferralV1AttributionResolver({
-      secret: partnerLinkSecret,
-      store: buildReferralV1Dependencies().store,
-    }),
+    createReferralV1AttributionResolver(buildReferralV1Dependencies()),
   );
   const assistedOrderDoor = (
     method: "GET" | "POST" | "PATCH",

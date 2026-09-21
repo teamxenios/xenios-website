@@ -24,6 +24,7 @@ import {
 } from "./referral-v1-tokens";
 
 export type ReferralAttributionDeps = Readonly<{
+  enabled: boolean;
   secret: string | null;
   store: ReferralV1Store;
   now?: () => number;
@@ -39,6 +40,7 @@ export type ReferralAttributionDeps = Readonly<{
 export function createReferralV1AttributionResolver(deps: ReferralAttributionDeps) {
   return {
     async resolve(cookieHeader: string | undefined): Promise<string | null> {
+      if (!deps.enabled) return null;
       if (!referralSecretReady(deps.secret)) return null;
       const now = (deps.now ?? Date.now)();
 

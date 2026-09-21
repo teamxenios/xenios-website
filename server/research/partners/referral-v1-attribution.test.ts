@@ -45,10 +45,16 @@ function cookiesFor(touchId = TOUCH, secret = SECRET): string {
 }
 
 function resolverWith(store: ReferralV1Store, secret: string | null = SECRET) {
-  return createReferralV1AttributionResolver({ secret, store, now: () => NOW });
+  return createReferralV1AttributionResolver({ enabled: true, secret, store, now: () => NOW });
 }
 
 describe("what the resolver will attribute", () => {
+  it("does not use an existing valid cookie while referral capture is disabled", async () => {
+    const { store, calls } = storeFor({ ok: true, value: { partnerId: PARTNER, eligible: true } });
+    const resolver = createReferralV1AttributionResolver({ enabled: false, secret: SECRET, store, now: () => NOW });
+    expect(await resolver.resolve(cookiesFor())).toBeNull();
+    expect(calls).toHaveLength(0);
+  });
   it("attributes the partner the durable authority names, and only that", async () => {
     const { store, calls } = storeFor({ ok: true, value: { partnerId: PARTNER, eligible: true } });
     const ref = await resolverWith(store).resolve(cookiesFor());

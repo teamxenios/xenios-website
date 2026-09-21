@@ -10,8 +10,11 @@
 // ---------------------------------------------------------------------------
 
 import { apiGet, apiPost, apiPut, type ApiResult } from "../lib/api";
+import { z } from "zod";
+import { ORDER_STATES, type OrderState } from "@shared/research/commerce";
 import type {
   AdminOrderDetailDto,
+  AdminOrderSummaryDto,
   AdminShipmentTrackingInput,
 } from "@shared/research/commerce-api";
 import { fetchCapabilities, type CapabilityStatus, type ResearchCapability } from "../lib/capabilities";
@@ -128,10 +131,28 @@ export function getMember<T>(token: string, id: string): Promise<ApiResult<T>> {
   return apiGet<T>(`${BASE}/members/${enc(id)}`, token);
 }
 
-// status may be "" (all orders); the query parameter is always present, which
-// matches the previous page behavior exactly.
-export function listOrders<T>(token: string, status: string): Promise<ApiResult<T>> {
-  return apiGet<T>(`${BASE}/orders?status=${enc(status)}`, token);
+// The roster is the native order service's projection, not the retired
+// snake-case admin mock. Reject drift before a page can render broken links or
+// mistake a malformed response for an empty queue. Filtering is local: the
+// mounted roster endpoint intentionally returns every order.
+const adminOrderSummarySchema: z.ZodType<AdminOrderSummaryDto> = z.object({
+  orderId: z.string().min(1),
+  memberId: z.string().min(1),
+  state: z.custom<OrderState>((value) => typeof value === "string" && ORDER_STATES.includes(value as OrderState)),
+  placedAt: z.string().datetime({ offset: true }),
+  updatedAt: z.string().datetime({ offset: true }),
+  totalCents: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER),
+  capturedAmountCents: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER).nullable(),
+  reviewTriggers: z.array(z.string()),
+});
+
+export async function listOrders(token: string): Promise<ApiResult<{ orders: AdminOrderSummaryDto[] }>> {
+  if (!token) return { kind: "unauthorized" };
+  const result = await apiGet<unknown>(`${BASE}/orders`, token);
+  if (result.kind !== "ok") return result;
+  const parsed = z.object({ ok: z.literal(true), orders: z.array(adminOrderSummarySchema) }).safeParse(result.data);
+  if (!parsed.success) return { kind: "error", message: "The order queue could not be verified. Please retry." };
+  return { kind: "ok", data: { orders: parsed.data.orders } };
 }
 
 export function getOrder<T>(token: string, id: string): Promise<ApiResult<T>> {

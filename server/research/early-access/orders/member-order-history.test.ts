@@ -18,6 +18,10 @@ import {
   type MemberOrdersService,
 } from "./member-order-history";
 import type { EarlyAccessPlacement } from "../routes/store";
+import type {
+  EarlyAccessFulfillmentRecord,
+  EarlyAccessTrackingRecord,
+} from "../commerce/release-service";
 import { earlyAccessPromotionVersion } from "../commerce/promotion";
 
 const KRIS = "9f1b1d2c-8a4e-4c31-9b77-1c2d3e4f5a6b";
@@ -980,6 +984,31 @@ describe("payment evidence comes from durable readers", () => {
 
 describe("Early Access shipment facts on the order detail", () => {
   const ORDER_NUMBER = "XEC-0000000000000000000000AA";
+  function tracking(over: Partial<EarlyAccessTrackingRecord> = {}): EarlyAccessTrackingRecord {
+    return {
+      releaseId: "release-1",
+      orderId: ORDER_NUMBER,
+      carrier: "UPS",
+      trackingNumber: "1Z-OLD",
+      recordedByActorId: "test-operator",
+      recordedAt: "2026-09-01T00:00:00.000Z",
+      sequence: 1,
+      ...over,
+    };
+  }
+  function fulfillment(over: Partial<EarlyAccessFulfillmentRecord> = {}): EarlyAccessFulfillmentRecord {
+    return {
+      releaseId: "release-1",
+      orderId: ORDER_NUMBER,
+      carrier: "FedEx",
+      trackingNumber: "FX-NEW",
+      fulfilledByActorId: "test-operator",
+      fulfilledAt: "2026-09-05T12:00:00.000Z",
+      commissionHold: null,
+      commissionAccrual: null,
+      ...over,
+    };
+  }
   function withDispatch(
     dispatch:
       | ((orderNumber: string) => Promise<unknown>)
@@ -1006,11 +1035,12 @@ describe("Early Access shipment facts on the order detail", () => {
 
   it("shows the carrier and tracking the dispatch record holds", async () => {
     const service = withDispatch(async () => ({
+      events: [],
       tracking: [
-        { carrier: "UPS", trackingNumber: "1Z-OLD", recordedAt: "2026-09-01T00:00:00.000Z" },
-        { carrier: "FedEx", trackingNumber: "FX-NEW", recordedAt: "2026-09-05T00:00:00.000Z" },
+        tracking(),
+        tracking({ carrier: "FedEx", trackingNumber: "FX-NEW", recordedAt: "2026-09-05T00:00:00.000Z", sequence: 2 }),
       ],
-      fulfillment: { fulfilledAt: "2026-09-05T12:00:00.000Z" },
+      fulfillment: fulfillment(),
     }));
 
     const detail = await service.getForMember(KRIS, ORDER_NUMBER);
@@ -1024,8 +1054,57 @@ describe("Early Access shipment facts on the order detail", () => {
     });
   });
 
+  it.each([
+    ["tie", "2026-09-01T00:00:00.000Z"],
+    ["move backwards", "2026-08-31T00:00:00.000Z"],
+  ])("uses the latest canonical sequence when tracking timestamps %s", async (_, recordedAt) => {
+    const service = withDispatch(async () => ({
+      events: [],
+      tracking: [tracking(), tracking({ trackingNumber: "1Z-CORRECTED", sequence: 2, recordedAt })],
+      fulfillment: null,
+    }));
+    const detail = await service.getForMember(KRIS, ORDER_NUMBER);
+    expect(detail?.shipmentsSource).toBe("connected");
+    expect(detail?.shipments[0].trackingNumber).toBe("1Z-CORRECTED");
+  });
+
+  it.each(["tracking", "older tracking", "fulfillment", "event"])(
+    "withholds shipment facts when the %s record belongs to a different order",
+    async (foreignKind) => {
+      const foreignOrder = "XEC-0000000000000000000000BB";
+      const service = withDispatch(async () => ({
+        events: foreignKind === "event" ? [{ orderNumber: foreignOrder }] : [],
+        tracking: foreignKind === "tracking"
+          ? [tracking({ orderId: foreignOrder, trackingNumber: "PRIVATE-FOREIGN" })]
+          : foreignKind === "older tracking"
+            ? [tracking({ orderId: foreignOrder, trackingNumber: "PRIVATE-FOREIGN" }), tracking({ sequence: 2 })]
+            : [tracking()],
+        fulfillment: fulfillment({ orderId: foreignKind === "fulfillment" ? foreignOrder : ORDER_NUMBER }),
+      }));
+      const detail = await service.getForMember(KRIS, ORDER_NUMBER);
+      expect(detail).not.toBeNull();
+      expect(detail?.shipmentsSource).toBe("unavailable");
+      expect(detail?.shipments).toEqual([]);
+      expect(JSON.stringify(detail)).not.toContain("PRIVATE-FOREIGN");
+    },
+  );
+
+  it.each([0, -1, 1.5, Number.NaN, 1])(
+    "withholds ambiguous or invalid tracking sequence %s",
+    async (sequence) => {
+      const service = withDispatch(async () => ({
+        events: [],
+        tracking: [tracking(), tracking({ trackingNumber: "1Z-AMBIGUOUS", sequence })],
+        fulfillment: null,
+      }));
+      const detail = await service.getForMember(KRIS, ORDER_NUMBER);
+      expect(detail?.shipmentsSource).toBe("unavailable");
+      expect(detail?.shipments).toEqual([]);
+    },
+  );
+
   it("says nothing has shipped yet, rather than saying it cannot tell", async () => {
-    const service = withDispatch(async () => ({ tracking: [], fulfillment: null }));
+    const service = withDispatch(async () => ({ events: [], tracking: [], fulfillment: null }));
     const detail = await service.getForMember(KRIS, ORDER_NUMBER);
     // The read happened and found nothing. That is a fact, and it is different
     // from not having asked.
@@ -1037,7 +1116,8 @@ describe("Early Access shipment facts on the order detail", () => {
     // A tracking number exists; nothing has left. Shipped is the carrier's
     // fact, and it is recorded separately.
     const service = withDispatch(async () => ({
-      tracking: [{ carrier: "UPS", trackingNumber: "1Z-PENDING", recordedAt: "2026-09-05T00:00:00.000Z" }],
+      events: [],
+      tracking: [tracking({ trackingNumber: "1Z-PENDING", recordedAt: "2026-09-05T00:00:00.000Z" })],
       fulfillment: null,
     }));
     const detail = await service.getForMember(KRIS, ORDER_NUMBER);
@@ -1063,8 +1143,9 @@ describe("Early Access shipment facts on the order detail", () => {
 
   it("leaves the LIST unconnected, so N orders stay one round trip", async () => {
     const service = withDispatch(async () => ({
-      tracking: [{ carrier: "UPS", trackingNumber: "1Z-LIST", recordedAt: "2026-09-05T00:00:00.000Z" }],
-      fulfillment: { fulfilledAt: "2026-09-05T12:00:00.000Z" },
+      events: [],
+      tracking: [tracking({ trackingNumber: "1Z-LIST", recordedAt: "2026-09-05T00:00:00.000Z" })],
+      fulfillment: fulfillment(),
     }));
     const rows = await service.listForMember(KRIS);
     expect(rows[0].shipmentsSource).toBe("unavailable");
