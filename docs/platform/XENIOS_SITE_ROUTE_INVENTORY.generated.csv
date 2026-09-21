@@ -96,7 +96,7 @@ path,persona,domain,source_status,test_status,browser_status,production_status,c
 /research/access-gate,public_research_visitor,research_experience,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:454
 /research/access-hub,public_research_visitor,research_experience,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:305
 /research/access-state,public_research_visitor,research_experience,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:324
-/research/account,research_customer,identity_accounts,mounted,focused_tests_pass,browser_verified,unknown,customer_account_portal,client/src/research/section.tsx:363
+/research/account,research_customer,identity_accounts,mounted,full_suite_pass,browser_verified,unknown,customer_account_portal,client/src/research/section.tsx:363
 /research/account/care,research_customer,identity_accounts,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:357
 /research/account/documents,research_customer,identity_accounts,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:358
 /research/account/interests,research_customer,identity_accounts,mounted,unknown,unknown,unknown,,client/src/research/section.tsx:361

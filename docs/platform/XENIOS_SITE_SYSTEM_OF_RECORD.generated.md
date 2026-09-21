@@ -1,8 +1,8 @@
 # Xenios Site System of Record
 
-Generated from source commit: `509f57b419035845867cd4af9125a3a2191b5597` (2026-09-14T14:18:46-05:00)
+Generated from source commit: `26e41e00b9fc55b95aff86d33fe1338faf7603b8` (2026-09-21T11:39:46-05:00)
 
-Source tree: `28db9fb174d886e328f6e672bddff0cf2ee2ae3a` on `codex/xenios-native-finish-20260910`
+Source tree: `e42cf2ce2c8e346197e3dd69abf1ee2ba0baa55d` on `codex/xenios-native-closeout-20260921`
 
 Recorded production: `c545a70eb694d990842ad1259df4f0786dab92c9` / `dep-dag8l567bikc738a1nj0` (deployed_not_authenticated_smoked)
 
@@ -16,8 +16,8 @@ Recorded production: `c545a70eb694d990842ad1259df4f0786dab92c9` / `dep-dag8l567b
 | Research public gateway | public_research_visitor | /research | mounted | focused_tests_pass | unknown | live_verified | CARE-RESEARCH-POSTLAUNCH-20260831 | Keep pathway copy aligned with current server-authorized Research, Care, account, and assisted-order doors. |
 | Quick Early Access ordering | quick_early_access_customer | /research/early-access | mounted | focused_tests_pass | browser_verified | deployed_not_authenticated_smoked | XENIOS-QUICK-EARLY-ACCESS-V2-20260904 | Build the source-qualified, member-scoped normalized customer timeline from canonical account and order projections without inferring source from reference prefixes or list scans. |
 | Assisted and volume Research order requests | research_customer | /research/early-access/order-request | mounted | full_suite_pass | unknown | deployed_not_authenticated_smoked | ASSISTED-ORDER-MOUNT | Reuse this request authority from the Order Entry Hub and later Quick Early Access simplification. |
-| Customer account and order history portal | research_customer | /research/account | mounted | focused_tests_pass | browser_verified | unknown | UX-AUTH-ACCOUNT-CONTINUITY-20260904 | Build the normalized customer timeline on these canonical account and order projections. |
-| Referral recommendation and durable attribution continuity | partner_affiliate_and_referral_recipient | /r/:code | mounted | full_suite_pass | browser_verified | built_not_deployed | UX-REFERRAL-RECOMMENDATION-V1-20260904 | Preserve referral and intended-destination context through the Order Entry Hub without changing referral authority. |
+| Customer account and order history portal | research_customer | /research/account | mounted | full_suite_pass | browser_verified | unknown | UX-AUTH-ACCOUNT-CONTINUITY-20260904 | Review and qualify the exact XRR SQL candidate against the managed predecessor, preserving the NULL-authorization correction; install only through the approved release process before hosted history/status verification. |
+| Referral recommendation and durable attribution continuity | partner_affiliate_and_referral_recipient | /r/:code | mounted | full_suite_pass | browser_verified | built_not_deployed | UX-REFERRAL-RECOMMENDATION-V1-20260904 | Qualify the exact service-only touch-lookup candidate on its managed predecessor. Resolve the canonical EA mapping, hold-rate and idempotence contract before wiring any money-bearing grant writer. |
 | Xenios Care manual access request | care_requester | /care | mounted | focused_tests_pass | unknown | live_verified | CARE-MANUAL-ACCESS-20260831 | Keep Care access separate from Research ordering and route clinical needs only to this Care-owned workflow. |
 | Care access request operations queue | founder_care_operations | /admin/research/care-requests | mounted | focused_tests_pass | unknown | deployed_not_authenticated_smoked | CARE-ADMIN-RELIABILITY-20260903 | Expose only bounded aggregate attention in the Founder Command Center and link here for operations. |
 | Membership application and review | applicant_and_membership_operations | /research/apply | mounted | unknown | unknown | blocked_external | APP-MEMBERSHIP | Continue operator UX improvements without opening the public write until legal versions are authoritative. |
@@ -129,7 +129,7 @@ Recorded production: `c545a70eb694d990842ad1259df4f0786dab92c9` / `dep-dag8l567b
 | /research/access-gate | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:454 |
 | /research/access-hub | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:305 |
 | /research/access-state | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:324 |
-| /research/account | research_customer | identity_accounts | mounted | focused_tests_pass | browser_verified | unknown | client/src/research/section.tsx:363 |
+| /research/account | research_customer | identity_accounts | mounted | full_suite_pass | browser_verified | unknown | client/src/research/section.tsx:363 |
 | /research/account/care | research_customer | identity_accounts | mounted | unknown | unknown | unknown | client/src/research/section.tsx:357 |
 | /research/account/documents | research_customer | identity_accounts | mounted | unknown | unknown | unknown | client/src/research/section.tsx:358 |
 | /research/account/interests | research_customer | identity_accounts | mounted | unknown | unknown | unknown | client/src/research/section.tsx:361 |
