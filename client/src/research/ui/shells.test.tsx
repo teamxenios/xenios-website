@@ -77,3 +77,42 @@ describe("research shells never nest a second main landmark", () => {
     expect(ResearchAppShell).toBe(ResearchPublicShell);
   });
 });
+
+describe("member subnavigation pointer targets", () => {
+  it("keeps every member-area link at least 44 by 44 at every viewport width", () => {
+    const view = render(
+      <ResearchMemberShell title="Orders">
+        <p>Order history</p>
+      </ResearchMemberShell>,
+    );
+    const nav = view.host.querySelector("nav[aria-label='Member areas']")!;
+    const links = Array.from(nav.querySelectorAll("a"));
+
+    expect(links).toHaveLength(18);
+    for (const link of links) {
+      expect(link.getAttribute("href")).toMatch(/^\/research\//);
+      // Unlike mobile-only CSS, this minimum applies to desktop and zoomed
+      // member pages too. Geometry remains checked by the browser matrix.
+      expect(link.style.minWidth).toBe("44px");
+      expect(link.style.minHeight).toBe("44px");
+      expect(link.style.display).toBe("inline-flex");
+      expect(link.style.alignItems).toBe("center");
+      expect(link.style.justifyContent).toBe("center");
+      expect(link.style.flexShrink).toBe("0");
+    }
+    expect(nav.classList.contains("ra-subnav")).toBe(true);
+    view.unmount();
+  });
+
+  it("does not change the partner shell's independent target styling", () => {
+    const view = render(
+      <ResearchPartnerShell title="Dashboard">
+        <p>Partner content</p>
+      </ResearchPartnerShell>,
+    );
+    const links = Array.from(view.host.querySelectorAll("nav[aria-label='Partner areas'] a"));
+    expect(links).not.toHaveLength(0);
+    expect(links.every((link) => !link.hasAttribute("style"))).toBe(true);
+    view.unmount();
+  });
+});

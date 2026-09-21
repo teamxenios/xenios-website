@@ -17,7 +17,15 @@ import { MEMBER_ROUTES, PARTNER_ROUTES, ADMIN_ROUTES } from "../lib/routes";
 // is distinct from the member area.
 // ---------------------------------------------------------------------------
 
-function SubNav({ items, label }: { items: Array<{ href: string; label: string }>; label: string }) {
+function SubNav({
+  items,
+  label,
+  minimumTargetSize,
+}: {
+  items: Array<{ href: string; label: string }>;
+  label: string;
+  minimumTargetSize?: number;
+}) {
   const [location] = useLocation();
   return (
     <nav aria-label={label} className="ra-subnav">
@@ -28,6 +36,14 @@ function SubNav({ items, label }: { items: Array<{ href: string; label: string }
             key={item.href}
             href={item.href}
             className={`ra-subnav-link ${active ? "ra-subnav-active" : ""}`}
+            style={minimumTargetSize === undefined ? undefined : {
+              minWidth: minimumTargetSize,
+              minHeight: minimumTargetSize,
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
             aria-current={active ? "page" : undefined}
           >
             {item.label}
@@ -95,7 +111,7 @@ export function ResearchMemberShell({
 }) {
   return (
     <div className="research-app container-x" style={{ paddingTop: 28, paddingBottom: 64 }}>
-      <SubNav items={MEMBER_SUBNAV} label="Member areas" />
+      <SubNav items={MEMBER_SUBNAV} label="Member areas" minimumTargetSize={44} />
       <PageHeader eyebrow={eyebrow} title={title} lead={lead} actions={actions} />
       {/* Not a landmark: the section chrome in layout.tsx already renders the
           page's one <main>, and this shell always composes inside it. A

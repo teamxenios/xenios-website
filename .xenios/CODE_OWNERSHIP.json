@@ -1475,6 +1475,7 @@
         "server/research/resource-access-wall.test.ts",
         "docs/revenue-launch/20260907/**",
         "client/src/research/ui/kit.tsx",
+        "client/src/research/ui/shells.test.tsx",
         "client/src/research/ui/shells.tsx",
         "client/src/research/ui/admin-shell.test.tsx",
         "client/src/research/pages/adminx/MemberAccessDiagnosisPanel.tsx",

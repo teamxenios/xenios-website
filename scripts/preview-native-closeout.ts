@@ -163,7 +163,9 @@ export async function buildNativeCloseoutPreview(port: number, distDir?: string)
       xrr: { connected: false, complete: false } },
   }, createAssistedMemberHistoryReader(getSupabaseAdmin()));
   app.get("/api/admin/me", requireSupabaseAdmin, (_req, res) => res.json({ success: true, email: FIXTURE.adminEmail }));
-  app.get("/api/research/me", (_req, res) => res.json({ ok: true, authenticated: true }));
+  // Match the production access-state envelope. Omitting configured causes
+  // cold navigation to mark a retained member session signed out.
+  app.get("/api/research/me", (_req, res) => res.json({ configured: true, authed: true, publicMode: true }));
   app.get("/api/research/member/me", requireActiveMember, (req, res) => res.json({ ok: true, member: { firstName: "Preview", status: "active", applicationStatus: "approved", id: (req as express.Request & { researchMember: { id: string } }).researchMember.id } }));
   app.get("/api/research/catalog", requireActiveMember, (_req, res) => res.json({ products: [], commerce: { research: false, consumer: false }, email: "research@preview.invalid" }));
   app.get("/api/research/capabilities", requireMember, (_req, res) => res.json({ ok: true, capabilities: { product_commerce: { enabled: false }, questions: { enabled: true } } }));

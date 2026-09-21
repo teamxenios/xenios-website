@@ -15,6 +15,7 @@ test("real native workflows through local auth, with ownership and failure bound
   };
   const login = async (email) => (await call("/preview-backend/auth/v1/token?grant_type=password", null, "POST", { email, password: FIXTURE.password })).body.access_token;
   try {
+    assert.deepEqual((await call("/api/research/me")).body, { configured: true, authed: true, publicMode: true });
     const admin = await login(FIXTURE.adminEmail);
     const member = await login(FIXTURE.memberEmail);
     const other = await login(FIXTURE.otherEmail);
