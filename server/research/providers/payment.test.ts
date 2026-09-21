@@ -370,6 +370,7 @@ describe("StripePaymentAdapter", () => {
 
   it("declares the credential names it needs, without any values", () => {
     expect(StripePaymentAdapter.requiredEnvironmentVariables).toEqual([
+      "STRIPE_PUBLISHABLE_KEY",
       "STRIPE_SECRET_KEY",
       "STRIPE_WEBHOOK_SECRET",
     ]);
@@ -689,6 +690,63 @@ describe("StripePaymentAdapter", () => {
       expect(requests[1].form?.amount).toBe("1000");
     });
 
+    it("binds the durable execution id as provider metadata and reads the same refund back", async () => {
+      const providerRefund = {
+        id: "re_bound_1",
+        status: "succeeded",
+        payment_intent: "pi_1",
+        amount: 1000,
+        currency: "usd",
+        metadata: { xeniosRefundExecutionId: "00000000-0000-4000-8000-0000000000f1" },
+      };
+      const { adapter, requests } = stripeAdapter([
+        { status: 200, body: capturedIntent },
+        { status: 200, body: providerRefund },
+        { status: 200, body: { object: "list", data: [providerRefund] } },
+      ]);
+
+      const created = await adapter.refund("pi_1", 1000, "refund_key_bound", {
+        refundExecutionId: "00000000-0000-4000-8000-0000000000f1",
+      });
+      expect(created.ok).toBe(true);
+      expect(requests[1].form?.["metadata[xeniosRefundExecutionId]"]).toBe("00000000-0000-4000-8000-0000000000f1");
+
+      const recovered = await adapter.retrieveRefund("pi_1", "00000000-0000-4000-8000-0000000000f1", 1000);
+      expect(recovered).toMatchObject({
+        ok: true,
+        value: {
+          providerReference: "re_bound_1",
+          paymentReference: "pi_1",
+          refundedAmountCents: 1000,
+          currency: "usd",
+          status: "refunded",
+        },
+      });
+      expect(requests[2].path).toBe("/v1/refunds?payment_intent=pi_1&limit=100");
+    });
+
+    it("fails closed on ambiguous or mismatched durable refund readback", async () => {
+      const match = {
+        id: "re_bound_1",
+        status: "succeeded",
+        payment_intent: "pi_1",
+        amount: 1000,
+        currency: "usd",
+        metadata: { xeniosRefundExecutionId: "exec_1" },
+      };
+      const ambiguous = stripeAdapter([{ status: 200, body: { data: [match, { ...match, id: "re_bound_2" }] } }]);
+      await expect(ambiguous.adapter.retrieveRefund("pi_1", "exec_1", 1000)).resolves.toMatchObject({
+        ok: false,
+        code: "PERMANENT_FAILURE",
+      });
+
+      const mismatched = stripeAdapter([{ status: 200, body: { data: [{ ...match, amount: 999 }] } }]);
+      await expect(mismatched.adapter.retrieveRefund("pi_1", "exec_1", 1000)).resolves.toMatchObject({
+        ok: false,
+        code: "PERMANENT_FAILURE",
+      });
+    });
+
     it.each([
       ["wrong retrieved id", { ...capturedIntent, id: "pi_other" }],
       ["wrong retrieved currency", { ...capturedIntent, currency: "eur" }],
@@ -956,7 +1014,7 @@ describe("StripePaymentAdapter", () => {
       if (r.ok) expect(r.value.eventType).toBe("payment_intent.created");
     });
 
-    it("reads the payment reference from a charge event's payment_intent field", async () => {
+    it("leaves the aggregate charge.refunded event untranslated because it cannot name one refund execution", async () => {
       const { adapter } = stripeAdapter([]);
       const body = JSON.stringify({
         id: "evt_3",
@@ -974,12 +1032,56 @@ describe("StripePaymentAdapter", () => {
       const r = await adapter.verifyWebhook(body, sign(body, nowSeconds));
       expect(r.ok).toBe(true);
       if (r.ok) {
-        expect(r.value.eventType).toBe("payment.refunded");
+        expect(r.value.eventType).toBe("charge.refunded");
         expect(r.value.providerReference).toBe("pi_7");
         expect(r.value.orderId).toBe("ord_7");
-        expect(r.value.amountCents).toBe(7_500);
+        expect(r.value.amountCents).toBeUndefined();
         expect(r.value.currency).toBe("usd");
       }
+    });
+
+    it("translates a terminal Refund object with exact durable execution metadata", async () => {
+      const { adapter } = stripeAdapter([]);
+      const executionId = "00000000-0000-4000-8000-0000000000f1";
+      const body = JSON.stringify({
+        id: "evt_refund_1",
+        type: "refund.updated",
+        data: {
+          object: {
+            id: "re_7",
+            status: "succeeded",
+            payment_intent: "pi_7",
+            metadata: { xeniosRefundExecutionId: executionId },
+            amount: 7_500,
+            currency: "usd",
+          },
+        },
+      });
+      const result = await adapter.verifyWebhook(body, sign(body, nowSeconds));
+      expect(result).toMatchObject({
+        ok: true,
+        value: {
+          eventType: "payment.refunded",
+          providerReference: "pi_7",
+          refundReference: "re_7",
+          refundExecutionId: executionId,
+          amountCents: 7_500,
+          currency: "usd",
+        },
+      });
+    });
+
+    it("does not translate a pending Refund object into settlement evidence", async () => {
+      const { adapter } = stripeAdapter([]);
+      const body = JSON.stringify({
+        id: "evt_refund_pending",
+        type: "refund.created",
+        data: { object: { id: "re_8", status: "pending", payment_intent: "pi_7", amount: 7_500, currency: "usd" } },
+      });
+      await expect(adapter.verifyWebhook(body, sign(body, nowSeconds))).resolves.toMatchObject({
+        ok: true,
+        value: { eventType: "refund.created" },
+      });
     });
 
     it("binds a connected-account event to the configured Stripe account", async () => {
@@ -1020,14 +1122,16 @@ describe("validateStripeConfig", () => {
     const r = validateStripeConfig({} as NodeJS.ProcessEnv);
     expect(r.ok).toBe(false);
     if (!r.ok) {
-      expect(r.missingEnvironmentVariables).toEqual(["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]);
+      expect(r.missingEnvironmentVariables).toEqual(["STRIPE_PUBLISHABLE_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"]);
+      expect(r.invalidEnvironmentVariables).toEqual([]);
     }
   });
 
   it("passes with both names present", () => {
     const r = validateStripeConfig({
-      STRIPE_SECRET_KEY: FAKE_SECRET_KEY,
-      STRIPE_WEBHOOK_SECRET: FAKE_WEBHOOK_SECRET,
+      STRIPE_PUBLISHABLE_KEY: "pk_test_abcdefgh12345678",
+      STRIPE_SECRET_KEY: "sk_test_abcdefgh12345678",
+      STRIPE_WEBHOOK_SECRET: "whsec_abcdefgh12345678",
     } as NodeJS.ProcessEnv);
     expect(r.ok).toBe(true);
   });
@@ -1084,45 +1188,72 @@ describe("resolvePaymentProvider", () => {
     expect(p.name).toBe("disabled");
   });
 
-  it("keeps Stripe disabled even with complete credentials until durable execution is mounted", () => {
+  it("selects Stripe only from a complete server-side, same-mode platform configuration", () => {
     const p = resolvePaymentProvider({
       NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
       PAYMENTS_PROVIDER: "stripe",
-      STRIPE_SECRET_KEY: FAKE_SECRET_KEY,
-      STRIPE_WEBHOOK_SECRET: FAKE_WEBHOOK_SECRET,
+      STRIPE_PUBLISHABLE_KEY: "pk_test_abcdefgh12345678",
+      STRIPE_SECRET_KEY: "sk_test_abcdefgh12345678",
+      STRIPE_WEBHOOK_SECRET: "whsec_abcdefgh12345678",
     } as NodeJS.ProcessEnv);
-    expect(p.name).toBe("disabled");
+    expect(p.name).toBe("stripe");
   });
 
   it("keeps unsupported Stripe Connect configuration disabled", () => {
     const p = resolvePaymentProvider({
       NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
       PAYMENTS_PROVIDER: "stripe",
-      STRIPE_SECRET_KEY: FAKE_SECRET_KEY,
-      STRIPE_WEBHOOK_SECRET: FAKE_WEBHOOK_SECRET,
+      STRIPE_PUBLISHABLE_KEY: "pk_test_abcdefgh12345678",
+      STRIPE_SECRET_KEY: "sk_test_abcdefgh12345678",
+      STRIPE_WEBHOOK_SECRET: "whsec_abcdefgh12345678",
       STRIPE_ACCOUNT_ID: "acct_live_connected",
     } as NodeJS.ProcessEnv);
     expect(p.name).toBe("disabled");
   });
 
-  it("keeps the earlier singular PAYMENT_PROVIDER spelling disabled too", () => {
+  it("honors the earlier singular PAYMENT_PROVIDER spelling only with complete configuration", () => {
     const p = resolvePaymentProvider({
       NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
       PAYMENT_PROVIDER: "stripe",
-      STRIPE_SECRET_KEY: FAKE_SECRET_KEY,
-      STRIPE_WEBHOOK_SECRET: FAKE_WEBHOOK_SECRET,
+      STRIPE_PUBLISHABLE_KEY: "pk_test_abcdefgh12345678",
+      STRIPE_SECRET_KEY: "sk_test_abcdefgh12345678",
+      STRIPE_WEBHOOK_SECRET: "whsec_abcdefgh12345678",
     } as NodeJS.ProcessEnv);
-    expect(p.name).toBe("disabled");
+    expect(p.name).toBe("stripe");
   });
 
   it("does not construct any adapter for a synthetic-marked Stripe configuration", () => {
     const p = resolvePaymentProvider({
       NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
       PAYMENTS_PROVIDER: "stripe",
+      STRIPE_PUBLISHABLE_KEY: "pk_test_abcdefgh12345678",
       STRIPE_SECRET_KEY: "sk_synthetic_test_fixture_123",
-      STRIPE_WEBHOOK_SECRET: FAKE_WEBHOOK_SECRET,
+      STRIPE_WEBHOOK_SECRET: "whsec_abcdefgh12345678",
     } as NodeJS.ProcessEnv);
     expect(p.name).toBe("disabled");
+  });
+
+  it.each([
+    { STRIPE_PUBLISHABLE_KEY: "pk_live_abcdefgh12345678", STRIPE_SECRET_KEY: "sk_test_abcdefgh12345678", STRIPE_WEBHOOK_SECRET: "whsec_abcdefgh12345678" },
+    { STRIPE_PUBLISHABLE_KEY: "pk_test_short", STRIPE_SECRET_KEY: "sk_test_abcdefgh12345678", STRIPE_WEBHOOK_SECRET: "whsec_abcdefgh12345678" },
+    { STRIPE_PUBLISHABLE_KEY: "pk_test_abcdefgh12345678", STRIPE_SECRET_KEY: "sk_test_abcdefgh12345678", STRIPE_WEBHOOK_SECRET: "bad_secret" },
+  ])("fails closed for invalid or cross-mode Stripe key shapes", (credentials) => {
+    expect(resolvePaymentProvider({
+      NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
+      PAYMENTS_PROVIDER: "stripe",
+      ...credentials,
+    } as NodeJS.ProcessEnv).name).toBe("disabled");
+  });
+
+  it("fails closed when the two server provider selectors disagree", () => {
+    expect(resolvePaymentProvider({
+      NEXT_PUBLIC_RESEARCH_COMMERCE_ENABLED: "true",
+      PAYMENTS_PROVIDER: "stripe",
+      PAYMENT_PROVIDER: "test",
+      STRIPE_PUBLISHABLE_KEY: "pk_test_abcdefgh12345678",
+      STRIPE_SECRET_KEY: "sk_test_abcdefgh12345678",
+      STRIPE_WEBHOOK_SECRET: "whsec_abcdefgh12345678",
+    } as NodeJS.ProcessEnv).name).toBe("disabled");
   });
 });
 

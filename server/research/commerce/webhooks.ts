@@ -29,6 +29,7 @@ import { transitionOrder, type OrderState } from "@shared/research/commerce";
 import type { PaymentProvider, WebhookVerification } from "../providers/payment";
 import type { FulfillmentProvider } from "../providers/fulfillment";
 import type { WebhookExecutionProcessor } from "./webhook-execution-processor";
+import type { RefundWebhookProcessor } from "./refund-webhook-processor";
 
 /**
  * The shipment fields a VERIFIED fulfillment event carries. Glue only: the
@@ -150,6 +151,8 @@ export interface WebhookDeps {
    * legacy order projection unchanged. Absent means executions are not wired.
    */
   executions?: WebhookExecutionProcessor;
+  /** Durable refund settlement, bound by provider refund metadata. */
+  refunds?: RefundWebhookProcessor;
   commerceEnabled: boolean;
 }
 
@@ -370,7 +373,7 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
     // The durable execution processor is its own atomic authority (a durable
     // receipt is claimed before any effect), so with it wired verification may
     // run; an event no execution owns still needs the legacy atomic store.
-    if (!atomic && !deps.executions) return { ok: false, code: "capability_disabled" };
+    if (!atomic && !deps.executions && !deps.refunds) return { ok: false, code: "capability_disabled" };
 
     const verified = await deps.payment.verifyWebhook(rawBody, signature);
     if (!verified.ok) {
@@ -386,7 +389,28 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
       return { ok: true, applied: false, eventId };
     }
 
-    // Durable executions take the event first when they own its payment. The
+    // Refund settlement is not a checkout-order event. It must bind to the
+    // server-authored refund execution metadata and commit through that
+    // authority before any checkout or legacy order processor sees it.
+    if (eventType === "payment.refunded") {
+      if (!deps.refunds) return { ok: false, code: "capability_disabled" };
+      const refund = await deps.refunds.process(verified.value, payloadSha256(rawBody), asOf);
+      switch (refund.outcome) {
+        case "applied":
+          return { ok: true, applied: true, eventId };
+        case "acknowledged":
+        case "duplicate":
+        case "isolated":
+          return { ok: true, applied: false, eventId };
+        case "conflict":
+          return { ok: false, code: "event_conflict" };
+        case "retry":
+        case "unbound":
+          return { ok: false, code: "execution_contention" };
+      }
+    }
+
+    // Durable checkout executions take the event first when they own its payment. The
     // processor claims a durable receipt before any effect and acknowledges
     // only from a terminal inbox state; "unbound" means no execution names
     // this payment and the legacy order projection keeps owning the event.

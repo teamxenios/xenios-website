@@ -157,6 +157,8 @@ export interface JourneyCapabilities {
   processRestart: boolean;
   /** Can fail the local transaction after a real capture, at the intended boundary. */
   localCommitFault: boolean;
+  /** Can drive the real claim/admin refund path and observe its durable authority. */
+  durableRefundExecution: boolean;
 }
 
 export interface JourneySubmitResult {
@@ -192,6 +194,42 @@ export interface JourneyPayment {
   amountReceivedCents: number;
 }
 
+export interface JourneyRefundResult {
+  ok: boolean;
+  code?: string;
+  claimId?: string;
+  executionId?: string;
+  providerRefundReference?: string;
+}
+
+export interface JourneyRefundExecution {
+  executionId: string;
+  claimId: string;
+  orderId: string;
+  paymentReference: string;
+  amountCents: number;
+  currency: "usd";
+  state: string;
+  providerRefundReference: string | null;
+  firstAttemptedAt: string | null;
+  committedAt: string | null;
+}
+
+export interface JourneyProviderRefund {
+  refundReference: string;
+  paymentReference: string;
+  amountCents: number;
+  currency: "usd";
+  status: string;
+}
+
+export interface JourneyClaim {
+  claimId: string;
+  orderId: string;
+  state: string;
+  resolution: string | null;
+}
+
 export interface JourneySurface {
   /** What this binding can actually do. */
   capabilities: JourneyCapabilities;
@@ -224,6 +262,13 @@ export interface JourneySurface {
   /** How many CAPTURE operations the provider has performed, in total. */
   providerCaptureCount(): Promise<number>;
 
+  /** Drive the mounted member-claim plus authenticated admin-refund path. */
+  executeClaimRefund?(input: { memberId: string; orderId: string; amountCents: number; idempotencyKey: string }): Promise<JourneyRefundResult>;
+  readRefundExecution?(executionId: string): Promise<JourneyRefundExecution | null>;
+  readClaim?(claimId: string): Promise<JourneyClaim | null>;
+  readProviderRefund?(refundReference: string): Promise<JourneyProviderRefund | null>;
+  providerRefundCount?(): Promise<number>;
+
   /** Order ids the downstream hook was told about, in order. */
   readDownstreamNotifications?(): Promise<readonly string[]>;
   /** Inventory hold events, as `reserve:`/`release:`/`finalize:` markers. */
@@ -243,6 +288,7 @@ export interface JourneyRequestFactory {
 
 export type ScenarioName =
   | "ordinary_payment"
+  | "durable_claim_refund"
   | "authentication_challenge_and_return"
   | "authentication_without_challenge"
   | "declined_card"
@@ -259,6 +305,7 @@ export type ScenarioName =
 /** Every scenario a managed run must actually execute before it may qualify. */
 export const REQUIRED_SCENARIOS: readonly ScenarioName[] = [
   "ordinary_payment",
+  "durable_claim_refund",
   "authentication_challenge_and_return",
   "authentication_without_challenge",
   "declined_card",
@@ -383,6 +430,59 @@ export async function runConnectedCheckoutJourney(inputs: JourneyInputs): Promis
       expect(order?.capturedAmountCents === execution?.amountCents, "the order records exactly the captured amount");
       return [];
     }),
+  );
+
+  // ---- captured purchase, approved claim, durable refund ----------------
+  scenarios.push(
+    can.durableRefundExecution
+      && surface.executeClaimRefund
+      && surface.readRefundExecution
+      && surface.readClaim
+      && surface.readProviderRefund
+      && surface.providerRefundCount
+      ? await runScenario("durable_claim_refund", async (expect) => {
+          const member = inputs.memberFor("durable_claim_refund");
+          const checkout = request();
+          const placed = await surface.submit(member, checkout);
+          expect(placed.ok === true && placed.state === "completed" && placed.orderId != null, "the purchase is captured before refund authorization");
+          const captured = await surface.readOrder(placed.orderId!);
+          const amount = captured?.capturedAmountCents ?? 0;
+          expect(amount > 0 && captured?.providerReference != null, "the canonical order carries exact capture evidence");
+          const refundRequest = {
+            memberId: member,
+            orderId: placed.orderId!,
+            amountCents: amount,
+            idempotencyKey: `refund-${checkout.idempotencyKey}`,
+          };
+          const refundsBefore = await surface.providerRefundCount!();
+          const refunded = await surface.executeClaimRefund!(refundRequest);
+          expect(refunded.ok === true, "the mounted claim/admin path authorizes the refund");
+          expect(refunded.claimId != null && refunded.executionId != null && refunded.providerRefundReference != null, "the refund names its claim, durable execution, and provider effect");
+          const replay = await surface.executeClaimRefund!(refundRequest);
+          expect(replay.ok === true && replay.executionId === refunded.executionId, "an exact replay returns the same durable execution");
+          expect(replay.providerRefundReference === refunded.providerRefundReference, "an exact replay returns the same provider refund");
+          expect((await surface.providerRefundCount!()) - refundsBefore === 1, "the provider performs exactly one refund across the replay");
+
+          const execution = await surface.readRefundExecution!(refunded.executionId!);
+          expect(execution?.state === "committed" && execution.committedAt != null, "the durable refund execution commits atomically");
+          expect(execution?.firstAttemptedAt != null, "the first provider attempt is persisted");
+          expect(execution?.orderId === placed.orderId && execution?.amountCents === amount, "the execution is bound to the captured order and amount");
+          expect(execution?.providerRefundReference === refunded.providerRefundReference, "the committed execution contains the exact provider evidence");
+          const claim = await surface.readClaim!(refunded.claimId!);
+          expect(claim?.orderId === placed.orderId && claim?.state === "resolved", "the same claim is resolved");
+          expect(claim?.resolution === "refund", "the claim records a full refund resolution");
+          const order = await surface.readOrder(placed.orderId!);
+          expect(order?.state === "refunded" && order.refundedCents === amount, "the same order is atomically marked refunded for the exact amount");
+          const providerRefund = await surface.readProviderRefund!(refunded.providerRefundReference!);
+          expect(providerRefund?.status === "succeeded", "the provider reports a succeeded refund");
+          expect(providerRefund?.paymentReference === captured!.providerReference, "the provider refund is bound to the captured payment");
+          expect(providerRefund?.amountCents === amount && providerRefund?.currency === "usd", "provider amount and currency match the execution");
+          return [];
+        })
+      : skipped(
+          "durable_claim_refund",
+          "surface.executeClaimRefund/readRefundExecution/readClaim/readProviderRefund/providerRefundCount (mounted member claim plus authenticated admin refund authority)",
+        ),
   );
 
   // ---- a real challenge, driven in a browser -----------------------------

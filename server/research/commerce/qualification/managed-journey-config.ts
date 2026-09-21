@@ -269,6 +269,9 @@ export function readManagedJourneyConfig(env: Record<string, string | undefined>
       transportFaultInjection: faultControlUrl !== null,
       processRestart: restartCommand !== null,
       localCommitFault: faultControlUrl !== null,
+      // The current launcher has no owner-approved admin claim/refund credential
+      // or mounted refund observation port. Keep this required gate explicit.
+      durableRefundExecution: false,
     },
     chromePath,
     restartCommand,

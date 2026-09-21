@@ -10,6 +10,7 @@ import { createInMemoryInventoryLotStore } from "./persistence/inventory-store";
 import { createInMemoryStoreCreditLedgerStore } from "./persistence/store-credit-store";
 import { createInMemorySubscriptionStore } from "./persistence/subscriptions-store";
 import { createInMemoryAdminQueuesStore } from "./persistence/admin-queues-store";
+import { createInMemoryRefundExecutionStore } from "./refund-executions";
 import {
   createInMemoryClaimOrderRepository,
   createInMemoryClaimRepository,
@@ -41,6 +42,8 @@ import {
   type ProductVariantActivationLedgerRepository,
 } from "../product-activation/authority-repository";
 import { createCommerceOrdersPort } from "../customer-account/orders-projection";
+import { createInMemoryCheckoutExecutionStore } from "./persistence/checkout-executions-store";
+import { createInMemoryWebhookExecutionInbox } from "./webhook-execution-processor";
 
 // ---------------------------------------------------------------------------
 // Three-state proof of the production commerce composition.
@@ -1040,6 +1043,68 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
       product_commerce: { enabled: false },
       quantum_commerce: { enabled: false },
     });
+  });
+
+  it("keeps customer checkout disabled with complete Stripe config until refund RPC authority is explicitly enabled", async () => {
+    const setup = await liveSetup();
+    const { resolvePaymentProvider: _testProvider, ...productionWiring } = setup.wiring;
+    const refundStore = vi.fn(() => {
+      throw new Error("refund store must not resolve while its rollout flag is absent");
+    });
+    const deps = buildCommerceDependencies(NOW, {
+      ...LIVE_ENV,
+      NODE_ENV: "production",
+      PAYMENTS_PROVIDER: "stripe",
+      STRIPE_PUBLISHABLE_KEY: "pk_test_A1b2C3d4E5",
+      STRIPE_SECRET_KEY: "sk_test_Z9y8X7w6V5",
+      STRIPE_WEBHOOK_SECRET: "whsec_Q1w2E3r4T5",
+      // RESEARCH_REFUND_EXECUTION_ENABLED is deliberately absent: applying
+      // the guarded RPC candidate is a separate, owner-authorized rollout.
+    }, {
+      ...productionWiring,
+      resolveDurableCheckoutStores: () => ({
+        executions: { store: createInMemoryCheckoutExecutionStore({ now: NOW }), durable: true },
+        webhookInbox: { store: createInMemoryWebhookExecutionInbox(), durable: true },
+      }),
+      resolveRefundExecutionStore: refundStore,
+    });
+
+    expect(refundStore).not.toHaveBeenCalled();
+    expect(deps.durableCheckout).toMatchObject({ ready: false, reason: "refund_authority_not_durable" });
+    expect(deps.durableCheckout.clientConfig()).toEqual({ ok: false, code: "payment_disabled" });
+    expect(deps.capabilities.memberVisible().product_commerce.enabled).toBe(false);
+  });
+
+  it("opens the full checkout composition only when refund store and durable webhook recovery are both present", async () => {
+    const setup = await liveSetup();
+    const { resolvePaymentProvider: _testProvider, ...productionWiring } = setup.wiring;
+    const refundExecutions = createInMemoryRefundExecutionStore({
+      claims: setup.claimRepository,
+      orders: setup.claimOrderRepository,
+    });
+    const deps = buildCommerceDependencies(NOW, {
+      ...LIVE_ENV,
+      NODE_ENV: "production",
+      PAYMENTS_PROVIDER: "stripe",
+      STRIPE_PUBLISHABLE_KEY: "pk_test_A1b2C3d4E5",
+      STRIPE_SECRET_KEY: "sk_test_Z9y8X7w6V5",
+      STRIPE_WEBHOOK_SECRET: "whsec_Q1w2E3r4T5",
+      RESEARCH_REFUND_EXECUTION_ENABLED: "true",
+    }, {
+      ...productionWiring,
+      resolveDurableCheckoutStores: () => ({
+        executions: { store: createInMemoryCheckoutExecutionStore({ now: NOW }), durable: true },
+        webhookInbox: { store: createInMemoryWebhookExecutionInbox(), durable: true },
+      }),
+      resolveRefundExecutionStore: () => refundExecutions,
+    });
+
+    expect(deps.durableCheckout.ready).toBe(true);
+    expect(deps.durableCheckout.clientConfig()).toMatchObject({
+      ok: true,
+      config: { provider: "stripe", mode: "test" },
+    });
+    expect(deps.capabilities.memberVisible().product_commerce.enabled).toBe(true);
   });
 
   it("keeps discovery previews outside commerce without canonical Product Control SKU authority", () => {

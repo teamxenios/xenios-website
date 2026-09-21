@@ -33,7 +33,8 @@ export type WebhookExecutionIsolateReason =
   | "member_mismatch"
   | "currency_mismatch"
   | "amount_mismatch"
-  | "captured_after_cancelled";
+  | "captured_after_cancelled"
+  | "refund_execution_required";
 
 export type WebhookExecutionDecision =
   | { kind: "apply"; proof: ProviderExecutionResult; target: "authorized" | "captured" | "refused" }
@@ -66,6 +67,12 @@ export function bindPaymentEventToExecution(
   execution: CheckoutExecutionRecord | null,
   expectedProviderAccountId: string | null,
 ): WebhookExecutionDecision {
+  // Refund settlement belongs to the refund-execution authority, whose intent
+  // and provider operation metadata are not represented by a checkout row.
+  // Isolate it here so it can never fall through to the legacy order mutator.
+  if (event.eventType === "payment.refunded") {
+    return { kind: "isolate", reason: "refund_execution_required" };
+  }
   if (!EXECUTION_EVENT_TYPES.has(event.eventType)) {
     return { kind: "acknowledge", reason: event.eventType.includes(".") && event.eventType.startsWith("payment.") ? "not_an_execution_event" : "untranslated_event_type" };
   }

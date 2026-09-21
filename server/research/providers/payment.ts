@@ -15,6 +15,7 @@ import {
   providerOk,
   type ProviderResult,
 } from "@shared/research/capability";
+import { scanForSyntheticMarkers } from "../commerce/production-guards";
 
 export interface CreateAuthorizationInput {
   /** Minor units. Always computed server-side from the catalog, never from a client. */
@@ -74,6 +75,10 @@ export interface WebhookVerification {
   currency?: string;
   /** Present for connected-account events after adapter-level account binding. */
   providerAccountId?: string;
+  /** Exact provider refund object when this is durable refund-settlement evidence. */
+  refundReference?: string;
+  /** Server-authored durable refund execution id echoed from provider metadata. */
+  refundExecutionId?: string;
   /** The provider-signed payload, already verified. */
   verified: true;
 }
@@ -129,9 +134,29 @@ export interface PaymentProvider {
   createAuthorization(input: CreateAuthorizationInput): Promise<ProviderResult<PaymentAuthorization>>;
   captureAuthorization(providerReference: string, amountCents?: number): Promise<ProviderResult<PaymentCapture>>;
   cancelAuthorization(providerReference: string): Promise<ProviderResult<void>>;
-  refund(providerReference: string, amountCents: number, idempotencyKey: string): Promise<ProviderResult<PaymentRefund>>;
+  refund(
+    providerReference: string,
+    amountCents: number,
+    idempotencyKey: string,
+    context?: { refundExecutionId: string },
+  ): Promise<ProviderResult<PaymentRefund>>;
   retrieveStatus(providerReference: string): Promise<ProviderResult<{ status: string }>>;
   verifyWebhook(rawBody: string, signatureHeader: string | undefined): Promise<ProviderResult<WebhookVerification>>;
+}
+
+/** A provider that can recover a refund after the original response was lost. */
+export interface DurableRefundPaymentProvider extends PaymentProvider {
+  retrieveRefund(
+    providerReference: string,
+    refundExecutionId: string,
+    amountCents: number,
+  ): Promise<ProviderResult<PaymentRefund | null>>;
+}
+
+export function supportsDurableRefundExecution(
+  provider: PaymentProvider,
+): provider is DurableRefundPaymentProvider {
+  return typeof (provider as Partial<DurableRefundPaymentProvider>).retrieveRefund === "function";
 }
 
 /**
@@ -219,7 +244,7 @@ export class DisabledPaymentProvider implements DurablePaymentProvider {
  * amount. It refuses to construct in production so it cannot become a live payment
  * path by a configuration mistake.
  */
-export class TestPaymentProvider implements DurablePaymentProvider {
+export class TestPaymentProvider implements DurablePaymentProvider, DurableRefundPaymentProvider {
   readonly name = "test";
   readonly supportsDeferredCapture = true;
 
@@ -243,6 +268,7 @@ export class TestPaymentProvider implements DurablePaymentProvider {
     string,
     { reference: string; amountCents: number; result: PaymentRefund }
   >();
+  private refundsByExecution = new Map<string, PaymentRefund>();
   private counter = 0;
   /** Test hook: payment methods that need a customer action before they authorize (models 3DS). */
   private readonly actionRequiredMethods = new Set<string>();
@@ -417,7 +443,12 @@ export class TestPaymentProvider implements DurablePaymentProvider {
     return providerOk(undefined as void, ref);
   }
 
-  async refund(ref: string, amountCents: number, idempotencyKey: string): Promise<ProviderResult<PaymentRefund>> {
+  async refund(
+    ref: string,
+    amountCents: number,
+    idempotencyKey: string,
+    context?: { refundExecutionId: string },
+  ): Promise<ProviderResult<PaymentRefund>> {
     if (!Number.isSafeInteger(amountCents) || amountCents <= 0) {
       return { ok: false, code: "REJECTED", message: "Refund amount must be a positive integer of cents.", retryable: false };
     }
@@ -433,6 +464,7 @@ export class TestPaymentProvider implements DurablePaymentProvider {
           retryable: false,
         };
       }
+      if (context) this.refundsByExecution.set(context.refundExecutionId, { ...replayed.result });
       return providerOk({ ...replayed.result }, replayed.result.providerReference);
     }
 
@@ -450,7 +482,7 @@ export class TestPaymentProvider implements DurablePaymentProvider {
       return { ok: false, code: "REJECTED", message: "Refund exceeds captured amount.", retryable: false };
     }
     auth.refunded += amountCents;
-    const refundReference = `test_ref_${this.refundsByKey.size + 1}`;
+    const refundReference = `re_test_${this.refundsByKey.size + 1}`;
     const refund: PaymentRefund = {
       providerReference: refundReference,
       paymentReference: ref,
@@ -459,7 +491,17 @@ export class TestPaymentProvider implements DurablePaymentProvider {
       status: "refunded",
     };
     this.refundsByKey.set(idempotencyKey, { reference: ref, amountCents, result: refund });
+    if (context) this.refundsByExecution.set(context.refundExecutionId, { ...refund });
     return providerOk({ ...refund }, refundReference);
+  }
+
+  async retrieveRefund(ref: string, refundExecutionId: string, amountCents: number): Promise<ProviderResult<PaymentRefund | null>> {
+    const refund = this.refundsByExecution.get(refundExecutionId);
+    if (!refund) return providerOk(null, ref);
+    if (refund.paymentReference !== ref || refund.refundedAmountCents !== amountCents) {
+      return { ok: false, code: "PERMANENT_FAILURE", message: "Refund readback did not match the operation.", retryable: false };
+    }
+    return providerOk({ ...refund }, refund.providerReference);
   }
 
   async retrieveStatus(ref: string): Promise<ProviderResult<{ status: string }>> {
@@ -492,6 +534,8 @@ export class TestPaymentProvider implements DurablePaymentProvider {
       amountCents?: number;
       currency?: string;
       providerAccountId?: string;
+      refundReference?: string;
+      refundExecutionId?: string;
     };
     try {
       parsed = JSON.parse(rawBody);
@@ -510,6 +554,8 @@ export class TestPaymentProvider implements DurablePaymentProvider {
       amountCents: parsed.amountCents,
       currency: parsed.currency,
       providerAccountId: parsed.providerAccountId,
+      refundReference: parsed.refundReference,
+      refundExecutionId: parsed.refundExecutionId,
       verified: true as const,
     });
   }
@@ -754,20 +800,61 @@ export interface StripePaymentConfig {
   toleranceSeconds?: number;
 }
 
+export type StripeMode = "test" | "live";
+
+export interface ValidStripeConfig {
+  publishableKey: string;
+  secretKey: string;
+  webhookSecret: string;
+  mode: StripeMode;
+}
+
 /**
  * Reports what is missing by VARIABLE NAME only. A value never appears in the
  * result, so this structure is safe to surface in admin diagnostics.
  */
 export function validateStripeConfig(
   env: NodeJS.ProcessEnv = process.env,
-): { ok: true; secretKey: string; webhookSecret: string } | { ok: false; missingEnvironmentVariables: string[] } {
+):
+  | ({ ok: true } & ValidStripeConfig)
+  | { ok: false; missingEnvironmentVariables: string[]; invalidEnvironmentVariables: string[] } {
+  const publishableKey = env.STRIPE_PUBLISHABLE_KEY;
   const secretKey = env.STRIPE_SECRET_KEY;
   const webhookSecret = env.STRIPE_WEBHOOK_SECRET;
   const missing: string[] = [];
+  if (!publishableKey) missing.push("STRIPE_PUBLISHABLE_KEY");
   if (!secretKey) missing.push("STRIPE_SECRET_KEY");
   if (!webhookSecret) missing.push("STRIPE_WEBHOOK_SECRET");
-  if (!secretKey || !webhookSecret) return { ok: false, missingEnvironmentVariables: missing };
-  return { ok: true, secretKey, webhookSecret };
+  const invalid: string[] = [];
+  const markInvalid = (name: string) => {
+    if (!invalid.includes(name)) invalid.push(name);
+  };
+  const publishableMatch = publishableKey?.match(/^pk_(test|live)_[A-Za-z0-9]{8,}$/);
+  const secretMatch = secretKey?.match(/^sk_(test|live)_[A-Za-z0-9]{8,}$/);
+  if (publishableKey && !publishableMatch) markInvalid("STRIPE_PUBLISHABLE_KEY");
+  if (secretKey && !secretMatch) markInvalid("STRIPE_SECRET_KEY");
+  if (webhookSecret && !/^whsec_[A-Za-z0-9]{8,}$/.test(webhookSecret)) markInvalid("STRIPE_WEBHOOK_SECRET");
+  const obviousFixture = /(fake|synthetic|fixture|example|placeholder|changeme)/i;
+  if (publishableKey && obviousFixture.test(publishableKey)) markInvalid("STRIPE_PUBLISHABLE_KEY");
+  if (secretKey && obviousFixture.test(secretKey)) markInvalid("STRIPE_SECRET_KEY");
+  if (webhookSecret && obviousFixture.test(webhookSecret)) markInvalid("STRIPE_WEBHOOK_SECRET");
+  if (publishableMatch && secretMatch && publishableMatch[1] !== secretMatch[1]) {
+    markInvalid("STRIPE_PUBLISHABLE_KEY");
+    markInvalid("STRIPE_SECRET_KEY");
+  }
+  const synthetic = scanForSyntheticMarkers({ publishableKey, secretKey, webhookSecret });
+  for (const violation of synthetic) {
+    const name = violation.path.startsWith("publishableKey")
+      ? "STRIPE_PUBLISHABLE_KEY"
+      : violation.path.startsWith("secretKey")
+        ? "STRIPE_SECRET_KEY"
+        : "STRIPE_WEBHOOK_SECRET";
+    markInvalid(name);
+  }
+  if (missing.length > 0 || invalid.length > 0 || !publishableKey || !secretKey || !webhookSecret || !publishableMatch) {
+    return { ok: false, missingEnvironmentVariables: missing, invalidEnvironmentVariables: invalid };
+  }
+  return { ok: true, publishableKey, secretKey, webhookSecret, mode: publishableMatch[1] as StripeMode };
 }
 
 // ---------------------------------------------------------------------------
@@ -798,7 +885,6 @@ const INTENT_STATUS_DOMAIN: Record<string, string> = {
 const STRIPE_PAYMENT_EVENT_TYPES: Record<string, string> = {
   "payment_intent.amount_capturable_updated": "payment.authorized",
   "payment_intent.succeeded": "payment.captured",
-  "charge.refunded": "payment.refunded",
   "payment_intent.payment_failed": "payment.failed",
 };
 
@@ -816,11 +902,11 @@ const STRIPE_PAYMENT_EVENT_TYPES: Record<string, string> = {
  * refused above captured-minus-already-refunded, and no response status
  * outside the explicit tables is ever treated as success.
  */
-export class StripePaymentAdapter implements DurablePaymentProvider {
+export class StripePaymentAdapter implements DurablePaymentProvider, DurableRefundPaymentProvider {
   readonly name = "stripe";
   readonly supportsDeferredCapture = true;
 
-  static readonly requiredEnvironmentVariables = ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"] as const;
+  static readonly requiredEnvironmentVariables = ["STRIPE_PUBLISHABLE_KEY", "STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"] as const;
 
   private readonly transport: StripeTransport;
   private readonly webhookSecret: string;
@@ -1130,7 +1216,12 @@ export class StripePaymentAdapter implements DurablePaymentProvider {
     return providerOk(undefined as void, ref);
   }
 
-  async refund(ref: string, amountCents: number, idempotencyKey: string): Promise<ProviderResult<PaymentRefund>> {
+  async refund(
+    ref: string,
+    amountCents: number,
+    idempotencyKey: string,
+    context?: { refundExecutionId: string },
+  ): Promise<ProviderResult<PaymentRefund>> {
     if (!Number.isSafeInteger(amountCents) || amountCents <= 0) {
       return { ok: false, code: "REJECTED", message: "Refund amount must be a positive integer of cents.", retryable: false };
     }
@@ -1166,7 +1257,11 @@ export class StripePaymentAdapter implements DurablePaymentProvider {
     const response = await this.call({
       method: "POST",
       path: "/v1/refunds",
-      form: { payment_intent: ref, amount: String(amountCents) },
+      form: {
+        payment_intent: ref,
+        amount: String(amountCents),
+        ...(context ? { "metadata[xeniosRefundExecutionId]": context.refundExecutionId } : {}),
+      },
       idempotencyKey,
     });
     if (!response) return stripeTransportFailure();
@@ -1201,9 +1296,11 @@ export class StripePaymentAdapter implements DurablePaymentProvider {
       // refund can still fail asynchronously. Reporting "refunded" here would
       // permanently record money returned that may never return (and could
       // trigger commission reversal upstream). RETRYABLE: nothing is recorded
-      // until the provider confirms settlement. The signed charge.refunded
-      // webhook (mapped to payment.refunded) is the settlement evidence; a
-      // pending refund that later fails simply never produces one.
+      // until the provider confirms settlement. A provider-terminal
+      // refund.created/refund.updated object carries the server-authored
+      // execution id and can atomically finish the durable refund; an admin
+      // retry can recover the same object by provider readback. A pending
+      // refund that later fails produces neither form of success evidence.
       return {
         ok: false,
         code: "RETRYABLE",
@@ -1222,6 +1319,51 @@ export class StripePaymentAdapter implements DurablePaymentProvider {
       },
       refundReference,
     );
+  }
+
+  async retrieveRefund(
+    ref: string,
+    refundExecutionId: string,
+    amountCents: number,
+  ): Promise<ProviderResult<PaymentRefund | null>> {
+    const response = await this.call({
+      method: "GET",
+      path: `/v1/refunds?payment_intent=${encodeURIComponent(ref)}&limit=100`,
+    });
+    if (!response) return stripeTransportFailure();
+    if (response.status !== 200) return mapStripeFailure(response.status, response.body);
+    const envelope = asJsonObject(response.body);
+    const data = envelope?.data;
+    if (!Array.isArray(data)) {
+      return { ok: false, code: "PERMANENT_FAILURE", message: "Stripe refund readback was malformed.", retryable: false };
+    }
+    const matches = data.filter((candidate) => {
+      const refund = asJsonObject(candidate);
+      return readString(asJsonObject(refund?.metadata), "xeniosRefundExecutionId") === refundExecutionId;
+    });
+    if (matches.length === 0) return providerOk(null, ref);
+    if (matches.length !== 1) {
+      return { ok: false, code: "PERMANENT_FAILURE", message: "Stripe returned ambiguous refund evidence.", retryable: false };
+    }
+    const refund = asJsonObject(matches[0]);
+    const refundReference = readString(refund, "id");
+    const paymentReference = readString(refund, "payment_intent");
+    const returnedAmount = readNumber(refund, "amount");
+    const currency = readString(refund, "currency");
+    if (!refundReference?.startsWith("re_") || paymentReference !== ref || returnedAmount !== amountCents || currency !== "usd") {
+      return { ok: false, code: "PERMANENT_FAILURE", message: "Stripe refund readback did not match the durable intent.", retryable: false };
+    }
+    if (refund?.status === "pending") {
+      return { ok: false, code: "RETRYABLE", message: "The refund remains pending.", retryable: true };
+    }
+    if (refund?.status !== "succeeded") return unrecognizedProviderStatus("refund readback", refund?.status);
+    return providerOk({
+      providerReference: refundReference,
+      paymentReference,
+      refundedAmountCents: returnedAmount,
+      currency: "usd",
+      status: "refunded",
+    }, refundReference);
   }
 
   async retrieveStatus(ref: string): Promise<ProviderResult<{ status: string }>> {
@@ -1328,16 +1470,22 @@ export class StripePaymentAdapter implements DurablePaymentProvider {
     const dataObject = asJsonObject(asJsonObject(event.data)?.object);
     const metadata = asJsonObject(dataObject?.metadata);
     const objectId = readString(dataObject, "id");
+    const isRefundObject = stripeType === "refund.created" || stripeType === "refund.updated";
     const providerReference =
       objectId && objectId.startsWith("pi_") ? objectId : readString(dataObject, "payment_intent");
-    const eventType = STRIPE_PAYMENT_EVENT_TYPES[stripeType] ?? stripeType;
+    // Only a provider-terminal Refund object is settlement authority. The
+    // broader charge.refunded aggregate can contain multiple refunds and does
+    // not carry one unambiguous execution binding, so it remains untranslated.
+    const eventType = isRefundObject && dataObject?.status === "succeeded"
+      ? "payment.refunded"
+      : STRIPE_PAYMENT_EVENT_TYPES[stripeType] ?? stripeType;
     const amountField =
       eventType === "payment.authorized"
         ? "amount_capturable"
         : eventType === "payment.captured"
           ? "amount_received"
           : eventType === "payment.refunded"
-            ? "amount_refunded"
+            ? "amount"
             : null;
     const amountCents = amountField === null ? undefined : readNumber(dataObject, amountField);
     const currency = readString(dataObject, "currency");
@@ -1352,6 +1500,10 @@ export class StripePaymentAdapter implements DurablePaymentProvider {
       memberId,
       amountCents,
       currency,
+      ...(eventType === "payment.refunded" && objectId?.startsWith("re_") ? { refundReference: objectId } : {}),
+      ...(eventType === "payment.refunded" && readString(metadata, "xeniosRefundExecutionId")
+        ? { refundExecutionId: readString(metadata, "xeniosRefundExecutionId") }
+        : {}),
       ...(eventProviderAccountId === null ? {} : { providerAccountId: eventProviderAccountId }),
       verified: true,
     });
@@ -1376,21 +1528,25 @@ export function resolvePaymentProvider(env: NodeJS.ProcessEnv = process.env): Pa
 
   // PROVIDER_READINESS.md names PAYMENTS_PROVIDER; the earlier singular spelling
   // is still honored so an existing environment does not silently fall to Disabled.
+  if (env.PAYMENTS_PROVIDER && env.PAYMENT_PROVIDER && env.PAYMENTS_PROVIDER !== env.PAYMENT_PROVIDER) {
+    return new DisabledPaymentProvider();
+  }
   const selected = env.PAYMENTS_PROVIDER ?? env.PAYMENT_PROVIDER;
   if (selected === "test") {
     if (env.NODE_ENV === "production") return new DisabledPaymentProvider();
     return new TestPaymentProvider();
   }
   if (selected === "stripe") {
-    // The adapter is fully executable and attack-tested in isolation, but the
-    // running composition has no durable payment intent/saga that can reconcile
-    // a provider success across a crash before order persistence. Mounting the
-    // adapter here would expose checkout, admin capture/cancel, and refund to
-    // that window. Until a reviewed durable execution adapter owns those
-    // effects, the production resolver remains structurally disabled even when
-    // credentials are present. Injected test compositions can still exercise
-    // StripePaymentAdapter directly without creating a production mutation path.
-    return new DisabledPaymentProvider();
+    // Connect is deliberately unsupported by this composition. Merely naming
+    // an account must never make platform credentials behave as account-bound.
+    if (env.STRIPE_ACCOUNT_ID || env.STRIPE_CONNECT_ACCOUNT_ID) return new DisabledPaymentProvider();
+    const config = validateStripeConfig(env);
+    if (!config.ok) return new DisabledPaymentProvider();
+    return new StripePaymentAdapter({
+      secretKey: config.secretKey,
+      webhookSecret: config.webhookSecret,
+      providerAccountId: null,
+    });
   }
   return new DisabledPaymentProvider();
 }

@@ -104,6 +104,7 @@ function localBinding() {
       now: () => NOW,
       newId: () => `${String(++ids).padStart(8, "0")}-0000-4000-8000-000000000000`,
       allowInMemoryStores: true,
+      refundAuthorityReady: true,
     });
   let composition = compose();
   if (!composition.ready) throw new Error("the local binding must be ready");
@@ -137,6 +138,7 @@ function localBinding() {
       // Rebuilding the composition over retained maps is NOT a process restart.
       processRestart: false,
       localCommitFault: true,
+      durableRefundExecution: false,
     },
     async submit(memberId, req) {
       const outcome = await live().submission.submit(memberId, req, NOW);
@@ -205,6 +207,7 @@ function localBinding() {
 
 const MEMBERS: Record<ScenarioName, string> = {
   ordinary_payment: "00000000-0000-4000-8000-0000000000a1",
+  durable_claim_refund: "00000000-0000-4000-8000-0000000000ae",
   authentication_challenge_and_return: "00000000-0000-4000-8000-0000000000a2",
   authentication_without_challenge: "00000000-0000-4000-8000-0000000000ac",
   declined_card: "00000000-0000-4000-8000-0000000000a3",
@@ -353,7 +356,7 @@ describe("connected checkout journey over the local binding", () => {
 
     // And the two this binding genuinely cannot do are skipped, naming why.
     const skippedNames = receipt.scenarios.filter((s) => s.status === "skipped").map((s) => s.scenario);
-    expect(skippedNames.sort()).toEqual(["authentication_challenge_and_return", "process_restart_recovery"]);
+    expect(skippedNames.sort()).toEqual(["authentication_challenge_and_return", "durable_claim_refund", "process_restart_recovery"]);
     for (const scenario of receipt.scenarios.filter((s) => s.status === "skipped")) {
       expect(scenario.missingCapability, `${scenario.scenario} must name what it needs`).toBeTruthy();
     }
@@ -362,7 +365,7 @@ describe("connected checkout journey over the local binding", () => {
     // A local receipt cannot be mistaken for provider evidence, however green.
     expect(receipt.qualified).toBe(false);
     expect(receipt.evidenceClass).toBe("local_scripted_transport");
-    expect(receipt.missingRequired.sort()).toEqual(["authentication_challenge_and_return", "process_restart_recovery"]);
+    expect(receipt.missingRequired.sort()).toEqual(["authentication_challenge_and_return", "durable_claim_refund", "process_restart_recovery"]);
 
     const serialized = JSON.stringify(receipt);
     expect(serialized).not.toContain("secret");

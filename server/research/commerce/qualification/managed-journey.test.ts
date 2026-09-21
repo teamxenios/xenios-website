@@ -335,6 +335,7 @@ describe("it reports what it cannot do", () => {
       transportFaultInjection: false,
       processRestart: false,
       localCommitFault: false,
+      durableRefundExecution: false,
     });
     // The runner skips on the ABSENCE of the function, so it must be absent.
     expect(h.binding.surface.completeCustomerChallenge).toBeUndefined();

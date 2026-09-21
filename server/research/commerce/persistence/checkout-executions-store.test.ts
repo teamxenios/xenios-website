@@ -168,7 +168,10 @@ describe("in-memory store with the real coordinator, port, adapter and webhook p
     const executor = createDurableCheckoutExecutor(store, createProviderVerifiedPaymentPort(model.adapter));
     expect((await executor.run(base.memberId, base.requestKey)).kind).toBe("reconciliation_required");
     const inbox = createInMemoryWebhookExecutionInbox();
-    const processor = createWebhookExecutionProcessor({ providerName: "stripe", inbox, executions: store, expectedProviderAccountId: null });
+    const processor = createWebhookExecutionProcessor({
+      providerName: "stripe", inbox, executions: store, expectedProviderAccountId: null,
+      settleCaptured: async (record) => (await store.commitCaptured(record.executionId, record.version))?.phase === "committed",
+    });
     const evidence = await processor.process({ eventId: "evt_1", eventType: "payment.authorized", providerReference: "pi_0001", orderId: base.orderId, memberId: base.memberId, amountCents: 33_999, currency: "usd", verified: true }, "a".repeat(64), new Date());
     expect(evidence).toMatchObject({ outcome: "applied", reason: "authorized" });
     expect(await executor.run(base.memberId, base.requestKey)).toMatchObject({ kind: "committed" });

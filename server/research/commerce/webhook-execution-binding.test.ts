@@ -90,7 +90,7 @@ describe("binding verified payment events to executions", () => {
     expect(bindPaymentEventToExecution(event({ eventType: "payment.failed", amountCents: undefined }), at("authorized"), null)).toEqual({ kind: "acknowledge", reason: "failed_after_authorization" });
   });
   it("acknowledges refunds and untranslated provider types without touching the execution", () => {
-    expect(bindPaymentEventToExecution(event({ eventType: "payment.refunded" }), execution, null)).toEqual({ kind: "acknowledge", reason: "not_an_execution_event" });
+    expect(bindPaymentEventToExecution(event({ eventType: "payment.refunded" }), execution, null)).toEqual({ kind: "isolate", reason: "refund_execution_required" });
     expect(bindPaymentEventToExecution(event({ eventType: "payment_intent.created" }), execution, null)).toEqual({ kind: "acknowledge", reason: "untranslated_event_type" });
     expect(bindPaymentEventToExecution(event({ eventType: "payment_intent.created" }), null, null)).toEqual({ kind: "acknowledge", reason: "untranslated_event_type" });
   });

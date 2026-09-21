@@ -688,12 +688,12 @@ export function createSupabaseWebhookExecutionInbox(client: () => CheckoutExecut
       if (row.state === "processing") return { state: "processing" };
       return { state: "processed", outcome: row.outcome ?? row.state };
     },
-    async complete(providerName, eventId, outcome, executionId) {
-      const result = await client().from(INBOX).update({ state: "processed", outcome, execution_id: executionId, completed_at: new Date().toISOString() }).eq("provider_name", providerName).eq("event_id", eventId);
+    async complete(providerName, eventId, outcome, executionId, refundExecutionId) {
+      const result = await client().from(INBOX).update({ state: "processed", outcome, execution_id: executionId, completed_at: new Date().toISOString(), ...(refundExecutionId ? { refund_execution_id: refundExecutionId } : {}) }).eq("provider_name", providerName).eq("event_id", eventId);
       if (result.error) throw fail("complete", result.error);
     },
-    async isolate(providerName, eventId, reason, executionId) {
-      const result = await client().from(INBOX).update({ state: "isolated", outcome: "isolated", reason, execution_id: executionId, completed_at: new Date().toISOString() }).eq("provider_name", providerName).eq("event_id", eventId);
+    async isolate(providerName, eventId, reason, executionId, refundExecutionId) {
+      const result = await client().from(INBOX).update({ state: "isolated", outcome: "isolated", reason, execution_id: executionId, completed_at: new Date().toISOString(), ...(refundExecutionId ? { refund_execution_id: refundExecutionId } : {}) }).eq("provider_name", providerName).eq("event_id", eventId);
       if (result.error) throw fail("isolate", result.error);
     },
   };

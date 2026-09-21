@@ -44,8 +44,8 @@ export type WebhookExecutionInboxClaim =
  */
 export interface WebhookExecutionInbox {
   claim(event: WebhookExecutionInboxEvent): Promise<WebhookExecutionInboxClaim>;
-  complete(providerName: string, eventId: string, outcome: "applied" | "acknowledged", executionId: string | null): Promise<void>;
-  isolate(providerName: string, eventId: string, reason: string, executionId: string | null): Promise<void>;
+  complete(providerName: string, eventId: string, outcome: "applied" | "acknowledged", executionId: string | null, refundExecutionId?: string): Promise<void>;
+  isolate(providerName: string, eventId: string, reason: string, executionId: string | null, refundExecutionId?: string): Promise<void>;
 }
 
 export interface WebhookExecutionLookup {
@@ -61,7 +61,7 @@ export type WebhookExecutionOutcome =
   | { outcome: "duplicate" }
   | { outcome: "conflict" }
   /** The conditional write lost twice; the inbox row stays "processing" for the provider's redelivery. */
-  | { outcome: "retry"; reason: "execution_contention" }
+  | { outcome: "retry"; reason: "execution_contention" | "settlement_incomplete" }
   | { outcome: "unbound" };
 
 export interface WebhookExecutionProcessor {
@@ -72,6 +72,8 @@ export interface WebhookExecutionProcessorDeps {
   providerName: string;
   inbox: WebhookExecutionInbox;
   executions: WebhookExecutionStore;
+  /** Runs the canonical executor; true only after commitCaptured completed. */
+  settleCaptured(execution: CheckoutExecutionRecord): Promise<boolean>;
   /** Null for platform-account events; a Connect event must match exactly. */
   expectedProviderAccountId: string | null;
 }
@@ -89,6 +91,16 @@ export function createWebhookExecutionProcessor(deps: WebhookExecutionProcessorD
       if (byOrder && byOrder.providerReference === null) return byOrder;
     }
     return null;
+  }
+
+  async function settleCaptured(execution: CheckoutExecutionRecord): Promise<boolean> {
+    if (execution.phase === "committed") return true;
+    if (execution.phase !== "captured") return false;
+    try {
+      return await deps.settleCaptured(execution);
+    } catch {
+      return false;
+    }
   }
 
   return {
@@ -124,11 +136,24 @@ export function createWebhookExecutionProcessor(deps: WebhookExecutionProcessorD
           return { outcome: "isolated", executionId, reason: decision.reason };
         }
         if (decision.kind === "acknowledge") {
+          // A crash after recording captured evidence but before the canonical
+          // order/reservation/credit commit leaves the execution at captured.
+          // Redelivery must finish that commit before the receipt is terminal.
+          if (
+            verified.eventType === "payment.captured" &&
+            execution !== null &&
+            !(await settleCaptured(execution))
+          ) {
+            return { outcome: "retry", reason: "settlement_incomplete" };
+          }
           await deps.inbox.complete(deps.providerName, verified.eventId, "acknowledged", executionId);
           return { outcome: "acknowledged", executionId, reason: decision.reason };
         }
         const saved = await deps.executions.recordProvider(execution!.executionId, execution!.version, decision.proof);
         if (saved) {
+          if (decision.target === "captured" && !(await settleCaptured(saved))) {
+            return { outcome: "retry", reason: "settlement_incomplete" };
+          }
           await deps.inbox.complete(deps.providerName, verified.eventId, "applied", saved.executionId);
           return { outcome: "applied", executionId: saved.executionId, reason: decision.target };
         }
@@ -140,7 +165,7 @@ export function createWebhookExecutionProcessor(deps: WebhookExecutionProcessorD
 
 /** Deterministic inbox for tests and local composition. Never a production authority. */
 export function createInMemoryWebhookExecutionInbox() {
-  const rows = new Map<string, { payloadSha256: string; state: "processing" | "processed" | "isolated"; outcome: string | null; reason: string | null; executionId: string | null }>();
+  const rows = new Map<string, { payloadSha256: string; state: "processing" | "processed" | "isolated"; outcome: string | null; reason: string | null; executionId: string | null; refundExecutionId: string | null }>();
   const key = (providerName: string, eventId: string) => JSON.stringify([providerName, eventId]);
   const inbox: WebhookExecutionInbox = {
     async claim(event) {
@@ -150,23 +175,25 @@ export function createInMemoryWebhookExecutionInbox() {
         if (existing.state === "processing") return { state: "processing" };
         return { state: "processed", outcome: existing.outcome ?? existing.state };
       }
-      rows.set(key(event.providerName, event.eventId), { payloadSha256: event.payloadSha256, state: "processing", outcome: null, reason: null, executionId: null });
+      rows.set(key(event.providerName, event.eventId), { payloadSha256: event.payloadSha256, state: "processing", outcome: null, reason: null, executionId: null, refundExecutionId: null });
       return { state: "new" };
     },
-    async complete(providerName, eventId, outcome, executionId) {
+    async complete(providerName, eventId, outcome, executionId, refundExecutionId) {
       const row = rows.get(key(providerName, eventId));
       if (!row) throw new Error("inbox completion without a claim");
       row.state = "processed";
       row.outcome = outcome;
       row.executionId = executionId;
+      row.refundExecutionId = refundExecutionId ?? null;
     },
-    async isolate(providerName, eventId, reason, executionId) {
+    async isolate(providerName, eventId, reason, executionId, refundExecutionId) {
       const row = rows.get(key(providerName, eventId));
       if (!row) throw new Error("inbox isolation without a claim");
       row.state = "isolated";
       row.outcome = "isolated";
       row.reason = reason;
       row.executionId = executionId;
+      row.refundExecutionId = refundExecutionId ?? null;
     },
   };
   return {

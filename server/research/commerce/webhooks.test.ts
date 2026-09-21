@@ -76,6 +76,8 @@ class FakePaymentProvider implements PaymentProvider {
       amountCents?: number;
       currency?: string;
       providerAccountId?: string;
+      refundReference?: string;
+      refundExecutionId?: string;
     };
     try {
       parsed = JSON.parse(rawBody);
@@ -93,6 +95,8 @@ class FakePaymentProvider implements PaymentProvider {
       amountCents: parsed.amountCents,
       currency: parsed.currency,
       providerAccountId: parsed.providerAccountId,
+      refundReference: parsed.refundReference,
+      refundExecutionId: parsed.refundExecutionId,
       verified: true as const,
     });
   }
@@ -592,7 +596,7 @@ describe("payment webhooks", () => {
     expect((await orders.get("ord_1"))!.state).toBe("approved");
   });
 
-  it("does not move an order along a transition a webhook may not drive", async () => {
+  it("leaves a refund webhook unclaimed when no durable refund execution boundary is wired", async () => {
     // payment_captured to refunded is an admin decision, never a provider one.
     const orders = orderStore([
       {
@@ -614,7 +618,47 @@ describe("payment webhooks", () => {
     });
     const result = await handler.handlePayment(body, GOOD_SIGNATURE, NOW);
 
-    expect(result).toEqual({ ok: true, applied: false, eventId: "evt_5" });
+    expect(result).toEqual({ ok: false, code: "capability_disabled" });
+    expect((await orders.get("ord_1"))!.state).toBe("payment_captured");
+  });
+
+  it("routes exact refund settlement to the durable refund authority before any order projection", async () => {
+    const orders = orderStore([{
+      ...approvedOrder(),
+      state: "payment_captured",
+      captured: true,
+      capturedAmountCents: 1_000,
+    }]);
+    const seen: WebhookVerification[] = [];
+    const handler = createWebhookHandler(deps({
+      orders,
+      refunds: {
+        async process(verified) {
+          seen.push(verified);
+          return { outcome: "applied", executionId: verified.refundExecutionId! };
+        },
+      },
+    }));
+    const executionId = "00000000-0000-4000-8000-0000000000f1";
+    const body = JSON.stringify({
+      id: "evt_refund_bound",
+      type: "payment.refunded",
+      providerReference: "auth_1",
+      refundReference: "re_1",
+      refundExecutionId: executionId,
+      amountCents: 1_000,
+      currency: "usd",
+    });
+
+    await expect(handler.handlePayment(body, GOOD_SIGNATURE, NOW)).resolves.toEqual({
+      ok: true,
+      applied: true,
+      eventId: "evt_refund_bound",
+    });
+    expect(seen).toHaveLength(1);
+    expect(seen[0]).toMatchObject({ refundExecutionId: executionId, refundReference: "re_1" });
+    // The mock processor owns no projection; this proves the legacy order
+    // transition did not independently race it to refunded.
     expect((await orders.get("ord_1"))!.state).toBe("payment_captured");
   });
 });

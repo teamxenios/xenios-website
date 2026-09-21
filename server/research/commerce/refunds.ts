@@ -27,7 +27,18 @@ import {
 } from "@shared/research/commerce";
 import type { ProviderFailureCode } from "@shared/research/capability";
 import type { LotDisposition } from "../inventory/lots";
-import type { PaymentProvider } from "../providers/payment";
+import {
+  supportsDurableRefundExecution,
+  type PaymentProvider,
+  type PaymentRefund,
+} from "../providers/payment";
+import {
+  REFUND_PROVIDER_IDEMPOTENCY_RETENTION_MS,
+  RefundExecutionConflict,
+  type DurableRefundExecutionStore,
+  type RefundExecutionIntent,
+  type RefundExecutionRecord,
+} from "./refund-executions";
 
 export type { ClaimReason };
 
@@ -141,6 +152,10 @@ export interface RefundServiceDeps {
    * setting general commerce enabled must never silently enable refunds.
    */
   durableRefundExecutionAvailable?: boolean;
+  /** The persisted intent/readback/atomic-commit authority. Required even when the legacy flag is true. */
+  refundExecutions?: DurableRefundExecutionStore;
+  /** Defaults to the conservative 20-hour provider-key replay boundary. */
+  refundProviderRetentionMs?: number;
   /**
    * Explicit proof that replacement fulfillment and the terminal order/claim
    * transition are owned by a durable atomic adapter. General commerce being
@@ -451,16 +466,20 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     idempotencyKey: string,
     asOf: Date,
   ): Promise<ResolutionOutcome> {
-    void asOf;
     const claim = await deps.claims.get(claimId);
     if (!claim) return deny("order_not_found");
 
     // Capability authority leads every replay path. A stale/pre-recorded key
     // must never turn a production-disabled or commerce-disabled operation
     // into a reported success.
+    const refundPayment = supportsDurableRefundExecution(deps.payment) ? deps.payment : null;
     const capabilityDenials = new Denials();
     if (!deps.commerceEnabled) capabilityDenials.add("commerce_disabled");
-    if (!deps.durableRefundExecutionAvailable) capabilityDenials.add("payment_disabled");
+    if (
+      !deps.durableRefundExecutionAvailable ||
+      deps.refundExecutions?.authority !== "durable_refund_execution_v1" ||
+      refundPayment === null
+    ) capabilityDenials.add("payment_disabled");
     if (!capabilityDenials.empty) return { ok: false, codes: capabilityDenials.list };
 
     if (typeof idempotencyKey !== "string" || idempotencyKey.trim() === "") {
@@ -476,23 +495,26 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     const order = await deps.orders.get(claim.orderId);
     if (!order) return deny("order_not_found");
 
-    // A key alone is not completion evidence: a crash can record it before the
-    // order and claim saves. Absorb a replay only when every durable projection
-    // proves this exact scoped operation already committed.
-    if (await deps.claims.hasRefundKey(replayScope)) {
-      const completed =
-        claim.state === "resolved" &&
-        (claim.resolution === "refund" || claim.resolution === "partial_refund") &&
-        order.state === "refunded" &&
-        order.lastAppliedIdempotencyKey === replayScope &&
-        order.refundedCents === amountCents;
-      if (!completed) return deny("payment_failed");
-      return {
-        ok: true,
-        claim: toClaimDto(claim),
-        restockedUnits: 0,
-        returnedLotDisposition: "destroyed",
-      };
+    const refundExecutions = deps.refundExecutions!;
+
+    // A terminal replay is answered only from the execution authority plus
+    // all canonical local projections. It must bypass the ordinary
+    // "claim must still be approved" gate because the atomic commit resolved it.
+    const prior = await refundExecutions.getByScope(replayScope);
+    if (prior) {
+      const sameIntent = prior.claimId === claimId && prior.orderId === order.orderId &&
+        prior.adminId === adminId && prior.paymentReference === order.paymentReference &&
+        prior.amountCents === amountCents && prior.currency === "usd";
+      if (!sameIntent) return deny("payment_failed");
+      if (prior.state === "committed") {
+        const complete = claim.state === "resolved" &&
+          (claim.resolution === "refund" || claim.resolution === "partial_refund") &&
+          order.state === "refunded" && order.lastAppliedIdempotencyKey === replayScope &&
+          order.refundedCents === amountCents;
+        return complete
+          ? { ok: true, claim: toClaimDto(claim), restockedUnits: 0, returnedLotDisposition: "destroyed" }
+          : deny("payment_failed");
+      }
     }
 
     if (claim.state !== "approved") return deny("order_state_invalid");
@@ -542,57 +564,108 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     if (!denials.empty) return { ok: false, codes: denials.list };
 
     const paymentReference = order.paymentReference as string;
-    const result = await deps.payment.refund(
+    const orderId = order.orderId;
+    const intent: RefundExecutionIntent = {
+      executionId: crypto.randomUUID(),
+      scope: replayScope,
+      claimId,
+      orderId,
+      adminId,
       paymentReference,
       amountCents,
-      providerIdempotencyKey,
-    );
-    if (!result.ok) {
-      // A disabled provider is not a resolution. The claim stays approved and unpaid,
-      // the order is untouched, and the key is not consumed so a retry after the
-      // capability is enabled still works.
-      return deny(refundDenialCode(result.code));
+      currency: "usd",
+      createdAt: asOf.toISOString(),
+    };
+    let execution: RefundExecutionRecord;
+    try {
+      execution = await refundExecutions.prepare(intent);
+    } catch (error) {
+      if (error instanceof RefundExecutionConflict) return deny("payment_failed");
+      throw error;
     }
 
-    // The order reaches `refunded` only on the reference the provider returned. An
-    // empty one is refused rather than substituted with anything of our own.
-    const refundReference = result.value.providerReference;
-    const reported = result.value.refundedAmountCents;
-    if (
-      typeof refundReference !== "string" ||
-      refundReference.trim() === "" ||
-      result.value.paymentReference !== paymentReference ||
-      !Number.isSafeInteger(reported) ||
-      reported !== amountCents ||
-      result.value.currency !== "usd" ||
-      result.value.status !== "refunded"
-    ) {
+    async function committedResult(): Promise<ResolutionOutcome> {
+      const committedClaim = await deps.claims.get(claimId);
+      const committedOrder = await deps.orders.get(orderId);
+      if (!committedClaim || !committedOrder || committedClaim.state !== "resolved" ||
+          (committedClaim.resolution !== "refund" && committedClaim.resolution !== "partial_refund") ||
+          committedOrder.state !== "refunded" || committedOrder.lastAppliedIdempotencyKey !== replayScope ||
+          committedOrder.refundedCents !== amountCents) return deny("payment_failed");
+      return { ok: true, claim: toClaimDto(committedClaim), restockedUnits: 0, returnedLotDisposition: "destroyed" };
+    }
+
+    if (execution.state === "committed") return committedResult();
+
+    let proof: PaymentRefund | null = null;
+    if (execution.state !== "provider_succeeded") {
+      const firstAttempt = execution.firstAttemptedAt;
+      const claimed = await refundExecutions.claim(execution.executionId, execution.version, asOf);
+      if (!claimed) {
+        const raced = await refundExecutions.getById(execution.executionId);
+        if (raced?.state === "committed") return committedResult();
+        return deny("payment_failed");
+      }
+      execution = claimed;
+
+      if (firstAttempt !== null) {
+        const recovered = await refundPayment!.retrieveRefund(paymentReference, execution.executionId, amountCents);
+        if (recovered.ok) proof = recovered.value;
+        else if (!recovered.retryable) {
+          await refundExecutions.requireReconciliation(execution.executionId, execution.version);
+          return deny(refundDenialCode(recovered.code));
+        }
+      }
+
+      if (proof === null) {
+        const attemptedAt = execution.firstAttemptedAt === null ? Number.NaN : Date.parse(execution.firstAttemptedAt);
+        const configuredRetention = deps.refundProviderRetentionMs ?? REFUND_PROVIDER_IDEMPOTENCY_RETENTION_MS;
+        // The provider's idempotency contract is not permanent. Callers may
+        // tighten this window for tests/operations, but can never extend it
+        // beyond the reviewed 20-hour ceiling.
+        const retention = Number.isSafeInteger(configuredRetention) && configuredRetention > 0
+          ? Math.min(configuredRetention, REFUND_PROVIDER_IDEMPOTENCY_RETENTION_MS)
+          : REFUND_PROVIDER_IDEMPOTENCY_RETENTION_MS;
+        const elapsed = asOf.getTime() - attemptedAt;
+        const insideRetention = Number.isFinite(attemptedAt) && elapsed >= 0 && elapsed <= retention;
+        // The first caller owns a just-created intent. Any later caller must
+        // first read back provider metadata above; outside the conservative
+        // window it is never allowed to replay the provider key.
+        if (firstAttempt !== null && !insideRetention) {
+          await refundExecutions.requireReconciliation(execution.executionId, execution.version);
+          return deny("payment_failed");
+        }
+        const result = await refundPayment!.refund(paymentReference, amountCents, providerIdempotencyKey, {
+          refundExecutionId: execution.executionId,
+        });
+        if (!result.ok) return deny(refundDenialCode(result.code));
+        proof = result.value;
+      }
+
+      if (
+        typeof proof.providerReference !== "string" || !proof.providerReference.startsWith("re_") ||
+        proof.paymentReference !== paymentReference || proof.refundedAmountCents !== amountCents ||
+        proof.currency !== "usd" || proof.status !== "refunded"
+      ) return deny("payment_failed");
+      const recorded = await refundExecutions.recordProvider(execution.executionId, execution.version, proof);
+      if (!recorded) {
+        const raced = await refundExecutions.getById(execution.executionId);
+        if (raced?.state === "committed") return committedResult();
+        if (raced?.state !== "provider_succeeded" || raced.providerRefundReference !== proof.providerReference) {
+          return deny("payment_failed");
+        }
+        execution = raced;
+      } else {
+        execution = recorded;
+      }
+    }
+
+    const committed = await refundExecutions.commit(execution.executionId, execution.version);
+    if (!committed) {
+      const raced = await refundExecutions.getById(execution.executionId);
+      if (raced?.state === "committed") return committedResult();
       return deny("payment_failed");
     }
-
-    const moved = transitionOrder({
-      from: order.state,
-      to: "refunded",
-      actor: "admin",
-      providerConfirmation: refundReference,
-      idempotencyKey: providerIdempotencyKey,
-      lastAppliedIdempotencyKey: order.lastAppliedIdempotencyKey,
-    });
-    if (!moved.ok) return deny("order_state_invalid");
-
-    await deps.claims.recordRefundKey(replayScope, refundReference);
-    order.state = moved.state;
-    order.refundedCents = order.refundedCents + reported;
-    order.lastAppliedIdempotencyKey = providerIdempotencyKey;
-    await deps.orders.save(order);
-
-    claim.state = "resolved";
-    claim.resolution = order.refundedCents >= order.capturedAmountCents ? "refund" : "partial_refund";
-    claim.reviewedBy = adminId;
-    await deps.claims.save(claim);
-
-    // A refunded unit is destroyed for the same reason a replaced one is.
-    return { ok: true, claim: toClaimDto(claim), restockedUnits: 0, returnedLotDisposition: "destroyed" };
+    return committedResult();
   }
 
   async function listForMember(memberId: string): Promise<ClaimDto[]> {

@@ -78,12 +78,15 @@ export interface DurableCheckoutCompositionInput {
    * in any other environment an in-memory store keeps the composition NOT READY.
    */
   allowInMemoryStores?: boolean;
+  /** Required post-purchase money authority; new purchases stay closed without it. */
+  refundAuthorityReady: boolean;
 }
 
 export type DurableCheckoutUnavailableReason =
   | "provider_not_durable"
   | "execution_store_not_durable"
   | "webhook_inbox_not_durable"
+  | "refund_authority_not_durable"
   | "provider_account_mismatch";
 
 export type DurableCheckoutComposition =
@@ -193,6 +196,7 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
   const memoryAllowed = env.NODE_ENV === "test" && input.allowInMemoryStores === true;
   if (!input.executions.durable && !memoryAllowed) return disabled("execution_store_not_durable");
   if (!input.webhookInbox.durable && !memoryAllowed) return disabled("webhook_inbox_not_durable");
+  if (!input.refundAuthorityReady) return disabled("refund_authority_not_durable");
 
   // The account the webhook binding expects is the provider's own. A supplied
   // value that disagrees would isolate every genuine event, so it is refused.
@@ -233,6 +237,8 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
     inbox: input.webhookInbox.store,
     executions,
     expectedProviderAccountId: providerAccount,
+    settleCaptured: async (record) =>
+      (await executor.run(record.memberId, record.requestKey)).kind === "committed",
   });
   return {
     ready: true,

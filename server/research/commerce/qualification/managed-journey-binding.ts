@@ -217,6 +217,7 @@ export function createManagedJourneySurface(config: ManagedJourneyConfig, ports:
     processRestart: config.capabilities.processRestart && Boolean(ports.process),
     transportFaultInjection: config.capabilities.transportFaultInjection && Boolean(ports.fault),
     localCommitFault: config.capabilities.localCommitFault && Boolean(ports.fault),
+    durableRefundExecution: false,
   };
 
   const asMember = (memberId: string) => ({

@@ -63,7 +63,7 @@ function holds() {
   return { seam, events };
 }
 
-function build(options: { requiresAction?: boolean; env?: NodeJS.ProcessEnv; allowInMemoryStores?: boolean; provider?: "stripe" | "disabled" } = {}) {
+function build(options: { requiresAction?: boolean; env?: NodeJS.ProcessEnv; allowInMemoryStores?: boolean; provider?: "stripe" | "disabled"; refundAuthorityReady?: boolean } = {}) {
   const model = stripeModel({ requiresAction: options.requiresAction ?? false });
   const orders = createInMemoryOrderStore();
   const inventory = holds();
@@ -84,6 +84,7 @@ function build(options: { requiresAction?: boolean; env?: NodeJS.ProcessEnv; all
     now: () => NOW,
     newId: () => `${String(++ids).padStart(8, "0")}-0000-4000-8000-000000000000`,
     allowInMemoryStores: options.allowInMemoryStores ?? true,
+    refundAuthorityReady: options.refundAuthorityReady ?? true,
   });
   return { model, orders, executions, inventory, committed, composition };
 }
@@ -116,6 +117,11 @@ describe("durable checkout composition readiness", () => {
     const { composition } = build();
     expect(composition.ready).toBe(true);
     expect(composition.clientConfig()).toEqual({ ok: true, config: { provider: "stripe", publishableKey: "pk_test_abcdefgh12345678", mode: "test" } });
+  });
+  it("fails closed when checkout is durable but the required refund authority is absent", () => {
+    const { composition } = build({ refundAuthorityReady: false });
+    expect(composition).toMatchObject({ ready: false, reason: "refund_authority_not_durable" });
+    expect(composition.clientConfig()).toEqual({ ok: false, code: "payment_disabled" });
   });
 });
 
@@ -259,6 +265,7 @@ describe("durable checkout surface over HTTP", () => {
       now: () => NOW,
       newId: () => `${String(++ids).padStart(8, "0")}-0000-4000-8000-000000000000`,
       allowInMemoryStores: true,
+      refundAuthorityReady: true,
     });
     const call = await serve(composition);
     const submitted = await call("POST", DURABLE_CHECKOUT_SURFACE_PATHS.submit, "token-owner", request());

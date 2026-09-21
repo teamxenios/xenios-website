@@ -46,6 +46,12 @@ import { assertNoSyntheticDataInProduction } from "./production-guards";
 import { resolveCartStore, type AsyncCartStore } from "./persistence/cart-store";
 import { resolveOrderRepository } from "./persistence/orders-store";
 import { resolveClaimOrderRepository, resolveClaimRepository } from "./persistence/claims-store";
+import {
+  createSupabaseRefundExecutionStore,
+  refundExecutionAuthorityEnabled,
+} from "./persistence/refund-executions-store";
+import type { DurableRefundExecutionStore } from "./refund-executions";
+import { createRefundWebhookProcessor } from "./refund-webhook-processor";
 import { resolveInventoryLotStore, type InventoryLotRepository } from "./persistence/inventory-store";
 import {
   resolveStoreCreditLedgerStore,
@@ -83,7 +89,12 @@ import { createLedgerPartnerStatsSource } from "../partners/member-linkage";
 import { createOwnPartnerReads } from "../partners/own-reads";
 import { affiliatePortalEnabled } from "../affiliates/v2/feature-flags";
 import type { ClaimRecord, RefundService } from "./refunds";
-import { resolvePaymentProvider, type PaymentProvider } from "../providers/payment";
+import {
+  resolvePaymentProvider,
+  supportsDurableExecution,
+  supportsDurableRefundExecution,
+  type PaymentProvider,
+} from "../providers/payment";
 import { resolveShippingProvider, type ShippingProvider } from "../providers/shipping";
 import {
   resolveFulfillmentProvider,
@@ -237,6 +248,7 @@ export interface CommerceWiring {
   resolveOrderRepository(): OrderRepository;
   resolveClaimRepository(): ClaimRepository;
   resolveClaimOrderRepository(): ClaimOrderRepository;
+  resolveRefundExecutionStore(): DurableRefundExecutionStore;
   resolveInventoryLotStore(): InventoryLotRepository;
   resolveStoreCreditLedgerStore(): StoreCreditLedgerRepository;
   resolveSubscriptionRepository(): SubscriptionRepository;
@@ -336,6 +348,7 @@ function defaultWiring(): CommerceWiring {
     resolveOrderRepository,
     resolveClaimRepository,
     resolveClaimOrderRepository,
+    resolveRefundExecutionStore: createSupabaseRefundExecutionStore,
     resolveInventoryLotStore,
     resolveStoreCreditLedgerStore,
     resolveSubscriptionRepository,
@@ -972,6 +985,9 @@ function liveDependencies(
   const payment = wiring.resolvePaymentProvider(env);
   const shipping = wiring.resolveShippingProvider(env);
   const fulfillment = wiring.resolveFulfillmentProvider(env);
+  const checkoutStores = wiring.resolveDurableCheckoutStores?.() ?? resolveDurableCheckoutStores();
+  const refundAuthorityReady = refundExecutionAuthorityEnabled(env) && supportsDurableRefundExecution(payment) && checkoutStores.webhookInbox.durable;
+  const refundExecutions = refundAuthorityReady ? wiring.resolveRefundExecutionStore() : undefined;
 
   /**
    * The inventory hold around a checkout: the CANONICAL seam checkout.ts
@@ -1137,7 +1153,8 @@ function liveDependencies(
     // A general-commerce flag is not durable refund authority. This stays
     // unavailable until an intent/reconciliation adapter owns the provider
     // call and atomic claim/order persistence.
-    durableRefundExecutionAvailable: false,
+    durableRefundExecutionAvailable: refundAuthorityReady,
+    refundExecutions,
     // A replacement is a physical fulfillment commitment plus a terminal
     // order/claim transition. No durable atomic replacement adapter is wired.
     durableReplacementExecutionAvailable: false,
@@ -1149,10 +1166,12 @@ function liveDependencies(
   // absorbed by the database, not by process memory. The fulfillment provider
   // rides the same handler, so a partner status webhook is signature-gated and
   // replay-guarded identically to a payment event.
-    // The same guarded evaluator and persistent order/inventory authorities as the existing checkout.
+  // The same guarded evaluator and persistent order/inventory authorities as
+  // the existing checkout.
   const durableCheckout = composeDurableCheckout({
     env, provider: payment, orders: orderRepository, inventory: inventoryReservations, now,
-    ...(wiring.resolveDurableCheckoutStores?.() ?? resolveDurableCheckoutStores()),
+    refundAuthorityReady,
+    ...checkoutStores,
     checkout: { evaluate: async (memberId, request, at) => {
       const evaluated = await checkoutService.evaluate(memberId, request, at);
       if (!(await everyStoredCartLineIsCurrentlyLive(memberId, at))) {
@@ -1162,8 +1181,18 @@ function liveDependencies(
     } },
   });
 
-const webhookHandler = createWebhookHandler({
+  const refundWebhookProcessor = refundAuthorityReady && refundExecutions
+    ? createRefundWebhookProcessor({
+        providerName: payment.name,
+        expectedProviderAccountId: supportsDurableExecution(payment) ? (payment.providerAccountId ?? null) : null,
+        inbox: checkoutStores.webhookInbox.store,
+        executions: refundExecutions,
+      })
+    : undefined;
+
+  const webhookHandler = createWebhookHandler({
     executions: durableCheckout.ready ? durableCheckout.webhookProcessor : undefined,
+    refunds: refundWebhookProcessor,
     store: webhookEventStore,
     payment,
     fulfillment,

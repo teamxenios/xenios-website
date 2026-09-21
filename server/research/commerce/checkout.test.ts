@@ -25,6 +25,7 @@ import {
   createInMemoryClaimRepository,
   createRefundService,
 } from "./refunds";
+import { createInMemoryRefundExecutionStore } from "./refund-executions";
 
 const NOW = new Date("2026-07-20T00:00:00Z");
 
@@ -1258,9 +1259,8 @@ describe("checkout through the real seam", () => {
     expect(await quantity(lots, "LOT-EARLY")).toBe(1);
 
     // The refund flow runs over the captured order, with the SAME payment provider.
-    const refunds = createRefundService({
-      claims: createInMemoryClaimRepository(),
-      orders: createInMemoryClaimOrderRepository([
+    const claims = createInMemoryClaimRepository();
+    const claimOrders = createInMemoryClaimOrderRepository([
         {
           orderId: outcome.order.orderId,
           memberId: "mem_1",
@@ -1270,10 +1270,14 @@ describe("checkout through the real seam", () => {
           refundedCents: 0,
           lines: [{ sku: "P001", lotId: "LOT-EARLY" }],
         },
-      ]),
+      ]);
+    const refunds = createRefundService({
+      claims,
+      orders: claimOrders,
       payment,
       commerceEnabled: true,
       durableRefundExecutionAvailable: true,
+      refundExecutions: createInMemoryRefundExecutionStore({ claims, orders: claimOrders }),
     });
 
     const claim = await refunds.submitClaim(

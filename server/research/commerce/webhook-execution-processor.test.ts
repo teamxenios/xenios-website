@@ -33,9 +33,10 @@ const base: CheckoutExecutionRecord = {
 };
 
 /** Execution store double with version compare-and-swap and reference/order lookups. Test only. */
-function executions(initial: CheckoutExecutionRecord | null, options: { contend?: number } = {}) {
+function executions(initial: CheckoutExecutionRecord | null, options: { contend?: number; commitFailures?: number } = {}) {
   let current = initial ? structuredClone(initial) : null;
   let contend = options.contend ?? 0;
+  let commitFailures = options.commitFailures ?? 0;
   const writes: ProviderExecutionResult[] = [];
   const store: WebhookExecutionStore & CanonicalCheckoutExecutionStore = {
     authority: "canonical_checkout_transaction_v1",
@@ -65,6 +66,10 @@ function executions(initial: CheckoutExecutionRecord | null, options: { contend?
       return structuredClone(current);
     },
     async commitCaptured(_id, expected) {
+      if (commitFailures > 0) {
+        commitFailures -= 1;
+        throw new Error("synthetic commit crash");
+      }
       if (!current || current.version !== expected) return null;
       current = { ...current, phase: "committed", version: expected + 1 };
       return structuredClone(current);
@@ -90,9 +95,15 @@ function verified(overrides: Partial<WebhookVerification> = {}): WebhookVerifica
   };
 }
 const digest = (value: string) => crypto.createHash("sha256").update(value).digest("hex");
+const settle = (store: WebhookExecutionStore) => async (record: CheckoutExecutionRecord) =>
+  (await (store as WebhookExecutionStore & CanonicalCheckoutExecutionStore).commitCaptured(record.executionId, record.version))?.phase === "committed";
 
 function processor(store: WebhookExecutionStore, inbox = createInMemoryWebhookExecutionInbox()) {
-  return { inbox, processor: createWebhookExecutionProcessor({ providerName: "test", inbox, executions: store, expectedProviderAccountId: null }) };
+  const canonical = store as WebhookExecutionStore & CanonicalCheckoutExecutionStore;
+  return { inbox, processor: createWebhookExecutionProcessor({
+    providerName: "test", inbox, executions: store, expectedProviderAccountId: null,
+    settleCaptured: async (record) => (await canonical.commitCaptured(record.executionId, record.version))?.phase === "committed",
+  }) };
 }
 
 describe("webhook execution processor", () => {
@@ -103,7 +114,7 @@ describe("webhook execution processor", () => {
     expect(await p.process(verified(), digest("a"), NOW)).toEqual({ outcome: "duplicate" });
     expect(exec.writes).toHaveLength(1);
     expect(exec.snapshot()).toMatchObject({ phase: "authorized", version: 3, providerReference: "pi_0001" });
-    expect(inbox.snapshot()).toEqual([{ key: ["test", "evt_1"], payloadSha256: digest("a"), state: "processed", outcome: "applied", reason: null, executionId: "exe-1" }]);
+    expect(inbox.snapshot()).toEqual([{ key: ["test", "evt_1"], payloadSha256: digest("a"), state: "processed", outcome: "applied", reason: null, executionId: "exe-1", refundExecutionId: null }]);
   });
   it("treats the same event id with different bytes as a conflict and writes nothing", async () => {
     const exec = executions(base);
@@ -118,7 +129,18 @@ describe("webhook execution processor", () => {
     expect(await p.process(verified({ eventId: "evt_cap", eventType: "payment.captured" }), digest("cap"), NOW)).toMatchObject({ outcome: "applied", reason: "captured" });
     expect(await p.process(verified({ eventId: "evt_auth" }), digest("auth"), NOW)).toEqual({ outcome: "acknowledged", executionId: "exe-1", reason: "already_authorized_or_later" });
     expect(exec.writes.map((w) => w.kind)).toEqual(["captured"]);
+    expect(exec.snapshot()?.phase).toBe("committed");
+  });
+  it("keeps a captured receipt processing across a commit crash, then commits before terminal acknowledgement", async () => {
+    const exec = executions(base, { commitFailures: 1 });
+    const { inbox, processor: p } = processor(exec.store);
+    const event = verified({ eventId: "evt_capture_crash", eventType: "payment.captured" });
+    expect(await p.process(event, digest("capture-crash"), NOW)).toEqual({ outcome: "retry", reason: "settlement_incomplete" });
     expect(exec.snapshot()?.phase).toBe("captured");
+    expect(inbox.snapshot()[0]).toMatchObject({ state: "processing" });
+    expect(await p.process(event, digest("capture-crash"), NOW)).toEqual({ outcome: "acknowledged", executionId: "exe-1", reason: "already_captured_or_later" });
+    expect(exec.snapshot()?.phase).toBe("committed");
+    expect(inbox.snapshot()[0]).toMatchObject({ state: "processed" });
   });
   it("resumes an interrupted run idempotently: the effect landed but the receipt was never completed", async () => {
     const exec = executions(base);
@@ -134,7 +156,7 @@ describe("webhook execution processor", () => {
         return inbox.complete(...args);
       },
     };
-    const p = createWebhookExecutionProcessor({ providerName: "test", inbox: flaky, executions: exec.store, expectedProviderAccountId: null });
+    const p = createWebhookExecutionProcessor({ providerName: "test", inbox: flaky, executions: exec.store, expectedProviderAccountId: null, settleCaptured: async () => true });
     await expect(p.process(verified(), digest("a"), NOW)).rejects.toThrow(/process died/);
     expect(inbox.snapshot()[0]).toMatchObject({ state: "processing" });
     // The provider redelivers because it never got a 2xx.
@@ -192,7 +214,7 @@ describe("canonical webhook handler with executions wired", () => {
         store: createInMemoryWebhookEventStore(),
         payment: new TestPaymentProvider(),
         orders: createInMemoryWebhookAtomicStore([]),
-        executions: createWebhookExecutionProcessor({ providerName: "test", inbox, executions: store, expectedProviderAccountId: null }),
+        executions: createWebhookExecutionProcessor({ providerName: "test", inbox, executions: store, expectedProviderAccountId: null, settleCaptured: settle(store) }),
         commerceEnabled: options.commerceEnabled ?? true,
       }),
     };
@@ -231,7 +253,7 @@ describe("canonical webhook handler with executions wired", () => {
       payment: new TestPaymentProvider(),
       // The legacy projection over plain (non-atomic) order reads: production's shape today.
       orders: { get: async () => undefined, save: async () => undefined } as never,
-      executions: createWebhookExecutionProcessor({ providerName: "test", inbox, executions: exec.store, expectedProviderAccountId: null }),
+      executions: createWebhookExecutionProcessor({ providerName: "test", inbox, executions: exec.store, expectedProviderAccountId: null, settleCaptured: settle(exec.store) }),
       commerceEnabled: true,
     });
     expect(await h.handlePayment(body(), "test-signature", NOW)).toEqual({ ok: true, applied: true, eventId: "evt_1" });
@@ -243,7 +265,7 @@ describe("canonical webhook handler with executions wired", () => {
       store: createInMemoryWebhookEventStore(),
       payment: new TestPaymentProvider(),
       orders: { get: async () => undefined, save: async () => undefined } as never,
-      executions: createWebhookExecutionProcessor({ providerName: "test", inbox: createInMemoryWebhookExecutionInbox(), executions: unbound.store, expectedProviderAccountId: null }),
+      executions: createWebhookExecutionProcessor({ providerName: "test", inbox: createInMemoryWebhookExecutionInbox(), executions: unbound.store, expectedProviderAccountId: null, settleCaptured: settle(unbound.store) }),
       commerceEnabled: true,
     });
     expect(await h2.handlePayment(body(), "test-signature", NOW)).toEqual({ ok: false, code: "capability_disabled" });
@@ -257,6 +279,35 @@ describe("canonical webhook handler with executions wired", () => {
     expect(await h.handlePayment(body(), "test-signature", NOW)).toEqual({ ok: true, applied: false, eventId: "evt_1" });
     expect(inbox.snapshot()).toHaveLength(0);
     expect(exec.writes).toHaveLength(0);
+  });
+
+  it("leaves a refund event unclaimed without refund authority and never legacy-mutates the order", async () => {
+    const exec = executions({ ...base, phase: "committed", version: 6 });
+    const inbox = createInMemoryWebhookExecutionInbox();
+    const orders = createInMemoryWebhookAtomicStore([{
+      orderId: base.orderId,
+      state: "delivered",
+      paymentReference: base.providerReference,
+      captured: true,
+      amountDueCents: base.amountCents,
+      capturedAmountCents: base.amountCents,
+      refundedAmountCents: 0,
+      currency: "usd",
+    }]);
+    const handler = createWebhookHandler({
+      store: createInMemoryWebhookEventStore(),
+      payment: new TestPaymentProvider(),
+      orders,
+      executions: createWebhookExecutionProcessor({
+        providerName: "test", inbox, executions: exec.store, expectedProviderAccountId: null,
+        settleCaptured: settle(exec.store),
+      }),
+      commerceEnabled: true,
+    });
+    const refund = body({ id: "evt_refund", type: "payment.refunded", amountCents: base.amountCents });
+    expect(await handler.handlePayment(refund, "test-signature", NOW)).toEqual({ ok: false, code: "capability_disabled" });
+    expect(await orders.get(base.orderId)).toMatchObject({ state: "delivered", refundedAmountCents: 0 });
+    expect(inbox.snapshot()).toEqual([]);
   });
 });
 
@@ -273,7 +324,7 @@ describe("real Stripe-signed events through the canonical adapter into an execut
       store: createInMemoryWebhookEventStore(),
       payment: adapter(),
       orders: createInMemoryWebhookAtomicStore([]),
-      executions: createWebhookExecutionProcessor({ providerName: "stripe", inbox, executions: exec.store, expectedProviderAccountId: null }),
+      executions: createWebhookExecutionProcessor({ providerName: "stripe", inbox, executions: exec.store, expectedProviderAccountId: null, settleCaptured: settle(exec.store) }),
       commerceEnabled: true,
     });
     const ts = Math.floor(NOW.getTime() / 1000);
@@ -283,7 +334,7 @@ describe("real Stripe-signed events through the canonical adapter into an execut
 
     const captured = stripeEvent("evt_c", "payment_intent.succeeded", { amount: base.amountCents, amount_received: base.amountCents });
     expect(await h.handlePayment(captured, sign(captured, ts), NOW)).toEqual({ ok: true, applied: true, eventId: "evt_c" });
-    expect(exec.snapshot()).toMatchObject({ phase: "captured" });
+    expect(exec.snapshot()).toMatchObject({ phase: "committed" });
 
     const wrongAccount = JSON.stringify({ ...JSON.parse(authorized), id: "evt_x", account: "acct_other" });
     expect(await h.handlePayment(wrongAccount, sign(wrongAccount, ts), NOW)).toEqual({ ok: false, code: "invalid_signature" });
@@ -305,7 +356,7 @@ describe("real Stripe-signed events through the canonical adapter into an execut
       store: createInMemoryWebhookEventStore(),
       payment: adapter(),
       orders: createInMemoryWebhookAtomicStore([]),
-      executions: createWebhookExecutionProcessor({ providerName: "stripe", inbox, executions: exec.store, expectedProviderAccountId: null }),
+      executions: createWebhookExecutionProcessor({ providerName: "stripe", inbox, executions: exec.store, expectedProviderAccountId: null, settleCaptured: settle(exec.store) }),
       commerceEnabled: true,
     });
     const ts = Math.floor(NOW.getTime() / 1000);
