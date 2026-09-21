@@ -27,7 +27,10 @@ export const SETH_OPERATING_ADVISOR_SCHEDULE: CommissionScheduleDefinition = Obj
   currency: "USD",
   eligibleBasis: "eligible_net_collected_product_channel_revenue",
   initialTermDays: 90,
-  measurementPeriod: Object.freeze({ anchor: "binding_effective_at", days: 30 }),
+  // The signed agreement says Day 1 / the first Commission Period begins on
+  // the contract Effective Date. A later administrative record must not shift
+  // the $50,000 reset or the 90-day boundary.
+  measurementPeriod: Object.freeze({ anchor: "contract_effective_at", days: 30 }),
   ratePolicy: Object.freeze({
     kind: "marginal_period",
     bands: Object.freeze([
@@ -136,8 +139,10 @@ export const COMMISSION_SCHEDULE_CATALOG: Readonly<
 });
 
 export function commissionScheduleDefinition(
-  programId: CommissionProgramId,
+  programId: string,
   version: number,
 ): CommissionScheduleDefinition | null {
-  return COMMISSION_SCHEDULE_CATALOG[programId][version] ?? null;
+  if (!Object.prototype.hasOwnProperty.call(COMMISSION_SCHEDULE_CATALOG, programId)) return null;
+  const versions = COMMISSION_SCHEDULE_CATALOG[programId as CommissionProgramId];
+  return versions[version] ?? null;
 }

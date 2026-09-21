@@ -7,6 +7,7 @@ import {
   incrementalCommissionForBasis,
   totalCommissionForBasis,
   validateCommissionRevenueBreakdown,
+  validateCommissionReversalAllocation,
 } from "./index";
 
 describe("versioned commission schedule calculations", () => {
@@ -35,23 +36,102 @@ describe("versioned commission schedule calculations", () => {
     });
   });
 
-  it("deducts explicit Care and ordinary exclusions and refuses unsupported written exclusions", () => {
+  it("reconciles gross price, non-cash adjustments, eligible cash, and collected exclusions exactly", () => {
     const breakdown = {
-      grossProductChannelRevenueCents: 100_000,
-      exclusions: [
+      grossEligibleProductChannelCents: 100_000,
+      preCollectionAdjustments: [
+        { kind: "discount" as const, amountCents: 10_000, authorityReference: null },
+      ],
+      eligibleProductChannelCollectedCents: 90_000,
+      collectedExclusions: [
         { kind: "tax" as const, amountCents: 5_000, authorityReference: null },
         { kind: "shipping_pass_through" as const, amountCents: 2_000, authorityReference: null },
         { kind: "care_clinical_charge" as const, amountCents: 40_000, authorityReference: null },
       ],
+      settlementAmountCents: 137_000,
     };
     expect(validateCommissionRevenueBreakdown(breakdown)).toEqual([]);
-    expect(eligibleNetCollectedRevenueCents(breakdown)).toBe(53_000);
+    expect(eligibleNetCollectedRevenueCents(breakdown)).toBe(90_000);
     expect(validateCommissionRevenueBreakdown({
-      grossProductChannelRevenueCents: 10_000,
-      exclusions: [
+      grossEligibleProductChannelCents: 10_000,
+      preCollectionAdjustments: [],
+      eligibleProductChannelCollectedCents: 10_000,
+      collectedExclusions: [
         { kind: "other_written_exclusion", amountCents: 100, authorityReference: " " },
       ],
-    })).toContain("exclusion_0_requires_written_authority");
+      settlementAmountCents: 10_100,
+    })).toContain("collected_exclusion_0_requires_written_authority");
+  });
+
+  it("rejects double-counted, duplicate, over-gross, and unsafe waterfall components", () => {
+    const invalid = validateCommissionRevenueBreakdown({
+      grossEligibleProductChannelCents: 10_000,
+      preCollectionAdjustments: [
+        { kind: "discount", amountCents: 1_000, authorityReference: null },
+        { kind: "discount", amountCents: 1_000, authorityReference: null },
+      ],
+      eligibleProductChannelCollectedCents: 9_000,
+      collectedExclusions: [],
+      settlementAmountCents: 9_000,
+    });
+    expect(invalid).toContain("pre_collection_adjustment_1_duplicate_kind");
+    expect(validateCommissionRevenueBreakdown({
+      grossEligibleProductChannelCents: 1_000,
+      preCollectionAdjustments: [
+        { kind: "credit", amountCents: 1_500, authorityReference: null },
+      ],
+      eligibleProductChannelCollectedCents: 0,
+      collectedExclusions: [],
+      settlementAmountCents: 0,
+    })).toContain("pre_collection_adjustments_do_not_reconcile_to_eligible_collected_cash");
+    expect(validateCommissionRevenueBreakdown({
+      grossEligibleProductChannelCents: Number.MAX_SAFE_INTEGER,
+      preCollectionAdjustments: [
+        { kind: "discount", amountCents: Number.MAX_SAFE_INTEGER, authorityReference: null },
+        { kind: "credit", amountCents: 1, authorityReference: null },
+      ],
+      eligibleProductChannelCollectedCents: 0,
+      collectedExclusions: [],
+      settlementAmountCents: 0,
+    })).toContain("revenue_component_sum_exceeds_safe_integer_cents");
+    expect(() => incrementalCommissionForBasis(
+      STANDARD_REPRESENTATIVE_SCHEDULE,
+      Number.MAX_SAFE_INTEGER,
+      1,
+    )).toThrow(/safe integer/);
+  });
+
+  it("requires exact, unique canonical reversal allocation components", () => {
+    const valid = {
+      allocationReference: "refund-allocation:1",
+      originalRevenueSnapshotHash: "a".repeat(64),
+      eligibleBasisReductionCents: 10_000,
+      components: [
+        { kind: "eligible_product_channel" as const, amountCents: 10_000, authorityReference: null },
+        { kind: "tax" as const, amountCents: 800, authorityReference: null },
+      ],
+    };
+    expect(validateCommissionReversalAllocation(valid, 10_800)).toEqual([]);
+    expect(validateCommissionReversalAllocation({
+      ...valid,
+      components: [...valid.components, {
+        kind: "tax" as const, amountCents: 200, authorityReference: null,
+      }],
+    }, 11_000)).toContain("reversal_component_2_duplicate_kind");
+    expect(validateCommissionReversalAllocation(valid, 11_000))
+      .toContain("reversal_components_do_not_equal_adjustment_amount");
+    expect(validateCommissionReversalAllocation({
+      ...valid,
+      eligibleBasisReductionCents: Number.MAX_SAFE_INTEGER,
+      components: [
+        {
+          kind: "eligible_product_channel",
+          amountCents: Number.MAX_SAFE_INTEGER,
+          authorityReference: null,
+        },
+        { kind: "tax", amountCents: 1, authorityReference: null },
+      ],
+    }, Number.MAX_SAFE_INTEGER)).toContain("reversal_component_sum_exceeds_safe_integer_cents");
   });
 
   it("uses exact exclusive 30-day and 14-day period boundaries", () => {

@@ -6,6 +6,7 @@ import {
 import type { PartnerState } from "@shared/research/distribution";
 import {
   commissionStateTransitionAllowed,
+  commissionRevenueSnapshotHash,
   createCommissionLedgerService,
   createInMemoryCommissionLedgerRepository,
   type CanonicalCommissionAccrualFact,
@@ -20,16 +21,20 @@ import { createCommissionScheduleSnapshot } from "./hash";
 
 const SETH_START = "2026-09-02T00:00:00.000Z";
 const STANDARD_START = "2026-09-15T00:00:00.000Z";
+const PARTNER_ID = "10000000-0000-4000-8000-000000000001";
+const CANONICAL_ORDER_ID = "30000000-0000-4000-8000-000000000001";
 
 function binding(
   program: "seth" | "standard",
-  partnerId = "partner-1",
+  partnerId = PARTNER_ID,
 ): CommissionProgramBinding {
   const schedule = program === "seth"
     ? SETH_OPERATING_ADVISOR_SCHEDULE
     : STANDARD_REPRESENTATIVE_SCHEDULE;
   return {
-    bindingId: `binding-${program}`,
+    bindingId: program === "seth"
+      ? "20000000-0000-4000-8000-000000000001"
+      : "20000000-0000-4000-8000-000000000002",
     partnerId,
     programId: schedule.programId,
     scheduleVersion: schedule.version,
@@ -48,7 +53,7 @@ function setup(program: "seth" | "standard", initialState: PartnerState = "activ
   const reversalFacts = new Map<string, CanonicalCommissionReversalFact>();
   const authority = createCommissionScheduleAuthority({
     bindings: createInMemoryCommissionProgramBindingRepository([binding(program)]),
-    partners: { async getPartnerState() { return state; } },
+    partners: { async getPartnerStateAt() { return state; } },
   });
   const domainService = createCommissionLedgerService({
     authority,
@@ -95,8 +100,9 @@ function accrualInput(input: Readonly<{
   const settledAt = input.settledAt ?? (input.program === "seth" ? SETH_START : STANDARD_START);
   const care = input.careExclusionCents ?? 0;
   return {
-    partnerId: "partner-1",
+    partnerId: PARTNER_ID,
     orderId: `order-${input.settlementRef}`,
+    canonicalOrderId: CANONICAL_ORDER_ID,
     settlement: {
       settlementRef: input.settlementRef,
       externalTransactionRef: `external-${input.settlementRef}`,
@@ -106,14 +112,18 @@ function accrualInput(input: Readonly<{
     },
     revenueLane: input.lane ?? "product_channel" as const,
     revenue: {
-      grossProductChannelRevenueCents: input.amountCents,
-      exclusions: care === 0 ? [] : [{
+      grossEligibleProductChannelCents: input.amountCents - care,
+      preCollectionAdjustments: [],
+      eligibleProductChannelCollectedCents: input.amountCents - care,
+      collectedExclusions: care === 0 ? [] : [{
         kind: "care_clinical_charge" as const,
         amountCents: care,
         authorityReference: null,
       }],
+      settlementAmountCents: input.amountCents,
     },
     attribution: {
+      customerBindingKey: "auth:10000000-0000-4000-8000-000000000099",
       acceptedRelationshipReference: "accepted-customer:1",
       firstEligibleTransactionAt: input.program === "seth" ? SETH_START : STANDARD_START,
       activeManagementConfirmed: true,
@@ -127,7 +137,15 @@ function adjustment(
   kind: "refund" | "chargeback",
   amountCents: number,
   suffix: string,
+  allocationComponents: readonly Readonly<{
+    kind: "eligible_product_channel" | "tax" | "shipping_pass_through" | "care_clinical_charge";
+    amountCents: number;
+    authorityReference: string | null;
+  }>[] = [{ kind: "eligible_product_channel", amountCents, authorityReference: null }],
 ) {
+  const eligibleBasisReductionCents = allocationComponents
+    .filter((component) => component.kind === "eligible_product_channel")
+    .reduce((sum, component) => sum + component.amountCents, 0);
   return {
     orderId: original.orderId,
     originalSettlementRef: original.settlement.settlementRef,
@@ -138,6 +156,12 @@ function adjustment(
       amountCents,
       currency: "USD" as const,
       settledAt: "2026-10-01T00:00:00.000Z",
+    },
+    allocation: {
+      allocationReference: `allocation:${kind}:${suffix}`,
+      originalRevenueSnapshotHash: commissionRevenueSnapshotHash(original.revenue),
+      eligibleBasisReductionCents,
+      components: allocationComponents,
     },
     authorityReference: `commerce:${kind}:${suffix}`,
   };
@@ -208,15 +232,54 @@ describe("program commission order and period ledgers", () => {
       service.reverse(adjustment(original, "refund", 80_000, "race-left")),
       service.reverse(adjustment(original, "refund", 80_000, "race-right")),
     ]);
-    expect(left.ok).toBe(true);
-    expect(right.ok).toBe(true);
-    if (!left.ok || !right.ok) throw new Error("expected both canonical refunds to record");
-    expect([left.entry.eligibleBasisDeltaCents, right.entry.eligibleBasisDeltaCents].sort((a, b) => a - b))
-      .toEqual([-80_000, -20_000]);
+    expect([left.ok, right.ok].filter(Boolean)).toHaveLength(1);
+    const accepted = left.ok ? left : right;
+    const denied = left.ok ? right : left;
+    expect(accepted.ok && accepted.entry.eligibleBasisDeltaCents).toBe(-80_000);
+    expect(denied).toEqual({ ok: false, code: "reversal_exceeds_outstanding_basis" });
     expect((await repository.listPeriodEvents()).at(-1)).toMatchObject({
-      cumulativeEligibleBasisCents: 0,
-      cumulativeCommissionCents: 0,
+      cumulativeEligibleBasisCents: 20_000,
+      cumulativeCommissionCents: 4_000,
     });
+  });
+
+  it("uses canonical refund allocation and never reverses tax-only cash", async () => {
+    const { service, repository } = setup("standard");
+    const original = accrualInput({
+      program: "standard", settlementRef: "allocated-refund", amountCents: 110_000,
+    });
+    original.revenue.grossEligibleProductChannelCents = 100_000;
+    original.revenue.eligibleProductChannelCollectedCents = 100_000;
+    original.revenue.collectedExclusions = [{
+      kind: "tax", amountCents: 10_000, authorityReference: null,
+    }];
+    expect((await service.accrue(original)).ok).toBe(true);
+
+    const taxOnly = await service.reverse(adjustment(
+      original,
+      "refund",
+      5_000,
+      "tax-only",
+      [{ kind: "tax", amountCents: 5_000, authorityReference: null }],
+    ));
+    expect(taxOnly).toEqual({ ok: false, code: "no_eligible_basis_reduction" });
+
+    const mixed = await service.reverse(adjustment(
+      original,
+      "refund",
+      11_000,
+      "mixed",
+      [
+        { kind: "eligible_product_channel", amountCents: 10_000, authorityReference: null },
+        { kind: "tax", amountCents: 1_000, authorityReference: null },
+      ],
+    ));
+    expect(mixed.ok && mixed.entry).toMatchObject({
+      eligibleBasisDeltaCents: -10_000,
+      commissionDeltaCents: -2_000,
+    });
+    expect((await repository.listEntries()).map((entry) => entry.eventKind))
+      .toEqual(["accrual", "refund_reversal"]);
   });
 
   it("replays the same settlement exactly once and rejects changed payloads under its key", async () => {
@@ -234,6 +297,29 @@ describe("program commission order and period ledgers", () => {
     expect(replay.ok && first.ok && replay.entry.entryId).toBe(first.ok && first.entry.entryId);
     expect(conflict).toEqual({ ok: false, code: "idempotency_conflict" });
     expect(await repository.listEntries()).toHaveLength(1);
+  });
+
+  it("refuses to append a period event behind a later money occurrence", async () => {
+    const { service, repository } = setup("standard");
+    expect((await service.accrue(accrualInput({
+      program: "standard",
+      settlementRef: "ordered-first",
+      amountCents: 10_000,
+      settledAt: "2026-09-16T00:00:00.000Z",
+    }))).ok).toBe(true);
+    expect((await service.accrue(accrualInput({
+      program: "standard",
+      settlementRef: "ordered-second",
+      amountCents: 10_000,
+      settledAt: "2026-09-20T00:00:00.000Z",
+    }))).ok).toBe(true);
+    expect(await service.accrue(accrualInput({
+      program: "standard",
+      settlementRef: "late-arriving-earlier-event",
+      amountCents: 10_000,
+      settledAt: "2026-09-18T00:00:00.000Z",
+    }))).toEqual({ ok: false, code: "period_contention" });
+    expect(await repository.listEntries()).toHaveLength(2);
   });
 
   it.each<PartnerState>(["quality_review", "suspended", "terminated"])(
@@ -298,6 +384,27 @@ describe("program commission order and period ledgers", () => {
       termMode: "post_term_tail",
       commissionDeltaCents: 1_500_000,
     });
+  });
+
+  it("ends Seth customer attribution at the exclusive 12-month boundary", async () => {
+    const beforeBoundary = await setup("seth").service.accrue(accrualInput({
+      program: "seth",
+      settlementRef: "seth-month-12-minus-one-day",
+      amountCents: 10_000,
+      settledAt: "2027-09-01T23:59:59.999Z",
+    }));
+    expect(beforeBoundary.ok && beforeBoundary.entry).toMatchObject({
+      termMode: "post_term_tail",
+      commissionDeltaCents: 2_500,
+    });
+
+    const atBoundary = await setup("seth").service.accrue(accrualInput({
+      program: "seth",
+      settlementRef: "seth-month-12-boundary",
+      amountCents: 10_000,
+      settledAt: "2027-09-02T00:00:00.000Z",
+    }));
+    expect(atBoundary).toEqual({ ok: false, code: "attribution_window_expired" });
   });
 
   it("requires payment evidence for the paid state and forbids leaving reversed", () => {

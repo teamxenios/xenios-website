@@ -8,9 +8,11 @@ import {
   initialProgramTermEndsAt,
   totalCommissionForBasis,
   validateCommissionRevenueBreakdown,
+  validateCommissionReversalAllocation,
   type CommissionCalculation,
   type CommissionPeriodWindow,
   type CommissionRevenueBreakdown,
+  type CommissionReversalAllocation,
   type CommissionScheduleSnapshot,
   type ProgramCommissionState,
 } from "@shared/research/commission-schedules";
@@ -22,8 +24,11 @@ export type CommissionTermMode = "initial_term" | "post_term_tail";
 export type CommissionLedgerEventKind = "accrual" | "refund_reversal" | "chargeback_reversal";
 
 const ISO_INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export type CanonicalCommissionAttribution = Readonly<{
+  /** Opaque canonical account/customer binding key; contains no customer PII. */
+  customerBindingKey: string;
   acceptedRelationshipReference: string;
   firstEligibleTransactionAt: string;
   activeManagementConfirmed: boolean;
@@ -37,6 +42,8 @@ export type CanonicalCommissionAttribution = Readonly<{
 export type CanonicalCommissionAccrualFact = Readonly<{
   partnerId: string;
   orderId: string;
+  /** UUID join to the canonical legacy commission/order ledger; never synthesized. */
+  canonicalOrderId: string;
   /** Canonical committed money fact; raw browser payment evidence is not accepted. */
   settlement: OrderSettlement;
   revenueLane: CommissionRevenueLane;
@@ -52,6 +59,8 @@ export type CanonicalCommissionReversalFact = Readonly<{
   kind: "refund" | "chargeback";
   /** Canonical committed refund/chargeback money fact. Amount is positive. */
   adjustment: OrderSettlement;
+  /** Canonical allocation of adjustment cash back to original settled components. */
+  allocation: CommissionReversalAllocation;
   authorityReference: string;
 }>;
 
@@ -76,7 +85,9 @@ export type CommissionLedgerEntry = Readonly<{
   eventKind: CommissionLedgerEventKind;
   partnerId: string;
   orderId: string;
+  canonicalOrderId: string;
   originalSettlementRef: string;
+  reversesEntryId: string | null;
   moneyEvidence: OrderSettlement;
   bindingId: string;
   bindingAuthorityReference: string;
@@ -94,6 +105,7 @@ export type CommissionLedgerEntry = Readonly<{
   attributionSnapshot: CanonicalCommissionAttribution;
   priceAuthorityReference: string;
   reversalAuthorityReference: string | null;
+  reversalAllocationSnapshot: CommissionReversalAllocation | null;
   initialState: ProgramCommissionState;
   occurredAt: string;
 }>;
@@ -126,11 +138,16 @@ export type CommissionLedgerDenialCode =
   | "partner_not_active"
   | "program_binding_not_found"
   | "program_binding_ambiguous"
+  | "program_binding_invalid"
   | "program_binding_not_effective"
   | "schedule_version_not_found"
   | "schedule_hash_mismatch"
   | "care_revenue_excluded"
   | "revenue_breakdown_invalid"
+  | "reversal_allocation_invalid"
+  | "reversal_allocation_mismatch"
+  | "no_eligible_basis_reduction"
+  | "reversal_exceeds_outstanding_basis"
   | "no_eligible_revenue"
   | "attribution_not_accepted"
   | "active_management_required"
@@ -168,7 +185,9 @@ export interface CommissionLedgerRepository {
   commit(
     operation: StoredCommissionOperation,
     expectedPeriodRevision: number,
-  ): Promise<"committed" | "replayed" | "idempotency_conflict" | "period_contention">;
+  ): Promise<
+    "committed" | "replayed" | "idempotency_conflict" | "canonical_money_reused" | "period_contention"
+  >;
   listEntries(): Promise<readonly CommissionLedgerEntry[]>;
   listPeriodEvents(): Promise<readonly CommissionPeriodLedgerEvent[]>;
 }
@@ -210,8 +229,16 @@ function hash(value: unknown): string {
   return createHash("sha256").update(canonicalJson(value), "utf8").digest("hex");
 }
 
-function id(prefix: string, value: unknown): string {
-  return `${prefix}_${hash(value).slice(0, 32)}`;
+export function commissionRevenueSnapshotHash(value: CommissionRevenueBreakdown): string {
+  return hash(value);
+}
+
+function deterministicUuid(value: unknown): string {
+  const raw = hash(value).slice(0, 32).split("");
+  raw[12] = "5";
+  raw[16] = ((Number.parseInt(raw[16], 16) & 0x3) | 0x8).toString(16);
+  const hex = raw.join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
 function positiveSafeCents(value: number): boolean {
@@ -237,11 +264,17 @@ function periodKey(
   return `${bindingId}:${period.index}:${mode}`;
 }
 
+function scheduleAnchorAt(resolved: ResolvedCommissionSchedule): string {
+  return resolved.schedule.measurementPeriod.anchor === "contract_effective_at"
+    ? `${resolved.schedule.effectiveDate}T00:00:00.000Z`
+    : resolved.binding.effectiveAt;
+}
+
 function resolveTermMode(
   resolved: ResolvedCommissionSchedule,
   settledAt: string,
 ): CommissionTermMode | null {
-  const endsAt = initialProgramTermEndsAt(resolved.schedule, resolved.binding.effectiveAt);
+  const endsAt = initialProgramTermEndsAt(resolved.schedule, scheduleAnchorAt(resolved));
   if (endsAt === null) return null;
   if (Date.parse(settledAt) < Date.parse(endsAt)) return "initial_term";
   return resolved.schedule.postTermTailRatePolicy === null ? null : "post_term_tail";
@@ -254,6 +287,7 @@ function validateAttribution(
   const settledAt = Date.parse(input.settlement.settledAt);
   if (
     input.attribution === null || typeof input.attribution !== "object" ||
+    typeof input.attribution.customerBindingKey !== "string" ||
     typeof input.attribution.acceptedRelationshipReference !== "string" ||
     typeof input.attribution.firstEligibleTransactionAt !== "string" ||
     !ISO_INSTANT.test(input.attribution.firstEligibleTransactionAt) ||
@@ -262,6 +296,7 @@ function validateAttribution(
   const firstAt = Date.parse(input.attribution.firstEligibleTransactionAt);
   if (
     input.attribution.acceptedRelationshipReference.trim().length === 0 ||
+    input.attribution.customerBindingKey.trim().length < 3 ||
     !Number.isFinite(firstAt) || firstAt > settledAt ||
     firstAt < Date.parse(resolved.binding.effectiveAt)
   ) return "attribution_not_accepted";
@@ -275,6 +310,31 @@ function validateAttribution(
   );
   if (end !== null && settledAt >= Date.parse(end)) return "attribution_window_expired";
   return null;
+}
+
+function validPeriodProjection(projection: PeriodProjection): boolean {
+  return Number.isSafeInteger(projection.revision) && projection.revision >= 0 &&
+    Number.isSafeInteger(projection.cumulativeEligibleBasisCents) &&
+    projection.cumulativeEligibleBasisCents >= 0 &&
+    Number.isSafeInteger(projection.cumulativeCommissionCents) &&
+    projection.cumulativeCommissionCents >= 0;
+}
+
+function projectionMatchesSchedule(
+  resolved: ResolvedCommissionSchedule,
+  projection: PeriodProjection,
+  termMode: CommissionTermMode,
+): boolean {
+  if (!validPeriodProjection(projection)) return false;
+  try {
+    return totalCommissionForBasis(
+      resolved.schedule,
+      projection.cumulativeEligibleBasisCents,
+      termMode,
+    ).commissionCents === projection.cumulativeCommissionCents;
+  } catch {
+    return false;
+  }
 }
 
 function replayResult(operation: StoredCommissionOperation): CommissionLedgerResult {
@@ -321,7 +381,7 @@ export function createCommissionLedgerService(deps: Readonly<{
         return { ok: false, code: "invalid_request" };
       }
       if (
-        input.partnerId.trim().length === 0 || input.orderId.trim().length === 0 ||
+        !UUID.test(input.partnerId) || input.orderId.trim().length === 0 || !UUID.test(input.canonicalOrderId) ||
         input.priceAuthorityReference.trim().length === 0 || !validSettlement(input.settlement)
       ) return { ok: false, code: "invalid_request" };
 
@@ -347,11 +407,12 @@ export function createCommissionLedgerService(deps: Readonly<{
         return { ok: false, code: "invalid_request" };
       }
       const issues = [...validateCommissionRevenueBreakdown(input.revenue)];
-      input.revenue.exclusions.forEach((exclusion, index) => {
+      [...input.revenue.preCollectionAdjustments, ...input.revenue.collectedExclusions]
+        .forEach((exclusion, index) => {
         if (!schedule.exclusions.includes(exclusion.kind)) issues.push(`exclusion_${index}_not_authorized`);
-      });
+        });
       if (issues.length > 0) return { ok: false, code: "revenue_breakdown_invalid", issues };
-      if (input.revenue.grossProductChannelRevenueCents > input.settlement.amountCents) {
+      if (input.revenue.settlementAmountCents !== input.settlement.amountCents) {
         return { ok: false, code: "canonical_money_amount_mismatch" };
       }
       const basisCents = eligibleNetCollectedRevenueCents(input.revenue);
@@ -360,25 +421,30 @@ export function createCommissionLedgerService(deps: Readonly<{
       if (attributionDenial !== null) return { ok: false, code: attributionDenial };
       const termMode = resolveTermMode(resolution.value, input.settlement.settledAt);
       if (termMode === null) return { ok: false, code: "program_term_ended" };
-      const period = commissionPeriodWindow(schedule, binding.effectiveAt, input.settlement.settledAt);
+      const period = commissionPeriodWindow(schedule, scheduleAnchorAt(resolution.value), input.settlement.settledAt);
       if (period === null) return { ok: false, code: "invalid_request" };
       const keyForPeriod = periodKey(binding.bindingId, period, termMode);
 
       for (let attempt = 0; attempt < 3; attempt += 1) {
         const prior = await deps.repository.getPeriodProjection(keyForPeriod);
+        if (!projectionMatchesSchedule(resolution.value, prior, termMode)) {
+          return { ok: false, code: "historical_schedule_invalid" };
+        }
         const calculation = incrementalCommissionForBasis(
           schedule,
           prior.cumulativeEligibleBasisCents,
           basisCents,
           termMode,
         );
-        const entryId = id("commission", { key, fingerprint });
+        const entryId = deterministicUuid({ kind: "commission", key, fingerprint });
         const entry: CommissionLedgerEntry = immutable({
           entryId,
           eventKind: "accrual",
           partnerId: input.partnerId,
           orderId: input.orderId,
+          canonicalOrderId: input.canonicalOrderId,
           originalSettlementRef: input.settlement.settlementRef,
+          reversesEntryId: null,
           moneyEvidence: input.settlement,
           bindingId: binding.bindingId,
           bindingAuthorityReference: binding.authorityReference,
@@ -396,11 +462,12 @@ export function createCommissionLedgerService(deps: Readonly<{
           attributionSnapshot: input.attribution,
           priceAuthorityReference: input.priceAuthorityReference,
           reversalAuthorityReference: null,
+          reversalAllocationSnapshot: null,
           initialState: "pending",
           occurredAt: input.settlement.settledAt,
         });
         const periodEvent: CommissionPeriodLedgerEvent = immutable({
-          periodEventId: id("commission_period", { entryId, revision: prior.revision + 1 }),
+          periodEventId: deterministicUuid({ kind: "commission_period", entryId, revision: prior.revision + 1 }),
           periodKey: keyForPeriod,
           revision: prior.revision + 1,
           sourceEntryId: entryId,
@@ -425,6 +492,7 @@ export function createCommissionLedgerService(deps: Readonly<{
           if (found !== null && found.fingerprint === fingerprint) return replayResult(found);
         }
         if (committed === "idempotency_conflict") return { ok: false, code: "idempotency_conflict" };
+        if (committed === "canonical_money_reused") return { ok: false, code: "canonical_money_reused" };
       }
       return { ok: false, code: "period_contention" };
     },
@@ -446,6 +514,13 @@ export function createCommissionLedgerService(deps: Readonly<{
         input.orderId.trim().length === 0 || input.originalSettlementRef.trim().length === 0 ||
         input.authorityReference.trim().length === 0 || !validSettlement(input.adjustment)
       ) return { ok: false, code: "invalid_request" };
+      const allocationIssues = validateCommissionReversalAllocation(
+        input.allocation,
+        input.adjustment.amountCents,
+      );
+      if (allocationIssues.length > 0) {
+        return { ok: false, code: "reversal_allocation_invalid", issues: allocationIssues };
+      }
       const key = `${input.kind}_reversal:${input.adjustment.settlementRef}`;
       const fingerprint = operationFingerprint(`${input.kind}_reversal`, input);
       const replay = await existingOperationResult(deps.repository, key, fingerprint);
@@ -464,6 +539,20 @@ export function createCommissionLedgerService(deps: Readonly<{
       if (!scheduleSnapshotIsAuthentic(original.scheduleSnapshot)) {
         return { ok: false, code: "historical_schedule_invalid" };
       }
+      if (
+        original.scheduleHash !== original.scheduleSnapshot.scheduleHash ||
+        original.programId !== original.scheduleSnapshot.definition.programId ||
+        original.scheduleVersion !== original.scheduleSnapshot.definition.version ||
+        original.revenueSnapshot === null
+      ) return { ok: false, code: "historical_schedule_invalid" };
+      if (
+        input.allocation.originalRevenueSnapshotHash !==
+          commissionRevenueSnapshotHash(original.revenueSnapshot)
+      ) return { ok: false, code: "reversal_allocation_mismatch" };
+      const requestedBasisReduction = input.allocation.eligibleBasisReductionCents;
+      if (requestedBasisReduction === 0) {
+        return { ok: false, code: "no_eligible_basis_reduction" };
+      }
       for (let attempt = 0; attempt < 3; attempt += 1) {
         // Re-read the order balance on every optimistic retry. Two different
         // refund references may race on the same original settlement; carrying
@@ -471,16 +560,32 @@ export function createCommissionLedgerService(deps: Readonly<{
         const settlementEntries = await deps.repository.listEntriesForSettlement(
           input.originalSettlementRef,
         );
-        const outstandingBasis = settlementEntries.reduce(
-          (total, entry) => total + entry.eligibleBasisDeltaCents,
-          0,
+        const outstandingBasisBigInt = settlementEntries.reduce(
+          (total, entry) => total + BigInt(entry.eligibleBasisDeltaCents),
+          0n,
         );
+        if (
+          outstandingBasisBigInt > BigInt(Number.MAX_SAFE_INTEGER) ||
+          outstandingBasisBigInt < BigInt(Number.MIN_SAFE_INTEGER)
+        ) return { ok: false, code: "historical_schedule_invalid" };
+        const outstandingBasis = Number(outstandingBasisBigInt);
         if (outstandingBasis <= 0) {
           return { ok: false, code: "no_outstanding_commission_basis" };
         }
-        const basisReduction = Math.min(outstandingBasis, input.adjustment.amountCents);
+        if (requestedBasisReduction > outstandingBasis) {
+          return { ok: false, code: "reversal_exceeds_outstanding_basis" };
+        }
+        const basisReduction = requestedBasisReduction;
         const prior = await deps.repository.getPeriodProjection(original.periodKey);
-        if (prior.cumulativeEligibleBasisCents < basisReduction) {
+        if (!validPeriodProjection(prior) || prior.cumulativeEligibleBasisCents < basisReduction) {
+          return { ok: false, code: "historical_schedule_invalid" };
+        }
+        const expectedBefore = totalCommissionForBasis(
+          original.scheduleSnapshot.definition,
+          prior.cumulativeEligibleBasisCents,
+          original.termMode,
+        );
+        if (expectedBefore.commissionCents !== prior.cumulativeCommissionCents) {
           return { ok: false, code: "historical_schedule_invalid" };
         }
         const after = totalCommissionForBasis(
@@ -494,13 +599,15 @@ export function createCommissionLedgerService(deps: Readonly<{
           commissionCents: Math.abs(commissionDeltaCents),
           components: [],
         });
-        const entryId = id("commission", { key, fingerprint });
+        const entryId = deterministicUuid({ kind: "commission", key, fingerprint });
         const entry: CommissionLedgerEntry = immutable({
           entryId,
           eventKind: input.kind === "refund" ? "refund_reversal" : "chargeback_reversal",
           partnerId: original.partnerId,
           orderId: original.orderId,
+          canonicalOrderId: original.canonicalOrderId,
           originalSettlementRef: original.originalSettlementRef,
+          reversesEntryId: original.entryId,
           moneyEvidence: input.adjustment,
           bindingId: original.bindingId,
           bindingAuthorityReference: original.bindingAuthorityReference,
@@ -518,11 +625,12 @@ export function createCommissionLedgerService(deps: Readonly<{
           attributionSnapshot: original.attributionSnapshot,
           priceAuthorityReference: original.priceAuthorityReference,
           reversalAuthorityReference: input.authorityReference,
+          reversalAllocationSnapshot: input.allocation,
           initialState: "reversed",
           occurredAt: input.adjustment.settledAt,
         });
         const periodEvent: CommissionPeriodLedgerEvent = immutable({
-          periodEventId: id("commission_period", { entryId, revision: prior.revision + 1 }),
+          periodEventId: deterministicUuid({ kind: "commission_period", entryId, revision: prior.revision + 1 }),
           periodKey: original.periodKey,
           revision: prior.revision + 1,
           sourceEntryId: entryId,
@@ -547,6 +655,7 @@ export function createCommissionLedgerService(deps: Readonly<{
           if (found !== null && found.fingerprint === fingerprint) return replayResult(found);
         }
         if (committed === "idempotency_conflict") return { ok: false, code: "idempotency_conflict" };
+        if (committed === "canonical_money_reused") return { ok: false, code: "canonical_money_reused" };
       }
       return { ok: false, code: "period_contention" };
     },
@@ -590,10 +699,15 @@ export function createInMemoryCommissionLedgerRepository(): CommissionLedgerRepo
       if (existing !== undefined) {
         return existing.fingerprint === operation.fingerprint ? "replayed" : "idempotency_conflict";
       }
-      const latest = periodEvents
+      const latestEvent = periodEvents
         .filter((event) => event.periodKey === operation.periodEvent.periodKey)
-        .reduce((revision, event) => Math.max(revision, event.revision), 0);
-      if (latest !== expectedPeriodRevision) return "period_contention";
+        .sort((left, right) => right.revision - left.revision)[0];
+      const latestRevision = latestEvent?.revision ?? 0;
+      if (
+        latestRevision !== expectedPeriodRevision ||
+        (latestEvent !== undefined &&
+          Date.parse(operation.periodEvent.occurredAt) < Date.parse(latestEvent.occurredAt))
+      ) return "period_contention";
       operations.set(operation.idempotencyKey, operation);
       entries.push(operation.entry);
       periodEvents.push(operation.periodEvent);

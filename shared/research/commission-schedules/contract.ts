@@ -37,6 +37,31 @@ export const COMMISSION_EXCLUSION_KINDS = [
 
 export type CommissionExclusionKind = (typeof COMMISSION_EXCLUSION_KINDS)[number];
 
+export const COMMISSION_PRE_COLLECTION_ADJUSTMENT_KINDS = [
+  "discount",
+  "credit",
+  "complimentary_value",
+] as const satisfies readonly CommissionExclusionKind[];
+
+export type CommissionPreCollectionAdjustmentKind =
+  (typeof COMMISSION_PRE_COLLECTION_ADJUSTMENT_KINDS)[number];
+
+export const COMMISSION_COLLECTED_EXCLUSION_KINDS = [
+  "tax",
+  "shipping_pass_through",
+  "fraud_or_duplicate",
+  "clinical_professional_fee",
+  "patient_referral",
+  "medication_or_pharmacy_revenue",
+  "laboratory_revenue",
+  "prescription_revenue",
+  "care_clinical_charge",
+  "other_written_exclusion",
+] as const satisfies readonly CommissionExclusionKind[];
+
+export type CommissionCollectedExclusionKind =
+  (typeof COMMISSION_COLLECTED_EXCLUSION_KINDS)[number];
+
 export type ScheduleSourceEvidence = Readonly<{
   file: string;
   sha256: string;
@@ -66,7 +91,7 @@ export type CommissionScheduleDefinition = Readonly<{
   eligibleBasis: "eligible_net_collected_product_channel_revenue";
   initialTermDays: number;
   measurementPeriod: Readonly<{
-    anchor: "binding_effective_at";
+    anchor: "binding_effective_at" | "contract_effective_at";
     days: number;
   }>;
   ratePolicy: CommissionRatePolicy;
@@ -113,8 +138,42 @@ export type CommissionRevenueExclusion = Readonly<{
 }>;
 
 export type CommissionRevenueBreakdown = Readonly<{
-  grossProductChannelRevenueCents: number;
-  exclusions: readonly CommissionRevenueExclusion[];
+  /** Eligible product/channel subtotal before discounts, credits, or complimentary value. */
+  grossEligibleProductChannelCents: number;
+  /** Non-cash reductions. These are evidence only and are not subtracted from settled cash again. */
+  preCollectionAdjustments: readonly CommissionRevenueExclusion[];
+  /** Eligible product/channel cash after the pre-collection adjustments above. */
+  eligibleProductChannelCollectedCents: number;
+  /** Cash collected in the settlement but excluded from commission (tax, shipping, Care, etc.). */
+  collectedExclusions: readonly CommissionRevenueExclusion[];
+  /** Must exactly equal the canonical committed settlement amount. */
+  settlementAmountCents: number;
+}>;
+
+export const COMMISSION_REVERSAL_ALLOCATION_KINDS = [
+  "eligible_product_channel",
+  ...COMMISSION_COLLECTED_EXCLUSION_KINDS,
+] as const;
+
+export type CommissionReversalAllocationKind =
+  (typeof COMMISSION_REVERSAL_ALLOCATION_KINDS)[number];
+
+export type CommissionReversalAllocationComponent = Readonly<{
+  kind: CommissionReversalAllocationKind;
+  amountCents: number;
+  /** Required for other_written_exclusion and otherwise supplied by the canonical allocator when available. */
+  authorityReference: string | null;
+}>;
+
+export type CommissionReversalAllocation = Readonly<{
+  /** Immutable canonical refund/chargeback allocation record, never browser-authored. */
+  allocationReference: string;
+  /** SHA-256 of the original immutable revenue snapshot to which this allocation applies. */
+  originalRevenueSnapshotHash: string;
+  /** Must equal the eligible_product_channel component and never includes tax/shipping/Care. */
+  eligibleBasisReductionCents: number;
+  /** Positive, unique, canonical components whose sum equals the committed adjustment cash. */
+  components: readonly CommissionReversalAllocationComponent[];
 }>;
 
 export type CommissionRateComponent = Readonly<{

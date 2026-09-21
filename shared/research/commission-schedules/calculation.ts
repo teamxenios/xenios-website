@@ -4,7 +4,14 @@ import type {
   CommissionRateComponent,
   CommissionRatePolicy,
   CommissionRevenueBreakdown,
+  CommissionRevenueExclusion,
+  CommissionReversalAllocation,
   CommissionScheduleDefinition,
+} from "./contract";
+import {
+  COMMISSION_COLLECTED_EXCLUSION_KINDS,
+  COMMISSION_PRE_COLLECTION_ADJUSTMENT_KINDS,
+  COMMISSION_REVERSAL_ALLOCATION_KINDS,
 } from "./contract";
 
 const DAY_MS = 24 * 60 * 60 * 1_000;
@@ -13,36 +20,173 @@ function wholeNonnegativeCents(value: number): boolean {
   return Number.isSafeInteger(value) && value >= 0;
 }
 
+function wholePositiveCents(value: number): boolean {
+  return Number.isSafeInteger(value) && value > 0;
+}
+
+function safeCentsSum(values: readonly number[]): number | null {
+  const total = values.reduce((sum, value) => sum + BigInt(value), 0n);
+  return total <= BigInt(Number.MAX_SAFE_INTEGER) ? Number(total) : null;
+}
+
+function validateUniqueComponents(
+  components: readonly unknown[],
+  allowed: readonly string[],
+  prefix: string,
+): readonly string[] {
+  const issues: string[] = [];
+  const seen = new Set<string>();
+  components.forEach((component, index) => {
+    if (component === null || typeof component !== "object" || Array.isArray(component)) {
+      issues.push(`${prefix}_${index}_must_be_an_object`);
+      return;
+    }
+    const candidate = component as Partial<CommissionRevenueExclusion>;
+    if (typeof candidate.kind !== "string" || !allowed.includes(candidate.kind)) {
+      issues.push(`${prefix}_${index}_kind_not_allowed`);
+    }
+    if (!wholePositiveCents(candidate.amountCents as number)) {
+      issues.push(`${prefix}_${index}_must_be_positive_safe_integer_cents`);
+    }
+    if (typeof candidate.kind === "string") {
+      if (seen.has(candidate.kind)) issues.push(`${prefix}_${index}_duplicate_kind`);
+      seen.add(candidate.kind);
+    }
+    if (candidate.authorityReference !== null && typeof candidate.authorityReference !== "string") {
+      issues.push(`${prefix}_${index}_authority_reference_invalid`);
+    }
+    if (
+      candidate.kind === "other_written_exclusion" &&
+      (typeof candidate.authorityReference !== "string" ||
+        candidate.authorityReference.trim().length === 0)
+    ) issues.push(`${prefix}_${index}_requires_written_authority`);
+  });
+  return issues;
+}
+
 export function validateCommissionRevenueBreakdown(
   breakdown: CommissionRevenueBreakdown,
 ): readonly string[] {
   const issues: string[] = [];
-  if (!wholeNonnegativeCents(breakdown.grossProductChannelRevenueCents)) {
-    issues.push("gross_product_channel_revenue_must_be_nonnegative_integer_cents");
+  if (breakdown === null || typeof breakdown !== "object") {
+    return ["revenue_breakdown_must_be_an_object"];
   }
-  breakdown.exclusions.forEach((exclusion, index) => {
-    if (!wholeNonnegativeCents(exclusion.amountCents)) {
-      issues.push(`exclusion_${index}_must_be_nonnegative_integer_cents`);
-    }
-    if (
-      exclusion.kind === "other_written_exclusion" &&
-      (exclusion.authorityReference === null || exclusion.authorityReference.trim().length === 0)
-    ) {
-      issues.push(`exclusion_${index}_requires_written_authority`);
-    }
-  });
+  if (!wholeNonnegativeCents(breakdown.grossEligibleProductChannelCents)) {
+    issues.push("gross_eligible_product_channel_must_be_nonnegative_safe_integer_cents");
+  }
+  if (!wholeNonnegativeCents(breakdown.eligibleProductChannelCollectedCents)) {
+    issues.push("eligible_product_channel_collected_must_be_nonnegative_safe_integer_cents");
+  }
+  if (!wholeNonnegativeCents(breakdown.settlementAmountCents)) {
+    issues.push("settlement_amount_must_be_nonnegative_safe_integer_cents");
+  }
+  if (!Array.isArray(breakdown.preCollectionAdjustments)) {
+    issues.push("pre_collection_adjustments_must_be_an_array");
+  }
+  if (!Array.isArray(breakdown.collectedExclusions)) {
+    issues.push("collected_exclusions_must_be_an_array");
+  }
+  if (issues.length > 0) return issues;
+
+  issues.push(...validateUniqueComponents(
+    breakdown.preCollectionAdjustments,
+    COMMISSION_PRE_COLLECTION_ADJUSTMENT_KINDS,
+    "pre_collection_adjustment",
+  ));
+  issues.push(...validateUniqueComponents(
+    breakdown.collectedExclusions,
+    COMMISSION_COLLECTED_EXCLUSION_KINDS,
+    "collected_exclusion",
+  ));
+  if (issues.length > 0) return issues;
+
+  const adjustmentTotal = safeCentsSum(breakdown.preCollectionAdjustments.map((item) => item.amountCents));
+  const collectedExclusionTotal = safeCentsSum(breakdown.collectedExclusions.map((item) => item.amountCents));
+  if (adjustmentTotal === null || collectedExclusionTotal === null) {
+    issues.push("revenue_component_sum_exceeds_safe_integer_cents");
+    return issues;
+  }
+  if (
+    BigInt(breakdown.grossEligibleProductChannelCents) - BigInt(adjustmentTotal) !==
+      BigInt(breakdown.eligibleProductChannelCollectedCents)
+  ) issues.push("pre_collection_adjustments_do_not_reconcile_to_eligible_collected_cash");
+  if (
+    BigInt(breakdown.eligibleProductChannelCollectedCents) + BigInt(collectedExclusionTotal) !==
+      BigInt(breakdown.settlementAmountCents)
+  ) issues.push("collected_cash_components_do_not_equal_settlement_amount");
   return issues;
 }
 
 export function eligibleNetCollectedRevenueCents(
   breakdown: CommissionRevenueBreakdown,
 ): number {
-  const exclusions = breakdown.exclusions.reduce(
-    (sum, item) => sum + BigInt(item.amountCents),
-    0n,
-  );
-  const net = BigInt(breakdown.grossProductChannelRevenueCents) - exclusions;
-  return net > 0n ? Number(net) : 0;
+  return breakdown.eligibleProductChannelCollectedCents;
+}
+
+export function validateCommissionReversalAllocation(
+  allocation: CommissionReversalAllocation,
+  adjustmentAmountCents: number,
+): readonly string[] {
+  const issues: string[] = [];
+  if (allocation === null || typeof allocation !== "object") {
+    return ["reversal_allocation_must_be_an_object"];
+  }
+  if (typeof allocation.allocationReference !== "string" || allocation.allocationReference.trim().length < 3) {
+    issues.push("reversal_allocation_reference_required");
+  }
+  if (
+    typeof allocation.originalRevenueSnapshotHash !== "string" ||
+    !/^[0-9a-f]{64}$/.test(allocation.originalRevenueSnapshotHash)
+  ) issues.push("reversal_original_revenue_snapshot_hash_invalid");
+  if (!wholeNonnegativeCents(allocation.eligibleBasisReductionCents)) {
+    issues.push("reversal_eligible_basis_reduction_must_be_nonnegative_safe_integer_cents");
+  }
+  if (!wholePositiveCents(adjustmentAmountCents)) {
+    issues.push("reversal_adjustment_must_be_positive_safe_integer_cents");
+  }
+  if (!Array.isArray(allocation.components) || allocation.components.length === 0) {
+    issues.push("reversal_allocation_components_required");
+    return issues;
+  }
+  const seen = new Set<string>();
+  allocation.components.forEach((component, index) => {
+    if (component === null || typeof component !== "object" || Array.isArray(component)) {
+      issues.push(`reversal_component_${index}_must_be_an_object`);
+      return;
+    }
+    const candidate = component as Partial<(typeof allocation.components)[number]>;
+    if (
+      typeof candidate.kind !== "string" ||
+      !(COMMISSION_REVERSAL_ALLOCATION_KINDS as readonly string[]).includes(candidate.kind)
+    ) {
+      issues.push(`reversal_component_${index}_kind_not_allowed`);
+    }
+    if (!wholePositiveCents(candidate.amountCents as number)) {
+      issues.push(`reversal_component_${index}_must_be_positive_safe_integer_cents`);
+    }
+    if (typeof candidate.kind === "string") {
+      if (seen.has(candidate.kind)) issues.push(`reversal_component_${index}_duplicate_kind`);
+      seen.add(candidate.kind);
+    }
+    if (candidate.authorityReference !== null && typeof candidate.authorityReference !== "string") {
+      issues.push(`reversal_component_${index}_authority_reference_invalid`);
+    }
+    if (
+      candidate.kind === "other_written_exclusion" &&
+      (typeof candidate.authorityReference !== "string" ||
+        candidate.authorityReference.trim().length === 0)
+    ) issues.push(`reversal_component_${index}_requires_written_authority`);
+  });
+  if (issues.length > 0) return issues;
+  const total = safeCentsSum(allocation.components.map((component) => component.amountCents));
+  const eligible = allocation.components.find((component) => component.kind === "eligible_product_channel")
+    ?.amountCents ?? 0;
+  if (total === null) issues.push("reversal_component_sum_exceeds_safe_integer_cents");
+  else if (total !== adjustmentAmountCents) issues.push("reversal_components_do_not_equal_adjustment_amount");
+  if (eligible !== allocation.eligibleBasisReductionCents) {
+    issues.push("reversal_eligible_component_does_not_equal_basis_reduction");
+  }
+  return issues;
 }
 
 function roundedDownCommissionCents(basisCents: number, rateBasisPoints: number): number {
@@ -116,6 +260,9 @@ export function incrementalCommissionForBasis(
 ): CommissionCalculation {
   if (!wholeNonnegativeCents(priorPeriodBasisCents) || !wholeNonnegativeCents(addedBasisCents)) {
     throw new Error("Prior and added commission bases must be non-negative integer cents.");
+  }
+  if (BigInt(priorPeriodBasisCents) + BigInt(addedBasisCents) > BigInt(Number.MAX_SAFE_INTEGER)) {
+    throw new Error("Cumulative commission basis exceeds safe integer cents.");
   }
   const before = totalCommissionForBasis(schedule, priorPeriodBasisCents, mode);
   const after = totalCommissionForBasis(schedule, priorPeriodBasisCents + addedBasisCents, mode);
