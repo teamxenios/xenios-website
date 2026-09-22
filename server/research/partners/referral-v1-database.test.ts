@@ -303,7 +303,8 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
       await expect(sql("select public.research_referral_v1_execute('listAdmin','{}')", [], role)).rejects.toThrow(/permission denied/);
     }
     for (const role of ["anon", "authenticated", "service_role"] as const) {
-      for (const name of ["research_partner_referral_events", "research_affiliate_customer_bindings", "research_referral_binding_transfer_events"]) {
+      for (const name of ["research_partner_referral_events", "research_affiliate_customer_bindings", "research_referral_binding_transfer_events",
+        "research_referral_privacy_cleanup_work", "research_referral_privacy_cleanup_events"]) {
         await expect(sql(`select * from public.${name}`, [], role)).rejects.toThrow(/permission denied/);
         await expect(sql(`truncate public.${name}`, [], role)).rejects.toThrow(/permission denied/);
       }
@@ -311,6 +312,10 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
         await expect(sql(`truncate public.${name}`, [], role)).rejects.toThrow(/permission denied/);
       }
     }
+    await expect(sql("select public.research_referral_v1_privacy_begin($1,$2)", [randomUUID(), hash()], "service_role"))
+      .rejects.toThrow(/permission denied/);
+    await expect(sql("select public.research_referral_v1_privacy_finalize($1)", [hash()], "service_role"))
+      .rejects.toThrow(/permission denied/);
     await expect(sql("select public.research_referral_v1_link_json($1)", [randomUUID()], "service_role")).rejects.toThrow(/permission denied/);
     const partner = await seedPartner(), issued = await issue(partner);
     await expect(sql("update public.research_partner_links set revoked_at=now() where id=$1", [issued.link.id], "service_role")).rejects.toThrow(/authority RPC/);
@@ -411,6 +416,143 @@ describe.skipIf(!enabled)("Referral V1 disposable PostgreSQL authority", () => {
     await expect(sql("update public.research_members set auth_user_id=$1 where id=$2", [replacementAuthUserId, memberId]))
       .rejects.toThrow(/partner Auth identity is immutable/i);
     await sql("alter table public.research_members alter column auth_user_id set not null");
+    expect((await store.authority()).ok).toBe(true);
+  });
+
+  it("executes exact same-transaction privacy cleanup without deleting unrelated link visitors", async () => {
+    const publisher = await seedPartner(), account = await seedPartner();
+    const issued = await issue(publisher), accountSubject = hash(), unrelatedSubject = hash();
+    const accountTouch = value(await store.capture({ tokenHashHex: issued.input.tokenHashHex, subjectKeyHash: accountSubject })).touch;
+    const unrelatedTouch = value(await store.capture({ tokenHashHex: issued.input.tokenHashHex, subjectKeyHash: unrelatedSubject })).touch;
+    value(await store.bind({ actorAuthUserId: account.actorAuthUserId, touchId: accountTouch.touchId, subjectKeyHash: accountSubject }));
+    const authorizationReferenceHash = hash();
+    const owner = await connection();
+    let prepared: { deletedRowCount: number; referralCleanupPrepared: boolean; mustFinalizeInCurrentTransaction: boolean };
+    try {
+      await owner.query("begin");
+      prepared = (await owner.query("select public.research_referral_v1_privacy_begin($1,$2) result",
+        [account.memberId, authorizationReferenceHash])).rows[0].result;
+      expect(prepared).toMatchObject({ referralCleanupPrepared: true, mustFinalizeInCurrentTransaction: true });
+      await owner.query("delete from public.research_partners where id=$1", [account.partnerId]);
+      await owner.query("delete from public.research_members where id=$1", [account.memberId]);
+      const finalized = (await owner.query("select public.research_referral_v1_privacy_finalize($1) result",
+        [authorizationReferenceHash])).rows[0].result;
+      expect(finalized).toMatchObject({ referralIdentityCleanupCompleted: true, deletedRowCount: prepared.deletedRowCount });
+      await owner.query("commit");
+    } finally {
+      await owner.query("rollback").catch(() => undefined);
+      await owner.end();
+    }
+    expect((await sql("select count(*)::int n from public.research_partner_links where id=$1", [issued.link.id])).rows[0].n).toBe(1);
+    expect((await sql("select count(*)::int n from public.research_attribution_touches where id=$1", [unrelatedTouch.touchId])).rows[0].n).toBe(1);
+    expect((await sql("select count(*)::int n from public.research_attribution_touches where id=$1", [accountTouch.touchId])).rows[0].n).toBe(0);
+    expect((await sql("select count(*)::int n from public.research_referral_privacy_cleanup_work")).rows[0].n).toBe(0);
+    const event = (await sql("select authorization_reference_hash,deleted_row_count from public.research_referral_privacy_cleanup_events where authorization_reference_hash=$1", [authorizationReferenceHash])).rows[0];
+    expect(event).toEqual({ authorization_reference_hash: authorizationReferenceHash, deleted_row_count: prepared.deletedRowCount });
+    expect((await store.authority()).ok).toBe(true);
+  });
+
+  it("rolls back unfinished privacy cleanup, preserves legacy rows, and refuses unrelated admin-actor erasure", async () => {
+    const legacyOwner = await seedPartner();
+    const legacyCode = `legacy-${randomUUID()}`;
+    await sql("insert into public.research_partner_links(partner_id,code,channel) values($1,$2,'code')", [legacyOwner.partnerId, legacyCode]);
+    const unfinished = await connection();
+    try {
+      await unfinished.query("begin");
+      await unfinished.query("select public.research_referral_v1_privacy_begin($1,$2)", [legacyOwner.memberId, hash()]);
+      await expect(unfinished.query("delete from public.research_partners where id=$1", [legacyOwner.partnerId]))
+        .rejects.toThrow(/privacy cleanup is required/i);
+      await unfinished.query("rollback");
+    } finally {
+      await unfinished.query("rollback").catch(() => undefined);
+      await unfinished.end();
+    }
+    expect((await sql("select count(*)::int n from public.research_partner_links where partner_id=$1 and code=$2 and referral_version is null",
+      [legacyOwner.partnerId, legacyCode])).rows[0].n).toBe(1);
+
+    const unfinishedOwner = await seedPartner(), unfinishedIssued = await issue(unfinishedOwner);
+    const mustFinalize = await connection();
+    try {
+      await mustFinalize.query("begin");
+      await mustFinalize.query("select public.research_referral_v1_privacy_begin($1,$2)", [unfinishedOwner.memberId, hash()]);
+      await expect(mustFinalize.query("commit")).rejects.toThrow(/must be finalized/i);
+      await mustFinalize.query("rollback");
+    } finally {
+      await mustFinalize.query("rollback").catch(() => undefined);
+      await mustFinalize.end();
+    }
+    expect((await sql("select count(*)::int n from public.research_partner_links where id=$1", [unfinishedIssued.link.id])).rows[0].n).toBe(1);
+
+    const publisher = await issue(await seedPartner()), target = await issue(await seedPartner());
+    const account = await seedPartner(), admin = await seedPartner(), subjectKeyHash = hash();
+    const touch = value(await store.capture({ tokenHashHex: publisher.input.tokenHashHex, subjectKeyHash })).touch;
+    const initial = value(await store.bind({ actorAuthUserId: account.actorAuthUserId, touchId: touch.touchId, subjectKeyHash })).binding!;
+    value(await store.transferBinding({ adminAuthUserId: admin.actorAuthUserId, accountAuthUserId: account.actorAuthUserId,
+      expectedRevisionId: initial.revisionId!, targetLinkId: target.link.id, idempotencyKey: randomUUID(),
+      reasonCode: "documented_correction", authorizationReferenceHash: hash() }));
+    const before = value(await store.getBinding({ actorAuthUserId: account.actorAuthUserId })).binding;
+    const actorCleanup = await connection();
+    try {
+      await actorCleanup.query("begin");
+      await expect(actorCleanup.query("select public.research_referral_v1_privacy_begin($1,$2)", [admin.memberId, hash()]))
+        .rejects.toThrow(/admin-actor redaction guidance/i);
+      await actorCleanup.query("rollback");
+    } finally {
+      await actorCleanup.query("rollback").catch(() => undefined);
+      await actorCleanup.end();
+    }
+    expect(value(await store.getBinding({ actorAuthUserId: account.actorAuthUserId })).binding).toEqual(before);
+    expect((await store.authority()).ok).toBe(true);
+  });
+
+  it("serializes a legacy no-FK binding writer across privacy identity deletion", async () => {
+    const target = await seedPartner(), customer = await seedPartner();
+    const authorizationReferenceHash = hash(), privacy = await connection(), legacyWriter = await connection();
+    try {
+      await privacy.query("begin");
+      await privacy.query("select public.research_referral_v1_privacy_begin($1,$2)",
+        [target.memberId, authorizationReferenceHash]);
+      await legacyWriter.query("begin");
+      const pendingInsert = legacyWriter.query(
+        "insert into public.research_affiliate_customer_bindings(customer_key,partner_id,code,subject_key,captured_at,bound_at,program_state,method) values($1,$2,$3,$4,clock_timestamp(),clock_timestamp(),'pending_program','attribution_cookie')",
+        [`auth:${customer.actorAuthUserId}`, target.partnerId, `legacy-${randomUUID()}`, hash()]);
+      await new Promise((resolve) => setTimeout(resolve, 75));
+      await privacy.query("delete from public.research_partners where id=$1", [target.partnerId]);
+      await privacy.query("delete from public.research_members where id=$1", [target.memberId]);
+      await privacy.query("select public.research_referral_v1_privacy_finalize($1)", [authorizationReferenceHash]);
+      await privacy.query("commit");
+      await expect(pendingInsert).rejects.toThrow(/canonical partner identity is invalid/i);
+      await legacyWriter.query("rollback");
+    } finally {
+      await privacy.query("rollback").catch(() => undefined);
+      await legacyWriter.query("rollback").catch(() => undefined);
+      await privacy.end();
+      await legacyWriter.end();
+    }
+    expect((await sql("select count(*)::int n from public.research_affiliate_customer_bindings where partner_id=$1", [target.partnerId])).rows[0].n).toBe(0);
+    expect((await store.authority()).ok).toBe(true);
+  });
+
+  it("deletes only canonical legacy bindings that directly reference the privacy subject", async () => {
+    const target = await seedPartner(), customer = await seedPartner();
+    const targetKey = `AUTH:${target.actorAuthUserId.toUpperCase()}`;
+    await sql("insert into public.research_affiliate_customer_bindings(customer_key,partner_id,code,subject_key,captured_at,bound_at,program_state,method) values($1,$2,$3,$4,clock_timestamp(),clock_timestamp(),'pending_program','attribution_cookie')",
+      [targetKey, target.partnerId.toUpperCase(), `legacy-${randomUUID()}`, hash()]);
+    const authorizationReferenceHash = hash(), owner = await connection();
+    try {
+      await owner.query("begin");
+      await owner.query("select public.research_referral_v1_privacy_begin($1,$2)", [target.memberId, authorizationReferenceHash]);
+      expect((await owner.query("select count(*)::int n from public.research_affiliate_customer_bindings where customer_key=$1", [targetKey])).rows[0].n).toBe(0);
+      await owner.query("delete from public.research_partners where id=$1", [target.partnerId]);
+      await owner.query("delete from public.research_members where id=$1", [target.memberId]);
+      await owner.query("select public.research_referral_v1_privacy_finalize($1)", [authorizationReferenceHash]);
+      await owner.query("commit");
+    } finally {
+      await owner.query("rollback").catch(() => undefined);
+      await owner.end();
+    }
+    expect((await sql("select count(*)::int n from public.research_affiliate_customer_bindings where customer_key='legacy:synthetic'")).rows[0].n).toBe(1);
+    expect((await sql("select count(*)::int n from public.research_members where id=$1", [customer.memberId])).rows[0].n).toBe(1);
     expect((await store.authority()).ok).toBe(true);
   });
 

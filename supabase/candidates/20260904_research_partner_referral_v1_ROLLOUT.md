@@ -95,6 +95,23 @@ files are not proof that any corresponding object exists in production.
   prevent UPDATE/DELETE/TRUNCATE of evidence even through ordinary owner DML.
   A privileged database operator can still change DDL; this is not an assertion
   of resistance to a compromised database owner.
+- Verified privacy deletion has an owner-only, transaction-scoped V1 path. The
+  reviewed owner calls `research_referral_v1_privacy_begin`, deletes the exact
+  partner (if present) and member, and calls
+  `research_referral_v1_privacy_finalize` before commit. Exact row-ID arrays let
+  the evidence guard delete only that subject's V1 rows; a deferred constraint
+  trigger rejects commit if the flow is unfinished, and no browser/service role
+  can call either helper or read its work/audit tables. The durable cleanup event
+  contains only the internal authorization-reference hash, deleted-row count and
+  execution time; it is a Referral/identity-slice audit, not the policy's full
+  deletion-completion tombstone. The exact canonical legacy binding whose account
+  or partner is the deletion subject is carried in a separately labeled work set;
+  unrelated legacy bindings survive. Other legacy referral rows must be cleared
+  under their existing owner path before identity deletion.
+  A table lock plus canonical-looking legacy binding validation closes the no-FK
+  text-reference race. If the subject acted as admin on an unrelated transfer,
+  cleanup refuses pending counsel-approved redaction/preservation guidance rather
+  than deleting the other customer's binding or lineage.
 - Admin reads are bounded to 100 rows per collection. Links have totals; events,
   touches, bindings and transfer events are explicit projections. They expose no
   raw visitor hash, transfer authorization-reference hash/actor, customer email/name,
@@ -148,6 +165,8 @@ identity refusal, independent
 connection concurrency, exact retries, audit-failure rollback, current revocation/
 suspension/self checks, locked insert/delete identity races, canonical first-Auth
 claim, immutable partner/member/Auth ownership, closed-member refusal, immutable evidence,
+same-transaction privacy finalization/rollback, directional deletion isolation,
+legacy-row preservation, legacy-writer serialization, unrelated admin-actor refusal,
 role/search-path/entrypoint-grant drift, and the separate lineage candidate's
 post-bind/own-member filtering, source caps and missing-schema refusal. This is not
 proof of the target production PostgreSQL version/schema or a release authorization.

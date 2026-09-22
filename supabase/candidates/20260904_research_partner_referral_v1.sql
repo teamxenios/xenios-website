@@ -23,7 +23,8 @@ begin
     ('research_partner_links','id','uuid'),('research_partner_links','partner_id','uuid'),('research_partner_links','code','text'),
     ('research_partner_links','created_at','timestamp with time zone'),('research_partner_links','revoked_at','timestamp with time zone'),
     ('research_attribution_touches','id','uuid'),('research_attribution_touches','subject_key','text'),('research_attribution_touches','partner_id','uuid'),
-    ('research_idempotency_keys','scope','text'),('research_idempotency_keys','key','text'),('research_idempotency_keys','result','jsonb')
+    ('research_idempotency_keys','id','uuid'),('research_idempotency_keys','scope','text'),
+    ('research_idempotency_keys','key','text'),('research_idempotency_keys','result','jsonb')
   ) as expected(table_name,column_name,data_type) loop
     if not exists(select 1 from information_schema.columns c where c.table_schema='public' and c.table_name=v_column.table_name and c.column_name=v_column.column_name and c.data_type=v_column.data_type) then
       raise exception 'Canonical dependency column drift: %.%',v_column.table_name,v_column.column_name;
@@ -46,9 +47,14 @@ begin
   end if;
   if pg_catalog.to_regclass('public.research_partner_referral_events') is not null
     or pg_catalog.to_regclass('public.research_referral_binding_transfer_events') is not null
+    or pg_catalog.to_regclass('public.research_referral_privacy_cleanup_work') is not null
+    or pg_catalog.to_regclass('public.research_referral_privacy_cleanup_events') is not null
     or exists(select 1 from information_schema.columns where table_schema='public' and table_name='research_partner_links' and column_name='referral_version')
     or pg_catalog.to_regprocedure('public.research_referral_v1_execute(text,jsonb)') is not null
     or pg_catalog.to_regprocedure('public.research_referral_v1_identity_guard()') is not null
+    or pg_catalog.to_regprocedure('public.research_referral_v1_privacy_begin(uuid,text)') is not null
+    or pg_catalog.to_regprocedure('public.research_referral_v1_privacy_finalize(text)') is not null
+    or pg_catalog.to_regprocedure('public.research_referral_v1_privacy_work_guard()') is not null
     or exists(select 1 from pg_catalog.pg_trigger where tgname in
       ('referral_v1_partner_identity_guard','referral_v1_member_auth_identity_guard',
        'referral_v1_partner_identity_no_truncate','referral_v1_member_auth_identity_no_truncate')) then
@@ -65,6 +71,17 @@ begin
       or not exists(select 1 from pg_catalog.pg_constraint where conrelid='public.research_affiliate_customer_bindings'::pg_catalog.regclass and contype='p'
         and conkey=array[(select attnum from pg_catalog.pg_attribute where attrelid='public.research_affiliate_customer_bindings'::pg_catalog.regclass and attname='customer_key')]) then
       raise exception 'Existing binding table lacks the canonical first-account key or nullability';
+    end if;
+    if exists(select 1 from public.research_affiliate_customer_bindings b
+        left join public.research_partners p on p.id=case when b.partner_id ~*
+          '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then b.partner_id::uuid else null end
+        where b.partner_id ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' and p.id is null)
+      or exists(select 1 from public.research_affiliate_customer_bindings b
+        left join public.research_members m on m.auth_user_id=case when b.customer_key ~*
+          '^auth:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+          then substring(b.customer_key from 6)::uuid else null end
+        where b.customer_key ~* '^auth:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' and m.id is null) then
+      raise exception 'Existing canonical-looking legacy binding identity is orphaned';
     end if;
   end if;
 end $preflight$;
@@ -157,22 +174,250 @@ create table public.research_partner_referral_events (
 );
 create index referral_v1_events_partner_time on public.research_partner_referral_events(partner_id,occurred_at desc);
 
+-- Manual verified-deletion support for the Referral V1 slice only. The work
+-- row is visible only inside the deleting transaction and binds every evidence
+-- guard bypass to exact row IDs derived from one locked canonical member. The
+-- durable cleanup event is not the full privacy-policy completion tombstone.
+-- Identity authorization never survives the transaction: a deferred guard
+-- rejects commit unless the exact partner/member cleanup is finalized.
+create table public.research_referral_privacy_cleanup_work (
+  transaction_id xid8 primary key,
+  member_id uuid not null,
+  auth_user_id uuid,
+  partner_id uuid,
+  authorization_reference_hash text not null
+    check(authorization_reference_hash ~ '^[a-f0-9]{64}$'),
+  account_keys text[] not null,
+  link_ids uuid[] not null,
+  touch_ids uuid[] not null,
+  binding_keys text[] not null,
+  legacy_binding_keys text[] not null,
+  transfer_ids uuid[] not null,
+  event_ids uuid[] not null,
+  idempotency_ids uuid[] not null,
+  deleted_row_count integer not null check(deleted_row_count>=0)
+);
+
+create table public.research_referral_privacy_cleanup_events (
+  id uuid primary key default gen_random_uuid(),
+  authorization_reference_hash text not null unique
+    check(authorization_reference_hash ~ '^[a-f0-9]{64}$'),
+  deleted_row_count integer not null check(deleted_row_count>=0),
+  executed_at timestamptz not null default clock_timestamp()
+);
+
+create function public.research_referral_v1_privacy_begin(
+  p_member_id uuid,
+  p_authorization_reference_hash text
+) returns jsonb
+language plpgsql security definer set search_path='' as $privacy_delete$
+declare
+  v_member record; v_partner_id uuid; v_account_key text;
+  v_account_keys text[]:='{}'; v_link_ids uuid[]:='{}'; v_touch_ids uuid[]:='{}';
+  v_binding_keys text[]:='{}'; v_legacy_binding_keys text[]:='{}';
+  v_transfer_ids uuid[]:='{}'; v_event_ids uuid[]:='{}';
+  v_idempotency_ids uuid[]:='{}'; v_deleted integer; v_total integer:=0;
+begin
+  if p_member_id is null or coalesce(p_authorization_reference_hash,'') !~ '^[a-f0-9]{64}$'
+    or session_user in ('anon','authenticated','service_role')
+    or not exists(select 1 from pg_catalog.pg_roles r where r.rolname=session_user and (r.rolsuper or r.rolbypassrls)) then
+    raise exception 'Referral privacy deletion requires a reviewed owner and authorization reference' using errcode='42501';
+  end if;
+  -- Same mutation fence as execute(); no issuance/capture/bind/transfer can
+  -- repopulate this subject between cleanup and same-transaction deletion.
+  perform pg_catalog.pg_advisory_xact_lock(9042026,1);
+  -- Legacy binding DML does not take the V1 advisory lock. Fence the whole
+  -- binding relation before identity row locks so an in-flight legacy writer is
+  -- observed, while a later writer waits and revalidates canonical identities.
+  lock table public.research_affiliate_customer_bindings in share row exclusive mode;
+  select m.id,m.auth_user_id into v_member from public.research_members m where m.id=p_member_id for update;
+  if not found then raise exception 'Referral privacy deletion member not found' using errcode='P0002'; end if;
+  select p.id into v_partner_id from public.research_partners p where p.member_id=p_member_id for update;
+  if v_member.auth_user_id is not null then v_account_key:='auth:'||v_member.auth_user_id::text; end if;
+
+  select coalesce(pg_catalog.array_agg(q.id order by q.id),'{}'::uuid[]) into v_link_ids from (
+    select distinct l.id from public.research_partner_links l
+      where l.partner_id=v_partner_id and l.referral_version=1
+  ) q;
+  -- K is directional: the deleting account, base bindings to the deleting
+  -- partner, and accounts whose transfer lineage directly involved that
+  -- partner or one of that partner's links. Never expand through an unrelated
+  -- account to that account's external links.
+  select coalesce(pg_catalog.array_agg(q.customer_key order by q.customer_key),'{}'::text[]) into v_account_keys from (
+    select v_account_key as customer_key where v_account_key is not null
+    union
+    select b.customer_key from public.research_affiliate_customer_bindings b
+      where b.referral_version=1 and (b.partner_id=v_partner_id::text or b.referral_link_id=any(v_link_ids))
+    union
+    select x.account_key from public.research_referral_binding_transfer_events x
+      where x.previous_partner_id=v_partner_id or x.next_partner_id=v_partner_id
+        or x.previous_link_id=any(v_link_ids) or x.next_link_id=any(v_link_ids)
+  ) q;
+  -- An admin actor UUID on an otherwise unrelated customer's immutable
+  -- transfer/idempotency lineage needs a counsel-approved redaction rule. Fail
+  -- this exceptional request closed; never erase that customer's attribution.
+  if v_member.auth_user_id is not null and (
+      exists(select 1 from public.research_referral_binding_transfer_events x
+        where x.actor_auth_user_id=v_member.auth_user_id and not (x.account_key=any(v_account_keys)))
+      or exists(select 1 from public.research_idempotency_keys i
+        where i.scope like 'referral-v1:transferBinding:%'
+          and i.result->'fingerprint'->>'actorAuthUserId'=v_member.auth_user_id::text
+          and not exists(select 1 from pg_catalog.unnest(v_account_keys) k
+            where i.scope='referral-v1:transferBinding:'||k))) then
+    raise exception 'Referral privacy cleanup requires reviewed admin-actor redaction guidance' using errcode='55000';
+  end if;
+  -- T contains the deleting partner's own touches plus only the exact touch
+  -- claimed by the deleting member-as-customer. An external partner's shared
+  -- link and its unrelated visitors are outside this deletion set.
+  select coalesce(pg_catalog.array_agg(q.id order by q.id),'{}'::uuid[]) into v_touch_ids from (
+    select distinct t.id from public.research_attribution_touches t
+      where t.referral_version=1 and (t.partner_id=v_partner_id or t.referral_link_id=any(v_link_ids))
+    union
+    select b.referral_touch_id from public.research_affiliate_customer_bindings b
+      where b.referral_version=1 and v_account_key is not null
+        and b.customer_key=v_account_key and b.referral_touch_id is not null
+  ) q;
+  select coalesce(pg_catalog.array_agg(q.customer_key order by q.customer_key),'{}'::text[]) into v_binding_keys from (
+    select distinct b.customer_key from public.research_affiliate_customer_bindings b
+      where b.referral_version=1 and b.customer_key=any(v_account_keys)
+  ) q;
+  -- The predecessor binding table is protected by the same immutable trigger.
+  -- Give verified deletion a separate, exact compatibility set: only a legacy
+  -- row whose account is this member or whose base partner is this partner.
+  select coalesce(pg_catalog.array_agg(q.customer_key order by q.customer_key),'{}'::text[]) into v_legacy_binding_keys from (
+    select distinct b.customer_key from public.research_affiliate_customer_bindings b
+      where b.referral_version is null and (
+        (v_member.auth_user_id is not null
+          and b.customer_key ~* '^auth:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+          and substring(b.customer_key from 6)::uuid=v_member.auth_user_id)
+        or (v_partner_id is not null
+          and b.partner_id ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+          and b.partner_id::uuid=v_partner_id))
+  ) q;
+  select coalesce(pg_catalog.array_agg(q.id order by q.id),'{}'::uuid[]) into v_transfer_ids from (
+    select distinct x.id from public.research_referral_binding_transfer_events x
+      where x.account_key=any(v_binding_keys)
+  ) q;
+  select coalesce(pg_catalog.array_agg(q.id order by q.id),'{}'::uuid[]) into v_event_ids from (
+    select distinct e.id from public.research_partner_referral_events e
+      where e.partner_id=v_partner_id or e.link_id=any(v_link_ids) or e.touch_id=any(v_touch_ids)
+        or (v_member.auth_user_id is not null and e.actor_auth_user_id=v_member.auth_user_id)
+  ) q;
+  select coalesce(pg_catalog.array_agg(q.id order by q.id),'{}'::uuid[]) into v_idempotency_ids from (
+    select distinct i.id from public.research_idempotency_keys i where
+      (v_member.auth_user_id is not null and i.scope in (
+        'referral-v1:issue:'||v_member.auth_user_id::text,'referral-v1:revoke:'||v_member.auth_user_id::text))
+      or exists(select 1 from pg_catalog.unnest(v_binding_keys) k
+        where i.scope='referral-v1:transferBinding:'||k)
+  ) q;
+
+  insert into public.research_referral_privacy_cleanup_work(
+    transaction_id,member_id,auth_user_id,partner_id,authorization_reference_hash,
+    account_keys,link_ids,touch_ids,binding_keys,legacy_binding_keys,transfer_ids,event_ids,idempotency_ids,deleted_row_count)
+  values(pg_catalog.pg_current_xact_id(),p_member_id,v_member.auth_user_id,v_partner_id,
+    p_authorization_reference_hash,v_account_keys,v_link_ids,v_touch_ids,v_binding_keys,v_legacy_binding_keys,
+    v_transfer_ids,v_event_ids,v_idempotency_ids,0);
+
+  delete from public.research_referral_binding_transfer_events where id=any(v_transfer_ids);
+  get diagnostics v_deleted=row_count; v_total:=v_total+v_deleted;
+  delete from public.research_partner_referral_events where id=any(v_event_ids);
+  get diagnostics v_deleted=row_count; v_total:=v_total+v_deleted;
+  delete from public.research_affiliate_customer_bindings where customer_key=any(v_binding_keys);
+  get diagnostics v_deleted=row_count; v_total:=v_total+v_deleted;
+  delete from public.research_affiliate_customer_bindings where customer_key=any(v_legacy_binding_keys);
+  get diagnostics v_deleted=row_count; v_total:=v_total+v_deleted;
+  delete from public.research_attribution_touches where id=any(v_touch_ids);
+  get diagnostics v_deleted=row_count; v_total:=v_total+v_deleted;
+  delete from public.research_partner_links where id=any(v_link_ids);
+  get diagnostics v_deleted=row_count; v_total:=v_total+v_deleted;
+  delete from public.research_idempotency_keys where id=any(v_idempotency_ids);
+  get diagnostics v_deleted=row_count; v_total:=v_total+v_deleted;
+  update public.research_referral_privacy_cleanup_work set deleted_row_count=v_total
+    where transaction_id=pg_catalog.pg_current_xact_id();
+  return pg_catalog.jsonb_build_object('deletedRowCount',v_total,'referralCleanupPrepared',true,
+    'mustFinalizeInCurrentTransaction',true);
+end $privacy_delete$;
+
+create function public.research_referral_v1_privacy_finalize(
+  p_authorization_reference_hash text
+) returns jsonb
+language plpgsql security definer set search_path='' as $privacy_finalize$
+declare v_work public.research_referral_privacy_cleanup_work; v_event_id uuid;
+begin
+  if coalesce(p_authorization_reference_hash,'') !~ '^[a-f0-9]{64}$'
+    or session_user in ('anon','authenticated','service_role')
+    or not exists(select 1 from pg_catalog.pg_roles r where r.rolname=session_user and (r.rolsuper or r.rolbypassrls)) then
+    raise exception 'Referral privacy finalization requires a reviewed owner and authorization reference' using errcode='42501';
+  end if;
+  select * into v_work from public.research_referral_privacy_cleanup_work w
+    where w.transaction_id=pg_catalog.pg_current_xact_id()
+      and w.authorization_reference_hash=p_authorization_reference_hash for update;
+  if not found then raise exception 'Referral privacy cleanup was not prepared in this transaction' using errcode='55000'; end if;
+  if exists(select 1 from public.research_partners p where p.id=v_work.partner_id)
+    or exists(select 1 from public.research_members m where m.id=v_work.member_id) then
+    raise exception 'Referral privacy identities must be deleted before finalization' using errcode='55000';
+  end if;
+  delete from public.research_referral_privacy_cleanup_work w where w.transaction_id=v_work.transaction_id;
+  insert into public.research_referral_privacy_cleanup_events(authorization_reference_hash,deleted_row_count)
+    values(p_authorization_reference_hash,v_work.deleted_row_count) returning id into v_event_id;
+  return pg_catalog.jsonb_build_object('cleanupEventId',v_event_id,
+    'deletedRowCount',v_work.deleted_row_count,'referralIdentityCleanupCompleted',true);
+end $privacy_finalize$;
+
+-- Fires at constraint-check/commit time for the row inserted by privacy_begin.
+-- A caller that fails to delete the exact identities and finalize cannot leave
+-- either partially deleted evidence or a persistent PII-bearing work row.
+create function public.research_referral_v1_privacy_work_guard() returns trigger
+language plpgsql security definer set search_path='' as $privacy_work_guard$
+begin
+  if exists(select 1 from public.research_referral_privacy_cleanup_work w
+      where w.transaction_id=new.transaction_id) then
+    raise exception 'Referral privacy cleanup must be finalized in its preparing transaction' using errcode='55000';
+  end if;
+  return null;
+end $privacy_work_guard$;
+
 -- Non-definer trigger: direct service_role calls retain their real role. Existing
 -- legacy rows/operations are unaffected; V1 rows can only be written by the RPC owner.
 create function public.research_referral_v1_guard() returns trigger
 language plpgsql set search_path='' as $guard$
-declare v_owner name; v_old jsonb; v_new jsonb; v_protected boolean;
+declare v_owner name; v_old jsonb; v_new jsonb; v_protected boolean; v_privacy_delete boolean:=false;
 begin
   if tg_op='TRUNCATE' then raise exception 'Referral evidence cannot be truncated' using errcode='55000'; end if;
   select pg_catalog.pg_get_userbyid(p.proowner) into v_owner from pg_catalog.pg_proc p
     where p.oid='public.research_referral_v1_execute(text,jsonb)'::pg_catalog.regprocedure;
   if tg_op<>'INSERT' then v_old:=to_jsonb(old); end if;
   if tg_op<>'DELETE' then v_new:=to_jsonb(new); end if;
-  v_protected:=tg_table_name in ('research_partner_referral_events','research_affiliate_customer_bindings','research_referral_binding_transfer_events')
+  v_protected:=tg_table_name in ('research_partner_referral_events','research_affiliate_customer_bindings','research_referral_binding_transfer_events','research_referral_privacy_cleanup_events')
     or coalesce(v_old->>'referral_version','')='1' or coalesce(v_new->>'referral_version','')='1'
     or coalesce(v_old->>'scope','') like 'referral-v1:%' or coalesce(v_new->>'scope','') like 'referral-v1:%';
+  if tg_table_name='research_affiliate_customer_bindings' and tg_op in ('INSERT','UPDATE')
+      and coalesce(v_new->>'referral_version','')<>'1' then
+    if coalesce(v_new->>'partner_id','') ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then
+      perform 1 from public.research_partners p where p.id=(v_new->>'partner_id')::uuid for key share;
+      if not found then raise exception 'Legacy referral canonical partner identity is invalid' using errcode='23503'; end if;
+    end if;
+    if coalesce(v_new->>'customer_key','') ~* '^auth:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then
+      perform 1 from public.research_members m where m.auth_user_id=substring(v_new->>'customer_key' from 6)::uuid for key share;
+      if not found then raise exception 'Legacy referral canonical member identity is invalid' using errcode='23503'; end if;
+    end if;
+  end if;
   if not v_protected then if tg_op='DELETE' then return old; else return new; end if; end if;
   if current_user<>v_owner then raise exception 'Referral V1 requires its authority RPC' using errcode='42501'; end if;
+  if tg_op='DELETE' and tg_table_name<>'research_referral_privacy_cleanup_events' then
+    select case tg_table_name
+      when 'research_partner_links' then (v_old->>'id')::uuid=any(w.link_ids)
+      when 'research_attribution_touches' then (v_old->>'id')::uuid=any(w.touch_ids)
+      when 'research_affiliate_customer_bindings' then v_old->>'customer_key'=any(w.binding_keys)
+        or v_old->>'customer_key'=any(w.legacy_binding_keys)
+      when 'research_referral_binding_transfer_events' then (v_old->>'id')::uuid=any(w.transfer_ids)
+      when 'research_partner_referral_events' then (v_old->>'id')::uuid=any(w.event_ids)
+      when 'research_idempotency_keys' then (v_old->>'id')::uuid=any(w.idempotency_ids)
+      else false end into v_privacy_delete
+    from public.research_referral_privacy_cleanup_work w
+    where w.transaction_id=pg_catalog.pg_current_xact_id();
+    if coalesce(v_privacy_delete,false) then return old; end if;
+  end if;
   if tg_op='INSERT' then return new; end if;
   if tg_table_name='research_partner_links' and tg_op='UPDATE' then
     if (v_old-'revoked_at')=(v_new-'revoked_at') and old.revoked_at is null and new.revoked_at is not null then return new; end if;
@@ -185,15 +430,24 @@ end $guard$;
 -- state and review facts, never member ownership. A partner-linked member may
 -- acquire its first Auth UUID (account claim), but an established Auth identity
 -- and a partner's owning member are immutable after this authority is installed.
+-- Deletion is the narrow exception: a reviewed owner needs the current
+-- transaction's exact cleanup work row and live proof that no referral row
+-- still references the subject. The deferred work guard makes an unfinished
+-- or unfinalized exception roll back at commit.
 create function public.research_referral_v1_identity_guard() returns trigger
 language plpgsql security definer set search_path='' as $identity_guard$
-declare v_old jsonb; v_new jsonb; v_member_auth uuid;
+declare
+  v_old jsonb; v_new jsonb; v_member_auth uuid;
+  v_reviewed_owner boolean:=false; v_cleanup_authorized boolean:=false; v_has_referral_rows boolean:=false;
 begin
   if tg_op='TRUNCATE' then
     raise exception 'Referral identity cannot be truncated' using errcode='55000';
   end if;
   if tg_op<>'INSERT' then v_old:=to_jsonb(old); end if;
   if tg_op<>'DELETE' then v_new:=to_jsonb(new); end if;
+  select exists(select 1 from pg_catalog.pg_roles r where r.rolname=session_user
+      and r.rolname not in ('anon','authenticated','service_role') and (r.rolsuper or r.rolbypassrls))
+    into v_reviewed_owner;
   if tg_table_name='research_partners' and tg_op='INSERT' then
     select m.auth_user_id into v_member_auth from public.research_members m
       where m.id=(v_new->>'member_id')::uuid for update;
@@ -208,14 +462,63 @@ begin
     end if;
     return new;
   end if;
-  if tg_table_name='research_partners' and (tg_op='DELETE'
-    or v_new->>'id' is distinct from v_old->>'id'
+  if tg_table_name='research_partners' and tg_op='DELETE' then
+    select exists(select 1 from public.research_referral_privacy_cleanup_work w
+      where w.transaction_id=pg_catalog.pg_current_xact_id()
+        and w.partner_id=(v_old->>'id')::uuid) into v_cleanup_authorized;
+    select exists(select 1 from public.research_partner_links l where l.partner_id=(v_old->>'id')::uuid)
+      or exists(select 1 from public.research_attribution_touches t where t.partner_id=(v_old->>'id')::uuid)
+      or exists(select 1 from public.research_affiliate_customer_bindings b
+        where b.partner_id ~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+          and b.partner_id::uuid=(v_old->>'id')::uuid)
+      or exists(select 1 from public.research_referral_binding_transfer_events x
+        where x.previous_partner_id=(v_old->>'id')::uuid or x.next_partner_id=(v_old->>'id')::uuid)
+      or exists(select 1 from public.research_partner_referral_events e where e.partner_id=(v_old->>'id')::uuid)
+      into v_has_referral_rows;
+    if not v_reviewed_owner or not v_cleanup_authorized or v_has_referral_rows then
+      raise exception 'Referral partner identity is immutable; privacy cleanup is required before deletion' using errcode='55000';
+    end if;
+    return old;
+  end if;
+  if tg_table_name='research_partners' and (
+    v_new->>'id' is distinct from v_old->>'id'
     or v_new->>'member_id' is distinct from v_old->>'member_id') then
     raise exception 'Referral partner identity is immutable' using errcode='55000';
   end if;
+  if tg_table_name='research_members' and tg_op='DELETE' then
+    select exists(select 1 from public.research_referral_privacy_cleanup_work w
+      where w.transaction_id=pg_catalog.pg_current_xact_id()
+        and w.member_id=(v_old->>'id')::uuid
+        and w.auth_user_id is not distinct from (v_old->>'auth_user_id')::uuid)
+      into v_cleanup_authorized;
+    select exists(select 1 from public.research_partners p where p.member_id=(v_old->>'id')::uuid)
+      or (v_old->>'auth_user_id' is not null and (
+        exists(select 1 from public.research_affiliate_customer_bindings b
+          where b.customer_key ~* '^auth:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+            and substring(b.customer_key from 6)::uuid=(v_old->>'auth_user_id')::uuid)
+        or exists(select 1 from public.research_referral_binding_transfer_events x
+          where x.account_key='auth:'||(v_old->>'auth_user_id')
+            or x.actor_auth_user_id=(v_old->>'auth_user_id')::uuid)
+        or exists(select 1 from public.research_partner_referral_events e
+          where e.actor_auth_user_id=(v_old->>'auth_user_id')::uuid)
+        or exists(select 1 from public.research_idempotency_keys i where
+          i.scope in ('referral-v1:issue:'||(v_old->>'auth_user_id'),
+            'referral-v1:revoke:'||(v_old->>'auth_user_id'),
+            'referral-v1:transferBinding:auth:'||(v_old->>'auth_user_id'))
+          or (i.scope like 'referral-v1:transferBinding:%'
+            and i.result->'fingerprint'->>'actorAuthUserId'=v_old->>'auth_user_id'))))
+      into v_has_referral_rows;
+    if v_has_referral_rows or (v_cleanup_authorized and not v_reviewed_owner) then
+      raise exception 'Referral partner Auth identity is immutable; privacy cleanup is required before member deletion' using errcode='55000';
+    end if;
+    -- Members with no referral relationship retain the canonical table's
+    -- pre-existing deletion path. Once privacy_begin prepared this member,
+    -- only the reviewed owner may consume that exact transaction-local work.
+    return old;
+  end if;
   if tg_table_name='research_members'
     and exists(select 1 from public.research_partners where member_id=(v_old->>'id')::uuid) then
-    if tg_op='DELETE' or v_new->>'id' is distinct from v_old->>'id'
+    if v_new->>'id' is distinct from v_old->>'id'
       or (v_new->>'auth_user_id' is distinct from v_old->>'auth_user_id' and v_old->>'auth_user_id' is not null) then
       raise exception 'Referral partner Auth identity is immutable' using errcode='55000';
     end if;
@@ -226,7 +529,6 @@ begin
       end if;
     end if;
   end if;
-  if tg_op='DELETE' then return old; end if;
   return new;
 end $identity_guard$;
 
@@ -620,6 +922,11 @@ create trigger referral_v1_bindings_guard before insert or update or delete on p
 create trigger referral_v1_transfers_guard before insert or update or delete on public.research_referral_binding_transfer_events for each row execute function public.research_referral_v1_guard();
 create trigger referral_v1_events_guard before insert or update or delete on public.research_partner_referral_events for each row execute function public.research_referral_v1_guard();
 create trigger referral_v1_idempotency_guard before insert or update or delete on public.research_idempotency_keys for each row execute function public.research_referral_v1_guard();
+create trigger referral_v1_privacy_events_guard before insert or update or delete on public.research_referral_privacy_cleanup_events for each row execute function public.research_referral_v1_guard();
+create constraint trigger referral_v1_privacy_work_must_finalize
+  after insert on public.research_referral_privacy_cleanup_work
+  deferrable initially deferred for each row
+  execute function public.research_referral_v1_privacy_work_guard();
 create trigger referral_v1_partner_identity_guard before insert or update of id,member_id or delete on public.research_partners for each row execute function public.research_referral_v1_identity_guard();
 create trigger referral_v1_member_auth_identity_guard before update of id,auth_user_id or delete on public.research_members for each row execute function public.research_referral_v1_identity_guard();
 create trigger referral_v1_partner_identity_no_truncate before truncate on public.research_partners for each statement execute function public.research_referral_v1_identity_guard();
@@ -630,6 +937,8 @@ create trigger referral_v1_bindings_no_truncate before truncate on public.resear
 create trigger referral_v1_transfers_no_truncate before truncate on public.research_referral_binding_transfer_events for each statement execute function public.research_referral_v1_guard();
 create trigger referral_v1_events_no_truncate before truncate on public.research_partner_referral_events for each statement execute function public.research_referral_v1_guard();
 create trigger referral_v1_idempotency_no_truncate before truncate on public.research_idempotency_keys for each statement execute function public.research_referral_v1_guard();
+create trigger referral_v1_privacy_events_no_truncate before truncate on public.research_referral_privacy_cleanup_events for each statement execute function public.research_referral_v1_guard();
+create trigger referral_v1_privacy_work_no_truncate before truncate on public.research_referral_privacy_cleanup_work for each statement execute function public.research_referral_v1_guard();
 
 alter table public.research_affiliate_customer_bindings enable row level security;
 alter table public.research_affiliate_customer_bindings force row level security;
@@ -637,8 +946,13 @@ alter table public.research_partner_referral_events enable row level security;
 alter table public.research_partner_referral_events force row level security;
 alter table public.research_referral_binding_transfer_events enable row level security;
 alter table public.research_referral_binding_transfer_events force row level security;
+alter table public.research_referral_privacy_cleanup_work enable row level security;
+alter table public.research_referral_privacy_cleanup_work force row level security;
+alter table public.research_referral_privacy_cleanup_events enable row level security;
+alter table public.research_referral_privacy_cleanup_events force row level security;
 revoke all on public.research_affiliate_customer_bindings,public.research_partner_referral_events,
-  public.research_referral_binding_transfer_events from public,anon,authenticated,service_role;
+  public.research_referral_binding_transfer_events,public.research_referral_privacy_cleanup_work,
+  public.research_referral_privacy_cleanup_events from public,anon,authenticated,service_role;
 -- Preserve old canonical access, but no untrusted browser table access or truncate.
 revoke all on public.research_partner_links,public.research_attribution_touches,public.research_idempotency_keys from public,anon,authenticated;
 revoke truncate on public.research_partner_links,public.research_attribution_touches,public.research_idempotency_keys from service_role;
@@ -646,7 +960,8 @@ revoke truncate on public.research_partners,public.research_members from public,
 
 create function public.research_referral_v1_authority() returns jsonb
 language plpgsql security definer set search_path='' as $authority$
-declare v_role text; v_table text; v_fn record; v_probe jsonb; v_execute_body text; v_identity_body text;
+declare v_role text; v_table text; v_fn record; v_probe jsonb; v_execute_body text; v_guard_body text; v_identity_body text;
+  v_privacy_begin_body text; v_privacy_finalize_body text; v_privacy_work_body text;
   v_schema text:='gen2_referral_v1_transfer_base_20260921';
 begin
   if current_user in ('anon','authenticated','service_role') or not exists(select 1 from pg_catalog.pg_roles where rolname=current_user and (rolsuper or rolbypassrls)) then raise exception 'Referral owner capability drift'; end if;
@@ -656,8 +971,11 @@ begin
     'public.research_referral_v1_effective_binding_json(text)','public.research_referral_v1_transfer_json(uuid)',
     'public.research_referral_v1_transfer_binding_json(uuid)','public.research_referral_v1_binding_availability(text,uuid)',
     'public.research_referral_v1_binding_at_json(text,timestamp with time zone)',
-    'public.research_referral_v1_execute(text,jsonb)','public.research_referral_v1_authority()']) f where pg_catalog.to_regprocedure(f) is not null)<>13 then raise exception 'Referral function inventory drift'; end if;
-  foreach v_table in array array['research_affiliate_customer_bindings','research_partner_referral_events','research_referral_binding_transfer_events'] loop
+    'public.research_referral_v1_privacy_begin(uuid,text)','public.research_referral_v1_privacy_finalize(text)',
+    'public.research_referral_v1_privacy_work_guard()',
+    'public.research_referral_v1_execute(text,jsonb)','public.research_referral_v1_authority()']) f where pg_catalog.to_regprocedure(f) is not null)<>16 then raise exception 'Referral function inventory drift'; end if;
+  foreach v_table in array array['research_affiliate_customer_bindings','research_partner_referral_events','research_referral_binding_transfer_events',
+      'research_referral_privacy_cleanup_work','research_referral_privacy_cleanup_events'] loop
     if not exists(select 1 from pg_catalog.pg_class where oid=pg_catalog.to_regclass('public.'||v_table) and relrowsecurity and relforcerowsecurity)
       or exists(select 1 from pg_catalog.pg_policy where polrelid=pg_catalog.to_regclass('public.'||v_table)) then raise exception 'Referral RLS drift'; end if;
     foreach v_role in array array['anon','authenticated','service_role'] loop
@@ -672,14 +990,30 @@ begin
     if v_fn.proowner<>current_user::pg_catalog.regrole::oid or v_fn.proconfig is distinct from array['search_path=""']::text[] then raise exception 'Referral function owner or search_path drift'; end if;
     if v_fn.proname<>'research_referral_v1_guard' and not v_fn.prosecdef then raise exception 'Referral owner drift'; end if;
   end loop;
-  if (select pg_catalog.count(*) from pg_catalog.pg_trigger where tgname in ('referral_v1_links_guard','referral_v1_touches_guard','referral_v1_bindings_guard','referral_v1_transfers_guard','referral_v1_events_guard','referral_v1_idempotency_guard',
-    'referral_v1_links_no_truncate','referral_v1_touches_no_truncate','referral_v1_bindings_no_truncate','referral_v1_transfers_no_truncate','referral_v1_events_no_truncate','referral_v1_idempotency_no_truncate')
-    and tgenabled='O' and tgfoid='public.research_referral_v1_guard()'::pg_catalog.regprocedure)<>12 then raise exception 'Referral trigger drift'; end if;
-  if pg_catalog.to_regclass('auth.users') is null
-    or exists(select 1 from public.research_partners p left join public.research_members m on m.id=p.member_id where m.id is null)
-    or exists(select 1 from public.research_partners p join public.research_members m on m.id=p.member_id
-      left join auth.users u on u.id=m.auth_user_id where m.auth_user_id is not null and u.id is null) then
+  if (select pg_catalog.count(*) from pg_catalog.pg_trigger where tgname in ('referral_v1_links_guard','referral_v1_touches_guard','referral_v1_bindings_guard','referral_v1_transfers_guard','referral_v1_events_guard','referral_v1_idempotency_guard','referral_v1_privacy_events_guard',
+    'referral_v1_links_no_truncate','referral_v1_touches_no_truncate','referral_v1_bindings_no_truncate','referral_v1_transfers_no_truncate','referral_v1_events_no_truncate','referral_v1_idempotency_no_truncate','referral_v1_privacy_events_no_truncate')
+    and tgenabled='O' and tgfoid='public.research_referral_v1_guard()'::pg_catalog.regprocedure)<>14 then raise exception 'Referral trigger drift'; end if;
+  if (select pg_catalog.count(*) from pg_catalog.pg_trigger t where t.tgenabled='O' and (
+      (t.tgname='referral_v1_privacy_events_guard'
+        and t.tgrelid='public.research_referral_privacy_cleanup_events'::pg_catalog.regclass
+        and t.tgfoid='public.research_referral_v1_guard()'::pg_catalog.regprocedure and t.tgtype=31 and t.tgattr::text='')
+      or (t.tgname='referral_v1_privacy_events_no_truncate'
+        and t.tgrelid='public.research_referral_privacy_cleanup_events'::pg_catalog.regclass
+        and t.tgfoid='public.research_referral_v1_guard()'::pg_catalog.regprocedure and t.tgtype=34 and t.tgattr::text='')
+      or (t.tgname='referral_v1_privacy_work_no_truncate'
+        and t.tgrelid='public.research_referral_privacy_cleanup_work'::pg_catalog.regclass
+        and t.tgfoid='public.research_referral_v1_guard()'::pg_catalog.regprocedure and t.tgtype=34 and t.tgattr::text='')
+      or (t.tgname='referral_v1_privacy_work_must_finalize'
+        and t.tgrelid='public.research_referral_privacy_cleanup_work'::pg_catalog.regclass
+        and t.tgfoid='public.research_referral_v1_privacy_work_guard()'::pg_catalog.regprocedure
+        and t.tgtype=5 and t.tgattr::text='' and t.tgdeferrable and t.tginitdeferred)))<>4 then
+    raise exception 'Referral privacy trigger topology drift';
+  end if;
+  if pg_catalog.to_regclass('auth.users') is null then
     raise exception 'Referral identity source drift';
+  end if;
+  if exists(select 1 from public.research_referral_privacy_cleanup_work) then
+    raise exception 'Referral privacy cleanup work leaked outside its transaction';
   end if;
   if (select pg_catalog.count(*) from pg_catalog.pg_trigger t
     where t.tgenabled='O' and t.tgfoid='public.research_referral_v1_identity_guard()'::pg_catalog.regprocedure and (
@@ -690,10 +1024,31 @@ begin
     ))<>4 then raise exception 'Referral identity trigger drift'; end if;
   select p.prosrc into v_identity_body from pg_catalog.pg_proc p
     where p.oid='public.research_referral_v1_identity_guard()'::pg_catalog.regprocedure;
+  select p.prosrc into v_guard_body from pg_catalog.pg_proc p
+    where p.oid='public.research_referral_v1_guard()'::pg_catalog.regprocedure;
+  if pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(
+      pg_catalog.regexp_replace(v_guard_body,'[[:space:]]+',' ','g'),'UTF8')),'hex')
+      <> '8af628c36ee02f86561f9f6b229f0798f374a0e095aade9d69417001bbbda71f' then
+    raise exception 'Referral evidence guard body drift';
+  end if;
   if pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(
       pg_catalog.regexp_replace(v_identity_body,'[[:space:]]+',' ','g'),'UTF8')),'hex')
-      <> 'bdd78aab1c8647a57dbb5c4bf13f5f7bb65ad030f19b2f37c0ff296bb2a0671c' then
+      <> '1613778b4ca6b24eed816052ee5e4a2011157688b666809c027d44a48f38e73f' then
     raise exception 'Referral identity guard body drift';
+  end if;
+  select p.prosrc into v_privacy_begin_body from pg_catalog.pg_proc p
+    where p.oid='public.research_referral_v1_privacy_begin(uuid,text)'::pg_catalog.regprocedure;
+  select p.prosrc into v_privacy_finalize_body from pg_catalog.pg_proc p
+    where p.oid='public.research_referral_v1_privacy_finalize(text)'::pg_catalog.regprocedure;
+  select p.prosrc into v_privacy_work_body from pg_catalog.pg_proc p
+    where p.oid='public.research_referral_v1_privacy_work_guard()'::pg_catalog.regprocedure;
+  if pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(pg_catalog.regexp_replace(v_privacy_begin_body,'[[:space:]]+',' ','g'),'UTF8')),'hex')
+      <> 'c2c127596af5fc1dc490b4c0f2a20d25cd074e1a55f99263a82eeeb952ded93d'
+    or pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(pg_catalog.regexp_replace(v_privacy_finalize_body,'[[:space:]]+',' ','g'),'UTF8')),'hex')
+      <> '2c8bc2a2ca1d4ac6ad29dbd2395d8ae6b8950d510ab5dc1564185eac7123feb6'
+    or pg_catalog.encode(pg_catalog.sha256(pg_catalog.convert_to(pg_catalog.regexp_replace(v_privacy_work_body,'[[:space:]]+',' ','g'),'UTF8')),'hex')
+      <> '2b0806441b3c5f5da8282aff1e0c9cf12336aef03b5252a82a1ecd9379882e4b' then
+    raise exception 'Referral privacy cleanup function drift';
   end if;
   foreach v_role in array array['anon','authenticated','service_role'] loop
     if pg_catalog.has_table_privilege(v_role,'public.research_partners','TRUNCATE')
@@ -728,7 +1083,9 @@ begin
   return pg_catalog.jsonb_build_object('ok',true,'value',pg_catalog.jsonb_build_object('schemaVersion',v_schema));
 end $authority$;
 
-revoke all on function public.research_referral_v1_guard(),public.research_referral_v1_identity_guard(),public.research_referral_v1_partner_availability(uuid,uuid),
+revoke all on function public.research_referral_v1_guard(),public.research_referral_v1_identity_guard(),
+  public.research_referral_v1_privacy_begin(uuid,text),public.research_referral_v1_privacy_finalize(text),
+  public.research_referral_v1_privacy_work_guard(),public.research_referral_v1_partner_availability(uuid,uuid),
   public.research_referral_v1_availability(uuid,uuid),public.research_referral_v1_link_json(uuid),
   public.research_referral_v1_binding_json(text),public.research_referral_v1_effective_binding_json(text),
   public.research_referral_v1_binding_at_json(text,timestamp with time zone),

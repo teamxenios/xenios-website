@@ -26,7 +26,8 @@ not deployed, and not authorized for production activation.
   claim against `auth.users`, and make the established edge immutable (including
   re-key/delete/truncate bypasses) so that proof cannot be invalidated by remapping.
   Authority checks bind those triggers to their exact table/event/column topology
-  and fingerprint the identity guard body.
+  and fingerprint the evidence, identity, privacy-begin, privacy-finalize, and
+  deferred-work guard bodies.
   Downstream commission schedule/partner-state authority decides
   earning eligibility at the same economic-event occurrence; current state can
   never erase an earlier owner during exact replay.
@@ -56,6 +57,22 @@ not deployed, and not authorized for production activation.
   durable facts before mutable account/partner eligibility. A closed account can
   retry a committed request, while a changed fingerprint conflicts and a new
   mutation remains ineligible.
+- Verified privacy deletion is fail-closed and transaction-scoped. A reviewed
+  BYPASSRLS owner prepares the exact member's Referral V1 row IDs, deletes the
+  exact partner/member identities, and finalizes in the same transaction. A
+  deferred trigger rolls back an unfinished flow; browser/service roles cannot
+  execute the helpers or read their work/audit tables. Directional selection
+  preserves unrelated partners' links and visitors, while the exact claimed
+  customer touch is removed. An exact canonical legacy binding whose account or
+  partner is the deletion subject is removed through its own labeled work set;
+  unrelated legacy bindings remain. Other legacy referral rows block identity
+  deletion until handled through their existing owner path.
+  A relation lock and canonical identity recheck serialize future legacy writers
+  across deletion. If the subject acted as admin on an unrelated transfer, the
+  helper refuses rather than destroying that customer's lineage; counsel-approved
+  redaction/preservation guidance remains an external prerequisite for that case.
+  The resulting cleanup event is only a Referral/identity-slice audit and never
+  claims that the full privacy-policy deletion or Auth deletion completed.
 
 ## Exact reviewed candidate order
 
@@ -93,8 +110,8 @@ or production data was used.
 - Focused Referral V1 plus assisted-order caller/runtime suite: 11 files,
   216 tests passed.
 - Full base → lineage → touch disposable PostgreSQL chain and read-only final
-  postcheck: 2 files, 38 tests passed.
-- Total executed assertions in the non-overlapping focused suites above: 254
+  postcheck: 2 files, 42 tests passed.
+- Total executed assertions in the non-overlapping focused suites above: 258
   passed, 0 failed, 0 skipped.
 
 The database rehearsal covers concurrent first-valid capture/bind, explicit
@@ -105,6 +122,10 @@ events, pre/post-transfer as-of projection, post-claim link expiry/revocation,
 later-suspension historical replay, malformed baseline identity refusal, locked
 partner-insert/member-delete serialization, canonical null-to-first-Auth claim,
 exact identity-trigger/body drift, immutable partner/member/Auth identity,
+same-transaction privacy cleanup/finalization, unfinished-flow rollback,
+  unrelated-link/touch and unrelated-legacy-row preservation, exact subject-bound
+  legacy binding cleanup, concurrent legacy-writer
+serialization, unrelated admin-actor refusal,
 authenticated cross-device/conflicting-cookie behavior, base-only readiness
 refusal, candidate replay refusal, and the exact touch-attribution installer seam.
 It also creates caller-controlled `pg_temp` shadows of catalog relations as
@@ -130,3 +151,7 @@ the reviewed capability and deny direct V1 mutation.
 6. Feature flags/secrets, deployment smoke, target postchecks, rollback readiness,
    and load/abuse qualification remain production-owner work. Local correctness
    evidence is not live-environment evidence.
+7. Counsel must approve whether and how to redact or preserve an unrelated
+   customer's immutable transfer/idempotency audit when the deleting person was
+   its admin actor. The candidate refuses this exceptional case and invents no
+   retention rule.

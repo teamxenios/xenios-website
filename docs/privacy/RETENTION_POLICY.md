@@ -68,6 +68,20 @@ A complete deletion for one person covers, in order:
    backups age out; we cannot purge vendor backups on demand. State this
    honestly in the confirmation to the requester.
 
+When the Referral V1 candidate is installed, steps 3 and 6 have one narrower
+database execution rule. A reviewed BYPASSRLS owner must perform the V1 cleanup,
+exact partner/member deletion, and cleanup finalization in one transaction by
+calling `research_referral_v1_privacy_begin`, deleting the exact partner (if
+present) and member, then calling `research_referral_v1_privacy_finalize` before
+commit. A deferred database guard rolls the transaction back if it is not
+finalized. This is the Referral V1/identity slice plus only an exact canonical
+legacy binding directly tied to the subject; it neither deletes the Auth user nor
+replaces the full admin-log completion tombstone. Other legacy referral rows must
+be handled under their own reviewed authority first. If the person was
+an admin actor on an unrelated customer's transfer, the helper refuses rather
+than erasing that customer's lineage; counsel must approve a redaction or
+preservation rule before that exceptional request proceeds.
+
 Out of reach and disclosed as such: Resend delivery logs and Render
 infrastructure logs, retained under those vendors' terms.
 
