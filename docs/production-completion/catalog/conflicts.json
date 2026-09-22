@@ -1,28 +1,23 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-09-21",
+  "asOf": "2026-09-22",
   "mode": "DRY_RUN",
-  "sourceScope": "canonical_catalog_plus_2026_09_15_commercial_intake",
-  "coverageStatus": "repo_canonical_plus_intake_only_not_full_live_snapshot",
-  "productionCoverageComplete": false,
-  "unreconciledLiveVariantDelta": 19,
-  "externalBlockers": [
-    {
-      "code": "exact_live_variant_snapshot_missing",
-      "declaredLiveVariantCount": 439,
-      "repoCanonicalVariantCount": 420,
-      "unreconciledVariantDelta": 19,
-      "effect": "The 19 unidentified live-only variants cannot be assigned an action. Batches are exact only for the stated repo-canonical-plus-intake union scope and must not be represented as complete live mutation coverage."
-    }
-  ],
-  "conflictEventCount": 310,
-  "affectedUnitCount": 158,
+  "sourceScope": "exact_live_product_control_plus_canonical_catalog_plus_2026_09_15_commercial_intake",
+  "coverageStatus": "exact_live_product_control_plus_repo_canonical_plus_intake",
+  "productionCoverageComplete": true,
+  "unreconciledLiveVariantCount": 0,
+  "liveSnapshotObservedAt": "2026-09-22T12:24:27.955302Z",
+  "liveSafeProjectionSha256": "083ca4a92df3ddf9caca7bc8b293311ef1f3a134632b1ebaef388090bab378ee",
+  "externalBlockers": [],
+  "conflictEventCount": 332,
+  "affectedUnitCount": 180,
   "countsByCode": {
     "below_launch_margin_floor_on_wholesale_proxy": 26,
     "canonical_approval_required": 2,
     "canonical_identity_missing": 71,
     "identity_or_lane_verification_required": 52,
     "lane_requires_verification": 49,
+    "live_legacy_identity_alias_requires_adjudication": 22,
     "negative_margin_on_wholesale_proxy": 23,
     "non_product_service_row": 2,
     "not_in_current_september_intake": 73,
@@ -1634,6 +1629,226 @@
       "candidateSku": "XRUO-039",
       "sourcePointer": "XENIOS_MASTER_PEPTIDE_CATALOG_WHOLESALE_RETAIL_DEMAND_2026-09-15(1).xlsx::Master Peptide Catalog!22",
       "remediation": "Confirm the lawful RUO or licensed clinical pathway."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:02c84407-cc6f-480f-82dc-a77de334f2a0",
+      "candidateSku": null,
+      "productControlSku": "R360-AOD9604-5MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0261",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::02c84407-cc6f-480f-82dc-a77de334f2a0",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:040560a6-f7e0-42e1-a8db-723212f1c3f0",
+      "candidateSku": null,
+      "productControlSku": "R360-HEXARELIN-10MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0300",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::040560a6-f7e0-42e1-a8db-723212f1c3f0",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:0e456fd4-371b-427d-a529-6482ca6b35b3",
+      "candidateSku": null,
+      "productControlSku": "R360-GHKCU-100MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0287",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::0e456fd4-371b-427d-a529-6482ca6b35b3",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:23738e39-81d3-41e4-978f-b78a64108280",
+      "candidateSku": null,
+      "productControlSku": "R360-OXYTOCIN-5MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0320",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::23738e39-81d3-41e4-978f-b78a64108280",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:390ef93f-f215-4cdf-9b7b-c537af94d4ff",
+      "candidateSku": null,
+      "productControlSku": "R360-GHKCU-50MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0288",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::390ef93f-f215-4cdf-9b7b-c537af94d4ff",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:3f5ba79d-f7a6-40dd-88e4-1f77aef9d410",
+      "candidateSku": null,
+      "productControlSku": "R360-PT141-10MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0321",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::3f5ba79d-f7a6-40dd-88e4-1f77aef9d410",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:4302123c-4f29-4259-ace4-15da51f48673",
+      "candidateSku": null,
+      "productControlSku": "R360-MOTSC-10MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0313",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::4302123c-4f29-4259-ace4-15da51f48673",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:5282a958-a390-4436-b8b0-bcf862ac744d",
+      "candidateSku": null,
+      "productControlSku": "R360-GLUTATHIONE-500MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0296",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::5282a958-a390-4436-b8b0-bcf862ac744d",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:56c72416-dab6-4ec0-a417-267d3af53e9c",
+      "candidateSku": null,
+      "productControlSku": "R360-DSIP-10MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0278",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::56c72416-dab6-4ec0-a417-267d3af53e9c",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:5fc05223-ab56-4a18-9857-936d36b26599",
+      "candidateSku": null,
+      "productControlSku": "R360-TESAMORELIN-10MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0347",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::5fc05223-ab56-4a18-9857-936d36b26599",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:6de7b7d4-71b7-4aad-ac9b-f2bfc9023fc7",
+      "candidateSku": null,
+      "productControlSku": "R360-KISSPEPTIN10-10MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0308",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::6de7b7d4-71b7-4aad-ac9b-f2bfc9023fc7",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:7595cda4-c45c-4c6a-9c33-ff4e8da9488e",
+      "candidateSku": null,
+      "productControlSku": "R360-CAGRILINTIDE-10MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0274",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::7595cda4-c45c-4c6a-9c33-ff4e8da9488e",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:7e134db7-29f2-4efc-acc3-3025cb0bac99",
+      "candidateSku": null,
+      "productControlSku": "R360-IPAMORELIN-10MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0302",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::7e134db7-29f2-4efc-acc3-3025cb0bac99",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:8488aa25-92a4-4fa2-bf53-cd12cafce5a0",
+      "candidateSku": null,
+      "productControlSku": "R360-THYMOSINALPHA1-10MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0350",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::8488aa25-92a4-4fa2-bf53-cd12cafce5a0",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:8dbf690a-5f7e-4fa8-8694-ac2722dcad3a",
+      "candidateSku": null,
+      "productControlSku": "R360-NAD-500MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0318",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::8dbf690a-5f7e-4fa8-8694-ac2722dcad3a",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:9ed65dee-1f44-43ae-835c-39762777f2bf",
+      "candidateSku": null,
+      "productControlSku": "R360-NAD-1000MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0317",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::9ed65dee-1f44-43ae-835c-39762777f2bf",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:a47e6ed6-21b5-457e-92fe-63088ff008ce",
+      "candidateSku": null,
+      "productControlSku": "R360-BPC157-5MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0264",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::a47e6ed6-21b5-457e-92fe-63088ff008ce",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:aff993e5-f889-4924-839b-0de24695355a",
+      "candidateSku": null,
+      "productControlSku": "R360-SELANK-10MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0331",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::aff993e5-f889-4924-839b-0de24695355a",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:b9cba238-f1e4-45f2-ae8b-4071f2d0f942",
+      "candidateSku": null,
+      "productControlSku": "R360-KPV-10MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0306",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::b9cba238-f1e4-45f2-ae8b-4071f2d0f942",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:bb5b7ac5-3861-4074-90cf-bfba0da28a09",
+      "candidateSku": null,
+      "productControlSku": "R360-BPC157-10MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0262",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::bb5b7ac5-3861-4074-90cf-bfba0da28a09",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:c024aed7-edda-4be8-a590-c2a26023ea18",
+      "candidateSku": null,
+      "productControlSku": "R360-SERMORELIN-5MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0341",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::c024aed7-edda-4be8-a590-c2a26023ea18",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
+    },
+    {
+      "code": "live_legacy_identity_alias_requires_adjudication",
+      "severity": "blocking",
+      "unitId": "live_alias:d049baa8-8b3b-405b-9d82-f84c84b0b95a",
+      "candidateSku": null,
+      "productControlSku": "R360-SEMAX-10MG-VIAL",
+      "canonicalProductControlSku": "GEN-GRP-0338",
+      "sourcePointer": "production Product Control snapshot 2026-09-22T12:24:27.955302Z::research_product_variants::d049baa8-8b3b-405b-9d82-f84c84b0b95a",
+      "remediation": "Treat the exact one-to-one mapping as reconciliation evidence only. Obtain a separately reviewed identity decision before any merge, archive, deactivation, or binding mutation; keep this physical SKU assisted-only."
     },
     {
       "code": "negative_margin_on_wholesale_proxy",

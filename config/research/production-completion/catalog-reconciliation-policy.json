@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-09-21",
-  "scope": "canonical_catalog_plus_2026_09_15_commercial_intake",
+  "asOf": "2026-09-22",
+  "scope": "exact_live_product_control_plus_canonical_catalog_plus_2026_09_15_commercial_intake",
   "declaredLiveProductionVariantCount": 439,
-  "liveProductionCountSource": "production completion sprint prompt; exact 439-row live snapshot not supplied to this lane",
+  "liveProductionCountSource": "read-only production Product Control snapshot observed 2026-09-22T12:24:27.955302Z",
   "mode": "dry_run_only",
   "launchMarginFloor": "0.35",
   "launchMarginFloorEvidence": {
@@ -56,15 +56,20 @@
       "sha256": "e49a8d74daed1553e567962c8e6e8d9b1c7029fe3e83ef665c7bafc72242b1f9"
     }
   },
+  "liveProductionSnapshot": {
+    "path": "config/research/production-completion/catalog-live-identity-closure-20260922.json",
+    "sha256": "2f9834d3960fe6eb24a11532499f6d18bebfd71fd572611c3ef32fe87bfe50e0"
+  },
   "classification": {
     "direct_buy": "Never emitted by this evidence set: actual landed cost is not verified, and no row has a completed supplier response, current inventory/capacity, quality and lot documentation, geography, policy, payment, and downstream order evidence.",
-    "assisted_order": "Exact canonical variant and Product Control binding, explicit RUO Research lane, and canonical request-access state. Candidate price, wholesale-cost proxy, and proxy margin may require operator review; missing price remains Price on request.",
+    "assisted_order": "Exact canonical variant and Product Control binding, explicit RUO Research lane, and canonical request-access state. The exact 22-row live legacy-identity closure inherits the mapped canonical assisted disposition while retaining a blocking identity conflict; the mapping is evidence only and never merge or deactivation authority. Candidate price, wholesale-cost proxy, and proxy margin may require operator review; missing price remains Price on request.",
     "care_required": "Existing canonical 503A clinical formulation only. A legacy care_pathway display flag on a shipping or supply row is not sufficient.",
     "unavailable": "Everything else, including unresolved canonical identity, approval-required state, missing Product Control binding, nonclinical canonical rows absent from current intake, and non-product service rows."
   },
   "privacy": {
     "excludeSupplierIdentity": true,
     "excludeWholesaleValues": true,
+    "excludePriceAmountsFromLiveSnapshot": true,
     "excludeRawNotes": true,
     "excludeClientDemandCounts": true
   },

@@ -137,11 +137,16 @@ class CatalogReconcilerTests(unittest.TestCase):
 
     def test_output_serialization_is_byte_deterministic_and_scope_explicit(self):
         report = {
-            "asOf": "2026-09-21",
-            "scope": "canonical_catalog_plus_2026_09_15_commercial_intake",
-            "coverageStatus": "repo_canonical_plus_intake_only_not_full_live_snapshot",
-            "sourceObservations": {"repoCanonicalToDeclaredLiveVariantDelta": 19},
-            "externalBlockers": [{"code": "exact_live_variant_snapshot_missing"}],
+            "asOf": "2026-09-22",
+            "scope": "exact_live_product_control_plus_canonical_catalog_plus_2026_09_15_commercial_intake",
+            "coverageStatus": "exact_live_product_control_plus_repo_canonical_plus_intake",
+            "productionCoverageComplete": True,
+            "sourceObservations": {
+                "unreconciledLiveProductionVariants": 0,
+                "liveSnapshotObservedAt": "2026-09-22T12:24:27.955302Z",
+                "liveSafeProjectionSha256": "a" * 64,
+            },
+            "externalBlockers": [],
             "globalDirectBuyBlockers": ["no_completed_vendor_rfq_response"],
             "rows": [],
         }
@@ -150,13 +155,13 @@ class CatalogReconcilerTests(unittest.TestCase):
         second = {name: catalog_reconciler.serialized_json(value) for name, value in documents.items()}
         self.assertEqual(first, second)
         self.assertEqual(documents["direct-buy-batch.json"]["sourceScope"], report["scope"])
-        self.assertFalse(documents["direct-buy-batch.json"]["productionCoverageComplete"])
-        self.assertEqual(documents["direct-buy-batch.json"]["unreconciledLiveVariantDelta"], 19)
+        self.assertTrue(documents["direct-buy-batch.json"]["productionCoverageComplete"])
+        self.assertEqual(documents["direct-buy-batch.json"]["unreconciledLiveVariantCount"], 0)
 
     def test_checked_in_batches_are_an_exact_partition_of_the_source_scope(self):
         output = MODULE_PATH.parents[3] / "docs/production-completion/catalog"
         report = json.loads((output / "catalog-reconciliation.json").read_text(encoding="utf-8"))
-        expected = {"direct_buy": 0, "assisted_order": 102, "care_required": 242, "unavailable": 147}
+        expected = {"direct_buy": 0, "assisted_order": 124, "care_required": 242, "unavailable": 147}
         observed_ids = []
         for action, filename in {
             "direct_buy": "direct-buy-batch.json",
@@ -168,12 +173,12 @@ class CatalogReconcilerTests(unittest.TestCase):
             self.assertEqual(batch["action"], action)
             self.assertEqual(batch["rowCount"], expected[action])
             self.assertEqual(batch["sourceScope"], report["scope"])
-            self.assertFalse(batch["productionCoverageComplete"])
-            self.assertEqual(batch["unreconciledLiveVariantDelta"], 19)
+            self.assertTrue(batch["productionCoverageComplete"])
+            self.assertEqual(batch["unreconciledLiveVariantCount"], 0)
             self.assertTrue(all(row["action"] == action for row in batch["rows"]))
             observed_ids.extend(row["unitId"] for row in batch["rows"])
-        self.assertEqual(len(observed_ids), 491)
-        self.assertEqual(len(set(observed_ids)), 491)
+        self.assertEqual(len(observed_ids), 513)
+        self.assertEqual(len(set(observed_ids)), 513)
         self.assertEqual(set(observed_ids), {row["unitId"] for row in report["rows"]})
         self.assertEqual(report["sourceObservations"]["retailPriceAuthorityCounts"], {
             "current_master_retail": 68,
@@ -181,6 +186,42 @@ class CatalogReconcilerTests(unittest.TestCase):
             "seth_recommended_retail": 106,
         })
         self.assertEqual(report["sourceObservations"]["exactCanonicalMatchProductNameMismatches"], 0)
+        self.assertEqual(report["sourceObservations"]["exactLiveCanonicalBindingMatches"], 417)
+        self.assertEqual(report["sourceObservations"]["liveLegacyPhysicalAliasVariants"], 22)
+        self.assertEqual(report["sourceObservations"]["repoOnlyUnboundCanonicalVariants"], 3)
+        self.assertEqual(report["sourceObservations"]["unreconciledLiveProductionVariants"], 0)
+        self.assertEqual(
+            report["sourceObservations"]["liveSafeProjectionSha256"],
+            "083ca4a92df3ddf9caca7bc8b293311ef1f3a134632b1ebaef388090bab378ee",
+        )
+
+    def test_checked_in_live_aliases_are_exact_assisted_dispositions_without_mutation_authority(self):
+        output = MODULE_PATH.parents[3] / "docs/production-completion/catalog"
+        assisted = json.loads((output / "assisted-order-batch.json").read_text(encoding="utf-8"))
+        conflicts = json.loads((output / "conflicts.json").read_text(encoding="utf-8"))
+        aliases = [row for row in assisted["rows"] if row["unitId"].startswith("live_alias:")]
+        identity_conflicts = [
+            item for item in conflicts["conflicts"]
+            if item["code"] == "live_legacy_identity_alias_requires_adjudication"
+        ]
+        self.assertEqual(len(aliases), 22)
+        self.assertEqual(len(identity_conflicts), 22)
+        self.assertEqual(len({row["productControlSku"] for row in aliases}), 22)
+        self.assertEqual(len({row["canonicalVariantId"] for row in aliases}), 22)
+        for row in aliases:
+            self.assertTrue(row["productControlSku"].startswith("R360-"))
+            self.assertEqual(row["action"], "assisted_order")
+            self.assertFalse(row["directBuyEligible"])
+            self.assertIsNone(row["candidateRetailAmount"])
+            self.assertIn("price_on_request", row["reasonCodes"])
+            disposition = row["liveIdentityDisposition"]
+            self.assertEqual(
+                disposition["mappingAuthority"],
+                "evidence_only_not_merge_or_deactivation_authority",
+            )
+            self.assertFalse(disposition["mergeAuthorized"])
+            self.assertFalse(disposition["deactivationAuthorized"])
+            self.assertFalse(row["evidence"]["aliasMergeOrDeactivationAuthorized"])
 
     def test_subfloor_exact_bound_rows_remain_assisted_with_truthful_review_reasons(self):
         output = MODULE_PATH.parents[3] / "docs/production-completion/catalog"

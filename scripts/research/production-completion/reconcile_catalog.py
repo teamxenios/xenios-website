@@ -31,6 +31,7 @@ NS = {"x": MAIN_NS, "r": REL_NS, "pr": PKG_REL_NS}
 REPO_ROOT = Path(__file__).resolve().parents[3]
 POLICY_PATH = REPO_ROOT / "config/research/production-completion/catalog-reconciliation-policy.json"
 DEFAULT_OUTPUT = REPO_ROOT / "docs/production-completion/catalog"
+LIVE_MAPPING_AUTHORITY = "evidence_only_not_merge_or_deactivation_authority"
 
 
 class ReconciliationRefused(ValueError):
@@ -50,6 +51,13 @@ def read_json(path: Path) -> dict:
     if not isinstance(value, dict):
         raise ReconciliationRefused(f"{path} is not a JSON object")
     return value
+
+
+def live_snapshot_pointer(snapshot: dict, alias: dict) -> str:
+    return (
+        f"production Product Control snapshot {snapshot['observedAt']}"
+        f"::research_product_variants::{alias['liveVariantId']}"
+    )
 
 
 def column_number(reference: str) -> int:
@@ -383,6 +391,73 @@ def sanitized_row(unit: dict) -> dict:
     }
 
 
+def sanitized_live_alias_row(alias: dict, snapshot: dict) -> dict:
+    """Project one exact live physical alias without granting identity mutation authority."""
+    return {
+        "unitId": f"live_alias:{alias['liveVariantId']}",
+        "action": "assisted_order",
+        "candidateSku": None,
+        "productName": alias["liveDisplayName"],
+        "configuration": alias["liveLabel"],
+        "canonicalOfferingId": alias["canonicalOfferingId"],
+        "canonicalVariantId": alias["canonicalVariantId"],
+        "productControlSku": alias["liveVariantSku"],
+        "candidateRetailAmount": None,
+        "candidateRetailCents": None,
+        "candidateRetailAuthority": None,
+        "candidateRetailStatus": None,
+        "sourcePointer": live_snapshot_pointer(snapshot, alias),
+        "liveIdentityDisposition": {
+            "kind": "legacy_physical_alias",
+            "liveProductId": alias["liveProductId"],
+            "liveVariantId": alias["liveVariantId"],
+            "liveProductSku": alias["liveProductSku"],
+            "mappedCanonicalProductControlProductId": alias["canonicalProductControlProductId"],
+            "mappedCanonicalProductControlVariantId": alias["canonicalProductControlVariantId"],
+            "mappedCanonicalProductControlSku": alias["canonicalProductControlSku"],
+            "mappingAuthority": snapshot["mappingAuthority"],
+            "mergeAuthorized": False,
+            "deactivationAuthorized": False,
+        },
+        "evidence": {
+            "canonicalIdentityVerified": True,
+            "productControlBindingPresent": True,
+            "researchLaneExplicit": alias["liveLane"] == "research_material",
+            "carePathwayExplicit": False,
+            "wholesaleCostProxyPresent": False,
+            "landedCostVerified": False,
+            "candidateRetailPresent": False,
+            "approvedActiveRetailVerified": False,
+            "marginOnWholesaleProxyAtOrAboveFloor": False,
+            "supplierFulfillmentEntityVerified": False,
+            "inventoryOrCapacityVerified": False,
+            "qualityLotCoaDocumentationVerified": False,
+            "storageShippingClassVerified": False,
+            "geographyVerified": False,
+            "returnReplacementRecallPolicyVerified": False,
+            "supportedPaymentVerified": False,
+            "downstreamOrderFlowVerified": False,
+            "liveProductControlVariantObserved": True,
+            "canonicalCounterpartBindingPresent": True,
+            "legacyVariantHasActivePrice": alias["activePriceCount"] > 0,
+            "actionInheritedFromCanonicalVariant": True,
+            "aliasMergeOrDeactivationAuthorized": False,
+        },
+        "reasonCodes": [
+            "canonical_counterpart_binding_present",
+            "exact_canonical_identity",
+            "exact_live_product_control_variant_observed",
+            "explicit_ruo_research_lane",
+            "legacy_identity_alias_requires_adjudication",
+            "mapping_evidence_only_not_merge_or_deactivation_authority",
+            "no_active_price_on_legacy_variant",
+            "operator_review_required_before_order",
+            "price_on_request",
+        ],
+        "directBuyEligible": False,
+    }
+
+
 def conflict(code: str, unit: dict, severity: str, remediation: str) -> dict:
     candidate = unit["candidate"]
     return {
@@ -392,6 +467,23 @@ def conflict(code: str, unit: dict, severity: str, remediation: str) -> dict:
         "candidateSku": candidate.get("SKU") if candidate else None,
         "sourcePointer": candidate.get("_pointer") if candidate else None,
         "remediation": remediation,
+    }
+
+
+def live_alias_conflict(alias: dict, snapshot: dict) -> dict:
+    return {
+        "code": "live_legacy_identity_alias_requires_adjudication",
+        "severity": "blocking",
+        "unitId": f"live_alias:{alias['liveVariantId']}",
+        "candidateSku": None,
+        "productControlSku": alias["liveVariantSku"],
+        "canonicalProductControlSku": alias["canonicalProductControlSku"],
+        "sourcePointer": live_snapshot_pointer(snapshot, alias),
+        "remediation": (
+            "Treat the exact one-to-one mapping as reconciliation evidence only. "
+            "Obtain a separately reviewed identity decision before any merge, archive, "
+            "deactivation, or binding mutation; keep this physical SKU assisted-only."
+        ),
     }
 
 
@@ -439,6 +531,139 @@ def verify_source(path: Path, expected: dict, label: str) -> None:
         raise ReconciliationRefused(f"{label} SHA-256 mismatch: {actual}")
 
 
+def load_live_snapshot(policy: dict) -> tuple[Path, dict]:
+    expected = policy.get("liveProductionSnapshot", {})
+    path_value = expected.get("path")
+    expected_sha = expected.get("sha256")
+    if not isinstance(path_value, str) or not isinstance(expected_sha, str):
+        raise ReconciliationRefused("live production snapshot policy is incomplete")
+    path = REPO_ROOT / path_value
+    if not path.is_file():
+        raise ReconciliationRefused(f"live production snapshot does not exist: {path}")
+    actual_sha = sha256(path)
+    if actual_sha != expected_sha:
+        raise ReconciliationRefused(f"live production snapshot SHA-256 mismatch: {actual_sha}")
+    snapshot = read_json(path)
+    return path, snapshot
+
+
+def validate_live_identity_closure(
+    snapshot: dict,
+    canonical_entries: list[dict],
+    binding_index: dict[tuple[str, str], dict],
+    declared_live_variants: int,
+) -> list[dict]:
+    if snapshot.get("schemaVersion") != 1:
+        raise ReconciliationRefused("live production snapshot schema drifted")
+    if snapshot.get("mappingAuthority") != LIVE_MAPPING_AUTHORITY:
+        raise ReconciliationRefused("live alias mapping authority drifted")
+    source = snapshot.get("source", {})
+    if source.get("kind") != "read_only_production_product_control_snapshot" or source.get("productionMutated") is not False:
+        raise ReconciliationRefused("live production snapshot provenance drifted")
+    safe_projection = snapshot.get("safeProjection", {})
+    counts = snapshot.get("counts", {})
+    verification = snapshot.get("exactBindingVerification", {})
+    privacy = snapshot.get("privacy", {})
+    aliases = snapshot.get("aliases")
+    if not isinstance(aliases, list):
+        raise ReconciliationRefused("live production aliases are not a list")
+    if (
+        safe_projection.get("rowCount") != declared_live_variants
+        or safe_projection.get("canonicalBindingRowCount") != len(binding_index)
+        or safe_projection.get("legacyAliasRowCount") != len(aliases)
+        or counts.get("liveVariants") != declared_live_variants
+        or counts.get("canonicalBindingVariants") != len(binding_index)
+        or counts.get("legacyAliasVariants") != len(aliases)
+        or counts.get("repoCanonicalVariants") != len(canonical_entries)
+        or counts.get("repoOnlyUnboundCanonicalVariants") != len(canonical_entries) - len(binding_index)
+        or counts.get("netLiveToRepoCanonicalDelta") != declared_live_variants - len(canonical_entries)
+        or counts.get("unreconciledLiveVariants") != 0
+    ):
+        raise ReconciliationRefused("live production snapshot count invariant failed")
+    if (
+        verification.get("expectedRows") != len(binding_index)
+        or verification.get("liveRows") != len(binding_index)
+        or verification.get("exactVariantIdProductIdSkuMatches") != len(binding_index)
+        or verification.get("mismatches") != 0
+    ):
+        raise ReconciliationRefused("live Product Control binding verification drifted")
+    if len(binding_index) + len(aliases) != declared_live_variants:
+        raise ReconciliationRefused("live Product Control composition does not equal the declared count")
+    if any(privacy.get(key) is not False for key in (
+        "containsCustomerData",
+        "containsSupplierIdentity",
+        "containsWholesaleValues",
+        "containsPriceAmounts",
+        "containsInternalNotes",
+        "containsAuthorIdentity",
+    )):
+        raise ReconciliationRefused("live production snapshot privacy boundary drifted")
+
+    canonical_index = {
+        (entry["offeringId"], entry["variantId"]): entry for entry in canonical_entries
+    }
+    live_ids: set[str] = set()
+    live_skus: set[str] = set()
+    canonical_keys: set[tuple[str, str]] = set()
+    canonical_binding_variant_ids = {
+        binding["variantId"] for binding in binding_index.values()
+    }
+    required_text = (
+        "liveProductId",
+        "liveVariantId",
+        "liveProductSku",
+        "liveVariantSku",
+        "liveDisplayName",
+        "liveLabel",
+        "liveStrength",
+        "liveLane",
+        "liveAvailability",
+        "liveCommerceApproval",
+        "canonicalOfferingId",
+        "canonicalVariantId",
+        "canonicalLabel",
+        "canonicalProductControlProductId",
+        "canonicalProductControlVariantId",
+        "canonicalProductControlSku",
+    )
+    for alias in aliases:
+        if not isinstance(alias, dict) or any(not isinstance(alias.get(key), str) or not alias[key] for key in required_text):
+            raise ReconciliationRefused("live alias contains a missing exact identity field")
+        live_id = alias["liveVariantId"]
+        live_sku = alias["liveVariantSku"]
+        canonical_key = (alias["canonicalOfferingId"], alias["canonicalVariantId"])
+        if live_id in live_ids or live_sku in live_skus or canonical_key in canonical_keys:
+            raise ReconciliationRefused("live alias identities are not one-to-one")
+        if not live_sku.startswith("R360-") or alias.get("action") != "assisted_order":
+            raise ReconciliationRefused("live alias disposition drifted")
+        if alias.get("liveLane") != "research_material" or alias.get("activePriceCount") != 0:
+            raise ReconciliationRefused("live alias lane or price-count evidence drifted")
+        entry = canonical_index.get(canonical_key)
+        if entry is None:
+            raise ReconciliationRefused(f"live alias {live_sku} references an absent canonical unit")
+        if (
+            entry["family"] != "research_peptides_materials"
+            or entry["displayState"] != "request_access"
+            or entry["configuration"] != alias["canonicalLabel"]
+        ):
+            raise ReconciliationRefused(f"live alias {live_sku} canonical evidence drifted")
+        binding = binding_index.get(canonical_key)
+        if binding is None or (
+            binding["productControlSku"] != alias["canonicalProductControlSku"]
+            or binding["productId"] != alias["canonicalProductControlProductId"]
+            or binding["variantId"] != alias["canonicalProductControlVariantId"]
+        ):
+            raise ReconciliationRefused(f"live alias {live_sku} canonical Product Control binding drifted")
+        if live_id in canonical_binding_variant_ids:
+            raise ReconciliationRefused(f"live alias {live_sku} reuses a canonical Product Control variant id")
+        live_ids.add(live_id)
+        live_skus.add(live_sku)
+        canonical_keys.add(canonical_key)
+    if [alias["liveVariantSku"] for alias in aliases] != sorted(live_skus):
+        raise ReconciliationRefused("live aliases are not deterministically sorted by SKU")
+    return aliases
+
+
 def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]]:
     expected_precedence = [
         "seth_recommended_retail",
@@ -465,6 +690,7 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
         actual = sha256(path)
         if actual != expected:
             raise ReconciliationRefused(f"canonical {key} SHA-256 mismatch: {actual}")
+    live_snapshot_path, live_snapshot = load_live_snapshot(policy)
 
     master = table_records(paths["septemberCatalog"], "Master Peptide Catalog", 3)
     margin_evidence = policy["launchMarginFloorEvidence"]
@@ -579,6 +805,13 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
         if key in binding_index:
             raise ReconciliationRefused("duplicate Product Control binding")
         binding_index[key] = binding
+    declared_live_variants = int(policy["declaredLiveProductionVariantCount"])
+    live_aliases = validate_live_identity_closure(
+        live_snapshot,
+        canonical_entries,
+        binding_index,
+        declared_live_variants,
+    )
 
     provisional_matches: dict[str, dict | None] = {}
     collisions: dict[tuple[str, str], list[str]] = defaultdict(list)
@@ -633,6 +866,18 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
         unit["action"] = classify_unit(unit, margin_floor)
         units.append(unit)
 
+    canonical_unit_index = {
+        (unit["offeringId"], unit["variantId"]): unit for unit in units
+    }
+    for alias in live_aliases:
+        canonical_unit = canonical_unit_index[
+            (alias["canonicalOfferingId"], alias["canonicalVariantId"])
+        ]
+        if canonical_unit["action"] != "assisted_order":
+            raise ReconciliationRefused(
+                f"live alias {alias['liveVariantSku']} does not map to an assisted canonical unit"
+            )
+
     for row in master:
         if provisional_matches[row["SKU"]] is not None:
             continue
@@ -669,22 +914,28 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
     open_blocking_gates = [row for row in financial_gates if str(row.get("Blocking?") or "").lower() == "yes" and str(row.get("Status") or "").lower() not in {"complete", "completed", "done"}]
     review_statuses = Counter(str(row.get("Review Status") or "") for row in seth_review)
 
-    sanitized = sorted((sanitized_row(unit) for unit in units), key=lambda row: (row["action"], row["unitId"]))
+    live_alias_rows = [
+        sanitized_live_alias_row(alias, live_snapshot) for alias in live_aliases
+    ]
+    sanitized = sorted(
+        [sanitized_row(unit) for unit in units] + live_alias_rows,
+        key=lambda row: (row["action"], row["unitId"]),
+    )
     all_conflicts = sorted(
-        (item for unit in units for item in conflicts_for(unit, margin_floor)),
+        [item for unit in units for item in conflicts_for(unit, margin_floor)]
+        + [live_alias_conflict(alias, live_snapshot) for alias in live_aliases],
         key=lambda item: (item["code"], item["unitId"], item["sourcePointer"] or ""),
     )
     action_counts = Counter(row["action"] for row in sanitized)
     expected_action_counts = {
         "direct_buy": 0,
-        "assisted_order": 102,
+        "assisted_order": 124,
         "care_required": 242,
         "unavailable": 147,
     }
     observed_action_counts = {action: action_counts.get(action, 0) for action in expected_action_counts}
-    if sum(action_counts.values()) != 491 or observed_action_counts != expected_action_counts:
+    if sum(action_counts.values()) != 513 or observed_action_counts != expected_action_counts:
         raise ReconciliationRefused(f"union/action invariant failed: {dict(action_counts)}")
-    declared_live_variants = int(policy["declaredLiveProductionVariantCount"])
     live_variant_delta = declared_live_variants - len(canonical_entries)
     if live_variant_delta != 19:
         raise ReconciliationRefused(f"declared live/repo canonical delta drifted: {live_variant_delta}")
@@ -693,8 +944,8 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
         "asOf": policy["asOf"],
         "mode": "DRY_RUN",
         "scope": policy["scope"],
-        "coverageStatus": "repo_canonical_plus_intake_only_not_full_live_snapshot",
-        "productionCoverageComplete": False,
+        "coverageStatus": "exact_live_product_control_plus_repo_canonical_plus_intake",
+        "productionCoverageComplete": True,
         "productionMutated": False,
         "databaseMutated": False,
         "catalogRuntimeMutated": False,
@@ -704,6 +955,12 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
         } | {
             "canonicalCatalog": {"path": str(catalog_path.relative_to(REPO_ROOT)).replace("\\", "/"), "sha256": sha256(catalog_path)},
             "canonicalBindings": {"path": str(bindings_path.relative_to(REPO_ROOT)).replace("\\", "/"), "sha256": sha256(bindings_path)},
+            "liveProductionSnapshot": {
+                "path": str(live_snapshot_path.relative_to(REPO_ROOT)).replace("\\", "/"),
+                "sha256": sha256(live_snapshot_path),
+                "observedAt": live_snapshot["observedAt"],
+                "safeProjectionSha256": live_snapshot["safeProjection"]["sha256"],
+            },
         },
         "sourceObservations": {
             "launchMarginFloor": policy["launchMarginFloor"],
@@ -729,6 +986,15 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
             "canonicalBindings": len(binding_index),
             "declaredLiveProductionVariants": declared_live_variants,
             "repoCanonicalToDeclaredLiveVariantDelta": live_variant_delta,
+            "exactLiveCanonicalBindingMatches": live_snapshot["exactBindingVerification"]["exactVariantIdProductIdSkuMatches"],
+            "liveLegacyPhysicalAliasVariants": len(live_aliases),
+            "repoOnlyUnboundCanonicalVariants": len(canonical_entries) - len(binding_index),
+            "unreconciledLiveProductionVariants": 0,
+            "liveSnapshotObservedAt": live_snapshot["observedAt"],
+            "liveSafeProjectionSha256": live_snapshot["safeProjection"]["sha256"],
+            "liveCanonicalBindingProjectionSha256": live_snapshot["safeProjection"]["canonicalBindingSha256"],
+            "liveLegacyAliasProjectionSha256": live_snapshot["safeProjection"]["legacyAliasSha256"],
+            "liveAliasMappingAuthority": live_snapshot["mappingAuthority"],
             "septemberRowsWithExactCanonicalVariant": len(candidate_by_variant),
             "septemberRowsWithoutExactCanonicalVariant": len(master) - len(candidate_by_variant),
             "exactCanonicalMatchProductNameMismatches": exact_match_name_mismatches,
@@ -743,7 +1009,6 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
             "conflictUnits": len({item["unitId"] for item in all_conflicts}),
         },
         "globalDirectBuyBlockers": [
-            "exact_live_439_variant_snapshot_not_supplied_to_catalog_lane",
             "no_completed_vendor_rfq_response",
             "actual_landed_cost_not_verified",
             "supplier_fulfillment_entity_not_verified",
@@ -755,15 +1020,7 @@ def build_report(paths: dict[str, Path], policy: dict) -> tuple[dict, list[dict]
             "complete_downstream_order_flow_not_verified_by_source_set",
             "approved_active_retail_not_verified_by_source_set",
         ],
-        "externalBlockers": [
-            {
-                "code": "exact_live_variant_snapshot_missing",
-                "declaredLiveVariantCount": declared_live_variants,
-                "repoCanonicalVariantCount": len(canonical_entries),
-                "unreconciledVariantDelta": live_variant_delta,
-                "effect": "The 19 unidentified live-only variants cannot be assigned an action. Batches are exact only for the stated repo-canonical-plus-intake union scope and must not be represented as complete live mutation coverage."
-            }
-        ],
+        "externalBlockers": [],
         "privacy": policy["privacy"],
         "rows": sanitized,
     }
@@ -778,8 +1035,10 @@ def batch_document(report: dict, action: str) -> dict:
         "mode": "DRY_RUN",
         "sourceScope": report["scope"],
         "coverageStatus": report["coverageStatus"],
-        "productionCoverageComplete": False,
-        "unreconciledLiveVariantDelta": report["sourceObservations"]["repoCanonicalToDeclaredLiveVariantDelta"],
+        "productionCoverageComplete": report["productionCoverageComplete"],
+        "unreconciledLiveVariantCount": report["sourceObservations"]["unreconciledLiveProductionVariants"],
+        "liveSnapshotObservedAt": report["sourceObservations"]["liveSnapshotObservedAt"],
+        "liveSafeProjectionSha256": report["sourceObservations"]["liveSafeProjectionSha256"],
         "globalDirectBuyBlockers": report["globalDirectBuyBlockers"],
         "action": action,
         "rowCount": len(rows),
@@ -796,8 +1055,10 @@ def conflict_document(report: dict, conflicts: list[dict]) -> dict:
         "mode": "DRY_RUN",
         "sourceScope": report["scope"],
         "coverageStatus": report["coverageStatus"],
-        "productionCoverageComplete": False,
-        "unreconciledLiveVariantDelta": report["sourceObservations"]["repoCanonicalToDeclaredLiveVariantDelta"],
+        "productionCoverageComplete": report["productionCoverageComplete"],
+        "unreconciledLiveVariantCount": report["sourceObservations"]["unreconciledLiveProductionVariants"],
+        "liveSnapshotObservedAt": report["sourceObservations"]["liveSnapshotObservedAt"],
+        "liveSafeProjectionSha256": report["sourceObservations"]["liveSafeProjectionSha256"],
         "externalBlockers": report["externalBlockers"],
         "conflictEventCount": len(conflicts),
         "affectedUnitCount": len({item["unitId"] for item in conflicts}),
