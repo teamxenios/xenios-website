@@ -6,7 +6,7 @@
       "id": "XENIOS-CHECKOUT-COMMERCE-AUTHORITY-REFACTOR-20260923",
       "title": "Move legacy commerce persistence behind bounded RPC authorities and converge ACLs",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-checkout-commerce-authority-refactor-20260923",
       "baseSha": "b3dba343d01d5f4f3777e484d8a8a72d65606437",
       "paths": [
@@ -37,7 +37,13 @@
         "XENIOS-CHECKOUT-RC-P1-REMEDIATION-20260923"
       ],
       "scopeNote": "Founder-requested source-only repair from exact SHA b3dba343d01d5f4f3777e484d8a8a72d65606437. Replace forbidden direct commerce-table operations with bounded security-definer RPC authorities, prove parity and atomicity, then converge the seven-table ACL contract. No merge, deploy, managed migration, staging or production mutation, provider activation, or feature activation.",
-      "claimedAt": "2026-09-23T18:11:08.107Z"
+      "claimedAt": "2026-09-23T18:11:08.107Z",
+      "handoff": {
+        "session": "codex-checkout-commerce-authority-refactor-20260923",
+        "sha": "e06b155489577287f4152a05e21b2f1833252fc5",
+        "file": ".xenios/handoffs/2026-09-23T20-20-59-765Z-XENIOS-CHECKOUT-COMMERCE-AUTHORITY-REFACTOR-20260923-codex-checkout-commerce-authority-refactor-20260923.md",
+        "at": "2026-09-23T20:20:59.769Z"
+      }
     },
     {
       "id": "XENIOS-CHECKOUT-RC-P1-REMEDIATION-20260923",

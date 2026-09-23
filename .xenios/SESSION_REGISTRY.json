@@ -482,10 +482,10 @@
       "tool": "codex",
       "lane": "checkout-commerce-authority-refactor",
       "branch": "codex/xenios-checkout-commerce-authority-refactor-20260923",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-09-23T18:10:36.957Z",
-      "heartbeatAt": "2026-09-23T18:10:36.958Z",
-      "note": "Source-only commerce RPC authority refactor and ACL convergence from b3dba343; no staging, production, deployment, merge, or activation authority."
+      "heartbeatAt": "2026-09-23T20:20:59.693Z",
+      "note": "Exact source candidate e06b155 pushed and handed off for independent review; all local gates green; no staging, production, provider, deployment, merge, or activation mutation."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
