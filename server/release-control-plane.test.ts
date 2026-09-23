@@ -51,6 +51,10 @@ const PRODUCTION_SHA = "c545a70eb694d990842ad1259df4f0786dab92c9";
 const PRODUCTION_BRANCH = "release/early-access-code-session-checkout";
 const PROTECTED_PENDING_SOURCE_SHA =
   "4a45b89856df3104de498c7124d27b608e52b34d";
+const PERSISTENT_CART_SOURCE_SHA =
+  "43e21784bcee2652e274d1161c91584906d41f07";
+const PERSISTENT_CART_SOURCE_PATH =
+  "supabase/migrations/20260727200000_research_persistent_cart.sql";
 const HEAD_SHA = "adb3df5f4a431b73087c2ce1f13b197d830216fe";
 const RESERVATION_SOURCE_SHA = "31b91f107cd2a54140d007267bb4cc02549e8404";
 const RESERVATION_SOURCE_PATH =
@@ -70,7 +74,7 @@ const STRENGTH_GATE_BLOB = "30e3550db2c37e64fb16a348076fd40fcec77f65";
 const STRENGTH_GATE_CHECKSUM =
   "6cd11e07eb764d0f803db4baa308ae397c23aacb8ff5d29306c8797be60b4818";
 const PROTECTED_PENDING_SOURCE_PATHS = new Set([
-  "supabase/migrations/20260727200000_research_persistent_cart.sql",
+  PERSISTENT_CART_SOURCE_PATH,
   "supabase/migrations/20260728010000_research_fulfillment_supplier_operations.sql",
   "supabase/migrations/20260728020000_research_affiliate_professional_operations.sql",
   "supabase/migrations/20260729000000_research_pricing_lineage.sql",
@@ -1130,6 +1134,8 @@ describe("migration DAG validator", () => {
           } else if (path === STRENGTH_GATE_PATH) {
             expect(sourceSha).toBe(STRENGTH_GATE_SOURCE_SHA);
             return checkedInStrengthGateSourceBytes();
+          } else if (path === PERSISTENT_CART_SOURCE_PATH) {
+            expect(sourceSha).toBe(PERSISTENT_CART_SOURCE_SHA);
           } else if (PROTECTED_PENDING_SOURCE_PATHS.has(path)) {
             expect(sourceSha).toBe(PROTECTED_PENDING_SOURCE_SHA);
           } else if (EA_PERSISTENCE_SOURCE_PATHS.has(path)) {
@@ -1266,7 +1272,7 @@ describe("migration DAG validator", () => {
         id: "research_persistent_cart",
         appliedToProduction: false,
         managedMigrationId: "PENDING",
-        sourceSha: PROTECTED_PENDING_SOURCE_SHA,
+        sourceSha: PERSISTENT_CART_SOURCE_SHA,
       },
       {
         id: "research_fulfillment_supplier_operations",
