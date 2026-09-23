@@ -153,6 +153,8 @@ export interface WebhookDeps {
   executions?: WebhookExecutionProcessor;
   /** Durable refund settlement, bound by provider refund metadata. */
   refunds?: RefundWebhookProcessor;
+  /** Read-only complete-money-chain proof, checked before provider verification. */
+  moneyAuthorityReady?: () => Promise<boolean>;
   commerceEnabled: boolean;
 }
 
@@ -366,6 +368,14 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
     // Step 1. An absent signature is refused without consulting the provider, the
     // store, or any order.
     if (!signature) return { ok: false, code: "invalid_signature" };
+
+    if (deps.moneyAuthorityReady) {
+      try {
+        if (!(await deps.moneyAuthorityReady())) return { ok: false, code: "capability_disabled" };
+      } catch {
+        return { ok: false, code: "capability_disabled" };
+      }
+    }
 
     // Without atomic inbox+effect authority even verification must not run: a
     // provider double or SDK may consume replay state while verifying. Refuse

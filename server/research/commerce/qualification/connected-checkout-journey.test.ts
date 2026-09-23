@@ -105,6 +105,7 @@ function localBinding() {
       newId: () => `${String(++ids).padStart(8, "0")}-0000-4000-8000-000000000000`,
       allowInMemoryStores: true,
       refundAuthorityReady: true,
+      refundAuthorityPreflight: async () => true,
     });
   let composition = compose();
   if (!composition.ready) throw new Error("the local binding must be ready");

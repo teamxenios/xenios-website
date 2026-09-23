@@ -13,6 +13,16 @@ Commerce was disabled. The health response did not expose a commit SHA, so it
 did not independently prove the sprint-supplied live identity
 `c545a70eb694d990842ad1259df4f0786dab92c9`.
 
+A later authenticated, read-only Render observation resolved service
+`srv-d8s9vej7uimc7384dfcg` and its live deploy
+`dep-dag8l567bikc738a1nj0` to exact commit
+`c545a70eb694d990842ad1259df4f0786dab92c9`. The service is configured from
+branch `release/early-access-code-session-checkout` with auto-deploy disabled.
+The public health endpoint still returned HTTP 200 with commerce false. This
+authenticated control-plane observation establishes the live deploy identity;
+the earlier health response alone did not. No Render setting, deploy, secret,
+or other production resource was written.
+
 A fresh authorized read-only observation found Supabase project
 `yvzeduaxbwgcwllhywff` `ACTIVE_HEALTHY` on PostgreSQL 17.6. Migration history
 included `20260921172323 research_assisted_order_member_history_20260921`.
@@ -40,23 +50,31 @@ The refund remediation adds a fifth, later prerequisite for checkout readiness:
 The fifth candidate must run only after all four checkout candidates. It adds
 the durable refund-intent authority, SECURITY DEFINER prepare/claim/evidence/
 reconciliation/commit RPCs, active claim/order mutation guards, and the refund
-execution foreign-key binding on the existing payment webhook inbox. Because
-the production composition now requires this authority before accepting new
-purchases, installing only the original four is not sufficient to activate
-checkout.
+execution foreign-key binding on the existing payment webhook inbox. It also
+adds `research_checkout_money_capability()`, whose exact version is returned
+only when the database proves the complete required chain: checkout execution
+claim/provider/settlement functions, recovery discovery and operation,
+credit-reservation guards, refund execution transitions, webhook receipt
+authority, guarded order-effect transitions, RLS/triggers, least-privilege
+ACLs, normalized function-body fingerprints, SECURITY DEFINER/invoker mode,
+fixed search paths, and safe ownership. Installing only
+the original four candidates is therefore not sufficient to activate checkout.
 
 LF-normalized SHA-256 identities:
 
 | File | LF SHA-256 |
 |---|---|
-| `20260909150000_research_checkout_executions.sql` | `5f3178756d017ab11d939c171d379ef153f1ae72791611f087e3c546518d6bfd` |
+| `20260909150000_research_checkout_executions.precheck.sql` | `515af7938470f6b80294457140825558fe1bdcefc8477d125eab917b67ab3b3c` |
+| `20260909150000_research_checkout_executions.sql` | `0aa4e24d5056ed3db5dfca30fb256955b8af2b15025244868fb3d86929dc1317` |
+| `20260909150000_research_checkout_executions.postcheck.sql` | `d488ae8e0a31e1279fa0daea95ede3edf78cd891b992b0511f8225d4973cbfc0` |
+| `20260909150000_research_checkout_executions.rehearsal.sql` | `622279f39c24bcbb995fb23ef980fa202e3396ce0459ff14b6912440a991dc15` |
 | `20260910201400_research_checkout_credit_reservations.sql` | `1196169a2d29cb7bf62e29326ed689bdd9f668d43abe6977d97dd087de70033e` |
 | `20260910120000_research_checkout_execution_recovery.sql` | `c63563dc5e378e95d35f70f3f99acf966ab74c4019edcb7f7dfa82872bf383ba` |
 | `20260910220129_research_checkout_recovery_operation.sql` | `a2fd98dfc80a921caa3eb1c6bb2b5e0d8a7c581b9ad3dcfaae65dd4fafa37fb0` |
-| `20260921_research_refund_execution.precheck.sql` | `4cba831ad3e94e077f8872c67e933adea570aced5e8f3a08cb4dbd32ef7f59e1` |
-| `20260921_research_refund_execution.sql` | `894e70909f48caa5fe5f13ea091e211d1be79750ab60684a8430d08963c71a16` |
-| `20260921_research_refund_execution.postcheck.sql` | `7202535e263ba76ebcf589463a9230da7b00636631521aa443cb7f17f27e8810` |
-| `20260921_research_refund_execution.rehearsal.sql` | `2b55a01bed5aa42011f3e85cbedfa11c7490af854a5efd5ea76bfee9aa8f4f8e` |
+| `20260921_research_refund_execution.precheck.sql` | `17d58ebe8c33d25f56ed2311855abf927c05435a65d20409894a098e4d0afc26` |
+| `20260921_research_refund_execution.sql` | `338180f77df1cb3504274c349fe5db4d42fd5ddba6b41fb4bce080bc041ce513` |
+| `20260921_research_refund_execution.postcheck.sql` | `98bbf522d73dbb3cc37d6b05001c82b2efcc46a0fd0e1f4e82dcaa05f3288907` |
+| `20260921_research_refund_execution.rehearsal.sql` | `630dce52da2f0bcc6ad3e52c1019730a9e4dd2c41b170fc3eafc1a11fde8b082` |
 
 For candidate 5 the authorized disposable-database sequence is exactly:
 
@@ -78,7 +96,20 @@ was applied by this session.
   marker, and no unsupported Connect account configuration.
 - Customer checkout readiness is one full-money-path decision. Durable checkout
   execution, durable webhook inbox, client Stripe configuration, and durable
-  refund authority must all be ready. Omitting refund authority is fail closed.
+  refund authority must all be ready. The server preflights the exact managed
+  capability version before exposing client configuration, accepting a checkout
+  submission, continuing/cancelling an execution, processing a payment/refund
+  webhook, or initiating a refund. Member-visible `product_commerce` starts
+  false and cannot become true from static composition readiness alone; the
+  capability API awaits a managed preflight before answering. Missing SQL, an RPC
+  error, a null or stale capability version, or a failed fingerprint is fail
+  closed.
+- Webhook receipt creation and terminalization are available to `service_role`
+  only through locked SECURITY DEFINER RPCs. The table is directly readable but
+  not directly insertable, updateable, deletable, truncatable, referenceable, or
+  triggerable by that role. Provider/event identity, event type, payload digest,
+  receipt time, execution/refund binding, and terminal result are immutable;
+  terminalization is one-way and only an exact replay is accepted.
 - A captured webhook receipt remains `processing` until the canonical
   `commitCaptured` path commits the order and checkout execution. A crash or
   contention returns non-2xx and redelivery resumes the same execution.
@@ -86,6 +117,10 @@ was applied by this session.
   same execution id is placed in provider refund metadata. Provider replay is
   allowed only inside the hard 20-hour ceiling; after that the operation moves
   to reconciliation and no new provider refund call is issued.
+- A Stripe refund response is accepted as provider evidence only when its
+  metadata echoes the exact `xeniosRefundExecutionId` supplied with the request.
+  Missing or mismatched metadata is a permanent, non-retryable provider
+  validation failure and cannot be committed locally.
 - A lost response is recovered by exact provider readback. Provider-terminal
   `refund.created`/`refund.updated` objects can also finish the same execution
   through the durable inbox. The aggregate `charge.refunded` event is not
@@ -100,8 +135,9 @@ was applied by this session.
 
 ## Local evidence
 
-The new candidate's precheck, migration, postcheck, and transactional rehearsal
-passed in a disposable in-memory PGlite 0.5.8 / PostgreSQL 18 runtime:
+The complete candidate chain (all four checkout layers followed by refund),
+its prechecks, migrations, postchecks, and transactional rehearsals passed in a
+fresh disposable in-memory PGlite 0.5.8 / PostgreSQL 18 runtime:
 
 ```json
 {"status":"PASS","scope":"LOCAL_MEMORY_ONLY","runtime":"@electric-sql/pglite@0.5.8"}
@@ -109,20 +145,19 @@ passed in a disposable in-memory PGlite 0.5.8 / PostgreSQL 18 runtime:
 
 That rehearsal covers exact prepare replay, conflicting replay refusal,
 compare-and-swap contention, first-attempt persistence, active claim/order
-guards, refund-inbox binding, provider evidence, atomic projections, ledger/
-event single-write, RPC/table privilege postures, and direct service-role write
-refusal. It is one connection and does not claim a real two-session lock race.
+guards, locked webhook claim/terminalization, digest and binding tamper refusal,
+provider evidence, atomic projections, ledger/event single-write, full RPC/table
+privilege postures including direct `TRUNCATE` refusal, the exact complete-chain
+capability token, function-body and execution-attribute tamper refusal, and ACL
+tamper refusal. It is one in-memory engine and does not claim a real two-session lock
+race, managed PostgREST behavior, or provider delivery.
 
-Focused Node 20.19.0 results at the final source state:
-
-- `server/research/commerce` plus `server/research/providers/payment.test.ts`:
-  57 passed files, 1 classified skipped file; 2,492 passed tests and 3
-  classified skips.
-- durable checkout client/payment UI: 3 passed files, 39 passed tests.
-- refund/provider/webhook/persistence/production-wiring focus: 7 passed files,
-  715 passed tests.
-
-Repository-wide `tsc --noEmit --pretty false` passed at the final source state.
+Focused Vitest results at the final source state: 13 passed files and 790 passed
+tests across managed capability gating, checkout submission/config and
+continuation, production visibility, refund execution, provider validation,
+webhook processing, strict repository readback, and the connected checkout
+journey. Repository-wide
+`tsc --noEmit --pretty false` and the production build also passed.
 
 ## Managed Stripe qualification and explicit NOT_RUN gates
 
@@ -147,7 +182,8 @@ The following evidence is external and remains **NOT_RUN**:
 
 - applying all five candidates to the authorized non-production project, with
   every precheck/postcheck/rehearsal receipt;
-- a true two-session PostgreSQL refund prepare/claim contention run;
+- a true independent-connection PostgreSQL checkout/refund/inbox contention
+  run (the local PGlite gate uses one in-memory engine);
 - the complete managed test-mode journey, including hosted 3DS return, process
   restart, controlled local-commit failure, and the required refund scenario;
 - a Stripe-delivered (not harness-signed) refund settlement webhook proving the

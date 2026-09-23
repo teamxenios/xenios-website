@@ -60,6 +60,24 @@ function expectPrivateHeaders(headers: Record<string, string | string[] | undefi
 }
 
 describe("canonical capabilities routes", () => {
+  it("awaits managed capability evidence before answering the first member request", async () => {
+    guardState.allowMember = true;
+    let release!: () => void;
+    const ready = new Promise<void>((resolve) => { release = resolve; });
+    const app = express();
+    registerMemberCapabilityApi(app, async () => {
+      await ready;
+      return { product_commerce: { enabled: true } };
+    });
+
+    const pending = request(app).get("/api/research/capabilities");
+    release();
+    const res = await pending;
+
+    expect(res.status).toBe(200);
+    expect(res.body.capabilities.product_commerce).toEqual({ enabled: true });
+  });
+
   it("merges member-platform and commerce capability keys in one member payload", async () => {
     guardState.allowMember = true;
     guardState.allowAdmin = false;

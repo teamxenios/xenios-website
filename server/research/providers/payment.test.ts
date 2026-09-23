@@ -725,6 +725,21 @@ describe("StripePaymentAdapter", () => {
       expect(requests[2].path).toBe("/v1/refunds?payment_intent=pi_1&limit=100");
     });
 
+    it.each([
+      ["missing", {}],
+      ["mismatched", { xeniosRefundExecutionId: "00000000-0000-4000-8000-0000000000f2" }],
+    ])("refuses %s refund execution metadata in the provider response", async (_label, metadata) => {
+      const { adapter } = stripeAdapter([
+        { status: 200, body: capturedIntent },
+        { status: 200, body: {
+          id: "re_bound_bad", status: "succeeded", payment_intent: "pi_1", amount: 1000, currency: "usd", metadata,
+        } },
+      ]);
+      await expect(adapter.refund("pi_1", 1000, "refund_key_bound_bad", {
+        refundExecutionId: "00000000-0000-4000-8000-0000000000f1",
+      })).resolves.toMatchObject({ ok: false, code: "PERMANENT_FAILURE", retryable: false });
+    });
+
     it("fails closed on ambiguous or mismatched durable refund readback", async () => {
       const match = {
         id: "re_bound_1",

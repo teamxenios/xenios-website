@@ -65,18 +65,158 @@ create index if not exists research_checkout_executions_order_idx
 -- claimed BEFORE any effect and acknowledged to the provider only from a
 -- terminal state. The same event id with other bytes is a conflict.
 create table if not exists public.research_payment_webhook_inbox (
-  provider_name   text not null,
-  event_id        text not null,
-  event_type      text not null,
+  provider_name   text not null check (char_length(provider_name) between 1 and 50),
+  event_id        text not null check (char_length(event_id) between 1 and 200),
+  event_type      text not null check (char_length(event_type) between 1 and 200),
   payload_sha256  text not null check (payload_sha256 ~ '^[a-f0-9]{64}$'),
   state           text not null default 'processing' check (state in ('processing','processed','isolated')),
   outcome         text null,
   reason          text null,
   execution_id    uuid null references public.research_checkout_executions (id),
+  -- The FK is installed by the refund-execution candidate after its authority
+  -- exists. Defining the binding column here lets one locked terminal RPC own
+  -- the entire shared inbox lifecycle without a temporary direct-write era.
+  refund_execution_id uuid null,
   received_at     timestamptz not null default now(),
   completed_at    timestamptz null,
-  primary key (provider_name, event_id)
+  primary key (provider_name, event_id),
+  constraint research_payment_webhook_inbox_one_binding
+    check (execution_id is null or refund_execution_id is null),
+  constraint research_payment_webhook_inbox_lifecycle check (
+    (state = 'processing' and outcome is null and reason is null and completed_at is null
+      and execution_id is null and refund_execution_id is null)
+    or
+    (state = 'processed' and outcome in ('applied','acknowledged') and reason is null and completed_at is not null
+      and (outcome <> 'applied' or num_nonnulls(execution_id, refund_execution_id) = 1))
+    or
+    (state = 'isolated' and outcome = 'isolated' and reason is not null
+      and char_length(reason) between 1 and 500 and completed_at is not null)
+  )
 );
+
+-- Event identity, signed-byte digest, bindings, and terminal truth are
+-- monotonic. Service role cannot call UPDATE directly; this trigger also
+-- protects against owner/operator mistakes and future grant drift.
+create or replace function public.research_payment_webhook_inbox_immutable()
+returns trigger language plpgsql set search_path = '' as $$
+begin
+  if new.provider_name is distinct from old.provider_name
+     or new.event_id is distinct from old.event_id
+     or new.event_type is distinct from old.event_type
+     or new.payload_sha256 is distinct from old.payload_sha256
+     or new.received_at is distinct from old.received_at then
+    raise exception 'research_payment_webhook_inbox_identity_immutable';
+  end if;
+  if old.state in ('processed','isolated') and to_jsonb(new) is distinct from to_jsonb(old) then
+    raise exception 'research_payment_webhook_inbox_terminal_immutable';
+  end if;
+  if old.execution_id is not null and new.execution_id is distinct from old.execution_id then
+    raise exception 'research_payment_webhook_inbox_execution_binding_immutable';
+  end if;
+  if old.refund_execution_id is not null and new.refund_execution_id is distinct from old.refund_execution_id then
+    raise exception 'research_payment_webhook_inbox_refund_binding_immutable';
+  end if;
+  if old.state = 'processing' and new.state not in ('processing','processed','isolated') then
+    raise exception 'research_payment_webhook_inbox_invalid_transition';
+  end if;
+  return new;
+end $$;
+drop trigger if exists research_payment_webhook_inbox_immutable on public.research_payment_webhook_inbox;
+create trigger research_payment_webhook_inbox_immutable
+  before update on public.research_payment_webhook_inbox
+  for each row execute function public.research_payment_webhook_inbox_immutable();
+
+-- Atomic claim under the primary key. The locked read makes a duplicate
+-- distinguish exact replay, an interrupted processing receipt, a terminal
+-- receipt, and a same-id/different-bytes conflict without a client race.
+create or replace function public.research_payment_webhook_inbox_claim(
+  p_provider_name text,
+  p_event_id text,
+  p_event_type text,
+  p_payload_sha256 text,
+  p_received_at timestamptz
+) returns table(claim_state text, outcome text)
+language plpgsql security definer set search_path = '' as $$
+declare
+  v_row public.research_payment_webhook_inbox%rowtype;
+  v_inserted integer := 0;
+begin
+  if p_provider_name is null or char_length(p_provider_name) not between 1 and 50
+     or p_event_id is null or char_length(p_event_id) not between 1 and 200
+     or p_event_type is null or char_length(p_event_type) not between 1 and 200
+     or p_payload_sha256 is null or p_payload_sha256 !~ '^[a-f0-9]{64}$'
+     or p_received_at is null then
+    raise exception 'research_payment_webhook_inbox_invalid_claim';
+  end if;
+  insert into public.research_payment_webhook_inbox
+    (provider_name,event_id,event_type,payload_sha256,state,received_at)
+  values
+    (p_provider_name,p_event_id,p_event_type,p_payload_sha256,'processing',p_received_at)
+  on conflict (provider_name,event_id) do nothing;
+  get diagnostics v_inserted = row_count;
+
+  select * into v_row from public.research_payment_webhook_inbox
+   where provider_name=p_provider_name and event_id=p_event_id for update;
+  if not found then raise exception 'research_payment_webhook_inbox_claim_lost'; end if;
+  if v_row.payload_sha256 <> p_payload_sha256 or v_row.event_type <> p_event_type then
+    return query select 'conflict'::text, null::text;
+  elsif v_row.state = 'processing' then
+    return query select case when v_inserted=1 then 'new' else 'processing' end, null::text;
+  else
+    return query select 'processed'::text, v_row.outcome;
+  end if;
+end $$;
+
+-- The sole writer of terminal state. It locks the claimed row, rebinds the
+-- exact signed-byte digest, and permits only byte-for-byte idempotent replay of
+-- an already-terminal transition. The refund candidate replaces this body to
+-- admit a refund binding after installing its FK.
+create or replace function public.research_payment_webhook_inbox_terminalize(
+  p_provider_name text,
+  p_event_id text,
+  p_payload_sha256 text,
+  p_terminal_state text,
+  p_outcome text,
+  p_reason text,
+  p_execution_id uuid,
+  p_refund_execution_id uuid
+) returns setof public.research_payment_webhook_inbox
+language plpgsql security definer set search_path = '' as $$
+declare v_row public.research_payment_webhook_inbox%rowtype;
+begin
+  if p_provider_name is null or p_event_id is null or p_payload_sha256 is null
+     or p_payload_sha256 !~ '^[a-f0-9]{64}$' or p_refund_execution_id is not null
+     or p_execution_id is null and p_terminal_state='processed' and p_outcome='applied'
+     or not (
+       (p_terminal_state='processed' and p_outcome in ('applied','acknowledged') and p_reason is null)
+       or
+       (p_terminal_state='isolated' and p_outcome='isolated' and p_reason is not null
+         and char_length(p_reason) between 1 and 500)
+     ) then
+    raise exception 'research_payment_webhook_inbox_invalid_terminal_transition';
+  end if;
+  select * into v_row from public.research_payment_webhook_inbox
+   where provider_name=p_provider_name and event_id=p_event_id for update;
+  if not found then raise exception 'research_payment_webhook_inbox_claim_missing'; end if;
+  if v_row.payload_sha256 <> p_payload_sha256 then
+    raise exception 'research_payment_webhook_inbox_digest_conflict';
+  end if;
+  if v_row.state in ('processed','isolated') then
+    if v_row.state is distinct from p_terminal_state or v_row.outcome is distinct from p_outcome
+       or v_row.reason is distinct from p_reason or v_row.execution_id is distinct from p_execution_id
+       or v_row.refund_execution_id is distinct from p_refund_execution_id then
+      raise exception 'research_payment_webhook_inbox_terminal_conflict';
+    end if;
+    return query select * from public.research_payment_webhook_inbox
+      where provider_name=p_provider_name and event_id=p_event_id;
+    return;
+  end if;
+  return query update public.research_payment_webhook_inbox
+    set state=p_terminal_state, outcome=p_outcome, reason=p_reason,
+        execution_id=p_execution_id, completed_at=clock_timestamp()
+    where provider_name=p_provider_name and event_id=p_event_id and state='processing'
+    returning *;
+end $$;
 
 -- Identity never changes after insert: a retry can only move phase/version/evidence.
 create or replace function public.research_checkout_executions_immutable()
@@ -114,9 +254,14 @@ alter table public.research_checkout_executions force row level security;
 alter table public.research_payment_webhook_inbox force row level security;
 revoke all on table public.research_checkout_executions, public.research_payment_webhook_inbox
   from public, anon, authenticated, service_role;
-grant select, insert, update on table public.research_checkout_executions, public.research_payment_webhook_inbox
-  to service_role;
+grant select, insert, update on table public.research_checkout_executions to service_role;
+grant select on table public.research_payment_webhook_inbox to service_role;
 revoke all on function public.research_checkout_executions_immutable() from public, anon, authenticated, service_role;
+revoke all on function public.research_payment_webhook_inbox_immutable() from public, anon, authenticated, service_role;
+revoke all on function public.research_payment_webhook_inbox_claim(text,text,text,text,timestamptz) from public, anon, authenticated, service_role;
+revoke all on function public.research_payment_webhook_inbox_terminalize(text,text,text,text,text,text,uuid,uuid) from public, anon, authenticated, service_role;
+grant execute on function public.research_payment_webhook_inbox_claim(text,text,text,text,timestamptz) to service_role;
+grant execute on function public.research_payment_webhook_inbox_terminalize(text,text,text,text,text,text,uuid,uuid) to service_role;
 
 -- ---------------------------------------------------------------------------
 -- Transitions. Each is a single UPDATE guarded by the expected version; zero
@@ -389,4 +534,4 @@ grant execute on function public.research_checkout_execution_commit_cancelled(uu
 comment on table public.research_checkout_executions is
   'Durable checkout executions: one persisted intent per (member, request key) with version-CAS transitions and provider evidence.';
 comment on table public.research_payment_webhook_inbox is
-  'Signature-verified provider events claimed before any effect and acknowledged only from a terminal state.';
+  'Signature-verified provider events claimed and terminalized through locked RPCs; identity, digest, bindings, and terminal state are immutable.';

@@ -447,7 +447,7 @@ export async function buildAcceptanceContext(
   const guards = testGuards();
   registerMemberCapabilityApi(
     app,
-    () => deps.capabilities.memberVisible(),
+    () => deps.capabilities.memberVisibleReady?.() ?? deps.capabilities.memberVisible(),
     (req, res, next) => guards.requireActiveMember(req, res, () => next()),
   );
   registerCommerceApi(app, deps, guards);

@@ -1277,17 +1277,19 @@ export class StripePaymentAdapter implements DurablePaymentProvider, DurableRefu
     const returnedPaymentReference = readString(refund, "payment_intent");
     const returnedAmount = readNumber(refund, "amount");
     const returnedCurrency = readString(refund, "currency");
+    const returnedExecutionId = readString(asJsonObject(refund?.metadata), "xeniosRefundExecutionId");
     if (
       !refundReference?.startsWith("re_") ||
       returnedPaymentReference !== ref ||
       !Number.isSafeInteger(returnedAmount) ||
       returnedAmount !== amountCents ||
-      returnedCurrency !== "usd"
+      returnedCurrency !== "usd" ||
+      (context !== undefined && returnedExecutionId !== context.refundExecutionId)
     ) {
       return {
         ok: false,
         code: "PERMANENT_FAILURE",
-        message: "Stripe refund evidence did not match the requested payment, amount, or currency.",
+        message: "Stripe refund evidence did not match the requested payment, amount, currency, or execution binding.",
         retryable: false,
       };
     }

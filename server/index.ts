@@ -526,7 +526,8 @@ registerMemberPlatformApi(app, {
     return record ? toTrainerSafeBiomarkerSummary(record) : null;
   },
 });
-registerMemberCapabilityApi(app, () => commerceDependencies.capabilities.memberVisible());
+registerMemberCapabilityApi(app, () => commerceDependencies.capabilities.memberVisibleReady?.()
+  ?? commerceDependencies.capabilities.memberVisible());
 // Commerce surface (G6-G8): catalog and goal reads are live and provenance-
 // gated; every stateful surface (cart writes, checkout, orders, subscriptions,
 // claims, partners) fails closed with commerce_disabled until the production

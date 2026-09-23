@@ -80,6 +80,8 @@ export interface DurableCheckoutCompositionInput {
   allowInMemoryStores?: boolean;
   /** Required post-purchase money authority; new purchases stay closed without it. */
   refundAuthorityReady: boolean;
+  /** Read-only managed schema/RPC proof, evaluated at every exposed money door. */
+  refundAuthorityPreflight: () => Promise<boolean>;
 }
 
 export type DurableCheckoutUnavailableReason =
@@ -102,11 +104,15 @@ export type DurableCheckoutComposition =
       /** The operations read: what a customer's payment is doing, for the order an admin is looking at. */
       adminExecutions: CheckoutExecutionAdminService;
       clientConfig: () => PaymentClientConfigResult;
+      assertReady: () => Promise<boolean>;
+      managedAuthorityReady: () => boolean;
     }
   | {
       ready: false;
       reason: DurableCheckoutUnavailableReason;
       clientConfig: () => PaymentClientConfigResult;
+      assertReady: () => Promise<boolean>;
+      managedAuthorityReady: () => boolean;
     };
 
 /**
@@ -141,6 +147,8 @@ export function unavailableDurableCheckout(
     ready: false,
     reason,
     clientConfig: () => ({ ok: false, code: "payment_disabled" }),
+    assertReady: async () => false,
+    managedAuthorityReady: () => false,
   };
 }
 
@@ -188,6 +196,8 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
     ready: false,
     reason,
     clientConfig: () => ({ ok: false, code: "payment_disabled" }),
+    assertReady: async () => false,
+    managedAuthorityReady: () => false,
   });
   const { provider, env } = input;
   // The Disabled provider implements the durable interface structurally (it
@@ -207,6 +217,16 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
 
   const now = input.now ?? (() => new Date());
   const newId = input.newId ?? (() => randomUUID());
+  let managedAuthorityReady = false;
+  const assertReady = async (): Promise<boolean> => {
+    try {
+      managedAuthorityReady = await input.refundAuthorityPreflight();
+      return managedAuthorityReady;
+    } catch {
+      managedAuthorityReady = false;
+      return false;
+    }
+  };
   // Downstream fires on the COMMIT TRANSITION rather than from any one door, so
   // an order committed through the continuation (3DS) or a webhook notifies
   // exactly like a synchronous one, and a retried submit of an already
@@ -218,6 +238,7 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
   });
   const executor = createDurableCheckoutExecutor(executions, port);
   const submission = createDurableCheckoutSubmission({
+    authorityReady: assertReady,
     evaluate: (memberId, req, asOf) => input.checkout.evaluate(memberId, req, asOf),
     orders: input.orders,
     executions,
@@ -230,7 +251,7 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
     newId,
     // Not here: the store wrapper above owns the notification for every door.
   });
-  const continuation = createCheckoutContinuationService({ store: executions, provider, executor });
+  const continuation = createCheckoutContinuationService({ authorityReady: assertReady, store: executions, provider, executor });
   const adminExecutions = createCheckoutExecutionAdminService({ findByOrder: (orderId) => executions.findByOrder(orderId) });
   const webhookProcessor = createWebhookExecutionProcessor({
     providerName: provider.name,
@@ -250,6 +271,8 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
     webhookProcessor,
     adminExecutions,
     clientConfig: () => resolvePaymentClientConfig(provider, env),
+    assertReady,
+    managedAuthorityReady: () => managedAuthorityReady,
   };
 }
 
@@ -278,7 +301,11 @@ export const DURABLE_CHECKOUT_SURFACE_PATHS = {
  * capability_disabled without touching a store or the provider.
  */
 export function registerDurableCheckoutSurface(app: Express, guards: DurableCheckoutGuards, composition: DurableCheckoutComposition, options: { now?: () => Date } = {}): void {
-  registerPaymentClientConfigApi(app, guards, { resolve: composition.clientConfig });
+  registerPaymentClientConfigApi(app, guards, {
+    resolve: async () => composition.ready && await composition.assertReady()
+      ? composition.clientConfig()
+      : { ok: false, code: "payment_disabled" },
+  });
   if (composition.ready) {
     registerDurableCheckoutApi(app, guards, { submission: composition.submission, now: options.now ?? (() => new Date()) });
     registerCheckoutContinuationApi(app, guards, { service: composition.continuation });

@@ -38,6 +38,8 @@ export type DurableCheckoutOutcome =
   | { ok: false; code: CommerceDenialCode; codes: CommerceDenialCode[]; reservationRefusals?: ReservationRefusalCode[] };
 
 export interface DurableCheckoutSubmissionDeps {
+  /** Managed refund authority must be proven before a new purchase can start. */
+  authorityReady: () => Promise<boolean>;
   /** The canonical gates and pricing (CheckoutService.evaluate). Side-effect free. */
   evaluate(memberId: string, req: CheckoutRequest, asOf: Date): Promise<CheckoutEvaluationResult>;
   orders: OrderRepository;
@@ -118,6 +120,14 @@ export function createDurableCheckoutSubmission(deps: DurableCheckoutSubmissionD
 
   return {
     async submit(memberId: string, req: CheckoutRequest, asOf: Date): Promise<DurableCheckoutOutcome> {
+      // This read-only managed capability check leads every replay/new-request
+      // path. A missing or drifted refund authority may not expose checkout or
+      // allow even an order/reservation intent to be created.
+      try {
+        if (!(await deps.authorityReady())) return deny(["capability_disabled"]);
+      } catch {
+        return deny(["capability_disabled"]);
+      }
       const requestKey = typeof req?.idempotencyKey === "string" ? req.idempotencyKey : "";
       if (!REQUEST_KEY.test(requestKey)) return deny(["idempotency_conflict"]);
       const requestDigest = requestBodySha256(req);
@@ -353,7 +363,7 @@ export function registerDurableCheckoutApi(
         // The same status contract as the legacy door: only commerce_disabled is
         // an unpublished capability; every other denial (payment_disabled for a
         // credit-covered order included) is a routable 400 with its code.
-        res.status(outcome.code === "commerce_disabled" ? 503 : 400).json({ ok: false, code: outcome.code, codes: outcome.codes, ...(outcome.reservationRefusals ? { reservationRefusals: outcome.reservationRefusals } : {}) });
+        res.status(outcome.code === "commerce_disabled" || outcome.code === "capability_disabled" ? 503 : 400).json({ ok: false, code: outcome.code, codes: outcome.codes, ...(outcome.reservationRefusals ? { reservationRefusals: outcome.reservationRefusals } : {}) });
         return;
       }
       const { ok: _ok, ...checkout } = outcome;

@@ -149,6 +149,8 @@ export interface CommerceDependencies {
   };
   capabilities: {
     memberVisible(): Record<string, MemberCapabilityStatus>;
+    /** Capability API path: completes the read-only managed money preflight first. */
+    memberVisibleReady?(): Promise<Record<string, MemberCapabilityStatus>>;
   };
   adminQueues: {
     /**

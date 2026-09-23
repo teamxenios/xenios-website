@@ -144,17 +144,17 @@ export function mergedMemberCapabilities(
 
 export function registerMemberCapabilityApi(
   app: Express,
-  additionalMemberCapabilities: () => MemberCapabilityMap = () => ({}),
+  additionalMemberCapabilities: () => MemberCapabilityMap | Promise<MemberCapabilityMap> = () => ({}),
   activeMemberGuard: CapabilityGuard = requireActiveMember,
 ) {
   app.get(
     "/api/research/capabilities",
     privateCapabilityHeaders,
     activeMemberGuard,
-    (_req, res) => {
+    async (_req, res) => {
       res.json({
         ok: true,
-        capabilities: mergedMemberCapabilities(additionalMemberCapabilities()),
+        capabilities: mergedMemberCapabilities(await additionalMemberCapabilities()),
       });
     },
   );
@@ -178,7 +178,7 @@ export function registerAdminCapabilityApi(
 export function registerCapabilityApi(
   app: Express,
   clockNow: () => Date,
-  additionalMemberCapabilities: () => MemberCapabilityMap = () => ({}),
+  additionalMemberCapabilities: () => MemberCapabilityMap | Promise<MemberCapabilityMap> = () => ({}),
 ) {
   registerMemberCapabilityApi(app, additionalMemberCapabilities);
   registerAdminCapabilityApi(app, clockNow);

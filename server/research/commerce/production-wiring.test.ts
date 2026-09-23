@@ -1078,10 +1078,16 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
   it("opens the full checkout composition only when refund store and durable webhook recovery are both present", async () => {
     const setup = await liveSetup();
     const { resolvePaymentProvider: _testProvider, ...productionWiring } = setup.wiring;
-    const refundExecutions = createInMemoryRefundExecutionStore({
-      claims: setup.claimRepository,
-      orders: setup.claimOrderRepository,
-    });
+    const preflight = vi.fn()
+      .mockResolvedValueOnce(false)
+      .mockResolvedValue(true);
+    const refundExecutions = {
+      ...createInMemoryRefundExecutionStore({
+        claims: setup.claimRepository,
+        orders: setup.claimOrderRepository,
+      }),
+      preflight,
+    };
     const deps = buildCommerceDependencies(NOW, {
       ...LIVE_ENV,
       NODE_ENV: "production",
@@ -1104,6 +1110,14 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
       ok: true,
       config: { provider: "stripe", mode: "test" },
     });
+    expect(deps.capabilities.memberVisible().product_commerce.enabled).toBe(false);
+    await expect(deps.capabilities.memberVisibleReady!()).resolves.toMatchObject({
+      product_commerce: { enabled: false },
+    });
+    await expect(deps.capabilities.memberVisibleReady!()).resolves.toMatchObject({
+      product_commerce: { enabled: true },
+    });
+    expect(preflight).toHaveBeenCalledTimes(2);
     expect(deps.capabilities.memberVisible().product_commerce.enabled).toBe(true);
   });
 

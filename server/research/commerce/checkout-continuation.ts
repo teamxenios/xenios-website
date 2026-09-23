@@ -51,6 +51,8 @@ export type CheckoutContinuationResult =
   | { ok: false; code: "not_found" | "capability_disabled" };
 
 export interface CheckoutContinuationDeps {
+  /** Managed money-chain proof; checked before every continuation read/effect. */
+  authorityReady?: () => Promise<boolean>;
   store: Pick<CanonicalCheckoutExecutionStore, "getForMember" | "claim">;
   provider: DurablePaymentProvider;
   executor: {
@@ -95,6 +97,15 @@ function view(record: CheckoutExecutionRecord, state: CheckoutContinuationState,
 }
 
 export function createCheckoutContinuationService(deps: CheckoutContinuationDeps) {
+  async function authorityReady(): Promise<boolean> {
+    if (!deps.authorityReady) return true;
+    try {
+      return await deps.authorityReady();
+    } catch {
+      return false;
+    }
+  }
+
   async function owned(memberId: string, requestKey: string): Promise<CheckoutExecutionRecord | null> {
     const record = await deps.store.getForMember(memberId, requestKey);
     // The store scopes by member; the re-check makes a foreign record indistinguishable from a missing one.
@@ -151,6 +162,7 @@ export function createCheckoutContinuationService(deps: CheckoutContinuationDeps
 
   return {
     async status(memberId: string, requestKey: string): Promise<CheckoutContinuationResult> {
+      if (!(await authorityReady())) return { ok: false, code: "capability_disabled" };
       const record = await owned(memberId, requestKey);
       if (!record) return { ok: false, code: "not_found" };
       if (record.phase !== "action_required") return { ok: true, continuation: view(record, stateOf(record)) };
@@ -160,6 +172,7 @@ export function createCheckoutContinuationService(deps: CheckoutContinuationDeps
 
     /** The customer says they finished. Verify with the provider, then let the coordinator advance. */
     async continue(memberId: string, requestKey: string): Promise<CheckoutContinuationResult> {
+      if (!(await authorityReady())) return { ok: false, code: "capability_disabled" };
       const record = await owned(memberId, requestKey);
       if (!record) return { ok: false, code: "not_found" };
       if (record.phase === "action_required") {
@@ -199,6 +212,7 @@ export function createCheckoutContinuationService(deps: CheckoutContinuationDeps
      * payment is never declared cancelled.
      */
     async cancel(memberId: string, requestKey: string): Promise<CheckoutContinuationResult> {
+      if (!(await authorityReady())) return { ok: false, code: "capability_disabled" };
       const record = await owned(memberId, requestKey);
       if (!record) return { ok: false, code: "not_found" };
       const outcome = await deps.executor.cancel(memberId, requestKey);

@@ -50,6 +50,7 @@ declare
   v_orow    public.research_orders%rowtype;
   v_count   bigint;
   v_err     text;
+  v_claim_state text;
   v_at      timestamptz := '2026-09-09T12:00:00Z';
   v_digest  text := repeat('a', 64);
 begin
@@ -307,18 +308,25 @@ begin
   -- the same id with other bytes cannot be inserted; the row moves to a
   -- terminal state once.
   -- ---------------------------------------------------------------------
-  insert into public.research_payment_webhook_inbox (provider_name, event_id, event_type, payload_sha256, state, received_at)
-  values ('stripe', 'evt_rehearsal_1', 'payment_intent.amount_capturable_updated', repeat('c', 64), 'processing', v_at);
-  v_err := pg_temp.error_of($q$insert into public.research_payment_webhook_inbox (provider_name, event_id, event_type, payload_sha256)
-    values ('stripe', 'evt_rehearsal_1', 'payment_intent.amount_capturable_updated', repeat('d', 64))$q$);
-  perform pg_temp.expect(v_err ilike '%unique%' or v_err ilike '%duplicate key%', 'case 8: same event id twice refused');
-  update public.research_payment_webhook_inbox set state = 'processed', outcome = 'applied', execution_id = v_exec, completed_at = v_at
-   where provider_name = 'stripe' and event_id = 'evt_rehearsal_1';
+  select claim_state into v_claim_state from public.research_payment_webhook_inbox_claim(
+    'stripe','evt_rehearsal_1','payment_intent.amount_capturable_updated',repeat('c',64),v_at);
+  perform pg_temp.expect(v_claim_state='new','case 8: first locked claim wins');
+  select claim_state into v_claim_state from public.research_payment_webhook_inbox_claim(
+    'stripe','evt_rehearsal_1','payment_intent.amount_capturable_updated',repeat('c',64),v_at);
+  perform pg_temp.expect(v_claim_state='processing','case 8: exact interrupted claim resumes');
+  select claim_state into v_claim_state from public.research_payment_webhook_inbox_claim(
+    'stripe','evt_rehearsal_1','payment_intent.amount_capturable_updated',repeat('d',64),v_at);
+  perform pg_temp.expect(v_claim_state='conflict','case 8: same id with other signed bytes conflicts');
+  perform * from public.research_payment_webhook_inbox_terminalize(
+    'stripe','evt_rehearsal_1',repeat('c',64),'processed','applied',null,v_exec,null);
   select count(*) into v_count from public.research_payment_webhook_inbox where provider_name = 'stripe' and event_id = 'evt_rehearsal_1' and state = 'processed' and execution_id = v_exec;
   perform pg_temp.expect(v_count = 1, 'case 8: receipt completed once');
-  v_err := pg_temp.error_of($q$insert into public.research_payment_webhook_inbox (provider_name, event_id, event_type, payload_sha256, state)
-    values ('stripe', 'evt_rehearsal_2', 'x', repeat('e', 64), 'done')$q$);
-  perform pg_temp.expect(v_err is not null, 'case 8: unknown inbox state refused');
+  select count(*) into v_count from public.research_payment_webhook_inbox_terminalize(
+    'stripe','evt_rehearsal_1',repeat('c',64),'processed','applied',null,v_exec,null);
+  perform pg_temp.expect(v_count=1,'case 8: exact terminal replay is idempotent');
+  v_err := pg_temp.error_of($q$select * from public.research_payment_webhook_inbox_terminalize(
+    'stripe','evt_rehearsal_1',repeat('c',64),'isolated','isolated','tamper',null,null)$q$);
+  perform pg_temp.expect(v_err like '%terminal_conflict%','case 8: terminal state cannot be rewritten');
 
   -- ---------------------------------------------------------------------
   -- Case 9: another member cannot commit against this member's order (the
@@ -337,6 +345,25 @@ begin
 
   raise notice 'checkout executions rehearsal PASS';
 end $rehearsal$;
+
+-- Service role reads receipts and invokes guarded RPCs, but cannot bypass the
+-- lock/immutability path with direct INSERT, UPDATE, DELETE, or TRUNCATE.
+set local role service_role;
+do $acl$
+declare v_err text; v_state text;
+begin
+  select claim_state into v_state from public.research_payment_webhook_inbox_claim(
+    'stripe','evt_service_rpc','test.event',repeat('e',64),'2026-09-09T12:00:00Z');
+  perform pg_temp.expect(v_state='new','case 8 ACL: service role can invoke claim RPC');
+  v_err := pg_temp.error_of($q$insert into public.research_payment_webhook_inbox
+    (provider_name,event_id,event_type,payload_sha256) values ('stripe','evt_direct','x',repeat('a',64))$q$);
+  perform pg_temp.expect(v_err is not null,'case 8 ACL: direct insert denied');
+  v_err := pg_temp.error_of($q$update public.research_payment_webhook_inbox set outcome='tamper' where event_id='evt_service_rpc'$q$);
+  perform pg_temp.expect(v_err is not null,'case 8 ACL: direct update denied');
+  v_err := pg_temp.error_of($q$truncate public.research_payment_webhook_inbox$q$);
+  perform pg_temp.expect(v_err is not null,'case 8 ACL: truncate denied');
+end $acl$;
+reset role;
 
 -- Data-preserving by construction: nothing above survives.
 rollback;

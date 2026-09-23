@@ -1171,6 +1171,7 @@ function liveDependencies(
   const durableCheckout = composeDurableCheckout({
     env, provider: payment, orders: orderRepository, inventory: inventoryReservations, now,
     refundAuthorityReady,
+    refundAuthorityPreflight: async () => refundExecutions?.preflight() ?? false,
     ...checkoutStores,
     checkout: { evaluate: async (memberId, request, at) => {
       const evaluated = await checkoutService.evaluate(memberId, request, at);
@@ -1191,6 +1192,7 @@ function liveDependencies(
     : undefined;
 
   const webhookHandler = createWebhookHandler({
+    moneyAuthorityReady: durableCheckout.assertReady,
     executions: durableCheckout.ready ? durableCheckout.webhookProcessor : undefined,
     refunds: refundWebhookProcessor,
     store: webhookEventStore,
@@ -1631,11 +1633,24 @@ function liveDependencies(
         // are composed, production must not advertise either commerce lane as
         // enabled. The explicit test-only harness gate remains separately true
         // only for executable in-memory acceptance coverage.
-        product_commerce: { enabled: testOnlyAllowNonAtomicCommerceMutations || (durableCheckout.ready && durableCheckout.clientConfig().ok) },
+        product_commerce: { enabled: testOnlyAllowNonAtomicCommerceMutations || (
+          durableCheckout.ready && durableCheckout.managedAuthorityReady() && durableCheckout.clientConfig().ok
+        ) },
         quantum_commerce: {
           enabled: testOnlyAllowNonAtomicCommerceMutations && quantumEnabled,
         },
       }),
+      memberVisibleReady: async () => {
+        await durableCheckout.assertReady();
+        return {
+          product_commerce: { enabled: testOnlyAllowNonAtomicCommerceMutations || (
+            durableCheckout.ready && durableCheckout.managedAuthorityReady() && durableCheckout.clientConfig().ok
+          ) },
+          quantum_commerce: {
+            enabled: testOnlyAllowNonAtomicCommerceMutations && quantumEnabled,
+          },
+        };
+      },
     },
     adminQueues: {
       commerce: () => adminQueuesStore.commerce(),

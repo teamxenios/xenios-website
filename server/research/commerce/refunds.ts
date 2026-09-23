@@ -496,6 +496,11 @@ export function createRefundService(deps: RefundServiceDeps): RefundService {
     if (!order) return deny("order_not_found");
 
     const refundExecutions = deps.refundExecutions!;
+    try {
+      if (!(await refundExecutions.preflight())) return deny("payment_disabled");
+    } catch {
+      return deny("payment_disabled");
+    }
 
     // A terminal replay is answered only from the execution authority plus
     // all canonical local projections. It must bypass the ordinary

@@ -1,6 +1,6 @@
 import express, { type Request, type Response } from "express";
 import type { Server } from "node:http";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { CheckoutExecutionRecord } from "@shared/research/durable-checkout-execution";
 import { createCheckoutContinuationService, registerCheckoutContinuationApi, CHECKOUT_CONTINUATION_PATHS } from "./checkout-continuation";
 import { createDurableCheckoutExecutor, type CanonicalCheckoutExecutionStore } from "./durable-checkout-executor";
@@ -66,6 +66,25 @@ function composition(options: { requiresAction?: boolean } = {}) {
 }
 
 describe("checkout continuation service", () => {
+  it("refuses every continuation door before store or provider access when managed authority is absent", async () => {
+    const c = composition();
+    const getForMember = vi.fn(c.store.getForMember);
+    const claim = vi.fn(c.store.claim);
+    const service = createCheckoutContinuationService({
+      authorityReady: async () => false,
+      store: { getForMember, claim },
+      provider: c.model.adapter,
+      executor: c.executor,
+    });
+
+    await expect(service.status(record.memberId, record.requestKey)).resolves.toEqual({ ok: false, code: "capability_disabled" });
+    await expect(service.continue(record.memberId, record.requestKey)).resolves.toEqual({ ok: false, code: "capability_disabled" });
+    await expect(service.cancel(record.memberId, record.requestKey)).resolves.toEqual({ ok: false, code: "capability_disabled" });
+    expect(getForMember).not.toHaveBeenCalled();
+    expect(claim).not.toHaveBeenCalled();
+    expect(c.model.creates()).toHaveLength(0);
+  });
+
   it("stops at authentication with the provider's client secret, and only for the owner", async () => {
     const c = composition();
     expect((await c.executor.run(record.memberId, record.requestKey)).kind).toBe("action_required");

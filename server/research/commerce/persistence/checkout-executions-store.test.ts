@@ -709,24 +709,51 @@ describe("strict managed recovery discovery", () => {
 
 describe("Supabase webhook inbox adapter", () => {
   const event = { providerName: "stripe", eventId: "evt_1", eventType: "payment.authorized", payloadSha256: "a".repeat(64), receivedAt: new Date("2026-09-09T12:00:00Z") };
-  it("claims by primary-key insert in processing state, then completes or isolates by terminal update", async () => {
-    const fresh = fakeClient();
+  const terminalRow = (args: Record<string, unknown>) => ({
+    provider_name: args.p_provider_name,
+    event_id: args.p_event_id,
+    event_type: event.eventType,
+    payload_sha256: args.p_payload_sha256,
+    state: args.p_terminal_state,
+    outcome: args.p_outcome,
+    reason: args.p_reason,
+    execution_id: args.p_execution_id,
+    refund_execution_id: args.p_refund_execution_id,
+    received_at: event.receivedAt.toISOString(),
+    completed_at: "2026-09-09T12:00:01.000000Z",
+  });
+  it("claims and terminalizes only through the locked RPCs with exact digest/bindings", async () => {
+    const fresh = fakeClient({ rpc: (fn, args) => fn === "research_payment_webhook_inbox_claim"
+      ? [{ claim_state: "new", outcome: null }]
+      : [terminalRow(args)] });
     const inbox = createSupabaseWebhookExecutionInbox(() => fresh.client);
     expect(await inbox.claim(event)).toEqual({ state: "new" });
-    expect(fresh.calls[0]).toMatchObject({ kind: "insert", table: "research_payment_webhook_inbox", row: { state: "processing", payload_sha256: event.payloadSha256 } });
-    await inbox.complete("stripe", "evt_1", "applied", base.executionId);
-    await inbox.isolate("stripe", "evt_2", "amount_mismatch", null);
-    expect(fresh.calls.filter((c) => c.kind === "update").map((c) => [c.row?.state, c.row?.outcome, c.row?.reason ?? null])).toEqual([
+    expect(fresh.calls[0]).toMatchObject({ kind: "rpc", fn: "research_payment_webhook_inbox_claim", args: { p_payload_sha256: event.payloadSha256 } });
+    await inbox.complete("stripe", "evt_1", event.payloadSha256, "applied", base.executionId);
+    await inbox.isolate("stripe", "evt_2", event.payloadSha256, "amount_mismatch", null);
+    expect(fresh.calls.filter((c) => c.fn === "research_payment_webhook_inbox_terminalize").map((c) => [c.args?.p_terminal_state, c.args?.p_outcome, c.args?.p_reason])).toEqual([
       ["processed", "applied", null],
       ["isolated", "isolated", "amount_mismatch"],
     ]);
   });
   it("reports an existing claim as processing, processed or conflict by the signed-bytes digest", async () => {
-    const processing = fakeClient({ inboxExisting: { payload_sha256: event.payloadSha256, state: "processing", outcome: null } });
+    const processing = fakeClient({ rpc: () => [{ claim_state: "processing", outcome: null }] });
     expect(await createSupabaseWebhookExecutionInbox(() => processing.client).claim(event)).toEqual({ state: "processing" });
-    const processed = fakeClient({ inboxExisting: { payload_sha256: event.payloadSha256, state: "processed", outcome: "applied" } });
+    const processed = fakeClient({ rpc: () => [{ claim_state: "processed", outcome: "applied" }] });
     expect(await createSupabaseWebhookExecutionInbox(() => processed.client).claim(event)).toEqual({ state: "processed", outcome: "applied" });
-    const conflict = fakeClient({ inboxExisting: { payload_sha256: "b".repeat(64), state: "processed", outcome: "applied" } });
+    const conflict = fakeClient({ rpc: () => [{ claim_state: "conflict", outcome: null }] });
     expect(await createSupabaseWebhookExecutionInbox(() => conflict.client).claim(event)).toEqual({ state: "conflict" });
+  });
+  it.each([null, [], [{}], [{ claim_state: "processed", outcome: null }], [{ claim_state: "invented", outcome: null }]])(
+    "fails closed on a malformed claim RPC projection (%#)", async (data) => {
+      const malformed = fakeClient({ rpc: () => data as Record<string, unknown>[] | null });
+      await expect(createSupabaseWebhookExecutionInbox(() => malformed.client).claim(event)).rejects.toThrow(/unavailable|lacks outcome/);
+    },
+  );
+  it("fails closed when terminal RPC readback does not echo the exact digest and binding", async () => {
+    const malformed = fakeClient({ rpc: (_fn, args) => [{ ...terminalRow(args), payload_sha256: "b".repeat(64) }] });
+    await expect(createSupabaseWebhookExecutionInbox(() => malformed.client).complete(
+      event.providerName, event.eventId, event.payloadSha256, "applied", base.executionId,
+    )).rejects.toThrow(/mismatched projection/);
   });
 });

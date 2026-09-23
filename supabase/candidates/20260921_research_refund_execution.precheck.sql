@@ -32,7 +32,7 @@ begin
         ('research_order_state_events','actor_id','text'),('research_order_state_events','provider_reference','text'),
         ('research_order_state_events','idempotency_key','text'),('research_order_state_events','occurred_at','timestamptz'),
         ('research_payment_webhook_inbox','provider_name','text'),('research_payment_webhook_inbox','event_id','text'),
-        ('research_payment_webhook_inbox','execution_id','uuid')
+        ('research_payment_webhook_inbox','execution_id','uuid'),('research_payment_webhook_inbox','refund_execution_id','uuid')
       ) expected(table_name,column_name,udt_name)
      where not exists (
        select 1 from information_schema.columns c
@@ -42,8 +42,9 @@ begin
   ) then
     raise exception 'refund execution prerequisite column type drift';
   end if;
-  if exists (select 1 from information_schema.columns where table_schema='public' and table_name='research_payment_webhook_inbox' and column_name='refund_execution_id')
-     or not exists (select 1 from information_schema.columns where table_schema='public' and table_name='research_payment_webhook_inbox' and column_name='execution_id' and udt_name='uuid') then
+  if not exists (select 1 from information_schema.columns where table_schema='public' and table_name='research_payment_webhook_inbox' and column_name='refund_execution_id' and udt_name='uuid')
+     or exists (select 1 from pg_constraint where conrelid='public.research_payment_webhook_inbox'::regclass and contype='f'
+       and pg_get_constraintdef(oid) like '%refund_execution_id%') then
     raise exception 'refund webhook inbox prerequisite drift';
   end if;
   if not exists (select 1 from pg_constraint where conrelid='public.research_orders'::regclass and contype='c' and pg_get_constraintdef(oid) like '%refunded%')

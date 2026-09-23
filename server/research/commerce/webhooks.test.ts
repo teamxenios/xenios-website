@@ -220,6 +220,23 @@ function captureBody(id = "evt_1", orderId = "ord_1"): string {
 // ---------------------------------------------------------------------------
 
 describe("payment webhooks", () => {
+  it("refuses before provider verification or order effects when managed money authority is absent", async () => {
+    const payment = new FakePaymentProvider();
+    const orders = orderStore([approvedOrder()]);
+    const handler = createWebhookHandler(deps({
+      payment,
+      orders,
+      moneyAuthorityReady: async () => false,
+    }));
+
+    await expect(handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW)).resolves.toEqual({
+      ok: false,
+      code: "capability_disabled",
+    });
+    expect(payment.verifyCalls).toBe(0);
+    expect(await orders.get("ord_1")).toMatchObject({ state: "approved", captured: false });
+  });
+
   it("routes a standard signed Stripe data.object metadata event and binds its money evidence", async () => {
     const webhookSecret = "whsec_fake_webhook_test_only";
     const eventBody = JSON.stringify({

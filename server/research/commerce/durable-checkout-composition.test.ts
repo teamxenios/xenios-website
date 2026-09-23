@@ -63,7 +63,7 @@ function holds() {
   return { seam, events };
 }
 
-function build(options: { requiresAction?: boolean; env?: NodeJS.ProcessEnv; allowInMemoryStores?: boolean; provider?: "stripe" | "disabled"; refundAuthorityReady?: boolean } = {}) {
+function build(options: { requiresAction?: boolean; env?: NodeJS.ProcessEnv; allowInMemoryStores?: boolean; provider?: "stripe" | "disabled"; refundAuthorityReady?: boolean; preflightReady?: boolean } = {}) {
   const model = stripeModel({ requiresAction: options.requiresAction ?? false });
   const orders = createInMemoryOrderStore();
   const inventory = holds();
@@ -85,6 +85,7 @@ function build(options: { requiresAction?: boolean; env?: NodeJS.ProcessEnv; all
     newId: () => `${String(++ids).padStart(8, "0")}-0000-4000-8000-000000000000`,
     allowInMemoryStores: options.allowInMemoryStores ?? true,
     refundAuthorityReady: options.refundAuthorityReady ?? true,
+    refundAuthorityPreflight: async () => options.preflightReady ?? true,
   });
   return { model, orders, executions, inventory, committed, composition };
 }
@@ -122,6 +123,17 @@ describe("durable checkout composition readiness", () => {
     const { composition } = build({ refundAuthorityReady: false });
     expect(composition).toMatchObject({ ready: false, reason: "refund_authority_not_durable" });
     expect(composition.clientConfig()).toEqual({ ok: false, code: "payment_disabled" });
+  });
+  it("does not observe managed readiness until the exact capability preflight succeeds", async () => {
+    const refused = build({ preflightReady: false }).composition;
+    expect(refused.ready).toBe(true);
+    expect(refused.managedAuthorityReady()).toBe(false);
+    await expect(refused.assertReady()).resolves.toBe(false);
+    expect(refused.managedAuthorityReady()).toBe(false);
+    const ready = build().composition;
+    expect(ready.managedAuthorityReady()).toBe(false);
+    await expect(ready.assertReady()).resolves.toBe(true);
+    expect(ready.managedAuthorityReady()).toBe(true);
   });
 });
 
@@ -181,6 +193,20 @@ describe("durable checkout surface over HTTP", () => {
     expect((await call("POST", DURABLE_CHECKOUT_SURFACE_PATHS.submit, undefined, request())).status).toBe(401);
     expect(executions.snapshot()).toEqual([]);
     expect(model.requests).toHaveLength(0);
+  });
+
+  it("keeps configuration and submission closed when managed capability preflight refuses", async () => {
+    const c = build({ preflightReady: false });
+    const call = await serve(c.composition);
+    expect(await call("GET", DURABLE_CHECKOUT_SURFACE_PATHS.config, "token-owner")).toMatchObject({
+      status: 503, body: { ok: false, code: "payment_disabled" },
+    });
+    expect(await call("POST", DURABLE_CHECKOUT_SURFACE_PATHS.submit, "token-owner", request())).toMatchObject({
+      status: 503, body: { ok: false, code: "capability_disabled" },
+    });
+    expect(c.model.intents.size).toBe(0);
+    expect(c.executions.snapshot()).toEqual([]);
+    expect(c.inventory.events).toEqual([]);
   });
 
   it("carries one buyer from configuration through authentication to a committed order visible in the order record, with downstream fired once", async () => {
@@ -266,6 +292,7 @@ describe("durable checkout surface over HTTP", () => {
       newId: () => `${String(++ids).padStart(8, "0")}-0000-4000-8000-000000000000`,
       allowInMemoryStores: true,
       refundAuthorityReady: true,
+      refundAuthorityPreflight: async () => true,
     });
     const call = await serve(composition);
     const submitted = await call("POST", DURABLE_CHECKOUT_SURFACE_PATHS.submit, "token-owner", request());

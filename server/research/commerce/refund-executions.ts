@@ -40,6 +40,11 @@ export interface RefundExecutionRecord extends RefundExecutionIntent {
 
 export interface DurableRefundExecutionStore {
   readonly authority: "durable_refund_execution_v1";
+  /**
+   * Proves the managed schema/RPC capability is present before any new money
+   * operation is exposed. Configuration alone is never readiness.
+   */
+  preflight(): Promise<boolean>;
   getById(executionId: string): Promise<RefundExecutionRecord | null>;
   getByScope(scope: string): Promise<RefundExecutionRecord | null>;
   prepare(intent: RefundExecutionIntent): Promise<RefundExecutionRecord>;
@@ -90,6 +95,9 @@ export function createInMemoryRefundExecutionStore(deps: {
     row.amountCents === intent.amountCents && row.currency === intent.currency;
   return {
     authority: "durable_refund_execution_v1",
+    async preflight() {
+      return true;
+    },
     async getById(executionId) {
       const row = rows.get(executionId);
       return row ? clone(row) : null;

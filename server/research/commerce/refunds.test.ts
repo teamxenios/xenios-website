@@ -522,6 +522,24 @@ describe("refund", () => {
     expect((await claims.get(submitted.claim.claimId))?.state).toBe("approved");
   });
 
+  it("refuses before provider contact when the managed capability preflight is absent or drifted", async () => {
+    const payment = new SpyPaymentProvider();
+    const claims = createInMemoryClaimRepository();
+    const order = deliveredOrder();
+    const orders = createInMemoryClaimOrderRepository([order]);
+    const base = createInMemoryRefundExecutionStore({ claims, orders });
+    const executions: DurableRefundExecutionStore = { ...base, preflight: async () => false };
+    const service = createRefundService({ claims, orders, payment, commerceEnabled: true,
+      durableRefundExecutionAvailable: true, refundExecutions: executions });
+    const submitted = expectClaim(await service.submitClaim("mem_1", claimRequest(), NOW));
+    expectClaim(await service.reviewClaim(submitted.claim.claimId, "adm_1", "approved", NOW));
+    const outcome = await service.resolveWithRefund(submitted.claim.claimId, "adm_1", 12_000, "key_1", NOW);
+    expect(expectDenied(outcome)).toEqual(["payment_disabled"]);
+    expect(payment.refundCalls).toEqual([]);
+    expect(base.snapshot()).toEqual([]);
+    expect(order.state).toBe("delivered");
+  });
+
   it("never treats a legacy refund-key row as completion evidence for the new durable authority", async () => {
     const h = harness();
     const claimId = await approvedClaim(h);

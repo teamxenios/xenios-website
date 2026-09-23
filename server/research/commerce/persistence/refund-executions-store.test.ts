@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { refundExecutionRowToRecord } from "./refund-executions-store";
+import { describe, expect, it, vi } from "vitest";
+import { createSupabaseRefundExecutionStore, REFUND_EXECUTION_CAPABILITY, refundExecutionRowToRecord } from "./refund-executions-store";
 
 const row = {
   id: "00000000-0000-4000-8000-000000000001",
@@ -20,6 +20,22 @@ const row = {
 };
 
 describe("refund execution managed projection", () => {
+  it("accepts only the exact complete checkout-money managed capability", async () => {
+    const exactRpc = vi.fn(async () => ({ data: REFUND_EXECUTION_CAPABILITY, error: null }));
+    const exact = createSupabaseRefundExecutionStore({ rpc: exactRpc } as never);
+    await expect(exact.preflight()).resolves.toBe(true);
+    expect(exactRpc).toHaveBeenCalledWith("research_checkout_money_capability");
+    for (const result of [
+      { data: "durable_refund_execution_v1", error: null },
+      { data: null, error: null },
+      { data: REFUND_EXECUTION_CAPABILITY, error: { message: "RPC missing" } },
+    ]) {
+      const store = createSupabaseRefundExecutionStore({ rpc: async () => result } as never);
+      await expect(store.preflight()).resolves.toBe(false);
+    }
+    const throwing = createSupabaseRefundExecutionStore({ rpc: async () => { throw new Error("offline"); } } as never);
+    await expect(throwing.preflight()).resolves.toBe(false);
+  });
   it("accepts the complete canonical calling-provider row", () => {
     expect(refundExecutionRowToRecord(row)).toMatchObject({ state: "calling_provider", version: 2, amountCents: 12000 });
   });

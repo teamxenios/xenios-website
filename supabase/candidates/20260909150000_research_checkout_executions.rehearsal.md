@@ -1,8 +1,8 @@
 # Durable checkout executions: the executable rehearsal (A runs it; Fable prepared it)
 
 Candidate: `supabase/candidates/20260909150000_research_checkout_executions.sql`
-(unchanged since `c70b77e1568d77465aeb23aad662ff7aa28916f8`; verify the LF SHA-256 you
-apply and record it in the receipt). Companion files: `.precheck.sql`,
+(verify the current LF SHA-256 you apply and record it in the receipt).
+Companion files: `.precheck.sql`,
 `.postcheck.sql`, `.rehearsal.sql` (this package), `.rollback.md`.
 
 Nothing here has been executed anywhere by Fable: there is no local PostgreSQL
@@ -17,9 +17,10 @@ effects on the shared staging project: two new service-role-only tables, one
 trigger, four functions. If the standing authorization does not name the
 checkout-executions candidate, the exact missing scope is: **founder
 confirmation that `20260909150000_research_checkout_executions.sql` may be
-installed on the authorized staging project.** Nothing else is missing for the
-rehearsal; a throwaway rehearsal database (a fresh branch/database with the
-canonical order, reservation and ledger tables) needs no additional scope.
+installed on the authorized staging project.** Managed installation still
+requires the exact current checkout candidate chain and its complete-money-path
+capability check; a throwaway rehearsal database (a fresh branch/database with
+the canonical order, reservation and ledger tables) needs no additional scope.
 
 ## 1. Where each step runs
 
@@ -57,8 +58,9 @@ psql "$REHEARSAL_DB_URL" -X -v ON_ERROR_STOP=1 -f supabase/candidates/2026090915
 Expected: precheck prints `checkout executions precheck PASS` (first install
 only; on a database that already has the objects it STOPS by design, run the
 postcheck instead); postcheck prints `checkout executions postcheck PASS`
-(zero rows, RLS forced, no policies, service_role without DELETE, functions
-executable by service_role only); rehearsal prints
+(zero rows, RLS forced, no policies, an RPC-only inbox whose service-role table
+access is SELECT-only, all six write/DDL privileges denied, guarded
+functions executable by service_role only); rehearsal prints
 `checkout executions rehearsal PASS` and exits 0.
 
 ## 3. What the rehearsal asserts (and what it proves about the release)
@@ -91,9 +93,13 @@ executable by service_role only); rehearsal prints
    evidence `commit_cancelled` cancels the order (cancel key recorded), releases
    the hold, appends one state event and stamps `settled_at`; repeating returns
    the row unchanged (nothing released twice); a stale version returns nothing.
-8. Webhook inbox: one receipt per (provider, event id); the same id again is
-   refused; the row moves to `processed` with its execution; an unknown state
-   is refused.
+8. Webhook inbox: a locked claim RPC creates one receipt per (provider, event
+   id); exact interrupted replay resumes, the same id with a different payload
+   digest conflicts, and a locked terminal RPC moves it once to `processed`
+   with its execution. Exact terminal replay is idempotent while a terminal
+   rewrite is refused. The service role can call the RPCs and read receipts but
+   direct INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, and TRIGGER privileges
+   are absent.
 9. Member binding: another member's execution cannot commit this member's
    order (raises; order untouched).
 

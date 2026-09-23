@@ -44,8 +44,8 @@ export type WebhookExecutionInboxClaim =
  */
 export interface WebhookExecutionInbox {
   claim(event: WebhookExecutionInboxEvent): Promise<WebhookExecutionInboxClaim>;
-  complete(providerName: string, eventId: string, outcome: "applied" | "acknowledged", executionId: string | null, refundExecutionId?: string): Promise<void>;
-  isolate(providerName: string, eventId: string, reason: string, executionId: string | null, refundExecutionId?: string): Promise<void>;
+  complete(providerName: string, eventId: string, payloadSha256: string, outcome: "applied" | "acknowledged", executionId: string | null, refundExecutionId?: string): Promise<void>;
+  isolate(providerName: string, eventId: string, payloadSha256: string, reason: string, executionId: string | null, refundExecutionId?: string): Promise<void>;
 }
 
 export interface WebhookExecutionLookup {
@@ -132,7 +132,7 @@ export function createWebhookExecutionProcessor(deps: WebhookExecutionProcessorD
           return { outcome: "retry", reason: "execution_contention" };
         }
         if (decision.kind === "isolate") {
-          await deps.inbox.isolate(deps.providerName, verified.eventId, decision.reason, executionId);
+          await deps.inbox.isolate(deps.providerName, verified.eventId, payloadSha256, decision.reason, executionId);
           return { outcome: "isolated", executionId, reason: decision.reason };
         }
         if (decision.kind === "acknowledge") {
@@ -146,7 +146,7 @@ export function createWebhookExecutionProcessor(deps: WebhookExecutionProcessorD
           ) {
             return { outcome: "retry", reason: "settlement_incomplete" };
           }
-          await deps.inbox.complete(deps.providerName, verified.eventId, "acknowledged", executionId);
+          await deps.inbox.complete(deps.providerName, verified.eventId, payloadSha256, "acknowledged", executionId);
           return { outcome: "acknowledged", executionId, reason: decision.reason };
         }
         const saved = await deps.executions.recordProvider(execution!.executionId, execution!.version, decision.proof);
@@ -154,7 +154,7 @@ export function createWebhookExecutionProcessor(deps: WebhookExecutionProcessorD
           if (decision.target === "captured" && !(await settleCaptured(saved))) {
             return { outcome: "retry", reason: "settlement_incomplete" };
           }
-          await deps.inbox.complete(deps.providerName, verified.eventId, "applied", saved.executionId);
+          await deps.inbox.complete(deps.providerName, verified.eventId, payloadSha256, "applied", saved.executionId);
           return { outcome: "applied", executionId: saved.executionId, reason: decision.target };
         }
       }
@@ -178,17 +178,27 @@ export function createInMemoryWebhookExecutionInbox() {
       rows.set(key(event.providerName, event.eventId), { payloadSha256: event.payloadSha256, state: "processing", outcome: null, reason: null, executionId: null, refundExecutionId: null });
       return { state: "new" };
     },
-    async complete(providerName, eventId, outcome, executionId, refundExecutionId) {
+    async complete(providerName, eventId, payloadSha256, outcome, executionId, refundExecutionId) {
       const row = rows.get(key(providerName, eventId));
       if (!row) throw new Error("inbox completion without a claim");
+      if (row.payloadSha256 !== payloadSha256) throw new Error("inbox completion digest mismatch");
+      if (row.state !== "processing") {
+        if (row.state === "processed" && row.outcome === outcome && row.executionId === executionId && row.refundExecutionId === (refundExecutionId ?? null)) return;
+        throw new Error("inbox completion conflicts with terminal receipt");
+      }
       row.state = "processed";
       row.outcome = outcome;
       row.executionId = executionId;
       row.refundExecutionId = refundExecutionId ?? null;
     },
-    async isolate(providerName, eventId, reason, executionId, refundExecutionId) {
+    async isolate(providerName, eventId, payloadSha256, reason, executionId, refundExecutionId) {
       const row = rows.get(key(providerName, eventId));
       if (!row) throw new Error("inbox isolation without a claim");
+      if (row.payloadSha256 !== payloadSha256) throw new Error("inbox isolation digest mismatch");
+      if (row.state !== "processing") {
+        if (row.state === "isolated" && row.reason === reason && row.executionId === executionId && row.refundExecutionId === (refundExecutionId ?? null)) return;
+        throw new Error("inbox isolation conflicts with terminal receipt");
+      }
       row.state = "isolated";
       row.outcome = "isolated";
       row.reason = reason;

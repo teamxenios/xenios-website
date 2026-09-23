@@ -443,7 +443,6 @@ export function createInMemoryCheckoutExecutionStore(options: { now?: () => Date
 // ---------------------------------------------------------------------------
 
 const EXECUTIONS = "research_checkout_executions";
-const INBOX = "research_payment_webhook_inbox";
 // Every column rowToExecution reads. PostgREST returns ONLY what is projected,
 // so an omission here does not fail: it silently answers null. Leaving out
 // authorization_first_attempted_at disabled the port's creation-key retention
@@ -665,36 +664,72 @@ export function createSupabaseCheckoutExecutionStore(client: () => CheckoutExecu
   };
 }
 
-/** Durable webhook receipt over research_payment_webhook_inbox: claim by primary key, terminal-state updates only. */
+const INBOX_DIGEST = /^[a-f0-9]{64}$/;
+const inboxRpcRow = (data: Row[] | Row | null): Row | null => {
+  if (Array.isArray(data)) return data.length === 1 && managedObject(data[0]) ? data[0] : null;
+  return managedObject(data) ? data : null;
+};
+
+/** Durable webhook receipt over locked database RPCs; service_role has no direct write grant. */
 export function createSupabaseWebhookExecutionInbox(client: () => CheckoutExecutionClient = () => getSupabaseAdmin() as unknown as CheckoutExecutionClient): WebhookExecutionInbox {
   const fail = (what: string, error: ProviderError) => new Error(`webhook inbox ${what} failed: ${error?.message ?? "unknown"}`);
+  const terminalize = async (input: {
+    providerName: string;
+    eventId: string;
+    payloadSha256: string;
+    state: "processed" | "isolated";
+    outcome: "applied" | "acknowledged" | "isolated";
+    reason: string | null;
+    executionId: string | null;
+    refundExecutionId: string | null;
+  }): Promise<void> => {
+    const result = await client().rpc("research_payment_webhook_inbox_terminalize", {
+      p_provider_name: input.providerName,
+      p_event_id: input.eventId,
+      p_payload_sha256: input.payloadSha256,
+      p_terminal_state: input.state,
+      p_outcome: input.outcome,
+      p_reason: input.reason,
+      p_execution_id: input.executionId,
+      p_refund_execution_id: input.refundExecutionId,
+    });
+    if (result.error) throw fail("terminal transition", result.error);
+    const row = inboxRpcRow(result.data);
+    if (!row || row.provider_name !== input.providerName || row.event_id !== input.eventId ||
+        row.payload_sha256 !== input.payloadSha256 || row.state !== input.state || row.outcome !== input.outcome ||
+        row.reason !== input.reason || row.execution_id !== input.executionId ||
+        row.refund_execution_id !== input.refundExecutionId || !managedString(row.event_type, 1, 200) ||
+        !INBOX_DIGEST.test(String(row.payload_sha256)) || !managedTimestamp(row.received_at) ||
+        !managedTimestamp(row.completed_at)) {
+      throw fail("terminal transition", { message: "unavailable or mismatched projection" });
+    }
+  };
   return {
     async claim(event: WebhookExecutionInboxEvent) {
-      const insert = await client().from(INBOX).insert({
-        provider_name: event.providerName,
-        event_id: event.eventId,
-        event_type: event.eventType,
-        payload_sha256: event.payloadSha256,
-        state: "processing",
-        received_at: event.receivedAt.toISOString(),
+      const result = await client().rpc("research_payment_webhook_inbox_claim", {
+        p_provider_name: event.providerName,
+        p_event_id: event.eventId,
+        p_event_type: event.eventType,
+        p_payload_sha256: event.payloadSha256,
+        p_received_at: event.receivedAt.toISOString(),
       });
-      if (!insert.error) return { state: "new" };
-      if (insert.error.code !== UNIQUE_VIOLATION) throw fail("claim", insert.error);
-      const existing = await client().from(INBOX).select("payload_sha256, state, outcome").eq("provider_name", event.providerName).eq("event_id", event.eventId).maybeSingle();
-      if (existing.error) throw fail("claim read-back", existing.error);
-      const row = existing.data as { payload_sha256: string; state: string; outcome: string | null } | null;
-      if (!row) throw fail("claim read-back", { message: "row vanished after unique violation" });
-      if (row.payload_sha256 !== event.payloadSha256) return { state: "conflict" };
-      if (row.state === "processing") return { state: "processing" };
-      return { state: "processed", outcome: row.outcome ?? row.state };
+      if (result.error) throw fail("claim", result.error);
+      const row = inboxRpcRow(result.data);
+      if (!row || !["new", "processing", "processed", "conflict"].includes(String(row.claim_state)) ||
+          (row.outcome !== null && !managedString(row.outcome, 1, 200))) {
+        throw fail("claim", { message: "unavailable projection" });
+      }
+      if (row.claim_state === "new") return { state: "new" };
+      if (row.claim_state === "processing") return { state: "processing" };
+      if (row.claim_state === "conflict") return { state: "conflict" };
+      if (!managedString(row.outcome, 1, 200)) throw fail("claim", { message: "terminal receipt lacks outcome" });
+      return { state: "processed", outcome: row.outcome };
     },
-    async complete(providerName, eventId, outcome, executionId, refundExecutionId) {
-      const result = await client().from(INBOX).update({ state: "processed", outcome, execution_id: executionId, completed_at: new Date().toISOString(), ...(refundExecutionId ? { refund_execution_id: refundExecutionId } : {}) }).eq("provider_name", providerName).eq("event_id", eventId);
-      if (result.error) throw fail("complete", result.error);
+    async complete(providerName, eventId, payloadSha256, outcome, executionId, refundExecutionId) {
+      await terminalize({ providerName, eventId, payloadSha256, state: "processed", outcome, reason: null, executionId, refundExecutionId: refundExecutionId ?? null });
     },
-    async isolate(providerName, eventId, reason, executionId, refundExecutionId) {
-      const result = await client().from(INBOX).update({ state: "isolated", outcome: "isolated", reason, execution_id: executionId, completed_at: new Date().toISOString(), ...(refundExecutionId ? { refund_execution_id: refundExecutionId } : {}) }).eq("provider_name", providerName).eq("event_id", eventId);
-      if (result.error) throw fail("isolate", result.error);
+    async isolate(providerName, eventId, payloadSha256, reason, executionId, refundExecutionId) {
+      await terminalize({ providerName, eventId, payloadSha256, state: "isolated", outcome: "isolated", reason, executionId, refundExecutionId: refundExecutionId ?? null });
     },
   };
 }

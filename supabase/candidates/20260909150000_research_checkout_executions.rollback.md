@@ -1,10 +1,11 @@
 # Durable checkout executions: recovery procedure (prepares, authorizes nothing)
 
-This candidate is additive: two service-role-only tables, one trigger and four
-transition functions. It creates no rows, seeds nothing and changes no existing
-table, policy or grant. It is not registered in the migration DAG or the
-managed ledger until it has been rehearsed twice on the authorized staging
-project with its exact precheck and postcheck.
+This candidate is additive: two service-role-only tables, two immutable
+triggers, four checkout transition functions, two locked webhook-inbox RPCs,
+and their trigger functions. It creates no rows, seeds nothing and changes no
+pre-existing table, policy, or grant. It is not registered in the migration DAG
+or the managed ledger until it has passed the authorized installation sequence
+with its exact precheck and postcheck.
 
 ## Before applying (staging first, production only under exact release authority)
 
@@ -15,8 +16,10 @@ project with its exact precheck and postcheck.
   rehearsal database to prove idempotence (`create ... if not exists`,
   `create or replace`, `drop trigger if exists`).
 - Run the postcheck read-only. Zero rows, RLS enabled and forced, no policies,
-  no public-role privileges, no service-role DELETE, functions executable by
-  service_role only.
+  no public-role privileges, and exact service-role ACLs: execution persistence
+  has only its required SELECT/INSERT/UPDATE access, the inbox is SELECT-only,
+  and writes occur through the guarded functions. DELETE, TRUNCATE, REFERENCES,
+  and TRIGGER are denied.
 
 ## Rehearsal that must pass before any production request
 
@@ -56,6 +59,7 @@ functions before any retry. A connector timeout is neither success nor failure.
 
 Do not drop the tables: executions and inbox rows are payment evidence. To
 retire the feature, keep the composition disabled (the provider resolver still
-returns Disabled) and revoke EXECUTE on the four functions from service_role.
-Never delete inbox rows; never edit an execution's identity columns (the
-trigger refuses).
+returns Disabled) and revoke EXECUTE on all four checkout transition functions
+and both webhook-inbox RPCs from service_role. Keep the trigger functions
+non-executable by service roles. Never delete or truncate inbox rows; never edit
+an execution or receipt identity column (the triggers refuse).

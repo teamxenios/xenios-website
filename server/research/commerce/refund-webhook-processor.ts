@@ -66,23 +66,23 @@ export function createRefundWebhookProcessor(deps: RefundWebhookProcessorDeps): 
         for (let attempt = 0; attempt < 3; attempt++) {
           const execution = await deps.executions.getById(executionId);
           if (!execution) {
-            await deps.inbox.isolate(deps.providerName, verified.eventId, "refund_execution_missing", null);
+            await deps.inbox.isolate(deps.providerName, verified.eventId, payloadSha256, "refund_execution_missing", null);
             return { outcome: "isolated", executionId, reason: "refund_execution_missing" };
           }
           if (!exactEvidence(verified, execution)) {
-            await deps.inbox.isolate(deps.providerName, verified.eventId, "refund_evidence_mismatch", null, executionId);
+            await deps.inbox.isolate(deps.providerName, verified.eventId, payloadSha256, "refund_evidence_mismatch", null, executionId);
             return { outcome: "isolated", executionId, reason: "refund_evidence_mismatch" };
           }
           if (execution.state === "prepared") {
-            await deps.inbox.isolate(deps.providerName, verified.eventId, "refund_was_never_attempted", null, executionId);
+            await deps.inbox.isolate(deps.providerName, verified.eventId, payloadSha256, "refund_was_never_attempted", null, executionId);
             return { outcome: "isolated", executionId, reason: "refund_was_never_attempted" };
           }
           if (execution.state === "committed") {
             if (execution.providerRefundReference !== verified.refundReference) {
-              await deps.inbox.isolate(deps.providerName, verified.eventId, "refund_reference_mismatch", null, executionId);
+              await deps.inbox.isolate(deps.providerName, verified.eventId, payloadSha256, "refund_reference_mismatch", null, executionId);
               return { outcome: "isolated", executionId, reason: "refund_reference_mismatch" };
             }
-            await deps.inbox.complete(deps.providerName, verified.eventId, "acknowledged", null, executionId);
+            await deps.inbox.complete(deps.providerName, verified.eventId, payloadSha256, "acknowledged", null, executionId);
             return { outcome: "acknowledged", executionId };
           }
 
@@ -98,13 +98,13 @@ export function createRefundWebhookProcessor(deps: RefundWebhookProcessorDeps): 
             if (!recorded) continue;
             ready = recorded;
           } else if (ready.providerRefundReference !== verified.refundReference) {
-            await deps.inbox.isolate(deps.providerName, verified.eventId, "refund_reference_mismatch", null, executionId);
+            await deps.inbox.isolate(deps.providerName, verified.eventId, payloadSha256, "refund_reference_mismatch", null, executionId);
             return { outcome: "isolated", executionId, reason: "refund_reference_mismatch" };
           }
 
           const committed = await deps.executions.commit(ready.executionId, ready.version);
           if (!committed || committed.state !== "committed") continue;
-          await deps.inbox.complete(deps.providerName, verified.eventId, "applied", null, executionId);
+          await deps.inbox.complete(deps.providerName, verified.eventId, payloadSha256, "applied", null, executionId);
           return { outcome: "applied", executionId };
         }
       } catch {

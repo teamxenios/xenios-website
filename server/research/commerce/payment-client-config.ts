@@ -77,8 +77,8 @@ function privateNoStore(res: Response): void {
  * 503 with payment_disabled or payment_misconfigured means "use today's
  * ordering path"; the page never guesses a provider from a missing answer.
  */
-export function registerPaymentClientConfigApi(app: Express, guards: PaymentClientConfigGuards, deps: { resolve: () => PaymentClientConfigResult }): void {
-  app.get(PAYMENT_CLIENT_CONFIG_PATH, guards.requireActiveMember, (req: Request, res: Response) => {
+export function registerPaymentClientConfigApi(app: Express, guards: PaymentClientConfigGuards, deps: { resolve: () => PaymentClientConfigResult | Promise<PaymentClientConfigResult> }): void {
+  app.get(PAYMENT_CLIENT_CONFIG_PATH, guards.requireActiveMember, async (req: Request, res: Response) => {
     privateNoStore(res);
     if (!subjectOf(req)) {
       res.status(403).json({ ok: false, code: "forbidden", message: "This area requires an active membership." });
@@ -86,7 +86,7 @@ export function registerPaymentClientConfigApi(app: Express, guards: PaymentClie
     }
     let result: PaymentClientConfigResult;
     try {
-      result = deps.resolve();
+      result = await deps.resolve();
     } catch {
       result = { ok: false, code: "payment_disabled" };
     }
