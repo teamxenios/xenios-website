@@ -20,7 +20,7 @@ Commission SQL uses `extensions.digest`; its precheck requires `extensions.diges
 
 - Submission: 55/55 passed.
 - Focused: 73 files passed, 1 skipped; 2,761 tests passed, 4 skipped, 0 failed.
-- Disposable SQL: PASS on PGlite 0.5.8, exact capability v2 and 22 named checks/tamper probes; no managed or independent-connection claim.
+- Disposable SQL: PASS on PGlite 0.5.8, exact capability v2 and 24 named checks/tamper probes; no managed or independent-connection claim.
 - `npm run check`: PASS.
 - `npm run build`: PASS.
 - Route uniqueness: 448 routes across 439 call sites, zero duplicates.
