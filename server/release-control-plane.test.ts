@@ -80,6 +80,9 @@ const PROTECTED_PENDING_SOURCE_PATHS = new Set([
   "supabase/migrations/20260729000000_research_pricing_lineage.sql",
   "supabase/migrations/20260729100000_research_rls_retro_hardening.sql",
 ]);
+const CHECKOUT_COMMERCE_AUTHORITY_SOURCE_SHA = "29841a13d11401643466ee56178f4fef1ae43e19";
+const CHECKOUT_COMMERCE_AUTHORITY_PATH =
+  "supabase/migrations/20260923181443_research_checkout_commerce_authority.sql";
 // The Early Access durable-persistence chain (ledger rows 50-53), pending,
 // pinned to the reviewed source commits on claude/f5-ea-durable-persistence.
 const EA_PERSISTENCE_SOURCE_SHA = "8739b433e5a1588a72bfed3eae649e38e416fe0f";
@@ -1176,6 +1179,8 @@ describe("migration DAG validator", () => {
             expect(sourceSha).toBe(BULK_UNIT_FACTS_SOURCE_SHA);
           } else if (path === DECLARED_AFFILIATE_CODE_PATH) {
             expect(sourceSha).toBe(DECLARED_AFFILIATE_CODE_SOURCE_SHA);
+          } else if (path === CHECKOUT_COMMERCE_AUTHORITY_PATH) {
+            expect(sourceSha).toBe(CHECKOUT_COMMERCE_AUTHORITY_SOURCE_SHA);
           } else if (path === "supabase/candidates/20260906120000_research_resource_library.sql") {
             expect(sourceSha).toBe("6c77c5663071715f8fe47038f57100c16c430246");
             return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], {

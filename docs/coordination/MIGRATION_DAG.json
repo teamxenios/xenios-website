@@ -744,6 +744,27 @@
         "procedure": "supabase/candidates/20260906120000_research_resource_library.rollback.md",
         "evidence": "Exact e55 applied once to managed PG17.6; exact 7c7 postcheck passed before any content with zero rows/objects, private bucket, FORCE RLS and expected ACL/RPC fingerprints. Receipt: docs/revenue-launch/20260907/resource-hub-production-migration-3814.json. Existing applyTwiceVerified reflects local154/154 PG17.5/18.3 rehearsals only; never a second production apply. Preserve additive data; Storage HTTP/live role qualification remains pending."
       }
+    },
+    {
+      "id": "research_checkout_commerce_authority",
+      "path": "supabase/migrations/20260923181443_research_checkout_commerce_authority.sql",
+      "sourceSha": "29841a13d11401643466ee56178f4fef1ae43e19",
+      "dependsOn": [
+        "research_inventory_reservation_commands"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "81638f5891e5284fe55c42080a7f1910a944b168a8c12d8e2c869073f59ffb46"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "restore_predecessor_capability_and_repository_code_before_dropping_the_three_bounded_authorities",
+        "procedure": "docs/production-completion/checkout/COMMERCE_AUTHORITY_QUALIFICATION_20260923.md",
+        "evidence": "Applied twice from broad, partial, and exact ACL states in disposable PGlite 0.5.8 / PostgreSQL 18.3; exact Capability V2 token restored in every state; no managed environment contacted."
+      },
+      "notes": "Source-only checkout authority repair. Requires the reviewed refund-execution candidate and Capability V2 chain before apply; the DAG dependency records the latest represented managed prerequisite. Creates no domain rows and remains unauthorized for staging or production."
     }
   ],
   "invariants": [
