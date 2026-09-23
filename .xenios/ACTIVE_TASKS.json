@@ -6,7 +6,7 @@
       "id": "XENIOS-CHECKOUT-RC-P1-REMEDIATION-20260923",
       "title": "Remediate checkout RC transactionality, inventory authority, capability attestation, and release gates",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-checkout-rc-second-review-20260923",
       "baseSha": "20f069088e1793146f66e04116232b4f0a41de9b",
       "paths": [
@@ -45,10 +45,10 @@
       "scopeNote": "Founder-authorized local remediation from the independently reviewed checkout SHA. Commit and push only; no merge, deploy, managed migration, production mutation, provider activation, or feature activation.",
       "claimedAt": "2026-09-23T12:23:23.075Z",
       "handoff": {
-        "session": "codex-checkout-rc-p1-remediation-20260923",
-        "sha": "9633233cebb8907c5b2244d2508883c6aa832630",
-        "file": ".xenios/handoffs/2026-09-23T05-24-52-022Z-XENIOS-CHECKOUT-RC-P1-REMEDIATION-20260923-codex-checkout-rc-p1-remediation-20260923.md",
-        "at": "2026-09-23T05:24:52.025Z"
+        "session": "codex-checkout-rc-second-review-20260923",
+        "sha": "23d4869df8370341fc5ec8e9963f020b6103faa3",
+        "file": ".xenios/handoffs/2026-09-23T14-40-26-133Z-XENIOS-CHECKOUT-RC-P1-REMEDIATION-20260923-codex-checkout-rc-second-review-20260923.md",
+        "at": "2026-09-23T14:40:26.136Z"
       }
     },
     {

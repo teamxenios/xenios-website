@@ -3,8 +3,8 @@
   "tool": "codex",
   "lane": "checkout-rc-p1-remediation",
   "branch": "codex/xenios-checkout-rc-p1-remediation-20260923",
-  "state": "active",
+  "state": "handoff_ready",
   "startedAt": "2026-09-23T04:19:04.007Z",
   "heartbeatAt": "2026-09-23T05:16:21.545Z",
-  "note": ""
+  "note": "Original remediation handoff preserved and superseded by the second independent review; lease is already in handoff state."
 }
