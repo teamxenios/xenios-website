@@ -92,3 +92,27 @@ row.
 Passing this document's source gates makes the commit eligible only for an
 independent review. It is not staging-qualified or production-ready and does
 not authorize migration apply, deployment, checkout activation, or merge.
+
+## Final source gates
+
+- focused mounted persistence/production wiring: 175/175;
+- submission/refund/persistence/production-wiring selection: 293/293;
+- affected UI rerun after a host timer-starvation incident: 98/98;
+- final full suite with four bounded workers: 964 files passed, 6 skipped;
+  18,009 tests passed, 85 skipped, zero failed;
+- application and release-control-plane TypeScript: PASS;
+- production build: PASS;
+- migration DAG: 37 nodes, canonical checksums and source bytes PASS;
+- site record, route uniqueness, protected-core hashes, and `public.digest`
+  qualification: PASS;
+- approved bounded V3 privacy and secret scan from the exact base through the
+  committed candidate: 1,209 added lines across 21 files, zero raw secrets,
+  zero unresolved secrets, and zero bounded PII findings;
+- local SQL authority rehearsal: PASS, including 18 existing and 16 new
+  isolated tamper cases and apply-twice convergence from three ACL states.
+
+One default-worker full-suite attempt was interrupted after the host paused its
+first UI tests for about 37 minutes, causing timer and React `act()` cascades.
+Those five reported files immediately passed 98/98 in isolation, and the full
+four-worker rerun passed with the counts above. No source change was made in
+response to the environmental stall.
