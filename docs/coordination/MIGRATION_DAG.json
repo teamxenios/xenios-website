@@ -110,14 +110,14 @@
     {
       "id": "research_persistent_cart",
       "path": "supabase/migrations/20260727200000_research_persistent_cart.sql",
-      "sourceSha": "4a45b89856df3104de498c7124d27b608e52b34d",
+      "sourceSha": "43e21784bcee2652e274d1161c91584906d41f07",
       "dependsOn": [
         "research_inventory_reservation_commands",
         "research_variant_strength_write_gate"
       ],
       "checksum": {
         "algorithm": "sha256",
-        "value": "6d1379db45939bdb27f6ea1b32c50e3137a3d0c3cbdbe21cd9a145e2d771d880"
+        "value": "0e0bbe23bef4c214ccdafd9cb9cd6a8682a9de0b8cc8fa4e376de51f4b5a1f43"
       },
       "appliedToProduction": false,
       "managedMigrationId": "PENDING",
@@ -125,7 +125,7 @@
       "rollback": {
         "strategy": "retain_additive_schema_until_explicit_zero-row_removal_is_approved",
         "procedure": "docs/coordination/WEBSITE_5_WAVE3_PERSISTENT_CART_HANDOFF.md",
-        "evidence": "Accepted PR103 and PR117 disposable PostgreSQL 16 apply-twice, forced-RLS, privilege, idempotency, concurrency, historical-and-current inventory, immutable-audit, zero-row, and rollback-zero proof"
+        "evidence": "Current source: managed-pgcrypto-shape PGlite 0.5.8/PostgreSQL 18.3 apply-twice plus checked-in verifier PASS (4 forced-RLS tables and 5 hardened command functions). Accepted PR103 and PR117 PostgreSQL 16 security, idempotency, concurrency, inventory, immutable-audit and rollback proof binds the predecessor bytes; exact-current stock PostgreSQL 16 rerun remains required."
       }
     },
     {
