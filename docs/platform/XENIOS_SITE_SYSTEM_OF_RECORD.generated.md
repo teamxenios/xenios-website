@@ -1,8 +1,8 @@
 # Xenios Site System of Record
 
-Generated from source commit: `8b9b8256719e1896c893d075b5ab99b9f036befd` (2026-09-23T09:34:31-05:00)
+Generated from source commit: `b55ac7e973352b1b3522a15371507a7b2bdd49a3` (2026-09-23T14:21:44-05:00)
 
-Source tree: `a034f8675ba1987e4525ee42f48b8647ac96eb05` on `codex/xenios-checkout-rc-second-review-20260923`
+Source tree: `0edb1aa8195cc5c56f896f69e00e4a2aead991c7` on `codex/xenios-checkout-commerce-authority-refactor-20260923`
 
 Recorded production: `c545a70eb694d990842ad1259df4f0786dab92c9` / `dep-dag8l567bikc738a1nj0` (deployed_not_authenticated_smoked)
 
