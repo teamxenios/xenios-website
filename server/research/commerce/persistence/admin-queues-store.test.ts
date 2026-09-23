@@ -360,7 +360,20 @@ function fakeSupabase(tables: Record<string, Array<Record<string, unknown>>>): S
     });
     return api;
   }
-  return { from: (table: string) => builder(table) } as unknown as SupabaseClient;
+  return {
+    from: (table: string) => {
+      if (table === "research_claims") throw new Error("forbidden direct relation access: research_claims");
+      return builder(table);
+    },
+    async rpc(name: string, args: { p_action?: string }) {
+      if (name !== "research_claim_repository" || args.p_action !== "list_open") {
+        return { data: null, error: { message: `unknown RPC ${name}` } };
+      }
+      const claims = tables.research_claims;
+      if (!claims) return { data: null, error: { message: "relation research_claims does not exist" } };
+      return { data: claims.filter((row) => !["resolved", "declined"].includes(String(row.state))), error: null };
+    },
+  } as unknown as SupabaseClient;
 }
 
 describe("createSupabaseAdminQueuesStore (fake client)", () => {

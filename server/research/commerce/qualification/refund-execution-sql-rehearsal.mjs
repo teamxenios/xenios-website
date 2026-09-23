@@ -41,6 +41,7 @@ const RECOVERY = "supabase/candidates/20260910120000_research_checkout_execution
 const CREDIT = "supabase/candidates/20260910201400_research_checkout_credit_reservations";
 const OPERATION = "supabase/candidates/20260910220129_research_checkout_recovery_operation";
 const REFUND = "supabase/candidates/20260921_research_refund_execution";
+const COMMERCE_AUTHORITY = "supabase/migrations/20260923181443_research_checkout_commerce_authority.sql";
 const FILES = [
   "supabase/production/research-track-b-commerce.sql",
   "supabase/research-idempotency-keys.sql",
@@ -49,7 +50,7 @@ const FILES = [
   `${CREDIT}.precheck.sql`, `${CREDIT}.sql`, `${CREDIT}.postcheck.sql`,
   `${RECOVERY}.precheck.sql`, `${RECOVERY}.sql`, `${RECOVERY}.postcheck.sql`,
   `${OPERATION}.precheck.sql`, `${OPERATION}.sql`, `${OPERATION}.postcheck.sql`,
-  `${REFUND}.precheck.sql`, `${REFUND}.sql`, `${REFUND}.postcheck.sql`, `${REFUND}.rehearsal.sql`,
+  `${REFUND}.precheck.sql`, `${REFUND}.sql`, COMMERCE_AUTHORITY, `${REFUND}.postcheck.sql`, `${REFUND}.rehearsal.sql`,
 ];
 const capability = "durable_checkout_money_v2:20260923.1";
 const lf = (bytes) => bytes.toString("utf8").replaceAll("\r\n", "\n");
@@ -60,13 +61,57 @@ const inputs = await Promise.all(FILES.map(async (name) => {
 }));
 const headSha = execFileSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim();
 
+const initializeDatabase = async (target) => target.exec(`create schema if not exists extensions;
+  create extension if not exists pgcrypto with schema extensions;
+  create role anon; create role authenticated; create role service_role bypassrls;
+  create schema if not exists storage;
+  create table if not exists storage.buckets(id text primary key,name text not null,public boolean not null default false,file_size_limit bigint,allowed_mime_types text[]);`);
+
+// Prove convergence from three materially different pre-existing ACL states.
+// Each state receives the exact checked-in migration in a fresh engine.
+const aclConvergenceStates = [];
+for (const mode of ["broad", "partial", "exact"]) {
+  const probe = new PGlite({ extensions: { pgcrypto } });
+  try {
+    await initializeDatabase(probe);
+    for (const input of inputs) {
+      if (input.name === COMMERCE_AUTHORITY) break;
+      if (input.name === INVENTORY_LOTS) {
+        await probe.exec("alter table public.research_lot_quality_documents add column if not exists private_storage_key text");
+      }
+      await probe.exec(input.text);
+    }
+    const tables = `public.research_claims,public.research_idempotency_keys,public.research_order_lines,
+      public.research_order_state_events,public.research_orders,public.research_refund_keys,
+      public.research_store_credit_ledger`;
+    if (mode === "broad") {
+      await probe.exec(`grant all privileges on table ${tables} to public,anon,authenticated,service_role;
+        grant update(state) on table public.research_orders to authenticated`);
+    } else if (mode === "partial") {
+      await probe.exec(`revoke all privileges on table ${tables} from public,anon,authenticated,service_role;
+        grant select,update on table public.research_orders to service_role;
+        grant select on table public.research_claims to authenticated;
+        grant insert(refund_reference) on table public.research_refund_keys to service_role`);
+    } else {
+      await probe.exec(`revoke all privileges on table ${tables} from public,anon,authenticated,service_role;
+        grant select on table public.research_orders,public.research_order_lines to service_role;
+        grant insert on table public.research_order_state_events to service_role;
+        grant select,insert on table public.research_store_credit_ledger to service_role;
+        grant select,insert,update on table public.research_idempotency_keys to service_role`);
+    }
+    await probe.exec(inputs.find((input) => input.name === COMMERCE_AUTHORITY).text);
+    await probe.exec(inputs.find((input) => input.name === COMMERCE_AUTHORITY).text);
+    const result = await probe.query("select public.research_checkout_money_capability() as capability");
+    if (result.rows[0]?.capability !== capability) throw new Error(`${mode} ACL state did not converge`);
+    aclConvergenceStates.push(mode);
+  } finally {
+    await probe.close();
+  }
+}
+
 const db = new PGlite({ extensions: { pgcrypto } });
 try {
-  await db.exec(`create schema if not exists extensions;
-    create extension if not exists pgcrypto with schema extensions;
-    create role anon; create role authenticated; create role service_role bypassrls;
-    create schema if not exists storage;
-    create table if not exists storage.buckets(id text primary key,name text not null,public boolean not null default false,file_size_limit bigint,allowed_mime_types text[]);`);
+  await initializeDatabase(db);
   for (const input of inputs) {
     // The historical lot/COA migration intentionally remains byte-identical.
     // Its prerequisite migration supplies this column in managed history; the
@@ -90,6 +135,147 @@ try {
 
   const exact = await db.query("select public.research_checkout_money_capability() as capability");
   if (exact.rows[0]?.capability !== capability) throw new Error("complete checkout capability did not attest exact chain");
+
+  // Exercise the new bounded repository authorities against real PostgreSQL
+  // constraints. These are deliberately below the application adapter so a
+  // passing fake-client test cannot hide transaction or ACL behavior.
+  const commerceChecks = [];
+  const authorityMemberId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const authorityOrderId = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+  const authorityOrder2Id = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+  const authorityClaimId = "dddddddd-dddd-4ddd-8ddd-dddddddddddd";
+  const authorityOrder = (overrides = {}) => ({
+    id: authorityOrderId, member_id: authorityMemberId, state: "checkout_pending",
+    subtotal_cents: 2000, shipping_cents: 0, store_credit_applied_cents: 0, total_cents: 2000,
+    authorized_amount_cents: null, captured_amount_cents: null, payment_reference: null,
+    checkout_idempotency_key: "authority-order-key", last_idempotency_key: "authority-order-key",
+    review_triggers: [], approved_by: null, approved_at: null, cancellation_reason: null,
+    authorization_release_failed: null, created_at: "2026-09-23T12:00:00.000Z",
+    updated_at: "2026-09-23T12:00:00.000Z", ...overrides,
+  });
+  const firstLines = [
+    { order_id: authorityOrderId, sku: "SKU-A", display_name: "A", quantity: 1,
+      unit_price_cents: 1000, line_total_cents: 1000, fulfillment_owner: "xenios" },
+    { order_id: authorityOrderId, sku: "SKU-A", display_name: "A duplicate", quantity: 1,
+      unit_price_cents: 1000, line_total_cents: 1000, fulfillment_owner: "xenios" },
+  ];
+  await db.query("select public.research_order_persist($1::jsonb,$2::jsonb,$3::jsonb)",
+    [JSON.stringify(authorityOrder()), JSON.stringify(firstLines), "[]"]);
+  const freshOrder = await db.query(`select o.state,count(l.*)::int as lines,
+      (select count(*)::int from public.research_order_state_events e where e.order_id=o.id) as events
+    from public.research_orders o left join public.research_order_lines l on l.order_id=o.id
+    where o.id=$1 group by o.id,o.state`, [authorityOrderId]);
+  if (freshOrder.rows[0]?.state !== "checkout_pending" || freshOrder.rows[0]?.lines !== 2
+      || freshOrder.rows[0]?.events !== 1) throw new Error("atomic order create/duplicate-SKU parity failed");
+  commerceChecks.push("order_fresh_create", "order_duplicate_sku_parity");
+
+  const replacementLines = [{ order_id: authorityOrderId, sku: "SKU-B", display_name: "B", quantity: 2,
+    unit_price_cents: 1000, line_total_cents: 2000, fulfillment_owner: "xenios" }];
+  await db.query("select public.research_order_persist($1::jsonb,$2::jsonb,$3::jsonb)", [
+    JSON.stringify(authorityOrder({ state: "processing", updated_at: "2026-09-23T12:01:00.000Z" })),
+    JSON.stringify(replacementLines), "[]",
+  ]);
+  const replaced = await db.query(`select array_agg(sku order by sku) as skus,
+    (select count(*)::int from public.research_order_state_events where order_id=$1) as events
+    from public.research_order_lines where order_id=$1`, [authorityOrderId]);
+  if (JSON.stringify(replaced.rows[0]?.skus) !== JSON.stringify(["SKU-B"]) || replaced.rows[0]?.events !== 2) {
+    throw new Error("atomic order line replacement/state event failed");
+  }
+  commerceChecks.push("order_line_replacement", "order_state_event_transition");
+
+  // An invalid child row fails after the header upsert and delete statements;
+  // the function statement must nevertheless roll the whole operation back.
+  let invalidLineFailed = false;
+  try {
+    await db.query("select public.research_order_persist($1::jsonb,$2::jsonb,$3::jsonb)", [
+      JSON.stringify(authorityOrder({ state: "fulfilled", updated_at: "2026-09-23T12:02:00.000Z" })),
+      JSON.stringify([{ ...replacementLines[0], quantity: 0 }]), "[]",
+    ]);
+  } catch { invalidLineFailed = true; }
+  const afterInvalidLine = await db.query(`select o.state,array_agg(l.sku order by l.sku) as skus
+    from public.research_orders o join public.research_order_lines l on l.order_id=o.id
+    where o.id=$1 group by o.state`, [authorityOrderId]);
+  if (!invalidLineFailed || afterInvalidLine.rows[0]?.state !== "processing"
+      || JSON.stringify(afterInvalidLine.rows[0]?.skus) !== JSON.stringify(["SKU-B"])) {
+    throw new Error("invalid order line did not roll back header and replacement");
+  }
+  commerceChecks.push("order_failure_atomic_rollback");
+
+  await db.query("select public.research_order_persist($1::jsonb,$2::jsonb,$3::jsonb)", [
+    JSON.stringify(authorityOrder({ updated_at: "2026-09-23T12:03:00.000Z" })), "[]", "[]",
+  ]);
+  const emptyLines = await db.query("select count(*)::int as count from public.research_order_lines where order_id=$1", [authorityOrderId]);
+  if (emptyLines.rows[0]?.count !== 0) throw new Error("empty order line replacement did not clear rows");
+  commerceChecks.push("order_empty_line_set");
+
+  let identityConflict = false;
+  try {
+    await db.query("select public.research_order_persist($1::jsonb,$2::jsonb,$3::jsonb)", [
+      JSON.stringify(authorityOrder({ member_id: authorityOrder2Id })), "[]", "[]",
+    ]);
+  } catch (error) { identityConflict = String(error?.message ?? error).includes("identity_conflict"); }
+  if (!identityConflict) throw new Error("order identity substitution was accepted");
+  commerceChecks.push("order_identity_conflict");
+
+  await db.query(`insert into public.research_orders
+    (id,member_id,state,subtotal_cents,shipping_cents,store_credit_applied_cents,total_cents,
+     checkout_idempotency_key,last_idempotency_key,review_triggers,created_at,updated_at)
+    values ($1,$2,'delivered',1000,0,0,1000,'authority-order-2','authority-order-2','{}',now(),now())`,
+    [authorityOrder2Id, authorityMemberId]);
+  const claimPayload = { claimId: authorityClaimId, orderId: authorityOrderId, memberId: authorityMemberId,
+    sku: "SKU-B", lotId: null, reason: "damaged", state: "submitted", resolution: null,
+    evidenceRefs: ["opaque:evidence"], reviewedBy: null, submittedAt: "2026-09-23T12:04:00.000Z",
+    notes: "box damaged", updatedAt: "2026-09-23T12:04:00.000Z" };
+  await db.query("select public.research_claim_repository('save',$1::jsonb)", [JSON.stringify(claimPayload)]);
+  const claimRead = await db.query("select public.research_claim_repository('get',$1::jsonb) as claim", [
+    JSON.stringify({ claimId: authorityClaimId }),
+  ]);
+  const claimList = await db.query("select public.research_claim_repository('list_by_member',$1::jsonb) as claims", [
+    JSON.stringify({ memberId: authorityMemberId }),
+  ]);
+  if (claimRead.rows[0]?.claim?.notes !== "box damaged" || claimList.rows[0]?.claims?.length !== 1) {
+    throw new Error("claim save/get/list parity failed");
+  }
+  let claimSubstitutionFailed = false;
+  try {
+    await db.query("select public.research_claim_repository('save',$1::jsonb)", [
+      JSON.stringify({ ...claimPayload, orderId: authorityOrder2Id }),
+    ]);
+  } catch (error) { claimSubstitutionFailed = String(error?.message ?? error).includes("identity_conflict"); }
+  if (!claimSubstitutionFailed) throw new Error("claim cross-record substitution was accepted");
+  commerceChecks.push("claim_save_get_list", "claim_identity_conflict");
+
+  const firstRefundKey = await db.query("select public.research_claim_repository('refund_key_reserve',$1::jsonb) as result", [
+    JSON.stringify({ scope: "authority-refund-key", refundReference: "re_original" }),
+  ]);
+  const replayRefundKey = await db.query("select public.research_claim_repository('refund_key_reserve',$1::jsonb) as result", [
+    JSON.stringify({ scope: "authority-refund-key", refundReference: "re_original" }),
+  ]);
+  const conflictRefundKey = await db.query("select public.research_claim_repository('refund_key_reserve',$1::jsonb) as result", [
+    JSON.stringify({ scope: "authority-refund-key", refundReference: "re_conflict" }),
+  ]);
+  if (!firstRefundKey.rows[0]?.result?.inserted || replayRefundKey.rows[0]?.result?.inserted
+      || replayRefundKey.rows[0]?.result?.matches !== true || conflictRefundKey.rows[0]?.result?.matches !== false
+      || conflictRefundKey.rows[0]?.result?.refundReference !== "re_original") {
+    throw new Error("refund-key reserve/replay/conflict semantics failed");
+  }
+  commerceChecks.push("refund_key_first_winner", "refund_key_replay", "refund_key_conflict_preserves_original");
+
+  const webhookUpdated = await db.query("select public.research_webhook_order_update($1,$2,$3,$4) as updated", [
+    authorityOrderId, "approved", "auth_authority", "webhook-authority-key",
+  ]);
+  if (webhookUpdated.rows[0]?.updated !== true) throw new Error("bounded webhook order update failed");
+  commerceChecks.push("webhook_bounded_update");
+
+  for (const role of ["anon", "authenticated"]) {
+    await db.exec(`set role ${role}`);
+    let rpcDenied = false;
+    try { await db.query("select public.research_claim_repository('list_open','{}'::jsonb)"); }
+    catch { rpcDenied = true; }
+    await db.exec("reset role");
+    if (!rpcDenied) throw new Error(`${role} unexpectedly invoked claim authority`);
+  }
+  commerceChecks.push("authority_unauthorized_roles_denied");
 
   // Exercise the atomic preparation authority itself. An already-committed
   // exact identity must replay before inventory is touched; changed commercial
@@ -276,6 +462,32 @@ try {
       throw new Error(`${name} rollback did not restore exact capability`);
     }
   }
+  const newAuthorityTamperProbes = [
+    ["authority_extra_anon_table_grant", "grant select on public.research_orders to anon"],
+    ["authority_extra_authenticated_table_grant", "grant select on public.research_orders to authenticated"],
+    ["authority_extra_service_table_grant", "grant update on public.research_orders to service_role"],
+    ["authority_maintain_table_grant", "grant maintain on public.research_orders to service_role"],
+    ["authority_missing_required_table_grant", "revoke select on public.research_orders from service_role"],
+    ["authority_unexpected_column_grant", "grant update(state) on public.research_orders to service_role"],
+    ["authority_rpc_body_tamper", `create or replace function public.research_claim_repository(p_action text,p_payload jsonb default '{}'::jsonb)
+      returns jsonb language sql volatile security definer set search_path='' as 'select null::jsonb'`],
+    ["authority_security_invoker_tamper", "alter function public.research_order_persist(jsonb,jsonb,jsonb) security invoker"],
+    ["authority_wrong_owner_tamper", "alter function public.research_webhook_order_update(uuid,text,text,text) owner to service_role"],
+    ["authority_search_path_tamper", "alter function public.research_claim_repository(text,jsonb) set search_path to public"],
+    ["authority_public_execute_tamper", "grant execute on function public.research_order_persist(jsonb,jsonb,jsonb) to public"],
+    ["authority_anon_execute_tamper", "grant execute on function public.research_order_persist(jsonb,jsonb,jsonb) to anon"],
+    ["authority_authenticated_execute_tamper", "grant execute on function public.research_order_persist(jsonb,jsonb,jsonb) to authenticated"],
+    ["authority_expected_execute_removed", "revoke execute on function public.research_order_persist(jsonb,jsonb,jsonb) from service_role"],
+    ["authority_signature_overload_tamper", `create function public.research_claim_repository(text)
+      returns jsonb language sql as 'select null::jsonb'`],
+    ["authority_function_grant_option_tamper", `grant execute on function
+      public.research_webhook_order_update(uuid,text,text,text) to service_role with grant option`],
+  ];
+  for (const [name, mutation] of newAuthorityTamperProbes) {
+    await expectCapabilityNullAfter(name, mutation);
+    const restoredAfterProbe = await db.query("select public.research_checkout_money_capability() as capability");
+    if (restoredAfterProbe.rows[0]?.capability !== capability) throw new Error(`${name} rollback did not restore capability`);
+  }
   await expectCapabilityNullAfter("wrong inventory trigger timing/event", `
     drop trigger research_inventory_reservation_events_no_update on public.research_inventory_reservation_events;
     create trigger research_inventory_reservation_events_no_update after update on public.research_inventory_reservation_events
@@ -352,8 +564,11 @@ try {
     runtime: `${metadata.name}@${metadata.version}`,
     headSha,
     capability,
+    existingTamperCaseCount: catalogTamperProbes.length,
+    newAuthorityTamperCaseCount: newAuthorityTamperProbes.length,
+    aclConvergenceStates,
     sqlInputs: inputs.map(({ name, lfSha256 }) => ({ path: name, lfSha256 })),
-    checks: ["full_candidate_chain", "postchecks", "atomic_prepare_exact_replay", "atomic_prepare_conflict", "atomic_prepare_sku_binding_mismatch", "atomic_prepare_quantity_binding_mismatch", "atomic_prepare_rollback", ...catalogTamperProbes.map(([name]) => name), "replay", "terminal_binding_tamper", "body_fingerprint_tamper", "function_attribute_tamper", "forbidden_acl_tamper", "direct_dml_acl_tamper", "search_path_tamper", "request_key_constraint_tamper", "provider_reference_index_tamper", "trigger_disabled_tamper", "trigger_timing_event_tamper", "refund_concurrency_index_tamper", "inventory_dml_grant_tamper", "reservation_dml_grant_tamper", "missing_atomic_prepare_tamper", "unsafe_owner_tamper", "security_invoker_tamper", "rls_force_tamper", "stale_capability_version_tamper"],
+    checks: ["full_candidate_chain", "postchecks", ...commerceChecks, "atomic_prepare_exact_replay", "atomic_prepare_conflict", "atomic_prepare_sku_binding_mismatch", "atomic_prepare_quantity_binding_mismatch", "atomic_prepare_rollback", ...catalogTamperProbes.map(([name]) => name), ...newAuthorityTamperProbes.map(([name]) => name), "replay", "terminal_binding_tamper", "body_fingerprint_tamper", "function_attribute_tamper", "forbidden_acl_tamper", "direct_dml_acl_tamper", "search_path_tamper", "request_key_constraint_tamper", "provider_reference_index_tamper", "trigger_disabled_tamper", "trigger_timing_event_tamper", "refund_concurrency_index_tamper", "inventory_dml_grant_tamper", "reservation_dml_grant_tamper", "missing_atomic_prepare_tamper", "unsafe_owner_tamper", "security_invoker_tamper", "rls_force_tamper", "stale_capability_version_tamper"],
     limitation: "single in-memory PostgreSQL engine; not managed Supabase/PostgREST or independent-connection concurrency evidence",
   }) + "\n");
 } finally {

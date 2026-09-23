@@ -1994,6 +1994,38 @@
       "state": "handoff",
       "claimedAt": "2026-09-23T12:23:23.078Z",
       "heartbeatAt": "2026-09-23T14:40:26.055Z"
+    },
+    {
+      "id": "ce2b7f91-6b60-4db9-b122-b077dc3cfd61",
+      "task": "XENIOS-CHECKOUT-COMMERCE-AUTHORITY-REFACTOR-20260923",
+      "session": "codex-checkout-commerce-authority-refactor-20260923",
+      "paths": [
+        "server/research/commerce/persistence/claims-store.ts",
+        "server/research/commerce/persistence/claims-store.test.ts",
+        "server/research/commerce/persistence/orders-store.ts",
+        "server/research/commerce/persistence/orders-store.test.ts",
+        "server/research/commerce/persistence/admin-queues-store.ts",
+        "server/research/commerce/persistence/admin-queues-store.test.ts",
+        "server/research/commerce/persistence/webhooks-store.ts",
+        "server/research/commerce/persistence/webhooks-store.test.ts",
+        "server/research/commerce/qualification/**",
+        "supabase/migrations/20260923*_research_checkout_commerce_authority.sql",
+        "supabase/MIGRATIONS.md",
+        "docs/coordination/MIGRATION_DAG.json",
+        "docs/production-completion/checkout/**",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+        "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-checkout-commerce-authority-refactor-20260923.json",
+        ".xenios/handoffs/*CHECKOUT-COMMERCE-AUTHORITY*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-23T18:11:08.108Z",
+      "heartbeatAt": "2026-09-23T18:11:08.108Z"
     }
   ],
   "rules": [

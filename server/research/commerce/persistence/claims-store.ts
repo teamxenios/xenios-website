@@ -39,18 +39,13 @@ import { getSupabaseAdmin, supabaseConfigured } from "../../../supabase";
 // Table names and the columns each read projects.
 // ---------------------------------------------------------------------------
 
-const CLAIMS = "research_claims";
-const REFUND_KEYS = "research_refund_keys";
 const ORDERS = "research_orders";
 const ORDER_LINES = "research_order_lines";
+const CLAIM_AUTHORITY_RPC = "research_claim_repository";
 
-const CLAIM_COLS =
-  "id, order_id, member_id, sku, lot_id, reason, state, resolution, evidence_refs, reviewed_by, submitted_at, notes";
 const ORDER_COLS =
   "id, member_id, state, captured_amount_cents, payment_reference, refunded_cents, last_idempotency_key";
 
-// PostgREST unique-violation code, surfaced when a refund key is recorded twice.
-const UNIQUE_VIOLATION = "23505";
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 // ---------------------------------------------------------------------------
@@ -246,11 +241,15 @@ function claimRowsToRecords(rows: readonly ClaimRow[]): ClaimRecord[] {
 }
 
 export function createSupabaseClaimRepository(client: SupabaseClient = getSupabaseAdmin()): ClaimRepository {
+  async function authority(action: string, payload: Record<string, unknown> = {}): Promise<unknown> {
+    const response = await client.rpc(CLAIM_AUTHORITY_RPC, { p_action: action, p_payload: payload });
+    if (response.error) throw new Error(`claim authority ${action} failed: ${response.error.message}`);
+    return response.data;
+  }
   return {
     async get(claimId) {
-      const res = await client.from(CLAIMS).select(CLAIM_COLS).eq("id", claimId).maybeSingle();
-      if (res.error) throw new Error(`claim load failed: ${res.error.message}`);
-      return res.data ? claimRowToRecord(res.data as ClaimRow) : null;
+      const data = await authority("get", { claimId });
+      return data ? claimRowToRecord(data as ClaimRow) : null;
     },
 
     async save(claim) {
@@ -260,36 +259,41 @@ export function createSupabaseClaimRepository(client: SupabaseClient = getSupaba
       if (!UUID_PATTERN.test(claim.claimId)) {
         throw new Error("claim save failed: claim id must be a schema-compatible UUID");
       }
-      const row = { ...claimRecordToRow(claim), updated_at: new Date().toISOString() };
-      const res = await client.from(CLAIMS).upsert(row, { onConflict: "id" });
-      if (res.error) throw new Error(`claim save failed: ${res.error.message}`);
+      const row = claimRecordToRow(claim);
+      await authority("save", {
+        claimId: row.id,
+        orderId: row.order_id,
+        memberId: row.member_id,
+        sku: row.sku,
+        lotId: row.lot_id,
+        reason: row.reason,
+        state: row.state,
+        resolution: row.resolution,
+        evidenceRefs: row.evidence_refs,
+        reviewedBy: row.reviewed_by,
+        submittedAt: row.submitted_at,
+        notes: row.notes,
+        updatedAt: new Date().toISOString(),
+      });
     },
 
     async listByMember(memberId) {
       // Tenant scope: the member id is the only filter, taken from the argument.
-      const res = await client.from(CLAIMS).select(CLAIM_COLS).eq("member_id", memberId);
-      if (res.error) throw new Error(`claims by member failed: ${res.error.message}`);
-      return claimRowsToRecords((res.data ?? []) as ClaimRow[]);
+      return claimRowsToRecords((await authority("list_by_member", { memberId }) ?? []) as ClaimRow[]);
     },
 
     async listByOrder(orderId) {
-      const res = await client.from(CLAIMS).select(CLAIM_COLS).eq("order_id", orderId);
-      if (res.error) throw new Error(`claims by order failed: ${res.error.message}`);
-      return claimRowsToRecords((res.data ?? []) as ClaimRow[]);
+      return claimRowsToRecords((await authority("list_by_order", { orderId }) ?? []) as ClaimRow[]);
     },
 
     async listOpen() {
       // Admin-wide (no tenant scope, by contract): every claim not yet resolved
       // or declined. The DB is the source of truth for "closed".
-      const res = await client.from(CLAIMS).select(CLAIM_COLS).not("state", "in", "(resolved,declined)");
-      if (res.error) throw new Error(`open claims failed: ${res.error.message}`);
-      return claimRowsToRecords((res.data ?? []) as ClaimRow[]);
+      return claimRowsToRecords((await authority("list_open") ?? []) as ClaimRow[]);
     },
 
     async hasRefundKey(scope) {
-      const res = await client.from(REFUND_KEYS).select("scope").eq("scope", scope).maybeSingle();
-      if (res.error) throw new Error(`refund key lookup failed: ${res.error.message}`);
-      return res.data !== null && res.data !== undefined;
+      return (await authority("refund_key_get", { scope })) !== null;
     },
 
     async recordRefundKey(scope, refundReference) {
@@ -297,10 +301,7 @@ export function createSupabaseClaimRepository(client: SupabaseClient = getSupaba
       // violation the DB raises, not an app check: a concurrent second record of
       // the same key is absorbed as a no-op so the ledger never double-writes and
       // no refund can move twice. There is deliberately no update or delete path.
-      const res = await client.from(REFUND_KEYS).insert({ scope, refund_reference: refundReference }).select();
-      if (res.error && res.error.code !== UNIQUE_VIOLATION) {
-        throw new Error(`refund key record failed: ${res.error.message ?? res.error.code ?? "unknown"}`);
-      }
+      await authority("refund_key_reserve", { scope, refundReference });
     },
   };
 }
@@ -328,8 +329,18 @@ export function createSupabaseClaimOrderRepository(
       // by id of the refund-touched columns. It never inserts an order and never
       // rewrites the line rows, which this view does not own.
       const patch = { ...orderViewToUpdateRow(order), updated_at: new Date().toISOString() };
-      const res = await client.from(ORDERS).update(patch).eq("id", order.orderId);
-      if (res.error) throw new Error(`order save failed: ${res.error.message}`);
+      const response = await client.rpc(CLAIM_AUTHORITY_RPC, {
+        p_action: "claim_order_update",
+        p_payload: {
+          orderId: order.orderId,
+          state: patch.state,
+          refundedCents: patch.refunded_cents,
+          lastIdempotencyKey: patch.last_idempotency_key,
+          updatedAt: new Date().toISOString(),
+        },
+      });
+      if (response.error) throw new Error(`order save failed: ${response.error.message}`);
+      if (!(response.data as { updated?: boolean } | null)?.updated) throw new Error("order save failed: order not found");
     },
   };
 }

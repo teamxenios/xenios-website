@@ -243,3 +243,17 @@ The following already-applied candidates retain their original paths and bytes. 
 | candidates/20260905_research_partner_lifecycle.sql | 20260907143204 / 20260905_research_partner_lifecycle | APPLIED; original postcheck PASS | 4f10c3e996cbe60e660981dc654e89af2d23e209f8252db067cb9a367b4f5bbb |
 
 No migration history is repaired, replayed or renamed by this ledger entry. At that historical read all three Hub tables were absent. Row77 was subsequently applied once on2026-09-08 as managed version20260908143724 with exact full pre/postchecks PASS; the actual receipt is linked in row77. Hub remains disabled and enabled delivery unverified.
+
+## Checkout commerce authority refactor — pending 2026-09-23
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 78 | migrations/20260923181443_research_checkout_commerce_authority.sql | Replace forbidden direct claims, refund-key, order, order-line, and webhook mutations with three bounded `SECURITY DEFINER` authorities; converge the seven Capability V2 relation ACLs; attest the new functions without changing the canonical token | PENDING; source-only, not applied to staging or production |
+
+This migration depends on the reviewed refund-execution candidate that defines
+`durable_checkout_money_v2:20260923.1`. It creates no domain rows. Disposable
+PGlite/PostgreSQL 18.3 qualification applied it twice from broad, partial, and
+exact ACL starting states and passed 18 existing plus 16 new authority tamper
+cases. Independent-connection contention and managed Supabase/PostgREST proof
+remain explicitly deferred to an authorized staging lane. See
+`docs/production-completion/checkout/COMMERCE_AUTHORITY_QUALIFICATION_20260923.md`.

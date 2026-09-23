@@ -340,7 +340,81 @@ function fakeSupabase(seed: Partial<FakeDb> = {}): { client: SupabaseClient; db:
     return api;
   }
 
-  const client = { from: (table: string) => builder(table) } as unknown as SupabaseClient;
+  const client = {
+    from: (table: string) => {
+      if (table === CLAIMS || table === REFUND_KEYS) throw new Error(`forbidden direct relation access: ${table}`);
+      return builder(table);
+    },
+    async rpc(name: string, args: { p_action?: string; p_payload?: Record<string, unknown> }) {
+      if (name !== "research_claim_repository") {
+        return { data: null, error: { message: `unknown RPC ${name}` } };
+      }
+      const action = args.p_action;
+      const payload = args.p_payload ?? {};
+      if (action === "get") {
+        return { data: db.claims.get(String(payload.claimId)) ?? null, error: null };
+      }
+      if (action === "save") {
+        const row: ClaimRow & { updated_at?: string } = {
+          id: String(payload.claimId),
+          order_id: String(payload.orderId),
+          member_id: String(payload.memberId),
+          sku: String(payload.sku),
+          lot_id: payload.lotId == null ? null : String(payload.lotId),
+          reason: String(payload.reason),
+          state: String(payload.state),
+          resolution: payload.resolution == null ? null : String(payload.resolution),
+          evidence_refs: (payload.evidenceRefs as string[] | undefined) ?? [],
+          reviewed_by: payload.reviewedBy == null ? null : String(payload.reviewedBy),
+          submitted_at: String(payload.submittedAt),
+          notes: String(payload.notes ?? ""),
+          updated_at: String(payload.updatedAt),
+        };
+        db.claims.set(row.id, row);
+        return { data: row, error: null };
+      }
+      if (action === "list_by_member") {
+        return { data: Array.from(db.claims.values()).filter((row) => row.member_id === payload.memberId), error: null };
+      }
+      if (action === "list_by_order") {
+        return { data: Array.from(db.claims.values()).filter((row) => row.order_id === payload.orderId), error: null };
+      }
+      if (action === "list_open") {
+        return { data: Array.from(db.claims.values()).filter((row) => !["resolved", "declined"].includes(row.state)), error: null };
+      }
+      if (action === "refund_key_get") {
+        return { data: db.refundKeys.get(String(payload.scope)) ?? null, error: null };
+      }
+      if (action === "refund_key_reserve") {
+        const scope = String(payload.scope);
+        const refundReference = String(payload.refundReference);
+        const existing = db.refundKeys.get(scope);
+        if (!existing) db.refundKeys.set(scope, { scope, refund_reference: refundReference });
+        return {
+          data: {
+            inserted: !existing,
+            matches: !existing || existing.refund_reference === refundReference,
+            refundReference: existing?.refund_reference ?? refundReference,
+          },
+          error: null,
+        };
+      }
+      if (action === "claim_order_update") {
+        const id = String(payload.orderId);
+        const existing = db.orders.get(id);
+        if (existing) {
+          db.orders.set(id, {
+            ...existing,
+            state: String(payload.state),
+            refunded_cents: Number(payload.refundedCents),
+            last_idempotency_key: payload.lastIdempotencyKey == null ? null : String(payload.lastIdempotencyKey),
+          });
+        }
+        return { data: { updated: Boolean(existing) }, error: null };
+      }
+      return { data: null, error: { message: `unknown claim action ${action}` } };
+    },
+  } as unknown as SupabaseClient;
   return { client, db };
 }
 
@@ -357,7 +431,7 @@ describe("createSupabaseClaimRepository (fake client)", () => {
   it("returns null for an unknown claim", async () => {
     const { client } = fakeSupabase();
     const repo = createSupabaseClaimRepository(client);
-    expect(await repo.get("nope")).toBeNull();
+    expect(await repo.get("00000000-0000-4000-8000-000000000099")).toBeNull();
   });
 
   it("saves then loads a claim round-trip EXACTLY, matching the in-memory reference", async () => {

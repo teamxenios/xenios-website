@@ -145,11 +145,15 @@ export function createSupabaseWebhookOrderStore(
     },
 
     async save(order) {
-      const update = await client
-        .from(ORDERS)
-        .update(webhookOrderToRowUpdate(order))
-        .eq("id", order.orderId);
+      const row = webhookOrderToRowUpdate(order);
+      const update = await client.rpc("research_webhook_order_update", {
+        p_order_id: order.orderId,
+        p_state: row.state,
+        p_payment_reference: row.payment_reference,
+        p_last_idempotency_key: row.last_idempotency_key,
+      });
       if (update.error) throw new Error(`webhook order save failed: ${update.error.message}`);
+      if (update.data !== true) throw new Error("webhook order save failed: order not found");
     },
   };
 }

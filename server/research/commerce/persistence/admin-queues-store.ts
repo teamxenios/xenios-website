@@ -663,12 +663,12 @@ export function createInMemoryAdminQueuesStore(): AdminQueuesRepository {
 
 const QUEUE_ITEMS_TABLE = "research_admin_queue_items";
 const ORDERS_TABLE = "research_orders";
-const CLAIMS_TABLE = "research_claims";
 const LOTS_TABLE = "research_inventory_lots";
 const LOT_DOCS_TABLE = "research_lot_quality_documents";
 const FULFILLMENT_TABLE = "research_fulfillment_orders";
 const PAYOUT_BATCHES_TABLE = "research_payout_batches";
 const STORE_CREDIT_TABLE = "research_store_credit_ledger";
+const CLAIM_AUTHORITY_RPC = "research_claim_repository";
 
 const QUEUE_ITEM_COLUMNS =
   "id, kind, source_ref, summary, status, opened_at, opened_by_actor_type, opened_by_actor_id, resolved_at, resolved_by_actor_id, resolution";
@@ -744,6 +744,20 @@ export function createSupabaseAdminQueuesStore(
     }
   }
 
+  async function readOpenClaims(): Promise<SourceRead<ClaimSourceRow>> {
+    try {
+      const { data, error } = await client.rpc(CLAIM_AUTHORITY_RPC, {
+        p_action: "list_open",
+        p_payload: {},
+      });
+      if (error) return { status: "unavailable", code: "source_unavailable" };
+      if (!Array.isArray(data)) return { status: "unavailable", code: "source_malformed" };
+      return { status: "available", rows: data as ClaimSourceRow[] };
+    } catch {
+      return { status: "unavailable", code: "source_unavailable" };
+    }
+  }
+
   /** Lift a pure derivation over a source read, preserving unavailability. */
   function derive<T>(
     read: SourceRead<T>,
@@ -785,11 +799,7 @@ export function createSupabaseAdminQueuesStore(
         );
       case "refund_review":
       case "replacement_review": {
-        const claims = await readRows<ClaimSourceRow>(
-          CLAIMS_TABLE,
-          "id, order_id, sku, reason, state, resolution, submitted_at",
-          (q) => q.in("state", [...OPEN_CLAIM_STATES]),
-        );
+        const claims = await readOpenClaims();
         return derive(claims, kind === "refund_review" ? deriveRefundReview : deriveReplacementReview);
       }
       case "supplier_document_review":

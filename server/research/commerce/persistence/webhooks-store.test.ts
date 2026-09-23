@@ -198,6 +198,7 @@ function fakeSupabase(): {
         return api;
       },
       update(payload: unknown) {
+        if (table === "research_orders") throw new Error("forbidden direct webhook order mutation");
         state.op = "update";
         state.payload = payload;
         return api;
@@ -212,7 +213,20 @@ function fakeSupabase(): {
     return api;
   }
 
-  const client = { from: (table: string) => builder(table) } as unknown as SupabaseClient;
+  const client = {
+    from: (table: string) => builder(table),
+    async rpc(name: string, args: Record<string, unknown>) {
+      if (name !== "research_webhook_order_update") {
+        return { data: null, error: { message: `unknown RPC ${name}` } };
+      }
+      const row = orders.get(String(args.p_order_id));
+      if (!row) return { data: false, error: null };
+      row.state = String(args.p_state);
+      row.payment_reference = args.p_payment_reference == null ? null : String(args.p_payment_reference);
+      row.last_idempotency_key = String(args.p_last_idempotency_key);
+      return { data: true, error: null };
+    },
+  } as unknown as SupabaseClient;
   return { client, orders, events };
 }
 

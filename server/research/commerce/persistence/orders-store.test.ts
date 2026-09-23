@@ -438,16 +438,19 @@ function fakeSupabase(): {
         return api;
       },
       upsert(payload: unknown) {
+        if (table === "research_orders") throw new Error("forbidden direct order mutation");
         state.op = "upsert";
         state.payload = payload;
         return api;
       },
       insert(payload: unknown) {
+        if (table === "research_order_lines") throw new Error("forbidden direct line mutation");
         state.op = "insert";
         state.payload = payload;
         return api;
       },
       delete() {
+        if (table === "research_order_lines") throw new Error("forbidden direct line mutation");
         state.op = "delete";
         return api;
       },
@@ -470,7 +473,57 @@ function fakeSupabase(): {
     return api;
   }
 
-  const client = { from: (table: string) => builder(table) } as unknown as SupabaseClient;
+  const client = {
+    from: (table: string) => builder(table),
+    async rpc(name: string, args: { p_order?: OrderHeaderRow; p_lines?: OrderLineInsert[]; p_shipments?: OrderShipmentInsert[] }) {
+      if (name !== "research_order_persist" || !args.p_order) {
+        return { data: null, error: { message: `unknown RPC ${name}` } };
+      }
+      const row = args.p_order;
+      const existing = orders.get(row.id);
+      if (existing && existing.member_id !== row.member_id) {
+        return { data: null, error: { message: "order member identity is immutable" } };
+      }
+      if (
+        existing?.checkout_idempotency_key &&
+        row.checkout_idempotency_key !== existing.checkout_idempotency_key
+      ) {
+        return { data: null, error: { message: "order checkout idempotency key is immutable" } };
+      }
+      orders.set(row.id, {
+        ...(existing ?? {}),
+        ...row,
+        refunded_cents: existing?.refunded_cents ?? null,
+      } as OrderHeaderRow);
+      lines.set(row.id, (args.p_lines ?? []).map((line) => ({
+        sku: line.sku,
+        display_name: line.display_name,
+        quantity: line.quantity,
+        unit_price_cents: line.unit_price_cents,
+        line_total_cents: line.line_total_cents,
+        fulfillment_owner: line.fulfillment_owner,
+      })));
+      shipments.set(row.id, (args.p_shipments ?? []).map((shipment) => ({
+        seq: shipment.seq,
+        owner: shipment.owner,
+        status: shipment.status,
+        tracking_number: shipment.tracking_number,
+        carrier: shipment.carrier,
+      })));
+      if (!existing || existing.state !== row.state) {
+        events.push({
+          order_id: row.id,
+          from_state: existing?.state ?? row.state,
+          to_state: row.state,
+          actor_type: "system",
+          actor_id: null,
+          provider_reference: row.payment_reference,
+          idempotency_key: row.last_idempotency_key,
+        });
+      }
+      return { data: { orderId: row.id, state: row.state }, error: null };
+    },
+  } as unknown as SupabaseClient;
   return { client, orders, lines, shipments, events, get deletes() { return counters.deletes; } };
 }
 

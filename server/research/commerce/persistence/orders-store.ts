@@ -413,7 +413,6 @@ export function createInMemoryOrderStore(seed: readonly OrderRecord[] = []): Asy
 const ORDERS = "research_orders";
 const LINES = "research_order_lines";
 const SHIPMENTS = "research_order_shipments";
-const EVENTS = "research_order_state_events";
 
 export function createSupabaseOrderStore(
   client: SupabaseClient = getSupabaseAdmin(),
@@ -449,56 +448,14 @@ export function createSupabaseOrderStore(
     },
 
     async save(order) {
-      // The prior state is read first so the append-only trail records the real
-      // from -> to transition. A save that does not change state records nothing.
-      const prior = await client
-        .from(ORDERS)
-        .select("state, checkout_idempotency_key")
-        .eq("id", order.orderId)
-        .maybeSingle();
-      if (prior.error) throw new Error(`order state read failed: ${prior.error.message}`);
-      const priorRow = prior.data as
-        | { state: string; checkout_idempotency_key: string | null }
-        | null;
-      const priorState = priorRow?.state ?? null;
-      if (
-        priorRow !== null &&
-        priorRow.checkout_idempotency_key !== order.checkoutIdempotencyKey
-      ) {
-        throw new Error(`order ${order.orderId} checkout idempotency key is immutable`);
-      }
-
-      const up = await client.from(ORDERS).upsert(orderToHeaderRow(order), { onConflict: "id" });
-      if (up.error) throw new Error(`order upsert failed: ${up.error.message}`);
-
-      // Lines are current-state, not a ledger, so they are replaced together.
-      const del = await client.from(LINES).delete().eq("order_id", order.orderId);
-      if (del.error) throw new Error(`order lines clear failed: ${del.error.message}`);
       const lineRows = orderToLineRows(order.orderId, order);
-      if (lineRows.length > 0) {
-        const ins = await client.from(LINES).insert(lineRows);
-        if (ins.error) throw new Error(`order lines insert failed: ${ins.error.message}`);
-      }
-
-      // Shipments are current-state too, replaced the same way, so a record
-      // whose shipments changed (or were never set) persists exactly.
-      const delShipments = await client.from(SHIPMENTS).delete().eq("order_id", order.orderId);
-      if (delShipments.error) {
-        throw new Error(`order shipments clear failed: ${delShipments.error.message}`);
-      }
       const shipmentRows = orderToShipmentRows(order.orderId, order);
-      if (shipmentRows.length > 0) {
-        const ins = await client.from(SHIPMENTS).insert(shipmentRows);
-        if (ins.error) throw new Error(`order shipments insert failed: ${ins.error.message}`);
-      }
-
-      // Append-only: insert the transition, never update or delete a prior event.
-      if (priorState === null || priorState !== order.state) {
-        const ev = await client
-          .from(EVENTS)
-          .insert(orderToStateEventRow(order, priorState ?? order.state));
-        if (ev.error) throw new Error(`order state event insert failed: ${ev.error.message}`);
-      }
+      const persisted = await client.rpc("research_order_persist", {
+        p_order: orderToHeaderRow(order),
+        p_lines: lineRows,
+        p_shipments: shipmentRows,
+      });
+      if (persisted.error) throw new Error(`order persist failed: ${persisted.error.message}`);
     },
 
     async listByMember(memberId) {
