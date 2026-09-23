@@ -133,7 +133,9 @@ describe("durable checkout composition readiness", () => {
     const ready = build().composition;
     expect(ready.managedAuthorityReady()).toBe(false);
     await expect(ready.assertReady()).resolves.toBe(true);
-    expect(ready.managedAuthorityReady()).toBe(true);
+    // Readiness is request-local; a completed preflight must not publish
+    // mutable process state for another request to consume.
+    expect(ready.managedAuthorityReady()).toBe(false);
   });
 });
 

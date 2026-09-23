@@ -13,7 +13,7 @@ const COLUMNS = "id, scope, claim_id, order_id, admin_id, payment_reference, amo
 const UNIQUE_VIOLATION = "23505";
 const STATES: readonly RefundExecutionState[] = ["prepared", "calling_provider", "provider_succeeded", "reconciliation_required", "committed"];
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-export const REFUND_EXECUTION_CAPABILITY = "durable_checkout_money_v1:20260922.1";
+export const REFUND_EXECUTION_CAPABILITY = "durable_checkout_money_v2:20260923.1";
 
 type Row = Record<string, unknown>;
 

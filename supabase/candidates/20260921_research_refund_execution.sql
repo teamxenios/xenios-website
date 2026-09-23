@@ -308,6 +308,9 @@ begin
      or pg_catalog.to_regclass('public.research_orders') is null
      or pg_catalog.to_regclass('public.research_order_state_events') is null
      or pg_catalog.to_regclass('public.research_lot_reservations') is null
+     or pg_catalog.to_regclass('public.research_lot_reservation_allocations') is null
+     or pg_catalog.to_regclass('public.research_inventory_lots') is null
+     or pg_catalog.to_regclass('public.research_inventory_reservation_events') is null
      or pg_catalog.to_regclass('public.research_store_credit_ledger') is null
      or pg_catalog.to_regclass('public.research_refund_keys') is null
      or pg_catalog.to_regclass('public.research_idempotency_keys') is null then
@@ -318,23 +321,31 @@ begin
       ('public.research_checkout_executions'),
       ('public.research_payment_webhook_inbox'),
       ('public.research_checkout_credit_reservations'),
-      ('public.research_refund_executions')
+      ('public.research_refund_executions'),
+      ('public.research_lot_reservations'),
+      ('public.research_lot_reservation_allocations'),
+      ('public.research_inventory_reservation_events')
     ) v(name)
     where not coalesce((select c.relrowsecurity and c.relforcerowsecurity
       from pg_catalog.pg_class c where c.oid=pg_catalog.to_regclass(v.name)),false)
   ) then return null; end if;
 
   for v_signature,v_expected in select * from (values
+    ('public.research_checkout_prepare(jsonb,jsonb,jsonb,timestamp with time zone,timestamp with time zone)', '7a4c58c0b27f4cde0af9b2bd02cdd4ae'),
+    ('public.research_reserve_inventory(uuid,uuid,jsonb,timestamp with time zone,timestamp with time zone,text)', '3b77a2e57552b8923e240f264921e3bb'),
+    ('public.research_release_inventory_reservations(uuid,uuid,text[],timestamp with time zone,text,text)', '7c2850385fdf3e4b34eef933d39df74d'),
+    ('public.research_finalize_inventory_reservations(uuid,uuid,text[],timestamp with time zone,text,text)', '25a3f19b8bbea60e8c124a798a5b1011'),
     ('public.research_checkout_execution_claim(uuid,integer,text)', 'cf1ea11145096dc3a26e7b3462d3d0fd'),
     ('public.research_checkout_execution_record_provider(uuid,integer,jsonb)', '1180967b2e15fbe04362548d35f540bc'),
-    ('public.research_checkout_execution_commit_captured(uuid,integer,timestamp with time zone)', '23256ff961e198a7b7412950b842a451'),
-    ('public.research_checkout_execution_commit_cancelled(uuid,integer,timestamp with time zone)', '9fb10776d94e93358d5e3bd7f477815c'),
+    ('public.research_checkout_execution_commit_captured(uuid,integer,timestamp with time zone)', '1cfd499fbd140bb925753779e03a0ab8'),
+    ('public.research_checkout_execution_commit_cancelled(uuid,integer,timestamp with time zone)', 'c3739e1e013c799668450d74c06c088e'),
     ('public.research_checkout_executions_list_recoverable(timestamp with time zone,integer,timestamp with time zone,uuid)', 'ce6179514d81c0553e68be2f9e3935d6'),
     ('public.research_checkout_recovery_operation(text,uuid,bigint,jsonb)', '9af6492463c1fddbeea4fec6ed844d09'),
     ('public.research_checkout_credit_reserve()', '9d4835dc085c2fb108abb73c717e078c'),
     ('public.research_checkout_credit_lock_before_insert()', '87820a4af4817789606bb1870b818539'),
     ('public.research_store_credit_protect_reservations()', '1634f82aa22b3f60a68b74508fae82c7'),
     ('public.research_checkout_credit_immutable()', 'bf820db0a634299ede4355adcfa9d2ee'),
+    ('public.research_inventory_reservation_event_immutable()', '1f1a2adf7d32b32f1ab79c7f05a89b49'),
     ('public.research_checkout_executions_immutable()', '3a6ddd59e10e526eab72c514661c3fff'),
     ('public.research_payment_webhook_inbox_immutable()', 'dedadd08977a958a9535a4764dc849fe'),
     ('public.research_payment_webhook_inbox_claim(text,text,text,text,timestamp with time zone)', 'f9116fb43f8c11e79451ae82124cb571'),
@@ -358,6 +369,15 @@ begin
   -- context without changing prosrc. Attest the reviewed attributes and keep
   -- every money RPC owned outside the request-serving roles.
   if exists (select 1 from (values
+      ('public.research_checkout_prepare(jsonb,jsonb,jsonb,timestamp with time zone,timestamp with time zone)','search_path=""'),
+      ('public.research_reserve_inventory(uuid,uuid,jsonb,timestamp with time zone,timestamp with time zone,text)','search_path=pg_catalog'),
+      ('public.research_release_inventory_reservations(uuid,uuid,text[],timestamp with time zone,text,text)','search_path=pg_catalog'),
+      ('public.research_finalize_inventory_reservations(uuid,uuid,text[],timestamp with time zone,text,text)','search_path=pg_catalog'),
+      ('public.research_checkout_execution_claim(uuid,integer,text)','search_path=""'),
+      ('public.research_checkout_execution_record_provider(uuid,integer,jsonb)','search_path=""'),
+      ('public.research_checkout_execution_commit_captured(uuid,integer,timestamp with time zone)','search_path=""'),
+      ('public.research_checkout_execution_commit_cancelled(uuid,integer,timestamp with time zone)','search_path=""'),
+      ('public.research_inventory_reservation_event_immutable()','search_path=pg_catalog'),
       ('public.research_payment_webhook_inbox_claim(text,text,text,text,timestamp with time zone)','search_path=""'),
       ('public.research_payment_webhook_inbox_terminalize(text,text,text,text,text,text,uuid,uuid)','search_path=""'),
       ('public.research_refund_execution_prepare(uuid,text,uuid,uuid,text,text,bigint,text,timestamp with time zone)','search_path=pg_catalog, public'),
@@ -377,10 +397,6 @@ begin
   ) then return null; end if;
 
   if exists (select 1 from (values
-      ('public.research_checkout_execution_claim(uuid,integer,text)'),
-      ('public.research_checkout_execution_record_provider(uuid,integer,jsonb)'),
-      ('public.research_checkout_execution_commit_captured(uuid,integer,timestamp with time zone)'),
-      ('public.research_checkout_execution_commit_cancelled(uuid,integer,timestamp with time zone)'),
       ('public.research_checkout_executions_list_recoverable(timestamp with time zone,integer,timestamp with time zone,uuid)'),
       ('public.research_checkout_recovery_operation(text,uuid,bigint,jsonb)'),
       ('public.research_checkout_credit_reserve()'),
@@ -401,37 +417,81 @@ begin
   ) then return null; end if;
 
   if exists (select 1 from (values
-      ('public.research_checkout_executions','research_checkout_executions_immutable','public.research_checkout_executions_immutable()'),
-      ('public.research_checkout_executions','research_checkout_credit_reserve','public.research_checkout_credit_reserve()'),
-      ('public.research_checkout_executions','research_checkout_credit_lock_before_insert','public.research_checkout_credit_lock_before_insert()'),
-      ('public.research_payment_webhook_inbox','research_payment_webhook_inbox_immutable','public.research_payment_webhook_inbox_immutable()'),
-      ('public.research_checkout_credit_reservations','research_checkout_credit_immutable','public.research_checkout_credit_immutable()'),
-      ('public.research_store_credit_ledger','research_store_credit_protect_reservations','public.research_store_credit_protect_reservations()'),
-      ('public.research_claims','research_refund_active_claim_guard','public.research_refund_active_claim_guard()'),
-      ('public.research_orders','research_refund_active_order_guard','public.research_refund_active_order_guard()'),
-      ('public.research_refund_executions','research_refund_execution_immutable','public.research_refund_execution_immutable()')
-    ) required(relation_name,trigger_name,function_name)
+      ('public.research_checkout_executions','research_checkout_executions_immutable','public.research_checkout_executions_immutable()',19),
+      ('public.research_checkout_executions','research_checkout_credit_reserve','public.research_checkout_credit_reserve()',5),
+      ('public.research_checkout_executions','research_checkout_credit_lock_before_insert','public.research_checkout_credit_lock_before_insert()',7),
+      ('public.research_inventory_reservation_events','research_inventory_reservation_events_no_update','public.research_inventory_reservation_event_immutable()',27),
+      ('public.research_payment_webhook_inbox','research_payment_webhook_inbox_immutable','public.research_payment_webhook_inbox_immutable()',19),
+      ('public.research_checkout_credit_reservations','research_checkout_credit_immutable','public.research_checkout_credit_immutable()',27),
+      ('public.research_store_credit_ledger','research_store_credit_protect_reservations','public.research_store_credit_protect_reservations()',7),
+      ('public.research_claims','research_refund_active_claim_guard','public.research_refund_active_claim_guard()',27),
+      ('public.research_orders','research_refund_active_order_guard','public.research_refund_active_order_guard()',27),
+      ('public.research_refund_executions','research_refund_execution_immutable','public.research_refund_execution_immutable()',19)
+    ) required(relation_name,trigger_name,function_name,trigger_type)
     where not exists (select 1 from pg_catalog.pg_trigger t
       where t.tgrelid=pg_catalog.to_regclass(required.relation_name)
         and t.tgname=required.trigger_name
         and t.tgfoid=pg_catalog.to_regprocedure(required.function_name)
-        and not t.tgisinternal and t.tgenabled='O')
+        and not t.tgisinternal and t.tgenabled='O' and t.tgtype=required.trigger_type)
   ) then return null; end if;
 
   if not exists (select 1 from pg_catalog.pg_constraint
-      where conrelid=pg_catalog.to_regclass('public.research_payment_webhook_inbox')
-        and conname='research_payment_webhook_inbox_lifecycle' and contype='c')
+      where conrelid=pg_catalog.to_regclass('public.research_checkout_executions')
+        and conname='research_checkout_executions_member_id_request_key_key' and contype='u' and convalidated
+        and pg_catalog.pg_get_constraintdef(oid)='UNIQUE (member_id, request_key)')
+     or not exists (select 1 from pg_catalog.pg_index
+      where indexrelid=pg_catalog.to_regclass('public.research_checkout_executions_provider_reference_idx')
+        and indisunique
+        and pg_catalog.pg_get_expr(indpred,indrelid)='(provider_reference IS NOT NULL)')
      or not exists (select 1 from pg_catalog.pg_constraint
       where conrelid=pg_catalog.to_regclass('public.research_payment_webhook_inbox')
-        and conname='research_payment_webhook_inbox_one_binding' and contype='c')
+        and conname='research_payment_webhook_inbox_lifecycle' and contype='c' and convalidated)
+     or not exists (select 1 from pg_catalog.pg_constraint
+      where conrelid=pg_catalog.to_regclass('public.research_payment_webhook_inbox')
+        and conname='research_payment_webhook_inbox_one_binding' and contype='c' and convalidated)
      or not exists (select 1 from pg_catalog.pg_constraint
       where conrelid=pg_catalog.to_regclass('public.research_payment_webhook_inbox')
         and conname='research_payment_webhook_inbox_refund_execution_fk' and contype='f'
-        and confrelid=pg_catalog.to_regclass('public.research_refund_executions')) then
+        and confrelid=pg_catalog.to_regclass('public.research_refund_executions') and convalidated)
+     or not exists (select 1 from pg_catalog.pg_index
+      where indexrelid=pg_catalog.to_regclass('public.research_refund_executions_one_active_claim')
+        and indisunique and pg_catalog.pg_get_expr(indpred,indrelid)='(state <> ''committed''::text)')
+     or not exists (select 1 from pg_catalog.pg_index
+      where indexrelid=pg_catalog.to_regclass('public.research_refund_executions_one_active_order')
+        and indisunique and pg_catalog.pg_get_expr(indpred,indrelid)='(state <> ''committed''::text)')
+     or pg_catalog.to_regclass('public.research_lot_reservations_member_idx') is null
+     or pg_catalog.to_regclass('public.research_lot_reservations_expiry_idx') is null
+     or pg_catalog.to_regclass('public.research_lot_reservation_allocations_lot_idx') is null
+     or pg_catalog.to_regclass('public.research_inventory_reservation_events_reservation_idx') is null
+     or exists (select 1 from (values
+        ('public.research_checkout_executions','id','uuid'),
+        ('public.research_checkout_executions','member_id','uuid'),
+        ('public.research_checkout_executions','request_key','text'),
+        ('public.research_checkout_executions','request_body_sha256','text'),
+        ('public.research_checkout_executions','order_id','uuid'),
+        ('public.research_checkout_executions','reservation_ids','text[]'),
+        ('public.research_lot_reservations','reservation_id','text'),
+        ('public.research_lot_reservations','member_id','uuid'),
+        ('public.research_lot_reservations','quantity','integer'),
+        ('public.research_lot_reservations','status','text'),
+        ('public.research_lot_reservations','version','bigint'),
+        ('public.research_lot_reservation_allocations','lot_uuid','uuid'),
+        ('public.research_lot_reservation_allocations','quantity','integer'),
+        ('public.research_lot_reservation_allocations','resulting_lot_version','bigint'),
+        ('public.research_refund_executions','state','text')
+      ) required(relation_name,column_name,type_name)
+      where not exists (select 1 from pg_catalog.pg_attribute a
+        where a.attrelid=pg_catalog.to_regclass(required.relation_name)
+          and a.attname=required.column_name and not a.attisdropped
+          and pg_catalog.format_type(a.atttypid,a.atttypmod)=required.type_name)) then
     return null;
   end if;
 
   foreach v_signature in array array[
+    'public.research_checkout_prepare(jsonb,jsonb,jsonb,timestamp with time zone,timestamp with time zone)',
+    'public.research_reserve_inventory(uuid,uuid,jsonb,timestamp with time zone,timestamp with time zone,text)',
+    'public.research_release_inventory_reservations(uuid,uuid,text[],timestamp with time zone,text,text)',
+    'public.research_finalize_inventory_reservations(uuid,uuid,text[],timestamp with time zone,text,text)',
     'public.research_checkout_execution_claim(uuid,integer,text)',
     'public.research_checkout_execution_record_provider(uuid,integer,jsonb)',
     'public.research_checkout_execution_commit_captured(uuid,integer,timestamp with time zone)',
@@ -465,6 +525,7 @@ begin
     'public.research_checkout_credit_immutable()',
     'public.research_checkout_executions_immutable()',
     'public.research_payment_webhook_inbox_immutable()',
+    'public.research_inventory_reservation_event_immutable()',
     'public.research_refund_execution_immutable()',
     'public.research_refund_active_claim_guard()',
     'public.research_refund_active_order_guard()'
@@ -494,22 +555,23 @@ begin
 
   if pg_catalog.has_table_privilege('service_role','public.research_payment_webhook_inbox','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
      or pg_catalog.has_table_privilege('service_role','public.research_refund_executions','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
-     or pg_catalog.has_table_privilege('service_role','public.research_checkout_executions','DELETE,TRUNCATE,REFERENCES,TRIGGER')
-     or pg_catalog.has_table_privilege('service_role','public.research_checkout_credit_reservations','DELETE,TRUNCATE,REFERENCES,TRIGGER')
+     or pg_catalog.has_table_privilege('service_role','public.research_checkout_executions','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+     or pg_catalog.has_table_privilege('service_role','public.research_checkout_credit_reservations','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+     or pg_catalog.has_table_privilege('service_role','public.research_inventory_lots','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+     or pg_catalog.has_table_privilege('service_role','public.research_lot_reservations','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+     or pg_catalog.has_table_privilege('service_role','public.research_lot_reservation_allocations','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
+     or pg_catalog.has_table_privilege('service_role','public.research_inventory_reservation_events','INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
      or not pg_catalog.has_table_privilege('service_role','public.research_payment_webhook_inbox','SELECT')
      or not pg_catalog.has_table_privilege('service_role','public.research_refund_executions','SELECT')
      or not pg_catalog.has_table_privilege('service_role','public.research_checkout_executions','SELECT')
-     or not pg_catalog.has_table_privilege('service_role','public.research_checkout_executions','INSERT')
-     or not pg_catalog.has_table_privilege('service_role','public.research_checkout_executions','UPDATE')
      or not pg_catalog.has_table_privilege('service_role','public.research_checkout_credit_reservations','SELECT')
-     or not pg_catalog.has_table_privilege('service_role','public.research_checkout_credit_reservations','INSERT')
-     or not pg_catalog.has_table_privilege('service_role','public.research_checkout_credit_reservations','UPDATE')
      or not pg_catalog.has_table_privilege('service_role','public.research_store_credit_ledger','SELECT')
      or not pg_catalog.has_table_privilege('service_role','public.research_store_credit_ledger','INSERT')
      or not pg_catalog.has_table_privilege('service_role','public.research_orders','SELECT')
-     or not pg_catalog.has_table_privilege('service_role','public.research_orders','UPDATE')
+     or not pg_catalog.has_table_privilege('service_role','public.research_inventory_lots','SELECT')
      or not pg_catalog.has_table_privilege('service_role','public.research_lot_reservations','SELECT')
-     or not pg_catalog.has_table_privilege('service_role','public.research_lot_reservations','UPDATE')
+     or not pg_catalog.has_table_privilege('service_role','public.research_lot_reservation_allocations','SELECT')
+     or not pg_catalog.has_table_privilege('service_role','public.research_inventory_reservation_events','SELECT')
      or not pg_catalog.has_table_privilege('service_role','public.research_order_lines','SELECT')
      or not pg_catalog.has_table_privilege('service_role','public.research_order_state_events','INSERT')
      or not pg_catalog.has_table_privilege('service_role','public.research_idempotency_keys','SELECT')
@@ -517,7 +579,7 @@ begin
      or not pg_catalog.has_table_privilege('service_role','public.research_idempotency_keys','UPDATE') then
     return null;
   end if;
-  return 'durable_checkout_money_v1:20260922.1';
+  return 'durable_checkout_money_v2:20260923.1';
 end $$;
 
 alter table public.research_refund_executions enable row level security;

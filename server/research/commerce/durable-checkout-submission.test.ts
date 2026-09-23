@@ -74,6 +74,8 @@ function composition(options: { requiresAction?: boolean; denials?: CheckoutRequ
   const committed: string[] = [];
   let ids = 0;
   const submission = createDurableCheckoutSubmission({
+    authorityReady: async () => true,
+    allowNonAtomicPreparationForTests: true,
     evaluate: async () => ({
       denials: (options.denials ?? []) as never,
       cart: options.cart ?? (options.storeCredit ? { ...cart, storeCreditAppliedCents: options.storeCredit, estimatedTotalCents: 33_999 - options.storeCredit } : cart),
@@ -369,7 +371,7 @@ describe("durable checkout submission", () => {
     expect(releases.length).toBe(c.holds.events.filter((e) => e.startsWith("reserve:")).length - 1);
   });
 
-  it("answers a legacy settled order for the key without creating an execution", async () => {
+  it("refuses a legacy order without its atomic execution instead of blessing a partial write", async () => {
     const c = composition();
     const legacy: OrderRecord = {
       orderId: "44444444-4444-4444-8444-444444444444",
@@ -385,7 +387,7 @@ describe("durable checkout submission", () => {
       updatedAt: NOW.toISOString(),
     };
     await c.orders.save(legacy);
-    expect(await c.submission.submit(MEMBER, request(), NOW)).toEqual({ ok: true, requestKey: "req_durable_0001", orderId: legacy.orderId, state: "completed", idempotent: true });
+    expect(await c.submission.submit(MEMBER, request(), NOW)).toEqual({ ok: false, code: "idempotency_conflict", codes: ["idempotency_conflict"] });
     expect(c.executions.snapshot()).toEqual([]);
     expect(c.model.requests).toHaveLength(0);
   });

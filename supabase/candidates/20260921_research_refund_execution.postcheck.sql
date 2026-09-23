@@ -78,7 +78,7 @@ begin
     raise exception 'checkout money capability posture is unsafe';
   end if;
   select public.research_checkout_money_capability() into v_capability;
-  if v_capability is distinct from 'durable_checkout_money_v1:20260922.1' then
+  if v_capability is distinct from 'durable_checkout_money_v2:20260923.1' then
     raise exception 'complete checkout money capability fingerprint mismatch';
   end if;
 end $$;

@@ -1,4 +1,5 @@
 import { composeDurableCheckout, resolveDurableCheckoutStores, unavailableDurableCheckout, type DurableCheckoutComposition } from "./durable-checkout-composition";
+import { createSupabaseCheckoutPreparationAuthority } from "./persistence/checkout-executions-store";
 import { randomUUID } from "node:crypto";
 import { CURRENT_CHECKOUT_CREDIT_POLICY, creditConsentFor, evaluateCreditQuote } from "@shared/research/checkout-credit-policy";
 import { orderShippingTotalCents } from "@shared/research/commerce";
@@ -221,6 +222,7 @@ function serviceableStatesFrom(env: NodeJS.ProcessEnv): string[] {
 export interface CommerceWiring {
   /** Optional owned qualification wiring; default remains the canonical managed stores. */
   resolveDurableCheckoutStores?(): ReturnType<typeof resolveDurableCheckoutStores>;
+  resolveCheckoutPreparationAuthority?(): ReturnType<typeof createSupabaseCheckoutPreparationAuthority>;
 
   /** Catalog records to serve. Default: the provenance-adapted legacy catalog. */
   catalogProducts?: CatalogProduct[];
@@ -344,6 +346,7 @@ async function memberHasAcceptedCurrentAgreement(memberId: string, agreementKey:
 
 function defaultWiring(): CommerceWiring {
   return {
+    resolveCheckoutPreparationAuthority: createSupabaseCheckoutPreparationAuthority,
     resolveCartStore,
     resolveOrderRepository,
     resolveClaimRepository,
@@ -999,11 +1002,9 @@ function liveDependencies(
    * released/finalized timestamps) are the evidence trail until an audit
    * destination exists, which is reported rather than invented.
    */
-  const inventoryReservations = createInventoryReservationSeam({
-    lots: lotStore,
-    reservations: reservationStore,
-    now,
-  });
+  const inventoryReservations = testOnlyAllowNonAtomicCommerceMutations
+    ? createInventoryReservationSeam({ lots: lotStore, reservations: reservationStore, now })
+    : undefined;
 
   const catalogBySku = new Map<string, CatalogProduct>(products.map((p) => [p.sku, p]));
 
@@ -1170,6 +1171,7 @@ function liveDependencies(
   // the existing checkout.
   const durableCheckout = composeDurableCheckout({
     env, provider: payment, orders: orderRepository, inventory: inventoryReservations, now,
+    preparation: wiring.resolveCheckoutPreparationAuthority?.(),
     refundAuthorityReady,
     refundAuthorityPreflight: async () => refundExecutions?.preflight() ?? false,
     ...checkoutStores,
@@ -1641,10 +1643,10 @@ function liveDependencies(
         },
       }),
       memberVisibleReady: async () => {
-        await durableCheckout.assertReady();
+        const authorityReady = await durableCheckout.assertReady();
         return {
           product_commerce: { enabled: testOnlyAllowNonAtomicCommerceMutations || (
-            durableCheckout.ready && durableCheckout.managedAuthorityReady() && durableCheckout.clientConfig().ok
+            durableCheckout.ready && authorityReady && durableCheckout.clientConfig().ok
           ) },
           quantum_commerce: {
             enabled: testOnlyAllowNonAtomicCommerceMutations && quantumEnabled,

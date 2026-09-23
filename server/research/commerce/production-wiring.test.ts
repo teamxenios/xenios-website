@@ -1118,7 +1118,9 @@ describe("state 3: flag on and configured (sandbox stores + test payment provide
       product_commerce: { enabled: true },
     });
     expect(preflight).toHaveBeenCalledTimes(2);
-    expect(deps.capabilities.memberVisible().product_commerce.enabled).toBe(true);
+    // The synchronous projection is deliberately fail-closed. Only the exact
+    // request-local result returned by memberVisibleReady may authorize money.
+    expect(deps.capabilities.memberVisible().product_commerce.enabled).toBe(false);
   });
 
   it("keeps discovery previews outside commerce without canonical Product Control SKU authority", () => {

@@ -2126,15 +2126,17 @@ describe("route uniqueness validator", () => {
     // and linked to a screen that could never load. Both sit under /api/admin
     // behind requireSupabaseAdmin, beside the answer verb they complete.
     //
-    // 438/447 with the orders roster mounted. ONE addition, MEASURED:
+    // 439/448 after the async member-capability registrar and durable checkout
+    // surface became canonical. Both numbers are generated from the current
+    // finite registration graph; uniqueness remains the behavioral invariant.
     //
     //   GET  /api/admin/research/orders
     //
     // The roster the operator scans, over the same research_orders authority as
     // the queue and the order file. Mounted rather than removed from the nav
     // because orders are launch-critical and the rest of that loop now works.
-    expect(result.callSites).toBe(438);
-    expect(result.routes).toHaveLength(447);
+    expect(result.callSites).toBe(439);
+    expect(result.routes).toHaveLength(448);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

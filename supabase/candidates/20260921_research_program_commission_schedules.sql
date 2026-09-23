@@ -658,7 +658,7 @@ begin
      or pg_catalog.jsonb_array_length(p_allocation->'components') = 0 then
     raise exception 'invalid reversal allocation shape' using errcode = '22023';
   end if;
-  v_expected_hash := pg_catalog.encode(public.digest(pg_catalog.convert_to(
+  v_expected_hash := pg_catalog.encode(extensions.digest(pg_catalog.convert_to(
     private.research_program_commission_canonical_json(p_original_revenue),'UTF8'
   ),'sha256'),'hex');
   if p_allocation->>'originalRevenueSnapshotHash' <> v_expected_hash
@@ -738,7 +738,7 @@ begin
   v_key := p_command->>'idempotencyKey';
   v_supplied_fingerprint := p_command->>'operationFingerprint';
   v_fingerprint := pg_catalog.encode(
-    public.digest(pg_catalog.convert_to(
+    extensions.digest(pg_catalog.convert_to(
       private.research_program_commission_canonical_json(
         pg_catalog.jsonb_build_object(
           'kind','bind',
@@ -847,7 +847,7 @@ begin
   v_key := p_command->>'idempotencyKey';
   v_supplied_fingerprint := p_command->>'operationFingerprint';
   v_fingerprint := pg_catalog.encode(
-    public.digest(pg_catalog.convert_to(
+    extensions.digest(pg_catalog.convert_to(
       private.research_program_commission_canonical_json(
         pg_catalog.jsonb_build_object(
           'kind','terminate_binding',
@@ -1412,7 +1412,7 @@ begin
   v_occurred_at := (p_command->>'occurredAt')::timestamptz;
   v_key := p_command->>'idempotencyKey';
   v_fingerprint := pg_catalog.encode(
-    public.digest(pg_catalog.convert_to(p_command::text,'UTF8'),'sha256'),
+    extensions.digest(pg_catalog.convert_to(p_command::text,'UTF8'),'sha256'),
     'hex'
   );
   if v_ledger_id is null or v_expected is null or v_occurred_at is null or v_expected < 0

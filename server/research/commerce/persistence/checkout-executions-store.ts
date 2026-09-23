@@ -664,6 +664,55 @@ export function createSupabaseCheckoutExecutionStore(client: () => CheckoutExecu
   };
 }
 
+/**
+ * The only production writer for initial checkout state. The RPC owns the
+ * order, FEFO inventory reservation, execution, order event and credit-hold
+ * trigger in one transaction; this adapter deliberately has no table-DML
+ * fallback.
+ */
+export function createSupabaseCheckoutPreparationAuthority(
+  client: () => CheckoutExecutionClient = () => getSupabaseAdmin() as unknown as CheckoutExecutionClient,
+) {
+  return {
+    async prepare(input: {
+      order: import("../orders").OrderRecord;
+      execution: CheckoutExecutionCreate;
+      inventoryLines: Array<{ sku: string; quantity: number }>;
+      at: Date;
+      expiresAt: Date;
+    }): Promise<{ orderId: string; executionId: string; reservationIds: string[]; idempotentReplay: boolean }> {
+      const response = await client().rpc("research_checkout_prepare", {
+        p_order: input.order,
+        p_execution: input.execution,
+        p_inventory_lines: input.inventoryLines,
+        p_at: input.at.toISOString(),
+        p_expires_at: input.expiresAt.toISOString(),
+      });
+      if (response.error) {
+        if (response.error.code === "P0001" && /idempotency_conflict|partial_legacy_state/.test(response.error.message ?? "")) {
+          throw new CheckoutExecutionConflict("request_key_reused");
+        }
+        if (response.error.code === "P0001" && /credit_reservation_insufficient|credit_expiry_allocation_not_qualified/.test(response.error.message ?? "")) {
+          throw new CheckoutCreditReservationRefused(response.error.message as "credit_reservation_insufficient" | "credit_expiry_allocation_not_qualified");
+        }
+        throw new Error(`checkout preparation failed: ${response.error.message ?? "unknown"}`);
+      }
+      const row = Array.isArray(response.data) ? response.data[0] : response.data;
+      if (!managedObject(row) || !managedUuid(row.order_id) || !managedUuid(row.execution_id)
+          || !Array.isArray(row.reservation_ids) || !row.reservation_ids.every(value => managedString(value))
+          || typeof row.idempotent_replay !== "boolean") {
+        throw new Error("checkout preparation returned an unavailable receipt");
+      }
+      return {
+        orderId: row.order_id,
+        executionId: row.execution_id,
+        reservationIds: [...row.reservation_ids] as string[],
+        idempotentReplay: row.idempotent_replay,
+      };
+    },
+  };
+}
+
 const INBOX_DIGEST = /^[a-f0-9]{64}$/;
 const inboxRpcRow = (data: Row[] | Row | null): Row | null => {
   if (Array.isArray(data)) return data.length === 1 && managedObject(data[0]) ? data[0] : null;

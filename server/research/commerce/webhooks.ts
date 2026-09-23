@@ -369,14 +369,6 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
     // store, or any order.
     if (!signature) return { ok: false, code: "invalid_signature" };
 
-    if (deps.moneyAuthorityReady) {
-      try {
-        if (!(await deps.moneyAuthorityReady())) return { ok: false, code: "capability_disabled" };
-      } catch {
-        return { ok: false, code: "capability_disabled" };
-      }
-    }
-
     // Without atomic inbox+effect authority even verification must not run: a
     // provider double or SDK may consume replay state while verifying. Refuse
     // before that side effect so redelivery remains eligible after activation.
@@ -390,13 +382,25 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
       return { ok: false, code: classifyVerificationFailure(verified.code, rawBody) };
     }
 
+    // Authentication always precedes managed-database access. Invalid bytes
+    // cannot use this public endpoint as a capability/readiness oracle and do
+    // not consume a database connection.
+    if (deps.moneyAuthorityReady) {
+      try {
+        if (!(await deps.moneyAuthorityReady())) return { ok: false, code: "capability_disabled" };
+      } catch {
+        return { ok: false, code: "capability_disabled" };
+      }
+    }
+
     const { eventId, eventType } = verified.value;
     const providerName = deps.payment.name;
 
-    // A disabled capability acknowledges and claims nothing. A redelivery after
-    // enablement therefore remains eligible for its first atomic application.
+    // A disabled capability claims nothing and returns a retryable refusal. A
+    // 2xx here would cause the provider to discard the only durable delivery
+    // even though no receipt or order effect exists.
     if (!deps.commerceEnabled) {
-      return { ok: true, applied: false, eventId };
+      return { ok: false, code: "capability_disabled" };
     }
 
     // Refund settlement is not a checkout-order event. It must bind to the

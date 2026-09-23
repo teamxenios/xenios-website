@@ -17,6 +17,7 @@
   "hashAlgorithm": {
     "name": "sha256-lf",
     "$comment": [
+      "2026-09-23, remediation lease XENIOS-CHECKOUT-RC-P1-REMEDIATION-20260923: canonical LF-normalized verifier record for server/index.ts old sha256:a4af7894d678b617a85579cc80bc3d169e003736ba731de5f6f0dbee6c7935d5, new sha256:2ae01b4da96ecb01a715533477c456e2fbd7a5ec5f8010c37ec0025dc97e2877. Source review covers exactly two additive authority-wiring changes already present in reviewed base 20f0690: the assisted-order bridge passes the authenticated member auth_user_id to the existing Referral V1 resolver, and the existing member capability route awaits its own memberVisibleReady result with the synchronous fail-closed projection only as compatibility fallback. No middleware, route path, provider, static serving, Care behavior, feature default, or production configuration changed. Route uniqueness is 448 routes across 439 call sites and has no duplicates. Focused seam, capability, production-wiring, and full-suite gates are required before handoff. Local source only; no production effect.",
       "sha256 over the file's UTF-8 content with every CRLF normalized to LF, so the",
       "digest is identical whether the file is read from a CRLF Windows checkout",
       "(this repo sets core.autocrlf) or from `git show <ref>:<path>`.",
@@ -1223,7 +1224,7 @@
     ],
     "files": {
       "client/src/App.tsx": "sha256:0a9e1c970b721f0aacbc3f375988d67ea5c4cc8a81186e97b70d56283bc9b912",
-      "server/index.ts": "sha256:a4af7894d678b617a85579cc80bc3d169e003736ba731de5f6f0dbee6c7935d5",
+      "server/index.ts": "sha256:2ae01b4da96ecb01a715533477c456e2fbd7a5ec5f8010c37ec0025dc97e2877",
       "server/research/index.ts": "sha256:b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070",
       "server/care/index.ts": "sha256:c902efc3ca97affb55692a06c3c249cd84e336caa3ec6e8f79462a1cf5460b0c",
       "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3"

@@ -20,7 +20,7 @@ import { evaluateLargeOrderReview, orderShippingTotalCents, transitionOrder, typ
 import type { CheckoutEvaluationResult, ReservationAuditEvent, ReservationRefusalCode, ReservationSeam } from "./checkout";
 import type { DurableExecutionOutcome } from "./durable-checkout-executor";
 import type { OrderRecord, OrderRepository } from "./orders";
-import { CheckoutCreditReservationRefused, CheckoutExecutionConflict, requestBodySha256, type CheckoutExecutionRepository } from "./persistence/checkout-executions-store";
+import { CheckoutCreditReservationRefused, CheckoutExecutionConflict, requestBodySha256, type CheckoutExecutionCreate, type CheckoutExecutionRepository } from "./persistence/checkout-executions-store";
 import { subjectOf } from "./routes";
 import { cancellationOf } from "./checkout-continuation";
 import type { CancellationReason, CheckoutExecutionRecord } from "@shared/research/durable-checkout-execution";
@@ -49,6 +49,22 @@ export interface DurableCheckoutSubmissionDeps {
     /** A retry of the same request is the buyer asking again: a parked execution gets one bounded reconciliation. */
     recover(memberId: string, requestKey: string): Promise<DurableExecutionOutcome>;
   };
+  /**
+   * Production-only transaction authority. It creates the order, inventory
+   * reservations, execution and (via the database trigger) credit hold in one
+   * PostgreSQL transaction. The split repositories below are retained only
+   * for deterministic in-memory tests.
+   */
+  preparation?: {
+    prepare(input: {
+      order: OrderRecord;
+      execution: CheckoutExecutionCreate;
+      inventoryLines: Array<{ sku: string; quantity: number }>;
+      at: Date;
+      expiresAt: Date;
+    }): Promise<{ orderId: string; executionId: string; reservationIds: string[]; idempotentReplay: boolean }>;
+  };
+  allowNonAtomicPreparationForTests?: boolean;
   inventory?: ReservationSeam;
   reservationAudit?: { record(event: ReservationAuditEvent): Promise<void> | void };
   isFraudFlagged?: (memberId: string) => boolean;
@@ -143,9 +159,10 @@ export function createDurableCheckoutSubmission(deps: DurableCheckoutSubmissionD
         if ((await deps.executions.verifyRequest(memberId, requestKey, requestDigest)) !== "match") return deny(["idempotency_conflict"]);
         return continueExisting(memberId, requestKey, existing.orderId, true);
       }
-      // A legacy order settled under this key answers with its truth; no new execution.
+      // An order without its execution is not a successful replay. It is
+      // evidence of a pre-v2 partial write and must be reconciled explicitly.
       const legacy = await deps.orders.findByCheckoutIdempotencyKey(memberId, requestKey);
-      if (legacy) return { ok: true, requestKey, orderId: legacy.orderId, state: orderStateToCheckoutState(legacy), idempotent: true };
+      if (legacy) return deny(["idempotency_conflict"]);
 
       // 2. Canonical gates. Nothing is created, reserved or charged on a denial.
       const { denials, cart, quote } = await deps.evaluate(memberId, req, asOf);
@@ -188,14 +205,59 @@ export function createDurableCheckoutSubmission(deps: DurableCheckoutSubmissionD
         return deny(["large_order_review_required"]);
       }
 
-      // 3. Inventory hold, all-or-nothing, before any money moves.
+      const orderId = deps.newId();
+      const executionId = deps.newId();
+      const placedAt = asOf.toISOString();
+      const opened = transitionOrder({ from: "draft", to: "checkout_pending", actor: "system" });
+      if (!opened.ok) return deny(["order_state_invalid"]);
+      const order: OrderRecord = {
+        orderId, memberId, state: opened.state,
+        lines: cart.lines.map((line) => ({ sku: line.sku, displayName: line.displayName, quantity: line.quantity, lineTotalCents: line.lineTotalCents ?? -1 })),
+        totals: { subtotalCents: cart.subtotalCents, shippingCents, storeCreditAppliedCents: cart.storeCreditAppliedCents, totalCents },
+        providerReference: null, checkoutIdempotencyKey: requestKey, lastIdempotencyKey: requestKey,
+        reviewTriggers: [...review.triggers], createdAt: placedAt, updatedAt: placedAt, refundedCents: 0,
+        shipments: cart.shipmentGroups.map((group) => ({ owner: group.owner, status: "pending", trackingNumber: null, carrier: null })),
+      };
+      const execution: CheckoutExecutionCreate = {
+        executionId, requestKey, requestBodySha256: requestDigest,
+        priceVersion: deps.priceVersion?.(cart) ?? null, phase: "reserved", version: 1,
+        providerReference: null, orderId, memberId, amountCents: totalCents, currency: "usd",
+        paymentMethodReference: req.paymentMethodReference,
+        quoteFingerprint: quoteFingerprint(cart, quote, cart.storeCreditAppliedCents),
+        authorizationKey: `xr-auth-${executionId}`, captureKey: `xr-capture-${executionId}`,
+        cancelKey: `xr-cancel-${executionId}`, reservationIds: [], createdAt: placedAt,
+        updatedAt: placedAt, authorizationAttemptedAt: null, settledAt: null,
+        lastProviderResult: null, localCommitFailure: null, committedAt: null,
+      };
+
+      if (deps.preparation) {
+        try {
+          const prepared = await deps.preparation.prepare({
+            order, execution,
+            inventoryLines: cart.lines.map((line) => ({ sku: line.sku, quantity: line.quantity })),
+            at: asOf,
+            expiresAt: new Date(asOf.getTime() + 30 * 60_000),
+          });
+          if (prepared.orderId !== orderId && !prepared.idempotentReplay) throw new Error("checkout preparation identity disagrees");
+          return continueExisting(memberId, requestKey, prepared.orderId, prepared.idempotentReplay);
+        } catch (error) {
+          const winner = await deps.executions.getForMember(memberId, requestKey);
+          if (winner && (await deps.executions.verifyRequest(memberId, requestKey, requestDigest)) === "match") {
+            return continueExisting(memberId, requestKey, winner.orderId, true);
+          }
+          if (error instanceof CheckoutExecutionConflict) return deny(["idempotency_conflict"]);
+          throw error;
+        }
+      }
+      if (!deps.allowNonAtomicPreparationForTests) return deny(["capability_disabled"]);
+
+      // Test reference path only: production always uses preparation above.
       let reservationIds: string[] = [];
       if (deps.inventory) {
         const reserved = await deps.inventory.reserve(memberId, cart.lines.map((line) => ({ sku: line.sku, quantity: line.quantity })), asOf);
         if (!reserved.ok) return deny(["insufficient_stock"], reserved.refusals);
         reservationIds = reserved.reservationIds;
       }
-      const orderId = deps.newId();
       const audit = async (type: ReservationAuditEvent["type"]) => {
         if (!deps.reservationAudit || reservationIds.length === 0) return;
         await deps.reservationAudit.record({ type, orderId, memberId, reservationIds: [...reservationIds], at: asOf.toISOString() });
@@ -207,27 +269,10 @@ export function createDurableCheckoutSubmission(deps: DurableCheckoutSubmissionD
       };
 
       // 4. The canonical order, persisted in checkout_pending BEFORE the execution and the provider.
-      const opened = transitionOrder({ from: "draft", to: "checkout_pending", actor: "system" });
       if (!opened.ok) {
         await release();
         return deny(["order_state_invalid"]);
       }
-      const placedAt = asOf.toISOString();
-      const order: OrderRecord = {
-        orderId,
-        memberId,
-        state: opened.state,
-        lines: cart.lines.map((line) => ({ sku: line.sku, displayName: line.displayName, quantity: line.quantity, lineTotalCents: line.lineTotalCents ?? -1 })),
-        totals: { subtotalCents: cart.subtotalCents, shippingCents, storeCreditAppliedCents: cart.storeCreditAppliedCents, totalCents },
-        providerReference: null,
-        checkoutIdempotencyKey: requestKey,
-        lastIdempotencyKey: requestKey,
-        reviewTriggers: [...review.triggers],
-        createdAt: placedAt,
-        updatedAt: placedAt,
-        refundedCents: 0,
-        shipments: cart.shipmentGroups.map((group) => ({ owner: group.owner, status: "pending", trackingNumber: null, carrier: null })),
-      };
       try {
         await deps.orders.save(order);
         await audit("reserved");
@@ -237,30 +282,8 @@ export function createDurableCheckoutSubmission(deps: DurableCheckoutSubmissionD
       }
 
       // 5. The recoverable intent, before any external effect.
-      const executionId = deps.newId();
       try {
-        await deps.executions.create({
-          executionId,
-          requestKey,
-          requestBodySha256: requestDigest,
-          priceVersion: deps.priceVersion?.(cart) ?? null,
-          phase: "reserved",
-          version: 1,
-          providerReference: null,
-          orderId,
-          memberId,
-          amountCents: totalCents,
-          currency: "usd",
-          paymentMethodReference: req.paymentMethodReference,
-          quoteFingerprint: quoteFingerprint(cart, quote, cart.storeCreditAppliedCents),
-          authorizationKey: `xr-auth-${executionId}`,
-          captureKey: `xr-capture-${executionId}`,
-          cancelKey: `xr-cancel-${executionId}`,
-          reservationIds,
-          createdAt: placedAt,
-          authorizationAttemptedAt: null,
-          settledAt: null,
-        });
+        await deps.executions.create({ ...execution, reservationIds });
       } catch (error) {
         // A transport failure may follow a committed INSERT. Establish canonical
         // identity before any compensation; absence after an uncertain response

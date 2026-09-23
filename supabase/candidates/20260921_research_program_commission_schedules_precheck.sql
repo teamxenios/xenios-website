@@ -1,6 +1,7 @@
 -- Read-only precheck. This does not authorize or apply the sibling candidate.
 with canonical as (
   select
+    to_regprocedure('extensions.digest(bytea,text)') is not null as digest_present,
     to_regclass('public.research_partners') is not null as partners_present,
     to_regclass('public.research_partner_lifecycle_events') is not null
       and not exists (
@@ -58,7 +59,7 @@ with canonical as (
 select jsonb_build_object(
   'verdict', case
     when not (
-      canonical.partners_present and canonical.partner_lifecycle_present
+      canonical.digest_present and canonical.partners_present and canonical.partner_lifecycle_present
       and canonical.ledger_present
       and canonical.append_function_present and canonical.kind_column_present
       and canonical.ledger_append_trigger_present and canonical.service_role_present
@@ -68,6 +69,7 @@ select jsonb_build_object(
     else 'APPLY_READY'
   end,
   'canonicalPartnersPresent', canonical.partners_present,
+  'extensionsDigestPresent', canonical.digest_present,
   'canonicalPartnerLifecyclePresent', canonical.partner_lifecycle_present,
   'canonicalCommissionLedgerPresent', canonical.ledger_present,
   'appendOnlyAuthorityPresent', canonical.append_function_present,

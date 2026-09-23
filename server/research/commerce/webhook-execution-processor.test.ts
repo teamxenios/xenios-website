@@ -276,7 +276,7 @@ describe("canonical webhook handler with executions wired", () => {
   it("claims nothing while commerce is disabled so the first enabled delivery still applies", async () => {
     const exec = executions(base);
     const { handler: h, inbox } = handler(exec.store, { commerceEnabled: false });
-    expect(await h.handlePayment(body(), "test-signature", NOW)).toEqual({ ok: true, applied: false, eventId: "evt_1" });
+    expect(await h.handlePayment(body(), "test-signature", NOW)).toEqual({ ok: false, code: "capability_disabled" });
     expect(inbox.snapshot()).toHaveLength(0);
     expect(exec.writes).toHaveLength(0);
   });

@@ -34,6 +34,7 @@ import type { OrderRecord, OrderRepository } from "./orders";
 import { registerPaymentClientConfigApi, resolvePaymentClientConfig, PAYMENT_CLIENT_CONFIG_PATH, type PaymentClientConfigResult } from "./payment-client-config";
 import {
   createInMemoryCheckoutExecutionStore,
+  createSupabaseCheckoutPreparationAuthority,
   createSupabaseCheckoutExecutionStore,
   createSupabaseWebhookExecutionInbox,
   type CheckoutExecutionRepository,
@@ -56,6 +57,7 @@ export interface DurableCheckoutCompositionInput {
   orders: OrderRepository;
   executions: DurableStoreChoice<CheckoutExecutionRepository>;
   webhookInbox: DurableStoreChoice<WebhookExecutionInbox>;
+  preparation?: ReturnType<typeof createSupabaseCheckoutPreparationAuthority>;
   inventory?: ReservationSeam;
   reservationAudit?: { record(event: ReservationAuditEvent): Promise<void> | void };
   isFraudFlagged?: (memberId: string) => boolean;
@@ -88,6 +90,7 @@ export type DurableCheckoutUnavailableReason =
   | "provider_not_durable"
   | "execution_store_not_durable"
   | "webhook_inbox_not_durable"
+  | "checkout_preparation_not_atomic"
   | "refund_authority_not_durable"
   | "provider_account_mismatch";
 
@@ -206,6 +209,7 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
   const memoryAllowed = env.NODE_ENV === "test" && input.allowInMemoryStores === true;
   if (!input.executions.durable && !memoryAllowed) return disabled("execution_store_not_durable");
   if (!input.webhookInbox.durable && !memoryAllowed) return disabled("webhook_inbox_not_durable");
+  if (!input.preparation && !memoryAllowed) return disabled("checkout_preparation_not_atomic");
   if (!input.refundAuthorityReady) return disabled("refund_authority_not_durable");
 
   // The account the webhook binding expects is the provider's own. A supplied
@@ -217,13 +221,10 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
 
   const now = input.now ?? (() => new Date());
   const newId = input.newId ?? (() => randomUUID());
-  let managedAuthorityReady = false;
   const assertReady = async (): Promise<boolean> => {
     try {
-      managedAuthorityReady = await input.refundAuthorityPreflight();
-      return managedAuthorityReady;
+      return await input.refundAuthorityPreflight();
     } catch {
-      managedAuthorityReady = false;
       return false;
     }
   };
@@ -243,6 +244,8 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
     orders: input.orders,
     executions,
     executor,
+    preparation: input.preparation,
+    allowNonAtomicPreparationForTests: memoryAllowed,
     inventory: input.inventory,
     reservationAudit: input.reservationAudit,
     isFraudFlagged: input.isFraudFlagged,
@@ -272,7 +275,9 @@ export function composeDurableCheckout(input: DurableCheckoutCompositionInput): 
     adminExecutions,
     clientConfig: () => resolvePaymentClientConfig(provider, env),
     assertReady,
-    managedAuthorityReady: () => managedAuthorityReady,
+    // Compatibility diagnostic only. Authorization callers must await
+    // assertReady() for their own request and use that exact result.
+    managedAuthorityReady: () => false,
   };
 }
 

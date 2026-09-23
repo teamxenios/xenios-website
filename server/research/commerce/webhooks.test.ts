@@ -220,7 +220,7 @@ function captureBody(id = "evt_1", orderId = "ord_1"): string {
 // ---------------------------------------------------------------------------
 
 describe("payment webhooks", () => {
-  it("refuses before provider verification or order effects when managed money authority is absent", async () => {
+  it("verifies authenticity before managed readiness and still applies no order effect when authority is absent", async () => {
     const payment = new FakePaymentProvider();
     const orders = orderStore([approvedOrder()]);
     const handler = createWebhookHandler(deps({
@@ -233,7 +233,7 @@ describe("payment webhooks", () => {
       ok: false,
       code: "capability_disabled",
     });
-    expect(payment.verifyCalls).toBe(0);
+    expect(payment.verifyCalls).toBe(1);
     expect(await orders.get("ord_1")).toMatchObject({ state: "approved", captured: false });
   });
 
@@ -588,14 +588,14 @@ describe("payment webhooks", () => {
     expect(store.calls).toEqual([]);
   });
 
-  it("acknowledges but applies nothing while commerce is disabled", async () => {
+  it("returns a retryable capability refusal while commerce is disabled", async () => {
     const store = new RecordingEventStore();
     const orders = orderStore([approvedOrder()]);
     const handler = createWebhookHandler(deps({ store, orders, commerceEnabled: false }));
 
     const result = await handler.handlePayment(captureBody(), GOOD_SIGNATURE, NOW);
 
-    expect(result).toEqual({ ok: true, applied: false, eventId: "evt_1" });
+    expect(result).toEqual({ ok: false, code: "capability_disabled" });
     expect((await orders.get("ord_1"))!.state).toBe("approved");
     // Not recorded, because nothing happened. A redelivery after commerce is
     // enabled is a first application, not a second.

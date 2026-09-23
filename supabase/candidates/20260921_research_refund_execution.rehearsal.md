@@ -16,7 +16,7 @@ foreign-key binding, atomic local completion, ledger/event single-write, and
 the exact table/function privilege posture including direct service-role
 `INSERT`, `UPDATE`, `DELETE`, and `TRUNCATE` refusal where applicable.
 
-The capability may return `durable_checkout_money_v1:20260922.1` only when its
+The capability may return `durable_checkout_money_v2:20260923.1` only when its
 complete chain is present: checkout executions and settlement, recovery
 discovery and operation, credit reservations and guards, refund execution,
 webhook receipt authority, and guarded order-effect transitions. In a disposable

@@ -9,6 +9,7 @@ import {
   CheckoutCreditReservationRefused,
   createInMemoryCheckoutExecutionStore,
   createSupabaseCheckoutExecutionStore,
+  createSupabaseCheckoutPreparationAuthority,
   createSupabaseWebhookExecutionInbox,
   executionToInsertRow,
   requestBodySha256,
@@ -333,6 +334,31 @@ function fakeClient(options: { existing?: CheckoutExecutionRow | null; rpc?: (fn
 }
 
 describe("Supabase execution store adapter", () => {
+  it("prepares initial checkout through one RPC and performs no direct table DML", async () => {
+    const calls: Array<{ fn: string; args: Record<string, unknown> }> = [];
+    const client = {
+      rpc: async (fn: string, args: Record<string, unknown>) => {
+        calls.push({ fn, args });
+        return { data: { order_id: base.orderId, execution_id: base.executionId, reservation_ids: ["res-1"], idempotent_replay: false }, error: null };
+      },
+      from: () => { throw new Error("direct DML is forbidden"); },
+    } as unknown as CheckoutExecutionClient;
+    const receipt = await createSupabaseCheckoutPreparationAuthority(() => client).prepare({
+      order: {
+        orderId: base.orderId, memberId: base.memberId, state: "checkout_pending",
+        lines: [{ sku: "SKU-1", displayName: "SKU 1", quantity: 2, lineTotalCents: 32_999 }],
+        totals: { subtotalCents: 32_999, shippingCents: 1_000, storeCreditAppliedCents: 0, totalCents: 33_999 },
+        providerReference: null, checkoutIdempotencyKey: base.requestKey, lastIdempotencyKey: base.requestKey,
+        reviewTriggers: [], createdAt: base.createdAt, updatedAt: base.createdAt,
+      },
+      execution: base,
+      inventoryLines: [{ sku: "SKU-1", quantity: 2 }],
+      at: new Date(base.createdAt), expiresAt: new Date("2026-09-09T00:30:00Z"),
+    });
+    expect(receipt).toEqual({ orderId: base.orderId, executionId: base.executionId, reservationIds: ["res-1"], idempotentReplay: false });
+    expect(calls).toHaveLength(1);
+    expect(calls[0]).toMatchObject({ fn: "research_checkout_prepare", args: { p_inventory_lines: [{ sku: "SKU-1", quantity: 2 }] } });
+  });
   it.each([null, undefined, {}, [null], [undefined], [{ order_id: "wrong" }]])(
     "does not use an unavailable order projection as proof of absence (%#)", async data => {
       const client = { from: () => ({ select: () => ({ eq: () => ({ order: () => ({

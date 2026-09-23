@@ -456,6 +456,16 @@
       "startedAt": "2026-09-21T14:38:16.503Z",
       "heartbeatAt": "2026-09-21T16:38:05.000Z",
       "note": "Local closeout complete: application 6d1792c build and 204 browser captures passed; test-only successor c559c4e passed 17,896 tests, zero failed, 71 explicit skips. Typechecks, route/DAG/protection and strict scan pass. Production-state verifier remains blocked by absent trusted inputs and stale evidence; managed SQL, hosted checkout and authoritative EA grant policy remain external. No managed writes or deployment."
+    },
+    {
+      "id": "codex-checkout-rc-p1-remediation-20260923",
+      "tool": "codex",
+      "lane": "checkout-rc-p1-remediation",
+      "branch": "codex/xenios-checkout-rc-p1-remediation-20260923",
+      "state": "active",
+      "startedAt": "2026-09-23T04:19:04.007Z",
+      "heartbeatAt": "2026-09-23T05:16:21.545Z",
+      "note": ""
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

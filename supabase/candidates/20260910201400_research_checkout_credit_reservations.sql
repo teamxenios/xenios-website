@@ -45,11 +45,11 @@ create index research_checkout_credit_reservations_member_held_idx
 alter table public.research_checkout_credit_reservations enable row level security;
 alter table public.research_checkout_credit_reservations force row level security;
 revoke all on table public.research_checkout_credit_reservations from public, anon, authenticated, service_role;
-grant select, insert, update on table public.research_checkout_credit_reservations to service_role;
+grant select on table public.research_checkout_credit_reservations to service_role;
 -- Required invoker permissions, explicit rather than relying on provider
 -- default privileges. No UPDATE/DELETE permission is added to the ledger.
 grant select,insert on table public.research_store_credit_ledger to service_role;
-grant select,update on table public.research_orders,public.research_lot_reservations to service_role;
+grant select on table public.research_orders,public.research_lot_reservations to service_role;
 grant select on table public.research_order_lines to service_role;
 grant insert on table public.research_order_state_events to service_role;
 
@@ -261,7 +261,7 @@ create or replace function public.research_checkout_execution_commit_captured(
   p_execution_id uuid,
   p_expected_version integer,
   p_at timestamptz
-) returns setof public.research_checkout_executions language plpgsql security invoker set search_path = '' as $$
+) returns setof public.research_checkout_executions language plpgsql security definer set search_path = '' as $$
 declare
   v_exec public.research_checkout_executions%rowtype;
   v_order public.research_orders%rowtype;
@@ -373,11 +373,14 @@ begin
       (v_order.id, v_order.state, 'payment_captured', 'system', 'durable_checkout', v_exec.provider_reference, v_exec.capture_key, p_at);
   end if;
 
-  update public.research_lot_reservations
-     set status = 'finalized', finalized_at = coalesce(finalized_at, p_at)
-   where reservation_id = any (v_exec.reservation_ids)
-     and member_id = v_exec.member_id
-     and status = 'held';
+  perform public.research_finalize_inventory_reservations(
+    v_exec.member_id,
+    v_exec.member_id,
+    v_exec.reservation_ids,
+    p_at,
+    'checkout-capture-v2:' || v_exec.id::text || ':' || v_exec.capture_key,
+    'checkout_captured'
+  );
   if exists (select 1 from public.research_lot_reservations
               where reservation_id = any (v_exec.reservation_ids) and member_id = v_exec.member_id
                 and status <> 'finalized') then
@@ -415,7 +418,7 @@ create or replace function public.research_checkout_execution_commit_cancelled(
   p_execution_id uuid,
   p_expected_version integer,
   p_at timestamptz
-) returns setof public.research_checkout_executions language plpgsql security invoker set search_path = '' as $$
+) returns setof public.research_checkout_executions language plpgsql security definer set search_path = '' as $$
 declare
   v_exec public.research_checkout_executions%rowtype;
   v_order public.research_orders%rowtype;
@@ -461,11 +464,18 @@ begin
     raise exception 'research_checkout_execution_commit_cancelled: order % cannot be cancelled from %', v_exec.order_id, v_order.state;
   end if;
 
-  update public.research_lot_reservations
-     set status = 'released', released_at = coalesce(released_at, p_at)
-   where reservation_id = any (v_exec.reservation_ids)
-     and member_id = v_exec.member_id
-     and status = 'held';
+  -- The canonical release RPC restores every allocation's lot quantities,
+  -- changes each header exactly once, and appends its audit receipt. Because
+  -- this call is inside the cancellation function, any later credit/execution
+  -- failure rolls the inventory restoration back with the whole transaction.
+  perform public.research_release_inventory_reservations(
+    v_exec.member_id,
+    v_exec.member_id,
+    v_exec.reservation_ids,
+    p_at,
+    'checkout-cancel-v2:' || v_exec.id::text || ':' || v_exec.cancel_key,
+    'checkout_cancelled'
+  );
 
   if v_order.store_credit_applied_cents > 0 then
     select * into v_hold from public.research_checkout_credit_reservations where execution_id = v_exec.id for update;
@@ -500,6 +510,8 @@ revoke execute on function public.research_checkout_execution_commit_captured(uu
   public.research_checkout_execution_commit_cancelled(uuid,integer,timestamptz) from public,anon,authenticated;
 grant execute on function public.research_checkout_execution_commit_captured(uuid,integer,timestamptz),
   public.research_checkout_execution_commit_cancelled(uuid,integer,timestamptz) to service_role;
+alter function public.research_checkout_execution_commit_captured(uuid,integer,timestamptz) owner to postgres;
+alter function public.research_checkout_execution_commit_cancelled(uuid,integer,timestamptz) owner to postgres;
 
 comment on table public.research_checkout_credit_reservations is
   'Execution-bound credit encumbrances. Ledger remains append-only; unknown provider outcomes never release holds.';

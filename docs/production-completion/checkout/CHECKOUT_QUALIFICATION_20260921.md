@@ -35,19 +35,17 @@ replayed and no database write was made.
 
 ## Required SQL order and exact identity
 
-There are two distinct layers. The existing durable checkout foundation is the
-same four-candidate sequence, in this order:
+The P1-remediated durable checkout chain is installed in this order:
 
 1. `20260909150000_research_checkout_executions`
-2. `20260910201400_research_checkout_credit_reservations`
-3. `20260910120000_research_checkout_execution_recovery`
-4. `20260910220129_research_checkout_recovery_operation`
+2. canonical inventory lot/COA and reservation-command migrations, then
+   `20260909170000_research_checkout_atomic_preparation`
+3. `20260910201400_research_checkout_credit_reservations`
+4. `20260910120000_research_checkout_execution_recovery`
+5. `20260910220129_research_checkout_recovery_operation`
+6. `20260921_research_refund_execution`
 
-The refund remediation adds a fifth, later prerequisite for checkout readiness:
-
-5. `20260921_research_refund_execution`
-
-The fifth candidate must run only after all four checkout candidates. It adds
+The refund candidate must run only after the preceding checkout authorities. It adds
 the durable refund-intent authority, SECURITY DEFINER prepare/claim/evidence/
 reconciliation/commit RPCs, active claim/order mutation guards, and the refund
 execution foreign-key binding on the existing payment webhook inbox. It also
@@ -68,13 +66,16 @@ LF-normalized SHA-256 identities:
 | `20260909150000_research_checkout_executions.sql` | `0aa4e24d5056ed3db5dfca30fb256955b8af2b15025244868fb3d86929dc1317` |
 | `20260909150000_research_checkout_executions.postcheck.sql` | `d488ae8e0a31e1279fa0daea95ede3edf78cd891b992b0511f8225d4973cbfc0` |
 | `20260909150000_research_checkout_executions.rehearsal.sql` | `622279f39c24bcbb995fb23ef980fa202e3396ce0459ff14b6912440a991dc15` |
-| `20260910201400_research_checkout_credit_reservations.sql` | `1196169a2d29cb7bf62e29326ed689bdd9f668d43abe6977d97dd087de70033e` |
+| `20260909170000_research_checkout_atomic_preparation.sql` | `5319c8c139be3f20b0648963e76ff2108340247c09eab39766b91b2cc7188953` |
+| `20260910201400_research_checkout_credit_reservations.sql` | `aedc5b073ff51c4c8e2c60f8ccf1b582a6f3f58fb41eaab47d171327b16caab4` |
+| `20260910201400_research_checkout_credit_reservations.postcheck.sql` | `9774dd97549591e34309b4a41f22411e448e45719e95abc2c3b3818c752c7122` |
 | `20260910120000_research_checkout_execution_recovery.sql` | `c63563dc5e378e95d35f70f3f99acf966ab74c4019edcb7f7dfa82872bf383ba` |
 | `20260910220129_research_checkout_recovery_operation.sql` | `a2fd98dfc80a921caa3eb1c6bb2b5e0d8a7c581b9ad3dcfaae65dd4fafa37fb0` |
 | `20260921_research_refund_execution.precheck.sql` | `17d58ebe8c33d25f56ed2311855abf927c05435a65d20409894a098e4d0afc26` |
-| `20260921_research_refund_execution.sql` | `338180f77df1cb3504274c349fe5db4d42fd5ddba6b41fb4bce080bc041ce513` |
-| `20260921_research_refund_execution.postcheck.sql` | `98bbf522d73dbb3cc37d6b05001c82b2efcc46a0fd0e1f4e82dcaa05f3288907` |
-| `20260921_research_refund_execution.rehearsal.sql` | `630dce52da2f0bcc6ad3e52c1019730a9e4dd2c41b170fc3eafc1a11fde8b082` |
+| `20260921_research_refund_execution.sql` | `1fa06c3163b910f805d42a6ae08ab28ccc6f48a76399ce2b6092dcd6a956abd9` |
+| `20260921_research_refund_execution.postcheck.sql` | `798d4f8a56e123c39101ec837578489467c744996ab6d9e2779f4dee0697f374` |
+| `20260921_research_refund_execution.rehearsal.sql` | `aea2196f9d3577d8e5a812db9e15d50a06e7c94daae867feaeda38d8349fdb27` |
+| `refund-execution-sql-rehearsal.mjs` | `d8b40f77330a6b89dca8c6b3402159728512479937433ae1d91e22ae84ac7e26` |
 
 For candidate 5 the authorized disposable-database sequence is exactly:
 
@@ -93,7 +94,11 @@ was applied by this session.
 - Provider selection is server-only and defaults disabled. Stripe requires the
   commerce flag, an unambiguous `stripe` selector, complete publishable/secret/
   webhook keys with valid shapes, matching test/live modes, no synthetic
-  marker, and no unsupported Connect account configuration.
+  marker, and no unsupported Connect account configuration. Matching `pk_*`
+  and `sk_*` modes prove only key-shape consistency; they do not prove that the
+  two keys or webhook secret belong to the same Stripe account. Checkout must
+  remain disabled until an authenticated provider account-readback check is
+  added to the activation procedure.
 - Customer checkout readiness is one full-money-path decision. Durable checkout
   execution, durable webhook inbox, client Stripe configuration, and durable
   refund authority must all be ready. The server preflights the exact managed
@@ -135,7 +140,8 @@ was applied by this session.
 
 ## Local evidence
 
-The complete candidate chain (all four checkout layers followed by refund),
+The complete candidate chain (checkout execution, inventory/atomic preparation,
+credit reservation, recovery discovery, recovery operation, and refund),
 its prechecks, migrations, postchecks, and transactional rehearsals passed in a
 fresh disposable in-memory PGlite 0.5.8 / PostgreSQL 18 runtime:
 

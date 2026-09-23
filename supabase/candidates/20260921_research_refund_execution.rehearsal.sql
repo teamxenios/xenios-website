@@ -83,7 +83,7 @@ set local role service_role;
 do $acl$
 declare v_err text;
 begin
-  perform pg_temp.expect(public.research_checkout_money_capability() = 'durable_checkout_money_v1:20260922.1',
+  perform pg_temp.expect(public.research_checkout_money_capability() = 'durable_checkout_money_v2:20260923.1',
     'complete checkout money capability is positively attested');
   v_err := pg_temp.error_of($q$insert into public.research_refund_executions
     (id,scope,claim_id,order_id,admin_id,payment_reference,amount_cents,currency,state,created_at,updated_at)
