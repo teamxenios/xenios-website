@@ -153,7 +153,7 @@ export interface WebhookDeps {
   executions?: WebhookExecutionProcessor;
   /** Durable refund settlement, bound by provider refund metadata. */
   refunds?: RefundWebhookProcessor;
-  /** Read-only complete-money-chain proof, checked before provider verification. */
+  /** Read-only complete-money-chain proof, checked after signature verification and before managed effects. */
   moneyAuthorityReady?: () => Promise<boolean>;
   commerceEnabled: boolean;
 }
@@ -510,7 +510,7 @@ export function createWebhookHandler(deps: WebhookDeps): WebhookHandler {
     const providerName = fulfillment.name;
 
     if (!deps.commerceEnabled) {
-      return { ok: true, applied: false, eventId };
+      return { ok: false, code: "capability_disabled" };
     }
 
     const target = FULFILLMENT_STATUS_STATES[update.status];

@@ -84,17 +84,6 @@ export const PGCRYPTO_ALLOWLIST: readonly PgcryptoAllowlistEntry[] = Object.free
       "by migration 60, which CREATE OR REPLACEs it with the extensions-qualified body BEFORE the cart " +
       "flag is ever switched on. Verified by scripts/verify-early-access-cart-managed-supabase.sh.",
   }),
-  Object.freeze({
-    path: "supabase/migrations/20260727200000_research_persistent_cart.sql",
-    occurrences: 9,
-    sha256: "6d1379db45939bdb27f6ea1b32c50e3137a3d0c3cbdbe21cd9a145e2d771d880",
-    reason:
-      "KNOWN DEFECT, NOT YET APPLIED, DIFFERENT LANE. This commerce-lane migration is PENDING and carries " +
-      "the same public.digest mistake. It is allowlisted only so it does not block the Early Access " +
-      "release that does not apply it. IT MUST BE CORRECTED TO extensions.digest BEFORE IT IS EVER " +
-      "APPLIED, or it will fail exactly as migration 60 did. Whoever picks up the persistent-cart lane " +
-      "should treat this entry as the work item.",
-  }),
 ]);
 
 /** SQL that will be applied to a Supabase database. */

@@ -62,7 +62,9 @@ const headSha = execFileSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding
 
 const db = new PGlite({ extensions: { pgcrypto } });
 try {
-  await db.exec(`create extension if not exists pgcrypto; create role anon; create role authenticated; create role service_role bypassrls;
+  await db.exec(`create schema if not exists extensions;
+    create extension if not exists pgcrypto with schema extensions;
+    create role anon; create role authenticated; create role service_role bypassrls;
     create schema if not exists storage;
     create table if not exists storage.buckets(id text primary key,name text not null,public boolean not null default false,file_size_limit bigint,allowed_mime_types text[]);`);
   for (const input of inputs) {
@@ -91,8 +93,9 @@ try {
 
   // Exercise the atomic preparation authority itself. An already-committed
   // exact identity must replay before inventory is touched; changed commercial
-  // identity must conflict; a fresh request with unavailable inventory must
-  // roll back without leaving an order or execution.
+  // identity must conflict; fresh inventory/order projection mismatches must
+  // fail before reservation; and unavailable inventory must roll back without
+  // leaving an order or execution.
   const memberId = "11111111-1111-4111-8111-111111111111";
   const replayOrderId = "22222222-2222-4222-8222-222222222222";
   const replayExecutionId = "33333333-3333-4333-8333-333333333333";
@@ -134,6 +137,50 @@ try {
     conflictRefused = String(error?.message ?? error).includes("checkout_prepare_idempotency_conflict");
   }
   if (!conflictRefused) throw new Error("atomic checkout conflicting replay was not refused");
+
+  const expectInventoryBindingMismatch = async ({ label, orderId, executionId, requestKey, digest, orderLines, inventoryLines }) => {
+    const order = {
+      orderId, memberId, checkoutIdempotencyKey: requestKey,
+      totals: { subtotalCents: 1000, shippingCents: 0, storeCreditAppliedCents: 0, totalCents: 1000 },
+      reviewTriggers: [], lines: orderLines, shipments: [],
+    };
+    const execution = {
+      ...replayExecution, executionId, orderId, requestKey, requestBodySha256: digest,
+      paymentMethodReference: `pm_atomic_${label}`, authorizationKey: `authorize-atomic-${label}`,
+      captureKey: `capture-atomic-${label}`, cancelKey: `cancel-atomic-${label}`,
+    };
+    let exactMarker = false;
+    try {
+      await db.query(`select * from public.research_checkout_prepare(
+        $1::jsonb,$2::jsonb,$3::jsonb,now(),now()+interval '15 minutes')`, [
+        JSON.stringify(order), JSON.stringify(execution), JSON.stringify(inventoryLines),
+      ]);
+    } catch (error) {
+      exactMarker = String(error?.message ?? error).includes("checkout_prepare_inventory_binding_mismatch");
+    }
+    if (!exactMarker) throw new Error(`atomic checkout ${label} mismatch did not return the exact binding marker`);
+    const partial = await db.query(`select
+      (select count(*)::int from public.research_orders where id=$1) as orders,
+      (select count(*)::int from public.research_checkout_executions where id=$2) as executions`,
+      [orderId, executionId]);
+    if (partial.rows[0]?.orders !== 0 || partial.rows[0]?.executions !== 0) {
+      throw new Error(`atomic checkout ${label} mismatch left partial order or execution state`);
+    }
+  };
+  await expectInventoryBindingMismatch({
+    label: "sku", orderId: "66666666-6666-4666-8666-666666666666",
+    executionId: "77777777-7777-4777-8777-777777777777", requestKey: "req_atomic_sku_mismatch",
+    digest: "d".repeat(64),
+    orderLines: [{ sku: "ORDER-SKU", displayName: "Order SKU", quantity: 1, lineTotalCents: 1000 }],
+    inventoryLines: [{ sku: "INVENTORY-SKU", quantity: 1 }],
+  });
+  await expectInventoryBindingMismatch({
+    label: "quantity", orderId: "88888888-8888-4888-8888-888888888888",
+    executionId: "99999999-9999-4999-8999-999999999999", requestKey: "req_atomic_quantity_mismatch",
+    digest: "e".repeat(64),
+    orderLines: [{ sku: "QUANTITY-SKU", displayName: "Quantity SKU", quantity: 1, lineTotalCents: 1000 }],
+    inventoryLines: [{ sku: "QUANTITY-SKU", quantity: 2 }],
+  });
 
   const rollbackOrderId = "44444444-4444-4444-8444-444444444444";
   const rollbackExecutionId = "55555555-5555-4555-8555-555555555555";
@@ -178,6 +225,57 @@ try {
       await db.exec("rollback");
     }
   };
+
+  // Each formerly uncovered catalog drift is isolated in its own transaction.
+  // A probe passes only when that single mutation makes the exact token null.
+  const catalogTamperProbes = [
+    ["column_nullability_tamper",
+      "alter table public.research_checkout_executions alter column currency drop not null"],
+    ["authorization_unique_constraint_tamper",
+      "alter table public.research_checkout_executions drop constraint research_checkout_executions_authorization_key_key"],
+    ["checkout_order_fk_tamper",
+      "alter table public.research_checkout_executions drop constraint research_checkout_executions_order_id_fkey"],
+    ["credit_execution_fk_tamper",
+      "alter table public.research_checkout_credit_reservations drop constraint research_checkout_credit_reservations_execution_id_fkey"],
+    ["credit_partial_index_tamper",
+      "drop index public.research_checkout_credit_reservations_member_held_idx"],
+    ["order_update_acl_tamper",
+      "grant update on table public.research_orders to service_role"],
+    ["anon_inventory_insert_acl_tamper",
+      "grant insert on table public.research_inventory_lots to anon"],
+    ["inventory_expire_rpc_acl_tamper",
+      "grant execute on function public.research_expire_inventory_reservations(uuid,uuid,text[],timestamptz,text,text) to anon"],
+    ["arbitrary_function_owner_tamper", `
+      create role capability_function_owner_drift;
+      alter function public.research_reserve_inventory(uuid,uuid,jsonb,timestamptz,timestamptz,text)
+        owner to capability_function_owner_drift`],
+    ["function_volatility_tamper",
+      "alter function public.research_checkout_execution_claim(uuid,integer,text) stable"],
+    ["credit_trigger_search_path_tamper",
+      "alter function public.research_checkout_credit_reserve() set search_path to public"],
+    ["inventory_force_rls_tamper",
+      "alter table public.research_inventory_lots no force row level security"],
+    ["inventory_identity_trigger_disabled_tamper",
+      "alter table public.research_inventory_lots disable trigger research_inventory_lot_identity_serialization"],
+    ["checkout_primary_key_tamper",
+      "alter table public.research_checkout_executions drop constraint research_checkout_executions_pkey cascade"],
+    ["webhook_primary_key_tamper",
+      "alter table public.research_payment_webhook_inbox drop constraint research_payment_webhook_inbox_pkey"],
+    ["paid_reference_check_tamper",
+      "alter table public.research_checkout_executions drop constraint research_checkout_executions_paid_needs_reference"],
+    ["order_truncate_acl_tamper",
+      "grant truncate on table public.research_orders to service_role"],
+    ["checkout_table_owner_tamper", `
+      create role capability_table_owner_drift;
+      alter table public.research_checkout_executions owner to capability_table_owner_drift`],
+  ];
+  for (const [name, mutation] of catalogTamperProbes) {
+    await expectCapabilityNullAfter(name, mutation);
+    const restoredAfterProbe = await db.query("select public.research_checkout_money_capability() as capability");
+    if (restoredAfterProbe.rows[0]?.capability !== capability) {
+      throw new Error(`${name} rollback did not restore exact capability`);
+    }
+  }
   await expectCapabilityNullAfter("wrong inventory trigger timing/event", `
     drop trigger research_inventory_reservation_events_no_update on public.research_inventory_reservation_events;
     create trigger research_inventory_reservation_events_no_update after update on public.research_inventory_reservation_events
@@ -255,7 +353,7 @@ try {
     headSha,
     capability,
     sqlInputs: inputs.map(({ name, lfSha256 }) => ({ path: name, lfSha256 })),
-    checks: ["full_candidate_chain", "postchecks", "atomic_prepare_exact_replay", "atomic_prepare_conflict", "atomic_prepare_rollback", "replay", "terminal_binding_tamper", "body_fingerprint_tamper", "function_attribute_tamper", "forbidden_acl_tamper", "direct_dml_acl_tamper", "search_path_tamper", "request_key_constraint_tamper", "provider_reference_index_tamper", "trigger_disabled_tamper", "trigger_timing_event_tamper", "refund_concurrency_index_tamper", "inventory_dml_grant_tamper", "reservation_dml_grant_tamper", "missing_atomic_prepare_tamper", "unsafe_owner_tamper", "security_invoker_tamper", "rls_force_tamper", "stale_capability_version_tamper"],
+    checks: ["full_candidate_chain", "postchecks", "atomic_prepare_exact_replay", "atomic_prepare_conflict", "atomic_prepare_sku_binding_mismatch", "atomic_prepare_quantity_binding_mismatch", "atomic_prepare_rollback", ...catalogTamperProbes.map(([name]) => name), "replay", "terminal_binding_tamper", "body_fingerprint_tamper", "function_attribute_tamper", "forbidden_acl_tamper", "direct_dml_acl_tamper", "search_path_tamper", "request_key_constraint_tamper", "provider_reference_index_tamper", "trigger_disabled_tamper", "trigger_timing_event_tamper", "refund_concurrency_index_tamper", "inventory_dml_grant_tamper", "reservation_dml_grant_tamper", "missing_atomic_prepare_tamper", "unsafe_owner_tamper", "security_invoker_tamper", "rls_force_tamper", "stale_capability_version_tamper"],
     limitation: "single in-memory PostgreSQL engine; not managed Supabase/PostgREST or independent-connection concurrency evidence",
   }) + "\n");
 } finally {

@@ -102,7 +102,7 @@ execute function public.research_persistent_cart_immutable();
 create or replace function public.research_persistent_cart_owner_scope(
   p_owner_kind text, p_owner_identity text
 ) returns text language sql immutable set search_path = pg_catalog as $$
-  select encode(public.digest(
+  select encode(extensions.digest(
     convert_to('xenios:persistent-cart:owner:v1|' || p_owner_kind || '|' ||
       case when p_owner_kind='member' then p_owner_identity::uuid::text else p_owner_identity end,
       'utf8'),
@@ -125,7 +125,7 @@ stable
 security definer
 set search_path = pg_catalog
 as $$
-  select encode(public.digest(convert_to(
+  select encode(extensions.digest(convert_to(
     coalesce((
       select '[' || string_agg(
         format(
@@ -422,7 +422,7 @@ begin
     raise exception 'unauthorized';
   end if;
   v_scope := public.research_persistent_cart_owner_scope(p_owner_kind,p_owner_identity);
-  v_hash := encode(public.digest(convert_to(jsonb_build_object(
+  v_hash := encode(extensions.digest(convert_to(jsonb_build_object(
     'action','put','owner',v_scope,'cart',p_cart_id,'cartVersion',p_expected_cart_version,
     'itemVersion',p_expected_item_version,'quantity',p_quantity,'selection',p_selection,
     'expiresAt',p_expires_at)::text,'utf8'),'sha256'),'hex');
@@ -469,7 +469,7 @@ begin
       price_version=(p_selection->'price'->>'version')::integer,
       selection_evaluated_at=(p_selection->>'evaluatedAt')::timestamptz,
       selection_snapshot=p_selection,
-      selection_hash=encode(public.digest(convert_to(p_selection::text,'utf8'),'sha256'),'hex'),
+      selection_hash=encode(extensions.digest(convert_to(p_selection::text,'utf8'),'sha256'),'hex'),
       version=version+1, updated_at=clock_timestamp()
     where id=v_item.id returning * into v_item;
   else
@@ -483,7 +483,7 @@ begin
       p_selection->'price'->>'currency',(p_selection->'price'->>'effectiveAt')::timestamptz,
       nullif(p_selection->'price'->>'expiresAt','')::timestamptz,
       (p_selection->'price'->>'version')::integer,(p_selection->>'evaluatedAt')::timestamptz,
-      p_selection,encode(public.digest(convert_to(p_selection::text,'utf8'),'sha256'),'hex'))
+      p_selection,encode(extensions.digest(convert_to(p_selection::text,'utf8'),'sha256'),'hex'))
     returning * into v_item;
   end if;
   update public.research_persistent_carts set version=version+1,
@@ -507,7 +507,7 @@ declare v_scope text; v_hash text; v_replay public.research_persistent_cart_comm
  v_cart public.research_persistent_carts; v_item public.research_persistent_cart_items; v_result jsonb;
 begin
   v_scope:=public.research_persistent_cart_owner_scope(p_owner_kind,p_owner_identity);
-  v_hash:=encode(public.digest(convert_to(jsonb_build_object('action','remove','owner',v_scope,'cart',p_cart_id,
+  v_hash:=encode(extensions.digest(convert_to(jsonb_build_object('action','remove','owner',v_scope,'cart',p_cart_id,
     'item',p_item_id,'cartVersion',p_expected_cart_version,'itemVersion',p_expected_item_version)::text,'utf8'),'sha256'),'hex');
   perform pg_advisory_xact_lock(hashtextextended('xenios:cart:v1|'||v_scope,0));
   select * into v_cart from public.research_persistent_carts where id=p_cart_id and state='active'
@@ -551,7 +551,7 @@ begin
      or p_expires_at<=clock_timestamp() then raise exception 'expired'; end if;
   v_scope:=public.research_persistent_cart_owner_scope('member',p_member_id::text);
   v_anon_scope:=public.research_persistent_cart_owner_scope('anonymous',p_anonymous_hash);
-  v_hash:=encode(public.digest(convert_to(jsonb_build_object('action','claim','owner',v_scope,
+  v_hash:=encode(extensions.digest(convert_to(jsonb_build_object('action','claim','owner',v_scope,
     'anonymous',p_anonymous_hash,'selections',p_selections,
     'anonymousVersion',p_expected_anonymous_cart_version,
     'memberCart',p_member_cart_id,'memberVersion',p_expected_member_cart_version,'expiresAt',p_expires_at)::text,'utf8'),'sha256'),'hex');
@@ -625,7 +625,7 @@ begin
       v_selection->'price'->>'currency',(v_selection->'price'->>'effectiveAt')::timestamptz,
       nullif(v_selection->'price'->>'expiresAt','')::timestamptz,
       (v_selection->'price'->>'version')::integer,(v_selection->>'evaluatedAt')::timestamptz,
-      v_selection,encode(public.digest(convert_to(v_selection::text,'utf8'),'sha256'),'hex'))
+      v_selection,encode(extensions.digest(convert_to(v_selection::text,'utf8'),'sha256'),'hex'))
     on conflict(cart_id,variant_id,audience) do update set
       quantity=public.research_persistent_cart_items.quantity+excluded.quantity,
       sku=excluded.sku,price_id=excluded.price_id,
@@ -658,7 +658,7 @@ begin
   if not found then raise exception 'not_found'; end if;
   v_scope:=public.research_persistent_cart_owner_scope(v_cart.owner_kind,
     case when v_cart.owner_kind='member' then v_cart.member_id::text else v_cart.anonymous_hash end);
-  v_hash:=encode(public.digest(convert_to(jsonb_build_object('action','expire','cart',p_cart_id,
+  v_hash:=encode(extensions.digest(convert_to(jsonb_build_object('action','expire','cart',p_cart_id,
     'cartVersion',p_expected_cart_version)::text,'utf8'),'sha256'),'hex');
   perform pg_advisory_xact_lock(hashtextextended('xenios:cart:v1|'||v_scope,0));
   select * into v_cart from public.research_persistent_carts where id=p_cart_id for update;

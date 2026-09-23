@@ -756,6 +756,27 @@ describe("fulfillment webhooks", () => {
     expect(second.ok && second.applied).toBe(false);
   });
 
+  it("keeps a verified fulfillment event retryable while commerce is disabled", async () => {
+    const orders = orderStore([
+      { orderId: "ord_1", state: "fulfilled", paymentReference: "auth_1", captured: true },
+    ]);
+    const disabled = createWebhookHandler(deps({ orders, commerceEnabled: false }));
+
+    await expect(disabled.handleFulfillment(deliveredBody(), GOOD_SIGNATURE, NOW)).resolves.toEqual({
+      ok: false,
+      code: "capability_disabled",
+    });
+    expect((await orders.get("ord_1"))!.state).toBe("fulfilled");
+
+    const enabled = createWebhookHandler(deps({ orders, commerceEnabled: true }));
+    await expect(enabled.handleFulfillment(deliveredBody(), GOOD_SIGNATURE, NOW)).resolves.toEqual({
+      ok: true,
+      applied: true,
+      eventId: "ff_evt_1",
+    });
+    expect((await orders.get("ord_1"))!.state).toBe("delivered");
+  });
+
   it("reports capability_disabled when no fulfillment provider is wired", async () => {
     const store = new RecordingEventStore();
     const handler = createWebhookHandler(deps({ store, fulfillment: undefined }));

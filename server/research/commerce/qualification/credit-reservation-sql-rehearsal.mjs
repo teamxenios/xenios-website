@@ -20,8 +20,15 @@ const FILES = [
   'supabase/production/research-track-b-commerce.sql',
   `${CHECKOUT}.precheck.sql`, `${CHECKOUT}.sql`, `${CHECKOUT}.postcheck.sql`, `${CHECKOUT}.rehearsal.sql`,
   `${RECOVERY}.precheck.sql`, `${RECOVERY}.sql`, `${RECOVERY}.postcheck.sql`,
+  'supabase/research-membership.sql',
+  'supabase/research-members.sql',
+  'supabase/research-products-diagnostics.sql',
+  'supabase/migrations/20260726143000_research_product_control_center.sql',
+  'supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql',
+  'supabase/migrations/20260727160000_research_inventory_reservation_commands.sql',
   `${CREDIT}.precheck.sql`, `${CREDIT}.sql`, `${CREDIT}.postcheck.sql`,
 ];
+const CREDIT_START = FILES.indexOf(`${CREDIT}.precheck.sql`);
 const SIGNATURES = [
   'public.research_store_credit_balance(uuid,timestamptz)',
   'public.research_store_credit_spend(uuid,bigint,uuid,timestamptz)',
@@ -94,7 +101,7 @@ function fixtures(db) {
   [uuid(), member, amount, options.state ?? 'approved', options.availableAt ?? null, options.reversesId ?? null,
     options.actorId ?? 'local-credit-rehearsal', options.expiresAt ?? null, options.createdAt ?? null]);
   const order = async (member, credit = 400, options = {}) => {
-    const id = uuid(), executionId = uuid(), requestKey = `credit-rehearsal-${serial}`, reservationId = `credit-reservation-${serial}`;
+    const id = uuid(), executionId = uuid(), requestKey = `credit-rehearsal-${serial}`, reservationId = uuid();
     const total = 1000 - credit, reference = `pi_credit${serial}`;
     await db.query(`insert into public.research_orders
       (id,member_id,state,subtotal_cents,shipping_cents,store_credit_applied_cents,total_cents,checkout_idempotency_key,last_idempotency_key)
@@ -191,13 +198,20 @@ async function main() {
     await check('local_engine_and_roles', 'setup', async () => {
       const { rows } = await db.query("select current_setting('server_version') as version,current_setting('server_version_num')::integer as version_num");
       requireFact(rows.length === 1 && rows[0].version_num >= 180000 && rows[0].version_num < 190000, 'expected_local_postgres_18');
-      await db.exec('create role anon; create role authenticated; create role service_role bypassrls;');
+      await db.exec(`create schema if not exists extensions;
+        create extension if not exists pgcrypto with schema extensions;
+        create role anon; create role authenticated; create role service_role bypassrls;
+        create schema if not exists storage;
+        create table if not exists storage.buckets(
+          id text primary key,name text not null,public boolean not null default false,
+          file_size_limit bigint,allowed_mime_types text[]
+        );`);
       return { postgresVersion: rows[0].version, connections: 1 };
     });
     const runInput = input => check(input.path, 'sql_file', () => db.exec(input.text).then(() => undefined), { lfSha256: input.lfSha256 });
-    for (const path of FILES.slice(0, 8)) await runInput(inputs.get(path));
+    for (const path of FILES.slice(0, CREDIT_START)) await runInput(inputs.get(path));
     await creditPrecheckNegatives(check, db, inputs);
-    for (const path of FILES.slice(8)) await runInput(inputs.get(path));
+    for (const path of FILES.slice(CREDIT_START)) await runInput(inputs.get(path));
     const f = fixtures(db);
     const scenario = (id, operation) => check(id, 'scenario', async () => {
       await db.exec("begin; set local statement_timeout='30s'; set local lock_timeout='5s';");
@@ -388,7 +402,8 @@ async function creditScenarios(scenario, f, db) {
 
   await scenario('private_rpc_privileges_and_reservation_rls_are_enforced_locally', async () => {
     const member = f.uuid(); await f.grant(member, 1000); const o = await f.order(member);
-    await f.asRole('service_role', async () => { await f.create(o); await f.expectBalance(member, 600, 400); });
+    await f.create(o);
+    await f.asRole('service_role', async () => { await f.expectBalance(member, 600, 400); });
     const relation = await f.one("select relrowsecurity,relforcerowsecurity from pg_class where oid='public.research_checkout_credit_reservations'::regclass");
     requireFact(relation.relrowsecurity === true && relation.relforcerowsecurity === true, 'reservation_rls_not_enabled_and_forced');
     for (const signature of SIGNATURES) {

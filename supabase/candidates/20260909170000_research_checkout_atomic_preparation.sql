@@ -20,16 +20,23 @@ declare
   v_existing public.research_checkout_executions%rowtype;
   v_reserved jsonb;
   v_line jsonb;
+  v_inventory_line jsonb;
   v_shipment jsonb;
   v_reservation_ids text[];
+  v_order_inventory_lines jsonb;
+  v_normalized_inventory_lines jsonb;
+  v_order_quantity_total bigint;
+  v_inventory_quantity_total bigint;
   v_seq integer := 0;
 begin
   if p_at is null or not pg_catalog.isfinite(p_at) or p_expires_at is null
      or not pg_catalog.isfinite(p_expires_at) or p_expires_at <= p_at
-     or pg_catalog.jsonb_typeof(p_order) <> 'object'
-     or pg_catalog.jsonb_typeof(p_execution) <> 'object'
-     or pg_catalog.jsonb_typeof(p_inventory_lines) <> 'array'
-     or pg_catalog.jsonb_array_length(p_inventory_lines) = 0 then
+     or pg_catalog.jsonb_typeof(p_order) is distinct from 'object'
+     or pg_catalog.jsonb_typeof(p_execution) is distinct from 'object'
+     or pg_catalog.jsonb_typeof(p_inventory_lines) is distinct from 'array' then
+    raise exception 'checkout_prepare_invalid_command';
+  end if;
+  if pg_catalog.jsonb_array_length(p_inventory_lines) = 0 then
     raise exception 'checkout_prepare_invalid_command';
   end if;
   begin
@@ -69,6 +76,102 @@ begin
   end if;
   if exists(select 1 from public.research_orders where member_id=v_member and checkout_idempotency_key=v_request_key) then
     raise exception 'checkout_prepare_partial_legacy_state';
+  end if;
+
+  if pg_catalog.jsonb_typeof(p_order->'lines') is distinct from 'array' then
+    raise exception 'checkout_prepare_invalid_command';
+  end if;
+  if pg_catalog.jsonb_array_length(p_inventory_lines) not between 1 and 100
+     or pg_catalog.jsonb_array_length(p_order->'lines') not between 1 and 100 then
+    raise exception 'checkout_prepare_invalid_command';
+  end if;
+
+  for v_line in select value from pg_catalog.jsonb_array_elements(p_order->'lines') loop
+    if pg_catalog.jsonb_typeof(v_line) is distinct from 'object' then
+      raise exception 'checkout_prepare_invalid_command';
+    end if;
+    if not (v_line ? 'sku')
+       or not (v_line ? 'displayName')
+       or not (v_line ? 'quantity')
+       or not (v_line ? 'lineTotalCents')
+       or (select pg_catalog.count(*) from pg_catalog.jsonb_object_keys(v_line)) <> 4 then
+      raise exception 'checkout_prepare_invalid_command';
+    end if;
+    if pg_catalog.jsonb_typeof(v_line->'sku') <> 'string'
+       or pg_catalog.jsonb_typeof(v_line->'displayName') <> 'string'
+       or pg_catalog.jsonb_typeof(v_line->'quantity') <> 'number'
+       or pg_catalog.jsonb_typeof(v_line->'lineTotalCents') <> 'number' then
+      raise exception 'checkout_prepare_invalid_command';
+    end if;
+    if pg_catalog.char_length(v_line->>'sku') not between 1 and 120
+       or pg_catalog.btrim(v_line->>'sku') <> v_line->>'sku'
+       or (v_line->>'sku') !~ '^[A-Za-z0-9][A-Za-z0-9._/-]{0,119}$'
+       or pg_catalog.char_length(v_line->>'displayName') < 1
+       or (v_line->>'quantity') !~ '^[0-9]+$'
+       or (v_line->>'lineTotalCents') !~ '^[0-9]+$' then
+      raise exception 'checkout_prepare_invalid_command';
+    end if;
+    if (v_line->>'quantity')::numeric not between 1 and 100000000
+       or (v_line->>'lineTotalCents')::numeric not between 0 and 9223372036854775807 then
+      raise exception 'checkout_prepare_invalid_command';
+    end if;
+  end loop;
+
+  for v_inventory_line in select value from pg_catalog.jsonb_array_elements(p_inventory_lines) loop
+    if pg_catalog.jsonb_typeof(v_inventory_line) is distinct from 'object' then
+      raise exception 'checkout_prepare_invalid_command';
+    end if;
+    if not (v_inventory_line ? 'sku')
+       or not (v_inventory_line ? 'quantity')
+       or (select pg_catalog.count(*) from pg_catalog.jsonb_object_keys(v_inventory_line)) <> 2 then
+      raise exception 'checkout_prepare_invalid_command';
+    end if;
+    if pg_catalog.jsonb_typeof(v_inventory_line->'sku') <> 'string'
+       or pg_catalog.jsonb_typeof(v_inventory_line->'quantity') <> 'number' then
+      raise exception 'checkout_prepare_invalid_command';
+    end if;
+    if pg_catalog.char_length(v_inventory_line->>'sku') not between 1 and 120
+       or pg_catalog.btrim(v_inventory_line->>'sku') <> v_inventory_line->>'sku'
+       or (v_inventory_line->>'sku') !~ '^[A-Za-z0-9][A-Za-z0-9._/-]{0,119}$'
+       or (v_inventory_line->>'quantity') !~ '^[0-9]+$' then
+      raise exception 'checkout_prepare_invalid_command';
+    end if;
+    if (v_inventory_line->>'quantity')::numeric not between 1 and 100000000 then
+      raise exception 'checkout_prepare_invalid_command';
+    end if;
+  end loop;
+
+  select
+    pg_catalog.jsonb_agg(
+      pg_catalog.jsonb_build_object('sku', consolidated.sku, 'quantity', consolidated.quantity)
+      order by consolidated.sku
+    ),
+    pg_catalog.sum(consolidated.quantity)
+    into v_order_inventory_lines, v_order_quantity_total
+    from (
+      select value->>'sku' as sku, pg_catalog.sum((value->>'quantity')::bigint) as quantity
+      from pg_catalog.jsonb_array_elements(p_order->'lines')
+      group by value->>'sku'
+    ) consolidated;
+
+  select
+    pg_catalog.jsonb_agg(
+      pg_catalog.jsonb_build_object('sku', consolidated.sku, 'quantity', consolidated.quantity)
+      order by consolidated.sku
+    ),
+    pg_catalog.sum(consolidated.quantity)
+    into v_normalized_inventory_lines, v_inventory_quantity_total
+    from (
+      select value->>'sku' as sku, pg_catalog.sum((value->>'quantity')::bigint) as quantity
+      from pg_catalog.jsonb_array_elements(p_inventory_lines)
+      group by value->>'sku'
+    ) consolidated;
+
+  if v_order_quantity_total > 100000000 or v_inventory_quantity_total > 100000000 then
+    raise exception 'checkout_prepare_invalid_command';
+  end if;
+  if v_order_inventory_lines is distinct from v_normalized_inventory_lines then
+    raise exception 'checkout_prepare_inventory_binding_mismatch';
   end if;
 
   v_reserved := public.research_reserve_inventory(

@@ -66,18 +66,18 @@ LF-normalized SHA-256 identities:
 | `20260909150000_research_checkout_executions.sql` | `0aa4e24d5056ed3db5dfca30fb256955b8af2b15025244868fb3d86929dc1317` |
 | `20260909150000_research_checkout_executions.postcheck.sql` | `d488ae8e0a31e1279fa0daea95ede3edf78cd891b992b0511f8225d4973cbfc0` |
 | `20260909150000_research_checkout_executions.rehearsal.sql` | `622279f39c24bcbb995fb23ef980fa202e3396ce0459ff14b6912440a991dc15` |
-| `20260909170000_research_checkout_atomic_preparation.sql` | `5319c8c139be3f20b0648963e76ff2108340247c09eab39766b91b2cc7188953` |
+| `20260909170000_research_checkout_atomic_preparation.sql` | `d96ce93a76c9f9f703bdb139730521677074d8de6500c8b8cb32db8c5a7820ab` |
 | `20260910201400_research_checkout_credit_reservations.sql` | `aedc5b073ff51c4c8e2c60f8ccf1b582a6f3f58fb41eaab47d171327b16caab4` |
 | `20260910201400_research_checkout_credit_reservations.postcheck.sql` | `9774dd97549591e34309b4a41f22411e448e45719e95abc2c3b3818c752c7122` |
 | `20260910120000_research_checkout_execution_recovery.sql` | `c63563dc5e378e95d35f70f3f99acf966ab74c4019edcb7f7dfa82872bf383ba` |
 | `20260910220129_research_checkout_recovery_operation.sql` | `a2fd98dfc80a921caa3eb1c6bb2b5e0d8a7c581b9ad3dcfaae65dd4fafa37fb0` |
 | `20260921_research_refund_execution.precheck.sql` | `17d58ebe8c33d25f56ed2311855abf927c05435a65d20409894a098e4d0afc26` |
-| `20260921_research_refund_execution.sql` | `1fa06c3163b910f805d42a6ae08ab28ccc6f48a76399ce2b6092dcd6a956abd9` |
+| `20260921_research_refund_execution.sql` | `7bdf5f6c806eb4cbfcfdd0b32d16e8c9d941ede688b6841dbca2c0b685a074cd` |
 | `20260921_research_refund_execution.postcheck.sql` | `798d4f8a56e123c39101ec837578489467c744996ab6d9e2779f4dee0697f374` |
 | `20260921_research_refund_execution.rehearsal.sql` | `aea2196f9d3577d8e5a812db9e15d50a06e7c94daae867feaeda38d8349fdb27` |
-| `refund-execution-sql-rehearsal.mjs` | `d8b40f77330a6b89dca8c6b3402159728512479937433ae1d91e22ae84ac7e26` |
+| `refund-execution-sql-rehearsal.mjs` | `cf2e3976e7bbb00b1e61f9a2d1f855801ddd749cb09a2d204d1a4ac157010b90` |
 
-For candidate 5 the authorized disposable-database sequence is exactly:
+For candidate 6 the authorized disposable-database sequence is exactly:
 
 1. precheck with `ON_ERROR_STOP=1`;
 2. candidate install;
@@ -150,16 +150,19 @@ fresh disposable in-memory PGlite 0.5.8 / PostgreSQL 18 runtime:
 ```
 
 That rehearsal covers exact prepare replay, conflicting replay refusal,
+SKU and quantity inventory/order binding refusal with zero durable rows,
 compare-and-swap contention, first-attempt persistence, active claim/order
 guards, locked webhook claim/terminalization, digest and binding tamper refusal,
 provider evidence, atomic projections, ledger/event single-write, full RPC/table
 privilege postures including direct `TRUNCATE` refusal, the exact complete-chain
-capability token, function-body and execution-attribute tamper refusal, and ACL
-tamper refusal. It is one in-memory engine and does not claim a real two-session lock
+capability token, all 18 independently isolated catalog-drift probes,
+function-body and execution-attribute tamper refusal, and ACL tamper refusal.
+It is one in-memory engine and does not claim a real two-session lock
 race, managed PostgREST behavior, or provider delivery.
 
-Focused Vitest results at the final source state: 13 passed files and 790 passed
-tests across managed capability gating, checkout submission/config and
+Focused Vitest results at the final source state: 65 passed files, 2,494 passed
+tests, 4 skipped tests, and 0 failures across managed capability gating,
+checkout submission/config and
 continuation, production visibility, refund execution, provider validation,
 webhook processing, strict repository readback, and the connected checkout
 journey. Repository-wide
@@ -186,7 +189,7 @@ reference.
 
 The following evidence is external and remains **NOT_RUN**:
 
-- applying all five candidates to the authorized non-production project, with
+- applying all six candidates to the authorized non-production project, with
   every precheck/postcheck/rehearsal receipt;
 - a true independent-connection PostgreSQL checkout/refund/inbox contention
   run (the local PGlite gate uses one in-memory engine);
@@ -212,9 +215,9 @@ owner-authorized deployment and configuration change. At minimum:
 - `PAYMENTS_PROVIDER=stripe` (with no conflicting singular selector);
 - same-account `STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, and
   `STRIPE_WEBHOOK_SECRET` in one mode;
-- the four checkout migrations plus the fifth refund candidate verified by the
+- the five checkout candidates plus the sixth refund candidate verified by the
   hashes and receipts above; and
-- `RESEARCH_REFUND_EXECUTION_ENABLED=true` only after candidate 5 is installed
+- `RESEARCH_REFUND_EXECUTION_ENABLED=true` only after candidate 6 is installed
   and its managed postcheck/rehearsal are green.
 
 No flag or secret was added or changed here. Production checkout remains

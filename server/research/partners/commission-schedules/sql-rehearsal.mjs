@@ -40,7 +40,8 @@ const [candidate, precheck, postcheck] = await Promise.all(
 
 const bootstrap = `
   set timezone = 'UTC';
-  create extension if not exists pgcrypto;
+  create schema if not exists extensions;
+  create extension if not exists pgcrypto with schema extensions;
   create role anon; create role authenticated; create role service_role bypassrls;
   create table public.research_partners (
     id uuid primary key default gen_random_uuid(),
@@ -144,6 +145,7 @@ let checks = 0;
 const checked = () => { checks += 1; };
 const db = await freshDb();
 try {
+  assert.equal((await db.query("select to_regprocedure('public.digest(bytea,text)') as digest")).rows[0].digest, null);
   assert.equal(resultValue(await db.exec(precheck), "commission_program_precheck").verdict, "APPLY_READY");
   checked();
   await db.exec(candidate);

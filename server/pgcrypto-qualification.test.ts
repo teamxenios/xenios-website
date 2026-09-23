@@ -39,7 +39,6 @@ function audit(files: Readonly<Record<string, string>>) {
 }
 
 const M58 = PGCRYPTO_ALLOWLIST[0]!;
-const M42 = PGCRYPTO_ALLOWLIST[1]!;
 
 describe("the pgcrypto guard bites", () => {
   it("fails on a NEW public-qualified pgcrypto call in an unlisted file", () => {
@@ -98,14 +97,12 @@ describe("the allowlist is a pin, not a blanket exemption", () => {
     const unused = result.findings.filter((f) => f.code === "ALLOWLIST_ENTRY_UNUSED");
     expect(unused).toHaveLength(PGCRYPTO_ALLOWLIST.length);
     expect(unused.map((f) => f.file)).toContain(M58.path);
-    expect(unused.map((f) => f.file)).toContain(M42.path);
+    expect(unused.map((f) => f.file)).toEqual([M58.path]);
   });
 
   it("names WHY each exemption exists, so the next reader is not guessing", () => {
     expect(M58.reason).toMatch(/IMMUTABLE HISTORICAL SQL/);
     expect(M58.reason).toMatch(/superseded by migration 60/);
-    expect(M42.reason).toMatch(/KNOWN DEFECT/);
-    expect(M42.reason).toMatch(/MUST BE CORRECTED/);
   });
 });
 
@@ -144,7 +141,7 @@ describe("the guard fails closed", () => {
 });
 
 describe("the real repository", () => {
-  it("has no public-qualified pgcrypto call outside the two pinned historical files", () => {
+  it("has no public-qualified pgcrypto call outside the one pinned historical file", () => {
     const repoRoot = resolve(import.meta.dirname, "..");
     const result = auditPgcryptoQualification({ repoRoot });
     expect(result.findings).toEqual([]);

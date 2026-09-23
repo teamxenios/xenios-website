@@ -309,6 +309,16 @@ try {
   requireOk("roles", psql(`
     create role anon nologin; create role authenticated nologin;
     create role service_role nologin bypassrls;
+    create schema extensions;
+    create extension pgcrypto with schema extensions;
+    do $managed_pgcrypto$
+    begin
+      if to_regprocedure('extensions.digest(bytea,text)') is null
+         or to_regprocedure('public.digest(bytea,text)') is not null then
+        raise exception 'persistent cart verifier did not reproduce managed Supabase pgcrypto placement';
+      end if;
+    end
+    $managed_pgcrypto$;
     create table public.research_members(
       id uuid primary key,
       status text not null default 'active',

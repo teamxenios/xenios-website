@@ -466,6 +466,16 @@
       "startedAt": "2026-09-23T04:19:04.007Z",
       "heartbeatAt": "2026-09-23T05:16:21.545Z",
       "note": ""
+    },
+    {
+      "id": "codex-checkout-rc-second-review-20260923",
+      "tool": "codex",
+      "lane": "checkout-rc-second-review",
+      "branch": "codex/xenios-checkout-rc-second-review-20260923",
+      "state": "active",
+      "startedAt": "2026-09-23T12:23:22.987Z",
+      "heartbeatAt": "2026-09-23T13:25:32.590Z",
+      "note": "P1/P2 remediation complete; focused and SQL rehearsals green; freezing source before full release gates"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
