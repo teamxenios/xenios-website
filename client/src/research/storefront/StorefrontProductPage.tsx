@@ -13,7 +13,6 @@ import {
 import { CatalogEvidenceNotice } from "../catalog-evidence/CatalogEvidenceNotice";
 import { ResearchSecureNotice, ResearchStatusBadge } from "../ui/kit";
 import {
-  APPLY_HREF,
   CARE_HREF,
   EARLY_ACCESS_HREF,
   intentCarriesQuantity,
@@ -90,11 +89,11 @@ function ContinuationPanel({
         </p>
         <div className="flex flex-wrap gap-3">
           <Link
-            href={APPLY_HREF}
+            href="/research/order"
             className="btn btn-secondary min-h-[44px]"
             data-testid="sf-detail-apply"
           >
-            Apply for membership
+            Order for Research
           </Link>
         </div>
       </div>
@@ -195,11 +194,11 @@ function ContinuationPanel({
           Continue through Early Access
         </Link>
         <Link
-          href={APPLY_HREF}
+          href="/research/order"
           className="body-s inline-flex min-h-[44px] min-w-[44px] items-center underline text-ink-mute"
           data-testid="sf-detail-apply"
         >
-          Apply for membership
+          Order for Research
         </Link>
       </div>
     </div>

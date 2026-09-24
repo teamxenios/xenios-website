@@ -207,8 +207,9 @@ function readableView(value: unknown): value is ApplicationStatusView {
 function StatusForToken({ token, returnTo, isCurrent, recovery, refreshMember, resumeStored }: {
   token: string; returnTo: string | null; isCurrent: () => boolean; recovery: string; refreshMember: () => Promise<void>; resumeStored: boolean;
 }) {
+  const missingToken = token.length === 0;
   const [view, setView] = useState<ApplicationStatusView | null>(null);
-  const [error, setError] = useState<string | null>(validToken(token) ? null : "This status link is not valid.");
+  const [error, setError] = useState<string | null>(missingToken || validToken(token) ? null : "This status link is invalid or expired.");
   const [resendEmail, setResendEmail] = useState("");
   const [resendMessage, setResendMessage] = useState<string | null>(null);
   const [resending, setResending] = useState(false);
@@ -224,8 +225,10 @@ function StatusForToken({ token, returnTo, isCurrent, recovery, refreshMember, r
       const body = await res.json().catch(() => null);
       if (!current || !isCurrent()) return;
       if (res.ok && body?.ok === true && readableView(body.application)) setView(body.application);
-      else setError("Application status could not be verified. Use the latest link or contact support.");
-    }).catch(() => { if (current && isCurrent()) setError("Status could not be loaded."); });
+      else if (res.status === 401 || res.status === 404) setError("This status link is invalid or expired.");
+      else if (res.ok) setError("Application status could not be verified. Use the latest link or contact support.");
+      else setError("Application status is temporarily unavailable. Please try again or contact support.");
+    }).catch(() => { if (current && isCurrent()) setError("Application status is temporarily unavailable. Please try again or contact support."); });
     return () => { current = false; alive.current = false; resendGeneration.current++; };
   }, [token]);
 
@@ -244,7 +247,7 @@ function StatusForToken({ token, returnTo, isCurrent, recovery, refreshMember, r
       });
       if (!alive.current || generation !== resendGeneration.current) return;
       setResendError(!res.ok);
-      setResendMessage(res.ok ? "If an application exists for that address, a secure status link has been requested."
+      setResendMessage(res.ok ? "If an application exists for that email, a secure status link has been requested."
         : "The request could not be processed. Please try again.");
     } catch {
       if (alive.current && generation === resendGeneration.current) { setResendError(true); setResendMessage("The request could not be processed. Please try again."); }
@@ -253,18 +256,31 @@ function StatusForToken({ token, returnTo, isCurrent, recovery, refreshMember, r
   const copy = view ? STATUS_COPY[view.status] : null;
   const expired = !!view?.approvalExpiresAt && Date.parse(view.approvalExpiresAt) <= Date.now();
   return <>
-    <PageIntro eyebrow="Application status" title={copy?.title || (error ? "Status unavailable" : "Application status")} />
+    <PageIntro eyebrow="Application status" title={copy?.title || (missingToken ? "Check your application status" : error === "This status link is invalid or expired." ? "This status link is invalid or expired" : error ? "Status unavailable" : "Application status")} />
     <section className="container-x pb-20"><div className="max-w-[560px] min-w-0" style={{ overflowWrap: "anywhere" }}>
-      {!error && !view ? <ResearchLoadingState label="Loading application status" /> : null}
-      {error ? <div><ResearchErrorState message={error} />
+      {!missingToken && !error && !view ? <ResearchLoadingState label="Loading application status" /> : null}
+      {missingToken || error ? <div>
+        {missingToken ? <div className="card" data-testid="application-status-request-intro">
+          <p className="body-m font-700">Enter the email used for your application.</p>
+          <p className="body-s text-ink-2 mt-2">If a matching application exists, Xenios will send a secure status link.</p>
+        </div> : <div className="card" role="alert" data-testid="application-status-invalid-link">
+          <p className="body-m font-700">{error}</p>
+          <p className="body-s text-ink-2 mt-2">Request a new secure link below.</p>
+        </div>}
         <form className="card mt-8" onSubmit={(event) => void requestNewLink(event)} noValidate>
-          <p className="mono-cap text-ink-mute mb-3">Lost your link?</p>
+          <p className="mono-cap text-ink-mute mb-3">Request a secure status link</p>
           <label htmlFor="rs-email" className="form-label">Application email</label>
           <input id="rs-email" type="email" autoComplete="email" maxLength={254} className="input-field" value={resendEmail}
             onChange={(e) => { resendGeneration.current++; setResendEmail(e.target.value); setResendMessage(null); setResending(false); }} data-testid="input-resend-email" />
           {resendMessage ? <p role={resendError ? "alert" : "status"} className="body-s mt-3" data-testid="text-resend-message">{resendMessage}</p> : null}
-          <button type="submit" className="btn btn-secondary mt-4" disabled={resending} data-testid="button-resend-link">{resending ? "Requesting…" : "Request a new link"}</button>
-        </form></div> : null}
+          <button type="submit" className="btn btn-secondary mt-4" disabled={resending} data-testid="button-resend-link">{resending ? "Requesting…" : "Request secure status link"}</button>
+        </form>
+        <nav className="flex flex-wrap gap-3 mt-6" aria-label="Application status help">
+          <Link href="/research/access-hub" className="btn btn-ghost">Back to Research access</Link>
+          <Link href="/research/sign-in" className="btn btn-ghost">Sign in</Link>
+          <Link href="/research/support" className="btn btn-ghost">Contact support</Link>
+        </nav>
+      </div> : null}
       {view && copy ? <>
         <p className="body-l text-ink-2">Hi {view.firstName}. {copy.body}</p>
         {view.memberVisibleNote ? <div className="card mt-6"><p className="mono-cap text-ink-mute mb-2">Note from Xenios</p><p className="body-s text-ink-2">{view.memberVisibleNote}</p></div> : null}
@@ -278,7 +294,7 @@ function StatusForToken({ token, returnTo, isCurrent, recovery, refreshMember, r
           <Link href={researchAuthPath("/research/sign-in", returnTo || ACCOUNT_PORTAL_ROUTES.home)} className="btn btn-primary">Sign in to my account</Link>
           <Link href="/research/support" className="btn btn-secondary">Contact support</Link>
         </div> : null}
-        {view.status === "more_information_requested" ? <Link href="/research/apply" className="btn btn-primary mt-8">Update my application</Link> : null}
+        {view.status === "more_information_requested" ? <Link href="/research/support" className="btn btn-primary mt-8">Contact support about the requested information</Link> : null}
       </> : null}
     </div></section>
   </>;

@@ -128,11 +128,11 @@ export function StorefrontCatalogSurface({
                 Member sign in
               </Link>
               <Link
-                href="/research/apply"
+                href="/research/order"
                 className="btn btn-secondary min-h-[44px]"
                 data-testid="sf-closed-apply"
               >
-                Apply for membership
+                Order for Research
               </Link>
             </div>
           }

@@ -296,11 +296,11 @@ export function StorefrontCatalogPage({
           </Link>
           {" · "}
           <Link
-            href="/research/apply"
+            href="/research/order"
             className="inline-flex min-h-[44px] min-w-[44px] items-center underline"
             data-testid="sf-catalog-apply"
           >
-            Apply for membership
+            Order for Research
           </Link>
         </p>
       </header>

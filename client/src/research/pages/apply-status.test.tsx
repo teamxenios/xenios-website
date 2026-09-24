@@ -59,6 +59,49 @@ afterEach(async () => {
 });
 
 describe("approved customer account claim", () => {
+  it("renders a neutral request experience when no status token was supplied", async () => {
+    window.history.replaceState({}, "", "/research/apply/status");
+    await render();
+    expect(host.textContent).toContain("Check your application status");
+    expect(host.textContent).toContain("Enter the email used for your application");
+    expect(host.textContent).not.toContain("Something went wrong");
+    expect(host.textContent).not.toContain("invalid or expired");
+    expect(host.querySelector('[data-testid="input-resend-email"]')).not.toBeNull();
+    expect(host.querySelector('a[href="/research/access-hub"]')?.textContent).toContain("Back to Research access");
+    expect(host.querySelector('a[href="/research/sign-in"]')).not.toBeNull();
+    expect(host.querySelector('a[href="/research/support"]')).not.toBeNull();
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
+  it("identifies a supplied malformed token and offers a replacement-link request", async () => {
+    window.history.replaceState({}, "", "/research/apply/status?token=bad");
+    await render();
+    expect(host.textContent).toContain("This status link is invalid or expired");
+    expect(host.textContent).toContain("Request a new secure link below");
+    expect(host.textContent).not.toContain("Something went wrong");
+    expect(host.querySelector('[data-testid="input-resend-email"]')).not.toBeNull();
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
+  it("uses invalid-or-expired copy when the server rejects a well-formed status token", async () => {
+    fetcher.mockResolvedValue(response({ ok: false }, 401));
+    await render();
+    expect(host.textContent).toContain("This status link is invalid or expired");
+    expect(host.textContent).toContain("Request a new secure link below");
+  });
+
+  it("keeps status-link requests enumeration-resistant", async () => {
+    window.history.replaceState({}, "", "/research/apply/status");
+    await render();
+    await fill("rs-email", "  PERSON@EXAMPLE.COM ");
+    await act(async () => host.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })));
+    expect(host.textContent).toContain("If an application exists for that email, a secure status link has been requested.");
+    expect(fetcher).toHaveBeenCalledWith("/api/research/applications/resend-link", expect.objectContaining({
+      method: "POST",
+      body: JSON.stringify({ email: "person@example.com" }),
+    }));
+  });
+
   it.each(["/research/account/orders", "https://outside.invalid", "/research/account?token=SECRET"])("scrubs the approval link and preserves only a safe destination (%s)", async (returnTo) => {
     window.history.replaceState({}, "", "/research/apply/status?token=" + TOKEN + "&returnTo=" + encodeURIComponent(returnTo));
     await render();

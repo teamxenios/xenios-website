@@ -107,11 +107,12 @@ export default function Overview() {
             xenios research is a private membership for people who want a more rigorous, whole-life approach to performance, recovery, longevity, and everyday wellbeing.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4">
-            <Link href="/research/apply" className="btn btn-primary">Apply for Membership</Link>
+            <Link href="/research/order" className="btn btn-primary">Order for Research</Link>
+            <Link href="/research/apply" className="btn btn-secondary">Membership application availability</Link>
             <Link href="/research/framework" className="btn btn-ghost">Explore the Framework</Link>
           </div>
           <p className="mt-6 mono-label text-ink-mute">
-            Applications are reviewed individually. No payment is required to apply.
+            Formal Research membership applications are not open yet. Research ordering remains a separate supported path.
           </p>
         </div>
       </section>
@@ -182,7 +183,7 @@ export default function Overview() {
           ))}
         </ol>
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
-          <Link href="/research/apply" className="btn btn-primary">Apply for Membership</Link>
+          <Link href="/research/apply" className="btn btn-primary">Membership application availability</Link>
           <Link href="/research/membership" className="btn btn-secondary">About the membership</Link>
         </div>
       </section>
@@ -262,10 +263,10 @@ export default function Overview() {
         <div className="card bg-paper-2 text-center" style={{ padding: "clamp(40px, 7vw, 88px)" }}>
           <h2 className="display-m text-balance max-w-[18ch] mx-auto">Build the plan before you build the stack.</h2>
           <p className="mt-6 body-l text-ink-2 max-w-[52ch] mx-auto">
-            Apply to join xenios research and begin with the context that most health experiences leave out.
+            Formal membership applications are not open yet. You can still use the supported Research ordering path now.
           </p>
           <div className="mt-10 flex justify-center">
-            <Link href="/research/apply" className="btn btn-primary">Apply for Membership</Link>
+            <Link href="/research/order" className="btn btn-primary">Order for Research</Link>
           </div>
         </div>
       </section>

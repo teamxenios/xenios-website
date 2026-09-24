@@ -975,6 +975,7 @@
         "client/src/research/pages/reset-password-continuity.test.tsx",
         "client/src/research/pages/ApplyStatus.tsx",
         "client/src/research/pages/apply-status.test.tsx",
+        "client/src/research/pages/public-access-flow.test.tsx",
         "client/src/research/account-portal/**",
         "server/research/members.ts",
         "server/research/members.test.ts",
@@ -2114,12 +2115,28 @@
       "paths": [
         "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
         "docs/ux/xenios-ux-account-notifications-20260924/**",
+        "client/src/components/AccountAccessChooser.tsx",
+        "client/src/components/AccountAccessChooser.test.tsx",
+        "client/src/research/pages/Apply.tsx",
+        "client/src/research/pages/apply.test.tsx",
+        "client/src/research/pages/ApplyStatus.tsx",
+        "client/src/research/pages/apply-status.test.tsx",
+        "client/src/research/pages/public-access-flow.test.tsx",
+        "client/src/research/pages/Membership.tsx",
+        "client/src/research/pages/Overview.tsx",
+        "client/src/research/pages/Framework.tsx",
+        "client/src/research/storefront/StorefrontCatalogSurface.tsx",
+        "client/src/research/storefront/StorefrontCatalogPage.tsx",
+        "client/src/research/storefront/StorefrontProductPage.tsx",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
         ".xenios/sessions/codex-xenios-ux-release-control-20260924.json",
         ".xenios/handoffs/*XENIOS-UX-RELEASE-CONTROL*"
       ],
       "state": "active",
       "claimedAt": "2026-09-24T17:03:29.999Z",
-      "heartbeatAt": "2026-09-24T17:34:07.514Z"
+      "heartbeatAt": "2026-09-24T18:03:26.105Z"
     }
   ],
   "rules": [

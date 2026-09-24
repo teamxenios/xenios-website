@@ -51,8 +51,12 @@ export default function Membership() {
       />
 
       <section className="container-x" style={{ paddingTop: 8, paddingBottom: 24 }}>
+        <p className="body-s text-ink-2 mb-4 max-w-[68ch]">
+          Formal Research membership applications are not open yet. The application information page explains the document hold and supported alternatives.
+        </p>
         <div className="flex flex-col sm:flex-row gap-4">
-          <Link href="/research/apply" className="btn btn-primary">Apply for Membership</Link>
+          <Link href="/research/apply" className="btn btn-primary">Membership application availability</Link>
+          <Link href="/research/order" className="btn btn-secondary">Order for Research</Link>
           <Link href="/research/framework" className="btn btn-ghost">Explore the framework</Link>
         </div>
       </section>
@@ -83,7 +87,7 @@ export default function Membership() {
             <p className="mt-6 body-s text-ink-mute">
               Membership does not guarantee access to every product, service, or professional pathway. Eligibility may depend on location, product category, documentation, and applicable requirements.
             </p>
-            <Link href="/research/apply" className="btn btn-primary mt-8">Apply for Membership</Link>
+            <Link href="/research/apply" className="btn btn-primary mt-8">Membership application availability</Link>
           </div>
         </div>
       </section>
@@ -139,10 +143,11 @@ export default function Membership() {
         <div className="card bg-paper-2 flex flex-col md:flex-row md:items-center md:justify-between gap-8" style={{ padding: "clamp(28px, 5vw, 56px)" }}>
           <div style={{ minWidth: 0 }}>
             <p className="mono-cap text-ink-mute mb-4">Ready when you are</p>
-            <h2 className="display-s max-w-[16ch]">Start with the application.</h2>
+            <h2 className="display-s max-w-[16ch]">Review current application availability.</h2>
           </div>
           <div className="flex flex-col sm:flex-row gap-4 shrink-0">
-            <Link href="/research/apply" className="btn btn-primary">Apply for Membership</Link>
+            <Link href="/research/apply" className="btn btn-primary">Membership application availability</Link>
+            <Link href="/research/order" className="btn btn-secondary">Order for Research</Link>
             <Link href="/research/quality" className="btn btn-ghost">Quality standards</Link>
           </div>
         </div>

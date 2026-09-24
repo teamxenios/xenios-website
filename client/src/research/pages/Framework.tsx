@@ -23,7 +23,7 @@ const DOMAINS: { name: string; note?: string; body: string }[] = [
 const BLUEPRINT_STEPS: { title: string; body: string }[] = [
   {
     title: "Application and human review",
-    body: "You apply for membership, and a person at xenios reviews the application. The outcome is an approval, a request for more information, or a decline.",
+    body: "When formal applications open, a person at xenios reviews each application. The outcome is an approval, a request for more information, or a decline.",
   },
   {
     title: "Activation",
@@ -127,7 +127,8 @@ export default function Framework() {
               Membership begins with an application and a human review. If the framework describes the kind of structure you want around your life, start there.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
-              <Link href="/research/apply" className="btn btn-primary">Apply for Membership</Link>
+              <Link href="/research/apply" className="btn btn-primary">Membership application availability</Link>
+              <Link href="/research/order" className="btn btn-secondary">Order for Research</Link>
               <Link href="/research/membership" className="btn btn-secondary">How membership works</Link>
             </div>
           </div>

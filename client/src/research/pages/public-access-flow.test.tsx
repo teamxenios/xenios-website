@@ -89,19 +89,22 @@ describe("Research public application flow", () => {
     assertKeyboardReachableActions(view);
   });
 
-  it("renders a truthful Documentation Pending application state with no write control", async () => {
+  it("renders a truthful closed application state with supported alternatives and no write control", async () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
     const view = await render(<Apply />);
 
     assertSinglePageHeading(view);
-    expect(view.querySelector('[data-testid="application-documentation-pending"]')).not.toBeNull();
-    expect(view.textContent).toContain("Documentation pending");
-    expect(view.textContent).toContain("No application has been started or saved");
+    expect(view.querySelector('[data-testid="application-closed-state"]')).not.toBeNull();
+    expect(view.textContent).toContain("Formal membership applications are not open yet");
+    expect(view.textContent).toContain("No application has been started");
     expect(view.querySelector("form")).toBeNull();
     expect(view.querySelector('input[type="checkbox"]')).toBeNull();
     expect(view.querySelector('[data-testid="button-apply-submit"]')).toBeNull();
     expect(view.querySelector('[data-testid="link-application-support"]')?.getAttribute("href"))
       .toBe("/research/support");
+    expect(links(view)).toEqual(expect.arrayContaining([
+      "/research/sign-in", "/research/order", "/care/schedule", "/research/organizations", "/research/partners",
+    ]));
     expect(links(view)).toContain("/research/terms");
     expect(links(view)).toContain("/research/privacy");
     assertKeyboardReachableActions(view);
@@ -117,7 +120,7 @@ describe("Research public application flow", () => {
     expect(source).not.toContain('type="checkbox"');
   });
 
-  for (const width of [320, 375, 768, 1024, 1440]) {
+  for (const width of [320, 375, 390, 768, 1024, 1440]) {
     it(`preserves public-page structural invariants at ${width}px`, async () => {
       Object.defineProperty(window, "innerWidth", { configurable: true, value: width });
       window.dispatchEvent(new Event("resize"));
@@ -144,9 +147,9 @@ describe("Research public application flow", () => {
       const apply = await render(<Apply />);
       expect(apply.querySelectorAll("main")).toHaveLength(0);
       assertSinglePageHeading(apply);
-      expect(apply.querySelector('[role="status"]')).not.toBeNull();
+      expect(apply.querySelector('[data-testid="application-closed-state"]')).not.toBeNull();
       const supportAction = apply.querySelector<HTMLElement>('[data-testid="link-application-support"]');
-      expect(supportAction?.classList.contains("btn")).toBe(true);
+      expect(supportAction?.getAttribute("href")).toBe("/research/support");
       assertKeyboardReachableActions(apply);
     });
   }
@@ -181,7 +184,7 @@ describe("Research public application flow", () => {
       json: async () => ({ ok: true, message: "A private record exists." }),
     } as Response);
     const view = await render(<ApplyStatus />);
-    expect(view.querySelector('[data-testid="ra-error"]')).not.toBeNull();
+    expect(view.querySelector('[data-testid="application-status-request-intro"]')).not.toBeNull();
     expect(fetchSpy).not.toHaveBeenCalled();
 
     const input = view.querySelector<HTMLInputElement>('[data-testid="input-resend-email"]')!;
@@ -202,7 +205,7 @@ describe("Research public application flow", () => {
     const message = view.querySelector('[data-testid="text-resend-message"]');
     expect(message?.getAttribute("role")).toBe("status");
     expect(message?.textContent).toBe(
-      "If an application exists for that address, a secure status link has been requested.",
+      "If an application exists for that email, a secure status link has been requested.",
     );
     expect(message?.textContent).not.toContain("private record");
     expect(message?.textContent).not.toMatch(/sent|on its way/i);

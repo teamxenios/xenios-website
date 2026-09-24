@@ -11,6 +11,8 @@ describe("AccountAccessChooser", () => {
       "/research/partners", "/research/organizations", "/research/supplier-access",
     ]) expect(html).toContain(`href="${href}"`);
     expect(html).toContain("sign in before submitting an application");
+    expect(html).toContain("Formal Research membership applications are not open yet");
+    expect(html).toContain("If you want Research products now");
     expect(html).not.toContain("Create account");
   });
 });
