@@ -36,13 +36,32 @@ export interface ContactSubmission {
 
 export const contactService = {
   submit: async (data: ContactSubmission): Promise<{ success: boolean; message?: string; autoReplySent?: boolean }> => {
-    const res = await fetch("/api/contact", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    const result = await res.json();
-    if (!res.ok || result.success !== true) throw new Error(result.message || "Failed to submit");
-    return result;
+    const uncertain = "Receipt is not confirmed. Your message may already have been accepted. Keep the same details and retry shortly; unchanged retries within 24 hours are protected against duplicate email.";
+    const controller = new AbortController();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const request = async () => {
+      let res: Response;
+      let result: { success: boolean; message?: string; autoReplySent?: boolean };
+      try {
+        res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+          signal: controller.signal,
+        });
+        result = await res.json();
+      } catch {
+        throw new Error(uncertain);
+      }
+      if (!res.ok || result.success !== true) throw new Error(result.message || uncertain);
+      return result;
+    };
+    try {
+      return await Promise.race([request(), new Promise<never>((_, reject) => {
+        timer = setTimeout(() => { reject(new Error(uncertain)); controller.abort(); }, 20_000);
+      })]);
+    } finally {
+      clearTimeout(timer);
+    }
   },
 };

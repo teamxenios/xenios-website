@@ -62,7 +62,7 @@ export default function OrganizationAccessPage() {
       actions={
         <>
           <a href="#organization-inquiry" className="btn btn-primary">
-            Prepare an organization inquiry
+            Send an organization inquiry
           </a>
           <Link href={B2B_PUBLIC_ROUTES.partners} className="btn btn-secondary">
             Compare partnership paths
@@ -129,7 +129,7 @@ export default function OrganizationAccessPage() {
       <div id="organization-inquiry" className="container-x xr-b2b-section">
         <PartnershipInquiryForm
           initialPathway="research_organization"
-          heading="Prepare an organization or wholesale inquiry"
+          heading="Send an organization or wholesale inquiry"
         />
       </div>
     </B2BPageFrame>

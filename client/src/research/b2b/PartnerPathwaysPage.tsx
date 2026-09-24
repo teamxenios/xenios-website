@@ -34,7 +34,7 @@ export default function PartnerPathwaysPage() {
       actions={
         <>
           <a href="#partnership-inquiry" className="btn btn-primary">
-            Prepare an inquiry
+            Send an inquiry
           </a>
           <Link href={B2B_PUBLIC_ROUTES.partnerDashboard} className="btn btn-secondary">
             Existing partner access

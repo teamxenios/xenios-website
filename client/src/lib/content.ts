@@ -692,8 +692,8 @@ export const ALL_ECOSYSTEM_NAMES = ECOSYSTEM_CATEGORIES;
 export const CONTACT_PAGE = {
   headline: "Talk to us.",
   sub: "Founding cohort. Partnership. Press. Investor. Careers. A human reads every message.",
-  successTitle: "We have it.",
-  successBody: "A human will reply inside two business days.",
+  successTitle: "Message accepted for delivery.",
+  successBody: "Your message was accepted for delivery to our team inbox for review. No response time is promised.",
   personaOptions: [
     { value: "practitioner", label: "Coach, trainer, or practitioner", prefix: "[Founding Cohort]" },
     { value: "investor", label: "Investor", prefix: "[Investor]" },

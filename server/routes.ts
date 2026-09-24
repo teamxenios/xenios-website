@@ -455,7 +455,7 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       if (!delivery.accepted) {
         return res.status(503).json({
           success: false,
-          message: "We could not confirm delivery of your message. Please email team@xeniostechnology.com directly.",
+            message: "Delivery is not confirmed. Your message may already have been accepted. Keep the same details and retry shortly; unchanged retries within 24 hours are protected against duplicate email. For help, contact team@xeniostechnology.com and mention this uncertain submission.",
         });
       }
       res.json({ success: true, message: "Accepted for delivery to our team inbox.", autoReplySent: delivery.autoReplySent });

@@ -10,9 +10,22 @@ beforeEach(() => {
   provider.configuration.mockReset().mockResolvedValue({ provider: "resend", apiKey: "synthetic-only", fromEmail: "xenios <team@xeniostechnology.com>" });
 });
 describe("contact provider acceptance", () => {
+  it("reuses distinct team/courtesy keys on retry and separates changed inquiries", async () => {
+    await sendContactMessage(message);
+    await sendContactMessage(message);
+    await sendContactAutoReply(message);
+    await sendContactAutoReply(message);
+    await sendContactMessage({ ...message, message: message.message + " Changed." });
+    await sendContactAutoReply({ ...message, message: message.message + " Changed." });
+    const keys = provider.send.mock.calls.map(call => call[1].idempotencyKey);
+    expect(keys[0]).toBe(keys[1]);
+    expect(keys[2]).toBe(keys[3]);
+    expect(new Set([keys[0], keys[2], keys[4], keys[5]]).size).toBe(4);
+    expect(keys.join()).not.toContain(message.email);
+  });
   it("uses the team inbox and bounded subject, and returns only on acceptance", async () => {
     await sendContactMessage(message);
-    expect(provider.send).toHaveBeenCalledWith(expect.objectContaining({ to: TEAM_EMAIL, replyTo: message.email, subject: "[Enterprise] Synthetic inquiry" }));
+    expect(provider.send).toHaveBeenCalledWith(expect.objectContaining({ to: TEAM_EMAIL, replyTo: message.email, subject: "[Enterprise] Synthetic inquiry" }), { idempotencyKey: expect.stringMatching(/^contact-team\/[a-f0-9]{64}$/) });
   });
   for (const send of [sendContactMessage, sendContactAutoReply]) {
     it(`${send.name} fails when configuration is unavailable`, async () => {

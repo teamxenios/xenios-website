@@ -49,7 +49,7 @@ export default function SupplierPartnershipPage() {
       actions={
         <>
           <a href="#supplier-inquiry" className="btn btn-primary">
-            Prepare supplier interest
+            Send supplier interest
           </a>
           <Link href={B2B_PUBLIC_ROUTES.support} className="btn btn-secondary">
             Supplier support
@@ -101,7 +101,7 @@ export default function SupplierPartnershipPage() {
       <div id="supplier-inquiry" className="container-x xr-b2b-section">
         <PartnershipInquiryForm
           initialPathway="supplier_lab_fulfillment"
-          heading="Prepare supplier, laboratory, or fulfillment interest"
+          heading="Send supplier, laboratory, or fulfillment interest"
         />
       </div>
     </B2BPageFrame>

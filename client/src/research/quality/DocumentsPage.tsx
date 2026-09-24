@@ -80,7 +80,7 @@ export default function DocumentsPage() {
               Sign in to reach secure documents connected to your membership or account. Authentication does not make a private record public.
             </p>
           </div>
-          <Link className="btn btn-primary" href="/research/member/documents">Open secure documents</Link>
+          <Link className="btn btn-primary" href="/research/account/documents">Open secure documents</Link>
         </div>
       </section>
 

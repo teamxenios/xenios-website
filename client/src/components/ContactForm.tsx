@@ -31,6 +31,7 @@ export default function ContactForm({ onSuccess }: Props) {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+  const [autoReplySent, setAutoReplySent] = useState(false);
 
   function handlePersona(value: ContactSubmission["persona"]) {
     setPersona(value);
@@ -61,7 +62,7 @@ export default function ContactForm({ onSuccess }: Props) {
     if (!persona) return;
     setSubmitting(true);
     try {
-      await contactService.submit({
+      const receipt = await contactService.submit({
         name: name.trim(),
         email: email.trim().toLowerCase(),
         persona,
@@ -69,6 +70,7 @@ export default function ContactForm({ onSuccess }: Props) {
         message: message.trim(),
         website,
       });
+      setAutoReplySent(receipt.autoReplySent === true);
       setDone(true);
       onSuccess?.();
     } catch (err: any) {
@@ -83,6 +85,7 @@ export default function ContactForm({ onSuccess }: Props) {
       <div className="space-y-3" data-testid="contact-success">
         <h3 className="display-s">{C.successTitle}</h3>
         <p className="body-l text-ink-2">{C.successBody}</p>
+        <p className="body-m text-ink-2">{autoReplySent ? "A confirmation email was also accepted for delivery; inbox delivery is not guaranteed." : "A confirmation email could not be confirmed. You do not need to resubmit your message."}</p>
       </div>
     );
   }

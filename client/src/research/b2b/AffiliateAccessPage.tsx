@@ -179,7 +179,7 @@ export default function AffiliateAccessPage() {
       </section>
 
       <div className="container-x xr-b2b-section">
-        <PartnershipInquiryForm initialPathway="affiliate" heading="Prepare an affiliate or collective inquiry" />
+        <PartnershipInquiryForm initialPathway="affiliate" heading="Send an affiliate or collective inquiry" />
       </div>
     </B2BPageFrame>
   );

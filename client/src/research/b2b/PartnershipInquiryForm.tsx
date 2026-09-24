@@ -66,7 +66,7 @@ function FieldError({ field, message }: { field: ValidatedField; message?: strin
 
 export default function PartnershipInquiryForm({
   initialPathway = "strategic_partner",
-  heading = "Prepare a partnership inquiry",
+  heading = "Send a partnership inquiry",
 }: {
   initialPathway?: PartnershipPathwayId;
   heading?: string;

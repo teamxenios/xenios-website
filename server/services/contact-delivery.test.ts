@@ -1,9 +1,25 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { deliverContact } from "./contact-delivery";
 
 const message = { name: "Audit", email: "audit@example.invalid", persona: "enterprise" as const, subject: "Synthetic inquiry", message: "Synthetic inquiry for a local test only." };
 
+afterEach(() => vi.useRealTimers());
 describe("contact acceptance boundary", () => {
+  it("returns accepted within two seconds when the courtesy request stalls", async () => {
+    vi.useFakeTimers();
+    const pending = deliverContact(message, { sendMessage: async () => {}, sendAutoReply: () => new Promise(() => {}) });
+    await vi.advanceTimersByTimeAsync(2_001);
+    expect(await pending).toEqual({ accepted: true, autoReplySent: false });
+    expect(vi.getTimerCount()).toBe(0);
+  });
+  it("bounds a stalled team request without claiming receipt or sending a courtesy reply", async () => {
+    vi.useFakeTimers();
+    const sendAutoReply = vi.fn(async () => {});
+    const pending = deliverContact(message, { sendMessage: () => new Promise(() => {}), sendAutoReply });
+    await vi.advanceTimersByTimeAsync(10_001);
+    expect(await pending).toEqual({ accepted: false });
+    expect(sendAutoReply).not.toHaveBeenCalled();
+  });
   it("does not acknowledge or send a confirmation before the team accepts", async () => {
     let accept!: () => void;
     const sendMessage = vi.fn(() => new Promise<void>(resolve => { accept = resolve; }));

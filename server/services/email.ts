@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { createHash } from "node:crypto";
 import type { WaitlistSignup, ContactMessage } from "@shared/schema";
 import { resolveEmailConfiguration } from "./email-config";
 
@@ -210,7 +211,9 @@ ${msg.message}
 xenios
 `;
 
-  const { data, error } = await client.emails.send({ from: fromEmail, to: TEAM_EMAIL, replyTo: msg.email, subject, text });
+  const payload = { from: fromEmail, to: TEAM_EMAIL, replyTo: msg.email, subject, text };
+  const idempotencyKey = "contact-team/" + createHash("sha256").update(JSON.stringify(payload)).digest("hex");
+  const { data, error } = await client.emails.send(payload, { idempotencyKey });
   if (error || !data?.id) throw new Error("Contact team message was not accepted by the email provider");
 }
 
@@ -230,7 +233,7 @@ export async function sendContactAutoReply(msg: ContactMessage) {
   };
   const prefixLabel = PREFIX_BY_PERSONA[msg.persona] ?? "Hello";
 
-  const subject = `We received your note (${prefixLabel}).`;
+  const subject = `Your note was accepted for delivery (${prefixLabel}).`;
 
   const text = `Thanks for writing.
 
@@ -255,7 +258,11 @@ The AI-adjunct operations system for coaches, trainers, and practitioners.
     <p style="font-size:13px;line-height:1.55;margin:0;color:#2A2A26;">The AI-adjunct operations system for coaches, trainers, and practitioners.</p>
   `);
 
-  const { data, error } = await client.emails.send({ from: fromEmail, to: msg.email, replyTo: TEAM_EMAIL, subject, text, html });
+  const payload = { from: fromEmail, to: msg.email, replyTo: TEAM_EMAIL, subject, text, html };
+  // Include the inquiry as well as the courtesy payload: different inquiries
+  // must not collapse merely because the confirmation template is identical.
+  const idempotencyKey = "contact-courtesy/" + createHash("sha256").update(JSON.stringify([payload, msg])).digest("hex");
+  const { data, error } = await client.emails.send(payload, { idempotencyKey });
   if (error || !data?.id) throw new Error("Contact confirmation was not accepted by the email provider");
 }
 

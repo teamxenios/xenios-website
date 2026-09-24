@@ -99,7 +99,7 @@ export const PARTNERSHIP_PATHWAYS: readonly PartnershipPathway[] = [
       "An exploratory business-development conversation, not a promise of formulation, supply, timing, or exclusivity.",
     reviewFocus: "Market, product category, quality standard, volume, claims controls, and ownership expectations.",
     route: "#partnership-inquiry",
-    actionLabel: "Prepare a white-label inquiry",
+    actionLabel: "Send a white-label inquiry",
   },
   {
     id: "strategic_partner",
@@ -109,7 +109,7 @@ export const PARTNERSHIP_PATHWAYS: readonly PartnershipPathway[] = [
       "A deliberate path for technology, distribution, education, research, and ecosystem collaborations.",
     reviewFocus: "Shared objective, responsibilities, data boundaries, commercial model, and measurable next step.",
     route: "#partnership-inquiry",
-    actionLabel: "Prepare a strategic inquiry",
+    actionLabel: "Send a strategic inquiry",
   },
 ] as const;
 
