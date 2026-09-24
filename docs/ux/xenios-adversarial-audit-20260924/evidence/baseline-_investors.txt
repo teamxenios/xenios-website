@@ -1,0 +1,135 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios":
+    - /url: /
+    - generic: xenios
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - paragraph: INVESTORS
+  - heading "The operating layer for proactive health." [level=1]
+  - paragraph: xenios is building the AI workspace under serious coaches and health professionals. The structural insight is that the professional relationship is valuable, but the current tool stack fragments attention, context, and follow-up.
+  - link "Request the Deck":
+    - /url: mailto:team@xeniostechnology.com?subject=Investor deck request
+  - link "Schedule a Conversation":
+    - /url: /book
+  - paragraph: THESIS
+  - heading "The coach is the wedge. The operating layer is the company." [level=2]
+  - paragraph: Coaches, trainers, clinicians, and performance professionals are doing the work upstream of disease, but they manage client relationships on tools built for scheduling, notes, messaging, or billing. xenios unifies the workflow around the client record and gives the professional AI leverage without taking the relationship away from them.
+  - paragraph: SIGNALS
+  - article:
+    - paragraph: Market
+    - paragraph: Proactive health professionals are running high-touch relationships on fragmented tools that were not built for the relationship itself.
+  - article:
+    - paragraph: Constraint
+    - paragraph: Quality breaks when one coach has to hold 30 to 40 client contexts across texts, forms, notes, and scheduling tools.
+  - article:
+    - paragraph: Product
+    - paragraph: Xen for the professional, Athena for the client, the Client Attention Queue, Hercules, and one shared client record.
+  - article:
+    - paragraph: Stage
+    - paragraph: Pre-seed, MVP build active, live website, founding cohort forming, and early coach conversations underway.
+  - paragraph: DIFFERENTIATION
+  - heading "Not a chatbot. Not another coaching app." [level=2]
+  - paragraph:
+    - generic: →
+    - generic: "Two-agent architecture: Xen for the professional and Athena for the client."
+  - paragraph:
+    - generic: →
+    - generic: Voice-preserving drafts that stay behind a coach approval gate.
+  - paragraph:
+    - generic: →
+    - generic: The Studio shows who needs attention and why.
+  - paragraph:
+    - generic: →
+    - generic: Hercules prepares weekly check-ins from client context.
+  - paragraph:
+    - generic: →
+    - generic: A long-term data layer for coaching, performance, and proactive health context.
+  - paragraph: ROUND DETAILS
+  - paragraph: Contact the founders for current round details, deck access, and data room context.
+  - link "Contact the Founders":
+    - /url: mailto:team@xeniostechnology.com?subject=Investor conversation
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first

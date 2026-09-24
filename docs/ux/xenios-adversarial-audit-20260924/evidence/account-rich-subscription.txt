@@ -1,0 +1,77 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to account content":
+  - /url: "#account-main-content"
+- banner:
+  - paragraph: XENIOS / RESEARCH + CARE
+  - paragraph: One private view for account access, commerce and billing history, Care operations, and support.
+  - generic: Private account
+  - button "Sign out"
+- navigation "Account areas":
+  - link "Overview":
+    - /url: /research/account
+  - link "Commerce":
+    - /url: /research/account/orders
+  - link "Browse products":
+    - /url: /research/member/catalog
+  - link "Billing history":
+    - /url: /research/account/subscription
+  - link "Care status":
+    - /url: /research/account/care
+  - link "Interests":
+    - /url: /research/account/interests
+  - link "Documents":
+    - /url: /research/account/documents
+  - link "Profile":
+    - /url: /research/account/profile
+  - link "Security":
+    - /url: /research/account/security
+  - link "Support":
+    - /url: /research/account/support
+  - link "Partner workspace":
+    - /url: /research/partners/dashboard
+- paragraph: Historical records
+- heading "Membership, separated from Care." [level=1]
+- paragraph: Review recorded plans, billing states, and receipts. Paid membership is not required for approved customer access; product subscriptions and Care remain separate.
+- main:
+  - region "Xenios Research Membership":
+    - paragraph: Historical billing
+    - heading "Xenios Research Membership" [level=2]
+    - generic: "Recorded account state: Active"
+    - generic: "Billing: Current"
+    - term: Billing status
+    - definition: Current
+    - term: Next billing / renewal
+    - definition: Sep 26, 2026
+    - term: Recorded billing method
+    - definition: Manual / offline
+    - link "Request billing support":
+      - /url: /research/account/support
+    - paragraph: Paid membership is not required for approved customer access. Historical charges and plan records remain available for review. This page does not refund payments, cancel existing recurring charges, or change account approval.
+  - region "Care enrollment":
+    - paragraph: Separate access and fulfillment
+    - heading "Care enrollment" [level=2]
+    - paragraph: Care enrollment is not a medication subscription. Provider review and pharmacy fulfillment each keep their own status.
+    - term: Enrollment
+    - definition: Enrolled
+    - term: Provider / Care stage
+    - definition: Provider review
+    - term: Pharmacy fulfillment
+    - definition: None
+    - link "View Care timeline":
+      - /url: /research/account/care
+  - region "Receipts and records":
+    - paragraph: Billing history
+    - heading "Receipts and records" [level=2]
+    - paragraph: Historical billing receipts are account documents. Product subscriptions, orders, and Care fulfillment charges remain distinct.
+    - article:
+      - paragraph: Receipt · Aug 11, 2026
+      - heading "Order receipt XRR-20260811-TESTFIX02" [level=3]
+      - link "Open documents":
+        - /url: /research/account/documents
+- contentinfo:
+  - paragraph: Administrative account information only. Care, provider review, and pharmacy fulfillment remain separate.
+  - link "Privacy":
+    - /url: /research/privacy
+- region "Notifications (F8)":
+  - list

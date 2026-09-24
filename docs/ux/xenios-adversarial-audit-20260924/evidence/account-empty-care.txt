@@ -1,0 +1,46 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to account content":
+  - /url: "#account-main-content"
+- banner:
+  - paragraph: XENIOS / RESEARCH + CARE
+  - paragraph: One private view for account access, commerce and billing history, Care operations, and support.
+  - generic: Private account
+  - button "Sign out"
+- navigation "Account areas":
+  - link "Overview":
+    - /url: /research/account
+  - link "Commerce":
+    - /url: /research/account/orders
+  - link "Browse products":
+    - /url: /research/member/catalog
+  - link "Billing history":
+    - /url: /research/account/subscription
+  - link "Care status":
+    - /url: /research/account/care
+  - link "Interests":
+    - /url: /research/account/interests
+  - link "Documents":
+    - /url: /research/account/documents
+  - link "Profile":
+    - /url: /research/account/profile
+  - link "Security":
+    - /url: /research/account/security
+  - link "Support":
+    - /url: /research/account/support
+- paragraph: Care operations
+- heading "Care, step by step." [level=1]
+- paragraph: A neutral operational timeline for intake, provider review, and pharmacy fulfillment—without clinical detail or implied outcomes.
+- main:
+  - region "Care not started.":
+    - paragraph: Care status
+    - heading "Care not started." [level=2]
+    - paragraph: Care has not been started in this account. Research access can exist without a Care relationship.
+    - link "Ask account support":
+      - /url: /research/account/support
+- contentinfo:
+  - paragraph: Administrative account information only. Care, provider review, and pharmacy fulfillment remain separate.
+  - link "Privacy":
+    - /url: /research/privacy
+- region "Notifications (F8)":
+  - list

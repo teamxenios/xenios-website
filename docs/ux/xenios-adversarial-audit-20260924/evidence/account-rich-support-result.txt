@@ -1,0 +1,78 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to account content":
+  - /url: "#account-main-content"
+- banner:
+  - paragraph: XENIOS / RESEARCH + CARE
+  - paragraph: One private view for account access, commerce and billing history, Care operations, and support.
+  - generic: Private account
+  - button "Sign out"
+- navigation "Account areas":
+  - link "Overview":
+    - /url: /research/account
+  - link "Commerce":
+    - /url: /research/account/orders
+  - link "Browse products":
+    - /url: /research/member/catalog
+  - link "Billing history":
+    - /url: /research/account/subscription
+  - link "Care status":
+    - /url: /research/account/care
+  - link "Interests":
+    - /url: /research/account/interests
+  - link "Documents":
+    - /url: /research/account/documents
+  - link "Profile":
+    - /url: /research/account/profile
+  - link "Security":
+    - /url: /research/account/security
+  - link "Support":
+    - /url: /research/account/support
+  - link "Partner workspace":
+    - /url: /research/partners/dashboard
+- paragraph: Account support
+- heading "The right help, in the right lane." [level=1]
+- paragraph: Open and review account, order, Care-operation, or pharmacy-operation support without placing sensitive clinical detail in the portal.
+- main:
+  - region "Open a support request":
+    - paragraph: Account support
+    - heading "Open a support request" [level=2]
+    - paragraph: Choose the operational area and describe the account question. Do not include diagnoses, dosing, or other unnecessary clinical detail.
+    - generic: Category
+    - combobox "Category":
+      - option "Order"
+      - option "Account" [selected]
+      - option "Care"
+      - option "Pharmacy"
+    - generic: Subject
+    - textbox "Subject"
+    - generic: What do you need help with?
+    - textbox "What do you need help with?"
+    - button "Submit support request"
+    - status: Your support request was recorded.
+  - complementary:
+    - paragraph: 🔒 Support is for account, order, Care-operation, and pharmacy-operation questions. Urgent or emergency services are outside this account portal.
+    - region "What happens next":
+      - paragraph: Response expectations
+      - heading "What happens next" [level=2]
+      - paragraph: Each case shows the response expectation recorded by the support service. No response time is invented by this page.
+  - region "Your cases":
+    - paragraph: Support history
+    - heading "Your cases" [level=2]
+    - generic: 2 visible open
+    - article:
+      - paragraph: Account · Updated Dec 31, 1969, 6:00 PM
+      - heading "Synthetic audit support" [level=3]
+      - paragraph: We reply within one business day.
+      - generic: Open
+    - article:
+      - paragraph: Order · Updated Aug 25, 2026, 7:00 AM
+      - heading "Shipping address update" [level=3]
+      - paragraph: We reply within one business day.
+      - generic: Open
+- contentinfo:
+  - paragraph: Administrative account information only. Care, provider review, and pharmacy fulfillment remain separate.
+  - link "Privacy":
+    - /url: /research/privacy
+- region "Notifications (F8)":
+  - list

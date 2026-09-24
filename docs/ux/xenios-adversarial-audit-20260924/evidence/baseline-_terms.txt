@@ -1,0 +1,115 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios":
+    - /url: /
+    - generic: xenios
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - paragraph: TERMS
+  - heading "Terms of service." [level=1]
+  - paragraph:
+    - strong: Acceptance.
+    - text: By using xeniostechnology.com or joining the waitlist, you agree to these terms.
+  - paragraph:
+    - strong: Marketing site.
+    - text: The information on this site is for general information about the xenios product and brand, and is not medical, clinical, financial, legal, or professional advice.
+  - paragraph:
+    - strong: Waitlist.
+    - text: Joining the waitlist is not a contract for service. We will follow up as the founding cohort opens.
+  - paragraph:
+    - strong: Product terms.
+    - text: Use of the xenios product (post-launch) is governed by a separate Master Service Agreement provided at onboarding.
+  - paragraph:
+    - strong: No warranty.
+    - text: The site is provided as-is. We do our best to keep it accurate and online.
+  - paragraph:
+    - strong: Governing law.
+    - text: Delaware. Disputes resolved in courts of competent jurisdiction in Austin, Texas.
+  - paragraph:
+    - strong: Contact.
+    - text: "Questions: team@xeniostechnology.com, subject prefix [Legal]."
+  - paragraph: "Last updated: May 2026 · Xenios Technologies, Inc."
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first

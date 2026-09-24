@@ -1,0 +1,64 @@
+- region "Notifications (F8)":
+  - list
+- link "xenios research ops":
+  - /url: /admin
+  - text: xenios
+  - generic: research ops
+- navigation "Admin destinations":
+  - link "Founder home":
+    - /url: /admin/research/command-center
+  - link "Growth / site admin":
+    - /url: /admin
+  - link "Back to site":
+    - /url: /
+- navigation "Research operations areas":
+  - link "Overview":
+    - /url: /admin/research
+  - generic "Founder":
+    - generic: Founder
+    - generic: +
+  - generic "Care":
+    - generic: Care
+    - generic: +
+  - generic "Members":
+    - generic: Members
+    - generic: +
+  - generic "Commerce":
+    - generic: Commerce
+    - generic: −
+  - link "Products":
+    - /url: /admin/research/products
+  - link "Product configuration":
+    - /url: /admin/research/product-configuration
+  - link "Product requests":
+    - /url: /admin/research/product-requests
+  - link "Inventory":
+    - /url: /admin/research/inventory
+  - link "Orders":
+    - /url: /admin/research/orders
+  - link "Commerce queues":
+    - /url: /admin/research/commerce-queues
+  - generic "Activation":
+    - generic: Activation
+    - generic: +
+  - generic "Content & partners":
+    - generic: Content & partners
+    - generic: +
+  - generic "Governance":
+    - generic: Governance
+    - generic: +
+- banner:
+  - paragraph: Operations
+  - heading "Commerce queues" [level=1]
+  - paragraph: Everything in commerce that is waiting on a human decision, in one place. A queue that cannot be read says so rather than showing a zero.
+- main:
+  - form "Admin sign in":
+    - paragraph: Sign in required
+    - paragraph: Research operations requires an admin account. The same account signs in to the /admin dashboard.
+    - generic: Email
+    - textbox "Email"
+    - generic: Password
+    - textbox "Password"
+    - button "Sign in"
+    - link "Password reset lives on /admin":
+      - /url: /admin

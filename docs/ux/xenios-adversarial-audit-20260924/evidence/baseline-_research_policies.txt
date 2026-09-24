@@ -1,0 +1,91 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Policies and documentation
+  - heading "Read the document—and its status." [level=1]
+  - paragraph: A document can be visible without being approved for acceptance or final reliance. This index preserves that distinction instead of treating publication as authority.
+  - region "Research policy documents":
+    - article:
+      - paragraph: Served Research-use document
+      - heading "Research Use Policy" [level=2]
+      - paragraph: The served Research-use boundaries, prohibited uses, review expectations, and permitted support topics.
+      - link "Read Research Use Policy":
+        - /url: /research/policies/research-use
+    - article:
+      - paragraph: Operational draft
+      - heading "Privacy Policy" [level=2]
+      - paragraph: The current source explicitly identifies this language as pending alignment with actual vendors and data flows.
+      - link "Read Privacy Policy":
+        - /url: /research/privacy
+    - article:
+      - paragraph: Operational draft
+      - heading "Terms of Service" [level=2]
+      - paragraph: The current source explicitly identifies this language as pending qualified review or approval.
+      - link "Read Terms of Service":
+        - /url: /research/terms
+    - article:
+      - paragraph: Publication status unconfirmed
+      - heading "Shipping Policy" [level=2]
+      - paragraph: Readable for review, but the source does not provide authoritative approval metadata and includes starter operating assumptions.
+      - link "Read Shipping Policy":
+        - /url: /research/policies/shipping
+    - article:
+      - paragraph: Publication status unconfirmed
+      - heading "Returns and Replacements" [level=2]
+      - paragraph: Readable for review, but the source does not provide authoritative approval metadata. This index does not present it as final.
+      - link "Read Returns and Replacements":
+        - /url: /research/policies/returns
+    - article:
+      - paragraph: Operational draft
+      - heading "Accessibility Statement" [level=2]
+      - paragraph: The working WCAG 2.1 AA target, what the Research surfaces do today, known limitations, and how to ask for an alternative format. Counsel review and an external audit are still pending.
+      - link "Read Accessibility Statement":
+        - /url: /research/policies/accessibility
+  - complementary "Need a document for review?":
+    - heading "Need a document for review?" [level=2]
+    - paragraph: Research Support can help locate the current public source. Support cannot declare draft or status-unconfirmed language approved, and this page does not collect acceptance.
+    - link "Contact Research":
+      - /url: /research/contact
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

@@ -1,0 +1,133 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios":
+    - /url: /
+    - generic: xenios
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - paragraph: EARLY INTEREST
+  - heading "Early interest" [level=1]
+  - paragraph: This is a non-binding way to tell us you would like to be part of the founding group of coaches. Share a few details and the xenios team will follow up.
+  - text: Leave this field empty
+  - textbox
+  - generic: Name
+  - textbox "Name"
+  - generic: Email
+  - textbox "Email"
+  - generic: Phone (optional)
+  - textbox "Phone (optional)"
+  - generic: Business name (optional)
+  - textbox "Business name (optional)"
+  - generic: Role
+  - combobox "Role":
+    - option "Select your role" [selected]
+    - option "Personal trainers"
+    - option "Strength and performance coaches"
+    - option "Health and longevity coaches"
+    - option "Nutritionists and dietitians"
+    - option "Physical therapists"
+    - option "Performance gyms"
+    - option "Wellness and longevity clinics"
+    - option "Sports teams"
+    - option "Corporate wellness teams"
+    - option "Other"
+  - generic: Website or Instagram (optional)
+  - textbox "Website or Instagram (optional)"
+  - generic: Number of clients
+  - combobox "Number of clients":
+    - option "Select a range" [selected]
+    - option "Just me / under 10"
+    - option "10 to 25"
+    - option "25 to 50"
+    - option "50 to 100"
+    - option "100 to 250"
+    - option "250+"
+  - generic: Why interested in xenios (optional)
+  - textbox "Why interested in xenios (optional)"
+  - checkbox "I understand this is a non-binding indication of interest."
+  - generic: I understand this is a non-binding indication of interest.
+  - button "Share your interest"
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first

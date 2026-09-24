@@ -1,0 +1,296 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to account content":
+  - /url: "#account-main-content"
+- banner:
+  - paragraph: XENIOS / RESEARCH + CARE
+  - paragraph: One private view for account access, commerce and billing history, Care operations, and support.
+  - generic: Private account
+  - button "Sign out"
+- navigation "Account areas":
+  - link "Overview" [active]:
+    - /url: /research/account
+  - link "Commerce":
+    - /url: /research/account/orders
+  - link "Browse products":
+    - /url: /research/member/catalog
+  - link "Billing history":
+    - /url: /research/account/subscription
+  - link "Care status":
+    - /url: /research/account/care
+  - link "Interests":
+    - /url: /research/account/interests
+  - link "Documents":
+    - /url: /research/account/documents
+  - link "Profile":
+    - /url: /research/account/profile
+  - link "Security":
+    - /url: /research/account/security
+  - link "Support":
+    - /url: /research/account/support
+- paragraph: Private account
+- heading "Your account, clearly organized." [level=1]
+- paragraph: Account access, commerce and billing history, Care operations, documents, and support—each with its own source of truth.
+- main:
+  - region "No administrative action is recorded, but some account information is currently unavailable.":
+    - paragraph: Next administrative action
+    - heading "No administrative action is recorded, but some account information is currently unavailable." [level=2]
+    - paragraph: This is an account step only. It is not a medical recommendation or a promise of product approval.
+    - generic: Status unavailable
+  - region "Account summary":
+    - paragraph: Account access
+    - paragraph: Active
+    - paragraph: Recorded account status. Paid membership is not required for approved customer access.
+    - paragraph: Research history
+    - paragraph: —
+    - paragraph: count unavailable — commerce history incomplete
+    - link "View commerce history":
+      - /url: /research/account/orders
+    - paragraph: Care operations
+    - paragraph: Not enrolled
+    - link "View separate Care timeline":
+      - /url: /research/account/care
+  - region "Empty Fixture":
+    - paragraph: Account identity
+    - heading "Empty Fixture" [level=2]
+    - generic: Email
+    - generic: empty.fixture@example.invalid
+    - generic: Account
+    - generic: Active
+    - generic: Account since
+    - generic: Not available
+  - region "No billing relationship recorded":
+    - paragraph: Historical billing
+    - heading "No billing relationship recorded" [level=2]
+    - generic: "Billing: No connected billing state"
+    - paragraph: "Recorded renewal evidence: Not scheduled"
+    - paragraph: Historical billing does not determine account approval and does not guarantee treatment, a provider decision, or fulfillment. This view does not refund payments or cancel existing recurring charges.
+    - link "View billing history":
+      - /url: /research/account/subscription
+  - region "Recent activity":
+    - paragraph: Research commerce history
+    - heading "Recent activity" [level=2]
+    - link "All records":
+      - /url: /research/account/orders
+    - note:
+      - paragraph: Some commerce history is currently unavailable.
+      - paragraph: "These sources do not provide a complete history: Early Access cart checkouts (XEC), assisted order requests (XRR)."
+    - generic: Commerce history is currently unavailable or incomplete — recent records may not be shown.
+  - region "Operational status":
+    - paragraph: Care enrollment
+    - heading "Operational status" [level=2]
+    - generic: Enrollment
+    - generic: Not enrolled
+    - generic: Provider stage
+    - generic: No stage recorded
+    - generic: Pharmacy
+    - generic: None
+    - link "Open Care status":
+      - /url: /research/account/care
+  - region "No interests are visible in this account view.":
+    - paragraph: Saved interests
+    - heading "No interests are visible in this account view." [level=2]
+    - paragraph: Interest-history completeness is not reported here. Availability requests can be reviewed with account support.
+  - region "Current availability priorities":
+    - paragraph: Priority collection
+    - heading "Current availability priorities" [level=2]
+    - paragraph: Statuses come from the audited activation record. Nothing here is orderable unless the catalog itself offers it.
+    - paragraph: No demand counts shown
+    - list:
+      - paragraph: Research
+      - generic: Request only
+      - heading "BPC-157 + TB-500" [level=3]
+      - paragraph: 15mg / 15mg total strength
+      - paragraph: An availability request is not an order or a promise of supply.
+      - generic "Catalog lanes":
+        - generic: Blends
+      - paragraph: No ordering action available
+      - paragraph: Provider / Care
+      - generic: Documentation pending
+      - heading "AOD-9604 + MOTS-C + Tesamorelin + Ipamorelin" [level=3]
+      - paragraph: This item is not active or orderable while documentation remains incomplete.
+      - generic "Catalog lanes":
+        - generic: Blends
+      - paragraph: No ordering action available
+      - paragraph: Research
+      - generic: Request only
+      - heading "Melanotan-2" [level=3]
+      - paragraph: An availability request is not an order or a promise of supply.
+      - generic "Catalog lanes":
+        - generic: Provider / Care
+      - paragraph: No ordering action available
+      - paragraph: Research
+      - generic: Request only
+      - heading "Retatrutide" [level=3]
+      - paragraph: Exact strength shown only when catalog-authorized
+      - paragraph: An availability request is not an order or a promise of supply.
+      - generic "Catalog lanes":
+        - generic: Provider / Care
+      - paragraph: No ordering action available
+      - paragraph: Research
+      - generic: Request only
+      - heading "Thymosin Alpha-1 + KPV + LL-37" [level=3]
+      - paragraph: An availability request is not an order or a promise of supply.
+      - generic "Catalog lanes":
+        - generic: Blends
+      - paragraph: No ordering action available
+      - paragraph: Research
+      - generic: Request only
+      - heading "CJC-1295 + Ipamorelin" [level=3]
+      - paragraph: An availability request is not an order or a promise of supply.
+      - generic "Catalog lanes":
+        - generic: Provider / Care
+        - generic: Blends
+      - paragraph: No ordering action available
+      - paragraph: Research
+      - generic: Request only
+      - heading "IGF-1 LR3" [level=3]
+      - paragraph: An availability request is not an order or a promise of supply.
+      - generic "Catalog lanes":
+        - generic: Provider / Care
+      - paragraph: No ordering action available
+      - paragraph: Research
+      - generic: Live
+      - heading "DSIP" [level=3]
+      - paragraph: Current catalog access still follows the server-resolved ordering pathway.
+      - generic "Catalog lanes":
+        - generic: Provider / Care
+      - paragraph: No ordering action available
+      - paragraph: Research
+      - generic: Live
+      - heading "NAD+" [level=3]
+      - paragraph: Formats remain distinct
+      - paragraph: Current catalog access still follows the server-resolved ordering pathway.
+      - generic "Catalog lanes":
+        - generic: Provider / Care
+        - generic: Capsules / Oral / Nasal / Topical
+      - paragraph: No ordering action available
+  - region "Exact variants pending activation":
+    - paragraph: Priority collection
+    - heading "Exact variants pending activation" [level=2]
+    - paragraph: These exact formulations are recorded for verification and are not orderable.
+    - paragraph: No demand counts shown
+    - list:
+      - paragraph: Request-only / Pending activation
+      - generic: Documentation pending
+      - heading "Retatrutide 48 mg" [level=3]
+      - paragraph: Exact documentation required
+      - paragraph: This item is not active or orderable while documentation remains incomplete.
+      - generic "Catalog lanes"
+      - 'link "Join availability list: Retatrutide 48 mg"':
+        - /url: /research/account/support
+      - paragraph: Request-only / Pending activation
+      - generic: Documentation pending
+      - heading "Provider/Care Retatrutide variants (exact pharmacy formulary strengths)" [level=3]
+      - paragraph: Exact documentation required
+      - paragraph: This item is not active or orderable while documentation remains incomplete.
+      - generic "Catalog lanes"
+      - 'link "Join availability list: Provider/Care Retatrutide variants (exact pharmacy formulary strengths)"':
+        - /url: /research/account/support
+      - paragraph: Request-only / Pending activation
+      - generic: Documentation pending
+      - heading "Tesamorelin + Ipamorelin + MOTS-C three-way blend (no AOD)" [level=3]
+      - paragraph: Exact documentation required
+      - paragraph: This item is not active or orderable while documentation remains incomplete.
+      - generic "Catalog lanes"
+      - 'link "Join availability list: Tesamorelin + Ipamorelin + MOTS-C three-way blend (no AOD)"':
+        - /url: /research/account/support
+      - paragraph: Request-only / Pending activation
+      - generic: Documentation pending
+      - heading "BPC-157 + TB-500 + MGF (Wolverine blend)" [level=3]
+      - paragraph: Exact documentation required
+      - paragraph: This item is not active or orderable while documentation remains incomplete.
+      - generic "Catalog lanes"
+      - 'link "Join availability list: BPC-157 + TB-500 + MGF (Wolverine blend)"':
+        - /url: /research/account/support
+      - paragraph: Request-only / Pending activation
+      - generic: Documentation pending
+      - heading "IGF-1 LR3 + MOTS-C blend" [level=3]
+      - paragraph: Exact documentation required
+      - paragraph: This item is not active or orderable while documentation remains incomplete.
+      - generic "Catalog lanes"
+      - 'link "Join availability list: IGF-1 LR3 + MOTS-C blend"':
+        - /url: /research/account/support
+      - paragraph: Request-only / Pending activation
+      - generic: Documentation pending
+      - heading "GHK-Cu + Epithalon + MOTS-C blend" [level=3]
+      - paragraph: Exact documentation required
+      - paragraph: This item is not active or orderable while documentation remains incomplete.
+      - generic "Catalog lanes"
+      - 'link "Join availability list: GHK-Cu + Epithalon + MOTS-C blend"':
+        - /url: /research/account/support
+      - paragraph: Request-only / Pending activation
+      - generic: Documentation pending
+      - heading "CJC-1295 + Ipamorelin + IGF-1 LR3 blend" [level=3]
+      - paragraph: Exact documentation required
+      - paragraph: This item is not active or orderable while documentation remains incomplete.
+      - generic "Catalog lanes"
+      - 'link "Join availability list: CJC-1295 + Ipamorelin + IGF-1 LR3 blend"':
+        - /url: /research/account/support
+      - paragraph: Request-only / Pending activation
+      - generic: Documentation pending
+      - heading "CJC-1295 + Ipamorelin + AOD-9604 blend" [level=3]
+      - paragraph: Exact documentation required
+      - paragraph: This item is not active or orderable while documentation remains incomplete.
+      - generic "Catalog lanes"
+      - 'link "Join availability list: CJC-1295 + Ipamorelin + AOD-9604 blend"':
+        - /url: /research/account/support
+      - paragraph: Request-only / Pending activation
+      - generic: Documentation pending
+      - heading "Semax + Selank 5mg/5mg exact formulation" [level=3]
+      - paragraph: Exact documentation required
+      - paragraph: This item is not active or orderable while documentation remains incomplete.
+      - generic "Catalog lanes"
+      - 'link "Join availability list: Semax + Selank 5mg/5mg exact formulation"':
+        - /url: /research/account/support
+      - paragraph: Request-only / Pending activation
+      - generic: Documentation pending
+      - heading "BPC-157 500 mcg capsules, 100-count package" [level=3]
+      - paragraph: Exact documentation required
+      - paragraph: This item is not active or orderable while documentation remains incomplete.
+      - generic "Catalog lanes"
+      - 'link "Join availability list: BPC-157 500 mcg capsules, 100-count package"':
+        - /url: /research/account/support
+      - paragraph: Request-only / Pending activation
+      - generic: Unavailable
+      - heading "Initial hormone-evaluation labs (diagnostic service entry, not a peptide)" [level=3]
+      - paragraph: Exact documentation required
+      - paragraph: This item is not currently available.
+      - generic "Catalog lanes"
+      - paragraph: No ordering action available
+      - paragraph: Request-only / Pending activation
+      - generic: Unavailable
+      - heading "Exosomes 1 oz exact item (reconcile vs existing exosome cream/serum rows)" [level=3]
+      - paragraph: Exact documentation required
+      - paragraph: This item is not currently available.
+      - generic "Catalog lanes"
+      - paragraph: No ordering action available
+      - paragraph: Request-only / Pending activation
+      - generic: Unavailable
+      - heading "Revive Glutathione 10 mL exact formulation (reconcile vs Glutathione 200mg/mL 10mL vial)" [level=3]
+      - paragraph: Exact documentation required
+      - paragraph: This item is not currently available.
+      - generic "Catalog lanes"
+      - paragraph: No ordering action available
+  - region "Account resources":
+    - link "Documents Status unavailable Receipts, approved COAs, and account documents.":
+      - /url: /research/account/documents
+      - paragraph: Documents
+      - paragraph: Status unavailable
+      - paragraph: Receipts, approved COAs, and account documents.
+    - link "Support Status unavailable Order, account, Care, and pharmacy support.":
+      - /url: /research/account/support
+      - paragraph: Support
+      - paragraph: Status unavailable
+      - paragraph: Order, account, Care, and pharmacy support.
+    - link "Billing No billing relationship Historical billing records remain separate from product subscriptions and fulfillment. Review outstanding charges with support.":
+      - /url: /research/account/subscription
+      - paragraph: Billing
+      - paragraph: No billing relationship
+      - paragraph: Historical billing records remain separate from product subscriptions and fulfillment. Review outstanding charges with support.
+- contentinfo:
+  - paragraph: Administrative account information only. Care, provider review, and pharmacy fulfillment remain separate.
+  - link "Privacy":
+    - /url: /research/privacy
+- region "Notifications (F8)":
+  - list

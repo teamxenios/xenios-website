@@ -1,0 +1,135 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios":
+    - /url: /
+    - generic: xenios
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - paragraph: MVP LAB
+  - heading "xenios MVP Lab." [level=1]
+  - paragraph: Functional synthetic demos for testing the xenios product system. Pick an MVP, run the loop, and see how the professional stays in front while the AI drafts.
+  - generic: Synthetic onlyThese MVPs use synthetic data only. Do not enter real client, patient, payment, or private information.
+  - heading "Kairos" [level=2]
+  - generic: Live · Public synthetic
+  - paragraph: Weekly check-in console for coaches.
+  - paragraph: Assembles each client's week, runs a deterministic safety pass first, and drafts a source-grounded check-in in the coach's voice. The coach approves, edits, or rejects. Nothing is sent by the system.
+  - generic: Synthetic only
+  - generic: No sends
+  - generic: Coach-side
+  - paragraph: Coach-side · no sends · sensitive topics route to the coach
+  - link "Open Kairos":
+    - /url: /kairos
+  - link "Details":
+    - /url: /kairos
+  - heading "Argos" [level=2]
+  - generic: In progress
+  - paragraph: Client Attention Queue for coaches and trainers.
+  - paragraph: "Shows who needs attention today, why they were flagged, what source supports it, and what follow-up is ready for review. The wedge: never miss who needs attention."
+  - generic: Synthetic only
+  - generic: No sends
+  - generic: Coach-side
+  - paragraph: Coach-side · no sends · sensitive topics route to the coach
+  - button "In progress" [disabled]
+  - paragraph: STAGE LADDER
+  - generic: Stage 0 Local synthetic
+  - generic: Stage 1 Public synthetic
+  - generic: Stage 2 Coach sandbox
+  - generic: Stage 3 Controlled pilot
+  - generic: Stage 4 Limited beta
+  - generic: Stage 5 Production
+  - paragraph: Synthetic versions are public and clearly labeled. Coach sandbox, controlled pilot, and beta are gated and only open after the legal, clinical, and privacy reviews clear.
+  - paragraph: SAFETY POSTURE
+  - paragraph: Synthetic only
+  - paragraph: No real client, patient, payment, or private data in any synthetic route. A gate refuses real clients until sign-off.
+  - paragraph: No external send
+  - paragraph: The system never sends. Drafts are prepared for coach review and delivery is manual and logged.
+  - paragraph: Human in command
+  - paragraph: Sensitive topics route to the coach with no draft. The coach approves, edits, or rejects every message.
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first
+- status:
+  - generic: Add xenios to your home screen.
+  - button "Install"
+  - button "Dismiss": ✕

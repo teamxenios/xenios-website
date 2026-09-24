@@ -1,0 +1,133 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios":
+    - /url: /
+    - generic: xenios
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - paragraph: SECURITY
+  - heading "Trust is a product requirement." [level=1]
+  - paragraph: xenios is built for professionals who hold real client relationships. Security is not a badge on the footer. It is part of how data, AI access, and approval gates are designed.
+  - link "Talk to the Team":
+    - /url: /contact
+  - link "Read Privacy Approach":
+    - /url: /privacy
+  - paragraph: SECURITY POSTURE
+  - heading "Data handling" [level=3]
+  - paragraph: Client context is treated as sensitive business and health-adjacent data. The record is designed to keep access scoped to the professional and approved team members.
+  - heading "AI access boundaries" [level=3]
+  - paragraph: Xen can reference approved client context to prepare drafts. Athena is disclosed as AI and stays under the professional's boundaries.
+  - heading "Approval before delivery" [level=3]
+  - paragraph: Version one keeps client-facing output behind professional review. The AI drafts. The coach decides.
+  - heading "Encryption" [level=3]
+  - paragraph: TLS in transit and encryption at rest through infrastructure providers. Technical details are available during security review.
+  - heading "Access control" [level=3]
+  - paragraph: Role-based access, scoped accounts, and audit-oriented workflows are part of the product posture.
+  - heading "Incident response" [level=3]
+  - paragraph: Security issues should be sent directly to the team. We prioritize rapid review, containment, and clear communication.
+  - paragraph: DATA FLOW
+  - heading "Plain-language architecture." [level=2]
+  - paragraph: The goal is to make data movement understandable to a solo coach and substantive enough for a compliance reviewer.
+  - generic: "01"
+  - paragraph: Client messages, check-ins, notes, and signals enter the workspace.
+  - generic: "02"
+  - paragraph: The client record keeps context attached to the person and the professional relationship.
+  - generic: "03"
+  - paragraph: Xen prepares drafts, summaries, or next actions from approved context.
+  - generic: "04"
+  - paragraph: The professional reviews before anything client-facing is delivered.
+  - generic: "05"
+  - paragraph: Actions, edits, and updates are retained as part of the operating record.
+  - paragraph: CLIENT DATA RIGHTS
+  - heading "Requests should be simple and visible." [level=2]
+  - generic: Request access
+  - generic: Request export
+  - generic: Request deletion
+  - generic: Ask how data is used
+  - generic: Escalate a security concern
+  - paragraph: RESPONSIBLE DISCLOSURE
+  - paragraph: Found something? Email security@xeniostechnology.com or team@xeniostechnology.com with the subject prefix [Security].
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first

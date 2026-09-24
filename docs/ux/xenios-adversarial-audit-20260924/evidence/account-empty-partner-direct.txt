@@ -1,0 +1,22 @@
+- region "Notifications (F8)":
+  - list
+- main:
+  - paragraph: Partners
+  - heading "Partner dashboard" [level=1]
+  - paragraph: Your partner activity, without individual customer details.
+  - navigation "Account and partner tools":
+    - link "My account":
+      - /url: /research/account
+    - link "Browse catalog":
+      - /url: /research/member/catalog
+    - link "Referral links":
+      - /url: /research/partners/links
+    - link "Account support":
+      - /url: /research/account/support
+  - paragraph: Referral eligibility is checked when you open the referral tools.
+  - alert:
+    - paragraph: No partner account found.
+    - paragraph: There is no partner account attached to this sign-in.
+  - paragraph: Partner access is separate from your customer account and catalog access.
+- region "Notifications (F8)":
+  - list

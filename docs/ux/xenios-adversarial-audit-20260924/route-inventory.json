@@ -1054,5 +1054,281 @@
     "path": "/research/access-gate",
     "status": "NOT RUN",
     "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/command-center",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/care-requests",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/referral-lifecycle",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/applications",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/applications/:id",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/members",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/members/:id",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/plans",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/plans/:id",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/blueprint-review",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/products",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/products/:id",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/product-configuration",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/product-requests",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/product-requests/:id",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/inventory/lots",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/inventory/coas",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/inventory",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/assisted-orders",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/assisted-orders/:requestId",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/orders",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/orders/:id",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/fulfillment",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/commerce-queues",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/questions",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/questions/:id",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/guides",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/guides/:id",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/partners",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/partners/:id",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/resource-hub",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/security",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/privacy",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/capabilities",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/required-inputs",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/activation-queue",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/activation-bridge",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/activation-checklist",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/activation-reconciliation",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/activation-readiness",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/esign",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/early-access/releases",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/early-access/payments",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/early-access/fulfillment",
+    "status": "NOT RUN",
+    "evidence": null
+  },
+  {
+    "source": "client/src/research/adminx-section.tsx",
+    "path": "/admin/research/audit",
+    "status": "NOT RUN",
+    "evidence": null
   }
 ]

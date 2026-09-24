@@ -1,0 +1,6 @@
+- region "Notifications (F8)":
+  - list
+- main:
+  - paragraph: Research operations
+  - heading "Assisted order requests" [level=1]
+  - alert: Sign in with your Xenios admin account to review assisted order requests.

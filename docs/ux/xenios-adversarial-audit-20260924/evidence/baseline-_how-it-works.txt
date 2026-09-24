@@ -1,0 +1,141 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios":
+    - /url: /
+    - generic: xenios
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - paragraph: HOW IT WORKS
+  - heading "Five steps. One operating system. Your voice on every surface." [level=1]
+  - paragraph: xenios is the AI-adjunct operations system for coaches, trainers, and practitioners. Here is what onboarding looks like.
+  - paragraph: "01"
+  - heading "Connect your stack." [level=2]
+  - paragraph: Bring the tools you already use. xenios reads from your programming app, your billing platform, your messaging inbox, your intake forms, and your client list. Day one, every client is on the new record.
+  - paragraph: "02"
+  - heading "Teach your voice." [level=2]
+  - paragraph: Upload prior messages, programs, and content. The xenios agent learns how you talk, what you teach, and how you teach it. Voice fidelity is measured, not assumed.
+  - paragraph: "03"
+  - heading "Approve the first batch." [level=2]
+  - paragraph: Every drafted message, program, or check-in lands in your queue first. You approve, edit, or discard. Each edit teaches the agent. The approval queue shrinks every week.
+  - paragraph: "04"
+  - heading "Move the autonomy dial." [level=2]
+  - paragraph: Per workflow, per client, per surface. Suggest. Draft. Auto-approve. Move it where you want it. Move it back when you want to. The dial is yours, always.
+  - paragraph: "05"
+  - heading "Run the practice." [level=2]
+  - paragraph: "The xenios agent handles the back office: programming, intake, check-ins, messaging, education, billing. The xenios client agent holds the in-between in your voice. You spend the day coaching, not coordinating."
+  - heading "The two surfaces, plain." [level=2]
+  - article:
+    - paragraph: the xenios agent
+    - heading "Runs your back office." [level=3]
+    - list:
+      - listitem: Drafts messages in your voice.
+      - listitem: Builds and versions programs and protocols.
+      - listitem: Triages your inbox across SMS, in-app, and email.
+      - listitem: Runs scheduled and adaptive check-ins.
+      - listitem: Handles billing, packages, and reorder routing.
+      - listitem: Surfaces who needs you today and who can wait.
+  - article:
+    - paragraph: the xenios client agent
+    - heading "Holds the in-between." [level=3]
+    - list:
+      - listitem: Answers protocol questions in your voice.
+      - listitem: Reminds, nudges, and holds accountability.
+      - listitem: Teaches the why with your education.
+      - listitem: Tracks adherence, mood, and signal between sessions.
+      - listitem: Hands clinical or out-of-scope items back to you.
+      - listitem: Never speaks outside the rails you set.
+  - heading "The autonomy dial." [level=2]
+  - paragraph: "Three modes per workflow per client: SUGGEST, DRAFT, AUTO-APPROVE. Set it where you want trust to start. Move it as the agent earns more."
+  - paragraph: SUGGEST
+  - paragraph: The agent proposes. You write it.
+  - paragraph: DRAFT
+  - paragraph: The agent drafts. You approve or edit.
+  - paragraph: AUTO-APPROVE
+  - paragraph: The agent ships. You see the log.
+  - heading "See it in your practice." [level=2]
+  - link "Join the waitlist":
+    - /url: /waitlist
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first

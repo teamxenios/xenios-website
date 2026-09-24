@@ -1,0 +1,22 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - generic "xenios research":
+    - text: xenios
+    - generic: research
+- main:
+  - paragraph: Account access
+  - heading "Account access is not active." [level=1]
+  - paragraph: The server has not confirmed an active customer account. Contact support to review the account status. This screen cannot approve or reopen access.
+  - alert:
+    - paragraph: Next step
+    - paragraph: Customer access is not active on this account. Pending, paused or closed records need an explicit review; signing in or holding a partner record does not reopen them.
+    - link "Application information":
+      - /url: /research/apply
+    - link "Contact support":
+      - /url: mailto:research@xeniostechnology.com
+    - paragraph:
+      - link "Back to gateway":
+        - /url: /research
+- region "Notifications (F8)":
+  - list

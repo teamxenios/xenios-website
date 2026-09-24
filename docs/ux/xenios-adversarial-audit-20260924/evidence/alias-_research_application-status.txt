@@ -1,0 +1,23 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - generic "xenios research":
+    - text: xenios
+    - generic: research
+- main:
+  - paragraph: Application status
+  - heading "This status link is invalid or expired" [level=1]
+  - alert:
+    - paragraph: This status link is invalid or expired.
+    - paragraph: Request a new secure link below.
+  - paragraph: Request a secure status link
+  - generic: Application email
+  - textbox "Application email"
+  - button "Request secure status link"
+  - navigation "Application status help":
+    - link "Back to Research access":
+      - /url: /research/access-hub
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Contact support":
+      - /url: /research/support

@@ -1,0 +1,121 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: How Xenios works
+  - heading "Two pathways. Clear authority at every step." [level=1]
+  - paragraph: Care and Research may share account, status, and support infrastructure, but they do not share clinical authority, product-use claims, prescribing, or fulfillment rules.
+  - list "Xenios Research journey":
+    - paragraph: Step 01
+    - heading "Choose Care or Research" [level=2]
+    - paragraph: Use Care for personal health. Use Research for legitimate nonclinical work.
+    - paragraph: Step 02
+    - heading "Create or verify your account" [level=2]
+    - paragraph: Care begins with a public access request that captures routing details. Research verifies its own membership, agreements, and access requirements.
+    - paragraph: Step 03
+    - heading "Complete the required information" [level=2]
+    - paragraph: The public Care request is nonclinical. If an appropriate pathway is available, a separate secure handoff may collect information for clinical review. Research presents exact product identity, documentation, and Research-use requirements.
+    - paragraph: Step 04
+    - heading "Receive the appropriate review" [level=2]
+    - paragraph: A U.S.-licensed clinician reviews Care. Research actions are governed by Product Control, documentation, availability, and account authority.
+    - paragraph: Step 05
+    - heading "Continue only when authorized" [level=2]
+    - paragraph: A clinician may prescribe when clinically appropriate. A pharmacy may fulfill when serviceable. A Research request or order proceeds only when its own gates pass.
+    - paragraph: Step 06
+    - heading "Follow status and support" [level=2]
+    - paragraph: Use the appropriate account, provider, pharmacy, Research, and support sources for updates, documents, tracking, follow-up, and exceptions.
+  - region "One platform, separate authorities.":
+    - paragraph: Common pathways
+    - heading "One platform, separate authorities." [level=2]
+    - article:
+      - heading "Xenios Care" [level=3]
+      - paragraph: Start with a short, nonclinical access request. If an appropriate pathway is available, Xenios may provide a separate secure handoff for independent clinical review. No request, product interest, or payment guarantees treatment or a prescription.
+      - link "Start Care request":
+        - /url: /care/schedule
+    - article:
+      - heading "Xenios Research" [level=3]
+      - paragraph: Review exact products, variants, evidence, documentation, and Research-only access without turning a Research listing into personal medical guidance.
+      - link "Explore Research":
+        - /url: /research/access-hub
+    - article:
+      - heading "Organizations and partners" [level=3]
+      - paragraph: Organizations, affiliates, suppliers, and strategic partners begin with context, eligibility, compliance, and human review.
+      - link "Ask about partnership access":
+        - /url: /research/support
+  - region "A checkpoint is not a claim.":
+    - paragraph: Quality checkpoint model
+    - heading "A checkpoint is not a claim." [level=2]
+    - paragraph: This intended checkpoint sequence makes status easier to evaluate. It does not imply that every offering has completed every checkpoint or received every kind of test.
+    - list:
+      - generic: "01"
+      - generic: Receive and inspect
+      - generic: "02"
+      - generic: Capture exact SKU and lot
+      - generic: "03"
+      - generic: Quarantine pending review
+      - generic: "04"
+      - generic: Review applicable documents
+      - generic: "05"
+      - generic: Record testing where applicable
+      - generic: "06"
+      - generic: Release, hold, or mark unavailable
+      - generic: "07"
+      - generic: Pick, pack, ship, and track only from durable evidence
+  - complementary "Research and Care boundary":
+    - paragraph: A firm boundary
+    - heading "Care and Research are separate by design." [level=2]
+    - paragraph: Use Xenios Care for personal medical evaluation, clinical records, prescribing, pharmacy fulfillment, and follow-up. Use Xenios Research for legitimate nonclinical research materials, evidence, documentation, and Research-only access. A Research account, listing, request, or purchase never creates a clinical decision.
+    - link "Explore Research":
+      - /url: /research/access-hub
+    - link "Begin Care":
+      - /url: /care
+  - region "Choose Care or Research.":
+    - paragraph: Ready to continue
+    - heading "Choose Care or Research." [level=2]
+    - paragraph: Begin with the pathway that matches your need. Each source remains responsible for its own decisions and status.
+    - link "Start Care request":
+      - /url: /care/schedule
+    - link "Explore Research":
+      - /url: /research/access-hub
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

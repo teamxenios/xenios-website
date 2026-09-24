@@ -1,0 +1,20 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - generic "xenios research":
+    - text: xenios
+    - generic: research
+- main:
+  - paragraph: Account access
+  - heading "This is not available right now." [level=1]
+  - paragraph: The request was declined. Please try again, or contact support if it keeps happening.
+  - alert:
+    - paragraph: Next step
+    - paragraph: Try signing in again. If this keeps happening, contact support and a person will look at your account with you.
+    - link "Account sign in":
+      - /url: /research/sign-in
+    - link "Contact support":
+      - /url: mailto:research@xeniostechnology.com
+    - paragraph:
+      - link "Back to gateway":
+        - /url: /research

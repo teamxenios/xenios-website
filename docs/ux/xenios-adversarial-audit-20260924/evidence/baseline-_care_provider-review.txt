@@ -1,0 +1,121 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- banner:
+  - link "xenios":
+    - /url: /
+    - generic: xenios
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - region "Your clinician makes the medical decision.":
+    - paragraph: XENIOS CARE · CLINICAL INDEPENDENCE
+    - heading "Your clinician makes the medical decision." [level=1]
+    - paragraph: The licensed clinician evaluates the information available, applies professional judgment, and determines whether more information, a visit, laboratory work, another form of care, a prescription, or no treatment is appropriate. Xenios does not direct the decision.
+  - navigation "Care pages":
+    - list:
+      - link "Care overview":
+        - /url: /care
+      - link "Start Care request":
+        - /url: /care/schedule
+      - link "Care account":
+        - /url: /care/portal
+      - link "How Care works":
+        - /url: /care/how-it-works
+      - link "Clinical review":
+        - /url: /care/provider-review
+      - link "Support":
+        - /url: /care/support
+  - region "What never establishes approval.":
+    - heading "What never establishes approval." [level=2]
+    - article:
+      - heading "A selected product" [level=3]
+      - paragraph: Choosing or asking about a product does not establish that it is appropriate, available, or prescribable for the person.
+    - article:
+      - heading "A completed questionnaire" [level=3]
+      - paragraph: The intake provides information for review. It does not require the clinician to approve treatment or accept the requested formulation.
+    - article:
+      - heading "Research access or purchase history" [level=3]
+      - paragraph: Research membership, a Research request, an order, or product documentation never creates Care eligibility or a clinical relationship.
+    - article:
+      - heading "Pharmacy availability or price" [level=3]
+      - paragraph: A pharmacy listing, formulation, estimate, or available ingredient does not replace the clinician's independent decision or the pharmacy's final prescription review.
+    - paragraph: The clinician may approve an appropriate treatment, ask follow-up questions, request records or laboratory work, require a live encounter, recommend a different option, decline the request, or refer the person elsewhere. No outcome is guaranteed.
+  - region "This site is not emergency care.":
+    - paragraph: EMERGENCY BOUNDARY
+    - heading "This site is not emergency care." [level=2]
+    - paragraph: If you may be experiencing a medical emergency, call 911 in the United States or contact your local emergency services now. Do not wait for a response from Xenios.
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first

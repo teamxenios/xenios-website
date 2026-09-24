@@ -1,0 +1,19 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - generic "xenios research":
+    - text: xenios
+    - generic: research
+- main:
+  - paragraph: Account access
+  - heading "Your Xenios account" [level=1]
+  - paragraph: Account approval and sign-in are separate from product, partner and Care eligibility.
+  - paragraph: Sign in to your account.
+  - paragraph: Use your normal Xenios email and password. Paid membership activation is not required by this page.
+  - link "Sign in":
+    - /url: /research/sign-in?returnTo=%2Fresearch%2Faccount
+  - link "Forgot password":
+    - /url: /research/reset-password?returnTo=%2Fresearch%2Faccount
+  - paragraph: Product purchase requirements, referral eligibility and Care authorization remain separate server-controlled decisions.
+  - link "Back to Xenios Research":
+    - /url: /research

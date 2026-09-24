@@ -2216,6 +2216,27 @@
       "dependsOn": [],
       "scopeNote": "Audit evidence first. No application edits until baseline. No production mutation or feature activation.",
       "claimedAt": "2026-09-24T18:45:40.035Z"
+    },
+    {
+      "id": "XENIOS-INQUIRY-RECEIPT-REPAIR-20260924",
+      "title": "Repair browser-demonstrated false inquiry receipt AUD-001",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-adversarial-audit-20260924",
+      "baseSha": "ee8af17d4423916a238756a16a95457b9d08a867",
+      "paths": [
+        "server/routes.ts",
+        "server/services/email.ts",
+        "server/services/contact-delivery.ts",
+        "server/services/contact-delivery.test.ts",
+        "server/services/contact-email.test.ts",
+        "client/src/lib/waitlist-service.ts",
+        "client/src/research/b2b/PartnershipInquiryForm.tsx",
+        "client/src/research/b2b/PartnershipInquiryForm.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Existing contact delivery only; no production mutation. Baseline artifacts precede edits.",
+      "claimedAt": "2026-09-24T19:10:34.931Z"
     }
   ]
 }

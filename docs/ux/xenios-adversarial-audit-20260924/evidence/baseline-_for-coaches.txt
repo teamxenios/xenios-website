@@ -1,0 +1,162 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios":
+    - /url: /
+    - generic: xenios
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - paragraph: FOR COACHES
+  - heading "Scale the relationship, not the admin." [level=1]
+  - paragraph: xenios is built for coaches managing 15 to 40 or more clients across texts, spreadsheets, programming tools, notes, and check-in forms. It keeps the relationship in front and the busywork behind you.
+  - link "Apply for Early Access":
+    - /url: /waitlist
+  - link "View How It Works":
+    - /url: /how-it-works
+  - paragraph: THE PAIN
+  - heading "The quality ceiling usually shows up before the client count does." [level=2]
+  - generic: Scattered client context
+  - generic: Inconsistent follow-up
+  - generic: Admin fatigue
+  - generic: Missed check-ins
+  - generic: Manual notes
+  - generic: Fear of dropping client details
+  - paragraph: A DAY IN THE LIFE
+  - article:
+    - paragraph: "01"
+    - heading "Morning triage" [level=2]
+    - paragraph: Open the Studio and see who needs attention before the day gets noisy.
+  - article:
+    - paragraph: "02"
+    - heading "Client check-ins" [level=2]
+    - paragraph: Hercules prepares weekly check-ins in your voice, grounded in the client's actual week.
+  - article:
+    - paragraph: "03"
+    - heading "Program changes" [level=2]
+    - paragraph: Adjust training, nutrition, or habit work from the same client record instead of another tab.
+  - article:
+    - paragraph: "04"
+    - heading "Follow-up drafting" [level=2]
+    - paragraph: Xen drafts the response and shows the reason, source, and next action for review.
+  - article:
+    - paragraph: "05"
+    - heading "Evening review" [level=2]
+    - paragraph: Approve what should go out, leave what needs judgment, and keep the relationship human.
+  - paragraph: RELATIONSHIP PRESERVATION
+  - heading "The coach stays in front." [level=2]
+  - paragraph: xenios does not pretend to be the coach. Xen prepares drafts and summaries. Athena is always disclosed as AI. You set the boundary, review the work, and decide what reaches the client.
+  - paragraph: The AI drafts. The coach decides.
+  - paragraph: That is the operating rule for every client-facing workflow in version one.
+  - paragraph: USE CASES
+  - heading "Specific moments where attention usually breaks." [level=2]
+  - article:
+    - heading "Missed check-in" [level=3]
+    - paragraph: The client does not respond. xenios flags it, drafts a calm follow-up, and keeps the context attached.
+  - article:
+    - heading "Stalled progress" [level=3]
+    - paragraph: Weight, performance, or adherence stalls. Xen prepares a summary and a next-step draft for your review.
+  - article:
+    - heading "Client asks a question" [level=3]
+    - paragraph: The question lands in the unified inbox with client context and a draft that follows your method.
+  - article:
+    - heading "Wearable signal changes" [level=3]
+    - paragraph: Sleep, recovery, or adherence shifts. The record updates and the Studio shows whether action is needed.
+  - article:
+    - heading "Low adherence" [level=3]
+    - paragraph: xenios surfaces the pattern before the relationship goes cold.
+  - article:
+    - heading "Program adjustment" [level=3]
+    - paragraph: The program change, reason, and client message stay connected on one record.
+  - paragraph: FOUNDING COACH SIGNALS
+  - heading "What we are testing with the first coaches." [level=2]
+  - generic: Can a coach review a full roster faster without losing judgment?
+  - generic: Can weekly check-ins sound like the actual coach, not generic AI?
+  - generic: Can the Client Attention Queue prevent clients from slipping through the cracks?
+  - heading "Join the founding coach cohort." [level=2]
+  - link "Apply for Early Access":
+    - /url: /waitlist
+  - link "Founding Coach Cohort":
+    - /url: /careers/founding-coach-cohort
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first

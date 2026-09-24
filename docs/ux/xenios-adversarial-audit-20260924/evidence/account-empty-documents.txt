@@ -1,0 +1,46 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to account content":
+  - /url: "#account-main-content"
+- banner:
+  - paragraph: XENIOS / RESEARCH + CARE
+  - paragraph: One private view for account access, commerce and billing history, Care operations, and support.
+  - generic: Private account
+  - button "Sign out"
+- navigation "Account areas":
+  - link "Overview":
+    - /url: /research/account
+  - link "Commerce":
+    - /url: /research/account/orders
+  - link "Browse products":
+    - /url: /research/member/catalog
+  - link "Billing history":
+    - /url: /research/account/subscription
+  - link "Care status":
+    - /url: /research/account/care
+  - link "Interests":
+    - /url: /research/account/interests
+  - link "Documents":
+    - /url: /research/account/documents
+  - link "Profile":
+    - /url: /research/account/profile
+  - link "Security":
+    - /url: /research/account/security
+  - link "Support":
+    - /url: /research/account/support
+- paragraph: Secure records
+- heading "Documents in one place." [level=1]
+- paragraph: Customer-facing receipts, approved COAs, order records, historical billing records, and appropriate Care administration documents.
+- main:
+  - paragraph: 🔒 Document links are account-authorized paths. Only approved customer-facing receipts, COAs, order records, historical billing records, and Care administration documents appear here.
+  - region "Document records":
+    - paragraph: Document center
+    - heading "Document records" [level=2]
+    - generic: Status unavailable
+    - generic: No customer-facing documents are visible in this account view. Document-history completeness is not reported here.
+- contentinfo:
+  - paragraph: Administrative account information only. Care, provider review, and pharmacy fulfillment remain separate.
+  - link "Privacy":
+    - /url: /research/privacy
+- region "Notifications (F8)":
+  - list

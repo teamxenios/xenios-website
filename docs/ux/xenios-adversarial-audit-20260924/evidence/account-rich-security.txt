@@ -1,0 +1,55 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to account content":
+  - /url: "#account-main-content"
+- banner:
+  - paragraph: XENIOS / RESEARCH + CARE
+  - paragraph: One private view for account access, commerce and billing history, Care operations, and support.
+  - generic: Private account
+  - button "Sign out"
+- navigation "Account areas":
+  - link "Overview":
+    - /url: /research/account
+  - link "Commerce":
+    - /url: /research/account/orders
+  - link "Browse products":
+    - /url: /research/member/catalog
+  - link "Billing history":
+    - /url: /research/account/subscription
+  - link "Care status":
+    - /url: /research/account/care
+  - link "Interests":
+    - /url: /research/account/interests
+  - link "Documents":
+    - /url: /research/account/documents
+  - link "Profile":
+    - /url: /research/account/profile
+  - link "Security":
+    - /url: /research/account/security
+  - link "Support":
+    - /url: /research/account/support
+  - link "Partner workspace":
+    - /url: /research/partners/dashboard
+- paragraph: Account security
+- heading "Security and recovery." [level=1]
+- paragraph: Use the existing recovery path, with unavailable controls described honestly.
+- main:
+  - region "Reset your password through the existing recovery route.":
+    - paragraph: Password recovery
+    - heading "Reset your password through the existing recovery route." [level=2]
+    - paragraph: "Account email: test.customer@example.invalid"
+    - generic: "Account: Active"
+    - link "Open password reset":
+      - /url: /research/reset-password?returnTo=%2Fresearch%2Faccount%2Fsecurity
+  - region "Session and multi-factor controls are not available here.":
+    - paragraph: Security controls
+    - heading "Session and multi-factor controls are not available here." [level=2]
+    - paragraph: This account surface has no authoritative session list or multi-factor status, so it does not display either as enabled, disabled, or current.
+    - link "Ask account support":
+      - /url: /research/account/support
+- contentinfo:
+  - paragraph: Administrative account information only. Care, provider review, and pharmacy fulfillment remain separate.
+  - link "Privacy":
+    - /url: /research/privacy
+- region "Notifications (F8)":
+  - list

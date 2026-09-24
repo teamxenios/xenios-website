@@ -1,0 +1,91 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Private Early Access
+  - heading "Request an order" [level=1]
+  - paragraph: Choose products and quantities. Xenios confirms availability and payment details before fulfillment.
+  - navigation "Order request progress":
+    - button "1 Choose products":
+      - generic: "1"
+      - text: Choose products
+    - button "2 Contact and delivery" [disabled]:
+      - generic: "2"
+      - text: Contact and delivery
+    - button "3 Review and payment" [disabled]:
+      - generic: "3"
+      - text: Review and payment
+    - button "4 Confirmation and tracking" [disabled]:
+      - generic: "4"
+      - text: Confirmation and tracking
+  - region "Browse all products":
+    - heading "Browse all products" [level=2]
+    - text: Search
+    - searchbox "Search"
+    - text: Family
+    - combobox "Family":
+      - option "All families" [selected]
+    - text: Action
+    - combobox "Action":
+      - option "All actions" [selected]
+      - option "Direct Order"
+      - option "Request Order"
+      - option "Care"
+      - option "Temporarily Unavailable / Held"
+    - generic: Search, Family, and Action apply before pagination.
+    - button "Clear filters" [disabled]
+    - status: Loading catalog.
+    - paragraph: Loading catalog…
+    - article
+    - article
+    - article
+    - article
+    - complementary:
+      - heading "Your request" [level=2]
+      - paragraph: No products selected yet.
+      - generic: Estimated priced total
+      - strong: Price on request
+      - paragraph: Estimates only. Xenios confirms availability and payment details before fulfillment.
+      - button "Continue" [disabled]
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

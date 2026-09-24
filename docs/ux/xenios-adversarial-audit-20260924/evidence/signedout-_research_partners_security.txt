@@ -1,0 +1,10 @@
+- region "Notifications (F8)":
+  - list
+- main:
+  - paragraph: xenios research
+  - heading "This area is under review." [level=1]
+  - paragraph: The research section is open to invited reviewers while the catalog, quality documentation, and legal review are completed. Enter the access password to continue.
+  - generic: Access password
+  - textbox "Access password"
+  - button "Enter" [disabled]
+  - paragraph: No password? Ask the xenios team for review access. Nothing in this section is for human or veterinary use, and ordering is not open.

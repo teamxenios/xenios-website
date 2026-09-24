@@ -1,0 +1,52 @@
+- region "Notifications (F8)":
+  - list
+- link "xenios research ops":
+  - /url: /admin
+  - text: xenios
+  - generic: research ops
+- navigation "Admin destinations":
+  - link "Founder home":
+    - /url: /admin/research/command-center
+  - link "Growth / site admin":
+    - /url: /admin
+  - link "Back to site":
+    - /url: /
+- navigation "Research operations areas":
+  - link "Overview":
+    - /url: /admin/research
+  - generic "Founder":
+    - generic: Founder
+    - generic: +
+  - generic "Care":
+    - generic: Care
+    - generic: +
+  - generic "Members":
+    - generic: Members
+    - generic: +
+  - generic "Commerce":
+    - generic: Commerce
+    - generic: +
+  - generic "Activation":
+    - generic: Activation
+    - generic: +
+  - generic "Content & partners":
+    - generic: Content & partners
+    - generic: +
+  - generic "Governance":
+    - generic: Governance
+    - generic: +
+- banner:
+  - paragraph: Operations
+  - heading "Early Access fulfillment" [level=1]
+  - paragraph: "The live single-order Early Access lane: payments waiting on a named human, settled orders still owed a shipment, and the dispatch trail for one order at a time. Nothing ships before a person confirms the money, and marking shipped requires a recorded tracking number."
+- main:
+  - form "Admin sign in":
+    - paragraph: Sign in required
+    - paragraph: Research operations requires an admin account. The same account signs in to the /admin dashboard.
+    - generic: Email
+    - textbox "Email"
+    - generic: Password
+    - textbox "Password"
+    - button "Sign in"
+    - link "Password reset lives on /admin":
+      - /url: /admin

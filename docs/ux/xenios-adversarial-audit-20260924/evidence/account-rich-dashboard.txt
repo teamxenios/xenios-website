@@ -1,0 +1,63 @@
+- region "Notifications (F8)":
+  - list
+- main:
+  - paragraph: Partners
+  - heading "Partner dashboard" [level=1]
+  - paragraph: Your partner activity, without individual customer details.
+  - navigation "Account and partner tools":
+    - link "My account":
+      - /url: /research/account
+    - link "Browse catalog":
+      - /url: /research/member/catalog
+    - link "Referral links":
+      - /url: /research/partners/links
+    - link "Account support":
+      - /url: /research/account/support
+  - paragraph: Referral eligibility is checked when you open the referral tools.
+  - generic: Affiliate
+  - generic: Partner active
+  - heading "Your next action" [level=2]
+  - paragraph: "Complete: Certification and activation are recorded."
+  - paragraph: "Blocking: No lifecycle blocker is reported."
+  - link "Open referral tools":
+    - /url: /research/partners/links
+  - button "Open referral tools"
+  - paragraph: Leads
+  - paragraph: Not reported
+  - paragraph: Lead counts are not reported by this dashboard. This is not a zero count.
+  - paragraph: Commission-linked conversions
+  - paragraph: "2"
+  - paragraph: Commission records with a positive balance in pending, held, approved, payable, paid, or disputed states. Not all purchases.
+  - paragraph: Net recorded commissions
+  - paragraph: $70.00
+  - paragraph: Recorded commissions after reversals, including pending, held, approved, payable, paid, and disputed amounts. Not a payout balance.
+  - paragraph: Payable balance
+  - paragraph: $20.00
+  - paragraph: Remaining commissions whose current state is payable. This does not confirm a scheduled or completed payout.
+  - region "Commission-linked activity":
+    - heading "Commission-linked activity" [level=2]
+    - paragraph: One row per commission chain with remaining value, as reported by the server. Fully reversed and forfeited chains are not counted.
+    - table "Commission-linked activity with attribution date, eligible net, remaining commission, and current state":
+      - caption: Commission-linked activity with attribution date, eligible net, remaining commission, and current state
+      - rowgroup:
+        - row "Attributed Eligible net Remaining commission State":
+          - columnheader "Attributed"
+          - columnheader "Eligible net"
+          - columnheader "Remaining commission"
+          - columnheader "State"
+      - rowgroup:
+        - row "2026-08-20T12:00:00.000Z $500.00 $50.00 held":
+          - cell "2026-08-20T12:00:00.000Z"
+          - cell "$500.00"
+          - cell "$50.00"
+          - cell "held":
+            - generic: held
+        - row "2026-08-21T12:00:00.000Z $200.00 $20.00 payable":
+          - cell "2026-08-21T12:00:00.000Z"
+          - cell "$200.00"
+          - cell "$20.00"
+          - cell "payable":
+            - generic: payable
+  - paragraph: 🔒 Dashboard figures are computed by the server. This view does not display customer names, contact details, purchased items, or health information. Referral opens and linked accounts are separate figures on the referral links page.
+- region "Notifications (F8)":
+  - list

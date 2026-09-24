@@ -1,0 +1,64 @@
+- region "Notifications (F8)":
+  - list
+- link "xenios research ops":
+  - /url: /admin
+  - text: xenios
+  - generic: research ops
+- navigation "Admin destinations":
+  - link "Founder home":
+    - /url: /admin/research/command-center
+  - link "Growth / site admin":
+    - /url: /admin
+  - link "Back to site":
+    - /url: /
+- navigation "Research operations areas":
+  - link "Overview":
+    - /url: /admin/research
+  - generic "Founder":
+    - generic: Founder
+    - generic: +
+  - generic "Care":
+    - generic: Care
+    - generic: +
+  - generic "Members":
+    - generic: Members
+    - generic: +
+  - generic "Commerce":
+    - generic: Commerce
+    - generic: +
+  - generic "Activation":
+    - generic: Activation
+    - generic: −
+  - link "Payment verification":
+    - /url: /admin/research/activation-queue
+  - link "Payment bridge":
+    - /url: /admin/research/activation-bridge
+  - link "Day 15 checklist":
+    - /url: /admin/research/activation-checklist
+  - link "Reconciliation":
+    - /url: /admin/research/activation-reconciliation
+  - link "Readiness":
+    - /url: /admin/research/activation-readiness
+  - link "E-signatures":
+    - /url: /admin/research/esign
+  - generic "Content & partners":
+    - generic: Content & partners
+    - generic: +
+  - generic "Governance":
+    - generic: Governance
+    - generic: +
+- banner:
+  - paragraph: Operations
+  - heading "Activation readiness" [level=1]
+  - paragraph: What stands between the founding activation flow and go-live, area by area. Each item is code ready, missing configuration, waiting on an external approval, or waiting on a production test. No secret values appear here.
+- main:
+  - form "Admin sign in":
+    - paragraph: Sign in required
+    - paragraph: Research operations requires an admin account. The same account signs in to the /admin dashboard.
+    - generic: Email
+    - textbox "Email"
+    - generic: Password
+    - textbox "Password"
+    - button "Sign in"
+    - link "Password reset lives on /admin":
+      - /url: /admin

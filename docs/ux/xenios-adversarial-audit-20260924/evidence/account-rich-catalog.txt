@@ -1,0 +1,56 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research/member
+    - generic: xenios
+    - generic: research
+  - button "Sign out (Jordan)"
+  - navigation "Member navigation (mobile)":
+    - link "Home":
+      - /url: /research/member
+    - link "Products":
+      - /url: /research/member/products
+    - link "Full catalog":
+      - /url: /research/member/catalog
+    - link "Requests":
+      - /url: /research/member/product-requests
+    - link "Guides":
+      - /url: /research/member/guides
+    - link "Cart":
+      - /url: /research/member/cart
+    - link "Orders":
+      - /url: /research/member/orders
+    - link "Membership":
+      - /url: /research/member/membership
+    - link "Account":
+      - /url: /research/account
+    - link "Profile":
+      - /url: /research/member/profile
+- main:
+  - paragraph: Xenios Research
+  - heading "Full catalog" [level=1]
+  - paragraph: The full catalog is not available yet.
+  - paragraph: It is being prepared. Nothing is wrong with your account.
+  - button "Try again"
+- contentinfo:
+  - link "xenios":
+    - /url: /
+    - generic: xenios
+  - link "research use":
+    - /url: /research/policies/research-use
+  - link "shipping":
+    - /url: /research/policies/shipping
+  - link "returns":
+    - /url: /research/policies/returns
+  - link "privacy":
+    - /url: /research/policies/privacy
+  - link "terms":
+    - /url: /research/policies/terms
+  - link "accessibility":
+    - /url: /research/policies/accessibility
+  - link "Support":
+    - /url: mailto:research@xeniostechnology.com
+  - paragraph: Research materials are not for human or veterinary use. Programs are human-led and non-clinical.
+- region "Notifications (F8)":
+  - list

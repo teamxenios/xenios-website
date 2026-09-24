@@ -1,0 +1,163 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Affiliates · collectives · referral partners
+  - heading "Earn trust before earning attribution." [level=1]
+  - paragraph: The Xenios affiliate pathway is built for educators, creators, practitioners, gyms, communities, and aligned organizations that can introduce the company accurately, disclose the relationship, and stay inside approved claims.
+  - link "Review the partner application":
+    - /url: /research/partners/apply
+  - link "Existing affiliate access":
+    - /url: /research/partners/dashboard
+  - region "Application through payout, without invented economics.":
+    - paragraph: Governed lifecycle
+    - heading "Application through payout, without invented economics." [level=2]
+    - paragraph: An affiliate relationship progresses only through durable review, agreement, activation, attribution, and ledger evidence. Public interest alone creates none of those states.
+    - list:
+      - generic: "01"
+      - heading "Application" [level=3]
+      - paragraph: A person or organization identifies its audience, channels, business identity, and intended way of introducing Xenios.
+      - generic: "02"
+      - heading "Review and agreement" [level=3]
+      - paragraph: Xenios reviews fit, disclosures, allowed claims, prohibited conduct, identity, and the current governed agreement.
+      - generic: "03"
+      - heading "Approved resources" [level=3]
+      - paragraph: Only approved links, codes, education, and brand materials may be used. Product or clinical claims are never improvised.
+      - generic: "04"
+      - heading "Durable attribution" [level=3]
+      - paragraph: Eligible activity is attributed through the canonical system. A browser value alone does not establish a conversion or commission.
+      - generic: "05"
+      - heading "Ledger and payout status" [level=3]
+      - paragraph: Commission, holds, reversals, statements, and payout status appear only when supported by durable authorized records.
+  - region "Clear permission. Clear prohibitions.":
+    - paragraph: Program conduct
+    - heading "Clear permission. Clear prohibitions." [level=2]
+    - paragraph: Approved partners introduce and educate. They do not diagnose, prescribe, set prices, approve products, or become a shadow sales authority.
+    - article:
+      - paragraph: Allowed after approval
+      - heading "Share within the approved library." [level=3]
+      - list:
+        - listitem: Explain what Xenios Research is using approved material
+        - listitem: Disclose the affiliate or partner relationship clearly
+        - listitem: Share an issued link or code without changing customer pricing
+        - listitem: Route questions, support needs, and Care interest to the correct Xenios pathway
+    - article:
+      - paragraph: Never allowed
+      - heading "No claims, access, or influence by implication." [level=3]
+      - list:
+        - listitem: Medical, treatment, dosing, administration, body-transformation, or outcome claims
+        - listitem: Income promises, fabricated conversions, or public commission economics not authorized for publication
+        - listitem: Influencing provider judgment, prescribing, pharmacy decisions, or clinical eligibility
+        - listitem: Viewing unrelated customers, private product interests, supplier cost, Xenios margin, or payment evidence
+  - complementary "Attribution is not customer access.":
+    - paragraph: Operating boundary
+    - heading "Attribution is not customer access." [level=2]
+    - paragraph: Partners may receive approved aggregate or partner-scoped reporting. The customer relationship and customer data remain with Xenios, and clinical information remains in the provider-governed system.
+    - list:
+      - listitem: No affiliate receives unrelated customer identity, health information, private product interests, or order detail.
+      - listitem: Commission status is shown only from the authoritative ledger, including holds and reversals where applicable.
+      - listitem: Rates, payment schedules, and program economics are not promised on this public page.
+      - listitem: No payment or benefit may reward prescribing, provider approval, or another clinical decision.
+  - region "Customer accounts stay with Xenios.":
+    - paragraph: External advisor programs
+    - heading "Customer accounts stay with Xenios." [level=2]
+    - paragraph: Any named advisor or collective program must use an internal attribution and customer-handoff boundary. The public pathway does not activate a program, import a list, invite a customer, or disclose a source relationship.
+    - article:
+      - heading "Xenios customer account" [level=3]
+      - paragraph: Customer-facing identity, access, support, and account history remain in Xenios. An advisor relationship never creates a duplicate customer portal.
+    - article:
+      - heading "Internal source attribution" [level=3]
+      - paragraph: An approved advisor or collective source may be recorded internally without exposing customer identity, private interests, or order detail to that source.
+    - article:
+      - heading "Time-bounded relationship" [level=3]
+      - paragraph: A 90-day external advisor relationship may operate through its approved organization while Xenios retains the customer relationship and data boundary.
+    - article:
+      - heading "Migration and consent gate" [level=3]
+      - paragraph: No contact import, customer invitation, or outreach begins until the migration dataset, consent basis, contact fields, and authorized sender are approved.
+  - region "Use the governed application when you are ready.":
+    - paragraph: Start here
+    - heading "Use the governed application when you are ready." [level=2]
+    - paragraph: The existing partner application is member-scoped and may be unavailable until your account and the program are enabled. An unavailable state means nothing was submitted.
+    - link "Open partner application":
+      - /url: /research/partners/apply
+    - link "Partner support":
+      - /url: /research/support
+    - article:
+      - paragraph: Before you apply
+      - heading "Bring an honest audience description." [level=3]
+      - paragraph: Be ready to identify where you share, how you disclose commercial relationships, the subjects your audience expects from you, and how you will avoid medical and income claims.
+  - region "Prepare an affiliate or collective inquiry":
+    - paragraph: Human review
+    - heading "Prepare an affiliate or collective inquiry" [level=2]
+    - paragraph: Submit a business inquiry for human review. This does not create an account, approve access, establish pricing, or activate a relationship.
+    - generic: Relationship type
+    - combobox "Relationship type":
+      - option "Research organizations"
+      - option "Clinical businesses"
+      - option "Provider partnerships"
+      - option "Affiliate relationships" [selected]
+      - option "Collective partnerships"
+      - option "Supply and quality partners"
+      - option "White-label interest"
+      - option "Strategic partnerships"
+    - generic: Your name
+    - textbox "Your name"
+    - generic: Business email
+    - textbox "Business email"
+    - generic: Organization
+    - textbox "Organization"
+    - generic: Your role
+    - textbox "Your role"
+    - generic: Website (optional)
+    - paragraph: Use a public page. Query and fragment values are omitted from the prepared summary.
+    - textbox "Website (optional)":
+      - /placeholder: https://
+    - generic: Principal region or jurisdiction
+    - textbox "Principal region or jurisdiction"
+    - generic: Business context
+    - paragraph: Describe the intended relationship, audience or use, approximate volume, documentation needs, and desired next step. Do not include patient information, health details, payment data, or secrets.
+    - textbox "Business context"
+    - button "Submit inquiry"
+    - paragraph: Submission creates a business inquiry only. It is not an account application or approval.
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

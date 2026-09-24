@@ -1,0 +1,146 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Research ordering
+  - heading "How would you like to begin?" [level=1]
+  - paragraph: Choose the route that matches what you need. Each option below continues into an existing Xenios system with its own identity, availability, payment, status, and support checks.
+  - region "Quick Research is the lightest supported way to start.":
+    - paragraph: Start here
+    - heading "Quick Research is the lightest supported way to start." [level=2]
+    - paragraph: It opens the existing passwordless Early Access session. It does not create a second account, cart, order, checkout, or price authority. If your need is personal and medical, choose Xenios Care instead of Research.
+    - generic: Browse before full membership
+    - generic: Server-confirmed facts only
+    - generic: Care stays separate
+    - paragraph: No active Research account in this browser.
+  - region "Five ways to begin or return":
+    - paragraph: Research pathways
+    - heading "Five ways to begin or return" [level=2]
+    - article:
+      - paragraph: Lightest supported Research path
+      - heading "Quick Research order" [level=2]
+      - generic: Recommended first path
+      - paragraph: Browse through the existing passwordless Early Access session and continue into its canonical request or order flow.
+      - paragraph: "For: First-time or returning Research customers who want the lightest supported way to begin."
+      - generic "What you need, payment, status, and support"
+      - link "Open Quick Early Access":
+        - /url: /research/early-access
+    - article:
+      - paragraph: Returning customer
+      - heading "Sign in and order" [level=2]
+      - generic: Sign-in required
+      - paragraph: Use the canonical Research member identity for the member catalog, saved context, documents, support, and commerce history.
+      - paragraph: "For: Returning customers who want the account experience and an exact continuation after sign-in."
+      - generic "What you need, payment, status, and support"
+      - link "Sign in and continue":
+        - /url: /research/sign-in?returnTo=%2Fresearch%2Fmember%2Fcatalog
+    - article:
+      - paragraph: Existing request or order
+      - heading "Resume or track an order" [level=2]
+      - generic: Sign-in required
+      - paragraph: Return through an authorized account, or reopen the same bounded Early Access browser session that created the request.
+      - paragraph: "For: Customers who already started a request or order and need its latest confirmed state."
+      - generic "What you need, payment, status, and support"
+      - link "Sign in to view orders":
+        - /url: /research/sign-in?returnTo=%2Fresearch%2Faccount%2Forders
+      - link "Resume in this browser":
+        - /url: /research/early-access
+      - paragraph: Use this only in the browser where you started Quick Early Access.
+    - article:
+      - paragraph: Large, custom, unavailable, or quote-dependent request
+      - heading "Assisted or volume order" [level=2]
+      - generic: No full account required
+      - paragraph: Begin through Early Access so its bounded session can route an exact multi-item, volume, quote, or human-assisted request.
+      - paragraph: "For: Customers with larger quantities, multiple products, custom requirements, unavailable variants, quote requests, or a need for human review."
+      - generic "What you need, payment, status, and support"
+      - link "Start an assisted request":
+        - /url: /research/early-access
+    - article:
+      - paragraph: Clinic, organization, or wholesale
+      - heading "Clinic, organization, or wholesale" [level=2]
+      - generic: Human-reviewed inquiry
+      - paragraph: Start the existing reviewed professional-buyer process without implying that an organization workspace already exists.
+      - paragraph: "For: Clinics, practices, gyms, marketplaces, and other qualified business or wholesale buyers."
+      - generic "What you need, payment, status, and support"
+      - link "Explore organization access":
+        - /url: /research/organizations
+  - region "Care and manual help":
+    - paragraph: Separate pathways
+    - heading "Care and manual help" [level=2]
+    - article:
+      - paragraph: Personal medical need
+      - heading "Xenios Care" [level=2]
+      - generic: Separate Care path
+      - paragraph: Use the separate Care pathway for personal health needs. Research ordering never substitutes for clinical intake or review.
+      - paragraph: "For: People seeking personal health evaluation or another provider-guided Care service."
+      - generic "What you need, payment, status, and support"
+      - link "Start with Xenios Care":
+        - /url: /care/schedule
+    - article:
+      - paragraph: Human routing help
+      - heading "Manual help" [level=2]
+      - generic: Human support
+      - paragraph: Ask Xenios to identify the right operational pathway when automation cannot yet get you there.
+      - paragraph: "For: Anyone who is unsure which path applies, cannot access an existing flow, or needs a human operational response."
+      - generic "What you need, payment, status, and support"
+      - link "Contact Xenios Research":
+        - /url: /research/contact
+  - region "Request, payment, fulfillment, and tracking are separate facts.":
+    - paragraph: Shared status rule
+    - heading "Request, payment, fulfillment, and tracking are separate facts." [level=2]
+    - list:
+      - paragraph: Request or order reference
+      - paragraph: Confirms only that the owning server recorded the submitted details.
+      - paragraph: Payment status
+      - paragraph: Changes only from an approved provider fact or authorized human verification.
+      - paragraph: Fulfillment status
+      - paragraph: Begins only when the owning order and payment gates permit a release.
+      - paragraph: Tracking
+      - paragraph: Appears only after an authorized carrier fact is recorded for the correct order.
+  - region "Safe selections continue; private credentials do not travel in links.":
+    - paragraph: Continuity without new authority
+    - heading "Safe selections continue; private credentials do not travel in links." [level=2]
+    - paragraph: A validated product, variant, and quantity continue into Quick Early Access, assisted ordering, or member sign-in for review against the current catalog. Account-order destinations continue through sign-in. Unknown destinations and credential-like query data are discarded. Any already-recognized referral remains with the server-owned referral session; this page does not copy a referral code into its links.
+  - paragraph: 🔒 Research-designated products are for legitimate nonclinical work. Do not send symptoms, diagnoses, medications, medical history, laboratory results, passwords, sign-in tokens, or payment credentials through Research ordering or ordinary support messages.
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

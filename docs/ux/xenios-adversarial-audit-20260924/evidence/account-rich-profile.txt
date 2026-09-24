@@ -1,0 +1,60 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to account content":
+  - /url: "#account-main-content"
+- banner:
+  - paragraph: XENIOS / RESEARCH + CARE
+  - paragraph: One private view for account access, commerce and billing history, Care operations, and support.
+  - generic: Private account
+  - button "Sign out"
+- navigation "Account areas":
+  - link "Overview":
+    - /url: /research/account
+  - link "Commerce":
+    - /url: /research/account/orders
+  - link "Browse products":
+    - /url: /research/member/catalog
+  - link "Billing history":
+    - /url: /research/account/subscription
+  - link "Care status":
+    - /url: /research/account/care
+  - link "Interests":
+    - /url: /research/account/interests
+  - link "Documents":
+    - /url: /research/account/documents
+  - link "Profile":
+    - /url: /research/account/profile
+  - link "Security":
+    - /url: /research/account/security
+  - link "Support":
+    - /url: /research/account/support
+  - link "Partner workspace":
+    - /url: /research/partners/dashboard
+- paragraph: Account identity
+- heading "Your profile." [level=1]
+- paragraph: The identity attached to this private account, shown as a read-only record.
+- main:
+  - region "Profile on this account":
+    - paragraph: Read-only identity
+    - heading "Profile on this account" [level=2]
+    - term: Name
+    - definition: Test Customer
+    - term: Email
+    - definition: test.customer@example.invalid
+    - term: Account status
+    - definition:
+      - generic: Active
+    - term: Member since
+    - definition: Jul 1, 2026
+  - complementary "Changes are handled by account support.":
+    - paragraph: Profile changes
+    - heading "Changes are handled by account support." [level=2]
+    - paragraph: This page is read-only and does not claim that an edit has been saved. Send the exact change through the private support form for review.
+    - link "Open account support":
+      - /url: /research/account/support
+- contentinfo:
+  - paragraph: Administrative account information only. Care, provider review, and pharmacy fulfillment remain separate.
+  - link "Privacy":
+    - /url: /research/privacy
+- region "Notifications (F8)":
+  - list

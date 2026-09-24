@@ -1,0 +1,174 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios":
+    - /url: /
+    - generic: xenios
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - paragraph: EARLY ACCESS
+  - heading "Apply for the founding group." [level=1]
+  - paragraph: xenios is opening to a small group of serious coaches and health professionals who want one inbox, one client record, and AI drafts they still control.
+  - link "Submit Application":
+    - /url: "#application"
+  - link "Book a Product Walkthrough":
+    - /url: /book
+  - generic: LIVE • 556
+  - generic: coaches, trainers, and practitioners
+  - text: Leave this field empty
+  - textbox
+  - generic: Name
+  - textbox "Name":
+    - /placeholder: Full name
+  - generic: Email
+  - textbox "Email":
+    - /placeholder: you@yourpractice.com
+  - generic: Role
+  - combobox "Role":
+    - option "Pick the closest fit" [selected]
+    - option "Personal trainers"
+    - option "Strength and performance coaches"
+    - option "Health and longevity coaches"
+    - option "Nutritionists and dietitians"
+    - option "Physical therapists"
+    - option "Performance gyms"
+    - option "Wellness and longevity clinics"
+    - option "Sports teams"
+    - option "Corporate wellness teams"
+    - option "Other"
+  - generic: Number of clients
+  - combobox "Number of clients":
+    - option "Select a range" [selected]
+    - option "Just me / under 10"
+    - option "10 to 25"
+    - option "25 to 50"
+    - option "50 to 100"
+    - option "100 to 250"
+    - option "250+"
+  - generic: Phone (optional)
+  - textbox "Phone (optional)":
+    - /placeholder: Optional
+  - generic: Company (optional)
+  - textbox "Company (optional)":
+    - /placeholder: Optional
+  - generic: City (optional)
+  - textbox "City (optional)":
+    - /placeholder: Optional
+  - generic: Instagram or website (optional)
+  - textbox "Instagram or website (optional)":
+    - /placeholder: Optional
+  - generic: What would you want xenios to do first? (optional)
+  - textbox "What would you want xenios to do first? (optional)":
+    - /placeholder: Optional
+  - checkbox "I understand xenios will email me about the founding cohort and the waitlist. I can opt out any time."
+  - generic: I understand xenios will email me about the founding cohort and the waitlist. I can opt out any time.
+  - button "Join the waitlist"
+  - paragraph: By joining the waitlist you agree to receive xenios product updates. Opt out at any time.
+  - complementary:
+    - paragraph: WHAT YOU GET
+    - list:
+      - generic: →
+      - generic: Priority onboarding when the founding cohort opens.
+      - generic: →
+      - generic: Founder-direct support during onboarding.
+      - generic: →
+      - generic: Founding pricing, locked in for the life of your account.
+      - generic: →
+      - generic: A seat in the room when we ship.
+    - paragraph: WHAT HAPPENS NEXT
+    - generic: "01"
+    - paragraph: Submit the short form.
+    - generic: "02"
+    - paragraph: The founder or team reviews fit and timing.
+    - generic: "03"
+    - paragraph: You receive a short conversation invite or onboarding email.
+    - generic: "04"
+    - paragraph: A small cohort gets early access and direct feedback loops with the team.
+    - paragraph: HOW WE TREAT YOU
+    - list:
+      - listitem: We send the email you would want to receive. Nothing else.
+      - listitem: We do not sell your information. We do not train third-party models on it.
+      - listitem: By joining the waitlist you agree to receive xenios product updates. Opt out at any time.
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first
