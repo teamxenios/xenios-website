@@ -1,0 +1,22 @@
+- region "Notifications (F8)":
+  - list
+- main:
+  - paragraph: Partners
+  - heading "Partner dashboard" [level=1]
+  - paragraph: Your partner activity, without individual customer details.
+  - navigation "Account and partner tools":
+    - link "My account":
+      - /url: /research/account
+    - link "Browse catalog":
+      - /url: /research/member/catalog
+    - link "Referral links":
+      - /url: /research/partners/links
+    - link "Account support":
+      - /url: /research/account/support
+  - paragraph: Referral eligibility is checked when you open the referral tools.
+  - paragraph: Sign in to view your partner dashboard
+  - paragraph: Use your Xenios account. Your partner activity is shown only when it is available to that account.
+  - link "Sign in":
+    - /url: /research/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard
+- region "Notifications (F8)":
+  - list

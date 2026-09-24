@@ -1,0 +1,265 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to main content":
+  - /url: "#research-main"
+- banner "Xenios Research header":
+  - link "Xenios Care and Research home":
+    - /url: /health
+    - generic: xenios
+    - generic: Care + Research
+  - generic "Research navigation menu": Menu
+- main:
+  - region "Provider-guided peptide care. Evidence-led Research access.":
+    - paragraph: Human-guided Care · Evidence-led Research access · Human support
+    - heading "Provider-guided peptide care. Evidence-led Research access." [level=1]:
+      - text: Provider-guided peptide care.
+      - text: Evidence-led Research access.
+    - paragraph: Xenios brings two distinct pathways into one clear starting point. For personal care, submit contact and routing details for human follow-up—never medical information in the public form. If an appropriate option is available, the team provides a separate secure clinical handoff. For legitimate nonclinical work, use Xenios Research to explore exact products, evidence, documentation, and current access status.
+    - generic "Research homepage actions":
+      - link "Start Care request":
+        - /url: /care/schedule
+        - generic: Start Care request
+        - generic: ↗
+      - link "Explore Research":
+        - /url: /research/access-hub
+        - text: Explore Research
+        - generic: ↗
+    - paragraph: A Care request is not a clinical intake, appointment, provider relationship, treatment decision, or prescription. Any later clinical service remains subject to location, licensed review, medical appropriateness, serviceability, and current availability. Research-designated materials remain for legitimate nonclinical research only and are not for human or veterinary use.
+    - link "Continue to what Xenios Research offers":
+      - /url: "#offering"
+      - generic: Discover
+      - generic: ↓
+  - region "Start with the path that matches what you need.":
+    - paragraph: 01 · Two pathways
+    - heading "Start with the path that matches what you need." [level=2]
+    - paragraph: Xenios Care accepts a non-clinical access request, adds human follow-up, and uses a separate authorized secure system for clinical information when appropriate. Xenios Research supports qualified nonclinical work through exact product identity, evidence-aware education, documentation, and controlled access. One path never silently becomes the other.
+    - paragraph: Care decisions remain with licensed clinicians and dispensing pharmacies. Research actions remain governed by exact product, documentation, availability, and account authority.
+    - link "See how access works":
+      - /url: /research/how-it-works
+      - text: See how access works
+      - generic: ↗
+  - region "A complete experience around the next responsible step.":
+    - paragraph: 02 · Care + Research
+    - heading "A complete experience around the next responsible step." [level=2]
+    - paragraph: Each card preserves the authority, evidence boundary, and source status of its pathway.
+    - article:
+      - generic: "01"
+      - heading "Care access request" [level=3]
+      - paragraph: Share contact, current-state, and routing preferences only. A Xenios team member follows up without collecting medical details in the public form.
+    - article:
+      - generic: "02"
+      - heading "Secure intake and licensed review" [level=3]
+      - paragraph: When an appropriate handoff is available, clinical information moves to an authorized secure system and a licensed clinician independently reviews it.
+    - article:
+      - generic: "03"
+      - heading "U.S.-based pharmacy fulfillment" [level=3]
+      - paragraph: When a prescription is clinically appropriate and serviceable, it may be fulfilled through a U.S.-based, state-licensed compounding pharmacy.
+    - article:
+      - generic: "04"
+      - heading "Personalized lifestyle support" [level=3]
+      - paragraph: Eligible Care clients receive a personalized First-Month Foundations Plan from a CSCS professional, with weekly email check-ins.
+    - article:
+      - generic: "05"
+      - heading "Research compounds and documentation" [level=3]
+      - paragraph: Research customers can review exact product identity, variants, evidence level, current status, quality records, and authorized next actions.
+    - article:
+      - generic: "06"
+      - heading "Quality and traceability" [level=3]
+      - paragraph: Product, formulation, lot, document, testing, storage, fulfillment, and exception records remain distinct and source-aware.
+    - link "Find the right pathway":
+      - /url: /research/access-hub
+      - text: Find the right pathway
+      - generic: ↗
+  - region "Care decisions, Research evidence, and operational facts stay separate.":
+    - paragraph: 03 · Trust architecture
+    - heading "Care decisions, Research evidence, and operational facts stay separate." [level=2]
+    - paragraph: Unknown and unavailable remain valid states. They are never quietly converted into approval, a prescription, payment, shipment, or completion.
+    - article:
+      - generic: "01"
+      - heading "Clinical independence" [level=3]
+      - paragraph: Commercial interest never determines diagnosis, treatment, or prescribing. The licensed clinician makes the clinical decision.
+    - article:
+      - generic: "02"
+      - heading "U.S.-based care network" [level=3]
+      - paragraph: Care is supported through U.S.-licensed clinicians and U.S.-based, state-licensed compounding pharmacies where serviceable.
+    - article:
+      - generic: "03"
+      - heading "Evidence-aware education" [level=3]
+      - paragraph: Public interest, anecdotes, mechanisms, preclinical findings, human evidence, and established uses are labeled separately.
+    - article:
+      - generic: "04"
+      - heading "Exact product and lot context" [level=3]
+      - paragraph: A product name never substitutes for exact formulation, strength, source, lot, documentation, status, or pathway.
+  - region "One place to follow Care and Research without blending them.":
+    - paragraph: 04 · Your account
+    - heading "One place to follow Care and Research without blending them." [level=2]
+    - paragraph: Your Care request reference and any later secure clinical account remain separate from Research requests, orders, billing, documents, tracking, and support. A later stage is never implied before its source confirms it.
+    - link "Access your account":
+      - /url: /research/sign-in
+      - text: Access your account
+      - generic: ↗
+    - generic "Information evaluated for an exact offering":
+      - generic: Identity
+      - strong: Product + exact variant
+      - generic: Format
+      - strong: Offering-specific
+      - generic: Documentation
+      - strong: Shown when available
+      - generic: Access
+      - strong: Server-authorized pathway
+      - generic: Status
+      - strong: Evidence-aware and current
+  - region "The label is the beginning of the record, not the end.":
+    - paragraph: 05 · Quality and documentation
+    - heading "The label is the beginning of the record, not the end." [level=2]
+    - paragraph: Xenios treats identity, formulation, receiving, lot capture, documentation, testing where applicable, storage, release, dispensing or fulfillment, and later exceptions as separate checkpoints.
+    - list:
+      - listitem: — Exact product, formulation, and lot traceability
+      - listitem: — Documentation shown only when it matches the exact item or lot
+      - listitem: — Testing described only when the applicable record supports it
+      - listitem: — Clear release, hold, unavailable, replacement, and escalation states
+    - link "Ask about documentation":
+      - /url: /research/support
+      - text: Ask about documentation
+      - generic: ↗
+  - region "From first interest to a responsible next action.":
+    - paragraph: 06 · How it works
+    - heading "From first interest to a responsible next action." [level=2]
+    - list:
+      - generic: "01"
+      - heading "Choose" [level=3]
+      - paragraph: Select Care for personal health or Research for legitimate nonclinical work.
+      - generic: "02"
+      - heading "Open the request" [level=3]
+      - paragraph: Care starts with contact and routing details only. Research starts with the exact access requirements for that pathway.
+      - generic: "03"
+      - heading "Move to the secure source" [level=3]
+      - paragraph: A human provides an authorized clinical handoff when appropriate. Research customers review exact identity, documentation, agreements, and access status.
+      - generic: "04"
+      - heading "Complete the required review" [level=3]
+      - paragraph: Care proceeds through independent licensed review when available. Research proceeds through its authorized request or ordering workflow.
+      - generic: "05"
+      - heading "Follow" [level=3]
+      - paragraph: Use the account and support experience for status, documents, tracking, follow-up, and exceptions.
+    - link "Review the complete journey":
+      - /url: /research/how-it-works
+      - text: Review the complete journey
+      - generic: ↗
+  - region "A relationship that continues after the first form or order.":
+    - paragraph: 07 · Ongoing support
+    - heading "A relationship that continues after the first form or order." [level=2]
+    - paragraph: Care follow-up, lifestyle support, Research documentation, order status, tracking, account access, and customer service remain available through their appropriate sources and teams.
+    - link "Access your account":
+      - /url: /research/sign-in
+      - text: Access your account
+      - generic: ↗
+    - list "Account capabilities":
+      - listitem: ↳ Care request reference and human follow-up
+      - listitem: ↳ Secure clinical access only after an authorized handoff
+      - listitem: ↳ Pharmacy and shipment status where applicable
+      - listitem: ↳ Research requests and order history
+      - listitem: ↳ Documents and exact-lot records when authorized
+      - listitem: ↳ A durable support path for questions and exceptions
+  - region "A dedicated path for every legitimate relationship.":
+    - paragraph: 08 · Organizations & partners
+    - heading "A dedicated path for every legitimate relationship." [level=2]
+    - paragraph: Care organizations, Research customers, clinics, professional buyers, affiliates, suppliers, and strategic partners begin with context and review—not automatic approval.
+    - link "Choose a relationship path":
+      - /url: /research/partners
+      - text: Choose a relationship path
+      - generic: ↗
+    - link "Review organization access":
+      - /url: /research/organizations
+      - text: Review organization access
+      - generic: ↗
+    - link "Review affiliate access":
+      - /url: /research/affiliates
+      - text: Review affiliate access
+      - generic: ↗
+  - region "Two pathways. No blurred authority.":
+    - paragraph: 09 · Research and Care
+    - heading "Two pathways. No blurred authority." [level=2]
+    - article:
+      - paragraph: Xenios Research
+      - heading "Nonclinical research materials and documentation" [level=3]
+      - paragraph: Research-use identity, available documentation, request and order pathways, fulfillment, and support.
+    - article:
+      - paragraph: Xenios Care
+      - heading "Human-guided access and a separate secure clinical handoff" [level=3]
+      - paragraph: Use the request page to check whether Care access requests are currently being accepted. Any later clinical service, formulation, clinician availability, or pharmacy fulfillment remains subject to location, eligibility, authority, serviceability, and current availability.
+      - link "Start Care request":
+        - /url: /care/schedule
+        - text: Start Care request
+        - generic: ↗
+  - region "Clarity before commitment.":
+    - paragraph: 10 · Questions, answered plainly
+    - heading "Clarity before commitment." [level=2]
+    - paragraph: The most important boundaries should be understandable before anyone signs in, applies, or submits a request.
+    - article:
+      - heading "How does Xenios Care work?" [level=3]
+      - paragraph: Submit a non-clinical access request, receive human follow-up, and move to an authorized secure clinical system when an appropriate option is available. A prescription is never guaranteed.
+    - article:
+      - heading "How is Research different from Care?" [level=3]
+      - paragraph: Research is for legitimate nonclinical work. Care is the provider-governed pathway for personal medical evaluation, prescribing, pharmacy activity, and follow-up.
+    - article:
+      - heading "Are all compounds available to every client?" [level=3]
+      - paragraph: No. Exact options depend on the pathway, patient location, clinical eligibility, clinician judgment, pharmacy serviceability, product status, and current availability.
+    - link "Read all questions":
+      - /url: /research/faq
+      - text: Read all questions
+      - generic: ↗
+  - region "Start with Care or explore Research.":
+    - paragraph: Xenios Research
+    - heading "Start with Care or explore Research." [level=2]
+    - paragraph: Choose the path that matches personal health or legitimate nonclinical work without guessing which authority applies.
+    - link "Start Care request":
+      - /url: /care/schedule
+      - text: Start Care request
+      - generic: ↗
+    - link "Explore Research":
+      - /url: /research/access-hub
+      - text: Explore Research
+      - generic: ↗
+- contentinfo:
+  - link "Xenios Care and Research home":
+    - /url: /health
+    - generic: xenios
+    - generic: Care + Research
+  - paragraph: Human-guided Care access with a separate secure clinical handoff when appropriate, plus an evidence-led Research pathway with clear product, document, and access status.
+  - navigation "Research footer":
+    - link "Access Hub":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "About":
+      - /url: /research/about
+    - link "FAQ":
+      - /url: /research/faq
+    - link "Organizations":
+      - /url: /research/organizations
+    - link "Partners":
+      - /url: /research/partners
+    - link "Affiliates":
+      - /url: /research/affiliates
+    - link "Care":
+      - /url: /care
+    - link "Early Access":
+      - /url: /research/early-access
+    - link "Member sign in":
+      - /url: /research/sign-in
+    - link "Contact & support":
+      - /url: /research/support
+    - link "Contact":
+      - /url: /research/contact
+    - link "Policy status":
+      - /url: /research/policies
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility
+  - generic: © 2026 Xenios Technology
+  - generic: Care and Research are separate by design · No prescription is guaranteed · Research use only where designated
+- region "Notifications (F8)":
+  - list

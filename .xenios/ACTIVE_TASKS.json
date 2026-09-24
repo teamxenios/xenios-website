@@ -2201,6 +2201,21 @@
         "file": ".xenios/handoffs/2026-09-24T18-04-57-760Z-XENIOS-UX-RELEASE-CONTROL-20260924-codex-xenios-ux-release-control-20260924.md",
         "at": "2026-09-24T18:04:57.762Z"
       }
+    },
+    {
+      "id": "XENIOS-ADVERSARIAL-AUDIT-20260924",
+      "title": "Independent audit-first UX baseline and evidence-backed scoped repairs",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-adversarial-audit-20260924",
+      "baseSha": "c8ea24944f277e5b0770d5446687f2752db3ab73",
+      "paths": [
+        "docs/ux/xenios-adversarial-audit-20260924/**",
+        ".xenios/sessions/codex-adversarial-audit-20260924.json"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Audit evidence first. No application edits until baseline. No production mutation or feature activation.",
+      "claimedAt": "2026-09-24T18:45:40.035Z"
     }
   ]
 }

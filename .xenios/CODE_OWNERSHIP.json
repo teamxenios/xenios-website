@@ -2137,6 +2137,18 @@
       "state": "handoff",
       "claimedAt": "2026-09-24T17:03:29.999Z",
       "heartbeatAt": "2026-09-24T18:03:26.105Z"
+    },
+    {
+      "id": "767879c9-d8cd-4c00-99b8-bbfb47709130",
+      "task": "XENIOS-ADVERSARIAL-AUDIT-20260924",
+      "session": "codex-adversarial-audit-20260924",
+      "paths": [
+        "docs/ux/xenios-adversarial-audit-20260924/**",
+        ".xenios/sessions/codex-adversarial-audit-20260924.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-24T18:45:40.037Z",
+      "heartbeatAt": "2026-09-24T18:54:02.413Z"
     }
   ],
   "rules": [

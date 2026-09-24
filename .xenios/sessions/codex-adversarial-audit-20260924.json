@@ -1,0 +1,10 @@
+{
+  "id": "codex-adversarial-audit-20260924",
+  "tool": "Codex",
+  "lane": "independent-ux-audit",
+  "branch": "codex/xenios-adversarial-audit-20260924",
+  "state": "active",
+  "startedAt": "2026-09-24T18:45:27.226Z",
+  "heartbeatAt": "2026-09-24T18:54:02.413Z",
+  "note": "Baseline audit: confirmed false inquiry receipt with no email provider at exact candidate; no application edits."
+}

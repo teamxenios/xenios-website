@@ -1,0 +1,236 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios":
+    - /url: /
+    - generic: xenios
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - paragraph: The AI drafts. The coach decides.
+  - heading "The AI workspace for serious coaches." [level=1]
+  - paragraph: xenios gives health and performance professionals one place to manage client context, follow-up, check-ins, drafts, and the work that usually falls through the cracks.
+  - link "Request Early Access":
+    - /url: /waitlist
+  - link "See How It Works":
+    - /url: /how-it-works
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - region "Choose the action you actually need.":
+    - paragraph: Account and access
+    - heading "Choose the action you actually need." [level=2]
+    - paragraph: Sign-in, activation, access requests, applications, inquiries, and Care routing are different actions. Each path below keeps its own review and authority.
+    - paragraph: Formal Research membership applications are not open yet. If you want Research products now, choose Order for Research.
+    - article:
+      - heading "Sign in" [level=3]
+      - paragraph: Use an existing Xenios Research account.
+      - link "Continue":
+        - /url: /research/sign-in
+        - text: Continue
+        - generic: →
+    - article:
+      - heading "Activate approved setup" [level=3]
+      - paragraph: Complete an activation that Xenios has already approved.
+      - link "Continue":
+        - /url: /research/activate
+        - text: Continue
+        - generic: →
+    - article:
+      - heading "Order for Research" [level=3]
+      - paragraph: Formal Research membership applications are not open yet. Use the supported ordering path for Research products now.
+      - link "Continue":
+        - /url: /research/order
+        - text: Continue
+        - generic: →
+    - article:
+      - heading "Start Care request" [level=3]
+      - paragraph: Send non-clinical routing details for human follow-up.
+      - link "Continue":
+        - /url: /care/schedule
+        - text: Continue
+        - generic: →
+    - article:
+      - heading "Partner program" [level=3]
+      - paragraph: Review the program, then sign in before submitting an application.
+      - link "Continue":
+        - /url: /research/partners
+        - text: Continue
+        - generic: →
+    - article:
+      - heading "Business or organization" [level=3]
+      - paragraph: Start a reviewed organization or strategic relationship inquiry.
+      - link "Continue":
+        - /url: /research/organizations
+        - text: Continue
+        - generic: →
+    - article:
+      - heading "Supplier access" [level=3]
+      - paragraph: Review invitation-only supplier, lab, and fulfillment access.
+      - link "Continue":
+        - /url: /research/supplier-access
+        - text: Continue
+        - generic: →
+  - paragraph: THE PROBLEM
+  - heading "Coaching breaks when attention breaks." [level=2]
+  - paragraph: Most coaches do not need another app. They need the scattered parts of the practice to become one calm command center.
+  - paragraph: What xenios replaces
+  - generic: Gmail
+  - generic: SMS
+  - generic: Spreadsheets
+  - generic: Notion
+  - generic: Trainerize
+  - generic: TrueCoach
+  - generic: Calendly
+  - generic: Stripe
+  - generic: Manual notes
+  - generic: CRM
+  - generic: Habit tracker
+  - generic: Check-in forms
+  - generic: Community tools
+  - paragraph: THE WORKSPACE
+  - heading "One inbox. One client record. One agent that drafts in your voice." [level=2]
+  - paragraph: "01"
+  - heading "One inbox" [level=3]
+  - paragraph: All client attention in one place.
+  - paragraph: "02"
+  - heading "One client record" [level=3]
+  - paragraph: Every note, goal, and signal attached to the person.
+  - paragraph: "03"
+  - heading "One agent" [level=3]
+  - paragraph: Drafts prepared in your voice, waiting for approval.
+  - paragraph: CORE MODULES
+  - heading "The operating pieces behind the relationship." [level=2]
+  - link "View Product":
+    - /url: /product
+  - article:
+    - heading "One inbox" [level=3]
+    - paragraph: Client messages, check-ins, reminders, and follow-ups land in one queue instead of five tabs.
+  - article:
+    - heading "One client record" [level=3]
+    - paragraph: Goals, history, notes, programs, context, and progress stay attached to the person, not scattered across tools.
+  - article:
+    - heading "Xen drafts in your voice" [level=3]
+    - paragraph: The professional-facing agent prepares the check-in, reply, or next action. You approve before it reaches the client.
+  - article:
+    - heading "The Studio" [level=3]
+    - paragraph: The Client Attention Queue shows who needs you today, why they were flagged, and what action is ready for review.
+  - article:
+    - heading "Hercules" [level=3]
+    - paragraph: The weekly check-in engine prepares client updates in your voice, grounded in each client's actual week.
+  - article:
+    - heading "Approval gate" [level=3]
+    - paragraph: Nothing client-facing goes out unless the coach approves it. The AI drafts. The coach decides.
+  - paragraph: WHO IT IS FOR
+  - heading "Built for professionals who run real client relationships." [level=2]
+  - generic: Personal trainers
+  - generic: Strength coaches
+  - generic: Health coaches
+  - generic: Dietitians
+  - generic: Longevity clinics
+  - generic: Performance teams
+  - generic: High-touch coaching businesses
+  - paragraph: WHY TRUST IT
+  - heading "Human relationship first. Automation second." [level=2]
+  - paragraph: xenios is designed around professional judgment. Athena is always disclosed as AI and always under the coach. Xen prepares work for review. The professional stays in front.
+  - paragraph: Founder-market fit
+  - paragraph: Built from the daily reality of coaching, performance work, and client-based health relationships.
+  - paragraph: Senior technical depth
+  - paragraph: Engineering leadership with healthcare and payments infrastructure experience behind prior exits.
+  - paragraph: Medical judgment nearby
+  - paragraph: Clinical leadership informs how xenios handles boundaries, sensitive context, and future care workflows.
+  - paragraph: Founding cohort motion
+  - paragraph: The first version is being shaped with serious coaches before broad release.
+  - paragraph: EARLY ACCESS
+  - heading "Help shape the workspace before broad release." [level=2]
+  - link "Apply for Early Access":
+    - /url: /waitlist
+  - link "See How It Works":
+    - /url: /how-it-works
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first
+- status:
+  - generic: Add xenios to your home screen.
+  - button "Install"
+  - button "Dismiss": ✕
+- region "Notifications (F8)":
+  - list
