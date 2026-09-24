@@ -30,9 +30,9 @@ describe("Early Access payment option presentation contract", () => {
       "Venmo",
       "Cash App",
       "PayPal",
-      "Apple Cash",
-      "ACH / bank transfer / bank wire",
-      "Other manual method",
+      "Apple Pay",
+      "ACH / Bank Transfer / Wire Transfer",
+      "Other payment method",
     ]);
   });
 
@@ -89,11 +89,11 @@ describe("Early Access payment option presentation contract", () => {
     expect(() => (normalized as string[]).push("venmo")).toThrow();
   });
 
-  it("keeps Apple Cash distinct from Apple Pay and the bank option combined", () => {
-    expect(earlyAccessPaymentOptionLabel("apple_cash")).toBe("Apple Cash");
+  it("keeps the legacy Apple identifier while presenting Apple Pay and the bank option combined", () => {
+    expect(earlyAccessPaymentOptionLabel("apple_cash")).toBe("Apple Pay");
     expect(earlyAccessPaymentOptionLabel("apple_pay")).toBeNull();
     expect(earlyAccessPaymentOptionLabel("ach_wire")).toBe(
-      "ACH / bank transfer / bank wire",
+      "ACH / Bank Transfer / Wire Transfer",
     );
   });
 
@@ -341,6 +341,6 @@ describe("Early Access payment option presentation contract", () => {
       earlyAccessPaymentOptionLabel,
     ).join(" ");
     expect(labels).not.toMatch(/\d/);
-    expect(labels).not.toMatch(/apple pay|google pay|stripe|card/i);
+    expect(labels).not.toMatch(/apple cash|google pay|stripe|card/i);
   });
 });

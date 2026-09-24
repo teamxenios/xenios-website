@@ -147,7 +147,8 @@ export function PrivateEarlyAccessPage({
             </h2>
             <p aria-live="polite" className="body-s text-ink-2 mt-2 max-w-[62ch]" role="status">
               Choosing one category does not initiate or confirm a payment.
-              Apple Cash is not Apple Pay; Apple Pay is not offered here.
+              If direct instructions are not available, Xenios will help you
+              arrange the selected manual payment method.
             </p>
             <div className="mt-6 min-w-0">
               <PaymentMethodSelector

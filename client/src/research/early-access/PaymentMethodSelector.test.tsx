@@ -119,9 +119,9 @@ describe("PaymentMethodSelector", () => {
       "Venmo",
       "Cash App",
       "PayPal",
-      "Apple Cash",
-      "ACH / bank transfer / bank wire",
-      "Other manual method",
+      "Apple Pay",
+      "ACH / Bank Transfer / Wire Transfer",
+      "Other payment method",
     ]);
   });
 

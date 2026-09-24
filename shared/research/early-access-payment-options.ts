@@ -27,9 +27,12 @@ const LABEL_BY_CODE: Readonly<Record<EarlyAccessPaymentOptionCode, string>> =
     venmo: "Venmo",
     cash_app: "Cash App",
     paypal: "PayPal",
-    apple_cash: "Apple Cash",
-    ach_wire: "ACH / bank transfer / bank wire",
-    other: "Other manual method",
+    // `apple_cash` is retained as the legacy wire/storage identifier. The
+    // customer experience calls the accepted manual option Apple Pay. This is
+    // a label only; it never implies that a native Apple Pay rail exists.
+    apple_cash: "Apple Pay",
+    ach_wire: "ACH / Bank Transfer / Wire Transfer",
+    other: "Other payment method",
   });
 
 /**

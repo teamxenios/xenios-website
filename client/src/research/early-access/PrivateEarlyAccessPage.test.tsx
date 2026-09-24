@@ -84,7 +84,7 @@ describe("PrivateEarlyAccessPage", () => {
     expect(view.host.querySelector('[aria-live="polite"]')).not.toBeNull();
   });
 
-  it("shows all seven canonical categories once and explicitly distinguishes Apple Cash from Apple Pay", () => {
+  it("shows all seven canonical manual-payment categories without customer-facing Apple Cash copy", () => {
     const view = render(page());
     expect(radios(view.host).map((input) => input.value)).toEqual(EARLY_ACCESS_PAYMENT_OPTION_CODES);
     expect(radios(view.host).map((input) => input.labels?.[0]?.textContent?.trim())).toEqual([
@@ -92,11 +92,12 @@ describe("PrivateEarlyAccessPage", () => {
       "Venmo",
       "Cash App",
       "PayPal",
-      "Apple Cash",
-      "ACH / bank transfer / bank wire",
-      "Other manual method",
+      "Apple Pay",
+      "ACH / Bank Transfer / Wire Transfer",
+      "Other payment method",
     ]);
-    expect(view.host.textContent).toContain("Apple Cash is not Apple Pay");
+    expect(view.host.textContent).not.toContain("Apple Cash");
+    expect(view.host.textContent).toContain("arrange the selected manual payment method");
     expect(radios(view.host).some((input) => input.value === "apple_pay")).toBe(false);
     expect(view.host.textContent).not.toContain("Google Pay");
     expect(view.host.textContent).not.toContain("Stripe");

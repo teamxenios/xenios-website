@@ -1,0 +1,10 @@
+{
+  "id": "codex-ordering-readiness-20260923",
+  "tool": "Codex",
+  "lane": "ordering-readiness",
+  "branch": "codex/xenios-ordering-readiness-20260923",
+  "state": "active",
+  "startedAt": "2026-09-24T03:31:31.622Z",
+  "heartbeatAt": "2026-09-24T04:47:22.614Z",
+  "note": "Gates green; preparing exact candidate commit"
+}

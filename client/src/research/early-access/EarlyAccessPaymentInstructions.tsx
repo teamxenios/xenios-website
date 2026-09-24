@@ -3,6 +3,11 @@ import {
   parseEarlyAccessPaymentInstructionsPresentation,
   type EarlyAccessPaymentInstruction,
 } from "@shared/research/early-access-payment-instructions";
+import {
+  EARLY_ACCESS_PAYMENT_OPTION_CODES,
+  earlyAccessPaymentOptionLabel,
+  type EarlyAccessPaymentOptionCode,
+} from "@shared/research/early-access-payment-options";
 import { ResearchPendingPanel, ResearchSecureNotice } from "../ui/kit";
 
 /**
@@ -70,12 +75,14 @@ function MethodCard({
   onCopy: (value: string) => void;
   testId: string;
 }>) {
+  const customerName =
+    earlyAccessPaymentOptionLabel(method.code) ?? method.methodName;
   return (
     <article
       className="card min-w-0 p-5"
       data-testid={`${testId}-method-${method.code}`}
     >
-      <h4 className="body-m font-700 min-w-0 break-words">{method.methodName}</h4>
+      <h4 className="body-m font-700 min-w-0 break-words">{customerName}</h4>
 
       {method.destinationValue !== null ? (
         <div className="mt-3 min-w-0">
@@ -140,10 +147,57 @@ function MethodCard({
             rel="noopener noreferrer"
             data-testid={`${testId}-link-${method.code}`}
           >
-            Open {method.methodName}
+            Open {customerName}
           </a>
         ) : null}
       </div>
+    </article>
+  );
+}
+
+const CONTACT_COPY: Readonly<Record<EarlyAccessPaymentOptionCode, string>> =
+  Object.freeze({
+    zelle: "Contact Xenios to arrange payment by Zelle.",
+    venmo: "Contact Xenios to arrange payment by Venmo.",
+    cash_app: "Contact Xenios to arrange payment by Cash App.",
+    paypal: "Contact Xenios to arrange payment by PayPal.",
+    apple_cash: "Prefer Apple Pay? Contact Xenios to arrange payment.",
+    ach_wire:
+      "Contact Xenios for the current approved ACH, bank transfer, or wire instructions.",
+    other:
+      "Need another way to pay? Contact Samuel directly at 737-418-6381.",
+  });
+
+const MANUAL_PAYMENT_SUPPORT = Object.freeze({
+  name: "Samuel",
+  phoneDisplay: "737-418-6381",
+  phoneHref: "tel:7374186381",
+});
+
+function ContactFallbackCard({
+  code,
+  testId,
+}: Readonly<{ code: EarlyAccessPaymentOptionCode; testId: string }>) {
+  return (
+    <article
+      className="card min-w-0 p-5"
+      data-testid={`${testId}-method-${code}`}
+      data-payment-action="contact"
+    >
+      <h4 className="body-m font-700 min-w-0 break-words">
+        {earlyAccessPaymentOptionLabel(code)}
+      </h4>
+      <p className="body-s text-ink-2 mt-3 max-w-[62ch]">
+        {CONTACT_COPY[code]}
+      </p>
+      <a
+        className="btn btn-secondary mt-3"
+        href={MANUAL_PAYMENT_SUPPORT.phoneHref}
+        data-testid={`${testId}-contact-${code}`}
+      >
+        Call {MANUAL_PAYMENT_SUPPORT.name} at{" "}
+        {MANUAL_PAYMENT_SUPPORT.phoneDisplay}
+      </a>
     </article>
   );
 }
@@ -155,17 +209,10 @@ export function EarlyAccessPaymentInstructions({
 }: EarlyAccessPaymentInstructionsProps) {
   const headingId = useId();
   const decoded = parseEarlyAccessPaymentInstructionsPresentation(presentation);
-
-  if (decoded === null || decoded.state !== "resolved") {
-    return (
-      <ResearchPendingPanel
-        kind="unavailable"
-        title="Payment details are being confirmed."
-        body="Where to send this payment will appear here once it is confirmed for your order. Nothing has been sent, and this order has not been paid."
-        testid={`${testId}-pending`}
-      />
-    );
-  }
+  const resolved = decoded?.state === "resolved" ? decoded : null;
+  const configuredMethods = new Map(
+    (resolved?.methods ?? []).map((method) => [method.code, method] as const),
+  );
 
   return (
     <section
@@ -178,9 +225,12 @@ export function EarlyAccessPaymentInstructions({
           How to pay
         </h3>
         <p className="body-s text-ink-mute mt-2 max-w-[62ch]">
-          Only methods confirmed for this order appear here. Copying a value or
-          opening a link does not send money and does not mark this order paid.
-          A named Xenios operator verifies every payment before anything ships.
+          Choose the payment method that works best for you. Where direct
+          payment instructions are available, they appear below. If you need
+          another method or help completing payment, contact Samuel at{" "}
+          {MANUAL_PAYMENT_SUPPORT.phoneDisplay}. Copying a value, opening a link,
+          or calling does not send money and does not mark this order paid.
+          Xenios verifies every payment before anything ships.
         </p>
       </div>
 
@@ -189,57 +239,62 @@ export function EarlyAccessPaymentInstructions({
         transfer can be matched to this order.
       </ResearchSecureNotice>
 
-      <section className="card p-5">
-        <dl className="body-s grid grid-cols-[1fr_auto] gap-x-5 gap-y-3">
-          <dt>Amount due</dt>
-          <dd className="font-700" data-testid={`${testId}-amount-due`}>
-            {/* Server-formatted. The browser renders the string as given. */}
-            {decoded.amountDueDisplay} {decoded.currency}
-          </dd>
-        </dl>
-      </section>
-
-      <section className="card min-w-0 p-5">
-        <p className="body-s text-ink-mute">{decoded.referenceLabel}</p>
-        <p
-          className="display-xs mt-2 break-all"
-          data-testid={`${testId}-payment-reference`}
-        >
-          {decoded.paymentReference}
-        </p>
-        <CopyControl
-          value={decoded.paymentReference}
-          label="Copy payment reference"
-          copiedLabel="Copied"
-          onCopy={onCopy}
-          testId={`${testId}-copy-reference`}
+      {resolved === null ? (
+        <ResearchPendingPanel
+          kind="unavailable"
+          title="Direct payment details are being confirmed."
+          body="You can still choose a payment option below and contact Xenios to arrange it. Nothing has been sent, and this order has not been paid."
+          testid={`${testId}-pending`}
         />
-      </section>
-
-      {decoded.methods.length === 0 ? (
-        <p
-          className="card body-s text-ink-mute p-5"
-          role="status"
-          data-testid={`${testId}-no-methods`}
-        >
-          No payment methods have been confirmed for this order yet. Nothing has
-          been sent, and this order has not been paid.
-        </p>
       ) : (
-        <div
-          className="grid min-w-0 gap-3"
-          data-testid={`${testId}-methods`}
-        >
-          {decoded.methods.map((method) => (
+        <>
+          <section className="card p-5">
+            <dl className="body-s grid grid-cols-[1fr_auto] gap-x-5 gap-y-3">
+              <dt>Amount due</dt>
+              <dd className="font-700" data-testid={`${testId}-amount-due`}>
+                {/* Server-formatted. The browser renders the string as given. */}
+                {resolved.amountDueDisplay} {resolved.currency}
+              </dd>
+            </dl>
+          </section>
+
+          <section className="card min-w-0 p-5">
+            <p className="body-s text-ink-mute">{resolved.referenceLabel}</p>
+            <p
+              className="display-xs mt-2 break-all"
+              data-testid={`${testId}-payment-reference`}
+            >
+              {resolved.paymentReference}
+            </p>
+            <CopyControl
+              value={resolved.paymentReference}
+              label="Copy payment reference"
+              copiedLabel="Copied"
+              onCopy={onCopy}
+              testId={`${testId}-copy-reference`}
+            />
+          </section>
+        </>
+      )}
+
+      <div
+        className="grid min-w-0 gap-3"
+        data-testid={`${testId}-methods`}
+      >
+        {EARLY_ACCESS_PAYMENT_OPTION_CODES.map((code) => {
+          const method = configuredMethods.get(code);
+          return method === undefined ? (
+            <ContactFallbackCard key={code} code={code} testId={testId} />
+          ) : (
             <MethodCard
-              key={method.code}
+              key={code}
               method={method}
               onCopy={onCopy}
               testId={testId}
             />
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
     </section>
   );
 }

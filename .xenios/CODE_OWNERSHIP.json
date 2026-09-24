@@ -2026,6 +2026,35 @@
       "state": "active",
       "claimedAt": "2026-09-23T18:11:08.108Z",
       "heartbeatAt": "2026-09-23T18:11:08.108Z"
+    },
+    {
+      "id": "1572207b-c8dc-4ea2-8893-84b50a3478a3",
+      "task": "XENIOS-ORDERING-READINESS-20260923",
+      "session": "codex-ordering-readiness-20260923",
+      "paths": [
+        "shared/research/early-access-payment-options.ts",
+        "shared/research/early-access-payment-instructions.ts",
+        "server/research/early-access/commerce/payment-method-registry.ts",
+        "server/research/early-access/commerce/payment-instructions-config.ts",
+        "server/research/early-access/cart/payment-instructions-route.ts",
+        "server/research/early-access/cart/**/*payment*",
+        "client/src/research/early-access/PaymentMethodSelector*",
+        "client/src/research/early-access/EarlyAccessPaymentInstructions*",
+        "client/src/research/early-access/EarlyAccessCheckoutJourney*",
+        "client/src/research/early-access/cart/EarlyAccessCartPayment*",
+        "client/src/research/adapters/earlyAccessPaymentInstructions*",
+        "client/src/research/adapters/earlyAccessCheckout*",
+        "server/research/assisted-order/payment/**",
+        "client/src/research/assisted-order/**",
+        "client/src/research/pages/member/Orders*",
+        "client/src/research/member-orders/**",
+        "client/src/care/**",
+        "docs/research-launch/*ORDERING_READINESS*",
+        ".xenios/sessions/codex-ordering-readiness-20260923.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-24T03:32:26.959Z",
+      "heartbeatAt": "2026-09-24T04:47:22.614Z"
     }
   ],
   "rules": [

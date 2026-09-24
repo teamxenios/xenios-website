@@ -486,6 +486,16 @@
       "startedAt": "2026-09-23T18:10:36.957Z",
       "heartbeatAt": "2026-09-23T18:10:36.958Z",
       "note": "Source-only commerce RPC authority refactor and ACL convergence from b3dba343; no staging, production, deployment, merge, or activation authority."
+    },
+    {
+      "id": "codex-ordering-readiness-20260923",
+      "tool": "Codex",
+      "lane": "ordering-readiness",
+      "branch": "codex/xenios-ordering-readiness-20260923",
+      "state": "active",
+      "startedAt": "2026-09-24T03:31:31.622Z",
+      "heartbeatAt": "2026-09-24T04:47:22.614Z",
+      "note": "Gates green; preparing exact candidate commit"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

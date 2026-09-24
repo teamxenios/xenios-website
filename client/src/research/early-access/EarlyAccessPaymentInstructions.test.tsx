@@ -80,32 +80,55 @@ describe("EarlyAccessPaymentInstructions", () => {
     }
   });
 
-  it("shows a configured method and hides one the server did not publish", () => {
+  it("preserves configured instructions and gives unpublished methods a contact fallback", () => {
     const container = render(
       <EarlyAccessPaymentInstructions presentation={presentation()} />,
     );
     expect(
       container.querySelector(`[data-testid="${TEST_ID}-method-zelle"]`),
     ).not.toBeNull();
+    const venmo = container.querySelector(
+      `[data-testid="${TEST_ID}-method-venmo"]`,
+    );
+    expect(venmo).not.toBeNull();
+    expect(venmo?.getAttribute("data-payment-action")).toBe("contact");
     expect(
-      container.querySelector(`[data-testid="${TEST_ID}-method-venmo"]`),
-    ).toBeNull();
+      container
+        .querySelector<HTMLAnchorElement>(`[data-testid="${TEST_ID}-contact-venmo"]`)
+        ?.getAttribute("href"),
+    ).toBe("tel:7374186381");
     expect(
       container.querySelector(`[data-testid="${TEST_ID}-destination-zelle"]`)
         ?.textContent,
     ).toBe(CONFIGURED_DESTINATION);
   });
 
-  it("says so plainly when no method is confirmed yet", () => {
+  it("shows all seven contact fallbacks when no direct method is confirmed yet", () => {
     const container = render(
       <EarlyAccessPaymentInstructions presentation={presentation({ methods: [] })} />,
     );
-    expect(
-      container.querySelector(`[data-testid="${TEST_ID}-no-methods"]`),
-    ).not.toBeNull();
-    expect(
-      container.querySelector(`[data-testid="${TEST_ID}-methods"]`),
-    ).toBeNull();
+    expect(container.querySelector(`[data-testid="${TEST_ID}-methods"]`)).not.toBeNull();
+    for (const code of [
+      "zelle",
+      "venmo",
+      "cash_app",
+      "paypal",
+      "apple_cash",
+      "ach_wire",
+      "other",
+    ]) {
+      expect(
+        container.querySelector(`[data-testid="${TEST_ID}-method-${code}"]`),
+      ).not.toBeNull();
+      expect(
+        container
+          .querySelector<HTMLAnchorElement>(`[data-testid="${TEST_ID}-contact-${code}"]`)
+          ?.getAttribute("href"),
+      ).toBe("tel:7374186381");
+    }
+    expect(container.textContent).toContain("Apple Pay");
+    expect(container.textContent).not.toContain("Apple Cash");
+    expect(container.textContent).toContain("Other payment method");
   });
 
   it("renders the server amount and the server payment reference verbatim", () => {

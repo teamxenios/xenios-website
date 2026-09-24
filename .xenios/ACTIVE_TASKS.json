@@ -3,6 +3,38 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "XENIOS-ORDERING-READINESS-20260923",
+      "title": "Complete customer-ready manual, assisted, and Care-gated ordering while native commerce remains dark",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-ordering-readiness-20260923",
+      "baseSha": "7a2ca4a3a0ced8280ed60e2d06aa22254f0acba9",
+      "paths": [
+        "shared/research/early-access-payment-options.ts",
+        "shared/research/early-access-payment-instructions.ts",
+        "server/research/early-access/commerce/payment-method-registry.ts",
+        "server/research/early-access/commerce/payment-instructions-config.ts",
+        "server/research/early-access/cart/payment-instructions-route.ts",
+        "server/research/early-access/cart/**/*payment*",
+        "client/src/research/early-access/PaymentMethodSelector*",
+        "client/src/research/early-access/EarlyAccessPaymentInstructions*",
+        "client/src/research/early-access/EarlyAccessCheckoutJourney*",
+        "client/src/research/early-access/cart/EarlyAccessCartPayment*",
+        "client/src/research/adapters/earlyAccessPaymentInstructions*",
+        "client/src/research/adapters/earlyAccessCheckout*",
+        "server/research/assisted-order/payment/**",
+        "client/src/research/assisted-order/**",
+        "client/src/research/pages/member/Orders*",
+        "client/src/research/member-orders/**",
+        "client/src/care/**",
+        "docs/research-launch/*ORDERING_READINESS*",
+        ".xenios/sessions/codex-ordering-readiness-20260923.json"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Founder-directed exact-production-base ordering readiness. Source, tests, build, synthetic browser QA, commit and push only. Preserve server-owned payment instructions, order ownership, manual verification and Care authority. Native commerce remains dark. No production config, migration, deploy, real payment, email or customer mutation without exact later authorization.",
+      "claimedAt": "2026-09-24T03:32:26.957Z"
+    },
+    {
       "id": "XENIOS-CHECKOUT-COMMERCE-AUTHORITY-REFACTOR-20260923",
       "title": "Move legacy commerce persistence behind bounded RPC authorities and converge ACLs",
       "priority": "P0",
