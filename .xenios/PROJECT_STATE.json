@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-21T16:38:00.000Z",
+  "updatedAt": "2026-09-24T19:36:53.496Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
@@ -1077,5 +1077,32 @@
       "releasePacketEvidenceSha": "52ead9cd15d26a7d18eca8c8088f3e354b5727c0",
       "manifestValidationStatus": "NOT_ACCEPTED_MISSING_ACTUAL_B_ATTESTATION_37_UNOWNED_BASELINE_PATHS"
     }
+  },
+  "independentUxAudit20260924": {
+    "session": "codex-adversarial-audit-20260924",
+    "branch": "codex/xenios-adversarial-audit-20260924",
+    "status": "AUDIT_CHECKPOINT_NOT_READY",
+    "observedProductionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "observedDeploymentId": "dep-daqft3vf3r2c73b7e88g",
+    "productionObservedAt": "2026-09-24T19:35:00Z",
+    "commerceEnabled": false,
+    "runtimeSha": "02d525baa7d784ed16e297c1d17b1e4050ecf4cc",
+    "runtimeTree": "cd9b2abf2fc90c01956e447fd4c124b3093ff343",
+    "fullSuite": {
+      "passed": 18049,
+      "failed": 1,
+      "skipped": 85
+    },
+    "typecheck": "PASS",
+    "build": "PASS",
+    "contactBrowserRetest": "PASS_LOCAL_ONLY",
+    "releaseReady": false,
+    "blockers": [
+      "Protected server/routes.ts fingerprint requires lead review",
+      "Stale central production evidence",
+      "Incomplete exhaustive browser/privileged lifecycle qualification"
+    ],
+    "packet": "docs/ux/xenios-adversarial-audit-20260924/RELEASE_PACKET.md",
+    "productionMutated": false
   }
 }

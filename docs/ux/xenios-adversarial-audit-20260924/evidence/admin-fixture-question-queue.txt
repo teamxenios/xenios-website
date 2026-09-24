@@ -1,0 +1,83 @@
+- region "Notifications (F8)":
+  - list
+- link "xenios research ops":
+  - /url: /admin
+  - text: xenios
+  - generic: research ops
+- navigation "Admin destinations":
+  - link "Founder home":
+    - /url: /admin/research/command-center
+  - link "Growth / site admin":
+    - /url: /admin
+  - link "Back to site":
+    - /url: /
+- navigation "Research operations areas":
+  - link "Overview":
+    - /url: /admin/research
+  - generic "Founder":
+    - generic: Founder
+    - generic: +
+  - generic "Care":
+    - generic: Care
+    - generic: +
+  - generic "Members":
+    - generic: Members
+    - generic: −
+  - link "Applications":
+    - /url: /admin/research/applications
+  - link "Account inspection":
+    - /url: /admin/research/members
+  - link "Plan review":
+    - /url: /admin/research/blueprint-review
+  - link "Questions":
+    - /url: /admin/research/questions
+  - generic "Commerce":
+    - generic: Commerce
+    - generic: +
+  - generic "Activation":
+    - generic: Activation
+    - generic: +
+  - generic "Content & partners":
+    - generic: Content & partners
+    - generic: +
+  - generic "Governance":
+    - generic: Governance
+    - generic: +
+- banner:
+  - paragraph: Operations
+  - heading "Questions" [level=1]
+  - generic: admin@preview.invalid
+  - button "Sign out"
+  - paragraph: The member question inbox. Rows show subject metadata only; the question itself opens on the detail page.
+- main:
+  - tablist "Question queues":
+    - tab "Open" [selected]
+    - tab "Answered"
+    - tab "Closed"
+    - tab "All"
+  - group "Filters":
+    - generic: Search questions
+    - searchbox "Search questions"
+  - table "Member questions":
+    - caption: Member questions
+    - rowgroup:
+      - row "Member Topic Status Asked Last activity":
+        - columnheader "Member"
+        - columnheader "Topic"
+        - columnheader "Status"
+        - columnheader "Asked"
+        - columnheader "Last activity"
+    - rowgroup:
+      - row "member@preview.invalid general pending Sep 14, 2026 Sep 14, 2026":
+        - cell "member@preview.invalid":
+          - link "member@preview.invalid":
+            - /url: /admin/research/questions/question-preview-one
+            - generic: member@preview.invalid
+        - cell "general"
+        - cell "pending":
+          - generic: pending
+        - cell "Sep 14, 2026"
+        - cell "Sep 14, 2026"
+  - paragraph: 🔒 Question bodies never render in this list. A member's question can contain health context, so it opens only on the detail page, deliberately, one question at a time.
+- region "Notifications (F8)":
+  - list

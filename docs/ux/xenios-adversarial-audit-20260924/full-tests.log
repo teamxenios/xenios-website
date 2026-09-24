@@ -1,0 +1,67 @@
+npm warn config production Use `--omit=dev` instead.
+
+> rest-express@1.0.0 test
+> vitest run --maxWorkers=2
+
+
+ RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/65aa/xenios-website
+
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ ❯ server/core-site-protection.test.ts (36 tests | 1 failed) 220ms
+     × matches every curated protected file at HEAD 118ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: navigation to another Document
+Not implemented: Window's scrollTo() method
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  server/core-site-protection.test.ts > the protected file hash tripwire > matches every curated protected file at HEAD
+AssertionError: expected [ { path: 'server/routes.ts', …(2) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "actual": "sha256:deb5c6b56ab131965ac857413b066b06db1e003c0ee847c0ffb16ced15860cce",
++     "expected": "sha256:feb276a9f6412c16deb352d267b3c2216ea251b32f0769bd42a66b1edd9f73c4",
++     "path": "server/routes.ts",
++   },
++ ]
+
+ ❯ server/core-site-protection.test.ts:292:31
+    290|   it("matches every curated protected file at HEAD", () => {
+    291|     const result = verifyHashes(manifest.fileHashes.files, cleanReader…
+    292|     expect(result.mismatches).toEqual([]);
+       |                               ^
+    293|     expect(result.missing).toEqual([]);
+    294|     expect(result.matched.length).toBe(Object.keys(manifest.fileHashes…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 972 passed | 6 skipped (979)
+      Tests  1 failed | 18049 passed | 85 skipped (18135)
+   Start at  14:14:42
+   Duration  910.65s (transform 66.53s, setup 0ms, import 404.03s, tests 505.82s, environment 475.11s)
+

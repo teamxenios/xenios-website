@@ -1,0 +1,62 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Public lot verification
+  - heading "Verify the record, not a resemblance." [level=1]
+  - paragraph: Enter the exact code from the label. The lookup is case-normalized, but it never uses partial or approximate matching.
+  - generic: Lot code from the product label
+  - textbox "Lot code from the product label":
+    - /placeholder: "Example: LOT-2026-001"
+    - text: SYNTHETIC-NO-LOT
+  - button "Verify lot":
+    - text: Verify lot
+  - status:
+    - heading "Verification is unavailable." [level=2]
+    - paragraph: The approved public source could not be verified. No lot status, document state, or absence has been inferred. Try again later.
+    - link "Contact support":
+      - /url: /research/support
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility
+- region "Notifications (F8)":
+  - list

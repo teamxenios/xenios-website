@@ -1,0 +1,17 @@
+npm warn config production Use `--omit=dev` instead.
+
+> rest-express@1.0.0 site:record:check
+> node scripts/agentic/generate-site-system-of-record.mjs --check
+
+Commit non-record source changes before generating the exact-SHA record:
+docs/ux/xenios-adversarial-audit-20260924/evidence/browser-evidence-index.json
+docs/ux/xenios-adversarial-audit-20260924/evidence/cta-inventory.json
+docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-question-detail-settled.txt
+docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-question-detail.txt
+docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-question-queue.txt
+docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-question-reply-result.txt
+docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-wrong-role-denied.txt
+docs/ux/xenios-adversarial-audit-20260924/evidence/repair-no-provider-result.png
+docs/ux/xenios-adversarial-audit-20260924/evidence/repair-no-provider-result.txt
+docs/ux/xenios-adversarial-audit-20260924/google-doc-tab-patch.json
+docs/ux/xenios-adversarial-audit-20260924/protected-file-mismatch.json

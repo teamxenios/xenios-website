@@ -1,0 +1,6 @@
+npm warn config production Use `--omit=dev` instead.
+
+> rest-express@1.0.0 verify:release-manifest
+> tsx scripts/acceptance/verify-release-manifest.ts
+
+Usage: tsx scripts/acceptance/verify-release-manifest.ts <manifest.json>

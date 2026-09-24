@@ -1,0 +1,97 @@
+{
+  "documentId": "1qogOnIU9P40rV0iVeTAPO6Yai5R8kgQohFdmuFe8s2I",
+  "heading": "Independent audit update — 2026-09-24",
+  "status": "AUDIT CHECKPOINT / NOT READY. Historical material below is retained as reference; it is not fresh proof.",
+  "tabs": [
+    {
+      "id": "t.0",
+      "title": "00 Executive Map",
+      "text": "Fresh Render read confirms production 79414143d4355d5d3d14cd5fe6e5a536dc68d99d, deployment dep-daqft3vf3r2c73b7e88g, with commerceEnabled=false. Baseline browser audit used exact candidate 0574264562f33fe40572b1d9976f4700bef9c83e. Narrow repair 02d525baa7d784ed16e297c1d17b1e4050ecf4cc removes false inquiry receipt when the email provider is unavailable. Exact-build browser retests cover unavailable provider, synthetic acceptance, courtesy rejection and corporate contact. Typecheck/build pass. Full suite: 18,049 passed, 85 skipped, 1 failure for the protected server/routes.ts fingerprint. Release NOT READY: lead-owned protection reconciliation, stale central production evidence and remaining scenario gaps. No production mutation or real email/payment occurred."
+    },
+    {
+      "id": "t.w619ayfvyp6u",
+      "title": "01 Personas + Entry Points",
+      "text": "Observed the candidate homepage/access chooser, public Research and Care paths, business/organization/affiliate/supplier information, signed-out account and partner gates, synthetic active/empty/paused customer accounts, and admin entry gates. The chooser separates inquiry from account approval and Care routing. Not every CTA or persona lifecycle is qualified. Missing real tokens, production-equivalent customer histories and privileged fixtures remain NOT RUN; an observed link is not an exercised workflow."
+    },
+    {
+      "id": "t.mkpp0r308aez",
+      "title": "02 Consumer + Research",
+      "text": "Candidate /research/order explains five pathways; /research/early-access and the assisted request entry render in a bounded preview. Formal membership apply/review/success remain closed. Catalog data in this preview is synthetic/fallback and cannot qualify exact products, pricing, ordering, payment or fulfillment. Supported /research/account and member catalog routes preserve returnTo on sign-in. Most legacy member routes are deliberately under review. Native commerce remains disabled; no ordering gate was opened."
+    },
+    {
+      "id": "t.msukh1lqzxsr",
+      "title": "03 Care",
+      "text": "Browser observations cover public Care, schedule, portal, how-it-works, provider review, support, eligibility, consent, appointments, prescriptions and pharmacy. The isolated candidate reports unavailable request intake and disabled/unactivated clinical services. It does not imply a prescription, appointment or provider relationship. Real request persistence, human handoff, authorized clinical review, pharmacy transitions and notification delivery are NOT RUN. Existing Care contact regression tests pass in the focused repair run."
+    },
+    {
+      "id": "t.eksh64ygd33s",
+      "title": "04 Affiliate + Partner",
+      "text": "Signed-out dashboard shows a clear sign-in gate and preserves the dashboard return destination. Synthetic active partner dashboard shows bounded activity; a customer with no partner relationship gets an explicit no-partner-account state. Partner application/onboarding and most legacy operational routes are held under review in the candidate preview. Real application, certification, activation, suspension, reinstatement, attribution, commissions and payout notification transitions remain NOT RUN. No partner approval or economic promise was inferred."
+    },
+    {
+      "id": "t.meg5cdcxxqel",
+      "title": "05 B2B + Organizations",
+      "text": "Current candidate inquiries do transmit through POST /api/contact; the older local-summary-only description is historical. The existing contract is email-owned, with no durable inquiry row or status page. Browser AUD-001 proves that a 200 response previously claimed receipt despite no provider. Repair 02d525b awaits team-email acceptance, fails honestly when unavailable, and treats courtesy-confirmation failure separately. Provider acceptance is not inbox delivery or review. No CRM, queue, schema or second account authority was added."
+    },
+    {
+      "id": "t.s22n05yinm74",
+      "title": "06 Account + Orders + Payment",
+      "text": "Synthetic active-account browser navigation covers commerce history, billing history, Care status, interests, documents, profile, security and support. Partial history is labeled unavailable rather than definitive zero. Empty-account states preserve completeness limits; a paused account cannot reopen itself. Support submission appears in fixture memory only; the fixture timestamp is epoch-based and is not evidence of a production date defect. Real invoice/proof/manual verification/settlement/fulfillment and cross-owner production data remain unverified. No money moved."
+    },
+    {
+      "id": "t.h3nvz85s1gym",
+      "title": "07 Admin + Operations",
+      "text": "All static admin route declarations were inventoried and their signed-out entry states observed. Shell navigation is visible; operational data/actions require admin access. A separate bounded fixture uses the actual requireSupabaseAdmin guard with synthetic identities: seeded question queue/detail and synthetic reply succeeded; a non-admin identity was denied. External sockets and fetches are blocked by the harness, and notifications remain memory intents. This is not proof of production ADMIN_EMAIL, every queue or founder-wide permissions. Other admin transitions remain NOT RUN."
+    },
+    {
+      "id": "t.v73mukt2iin3",
+      "title": "08 Notifications + Next Steps",
+      "text": "A UI success must match the underlying authority. AUD-001 distinguishes team-provider acceptance, optional courtesy-provider acceptance, inbox delivery, durable storage and human review. Only the first two are addressed by the narrow contact repair. Failure preserves the draft and names a direct email fallback; courtesy-only failure does not invite duplicate inquiry submission. Existing account, partner, Care, order and outbox authorities remain separate. Real delivery, bounce handling, retry and operator notification coverage are not established by this browser run."
+    },
+    {
+      "id": "t.cnlotndvqirx",
+      "title": "09 Findings + Priority Backlog",
+      "text": "Fresh P1 AUD-001: baseline falsely confirmed a partnership inquiry with no email provider. Repair 02d525b passes exact-build browser retests for provider unavailable, synthetic accepted delivery and courtesy-only failure. No actual inbox delivery is claimed. Deferred P2 candidates: Prepare inquiry labels, the corporate contact's fixed two-business-day promise, and the public secure-documents link leading to a held legacy route. Preserve original Seth screenshots below. P0 count is not established by this incomplete audit; zero blockers is not claimed. Release-control and remaining adversarial evidence gaps remain open."
+    },
+    {
+      "id": "t.in1nfvycebbn",
+      "title": "10 Route + Source Inventory",
+      "text": "Fresh baseline: candidate 0574264562f33fe40572b1d9976f4700bef9c83e, tree 0f4c05b8fa8e4d927c8de693085b58d96ac1febd. Audit branch begins at documentation successor c8ea24944f277e5b0770d5446687f2752db3ab73. Inventory contains 222 route declarations from App, Research and Research admin routers; Care constants add public routes. Before repair, 230 browser observations and 3,158 link occurrences were saved. Counts include repeats and loading states; they are not pass counts. Repository folder docs/ux/xenios-adversarial-audit-20260924 contains provenance, coverage and raw evidence."
+    },
+    {
+      "id": "t.kshu9x2u1uiq",
+      "title": "11 UAT Walkthrough",
+      "text": "Executed: home→access chooser→partner inquiry; no-provider submit; returning-partner sign-in and recovery continuation; closed application; missing/invalid status token; unsafe external return destination; active/empty/paused account fixtures; account navigation/support/sign-out; Care and admin gates. Missing: real expired/consumed/approved tokens, full keyboard/zoom/slow-network coverage, all meaningful CTAs and all privileged lifecycles. Treat those as NOT RUN, not inferred pass. Every evidence item must name candidate/environment/persona and distinguish fixtures from production."
+    },
+    {
+      "id": "t.3fnxiypelkis",
+      "title": "12 Homepage Account Entry",
+      "text": "Production browsing confirms weaker account discovery, while the candidate visibly adds Sign in/Get access and a chooser. Exact access-hub screenshots were later captured at measured 390×844, 768×1024 and 1440×1000; measured 390 and 1440 had no horizontal overflow. Earlier screenshot filenames used requested window dimensions and are not proof of actual viewport pixels. A keyboard sample reached the Explore Xenios disclosure with a visible native outline. Full responsive, zoom, sticky-overlap and accessibility qualification remains incomplete."
+    },
+    {
+      "id": "t.vv5ocdle8ibk",
+      "title": "13 Notification Coverage Matrix",
+      "text": "Historical email-health configuration claims below are not fresh delivery evidence. This run confirms production identity and health commerceEnabled=false but does not re-establish recipient identity or send real mail. Local missing-provider contact test failed truthfulness; focused tests now cover accepted/rejected/malformed provider responses, unavailable configuration, awaited team acceptance, and courtesy failure. Existing Care contact tests pass. Real partner lifecycle/outbox retries/dead-letter handling/operator recipient delivery and customer inbox receipt remain NOT RUN."
+    },
+    {
+      "id": "t.rzz6nlpbz6lw",
+      "title": "14 Implementation Blueprint",
+      "text": "Current scope is evidence-led repair. Repair 02d525b changes existing contact acceptance and inquiry feedback, adding no database or competing queue. Typecheck, exact production build, 33 focused tests and four contact browser scenarios passed. Full suite has 18,049 passes, 85 skips and one protected server/routes.ts fingerprint failure. The manifest remains unchanged; the lead must review the narrow protected diff and reconcile its fingerprint under the existing ownership contract. Migration DAG and route uniqueness pass. Bound production verification fails for stale c545a70 evidence. Broader redesign is deferred."
+    },
+    {
+      "id": "t.srrmszar14b9",
+      "title": "15 Release Acceptance Matrix",
+      "text": "Current disposition: NOT READY. Typecheck PASS; exact build PASS; focused tests 33 PASS; exact repair browser unavailable/accepted/courtesy-failure/corporate-contact checks PASS using no-provider or synthetic capture fixtures. Full suite: 972 files passed, 1 failed, 6 skipped; 18,049 tests passed, 1 failed, 85 skipped. The sole failure is the protected server/routes.ts fingerprint. Migration DAG and route uniqueness PASS. Bound production-state verification FAILS on stale central evidence. A qualified release manifest is not available. Complete CTA, true token lifecycle, production-equivalent owner isolation and privileged workflow coverage remain incomplete. No production GO requested."
+    },
+    {
+      "id": "t.s31z24jpx752",
+      "title": "16 Codex Execution Prompt",
+      "text": "CURRENT OPERATIVE MODE: AUDIT FIRST, then scoped evidence-backed repairs. Read Parts I–VIII of XENIOS_CODEX_MASTER_BRIEF_2026-09-24.md and current repository corpus. Current Git/runtime/production truth outranks the historical implementation instructions below. Do not restart from old production or rebuild features already in the candidate. Establish browser baseline, label blocked states, preserve authority boundaries, repair demonstrated P0/P1 or justified P2 defects, retest, update all 18 tabs and issue an exact-SHA evidence packet. Never deploy, merge a production-triggering branch, send real test mail, change production config or apply migrations under this task. Historical phase instructions below are retained only as context."
+    },
+    {
+      "id": "t.hkj9btkb5yz3",
+      "title": "17 Samuel Super Admin",
+      "text": "Observed the canonical admin sign-in path and shell. An isolated fixture using actual guard code accepted its configured synthetic admin and denied another synthetic member. Seeded question detail/reply stayed behind the guard. This does not verify Samuel's production identity, recovery-purpose denial, every operational domain or unrestricted access. The expected founder email in historical material is not a permission grant. Production ADMIN_EMAIL matching and authorized founder smoke remain unverified; clinical raw-data access is not part of a super-admin promise."
+    }
+  ]
+}

@@ -1,0 +1,327 @@
+npm warn config production Use `--omit=dev` instead.
+
+added 531 packages in 1m
+npm warn config production Use `--omit=dev` instead.
+
+> rest-express@1.0.0 build
+> node script/build.mjs
+
+building client...
+vite v7.3.5 building client environment for production...
+transforming...
+✓ 2304 modules transformed.
+rendering chunks...
+[plugin vite:reporter] 
+(!) C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/AdminResearchHome.tsx is dynamically imported by C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/adminx-section.tsx but also statically imported by C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/adminx-section.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/ActivationBridge.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/ActivationChecklist.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/ActivationQueue.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/ActivationReadiness.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/ActivationReconciliation.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/ApplicationDetail.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/Applications.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/Audit.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/BlueprintReview.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/Capabilities.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/CareAccessRequests.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/CommerceQueues.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/EarlyAccessFulfillment.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/EarlyAccessPaymentReview.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/EarlyAccessReleases.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/EsignDocuments.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/FounderCommandCenter.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/Fulfillment.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/GuideAdminDetail.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/GuidesAdmin.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/InventoryLotsAdmin.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/LotCoasAdmin.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/MemberDetail.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/Members.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/OrderAdminDetail.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/OrdersAdmin.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/PartnerAdminDetail.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/PartnersAdmin.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/PlanDetail.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/Plans.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/PrivacyAdmin.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/ProductAdminDetail.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/ProductRequestAdminDetail.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/ProductRequestsAdmin.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/ProductsAdmin.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/QuestionAdminDetail.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/QuestionsAdmin.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/ReferralLifecycle.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/RequiredInputs.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/ResourceHubAdmin.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/SecurityAdmin.tsx, C:/tmp/xenios-audit-repair-02d525b-20260924/client/src/research/pages/adminx/Website3Configuration.tsx, dynamic import will not move module into another chunk.
+
+computing gzip size...
+../dist/public/assets/jetbrains-mono-cyrillic-ext-600-normal-Dj6eZy5f.woff2    1.16 kB
+../dist/public/assets/jetbrains-mono-cyrillic-ext-500-normal-C9ShMxGR.woff2    1.17 kB
+../dist/public/assets/jetbrains-mono-cyrillic-ext-600-normal-DVvC-yKp.woff     1.73 kB
+../dist/public/assets/jetbrains-mono-cyrillic-ext-500-normal-CEVyPk4Y.woff     1.74 kB
+../dist/public/assets/jetbrains-mono-vietnamese-600-normal-Dtizs43-.woff2      4.00 kB
+../dist/public/assets/jetbrains-mono-vietnamese-500-normal-BvH7FW2L.woff2      4.04 kB
+../dist/public/assets/jetbrains-mono-greek-500-normal-JpySY46c.woff2           4.28 kB
+../dist/public/assets/jetbrains-mono-greek-600-normal-H7WoG9Et.woff2           4.31 kB
+../dist/public/assets/inter-tight-vietnamese-900-normal-BOhvDLRK.woff2         4.93 kB
+../dist/public/assets/inter-tight-vietnamese-500-normal-C7jl9LDK.woff2         5.03 kB
+../dist/public/assets/inter-tight-vietnamese-600-normal-FGgebaLI.woff2         5.06 kB
+../dist/public/assets/inter-tight-vietnamese-800-normal-OJoDhpMd.woff2         5.12 kB
+../dist/public/assets/inter-tight-vietnamese-700-normal-Cn_DV52A.woff2         5.15 kB
+../dist/public/assets/jetbrains-mono-cyrillic-500-normal-DmUKJPL_.woff2        5.36 kB
+../dist/public/assets/jetbrains-mono-cyrillic-600-normal-EVf6-Yzo.woff2        5.38 kB
+../dist/public/assets/inter-tight-greek-ext-900-normal-wxL47-fE.woff2          5.39 kB
+../dist/public/assets/inter-tight-greek-ext-500-normal-Be7hKmpC.woff2          5.45 kB
+../dist/public/assets/jetbrains-mono-vietnamese-500-normal-DNRqzVM1.woff       5.48 kB
+../dist/public/assets/jetbrains-mono-vietnamese-600-normal-OWROknRo.woff       5.48 kB
+../dist/public/assets/inter-tight-greek-ext-700-normal-D0RkHJEE.woff2          5.49 kB
+../dist/public/assets/inter-tight-greek-ext-600-normal-CiDI6ET5.woff2          5.51 kB
+../dist/public/assets/inter-tight-greek-ext-800-normal-DNWjXg9N.woff2          5.52 kB
+../dist/public/assets/jetbrains-mono-greek-600-normal-mc2nkWzM.woff            5.70 kB
+../dist/public/assets/jetbrains-mono-greek-500-normal-D7SFKleX.woff            5.72 kB
+../dist/public/index.html                                                      6.35 kB │ gzip:   1.83 kB
+../dist/public/assets/inter-tight-vietnamese-900-normal-BzyaF6D1.woff          6.62 kB
+../dist/public/assets/inter-tight-vietnamese-500-normal-CO4EMNTO.woff          6.69 kB
+../dist/public/assets/inter-tight-vietnamese-600-normal-BCXZ1BbA.woff          6.74 kB
+../dist/public/assets/inter-tight-vietnamese-800-normal-CbYrLkxo.woff          6.74 kB
+../dist/public/assets/inter-tight-vietnamese-700-normal-DwHBAXeT.woff          6.76 kB
+../dist/public/assets/inter-tight-cyrillic-900-normal-DQyl4dKK.woff2           6.89 kB
+../dist/public/assets/inter-tight-cyrillic-600-normal-BERwQ0yl.woff2           6.98 kB
+../dist/public/assets/inter-tight-cyrillic-700-normal-DtWWjp29.woff2           6.99 kB
+../dist/public/assets/inter-tight-cyrillic-800-normal-CC_RRmyd.woff2           7.00 kB
+../dist/public/assets/jetbrains-mono-cyrillic-600-normal-8K4wrrwR.woff         7.02 kB
+../dist/public/assets/jetbrains-mono-cyrillic-500-normal-DJqRU3vO.woff         7.02 kB
+../dist/public/assets/inter-tight-cyrillic-500-normal-5ykfyGeh.woff2           7.09 kB
+../dist/public/assets/inter-tight-greek-ext-500-normal-BEGGcu3x.woff           7.25 kB
+../dist/public/assets/inter-tight-greek-ext-700-normal-mW3dmpoD.woff           7.30 kB
+../dist/public/assets/inter-tight-greek-ext-600-normal-5gKW7MDU.woff           7.30 kB
+../dist/public/assets/inter-tight-greek-ext-900-normal-BkFPiXz8.woff           7.36 kB
+../dist/public/assets/inter-tight-greek-ext-800-normal-DfP-QoiQ.woff           7.40 kB
+../dist/public/assets/jetbrains-mono-latin-ext-600-normal-BfB_LPfz.woff2       7.51 kB
+../dist/public/assets/jetbrains-mono-latin-ext-500-normal-Cut-4mMH.woff2       7.53 kB
+../dist/public/assets/inter-tight-cyrillic-900-normal-BB7BsRn9.woff            8.76 kB
+../dist/public/assets/inter-tight-cyrillic-800-normal-ChWbk4mt.woff            8.90 kB
+../dist/public/assets/inter-tight-cyrillic-600-normal-BeTasGgk.woff            8.90 kB
+../dist/public/assets/inter-tight-cyrillic-500-normal-CRXauZSq.woff            8.92 kB
+../dist/public/assets/inter-tight-greek-700-normal-RgALSHS4.woff2              8.92 kB
+../dist/public/assets/inter-tight-greek-500-normal-kave9HZE.woff2              8.94 kB
+../dist/public/assets/inter-tight-cyrillic-700-normal-DDZiLR3d.woff            8.94 kB
+../dist/public/assets/inter-tight-greek-800-normal-X9eW6L67.woff2              8.95 kB
+../dist/public/assets/inter-tight-greek-900-normal-BlRasW-P.woff2              8.99 kB
+../dist/public/assets/inter-tight-greek-600-normal-BIqmcc-q.woff2              8.99 kB
+../dist/public/assets/jetbrains-mono-latin-ext-600-normal-DObL3zCW.woff       10.32 kB
+../dist/public/assets/jetbrains-mono-latin-ext-500-normal-ckzbgY84.woff       10.34 kB
+../dist/public/assets/inter-tight-cyrillic-ext-900-normal-D2HnBArf.woff2      10.46 kB
+../dist/public/assets/inter-tight-cyrillic-ext-600-normal-B4SKDMEv.woff2      10.49 kB
+../dist/public/assets/inter-tight-cyrillic-ext-700-normal-D_7NT8eF.woff2      10.51 kB
+../dist/public/assets/inter-tight-cyrillic-ext-500-normal-BZAF-_VI.woff2      10.52 kB
+../dist/public/assets/inter-tight-cyrillic-ext-800-normal-CzCOBUhR.woff2      10.62 kB
+../dist/public/assets/inter-tight-greek-500-normal-Ca-cFdRH.woff              11.14 kB
+../dist/public/assets/inter-tight-greek-600-normal-67HAlfW-.woff              11.17 kB
+../dist/public/assets/inter-tight-greek-900-normal-Whngmt0q.woff              11.18 kB
+../dist/public/assets/inter-tight-greek-700-normal-DU8XoIeX.woff              11.21 kB
+../dist/public/assets/inter-tight-greek-800-normal-CxHmUlv4.woff              11.22 kB
+../dist/public/assets/inter-tight-cyrillic-ext-900-normal-DFYsuKtp.woff       13.71 kB
+../dist/public/assets/inter-tight-cyrillic-ext-500-normal-Dy1ZB9JY.woff       13.76 kB
+../dist/public/assets/inter-tight-cyrillic-ext-600-normal-_3ga77Eo.woff       13.84 kB
+../dist/public/assets/inter-tight-cyrillic-ext-800-normal-WowoGRZX.woff       13.86 kB
+../dist/public/assets/inter-tight-cyrillic-ext-700-normal-BFcoPt71.woff       13.87 kB
+../dist/public/assets/jetbrains-mono-latin-500-normal-BWZEU5yA.woff2          21.83 kB
+../dist/public/assets/jetbrains-mono-latin-600-normal-C8RAYTDA.woff2          21.86 kB
+../dist/public/assets/inter-tight-latin-900-normal-CsycwHi3.woff2             22.20 kB
+../dist/public/assets/inter-tight-latin-500-normal-BFXNXuvF.woff2             22.62 kB
+../dist/public/assets/inter-tight-latin-600-normal-BgSTtRxb.woff2             22.66 kB
+../dist/public/assets/inter-tight-latin-800-normal-CRGCHRPv.woff2             22.70 kB
+../dist/public/assets/inter-tight-latin-700-normal-BZKd_v_8.woff2             22.75 kB
+../dist/public/assets/jetbrains-mono-latin-600-normal-BfsvjouI.woff           28.18 kB
+../dist/public/assets/jetbrains-mono-latin-500-normal-CJOVTJB7.woff           28.21 kB
+../dist/public/assets/inter-tight-latin-900-normal-D-ilywrK.woff              28.47 kB
+../dist/public/assets/inter-tight-latin-500-normal-pobXraBK.woff              28.94 kB
+../dist/public/assets/inter-tight-latin-800-normal-D2te1T7i.woff              29.04 kB
+../dist/public/assets/inter-tight-latin-600-normal-D7bG6gX1.woff              29.05 kB
+../dist/public/assets/inter-tight-latin-700-normal-DvYAVZQd.woff              29.06 kB
+../dist/public/assets/inter-tight-latin-ext-900-normal-CRvdXIc8.woff2         37.24 kB
+../dist/public/assets/inter-tight-latin-ext-500-normal-D3akd6m-.woff2         37.73 kB
+../dist/public/assets/inter-tight-latin-ext-600-normal-BgMgWFts.woff2         37.90 kB
+../dist/public/assets/inter-tight-latin-ext-700-normal-BpKPOkj3.woff2         37.91 kB
+../dist/public/assets/inter-tight-latin-ext-800-normal-DfKN99cy.woff2         38.00 kB
+../dist/public/assets/inter-tight-latin-ext-900-normal-CibZOeMa.woff          50.17 kB
+../dist/public/assets/inter-tight-latin-ext-500-normal-_hLDZz_3.woff          50.89 kB
+../dist/public/assets/inter-tight-latin-ext-800-normal-A39zhqaD.woff          51.13 kB
+../dist/public/assets/inter-tight-latin-ext-700-normal-CrlzIQ10.woff          51.14 kB
+../dist/public/assets/inter-tight-latin-ext-600-normal-BvYdOF2O.woff          51.19 kB
+../dist/public/assets/Links-C_ucpXV5.css                                       1.45 kB │ gzip:   0.55 kB
+../dist/public/assets/AccountOverview-CUwxuLyl.css                             1.88 kB │ gzip:   0.66 kB
+../dist/public/assets/quality-BRyQwagB.css                                     3.37 kB │ gzip:   1.11 kB
+../dist/public/assets/components-Cfq3KlQw.css                                  3.44 kB │ gzip:   1.12 kB
+../dist/public/assets/section-DdoGtFfN.css                                     4.20 kB │ gzip:   1.12 kB
+../dist/public/assets/Dashboard-93y3Q2q-.css                                   4.65 kB │ gzip:   1.56 kB
+../dist/public/assets/resource-Cqq4fkzz.css                                    7.38 kB │ gzip:   1.95 kB
+../dist/public/assets/assisted-order-C6sZMaIJ.css                             11.42 kB │ gzip:   2.74 kB
+../dist/public/assets/Gateway-DiifhfID.css                                    18.77 kB │ gzip:   4.75 kB
+../dist/public/assets/index-LjVUmGyC.css                                     126.58 kB │ gzip:  22.12 kB
+../dist/public/assets/fixtures-BnWoyHzs.js                                     0.07 kB │ gzip:   0.08 kB
+../dist/public/assets/product-request-sources-B3jGpvE_.js                      0.17 kB │ gzip:   0.16 kB
+../dist/public/assets/distribution-BedJ_C07.js                                 0.21 kB │ gzip:   0.15 kB
+../dist/public/assets/commerce-Cl9956qa.js                                     0.25 kB │ gzip:   0.19 kB
+../dist/public/assets/activation-7P-n9_jD.js                                   0.27 kB │ gzip:   0.22 kB
+../dist/public/assets/api-D_6RIzQy.js                                          0.36 kB │ gzip:   0.28 kB
+../dist/public/assets/early-access-quantity-w_7J3H7P.js                        0.38 kB │ gzip:   0.26 kB
+../dist/public/assets/contract-CMFmJ0NR.js                                     0.51 kB │ gzip:   0.30 kB
+../dist/public/assets/product-requests-rzkuSvMp.js                             0.56 kB │ gzip:   0.36 kB
+../dist/public/assets/billing-presentation-CK2Z1ScJ.js                         0.64 kB │ gzip:   0.29 kB
+../dist/public/assets/entry-intent-BFVE7Xjr.js                                 0.70 kB │ gzip:   0.43 kB
+../dist/public/assets/AccountInterests-B6kIF2pt.js                             0.77 kB │ gzip:   0.47 kB
+../dist/public/assets/useCatalogQueryState-CytsdIYv.js                         0.81 kB │ gzip:   0.40 kB
+../dist/public/assets/QualityNav-P2HDkq-Y.js                                   0.93 kB │ gzip:   0.54 kB
+../dist/public/assets/EarlyAccessStepper-6otncpYk.js                           0.99 kB │ gzip:   0.58 kB
+../dist/public/assets/esign-CauHzOj5.js                                        1.06 kB │ gzip:   0.56 kB
+../dist/public/assets/member-platform-CD2y5EVS.js                              1.09 kB │ gzip:   0.52 kB
+../dist/public/assets/principal-bound-C3qKJRqu.js                              1.09 kB │ gzip:   0.60 kB
+../dist/public/assets/inventory-admin-poKKzNBW.js                              1.16 kB │ gzip:   0.51 kB
+../dist/public/assets/productRequests-CuM-EQOn.js                              1.28 kB │ gzip:   0.60 kB
+../dist/public/assets/LotLookupForm-xup_D_zw.js                                1.30 kB │ gzip:   0.82 kB
+../dist/public/assets/commission-ledger-YIzxuBiz.js                            1.43 kB │ gzip:   0.76 kB
+../dist/public/assets/shared-B8DCRtjF.js                                       1.71 kB │ gzip:   0.78 kB
+../dist/public/assets/products-diagnostics-DIcwYKTW.js                         1.91 kB │ gzip:   0.70 kB
+../dist/public/assets/Goals-QoZfmJfw.js                                        1.92 kB │ gzip:   0.94 kB
+../dist/public/assets/GuideAdminDetail-DOoh82me.js                             1.95 kB │ gzip:   0.98 kB
+../dist/public/assets/GuidesAdmin-CTc-gSVP.js                                  1.96 kB │ gzip:   1.02 kB
+../dist/public/assets/customerSteps-DXv_dBjU.js                                2.00 kB │ gzip:   0.92 kB
+../dist/public/assets/api-BY2qXwEB.js                                          2.05 kB │ gzip:   1.11 kB
+../dist/public/assets/contract-CDitim5d.js                                     2.09 kB │ gzip:   0.86 kB
+../dist/public/assets/api-CP0Dp9Sw.js                                          2.13 kB │ gzip:   0.92 kB
+../dist/public/assets/OrderEntryIntentNotice--YFYDj2H.js                       2.16 kB │ gzip:   1.07 kB
+../dist/public/assets/AccountSecurity-M9JTMjuX.js                              2.18 kB │ gzip:   0.93 kB
+../dist/public/assets/read-CtKKQx1J.js                                         2.18 kB │ gzip:   0.91 kB
+../dist/public/assets/ResearchContact-D1qrROyf.js                              2.42 kB │ gzip:   1.13 kB
+../dist/public/assets/PlanDetail-DDUxpg64.js                                   2.46 kB │ gzip:   1.08 kB
+../dist/public/assets/ActivationReadiness-DQkuNYU_.js                          2.56 kB │ gzip:   1.17 kB
+../dist/public/assets/productAdmin-DWd71hf1.js                                 2.59 kB │ gzip:   1.10 kB
+../dist/public/assets/AccountProfile-CZObGA6W.js                               2.60 kB │ gzip:   0.91 kB
+../dist/public/assets/QuestionsAdmin-CUyOkCuP.js                               2.63 kB │ gzip:   1.34 kB
+../dist/public/assets/InterestsView-9ePbMiof.js                                2.69 kB │ gzip:   1.08 kB
+../dist/public/assets/ActivationPage-CvGCrQAh.js                               2.71 kB │ gzip:   1.17 kB
+../dist/public/assets/Plans-ChiqW9ZX.js                                        2.73 kB │ gzip:   1.30 kB
+../dist/public/assets/Applications-FKqsle3h.js                                 2.84 kB │ gzip:   1.44 kB
+../dist/public/assets/ActivationChecklist-CfV1RcMo.js                          2.85 kB │ gzip:   1.31 kB
+../dist/public/assets/commerce-presentation-CPzGeJ7K.js                        2.92 kB │ gzip:   1.11 kB
+../dist/public/assets/AssistedOrderConfirmationPage-BNh7pJz5.js                2.98 kB │ gzip:   1.11 kB
+../dist/public/assets/LegalPage-CzfHroC5.js                                    3.01 kB │ gzip:   1.36 kB
+../dist/public/assets/orderEntryIntent-hIqMQPKx.js                             3.05 kB │ gzip:   1.37 kB
+../dist/public/assets/PartnerAdminDetail-SrwbJR31.js                           3.11 kB │ gzip:   1.22 kB
+../dist/public/assets/guides-P5_4bhIK.js                                       3.17 kB │ gzip:   1.17 kB
+../dist/public/assets/content-BF-RhI78.js                                      3.22 kB │ gzip:   1.47 kB
+../dist/public/assets/Xenios90-7NJEVb_-.js                                     3.23 kB │ gzip:   1.40 kB
+../dist/public/assets/OrdersAdmin-Bbbe5DNp.js                                  3.24 kB │ gzip:   1.56 kB
+../dist/public/assets/commerce-C7rvqmhD.js                                     3.32 kB │ gzip:   1.35 kB
+../dist/public/assets/PoliciesIndex-DWdIh2Az.js                                3.37 kB │ gzip:   1.33 kB
+../dist/public/assets/Audit-X4j-kR8d.js                                        3.40 kB │ gzip:   1.30 kB
+../dist/public/assets/PrivacyAdmin-CQwwAQJT.js                                 3.41 kB │ gzip:   1.35 kB
+../dist/public/assets/Blueprint-2DMmojag.js                                    3.42 kB │ gzip:   1.38 kB
+../dist/public/assets/ActivationReconciliation-DbDH6Vi8.js                     3.52 kB │ gzip:   1.65 kB
+../dist/public/assets/api-Ck6NUaHn.js                                          3.56 kB │ gzip:   1.34 kB
+../dist/public/assets/MemberDetail-CBaJl0Qh.js                                 3.58 kB │ gzip:   1.49 kB
+../dist/public/assets/Capabilities-D8LAkuuA.js                                 3.59 kB │ gzip:   1.56 kB
+../dist/public/assets/integration-packet-D0QokOBB.js                           3.62 kB │ gzip:   1.26 kB
+../dist/public/assets/Leads-Crz4qAAd.js                                        3.66 kB │ gzip:   1.75 kB
+../dist/public/assets/Landing-BLDIfHgq.js                                      3.79 kB │ gzip:   1.60 kB
+../dist/public/assets/Profile-VkSg2yXP.js                                      3.97 kB │ gzip:   1.48 kB
+../dist/public/assets/CareConsentPendingPage-QgzRUAEt.js                       3.98 kB │ gzip:   1.54 kB
+../dist/public/assets/CarePrescriptionsPage-BPO9itQ7.js                        3.99 kB │ gzip:   1.53 kB
+../dist/public/assets/wizard-state-DOGmoz4J.js                                 4.00 kB │ gzip:   1.51 kB
+../dist/public/assets/AccountCare-Pkr6NKSQ.js                                  4.00 kB │ gzip:   1.31 kB
+../dist/public/assets/Conversions-DhLKD2rp.js                                  4.06 kB │ gzip:   1.79 kB
+../dist/public/assets/Documents-B1YXuJ3Q.js                                    4.06 kB │ gzip:   1.65 kB
+../dist/public/assets/QuestionAdminDetail-B2NNNCym.js                          4.32 kB │ gzip:   1.86 kB
+../dist/public/assets/AccountDocuments-B02Yx9TV.js                             4.35 kB │ gzip:   1.81 kB
+../dist/public/assets/Support-Cj5pIlqY.js                                      4.40 kB │ gzip:   1.79 kB
+../dist/public/assets/Support-CwY_vSsF.js                                      4.46 kB │ gzip:   1.62 kB
+../dist/public/assets/Security-CSQj-hvB.js                                     4.47 kB │ gzip:   1.72 kB
+../dist/public/assets/SupplierAccess-C9tNB-Fk.js                               4.49 kB │ gzip:   1.86 kB
+../dist/public/assets/AdminAssistedOrderQueue-CqvQuCWE.js                      4.66 kB │ gzip:   1.66 kB
+../dist/public/assets/ResearchDocuments-DqJFkmAm.js                            4.73 kB │ gzip:   1.97 kB
+../dist/public/assets/Orders-CFsfkmkn.js                                       4.75 kB │ gzip:   2.12 kB
+../dist/public/assets/pricing-contract-CGEtyafz.js                             4.81 kB │ gzip:   2.11 kB
+../dist/public/assets/request-read-BylcFZsE.js                                 4.82 kB │ gzip:   1.88 kB
+../dist/public/assets/AboutResearch-Dg0cqxQw.js                                4.84 kB │ gzip:   1.77 kB
+../dist/public/assets/Commissions-BLYUvtDy.js                                  4.87 kB │ gzip:   1.98 kB
+../dist/public/assets/MemberAccessState-DGpL7Rw4.js                            5.23 kB │ gzip:   1.60 kB
+../dist/public/assets/OrganizationAccessPage-CbPNDyD-.js                       5.33 kB │ gzip:   2.09 kB
+../dist/public/assets/ProductRequestsAdmin-2C01bZwm.js                         5.55 kB │ gzip:   2.10 kB
+../dist/public/assets/EarlyAccessPaymentReview-DS3Hbnqu.js                     5.62 kB │ gzip:   2.23 kB
+../dist/public/assets/Dashboard-DqaDjgSV.js                                    5.63 kB │ gzip:   2.18 kB
+../dist/public/assets/Payouts-BHxS4qMu.js                                      5.65 kB │ gzip:   2.38 kB
+../dist/public/assets/Quality-I7smswJh.js                                      5.66 kB │ gzip:   2.31 kB
+../dist/public/assets/DocumentCenter-oTbVH1ih.js                               5.73 kB │ gzip:   2.15 kB
+../dist/public/assets/AccountSubscription-Ds3F06lF.js                          5.81 kB │ gzip:   1.83 kB
+../dist/public/assets/Testing-tKZpsTcB.js                                      5.83 kB │ gzip:   2.27 kB
+../dist/public/assets/HowItWorks-Dj_wJdNH.js                                   5.85 kB │ gzip:   2.13 kB
+../dist/public/assets/Resources-CYgxP-ER.js                                    5.96 kB │ gzip:   2.63 kB
+../dist/public/assets/Security-C7HmPmCq.js                                     6.12 kB │ gzip:   2.66 kB
+../dist/public/assets/Apply-BBXrYbvx.js                                        6.28 kB │ gzip:   2.47 kB
+../dist/public/assets/GoalDetail-Dds2kT1H.js                                   6.29 kB │ gzip:   2.10 kB
+../dist/public/assets/Training-B3iKXRu7.js                                     6.62 kB │ gzip:   2.60 kB
+../dist/public/assets/EligibilityPendingPage-DyR3mzy3.js                       6.68 kB │ gzip:   2.55 kB
+../dist/public/assets/ReferralLifecycle-BcdJyx6u.js                            6.77 kB │ gzip:   2.51 kB
+../dist/public/assets/AdminAssistedOrderDetail-D1VDvrcT.js                     6.84 kB │ gzip:   2.31 kB
+../dist/public/assets/KrisPrice-DFb2pZUa.js                                    6.88 kB │ gzip:   2.51 kB
+../dist/public/assets/partner-CncsbLte.js                                      6.95 kB │ gzip:   2.66 kB
+../dist/public/assets/BlueprintReview-BjYmcgl6.js                              7.03 kB │ gzip:   2.40 kB
+../dist/public/assets/Recipient-LkL0rwRK.js                                    7.04 kB │ gzip:   2.46 kB
+../dist/public/assets/member-wighZvSW.js                                       7.06 kB │ gzip:   2.44 kB
+../dist/public/assets/Organizations-BTl0egnT.js                                7.10 kB │ gzip:   2.68 kB
+../dist/public/assets/ProductRequests-B8DU4k2E.js                              7.25 kB │ gzip:   2.61 kB
+../dist/public/assets/AccessHub-DXPcuN6R.js                                    7.27 kB │ gzip:   2.57 kB
+../dist/public/assets/AccountSupport-Dm7ONHhs.js                               7.36 kB │ gzip:   2.58 kB
+../dist/public/assets/AssistedOrderStatusPage-CtyYsysP.js                      7.45 kB │ gzip:   2.71 kB
+../dist/public/assets/Guides-CTsX1eXe.js                                       7.51 kB │ gzip:   2.63 kB
+../dist/public/assets/Onboarding-DC3xtLlO.js                                   7.60 kB │ gzip:   2.78 kB
+../dist/public/assets/NewProductRequest-CtQkBVGk.js                            7.65 kB │ gzip:   2.81 kB
+../dist/public/assets/AffiliateAccessPage-D83-SD_P.js                          7.75 kB │ gzip:   2.77 kB
+../dist/public/assets/Cart-BeygTtsJ.js                                         7.75 kB │ gzip:   2.56 kB
+../dist/public/assets/Xenios30-DvXWNsjI.js                                     7.76 kB │ gzip:   2.53 kB
+../dist/public/assets/core-C177jBmn.js                                         7.76 kB │ gzip:   3.06 kB
+../dist/public/assets/GuideReader-CkkrMsGs.js                                  7.94 kB │ gzip:   2.79 kB
+../dist/public/assets/PartnersAdmin-DEgG1PZw.js                                8.11 kB │ gzip:   2.89 kB
+../dist/public/assets/Campaigns-KE_L-x9e.js                                    8.25 kB │ gzip:   3.26 kB
+../dist/public/assets/CarePharmacyOrdersPage-CZfO4_RZ.js                       8.33 kB │ gzip:   2.60 kB
+../dist/public/assets/ProductRequestAdminDetail-BlSsdLIT.js                    8.34 kB │ gzip:   2.85 kB
+../dist/public/assets/ReferralsUpgrade-Cau_xmur.js                             8.58 kB │ gzip:   3.14 kB
+../dist/public/assets/AccountOrders-DyGwQxkR.js                                8.65 kB │ gzip:   2.49 kB
+../dist/public/assets/Events-D22QiChK.js                                       8.77 kB │ gzip:   3.39 kB
+../dist/public/assets/CareAppointmentsPage-BPtf5ov9.js                         8.89 kB │ gzip:   2.76 kB
+../dist/public/assets/ApplicationDetail-DYjMppgR.js                            8.98 kB │ gzip:   3.25 kB
+../dist/public/assets/EsignDocuments-Cq_Dhpwa.js                               9.00 kB │ gzip:   2.80 kB
+../dist/public/assets/Products-Bq7LnffT.js                                     9.14 kB │ gzip:   3.24 kB
+../dist/public/assets/Tracker-ZmS_n283.js                                      9.16 kB │ gzip:   3.41 kB
+../dist/public/assets/CareAccessRequests-CW63LiYa.js                           9.17 kB │ gzip:   3.23 kB
+../dist/public/assets/KrisCatalogRoute-DtR0qC9e.js                             9.39 kB │ gzip:   3.03 kB
+../dist/public/assets/Questions-U8Uy_ODK.js                                    9.50 kB │ gzip:   3.39 kB
+../dist/public/assets/AccountOrderDetail-CJUWBLa2.js                           9.50 kB │ gzip:   2.95 kB
+../dist/public/assets/EarlyAccessReleases-CkpuUH22.js                          9.57 kB │ gzip:   3.15 kB
+../dist/public/assets/SecurityAdmin-Bm8GLWxU.js                                9.62 kB │ gzip:   3.25 kB
+../dist/public/assets/InventoryLotsAdmin-CK9i8ahO.js                           9.65 kB │ gzip:   2.93 kB
+../dist/public/assets/OrderAdminDetail-HCyWl5wC.js                             9.76 kB │ gzip:   3.10 kB
+../dist/public/assets/PrivacyControls-CV7oZpVa.js                              9.78 kB │ gzip:   3.29 kB
+../dist/public/assets/Website3Configuration-OibdalMr.js                        9.97 kB │ gzip:   2.99 kB
+../dist/public/assets/MembershipPage-BmK4M6NG.js                              10.21 kB │ gzip:   3.18 kB
+../dist/public/assets/RequiredInputState-CxBTcMR3.js                          10.51 kB │ gzip:   3.19 kB
+../dist/public/assets/CommerceQueues-VnilCjX_.js                              10.61 kB │ gzip:   3.83 kB
+../dist/public/assets/Compliance-koCN-BQM.js                                  10.62 kB │ gzip:   4.19 kB
+../dist/public/assets/KrisProductRoute-CpdASn5v.js                            10.74 kB │ gzip:   3.39 kB
+../dist/public/assets/resource-Cui2N4HP.js                                    10.78 kB │ gzip:   4.08 kB
+../dist/public/assets/Faq-BejC7J6X.js                                         10.84 kB │ gzip:   4.13 kB
+../dist/public/assets/LotVerification-CXQH1bRE.js                             10.86 kB │ gzip:   3.91 kB
+../dist/public/assets/EarlyAccessFulfillment-DqvNdgm7.js                      11.58 kB │ gzip:   3.75 kB
+../dist/public/assets/SubscriptionsPage-BNbsMKow.js                           11.84 kB │ gzip:   3.68 kB
+../dist/public/assets/FullCatalogProductRoute-CluH5bYo.js                     12.94 kB │ gzip:   4.13 kB
+../dist/public/assets/LotCoasAdmin-BpPod17y.js                                14.55 kB │ gzip:   4.79 kB
+../dist/public/assets/Assessment-CeWbij--.js                                  14.85 kB │ gzip:   5.06 kB
+../dist/public/assets/goals-data-2hIkChtg.js                                  14.93 kB │ gzip:   5.32 kB
+../dist/public/assets/Links-CCnupsNF.js                                       15.16 kB │ gzip:   5.22 kB
+../dist/public/assets/memberCatalog-bSxDLaJA.js                               15.31 kB │ gzip:   4.33 kB
+../dist/public/assets/Fulfillment-fjmU3J3y.js                                 15.36 kB │ gzip:   4.86 kB
+../dist/public/assets/OrderDetail-CMwk7_bu.js                                 15.65 kB │ gzip:   5.15 kB
+../dist/public/assets/FullCatalogRoute-lmgOQmBW.js                            17.90 kB │ gzip:   5.22 kB
+../dist/public/assets/components-FWD6xOfj.js                                  18.10 kB │ gzip:   5.53 kB
+../dist/public/assets/AccountOverview-CCfzZCBy.js                             18.97 kB │ gzip:   5.41 kB
+../dist/public/assets/Dashboard-oJw-Dhbe.js                                   19.17 kB │ gzip:   6.63 kB
+../dist/public/assets/RequiredInputs-Nq9wY35T.js                              19.43 kB │ gzip:   5.49 kB
+../dist/public/assets/ActivationBridge-DEvZEi5S.js                            20.78 kB │ gzip:   5.17 kB
+../dist/public/assets/ProductsAdmin-CKdS7rNX.js                               20.93 kB │ gzip:   6.48 kB
+../dist/public/assets/Gateway-DSPOef_p.js                                     21.32 kB │ gzip:   5.17 kB
+../dist/public/assets/ActivationQueue-DmLuWlGu.js                             21.52 kB │ gzip:   6.00 kB
+../dist/public/assets/OrderEntryHub-BmGkpCz-.js                               22.04 kB │ gzip:   6.71 kB
+../dist/public/assets/qr-export-BfQigOS1.js                                   23.62 kB │ gzip:   8.90 kB
+../dist/public/assets/ResourceHubAdmin-_VaVzee-.js                            24.99 kB │ gzip:   7.73 kB
+../dist/public/assets/FounderCommandCenter-DMaJsHS7.js                        26.50 kB │ gzip:   7.42 kB
+../dist/public/assets/ProductAdminDetail-D5E2g4V0.js                          27.06 kB │ gzip:   7.52 kB
+../dist/public/assets/AssistedOrderPage-ChRuly3P.js                           28.83 kB │ gzip:   8.14 kB
+../dist/public/assets/EarlyAccessCheckoutJourney-D_GAQCcN.js                  32.94 kB │ gzip:   9.37 kB
+../dist/public/assets/Website3Surfaces-0HGu8GOv.js                            37.76 kB │ gzip:  10.16 kB
+../dist/public/assets/Admin-DoxmwrLx.js                                       38.64 kB │ gzip:   9.23 kB
+../dist/public/assets/Checkout-Zd527svX.js                                    40.18 kB │ gzip:  11.31 kB
+../dist/public/assets/Members-7E5tS2GG.js                                     41.34 kB │ gzip:  10.57 kB
+../dist/public/assets/adminx-section-UgvvvDPa.js                              41.97 kB │ gzip:  11.50 kB
+../dist/public/assets/kit-BHYbIM7l.js                                         42.26 kB │ gzip:  12.37 kB
+../dist/public/assets/section-CVqowbdA.js                                     44.68 kB │ gzip:  12.69 kB
+../dist/public/assets/types-CiEqJl5P.js                                       54.98 kB │ gzip:  12.70 kB
+../dist/public/assets/section-CJT9w3tu.js                                     75.17 kB │ gzip:  19.10 kB
+../dist/public/assets/EarlyAccessRoute-BchrLInN.js                           100.35 kB │ gzip:  26.72 kB
+../dist/public/assets/ProductPage-xca6o58L.js                                155.74 kB │ gzip:  37.55 kB
+../dist/public/assets/supabaseBrowser-iHNqcIyH.js                            211.39 kB │ gzip:  55.30 kB
+../dist/public/assets/index-C0hjdmqD.js                                      509.17 kB │ gzip: 153.04 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 48.47s
+building server...
+
+  dist\index.cjs  1.7mb
+
+Done in 3754ms
+npm warn config production Use `--omit=dev` instead.
+candidate preview built: 02d525baa7d784ed16e297c1d17b1e4050ecf4cc (346 files, inventory f51b1a21d6f8667b4939219ac2c12981dfa7ef06a769dc33afb5dc0716759be1)

@@ -1,0 +1,115 @@
+{
+  "documentId": "1qogOnIU9P40rV0iVeTAPO6Yai5R8kgQohFdmuFe8s2I",
+  "revision": "ANLCKQlMtSZNlS-gQ7zF8imz3VlPHD9AivuLWjNGQKUtt28ixTDFdwE-wh4NSIAyMmH6rdbzq_3K3ZHOcGTNaxfDT-1b9AdtG0tfxT_AKbc",
+  "tabCount": 18,
+  "updates": [
+    {
+      "tabId": "t.0",
+      "title": "00 Executive Map",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.w619ayfvyp6u",
+      "title": "01 Personas + Entry Points",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.mkpp0r308aez",
+      "title": "02 Consumer + Research",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.msukh1lqzxsr",
+      "title": "03 Care",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.eksh64ygd33s",
+      "title": "04 Affiliate + Partner",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.meg5cdcxxqel",
+      "title": "05 B2B + Organizations",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.s22n05yinm74",
+      "title": "06 Account + Orders + Payment",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.h3nvz85s1gym",
+      "title": "07 Admin + Operations",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.v73mukt2iin3",
+      "title": "08 Notifications + Next Steps",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.cnlotndvqirx",
+      "title": "09 Findings + Priority Backlog",
+      "verified": true,
+      "inlineImageCount": 2
+    },
+    {
+      "tabId": "t.in1nfvycebbn",
+      "title": "10 Route + Source Inventory",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.kshu9x2u1uiq",
+      "title": "11 UAT Walkthrough",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.3fnxiypelkis",
+      "title": "12 Homepage Account Entry",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.vv5ocdle8ibk",
+      "title": "13 Notification Coverage Matrix",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.rzz6nlpbz6lw",
+      "title": "14 Implementation Blueprint",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.srrmszar14b9",
+      "title": "15 Release Acceptance Matrix",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.s31z24jpx752",
+      "title": "16 Codex Execution Prompt",
+      "verified": true,
+      "inlineImageCount": 0
+    },
+    {
+      "tabId": "t.hkj9btkb5yz3",
+      "title": "17 Samuel Super Admin",
+      "verified": true,
+      "inlineImageCount": 0
+    }
+  ]
+}

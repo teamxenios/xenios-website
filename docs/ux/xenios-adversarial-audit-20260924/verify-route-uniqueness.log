@@ -1,0 +1,6 @@
+npm warn config production Use `--omit=dev` instead.
+
+> rest-express@1.0.0 verify:route-uniqueness
+> tsx scripts/acceptance/verify-route-uniqueness.ts
+
+Route uniqueness accepted: 448 static Express API registrations across 439 call sites in the worktree.

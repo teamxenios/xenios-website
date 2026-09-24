@@ -1148,5 +1148,65 @@
     "id": "alias-_admin_research_inventory",
     "url": "http://127.0.0.1:5299/admin/research/inventory/lots",
     "at": "2026-09-24T19:09:04.240Z"
+  },
+  {
+    "id": "admin-fixture-question-queue",
+    "url": "http://127.0.0.1:5301/admin/research/questions",
+    "at": "2026-09-24T19:17:00.576Z"
+  },
+  {
+    "id": "admin-fixture-question-detail",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "at": "2026-09-24T19:17:10.242Z"
+  },
+  {
+    "id": "admin-fixture-question-detail-settled",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "at": "2026-09-24T19:17:14.198Z"
+  },
+  {
+    "id": "admin-fixture-question-reply-result",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "at": "2026-09-24T19:18:17.185Z"
+  },
+  {
+    "id": "admin-fixture-wrong-role-denied",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "at": "2026-09-24T19:19:07.326Z"
+  },
+  {
+    "id": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "at": "2026-09-24T19:24:41.954Z"
+  },
+  {
+    "id": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "at": "2026-09-24T19:27:12.204Z"
+  },
+  {
+    "id": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "at": "2026-09-24T19:27:41.304Z"
+  },
+  {
+    "id": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "at": "2026-09-24T19:28:39.759Z"
+  },
+  {
+    "id": "public-lot-fixture-lookup",
+    "url": "http://127.0.0.1:5302/research/lots/SYNTHETIC-NO-LOT",
+    "at": "2026-09-24T19:32:57.202Z"
+  },
+  {
+    "id": "public-lot-fixture-lookup-result",
+    "url": "http://127.0.0.1:5302/research/lots/SYNTHETIC-NO-LOT",
+    "at": "2026-09-24T19:33:25.024Z"
+  },
+  {
+    "id": "public-accessibility-policy",
+    "url": "http://127.0.0.1:5302/research/policies/accessibility",
+    "at": "2026-09-24T19:33:26.245Z"
   }
 ]

@@ -1,0 +1,39 @@
+{
+  "matched": [
+    "client/index.html",
+    "client/src/index.css",
+    "client/src/main.tsx",
+    "client/src/pwa/PwaLifecycle.tsx",
+    "client/src/fonts.ts",
+    "client/src/components/Navbar.tsx",
+    "client/src/components/Footer.tsx",
+    "client/src/components/PageShell.tsx",
+    "client/src/components/SeoHead.tsx",
+    "client/src/components/TopRibbon.tsx",
+    "client/src/components/Wordmark.tsx",
+    "client/src/components/ExternalRedirect.tsx",
+    "client/src/pages/Home.tsx",
+    "client/src/pages/not-found.tsx",
+    "client/src/lib/nav.ts",
+    "client/src/lib/tracking.ts",
+    "client/src/lib/attribution.ts",
+    "client/src/lib/content.ts",
+    "client/src/lib/careers.ts",
+    "client/public/sitemap.xml",
+    "client/public/llms.txt",
+    "client/public/robots.txt",
+    "server/static.ts",
+    "package.json",
+    "package-lock.json",
+    "postcss.config.js",
+    "vite.config.ts"
+  ],
+  "mismatches": [
+    {
+      "path": "server/routes.ts",
+      "expected": "sha256:feb276a9f6412c16deb352d267b3c2216ea251b32f0769bd42a66b1edd9f73c4",
+      "actual": "sha256:deb5c6b56ab131965ac857413b066b06db1e003c0ee847c0ffb16ced15860cce"
+    }
+  ],
+  "missing": []
+}

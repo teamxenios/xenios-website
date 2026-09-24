@@ -2211,7 +2211,9 @@
       "baseSha": "c8ea24944f277e5b0770d5446687f2752db3ab73",
       "paths": [
         "docs/ux/xenios-adversarial-audit-20260924/**",
-        ".xenios/sessions/codex-adversarial-audit-20260924.json"
+        ".xenios/sessions/codex-adversarial-audit-20260924.json",
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json"
       ],
       "dependsOn": [],
       "scopeNote": "Audit evidence first. No application edits until baseline. No production mutation or feature activation.",

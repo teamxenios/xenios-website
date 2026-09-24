@@ -1,0 +1,730 @@
+[
+  {
+    "path": "/research/order",
+    "url": "http://127.0.0.1:5299/research/order"
+  },
+  {
+    "path": "/research/supplier-access",
+    "url": "http://127.0.0.1:5299/research/supplier-access"
+  },
+  {
+    "path": "/research/early-access",
+    "url": "http://127.0.0.1:5299/research/early-access"
+  },
+  {
+    "path": "/research/early-access/order-request",
+    "url": "http://127.0.0.1:5299/research/early-access/order-request"
+  },
+  {
+    "path": "/research/apply/status",
+    "url": "http://127.0.0.1:5299/research/apply/status"
+  },
+  {
+    "path": "/research/activate",
+    "url": "http://127.0.0.1:5299/research/activate"
+  },
+  {
+    "path": "/research/access-state",
+    "url": "http://127.0.0.1:5299/research/access-state"
+  },
+  {
+    "path": "/research/order",
+    "url": null
+  },
+  {
+    "path": "/research/early-access",
+    "url": null
+  },
+  {
+    "path": "/research/early-access/order-request",
+    "url": null
+  },
+  {
+    "path": "/research/activate",
+    "url": null
+  },
+  {
+    "path": "/research/access-state",
+    "url": null
+  },
+  {
+    "path": "/research/support",
+    "url": null
+  },
+  {
+    "path": "/research/privacy",
+    "url": null
+  },
+  {
+    "path": "/research/terms",
+    "url": null
+  },
+  {
+    "path": "/research/about",
+    "url": null
+  },
+  {
+    "path": "/research/how-it-works",
+    "url": null
+  },
+  {
+    "path": "/research/faq",
+    "url": null
+  },
+  {
+    "path": "/research/quality",
+    "url": null
+  },
+  {
+    "path": "/research/testing",
+    "url": null
+  },
+  {
+    "path": "/research/documents",
+    "url": null
+  },
+  {
+    "path": "/research/policies",
+    "url": null
+  },
+  {
+    "path": "/research/contact",
+    "url": null
+  },
+  {
+    "path": "/research/organizations",
+    "url": null
+  },
+  {
+    "path": "/research/affiliates",
+    "url": null
+  },
+  {
+    "path": "/product",
+    "url": "http://127.0.0.1:5299/product"
+  },
+  {
+    "path": "/how-it-works",
+    "url": "http://127.0.0.1:5299/how-it-works"
+  },
+  {
+    "path": "/for-coaches",
+    "url": "http://127.0.0.1:5299/for-coaches"
+  },
+  {
+    "path": "/for-clients",
+    "url": "http://127.0.0.1:5299/for-clients"
+  },
+  {
+    "path": "/storefront",
+    "url": "http://127.0.0.1:5299/storefront"
+  },
+  {
+    "path": "/network",
+    "url": "http://127.0.0.1:5299/network"
+  },
+  {
+    "path": "/ecosystem",
+    "url": "http://127.0.0.1:5299/ecosystem"
+  },
+  {
+    "path": "/for-practitioners",
+    "url": "http://127.0.0.1:5299/for-practitioners"
+  },
+  {
+    "path": "/manifesto",
+    "url": "http://127.0.0.1:5299/manifesto"
+  },
+  {
+    "path": "/about",
+    "url": "http://127.0.0.1:5299/about"
+  },
+  {
+    "path": "/waitlist",
+    "url": "http://127.0.0.1:5299/waitlist"
+  },
+  {
+    "path": "/contact",
+    "url": "http://127.0.0.1:5299/contact"
+  },
+  {
+    "path": "/security",
+    "url": "http://127.0.0.1:5299/security"
+  },
+  {
+    "path": "/compliance",
+    "url": "http://127.0.0.1:5299/compliance"
+  },
+  {
+    "path": "/investors",
+    "url": "http://127.0.0.1:5299/investors"
+  },
+  {
+    "path": "/press",
+    "url": "http://127.0.0.1:5299/press"
+  },
+  {
+    "path": "/privacy",
+    "url": "http://127.0.0.1:5299/privacy"
+  },
+  {
+    "path": "/terms",
+    "url": "http://127.0.0.1:5299/terms"
+  },
+  {
+    "path": "/disclosures",
+    "url": "http://127.0.0.1:5299/disclosures"
+  },
+  {
+    "path": "/early-interest",
+    "url": "http://127.0.0.1:5299/early-interest"
+  },
+  {
+    "path": "/book",
+    "url": "http://127.0.0.1:5299/book"
+  },
+  {
+    "path": "/concepts",
+    "url": "http://127.0.0.1:5299/concepts"
+  },
+  {
+    "path": "/mvps",
+    "url": "http://127.0.0.1:5299/mvps"
+  },
+  {
+    "path": "/argos",
+    "url": "http://127.0.0.1:5299/mvps"
+  },
+  {
+    "path": "/telemedicine",
+    "url": "http://127.0.0.1:5299/product"
+  },
+  {
+    "path": "/agents",
+    "url": "http://127.0.0.1:5299/product"
+  },
+  {
+    "path": "/developers",
+    "url": "http://127.0.0.1:5299/ecosystem"
+  },
+  {
+    "path": "/enterprise",
+    "url": "http://127.0.0.1:5299/contact"
+  },
+  {
+    "path": "/ontology",
+    "url": "http://127.0.0.1:5299/product"
+  },
+  {
+    "path": "/partners",
+    "url": "http://127.0.0.1:5299/ecosystem"
+  },
+  {
+    "path": "/faq",
+    "url": "http://127.0.0.1:5299/product"
+  },
+  {
+    "path": "/research/member/welcome",
+    "url": "http://127.0.0.1:5299/research/member/welcome"
+  },
+  {
+    "path": "/research/account/orders",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Forders"
+  },
+  {
+    "path": "/research/account/subscription",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fsubscription"
+  },
+  {
+    "path": "/research/account/care",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fcare"
+  },
+  {
+    "path": "/research/account/documents",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fdocuments"
+  },
+  {
+    "path": "/research/account/profile",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fprofile"
+  },
+  {
+    "path": "/research/account/security",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fsecurity"
+  },
+  {
+    "path": "/research/account/interests",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Finterests"
+  },
+  {
+    "path": "/research/account/support",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fsupport"
+  },
+  {
+    "path": "/research/account",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount"
+  },
+  {
+    "path": "/research/member",
+    "url": "http://127.0.0.1:5299/research/member"
+  },
+  {
+    "path": "/research/member/membership",
+    "url": "http://127.0.0.1:5299/research/member/membership"
+  },
+  {
+    "path": "/research/member/security",
+    "url": "http://127.0.0.1:5299/research/member/security"
+  },
+  {
+    "path": "/research/member/privacy",
+    "url": "http://127.0.0.1:5299/research/member/privacy"
+  },
+  {
+    "path": "/research/member/profile",
+    "url": "http://127.0.0.1:5299/research/member/profile"
+  },
+  {
+    "path": "/research/member/assessment",
+    "url": "http://127.0.0.1:5299/research/member/assessment"
+  },
+  {
+    "path": "/research/member/blueprint",
+    "url": "http://127.0.0.1:5299/research/member/blueprint"
+  },
+  {
+    "path": "/research/member/xenios-30",
+    "url": "http://127.0.0.1:5299/research/member/xenios-30"
+  },
+  {
+    "path": "/research/member/xenios-90",
+    "url": "http://127.0.0.1:5299/research/member/xenios-90"
+  },
+  {
+    "path": "/research/member/documents",
+    "url": "http://127.0.0.1:5299/research/member/documents"
+  },
+  {
+    "path": "/research/member/documents-center",
+    "url": "http://127.0.0.1:5299/research/member/documents-center"
+  },
+  {
+    "path": "/research/member/tracker",
+    "url": "http://127.0.0.1:5299/research/member/tracker"
+  },
+  {
+    "path": "/research/member/goals",
+    "url": "http://127.0.0.1:5299/research/member/goals"
+  },
+  {
+    "path": "/research/member/products",
+    "url": "http://127.0.0.1:5299/research/member/products"
+  },
+  {
+    "path": "/research/member/catalog",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Fmember%2Fcatalog"
+  },
+  {
+    "path": "/research/member/kris-catalog",
+    "url": "http://127.0.0.1:5299/research/member/kris-catalog"
+  },
+  {
+    "path": "/research/member/supplements",
+    "url": "http://127.0.0.1:5299/research/member/supplements"
+  },
+  {
+    "path": "/research/member/metabolic-care",
+    "url": "http://127.0.0.1:5299/research/member/metabolic-care"
+  },
+  {
+    "path": "/research/member/diagnostics",
+    "url": "http://127.0.0.1:5299/research/member/diagnostics"
+  },
+  {
+    "path": "/research/member/storage",
+    "url": "http://127.0.0.1:5299/research/member/storage"
+  },
+  {
+    "path": "/research/member/education",
+    "url": "http://127.0.0.1:5299/research/member/education"
+  },
+  {
+    "path": "/research/member/support",
+    "url": "http://127.0.0.1:5299/research/member/support"
+  },
+  {
+    "path": "/research/member/product-requests/new",
+    "url": "http://127.0.0.1:5299/research/member/product-requests/new"
+  },
+  {
+    "path": "/research/member/product-requests",
+    "url": "http://127.0.0.1:5299/research/member/product-requests"
+  },
+  {
+    "path": "/research/member/guides",
+    "url": "http://127.0.0.1:5299/research/member/guides"
+  },
+  {
+    "path": "/research/member/cart",
+    "url": "http://127.0.0.1:5299/research/member/cart"
+  },
+  {
+    "path": "/research/member/checkout",
+    "url": "http://127.0.0.1:5299/research/member/checkout"
+  },
+  {
+    "path": "/research/member/orders",
+    "url": "http://127.0.0.1:5299/research/member/orders"
+  },
+  {
+    "path": "/research/member/subscriptions",
+    "url": "http://127.0.0.1:5299/research/member/subscriptions"
+  },
+  {
+    "path": "/research/member/questions",
+    "url": "http://127.0.0.1:5299/research/member/questions"
+  },
+  {
+    "path": "/research/member/referrals",
+    "url": "http://127.0.0.1:5299/research/member/referrals"
+  },
+  {
+    "path": "/research/partners/apply",
+    "url": "http://127.0.0.1:5299/research/partners/apply"
+  },
+  {
+    "path": "/research/partners/onboarding",
+    "url": "http://127.0.0.1:5299/research/partners/onboarding"
+  },
+  {
+    "path": "/research/partners/training",
+    "url": "http://127.0.0.1:5299/research/partners/training"
+  },
+  {
+    "path": "/research/partners/dashboard",
+    "url": "http://127.0.0.1:5299/research/partners/dashboard"
+  },
+  {
+    "path": "/research/partners/links",
+    "url": "http://127.0.0.1:5299/research/partners/links"
+  },
+  {
+    "path": "/research/partners/campaigns",
+    "url": "http://127.0.0.1:5299/research/partners/campaigns"
+  },
+  {
+    "path": "/research/partners/events",
+    "url": "http://127.0.0.1:5299/research/partners/events"
+  },
+  {
+    "path": "/research/partners/leads",
+    "url": "http://127.0.0.1:5299/research/partners/leads"
+  },
+  {
+    "path": "/research/partners/conversions",
+    "url": "http://127.0.0.1:5299/research/partners/conversions"
+  },
+  {
+    "path": "/research/partners/commissions",
+    "url": "http://127.0.0.1:5299/research/partners/commissions"
+  },
+  {
+    "path": "/research/partners/payouts",
+    "url": "http://127.0.0.1:5299/research/partners/payouts"
+  },
+  {
+    "path": "/research/partners/organizations",
+    "url": "http://127.0.0.1:5299/research/partners/organizations"
+  },
+  {
+    "path": "/research/partners/compliance",
+    "url": "http://127.0.0.1:5299/research/partners/compliance"
+  },
+  {
+    "path": "/research/partners/resources",
+    "url": "http://127.0.0.1:5299/research/partners/resources"
+  },
+  {
+    "path": "/research/partners/support",
+    "url": "http://127.0.0.1:5299/research/partners/support"
+  },
+  {
+    "path": "/research/partners/security",
+    "url": "http://127.0.0.1:5299/research/partners/security"
+  },
+  {
+    "path": "/research/membership",
+    "url": "http://127.0.0.1:5299/research/membership"
+  },
+  {
+    "path": "/admin",
+    "url": null
+  },
+  {
+    "path": "/admin/research",
+    "url": null
+  },
+  {
+    "path": "/admin/research/command-center",
+    "url": null
+  },
+  {
+    "path": "/admin/research/care-requests",
+    "url": null
+  },
+  {
+    "path": "/admin/research/referral-lifecycle",
+    "url": null
+  },
+  {
+    "path": "/admin/research/applications",
+    "url": null
+  },
+  {
+    "path": "/admin/research/members",
+    "url": null
+  },
+  {
+    "path": "/admin/research/plans",
+    "url": null
+  },
+  {
+    "path": "/admin/research/blueprint-review",
+    "url": null
+  },
+  {
+    "path": "/admin/research/products",
+    "url": null
+  },
+  {
+    "path": "/admin/research/product-configuration",
+    "url": null
+  },
+  {
+    "path": "/admin/research/product-requests",
+    "url": null
+  },
+  {
+    "path": "/admin/research/inventory/lots",
+    "url": null
+  },
+  {
+    "path": "/admin/research/inventory/coas",
+    "url": null
+  },
+  {
+    "path": "/admin/research/inventory",
+    "url": null
+  },
+  {
+    "path": "/admin/research/assisted-orders",
+    "url": null
+  },
+  {
+    "path": "/admin/research/orders",
+    "url": null
+  },
+  {
+    "path": "/admin/research/fulfillment",
+    "url": null
+  },
+  {
+    "path": "/admin/research/commerce-queues",
+    "url": null
+  },
+  {
+    "path": "/admin/research/questions",
+    "url": null
+  },
+  {
+    "path": "/admin/research/guides",
+    "url": null
+  },
+  {
+    "path": "/admin/research/partners",
+    "url": null
+  },
+  {
+    "path": "/admin/research/resource-hub",
+    "url": null
+  },
+  {
+    "path": "/admin/research/security",
+    "url": null
+  },
+  {
+    "path": "/admin/research/privacy",
+    "url": null
+  },
+  {
+    "path": "/admin/research/capabilities",
+    "url": null
+  },
+  {
+    "path": "/admin/research/required-inputs",
+    "url": null
+  },
+  {
+    "path": "/admin/research/activation-queue",
+    "url": null
+  },
+  {
+    "path": "/admin/research/activation-bridge",
+    "url": null
+  },
+  {
+    "path": "/admin/research/activation-checklist",
+    "url": null
+  },
+  {
+    "path": "/admin/research/activation-reconciliation",
+    "url": null
+  },
+  {
+    "path": "/admin/research/activation-readiness",
+    "url": null
+  },
+  {
+    "path": "/admin/research/esign",
+    "url": null
+  },
+  {
+    "path": "/admin/research/early-access/releases",
+    "url": null
+  },
+  {
+    "path": "/admin/research/early-access/payments",
+    "url": null
+  },
+  {
+    "path": "/admin/research/early-access/fulfillment",
+    "url": null
+  },
+  {
+    "path": "/admin/research/audit",
+    "url": null
+  },
+  {
+    "path": "/careers",
+    "url": "http://127.0.0.1:5299/careers"
+  },
+  {
+    "path": "/careers/innovative-product-builder",
+    "url": "http://127.0.0.1:5299/careers/founding-senior-ai-software-engineer"
+  },
+  {
+    "path": "/health",
+    "url": "http://127.0.0.1:5299/health"
+  },
+  {
+    "path": "/research/apply/review",
+    "url": "http://127.0.0.1:5299/research/apply/review"
+  },
+  {
+    "path": "/research/apply/success",
+    "url": "http://127.0.0.1:5299/research/apply/success"
+  },
+  {
+    "path": "/research/application/status",
+    "url": "http://127.0.0.1:5299/research/application/status"
+  },
+  {
+    "path": "/research/application-status",
+    "url": "http://127.0.0.1:5299/research/application-status"
+  },
+  {
+    "path": "/research/products",
+    "url": "http://127.0.0.1:5299/research/products"
+  },
+  {
+    "path": "/research/products/peptides",
+    "url": "http://127.0.0.1:5299/research/products/peptides"
+  },
+  {
+    "path": "/research/products/supplements",
+    "url": "http://127.0.0.1:5299/research/products/supplements"
+  },
+  {
+    "path": "/research/products/quantum",
+    "url": "http://127.0.0.1:5299/research/products/quantum"
+  },
+  {
+    "path": "/research/guides",
+    "url": "http://127.0.0.1:5299/research/guides"
+  },
+  {
+    "path": "/research/orders",
+    "url": "http://127.0.0.1:5299/research/orders"
+  },
+  {
+    "path": "/research/subscriptions",
+    "url": "http://127.0.0.1:5299/research/subscriptions"
+  },
+  {
+    "path": "/research/referrals",
+    "url": "http://127.0.0.1:5299/research/referrals"
+  },
+  {
+    "path": "/research/profile",
+    "url": "http://127.0.0.1:5299/research/profile"
+  },
+  {
+    "path": "/research/systems",
+    "url": "http://127.0.0.1:5299/research/systems"
+  },
+  {
+    "path": "/research/peptides",
+    "url": "http://127.0.0.1:5299/research/peptides"
+  },
+  {
+    "path": "/research/supplements",
+    "url": "http://127.0.0.1:5299/research/supplements"
+  },
+  {
+    "path": "/research/quantum",
+    "url": "http://127.0.0.1:5299/research/quantum"
+  },
+  {
+    "path": "/research/shop",
+    "url": "http://127.0.0.1:5299/research/shop"
+  },
+  {
+    "path": "/research/build-a-system",
+    "url": "http://127.0.0.1:5299/research/build-a-system"
+  },
+  {
+    "path": "/research/learn",
+    "url": "http://127.0.0.1:5299/research/learn"
+  },
+  {
+    "path": "/research/cart",
+    "url": "http://127.0.0.1:5299/research/cart"
+  },
+  {
+    "path": "/research/framework",
+    "url": "http://127.0.0.1:5299/research/framework"
+  },
+  {
+    "path": "/research/programs",
+    "url": "http://127.0.0.1:5299/research/programs"
+  },
+  {
+    "path": "/research/professionals",
+    "url": "http://127.0.0.1:5299/research/professionals"
+  },
+  {
+    "path": "/research/access",
+    "url": "http://127.0.0.1:5299/research/access"
+  },
+  {
+    "path": "/research/wholesale",
+    "url": "http://127.0.0.1:5299/research/wholesale"
+  },
+  {
+    "path": "/research/access-gate",
+    "url": "http://127.0.0.1:5299/research/access-gate"
+  },
+  {
+    "path": "/admin/research/inventory",
+    "url": "http://127.0.0.1:5299/admin/research/inventory/lots"
+  }
+]

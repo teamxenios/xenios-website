@@ -2,1333 +2,1780 @@
   {
     "source": "client/src/App.tsx",
     "path": "/",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "candidate-home-mobile.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/product",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_product.txt",
+      "baseline-_telemedicine.txt",
+      "baseline-_agents.txt",
+      "baseline-_ontology.txt",
+      "baseline-_faq.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/how-it-works",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_how-it-works.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/for-coaches",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_for-coaches.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/for-clients",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_for-clients.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/storefront",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_storefront.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/network",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_network.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/ecosystem",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_ecosystem.txt",
+      "baseline-_developers.txt",
+      "baseline-_partners.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/for-practitioners",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_for-practitioners.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/for/:slug",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/App.tsx",
     "path": "/manifesto",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_manifesto.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/about",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_about.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/careers/innovative-product-builder",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "evidence/route-visits.json (requested route may redirect)"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/careers/:slug",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_careers_innovative-product-builder.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/careers",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_careers.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/waitlist",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_waitlist.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/contact",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_contact.txt",
+      "baseline-_enterprise.txt",
+      "repair-corporate-contact-accepted.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/security",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_security.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/compliance",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_compliance.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/investors",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_investors.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/press",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_press.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/privacy",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_privacy.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/terms",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_terms.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/disclosures",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_disclosures.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/early-interest",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_early-interest.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/book",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_book.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/concepts",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_concepts.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/admin",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/admin/research",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/admin/research/*",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "ROUTER WILDCARD; not a discrete scenario",
+    "evidence": []
   },
   {
     "source": "client/src/App.tsx",
     "path": "/health",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_health.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/r/:code",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/App.tsx",
     "path": "/research",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "account-signout-result.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/research/*",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "ROUTER WILDCARD; not a discrete scenario",
+    "evidence": []
   },
   {
     "source": "client/src/App.tsx",
     "path": "/care/eligibility",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_care_eligibility.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/care/consent",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_care_consent.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/care/appointments",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_care_appointments.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/care/prescriptions",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_care_prescriptions.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/care/pharmacy",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_care_pharmacy.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/care",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_care.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/care/*",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "ROUTER WILDCARD; not a discrete scenario",
+    "evidence": []
   },
   {
     "source": "client/src/App.tsx",
     "path": "/mvps",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_mvps.txt",
+      "baseline-_argos.txt"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/kairos",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/App.tsx",
     "path": "/argos",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "evidence/route-visits.json (requested route may redirect)"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/telemedicine",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "evidence/route-visits.json (requested route may redirect)"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/agents",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "evidence/route-visits.json (requested route may redirect)"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/developers",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "evidence/route-visits.json (requested route may redirect)"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/enterprise",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "evidence/route-visits.json (requested route may redirect)"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/ontology",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "evidence/route-visits.json (requested route may redirect)"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/partners",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "evidence/route-visits.json (requested route may redirect)"
+    ]
   },
   {
     "source": "client/src/App.tsx",
     "path": "/faq",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "evidence/route-visits.json (requested route may redirect)"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "account-signout-result.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/access-hub",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "candidate-access-hub-mobile.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/order",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_order.txt",
+      "baseline-_research_order.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/supplier-access",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_supplier-access.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/early-access",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_early-access.txt",
+      "baseline-_research_early-access.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/early-access/order-request",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_early-access_order-request.txt",
+      "baseline-_research_early-access_order-request.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/early-access/order-request/confirmation/:publicReference",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/early-access/order-request/:publicReference",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/apply",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "candidate-application-closed.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/apply/review",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_apply_review.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/apply/success",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_apply_success.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/apply/status",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_apply_status.txt",
+      "status-invalid-token.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/application/status",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_application_status.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/application-status",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_application-status.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/sign-in",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "candidate-partner-signin-return.txt",
+      "signedout-_research_account_orders.txt",
+      "signedout-_research_account_subscription.txt",
+      "signedout-_research_account_care.txt",
+      "signedout-_research_account_documents.txt",
+      "signedout-_research_account_profile.txt",
+      "signedout-_research_account_security.txt",
+      "signedout-_research_account_interests.txt",
+      "signedout-_research_account_support.txt",
+      "signedout-_research_account.txt",
+      "signedout-_research_member_catalog.txt",
+      "signin-external-return-rejected.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/reset-password",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "candidate-reset-no-session.txt",
+      "candidate-reset-unavailable-submit.txt",
+      "candidate-reset-unavailable-result.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/activate",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_activate.txt",
+      "baseline-_research_activate.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/access-state",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_access-state.txt",
+      "baseline-_research_access-state.txt",
+      "account-paused-signin.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/welcome",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_welcome.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/support",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_support.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/privacy",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_privacy.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/terms",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_terms.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/about",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_about.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/how-it-works",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_how-it-works.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/faq",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_faq.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/quality",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_quality.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/testing",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_testing.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/documents",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_documents.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/lots/:lotCode",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "public-lot-fixture-lookup.txt",
+      "public-lot-fixture-lookup-result.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/policies",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_policies.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/contact",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_contact.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/organizations",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_organizations.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "candidate-partners-mobile.txt",
+      "candidate-partnership-submit-no-provider.txt",
+      "candidate-partnership-no-provider-result.txt",
+      "repair-no-provider-result.txt",
+      "repair-synthetic-accepted.txt",
+      "repair-synthetic-courtesy-failure.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/affiliates",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "baseline-_research_affiliates.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/policies/:policy",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "public-accessibility-policy.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/__gallery/:page",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/account/orders/:reference",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/account/orders",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "account-rich-orders.txt",
+      "account-empty-orders.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/account/subscription",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "account-rich-subscription.txt",
+      "account-empty-subscription.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/account/care",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "account-rich-care.txt",
+      "account-empty-care.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/account/documents",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "account-rich-documents.txt",
+      "account-empty-documents.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/account/profile",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "account-rich-profile.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/account/security",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "account-rich-security.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/account/interests",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "account-rich-interests.txt",
+      "account-empty-interests.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/account/support",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "account-rich-support.txt",
+      "account-rich-support-submit.txt",
+      "account-rich-support-result.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/account",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "account-rich-overview.txt",
+      "account-empty-account.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/membership",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_membership.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/security",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_security.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/privacy",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_privacy.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/profile",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_profile.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/assessment",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_assessment.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/blueprint",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_blueprint.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/xenios-30",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_xenios-30.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/xenios-90",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_xenios-90.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/documents",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_documents.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/documents-center",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_documents-center.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/tracker",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_tracker.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/goals",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_goals.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/goals/:slug",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/products",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_products.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/products/:slug",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/catalog/:family/:slug",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/catalog",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "account-rich-catalog.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/kris-catalog/:family/:slug",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/kris-catalog",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_kris-catalog.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/supplements",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_supplements.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/metabolic-care",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_metabolic-care.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/diagnostics",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_diagnostics.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/storage",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_storage.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/education",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_education.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/support",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_support.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/product-requests/new",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_product-requests_new.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/product-requests",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_product-requests.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/guides",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_guides.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/guides/:slug",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/cart",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_cart.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/checkout",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_checkout.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/orders",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_orders.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/orders/:id",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/subscriptions",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_subscriptions.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/questions",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_questions.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/member/referrals",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_member_referrals.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/apply",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_apply.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/onboarding",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_onboarding.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/training",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_training.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/dashboard",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "candidate-partner-signed-out.txt",
+      "account-rich-dashboard.txt",
+      "account-empty-partner-direct.txt",
+      "signedout-_research_partners_dashboard.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/links",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_links.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/campaigns",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_campaigns.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/events",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_events.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/leads",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_leads.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/conversions",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_conversions.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/commissions",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_commissions.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/payouts",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_payouts.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/organizations",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_organizations.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/compliance",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_compliance.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/resources",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_resources.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/support",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_support.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/partners/security",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_partners_security.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/products",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_products.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/products/peptides",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_products_peptides.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/products/supplements",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_products_supplements.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/products/quantum",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_products_quantum.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/products/:slug",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_products_peptides.txt",
+      "alias-_research_products_supplements.txt",
+      "alias-_research_products_quantum.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/product/:slug",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/guides",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_guides.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/orders",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_orders.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/subscriptions",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_subscriptions.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/referrals",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_referrals.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/profile",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_profile.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/systems",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_systems.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/peptides",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_peptides.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/supplements",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_supplements.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/quantum",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_quantum.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/shop",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_shop.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/build-a-system",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_build-a-system.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/learn",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_learn.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/cart",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_cart.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/membership",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_research_membership.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/framework",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_framework.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/programs",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_programs.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/professionals",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_professionals.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/access",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_access.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/wholesale",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_wholesale.txt"
+    ]
   },
   {
     "source": "client/src/research/section.tsx",
     "path": "/research/access-gate",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "alias-_research_access-gate.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/command-center",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_command-center.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/care-requests",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_care-requests.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/referral-lifecycle",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_referral-lifecycle.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/applications",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_applications.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/applications/:id",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/members",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_members.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/members/:id",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/plans",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_plans.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/plans/:id",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/blueprint-review",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_blueprint-review.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/products",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_products.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/products/:id",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/product-configuration",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_product-configuration.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/product-requests",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_product-requests.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/product-requests/:id",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/inventory/lots",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_inventory_lots.txt",
+      "signedout-_admin_research_inventory.txt",
+      "admin-signedout-settled.txt",
+      "alias-_admin_research_inventory.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/inventory/coas",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_inventory_coas.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/inventory",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "evidence/route-visits.json (requested route may redirect)"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/assisted-orders",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_assisted-orders.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/assisted-orders/:requestId",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/orders",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_orders.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/orders/:id",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/fulfillment",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_fulfillment.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/commerce-queues",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_commerce-queues.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/questions",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_questions.txt",
+      "admin-fixture-question-queue.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/questions/:id",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "admin-fixture-question-detail.txt",
+      "admin-fixture-question-detail-settled.txt",
+      "admin-fixture-question-reply-result.txt",
+      "admin-fixture-wrong-role-denied.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/guides",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_guides.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/guides/:id",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/partners",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_partners.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/partners/:id",
     "status": "NOT RUN",
-    "evidence": null
+    "evidence": []
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/resource-hub",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_resource-hub.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/security",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_security.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/privacy",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_privacy.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/capabilities",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_capabilities.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/required-inputs",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_required-inputs.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/activation-queue",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_activation-queue.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/activation-bridge",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_activation-bridge.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/activation-checklist",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_activation-checklist.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/activation-reconciliation",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_activation-reconciliation.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/activation-readiness",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_activation-readiness.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/esign",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_esign.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/early-access/releases",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_early-access_releases.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/early-access/payments",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_early-access_payments.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/early-access/fulfillment",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_early-access_fulfillment.txt"
+    ]
   },
   {
     "source": "client/src/research/adminx-section.tsx",
     "path": "/admin/research/audit",
-    "status": "NOT RUN",
-    "evidence": null
+    "status": "BROWSER ENTRY OBSERVED; full lifecycle NOT QUALIFIED",
+    "evidence": [
+      "signedout-_admin_research_audit.txt"
+    ]
   }
 ]

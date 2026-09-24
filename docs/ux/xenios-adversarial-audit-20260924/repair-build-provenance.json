@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "kind": "xenios-evidence-build-provenance",
+  "candidateSha": "02d525baa7d784ed16e297c1d17b1e4050ecf4cc",
+  "sourceTree": "cd9b2abf2fc90c01956e447fd4c124b3093ff343",
+  "builtAtUtc": "2026-09-24T19:21:01.275Z",
+  "nodeVersion": "v20.19.0",
+  "npmVersion": "10.8.2",
+  "packageLockSha256": "d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8",
+  "installMethod": "npm ci --no-audit --no-fund",
+  "distFileCount": 346,
+  "distInventorySha256": "f51b1a21d6f8667b4939219ac2c12981dfa7ef06a769dc33afb5dc0716759be1"
+}

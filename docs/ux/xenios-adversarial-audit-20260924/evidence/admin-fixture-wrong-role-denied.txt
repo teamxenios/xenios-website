@@ -1,0 +1,58 @@
+- region "Notifications (F8)":
+  - list
+- link "xenios research ops":
+  - /url: /admin
+  - text: xenios
+  - generic: research ops
+- navigation "Admin destinations":
+  - link "Founder home":
+    - /url: /admin/research/command-center
+  - link "Growth / site admin":
+    - /url: /admin
+  - link "Back to site":
+    - /url: /
+- navigation "Research operations areas":
+  - link "Overview":
+    - /url: /admin/research
+  - generic "Founder":
+    - generic: Founder
+    - generic: +
+  - generic "Care":
+    - generic: Care
+    - generic: +
+  - generic "Members":
+    - generic: Members
+    - generic: −
+  - link "Applications":
+    - /url: /admin/research/applications
+  - link "Account inspection":
+    - /url: /admin/research/members
+  - link "Plan review":
+    - /url: /admin/research/blueprint-review
+  - link "Questions":
+    - /url: /admin/research/questions
+  - generic "Commerce":
+    - generic: Commerce
+    - generic: +
+  - generic "Activation":
+    - generic: Activation
+    - generic: +
+  - generic "Content & partners":
+    - generic: Content & partners
+    - generic: +
+  - generic "Governance":
+    - generic: Governance
+    - generic: +
+- banner:
+  - paragraph: Operations
+  - heading "Question" [level=1]
+  - button "Sign out"
+  - link "Back to questions":
+    - /url: /admin/research/questions
+  - paragraph: One member question and its thread. Replies always come from a named person.
+- main:
+  - paragraph: Access denied.
+  - paragraph: Forbidden
+  - paragraph: 🔒 Question content can contain health context. It renders only on this page, for the signed-in reviewer, and replies are always from a named person, never automated.
+- region "Notifications (F8)":
+  - list

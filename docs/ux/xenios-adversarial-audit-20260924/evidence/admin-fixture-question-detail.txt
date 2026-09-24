@@ -1,0 +1,7 @@
+- region "Notifications (F8)":
+  - list
+- text: + + − + + + +
+- status:
+  - paragraph: Loading...
+- region "Notifications (F8)":
+  - list

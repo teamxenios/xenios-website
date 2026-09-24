@@ -25262,5 +25262,1253 @@
     "evidence": "alias-_admin_research_inventory",
     "url": "http://127.0.0.1:5299/admin/research/inventory/lots",
     "status": "NOT RUN"
+  },
+  {
+    "href": "/admin",
+    "index": 0,
+    "label": "xenios research ops",
+    "evidence": "admin-fixture-question-queue",
+    "url": "http://127.0.0.1:5301/admin/research/questions",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/command-center",
+    "index": 1,
+    "label": "Founder home",
+    "evidence": "admin-fixture-question-queue",
+    "url": "http://127.0.0.1:5301/admin/research/questions",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin",
+    "index": 2,
+    "label": "Growth / site admin",
+    "evidence": "admin-fixture-question-queue",
+    "url": "http://127.0.0.1:5301/admin/research/questions",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/",
+    "index": 3,
+    "label": "Back to site",
+    "evidence": "admin-fixture-question-queue",
+    "url": "http://127.0.0.1:5301/admin/research/questions",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research",
+    "index": 4,
+    "label": "Overview",
+    "evidence": "admin-fixture-question-queue",
+    "url": "http://127.0.0.1:5301/admin/research/questions",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/applications",
+    "index": 5,
+    "label": "Applications",
+    "evidence": "admin-fixture-question-queue",
+    "url": "http://127.0.0.1:5301/admin/research/questions",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/members",
+    "index": 6,
+    "label": "Account inspection",
+    "evidence": "admin-fixture-question-queue",
+    "url": "http://127.0.0.1:5301/admin/research/questions",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/blueprint-review",
+    "index": 7,
+    "label": "Plan review",
+    "evidence": "admin-fixture-question-queue",
+    "url": "http://127.0.0.1:5301/admin/research/questions",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/questions",
+    "index": 8,
+    "label": "Questions",
+    "evidence": "admin-fixture-question-queue",
+    "url": "http://127.0.0.1:5301/admin/research/questions",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/questions/question-preview-one",
+    "index": 9,
+    "label": "member@preview.invalid",
+    "evidence": "admin-fixture-question-queue",
+    "url": "http://127.0.0.1:5301/admin/research/questions",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin",
+    "index": 0,
+    "label": "xenios research ops",
+    "evidence": "admin-fixture-question-detail-settled",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/command-center",
+    "index": 1,
+    "label": "Founder home",
+    "evidence": "admin-fixture-question-detail-settled",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin",
+    "index": 2,
+    "label": "Growth / site admin",
+    "evidence": "admin-fixture-question-detail-settled",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/",
+    "index": 3,
+    "label": "Back to site",
+    "evidence": "admin-fixture-question-detail-settled",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research",
+    "index": 4,
+    "label": "Overview",
+    "evidence": "admin-fixture-question-detail-settled",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/applications",
+    "index": 5,
+    "label": "Applications",
+    "evidence": "admin-fixture-question-detail-settled",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/members",
+    "index": 6,
+    "label": "Account inspection",
+    "evidence": "admin-fixture-question-detail-settled",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/blueprint-review",
+    "index": 7,
+    "label": "Plan review",
+    "evidence": "admin-fixture-question-detail-settled",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/questions",
+    "index": 8,
+    "label": "Questions",
+    "evidence": "admin-fixture-question-detail-settled",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/questions",
+    "index": 9,
+    "label": "Back to questions",
+    "evidence": "admin-fixture-question-detail-settled",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin",
+    "index": 0,
+    "label": "xenios research ops",
+    "evidence": "admin-fixture-question-reply-result",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/command-center",
+    "index": 1,
+    "label": "Founder home",
+    "evidence": "admin-fixture-question-reply-result",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin",
+    "index": 2,
+    "label": "Growth / site admin",
+    "evidence": "admin-fixture-question-reply-result",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/",
+    "index": 3,
+    "label": "Back to site",
+    "evidence": "admin-fixture-question-reply-result",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research",
+    "index": 4,
+    "label": "Overview",
+    "evidence": "admin-fixture-question-reply-result",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/applications",
+    "index": 5,
+    "label": "Applications",
+    "evidence": "admin-fixture-question-reply-result",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/members",
+    "index": 6,
+    "label": "Account inspection",
+    "evidence": "admin-fixture-question-reply-result",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/blueprint-review",
+    "index": 7,
+    "label": "Plan review",
+    "evidence": "admin-fixture-question-reply-result",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/questions",
+    "index": 8,
+    "label": "Questions",
+    "evidence": "admin-fixture-question-reply-result",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/questions",
+    "index": 9,
+    "label": "Back to questions",
+    "evidence": "admin-fixture-question-reply-result",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin",
+    "index": 0,
+    "label": "xenios research ops",
+    "evidence": "admin-fixture-wrong-role-denied",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/command-center",
+    "index": 1,
+    "label": "Founder home",
+    "evidence": "admin-fixture-wrong-role-denied",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin",
+    "index": 2,
+    "label": "Growth / site admin",
+    "evidence": "admin-fixture-wrong-role-denied",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/",
+    "index": 3,
+    "label": "Back to site",
+    "evidence": "admin-fixture-wrong-role-denied",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research",
+    "index": 4,
+    "label": "Overview",
+    "evidence": "admin-fixture-wrong-role-denied",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/applications",
+    "index": 5,
+    "label": "Applications",
+    "evidence": "admin-fixture-wrong-role-denied",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/members",
+    "index": 6,
+    "label": "Account inspection",
+    "evidence": "admin-fixture-wrong-role-denied",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/blueprint-review",
+    "index": 7,
+    "label": "Plan review",
+    "evidence": "admin-fixture-wrong-role-denied",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/questions",
+    "index": 8,
+    "label": "Questions",
+    "evidence": "admin-fixture-wrong-role-denied",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/admin/research/questions",
+    "index": 9,
+    "label": "Back to questions",
+    "evidence": "admin-fixture-wrong-role-denied",
+    "url": "http://127.0.0.1:5301/admin/research/questions/question-preview-one",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research",
+    "index": 0,
+    "label": "xeniosresearch",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research",
+    "index": 1,
+    "label": "Back to gateway",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "#partnership-inquiry",
+    "index": 2,
+    "label": "Prepare an inquiry",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/partners/dashboard",
+    "index": 3,
+    "label": "Existing partner access",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/organizations",
+    "index": 4,
+    "label": "Explore organization access",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/organizations",
+    "index": 5,
+    "label": "Review the clinic pathway",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/organizations",
+    "index": 6,
+    "label": "Review provider boundaries",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/affiliates",
+    "index": 7,
+    "label": "Explore affiliate access",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/affiliates",
+    "index": 8,
+    "label": "Review the collective boundary",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/supplier-access",
+    "index": 9,
+    "label": "Review supplier access",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "#partnership-inquiry",
+    "index": 10,
+    "label": "Prepare a white-label inquiry",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "#partnership-inquiry",
+    "index": 11,
+    "label": "Prepare a strategic inquiry",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/health",
+    "index": 12,
+    "label": "xenios care + research",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/care",
+    "index": 13,
+    "label": "Care",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/access-hub",
+    "index": 14,
+    "label": "Research",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/how-it-works",
+    "index": 15,
+    "label": "How it works",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/quality",
+    "index": 16,
+    "label": "Quality",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/faq",
+    "index": 17,
+    "label": "FAQ",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/about",
+    "index": 18,
+    "label": "About",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/partners",
+    "index": 19,
+    "label": "Partners",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/policies",
+    "index": 20,
+    "label": "Policies",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/contact",
+    "index": 21,
+    "label": "Contact",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/support",
+    "index": 22,
+    "label": "Support",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/sign-in",
+    "index": 23,
+    "label": "Sign in",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/privacy",
+    "index": 24,
+    "label": "Privacy",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/terms",
+    "index": 25,
+    "label": "Terms",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/policies/accessibility",
+    "index": 26,
+    "label": "Accessibility",
+    "evidence": "repair-no-provider-result",
+    "url": "http://127.0.0.1:5302/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research",
+    "index": 0,
+    "label": "xeniosresearch",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research",
+    "index": 1,
+    "label": "Back to gateway",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "#partnership-inquiry",
+    "index": 2,
+    "label": "Prepare an inquiry",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/partners/dashboard",
+    "index": 3,
+    "label": "Existing partner access",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/organizations",
+    "index": 4,
+    "label": "Explore organization access",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/organizations",
+    "index": 5,
+    "label": "Review the clinic pathway",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/organizations",
+    "index": 6,
+    "label": "Review provider boundaries",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/affiliates",
+    "index": 7,
+    "label": "Explore affiliate access",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/affiliates",
+    "index": 8,
+    "label": "Review the collective boundary",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/supplier-access",
+    "index": 9,
+    "label": "Review supplier access",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "#partnership-inquiry",
+    "index": 10,
+    "label": "Prepare a white-label inquiry",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "#partnership-inquiry",
+    "index": 11,
+    "label": "Prepare a strategic inquiry",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "mailto:research@xeniostechnology.com?subject=Business%20inquiry%20support",
+    "index": 12,
+    "label": "Contact support",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/health",
+    "index": 13,
+    "label": "xenios care + research",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/care",
+    "index": 14,
+    "label": "Care",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/access-hub",
+    "index": 15,
+    "label": "Research",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/how-it-works",
+    "index": 16,
+    "label": "How it works",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/quality",
+    "index": 17,
+    "label": "Quality",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/faq",
+    "index": 18,
+    "label": "FAQ",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/about",
+    "index": 19,
+    "label": "About",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/partners",
+    "index": 20,
+    "label": "Partners",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/policies",
+    "index": 21,
+    "label": "Policies",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/contact",
+    "index": 22,
+    "label": "Contact",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/support",
+    "index": 23,
+    "label": "Support",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/sign-in",
+    "index": 24,
+    "label": "Sign in",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/privacy",
+    "index": 25,
+    "label": "Privacy",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/terms",
+    "index": 26,
+    "label": "Terms",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/policies/accessibility",
+    "index": 27,
+    "label": "Accessibility",
+    "evidence": "repair-synthetic-accepted",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research",
+    "index": 0,
+    "label": "xeniosresearch",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research",
+    "index": 1,
+    "label": "Back to gateway",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "#partnership-inquiry",
+    "index": 2,
+    "label": "Prepare an inquiry",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/partners/dashboard",
+    "index": 3,
+    "label": "Existing partner access",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/organizations",
+    "index": 4,
+    "label": "Explore organization access",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/organizations",
+    "index": 5,
+    "label": "Review the clinic pathway",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/organizations",
+    "index": 6,
+    "label": "Review provider boundaries",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/affiliates",
+    "index": 7,
+    "label": "Explore affiliate access",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/affiliates",
+    "index": 8,
+    "label": "Review the collective boundary",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/supplier-access",
+    "index": 9,
+    "label": "Review supplier access",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "#partnership-inquiry",
+    "index": 10,
+    "label": "Prepare a white-label inquiry",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "#partnership-inquiry",
+    "index": 11,
+    "label": "Prepare a strategic inquiry",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "mailto:research@xeniostechnology.com?subject=Business%20inquiry%20support",
+    "index": 12,
+    "label": "Contact support",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/health",
+    "index": 13,
+    "label": "xenios care + research",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/care",
+    "index": 14,
+    "label": "Care",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/access-hub",
+    "index": 15,
+    "label": "Research",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/how-it-works",
+    "index": 16,
+    "label": "How it works",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/quality",
+    "index": 17,
+    "label": "Quality",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/faq",
+    "index": 18,
+    "label": "FAQ",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/about",
+    "index": 19,
+    "label": "About",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/partners",
+    "index": 20,
+    "label": "Partners",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/policies",
+    "index": 21,
+    "label": "Policies",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/contact",
+    "index": 22,
+    "label": "Contact",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/support",
+    "index": 23,
+    "label": "Support",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/sign-in",
+    "index": 24,
+    "label": "Sign in",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/privacy",
+    "index": 25,
+    "label": "Privacy",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/terms",
+    "index": 26,
+    "label": "Terms",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/policies/accessibility",
+    "index": 27,
+    "label": "Accessibility",
+    "evidence": "repair-synthetic-courtesy-failure",
+    "url": "http://127.0.0.1:5303/research/partners",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "#site-main",
+    "index": 0,
+    "label": "Skip to content",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/waitlist",
+    "index": 1,
+    "label": "Join",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/",
+    "index": 2,
+    "label": "xenios",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/sign-in",
+    "index": 3,
+    "label": "Sign in",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/research/access-hub#account-access",
+    "index": 4,
+    "label": "Get access",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "mailto:team@xeniostechnology.com",
+    "index": 5,
+    "label": "team@xeniostechnology.com",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "mailto:team@xeniostechnology.com",
+    "index": 6,
+    "label": "team@xeniostechnology.com",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "https://www.instagram.com/officialxenios/",
+    "index": 7,
+    "label": "Instagram, @officialxenios",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "https://www.linkedin.com/company/officialxenios",
+    "index": 8,
+    "label": "LinkedIn, /company/officialxenios",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/product",
+    "index": 9,
+    "label": "Product",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/how-it-works",
+    "index": 10,
+    "label": "How It Works",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/for-coaches",
+    "index": 11,
+    "label": "For Coaches",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/for-clients",
+    "index": 12,
+    "label": "For Clients",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/storefront",
+    "index": 13,
+    "label": "Storefront",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/network",
+    "index": 14,
+    "label": "Network",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/ecosystem",
+    "index": 15,
+    "label": "Ecosystem",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/for-practitioners",
+    "index": 16,
+    "label": "For Practitioners",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/health",
+    "index": 17,
+    "label": "Health",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/book",
+    "index": 18,
+    "label": "Book a Call",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/waitlist",
+    "index": 19,
+    "label": "Early Access",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/concepts",
+    "index": 20,
+    "label": "Concepts",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/manifesto",
+    "index": 21,
+    "label": "Manifesto",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/about",
+    "index": 22,
+    "label": "About",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/careers",
+    "index": 23,
+    "label": "Careers",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/press",
+    "index": 24,
+    "label": "Press",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/contact",
+    "index": 25,
+    "label": "Contact",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/security",
+    "index": 26,
+    "label": "Security",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/compliance",
+    "index": 27,
+    "label": "Compliance",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/investors",
+    "index": 28,
+    "label": "Investors",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/llms.txt",
+    "index": 29,
+    "label": "llms.txt",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/privacy",
+    "index": 30,
+    "label": "Privacy",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/terms",
+    "index": 31,
+    "label": "Terms",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
+  },
+  {
+    "href": "/disclosures",
+    "index": 32,
+    "label": "Disclosures",
+    "evidence": "repair-corporate-contact-accepted",
+    "url": "http://127.0.0.1:5303/contact",
+    "status": "NOT RUN"
   }
 ]
