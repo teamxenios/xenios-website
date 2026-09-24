@@ -2110,7 +2110,7 @@
       "id": "XENIOS-UX-ACCOUNT-NOTIFICATIONS-20260924",
       "title": "Implement production-based account entry, partner and B2B handoff, and partner notification continuity",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-ux-account-notifications-20260924",
       "paths": [
         "client/src/pages/Home.tsx",
@@ -2150,7 +2150,13 @@
       "baseSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "scopeNote": "Founder-directed source implementation from the exact production SHA. Reuse the current contact endpoint and Research notification outbox; preserve legal, Care, identity, partner authorization, payment, and commerce boundaries. No database migration by default and no deployment authority.",
       "createdAt": "2026-09-24T16:15:00.000Z",
-      "claimedAt": "2026-09-24T16:02:49.202Z"
+      "claimedAt": "2026-09-24T16:02:49.202Z",
+      "handoff": {
+        "session": "codex-xenios-ux-account-notifications-20260924",
+        "sha": "8315710f90a6db4335db4c5dddac652bf05d9546",
+        "file": ".xenios/handoffs/2026-09-24T16-52-54-384Z-XENIOS-UX-ACCOUNT-NOTIFICATIONS-20260924-codex-xenios-ux-account-notifications-20260924.md",
+        "at": "2026-09-24T16:52:54.387Z"
+      }
     }
   ]
 }

@@ -2098,7 +2098,7 @@
         "docs/ux/xenios-founder-admin-matrix-20260924/**",
         ".xenios/sessions/codex-xenios-ux-account-notifications-20260924.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-24T16:02:49.204Z",
       "heartbeatAt": "2026-09-24T16:52:19.316Z"
     }
