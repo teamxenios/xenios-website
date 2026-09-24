@@ -74,6 +74,7 @@ export default function PartnershipInquiryForm({
   const [draft, setDraft] = useState<PartnershipInquiryDraft>(() => blankDraft(initialPathway));
   const [validation, setValidation] = useState<ValidationIssue[]>([]);
   const [prepared, setPrepared] = useState(false);
+  const [autoReplySent, setAutoReplySent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [copyState, setCopyState] = useState<CopyState>("idle");
@@ -159,13 +160,14 @@ export default function PartnershipInquiryForm({
     setSubmitting(true);
     setSubmitError(null);
     try {
-      await contactService.submit({
+      const receipt = await contactService.submit({
         name: draft.name.trim(),
         email: draft.businessEmail.trim(),
         persona: pathwayContactPersona(draft.pathway),
         subject: `Xenios Research: ${pathwayTitle(draft.pathway)}`,
         message: summary,
       });
+      setAutoReplySent(receipt.autoReplySent === true);
       setPrepared(true);
       setCopyState("idle");
     } catch (error) {
@@ -381,16 +383,16 @@ export default function PartnershipInquiryForm({
             Submission creates a business inquiry only. It is not an account application or approval.
           </p>
         </div>
-        {submitError && <p className="body-s mt-4" role="alert">{submitError} Your details were not accepted; you can retry.</p>}
+        {submitError && <p className="body-s mt-4" role="alert">{submitError} Your details remain in this form. Receipt has not been confirmed.</p>}
       </form>
 
       {prepared && (
         <div className="xr-b2b-prepared mt-8" role="status" aria-live="polite">
-          <p className="mono-cap text-pulse">Inquiry received</p>
-          <h3 className="body-l font-700 mt-2">We received your {pathwayTitle(draft.pathway)} inquiry.</h3>
+          <p className="mono-cap text-pulse">Inquiry submitted</p>
+          <h3 className="body-l font-700 mt-2">Your {pathwayTitle(draft.pathway)} inquiry was accepted for delivery.</h3>
           <p className="body-s text-ink-2 mt-3 max-w-[64ch]">
-            This is a business inquiry, not an account approval. A Xenios team member will follow up at {draft.businessEmail.trim()}.
-            A confirmation will be sent separately. If the relationship requires account access, application or activation instructions will be sent separately.
+            This is a business inquiry, not an account approval. The team can use {draft.businessEmail.trim()} for follow-up. {" "}
+            {autoReplySent ? "A confirmation email was also accepted for delivery; inbox delivery is not guaranteed." : "A confirmation email could not be confirmed. You do not need to resubmit your inquiry."} If the relationship requires account access, application or activation instructions follow a separate review.
           </p>
           <dl className="body-s text-ink-2 mt-4 grid gap-2">
             <div><dt className="font-700 inline">Submitted email: </dt><dd className="inline">{draft.businessEmail.trim()}</dd></div>

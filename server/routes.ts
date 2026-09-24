@@ -6,13 +6,12 @@ import { z } from "zod";
 import {
   sendConfirmationEmail,
   sendInternalNotification,
-  sendContactMessage,
-  sendContactAutoReply,
   sendWaitlistConfirmationV3,
   sendWaitlistInternalAlertV3,
   sendLoiConfirmationV3,
   sendLoiInternalAlertV3,
 } from "./services/email";
+import { deliverContact } from "./services/contact-delivery";
 import {
   getDisplayCount,
   upsertWaitlist,
@@ -452,12 +451,14 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
       }
       const validated = contactMessageSchema.parse(req.body);
 
-      Promise.allSettled([
-        sendContactMessage(validated),
-        sendContactAutoReply(validated),
-      ]).catch(() => {});
-
-      res.json({ success: true, message: "We have it." });
+      const delivery = await deliverContact(validated);
+      if (!delivery.accepted) {
+        return res.status(503).json({
+          success: false,
+          message: "We could not confirm delivery of your message. Please email team@xeniostechnology.com directly.",
+        });
+      }
+      res.json({ success: true, message: "Accepted for delivery to our team inbox.", autoReplySent: delivery.autoReplySent });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({

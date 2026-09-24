@@ -35,14 +35,14 @@ export interface ContactSubmission {
 }
 
 export const contactService = {
-  submit: async (data: ContactSubmission): Promise<{ success: boolean; message?: string }> => {
+  submit: async (data: ContactSubmission): Promise<{ success: boolean; message?: string; autoReplySent?: boolean }> => {
     const res = await fetch("/api/contact", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
     const result = await res.json();
-    if (!res.ok) throw new Error(result.message || "Failed to submit");
+    if (!res.ok || result.success !== true) throw new Error(result.message || "Failed to submit");
     return result;
   },
 };

@@ -12,7 +12,7 @@ let root: Root | null = null;
 let container: HTMLDivElement | null = null;
 
 beforeEach(() => {
-  vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => ({ success: true, message: "We have it." }) })));
+  vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => ({ success: true, autoReplySent: true }) })));
 });
 
 afterEach(() => {
@@ -75,6 +75,35 @@ async function submit(view: HTMLElement) {
 }
 
 describe("PartnershipInquiryForm", () => {
+  it("does not invite duplicate submission when only the courtesy confirmation fails", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: true, json: async () => ({ success: true, autoReplySent: false }) } as Response);
+    const view = await renderForm();
+    await completeDraft(view);
+    await submit(view);
+    expect(view.textContent).toContain("accepted for delivery");
+    expect(view.textContent).toContain("You do not need to resubmit");
+    expect(view.textContent).not.toContain("will be sent separately");
+  });
+
+  it("preserves the draft and gives no receipt on unavailable delivery", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: false, json: async () => ({ success: false, message: "We could not confirm delivery." }) } as Response);
+    const view = await renderForm();
+    await completeDraft(view);
+    await submit(view);
+    expect(view.querySelector('[role="alert"]')?.textContent).toContain("Receipt has not been confirmed");
+    expect((view.querySelector('#b2b-email') as HTMLInputElement).value).toBe("contact@example.test");
+    expect(view.querySelector('#b2b-summary')).toBeNull();
+  });
+
+  it("rejects an unsuccessful response even when HTTP status is successful", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce({ ok: true, json: async () => ({ success: false }) } as Response);
+    const view = await renderForm();
+    await completeDraft(view);
+    await submit(view);
+    expect(view.querySelector('[role="alert"]')).not.toBeNull();
+    expect(view.querySelector('#b2b-summary')).toBeNull();
+  });
+
   it("submits through the canonical contact endpoint and confirms only after 2xx", async () => {
     const fetchSpy = vi.mocked(fetch);
     const view = await renderForm();
@@ -88,9 +117,9 @@ describe("PartnershipInquiryForm", () => {
     expect(payload).toMatchObject({ persona: "enterprise", email: "contact@example.test" });
     expect(payload.website).toBeUndefined();
     expect(payload.message).toContain("Website: https://example.test/");
-    expect(view.textContent).toContain("We received your Research organizations inquiry.");
+    expect(view.textContent).toContain("Your Research organizations inquiry was accepted for delivery.");
     expect(view.textContent).toContain("not an account approval");
-    expect(view.textContent).toContain("A confirmation will be sent separately");
+    expect(view.textContent).toContain("A confirmation email was also accepted for delivery");
     expect(view.textContent).not.toContain("Application received");
     const summary = view.querySelector("#b2b-summary") as HTMLTextAreaElement;
     expect(summary.value).toContain("Synthetic Contact");
@@ -104,7 +133,7 @@ describe("PartnershipInquiryForm", () => {
     await completeDraft(view);
     await submit(view);
     expect(view.textContent).toContain("Please try again later");
-    expect(view.textContent).not.toContain("Inquiry received");
+    expect(view.textContent).not.toContain("Inquiry submitted");
   });
 
   it("copies the locally prepared summary only after an explicit action", async () => {
@@ -149,7 +178,7 @@ describe("PartnershipInquiryForm", () => {
     expect(context.getAttribute("aria-describedby")).toBe("b2b-context-help b2b-context-error");
     expect(view.querySelector("#b2b-context-help")).not.toBeNull();
     expect(view.querySelector("#b2b-context-error")).not.toBeNull();
-    expect(view.textContent).not.toContain("Inquiry received");
+    expect(view.textContent).not.toContain("Inquiry submitted");
   });
 
   it("requires an optional website to use an explicit HTTP or HTTPS URL", async () => {
@@ -163,7 +192,7 @@ describe("PartnershipInquiryForm", () => {
     expect(website.getAttribute("aria-invalid")).toBe("true");
     expect(view.querySelector("#b2b-website-error")?.textContent).toContain("http:// or https://");
     expect(website.getAttribute("aria-describedby")).toBe("b2b-website-help b2b-website-error");
-    expect(view.textContent).not.toContain("Inquiry received");
+    expect(view.textContent).not.toContain("Inquiry submitted");
   });
 
   it("shows a manual-copy fallback when clipboard access is unavailable", async () => {
@@ -205,11 +234,11 @@ describe("PartnershipInquiryForm", () => {
     const view = await renderForm();
     await completeDraft(view);
     await submit(view);
-    expect(view.textContent).toContain("Inquiry received");
+    expect(view.textContent).toContain("Inquiry submitted");
 
     await act(async () => setControl(view, "b2b-name", "Synthetic Contact Two"));
 
-    expect(view.textContent).not.toContain("Inquiry received");
+    expect(view.textContent).not.toContain("Inquiry submitted");
     expect(view.querySelector("#b2b-summary")).toBeNull();
   });
 

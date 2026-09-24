@@ -181,15 +181,8 @@ xenios
 
 // E4 — Contact forward to team inbox
 export async function sendContactMessage(msg: ContactMessage) {
-  let client: Resend;
-  let fromEmail: string;
-  try {
-    const r = await getResendClient();
-    client = r.client;
-    fromEmail = r.fromEmail || FROM_DEFAULT;
-  } catch {
-    return;
-  }
+  const { client, fromEmail: configuredFrom } = await getResendClient();
+  const fromEmail = configuredFrom || FROM_DEFAULT;
 
   const PREFIX_BY_PERSONA: Record<string, string> = {
     practitioner: "[Founding Cohort]",
@@ -217,25 +210,14 @@ ${msg.message}
 xenios
 `;
 
-  try {
-    await client.emails.send({ from: fromEmail, to: TEAM_EMAIL, replyTo: msg.email, subject, text });
-    console.log(`[email] contact forwarded for ${msg.email} (${prefix})`);
-  } catch (err) {
-    console.error("[email] contact forward failed:", err);
-  }
+  const { data, error } = await client.emails.send({ from: fromEmail, to: TEAM_EMAIL, replyTo: msg.email, subject, text });
+  if (error || !data?.id) throw new Error("Contact team message was not accepted by the email provider");
 }
 
 // E5 — Contact auto-reply
 export async function sendContactAutoReply(msg: ContactMessage) {
-  let client: Resend;
-  let fromEmail: string;
-  try {
-    const r = await getResendClient();
-    client = r.client;
-    fromEmail = r.fromEmail || FROM_DEFAULT;
-  } catch {
-    return;
-  }
+  const { client, fromEmail: configuredFrom } = await getResendClient();
+  const fromEmail = configuredFrom || FROM_DEFAULT;
 
   const PREFIX_BY_PERSONA: Record<string, string> = {
     practitioner: "Founding Cohort",
@@ -252,7 +234,7 @@ export async function sendContactAutoReply(msg: ContactMessage) {
 
   const text = `Thanks for writing.
 
-We received your message and routed it to the right human on our team. We reply to every serious note inside two business days.
+Your message was accepted for delivery to our team inbox for review. This confirmation does not approve an account or business relationship.
 
 While you wait:
   Instagram: @officialxenios
@@ -265,7 +247,7 @@ The AI-adjunct operations system for coaches, trainers, and practitioners.
   const html = shell(`
     <p style="font-size:28px;font-weight:900;letter-spacing:-0.04em;text-transform:lowercase;margin:0 0 32px;">xenios</p>
     <h1 style="font-size:36px;font-weight:800;letter-spacing:-0.02em;line-height:1.05;margin:0 0 24px;">Thanks for writing.</h1>
-    <p style="font-size:17px;line-height:1.55;margin:0 0 16px;">We received your message (${prefixLabel}) and routed it to the right human on our team. We reply to every serious note inside two business days.</p>
+    <p style="font-size:17px;line-height:1.55;margin:0 0 16px;">Your message (${prefixLabel}) was accepted for delivery to our team inbox for review. This confirmation does not approve an account or business relationship.</p>
     <p style="font-size:17px;line-height:1.55;margin:24px 0 8px;">While you wait:</p>
     <p style="font-size:17px;line-height:1.55;margin:0 0 8px;">Instagram: <a href="https://www.instagram.com/officialxenios/" style="color:#E04F1F;font-weight:600;">@officialxenios</a></p>
     <p style="font-size:17px;line-height:1.55;margin:0 0 32px;">LinkedIn: <a href="https://www.linkedin.com/company/officialxenios" style="color:#E04F1F;font-weight:600;">/company/officialxenios</a></p>
@@ -273,12 +255,8 @@ The AI-adjunct operations system for coaches, trainers, and practitioners.
     <p style="font-size:13px;line-height:1.55;margin:0;color:#2A2A26;">The AI-adjunct operations system for coaches, trainers, and practitioners.</p>
   `);
 
-  try {
-    await client.emails.send({ from: fromEmail, to: msg.email, replyTo: TEAM_EMAIL, subject, text, html });
-    console.log(`[email] contact auto-reply sent to ${msg.email}`);
-  } catch (err) {
-    console.error("[email] contact auto-reply failed:", err);
-  }
+  const { data, error } = await client.emails.send({ from: fromEmail, to: msg.email, replyTo: TEAM_EMAIL, subject, text, html });
+  if (error || !data?.id) throw new Error("Contact confirmation was not accepted by the email provider");
 }
 
 // ===========================================================================
