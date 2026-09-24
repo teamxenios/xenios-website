@@ -62,6 +62,8 @@ test("source path policy confines reads and excludes sensitive or generated path
   assert.equal(isSafeSourcePath("node_modules/pkg/index.js"), false);
   assert.equal(isSafeSourcePath("dist/server.js"), false);
   assert.equal(isSafeSourcePath(".xenios/SESSION_REGISTRY.json"), false);
+  assert.equal(isSafeSourcePath(".agents/memory/MEMORY.md"), false);
+  assert.equal(isSafeSourcePath(".claude/launch.json"), false);
   assert.equal(isSafeSourcePath("attached_assets/pasted.txt"), false);
   assert.equal(isSafeSourcePath("assets/photo.png"), false);
 });
@@ -140,6 +142,8 @@ test("Windows helpers pin toolchain, install in the resolved repo and exclude ma
   const index = readFileSync(path.join(controlDirectory, "index.html"), "utf8");
   assert.match(common, /20\.19\.0/u);
   assert.match(common, /10\.8\.2/u);
+  assert.match(common, /\$isInternalLayout/u);
+  assert.match(common, /\$extractedCandidates\.Count -eq 1/u);
   assert.match(start, /Push-Location -LiteralPath \$repoRoot/u);
   assert.match(start, /SUPABASE_ANON_KEY/u);
   assert.match(start, /SITE_URL/u);

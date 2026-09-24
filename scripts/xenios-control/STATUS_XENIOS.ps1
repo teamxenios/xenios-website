@@ -36,7 +36,7 @@ if (Test-Path -LiteralPath $catalogPath -PathType Leaf) {
 }
 
 $requiredNames = @('SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'SITE_URL')
-$missingNames = $requiredNames | Where-Object { [string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($_, 'Process')) }
+$missingNames = @($requiredNames | Where-Object { [string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($_, 'Process')) })
 $runtime = Get-XeniosRuntimeDirectory -RepoRoot $repoRoot
 $actionPath = Join-Path $runtime 'actions.json'
 $lastBuild = 'No cockpit build result recorded.'

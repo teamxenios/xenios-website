@@ -82,9 +82,9 @@ if ($startApp) {
       $state.appCommandFragment = $null
       Write-XeniosState -RepoRoot $repoRoot -State $state
     } else {
-      $missingServerNames = @('SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'SITE_URL') | Where-Object {
+      $missingServerNames = @(@('SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'SITE_URL') | Where-Object {
         [string]::IsNullOrWhiteSpace([Environment]::GetEnvironmentVariable($_, 'Process'))
-      }
+      })
       $node = $toolchain.NodePath
       $stdout = Join-Path $runtime 'app.stdout.log'
       $stderr = Join-Path $runtime 'app.stderr.log'

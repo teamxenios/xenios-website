@@ -50,14 +50,15 @@ function Resolve-XeniosToolchain {
 }
 
 function Get-XeniosRepoRoot {
-  $candidates = @(
-    [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\..')),
-    [System.IO.Path]::GetFullPath($PSScriptRoot)
-  )
-  foreach ($candidate in $candidates) {
-    if (Test-Path -LiteralPath (Join-Path $candidate 'package.json') -PathType Leaf) { return $candidate }
+  $scriptDirectory = [System.IO.Path]::GetFullPath($PSScriptRoot)
+  $scriptParent = Split-Path -Parent $scriptDirectory
+  $isInternalLayout = (Split-Path -Leaf $scriptDirectory) -eq 'xenios-control' -and (Split-Path -Leaf $scriptParent) -eq 'scripts'
+  if ($isInternalLayout) {
+    $internalCandidate = [System.IO.Path]::GetFullPath((Join-Path $scriptDirectory '..\..'))
+    if (Test-Path -LiteralPath (Join-Path $internalCandidate 'package.json') -PathType Leaf) { return $internalCandidate }
   }
-  $extractedCandidates = @(Get-ChildItem -LiteralPath $PSScriptRoot -Directory -Force -ErrorAction SilentlyContinue | Where-Object {
+  if (Test-Path -LiteralPath (Join-Path $scriptDirectory 'package.json') -PathType Leaf) { return $scriptDirectory }
+  $extractedCandidates = @(Get-ChildItem -LiteralPath $scriptDirectory -Directory -Force -ErrorAction SilentlyContinue | Where-Object {
     Test-Path -LiteralPath (Join-Path $_.FullName 'package.json') -PathType Leaf
   })
   if ($extractedCandidates.Count -eq 1) { return [System.IO.Path]::GetFullPath($extractedCandidates[0].FullName) }
