@@ -8,6 +8,8 @@
     "npm": "10.8.2"
   },
   "scripts": {
+    "xenios:control": "node scripts/xenios-control/server.mjs",
+    "test:xenios-control": "node --test scripts/xenios-control/control.test.mjs",
     "dev:client": "vite dev --port 5000",
     "dev": "NODE_ENV=development tsx server/index.ts",
     "build": "node script/build.mjs",

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>Xenios Control Cockpit</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="shell">
+      <header class="masthead">
+        <div>
+          <p class="eyebrow">LOCAL OPERATIONS · 127.0.0.1</p>
+          <h1>Xenios Control Cockpit</h1>
+          <p class="lede">Inspect, verify and package the customer launch without exposing secrets or production controls.</p>
+        </div>
+        <div class="mast-actions">
+          <span id="clock" class="mono quiet"></span>
+          <button class="button button-primary" data-action="refresh">Refresh</button>
+        </div>
+      </header>
+
+      <aside class="safety-band" aria-label="Safety status">
+        <span class="pulse" aria-hidden="true"></span>
+        <strong>Local only</strong>
+        <span>Bound to 127.0.0.1:4177</span>
+        <span class="separator">•</span>
+        <span>No deploy, database writes, secret display or arbitrary commands</span>
+      </aside>
+
+      <nav class="tabs" aria-label="Control cockpit sections" role="tablist">
+        <button class="tab active" role="tab" aria-selected="true" aria-controls="overview" data-tab="overview">Overview</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="website" data-tab="website">Website</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="routes" data-tab="routes">Routes</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="tests" data-tab="tests">Tests</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="logs" data-tab="logs">Logs</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="git" data-tab="git">Git</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="launch" data-tab="launch">Launch</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="package" data-tab="package">Download / Package</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="source" data-tab="source">Source Explorer</button>
+      </nav>
+
+      <main>
+        <section id="overview" class="panel active" role="tabpanel">
+          <div class="section-heading">
+            <div><p class="eyebrow">SYSTEM SNAPSHOT</p><h2>Release posture at a glance</h2></div>
+            <span id="generated-at" class="mono quiet">Loading…</span>
+          </div>
+          <div id="overview-alert"></div>
+          <div id="overview-grid" class="metric-grid loading-block"></div>
+          <div class="split-grid">
+            <article class="card"><p class="card-kicker">CHECKOUT AUTHORITY</p><div id="checkout-summary"></div></article>
+            <article class="card"><p class="card-kicker">LAST BOUNDED ACTION</p><div id="last-action"></div></article>
+          </div>
+        </section>
+
+        <section id="website" class="panel" role="tabpanel" hidden>
+          <div class="section-heading"><div><p class="eyebrow">CUSTOMER SURFACES</p><h2>Open the local experience</h2></div></div>
+          <div id="website-mode"></div>
+          <article class="workspace-strip">
+            <div><span>Resolved worktree</span><code id="repo-path">Loading…</code></div>
+            <button class="button button-quiet" id="copy-repo-path">Copy path</button>
+          </article>
+          <div class="link-grid">
+            <a class="route-card featured" href="http://127.0.0.1:5000/" target="_blank" rel="noreferrer"><span>Corporate home</span><strong>/</strong><small>Open local route ↗</small></a>
+            <a class="route-card" href="http://127.0.0.1:5000/health" target="_blank" rel="noreferrer"><span>Health gateway</span><strong>/health</strong><small>Open local route ↗</small></a>
+            <a class="route-card" href="http://127.0.0.1:5000/research/access-hub" target="_blank" rel="noreferrer"><span>Access hub</span><strong>/research/access-hub</strong><small>Open local route ↗</small></a>
+            <a class="route-card" href="http://127.0.0.1:5000/research/order" target="_blank" rel="noreferrer"><span>Order hub</span><strong>/research/order</strong><small>Open local route ↗</small></a>
+            <a class="route-card" href="http://127.0.0.1:5000/research/sign-in" target="_blank" rel="noreferrer"><span>Member sign-in</span><strong>/research/sign-in</strong><small>Open local route ↗</small></a>
+            <a class="route-card" href="http://127.0.0.1:5000/care" target="_blank" rel="noreferrer"><span>Xenios Care</span><strong>/care</strong><small>Open local route ↗</small></a>
+          </div>
+          <div class="action-row">
+            <button class="button" data-action="restart-app">Restart helper-managed app</button>
+            <a class="button button-quiet" href="https://xeniostechnology.com" target="_blank" rel="noreferrer">View production ↗</a>
+          </div>
+        </section>
+
+        <section id="routes" class="panel" role="tabpanel" hidden>
+          <div class="section-heading"><div><p class="eyebrow">ROUTE AUDIT</p><h2>Customer and protected paths</h2></div><input id="route-filter" class="input" type="search" placeholder="Filter routes…" aria-label="Filter routes"></div>
+          <div class="table-wrap"><table><thead><tr><th>Route</th><th>Audience</th><th>Auth</th><th>Checkout</th><th>Status</th><th>Notes</th></tr></thead><tbody id="routes-body"></tbody></table></div>
+        </section>
+
+        <section id="tests" class="panel" role="tabpanel" hidden>
+          <div class="section-heading"><div><p class="eyebrow">BOUNDED VERIFICATION</p><h2>Allowlisted quality gates</h2></div><span class="quiet">One action runs at a time</span></div>
+          <div class="action-grid">
+            <article class="card"><span class="index">01</span><h3>Customer smoke</h3><p>Runs a fixed customer-facing route and gateway suite.</p><button class="button" data-action="customer-smoke">Run smoke</button></article>
+            <article class="card"><span class="index">02</span><h3>Typecheck</h3><p>Runs the repository TypeScript check without writes.</p><button class="button" data-action="typecheck">Run typecheck</button></article>
+            <article class="card"><span class="index">03</span><h3>Build</h3><p>Runs the supported production build command locally.</p><button class="button" data-action="build">Run build</button></article>
+          </div>
+          <article class="console-card"><header><span>Latest action output</span><span id="action-state" class="status-pill">Idle</span></header><pre id="action-output">No action has run in this workspace yet.</pre></article>
+        </section>
+
+        <section id="logs" class="panel" role="tabpanel" hidden>
+          <div class="section-heading"><div><p class="eyebrow">REDACTED TAILS</p><h2>Helper and action logs</h2></div><button class="button button-quiet" id="refresh-logs">Refresh logs</button></div>
+          <p class="callout">Only bounded tails from the cockpit runtime directory are shown. Known tokens, authorization values, passwords and secret assignments are redacted.</p>
+          <article class="console-card"><pre id="logs-output">Loading logs…</pre></article>
+        </section>
+
+        <section id="git" class="panel" role="tabpanel" hidden>
+          <div class="section-heading"><div><p class="eyebrow">READ-ONLY GIT</p><h2>Working tree and recent commits</h2></div></div>
+          <div class="split-grid"><article class="console-card"><header>git status --short --branch</header><pre id="git-status">Loading…</pre></article><article class="console-card"><header>Recent commits</header><pre id="git-log">Loading…</pre></article></div>
+          <p class="quiet">This cockpit contains no commit, checkout, merge, push, reset or force-push action.</p>
+        </section>
+
+        <section id="launch" class="panel" role="tabpanel" hidden>
+          <div class="section-heading"><div><p class="eyebrow">LAUNCH CONTROL</p><h2>Evidence before production</h2></div></div>
+          <div id="launch-checklist" class="checklist"></div>
+          <article class="danger-zone"><div><strong>Deploy to production</strong><p>Disabled. Production writes require Samuel’s fresh explicit approval, exact SHA, prechecks, rollback and post-deploy smoke.</p></div><button class="button" disabled>Deploy unavailable</button></article>
+        </section>
+
+        <section id="package" class="panel" role="tabpanel" hidden>
+          <div class="section-heading"><div><p class="eyebrow">RECOVERY ARTIFACT</p><h2>Sanitized exact-source package</h2></div></div>
+          <div class="split-grid">
+            <article class="card"><h3>Destination</h3><code>C:\Users\&lt;you&gt;\Downloads\XENIOS-LAUNCH</code><p>The zip is built from committed HEAD, then filtered and scanned. It excludes Git internals, dependencies, build output, logs, caches, environment files and obvious secret files.</p><button class="button button-primary" data-action="package">Regenerate package</button></article>
+            <article class="card"><h3>Included operator aids</h3><ul class="plain-list"><li>Exact-SHA source zip</li><li>Launch handoff document</li><li>START, STOP and STATUS helpers</li><li>PACKAGE helper for regeneration</li></ul><p class="quiet">No credentials or environment values are copied or displayed.</p></article>
+          </div>
+        </section>
+
+        <section id="source" class="panel" role="tabpanel" hidden>
+          <div class="section-heading"><div><p class="eyebrow">SAFE SOURCE EXPLORER</p><h2>Tracked text files only</h2></div><input id="source-filter" class="input" type="search" placeholder="Search filenames…" aria-label="Search source filenames"></div>
+          <p class="callout">Read-only and repository-confined. Environment files, secrets, keys, logs, dependencies, Git metadata and build outputs are excluded.</p>
+          <div class="explorer"><div id="source-files" class="file-list"></div><article class="source-view"><header id="source-name">Choose a file</header><pre id="source-content">Select a safe tracked text file to view it with line numbers.</pre></article></div>
+        </section>
+      </main>
+
+      <footer><span>Xenios local launch control</span><span class="mono">127.0.0.1:4177</span></footer>
+      <div id="toast" role="status" aria-live="polite"></div>
+    </div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

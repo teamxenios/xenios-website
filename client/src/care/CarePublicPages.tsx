@@ -112,7 +112,7 @@ export function CareHomePage() {
     <CarePage
       path={CARE_PUBLIC_PATHS.home}
       eyebrow="XENIOS CARE · HUMAN-GUIDED ACCESS"
-      title="Start your Care request today."
+      title="Start with a Care access request."
       description="Submit contact and routing details for Xenios Care, then receive a human follow-up and a separate secure clinical handoff when appropriate."
       intro="Xenios Care takes access requests directly, without relying on a third-party scheduler. Share contact, current-state, and routing preferences only—never medical details. A human reviews each request and provides the appropriate secure next step when one is available."
     >

@@ -416,6 +416,10 @@ describe("public product surface", () => {
       expect(target?.className).toContain("min-h-[44px]");
       expect(target?.className).toContain("min-w-[44px]");
     }
+    expect(
+      view.host.querySelector('[data-testid="sf-detail-early-access"]')?.textContent,
+    ).toContain("Continue through Early Access");
+    expect(view.host.textContent).not.toContain("Have an early access password?");
     expect(view.host.querySelector("main")).toBeNull();
     view.unmount();
   });

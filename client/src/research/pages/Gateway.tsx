@@ -367,7 +367,7 @@ export default function Gateway() {
               <article>
                 <p className="rg-pathway-tag">Xenios Care</p>
                 <h3>Human-guided access and a separate secure clinical handoff</h3>
-                <p>Care access requests are open. Any later clinical service, formulation, clinician availability, or pharmacy fulfillment remains subject to location, eligibility, authority, serviceability, and current availability.</p>
+                <p>Use the request page to check whether Care access requests are currently being accepted. Any later clinical service, formulation, clinician availability, or pharmacy fulfillment remains subject to location, eligibility, authority, serviceability, and current availability.</p>
                 <Link href="/care/schedule" className="rg-inline-link">Start Care request <Arrow /></Link>
               </article>
             </div>

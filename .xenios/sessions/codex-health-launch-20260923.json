@@ -1,0 +1,10 @@
+{
+  "id": "codex-health-launch-20260923",
+  "tool": "codex",
+  "lane": "customer-health-launch-local-control",
+  "branch": "codex/xenios-health-launch-20260923",
+  "state": "ready_for_handoff",
+  "startedAt": "2026-09-23T23:27:59.830Z",
+  "heartbeatAt": "2026-09-24T00:20:00.000Z",
+  "note": "Customer-site candidate closure complete; exact candidate SHA and package are recorded in the handoff successor commit. Shared lead-owned registry indexes were intentionally not modified."
+}

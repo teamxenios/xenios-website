@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { content } from "@/lib/content";
 import { useWaitlistCount } from "@/hooks/use-waitlist-count";
 
-export default function TopRibbon() {
+function TopRibbonContent() {
   const [hidden, setHidden] = useState(false);
   const count = useWaitlistCount();
   if (hidden) return null;
@@ -37,4 +37,16 @@ export default function TopRibbon() {
       </div>
     </div>
   );
+}
+
+export default function TopRibbon() {
+  const [location] = useLocation();
+  // The founding-cohort ribbon belongs to the professional AI workspace. On
+  // Care routes it could be mistaken for clinical availability or a Care
+  // price, both of which are owned by live Care authorities instead of static
+  // marketing copy. Keep the shared Xenios navigation, but remove that
+  // unrelated promotion from the whole exact /care route family.
+  const isCareRoute = location === "/care" || location.startsWith("/care/");
+  if (isCareRoute) return null;
+  return <TopRibbonContent />;
 }

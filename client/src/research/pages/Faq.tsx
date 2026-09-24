@@ -14,12 +14,12 @@ const FAQ_ITEMS: FaqItem[] = [
   {
     question: "What is Xenios?",
     answer:
-      "Xenios is a U.S.-based health-access and product platform with two separate pathways. Xenios Care supports personal health through secure intake and independent review by U.S.-licensed clinicians. Xenios Research supports legitimate nonclinical work through exact product identity, evidence-aware education, quality documentation, controlled access, and Research operations.",
+      "Xenios is a U.S.-based health-access and product platform with two separate pathways. Xenios Care begins with a short, nonclinical access request and may provide a separate secure clinical handoff when an appropriate pathway is available. Xenios Research supports legitimate nonclinical work through exact product identity, evidence-aware education, quality documentation, controlled access, and Research operations.",
   },
   {
     question: "How does Xenios Care work?",
     answer:
-      "Create or access your secure account, confirm your current location, and complete the health questionnaire. A U.S.-licensed clinician independently reviews the information and may request follow-up questions, records, laboratory work, or a phone or video visit. When treatment is clinically appropriate and serviceable, a prescription may be sent to a U.S.-based, state-licensed compounding pharmacy for fulfillment.",
+      "Start with the public Care access request so Xenios can understand your location, goals, and routing needs. That request is not a medical intake and does not establish a provider relationship. If an appropriate pathway is available, Xenios may provide a separate secure handoff where a licensed clinician can independently review clinical information and decide what, if any, next step is appropriate.",
   },
   {
     question: "Who reviews my health questionnaire?",
@@ -37,9 +37,9 @@ const FAQ_ITEMS: FaqItem[] = [
       "Not necessarily. Review may begin asynchronously. The clinician determines whether additional questions, records, laboratory work, a phone call, or a video visit is required based on clinical judgment, patient location, service rules, and applicable requirements.",
   },
   {
-    question: "Is Xenios Care available nationwide?",
+    question: "Where is Xenios Care available?",
     answer:
-      "Xenios Care is available nationwide. Exact services, formulations, clinician availability, and pharmacy fulfillment depend on the patient's current location, clinical eligibility, clinician authority, pharmacy serviceability, and current availability.",
+      "Availability is confirmed after the access request. Exact services, clinician availability, and any pharmacy fulfillment depend on the person's current location, clinical eligibility, clinician authority, pharmacy serviceability, and current availability. Submitting the public request does not guarantee access, treatment, or a prescription.",
   },
   {
     question: "How do compounding pharmacies fit into the process?",
@@ -194,7 +194,7 @@ export default function Faq() {
               Use Research Support for account, product-access, document, order, or organization questions. Use Care for provider-governed clinical questions.
             </p>
             <div className="mt-8 public-editorial-actions">
-              <Link href="/care" className="btn btn-primary public-editorial-action">Begin clinical intake</Link>
+              <Link href="/care/schedule" className="btn btn-primary public-editorial-action">Start Care request</Link>
               <Link href="/research/access-hub" className="btn btn-secondary public-editorial-action">Explore Research</Link>
               <Link href="/research/support" className="btn btn-ghost public-editorial-action">Get support</Link>
             </div>

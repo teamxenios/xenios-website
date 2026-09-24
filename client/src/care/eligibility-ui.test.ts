@@ -80,10 +80,11 @@ describe("Care PR 2 Xenios UI and truthful-state gate", () => {
   });
 
   it("uses approved qualified availability language without automated clearance", () => {
-    expect(eligibility).toContain("Xenios Care is available nationwide");
-    expect(eligibility).toContain("depend on where you are physically located");
+    expect(eligibility).toContain("Care availability is determined for your current location");
+    expect(eligibility).toMatch(/depend on where you are physically\s+located/);
     expect(eligibility).toContain("No automated clinical clearance.");
     expect(eligibility).toContain("This does not establish clinical eligibility.");
+    expect(eligibility).not.toContain("Xenios Care is available nationwide");
     expect(`${eligibility}\n${consent}`).not.toMatch(/\$\d|our clinicians|our pharmacy|launches? on/i);
   });
 

@@ -94,6 +94,7 @@ describe("public editorial page system", () => {
   it("keeps the Access Hub public and fail-closed instead of linking to unprovisioned workspaces", async () => {
     const view = await renderPage(<AccessHub />);
     const links = hrefs(view);
+    expect(links).toContain("/care/schedule");
     expect(links).toContain("/research/organizations");
     expect(links).toContain("/research/partners");
     expect(links).toContain("/research/affiliates");
@@ -103,6 +104,10 @@ describe("public editorial page system", () => {
     expect(view.textContent).toContain("No public supplier workspace is promised");
     expect(view.textContent).toContain("must fail closed");
     expect(view.textContent).toContain("Open early-access entry");
+    expect(view.textContent).toContain("non-clinical access request");
+    expect(view.textContent).toContain("does not establish clinical availability");
+    expect(view.textContent).not.toContain("Xenios Care is available nationwide");
+    expect(view.textContent).not.toContain("Begin clinical intake");
     expect(view.textContent).not.toContain("Invited early-access users");
     expect(view.querySelectorAll("article")).toHaveLength(6);
   });
@@ -123,6 +128,18 @@ describe("public editorial page system", () => {
     const panel = view.querySelector(`#${buttons[1].getAttribute("aria-controls")}`);
     expect(panel?.getAttribute("role")).toBe("region");
     expect(panel?.getAttribute("aria-labelledby")).toBe(buttons[1].id);
+  });
+
+  it.each([
+    ["FAQ", <Faq />],
+    ["How it works", <HowItWorks />],
+    ["About", <AboutResearch />],
+  ] as const)("keeps %s aligned with the nonclinical Care request boundary", async (_name, page) => {
+    const view = await renderPage(page);
+    expect(hrefs(view)).toContain("/care/schedule");
+    expect(view.textContent).toContain("Start Care request");
+    expect(view.textContent).not.toContain("Begin clinical intake");
+    expect(view.textContent).not.toContain("Xenios Care is available nationwide");
   });
 
   it("makes policy status discoverable without presenting draft or unconfirmed documents as approved", async () => {
@@ -171,6 +188,7 @@ describe("editorial homepage reconciliation", () => {
     expect(view.textContent).toContain("Provider-guided peptide care.Evidence-led Research access.");
     expect(view.textContent).toContain("Start Care request");
     expect(view.textContent).toContain("Explore Research");
+    expect(view.textContent).not.toContain("Care access requests are open.");
 
     const hero = view.querySelector<HTMLImageElement>('.rg-hero-image');
     expect(hero?.getAttribute("src")).toBe("/research/editorial-hero-warm-silver.jpg");

@@ -10,11 +10,11 @@ const journey = [
   },
   {
     title: "Create or verify your account",
-    body: "Care confirms identity and current location. Research verifies its own membership, agreements, and access requirements.",
+    body: "Care begins with a public access request that captures routing details. Research verifies its own membership, agreements, and access requirements.",
   },
   {
     title: "Complete the required information",
-    body: "Care collects the health history needed for clinical review. Research presents exact product identity, documentation, and Research-use requirements.",
+    body: "The public Care request is nonclinical. If an appropriate pathway is available, a separate secure handoff may collect information for clinical review. Research presents exact product identity, documentation, and Research-use requirements.",
   },
   {
     title: "Receive the appropriate review",
@@ -43,9 +43,9 @@ const qualityFlow = [
 const pathwayCards = [
   {
     title: "Xenios Care",
-    body: "Create an account, complete your health intake, and continue to independent clinical review. No questionnaire, product interest, or payment guarantees a prescription.",
-    href: "/care",
-    label: "Begin clinical intake",
+    body: "Start with a short, nonclinical access request. If an appropriate pathway is available, Xenios may provide a separate secure handoff for independent clinical review. No request, product interest, or payment guarantees treatment or a prescription.",
+    href: "/care/schedule",
+    label: "Start Care request",
   },
   {
     title: "Xenios Research",
@@ -127,7 +127,7 @@ export default function HowItWorks() {
             Begin with the pathway that matches your need. Each source remains responsible for its own decisions and status.
           </p>
           <div className="mt-5 public-editorial-actions">
-            <Link href="/care" className="btn btn-primary public-editorial-action">Begin clinical intake</Link>
+            <Link href="/care/schedule" className="btn btn-primary public-editorial-action">Start Care request</Link>
             <Link href="/research/access-hub" className="btn btn-secondary public-editorial-action">Explore Research</Link>
           </div>
         </section>

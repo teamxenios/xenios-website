@@ -147,9 +147,9 @@ export default function EligibilityPendingPage() {
         <p className="mono-cap text-pulse mb-6">CARE · ELIGIBILITY</p>
         <h1 className="display-m max-w-[18ch]">Your Care journey begins with your current location.</h1>
         <p className="mt-8 body-l text-ink-2 max-w-[64ch]">
-          Xenios Care is available nationwide, but the exact clinical service, licensed clinician,
-          formulation, and pharmacy handoff depend on where you are physically located, your
-          clinical eligibility, and current serviceability.
+          Care availability is determined for your current location. The exact clinical service,
+          licensed clinician, formulation, and pharmacy handoff depend on where you are physically
+          located, your clinical eligibility, and current serviceability.
         </p>
 
         <section

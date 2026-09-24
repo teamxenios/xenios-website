@@ -192,7 +192,7 @@ function ContinuationPanel({
           className="body-s inline-flex min-h-[44px] min-w-[44px] items-center underline text-ink-mute"
           data-testid="sf-detail-early-access"
         >
-          Have an early access password?
+          Continue through Early Access
         </Link>
         <Link
           href={APPLY_HREF}

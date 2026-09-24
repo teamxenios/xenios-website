@@ -8,9 +8,9 @@ const ACCESS_OPTIONS = [
     id: "care",
     eyebrow: "Individuals seeking personal care",
     title: "Xenios Care",
-    body: "Create or access your secure account, confirm your current location, complete the health questionnaire, and continue to independent review by a U.S.-licensed clinician. When treatment is clinically appropriate and serviceable, a prescription may be fulfilled through a U.S.-based, state-licensed compounding pharmacy.",
-    availability: "Xenios Care is available nationwide. Exact services and formulations depend on location, clinician authority, clinical eligibility, pharmacy serviceability, and current availability. No prescription is guaranteed.",
-    primary: { label: "Begin clinical intake", href: "/care" },
+    body: "Start with a short, non-clinical access request. A Xenios team member reviews the routing details and follows up. If an appropriate option is available, the team provides a separate authorized secure handoff for any clinical information and independent review by a licensed clinician.",
+    availability: "The public request does not establish clinical availability, a provider relationship, treatment, or a prescription. Any later service depends on location, clinician authority, clinical eligibility, pharmacy serviceability, and current availability.",
+    primary: { label: "Start Care request", href: "/care/schedule" },
     secondary: { label: "How Care works", href: "/care/how-it-works" },
   },
   {
@@ -86,9 +86,10 @@ export default function AccessHub() {
           <p className="mono-label text-ink-mute">Start with one question</p>
           <h2 id="access-first-question" className="body-l font-700 mt-2">Are you looking for care for yourself or nonclinical Research access?</h2>
           <p className="body-s text-ink-2 mt-3 max-w-[68ch]">
-            Use Care to create or access a secure account, complete a health intake, receive licensed clinical review,
-            and continue to pharmacy fulfillment when prescribed. Use Research to review exact products, evidence,
-            documentation, and Research-only access. Support can route an operational question without making a clinical decision.
+            Use Care to send contact and routing details for human follow-up. If an appropriate option is available,
+            clinical information moves later through a separate authorized secure handoff. Use Research to review exact
+            products, evidence, documentation, and Research-only access. Support can route an operational question
+            without making a clinical decision.
           </p>
         </section>
 

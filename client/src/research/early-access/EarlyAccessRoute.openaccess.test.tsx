@@ -1,5 +1,7 @@
 // @vitest-environment jsdom
 import { act } from "react";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -109,6 +111,9 @@ describe("the Early Access route with no password", () => {
     // longer exists.
     expect(html).not.toMatch(/access password/i);
     expect(html).not.toMatch(/enter the password/i);
+    const routeSource = readFileSync(resolve(__dirname, "./EarlyAccessRoute.tsx"), "utf8");
+    expect(routeSource).toContain("without a customer password");
+    expect(routeSource).not.toContain("The access code opens this private catalogue");
   });
 
   it("obtains a session by itself, sending no password", async () => {

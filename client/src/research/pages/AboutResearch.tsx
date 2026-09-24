@@ -20,7 +20,7 @@ const operatingPrinciples = [
 
 const platformLayers = [
   ["Discover", "Understand Care, Research, the product or formulation, the evidence boundary, and the next available step."],
-  ["Complete", "Create or access the right account, complete the Care intake or Research requirements, and provide only the information that pathway needs."],
+  ["Complete", "Submit the public Care access request or complete the applicable Research requirements. A separate secure clinical handoff appears only when an appropriate Care pathway is available."],
   ["Review", "Licensed clinicians make clinical decisions. Research actions remain governed by exact product, documentation, availability, and access controls."],
   ["Follow", "Use source-aware status, pharmacy or fulfillment updates, documents, lifestyle support, and customer service over time."],
 ] as const;
@@ -87,7 +87,7 @@ export default function AboutResearch() {
             Personal health begins with Care. Legitimate nonclinical work begins with Research.
           </p>
           <div className="mt-5 public-editorial-actions">
-            <Link href="/care" className="btn btn-primary public-editorial-action">Begin clinical intake</Link>
+            <Link href="/care/schedule" className="btn btn-primary public-editorial-action">Start Care request</Link>
             <Link href="/research/access-hub" className="btn btn-secondary public-editorial-action">Explore Research</Link>
           </div>
         </section>
