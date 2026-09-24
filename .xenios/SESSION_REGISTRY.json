@@ -482,10 +482,12 @@
       "tool": "codex",
       "lane": "checkout-commerce-authority-refactor",
       "branch": "codex/xenios-checkout-commerce-authority-refactor-20260923",
-      "state": "active",
+      "state": "stale",
       "startedAt": "2026-09-23T18:10:36.957Z",
       "heartbeatAt": "2026-09-23T18:10:36.958Z",
-      "note": "Source-only commerce RPC authority refactor and ACL convergence from b3dba343; no staging, production, deployment, merge, or activation authority."
+      "note": "Source-only commerce RPC authority refactor and ACL convergence from b3dba343; no staging, production, deployment, merge, or activation authority. Marked stale after more than 22 hours without heartbeat; original branch and history preserved. Only the protection-manifest path transferred under the founder's 2026-09-24 UX release-control extension.",
+      "staleAt": "2026-09-24T17:03:00.000Z",
+      "continuedBy": "codex-xenios-ux-account-notifications-20260924"
     },
     {
       "id": "codex-ordering-readiness-20260923",
@@ -506,6 +508,16 @@
       "startedAt": "2026-09-24T16:02:17.710Z",
       "heartbeatAt": "2026-09-24T16:52:19.316Z",
       "note": ""
+    },
+    {
+      "id": "codex-xenios-ux-release-control-20260924",
+      "tool": "Codex",
+      "lane": "ux-release-control",
+      "branch": "codex/xenios-ux-account-notifications-20260924",
+      "state": "active",
+      "startedAt": "2026-09-24T17:03:29.930Z",
+      "heartbeatAt": "2026-09-24T17:34:07.514Z",
+      "note": "Protection 36/36; focused 138/138 plus control 11/11; full serial 18030 passed, 85 skipped, zero failed; typecheck/build running complete"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

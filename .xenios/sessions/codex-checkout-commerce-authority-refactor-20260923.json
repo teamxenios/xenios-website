@@ -3,8 +3,10 @@
   "tool": "codex",
   "lane": "checkout-commerce-authority-refactor",
   "branch": "codex/xenios-checkout-commerce-authority-refactor-20260923",
-  "state": "active",
+  "state": "stale",
   "startedAt": "2026-09-23T18:10:36.957Z",
   "heartbeatAt": "2026-09-23T18:10:36.958Z",
-  "note": "Source-only commerce RPC authority refactor and ACL convergence from b3dba343; no staging, production, deployment, merge, or activation authority."
+  "note": "Source-only commerce RPC authority refactor and ACL convergence from b3dba343; no staging, production, deployment, merge, or activation authority. Marked stale after more than 22 hours without heartbeat; original branch and history preserved. Only the protection-manifest path transferred under the founder's 2026-09-24 UX release-control extension.",
+  "staleAt": "2026-09-24T17:03:00.000Z",
+  "continuedBy": "codex-xenios-ux-account-notifications-20260924"
 }

@@ -38,7 +38,7 @@
       "id": "XENIOS-CHECKOUT-COMMERCE-AUTHORITY-REFACTOR-20260923",
       "title": "Move legacy commerce persistence behind bounded RPC authorities and converge ACLs",
       "priority": "P0",
-      "state": "claimed",
+      "state": "paused_stale",
       "owner": "codex-checkout-commerce-authority-refactor-20260923",
       "baseSha": "b3dba343d01d5f4f3777e484d8a8a72d65606437",
       "paths": [
@@ -69,7 +69,10 @@
         "XENIOS-CHECKOUT-RC-P1-REMEDIATION-20260923"
       ],
       "scopeNote": "Founder-requested source-only repair from exact SHA b3dba343d01d5f4f3777e484d8a8a72d65606437. Replace forbidden direct commerce-table operations with bounded security-definer RPC authorities, prove parity and atomicity, then converge the seven-table ACL contract. No merge, deploy, managed migration, staging or production mutation, provider activation, or feature activation.",
-      "claimedAt": "2026-09-23T18:11:08.107Z"
+      "claimedAt": "2026-09-23T18:11:08.107Z",
+      "staleAt": "2026-09-24T17:03:00.000Z",
+      "continuedBy": "codex-xenios-ux-account-notifications-20260924",
+      "continuationNote": "Founder-directed exact-path transfer of only docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json to close the UX candidate release-control gate. Original branch and task history preserved; no commerce-authority runtime paths transferred."
     },
     {
       "id": "XENIOS-CHECKOUT-RC-P1-REMEDIATION-20260923",
@@ -2157,6 +2160,24 @@
         "file": ".xenios/handoffs/2026-09-24T16-52-54-384Z-XENIOS-UX-ACCOUNT-NOTIFICATIONS-20260924-codex-xenios-ux-account-notifications-20260924.md",
         "at": "2026-09-24T16:52:54.387Z"
       }
+    },
+    {
+      "id": "XENIOS-UX-RELEASE-CONTROL-20260924",
+      "title": "Reconcile the protected manifest for the qualified UX account notifications candidate",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-xenios-ux-release-control-20260924",
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/ux/xenios-ux-account-notifications-20260924/**",
+        ".xenios/sessions/codex-xenios-ux-release-control-20260924.json",
+        ".xenios/handoffs/*XENIOS-UX-RELEASE-CONTROL*"
+      ],
+      "dependsOn": [],
+      "baseSha": "8315710f90a6db4335db4c5dddac652bf05d9546",
+      "scopeNote": "Founder-directed release-control extension. Reconcile only reviewed protected-file hashes against production base 79414143 and UX candidate 8315710f; do not change runtime UX, configuration, credentials, database state, native-commerce authority, or production.",
+      "createdAt": "2026-09-24T17:03:00.000Z",
+      "claimedAt": "2026-09-24T17:03:29.997Z"
     }
   ]
 }

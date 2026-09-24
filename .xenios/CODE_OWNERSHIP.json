@@ -2027,9 +2027,14 @@
         ".xenios/sessions/codex-checkout-commerce-authority-refactor-20260923.json",
         ".xenios/handoffs/*CHECKOUT-COMMERCE-AUTHORITY*"
       ],
-      "state": "active",
+      "state": "stale",
       "claimedAt": "2026-09-23T18:11:08.108Z",
-      "heartbeatAt": "2026-09-23T18:11:08.108Z"
+      "heartbeatAt": "2026-09-23T18:11:08.108Z",
+      "staleAt": "2026-09-24T17:03:00.000Z",
+      "continuedBy": "codex-xenios-ux-account-notifications-20260924",
+      "transferredPaths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
+      ]
     },
     {
       "id": "1572207b-c8dc-4ea2-8893-84b50a3478a3",
@@ -2101,6 +2106,20 @@
       "state": "handoff",
       "claimedAt": "2026-09-24T16:02:49.204Z",
       "heartbeatAt": "2026-09-24T16:52:19.316Z"
+    },
+    {
+      "id": "f9db327b-b7df-4730-821d-3175a73cba4c",
+      "task": "XENIOS-UX-RELEASE-CONTROL-20260924",
+      "session": "codex-xenios-ux-release-control-20260924",
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/ux/xenios-ux-account-notifications-20260924/**",
+        ".xenios/sessions/codex-xenios-ux-release-control-20260924.json",
+        ".xenios/handoffs/*XENIOS-UX-RELEASE-CONTROL*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-24T17:03:29.999Z",
+      "heartbeatAt": "2026-09-24T17:34:07.514Z"
     }
   ],
   "rules": [

@@ -1,0 +1,10 @@
+{
+  "id": "codex-xenios-ux-release-control-20260924",
+  "tool": "Codex",
+  "lane": "ux-release-control",
+  "branch": "codex/xenios-ux-account-notifications-20260924",
+  "state": "active",
+  "startedAt": "2026-09-24T17:03:29.930Z",
+  "heartbeatAt": "2026-09-24T17:34:07.514Z",
+  "note": "Protection 36/36; focused 138/138 plus control 11/11; full serial 18030 passed, 85 skipped, zero failed; typecheck/build running complete"
+}
