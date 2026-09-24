@@ -2052,7 +2052,7 @@
         "docs/research-launch/*ORDERING_READINESS*",
         ".xenios/sessions/codex-ordering-readiness-20260923.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-24T03:32:26.959Z",
       "heartbeatAt": "2026-09-24T04:47:22.614Z"
     }

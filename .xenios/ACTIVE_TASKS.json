@@ -6,7 +6,7 @@
       "id": "XENIOS-ORDERING-READINESS-20260923",
       "title": "Complete customer-ready manual, assisted, and Care-gated ordering while native commerce remains dark",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-ordering-readiness-20260923",
       "baseSha": "7a2ca4a3a0ced8280ed60e2d06aa22254f0acba9",
       "paths": [
@@ -32,7 +32,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Founder-directed exact-production-base ordering readiness. Source, tests, build, synthetic browser QA, commit and push only. Preserve server-owned payment instructions, order ownership, manual verification and Care authority. Native commerce remains dark. No production config, migration, deploy, real payment, email or customer mutation without exact later authorization.",
-      "claimedAt": "2026-09-24T03:32:26.957Z"
+      "claimedAt": "2026-09-24T03:32:26.957Z",
+      "handoff": {
+        "session": "codex-ordering-readiness-20260923",
+        "sha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+        "file": ".xenios/handoffs/2026-09-24T04-49-17-279Z-XENIOS-ORDERING-READINESS-20260923-codex-ordering-readiness-20260923.md",
+        "at": "2026-09-24T04:49:17.290Z"
+      }
     },
     {
       "id": "XENIOS-CHECKOUT-COMMERCE-AUTHORITY-REFACTOR-20260923",
