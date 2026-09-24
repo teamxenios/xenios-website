@@ -2183,6 +2183,51 @@
       "state": "handoff",
       "claimedAt": "2026-09-24T19:41:56.078Z",
       "heartbeatAt": "2026-09-24T19:41:56.078Z"
+    },
+    {
+      "id": "db3c23b5-8b71-4e71-b472-70399507e499",
+      "task": "XENIOS-ADVERSARIAL-AUDIT-20260924",
+      "session": "codex-adversarial-audit-20260924",
+      "paths": [
+        "docs/ux/xenios-adversarial-audit-20260924/**",
+        ".xenios/sessions/codex-adversarial-audit-20260924.json",
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+        "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-24T19:52:45.428Z",
+      "heartbeatAt": "2026-09-24T21:56:23.995Z"
+    },
+    {
+      "id": "e7cc5451-5396-420b-b777-92bfc898c643",
+      "task": "XENIOS-INQUIRY-RECEIPT-REPAIR-20260924",
+      "session": "codex-adversarial-audit-20260924",
+      "paths": [
+        "server/routes.ts",
+        "server/services/email.ts",
+        "server/services/contact-delivery.ts",
+        "server/services/contact-delivery.test.ts",
+        "server/services/contact-email.test.ts",
+        "client/src/lib/waitlist-service.ts",
+        "client/src/research/b2b/PartnershipInquiryForm.tsx",
+        "client/src/research/b2b/PartnershipInquiryForm.test.tsx",
+        "client/src/components/ContactForm.tsx",
+        "client/src/lib/content.ts",
+        "client/src/lib/contact-service.test.ts",
+        "client/src/research/b2b/PartnerPathwaysPage.tsx",
+        "client/src/research/b2b/OrganizationAccessPage.tsx",
+        "client/src/research/b2b/SupplierPartnershipPage.tsx",
+        "client/src/research/b2b/AffiliateAccessPage.tsx",
+        "client/src/research/b2b/pathways.ts",
+        "client/src/research/quality/DocumentsPage.tsx",
+        "client/src/research/pages/quality-surfaces.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-24T19:52:45.501Z",
+      "heartbeatAt": "2026-09-24T21:56:23.995Z"
     }
   ],
   "rules": [

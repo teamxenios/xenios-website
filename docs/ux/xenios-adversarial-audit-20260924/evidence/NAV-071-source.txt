@@ -1,0 +1,57 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Invitation only
+  - heading "Private Early Access" [level=1]
+  - paragraph: Enter the access password you were given. This area is limited to members approved through the Xenios network.
+  - form "Enter your access password":
+    - paragraph: Invitation only
+    - heading "Enter your access password" [level=2]
+    - paragraph: Use the password from your invitation. Nothing is ordered, charged, or confirmed by unlocking this page.
+    - text: Access password
+    - textbox "Access password"
+    - button "Unlock" [disabled]
+    - paragraph: 🔒 Your password is checked once against your invitation. It is never put in the address bar, in a link, or in anything this page shares.
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

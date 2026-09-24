@@ -1,0 +1,95 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research/member
+    - generic: xenios
+    - generic: research
+  - button "Sign out (Preview)"
+  - navigation "Member navigation (mobile)":
+    - link "Home":
+      - /url: /research/member
+    - link "Products":
+      - /url: /research/member/products
+    - link "Full catalog":
+      - /url: /research/member/catalog
+    - link "Requests":
+      - /url: /research/member/product-requests
+    - link "Guides":
+      - /url: /research/member/guides
+    - link "Cart":
+      - /url: /research/member/cart
+    - link "Orders":
+      - /url: /research/member/orders
+    - link "Membership":
+      - /url: /research/member/membership
+    - link "Account":
+      - /url: /research/account
+    - link "Profile":
+      - /url: /research/member/profile
+- main:
+  - navigation "Member areas":
+    - link "Home":
+      - /url: /research/member
+    - link "Assessment":
+      - /url: /research/member/assessment
+    - link "Goals":
+      - /url: /research/member/goals
+    - link "Products":
+      - /url: /research/member/products
+    - link "Product requests":
+      - /url: /research/member/product-requests
+    - link "Guides":
+      - /url: /research/member/guides
+    - link "Documents":
+      - /url: /research/member/documents
+    - link "Document center":
+      - /url: /research/member/documents-center
+    - link "Cart":
+      - /url: /research/member/cart
+    - link "Orders":
+      - /url: /research/member/orders
+    - link "Subscriptions":
+      - /url: /research/member/subscriptions
+    - link "Questions":
+      - /url: /research/member/questions
+    - link "Referrals":
+      - /url: /research/member/referrals
+    - link "Recommend Xenios":
+      - /url: /research/partners/links
+    - link "Account access":
+      - /url: /research/member/membership
+    - link "Profile":
+      - /url: /research/member/profile
+    - link "Security":
+      - /url: /research/member/security
+    - link "Privacy":
+      - /url: /research/member/privacy
+  - paragraph: Member · Orders
+  - heading "Order" [level=1]
+  - link "All orders":
+    - /url: /research/member/orders
+  - button "Refresh record"
+  - paragraph: This order is not available.
+  - paragraph: This source could not provide the requested record. That does not establish whether it exists, belongs to your account, or is eligible for any action. Open your order history or contact support.
+- contentinfo:
+  - link "xenios":
+    - /url: /
+    - generic: xenios
+  - link "research use":
+    - /url: /research/policies/research-use
+  - link "shipping":
+    - /url: /research/policies/shipping
+  - link "returns":
+    - /url: /research/policies/returns
+  - link "privacy":
+    - /url: /research/policies/privacy
+  - link "terms":
+    - /url: /research/policies/terms
+  - link "accessibility":
+    - /url: /research/policies/accessibility
+  - link "Support":
+    - /url: mailto:research@xeniostechnology.com
+  - paragraph: Research materials are not for human or veterinary use. Programs are human-led and non-clinical.
+- region "Notifications (F8)":
+  - list

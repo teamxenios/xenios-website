@@ -1,0 +1,76 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Support
+  - heading "How to reach us" [level=1]
+  - paragraph: Pick the path that matches where you are. Research Support handles operational questions and account help; clinical questions stay with the authorized Care or provider workflow.
+  - region "Email support":
+    - heading "Email support" [level=2]
+    - paragraph: For applications, membership, Research requests, orders, access, documents, organization inquiries, or an operational question this page does not answer, email Research Support directly.
+    - link "Email research@xeniostechnology.com":
+      - /url: mailto:research@xeniostechnology.com
+    - paragraph: A member of the Xenios team will respond when support coverage is available. No response time is promised here.
+  - region "Check your application":
+    - heading "Check your application" [level=2]
+    - paragraph: If you received a valid secure status link, it opens the application status returned by the current source. Links can expire or be unavailable; the status page also offers a generic request for another link without disclosing whether an address has an application.
+    - link "Application status":
+      - /url: /research/application-status
+  - region "Approved but no account?":
+    - heading "Approved but no account?" [level=2]
+    - paragraph: Use the secure link in your approval email. It opens your status page, where you create your member account and choose your own password. If the link is missing or expired, use Application status above to request another status link. The response remains generic for privacy.
+  - region "Forgot your password?":
+    - heading "Forgot your password?" [level=2]
+    - paragraph: Members can request a password reset link by email. The link is single use and expires; if yours has expired, simply request a new one.
+    - link "Reset password":
+      - /url: /research/reset-password
+  - paragraph: 🔒 Support will never ask you for your password. Account help always goes through the secure links we email you.
+  - region "Research Support does not make clinical decisions.":
+    - heading "Research Support does not make clinical decisions." [level=2]
+    - paragraph: Support cannot diagnose, recommend treatment, prescribe, interpret a personal clinical result, or promise pharmacy fulfillment. Use the provider-governed Care path for those questions.
+    - link "Open Care":
+      - /url: /care
+    - link "Read the FAQ":
+      - /url: /research/faq
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

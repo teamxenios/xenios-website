@@ -1,0 +1,776 @@
+[
+  {
+    "ctaId": "CTA-candidate-home-mobile-L13",
+    "url": "http://127.0.0.1:5299/",
+    "label": "xenios",
+    "destination": "/"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L203",
+    "url": "http://127.0.0.1:5299/",
+    "label": "About",
+    "destination": "/about"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L193",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Book a Call",
+    "destination": "/book"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L141",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "Begin Care",
+    "destination": "/care"
+  },
+  {
+    "ctaId": "CTA-baseline-_care_consent-L24",
+    "url": "http://127.0.0.1:5299/care/consent",
+    "label": "Back to Care eligibility",
+    "destination": "/care/eligibility"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L80",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "How Care works",
+    "destination": "/care/how-it-works"
+  },
+  {
+    "ctaId": "CTA-baseline-_care-L25",
+    "url": "http://127.0.0.1:5299/care",
+    "label": "Care account",
+    "destination": "/care/portal"
+  },
+  {
+    "ctaId": "CTA-baseline-_care-L29",
+    "url": "http://127.0.0.1:5299/care",
+    "label": "Clinical review",
+    "destination": "/care/provider-review"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L60",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Continue",
+    "destination": "/care/schedule"
+  },
+  {
+    "ctaId": "CTA-baseline-_care-L31",
+    "url": "http://127.0.0.1:5299/care",
+    "label": "Support",
+    "destination": "/care/support"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L205",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Careers",
+    "destination": "/careers"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-coaches-L91",
+    "url": "http://127.0.0.1:5299/for-coaches",
+    "label": "Founding Coach Cohort",
+    "destination": "/careers/founding-coach-cohort"
+  },
+  {
+    "ctaId": "CTA-alias-_careers-L76",
+    "url": "http://127.0.0.1:5299/careers",
+    "label": "View details",
+    "destination": "/careers/founding-designer"
+  },
+  {
+    "ctaId": "CTA-alias-_careers-L86",
+    "url": "http://127.0.0.1:5299/careers",
+    "label": "View details",
+    "destination": "/careers/founding-senior-ai-software-engineer"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L215",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Compliance",
+    "destination": "/compliance"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L197",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Concepts",
+    "destination": "/concepts"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L209",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Contact",
+    "destination": "/contact"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L227",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Disclosures",
+    "destination": "/disclosures"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L187",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Ecosystem",
+    "destination": "/ecosystem"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L181",
+    "url": "http://127.0.0.1:5299/",
+    "label": "For Clients",
+    "destination": "/for-clients"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L179",
+    "url": "http://127.0.0.1:5299/",
+    "label": "For Coaches",
+    "destination": "/for-coaches"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L189",
+    "url": "http://127.0.0.1:5299/",
+    "label": "For Practitioners",
+    "destination": "/for-practitioners"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L73",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Athlete brands The athlete brand operating system. Programs, audience, commerce, outcomes.",
+    "destination": "/for/athlete-brands"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L89",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Biohacking clinics Biohacking clinics on one operating system, not seven.",
+    "destination": "/for/biohacking-clinics"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L97",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Chiropractors Chiropractic care with a real client app and real outcomes.",
+    "destination": "/for/chiropractors"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L45",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Concierge medicine Concierge medicine with an agent on the practitioner side and a pocket physician on the patient side.",
+    "destination": "/for/concierge-medicine"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L77",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Corporate wellness Corporate wellness that delivers outcomes, not engagement screenshots.",
+    "destination": "/for/corporate-wellness"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L117",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Creators The operating system for health creators who want a real coaching business, not a link page.",
+    "destination": "/for/creators"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L113",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Elite athletes The operating system for elite athletes and the teams around them.",
+    "destination": "/for/elite-athletes"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L37",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Functional medicine Functional medicine practices without the legacy EMR drag.",
+    "destination": "/for/functional-medicine"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L81",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Healthcare systems The proactive health layer healthcare systems have been missing.",
+    "destination": "/for/healthcare-systems"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L101",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Hormone clinics Hormone clinics with protocol versioning, lab review, and patient follow-through native.",
+    "destination": "/for/hormone-clinics"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L41",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Longevity clinics The operations layer for longevity clinics that want to deliver care, not data entry.",
+    "destination": "/for/longevity-clinics"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L85",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Military The operations system for military performance and tactical readiness programs.",
+    "destination": "/for/military"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L65",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Nutrition companies The operations rail under modern nutrition companies.",
+    "destination": "/for/nutrition-companies"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L49",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Performance labs The performance lab operating system. Testing, protocol, and follow-up on one rail.",
+    "destination": "/for/performance-labs"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L29",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Personal trainers The operating system for personal trainers who deserve more than a programming app and a billing tool stapled together.",
+    "destination": "/for/personal-trainers"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L93",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Physical therapists Physical therapy without the EMR tax.",
+    "destination": "/for/physical-therapists"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L61",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Preventive care The operations layer for preventive care, finally.",
+    "destination": "/for/preventive-care"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L53",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Recovery studios The recovery studio operations layer. Memberships, modalities, outcomes.",
+    "destination": "/for/recovery-studios"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L109",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Self-insured employers The proactive health operating layer for self-insured employers.",
+    "destination": "/for/self-insured-employers"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L121",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Sports agencies The performance, recovery, and care operations layer for sports agencies.",
+    "destination": "/for/sports-agencies"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L33",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Sports performance coaches The operating system for sports performance coaches across DIII, DI, and pro.",
+    "destination": "/for/sports-performance"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L25",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Strength coaches The operating system for strength coaches who run programming, check-ins, and meet prep on five disconnected tools.",
+    "destination": "/for/strength-coaches"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L69",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Supplement brands Supplement brands, with native practitioner distribution.",
+    "destination": "/for/supplement-brands"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L57",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Virtual coaching businesses The proactive-care operations layer for virtual coaching businesses.",
+    "destination": "/for/virtual-coaching"
+  },
+  {
+    "ctaId": "CTA-baseline-_for-practitioners-L105",
+    "url": "http://127.0.0.1:5299/for-practitioners",
+    "label": "Wellness clinics Wellness clinics with compliance, protocol, and member engagement on one rail.",
+    "destination": "/for/wellness-clinics"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L191",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Health",
+    "destination": "/health"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L27",
+    "url": "http://127.0.0.1:5299/",
+    "label": "See How It Works",
+    "destination": "/how-it-works"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L217",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Investors",
+    "destination": "/investors"
+  },
+  {
+    "ctaId": "CTA-baseline-_mvps-L34",
+    "url": "http://127.0.0.1:5299/mvps",
+    "label": "Open Kairos",
+    "destination": "/kairos"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L219",
+    "url": "http://127.0.0.1:5299/",
+    "label": "llms.txt",
+    "destination": "/llms.txt"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L201",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Manifesto",
+    "destination": "/manifesto"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L185",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Network",
+    "destination": "/network"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L207",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Press",
+    "destination": "/press"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L223",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Privacy",
+    "destination": "/privacy"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L115",
+    "url": "http://127.0.0.1:5299/",
+    "label": "View Product",
+    "destination": "/product"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L4",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "xenios research",
+    "destination": "/research"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L160",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "About",
+    "destination": "/research/about"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L139",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "Explore Research",
+    "destination": "/research/access-hub"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L18",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Get access",
+    "destination": "/research/access-hub#account-access"
+  },
+  {
+    "ctaId": "CTA-candidate-partner-signed-out-L8",
+    "url": "http://127.0.0.1:5299/research/partners/dashboard",
+    "label": "My account",
+    "destination": "/research/account"
+  },
+  {
+    "ctaId": "CTA-candidate-partner-signed-out-L14",
+    "url": "http://127.0.0.1:5299/research/partners/dashboard",
+    "label": "Account support",
+    "destination": "/research/account/support"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L46",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Continue",
+    "destination": "/research/activate"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L107",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "Review affiliate access",
+    "destination": "/research/affiliates"
+  },
+  {
+    "ctaId": "CTA-baseline-_research_support-L24",
+    "url": "http://127.0.0.1:5299/research/support",
+    "label": "Application status",
+    "destination": "/research/application-status"
+  },
+  {
+    "ctaId": "CTA-candidate-partner-signin-return-L26",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard",
+    "label": "View application information",
+    "destination": "/research/apply"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L166",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "Contact",
+    "destination": "/research/contact"
+  },
+  {
+    "ctaId": "CTA-baseline-_research_quality-L77",
+    "url": "http://127.0.0.1:5299/research/quality",
+    "label": "Explore Documents Public records and secure member documents.",
+    "destination": "/research/documents"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L123",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "Enter Private Early Access",
+    "destination": "/research/early-access"
+  },
+  {
+    "ctaId": "CTA-baseline-_research_early-access-L30",
+    "url": "http://127.0.0.1:5299/research/early-access",
+    "label": "Place an Early Access order",
+    "destination": "/research/early-access/order-request"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L158",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "FAQ",
+    "destination": "/research/faq"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L116",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "How access works",
+    "destination": "/research/how-it-works"
+  },
+  {
+    "ctaId": "CTA-candidate-partner-signed-out-L10",
+    "url": "http://127.0.0.1:5299/research/partners/dashboard",
+    "label": "Browse catalog",
+    "destination": "/research/member/catalog"
+  },
+  {
+    "ctaId": "CTA-baseline-_research_documents-L41",
+    "url": "http://127.0.0.1:5299/research/documents",
+    "label": "Open secure documents",
+    "destination": "/research/member/documents"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L53",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Continue",
+    "destination": "/research/order"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L74",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Continue",
+    "destination": "/research/organizations"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L67",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Continue",
+    "destination": "/research/partners"
+  },
+  {
+    "ctaId": "CTA-baseline-_research_affiliates-L15",
+    "url": "http://127.0.0.1:5299/research/affiliates",
+    "label": "Review the partner application",
+    "destination": "/research/partners/apply"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_partners_links-L9",
+    "url": "http://127.0.0.1:5299/research/partners/links",
+    "label": "Campaigns",
+    "destination": "/research/partners/campaigns"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_partners_links-L17",
+    "url": "http://127.0.0.1:5299/research/partners/links",
+    "label": "Commissions",
+    "destination": "/research/partners/commissions"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_partners_links-L27",
+    "url": "http://127.0.0.1:5299/research/partners/links",
+    "label": "Compliance",
+    "destination": "/research/partners/compliance"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_partners_links-L15",
+    "url": "http://127.0.0.1:5299/research/partners/links",
+    "label": "Conversions",
+    "destination": "/research/partners/conversions"
+  },
+  {
+    "ctaId": "CTA-candidate-partners-mobile-L17",
+    "url": "http://127.0.0.1:5299/research/partners",
+    "label": "Existing partner access",
+    "destination": "/research/partners/dashboard"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_partners_links-L11",
+    "url": "http://127.0.0.1:5299/research/partners/links",
+    "label": "Events",
+    "destination": "/research/partners/events"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_partners_links-L13",
+    "url": "http://127.0.0.1:5299/research/partners/links",
+    "label": "Leads",
+    "destination": "/research/partners/leads"
+  },
+  {
+    "ctaId": "CTA-candidate-partner-signed-out-L12",
+    "url": "http://127.0.0.1:5299/research/partners/dashboard",
+    "label": "Referral links",
+    "destination": "/research/partners/links"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_partners_links-L21",
+    "url": "http://127.0.0.1:5299/research/partners/links",
+    "label": "Organizations",
+    "destination": "/research/partners/organizations"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_partners_links-L19",
+    "url": "http://127.0.0.1:5299/research/partners/links",
+    "label": "Payouts",
+    "destination": "/research/partners/payouts"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_partners_links-L25",
+    "url": "http://127.0.0.1:5299/research/partners/links",
+    "label": "Resources",
+    "destination": "/research/partners/resources"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_partners_links-L31",
+    "url": "http://127.0.0.1:5299/research/partners/links",
+    "label": "Security",
+    "destination": "/research/partners/security"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_partners_links-L29",
+    "url": "http://127.0.0.1:5299/research/partners/links",
+    "label": "Support",
+    "destination": "/research/partners/support"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_partners_links-L23",
+    "url": "http://127.0.0.1:5299/research/partners/links",
+    "label": "Training",
+    "destination": "/research/partners/training"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L164",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "Policies",
+    "destination": "/research/policies"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L176",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "Accessibility",
+    "destination": "/research/policies/accessibility"
+  },
+  {
+    "ctaId": "CTA-candidate-partner-signin-return-L29",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard",
+    "label": "Privacy",
+    "destination": "/research/policies/privacy"
+  },
+  {
+    "ctaId": "CTA-baseline-_research_policies-L20",
+    "url": "http://127.0.0.1:5299/research/policies",
+    "label": "Read Research Use Policy",
+    "destination": "/research/policies/research-use"
+  },
+  {
+    "ctaId": "CTA-baseline-_research_policies-L44",
+    "url": "http://127.0.0.1:5299/research/policies",
+    "label": "Read Returns and Replacements",
+    "destination": "/research/policies/returns"
+  },
+  {
+    "ctaId": "CTA-baseline-_research_policies-L38",
+    "url": "http://127.0.0.1:5299/research/policies",
+    "label": "Read Shipping Policy",
+    "destination": "/research/policies/shipping"
+  },
+  {
+    "ctaId": "CTA-candidate-partner-signin-return-L32",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard",
+    "label": "Terms",
+    "destination": "/research/policies/terms"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L172",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "Privacy",
+    "destination": "/research/privacy"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L156",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "Quality",
+    "destination": "/research/quality"
+  },
+  {
+    "ctaId": "CTA-baseline-_research_support-L32",
+    "url": "http://127.0.0.1:5299/research/support",
+    "label": "Reset password",
+    "destination": "/research/reset-password"
+  },
+  {
+    "ctaId": "CTA-baseline-_research_activate-L15",
+    "url": "http://127.0.0.1:5299/research/activate",
+    "label": "Forgot password",
+    "destination": "/research/reset-password?returnTo=%2Fresearch%2Faccount"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_account_care-L18",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fcare",
+    "label": "Forgot your password?",
+    "destination": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fcare"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_account_documents-L18",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fdocuments",
+    "label": "Forgot your password?",
+    "destination": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fdocuments"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_account_interests-L18",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Finterests",
+    "label": "Forgot your password?",
+    "destination": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Finterests"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_account_orders-L18",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Forders",
+    "label": "Forgot your password?",
+    "destination": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Forders"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_account_profile-L18",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fprofile",
+    "label": "Forgot your password?",
+    "destination": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fprofile"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_account_security-L18",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fsecurity",
+    "label": "Forgot your password?",
+    "destination": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fsecurity"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_account_subscription-L18",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fsubscription",
+    "label": "Forgot your password?",
+    "destination": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fsubscription"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_account_support-L18",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Faccount%2Fsupport",
+    "label": "Forgot your password?",
+    "destination": "/research/reset-password?returnTo=%2Fresearch%2Faccount%2Fsupport"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_member_catalog-L18",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Fmember%2Fcatalog",
+    "label": "Forgot your password?",
+    "destination": "/research/reset-password?returnTo=%2Fresearch%2Fmember%2Fcatalog"
+  },
+  {
+    "ctaId": "CTA-candidate-partner-signin-return-L18",
+    "url": "http://127.0.0.1:5299/research/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard",
+    "label": "Forgot your password?",
+    "destination": "/research/reset-password?returnTo=%2Fresearch%2Fpartners%2Fdashboard"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L16",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Sign in",
+    "destination": "/research/sign-in"
+  },
+  {
+    "ctaId": "CTA-baseline-_research_activate-L13",
+    "url": "http://127.0.0.1:5299/research/activate",
+    "label": "Sign in",
+    "destination": "/research/sign-in?returnTo=%2Fresearch%2Faccount"
+  },
+  {
+    "ctaId": "CTA-baseline-_research_order-L51",
+    "url": "http://127.0.0.1:5299/research/order",
+    "label": "Sign in to view orders",
+    "destination": "/research/sign-in?returnTo=%2Fresearch%2Faccount%2Forders"
+  },
+  {
+    "ctaId": "CTA-baseline-_research_order-L42",
+    "url": "http://127.0.0.1:5299/research/order",
+    "label": "Sign in and continue",
+    "destination": "/research/sign-in?returnTo=%2Fresearch%2Fmember%2Fcatalog"
+  },
+  {
+    "ctaId": "CTA-candidate-partner-signed-out-L19",
+    "url": "http://127.0.0.1:5299/research/partners/dashboard",
+    "label": "Sign in",
+    "destination": "/research/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_partners_links-L38",
+    "url": "http://127.0.0.1:5299/research/partners/links",
+    "label": "Sign in",
+    "destination": "/research/sign-in?returnTo=%2Fresearch%2Fpartners%2Flinks"
+  },
+  {
+    "ctaId": "CTA-signedout-_research_partners_resources-L43",
+    "url": "http://127.0.0.1:5299/research/partners/resources",
+    "label": "Member Login",
+    "destination": "/research/sign-in?returnTo=%2Fresearch%2Fpartners%2Fresources"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L81",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Continue",
+    "destination": "/research/supplier-access"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L125",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "Get support",
+    "destination": "/research/support"
+  },
+  {
+    "ctaId": "CTA-candidate-access-hub-mobile-L174",
+    "url": "http://127.0.0.1:5299/research/access-hub#account-access",
+    "label": "Terms",
+    "destination": "/research/terms"
+  },
+  {
+    "ctaId": "CTA-baseline-_research_quality-L68",
+    "url": "http://127.0.0.1:5299/research/quality",
+    "label": "See how to read testing evidence",
+    "destination": "/research/testing"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L213",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Security",
+    "destination": "/security"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L183",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Storefront",
+    "destination": "/storefront"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L225",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Terms",
+    "destination": "/terms"
+  },
+  {
+    "ctaId": "CTA-candidate-home-mobile-L8",
+    "url": "http://127.0.0.1:5299/",
+    "label": "Join",
+    "destination": "/waitlist"
+  }
+]

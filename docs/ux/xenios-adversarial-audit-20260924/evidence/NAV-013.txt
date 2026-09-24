@@ -1,0 +1,144 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios home":
+    - /url: /
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - link "Back to careers":
+    - /url: /careers
+  - paragraph: Contract to full-time
+  - heading "Founding Designer" [level=1]
+  - paragraph: Set the visual identity and design system for the operating system behind proactive-health professionals.
+  - link "Apply by email":
+    - /url: mailto:team@xeniostechnology.com?subject=Founding%20Designer%2C%20xenios
+  - link "Ask a question":
+    - /url: mailto:team@xeniostechnology.com
+  - paragraph: TYPE
+  - paragraph: Contract to full-time
+  - paragraph: LOCATION
+  - paragraph: Remote, US
+  - paragraph: APPLY
+  - paragraph: team@xeniostechnology.com
+  - article:
+    - paragraph: "xenios is building the AI-native operating system for the proactive-health professional: coaches, clinicians, performance specialists, and the organizations that employ them. One platform, three commercial surfaces: a professional workspace, a consumer behavioral companion, and a clinical enterprise tier. A great coach today maxes out around 20 to 40 clients before quality breaks. xenios is the substrate that lets one coach serve far more clients without losing what makes coaching transformative."
+    - paragraph: Design is not a layer here. It is the product. The professional workspace lives or dies on whether hours of weekly operational drag disappear the moment they open it. The consumer companion lives or dies on whether it feels like their coach, not like a chatbot. The clinical surface lives or dies on whether a longevity clinic's medical director trusts it inside an audited prescribing workflow. The founding designer sets that foundation.
+    - paragraph: "The team. The founding team includes a CTO with two prior healthcare-technology exits totaling over 710 million dollars, an MD cofounder with a 30,000-plus patient prescribing history and clinical leadership through a 1.6 billion dollar SPAC, and a founding bench spanning performance science, clinical operations, product, and operator-side experience across coaching, healthtech, and consumer. Pre-seed stage, with named angel capital closed and the MVP build active now. Aesthetic and posture: Anthropic, Stripe, Palantir. Infrastructure, not vertical SaaS."
+    - heading "What you own in the first 90 days" [level=2]
+    - list:
+      - generic: →
+      - generic: "Visual identity and design system from scratch: Figma library, tokens, components, motion principles"
+      - generic: →
+      - generic: "End-to-end flows for the professional workspace: operator dashboard, client roster, protocol builder, lab interpretation, prescribing handoff"
+      - generic: →
+      - generic: "End-to-end flows for the consumer companion: daily check-in, food log, form-check video capture, wearable synthesis, conversational layer"
+      - generic: →
+      - generic: "Onboarding and migration UX: moving working professionals off legacy platforms quickly"
+      - generic: →
+      - generic: A consistent design language across web, mobile, conversational, and clinical surfaces
+    - paragraph: The founding designer reports to the CEO and works directly with the CTO. Ships to production weekly. No PM gates between design and shipped UI.
+    - heading "Who fits" [level=2]
+    - list:
+      - generic: →
+      - generic: 5 or more years shipping product design
+      - generic: →
+      - generic: A portfolio that holds visual quality and information density at the same time
+      - generic: →
+      - generic: Experience designing systems-heavy products such as B2B SaaS, fintech infrastructure, clinical, or performance tooling
+      - generic: →
+      - generic: Comfortable building a design system from a blank file
+      - generic: →
+      - generic: Fast iteration, taste over polish, no patience for design theater
+    - paragraph: "Bonus: health, fitness, performance, longevity, or clinical product experience; designing for AI-assisted workflows; a design system that scaled past 50 components."
+    - paragraph: "Stack the team uses: Figma. React, Next.js, Tailwind v4, React Native (Expo). Supabase backend. Anthropic Claude. MCP server architecture. Vercel and Fly.io. AI-assisted design tools welcome."
+    - paragraph: "Compensation: Competitive market-rate cash, paid in 4-week cycles from start date. Founding-level equity grant with a 4-year vest and 6-month cliff. A 30-day reassessment after start. Final cash terms set at offer based on scope and time commitment. Full-time transition available as the company scales."
+    - paragraph: "Work authorization: This role requires current authorization to work in the United States on a permanent basis, without current or future employer-sponsored work visa. This is solely because we are not able to sponsor employment visas at this stage."
+    - paragraph: "How to apply: Email team@xeniostechnology.com with the subject \"Founding Designer, xenios\". Include your resume, your portfolio, one paragraph on a 0 to 1 product you designed, and why xenios specifically. The founding team responds to every serious applicant within 48 hours."
+  - paragraph: xenios is an equal opportunity employer. We do not discriminate on the basis of race, color, national origin, ancestry, religion, sex, gender identity, sexual orientation, age, disability, veteran status, or any other characteristic protected by applicable law. Any work-authorization requirement noted on a role is solely because we are not able to sponsor employment visas at this stage.
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first
+- status:
+  - generic: Add xenios to your home screen.
+  - button "Install"
+  - button "Dismiss": ✕

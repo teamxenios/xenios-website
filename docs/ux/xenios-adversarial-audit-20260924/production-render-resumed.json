@@ -1,0 +1,12 @@
+{
+  "source": "read-only Render list_deploys connector",
+  "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+  "service": "srv-d8s9vej7uimc7384dfcg",
+  "deploy": "dep-daqft3vf3r2c73b7e88g",
+  "status": "live",
+  "commit": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+  "finishedAt": "2026-09-24T10:43:29.274153Z",
+  "productionMutated": false,
+  "recordedAt": "2026-09-24T22:09:49.000Z",
+  "observationTimeScope": "Read-only connector observation in this audit continuation; no precise observation timestamp was returned by the connector"
+}

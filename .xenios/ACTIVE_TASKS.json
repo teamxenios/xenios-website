@@ -2206,18 +2206,21 @@
       "id": "XENIOS-ADVERSARIAL-AUDIT-20260924",
       "title": "Independent audit-first UX baseline and evidence-backed scoped repairs",
       "priority": "P1",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-adversarial-audit-20260924",
       "baseSha": "c8ea24944f277e5b0770d5446687f2752db3ab73",
       "paths": [
         "docs/ux/xenios-adversarial-audit-20260924/**",
         ".xenios/sessions/codex-adversarial-audit-20260924.json",
         ".xenios/PROJECT_STATE.json",
-        ".xenios/RELEASE_STATE.json"
+        ".xenios/RELEASE_STATE.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+        "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv"
       ],
       "dependsOn": [],
       "scopeNote": "Audit evidence first. No application edits until baseline. No production mutation or feature activation.",
-      "claimedAt": "2026-09-24T19:41:56.074Z",
+      "claimedAt": "2026-09-24T19:52:45.425Z",
       "handoff": {
         "session": "codex-adversarial-audit-20260924",
         "sha": "ab34880ef390384dc9cc72a01a35e59279f384fb",
@@ -2229,7 +2232,7 @@
       "id": "XENIOS-INQUIRY-RECEIPT-REPAIR-20260924",
       "title": "Repair browser-demonstrated false inquiry receipt AUD-001",
       "priority": "P1",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-adversarial-audit-20260924",
       "baseSha": "ee8af17d4423916a238756a16a95457b9d08a867",
       "paths": [
@@ -2240,11 +2243,21 @@
         "server/services/contact-email.test.ts",
         "client/src/lib/waitlist-service.ts",
         "client/src/research/b2b/PartnershipInquiryForm.tsx",
-        "client/src/research/b2b/PartnershipInquiryForm.test.tsx"
+        "client/src/research/b2b/PartnershipInquiryForm.test.tsx",
+        "client/src/components/ContactForm.tsx",
+        "client/src/lib/content.ts",
+        "client/src/lib/contact-service.test.ts",
+        "client/src/research/b2b/PartnerPathwaysPage.tsx",
+        "client/src/research/b2b/OrganizationAccessPage.tsx",
+        "client/src/research/b2b/SupplierPartnershipPage.tsx",
+        "client/src/research/b2b/AffiliateAccessPage.tsx",
+        "client/src/research/b2b/pathways.ts",
+        "client/src/research/quality/DocumentsPage.tsx",
+        "client/src/research/pages/quality-surfaces.test.tsx"
       ],
       "dependsOn": [],
       "scopeNote": "Existing contact delivery only; no production mutation. Baseline artifacts precede edits.",
-      "claimedAt": "2026-09-24T19:10:34.931Z",
+      "claimedAt": "2026-09-24T19:52:45.498Z",
       "handoff": {
         "session": "codex-adversarial-audit-20260924",
         "sha": "ab34880ef390384dc9cc72a01a35e59279f384fb",

@@ -1,0 +1,44 @@
+- region "Notifications (F8)":
+  - list
+- main:
+  - navigation "Partner areas":
+    - link "Dashboard":
+      - /url: /research/partners/dashboard
+    - link "Links":
+      - /url: /research/partners/links
+    - link "Campaigns":
+      - /url: /research/partners/campaigns
+    - link "Events":
+      - /url: /research/partners/events
+    - link "Leads":
+      - /url: /research/partners/leads
+    - link "Conversions":
+      - /url: /research/partners/conversions
+    - link "Commissions":
+      - /url: /research/partners/commissions
+    - link "Payouts":
+      - /url: /research/partners/payouts
+    - link "Organizations":
+      - /url: /research/partners/organizations
+    - link "Training":
+      - /url: /research/partners/training
+    - link "Resources":
+      - /url: /research/partners/resources
+    - link "Compliance":
+      - /url: /research/partners/compliance
+    - link "Support":
+      - /url: /research/partners/support
+    - link "Security":
+      - /url: /research/partners/security
+  - paragraph: Partners
+  - heading "Resources" [level=1]
+  - paragraph: "Each item Xenios publishes for your role carries one of four usage labels: Approved to share (use exactly as published), Private working material (yours to read, not to forward), Training or internal use (onboarding and internal reference), or Draft / review required (not approved material); only an item labelled Approved to share is cleared for use outside Xenios."
+  - paragraph: The label on each item is the permission.
+  - paragraph:
+    - text: Anything not labelled “Approved to share”, and any edit, excerpt, or remix of any item, needs review before it goes outside Xenios.
+    - link "Submit content for review on the Compliance page.":
+      - /url: /research/partners/compliance
+  - paragraph: Please sign in.
+  - paragraph: Your session has ended. Sign in again to continue.
+  - link "Member Login":
+    - /url: /research/sign-in?returnTo=%2Fresearch%2Fpartners%2Fresources

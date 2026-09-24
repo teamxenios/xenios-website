@@ -1,0 +1,117 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios home":
+    - /url: /
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - paragraph: CHIROPRACTORS
+  - heading "Chiropractic care with a real client app and real outcomes." [level=1]
+  - paragraph: THE PROBLEM
+  - paragraph: Chiropractors deliver hands-on care and then send patients home with a paper sheet. The relationship goes cold between visits.
+  - paragraph: WHAT XENIOS DOES FOR YOU
+  - list:
+    - generic: →
+    - generic: Patient record across visits, programs, and recovery cues.
+    - generic: →
+    - generic: Pocket coach that holds the in-between.
+    - generic: →
+    - generic: Native memberships and packages.
+  - paragraph: THE STACK YOU WOULD RETIRE
+  - generic: Sick-care EMR
+  - generic: Patient portal
+  - generic: Email reminders
+  - generic: Booking platform
+  - heading "Ready to put your practice on one rail?" [level=2]
+  - link "Join the waitlist":
+    - /url: /waitlist
+  - link "All categories":
+    - /url: /for-practitioners
+  - paragraph: Remote first. Austin preferred.
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first
+- status:
+  - generic: Add xenios to your home screen.
+  - button "Install"
+  - button "Dismiss": ✕

@@ -1,0 +1,16 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - generic "xenios research":
+    - text: xenios
+    - generic: research
+- main:
+  - paragraph: Application status
+  - heading "Account active" [level=1]
+  - paragraph: Hi Synthetic. This application is recorded as active. Sign in normally to verify and open your customer account.
+  - link "Sign in to my account":
+    - /url: /research/sign-in?returnTo=%2Fresearch%2Faccount
+  - link "Contact support":
+    - /url: /research/support
+- region "Notifications (F8)":
+  - list

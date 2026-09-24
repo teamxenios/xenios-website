@@ -1,0 +1,198 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- banner:
+  - link "xenios":
+    - /url: /
+    - generic: xenios
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - region "Start your Care request.":
+    - paragraph: XENIOS CARE · ACCESS REQUEST
+    - heading "Start your Care request." [level=1]
+    - paragraph: This short survey opens the human follow-up workflow. It is not a clinical intake, appointment request, provider relationship, treatment decision, or prescription. If an appropriate clinical next step is available, the team will provide a separate authorized secure handoff.
+  - navigation "Care pages":
+    - list:
+      - link "Care overview":
+        - /url: /care
+      - link "Start Care request":
+        - /url: /care/schedule
+      - link "Care account":
+        - /url: /care/portal
+      - link "How Care works":
+        - /url: /care/how-it-works
+      - link "Clinical review":
+        - /url: /care/provider-review
+      - link "Support":
+        - /url: /care/support
+  - region "Xenios Care access request":
+    - paragraph: CONTACT AND ROUTING ONLY
+    - paragraph: Do not enter symptoms, diagnoses, medications, medical history, laboratory results, or other medical information. This public form intentionally has no clinical free-text field.
+    - paragraph:
+      - strong: Requests are open.
+      - text: Required fields are marked below.
+    - generic: Full name *
+    - textbox "Full name *"
+    - generic: Email *
+    - textbox "Email *"
+    - generic: Phone (optional)
+    - textbox "Phone (optional)"
+    - generic: Current U.S. state *
+    - combobox "Current U.S. state *":
+      - option "Choose a state" [selected]
+      - option "Alabama"
+      - option "Alaska"
+      - option "Arizona"
+      - option "Arkansas"
+      - option "California"
+      - option "Colorado"
+      - option "Connecticut"
+      - option "Delaware"
+      - option "District of Columbia"
+      - option "Florida"
+      - option "Georgia"
+      - option "Hawaii"
+      - option "Idaho"
+      - option "Illinois"
+      - option "Indiana"
+      - option "Iowa"
+      - option "Kansas"
+      - option "Kentucky"
+      - option "Louisiana"
+      - option "Maine"
+      - option "Maryland"
+      - option "Massachusetts"
+      - option "Michigan"
+      - option "Minnesota"
+      - option "Mississippi"
+      - option "Missouri"
+      - option "Montana"
+      - option "Nebraska"
+      - option "Nevada"
+      - option "New Hampshire"
+      - option "New Jersey"
+      - option "New Mexico"
+      - option "New York"
+      - option "North Carolina"
+      - option "North Dakota"
+      - option "Ohio"
+      - option "Oklahoma"
+      - option "Oregon"
+      - option "Pennsylvania"
+      - option "Rhode Island"
+      - option "South Carolina"
+      - option "South Dakota"
+      - option "Tennessee"
+      - option "Texas"
+      - option "Utah"
+      - option "Vermont"
+      - option "Virginia"
+      - option "Washington"
+      - option "West Virginia"
+      - option "Wisconsin"
+      - option "Wyoming"
+    - generic: Help me route *
+    - combobox "Help me route *":
+      - option "Choose a broad category" [selected]
+      - option "I want to start a new Care request"
+      - option "I have questions before I start"
+      - option "I need help with an existing request"
+      - option "I am not sure yet"
+    - generic: Preferred contact *
+    - combobox "Preferred contact *":
+      - option "Choose a contact method" [selected]
+      - option "Email"
+      - option "Phone call"
+      - option "Text message"
+    - generic: Best time *
+    - combobox "Best time *":
+      - option "Choose a time" [selected]
+      - option "Morning"
+      - option "Afternoon"
+      - option "Evening"
+      - option "Any time"
+    - checkbox "I am 18 or older and currently located in the United States. *"
+    - generic: I am 18 or older and currently located in the United States. *
+    - checkbox "I understand this is not emergency care or a medical intake and does not create an appointment, clinician-patient relationship, treatment decision, or prescription. *"
+    - generic: I understand this is not emergency care or a medical intake and does not create an appointment, clinician-patient relationship, treatment decision, or prescription. *
+    - button "Submit Care request"
+    - paragraph: Submitting authorizes Xenios to contact you about this request. It is not marketing consent and is not clinical consent.
+  - region "This site is not emergency care.":
+    - paragraph: EMERGENCY BOUNDARY
+    - heading "This site is not emergency care." [level=2]
+    - paragraph: If you may be experiencing a medical emergency, call 911 in the United States or contact your local emergency services now. Do not wait for a response from Xenios.
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first

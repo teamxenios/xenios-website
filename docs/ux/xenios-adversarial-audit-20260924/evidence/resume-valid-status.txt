@@ -1,0 +1,12 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - generic "xenios research":
+    - text: xenios
+    - generic: research
+- main:
+  - paragraph: Application status
+  - heading "Under review" [level=1]
+  - paragraph: Hi Synthetic. Your application is being reviewed individually.
+- region "Notifications (F8)":
+  - list

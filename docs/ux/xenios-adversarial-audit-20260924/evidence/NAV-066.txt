@@ -1,0 +1,22 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - generic "xenios research":
+    - text: xenios
+    - generic: research
+- main:
+  - paragraph: Application status
+  - heading "Check your application status" [level=1]
+  - paragraph: Enter the email used for your application.
+  - paragraph: If a matching application exists, Xenios will send a secure status link.
+  - paragraph: Request a secure status link
+  - generic: Application email
+  - textbox "Application email"
+  - button "Request secure status link"
+  - navigation "Application status help":
+    - link "Back to Research access":
+      - /url: /research/access-hub
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Contact support":
+      - /url: /research/support

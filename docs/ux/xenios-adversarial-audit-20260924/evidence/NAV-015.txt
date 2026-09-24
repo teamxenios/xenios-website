@@ -1,0 +1,133 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios home":
+    - /url: /
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - paragraph: COMPLIANCE
+  - heading "Honest posture. Clear boundaries." [level=1]
+  - paragraph: xenios is built for coaches, trainers, and practitioners who handle sensitive client context. We keep trust language specific and cautious because credibility depends on accuracy.
+  - link "Talk to the Team":
+    - /url: /contact
+  - link "View Security":
+    - /url: /security
+  - paragraph: CURRENT POSTURE
+  - heading "Health-aware posture" [level=3]
+  - paragraph: xenios is designed with higher privacy expectations in mind. Formal use in regulated settings should be reviewed with the team before launch.
+  - heading "Security roadmap" [level=3]
+  - paragraph: Controls, documentation, and review processes are being built as the product matures. This page does not claim a completed certification.
+  - heading "Agreement review" [level=3]
+  - paragraph: Contract and data handling needs depend on customer use case and data scope. Ask the team for current availability and review status.
+  - heading "Scope of practice" [level=3]
+  - paragraph: Professionals operate within their own licensure, credentials, and scope. xenios is software, not a provider of care.
+  - heading "AI boundary" [level=3]
+  - paragraph: AI does not diagnose, prescribe, or replace licensed professional judgment. Clinical workflows require appropriate professionals and legal review.
+  - heading "Privacy posture" [level=3]
+  - paragraph: Client context is treated as sensitive. Questions about use, access, retention, or deletion should be sent directly to the team.
+  - paragraph: ROADMAP
+  - heading "The trust layer matures with the product." [level=2]
+  - paragraph:
+    - generic: →
+    - generic: Documented security review process
+  - paragraph:
+    - generic: →
+    - generic: Expanded audit logs and access controls
+  - paragraph:
+    - generic: →
+    - generic: Customer-facing data handling overview
+  - paragraph:
+    - generic: →
+    - generic: Compliance packet for qualified customers
+  - paragraph:
+    - generic: →
+    - generic: Formal audit path as the product matures
+  - paragraph: REQUEST DOCUMENTS
+  - paragraph: Security review packets, posture summaries, and compliance questions can be sent to team@xeniostechnology.com with subject prefix [Compliance].
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first
+- status:
+  - generic: Add xenios to your home screen.
+  - button "Install"
+  - button "Dismiss": ✕

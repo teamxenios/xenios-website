@@ -1,0 +1,87 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Membership application
+  - heading "Formal membership applications are not open yet." [level=1]
+  - paragraph: The required Membership Application Terms and Privacy Policy are still under review. No application can be started or submitted here, but you can use the supported paths below now.
+  - region "Choose the real next action you need.":
+    - paragraph: Available now
+    - heading "Choose the real next action you need." [level=2]
+    - paragraph: If you want Research products now, start with Order for Research. Existing customers can sign in. Care, organization, partner, and support requests each keep their own review and authority.
+    - link "Sign in Use an existing Xenios Research account.":
+      - /url: /research/sign-in
+      - text: Sign in
+      - generic: Use an existing Xenios Research account.
+    - link "Order for Research Choose the currently supported Research ordering path.":
+      - /url: /research/order
+      - text: Order for Research
+      - generic: Choose the currently supported Research ordering path.
+    - link "Start Care Send non-clinical routing details for human follow-up.":
+      - /url: /care/schedule
+      - text: Start Care
+      - generic: Send non-clinical routing details for human follow-up.
+    - link "Business or organization Start a reviewed organization or professional-buyer inquiry.":
+      - /url: /research/organizations
+      - text: Business or organization
+      - generic: Start a reviewed organization or professional-buyer inquiry.
+    - link "Partner program Review partner paths and their separate application requirements.":
+      - /url: /research/partners
+      - text: Partner program
+      - generic: Review partner paths and their separate application requirements.
+    - link "Support Ask a person about the right supported next step.":
+      - /url: /research/support
+      - text: Support
+      - generic: Ask a person about the right supported next step.
+  - region "No application has been started":
+    - paragraph: What happens next
+    - heading "No application has been started" [level=2]
+    - paragraph: This page does not submit, save, or imply a membership application. When the approved documents are available, this route can present the complete application and its required acknowledgements.
+    - paragraph: Do not email medical records or sensitive health information.
+    - navigation "Application documentation":
+      - link "Terms status":
+        - /url: /research/terms
+      - link "Privacy status":
+        - /url: /research/privacy
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

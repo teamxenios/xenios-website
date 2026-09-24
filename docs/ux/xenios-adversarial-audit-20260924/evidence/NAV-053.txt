@@ -1,0 +1,121 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios home":
+    - /url: /
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - paragraph: MANIFESTO
+  - heading "Infrastructure as serious as the work." [level=1]
+  - paragraph: Coaches, trainers, and practitioners are the people doing the work upstream of disease. They build athletes. They recover bodies. They restore hormones. They steward longevity. They hold a relationship that the legacy healthcare system has never been able to hold.
+  - paragraph: And the tools they were given? A coaching app stitched to a billing platform stitched to an EMR stitched to an inbox. A spreadsheet for what is actually happening with the client. A founder coaching forty people from a phone in a parking lot.
+  - paragraph: We do not buy the future of health from a chatbot. We do not buy it from another portal. We do not buy it from a wellness app pretending to be infrastructure.
+  - paragraph: We buy it from the practitioner who knows the client by name, the coach who shows up at the meet, the clinician who gets the lab back at midnight and replies before sunrise. The work is human. The infrastructure should be honest.
+  - paragraph: xenios is the AI-adjunct operations system for that practitioner. The xenios agent runs the back office. The xenios client agent holds the in-between. The voice is theirs. The judgment is theirs. The autonomy dial is theirs.
+  - paragraph: We are not building another wellness app. We are building infrastructure as serious as the work.
+  - heading "Five beliefs." [level=2]
+  - paragraph: "01"
+  - heading "The relationship is the unit." [level=3]
+  - paragraph: The visit, the session, and the message are moments inside it. The operating system holds the relationship, not the moment.
+  - paragraph: "02"
+  - heading "Voice and judgment first." [level=3]
+  - paragraph: The agent loads the practitioner's voice corpus and decision rules. It acts in their style, or it does not act.
+  - paragraph: "03"
+  - heading "AI is an adjunct, not a replacement." [level=3]
+  - paragraph: "Three modes per workflow per client: SUGGEST, DRAFT, AUTO-APPROVE. The dial is the practitioner's, always."
+  - paragraph: "04"
+  - heading "Outcomes are the receipt." [level=3]
+  - paragraph: Engagement screenshots are not outcomes. We build the layer that proves the work.
+  - paragraph: "05"
+  - heading "Coordination, not capture." [level=3]
+  - paragraph: The practitioner owns the relationship. We build the rails for them to refer, collaborate, and grow without leaving.
+  - heading "If this is the work you are doing, build with us." [level=2]
+  - link "Join the waitlist":
+    - /url: /waitlist
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first
+- status:
+  - generic: Add xenios to your home screen.
+  - button "Install"
+  - button "Dismiss": ✕

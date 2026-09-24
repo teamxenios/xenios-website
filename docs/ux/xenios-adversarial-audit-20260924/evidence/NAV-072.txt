@@ -1,0 +1,115 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Questions, answered plainly
+  - heading "Questions about Xenios Care + Research" [level=1]
+  - paragraph: Understand the clinical journey, pharmacy role, lifestyle support, Research boundary, evidence labels, pricing, quality documents, and the next responsible step.
+  - paragraph: Care and Research are separate. Clinical decisions belong to appropriately licensed clinicians. Research-designated materials remain nonclinical and are not for human or veterinary use.
+  - heading "What is Xenios?" [level=2]:
+    - button "What is Xenios?" [expanded]:
+      - generic: What is Xenios?
+  - region "What is Xenios?":
+    - paragraph: Xenios is a U.S.-based health-access and product platform with two separate pathways. Xenios Care begins with a short, nonclinical access request and may provide a separate secure clinical handoff when an appropriate pathway is available. Xenios Research supports legitimate nonclinical work through exact product identity, evidence-aware education, quality documentation, controlled access, and Research operations.
+  - heading "How does Xenios Care work?" [level=2]:
+    - button "How does Xenios Care work?":
+      - generic: How does Xenios Care work?
+  - heading "Who reviews my health questionnaire?" [level=2]:
+    - button "Who reviews my health questionnaire?":
+      - generic: Who reviews my health questionnaire?
+  - heading "Does completing the intake guarantee a prescription?" [level=2]:
+    - button "Does completing the intake guarantee a prescription?":
+      - generic: Does completing the intake guarantee a prescription?
+  - heading "Is a video visit always required?" [level=2]:
+    - button "Is a video visit always required?":
+      - generic: Is a video visit always required?
+  - heading "Where is Xenios Care available?" [level=2]:
+    - button "Where is Xenios Care available?":
+      - generic: Where is Xenios Care available?
+  - heading "How do compounding pharmacies fit into the process?" [level=2]:
+    - button "How do compounding pharmacies fit into the process?":
+      - generic: How do compounding pharmacies fit into the process?
+  - heading "Is Xenios a pharmacy, and are compounded medications FDA-approved?" [level=2]:
+    - button "Is Xenios a pharmacy, and are compounded medications FDA-approved?":
+      - generic: Is Xenios a pharmacy, and are compounded medications FDA-approved?
+  - heading "Is every product available to every Care client?" [level=2]:
+    - button "Is every product available to every Care client?":
+      - generic: Is every product available to every Care client?
+  - heading "Can a custom formulation or custom blend be requested?" [level=2]:
+    - button "Can a custom formulation or custom blend be requested?":
+      - generic: Can a custom formulation or custom blend be requested?
+  - heading "What is the First-Month Foundations Plan?" [level=2]:
+    - button "What is the First-Month Foundations Plan?":
+      - generic: What is the First-Month Foundations Plan?
+  - heading "What happens after the first month of lifestyle support?" [level=2]:
+    - button "What happens after the first month of lifestyle support?":
+      - generic: What happens after the first month of lifestyle support?
+  - heading "What is Xenios Research?" [level=2]:
+    - button "What is Xenios Research?":
+      - generic: What is Xenios Research?
+  - heading "What does Research use only mean?" [level=2]:
+    - button "What does Research use only mean?":
+      - generic: What does Research use only mean?
+  - heading "Why do product pages say people commonly discuss a compound for certain goals?" [level=2]:
+    - button "Why do product pages say people commonly discuss a compound for certain goals?":
+      - generic: Why do product pages say people commonly discuss a compound for certain goals?
+  - heading "What does a certificate of analysis prove?" [level=2]:
+    - button "What does a certificate of analysis prove?":
+      - generic: What does a certificate of analysis prove?
+  - heading "How are pricing and availability shown?" [level=2]:
+    - button "How are pricing and availability shown?":
+      - generic: How are pricing and availability shown?
+  - heading "How do I get help?" [level=2]:
+    - button "How do I get help?":
+      - generic: How do I get help?
+  - paragraph: Need a specific answer?
+  - heading "A person can help route the question." [level=2]
+  - paragraph: Use Research Support for account, product-access, document, order, or organization questions. Use Care for provider-governed clinical questions.
+  - link "Start Care request":
+    - /url: /care/schedule
+  - link "Explore Research":
+    - /url: /research/access-hub
+  - link "Get support":
+    - /url: /research/support
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ" [active]:
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

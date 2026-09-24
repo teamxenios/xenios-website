@@ -1,0 +1,100 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - navigation "Partner areas":
+    - link "Dashboard":
+      - /url: /research/partners/dashboard
+    - link "Links":
+      - /url: /research/partners/links
+    - link "Campaigns":
+      - /url: /research/partners/campaigns
+    - link "Events":
+      - /url: /research/partners/events
+    - link "Leads":
+      - /url: /research/partners/leads
+    - link "Conversions":
+      - /url: /research/partners/conversions
+    - link "Commissions":
+      - /url: /research/partners/commissions
+    - link "Payouts":
+      - /url: /research/partners/payouts
+    - link "Organizations":
+      - /url: /research/partners/organizations
+    - link "Training":
+      - /url: /research/partners/training
+    - link "Resources":
+      - /url: /research/partners/resources
+    - link "Compliance":
+      - /url: /research/partners/compliance
+    - link "Support":
+      - /url: /research/partners/support
+    - link "Security":
+      - /url: /research/partners/security
+  - paragraph: Partners
+  - heading "Compliance" [level=1]
+  - paragraph: The rules are short and hard. Everything shareable follows them; anything that does not is out of the program.
+  - region "What you may say":
+    - heading "What you may say" [level=2]
+    - list:
+      - listitem: "Describe the program factually: approved customer access is education-first and does not require a paid membership prerequisite."
+      - listitem: Do not present retired membership prices as current. Historical billing and plan records may remain visible in legacy reporting; product purchases, when available, are separate.
+      - listitem: Use materials from the approved library word for word, or submit your own version for review first.
+      - listitem: Disclose the rep relationship in every share, visibly, in the share itself.
+      - listitem: Speak from your own experience as an educator or community builder, without outcome promises of any kind.
+  - region "The three hard lines":
+    - heading "The three hard lines" [level=2]
+    - paragraph: No medical claims
+    - paragraph: Never state or imply that anything offered diagnoses, treats, cures, mitigates, or prevents any disease or condition. No before-and-after health outcome framing, no dosage or protocol advice, no repurposing of research literature as a promise.
+    - paragraph: No income claims
+    - paragraph: Never present the program as an income opportunity. No earnings figures, no lifestyle framing, no 'replace your job' language, no hypothetical math. Reps earn commissions on their own referrals and that is the entire story.
+    - paragraph: No downline recruitment
+    - paragraph: Never recruit others to become reps for compensation. There is no downline, no tier, and no override in this program, and presenting one is grounds for immediate removal.
+  - link "My account":
+    - /url: /research/account
+  - paragraph: Sign in to view content reviews
+  - paragraph: Use your Xenios account. Partner reporting and submission access are verified separately by the server.
+  - link "Sign in":
+    - /url: /research/sign-in
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

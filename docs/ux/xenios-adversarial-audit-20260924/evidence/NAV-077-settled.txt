@@ -1,0 +1,139 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Organizations and professional buyers
+  - heading "Structured access for serious business relationships." [level=1]
+  - paragraph: Organization access brings the buyer, business purpose, catalog request, documentation needs, commercial review, fulfillment expectations, and support relationship into one deliberate pathway.
+  - link "Send an organization inquiry":
+    - /url: "#organization-inquiry"
+  - link "Compare partnership paths":
+    - /url: /research/partners
+  - region "Different buyers, one disciplined intake.":
+    - paragraph: Who this is for
+    - heading "Different buyers, one disciplined intake." [level=2]
+    - paragraph: The organization route supports Research and commercial relationships. Provider-governed patient care remains in Care, even when the same business has a Research relationship with Xenios.
+    - article:
+      - heading "Research and analytical organizations" [level=3]
+      - paragraph: Laboratories, biotechnology teams, contract research organizations, and qualified product-development groups seeking documented nonclinical materials.
+    - article:
+      - heading "Clinics and medical spas" [level=3]
+      - paragraph: A reviewed business relationship that keeps Research procurement separate from patient care, provider judgment, prescribing, and pharmacy fulfillment.
+    - article:
+      - heading "Professional and volume buyers" [level=3]
+      - paragraph: Qualified businesses requesting a buyer profile, documented catalog review, volume planning, or human-reviewed commercial terms.
+    - article:
+      - heading "Brands and approved resellers" [level=3]
+      - paragraph: Entity, channel, claims, quality, insurance, buyer controls, intended market, and audit expectations are reviewed before any approval.
+  - region "An operational relationship, not a generic contact form.":
+    - paragraph: After approval
+    - heading "An operational relationship, not a generic contact form." [level=2]
+    - paragraph: The exact capabilities depend on durable account, catalog, pricing, documentation, and fulfillment authority. Missing capabilities stay explicit.
+    - list:
+      - listitem: Reviewed organization and buyer access
+      - listitem: Exact product and variant requests
+      - listitem: Volume and availability planning
+      - listitem: Human-reviewed quote requests
+      - listitem: Lot and document requirements
+      - listitem: Order, fulfillment, and support relationship
+    - complementary "A request does not establish price, supply, or clinical access.":
+      - paragraph: Operating boundary
+      - heading "A request does not establish price, supply, or clinical access." [level=2]
+      - paragraph: Organization review creates a defensible next action. It does not turn workbook presence, demand, verbal supply, or a provider relationship into a purchasable product.
+      - list:
+        - listitem: Wholesale and organization-specific terms remain private and human-approved.
+        - listitem: Inventory, availability, documentation, and exact variants remain authoritative at the time of action.
+        - listitem: A clinic's Research account never authorizes treatment, prescribing, telehealth, or pharmacy fulfillment.
+        - listitem: No client or patient list should be attached to an initial inquiry.
+  - region "From interest to an owned next action.":
+    - paragraph: Review sequence
+    - heading "From interest to an owned next action." [level=2]
+    - paragraph: Each stage names the evidence or decision still needed. A missing external agreement or configuration blocks only that capability, not the clarity of the pathway.
+    - list:
+      - generic: "01"
+      - heading "Organization review" [level=3]
+      - paragraph: Verify the legal entity, authorized contact, intended business purpose, region, and the people who need buyer or billing access.
+      - generic: "02"
+      - heading "Scope and documentation" [level=3]
+      - paragraph: Identify exact categories, volume, research context, quality documents, delivery needs, and any terms requiring human review.
+      - generic: "03"
+      - heading "Commercial path" [level=3]
+      - paragraph: Review identifies whether the next path is a catalog, availability request, quote, organization account, or Care handoff without silently merging them.
+      - generic: "04"
+      - heading "Onboarding and support" [level=3]
+      - paragraph: Any approved onboarding must identify an accountable Xenios owner, next action, account status, and supported operational path. Approval is never automatic.
+  - region "Send an organization or wholesale inquiry":
+    - paragraph: Human review
+    - heading "Send an organization or wholesale inquiry" [level=2]
+    - paragraph: Submit a business inquiry for human review. This does not create an account, approve access, establish pricing, or activate a relationship.
+    - generic: Relationship type
+    - combobox "Relationship type":
+      - option "Research organizations" [selected]
+      - option "Clinical businesses"
+      - option "Provider partnerships"
+      - option "Affiliate relationships"
+      - option "Collective partnerships"
+      - option "Supply and quality partners"
+      - option "White-label interest"
+      - option "Strategic partnerships"
+    - generic: Your name
+    - textbox "Your name"
+    - generic: Business email
+    - textbox "Business email"
+    - generic: Organization
+    - textbox "Organization"
+    - generic: Your role
+    - textbox "Your role"
+    - generic: Website (optional)
+    - paragraph: Use a public page. Query and fragment values are omitted from the prepared summary.
+    - textbox "Website (optional)":
+      - /placeholder: https://
+    - generic: Principal region or jurisdiction
+    - textbox "Principal region or jurisdiction"
+    - generic: Business context
+    - paragraph: Describe the intended relationship, audience or use, approximate volume, documentation needs, and desired next step. Do not include patient information, health details, payment data, or secrets.
+    - textbox "Business context"
+    - button "Submit inquiry"
+    - paragraph: Submission creates a business inquiry only. It is not an account application or approval.
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

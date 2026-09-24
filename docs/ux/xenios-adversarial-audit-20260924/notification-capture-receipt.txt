@@ -1,0 +1,23 @@
+[synthetic-email-capture] acceptance 1; no network request
+[synthetic-email-capture] courtesy stalled after team acceptance
+3:00:33 PM [express] [rid:f08fd491-c7f1-4da8-8517-c22fae24416e] POST /api/contact 200 in 2015ms
+[synthetic-email-capture] team stalled; acceptance unknown
+3:01:57 PM [express] [rid:a122a57b-2cc3-4cdf-9860-05f6025e13c9] POST /api/contact 503 in 10006ms
+[synthetic-email-capture] acceptance 2; no network request
+3:02:11 PM [express] [rid:984bbee3-a93f-4c2a-a549-191d21c576e5] POST /api/contact 503 in 2ms
+[synthetic-email-capture] replay; no second acceptance
+[synthetic-email-capture] acceptance 3; no network request
+3:03:26 PM [express] [rid:48f393e0-fdaa-45ce-8e77-506b1e6cf9c5] POST /api/contact 200 in 5ms
+[synthetic-email-capture] acceptance 4; no network request
+[synthetic-email-capture] acceptance 5; no network request
+3:03:47 PM [express] [rid:b903b199-e90d-4a04-9f81-79e09d879231] POST /api/contact 200 in 4ms
+3:04:08 PM [express] [rid:74c59d43-0f6b-4f21-b0fd-4f66685d9339] POST /api/contact 429 in 1ms
+[synthetic-email-capture] acceptance 6; no network request
+[synthetic-email-capture] acceptance 7; no network request
+3:11:22 PM [express] [rid:2fd929d8-325c-45e5-bf98-a9dc5b735537] POST /api/contact 200 in 4ms
+[synthetic-email-capture] replay; no second acceptance
+[synthetic-email-capture] replay; no second acceptance
+3:12:02 PM [express] [rid:4d7129e6-626d-4ca4-a711-977a1a8c2e80] POST /api/contact 200 in 5ms
+[synthetic-email-capture] replay; no second acceptance
+[synthetic-email-capture] replay; no second acceptance
+3:12:43 PM [express] [rid:e132ba39-f56f-497f-8d11-c733a56ea375] POST /api/contact 200 in 4ms

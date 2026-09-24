@@ -1,0 +1,116 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: The Xenios quality system
+  - heading "Evidence travels with the lot." [level=1]
+  - paragraph: A certificate is one record in a larger control system. The material, exact lot, review decision, approved documents, storage, and fulfillment trail must remain connected.
+  - paragraph: A certificate of analysis or purity result does not, by itself, establish identity, potency, sterility, safety, stability, or suitability. Testing and review requirements vary by material and intended research context.
+  - region "From receiving to a traceable decision.":
+    - paragraph: Lot control, end to end
+    - heading "From receiving to a traceable decision." [level=2]
+    - paragraph: Each step preserves a different fact. No step silently substitutes for another, and an unavailable record is never presented as a passing result.
+    - article:
+      - heading "Receive" [level=3]
+      - paragraph: Inbound material is matched to the expected shipment and receiving record before it enters usable inventory.
+    - article:
+      - heading "Inspect" [level=3]
+      - paragraph: Packaging, quantity, labeling, condition, and shipment exceptions are recorded against the received material.
+    - article:
+      - heading "Identify the lot" [level=3]
+      - paragraph: The exact SKU and supplier lot are bound to a controlled internal lot record so later evidence cannot drift to another batch.
+    - article:
+      - heading "Quarantine" [level=3]
+      - paragraph: Material remains outside released inventory while required documentation and applicable test evidence are reviewed.
+    - article:
+      - heading "Review evidence" [level=3]
+      - paragraph: Required documents and third-party testing, where applicable, are checked for lot identity, method, sample, dates, issuing party, specification, and exceptions—not a headline number alone.
+    - article:
+      - heading "Decide" [level=3]
+      - paragraph: An authorized review records release, hold, continued quarantine, or withdrawal. Missing evidence is never treated as a pass.
+    - article:
+      - heading "Publish approved records" [level=3]
+      - paragraph: Only explicitly approved public summaries, COAs, and supporting documents may appear in lot verification. Private source records remain private.
+    - article:
+      - heading "Store and fulfill" [level=3]
+      - paragraph: Released inventory remains lot-traceable through storage, reservation, fulfillment, and any documented deviation, exception, or withdrawal.
+  - region "A missing record is a stop, not a shortcut.":
+    - paragraph: Decision integrity
+    - heading "A missing record is a stop, not a shortcut." [level=2]
+    - article:
+      - heading "Release" [level=3]
+      - paragraph: Required evidence is present and the recorded review supports movement into released inventory for its authorized use.
+    - article:
+      - heading "Hold or quarantine" [level=3]
+      - paragraph: Missing, inconsistent, damaged, or unresolved material stays out of released inventory while the exception is investigated.
+    - article:
+      - heading "Trace through fulfillment" [level=3]
+      - paragraph: The exact lot remains connected to storage, reservation, fulfillment, and any later withdrawal or exception record.
+    - paragraph: When damage, a temperature excursion, a documentation gap, a complaint, or another deviation is recorded, the event stays attached to the exact lot’s exception trail. Investigation, disposition, and corrective or preventive action belong there when the event requires them.
+  - region "Start with the code on the label.":
+    - paragraph: Public lot records
+    - heading "Start with the code on the label." [level=2]
+    - paragraph: Verification returns only an exact, approved public match. It does not search approximately, expose a private source file, or treat a source outage as “not found.”
+    - generic: Lot code from the product label
+    - textbox "Lot code from the product label":
+      - /placeholder: "Example: LOT-2026-001"
+    - button "Verify lot":
+      - text: Verify lot
+    - paragraph:
+      - text: Need help reading a record?
+      - link "See how to read testing evidence":
+        - /url: /research/testing
+      - text: .
+  - navigation "Quality resources":
+    - link "Explore Testing explained What a test can—and cannot—support.":
+      - /url: /research/testing
+      - text: Explore
+      - strong: Testing explained
+      - generic: What a test can—and cannot—support.
+    - link "Explore Documents Public records and secure member documents.":
+      - /url: /research/documents
+      - text: Explore
+      - strong: Documents
+      - generic: Public records and secure member documents.
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

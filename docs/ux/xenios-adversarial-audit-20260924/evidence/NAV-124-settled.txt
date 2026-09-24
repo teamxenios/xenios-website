@@ -1,0 +1,62 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Documentation pending
+  - heading "Terms of Service" [level=1]
+  - status:
+    - paragraph: With the review team
+    - generic: In review
+    - paragraph: Documentation pending
+    - paragraph: This is starter language for operational review. It has not been approved for acceptance, enrollment, payment, or account creation.
+  - article "Terms of Service operational draft":
+    - heading "Draft status" [level=2]
+    - paragraph: This starter language is an operational draft for qualified counsel to replace or approve before production launch.
+    - heading "Separate offerings" [level=2]
+    - paragraph: Research materials, supplements, programs, and any future clinical services are separate categories with separate terms, claims, payment, fulfillment, and responsibilities.
+    - heading "No medical advice" [level=2]
+    - paragraph: Site content is educational and commercial information. It is not diagnosis, prescribing, treatment, or a substitute for a licensed professional.
+    - heading "Accounts and orders" [level=2]
+    - paragraph: xenios may approve, restrict, suspend, or close accounts and may reject or cancel transactions as permitted by law and the applicable policy.
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

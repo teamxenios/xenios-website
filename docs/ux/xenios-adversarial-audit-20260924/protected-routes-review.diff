@@ -1,0 +1,40 @@
+diff --git a/server/routes.ts b/server/routes.ts
+index 2d573f7..84000a5 100644
+--- a/server/routes.ts
++++ b/server/routes.ts
+@@ -6,13 +6,12 @@ import { z } from "zod";
+ import {
+   sendConfirmationEmail,
+   sendInternalNotification,
+-  sendContactMessage,
+-  sendContactAutoReply,
+   sendWaitlistConfirmationV3,
+   sendWaitlistInternalAlertV3,
+   sendLoiConfirmationV3,
+   sendLoiInternalAlertV3,
+ } from "./services/email";
++import { deliverContact } from "./services/contact-delivery";
+ import {
+   getDisplayCount,
+   upsertWaitlist,
+@@ -452,12 +451,14 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
+       }
+       const validated = contactMessageSchema.parse(req.body);
+ 
+-      Promise.allSettled([
+-        sendContactMessage(validated),
+-        sendContactAutoReply(validated),
+-      ]).catch(() => {});
+-
+-      res.json({ success: true, message: "We have it." });
++      const delivery = await deliverContact(validated);
++      if (!delivery.accepted) {
++        return res.status(503).json({
++          success: false,
++            message: "Delivery is not confirmed. Your message may already have been accepted. Keep the same details and retry shortly; unchanged retries within 24 hours are protected against duplicate email. For help, contact team@xeniostechnology.com and mention this uncertain submission.",
++        });
++      }
++      res.json({ success: true, message: "Accepted for delivery to our team inbox.", autoReplySent: delivery.autoReplySent });
+     } catch (error) {
+       if (error instanceof z.ZodError) {
+         return res.status(400).json({

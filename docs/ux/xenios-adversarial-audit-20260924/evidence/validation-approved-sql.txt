@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "checks": 35,
+  "candidatePath": "supabase/candidates/20260905_research_approved_customer_access.sql",
+  "candidateLfSha256": "026ac29d3e17a86fa19100aa4c712e5d90fd66b2ef5de28774b8032965b171b5",
+  "sourceHashes": {
+    "supabase/research-membership.sql": "a5741c2cd9d25e7fec0631e0609cc3e8385f4808026680465ee4a46cf26c46d8",
+    "supabase/research-members.sql": "aa9f6c539f755f08042f90f7799885320e58e2f775f4078fbc6f10cf21b0aded",
+    "supabase/research-notification-outbox.sql": "70cee0109dce7401431de9449a1312076ad61b7081ed31b9b8a9659bc6cca7ac"
+  },
+  "productionMutated": false,
+  "engine": "PostgreSQL 18.3 (PGlite 0.5.8) on wasm32-unknown-emscripten, compiled by emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 3.1.74 (1092ec30a3fb1d46b1782ff1b4db5094d3d06ae5), 32-bit",
+  "scope": "In-memory SQL engine; Git baseline application/member/outbox schema and minimal synthetic Auth. Apply twice, service grants, exact identities, expiry, replay and rollback atomicity. Not production schema parity, live email, browser ownership, cross-session concurrency or restart attestation."
+}

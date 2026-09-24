@@ -1,0 +1,177 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Care + Research access
+  - heading "Choose the path that matches what you need." [level=1]
+  - paragraph: Personal health starts with Xenios Care. Legitimate nonclinical work starts with Xenios Research. Organizations, partners, suppliers, Early Access, and support retain their own authorities and next steps.
+  - region "Choose the action you actually need.":
+    - paragraph: Account and access
+    - heading "Choose the action you actually need." [level=2]
+    - paragraph: Sign-in, activation, access requests, applications, inquiries, and Care routing are different actions. Each path below keeps its own review and authority.
+    - paragraph: Formal Research membership applications are not open yet. If you want Research products now, choose Order for Research.
+    - article:
+      - heading "Sign in" [level=3]
+      - paragraph: Use an existing Xenios Research account.
+      - link "Continue":
+        - /url: /research/sign-in
+        - text: Continue
+        - generic: →
+    - article:
+      - heading "Activate approved setup" [level=3]
+      - paragraph: Complete an activation that Xenios has already approved.
+      - link "Continue":
+        - /url: /research/activate
+        - text: Continue
+        - generic: →
+    - article:
+      - heading "Order for Research" [level=3]
+      - paragraph: Formal Research membership applications are not open yet. Use the supported ordering path for Research products now.
+      - link "Continue":
+        - /url: /research/order
+        - text: Continue
+        - generic: →
+    - article:
+      - heading "Start Care request" [level=3]
+      - paragraph: Send non-clinical routing details for human follow-up.
+      - link "Continue":
+        - /url: /care/schedule
+        - text: Continue
+        - generic: →
+    - article:
+      - heading "Partner program" [level=3]
+      - paragraph: Review the program, then sign in before submitting an application.
+      - link "Continue":
+        - /url: /research/partners
+        - text: Continue
+        - generic: →
+    - article:
+      - heading "Business or organization" [level=3]
+      - paragraph: Start a reviewed organization or strategic relationship inquiry.
+      - link "Continue":
+        - /url: /research/organizations
+        - text: Continue
+        - generic: →
+    - article:
+      - heading "Supplier access" [level=3]
+      - paragraph: Review invitation-only supplier, lab, and fulfillment access.
+      - link "Continue":
+        - /url: /research/supplier-access
+        - text: Continue
+        - generic: →
+  - region "Are you looking for care for yourself or nonclinical Research access?":
+    - paragraph: Start with one question
+    - heading "Are you looking for care for yourself or nonclinical Research access?" [level=2]
+    - paragraph: Use Care to send contact and routing details for human follow-up. If an appropriate option is available, clinical information moves later through a separate authorized secure handoff. Use Research to review exact products, evidence, documentation, and Research-only access. Support can route an operational question without making a clinical decision.
+  - article:
+    - paragraph: Individuals seeking personal care
+    - heading "Xenios Care" [level=2]
+    - paragraph: Start with a short, non-clinical access request. A Xenios team member reviews the routing details and follows up. If an appropriate option is available, the team provides a separate authorized secure handoff for any clinical information and independent review by a licensed clinician.
+    - paragraph: The public request does not establish clinical availability, a provider relationship, treatment, or a prescription. Any later service depends on location, clinician authority, clinical eligibility, pharmacy serviceability, and current availability.
+    - link "Start Care request":
+      - /url: /care/schedule
+    - link "How Care works":
+      - /url: /care/how-it-works
+  - article:
+    - paragraph: Researchers, qualified customers, and professionals
+    - heading "Xenios Research" [level=2]
+    - paragraph: Explore legitimate nonclinical Research access with exact product and variant identity, plain-language evidence, current status, documentation, authorized requests, orders, and support.
+    - paragraph: Research access never includes personal-use guidance, prescribing, dosing, reconstitution, injection, or treatment recommendations.
+    - link "Choose how to order":
+      - /url: /research/order
+    - link "Research member sign in":
+      - /url: /research/sign-in
+  - article:
+    - paragraph: Clinics, practices, gyms, marketplaces, and businesses
+    - heading "Organization buyer" [level=2]
+    - paragraph: Begin an organization or professional-buyer conversation for Care or Research context, documentation needs, account review, and human follow-up.
+    - paragraph: Organization workspaces require review and may not yet be provisioned.
+    - link "Explore organization access":
+      - /url: /research/organizations
+    - link "Compare partnership paths":
+      - /url: /research/partners
+  - article:
+    - paragraph: Affiliates and referral partners
+    - heading "Partner program" [level=2]
+    - paragraph: Review Care + Research relationship types, compliance boundaries, application and onboarding expectations, and the resources available only after approval.
+    - paragraph: No approval, commission, payout, or commercial term is implied publicly.
+    - link "Compare partnership paths":
+      - /url: /research/partners
+    - link "Review affiliate access":
+      - /url: /research/affiliates
+  - article:
+    - paragraph: Suppliers, labs, and fulfillment partners
+    - heading "Supplier access" [level=2]
+    - paragraph: Supplier, laboratory, and fulfillment relationships begin with human review. Any future workspace must remain limited to assigned work and the minimum required operational information.
+    - paragraph: No public supplier workspace is promised. Access requires a provisioned, authorized relationship.
+    - link "Review supplier access":
+      - /url: /research/supplier-access
+    - link "How access works":
+      - /url: /research/how-it-works
+  - article:
+    - paragraph: Open early-access entry
+    - heading "Private Early Access" [level=2]
+    - paragraph: Open the separate passwordless Early Access request and ordering experience. Any later action still depends on its own current authorization and evidence.
+    - paragraph: Entry does not prove approval, availability, payment, shipment, or a Care decision.
+    - link "Enter Private Early Access":
+      - /url: /research/early-access
+    - link "Get support":
+      - /url: /research/support
+  - region "Each workspace requires its own server authority.":
+    - paragraph: Identity and privacy
+    - heading "Each workspace requires its own server authority." [level=2]
+    - paragraph: The browser never chooses its own role. Any signed-in surface and data scope must come from the canonical server-side authority applicable to that workspace. Membership or access to one workspace does not imply organization, partner, supplier, provider, or administrative authority. An absent or unprovisioned authority must fail closed.
+  - region "The selected page explains its own availability.":
+    - paragraph: What happens next
+    - heading "The selected page explains its own availability." [level=2]
+    - paragraph: A configured experience offers its supported next action. A disabled, unprovisioned, documentation-pending, or externally blocked experience explains the missing input and provides a safe fallback instead of a fake success.
+  - complementary "Research and Care boundary":
+    - paragraph: A firm boundary
+    - heading "Care and Research are separate by design." [level=2]
+    - paragraph: Use Xenios Care for personal medical evaluation, clinical records, prescribing, pharmacy fulfillment, and follow-up. Use Xenios Research for legitimate nonclinical research materials, evidence, documentation, and Research-only access. A Research account, listing, request, or purchase never creates a clinical decision.
+    - link "Explore Research":
+      - /url: /research/access-hub
+    - link "Begin Care":
+      - /url: /care
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

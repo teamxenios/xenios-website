@@ -1,0 +1,39 @@
+- region "Notifications (F8)":
+  - list
+- main:
+  - navigation "Partner areas":
+    - link "Dashboard":
+      - /url: /research/partners/dashboard
+    - link "Links":
+      - /url: /research/partners/links
+    - link "Campaigns":
+      - /url: /research/partners/campaigns
+    - link "Events":
+      - /url: /research/partners/events
+    - link "Leads":
+      - /url: /research/partners/leads
+    - link "Conversions":
+      - /url: /research/partners/conversions
+    - link "Commissions":
+      - /url: /research/partners/commissions
+    - link "Payouts":
+      - /url: /research/partners/payouts
+    - link "Organizations":
+      - /url: /research/partners/organizations
+    - link "Training":
+      - /url: /research/partners/training
+    - link "Resources":
+      - /url: /research/partners/resources
+    - link "Compliance":
+      - /url: /research/partners/compliance
+    - link "Support":
+      - /url: /research/partners/support
+    - link "Security":
+      - /url: /research/partners/security
+  - paragraph: Partners
+  - heading "Referral links" [level=1]
+  - paragraph: Make a clear, thoughtful introduction to Xenios. Manage your own links and see the status the system can verify.
+  - heading "Sign in to manage your links" [level=2]
+  - paragraph: Referral access is checked for your account. Signing in does not enroll you as an affiliate.
+  - link "Sign in":
+    - /url: /research/sign-in?returnTo=%2Fresearch%2Fpartners%2Flinks

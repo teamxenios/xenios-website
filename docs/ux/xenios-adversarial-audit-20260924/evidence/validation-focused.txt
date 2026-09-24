@@ -1,0 +1,10 @@
+npm warn config production Use `--omit=dev` instead.
+
+ RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/65aa/xenios-website
+
+
+ Test Files  12 passed (12)
+      Tests  74 passed (74)
+   Start at  14:58:33
+   Duration  7.67s (transform 1.20s, setup 0ms, import 3.49s, tests 2.03s, environment 6.56s)
+

@@ -1,0 +1,116 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios home":
+    - /url: /
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - paragraph: THE XENIOS CLIENT AGENT
+  - heading "A pocket coach that knows you." [level=1]
+  - paragraph: A pocket coach that knows their program, their data, their goals, and the way you actually talk to them.
+  - paragraph: Answers their questions. Holds them accountable. Teaches them the why. Hands the hard stuff back to you, every time.
+  - heading "What the xenios client agent promises." [level=2]
+  - heading "Pocket coach" [level=3]
+  - paragraph: Knows your program, your data, your goals, and the way your coach actually talks to you.
+  - heading "Real answers" [level=3]
+  - paragraph: Asks before it acts. Explains the why. Never invents a clinical opinion. Hands the hard stuff back to your coach, every time.
+  - heading "Accountability that fits" [level=3]
+  - paragraph: Reminds without nagging. Adapts to the day you are having, not the day the program assumed.
+  - heading "Education on time" [level=3]
+  - paragraph: The right lesson at the right moment. The kind your coach would have sent if they had the bandwidth.
+  - heading "One place" [level=3]
+  - paragraph: Today's session, your messages, your reorder, your check-in, your data. Not seven apps.
+  - heading "Your privacy, defended" [level=3]
+  - paragraph: Your coach owns the relationship. We do not sell your data. We do not train third-party models on it.
+  - heading "It is not a chatbot. It is your coach's reach." [level=2]
+  - paragraph: Every word the xenios client agent says is built from the way your coach actually works. When something is outside scope, it stops talking and gets your coach. That is the rule, not the exception.
+  - heading "Ask your coach about xenios" [level=2]
+  - link "Talk to us":
+    - /url: /contact
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first
+- status:
+  - generic: Add xenios to your home screen.
+  - button "Install"
+  - button "Dismiss": ✕

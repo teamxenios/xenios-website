@@ -1,3 +1,5 @@
+> Continuation supersedes this historical checkpoint: see [CONTINUATION_RESULTS.md](CONTINUATION_RESULTS.md), [CONTINUATION_SCENARIOS.csv](CONTINUATION_SCENARIOS.csv), and [PROTECTED_CHANGE_REVIEW.md](PROTECTED_CHANGE_REVIEW.md). Original repair 02d525b remains preserved; c4ea8a9 is the application successor; ee1c972 is test-only.
+
 # Audit checkpoint — exact pushed source, not release approval
 
 Session: `codex-adversarial-audit-20260924`.

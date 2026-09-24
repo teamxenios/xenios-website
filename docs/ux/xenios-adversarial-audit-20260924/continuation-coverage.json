@@ -1,0 +1,23 @@
+{
+  "runtime": "c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa",
+  "originalTestedRepair": "02d525baa7d784ed16e297c1d17b1e4050ecf4cc",
+  "testOnlySuccessor": "ee1c972ce57e34ed185949a72b0ce55256a35951",
+  "discoveredControls": 3910,
+  "navigationPlan": 129,
+  "navigationExecuted": 127,
+  "navigationNotExecuted": [
+    {
+      "id": "NAV-071",
+      "limitation": "Invitation password gate is rendered; order-request link is not available in this configured capture fixture. No password guessed or real invitation used."
+    },
+    {
+      "id": "NAV-075",
+      "limitation": "Retired destination intentionally replaced by /research/account/documents. Replacement browser journey PASS in R017; old control is superseded, not a broken retained link."
+    }
+  ],
+  "scenarioRows": 24,
+  "scenariosPass": 23,
+  "scenariosNotRun": 1,
+  "externalDelivery": "UNVERIFIED",
+  "productionMutated": false
+}

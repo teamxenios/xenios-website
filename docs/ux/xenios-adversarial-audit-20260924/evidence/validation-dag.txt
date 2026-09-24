@@ -1,0 +1,6 @@
+npm warn config production Use `--omit=dev` instead.
+
+> rest-express@1.0.0 verify:migration-dag
+> tsx scripts/acceptance/verify-migration-dag.ts
+
+Migration DAG accepted: 37 nodes, canonical checksums verified.

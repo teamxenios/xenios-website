@@ -1,0 +1,99 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: About Xenios
+  - heading "One platform. Two accountable pathways." [level=1]
+  - paragraph: Xenios supports personal health through provider-guided Care and legitimate nonclinical work through Xenios Research. The platform connects account access, education, product and formulation context, status, quality documentation, fulfillment, lifestyle support, and customer service while preserving the authority of clinicians, pharmacies, Research controls, and exact source records.
+  - region "Clarity across the full relationship.":
+    - paragraph: Why it exists
+    - heading "Clarity across the full relationship." [level=2]
+    - article:
+      - heading "Discover" [level=3]
+      - paragraph: Understand Care, Research, the product or formulation, the evidence boundary, and the next available step.
+    - article:
+      - heading "Complete" [level=3]
+      - paragraph: Submit the public Care access request or complete the applicable Research requirements. A separate secure clinical handoff appears only when an appropriate Care pathway is available.
+    - article:
+      - heading "Review" [level=3]
+      - paragraph: Licensed clinicians make clinical decisions. Research actions remain governed by exact product, documentation, availability, and access controls.
+    - article:
+      - heading "Follow" [level=3]
+      - paragraph: Use source-aware status, pharmacy or fulfillment updates, documents, lifestyle support, and customer service over time.
+  - region "Trust is built in the details.":
+    - paragraph: Operating principles
+    - heading "Trust is built in the details." [level=2]
+    - article:
+      - paragraph: "01"
+      - heading "Clinical independence" [level=3]
+      - paragraph: A commercial goal never determines diagnosis, treatment, prescribing, or clinical follow-up.
+    - article:
+      - paragraph: "02"
+      - heading "Research exactness" [level=3]
+      - paragraph: A product, exact variant, strength, format, lot, evidence level, and document state remain distinct.
+    - article:
+      - paragraph: "03"
+      - heading "Accountable handoffs" [level=3]
+      - paragraph: Intake, provider review, prescription, pharmacy processing, Research requests, orders, payment, fulfillment, tracking, and support remain connected without pretending one proves another.
+  - region "Active Care alongside evidence-led Research.":
+    - paragraph: Current stage
+    - heading "Active Care alongside evidence-led Research." [level=2]
+    - paragraph: Xenios is operating an active Care pathway alongside its Research platform. Availability still depends on current clinician authority, patient location, pharmacy serviceability, exact product or formulation status, quality records, and source-authoritative configuration. The website must show those differences clearly rather than turning broad access into a guarantee.
+  - complementary "Research and Care boundary":
+    - paragraph: A firm boundary
+    - heading "Care and Research are separate by design." [level=2]
+    - paragraph: Use Xenios Care for personal medical evaluation, clinical records, prescribing, pharmacy fulfillment, and follow-up. Use Xenios Research for legitimate nonclinical research materials, evidence, documentation, and Research-only access. A Research account, listing, request, or purchase never creates a clinical decision.
+    - link "Explore Research":
+      - /url: /research/access-hub
+    - link "Begin Care":
+      - /url: /care
+  - region "Choose the pathway that fits.":
+    - paragraph: Your next step
+    - heading "Choose the pathway that fits." [level=2]
+    - paragraph: Personal health begins with Care. Legitimate nonclinical work begins with Research.
+    - link "Start Care request":
+      - /url: /care/schedule
+    - link "Explore Research":
+      - /url: /research/access-hub
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

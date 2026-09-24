@@ -1,0 +1,122 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios home":
+    - /url: /
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - paragraph: NETWORK
+  - heading "Coordination, not capture." [level=1]
+  - paragraph: The proactive health team that finally talks to itself. Refer between coaches, trainers, and practitioners on the network. The xenios agent handles the handoff in your voice.
+  - heading "Refer between coaches" [level=3]
+  - paragraph: and the trainers, clinicians, and practitioners on the network. Bring your roster. Grow without leaving the operating system.
+  - heading "Agent-to-agent handoff" [level=3]
+  - paragraph: When you refer, the receiving coach's xenios agent gets the context, scope-aware. The client experiences one continuous relationship.
+  - heading "Revenue routing" [level=3]
+  - paragraph: Native splits across the chain. Transparent. Auditable. Paid on time.
+  - heading "Scope-aware guardrails" [level=3]
+  - paragraph: The agent never refers across scope of practice without the coach's approval. Audit trail every step.
+  - heading "A six-step example." [level=2]
+  - list:
+    - generic: "01"
+    - generic: A strength coach wants nutrition support for a client preparing for a meet.
+    - generic: "02"
+    - generic: The coach taps Refer in the client record. The xenios agent suggests a nutritionist on the network whose voice and method fit.
+    - generic: "03"
+    - generic: "The coach approves. The client sees a single message in their xenios client agent: \"Coach added Sarah on the nutrition side. She has your record.\""
+    - generic: "04"
+    - generic: Sarah's xenios agent receives a scope-bound context window. Nothing more.
+    - generic: "05"
+    - generic: Sarah charts, programs, and follows up. The client experiences one practice, two coaches.
+    - generic: "06"
+    - generic: Revenue is routed per the agreement. The receipt is the audit trail.
+  - heading "Bring your roster. Grow without leaving." [level=2]
+  - link "Join the waitlist":
+    - /url: /waitlist
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first
+- status:
+  - generic: Add xenios to your home screen.
+  - button "Install"
+  - button "Dismiss": ✕

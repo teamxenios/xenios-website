@@ -1,0 +1,85 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - navigation "Partner areas":
+    - link "Dashboard":
+      - /url: /research/partners/dashboard
+    - link "Links":
+      - /url: /research/partners/links
+    - link "Campaigns":
+      - /url: /research/partners/campaigns
+    - link "Events":
+      - /url: /research/partners/events
+    - link "Leads":
+      - /url: /research/partners/leads
+    - link "Conversions":
+      - /url: /research/partners/conversions
+    - link "Commissions":
+      - /url: /research/partners/commissions
+    - link "Payouts":
+      - /url: /research/partners/payouts
+    - link "Organizations":
+      - /url: /research/partners/organizations
+    - link "Training":
+      - /url: /research/partners/training
+    - link "Resources":
+      - /url: /research/partners/resources
+    - link "Compliance":
+      - /url: /research/partners/compliance
+    - link "Support":
+      - /url: /research/partners/support
+    - link "Security":
+      - /url: /research/partners/security
+  - paragraph: Partners
+  - heading "Events" [level=1]
+  - paragraph: Event records returned for your server-verified organization relationships. A schedule marker is not event approval, registration, or attendance evidence.
+  - paragraph: 🔒 No medical claims, no income claims, no recruitment. This report does not establish content clearance, a confirmed venue, event occurrence, attendance attribution, or organization permissions. The current integration does not provide event request intake.
+  - link "My account":
+    - /url: /research/account
+  - paragraph: Sign in to view reported events
+  - paragraph: Use your Xenios account. The server verifies partner and organization reporting access separately.
+  - link "Sign in":
+    - /url: /research/sign-in
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

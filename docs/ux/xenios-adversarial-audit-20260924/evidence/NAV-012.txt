@@ -1,0 +1,159 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- region "Site announcement":
+  - paragraph:
+    - text: Founding cohort is open.
+    - link "Join":
+      - /url: /waitlist
+    - generic: LIVE • 556 on the waitlist
+  - button "Dismiss announcement": ×
+- banner:
+  - link "xenios home":
+    - /url: /
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - link "Back to careers":
+    - /url: /careers
+  - paragraph: Design-partner program, free early access
+  - heading "Founding Coach Cohort" [level=1]
+  - paragraph: Help build the coaching OS. Free early access, a direct line to the founder, and your name among the first coaches on it.
+  - link "Apply by email":
+    - /url: "mailto:team@xeniostechnology.com?body=Who you are and who you coach:%0D%0AOnline, in-person, or hybrid:%0D%0AMain specialty:%0D%0AActive client count:%0D%0ACheck-in cadence:%0D%0ATools used today:%0D%0AWhere follow-up or client attention breaks:%0D%0AAudience links or handles:%0D%0AAre you willing to join a private Slack and test weekly:%0D%0AWhy you want in:%0D%0AAnything else we should know:"
+  - link "Ask a question":
+    - /url: mailto:team@xeniostechnology.com
+  - paragraph: TYPE
+  - paragraph: Design-partner program, free early access
+  - paragraph: LOCATION
+  - paragraph: Remote, US
+  - paragraph: APPLY
+  - paragraph: team@xeniostechnology.com
+  - article:
+    - paragraph: "We are building the operating system for proactive health, and we want 30 of the best coaches to help build it with us. xenios is an AI-native system for coaches. The professional stays in front. The AI carries the work behind them. Over time it is meant to consolidate the fragmented stack of tools a serious coach juggles into one system, with the human in front. We are not there yet, and we are honest about that. We are starting with two coach-side products, both human-approved and non-clinical in version one:"
+    - list:
+      - generic: →
+      - generic: Hercules, the weekly check-in engine. For every client, every week, it prepares a check-in in your voice, grounded in that client's actual week. You edit, approve, or reject. Nothing sends on its own.
+      - generic: →
+      - generic: The Studio, the client attention queue. Across your whole roster it shows who needs attention today, why they were flagged, the source behind the reason, and the next action prepared for your approval.
+    - paragraph: This is a founding cohort, not a public launch and not a paid job. We are hand-picking a small group of high-caliber coaches who get early access, shape what we build, and become some of the first names on it when we launch. It is capped at 30.
+    - heading "What you get" [level=2]
+    - list:
+      - generic: →
+      - generic: Free early access to xenios, starting with Hercules and the Studio, with founding-coach pricing when we go paid
+      - generic: →
+      - generic: Concierge support from the team while we build
+      - generic: →
+      - generic: A direct line to the founder, including a private Slack and real influence over the roadmap
+      - generic: →
+      - generic: Founding-coach recognition, your name among the first coaches who shaped the product
+      - generic: →
+      - generic: Early visibility into Athena, the future client-side AI companion, always disclosed as AI and always under the coach
+    - heading "What we ask" [level=2]
+    - list:
+      - generic: →
+      - generic: "Use it for real and tell us the truth: what works, what is broken, what is missing"
+      - generic: →
+      - generic: Test new features as they ship and flag bugs as they come up
+      - generic: →
+      - generic: Bring real client context, since the product can only be judged on real work
+      - generic: →
+      - generic: A short weekly check-in in Slack
+      - generic: →
+      - generic: Patience with an early product that will have rough edges
+      - generic: →
+      - generic: "Optional, and only if you mean it: share your experience with your audience, in your words, with everything approved by you"
+    - paragraph: "Who we are looking for. You are a strong fit if you are a personal trainer, strength and conditioning coach, health or wellness coach, dietitian, or performance and longevity practitioner, and most of the following are true: you actively coach a real book of clients, roughly 20 to 80 or more; you run weekly or biweekly check-ins; you are certified and respected in your field, for example NASM, NSCA, ACE, CSCS, or RD; you are the kind of coach other coaches come to for advice. An engaged audience, a following, a newsletter, a podcast, or a community, is a plus but not required."
+    - paragraph: This is a build-with-us seat, not a free login. You are not a fit if you are looking for paid sponsorship, do not actively coach clients, are building competing coach software, or just want a free login with no interest in giving feedback.
+    - heading "The boundaries that matter" [level=2]
+    - list:
+      - generic: →
+      - generic: xenios does not replace the coach. You stay in front of every client.
+      - generic: →
+      - generic: xenios does not practice medicine. Version one is non-clinical.
+      - generic: →
+      - generic: Nothing client-facing goes out without your approval.
+      - generic: →
+      - generic: Athena, the future client-side AI, is always disclosed as AI.
+      - generic: →
+      - generic: Your data and your clients' data are handled with care and confidentiality, and we will walk you through how we handle data before you onboard.
+    - paragraph: "How to apply. Email team@xeniostechnology.com and tell us: who you are and who you coach, and whether you are online, in-person, or hybrid; your main specialty; roughly how many active clients you coach now; how often you check in with clients; the tools you use today; the single biggest place follow-up or client attention breaks for you; your audience, where it lives and how big it is, with handles or links welcome; whether you will join a private Slack, test early flows weekly, and bring real client context; why you want in; and anything else we should know. We review on a rolling basis and reach out personally for a short conversation before confirming a spot. Spots are limited, and the founding window closes once the cohort is full."
+  - paragraph: xenios is an equal opportunity employer. We do not discriminate on the basis of race, color, national origin, ancestry, religion, sex, gender identity, sexual orientation, age, disability, veteran status, or any other characteristic protected by applicable law. Any work-authorization requirement noted on a role is solely because we are not able to sponsor employment visas at this stage.
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first
+- status:
+  - generic: Add xenios to your home screen.
+  - button "Install"
+  - button "Dismiss": ✕

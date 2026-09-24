@@ -1,0 +1,86 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - navigation "Partner areas":
+    - link "Dashboard":
+      - /url: /research/partners/dashboard
+    - link "Links":
+      - /url: /research/partners/links
+    - link "Campaigns":
+      - /url: /research/partners/campaigns
+    - link "Events":
+      - /url: /research/partners/events
+    - link "Leads":
+      - /url: /research/partners/leads
+    - link "Conversions":
+      - /url: /research/partners/conversions
+    - link "Commissions":
+      - /url: /research/partners/commissions
+    - link "Payouts":
+      - /url: /research/partners/payouts
+    - link "Organizations":
+      - /url: /research/partners/organizations
+    - link "Training":
+      - /url: /research/partners/training
+    - link "Resources":
+      - /url: /research/partners/resources
+    - link "Compliance":
+      - /url: /research/partners/compliance
+    - link "Support":
+      - /url: /research/partners/support
+    - link "Security":
+      - /url: /research/partners/security
+  - paragraph: Partners
+  - heading "Leads" [level=1]
+  - paragraph: Recorded attribution activity grouped by month and channel. Aggregate events, never identified people.
+  - paragraph: "🔒 Lead reporting is aggregate only. You will never see who a lead is: no names, no contact details, no member identities, and never any health data. This is a design guarantee, not a setting."
+  - paragraph: These are recorded attribution events, not unique people, approved applications, purchases, recruits, or earned commissions. Reporting access does not grant another role.
+  - link "My account":
+    - /url: /research/account
+  - paragraph: Sign in to view partner lead reporting
+  - paragraph: Use your Xenios account. The server checks whether partner reporting is available to that account.
+  - link "Sign in":
+    - /url: /research/sign-in
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

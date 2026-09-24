@@ -1,0 +1,124 @@
+- region "Notifications (F8)":
+  - list
+- link "xenios research ops":
+  - /url: /admin
+  - text: xenios
+  - generic: research ops
+- navigation "Admin destinations":
+  - link "Founder home":
+    - /url: /admin/research/command-center
+  - link "Growth / site admin":
+    - /url: /admin
+  - link "Back to site":
+    - /url: /
+- navigation "Research operations areas":
+  - link "Overview":
+    - /url: /admin/research
+  - generic "Founder":
+    - generic: Founder
+    - generic: +
+  - generic "Care":
+    - generic: Care
+    - generic: +
+  - generic "Members":
+    - generic: Members
+    - generic: +
+  - generic "Commerce":
+    - generic: Commerce
+    - generic: −
+  - link "Products":
+    - /url: /admin/research/products
+  - link "Product configuration":
+    - /url: /admin/research/product-configuration
+  - link "Product requests":
+    - /url: /admin/research/product-requests
+  - link "Inventory":
+    - /url: /admin/research/inventory
+  - link "Orders":
+    - /url: /admin/research/orders
+  - link "Commerce queues":
+    - /url: /admin/research/commerce-queues
+  - generic "Activation":
+    - generic: Activation
+    - generic: +
+  - generic "Content & partners":
+    - generic: Content & partners
+    - generic: +
+  - generic "Governance":
+    - generic: Governance
+    - generic: +
+- banner:
+  - paragraph: Operations
+  - heading "Order" [level=1]
+  - generic: admin@preview.invalid
+  - button "Sign out"
+  - link "Back to orders":
+    - /url: /admin/research/orders
+  - paragraph: "One order: what was bought, what was paid, where it is, and what may be done next."
+- main:
+  - status: "order-preview-one: start processing done."
+  - region "Order summary":
+    - heading "order-preview-one" [level=2]
+    - generic: Being prepared
+    - term: Placed
+    - definition: Sep 14, 2026, 7:00 AM
+    - term: Last change
+    - definition: Sep 21, 2026, 7:00 AM
+    - term: Order total
+    - definition: $210.95
+    - term: Captured
+    - definition: $210.95
+    - term: Shipping
+    - definition: $12.95
+    - term: Store credit applied
+    - definition: $0.00
+  - region "Items":
+    - heading "Items" [level=2]
+    - region "Order items":
+      - table "Order items":
+        - caption: Order items
+        - rowgroup:
+          - row "Item SKU Qty Line total":
+            - columnheader "Item"
+            - columnheader "SKU"
+            - columnheader "Qty"
+            - columnheader "Line total"
+        - rowgroup:
+          - row "Synthetic QA product PREVIEW-ONLY 2 $198.00":
+            - cell "Synthetic QA product"
+            - cell "PREVIEW-ONLY"
+            - cell "2"
+            - cell "$198.00"
+  - region "Shipments":
+    - heading "Shipments" [level=2]
+    - region "Shipments":
+      - table "Shipments":
+        - caption: Shipments
+        - rowgroup:
+          - row "Fulfilled by Status Carrier Tracking":
+            - columnheader "Fulfilled by"
+            - columnheader "Status"
+            - columnheader "Carrier"
+            - columnheader "Tracking"
+        - rowgroup:
+          - row "xenios pending Not recorded Not recorded":
+            - cell "xenios"
+            - cell "pending"
+            - cell "Not recorded"
+            - cell "Not recorded"
+  - region "What can be done next":
+    - heading "What can be done next" [level=2]
+    - button "Mark shipped"
+    - paragraph: Recording a carrier and tracking number does not move the order. Mark it shipped separately, once it has actually gone.
+    - generic: Carrier
+    - textbox "Carrier"
+    - generic: Tracking number
+    - textbox "Tracking number"
+    - button "Record tracking"
+    - generic: Reason for cancelling
+    - textbox "Reason for cancelling"
+    - button "Cancel order" [disabled]
+    - paragraph: Delivered is not an action here. It is recorded from the carrier, through a signed fulfillment event.
+  - paragraph: 🔒 This file carries the order, its money facts and its shipments. It carries no card reference, no provider secret and no member contact detail.
+- region "Notifications (F8)":
+  - list

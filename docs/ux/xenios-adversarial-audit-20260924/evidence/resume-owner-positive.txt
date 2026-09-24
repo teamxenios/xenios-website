@@ -1,0 +1,149 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research/member
+    - generic: xenios
+    - generic: research
+  - button "Sign out (Preview)"
+  - navigation "Member navigation (mobile)":
+    - link "Home":
+      - /url: /research/member
+    - link "Products":
+      - /url: /research/member/products
+    - link "Full catalog":
+      - /url: /research/member/catalog
+    - link "Requests":
+      - /url: /research/member/product-requests
+    - link "Guides":
+      - /url: /research/member/guides
+    - link "Cart":
+      - /url: /research/member/cart
+    - link "Orders":
+      - /url: /research/member/orders
+    - link "Membership":
+      - /url: /research/member/membership
+    - link "Account":
+      - /url: /research/account
+    - link "Profile":
+      - /url: /research/member/profile
+- main:
+  - navigation "Member areas":
+    - link "Home":
+      - /url: /research/member
+    - link "Assessment":
+      - /url: /research/member/assessment
+    - link "Goals":
+      - /url: /research/member/goals
+    - link "Products":
+      - /url: /research/member/products
+    - link "Product requests":
+      - /url: /research/member/product-requests
+    - link "Guides":
+      - /url: /research/member/guides
+    - link "Documents":
+      - /url: /research/member/documents
+    - link "Document center":
+      - /url: /research/member/documents-center
+    - link "Cart":
+      - /url: /research/member/cart
+    - link "Orders":
+      - /url: /research/member/orders
+    - link "Subscriptions":
+      - /url: /research/member/subscriptions
+    - link "Questions":
+      - /url: /research/member/questions
+    - link "Referrals":
+      - /url: /research/member/referrals
+    - link "Recommend Xenios":
+      - /url: /research/partners/links
+    - link "Account access":
+      - /url: /research/member/membership
+    - link "Profile":
+      - /url: /research/member/profile
+    - link "Security":
+      - /url: /research/member/security
+    - link "Privacy":
+      - /url: /research/member/privacy
+  - paragraph: Member · Orders
+  - heading "Order order-preview-one" [level=1]
+  - link "All orders":
+    - /url: /research/member/orders
+  - button "Refresh record"
+  - paragraph: Placed Sep 14, 2026.
+  - generic: Recorded status
+  - generic: Payment received
+  - region "Items in this order":
+    - heading "Items" [level=2]
+    - table "Items in order order-preview-one":
+      - caption: Items in order order-preview-one
+      - rowgroup:
+        - row "Item Qty Line total":
+          - columnheader "Item"
+          - columnheader "Qty"
+          - columnheader "Line total"
+      - rowgroup:
+        - row "Synthetic QA product 2 $198.00":
+          - cell "Synthetic QA product"
+          - cell "2"
+          - cell "$198.00"
+  - region "Shipments for this order":
+    - heading "Shipments" [level=2]
+    - paragraph: An order can ship in more than one package. Each shipment carries its own status and tracking; shipping is shown once for the whole record.
+    - region "Shipment 1 of 1":
+      - paragraph: "Shipment 1 of 1 · Shipment owner: Xenios"
+      - paragraph: No tracking number was returned for this shipment.
+      - generic: pending
+  - region "Order totals":
+    - heading "Totals" [level=2]
+    - term: Shipping (once per order)
+    - definition: $12.95
+    - term: Total
+    - definition: $210.95
+  - region "Report an issue":
+    - heading "Report an issue" [level=2]
+    - paragraph: A report requests review. It does not by itself approve or execute a refund, replacement, or shipment.
+    - paragraph: Issue-report history is unavailable or still loading. This does not confirm whether a report exists.
+    - form "Report an issue with this order":
+      - generic: Item
+      - combobox "Item":
+        - option "Synthetic QA product" [selected]
+      - generic: What happened
+      - combobox "What happened":
+        - option "Arrived damaged" [selected]
+        - option "Never arrived"
+        - option "Wrong item received"
+        - option "Item missing from the order"
+        - option "Temperature concern"
+      - generic: Tell us more
+      - textbox "Tell us more"
+      - button "Send report"
+  - region "Support for this order":
+    - heading "Need help with this order?" [level=2]
+    - paragraph: A person answers. Include your order id and we will pick it up from there.
+    - link "Email support":
+      - /url: mailto:team@xeniostechnology.com
+    - link "Support options":
+      - /url: /research/support
+  - paragraph: 🔒 This page reflects the returned record, not a complete-history or purchasing-eligibility guarantee. Totals are reported by the server; shipping is one charge per order even when it ships in several packages.
+- contentinfo:
+  - link "xenios":
+    - /url: /
+    - generic: xenios
+  - link "research use":
+    - /url: /research/policies/research-use
+  - link "shipping":
+    - /url: /research/policies/shipping
+  - link "returns":
+    - /url: /research/policies/returns
+  - link "privacy":
+    - /url: /research/policies/privacy
+  - link "terms":
+    - /url: /research/policies/terms
+  - link "accessibility":
+    - /url: /research/policies/accessibility
+  - link "Support":
+    - /url: mailto:research@xeniostechnology.com
+  - paragraph: Research materials are not for human or veterinary use. Programs are human-led and non-clinical.
+- region "Notifications (F8)":
+  - list

@@ -1,0 +1,86 @@
+npm warn config production Use `--omit=dev` instead.
+
+> rest-express@1.0.0 test
+> vitest run --maxWorkers=2
+
+
+ RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/65aa/xenios-website
+
+ ❯ server/core-site-protection.test.ts (36 tests | 1 failed) 171ms
+     × matches every curated protected file at HEAD 30ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: navigation to another Document
+ ❯ client/src/research/pages/quality-surfaces.test.tsx (5 tests | 1 failed) 479ms
+     × keeps public and secure document lanes distinct with a labeled lot form 77ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  server/core-site-protection.test.ts > the protected file hash tripwire > matches every curated protected file at HEAD
+AssertionError: expected [ { …(3) }, …(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "actual": "sha256:505468087f7f96148d3e112b428ed8c3b39a125d159511d28d81fb641c05e2f0",
++     "expected": "sha256:077f0e154aa05ee91f4a9088f763c391d3ca61f78cf9bd89f9ce7031bf8cc13a",
++     "path": "client/src/lib/content.ts",
++   },
++   {
++     "actual": "sha256:f17d518ee2a3bcda2ff4d4ffca6bc8475c0ced5f7c9f5f85b19bd189e09ea2ae",
++     "expected": "sha256:feb276a9f6412c16deb352d267b3c2216ea251b32f0769bd42a66b1edd9f73c4",
++     "path": "server/routes.ts",
++   },
++ ]
+
+ ❯ server/core-site-protection.test.ts:292:31
+    290|   it("matches every curated protected file at HEAD", () => {
+    291|     const result = verifyHashes(manifest.fileHashes.files, cleanReader…
+    292|     expect(result.mismatches).toEqual([]);
+       |                               ^
+    293|     expect(result.missing).toEqual([]);
+    294|     expect(result.matched.length).toBe(Object.keys(manifest.fileHashes…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  client/src/research/pages/quality-surfaces.test.tsx > public quality editorial surfaces > keeps public and secure document lanes distinct with a labeled lot form
+AssertionError: expected null not to be null
+ ❯ client/src/research/pages/quality-surfaces.test.tsx:83:76
+     81|     expect(view.textContent).toContain("Secure account documents");
+     82|     expect(view.textContent).toContain("Version-aware records");
+     83|     expect(view.querySelector('a[href="/research/account/documents"]')…
+       |                                                                            ^
+     84|     const input = view.querySelector<HTMLInputElement>('input[name="lo…
+     85|     expect(input).not.toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 972 passed | 6 skipped (980)
+      Tests  2 failed | 18053 passed | 85 skipped (18140)
+   Start at  15:06:36
+   Duration  780.05s (transform 46.59s, setup 0ms, import 346.47s, tests 411.23s, environment 428.88s)
+

@@ -1,0 +1,91 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Xenios Research
+  - heading "Apply to become a Research Rep" [level=1]
+  - paragraph: Tell us who you are and where you share. Applications are reviewed by a person, and compliance training comes before anything goes live.
+  - generic: Full name
+  - textbox "Full name"
+  - generic: Email address
+  - textbox "Email address"
+  - generic: Your audience
+  - paragraph: Who do you reach, roughly how many people, and what do they come to you for?
+  - textbox "Your audience"
+  - group "Where you share (select all that apply)":
+    - generic: Where you share (select all that apply)
+    - button "Instagram Posts, stories, or reels to your own audience.":
+      - generic: Instagram
+      - generic: Posts, stories, or reels to your own audience.
+    - button "YouTube Long-form or short-form video content.":
+      - generic: YouTube
+      - generic: Long-form or short-form video content.
+    - button "TikTok Short-form video content.":
+      - generic: TikTok
+      - generic: Short-form video content.
+    - button "Podcast Your own show or regular guest appearances.":
+      - generic: Podcast
+      - generic: Your own show or regular guest appearances.
+    - button "Newsletter or email list An email audience you own.":
+      - generic: Newsletter or email list
+      - generic: An email audience you own.
+    - button "In-person events Talks, meetups, or community events you run.":
+      - generic: In-person events
+      - generic: Talks, meetups, or community events you run.
+    - button "Clinic or practice A professional practice with its own clients.":
+      - generic: Clinic or practice
+      - generic: A professional practice with its own clients.
+    - button "Other Describe it in the audience section below.":
+      - generic: Other
+      - generic: Describe it in the audience section below.
+  - region "Research Rep Partner Agreement agreement":
+    - paragraph: Agreement · vDraft
+    - paragraph: Research Rep Partner Agreement
+    - paragraph: "The partner agreement covers the compliance rules in full: education-first sharing, mandatory disclosure of the rep relationship, no medical claims, no income claims, and no recruitment of other reps. It also covers commission terms, holds, reversals, and how the agreement ends."
+    - paragraph: You do not sign it here. If your application is approved, the full agreement is presented for review and acceptance during onboarding, before anything is shared.
+    - generic: Acceptance opens later
+  - button "Submit application"
+  - link "Back":
+    - /url: /research/partners
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

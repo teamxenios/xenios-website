@@ -1,0 +1,100 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - navigation "Partner areas":
+    - link "Dashboard":
+      - /url: /research/partners/dashboard
+    - link "Links":
+      - /url: /research/partners/links
+    - link "Campaigns":
+      - /url: /research/partners/campaigns
+    - link "Events":
+      - /url: /research/partners/events
+    - link "Leads":
+      - /url: /research/partners/leads
+    - link "Conversions":
+      - /url: /research/partners/conversions
+    - link "Commissions":
+      - /url: /research/partners/commissions
+    - link "Payouts":
+      - /url: /research/partners/payouts
+    - link "Organizations":
+      - /url: /research/partners/organizations
+    - link "Training":
+      - /url: /research/partners/training
+    - link "Resources":
+      - /url: /research/partners/resources
+    - link "Compliance":
+      - /url: /research/partners/compliance
+    - link "Support":
+      - /url: /research/partners/support
+    - link "Security":
+      - /url: /research/partners/security
+  - paragraph: Partners
+  - heading "Training and certification" [level=1]
+  - paragraph: Certification comes before sharing. These modules cover the program, the compliance rules, and the approved content library.
+  - region "What the curriculum covers":
+    - heading "What the curriculum covers" [level=2]
+    - paragraph: The program, honestly
+    - paragraph: What Xenios Research is, how customer access works without a paid membership prerequisite, and what a partner's role is and is not.
+    - paragraph: Compliance rules
+    - paragraph: "The three hard lines: no medical claims, no income claims, no recruitment. Plus disclosure requirements on every share."
+    - paragraph: Approved content
+    - paragraph: How the approved library works, what may be edited, and how to submit your own content for review before use.
+    - paragraph: Certification check
+    - paragraph: A short check on the rules above. Completion is reviewed with the other current requirements before certification and activation.
+  - navigation "Training help":
+    - link "My account":
+      - /url: /research/account
+    - link "Partner support":
+      - /url: /research/partners/support
+  - paragraph: 🔒 The curriculum above describes the program, not your account status. Reported completion and certification markers do not establish current certification validity, partner activation, sharing permission, product eligibility, or payout readiness. This report does not change account access or record training completion.
+  - region "Reported training records":
+    - heading "Reported training records" [level=2]
+    - paragraph: Sign in to view reported training records
+    - paragraph: Use your Xenios account. The server verifies partner reporting access separately.
+    - link "Sign in":
+      - /url: /research/sign-in
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

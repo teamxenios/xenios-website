@@ -1,0 +1,97 @@
+{
+  "revisionId": "ANLCKQk7VRknpXcVK6U30jlbcxn3QZ729LmIH_BcHWTUUvuG9iLNxTUEIIts_veOl5HXa1UCaA5Pp1zRDmCrxS5Ecn2dkTmvUN5BzsA2rDM",
+  "tabs": 18,
+  "verifiedNotes": [
+    {
+      "id": "t.0",
+      "title": "00 Executive Map",
+      "verified": true
+    },
+    {
+      "id": "t.w619ayfvyp6u",
+      "title": "01 Personas + Entry Points",
+      "verified": true
+    },
+    {
+      "id": "t.mkpp0r308aez",
+      "title": "02 Consumer + Research",
+      "verified": true
+    },
+    {
+      "id": "t.msukh1lqzxsr",
+      "title": "03 Care",
+      "verified": true
+    },
+    {
+      "id": "t.eksh64ygd33s",
+      "title": "04 Affiliate + Partner",
+      "verified": true
+    },
+    {
+      "id": "t.meg5cdcxxqel",
+      "title": "05 B2B + Organizations",
+      "verified": true
+    },
+    {
+      "id": "t.s22n05yinm74",
+      "title": "06 Account + Orders + Payment",
+      "verified": true
+    },
+    {
+      "id": "t.h3nvz85s1gym",
+      "title": "07 Admin + Operations",
+      "verified": true
+    },
+    {
+      "id": "t.v73mukt2iin3",
+      "title": "08 Notifications + Next Steps",
+      "verified": true
+    },
+    {
+      "id": "t.cnlotndvqirx",
+      "title": "09 Findings + Priority Backlog",
+      "verified": true
+    },
+    {
+      "id": "t.in1nfvycebbn",
+      "title": "10 Route + Source Inventory",
+      "verified": true
+    },
+    {
+      "id": "t.kshu9x2u1uiq",
+      "title": "11 UAT Walkthrough",
+      "verified": true
+    },
+    {
+      "id": "t.3fnxiypelkis",
+      "title": "12 Homepage Account Entry",
+      "verified": true
+    },
+    {
+      "id": "t.vv5ocdle8ibk",
+      "title": "13 Notification Coverage Matrix",
+      "verified": true
+    },
+    {
+      "id": "t.rzz6nlpbz6lw",
+      "title": "14 Implementation Blueprint",
+      "verified": true
+    },
+    {
+      "id": "t.srrmszar14b9",
+      "title": "15 Release Acceptance Matrix",
+      "verified": true
+    },
+    {
+      "id": "t.s31z24jpx752",
+      "title": "16 Codex Execution Prompt",
+      "verified": true
+    },
+    {
+      "id": "t.hkj9btkb5yz3",
+      "title": "17 Samuel Super Admin",
+      "verified": true
+    }
+  ],
+  "images": 2
+}

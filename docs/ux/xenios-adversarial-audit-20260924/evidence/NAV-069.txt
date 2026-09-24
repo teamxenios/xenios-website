@@ -1,0 +1,88 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Document access
+  - heading "The right record, through the right door." [level=1]
+  - paragraph: Public lot evidence and private account records serve different audiences. Xenios keeps their access paths, approval states, and disclosure boundaries separate.
+  - paragraph: Public verification exposes only records explicitly approved for public access. It never publishes unapproved or private supplier files, internal review notes, raw storage locations, personal information, or private account documents.
+  - region "Availability is a fact, not a guess.":
+    - paragraph: Access model
+    - heading "Availability is a fact, not a guess." [level=2]
+    - article:
+      - heading "Approved public lot records" [level=3]
+      - paragraph: An exact lot lookup may show an approved status summary and explicitly public documents. No approximate match is returned.
+    - article:
+      - heading "Secure account documents" [level=3]
+      - paragraph: Member, order, agreement, and account documents remain behind authenticated, ownership-scoped access controls.
+    - article:
+      - heading "Version-aware records" [level=3]
+      - paragraph: Pending, expired, missing, replaced, and withdrawn records stay distinct from currently available documents when their status metadata is explicitly approved for public display.
+  - region "Use the exact lot code.":
+    - paragraph: Public verification
+    - heading "Use the exact lot code." [level=2]
+    - generic: Lot code from the product label
+    - textbox "Lot code from the product label":
+      - /placeholder: "Example: LOT-2026-001"
+    - button "Verify lot":
+      - text: Verify lot
+    - paragraph: If the public source is unavailable, the result will say so. It will not imply that the lot or document does not exist.
+  - region "Looking for an account document?":
+    - paragraph: Private records
+    - heading "Looking for an account document?" [level=2]
+    - paragraph: Sign in to reach secure documents connected to your membership or account. Authentication does not make a private record public.
+    - link "Open secure documents":
+      - /url: /research/account/documents
+  - navigation "Quality resources":
+    - link "Explore Quality system How material moves from receipt to a recorded decision.":
+      - /url: /research/quality
+      - text: Explore
+      - strong: Quality system
+      - generic: How material moves from receipt to a recorded decision.
+    - link "Explore Testing explained What a test can—and cannot—support.":
+      - /url: /research/testing
+      - text: Explore
+      - strong: Testing explained
+      - generic: What a test can—and cannot—support.
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

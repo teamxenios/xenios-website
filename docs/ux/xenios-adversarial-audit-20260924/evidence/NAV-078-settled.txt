@@ -1,0 +1,180 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Xenios Research partnerships
+  - heading "The right relationship starts with the right boundary." [level=1]
+  - paragraph: Xenios provides distinct review pathways for research organizations, clinics, medical spas, providers, affiliates, collectives, suppliers, laboratories, fulfillment teams, and strategic operators. Each relationship has its own authority, evidence, privacy, and activation requirements.
+  - link "Send an inquiry":
+    - /url: "#partnership-inquiry"
+  - link "Existing partner access":
+    - /url: /research/partners/dashboard
+  - region "One company, distinct review paths for each relationship.":
+    - paragraph: Relationship pathways
+    - heading "One company, distinct review paths for each relationship." [level=2]
+    - paragraph: Choose the path closest to the actual relationship. If more than one applies, start with the primary commercial purpose; the review team can route the rest without creating duplicate accounts.
+    - article:
+      - paragraph: Laboratories · CROs · product teams
+      - heading "Research organizations" [level=3]
+      - paragraph: Reviewed business access for legitimate nonclinical research, analytical work, and product development.
+      - paragraph: Human review covers
+      - paragraph: Entity, intended use, buyer roles, documentation needs, volume, and fulfillment expectations.
+      - link "Explore organization access":
+        - /url: /research/organizations
+    - article:
+      - paragraph: Clinics · medical spas · wellness practices
+      - heading "Clinical businesses" [level=3]
+      - paragraph: A commercial relationship with a hard boundary between Research purchasing and provider-governed Care.
+      - paragraph: Human review covers
+      - paragraph: Business purpose, licensed activities, jurisdictions, Research scope, and the separate Care handoff.
+      - link "Review the clinic pathway":
+        - /url: /research/organizations
+    - article:
+      - paragraph: Physicians · licensed providers · practices
+      - heading "Provider partnerships" [level=3]
+      - paragraph: Practice relationships that preserve independent clinical judgment and route patient care through Care.
+      - paragraph: Human review covers
+      - paragraph: Credentials, coverage, practice workflow, Care readiness, and prohibited commercial influence.
+      - link "Review provider boundaries":
+        - /url: /research/organizations
+    - article:
+      - paragraph: Educators · creators · referral partners
+      - heading "Affiliate relationships" [level=3]
+      - paragraph: Application, compliance review, approved resources, durable attribution, and reporting without clinical influence.
+      - paragraph: Human review covers
+      - paragraph: Audience, channels, disclosure practices, allowed claims, and agreement readiness.
+      - link "Explore affiliate access":
+        - /url: /research/affiliates
+    - article:
+      - paragraph: Communities · gyms · advisor groups
+      - heading "Collective partnerships" [level=3]
+      - paragraph: Reviewed group relationships with Xenios-owned customer accounts, internal source attribution, and no duplicate customer portal.
+      - paragraph: Human review covers
+      - paragraph: Entity, program owner, audience, time window, disclosures, consent authority, and data boundaries.
+      - link "Review the collective boundary":
+        - /url: /research/affiliates
+    - article:
+      - paragraph: Suppliers · labs · fulfillment partners
+      - heading "Supply and quality partners" [level=3]
+      - paragraph: Prospective operational access is invitation-only and requires identity, documentation, quality, SLA, and recall-readiness review.
+      - paragraph: Human review covers
+      - paragraph: Entity, assigned capabilities, COA and lot evidence, shipping, escalation, and recall contacts.
+      - link "Review supplier access":
+        - /url: /research/supplier-access
+    - article:
+      - paragraph: Qualified brands · product teams
+      - heading "White-label interest" [level=3]
+      - paragraph: An exploratory business-development conversation, not a promise of formulation, supply, timing, or exclusivity.
+      - paragraph: Human review covers
+      - paragraph: Market, product category, quality standard, volume, claims controls, and ownership expectations.
+      - link "Send a white-label inquiry":
+        - /url: "#partnership-inquiry"
+    - article:
+      - paragraph: Platforms · collectives · aligned operators
+      - heading "Strategic partnerships" [level=3]
+      - paragraph: A deliberate path for technology, distribution, education, research, and ecosystem collaborations.
+      - paragraph: Human review covers
+      - paragraph: Shared objective, responsibilities, data boundaries, commercial model, and measurable next step.
+      - link "Send a strategic inquiry":
+        - /url: "#partnership-inquiry"
+  - region "A clear review, without implied approval.":
+    - paragraph: What happens next
+    - heading "A clear review, without implied approval." [level=2]
+    - paragraph: The public inquiry is an orientation and handoff. It is not an account application, quote, supplier assignment, partner agreement, or clinical credentialing decision.
+    - list:
+      - generic: "01"
+      - heading "Choose the correct relationship" [level=3]
+      - paragraph: Research buying, clinical practice, affiliate, supplier, white-label, and strategic work enter different review lanes.
+      - generic: "02"
+      - heading "Prepare the business context" [level=3]
+      - paragraph: Share the entity, authorized contact, intended scope, region, documentation needs, and a concrete next step.
+      - generic: "03"
+      - heading "Complete human review" [level=3]
+      - paragraph: Xenios verifies fit, authority, legal and compliance needs, privacy boundaries, and operational readiness.
+      - generic: "04"
+      - heading "Activate only what is approved" [level=3]
+      - paragraph: Accounts, prices, catalog access, links, economics, products, and clinical capabilities remain unavailable until separately authorized.
+  - complementary "Commercial relationships never control clinical decisions.":
+    - paragraph: Operating boundary
+    - heading "Commercial relationships never control clinical decisions." [level=2]
+    - paragraph: Research commerce, affiliate attribution, supplier operations, and provider-governed Care remain separate authorities. A relationship with Xenios does not create product access or a clinical outcome.
+    - list:
+      - listitem: No affiliate, clinic, supplier, or strategic partner can approve a prescription, provider decision, pharmacy action, or Care status.
+      - listitem: No public page promises a commission rate, wholesale price, inventory position, product activation, territory, exclusivity, or payout.
+      - listitem: No inquiry should include patient details, health information, payment evidence, customer product interests, credentials, or secrets.
+      - listitem: Research-designated materials remain for legitimate nonclinical use and never include dosing, administration, or personal-use guidance.
+  - region "Send a partnership inquiry":
+    - paragraph: Human review
+    - heading "Send a partnership inquiry" [level=2]
+    - paragraph: Submit a business inquiry for human review. This does not create an account, approve access, establish pricing, or activate a relationship.
+    - generic: Relationship type
+    - combobox "Relationship type":
+      - option "Research organizations"
+      - option "Clinical businesses"
+      - option "Provider partnerships"
+      - option "Affiliate relationships"
+      - option "Collective partnerships"
+      - option "Supply and quality partners"
+      - option "White-label interest"
+      - option "Strategic partnerships" [selected]
+    - generic: Your name
+    - textbox "Your name"
+    - generic: Business email
+    - textbox "Business email"
+    - generic: Organization
+    - textbox "Organization"
+    - generic: Your role
+    - textbox "Your role"
+    - generic: Website (optional)
+    - paragraph: Use a public page. Query and fragment values are omitted from the prepared summary.
+    - textbox "Website (optional)":
+      - /placeholder: https://
+    - generic: Principal region or jurisdiction
+    - textbox "Principal region or jurisdiction"
+    - generic: Business context
+    - paragraph: Describe the intended relationship, audience or use, approximate volume, documentation needs, and desired next step. Do not include patient information, health details, payment data, or secrets.
+    - textbox "Business context"
+    - button "Submit inquiry"
+    - paragraph: Submission creates a business inquiry only. It is not an account application or approval.
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

@@ -1,0 +1,108 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Testing explained
+  - heading "One result answers one defined question." [level=1]
+  - paragraph: Testing is useful when the sample, method, scope, specification, dates, and issuing record are clear. A strong number without that context is not a complete quality conclusion.
+  - paragraph: Third-party testing is used where applicable to the material and control plan. Xenios does not claim that every test category applies to every lot, or that any laboratory result establishes safety or human suitability.
+  - region "Do not let one test impersonate another.":
+    - paragraph: Different questions
+    - heading "Do not let one test impersonate another." [level=2]
+    - paragraph: The applicable panel depends on the material, its risks, the specification, and the documented control plan.
+    - article:
+      - generic: "01"
+      - heading "Identity" [level=3]
+      - paragraph: Addresses whether the tested sample matches the represented material. It does not establish amount, sterility, or suitability.
+    - article:
+      - generic: "02"
+      - heading "Purity" [level=3]
+      - paragraph: Describes the proportion of detected material attributed to a target under a stated method. It does not prove identity by itself.
+    - article:
+      - generic: "03"
+      - heading "Assay or content" [level=3]
+      - paragraph: Measures the amount present against a stated specification or label claim where that measurement is applicable.
+    - article:
+      - generic: "04"
+      - heading "Microbial, sterility, or endotoxin" [level=3]
+      - paragraph: Distinct tests with distinct methods and limits. None should be inferred from a purity result or a generic certificate.
+    - article:
+      - generic: "05"
+      - heading "Contaminant panels" [level=3]
+      - paragraph: Heavy metals, residual solvents, and other panels are product- and risk-specific. A panel only covers what it actually measures.
+    - article:
+      - generic: "06"
+      - heading "Stability and handling" [level=3]
+      - paragraph: Storage, retest, and shelf-life claims require evidence designed for those questions; a release test is not automatically stability data.
+  - region "The context belongs beside the result.":
+    - paragraph: Reading a record
+    - heading "The context belongs beside the result." [level=2]
+    - term: Exact sample
+    - definition: Does the report identify the same SKU, material, and lot as the label—not merely a similar name?
+    - term: Method and scope
+    - definition: What method was used, what was measured, and which questions remain outside that method?
+    - term: Dates and custody
+    - definition: When was the sample collected, received, tested, issued, and reviewed, and who controlled it along the way?
+    - term: Specification
+    - definition: Is there a stated acceptance criterion, unit, and result, with qualifiers and exceptions preserved?
+    - term: Issuing record
+    - definition: Is the original approved report available, and does it identify the issuing laboratory or qualified party?
+    - term: Currentness
+    - definition: Has the record been replaced, withdrawn, or superseded by a newer approved document?
+  - region "What a COA is not.":
+    - heading "What a COA is not." [level=2]
+    - paragraph: A COA is not a universal guarantee. It is a controlled record of identified tests, methods, specifications, and results for a stated sample or lot.
+    - paragraph: It does not replace chain of custody, receiving inspection, release authority, storage controls, traceability, or exception handling. It also does not provide dosing or personal-use guidance.
+  - navigation "Quality resources":
+    - link "Explore Quality system How material moves from receipt to a recorded decision.":
+      - /url: /research/quality
+      - text: Explore
+      - strong: Quality system
+      - generic: How material moves from receipt to a recorded decision.
+    - link "Explore Documents Public records and secure member documents.":
+      - /url: /research/documents
+      - text: Explore
+      - strong: Documents
+      - generic: Public records and secure member documents.
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

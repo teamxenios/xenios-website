@@ -1,3 +1,5 @@
+> Continuation supersedes this historical checkpoint: see [CONTINUATION_RESULTS.md](CONTINUATION_RESULTS.md), [CONTINUATION_SCENARIOS.csv](CONTINUATION_SCENARIOS.csv), and [PROTECTED_CHANGE_REVIEW.md](PROTECTED_CHANGE_REVIEW.md). Original repair 02d525b remains preserved; c4ea8a9 is the application successor; ee1c972 is test-only.
+
 # Baseline coverage before repair
 
 230 browser observations and 3,158 observed link instances were saved before application edits. These are observations, not 230 complete passing scenarios. Repeated header/footer links remain distinct occurrences. The link inventory does not yet cover every button, disclosure, keyboard action or form state.

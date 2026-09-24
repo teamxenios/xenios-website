@@ -1,0 +1,107 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - navigation "Partner areas":
+    - link "Dashboard":
+      - /url: /research/partners/dashboard
+    - link "Links":
+      - /url: /research/partners/links
+    - link "Campaigns":
+      - /url: /research/partners/campaigns
+    - link "Events":
+      - /url: /research/partners/events
+    - link "Leads":
+      - /url: /research/partners/leads
+    - link "Conversions":
+      - /url: /research/partners/conversions
+    - link "Commissions":
+      - /url: /research/partners/commissions
+    - link "Payouts":
+      - /url: /research/partners/payouts
+    - link "Organizations":
+      - /url: /research/partners/organizations
+    - link "Training":
+      - /url: /research/partners/training
+    - link "Resources":
+      - /url: /research/partners/resources
+    - link "Compliance":
+      - /url: /research/partners/compliance
+    - link "Support":
+      - /url: /research/partners/support
+    - link "Security":
+      - /url: /research/partners/security
+  - paragraph: Partners
+  - heading "Commissions" [level=1]
+  - paragraph: Recorded affiliate commission entries for this account. Ledger status is reported evidence, not a promise of income or payout.
+  - paragraph: 🔒 Affiliate commission and wholesale ledgers stay separate. This page does not calculate a balance, initiate a payout, identify referred customers, or grant partner permissions. Approved customer access does not require paid membership.
+  - link "My account":
+    - /url: /research/account
+  - link "Payout records":
+    - /url: /research/partners/payouts
+  - region "Ledger":
+    - heading "Ledger" [level=2]
+    - paragraph: Sign in to view your commission ledger
+    - paragraph: Use your Xenios account. The server verifies partner reporting access separately.
+    - link "Sign in":
+      - /url: /research/sign-in
+  - region "Reading reported ledger states":
+    - heading "Reading reported ledger states" [level=2]
+    - term: Pending
+    - definition: The ledger reports an entry awaiting further processing. This view does not independently confirm the underlying payment.
+    - term: Held
+    - definition: The ledger reports a hold. This view does not establish its reason, release date, or a spendable balance.
+    - term: Approved
+    - definition: The ledger reports approval. Approval alone does not confirm payout scheduling or execution.
+    - term: Payable
+    - definition: The ledger reports the entry as payable. It does not confirm that a payout was queued or provide a payment date.
+    - term: Paid
+    - definition: The commission ledger reports paid. This page has no bank or provider receipt; consult the separate payout records for available evidence.
+    - term: Reversed
+    - definition: The ledger reports a reversal. The recorded signed amount is preserved; this page does not infer its cause or net it against other entries.
+    - term: Disputed
+    - definition: The ledger reports a dispute. No resolution or timing is assumed here.
+    - term: Forfeited
+    - definition: The ledger reports forfeited. This view does not infer a reason or change the entry.
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

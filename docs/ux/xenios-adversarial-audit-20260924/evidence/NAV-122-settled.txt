@@ -1,0 +1,125 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Suppliers · laboratories · fulfillment
+  - heading "Operational access begins after evidence, not interest." [level=1]
+  - paragraph: Supplier access, when offered, is invitation-only. A business relationship, product conversation, or prepared inquiry does not establish supply readiness, documentation approval, inventory, assignment, or fulfillment authority.
+  - link "Send supplier interest":
+    - /url: "#supplier-inquiry"
+  - link "Supplier support":
+    - /url: /research/support
+  - region "Each role needs a deliberately narrow operating boundary.":
+    - paragraph: Operating partners
+    - heading "Each role needs a deliberately narrow operating boundary." [level=2]
+    - paragraph: The public page explains a prospective relationship. Any future private workspace would remain unavailable until entity, agreement, quality, documentation, security, and operational checks are complete.
+    - article:
+      - heading "Product and material suppliers" [level=3]
+      - paragraph: Exact identity, variant, source documentation, lot controls, availability, storage, and commercial authority are verified before assignment.
+    - article:
+      - heading "Independent laboratories" [level=3]
+      - paragraph: Scope, methods, accreditation or qualifications, sample chain, report authenticity, and document-delivery controls are reviewed.
+    - article:
+      - heading "Fulfillment and logistics partners" [level=3]
+      - paragraph: Assigned references, minimum shipping data, handling requirements, tracking, exceptions, returns, and recall procedures define the operating boundary.
+  - region "Verified first. Assigned second.":
+    - paragraph: Readiness sequence
+    - heading "Verified first. Assigned second." [level=2]
+    - paragraph: Missing evidence must remain a clear pending or held state. It never becomes a fabricated approval, available lot, shipment, delivery, or customer promise.
+    - list:
+      - generic: "01"
+      - heading "Identity and agreement" [level=3]
+      - paragraph: Verify the legal entity, authorized contacts, facility or operating scope, insurance where required, and executed agreements.
+      - generic: "02"
+      - heading "Evidence readiness" [level=3]
+      - paragraph: Review product identity, lot and COA expectations, quality documents, inventory evidence, shipping capability, SLA, and recall contacts.
+      - generic: "03"
+      - heading "Scoped assignment" [level=3]
+      - paragraph: Any approved partner must receive only assigned products, references, quantities, handling requirements, and the minimum destination data needed.
+      - generic: "04"
+      - heading "Operational updates" [level=3]
+      - paragraph: Acknowledgement, packing, shipment, delivery, exceptions, replacements, returns, and recalls require durable source-specific evidence.
+  - complementary "Minimum data, assigned work, no commercial poaching.":
+    - paragraph: Operating boundary
+    - heading "Minimum data, assigned work, no commercial poaching." [level=2]
+    - paragraph: Any supplier access must expose only what is required to complete an approved assignment. Xenios retains the broader customer, partner, pricing, margin, payment, and business relationship.
+    - list:
+      - listitem: No unrelated customer history, affiliate attribution, private product interests, supplier comparisons, Xenios margin, or payment evidence.
+      - listitem: No assignment exists until the canonical operations authority creates it for an approved supplier account.
+      - listitem: Tracking, shipment, delivery, lot, COA, testing, and availability appear only from their authoritative source.
+      - listitem: Provider-governed prescription fulfillment remains with the licensed pharmacy and does not enter the Research supplier workflow.
+  - region "Send supplier, laboratory, or fulfillment interest":
+    - paragraph: Human review
+    - heading "Send supplier, laboratory, or fulfillment interest" [level=2]
+    - paragraph: Submit a business inquiry for human review. This does not create an account, approve access, establish pricing, or activate a relationship.
+    - generic: Relationship type
+    - combobox "Relationship type":
+      - option "Research organizations"
+      - option "Clinical businesses"
+      - option "Provider partnerships"
+      - option "Affiliate relationships"
+      - option "Collective partnerships"
+      - option "Supply and quality partners" [selected]
+      - option "White-label interest"
+      - option "Strategic partnerships"
+    - generic: Your name
+    - textbox "Your name"
+    - generic: Business email
+    - textbox "Business email"
+    - generic: Organization
+    - textbox "Organization"
+    - generic: Your role
+    - textbox "Your role"
+    - generic: Website (optional)
+    - paragraph: Use a public page. Query and fragment values are omitted from the prepared summary.
+    - textbox "Website (optional)":
+      - /placeholder: https://
+    - generic: Principal region or jurisdiction
+    - textbox "Principal region or jurisdiction"
+    - generic: Business context
+    - paragraph: Describe the intended relationship, audience or use, approximate volume, documentation needs, and desired next step. Do not include patient information, health details, payment data, or secrets.
+    - textbox "Business context"
+    - button "Submit inquiry"
+    - paragraph: Submission creates a business inquiry only. It is not an account application or approval.
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

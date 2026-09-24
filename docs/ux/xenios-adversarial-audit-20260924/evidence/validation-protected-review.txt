@@ -1,0 +1,39 @@
+core-site protection gate
+  manifest baseline : 766f19fce3b67cd9b940ea66fe075281c2d8bdf8
+  comparing         : 0574264562f33fe40572b1d9976f4700bef9c83e..c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa
+  changed files     : 304
+  allowed (research/care) : 7
+  infrastructure          : 287
+  protected file hashes   : 26 verified
+
+TEST FILES TOUCHED (permitted: a test cannot change what a visitor sees.
+Review must still confirm each one was STRENGTHENED, not weakened. Lowering
+an existing safety or regression gate to make a build pass is forbidden):
+  - client/src/lib/contact-service.test.ts
+  - client/src/research/b2b/PartnershipInquiryForm.test.tsx
+  - server/services/contact-delivery.test.ts
+  - server/services/contact-email.test.ts
+
+FAIL: changed files outside the allowed Research/Care write zones.
+The main website outside /research and /care must not be modified.
+  - client/src/components/ContactForm.tsx
+  - client/src/lib/content.ts
+  - client/src/lib/waitlist-service.ts
+  - server/routes.ts
+  - server/services/contact-delivery.ts
+  - server/services/email.ts
+
+FAIL: protected file content changed (hash mismatch against the baseline).
+  - client/src/lib/content.ts
+      expected sha256:077f0e154aa05ee91f4a9088f763c391d3ca61f78cf9bd89f9ce7031bf8cc13a
+      actual   sha256:505468087f7f96148d3e112b428ed8c3b39a125d159511d28d81fb641c05e2f0
+  - server/routes.ts
+      expected sha256:feb276a9f6412c16deb352d267b3c2216ea251b32f0769bd42a66b1edd9f73c4
+      actual   sha256:f17d518ee2a3bcda2ff4d4ffca6bc8475c0ced5f7c9f5f85b19bd189e09ea2ae
+
+RESULT: FAIL
+
+What to do: see docs/phase2/CORE_SITE_PROTECTION.md. Either move the change
+into client/src/research, client/src/care, server/research, server/care, or
+shared/research, or request an exclusive seam lease if the change genuinely
+needs one of the permitted seam files. Do not widen the manifest to pass.

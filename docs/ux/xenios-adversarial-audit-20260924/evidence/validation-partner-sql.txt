@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "checks": 57,
+  "candidatePath": "supabase/candidates/20260905_research_partner_lifecycle.sql",
+  "candidateLfSha256": "4f10c3e996cbe60e660981dc654e89af2d23e209f8252db067cb9a367b4f5bbb",
+  "sourceHashes": {
+    "supabase/research-membership.sql": "a5741c2cd9d25e7fec0631e0609cc3e8385f4808026680465ee4a46cf26c46d8",
+    "supabase/research-members.sql": "aa9f6c539f755f08042f90f7799885320e58e2f775f4078fbc6f10cf21b0aded",
+    "supabase/research-partners.sql": "c2eb9d486e2c6f61111b34cb31eda8d2709e3bd951b901cbef396368b8ab97d0"
+  },
+  "productionMutated": false,
+  "scope": "Offline PGlite synthetic Auth/member/partner baseline. Exact gates, idempotency, stale revisions, append-only evidence, privileged operations and transaction rollback. No production parity, live onboarding evidence, concurrency or provider attestations."
+}

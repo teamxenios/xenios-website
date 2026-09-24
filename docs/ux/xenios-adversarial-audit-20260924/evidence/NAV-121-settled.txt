@@ -1,0 +1,36 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - generic "xenios research":
+    - text: xenios
+    - generic: research
+- main:
+  - paragraph: Your account
+  - heading "Sign in." [level=1]
+  - paragraph: Use the email and password connected to your Xenios account. An approval link connects approved customer access to your account; it does not replace your password.
+  - generic: Email
+  - textbox "Email"
+  - generic: Password
+  - textbox "Password"
+  - button "Show password": Show
+  - button "Sign in"
+  - paragraph:
+    - link "Forgot your password?":
+      - /url: /research/reset-password?returnTo=%2Fresearch%2Fpartners%2Fresources
+  - paragraph: Returning customers can sign in normally. If you still need to finish approved account setup, open your secure approval link and continue with this same sign-in.
+  - paragraph:
+    - link "Back to gateway":
+      - /url: /research
+  - paragraph:
+    - text: Need customer access?
+    - link "View application information":
+      - /url: /research/apply
+  - paragraph:
+    - link "Privacy":
+      - /url: /research/policies/privacy
+    - text: ·
+    - link "Terms":
+      - /url: /research/policies/terms
+    - text: ·
+    - link "Support":
+      - /url: mailto:team@xeniostechnology.com

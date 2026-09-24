@@ -1,0 +1,20 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - generic "xenios research":
+    - text: xenios
+    - generic: research
+- main:
+  - paragraph: Members
+  - heading "Reset your password." [level=1]
+  - paragraph: Enter your member email and we will send a secure reset link.
+  - generic: Email
+  - textbox "Email"
+  - button "Send reset link"
+  - paragraph:
+    - link "Back to sign in":
+      - /url: /research/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard
+  - paragraph:
+    - text: Need help?
+    - link "Support":
+      - /url: mailto:research@xeniostechnology.com

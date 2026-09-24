@@ -1,0 +1,102 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - navigation "Partner areas":
+    - link "Dashboard":
+      - /url: /research/partners/dashboard
+    - link "Links":
+      - /url: /research/partners/links
+    - link "Campaigns":
+      - /url: /research/partners/campaigns
+    - link "Events":
+      - /url: /research/partners/events
+    - link "Leads":
+      - /url: /research/partners/leads
+    - link "Conversions":
+      - /url: /research/partners/conversions
+    - link "Commissions":
+      - /url: /research/partners/commissions
+    - link "Payouts":
+      - /url: /research/partners/payouts
+    - link "Organizations":
+      - /url: /research/partners/organizations
+    - link "Training":
+      - /url: /research/partners/training
+    - link "Resources":
+      - /url: /research/partners/resources
+    - link "Compliance":
+      - /url: /research/partners/compliance
+    - link "Support":
+      - /url: /research/partners/support
+    - link "Security":
+      - /url: /research/partners/security
+  - paragraph: Partners
+  - heading "Account security" [level=1]
+  - paragraph: The basics that keep your rep account yours. Most of this is habits; the rest is knowing what the team will never ask for.
+  - region "The basics":
+    - heading "The basics" [level=2]
+    - paragraph: One account, one person
+    - paragraph: Your rep account is yours alone. Sharing credentials, running someone else's account, or operating multiple personal accounts is grounds for removal.
+    - paragraph: A strong, unique password
+    - paragraph: Use a password you use nowhere else, ideally from a password manager. If you suspect it is known to anyone, change it immediately.
+    - paragraph: We never ask for credentials
+    - paragraph: No one from the team will ever ask for your password, a sign-in code, or payout credentials by email, text, or phone. Treat any such request as an attack.
+    - paragraph: Sign out on shared devices
+    - paragraph: If you sign in on a device that is not yours, sign out when you are done. Your dashboard and ledger are nobody else's business.
+    - paragraph: Report anything odd, fast
+    - paragraph: "Unexpected sign-in notices, changed details you did not change, or messages pretending to be the team: report them the moment you see them."
+  - link "My account":
+    - /url: /research/account
+  - paragraph: 🔒 This partner report is not a complete sign-in history or an account-safety check. Records do not prove who used a device, whether a session is still valid, or that other sessions were signed out. No sessions are revoked here.
+  - region "Reported session records":
+    - heading "Reported session records" [level=2]
+    - paragraph: Sign in to view reported session records
+    - paragraph: Use your Xenios account. The server verifies access to partner reporting separately.
+    - link "Sign in":
+      - /url: /research/sign-in
+  - paragraph: 🔒 To report a security concern, contact team@xeniostechnology.com. Do not include passwords, sign-in codes, tokens, or bank details. Contacting support does not itself lock the account, change a password, or revoke a session.
+  - link "Contact the security team":
+    - /url: mailto:team@xeniostechnology.com?subject=Account%20security%20concern
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

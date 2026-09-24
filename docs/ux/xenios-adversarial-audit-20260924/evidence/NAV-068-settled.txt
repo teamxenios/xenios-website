@@ -1,0 +1,74 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - link "xenios research":
+    - /url: /research
+    - generic: xenios
+    - generic: research
+  - link "Back to gateway":
+    - /url: /research
+  - generic "Explore Xenios"
+- main:
+  - paragraph: Contact Xenios Research
+  - heading "Start with the team and pathway that can actually help." [level=1]
+  - paragraph: Use the options below for operational Research questions. No response-time promise, clinical decision, product approval, or account approval is created by contacting us.
+  - region "Research contact options":
+    - article:
+      - heading "Research operations" [level=2]
+      - paragraph: Account access, applications, Research requests, orders, documents, organization context, or another operational question.
+      - link "Email research@xeniostechnology.com":
+        - /url: mailto:research@xeniostechnology.com
+    - article:
+      - heading "Account help" [level=2]
+      - paragraph: Application status, approved-account claim, password recovery, and secure support guidance.
+      - link "Open Research Support":
+        - /url: /research/support
+    - article:
+      - heading "Choosing a pathway" [level=2]
+      - paragraph: Compare Research, Care, organization, partner, supplier, and private Early Access entry points before continuing.
+      - link "Open the Access Hub":
+        - /url: /research/access-hub
+  - complementary "Research and Care boundary":
+    - paragraph: A firm boundary
+    - heading "Care and Research are separate by design." [level=2]
+    - paragraph: Use Xenios Care for personal medical evaluation, clinical records, prescribing, pharmacy fulfillment, and follow-up. Use Xenios Research for legitimate nonclinical research materials, evidence, documentation, and Research-only access. A Research account, listing, request, or purchase never creates a clinical decision.
+    - link "Explore Research":
+      - /url: /research/access-hub
+    - link "Begin Care":
+      - /url: /care
+  - paragraph: Do not email passwords, access tokens, payment credentials, or unnecessary medical information. Protected clinical messages and records belong in the authorized provider or patient-portal workflow.
+- contentinfo:
+  - link "xenios care + research":
+    - /url: /health
+    - text: xenios
+    - generic: care + research
+  - paragraph: Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+  - navigation "Research public footer":
+    - link "Care":
+      - /url: /care
+    - link "Research":
+      - /url: /research/access-hub
+    - link "How it works":
+      - /url: /research/how-it-works
+    - link "Quality":
+      - /url: /research/quality
+    - link "FAQ":
+      - /url: /research/faq
+    - link "About":
+      - /url: /research/about
+    - link "Partners":
+      - /url: /research/partners
+    - link "Policies":
+      - /url: /research/policies
+    - link "Contact":
+      - /url: /research/contact
+    - link "Support":
+      - /url: /research/support
+    - link "Sign in":
+      - /url: /research/sign-in
+    - link "Privacy":
+      - /url: /research/privacy
+    - link "Terms":
+      - /url: /research/terms
+    - link "Accessibility":
+      - /url: /research/policies/accessibility

@@ -1,0 +1,162 @@
+Browser tab: 1096124917, Title: "Organization access | Xenios Research", URL: "http://127.0.0.1:5303/research/organizations".
+0 AXWebArea Organization access | Xenios Research, URL: 127.0.0.1:5303/research/organizations
+	1 container root
+		2 container Notifications (F8)
+			3 content list
+		4 container
+			5 link Description: xenios research, Value: 127.0.0.1:5303/research
+			6 link Description: Back to gateway, Value: 127.0.0.1:5303/research
+			7 button (collapsed) Explore Xenios, Secondary Actions: Expand
+				8 text Explore Xenios
+		9 container
+			10 container
+				11 text ORGANIZATIONS AND PROFESSIONAL BUYERS
+				12 heading Structured access for serious business relationships., Value: 1
+					13 text Structured access for serious business relationships.
+				14 text Organization access brings the buyer, business purpose, catalog request, documentation needs, commercial review, fulfillment expectations, and support relationship into one deliberate pathway.
+				15 link Description: Send an organization inquiry, Value: 127.0.0.1:5303/research/organizations#organization-inquiry
+				16 link Description: Compare partnership paths, Value: 127.0.0.1:5303/research/partners
+			17 container Different buyers, one disciplined intake.
+				18 text WHO THIS IS FOR
+				19 heading Different buyers, one disciplined intake., Value: 2, ID: organization-fit-heading
+					20 text Different buyers, one disciplined intake.
+				21 text The organization route supports Research and commercial relationships. Provider-governed patient care remains in Care, even when the same business has a Research relationship with Xenios.
+				22 container
+					23 heading Research and analytical organizations, Value: 3
+						24 text Research and analytical organizations
+					25 text Laboratories, biotechnology teams, contract research organizations, and qualified product-development groups seeking documented nonclinical materials.
+				26 container
+					27 heading Clinics and medical spas, Value: 3
+						28 text Clinics and medical spas
+					29 text A reviewed business relationship that keeps Research procurement separate from patient care, provider judgment, prescribing, and pharmacy fulfillment.
+				30 container
+					31 heading Professional and volume buyers, Value: 3
+						32 text Professional and volume buyers
+					33 text Qualified businesses requesting a buyer profile, documented catalog review, volume planning, or human-reviewed commercial terms.
+				34 container
+					35 heading Brands and approved resellers, Value: 3
+						36 text Brands and approved resellers
+					37 text Entity, channel, claims, quality, insurance, buyer controls, intended market, and audit expectations are reviewed before any approval.
+			38 container An operational relationship, not a generic contact form.
+				39 text AFTER APPROVAL
+				40 heading An operational relationship, not a generic contact form., Value: 2, ID: organization-capabilities-heading
+					41 text An operational relationship, not a generic contact form.
+				42 text The exact capabilities depend on durable account, catalog, pricing, documentation, and fulfillment authority. Missing capabilities stay explicit.
+				43 content list
+					44 container
+						45 AXListMarker • 
+						46 text Reviewed organization and buyer access
+					47 container
+						48 AXListMarker • 
+						49 text Exact product and variant requests
+					50 container
+						51 AXListMarker • 
+						52 text Volume and availability planning
+					53 container
+						54 AXListMarker • 
+						55 text Human-reviewed quote requests
+					56 container
+						57 AXListMarker • 
+						58 text Lot and document requirements
+					59 container
+						60 AXListMarker • 
+						61 text Order, fulfillment, and support relationship
+				62 container A request does not establish price, supply, or clinical access.
+					63 text OPERATING BOUNDARY
+					64 heading A request does not establish price, supply, or clinical access., Value: 2, ID: organization-capabilities-boundary-heading
+						65 text A request does not establish price, supply, or clinical access.
+					66 text Organization review creates a defensible next action. It does not turn workbook presence, demand, verbal supply, or a provider relationship into a purchasable product.
+					67 content list
+						68 container
+							69 AXListMarker • 
+							70 text Wholesale and organization-specific terms remain private and human-approved.
+						71 container
+							72 AXListMarker • 
+							73 text Inventory, availability, documentation, and exact variants remain authoritative at the time of action.
+						74 container
+							75 AXListMarker • 
+							76 text A clinic's Research account never authorizes treatment, prescribing, telehealth, or pharmacy fulfillment.
+						77 container
+							78 AXListMarker • 
+							79 text No client or patient list should be attached to an initial inquiry.
+			80 container From interest to an owned next action.
+				81 text REVIEW SEQUENCE
+				82 heading From interest to an owned next action., Value: 2, ID: organization-review-heading
+					83 text From interest to an owned next action.
+				84 text Each stage names the evidence or decision still needed. A missing external agreement or configuration blocks only that capability, not the clarity of the pathway.
+				85 content list
+					86 container
+						87 AXListMarker 1. 
+						88 heading Organization review, Value: 3
+							89 text Organization review
+						90 text Verify the legal entity, authorized contact, intended business purpose, region, and the people who need buyer or billing access.
+					91 container
+						92 AXListMarker 2. 
+						93 heading Scope and documentation, Value: 3
+							94 text Scope and documentation
+						95 text Identify exact categories, volume, research context, quality documents, delivery needs, and any terms requiring human review.
+					96 container
+						97 AXListMarker 3. 
+						98 heading Commercial path, Value: 3
+							99 text Commercial path
+						100 text Review identifies whether the next path is a catalog, availability request, quote, organization account, or Care handoff without silently merging them.
+					101 container
+						102 AXListMarker 4. 
+						103 heading Onboarding and support, Value: 3
+							104 text Onboarding and support
+						105 text Any approved onboarding must identify an accountable Xenios owner, next action, account status, and supported operational path. Approval is never automatic.
+			106 container Send an organization or wholesale inquiry
+				107 text HUMAN REVIEW
+				108 heading Send an organization or wholesale inquiry, Value: 2, ID: xr-b2b-inquiry-title
+					109 text Send an organization or wholesale inquiry
+				110 text Submit a business inquiry for human review. This does not create an account, approve access, establish pricing, or activate a relationship.
+				111 container
+					112 text RELATIONSHIP TYPE
+					113 pop up button (collapsed, settable) RELATIONSHIP TYPE, Value: Research organizations, ID: b2b-pathway, Secondary Actions: Expand
+						114 menu
+							115 (selected) Research organizations
+							116 Clinical businesses
+							117 Provider partnerships
+							118 Affiliate relationships
+							119 Collective partnerships
+							120 Supply and quality partners
+							121 White-label interest
+							122 Strategic partnerships
+					123 text YOUR NAME
+					124 text field (settable) YOUR NAME, ID: b2b-name
+					125 text BUSINESS EMAIL
+					126 text field (settable) BUSINESS EMAIL
+					127 text ORGANIZATION
+					128 text field (settable) ORGANIZATION, ID: b2b-organization
+					129 text YOUR ROLE
+					130 text field (settable) YOUR ROLE, ID: b2b-role
+					131 text WEBSITE  (OPTIONAL)
+					132 text Use a public page. Query and fragment values are omitted from the prepared summary.
+					133 text field (settable) WEBSITE (OPTIONAL), ID: b2b-website
+					134 text PRINCIPAL REGION OR JURISDICTION
+					135 text field (settable) PRINCIPAL REGION OR JURISDICTION, ID: b2b-region
+					136 text BUSINESS CONTEXT
+					137 text Describe the intended relationship, audience or use, approximate volume, documentation needs, and desired next step. Do not include patient information, health details, payment data, or secrets.
+					138 text entry area (settable) BUSINESS CONTEXT, ID: b2b-context
+					139 button Submit inquiry
+					140 text Submission creates a business inquiry only. It is not an account application or approval.
+		141 container
+			142 link Description: xenios care + research, Value: 127.0.0.1:5303/health
+			143 text Provider-guided Care, evidence-led Research access, and clear separation between clinical decisions, product facts, and operational status.
+			144 container Research public footer
+				145 link Description: Care, Value: 127.0.0.1:5303/care
+				146 link Description: Research, Value: 127.0.0.1:5303/research/access-hub
+				147 link Description: How it works, Value: 127.0.0.1:5303/research/how-it-works
+				148 link Description: Quality, Value: 127.0.0.1:5303/research/quality
+				149 link Description: FAQ, Value: 127.0.0.1:5303/research/faq
+				150 link Description: About, Value: 127.0.0.1:5303/research/about
+				151 link Description: Partners, Value: 127.0.0.1:5303/research/partners
+				152 link Description: Policies, Value: 127.0.0.1:5303/research/policies
+				153 link Description: Contact, Value: 127.0.0.1:5303/research/contact
+				154 link Description: Support, Value: 127.0.0.1:5303/research/support
+				155 link Description: Sign in, Value: 127.0.0.1:5303/research/sign-in
+				156 link Description: Privacy, Value: 127.0.0.1:5303/research/privacy
+				157 link Description: Terms, Value: 127.0.0.1:5303/research/terms
+				158 link Description: Accessibility, Value: 127.0.0.1:5303/research/policies/accessibility
+
+The focused UI element is 0 AXWebArea Organization access | Xenios Research, URL: 127.0.0.1:5303/research/organizations

@@ -8,18 +8,35 @@ const keep = new Set(['PATH','SYSTEMROOT','WINDIR','COMSPEC','TEMP','TMP','USERP
 for (const key of Object.keys(process.env)) if (!keep.has(key.toUpperCase())) delete process.env[key];
 Object.assign(process.env, { NODE_ENV: 'production', PORT: '5303', RESEND_API_KEY: 're_synthetic_local_only', FROM_EMAIL: 'xenios <team@xeniostechnology.com>', RESEARCH_PUBLIC: 'true', RESEARCH_SESSION_SECRET: 'contact-preview-not-production', SUPABASE_URL: 'http://127.0.0.1:5303/blocked-backend', SUPABASE_ANON_KEY: 'synthetic-only', SUPABASE_SERVICE_ROLE_KEY: 'synthetic-only' });
 let accepted = 0;
+const receipts = new Map();
 globalThis.fetch = async (input, init) => {
   const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url);
   if (url.origin !== 'https://api.resend.com' || url.pathname !== '/emails') throw Error('Contact preview blocked outbound fetch');
   const body = JSON.parse(String(init?.body || '{}'));
   const recipients = Array.isArray(body.to) ? body.to : [body.to];
+  const key = new Headers(init?.headers).get('idempotency-key');
+  if (receipts.has(key)) {
+    console.log('[synthetic-email-capture] replay; no second acceptance');
+    return new Response(JSON.stringify({ id: receipts.get(key) }), { status: 200 });
+  }
+  const team = recipients.includes('team@xeniostechnology.com');
+  if (team && body.reply_to === 'team-stall@example.invalid') {
+    console.log('[synthetic-email-capture] team stalled; acceptance unknown');
+    return new Promise(() => {});
+  }
+  if (!team && recipients.includes('courtesy-stall@example.invalid')) {
+    console.log('[synthetic-email-capture] courtesy stalled after team acceptance');
+    return new Promise(() => {});
+  }
   if (recipients.some(value => value === 'courtesy-fail@example.invalid')) {
     console.log('[synthetic-email-capture] courtesy rejected; no network request');
     return new Response(JSON.stringify({ name: 'validation_error', message: 'synthetic courtesy rejection' }), { status: 422, headers: { 'content-type':'application/json' } });
   }
-  if (!recipients.every(value => value === 'team@xeniostechnology.com' || value === 'audit@example.invalid')) throw Error('Unknown fixture recipient');
+  if (!recipients.every(value => value === 'team@xeniostechnology.com' || ['audit@example.invalid','courtesy-stall@example.invalid','team-stall@example.invalid','lost-response@example.invalid'].includes(value))) throw Error('Unknown fixture recipient');
   accepted++;
+  if (key) receipts.set(key, 'synthetic-acceptance-'+accepted);
   console.log('[synthetic-email-capture] acceptance '+accepted+'; no network request');
+  if (team && body.reply_to === 'lost-response@example.invalid') throw Error('Synthetic provider response lost after acceptance');
   return new Response(JSON.stringify({ id: 'synthetic-acceptance-'+accepted }), { status: 200, headers: { 'content-type':'application/json' } });
 };
 net.Socket.prototype.connect = function () { throw Error('Contact preview blocked outbound socket'); };

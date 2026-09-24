@@ -1,0 +1,135 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to content":
+  - /url: "#site-main"
+- banner:
+  - link "xenios home":
+    - /url: /
+  - link "Sign in":
+    - /url: /research/sign-in
+  - link "Get access":
+    - /url: /research/access-hub#account-access
+  - button "Open full site menu": Menu
+- main:
+  - region "Start with a Care access request.":
+    - paragraph: XENIOS CARE · HUMAN-GUIDED ACCESS
+    - heading "Start with a Care access request." [level=1]
+    - paragraph: Xenios Care takes access requests directly, without relying on a third-party scheduler. Share contact, current-state, and routing preferences only—never medical details. A human reviews each request and provides the appropriate secure next step when one is available.
+  - navigation "Care pages":
+    - list:
+      - link "Care overview":
+        - /url: /care
+      - link "Start Care request":
+        - /url: /care/schedule
+      - link "Care account":
+        - /url: /care/portal
+      - link "How Care works":
+        - /url: /care/how-it-works
+      - link "Clinical review":
+        - /url: /care/provider-review
+      - link "Support":
+        - /url: /care/support
+  - region "Current status of the Care request line":
+    - complementary:
+      - paragraph: CURRENT STATUS
+      - heading "Current status of the Care request line" [level=2]
+      - paragraph: Care access requests are open today.
+      - paragraph: Share contact and routing details only. A Xenios team member will review the request and follow up through your preferred channel, typically within one business day. Medical information belongs only in a later authorized secure clinical system.
+      - paragraph: A public request is not a medical intake. Clinical information moves only through a later authorized secure handoff.
+  - region "Separate checkpoints, one clear experience.":
+    - paragraph: THE CARE JOURNEY
+    - heading "Separate checkpoints, one clear experience." [level=2]
+    - article:
+      - heading "Care access request" [level=3]
+      - paragraph: Share only the contact and routing details needed for a human follow-up. Do not submit symptoms, diagnoses, medications, health history, or other medical information here.
+      - link "Start Care request":
+        - /url: /care/schedule
+    - article:
+      - heading "Secure clinical handoff" [level=3]
+      - paragraph: When an appropriate option is available, the team directs you to an authorized secure system. A U.S.-licensed clinician independently decides whether questions, records, labs, a visit, treatment, another approach, or no treatment is appropriate.
+      - link "Understand clinical review":
+        - /url: /care/provider-review
+    - article:
+      - heading "Pharmacy, tracking, and follow-up" [level=3]
+      - paragraph: When prescribed and serviceable, a U.S.-based, state-licensed compounding pharmacy handles compounding or dispensing and shipment. Account status, tracking, support, and clinical follow-up remain separate and visible.
+      - link "Continue to Care account":
+        - /url: /care/portal
+  - region "Personalized support for the habits around your care.":
+    - paragraph: FIRST-MONTH FOUNDATIONS
+    - heading "Personalized support for the habits around your care." [level=2]
+    - paragraph: Eligible Xenios Care clients receive a personalized First-Month Foundations Plan at no additional charge, created by a CSCS professional. The plan may include fitness programming, weekly training structure, home or gym alternatives, nutrition planning, protein and hydration guidance, grocery lists, recipes, location-aware restaurant recommendations, travel adaptations, sleep and recovery foundations, and one email check-in each week. Optional continuation is available for $30 per month and is never automatic.
+    - paragraph: Lifestyle programming is nonclinical. CSCS professionals do not diagnose, prescribe, change medication, or replace the licensed clinical team.
+  - region "This site is not emergency care.":
+    - paragraph: EMERGENCY BOUNDARY
+    - heading "This site is not emergency care." [level=2]
+    - paragraph: If you may be experiencing a medical emergency, call 911 in the United States or contact your local emergency services now. Do not wait for a response from Xenios.
+- contentinfo:
+  - generic: xenios
+  - paragraph: An AI workspace for health and performance professionals.
+  - paragraph: Remote first. Austin preferred.
+  - generic: LIVE • 556
+  - generic: on the waitlist
+  - link "team@xeniostechnology.com":
+    - /url: mailto:team@xeniostechnology.com
+  - link "Instagram, @officialxenios":
+    - /url: https://www.instagram.com/officialxenios/
+  - link "LinkedIn, /company/officialxenios":
+    - /url: https://www.linkedin.com/company/officialxenios
+  - navigation "Product footer links":
+    - paragraph: Product
+    - link "Product":
+      - /url: /product
+    - link "How It Works":
+      - /url: /how-it-works
+    - link "For Coaches":
+      - /url: /for-coaches
+    - link "For Clients":
+      - /url: /for-clients
+    - link "Storefront":
+      - /url: /storefront
+    - link "Network":
+      - /url: /network
+    - link "Ecosystem":
+      - /url: /ecosystem
+    - link "For Practitioners":
+      - /url: /for-practitioners
+    - link "Health":
+      - /url: /health
+    - link "Book a Call":
+      - /url: /book
+    - link "Early Access":
+      - /url: /waitlist
+    - link "Concepts":
+      - /url: /concepts
+  - navigation "Company footer links":
+    - paragraph: Company
+    - link "Manifesto":
+      - /url: /manifesto
+    - link "About":
+      - /url: /about
+    - link "Careers":
+      - /url: /careers
+    - link "Press":
+      - /url: /press
+    - link "Contact":
+      - /url: /contact
+  - navigation "Resources footer links":
+    - paragraph: Resources
+    - link "Security":
+      - /url: /security
+    - link "Compliance":
+      - /url: /compliance
+    - link "Investors":
+      - /url: /investors
+    - link "llms.txt":
+      - /url: /llms.txt
+  - navigation "Legal footer links":
+    - paragraph: Legal
+    - link "Privacy":
+      - /url: /privacy
+    - link "Terms":
+      - /url: /terms
+    - link "Disclosures":
+      - /url: /disclosures
+  - paragraph: © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
+  - paragraph: Austin, TX · Remote first
