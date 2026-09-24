@@ -2148,7 +2148,7 @@
         ".xenios/PROJECT_STATE.json",
         ".xenios/RELEASE_STATE.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-24T18:45:40.037Z",
       "heartbeatAt": "2026-09-24T19:26:35.513Z"
     },
@@ -2166,9 +2166,23 @@
         "client/src/research/b2b/PartnershipInquiryForm.tsx",
         "client/src/research/b2b/PartnershipInquiryForm.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-24T19:10:34.940Z",
       "heartbeatAt": "2026-09-24T19:26:35.513Z"
+    },
+    {
+      "id": "e9847664-2761-4f98-b68c-8761827065c5",
+      "task": "XENIOS-ADVERSARIAL-AUDIT-20260924",
+      "session": "codex-adversarial-audit-20260924",
+      "paths": [
+        "docs/ux/xenios-adversarial-audit-20260924/**",
+        ".xenios/sessions/codex-adversarial-audit-20260924.json",
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-09-24T19:41:56.078Z",
+      "heartbeatAt": "2026-09-24T19:41:56.078Z"
     }
   ],
   "rules": [

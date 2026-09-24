@@ -1,0 +1,10 @@
+npm warn config production Use `--omit=dev` instead.
+
+> rest-express@1.0.0 site:record:check
+> node scripts/agentic/generate-site-system-of-record.mjs --check
+
+Generated Site System of Record is not current:
+docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json: stale
+docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md: stale
+docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv: stale
+Run npm run site:record after committing source changes.

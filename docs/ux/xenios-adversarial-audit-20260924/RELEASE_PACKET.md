@@ -38,7 +38,7 @@ No Auth, admin guard, account identity, pricing, product authority, clinical bou
 | Route uniqueness | PASS | 448 registrations, 439 call sites; no new route added |
 | Bound production-state verifier | FAIL | Stale central production evidence refers to c545a70; fresh expected base/head supplied. `verify-production-state-bound.log` |
 | Qualified release manifest | NOT RUN / BLOCKED | No new lead-approved manifest. The bare command's usage error is retained as an unsuccessful invocation, not a validation result. |
-| Exact site-system record | BLOCKED pending clean checkpoint/reconciliation | Initial check correctly refused uncommitted audit artifacts. Do not regenerate protected records to hide failures. |
+| Exact site-system record | FAIL on clean post-commit tree | Three generated site record files are stale. `site-record-clean-check.log`. Initial dirty-tree refusal is also retained. |
 | Missing-provider browser retest | PASS | Exact repair bundle, no provider: 503/error, retained draft, no false receipt; `evidence/repair-no-provider-result.*` |
 | Accepted email browser scenario | PASS, synthetic only | Network-blocked capture returns synthetic acceptance; `repair-synthetic-accepted.txt` |
 | Courtesy rejection browser scenario | PASS, synthetic only | Team acceptance + rejected confirmation; no resubmit instruction; `repair-synthetic-courtesy-failure.*` |

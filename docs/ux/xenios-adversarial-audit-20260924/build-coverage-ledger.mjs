@@ -13,12 +13,16 @@ for(const [id,observation] of latest){
   for(let index=0;index<lines.length;index++){
     const match=lines[index].match(/^\s*- (link|button|textbox|combobox|tab|searchbox|checkbox|radio) "([^"]+)"/);
     if(!match)continue;
-    rows.push({evidence:id+'.txt',url:observation.url,observedAt:observation.at,role:match[1],label:match[2],destination:lines[index+1]?.match(/\/url: (.*)/)?.[1]??'',disabled:lines[index].includes('[disabled]'),exerciseStatus:'OBSERVED; individual action NOT RUN unless listed in scenario matrix'});
+    rows.push({ctaId:'CTA-'+id+'-L'+(index+1),evidence:id+'.txt',url:observation.url,observedAt:observation.at,role:match[1],label:match[2],destination:lines[index+1]?.match(/\/url: (.*)/)?.[1]??'',disabled:lines[index].includes('[disabled]'),exerciseStatus:'OBSERVED; individual action NOT RUN unless listed in scenario matrix'});
   }
 }
 const csvValue=x=>'"'+String(x??'').replaceAll('"','""')+'"';
 const keys=Object.keys(rows[0]);
 fs.writeFileSync(path.join(root,'CTA_MATRIX.csv'),[keys.map(csvValue).join(','),...rows.map(row=>keys.map(k=>csvValue(row[k])).join(','))].join('\n')+'\n');
+function environment(url){const u=new URL(url);return u.hostname==='xeniostechnology.com'?'PRODUCTION 79414143d4355d5d3d14cd5fe6e5a536dc68d99d':u.port==='5302'||u.port==='5303'?'LOCAL REPAIR 02d525baa7d784ed16e297c1d17b1e4050ecf4cc':'LOCAL BASELINE 0574264562f33fe40572b1d9976f4700bef9c83e';}
+const contractColumns=['CTA ID','environment/build','route','UI location','persona','exact label','likely user expectation','actual destination/action','prerequisites','server write expected/observed','persistence contract','confirmation','notification requirements','operator owner/queue','return/status path','applicable scenario IDs','mobile result','desktop result','evidence','finding IDs'];
+const contracts=rows.map(r=>[r.ctaId,environment(r.url),new URL(r.url).pathname,r.role+'; '+r.evidence,'See evidence fixture/scenario; not individually qualified',r.label,'Label implies '+(r.role==='link'?'navigation':'interaction')+'; individual expectation review NOT RUN',r.destination||'Control observed; action contract NOT RUN',r.disabled?'Disabled in observed state':'Not individually verified','NOT RUN unless scenario explicitly records submission','NOT VERIFIED','See scenario results; otherwise NOT RUN','NOT VERIFIED','NOT VERIFIED',r.destination||'NOT VERIFIED','Map through evidence filename to SCENARIO_RESULTS.csv','NOT INDIVIDUALLY RUN','NOT INDIVIDUALLY RUN','evidence/'+r.evidence,/partnership|repair-.*(?:provider|accepted|courtesy)/.test(r.evidence)?'AUD-001':'']);
+fs.writeFileSync(path.join(root,'ROUTE_AND_CTA_MATRIX.csv'),[contractColumns.map(csvValue).join(','),...contracts.map(r=>r.map(csvValue).join(','))].join('\n')+'\n');
 const visits=JSON.parse(fs.readFileSync(path.join(evidence,'route-visits.json'),'utf8'));
 const visited=new Set(visits.map(x=>x.path));
 for(const o of observations)visited.add(new URL(o.url).pathname);

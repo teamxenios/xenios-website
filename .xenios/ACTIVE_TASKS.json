@@ -2206,7 +2206,7 @@
       "id": "XENIOS-ADVERSARIAL-AUDIT-20260924",
       "title": "Independent audit-first UX baseline and evidence-backed scoped repairs",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-adversarial-audit-20260924",
       "baseSha": "c8ea24944f277e5b0770d5446687f2752db3ab73",
       "paths": [
@@ -2217,13 +2217,19 @@
       ],
       "dependsOn": [],
       "scopeNote": "Audit evidence first. No application edits until baseline. No production mutation or feature activation.",
-      "claimedAt": "2026-09-24T18:45:40.035Z"
+      "claimedAt": "2026-09-24T19:41:56.074Z",
+      "handoff": {
+        "session": "codex-adversarial-audit-20260924",
+        "sha": "ab34880ef390384dc9cc72a01a35e59279f384fb",
+        "file": ".xenios/handoffs/2026-09-24T19-46-09-019Z-XENIOS-ADVERSARIAL-AUDIT-20260924-codex-adversarial-audit-20260924.md",
+        "at": "2026-09-24T19:46:09.023Z"
+      }
     },
     {
       "id": "XENIOS-INQUIRY-RECEIPT-REPAIR-20260924",
       "title": "Repair browser-demonstrated false inquiry receipt AUD-001",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-adversarial-audit-20260924",
       "baseSha": "ee8af17d4423916a238756a16a95457b9d08a867",
       "paths": [
@@ -2238,7 +2244,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Existing contact delivery only; no production mutation. Baseline artifacts precede edits.",
-      "claimedAt": "2026-09-24T19:10:34.931Z"
+      "claimedAt": "2026-09-24T19:10:34.931Z",
+      "handoff": {
+        "session": "codex-adversarial-audit-20260924",
+        "sha": "ab34880ef390384dc9cc72a01a35e59279f384fb",
+        "file": ".xenios/handoffs/2026-09-24T19-39-24-559Z-XENIOS-INQUIRY-RECEIPT-REPAIR-20260924-codex-adversarial-audit-20260924.md",
+        "at": "2026-09-24T19:39:24.562Z"
+      }
     }
   ]
 }
