@@ -32,7 +32,7 @@ describe("Care + Research public-control conservation", () => {
   });
 
   it.each([
-    ["/research/access-hub", <AccessHub />, { links: 14, buttons: 0, forms: 0 }, 53],
+    ["/research/access-hub", <AccessHub />, { links: 21, buttons: 0, forms: 0 }, 60],
     ["/research/how-it-works", <HowItWorks />, { links: 7, buttons: 0, forms: 0 }, 46],
     ["/research/about", <AboutResearch />, { links: 4, buttons: 0, forms: 0 }, 43],
     ["/research/faq", <Faq />, { links: 3, buttons: 18, forms: 0 }, 42],
@@ -44,7 +44,7 @@ describe("Care + Research public-control conservation", () => {
 
   it("preserves the self-contained Gateway control baseline", () => {
     expect(controlCounts(renderToStaticMarkup(<Gateway />))).toEqual({
-      links: 55,
+      links: 56,
       buttons: 0,
       forms: 0,
     });

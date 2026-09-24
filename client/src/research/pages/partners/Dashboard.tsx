@@ -58,6 +58,20 @@ const COMMISSION_STATE_TONES: Record<CommissionState, BadgeTone> = {
 
 type ConversionRow = PartnerDashboardDto["conversions"][number] & { key: string };
 
+const NEXT_ACTION: Record<PartnerDashboardDto["state"], { status: string; complete: string; blocking: string; action: string; href: string }> = {
+  application: { status: "Application received", complete: "Your member-scoped partner application is recorded.", blocking: "Human review has not been completed.", action: "Review program expectations", href: PARTNER_ROUTES.home },
+  identity_verification_pending: { status: "Identity review required", complete: "Initial application review is complete.", blocking: "Identity verification is still required.", action: "Contact account support", href: ACCOUNT_PORTAL_ROUTES.support },
+  tax_status_pending: { status: "Tax review required", complete: "Identity review is complete.", blocking: "Required tax clearance is not recorded.", action: "Contact account support", href: ACCOUNT_PORTAL_ROUTES.support },
+  payout_status_pending: { status: "Payout setup required", complete: "Identity and tax review are complete.", blocking: "Payout clearance is not recorded.", action: "Contact account support", href: ACCOUNT_PORTAL_ROUTES.support },
+  agreement_pending: { status: "Agreement required", complete: "Account clearances are complete.", blocking: "The current partner agreement has not been accepted.", action: "Continue onboarding", href: PARTNER_ROUTES.onboarding },
+  training_pending: { status: "Training required", complete: "The current partner agreement is recorded.", blocking: "Required training remains incomplete.", action: "Open training", href: PARTNER_ROUTES.training },
+  certification_pending: { status: "Certification review", complete: "Required onboarding steps are recorded.", blocking: "Administrative certification is pending.", action: "Contact account support", href: ACCOUNT_PORTAL_ROUTES.support },
+  active: { status: "Partner active", complete: "Certification and activation are recorded.", blocking: "No lifecycle blocker is reported.", action: "Open referral tools", href: PARTNER_ROUTES.links },
+  quality_review: { status: "Quality review", complete: "Your partner record remains available.", blocking: "A quality review must finish before the next authorized action.", action: "Contact partner support", href: PARTNER_ROUTES.support },
+  suspended: { status: "Partner suspended", complete: "Your account history remains recorded.", blocking: "Partner activity is suspended pending review.", action: "Contact partner support", href: PARTNER_ROUTES.support },
+  terminated: { status: "Partner relationship ended", complete: "Your account history remains recorded.", blocking: "Partner tools are no longer authorized.", action: "Contact partner support", href: PARTNER_ROUTES.support },
+};
+
 const PARTNER_STATES = new Set<PartnerDashboardDto["state"]>([
   "application", "identity_verification_pending", "tax_status_pending", "payout_status_pending",
   "agreement_pending", "training_pending", "certification_pending", "active", "quality_review", "suspended", "terminated",
@@ -175,12 +189,17 @@ function DashboardActivity({ token }: { token: string }) {
         )}
 
         {partner && (
-          <div className="flex items-center gap-3 flex-wrap mb-4" data-testid="pd-identity">
-            <ResearchStatusBadge label={ROLE_LABEL[partner.role] ?? partner.role} tone="neutral" />
-            <ResearchStatusBadge
-              label={partner.state.replace(/_/g, " ")}
-              tone={partner.state === "active" ? "success" : "pending"}
-            />
+          <div className="card mb-6" data-testid="pd-next-action">
+            <div className="flex items-center gap-3 flex-wrap" data-testid="pd-identity">
+              <ResearchStatusBadge label={ROLE_LABEL[partner.role] ?? partner.role} tone="neutral" />
+              <ResearchStatusBadge label={NEXT_ACTION[partner.state].status} tone={partner.state === "active" ? "success" : partner.state === "suspended" || partner.state === "terminated" ? "danger" : "pending"} />
+            </div>
+            <h2 className="body-l font-700 mt-4">Your next action</h2>
+            <p className="body-s text-ink-2 mt-2"><span className="font-700">Complete:</span> {NEXT_ACTION[partner.state].complete}</p>
+            <p className="body-s text-ink-2 mt-2"><span className="font-700">Blocking:</span> {NEXT_ACTION[partner.state].blocking}</p>
+            <Link href={NEXT_ACTION[partner.state].href} className="btn btn-primary mt-4" style={{ minHeight: 44 }}>
+              {NEXT_ACTION[partner.state].action}
+            </Link>
           </div>
         )}
 

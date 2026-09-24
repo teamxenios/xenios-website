@@ -1,12 +1,14 @@
 import { useMemo, useRef, useState, type FormEvent } from "react";
 import {
   buildPartnershipInquirySummary,
-  PARTNERSHIP_CONTACT_MAILTO,
   PARTNERSHIP_INQUIRY_LIMITS,
   PARTNERSHIP_PATHWAY_OPTIONS,
+  pathwayContactPersona,
+  pathwayTitle,
   type PartnershipInquiryDraft,
   type PartnershipPathwayId,
 } from "./pathways";
+import { contactService } from "@/lib/waitlist-service";
 
 type CopyState = "idle" | "copied" | "manual";
 type ValidatedField = Exclude<keyof PartnershipInquiryDraft, "pathway">;
@@ -72,6 +74,8 @@ export default function PartnershipInquiryForm({
   const [draft, setDraft] = useState<PartnershipInquiryDraft>(() => blankDraft(initialPathway));
   const [validation, setValidation] = useState<ValidationIssue[]>([]);
   const [prepared, setPrepared] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [copyState, setCopyState] = useState<CopyState>("idle");
   const errorRef = useRef<HTMLDivElement>(null);
   const summary = useMemo(() => buildPartnershipInquirySummary(draft), [draft]);
@@ -80,6 +84,7 @@ export default function PartnershipInquiryForm({
     setDraft((current) => ({ ...current, [key]: value }));
     setValidation((current) => current.filter((issue) => issue.field !== key));
     setPrepared(false);
+    setSubmitError(null);
     setCopyState("idle");
   }
 
@@ -91,7 +96,7 @@ export default function PartnershipInquiryForm({
     return [baseId, issueFor(field) ? `${FIELD_CONTROL_IDS[field]}-error` : undefined].filter(Boolean).join(" ") || undefined;
   }
 
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const nextValidation: ValidationIssue[] = [];
     if (!draft.name.trim()) nextValidation.push({ field: "name", message: "Add your name." });
@@ -151,8 +156,24 @@ export default function PartnershipInquiryForm({
       return;
     }
 
-    setPrepared(true);
-    setCopyState("idle");
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      await contactService.submit({
+        name: draft.name.trim(),
+        email: draft.businessEmail.trim(),
+        persona: pathwayContactPersona(draft.pathway),
+        subject: `Xenios Research: ${pathwayTitle(draft.pathway)}`,
+        message: summary,
+      });
+      setPrepared(true);
+      setCopyState("idle");
+    } catch (error) {
+      setPrepared(false);
+      setSubmitError(error instanceof Error ? error.message : "The inquiry could not be submitted. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   async function copySummary() {
@@ -176,8 +197,8 @@ export default function PartnershipInquiryForm({
           {heading}
         </h2>
         <p className="body-m text-ink-2 mt-4 max-w-[64ch]">
-          This form prepares a summary on your device. It does not transmit, save, approve, price, or activate anything.
-          You choose whether to copy the summary and open your email application.
+          Submit a business inquiry for human review. This does not create an account, approve access, establish pricing,
+          or activate a relationship.
         </p>
       </div>
 
@@ -353,23 +374,29 @@ export default function PartnershipInquiryForm({
         </div>
 
         <div className="mt-6 flex flex-wrap gap-3 items-center">
-          <button type="submit" className="btn btn-primary">
-            Prepare request summary
+          <button type="submit" className="btn btn-primary" disabled={submitting}>
+            {submitting ? "Submitting…" : "Submit inquiry"}
           </button>
           <p className="body-s text-ink-mute max-w-[52ch]">
-            Preparing a summary is not an application submission and creates no account, quote, product access, or approval.
+            Submission creates a business inquiry only. It is not an account application or approval.
           </p>
         </div>
+        {submitError && <p className="body-s mt-4" role="alert">{submitError} Your details were not accepted; you can retry.</p>}
       </form>
 
       {prepared && (
         <div className="xr-b2b-prepared mt-8" role="status" aria-live="polite">
-          <p className="mono-cap text-pulse">Prepared locally</p>
-          <h3 className="body-l font-700 mt-2">Your draft is ready. Xenios has not received it.</h3>
+          <p className="mono-cap text-pulse">Inquiry received</p>
+          <h3 className="body-l font-700 mt-2">We received your {pathwayTitle(draft.pathway)} inquiry.</h3>
           <p className="body-s text-ink-2 mt-3 max-w-[64ch]">
-            Review the summary, copy it, and send it from your own email account if you want the team to review the inquiry.
-            The email link contains only a generic subject; your contact details are not placed in the URL.
+            This is a business inquiry, not an account approval. A Xenios team member will follow up at {draft.businessEmail.trim()}.
+            A confirmation will be sent separately. If the relationship requires account access, application or activation instructions will be sent separately.
           </p>
+          <dl className="body-s text-ink-2 mt-4 grid gap-2">
+            <div><dt className="font-700 inline">Submitted email: </dt><dd className="inline">{draft.businessEmail.trim()}</dd></div>
+            <div><dt className="font-700 inline">Relationship type: </dt><dd className="inline">{pathwayTitle(draft.pathway)}</dd></div>
+            <div><dt className="font-700 inline">Next owner: </dt><dd className="inline">Xenios business review</dd></div>
+          </dl>
           <label htmlFor="b2b-summary" className="form-label mt-5">
             Request summary
           </label>
@@ -378,8 +405,8 @@ export default function PartnershipInquiryForm({
             <button type="button" className="btn btn-secondary" onClick={() => void copySummary()}>
               {copyState === "copied" ? "Copied" : "Copy summary"}
             </button>
-            <a className="btn btn-primary" href={PARTNERSHIP_CONTACT_MAILTO}>
-              Open email
+            <a className="btn btn-secondary" href="mailto:research@xeniostechnology.com?subject=Business%20inquiry%20support">
+              Contact support
             </a>
             {copyState === "manual" && (
               <p className="body-s text-ink-2" role="alert">

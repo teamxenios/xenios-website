@@ -404,7 +404,10 @@ export default function Gateway() {
       </main>
 
       <ResearchFooter />
-      <Link href="/care/schedule" className="rg-mobile-access">Start Care request <Arrow /></Link>
+      <nav className="rg-mobile-access" aria-label="Account entry">
+        <Link href="/research/sign-in">Sign in</Link>
+        <Link href="/research/access-hub#account-access">Get access</Link>
+      </nav>
     </div>
   );
 }

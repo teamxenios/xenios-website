@@ -7,6 +7,7 @@ import { DEFAULT_PARTNER_REQUIREMENTS } from "./partners";
 export interface PartnerLifecycleDependencies {
   authority(): Promise<unknown>;
   operate(actorAuthUserId: string, operation: PartnerOperation): Promise<unknown>;
+  notify?(result: z.infer<typeof PartnerOperationResult>): Promise<void>;
   now(): Date;
 }
 const authoritySchema = z.object({ schemaVersion: z.literal(PARTNER_LIFECYCLE_SCHEMA_VERSION), requirements: PartnerLifecycleRequirements }).strict();
@@ -29,6 +30,17 @@ export async function performPartnerOperation(deps: PartnerLifecycleDependencies
     const result = z.union([PartnerOperationResult, PartnerOperationDenial]).safeParse(await deps.operate(actorAuthUserId, operation));
     if (!result.success) return unavailable;
     if (result.data.ok && (result.data.action !== operation.action || (operation.action === "prepare" ? result.data.memberId !== operation.memberId : result.data.partnerId !== operation.partnerId))) return unavailable;
+    if (result.data.ok) {
+      const materialNotification = (
+        ["prepare", "record_clearance", "certify", "activate", "suspend", "terminate", "reinstate"].includes(result.data.action)
+        || (result.data.action === "record_agreement" && result.data.state === "training_pending")
+        || (result.data.action === "record_training" && result.data.state === "certification_pending")
+      );
+      if (materialNotification && deps.notify) {
+        try { await deps.notify(result.data); }
+        catch { console.error("[partner-lifecycle] notification enqueue unavailable"); }
+      }
+    }
     return result.data;
   } catch { return unavailable; }
 }

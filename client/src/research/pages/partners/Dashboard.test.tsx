@@ -173,9 +173,9 @@ describe("owned partner dashboard", () => {
 
   it("does not turn a pending server partner state into active earning or referral permission", async () => {
     fetcher.mockResolvedValue(loaded(partner({ state: "certification_pending" }))); await render();
-    expect(host.querySelector('[data-testid="pd-identity"]')?.textContent).toContain("certification pending");
+    expect(host.querySelector('[data-testid="pd-identity"]')?.textContent).toContain("Certification review");
     expect(host.querySelector('[data-testid="pd-identity"]')?.textContent).not.toContain("active");
-    expect(host.querySelector("button")).toBeNull();
+    expect(host.querySelector('[data-testid="pd-next-action"]')?.textContent).toContain("Administrative certification is pending");
   });
 
   it("uses a safe error on failed reads without reflecting upstream messages or previous balances", async () => {

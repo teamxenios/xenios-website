@@ -31,6 +31,7 @@ import { renderProductDiagnosticOutboxEmail } from "./products-diagnostics/commu
 import { renderEarlyAccessOutboxEmail } from "./early-access/notifications/communications";
 import { renderAssistedOrderOutboxEmail } from "./assisted-order/communications";
 import { renderBuyerCommerceOutboxEmail } from "./buyer-commerce/communications";
+import { renderPartnerOutboxEmail } from "./partners/notification-templates";
 
 // ---------------------------------------------------------------------------
 // Durable notification outbox (Mega 1 sections 3-4). Every notification is a
@@ -398,6 +399,10 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
             text: buyerCommerce.text,
             idempotencyKey: String(job.event_key),
           });
+        }
+        const partnerNotification = renderPartnerOutboxEmail(job.template_key, payload);
+        if (partnerNotification) {
+          return await sendFoundingEmail({ to: job.recipient, subject: partnerNotification.subject, text: partnerNotification.text, idempotencyKey: String(job.event_key) });
         }
         // Early Access customer mail shares this ONE durable path too. The
         // renderer refuses a payload carrying receiving material, so a

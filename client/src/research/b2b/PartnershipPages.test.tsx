@@ -79,7 +79,7 @@ describe("public B2B pathway pages", () => {
     expect(view.textContent).toContain("White-label interest");
     expect(view.textContent).toContain("Strategic partnerships");
     expect(view.textContent).toContain("Commercial relationships never control clinical decisions.");
-    expect(view.textContent).toContain("does not transmit, save, approve, price, or activate anything");
+    expect(view.textContent).toContain("does not create an account, approve access, establish pricing, or activate a relationship");
     expectAccessibleRelationships(view);
   });
 

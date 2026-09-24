@@ -70,3 +70,7 @@ export const menuGroups: NavGroup[] = [
 export const navSocials = SOCIALS;
 export const contactEmail = SITE.email;
 export const earlyAccessCta = { label: "Request Early Access", href: "/waitlist" } as const;
+export const accountEntry = {
+  signIn: { label: "Sign in", href: "/research/sign-in" },
+  getAccess: { label: "Get access", href: "/research/access-hub#account-access" },
+} as const;

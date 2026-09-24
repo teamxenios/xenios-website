@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { contactEmail, earlyAccessCta, menuGroups, navSocials, primaryNav, type NavLink } from "@/lib/nav";
+import { accountEntry, contactEmail, earlyAccessCta, menuGroups, navSocials, primaryNav, type NavLink } from "@/lib/nav";
 import Wordmark from "./Wordmark";
 
 const OVERLAY_ID = "nav-mobile-overlay";
@@ -76,9 +76,12 @@ export default function Navbar() {
   return (
     <>
       <header className="sticky top-0 z-40 bg-paper/90 backdrop-blur-md rule-bottom" data-testid="nav-main" style={{ paddingTop: "max(0px, env(safe-area-inset-top))" }}>
-        <div className="container-x">
-          <div className="flex items-center justify-between gap-4" style={{ minHeight: 64 }}>
-            <Wordmark size="md" />
+        <div className="container-x max-[480px]:!px-3">
+          <div className="flex items-center justify-between gap-1 sm:gap-4" style={{ minHeight: 64 }}>
+            <span className="hidden sm:inline-flex"><Wordmark size="md" /></span>
+            <Link href="/" aria-label="xenios home" className="inline-flex sm:hidden min-h-[44px] min-w-[44px] items-center justify-center">
+              <span className="wordmark text-2xl" aria-hidden="true"><span className="wordmark-mark" /></span>
+            </Link>
 
             <nav className="hidden lg:flex items-center gap-6" aria-label="Primary">
               {primaryNav.map((item) => {
@@ -97,24 +100,26 @@ export default function Navbar() {
               })}
             </nav>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Link href={accountEntry.signIn.href} className="btn btn-ghost" style={{ height: 44, padding: "0 10px", fontSize: 13 }}>
+                {accountEntry.signIn.label}
+              </Link>
+              <Link href={accountEntry.getAccess.href} className="btn btn-primary" style={{ height: 44, padding: "0 10px", fontSize: 13 }}>
+                {accountEntry.getAccess.label}
+              </Link>
               <button
                 ref={triggerRef}
                 type="button"
                 onClick={() => setOpen(true)}
                 className="btn btn-ghost"
-                style={{ height: 44, padding: "0 14px", fontSize: 14 }}
+                style={{ height: 44, padding: "0 10px", fontSize: 13 }}
                 aria-label="Open full site menu"
                 aria-expanded={open}
                 aria-controls={open ? OVERLAY_ID : undefined}
                 data-testid="button-menu-toggle"
               >
-                <span aria-hidden="true" className="mr-2">☰</span>
                 Menu
               </button>
-              <Link href={earlyAccessCta.href} data-testid="button-nav-waitlist" className="btn btn-primary !hidden sm:!inline-flex" style={{ height: 44, padding: "0 18px", fontSize: 14 }}>
-                {earlyAccessCta.label}
-              </Link>
             </div>
           </div>
         </div>

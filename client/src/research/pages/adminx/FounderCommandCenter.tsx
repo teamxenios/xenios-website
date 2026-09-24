@@ -531,6 +531,94 @@ function CommandCenterSnapshot({ data }: { data: FounderCommandCenterResponse })
   );
 }
 
+type AdminToolStatus = "Live" | "Feature gated" | "Unavailable" | "Superseded";
+type AdminTool = { label: string; route: string; status: AdminToolStatus; note: string; live?: boolean };
+
+const ADMIN_TOOL_GROUPS: ReadonlyArray<{ label: string; tools: ReadonlyArray<AdminTool> }> = [
+  { label: "Founder and growth", tools: [
+    { label: "Founder command center", route: "/admin/research/command-center", status: "Live", note: "Privacy-minimal operating picture.", live: true },
+    { label: "Growth, leads, bookings and analytics", route: "/admin", status: "Live", note: "Original site administration workspace.", live: true },
+    { label: "Research operations overview", route: "/admin/research", status: "Live", note: "All Research operations families.", live: true },
+  ] },
+  { label: "Customers and Care", tools: [
+    { label: "Applications", route: "/admin/research/applications", status: "Live", note: "Application review and activation workflow.", live: true },
+    { label: "Account inspection", route: "/admin/research/members", status: "Live", note: "Server-authorized customer account inspection.", live: true },
+    { label: "Care requests", route: "/admin/research/care-requests", status: "Live", note: "Care access request queue.", live: true },
+    { label: "Plan review", route: "/admin/research/blueprint-review", status: "Live", note: "Human review workflow.", live: true },
+    { label: "Plans roster", route: "/admin/research/plans", status: "Unavailable", note: "Route is retained; no mounted list read authority is advertised." },
+    { label: "Questions and support", route: "/admin/research/questions", status: "Live", note: "Customer question workflow.", live: true },
+  ] },
+  { label: "Commerce and fulfillment", tools: [
+    { label: "Products", route: "/admin/research/products", status: "Live", note: "Product lifecycle administration.", live: true },
+    { label: "Product configuration", route: "/admin/research/product-configuration", status: "Live", note: "Site product configuration.", live: true },
+    { label: "Product requests", route: "/admin/research/product-requests", status: "Live", note: "Customer product request queue.", live: true },
+    { label: "Inventory and exact-lot COAs", route: "/admin/research/inventory", status: "Live", note: "Inventory, lots and controlled COA publication.", live: true },
+    { label: "Assisted orders", route: "/admin/research/assisted-orders", status: "Live", note: "Manual assisted-order operations.", live: true },
+    { label: "Orders", route: "/admin/research/orders", status: "Live", note: "Canonical order files and progression.", live: true },
+    { label: "Commerce queues", route: "/admin/research/commerce-queues", status: "Live", note: "Operational queue status.", live: true },
+    { label: "Independent fulfillment engine", route: "/admin/research/fulfillment", status: "Superseded", note: "Not the release authority; order-file progression remains canonical." },
+  ] },
+  { label: "Activation and early access", tools: [
+    { label: "Payment verification", route: "/admin/research/activation-queue", status: "Live", note: "Manual verification queue.", live: true },
+    { label: "Payment bridge", route: "/admin/research/activation-bridge", status: "Live", note: "Activation bridge operations.", live: true },
+    { label: "Day 15 checklist", route: "/admin/research/activation-checklist", status: "Live", note: "Controlled activation checklist.", live: true },
+    { label: "Activation reconciliation", route: "/admin/research/activation-reconciliation", status: "Live", note: "Cross-system reconciliation.", live: true },
+    { label: "Activation readiness", route: "/admin/research/activation-readiness", status: "Live", note: "Readiness evidence and blockers.", live: true },
+    { label: "E-signatures", route: "/admin/research/esign", status: "Live", note: "Document signature operations.", live: true },
+    { label: "Early access releases", route: "/admin/research/early-access/releases", status: "Feature gated", note: "Mounted release-control surface; availability remains server-owned.", live: true },
+    { label: "Early access payments", route: "/admin/research/early-access/payments", status: "Feature gated", note: "Mounted manual payment-review surface.", live: true },
+    { label: "Early access fulfillment", route: "/admin/research/early-access/fulfillment", status: "Feature gated", note: "Mounted early-access fulfillment surface.", live: true },
+  ] },
+  { label: "Partners, content and governance", tools: [
+    { label: "Referral integrity", route: "/admin/research/partners", status: "Live", note: "Partner and referral integrity review.", live: true },
+    { label: "Referral lifecycle", route: "/admin/research/referral-lifecycle", status: "Live", note: "Referral lifecycle operations.", live: true },
+    { label: "Resource Hub", route: "/admin/research/resource-hub", status: "Live", note: "Controlled partner resource publication.", live: true },
+    { label: "Guides administration", route: "/admin/research/guides", status: "Unavailable", note: "Route retained; no supported admin read is advertised." },
+    { label: "Security", route: "/admin/research/security", status: "Live", note: "Security posture and evidence.", live: true },
+    { label: "Privacy queue", route: "/admin/research/privacy", status: "Unavailable", note: "Route retained; no supported queue read is advertised." },
+    { label: "Capabilities", route: "/admin/research/capabilities", status: "Live", note: "Capability availability and authority.", live: true },
+    { label: "Required inputs", route: "/admin/research/required-inputs", status: "Live", note: "Blocking and informational launch inputs.", live: true },
+    { label: "Audit browser", route: "/admin/research/audit", status: "Unavailable", note: "Route retained; no supported admin read is advertised." },
+    { label: "Notification / outbox health", route: "/admin/research/security", status: "Live", note: "Provider status, delivery counts, retry controls and test delivery without exposing credentials.", live: true },
+  ] },
+];
+
+const TOOL_STATUS_TONE: Record<AdminToolStatus, BadgeTone> = {
+  Live: "success",
+  "Feature gated": "pending",
+  Unavailable: "neutral",
+  Superseded: "warning",
+};
+
+export function AllAdminTools() {
+  return (
+    <section className="mt-12" aria-labelledby="all-admin-tools">
+      <p className="mono-cap text-pulse">Directory</p>
+      <h2 id="all-admin-tools" className="display-s mt-2">All admin tools</h2>
+      <p className="body-s text-ink-2 mt-3 max-w-[72ch]">Live destinations are links. Retained routes without a supported read authority are shown honestly and are not presented as operational links.</p>
+      <div className="grid gap-4 mt-6" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))" }}>
+        {ADMIN_TOOL_GROUPS.map((group) => (
+          <section key={group.label} className="card" aria-label={group.label}>
+            <h3 className="body-l font-700">{group.label}</h3>
+            <ul className="mt-4 space-y-4">
+              {group.tools.map((tool) => (
+                <li key={`${tool.label}-${tool.route}`}>
+                  <div className="flex items-start justify-between gap-3">
+                    {tool.live ? <Link href={tool.route} className="body-s font-700 underline">{tool.label}</Link> : <span className="body-s font-700">{tool.label}</span>}
+                    <ResearchStatusBadge label={tool.status} tone={TOOL_STATUS_TONE[tool.status]} />
+                  </div>
+                  <p className="body-s text-ink-mute mt-1">{tool.note}</p>
+                  <p className="mono-label text-ink-mute mt-1">{tool.route}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function FounderCommandCenterBody({ token }: { token: string }) {
   const resource = useAdminResource(token, getFounderCommandCenter);
   return (
@@ -553,7 +641,7 @@ export default function FounderCommandCenter() {
       title="Founder command center"
       lead="A privacy-minimal, read-only operating picture across the canonical Research workflows. Each destination rechecks admin authority."
     >
-      {(token) => <FounderCommandCenterBody token={token} />}
+      {(token) => <><FounderCommandCenterBody token={token} /><AllAdminTools /></>}
     </AdminScreen>
   );
 }

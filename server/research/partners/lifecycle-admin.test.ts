@@ -86,6 +86,23 @@ describe("canonical partner lifecycle administration", () => {
     expect(await performPartnerOperation(deps, actor, { ...selected, action: "activate" })).toMatchObject({ ok: true, replayed: true });
   });
 
+  it("enqueues lifecycle communication after the durable operation and preserves a successful write if notification enqueue is unavailable", async () => {
+    const notify = vi.fn(async () => undefined);
+    const deps = { ...fixture("activate"), notify };
+    const result = await performPartnerOperation(deps, actor, { ...selected, action: "activate" });
+    expect(result).toMatchObject({ ok: true, action: "activate" });
+    expect(notify).toHaveBeenCalledWith(expect.objectContaining({ partnerId, state: "application" }));
+    notify.mockRejectedValueOnce(new Error("private provider detail"));
+    await expect(performPartnerOperation(deps, actor, { ...selected, action: "activate" })).resolves.toMatchObject({ ok: true });
+  });
+
+  it("does not notify for an intermediate training write that leaves training pending", async () => {
+    const notify = vi.fn(async () => undefined);
+    const deps = { ...fixture("record_training"), notify };
+    await performPartnerOperation(deps, actor, { ...selected, ...proof, action: "record_training", moduleKey: "security", version: "1.0.0", completedAt: timestamp });
+    expect(notify).not.toHaveBeenCalled();
+  });
+
   it.each([
     { ok: true }, { ok: false, code: "PRIVATE_PROVIDER_DETAIL" },
     { ok: true, partnerId, memberId: actor, action: "prepare", state: "application", updatedAt: timestamp, replayed: false },

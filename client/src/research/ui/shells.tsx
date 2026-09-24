@@ -353,7 +353,11 @@ export function ResearchAdminShell({
           <span className="wordmark-mark" aria-hidden="true"></span>
           xenios <span className="text-ink-mute" style={{ fontWeight: 600 }}>research ops</span>
         </Link>
-        <Link href="/" className="body-s text-ink-mute ra-admin-top-link" style={{ textDecoration: "none" }}>Back to site</Link>
+        <nav aria-label="Admin destinations" className="flex items-center gap-4 flex-wrap justify-end">
+          <Link href={ADMIN_ROUTES.commandCenter} className="body-s text-ink-mute ra-admin-top-link" style={{ textDecoration: "none" }}>Founder home</Link>
+          <Link href="/admin" className="body-s text-ink-mute ra-admin-top-link" style={{ textDecoration: "none" }}>Growth / site admin</Link>
+          <Link href="/" className="body-s text-ink-mute ra-admin-top-link" style={{ textDecoration: "none" }}>Back to site</Link>
+        </nav>
       </div>
       <AdminGroupedNav />
       <PageHeader eyebrow="Operations" title={title} lead={lead} actions={actions} />

@@ -143,6 +143,12 @@ export function pathwayTitle(id: PartnershipPathwayId): string {
   return PARTNERSHIP_PATHWAYS.find((pathway) => pathway.id === id)?.title ?? "Business partnership";
 }
 
+export function pathwayContactPersona(id: PartnershipPathwayId): "integration_partner" | "enterprise" {
+  return ["strategic_partner", "supplier_lab_fulfillment", "affiliate", "collective", "provider_practice"].includes(id)
+    ? "integration_partner"
+    : "enterprise";
+}
+
 function safeLine(value: string, maxLength: number, fallback = "Not provided"): string {
   const normalized = value.replace(/[\r\n\t]+/g, " ").replace(/\s{2,}/g, " ").trim();
   return normalized.slice(0, maxLength) || fallback;

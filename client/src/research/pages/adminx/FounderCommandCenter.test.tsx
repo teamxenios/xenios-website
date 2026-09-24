@@ -23,7 +23,7 @@ vi.mock("../../lib/api", () => ({
   apiGet: mocks.apiGet,
 }));
 
-import { FounderCommandCenterBody } from "./FounderCommandCenter";
+import { AllAdminTools, FounderCommandCenterBody } from "./FounderCommandCenter";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const TOKEN = ["synthetic", "admin", "token"].join("-");
@@ -128,6 +128,32 @@ afterEach(async () => {
 });
 
 describe("Founder command center aggregate", () => {
+  it("publishes a complete tool directory while leaving unsupported reads unlinked", async () => {
+    await act(async () => {
+      root = createRoot(host);
+      root.render(<AllAdminTools />);
+    });
+
+    expect(host.textContent).toContain("All admin tools");
+    expect(host.textContent).toContain("Growth, leads, bookings and analytics");
+    expect(host.querySelector('a[href="/admin"]')).not.toBeNull();
+    expect(host.querySelector('a[href="/admin/research/assisted-orders"]')).not.toBeNull();
+    expect(host.querySelector('a[href="/admin/research/early-access/releases"]')).not.toBeNull();
+    for (const route of [
+      "/admin/research/plans",
+      "/admin/research/fulfillment",
+      "/admin/research/guides",
+      "/admin/research/privacy",
+      "/admin/research/audit",
+    ]) {
+      expect(host.querySelector(`a[href="${route}"]`)).toBeNull();
+      expect(host.textContent).toContain(route);
+    }
+    expect(host.textContent).toContain("Feature gated");
+    expect(host.textContent).toContain("Unavailable");
+    expect(host.textContent).toContain("Superseded");
+  });
+
   it("performs one authorized GET and renders all 13 fixed areas in canonical order", async () => {
     mocks.apiGet.mockResolvedValue({ kind: "ok", data: buildResponse() });
     await renderBody();

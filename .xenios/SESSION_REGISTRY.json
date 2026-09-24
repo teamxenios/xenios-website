@@ -496,6 +496,16 @@
       "startedAt": "2026-09-24T03:31:31.622Z",
       "heartbeatAt": "2026-09-24T04:47:22.614Z",
       "note": "Gates green; preparing exact candidate commit"
+    },
+    {
+      "id": "codex-xenios-ux-account-notifications-20260924",
+      "tool": "Codex",
+      "lane": "ux-account-partner-notifications",
+      "branch": "codex/xenios-ux-account-notifications-20260924",
+      "state": "active",
+      "startedAt": "2026-09-24T16:02:17.710Z",
+      "heartbeatAt": "2026-09-24T16:52:19.316Z",
+      "note": ""
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

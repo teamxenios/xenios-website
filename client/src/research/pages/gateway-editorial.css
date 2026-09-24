@@ -217,6 +217,16 @@
   text-transform: uppercase;
   transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, transform 180ms ease;
 }
+.rg-mobile-access a {
+  min-height: 44px;
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  text-decoration: none;
+}
+.rg-mobile-access a + a { border-left: 1px solid rgba(255,255,255,.22); }
 .rg-btn-light { color: #1d1b18 !important; background: rgba(250,248,243,.94); border-color: rgba(250,248,243,.94); }
 .rg-btn-dark { color: #fff !important; background: var(--rg-ink); border-color: var(--rg-ink); }
 .rg-btn-outline { color: var(--rg-ink) !important; background: transparent; border-color: rgba(23,23,20,.42); }

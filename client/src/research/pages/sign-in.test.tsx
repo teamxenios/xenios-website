@@ -105,9 +105,14 @@ beforeEach(() => {
   supa.state.currentToken = "password-session-token";
   supa.state.currentUserId = "auth-a";
   sessionStorage.clear();
+  vi.stubGlobal("fetch", vi.fn(async () => new Response(
+    JSON.stringify({ success: false }),
+    { status: 403, headers: { "Content-Type": "application/json" } },
+  )));
 });
 
 afterEach(() => {
+  vi.unstubAllGlobals();
   if (root) act(() => root!.unmount());
   container?.remove();
   root = null;
@@ -115,6 +120,24 @@ afterEach(() => {
 });
 
 describe("member sign-in", () => {
+  it("routes a server-confirmed admin to the founder command center using the same Supabase session", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(
+      JSON.stringify({ success: true, email: "founder@example.test" }),
+      { status: 200, headers: { "Content-Type": "application/json" } },
+    ));
+    const establish = vi.fn(async () => null);
+    await renderSignIn(establish);
+    submit();
+    await flush();
+
+    expect(fetch).toHaveBeenCalledWith("/api/admin/me", {
+      headers: { Authorization: "Bearer password-session-token" },
+      cache: "no-store",
+    });
+    expect(window.location.pathname).toBe("/admin/research/command-center");
+    expect(supa.auth.signOut).not.toHaveBeenCalled();
+  });
+
   it("hydrates the provider with the returned token before routing a pending member to activation", async () => {
     let resolveMember!: (member: MemberInfo) => void;
     const pending = new Promise<MemberInfo>((resolve) => {

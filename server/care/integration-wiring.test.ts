@@ -119,12 +119,9 @@ describe("Care shared integration wiring", () => {
     expect(serverSource).not.toContain("registerCareManualAccessApi(app");
   });
 
-  it("keeps the desktop call to action hidden at mobile breakpoints", () => {
-    expect(navbarSource).toContain(
-      'className="btn btn-primary !hidden sm:!inline-flex"',
-    );
-    expect(navbarSource).not.toContain(
-      'className="btn btn-primary hidden sm:inline-flex"',
-    );
+  it("keeps account entry persistent at mobile breakpoints without restoring the old early-access CTA", () => {
+    expect(navbarSource).toContain('href={accountEntry.signIn.href}');
+    expect(navbarSource).toContain('href={accountEntry.getAccess.href}');
+    expect(navbarSource).not.toContain('className="btn btn-primary !hidden sm:!inline-flex"');
   });
 });

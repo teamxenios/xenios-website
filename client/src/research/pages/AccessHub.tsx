@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import { ResearchPublicShell } from "../ui/shells";
 import { PublicBoundaryNote } from "./PublicEditorialNav";
+import AccountAccessChooser from "@/components/AccountAccessChooser";
 
 const ACCESS_OPTIONS = [
   {
@@ -82,6 +83,9 @@ export default function AccessHub() {
         title="Choose the path that matches what you need."
         lead="Personal health starts with Xenios Care. Legitimate nonclinical work starts with Xenios Research. Organizations, partners, suppliers, Early Access, and support retain their own authorities and next steps."
       >
+        <div className="card mt-6">
+          <AccountAccessChooser compact />
+        </div>
         <section className="card bg-paper-2 mt-6" aria-labelledby="access-first-question">
           <p className="mono-label text-ink-mute">Start with one question</p>
           <h2 id="access-first-question" className="body-l font-700 mt-2">Are you looking for care for yourself or nonclinical Research access?</h2>

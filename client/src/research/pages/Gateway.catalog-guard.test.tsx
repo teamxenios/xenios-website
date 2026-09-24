@@ -196,6 +196,7 @@ describe("Gateway: no public catalog entry point (DOM)", () => {
       // doors. No product, no price, and no catalog data are reachable from
       // it without a server-authorized session; a catalog CTA it is not.
       "/research/access-hub",
+      "/research/access-hub#account-access", // Reviewed account-entry chooser; never a catalog grant.
     ]);
 
     const view = await renderGateway();

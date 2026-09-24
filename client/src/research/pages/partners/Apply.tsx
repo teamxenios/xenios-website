@@ -104,7 +104,10 @@ export default function Apply() {
         <div className="card" role="status" aria-live="polite" style={{ maxWidth: 640 }}>
           <p className="body-m font-700">Application received.</p>
           <p className="body-s text-ink-2 mt-2">{outcome.message}</p>
-          <div className="mt-4">
+          <p className="body-s text-ink-2 mt-3">A confirmation will be sent to {email.trim()}. A person reviews the application; submission does not approve, certify, or activate partner access.</p>
+          <p className="body-s text-ink-2 mt-2">Your dashboard will show the recorded status and next authorized action.</p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link href={PARTNER_ROUTES.dashboard} className="btn btn-primary">View partner status</Link>
             <Link href={PARTNER_ROUTES.home} className="btn btn-secondary">
               Back to the program overview
             </Link>

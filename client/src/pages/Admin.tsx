@@ -1,4 +1,5 @@
-import { Fragment, useEffect, useState, useCallback } from "react";
+import { Fragment, useEffect, useState, useCallback, useRef } from "react";
+import { Link, useLocation } from "wouter";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
@@ -122,6 +123,7 @@ function truncate(value?: string | null, max = 80): string {
 }
 
 export default function Admin() {
+  const [, navigate] = useLocation();
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [configured, setConfigured] = useState<boolean | null>(null);
   const [authReady, setAuthReady] = useState(false);
@@ -134,6 +136,8 @@ export default function Admin() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [signingIn, setSigningIn] = useState(false);
   const [adminEmail, setAdminEmail] = useState<string | null>(null);
+  const [adminCheck, setAdminCheck] = useState<"idle" | "checking" | "verified" | "denied">("idle");
+  const routeAfterAdminConfirmation = useRef(false);
   const [resetNotice, setResetNotice] = useState<string | null>(null);
   const [resetting, setResetting] = useState(false);
 
@@ -187,12 +191,15 @@ export default function Admin() {
     if (!supabase) return;
     setLoginError(null);
     setSigningIn(true);
+    routeAfterAdminConfirmation.current = true;
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
+        routeAfterAdminConfirmation.current = false;
         setLoginError(error.message || "Admin login failed. Check your email and password.");
       }
     } catch (err: any) {
+      routeAfterAdminConfirmation.current = false;
       setLoginError(err?.message || "Admin login failed. Check your email and password.");
     } finally {
       setSigningIn(false);
@@ -203,6 +210,7 @@ export default function Admin() {
     if (!supabase) return;
     await supabase.auth.signOut();
     setAdminEmail(null);
+    setAdminCheck("idle");
   }
 
   async function handleUpdatePassword(e: React.FormEvent) {
@@ -270,14 +278,26 @@ export default function Admin() {
   }
 
   useEffect(() => {
-    if (!token) return;
+    if (!token) { setAdminCheck("idle"); return; }
     let cancelled = false;
-    fetch("/api/admin/me", { headers: { Authorization: "Bearer " + token } })
-      .then((r) => r.json())
-      .then((j) => {
-        if (!cancelled && j?.success) setAdminEmail(j.email ?? null);
+    setAdminCheck("checking");
+    fetch("/api/admin/me", { headers: { Authorization: "Bearer " + token }, cache: "no-store" })
+      .then(async (r) => ({ ok: r.ok, body: await r.json() }))
+      .then(({ ok, body }) => {
+        if (cancelled) return;
+        if (ok && body?.success && typeof body.email === "string") {
+          setAdminEmail(body.email);
+          setAdminCheck("verified");
+          if (routeAfterAdminConfirmation.current) {
+            routeAfterAdminConfirmation.current = false;
+            navigate("/admin/research/command-center");
+          }
+        } else {
+          setAdminEmail(null);
+          setAdminCheck("denied");
+        }
       })
-      .catch(() => {});
+      .catch(() => { if (!cancelled) setAdminCheck("denied"); });
     return () => {
       cancelled = true;
     };
@@ -287,16 +307,14 @@ export default function Admin() {
     <PageShell>
       <SeoHead title="xenios admin" description="Admin dashboard" path="/admin" robots="noindex, nofollow" />
       <section className="container-x pt-24 md:pt-36 pb-16">
-        <p className="mono-cap text-ink-mute mb-6">ADMIN</p>
+        <p className="mono-cap text-ink-mute mb-6">XENIOS ADMIN</p>
         <div className="flex items-center justify-between gap-4 flex-wrap">
-          <h1 className="display-l">Dashboard</h1>
+          <div>
+            <h1 className="display-l">{adminCheck === "verified" ? "Founder / Super Admin" : "Secure operations access"}</h1>
+            {adminCheck === "verified" && adminEmail && <p className="body-s text-ink-mute mt-3">Signed in as {adminEmail}</p>}
+          </div>
           {session && (
             <div className="flex items-center gap-4">
-              {adminEmail && (
-                <span className="body-s text-ink-mute" data-testid="text-admin-email">
-                  {adminEmail}
-                </span>
-              )}
               <button
                 type="button"
                 className="btn"
@@ -353,6 +371,24 @@ export default function Admin() {
 
         {configured && authReady && !recoveryMode && session && token && (
           <>
+            {adminCheck === "checking" && <p className="body-l text-ink-mute" role="status">Verifying admin authority…</p>}
+            {adminCheck === "denied" && (
+              <div className="card" role="alert" style={{ maxWidth: 640 }}>
+                <h2 className="body-l font-700">Admin access denied</h2>
+                <p className="body-s text-ink-2 mt-2">This signed-in Supabase identity was not authorized by the server. No admin data has been loaded.</p>
+              </div>
+            )}
+            {adminCheck === "verified" && <>
+            <section className="card mb-8" aria-labelledby="founder-start">
+              <p className="mono-cap text-pulse">One admin session</p>
+              <h2 id="founder-start" className="display-s mt-2">Start with the founder command center.</h2>
+              <p className="body-s text-ink-2 mt-3">The same server-confirmed Supabase session opens growth administration and Research operations. Every destination rechecks admin authority.</p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link href="/admin/research/command-center" className="btn btn-primary">Open Founder Command Center</Link>
+                <Link href="/admin/research" className="btn btn-secondary">Open Full Research Operations</Link>
+                <button type="button" className="btn btn-secondary" onClick={() => setTab("waitlist")}>Open Growth / Leads Admin</button>
+              </div>
+            </section>
             <div className="flex flex-wrap gap-2 mb-10" role="tablist">
               <TabButton id="tab-waitlist" active={tab === "waitlist"} onClick={() => setTab("waitlist")}>
                 Waitlist
@@ -376,6 +412,7 @@ export default function Admin() {
             {tab === "bookings" && <BookingsTab token={token} />}
             {tab === "analytics" && <AnalyticsTab token={token} />}
             {tab === "research" && <ResearchApplicationsTab token={token} />}
+            </>}
           </>
         )}
       </section>

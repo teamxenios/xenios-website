@@ -129,11 +129,18 @@ describe("ResearchAdminShell grouped navigation", () => {
     const summaries = Array.from(nav.querySelectorAll("summary"));
 
     expect(summaries.every((summary) => summary.tabIndex === 0)).toBe(true);
-    expect(
-      Array.from(nav.querySelectorAll("a")).every((link) =>
-        link.getAttribute("href")?.startsWith("/admin/research"),
-      ),
-    ).toBe(true);
+    expect(Array.from(nav.querySelectorAll("a")).every((link) =>
+      link.getAttribute("href")?.startsWith("/admin/research"),
+    )).toBe(true);
+    const destinationNav = view.host.querySelector('nav[aria-label="Admin destinations"]')!;
+    expect(Array.from(destinationNav.querySelectorAll("a")).map((link) => [
+      link.textContent?.trim(),
+      link.getAttribute("href"),
+    ])).toEqual([
+      ["Founder home", "/admin/research/command-center"],
+      ["Growth / site admin", "/admin"],
+      ["Back to site", "/"],
+    ]);
     view.unmount();
   });
   it("closes an expanded group on Escape and returns focus to its summary", () => {

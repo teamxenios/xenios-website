@@ -17,6 +17,21 @@ function pendingClaimDestination(returnTo: string | null): string | null {
   } catch { return null; }
 }
 
+async function isServerConfirmedAdmin(token: string): Promise<boolean> {
+  try {
+    const response = await fetch("/api/admin/me", {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (!response.ok) return false;
+    const body = await response.json();
+    return body?.success === true && typeof body.email === "string";
+  } catch {
+    // Admin discovery must never prevent an ordinary customer from signing in.
+    return false;
+  }
+}
+
 export default function SignIn() {
   const { establishMemberSession, peekMemberDenial, recovery } = useResearch();
   const [, navigate] = useLocation();
@@ -88,6 +103,15 @@ export default function SignIn() {
           token = after.access_token;
           continue;
         }
+        // The browser never infers admin authority from the submitted email.
+        // The existing admin guard is the sole authority and shares this same
+        // Supabase session. Recovery-purpose tokens were rejected above.
+        if (await isServerConfirmedAdmin(token)) {
+          if (!current()) return;
+          navigate("/admin/research/command-center");
+          return;
+        }
+        if (!current()) return;
         if (verifiedMember) {
           navigate(memberDestination(verifiedMember, returnTo));
           return;

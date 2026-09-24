@@ -2,7 +2,7 @@
 
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import PartnershipInquiryForm from "./PartnershipInquiryForm";
 import { PARTNERSHIP_INQUIRY_LIMITS } from "./pathways";
 
@@ -10,6 +10,10 @@ import { PARTNERSHIP_INQUIRY_LIMITS } from "./pathways";
 
 let root: Root | null = null;
 let container: HTMLDivElement | null = null;
+
+beforeEach(() => {
+  vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => ({ success: true, message: "We have it." }) })));
+});
 
 afterEach(() => {
   if (root) act(() => root?.unmount());
@@ -71,26 +75,36 @@ async function submit(view: HTMLElement) {
 }
 
 describe("PartnershipInquiryForm", () => {
-  it("prepares a local draft without a network request or fake submission state", async () => {
-    const fetchSpy = vi.fn();
-    vi.stubGlobal("fetch", fetchSpy);
+  it("submits through the canonical contact endpoint and confirms only after 2xx", async () => {
+    const fetchSpy = vi.mocked(fetch);
     const view = await renderForm();
 
     await completeDraft(view);
     await submit(view);
 
-    expect(fetchSpy).not.toHaveBeenCalled();
-    expect(view.textContent).toContain("Your draft is ready. Xenios has not received it.");
+    expect(fetchSpy).toHaveBeenCalledOnce();
+    expect(fetchSpy).toHaveBeenCalledWith("/api/contact", expect.objectContaining({ method: "POST" }));
+    const payload = JSON.parse(String((fetchSpy.mock.calls[0]?.[1] as RequestInit).body));
+    expect(payload).toMatchObject({ persona: "enterprise", email: "contact@example.test" });
+    expect(payload.website).toBeUndefined();
+    expect(payload.message).toContain("Website: https://example.test/");
+    expect(view.textContent).toContain("We received your Research organizations inquiry.");
+    expect(view.textContent).toContain("not an account approval");
+    expect(view.textContent).toContain("A confirmation will be sent separately");
     expect(view.textContent).not.toContain("Application received");
     const summary = view.querySelector("#b2b-summary") as HTMLTextAreaElement;
     expect(summary.value).toContain("Synthetic Contact");
     expect(summary.value).toContain("Example Research Laboratory");
 
-    const emailLink = Array.from(view.querySelectorAll("a")).find((link) => link.textContent?.includes("Open email"));
-    expect(emailLink?.getAttribute("href")).toMatch(/^mailto:research@xeniostechnology\.com\?subject=/);
-    expect(emailLink?.getAttribute("href")).not.toContain("Synthetic");
-    expect(emailLink?.getAttribute("href")).not.toContain("example.test");
-    expect(emailLink?.getAttribute("href")).not.toContain("body=");
+  });
+
+  it("does not show success when the endpoint rejects the inquiry", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 503, json: async () => ({ message: "Please try again later." }) })));
+    const view = await renderForm();
+    await completeDraft(view);
+    await submit(view);
+    expect(view.textContent).toContain("Please try again later");
+    expect(view.textContent).not.toContain("Inquiry received");
   });
 
   it("copies the locally prepared summary only after an explicit action", async () => {
@@ -135,7 +149,7 @@ describe("PartnershipInquiryForm", () => {
     expect(context.getAttribute("aria-describedby")).toBe("b2b-context-help b2b-context-error");
     expect(view.querySelector("#b2b-context-help")).not.toBeNull();
     expect(view.querySelector("#b2b-context-error")).not.toBeNull();
-    expect(view.textContent).not.toContain("Xenios has not received it");
+    expect(view.textContent).not.toContain("Inquiry received");
   });
 
   it("requires an optional website to use an explicit HTTP or HTTPS URL", async () => {
@@ -149,7 +163,7 @@ describe("PartnershipInquiryForm", () => {
     expect(website.getAttribute("aria-invalid")).toBe("true");
     expect(view.querySelector("#b2b-website-error")?.textContent).toContain("http:// or https://");
     expect(website.getAttribute("aria-describedby")).toBe("b2b-website-help b2b-website-error");
-    expect(view.textContent).not.toContain("Your draft is ready");
+    expect(view.textContent).not.toContain("Inquiry received");
   });
 
   it("shows a manual-copy fallback when clipboard access is unavailable", async () => {
@@ -191,11 +205,11 @@ describe("PartnershipInquiryForm", () => {
     const view = await renderForm();
     await completeDraft(view);
     await submit(view);
-    expect(view.textContent).toContain("Your draft is ready");
+    expect(view.textContent).toContain("Inquiry received");
 
     await act(async () => setControl(view, "b2b-name", "Synthetic Contact Two"));
 
-    expect(view.textContent).not.toContain("Your draft is ready");
+    expect(view.textContent).not.toContain("Inquiry received");
     expect(view.querySelector("#b2b-summary")).toBeNull();
   });
 

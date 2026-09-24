@@ -3,6 +3,7 @@ import PageShell from "@/components/PageShell";
 import SeoHead from "@/components/SeoHead";
 import Counter from "@/components/Counter";
 import Reveal from "@/components/Reveal";
+import AccountAccessChooser from "@/components/AccountAccessChooser";
 
 const STACK_ITEMS = [
   "Gmail",
@@ -70,6 +71,10 @@ export default function Home() {
         <div className="mt-8">
           <Counter variant="line" suffix="on the waitlist" />
         </div>
+      </Reveal>
+
+      <Reveal as="div" className="container-x section-y rule-top">
+        <AccountAccessChooser />
       </Reveal>
 
       <Reveal as="section" className="container-x section-y rule-top">

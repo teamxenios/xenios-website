@@ -109,7 +109,9 @@ describe("public editorial page system", () => {
     expect(view.textContent).not.toContain("Xenios Care is available nationwide");
     expect(view.textContent).not.toContain("Begin clinical intake");
     expect(view.textContent).not.toContain("Invited early-access users");
-    expect(view.querySelectorAll("article")).toHaveLength(6);
+    expect(view.querySelectorAll("article")).toHaveLength(13);
+    expect(links).toContain("/research/activate");
+    expect(view.textContent).toContain("Review the program, then sign in before submitting an application");
   });
 
   it("opens FAQ panels with explicit button and region relationships", async () => {

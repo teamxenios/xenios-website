@@ -19,6 +19,7 @@
 //      response by default.
 
 import express, { type Express, type Request, type Response } from "express";
+import { enqueuePartnerApplicationNotifications } from "../partners/notifications";
 import type {
   AddCartLineRequest,
   Api,
@@ -653,7 +654,20 @@ export function registerCommerceApi(app: Express, deps: CommerceDependencies, gu
         deny(res, 400, "forbidden", "A partner application needs a valid role, legal name, and contact email.");
         return;
       }
-      relay(res, await deps.partners.applyForMember(memberId, input, deps.now()), "partner");
+      const result = await deps.partners.applyForMember(memberId, input, deps.now());
+      const successful = result && typeof result === "object" && (result as { ok?: unknown }).ok === true
+        ? result as { partner?: { partnerId?: unknown; state?: unknown } }
+        : null;
+      if (successful && typeof successful.partner?.partnerId === "string") {
+        await enqueuePartnerApplicationNotifications({
+          partnerId: successful.partner.partnerId,
+          contactEmail: input.contactEmail,
+          legalName: input.legalName,
+          role: input.role,
+          state: typeof successful.partner.state === "string" ? successful.partner.state : "application",
+        });
+      }
+      relay(res, result, "partner");
     }),
   );
 
