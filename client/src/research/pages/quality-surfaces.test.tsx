@@ -80,7 +80,7 @@ describe("public quality editorial surfaces", () => {
     expect(view.textContent).toContain("Approved public lot records");
     expect(view.textContent).toContain("Secure account documents");
     expect(view.textContent).toContain("Version-aware records");
-    expect(view.querySelector('a[href="/research/member/documents"]')).not.toBeNull();
+    expect(view.querySelector('a[href="/research/account/documents"]')).not.toBeNull();
     const input = view.querySelector<HTMLInputElement>('input[name="lotCode"]')!;
     expect(input).not.toBeNull();
     expect(view.querySelector(`label[for="${input.id}"]`)).not.toBeNull();
