@@ -2134,7 +2134,7 @@
         ".xenios/sessions/codex-xenios-ux-release-control-20260924.json",
         ".xenios/handoffs/*XENIOS-UX-RELEASE-CONTROL*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-24T17:03:29.999Z",
       "heartbeatAt": "2026-09-24T18:03:26.105Z"
     }

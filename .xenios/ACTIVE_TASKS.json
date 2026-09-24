@@ -2166,7 +2166,7 @@
       "id": "XENIOS-UX-RELEASE-CONTROL-20260924",
       "title": "Repair the live-mobile-UAT application and status P1 defects",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-ux-release-control-20260924",
       "paths": [
         "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
@@ -2194,7 +2194,13 @@
       "baseSha": "6d9ec3cb615f0c48102e74974e777c07e7039eba",
       "scopeNote": "Founder-directed live-mobile-UAT P1 extension on the fully reconciled release-control SHA. Repair the closed application dead end, distinguish neutral no-token status requests from invalid links, and remove misleading application-entry semantics. Preserve closed formal applications and all existing authorities. No new interest intake, configuration, credentials, database state, native-commerce authority, or production mutation.",
       "createdAt": "2026-09-24T17:03:00.000Z",
-      "claimedAt": "2026-09-24T17:03:29.997Z"
+      "claimedAt": "2026-09-24T17:03:29.997Z",
+      "handoff": {
+        "session": "codex-xenios-ux-release-control-20260924",
+        "sha": "0574264562f33fe40572b1d9976f4700bef9c83e",
+        "file": ".xenios/handoffs/2026-09-24T18-04-57-760Z-XENIOS-UX-RELEASE-CONTROL-20260924-codex-xenios-ux-release-control-20260924.md",
+        "at": "2026-09-24T18:04:57.762Z"
+      }
     }
   ]
 }
