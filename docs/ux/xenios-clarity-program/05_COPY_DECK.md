@@ -1,6 +1,6 @@
 # 05 — Copy deck
 
-Original Xenios copy. Nothing here is taken from System Labs or any other site. Brand token shown as **Xenios** (D-01). Text in ⟦brackets⟧ depends on a decision or claim and must be replaced by the approved wording in `02_DECISIONS.md` / `CLAIM_LEDGER.csv` before shipping; if not approved, the bracketed sentence is **omitted**, not guessed.
+Original Xenios copy. Nothing here is taken from System Labs or any other site. Brand token shown as **Xenios** (A-1). Text in ⟦brackets⟧ depends on a decision or claim and must be replaced by the approved wording in `02_DECISIONS.md` / `CLAIM_LEDGER.csv` before shipping; if not approved, the bracketed sentence is **omitted**, not guessed.
 
 Style: short sentences; second person; no hype; no internal words (authority, fail closed, provisioned, lane, member-safe, Early Access, access hub, manifest, substrate); no agent names (Xen, Athena, Hercules) outside `/workspace`; "research products" lower-case in sentences; numbers only where the claim ledger allows.
 
@@ -38,7 +38,7 @@ Secondary text links may use plain nouns ("How It Works", "Quality", "FAQ", "Pri
 
 ## 3. Home (`/`)
 
-- **H1:** ⟦D-03⟧ default "Clinician-guided Care and research-grade products."
+- **H1:** ⟦B-2⟧ default "Clinician-guided Care and research-grade products."
 - **Sub:** "Start Care with a ⟦C-004: licensed⟧ clinician, or order research products for your work. Two separate paths — you choose."
 - **Buttons:** Start Care · Explore Products
 - **Audience selector heading:** "Where do you fit?"
@@ -51,7 +51,7 @@ Secondary text links may use plain nouns ("How It Works", "Quality", "FAQ", "Pri
 - **Products section:** heading "Two ways to get what you need" · tiles: "Care — clinician-guided treatment" / "Research products — for research use" / "For practices — refer your clients". Card grid heading "Research products". Link button **Explore Products**.
 - **How Care works:** "1. Send a Care request — a few contact details and what you're looking for. 2. A person reviews it and contacts you. 3. If Care fits, you complete a secure clinical visit, and a clinician decides what's right for you." Line: "This request isn't a medical intake. Please don't include health details." → **Start Care**
 - **How research orders work:** "1. Request an order for the exact product and size. 2. We confirm availability and email your payment details. 3. We verify your payment by hand. 4. We ship and email your tracking." Line: "Research products are for research use only. Ordering them doesn't give you access to Care." → **Explore Products**
-- **For Practices band:** "Your clients, supported. Refer clients with your own link. They create their own accounts; you see what's credited to your practice. ⟦D-09: Your client stays your client.⟧" → **For Practices**
+- **For Practices band:** "Your clients, supported. Refer clients with your own link. They create their own accounts; you see what's credited to your practice. ⟦G-1: Your client stays your client.⟧" → **For Practices**
 - **Partners band:** "Recommend Xenios to people who'd value it. Approved partners get a link, resources and commission on eligible orders." → **Become a Partner**
 - **Quality band:** "Every lot has a record. ⟦C-009: If a certificate of analysis exists for your lot, you can look it up.⟧" → text link "Quality"
 - **FAQ (6):**
@@ -88,7 +88,7 @@ Secondary text links may use plain nouns ("How It Works", "Quality", "FAQ", "Pri
 - Availability live line (existing check): open → "Care requests are open." · closed → "Care requests are paused right now. You can still **Contact Support**." (with Retry)
 - Steps: as Home "How Care works".
 - "What Care is not": "Buying research products doesn't give you access to Care. A practice can't approve treatment for you. Only a clinician decides."
-- ⟦D-06 availability⟧ "Care availability depends on your state. We confirm it after your request."
+- ⟦D-1 availability⟧ "Care availability depends on your state. We confirm it after your request."
 - Remove: pharmacy sentence (C-005) until verified; $30 plan (C-015); "one business day" (C-012).
 - `/care/schedule` H1: "Start Care"
 - Form intro: "This isn't a medical intake. Please don't include health details."
@@ -116,20 +116,20 @@ Secondary text links may use plain nouns ("How It Works", "Quality", "FAQ", "Pri
   - **Refer clients** — "Share your practice's link or code. Clients create their own accounts and place their own orders. Eligible orders are credited to your practice." → text link "How referrals work"
   - **Practice workspace** — "Approved practices sign in to see referrals, orders credited to them, and commission. Add staff with the right access." → "About the workspace"
   - **Care for your clients** — "When a client needs a clinician, they can start Care. Our clinician makes medical decisions; your coaching relationship continues." → "Care for your clients"
-- Section "Your client stays your client" — ⟦D-09 approved text⟧
+- Section "Your client stays your client" — ⟦G-1 approved text⟧
 - Section "What we handle / what you handle":
   - We handle: product orders and fulfilment, payment verification, customer support for orders, Care (through our clinicians) when a client chooses it.
   - You handle: your coaching and client relationship; recommending whether a client might look into research products or Care; your own professional obligations.
 - Section "What a practice account doesn't do": "It doesn't place orders for clients, edit their accounts, or approve treatment. Each client accepts the research-use terms themselves. If you're a licensed provider, talk to your own counsel about your obligations."
-- Section "Commission": ⟦D-07 approved text⟧ default "Your practice earns commission on eligible research-product orders from clients you refer. Rates, holds and payout timing are in your partner agreement. Care services never earn commission."
+- Section "Commission": ⟦F-1 approved text⟧ default "Your practice earns commission on eligible research-product orders from clients you refer. Rates, holds and payout timing are in your partner agreement. Care services never earn commission."
 - Section "In-clinic inventory": "Under review. If you're interested, mention it in your inquiry."
 - Section "What happens after you submit an inquiry": "1. You get a reference number. 2. Someone from our team contacts you to learn about your practice. 3. If we're a fit, we send a partner agreement. 4. Once approved, you get an email to activate your account and your referral link."
 - Primary: **Submit Inquiry** (practice inquiry form on page) · Secondary: **Sign In** ("Approved practice? Sign In")
 - Inquiry form title: "Tell us about your practice" · fields: name, email, practice name, practice type (list above), your role, state/region, "How would you like to work with us?" (Refer clients / Care for clients / In-clinic inventory (under review) / Not sure), message.
 - Submit label: **Submit Inquiry**
 - **Confirmation:** "Your inquiry was received." · "Reference: {ref}" · "This is an inquiry — it doesn't create an account or approve anything." · "Next: someone from our team will contact you at {email}. We don't promise a response time." · email line per C-041
-- `/practices/referrals` H1: "How referrals work" — flow text from `09_PRACTICE_MODEL.md` Model A in plain language; FAQ: "Do my clients pay to sign up?" ⟦C-021⟧ · "Can I see what my clients order?" ⟦D-10⟧ · "Do I earn commission on Care?" "No."
-- `/practices/workspace` H1: "Your practice workspace" — what you see (D-10 table in plain words), staff roles (Owner, Admin, Billing contact), "What it doesn't do". Buttons: Sign In · (not yet approved) Submit Inquiry. If workspace pages are not yet mounted: "The practice workspace is opening to approved practices. Until then, your partner dashboard shows your referrals and commission."
+- `/practices/referrals` H1: "How referrals work" — flow text from `09_PRACTICE_MODEL.md` Model A in plain language; FAQ: "Do my clients pay to sign up?" ⟦C-021⟧ · "Can I see what my clients order?" ⟦E-2⟧ · "Do I earn commission on Care?" "No."
+- `/practices/workspace` H1: "Your practice workspace" — what you see (E-2 table in plain words), staff roles (Owner, Admin, Billing contact), "What it doesn't do". Buttons: Sign In · (not yet approved) Submit Inquiry. If workspace pages are not yet mounted: "The practice workspace is opening to approved practices. Until then, your partner dashboard shows your referrals and commission."
 - `/practices/care` H1: "Care for your clients" — Model C in plain words; "Who decides: our clinician." "Who follows up: our clinician, for anything they prescribe. You keep coaching." "What you see: only what your client chooses to share with you." ⟦Q-04⟧
 
 ## 9. Partners (`/partners`)
@@ -163,7 +163,7 @@ Secondary text links may use plain nouns ("How It Works", "Quality", "FAQ", "Pri
 - **Support** H1: "How can we help?" · cards: "An order" → Check Status / Contact Support · "Care" → Care support form · "My account" → Sign In / reset password · "A business question" → Submit Inquiry (practice/partner/supplier) · general form (existing contact route) submit label "Send message" (§12) · confirmation: "Your message was received. We don't promise a response time." + reference once durable (N-12).
 - **Quality** H1: "Quality and documentation" · "Every lot has a record." ⟦C-009⟧ · lot lookup "Look up a lot" · "What we publish and what we don't" (no third-party testing claim until C-008) · Research-use note.
 - **FAQ** H1: "Questions" — groups: Care · Research products · Orders and payment · Practices · Partners · Accounts. Uses §3 answers plus: "How do I pay?" "After we confirm your order, we email payment details. We verify every payment by hand." · "Do you ship everywhere?" ⟦ops⟧ omit until verified.
-- **About** H1: "About Xenios" · "Xenios Technologies, Inc. builds technology for proactive health: clinician-guided Care, research products, and tools for the professionals who support people's health." · workspace mention → `/workspace` · ⟦D-01/D-02 brand architecture sentence only after decision⟧.
+- **About** H1: "About Xenios" · "Xenios Technologies, Inc. builds technology for proactive health: clinician-guided Care, research products, and tools for the professionals who support people's health." · workspace mention → `/workspace` · ⟦A-1/B-1 brand architecture sentence only after decision⟧.
 - **Admin** (unchanged page) H1: "Secure operations access" · Sign In · no public links.
 
 ## 12. Submit-button rule

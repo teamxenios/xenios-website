@@ -52,7 +52,7 @@
 ## J-07 Practice-referred client
 
 - **Goal:** follow their coach's recommendation.
-- **Steps:** opens practice link (`/r/:code` when V1 enabled, else code typed at order) → neutral landing "An introduction from {practice}" → chooses **Explore Products** or **Start Care** → own account/order → accepts research-use terms personally → optional consent to share name/order status with practice (future, D-10).
+- **Steps:** opens practice link (`/r/:code` when V1 enabled, else code typed at order) → neutral landing "An introduction from {practice}" → chooses **Explore Products** or **Start Care** → own account/order → accepts research-use terms personally → optional consent to share name/order status with practice (future, E-2).
 - **Must understand:** they own the account; the practice doesn't see Care info; practice can't order for them.
 - **Edge states:** V1 off → link falls back to Home with no error; invalid code → "We couldn't match that code — you can still continue" (never blocks ordering).
 - **UAT:** U-068, U-069.

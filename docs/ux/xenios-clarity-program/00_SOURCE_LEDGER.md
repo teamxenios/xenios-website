@@ -13,11 +13,11 @@ Rule: a D, E or F source never becomes public copy on its own. Any factual publi
 | S01 | Runtime source @ `c4ea8a9` (via worktree `049dfd9`) | `client/`, `server/`, `shared/` | A | What exists: routes, nav, copy, forms, endpoints, gates, statuses | Claiming anything is deployed |
 | S02 | Master offerings dataset (420 products, all copy `draft`) | `server/research/master-offerings/data/member-safe-master-offerings.generated.json` | A | Product identity, family, variant labels | Public copy (none approved) |
 | S03 | Catalog reconciliation (513 units: 0 direct / 124 assisted / 242 Care / 147 unavailable) | `docs/production-completion/catalog/` | A (dry-run reconciliation; not a production write plan) | Pathway state per product, candidate prices and their status | Treating candidate prices as approved |
-| S04 | Founder price book (39 SKUs) + 2026-08-19 price release (34 member prices) | `docs/research-launch/FOUNDER_PRICE_BOOK_2026-08-16.json`, `PRICE_RELEASE_2026-08-19.*` | A/C | Evidence that some member prices were founder-approved in August | Public pricing without D-05 |
+| S04 | Founder price book (39 SKUs) + 2026-08-19 price release (34 member prices) | `docs/research-launch/FOUNDER_PRICE_BOOK_2026-08-16.json`, `PRICE_RELEASE_2026-08-19.*` | A/C | Evidence that some member prices were founder-approved in August | Public pricing without C-2 |
 | S05 | Provider readiness | `docs/research-launch/PROVIDER_READINESS.md` | A | Pharmacy/clinician/billing readiness (none marked ready) | — |
 | S06 | Affiliate program config / draft schedule | `shared/research/affiliate-program/config.ts`, `server/research/affiliates/v2/draft-schedule.ts` | A (draft, inactive) | Evidence of intended economics and conflict (7.5% vs 15% repeat) | Publishing any rate |
 | S07 | `.xenios` corpus (MASTER_CORPUS, FULL_VISION, ownership, sessions) | `.xenios/` | A | Platform direction, persona list, ownership, "rebrand only when explicitly authorized" (FULL_VISION l.773) | — |
-| S08 | Adversarial audit packet (release NOT ACCEPTED) | `docs/ux/xenios-adversarial-audit-20260924/` | B | Route inventory (222 declarations), 3,910-control inventory, AUD-001..003, contact repair semantics, production read-only health 2026-09-26 | Treating inventory rows as exercised journeys |
+| S08 | Adversarial audit packet at 049dfd9 (then NOT ACCEPTED; superseded by S22) | `docs/ux/xenios-adversarial-audit-20260924/` | B | Route inventory (222 declarations), 3,910-control inventory, AUD-001..003, contact repair semantics, production read-only health 2026-09-26 | Treating inventory rows as exercised journeys |
 | S09 | UX account/notifications candidate reports | `docs/ux/xenios-ux-account-notifications-20260924/` | B | Sign-in/access chooser, partnership form on `/api/contact`, live-UAT repair | — |
 | S10 | Founder admin matrix | `docs/ux/xenios-founder-admin-matrix-20260924/` | B | Admin surfaces, guard, unsupported surfaces | — |
 | S11 | XENIOS Full Website UX Source of Truth (18 tabs) | `Downloads/XENIOS _ Full Website UX Source of Truth + End-to-End Journey Map _ 2026-09-24.docx` (local copy predates the audit's 2026-09-26 tab updates; live Google Doc id `1qogOnIU…` was updated by the audit lane) | B/F (source-centric analysis + recommendations) | P1-01..P1-07, Seth case study, Care status vocabulary, "four actions never share a CTA" rule | Its own admission: it under-tested first-time-user states |
@@ -31,13 +31,19 @@ Rule: a D, E or F source never becomes public copy on its own. Any factual publi
 | S19 | System Labs public site | systemlabs.com homepage + treatments index, read-only 2026-09-26 | E | Pattern analysis (`SYSTEM_LABS_REFERENCE_ANALYSIS.md`) | Copy, assets, numbers, claims |
 | S20 | Third-party System Labs reviews (web search) | onlinetherapistai.com, peptideclinicfinder.com, glp1evolution.com | E (secondary, unverified) | Context only | Anything published |
 | S21 | This lane's IA, copy, models, specs | this directory | F | Recommendations for Samuel's decision | Implementation before D-items are approved |
+| S22 | Final audit release packet + handoff at `bad1c41` (candidate `3298f279`, gates PASS, manifest ACCEPTED, deploy unauthorized) | `docs/ux/xenios-adversarial-audit-20260924/` @ bad1c41 | B | Implementation base identity; coverage (127/129 nav, 70 rows: 69 PASS / 1 NOT RUN zoom; 26 local-service cases); remaining evidence limits | Treating local gates as deployment authority |
+| S23 | Core-site protection manifest (Samuel directive 2026-07-29, XCA-W17) | `docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json` @ bad1c41 | A + C | Which files/routes the redesign may touch without an amended directive | Editing hashes to pass the gate |
+| S24 | Live 18-tab Google UX doc (current-closeout notices dated 2026-09-26 on every tab) | Drive `1qogOnIU…` read 2026-09-26 | B | Confirms closeout identity and repaired items ("Send inquiry", no two-business-day promise, secure-documents destination) | — (historical tab bodies unchanged from S11) |
+| S25 | Founder commercial directive 2026-08-17 (affiliate terms, 14/full/request offer layers, volume discounts) | `Downloads/XENIOS_AUTHORITATIVE_RECONCILIATION_SOURCES_2026-08-17/` (+ 90-day sprint folder); matches `affiliate-program/config.ts` | C | Resolves the 7.5% vs 15% conflict; "clinical revenue never commissionable"; featured-product layer | Publishing any rate |
+| S26 | System Labs UX/UI audit PDF (2026-07-24, 36 pp.) | `Downloads/System_Labs_Super_Mega_UX_UI_Audit.pdf` | E | Written reference findings (see SYSTEM_LABS_REFERENCE_ANALYSIS §Written audit findings) | Copying text or claims |
+| S27 | Application diff `c4ea8a9..3298f279` | git | A | Proves application bytes unchanged (3 test files only) | — |
 
 ## Sources named but missing
 
 | Named input | Search performed | Result | Consequence |
 | --- | --- | --- | --- |
-| `Xenios_Current_Thread_Archive_2026-09-26(1).md` | Downloads (exact + prefix), Gmail | Exists only as an attachment on Samuel's 2026-09-26 self-sent email ("Xenios Current Thread Archive \| September 26, 2026"); not downloadable by this lane | Decisions made in chat on 2026-09-25/26 that are not in S13/S15/S16 are **not known**. Anything Samuel decided there must be re-stated in `02_DECISIONS.md` review. |
-| "System Labs reference findings" | Repo, Downloads, Drive, Gmail | No such document exists | Replaced by S19 observation, limited to what was observed |
+| `Xenios_Current_Thread_Archive_2026-09-26(1).md` | Downloads (exact + prefix; re-searched 2026-09-26 after CLAUDE_03 incl. subfolders), Gmail | Exists only as an attachment on Samuel's 2026-09-26 self-sent email ("Xenios Current Thread Archive \| September 26, 2026"); not downloadable by this lane | Decisions made in chat on 2026-09-25/26 that are not in S13/S15/S16 are **not known**. Anything Samuel decided there must be re-stated in `02_DECISIONS.md` review. |
+| "System Labs reference findings" / `SYSTEM_LABS_REFERENCE_FINDINGS_FOR_XENIOS_2026-09-26.md` | Repo, Downloads (incl. subfolders), Drive, Gmail | The named .md was not found; the equivalent written audit **was found** (S26) | **Resolved** — S26 used |
 | `Steve Toth … Notes by Gemini(1).docx` | Downloads | Not present; the Drive original (S16) was used | None — same document |
 | `XENIOS _ Full Website UX … (1).docx` | Downloads | Only the un-suffixed 2026-09-24 copy exists | Audit-lane tab updates of 2026-09-24/26 were not re-read here; audit packet S08 covers them |
 | "Current product/catalog/pricing authority" as a single document | Repo | Split across S02–S06 | Documented per product in `08_PRODUCT_PATHWAY_MATRIX.csv` |
@@ -55,7 +61,7 @@ Rule: a D, E or F source never becomes public copy on its own. Any factual publi
 | "Typically within one business day" (Care) | S01 | No SLA evidence |
 | First-Month Foundations Plan $30/month (CSCS-created) | S01 `CarePublicPages.tsx:155-160` | No commerce/price authority |
 | No cost to create an account / to use a provider | S16 (Seth, Samuel) | Care consult cost "right now" — not a durable policy |
-| Commission: all sales from referred clients; monthly payout; weekly statements | S16 | Code: 20% first + 7.5% or 15% repeat, biweekly Friday, draft/inactive |
+| Commission: all sales from referred clients; monthly payout; weekly statements | S16 | Founder directive 2026-08-17 (S25) governs agreement terms (20/7.5, 21-day hold, $50, biweekly Friday; clinical never commissionable); program inactive; nothing public |
 | Chatbot with 24/7 support "within a week" | S16 | Not built; dosing guidance boundary (brief §4.5) |
 | Lifetime 50% discount + $500 credit for delayed customers | S16 | Operational remedy for specific customers; never public copy |
 | Public brand "Infinity Health" / "Eon Health" | S16 vs S13 | No legal, domain or trademark change recorded (S07 FULL_VISION l.773) |

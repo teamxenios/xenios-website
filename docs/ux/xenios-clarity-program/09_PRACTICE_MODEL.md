@@ -9,10 +9,28 @@ Each capability is labelled: **NOW** (implemented and mounted) · **BUILT-DARK**
 | Model | One line a practice reads | Who holds the client relationship | Who can order | Clinical authority | Status |
 | --- | --- | --- | --- | --- | --- |
 | A — Referral | "Share your link. Your clients create their own accounts. You're credited for what they order." | Practice (coaching); client owns the account | The client, for themselves | None for Research; Care is separate | Page NOW-able; attribution BUILT-DARK |
-| B — Practice workspace | "Sign in to see your referrals, orders and commission in one place." | unchanged | Nobody orders on anyone's behalf (D-08) | None | API BUILT-DARK (tables unapplied); pages NEAR |
+| B — Practice workspace | "Sign in to see your referrals, orders and commission in one place." | unchanged | Nobody orders on anyone's behalf (E-1) | None | API BUILT-DARK (tables unapplied); pages NEAR |
 | C — Care for your clients | "When a client needs a clinician, send them to Care. Our clinician decides; your coaching continues." | Practice keeps coaching; Eon clinician owns medical decisions | Clinician prescribes if appropriate | Eon clinician only (never the practice by default) | Care request NOW; practice attribution into Care DECISION (Q-03/Q-04) |
-| D — In-clinic inventory | "Under review. Ask us." | — | — | Licensing/pharmacy review | DECISION (D-11: not offered) |
+| D — In-clinic inventory | "Under review. Ask us." | — | — | Licensing/pharmacy review | DECISION (H-1: not offered) |
 | E — Programs & services | "Coming later: coaching, labs, retreats and more." | — | — | Depends on service | LATER (H-02) |
+
+## Capability classification (reconciled against `3298f279`)
+
+| Capability | Current capability (mounted) | Approved near-term (after owner packet) | Proposed future | Legal/clinical review required | Not supported |
+| --- | --- | --- | --- | --- | --- |
+| Practice learns the model publicly | Partial (8-card partner page, no practice page) | `/practices` + 3 sub-pages (B-1) or `/research/practices` (fallback) | — | Ownership wording (G-1) | — |
+| Practice inquiry | Email-only via `/api/contact` (accept/uncertain semantics) | Durable inquiry + reference + founder lane (Phase 2, `server/research/` endpoint) | Qualification questionnaire in-product | — | — |
+| Partner application | Built, dark (commerce flag + password gate + sign-in) | Closed state + interest inquiry; open only by decision | Commerce-independent apply | — | — |
+| Referral link/code + attribution | Built, dark (Referral V1 flags off; bindings SQL unapplied) | — | Enable V1 + bindings | Q-01, Q-07 | — |
+| Commission ledger/payouts | Built, dark (`AFFILIATE_PROGRAM_ENABLED` off; no payout provider) | Public structural wording only (F-1) | Activate under founder 2026-08-17 terms | Q-03 (licensed referrers) | Commission on Care |
+| Practice workspace (partner portal) | Built, dark (portal flags off) | Explanation page | Enable portal | — | — |
+| Org staff roles (owner/admin/billing) | API mounted; tables unapplied; pages unmounted; `research_organizations` name collision | Explanation only | Pack 02 apply + mount | — | — |
+| Client-level visibility for practice | Counts only | Promise counts + commission (E-2) | Opt-in names/status | Q-06 | Care data to practice |
+| Care integration | Care request mounted (client submits) | "Care for your clients" page | "Referred by a practice?" context field | Q-03, Q-04 | Practice approving treatment; practice commission on Care |
+| Ordering for clients (parent account) | — | — | — | Q-02 | **Not supported** (E-1) |
+| Wholesale / in-clinic inventory | — | "Under review" line (H-1) | Separate program | Licensing, pharmacy, storage, resale | Public wholesale pricing |
+| Programs / services (Model E) | — | — | Marketplace (coaching, labs, behavioral health, retreats) | Per service | — |
+| Premixed / pre-dosed formats; outside-provider orders | — | — | — | Q-10, Q-11 | Any public mention |
 
 ## Model A — Referral
 
@@ -24,14 +42,14 @@ Each capability is labelled: **NOW** (implemented and mounted) · **BUILT-DARK**
 4. Practice receives a **referral link and code** (Referral V1 — BUILT-DARK; `xr_aff` signed cookie; typed codes stored as unmatched claims until matched).
 5. Client follows the link, creates their own account / submits their own order, **accepts the research-use terms personally**, and is attributed to the practice.
 6. Orders flow through the normal Research order lifecycle (request → quote/payment instructions → human verification → fulfilment).
-7. Commission accrues on eligible Research orders only (D-07); held, approved, payable, paid per the commission ledger; reported in the workspace.
+7. Commission accrues on eligible Research orders only; held, approved, payable, paid per the commission ledger; reported in the workspace. Governing terms: the founder directive of 2026-08-17 (general 20% first / 7.5% repeat months 2–12, 21-day hold, $50 minimum, biweekly Friday, clinical revenue never commissionable, no parent override) — agreement-only, never on the website (F-1). The inactive `draft-schedule.ts` (20/15, 30 days, $100) is superseded.
 
 **Rules**
 
-- The client owns the account and their data. The practice is recorded as the referring practice (D-09).
-- Attribution rule: last-touch within the attribution window configured in code (30 days, `distribution.ts:114`) — **not published** as a number until D-07; public copy says "clients who sign up or order with your link or code".
+- The client owns the account and their data. The practice is recorded as the referring practice (G-1).
+- Attribution rule: last-touch within the attribution window configured in code (30 days, `distribution.ts:114`) — **not published** as a number until F-1; public copy says "clients who sign up or order with your link or code".
 - Self-referral is denied (config).
-- No commission on Care services, consultations or prescriptions (D-07/Q-03).
+- No commission on Care services, consultations or prescriptions (F-1/Q-03).
 - A practice never sees a client's Care information.
 - A practice-referred client is never auto-routed into Care; Care happens only if the client (or practice, by advising the client) chooses Care.
 
@@ -45,10 +63,10 @@ Each capability is labelled: **NOW** (implemented and mounted) · **BUILT-DARK**
 | --- | --- | --- |
 | `organization_owner` | Practice owner | Everything below + invite/remove staff, edit practice profile, see commission and payouts |
 | `organization_admin` | Practice admin | Invite staff, edit profile, see referrals and reports |
-| `business_buyer` | (not used for practices at launch) | Would allow practice-owned purchases for the practice itself — **not** for clients; hidden until D-08/D-11 |
+| `business_buyer` | (not used for practices at launch) | Would allow practice-owned purchases for the practice itself — **not** for clients; hidden until E-1/H-1 |
 | `billing_viewer` | Billing contact | See commission statements and payouts only |
 
-**Visibility (D-10 default)**
+**Visibility (E-2 default)**
 
 | Data | Practice sees | Condition |
 | --- | --- | --- |
@@ -71,7 +89,7 @@ Each capability is labelled: **NOW** (implemented and mounted) · **BUILT-DARK**
 3. Human review → secure clinical handoff → licensed clinician decides independently (treat / don't treat / needs more information).
 4. Follow-up: the clinician owns medical follow-up for anything they prescribe. The practice continues coaching. The patient decides what to share with the practice.
 
-**Must say publicly (after D-09/Q-04):** the practice does not become responsible for Eon's clinical decisions; Eon's clinician does not take over the practice's coaching relationship; nothing is prescribed automatically.
+**Must say publicly (after G-1/Q-04):** the practice does not become responsible for Eon's clinical decisions; Eon's clinician does not take over the practice's coaching relationship; nothing is prescribed automatically.
 
 **Must not say:** that the practice can "approve" treatment for its clients; that referral guarantees treatment; any turnaround time.
 
@@ -79,7 +97,7 @@ Note on the transcript: Samuel told Stephen "at the end of the day, you guys sho
 
 ## Model D — Wholesale / in-clinic inventory
 
-Separate authority from referrals and Care. Requires: legal (resale of research-use materials, state rules), pharmacy/licensing (if any compounded product), storage and handling, product documentation, pricing tiers (price book has internal 5+/10+ tiers — not public), fulfilment and returns. **Default D-11: not offered.** `/practices` shows: "In-clinic inventory: under review. If you're interested, tell us in your inquiry." No price, no timeline.
+Separate authority from referrals and Care. Requires: legal (resale of research-use materials, state rules), pharmacy/licensing (if any compounded product), storage and handling, product documentation, pricing tiers (price book has internal 5+/10+ tiers — not public), fulfilment and returns. **Default H-1: not offered.** `/practices` shows: "In-clinic inventory: under review. If you're interested, tell us in your inquiry." No price, no timeline.
 
 ## Model E — Programs and services (future)
 

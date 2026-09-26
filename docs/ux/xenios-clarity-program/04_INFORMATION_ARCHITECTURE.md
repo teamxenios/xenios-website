@@ -1,6 +1,8 @@
 # 04 — Information architecture
 
-Assumes the recommended defaults of D-01 (brand "Xenios") and D-02 (health front door at root; coach workspace at `/workspace`). If Samuel chooses otherwise, only the brand token and the root assignment change; the structure holds.
+Assumes the recommended defaults of A-1 (brand "Xenios") and **B-1 (Samuel amends the 2026-07-29 core-site protection directive so the root becomes the health front door and the coach workspace moves to `/workspace`)**. Decision IDs: see the map in `02_DECISIONS.md`.
+
+> **Protection gate (added in reconciliation).** At `3298f279` the root, every coach route and the files `App.tsx`, `pages/**`, `components/**`, `lib/**`, `server/routes.ts` and `server/services/**` are protected by `CORE_SITE_PROTECTION_MANIFEST.json`. Everything in this document that touches them — new root, shared header/footer, new top-level routes, removing the `/partners` and `/faq` redirects — is **conditional on B-1**. If B-1 is declined or deferred, build the §Fallback below instead.
 
 ## Design principles
 
@@ -62,14 +64,14 @@ Careers is in the header and footer, not the selector.
 
 ## Homepage content order
 
-1. Hero — H1 (D-03), subhead, **Start Care** + **Explore Products**; a single line under the buttons: "Already a customer? **Sign In** · Have an order? **Check Status**".
+1. Hero — H1 (B-2), subhead, **Start Care** + **Explore Products**; a single line under the buttons: "Already a customer? **Sign In** · Have an order? **Check Status**".
 2. Audience selector (above).
-3. Products and pathways — three pathway tiles (Care · Research products · For Practices), then up to 6 product cards from the approved public set (D-04) with price or price state (D-05), then **Explore Products**.
+3. Products and pathways — three pathway tiles (Care · Research products · For Practices), then up to 6 product cards from the approved public set (C-1) with price or price state (C-2), then **Explore Products**.
 4. How Care works — 3 steps (request → human review → secure clinical visit), boundary line, **Start Care**.
 5. How research orders work — 4 steps (request order → we confirm and send payment details → we verify payment by hand → we ship and email tracking), research-use line, **Explore Products**.
-6. For Practices — 3 models in one row (Refer clients · Practice workspace · Care for your clients) + "Your client stays your client" (D-09), **For Practices**.
+6. For Practices — 3 models in one row (Refer clients · Practice workspace · Care for your clients) + "Your client stays your client" (G-1), **For Practices**.
 7. Partners — one paragraph, **Become a Partner**.
-8. Quality and documentation — process-only (D-12), link to lot lookup, **Quality**.
+8. Quality and documentation — process-only (D-2), link to lot lookup, **Quality**.
 9. FAQ — 6 questions (Care vs Research, cost to start, what happens after I submit, can my practice order for me, where do I sign in, do you give dosing instructions), link to full FAQ.
 10. Final CTA band — **Start Care** · **Explore Products** · **For Practices**.
 11. Footer.
@@ -101,9 +103,9 @@ Principle: keep every authority route; add public marketing routes; redirect sup
 | --- | --- | --- |
 | `/` | Health front door | Replace `pages/Home.tsx` content; move current content to `/workspace` |
 | `/individuals` | For Individuals | New page |
-| `/products` | Public product index | New page; data from the existing storefront projection / publication authority (`server/research/storefront/*`) — only products with an approved publication record (D-04); signed-out price = D-05 |
+| `/products` | Public product index | New page; data from the existing storefront projection / publication authority (`server/research/storefront/*`) — only products with an approved publication record (C-1); signed-out price = C-2 |
 | `/products/:slug` | Reusable product page | Reuse `research/storefront/StorefrontProductPage.tsx` structure; server-decided action only |
-| `/care`, `/care/schedule`, `/care/portal`, `/care/how-it-works`, `/care/provider-review`, `/care/support` | Care | Keep routes and authority; move into shared chrome; copy per D-06 |
+| `/care`, `/care/schedule`, `/care/portal`, `/care/how-it-works`, `/care/provider-review`, `/care/support` | Care | Keep routes and authority; move into shared chrome; copy per D-1 |
 | `/research` | How research orders work | Replace Gateway at `/research` with an explainer; `/health` → 301 `/` |
 | `/research/order`, `/research/early-access/*`, `/research/early-access/order-request/*` | Research ordering and status | Keep authority; relabel per copy deck; remove "Early Access" from customer-facing labels (route names may stay) |
 | `/practices` | For Practices | New page (replaces `/research/organizations` as public entry) |
@@ -126,7 +128,7 @@ Principle: keep every authority route; add public marketing routes; redirect sup
 | `/workspace`, `/workspace/*` | Coach AI workspace (future Infinity) | Current Home, Product, How It Works, For Coaches, For Clients, Storefront, Network, Ecosystem, For Practitioners, `/for/:slug`, Manifesto, Waitlist move under this section or keep URLs but leave primary nav |
 | `/admin`, `/admin/research/*` | Founder/admin | Unchanged, unlinked |
 
-Redirects (301): `/health → /`; `/research/access-hub → /`; `/research/partners → /partners` (landing only; `/research/partners/*` workspace sub-routes unchanged); `/research/affiliates → /partners`; `/research/organizations → /practices`; `/research/supplier-access → /suppliers`; `/research/faq → /faq`; `/research/quality → /quality`; `/research/testing → /quality#testing`; `/research/documents → /quality#documents`; `/research/about → /about`; `/research/how-it-works → /how-it-works`; `/research/contact → /support`; `/research/support → /support`; `/faq` (remove redirect to `/product`); `/partners` (remove redirect to `/ecosystem`); `/enterprise → /practices`. Keep `noindex` on authenticated and token pages; public marketing pages become indexable once D-01 is decided.
+Redirects (301): `/health → /`; `/research/access-hub → /`; `/research/partners → /partners` (landing only; `/research/partners/*` workspace sub-routes unchanged); `/research/affiliates → /partners`; `/research/organizations → /practices`; `/research/supplier-access → /suppliers`; `/research/faq → /faq`; `/research/quality → /quality`; `/research/testing → /quality#testing`; `/research/documents → /quality#documents`; `/research/about → /about`; `/research/how-it-works → /how-it-works`; `/research/contact → /support`; `/research/support → /support`; `/faq` (remove redirect to `/product`); `/partners` (remove redirect to `/ecosystem`); `/enterprise → /practices`. Keep `noindex` on authenticated and token pages; public marketing pages become indexable once A-1 is decided.
 
 ## Responsive rules (all pages)
 
@@ -134,3 +136,20 @@ Redirects (301): `/health → /`; `/research/access-hub → /`; `/research/partn
 - No horizontal overflow at any width; tap targets ≥44px; body text ≥16px on mobile.
 - Header behaviour as tabled above. Section order identical at every width; cards stack to one column <768, two columns 768–1279, three or more ≥1280.
 - Every CTA reachable by keyboard; visible focus; skip-to-content link retained.
+
+## Fallback — if B-1 is not approved (allowed zones only)
+
+Everything below stays inside `client/src/research/`, `client/src/care/`, `server/research/`, `server/care/`, `shared/research|care/` — no protected file changes.
+
+| Item | Fallback implementation |
+| --- | --- |
+| Front door | `/health` (Gateway, allowed zone) becomes the full health front door: same hero, audience selector, product tiles, Care/Research explainers, practices/partners bands as §Homepage content order |
+| Header | One shared header for `/health`, `/research/*`, `/care/*` (Research + Care shells unified); coach Navbar untouched; its existing "Health" link and "Sign in"/"Get access" remain the only bridge from `/` |
+| Practices / partners / suppliers | `/research/practices`, `/research/practices/referrals`, `/research/practices/workspace`, `/research/practices/care`, `/research/partners` (rewritten), `/research/supplier-access` (rewritten) |
+| Products | `/research/products` + `/research/products/:slug` (storefront, allowed zone) |
+| Status / sign-in / support / quality / FAQ | Existing `/research/*` routes, rewritten copy |
+| Claims cleanup | All Care/Research claim edits are allowed-zone (`client/src/care/**`, `client/src/research/**`, `server/care/**`, `server/research/**`) |
+| Durable inquiries | New endpoint under `server/research/` (not `server/routes.ts`) |
+| Not possible | Root hero, coach nav, `/careers`, `/about`, `/contact`, `/how-it-works`, footer legal string on coach pages, `/partners` and `/faq` redirects |
+
+Result: Care/Research/practice clarity improves substantially; **CUX-01/02/03 remain** because a first-time visitor still lands on the coach site.

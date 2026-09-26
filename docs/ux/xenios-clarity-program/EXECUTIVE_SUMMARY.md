@@ -2,6 +2,8 @@
 
 For Samuel, Seth, Stephen, designers and engineers. Plain language.
 
+> Reconciled 2026-09-26 against the final audit candidate `3298f279`. Its application code is identical to what this strategy analysed, so every finding still applies. Two things changed: (1) your July 29 rule protecting the main site means the new homepage needs your explicit OK (decision B-1); (2) your August 17 commission directive settles the commission conflict. Decisions now live in `17_OWNER_DECISION_PACKET.md`; Codex follows `18_CODEX_IMPLEMENTATION_BRIEF.md`.
+
 ## The problem
 
 xeniostechnology.com is three websites sharing one address. The homepage sells an AI tool for coaches. Care lives on a separate set of pages. Products and ordering live on a third, reached through a "Health" link that changes the whole look of the site. The same words mean different things in different places ("Early Access" is both a coach waitlist and a way to order products). Practices don't have a page of their own.
@@ -33,7 +35,7 @@ The coach AI workspace moves to its own section (`/workspace`) until the Infinit
 
 ## What Samuel needs to decide
 
-There are 12 decisions, each with a recommended default (`02_DECISIONS.md`):
+There are 13 decisions, each with a recommended default (`17_OWNER_DECISION_PACKET.md`). The most important new one is B-1: whether to lift your July 29 "don't touch the main site" rule for this redesign. The first 12 decisions below were in the original package; careers (I-1) is the 13th:
 
 1. Brand now (recommended: keep "Xenios" until Eon/Infinity is legally ready).
 2. Health front door at the root.
@@ -48,11 +50,11 @@ There are 12 decisions, each with a recommended default (`02_DECISIONS.md`):
 11. No wholesale for now.
 12. No named clinicians or pharmacies until verified.
 
-Reply "accept defaults" to take all 12 recommendations at once.
+Reply "Accept all RECOMMENDED DEFAULTS" to take all 13 at once.
 
 ## How it gets built
 
-Codex implements in phases (`12_IMPLEMENTATION_PLAN.md`):
+Codex implements in the order set by `18_CODEX_IMPLEMENTATION_BRIEF.md` (full mode if B-1 is approved, fallback mode otherwise):
 
 1. **The front door.** New homepage, one header and footer, audience selector, practice/partner/supplier pages, plain-language copy, claim cleanup, and fixed dead ends.
 2. **Durable inquiries.** Every business inquiry and job application gets a reference and lands in the founder queue.

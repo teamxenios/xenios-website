@@ -13,7 +13,8 @@ Copy lives in `05_COPY_DECK.md` (referenced as §n). Routes in `04_INFORMATION_A
 - **Tablet (768):** two-column card grids; header as mobile.
 - **Desktop (1440):** full header; max content width ~1200px; card grids 3–4 columns.
 - **Analytics (first-party, no PII):** `page_view{route}` · `cta_click{cta_id,label,route,section}` · `audience_select{tile}` · `form_start{form_id}` · `form_submit_result{form_id,result:accepted|rejected|uncertain}` · `status_lookup{result:found|not_found}` · `sign_in_result{result}` (no emails, names or references in events).
-- **Acceptance (every page):** passes U-G01..U-G08 (no overflow at 390/768/1440; keyboard reachable; visible focus; only §1 CTA labels; no retired labels; no unapproved claims from CLAIM_LEDGER; shared chrome; legal line exact).
+- **Gate/mode:** each page is built in full mode (B-1 approved) at the target route or in fallback mode at the `fallback_if_B1_declined` route in `07_CTA_MATRIX.csv`; see `18_CODEX_IMPLEMENTATION_BRIEF.md` §2.
+- **Acceptance (every page):** passes U-G01..U-G09 (no overflow at 390/768/1440; keyboard reachable; visible focus; only §1 CTA labels; no retired labels; no unapproved claims from CLAIM_LEDGER; shared chrome; legal line exact).
 
 ---
 
@@ -24,11 +25,11 @@ Copy lives in `05_COPY_DECK.md` (referenced as §n). Routes in `04_INFORMATION_A
 | Audience | Everyone, first visit |
 | User question | "What is this, is it for me, and what do I click?" |
 | 5-second promise | Clinician-guided Care or research products — pick your path; practices and partners have their own door. |
-| Hero | §3 H1/sub (D-03) |
+| Hero | §3 H1/sub (B-2) |
 | Primary CTA | Start Care → `/care/schedule` |
 | Secondary CTA | Explore Products → `/products` |
 | Content order | IA §Homepage content order (11 sections) |
-| Product/pricing | Up to 6 cards from the approved public set (D-04) with price or "Price confirmed in your quote" (D-05); if none approved, pathway tiles only |
+| Product/pricing | Up to 6 cards from the approved public set (C-1) with price or "Price confirmed in your quote" (C-2); if none approved, pathway tiles only |
 | Trust evidence | Process-only quality line; Care/Research separation; legal entity; no counts, names, reviews, seals |
 | Authority boundary | No catalog authority change; product list from publication authority; Care CTA goes to existing request form |
 | Form behaviour | None on page |
@@ -72,7 +73,7 @@ Copy lives in `05_COPY_DECK.md` (referenced as §n). Routes in `04_INFORMATION_A
 | Primary CTA | Per card (Request Order / Start Care) |
 | Secondary CTA | Check Status (header helper) |
 | Content order | Hero → filter → pathway tiles (Care tile always present) → card grid → research-use note → "How ordering works" link |
-| Product/pricing | Card contract §5: name, variant, one-line approved description, one badge, price or price state, one CTA. Source: publication authority (storefront projection) — only products with an approved publication record (D-04). Price only if D-05 approves for that SKU. Never show Unavailable products in the grid. |
+| Product/pricing | Card contract §5: name, variant, one-line approved description, one badge, price or price state, one CTA. Source: publication authority (storefront projection) — only products with an approved publication record (C-1). Price only if C-2 approves for that SKU. Never show Unavailable products in the grid. |
 | Trust | Research-use note on every card; lot-record link where present |
 | Authority boundary | Server decides badge and action (existing `action.ts` semantics); client never infers "buyable"; no add-to-cart (commerce dark) |
 | Form | None |
@@ -119,7 +120,7 @@ Copy lives in `05_COPY_DECK.md` (referenced as §n). Routes in `04_INFORMATION_A
 | 5-second promise | Send a short request; a person reviews it; a clinician decides. |
 | Hero | §6 |
 | Primary / secondary | Start Care → `/care/schedule` / How It Works (text link) |
-| Content order | Hero + live availability → 3 steps → What Care is not → availability line (D-06) → FAQ (Care) → Start Care band |
+| Content order | Hero + live availability → 3 steps → What Care is not → availability line (D-1) → FAQ (Care) → Start Care band |
 | Product/pricing | No product prices. No consultation price (C-022) |
 | Trust | C-004 only if verified; C-020, C-024; emergency note |
 | Authority boundary | Existing `/api/care/access-request` and its readiness gate unchanged; no clinical fields added |
@@ -170,11 +171,11 @@ Copy lives in `05_COPY_DECK.md` (referenced as §n). Routes in `04_INFORMATION_A
 | Hero | §8 |
 | Primary / secondary | Submit Inquiry (on-page form) / Sign In (approved practices) |
 | Content order | Hero → 3 model cards → Your client stays your client → We handle / you handle → What a practice account doesn't do → Commission → In-clinic inventory → What happens after you submit → Inquiry form → Practice FAQ |
-| Product/pricing | No product prices; commission per D-07 wording only |
+| Product/pricing | No product prices; commission per F-1 wording only |
 | Trust | C-028, C-029, C-030 (approved wording only) |
 | Authority boundary | No ordering for clients; no commission on Care; no practice clinical authority |
 | Form | §8 fields; inquiry type `practice` |
-| Submission | Existing `/api/contact` acceptance semantics **plus** durable record + reference + founder queue item (N-09; `12_IMPLEMENTATION_PLAN.md` Phase 2). Until durable record exists, confirmation must not show a reference and must say "We've emailed our team." |
+| Submission | Step 12 of `18_CODEX_IMPLEMENTATION_BRIEF.md`: new `server/research/` inquiry endpoint that stores the record (existing `loi_submissions` store, no migration) **before** reporting accepted, keeps accept/reject/uncertain semantics, issues `INQ-` reference, adds founder lane (N-09). Until then the existing `/api/contact` path is used unchanged and the confirmation shows no reference ("We've emailed our team."). |
 | Success | §8 confirmation |
 | Failure/uncertain | G rules; draft preserved |
 | Next step | Qualification contact → agreement → activation (practice lifecycle) |
@@ -193,10 +194,10 @@ Copy lives in `05_COPY_DECK.md` (referenced as §n). Routes in `04_INFORMATION_A
 | User question | "How exactly does referral, attribution and commission work?" |
 | Promise | Your link → client's own account and order → credited to you → reported in your workspace. |
 | Hero / CTAs | "How referrals work" / Submit Inquiry · Sign In |
-| Content | 7-step flow (Model A) in plain words; attribution sentence (no window number); commission (D-07); what the client does (accepts research-use terms); FAQ |
+| Content | 7-step flow (Model A) in plain words; attribution sentence (no window number); commission (F-1); what the client does (accepts research-use terms); FAQ |
 | Authority | Referral links are issued after approval (C-031) |
 | States | Static |
-| Acceptance | No rate, no payout cadence number unless D-07 approves; "Care never earns commission" present |
+| Acceptance | No rate, no payout cadence number unless F-1 approves; "Care never earns commission" present |
 
 ## P-09 Practice workspace `/practices/workspace`
 
@@ -206,7 +207,7 @@ Copy lives in `05_COPY_DECK.md` (referenced as §n). Routes in `04_INFORMATION_A
 | User question | "What will I see and who on my team can see it?" |
 | Promise | Referrals, credited orders and commission; staff with the right access; nothing that touches client care. |
 | Hero / CTAs | "Your practice workspace" / Sign In · Submit Inquiry |
-| Content | What you see (D-10 table) · Roles (Owner/Admin/Billing contact) · What it doesn't do · How to add staff |
+| Content | What you see (E-2 table) · Roles (Owner/Admin/Billing contact) · What it doesn't do · How to add staff |
 | Authority | Workspace pages are BUILT-DARK; this page explains; Sign In routes by server role |
 | Unavailable | If org workspace not mounted: §8 interim line pointing to partner dashboard |
 | Acceptance | No mention of ordering for clients; no client-name visibility without consent wording |
@@ -356,4 +357,4 @@ Care steps and Research steps side by side (§3 steps), "What each path is not",
 
 ## P-23 About `/about`
 
-§11 About; company, legal entity, workspace link; no agent names; no counts. Brand architecture sentence only after D-01/D-02.
+§11 About; company, legal entity, workspace link; no agent names; no counts. Brand architecture sentence only after A-1/B-1.
