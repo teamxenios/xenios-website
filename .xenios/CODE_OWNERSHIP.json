@@ -2313,6 +2313,23 @@
       "state": "handoff",
       "claimedAt": "2026-09-26T19:59:09.828Z",
       "heartbeatAt": "2026-09-26T20:08:41.160Z"
+    },
+    {
+      "id": "d42d1286-a4f0-4f76-9c3f-0aba711bc4be",
+      "task": "XENIOS-ADVERSARIAL-AUDIT-20260924",
+      "session": "codex-adversarial-audit-20260924",
+      "paths": [
+        "docs/ux/xenios-adversarial-audit-20260924/**",
+        ".xenios/sessions/codex-adversarial-audit-20260924.json",
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+        "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-26T21:35:27.440Z",
+      "heartbeatAt": "2026-09-26T21:35:27.542Z"
     }
   ],
   "rules": [

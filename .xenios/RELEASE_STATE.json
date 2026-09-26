@@ -932,7 +932,25 @@
     "candidateTree": "ac69ecf87e3c622738908bb4fa7a1779aad493fb",
     "localManifestAccepted": true,
     "deploymentAuthorized": false,
-    "localServiceCases": 26
+    "localServiceCases": 26,
+    "finalReleaseDisposition": {
+      "candidateSha": "3298f279ad760a861e26e3e08514bb49694fae38",
+      "engineeringRecommendation": "YES_BOUNDED_SAFETY_RELEASE",
+      "deploymentAuthorized": false,
+      "preDeploymentDefectBlockers": 0,
+      "postDeploymentSmoke": [
+        "Actual desktop zoom",
+        "Hosted integration parity"
+      ],
+      "authorizedOperatorTest": [
+        "External delivery and operator receipt"
+      ],
+      "futureScope": [
+        "Real provider/payment/fulfillment activation"
+      ],
+      "addendum": "docs/ux/xenios-adversarial-audit-20260924/RELEASE_DISPOSITION_ADDENDUM.md",
+      "note": "Supersedes prior unclassified blockers; historical local closeout retained. No runtime change or production mutation."
+    }
   },
   "historicalPreCloseoutProduction": {
     "classification": "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",

@@ -524,10 +524,10 @@
       "tool": "Codex",
       "lane": "audit-release-control-lead",
       "branch": "codex/xenios-adversarial-audit-20260924",
-      "state": "handoff_ready",
+      "state": "active",
       "startedAt": "2026-09-24T18:45:27.226Z",
-      "heartbeatAt": "2026-09-26T20:08:41.160Z",
-      "note": "Pushed closeout 9048e87; frozen candidate 3298 accepted locally, no deployment authority; other sessions untouched",
+      "heartbeatAt": "2026-09-26T21:35:27.542Z",
+      "note": "Final release disposition only, frozen 3298 candidate, no runtime edits or production writes",
       "resumedAt": "2026-09-26T19:12:06.503Z"
     }
   ],

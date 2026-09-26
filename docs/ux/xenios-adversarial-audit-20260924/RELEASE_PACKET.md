@@ -1,5 +1,7 @@
 # Xenios closeout — local release gates PASS; deployment unauthorized
 
+Final engineering disposition: **YES for exact candidate3298**, limited to this safety/audit release; deployment remains unauthorized. [RELEASE_DISPOSITION_ADDENDUM.md](RELEASE_DISPOSITION_ADDENDUM.md) classifies the four evidence gaps and supplies the bounded smoke/rollback plan. This supersedes the unclassified limitations below, without claiming their tests passed.
+
 Frozen candidate: **3298f279ad760a861e26e3e08514bb49694fae38**, tree **ac69ecf87e3c622738908bb4fa7a1779aad493fb**. Subsequent commits are documentation/evidence successors, not a substituted runtime candidate. Original tested repair **02d525baa7d784ed16e297c1d17b1e4050ecf4cc** remains preserved. Application successor **c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa** is unchanged.
 
 Production remains **79414143d4355d5d3d14cd5fe6e5a536dc68d99d**, deployment dep-daqft3vf3r2c73b7e88g, both origins healthy, commerce disabled. No production writes, real messages, payment or clinical actions occurred.
