@@ -34,12 +34,13 @@ Secondary text links may use plain nouns ("How It Works", "Quality", "FAQ", "Pri
 - Under-hero helper line (home): "Already a customer? **Sign In** · Have an order? **Check Status**"
 - Footer legal: "© 2026 Xenios Technologies, Inc."
 - Care-page emergency note: "If you're having a medical emergency, call 911."
+- **Clinician-statement rule (C-004):** every sentence saying a clinician reviews, decides or follows up (e.g., "a clinician decides what's right for you", "Only a clinician decides", "Our clinician makes medical decisions") is C-004-dependent. Until C-004 is VERIFIED FOR PUBLIC USE, Codex keeps the existing live Care-page wording already present at `3298f279` and adds no new clinician statements; after verification, use the copy below.
 - Research-use note (on every research product card and page): ⟦C-018 approved Research Use Policy sentence⟧ — default text until counsel supplies: "For research use only. Not for human consumption. Not medical advice."
 
 ## 3. Home (`/`)
 
-- **H1:** ⟦B-2⟧ default "Clinician-guided Care and research-grade products."
-- **Sub:** "Start Care with a ⟦C-004: licensed⟧ clinician, or order research products for your work. Two separate paths — you choose."
+- **H1:** ⟦B-2⟧ recommended "Care and research products, clearly separated." (upgrade to "Clinician-guided Care…" only after C-004 is verified and Samuel approves)
+- **Sub:** "Start a Care request, or explore products for research use. Two different paths, with clear next steps."
 - **Buttons:** Start Care · Explore Products
 - **Audience selector heading:** "Where do you fit?"
   - I want Care — "Tell us what you're looking for. A person reviews your request and, if Care fits, sets up a secure visit with a clinician. No account needed to start." → **Start Care**
@@ -48,7 +49,7 @@ Secondary text links may use plain nouns ("How It Works", "Quality", "FAQ", "Pri
   - I want to refer people — "Share Xenios with your audience and earn commission on eligible orders once you're approved." → **Become a Partner**
   - I supply or fulfil — "Pharmacies, labs, manufacturers, distributors and fulfilment partners. Access is by invitation after review." → **Submit Inquiry**
   - I already have an account — "Orders, documents and your Care status." → **Sign In**
-- **Products section:** heading "Two ways to get what you need" · tiles: "Care — clinician-guided treatment" / "Research products — for research use" / "For practices — refer your clients". Card grid heading "Research products". Link button **Explore Products**.
+- **Products section:** heading "Two ways to get what you need" · tiles: "Care — the medical pathway" / "Research products — for research use" / "For practices — refer your clients". (First release per C-1: tiles only — no product card grid.) Link button **Explore Products**.
 - **How Care works:** "1. Send a Care request — a few contact details and what you're looking for. 2. A person reviews it and contacts you. 3. If Care fits, you complete a secure clinical visit, and a clinician decides what's right for you." Line: "This request isn't a medical intake. Please don't include health details." → **Start Care**
 - **How research orders work:** "1. Request an order for the exact product and size. 2. We confirm availability and email your payment details. 3. We verify your payment by hand. 4. We ship and email your tracking." Line: "Research products are for research use only. Ordering them doesn't give you access to Care." → **Explore Products**
 - **For Practices band:** "Your clients, supported. Refer clients with your own link. They create their own accounts; you see what's credited to your practice. ⟦G-1: Your client stays your client.⟧" → **For Practices**
@@ -156,14 +157,14 @@ Secondary text links may use plain nouns ("How It Works", "Quality", "FAQ", "Pri
 
 ## 11. Careers, Sign In, Activation, Status, Support, Quality, FAQ, About, Admin
 
-- **Careers** H1: "Work with Xenios" · roles list · role page button **Apply** · if mailto (H-01 fallback): button "Apply by email" with line "We'll reply by email if there's a fit." · confirmation (form version): "Your application was received. Reference {ref}. We'll email you if we'd like to talk."
+- **Careers** H1: "Work with Xenios" · **only roles Samuel confirms are open** (I-1) · always a "General interest" card ("Don't see a role? Tell us how you'd like to help.") · role/general button **Apply** · if mailto (before Phase 2): button "Apply by email" with line "This opens your email app. We'll reply by email if there's a fit." · confirmation (form version): "Your application was received. Reference {ref}. We'll email you if we'd like to talk." · if no confirmed roles: general interest only
 - **Sign In** H1: "Sign in" · form (email, password) · "Forgot your password?" · "Approved but haven't set up your account? **Activate Account**" · "Care patients: your clinical account is separate — use the secure link your Care team sent you." · "New here? **Start Care** or **Explore Products**." · Error: "That email and password don't match. Try again or reset your password." · Locked/unknown: no account enumeration.
 - **Activate Account** H1: "Activate your account" · valid link: set password → "Your account is active." → Sign In / Open my account · invalid/expired: "This activation link has expired or was already used. **Contact Support** and we'll send a new one." (existing claim authority decides; never reveals whether an email exists)
 - **Check Status** H1: "Check status" · "Order or request reference" + "Email you used" → **Check Status** · not found: "We couldn't find that reference with that email. Check the reference in your confirmation email, or **Contact Support**." · Signed-in shortcut: "Signed in? See all your orders in your account." · Care note: "Care requests: our Care team updates you directly by the contact method you chose." ⟦Q-13⟧
 - **Support** H1: "How can we help?" · cards: "An order" → Check Status / Contact Support · "Care" → Care support form · "My account" → Sign In / reset password · "A business question" → Submit Inquiry (practice/partner/supplier) · general form (existing contact route) submit label "Send message" (§12) · confirmation: "Your message was received. We don't promise a response time." + reference once durable (N-12).
 - **Quality** H1: "Quality and documentation" · "Every lot has a record." ⟦C-009⟧ · lot lookup "Look up a lot" · "What we publish and what we don't" (no third-party testing claim until C-008) · Research-use note.
 - **FAQ** H1: "Questions" — groups: Care · Research products · Orders and payment · Practices · Partners · Accounts. Uses §3 answers plus: "How do I pay?" "After we confirm your order, we email payment details. We verify every payment by hand." · "Do you ship everywhere?" ⟦ops⟧ omit until verified.
-- **About** H1: "About Xenios" · "Xenios Technologies, Inc. builds technology for proactive health: clinician-guided Care, research products, and tools for the professionals who support people's health." · workspace mention → `/workspace` · ⟦A-1/B-1 brand architecture sentence only after decision⟧.
+- **About** H1: "About Xenios" · "Xenios Technologies, Inc. builds technology for proactive health: Care, research products, and tools for the professionals who support people's health." · workspace mention → `/workspace` · ⟦A-1/B-1 brand architecture sentence only after decision⟧.
 - **Admin** (unchanged page) H1: "Secure operations access" · Sign In · no public links.
 
 ## 12. Submit-button rule

@@ -1,209 +1,218 @@
 # 17 — Owner decision packet (for Samuel, one sitting)
 
-This packet is the **only** place owner answers are recorded. `02_DECISIONS.md` now points here.
+This packet is the **only** place owner answers are recorded. `02_DECISIONS.md` points here.
 
-**How to answer:** under each item write `APPROVED DEFAULT`, `REVISED: …` or `DEFERRED`, with your initials and date. Or answer the whole packet at once: *"Accept all RECOMMENDED DEFAULTS — SB, <date>."* Codex implements only what is answered here. DEFERRED items get a truthful neutral state (listed per item).
+**Status: every answer is PENDING SAMUEL APPROVAL.**
 
-Count: **13 decisions** (the original 12, plus the careers item the packet format requires). The July core-site protection question is folded into B-1 because it decides the same thing: whether the root can change.
+The reviewed recommendation for each item, and the reasons behind it, are in `19_REVIEWED_DECISION_RECOMMENDATION.md`. That document incorporates the 2026-09-26 full document review and the founder context from the 2026-09-26 thread archive.
+
+**How approval works:**
+- Samuel approves the whole reviewed set with the exact statement **`APPROVE THE REVIEWED XENIOS CLARITY DECISION SET`**, optionally naming revisions.
+- A separate step (CLAUDE_06) then records the approval in this file, with initials and date.
+- Nothing here is approved until that happens. Codex implements only recorded answers.
+
+Count: **13 decisions**. Labels used below:
+- **RECOMMENDED (revised)** — changed by the 2026-09-26 review.
+- **RECOMMENDED DEFAULT** — unchanged.
 
 ---
 
 ## A. BRAND / ENTITY
 
-### A-1 (was D-01) — Which name does the public see now?
+### A-1 — Which name does the public see now?
 
 - **Question:** Should the public site say "Xenios", "Eon Health", "Infinity Health", or a combination?
-- **Why it matters:** A half-renamed site (new name in the header, old name on policies, receipts and domain) is more confusing than either name.
-- **Source truth:** The repo uses only Xenios. Legal entity is Xenios Technologies, Inc. (Delaware) in Privacy, Terms and the footer; the Gateway footer wrongly says "Xenios Technology". FULL_VISION: "rebrand only when explicitly authorized." No Eon or Infinity text exists in code.
-- **Stakeholder input:** You told Stephen (2026-09-25) you are renaming to "Infinity Health". The execution brief names Eon Health (clinical/customer health) under Infinity (technology umbrella).
-- **RECOMMENDED DEFAULT:** Keep **"Xenios"** publicly for this release. Use one brand setting in code so a later rename is a single reviewed change. Drop the sub-brands "Xenios Research", "Xenios Health" and "Care + Research"; the paths are just "Care" and "Research products". Fix every legal line to "Xenios Technologies, Inc."
-- **Tradeoffs:** Delays the name you discussed; nothing on the site contradicts policies, receipts or contracts.
+- **Why it matters:** A half-renamed site (new name in the header, old name on policies, receipts, senders and the domain) is more confusing than either name.
+- **Source truth:** The repo uses only Xenios. The legal entity is Xenios Technologies, Inc. (Delaware) in Privacy, Terms and the footer; the Gateway footer wrongly says "Xenios Technology". FULL_VISION says "rebrand only when explicitly authorized". No Eon or Infinity text exists in code.
+- **Founder/stakeholder input:**
+  - The working architecture is **Infinity** (technology umbrella), **Eon Health** (working favorite for the clinical/telehealth company) and **Xenios Technologies, Inc.** (current legal/contracting entity).
+  - In the 2026-09-26 thread, as summarized in the full review, you called Eon Health "awesome", still as a working name.
+  - You told Stephen on 2026-09-25 that you are renaming to "Infinity Health".
+- **RECOMMENDED (revised):**
+  - Keep **"Xenios"** public for this release.
+  - Keep **Xenios Technologies, Inc.** in all legal and contracting copy.
+  - Record internally that Eon Health is the working future clinical brand under Infinity.
+  - Do not publish Eon or Infinity until the name, trademark, domain, policies, sender identity, contracting structure and clinical-entity relationship are approved.
+  - Use one brand setting in code.
+  - Drop the sub-brands "Xenios Research", "Xenios Health" and "Care + Research".
+  - Fix every legal line to "Xenios Technologies, Inc."
+- **Tradeoffs:** Delays the name you prefer. In exchange, nothing contradicts the policies, receipts, senders or contracts.
 - **Codex implements if approved:** brand setting, unified wordmark, legal-string fix.
-- **Codex must not without approval:** show "Eon", "Eon Health", "Infinity", "Infinity Health"; change domain, sender names or policy entity.
-- **If DEFERRED:** same as default.
-- **Answer:** ______
+- **Codex must not without approval:** show "Eon", "Eon Health", "Infinity" or "Infinity Health" publicly; change the domain, sender names or policy entity.
+- **If DEFERRED:** same as the recommendation.
+- **Answer:** PENDING SAMUEL APPROVAL
 
 ---
 
 ## B. PUBLIC OFFER / HOMEPAGE
 
-### B-1 (was D-02, now includes the July protection directive) — May the root homepage and shared header change?
+### B-1 — Amend the 2026-07-29 core-site protection directive for this program?
 
-- **Question:** Do you amend your 2026-07-29 directive ("the main xenios website outside /health, /research and /care must not be redesigned, rewritten, or behaviorally modified") so the root becomes the health front door and the whole site shares one header and footer?
-- **Why it matters:** This is the fix for "three websites under one domain" and for Stephen not knowing where to start. The protection manifest blocks it today: `/`, the coach routes, `App.tsx`, `pages/**`, `components/**`, `lib/**`, `server/routes.ts` and `server/services/**` are protected.
-- **Source truth:** `/` is the coach-AI waitlist ("The AI workspace for serious coaches"). Care and Research use separate shells. The protection gate enforces the July directive on every candidate.
-- **Stakeholder input:** Stephen found the site overwhelming. Your meeting action item was "revamp the website… simplify calls to action". The execution brief specifies a new header and homepage.
-- **RECOMMENDED DEFAULT:** **Amend the directive for this program.** Root becomes the health front door. Today's coach homepage moves to `/workspace`, all existing coach URLs keep working and leave the primary header, and one shared header and footer is used everywhere. Codex re-baselines the protection manifest through the canonical protected-change review, not by editing hashes.
-- **Tradeoffs:** Coach-software discovery moves off the homepage. Protected-file review work increases.
-- **Codex implements if approved:** the full `04_INFORMATION_ARCHITECTURE.md` plan.
+- **Question:** Do you amend your directive ("the main xenios website outside /health, /research and /care must not be redesigned, rewritten, or behaviorally modified") so the root becomes the health front door and the site shares one header and footer?
+- **Why it matters:**
+  - This is the fix for "three websites under one domain" and for Stephen not knowing where to start.
+  - 54 of the 61 target CTAs depend on it.
+  - The protection manifest blocks it today and hard-locks the bytes of `Home.tsx`, `Navbar.tsx` and `AccountAccessChooser.tsx`.
+- **Source truth:** `/` is the coach-AI waitlist. Care and Research use separate shells. The protection gate enforces the July directive on every candidate.
+- **Stakeholder input:** Stephen found the site overwhelming. Your meeting action item was to revamp the site and simplify the CTAs. The execution brief specifies a new header and homepage.
+- **RECOMMENDED DEFAULT — approve with this exact amendment text:**
+  > *I amend the July 29 core-site protection directive solely for the Xenios clarity program. Codex may modify the protected root homepage, shared header and footer, navigation, App routing, and related protected files only to implement the owner-approved clarity information architecture and copy. Every protected change must still pass the canonical protected-change review. This does not authorize unrelated redesign, deployment, commerce activation, or authority changes.*
+- **Tradeoffs:** Coach-software discovery moves off the homepage to `/workspace`; all old coach URLs keep working. Protected review work increases.
+- **Codex implements if approved:** the full `04_INFORMATION_ARCHITECTURE.md` plan (full mode).
 - **Codex must not without approval:** touch any protected file or route.
-- **If DEFERRED / declined:** build only the allowed-zone fallback (IA §Fallback). A unified `/health` front door, practice/partner/supplier pages under `/research/*`, and Care/Research claim cleanup can all happen, but the root and header stay as they are. The main confusion remains.
-- **Answer:** ______
+- **If DEFERRED or declined:** fallback mode only (IA §Fallback). The root confusion remains.
+- **Answer:** PENDING SAMUEL APPROVAL
 
-### B-2 (was D-03) — Hero line
+### B-2 — Hero line
 
 - **Question:** What one line tells a visitor what this is?
-- **Why it matters:** "Premium peptides, guided by licensed clinicians" fails a truth test today. "Premium" is unsupported, and Research orders are not clinician-reviewed.
-- **Source truth:** Two pathways exist: Care (clinician decides) and Research (research use, no clinical review). Neither the clinician nor the pharmacy provider is marked ready in `PROVIDER_READINESS.md`.
-- **Stakeholder input:** The System Labs reference uses a one-line category statement.
-- **RECOMMENDED DEFAULT:** H1 **"Clinician-guided Care and research-grade products."** Sub: **"Start a Care request, or order research products for your work. Two separate paths — you choose."** "Licensed clinician" is added only after C-004 is verified.
-- **Tradeoffs:** Less punchy; accurate.
-- **Codex must not without approval:** use "premium" or any outcome words.
-- **If DEFERRED:** H1 "Care and research products, clearly separated."
-- **Answer:** ______
+- **Why it matters:** "Premium peptides, guided by licensed clinicians" fails a truth test. "Clinician-guided Care" also depends on the licensed-clinician claim C-004, which is still under clinical review.
+- **Source truth:**
+  - Care: a clinician decides, after a secure handoff.
+  - Research: research use only, with no clinical review.
+  - `PROVIDER_READINESS.md` marks no clinician or pharmacy provider as ready.
+- **RECOMMENDED (revised):**
+  - H1 **"Care and research products, clearly separated."**
+  - Sub **"Start a Care request, or explore products for research use. Two different paths, with clear next steps."**
+  - Upgrade to "Clinician-guided Care…" only after clinical leadership verifies C-004 and you approve the change.
+- **Tradeoffs:** Less aspirational; nothing unverified.
+- **Codex must not without approval:** use "premium", "clinician-guided", "licensed" or any outcome words in the hero.
+- **If DEFERRED:** same as the recommendation.
+- **Answer:** PENDING SAMUEL APPROVAL
 
 ---
 
 ## C. PRODUCTS / PRICING
 
-### C-1 (was D-04) — Which products appear publicly?
+### C-1 — Which products appear publicly?
 
-- **Question:** Show individual products to signed-out visitors, and which ones?
-- **Why it matters:** Publishing a product publishes its copy.
-- **Source truth (unchanged at 3298f279):** 420 canonical products, all with **draft** copy. The 513-unit reconciliation has **0 direct-buy, 124 assisted-order, 242 Care-required and 147 unavailable** units. Supplier and COA responses are zero. The public storefront is unmounted and needs `RESEARCH_PUBLIC_STOREFRONT_ENABLED` plus approved publication records.
-- **Stakeholder input:** On 2026-08-17 you set "14 featured (Layer 1), full catalog by reference (Layer 2), request-pathway only (Layer 3)". You said "393 SKUs / 114 peptides" on the Compass call (unverified; not publishable).
-- **RECOMMENDED DEFAULT:** The public index shows three pathway tiles plus **your featured products (up to the 14 in your 2026-08-17 featured layer) that are assisted-order research products and whose copy you approve**. Care-only compounds are not listed individually; unavailable products are never listed. The site shows no product counts.
-- **Tradeoffs:** Smaller visible catalog; everything shown is defensible.
-- **Codex implements if approved:** card and page template reading publication records; the approved list becomes the publication records.
+- **Question:** Show individual products to signed-out visitors?
+- **Why it matters:** Publishing a product publishes its copy, format and price state.
+- **Source truth (at 3298f279):**
+  - 420 canonical products, all with **draft** copy.
+  - The 513-unit reconciliation has 0 direct-buy, 124 assisted-order, 242 Care-required and 147 unavailable units.
+  - Supplier and COA responses: zero.
+  - The public storefront is unmounted.
+- **Stakeholder input:** Your 2026-08-17 offer layers (14 featured / full catalog by reference / request-only). The "393 SKUs" figure is unverified.
+- **RECOMMENDED (revised):** **Pathway tiles only in the first implementation** (Care · Research products · For Practices).
+  - No individual products, product counts, unavailable products or individual Care products.
+  - Named assisted-order products (up to your 14 featured) come in a later content pass, after you approve the exact product, variant, copy and price state for each.
+  - The first release does **not** depend on a founder-provided product list.
+- **Codex implements if approved:** the tiles; the card and page template may be built but must render no product until publication records are approved.
 - **Codex must not without approval:** publish any product, turn on the storefront flag in production, or show counts.
-- **If DEFERRED:** pathway tiles plus "Sign in to see the full catalog". The template is built but empty.
-- **Answer:** ______ (list product + variant, or "tiles only for now")
+- **If DEFERRED:** same as the recommendation.
+- **Answer:** PENDING SAMUEL APPROVAL
 
-### C-2 (was D-05) — Public prices
+### C-2 — Public prices
 
 - **Question:** Do signed-out visitors see prices?
-- **Source truth:** The August price book was founder-approved as member prices (34 SKUs released 2026-08-19; member price equals retail). September retail prices are **pending_approval** candidates. Care prices depend on the clinician and pharmacy.
-- **RECOMMENDED DEFAULT:** Yes, **only for listed research products whose price you approved**. Otherwise show "Price confirmed in your quote". No Care product prices and no introductory discounts. Volume tiers (5+/10+) are not shown publicly.
-- **Tradeoffs:** Some cards show a quote state.
-- **Codex must not without approval:** show any unapproved or candidate price, or a "$0".
-- **If DEFERRED:** all cards show "Price confirmed in your quote".
-- **Answer:** ______
+- **Source truth:** August member prices were founder-approved (34 SKUs). September retail prices are pending-approval candidates. Care prices depend on the clinician and pharmacy.
+- **RECOMMENDED DEFAULT:**
+  - Show a price only for a product and variant with an explicitly founder-approved public price; otherwise "Price confirmed in your quote."
+  - No Care prices, no candidate or pending prices, no volume tiers, no introductory discounts, no "$0".
+  - Under C-1 tiles-only, no prices appear in the first release.
+- **Answer:** PENDING SAMUEL APPROVAL
 
 ---
 
 ## D. CARE / CLINICAL CLAIMS
 
-### D-1 (was D-06) — Care availability, cost and speed wording
+### D-1 — Care availability, cost and speed
 
-- **Question:** What may the site say about states served, consultation cost and response time?
-- **Source truth:** Live copy says "typically within one business day" (8 occurrences) and offers a "$30 per month" plan (3); state coverage is deferred until after the request. Neither timing nor price has operational evidence.
-- **Stakeholder input:** On the call: "right now it's no cost" for providers.
+- **Source truth:** "One business day" (×8) and "$30 per month" (×3) are live without evidence; state coverage is deferred until after the request.
 - **RECOMMENDED DEFAULT:**
   - "Care availability depends on your state; we confirm it after your request."
-  - "Submitting a Care request is free." (verified)
-  - No response-time promise.
-  - No consultation price.
-  - Remove the $30 plan.
-- **Codex must not without approval:** publish any timing, state list, consultation cost or plan price.
-- **If DEFERRED:** same as default.
-- **Answer:** ______
+  - "Submitting a Care request is free."
+  - No response-time promise, no consultation price, and the $30 plan removed.
+- **Answer:** PENDING SAMUEL APPROVAL
 
-### D-2 (was D-12) — Clinician, pharmacy, testing and shipping claims
+### D-2 — Clinician, pharmacy, testing and shipping claims
 
-- **Question:** May the site name clinicians, pharmacies, testing or shipping times?
-- **Source truth:** "state-licensed" compounding-pharmacy copy (6 occurrences), "72 hours" shipping (22), "Third-party testing" (1). `PROVIDER_READINESS.md` has no ready pharmacy or clinician. The vendor RFQ has zero responses.
-- **Stakeholder input:** You named three medical directors to Stephen and described seven new suppliers and multiple pharmacies. None of these facts are recorded in the repo.
+- **Source truth:** "state-licensed" pharmacy copy (×6), "72 hours" (×22) and "Third-party testing" (×1) are live. No provider is ready. Vendor RFQ responses: zero.
+- **Stakeholder input:** Directors, suppliers and pharmacies named verbally are not recorded in the repo.
 - **RECOMMENDED DEFAULT:**
-  - Remove all of these claims until operations or clinical leadership verifies each one in `CLAIM_LEDGER.csv`.
+  - Remove all of these claims until each is verified in `CLAIM_LEDGER.csv`.
   - The Quality page describes the lot-record process only.
-  - After verification, the allowed wording is: "A licensed clinician makes every medical decision in Care" and "Prescriptions, if any, are filled by a licensed pharmacy".
-- **Codex must not without approval:** name any person, pharmacy or lab; state any shipping time or testing claim.
-- **Answer:** ______
+  - No named people, pharmacies or labs.
+- **Answer:** PENDING SAMUEL APPROVAL
 
 ---
 
 ## E. PRACTICE MODEL
 
-### E-1 (was D-08) — Can a practice account order for clients?
+### E-1 — Can a practice account order for clients?
 
-- **Question:** Offer parent-account ordering (Tammy's proposal)?
-- **Source truth:** Not supported. Organizations can only re-request their own past orders, and the organization tables are unapplied.
-- **Stakeholder input:** Stephen raised the liability himself and prefers client-owned accounts. Seth suggested a client-signed sheet as a workaround.
-- **RECOMMENDED DEFAULT:** **No, not at launch.** Each client creates their own account and personally accepts the research-use terms. Revisit after counsel review (Q-02).
-- **Codex must not without approval:** build or describe any order-for-client capability.
-- **Answer:** ______
+- **RECOMMENDED DEFAULT:** **No, not at launch.**
+  - Each client creates their own account and accepts the research-use terms personally. This matches Stephen's own liability concern.
+  - Revisit after counsel review (Q-02).
+- **Answer:** PENDING SAMUEL APPROVAL
 
-### E-2 (was D-10) — What can a practice see about referred clients?
+### E-2 — What can a practice see?
 
-- **Question:** How much reporting detail does a practice get?
-- **Source truth:** The partner portal shows **counts only** ("a lead is a count, never a person"); commission entries and payouts are listed. There is no consent capture.
-- **Stakeholder input:** Stephen asked how he'd know who bought. You promised transparent weekly statements.
 - **RECOMMENDED DEFAULT:**
-  - The public page promises: referrals, credited orders and commission.
-  - Client names and order status appear only with the client's opt-in (a future build).
-  - Care information is never shared without the patient's written authorization.
-  - No statement cadence is published.
-- **Codex must not without approval:** show client identity, order contents or Care data to practices, or promise a cadence.
-- **Answer:** ______
+  - Referrals, credited orders and commission only.
+  - Client names and status only with a future client opt-in.
+  - No Care information without written patient authorization.
+  - No published statement cadence.
+- **Answer:** PENDING SAMUEL APPROVAL
 
 ---
 
 ## F. PARTNER / COMMISSION ECONOMICS
 
-### F-1 (was D-07, corrected) — Commission terms and public wording
+### F-1 — Commission terms and public wording
 
-- **Question:** Which schedule governs practice referrals, and what does the website say?
-- **Source truth (corrected in reconciliation):**
-  - Your **founder directive of 2026-08-17** (source folder `Downloads/XENIOS_AUTHORITATIVE_RECONCILIATION_SOURCES_2026-08-17`): 20% on the first eligible payment and 7.5% on eligible repeat payments in months 2–12; a separate qualified research-B2B tier of 8/10/12% (assignment criteria undefined); a 21-day hold; a $50 minimum; payouts every other Friday; no parent override; **clinical revenue is never commissionable**.
-  - `shared/research/affiliate-program/config.ts` matches the general terms.
-  - `server/research/affiliates/v2/draft-schedule.ts` (20/15, 30-day hold, $100 minimum) matches the **superseded** founding-cohort pack.
-  - Both are inactive.
-- **Stakeholder input:** Commission on all sales from referred clients, paid monthly (Seth), with weekly statements (you).
+- **Source truth:** Your founder directive of 2026-08-17 matches `affiliate-program/config.ts`:
+  - 20% on the first eligible Research payment;
+  - 7.5% on eligible repeat payments in months 2–12;
+  - 21-day hold, $50 minimum, payouts every other Friday;
+  - no parent override;
+  - clinical revenue never commissionable.
+
+  The 20/15 draft schedule is superseded.
 - **RECOMMENDED DEFAULT:**
-  - Practice referrals use the **general 20% / 7.5% schedule**, not the B2B tier.
-  - Retire the 20/15 draft in a separate engineering task.
-  - Public wording: **"Your practice earns commission on eligible research-product orders from clients you refer. Rates, holds and payout timing are in your partner agreement. Care services never earn commission."** No numbers on the site.
+  - Practices use the general 20% / 7.5% terms, **in agreements only**. Never publish numeric rates.
+  - Public wording: **"Your practice earns commission on eligible research-product orders from clients you refer. Rates, holds and payout timing are in your partner agreement. Care services never earn commission."**
   - Counsel confirms commissions to licensed referrers (Q-03) before agreements are signed.
-- **Codex must not without approval:** publish any rate, hold, minimum or cadence, or imply commission on Care.
-- **If DEFERRED:** same public wording, and the agreement terms stay open.
-- **Answer:** ______
+- **Answer:** PENDING SAMUEL APPROVAL
 
 ---
 
 ## G. CLIENT OWNERSHIP
 
-### G-1 (was D-09) — The client-ownership promise
+### G-1 — The client-relationship promise
 
-- **Question:** What exact promise do we make to a referring practice?
-- **Source truth:** No code enforces "ownership". Attribution is a signed cookie or typed code (dark). The client owns their Supabase account.
-- **Stakeholder input:** Stephen's main worry was losing clients. You answered "you guys always are keeping client".
-- **RECOMMENDED DEFAULT (public wording):** **"Your client stays your client. They own their Xenios account; your practice stays attached to it as the referring practice. We don't market competing coaching or practice services to clients you refer. If your client uses Care, our clinician makes the medical decisions and your client decides what to share with you."** The same promise goes into the partner agreement.
-- **Tradeoffs:** Limits future cross-selling to referred clients.
-- **Codex must not without approval:** publish any ownership promise.
-- **If DEFERRED:** "Clients create and own their own accounts; your practice is recorded as the referring practice."
-- **Answer:** ______
+- **RECOMMENDED — subject to counsel review:**
+  - Public wording: **"Your client stays your client. They own their Xenios account; your practice stays attached to it as the referring practice. We don't market competing coaching or practice services to clients you refer. If your client uses Care, the Care clinician makes the medical decisions and your client decides what to share with you."**
+  - The partner agreement must contain the same language before practices rely on it.
+- **If DEFERRED or counsel declines:** "Clients create and own their own accounts; your practice is recorded as the referring practice."
+- **Answer:** PENDING SAMUEL APPROVAL
 
 ---
 
 ## H. WHOLESALE / INVENTORY
 
-### H-1 (was D-11) — In-clinic inventory
+### H-1 — In-clinic inventory
 
-- **Question:** Offer wholesale or stock-on-hand to practices now?
-- **Source truth:** No authority exists. The price book has internal 5+/10+ tiers, and you approved volume discounts (up to 7% and 15%) on 2026-08-17.
-- **RECOMMENDED DEFAULT:** **Not offered.** `/practices` says only: "In-clinic inventory: under review — mention it in your inquiry."
-- **Codex must not without approval:** show wholesale pricing, ordering or any timeline.
-- **Answer:** ______
+- **RECOMMENDED DEFAULT:** **Not offered.** `/practices` may say only: "In-clinic inventory: under review — mention it in your inquiry." No pricing, ordering or timeline.
+- **Answer:** PENDING SAMUEL APPROVAL
 
 ---
 
 ## I. CAREERS / TEAM
 
-### I-1 (new; was helpful item H-01) — Careers page and applications
+### I-1 — Careers page
 
-- **Question:** Which roles are public, and should applying create a record?
-- **Source truth:** Three hard-coded roles (Founding Designer, Founding Senior AI Software Engineer, Founding Coach Cohort) with mailto-only applications. An admin recruiting-mail endpoint exists with a receipt kind. `/careers` is a protected route.
-- **Stakeholder input:** The brief asks for clinical, operations, technology, growth, partnerships, support, contractor and advisor paths. Seth was brought on as COO.
-- **RECOMMENDED DEFAULT:**
-  - Keep the three roles.
-  - Add "Don't see a fit? Apply" (general application).
-  - Applying creates a record, a receipt and a founder-queue item (Phase 2).
-  - Until then, show "Apply by email", clearly labelled.
-- **Codex must not without approval:** list roles you have not confirmed.
-- **Answer:** ______ (confirm roles; add/remove)
+- **Source truth:** Three hard-coded roles, with applications by email only. Recent operating discussions mention other hiring needs. `/careers` is protected.
+- **RECOMMENDED (revised):**
+  - Show **only roles you separately confirm are currently open**, plus a **general-interest application**.
+  - If no role is confirmed, show general interest only.
+  - Do not keep stale roles just because they are in source.
+  - Every apply control says truthfully whether it creates a record (Phase 2) or opens email.
+- **Answer:** PENDING SAMUEL APPROVAL (plus the list of confirmed open roles, if any)
 
 ---
 
 ## Not decisions (Claude may specify; no answer needed)
 
-Information architecture, page order, the CTA vocabulary, copy tone, product-card structure, error/loading/empty states, status wording, mobile/desktop rules, accessibility, analytics names, dead-end fixes, jargon removal, and the legal-string fix.
+Information architecture, page order, CTA vocabulary, copy tone, product-card structure, states, status wording, responsive and accessibility rules, analytics names, dead-end fixes, jargon removal, and the legal-string fix.

@@ -24,12 +24,12 @@ Copy lives in `05_COPY_DECK.md` (referenced as §n). Routes in `04_INFORMATION_A
 | --- | --- |
 | Audience | Everyone, first visit |
 | User question | "What is this, is it for me, and what do I click?" |
-| 5-second promise | Clinician-guided Care or research products — pick your path; practices and partners have their own door. |
+| 5-second promise | Care and research products, clearly separated — pick your path; practices and partners have their own door. |
 | Hero | §3 H1/sub (B-2) |
 | Primary CTA | Start Care → `/care/schedule` |
 | Secondary CTA | Explore Products → `/products` |
 | Content order | IA §Homepage content order (11 sections) |
-| Product/pricing | Up to 6 cards from the approved public set (C-1) with price or "Price confirmed in your quote" (C-2); if none approved, pathway tiles only |
+| Product/pricing | First release: pathway tiles only (C-1); no product cards, counts or prices. Later approved content pass may add cards per C-1/C-2 |
 | Trust evidence | Process-only quality line; Care/Research separation; legal entity; no counts, names, reviews, seals |
 | Authority boundary | No catalog authority change; product list from publication authority; Care CTA goes to existing request form |
 | Form behaviour | None on page |
@@ -73,7 +73,7 @@ Copy lives in `05_COPY_DECK.md` (referenced as §n). Routes in `04_INFORMATION_A
 | Primary CTA | Per card (Request Order / Start Care) |
 | Secondary CTA | Check Status (header helper) |
 | Content order | Hero → filter → pathway tiles (Care tile always present) → card grid → research-use note → "How ordering works" link |
-| Product/pricing | Card contract §5: name, variant, one-line approved description, one badge, price or price state, one CTA. Source: publication authority (storefront projection) — only products with an approved publication record (C-1). Price only if C-2 approves for that SKU. Never show Unavailable products in the grid. |
+| Product/pricing | **First release (C-1): pathway tiles + the empty-state copy only; the card grid renders nothing until publication records are approved.** Card contract for later passes §5: name, variant, one-line approved description, one badge, price or price state, one CTA. Source: publication authority (storefront projection) — only products with an approved publication record (C-1). Price only if C-2 approves for that SKU. Never show Unavailable products in the grid. |
 | Trust | Research-use note on every card; lot-record link where present |
 | Authority boundary | Server decides badge and action (existing `action.ts` semantics); client never infers "buyable"; no add-to-cart (commerce dark) |
 | Form | None |
@@ -221,7 +221,7 @@ Copy lives in `05_COPY_DECK.md` (referenced as §n). Routes in `04_INFORMATION_A
 | Promise | Our clinician decides; your coaching continues; you see only what your client shares. |
 | Hero / CTAs | "Care for your clients" / Start Care (for the client to use) · Submit Inquiry |
 | Content | Model C flow; who decides; who follows up; what's shared; no commission on Care |
-| Authority | Clinical authority solely with Eon clinician; wording pending Q-04 |
+| Authority | Clinical authority solely with Care clinician; wording pending Q-04 |
 | Acceptance | No sentence implying the practice approves treatment |
 
 ## P-11 Partners `/partners` (affiliates/referral partners) and `/partners/apply`
@@ -272,7 +272,7 @@ Copy lives in `05_COPY_DECK.md` (referenced as §n). Routes in `04_INFORMATION_A
 | User question | "What roles exist and how do I apply?" |
 | Promise | Real roles, a real way to apply, a real acknowledgement. |
 | Primary CTA | Apply |
-| Content | Roles grouped by function; each role: summary, location, type, Apply; "Don't see a fit?" general application |
+| Content | Only founder-confirmed open roles (I-1), grouped by function; each role: summary, location, type, Apply; a general-interest application always present; if no confirmed roles, general interest only; stale source roles removed |
 | Behaviour | H-01: Phase 2 durable application form (N-13); until then "Apply by email" with honest line |
 | Acceptance | Apply never a bare mailto without the "by email" label |
 

@@ -53,7 +53,7 @@ Six tiles, each with: who it's for · whether an account is needed · what happe
 
 | Tile | For | Account needed? | CTA → |
 | --- | --- | --- | --- |
-| I want Care | Adults in the U.S. seeking clinician-guided treatment | No — start with a request | **Start Care** → `/care/schedule` |
+| I want Care | Adults in the U.S. looking for medical care | No — start with a request | **Start Care** → `/care/schedule` |
 | I want research products | Researchers, labs, professionals ordering for research use | No — order with your email; sign in to see history | **Explore Products** → `/products` |
 | I run a practice | Clinics, providers, coaches, trainers, gyms, med spas, behavioral-health practices, retreats, corporate wellness | Not to learn; approved practices sign in | **For Practices** → `/practices` |
 | I want to refer people | Affiliates, creators, individual referrers | After approval | **Become a Partner** → `/partners` |
@@ -66,7 +66,7 @@ Careers is in the header and footer, not the selector.
 
 1. Hero — H1 (B-2), subhead, **Start Care** + **Explore Products**; a single line under the buttons: "Already a customer? **Sign In** · Have an order? **Check Status**".
 2. Audience selector (above).
-3. Products and pathways — three pathway tiles (Care · Research products · For Practices), then up to 6 product cards from the approved public set (C-1) with price or price state (C-2), then **Explore Products**.
+3. Products and pathways — three pathway tiles (Care · Research products · For Practices), then **Explore Products**. First release: **tiles only** (C-1); product cards appear only in a later approved content pass.
 4. How Care works — 3 steps (request → human review → secure clinical visit), boundary line, **Start Care**.
 5. How research orders work — 4 steps (request order → we confirm and send payment details → we verify payment by hand → we ship and email tracking), research-use line, **Explore Products**.
 6. For Practices — 3 models in one row (Refer clients · Practice workspace · Care for your clients) + "Your client stays your client" (G-1), **For Practices**.

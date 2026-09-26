@@ -8,9 +8,9 @@ The only internal mention of System Labs is Samuel's remark on the 2026-09-25 Co
 
 ## What they do well (patterns — adapt)
 
-| Dimension | Observed pattern | Why it works | Xenios/Eon adaptation |
+| Dimension | Observed pattern | Why it works | Xenios adaptation |
 | --- | --- | --- | --- |
-| Category statement | One short line naming *what* (the product class) and *who guides it* (clinicians). | Visitor knows the offer in one read. | Write our own line; it may only name what is true for Eon today (see `CLAIM_LEDGER.csv` C-001, B-2). |
+| Category statement | One short line naming *what* (the product class) and *who guides it* (clinicians). | Visitor knows the offer in one read. | Write our own line; it may only name what is true for Xenios's Care and Research pathways today (see `CLAIM_LEDGER.csv` C-001, B-2). |
 | Header | 3–4 nav items (Treatments, FAQs, Contact), **Login** always visible, one primary CTA repeated. | Returning users never hunt; new users have one obvious action. | Header keeps **Sign In** persistent at every width and one primary CTA (**Start Care**). |
 | Hero | Headline + one primary CTA + a small live-availability note. | No competing choices above the fold. | One primary (**Start Care**), one secondary (**Explore Products**); the audience selector sits *below* the hero, not inside it. |
 | Product presentation | Grid of ~6 treatment cards: image, name, 2–4-word purpose, price (regular and first-month), one CTA per card. | Price visible before commitment; one action per card. | Product card contract in `PAGE_SPECIFICATIONS.md` §P-03: exact product + variant, plain purpose, **price or honest price state**, pathway badge, one CTA. No introductory-discount mechanics unless Samuel approves a real offer. |
@@ -27,7 +27,7 @@ The only internal mention of System Labs is Samuel's remark on the 2026-09-25 Co
 - Reviews, testimonials, star ratings, press logos, patient counts, funding figures.
 - Clinician names/credentials, pharmacy statements, testing parameter lists, LegitScript-style seals.
 - Pricing mechanics ("first month" discounts), shipping promises ("two-day", "temperature-controlled"), "no insurance needed", state coverage.
-- Outcome language (energy, recovery, metabolism, healthy aging) — Eon has no clinical review of such claims.
+- Outcome language (energy, recovery, metabolism, healthy aging) — Xenios has no clinical review of such claims.
 
 ## Where Xenios is structurally different (do not force-fit)
 
@@ -38,15 +38,15 @@ The only internal mention of System Labs is Samuel's remark on the 2026-09-25 Co
 
 ## Proposed category statement — evaluation
 
-The phrase "Premium peptides, guided by licensed clinicians" was proposed as a *concept*. Word-by-word test against Eon today:
+The phrase "Premium peptides, guided by licensed clinicians" was proposed as a *concept*. Word-by-word test against Xenios today:
 
-| Word | True for Eon today? | Evidence / gap |
+| Word | True for Xenios today? | Evidence / gap |
 | --- | --- | --- |
 | "Premium" | Unsupported superlative. | No comparative quality evidence; zero vendor COA responses recorded (`docs/production-completion/catalog/README.md`). |
 | "peptides" | Partly. | 242 Care-pathway clinical formulations + 135 research peptide materials exist in catalog data; none have approved public copy. Also invites Care/Research conflation. |
 | "guided by licensed clinicians" | Only for the Care pathway, and only after secure handoff. | `PROVIDER_READINESS.md` shows no clinician/pharmacy provider marked ready; meeting names three directors (unverified; C-006). Research orders are explicitly **not** clinician-guided. |
 
-Verdict: **do not use as written.** Recommended default (B-2): a pathway-honest line such as *"Clinician-guided Care and research-grade products — clearly separated."* Final wording is a founder decision after clinical/counsel review of "clinician-guided".
+Verdict: **do not use as written.** Recommended (B-2, revised 2026-09-26): the neutral line *"Care and research products, clearly separated."*; "Clinician-guided" only after C-004 is verified. Final wording is a founder decision after clinical/counsel review of "clinician-guided".
 
 
 ## Written audit findings (System Labs audit PDF, 2026-07-24) and what they change for Xenios

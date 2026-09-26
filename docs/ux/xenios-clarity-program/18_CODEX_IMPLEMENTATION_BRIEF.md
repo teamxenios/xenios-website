@@ -6,7 +6,7 @@ Supersedes `12_IMPLEMENTATION_PLAN.md` wherever they differ.
 
 | # | Condition | How to verify |
 | --- | --- | --- |
-| 1 | Samuel has answered `17_OWNER_DECISION_PACKET.md` (per item or "accept all RECOMMENDED DEFAULTS") and the answers are committed on the strategy branch | Answer fields filled, with initials and date |
+| 1 | Samuel stated "APPROVE THE REVIEWED XENIOS CLARITY DECISION SET" (plus any named revisions) and CLAUDE_06 recorded it in `17` and produced `19_FINAL_OWNER_APPROVAL_RECORD.md` + `20_CODEX_READY_HANDOFF.md` | Answer fields no longer PENDING; initials SB with date |
 | 2 | Codex's `RELEASE_DISPOSITION_ADDENDUM.md` (CODEX_00) confirms the implementation base | See §1 |
 | 3 | Strategy content SHA is fixed | The strategy-branch commit that contains Samuel's answers; record it in the implementation report as "STRATEGY SHA" |
 | 4 | Leases in §5 resolved | U-114 |
@@ -16,9 +16,9 @@ Do not implement in the audit branch, the strategy branch, the checkout-security
 
 ## 1. Base
 
-- **Expected base:** `3298f279ad760a861e26e3e08514bb49694fae38`, tree `ac69ecf87e3c622738908bb4fa7a1779aad493fb` (frozen audit candidate).
+- **Base (confirmed by the Codex release-disposition addendum at `0b351a124880bbeb690108d2ded540282c39546e`):** `3298f279ad760a861e26e3e08514bb49694fae38`, tree `ac69ecf87e3c622738908bb4fa7a1779aad493fb`. If that bounded release is deployed first, the Git base stays `3298f279` unless source diverges.
 - Evidence/handoff tip `bad1c4124ef3a199eec01802438073cdf73b2b83` is docs and records only; zero client/server/shared/supabase/config changes after `3298f279`, verified by this lane.
-- If the CODEX_00 addendum names a different base, use that and diff the §4 files first.
+- If a later disposition names a different base, use that and diff the §4 files first.
 - Application source at `3298f279` is byte-identical to `c4ea8a9`, the source this strategy analysed.
 
 ## 2. Mode is set by owner decision B-1
@@ -49,9 +49,9 @@ Each step lands as one or more coherent runtime commits with focused tests. Copy
 | 6 | Practice pages: `/practices` + 3 sub-pages (full) or `/research/practices/*` (fallback) | full: protected (`App.tsx`); fallback: allowed | E-1, E-2, F-1, G-1, H-1 (use DEFERRED text where unanswered) |
 | 7 | Partners (closed state + interest inquiry; Apply only if opened), suppliers | same split | F-1 |
 | 8 | Sign-in / activation / status / support / quality / FAQ / how-it-works pages | same split | none |
-| 9 | Products index + product page template (reads storefront publication records; empty-state if none) | same split | C-1, C-2 |
+| 9 | Products: **pathway tiles only** in the first release (C-1); the index shows tiles + empty-state copy; the product template may be built but renders no product until approved publication records exist. **No dependency on a founder product list.** No prices (C-2) | same split | C-1, C-2 |
 | 10 | Home + shared header/footer + audience selector; coach home → `/workspace`; redirects | **full mode only** | A-1, B-1, B-2 |
-| 11 | Careers "Apply" | **full mode only** (protected) | I-1 |
+| 11 | Careers: only founder-confirmed open roles + a general-interest application; stale roles removed; if none confirmed, general interest only; apply control says truthfully whether it emails or records | **full mode only** (protected) | I-1 |
 | 12 | Durable inquiries + founder lane (Phase 2) | allowed (`server/research/`, admin research lane) | Q-14 owner default = founder |
 
 Stop after step 11 and report if step 12 needs a schema change (see §6).
@@ -91,7 +91,8 @@ Resolve stale leases through the fleet tool with a recorded note. Never delete a
   - Reuse the existing `loi_submissions` store exactly as Care requests do: `insertLoi` / `updateLoiStatus` / `listLoi` in `server/supabase-store.ts`. Call them; do not edit them — the file is protected.
   - Tag each row with a classifier (pattern: `server/care/manual-access-classifier.ts`).
   - Derive the reference from the row id (pattern: `CARE-XXXXXXXX` → `INQ-XXXXXXXX`).
-  - Default owner = founder; due dates are tracked in the command-center lane.
+  - Persist through the existing store: classifier/type, reference, state (existing `status` column), contact payload and content hash.
+  - Operational owner defaults to the founder in the command-center layer. Due date is tracked in the queue/operating layer **only if current fields support it**.
   - The courtesy email goes through the existing outbox or email path. No second email system.
 - **STOP** and ask Samuel if owner or due-date fields require new columns. That is a migration needing its own approval.
 - **Flags** stay exactly as in production: `commerceEnabled=false`, EA cart off, `RESEARCH_PUBLIC_STOREFRONT_ENABLED` off, Referral V1 off, affiliate program off, portal flags off. Enabling any of them is a separate production decision.

@@ -18,6 +18,8 @@ These do **not** block the clarity implementation if the defaults in `02_DECISIO
 | Q-12 | Which pharmacy(ies) and suppliers are contracted and verified today (after replacing the primary supplier)? COA availability per lot? | Operations | C-005, C-008, C-009, quality copy | Process-only quality copy |
 | Q-13 | There is no customer-facing status lookup for a Care request reference (`CARE-XXXXXXXX`). Should one exist, or is email follow-up the status channel? | Founder + Care ops | "Check Status" for Care | "Check Status" explains Care status arrives by email/phone from our team; offers Care support form |
 | Q-14 | Who owns business inquiries operationally (practice, partner, supplier), and what is the first-contact expectation we can truthfully state? | Founder / COO (Seth) | Operator queue owner field; confirmation copy | Owner = founder queue; no timing promise |
-| Q-15 | Decisions recorded only in the 2026-09-26 thread archive (Gmail attachment, not readable by this lane). | Samuel | Possible conflicts with this spec | Samuel confirms or overrides in `02_DECISIONS.md` review |
 | Q-16 | Delayed-order remedies (lifetime 50% discount, $500 credit mentioned to Compass): how are they recorded and applied to specific customers? | Operations | Nothing public (never public copy) | Handled manually per customer |
 | Q-17 | Should `/research/member/metabolic-care` (member-only) remain the "Explore Care" target from product pages, or should all Care entry go through `/care`? | Founder | Care CTA target | `/care` (public) |
+
+
+Q-15 (decisions recorded only in the 2026-09-26 thread archive) was **removed on 2026-09-26**: the archive was reviewed firsthand in Samuel's full document review (S28) and its relevant founder context is incorporated in `19_REVIEWED_DECISION_RECOMMENDATION.md`. This lane could not download the Gmail attachment itself; saving the file to Downloads would allow a direct check.

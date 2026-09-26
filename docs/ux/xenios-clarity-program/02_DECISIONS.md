@@ -28,7 +28,7 @@ Total: 13 decisions.
 | --- | --- | --- | --- | --- |
 | Legal/contracting entity | Xenios Technologies, Inc. (Privacy, Terms, footer, SEO); Gateway footer "Xenios Technology" (error) | unchanged | Correct the Gateway string everywhere | Any entity change or DBA |
 | Umbrella / technology | "xenios" coach workspace at `/` | **Infinity** | Move the workspace to `/workspace` (only if B-1 is approved) without Infinity text | Public use of "Infinity"; domain |
-| Clinical / customer health | "Xenios Care", "Xenios Health", "Care + Research" | **Eon Health** (working favorite); "Infinity Health" said to Stephen | Pathways named "Care" and "Research products" under "Xenios" | Choosing Eon vs Infinity Health; trademark; DBA vs separate entity; Care provider-of-record entity (Q-04) |
+| Clinical / customer health | "Xenios Care", "Xenios Health", "Care + Research" | **Eon Health** (founder's working favorite, confirmed in the 2026-09-26 thread per S28; internal/future only); "Infinity Health" said to Stephen 2026-09-25 | Pathways named "Care" and "Research products" under "Xenios" | Choosing Eon vs Infinity Health; trademark; DBA vs separate entity; Care provider-of-record entity (Q-04) |
 | Domain / email | xeniostechnology.com; team@, research@ | — | Keep | Any change |
 | Policies | Xenios Technologies, Inc. | — | Keep | Re-papering under a new brand |
 

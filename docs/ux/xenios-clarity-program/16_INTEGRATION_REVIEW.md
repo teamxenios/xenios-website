@@ -25,7 +25,7 @@ Reviewed 2026-09-26 by `claude-clarity-spec-20260926`. Docs-only; no runtime sou
 - **Re-verification at `3298f279`:** claim-string occurrence counts; catalog/provider authority files unchanged since `049dfd9`; `supabase-store` LOI API; active leases.
 - **Scenario ledgers** (`SCENARIO_RESULTS.csv`, `CONTINUATION_SCENARIOS.csv`) were used only through their summaries in the packet and continuation results; row-level contents were not re-audited. That is the CODEX_00 lane's job.
 
-**Still missing:** `Xenios_Current_Thread_Archive_2026-09-26(1).md`. It was re-searched in Downloads (including subfolders) after CLAUDE_03 arrived and is not on disk; it exists only as a Gmail attachment. Any decision recorded only there is unknown to this package (Q-15). The written System Labs findings **were** found (PDF) and are integrated.
+**Thread archive (updated 2026-09-26, CLAUDE_05):** `Xenios_Current_Thread_Archive_2026-09-26(1).md` is available to Samuel and was reviewed in `XENIOS_FULL_DOCUMENT_REVIEW_2026-09-26.md` (S28); its founder context is incorporated via that review. This lane cannot download the Gmail attachment and has not read it directly. The written System Labs findings **were** found (PDF) and are integrated.
 
 ## 2. Verification of the original major findings against `3298f279`
 
@@ -75,7 +75,7 @@ Reviewed 2026-09-26 by `claude-clarity-spec-20260926`. Docs-only; no runtime sou
 8. **Two decision records** (`02` full text vs a new packet). `02` is now an index; `17` is the sole answer record.
 9. **Two implementation plans** (`12` vs `18`). `12` is marked superseded.
 10. **Mixed decision IDs** (D-xx vs packet IDs). 441 references rewritten to packet IDs; the map is kept in `02`.
-11. **"Up to 12 products" vs the founder's 14-featured layer.** C-1 now uses the featured layer.
+11. **"Up to 12 products" vs the founder's 14-featured layer.** C-1 first used the featured layer; superseded by CLAUDE_05 (tiles only in the first release; named products in a later pass).
 
 ## 5. Practice models re-verified (Stephen/Compass principal case)
 
@@ -124,3 +124,26 @@ Detail: `09_PRACTICE_MODEL.md` §Capability classification. Stephen's 15 questio
 ## 8. Coordination with the parallel Codex lane
 
 CODEX_00 (release disposition for `3298f279`) runs in parallel. This package does not depend on its outcome except for the base line in `18` §1. Deploying `3298f279` does not conflict with the redesign: the redesign branches from the same application bytes. If `3298f279` is deployed first, the "production" column in `01` changes, and the fallback/full-mode analysis does not.
+
+## 9. CLAUDE_05 finalization pass (2026-09-26)
+
+Inputs:
+- `XENIOS_FULL_DOCUMENT_REVIEW_2026-09-26.md` (S28), including the thread-archive content it reviewed firsthand
+- disposition addendum @ `0b351a1` (S29)
+
+The ten corrections were applied as follows:
+
+| # | Correction | Where |
+| --- | --- | --- |
+| 1 | Archive no longer marked missing; recorded as available and reviewed via S28; this lane has not read it directly (Gmail attachment not downloadable) | `00` S28 + missing table, `16` §1, `03` |
+| 2 | Q-15 removed (with note) | `03` |
+| 3 | "Eon clinician" / "Eon's clinician" → "Care clinician" (4 files) | `09`, `PAGE_SPECIFICATIONS`, `STEPHEN_COMPASS_CASE_STUDY`, `SYSTEM_LABS_REFERENCE_ANALYSIS` |
+| 4 | N-09 storage reconciled with the no-migration `loi_submissions` path; owner = founder in the command-center layer; due date only if current fields support it; STOP otherwise | `10` N-09, `18` §6 |
+| 5 | Neutral hero recommended; public "clinician-guided" strings neutralized; clinician-statement rule added | `17` B-2, `05` §2/§3/§11, `04`, `PAGE_SPECIFICATIONS` P-01, `SYSTEM_LABS…`, `CLAIM_LEDGER` C-002 |
+| 6 | Tiles-only first-release product scope | `17` C-1, `04`, `05`, `PAGE_SPECIFICATIONS` P-01/P-03, `18` step 9, `11` (U-025; card tests marked later pass) |
+| 7 | No dependency on a founder product list for the first release | `17` C-1, `18` step 9 |
+| 8 | Careers = confirmed open roles + general interest | `17` I-1, `05` §11, `PAGE_SPECIFICATIONS` P-14, `18` step 11, `11` U-116 |
+| 9 | Eon/Infinity internal or future only | `02` brand table, `17` A-1, `11` U-115; grep shows no public-spec use |
+| 10 | Contradiction recheck | see below |
+
+Recheck (grep across all `.md` and `.csv`): no old decision IDs, no "up to 12/6 product cards", no "keep the three roles", no public "clinician-guided" copy, no public "Eon clinician". The approval route is consistent in `17`, `18`, `19`, `20` and `EXECUTIVE_SUMMARY`. **0 contradictions remaining.** Owner answers remain PENDING SAMUEL APPROVAL.

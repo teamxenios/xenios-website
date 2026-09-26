@@ -10,7 +10,7 @@ Each capability is labelled: **NOW** (implemented and mounted) · **BUILT-DARK**
 | --- | --- | --- | --- | --- | --- |
 | A — Referral | "Share your link. Your clients create their own accounts. You're credited for what they order." | Practice (coaching); client owns the account | The client, for themselves | None for Research; Care is separate | Page NOW-able; attribution BUILT-DARK |
 | B — Practice workspace | "Sign in to see your referrals, orders and commission in one place." | unchanged | Nobody orders on anyone's behalf (E-1) | None | API BUILT-DARK (tables unapplied); pages NEAR |
-| C — Care for your clients | "When a client needs a clinician, send them to Care. Our clinician decides; your coaching continues." | Practice keeps coaching; Eon clinician owns medical decisions | Clinician prescribes if appropriate | Eon clinician only (never the practice by default) | Care request NOW; practice attribution into Care DECISION (Q-03/Q-04) |
+| C — Care for your clients | "When a client needs a clinician, send them to Care. Our clinician decides; your coaching continues." | Practice keeps coaching; Care clinician owns medical decisions | Clinician prescribes if appropriate | Care clinician only (never the practice by default) | Care request NOW; practice attribution into Care DECISION (Q-03/Q-04) |
 | D — In-clinic inventory | "Under review. Ask us." | — | — | Licensing/pharmacy review | DECISION (H-1: not offered) |
 | E — Programs & services | "Coming later: coaching, labs, retreats and more." | — | — | Depends on service | LATER (H-02) |
 
@@ -89,7 +89,7 @@ Each capability is labelled: **NOW** (implemented and mounted) · **BUILT-DARK**
 3. Human review → secure clinical handoff → licensed clinician decides independently (treat / don't treat / needs more information).
 4. Follow-up: the clinician owns medical follow-up for anything they prescribe. The practice continues coaching. The patient decides what to share with the practice.
 
-**Must say publicly (after G-1/Q-04):** the practice does not become responsible for Eon's clinical decisions; Eon's clinician does not take over the practice's coaching relationship; nothing is prescribed automatically.
+**Must say publicly (after G-1/Q-04):** the practice does not become responsible for the Care clinician's decisions; the Care clinician does not take over the practice's coaching relationship; nothing is prescribed automatically.
 
 **Must not say:** that the practice can "approve" treatment for its clients; that referral guarantees treatment; any turnaround time.
 

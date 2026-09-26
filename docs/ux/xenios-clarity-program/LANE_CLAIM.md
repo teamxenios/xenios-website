@@ -4,9 +4,9 @@ Any session (Claude, Codex, human) that opens the six clarity-program prompts mu
 
 | Step | Owner | Branch | State |
 | --- | --- | --- | --- |
-| 1. Discovery, strategy, IA, copy, practice model, spec (`CLAUDE_01`) | `claude-clarity-spec-20260926` (Claude Code) | `claude/xenios-clarity-spec-20260926` | COMPLETE + RECONCILED to `3298f279` (CLAUDE_03, 2026-09-26) — awaiting Samuel |
-| 2. Samuel answers `17_OWNER_DECISION_PACKET.md` | Samuel | — | NOT STARTED |
-| 3. Implementation (`CODEX_03`, per `18_CODEX_IMPLEMENTATION_BRIEF.md`) | Codex | `codex/xenios-clarity-implementation-20260926` | BLOCKED on steps 1–2 |
+| 1. Discovery, strategy, IA, copy, practice model, spec (`CLAUDE_01`) | `claude-clarity-spec-20260926` (Claude Code) | `claude/xenios-clarity-spec-20260926` | COMPLETE + RECONCILED to `3298f279` + FINALIZED (CLAUDE_05, 2026-09-26) — awaiting Samuel's one-line approval |
+| 2. Samuel states "APPROVE THE REVIEWED XENIOS CLARITY DECISION SET"; CLAUDE_06 records it | Samuel + Claude | this branch | NOT STARTED |
+| 3. Implementation (`CODEX_06`, per `18` and the CLAUDE_06 ready handoff) | Codex | `codex/xenios-clarity-implementation-20260926` | BLOCKED on steps 1–2 |
 | 4. Independent review (`CLAUDE_04`) | Claude | `claude/xenios-clarity-review-20260926` | BLOCKED on step 3 |
 | 5. Fix + release closeout (`CODEX_02`) | Codex | `codex/xenios-clarity-fix-20260926` | BLOCKED on step 4 |
 

@@ -11,13 +11,13 @@ U-001,J-01 consumer,/,390,30-second comprehension,Fresh session; tester has 30s;
 U-002,J-01,/,390,Hero first viewport,Load at 390x844,H1; sub; Start Care; Explore Products visible without scroll,exact-build browser,P-01
 U-003,All,/,390/768/1440,Audience selector,Click each of 6 tiles,Each goes to its documented destination; no tile submits anything,exact-build browser,P-01
 U-004,J-04,/,1440,No coach content on root,Scan root above footer,No coach-workspace hero/modules/agent names,exact-build browser,P-01
-U-005,All,/,1440,Product section fallback,Block product API,Pathway tiles render; no error text; page otherwise intact,browser fixture,P-01
+U-005,All,/,1440,[LATER CONTENT PASS - not first release per C-1] Product section fallback,Block product API,Pathway tiles render; no error text; page otherwise intact,browser fixture,P-01
 U-006,All,/workspace,1440,Workspace preserved,Load /workspace and old coach URLs,Former homepage content renders; Join Waitlist works; old URLs resolve,exact-build browser,—
-U-020,J-02,/products,390/1440,Card contract,Inspect every card,Exactly one badge; one CTA matching badge; variant shown; price or 'Price confirmed in your quote'; never $0,browser fixture with fixture publication set,P-03
-U-021,J-02,/products/:slug,1440,Research product page,Open an approved research product,Research-use note present; Request Order prefills order request with product+variant,browser fixture,P-04
-U-022,J-02,/products/:slug,1440,Care-only product,Open a Care-only product by URL,Start Care only; no price; no Request Order,browser fixture,P-04
-U-023,J-02,/products/:slug,1440,Unavailable/unknown slug,Open unavailable and nonexistent slugs,Unavailable copy / not-found copy + Explore Products; no dead end,browser fixture,P-04
-U-024,J-02,/products,1440,Empty publication set,Zero approved products,Empty-state copy with Start Care and Sign In,browser fixture,P-03
+U-020,J-02,/products,390/1440,[LATER CONTENT PASS - not first release per C-1] Card contract,Inspect every card,Exactly one badge; one CTA matching badge; variant shown; price or 'Price confirmed in your quote'; never $0,browser fixture with fixture publication set,P-03
+U-021,J-02,/products/:slug,1440,[LATER CONTENT PASS - not first release per C-1] Research product page,Open an approved research product,Research-use note present; Request Order prefills order request with product+variant,browser fixture,P-04
+U-022,J-02,/products/:slug,1440,[LATER CONTENT PASS - not first release per C-1] Care-only product,Open a Care-only product by URL,Start Care only; no price; no Request Order,browser fixture,P-04
+U-023,J-02,/products/:slug,1440,[LATER CONTENT PASS - not first release per C-1] Unavailable/unknown slug,Open unavailable and nonexistent slugs,Unavailable copy / not-found copy + Explore Products; no dead end,browser fixture,P-04
+U-024,J-02,/products,1440,[LATER CONTENT PASS - not first release per C-1] Empty publication set,Zero approved products,Empty-state copy with Start Care and Sign In,browser fixture,P-03
 U-030,J-01,/care/schedule,390,Care request accepted,Submit valid request (fixture),Confirmation with CARE ref; contact method echoed; not-intake line; email line reflects actual email result,SQL/local rehearsal + browser fixture,P-05
 U-031,J-01,/care/schedule,390,Care closed,Readiness returns closed,Closed line + Contact Support + Retry; form not shown as open,browser fixture,P-05
 U-032,J-01,/care/schedule,390,Server rejection,Endpoint returns error,'Nothing was saved'; form preserved,browser fixture,P-05
@@ -78,3 +78,6 @@ U-G09,All,every public route,1280 at 200% and 400% zoom,Desktop zoom / reflow,Re
 U-112,Engineering,repo,n/a,Core-site protection gate - B-1 approved,Run verify-core-site-protection with re-baselined manifest,Gate passes only via canonical protected-change review record naming B-1 approval; no hand-edited hashes,release suite + protected review record,IA
 U-113,Engineering,repo,n/a,Core-site protection gate - fallback,"If B-1 declined/deferred, run gate against unchanged manifest",Zero protected-path changes; all edits inside allowed zones,release suite,IA §Fallback
 U-114,Engineering,.xenios,n/a,Lease resolution,Run xenios-os stale; record release/takeover of the four stale leases before editing their paths,No active conflicting lease on any implemented path,fleet records,18 §Leases
+U-025,J-02,"/, /products, all public routes",390/1440,Tiles-only first release (C-1/C-2),Scan public pages,"Pathway tiles present; zero individual product cards, product counts or prices; empty-state copy on /products",exact-build browser + unit test,"P-01, P-03"
+U-115,All,all public routes,1440,No Eon/Infinity public strings (A-1),Grep rendered text and client bundle strings,"Zero occurrences of Eon, Eon Health, Infinity, Infinity Health in public UI",exact-build browser + unit test,G
+U-116,J-11,/careers,390/1440,Careers truthfulness (I-1),Load careers; click each Apply,Only confirmed roles + general interest; each Apply states whether it emails or records,exact-build browser,P-14

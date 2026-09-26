@@ -35,22 +35,23 @@ The coach AI workspace moves to its own section (`/workspace`) until the Infinit
 
 ## What Samuel needs to decide
 
-There are 13 decisions, each with a recommended default (`17_OWNER_DECISION_PACKET.md`). The most important new one is B-1: whether to lift your July 29 "don't touch the main site" rule for this redesign. The first 12 decisions below were in the original package; careers (I-1) is the 13th:
+There are 13 decisions. The reviewed recommendations are in `19_REVIEWED_DECISION_RECOMMENDATION.md`, and answers are recorded in `17_OWNER_DECISION_PACKET.md`, where every answer is currently **PENDING SAMUEL APPROVAL**. In short:
 
-1. Brand now (recommended: keep "Xenios" until Eon/Infinity is legally ready).
-2. Health front door at the root.
-3. Hero line.
-4. Which products are public.
-5. Public prices.
-6. Care availability, cost and speed wording.
-7. Commission wording.
-8. No practice ordering for clients at launch.
-9. The client-ownership promise.
-10. What practices can see.
-11. No wholesale for now.
-12. No named clinicians or pharmacies until verified.
+1. **Brand:** Xenios stays public for now. Eon Health is recorded internally as the future clinical brand under Infinity.
+2. **Homepage (B-1):** amend your July 29 protection rule for this program only. This is the key decision.
+3. **Hero:** "Care and research products, clearly separated."
+4. **Products:** pathway tiles only in the first release.
+5. **Prices:** only prices you approve per product; otherwise "Price confirmed in your quote".
+6. **Care:** no timing, consult-price or $30-plan claims; "availability confirmed after your request".
+7. **Claims:** no clinician, pharmacy, testing or shipping claims until verified.
+8. **Practices:** practices don't order for clients.
+9. **Practice visibility:** counts, credited orders and commission only.
+10. **Commission:** agreement-only 20% / 7.5%, never on Care, no numbers on the site.
+11. **Client relationship:** "Your client stays your client", subject to counsel.
+12. **Wholesale:** not offered.
+13. **Careers:** confirmed open roles plus general interest.
 
-Reply "Accept all RECOMMENDED DEFAULTS" to take all 13 at once.
+To approve the whole set, say exactly: **"APPROVE THE REVIEWED XENIOS CLARITY DECISION SET"**. You can name revisions alongside it.
 
 ## How it gets built
 
@@ -58,7 +59,7 @@ Codex implements in the order set by `18_CODEX_IMPLEMENTATION_BRIEF.md` (full mo
 
 1. **The front door.** New homepage, one header and footer, audience selector, practice/partner/supplier pages, plain-language copy, claim cleanup, and fixed dead ends.
 2. **Durable inquiries.** Every business inquiry and job application gets a reference and lands in the founder queue.
-3. **Public products and prices,** once Samuel approves which ones.
+3. **Public products and prices** in a later content pass, once Samuel approves specific products, copy and prices. The first release uses pathway tiles only.
 4. **Practice program activation.** Referral links, commissions and the practice workspace. This needs counsel answers first and is separate from this release.
 
 Nothing is deployed without Samuel's exact-SHA production approval.
