@@ -281,16 +281,15 @@
   "observedHead": "14c2c2ca27156652106b96ee72744e34737fa452",
   "lastDocumentedProductionRelease": {
     "classification": "CURRENT_LIVE_PRODUCTION",
-    "sha": "c545a70eb694d990842ad1259df4f0786dab92c9",
-    "tree": "76bb6ff7ee2639d6745e846f05ea7a0cbcc8568a",
+    "sha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "tree": "ca9d77ce95bede22b40315fa4cbcdee91de2312c",
     "status": "live",
     "branch": "release/early-access-code-session-checkout",
-    "deployId": "dep-dag8l567bikc738a1nj0",
-    "liveSince": "2026-09-08T22:23:06Z",
-    "observedAt": "2026-09-14T15:47:19.402Z",
+    "deployId": "dep-daqft3vf3r2c73b7e88g",
+    "liveSince": "2026-09-24T10:43:29.274153Z",
+    "observedAt": "2026-09-26T19:12:49Z",
     "autoDeploy": "off",
-    "scope": "Guarded partner QR sharing tools, on top of the account/partner UI and the installed, disabled Resource Hub.",
-    "note": "Identity from the founder's authenticated Render audit of 2026-09-14, corroborated read-only: both origins answered /api/health 200 at 2026-09-14T15:47:19.402Z with uptimeSeconds 494653, placing process start at 2026-09-08T22:23:06Z, 160 s after c545a70 was authored. commerceEnabled=false. No migration differs from 3814c68. Not verified by a credentialed Render read in that session."
+    "note": "Read-only Render deploy/service observations plus dual-origin health200, commerce disabled. Audit evidence/closeout-*-20260926.json. No authenticated production smoke or production mutation."
   },
   "nextRelease": {
     "name": "XENIOS_RESEARCH_FULL_SITE_RC_2026-08-29",
@@ -599,23 +598,16 @@
     "deployed": false,
     "deployHistory": "eb659d81 deployed 2026-08-29T02:37:19Z (dep-da94b91srm7s73b55dsg), rolled back 02:47:15Z to 3daa3f4a (dep-da94g05g1s2s7396lkv0); eb659d81 remains disqualified"
   },
-  "nextReleaseScanBase": "c545a70eb694d990842ad1259df4f0786dab92c9",
+  "nextReleaseScanBase": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
   "reconciliation": {
-    "at": "2026-09-14T15:47:19.402Z",
-    "liveBase": "c545a70eb694d990842ad1259df4f0786dab92c9",
-    "liveDeployId": "dep-dag8l567bikc738a1nj0",
-    "supersededBase": "3814c687ef9293f84f939c372fdbc01b278a9193",
-    "releaseBranchFastForwarded": false,
-    "deployed": true,
-    "deployedSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
-    "migrationsApplied": true,
-    "migrationHistoryVersion": "20260908143724",
-    "scope": "Read-only identity reconciliation only. No deploy, migration, environment or service change.",
+    "at": "2026-09-26T19:12:49Z",
+    "liveBase": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "liveDeployId": "dep-daqft3vf3r2c73b7e88g",
     "readOnlyReverification": true,
+    "productionMutated": false,
     "serviceSettingsChanged": false,
     "environmentChanged": false,
-    "evidence": "docs/coordination/CURRENT_PRODUCTION_STATE.json evidence id production-identity-reconciliation-c545a70-20260914",
-    "note": "Identity from the founder's authenticated Render audit of 2026-09-14, corroborated read-only: both origins answered /api/health 200 at 2026-09-14T15:47:19.402Z with uptimeSeconds 494653, placing process start at 2026-09-08T22:23:06Z, 160 s after c545a70 was authored. commerceEnabled=false. No migration differs from 3814c68. Not verified by a credentialed Render read in that session."
+    "scope": "Read-only Render deploy/service observations plus dual-origin health200, commerce disabled. Audit evidence/closeout-*-20260926.json. No authenticated production smoke or production mutation."
   },
   "careAdminReliabilityCandidate": {
     "codeSha": "ace27886dd3b76a8e5dcc982111bb7062e9e451b",
@@ -936,5 +928,38 @@
     "scenarioNotRun": 1,
     "sqlClaimQualification": "PASS: six real HTTP/SQL cases, browser claim and recovery boundary",
     "adminSqlApproval": "PASS: member denied, admin accepted, idempotent replay"
+  },
+  "historicalPreCloseoutProduction": {
+    "classification": "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
+    "record": {
+      "classification": "CURRENT_LIVE_PRODUCTION",
+      "sha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "tree": "76bb6ff7ee2639d6745e846f05ea7a0cbcc8568a",
+      "status": "live",
+      "branch": "release/early-access-code-session-checkout",
+      "deployId": "dep-dag8l567bikc738a1nj0",
+      "liveSince": "2026-09-08T22:23:06Z",
+      "observedAt": "2026-09-14T15:47:19.402Z",
+      "autoDeploy": "off",
+      "scope": "Guarded partner QR sharing tools, on top of the account/partner UI and the installed, disabled Resource Hub.",
+      "note": "Identity from the founder's authenticated Render audit of 2026-09-14, corroborated read-only: both origins answered /api/health 200 at 2026-09-14T15:47:19.402Z with uptimeSeconds 494653, placing process start at 2026-09-08T22:23:06Z, 160 s after c545a70 was authored. commerceEnabled=false. No migration differs from 3814c68. Not verified by a credentialed Render read in that session."
+    },
+    "reconciliation": {
+      "at": "2026-09-14T15:47:19.402Z",
+      "liveBase": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "liveDeployId": "dep-dag8l567bikc738a1nj0",
+      "supersededBase": "3814c687ef9293f84f939c372fdbc01b278a9193",
+      "releaseBranchFastForwarded": false,
+      "deployed": true,
+      "deployedSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "migrationsApplied": true,
+      "migrationHistoryVersion": "20260908143724",
+      "scope": "Read-only identity reconciliation only. No deploy, migration, environment or service change.",
+      "readOnlyReverification": true,
+      "serviceSettingsChanged": false,
+      "environmentChanged": false,
+      "evidence": "docs/coordination/CURRENT_PRODUCTION_STATE.json evidence id production-identity-reconciliation-c545a70-20260914",
+      "note": "Identity from the founder's authenticated Render audit of 2026-09-14, corroborated read-only: both origins answered /api/health 200 at 2026-09-14T15:47:19.402Z with uptimeSeconds 494653, placing process start at 2026-09-08T22:23:06Z, 160 s after c545a70 was authored. commerceEnabled=false. No migration differs from 3814c68. Not verified by a credentialed Render read in that session."
+    }
   }
 }

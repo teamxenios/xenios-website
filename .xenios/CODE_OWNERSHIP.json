@@ -2273,6 +2273,17 @@
       "state": "active",
       "claimedAt": "2026-09-26T19:43:58.342Z",
       "heartbeatAt": "2026-09-26T19:43:58.342Z"
+    },
+    {
+      "id": "37bc07a3-dd8e-4866-8695-70e7fe1d4c0f",
+      "task": "XENIOS-AUDIT-SITE-REGISTRY-20260926",
+      "session": "codex-adversarial-audit-20260924",
+      "paths": [
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.registry.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-26T19:50:59.927Z",
+      "heartbeatAt": "2026-09-26T19:50:59.927Z"
     }
   ],
   "rules": [

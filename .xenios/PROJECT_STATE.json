@@ -394,19 +394,15 @@
   },
   "currentRelease": {
     "classification": "CURRENT_LIVE_PRODUCTION",
-    "sha": "c545a70eb694d990842ad1259df4f0786dab92c9",
-    "tree": "76bb6ff7ee2639d6745e846f05ea7a0cbcc8568a",
+    "sha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "tree": "ca9d77ce95bede22b40315fa4cbcdee91de2312c",
     "status": "live",
     "branch": "release/early-access-code-session-checkout",
-    "deployedFromBranch": "codex/xenios-seth-revenue-launch-20260905",
-    "rollback": "ff3c496245739233b71e46f9e5d6e26af9d57017",
-    "deployId": "dep-dag8l567bikc738a1nj0",
-    "liveSince": "2026-09-08T22:23:06Z",
-    "observedAt": "2026-09-14T15:47:19.402Z",
+    "deployId": "dep-daqft3vf3r2c73b7e88g",
+    "liveSince": "2026-09-24T10:43:29.274153Z",
+    "observedAt": "2026-09-26T19:12:49Z",
     "autoDeploy": "off",
-    "scope": "Account/partner UI and Resource Hub installation; Hub disabled",
-    "receipt": "docs/revenue-launch/20260907/resource-hub-installation-production-receipt-3814.json",
-    "note": "Identity from the founder's authenticated Render audit of 2026-09-14, corroborated read-only: both origins answered /api/health 200 at 2026-09-14T15:47:19.402Z with uptimeSeconds 494653, placing process start at 2026-09-08T22:23:06Z, 160 s after c545a70 was authored. commerceEnabled=false. No migration differs from 3814c68. Not verified by a credentialed Render read in that session."
+    "note": "Read-only Render deploy/service observations plus dual-origin health200, commerce disabled. Audit evidence/closeout-*-20260926.json. No authenticated production smoke or production mutation."
   },
   "catalog": {
     "classification": "HISTORICAL_NOT_REATTESTED_FOR_THIS_RELEASE",
@@ -1116,5 +1112,24 @@
     "scenarioNotRun": 1,
     "sqlClaimQualification": "PASS: six real HTTP/SQL cases, browser claim and recovery boundary",
     "adminSqlApproval": "PASS: member denied, admin accepted, idempotent replay"
+  },
+  "historicalPreCloseoutProduction": {
+    "classification": "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
+    "record": {
+      "classification": "CURRENT_LIVE_PRODUCTION",
+      "sha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "tree": "76bb6ff7ee2639d6745e846f05ea7a0cbcc8568a",
+      "status": "live",
+      "branch": "release/early-access-code-session-checkout",
+      "deployedFromBranch": "codex/xenios-seth-revenue-launch-20260905",
+      "rollback": "ff3c496245739233b71e46f9e5d6e26af9d57017",
+      "deployId": "dep-dag8l567bikc738a1nj0",
+      "liveSince": "2026-09-08T22:23:06Z",
+      "observedAt": "2026-09-14T15:47:19.402Z",
+      "autoDeploy": "off",
+      "scope": "Account/partner UI and Resource Hub installation; Hub disabled",
+      "receipt": "docs/revenue-launch/20260907/resource-hub-installation-production-receipt-3814.json",
+      "note": "Identity from the founder's authenticated Render audit of 2026-09-14, corroborated read-only: both origins answered /api/health 200 at 2026-09-14T15:47:19.402Z with uptimeSeconds 494653, placing process start at 2026-09-08T22:23:06Z, 160 s after c545a70 was authored. commerceEnabled=false. No migration differs from 3814c68. Not verified by a credentialed Render read in that session."
+    }
   }
 }
