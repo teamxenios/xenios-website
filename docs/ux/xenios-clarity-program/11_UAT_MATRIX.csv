@@ -4,7 +4,7 @@ U-G02,All,every public route,1440,Keyboard reachability,Tab through page,Every C
 U-G03,All,every public route,390/1440,Controlled vocabulary,Extract all button/primary-link labels,Every label in copy deck §1 or §12; zero retired labels,exact-build browser + unit test,G
 U-G04,All,every public route,1440,Claim ledger compliance,Grep rendered text for do-not-publish claims (72 hours; one business day; state-licensed compounding pharmacy; third-party tested; $30 per month; Research Rep; Early Access; passwordless; Catalogue),Zero matches unless ledger status verified/approved,exact-build browser + unit test,G
 U-G05,All,every public route,390,Shared chrome,Load each route,Same header and footer component; Sign In + Start Care visible without opening menu,exact-build browser,G
-U-G06,All,every public route,1440,Legal line,Read footer,Exactly '© 2026 Xenios Technologies, Inc.',exact-build browser,G
+U-G06,All,every public route,1440,Legal line,Read footer,"Exactly '© 2026 Xenios Technologies, Inc.'",exact-build browser,G
 U-G07,All,every public route,390,Brand consistency,Read header/title,Only the D-01 brand; no 'Xenios Technology'; no Eon/Infinity unless D-01 says so,exact-build browser,G
 U-G08,All,token/auth pages,1440,Indexing,Read meta robots,noindex on auth/token/status pages; public pages indexable only after D-01,source + browser,G
 U-001,J-01 consumer,/,390,30-second comprehension,Fresh session; tester has 30s; no scrolling past section 2,Tester identifies Start Care; Explore Products; For Practices; Become a Partner; Sign In; Check Status,human UAT on exact build,P-01
@@ -59,7 +59,7 @@ U-084,J-12,/sign-in,1440,Founder routing,Admin fixture signs in,Server routes to
 U-085,J-03,/research/reset-password,390,Reset neutral,Request reset for unknown and known email,Identical response,local rehearsal,P-15
 U-086,J-03,/activate,390,No token,Open /activate without token,Explains activation needs emailed link + Contact Support,browser fixture,P-16
 U-087,J-03,/activate,390,Invalid token,Tampered token,Expired/invalid copy; no account existence leak,local rehearsal,P-16
-U-088,J-03,/activate,390,Expired / consumed token,Use expired and already-used tokens,Correct copy; consumed → 'already active, Sign In',local rehearsal,P-16
+U-088,J-03,/activate,390,Expired / consumed token,Use expired and already-used tokens,"Correct copy; consumed → 'already active, Sign In'",local rehearsal,P-16
 U-089,J-03,/activate,390,Valid token,Valid fixture claim,Set password → 'Your account is active',SQL/local rehearsal,P-16
 U-090,J-03,/status,390,Found,Valid ref+email,Status page with §13 label,browser fixture,P-17
 U-091,J-03,/status,390,Not found,Invalid pair,Neutral not-found,browser fixture,P-17

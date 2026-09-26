@@ -4,7 +4,7 @@ Any session (Claude, Codex, human) that opens the six clarity-program prompts mu
 
 | Step | Owner | Branch | State |
 | --- | --- | --- | --- |
-| 1. Discovery, strategy, IA, copy, practice model, spec (`CLAUDE_01`) | `claude-clarity-spec-20260926` (Claude Code) | `claude/xenios-clarity-spec-20260926` | IN PROGRESS — started 2026-09-26 |
+| 1. Discovery, strategy, IA, copy, practice model, spec (`CLAUDE_01`) | `claude-clarity-spec-20260926` (Claude Code) | `claude/xenios-clarity-spec-20260926` | COMPLETE — awaiting Samuel decision review (2026-09-26) |
 | 2. Samuel approves `02_DECISIONS.md` | Samuel | — | NOT STARTED |
 | 3. Implementation (`CODEX_01`) | Codex | `codex/xenios-clarity-implementation-20260926` | BLOCKED on steps 1–2 |
 | 4. Independent review (`CLAUDE_02`) | Claude | `claude/xenios-clarity-review-20260926` | BLOCKED on step 3 |
