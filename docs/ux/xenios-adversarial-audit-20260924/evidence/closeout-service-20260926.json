@@ -1,0 +1,12 @@
+{
+  "observedAt": "2026-09-26T19:12:44.417Z",
+  "provenance": "read-only connector",
+  "receipt": {
+    "content": [
+      {
+        "type": "text",
+        "text": "{\"autoDeploy\":\"no\",\"autoDeployTrigger\":\"off\",\"branch\":\"release/early-access-code-session-checkout\",\"createdAt\":\"2026-06-22T02:36:43.408029Z\",\"dashboardUrl\":\"https://dashboard.render.com/web/srv-d8s9vej7uimc7384dfcg\",\"id\":\"srv-d8s9vej7uimc7384dfcg\",\"name\":\"xenios-website\",\"notifyOnFail\":\"default\",\"ownerId\":\"tea-d8nhh6a8qa3s73f4ocj0\",\"repo\":\"https://github.com/teamxenios/xenios-website\",\"rootDir\":\"\",\"serviceDetails\":{\"buildPlan\":\"starter\",\"cache\":{\"profile\":\"no-cache\"},\"env\":\"node\",\"envSpecificDetails\":{\"buildCommand\":\"npm run render-build\",\"startCommand\":\"npm run start\"},\"healthCheckPath\":\"/api/health\",\"ipAllowList\":[{\"cidrBlock\":\"0.0.0.0/0\",\"description\":\"everywhere\"}],\"maintenanceMode\":{\"enabled\":false,\"uri\":\"\"},\"numInstances\":1,\"openPorts\":[{\"port\":10000,\"protocol\":\"TCP\"}],\"plan\":\"starter\",\"previews\":{\"generation\":\"off\"},\"pullRequestPreviewsEnabled\":\"no\",\"region\":\"ohio\",\"renderSubdomainPolicy\":\"enabled\",\"runtime\":\"node\",\"sshAddress\":\"srv-d8s9vej7uimc7384dfcg@ssh.ohio.render.com\",\"url\":\"https://xenios-website.onrender.com\"},\"slug\":\"xenios-website\",\"suspended\":\"not_suspended\",\"suspenders\":[],\"type\":\"web_service\",\"updatedAt\":\"2026-09-24T10:43:29.27568Z\"}"
+      }
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 3,
   "identitySemantics": "TRUSTED_RELEASE_BASELINE",
-  "generatedAt": "2026-09-26T19:14:17.985Z",
+  "generatedAt": "2026-09-14T15:47:19.402Z",
   "historicalSnapshots": [
     {
       "id": "production-state-20260730",
@@ -61,14 +61,14 @@
     }
   ],
   "production": {
-    "gitSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "gitSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
     "renderWorkspaceId": "tea-d8nhh6a8qa3s73f4ocj0",
     "renderServiceId": "srv-d8s9vej7uimc7384dfcg",
-    "renderDeploymentId": "dep-daqft3vf3r2c73b7e88g",
+    "renderDeploymentId": "dep-dag8l567bikc738a1nj0",
     "status": "LIVE",
-    "verifiedAt": "2026-09-26T19:14:17.985Z",
-    "liveSince": "2026-09-24T10:43:29.274153Z",
-    "deployTrigger": "api; read-only Render connector deployment and service receipts recorded during audit closeout. No deployment performed by this session.",
+    "verifiedAt": "2026-09-14T15:47:19.402Z",
+    "liveSince": "2026-09-08T22:23:06Z",
+    "deployTrigger": "Superseded the 3814c68 deploy on 2026-09-08. Render deploy identity comes from the founder's authenticated Render audit of 2026-09-14; this session holds no Render credential. Corroborated independently and read-only: both production origins answered /api/health 200 at 2026-09-14T15:47:19.402Z reporting uptimeSeconds 494653, which places process start at 2026-09-08T22:23:06Z, 160 s after c545a70 was authored at 2026-09-08T22:20:27Z. The superseded deploy dep-dag1reu7bikc73e16ie0 went live at 2026-09-08T14:38:44.68489Z, 7.74 h earlier, which the observed uptime excludes. Between 3814c68 and c545a70 only supabase/MIGRATIONS.md changed under supabase/ (a ledger note recording the already-applied migration 77), so the installed migration set is unchanged and this baseline move applies no SQL. /api/health does not expose a commit identity; no authenticated request, account mutation, notification, payment or commerce action was performed.",
     "branch": "release/early-access-code-session-checkout",
     "autoDeploy": false,
     "publicOrigin": "https://xeniostechnology.com"
@@ -78,8 +78,10 @@
     "commerceEnabled": false,
     "publicHealthStatus": 200,
     "renderOriginHealthStatus": 200,
-    "checkedAt": "2026-09-26T19:14:17.985Z",
-    "limitation": "Read-only dual-origin health. Hub/billing/Care flags and business rows not queried; no authenticated customer workflow or delivery established."
+    "resourceHubEnabled": false,
+    "membershipBilling": "absent",
+    "checkedAt": "2026-09-14T15:47:19.402Z",
+    "limitation": "Dual-origin read-only /api/health at 2026-09-14T15:47:19.402Z: xeniostechnology.com 200 and xenios-website.onrender.com 200, identical uptime, commerceEnabled=false, supabaseConfigured=true, adminConfigured=true, turnstileConfigured=false. Native checkout is therefore not enabled in production. Resource Hub enablement and membership billing were not re-read here; those recorded values are carried forward from the 2026-09-08T14:45:51.681Z direct configuration read. Public unauthenticated smoke is not an authenticated Hub, managed delivery or commerce journey."
   },
   "dataPosture": {
     "availability": "unavailable",
@@ -395,32 +397,11 @@
   ],
   "evidence": [
     {
-      "id": "audit-closeout-render-20260926",
-      "kind": "render_service_and_deployment_read",
-      "observedSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
-      "checkedAt": "2026-09-26T19:14:17.985Z",
-      "detail": "Render confirms live SHA, deployment, branch and autoDeploy off. Receipt docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-render-20260926.json"
-    },
-    {
-      "id": "audit-closeout-health-20260926",
-      "kind": "public_http_health_and_runtime_config",
-      "observedSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
-      "checkedAt": "2026-09-26T19:14:17.985Z",
-      "detail": "Both health origins 200, commerceEnabled=false. Receipt docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-health-20260926.json"
-    },
-    {
-      "id": "audit-closeout-migrations-20260926",
-      "kind": "database_read",
-      "observedSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
-      "checkedAt": "2026-09-26T19:14:17.985Z",
-      "detail": "Managed history lists 44 versions including 20260921172323. History presence is not exact SQL byte equality or postcheck qualification. Receipt docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-migrations-20260926.json"
-    },
-    {
-      "id": "audit-closeout-schema-20260926",
-      "kind": "database_read",
-      "observedSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
-      "checkedAt": "2026-09-26T19:14:17.985Z",
-      "detail": "Customer status/history functions exist as security definers, anon/authenticated execute denied, service_role execute allowed. No customer rows queried. Receipt docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-schema-20260926.json"
+      "id": "production-identity-reconciliation-c545a70-20260914",
+      "kind": "external_render_audit_with_read_only_http_corroboration",
+      "observedSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "checkedAt": "2026-09-14T15:47:19.402Z",
+      "detail": "Render deploy identity comes from the founder's authenticated Render audit of 2026-09-14; this session holds no Render credential. Corroborated independently and read-only: both production origins answered /api/health 200 at 2026-09-14T15:47:19.402Z reporting uptimeSeconds 494653, which places process start at 2026-09-08T22:23:06Z, 160 s after c545a70 was authored at 2026-09-08T22:20:27Z. The superseded deploy dep-dag1reu7bikc73e16ie0 went live at 2026-09-08T14:38:44.68489Z, 7.74 h earlier, which the observed uptime excludes. Between 3814c68 and c545a70 only supabase/MIGRATIONS.md changed under supabase/ (a ledger note recording the already-applied migration 77), so the installed migration set is unchanged and this baseline move applies no SQL. /api/health does not expose a commit identity; no authenticated request, account mutation, notification, payment or commerce action was performed."
     }
   ],
   "externalInputsDocument": "docs/coordination/EXTERNAL_INPUTS_REQUIRED.md",
@@ -506,20 +487,6 @@
       "observedSha": "3814c687ef9293f84f939c372fdbc01b278a9193",
       "checkedAt": "2026-09-08T14:44:32.465Z",
       "detail": "[observed at superseded baseline 3814c68, retired 2026-09-14] 30 SAME with explicit empty allowances; 300232ms observation; 13 dual-origin health samples. docs/revenue-launch/20260907/resource-hub-installation-health-observation-3814.json; final severity/text-error logs empty."
-    },
-    {
-      "id": "production-identity-reconciliation-c545a70-20260914",
-      "kind": "external_render_audit_with_read_only_http_corroboration",
-      "observedSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
-      "checkedAt": "2026-09-14T15:47:19.402Z",
-      "detail": "Render deploy identity comes from the founder's authenticated Render audit of 2026-09-14; this session holds no Render credential. Corroborated independently and read-only: both production origins answered /api/health 200 at 2026-09-14T15:47:19.402Z reporting uptimeSeconds 494653, which places process start at 2026-09-08T22:23:06Z, 160 s after c545a70 was authored at 2026-09-08T22:20:27Z. The superseded deploy dep-dag1reu7bikc73e16ie0 went live at 2026-09-08T14:38:44.68489Z, 7.74 h earlier, which the observed uptime excludes. Between 3814c68 and c545a70 only supabase/MIGRATIONS.md changed under supabase/ (a ledger note recording the already-applied migration 77), so the installed migration set is unchanged and this baseline move applies no SQL. /api/health does not expose a commit identity; no authenticated request, account mutation, notification, payment or commerce action was performed.",
-      "classification": "HISTORICAL_SUPERSEDED_DEPLOYMENT_EVIDENCE"
     }
-  ],
-  "lastSuccessfulValidation": {
-    "deployedSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
-    "renderDeploymentId": "dep-daqft3vf3r2c73b7e88g",
-    "checkedAt": "2026-09-26T19:14:17.985Z",
-    "scope": "Read-only Render identity and dual-origin health only; not candidate release acceptance."
-  }
+  ]
 }

@@ -1,0 +1,15 @@
+{
+  "observedAt": "2026-09-26T19:12:44.304Z",
+  "provenance": "read-only connector",
+  "receipt": {
+    "status": "fulfilled",
+    "value": {
+      "content": [
+        {
+          "type": "text",
+          "text": "[{\"commit\":{\"createdAt\":\"2026-09-24T04:48:31Z\",\"id\":\"79414143d4355d5d3d14cd5fe6e5a536dc68d99d\",\"message\":\"feat(research): complete manual payment choices\"},\"createdAt\":\"2026-09-24T10:42:23.923813Z\",\"finishedAt\":\"2026-09-24T10:43:29.274153Z\",\"id\":\"dep-daqft3vf3r2c73b7e88g\",\"startedAt\":\"2026-09-24T10:42:23.897881Z\",\"status\":\"live\",\"trigger\":\"api\",\"updatedAt\":\"2026-09-24T10:44:03.084009Z\"},{\"commit\":{\"createdAt\":\"2026-09-24T00:21:37Z\",\"id\":\"7a2ca4a3a0ced8280ed60e2d06aa22254f0acba9\",\"message\":\"fix: harden Windows launch helper resolution\"},\"createdAt\":\"2026-09-24T00:43:56.590121Z\",\"finishedAt\":\"2026-09-24T00:45:11.979052Z\",\"id\":\"dep-daq74j0u01pc73f2tbbg\",\"startedAt\":\"2026-09-24T00:43:56.559294Z\",\"status\":\"deactivated\",\"trigger\":\"api\",\"updatedAt\":\"2026-09-24T10:43:29.272608Z\"}]\n\n cursor: aeUEb0oxp3c0ajB1MDFwYzczZjJ0YmJn"
+        }
+      ]
+    }
+  }
+}
