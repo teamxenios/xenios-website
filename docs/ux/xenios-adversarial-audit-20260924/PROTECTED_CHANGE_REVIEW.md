@@ -1,4 +1,4 @@
-# Protected change review — integrator action required
+# Protected change review — local lead review completed; deployment not authorized
 
 ## September 26 closeout lead review (supersedes the ownership dependency below)
 
@@ -11,6 +11,8 @@ Fresh read-only Render, dual-origin health, managed migration history and bounde
 The production-to-candidate classifier exposed four inherited UX paths: AccountAccessChooser.tsx, Navbar.tsx, Admin.tsx and Home.tsx. Their complete diffs were read against live79414143. The earlier implementation/release reports in docs/ux/xenios-ux-account-notifications-20260924 establish the existing scope: persistent account entry, chooser mount, mobile navigation spacing and admin entry after a successful server /api/admin/me response. None grants authority in the client. This closeout adds exact hash-locked reported seams for these four inherited files, not runtime edits. Unrelated About/Footer files still exercise classifier denial; all four accepted paths now participate in mutation-failure tests. The focused core gate passes36 tests. This fixes the prior distinction between passing hash tests and the still-failing full changed-path gate.
 
 Application source: `c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa`. Original tested repair: `02d525baa7d784ed16e297c1d17b1e4050ecf4cc`. Test-only successor `ee1c972` corrects the old documents destination assertion; it does not change the browser bundle.
+
+## Historical pre-closeout record (superseded by the lead review above)
 
 The user authorized reversible audit repairs, including corporate confirmation and response-time wording, but explicitly withheld deployment authorization. The author has not approved their own protected integration or modified fingerprints.
 

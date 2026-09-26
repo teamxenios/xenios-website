@@ -15,9 +15,15 @@
       "limitation": "Retired destination intentionally replaced by /research/account/documents. Replacement browser journey PASS in R017; old control is superseded, not a broken retained link."
     }
   ],
-  "scenarioRows": 39,
-  "scenariosPass": 38,
+  "scenarioRows": 66,
+  "scenariosPass": 65,
   "scenariosNotRun": 1,
   "externalDelivery": "UNVERIFIED",
-  "productionMutated": false
+  "productionMutated": false,
+  "scenariosFail": 0,
+  "scenariosBlocked": 0,
+  "scenariosExecuted": 65,
+  "zoomRetry": "C045 is a second unsuccessful attempt at the existing desktop zoom scenario, not a new unique scenario.",
+  "localServiceCases": 22,
+  "countingNote": "Rows are bounded qualification scenarios across evidence levels; overlapping journeys are not 65 unique browser end-to-end paths."
 }

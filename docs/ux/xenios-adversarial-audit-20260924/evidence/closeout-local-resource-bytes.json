@@ -1,0 +1,68 @@
+{
+  "status": "PASS",
+  "observedAt": "2026-09-26T19:47:08.102Z",
+  "applicationSha": "c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa",
+  "cases": [
+    {
+      "name": "Normal member cannot upload through canonical admin guard",
+      "status": "PASS"
+    },
+    {
+      "name": "Admin upload validates bytes and persists private object",
+      "status": "PASS"
+    },
+    {
+      "name": "Canonical admin review and atomic publish through real REST/SQL",
+      "status": "PASS"
+    },
+    {
+      "name": "In-audience partner receives exact private bytes through real Auth and owner resolution",
+      "status": "PASS"
+    },
+    {
+      "name": "Different real owner outside audience receives non-enumerating denial",
+      "status": "PASS"
+    },
+    {
+      "name": "Authorized app audience still cannot bypass server via direct Storage",
+      "status": "PASS"
+    },
+    {
+      "name": "Private object has no public download",
+      "status": "PASS"
+    },
+    {
+      "name": "Use-time suspension denies previously authorized owner",
+      "status": "PASS"
+    },
+    {
+      "name": "Three app delivery attempts durably recorded",
+      "status": "PASS",
+      "detail": [
+        {
+          "outcome": "delivered"
+        },
+        {
+          "outcome": "denied"
+        },
+        {
+          "outcome": "denied"
+        }
+      ]
+    }
+  ],
+  "productionMutated": false,
+  "externalDelivery": false,
+  "provenance": "Real local GoTrue/PostgREST/Postgres/Storage; canonical admin and member guards, partner owner resolver and resource service",
+  "sourceHashes": {
+    "supabase/research-partners.sql": "c2eb9d486e2c6f61111b34cb31eda8d2709e3bd951b901cbef396368b8ab97d0",
+    "supabase/candidates/20260906120000_research_resource_library.precheck.sql": "742bce5729a0b4c2db848fbf32658efe0b286c5b910730fd6bfc9182c1ea6fab",
+    "supabase/candidates/20260906120000_research_resource_library.sql": "e55f965fbc942b4de6ec7b74b2bc28b8d7eff8dd6530f50c9876d3137e8dd722",
+    "supabase/candidates/20260906120000_research_resource_library.postcheck.sql": "7c7ef33b7091cc1946077070ca6587491b299c5101ca05b4b70dcf95ff379550"
+  },
+  "limits": [
+    "Synthetic partner records seeded with valid database constraints; lifecycle transitions tested separately",
+    "Local service versions are not hosted-production parity",
+    "HTTP/service evidence, not browser byte-download evidence"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "applicationSha": "c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa",
+  "provenance": "exact production bundle served by isolated SQL preview on localhost:5305; Chrome extension browser",
+  "productionMutated": false,
+  "scenarios": [
+    {"id":"C040","status":"PASS","action":"Keyboard Enter opens site menu; delayed initial focus reaches Close menu","observation":"dialog aria-modal true; Close menu focused"},
+    {"id":"C041","status":"PASS","action":"Reverse Tab from first dialog link and forward Tab from last link","observation":"Wraps xenios -> Disclosures and Disclosures -> xenios; stays in dialog"},
+    {"id":"C042","status":"PASS","action":"Escape closes menu","observation":"Zero dialogs; focus restored to Open full site menu"},
+    {"id":"C043","status":"PASS","action":"Corporate contact Name Tab then keyboard submit with missing persona and short message","observation":"Tab reaches cf-email; validation alerts identify persona and message; focus reaches cf-persona"},
+    {"id":"C044","status":"PASS","action":"Corporate contact responsive layout at 320/390/768/1440","observation":"document widths305/375/753/1425 respectively; no horizontal overflow"},
+    {"id":"C045","status":"NOT RUN","action":"Actual desktop browser zoom","observation":"Control++ via supported locator press did not change innerWidth1440 or devicePixelRatio1.0000000298. No 200% zoom claim; pinch/device emulation is not desktop zoom."}
+  ],
+  "limitations": ["Bounded keyboard scenarios, not exhaustive keyboard coverage", "No corporate message submitted", "No external notifications", "Fixture Auth remains synthetic"]
+}

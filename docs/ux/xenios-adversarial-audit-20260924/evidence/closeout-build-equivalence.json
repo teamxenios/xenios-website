@@ -1,0 +1,9 @@
+{
+  "applicationSha": "c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa",
+  "rebuiltAt": "2026-09-26T19:32:46.197Z",
+  "inventoryCount": 346,
+  "missing": [],
+  "mismatches": [],
+  "passed": true,
+  "scope": "All prior build inventory paths compared; not external delivery or managed service parity"
+}

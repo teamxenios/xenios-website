@@ -1,0 +1,92 @@
+{
+  "applicationSha": "c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa",
+  "observedAt": "2026-09-26T19:44:37.994Z",
+  "status": "PASS",
+  "cases": [
+    {
+      "name": "Three distinct synthetic users authenticated by real local GoTrue",
+      "status": "PASS"
+    },
+    {
+      "name": "Real member denied canonical admin approval",
+      "status": "PASS",
+      "detail": 403
+    },
+    {
+      "name": "Canonical admin approval through real PostgREST SQL",
+      "status": "PASS",
+      "detail": 200
+    },
+    {
+      "name": "Approval replay remains one durable operation",
+      "status": "PASS"
+    },
+    {
+      "name": "Status-purpose token denied",
+      "status": "PASS",
+      "detail": 401
+    },
+    {
+      "name": "Expired signed claim denied",
+      "status": "PASS",
+      "detail": 401
+    },
+    {
+      "name": "Separate real Auth owner denied foreign claim",
+      "status": "PASS",
+      "detail": 409
+    },
+    {
+      "name": "Real GoTrue recovery-purpose session denied claim",
+      "status": "PASS",
+      "detail": 409
+    },
+    {
+      "name": "Verified owner claims approved membership through real SQL",
+      "status": "PASS",
+      "detail": 200
+    },
+    {
+      "name": "Consumed claim replays without duplicate grant",
+      "status": "PASS",
+      "detail": 200
+    },
+    {
+      "name": "One matching member, no paid membership inference",
+      "status": "PASS"
+    },
+    {
+      "name": "Outbox states do not claim external delivery",
+      "status": "PASS",
+      "detail": [
+        {
+          "event_type": "approved_customer_claim",
+          "status": "failed_retryable"
+        },
+        {
+          "event_type": "approved_customer_welcome",
+          "status": "failed_retryable"
+        }
+      ]
+    },
+    {
+      "name": "Foreign authenticated REST principal cannot read member rows",
+      "status": "PASS"
+    }
+  ],
+  "blockedNetwork": 0,
+  "productionMutated": false,
+  "externalDelivery": false,
+  "provenance": "Actual local Docker GoTrue/PostgREST/Postgres; canonical guards, routes and SQL; synthetic users only",
+  "sourceHashes": {
+    "supabase/research-membership.sql": "a5741c2cd9d25e7fec0631e0609cc3e8385f4808026680465ee4a46cf26c46d8",
+    "supabase/research-members.sql": "aa9f6c539f755f08042f90f7799885320e58e2f775f4078fbc6f10cf21b0aded",
+    "supabase/research-notification-outbox.sql": "70cee0109dce7401431de9449a1312076ad61b7081ed31b9b8a9659bc6cca7ac",
+    "supabase/candidates/20260905_research_approved_customer_access.sql": "026ac29d3e17a86fa19100aa4c712e5d90fd66b2ef5de28774b8032965b171b5"
+  },
+  "limits": [
+    "Local service versions differ from hosted production",
+    "No external delivery",
+    "Not a browser end-to-end assertion"
+  ]
+}
