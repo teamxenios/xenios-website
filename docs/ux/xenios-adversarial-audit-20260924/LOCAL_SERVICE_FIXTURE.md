@@ -11,3 +11,5 @@ Run against a fresh dedicated local stack: first qualify-local-services.ts, then
 The first startup using a Docker internal network could not reach the published Postgres port; the normal local network succeeded. A first runner attempt exposed Node20's missing native WebSocket transport before user creation; the fixture now supplies the repository's existing ws transport, like server/supabase.ts. Neither was an application defect.
 
 Official workflow reference: https://supabase.com/docs/guides/local-development/cli/getting-started . No production changes or hosted delivery tests were performed.
+
+qualify-local-persistence.mjs adds four real restart checks: member rows, notification intents, delivery audits and exact private object digest survive restarting only the dedicated Postgres container. The stack was then stopped by exact project ID with backups retained; other projects were not stopped.

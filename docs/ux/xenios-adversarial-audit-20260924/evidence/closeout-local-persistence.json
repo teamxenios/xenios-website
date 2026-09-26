@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "observedAt": "2026-09-26T19:49:57.421Z",
+  "provenance": "Actual local Docker database restart and real REST/Storage reads",
+  "cases": [
+    "Approved member records survive restart",
+    "Notification intent records survive restart",
+    "Delivery audit records survive restart",
+    "Private object bytes still match canonical digest"
+  ],
+  "counts": {
+    "research_members": 3,
+    "research_notification_outbox": 6,
+    "research_resource_deliveries": 3,
+    "privateBytesSha256": "4f0721b2855d0ba9449d707e357a71b818155573a87bd0b3bb57f66627230175"
+  },
+  "productionMutated": false,
+  "externalDelivery": false
+}
