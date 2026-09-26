@@ -1,0 +1,62 @@
+cta_id,route,location,label,exact_meaning,destination_or_action,prerequisite,server_write,confirmation,notification,status_return_path,replaces_current,mobile_390,desktop_1440,page_spec
+CTA-H01,all,header,Sign In,Sign in to existing account,/sign-in,None,None,N/A,N/A,Account,Sign in; Member sign in; Get access (partially),Visible without menu,Visible,G
+CTA-H02,all,header,Start Care,Open Care request form,/care/schedule,None,None,N/A,N/A,N/A,Start Care request (sticky mobile); Request Early Access (as header primary),Visible filled button,Visible filled button,G
+CTA-H03,all,header nav,For Individuals,Navigate,/individuals (panel: Start Care; Explore Products; How research orders work; Check Status),None,None,N/A,N/A,N/A,Health (nav),In menu,Visible,G
+CTA-H04,all,header nav,For Practices,Navigate,/practices,None,None,N/A,N/A,N/A,(none - practices had no nav item),In menu,Visible,G
+CTA-H05,all,header nav,Partners,Navigate,/partners,None,None,N/A,N/A,N/A,Partners (Research nav); /partners->/ecosystem redirect,In menu,Visible,G
+CTA-H06,all,header nav,How It Works,Navigate,/how-it-works,None,None,N/A,N/A,N/A,How It Works (coach); How it works (Research),In menu,Visible,G
+CTA-H07,all,header nav,Quality,Navigate,/quality,None,None,N/A,N/A,N/A,Quality (Research),In menu,Visible ≥1280,G
+CTA-H08,all,header nav,About,Navigate,/about,None,None,N/A,N/A,N/A,About (coach + Research),In menu,Visible ≥1280,G
+CTA-H09,all,header nav,Careers,Navigate,/careers,None,None,N/A,N/A,N/A,Careers,In menu,Visible ≥1280,G
+CTA-H10,all,menu,Check Status,Look up a submitted order/request,/status,Reference + email,Read only,N/A,N/A,/status,Open order history; Resume/track,In menu,In For Individuals panel,P-17
+CTA-P101,/,hero,Start Care,Open Care request form,/care/schedule,None,None,N/A,N/A,N/A,Request Early Access (hero),First viewport,Hero,P-01
+CTA-P102,/,hero,Explore Products,Product index,/products,None,None,N/A,N/A,N/A,See How It Works (hero),First viewport,Hero,P-01
+CTA-P103,/,hero helper,Sign In,Sign in,/sign-in,None,None,N/A,N/A,N/A,—,Under hero,Under hero,P-01
+CTA-P104,/,hero helper,Check Status,Status lookup,/status,None,None,N/A,N/A,N/A,—,Under hero,Under hero,P-01
+CTA-P105,/,selector: Care,Start Care,Care request form,/care/schedule,None,None,N/A,N/A,N/A,Start Care request (chooser),Stacked tile,3x2 grid,P-01
+CTA-P106,/,selector: products,Explore Products,Product index,/products,None,None,N/A,N/A,N/A,Order for Research (chooser),Stacked tile,Grid,P-01
+CTA-P107,/,selector: practice,For Practices,Practices page,/practices,None,None,N/A,N/A,N/A,Business or organization (chooser),Stacked tile,Grid,P-01
+CTA-P108,/,selector: refer,Become a Partner,Partner page,/partners,None,None,N/A,N/A,N/A,Partner program (chooser),Stacked tile,Grid,P-01
+CTA-P109,/,selector: supplier,Submit Inquiry,Go to supplier inquiry,/suppliers#inquiry,None,None (navigates),N/A,N/A,N/A,Supplier access (chooser),Stacked tile,Grid,P-01
+CTA-P110,/,selector: account,Sign In,Sign in,/sign-in,None,None,N/A,N/A,N/A,Sign in; Activate approved setup (moves to /sign-in),Stacked tile,Grid,P-01
+CTA-P111,/,Care section,Start Care,Care request form,/care/schedule,None,None,N/A,N/A,N/A,—,Section end,Section end,P-01
+CTA-P112,/,Research section,Explore Products,Product index,/products,None,None,N/A,N/A,N/A,—,Section end,Section end,P-01
+CTA-P113,/,Practices band,For Practices,Practices page,/practices,None,None,N/A,N/A,N/A,—,Band,Band,P-01
+CTA-P114,/,Partners band,Become a Partner,Partner page,/partners,None,None,N/A,N/A,N/A,—,Band,Band,P-01
+CTA-P115,/,final band,Start Care / Explore Products / For Practices,As above,As above,None,None,N/A,N/A,N/A,Apply for Early Access; See How It Works (closing band),Stacked,Row,P-01
+CTA-P301,/products,card (Research/Assisted),Request Order,Start order request for this exact product+variant,/research/early-access/order-request?product={id}&variant={id},Product state allows request (server),None on click,N/A,N/A,N/A,Order; Choose how to order; Open Quick Early Access,Full-width button,Card button,P-03
+CTA-P302,/products,card (Care only),Start Care,Care request form,/care/schedule,None,None,N/A,N/A,N/A,Explore Care (-> member-only metabolic-care),Full-width,Card,P-03
+CTA-P303,/products,card (Unavailable),(none),Not listed,—,—,—,—,—,—,Notify me; Join waitlist,—,—,P-03
+CTA-P401,/products/:slug,hero,Request Order / Start Care,Per state,As P301/P302,Server action,None on click,N/A,N/A,N/A,Order; Add to cart (dark),Sticky in product hero,Hero,P-04
+CTA-P402,/products/:slug,questions,Contact Support,Support,/support,None,None,N/A,N/A,N/A,—,Section,Section,P-04
+CTA-P501,/care,hero,Start Care,Care request form,/care/schedule,Availability open,None,N/A,N/A,N/A,Start Care request,First viewport,Hero,P-05
+CTA-P502,/care/schedule,form submit,Send Care request,Submit Care request,POST /api/care/access-request,Required fields + acknowledgements,YES loi_submissions,Care confirmation (ref CARE-…),N-01 N-02,Care team contact,Submit Care request,After last field,After last field,P-05
+CTA-P503,/care (closed),availability,Contact Support,Care support,/care/support,None,None,N/A,N/A,N/A,Try again (kept as secondary),Visible,Visible,P-05
+CTA-P601,/research,hero,Explore Products,Product index,/products,None,None,N/A,N/A,N/A,Explore Research; Access Hub,First viewport,Hero,P-06
+CTA-P602,/research,hero,Check Status,Status lookup,/status,None,None,N/A,N/A,N/A,Resume or track,First viewport,Hero,P-06
+CTA-P603,order request page,form submit,Request Order,Submit order request,POST /api/research/early-access/assisted-orders,Research-use acknowledgment + product + delivery,YES assisted order,Order confirmation (XRR-…),N-03,/research/early-access/order-request/:ref,Request an order; Start an assisted request,After last field,After last field,P-06
+CTA-P604,order status page,action,Continue Order,Complete required customer action,Server-provided action (payment details/document upload),Server says action required,Per action,Status updates,N-04/N-05,same status page,(implicit links),Visible when required,Visible when required,P-06
+CTA-P701,/practices,hero,Submit Inquiry,Jump to practice inquiry form,#inquiry,None,None,N/A,N/A,N/A,Send an organization inquiry; Send an inquiry,First viewport,Hero,P-07
+CTA-P702,/practices,hero secondary,Sign In,Approved practices sign in,/sign-in,Approved,None,N/A,N/A,Workspace,Existing partner access,First viewport,Hero,P-07
+CTA-P703,/practices,form submit,Submit Inquiry,Send practice inquiry,POST /api/contact (type practice) + Phase 2 durable record,Required fields,Email today; durable record Phase 2,Inquiry confirmation ('not an account'),N-09,'We'll contact you',Submit inquiry,After form,After form,P-07
+CTA-P801,/practices/referrals,end,Submit Inquiry,Practice inquiry,/practices#inquiry,None,None,N/A,N/A,N/A,—,End,End,P-08
+CTA-P901,/practices/workspace,hero,Sign In,Sign in,/sign-in,Approved,None,N/A,N/A,Workspace,—,Hero,Hero,P-09
+CTA-P1001,/practices/care,hero,Start Care,Care request (for client),/care/schedule,None,None,N/A,N/A,N/A,—,Hero,Hero,P-10
+CTA-P1101,/partners,hero (program closed),Submit Inquiry,Partner program interest inquiry,#inquiry (type partner_interest),None,Email today; durable Phase 2,Inquiry confirmation,N-09,'We'll contact you when applications open',Review the partner application; Send an inquiry,Hero,Hero,P-11
+CTA-P1102,/partners,hero (program open),Apply,Partner application,/partners/apply,Sign in (API requires member),YES partner application,Application confirmation,N-10,Partner workspace next-action,Apply to become a Research Rep,Hero,Hero,P-11
+CTA-P1103,/partners,secondary,Activate Account,First-time setup,/activate,Emailed token,Claim,Activation success,N-11 N-12,Sign In,Activate approved setup,Section,Section,P-11
+CTA-P1104,/partners,strategic section,Submit Inquiry,Strategic partnership inquiry,#strategic (type strategic),None,Email today; durable Phase 2,Inquiry confirmation,N-09,'We'll contact you',Send an inquiry (strategic),Section,Section,P-12
+CTA-P1301,/suppliers,hero + form,Submit Inquiry,Supplier inquiry,POST /api/contact (type supplier) + Phase 2,Required fields,Email today; durable Phase 2,Inquiry confirmation ('doesn't create supplier access'),N-09,'We'll contact you',Send supplier interest,Hero/form,Hero/form,P-13
+CTA-P1302,/suppliers,secondary,Contact Support,Support,/support,None,None,N/A,N/A,N/A,Supplier support,Section,Section,P-13
+CTA-P1401,/careers/:slug,role,Apply (or 'Apply by email' fallback),Job application,Phase 2 form (N-13) or mailto fallback,None,Phase 2 durable,Application confirmation (Phase 2),N-13,Email,Apply by email,Role page,Role page,P-14
+CTA-P1501,/sign-in,form,Sign In,Authenticate,Supabase sign-in; server routes by role,Credentials,Session,Redirect to account/workspace/command center,N/A,Account,Sign in,Form,Form,P-15
+CTA-P1502,/sign-in,link,Activate Account,First-time setup,/activate,Token email,None,N/A,N/A,N/A,Activate approved setup,Below form,Below form,P-15
+CTA-P1503,/sign-in,remove,(removed) View application information,—,—,—,—,—,—,—,View application information (dead end),—,—,P-15
+CTA-P1601,/activate,form,Activate Account,Set password with valid token,POST /api/research/member/claim,Valid token,YES,'Your account is active',N-12,Sign In,Claim account; Open my account,Form,Form,P-16
+CTA-P1701,/status,form,Check Status,Look up reference+email,Existing status authority,Reference + email,Read,Status page,N/A,Status page,Request secure status link (apply status),Form,Form,P-17
+CTA-P1801,/support,cards,Check Status / Contact Support / Submit Inquiry / Sign In,Routing,Per card,None,None,N/A,N/A,N/A,Contact Xenios Research; Get support; Contact &amp; support,Stacked,Grid,P-18
+CTA-P1802,/support,form submit,Send message,General contact,POST /api/contact,Required fields,Email today; durable Phase 2,Message confirmation,N-08,'We'll reply by email',send,After form,After form,P-18
+CTA-P1901,/quality,lookup,Look up a lot,Lot record lookup,/research/lots/:lotCode,Lot code,Read,Lot page,N/A,N/A,Verify a lot,Form,Form,P-19
+CTA-P1902,/quality,documents,Sign In,See your secure documents,/sign-in?returnTo=/research/account/documents,Account,None,N/A,N/A,Account documents,Open secure documents (dead end),Section,Section,P-19
+CTA-W01,/workspace,hero,Join Waitlist,Coach workspace waitlist,/workspace/waitlist,None,Waitlist row,Waitlist confirmation,N-14,—,Request Early Access; Apply for Early Access; Join the waitlist; Submit Application,Hero,Hero,—
+CTA-F01,all,footer,Workspace for coaches,Navigate,/workspace,None,None,N/A,N/A,N/A,(coach nav items),Footer,Footer,G
