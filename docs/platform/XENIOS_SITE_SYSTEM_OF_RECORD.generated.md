@@ -1,8 +1,8 @@
 # Xenios Site System of Record
 
-Generated from source commit: `ab134a905c47f274ce0832e638aa1a3933720b6d` (2026-09-26T14:52:00-05:00)
+Generated from source commit: `1b5a8504455990c2a21ca469689c6a588693238b` (2026-09-26T15:00:10-05:00)
 
-Source tree: `ffc8db7d83cd0b8df9c967f888e34cd3a8ce7a21` on `codex/xenios-adversarial-audit-20260924`
+Source tree: `e94149c0d46973265dfd34ed3dee6ef5efdee366` on `codex/xenios-adversarial-audit-20260924`
 
 Recorded production: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d` / `dep-daqft3vf3r2c73b7e88g` (deployed_not_authenticated_smoked)
 
