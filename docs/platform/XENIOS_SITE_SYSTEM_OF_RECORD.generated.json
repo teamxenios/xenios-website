@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-26T10:21:16-05:00",
+  "generatedAt": "2026-09-26T14:52:00-05:00",
   "repository": "teamxenios/xenios-website",
   "source": {
     "branch": "codex/xenios-adversarial-audit-20260924",
-    "sha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-    "tree": "49d253cf39ea827eeb7a01f6807aa9c105837c14",
+    "sha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+    "tree": "ffc8db7d83cd0b8df9c967f888e34cd3a8ce7a21",
     "clean": true,
     "provenance": "Latest commit changing non-generated, non-.xenios source paths"
   },
   "production": {
-    "sha": "c545a70eb694d990842ad1259df4f0786dab92c9",
-    "deployId": "dep-dag8l567bikc738a1nj0",
+    "sha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "deployId": "dep-daqft3vf3r2c73b7e88g",
     "verificationStatus": "deployed_not_authenticated_smoked",
-    "observedAt": "2026-09-14T15:47:19.402Z",
-    "evidenceSource": "This registry had been pinned to db5a2d44 (2026-09-03) through two later production deploys. Corrected 2026-09-14 to the deploy the founder's authenticated Render audit reports, corroborated read-only: both production origins answered /api/health 200 at 2026-09-14T15:47:19Z with uptimeSeconds 494473-494653, placing process start at 2026-09-08T22:23:06Z, 160 s after c545a70 was authored. Unauthenticated health only; no authenticated journey was smoked and this session holds no Render credential."
+    "observedAt": "2026-09-26T19:12:49Z",
+    "evidenceSource": "Read-only Render deploy/service observations plus dual-origin health200, commerce disabled. Audit evidence/closeout-*-20260926.json. No authenticated production smoke or production mutation."
   },
   "statusVocabulary": [
     "source_present",
@@ -3667,8 +3667,8 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
         "owner": "codex-major-ordering-admin-sor-20260904",
@@ -3703,8 +3703,8 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "live_verified",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": "CARE-RESEARCH-POSTLAUNCH-20260831",
         "owner": "codex-care-research-postlaunch-20260831",
@@ -3741,8 +3741,8 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": "XENIOS-QUICK-EARLY-ACCESS-V2-20260904",
         "owner": "codex-major-ordering-admin-sor-20260904",
@@ -3790,8 +3790,8 @@
       "testStatus": "full_suite_pass",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": "ASSISTED-ORDER-MOUNT",
         "owner": "claude-fable-main",
@@ -3828,8 +3828,8 @@
       "testStatus": "full_suite_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "unknown",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": "UX-AUTH-ACCOUNT-CONTINUITY-20260904",
         "owner": "codex-ux-continuation-20260904",
@@ -3869,8 +3869,8 @@
       "testStatus": "full_suite_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": "UX-REFERRAL-RECOMMENDATION-V1-20260904",
         "owner": "codex-ux-referral-20260904",
@@ -3908,8 +3908,8 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "live_verified",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": "CARE-MANUAL-ACCESS-20260831",
         "owner": "codex-care-manual-access-20260831",
@@ -3945,8 +3945,8 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": "CARE-ADMIN-RELIABILITY-20260903",
         "owner": "claude-care-admin-reliability-20260903",
@@ -3982,8 +3982,8 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "blocked_external",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": "APP-MEMBERSHIP",
         "owner": null,
@@ -4017,8 +4017,8 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": null,
         "owner": null,
@@ -4052,8 +4052,8 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": null,
         "owner": null,
@@ -4087,8 +4087,8 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "deployed_not_authenticated_smoked",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": "FULFILLMENT-MOUNT",
         "owner": "claude-fable-s8-fulfillment",
@@ -4122,8 +4122,8 @@
       "testStatus": "unknown",
       "browserStatus": "unknown",
       "productionStatus": "blocked_external",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": "F7-ACCOUNT-MOUNT",
         "owner": null,
@@ -4156,8 +4156,8 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
         "owner": "codex-major-ordering-admin-sor-20260904",
@@ -4198,8 +4198,8 @@
       "testStatus": "focused_tests_pass",
       "browserStatus": "browser_verified",
       "productionStatus": "built_not_deployed",
-      "currentSourceSha": "ed6c573cd66e1f2904233d851b4effcfd81d7e41",
-      "productionSha": "c545a70eb694d990842ad1259df4f0786dab92c9",
+      "currentSourceSha": "ab134a905c47f274ce0832e638aa1a3933720b6d",
+      "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
       "ownerAndLease": {
         "taskId": "XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904",
         "owner": "codex-major-ordering-admin-sor-20260904",

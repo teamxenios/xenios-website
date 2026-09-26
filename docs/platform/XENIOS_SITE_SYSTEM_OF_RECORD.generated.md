@@ -1,10 +1,10 @@
 # Xenios Site System of Record
 
-Generated from source commit: `ed6c573cd66e1f2904233d851b4effcfd81d7e41` (2026-09-26T10:21:16-05:00)
+Generated from source commit: `ab134a905c47f274ce0832e638aa1a3933720b6d` (2026-09-26T14:52:00-05:00)
 
-Source tree: `49d253cf39ea827eeb7a01f6807aa9c105837c14` on `codex/xenios-adversarial-audit-20260924`
+Source tree: `ffc8db7d83cd0b8df9c967f888e34cd3a8ce7a21` on `codex/xenios-adversarial-audit-20260924`
 
-Recorded production: `c545a70eb694d990842ad1259df4f0786dab92c9` / `dep-dag8l567bikc738a1nj0` (deployed_not_authenticated_smoked)
+Recorded production: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d` / `dep-daqft3vf3r2c73b7e88g` (deployed_not_authenticated_smoked)
 
 > Source, test, browser, and production status are independent evidence axes. A mounted route is never treated as deployment proof.
 
