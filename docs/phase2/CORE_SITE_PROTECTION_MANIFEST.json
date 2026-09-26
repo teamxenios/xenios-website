@@ -573,6 +573,42 @@
         "seam": "feature flag declaration",
         "allowed": "add a flag with a FALSE default",
         "forbidden": "changing an existing flag's default to true, or removing a flag another surface reads"
+      },
+      {
+        "path": "server/routes.ts",
+        "seam": "hash-locked contact receipt repair",
+        "allowed": "Only reviewed c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa bytes: bounded acceptance, idempotent retry and truthful confirmation. Review: docs/ux/xenios-adversarial-audit-20260924/PROTECTED_CHANGE_REVIEW.md; founder-assigned closeout lead lease XENIOS-AUDIT-RELEASE-CONTROL-20260926.",
+        "forbidden": "Any unreviewed byte change; no expanded namespace allowance, route/auth/money/clinical authority or redesign."
+      },
+      {
+        "path": "server/services/email.ts",
+        "seam": "hash-locked contact receipt repair",
+        "allowed": "Only reviewed c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa bytes: bounded acceptance, idempotent retry and truthful confirmation. Review: docs/ux/xenios-adversarial-audit-20260924/PROTECTED_CHANGE_REVIEW.md; founder-assigned closeout lead lease XENIOS-AUDIT-RELEASE-CONTROL-20260926.",
+        "forbidden": "Any unreviewed byte change; no expanded namespace allowance, route/auth/money/clinical authority or redesign."
+      },
+      {
+        "path": "server/services/contact-delivery.ts",
+        "seam": "hash-locked contact receipt repair",
+        "allowed": "Only reviewed c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa bytes: bounded acceptance, idempotent retry and truthful confirmation. Review: docs/ux/xenios-adversarial-audit-20260924/PROTECTED_CHANGE_REVIEW.md; founder-assigned closeout lead lease XENIOS-AUDIT-RELEASE-CONTROL-20260926.",
+        "forbidden": "Any unreviewed byte change; no expanded namespace allowance, route/auth/money/clinical authority or redesign."
+      },
+      {
+        "path": "client/src/components/ContactForm.tsx",
+        "seam": "hash-locked contact receipt repair",
+        "allowed": "Only reviewed c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa bytes: bounded acceptance, idempotent retry and truthful confirmation. Review: docs/ux/xenios-adversarial-audit-20260924/PROTECTED_CHANGE_REVIEW.md; founder-assigned closeout lead lease XENIOS-AUDIT-RELEASE-CONTROL-20260926.",
+        "forbidden": "Any unreviewed byte change; no expanded namespace allowance, route/auth/money/clinical authority or redesign."
+      },
+      {
+        "path": "client/src/lib/content.ts",
+        "seam": "hash-locked contact receipt repair",
+        "allowed": "Only reviewed c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa bytes: bounded acceptance, idempotent retry and truthful confirmation. Review: docs/ux/xenios-adversarial-audit-20260924/PROTECTED_CHANGE_REVIEW.md; founder-assigned closeout lead lease XENIOS-AUDIT-RELEASE-CONTROL-20260926.",
+        "forbidden": "Any unreviewed byte change; no expanded namespace allowance, route/auth/money/clinical authority or redesign."
+      },
+      {
+        "path": "client/src/lib/waitlist-service.ts",
+        "seam": "hash-locked contact receipt repair",
+        "allowed": "Only reviewed c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa bytes: bounded acceptance, idempotent retry and truthful confirmation. Review: docs/ux/xenios-adversarial-audit-20260924/PROTECTED_CHANGE_REVIEW.md; founder-assigned closeout lead lease XENIOS-AUDIT-RELEASE-CONTROL-20260926.",
+        "forbidden": "Any unreviewed byte change; no expanded namespace allowance, route/auth/money/clinical authority or redesign."
       }
     ]
   },
@@ -656,7 +692,8 @@
       "2026-09-04, XENIOS-MAJOR-ORDERING-ADMIN-SOR-20260904: package.json adds only the deterministic site:record and site:record:check script aliases required by the founder-directed living system of record. No dependency, engine, build, start, deployment, or existing script changed. old sha256:10033e478592a124a66283217f5767c61ceb352578b60ff868c10a5260336066, new sha256:b140be27b9ea39dc4f551172d29c0d3da454c5954d61f82c52a0248b9f0496bd.",
       "2026-09-07, reviewed B QR/export integration: pinned qrcode-generator2.0.4 runtime and jsqr1.4.0 decoder test dependency with exact lockfile. Rest of dependency authority unchanged.",
       "2026-09-24, XENIOS UX release-control reconciliation. The production base is 79414143d4355d5d3d14cd5fe6e5a536dc68d99d and the reviewed UX runtime candidate is 8315710f90a6db4335db4c5dddac652bf05d9546. Exactly five hard-tripwire hashes differed. Three are intentional candidate changes: client/src/components/Navbar.tsx old sha256:a4d414440431bc646811f82b6551d5d877667e3a755484eda4e1b1de01746fad, new sha256:1b2930b1298f09fd2f6a0d9ed00c2ffcbd457656a9e67ef88521d636dbe0a82b (persistent desktop/mobile Sign in, Get access, and Menu controls while retaining the existing accessible overlay); client/src/pages/Home.tsx old sha256:6200f6faaa62232c1c39dd23c392184a3fc3f93fa4f0550f6daadcb9d3890ee9, new sha256:644b639c7a02d86df085775756ffe8a152ab958b2de504367d2ede07ea0d0548 (mounts the reviewed account-access chooser); client/src/lib/nav.ts old sha256:496dd7567ed1580f39c694775f73fc8e3dcac4a67fe762efa64f098cdfb27f73, new sha256:15cf2d408c72326eb2f62623265a15cfd6f3a342df451b0f08deb4158baedbe0 (adds the canonical Sign in and Get access route identities). Focused account-entry tests, mobile/desktop browser checks, typecheck, and production build passed for those reviewed bytes.",
-      "The other two mismatches are unchanged between production base 79414143 and UX candidate 8315710f and therefore pre-date this lane. Both trace to reviewed production-lineage commit 9f9da8540fc64573614d37bed95a0f991dd79a09 (feat: finalize customer website launch candidate): client/src/components/TopRibbon.tsx old sha256:ea71af1096edd022ede6edd002370201e36369b1b7bb8a380d94518bd5868666, new sha256:33293060886e1d8e866078c02bc43703e628155c9c2702ff029b5349584ff8ad (suppresses the non-clinical founding-cohort ribbon across the exact /care route family while retaining shared navigation); package.json old sha256:c01129601999b1e6b2f02790af0245350182e08fcf739fe40174e4b004c9e081, new sha256:27a6b86fc66aefa1eb2cea035faa5ab4ca09e027774a4b5cebe65b5fc3a4b748 (adds only xenios:control and test:xenios-control script aliases; dependency, engine, build, render-build, start, and existing scripts remain unchanged). The corresponding TopRibbon route test and control-package test already ship in the production lineage. No unrelated runtime file was modified during this reconciliation."
+      "The other two mismatches are unchanged between production base 79414143 and UX candidate 8315710f and therefore pre-date this lane. Both trace to reviewed production-lineage commit 9f9da8540fc64573614d37bed95a0f991dd79a09 (feat: finalize customer website launch candidate): client/src/components/TopRibbon.tsx old sha256:ea71af1096edd022ede6edd002370201e36369b1b7bb8a380d94518bd5868666, new sha256:33293060886e1d8e866078c02bc43703e628155c9c2702ff029b5349584ff8ad (suppresses the non-clinical founding-cohort ribbon across the exact /care route family while retaining shared navigation); package.json old sha256:c01129601999b1e6b2f02790af0245350182e08fcf739fe40174e4b004c9e081, new sha256:27a6b86fc66aefa1eb2cea035faa5ab4ca09e027774a4b5cebe65b5fc3a4b748 (adds only xenios:control and test:xenios-control script aliases; dependency, engine, build, render-build, start, and existing scripts remain unchanged). The corresponding TopRibbon route test and control-package test already ship in the production lineage. No unrelated runtime file was modified during this reconciliation.",
+      "2026-09-26: Codex release-control lead reviewed exact six-path diff 0574264..c4ea8a9 under explicit user audit-closeout direction. Original repair02d525b preserved. Re-pin only reviewed bytes; six exact paths remain hard hash locked and reported as seams. Focused tamper checks extended to each path. No deployment approval."
     ],
     "files": {
       "client/index.html": "sha256:b2d696a8b3e6657977932aa86cb20483f103fca121748add91e1959e54fd76ba",
@@ -676,17 +713,21 @@
       "client/src/lib/nav.ts": "sha256:15cf2d408c72326eb2f62623265a15cfd6f3a342df451b0f08deb4158baedbe0",
       "client/src/lib/tracking.ts": "sha256:258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
       "client/src/lib/attribution.ts": "sha256:2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
-      "client/src/lib/content.ts": "sha256:077f0e154aa05ee91f4a9088f763c391d3ca61f78cf9bd89f9ce7031bf8cc13a",
+      "client/src/lib/content.ts": "sha256:505468087f7f96148d3e112b428ed8c3b39a125d159511d28d81fb641c05e2f0",
       "client/src/lib/careers.ts": "sha256:b3da84886eb24be6f8d77e551fc460e9279d8813063fae9f860128e9fda75ebc",
       "client/public/sitemap.xml": "sha256:4e86dd4dbe020a3bc621cf48249dff4d3dea3883ff6b710499f4dbca96f3f84f",
       "client/public/llms.txt": "sha256:b1e4c1940cd19229a1fba393ba9c82370c2bde5ccaedd5b5a2f9078a1f0aac37",
       "client/public/robots.txt": "sha256:b79293d54b5df7f4fda3b83b570eca294dd50d8f2cb9b1a9045f72d762570a81",
-      "server/routes.ts": "sha256:feb276a9f6412c16deb352d267b3c2216ea251b32f0769bd42a66b1edd9f73c4",
+      "server/routes.ts": "sha256:f17d518ee2a3bcda2ff4d4ffca6bc8475c0ced5f7c9f5f85b19bd189e09ea2ae",
       "server/static.ts": "sha256:3b0813133a6f0533b5880c47dc6f3187d6409f839f8cfcecb7070e6286e561f1",
       "package.json": "sha256:27a6b86fc66aefa1eb2cea035faa5ab4ca09e027774a4b5cebe65b5fc3a4b748",
       "package-lock.json": "sha256:d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74",
       "postcss.config.js": "sha256:190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27",
-      "vite.config.ts": "sha256:08f76e7d682a54b03c04ee003675891a605d53b0d422f1132e6354860a15b924"
+      "vite.config.ts": "sha256:08f76e7d682a54b03c04ee003675891a605d53b0d422f1132e6354860a15b924",
+      "server/services/email.ts": "sha256:b03513764fb3c1ed611b9155618df76d8db606c90262815f07a45b336734fa26",
+      "server/services/contact-delivery.ts": "sha256:7485a2d427a73909cccfb06dfb5d8b4c376f7d278504a3c7a6473d76d7da93a6",
+      "client/src/components/ContactForm.tsx": "sha256:9dcc8cc0a498a77aeeeab41d6966149641c5032c419bfde296abff6bb0483719",
+      "client/src/lib/waitlist-service.ts": "sha256:48a33c461ea4c374a6be87ba19d04794124f63c1b3ec64b5fc375c12dc63da1e"
     }
   },
   "seamBaselineHashes": {

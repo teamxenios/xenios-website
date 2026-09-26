@@ -129,12 +129,12 @@ describe("the changed-file classifier", () => {
 
   it("FAILS an unrelated server route file and an unrelated API surface", () => {
     const result = classifyChangedFiles(
-      ["server/routes.ts", "server/services/email.ts", "shared/schema.ts"],
+      ["server/unrelated-route.ts", "server/services/unrelated-email.ts", "shared/schema.ts"],
       manifest,
     );
     expect(result.violations.sort()).toEqual([
-      "server/routes.ts",
-      "server/services/email.ts",
+      "server/services/unrelated-email.ts",
+      "server/unrelated-route.ts",
       "shared/schema.ts",
     ]);
   });
@@ -158,6 +158,12 @@ describe("the changed-file classifier", () => {
       "client/src/pwa/PwaLifecycle.tsx",
     ];
     const reviewedHashLockedSeams = [
+      "server/routes.ts",
+      "server/services/email.ts",
+      "server/services/contact-delivery.ts",
+      "client/src/components/ContactForm.tsx",
+      "client/src/lib/content.ts",
+      "client/src/lib/waitlist-service.ts",
       ...typographyFiles,
       ...healthEntrypointFiles,
       ...pwaSensitiveWorkflowFiles,
@@ -305,6 +311,12 @@ describe("the protected file hash tripwire", () => {
 
   it("FAILS every mutation of the reviewed typography and dependency seam bytes", () => {
     for (const target of [
+      "server/routes.ts",
+      "server/services/email.ts",
+      "server/services/contact-delivery.ts",
+      "client/src/components/ContactForm.tsx",
+      "client/src/lib/content.ts",
+      "client/src/lib/waitlist-service.ts",
       "client/index.html",
       "client/src/main.tsx",
       "client/src/fonts.ts",

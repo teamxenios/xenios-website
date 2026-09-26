@@ -2228,6 +2228,40 @@
       "state": "handoff",
       "claimedAt": "2026-09-24T19:52:45.501Z",
       "heartbeatAt": "2026-09-26T15:18:12.445Z"
+    },
+    {
+      "id": "c250f04b-5f26-4b31-a905-1abfdf47ca4c",
+      "task": "XENIOS-ADVERSARIAL-AUDIT-20260924",
+      "session": "codex-adversarial-audit-20260924",
+      "paths": [
+        "docs/ux/xenios-adversarial-audit-20260924/**",
+        ".xenios/sessions/codex-adversarial-audit-20260924.json",
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+        "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-26T19:11:44.333Z",
+      "heartbeatAt": "2026-09-26T19:11:44.483Z"
+    },
+    {
+      "id": "1008c7a2-36ee-4608-8c18-19623638e2f1",
+      "task": "XENIOS-AUDIT-RELEASE-CONTROL-20260926",
+      "session": "codex-adversarial-audit-20260924",
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+        "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+        "docs/coordination/FILE_OWNERSHIP.json",
+        "docs/coordination/MIGRATION_DAG.json",
+        "docs/coordination/history/*2026-09-26*",
+        "server/core-site-protection.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-26T19:12:06.604Z",
+      "heartbeatAt": "2026-09-26T19:12:06.604Z"
     }
   ],
   "rules": [

@@ -1,5 +1,13 @@
 # Protected change review — integrator action required
 
+## September 26 closeout lead review (supersedes the ownership dependency below)
+
+Samuel's pasted continuation request explicitly assigns this Codex session as implementation and release-control lead and requires protected review and canonical fingerprint reconciliation. This grants local review/record authority only. The six-file diff from 0574264 to c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa was re-read in full: the change is limited to contact acceptance, provider idempotency, bounded waiting, corporate confirmation and removal of an unsupported response-time promise. Existing validation, honeypot, rate limit, email recipient configuration and all non-contact routes remain unchanged. This is the named lead's review, not an independent second-agent acceptance.
+
+Exact lease: XENIOS-AUDIT-RELEASE-CONTROL-20260926. The prior manifest lease is in handoff state. Claude's active clarity-spec lease covers only docs/ux/xenios-clarity-program/** and is untouched. The manifest now records these six exact reviewed files as reported seams, hard-locks their complete normalized bytes, and admits no directory wildcard. The gate's unrelated-file denial remains tested; mutation checks now include every contact seam. This deliberately scoped baseline revision will be committed separately from application changes. Full release qualification is still pending and no deployment is authorized.
+
+Fresh read-only Render, dual-origin health, managed migration history and bounded function-ACL observations are in evidence/closeout-*-20260926.json. Central production identity is reconciled to 79414143, never to the candidate. Managed history alone is not exact migration byte equality or full SQL postcheck evidence.
+
 Application source: `c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa`. Original tested repair: `02d525baa7d784ed16e297c1d17b1e4050ecf4cc`. Test-only successor `ee1c972` corrects the old documents destination assertion; it does not change the browser bundle.
 
 The user authorized reversible audit repairs, including corporate confirmation and response-time wording, but explicitly withheld deployment authorization. The author has not approved their own protected integration or modified fingerprints.
