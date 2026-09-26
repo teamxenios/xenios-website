@@ -1,0 +1,12 @@
+TASK: XENIOS-CLARITY-SPEC-20260926 — CLAUDE_06 owner approval recorded
+ROLE: Claude Code strategy lane (claude-clarity-spec-20260926)
+BASE SHA: 409c0cf3a34bc735e0a8ef1ae00d1b90869d9f5d
+BRANCH: claude/xenios-clarity-spec-20260926
+FINAL STRATEGY CONTENT SHA / TREE: af5713863dcf9b8455c568b89ffc15f6c103e58a / aed302d6cf48ce760878b5138d3028b6c908e35b
+IDENTITY-PIN SUCCESSOR: 0194a36907bcaa7433e490456f552a6c3471d8f7 (tree 1929b36fa081a6a09e01d930b177418d2d5ee36f)
+APPROVAL: Samuel Boadu (SB), 2026-09-26, "APPROVE THE REVIEWED XENIOS CLARITY DECISION SET"; 13/13 approved; revisions G-1 conservative, I-1 general interest only
+IMPLEMENTATION BASE: 3298f279ad760a861e26e3e08514bb49694fae38 (full mode; B-1 approved)
+RUNTIME FILES CHANGED: NONE
+PRODUCTION MUTATED: NO
+
+Next: Codex runs CODEX_06 from 20_CODEX_READY_HANDOFF.md, recording STRATEGY SHA af57138. Then Claude runs CLAUDE_04 on the exact Codex runtime candidate.
