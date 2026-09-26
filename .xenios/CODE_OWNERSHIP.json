@@ -2197,7 +2197,7 @@
         "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
         "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-24T19:52:45.428Z",
       "heartbeatAt": "2026-09-26T15:18:12.445Z"
     },
@@ -2225,7 +2225,7 @@
         "client/src/research/quality/DocumentsPage.tsx",
         "client/src/research/pages/quality-surfaces.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-24T19:52:45.501Z",
       "heartbeatAt": "2026-09-26T15:18:12.445Z"
     }
