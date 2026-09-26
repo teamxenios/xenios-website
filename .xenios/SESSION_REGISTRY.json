@@ -524,10 +524,10 @@
       "tool": "Codex",
       "lane": "audit-release-control-lead",
       "branch": "codex/xenios-adversarial-audit-20260924",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-09-24T18:45:27.226Z",
       "heartbeatAt": "2026-09-26T20:08:41.160Z",
-      "note": "Frozen candidate 3298 manifest accepted; final evidence and Google closeout, no production mutation",
+      "note": "Pushed closeout 9048e87; frozen candidate 3298 accepted locally, no deployment authority; other sessions untouched",
       "resumedAt": "2026-09-26T19:12:06.503Z"
     }
   ],

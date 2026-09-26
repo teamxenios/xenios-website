@@ -2206,7 +2206,7 @@
       "id": "XENIOS-ADVERSARIAL-AUDIT-20260924",
       "title": "Independent audit-first UX baseline and evidence-backed scoped repairs",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-adversarial-audit-20260924",
       "baseSha": "c8ea24944f277e5b0770d5446687f2752db3ab73",
       "paths": [
@@ -2223,9 +2223,9 @@
       "claimedAt": "2026-09-26T19:11:44.331Z",
       "handoff": {
         "session": "codex-adversarial-audit-20260924",
-        "sha": "1daac3119a9efcd74f8ccb76bc0c1c0745ec459d",
-        "file": ".xenios/handoffs/2026-09-26T15-20-44-886Z-XENIOS-ADVERSARIAL-AUDIT-20260924-codex-adversarial-audit-20260924.md",
-        "at": "2026-09-26T15:20:44.899Z"
+        "sha": "9048e87ec05712a3fb7d0dba30ba98fa21937b22",
+        "file": ".xenios/handoffs/2026-09-26T20-11-07-985Z-XENIOS-ADVERSARIAL-AUDIT-20260924-codex-adversarial-audit-20260924.md",
+        "at": "2026-09-26T20:11:07.988Z"
       }
     },
     {
@@ -2269,7 +2269,7 @@
       "id": "XENIOS-AUDIT-RELEASE-CONTROL-20260926",
       "title": "Close existing adversarial audit release controls under founder-assigned lead authority",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-adversarial-audit-20260924",
       "baseSha": "049dfd9d387893623771b8a76b90df6a8bc444d7",
       "paths": [
@@ -2283,12 +2283,18 @@
       ],
       "dependsOn": [],
       "scopeNote": "User pasted request explicitly assigns Codex implementation and release-control lead for existing audit only. Review before fingerprint reconciliation; preserve historical evidence. No deployment or production mutation. Claude clarity strategy directory excluded.",
-      "claimedAt": "2026-09-26T19:12:06.601Z"
+      "claimedAt": "2026-09-26T19:12:06.601Z",
+      "handoff": {
+        "session": "codex-adversarial-audit-20260924",
+        "sha": "9048e87ec05712a3fb7d0dba30ba98fa21937b22",
+        "file": ".xenios/handoffs/2026-09-26T20-11-08-061Z-XENIOS-AUDIT-RELEASE-CONTROL-20260926-codex-adversarial-audit-20260924.md",
+        "at": "2026-09-26T20:11:08.067Z"
+      }
     },
     {
       "id": "XENIOS-AUDIT-PRODUCTION-ASSERTIONS-20260926",
       "title": "Reconcile stale live-baseline assertions after verified production refresh",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-adversarial-audit-20260924",
       "paths": [
         "server/release-control-plane.test.ts"
@@ -2297,12 +2303,18 @@
       "acceptance": [
         "Retain negative false-production controls; verify exact observed baseline and historical snapshots"
       ],
-      "claimedAt": "2026-09-26T19:43:58.328Z"
+      "claimedAt": "2026-09-26T19:43:58.328Z",
+      "handoff": {
+        "session": "codex-adversarial-audit-20260924",
+        "sha": "9048e87ec05712a3fb7d0dba30ba98fa21937b22",
+        "file": ".xenios/handoffs/2026-09-26T20-11-08-139Z-XENIOS-AUDIT-PRODUCTION-ASSERTIONS-20260926-codex-adversarial-audit-20260924.md",
+        "at": "2026-09-26T20:11:08.142Z"
+      }
     },
     {
       "id": "XENIOS-AUDIT-SITE-REGISTRY-20260926",
       "title": "Bind canonical site registry to freshly observed production",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-adversarial-audit-20260924",
       "paths": [
         "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.registry.json"
@@ -2311,7 +2323,13 @@
       "acceptance": [
         "Fresh identity only; preserve capability evidence statuses"
       ],
-      "claimedAt": "2026-09-26T19:50:59.910Z"
+      "claimedAt": "2026-09-26T19:50:59.910Z",
+      "handoff": {
+        "session": "codex-adversarial-audit-20260924",
+        "sha": "9048e87ec05712a3fb7d0dba30ba98fa21937b22",
+        "file": ".xenios/handoffs/2026-09-26T20-11-08-212Z-XENIOS-AUDIT-SITE-REGISTRY-20260926-codex-adversarial-audit-20260924.md",
+        "at": "2026-09-26T20:11:08.228Z"
+      }
     },
     {
       "id": "XENIOS-AUDIT-EVIDENCE-FORMAT-20260926",
