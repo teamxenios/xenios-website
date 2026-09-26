@@ -1,0 +1,83 @@
+{
+  "archive": "docs/ux/xenios-adversarial-audit-20260924/evidence/raw-before-whitespace-normalization.json.gz",
+  "archiveSha256": "ef19392e0ee8e1ccec37bf6f8a22881707af83fdd4f575060c97b095b6cdffe2",
+  "files": [
+    {
+      "path": ".xenios/handoffs/2026-09-24T16-52-54-384Z-XENIOS-UX-ACCOUNT-NOTIFICATIONS-20260924-codex-xenios-ux-account-notifications-20260924.md",
+      "sha256": "e6e8fbf61ba66a579e4f26a6bcfc7ee213d4dc2930baa101f0640d7c79f1c127"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/check.log",
+      "sha256": "93ea5c8bbb17193449a166753a0a48eb8c290a6edd19513920756cda8af19e1a"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-control-focused.txt",
+      "sha256": "c2b3a3d4a871ef8b123a81363c2ab74c3b0162f0dc70fe48bcd18470bddcdc05"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-full-before-baseline-assertions.txt",
+      "sha256": "b3591f260a3ad05f31e9030879688f70a04ed21bd603edd7058de229002ac1a6"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-protection-final.txt",
+      "sha256": "6bfdf8b2a188a2a94a59d4bd7e269c211977e6006adcbe70b1bcc429f79bc280"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/document-partner-tests-20260926.txt",
+      "sha256": "fb9c5f8160e6138af8ead64d6e65971309b929d34c82c53c86a602e0b846e929"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-desktop-zoom-attempt.txt",
+      "sha256": "c75de8beba901847196d9c3129814f8f63fe0b98ed0777638839c6369fcbc771"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-build.txt",
+      "sha256": "2e7aaacc87aab5fb03b56676e8355bde376d97efbf10082001223696e59e7d45"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-focused.txt",
+      "sha256": "b02c548fb2d38e4a5d0515167a654739002a34f232ad3dcb31115d87a184c19d"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-full-tests.txt",
+      "sha256": "e7c9b82e7aa8c8805c847729973acfd631cecb045125afc23b81044e00338327"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-lifecycle-tests.txt",
+      "sha256": "d57d65609be38046cdc45488f4ff7f50c9173b62cf8a4426684c676b80ee6a07"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-quality-regression.txt",
+      "sha256": "fe499821a6d5572179857a2b88397d6707097718f0424077bc8bfa72a660b9ff"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-typecheck.txt",
+      "sha256": "93ea5c8bbb17193449a166753a0a48eb8c290a6edd19513920756cda8af19e1a"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/full-tests.log",
+      "sha256": "b6bf73b5c1653d188be200eb3d1aec95581254101240d80496d53476db900e2e"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/protected-routes-review.diff",
+      "sha256": "e2adb7e12b1985c91fd24f7c32fc1a5f5f13b2f51d2c8541da4b0a85b00e0b11"
+    },
+    {
+      "path": "docs/ux/xenios-adversarial-audit-20260924/repair-build.log",
+      "sha256": "fc3186d72f6d9158fc18bab658980686bc01a253ff9e88e017c1825f43c1bbeb"
+    },
+    {
+      "path": "docs/ux/xenios-founder-admin-matrix-20260924/ADMIN_DATA_ACCESS_MATRIX.md",
+      "sha256": "52f687ae4130d54fab581a16ff3e96b44174ef5c0f07935748869caeb6e51297"
+    },
+    {
+      "path": "docs/ux/xenios-ux-account-notifications-20260924/IMPLEMENTATION_REPORT.md",
+      "sha256": "e6e8fbf61ba66a579e4f26a6bcfc7ee213d4dc2930baa101f0640d7c79f1c127"
+    },
+    {
+      "path": "docs/ux/xenios-ux-account-notifications-20260924/RELEASE_CONTROL_REPORT.md",
+      "sha256": "f281c4e8b6e4e1992a2e4e93ffb5128b38f93192d2012f8ff08ebb4f5563e6d5"
+    }
+  ],
+  "change": "Text presentation only: trailing whitespace/EOF blanks removed; Markdown hard breaks retained as backslash; protected route diff regenerated with zero context. Original bytes recoverable from gzip JSON. No application bytes changed."
+}

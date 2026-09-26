@@ -1,9 +1,9 @@
 # Xenios UX release-control reconciliation
 
-Date: 2026-09-24  
-Production base: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d`  
-Previous UX runtime candidate: `8315710f90a6db4335db4c5dddac652bf05d9546`  
-Previous UX runtime tree: `522d6d8612f59462ea7f5f0e38e2fd852c920cbc`  
+Date: 2026-09-24\
+Production base: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d`\
+Previous UX runtime candidate: `8315710f90a6db4335db4c5dddac652bf05d9546`\
+Previous UX runtime tree: `522d6d8612f59462ea7f5f0e38e2fd852c920cbc`\
 Production mutation: none
 
 ## Manifest mismatch disposition

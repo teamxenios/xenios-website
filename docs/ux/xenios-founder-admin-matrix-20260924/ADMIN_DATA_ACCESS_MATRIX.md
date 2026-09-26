@@ -1,7 +1,7 @@
 # Xenios founder admin data-access matrix
 
-Date: 2026-09-24  
-Candidate base: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d`  
+Date: 2026-09-24\
+Candidate base: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d`\
 Authority invariant: every data read and mutation remains behind the existing server admin guard and the authenticated Supabase bearer session. The UI does not infer authority from an email string. Recovery-purpose sessions are denied. Care visibility remains operational and minimum-necessary; this work creates no clinical-record bypass.
 
 `Page adapter` below means the existing page-specific adapter/API already mounted by that surface. It does not imply a new endpoint or authority.

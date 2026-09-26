@@ -2284,6 +2284,35 @@
       "state": "active",
       "claimedAt": "2026-09-26T19:50:59.927Z",
       "heartbeatAt": "2026-09-26T19:50:59.927Z"
+    },
+    {
+      "id": "b3d3288b-bdef-4207-a808-d90f17c6aafb",
+      "task": "XENIOS-AUDIT-EVIDENCE-FORMAT-20260926",
+      "session": "codex-adversarial-audit-20260924",
+      "paths": [
+        ".xenios/handoffs/2026-09-24T16-52-54-384Z-XENIOS-UX-ACCOUNT-NOTIFICATIONS-20260924-codex-xenios-ux-account-notifications-20260924.md",
+        "docs/ux/xenios-adversarial-audit-20260924/check.log",
+        "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-control-focused.txt",
+        "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-full-before-baseline-assertions.txt",
+        "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-protection-final.txt",
+        "docs/ux/xenios-adversarial-audit-20260924/evidence/document-partner-tests-20260926.txt",
+        "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-desktop-zoom-attempt.txt",
+        "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-build.txt",
+        "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-focused.txt",
+        "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-full-tests.txt",
+        "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-lifecycle-tests.txt",
+        "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-quality-regression.txt",
+        "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-typecheck.txt",
+        "docs/ux/xenios-adversarial-audit-20260924/full-tests.log",
+        "docs/ux/xenios-adversarial-audit-20260924/protected-routes-review.diff",
+        "docs/ux/xenios-adversarial-audit-20260924/repair-build.log",
+        "docs/ux/xenios-founder-admin-matrix-20260924/ADMIN_DATA_ACCESS_MATRIX.md",
+        "docs/ux/xenios-ux-account-notifications-20260924/IMPLEMENTATION_REPORT.md",
+        "docs/ux/xenios-ux-account-notifications-20260924/RELEASE_CONTROL_REPORT.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-26T19:59:09.828Z",
+      "heartbeatAt": "2026-09-26T19:59:09.828Z"
     }
   ],
   "rules": [

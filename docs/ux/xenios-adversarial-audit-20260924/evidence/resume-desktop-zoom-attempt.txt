@@ -44,22 +44,22 @@ Browser tab: 1096124917, Title: "Organization access | Xenios Research", URL: "h
 				42 text The exact capabilities depend on durable account, catalog, pricing, documentation, and fulfillment authority. Missing capabilities stay explicit.
 				43 content list
 					44 container
-						45 AXListMarker • 
+						45 AXListMarker •
 						46 text Reviewed organization and buyer access
 					47 container
-						48 AXListMarker • 
+						48 AXListMarker •
 						49 text Exact product and variant requests
 					50 container
-						51 AXListMarker • 
+						51 AXListMarker •
 						52 text Volume and availability planning
 					53 container
-						54 AXListMarker • 
+						54 AXListMarker •
 						55 text Human-reviewed quote requests
 					56 container
-						57 AXListMarker • 
+						57 AXListMarker •
 						58 text Lot and document requirements
 					59 container
-						60 AXListMarker • 
+						60 AXListMarker •
 						61 text Order, fulfillment, and support relationship
 				62 container A request does not establish price, supply, or clinical access.
 					63 text OPERATING BOUNDARY
@@ -68,16 +68,16 @@ Browser tab: 1096124917, Title: "Organization access | Xenios Research", URL: "h
 					66 text Organization review creates a defensible next action. It does not turn workbook presence, demand, verbal supply, or a provider relationship into a purchasable product.
 					67 content list
 						68 container
-							69 AXListMarker • 
+							69 AXListMarker •
 							70 text Wholesale and organization-specific terms remain private and human-approved.
 						71 container
-							72 AXListMarker • 
+							72 AXListMarker •
 							73 text Inventory, availability, documentation, and exact variants remain authoritative at the time of action.
 						74 container
-							75 AXListMarker • 
+							75 AXListMarker •
 							76 text A clinic's Research account never authorizes treatment, prescribing, telehealth, or pharmacy fulfillment.
 						77 container
-							78 AXListMarker • 
+							78 AXListMarker •
 							79 text No client or patient list should be attached to an initial inquiry.
 			80 container From interest to an owned next action.
 				81 text REVIEW SEQUENCE
@@ -86,22 +86,22 @@ Browser tab: 1096124917, Title: "Organization access | Xenios Research", URL: "h
 				84 text Each stage names the evidence or decision still needed. A missing external agreement or configuration blocks only that capability, not the clarity of the pathway.
 				85 content list
 					86 container
-						87 AXListMarker 1. 
+						87 AXListMarker 1.
 						88 heading Organization review, Value: 3
 							89 text Organization review
 						90 text Verify the legal entity, authorized contact, intended business purpose, region, and the people who need buyer or billing access.
 					91 container
-						92 AXListMarker 2. 
+						92 AXListMarker 2.
 						93 heading Scope and documentation, Value: 3
 							94 text Scope and documentation
 						95 text Identify exact categories, volume, research context, quality documents, delivery needs, and any terms requiring human review.
 					96 container
-						97 AXListMarker 3. 
+						97 AXListMarker 3.
 						98 heading Commercial path, Value: 3
 							99 text Commercial path
 						100 text Review identifies whether the next path is a catalog, availability request, quote, organization account, or Care handoff without silently merging them.
 					101 container
-						102 AXListMarker 4. 
+						102 AXListMarker 4.
 						103 heading Onboarding and support, Value: 3
 							104 text Onboarding and support
 						105 text Any approved onboarding must identify an accountable Xenios owner, next action, account status, and supported operational path. Approval is never automatic.

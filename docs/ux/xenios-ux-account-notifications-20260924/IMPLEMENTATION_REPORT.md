@@ -1,8 +1,8 @@
 # Xenios UX, account entry, partner handoff, notifications, and founder admin candidate
 
-Date: 2026-09-24  
-Base SHA: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d`  
-Branch: `codex/xenios-ux-account-notifications-20260924`  
+Date: 2026-09-24\
+Base SHA: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d`\
+Branch: `codex/xenios-ux-account-notifications-20260924`\
 Production mutation: none
 
 ## Implemented

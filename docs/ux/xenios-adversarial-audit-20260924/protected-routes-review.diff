@@ -2,25 +2,12 @@ diff --git a/server/routes.ts b/server/routes.ts
 index 2d573f7..84000a5 100644
 --- a/server/routes.ts
 +++ b/server/routes.ts
-@@ -6,13 +6,12 @@ import { z } from "zod";
- import {
-   sendConfirmationEmail,
-   sendInternalNotification,
+@@ -9,2 +8,0 @@ import {
 -  sendContactMessage,
 -  sendContactAutoReply,
-   sendWaitlistConfirmationV3,
-   sendWaitlistInternalAlertV3,
-   sendLoiConfirmationV3,
-   sendLoiInternalAlertV3,
- } from "./services/email";
+@@ -15,0 +14 @@ import {
 +import { deliverContact } from "./services/contact-delivery";
- import {
-   getDisplayCount,
-   upsertWaitlist,
-@@ -452,12 +451,14 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
-       }
-       const validated = contactMessageSchema.parse(req.body);
- 
+@@ -455,6 +454,8 @@ export async function registerRoutes(httpServer: Server, app: Express): Promise<
 -      Promise.allSettled([
 -        sendContactMessage(validated),
 -        sendContactAutoReply(validated),
@@ -35,6 +22,3 @@ index 2d573f7..84000a5 100644
 +        });
 +      }
 +      res.json({ success: true, message: "Accepted for delivery to our team inbox.", autoReplySent: delivery.autoReplySent });
-     } catch (error) {
-       if (error instanceof z.ZodError) {
-         return res.status(400).json({
