@@ -609,6 +609,30 @@
         "seam": "hash-locked contact receipt repair",
         "allowed": "Only reviewed c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa bytes: bounded acceptance, idempotent retry and truthful confirmation. Review: docs/ux/xenios-adversarial-audit-20260924/PROTECTED_CHANGE_REVIEW.md; founder-assigned closeout lead lease XENIOS-AUDIT-RELEASE-CONTROL-20260926.",
         "forbidden": "Any unreviewed byte change; no expanded namespace allowance, route/auth/money/clinical authority or redesign."
+      },
+      {
+        "path": "client/src/components/AccountAccessChooser.tsx",
+        "seam": "hash-locked inherited account entry repair",
+        "allowed": "Exact inherited candidate bytes reviewed against production79414143 in audit closeout. Prior scope: docs/ux/xenios-ux-account-notifications-20260924/IMPLEMENTATION_REPORT.md and RELEASE_CONTROL_REPORT.md. No runtime edited in this reconciliation.",
+        "forbidden": "Any unreviewed byte change, redesign or authority expansion. Complete file remains hash locked."
+      },
+      {
+        "path": "client/src/components/Navbar.tsx",
+        "seam": "hash-locked inherited account entry repair",
+        "allowed": "Exact inherited candidate bytes reviewed against production79414143 in audit closeout. Prior scope: docs/ux/xenios-ux-account-notifications-20260924/IMPLEMENTATION_REPORT.md and RELEASE_CONTROL_REPORT.md. No runtime edited in this reconciliation.",
+        "forbidden": "Any unreviewed byte change, redesign or authority expansion. Complete file remains hash locked."
+      },
+      {
+        "path": "client/src/pages/Admin.tsx",
+        "seam": "hash-locked inherited account entry repair",
+        "allowed": "Exact inherited candidate bytes reviewed against production79414143 in audit closeout. Prior scope: docs/ux/xenios-ux-account-notifications-20260924/IMPLEMENTATION_REPORT.md and RELEASE_CONTROL_REPORT.md. No runtime edited in this reconciliation.",
+        "forbidden": "Any unreviewed byte change, redesign or authority expansion. Complete file remains hash locked."
+      },
+      {
+        "path": "client/src/pages/Home.tsx",
+        "seam": "hash-locked inherited account entry repair",
+        "allowed": "Exact inherited candidate bytes reviewed against production79414143 in audit closeout. Prior scope: docs/ux/xenios-ux-account-notifications-20260924/IMPLEMENTATION_REPORT.md and RELEASE_CONTROL_REPORT.md. No runtime edited in this reconciliation.",
+        "forbidden": "Any unreviewed byte change, redesign or authority expansion. Complete file remains hash locked."
       }
     ]
   },
@@ -693,7 +717,8 @@
       "2026-09-07, reviewed B QR/export integration: pinned qrcode-generator2.0.4 runtime and jsqr1.4.0 decoder test dependency with exact lockfile. Rest of dependency authority unchanged.",
       "2026-09-24, XENIOS UX release-control reconciliation. The production base is 79414143d4355d5d3d14cd5fe6e5a536dc68d99d and the reviewed UX runtime candidate is 8315710f90a6db4335db4c5dddac652bf05d9546. Exactly five hard-tripwire hashes differed. Three are intentional candidate changes: client/src/components/Navbar.tsx old sha256:a4d414440431bc646811f82b6551d5d877667e3a755484eda4e1b1de01746fad, new sha256:1b2930b1298f09fd2f6a0d9ed00c2ffcbd457656a9e67ef88521d636dbe0a82b (persistent desktop/mobile Sign in, Get access, and Menu controls while retaining the existing accessible overlay); client/src/pages/Home.tsx old sha256:6200f6faaa62232c1c39dd23c392184a3fc3f93fa4f0550f6daadcb9d3890ee9, new sha256:644b639c7a02d86df085775756ffe8a152ab958b2de504367d2ede07ea0d0548 (mounts the reviewed account-access chooser); client/src/lib/nav.ts old sha256:496dd7567ed1580f39c694775f73fc8e3dcac4a67fe762efa64f098cdfb27f73, new sha256:15cf2d408c72326eb2f62623265a15cfd6f3a342df451b0f08deb4158baedbe0 (adds the canonical Sign in and Get access route identities). Focused account-entry tests, mobile/desktop browser checks, typecheck, and production build passed for those reviewed bytes.",
       "The other two mismatches are unchanged between production base 79414143 and UX candidate 8315710f and therefore pre-date this lane. Both trace to reviewed production-lineage commit 9f9da8540fc64573614d37bed95a0f991dd79a09 (feat: finalize customer website launch candidate): client/src/components/TopRibbon.tsx old sha256:ea71af1096edd022ede6edd002370201e36369b1b7bb8a380d94518bd5868666, new sha256:33293060886e1d8e866078c02bc43703e628155c9c2702ff029b5349584ff8ad (suppresses the non-clinical founding-cohort ribbon across the exact /care route family while retaining shared navigation); package.json old sha256:c01129601999b1e6b2f02790af0245350182e08fcf739fe40174e4b004c9e081, new sha256:27a6b86fc66aefa1eb2cea035faa5ab4ca09e027774a4b5cebe65b5fc3a4b748 (adds only xenios:control and test:xenios-control script aliases; dependency, engine, build, render-build, start, and existing scripts remain unchanged). The corresponding TopRibbon route test and control-package test already ship in the production lineage. No unrelated runtime file was modified during this reconciliation.",
-      "2026-09-26: Codex release-control lead reviewed exact six-path diff 0574264..c4ea8a9 under explicit user audit-closeout direction. Original repair02d525b preserved. Re-pin only reviewed bytes; six exact paths remain hard hash locked and reported as seams. Focused tamper checks extended to each path. No deployment approval."
+      "2026-09-26: Codex release-control lead reviewed exact six-path diff 0574264..c4ea8a9 under explicit user audit-closeout direction. Original repair02d525b preserved. Re-pin only reviewed bytes; six exact paths remain hard hash locked and reported as seams. Focused tamper checks extended to each path. No deployment approval.",
+      "2026-09-26: production-base classifier review also found four inherited account/admin UI paths whose prior reviewed bytes were not registered as seams. Lead re-read all four diffs against79414143; account chooser/navigation and server-confirmed admin entry only. Exact hard hashes retained/added; no global write zone widened."
     ],
     "files": {
       "client/index.html": "sha256:b2d696a8b3e6657977932aa86cb20483f103fca121748add91e1959e54fd76ba",
@@ -727,7 +752,9 @@
       "server/services/email.ts": "sha256:b03513764fb3c1ed611b9155618df76d8db606c90262815f07a45b336734fa26",
       "server/services/contact-delivery.ts": "sha256:7485a2d427a73909cccfb06dfb5d8b4c376f7d278504a3c7a6473d76d7da93a6",
       "client/src/components/ContactForm.tsx": "sha256:9dcc8cc0a498a77aeeeab41d6966149641c5032c419bfde296abff6bb0483719",
-      "client/src/lib/waitlist-service.ts": "sha256:48a33c461ea4c374a6be87ba19d04794124f63c1b3ec64b5fc375c12dc63da1e"
+      "client/src/lib/waitlist-service.ts": "sha256:48a33c461ea4c374a6be87ba19d04794124f63c1b3ec64b5fc375c12dc63da1e",
+      "client/src/components/AccountAccessChooser.tsx": "sha256:07cc369332f2fb6002f2c540f85edc63b13879fc8dc5d3284b50b677c958d480",
+      "client/src/pages/Admin.tsx": "sha256:413ac824396685ed476324057f6cd3bd0b929233b1fac550f10bc167fe3f69cd"
     }
   },
   "seamBaselineHashes": {

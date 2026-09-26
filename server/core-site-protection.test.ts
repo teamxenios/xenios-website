@@ -85,21 +85,21 @@ describe("the changed-file classifier", () => {
     ]);
   });
 
-  it("FAILS a change set that touches client/src/pages/Home.tsx", () => {
+  it("FAILS a change set that touches an unrelated corporate page", () => {
     const result = classifyChangedFiles(
-      ["client/src/research/section.tsx", "client/src/pages/Home.tsx"],
+      ["client/src/research/section.tsx", "client/src/pages/About.tsx"],
       manifest,
     );
-    expect(result.violations).toEqual(["client/src/pages/Home.tsx"]);
+    expect(result.violations).toEqual(["client/src/pages/About.tsx"]);
   });
 
   it("FAILS unrelated global presentation changes while reporting the hash-locked shell seam", () => {
     const result = classifyChangedFiles(
-      ["client/src/index.css", "client/index.html", "client/src/components/Navbar.tsx"],
+      ["client/src/index.css", "client/index.html", "client/src/components/Footer.tsx"],
       manifest,
     );
     expect(result.violations.sort()).toEqual([
-      "client/src/components/Navbar.tsx",
+      "client/src/components/Footer.tsx",
       "client/src/index.css",
     ]);
     expect(result.seam).toEqual(["client/index.html"]);
@@ -122,8 +122,8 @@ describe("the changed-file classifier", () => {
   });
 
   it("treats Windows backslash paths the same as git's forward-slash paths", () => {
-    const result = classifyChangedFiles(["client\\src\\pages\\Home.tsx"], manifest);
-    expect(result.violations).toEqual(["client/src/pages/Home.tsx"]);
+    const result = classifyChangedFiles(["client\\src\\pages\\About.tsx"], manifest);
+    expect(result.violations).toEqual(["client/src/pages/About.tsx"]);
     expect(normalizePath(".\\server\\routes.ts")).toBe("server/routes.ts");
   });
 
@@ -158,6 +158,10 @@ describe("the changed-file classifier", () => {
       "client/src/pwa/PwaLifecycle.tsx",
     ];
     const reviewedHashLockedSeams = [
+      "client/src/components/AccountAccessChooser.tsx",
+      "client/src/components/Navbar.tsx",
+      "client/src/pages/Admin.tsx",
+      "client/src/pages/Home.tsx",
       "server/routes.ts",
       "server/services/email.ts",
       "server/services/contact-delivery.ts",
@@ -285,10 +289,10 @@ describe("test files pass but are always reported", () => {
 
   it("still FAILS a protected source file even when a test file is changed alongside it", () => {
     const result = classifyChangedFiles(
-      ["server/core-site-protection.test.ts", "client/src/components/Navbar.tsx"],
+      ["server/core-site-protection.test.ts", "client/src/components/Footer.tsx"],
       manifest,
     );
-    expect(result.violations).toEqual(["client/src/components/Navbar.tsx"]);
+    expect(result.violations).toEqual(["client/src/components/Footer.tsx"]);
   });
 });
 
@@ -311,6 +315,10 @@ describe("the protected file hash tripwire", () => {
 
   it("FAILS every mutation of the reviewed typography and dependency seam bytes", () => {
     for (const target of [
+      "client/src/components/AccountAccessChooser.tsx",
+      "client/src/components/Navbar.tsx",
+      "client/src/pages/Admin.tsx",
+      "client/src/pages/Home.tsx",
       "server/routes.ts",
       "server/services/email.ts",
       "server/services/contact-delivery.ts",
@@ -354,7 +362,7 @@ describe("the protected file hash tripwire", () => {
 
 describe("the gate report", () => {
   it("fails and lists every violating path when protected files change", () => {
-    const classification = classifyChangedFiles(["client/src/pages/Home.tsx"], manifest);
+    const classification = classifyChangedFiles(["client/src/pages/About.tsx"], manifest);
     const clean = { matched: [], mismatches: [], missing: [] };
     const { text, failed } = formatReport(classification, clean, clean, {
       baseRef: "origin/main",
@@ -363,7 +371,7 @@ describe("the gate report", () => {
     });
     expect(failed).toBe(true);
     expect(text).toContain("RESULT: FAIL");
-    expect(text).toContain("client/src/pages/Home.tsx");
+    expect(text).toContain("client/src/pages/About.tsx");
   });
 
   it("fails on a hash mismatch even when every changed path is allowed", () => {
