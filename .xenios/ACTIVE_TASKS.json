@@ -2269,14 +2269,20 @@
       "id": "XENIOS-CLARITY-SPEC-20260926",
       "title": "Clarity program step 1: product strategy, IA, copy, practice model and implementation spec (docs only, no runtime)",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "claude-clarity-spec-20260926",
       "baseSha": "049dfd9d387893623771b8a76b90df6a8bc444d7",
       "paths": [
         "docs/ux/xenios-clarity-program/**"
       ],
       "notes": "Runtime under analysis c4ea8a9; production observed 79414143. Codex implements only after Samuel approves 02_DECISIONS.md.",
-      "claimedAt": "2026-09-26T19:10:04.802Z"
+      "claimedAt": "2026-09-26T19:10:04.802Z",
+      "handoff": {
+        "session": "claude-clarity-spec-20260926",
+        "sha": "7307d73296e568186db72e53cb87e60eccd01b82",
+        "file": ".xenios/handoffs/2026-09-26T19-37-34-236Z-XENIOS-CLARITY-SPEC-20260926-claude-clarity-spec-20260926.md",
+        "at": "2026-09-26T19:37:34.279Z"
+      }
     }
   ]
 }
