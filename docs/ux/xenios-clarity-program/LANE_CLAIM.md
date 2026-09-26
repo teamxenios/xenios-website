@@ -21,3 +21,5 @@ Source identity used by this lane:
 - Audit evidence / documentation tip: `049dfd9d387893623771b8a76b90df6a8bc444d7` (worktree base)
 - Runtime under analysis: `c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa`; reconciled to frozen candidate `3298f279ad760a861e26e3e08514bb49694fae38` (identical application bytes; local gates PASS; deployment not authorized)
 - Observed production: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d`
+
+Final owner-approved strategy content: `af5713863dcf9b8455c568b89ffc15f6c103e58a` (tree `aed302d6cf48ce760878b5138d3028b6c908e35b`). Codex implements from this SHA per `20_CODEX_READY_HANDOFF.md`.

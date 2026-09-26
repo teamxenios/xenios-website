@@ -3,7 +3,7 @@ ROLE: Claude Code — strategy/specification lane (session `claude-clarity-spec-
 STRATEGY BRANCH: claude/xenios-clarity-spec-20260926
 ORIGINAL STRATEGY BASE: 049dfd9d387893623771b8a76b90df6a8bc444d7 (content tip 7307d73, head 91e8473)
 RECONCILED AGAINST: runtime 3298f279ad760a861e26e3e08514bb49694fae38 / evidence tip bad1c4124ef3a199eec01802438073cdf73b2b83
-HEAD SHA / TREE: recorded in the reconciliation handoff (`.xenios/handoffs/`)
+FINAL OWNER-APPROVED STRATEGY CONTENT SHA / TREE: af5713863dcf9b8455c568b89ffc15f6c103e58a / aed302d6cf48ce760878b5138d3028b6c908e35b (approval recorded 2026-09-26, SB; later commits change identity/handoff records only)
 RUNTIME FILES CHANGED: NONE
 TEST-ONLY FILES CHANGED: NONE
 DOCS-ONLY FILES CHANGED: docs/ux/xenios-clarity-program/** and this lane's own .xenios records

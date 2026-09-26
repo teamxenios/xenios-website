@@ -7,7 +7,7 @@
 | Item | Value |
 | --- | --- |
 | Owner approval | `19_FINAL_OWNER_APPROVAL_RECORD.md`: Samuel Boadu (SB), September 26, 2026, "APPROVE THE REVIEWED XENIOS CLARITY DECISION SET"; 13/13 approved |
-| **Final strategy content SHA** | `{{FINAL_CONTENT_SHA}}` (tree `{{FINAL_CONTENT_TREE}}`). Codex records this as STRATEGY SHA/TREE. Later commits on the strategy branch change only identity or handoff records. |
+| **Final strategy content SHA** | `af5713863dcf9b8455c568b89ffc15f6c103e58a` (tree `aed302d6cf48ce760878b5138d3028b6c908e35b`). Codex records this as STRATEGY SHA/TREE. Later commits on the strategy branch change only identity or handoff records. |
 | Strategy branch | `claude/xenios-clarity-spec-20260926` |
 | **Implementation base** | `3298f279ad760a861e26e3e08514bb49694fae38`, tree `ac69ecf87e3c622738908bb4fa7a1779aad493fb` (confirmed by disposition addendum @ `0b351a1`). If the bounded release is deployed first, the Git base stays `3298f279` unless source diverges. |
 | Implementation branch | `codex/xenios-clarity-implementation-20260926`, in a new isolated worktree. Never the audit, strategy, checkout or any production-triggering branch. |
