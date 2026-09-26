@@ -167,10 +167,10 @@ Copy lives in `05_COPY_DECK.md` (referenced as §n). Routes in `04_INFORMATION_A
 | --- | --- |
 | Audience | Practice owners and staff (Stephen) |
 | User question | "Does this fit my practice, do I keep my clients, how do I earn, what's the legal line, what happens next?" |
-| 5-second promise | Refer clients with your link; they own their accounts; your client stays your client. |
+| 5-second promise | Refer clients with your link; clients create and own their accounts; your practice is recorded as the referring practice. |
 | Hero | §8 |
 | Primary / secondary | Submit Inquiry (on-page form) / Sign In (approved practices) |
-| Content order | Hero → 3 model cards → Your client stays your client → We handle / you handle → What a practice account doesn't do → Commission → In-clinic inventory → What happens after you submit → Inquiry form → Practice FAQ |
+| Content order | Hero → 3 model cards → Your clients and their accounts (approved G-1, conservative) → We handle / you handle → What a practice account doesn't do → Commission → In-clinic inventory → What happens after you submit → Inquiry form → Practice FAQ |
 | Product/pricing | No product prices; commission per F-1 wording only |
 | Trust | C-028, C-029, C-030 (approved wording only) |
 | Authority boundary | No ordering for clients; no commission on Care; no practice clinical authority |
@@ -272,7 +272,7 @@ Copy lives in `05_COPY_DECK.md` (referenced as §n). Routes in `04_INFORMATION_A
 | User question | "What roles exist and how do I apply?" |
 | Promise | Real roles, a real way to apply, a real acknowledgement. |
 | Primary CTA | Apply |
-| Content | Only founder-confirmed open roles (I-1), grouped by function; each role: summary, location, type, Apply; a general-interest application always present; if no confirmed roles, general interest only; stale source roles removed |
+| Content | Approved I-1: general-interest application only; no named roles (source roles removed) until Samuel separately confirms each open role (title, scope, compensation presentation, application method, owner) |
 | Behaviour | H-01: Phase 2 durable application form (N-13); until then "Apply by email" with honest line |
 | Acceptance | Apply never a bare mailto without the "by email" label |
 

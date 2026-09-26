@@ -1,6 +1,8 @@
 # 19 — Reviewed decision recommendation (for Samuel's one-line approval)
 
-**Status: RECOMMENDATION ONLY — NOT APPROVED.** Nothing here is Samuel's decision until he states, exactly:
+**Status: APPROVED with revisions on 2026-09-26 — see `19_FINAL_OWNER_APPROVAL_RECORD.md` (G-1 conservative wording; I-1 general interest only). This file is the recommendation as reviewed; the approval record and `17` Answer lines govern.**
+
+(Original status: RECOMMENDATION ONLY — NOT APPROVED.) Nothing here is Samuel's decision until he states, exactly:
 
 > **APPROVE THE REVIEWED XENIOS CLARITY DECISION SET**
 

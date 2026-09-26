@@ -147,3 +147,25 @@ The ten corrections were applied as follows:
 | 10 | Contradiction recheck | see below |
 
 Recheck (grep across all `.md` and `.csv`): no old decision IDs, no "up to 12/6 product cards", no "keep the three roles", no public "clinician-guided" copy, no public "Eon clinician". The approval route is consistent in `17`, `18`, `19`, `20` and `EXECUTIVE_SUMMARY`. **0 contradictions remaining.** Owner answers remain PENDING SAMUEL APPROVAL.
+
+## 10. CLAUDE_06 approval recording (2026-09-26)
+
+Samuel's statement "APPROVE THE REVIEWED XENIOS CLARITY DECISION SET", with owner instructions and revisions, was confirmed in-session ("Yes, record it as written").
+
+Recorded in:
+- `19_FINAL_OWNER_APPROVAL_RECORD.md` (verbatim)
+- `17` (13 Answer lines)
+
+Propagated to:
+- `05` (hero, D-1, G-1 conservative, F-1, E-2, H-1, careers, A-1)
+- `PAGE_SPECIFICATIONS` (P-07, P-14)
+- `04`
+- `11` (U-116)
+- `18` (full mode, careers)
+- `CLAIM_LEDGER` (new C-048; C-003/025/029/030/032/044 approved wording; C-028 stronger promise to counsel)
+- `EXECUTIVE_SUMMARY`
+- `LANE_CLAIM`
+
+`20_CODEX_READY_HANDOFF.md` supersedes the pre-approval handoff.
+
+Contradiction recheck: no remaining "PENDING SAMUEL APPROVAL" in governing files; no public "your client stays your client"; no named careers roles; no public Eon/Infinity.

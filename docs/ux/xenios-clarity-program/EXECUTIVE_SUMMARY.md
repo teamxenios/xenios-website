@@ -17,7 +17,7 @@ What already works is solid. Care requests are recorded and reviewed by a person
 **One site, one header, one promise.** Every visitor knows where they fit in under 30 seconds:
 
 - **Individuals** — *Start Care* (a clinician decides) or *Explore Products* (research use, no clinical review). The two paths are clearly separate, and one never unlocks the other.
-- **Practices** — a first-class *For Practices* section. Refer clients with your own link. Your clients create and own their accounts. Your client stays your client. You see what's credited to you. You never have to order on a client's behalf or put your license behind a research order.
+- **Practices** — a first-class *For Practices* section. Refer clients with your own link. Your clients create and own their accounts, and your practice is recorded as the referring practice. You see what's credited to you. You never have to order on a client's behalf or put your license behind a research order.
 - **Partners** — a clear path: apply, get approved, activate, get your link. It is never confused with a business inquiry.
 - **Suppliers** — invitation after review. No promise of access.
 - **Careers** — real roles and a real way to apply.
@@ -35,7 +35,7 @@ The coach AI workspace moves to its own section (`/workspace`) until the Infinit
 
 ## What Samuel needs to decide
 
-There are 13 decisions. The reviewed recommendations are in `19_REVIEWED_DECISION_RECOMMENDATION.md`, and answers are recorded in `17_OWNER_DECISION_PACKET.md`, where every answer is currently **PENDING SAMUEL APPROVAL**. In short:
+**All 13 decisions were approved by Samuel on September 26, 2026** (`19_FINAL_OWNER_APPROVAL_RECORD.md`; answers are in `17_OWNER_DECISION_PACKET.md`). In short:
 
 1. **Brand:** Xenios stays public for now. Eon Health is recorded internally as the future clinical brand under Infinity.
 2. **Homepage (B-1):** amend your July 29 protection rule for this program only. This is the key decision.
@@ -47,11 +47,11 @@ There are 13 decisions. The reviewed recommendations are in `19_REVIEWED_DECISIO
 8. **Practices:** practices don't order for clients.
 9. **Practice visibility:** counts, credited orders and commission only.
 10. **Commission:** agreement-only 20% / 7.5%, never on Care, no numbers on the site.
-11. **Client relationship:** "Your client stays your client", subject to counsel.
+11. **Client relationship:** conservative wording — clients own their accounts and your practice is recorded as the referring practice. "Your client stays your client" waits for counsel and a matching partner agreement.
 12. **Wholesale:** not offered.
-13. **Careers:** confirmed open roles plus general interest.
+13. **Careers:** general-interest application only for now; named roles only after Samuel confirms each one.
 
-To approve the whole set, say exactly: **"APPROVE THE REVIEWED XENIOS CLARITY DECISION SET"**. You can name revisions alongside it.
+Codex implements from `20_CODEX_READY_HANDOFF.md` (full mode). Nothing is deployed without a separate exact-SHA production GO.
 
 ## How it gets built
 

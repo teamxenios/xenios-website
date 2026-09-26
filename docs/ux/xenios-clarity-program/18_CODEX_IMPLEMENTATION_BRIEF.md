@@ -1,4 +1,6 @@
-# 18 — Codex implementation brief (the contract for `CODEX_03`)
+# 18 — Codex implementation brief (the contract for `CODEX_06`)
+
+> **Owner decisions APPROVED 2026-09-26 (SB) — `19_FINAL_OWNER_APPROVAL_RECORD.md`. Mode: FULL MODE (B-1 approved; protected changes also require independent review). Start from `20_CODEX_READY_HANDOFF.md`.**
 
 Supersedes `12_IMPLEMENTATION_PLAN.md` wherever they differ.
 
@@ -51,7 +53,7 @@ Each step lands as one or more coherent runtime commits with focused tests. Copy
 | 8 | Sign-in / activation / status / support / quality / FAQ / how-it-works pages | same split | none |
 | 9 | Products: **pathway tiles only** in the first release (C-1); the index shows tiles + empty-state copy; the product template may be built but renders no product until approved publication records exist. **No dependency on a founder product list.** No prices (C-2) | same split | C-1, C-2 |
 | 10 | Home + shared header/footer + audience selector; coach home → `/workspace`; redirects | **full mode only** | A-1, B-1, B-2 |
-| 11 | Careers: only founder-confirmed open roles + a general-interest application; stale roles removed; if none confirmed, general interest only; apply control says truthfully whether it emails or records | **full mode only** (protected) | I-1 |
+| 11 | Careers (approved I-1): general-interest application only; remove the three hard-coded roles from public display; apply control states truthfully whether it emails (mailto fallback) or records (Phase 2) | **full mode** (protected) | I-1 approved |
 | 12 | Durable inquiries + founder lane (Phase 2) | allowed (`server/research/`, admin research lane) | Q-14 owner default = founder |
 
 Stop after step 11 and report if step 12 needs a schema change (see §6).

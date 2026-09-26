@@ -2,7 +2,7 @@
 
 This packet is the **only** place owner answers are recorded. `02_DECISIONS.md` points here.
 
-**Status: every answer is PENDING SAMUEL APPROVAL.**
+**Status: ALL 13 DECISIONS APPROVED by Samuel Boadu (SB) on September 26, 2026** via the statement "APPROVE THE REVIEWED XENIOS CLARITY DECISION SET" with revisions to G-1 (conservative wording) and I-1 (general interest only), confirmed by Samuel in this session. Exact record: `19_FINAL_OWNER_APPROVAL_RECORD.md`. The recommendation text below each item is kept for history; the **Answer** line governs.
 
 The reviewed recommendation for each item, and the reasons behind it, are in `19_REVIEWED_DECISION_RECOMMENDATION.md`. That document incorporates the 2026-09-26 full document review and the founder context from the 2026-09-26 thread archive.
 
@@ -40,7 +40,7 @@ Count: **13 decisions**. Labels used below:
 - **Codex implements if approved:** brand setting, unified wordmark, legal-string fix.
 - **Codex must not without approval:** show "Eon", "Eon Health", "Infinity" or "Infinity Health" publicly; change the domain, sender names or policy entity.
 - **If DEFERRED:** same as the recommendation.
-- **Answer:** PENDING SAMUEL APPROVAL
+- **Answer:** APPROVED (revised A-1): Xenios public; Xenios Technologies, Inc. as legal, contracting, policy, footer, receipt and sender entity; Infinity = technology/AI/software/hardware/data/product/infrastructure organization; Eon Health = working future name for the clinical/telehealth/Care/therapeutics/diagnostics/pharmacy-coordination/fulfillment/customer-health business; neither published as a completed rename until entity/DBA or subsidiary, trademark, domain, policies, contracts, sender identities and transition plan are approved; one centralized brand configuration — Samuel Boadu (SB), September 26, 2026. See `19_FINAL_OWNER_APPROVAL_RECORD.md`.
 
 ---
 
@@ -61,7 +61,7 @@ Count: **13 decisions**. Labels used below:
 - **Codex implements if approved:** the full `04_INFORMATION_ARCHITECTURE.md` plan (full mode).
 - **Codex must not without approval:** touch any protected file or route.
 - **If DEFERRED or declined:** fallback mode only (IA §Fallback). The root confusion remains.
-- **Answer:** PENDING SAMUEL APPROVAL
+- **Answer:** APPROVED with the amendment text above (clarity program only), adding: every protected-file change must pass the canonical protected-change review **and independent review**; no unrelated redesign, authority change, deployment, database, commerce, payment, credential, clinical change or feature activation — Samuel Boadu (SB), September 26, 2026. See `19_FINAL_OWNER_APPROVAL_RECORD.md`.
 
 ### B-2 — Hero line
 
@@ -78,7 +78,7 @@ Count: **13 decisions**. Labels used below:
 - **Tradeoffs:** Less aspirational; nothing unverified.
 - **Codex must not without approval:** use "premium", "clinician-guided", "licensed" or any outcome words in the hero.
 - **If DEFERRED:** same as the recommendation.
-- **Answer:** PENDING SAMUEL APPROVAL
+- **Answer:** APPROVED (revised B-2): H1 "Care and research products, clearly separated." Sub "Start a Care request, or explore products for research use. Two different paths, with clear next steps." "Clinician-guided Care" not used as the primary category claim until clinical leadership verifies it and the claim ledger is updated — Samuel Boadu (SB), September 26, 2026. See `19_FINAL_OWNER_APPROVAL_RECORD.md`.
 
 ---
 
@@ -101,7 +101,7 @@ Count: **13 decisions**. Labels used below:
 - **Codex implements if approved:** the tiles; the card and page template may be built but must render no product until publication records are approved.
 - **Codex must not without approval:** publish any product, turn on the storefront flag in production, or show counts.
 - **If DEFERRED:** same as the recommendation.
-- **Answer:** PENDING SAMUEL APPROVAL
+- **Answer:** APPROVED (revised C-1): pathway tiles only — Start Care · Explore Research Products · For Practices. No product counts, individual Care products, unavailable products, unapproved copy, large public catalog or direct-buy experience. Individual assisted-order products only after Samuel approves exact product, variant, public copy, price state, availability, fulfillment authority and documentation state — Samuel Boadu (SB), September 26, 2026. See `19_FINAL_OWNER_APPROVAL_RECORD.md`.
 
 ### C-2 — Public prices
 
@@ -111,7 +111,7 @@ Count: **13 decisions**. Labels used below:
   - Show a price only for a product and variant with an explicitly founder-approved public price; otherwise "Price confirmed in your quote."
   - No Care prices, no candidate or pending prices, no volume tiers, no introductory discounts, no "$0".
   - Under C-1 tiles-only, no prices appear in the first release.
-- **Answer:** PENDING SAMUEL APPROVAL
+- **Answer:** APPROVED (default): public price only for an exact SKU+variant with an explicitly approved public price; otherwise "Price confirmed in your quote." No candidate, pending, Care, $0, introductory prices or public volume tiers — Samuel Boadu (SB), September 26, 2026. See `19_FINAL_OWNER_APPROVAL_RECORD.md`.
 
 ---
 
@@ -124,7 +124,7 @@ Count: **13 decisions**. Labels used below:
   - "Care availability depends on your state; we confirm it after your request."
   - "Submitting a Care request is free."
   - No response-time promise, no consultation price, and the $30 plan removed.
-- **Answer:** PENDING SAMUEL APPROVAL
+- **Answer:** APPROVED (default): "Care availability depends on your state. We confirm it after your request." and "Submitting a Care request is free." No response-time, consultation-price, $30-plan or unsupported state-coverage claims — Samuel Boadu (SB), September 26, 2026. See `19_FINAL_OWNER_APPROVAL_RECORD.md`.
 
 ### D-2 — Clinician, pharmacy, testing and shipping claims
 
@@ -134,7 +134,7 @@ Count: **13 decisions**. Labels used below:
   - Remove all of these claims until each is verified in `CLAIM_LEDGER.csv`.
   - The Quality page describes the lot-record process only.
   - No named people, pharmacies or labs.
-- **Answer:** PENDING SAMUEL APPROVAL
+- **Answer:** APPROVED (default): remove clinician, pharmacy, testing, COA and shipping-time claims until the responsible owner verifies them and the claim ledger is updated — Samuel Boadu (SB), September 26, 2026. See `19_FINAL_OWNER_APPROVAL_RECORD.md`.
 
 ---
 
@@ -145,7 +145,7 @@ Count: **13 decisions**. Labels used below:
 - **RECOMMENDED DEFAULT:** **No, not at launch.**
   - Each client creates their own account and accepts the research-use terms personally. This matches Stephen's own liability concern.
   - Revisit after counsel review (Q-02).
-- **Answer:** PENDING SAMUEL APPROVAL
+- **Answer:** APPROVED (default): no practice ordering on behalf of clients at launch; clients create/own accounts, submit their own orders and personally accept Research-use terms — Samuel Boadu (SB), September 26, 2026. See `19_FINAL_OWNER_APPROVAL_RECORD.md`.
 
 ### E-2 — What can a practice see?
 
@@ -154,7 +154,7 @@ Count: **13 decisions**. Labels used below:
   - Client names and status only with a future client opt-in.
   - No Care information without written patient authorization.
   - No published statement cadence.
-- **Answer:** PENDING SAMUEL APPROVAL
+- **Answer:** APPROVED (default): referral counts, attributed/credited orders, commission entries, payout information when the program is active; client names/status need a future explicit consent mechanism; Care/clinical information never shared without written patient authorization and applicable clinical/legal authority — Samuel Boadu (SB), September 26, 2026. See `19_FINAL_OWNER_APPROVAL_RECORD.md`.
 
 ---
 
@@ -174,7 +174,7 @@ Count: **13 decisions**. Labels used below:
   - Practices use the general 20% / 7.5% terms, **in agreements only**. Never publish numeric rates.
   - Public wording: **"Your practice earns commission on eligible research-product orders from clients you refer. Rates, holds and payout timing are in your partner agreement. Care services never earn commission."**
   - Counsel confirms commissions to licensed referrers (Q-03) before agreements are signed.
-- **Answer:** PENDING SAMUEL APPROVAL
+- **Answer:** APPROVED (default): internal/agreement terms 20% first eligible Research payment; 7.5% eligible repeat Research payments months 2–12; 21-day hold; $50 minimum; every other Friday; no Care/clinical commission. None of these numbers, hold, minimum, attribution window or cadence on the public site. Public wording: "Your practice earns commission on eligible research-product orders from clients you refer. Rates, holds, and payout timing are in your partner agreement. Care services never earn commission." — Samuel Boadu (SB), September 26, 2026. See `19_FINAL_OWNER_APPROVAL_RECORD.md`.
 
 ---
 
@@ -186,7 +186,7 @@ Count: **13 decisions**. Labels used below:
   - Public wording: **"Your client stays your client. They own their Xenios account; your practice stays attached to it as the referring practice. We don't market competing coaching or practice services to clients you refer. If your client uses Care, the Care clinician makes the medical decisions and your client decides what to share with you."**
   - The partner agreement must contain the same language before practices rely on it.
 - **If DEFERRED or counsel declines:** "Clients create and own their own accounts; your practice is recorded as the referring practice."
-- **Answer:** PENDING SAMUEL APPROVAL
+- **Answer:** APPROVED — CONSERVATIVE VERSION (revision): public text "Clients create and own their own accounts. Your practice is recorded as the referring practice. If a client uses Care, the Care clinician makes the medical decisions, and the client decides what to share with the practice." The stronger "your client stays your client" / no-competing-marketing promise only after counsel approves matching partner-agreement language — Samuel Boadu (SB), September 26, 2026. See `19_FINAL_OWNER_APPROVAL_RECORD.md`.
 
 ---
 
@@ -195,7 +195,7 @@ Count: **13 decisions**. Labels used below:
 ### H-1 — In-clinic inventory
 
 - **RECOMMENDED DEFAULT:** **Not offered.** `/practices` may say only: "In-clinic inventory: under review — mention it in your inquiry." No pricing, ordering or timeline.
-- **Answer:** PENDING SAMUEL APPROVAL
+- **Answer:** APPROVED (default): wholesale and in-clinic inventory not offered in this release; site may state only "In-clinic inventory is under review. Mention it in your inquiry if you are interested." No wholesale prices, ordering controls, timelines or availability promises — Samuel Boadu (SB), September 26, 2026. See `19_FINAL_OWNER_APPROVAL_RECORD.md`.
 
 ---
 
@@ -209,7 +209,7 @@ Count: **13 decisions**. Labels used below:
   - If no role is confirmed, show general interest only.
   - Do not keep stale roles just because they are in source.
   - Every apply control says truthfully whether it creates a record (Phase 2) or opens email.
-- **Answer:** PENDING SAMUEL APPROVAL (plus the list of confirmed open roles, if any)
+- **Answer:** APPROVED — REVISION: general-interest application only for the first clarity release; no named role listed merely because it exists in source or a prior draft; named roles only after Samuel separately confirms the role is open, its title, scope, compensation presentation, application method and owner — Samuel Boadu (SB), September 26, 2026. See `19_FINAL_OWNER_APPROVAL_RECORD.md`.
 
 ---
 

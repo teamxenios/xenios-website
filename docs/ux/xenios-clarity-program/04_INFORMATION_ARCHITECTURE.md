@@ -69,7 +69,7 @@ Careers is in the header and footer, not the selector.
 3. Products and pathways — three pathway tiles (Care · Research products · For Practices), then **Explore Products**. First release: **tiles only** (C-1); product cards appear only in a later approved content pass.
 4. How Care works — 3 steps (request → human review → secure clinical visit), boundary line, **Start Care**.
 5. How research orders work — 4 steps (request order → we confirm and send payment details → we verify payment by hand → we ship and email tracking), research-use line, **Explore Products**.
-6. For Practices — 3 models in one row (Refer clients · Practice workspace · Care for your clients) + "Your client stays your client" (G-1), **For Practices**.
+6. For Practices — 3 models in one row (Refer clients · Practice workspace · Care for your clients) + the approved G-1 client-account line (conservative), **For Practices**.
 7. Partners — one paragraph, **Become a Partner**.
 8. Quality and documentation — process-only (D-2), link to lot lookup, **Quality**.
 9. FAQ — 6 questions (Care vs Research, cost to start, what happens after I submit, can my practice order for me, where do I sign in, do you give dosing instructions), link to full FAQ.

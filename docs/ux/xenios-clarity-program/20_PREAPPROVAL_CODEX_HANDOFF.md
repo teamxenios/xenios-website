@@ -1,4 +1,6 @@
-# 20 — Pre-approval Codex handoff
+# 20 — Pre-approval Codex handoff (SUPERSEDED)
+
+> Superseded on 2026-09-26 by `20_CODEX_READY_HANDOFF.md` after Samuel's recorded approval (`19_FINAL_OWNER_APPROVAL_RECORD.md`). Kept for history.
 
 **Codex must not start implementation from this file.** It exists so Codex can prepare while approval is pending: read, plan, check leases. The start signal is the CLAUDE_06 output (`19_FINAL_OWNER_APPROVAL_RECORD.md` + `20_CODEX_READY_HANDOFF.md`), created only after Samuel states "APPROVE THE REVIEWED XENIOS CLARITY DECISION SET". Naming note: when CLAUDE_06 runs, it writes `19_FINAL_OWNER_APPROVAL_RECORD.md` and `20_CODEX_READY_HANDOFF.md` alongside these pre-approval files; it does not overwrite them.
 
