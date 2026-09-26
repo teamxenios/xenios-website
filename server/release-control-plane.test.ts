@@ -47,7 +47,8 @@ function gitFilteredBlobSha(path: string): string {
 // Moved from 3814c687 on 2026-09-14 with the coordination records: production
 // advanced to c545a70 / dep-dag8l567bikc738a1nj0 on 2026-09-08 and nothing had
 // written it down. No migration differs between the two commits.
-const PRODUCTION_SHA = "c545a70eb694d990842ad1259df4f0786dab92c9";
+// Fresh read-only Render evidence is pinned in the audit closeout receipts.
+const PRODUCTION_SHA = "79414143d4355d5d3d14cd5fe6e5a536dc68d99d";
 const PRODUCTION_BRANCH = "release/early-access-code-session-checkout";
 const PROTECTED_PENDING_SOURCE_SHA =
   "4a45b89856df3104de498c7124d27b608e52b34d";
@@ -2610,7 +2611,7 @@ describe("production state validator", () => {
       (snapshot) => snapshot.classification === "HISTORICAL_SNAPSHOT_DO_NOT_TREAT_AS_CURRENT",
     )).toBe(true);
     expect(checked.graph.nodes.filter((node) => node.state === "AUDITED_BASELINE")).toEqual([
-      expect.objectContaining({ sha: PRODUCTION_SHA, id: "production-c545a70" }),
+      expect.objectContaining({ sha: PRODUCTION_SHA, id: "production-79414143" }),
     ]);
     for (const id of [
       "founder-decision-lock-20260730",
@@ -2630,9 +2631,9 @@ describe("production state validator", () => {
       "utf8",
     )) as MigrationDag;
     expect(checked.ownership.generatedAt).toBe("2026-08-03T16:00:00Z");
-    expect(checked.ownership.productionBaselineReconciledAt).toBe("2026-09-08T14:45:55.787734Z");
+    expect(checked.ownership.productionBaselineReconciledAt).toBe("2026-09-26T19:14:17.985Z");
     expect(dag.generatedAt).toBe("2026-08-02T02:02:07Z");
-    expect(dag.productionBaselineReconciledAt).toBe("2026-09-08T14:45:55.787734Z");
+    expect(dag.productionBaselineReconciledAt).toBe("2026-09-26T19:14:17.985Z");
   }, 30_000);
 
   it("accepts unavailable/null data posture without treating it as zero", () => {

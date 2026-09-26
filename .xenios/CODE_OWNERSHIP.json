@@ -2244,7 +2244,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-26T19:11:44.333Z",
-      "heartbeatAt": "2026-09-26T19:11:44.483Z"
+      "heartbeatAt": "2026-09-26T19:36:13.203Z"
     },
     {
       "id": "1008c7a2-36ee-4608-8c18-19623638e2f1",
@@ -2261,7 +2261,18 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-26T19:12:06.604Z",
-      "heartbeatAt": "2026-09-26T19:12:06.604Z"
+      "heartbeatAt": "2026-09-26T19:36:13.203Z"
+    },
+    {
+      "id": "e41d411e-ed62-4ccc-a361-959e3c115d25",
+      "task": "XENIOS-AUDIT-PRODUCTION-ASSERTIONS-20260926",
+      "session": "codex-adversarial-audit-20260924",
+      "paths": [
+        "server/release-control-plane.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-26T19:43:58.342Z",
+      "heartbeatAt": "2026-09-26T19:43:58.342Z"
     }
   ],
   "rules": [

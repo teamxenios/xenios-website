@@ -2284,6 +2284,20 @@
       "dependsOn": [],
       "scopeNote": "User pasted request explicitly assigns Codex implementation and release-control lead for existing audit only. Review before fingerprint reconciliation; preserve historical evidence. No deployment or production mutation. Claude clarity strategy directory excluded.",
       "claimedAt": "2026-09-26T19:12:06.601Z"
+    },
+    {
+      "id": "XENIOS-AUDIT-PRODUCTION-ASSERTIONS-20260926",
+      "title": "Reconcile stale live-baseline assertions after verified production refresh",
+      "state": "claimed",
+      "owner": "codex-adversarial-audit-20260924",
+      "paths": [
+        "server/release-control-plane.test.ts"
+      ],
+      "dependencies": [],
+      "acceptance": [
+        "Retain negative false-production controls; verify exact observed baseline and historical snapshots"
+      ],
+      "claimedAt": "2026-09-26T19:43:58.328Z"
     }
   ]
 }
