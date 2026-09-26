@@ -700,12 +700,12 @@
     "branch": "codex/xenios-adversarial-audit-20260924",
     "applicationSha": "c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa",
     "originalTestedRepairSha": "02d525baa7d784ed16e297c1d17b1e4050ecf4cc",
-    "releaseControlSha": "c40003d95d73655f23bf57efeed6f60c5b24af9a",
+    "releaseControlSha": "3298f279ad760a861e26e3e08514bb49694fae38",
     "deployed": false,
     "deploymentAuthorized": false,
     "migrationRequired": false,
     "migrationAuthorized": false,
-    "qualification": "PENDING_FULL_SUITE_AND_MANIFEST"
+    "qualification": "LOCAL_RELEASE_GATES_AND_MANIFEST_PASS_DEPLOYMENT_UNAUTHORIZED"
   },
   "observation": "Fresh read-only Render identity, both public health origins, managed migration history and bounded function ACLs captured in docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-*-20260926.json. Production remains 79414143. No production mutation."
 }

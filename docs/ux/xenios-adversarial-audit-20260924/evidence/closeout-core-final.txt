@@ -1,0 +1,53 @@
+core-site protection gate
+  manifest baseline : 766f19fce3b67cd9b940ea66fe075281c2d8bdf8
+  comparing         : 79414143d4355d5d3d14cd5fe6e5a536dc68d99d..HEAD
+  changed files     : 640
+  allowed (research/care) : 29
+  infrastructure          : 575
+  protected file hashes   : 34 verified
+
+TEST FILES TOUCHED (permitted: a test cannot change what a visitor sees.
+Review must still confirm each one was STRENGTHENED, not weakened. Lowering
+an existing safety or regression gate to make a build pass is forbidden):
+  - client/src/components/AccountAccessChooser.test.tsx
+  - client/src/components/Navbar.account-entry.test.tsx
+  - client/src/lib/contact-service.test.ts
+  - client/src/pages/Admin.auth.test.tsx
+  - client/src/research/b2b/PartnershipInquiryForm.test.tsx
+  - client/src/research/b2b/PartnershipPages.test.tsx
+  - client/src/research/pages/Gateway.catalog-guard.test.tsx
+  - client/src/research/pages/adminx/FounderCommandCenter.test.tsx
+  - client/src/research/pages/apply-status.test.tsx
+  - client/src/research/pages/apply.test.tsx
+  - client/src/research/pages/care-research-postlaunch-conservation.test.tsx
+  - client/src/research/pages/partners/Dashboard.test.tsx
+  - client/src/research/pages/public-access-flow.test.tsx
+  - client/src/research/pages/public-brand-pages.test.tsx
+  - client/src/research/pages/quality-surfaces.test.tsx
+  - client/src/research/pages/sign-in.test.tsx
+  - client/src/research/ui/admin-shell.test.tsx
+  - server/care/integration-wiring.test.ts
+  - server/core-site-protection.test.ts
+  - server/release-control-plane.test.ts
+  - server/research/partners/lifecycle-admin.test.ts
+  - server/research/partners/notification-templates.test.ts
+  - server/research/partners/notifications.test.ts
+  - server/services/contact-delivery.test.ts
+  - server/services/contact-email.test.ts
+
+SEAM FILES TOUCHED (permitted, but each needs an exclusive lease, the
+minimum diff, a focused regression test, and QA confirmation of no
+unrelated change before this branch is approved):
+  - client/src/components/AccountAccessChooser.tsx
+  - client/src/components/ContactForm.tsx
+  - client/src/components/Navbar.tsx
+  - client/src/lib/content.ts
+  - client/src/lib/nav.ts
+  - client/src/lib/waitlist-service.ts
+  - client/src/pages/Admin.tsx
+  - client/src/pages/Home.tsx
+  - server/routes.ts
+  - server/services/contact-delivery.ts
+  - server/services/email.ts
+
+RESULT: PASS

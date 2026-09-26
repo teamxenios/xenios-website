@@ -1,0 +1,19 @@
+{
+  "artifactSchemaVersion": 1,
+  "kind": "xenios.integration-ownership-review",
+  "attestation": {
+    "baseSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "headSha": "3298f279ad760a861e26e3e08514bb49694fae38",
+    "trustedBaseOwnershipPolicySha256": "bb4ea1f78ec70ef749ad881650a38ce274a48a801bab5b95c4aac21cb42eed92",
+    "gitDiffPathInventorySha256": "3c4f9efe7e8023e0689afdf22e165c70515fd80f7bb4aea7a08f78e356c31baf",
+    "ownershipFindingInventorySha256": "5d9fa05463e609c924d242cab3d8e77e47eedbc52a02e8b870fac193cb46bf07",
+    "ownershipFindingCounts": {
+      "UNOWNED_FILE": 621,
+      "WRONG_LANE_OWNER": 19,
+      "OWNERSHIP_CONFLICT": 0
+    },
+    "reviewerIdentity": "codex-adversarial-audit-20260924; user-assigned implementation and release-control lead",
+    "reviewedAt": "2026-09-26T20:02:49.196Z",
+    "reviewArtifactPath": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-integration-ownership-review.json"
+  }
+}

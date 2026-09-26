@@ -2244,7 +2244,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-26T19:11:44.333Z",
-      "heartbeatAt": "2026-09-26T19:36:13.203Z"
+      "heartbeatAt": "2026-09-26T20:08:41.160Z"
     },
     {
       "id": "1008c7a2-36ee-4608-8c18-19623638e2f1",
@@ -2261,7 +2261,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-26T19:12:06.604Z",
-      "heartbeatAt": "2026-09-26T19:36:13.203Z"
+      "heartbeatAt": "2026-09-26T20:08:41.160Z"
     },
     {
       "id": "e41d411e-ed62-4ccc-a361-959e3c115d25",
@@ -2272,7 +2272,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-26T19:43:58.342Z",
-      "heartbeatAt": "2026-09-26T19:43:58.342Z"
+      "heartbeatAt": "2026-09-26T20:08:41.160Z"
     },
     {
       "id": "37bc07a3-dd8e-4866-8695-70e7fe1d4c0f",
@@ -2283,7 +2283,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-26T19:50:59.927Z",
-      "heartbeatAt": "2026-09-26T19:50:59.927Z"
+      "heartbeatAt": "2026-09-26T20:08:41.160Z"
     },
     {
       "id": "b3d3288b-bdef-4207-a808-d90f17c6aafb",
@@ -2310,9 +2310,9 @@
         "docs/ux/xenios-ux-account-notifications-20260924/IMPLEMENTATION_REPORT.md",
         "docs/ux/xenios-ux-account-notifications-20260924/RELEASE_CONTROL_REPORT.md"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-26T19:59:09.828Z",
-      "heartbeatAt": "2026-09-26T19:59:09.828Z"
+      "heartbeatAt": "2026-09-26T20:08:41.160Z"
     }
   ],
   "rules": [

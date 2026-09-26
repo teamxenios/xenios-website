@@ -1,0 +1,134 @@
+{
+  "documentId": "1qogOnIU9P40rV0iVeTAPO6Yai5R8kgQohFdmuFe8s2I",
+  "revisionId": "ANLCKQnbi4poAK6N1Yl_bUFRFpqmXc3Vd-ThYvY-6cQQ2t_A43iz58A7P4dUNTvwudf9lEnx2J7q-7gQR7SDdlJDky1ugC3Aj-9gFWz2fiI",
+  "checks": [
+    {
+      "tabId": "t.0",
+      "title": "00 Executive Map",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.w619ayfvyp6u",
+      "title": "01 Personas + Entry Points",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.mkpp0r308aez",
+      "title": "02 Consumer + Research",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.msukh1lqzxsr",
+      "title": "03 Care",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.eksh64ygd33s",
+      "title": "04 Affiliate + Partner",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.meg5cdcxxqel",
+      "title": "05 B2B + Organizations",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.s22n05yinm74",
+      "title": "06 Account + Orders + Payment",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.h3nvz85s1gym",
+      "title": "07 Admin + Operations",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.v73mukt2iin3",
+      "title": "08 Notifications + Next Steps",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.cnlotndvqirx",
+      "title": "09 Findings + Priority Backlog",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 2
+    },
+    {
+      "tabId": "t.in1nfvycebbn",
+      "title": "10 Route + Source Inventory",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.kshu9x2u1uiq",
+      "title": "11 UAT Walkthrough",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.3fnxiypelkis",
+      "title": "12 Homepage Account Entry",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.vv5ocdle8ibk",
+      "title": "13 Notification Coverage Matrix",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.rzz6nlpbz6lw",
+      "title": "14 Implementation Blueprint",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.srrmszar14b9",
+      "title": "15 Release Acceptance Matrix",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.s31z24jpx752",
+      "title": "16 Codex Execution Prompt",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    },
+    {
+      "tabId": "t.hkj9btkb5yz3",
+      "title": "17 Samuel Super Admin",
+      "textVerified": true,
+      "topologyPreserved": true,
+      "images": 0
+    }
+  ],
+  "tabs": 18,
+  "images": 2
+}

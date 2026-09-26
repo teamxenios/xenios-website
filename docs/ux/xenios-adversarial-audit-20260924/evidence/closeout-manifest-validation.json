@@ -1,0 +1,8 @@
+{
+  "candidateSha": "3298f279ad760a861e26e3e08514bb49694fae38",
+  "status": "PASS",
+  "exitCode": 0,
+  "output": "Release manifest accepted: docs/ux/xenios-adversarial-audit-20260924/RELEASE_MANIFEST.json",
+  "deploymentAuthorized": false,
+  "review": "user-appointed lead; not independent second-agent approval"
+}

@@ -2316,7 +2316,7 @@
     {
       "id": "XENIOS-AUDIT-EVIDENCE-FORMAT-20260926",
       "title": "Preserve raw capture bytes and normalize text presentation for full diff gate",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-adversarial-audit-20260924",
       "paths": [
         ".xenios/handoffs/2026-09-24T16-52-54-384Z-XENIOS-UX-ACCOUNT-NOTIFICATIONS-20260924-codex-xenios-ux-account-notifications-20260924.md",
@@ -2343,7 +2343,13 @@
       "acceptance": [
         "Archive original bytes and hashes; no application changes; exact route diff retained"
       ],
-      "claimedAt": "2026-09-26T19:59:09.815Z"
+      "claimedAt": "2026-09-26T19:59:09.815Z",
+      "handoff": {
+        "session": "codex-adversarial-audit-20260924",
+        "sha": "3298f279ad760a861e26e3e08514bb49694fae38",
+        "file": ".xenios/handoffs/2026-09-26T20-10-13-661Z-XENIOS-AUDIT-EVIDENCE-FORMAT-20260926-codex-adversarial-audit-20260924.md",
+        "at": "2026-09-26T20:10:13.666Z"
+      }
     }
   ]
 }

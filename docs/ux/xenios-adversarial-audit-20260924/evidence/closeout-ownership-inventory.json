@@ -1,0 +1,3968 @@
+{
+  "base": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+  "head": "3298f279ad760a861e26e3e08514bb49694fae38",
+  "files": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/PROJECT_STATE.json",
+    ".xenios/RELEASE_STATE.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/handoffs/2026-09-24T16-52-54-384Z-XENIOS-UX-ACCOUNT-NOTIFICATIONS-20260924-codex-xenios-ux-account-notifications-20260924.md",
+    ".xenios/handoffs/2026-09-24T18-04-57-760Z-XENIOS-UX-RELEASE-CONTROL-20260924-codex-xenios-ux-release-control-20260924.md",
+    ".xenios/handoffs/2026-09-24T19-39-24-461Z-XENIOS-ADVERSARIAL-AUDIT-20260924-codex-adversarial-audit-20260924.md",
+    ".xenios/handoffs/2026-09-24T19-39-24-559Z-XENIOS-INQUIRY-RECEIPT-REPAIR-20260924-codex-adversarial-audit-20260924.md",
+    ".xenios/handoffs/2026-09-24T19-46-09-019Z-XENIOS-ADVERSARIAL-AUDIT-20260924-codex-adversarial-audit-20260924.md",
+    ".xenios/handoffs/2026-09-26T15-20-44-886Z-XENIOS-ADVERSARIAL-AUDIT-20260924-codex-adversarial-audit-20260924.md",
+    ".xenios/handoffs/2026-09-26T15-20-44-988Z-XENIOS-INQUIRY-RECEIPT-REPAIR-20260924-codex-adversarial-audit-20260924.md",
+    ".xenios/messages/2026-09-24T16-48-06-972Z-codex-xenios-ux-account-notifications-20260924.json",
+    ".xenios/sessions/codex-adversarial-audit-20260924.json",
+    ".xenios/sessions/codex-checkout-commerce-authority-refactor-20260923.json",
+    ".xenios/sessions/codex-xenios-ux-account-notifications-20260924.json",
+    ".xenios/sessions/codex-xenios-ux-release-control-20260924.json",
+    "client/src/components/AccountAccessChooser.test.tsx",
+    "client/src/components/AccountAccessChooser.tsx",
+    "client/src/components/ContactForm.tsx",
+    "client/src/components/Navbar.account-entry.test.tsx",
+    "client/src/components/Navbar.tsx",
+    "client/src/lib/contact-service.test.ts",
+    "client/src/lib/content.ts",
+    "client/src/lib/nav.ts",
+    "client/src/lib/waitlist-service.ts",
+    "client/src/pages/Admin.auth.test.tsx",
+    "client/src/pages/Admin.tsx",
+    "client/src/pages/Home.tsx",
+    "client/src/research/b2b/AffiliateAccessPage.tsx",
+    "client/src/research/b2b/OrganizationAccessPage.tsx",
+    "client/src/research/b2b/PartnerPathwaysPage.tsx",
+    "client/src/research/b2b/PartnershipInquiryForm.test.tsx",
+    "client/src/research/b2b/PartnershipInquiryForm.tsx",
+    "client/src/research/b2b/PartnershipPages.test.tsx",
+    "client/src/research/b2b/SupplierPartnershipPage.tsx",
+    "client/src/research/b2b/pathways.ts",
+    "client/src/research/pages/AccessHub.tsx",
+    "client/src/research/pages/Apply.tsx",
+    "client/src/research/pages/ApplyStatus.tsx",
+    "client/src/research/pages/Framework.tsx",
+    "client/src/research/pages/Gateway.catalog-guard.test.tsx",
+    "client/src/research/pages/Gateway.tsx",
+    "client/src/research/pages/Membership.tsx",
+    "client/src/research/pages/Overview.tsx",
+    "client/src/research/pages/SignIn.tsx",
+    "client/src/research/pages/adminx/FounderCommandCenter.test.tsx",
+    "client/src/research/pages/adminx/FounderCommandCenter.tsx",
+    "client/src/research/pages/apply-status.test.tsx",
+    "client/src/research/pages/apply.test.tsx",
+    "client/src/research/pages/care-research-postlaunch-conservation.test.tsx",
+    "client/src/research/pages/gateway-editorial.css",
+    "client/src/research/pages/partners/Apply.tsx",
+    "client/src/research/pages/partners/Dashboard.test.tsx",
+    "client/src/research/pages/partners/Dashboard.tsx",
+    "client/src/research/pages/public-access-flow.test.tsx",
+    "client/src/research/pages/public-brand-pages.test.tsx",
+    "client/src/research/pages/quality-surfaces.test.tsx",
+    "client/src/research/pages/sign-in.test.tsx",
+    "client/src/research/quality/DocumentsPage.tsx",
+    "client/src/research/storefront/StorefrontCatalogPage.tsx",
+    "client/src/research/storefront/StorefrontCatalogSurface.tsx",
+    "client/src/research/storefront/StorefrontProductPage.tsx",
+    "client/src/research/ui/admin-shell.test.tsx",
+    "client/src/research/ui/shells.tsx",
+    "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+    "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+    "docs/coordination/FILE_OWNERSHIP.json",
+    "docs/coordination/MIGRATION_DAG.json",
+    "docs/coordination/history/ACTIVE_RELEASE_GRAPH_2026-09-26-before-closeout.json",
+    "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-09-26-before-closeout.json",
+    "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+    "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+    "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.registry.json",
+    "docs/ux/xenios-adversarial-audit-20260924/AUDIT_REPORT.md",
+    "docs/ux/xenios-adversarial-audit-20260924/BASELINE.md",
+    "docs/ux/xenios-adversarial-audit-20260924/BASELINE_COVERAGE.md",
+    "docs/ux/xenios-adversarial-audit-20260924/CONTINUATION_RESULTS.md",
+    "docs/ux/xenios-adversarial-audit-20260924/CONTINUATION_SCENARIOS.csv",
+    "docs/ux/xenios-adversarial-audit-20260924/CTA_MATRIX.csv",
+    "docs/ux/xenios-adversarial-audit-20260924/HANDOFF.md",
+    "docs/ux/xenios-adversarial-audit-20260924/LOCAL_SERVICE_FIXTURE.md",
+    "docs/ux/xenios-adversarial-audit-20260924/OWNERSHIP_REVIEW_20260926.md",
+    "docs/ux/xenios-adversarial-audit-20260924/PROTECTED_CHANGE_REVIEW.md",
+    "docs/ux/xenios-adversarial-audit-20260924/RELEASE_PACKET.md",
+    "docs/ux/xenios-adversarial-audit-20260924/ROUTE_AND_CTA_MATRIX.csv",
+    "docs/ux/xenios-adversarial-audit-20260924/SCENARIO_RESULTS.csv",
+    "docs/ux/xenios-adversarial-audit-20260924/SQL_FIXTURE_README.md",
+    "docs/ux/xenios-adversarial-audit-20260924/build-coverage-ledger.mjs",
+    "docs/ux/xenios-adversarial-audit-20260924/check.log",
+    "docs/ux/xenios-adversarial-audit-20260924/continuation-coverage.json",
+    "docs/ux/xenios-adversarial-audit-20260924/coverage-summary.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-001.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-002.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-003.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-004-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-004.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-005.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-006.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-007.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-008.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-009.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-010.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-011.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-012.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-013.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-014.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-015.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-016.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-017.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-018.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-019.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-020.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-021.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-022.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-023.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-024.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-025.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-026.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-027.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-028.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-029.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-030.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-031.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-032.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-033.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-034.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-035.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-036.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-037.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-038.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-039.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-040.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-041.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-042.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-043.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-044.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-045.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-046.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-047.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-048-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-048.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-049-source.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-049.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-050.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-051.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-052.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-053.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-054.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-055.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-056.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-057.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-058.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-059-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-059.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-060.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-061-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-061.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-062.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-063.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-064-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-064.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-065-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-065.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-066.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-067.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-068-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-068.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-069.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-070-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-070.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-071-source.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-072.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-073-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-073.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-074.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-076-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-076.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-077-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-077.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-078-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-078.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-079-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-079.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-080-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-080.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-081-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-081.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-082-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-082.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-083-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-083.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-084-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-084.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-085-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-085.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-086-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-086.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-087-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-087.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-088-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-088.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-089-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-089.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-090-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-090.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-091-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-091.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-092-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-092.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-093-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-093-source.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-093.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-094.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-095.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-096.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-097.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-098.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-099.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-100.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-101-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-101.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-102-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-102.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-103.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-104.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-105-source.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-105.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-106-source.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-106.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-107-source.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-107.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-108-source.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-108.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-109.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-110.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-111.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-112.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-113.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-114.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-115-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-115.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-116.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-117.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-118.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-119.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-120.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-121-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-121.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-122-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-122.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-123-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-123.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-124-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-124.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-125-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-125.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-126.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-127.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-128.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-129.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/access-hub-actual1440.png",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/access-hub-actual390.png",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/access-hub-actual768.png",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/access-hub-tablet.png",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-empty-account.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-empty-care.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-empty-documents.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-empty-interests.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-empty-orders.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-empty-partner-direct.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-empty-subscription.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-paused-signin.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-care.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-catalog.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-dashboard.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-documents.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-interests.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-orders.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-overview.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-profile.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-security.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-subscription.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-support-result.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-support-submit.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-support.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-signout-result.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/account-support-desktop.png",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-question-detail-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-question-detail.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-question-queue.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-question-reply-result.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-wrong-role-denied.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/admin-signedout-settled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_admin_research_inventory.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_careers.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_careers_innovative-product-builder.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_health.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_access-gate.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_access.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_application-status.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_application_status.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_apply_review.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_apply_success.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_build-a-system.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_cart.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_framework.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_guides.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_learn.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_orders.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_peptides.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_products.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_products_peptides.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_products_quantum.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_products_supplements.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_professionals.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_profile.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_programs.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_quantum.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_referrals.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_shop.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_subscriptions.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_supplements.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_systems.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_wholesale.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_about.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_agents.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_argos.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_book.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_appointments.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_consent.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_eligibility.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_how-it-works.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_pharmacy.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_portal.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_prescriptions.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_provider-review.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_reviews.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_schedule.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_support.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_compliance.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_concepts.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_contact.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_developers.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_disclosures.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_early-interest.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_ecosystem.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_enterprise.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_faq.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_for-clients.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_for-coaches.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_for-practitioners.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_how-it-works.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_investors.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_manifesto.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_mvps.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_network.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_ontology.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_partners.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_press.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_privacy.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_product.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_about.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_access-state.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_activate.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_affiliates.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_apply_status.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_contact.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_documents.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_early-access.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_early-access_order-request.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_faq.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_how-it-works.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_order.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_organizations.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_policies.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_privacy.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_quality.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_supplier-access.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_support.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_terms.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_testing.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_security.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_storefront.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_telemedicine.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_terms.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_waitlist.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/browser-evidence-index.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-access-hub-mobile.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-application-closed.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-home-390.png",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-home-390.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-home-mobile.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-partner-signed-out.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-partner-signin-return.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-partners-mobile.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-partnership-no-provider-result.png",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-partnership-no-provider-result.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-partnership-submit-no-provider.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-reset-no-session.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-reset-unavailable-result.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-reset-unavailable-submit.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-browser-20260926.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-build-equivalence.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-control-focused.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-full-before-baseline-assertions.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-health-20260926.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-local-persistence.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-local-resource-bytes.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-local-services.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-migrations-20260926.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-protection-final.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-render-20260926.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-schema-20260926.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-service-20260926.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/cta-inventory.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/document-partner-tests-20260926.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/production-health-mobile.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/public-accessibility-policy.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/public-lot-fixture-lookup-result.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/public-lot-fixture-lookup.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/raw-before-whitespace-normalization.json.gz",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/repair-corporate-contact-accepted.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/repair-no-provider-result.png",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/repair-no-provider-result.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/repair-synthetic-accepted.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/repair-synthetic-courtesy-failure.png",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/repair-synthetic-courtesy-failure.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resource-sql-20260926.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-active-status.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-admin-processing.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-admin-shipped.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-admin-tracking.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-approved-status.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-browser-response-lost.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-browser-response-retry-accepted.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-browser-response-retry.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-correct-owner-history.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-courtesy-stall.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-cross-owner-denial.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-desktop-zoom-attempt.png",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-desktop-zoom-attempt.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-duplicate-inquiry.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-expired-status.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-inquiry-1440.png",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-inquiry-390.png",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-inquiry-768.png",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-mobile-inquiry-validation.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-navigation-results.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-other-owner-history.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-owner-positive.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-provider-response-lost.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-provider-retry-accepted.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-responsive.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-retry-throttled.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-secure-documents-return.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-session-reopened.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-session-revoked.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-slow-inquiry-accepted.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-slow-inquiry-pending.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-team-timeout.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-valid-status.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-visual-zoom-200.png",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/route-visits.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/scenario-ledger-before-status-normalization.csv",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_activation-bridge.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_activation-checklist.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_activation-queue.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_activation-readiness.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_activation-reconciliation.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_applications.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_assisted-orders.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_audit.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_blueprint-review.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_capabilities.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_care-requests.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_command-center.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_commerce-queues.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_early-access_fulfillment.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_early-access_payments.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_early-access_releases.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_esign.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_fulfillment.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_guides.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_inventory.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_inventory_coas.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_inventory_lots.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_members.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_orders.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_partners.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_plans.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_privacy.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_product-configuration.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_product-requests.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_products.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_questions.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_referral-lifecycle.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_required-inputs.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_resource-hub.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_security.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_care.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_documents.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_interests.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_orders.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_profile.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_security.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_subscription.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_support.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_assessment.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_blueprint.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_cart.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_catalog.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_checkout.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_diagnostics.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_documents-center.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_documents.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_education.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_goals.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_guides.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_kris-catalog.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_membership.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_metabolic-care.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_orders.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_privacy.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_product-requests.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_product-requests_new.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_products.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_profile.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_questions.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_referrals.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_security.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_storage.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_subscriptions.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_supplements.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_support.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_tracker.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_welcome.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_xenios-30.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_xenios-90.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_membership.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_apply.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_campaigns.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_commissions.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_compliance.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_conversions.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_dashboard.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_events.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_leads.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_links.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_onboarding.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_organizations.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_payouts.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_resources.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_security.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_support.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_training.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/signin-external-return-rejected.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-admin-approval.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-claim-after.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-claim-before.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-claim-consumed-status.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-claim-negatives.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-claim-replay-owner.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-claims-qualification.json",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-recovery-browser-boundary.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/status-invalid-token.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/synthetic-contact-log.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-approved-sql.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-build.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-dag.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-focused.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-full-tests.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-lifecycle-tests.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-partner-sql.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-production-bound.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-protected-review.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-quality-regression.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-routes.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-typecheck.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/evidence/whitespace-normalization-receipt.json",
+    "docs/ux/xenios-adversarial-audit-20260924/full-tests.log",
+    "docs/ux/xenios-adversarial-audit-20260924/google-doc-continuation-verification.json",
+    "docs/ux/xenios-adversarial-audit-20260924/google-doc-final-verification.json",
+    "docs/ux/xenios-adversarial-audit-20260924/google-doc-sql-continuation-verification.json",
+    "docs/ux/xenios-adversarial-audit-20260924/google-doc-tab-patch.json",
+    "docs/ux/xenios-adversarial-audit-20260924/google-doc-verification.json",
+    "docs/ux/xenios-adversarial-audit-20260924/navigation-plan.json",
+    "docs/ux/xenios-adversarial-audit-20260924/notification-capture-receipt.txt",
+    "docs/ux/xenios-adversarial-audit-20260924/preview-contact-receipts.cjs",
+    "docs/ux/xenios-adversarial-audit-20260924/preview-sql-claims.ts",
+    "docs/ux/xenios-adversarial-audit-20260924/preview-token-status.ts",
+    "docs/ux/xenios-adversarial-audit-20260924/production-health-20260926.json",
+    "docs/ux/xenios-adversarial-audit-20260924/production-health-resumed.json",
+    "docs/ux/xenios-adversarial-audit-20260924/production-render-20260926.json",
+    "docs/ux/xenios-adversarial-audit-20260924/production-render-resumed.json",
+    "docs/ux/xenios-adversarial-audit-20260924/protected-file-mismatch.json",
+    "docs/ux/xenios-adversarial-audit-20260924/protected-routes-review.diff",
+    "docs/ux/xenios-adversarial-audit-20260924/qualify-local-persistence.mjs",
+    "docs/ux/xenios-adversarial-audit-20260924/qualify-local-resource-bytes.ts",
+    "docs/ux/xenios-adversarial-audit-20260924/qualify-local-services.ts",
+    "docs/ux/xenios-adversarial-audit-20260924/qualify-sql-claims.mjs",
+    "docs/ux/xenios-adversarial-audit-20260924/record-continuation.cjs",
+    "docs/ux/xenios-adversarial-audit-20260924/repair-build-provenance.json",
+    "docs/ux/xenios-adversarial-audit-20260924/repair-build.log",
+    "docs/ux/xenios-adversarial-audit-20260924/resumed-build-provenance.json",
+    "docs/ux/xenios-adversarial-audit-20260924/review-ownership.ts",
+    "docs/ux/xenios-adversarial-audit-20260924/route-inventory.json",
+    "docs/ux/xenios-adversarial-audit-20260924/site-record-check.log",
+    "docs/ux/xenios-adversarial-audit-20260924/site-record-clean-check.log",
+    "docs/ux/xenios-adversarial-audit-20260924/verify-migration-dag.log",
+    "docs/ux/xenios-adversarial-audit-20260924/verify-production-state-bound.log",
+    "docs/ux/xenios-adversarial-audit-20260924/verify-release-manifest.log",
+    "docs/ux/xenios-adversarial-audit-20260924/verify-route-uniqueness.log",
+    "docs/ux/xenios-founder-admin-matrix-20260924/ADMIN_DATA_ACCESS_MATRIX.md",
+    "docs/ux/xenios-ux-account-notifications-20260924/IMPLEMENTATION_REPORT.md",
+    "docs/ux/xenios-ux-account-notifications-20260924/LIVE_UAT_REPAIR_REPORT.md",
+    "docs/ux/xenios-ux-account-notifications-20260924/RELEASE_CONTROL_REPORT.md",
+    "server/care/integration-wiring.test.ts",
+    "server/core-site-protection.test.ts",
+    "server/release-control-plane.test.ts",
+    "server/research/commerce/routes.ts",
+    "server/research/outbox.ts",
+    "server/research/partners/lifecycle-admin.test.ts",
+    "server/research/partners/lifecycle-admin.ts",
+    "server/research/partners/lifecycle-production.ts",
+    "server/research/partners/notification-templates.test.ts",
+    "server/research/partners/notification-templates.ts",
+    "server/research/partners/notifications.test.ts",
+    "server/research/partners/notifications.ts",
+    "server/routes.ts",
+    "server/services/contact-delivery.test.ts",
+    "server/services/contact-delivery.ts",
+    "server/services/contact-email.test.ts",
+    "server/services/email.ts"
+  ],
+  "policySha256": "bb4ea1f78ec70ef749ad881650a38ce274a48a801bab5b95c4aac21cb42eed92",
+  "counts": {
+    "UNOWNED_FILE": 621,
+    "WRONG_LANE_OWNER": 19,
+    "OWNERSHIP_CONFLICT": 0
+  },
+  "findings": [
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": ".xenios/ACTIVE_TASKS.json",
+      "owners": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "owner": "claude-fable-desktop (lead session, founder-directed 2026-08-19 recovery)",
+          "lane": "release-manager"
+        }
+      ]
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": ".xenios/CODE_OWNERSHIP.json",
+      "owners": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "owner": "claude-fable-desktop (lead session, founder-directed 2026-08-19 recovery)",
+          "lane": "release-manager"
+        }
+      ]
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": ".xenios/PROJECT_STATE.json",
+      "owners": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "owner": "claude-fable-desktop (lead session, founder-directed 2026-08-19 recovery)",
+          "lane": "release-manager"
+        }
+      ]
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": ".xenios/RELEASE_STATE.json",
+      "owners": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "owner": "claude-fable-desktop (lead session, founder-directed 2026-08-19 recovery)",
+          "lane": "release-manager"
+        }
+      ]
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": ".xenios/SESSION_REGISTRY.json",
+      "owners": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "owner": "claude-fable-desktop (lead session, founder-directed 2026-08-19 recovery)",
+          "lane": "release-manager"
+        }
+      ]
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/handoffs/2026-09-24T16-52-54-384Z-XENIOS-UX-ACCOUNT-NOTIFICATIONS-20260924-codex-xenios-ux-account-notifications-20260924.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/handoffs/2026-09-24T18-04-57-760Z-XENIOS-UX-RELEASE-CONTROL-20260924-codex-xenios-ux-release-control-20260924.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/handoffs/2026-09-24T19-39-24-461Z-XENIOS-ADVERSARIAL-AUDIT-20260924-codex-adversarial-audit-20260924.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/handoffs/2026-09-24T19-39-24-559Z-XENIOS-INQUIRY-RECEIPT-REPAIR-20260924-codex-adversarial-audit-20260924.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/handoffs/2026-09-24T19-46-09-019Z-XENIOS-ADVERSARIAL-AUDIT-20260924-codex-adversarial-audit-20260924.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/handoffs/2026-09-26T15-20-44-886Z-XENIOS-ADVERSARIAL-AUDIT-20260924-codex-adversarial-audit-20260924.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/handoffs/2026-09-26T15-20-44-988Z-XENIOS-INQUIRY-RECEIPT-REPAIR-20260924-codex-adversarial-audit-20260924.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/messages/2026-09-24T16-48-06-972Z-codex-xenios-ux-account-notifications-20260924.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/sessions/codex-adversarial-audit-20260924.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/sessions/codex-checkout-commerce-authority-refactor-20260923.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/sessions/codex-xenios-ux-account-notifications-20260924.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": ".xenios/sessions/codex-xenios-ux-release-control-20260924.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/components/AccountAccessChooser.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/components/AccountAccessChooser.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/components/ContactForm.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/components/Navbar.account-entry.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/components/Navbar.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/lib/contact-service.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/lib/content.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/lib/nav.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/lib/waitlist-service.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/pages/Admin.auth.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/pages/Admin.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/pages/Home.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/b2b/AffiliateAccessPage.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/b2b/OrganizationAccessPage.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/b2b/PartnerPathwaysPage.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/b2b/PartnershipInquiryForm.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/b2b/PartnershipInquiryForm.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/b2b/PartnershipPages.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/b2b/SupplierPartnershipPage.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/b2b/pathways.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/AccessHub.tsx",
+      "owners": []
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": "client/src/research/pages/Apply.tsx",
+      "owners": [
+        {
+          "id": "OWNER-W5-RESEARCH-APPLICATION-UI-COMPLETION",
+          "owner": "Website 5",
+          "lane": "research-application-ui-completion"
+        }
+      ]
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": "client/src/research/pages/ApplyStatus.tsx",
+      "owners": [
+        {
+          "id": "OWNER-W5-RESEARCH-APPLICATION-UI-COMPLETION",
+          "owner": "Website 5",
+          "lane": "research-application-ui-completion"
+        }
+      ]
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/Framework.tsx",
+      "owners": []
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": "client/src/research/pages/Gateway.catalog-guard.test.tsx",
+      "owners": [
+        {
+          "id": "OWNER-W5-RESEARCH-APPLICATION-UI-COMPLETION",
+          "owner": "Website 5",
+          "lane": "research-application-ui-completion"
+        }
+      ]
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": "client/src/research/pages/Gateway.tsx",
+      "owners": [
+        {
+          "id": "OWNER-W5-RESEARCH-APPLICATION-UI-COMPLETION",
+          "owner": "Website 5",
+          "lane": "research-application-ui-completion"
+        }
+      ]
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/Membership.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/Overview.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/SignIn.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/adminx/FounderCommandCenter.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/adminx/FounderCommandCenter.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/apply-status.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/apply.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/care-research-postlaunch-conservation.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/gateway-editorial.css",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Apply.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Dashboard.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/partners/Dashboard.tsx",
+      "owners": []
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": "client/src/research/pages/public-access-flow.test.tsx",
+      "owners": [
+        {
+          "id": "OWNER-W5-RESEARCH-APPLICATION-UI-COMPLETION",
+          "owner": "Website 5",
+          "lane": "research-application-ui-completion"
+        }
+      ]
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/public-brand-pages.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/quality-surfaces.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/pages/sign-in.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/quality/DocumentsPage.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/storefront/StorefrontCatalogPage.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/storefront/StorefrontCatalogSurface.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/storefront/StorefrontProductPage.tsx",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "client/src/research/ui/admin-shell.test.tsx",
+      "owners": []
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": "client/src/research/ui/shells.tsx",
+      "owners": [
+        {
+          "id": "OWNER-W2-RESEARCH-MEMBER-UI-CONTRACT-RECONSTRUCTION",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ]
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ]
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ]
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": "docs/coordination/FILE_OWNERSHIP.json",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ]
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": "docs/coordination/MIGRATION_DAG.json",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ]
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/coordination/history/ACTIVE_RELEASE_GRAPH_2026-09-26-before-closeout.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/coordination/history/CURRENT_PRODUCTION_STATE_2026-09-26-before-closeout.json",
+      "owners": []
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ]
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.registry.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/AUDIT_REPORT.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/BASELINE.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/BASELINE_COVERAGE.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/CONTINUATION_RESULTS.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/CONTINUATION_SCENARIOS.csv",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/CTA_MATRIX.csv",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/HANDOFF.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/LOCAL_SERVICE_FIXTURE.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/OWNERSHIP_REVIEW_20260926.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/PROTECTED_CHANGE_REVIEW.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/RELEASE_PACKET.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/ROUTE_AND_CTA_MATRIX.csv",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/SCENARIO_RESULTS.csv",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/SQL_FIXTURE_README.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/build-coverage-ledger.mjs",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/check.log",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/continuation-coverage.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/coverage-summary.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-001.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-002.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-003.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-004-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-004.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-005.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-006.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-007.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-008.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-009.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-010.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-011.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-012.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-013.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-014.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-015.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-016.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-017.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-018.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-019.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-020.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-021.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-022.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-023.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-024.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-025.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-026.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-027.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-028.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-029.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-030.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-031.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-032.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-033.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-034.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-035.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-036.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-037.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-038.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-039.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-040.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-041.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-042.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-043.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-044.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-045.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-046.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-047.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-048-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-048.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-049-source.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-049.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-050.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-051.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-052.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-053.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-054.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-055.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-056.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-057.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-058.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-059-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-059.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-060.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-061-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-061.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-062.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-063.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-064-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-064.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-065-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-065.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-066.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-067.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-068-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-068.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-069.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-070-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-070.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-071-source.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-072.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-073-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-073.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-074.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-076-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-076.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-077-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-077.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-078-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-078.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-079-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-079.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-080-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-080.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-081-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-081.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-082-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-082.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-083-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-083.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-084-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-084.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-085-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-085.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-086-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-086.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-087-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-087.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-088-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-088.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-089-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-089.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-090-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-090.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-091-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-091.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-092-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-092.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-093-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-093-source.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-093.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-094.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-095.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-096.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-097.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-098.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-099.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-100.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-101-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-101.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-102-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-102.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-103.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-104.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-105-source.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-105.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-106-source.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-106.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-107-source.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-107.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-108-source.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-108.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-109.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-110.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-111.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-112.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-113.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-114.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-115-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-115.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-116.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-117.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-118.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-119.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-120.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-121-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-121.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-122-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-122.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-123-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-123.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-124-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-124.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-125-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-125.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-126.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-127.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-128.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/NAV-129.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/access-hub-actual1440.png",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/access-hub-actual390.png",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/access-hub-actual768.png",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/access-hub-tablet.png",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-empty-account.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-empty-care.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-empty-documents.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-empty-interests.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-empty-orders.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-empty-partner-direct.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-empty-subscription.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-paused-signin.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-care.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-catalog.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-dashboard.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-documents.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-interests.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-orders.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-overview.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-profile.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-security.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-subscription.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-support-result.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-support-submit.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-rich-support.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-signout-result.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/account-support-desktop.png",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-question-detail-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-question-detail.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-question-queue.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-question-reply-result.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/admin-fixture-wrong-role-denied.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/admin-signedout-settled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_admin_research_inventory.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_careers.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_careers_innovative-product-builder.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_health.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_access-gate.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_access.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_application-status.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_application_status.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_apply_review.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_apply_success.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_build-a-system.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_cart.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_framework.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_guides.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_learn.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_orders.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_peptides.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_products.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_products_peptides.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_products_quantum.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_products_supplements.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_professionals.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_profile.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_programs.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_quantum.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_referrals.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_shop.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_subscriptions.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_supplements.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_systems.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/alias-_research_wholesale.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_about.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_agents.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_argos.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_book.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_appointments.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_consent.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_eligibility.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_how-it-works.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_pharmacy.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_portal.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_prescriptions.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_provider-review.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_reviews.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_schedule.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_care_support.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_compliance.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_concepts.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_contact.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_developers.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_disclosures.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_early-interest.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_ecosystem.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_enterprise.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_faq.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_for-clients.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_for-coaches.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_for-practitioners.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_how-it-works.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_investors.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_manifesto.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_mvps.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_network.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_ontology.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_partners.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_press.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_privacy.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_product.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_about.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_access-state.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_activate.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_affiliates.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_apply_status.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_contact.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_documents.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_early-access.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_early-access_order-request.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_faq.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_how-it-works.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_order.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_organizations.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_policies.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_privacy.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_quality.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_supplier-access.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_support.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_terms.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_research_testing.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_security.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_storefront.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_telemedicine.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_terms.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/baseline-_waitlist.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/browser-evidence-index.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-access-hub-mobile.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-application-closed.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-home-390.png",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-home-390.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-home-mobile.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-partner-signed-out.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-partner-signin-return.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-partners-mobile.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-partnership-no-provider-result.png",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-partnership-no-provider-result.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-partnership-submit-no-provider.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-reset-no-session.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-reset-unavailable-result.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/candidate-reset-unavailable-submit.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-browser-20260926.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-build-equivalence.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-control-focused.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-full-before-baseline-assertions.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-health-20260926.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-local-persistence.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-local-resource-bytes.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-local-services.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-migrations-20260926.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-protection-final.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-render-20260926.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-schema-20260926.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/closeout-service-20260926.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/cta-inventory.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/document-partner-tests-20260926.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/production-health-mobile.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/public-accessibility-policy.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/public-lot-fixture-lookup-result.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/public-lot-fixture-lookup.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/raw-before-whitespace-normalization.json.gz",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/repair-corporate-contact-accepted.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/repair-no-provider-result.png",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/repair-no-provider-result.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/repair-synthetic-accepted.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/repair-synthetic-courtesy-failure.png",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/repair-synthetic-courtesy-failure.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resource-sql-20260926.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-active-status.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-admin-processing.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-admin-shipped.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-admin-tracking.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-approved-status.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-browser-response-lost.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-browser-response-retry-accepted.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-browser-response-retry.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-correct-owner-history.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-courtesy-stall.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-cross-owner-denial.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-desktop-zoom-attempt.png",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-desktop-zoom-attempt.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-duplicate-inquiry.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-expired-status.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-inquiry-1440.png",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-inquiry-390.png",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-inquiry-768.png",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-mobile-inquiry-validation.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-navigation-results.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-other-owner-history.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-owner-positive.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-provider-response-lost.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-provider-retry-accepted.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-responsive.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-retry-throttled.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-secure-documents-return.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-session-reopened.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-session-revoked.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-slow-inquiry-accepted.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-slow-inquiry-pending.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-team-timeout.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-valid-status.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/resume-visual-zoom-200.png",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/route-visits.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/scenario-ledger-before-status-normalization.csv",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_activation-bridge.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_activation-checklist.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_activation-queue.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_activation-readiness.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_activation-reconciliation.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_applications.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_assisted-orders.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_audit.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_blueprint-review.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_capabilities.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_care-requests.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_command-center.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_commerce-queues.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_early-access_fulfillment.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_early-access_payments.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_early-access_releases.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_esign.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_fulfillment.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_guides.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_inventory.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_inventory_coas.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_inventory_lots.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_members.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_orders.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_partners.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_plans.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_privacy.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_product-configuration.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_product-requests.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_products.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_questions.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_referral-lifecycle.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_required-inputs.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_resource-hub.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_admin_research_security.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_care.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_documents.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_interests.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_orders.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_profile.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_security.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_subscription.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_account_support.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_assessment.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_blueprint.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_cart.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_catalog.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_checkout.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_diagnostics.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_documents-center.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_documents.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_education.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_goals.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_guides.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_kris-catalog.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_membership.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_metabolic-care.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_orders.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_privacy.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_product-requests.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_product-requests_new.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_products.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_profile.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_questions.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_referrals.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_security.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_storage.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_subscriptions.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_supplements.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_support.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_tracker.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_welcome.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_xenios-30.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_member_xenios-90.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_membership.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_apply.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_campaigns.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_commissions.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_compliance.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_conversions.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_dashboard.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_events.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_leads.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_links.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_onboarding.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_organizations.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_payouts.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_resources.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_security.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_support.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signedout-_research_partners_training.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/signin-external-return-rejected.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-admin-approval.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-claim-after.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-claim-before.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-claim-consumed-status.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-claim-negatives.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-claim-replay-owner.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-claims-qualification.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/sql-recovery-browser-boundary.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/status-invalid-token.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/synthetic-contact-log.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-approved-sql.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-build.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-dag.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-focused.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-full-tests.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-lifecycle-tests.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-partner-sql.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-production-bound.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-protected-review.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-quality-regression.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-routes.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/validation-typecheck.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/evidence/whitespace-normalization-receipt.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/full-tests.log",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/google-doc-continuation-verification.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/google-doc-final-verification.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/google-doc-sql-continuation-verification.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/google-doc-tab-patch.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/google-doc-verification.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/navigation-plan.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/notification-capture-receipt.txt",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/preview-contact-receipts.cjs",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/preview-sql-claims.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/preview-token-status.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/production-health-20260926.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/production-health-resumed.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/production-render-20260926.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/production-render-resumed.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/protected-file-mismatch.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/protected-routes-review.diff",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/qualify-local-persistence.mjs",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/qualify-local-resource-bytes.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/qualify-local-services.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/qualify-sql-claims.mjs",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/record-continuation.cjs",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/repair-build-provenance.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/repair-build.log",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/resumed-build-provenance.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/review-ownership.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/route-inventory.json",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/site-record-check.log",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/site-record-clean-check.log",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/verify-migration-dag.log",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/verify-production-state-bound.log",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/verify-release-manifest.log",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-adversarial-audit-20260924/verify-route-uniqueness.log",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-founder-admin-matrix-20260924/ADMIN_DATA_ACCESS_MATRIX.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-ux-account-notifications-20260924/IMPLEMENTATION_REPORT.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-ux-account-notifications-20260924/LIVE_UAT_REPAIR_REPORT.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "docs/ux/xenios-ux-account-notifications-20260924/RELEASE_CONTROL_REPORT.md",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/care/integration-wiring.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/core-site-protection.test.ts",
+      "owners": []
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": "server/release-control-plane.test.ts",
+      "owners": [
+        {
+          "id": "OWNER-W2-CONTROL-PLANE",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ]
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": "server/research/commerce/routes.ts",
+      "owners": [
+        {
+          "id": "OWNER-W2-PR86-SHARED-HOTFIX",
+          "owner": "Website 2",
+          "lane": "release-manager"
+        }
+      ]
+    },
+    {
+      "code": "WRONG_LANE_OWNER",
+      "path": "server/research/outbox.ts",
+      "owners": [
+        {
+          "id": "OWNER-PHASE-ZERO-ASSISTED-ORDER-WIRING-20260819",
+          "owner": "claude-fable-desktop (lead session, founder-directed 2026-08-19 recovery)",
+          "lane": "release-manager"
+        }
+      ]
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/partners/lifecycle-admin.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/partners/lifecycle-admin.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/partners/lifecycle-production.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/partners/notification-templates.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/partners/notification-templates.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/partners/notifications.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/research/partners/notifications.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/routes.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/services/contact-delivery.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/services/contact-delivery.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/services/contact-email.test.ts",
+      "owners": []
+    },
+    {
+      "code": "UNOWNED_FILE",
+      "path": "server/services/email.ts",
+      "owners": []
+    }
+  ]
+}
