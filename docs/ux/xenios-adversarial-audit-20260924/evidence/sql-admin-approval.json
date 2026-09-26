@@ -1,0 +1,58 @@
+{
+  "observedAt": "2026-09-26T15:13:23.781Z",
+  "fixtureRestart": "v2: fresh SQL state, admin registrar added after v1 claim evidence",
+  "provenance": "canonical requireSupabaseAdmin, registrar, production dependency and actual SQL",
+  "cases": [
+    {
+      "actor": "synthetic member",
+      "status": 403,
+      "result": {
+        "success": false,
+        "message": "Forbidden"
+      }
+    },
+    {
+      "actor": "synthetic admin",
+      "status": 200,
+      "result": {
+        "ok": true,
+        "applicationId": "9e6418ee-036c-43ed-8af9-2e24d1866a94",
+        "approvalVersion": 1,
+        "state": "approved_customer",
+        "delivery": "queued",
+        "expiresAt": "2026-10-10T09:13:23.728-06:00",
+        "replayed": false
+      }
+    },
+    {
+      "actor": "synthetic admin",
+      "status": 200,
+      "result": {
+        "ok": true,
+        "applicationId": "9e6418ee-036c-43ed-8af9-2e24d1866a94",
+        "approvalVersion": 1,
+        "state": "approved_customer",
+        "delivery": "queued",
+        "expiresAt": "2026-10-10T09:13:23.728-06:00",
+        "replayed": true
+      }
+    }
+  ],
+  "state": {
+    "application": {
+      "status": "approved_customer",
+      "access_approval_version": 1
+    },
+    "members": [],
+    "outbox": [
+      {
+        "event_type": "approved_customer_claim",
+        "status": "pending",
+        "count": 2
+      }
+    ],
+    "productionMutated": false,
+    "externalDelivery": false
+  },
+  "externalDelivery": false
+}

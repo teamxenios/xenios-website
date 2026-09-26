@@ -1,0 +1,10 @@
+{
+  "observedAt": "2026-09-26T15:14:59Z",
+  "source": "Render list_deploys connector; clock read immediately after result",
+  "workspace": "tea-d8nhh6a8qa3s73f4ocj0",
+  "service": "srv-d8s9vej7uimc7384dfcg",
+  "deployment": "dep-daqft3vf3r2c73b7e88g",
+  "status": "live",
+  "productionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+  "productionMutated": false
+}

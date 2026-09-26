@@ -1,0 +1,18 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - generic "xenios research":
+    - text: xenios
+    - generic: research
+- main:
+  - paragraph: Application status
+  - heading "Customer access approved" [level=1]
+  - paragraph: Hi Other. Complete the secure account claim below. No paid membership activation is required.
+  - status:
+    - paragraph: Complete recovery and sign in normally before using this account link.
+    - link "Normal sign-in":
+      - /url: /research/sign-in?returnTo=%2Fresearch%2Fapply%2Fstatus
+  - paragraph:
+    - text: "Approval expires:"
+    - time: 2026-10-10T15:13:23.728Z
+    - text: .

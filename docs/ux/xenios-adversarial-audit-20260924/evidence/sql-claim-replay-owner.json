@@ -1,0 +1,56 @@
+{
+  "observedAt": "2026-09-26T15:11:35.263Z",
+  "provenance": "actual production claim dependency and candidate SQL; isolated synthetic Auth",
+  "cases": [
+    {
+      "name": "consumed-claim-safe-replay",
+      "status": 200,
+      "result": {
+        "ok": true,
+        "applicationId": "985f1d07-3a30-460f-9bd7-1b1ca89e93a3",
+        "memberId": "06d42c2a-0bd4-4cb3-b2b9-74c36f97c31d",
+        "state": "active",
+        "replayed": true
+      }
+    },
+    {
+      "name": "different-owner-denied",
+      "status": 409,
+      "result": {
+        "ok": false,
+        "code": "identity_review_required",
+        "message": "The signed-in identity does not match this approved account link."
+      }
+    }
+  ],
+  "state": {
+    "application": {
+      "status": "active",
+      "access_approval_version": 1
+    },
+    "members": [
+      {
+        "auth_user_id": "20000000-0000-4000-8000-000000000001",
+        "status": "active",
+        "access_basis": "approved_customer",
+        "billing_state": "not_started"
+      }
+    ],
+    "outbox": [
+      {
+        "event_type": "approved_customer_welcome",
+        "status": "pending",
+        "count": 1
+      },
+      {
+        "event_type": "approved_customer_claim",
+        "status": "pending",
+        "count": 1
+      }
+    ],
+    "productionMutated": false,
+    "externalDelivery": false
+  },
+  "productionMutated": false,
+  "externalDelivery": false
+}

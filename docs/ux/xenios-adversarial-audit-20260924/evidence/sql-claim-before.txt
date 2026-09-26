@@ -1,0 +1,21 @@
+- region "Notifications (F8)":
+  - list
+- banner:
+  - generic "xenios research":
+    - text: xenios
+    - generic: research
+- main:
+  - paragraph: Application status
+  - heading "Customer access approved" [level=1]
+  - paragraph: Hi Synthetic. Complete the secure account claim below. No paid membership activation is required.
+  - paragraph: Confirm approved customer access
+  - paragraph: Use your existing normal sign-in to claim this approved account. Your password will not be changed.
+  - button "Claim approved account"
+  - link "Sign in with an existing account":
+    - /url: /research/sign-in?returnTo=%2Fresearch%2Fapply%2Fstatus
+  - link "Contact support":
+    - /url: /research/support
+  - paragraph:
+    - text: "Approval expires:"
+    - time: 2026-10-10T15:09:56.593Z
+    - text: .

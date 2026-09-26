@@ -15,8 +15,8 @@
       "limitation": "Retired destination intentionally replaced by /research/account/documents. Replacement browser journey PASS in R017; old control is superseded, not a broken retained link."
     }
   ],
-  "scenarioRows": 24,
-  "scenariosPass": 23,
+  "scenarioRows": 39,
+  "scenariosPass": 38,
   "scenariosNotRun": 1,
   "externalDelivery": "UNVERIFIED",
   "productionMutated": false

@@ -1,0 +1,60 @@
+- region "Notifications (F8)":
+  - list
+- link "Skip to account content":
+  - /url: "#account-main-content"
+- banner:
+  - paragraph: XENIOS / RESEARCH + CARE
+  - paragraph: One private view for account access, commerce and billing history, Care operations, and support.
+  - generic: Private account
+  - button "Sign out"
+- navigation "Account areas":
+  - link "Overview":
+    - /url: /research/account
+  - link "Commerce":
+    - /url: /research/account/orders
+  - link "Browse products":
+    - /url: /research/member/catalog
+  - link "Billing history":
+    - /url: /research/account/subscription
+  - link "Care status":
+    - /url: /research/account/care
+  - link "Interests":
+    - /url: /research/account/interests
+  - link "Documents":
+    - /url: /research/account/documents
+  - link "Profile":
+    - /url: /research/account/profile
+  - link "Security":
+    - /url: /research/account/security
+  - link "Support":
+    - /url: /research/account/support
+- paragraph: Commerce + fulfillment
+- heading "Commerce history, without ambiguity." [level=1]
+- paragraph: Research records and Care/pharmacy fulfillment remain visibly separate, with only available payment and fulfillment evidence shown.
+- main:
+  - region "Records and available status":
+    - paragraph: Research commerce history
+    - heading "Records and available status" [level=2]
+    - paragraph: Payment, fulfillment, tracking, and approved lot-document availability are shown only when the commerce record carries that evidence.
+    - generic: Partial history · total unavailable
+    - note:
+      - paragraph: Some commerce history is currently unavailable.
+      - paragraph: "These sources do not provide a complete history: Early Access placements (XEA), Early Access cart checkouts (XEC)."
+    - generic: No Research commerce records are visible here yet — see the availability and completeness note above.
+  - region "Assisted order requests (XRR)":
+    - heading "Assisted order requests (XRR)" [level=2]
+    - paragraph: Requests are separate from order records. A request status or estimate does not establish captured payment, a carrier, or a shipment.
+    - paragraph: No assisted order requests were returned for this account.
+  - region "Separate operational fulfillment":
+    - paragraph: Care / pharmacy
+    - heading "Separate operational fulfillment" [level=2]
+    - paragraph: Care intake, provider review, and pharmacy fulfillment remain separate from Research commerce records and membership.
+    - generic: History unavailable
+    - note:
+      - paragraph: Care/pharmacy history is unavailable.
+      - paragraph: This page cannot prove that the visible list is complete or empty, so it cannot report a definitive zero.
+    - generic: Care status is managed through the provider/Tebra workflow. Care/pharmacy history is unavailable, so this page cannot report a definitive zero.
+- contentinfo:
+  - paragraph: Administrative account information only. Care, provider review, and pharmacy fulfillment remain separate.
+  - link "Privacy":
+    - /url: /research/privacy

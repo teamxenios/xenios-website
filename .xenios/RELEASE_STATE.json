@@ -904,7 +904,7 @@
     "status": "CONTINUED_AUDIT_NOT_RELEASE_ACCEPTED",
     "observedProductionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
     "observedDeploymentId": "dep-daqft3vf3r2c73b7e88g",
-    "productionObservedAt": "2026-09-24T20:06:01.544Z",
+    "productionObservedAt": "2026-09-26T15:14:59Z",
     "commerceEnabled": false,
     "runtimeSha": "c4ea8a9111fcdf7b66cff7db42347e7d38a3fefa",
     "runtimeTree": "e79b5eef9da677a783e2b928597ead86593c74ce",
@@ -930,6 +930,11 @@
     "continuationReport": "docs/ux/xenios-adversarial-audit-20260924/CONTINUATION_RESULTS.md",
     "navigationExecuted": 127,
     "navigationPlan": 129,
-    "productionObservationNote": "Exact HTTP health timestamp; later Render list_deploys reconfirmed same live identity in this continuation, receipt has separate recordedAt"
+    "productionObservationNote": "Fresh read-only Render plus both origin health receipts, September26; no mutation",
+    "scenarioRows": 39,
+    "scenarioPass": 38,
+    "scenarioNotRun": 1,
+    "sqlClaimQualification": "PASS: six real HTTP/SQL cases, browser claim and recovery boundary",
+    "adminSqlApproval": "PASS: member denied, admin accepted, idempotent replay"
   }
 }

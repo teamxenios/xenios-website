@@ -1,0 +1,36 @@
+[
+  {
+    "origin": "https://xeniostechnology.com",
+    "observedAt": "2026-09-26T15:14:59.280Z",
+    "status": 200,
+    "body": {
+      "status": "Xenios API is running",
+      "uptimeSeconds": 189094,
+      "timestamp": "2026-09-26T15:15:00.265Z",
+      "config": {
+        "supabaseConfigured": true,
+        "adminConfigured": true,
+        "turnstileConfigured": false,
+        "commerceEnabled": false
+      },
+      "requestId": "930e8b88-98a1-40b7-a434-a12d1bed5b31"
+    }
+  },
+  {
+    "origin": "https://xenios-website.onrender.com",
+    "observedAt": "2026-09-26T15:14:59.523Z",
+    "status": 200,
+    "body": {
+      "status": "Xenios API is running",
+      "uptimeSeconds": 189094,
+      "timestamp": "2026-09-26T15:15:00.528Z",
+      "config": {
+        "supabaseConfigured": true,
+        "adminConfigured": true,
+        "turnstileConfigured": false,
+        "commerceEnabled": false
+      },
+      "requestId": "5c7fd8c1-3d2f-45d0-89c3-65f821a6536c"
+    }
+  }
+]

@@ -27,10 +27,32 @@ const cases = [
  ['Duplicate inquiry replay','resume-duplicate-inquiry.txt','actual bundle; isolated provider capture','PASS','No duplicate captured acceptance'],
  ['200 percent visual scale','resume-visual-zoom-200.png','CDP page visual scale','PASS','Pinch-style scale, not desktop CSS reflow'],
  ['Desktop browser zoom qualification','resume-desktop-zoom-attempt.txt','browser keyboard attempt and DOM measurements','NOT RUN','Keyboard shortcut did not change measured width or pixel ratio; no 200-percent reflow claim'],
+ ['Second owner history isolated','resume-other-owner-history.txt','real account/history projection and guard; native synthetic rows','PASS','No seeded order or assisted requests visible; unavailable sources disclosed'],
+ ['Correct owner history visible','resume-correct-owner-history.txt','real account/history projection and guard; native synthetic rows','PASS','One order and two assisted requests; no production RLS claim'],
+ ['Interrupted tab session recovers','resume-session-reopened.txt','native synthetic session; real account gate','PASS','Close tab and cold reopen retains authorized owner history'],
+ ['Explicit sign-out revokes cold access','resume-session-revoked.txt','native synthetic session; real account gate','PASS','Cold account navigation returns to sign-in'],
+ ['Status-purpose cannot claim','sql-claims-qualification.json','real HTTP token validator and production dependency; actual local SQL','PASS','401; no membership grant'],
+ ['Expired claim cannot grant access','sql-claims-qualification.json','real signed-token validator and actual local SQL','PASS','401 even with correctly signed expired token'],
+ ['Recovery-purpose session cannot claim','sql-claims-qualification.json','real production verifySignIn and actual local SQL','PASS','409; provider session is synthetic, exact-match verified'],
+ ['Different signed-in owner cannot claim','sql-claims-qualification.json','real claim ownership check and actual local SQL','PASS','409; no foreign grant'],
+ ['Approved owner claims in browser','sql-claim-after.txt','actual SPA, member claim route, production dependency and candidate SQL','PASS','One local active member; billing remains not_started'],
+ ['Consumed claim replay is idempotent','sql-claims-qualification.json','actual HTTP claim route and SQL replay','PASS','One member and one welcome event; no duplicate'],
+ ['Normal member denied admin approval','sql-admin-approval.json','canonical requireSupabaseAdmin and actual SQL','PASS','403; browser roles cannot grant admin'],
+ ['Admin approval queues local claim','sql-admin-approval.json','canonical guard, approval registrar, production dependency and actual SQL','PASS','Queued is not delivered'],
+ ['Admin approval retry replays','sql-admin-approval.json','actual SQL idempotency behind real admin guard','PASS','No duplicate approval notification'],
+ ['Recovery browser hides claim action','sql-recovery-browser-boundary.txt','actual SPA recovery marker and real approved SQL row','PASS','Normal sign-in required; no password reset performed'],
+ ['Consumed claim displays active status','sql-claim-consumed-status.txt','actual SPA status route after actual SQL claim','PASS','No second create-account form'],
 ];
 const q = s => '"'+String(s??'').replaceAll('"','""')+'"';
 const rows = cases.map((x,i)=>({id:'R'+String(i+1).padStart(3,'0'),scenario:x[0],evidence:'evidence/'+x[1],provenance:x[2],status:x[3],limitation:x[4],runtime:i<5?'02d525b UI; unchanged native guard/order source at c4ea8a9':runtime}));
 fs.writeFileSync(path.join(base,'CONTINUATION_SCENARIOS.csv'),[['id','scenario','evidence','provenance','status','limitation','runtime'],...rows.map(r=>Object.values(r))].map(row=>row.map(q).join(',')).join('\n')+'\n');
+// Preserve the historical rows while making the existing scenario ledger the
+// entry point for new executed work. Provenance is an independent column.
+const ledgerPath=path.join(base,'SCENARIO_RESULTS.csv');
+let ledger=fs.readFileSync(ledgerPath,'utf8').trimEnd().split(/\r?\n/).filter(line=>!/^"R\d{3}"/.test(line));
+if(!ledger[0].includes('"provenance"')) ledger=ledger.map((line,i)=>line+','+q(i===0?'provenance':'Historical evidence; see environment/build and original receipt'));
+for(const r of rows)ledger.push([r.id,r.scenario,'LOCAL '+r.runtime,'synthetic only','See evidence','Isolated fixture','See evidence',r.scenario,'See scenario receipt','See scenario receipt',r.evidence,'See fixture receipt',r.evidence,r.status,r.limitation,'','Current continuation',r.provenance].map(q).join(','));
+fs.writeFileSync(ledgerPath,ledger.join('\n')+'\n');
 let nav=JSON.parse(fs.readFileSync(path.join(base,'evidence/resume-navigation-results.json')));
 nav[70].limitation='Invitation password gate is rendered; order-request link is not available in this configured capture fixture. No password guessed or real invitation used.';
 nav[74].limitation='Retired destination intentionally replaced by /research/account/documents. Replacement browser journey PASS in R017; old control is superseded, not a broken retained link.';

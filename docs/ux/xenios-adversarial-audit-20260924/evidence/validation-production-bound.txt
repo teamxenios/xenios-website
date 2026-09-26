@@ -1,0 +1,7 @@
+npm warn config production Use `--omit=dev` instead.
+
+> rest-express@1.0.0 verify:production-state
+> tsx scripts/acceptance/verify-production-state.ts
+
+STALE_PRODUCTION_EVIDENCE: Production verification is stale.
+STALE_EVIDENCE: production-identity-reconciliation-c545a70-20260914 is invalid or stale.

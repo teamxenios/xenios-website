@@ -1,0 +1,48 @@
+{
+  "observedAt": "2026-09-26T15:10:51.446Z",
+  "provenance": "actual claim route/production dependencies against isolated SQL and synthetic exact-session Auth",
+  "cases": [
+    {
+      "name": "status-purpose-denied",
+      "status": 401,
+      "result": {
+        "ok": false,
+        "message": "This link is not valid. Use the most recent link from your email."
+      }
+    },
+    {
+      "name": "recovery-purpose-session-denied",
+      "status": 409,
+      "result": {
+        "ok": false,
+        "code": "verified_sign_in_required",
+        "message": "Sign in normally, then reopen your account link."
+      }
+    },
+    {
+      "name": "expired-claim-token-denied",
+      "status": 401,
+      "result": {
+        "ok": false,
+        "message": "This link is not valid. Use the most recent link from your email."
+      }
+    }
+  ],
+  "state": {
+    "application": {
+      "status": "approved_customer",
+      "access_approval_version": 1
+    },
+    "members": [],
+    "outbox": [
+      {
+        "event_type": "approved_customer_claim",
+        "status": "pending",
+        "count": 1
+      }
+    ],
+    "productionMutated": false,
+    "externalDelivery": false
+  },
+  "externalDelivery": false
+}
