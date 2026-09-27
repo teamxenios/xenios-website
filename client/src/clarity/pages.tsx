@@ -533,7 +533,7 @@ export function StatusPage() {
           <button className="btn btn-primary mt-6" type="submit">Check Status</button>
         </form>
         {message && <div className="clarity-boundary mt-6" role={message.kind === "invalid" ? "alert" : "status"}>{message.text} <Link href={message.kind === "care" ? "/care/support" : "/support"} className="clarity-text-link">Contact Support</Link>.</div>}
-        <p className="body-m text-ink-2 mt-8">Signed in? See all your orders in your account. <Link href="/sign-in" className="clarity-text-link">Sign In</Link></p>
+        <p className="body-m text-ink-2 mt-8">Signed in? See all your orders in your account. <Link href="/research/account/orders" className="clarity-text-link">View Account Orders</Link></p>
       </ContentSection>
     </PublicPage>
   );

@@ -56,6 +56,13 @@ describe("public status credential boundary", () => {
     expect(window.location.pathname).toBe(`/research/early-access/order-request/${ORDER_REFERENCE}`);
   });
 
+  it("links the signed-in shortcut directly to the canonical account orders route", async () => {
+    const view = await renderPage();
+
+    const accountOrders = view.querySelector<HTMLAnchorElement>('a[href="/research/account/orders"]');
+    expect(accountOrders?.textContent).toBe("View Account Orders");
+  });
+
   it.each([
     ["CARE-123E4567", "Care requests are updated directly", "/care/support"],
     ["INQ-ABC12345", "Business inquiries do not have a public status page", "/support"],
@@ -76,7 +83,7 @@ describe("public status credential boundary", () => {
       expect(view.querySelector('[role="status"]')?.textContent).toContain("belongs in your secure account");
       expect(view.querySelector('[role="alert"]')).toBeNull();
     }
-    expect(view.querySelector('a[href="/sign-in"]')).not.toBeNull();
+    expect(view.querySelector('a[href="/research/account/orders"]')).not.toBeNull();
   });
 
   it("announces malformed references without navigating", async () => {
