@@ -16,7 +16,7 @@
       "tool": "claude",
       "lane": "continuity",
       "branch": "claude/multi-max-continuity",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-08-16T02:49:08.974Z",
       "heartbeatAt": "2026-08-16T18:40:26.415Z",
       "note": "server mount pushed 56d8501; next: assisted-order wall probes, then client mounts + EA CTA"
@@ -535,10 +535,10 @@
       "tool": "Codex",
       "lane": "clarity-implementation",
       "branch": "codex/xenios-clarity-implementation-20260926",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-09-27T02:11:21.793Z",
-      "heartbeatAt": "2026-09-27T02:12:50.953Z",
-      "note": "Lease acquired after stale-lock release and audit-state reconciliation; implementing owner-approved clarity program; no production mutation"
+      "heartbeatAt": "2026-09-27T17:43:43.709Z",
+      "note": "Evidence SHA 347bff25397210883518825850edd711b078c0eb is pushed; full suite/typecheck/build/core/routes/migrations/site records/manifest pass. P-17 secure recovery authority remains the single P1 product blocker. productionMutated=false."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
