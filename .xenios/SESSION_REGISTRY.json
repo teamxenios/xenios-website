@@ -547,8 +547,8 @@
       "branch": "codex/xenios-p17-secure-status-recovery-20260927",
       "state": "active",
       "startedAt": "2026-09-27T20:16:51.935Z",
-      "heartbeatAt": "2026-09-27T20:38:27.822Z",
-      "note": "P17 implementation active: source, migration candidate, UX and tests in progress"
+      "heartbeatAt": "2026-09-27T21:18:09.929Z",
+      "note": "P17 runtime/test/control commits pushed; final full-suite rerun and handoff closeout in progress"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

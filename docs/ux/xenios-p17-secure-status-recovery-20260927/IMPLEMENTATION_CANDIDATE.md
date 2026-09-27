@@ -49,7 +49,8 @@ SameSite=Strict, and path-scoped to `/api/research/status`.
   independent-connection double-consume race passed.
 - Local exact-build browser UAT passed fragment removal, explicit exchange,
   neutral landing, no-referrer and safe invalid-token behavior.
-- The complete suite was rerun after release-control reconciliation; its final
-  counts are recorded in the release manifest and handoff.
+- The complete suite was rerun after release-control reconciliation with the
+  established 60-second per-test headroom: 987 files passed, 6 skipped; 18,169
+  tests passed, 85 skipped; zero failures.
 
 P0: 0. P1: 0. The candidate is ready for independent source review, not deploy.

@@ -23,6 +23,14 @@
     "commerceEnabled": false,
     "nativeCommerce": "DARK"
   },
+  "fullSuite": {
+    "filesPassed": 987,
+    "filesSkipped": 6,
+    "testsPassed": 18169,
+    "testsSkipped": 85,
+    "testsFailed": 0,
+    "testTimeoutMs": 60000
+  },
   "externalEffects": {
     "realEmail": false,
     "stagingMutated": false,

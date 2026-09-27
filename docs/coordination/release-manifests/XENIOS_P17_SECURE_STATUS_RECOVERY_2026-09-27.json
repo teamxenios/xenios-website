@@ -116,7 +116,7 @@
     },
     "fullSuite": {
       "status": "PASS",
-      "command": "npm test -- --reporter=dot; final post-control-plane rerun, 0 failures (exact counts recorded in handoff)",
+      "command": "npm test -- --reporter=dot --testTimeout=60000 -> 987 files passed, 6 skipped; 18,169 tests passed, 85 skipped; 0 failed; 406.54 s",
       "checkedAt": "2026-09-27T21:04:56.7508878Z"
     },
     "typecheck": {
