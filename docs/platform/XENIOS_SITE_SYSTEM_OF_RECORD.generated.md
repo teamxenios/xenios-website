@@ -1,8 +1,8 @@
 # Xenios Site System of Record
 
-Generated from source commit: `1b5a8504455990c2a21ca469689c6a588693238b` (2026-09-26T15:00:10-05:00)
+Generated from source commit: `282c88ee491a569e16e97f88b14d959c1d67493c` (2026-09-27T12:40:02-05:00)
 
-Source tree: `e94149c0d46973265dfd34ed3dee6ef5efdee366` on `codex/xenios-adversarial-audit-20260924`
+Source tree: `5e1186894a5fed3d6e9c3c45d1d0050e71e613a5` on `codex/xenios-clarity-implementation-20260926`
 
 Recorded production: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d` / `dep-daqft3vf3r2c73b7e88g` (deployed_not_authenticated_smoked)
 
@@ -32,11 +32,12 @@ Recorded production: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d` / `dep-daqft3vf3
 
 | Route | Persona | Domain | Source | Tests | Browser | Production | Registration evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| / | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:154 |
-| /about | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:165 |
-| /admin | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/App.tsx:181 |
-| /admin/research | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/App.tsx:183; client/src/research/adminx-section.tsx:142 |
-| /admin/research/* | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/App.tsx:184 |
+| / | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:194 |
+| /about | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:223 |
+| /activate | public_visitor | identity_accounts | mounted | unknown | unknown | unknown | client/src/App.tsx:210 |
+| /admin | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/App.tsx:238 |
+| /admin/research | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/App.tsx:240; client/src/research/adminx-section.tsx:142 |
+| /admin/research/* | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/App.tsx:241 |
 | /admin/research/activation-bridge | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:181 |
 | /admin/research/activation-checklist | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:182 |
 | /admin/research/activation-queue | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:180 |
@@ -82,52 +83,60 @@ Recorded production: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d` / `dep-daqft3vf3
 | /admin/research/required-inputs | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:179 |
 | /admin/research/resource-hub | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:175 |
 | /admin/research/security | founder_admin_operations | operations | mounted | unknown | unknown | unknown | client/src/research/adminx-section.tsx:176 |
-| /agents | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:205 |
-| /argos | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:202 |
-| /book | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:179 |
-| /care | care_requester | care | mounted | focused_tests_pass | unknown | live_verified | client/src/App.tsx:197 |
-| /care/* | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:198 |
-| /care/appointments | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:194 |
-| /care/consent | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:193 |
-| /care/eligibility | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:192 |
-| /care/pharmacy | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:196 |
-| /care/prescriptions | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:195 |
-| /careers | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:168 |
-| /careers/:slug | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:167 |
-| /careers/innovative-product-builder | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:166 |
-| /compliance | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:172 |
-| /concepts | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:180 |
-| /contact | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:170 |
-| /developers | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:206 |
-| /disclosures | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:177 |
-| /early-interest | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:178 |
-| /ecosystem | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:161 |
-| /enterprise | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:207 |
-| /faq | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:210 |
-| /for-clients | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:158 |
-| /for-coaches | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:157 |
-| /for-practitioners | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:162 |
-| /for/:slug | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:163 |
-| /health | public_health_visitor | care | mounted | unknown | unknown | unknown | client/src/App.tsx:186 |
-| /how-it-works | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:156 |
-| /investors | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:173 |
-| /kairos | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:201 |
-| /manifesto | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:164 |
-| /mvps | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:200 |
-| /network | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:160 |
-| /ontology | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:208 |
-| /partners | partner_affiliate | referrals_partners | mounted | unknown | unknown | unknown | client/src/App.tsx:209 |
-| /press | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:174 |
-| /privacy | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:175 |
-| /product | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:155 |
-| /r/:code | partner_affiliate_and_referral_recipient | referrals_partners | mounted | full_suite_pass | browser_verified | built_not_deployed | client/src/App.tsx:187 |
-| /research | public_research_visitor | research_experience | mounted | focused_tests_pass | unknown | live_verified | client/src/App.tsx:190; client/src/research/section.tsx:302 |
+| /agents | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:274 |
+| /argos | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:271 |
+| /book | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:236 |
+| /care | care_requester | care | mounted | focused_tests_pass | unknown | live_verified | client/src/App.tsx:266 |
+| /care/* | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:267 |
+| /care/appointments | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:263 |
+| /care/consent | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:262 |
+| /care/eligibility | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:261 |
+| /care/pharmacy | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:265 |
+| /care/prescriptions | care_requester | care | mounted | unknown | unknown | unknown | client/src/App.tsx:264 |
+| /careers | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:225 |
+| /careers/:slug | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:224 |
+| /compliance | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:229 |
+| /concepts | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:237 |
+| /contact | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:227 |
+| /developers | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:275 |
+| /disclosures | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:234 |
+| /early-interest | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:235 |
+| /ecosystem | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:219 |
+| /enterprise | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:276 |
+| /faq | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:206 |
+| /for-clients | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:216 |
+| /for-coaches | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:215 |
+| /for-practitioners | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:220 |
+| /for/:slug | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:221 |
+| /health | public_health_visitor | care | mounted | unknown | unknown | unknown | client/src/App.tsx:242 |
+| /how-it-works | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:214 |
+| /individuals | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:195 |
+| /investors | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:230 |
+| /kairos | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:270 |
+| /manifesto | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:222 |
+| /mvps | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:269 |
+| /network | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:218 |
+| /ontology | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:277 |
+| /partners | partner_affiliate | referrals_partners | mounted | unknown | unknown | unknown | client/src/App.tsx:203 |
+| /partners/apply | partner_affiliate | referrals_partners | mounted | unknown | unknown | unknown | client/src/App.tsx:202 |
+| /practices | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:201 |
+| /practices/care | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:200 |
+| /practices/referrals | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:198 |
+| /practices/workspace | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:199 |
+| /press | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:231 |
+| /privacy | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:232 |
+| /product | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:213 |
+| /products | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:197 |
+| /products/:slug | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:196 |
+| /quality | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:205 |
+| /r/:code | partner_affiliate_and_referral_recipient | referrals_partners | mounted | full_suite_pass | browser_verified | built_not_deployed | client/src/App.tsx:243 |
+| /research | public_research_visitor | research_experience | mounted | focused_tests_pass | unknown | live_verified | client/src/App.tsx:259; client/src/research/section.tsx:302 |
 | /research/__gallery/:page | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:350 |
-| /research/* | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/App.tsx:191 |
-| /research/about | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:329 |
+| /research/* | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/App.tsx:260 |
+| /research/about | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/App.tsx:254; client/src/research/section.tsx:329 |
 | /research/access | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:452 |
 | /research/access-gate | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:454 |
-| /research/access-hub | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:305 |
+| /research/access-hub | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/App.tsx:258; client/src/research/section.tsx:305 |
 | /research/access-state | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:324 |
 | /research/account | research_customer | identity_accounts | mounted | full_suite_pass | browser_verified | unknown | client/src/research/section.tsx:363 |
 | /research/account/care | research_customer | identity_accounts | mounted | unknown | unknown | unknown | client/src/research/section.tsx:357 |
@@ -140,7 +149,7 @@ Recorded production: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d` / `dep-daqft3vf3
 | /research/account/subscription | research_customer | identity_accounts | mounted | unknown | unknown | unknown | client/src/research/section.tsx:356 |
 | /research/account/support | research_customer | identity_accounts | mounted | unknown | unknown | unknown | client/src/research/section.tsx:362 |
 | /research/activate | public_research_visitor | identity_accounts | mounted | unknown | unknown | unknown | client/src/research/section.tsx:323 |
-| /research/affiliates | partner_affiliate | referrals_partners | mounted | unknown | unknown | unknown | client/src/research/section.tsx:342 |
+| /research/affiliates | partner_affiliate | referrals_partners | mounted | unknown | unknown | unknown | client/src/App.tsx:247; client/src/research/section.tsx:342 |
 | /research/application-status | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:320 |
 | /research/application/status | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:319 |
 | /research/apply | applicant_and_membership_operations | research_experience | mounted | unknown | unknown | blocked_external | client/src/research/section.tsx:315 |
@@ -149,16 +158,16 @@ Recorded production: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d` / `dep-daqft3vf3
 | /research/apply/success | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:317 |
 | /research/build-a-system | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:445 |
 | /research/cart | public_research_visitor | commerce | mounted | unknown | unknown | unknown | client/src/research/section.tsx:447 |
-| /research/contact | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:337 |
-| /research/documents | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:334 |
+| /research/contact | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/App.tsx:256; client/src/research/section.tsx:337 |
+| /research/documents | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/App.tsx:253; client/src/research/section.tsx:334 |
 | /research/early-access | quick_early_access_customer | commerce | mounted | focused_tests_pass | browser_verified | deployed_not_authenticated_smoked | client/src/research/section.tsx:308 |
 | /research/early-access/order-request | research_customer | commerce | mounted | full_suite_pass | unknown | deployed_not_authenticated_smoked | client/src/research/section.tsx:312 |
 | /research/early-access/order-request/:publicReference | quick_early_access_customer | commerce | mounted | unknown | unknown | unknown | client/src/research/section.tsx:314 |
 | /research/early-access/order-request/confirmation/:publicReference | quick_early_access_customer | commerce | mounted | unknown | unknown | unknown | client/src/research/section.tsx:313 |
-| /research/faq | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:331 |
+| /research/faq | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/App.tsx:250; client/src/research/section.tsx:331 |
 | /research/framework | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:449 |
 | /research/guides | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:435 |
-| /research/how-it-works | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:330 |
+| /research/how-it-works | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/App.tsx:255; client/src/research/section.tsx:330 |
 | /research/learn | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:446 |
 | /research/lots/:lotCode | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:335 |
 | /research/member | research_member | identity_accounts | mounted | unknown | unknown | unknown | client/src/research/section.tsx:367 |
@@ -202,8 +211,8 @@ Recorded production: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d` / `dep-daqft3vf3
 | /research/membership | research_member | identity_accounts | mounted | unknown | unknown | unknown | client/src/research/section.tsx:448 |
 | /research/order | all_legitimate_ordering_personas | commerce | mounted | focused_tests_pass | browser_verified | built_not_deployed | client/src/research/section.tsx:306 |
 | /research/orders | public_research_visitor | commerce | mounted | unknown | unknown | unknown | client/src/research/section.tsx:436 |
-| /research/organizations | organization_buyer | organizations | mounted | unknown | unknown | blocked_external | client/src/research/section.tsx:340 |
-| /research/partners | partner_affiliate | referrals_partners | mounted | unknown | unknown | unknown | client/src/research/section.tsx:341 |
+| /research/organizations | organization_buyer | organizations | mounted | unknown | unknown | blocked_external | client/src/App.tsx:248; client/src/research/section.tsx:340 |
+| /research/partners | partner_affiliate | referrals_partners | mounted | unknown | unknown | unknown | client/src/App.tsx:246; client/src/research/section.tsx:341 |
 | /research/partners/apply | partner_affiliate | referrals_partners | mounted | unknown | unknown | unknown | client/src/research/section.tsx:407 |
 | /research/partners/campaigns | partner_affiliate | referrals_partners | mounted | unknown | unknown | unknown | client/src/research/section.tsx:412 |
 | /research/partners/commissions | partner_affiliate | referrals_partners | mounted | unknown | unknown | unknown | client/src/research/section.tsx:416 |
@@ -233,7 +242,7 @@ Recorded production: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d` / `dep-daqft3vf3
 | /research/professionals | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:451 |
 | /research/profile | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:439 |
 | /research/programs | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:450 |
-| /research/quality | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:332 |
+| /research/quality | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/App.tsx:251; client/src/research/section.tsx:332 |
 | /research/quantum | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:443 |
 | /research/referrals | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:438 |
 | /research/reset-password | public_research_visitor | identity_accounts | mounted | unknown | unknown | unknown | client/src/research/section.tsx:322 |
@@ -241,17 +250,23 @@ Recorded production: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d` / `dep-daqft3vf3
 | /research/sign-in | public_research_visitor | identity_accounts | mounted | unknown | unknown | unknown | client/src/research/section.tsx:321 |
 | /research/subscriptions | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:437 |
 | /research/supplements | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:442 |
-| /research/supplier-access | supplier_fulfillment | supplier_fulfillment | mounted | unknown | unknown | unknown | client/src/research/section.tsx:307 |
-| /research/support | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:326 |
+| /research/supplier-access | supplier_fulfillment | supplier_fulfillment | mounted | unknown | unknown | unknown | client/src/App.tsx:249; client/src/research/section.tsx:307 |
+| /research/support | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/App.tsx:257; client/src/research/section.tsx:326 |
 | /research/systems | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:440 |
 | /research/terms | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:328 |
-| /research/testing | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/research/section.tsx:333 |
+| /research/testing | public_research_visitor | research_experience | mounted | unknown | unknown | unknown | client/src/App.tsx:252; client/src/research/section.tsx:333 |
 | /research/wholesale | organization_buyer | organizations | mounted | unknown | unknown | unknown | client/src/research/section.tsx:453 |
-| /security | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:171 |
-| /storefront | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:159 |
-| /telemedicine | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:204 |
-| /terms | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:176 |
-| /waitlist | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:169 |
+| /security | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:228 |
+| /sign-in | public_visitor | identity_accounts | mounted | unknown | unknown | unknown | client/src/App.tsx:209 |
+| /status | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:208 |
+| /storefront | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:217 |
+| /suppliers | supplier_fulfillment | supplier_fulfillment | mounted | unknown | unknown | unknown | client/src/App.tsx:204 |
+| /support | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:207 |
+| /telemedicine | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:273 |
+| /terms | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:233 |
+| /waitlist | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:226 |
+| /workspace | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:212 |
+| /workspace/how-it-works | public_visitor | corporate_site | mounted | unknown | unknown | unknown | client/src/App.tsx:211 |
 
 ## Status vocabulary
 
