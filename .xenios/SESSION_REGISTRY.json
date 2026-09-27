@@ -535,10 +535,10 @@
       "tool": "Codex",
       "lane": "clarity-implementation",
       "branch": "codex/xenios-clarity-implementation-20260926",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-09-27T02:11:21.793Z",
       "heartbeatAt": "2026-09-27T17:53:16.664Z",
-      "note": "Resumed after completion audit to implement the authorized P-17 signed-in account-orders shortcut. Anonymous recovery authority remains blocked. productionMutated=false."
+      "note": "Follow-up evidence SHA 3da9577ebadba69591b3ce4d621d9f71a6c3fe11 is pushed; signed-in P-17 shortcut, full serial suite, typecheck, build, protected/routes/migrations/site/manifest gates and built-bundle smoke pass. Anonymous recovery authority remains the single P1 blocker. productionMutated=false."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
