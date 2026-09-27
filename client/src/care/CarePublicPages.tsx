@@ -115,7 +115,7 @@ export function CareHomePage() {
           <p className="body-m text-ink-2 mt-6">
             A public request is not a medical intake. Clinical information moves only through a later authorized secure handoff.
           </p>
-          <p className="body-m text-ink-2 mt-4">Care availability depends on your state. We confirm availability after the request.</p>
+          <p className="body-m text-ink-2 mt-4">Care availability depends on your state. We confirm it after your request.</p>
           <p className="body-m text-ink-2 mt-2">Submitting a Care request is free.</p>
         </aside>
       </section>

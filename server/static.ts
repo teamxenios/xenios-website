@@ -84,7 +84,7 @@ export function sendRawHttpDocument(
   // req.path is rewritten relative to the mount inside app.use("/{*path}"),
   // so the document class is taken from the ORIGINAL pathname.
   const originalPathname = requestTarget.split("?")[0].split("#")[0];
-  const routeTemplate = isCarePath(originalPathname)
+  const routeTemplate = isCarePath(originalPathname) || originalPathname === "/status"
     ? stripExternalFontLinksForCare(templateHtml)
     : templateHtml;
   const document = buildRawHttpDocumentResponse({
@@ -99,7 +99,13 @@ export function sendRawHttpDocument(
     // Research document stays noindex at the HTTP layer as well as in the client.
     indexable: !isResearchPath(originalPathname) || process.env.RESEARCH_INDEXABLE === "true",
   });
-  res.status(document.status).set(document.headers).send(document.html);
+  res.status(document.status).set(document.headers);
+  if (originalPathname === "/status") {
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Referrer-Policy", "no-referrer");
+  }
+  res.send(document.html);
 }
 
 function isStaticIndexDirectory(distPath: string, requestPath: string): boolean {

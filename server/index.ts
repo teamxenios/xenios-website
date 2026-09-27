@@ -13,7 +13,7 @@ import { registerPrivateEarlyAccessApi } from "./research/early-access/register"
 import { buildEarlyAccessPersistence } from "./research/early-access/persistence/production-deps";
 import { registerMemberApi } from "./research/members";
 import { registerMemberAccessApi } from "./research/guards";
-import { registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
+import { enqueueNotification, registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
 import { registerRecruitingMail } from "./research/recruiting-mail";
 import { registerReferralFraudAdmin } from "./research/fraud-admin";
 import { registerMemberPlatformApi } from "./research/member-platform";
@@ -180,6 +180,10 @@ import {
   buildProductionResearchInquiryDependencies,
   registerResearchInquiryApi,
 } from "./research/inquiries";
+import { registerStatusRecoveryApi } from "./research/status-recovery/http";
+import { createProductionStatusRecoveryService } from "./research/status-recovery/production";
+import type { StatusRecoveryRpcClient } from "./research/status-recovery/supabase-store";
+import { rateLimitHit, requestIp as researchRequestIp } from "./research/rate-limit";
 import { registerFounderCommandCenterApi } from "./research/founder-command-center";
 import {
   buildFounderCommandCenterProductionSources,
@@ -384,6 +388,29 @@ app.use(researchPageGate);
 // POST before the legacy /api/research wall; every other Research route keeps
 // the existing wall unchanged.
 registerResearchInquiryApi(app, buildProductionResearchInquiryDependencies());
+registerStatusRecoveryApi(
+  app,
+  createProductionStatusRecoveryService({
+    rpc: supabaseConfigured()
+      ? (getSupabaseAdmin() as unknown as StatusRecoveryRpcClient)
+      : null,
+    enqueue: (intent) => enqueueNotification({
+      eventKey: intent.eventKey,
+      eventType: intent.eventType,
+      templateKey: intent.templateKey,
+      recipient: intent.recipient,
+      applicationId: intent.applicationId,
+      payload: { ...intent.payload },
+    }),
+    rateLimit: (key, windowSeconds, maxHits) => rateLimitHit(
+      key,
+      windowSeconds,
+      maxHits,
+      { durableFailurePolicy: "deny" },
+    ),
+  }),
+  { publicClientKey: (request) => researchRequestIp(request) },
+);
 registerResearchApi(app);
 registerProductionAccountIdentityApi(app);
 /**

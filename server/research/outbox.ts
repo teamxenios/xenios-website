@@ -33,6 +33,9 @@ import { renderAssistedOrderOutboxEmail } from "./assisted-order/communications"
 import { renderBuyerCommerceOutboxEmail } from "./buyer-commerce/communications";
 import { renderPartnerOutboxEmail } from "./partners/notification-templates";
 import { renderPublicInquiryOutboxEmail } from "./inquiries/notification-templates";
+import { statusRecoveryCrypto } from "./status-recovery/crypto";
+import { prepareStatusRecoveryOutboxEmail } from "./status-recovery/notification";
+import { SupabaseStatusRecoveryStore } from "./status-recovery/supabase-store";
 
 // ---------------------------------------------------------------------------
 // Durable notification outbox (Mega 1 sections 3-4). Every notification is a
@@ -238,7 +241,8 @@ export async function sendFoundingEmail(input: {
   }
 }
 
-// Template dispatch at SEND time. Fresh tokens are minted here, never stored.
+// Materialize the delivery credential only at send time. A retry of the same
+// event deterministically reproduces it, while persistence retains only its digest.
 // The token PURPOSE is decided at enqueue time (payload.tokenPurpose) so a
 // pre-approval status link can never carry an account-claim credential.
 async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean }> {
@@ -260,6 +264,29 @@ async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | n
     }
     let result: unknown;
     switch (job.template_key) {
+      case "research.status_recovery.link": {
+        const prepared = await prepareStatusRecoveryOutboxEmail({
+          job,
+          store: new SupabaseStatusRecoveryStore(getSupabaseAdmin() as any),
+          crypto: statusRecoveryCrypto,
+          clock: Object.freeze({ now: () => new Date(), nowMs: () => Date.now() }),
+          siteUrl: process.env.SITE_URL,
+        });
+        if (!prepared) {
+          return {
+            ok: false,
+            providerId: null,
+            error: "status recovery notification binding invalid",
+            nonRetryable: true,
+          };
+        }
+        return await sendFoundingEmail({
+          to: prepared.to,
+          subject: prepared.subject,
+          text: prepared.text,
+          idempotencyKey: String(job.event_key),
+        });
+      }
       case "approved_customer_claim": {
         // Recheck the approval before minting/sending its ownership credential.
         // A stale or revoked job is a visible failure, never recorded as sent.

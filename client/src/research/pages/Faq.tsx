@@ -14,7 +14,7 @@ const FAQ_ITEMS: FaqItem[] = [
   },
   {
     question: "What does it cost to start Care?",
-    answer: "Submitting a Care request is free. Care availability depends on your state. We confirm availability after the request.",
+    answer: "Submitting a Care request is free. Care availability depends on your state. We confirm it after your request.",
   },
   {
     question: "How do research orders work?",

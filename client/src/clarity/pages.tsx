@@ -1,7 +1,7 @@
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { contactService } from "@/lib/waitlist-service";
-import { readAssistedOrderToken } from "@/research/assisted-order/storage";
+import type { StatusRecoveryStatusView } from "@shared/research/status-recovery/contract";
 import InquiryForm from "./InquiryForm";
 import {
   ActionRow,
@@ -364,7 +364,7 @@ export function HowItWorksPage() {
     >
       <ContentSection title="Start Care">
         <NumberedSteps steps={[...CARE_STEPS]} />
-        <BoundaryNote>This request isn't a medical intake. Please don't include health details. Care availability depends on your state. We confirm availability after the request. Submitting a Care request is free.</BoundaryNote>
+        <BoundaryNote>This request isn't a medical intake. Please don't include health details. Care availability depends on your state. We confirm it after your request. Submitting a Care request is free.</BoundaryNote>
       </ContentSection>
       <ContentSection tone="soft" title="Request research products">
         <NumberedSteps steps={[...RESEARCH_STEPS]} />
@@ -497,43 +497,159 @@ function SupportForm() {
 }
 
 export function StatusPage() {
-  const [, navigate] = useLocation();
-  const [message, setMessage] = useState<{ kind: "care" | "inquiry" | "missing_access" | "invalid"; text: string } | null>(null);
-  function submit(event: React.FormEvent<HTMLFormElement>) {
+  const [recoveryToken, setRecoveryToken] = useState<string | null>(null);
+  const [phase, setPhase] = useState<"checking" | "request" | "requesting" | "requested" | "exchange" | "exchanging" | "status">("checking");
+  const [statusView, setStatusView] = useState<StatusRecoveryStatusView | null>(null);
+  const [exchangeError, setExchangeError] = useState(false);
+
+  useEffect(() => {
+    const priorReferrer = document.querySelector<HTMLMetaElement>('meta[name="referrer"]');
+    const priorContent = priorReferrer?.content;
+    const referrer = priorReferrer ?? document.head.appendChild(document.createElement("meta"));
+    referrer.name = "referrer";
+    referrer.content = "no-referrer";
+
+    const fragment = window.location.hash.slice(1);
+    let fragmentToken = "";
+    if (fragment.startsWith("recovery=")) {
+      try {
+        const candidate = decodeURIComponent(fragment.slice("recovery=".length));
+        if (/^[A-Za-z0-9_-]{43}$/u.test(candidate)) fragmentToken = candidate;
+      } catch {
+        fragmentToken = "";
+      }
+      window.history.replaceState(window.history.state, "", `${window.location.pathname}${window.location.search}`);
+    }
+    if (fragmentToken) {
+      // The credential arrived in a fragment, so it was never sent to the
+      // document server. Remove it before any navigation or referrer can carry
+      // it, and keep it only in component memory until explicit exchange.
+      setRecoveryToken(fragmentToken);
+      setPhase("exchange");
+    } else {
+      void fetch("/api/research/status", {
+        method: "GET",
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+      }).then(async (response) => {
+        if (!response.ok) {
+          setPhase("request");
+          return;
+        }
+        setStatusView(await response.json() as StatusRecoveryStatusView);
+        setPhase("status");
+      }).catch(() => setPhase("request"));
+    }
+
+    return () => {
+      if (priorReferrer) priorReferrer.content = priorContent ?? "";
+      else referrer.remove();
+    };
+  }, []);
+
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const reference = String(form.get("reference") || "").trim().toUpperCase();
-    if (reference.startsWith("CARE-")) {
-      setMessage({ kind: "care", text: "Care requests are updated directly by the Care team using the contact method you chose." });
-      return;
+    setPhase("requesting");
+    try {
+      await fetch("/api/research/status-recovery/request", {
+        method: "POST",
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          reference: String(form.get("reference") || ""),
+          email: String(form.get("email") || ""),
+        }),
+      });
+    } catch {
+      // Deliberately converge transport failure on the neutral public result.
+    } finally {
+      // Network and server outcomes intentionally converge on the same public
+      // state. The browser never learns match, eligibility, queue or rate-limit
+      // results.
+      setPhase("requested");
     }
-    if (reference.startsWith("INQ-")) {
-      setMessage({ kind: "inquiry", text: "Business inquiries do not have a public status page. Keep your reference; our team will contact you at the email you provided." });
-      return;
-    }
-    if (/^(?:XEA|XEC|XO)-[A-Z0-9-]{6,64}$/u.test(reference)) {
-      setMessage({ kind: "missing_access", text: "This order belongs in your secure account. Sign in to view your orders, or contact support with the reference." });
-      return;
-    }
-    if (!/^XRR-\d{8}-[0-9A-F]{10}$/u.test(reference)) {
-      setMessage({ kind: "invalid", text: "That reference format is not recognized. Check your confirmation, or contact support." });
-      return;
-    }
-    if (!readAssistedOrderToken(reference)) {
-      setMessage({ kind: "missing_access", text: "This browser does not have the secure status credential for that order. Sign in to view your orders, or contact support with the reference." });
-      return;
-    }
-    navigate(`/research/early-access/order-request/${encodeURIComponent(reference)}`);
   }
+
+  async function exchange() {
+    if (!recoveryToken) return;
+    setPhase("exchanging");
+    setExchangeError(false);
+    try {
+      const exchanged = await fetch("/api/research/status-recovery/exchange", {
+        method: "POST",
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: recoveryToken }),
+      });
+      setRecoveryToken(null);
+      if (!exchanged.ok) throw new Error("exchange refused");
+      const response = await fetch("/api/research/status", {
+        method: "GET",
+        credentials: "same-origin",
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+      });
+      if (!response.ok) throw new Error("status unavailable");
+      setStatusView(await response.json() as StatusRecoveryStatusView);
+      setPhase("status");
+    } catch {
+      setRecoveryToken(null);
+      setExchangeError(true);
+      setPhase("request");
+    }
+  }
+
+  async function endStatusSession() {
+    await fetch("/api/research/status/end", {
+      method: "POST",
+      credentials: "same-origin",
+      cache: "no-store",
+    }).catch(() => undefined);
+    setStatusView(null);
+    setPhase("request");
+  }
+
   return (
-    <PublicPage title="Check status" description="Return to a Xenios order or request using its reference." path="/status" robots="noindex, nofollow" eyebrow="STATUS" heading="Check status" lead="Use the browser where you submitted an order, or sign in. A reference by itself never unlocks private order details.">
+    <PublicPage title="Check order status" description="Request secure, order-scoped access to a Xenios Research order status." path="/status" robots="noindex, nofollow" eyebrow="STATUS" heading="Check order status" lead="Enter your reference and the email used for the order. If they match an eligible order, we’ll send a secure status link to the email already associated with it.">
       <ContentSection>
-        <form className="clarity-form clarity-form-narrow" onSubmit={submit}>
-          <label className="clarity-field"><span>Order or request reference</span><input name="reference" required autoComplete="off" /></label>
-          <button className="btn btn-primary mt-6" type="submit">Check Status</button>
-        </form>
-        {message && <div className="clarity-boundary mt-6" role={message.kind === "invalid" ? "alert" : "status"}>{message.text} <Link href={message.kind === "care" ? "/care/support" : "/support"} className="clarity-text-link">Contact Support</Link>.</div>}
-        <p className="body-m text-ink-2 mt-8">Signed in? See all your orders in your account. <Link href="/research/account/orders" className="clarity-text-link">View Account Orders</Link></p>
+        {phase === "checking" && <p className="body-m text-ink-2" role="status">Checking for secure status access…</p>}
+        {(phase === "exchange" || phase === "exchanging") && (
+          <div className="clarity-form clarity-form-narrow" role="region" aria-labelledby="secure-link-heading">
+            <h2 id="secure-link-heading" className="display-s">Secure status link ready</h2>
+            <p className="body-m text-ink-2 mt-3">Opening this page did not use the link. Continue only if you requested order status access.</p>
+            <button className="btn btn-primary mt-6" type="button" onClick={() => void exchange()} disabled={phase === "exchanging"}>
+              {phase === "exchanging" ? "Opening…" : "View status"}
+            </button>
+          </div>
+        )}
+        {phase === "status" && statusView && (
+          <article className="clarity-status-card" aria-labelledby="status-heading">
+            <p className="eyebrow">REFERENCE {statusView.reference}</p>
+            <h2 id="status-heading" className="display-s">{statusView.statusLabel}</h2>
+            <dl className="clarity-status-facts">
+              <div><dt>What happened</dt><dd>{statusView.whatHappened}</dd></div>
+              <div><dt>Next step</dt><dd>{statusView.nextStep}</dd></div>
+              <div><dt>Who owns the next step</dt><dd>{statusView.nextStepOwner === "customer" ? "You" : "Xenios"}</dd></div>
+              <div><dt>Where to return</dt><dd><Link href={statusView.returnPath} className="clarity-text-link">Check order status</Link></dd></div>
+            </dl>
+            {statusView.timeline.length > 0 && <ol className="clarity-status-timeline" aria-label="Order status timeline">{statusView.timeline.map((item, index) => <li key={`${item.occurredAt}-${index}`}><strong>{item.status.replaceAll("_", " ")}</strong>{item.customerMessage ? ` — ${item.customerMessage}` : ""}<time dateTime={item.occurredAt}>{new Date(item.occurredAt).toLocaleDateString()}</time></li>)}</ol>}
+            <div className="clarity-actions mt-8"><Link href={statusView.supportPath} className="btn btn-secondary">Contact Support</Link><button className="btn btn-secondary" type="button" onClick={() => void endStatusSession()}>End secure status access</button></div>
+          </article>
+        )}
+        {(phase === "request" || phase === "requesting") && (
+          <form className="clarity-form clarity-form-narrow" onSubmit={(event) => void submit(event)}>
+            {exchangeError && <div className="clarity-form-alert" role="alert">This secure status link is invalid or has expired. Request a new link below.</div>}
+            <label className="clarity-field"><span>Order or request reference</span><input name="reference" required autoComplete="off" /></label>
+            <label className="clarity-field mt-5"><span>Email used for the order</span><input name="email" type="email" required autoComplete="email" /></label>
+            <button className="btn btn-primary mt-6" type="submit" disabled={phase === "requesting"}>{phase === "requesting" ? "Requesting…" : "Send secure status link"}</button>
+          </form>
+        )}
+        {phase === "requested" && <div className="clarity-confirmation" role="status"><h2 className="display-s">Check your email</h2><p className="body-m text-ink-2 mt-3">If the details match an eligible order, a secure status link will be sent to the email already associated with it. For privacy, we cannot confirm whether a matching order exists here.</p></div>}
+        <div className="clarity-actions mt-8"><Link href="/support" className="clarity-text-link">Contact Support</Link><Link href="/sign-in" className="clarity-text-link">Sign In</Link></div>
       </ContentSection>
     </PublicPage>
   );

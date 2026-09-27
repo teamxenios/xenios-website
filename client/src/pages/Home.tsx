@@ -64,7 +64,7 @@ export default function Home() {
 
       <ContentSection eyebrow="CARE" title="How Care works">
         <NumberedSteps steps={[...CARE_STEPS]} />
-        <BoundaryNote>This request isn't a medical intake. Please don't include health details. Care availability depends on your state. We confirm availability after the request. Submitting a Care request is free.</BoundaryNote>
+        <BoundaryNote>This request isn't a medical intake. Please don't include health details. Care availability depends on your state. We confirm it after your request. Submitting a Care request is free.</BoundaryNote>
         <ActionRow actions={[{ label: "Start Care", href: "/care/schedule", kind: "primary" }]} />
       </ContentSection>
 
