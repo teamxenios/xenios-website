@@ -765,6 +765,28 @@
         "evidence": "Applied twice from broad, partial, and exact ACL states in disposable PGlite 0.5.8 / PostgreSQL 18.3; exact Capability V2 token restored in every state; no managed environment contacted."
       },
       "notes": "Source-only checkout authority repair. Requires the reviewed refund-execution candidate and Capability V2 chain before apply; the DAG dependency records the latest represented managed prerequisite. Creates no domain rows and remains unauthorized for staging or production."
+    },
+    {
+      "id": "research_status_recovery",
+      "path": "supabase/migrations/20260927203000_research_status_recovery.sql",
+      "sourceSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
+      "sourcePath": "supabase/candidates/20260927203000_research_status_recovery.sql",
+      "dependsOn": [
+        "research_assisted_order_bridge"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "98cce457db8d82c72a399223117dcf4d98488dc153f3d1883e65a07e95220292"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "revoke_and_drop_the_five_bounded_functions_then_drop_the_two_additive_empty_recovery_relations",
+        "procedure": "supabase/candidates/20260927203000_research_status_recovery.rollback.md",
+        "evidence": "Applied twice from exact source bytes on disposable PostgreSQL 17, then passed structural, ACL, forced-RLS, canonical-recipient, digest-only, expiry, revocation, owner-binding, single-use and parallel double-consume behavior checks. One of two concurrent exchanges succeeded and the durable token was consumed exactly once. The disposable container was removed. No managed Supabase, staging, or production environment was contacted."
+      },
+      "notes": "Owner-authorized P-17 source-only additive candidate. Stores token/session digests only, exposes only five service_role-only bounded SECURITY DEFINER functions, and creates no customer/order rows. Application outside a new explicitly authorized migration lane is forbidden."
     }
   ],
   "invariants": [

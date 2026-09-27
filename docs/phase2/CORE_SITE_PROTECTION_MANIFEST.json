@@ -659,11 +659,12 @@
       "The other two mismatches are unchanged between production base 79414143 and UX candidate 8315710f and therefore pre-date this lane. Both trace to reviewed production-lineage commit 9f9da8540fc64573614d37bed95a0f991dd79a09 (feat: finalize customer website launch candidate): client/src/components/TopRibbon.tsx old sha256:ea71af1096edd022ede6edd002370201e36369b1b7bb8a380d94518bd5868666, new sha256:33293060886e1d8e866078c02bc43703e628155c9c2702ff029b5349584ff8ad (suppresses the non-clinical founding-cohort ribbon across the exact /care route family while retaining shared navigation); package.json old sha256:c01129601999b1e6b2f02790af0245350182e08fcf739fe40174e4b004c9e081, new sha256:27a6b86fc66aefa1eb2cea035faa5ab4ca09e027774a4b5cebe65b5fc3a4b748 (adds only xenios:control and test:xenios-control script aliases; dependency, engine, build, render-build, start, and existing scripts remain unchanged). The corresponding TopRibbon route test and control-package test already ship in the production lineage. No unrelated runtime file was modified during this reconciliation.",
       "2026-09-26: Codex release-control lead reviewed exact six-path diff 0574264..c4ea8a9 under explicit user audit-closeout direction. Original repair02d525b preserved. Re-pin only reviewed bytes; six exact paths remain hard hash locked and reported as seams. Focused tamper checks extended to each path. No deployment approval.",
       "2026-09-26: production-base classifier review also found four inherited account/admin UI paths whose prior reviewed bytes were not registered as seams. Lead re-read all four diffs against79414143; account chooser/navigation and server-confirmed admin entry only. Exact hard hashes retained/added; no global write zone widened.",
-      "2026-09-26, owner-approved clarity amendment B-1: exact runtime candidate cfdfd4e66429cee03ad3c59113ce22dd1469f0ef, tree 560485b32d01061fef94f8849201417b40adc63f. Re-pin only the reviewed full-file bytes for the root, shared chrome, document metadata, global clarity styles, public sitemap, careers general-interest cleanup, legacy supporting CTAs and static redirect/document policy. App.tsx and server/index.ts remain reported seam baselines. Research, Care, account, commerce, admin and clinical authorities are not widened. No production mutation."
+      "2026-09-26, owner-approved clarity amendment B-1: exact runtime candidate cfdfd4e66429cee03ad3c59113ce22dd1469f0ef, tree 560485b32d01061fef94f8849201417b40adc63f. Re-pin only the reviewed full-file bytes for the root, shared chrome, document metadata, global clarity styles, public sitemap, careers general-interest cleanup, legacy supporting CTAs and static redirect/document policy. App.tsx and server/index.ts remain reported seam baselines. Research, Care, account, commerce, admin and clinical authorities are not widened. No production mutation.",
+      "2026-09-27, owner-authorized P-17 source-only recovery lane at runtime fef7b31: re-pin client/src/index.css for the scoped status timeline, Home.tsx for the exact approved Care sentence, and server/static.ts for /status no-store/no-referrer plus removal of blocked third-party font links. No protected route is redesigned, no feature or commerce flag changes, and no staging or production mutation occurred."
     ],
     "files": {
       "client/index.html": "sha256:40620216427bcca3325ede1bb03153ce5e5bb71570acbf51cb601a418af74bfc",
-      "client/src/index.css": "sha256:3aeed25ecec005edd5fd53dabf69912356628a5419eb17c970f3825127866be4",
+      "client/src/index.css": "sha256:1979a1b134ceccecbe76e860e2dc379c82abb6bc4b04769fb91c9319383e186f",
       "client/src/main.tsx": "sha256:8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162",
       "client/src/pwa/PwaLifecycle.tsx": "sha256:9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741",
       "client/src/fonts.ts": "sha256:643c7a1a30fcf0f6a1a300c0bf7a044cf2e426e579405493cc4251474f4a73a5",
@@ -674,7 +675,7 @@
       "client/src/components/TopRibbon.tsx": "sha256:33293060886e1d8e866078c02bc43703e628155c9c2702ff029b5349584ff8ad",
       "client/src/components/Wordmark.tsx": "sha256:878c3f3710b7d1c1cedf841268cee65061148af24173788a354023d8b5c90ec6",
       "client/src/components/ExternalRedirect.tsx": "sha256:72e9709bfa674dcc138a4156edf4fa73aed0c3014c53bba5c37c7c10ff88459a",
-      "client/src/pages/Home.tsx": "sha256:b22f5a10e973c86fb77f9b26c906713951b54c52ac23ae722d241b17877a46b7",
+      "client/src/pages/Home.tsx": "sha256:2f54d3e04057290ecaddff59ffaaf2eaec7a3c3978e1729c4ee3a2426d384b91",
       "client/src/pages/Careers.tsx": "sha256:460d1de97278bc6d127d4a1528e0db8ce0033b133ff4882e45ed87ed14ff1d92",
       "client/src/pages/ForCoaches.tsx": "sha256:659812f56fa22292b54abed209c0233ad65f97e264cc580b32c2bf0d82470a26",
       "client/src/pages/Waitlist.tsx": "sha256:35152500aeb3c4dc3c198be7f6fb77735d160cc1844f5f44cab7bd963f3b02c2",
@@ -688,7 +689,7 @@
       "client/public/llms.txt": "sha256:b1e4c1940cd19229a1fba393ba9c82370c2bde5ccaedd5b5a2f9078a1f0aac37",
       "client/public/robots.txt": "sha256:b79293d54b5df7f4fda3b83b570eca294dd50d8f2cb9b1a9045f72d762570a81",
       "server/routes.ts": "sha256:f17d518ee2a3bcda2ff4d4ffca6bc8475c0ced5f7c9f5f85b19bd189e09ea2ae",
-      "server/static.ts": "sha256:644a2f0ba1fa4db720e0340c4c5ccca2a2aa5338d6f73b706ee8d198322c8586",
+      "server/static.ts": "sha256:9cd3e1c363dd921fab780761baa888e9319f40ef177ca303072e3179b2c20004",
       "package.json": "sha256:27a6b86fc66aefa1eb2cea035faa5ab4ca09e027774a4b5cebe65b5fc3a4b748",
       "package-lock.json": "sha256:d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74",
       "postcss.config.js": "sha256:190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27",
@@ -703,6 +704,7 @@
   },
   "seamBaselineHashes": {
     "$comment": [
+      "2026-09-27, owner-authorized P-17 source-only recovery lane: server/index.ts old sha256:36a6dfd77353656d8700adb141510459855c24f342b6991bb945b169a4b13ba2, new sha256:598ffd2e79038c35b5c9e6662cb05258a6b27a33bc3ee96b8b23757f9e2fd888. The exact additive seam mounts four recovery/status endpoints before the existing legacy Research wall and wires them only to the existing durable rate limiter and notification outbox. Existing account, Care, admin, partner and commerce authorities remain unchanged. Route uniqueness is 453 registrations across 444 call sites. Local source only; no staging or production mutation.",
       "2026-09-26, owner-approved clarity amendment B-1: client/src/App.tsx old sha256:0a9e1c970b721f0aacbc3f375988d67ea5c4cc8a81186e97b70d56283bc9b912, new sha256:3b3b808b23cccdf8d2e2179fd30349b3ae299137a8a4a5f33525e0a304828d80; server/index.ts old sha256:2ae01b4da96ecb01a715533477c456e2fbd7a5ec5f8010c37ec0025dc97e2877, new sha256:36a6dfd77353656d8700adb141510459855c24f342b6991bb945b169a4b13ba2. Exact runtime cfdfd4e66429cee03ad3c59113ce22dd1469f0ef registers the approved public clarity topology, fragment focus behavior and durable anonymous inquiry router while preserving existing downstream guards and authorities. No production mutation.",
       "2026-09-21, native closeout lease XENIOS-NATIVE-FINISH-20260910: server/index.ts old sha256:6552eb001fe7f8ba97a325af1241dc845d79249ab8f7d09229bdf429980d0c7c, new sha256:a4af7894d678b617a85579cc80bc3d169e003736ba731de5f6f0dbee6c7935d5. Decorate the canonical orders port with the strict member-owned assisted-request history reader independently of purchase activation, and report measured per-read source availability instead of static configuration claims. Correct the stale shared document-byte-reader comment. Existing guards, middleware order, providers, and non-Research behavior remain unchanged. The service-only history/status SQL is a separate unapplied candidate; missing RPCs fail closed. Focused ownership, source failure, nullable estimates, tracking, and disposable PostgreSQL authorization tests pass. Local source only; no production effect.",
       "2026-09-21, native closeout lease XENIOS-NATIVE-FINISH-20260910: server/index.ts old sha256:99e9134b5ba0391084467cc355dd1a21182d502c2101f607295bfb47affeb497, new sha256:6552eb001fe7f8ba97a325af1241dc845d79249ab8f7d09229bdf429980d0c7c. Pass the existing Referral V1 dependency bundle, including its enabled flag, to the assisted-order attribution resolver. This restores disabled-flag refusal for already-issued cookies. No route, guard, middleware, provider, or non-Research behavior changes. Resolver disabled-cookie regression and disposable PostgreSQL extension tests pass. Local source only; no production effect.",
@@ -1239,7 +1241,7 @@
     ],
     "files": {
       "client/src/App.tsx": "sha256:3b3b808b23cccdf8d2e2179fd30349b3ae299137a8a4a5f33525e0a304828d80",
-      "server/index.ts": "sha256:36a6dfd77353656d8700adb141510459855c24f342b6991bb945b169a4b13ba2",
+      "server/index.ts": "sha256:598ffd2e79038c35b5c9e6662cb05258a6b27a33bc3ee96b8b23757f9e2fd888",
       "server/research/index.ts": "sha256:b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070",
       "server/care/index.ts": "sha256:c902efc3ca97affb55692a06c3c249cd84e336caa3ec6e8f79462a1cf5460b0c",
       "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3"
