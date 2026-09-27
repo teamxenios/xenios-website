@@ -191,7 +191,7 @@ function ContinuationPanel({
           className="body-s inline-flex min-h-[44px] min-w-[44px] items-center underline text-ink-mute"
           data-testid="sf-detail-early-access"
         >
-          Continue through Early Access
+          Continue to research ordering
         </Link>
         <Link
           href="/research/order"

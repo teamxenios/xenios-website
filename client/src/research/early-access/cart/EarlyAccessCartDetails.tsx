@@ -22,7 +22,7 @@ export function cartShippingProblems(shipTo: EarlyAccessCartShipping): string[] 
   if (shipTo.city.trim().length < 2) problems.push("Enter the city.");
   if (shipTo.region.trim().length < 2) problems.push("Enter the state or region.");
   if (shipTo.postalCode.trim().length < 3) problems.push("Enter the postal code.");
-  if (shipTo.country !== "US") problems.push("Early Access currently ships within the US.");
+  if (shipTo.country !== "US") problems.push("Enter a United States shipping address.");
   return problems;
 }
 

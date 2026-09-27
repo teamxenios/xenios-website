@@ -39,9 +39,9 @@ import {
   earlyAccessCustomerStepIndex,
 } from "./customerSteps";
 
-// The mounted Private Early Access route.
+// The mounted private research-ordering route.
 //
-// This is the only Early Access component that talks to the network. Everything
+// This is the only research-ordering component that talks to the network. Everything
 // it renders below is a controlled presentation component, so the gate state
 // lives in exactly one place.
 //
@@ -98,7 +98,7 @@ function bestEffort(action: () => void): void {
   }
 }
 
-/** Clears only customer-scoped browser artifacts owned by Early Access. */
+/** Clears only customer-scoped browser artifacts owned by research ordering. */
 export function clearEarlyAccessCustomerStorage(): void {
   bestEffort(clearLastOrderNumber);
   bestEffort(clearPendingAttempt);
@@ -123,7 +123,7 @@ export default function EarlyAccessRoute() {
   const [checkoutPhase, setCheckoutPhase] = useState<
     "details" | "review" | "submitting" | "payment" | "status"
   >("details");
-  // The server said the confirmed price is gone. The catalogue below has been
+  // The server said the confirmed price is gone. The catalog below has been
   // remounted (a fresh server read), and the customer is told why they are
   // back on it. Cleared the moment they carry a new selection forward.
   const [priceChanged, setPriceChanged] = useState(false);
@@ -412,7 +412,7 @@ export default function EarlyAccessRoute() {
   return (
     <>
       <SeoHead
-        title="Private Early Access, xenios research"
+        title="Research ordering | Xenios"
         description="A private ordering experience for approved Xenios Research members."
         path="/research/early-access"
         robots="noindex, nofollow"
@@ -427,10 +427,10 @@ export default function EarlyAccessRoute() {
 
       {state.kind === "unavailable" && (
         <section className="container-x" style={{ paddingTop: 96, paddingBottom: 96 }}>
-          <p className="mono-cap text-pulse mb-5">Private Early Access</p>
+          <p className="mono-cap text-pulse mb-5">Research ordering</p>
           <h1 className="display-s max-w-[22ch]">This area is not open yet.</h1>
           <p className="mt-6 body-m text-ink-2 max-w-[58ch]" data-testid="early-access-unavailable">
-            Private Early Access is being prepared. Nothing is wrong with your invitation, and no
+            Research ordering is being prepared. Nothing is wrong with your invitation, and no
             action is needed from you right now.
           </p>
         </section>
@@ -440,7 +440,7 @@ export default function EarlyAccessRoute() {
         <section className="container-x" style={{ paddingTop: 96, paddingBottom: 96 }}>
           <div className="max-w-[520px]">
             <p className="mono-cap text-pulse mb-5">Invitation only</p>
-            <h1 className="display-s max-w-[22ch]">Private Early Access</h1>
+            <h1 className="display-s max-w-[22ch]">Research ordering</h1>
             <p className="mt-6 body-m text-ink-2 max-w-[58ch]">
               Enter the access password you were given. This area is limited to members approved
               through the Xenios network.
@@ -472,17 +472,17 @@ export default function EarlyAccessRoute() {
             {/*
               A compact masthead. The three-paragraph welcome that used to sit
               here explained the programme to someone who had already unlocked,
-              read it once, and was now trying to buy. It pushed the catalogue
+              read it once, and was now trying to buy. It pushed the catalog
               below the fold on every visit, so it is gone rather than
               shortened: the place to explain the programme is before the
               password, not after it.
             */}
-            <p className="mono-cap text-pulse mb-2">Private Early Access</p>
+            <p className="mono-cap text-pulse mb-2">Research ordering</p>
             <h1 className="display-s max-w-[26ch]">
               {selection !== null
                 ? "Complete your order"
                 : embeddedOrderStep === "products"
-                  ? "Research Catalogue"
+                  ? "Research catalog"
                   : "Complete your order request"}
             </h1>
 
@@ -498,9 +498,9 @@ export default function EarlyAccessRoute() {
             </div>
 
             {/*
-              The required agreement, above the catalogue. Browsing is not
+              The required agreement, above the catalog. Browsing is not
               gated: a customer may read the whole shelf before agreeing to
-              anything, and the catalogue is unchanged by what follows. What IS
+              anything, and the catalog is unchanged by what follows. What IS
               gated is the continuation into ordering, because the order route
               refuses with AGREEMENT_REQUIRED until this is on file.
             */}
@@ -510,7 +510,7 @@ export default function EarlyAccessRoute() {
 
             {!agreed ? (
               <div className="mt-5 body-s text-ink-2 max-w-[62ch]" data-testid="early-access-first-time-guide">
-                You can review this catalogue without a customer password. Before continuing, review the Research Use Policy; then choose an available product, enter a US shipping address, and submit the server-confirmed order step. Creating a checkout and invoice does not charge you or confirm payment.
+                You can review this catalog without a customer password. Before continuing, review the Research Use Policy; then choose an available product, enter a US shipping address, and submit the server-confirmed order step. Creating a checkout and invoice does not charge you or confirm payment.
               </div>
             ) : null}
 
@@ -523,7 +523,7 @@ export default function EarlyAccessRoute() {
                     data-testid="early-access-price-changed"
                   >
                     The price of the product you were ordering changed before the order was
-                    created, so nothing was ordered or charged. The catalogue below shows the
+                    created, so nothing was ordered or charged. The catalog below shows the
                     current server prices; please review and confirm again.
                   </p>
                 )}
@@ -546,7 +546,7 @@ export default function EarlyAccessRoute() {
                 {/*
                   ONE STOREFRONT (founder decision 2026-08-21).
                   
-                  The full canonical catalog is now the primary Early Access
+                  The full canonical catalog is now the primary research-ordering
                   experience: the current 420 canonical variants, each routed by the
                   same server authority and routed by the same canonical action
                   resolver. The curated opening set below is a FEATURED
@@ -581,7 +581,7 @@ export default function EarlyAccessRoute() {
                           : "Review and submit"}
                     </h2>
                     <Suspense
-                      fallback={<p className="xenios-order-notice">Loading the full research catalogue.</p>}
+                      fallback={<p className="xenios-order-notice">Loading the full research catalog.</p>}
                     >
                       <FullCanonicalCatalog
                         embedded
@@ -635,7 +635,7 @@ export default function EarlyAccessRoute() {
                     setCheckoutPhase("details");
                   }}
                   onPriceChanged={() => {
-                    // The catalogue remounts below, which is a FRESH server
+                    // The catalog remounts below, which is a FRESH server
                     // read; the notice above it says why the customer is back.
                     setSelection(null);
                     setCheckoutPhase("details");
@@ -653,7 +653,7 @@ export default function EarlyAccessRoute() {
                 onClick={signOut}
                 data-testid="early-access-signout"
               >
-                Sign out of Early Access
+                Sign out
               </button>
             </div>
           </div>

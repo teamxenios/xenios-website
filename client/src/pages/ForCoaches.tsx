@@ -44,7 +44,7 @@ export default function ForCoaches() {
           xenios is built for coaches managing 15 to 40 or more clients across texts, spreadsheets, programming tools, notes, and check-in forms. It keeps the relationship in front and the busywork behind you.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
-          <Link href="/waitlist" className="btn btn-primary">Apply for Early Access</Link>
+          <Link href="/support" className="btn btn-primary">Contact Support</Link>
           <Link href="/how-it-works" className="btn btn-ghost">View How It Works</Link>
         </div>
       </section>
@@ -106,7 +106,7 @@ export default function ForCoaches() {
       </section>
 
       <section className="container-x py-20 rule-top">
-        <p className="mono-cap text-ink-mute mb-6">FOUNDING COACH SIGNALS</p>
+        <p className="mono-cap text-ink-mute mb-6">COACH WORKSPACE SIGNALS</p>
         <h2 className="display-m max-w-[24ch] mb-8">What we are testing with the first coaches.</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
@@ -121,10 +121,11 @@ export default function ForCoaches() {
 
       <section className="bg-ink text-paper py-20">
         <div className="container-x">
-          <h2 className="display-m text-paper mb-6 max-w-[24ch]">Join the founding coach cohort.</h2>
+          <h2 className="display-m text-paper mb-6 max-w-[24ch]">Questions about the coach workspace?</h2>
+          <p className="body-l text-paper/70 mb-6 max-w-[56ch]">The coach workspace remains separate from Care, research products, and current job applications.</p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Link href="/waitlist" className="btn btn-primary btn-on-dark">Apply for Early Access</Link>
-            <Link href="/careers/founding-coach-cohort" className="btn btn-ghost btn-on-dark">Founding Coach Cohort</Link>
+            <Link href="/support" className="btn btn-primary btn-on-dark">Contact Support</Link>
+            <Link href="/careers" className="btn btn-ghost btn-on-dark">Careers</Link>
           </div>
         </div>
       </section>

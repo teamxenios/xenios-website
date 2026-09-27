@@ -28,7 +28,7 @@ export function EarlyAccessProgress({
   const current = EARLY_ACCESS_CUSTOMER_STEPS[index];
 
   return (
-    <nav aria-label="Early Access checkout progress" className="grid min-w-0 gap-3">
+    <nav aria-label="Research ordering checkout progress" className="grid min-w-0 gap-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="mono-label text-ink-mute" data-testid="early-access-progress-position">
           Step {index + 1} of {EARLY_ACCESS_CUSTOMER_STEPS.length} · {current.label}

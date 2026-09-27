@@ -29,7 +29,7 @@ const STEPS = [
   },
   {
     title: "Partner agreement",
-    body: "The full Research Rep agreement is presented for review and acceptance. Nothing is shareable before it is accepted.",
+    body: "The full partner agreement is presented for review and acceptance. Nothing is shareable before it is accepted.",
   },
   {
     title: "Compliance certification",

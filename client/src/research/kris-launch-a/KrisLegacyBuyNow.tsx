@@ -126,7 +126,7 @@ export function KrisLegacyBuyNow({
         <p className="mono-label text-pulse">Direct eligible</p>
         <h2 className="body-l font-700 mt-2">Buy this exact variant</h2>
         <p className="body-s text-ink-2 mt-1">
-          Buy Now creates one Early Access order and a manual-payment invoice. It does not charge you.
+          Buy Now creates one research order and a manual-payment invoice. It does not charge you.
         </p>
       </div>
       <EarlyAccessQuantitySelector

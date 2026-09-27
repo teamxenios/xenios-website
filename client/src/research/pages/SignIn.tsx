@@ -72,7 +72,7 @@ export default function SignIn() {
       const { data, error: signInError } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
       if (!current()) return;
       if (signInError || !data.session) {
-        setError("That email and password combination is not correct.");
+        setError("That email and password don't match. Try again or reset your password.");
         return;
       }
       const submitted = data.session;
@@ -142,11 +142,11 @@ export default function SignIn() {
 
   return (
     <>
-      <SeoHead title="Account sign in, xenios research" description="Sign in to your Xenios customer account." path="/research/sign-in" />
+      <SeoHead title="Sign in | Xenios" description="Sign in to your existing Xenios account." path="/sign-in" />
       <PageIntro
         eyebrow="Your account"
-        title="Sign in."
-        lead="Use the email and password connected to your Xenios account. An approval link connects approved customer access to your account; it does not replace your password."
+        title="Sign in"
+        lead="Use the email and password connected to your existing Xenios account."
       />
       <section className="container-x pb-20">
         <form onSubmit={onSubmit} className="max-w-[420px] space-y-5" data-testid="form-member-signin">
@@ -163,14 +163,12 @@ export default function SignIn() {
           </div>
           {error && <p className="body-s" role="alert" style={{ color: "var(--error)" }} data-testid="text-signin-error">{error}</p>}
           <button type="submit" className="btn btn-primary" disabled={busy} data-testid="button-member-signin">
-            {busy ? "Signing in" : "Sign in"}
+            {busy ? "Signing in…" : "Sign In"}
           </button>
           <p className="body-s text-ink-mute">
             <Link href={researchAuthPath("/research/reset-password", returnTo)} className="underline ra-documentation-link" data-testid="link-forgot-password">Forgot your password?</Link>
           </p>
-          <p className="body-s text-ink-mute">
-            Returning customers can sign in normally. If you still need to finish approved account setup, open your secure approval link and continue with this same sign-in.
-          </p>
+          <p className="body-s text-ink-mute">Approved but haven't set up your account? <Link href="/activate" className="underline ra-documentation-link">Activate Account</Link>.</p>
         </form>
         {/*
           SEN-0025. Every other /research page offers a way out: the gateway has
@@ -181,18 +179,14 @@ export default function SignIn() {
           Policy or Terms it is collecting them under.
         */}
         <div className="max-w-[420px] mt-8 space-y-3 border-t border-line pt-6">
-          <p className="body-s text-ink-mute">
-            <Link href="/research" className="underline ra-documentation-link" data-testid="link-signin-gateway">Back to gateway</Link>
-          </p>
-          <p className="body-s text-ink-mute">
-            Need customer access? <Link href="/research/apply" className="underline ra-documentation-link" data-testid="link-signin-apply">View application information</Link>
-          </p>
+          <p className="body-s text-ink-mute">Care patients: your clinical account is separate — use the secure link your Care team sent you.</p>
+          <p className="body-s text-ink-mute">New here? <Link href="/care/schedule" className="underline ra-documentation-link" data-testid="link-signin-gateway">Start Care</Link>{" · "}<Link href="/products" className="underline ra-documentation-link" data-testid="link-signin-apply">Explore Products</Link></p>
           <p className="body-s text-ink-mute">
             <Link href="/research/policies/privacy" className="underline ra-documentation-link" data-testid="link-signin-privacy">Privacy</Link>
             {" · "}
             <Link href="/research/policies/terms" className="underline ra-documentation-link" data-testid="link-signin-terms">Terms</Link>
             {" · "}
-            <a href="mailto:team@xeniostechnology.com" className="underline ra-documentation-link" data-testid="link-signin-support">Support</a>
+            <Link href="/research/support" className="underline ra-documentation-link" data-testid="link-signin-support">Contact Support</Link>
           </p>
         </div>
       </section>

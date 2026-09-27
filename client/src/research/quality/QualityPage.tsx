@@ -30,16 +30,16 @@ export default function QualityPage() {
     <div className="quality-page">
       <SeoHead
         title="Quality system | Xenios Research"
-        description="See how Xenios Research handles receiving, lot identity, quarantine, evidence review, release decisions, documents, storage, and fulfillment traceability."
+        description="Learn how public lot records work and look up an exact approved record when one is available."
         path="/research/quality"
       />
       <PageIntro
-        eyebrow="The Xenios quality system"
-        title="Evidence travels with the lot."
-        lead="A certificate is one record in a larger control system. The material, exact lot, review decision, approved documents, storage, and fulfillment trail must remain connected."
+        eyebrow="Quality"
+        title="Look up the record for an exact lot."
+        lead="Public results appear only when an exact approved lot record is available. An unavailable record is never presented as a passing result."
       />
       <NoticeBar>
-        A certificate of analysis or purity result does not, by itself, establish identity, potency, sterility, safety, stability, or suitability. Testing and review requirements vary by material and intended research context.
+        A public lookup is a limited record, not a promise that every product or lot has public documentation.
       </NoticeBar>
 
       <section className="container-x section-y" aria-labelledby="quality-process-title">
@@ -49,7 +49,7 @@ export default function QualityPage() {
             <h2 className="display-s" id="quality-process-title">From receiving to a traceable decision.</h2>
           </div>
           <p className="body-l text-ink-2">
-            Each step preserves a different fact. No step silently substitutes for another, and an unavailable record is never presented as a passing result.
+            These are distinct record types. This page does not claim that every product or lot has completed every step.
           </p>
         </div>
         <div className="quality-process">
@@ -94,7 +94,7 @@ export default function QualityPage() {
           <div className="card bg-paper-2">
             <LotLookupForm />
             <p className="body-s text-ink-mute mt-5">
-              Need help reading a record? <Link href="/research/testing">See how to read testing evidence</Link>.
+              Need help with a record? <Link href="/research/support">Contact Support</Link>.
             </p>
           </div>
         </div>

@@ -72,9 +72,20 @@ const CLAIM_ERRORS: Record<string, string> = {
 };
 const SIGN_IN_ERRORS = new Set(["existing_sign_in_required", "verified_sign_in_required", "claim_incomplete"]);
 
-function ClaimForm({ token, returnTo, session, setSession, isCurrent, refreshMember }: {
+function signInPath(statusPath: string, returnTo?: unknown): string {
+  const researchPath = researchAuthPath("/research/sign-in", returnTo);
+  return statusPath === "/activate"
+    ? researchPath.replace(/^\/research\/sign-in/u, "/sign-in")
+    : researchPath;
+}
+
+function supportPath(statusPath: string): string {
+  return statusPath === "/activate" ? "/support" : "/research/support";
+}
+
+function ClaimForm({ token, returnTo, session, setSession, isCurrent, refreshMember, statusPath }: {
   token: string; returnTo: string | null; session: ClaimSession; setSession: (value: ClaimSession) => void;
-  isCurrent: () => boolean; refreshMember: () => Promise<void>;
+  isCurrent: () => boolean; refreshMember: () => Promise<void>; statusPath: string;
 }) {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -88,7 +99,7 @@ function ClaimForm({ token, returnTo, session, setSession, isCurrent, refreshMem
   useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   useEffect(() => { if (claimed) successRef.current?.focus(); }, [claimed]);
   const normal = session.kind === "normal";
-  const signInHref = researchAuthPath("/research/sign-in", STATUS_PATH);
+  const signInHref = signInPath(statusPath, statusPath);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -137,7 +148,7 @@ function ClaimForm({ token, returnTo, session, setSession, isCurrent, refreshMem
     <div ref={successRef} className="card" role="status" aria-live="polite" tabIndex={-1} data-testid="card-claim-success">
       <p className="mono-cap text-pulse mb-2">Account access confirmed</p>
       <p className="body-s text-ink-2 mb-4">Your customer account is active. Access is checked again when you continue; no paid activation is needed.</p>
-      <Link href={normal ? returnTo || ACCOUNT_PORTAL_ROUTES.home : researchAuthPath("/research/sign-in", returnTo || ACCOUNT_PORTAL_ROUTES.home)} className="btn btn-primary">
+      <Link href={normal ? returnTo || ACCOUNT_PORTAL_ROUTES.home : signInPath(statusPath, returnTo || ACCOUNT_PORTAL_ROUTES.home)} className="btn btn-primary">
         {normal ? "Continue to my account" : "Sign in"}
       </Link>
     </div>
@@ -158,12 +169,12 @@ function ClaimForm({ token, returnTo, session, setSession, isCurrent, refreshMem
         {busy ? "Confirming account…" : normal ? "Claim approved account" : "Create account"}
       </button> : null}
       <Link href={signInHref} className="btn btn-secondary">Sign in with an existing account</Link>
-      <Link href="/research/support" className="btn btn-ghost">Contact support</Link>
+      <Link href={supportPath(statusPath)} className="btn btn-ghost">Contact support</Link>
     </form>
   );
 }
 
-function ClaimAccount(props: { token: string; returnTo: string | null; isCurrent: () => boolean; refreshMember: () => Promise<void>; recovery: string }) {
+function ClaimAccount(props: { token: string; returnTo: string | null; isCurrent: () => boolean; refreshMember: () => Promise<void>; recovery: string; statusPath: string }) {
   const [session, setSession] = useState<ClaimSession>({ kind: "checking" });
   useEffect(() => {
     let alive = true; let generation = 0; let unsubscribe: (() => void) | undefined;
@@ -188,7 +199,7 @@ function ClaimAccount(props: { token: string; returnTo: string | null; isCurrent
   }, []);
   if (props.recovery !== "none" || session.kind === "recovery") return (
     <div className="card" role="status"><p>Complete recovery and sign in normally before using this account link.</p>
-      <Link href={researchAuthPath("/research/sign-in", STATUS_PATH)} className="btn btn-secondary mt-3">Normal sign-in</Link></div>
+      <Link href={signInPath(props.statusPath, props.statusPath)} className="btn btn-secondary mt-3">Normal sign-in</Link></div>
   );
   if (session.kind === "checking") return <ResearchLoadingState label="Checking your sign-in" />;
   if (session.kind === "unavailable") return <ResearchErrorState message="Your sign-in could not be checked. Reload this account link before continuing." />;
@@ -204,12 +215,14 @@ function readableView(value: unknown): value is ApplicationStatusView {
     && (v.approvalExpiresAt === null || typeof v.approvalExpiresAt === "string" && Number.isFinite(Date.parse(v.approvalExpiresAt)));
 }
 
-function StatusForToken({ token, returnTo, isCurrent, recovery, refreshMember, resumeStored }: {
-  token: string; returnTo: string | null; isCurrent: () => boolean; recovery: string; refreshMember: () => Promise<void>; resumeStored: boolean;
+function StatusForToken({ token, returnTo, isCurrent, recovery, refreshMember, resumeStored, statusPath }: {
+  token: string; returnTo: string | null; isCurrent: () => boolean; recovery: string; refreshMember: () => Promise<void>; resumeStored: boolean; statusPath: string;
 }) {
+  type LoadError = "invalid_or_expired" | "unverified" | "unavailable";
+  const activationAlias = statusPath === "/activate";
   const missingToken = token.length === 0;
   const [view, setView] = useState<ApplicationStatusView | null>(null);
-  const [error, setError] = useState<string | null>(missingToken || validToken(token) ? null : "This status link is invalid or expired.");
+  const [error, setError] = useState<LoadError | null>(missingToken || validToken(token) ? null : "invalid_or_expired");
   const [resendEmail, setResendEmail] = useState("");
   const [resendMessage, setResendMessage] = useState<string | null>(null);
   const [resending, setResending] = useState(false);
@@ -225,10 +238,10 @@ function StatusForToken({ token, returnTo, isCurrent, recovery, refreshMember, r
       const body = await res.json().catch(() => null);
       if (!current || !isCurrent()) return;
       if (res.ok && body?.ok === true && readableView(body.application)) setView(body.application);
-      else if (res.status === 401 || res.status === 404) setError("This status link is invalid or expired.");
-      else if (res.ok) setError("Application status could not be verified. Use the latest link or contact support.");
-      else setError("Application status is temporarily unavailable. Please try again or contact support.");
-    }).catch(() => { if (current && isCurrent()) setError("Application status is temporarily unavailable. Please try again or contact support."); });
+      else if (res.status === 401 || res.status === 404) setError("invalid_or_expired");
+      else if (res.ok) setError("unverified");
+      else setError("unavailable");
+    }).catch(() => { if (current && isCurrent()) setError("unavailable"); });
     return () => { current = false; alive.current = false; resendGeneration.current++; };
   }, [token]);
 
@@ -253,18 +266,39 @@ function StatusForToken({ token, returnTo, isCurrent, recovery, refreshMember, r
       if (alive.current && generation === resendGeneration.current) { setResendError(true); setResendMessage("The request could not be processed. Please try again."); }
     } finally { if (alive.current && generation === resendGeneration.current) setResending(false); }
   }
-  const copy = view ? STATUS_COPY[view.status] : null;
   const expired = !!view?.approvalExpiresAt && Date.parse(view.approvalExpiresAt) <= Date.now();
+  const activationExpired = activationAlias && (view?.status === "expired" || view?.status === "approved_customer" && expired);
+  const copy = view
+    ? activationAlias && view.status === "active"
+      ? { title: "Account already active", body: "This account has already been activated. Sign in to continue." }
+      : activationExpired
+        ? { title: "Activation link expired", body: "This account approval has expired. Contact support to review the next step." }
+        : STATUS_COPY[view.status]
+    : null;
+  const errorMessage = error === "invalid_or_expired"
+    ? `This ${activationAlias ? "activation" : "status"} link is invalid or expired.`
+    : error === "unverified"
+      ? "Application status could not be verified. Use the latest link or contact support."
+      : "Application status is temporarily unavailable. Please try again or contact support.";
   return <>
-    <PageIntro eyebrow="Application status" title={copy?.title || (missingToken ? "Check your application status" : error === "This status link is invalid or expired." ? "This status link is invalid or expired" : error ? "Status unavailable" : "Application status")} />
+    <PageIntro eyebrow={activationAlias ? "Account activation" : "Application status"} title={copy?.title || (missingToken ? "Check your application status" : error === "invalid_or_expired" ? `This ${activationAlias ? "activation" : "status"} link is invalid or expired` : error ? "Status unavailable" : "Application status")} />
     <section className="container-x pb-20"><div className="max-w-[560px] min-w-0" style={{ overflowWrap: "anywhere" }}>
       {!missingToken && !error && !view ? <ResearchLoadingState label="Loading application status" /> : null}
-      {missingToken || error ? <div>
+      {missingToken || error ? activationAlias ? <div>
+        <div className="card" role={error ? "alert" : "status"} data-testid="activation-terminal-state">
+          <p className="body-m font-700">{error ? errorMessage : "Open the secure activation link from your approval email."}</p>
+          <p className="body-s text-ink-2 mt-2">If the account is already active, sign in. Otherwise, contact support for a current link.</p>
+        </div>
+        <nav className="flex flex-wrap gap-3 mt-6" aria-label="Account activation help">
+          <Link href="/sign-in" className="btn btn-primary">Sign In</Link>
+          <Link href="/support" className="btn btn-secondary">Contact Support</Link>
+        </nav>
+      </div> : <div>
         {missingToken ? <div className="card" data-testid="application-status-request-intro">
           <p className="body-m font-700">Enter the email used for your application.</p>
           <p className="body-s text-ink-2 mt-2">If a matching application exists, Xenios will send a secure status link.</p>
         </div> : <div className="card" role="alert" data-testid="application-status-invalid-link">
-          <p className="body-m font-700">{error}</p>
+          <p className="body-m font-700">{errorMessage}</p>
           <p className="body-s text-ink-2 mt-2">Request a new secure link below.</p>
         </div>}
         <form className="card mt-8" onSubmit={(event) => void requestNewLink(event)} noValidate>
@@ -287,20 +321,21 @@ function StatusForToken({ token, returnTo, isCurrent, recovery, refreshMember, r
         {view.status === "approved_customer" ? <div className="mt-8">
           {!resumeStored ? <p className="body-s text-ink-mute mb-4" role="status">This tab cannot retain the account link through sign-in. After signing in normally, reopen the latest link from your email.</p> : null}
           {expired ? <p role="status">This approval has expired. Contact support before claiming the account.</p>
-            : <ClaimAccount token={token} returnTo={returnTo} isCurrent={isCurrent} refreshMember={refreshMember} recovery={recovery} />}
+            : <ClaimAccount token={token} returnTo={returnTo} isCurrent={isCurrent} refreshMember={refreshMember} recovery={recovery} statusPath={statusPath} />}
           {view.approvalExpiresAt ? <p className="body-s text-ink-mute mt-4">Approval expires: <time dateTime={view.approvalExpiresAt}>{new Date(view.approvalExpiresAt).toISOString()}</time>.</p> : null}
         </div> : null}
         {["active", "approved_pending_payment", "approved_sponsored_b2b", "payment_pending"].includes(view.status) ? <div className="flex flex-wrap gap-3 mt-6">
-          <Link href={researchAuthPath("/research/sign-in", returnTo || ACCOUNT_PORTAL_ROUTES.home)} className="btn btn-primary">Sign in to my account</Link>
-          <Link href="/research/support" className="btn btn-secondary">Contact support</Link>
+          <Link href={signInPath(statusPath, returnTo || ACCOUNT_PORTAL_ROUTES.home)} className="btn btn-primary">{activationAlias ? "Sign In" : "Sign in to my account"}</Link>
+          <Link href={supportPath(statusPath)} className="btn btn-secondary">Contact support</Link>
         </div> : null}
-        {view.status === "more_information_requested" ? <Link href="/research/support" className="btn btn-primary mt-8">Contact support about the requested information</Link> : null}
+        {activationExpired ? <Link href="/support" className="btn btn-primary mt-8">Contact Support</Link> : null}
+        {view.status === "more_information_requested" ? <Link href={supportPath(statusPath)} className="btn btn-primary mt-8">Contact support about the requested information</Link> : null}
       </> : null}
     </div></section>
   </>;
 }
 
-export default function ApplyStatus() {
+export default function ApplyStatus({ statusPath = STATUS_PATH }: { statusPath?: string }) {
   const search = useSearch();
   const { recovery, refreshMember } = useResearch();
   const params = new URLSearchParams(search);
@@ -323,8 +358,8 @@ export default function ApplyStatus() {
     try { window.sessionStorage.setItem(TOKEN_KEY, fromUrl); } catch { memoryOnly = true; }
     liveContext.current = { token: fromUrl, memoryOnly };
     setHeld({ token: fromUrl, returnTo: requestedReturn, memoryOnly });
-    window.history.replaceState({}, "", STATUS_PATH + (requestedReturn ? "?returnTo=" + encodeURIComponent(requestedReturn) : ""));
-  }, [supplied, fromUrl, requestedReturn]);
+    window.history.replaceState({}, "", statusPath + (requestedReturn ? "?returnTo=" + encodeURIComponent(requestedReturn) : ""));
+  }, [supplied, fromUrl, requestedReturn, statusPath]);
   function isCurrent() {
     if (liveContext.current.token !== token) return false;
     if (liveContext.current.memoryOnly) return true;
@@ -333,9 +368,15 @@ export default function ApplyStatus() {
     setHeld((previous) => ({ ...previous })); // Re-render with the new tab credential; never reuse the previous view.
     return false;
   }
+  const activationAlias = statusPath === "/activate";
   return <>
-    <SeoHead title="Application status, Xenios Research" description="Check the status of your Xenios customer application." path={STATUS_PATH} />
+    <SeoHead
+      title={activationAlias ? "Activate your account | Xenios" : "Application status, Xenios Research"}
+      description={activationAlias ? "Use a secure Xenios approval link to activate your account." : "Check the status of your Xenios customer application."}
+      path={statusPath}
+      robots={activationAlias ? "noindex, nofollow" : undefined}
+    />
     <StatusForToken key={token + ":" + (returnTo || "")} token={token} returnTo={returnTo} isCurrent={isCurrent} recovery={recovery} refreshMember={refreshMember}
-      resumeStored={!held.memoryOnly && storage.available && storage.token === token} />
+      resumeStored={!held.memoryOnly && storage.available && storage.token === token} statusPath={statusPath} />
   </>;
 }

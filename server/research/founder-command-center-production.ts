@@ -12,6 +12,17 @@ import {
 import { projectCareManualAccessAdminRecord } from "../care/manual-access-admin";
 import { CARE_MANUAL_ACCESS_SOURCE_PAGE } from "@shared/care/manual-access";
 import {
+  RESEARCH_INQUIRY_TYPES,
+  type ResearchInquiryType,
+} from "@shared/research/inquiries";
+import {
+  PUBLIC_INQUIRY_BUSINESS_NAME,
+  PUBLIC_INQUIRY_ROLE_PREFIX,
+  PUBLIC_INQUIRY_SCHEMA,
+  isPublicInquiryOperationsRow,
+  parsePublicInquiryPayload,
+} from "./inquiries/classifier";
+import {
   boundedCount,
   currentFact,
   exactCount,
@@ -195,6 +206,7 @@ const CARE_PAGE_SIZE = 500;
 const CARE_MAX_PAGES_PER_MARKER = 4;
 const CARE_OPERATION_COLUMNS =
   "id,business_name,role,why_interested,source_page,landing_page,status,email_status,created_at";
+const INQUIRY_OPERATION_COLUMNS = CARE_OPERATION_COLUMNS;
 
 const RELEASE_EVIDENCE_PATH = path.resolve(
   process.cwd(),
@@ -321,6 +333,129 @@ async function applicationsSource(
     facts: [],
     oldestWaiting: oldestState(total, oldest),
     attention: attentionForCount(total, "applications_open", "application"),
+  };
+}
+
+async function businessInquiriesSource(
+  reads: FounderCommandCenterReadPort | null,
+  now: () => Date,
+): Promise<FounderCommandCenterSourceSnapshot> {
+  const db = requireReads(reads);
+  const markerQueries: readonly (Omit<FounderCommandCenterPageQuery, "from" | "to">)[] = [
+    {
+      table: "loi_submissions",
+      columns: INQUIRY_OPERATION_COLUMNS,
+      filters: [
+        { operation: "eq", column: "business_name", value: PUBLIC_INQUIRY_BUSINESS_NAME },
+      ],
+      orderBy: "created_at",
+    },
+    {
+      table: "loi_submissions",
+      columns: INQUIRY_OPERATION_COLUMNS,
+      filters: [
+        { operation: "like", column: "role", value: `${PUBLIC_INQUIRY_ROLE_PREFIX}%` },
+      ],
+      orderBy: "created_at",
+    },
+    {
+      table: "loi_submissions",
+      columns: INQUIRY_OPERATION_COLUMNS,
+      filters: [
+        { operation: "like", column: "why_interested", value: `%${PUBLIC_INQUIRY_SCHEMA}%` },
+      ],
+      orderBy: "created_at",
+    },
+  ];
+  const pages = await Promise.all(
+    markerQueries.map((query) => readBoundedPages(db, query)),
+  );
+  const truncated = pages.some((page) => page.truncated);
+  const byId = new Map<string, LoiRow>();
+  for (const row of pages.flatMap((page) => page.rows)) {
+    const id = typeof row.id === "string" ? row.id : "";
+    if (!id) throw new Error("business_inquiry_row_invalid");
+    const candidate = row as unknown as LoiRow;
+    if (isPublicInquiryOperationsRow(candidate)) byId.set(id, candidate);
+  }
+
+  const rows = [...byId.values()];
+  const newRows = rows.filter((row) => row.status === "New");
+  const malformed = rows.filter(
+    (row) => parsePublicInquiryPayload(row.why_interested) === null,
+  ).length;
+  const countsByType = new Map<ResearchInquiryType, number>(
+    RESEARCH_INQUIRY_TYPES.map((type) => [type, 0] as const),
+  );
+  for (const row of newRows) {
+    const type = parsePublicInquiryPayload(row.why_interested)?.inquiryType;
+    if (type && countsByType.has(type)) {
+      countsByType.set(type, (countsByType.get(type) ?? 0) + 1);
+    }
+  }
+  const oldest = newRows.length
+    ? newRows.reduce((minimum, row) =>
+        Date.parse(row.created_at) < Date.parse(minimum)
+          ? row.created_at
+          : minimum,
+      safeTimestamp(newRows[0].created_at))
+    : null;
+  const countMetric = truncated ? boundedCount : exactCount;
+  return {
+    source: {
+      state: truncated ? "partial" : "current",
+      authority: "Canonical non-Care inquiry classifier over LOI storage",
+      observedAt: observedAt(now),
+    },
+    primaryCount: countMetric(
+      "business_inquiries.new",
+      "New inquiries",
+      newRows.length,
+      truncated
+        ? "At least this many founder-owned business inquiries are New within the bounded projection."
+        : "Founder-owned business inquiries whose lifecycle state is New.",
+    ),
+    breakdown: [
+      ...RESEARCH_INQUIRY_TYPES.map((type) =>
+        countMetric(
+          `business_inquiries.${type}`,
+          type === "partner_interest"
+            ? "Partner interest"
+            : type === "career_interest"
+              ? "Career interest"
+              : type.charAt(0).toUpperCase() + type.slice(1),
+          countsByType.get(type) ?? 0,
+          `New ${type.replaceAll("_", " ")} inquiries.`,
+        ),
+      ),
+      countMetric(
+        "business_inquiries.data_quality",
+        "Data quality review",
+        malformed,
+        "Inquiry-classified rows whose structured payload needs review.",
+      ),
+    ],
+    facts: [
+      currentFact("business_inquiries.owner", "Default operational owner", "Founder"),
+      currentFact("business_inquiries.state", "Initial lifecycle state", "New"),
+      unavailableFact("business_inquiries.due_date", "Due date"),
+    ],
+    oldestWaiting: truncated
+      ? { state: "unavailable", since: null }
+      : oldestState(newRows.length, oldest),
+    attention: truncated
+      ? {
+          severity: newRows.length > 0 ? "warning" : "unknown",
+          code: "business_inquiries_projection_bounded",
+          reason: newRows.length > 0
+            ? `At least ${newRows.length} business inquiries await founder review; the projection reached its safety cap.`
+            : "The business-inquiry projection reached its safety cap, so a zero cannot be claimed.",
+        }
+      : attentionForCount(
+          newRows.length,
+          "business_inquiries_new",
+          "business inquiry",
+        ),
   };
 }
 
@@ -1075,7 +1210,7 @@ async function releaseStatusSource(
 }
 
 /**
- * Compose thirteen read-only sources over existing authorities. Each closure
+ * Compose fourteen read-only sources over existing authorities. Each closure
  * performs only the reads needed for its card; the outer collector isolates
  * rejection and timeout per closure.
  */
@@ -1085,6 +1220,7 @@ export function buildFounderCommandCenterProductionSources(
   const now = dependencies.now ?? (() => new Date());
   return Object.freeze({
     applications: () => applicationsSource(dependencies.reads, now),
+    business_inquiries: () => businessInquiriesSource(dependencies.reads, now),
     care_requests: () => careSource(dependencies.reads, now),
     assisted_orders: ({ request }) =>
       assistedOrdersSource(dependencies.assistedOrders, request, now),

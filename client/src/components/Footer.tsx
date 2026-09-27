@@ -1,59 +1,35 @@
-import { Link } from "wouter";
-import { contactEmail, menuGroups, navSocials } from "@/lib/nav";
-import { content } from "@/lib/content";
-import Wordmark from "./Wordmark";
-import Counter from "./Counter";
+import { Link, useLocation } from "wouter";
+import { BRAND } from "@/clarity/brand";
 
-function FooterLink({ label, href, external }: { label: string; href: string; external?: boolean }) {
-  const className = "flex min-h-[44px] items-center text-[15px] font-600 text-ink hover:text-pulse transition-colors";
-  if (external) {
-    return <a href={href} className={className}>{label}</a>;
-  }
-  return <Link href={href} className={className}>{label}</Link>;
-}
+const GROUPS = [
+  { label: "Individuals", links: [["Start Care", "/care/schedule"], ["Explore Products", "/products"], ["How It Works", "/how-it-works"], ["Check Status", "/status"], ["FAQ", "/faq"]] },
+  { label: "Practices & partners", links: [["For Practices", "/practices"], ["Become a Partner", "/partners"], ["Suppliers", "/suppliers"], ["Workspace for coaches", "/workspace"]] },
+  { label: "Company", links: [["About", "/about"], ["Careers", "/careers"], ["Quality", "/quality"], ["Press", "/press"], ["Investors", "/investors"]] },
+  { label: "Support", links: [["Support", "/support"], ["Contact", "/contact"], ["Sign In", "/sign-in"]] },
+  { label: "Legal", links: [["Privacy", "/privacy"], ["Terms", "/terms"], ["Research Use Policy", "/research/policies"], ["Disclosures", "/disclosures"], ["Accessibility", "/research/policies/accessibility"]] },
+] as const;
 
 export default function Footer() {
+  const [location] = useLocation();
+  const careAdjacent = location === "/care" || location.startsWith("/care/");
   return (
-    <footer className="bg-paper rule-top" data-testid="footer-main">
-      <div className="container-x py-16 md:py-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.3fr_repeat(4,1fr)] gap-10 lg:gap-12">
-          <div>
-            <Wordmark size="lg" asLink={false} />
-            <p className="mt-6 body-m text-ink-2 max-w-[28ch]">{content.footer.tagline}</p>
-            <p className="mt-3 mono-cap text-ink-mute">Remote first. Austin preferred.</p>
-            <div className="mt-6">
-              <Counter variant="line" suffix="on the waitlist" />
-            </div>
-            <div className="mt-6">
-              <a href={`mailto:${contactEmail}`} data-testid="link-footer-email" className="flex min-h-[44px] items-center text-[15px] font-600 text-ink hover:text-pulse transition-colors">
-                {contactEmail}
-              </a>
-              {navSocials.map((social) => (
-                <a key={social.url} href={social.url} target="_blank" rel="noopener noreferrer" data-testid={`link-social-${social.label.split(",")[0].toLowerCase()}`} className="flex min-h-[44px] items-center text-[15px] font-600 text-ink hover:text-pulse transition-colors">
-                  {social.label}
-                </a>
-              ))}
-            </div>
+    <footer className="clarity-footer" data-testid="footer-main">
+      <div className="container-x">
+        <div className="clarity-footer-top">
+          <div className="clarity-footer-brand">
+            <Link href="/" className="clarity-brand-link" aria-label={`${BRAND.publicName} home`}><span className="wordmark-mark" aria-hidden="true" /><span className="clarity-brand-name">{BRAND.publicName}</span></Link>
+            <p className="body-m text-ink-2">Care, research products and tools for the professionals who support people's health.</p>
+            <a href={`mailto:${BRAND.supportEmail}`} className="clarity-footer-link">{BRAND.supportEmail}</a>
           </div>
-
-          {menuGroups.map((group) => (
+          {GROUPS.map((group) => (
             <nav key={group.label} aria-label={`${group.label} footer links`}>
-              <p className="mono-cap text-ink-mute mb-5">{group.label}</p>
-              <div>
-                {group.items.map((item) => (
-                  <FooterLink key={`${group.label}-${item.href}`} {...item} />
-                ))}
-              </div>
+              <p className="mono-cap text-ink-mute">{group.label}</p>
+              <div className="clarity-footer-links">{group.links.map(([label, href]) => <Link key={`${label}-${href}`} href={href} className="clarity-footer-link">{label}</Link>)}</div>
             </nav>
           ))}
         </div>
-
-        <div className="rule-top mt-16 pt-6 flex flex-col md:flex-row justify-between gap-4">
-          <p className="mono-cap text-ink-mute" data-testid="text-copyright">
-            © 2026 Xenios Technologies, Inc. · An AI workspace for health and performance professionals.
-          </p>
-          <p className="mono-cap text-ink-mute">Austin, TX · Remote first</p>
-        </div>
+        {careAdjacent && <p className="clarity-emergency">If this is an emergency, call 911.</p>}
+        <div className="clarity-footer-bottom"><p data-testid="text-copyright">{BRAND.copyright}</p></div>
       </div>
     </footer>
   );

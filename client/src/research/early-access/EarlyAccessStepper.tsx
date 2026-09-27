@@ -32,7 +32,7 @@ export function EarlyAccessStepper({
   return (
     <div className="min-w-0" data-testid={testId}>
       <ol
-        aria-label="Early access steps"
+        aria-label="Research ordering steps"
         aria-describedby={statusId}
         className="grid min-w-0 gap-2"
       >

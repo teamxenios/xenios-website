@@ -69,7 +69,7 @@ export function EarlyAccessVerificationPanel({
         kind: "fault",
         message:
           result.kind === "locked"
-            ? "Your private session has ended. Unlock again to continue."
+            ? "Your research-ordering session has ended. Start a new session to continue."
             : result.message,
       });
     });
@@ -93,7 +93,7 @@ export function EarlyAccessVerificationPanel({
         kind: "fault",
         message:
           result.kind === "locked"
-            ? "Your private session has ended. Unlock again to continue."
+            ? "Your research-ordering session has ended. Start a new session to continue."
             : result.message,
       });
     });
@@ -105,7 +105,7 @@ export function EarlyAccessVerificationPanel({
     <div className="grid gap-5 min-w-0" data-testid={testId} data-status={status.kind}>
       <div className="grid gap-2 min-w-0">
         <label className="body-s text-ink-2" htmlFor={emailId}>
-          The email address your Early Access account was approved under
+          The email address approved for your research ordering access
         </label>
         <input
           id={emailId}
@@ -136,7 +136,7 @@ export function EarlyAccessVerificationPanel({
             className="body-s text-ink-2 max-w-[62ch]"
             data-testid={`${testId}-requested`}
           >
-            If that address is an approved Early Access account, a verification link is on its way
+            If that address has approved research ordering access, a verification link is on its way
             from your access contact. Paste the code below when it arrives.
           </p>
         )}

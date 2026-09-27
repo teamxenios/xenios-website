@@ -11,22 +11,9 @@ import { normalizeResearchPath } from "@shared/research/paths";
 
 export const PUBLIC_RESEARCH_EXACT_PATHS = [
   "/research",
-  "/research/access-hub",
-  "/research/how-it-works",
-  "/research/quality",
-  "/research/testing",
-  "/research/documents",
-  "/research/organizations",
-  "/research/partners",
-  "/research/affiliates",
-  "/research/about",
-  "/research/faq",
-  "/research/support",
   "/research/policies",
-  "/research/contact",
   "/research/privacy",
   "/research/terms",
-  "/research/supplier-access",
 ] as const;
 
 const PUBLIC_EXACT = new Set<string>(PUBLIC_RESEARCH_EXACT_PATHS);

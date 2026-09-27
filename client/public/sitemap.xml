@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://xeniostechnology.com/</loc><priority>1.0</priority></url>
-  <url><loc>https://xeniostechnology.com/product</loc><priority>0.9</priority></url>
-  <url><loc>https://xeniostechnology.com/how-it-works</loc><priority>0.9</priority></url>
-  <url><loc>https://xeniostechnology.com/health</loc><priority>0.9</priority></url>
-  <url><loc>https://xeniostechnology.com/for-coaches</loc><priority>0.9</priority></url>
-  <url><loc>https://xeniostechnology.com/waitlist</loc><priority>0.9</priority></url>
-  <url><loc>https://xeniostechnology.com/about</loc><priority>0.8</priority></url>
-  <url><loc>https://xeniostechnology.com/careers</loc><priority>0.8</priority></url>
-  <url><loc>https://xeniostechnology.com/careers/founding-designer</loc><priority>0.7</priority></url>
-  <url><loc>https://xeniostechnology.com/careers/founding-senior-ai-software-engineer</loc><priority>0.7</priority></url>
-  <url><loc>https://xeniostechnology.com/careers/founding-coach-cohort</loc><priority>0.7</priority></url>
-  <url><loc>https://xeniostechnology.com/security</loc><priority>0.7</priority></url>
-  <url><loc>https://xeniostechnology.com/compliance</loc><priority>0.7</priority></url>
-  <url><loc>https://xeniostechnology.com/investors</loc><priority>0.7</priority></url>
+  <url><loc>https://xeniostechnology.com/individuals</loc><priority>0.9</priority></url>
+  <url><loc>https://xeniostechnology.com/products</loc><priority>0.9</priority></url>
+  <url><loc>https://xeniostechnology.com/care</loc><priority>0.9</priority></url>
+  <url><loc>https://xeniostechnology.com/practices</loc><priority>0.9</priority></url>
+  <url><loc>https://xeniostechnology.com/practices/referrals</loc><priority>0.8</priority></url>
+  <url><loc>https://xeniostechnology.com/practices/workspace</loc><priority>0.8</priority></url>
+  <url><loc>https://xeniostechnology.com/practices/care</loc><priority>0.8</priority></url>
+  <url><loc>https://xeniostechnology.com/partners</loc><priority>0.8</priority></url>
+  <url><loc>https://xeniostechnology.com/suppliers</loc><priority>0.8</priority></url>
+  <url><loc>https://xeniostechnology.com/how-it-works</loc><priority>0.8</priority></url>
+  <url><loc>https://xeniostechnology.com/quality</loc><priority>0.8</priority></url>
+  <url><loc>https://xeniostechnology.com/faq</loc><priority>0.7</priority></url>
+  <url><loc>https://xeniostechnology.com/about</loc><priority>0.7</priority></url>
+  <url><loc>https://xeniostechnology.com/support</loc><priority>0.7</priority></url>
+  <url><loc>https://xeniostechnology.com/careers</loc><priority>0.7</priority></url>
   <url><loc>https://xeniostechnology.com/contact</loc><priority>0.6</priority></url>
-  <url><loc>https://xeniostechnology.com/book</loc><priority>0.6</priority></url>
-  <url><loc>https://xeniostechnology.com/early-interest</loc><priority>0.6</priority></url>
-  <url><loc>https://xeniostechnology.com/for-clients</loc><priority>0.6</priority></url>
-  <url><loc>https://xeniostechnology.com/for-practitioners</loc><priority>0.6</priority></url>
+  <url><loc>https://xeniostechnology.com/workspace</loc><priority>0.6</priority></url>
   <url><loc>https://xeniostechnology.com/for/strength-coaches</loc><priority>0.5</priority></url>
   <url><loc>https://xeniostechnology.com/for/personal-trainers</loc><priority>0.5</priority></url>
   <url><loc>https://xeniostechnology.com/for/sports-performance</loc><priority>0.5</priority></url>
@@ -44,13 +43,10 @@
   <url><loc>https://xeniostechnology.com/for/elite-athletes</loc><priority>0.5</priority></url>
   <url><loc>https://xeniostechnology.com/for/creators</loc><priority>0.5</priority></url>
   <url><loc>https://xeniostechnology.com/for/sports-agencies</loc><priority>0.5</priority></url>
-  <url><loc>https://xeniostechnology.com/storefront</loc><priority>0.5</priority></url>
-  <url><loc>https://xeniostechnology.com/network</loc><priority>0.5</priority></url>
-  <url><loc>https://xeniostechnology.com/ecosystem</loc><priority>0.5</priority></url>
-  <url><loc>https://xeniostechnology.com/manifesto</loc><priority>0.5</priority></url>
+  <url><loc>https://xeniostechnology.com/mvps</loc><priority>0.4</priority></url>
+  <url><loc>https://xeniostechnology.com/early-interest</loc><priority>0.4</priority></url>
   <url><loc>https://xeniostechnology.com/press</loc><priority>0.5</priority></url>
-  <url><loc>https://xeniostechnology.com/concepts</loc><priority>0.5</priority></url>
-  <url><loc>https://xeniostechnology.com/mvps</loc><priority>0.5</priority></url>
+  <url><loc>https://xeniostechnology.com/investors</loc><priority>0.5</priority></url>
   <url><loc>https://xeniostechnology.com/privacy</loc><priority>0.4</priority></url>
   <url><loc>https://xeniostechnology.com/terms</loc><priority>0.4</priority></url>
   <url><loc>https://xeniostechnology.com/disclosures</loc><priority>0.4</priority></url>

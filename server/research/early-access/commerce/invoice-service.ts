@@ -46,7 +46,7 @@ import type { EarlyAccessReleaseOrder } from "./order-service";
  * further wording would be a product claim this module has no standing to make
  * about a unit Product Control has not finished documenting.
  */
-export const EARLY_ACCESS_LINE_DESCRIPTION = "Private Early Access unit";
+export const EARLY_ACCESS_LINE_DESCRIPTION = "Xenios Research order item";
 
 /** Prefix for the reference a customer quotes when they send payment by hand. */
 export const EARLY_ACCESS_PAYMENT_REFERENCE_PREFIX = "XEAPAY-";

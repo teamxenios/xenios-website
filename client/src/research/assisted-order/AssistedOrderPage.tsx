@@ -778,7 +778,7 @@ export function AssistedOrderPage({
             reason.code === "agreement_required"
               ? "Review and accept the current Research Use Policy before submitting."
               : reason.code === "forbidden"
-              ? "Your Early Access session ended. Return to Early Access and start again."
+              ? "Your research-ordering session ended. Return to Research ordering and start again."
               : reason.code === "validation_error"
                 ? "Review the highlighted information and try again."
                 : "The order request could not be submitted. Nothing was ordered or charged. Please try again.",
@@ -804,7 +804,7 @@ export function AssistedOrderPage({
   return (
     <div className={`xenios-order-page${embedded ? " xenios-order-page--embedded" : ""}`}>
       <header className="xenios-order-hero">
-        <p className="xenios-order-eyebrow">Private Early Access</p>
+        <p className="xenios-order-eyebrow">Research ordering</p>
         {embedded ? <h3>Request an order</h3> : <h1>Request an order</h1>}
         <p>
           Choose products and quantities. Xenios confirms availability and

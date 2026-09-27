@@ -26,7 +26,7 @@ export type BoundaryState =
 
 export const PARTNER_PENDING_TITLE = "The partner platform is being prepared.";
 export const PARTNER_PENDING_BODY =
-  "This area goes live when the Research Rep platform launches. Nothing is wrong with your account, and nothing is required from you right now.";
+  "This area goes live when the partner workspace launches. Nothing is wrong with your account, and nothing is required from you right now.";
 
 export const PARTNER_SUPPORT_EMAIL = "research@xeniostechnology.com";
 

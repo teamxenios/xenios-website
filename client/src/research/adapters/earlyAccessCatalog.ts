@@ -70,7 +70,7 @@ export async function loadEarlyAccessCatalog(
 
   if (result.kind === "unauthorized" || result.kind === "forbidden") return { kind: "locked" };
   if (result.kind === "unavailable") {
-    return { kind: "unreadable", reason: "The catalogue is not available yet." };
+    return { kind: "unreadable", reason: "The catalog is not available yet." };
   }
   if (result.kind === "denied") {
     return { kind: "unreadable", reason: result.message ?? result.code };
@@ -79,7 +79,7 @@ export async function loadEarlyAccessCatalog(
 
   const rows = rowsOf(result.data ?? {});
   if (rows === null) {
-    return { kind: "unreadable", reason: "The catalogue response was not in a readable shape." };
+    return { kind: "unreadable", reason: "The catalog response was not in a readable shape." };
   }
 
   const { products, dropped } = toCardProducts(rows as readonly EarlyAccessCatalogRowView[]);

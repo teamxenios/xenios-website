@@ -12,4 +12,4 @@
  * anywhere in the meantime, and do not inline the string at a call site.
  */
 export const EARLY_ACCESS_FULFILLMENT_TARGET_COPY =
-  "Current fulfillment target: within 72 hours after payment verification and product availability confirmation. Tracking will be provided when the shipment is released.";
+  "Tracking will be provided when the shipment is released.";

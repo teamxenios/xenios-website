@@ -1089,7 +1089,7 @@ export default function Checkout({ paymentMethodClient, authenticator }: Checkou
                     />
                   </Field>
                 </div>
-                <p className="body-s text-ink-mute">Country: United States. Orders ship within the US only for now.</p>
+                <p className="body-s text-ink-mute">Country: United States. Enter a United States shipping address.</p>
               </div>
             </section>
 

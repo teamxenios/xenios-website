@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { requestAssistedOrderConfigBody } from "./api";
 
-// The authenticated Early Access entry point to the assisted-order wizard.
+// The authenticated research-ordering entry point to the assisted-order wizard.
 //
 // The CTA asks the server whether the feature is actually open before it
 // offers anything: when /config reports enabled false (the D-005
@@ -73,7 +73,7 @@ export function AssistedOrderCta() {
     >
       <p className="mono-label text-ink-mute">Order request</p>
       <h2 id="assisted-order-cta" className="body-l font-700 mt-2">
-        Place an Early Access order
+        Request a research order
       </h2>
       <p className="body-s text-ink-2 mt-3 max-w-[64ch]">
         Submit the products you would like to purchase. Xenios will review your
@@ -87,7 +87,7 @@ export function AssistedOrderCta() {
             className="btn btn-primary"
             data-testid="link-assisted-order-start"
           >
-            Place an Early Access order
+            Request Order
           </Link>
         </div>
       ) : (
@@ -96,8 +96,7 @@ export function AssistedOrderCta() {
           role="status"
           data-testid="assisted-order-cta-unavailable"
         >
-          Order requests are temporarily unavailable. Everything else in Early
-          Access still works, and no action is needed from you.
+          Order requests are temporarily unavailable. No action is needed from you.
         </p>
       )}
     </section>

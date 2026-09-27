@@ -114,10 +114,10 @@ export function PrivateEarlyAccessPage({
           style={{ maxWidth: "24ch" }}
           tabIndex={-1}
         >
-          Private Early Access
+          Research ordering
         </h1>
         <p className="body-m text-ink-2 mt-3 max-w-[58ch] text-balance">
-          A controlled preview for an invited access session. This page does
+          A controlled preview for a research-ordering session. This page does
           not collect, send, or confirm payment.
         </p>
       </header>
@@ -131,8 +131,8 @@ export function PrivateEarlyAccessPage({
         {!available ? (
           <ResearchPendingPanel
             kind="unavailable"
-            title="Private access is not available yet."
-            body="Payment categories will appear only after this private access session and its allowed methods are resolved. Nothing has been submitted or paid."
+            title="Research ordering is not available yet."
+            body="Payment categories will appear only after this research-ordering session and its allowed methods are resolved. Nothing has been submitted or paid."
             testid="private-early-access-pending"
           />
         ) : (

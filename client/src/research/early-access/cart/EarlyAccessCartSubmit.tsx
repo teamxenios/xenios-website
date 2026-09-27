@@ -70,7 +70,7 @@ const OUTCOME_COPY: Readonly<Record<EarlyAccessProofSubmitOutcome["kind"], strin
   unavailable:
     "Proof cannot be submitted on the website for this order. Follow the concierge instructions on your invoice, and nothing about your checkout is lost.",
   locked:
-    "Your private session ended before your proof was sent, so nothing was recorded. Unlock again and send it once more. Nothing has been ordered or charged twice.",
+    "Your research-ordering session ended before your proof was sent, so nothing was recorded. Start a new session and send it once more. Nothing has been ordered or charged twice.",
   failed:
     "Your proof was not sent. Nothing about your order changed and nothing was charged. Choose the file again and retry.",
 });

@@ -166,8 +166,8 @@ export function EarlyAccessCustomerForm({
           Where this should reach you
         </h2>
         <p className="body-s text-ink-2 mt-2 max-w-[62ch]">
-          These details are used to reach you about early access and to ship it
-          if you go ahead. Nothing is charged from this step.
+          These details are used to contact you about your research ordering request and to collect
+          a shipping address. Nothing is charged from this step.
         </p>
       </div>
 
@@ -195,7 +195,7 @@ export function EarlyAccessCustomerForm({
             data-testid={`${testId}-country`}
           />
           <p id={countryNoteId} className="body-s text-ink-mute mt-2 max-w-[62ch]">
-            Early access ships within the United States only for now.
+            Enter a United States shipping address.
           </p>
         </Field>
       </div>

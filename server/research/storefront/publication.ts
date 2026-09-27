@@ -428,7 +428,7 @@ function isAction(value: unknown): value is MasterOfferingAction {
   }
   const labels: Readonly<Record<string, string>> = {
     request_access: "Request Access",
-    request_early_access_purchase: "Request Early Access Purchase",
+    request_early_access_purchase: "Request Order",
     apply: "Apply",
     notify_me: "Notify Me",
     join_waitlist: "Join Waitlist",

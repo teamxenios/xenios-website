@@ -78,8 +78,8 @@ export const FULFILLMENT_STATE_META: Record<CanonicalOrderFulfillmentState, Stat
  */
 export const SOURCE_KIND_LABELS: Record<CanonicalOrderSourceKind, string> = {
   assisted_request_quote: "Assisted request",
-  early_access_placement: "Early Access order",
-  early_access_cart_checkout: "Early Access cart",
+  early_access_placement: "Research order",
+  early_access_cart_checkout: "Research cart checkout",
 };
 
 export function formatCents(cents: number): string {

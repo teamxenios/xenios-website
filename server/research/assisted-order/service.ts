@@ -53,7 +53,7 @@ export class AssistedOrderAuthorizationError extends Error {
 
 export class AssistedOrderAgreementRequiredError extends Error {
   public constructor() {
-    super("The server-recorded Early Access agreement is required.");
+    super("The required research-ordering agreement must be accepted before this request can be submitted.");
     this.name = "AssistedOrderAgreementRequiredError";
   }
 }

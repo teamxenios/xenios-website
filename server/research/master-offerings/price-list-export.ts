@@ -38,7 +38,7 @@ import { priceForVariant, type MasterOfferingPriceMap } from "./price-projection
 export const MASTER_OFFERING_PRICE_LIST_MAX_ROWS = 5000;
 
 const PURCHASE_PATH_BY_ACTION: Readonly<Record<string, string>> = {
-  request_early_access_purchase: "Request an Early Access purchase",
+  request_early_access_purchase: "Request an order",
   request_access: "Request access",
   apply: "Apply for approval",
   notify_me: "Ask to be notified",

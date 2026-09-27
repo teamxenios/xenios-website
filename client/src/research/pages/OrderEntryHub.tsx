@@ -362,7 +362,7 @@ export default function OrderEntryHub() {
             Quick Research is the lightest supported way to start.
           </h2>
           <p className="body-s text-ink-2 mt-3 max-w-[72ch] min-w-0 break-words">
-            It opens the existing passwordless Early Access session. It does
+            It opens the existing research-ordering session. It does
             not create a second account, cart, order, checkout, or price
             authority. If your need is personal and medical, choose Xenios Care
             instead of Research.
@@ -464,8 +464,8 @@ export default function OrderEntryHub() {
             Safe selections continue; private credentials do not travel in links.
           </h2>
           <p className="body-s text-ink-2 mt-3 max-w-[72ch]">
-            A validated product, variant, and quantity continue into Quick Early
-            Access, assisted ordering, or member sign-in for review against the
+            A validated product, variant, and quantity continue into research
+            ordering, assisted ordering, or member sign-in for review against the
             current catalog. Account-order destinations continue through sign-in. Unknown destinations and
             credential-like query data are discarded. Any already-recognized
             referral remains with the server-owned referral session; this page

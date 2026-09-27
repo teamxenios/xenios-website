@@ -10,7 +10,7 @@ const NEXT_STEPS = [
   "Submit the short form.",
   "The founder or team reviews fit and timing.",
   "You receive a short conversation invite or onboarding email.",
-  "A small cohort gets early access and direct feedback loops with the team.",
+  "A small cohort works directly with the team through structured feedback loops.",
 ];
 
 export default function Waitlist() {
@@ -21,7 +21,7 @@ export default function Waitlist() {
     <PageShell>
       <SeoHead {...PAGES.waitlist} />
       <section className="container-x pt-24 md:pt-36 pb-16">
-        <p className="mono-cap text-ink-mute mb-6">EARLY ACCESS</p>
+        <p className="mono-cap text-ink-mute mb-6">FOUNDING GROUP</p>
         <h1 className="display-xl text-balance max-w-[18ch]">Apply for the founding group.</h1>
         <p className="mt-8 body-l text-ink-2 max-w-[62ch]">
           xenios is opening to a small group of serious coaches and health professionals who want one inbox, one client record, and AI drafts they still control.

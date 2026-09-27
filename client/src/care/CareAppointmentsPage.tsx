@@ -76,7 +76,7 @@ export default function CareAppointmentsPage() {
           <h2 id="care-appointments-title" className="h2">
             {state.kind === "loading" && "Checking appointment status…"}
             {state.kind === "disabled" &&
-              "Clinician-guided scheduling is being prepared."}
+              "Care scheduling is not available here."}
             {state.kind === "auth_required" && "Sign in is required."}
             {state.kind === "error" &&
               "Appointment status is temporarily unavailable."}

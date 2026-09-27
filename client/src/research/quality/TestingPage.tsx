@@ -28,7 +28,7 @@ export default function TestingPage() {
         lead="Testing is useful when the sample, method, scope, specification, dates, and issuing record are clear. A strong number without that context is not a complete quality conclusion."
       />
       <NoticeBar>
-        Third-party testing is used where applicable to the material and control plan. Xenios does not claim that every test category applies to every lot, or that any laboratory result establishes safety or human suitability.
+        This page explains how to read a record. It does not claim that a product or lot has been tested, approved, or made suitable for any use.
       </NoticeBar>
 
       <section className="container-x section-y" aria-labelledby="testing-categories-title">
@@ -77,12 +77,12 @@ export default function TestingPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
             <CircleHelp aria-hidden="true" size={22} style={{ color: "var(--quality-copper)" }} />
-            <h2 className="h3 mt-5" id="testing-limits-title">What a COA is not.</h2>
+            <h2 className="h3 mt-5" id="testing-limits-title">What a test record is not.</h2>
           </div>
           <div className="card md:col-span-2">
             <Braces aria-hidden="true" size={20} className="text-ink-mute" />
             <p className="body-l mt-5">
-              A COA is not a universal guarantee. It is a controlled record of identified tests, methods, specifications, and results for a stated sample or lot.
+              A test record is not a universal guarantee. It describes identified methods, specifications, and results for a stated sample or lot.
             </p>
             <p className="body-s text-ink-2 mt-4">
               It does not replace chain of custody, receiving inspection, release authority, storage controls, traceability, or exception handling. It also does not provide dosing or personal-use guidance.

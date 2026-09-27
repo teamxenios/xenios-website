@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
 import Product from "@/pages/Product";
-import HowItWorks from "@/pages/HowItWorks";
+import CoachHowItWorks from "@/pages/HowItWorks";
 import ForCoaches from "@/pages/ForCoaches";
 import ForClients from "@/pages/ForClients";
 import Storefront from "@/pages/Storefront";
@@ -15,7 +15,6 @@ import Ecosystem from "@/pages/Ecosystem";
 import ForPractitioners from "@/pages/ForPractitioners";
 import IcpPage from "@/pages/IcpPage";
 import Manifesto from "@/pages/Manifesto";
-import About from "@/pages/About";
 import Careers, { CareersRole } from "@/pages/Careers";
 import Waitlist from "@/pages/Waitlist";
 import Contact from "@/pages/Contact";
@@ -32,6 +31,27 @@ import Concepts from "@/pages/Concepts";
 import MvpLab from "@/pages/MvpLab";
 import ExternalRedirect from "@/components/ExternalRedirect";
 import NotFound from "@/pages/not-found";
+import WorkspaceHome from "@/clarity/WorkspaceHome";
+import {
+  AboutPage,
+  ActivatePage,
+  FaqPage,
+  HowItWorksPage,
+  IndividualsPage,
+  PartnersPage,
+  PracticeCarePage,
+  PracticeReferralsPage,
+  PracticesPage,
+  PracticeWorkspacePage,
+  ProductUnavailablePage,
+  ProductsPage,
+  QualityPage,
+  ResearchOverviewPage,
+  SignInPage,
+  StatusPage,
+  SuppliersPage,
+  SupportPage,
+} from "@/clarity/pages";
 
 // The deployed Kairos MVP (synthetic only), served under the xenios domain at
 // kairos.xeniostechnology.com (falls back to the Vercel URL until DNS propagates). /kairos sends
@@ -41,10 +61,6 @@ const KAIROS_APP_URL = "https://kairos.xeniostechnology.com";
 // xenios research: the entire section is one lazy chunk so the main bundle does
 // not grow. It carries no product data; the catalog comes from gated server APIs.
 const ResearchSection = lazy(() => import("@/research/section"));
-// Public Care + Research umbrella. This mounts the shared gateway directly so
-// /health has its own indexable document identity while /research keeps its
-// existing section-level indexing and access policy.
-const HealthGateway = lazy(() => import("@/research/pages/Gateway"));
 const RecommendationRecipient = lazy(() => import("@/research/recommendation/Recipient"));
 // Admin dashboard: a large, rarely visited surface (waitlist/LOI/bookings/
 // analytics/research tables). Its own lazy chunk keeps it out of the main
@@ -64,14 +80,6 @@ function ResearchRoutes() {
   return (
     <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
       <ResearchSection />
-    </Suspense>
-  );
-}
-
-function HealthRoutes() {
-  return (
-    <Suspense fallback={<div className="container-x" style={{ paddingTop: 96 }} aria-busy="true" />}>
-      <HealthGateway />
     </Suspense>
   );
 }
@@ -143,7 +151,39 @@ function CarePharmacyRoutes() {
 function ScrollToTop() {
   const [location] = useLocation();
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+    let frame = 0;
+    const scrollForLocation = () => {
+      window.cancelAnimationFrame(frame);
+      const rawHash = window.location.hash.slice(1);
+      if (!rawHash) {
+        window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+        return;
+      }
+      frame = window.requestAnimationFrame(() => {
+        let targetId = rawHash;
+        try { targetId = decodeURIComponent(rawHash); } catch { /* use the literal hash */ }
+        const target = document.getElementById(targetId);
+        if (!target) return;
+        target.scrollIntoView({ block: "start" });
+        const suppliedTabIndex = target.hasAttribute("tabindex");
+        if (!suppliedTabIndex) target.setAttribute("tabindex", "-1");
+        target.focus({ preventScroll: true });
+        if (!suppliedTabIndex) {
+          target.addEventListener("blur", () => target.removeAttribute("tabindex"), { once: true });
+        }
+      });
+    };
+
+    scrollForLocation();
+    // Wouter dispatches pushState for client navigation, including same-page
+    // fragment links whose pathname snapshot does not change.
+    window.addEventListener("pushState", scrollForLocation);
+    window.addEventListener("hashchange", scrollForLocation);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("pushState", scrollForLocation);
+      window.removeEventListener("hashchange", scrollForLocation);
+    };
   }, [location]);
   return null;
 }
@@ -152,8 +192,26 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/individuals" component={IndividualsPage} />
+      <Route path="/products/:slug" component={ProductUnavailablePage} />
+      <Route path="/products" component={ProductsPage} />
+      <Route path="/practices/referrals" component={PracticeReferralsPage} />
+      <Route path="/practices/workspace" component={PracticeWorkspacePage} />
+      <Route path="/practices/care" component={PracticeCarePage} />
+      <Route path="/practices" component={PracticesPage} />
+      <Route path="/partners/apply"><Redirect to="/partners#inquiry" /></Route>
+      <Route path="/partners" component={PartnersPage} />
+      <Route path="/suppliers" component={SuppliersPage} />
+      <Route path="/quality" component={QualityPage} />
+      <Route path="/faq" component={FaqPage} />
+      <Route path="/support" component={SupportPage} />
+      <Route path="/status" component={StatusPage} />
+      <Route path="/sign-in" component={SignInPage} />
+      <Route path="/activate" component={ActivatePage} />
+      <Route path="/workspace/how-it-works" component={CoachHowItWorks} />
+      <Route path="/workspace" component={WorkspaceHome} />
       <Route path="/product" component={Product} />
-      <Route path="/how-it-works" component={HowItWorks} />
+      <Route path="/how-it-works" component={HowItWorksPage} />
       <Route path="/for-coaches" component={ForCoaches} />
       <Route path="/for-clients" component={ForClients} />
       <Route path="/storefront" component={Storefront} />
@@ -162,8 +220,7 @@ function Router() {
       <Route path="/for-practitioners" component={ForPractitioners} />
       <Route path="/for/:slug" component={IcpPage} />
       <Route path="/manifesto" component={Manifesto} />
-      <Route path="/about" component={About} />
-      <Route path="/careers/innovative-product-builder"><Redirect to="/careers/founding-senior-ai-software-engineer" /></Route>
+      <Route path="/about" component={AboutPage} />
       <Route path="/careers/:slug" component={CareersRole} />
       <Route path="/careers" component={Careers} />
       <Route path="/waitlist" component={Waitlist} />
@@ -182,12 +239,24 @@ function Router() {
       {/* Research operations family (Samuel admin presentation, own chunk). */}
       <Route path="/admin/research" component={AdminResearchRoutes} />
       <Route path="/admin/research/*" component={AdminResearchRoutes} />
-      {/* Canonical public entrypoint for the separate Care and Research paths. */}
-      <Route path="/health" component={HealthRoutes} />
+      <Route path="/health"><Redirect to="/" /></Route>
       <Route path="/r/:code">{({ code }) => <Suspense fallback={<div className="container-x" aria-busy="true" style={{ paddingTop: 96 }} />}><RecommendationRecipient code={code} /></Suspense>}</Route>
-      {/* xenios research (password-gated section, own chunk). The bare path and
-          the multi-segment wildcard both mount the section's own router. */}
-      <Route path="/research" component={ResearchRoutes} />
+      {/* Public clarity entrypoints redirect legacy marketing URLs before the
+          existing Research authority router handles its preserved subroutes. */}
+      <Route path="/research/partners"><Redirect to="/partners" /></Route>
+      <Route path="/research/affiliates"><Redirect to="/partners" /></Route>
+      <Route path="/research/organizations"><Redirect to="/practices" /></Route>
+      <Route path="/research/supplier-access"><Redirect to="/suppliers" /></Route>
+      <Route path="/research/faq"><Redirect to="/faq" /></Route>
+      <Route path="/research/quality"><Redirect to="/quality" /></Route>
+      <Route path="/research/testing"><Redirect to="/quality#testing" /></Route>
+      <Route path="/research/documents"><Redirect to="/quality#documents" /></Route>
+      <Route path="/research/about"><Redirect to="/about" /></Route>
+      <Route path="/research/how-it-works"><Redirect to="/how-it-works" /></Route>
+      <Route path="/research/contact"><Redirect to="/support" /></Route>
+      <Route path="/research/support"><Redirect to="/support" /></Route>
+      <Route path="/research/access-hub"><Redirect to="/" /></Route>
+      <Route path="/research" component={ResearchOverviewPage} />
       <Route path="/research/*" component={ResearchRoutes} />
       <Route path="/care/eligibility" component={CareEligibilityRoutes} />
       <Route path="/care/consent" component={CareConsentRoutes} />
@@ -204,10 +273,8 @@ function Router() {
       <Route path="/telemedicine"><Redirect to="/product" /></Route>
       <Route path="/agents"><Redirect to="/product" /></Route>
       <Route path="/developers"><Redirect to="/ecosystem" /></Route>
-      <Route path="/enterprise"><Redirect to="/contact" /></Route>
+      <Route path="/enterprise"><Redirect to="/practices" /></Route>
       <Route path="/ontology"><Redirect to="/product" /></Route>
-      <Route path="/partners"><Redirect to="/ecosystem" /></Route>
-      <Route path="/faq"><Redirect to="/product" /></Route>
       <Route component={NotFound} />
     </Switch>
   );

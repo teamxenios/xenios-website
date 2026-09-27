@@ -2,12 +2,12 @@ import type { EarlyAccessCartLineRefusal } from "@shared/research/early-access-c
 import type { EarlyAccessCardProduct } from "../EarlyAccessProductCard";
 
 const COPY: Record<EarlyAccessCartLineRefusal["code"], string> = {
-  PRODUCT_NOT_FOUND: "This item is no longer in the current catalogue.",
+  PRODUCT_NOT_FOUND: "This item is no longer in the current catalog.",
   PRODUCT_HELD: "This item is currently held and cannot be ordered.",
   RELEASE_REQUIRED: "This item is not released for ordering.",
-  RELEASE_STALE: "This item's release changed. Review the current catalogue.",
+  RELEASE_STALE: "This item's release changed. Review the current catalog.",
   RELEASE_REVOKED: "This item's release was withdrawn.",
-  PRICE_CHANGED: "The unit price changed. Review the current catalogue price.",
+  PRICE_CHANGED: "The unit price changed. Review the current catalog price.",
   QUANTITY_INVALID: "The selected quantity is not currently available.",
   SUPPLIER_UNAVAILABLE: "The supplier route is not currently available.",
   SHIPPING_UNAVAILABLE: "This destination is not currently served.",
@@ -44,7 +44,7 @@ export function EarlyAccessCartLineIssues({
         })}
       </ul>
       <button type="button" className="btn btn-secondary mt-4" onClick={onReturn}>
-        Return to catalogue
+        Return to catalog
       </button>
     </section>
   );

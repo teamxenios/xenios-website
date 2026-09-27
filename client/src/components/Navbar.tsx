@@ -1,203 +1,192 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { accountEntry, contactEmail, earlyAccessCta, menuGroups, navSocials, primaryNav, type NavLink } from "@/lib/nav";
-import Wordmark from "./Wordmark";
+import { BRAND } from "@/clarity/brand";
 
-const OVERLAY_ID = "nav-mobile-overlay";
+const PRIMARY = [
+  { label: "For Individuals", href: "/individuals" },
+  { label: "For Practices", href: "/practices" },
+  { label: "Partners", href: "/partners" },
+  { label: "How It Works", href: "/how-it-works" },
+  { label: "Quality", href: "/quality" },
+  { label: "About", href: "/about" },
+  { label: "Careers", href: "/careers" },
+] as const;
 
-function SmartLink({ item, className, onClick }: { item: NavLink; className?: string; onClick?: () => void }) {
-  if (item.external) {
-    return (
-      <a href={item.href} className={className} onClick={onClick}>
-        {item.label}
-      </a>
-    );
-  }
-  return (
-    <Link href={item.href} className={className} onClick={onClick}>
-      {item.label}
-    </Link>
-  );
-}
+const MORE = [
+  { label: "Explore Products", href: "/products" },
+  { label: "Check Status", href: "/status" },
+  { label: "Suppliers", href: "/suppliers" },
+  { label: "FAQ", href: "/faq" },
+  { label: "Support", href: "/support" },
+] as const;
+
+const AUDIENCE_MENUS = {
+  "/individuals": [
+    { label: "For Individuals", href: "/individuals" },
+    { label: "Start Care", href: "/care/schedule" },
+    { label: "Explore Products", href: "/products" },
+    { label: "How Research orders work", href: "/research" },
+    { label: "Check Status", href: "/status" },
+  ],
+  "/practices": [
+    { label: "For Practices", href: "/practices" },
+    { label: "How referrals work", href: "/practices/referrals" },
+    { label: "Practice workspace", href: "/practices/workspace" },
+    { label: "Care for your clients", href: "/practices/care" },
+    { label: "Submit Inquiry", href: "/practices#inquiry" },
+  ],
+} as const;
+
+type AudienceMenuKey = keyof typeof AUDIENCE_MENUS;
+
+const OVERLAY_ID = "clarity-navigation";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [audienceMenu, setAudienceMenu] = useState<AudienceMenuKey | null>(null);
   const [location] = useLocation();
+  const headerRef = useRef<HTMLElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
-  const overlayRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const closeRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
-    if (!open) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const t = window.setTimeout(() => closeRef.current?.focus(), 0);
+    setOpen(false);
+    setAudienceMenu(null);
+  }, [location]);
 
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        e.preventDefault();
+  useEffect(() => {
+    if (!audienceMenu) return;
+    function closeOnOutsidePointer(event: PointerEvent) {
+      if (!headerRef.current?.contains(event.target as Node)) setAudienceMenu(null);
+    }
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      const key = audienceMenu;
+      setAudienceMenu(null);
+      window.requestAnimationFrame(() => headerRef.current?.querySelector<HTMLButtonElement>(`[data-audience-menu="${key}"]`)?.focus());
+    }
+    document.addEventListener("pointerdown", closeOnOutsidePointer);
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", closeOnOutsidePointer);
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [audienceMenu]);
+
+  useEffect(() => {
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const focusTimer = window.setTimeout(() => closeRef.current?.focus(), 0);
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
         setOpen(false);
         return;
       }
-      if (e.key !== "Tab") return;
-      const root = panelRef.current;
-      if (!root) return;
-      const focusables = root.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
-      if (!focusables.length) return;
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
+      if (event.key !== "Tab" || !panelRef.current) return;
+      const items = panelRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled])');
+      const first = items.item(0);
+      const last = items.item(items.length - 1);
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
     }
-
     document.addEventListener("keydown", onKey);
     return () => {
+      window.clearTimeout(focusTimer);
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = prevOverflow;
-      window.clearTimeout(t);
+      document.body.style.overflow = previousOverflow;
       triggerRef.current?.focus();
     };
   }, [open]);
 
-  useEffect(() => {
-    setOpen(false);
-  }, [location]);
-
-  function closeMenu() {
-    setOpen(false);
-  }
-
   return (
     <>
-      <header className="sticky top-0 z-40 bg-paper/90 backdrop-blur-md rule-bottom" data-testid="nav-main" style={{ paddingTop: "max(0px, env(safe-area-inset-top))" }}>
-        <div className="container-x max-[480px]:!px-3">
-          <div className="flex items-center justify-between gap-1 sm:gap-4" style={{ minHeight: 64 }}>
-            <span className="hidden sm:inline-flex"><Wordmark size="md" /></span>
-            <Link href="/" aria-label="xenios home" className="inline-flex sm:hidden min-h-[44px] min-w-[44px] items-center justify-center">
-              <span className="wordmark text-2xl" aria-hidden="true"><span className="wordmark-mark" /></span>
-            </Link>
-
-            <nav className="hidden lg:flex items-center gap-6" aria-label="Primary">
-              {primaryNav.map((item) => {
-                const active = location === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    data-testid={`link-nav-${item.label.replace(/[^a-z]+/gi, "-").toLowerCase()}`}
-                    className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-[14px] tracking-[-0.005em] transition-colors ${active ? "text-ink font-semibold" : "text-ink-2 hover:text-pulse"}`}
-                    style={{ fontWeight: active ? 700 : 600 }}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
-
-            <div className="flex items-center gap-1 sm:gap-2">
-              <Link href={accountEntry.signIn.href} className="btn btn-ghost" style={{ height: 44, padding: "0 10px", fontSize: 13 }}>
-                {accountEntry.signIn.label}
-              </Link>
-              <Link href={accountEntry.getAccess.href} className="btn btn-primary" style={{ height: 44, padding: "0 10px", fontSize: 13 }}>
-                {accountEntry.getAccess.label}
-              </Link>
-              <button
-                ref={triggerRef}
-                type="button"
-                onClick={() => setOpen(true)}
-                className="btn btn-ghost"
-                style={{ height: 44, padding: "0 10px", fontSize: 13 }}
-                aria-label="Open full site menu"
-                aria-expanded={open}
-                aria-controls={open ? OVERLAY_ID : undefined}
-                data-testid="button-menu-toggle"
-              >
-                Menu
-              </button>
-            </div>
+      <header ref={headerRef} className="clarity-nav" data-testid="nav-main">
+        <div className="container-x clarity-nav-inner">
+          <Link href="/" aria-label={`${BRAND.publicName} home`} className="clarity-brand-link">
+            <span className="wordmark-mark" aria-hidden="true" />
+            <span className="clarity-brand-name">{BRAND.publicName}</span>
+          </Link>
+          <nav className="clarity-desktop-nav" aria-label="Primary">
+            {PRIMARY.map((item) => <PrimaryNavItem key={item.href} item={item} current={location} openMenu={audienceMenu} setOpenMenu={(value) => { setOpen(false); setAudienceMenu(value); }} />)}
+          </nav>
+          <nav className="clarity-condensed-nav" aria-label="Primary">
+            {PRIMARY.slice(0, 4).map((item) => <PrimaryNavItem key={item.href} item={item} current={location} openMenu={audienceMenu} setOpenMenu={(value) => { setOpen(false); setAudienceMenu(value); }} />)}
+          </nav>
+          <div className="clarity-nav-actions">
+            <Link href="/sign-in" className="clarity-header-link">Sign In</Link>
+            <Link href="/care/schedule" className="btn btn-primary clarity-header-care">Start Care</Link>
+            <button
+              ref={triggerRef}
+              type="button"
+              onClick={() => { setAudienceMenu(null); setOpen(true); }}
+              className="clarity-menu-button"
+              aria-label="Open site menu"
+              aria-expanded={open}
+              aria-controls={open ? OVERLAY_ID : undefined}
+            >Menu</button>
           </div>
         </div>
       </header>
-
       {open && (
-        <div
-          ref={overlayRef}
-          id={OVERLAY_ID}
-          className="nav-overlay"
-          data-testid="nav-menu-overlay"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Site navigation"
-          onMouseDown={(event) => {
-            if (event.target === event.currentTarget) closeMenu();
-          }}
-        >
-          <div ref={panelRef} className="min-h-full flex flex-col bg-paper text-ink px-6 py-5 md:px-10 md:py-8">
-            <div className="flex items-center justify-between gap-4 rule-bottom pb-5">
-              <Wordmark size="md" />
-              <button
-                ref={closeRef}
-                type="button"
-                onClick={closeMenu}
-                aria-label="Close menu"
-                className="btn btn-ghost"
-                style={{ height: 44, padding: "0 14px" }}
-                data-testid="button-menu-close"
-              >
-                Close
-              </button>
+        <div id={OVERLAY_ID} className="clarity-nav-overlay" role="dialog" aria-modal="true" aria-label="Site navigation" onMouseDown={(event) => { if (event.target === event.currentTarget) setOpen(false); }}>
+          <div ref={panelRef} className="clarity-nav-panel">
+            <div className="clarity-nav-panel-head">
+              <span className="clarity-brand-name">{BRAND.publicName}</span>
+              <button ref={closeRef} type="button" onClick={() => setOpen(false)} className="clarity-menu-button" aria-label="Close menu">Close</button>
             </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_2fr] gap-10 lg:gap-16 py-10 flex-1">
-              <div>
-                <p className="mono-cap text-pulse mb-5">FULL SITE MENU</p>
-                <h2 className="display-l max-w-[10ch] mb-6">Find the right path.</h2>
-                <p className="body-l text-ink-2 max-w-[34ch] mb-8">
-                  Product, trust, careers, and investor pages are grouped so coaches and partners can move quickly.
-                </p>
-                <Link href={earlyAccessCta.href} onClick={closeMenu} className="btn btn-primary" data-testid="button-menu-early-access">
-                  {earlyAccessCta.label}
-                </Link>
-                <div className="mt-8 space-y-2">
-                  <a href={`mailto:${contactEmail}`} className="flex min-h-[44px] items-center body-m text-ink hover:text-pulse transition-colors">{contactEmail}</a>
-                  {navSocials.map((social) => (
-                    <a key={social.url} href={social.url} target="_blank" rel="noopener noreferrer" className="flex min-h-[44px] items-center body-m text-ink-2 hover:text-pulse transition-colors">
-                      {social.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-
-              <nav className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8" aria-label="Full site navigation">
-                {menuGroups.map((group) => (
-                  <section key={group.label}>
-                    <p className="mono-cap text-ink-mute mb-5">{group.label}</p>
-                    <div className="space-y-3">
-                      {group.items.map((item) => {
-                        const active = location === item.href;
-                        return (
-                          <SmartLink
-                            key={`${group.label}-${item.href}`}
-                            item={item}
-                            onClick={closeMenu}
-                            className={`flex min-h-[44px] items-center text-[15px] font-600 transition-colors ${active ? "text-pulse" : "text-ink hover:text-pulse"}`}
-                          />
-                        );
-                      })}
-                    </div>
-                  </section>
-                ))}
-              </nav>
+            <p className="mono-cap text-pulse mt-8">CHOOSE A PATH</p>
+            <nav className="clarity-nav-menu" aria-label="Full site navigation">
+              {[...PRIMARY, ...MORE].map((item) => <NavLink key={item.href} {...item} current={location} onClick={() => setOpen(false)} />)}
+            </nav>
+            <div className="clarity-nav-panel-actions">
+              <Link href="/care/schedule" onClick={() => setOpen(false)} className="btn btn-primary">Start Care</Link>
+              <Link href="/products" onClick={() => setOpen(false)} className="btn btn-secondary">Explore Products</Link>
+              <Link href="/sign-in" onClick={() => setOpen(false)} className="btn btn-secondary">Sign In</Link>
             </div>
           </div>
         </div>
       )}
     </>
   );
+}
+
+function PrimaryNavItem({ item, current, openMenu, setOpenMenu }: {
+  item: (typeof PRIMARY)[number];
+  current: string;
+  openMenu: AudienceMenuKey | null;
+  setOpenMenu: (value: AudienceMenuKey | null) => void;
+}) {
+  if (!(item.href in AUDIENCE_MENUS)) return <NavLink {...item} current={current} />;
+  const key = item.href as AudienceMenuKey;
+  const open = openMenu === key;
+  const active = current === key || current.startsWith(`${key}/`);
+  return (
+    <div className="clarity-nav-popover">
+      <button
+        type="button"
+        className={`clarity-nav-link clarity-nav-popover-trigger ${active ? "is-active" : ""}`}
+        aria-expanded={open}
+        data-audience-menu={key}
+        onClick={() => setOpenMenu(open ? null : key)}
+      >
+        {item.label}<span aria-hidden="true" className="clarity-nav-chevron">⌄</span>
+      </button>
+      {open && (
+        <nav className="clarity-nav-popover-panel" aria-label={`${item.label} links`}>
+          {AUDIENCE_MENUS[key].map((menuItem) => (
+            <NavLink key={menuItem.href} {...menuItem} current={current} onClick={() => setOpenMenu(null)} />
+          ))}
+        </nav>
+      )}
+    </div>
+  );
+}
+
+function NavLink({ label, href, current, onClick }: { label: string; href: string; current: string; onClick?: () => void }) {
+  const active = current === href || (href !== "/" && current.startsWith(`${href}/`));
+  return <Link href={href} onClick={onClick} aria-current={active ? "page" : undefined} className={`clarity-nav-link ${active ? "is-active" : ""}`}>{label}</Link>;
 }

@@ -161,7 +161,7 @@ export const FIXTURE_SUPPORT_CASES: readonly SupportCaseSummaryDto[] = Object.fr
     subject: "Shipping address update",
     state: "open" as const,
     lastUpdateAt: "2026-08-25T12:00:00.000Z",
-    responseExpectation: "We reply within one business day.",
+    responseExpectation: "Our team will reply after the request is reviewed.",
   }),
 ]);
 

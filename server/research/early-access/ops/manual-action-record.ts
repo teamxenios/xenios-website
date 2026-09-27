@@ -31,7 +31,7 @@ import type { CommerceResult } from "../commerce/input-guards";
  * its own sentence, and `assertFulfillmentCopyUnmodified` is the enforcement.
  */
 export const EARLY_ACCESS_FULFILLMENT_TARGET_COPY =
-  "Current fulfillment target: within 72 hours after payment verification and product availability confirmation. Tracking will be provided when the shipment is released.";
+  "Tracking will be provided when the shipment is released.";
 
 /**
  * True only for the exact approved string. A caller that has appended a date, a

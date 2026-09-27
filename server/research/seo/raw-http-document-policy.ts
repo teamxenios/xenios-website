@@ -42,28 +42,27 @@ export const RAW_HTTP_NOINDEX_ROBOTS = "noindex,nofollow,noarchive";
 /** Exact non-detail paths in client/public/sitemap.xml. */
 export const RAW_HTTP_GLOBAL_PUBLIC_PATHS = Object.freeze([
   "/",
-  "/product",
+  "/individuals",
+  "/products",
+  "/care",
+  "/practices",
+  "/practices/referrals",
+  "/practices/workspace",
+  "/practices/care",
+  "/partners",
+  "/suppliers",
   "/how-it-works",
-  "/health",
-  "/for-coaches",
-  "/waitlist",
+  "/quality",
+  "/faq",
   "/about",
+  "/support",
   "/careers",
-  "/security",
-  "/compliance",
-  "/investors",
   "/contact",
-  "/book",
-  "/early-interest",
-  "/for-clients",
-  "/for-practitioners",
-  "/storefront",
-  "/network",
-  "/ecosystem",
-  "/manifesto",
-  "/press",
-  "/concepts",
+  "/workspace",
   "/mvps",
+  "/early-interest",
+  "/press",
+  "/investors",
   "/privacy",
   "/terms",
   "/disclosures",
@@ -133,13 +132,13 @@ export const RAW_HTTP_HOMEPAGE_STRUCTURED_DATA = Object.freeze([
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": `${RAW_HTTP_SITE_ORIGIN}/#org`,
-    name: "xenios",
-    alternateName: "Xenios Technologies",
+    name: "Xenios",
+    alternateName: "Xenios Technologies, Inc.",
     legalName: "Xenios Technologies, Inc.",
     url: RAW_HTTP_SITE_ORIGIN,
     logo: `${RAW_HTTP_SITE_ORIGIN}/brand/xenios-mark.png`,
     email: "team@xeniostechnology.com",
-    description: "An AI workspace for health and performance professionals.",
+    description: "Care, research products, and tools for the professionals who support people's health.",
     areaServed: "US",
     foundingLocation: Object.freeze({
       "@type": "Place",
@@ -159,7 +158,7 @@ export const RAW_HTTP_HOMEPAGE_STRUCTURED_DATA = Object.freeze([
     "@context": "https://schema.org",
     "@type": "WebSite",
     url: RAW_HTTP_SITE_ORIGIN,
-    name: "xenios",
+    name: "Xenios",
     publisher: Object.freeze({ "@id": `${RAW_HTTP_SITE_ORIGIN}/#org` }),
   }),
 ] as const);
@@ -189,8 +188,68 @@ const metadata = (title: string, description: string): RawHttpDocumentMetadata =
 const RAW_HTTP_LITERAL_PUBLIC_METADATA: Readonly<Record<string, RawHttpDocumentMetadata>> =
   Object.freeze({
     "/": metadata(
-      "xenios | The operating system for proactive health",
-      "The professional stays in front. Xen and Athena carry the work behind them.",
+      "Care and research products | Xenios",
+      "Start a Care request or explore products for research use through two clearly separated paths.",
+    ),
+    "/individuals": metadata(
+      "For Individuals | Xenios",
+      "Choose the Xenios path that fits: Care or research products.",
+    ),
+    "/products": metadata(
+      "Research products | Xenios",
+      "Explore Xenios Care, research-product and practice pathways.",
+    ),
+    "/care": metadata(
+      "Start Care with a short request | Xenios Care",
+      "Start with a short Care request. A person on our team reviews it and contacts you about next steps.",
+    ),
+    "/research": metadata(
+      "How research orders work | Xenios",
+      "Request, confirm, verify and track a Xenios research order.",
+    ),
+    "/practices": metadata(
+      "For Practices | Xenios",
+      "Refer clients and learn how approved Xenios practice access works.",
+    ),
+    "/practices/referrals": metadata(
+      "How referrals work | Xenios",
+      "How Xenios practice referrals, credited orders and commission work.",
+    ),
+    "/practices/workspace": metadata(
+      "Practice workspace | Xenios",
+      "What approved practices can see in their Xenios workspace.",
+    ),
+    "/practices/care": metadata(
+      "Care for your clients | Xenios",
+      "Understand the boundary between a practice relationship and Xenios Care.",
+    ),
+    "/partners": metadata(
+      "Partners | Xenios",
+      "Learn about Xenios referral and strategic partnership paths.",
+    ),
+    "/suppliers": metadata(
+      "Suppliers | Xenios",
+      "Submit a supplier or fulfilment inquiry to Xenios.",
+    ),
+    "/quality": metadata(
+      "Quality and documentation | Xenios",
+      "Learn how Xenios lot records and secure order documents work.",
+    ),
+    "/faq": metadata(
+      "Questions | Xenios",
+      "Straight answers about Xenios Care, research products, practices, partners and accounts.",
+    ),
+    "/support": metadata(
+      "Support | Xenios",
+      "Find the right Xenios support path.",
+    ),
+    "/workspace": metadata(
+      "Workspace for coaches | Xenios",
+      "The Xenios workspace for health and performance professionals.",
+    ),
+    "/how-it-works": metadata(
+      "How It Works | Xenios",
+      "See the Care and research-product paths side by side.",
     ),
     "/product": metadata(
       "Product, xenios",
@@ -201,12 +260,12 @@ const RAW_HTTP_LITERAL_PUBLIC_METADATA: Readonly<Record<string, RawHttpDocumentM
       "xenios helps high-touch coaches manage more clients without losing the human relationship. The AI drafts, the coach decides.",
     ),
     "/about": metadata(
-      "About, xenios",
-      "Learn why xenios exists, who is building it, and how the company approaches trust, client relationships, and proactive health infrastructure.",
+      "About Xenios | Xenios",
+      "Xenios builds Care, research-product and professional-support technology.",
     ),
     "/careers": metadata(
-      "Careers, xenios",
-      "Open founding roles and the founding coach cohort at xenios.",
+      "Work with Xenios | Xenios",
+      "Submit a general-interest application to Xenios.",
     ),
     "/security": metadata(
       "Security, xenios",
@@ -236,14 +295,6 @@ const RAW_HTTP_LITERAL_PUBLIC_METADATA: Readonly<Record<string, RawHttpDocumentM
     "/disclosures": metadata(
       "Disclosures - xenios",
       "Cookie and tracking, AI disclosure, medical disclaimer, and data deletion for xenios.",
-    ),
-    "/health": metadata(
-      "Xenios | Care + Research",
-      "Begin provider-guided Care for personal health or explore the separate evidence-led Xenios Research pathway for legitimate nonclinical work.",
-    ),
-    "/research": metadata(
-      "Xenios Research | Clear, evidence-aware research access",
-      "Explore Xenios Research, understand product and documentation status, and choose the correct Research, Care, organization, or partner pathway.",
     ),
     "/research/access-hub": metadata(
       "Access Xenios Research",
@@ -361,12 +412,28 @@ const KNOWN_NOINDEX_EXACT_PATHS = Object.freeze([
   "/developers",
   "/enterprise",
   "/ontology",
-  "/partners",
-  "/faq",
+  "/health",
+  "/status",
+  "/sign-in",
+  "/activate",
+  "/partners/apply",
   "/careers/innovative-product-builder",
+  "/product",
+  "/for-coaches",
+  "/for-clients",
+  "/storefront",
+  "/network",
+  "/ecosystem",
+  "/for-practitioners",
+  "/manifesto",
+  "/waitlist",
+  "/security",
+  "/compliance",
+  "/book",
+  "/concepts",
+  "/workspace/how-it-works",
 
-  // Every exact Care document remains noindex in the client contract.
-  "/care",
+  // Care actions and private-adjacent surfaces remain noindex; /care is public.
   "/care/schedule",
   "/care/portal",
   "/care/how-it-works",
@@ -419,6 +486,8 @@ const KNOWN_NOINDEX_EXACT_PATHS = Object.freeze([
 ] as const);
 
 const KNOWN_NOINDEX_PATTERNS = Object.freeze([
+  "/products/:slug",
+  "/careers/:slug",
   "/research/early-access/order-request/confirmation/:publicReference",
   "/research/early-access/order-request/:publicReference",
   "/research/products/:slug",

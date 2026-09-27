@@ -14,6 +14,7 @@ export const FOUNDER_COMMAND_CENTER_ADMIN_PATH =
 
 export const FOUNDER_COMMAND_CENTER_AREA_IDS = [
   "applications",
+  "business_inquiries",
   "care_requests",
   "assisted_orders",
   "payment_review",
@@ -32,6 +33,7 @@ export type FounderCommandCenterAreaId =
   (typeof FOUNDER_COMMAND_CENTER_AREA_IDS)[number];
 
 export const FOUNDER_COMMAND_CENTER_ALLOWED_ACTION_HREFS = [
+  "/admin",
   "/admin/research/applications",
   "/admin/research/care-requests",
   "/admin/research/assisted-orders",
@@ -65,6 +67,14 @@ export const FOUNDER_COMMAND_CENTER_AREA_DEFINITIONS = [
     workflowLabel: "Application review",
     workflowHref: "/admin/research/applications",
     actionLabel: "Open applications",
+  },
+  {
+    area: "business_inquiries",
+    label: "Business inquiries",
+    scope: "New practice, partner, supplier, strategic, and career inquiries awaiting founder review.",
+    workflowLabel: "Business inquiry operations",
+    workflowHref: "/admin",
+    actionLabel: "Open business inquiries",
   },
   {
     area: "care_requests",

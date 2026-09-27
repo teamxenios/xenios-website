@@ -22,6 +22,36 @@ function referenceFromPath(path: string): string {
 
 const PUBLIC_REFERENCE = /^XRR-\d{8}-[0-9A-F]{10}$/u;
 
+function customerStatus(status: AssistedOrderStatusView["status"]): { label: string; line: string } {
+  switch (status) {
+    case "submitted":
+    case "reviewing":
+      return { label: "Received", line: "We're confirming availability." };
+    case "waiting_on_customer":
+    case "identity_requested":
+    case "agreements_pending":
+      return { label: "Action needed", line: "Review the requested next step below." };
+    case "identity_received":
+    case "agreements_complete":
+      return { label: "In review", line: "We're checking what you sent." };
+    case "payment_pending":
+      return { label: "Awaiting payment", line: "Use the payment details we emailed." };
+    case "payment_review":
+      return { label: "Verifying payment", line: "We verify every payment by hand." };
+    case "paid":
+    case "supplier_processing":
+      return { label: "Preparing your order", line: "Your payment is confirmed." };
+    case "shipped":
+      return { label: "Shipped", line: "Tracking appears below when it is available." };
+    case "delivered":
+      return { label: "Delivered", line: "The order is recorded as delivered." };
+    case "closed":
+      return { label: "Closed", line: "This order is complete." };
+    case "cancelled":
+      return { label: "Cancelled", line: "Contact Support if this is unexpected." };
+  }
+}
+
 export function AssistedOrderStatusPage() {
   const [location] = useLocation();
   const { memberToken, memberChecking } = useResearch();
@@ -78,7 +108,7 @@ function VerifiedRequestStatus({ reference, memberToken, memberChecking }: {
   return (
     <div className="xenios-order-page min-w-0" style={{ overflowWrap: "anywhere" }}>
       <header className="xenios-order-hero">
-        <p className="xenios-order-eyebrow">Early Access request</p>
+        <p className="xenios-order-eyebrow">Order request</p>
         <h1 data-testid="order-status-heading" style={{ overflowWrap: "anywhere" }}>{status ? status.publicReference : "Request status"}</h1>
         <p>
           {status
@@ -99,7 +129,7 @@ function VerifiedRequestStatus({ reference, memberToken, memberChecking }: {
         <>
           <section className="xenios-order-panel">
             <div className="xenios-order-card__header" style={{ flexWrap: "wrap" }}>
-              <div><p className="xenios-order-eyebrow">Current status</p><h2>{status.status.replaceAll("_", " ")}</h2></div>
+              <div><p className="xenios-order-eyebrow">Current status</p><h2>{customerStatus(status.status).label}</h2><p>{customerStatus(status.status).line}</p></div>
               <strong data-testid="assisted-request-status-estimate">Estimate: {money(status.estimatedTotalCents)}</strong>
             </div>
             {status.actionRequired ? <div className="xenios-order-notice"><strong>Action required:</strong> {status.actionRequired}</div> : null}
@@ -118,7 +148,7 @@ function VerifiedRequestStatus({ reference, memberToken, memberChecking }: {
             <ol className="xenios-order-timeline">
               {status.timeline.map((event, index) => (
                 <li key={`${event.occurredAt}-${index}`}>
-                  <strong>{event.status.replaceAll("_", " ")}</strong>
+                  <strong>{customerStatus(event.status).label}</strong>
                   <time dateTime={event.occurredAt}>{new Date(event.occurredAt).toLocaleString()}</time>
                   {event.customerMessage ? <p>{event.customerMessage}</p> : null}
                 </li>
@@ -148,7 +178,7 @@ function VerifiedRequestStatus({ reference, memberToken, memberChecking }: {
       ) : null}
       <p>
         <a className="xenios-order-return-link" href="/research/early-access">
-          Return to Early Access
+          Explore Products
         </a>
       </p>
     </div>

@@ -122,15 +122,15 @@ export function shippingProblems(shipTo: EarlyAccessShipTo): string[] {
  */
 const REFUSAL_COPY: Record<string, string> = {
   SESSION_REQUIRED:
-    "Your private session has ended. Unlock Early Access again, then return to the catalogue. Nothing was ordered or charged.",
+    "Your research-ordering session has ended. Start a new session, then return to the catalog. Nothing was ordered or charged.",
   IDENTITY_REQUIRED:
-    "Your access session could not be prepared. Sign out, unlock again, and retry. Nothing was ordered or charged.",
+    "Your research-ordering session could not be prepared. Sign out, start a new session, and retry. Nothing was ordered or charged.",
   AGREEMENT_REQUIRED:
     "Accept the Research Use Policy above before placing the order. Nothing was ordered or charged.",
   PRODUCT_HELD: "This product is currently held and cannot be ordered.",
   RELEASE_REQUIRED: "This product is not released for ordering.",
   RELEASE_STALE:
-    "The product release changed while you were reviewing. Return to the catalogue and start from the current listing.",
+    "The product release changed while you were reviewing. Return to the catalog and start from the current listing.",
   RELEASE_REVOKED:
     "This product's release was withdrawn before your order was created. Nothing was ordered or charged.",
   QUANTITY_EXCEEDED:
@@ -601,8 +601,8 @@ export function EarlyAccessCheckoutJourney({
           data-testid={`${testId}-reference-continuity`}
         >
           <p className="body-s text-ink-2 max-w-[62ch]">
-            Signing in does not itself link this Early Access order to your account. This same
-            authorized Early Access session remains the authority for viewing its current status.
+            Signing in does not itself link this research order to your account. This same
+            authorized research-ordering session remains the authority for viewing its current status.
           </p>
           <div className="flex flex-wrap gap-2">
             <Link className="btn btn-secondary" href="/research/account/orders">
@@ -825,7 +825,7 @@ export function EarlyAccessCheckoutJourney({
         <div className="mt-4 card min-w-0" role="status" data-testid={`${testId}-stranded`}>
           <p className="body-s text-ink-2 max-w-[62ch]">
             An earlier order attempt from this session did not finish, for a different product or
-            quantity. To resume it safely, return to the catalogue and re-select that exact product
+            quantity. To resume it safely, return to the catalog and re-select that exact product
             and quantity. To abandon it instead, discard it here; nothing already created on the
             server is deleted by discarding.
           </p>
@@ -924,7 +924,7 @@ export function EarlyAccessCheckoutJourney({
         )}
         <div className="sm:col-span-2 mt-2 flex flex-wrap gap-2">
           <button type="button" className="btn btn-secondary" onClick={onBack} data-testid={`${testId}-back`}>
-            Back to catalogue
+            Back to catalog
           </button>
           <button type="submit" className="btn btn-primary" data-testid={`${testId}-to-review`}>
             Continue to review

@@ -44,7 +44,7 @@ export function AssistedOrderConfirmationPage() {
           </p>
           <div className="xenios-order-actions">
             <Link className="xenios-order-return-link" href="/research/early-access">
-              Return to Early Access
+              Explore Products
             </Link>
             {reference ? (
               <a className="xenios-order-button" href={statusHref}>
@@ -91,9 +91,9 @@ export function AssistedOrderConfirmationPage() {
         </div>
         <div className="xenios-order-actions">
           <a className="xenios-order-return-link" href="/research/early-access">
-            Return to Early Access
+            Explore Products
           </a>
-          {reference ? <a className="xenios-order-button" href={statusHref}>View request status</a> : null}
+          {reference ? <a className="xenios-order-button" href={statusHref}>Check Status</a> : null}
         </div>
         <p className="xenios-order-small">Questions: research@xeniostechnology.com</p>
       </section>

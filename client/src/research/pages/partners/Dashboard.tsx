@@ -36,8 +36,8 @@ const UNAVAILABLE_SUMMARY = "The current dashboard figures could not be loaded."
 const ROLE_LABEL: Record<PartnerDashboardDto["role"], string> = {
   member_referral: "Member referral",
   affiliate: "Affiliate",
-  research_rep: "Research Rep",
-  senior_research_rep: "Senior Research Rep",
+  research_rep: "Xenios partner",
+  senior_research_rep: "Senior Xenios partner",
   organization_partner: "Organization partner",
   private_community_partner: "Private community partner",
   professional_partner: "Professional partner",

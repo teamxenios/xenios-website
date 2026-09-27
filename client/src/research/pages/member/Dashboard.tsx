@@ -165,7 +165,7 @@ const AREA_GROUPS: Array<{ heading: string; links: Array<{ href: string; label: 
       { href: MEMBER_ROUTES.products, label: "Products" },
       // The Early Access catalog/cart surface. Navigation only: that surface
       // runs its own server-side session gate and decides its own access.
-      { href: ACCESS_ROUTES.earlyAccess, label: "Early Access" },
+      { href: ACCESS_ROUTES.earlyAccess, label: "Research ordering" },
       { href: MEMBER_ROUTES.orders, label: "Orders" },
       { href: MEMBER_ROUTES.subscriptions, label: "Subscriptions" },
       { href: MEMBER_ROUTES.guides, label: "Guides" },

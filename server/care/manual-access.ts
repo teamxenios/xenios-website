@@ -96,7 +96,6 @@ export function careManualAccessAvailability(
     acceptingRequests:
       readiness.persistenceReady === true && readiness.notificationsReady === true,
     workflow: "manual_human_follow_up",
-    typicalResponse: "one_business_day",
     clinicalHandoff: "separate_secure_step_after_review",
   };
 }
@@ -197,7 +196,7 @@ async function sendCareAccessConfirmation(
 
 We received your Xenios Care access request. Your reference is ${reference}.
 
-A human on the Xenios team will review your contact and routing details and follow up through your preferred contact method, typically within one business day. This request is not a medical intake, appointment, clinician-patient relationship, treatment decision, or prescription.
+A human on the Xenios team will review your contact and routing details and follow up through your preferred contact method. This request is not a medical intake, appointment, clinician-patient relationship, treatment decision, or prescription.
 
 Do not reply with symptoms, diagnoses, medications, medical history, or other medical information. If an appropriate clinical next step is available, we will direct you to an authorized secure system.
 
@@ -213,7 +212,7 @@ The Xenios team
         <h1 style="font-size:30px;line-height:1.1;margin:0 0 20px;">We received your request.</h1>
         <p style="font-size:16px;line-height:1.6;">Hi ${safeFirstName},</p>
         <p style="font-size:16px;line-height:1.6;">Your reference is <strong>${safeReference}</strong>.</p>
-        <p style="font-size:16px;line-height:1.6;">A human on the Xenios team will review your contact and routing details and follow up through your preferred contact method, typically within one business day.</p>
+        <p style="font-size:16px;line-height:1.6;">A human on the Xenios team will review your contact and routing details and follow up through your preferred contact method.</p>
         <p style="font-size:16px;line-height:1.6;"><strong>This request is not a medical intake, appointment, clinician-patient relationship, treatment decision, or prescription.</strong></p>
         <p style="font-size:16px;line-height:1.6;">Do not reply with symptoms, diagnoses, medications, medical history, or other medical information. If an appropriate clinical next step is available, we will direct you to an authorized secure system.</p>
         <p style="font-size:14px;line-height:1.6;color:#555;">If you may be experiencing a medical emergency, call 911 in the United States or contact your local emergency services now.</p>

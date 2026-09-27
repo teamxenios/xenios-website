@@ -214,7 +214,7 @@ export type MasterOfferingAction =
        * no payment, and no quantity commitment.
        */
       kind: "request_early_access_purchase";
-      label: "Request Early Access Purchase";
+      label: "Request Order";
       href: string;
     }
   | {

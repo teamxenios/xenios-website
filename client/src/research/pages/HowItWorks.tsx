@@ -1,134 +1,63 @@
 import { Link } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import { ResearchPublicShell } from "../ui/shells";
-import { PublicBoundaryNote } from "./PublicEditorialNav";
 
-const journey = [
-  {
-    title: "Choose Care or Research",
-    body: "Use Care for personal health. Use Research for legitimate nonclinical work.",
-  },
-  {
-    title: "Create or verify your account",
-    body: "Care begins with a public access request that captures routing details. Research verifies its own membership, agreements, and access requirements.",
-  },
-  {
-    title: "Complete the required information",
-    body: "The public Care request is nonclinical. If an appropriate pathway is available, a separate secure handoff may collect information for clinical review. Research presents exact product identity, documentation, and Research-use requirements.",
-  },
-  {
-    title: "Receive the appropriate review",
-    body: "A U.S.-licensed clinician reviews Care. Research actions are governed by Product Control, documentation, availability, and account authority.",
-  },
-  {
-    title: "Continue only when authorized",
-    body: "A clinician may prescribe when clinically appropriate. A pharmacy may fulfill when serviceable. A Research request or order proceeds only when its own gates pass.",
-  },
-  {
-    title: "Follow status and support",
-    body: "Use the appropriate account, provider, pharmacy, Research, and support sources for updates, documents, tracking, follow-up, and exceptions.",
-  },
-] as const;
-
-const qualityFlow = [
-  "Receive and inspect",
-  "Capture exact SKU and lot",
-  "Quarantine pending review",
-  "Review applicable documents",
-  "Record testing where applicable",
-  "Release, hold, or mark unavailable",
-  "Pick, pack, ship, and track only from durable evidence",
-] as const;
-
-const pathwayCards = [
-  {
-    title: "Xenios Care",
-    body: "Start with a short, nonclinical access request. If an appropriate pathway is available, Xenios may provide a separate secure handoff for independent clinical review. No request, product interest, or payment guarantees treatment or a prescription.",
-    href: "/care/schedule",
-    label: "Start Care request",
-  },
-  {
-    title: "Xenios Research",
-    body: "Review exact products, variants, evidence, documentation, and Research-only access without turning a Research listing into personal medical guidance.",
-    href: "/research/access-hub",
-    label: "Explore Research",
-  },
-  {
-    title: "Organizations and partners",
-    body: "Organizations, affiliates, suppliers, and strategic partners begin with context, eligibility, compliance, and human review.",
-    href: "/research/support",
-    label: "Ask about partnership access",
-  },
+const researchSteps = [
+  ["Request an order", "Choose the exact product and size, then send an order request."],
+  ["We confirm availability", "We review the request and email your quote and payment details."],
+  ["We verify payment", "We confirm your payment by hand before we release your order."],
+  ["We send tracking", "We email your tracking when your order ships."],
 ] as const;
 
 export default function HowItWorks() {
   return (
     <>
       <SeoHead
-        title="How Xenios Care + Research works"
-        description="See the separate journeys for provider-guided Care and legitimate nonclinical Research access, from account and intake to review, fulfillment, documentation, and support."
+        title="How research orders work | Xenios"
+        description="Four clear steps from a research order request to tracking."
         path="/research/how-it-works"
       />
       <ResearchPublicShell
-        eyebrow="How Xenios works"
-        title="Two pathways. Clear authority at every step."
-        lead="Care and Research may share account, status, and support infrastructure, but they do not share clinical authority, product-use claims, prescribing, or fulfillment rules."
+        eyebrow="Research orders"
+        title="How research orders work"
+        lead="Research products are sold for research use only. There's no clinical review, and nothing here is medical advice."
       >
-        <ol className="grid gap-4 mt-8" aria-label="Xenios Research journey">
-          {journey.map((step, index) => (
-            <li className="card" key={step.title}>
+        <ol className="grid gap-4 mt-8" aria-label="Research order steps">
+          {researchSteps.map(([title, body], index) => (
+            <li className="card" key={title}>
               <p className="mono-label text-ink-mute">Step {String(index + 1).padStart(2, "0")}</p>
-              <h2 className="body-l font-700 mt-2">{step.title}</h2>
-              <p className="body-s text-ink-2 mt-3 max-w-[68ch]">{step.body}</p>
+              <h2 className="body-l font-700 mt-2">{title}</h2>
+              <p className="body-s text-ink-2 mt-3 max-w-[68ch]">{body}</p>
             </li>
           ))}
         </ol>
 
-        <section className="mt-10" aria-labelledby="pathway-choices">
-          <p className="mono-label text-ink-mute">Common pathways</p>
-          <h2 id="pathway-choices" className="display-s mt-2">One platform, separate authorities.</h2>
-          <div className="grid gap-4 mt-6 public-editorial-grid">
-            {pathwayCards.map((pathway) => (
-              <article className="card flex flex-col" key={pathway.title}>
-                <h3 className="body-l font-700">{pathway.title}</h3>
-                <p className="body-s text-ink-2 mt-3">{pathway.body}</p>
-                <div className="mt-5" style={{ marginTop: "auto", paddingTop: 20 }}>
-                  <Link href={pathway.href} className="btn btn-secondary public-editorial-action">{pathway.label}</Link>
-                </div>
-              </article>
-            ))}
-          </div>
+        <section className="grid gap-4 mt-10 md:grid-cols-2" aria-label="Payment and tracking">
+          <article className="card">
+            <p className="mono-label text-ink-mute">Payment</p>
+            <h2 className="body-l font-700 mt-2">We send payment details after confirmation.</h2>
+            <p className="body-s text-ink-2 mt-3">After we confirm your order, we email payment details. We verify every payment by hand before we release your order.</p>
+          </article>
+          <article className="card">
+            <p className="mono-label text-ink-mute">Tracking</p>
+            <h2 className="body-l font-700 mt-2">Tracking arrives when the order ships.</h2>
+            <p className="body-s text-ink-2 mt-3">We email your tracking when your order ships.</p>
+          </article>
         </section>
 
-        <section className="card bg-paper-2 mt-10" aria-labelledby="quality-flow">
-          <p className="mono-label text-ink-mute">Quality checkpoint model</p>
-          <h2 id="quality-flow" className="body-l font-700 mt-2">A checkpoint is not a claim.</h2>
-          <p className="body-s text-ink-2 mt-3 max-w-[68ch]">
-            This intended checkpoint sequence makes status easier to evaluate. It does not imply that every offering has completed every checkpoint or received every kind of test.
-          </p>
-          <ol className="mt-5 grid gap-2">
-            {qualityFlow.map((step, index) => (
-              <li className="flex gap-3 items-start" key={step}>
-                <span className="mono-label text-ink-mute" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-                <span className="body-s text-ink-2">{step}</span>
-              </li>
-            ))}
-          </ol>
+        <section className="card bg-paper-2 mt-10" aria-labelledby="research-care-separation">
+          <p className="mono-label text-ink-mute">Separate pathways</p>
+          <h2 id="research-care-separation" className="body-l font-700 mt-2">A research order never unlocks Care.</h2>
+          <p className="body-s text-ink-2 mt-3 max-w-[68ch]">Ordering research products doesn't give you access to Care. Care starts with its own request.</p>
         </section>
 
-        <div className="mt-10">
-          <PublicBoundaryNote />
-        </div>
-
-        <section className="card mt-10" aria-labelledby="how-next">
-          <p className="mono-label text-ink-mute">Ready to continue</p>
-          <h2 id="how-next" className="body-l font-700 mt-2">Choose Care or Research.</h2>
-          <p className="body-s text-ink-2 mt-3 max-w-[64ch]">
-            Begin with the pathway that matches your need. Each source remains responsible for its own decisions and status.
-          </p>
+        <section className="card mt-10" aria-labelledby="research-next-step">
+          <p className="mono-label text-ink-mute">Next step</p>
+          <h2 id="research-next-step" className="body-l font-700 mt-2">Explore products or check an existing request.</h2>
           <div className="mt-5 public-editorial-actions">
-            <Link href="/care/schedule" className="btn btn-primary public-editorial-action">Start Care request</Link>
-            <Link href="/research/access-hub" className="btn btn-secondary public-editorial-action">Explore Research</Link>
+            <Link href="/products" className="btn btn-primary public-editorial-action">Explore Products</Link>
+            <Link href="/status" className="btn btn-secondary public-editorial-action">Check Status</Link>
+            <Link href="/research/support" className="btn btn-ghost public-editorial-action">Contact Support</Link>
           </div>
         </section>
       </ResearchPublicShell>

@@ -49,7 +49,7 @@ export function EarlyAccessCatalogGrid({
     return (
       <section data-testid={testId} data-row-count={0}>
         <p data-testid={`${testId}-empty`}>
-          The research catalogue is not available right now. Nothing has been charged and no
+          The research catalog is not available right now. Nothing has been charged and no
           order has been placed. Please contact us and we will confirm what is available.
         </p>
       </section>

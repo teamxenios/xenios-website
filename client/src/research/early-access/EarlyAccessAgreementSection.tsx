@@ -252,8 +252,8 @@ export function EarlyAccessAgreementSection({
     return (
       <section data-testid={testId} data-state="locked">
         <p className="body-s text-ink-2" data-testid={`${testId}-locked`}>
-          Your private session has ended. Unlock again to review and accept the Research Use
-          Policy. Nothing has been ordered or charged.
+          Your research-ordering session has ended. Start a new session to review and accept the
+          Research Use Policy. Nothing has been ordered or charged.
         </p>
       </section>
     );
@@ -267,7 +267,7 @@ export function EarlyAccessAgreementSection({
     return (
       <section data-testid={testId} data-state="unverified">
         <p className="body-s text-ink-2 max-w-[62ch]" data-testid={`${testId}-unverified`}>
-          Your private access session is active. Complete identity verification before reviewing
+          Your research-ordering session is active. Complete identity verification before reviewing
           prices, accepting the Research Use Policy, or placing an order. Nothing has been ordered
           or charged.
         </p>
@@ -422,7 +422,7 @@ export function EarlyAccessAgreementSection({
           className="body-s text-ink-2 mt-3"
           data-testid={`${testId}-accepted`}
         >
-          You have accepted the Research Use Policy. You can continue to the research catalogue.
+          You have accepted the Research Use Policy. You can continue to the research catalog.
         </p>
       ) : (
         <div className="mt-6 grid gap-4 min-w-0">

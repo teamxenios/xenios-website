@@ -101,7 +101,7 @@ export function createMemoryCustomerAccountPorts(
           subject: input.subject,
           state: "open",
           lastUpdateAt: new Date(0).toISOString(),
-          responseExpectation: "We reply within one business day.",
+          responseExpectation: "Our team will reply after the request is reviewed.",
         };
         opened.push(created);
         return created;

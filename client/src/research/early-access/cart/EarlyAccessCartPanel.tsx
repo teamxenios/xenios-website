@@ -62,9 +62,9 @@ export function EarlyAccessCartPanel({
   return (
     <section className="grid gap-5" aria-labelledby="early-access-cart-heading">
       <div>
-        <p className="mono-cap text-pulse">Private Early Access</p>
+        <p className="mono-cap text-pulse">Research ordering</p>
         <h2 id="early-access-cart-heading" className="display-xs mt-2">Your cart</h2>
-        <p className="body-s text-ink-mute mt-2">Prices shown here are the latest catalogue unit prices. The server confirms every line and the final payable total before an order is created.</p>
+        <p className="body-s text-ink-mute mt-2">Prices shown here are the latest catalog unit prices. The server confirms every line and the final payable total before an order is created.</p>
       </div>
       {rows.length === 0 ? (
         <div className="card p-5"><p>Your cart is empty.</p><button type="button" className="btn btn-primary mt-4" onClick={onContinueShopping}>Browse products</button></div>

@@ -295,7 +295,7 @@ export interface SessionsPayload {
 // ---------------------------------------------------------------------------
 
 const AGREEMENT_TITLES: Record<AgreementKey, string> = {
-  partner_agreement: "Research Rep agreement",
+  partner_agreement: "Partner agreement",
   code_of_conduct: "Code of conduct",
   advertising_and_claims: "Advertising and claims policy",
   privacy_and_data_handling: "Privacy and data handling policy",

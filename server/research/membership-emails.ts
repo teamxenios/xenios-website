@@ -47,12 +47,16 @@ export function statusUrl(token: string): string {
   return `${SITE}/research/apply/status?token=${encodeURIComponent(token)}`;
 }
 
+export function activationUrl(token: string): string {
+  return `${SITE}/activate?token=${encodeURIComponent(token)}`;
+}
+
 export function sendApprovedCustomerClaim(input: { email: string; firstName: string; token: string; approvalExpiresAt: Date; idempotencyKey: string }) {
   const expires = input.approvalExpiresAt.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
   return send(input.email, "Your Xenios Health account access is approved", `Hi ${input.firstName},
 
 Your customer account access has been approved. Open your secure link to finish setting up your account:
-${statusUrl(input.token)}
+${activationUrl(input.token)}
 
 If you already have a sign-in for this email, sign in normally and reopen the link to continue. This link is available until ${expires}.
 
@@ -110,7 +114,7 @@ Your application to xenios research has been approved.
 The next step is to activate your membership: a one-time $50 activation fee plus the $25 monthly membership. After activation, you will complete the in-depth Whole-Life Onboarding so xenios can build a plan around your actual schedule, environment, priorities, and available resources.
 
 Activate your membership:
-${statusUrl(input.token)}
+${activationUrl(input.token)}
 
 Your approval expires on ${date}. Membership does not guarantee access to every product or professional pathway.
 

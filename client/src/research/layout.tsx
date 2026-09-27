@@ -2,6 +2,7 @@ import { useState, type FormEvent, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { isAccountOrderDetailPath } from "./account-portal/routes";
 import Wordmark from "@/components/Wordmark";
+import PublicShell from "@/clarity/PublicShell";
 import {
   isResearchAccessStatePath,
   isResearchActivatePath,
@@ -13,10 +14,7 @@ import { useResearch } from "./core";
 import { ACCOUNT_PORTAL_ROUTES } from "./lib/routes";
 import { isPublicLotRoutePath } from "./quality/routes";
 import { safeReferralDestination } from "@shared/research/referral-v1";
-import {
-  PublicEditorialFooter,
-  PublicEditorialNav,
-} from "./pages/PublicEditorialNav";
+import { PublicEditorialNav } from "./pages/PublicEditorialNav";
 import "./layout-touch-targets.css";
 
 // xenios research: section chrome. Three modes by route (canonical gateway
@@ -148,23 +146,12 @@ function MinimalChrome({ children }: { children: ReactNode }) {
   const normalizedLocation = normalizeResearchPath(location) ?? undefined;
 
   return (
-    <div className="flex flex-col" style={{ minHeight: "100dvh" }}>
-      <header className="rule-bottom" style={{ paddingTop: "max(0px, env(safe-area-inset-top))" }}>
-        <div className="container-x flex items-center justify-between research-minimal-header-row" style={{ minHeight: 60 }}>
-          <Link href="/research" className="wordmark research-chrome-target research-chrome-wordmark" style={{ fontSize: 18, textDecoration: "none" }} data-testid="link-research-home">
-            <span className="wordmark-mark" aria-hidden="true"></span>
-            <span className="wordmark-text">xenios</span>
-            <span className="text-ink-mute" style={{ fontWeight: 600 }}>research</span>
-          </Link>
-          <Link href="/research" className="body-s text-ink-mute hover:text-pulse transition-colors research-chrome-target">Back to gateway</Link>
-        </div>
-        <div className="container-x" style={{ paddingBottom: 12 }}>
-          <PublicEditorialNav current={normalizedLocation} />
-        </div>
-      </header>
-      <main className="flex-1">{children}</main>
-      <PublicEditorialFooter />
-    </div>
+    <PublicShell>
+      <div className="container-x rule-bottom" style={{ paddingTop: 12, paddingBottom: 12 }}>
+        <PublicEditorialNav current={normalizedLocation} />
+      </div>
+      {children}
+    </PublicShell>
   );
 }
 

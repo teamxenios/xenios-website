@@ -72,7 +72,7 @@ const GATE: Readonly<Record<EarlyAccessAgreementStanding, EarlyAccessAgreementGa
     satisfied: false,
     actionable: false,
     detail:
-      "Your private session has ended, so your agreements cannot be recorded. Unlock again to continue. Nothing has been ordered or charged.",
+      "Your research-ordering session has ended, so your agreements cannot be recorded. Start a new session to continue. Nothing has been ordered or charged.",
   }),
   unverified: Object.freeze({
     satisfied: false,

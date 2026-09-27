@@ -279,7 +279,7 @@ export function renderEarlyAccessOutboxEmail(
       const lines = renderLines(payload.lines);
       const text = [
         `Hello ${name},`,
-        `Your Early Access checkout ${checkout} is reserved. It is not submitted yet, and nothing has been charged.`,
+        `Your research checkout ${checkout} is reserved. It is not submitted yet, and nothing has been charged.`,
         lines ? `What you reserved:\n${lines}` : "",
         str(payload, "invoiceNumber") ? `Invoice: ${str(payload, "invoiceNumber")}` : "",
         str(payload, "amountDueDisplay") ? `Amount due: ${str(payload, "amountDueDisplay")}` : "",
@@ -292,7 +292,7 @@ export function renderEarlyAccessOutboxEmail(
       ]
         .filter((part) => part.length > 0)
         .join("\n\n");
-      return { subject: `Your Early Access checkout ${checkout} is reserved`, text };
+      return { subject: `Your research checkout ${checkout} is reserved`, text };
     }
     // The acknowledgement that the customer's proof actually arrived. This is
     // the email the old one was pretending to be.
@@ -302,7 +302,7 @@ export function renderEarlyAccessOutboxEmail(
     case "ea_submitted_for_review": {
       const text = [
         `Hello ${name},`,
-        `Your Early Access order ${checkout} is submitted for payment review.`,
+        `Your research order ${checkout} is submitted for payment review.`,
         "We have your payment confirmation and the order is with a named member of the Xenios team.",
         str(payload, "invoiceNumber") ? `Invoice: ${str(payload, "invoiceNumber")}` : "",
         str(payload, "paymentReference") ? `Payment reference: ${str(payload, "paymentReference")}` : "",
@@ -312,16 +312,16 @@ export function renderEarlyAccessOutboxEmail(
       ]
         .filter((part) => part.length > 0)
         .join("\n\n");
-      return { subject: `Early Access order ${checkout} submitted for review`, text };
+      return { subject: `Research order ${checkout} submitted for review`, text };
     }
     case "ea_payment_verified": {
       const text = [
         `Hello ${name},`,
-        `Your payment for Early Access order ${checkout} has been verified by a named member of the Xenios team.`,
+        `Your payment for research order ${checkout} has been verified by a named member of the Xenios team.`,
         str(payload, "verifiedAmountDisplay") ? `Amount verified: ${str(payload, "verifiedAmountDisplay")}` : "",
         str(payload, "invoiceNumber") ? `Invoice: ${str(payload, "invoiceNumber")}` : "",
         str(payload, "receiptNumber") ? `Receipt: ${str(payload, "receiptNumber")}` : "",
-        "Expected to ship within 72 hours after payment verification.",
+        "Tracking will be provided when the shipment is released.",
         statusUrl ? `Your order page:\n${statusUrl}` : "",
         SIGNOFF,
       ]
@@ -336,7 +336,7 @@ export function renderEarlyAccessOutboxEmail(
     case "ea_payment_rejected": {
       const text = [
         `Hello ${name},`,
-        `Your payment confirmation for Early Access order ${checkout} needs attention.`,
+        `Your payment confirmation for research order ${checkout} needs attention.`,
         "A named member of the Xenios team reviewed your submitted confirmation and could not verify the transfer from it. Your order is still reserved and nothing has been cancelled.",
         str(payload, "invoiceNumber") ? `Invoice: ${str(payload, "invoiceNumber")}` : "",
         str(payload, "paymentReference") ? `Payment reference: ${str(payload, "paymentReference")}` : "",
@@ -346,14 +346,14 @@ export function renderEarlyAccessOutboxEmail(
       ]
         .filter((part) => part.length > 0)
         .join("\n\n");
-      return { subject: `Action needed on Early Access order ${checkout}`, text };
+      return { subject: `Action needed on research order ${checkout}`, text };
     }
     case "ea_order_released": {
       const lines = renderLines(payload.lines);
       const text = [
         `Hello ${name},`,
-        `Your Early Access order ${checkout} is being prepared.`,
-        "Expected to ship within 72 hours after payment verification.",
+        `Your research order ${checkout} is being prepared.`,
+        "Tracking will be provided when the shipment is released.",
         lines ? `Items:\n${lines}` : "",
         str(payload, "releaseReference") ? `Reference: ${str(payload, "releaseReference")}` : "",
         statusUrl ? `Your order page:\n${statusUrl}` : "",
@@ -366,7 +366,7 @@ export function renderEarlyAccessOutboxEmail(
     case "ea_tracking_posted": {
       const text = [
         `Hello ${name},`,
-        `Your Early Access order ${checkout} is on its way.`,
+        `Your research order ${checkout} is on its way.`,
         str(payload, "carrierLabel") ? `Carrier: ${str(payload, "carrierLabel")}` : "",
         str(payload, "trackingReference") ? `Tracking: ${str(payload, "trackingReference")}` : "",
         statusUrl ? `Your order page:\n${statusUrl}` : "",
@@ -386,15 +386,15 @@ export function renderEarlyAccessOutboxEmail(
       const shipBy = str(payload, "shipByAt");
       const overdueAt = str(payload, "overdueAt");
       const text = [
-        `Early Access order ${checkout} has passed its 72-hour shipping commitment with no shipment recorded.`,
+        `Research order ${checkout} has passed its recorded ship-by time with no shipment recorded.`,
         shipBy ? `Ship-by (UTC): ${shipBy}` : "",
         overdueAt ? `Detected overdue at (UTC): ${overdueAt}` : "",
-        "This is an operations alert. Nothing has been settled, refunded, shipped or sent to the customer by it. Open the order in Early Access admin to see the current state and decide what to do.",
+        "This is an operations alert. Nothing has been settled, refunded, shipped or sent to the customer by it. Open the order in research-ordering admin to see the current state and decide what to do.",
         SIGNOFF,
       ]
         .filter((part) => part.length > 0)
         .join("\n\n");
-      return { subject: `OVERDUE: Early Access order ${checkout} is past its ship-by`, text };
+      return { subject: `OVERDUE: Research order ${checkout} is past its ship-by`, text };
     }
   }
 }

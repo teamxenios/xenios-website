@@ -176,6 +176,10 @@ import { createSupabasePlanDocumentsSource } from "./research/customer-account/p
 import { createCatalogPriorityPort } from "./research/product-activation/catalog-projection";
 import { registerClientImportAdminApi } from "./research/client-import/admin-routes";
 import { createMemoryClientImportStagingStore } from "./research/client-import/staging-store";
+import {
+  buildProductionResearchInquiryDependencies,
+  registerResearchInquiryApi,
+} from "./research/inquiries";
 import { registerFounderCommandCenterApi } from "./research/founder-command-center";
 import {
   buildFounderCommandCenterProductionSources,
@@ -375,6 +379,11 @@ app.use((req, res, next) => {
 // gated research APIs (catalog, policies, access, orders). Registered before
 // the SPA catch-all so the gate always runs first.
 app.use(researchPageGate);
+// Public business inquiries own their own strict validation, human check,
+// durable rate limit, and persistence-first response. Mount this one exact
+// POST before the legacy /api/research wall; every other Research route keeps
+// the existing wall unchanged.
+registerResearchInquiryApi(app, buildProductionResearchInquiryDependencies());
 registerResearchApi(app);
 registerProductionAccountIdentityApi(app);
 /**

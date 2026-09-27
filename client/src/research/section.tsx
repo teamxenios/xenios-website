@@ -315,9 +315,9 @@ export default function ResearchSection() {
           <Route path="/research/apply" component={Apply} />
           <Route path="/research/apply/review" component={Apply} />
           <Route path="/research/apply/success" component={Apply} />
-          <Route path="/research/apply/status" component={ApplyStatus} />
-          <Route path="/research/application/status" component={ApplyStatus} />
-          <Route path="/research/application-status" component={ApplyStatus} />
+          <Route path="/research/apply/status">{() => <ApplyStatus />}</Route>
+          <Route path="/research/application/status">{() => <ApplyStatus />}</Route>
+          <Route path="/research/application-status">{() => <ApplyStatus />}</Route>
           <Route path="/research/sign-in" component={SignIn} />
           <Route path="/research/reset-password" component={ResetPassword} />
           <Route path="/research/activate">{() => <L component={ActivationPage} />}</Route>

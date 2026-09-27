@@ -694,7 +694,7 @@ export function dispatchEarlyAccessRoute(work: Promise<unknown>, res: Response):
     if (res.headersSent) return;
     res.status(500).json({
       error: "early_access_unavailable",
-      message: "Early Access is temporarily unavailable. Please try again.",
+      message: "Research ordering is temporarily unavailable. Please try again.",
     });
   });
 }

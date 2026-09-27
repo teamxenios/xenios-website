@@ -77,7 +77,7 @@ export function PeptideRoadmapCatalog({
     <section className="ea-roadmap" aria-labelledby="ea-roadmap-heading">
       <header className="ea-roadmap__header">
         <div>
-          <p className="ea-roadmap__eyebrow">Private Early Access</p>
+          <p className="ea-roadmap__eyebrow">Research ordering</p>
           <h2 id="ea-roadmap-heading">Peptide roadmap</h2>
           <p className="ea-roadmap__intro">
             Roadmap status is planning information. Purchase controls appear only when the

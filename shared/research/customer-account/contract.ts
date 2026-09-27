@@ -317,8 +317,8 @@ export type OrderHistoryAvailabilityDto =
 
 export const ORDER_HISTORY_SOURCE_LABELS: Readonly<Record<OrderHistorySourceKey, string>> = {
   commerce: "commerce member orders",
-  xea: "Early Access placements (XEA)",
-  xec: "Early Access cart checkouts (XEC)",
+  xea: "Research order placements (XEA)",
+  xec: "Research cart checkouts (XEC)",
   xrr: "assisted order requests (XRR)",
 };
 
@@ -409,7 +409,7 @@ export type SupportCaseSummaryDto = Readonly<{
   subject: string;
   state: SupportCaseState;
   lastUpdateAt: string;
-  /** Human sentence, e.g. "We reply within one business day." */
+  /** Human sentence that describes the routed follow-up without a timing promise. */
   responseExpectation: string;
 }>;
 

@@ -43,7 +43,7 @@ function useCareAccessAvailability() {
         } else {
           setState({
             kind: "closed",
-            message: "Care requests are temporarily unavailable. Please try again shortly.",
+            message: "Care requests are paused right now. You can still contact support.",
           });
         }
       })
@@ -85,11 +85,10 @@ export function CareAccessAvailabilitySummary() {
 
   return (
     <div aria-live="polite">
-      <p className="body-l">Care access requests are open today.</p>
+      <p className="body-l">Care requests are open.</p>
       <p className="body-m text-ink-2 mt-4 max-w-[64ch]">
-        Share contact and routing details only. A Xenios team member will review the request and
-        follow up through your preferred channel, typically within one business day. Medical
-        information belongs only in a later authorized secure clinical system.
+        Share contact and routing details only. This request isn't a medical intake. Please don't
+        include health details here.
       </p>
     </div>
   );
@@ -150,7 +149,7 @@ export default function CareAccessRequestForm() {
   const [website, setWebsite] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
-  const [serverError, setServerError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState<{ kind: "rejected" | "uncertain"; message: string } | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState<CareManualAccessResponse | null>(null);
 
@@ -199,7 +198,10 @@ export default function CareAccessRequestForm() {
       return;
     }
     if (availability.kind !== "open") {
-      setServerError("Care request status is not open yet. Retry the status check and submit again.");
+      setServerError({
+        kind: "rejected",
+        message: "We couldn't send your request. Nothing was saved. Please try again, or use Contact Support.",
+      });
       return;
     }
 
@@ -228,16 +230,19 @@ export default function CareAccessRequestForm() {
         message?: string;
       };
       if (!response.ok || body.ok !== true || typeof body.reference !== "string") {
-        throw new Error(body.message || "We could not save the request. Please try again.");
+        setServerError({
+          kind: "rejected",
+          message: "We couldn't send your request. Nothing was saved. Please try again, or use Contact Support.",
+        });
+        return;
       }
       setErrors({});
       setSuccess(body as CareManualAccessResponse);
-    } catch (error) {
-      setServerError(
-        error instanceof Error
-          ? error.message
-          : "We could not save the request. Please try again.",
-      );
+    } catch {
+      setServerError({
+        kind: "uncertain",
+        message: "We're not sure your request went through. Please don't resend yet — check your email for a copy in a few minutes, or use Contact Support with the time you submitted.",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -247,20 +252,23 @@ export default function CareAccessRequestForm() {
     return (
       <div className="card max-w-[760px]" role="status" data-testid="care-access-success">
         <p className="mono-label text-pulse mb-3">REQUEST RECEIVED</p>
-        <h2 className="h2">Your Care request is in.</h2>
-        <p className="body-l text-ink-2 mt-5">
-          Reference <strong>{success.reference}</strong>. A human will review your routing details
-          and follow up through your preferred contact method, typically within one business day.
+        <h2 className="h2">Your Care request was received.</h2>
+        <p className="body-l text-ink-2 mt-5">Reference: <strong>{success.reference}</strong></p>
+        <p className="body-m text-ink-2 mt-4">
+          What we received: your contact details, your state and the kind of help you're looking for.
+        </p>
+        <p className="body-m text-ink-2 mt-4">
+          What happens next: someone on our Care team will contact you by {CARE_CONTACT_METHOD_LABELS[contactMethod as (typeof CARE_CONTACT_METHOD_VALUES)[number]].toLowerCase()}.
         </p>
         <p className="body-m text-ink-2 mt-4">
           {success.confirmationSent
-            ? "We also sent a confirmation to your email address."
-            : "Your request is saved. Email confirmation may be delayed, so keep this reference."}
+            ? "We've also emailed you a copy."
+            : "We couldn't send a copy to your email; keep this reference."}
         </p>
         <p className="body-m text-ink-2 mt-4">
-          Do not email medical information. A secure clinical intake will be provided separately
-          only when an appropriate handoff is available.
+          This wasn't a medical intake — that happens later in a secure system, if Care fits.
         </p>
+        <p className="body-m text-ink-2 mt-4">Questions? <a className="underline" href={CARE_ALTERNATE_CONTACT_PATH}>Contact Support</a>.</p>
       </div>
     );
   }
@@ -310,11 +318,8 @@ export default function CareAccessRequestForm() {
       )}
       {serverError && (
         <div role="alert" className="mb-6" data-testid="care-access-server-error">
-          <p className="body-m text-pulse">{serverError}</p>
-          <p className="body-m text-ink-2 mt-3">
-            You can still reach the team through{" "}
-            <a className="underline" href={CARE_ALTERNATE_CONTACT_PATH}>Care support</a>.
-          </p>
+          <p className="body-m text-pulse">{serverError.message}</p>
+          <a className="underline body-m mt-3 inline-block" href={CARE_ALTERNATE_CONTACT_PATH}>Contact Support</a>
         </div>
       )}
 
@@ -495,7 +500,7 @@ export default function CareAccessRequestForm() {
         disabled={!open || submitting}
         data-testid="care-access-submit"
       >
-        {submitting ? "Saving request…" : "Submit Care request"}
+        {submitting ? "Sending…" : "Send Care request"}
       </button>
       <p className="body-s text-ink-mute mt-4 max-w-[68ch]">
         Submitting authorizes Xenios to contact you about this request. It is not marketing consent

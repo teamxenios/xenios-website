@@ -60,7 +60,7 @@ export function EarlyAccessCartMount({
   if (state.kind === "locked") {
     return (
       <section className="container-x" style={{ paddingTop: 32, paddingBottom: 48 }}>
-        <p className="body-s text-pulse" role="alert" data-testid="early-access-cart-locked">Your private session ended. Unlock Early Access again.</p>
+        <p className="body-s text-pulse" role="alert" data-testid="early-access-cart-locked">Your research-ordering session ended. Start a new session to continue.</p>
       </section>
     );
   }
@@ -69,7 +69,7 @@ export function EarlyAccessCartMount({
       <section className="container-x" style={{ paddingTop: 32, paddingBottom: 48 }}>
         <div className="card p-5 max-w-[62ch]" role="alert" data-testid="early-access-cart-error">
           <h2 className="body-m font-700">The multi-product cart is unavailable.</h2>
-          <p className="body-s mt-2">No cart order was created. The existing Early Access ordering flow remains available only when the server explicitly reports the cart disabled, not when the cart is misconfigured.</p>
+          <p className="body-s mt-2">No cart order was created. The existing research ordering flow remains available only when the server explicitly reports the cart disabled, not when the cart is misconfigured.</p>
         </div>
       </section>
     );

@@ -220,7 +220,7 @@ export function resolveMasterOfferingAction(
   ) {
     return {
       kind: "request_early_access_purchase",
-      label: "Request Early Access Purchase",
+      label: "Request Order",
       href: targets.earlyAccessPurchase(offering, variant),
     };
   }

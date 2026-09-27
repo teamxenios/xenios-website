@@ -97,7 +97,7 @@ export default function Apply() {
     <ResearchPartnerShell
       showNav={false}
       eyebrow="Xenios Research"
-      title="Apply to become a Research Rep"
+      title="Apply to become a Xenios partner"
       lead="Tell us who you are and where you share. Applications are reviewed by a person, and compliance training comes before anything goes live."
     >
       {outcome.kind === "accepted" ? (
@@ -180,7 +180,7 @@ export default function Apply() {
 
           <div className="mt-8">
             <ResearchAgreementViewer
-              title="Research Rep Partner Agreement"
+              title="Xenios Partner Agreement"
               version="Draft"
               accepted={false}
               content={

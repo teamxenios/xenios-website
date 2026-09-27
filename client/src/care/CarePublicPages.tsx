@@ -18,7 +18,7 @@ export const CARE_PUBLIC_PATHS = {
 
 const careNavigation = [
   ["Care overview", CARE_PUBLIC_PATHS.home],
-  ["Start Care request", CARE_PUBLIC_PATHS.schedule],
+  ["Start Care", CARE_PUBLIC_PATHS.schedule],
   ["Care account", CARE_PUBLIC_PATHS.portal],
   ["How Care works", CARE_PUBLIC_PATHS.howItWorks],
   ["Clinical review", CARE_PUBLIC_PATHS.providerReview],
@@ -28,20 +28,9 @@ const careNavigation = [
 /** Where a blocked visitor can still reach a person. */
 export const CARE_ALTERNATE_CONTACT_PATH = CARE_PUBLIC_PATHS.support;
 
-/**
- * Every Care path is noindex.
- *
- * This used to claim index for three of them while the server sent
- * `X-Robots-Tag: noindex, nofollow` for every /care path, the raw-document
- * policy classified them all private, and the sitemap omitted them. Three
- * declarations against one, so the meta tag simply lost — but a reader of this
- * file would have believed it. Agreeing here is the smaller change and the
- * honest one: the header, the policy, the sitemap and this tag now say the same
- * thing. Making Care indexable is a separate, deliberate decision that would
- * start with the server.
- */
-function careRobots(_path: string): "noindex, follow" {
-  return "noindex, follow";
+/** The approved Care overview is public; request, portal, and support routes remain noindex. */
+function careRobots(path: string): "index, follow" | "noindex, follow" {
+  return path === CARE_PUBLIC_PATHS.home ? "index, follow" : "noindex, follow";
 }
 
 function CareNavigation({ currentPath }: { currentPath: string }) {
@@ -111,10 +100,10 @@ export function CareHomePage() {
   return (
     <CarePage
       path={CARE_PUBLIC_PATHS.home}
-      eyebrow="XENIOS CARE · HUMAN-GUIDED ACCESS"
-      title="Start with a Care access request."
-      description="Submit contact and routing details for Xenios Care, then receive a human follow-up and a separate secure clinical handoff when appropriate."
-      intro="Xenios Care takes access requests directly, without relying on a third-party scheduler. Share contact, current-state, and routing preferences only—never medical details. A human reviews each request and provides the appropriate secure next step when one is available."
+      eyebrow="XENIOS CARE"
+      title="Start Care with a short request."
+      description="Start with a short Care request. A person on our team reviews it and contacts you about next steps."
+      intro="Start with a short request. A person on our team reviews it and contacts you about next steps. This request isn't a medical intake. Please don't include health details."
     >
       <section className="container-x pb-16" aria-labelledby="care-current-status">
         <aside className="card max-w-[820px]" style={{ borderLeftColor: "var(--pulse)", borderLeftWidth: 3 }}>
@@ -126,41 +115,34 @@ export function CareHomePage() {
           <p className="body-m text-ink-2 mt-6">
             A public request is not a medical intake. Clinical information moves only through a later authorized secure handoff.
           </p>
+          <p className="body-m text-ink-2 mt-4">Care availability depends on your state. We confirm availability after the request.</p>
+          <p className="body-m text-ink-2 mt-2">Submitting a Care request is free.</p>
         </aside>
       </section>
       <section className="container-x py-16 rule-y" aria-labelledby="care-boundaries-title">
         <p className="mono-cap text-ink-mute mb-6">THE CARE JOURNEY</p>
-        <h2 id="care-boundaries-title" className="display-s max-w-[20ch]">Separate checkpoints, one clear experience.</h2>
+        <h2 id="care-boundaries-title" className="display-s max-w-[20ch]">How Care works.</h2>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-10">
           <article className="card">
-            <h3 className="h3">Care access request</h3>
+            <h3 className="h3">1. Send a Care request</h3>
             <p className="body-m text-ink-2 mt-3">Share only the contact and routing details needed for a human follow-up. Do not submit symptoms, diagnoses, medications, health history, or other medical information here.</p>
-            <Link className="btn btn-secondary min-h-11 mt-6" href={CARE_PUBLIC_PATHS.schedule}>Start Care request</Link>
+            <Link className="btn btn-secondary min-h-11 mt-6" href={CARE_PUBLIC_PATHS.schedule}>Start Care</Link>
           </article>
           <article className="card">
-            <h3 className="h3">Secure clinical handoff</h3>
-            <p className="body-m text-ink-2 mt-3">When an appropriate option is available, the team directs you to an authorized secure system. A U.S.-licensed clinician independently decides whether questions, records, labs, a visit, treatment, another approach, or no treatment is appropriate.</p>
-            <Link className="btn btn-secondary min-h-11 mt-6" href={CARE_PUBLIC_PATHS.providerReview}>Understand clinical review</Link>
+            <h3 className="h3">2. A person reviews it</h3>
+            <p className="body-m text-ink-2 mt-3">A person reviews the contact and routing details and contacts you about the next step.</p>
           </article>
           <article className="card">
-            <h3 className="h3">Pharmacy, tracking, and follow-up</h3>
-            <p className="body-m text-ink-2 mt-3">When prescribed and serviceable, a U.S.-based, state-licensed compounding pharmacy handles compounding or dispensing and shipment. Account status, tracking, support, and clinical follow-up remain separate and visible.</p>
-            <Link className="btn btn-secondary min-h-11 mt-6" href={CARE_PUBLIC_PATHS.portal}>Continue to Care account</Link>
+            <h3 className="h3">3. Continue securely if Care fits</h3>
+            <p className="body-m text-ink-2 mt-3">If Care fits, the team gives you the secure instructions for the next part of the Care process.</p>
           </article>
         </div>
       </section>
       <section className="container-x py-16 rule-bottom" aria-labelledby="care-foundations-title">
-        <p className="mono-cap text-pulse mb-6">FIRST-MONTH FOUNDATIONS</p>
-        <h2 id="care-foundations-title" className="display-s max-w-[20ch]">Personalized support for the habits around your care.</h2>
+        <p className="mono-cap text-pulse mb-6">KEEP THE PATHS SEPARATE</p>
+        <h2 id="care-foundations-title" className="display-s max-w-[20ch]">What Care is not.</h2>
         <p className="mt-6 body-l text-ink-2 max-w-[72ch]">
-          Eligible Xenios Care clients receive a personalized First-Month Foundations Plan at no additional charge,
-          created by a CSCS professional. The plan may include fitness programming, weekly training structure, home or
-          gym alternatives, nutrition planning, protein and hydration guidance, grocery lists, recipes, location-aware
-          restaurant recommendations, travel adaptations, sleep and recovery foundations, and one email check-in each
-          week. Optional continuation is available for $30 per month and is never automatic.
-        </p>
-        <p className="mt-5 body-m text-ink-mute max-w-[68ch]">
-          Lifestyle programming is nonclinical. CSCS professionals do not diagnose, prescribe, change medication, or replace the licensed clinical team.
+          Buying research products doesn't give you access to Care. A practice can't approve treatment for you.
         </p>
       </section>
     </CarePage>
@@ -172,9 +154,9 @@ export function CareSchedulePage() {
     <CarePage
       path={CARE_PUBLIC_PATHS.schedule}
       eyebrow="XENIOS CARE · ACCESS REQUEST"
-      title="Start your Care request."
+      title="Start Care"
       description="Send contact and routing details to the Xenios Care team without submitting medical information through the public site."
-      intro="This short survey opens the human follow-up workflow. It is not a clinical intake, appointment request, provider relationship, treatment decision, or prescription. If an appropriate clinical next step is available, the team will provide a separate authorized secure handoff."
+      intro="This isn't a medical intake. Please don't include health details."
     >
       <section className="container-x pb-16" aria-label="Xenios Care access request">
         <CareAccessRequestForm />
@@ -196,7 +178,7 @@ export function CarePortalPage() {
         <div className="card max-w-[820px]">
           <h2 id="care-account-next-step" className="h2">Need a Care handoff?</h2>
           <p className="body-m text-ink-2 mt-4">Submit the non-clinical access request. A human will follow up without asking you to place medical details in a general website form.</p>
-          <Link className="btn btn-primary min-h-11 mt-6" href={CARE_PUBLIC_PATHS.schedule}>Start Care request</Link>
+          <Link className="btn btn-primary min-h-11 mt-6" href={CARE_PUBLIC_PATHS.schedule}>Start Care</Link>
         </div>
       </section>
     </CarePage>
@@ -205,8 +187,8 @@ export function CarePortalPage() {
 
 export function CareHowItWorksPage() {
   const steps = [
-    ["Submit a Care access request", "Provide contact information, current U.S. state, a broad routing category, and contact preference. The public form collects no clinical free text."],
-    ["Receive human follow-up", "A Xenios team member reviews the operational request and contacts you, typically within one business day."],
+    ["Send a Care request", "Provide contact information, current U.S. state, a broad routing category, and contact preference. The public form collects no clinical free text."],
+    ["Receive human follow-up", "A Xenios team member reviews the operational request and contacts you about the next step."],
     ["Move to a secure clinical system when appropriate", "If a serviceable option is available, complete any identity, consent, health questionnaire, records, or scheduling steps only in the authorized secure system provided to you."],
     ["Receive independent clinical review", "A licensed clinician determines whether more information, records, labs, a visit, a different approach, treatment, or no treatment is appropriate. No outcome or prescription is guaranteed."],
   ] as const;
@@ -216,7 +198,7 @@ export function CareHowItWorksPage() {
       eyebrow="XENIOS CARE · PROCESS"
       title="From a Care request to the right secure next step."
       description="See how Xenios routes a public Care request into human follow-up and a separate authorized clinical system when appropriate."
-      intro="The process starts with a non-clinical public request and preserves the boundary between human routing, secure clinical intake, licensed review, and any later pharmacy step."
+      intro="The process starts with a non-clinical public request and preserves the boundary between human routing, secure clinical intake, and licensed review."
     >
       <section className="container-x pb-16" aria-labelledby="care-process-title">
         <h2 id="care-process-title" className="display-s max-w-[20ch]">Four separate checkpoints.</h2>
@@ -240,7 +222,7 @@ export function CareProviderReviewPage() {
       path={CARE_PUBLIC_PATHS.providerReview}
       eyebrow="XENIOS CARE · CLINICAL INDEPENDENCE"
       title="Your clinician makes the medical decision."
-      description="Understand what a licensed clinician reviews and why an intake, product interest, price, or pharmacy option never creates automatic approval."
+      description="Understand what a licensed clinician reviews and why an intake, product interest, or price never creates automatic approval."
       intro="The licensed clinician evaluates the information available, applies professional judgment, and determines whether more information, a visit, laboratory work, another form of care, a prescription, or no treatment is appropriate. Xenios does not direct the decision."
     >
       <section className="container-x pb-16" aria-labelledby="provider-review-boundaries">
@@ -250,7 +232,7 @@ export function CareProviderReviewPage() {
             ["A selected product", "Choosing or asking about a product does not establish that it is appropriate, available, or prescribable for the person."],
             ["A completed questionnaire", "The intake provides information for review. It does not require the clinician to approve treatment or accept the requested formulation."],
             ["Research access or purchase history", "Research membership, a Research request, an order, or product documentation never creates Care eligibility or a clinical relationship."],
-            ["Pharmacy availability or price", "A pharmacy listing, formulation, estimate, or available ingredient does not replace the clinician's independent decision or the pharmacy's final prescription review."],
+            ["A price or available product", "A price, formulation, estimate, or available product does not replace the clinician's independent decision."],
           ].map(([title, detail]) => (
             <article className="card" key={title}>
               <h3 className="h3">{title}</h3>
@@ -273,24 +255,24 @@ export function CareSupportPage() {
       path={CARE_PUBLIC_PATHS.support}
       eyebrow="XENIOS CARE · SUPPORT"
       title="Use the support channel that owns the answer."
-      description="Route clinical, pharmacy, account, shipment, and website questions to the source that can answer them safely."
-      intro="Clinical symptoms, side effects, medical records, prescribing, and treatment questions belong to the authorized clinical team. Medication-specific dispensing and pharmacy-shipment questions belong to the pharmacy. Xenios support handles website access, pathway navigation, operational status, tracking visibility, lifestyle-program support, and escalation."
+      description="Route Care, account, order, and website questions to the source that can answer them safely."
+      intro="Use the secure instructions sent by your Care team for personal Care questions. Xenios support handles website access, pathway navigation, and general operational questions."
     >
       <section className="container-x pb-16" aria-labelledby="care-support-options">
         <h2 id="care-support-options" className="display-s max-w-[20ch]">Choose by responsibility.</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
           <article className="card">
-            <h3 className="h3">Clinical and pharmacy support</h3>
-            <p className="body-m text-ink-2 mt-3">Use the authorized clinical or pharmacy instructions for symptoms, side effects, medical records, prescribing, treatment, medication-specific dispensing, or pharmacy shipment questions.</p>
+            <h3 className="h3">Care questions</h3>
+            <p className="body-m text-ink-2 mt-3">Use the secure instructions sent by your Care team. Do not send health details through a general website form.</p>
           </article>
           <article className="card">
             <h3 className="h3">Xenios site support</h3>
-            <p className="body-m text-ink-2 mt-3">Contact Xenios for website access, pathway navigation, operational status, tracking visibility, lifestyle-program support, or escalation. Do not send medical information through the general contact page.</p>
-            <a className="btn btn-secondary min-h-11 mt-6" href="#care-contact-form">Contact Xenios Health</a>
+            <p className="body-m text-ink-2 mt-3">Contact Xenios for website access, pathway navigation, or a general operational question. Do not send health details through this form.</p>
+            <a className="btn btn-secondary min-h-11 mt-6" href="#care-contact-form">Contact Support</a>
           </article>
         </div>
         <div id="care-contact-form" className="card mt-6 scroll-mt-24">
-          <h3 className="h3">Xenios Health site support</h3>
+          <h3 className="h3">Contact Support</h3>
           <p className="body-m text-ink-2 mt-3 mb-8">
             Send a website, pathway, or operational support question. This is not a clinical intake channel.
           </p>

@@ -89,7 +89,7 @@ export const MASTER_OFFERING_STATE_EXPLANATIONS: Readonly<
   Record<MasterOfferingDisplayState, string>
 > = {
   available_now:
-    "Currently listed in Early Access. Purchase still requires a matching server-authorized Product Control selection.",
+    "Currently listed for research ordering. The server must still authorize this exact selection before purchase.",
   available_this_week:
     "Expected soon. Availability is not a purchase promise.",
   request_access:
@@ -97,7 +97,7 @@ export const MASTER_OFFERING_STATE_EXPLANATIONS: Readonly<
   approval_required:
     "This offering requires review and approval before any transaction.",
   temporarily_unavailable:
-    "This offering is catalogued but not currently available.",
+    "This offering is listed in the catalog but not currently available.",
   coming_soon: "This offering is planned for a future release.",
   care_pathway:
     "This offering belongs to a provider or clinical workflow and is not research-store commerce.",

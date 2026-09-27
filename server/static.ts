@@ -11,6 +11,40 @@ import {
 const EXTERNAL_FONT_LINK =
   /\s*<link\b(?=[^>]*\bhref=["']https:\/\/fonts\.(?:googleapis|gstatic)\.com(?:\/[^"']*)?["'])[^>]*>\s*/giu;
 
+/** Owner-approved public aliases. Deeper account and workspace routes are not
+ * included: only these exact legacy marketing documents move permanently. */
+export const PUBLIC_DOCUMENT_REDIRECTS: Readonly<Record<string, string>> =
+  Object.freeze({
+    "/health": "/",
+    "/research/access-hub": "/",
+    "/research/partners": "/partners",
+    "/research/affiliates": "/partners",
+    "/research/organizations": "/practices",
+    "/research/supplier-access": "/suppliers",
+    "/research/faq": "/faq",
+    "/research/quality": "/quality",
+    "/research/testing": "/quality#testing",
+    "/research/documents": "/quality#documents",
+    "/research/about": "/about",
+    "/research/how-it-works": "/how-it-works",
+    "/research/contact": "/support",
+    "/research/support": "/support",
+    "/partners/apply": "/partners#inquiry",
+    "/enterprise": "/practices",
+  });
+
+function publicDocumentRedirectLocation(requestTarget: string): string | null {
+  const queryIndex = requestTarget.indexOf("?");
+  const rawPath = queryIndex === -1 ? requestTarget : requestTarget.slice(0, queryIndex);
+  const query = queryIndex === -1 ? "" : requestTarget.slice(queryIndex);
+  const destination = PUBLIC_DOCUMENT_REDIRECTS[rawPath];
+  if (!destination) return null;
+  const fragmentIndex = destination.indexOf("#");
+  return fragmentIndex === -1
+    ? `${destination}${query}`
+    : `${destination.slice(0, fragmentIndex)}${query}${destination.slice(fragmentIndex)}`;
+}
+
 /**
  * Care documents run with a self-only font/style CSP. Remove the shared
  * marketing shell's Google Fonts hints and stylesheet before it reaches the
@@ -40,6 +74,13 @@ export function sendRawHttpDocument(
   structuredData: readonly unknown[] = [],
 ): void {
   const requestTarget = req.originalUrl || req.url;
+  if (req.method === "GET" || req.method === "HEAD") {
+    const redirectLocation = publicDocumentRedirectLocation(requestTarget);
+    if (redirectLocation) {
+      res.redirect(301, redirectLocation);
+      return;
+    }
+  }
   // req.path is rewritten relative to the mount inside app.use("/{*path}"),
   // so the document class is taken from the ORIGINAL pathname.
   const originalPathname = requestTarget.split("?")[0].split("#")[0];

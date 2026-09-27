@@ -56,7 +56,7 @@ export const ORDER_ENTRY_MODES: readonly OrderEntryMode[] = [
     eyebrow: "Lightest supported Research path",
     title: "Quick Research order",
     summary:
-      "Browse through the existing passwordless Early Access session and continue into its canonical request or order flow.",
+      "Browse through the existing bounded research-ordering session and continue into its canonical request or order flow.",
     audience:
       "First-time or returning Research customers who want the lightest supported way to begin.",
     requiredInformation: [
@@ -65,16 +65,16 @@ export const ORDER_ENTRY_MODES: readonly OrderEntryMode[] = [
       "Contact and U.S. delivery details when the flow asks for them",
     ],
     accountRequirement:
-      "No full member account is required to browse or begin. The server creates a bounded Early Access browser session.",
+      "No full member account is required to browse or begin. The server creates a bounded research-ordering session.",
     nextStep:
-      "Open Early Access, complete its policy and session step, then choose the action the server currently authorizes.",
+      "Open research ordering, complete its policy and session step, then choose the action the server currently authorizes.",
     paymentTiming:
       "Not on entry. Payment appears only when the authorized flow supplies a current method or instructions.",
     statusLocation:
       "A server-confirmed reference and its bounded status experience appear after a valid submission in the authorized browser.",
     humanSupport:
       "Research contact remains available if the automated path cannot complete the request.",
-    actionLabel: "Open Quick Early Access",
+    actionLabel: "Open research ordering",
     href: "/research/early-access",
     primary: true,
     lane: "research",
@@ -121,21 +121,21 @@ export const ORDER_ENTRY_MODES: readonly OrderEntryMode[] = [
     eyebrow: "Existing request or order",
     title: "Resume or track an order",
     summary:
-      "Return through an authorized account, or reopen the same bounded Early Access browser session that created the request.",
+      "Return through an authorized account, or reopen the same bounded research-ordering session that created the request.",
     audience:
       "Customers who already started a request or order and need its latest confirmed state.",
     requiredInformation: [
       "A signed-in Research account for account history",
-      "Or the same authorized browser session for a Quick Early Access request",
+      "Or the same authorized research-ordering session for the request",
     ],
     accountRequirement:
-      "An account is required for account history. A Quick Early Access reference remains bound to the session that created it; a reference alone is not authorization.",
+      "An account is required for account history. A research-ordering reference remains bound to the session that created it; a reference alone is not authorization.",
     nextStep:
-      "Open account order history, or return to Quick Early Access in the same browser to resume its bounded flow.",
+      "Open account order history, or return to research ordering in the same browser to resume its bounded flow.",
     paymentTiming:
       "No payment occurs merely by viewing status. Any later payment action is shown by the owning authorized workflow.",
     statusLocation:
-      "Confirmed order facts appear in account order history; bounded Early Access status stays in its existing session-scoped experience.",
+      "Confirmed order facts appear in account order history; bounded research-ordering status stays in its existing session-scoped experience.",
     humanSupport:
       "Research contact can help locate the correct workflow but cannot disclose an order from a reference alone.",
     actionLabel: "Open order history",
@@ -147,7 +147,7 @@ export const ORDER_ENTRY_MODES: readonly OrderEntryMode[] = [
       label: "Resume in this browser",
       href: "/research/early-access",
       explanation:
-        "Use this only in the browser where you started Quick Early Access.",
+        "Use this only in the browser where you started research ordering.",
     },
     doesNotMean: [
       "Knowing a public reference grants access to private order facts.",
@@ -159,7 +159,7 @@ export const ORDER_ENTRY_MODES: readonly OrderEntryMode[] = [
     eyebrow: "Large, custom, unavailable, or quote-dependent request",
     title: "Assisted or volume order",
     summary:
-      "Begin through Early Access so its bounded session can route an exact multi-item, volume, quote, or human-assisted request.",
+      "Begin through research ordering so its bounded session can route an exact multi-item, volume, quote, or human-assisted request.",
     audience:
       "Customers with larger quantities, multiple products, custom requirements, unavailable variants, quote requests, or a need for human review.",
     requiredInformation: [
@@ -168,9 +168,9 @@ export const ORDER_ENTRY_MODES: readonly OrderEntryMode[] = [
       "No symptoms, diagnoses, medications, labs, or other clinical information",
     ],
     accountRequirement:
-      "No full member account is required to begin. The assisted flow first relies on the existing bounded Early Access session.",
+      "No full member account is required to begin. The assisted flow first relies on the existing bounded research-ordering session.",
     nextStep:
-      "Open Early Access, establish its session, and select the assisted or request action for the exact item and quantity.",
+      "Open research ordering, establish its session, and select the assisted or request action for the exact item and quantity.",
     paymentTiming:
       "Not immediately. A request or quote is not a paid order; payment follows only through an authorized later step.",
     statusLocation:

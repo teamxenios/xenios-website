@@ -15,7 +15,7 @@ import {
 } from "@shared/research/early-access-hardening";
 
 export const EARLY_ACCESS_SHIPPING_EXPECTATION =
-  "Expected to ship within 72 hours after payment verification." as const;
+  "Tracking will be provided when the shipment is released." as const;
 
 type CustomerChildOrder = Omit<
   EarlyAccessCartCheckoutRecord["children"][number],

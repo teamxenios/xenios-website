@@ -75,7 +75,7 @@ import {
 
 function titleFor(step: EarlyAccessCheckoutStep): string {
   switch (step) {
-    case "catalog": return "Research Catalogue";
+    case "catalog": return "Research catalog";
     case "cart": return "Your cart";
     case "details": return "Contact & Shipping";
     case "agreements": return "Required Agreements";
@@ -105,7 +105,7 @@ export function EarlyAccessCartReferenceContinuity({
         data-testid="early-access-reference-authority-copy"
       >
         Signing in does not itself link this XEC checkout to your account. This same authorized
-        Early Access session remains the authority for viewing its current status.
+        research-ordering session remains the authority for viewing its current status.
       </p>
       <div className="flex flex-wrap gap-2">
         <Link className="btn btn-secondary" href="/research/account/orders">
@@ -393,7 +393,7 @@ export function EarlyAccessMultiCartJourney({
     }
     const request = toQuoteRequest();
     if (request === null || request.items.length === 0) {
-      setError("One or more cart items must be reviewed again in the catalogue.");
+      setError("One or more cart items must be reviewed again in the catalog.");
       navigate("catalog");
       return;
     }
@@ -498,7 +498,7 @@ export function EarlyAccessMultiCartJourney({
       setStatus(result.status);
       return;
     }
-    setError(result.kind === "locked" ? "Your Early Access session ended. Unlock again to read this cart." : "The cart status could not be loaded.");
+    setError(result.kind === "locked" ? "Your research-ordering session ended. Start a new session to read this cart." : "The cart status could not be loaded.");
   };
 
   // RE-ASK AT EVERY GATE. The two steps that decide whether ordering may
@@ -516,11 +516,11 @@ export function EarlyAccessMultiCartJourney({
     <section className="container-x grid gap-6" style={{ paddingTop: 28, paddingBottom: 48 }}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="mono-cap text-pulse">Private Early Access</p>
+          <p className="mono-cap text-pulse">Research ordering</p>
           <h1 className="display-s mt-2">{titleFor(step)}</h1>
         </div>
         <button type="button" className="btn btn-secondary" onClick={onExitEarlyAccess}>
-          Exit Early Access
+          Exit research ordering
         </button>
       </div>
 
@@ -584,7 +584,7 @@ export function EarlyAccessMultiCartJourney({
             // than letting them fill in shipping for a cart that cannot quote.
             if (!canOrder) {
               navigate("catalog");
-              setError("The Research Use Policy must be accepted before this cart can continue. It is at the top of the catalogue.");
+              setError("The Research Use Policy must be accepted before this cart can continue. It is at the top of the catalog.");
               return;
             }
             navigate("details");

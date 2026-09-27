@@ -91,14 +91,14 @@ export function EarlyAccessCatalogSection({
   );
 
   if (state.status === "loading") {
-    return <section data-testid={testId} data-state="loading"><p>Loading the research catalogue.</p></section>;
+    return <section data-testid={testId} data-state="loading"><p>Loading the research catalog.</p></section>;
   }
   const result = state.load;
   if (result.kind === "locked") {
-    return <section data-testid={testId} data-state="locked"><p>Your private session has ended. Unlock again to view the research catalogue. Nothing has been ordered or charged.</p></section>;
+    return <section data-testid={testId} data-state="locked"><p>Your research-ordering session has ended. Start a new session to view the research catalog. Nothing has been ordered or charged.</p></section>;
   }
   if (result.kind === "unreadable" || result.kind === "error") {
-    return <section data-testid={testId} data-state="fault"><p>We could not load the research catalogue just now. This is a fault on our side, not an empty catalogue. Nothing has been ordered or charged.</p></section>;
+    return <section data-testid={testId} data-state="fault"><p>We could not load the research catalog just now. This is a fault on our side, not an empty catalog. Nothing has been ordered or charged.</p></section>;
   }
 
   const toggleSelected = (product: EarlyAccessCardProduct) => {
@@ -118,7 +118,7 @@ export function EarlyAccessCatalogSection({
         <input id={`${testId}-search`} type="search" value={query}
           onChange={(event) => setQuery(event.target.value)} placeholder="Search products..."
           data-testid={`${testId}-search`} className="input-field min-w-0 flex-1" style={{ maxWidth: 360 }} />
-        <div className="flex flex-wrap gap-1" role="group" aria-label="Filter the catalogue">
+        <div className="flex flex-wrap gap-1" role="group" aria-label="Filter the catalog">
           {FILTERS.map((option) => (
             <button key={option} type="button" onClick={() => setFilter(option)}
               aria-pressed={filter === option} data-testid={`${testId}-filter-${option}`}
