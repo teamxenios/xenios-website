@@ -1,8 +1,8 @@
 # Xenios Site System of Record
 
-Generated from source commit: `282c88ee491a569e16e97f88b14d959c1d67493c` (2026-09-27T12:40:02-05:00)
+Generated from source commit: `c1d88972ec8f9909032b78d9bbd086f5f4cf9f0c` (2026-09-27T13:53:29-05:00)
 
-Source tree: `5e1186894a5fed3d6e9c3c45d1d0050e71e613a5` on `codex/xenios-clarity-implementation-20260926`
+Source tree: `d2fe43a82a01cc8fc7dc414327b2227c024fecd8` on `codex/xenios-clarity-implementation-20260926`
 
 Recorded production: `79414143d4355d5d3d14cd5fe6e5a536dc68d99d` / `dep-daqft3vf3r2c73b7e88g` (deployed_not_authenticated_smoked)
 
