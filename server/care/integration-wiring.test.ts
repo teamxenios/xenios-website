@@ -119,9 +119,11 @@ describe("Care shared integration wiring", () => {
     expect(serverSource).not.toContain("registerCareManualAccessApi(app");
   });
 
-  it("keeps account entry persistent at mobile breakpoints without restoring the old early-access CTA", () => {
-    expect(navbarSource).toContain('href={accountEntry.signIn.href}');
-    expect(navbarSource).toContain('href={accountEntry.getAccess.href}');
+  it("keeps Sign In and Start Care persistent in the clarity header and mobile menu", () => {
+    expect(navbarSource.match(/href="\/sign-in"/gu)?.length).toBeGreaterThanOrEqual(2);
+    expect(navbarSource.match(/href="\/care\/schedule"/gu)?.length).toBeGreaterThanOrEqual(2);
+    expect(navbarSource).toContain('className="clarity-nav-actions"');
+    expect(navbarSource).toContain('className="clarity-nav-panel-actions"');
     expect(navbarSource).not.toContain('className="btn btn-primary !hidden sm:!inline-flex"');
   });
 });

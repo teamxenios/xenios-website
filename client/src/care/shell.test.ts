@@ -35,10 +35,12 @@ describe("Care public shell and explicit dispatcher", () => {
   const publicSurfaceSource = [pagesSource, accessRequestSource, schedulingSource, portalSource].join("\n");
 
   it("is truthful and limits the public submission to non-clinical routing fields", () => {
-    expect(pagesSource).toContain("This short survey opens the human follow-up workflow.");
+    expect(pagesSource).toContain("Start with a short request. A person on our team reviews it and contacts you about next steps.");
     expect(pagesSource).toContain("This site is not emergency care.");
-    expect(pagesSource).toContain("It is not a clinical intake, appointment request, provider relationship, treatment decision, or prescription.");
+    expect(pagesSource).toContain("This request isn't a medical intake. Please don't include health details.");
     expect(accessRequestSource).toContain("This public form intentionally has no clinical free-text field.");
+    expect(accessRequestSource).toContain("not emergency care or a medical intake and does not create an");
+    expect(accessRequestSource).toContain("appointment, clinician-patient relationship, treatment decision, or prescription");
     expect(accessRequestSource).toContain('data-testid="care-access-form"');
     expect(accessRequestSource).toContain("<input");
     expect(accessRequestSource).toContain("<select");
@@ -84,12 +86,14 @@ describe("Care public shell and explicit dispatcher", () => {
     expect(pagesSource).toContain('className="m-0 flex list-none flex-wrap gap-3 p-0"');
   });
 
-  it("uses qualified human-routing, clinician, pharmacy, and Foundations language", () => {
-    expect(publicSurfaceSource).toContain("Care access requests are open today");
-    expect(publicSurfaceSource).toContain("separate authorized secure handoff");
-    expect(publicSurfaceSource).toContain("U.S.-licensed clinician");
-    expect(publicSurfaceSource).toContain("U.S.-based, state-licensed compounding pharmacy");
-    expect(publicSurfaceSource).toContain("$30 per month and is never automatic");
+  it("uses qualified human-routing and licensed-review language without stale commercial claims", () => {
+    expect(publicSurfaceSource).toContain("A person on our team reviews it and contacts you about next steps");
+    expect(publicSurfaceSource).toContain("later authorized secure handoff");
+    expect(publicSurfaceSource).toContain("licensed clinician");
+    expect(publicSurfaceSource).toContain("No outcome or prescription is guaranteed");
+    expect(publicSurfaceSource).toContain("Submitting a Care request is free");
+    expect(publicSurfaceSource).not.toContain("$30 per month");
+    expect(publicSurfaceSource).not.toContain("U.S.-based, state-licensed compounding pharmacy");
     expect(publicSurfaceSource).not.toContain("Xenios Care is available nationwide");
     expect(publicSurfaceSource).not.toMatch(/\b(all 50 states|launches? on)\b/i);
     expect(publicSurfaceSource).not.toMatch(/\b(our clinicians|our pharmacy|partner pharmacy)\b/i);

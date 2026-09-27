@@ -63,7 +63,9 @@ afterEach(() => {
 describe("routed B2B protected composition", () => {
   it("renders the exact public partner root without firing referral capture", async () => {
     const view = await renderAt("/research/partners?ref=signed.code");
-    expect(view.textContent).toContain("The right relationship starts with the right boundary.");
+    expect(view.textContent).toContain("Become a Xenios partner");
+    expect(view.textContent).toContain("Partner applications open soon.");
+    expect(view.textContent).toContain("Sending an inquiry is not an application, does not create an account, and does not approve a partnership.");
     expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
     expect(fetchSpy).not.toHaveBeenCalled();
   }, 15_000);
@@ -71,7 +73,7 @@ describe("routed B2B protected composition", () => {
   it("keeps partner application and portal descendants behind the gate", async () => {
     const view = await renderAt("/research/partners/apply");
     expect(view.querySelector('[data-testid="form-research-access"]')).toBeTruthy();
-    expect(view.textContent).not.toContain("The right relationship starts with the right boundary.");
+    expect(view.textContent).not.toContain("Become a Xenios partner");
   });
 
   it("renders an in-section not-found result for an open unknown B2B descendant", async () => {

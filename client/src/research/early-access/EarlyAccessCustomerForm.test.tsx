@@ -217,7 +217,7 @@ describe("EarlyAccessCustomerForm", () => {
     expect(Object.keys(EMPTY)).not.toContain("country");
     expect(
       document.getElementById(country.getAttribute("aria-describedby")!)?.textContent,
-    ).toContain("United States only");
+    ).toContain("Enter a United States shipping address.");
   });
 
   it("shows no money and creates no network, storage, or history effect", () => {

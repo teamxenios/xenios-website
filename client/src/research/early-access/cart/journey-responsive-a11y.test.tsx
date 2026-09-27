@@ -107,7 +107,7 @@ describe("the eight internal states are announced through four customer stages",
     const list = host.querySelector('[data-testid="early-access-progress-steps"]');
     expect(list?.getAttribute("aria-hidden")).toBe("true");
     expect(host.querySelector("nav")?.getAttribute("aria-label")).toBe(
-      "Early Access checkout progress",
+      "Research ordering checkout progress",
     );
   });
 

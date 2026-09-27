@@ -174,7 +174,7 @@ describe("F6 I: sign-out clears every browser recovery pointer", () => {
       expect(window.sessionStorage.getItem(key)).toBeNull();
     }
     // And the customer is back at the password screen, not inside a session.
-    expect(container.textContent).toContain("Private Early Access");
+    expect(container.textContent).toContain("Research ordering");
 
     const password = container.querySelector(
       '[data-testid="early-access-unlock-form-password"]',
@@ -351,7 +351,7 @@ describe("sign-out clears the entire assisted-order storage family", () => {
     expect(logoutSettled).toBe(false);
     expect(window.sessionStorage.getItem(assistedOrderTokenKey(ASSISTED_ORDER_REFERENCE))).toBeNull();
     expect(window.sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBeNull();
-    expect(container.textContent).toContain("Private Early Access");
+    expect(container.textContent).toContain("Research ordering");
 
     finishLogout?.(jsonResponse({ ok: true }));
     await settle();

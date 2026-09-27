@@ -1069,7 +1069,7 @@ describe("AssistedOrderStatusPage verified identity", () => {
     expect(
       host!.querySelector('a.xenios-order-return-link[href="/research/early-access"]')
         ?.textContent,
-    ).toContain("Return to Early Access");
+    ).toContain("Explore Products");
   });
 
   it("keeps a refused or missing request neutral", async () => {

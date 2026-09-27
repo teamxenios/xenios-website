@@ -6,6 +6,8 @@ import { createRoot } from "react-dom/client";
 import { act } from "react";
 import PageShell from "./PageShell";
 
+(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+
 function render(ui: React.ReactElement) {
   const host = document.createElement("div");
   document.body.appendChild(host);
@@ -69,38 +71,55 @@ describe("PageShell skip link", () => {
     expect(css).toMatch(/\.cs-fld-input:focus-visible\s*\{[^}]*outline:\s*2px solid var\(--pulse\)/);
   });
 
-  it("only points aria-controls at the mobile navigation overlay while that target exists", () => {
+  it("only points aria-controls at the clarity overlay while it exists and restores trigger focus", async () => {
     const view = render(
       <PageShell>
         <p>content</p>
       </PageShell>,
     );
     const trigger = view.host.querySelector(
-      '[data-testid="button-menu-toggle"]',
+      '.clarity-menu-button[aria-label="Open site menu"]',
     ) as HTMLButtonElement;
 
+    expect(trigger).not.toBeNull();
     expect(trigger.getAttribute("aria-controls")).toBeNull();
-    expect(view.host.querySelector("#nav-mobile-overlay")).toBeNull();
+    expect(view.host.querySelector("#clarity-navigation")).toBeNull();
 
     act(() => trigger.click());
+    await act(async () => {
+      await new Promise((resolve) => window.setTimeout(resolve, 0));
+    });
 
-    expect(trigger.getAttribute("aria-controls")).toBe("nav-mobile-overlay");
-    expect(view.host.querySelector("#nav-mobile-overlay")).not.toBeNull();
+    expect(trigger.getAttribute("aria-controls")).toBe("clarity-navigation");
+    expect(view.host.querySelector("#clarity-navigation")).not.toBeNull();
+    const close = view.host.querySelector(
+      '.clarity-menu-button[aria-label="Close menu"]',
+    ) as HTMLButtonElement;
+    expect(document.activeElement).toBe(close);
+
+    act(() => close.click());
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(view.host.querySelector("#clarity-navigation")).toBeNull();
+    expect(trigger.getAttribute("aria-controls")).toBeNull();
+    expect(document.activeElement).toBe(trigger);
     view.unmount();
   });
 
-  it("gives every desktop primary navigation link a 44 by 44 minimum target", () => {
+  it("keeps clarity navigation controls on the shared 44px target-size contract", () => {
     const view = render(
       <PageShell>
         <p>content</p>
       </PageShell>,
     );
-    const links = [...view.host.querySelectorAll('nav[aria-label="Primary"] a')];
-    expect(links.length).toBeGreaterThan(0);
-    for (const link of links) {
-      expect(link.classList.contains("min-h-[44px]")).toBe(true);
-      expect(link.classList.contains("min-w-[44px]")).toBe(true);
-    }
+    const css = readFileSync(resolve(__dirname, "../index.css"), "utf8");
+    expect(view.host.querySelectorAll(".clarity-nav-link").length).toBeGreaterThan(0);
+    expect(view.host.querySelector('.clarity-header-link[href="/sign-in"]')).not.toBeNull();
+    expect(view.host.querySelector('.clarity-header-care[href="/care/schedule"]')).not.toBeNull();
+    expect(css).toMatch(/\.clarity-brand-link\s*\{[^}]*min-width:\s*44px[^}]*min-height:\s*44px/su);
+    expect(css).toMatch(/\.clarity-nav-link,\s*\.clarity-header-link,\s*\.clarity-menu-button\s*\{[^}]*min-height:\s*44px/su);
+    expect(css).toMatch(/\.clarity-header-care\.btn\s*\{[^}]*height:\s*44px[^}]*min-height:\s*44px/su);
     view.unmount();
   });
 });

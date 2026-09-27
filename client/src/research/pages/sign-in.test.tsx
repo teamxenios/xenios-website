@@ -265,10 +265,9 @@ describe("member sign-in", () => {
 
   it("separates ordinary password sign-in from approved account setup", async () => {
     await renderSignIn(vi.fn(async () => null));
-    expect(container!.textContent).toContain(
-      "An approval link connects approved customer access to your account; it does not replace your password.",
-    );
-    expect(container!.textContent).toContain("Returning customers can sign in normally.");
+    expect(container!.textContent).toContain("Use the email and password connected to your existing Xenios account.");
+    expect(container!.textContent).toContain("Approved but haven't set up your account? Activate Account.");
+    expect(container!.querySelector('a[href="/activate"]')?.textContent).toBe("Activate Account");
   });
 });
 
@@ -421,18 +420,20 @@ describe("SEN-0025: sign in is not a dead end", () => {
   // Anti-vacuity: each assertion reads the href, not just presence, so a link
   // that renders with the wrong destination still fails.
 
-  it("offers a route back to the gateway", async () => {
+  it("offers the persistent Start Care route", async () => {
     await renderSignIn(async () => null);
     const link = container!.querySelector('[data-testid="link-signin-gateway"]') as HTMLAnchorElement;
     expect(link).not.toBeNull();
-    expect(link.getAttribute("href")).toBe("/research");
+    expect(link.getAttribute("href")).toBe("/care/schedule");
+    expect(link.textContent).toBe("Start Care");
   });
 
-  it("offers the apply route for someone who is not a member yet", async () => {
+  it("offers the public product exploration route", async () => {
     await renderSignIn(async () => null);
     const link = container!.querySelector('[data-testid="link-signin-apply"]') as HTMLAnchorElement;
     expect(link).not.toBeNull();
-    expect(link.getAttribute("href")).toBe("/research/apply");
+    expect(link.getAttribute("href")).toBe("/products");
+    expect(link.textContent).toBe("Explore Products");
   });
 
   it("links the policies it is collecting credentials under", async () => {
@@ -442,7 +443,7 @@ describe("SEN-0025: sign in is not a dead end", () => {
     const support = container!.querySelector('[data-testid="link-signin-support"]') as HTMLAnchorElement;
     expect(privacy?.getAttribute("href")).toBe("/research/policies/privacy");
     expect(terms?.getAttribute("href")).toBe("/research/policies/terms");
-    expect(support?.getAttribute("href")).toBe("mailto:team@xeniostechnology.com");
+    expect(support?.getAttribute("href")).toBe("/research/support");
   });
 
   it("keeps the existing forgot-password route intact", async () => {

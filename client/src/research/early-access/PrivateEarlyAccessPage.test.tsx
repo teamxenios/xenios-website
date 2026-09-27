@@ -76,7 +76,7 @@ describe("PrivateEarlyAccessPage", () => {
     const heading = view.host.querySelector("h1")!;
     expect(main.getAttribute("aria-labelledby")).toBe(heading.id);
     expect(heading.getAttribute("tabindex")).toBe("-1");
-    expect(heading.textContent).toBe("Private Early Access");
+    expect(heading.textContent).toBe("Research ordering");
     expect(main.className).toContain("research-app");
     expect(main.className).toContain("container-x");
     expect(view.host.querySelectorAll("fieldset")).toHaveLength(1);

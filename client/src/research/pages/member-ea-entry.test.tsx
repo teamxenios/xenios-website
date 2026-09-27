@@ -67,6 +67,6 @@ describe("the routed member home Early Access entry", () => {
     const links = Array.from(container!.querySelectorAll("a"));
     const ea = links.find((a) => a.getAttribute("href") === ACCESS_ROUTES.earlyAccess);
     expect(ea).toBeTruthy();
-    expect(ea!.textContent).toContain("Early Access");
+    expect(ea!.textContent).toContain("Research ordering");
   });
 });

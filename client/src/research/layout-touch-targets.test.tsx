@@ -37,6 +37,7 @@ import ResearchLayout from "./layout";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const css = readFileSync(resolve(here, "layout-touch-targets.css"), "utf8");
+const publicCss = readFileSync(resolve(here, "../index.css"), "utf8");
 const layoutSource = readFileSync(resolve(here, "layout.tsx"), "utf8");
 
 let root: Root | null = null;
@@ -65,17 +66,22 @@ function renderAt(path: string) {
 }
 
 describe("protected Research chrome pointer targets", () => {
-  it("gives both minimal-chrome links the shared target and a wrapping row", () => {
+  it("gives the current public-shell brand and actions full pointer targets", () => {
     const view = renderAt("/research/about");
-    const row = view.querySelector(".research-minimal-header-row");
-    const home = view.querySelector<HTMLAnchorElement>('[data-testid="link-research-home"]');
-    const back = Array.from(view.querySelectorAll<HTMLAnchorElement>('header a[href="/research"]'))
-      .find((link) => link.textContent?.includes("Back to gateway"));
+    const header = view.querySelector("header.clarity-nav");
+    const home = view.querySelector<HTMLAnchorElement>('a.clarity-brand-link[href="/"]');
+    const signIn = view.querySelector<HTMLAnchorElement>('a.clarity-header-link[href="/sign-in"]');
+    const startCare = view.querySelector<HTMLAnchorElement>('a.clarity-header-care[href="/care/schedule"]');
+    const menu = view.querySelector<HTMLButtonElement>('button.clarity-menu-button[aria-label="Open site menu"]');
 
-    expect(row).not.toBeNull();
-    expect(home?.classList.contains("research-chrome-target")).toBe(true);
-    expect(home?.classList.contains("research-chrome-wordmark")).toBe(true);
-    expect(back?.classList.contains("research-chrome-target")).toBe(true);
+    expect(header).not.toBeNull();
+    expect(home).not.toBeNull();
+    expect(signIn).not.toBeNull();
+    expect(startCare).not.toBeNull();
+    expect(menu).not.toBeNull();
+    expect(publicCss).toMatch(/\.clarity-brand-link \{[^}]*min-width: 44px;[^}]*min-height: 44px;/);
+    expect(publicCss).toMatch(/\.clarity-header-link,[\s\S]*?\.clarity-menu-button \{[^}]*min-height: 44px;/);
+    expect(publicCss).toMatch(/\.clarity-header-care\.btn \{[^}]*height: 44px;[^}]*min-height: 44px;/);
   });
 
   it("pins both member navigation families, current-page semantics, and wrap-safe sign-out", () => {

@@ -68,24 +68,29 @@ function assertKeyboardReachableActions(view: HTMLElement) {
 }
 
 describe("Research public application flow", () => {
-  it("keeps the editorial gateway on reviewed public access doors", async () => {
+  it("keeps the /research clarity page on its reviewed public order and account doors", async () => {
     const view = await render(<Gateway />);
     assertSinglePageHeading(view);
 
     const hrefs = links(view);
-    expect(hrefs).toContain("/research/access-hub");
-    expect(hrefs).toContain("/care");
-    expect(hrefs).toContain("/research/quality");
-    expect(hrefs).toContain("/research/sign-in");
-    expect(hrefs).toContain("/research/how-it-works");
-    expect(hrefs).toContain("/research/about");
-    expect(hrefs).toContain("/research/faq");
-    expect(hrefs).toContain("/research/policies");
-    expect(hrefs).toContain("/research/contact");
-    expect(hrefs).toContain("/research/privacy");
-    expect(hrefs).toContain("/research/terms");
-    expect(hrefs).toContain("/research/support");
-    expect(hrefs.some((href) => /catalog|products|shop|supplements/i.test(href))).toBe(false);
+    expect(hrefs).toEqual(expect.arrayContaining([
+      "/products",
+      "/status",
+      "/care",
+      "/sign-in",
+      "/research/how-it-works",
+      "/research/quality",
+      "/research/faq",
+      "/research/partners",
+      "/research/organizations",
+      "/research/support",
+      "/privacy",
+      "/terms",
+    ]));
+    expect(hrefs).not.toContain("/research/access-hub");
+    expect(hrefs).not.toContain("/research/sign-in");
+    expect(hrefs).not.toContain("/research/apply");
+    expect(hrefs).not.toContain("/research/order");
     assertKeyboardReachableActions(view);
   });
 
@@ -128,9 +133,9 @@ describe("Research public application flow", () => {
       const gateway = await render(<Gateway />);
       expect(gateway.querySelectorAll("main")).toHaveLength(1);
       assertSinglePageHeading(gateway);
-      expect(gateway.querySelector('[data-testid="link-gateway-apply"]')).not.toBeNull();
-      expect(gateway.querySelector('[data-testid="link-gateway-pathways"]')).not.toBeNull();
-      expect(gateway.querySelector('[data-testid="link-gateway-access-hub"]')).not.toBeNull();
+      expect(gateway.querySelector('.rg-hero-actions a[href="/products"]')).not.toBeNull();
+      expect(gateway.querySelector('.rg-hero-actions a[href="/status"]')).not.toBeNull();
+      expect(gateway.querySelector('.rg-mobile-access a[href="/sign-in"]')).not.toBeNull();
       expect(gateway.querySelector<HTMLAnchorElement>('.rg-skip-link')?.getAttribute("href"))
         .toBe("#research-main");
       const hero = gateway.querySelector<HTMLImageElement>('.rg-hero-image');
@@ -162,8 +167,8 @@ describe("Research public application flow", () => {
       'a[href="mailto:research@xeniostechnology.com"]',
     );
     expect(email).not.toBeNull();
-    expect(email?.style.maxWidth).toBe("100%");
-    expect(email?.style.whiteSpace).toBe("normal");
+    expect(email?.classList.contains("public-editorial-action")).toBe(true);
+    expect(email?.style.whiteSpace).not.toBe("nowrap");
   });
 
   it("uses the shared loading treatment while a signed status lookup is pending", async () => {

@@ -511,9 +511,9 @@ describe("signed in, but not verified against an approved account", () => {
     const panel = host.querySelector('[data-testid="early-access-agreement-unverified"]');
     expect(panel).not.toBeNull();
     expect(panel?.textContent).toContain("Complete identity verification");
-    expect(panel?.textContent).toContain("Your private access session is active");
+    expect(panel?.textContent).toContain("Your research-ordering session is active");
     // The false message that shipped to production.
-    expect(host.textContent).not.toContain("Your private session has ended");
+    expect(host.textContent).not.toContain("Your research-ordering session has ended");
     // Fail closed: nothing to tick, nothing to submit, nothing recorded.
     expect(host.querySelector('[data-testid="early-access-agreement-checkbox"]')).toBeNull();
     expect(host.querySelector('[data-testid="early-access-agreement-submit"]')).toBeNull();

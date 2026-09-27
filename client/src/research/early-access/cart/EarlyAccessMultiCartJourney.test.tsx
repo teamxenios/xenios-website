@@ -305,7 +305,7 @@ describe("durable checkout reference continuity", () => {
       "Signing in does not itself link this XEC checkout to your account.",
     );
     expect(continuity?.textContent).toContain(
-      "same authorized Early Access session remains the authority",
+      "same authorized research-ordering session remains the authority",
     );
     expect(continuity?.querySelector('a[href="/research/account/orders"]')?.textContent)
       .toContain("Sign in or view account orders");
@@ -423,7 +423,7 @@ describe("Back and Forward move, and never buy", () => {
 
       // Every one of those steps needs a quote, a checkout or a basket, and
       // this browser has none, so the only honest place to land is the shelf.
-      expect(text()).toContain("Research Catalogue");
+      expect(text()).toContain("Research catalog");
       expect(window.history.state).toEqual({ earlyAccess: true, step: "catalog" });
       expect(posted.filter((entry) => entry.path.includes("/cart/"))).toEqual([]);
     }
@@ -454,7 +454,7 @@ describe("Back and Forward move, and never buy", () => {
         window.dispatchEvent(new PopStateEvent("popstate", { state }));
       });
       await settle();
-      expect(text()).toContain("Research Catalogue");
+      expect(text()).toContain("Research catalog");
     }
   });
 });

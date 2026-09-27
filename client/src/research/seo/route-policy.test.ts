@@ -7,6 +7,12 @@ import {
 
 describe("Research SEO route policy", () => {
   it("allows only the declared public informational routes", () => {
+    expect(PUBLIC_RESEARCH_EXACT_PATHS).toEqual([
+      "/research",
+      "/research/policies",
+      "/research/privacy",
+      "/research/terms",
+    ]);
     for (const path of PUBLIC_RESEARCH_EXACT_PATHS) {
       expect(isPublicResearchIndexRoute(path), path).toBe(true);
       expect(researchRouteRobots(path), path).toBe("index");
@@ -51,9 +57,11 @@ describe("Research SEO route policy", () => {
     }
   });
 
-  it("normalizes router-equivalent case, encoding, and one trailing slash", () => {
-    expect(isPublicResearchIndexRoute("/Research/Partners/")).toBe(true);
-    expect(isPublicResearchIndexRoute("/%72esearch/organizations")).toBe(true);
+  it("normalizes declared route variants without expanding the indexable set", () => {
+    expect(isPublicResearchIndexRoute("/Research/")).toBe(true);
+    expect(isPublicResearchIndexRoute("/%72esearch/policies")).toBe(true);
+    expect(isPublicResearchIndexRoute("/Research/Partners/")).toBe(false);
+    expect(isPublicResearchIndexRoute("/%72esearch/organizations")).toBe(false);
     expect(isPublicResearchIndexRoute("/research/account/")).toBe(false);
   });
 

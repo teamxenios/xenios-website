@@ -2147,8 +2147,8 @@ describe("route uniqueness validator", () => {
     // The roster the operator scans, over the same research_orders authority as
     // the queue and the order file. Mounted rather than removed from the nav
     // because orders are launch-critical and the rest of that loop now works.
-    expect(result.callSites).toBe(439);
-    expect(result.routes).toHaveLength(448);
+    expect(result.callSites).toBe(440);
+    expect(result.routes).toHaveLength(449);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

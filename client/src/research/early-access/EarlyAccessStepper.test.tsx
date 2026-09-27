@@ -47,7 +47,7 @@ describe("EarlyAccessStepper", () => {
     const view = render(<EarlyAccessStepper steps={[...STEPS]} activeIndex={1} />);
     expect(view.host.querySelectorAll("ol")).toHaveLength(1);
     expect(view.host.querySelector("ol")?.getAttribute("aria-label")).toBe(
-      "Early access steps",
+      "Research ordering steps",
     );
     expect(items(view.host)).toHaveLength(STEPS.length);
     expect(items(view.host).map((li) => li.textContent)).toEqual([

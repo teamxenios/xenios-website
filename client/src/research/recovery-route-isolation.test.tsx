@@ -81,12 +81,14 @@ describe("recovery route chrome isolation", () => {
     "/research/privacy",
     "/research/terms",
     "/research/policies/privacy",
-  ])("mounts public Research routes in minimal chrome without the shared gate at %s", (path) => {
+  ])("mounts public Research routes in shared clarity chrome without the private review gate at %s", (path) => {
     const view = renderAt(path);
     expect(view.querySelector('[data-testid="recovery-content"]')).toBeTruthy();
     expect(view.querySelector('[data-testid="form-research-access"]')).toBeNull();
     expect(view.querySelectorAll("main")).toHaveLength(1);
-    expect(view.textContent).toContain("Back to gateway");
+    expect(view.querySelector('[data-testid="nav-main"]')).toBeTruthy();
+    expect(view.querySelector('[data-testid="footer-main"]')).toBeTruthy();
+    expect(view.querySelector('a[href="#site-main"]')?.textContent).toBe("Skip to content");
     expect(view.querySelector('nav[aria-label="Research information"]')).toBeTruthy();
   });
 
