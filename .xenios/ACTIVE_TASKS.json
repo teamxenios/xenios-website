@@ -6,8 +6,8 @@
       "id": "XENIOS-ORDERING-READINESS-20260923",
       "title": "Complete customer-ready manual, assisted, and Care-gated ordering while native commerce remains dark",
       "priority": "P0",
-      "state": "claimed",
-      "owner": "codex-ordering-readiness-20260923",
+      "state": "ready",
+      "owner": null,
       "baseSha": "7a2ca4a3a0ced8280ed60e2d06aa22254f0acba9",
       "paths": [
         "shared/research/early-access-payment-options.ts",
@@ -32,7 +32,8 @@
       ],
       "dependsOn": [],
       "scopeNote": "Founder-directed exact-production-base ordering readiness. Source, tests, build, synthetic browser QA, commit and push only. Preserve server-owned payment instructions, order ownership, manual verification and Care authority. Native commerce remains dark. No production config, migration, deploy, real payment, email or customer mutation without exact later authorization.",
-      "claimedAt": "2026-09-24T03:32:26.957Z"
+      "claimedAt": "2026-09-24T03:32:26.957Z",
+      "releasedAt": "2026-09-27T02:11:21.708Z"
     },
     {
       "id": "XENIOS-CHECKOUT-COMMERCE-AUTHORITY-REFACTOR-20260923",
@@ -435,8 +436,8 @@
       "id": "F7-PACK02-RENAME",
       "title": "Rename account organization table and certify migration",
       "priority": "P0",
-      "state": "claimed",
-      "owner": "codex-astra-a-pack02-20260909",
+      "state": "ready",
+      "owner": null,
       "paths": [
         "supabase/pack02-candidates/20260812_research_account_organizations.sql",
         "server/research/account-identity/**",
@@ -444,7 +445,7 @@
       ],
       "dependsOn": [],
       "claimedAt": "2026-09-09T13:05:13.403Z",
-      "releasedAt": "2026-09-05T23:41:19.004Z",
+      "releasedAt": "2026-09-27T02:11:21.601Z",
       "handoff": {
         "session": "codex-seth-revenue-launch-20260905",
         "sha": "c32ba74fef16e57e83245108ec537e44144a7a52",
@@ -714,8 +715,8 @@
       "id": "CATALOG-ACTION-UNIFICATION",
       "title": "One buyer-scoped catalog pathway and price projection for every surface",
       "priority": "P1",
-      "state": "claimed",
-      "owner": "claude-fable-s7",
+      "state": "ready",
+      "owner": null,
       "paths": [
         "shared/research/master-offerings/**",
         "server/research/master-offerings/**",
@@ -724,7 +725,8 @@
         "server/research/pricing/catalog-price-projection.ts"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-20T17:51:40.938Z"
+      "claimedAt": "2026-08-20T17:51:40.938Z",
+      "releasedAt": "2026-09-27T02:11:21.436Z"
     },
     {
       "id": "FULFILLMENT-MOUNT",
@@ -865,14 +867,15 @@
       "id": "ADMIN-ORDER-EMAIL-COMPLETENESS",
       "title": "Make the admin order email sufficient to fulfil an order without opening the database",
       "priority": "P0",
-      "state": "claimed",
-      "owner": "claude-fable-s3",
+      "state": "ready",
+      "owner": null,
       "paths": [
         "server/research/assisted-order/communications.ts",
         "server/research/assisted-order/communications.test.ts"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-21T15:35:03.372Z"
+      "claimedAt": "2026-08-21T15:35:03.372Z",
+      "releasedAt": "2026-09-27T02:11:21.513Z"
     },
     {
       "id": "BROWSER-PERF-PROOF",
@@ -2344,6 +2347,64 @@
         "Archive original bytes and hashes; no application changes; exact route diff retained"
       ],
       "claimedAt": "2026-09-26T19:59:09.815Z"
+    },
+    {
+      "id": "XENIOS-CLARITY-IMPLEMENTATION-20260926",
+      "title": "Implement the owner-approved Xenios clarity program",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-xenios-clarity-implementation-20260926",
+      "baseSha": "3298f279ad760a861e26e3e08514bb49694fae38",
+      "paths": [
+        "client/src/clarity/**",
+        "client/src/App.tsx",
+        "client/src/index.css",
+        "client/src/components/Navbar.tsx",
+        "client/src/components/Footer.tsx",
+        "client/src/components/AccountAccessChooser.tsx",
+        "client/src/pages/Home.tsx",
+        "client/src/pages/Careers.tsx",
+        "client/src/lib/careers.ts",
+        "client/src/lib/careers-schema.ts",
+        "client/src/research/layout.tsx",
+        "client/src/research/section.tsx",
+        "client/src/research/pages/**",
+        "client/src/research/b2b/**",
+        "client/src/research/ui/shells.tsx",
+        "client/src/care/**",
+        "server/research/inquiries/**",
+        "shared/research/inquiries.ts",
+        "server/index.ts",
+        "server/research/index.ts",
+        "shared/research/founder-command-center.ts",
+        "server/research/founder-command-center.ts",
+        "server/research/founder-command-center-production.ts",
+        "client/src/research/pages/adminx/FounderCommandCenter.tsx",
+        "server/research/seo/raw-http-document-policy.ts",
+        "server/research/assisted-order/communications.ts",
+        "server/research/master-offerings/customer-projection.ts",
+        "client/public/sitemap.xml",
+        "scripts/evidence/routes.public.json",
+        "scripts/evidence/routes-public.test.mjs",
+        "e2e/customer-launch/browser-acceptance.mjs",
+        "docs/ux/xenios-clarity-implementation-20260926/**",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "server/core-site-protection.test.ts",
+        "server/release-control-plane.test.ts",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+        "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.registry.json",
+        "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+        "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+        "docs/coordination/FILE_OWNERSHIP.json",
+        "docs/coordination/MIGRATION_DAG.json",
+        "docs/coordination/history/*2026-09-27*",
+        ".xenios/sessions/codex-xenios-clarity-implementation-20260926.json"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Owner-approved clarity implementation from strategy af571386; no deployment, production mutation, schema migration, feature activation, or checkout-security changes.",
+      "claimedAt": "2026-09-27T02:12:50.809Z"
     }
   ]
 }

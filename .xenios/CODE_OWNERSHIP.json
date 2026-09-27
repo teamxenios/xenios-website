@@ -153,7 +153,7 @@
         "server/research/catalog-display/**",
         "server/research/pricing/catalog-price-projection.ts"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-08-20T17:51:40.949Z",
       "heartbeatAt": "2026-08-21T16:11:42.803Z"
     },
@@ -256,7 +256,7 @@
         "server/research/assisted-order/communications.ts",
         "server/research/assisted-order/communications.test.ts"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-08-21T15:35:03.376Z",
       "heartbeatAt": "2026-08-21T16:05:26.697Z"
     },
@@ -1773,7 +1773,7 @@
         "server/research/account-identity/**",
         "shared/research/account-identity.ts"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-09-09T13:05:13.405Z",
       "heartbeatAt": "2026-09-09T13:06:45.865Z"
     },
@@ -2062,7 +2062,7 @@
         "docs/research-launch/*ORDERING_READINESS*",
         ".xenios/sessions/codex-ordering-readiness-20260923.json"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-09-24T03:32:26.959Z",
       "heartbeatAt": "2026-09-24T04:47:22.614Z"
     },
@@ -2242,7 +2242,7 @@
         "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
         "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-26T19:11:44.333Z",
       "heartbeatAt": "2026-09-26T19:36:13.203Z"
     },
@@ -2259,7 +2259,7 @@
         "docs/coordination/history/*2026-09-26*",
         "server/core-site-protection.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-26T19:12:06.604Z",
       "heartbeatAt": "2026-09-26T19:36:13.203Z"
     },
@@ -2270,7 +2270,7 @@
       "paths": [
         "server/release-control-plane.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-26T19:43:58.342Z",
       "heartbeatAt": "2026-09-26T19:43:58.342Z"
     },
@@ -2281,7 +2281,7 @@
       "paths": [
         "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.registry.json"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-26T19:50:59.927Z",
       "heartbeatAt": "2026-09-26T19:50:59.927Z"
     },
@@ -2310,9 +2310,64 @@
         "docs/ux/xenios-ux-account-notifications-20260924/IMPLEMENTATION_REPORT.md",
         "docs/ux/xenios-ux-account-notifications-20260924/RELEASE_CONTROL_REPORT.md"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-26T19:59:09.828Z",
       "heartbeatAt": "2026-09-26T19:59:09.828Z"
+    },
+    {
+      "id": "cfaa1c68-a3b7-441e-8594-ccd47f75019b",
+      "task": "XENIOS-CLARITY-IMPLEMENTATION-20260926",
+      "session": "codex-xenios-clarity-implementation-20260926",
+      "paths": [
+        "client/src/clarity/**",
+        "client/src/App.tsx",
+        "client/src/index.css",
+        "client/src/components/Navbar.tsx",
+        "client/src/components/Footer.tsx",
+        "client/src/components/AccountAccessChooser.tsx",
+        "client/src/pages/Home.tsx",
+        "client/src/pages/Careers.tsx",
+        "client/src/lib/careers.ts",
+        "client/src/lib/careers-schema.ts",
+        "client/src/research/layout.tsx",
+        "client/src/research/section.tsx",
+        "client/src/research/pages/**",
+        "client/src/research/b2b/**",
+        "client/src/research/ui/shells.tsx",
+        "client/src/care/**",
+        "server/research/inquiries/**",
+        "shared/research/inquiries.ts",
+        "server/index.ts",
+        "server/research/index.ts",
+        "shared/research/founder-command-center.ts",
+        "server/research/founder-command-center.ts",
+        "server/research/founder-command-center-production.ts",
+        "client/src/research/pages/adminx/FounderCommandCenter.tsx",
+        "server/research/seo/raw-http-document-policy.ts",
+        "server/research/assisted-order/communications.ts",
+        "server/research/master-offerings/customer-projection.ts",
+        "client/public/sitemap.xml",
+        "scripts/evidence/routes.public.json",
+        "scripts/evidence/routes-public.test.mjs",
+        "e2e/customer-launch/browser-acceptance.mjs",
+        "docs/ux/xenios-clarity-implementation-20260926/**",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "server/core-site-protection.test.ts",
+        "server/release-control-plane.test.ts",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+        "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.registry.json",
+        "docs/coordination/CURRENT_PRODUCTION_STATE.json",
+        "docs/coordination/ACTIVE_RELEASE_GRAPH.json",
+        "docs/coordination/FILE_OWNERSHIP.json",
+        "docs/coordination/MIGRATION_DAG.json",
+        "docs/coordination/history/*2026-09-27*",
+        ".xenios/sessions/codex-xenios-clarity-implementation-20260926.json"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-27T02:12:50.811Z",
+      "heartbeatAt": "2026-09-27T02:12:50.953Z"
     }
   ],
   "rules": [
