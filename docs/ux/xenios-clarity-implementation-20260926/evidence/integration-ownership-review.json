@@ -3,17 +3,17 @@
   "kind": "xenios.integration-ownership-review",
   "attestation": {
     "baseSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
-    "headSha": "cfdfd4e66429cee03ad3c59113ce22dd1469f0ef",
+    "headSha": "5dcbc45f49a753bb857b8f6f035e83d212bd9648",
     "trustedBaseOwnershipPolicySha256": "bb4ea1f78ec70ef749ad881650a38ce274a48a801bab5b95c4aac21cb42eed92",
-    "gitDiffPathInventorySha256": "f3c8d9d081154e90dafb4cad0bcf507d79a66a558f758f429410b822a0c62b98",
-    "ownershipFindingInventorySha256": "748ee5bf8f5254f694491b3611cf8bec3271c07fdebb8f65c2f83426e183ca08",
+    "gitDiffPathInventorySha256": "4aae4787b220df2b5837ab4d003fc22deeac7646e3a560592873b3b68c317989",
+    "ownershipFindingInventorySha256": "88ebcc029f7678333cd86a0212deb1c8bf1f02dfab0f91e09b20aeec633a0c6c",
     "ownershipFindingCounts": {
-      "UNOWNED_FILE": 703,
-      "WRONG_LANE_OWNER": 33,
+      "UNOWNED_FILE": 767,
+      "WRONG_LANE_OWNER": 35,
       "OWNERSHIP_CONFLICT": 0
     },
     "reviewerIdentity": "Codex session codex-xenios-clarity-implementation-20260926",
-    "reviewedAt": "2026-09-27T17:36:59.3503918Z",
+    "reviewedAt": "2026-09-27T18:46:55.012Z",
     "reviewArtifactPath": "docs/ux/xenios-clarity-implementation-20260926/evidence/integration-ownership-review.json"
   }
 }

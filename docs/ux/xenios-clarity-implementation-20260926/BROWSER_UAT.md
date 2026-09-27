@@ -2,9 +2,9 @@
 
 ## Candidate identity
 
-- Runtime SHA: `cfdfd4e66429cee03ad3c59113ce22dd1469f0ef`
-- Runtime tree: `560485b32d01061fef94f8849201417b40adc63f`
-- Browser surface: controlled Google Chrome
+- Runtime SHA: `5dcbc45f49a753bb857b8f6f035e83d212bd9648`
+- Runtime tree: `4bd01064388dfd39692e056c4b059fcbc1c3851b`
+- Browser surface: controlled Google Chrome plus bounded in-app Chromium follow-up
 - Production mutation: none
 
 ## Responsive and reflow checks
@@ -34,7 +34,7 @@ At 400% equivalent reflow, opening the navigation produced modal dialog `clarity
 | `/workspace` | The AI workspace for serious coaches. | Legacy coach surface preserved away from root; no overflow. |
 | `/quality` | Quality and documentation | One form; no overflow. |
 | `/careers` | Work with Xenios | General-interest path only; one form; no named-role grid; no overflow. |
-| `/status` | Check status | noindex/nofollow; explicitly requires the submitting browser or sign-in and says a reference alone never unlocks details. |
+| `/status` | Check status | noindex/nofollow; explicitly requires the submitting browser or account authority and says a reference alone never unlocks details. The canonical `View Account Orders` shortcut is present. |
 | `/sign-in` | Sign in | noindex/nofollow. |
 | `/activate` | Activate your account | noindex/nofollow; no-token state says the secure emailed link is required. |
 | `/research` | How research orders work | No overflow. The client-only preview injects index/follow; the production raw-document policy independently tests noindex for this legacy route. |
@@ -43,12 +43,13 @@ At 400% equivalent reflow, opening the navigation produced modal dialog `clarity
 
 ## Exact-built-bundle smoke
 
-After the final `npm run build`, the generated `dist/public` bundle was served locally with Vite preview and opened in controlled Chrome at `http://127.0.0.1:5001/`. This second pass loaded hashed production assets (`/assets/index-DUs6i2yg.js` and `/assets/index-Bzc8R8qm.css`), not Vite source modules.
+After the final `npm run build`, the generated `dist/public` bundle was served locally with Vite preview and opened in controlled Chromium at `http://127.0.0.1:5001/`. The follow-up build loaded hashed production assets including `/assets/index-B__yCREs.js` and `/assets/index-Bzc8R8qm.css`, not Vite source modules.
 
 - Root returned the approved H1, one main region and no horizontal overflow at the native controlled-Chrome viewport (`scrollWidth=623`, `clientWidth=623`, `innerWidth=638`, DPR 1.5).
 - Built routes returned the expected H1s for Care scheduling, products, practices, partners and careers.
 - Careers explicitly said general interest only and rendered one application form.
-- `/status` retained `noindex, nofollow`, the reference-only non-disclosure statement and canonical sign-in guidance.
+- `/status` at an exact 390 px viewport retained `noindex, nofollow`, rendered H1 `Check status`, had `scrollWidth=375` / `innerWidth=390` with no overflow, and exposed `View Account Orders` at `/research/account/orders`.
+- Activating that shortcut while signed out reached `/research/sign-in?returnTo=%2Fresearch%2Faccount%2Forders`, preserving the canonical private destination without exposing a credential.
 - `/activate` retained `noindex, nofollow` and the secure-link-required no-token state.
 - `/partners/apply?source=build-smoke` resolved to `/partners#inquiry` and rendered the partner page.
 - Captured warning/error entries all originated from installed Chrome extensions; zero entry originated from the Xenios preview origin or its built assets.

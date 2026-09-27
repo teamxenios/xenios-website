@@ -6,8 +6,8 @@ Samuel's owner approval in strategy SHA `af5713863dcf9b8455c568b89ffc15f6c103e58
 
 - Audited implementation base: `3298f279ad760a861e26e3e08514bb49694fae38`
 - Base tree: `ac69ecf87e3c622738908bb4fa7a1779aad493fb`
-- Runtime candidate: `cfdfd4e66429cee03ad3c59113ce22dd1469f0ef`
-- Runtime tree: `560485b32d01061fef94f8849201417b40adc63f`
+- Runtime candidate: `5dcbc45f49a753bb857b8f6f035e83d212bd9648`
+- Runtime tree: `4bd01064388dfd39692e056c4b059fcbc1c3851b`
 - Protected-control commit: `98b43d68d3e0a2f63e14ec5ad5afd7abe2f9fb80`
 - Production mutation: none
 
@@ -39,14 +39,14 @@ The implementing session registered and claimed the clarity lane before runtime 
 Command:
 
 ```text
-node scripts/acceptance/verify-core-site-protection.mjs 3298f279ad760a861e26e3e08514bb49694fae38 cfdfd4e66429cee03ad3c59113ce22dd1469f0ef
+node scripts/acceptance/verify-core-site-protection.mjs 3298f279ad760a861e26e3e08514bb49694fae38 5dcbc45f49a753bb857b8f6f035e83d212bd9648
 ```
 
 Result: **PASS**.
 
-- 114 changed files classified
-- 93 allowed Research/Care paths
-- 5 infrastructure paths
+- 197 changed files classified
+- 94 allowed Research/Care paths
+- 19 infrastructure paths
 - 37 protected hashes verified
 - 16 permitted seam files reported and reviewed above
 

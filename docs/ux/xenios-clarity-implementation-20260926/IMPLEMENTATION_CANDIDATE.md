@@ -9,8 +9,8 @@
 | Owner-approved strategy | `af5713863dcf9b8455c568b89ffc15f6c103e58a` |
 | Strategy tree | `aed302d6cf48ce760878b5138d3028b6c908e35b` |
 | Branch | `codex/xenios-clarity-implementation-20260926` |
-| Runtime SHA | `cfdfd4e66429cee03ad3c59113ce22dd1469f0ef` |
-| Runtime tree | `560485b32d01061fef94f8849201417b40adc63f` |
+| Runtime SHA | `5dcbc45f49a753bb857b8f6f035e83d212bd9648` |
+| Runtime tree | `4bd01064388dfd39692e056c4b059fcbc1c3851b` |
 | Test-only SHA | `2cdd448bda4f7fbf3e071c0a2104a75ddb124955` |
 | Test-only tree | `52a44e95b6c1cdf9ceb78117fb58f7572347eeee` |
 | Regression-alignment test SHA | `3feeb2477919f767152bd9569f4803aca22f4e1e` |
@@ -19,7 +19,7 @@
 | Protected-control tree | `813cb3273ee979ec73d00bfbb3d3491736a4e666` |
 | Production observed | `79414143d4355d5d3d14cd5fe6e5a536dc68d99d` |
 
-The runtime SHA is the application candidate. Later test, evidence, generated-record and continuity commits are not deploy candidates and do not replace that identity.
+The runtime SHA is the application candidate. It includes the bounded P-17 signed-in shortcut follow-up after the first handoff; later recut evidence, generated-record and continuity commits are not deploy candidates and do not replace that identity.
 
 ## Outcome
 
@@ -27,7 +27,7 @@ The owner-approved clarity program is implemented across the public home, shared
 
 All 13 owner decisions are applied. There is no production mutation, migration, flag activation, checkout-security merge, native-commerce activation, automatic settlement or external-message send.
 
-The candidate is **not ready for independent release approval** because the approved P-17 anonymous reference+email/closed-tab status-recovery contract cannot be added under the lane's no-new-credential/no-database authority. The fail-closed implementation preserves the current owner/status-token/Early-Access-session proofs instead. See `STATUS_AUTHORITY_BLOCKER.md`.
+The candidate is **not ready for independent release approval** because the approved P-17 anonymous reference+email/closed-tab status-recovery contract cannot be added under the lane's no-new-credential/no-database authority. The signed-in shortcut now opens the canonical account-orders authority; anonymous recovery still fails closed and preserves the current owner/status-token/Early-Access-session proofs. See `STATUS_AUTHORITY_BLOCKER.md`.
 
 ## Surface disposition
 
@@ -43,7 +43,7 @@ The candidate is **not ready for independent release approval** because the appr
 | Suppliers | PASS |
 | Careers | PASS |
 | Sign-in / activation | PASS |
-| Status P-17 | FAIL — authority blocker |
+| Status P-17 | PARTIAL — signed-in shortcut PASS; anonymous recovery authority blocker |
 | Durable inquiries | PASS |
 | Founder operator obligation | PASS |
 
@@ -67,25 +67,27 @@ The durable inquiry endpoint persists to the existing `loi_submissions` store be
 
 | Gate | Result | Evidence |
 | --- | --- | --- |
-| Focused candidate tests | PASS | New/changed batches plus combined 20-file regression: 355 passed, 1 skipped, 0 failed. |
-| Full suite | PASS | 987 files; 3,611 suites; 18,141 passed; 85 skipped; 0 failed. The JSON result recorded `success=true`; a separate exit-0 postcondition asserted zero failed files/suites/tests and no snapshot failure. |
+| Focused candidate tests | PASS | Follow-up route/auth batch: 12 passed. Repository guard rerun: 77 passed, 1 skipped. Earlier combined 20-file regression: 355 passed, 1 skipped, 0 failed. |
+| Full suite | PASS | Serial exact-tree run: 988 files; 3,613 suites; 18,149 passed; 85 skipped; 0 failed; exit 0 and JSON `success=true`. |
 | Typecheck | PASS | `npm run check` |
 | Production build | PASS | `npm run build`; only existing chunk/dynamic-import advisory warnings. |
-| Exact-built-bundle smoke | PASS | Hashed `dist/public` assets loaded in Chrome; critical H1, auth robots, Careers and partner redirect boundaries verified. |
+| Exact-built-bundle smoke | PASS | Hashed `dist/public` assets loaded in controlled Chromium; `/status` at 390 px had no overflow, retained noindex, exposed the canonical account-orders link, and the signed-out gate preserved its exact return target. Earlier critical H1, Careers and partner redirect boundaries remain verified. |
 | 390 / 768 / 1440 reflow | PASS | Source-preview responsive pass; no horizontal overflow. |
 | Real 200% / 400% browser zoom | NOT RUN | Controlled surface could not operate browser chrome. Chrome-engine DPR/viewport equivalent reflow passed at 2x/4x, including menu focus/Escape and 44 px targets; manual browser-zoom U-G09 remains. |
 | Keyboard/focus | PARTIAL PASS | Menu focus entry, Escape close, focus return and modal scroll lock passed; full route-by-route keyboard traversal remains manual UAT. |
-| Protected change | PASS | 114 paths classified; 93 allowed, 5 infrastructure, 37 hashes, 16 reviewed seams. |
+| Protected change | PASS | 197 paths classified; 94 allowed, 19 infrastructure, 37 hashes, 16 reviewed seams. |
 | Route uniqueness | PASS | 449 registrations across 440 call sites at the runtime SHA. |
 | Migration DAG | PASS | 37 nodes, canonical checksums verified. |
 | Site records | PASS | 235 unique public routes and 15 capabilities; generated against the final non-record evidence source SHA. |
 | Release control plane | PASS | Typecheck; 51 passed, 1 skipped. |
 | Release diff-scan tests | PASS | 8 passed. The strict candidate scan was not run because the required external approved-name corpus (`XENIOS_RELEASE_PII_NAMES_FILE`) was unavailable; no empty substitute was fabricated. |
-| Release manifest | PASS | Schema v2; exact 736-path production-to-runtime inventory; trusted-base ownership digest; zero ownership conflicts. |
+| Release manifest | PASS | Schema v2; exact 802-path production-to-runtime inventory; trusted-base ownership digest; zero ownership conflicts. |
 | `git diff --check` | PASS | Production-to-runtime and staged slices. |
 | Production read | PASS | Render remains live at production SHA `79414143…`; `/api/health` 200; Supabase/admin configured; commerce false. |
 
 The first full-suite pass revealed only assertions that still expected retired routes/copy. Exactly 20 test files were aligned with the approved runtime, their combined regression went green, and the final complete JSON run had zero failures. The earlier red temporary report is not release evidence.
+
+For the bounded signed-in-shortcut follow-up, a parallel full run reached 18,148 passes before one repository-wide preview-harness scan exceeded its worker timeout. That exact guard passed in the serial four-file rerun, and the authoritative full serial run then exited 0 with 18,149 passes and zero failures. The timeout report is not release evidence.
 
 ## Release posture
 

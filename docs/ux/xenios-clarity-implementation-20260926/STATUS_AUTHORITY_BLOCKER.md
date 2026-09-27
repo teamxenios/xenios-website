@@ -23,7 +23,9 @@ The implementation therefore keeps `/status` fail closed:
 
 This boundary is asserted in `client/src/clarity/StatusPage.test.tsx` and the existing assisted-order owner/token-isolation tests.
 
-The public page does not claim P-17 acceptance. It has no email field, anonymous lookup, loading state, closed-tab emailed-return flow, or session-aware signed-in shortcut; its sign-in guidance remains a link into the canonical account authority.
+The public page does not claim P-17 acceptance. It now provides the authorized signed-in shortcut directly to `/research/account/orders`; the existing account gate sends signed-out users through canonical sign-in with that exact return target. It still has no email field, anonymous lookup, lookup loading state, or closed-tab emailed-return flow.
+
+The existing account-history claim flow was also audited as a possible reuse. It requires an authenticated, email-verified account, an `eac_…` customer reference, and a consumed one-time challenge bound to that user and target account. Broadening it to anonymous `XRR-…` reference-plus-email recovery would still create new credential and server authority, so it is not a drop-in P-17 substitute.
 
 ## Why the requested recovery is not implemented
 
@@ -35,4 +37,4 @@ The final owner approval explicitly withholds credential/database changes from t
 
 P-17 needs a separately approved secure recovery design. A safe design could mint a short-lived, single-purpose status link after a neutral reference+email challenge, with rate limiting, non-enumerating responses, hashed one-time token storage, expiry/consumption rules, audit behavior, and owner-isolation tests. That is a new credential flow and may require schema and notification changes; it is outside the approved no-migration/no-new-auth-authority lane.
 
-No workaround was introduced. The blocker is the P-17 recovery authority as a whole: reference+email lookup, neutral mismatch handling, closed-tab recovery, and the related loading/signed-in page states must be designed and reviewed together. This is the single concrete P1 product blocker to declaring the clarity candidate ready for independent release review.
+No workaround was introduced. The remaining blocker is the anonymous P-17 recovery authority: reference+email lookup, neutral mismatch handling, closed-tab recovery, and the related network loading/double-submit states must be designed and reviewed together. Care-reference guidance and the signed-in account-orders shortcut are implemented. This is the single concrete P1 product blocker to declaring the clarity candidate ready for independent release review.
