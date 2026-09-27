@@ -2481,7 +2481,7 @@
       "id": "XENIOS-P17-SECURE-STATUS-RECOVERY-20260927",
       "title": "Implement secure out-of-band order-scoped P-17 status recovery",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-p17-secure-status-recovery-20260927",
       "baseSha": "5dcbc45f49a753bb857b8f6f035e83d212bd9648",
       "paths": [
@@ -2541,7 +2541,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Owner-authorized source-only secure P-17 recovery from frozen runtime 5dcbc45. One narrow additive migration candidate, existing durable outbox, and exact-subject status-only session are authorized. No migration apply, deploy, real email, environment/credential change, real customer mutation, commerce activation, or weakened owner isolation.",
-      "claimedAt": "2026-09-27T20:17:58.003Z"
+      "claimedAt": "2026-09-27T20:17:58.003Z",
+      "handoff": {
+        "session": "codex-xenios-p17-secure-status-recovery-20260927",
+        "sha": "02f8c0d282055eba29321ae55802e74fafbc1f5a",
+        "file": ".xenios/handoffs/2026-09-27T21-33-39-844Z-XENIOS-P17-SECURE-STATUS-RECOVERY-20260927-codex-xenios-p17-secure-status-recovery-20260927.md",
+        "at": "2026-09-27T21:33:39.848Z"
+      }
     }
   ]
 }
