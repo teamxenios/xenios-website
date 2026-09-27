@@ -2354,7 +2354,7 @@
       "id": "XENIOS-CLARITY-IMPLEMENTATION-20260926",
       "title": "Implement the owner-approved Xenios clarity program",
       "priority": "P0",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-clarity-implementation-20260926",
       "baseSha": "3298f279ad760a861e26e3e08514bb49694fae38",
       "paths": [
@@ -2469,7 +2469,7 @@
       ],
       "dependsOn": [],
       "scopeNote": "Owner-approved clarity implementation from strategy af571386; no deployment, production mutation, schema migration, feature activation, or checkout-security changes.",
-      "claimedAt": "2026-09-27T02:12:50.809Z",
+      "claimedAt": "2026-09-27T17:53:16.569Z",
       "handoff": {
         "session": "codex-xenios-clarity-implementation-20260926",
         "sha": "347bff25397210883518825850edd711b078c0eb",
