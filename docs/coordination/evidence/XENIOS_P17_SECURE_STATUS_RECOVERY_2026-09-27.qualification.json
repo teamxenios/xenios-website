@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "taskId": "XENIOS-P17-SECURE-STATUS-RECOVERY-20260927",
+  "checkedAt": "2026-09-27T21:04:56.7508878Z",
+  "parentSha": "5dcbc45f49a753bb857b8f6f035e83d212bd9648",
+  "runtimeSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
+  "runtimeTree": "55bdc57d3992393f4b767cd7f9c6a00c53e25c60",
+  "testSha": "4ca346e0bae7252eab62b71e59310cf263211a68",
+  "releaseControlSha": "9b77f1ce400074985da87daba48628d3ffa1f570",
+  "migration": {
+    "path": "supabase/migrations/20260927203000_research_status_recovery.sql",
+    "sha256": "98cce457db8d82c72a399223117dcf4d98488dc153f3d1883e65a07e95220292",
+    "applyTwice": "PASS",
+    "behavior": "PASS",
+    "concurrentDoubleConsume": "ONE_SUCCESS_MAXIMUM",
+    "environment": "DISPOSABLE_POSTGRESQL_17_ONLY"
+  },
+  "security": {
+    "publicEnumeration": 0,
+    "rawTokensInDatabaseLogsOrEvidence": 0,
+    "careOrClinicalDataExposed": false,
+    "statusSessionScope": "ONE_EXACT_SUBJECT",
+    "commerceEnabled": false,
+    "nativeCommerce": "DARK"
+  },
+  "externalEffects": {
+    "realEmail": false,
+    "stagingMutated": false,
+    "productionMutated": false,
+    "deployed": false
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "XENIOS_P17_SECURE_STATUS_RECOVERY_2026-09-27",
+  "domain": "research-status-recovery",
+  "lane": "clarity-implementation",
+  "owner": "Codex owner-authorized P-17 source-only lane",
+  "createdAt": "2026-09-27T21:04:56.7508878Z",
+  "baseSha": "5dcbc45f49a753bb857b8f6f035e83d212bd9648",
+  "headSha": "9b77f1ce400074985da87daba48628d3ffa1f570",
+  "currentProductionSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+  "files": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/handoffs/2026-09-27T18-56-28-967Z-XENIOS-CLARITY-IMPLEMENTATION-20260926-codex-xenios-clarity-implementation-20260926.md",
+    ".xenios/sessions/codex-xenios-clarity-implementation-20260926.json",
+    ".xenios/sessions/codex-xenios-p17-secure-status-recovery-20260927.json",
+    "client/src/care/CarePublicPages.tsx",
+    "client/src/clarity/StatusPage.test.tsx",
+    "client/src/clarity/pages.test.tsx",
+    "client/src/clarity/pages.tsx",
+    "client/src/index.css",
+    "client/src/pages/Home.tsx",
+    "client/src/research/pages/Faq.tsx",
+    "docs/coordination/MIGRATION_DAG.json",
+    "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+    "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+    "docs/ux/xenios-clarity-implementation-20260926/BROWSER_UAT.md",
+    "docs/ux/xenios-clarity-implementation-20260926/HANDOFF.md",
+    "docs/ux/xenios-clarity-implementation-20260926/IMPLEMENTATION_CANDIDATE.md",
+    "docs/ux/xenios-clarity-implementation-20260926/PROTECTED_CHANGE_REVIEW.md",
+    "docs/ux/xenios-clarity-implementation-20260926/RELEASE_MANIFEST.json",
+    "docs/ux/xenios-clarity-implementation-20260926/STATUS_AUTHORITY_BLOCKER.md",
+    "docs/ux/xenios-clarity-implementation-20260926/evidence/integration-ownership-review.json",
+    "server/index.ts",
+    "server/release-control-plane.test.ts",
+    "server/research/frontdoor.test.ts",
+    "server/research/outbox.ts",
+    "server/research/status-recovery/crypto.test.ts",
+    "server/research/status-recovery/crypto.ts",
+    "server/research/status-recovery/http.test.ts",
+    "server/research/status-recovery/http.ts",
+    "server/research/status-recovery/memory-store.ts",
+    "server/research/status-recovery/migration-source.test.ts",
+    "server/research/status-recovery/notification.test.ts",
+    "server/research/status-recovery/notification.ts",
+    "server/research/status-recovery/ports.ts",
+    "server/research/status-recovery/production.ts",
+    "server/research/status-recovery/service.test.ts",
+    "server/research/status-recovery/service.ts",
+    "server/research/status-recovery/status-copy.ts",
+    "server/research/status-recovery/supabase-store.ts",
+    "server/static.test.ts",
+    "server/static.ts",
+    "shared/research/status-recovery/contract.ts",
+    "supabase/MIGRATIONS.md",
+    "supabase/candidates/20260927203000_research_status_recovery.postcheck.sql",
+    "supabase/candidates/20260927203000_research_status_recovery.precheck.sql",
+    "supabase/candidates/20260927203000_research_status_recovery.rollback.md",
+    "supabase/candidates/20260927203000_research_status_recovery.sql",
+    "supabase/migrations/20260927203000_research_status_recovery.sql",
+    "supabase/verification/20260927_research_status_recovery_disposable.sql"
+  ],
+  "routes": [
+    { "method": "POST", "path": "/api/research/status-recovery/request" },
+    { "method": "POST", "path": "/api/research/status-recovery/exchange" },
+    { "method": "GET", "path": "/api/research/status" },
+    { "method": "POST", "path": "/api/research/status/end" }
+  ],
+  "migrations": [
+    {
+      "id": "research_status_recovery",
+      "path": "supabase/migrations/20260927203000_research_status_recovery.sql",
+      "checksum": "98cce457db8d82c72a399223117dcf4d98488dc153f3d1883e65a07e95220292",
+      "dependsOn": ["research_assisted_order_bridge"],
+      "rollback": {
+        "strategy": "Drop the five bounded functions, then the two additive recovery relations only in a separately authorized rollback lane.",
+        "steps": ["Follow supabase/candidates/20260927203000_research_status_recovery.rollback.md against the exact applied migration receipt."],
+        "verification": ["Run the candidate postcheck and confirm the removed objects are absent without changing order or assisted-request rows."]
+      }
+    }
+  ],
+  "tables": [
+    "public.research_status_recovery_tokens",
+    "public.research_status_recovery_sessions"
+  ],
+  "functions": [
+    "public.research_status_recovery_match",
+    "public.research_status_recovery_prepare_delivery",
+    "public.research_status_recovery_exchange",
+    "public.research_status_recovery_status",
+    "public.research_status_recovery_end"
+  ],
+  "rls": [
+    "Both additive relations enable and force RLS with no browser policies."
+  ],
+  "privileges": [
+    "PUBLIC, anon and authenticated have no relation privileges or function EXECUTE; service_role receives only the five exact function EXECUTE grants."
+  ],
+  "environmentNames": [
+    "RESEARCH_SESSION_SECRET",
+    "SITE_URL"
+  ],
+  "sharedWiring": [
+    "Existing durable Research notification outbox and provider sender configuration.",
+    "Existing durable public rate limiter with deny-on-failure recovery policy.",
+    "Existing Research order and assisted-order canonical recipient/status authorities.",
+    "Existing owner, raw status-token and Early Access status authorities remain unchanged."
+  ],
+  "tests": {
+    "focused": {
+      "status": "PASS",
+      "command": "Status recovery focused: 5 files / 20 tests; combined focused: 6 files / 61 tests; nearby regressions: 6 files / 145 tests; clarity copy/CTA: 5 tests",
+      "checkedAt": "2026-09-27T21:04:56.7508878Z"
+    },
+    "fullSuite": {
+      "status": "PASS",
+      "command": "npm test -- --reporter=dot; final post-control-plane rerun, 0 failures (exact counts recorded in handoff)",
+      "checkedAt": "2026-09-27T21:04:56.7508878Z"
+    },
+    "typecheck": {
+      "status": "PASS",
+      "command": "npm run check",
+      "checkedAt": "2026-09-27T21:04:56.7508878Z"
+    },
+    "build": {
+      "status": "PASS",
+      "command": "npm run build",
+      "checkedAt": "2026-09-27T21:04:56.7508878Z"
+    },
+    "diffCheck": {
+      "status": "PASS",
+      "command": "git diff --check 5dcbc45f49a753bb857b8f6f035e83d212bd9648..9b77f1ce400074985da87daba48628d3ffa1f570",
+      "checkedAt": "2026-09-27T21:04:56.7508878Z"
+    }
+  },
+  "rollback": {
+    "strategy": "Source-only candidate: no deployed artifact, environment change or managed migration exists to roll back.",
+    "steps": [
+      "Do not deploy or apply the migration from this lane.",
+      "If a later authorized deployment must be rolled back, redeploy its exact predecessor and follow the separately approved database rollback receipt."
+    ],
+    "verification": [
+      "Confirm production remains at 79414143d4355d5d3d14cd5fe6e5a536dc68d99d and commerceEnabled remains false."
+    ]
+  },
+  "smoke": {
+    "steps": [
+      "On an authorized environment, request status with matching, wrong, unknown, malformed and Care-style fixtures and compare the public response.",
+      "Capture the canonical-recipient notification without external delivery, open its fragment link, explicitly exchange, reload, close/reopen, then end the session.",
+      "Attempt cross-owner, account, payment-document, Care, partner and admin access with only the status cookie."
+    ],
+    "expected": [
+      "Every request response is neutral and only the canonical recipient gets an event.",
+      "Initial GET does not consume; explicit POST creates one exact-subject status session and closed-tab return works until expiry/end.",
+      "All authority outside the one safe status view remains denied."
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "implementation",
+      "checkedAt": "2026-09-27T21:04:56.7508878Z",
+      "reference": "docs/ux/xenios-p17-secure-status-recovery-20260927/IMPLEMENTATION_CANDIDATE.md"
+    },
+    {
+      "kind": "sql-qualification",
+      "checkedAt": "2026-09-27T21:04:56.7508878Z",
+      "reference": "docs/ux/xenios-p17-secure-status-recovery-20260927/SQL_QUALIFICATION.md"
+    },
+    {
+      "kind": "browser-uat",
+      "checkedAt": "2026-09-27T21:04:56.7508878Z",
+      "reference": "docs/ux/xenios-p17-secure-status-recovery-20260927/BROWSER_UAT.md"
+    },
+    {
+      "kind": "protected-change-review",
+      "checkedAt": "2026-09-27T21:04:56.7508878Z",
+      "reference": "docs/ux/xenios-p17-secure-status-recovery-20260927/PROTECTED_CHANGE_REVIEW.md"
+    }
+  ]
+}
