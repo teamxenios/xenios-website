@@ -93,16 +93,25 @@ describe("the changed-file classifier", () => {
     expect(result.violations).toEqual(["client/src/pages/About.tsx"]);
   });
 
-  it("FAILS unrelated global presentation changes while reporting the hash-locked shell seam", () => {
+  it("FAILS unrelated global presentation changes while reporting the approved hash-locked shell seam", () => {
     const result = classifyChangedFiles(
-      ["client/src/index.css", "client/index.html", "client/src/components/Footer.tsx"],
+      ["client/src/components/Wordmark.tsx", "client/index.html", "client/src/pages/About.tsx"],
       manifest,
     );
     expect(result.violations.sort()).toEqual([
-      "client/src/components/Footer.tsx",
-      "client/src/index.css",
+      "client/src/components/Wordmark.tsx",
+      "client/src/pages/About.tsx",
     ]);
     expect(result.seam).toEqual(["client/index.html"]);
+  });
+
+  it("keeps the clarity implementation zone bounded to its exact slash-terminated prefix", () => {
+    const result = classifyChangedFiles(
+      ["client/src/clarity/NewPublicPage.tsx", "client/src/clarity-adjacent/NewPublicPage.tsx"],
+      manifest,
+    );
+    expect(result.allowed).toEqual(["client/src/clarity/NewPublicPage.tsx"]);
+    expect(result.violations).toEqual(["client/src/clarity-adjacent/NewPublicPage.tsx"]);
   });
 
   it("PASSES a permitted seam file but REPORTS it as a seam, not as an ordinary allowed change", () => {
@@ -159,9 +168,18 @@ describe("the changed-file classifier", () => {
     ];
     const reviewedHashLockedSeams = [
       "client/src/components/AccountAccessChooser.tsx",
+      "client/src/components/Footer.tsx",
       "client/src/components/Navbar.tsx",
+      "client/src/components/PageShell.tsx",
+      "client/src/components/SeoHead.tsx",
+      "client/src/index.css",
+      "client/src/lib/careers.ts",
       "client/src/pages/Admin.tsx",
+      "client/src/pages/Careers.tsx",
+      "client/src/pages/ForCoaches.tsx",
       "client/src/pages/Home.tsx",
+      "client/src/pages/Waitlist.tsx",
+      "server/static.ts",
       "server/routes.ts",
       "server/services/email.ts",
       "server/services/contact-delivery.ts",
@@ -289,10 +307,10 @@ describe("test files pass but are always reported", () => {
 
   it("still FAILS a protected source file even when a test file is changed alongside it", () => {
     const result = classifyChangedFiles(
-      ["server/core-site-protection.test.ts", "client/src/components/Footer.tsx"],
+      ["server/core-site-protection.test.ts", "client/src/components/Wordmark.tsx"],
       manifest,
     );
-    expect(result.violations).toEqual(["client/src/components/Footer.tsx"]);
+    expect(result.violations).toEqual(["client/src/components/Wordmark.tsx"]);
   });
 });
 
@@ -316,9 +334,19 @@ describe("the protected file hash tripwire", () => {
   it("FAILS every mutation of the reviewed typography and dependency seam bytes", () => {
     for (const target of [
       "client/src/components/AccountAccessChooser.tsx",
+      "client/src/components/Footer.tsx",
       "client/src/components/Navbar.tsx",
+      "client/src/components/PageShell.tsx",
+      "client/src/components/SeoHead.tsx",
+      "client/src/index.css",
+      "client/src/lib/careers.ts",
       "client/src/pages/Admin.tsx",
+      "client/src/pages/Careers.tsx",
+      "client/src/pages/ForCoaches.tsx",
       "client/src/pages/Home.tsx",
+      "client/src/pages/Waitlist.tsx",
+      "client/public/sitemap.xml",
+      "server/static.ts",
       "server/routes.ts",
       "server/services/email.ts",
       "server/services/contact-delivery.ts",
