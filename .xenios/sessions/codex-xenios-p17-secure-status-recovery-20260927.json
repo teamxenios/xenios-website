@@ -1,0 +1,10 @@
+{
+  "id": "codex-xenios-p17-secure-status-recovery-20260927",
+  "tool": "OpenAI Codex desktop",
+  "lane": "P17 secure status recovery",
+  "branch": "codex/xenios-p17-secure-status-recovery-20260927",
+  "state": "active",
+  "startedAt": "2026-09-27T20:16:51.935Z",
+  "heartbeatAt": "2026-09-27T20:16:51.935Z",
+  "note": "Owner-authorized source-only secure P-17 recovery from runtime 5dcbc45; no deploy, migration apply, real email, environment change, or production mutation."
+}
