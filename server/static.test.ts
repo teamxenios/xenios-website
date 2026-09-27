@@ -177,6 +177,17 @@ describe("the production static server answers documents through the raw HTTP po
     expect(res.headers.link).toBeUndefined();
   });
 
+  it("serves the recovery landing document no-store and no-referrer with only same-origin resources", async () => {
+    const res = await request(app).get("/status");
+    expect(res.status).toBe(200);
+    expect(res.headers["cache-control"]).toBe("no-store");
+    expect(res.headers.pragma).toBe("no-cache");
+    expect(res.headers["referrer-policy"]).toBe("no-referrer");
+    expect(res.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+    expect(res.text).not.toMatch(/https:\/\/(?!xeniostechnology\.com)/u);
+    expect(res.text).toContain('src="/assets/app.js"');
+  });
+
   it("keeps the self-hosted font asset same-origin for Care and marketing documents", async () => {
     const care = await request(app).get("/care");
     expect(care.status).toBe(200);

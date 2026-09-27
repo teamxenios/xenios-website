@@ -2,15 +2,21 @@
 
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
-import { afterEach, describe, expect, it } from "vitest";
-import { assistedOrderTokenKey } from "@/research/assisted-order/storage";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { StatusPage } from "./pages";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
-const ORDER_REFERENCE = "XRR-20260926-ABCDEF1234";
 let root: Root | null = null;
 let host: HTMLDivElement | null = null;
+const fetchMock = vi.fn<typeof fetch>();
+
+beforeEach(() => {
+  vi.stubGlobal("fetch", fetchMock);
+  fetchMock.mockReset();
+  fetchMock.mockResolvedValue(new Response(JSON.stringify({ ok: false }), { status: 401, headers: { "Content-Type": "application/json" } }));
+  window.history.replaceState({}, "", "/status");
+});
 
 afterEach(() => {
   if (root) act(() => root?.unmount());
@@ -18,11 +24,12 @@ afterEach(() => {
   root = null;
   host = null;
   sessionStorage.clear();
-  window.history.replaceState({}, "", "/status");
+  localStorage.clear();
+  vi.unstubAllGlobals();
 });
 
-async function renderPage(): Promise<HTMLDivElement> {
-  window.history.replaceState({}, "", "/status");
+async function renderPage(url = "/status"): Promise<HTMLDivElement> {
+  window.history.replaceState({}, "", url);
   host = document.createElement("div");
   document.body.appendChild(host);
   root = createRoot(host);
@@ -30,67 +37,95 @@ async function renderPage(): Promise<HTMLDivElement> {
   return host;
 }
 
-async function submitReference(view: HTMLElement, reference: string): Promise<void> {
-  const input = view.querySelector<HTMLInputElement>('input[name="reference"]')!;
-  Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(input, reference);
+function setInput(view: HTMLElement, name: string, value: string): void {
+  const input = view.querySelector<HTMLInputElement>(`input[name="${name}"]`)!;
+  Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(input, value);
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+}
+
+async function submit(view: HTMLElement): Promise<void> {
   await act(async () => {
     view.querySelector("form")?.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
   });
 }
 
-describe("public status credential boundary", () => {
-  it("never opens private order details from a reference alone", async () => {
+describe("public status recovery", () => {
+  it("requests reference plus email and shows the same neutral result", async () => {
+    fetchMock
+      .mockResolvedValueOnce(new Response(null, { status: 401 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ ok: true }), { status: 202 }));
     const view = await renderPage();
-    await submitReference(view, ORDER_REFERENCE.toLowerCase());
+    setInput(view, "reference", "xrr-20260927-abcdef1234");
+    setInput(view, "email", "owner@example.invalid");
+    await submit(view);
 
-    expect(window.location.pathname).toBe("/status");
-    expect(view.querySelector('[role="status"]')?.textContent).toContain("does not have the secure status credential");
-    expect(view.textContent).toContain("A reference by itself never unlocks private order details");
+    expect(fetchMock).toHaveBeenLastCalledWith("/api/research/status-recovery/request", expect.objectContaining({ method: "POST", cache: "no-store" }));
+    expect(view.querySelector('[role="status"]')?.textContent).toContain("If the details match an eligible order");
+    expect(view.textContent).not.toMatch(/order found|email matched|reference invalid/iu);
   });
 
-  it("opens the order route only when this browser has its status credential", async () => {
-    sessionStorage.setItem(assistedOrderTokenKey(ORDER_REFERENCE), "status-secret");
+  it("keeps network failure and a Care-shaped reference on the same non-enumerating result", async () => {
+    fetchMock
+      .mockResolvedValueOnce(new Response(null, { status: 401 }))
+      .mockRejectedValueOnce(new Error("offline"));
     const view = await renderPage();
-    await submitReference(view, `  ${ORDER_REFERENCE.toLowerCase()}  `);
-
-    expect(window.location.pathname).toBe(`/research/early-access/order-request/${ORDER_REFERENCE}`);
+    setInput(view, "reference", "CARE-ABC12345");
+    setInput(view, "email", "owner@example.invalid");
+    await submit(view);
+    expect(view.querySelector('[role="status"]')?.textContent).toContain("For privacy, we cannot confirm whether a matching order exists");
   });
 
-  it("links the signed-in shortcut directly to the canonical account orders route", async () => {
-    const view = await renderPage();
+  it("removes a fragment credential immediately and waits for explicit View status", async () => {
+    const token = "T".repeat(43);
+    const view = await renderPage(`/status#recovery=${token}`);
+    expect(window.location.hash).toBe("");
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(sessionStorage.length).toBe(0);
+    expect(localStorage.length).toBe(0);
 
-    const accountOrders = view.querySelector<HTMLAnchorElement>('a[href="/research/account/orders"]');
-    expect(accountOrders?.textContent).toBe("View Account Orders");
+    fetchMock
+      .mockResolvedValueOnce(new Response(null, { status: 204 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify({
+        subjectType: "assisted_order",
+        reference: "XRR-20260927-ABCDEF1234",
+        status: "reviewing",
+        statusLabel: "In review",
+        whatHappened: "Xenios is reviewing your request.",
+        nextStep: "Wait for the review update from Xenios.",
+        nextStepOwner: "xenios",
+        returnPath: "/status",
+        supportPath: "/support",
+        updatedAt: "2026-09-27T20:00:00.000Z",
+        timeline: [],
+      }), { status: 200, headers: { "Content-Type": "application/json" } }));
+    const viewStatus = Array.from(view.querySelectorAll("button")).find((button) => button.textContent === "View status");
+    await act(async () => viewStatus?.click());
+    expect(fetchMock.mock.calls[0][0]).toBe("/api/research/status-recovery/exchange");
+    expect(String(fetchMock.mock.calls[0][1]?.body)).toContain(token);
+    expect(view.textContent).toContain("In review");
+    expect(view.textContent).toContain("Who owns the next step");
   });
 
-  it.each([
-    ["CARE-123E4567", "Care requests are updated directly", "/care/support"],
-    ["INQ-ABC12345", "Business inquiries do not have a public status page", "/support"],
-  ] as const)("routes %s to its bounded support message", async (reference, message, supportHref) => {
+  it("restores an exact-order view from the HttpOnly session and can end it", async () => {
+    fetchMock.mockResolvedValueOnce(new Response(JSON.stringify({
+      subjectType: "assisted_order",
+      reference: "XRR-20260927-ABCDEF1234",
+      status: "submitted",
+      statusLabel: "Received",
+      whatHappened: "Xenios received your request.",
+      nextStep: "Xenios will review the request and contact you.",
+      nextStepOwner: "xenios",
+      returnPath: "/status",
+      supportPath: "/support",
+      updatedAt: "2026-09-27T20:00:00.000Z",
+      timeline: [],
+    }), { status: 200, headers: { "Content-Type": "application/json" } }));
     const view = await renderPage();
-    await submitReference(view, reference);
-
-    expect(window.location.pathname).toBe("/status");
-    expect(view.querySelector('[role="status"]')?.textContent).toContain(message);
-    expect(view.querySelector(`a[href="${supportHref}"]`)).not.toBeNull();
-  });
-
-  it("routes XEA, XEC, and XO order references to secure-account guidance instead of invalid", async () => {
-    const view = await renderPage();
-    for (const reference of ["XEA-ABC12345", "XEC-ABC12345", "XO-ABC12345"]) {
-      await submitReference(view, reference);
-      expect(window.location.pathname).toBe("/status");
-      expect(view.querySelector('[role="status"]')?.textContent).toContain("belongs in your secure account");
-      expect(view.querySelector('[role="alert"]')).toBeNull();
-    }
-    expect(view.querySelector('a[href="/research/account/orders"]')).not.toBeNull();
-  });
-
-  it("announces malformed references without navigating", async () => {
-    const view = await renderPage();
-    await submitReference(view, "../private");
-
-    expect(window.location.pathname).toBe("/status");
-    expect(view.querySelector('[role="alert"]')?.textContent).toContain("not recognized");
+    expect(view.textContent).toContain("XRR-20260927-ABCDEF1234");
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+    const end = Array.from(view.querySelectorAll("button")).find((button) => button.textContent?.includes("End secure"));
+    await act(async () => end?.click());
+    expect(fetchMock).toHaveBeenLastCalledWith("/api/research/status/end", expect.objectContaining({ method: "POST" }));
+    expect(view.querySelector('input[name="email"]')).not.toBeNull();
   });
 });

@@ -1,4 +1,6 @@
 import express from "express";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import request from "supertest";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { registerResearchApi, researchPageGate } from "./index";
@@ -42,6 +44,14 @@ afterEach(() => {
 });
 
 describe("the homepage stays at the root domain", () => {
+  it("mounts the exact public status-recovery boundary before the legacy Research API wall", () => {
+    const productionSource = readFileSync(path.resolve("server/index.ts"), "utf8");
+    const recoveryMount = productionSource.indexOf("registerStatusRecoveryApi(");
+    const legacyWallMount = productionSource.indexOf("registerResearchApi(app);");
+    expect(recoveryMount).toBeGreaterThan(0);
+    expect(legacyWallMount).toBeGreaterThan(recoveryMount);
+    expect(productionSource.match(/registerStatusRecoveryApi\(/gu)).toHaveLength(1);
+  });
   it("serves the homepage at / while the review password gate is on", async () => {
     process.env.RESEARCH_ACCESS_PASSWORD = "gate-password";
     const res = await request(makeApp()).get("/");
