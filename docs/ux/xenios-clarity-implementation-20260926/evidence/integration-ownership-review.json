@@ -1,0 +1,19 @@
+{
+  "artifactSchemaVersion": 1,
+  "kind": "xenios.integration-ownership-review",
+  "attestation": {
+    "baseSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "headSha": "cfdfd4e66429cee03ad3c59113ce22dd1469f0ef",
+    "trustedBaseOwnershipPolicySha256": "bb4ea1f78ec70ef749ad881650a38ce274a48a801bab5b95c4aac21cb42eed92",
+    "gitDiffPathInventorySha256": "f3c8d9d081154e90dafb4cad0bcf507d79a66a558f758f429410b822a0c62b98",
+    "ownershipFindingInventorySha256": "748ee5bf8f5254f694491b3611cf8bec3271c07fdebb8f65c2f83426e183ca08",
+    "ownershipFindingCounts": {
+      "UNOWNED_FILE": 703,
+      "WRONG_LANE_OWNER": 33,
+      "OWNERSHIP_CONFLICT": 0
+    },
+    "reviewerIdentity": "Codex session codex-xenios-clarity-implementation-20260926",
+    "reviewedAt": "2026-09-27T17:36:59.3503918Z",
+    "reviewArtifactPath": "docs/ux/xenios-clarity-implementation-20260926/evidence/integration-ownership-review.json"
+  }
+}

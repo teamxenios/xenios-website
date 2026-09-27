@@ -1,0 +1,30 @@
+{
+  "kind": "xenios.clarity-production-read",
+  "checkedAt": "2026-09-27T17:06:49.2038909Z",
+  "productionMutated": false,
+  "workspaceId": "tea-d8nhh6a8qa3s73f4ocj0",
+  "serviceId": "srv-d8s9vej7uimc7384dfcg",
+  "serviceName": "xenios-website",
+  "serviceUrl": "https://xenios-website.onrender.com",
+  "autoDeploy": "no",
+  "liveDeploy": {
+    "deployId": "dep-daqft3vf3r2c73b7e88g",
+    "commitSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "status": "live",
+    "finishedAt": "2026-09-24T10:43:29.274153Z"
+  },
+  "health": {
+    "httpResult": "PASS",
+    "status": "Xenios API is running",
+    "responseTimestamp": "2026-09-27T17:06:50.116Z",
+    "supabaseConfigured": true,
+    "adminConfigured": true,
+    "turnstileConfigured": false,
+    "commerceEnabled": false
+  },
+  "notes": [
+    "Render service and deploy state were read only.",
+    "No deploy, migration, environment, flag, database, or production write was performed.",
+    "Production remains on the pre-candidate SHA; this evidence does not claim the clarity candidate is deployed."
+  ]
+}
