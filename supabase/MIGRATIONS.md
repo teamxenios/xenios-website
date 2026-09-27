@@ -257,3 +257,18 @@ exact ACL starting states and passed 18 existing plus 16 new authority tamper
 cases. Independent-connection contention and managed Supabase/PostgREST proof
 remain explicitly deferred to an authorized staging lane. See
 `docs/production-completion/checkout/COMMERCE_AUTHORITY_QUALIFICATION_20260923.md`.
+
+## Secure P-17 status recovery — pending 2026-09-27
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 79 | migrations/20260927203000_research_status_recovery.sql | Add digest-only, expiring, revocable recovery tokens and exact-subject status sessions behind five bounded service-role RPCs | PENDING; source-only, not applied to staging or production |
+
+The candidate is byte-identical to
+`candidates/20260927203000_research_status_recovery.sql` and is pinned in the
+migration DAG to runtime source commit `fef7b313c23ac0e12046420041aa51a3a6e3c2d6`.
+It applied twice and passed structural, ACL, forced-RLS and adversarial behavior
+checks on disposable PostgreSQL 17, including an independent-connection
+double-consume race with one success maximum. No managed environment was
+contacted. Precheck, postcheck, rollback and disposable verifier artifacts live
+beside the candidate and under `supabase/verification/`.
