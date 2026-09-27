@@ -493,7 +493,7 @@ describe("master offering detail", () => {
             variant({
               action: {
                 kind: "request_early_access_purchase",
-                label: "Request Early Access Purchase",
+                label: "Request Order",
                 href: "/research/member/product-requests/new?source=products",
               },
             }),
@@ -502,7 +502,7 @@ describe("master offering detail", () => {
       />,
     );
     const cta = host.querySelector('[data-testid="mo-cta"]');
-    expect(cta?.textContent).toBe("Request Early Access Purchase");
+    expect(cta?.textContent).toBe("Request Order");
     expect(cta?.tagName).toBe("A");
     expect(host.querySelectorAll('[data-testid="mo-cta"]')).toHaveLength(1);
     unmount();

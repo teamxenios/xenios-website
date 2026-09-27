@@ -4,15 +4,16 @@ import { describe, expect, it } from "vitest";
 import AccountAccessChooser from "./AccountAccessChooser";
 
 describe("AccountAccessChooser", () => {
-  it("keeps sign-in, activation, ordering, Care, partner, business, and supplier intents distinct", () => {
+  it("keeps sign-in, activation, products, Care, partner, practice, and supplier intents distinct", () => {
     const html = renderToStaticMarkup(<AccountAccessChooser />);
     for (const href of [
-      "/research/sign-in", "/research/activate", "/research/order", "/care/schedule",
-      "/research/partners", "/research/organizations", "/research/supplier-access",
+      "/sign-in", "/activate", "/products", "/care/schedule",
+      "/partners", "/practices", "/suppliers#inquiry",
     ]) expect(html).toContain(`href="${href}"`);
-    expect(html).toContain("sign in before submitting an application");
-    expect(html).toContain("Formal Research membership applications are not open yet");
-    expect(html).toContain("If you want Research products now");
+    for (const label of ["Sign In", "Activate Account", "Explore Products", "Start Care", "Become a Partner", "For Practices", "Submit Inquiry"]) {
+      expect(html).toContain(label);
+    }
     expect(html).not.toContain("Create account");
+    expect(html).not.toContain("Early Access");
   });
 });

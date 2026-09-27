@@ -180,7 +180,7 @@ describe("master-offerings actions translate into the six actions", () => {
       [
         {
           kind: "request_early_access_purchase",
-          label: "Request Early Access Purchase",
+          label: "Request Order",
           ...href,
         },
         "ASSISTED_ORDER",

@@ -14,7 +14,7 @@ import { resetAssistedOrderConfigCache } from "../assisted-order/api";
 
 /** The canonical sentence, passed in exactly as the server states it. */
 const FULFILLMENT =
-  "Current fulfillment target: within 72 hours after payment verification and product availability confirmation. Tracking will be provided when the shipment is released.";
+  "Tracking will be provided when the shipment is released.";
 
 let container: HTMLElement | null = null;
 let root: Root | null = null;

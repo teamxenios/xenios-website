@@ -154,7 +154,7 @@ describe("Founder command center aggregate", () => {
     expect(host.textContent).toContain("Superseded");
   });
 
-  it("performs one authorized GET and renders all 13 fixed areas in canonical order", async () => {
+  it("performs one authorized GET and renders all 14 fixed areas in canonical order", async () => {
     mocks.apiGet.mockResolvedValue({ kind: "ok", data: buildResponse() });
     await renderBody();
 
@@ -163,7 +163,7 @@ describe("Founder command center aggregate", () => {
       FOUNDER_COMMAND_CENTER_API_PATH,
       TOKEN,
     );
-    expect(commandCards()).toHaveLength(13);
+    expect(commandCards()).toHaveLength(14);
     expect(
       commandCards().map((card) =>
         card.getAttribute("data-testid")?.replace("command-center-card-", ""),
@@ -216,9 +216,9 @@ describe("Founder command center aggregate", () => {
     await renderBody();
 
     expect(commandCards()[0]?.textContent).toMatch(/Applications[\s\S]*0[\s\S]*Exact/);
-    expect(commandCards()[1]?.textContent).toMatch(/Care requests[\s\S]*2[\s\S]*Bounded/);
+    expect(commandCards()[1]?.textContent).toMatch(/Business inquiries[\s\S]*2[\s\S]*Bounded/);
     const unavailable = commandCards()[2];
-    expect(unavailable?.textContent).toContain("Assisted orders");
+    expect(unavailable?.textContent).toContain("Care requests");
     expect(unavailable?.textContent).toContain("Unavailable");
     expect(unavailable?.textContent).not.toMatch(/\b0\b/);
   });
@@ -302,7 +302,9 @@ describe("Founder command center aggregate", () => {
 
   it("uses closed attention-code copy for bounded Care, email-provider failure, and unknown-code fallback", async () => {
     const response = buildResponse();
-    response.cards[1] = buildCard(1, {
+    const careIndex = FOUNDER_COMMAND_CENTER_AREA_IDS.indexOf("care_requests");
+    const systemIndex = FOUNDER_COMMAND_CENTER_AREA_IDS.indexOf("system_status");
+    response.cards[careIndex] = buildCard(careIndex, {
       source: {
         state: "partial",
         authority: "private Care source detail",
@@ -321,7 +323,7 @@ describe("Founder command center aggregate", () => {
         reason: "owner@example.test reached a private cap",
       },
     });
-    response.cards[11] = buildCard(11, {
+    response.cards[systemIndex] = buildCard(systemIndex, {
       attention: {
         severity: "warning",
         code: "email_provider_unavailable",
@@ -338,10 +340,10 @@ describe("Founder command center aggregate", () => {
     mocks.apiGet.mockResolvedValue({ kind: "ok", data: response });
     await renderBody();
 
-    expect(commandCards()[1]?.textContent).toContain(
+    expect(commandCards()[careIndex]?.textContent).toContain(
       "The Care projection reached its safety cap, so its counts are bounded and a zero is not inferred.",
     );
-    expect(commandCards()[11]?.textContent).toContain(
+    expect(commandCards()[systemIndex]?.textContent).toContain(
       "The canonical email configuration resolver reports no available provider.",
     );
     expect(commandCards()[0]?.textContent).toContain(
@@ -360,7 +362,7 @@ describe("Founder command center aggregate", () => {
     await renderBody();
 
     expect(host.querySelectorAll("button, form, input, select, textarea")).toHaveLength(0);
-    expect(host.querySelectorAll("a")).toHaveLength(26);
+    expect(host.querySelectorAll("a")).toHaveLength(28);
     expect(
       Array.from(host.querySelectorAll("a")).some(
         (link) => link.textContent?.trim() === "Unavailable",
@@ -402,7 +404,7 @@ describe("Founder command center aggregate", () => {
     mocks.apiGet.mockResolvedValue({ kind: "ok", data: response });
     await renderBody();
 
-    expect(commandCards()).toHaveLength(13);
+    expect(commandCards()).toHaveLength(14);
     const html = host.innerHTML;
     for (const privateText of [
       "John Doe",
@@ -538,7 +540,7 @@ describe("Founder command center boundary states", () => {
     await flush();
 
     expect(mocks.apiGet).toHaveBeenCalledTimes(2);
-    expect(commandCards()).toHaveLength(13);
+    expect(commandCards()).toHaveLength(14);
   });
 
   it.each([

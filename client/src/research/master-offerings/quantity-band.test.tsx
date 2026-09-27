@@ -252,7 +252,7 @@ describe("quantity 1 through 50", () => {
         purchasableVariant({
           action: {
             kind: "request_early_access_purchase",
-            label: "Request Early Access Purchase",
+            label: "Request Order",
             href: "/research/member/product-requests/new?source=products",
           },
         }),

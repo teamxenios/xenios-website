@@ -113,7 +113,7 @@ describe("Early Access customer cart projections", () => {
     expect(JSON.stringify(view)).not.toContain("eac_private");
   });
 
-  it("projects processing, exact DB timestamps, and the shipping-only promise", () => {
+  it("projects processing, exact DB timestamps, and timing-neutral tracking guidance", () => {
     const view = projectEarlyAccessCustomerCartStatus(
       status(),
       "2026-08-12T01:00:00.001Z",
@@ -123,9 +123,10 @@ describe("Early Access customer cart projections", () => {
     expect(view.fulfilment.shipByAt).toBe("2026-08-12T01:00:00.000Z");
     expect(view.fulfilment.overdue).toBe(true);
     expect(view.shippingExpectation).toBe(EARLY_ACCESS_SHIPPING_EXPECTATION);
-    expect(view.shippingExpectation.toLowerCase()).toContain(
-      "expected to ship within 72 hours after payment verification",
+    expect(view.shippingExpectation).toBe(
+      "Tracking will be provided when the shipment is released.",
     );
+    expect(view.shippingExpectation).not.toMatch(/72 hours|ship by/iu);
     expect(view.shippingExpectation.toLowerCase()).not.toContain("deliver");
     expect(cartCustomerPayloadIsClean(view)).toBe(true);
     expect(JSON.stringify(view)).not.toContain("supplier-secret");

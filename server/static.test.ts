@@ -5,7 +5,7 @@ import path from "node:path";
 import request from "supertest";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { serveStatic } from "./static";
+import { PUBLIC_DOCUMENT_REDIRECTS, serveStatic } from "./static";
 
 // The document-policy cases below assert each document's INTENDED indexability
 // (index vs noindex per the policy tables). The environment gate is exercised
@@ -108,44 +108,61 @@ describe("the production static server answers documents through the raw HTTP po
     expect(res.text.match(/data-raw-http-schema="Organization"/gu)).toHaveLength(1);
     expect(res.text.match(/data-raw-http-schema="WebSite"/gu)).toHaveLength(1);
     expect(res.text.match(/application\/ld\+json/gu)).toHaveLength(2);
-    expect(res.text).toContain("xenios | The operating system for proactive health");
-    expect(res.text).toContain("The professional stays in front. Xen and Athena carry the work behind them.");
+    expect(res.text).toContain("Care and research products | Xenios");
+    expect(res.text).toContain("Start a Care request or explore products for research use through two clearly separated paths.");
     // Exactly one robots directive survives: the policy's.
     expect(res.text.match(/name="robots"/gu)).toHaveLength(1);
   });
 
-  it("serves only reviewed JobPosting schema on careers routes", async () => {
+  it("publishes no JobPosting schema while careers is general-interest only", async () => {
     const careers = await request(app).get("/careers");
-    expect(careers.text.match(/data-raw-http-schema="JobPosting:/gu)).toHaveLength(2);
+    expect(careers.status).toBe(200);
+    expect(careers.text).not.toContain('data-raw-http-schema="JobPosting:');
     const detail = await request(app).get("/careers/founding-designer");
-    expect(detail.text.match(/data-raw-http-schema="JobPosting:Founding Designer"/gu))
-      .toHaveLength(1);
-    const closed = await request(app).get("/careers/founding-coach-cohort");
-    expect(closed.text).not.toContain('data-raw-http-schema="JobPosting:');
+    expect(detail.text).not.toContain('data-raw-http-schema="JobPosting:');
   });
 
-  it("serves a public Research editorial page as indexable with an exact canonical", async () => {
-    const res = await request(app).get("/research/quality");
+  it("serves a canonical public quality page as indexable with an exact canonical", async () => {
+    const res = await request(app).get("/quality");
     expect(res.status).toBe(200);
     expect(res.headers["x-robots-tag"]).toMatch(/^index,follow/u);
-    expect(canonical(res.text)).toBe("https://xeniostechnology.com/research/quality");
+    expect(canonical(res.text)).toBe("https://xeniostechnology.com/quality");
   });
 
-  it("serves /health as the indexable canonical Care + Research gateway", async () => {
+  it("moves the exact legacy /health document permanently to the root", async () => {
     const res = await request(app).get("/health");
-    expect(res.status).toBe(200);
-    expect(res.headers["x-robots-tag"]).toMatch(/^index,follow/u);
-    expect(res.headers.link).toBe(
-      '<https://xeniostechnology.com/health>; rel="canonical"',
-    );
-    expect(canonical(res.text)).toBe("https://xeniostechnology.com/health");
-    expect(res.text).toContain("Xenios | Care + Research");
-    expect(res.text).toContain(
-      "Begin provider-guided Care for personal health or explore the separate evidence-led Xenios Research pathway for legitimate nonclinical work.",
-    );
-    expect(res.text).not.toContain("template-organization");
-    expect(res.text).not.toContain("template-faq");
-    expect(res.text).not.toContain("application/ld+json");
+    expect(res.status).toBe(301);
+    expect(res.headers.location).toBe("/");
+  });
+
+  it.each(Object.entries(PUBLIC_DOCUMENT_REDIRECTS))(
+    "redirects only the exact legacy document %s to %s",
+    async (source, destination) => {
+      const res = await request(app).get(source);
+      expect(res.status).toBe(301);
+      expect(res.headers.location).toBe(destination);
+    },
+  );
+
+  it.each([
+    ["/research/quality?utm_source=clarity", "/quality?utm_source=clarity"],
+    ["/research/testing?lot=ABC-123", "/quality?lot=ABC-123#testing"],
+    ["/research/documents?lot=ABC-123", "/quality?lot=ABC-123#documents"],
+  ])("preserves query data when redirecting %s", async (source, destination) => {
+    const res = await request(app).get(source);
+    expect(res.status).toBe(301);
+    expect(res.headers.location).toBe(destination);
+  });
+
+  it.each([
+    "/healthcare",
+    "/research/quality/deeper",
+    "/research/partners/workspace",
+    "/enterprise/account",
+  ])("never applies an exact-document alias as a prefix for %s", async (source) => {
+    const res = await request(app).get(source);
+    expect(res.status).not.toBe(301);
+    expect(res.headers.location).toBeUndefined();
   });
 
   it("keeps a private member document at 200 but noindex, with no canonical or Open Graph authority", async () => {
@@ -203,10 +220,11 @@ describe("the production static server answers documents through the raw HTTP po
     expect(res.text).not.toContain("xenios | shell");
   });
 
-  it("no longer soft-404s an unknown career slug", async () => {
+  it("keeps an unrecognized legacy career slug noindex and free of JobPosting schema", async () => {
     const res = await request(app).get("/careers/not-a-real-role");
-    expect(res.status).toBe(404);
+    expect(res.status).toBe(200);
     expect(res.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+    expect(res.text).not.toContain('data-raw-http-schema="JobPosting:');
   });
 
   it("serves the static /hino subtree byte-for-byte and never routes it through the policy", async () => {
@@ -273,10 +291,10 @@ describe("the production static server answers documents through the raw HTTP po
     expect(res.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
   });
 
-  it("ignores a query suffix on a public path and canonicalizes to the exact document", async () => {
-    const res = await request(app).get("/research/quality?utm_source=x");
+  it("ignores a query suffix on a canonical public path", async () => {
+    const res = await request(app).get("/quality?utm_source=x");
     expect(res.status).toBe(200);
     expect(res.headers["x-robots-tag"]).toMatch(/^index,follow/u);
-    expect(canonical(res.text)).toBe("https://xeniostechnology.com/research/quality");
+    expect(canonical(res.text)).toBe("https://xeniostechnology.com/quality");
   });
 });

@@ -108,7 +108,7 @@ export const ACTIONS: Readonly<Record<MasterOfferingAction["kind"], MasterOfferi
   request_access: { kind: "request_access", label: "Request Access", href: REQUEST_HREF },
   request_early_access_purchase: {
     kind: "request_early_access_purchase",
-    label: "Request Early Access Purchase",
+    label: "Request Order",
     href: REQUEST_HREF,
   },
   apply: { kind: "apply", label: "Apply", href: "/research/apply" },

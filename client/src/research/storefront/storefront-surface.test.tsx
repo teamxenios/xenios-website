@@ -418,7 +418,7 @@ describe("public product surface", () => {
     }
     expect(
       view.host.querySelector('[data-testid="sf-detail-early-access"]')?.textContent,
-    ).toContain("Continue through Early Access");
+    ).toContain("Continue to research ordering");
     expect(view.host.textContent).not.toContain("Have an early access password?");
     expect(view.host.querySelector("main")).toBeNull();
     view.unmount();

@@ -77,7 +77,7 @@ describe("onboarding source facts and preserved policy", () => {
     await render(); const steps = host.querySelector('section[aria-labelledby="po-steps"]')!.textContent;
     for (const value of [
       "Identity verification", "We confirm who you are before your link exists. One account per person, always under a real name.",
-      "Partner agreement", "The full Research Rep agreement is presented for review and acceptance. Nothing is shareable before it is accepted.",
+      "Partner agreement", "The full partner agreement is presented for review and acceptance. Nothing is shareable before it is accepted.",
       "Compliance certification", "The training modules and certification review. Current training and reviewed evidence are required before activation.",
       "Payout and tax clearance", "Payout readiness and tax documentation are reviewed before certification and activation. No fee or payment is required to begin customer access.",
     ]) expect(steps).toContain(value);

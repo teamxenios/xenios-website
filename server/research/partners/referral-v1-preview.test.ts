@@ -16,7 +16,7 @@ describe("local referral preview read-only dependency contract", () => {
   it("uses canonical Care status with requests closed and no provider readiness", async () => {
     const response = await request(app).get("/api/care/access-request/status");
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ ok: true, acceptingRequests: false, workflow: "manual_human_follow_up", typicalResponse: "one_business_day", clinicalHandoff: "separate_secure_step_after_review" });
+    expect(response.body).toEqual({ ok: true, acceptingRequests: false, workflow: "manual_human_follow_up", clinicalHandoff: "separate_secure_step_after_review" });
     expect(response.headers["cache-control"]).toContain("no-store");
   });
 

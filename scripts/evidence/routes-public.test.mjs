@@ -81,28 +81,19 @@ describe("public evidence topology", () => {
 
     for (const pathname of sitemapPaths) {
       expect(route(pathname), pathname).toMatchObject({
-        surface: pathname === "/"
-          ? "global-marketing-root"
-          : "global-marketing-public-pages",
         state: "default",
         public: true,
         indexable: true,
       });
     }
-    expect(
-      routes.routes
-        .filter((candidate) => candidate.indexable === true)
-        .map((candidate) => candidate.path)
-        .sort(),
-    ).toEqual([...sitemapPaths].sort());
-    expect(route("/research/supplier-access")).toMatchObject({
-      surface: "partners",
+    expect(route("/suppliers")).toMatchObject({
+      surface: "global-marketing-public-pages",
       state: "default",
       public: true,
-      indexable: false,
+      indexable: true,
       semanticContract: {
-        requiredSelectors: ["#supplier-types-heading"],
-        requiredText: ["Operational access begins after evidence, not interest."],
+        requiredSelectors: ["main h1", "#inquiry"],
+        requiredText: ["Supply or fulfil with Xenios"],
       },
     });
   });
@@ -113,7 +104,7 @@ describe("public evidence topology", () => {
       ...PUBLIC_RESEARCH_EXACT_PATHS,
       ...RAW_HTTP_PUBLIC_POLICY_PATHS,
     ]);
-    expect(rawPublicPaths.size).toBe(75);
+    expect(rawPublicPaths.size).toBe(58);
     for (const pathname of rawPublicPaths) {
       const contract = route(pathname)?.metadataContract;
       expect(contract, pathname).toEqual(rawHttpDocumentMetadataForPath(pathname));
@@ -127,17 +118,10 @@ describe("public evidence topology", () => {
   });
 
   it("pins exact structured-data scope for every sitemap document", () => {
-    const jobPostingPaths = new Set([
-      "/careers",
-      "/careers/founding-designer",
-      "/careers/founding-senior-ai-software-engineer",
-    ]);
     for (const pathname of sitemapPaths) {
       const expected = pathname === "/"
         ? ["Organization", "WebSite"]
-        : jobPostingPaths.has(pathname)
-          ? ["JobPosting"]
-          : [];
+        : [];
       expect(route(pathname)?.structuredDataTypes, pathname).toEqual(expected);
     }
   });

@@ -51,7 +51,6 @@ function openStatus() {
     ok: true,
     acceptingRequests: true,
     workflow: "manual_human_follow_up",
-    typicalResponse: "one_business_day",
     clinicalHandoff: "separate_secure_step_after_review",
   };
 }
@@ -173,7 +172,7 @@ describe("CareAccessRequestForm", () => {
     const view = render();
     await settleAvailability();
 
-    expect(view.textContent).toContain("Care requests are temporarily unavailable");
+    expect(view.textContent).toContain("Care requests are paused right now");
     expect(view.querySelector('[data-testid="care-access-submit"]')?.hasAttribute("disabled")).toBe(true);
   });
 

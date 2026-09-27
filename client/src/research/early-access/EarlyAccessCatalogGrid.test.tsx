@@ -8,7 +8,7 @@ import { EarlyAccessCatalogGrid } from "./EarlyAccessCatalogGrid";
 import { toCardProducts, type EarlyAccessCatalogRowView } from "./earlyAccessCatalogView";
 
 const FULFILLMENT =
-  "Current fulfillment target: within 72 hours after payment verification and product availability confirmation. Tracking will be provided when the shipment is released.";
+  "Tracking will be provided when the shipment is released.";
 
 /** The 22 approved rows, exactly as the founder priced them. */
 const APPROVED: ReadonlyArray<readonly [string, string, number]> = [

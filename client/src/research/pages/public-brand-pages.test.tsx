@@ -110,14 +110,14 @@ describe("public editorial page system", () => {
     expect(view.textContent).not.toContain("Begin clinical intake");
     expect(view.textContent).not.toContain("Invited early-access users");
     expect(view.querySelectorAll("article")).toHaveLength(13);
-    expect(links).toContain("/research/activate");
-    expect(view.textContent).toContain("Review the program, then sign in before submitting an application");
+    expect(links).toContain("/activate");
+    expect(view.textContent).toContain("No approval, commission, payout, or commercial term is implied publicly.");
   });
 
   it("opens FAQ panels with explicit button and region relationships", async () => {
     const view = await renderPage(<Faq />);
     const buttons = Array.from(view.querySelectorAll<HTMLButtonElement>('[data-testid^="button-faq-"]'));
-    expect(buttons).toHaveLength(18);
+    expect(buttons).toHaveLength(9);
     expect(buttons[0].getAttribute("aria-expanded")).toBe("true");
     expect(view.querySelector(`#${buttons[0].getAttribute("aria-controls")}`)).not.toBeNull();
 
@@ -134,14 +134,21 @@ describe("public editorial page system", () => {
 
   it.each([
     ["FAQ", <Faq />],
-    ["How it works", <HowItWorks />],
     ["About", <AboutResearch />],
   ] as const)("keeps %s aligned with the nonclinical Care request boundary", async (_name, page) => {
     const view = await renderPage(page);
     expect(hrefs(view)).toContain("/care/schedule");
-    expect(view.textContent).toContain("Start Care request");
+    expect(view.textContent).toContain("Start Care");
     expect(view.textContent).not.toContain("Begin clinical intake");
     expect(view.textContent).not.toContain("Xenios Care is available nationwide");
+  });
+
+  it("keeps the research-order explainer separate from Care", async () => {
+    const view = await renderPage(<HowItWorks />);
+    expect(view.textContent).toContain("A research order never unlocks Care.");
+    expect(hrefs(view)).toContain("/products");
+    expect(hrefs(view)).toContain("/status");
+    expect(hrefs(view)).not.toContain("/care/schedule");
   });
 
   it("makes policy status discoverable without presenting draft or unconfirmed documents as approved", async () => {
@@ -187,9 +194,10 @@ describe("editorial homepage reconciliation", () => {
     expect(view.querySelectorAll("main")).toHaveLength(1);
     expect(view.querySelectorAll("h1")).toHaveLength(1);
     expect(view.querySelector("#research-main")?.getAttribute("tabindex")).toBe("-1");
-    expect(view.textContent).toContain("Provider-guided peptide care.Evidence-led Research access.");
-    expect(view.textContent).toContain("Start Care request");
-    expect(view.textContent).toContain("Explore Research");
+    expect(view.textContent).toContain("How research orders work");
+    expect(view.textContent).toContain("Explore Products");
+    expect(view.textContent).toContain("Check Status");
+    expect(view.textContent).toContain("There's no clinical review");
     expect(view.textContent).not.toContain("Care access requests are open.");
 
     const hero = view.querySelector<HTMLImageElement>('.rg-hero-image');
@@ -199,21 +207,18 @@ describe("editorial homepage reconciliation", () => {
 
     const links = hrefs(view);
     for (const required of [
-      "/research/access-hub",
+      "/products",
       "/research/organizations",
       "/research/partners",
-      "/research/affiliates",
       "/research/how-it-works",
       "/research/quality",
-      "/research/about",
       "/research/faq",
-      "/research/policies",
-      "/research/contact",
       "/research/support",
-      "/research/privacy",
-      "/research/terms",
+      "/sign-in",
+      "/status",
+      "/privacy",
+      "/terms",
       "/care",
-      "/care/schedule",
     ]) {
       expect(links).toContain(required);
     }

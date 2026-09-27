@@ -161,12 +161,12 @@ describe("supplier dispatch never duplicates a supplier order", () => {
 describe("customer-facing fulfilment copy", () => {
   it("is the approved string, character for character", () => {
     expect(EARLY_ACCESS_FULFILLMENT_TARGET_COPY).toBe(
-      "Current fulfillment target: within 72 hours after payment verification and product availability confirmation. Tracking will be provided when the shipment is released.",
+      "Tracking will be provided when the shipment is released.",
     );
   });
 
-  it("reads as a target and never as a promised date", () => {
-    expect(EARLY_ACCESS_FULFILLMENT_TARGET_COPY).toContain("target");
+  it("is timing-neutral and never promises a shipment or delivery date", () => {
+    expect(EARLY_ACCESS_FULFILLMENT_TARGET_COPY).not.toMatch(/72 hours|ship within|target/iu);
     expect(EARLY_ACCESS_FULFILLMENT_TARGET_COPY).not.toMatch(
       /guarantee|guaranteed|will arrive|delivered by|deliver by/i,
     );

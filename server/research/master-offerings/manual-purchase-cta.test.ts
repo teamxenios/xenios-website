@@ -33,7 +33,7 @@ describe("manual Early Access purchase CTA", () => {
       ON,
     );
     expect(action.kind).toBe("request_early_access_purchase");
-    expect(action.label).toBe("Request Early Access Purchase");
+    expect(action.label).toBe("Request Order");
   });
 
   it("never shadows a real Add to Cart", async () => {

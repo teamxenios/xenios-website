@@ -20,7 +20,6 @@ import {
   RAW_HTTP_SITE_ORIGIN,
   buildRawHttpDocumentResponse,
   createRawHttpDocumentPolicyResolver,
-  rawHttpDocumentMetadataForPath,
   rawHttpStructuredDataForPath,
 } from "./raw-http-document-policy";
 
@@ -167,6 +166,7 @@ describe("raw HTTP route authority", () => {
     expect([...new Set(sitemapPaths)].sort()).toEqual(
       [...allSitemapPolicyPaths].sort(),
     );
+    expect(sitemapPaths).not.toContain("/research");
 
     expect(
       RAW_HTTP_CAREER_DETAILS.map(({ path, jobPostingTitle }) => ({
@@ -222,7 +222,7 @@ describe("raw HTTP route authority", () => {
       'const ResearchSection = lazy(() => import("@/research/section"));',
     );
     expect(appSource).toContain(
-      '<Route path="/research" component={ResearchRoutes} />',
+      '<Route path="/research" component={ResearchOverviewPage} />',
     );
     expect(appSource).toContain(
       '<Route path="/research/*" component={ResearchRoutes} />',
@@ -263,21 +263,19 @@ describe("raw HTTP route authority", () => {
     }
   });
 
-  it("admits /health as the canonical public Care + Research gateway", () => {
+  it("keeps the retired /health identity raw-noindex behind its exact redirect", () => {
+    expect(appSource).toContain('<Route path="/health"><Redirect to="/" /></Route>');
     expect(defaultResolver.resolve("/health")).toMatchObject({
       status: 200,
-      routeKind: "public",
-      indexable: true,
-      canonicalPath: "/health",
-      canonicalUrl: "https://xeniostechnology.com/health",
-    });
-    expect(rawHttpDocumentMetadataForPath("/health")).toEqual({
-      title: "Xenios | Care + Research",
-      description: "Begin provider-guided Care for personal health or explore the separate evidence-led Xenios Research pathway for legitimate nonclinical work.",
+      routeKind: "private",
+      reason: "registered_private_document",
+      indexable: false,
+      canonicalPath: null,
+      canonicalUrl: null,
     });
   });
 
-  it("makes Quality, Testing, and Documents explicit public roots", () => {
+  it("keeps the retired Research quality aliases noindex behind clarity redirects", () => {
     const qualityMatrix = [
       PUBLIC_QUALITY_ROUTES.quality,
       PUBLIC_QUALITY_ROUTES.testing,
@@ -301,30 +299,33 @@ describe("raw HTTP route authority", () => {
         path: "/research/quality",
         registeredInProductionSection: true,
         status: 200,
-        robots: RAW_HTTP_INDEX_ROBOTS,
-        canonicalPath: "/research/quality",
+        robots: RAW_HTTP_NOINDEX_ROBOTS,
+        canonicalPath: null,
         inCurrentSitemap: false,
       },
       {
         path: "/research/testing",
         registeredInProductionSection: true,
         status: 200,
-        robots: RAW_HTTP_INDEX_ROBOTS,
-        canonicalPath: "/research/testing",
+        robots: RAW_HTTP_NOINDEX_ROBOTS,
+        canonicalPath: null,
         inCurrentSitemap: false,
       },
       {
         path: "/research/documents",
         registeredInProductionSection: true,
         status: 200,
-        robots: RAW_HTTP_INDEX_ROBOTS,
-        canonicalPath: "/research/documents",
+        robots: RAW_HTTP_NOINDEX_ROBOTS,
+        canonicalPath: null,
         inCurrentSitemap: false,
       },
     ]);
     expect(serverResearchCompositionSource).not.toContain(
       "registerPublicQualityApi(",
     );
+    expect(appSource).toContain('<Route path="/research/quality"><Redirect to="/quality" /></Route>');
+    expect(appSource).toContain('<Route path="/research/testing"><Redirect to="/quality#testing" /></Route>');
+    expect(appSource).toContain('<Route path="/research/documents"><Redirect to="/quality#documents" /></Route>');
   });
 
   it("keeps every exact authoritative Research document canonical and indexable", () => {
@@ -385,7 +386,6 @@ describe("raw HTTP route authority", () => {
 
   it("returns honest 404/noindex for unknown public detail identities", () => {
     for (const target of [
-      "/careers/not-a-role",
       "/for/not-an-icp",
       "/research/documents/private",
       "/research/documents/private.pdf",
@@ -407,6 +407,12 @@ describe("raw HTTP route authority", () => {
         schema: { singletonTypes: [], jobPostingTitles: [] },
       });
     }
+    expect(defaultResolver.resolve("/careers/not-a-role")).toMatchObject({
+      status: 200,
+      routeKind: "private",
+      reason: "registered_private_document",
+      indexable: false,
+    });
   });
 
   it("allows only injected exact lot identities and keeps Lot Verification noindex", () => {
@@ -446,12 +452,12 @@ describe("raw HTTP route authority", () => {
 
   it("ignores query and fragment suffixes without changing route identity", () => {
     for (const target of [
-      "/product?utm_source=test",
-      "/research/quality?utm=x#section",
-      "/careers/founding-designer#apply",
+      "/products?utm_source=test",
+      "/quality?utm=x#section",
+      "/partners?ref=closed#inquiry",
       "/?campaign=founders",
-      "/product?bad=%ZZ path\\still-query#../../admin",
-      `/research/quality?${"x".repeat(5000)}`,
+      "/products?bad=%ZZ path\\still-query#../../admin",
+      `/quality?${"x".repeat(5000)}`,
     ]) {
       const pathname = target.split(/[?#]/u, 1)[0] || "/";
       expect(defaultResolver.resolve(target), target).toMatchObject({
@@ -481,19 +487,19 @@ describe("raw HTTP route authority", () => {
       });
     expect(defaultResolver.resolve("/careers/missing?slug=founding-designer#apply"))
       .toMatchObject({
-        status: 404,
-        routeKind: "not_found",
+        status: 200,
+        routeKind: "private",
         indexable: false,
       });
   });
 
   it("downgrades only noncanonical pathname spellings", () => {
     for (const target of [
-      "/PRODUCT",
-      "/product/",
-      "/%70roduct",
-      "/Research/Quality?utm=x",
-      "/careers/%66ounding-designer",
+      "/PRODUCTS",
+      "/products/",
+      "/%70roducts",
+      "/Quality?utm=x",
+      "/%70artners",
     ]) {
       expect(defaultResolver.resolve(target), target).toMatchObject({
         status: 200,
@@ -574,7 +580,7 @@ describe("raw HTTP HTML and schema policy", () => {
 
   it("replaces inherited homepage SEO authority on an ordinary public route", () => {
     const response = buildRawHttpDocumentResponse({
-      requestTarget: "/product",
+      requestTarget: "/products",
       templateHtml: inheritedTemplate,
       structuredData: everyPublicSchema,
     });
@@ -583,7 +589,7 @@ describe("raw HTTP HTML and schema policy", () => {
     expect(response.headers).toEqual({
       "Content-Type": "text/html; charset=utf-8",
       "X-Robots-Tag": RAW_HTTP_INDEX_ROBOTS,
-      Link: `<${RAW_HTTP_SITE_ORIGIN}/product>; rel="canonical"`,
+      Link: `<${RAW_HTTP_SITE_ORIGIN}/products>; rel="canonical"`,
     });
     expect(count(response.html, 'data-raw-http-policy="robots"')).toBe(1);
     expect(count(response.html, 'rel="canonical"')).toBe(1);
@@ -604,7 +610,7 @@ describe("raw HTTP HTML and schema policy", () => {
       ["/care/provider-review", 200],
       ["/care/reviews", 200],
       ["/review/seo", 404],
-      ["/careers/missing", 404],
+      ["/careers/missing", 200],
       ["/research/documents/private.pdf", 404],
     ] as const;
 
@@ -682,84 +688,24 @@ describe("raw HTTP HTML and schema policy", () => {
     expect(schemaIdentities(nestedGlobalLeak.html)).toEqual([]);
   });
 
-  it("gates JobPosting schema by exact open role and rejects Remote as a country", () => {
-    const designer = jobPosting("Founding Designer", {
-      jobLocationType: "TELECOMMUTE",
-      hiringOrganization: {
-        "@type": "Organization",
-        name: "Xenios Technologies, Inc.",
-      },
-      applicantLocationRequirements: {
-        "@type": "Country",
-        name: "United States",
-      },
-    });
-    const senior = jobPosting("Founding Senior AI Software Engineer");
-    const remoteCountry = jobPosting("Founding Senior AI Software Engineer", {
-      jobLocationType: "TELECOMMUTE",
-      applicantLocationRequirements: {
-        "@type": "Country",
-        name: "Remote",
-      },
-    });
-    const remoteAddressCountry = jobPosting("Founding Senior AI Software Engineer", {
-      jobLocation: {
-        "@type": "Place",
-        address: {
-          "@type": "PostalAddress",
-          addressCountry: "Remote",
-        },
-      },
-    });
-    const cohort = jobPosting("Founding Coach Cohort");
+  it("publishes no JobPosting schema while the approved careers catalog has no named roles", () => {
+    expect(CAREERS_ROLES).toEqual([]);
+    expect(RAW_HTTP_CAREER_DETAILS).toEqual([]);
 
     const landing = buildRawHttpDocumentResponse({
       requestTarget: "/careers",
       templateHtml: inheritedTemplate,
-      structuredData: [
-        designer,
-        senior,
-        cohort,
-      ],
+      structuredData: [jobPosting("Founding Designer"), jobPosting("Founding Senior AI Software Engineer")],
     });
-    expect(schemaIdentities(landing.html)).toEqual([
-      "JobPosting:Founding Designer",
-      "JobPosting:Founding Senior AI Software Engineer",
-    ]);
-    expect(landing.html).not.toContain('"name":"Remote"');
-    expect(landing.html).not.toContain('"addressCountry":"Remote"');
+    expect(schemaIdentities(landing.html)).toEqual([]);
 
-    for (const malformedLocation of [remoteCountry, remoteAddressCountry]) {
-      const rejected = buildRawHttpDocumentResponse({
-        requestTarget: "/careers/founding-senior-ai-software-engineer",
-        templateHtml: inheritedTemplate,
-        structuredData: [malformedLocation],
-      });
-      expect(schemaIdentities(rejected.html)).toEqual([]);
-    }
-
-    const detail = buildRawHttpDocumentResponse({
-      requestTarget: "/careers/founding-designer?source=linkedin#apply",
-      templateHtml: inheritedTemplate,
-      structuredData: [designer, senior, cohort],
-    });
-    expect(schemaIdentities(detail.html)).toEqual([
-      "JobPosting:Founding Designer",
-    ]);
-
-    const cohortDetail = buildRawHttpDocumentResponse({
-      requestTarget: "/careers/founding-coach-cohort",
-      templateHtml: inheritedTemplate,
-      structuredData: [designer, senior, cohort],
-    });
-    expect(schemaIdentities(cohortDetail.html)).toEqual([]);
-
-    const duplicatedRole = buildRawHttpDocumentResponse({
+    const retiredDetail = buildRawHttpDocumentResponse({
       requestTarget: "/careers/founding-designer",
       templateHtml: inheritedTemplate,
-      structuredData: [designer, { ...designer, description: "duplicate" }],
+      structuredData: [jobPosting("Founding Designer")],
     });
-    expect(schemaIdentities(duplicatedRole.html)).toEqual([]);
+    expect(retiredDetail.policy).toMatchObject({ routeKind: "private", indexable: false });
+    expect(schemaIdentities(retiredDetail.html)).toEqual([]);
   });
 
   it("escapes JSON-LD script breakers and skips unserializable values", () => {

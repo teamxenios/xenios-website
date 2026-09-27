@@ -62,7 +62,6 @@ describe("Care manual access API", () => {
       ok: true,
       acceptingRequests: true,
       workflow: "manual_human_follow_up",
-      typicalResponse: "one_business_day",
       clinicalHandoff: "separate_secure_step_after_review",
     });
 

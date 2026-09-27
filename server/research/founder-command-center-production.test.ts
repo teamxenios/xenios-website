@@ -140,6 +140,82 @@ describe("Founder Command Center production sources", () => {
     expect(card.oldestWaiting).toEqual({ state: "available", since: OLDEST });
   });
 
+  it("projects durable non-Care inquiries with founder ownership and no invented due date", async () => {
+    const inquiryPayload = (inquiryType: string, contentHash: string) =>
+      JSON.stringify({
+        schema: "xenios_public_inquiry_v1",
+        classifier: "xenios_non_care_public_inquiry",
+        inquiryType,
+        contentHash,
+        recordedAt: OLDEST,
+        updatedAt: OLDEST,
+        organization: { name: null, kind: null, website: null, region: null },
+        contactRole: null,
+        interest: null,
+        documentationAvailable: null,
+        message: null,
+        notification: { customer: "outbox_pending", operator: "outbox_pending" },
+      });
+    const page = vi.fn(async () => [
+      {
+        id: "11111111-1111-8111-8111-111111111111",
+        business_name: "Xenios public inquiry",
+        role: "xenios_inquiry:practice",
+        why_interested: inquiryPayload("practice", "a".repeat(64)),
+        source_page: "/practices",
+        landing_page: "/practices",
+        status: "New",
+        email_status: null,
+        created_at: OLDEST,
+        name: "PII NAME SENTINEL",
+        email: "pii-sentinel@example.invalid",
+      },
+      {
+        id: "22222222-2222-8222-8222-222222222222",
+        business_name: "Xenios public inquiry",
+        role: "xenios_inquiry:supplier",
+        why_interested: inquiryPayload("supplier", "b".repeat(64)),
+        source_page: "/suppliers",
+        landing_page: "/suppliers",
+        status: "Followed up",
+        email_status: null,
+        created_at: NOW.toISOString(),
+      },
+    ]);
+    const card = await sourcesFor({ reads: readPort({ page }) }).business_inquiries!({
+      request: null,
+    });
+
+    expect(page).toHaveBeenCalledTimes(3);
+    expect(card.source.state).toBe("current");
+    expect(card.primaryCount).toMatchObject({ state: "exact", value: 1 });
+    expect(card.breakdown.find((metric) => metric.key === "business_inquiries.practice"))
+      .toMatchObject({ state: "exact", value: 1 });
+    expect(card.breakdown.find((metric) => metric.key === "business_inquiries.supplier"))
+      .toMatchObject({ state: "exact", value: 0 });
+    expect(card.facts).toContainEqual({
+      key: "business_inquiries.owner",
+      label: "Default operational owner",
+      value: "Founder",
+      state: "current",
+    });
+    expect(card.facts).toContainEqual({
+      key: "business_inquiries.due_date",
+      label: "Due date",
+      value: null,
+      state: "unavailable",
+    });
+    expect(card.oldestWaiting).toEqual({ state: "available", since: OLDEST });
+    expect(JSON.stringify(card)).not.toContain("PII NAME SENTINEL");
+    expect(JSON.stringify(card)).not.toContain("pii-sentinel@example.invalid");
+    for (const [query] of page.mock.calls) {
+      expect(query.columns.split(",")).not.toContain("name");
+      expect(query.columns.split(",")).not.toContain("email");
+      expect(query.columns.split(",")).not.toContain("phone");
+      expect(query.columns.split(",")).not.toContain("ip");
+    }
+  });
+
   it("caps every Care marker projection and never calls an unbounded fifth page", async () => {
     const page = vi.fn(async (query: FounderCommandCenterPageQuery) => {
       return Array.from({ length: 500 }, (_, index) => ({

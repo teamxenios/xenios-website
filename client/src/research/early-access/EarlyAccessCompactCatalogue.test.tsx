@@ -22,7 +22,7 @@ import type { EarlyAccessCatalogLoad } from "../adapters/earlyAccessCatalog";
  */
 
 const FULFILLMENT =
-  "Current fulfillment target: within 72 hours after payment verification and product availability confirmation.";
+  "Tracking will be provided when the shipment is released.";
 
 function unit(
   overrides: Partial<EarlyAccessCardProduct> & { variantId: string },

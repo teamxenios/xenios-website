@@ -1,29 +1,54 @@
-// Static source checks for App.tsx (same idiom as research/routes-parity.test.ts):
-// reading the router source directly is cheap, deterministic, and catches
-// drift a full render test would not (e.g. a redirect target that is valid
-// TypeScript but points at a slug nobody serves).
-
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { CAREERS_ROLES } from "./lib/careers";
-import { menuGroups, primaryNav } from "./lib/nav";
 
 const appSource = readFileSync(resolve(__dirname, "App.tsx"), "utf8");
-const gatewaySource = readFileSync(
-  resolve(__dirname, "research/pages/Gateway.tsx"),
-  "utf8",
-);
 
-describe("the retired /careers/innovative-product-builder redirect", () => {
-  it("targets a slug that exists in the live careers.ts CAREERS_ROLES", () => {
-    const match = appSource.match(
-      /"\/careers\/innovative-product-builder"><Redirect to="\/careers\/([^"]+)"/,
-    );
-    expect(match).not.toBeNull();
-    const target = match![1];
-    const liveSlugs = CAREERS_ROLES.map((role) => role.slug);
-    expect(liveSlugs).toContain(target);
+describe("the owner-approved clarity route map", () => {
+  it.each([
+    ["/", "Home"],
+    ["/individuals", "IndividualsPage"],
+    ["/products", "ProductsPage"],
+    ["/practices", "PracticesPage"],
+    ["/partners", "PartnersPage"],
+    ["/suppliers", "SuppliersPage"],
+    ["/quality", "QualityPage"],
+    ["/faq", "FaqPage"],
+    ["/support", "SupportPage"],
+    ["/status", "StatusPage"],
+    ["/sign-in", "SignInPage"],
+    ["/activate", "ActivatePage"],
+  ])("mounts %s through %s", (path, component) => {
+    expect(appSource).toContain(`<Route path="${path}" component={${component}} />`);
+  });
+
+  it("moves the coach home to /workspace and redirects the old health gateway to root", () => {
+    expect(appSource).toContain('<Route path="/workspace" component={WorkspaceHome} />');
+    expect(appSource).toContain('<Route path="/health"><Redirect to="/" /></Route>');
+  });
+
+  it("preserves exact Research and Care authority subroutes", () => {
+    expect(appSource).toContain('<Route path="/research/*" component={ResearchRoutes} />');
+    expect(appSource).toContain('<Route path="/care" component={CareRoutes} />');
+    expect(appSource).toContain('<Route path="/care/*" component={CareRoutes} />');
+  });
+
+  it("removes the legacy public partners and FAQ redirects", () => {
+    expect(appSource).not.toContain('<Route path="/partners"><Redirect to="/ecosystem" /></Route>');
+    expect(appSource).not.toContain('<Route path="/faq"><Redirect to="/product" /></Route>');
+  });
+
+  it("keeps the closed partner-application alias on the public inquiry journey", () => {
+    expect(appSource).toContain('<Route path="/partners/apply"><Redirect to="/partners#inquiry" /></Route>');
+    expect(appSource).not.toContain('<Route path="/partners/apply"><Redirect to="/research/partners/apply" /></Route>');
+  });
+
+  it("handles same-path fragment navigation through Wouter's pushState event", () => {
+    expect(appSource).toContain('window.addEventListener("pushState", scrollForLocation);');
+    expect(appSource).toContain('window.addEventListener("hashchange", scrollForLocation);');
+    expect(appSource).toContain("target.scrollIntoView({ block: \"start\" });");
+    expect(appSource).toContain("target.focus({ preventScroll: true });");
+    expect(appSource).toContain('window.removeEventListener("pushState", scrollForLocation);');
   });
 });
 
@@ -33,34 +58,8 @@ describe("the Admin dashboard bundle", () => {
     expect(appSource).not.toMatch(/^import Admin from "@\/pages\/Admin";/m);
   });
 
-  it("mounts through a Suspense-wrapped route, same pattern as the research/care sections", () => {
+  it("mounts through a Suspense-wrapped route", () => {
     expect(appSource).toContain('<Route path="/admin" component={AdminRoutes} />');
     expect(appSource).toMatch(/function AdminRoutes\(\) \{\s*return \(\s*<Suspense[^]*?<Admin \/>/);
-  });
-});
-
-describe("the canonical /health Care + Research gateway", () => {
-  it("mounts the existing gateway in its own lazy route while preserving /care and /research", () => {
-    expect(appSource).toContain(
-      'const HealthGateway = lazy(() => import("@/research/pages/Gateway"));',
-    );
-    expect(appSource).toContain('<Route path="/health" component={HealthRoutes} />');
-    expect(appSource).toContain('<Route path="/research" component={ResearchRoutes} />');
-    expect(appSource).toContain('<Route path="/care" component={CareRoutes} />');
-  });
-
-  it("uses /health as the gateway canonical and brand-home identity", () => {
-    expect(gatewaySource).toContain('path="/health"');
-    expect(gatewaySource.match(/href="\/health"/gu)).toHaveLength(2);
-    expect(gatewaySource).not.toContain('href="/research" className="rg-brand"');
-  });
-
-  it("changes the main-site navigation label and target without removing the legacy route", () => {
-    expect(primaryNav).toContainEqual({ label: "Health", href: "/health" });
-    expect(primaryNav).not.toContainEqual({ label: "Research", href: "/research" });
-    expect(menuGroups.flatMap((group) => group.items)).toContainEqual({
-      label: "Health",
-      href: "/health",
-    });
   });
 });

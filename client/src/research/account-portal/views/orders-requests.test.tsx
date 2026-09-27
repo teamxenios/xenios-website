@@ -44,7 +44,7 @@ describe("mounted account orders request history", () => {
     expect(requests.textContent).not.toContain("$0.00");
     expect(requests.querySelector("a")?.getAttribute("href")).toBe("/research/early-access/order-request/XRR-20260921-ABCDEF1234");
     expect(host.textContent).toContain("Some commerce history is currently unavailable.");
-    expect(host.textContent).toContain("Early Access cart checkouts (XEC)");
+    expect(host.textContent).toContain("Research cart checkouts (XEC)");
     expect(host.querySelector("#research-orders-heading")?.closest("section")?.textContent).not.toContain("XRR-20260921-ABCDEF1234");
   });
   it("shows a recorded zero estimate and opaque tracking text without inventing a carrier link", async () => {

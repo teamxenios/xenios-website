@@ -37,7 +37,7 @@ import type { ApiResult } from "../lib/api";
 const CATALOG_PATH = "/api/research/early-access/catalog";
 const UNLOCK_PATH = "/api/research/early-access/unlock";
 const FULFILLMENT =
-  "Current fulfillment target: within 72 hours after payment verification and product availability confirmation. Tracking will be provided when the shipment is released.";
+  "Tracking will be provided when the shipment is released.";
 
 /**
  * The real app.

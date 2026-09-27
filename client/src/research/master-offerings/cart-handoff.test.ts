@@ -104,7 +104,7 @@ describe("catalog to cart handoff", () => {
       { kind: "request_access", label: "Request Access", href: "/x" },
       {
         kind: "request_early_access_purchase",
-        label: "Request Early Access Purchase",
+        label: "Request Order",
         href: "/x",
       },
       { kind: "explore_care", label: "Explore Care", href: "/care" },

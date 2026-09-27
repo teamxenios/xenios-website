@@ -100,7 +100,7 @@ function appFor(
 }
 
 describe("Founder Command Center read-only API", () => {
-  it("returns the one strict thirteen-card contract in canonical order", async () => {
+  it("returns the one strict fourteen-card contract in canonical order", async () => {
     const response = await request(appFor(successfulSources()))
       .get(FOUNDER_COMMAND_CENTER_API_PATH)
       .expect(200);
@@ -171,7 +171,7 @@ describe("Founder Command Center read-only API", () => {
     expect(JSON.stringify(response.body)).not.toContain(
       "pii-sentinel@example.invalid",
     );
-    expect(response.body.cards).toHaveLength(13);
+    expect(response.body.cards).toHaveLength(14);
   });
 
   it("preserves bounded semantics and accepts an exact zero only from a successful source", async () => {
@@ -397,7 +397,7 @@ describe("Founder Command Center endpoint with the real canonical admin guard", 
     expectNoSourceReads(sources);
   });
 
-  it("reads all thirteen sources only for the configured, Auth-verified ordinary admin session", async () => {
+  it("reads all fourteen sources only for the configured, Auth-verified ordinary admin session", async () => {
     vi.stubEnv("ADMIN_EMAIL", `  ${allowedEmail.toUpperCase()}  `);
     const verifiedEmail = allowedEmail.toUpperCase();
     authEdge.getUser.mockResolvedValue({

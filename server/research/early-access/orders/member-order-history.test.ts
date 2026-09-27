@@ -139,7 +139,7 @@ function placement(over: Partial<EarlyAccessPlacement> = {}): EarlyAccessPlaceme
       customerRef,
       lines: [
         {
-          description: "Private Early Access unit",
+          description: "Xenios Research order item",
           sku: "SKU-1",
           quantity: 2,
           unitPriceCents: 5000,

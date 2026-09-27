@@ -9,7 +9,7 @@ import type { EarlyAccessCatalogLoad } from "../adapters/earlyAccessCatalog";
 import type { EarlyAccessCardProduct } from "./EarlyAccessProductCard";
 
 const FULFILLMENT =
-  "Current fulfillment target: within 72 hours after payment verification and product availability confirmation. Tracking will be provided when the shipment is released.";
+  "Tracking will be provided when the shipment is released.";
 
 let container: HTMLElement | null = null;
 let root: Root | null = null;
@@ -104,7 +104,7 @@ describe("early access catalogue section", () => {
     const { el } = await mount({ kind: "locked" });
     expect(state(el)).toBe("locked");
     const text = el.textContent ?? "";
-    expect(text).toContain("Unlock again");
+    expect(text).toContain("Start a new session");
     expect(text).toContain("Nothing has been ordered or charged");
     expect(el.querySelectorAll("article")).toHaveLength(0);
   });
@@ -114,7 +114,7 @@ describe("early access catalogue section", () => {
     // instead of absorbed as "there is nothing available".
     const { el } = await mount({ kind: "unreadable", reason: "bad shape" });
     expect(state(el)).toBe("fault");
-    expect(el.textContent).toContain("fault on our side, not an empty catalogue");
+    expect(el.textContent).toContain("fault on our side, not an empty catalog");
   });
 
   it("shows a transport error as the same fault, not as an empty catalogue", async () => {

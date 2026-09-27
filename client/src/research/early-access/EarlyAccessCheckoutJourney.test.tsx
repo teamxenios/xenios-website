@@ -271,10 +271,10 @@ describe("details, then a TRUE review, then one explicit confirmation", () => {
       "[data-testid='early-access-checkout-reference-continuity']",
     );
     expect(continuity?.textContent).toContain(
-      "Signing in does not itself link this Early Access order to your account.",
+      "Signing in does not itself link this research order to your account.",
     );
     expect(continuity?.textContent).toContain(
-      "same authorized Early Access session remains the authority",
+      "same authorized research-ordering session remains the authority",
     );
     expect(continuity?.querySelector('a[href="/research/account/orders"]')).not.toBeNull();
     expect(continuity?.querySelector('a[href="/research/support"]')).not.toBeNull();

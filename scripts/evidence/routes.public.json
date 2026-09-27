@@ -42,6 +42,138 @@
   ],
   "routes": [
     {
+      "path": "/individuals",
+      "surface": "global-marketing-public-pages",
+      "state": "default",
+      "indexable": true,
+      "public": true,
+      "label": "individuals",
+      "metadataContract": { "title": "For Individuals | Xenios", "description": "Choose the Xenios path that fits: Care or research products." },
+      "structuredDataTypes": [],
+      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Care or research products — here's how to choose."] }
+    },
+    {
+      "path": "/products",
+      "surface": "global-marketing-public-pages",
+      "state": "default",
+      "indexable": true,
+      "public": true,
+      "label": "products",
+      "metadataContract": { "title": "Research products | Xenios", "description": "Explore Xenios Care, research-product and practice pathways." },
+      "structuredDataTypes": [],
+      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Research products"] }
+    },
+    {
+      "path": "/practices",
+      "surface": "global-marketing-public-pages",
+      "state": "default",
+      "indexable": true,
+      "public": true,
+      "label": "practices",
+      "metadataContract": { "title": "For Practices | Xenios", "description": "Refer clients and learn how approved Xenios practice access works." },
+      "structuredDataTypes": [],
+      "semanticContract": { "requiredSelectors": ["main h1", "#inquiry"], "requiredText": ["For practices: refer clients, keep your relationships."] }
+    },
+    {
+      "path": "/practices/referrals",
+      "surface": "global-marketing-public-pages",
+      "state": "default",
+      "indexable": true,
+      "public": true,
+      "label": "practice-referrals",
+      "metadataContract": { "title": "How referrals work | Xenios", "description": "How Xenios practice referrals, credited orders and commission work." },
+      "structuredDataTypes": [],
+      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["How referrals work"] }
+    },
+    {
+      "path": "/practices/workspace",
+      "surface": "global-marketing-public-pages",
+      "state": "default",
+      "indexable": true,
+      "public": true,
+      "label": "practice-workspace",
+      "metadataContract": { "title": "Practice workspace | Xenios", "description": "What approved practices can see in their Xenios workspace." },
+      "structuredDataTypes": [],
+      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Your practice workspace"] }
+    },
+    {
+      "path": "/practices/care",
+      "surface": "global-marketing-public-pages",
+      "state": "default",
+      "indexable": true,
+      "public": true,
+      "label": "practice-care",
+      "metadataContract": { "title": "Care for your clients | Xenios", "description": "Understand the boundary between a practice relationship and Xenios Care." },
+      "structuredDataTypes": [],
+      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Care for your clients"] }
+    },
+    {
+      "path": "/partners",
+      "surface": "global-marketing-public-pages",
+      "state": "default",
+      "indexable": true,
+      "public": true,
+      "label": "partners-canonical",
+      "metadataContract": { "title": "Partners | Xenios", "description": "Learn about Xenios referral and strategic partnership paths." },
+      "structuredDataTypes": [],
+      "semanticContract": { "requiredSelectors": ["main h1", "#inquiry"], "requiredText": ["Become a Xenios partner"] }
+    },
+    {
+      "path": "/suppliers",
+      "surface": "global-marketing-public-pages",
+      "state": "default",
+      "indexable": true,
+      "public": true,
+      "label": "suppliers-canonical",
+      "metadataContract": { "title": "Suppliers | Xenios", "description": "Submit a supplier or fulfilment inquiry to Xenios." },
+      "structuredDataTypes": [],
+      "semanticContract": { "requiredSelectors": ["main h1", "#inquiry"], "requiredText": ["Supply or fulfil with Xenios"] }
+    },
+    {
+      "path": "/quality",
+      "surface": "global-marketing-public-pages",
+      "state": "default",
+      "indexable": true,
+      "public": true,
+      "label": "quality-canonical",
+      "metadataContract": { "title": "Quality and documentation | Xenios", "description": "Learn how Xenios lot records and secure order documents work." },
+      "structuredDataTypes": [],
+      "semanticContract": { "requiredSelectors": ["main h1", "#testing", "#documents"], "requiredText": ["Quality and documentation"] }
+    },
+    {
+      "path": "/faq",
+      "surface": "global-marketing-public-pages",
+      "state": "default",
+      "indexable": true,
+      "public": true,
+      "label": "faq-canonical",
+      "metadataContract": { "title": "Questions | Xenios", "description": "Straight answers about Xenios Care, research products, practices, partners and accounts." },
+      "structuredDataTypes": [],
+      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["Questions"] }
+    },
+    {
+      "path": "/support",
+      "surface": "global-marketing-public-pages",
+      "state": "default",
+      "indexable": true,
+      "public": true,
+      "label": "support-canonical",
+      "metadataContract": { "title": "Support | Xenios", "description": "Find the right Xenios support path." },
+      "structuredDataTypes": [],
+      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["How can we help?"] }
+    },
+    {
+      "path": "/workspace",
+      "surface": "global-marketing-public-pages",
+      "state": "default",
+      "indexable": true,
+      "public": true,
+      "label": "workspace-canonical",
+      "metadataContract": { "title": "Workspace for coaches | Xenios", "description": "The Xenios workspace for health and performance professionals." },
+      "structuredDataTypes": [],
+      "semanticContract": { "requiredSelectors": ["main h1"], "requiredText": ["The AI workspace for serious coaches."] }
+    },
+    {
       "path": "/health",
       "surface": "global-marketing-public-pages",
       "state": "default",
@@ -66,21 +198,20 @@
       "path": "/research",
       "surface": "warm-silver-homepage-reconciliation",
       "state": "default",
-      "indexable": false,
+      "indexable": true,
       "public": true,
       "metadataContract": {
-        "title": "Xenios Research | Clear, evidence-aware research access",
-        "description": "Explore Xenios Research, understand product and documentation status, and choose the correct Research, Care, organization, or partner pathway."
+        "title": "How research orders work | Xenios",
+        "description": "Request, confirm, verify and track a Xenios research order."
       },
+      "structuredDataTypes": [],
       "semanticContract": {
         "requiredSelectors": [
           "#rg-hero-title"
         ],
         "requiredText": [
-          "Provider-guided peptide care.",
-          "Evidence-led Research access."
-        ],
-        "$comment": "Re-pinned 2026-09-14. /research has rendered the canonical Care + Research gateway since 8b53dbe, so the former warm-silver hero copy no longer exists anywhere in the client and this contract had been failing every run since. The two lines pinned here are the gateway h1, the same copy /health pins, because both paths deliberately render the same component."
+          "How research orders work"
+        ]
       }
     },
     {
@@ -807,14 +938,19 @@
       "path": "/care",
       "surface": "care",
       "state": "default",
-      "indexable": false,
+      "indexable": true,
       "public": true,
+      "metadataContract": {
+        "title": "Start Care with a short request | Xenios Care",
+        "description": "Start with a short Care request. A person on our team reviews it and contacts you about next steps."
+      },
+      "structuredDataTypes": [],
       "semanticContract": {
         "requiredSelectors": [
           "#care-page-title"
         ],
         "requiredText": [
-          "Start your Care request today."
+          "Start Care with a short request."
         ]
       }
     },
@@ -1012,15 +1148,15 @@
       "label": "how-it-works",
       "structuredDataTypes": [],
       "metadataContract": {
-        "title": "How it works, xenios",
-        "description": "Connect your stack. Teach your voice. Approve the first batch. Move the autonomy dial. The xenios agent runs the back office. The xenios client agent runs the in-between."
+        "title": "How It Works | Xenios",
+        "description": "See the Care and research-product paths side by side."
       },
       "semanticContract": {
         "requiredSelectors": [
           "main h1"
         ],
         "requiredText": [
-          "Five steps. One operating system. Your voice on every surface."
+          "Two paths, with clear next steps."
         ]
       }
     },
@@ -1075,15 +1211,15 @@
       "label": "about",
       "structuredDataTypes": [],
       "metadataContract": {
-        "title": "About, xenios",
-        "description": "Learn why xenios exists, who is building it, and how the company approaches trust, client relationships, and proactive health infrastructure."
+        "title": "About Xenios | Xenios",
+        "description": "Xenios builds Care, research-product and professional-support technology."
       },
       "semanticContract": {
         "requiredSelectors": [
           "main h1"
         ],
         "requiredText": [
-          "The operating layer for proactive health relationships."
+          "About Xenios"
         ]
       }
     },
@@ -1094,19 +1230,17 @@
       "indexable": true,
       "public": true,
       "label": "careers",
-      "structuredDataTypes": [
-        "JobPosting"
-      ],
+      "structuredDataTypes": [],
       "metadataContract": {
-        "title": "Careers, xenios",
-        "description": "Open founding roles and the founding coach cohort at xenios."
+        "title": "Work with Xenios | Xenios",
+        "description": "Submit a general-interest application to Xenios."
       },
       "semanticContract": {
         "requiredSelectors": [
           "main h1"
         ],
         "requiredText": [
-          "Build the operating system behind proactive health."
+          "Work with Xenios"
         ]
       }
     },
@@ -2099,15 +2233,15 @@
         "WebSite"
       ],
       "metadataContract": {
-        "title": "xenios | The operating system for proactive health",
-        "description": "The professional stays in front. Xen and Athena carry the work behind them."
+        "title": "Care and research products | Xenios",
+        "description": "Start a Care request or explore products for research use through two clearly separated paths."
       },
       "semanticContract": {
         "requiredSelectors": [
           "[data-testid=\"text-headline\"]"
         ],
         "requiredText": [
-          "The AI workspace for serious coaches."
+          "Care and research products, clearly separated."
         ]
       }
     },

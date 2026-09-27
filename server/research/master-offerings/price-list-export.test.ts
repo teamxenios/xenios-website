@@ -124,7 +124,7 @@ describe("price list export", () => {
       capabilities: { manualEarlyAccessPurchase: true },
     });
     expect(document.rows[0].purchasePath).toBe(
-      "Request an Early Access purchase",
+      "Request an order",
     );
   });
 

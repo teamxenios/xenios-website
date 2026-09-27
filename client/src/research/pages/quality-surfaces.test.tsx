@@ -56,8 +56,8 @@ describe("public quality editorial surfaces", () => {
       "Receive", "Inspect", "Identify the lot", "Quarantine", "Review evidence",
       "Decide", "Publish approved records", "Store and fulfill",
     ]) expect(view.textContent).toContain(phrase);
-    expect(view.textContent).toContain("where applicable");
-    expect(view.textContent).toContain("does not, by itself, establish identity, potency, sterility, safety, stability, or suitability");
+    expect(view.textContent).toContain("A public lookup is a limited record, not a promise that every product or lot has public documentation.");
+    expect(view.textContent).toContain("This page does not claim that every product or lot has completed every step.");
     expect(view.textContent).not.toMatch(/every lot is independently tested|pharmaceutical grade|clinically proven/i);
     expect(view.querySelector('a[href="/research/testing"]')).not.toBeNull();
     expect(view.querySelector('a[href="/research/documents"]')).not.toBeNull();
@@ -69,8 +69,8 @@ describe("public quality editorial surfaces", () => {
     for (const phrase of ["Identity", "Purity", "Assay or content", "Microbial, sterility, or endotoxin", "Contaminant panels", "Stability and handling"]) {
       expect(view.textContent).toContain(phrase);
     }
-    expect(view.textContent).toContain("where applicable");
-    expect(view.textContent).toContain("A COA is not a universal guarantee");
+    expect(view.textContent).toContain("This page explains how to read a record. It does not claim that a product or lot has been tested, approved, or made suitable for any use.");
+    expect(view.textContent).toContain("A test record is not a universal guarantee");
     expect(view.textContent).toContain("does not provide dosing or personal-use guidance");
   });
 

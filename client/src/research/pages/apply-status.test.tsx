@@ -30,7 +30,7 @@ const response = (body: unknown, status = 200) => ({ ok: status >= 200 && status
 let host: HTMLDivElement;
 let root: Root;
 let fetcher: ReturnType<typeof vi.fn>;
-const render = () => act(async () => { root.render(<ApplyStatus />); });
+const render = (statusPath?: string) => act(async () => { root.render(<ApplyStatus statusPath={statusPath} />); });
 const calls = () => fetcher.mock.calls.filter(([url]) => url === "/api/research/member/claim");
 async function fill(id: string, value: string) {
   await act(async () => {
@@ -59,6 +59,57 @@ afterEach(async () => {
 });
 
 describe("approved customer account claim", () => {
+  it("renders the existing approved-customer claim flow through /activate?token= and scrubs the token", async () => {
+    window.history.replaceState({}, "", "/activate?token=" + TOKEN);
+    await render("/activate");
+
+    expect(window.location.pathname).toBe("/activate");
+    expect(window.location.search).toBe("");
+    expect(window.location.href).not.toContain(TOKEN);
+    expect(window.sessionStorage.getItem("xr-application-token")).toBe(TOKEN);
+    expect(fetcher).toHaveBeenCalledWith(
+      "/api/research/applications/status?token=" + encodeURIComponent(TOKEN),
+      expect.objectContaining({ cache: "no-store", referrerPolicy: "no-referrer" }),
+    );
+    expect(host.textContent).toContain("Hi Synthetic.");
+    expect(host.querySelector('[data-testid="form-claim-account"]')).not.toBeNull();
+  });
+
+  it("renders an invalid or expired activation link as a terminal state without reopening applications", async () => {
+    window.history.replaceState({}, "", "/activate?token=" + TOKEN);
+    fetcher.mockResolvedValue(response({ ok: false, code: "invalid_token" }, 401));
+    await render("/activate");
+
+    expect(host.textContent).toContain("This activation link is invalid or expired");
+    expect(host.querySelector('[data-testid="activation-terminal-state"]')).not.toBeNull();
+    expect(host.querySelector('[data-testid="input-resend-email"]')).toBeNull();
+    expect(host.querySelector('a[href="/sign-in"]')?.textContent).toBe("Sign In");
+    expect(host.querySelector('a[href="/support"]')?.textContent).toBe("Contact Support");
+  });
+
+  it("uses the authoritative expired application status as an activation terminal state", async () => {
+    window.history.replaceState({}, "", "/activate?token=" + TOKEN);
+    fetcher.mockResolvedValue(response({ ok: true, application: fixture("expired") }));
+    await render("/activate");
+
+    expect(host.textContent).toContain("Activation link expired");
+    expect(host.textContent).toContain("This account approval has expired");
+    expect(host.querySelector('[data-testid="form-claim-account"]')).toBeNull();
+    expect(host.querySelector('a[href="/support"]')?.textContent).toBe("Contact Support");
+  });
+
+  it("sends an already-active activation link to the canonical Sign In route", async () => {
+    window.history.replaceState({}, "", "/activate?token=" + TOKEN);
+    fetcher.mockResolvedValue(response({ ok: true, application: fixture("active") }));
+    await render("/activate");
+
+    expect(host.textContent).toContain("Account already active");
+    expect(host.textContent).toContain("This account has already been activated");
+    expect(host.querySelector('[data-testid="form-claim-account"]')).toBeNull();
+    expect(host.querySelector('a[href^="/sign-in"]')?.getAttribute("href")).toBe("/sign-in?returnTo=%2Fresearch%2Faccount");
+    expect(host.querySelector('a[href^="/sign-in"]')?.textContent).toBe("Sign In");
+  });
+
   it("renders a neutral request experience when no status token was supplied", async () => {
     window.history.replaceState({}, "", "/research/apply/status");
     await render();

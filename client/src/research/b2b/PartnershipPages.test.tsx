@@ -74,23 +74,23 @@ describe("public B2B pathway pages", () => {
 
     expect(view.querySelectorAll("h1")).toHaveLength(1);
     expect(view.querySelectorAll("main")).toHaveLength(0);
-    expect(view.querySelectorAll('[data-testid^="b2b-pathway-"]')).toHaveLength(8);
-    expect(view.textContent).toContain("Collective partnerships");
-    expect(view.textContent).toContain("White-label interest");
+    expect(view.textContent).toContain("Partner applications open soon.");
     expect(view.textContent).toContain("Strategic partnerships");
-    expect(view.textContent).toContain("Commercial relationships never control clinical decisions.");
-    expect(view.textContent).toContain("does not create an account, approve access, establish pricing, or activate a relationship");
+    expect(view.textContent).toContain("Sending an inquiry is not an application, does not create an account, and does not approve a partnership.");
+    expect(view.textContent).toContain("Care services never earn commission.");
+    expect(view.textContent).not.toMatch(/\b20%\b|\b7\.5%\b|\$50 minimum/i);
     expectAccessibleRelationships(view);
   });
 
-  it("keeps organization procurement separate from Care and makes wholesale terms non-authoritative", async () => {
+  it("keeps client accounts and clinical authority separate from the practice relationship", async () => {
     const view = await renderPage(<OrganizationAccessPage />);
 
     expect(view.querySelectorAll("h1")).toHaveLength(1);
-    expect(view.textContent).toContain("Clinics and medical spas");
-    expect(view.textContent).toContain("Research procurement separate from patient care");
-    expect(view.textContent).toContain("Wholesale and organization-specific terms remain private and human-approved.");
-    expect(view.textContent).toContain("A request does not establish price, supply, or clinical access.");
+    expect(view.textContent).toContain("For practices: refer clients, keep your relationships.");
+    expect(view.textContent).toContain("Your clients create and own their accounts.");
+    expect(view.textContent).toContain("Your practice is recorded as the referring practice");
+    expect(view.textContent).toContain("doesn't place orders for clients, edit their accounts, or approve treatment");
+    expect(view.textContent).toContain("In-clinic inventory is under review.");
     expectAccessibleRelationships(view);
   });
 
@@ -98,24 +98,21 @@ describe("public B2B pathway pages", () => {
     const view = await renderPage(<AffiliateAccessPage />);
 
     expect(view.querySelectorAll("h1")).toHaveLength(1);
-    expect(view.textContent).toContain("Application through payout, without invented economics.");
-    expect(view.textContent).toContain("No payment or benefit may reward prescribing");
-    expect(view.textContent).toContain("Rates, payment schedules, and program economics are not promised");
-    expect(view.textContent).toContain("Customer accounts stay with Xenios.");
-    expect(view.textContent).toContain("A 90-day external advisor relationship may operate");
-    expect(view.textContent).toContain("No contact import, customer invitation, or outreach begins");
+    expect(view.textContent).toContain("Partner applications open soon.");
+    expect(view.textContent).toContain("This inquiry is not an application, account, or approval.");
+    expect(view.textContent).toContain("The agreement controls the details.");
+    expect(view.textContent).toContain("Care services never earn commission.");
     expect(view.textContent).not.toMatch(/\b20%\b|\b7\.5%\b|\$50 minimum/i);
     expectAccessibleRelationships(view);
   });
 
-  it("presents supplier access as invitation-only, minimum-data, and evidence-bound", async () => {
+  it("presents supplier access as inquiry, review, then invitation", async () => {
     const view = await renderPage(<SupplierPartnershipPage />);
 
     expect(view.querySelectorAll("h1")).toHaveLength(1);
-    expect(view.textContent).toContain("Operational access begins after evidence, not interest.");
-    expect(view.textContent).toContain("Minimum data, assigned work, no commercial poaching.");
-    expect(view.textContent).toContain("No assignment exists until the canonical operations authority creates it");
-    expect(view.textContent).toContain("prescription fulfillment remains with the licensed pharmacy");
+    expect(view.textContent).toContain("Inquiry, review, then invitation.");
+    expect(view.textContent).toContain("does not create supplier access, approve a relationship, or promise product, inventory, price, or timing");
+    expect(view.textContent).toContain("Supplier access is by invitation, after we review your documentation.");
     expectAccessibleRelationships(view);
   });
 });

@@ -144,7 +144,7 @@ describe("partner resources library", () => {
     expect(html).toContain("Approved to share");
     expect(html).toContain("Private working material");
     expect(html).toContain("Affiliate, All partners");
-    expect(html).toContain("Research Rep");
+    expect(html).toContain("Xenios partner");
     expect(html).toContain("1.2 MB");
     expect(html).toContain("50 KB");
     expect(html).toContain("PDF · v2");
