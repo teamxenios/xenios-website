@@ -10,12 +10,14 @@ const routedPublicSources = [
   "../components/Navbar.tsx",
   "../components/Footer.tsx",
   "../components/AccountAccessChooser.tsx",
+  "../clarity/WorkspaceHome.tsx",
   "../care/CarePublicPages.tsx",
   "../care/CareAccessRequestForm.tsx",
   "../research/pages/Gateway.tsx",
   "../research/pages/Faq.tsx",
   "../research/pages/HowItWorks.tsx",
   "../research/pages/Support.tsx",
+  "../research/assisted-order/AssistedOrderCta.tsx",
   "../research/quality/QualityPage.tsx",
   "../research/quality/TestingPage.tsx",
   "../research/b2b/PartnerPathwaysPage.tsx",
@@ -37,6 +39,16 @@ describe("owner-approved public clarity copy", () => {
       "For Practices",
     ]);
     expect(`${homeSource}\n${pagesSource}`).not.toMatch(/product count|\$\d|Buy now|Add to cart/iu);
+  });
+
+  it("preserves the complete approved CTA vocabulary and exact Care qualifier", () => {
+    const publicSource = `${homeSource}\n${pagesSource}\n${careersSource}\n${routedPublicSources}`;
+    for (const approvedCta of ["Request Order", "Activate Account", "Join Waitlist"]) {
+      expect(publicSource).toContain(approvedCta);
+    }
+    expect(publicSource).toContain("Care availability depends on your state. We confirm it after your request.");
+    expect(publicSource).not.toContain("We confirm availability after the request.");
+    expect(PATHWAY_TILES[1]).toMatchObject({ title: "Explore Research Products", label: "Explore Products" });
   });
 
   it("omits unverified claims and retired public labels", () => {

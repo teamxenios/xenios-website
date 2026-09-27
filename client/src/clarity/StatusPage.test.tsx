@@ -15,6 +15,14 @@ const ORDER_REFERENCE = "XRR-20260926-ABCDEF1234";
 const RECOVERY_TOKEN = "R".repeat(43);
 let root: Root | null = null;
 let host: HTMLDivElement | null = null;
+const fetchMock = vi.fn<typeof fetch>();
+
+beforeEach(() => {
+  vi.stubGlobal("fetch", fetchMock);
+  fetchMock.mockReset();
+  fetchMock.mockResolvedValue(new Response(JSON.stringify({ ok: false }), { status: 401, headers: { "Content-Type": "application/json" } }));
+  window.history.replaceState({}, "", "/status");
+});
 
 function response(status: number, body?: unknown): Response {
   return new Response(body === undefined ? null : JSON.stringify(body), {
