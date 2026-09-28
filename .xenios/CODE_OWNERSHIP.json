@@ -2674,7 +2674,7 @@
         ".xenios/sessions/codex-xenios-p17-secure-status-recovery-20260927.json",
         ".xenios/handoffs/*P17-SECURE-STATUS-RECOVERY*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-28T15:43:57.231Z",
       "heartbeatAt": "2026-09-28T15:43:57.316Z"
     }
