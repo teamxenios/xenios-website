@@ -1,0 +1,4 @@
+ Test Files  987 passed | 6 skipped (993)
+      Tests  18169 passed | 85 skipped (18254)
+   Duration  404.42s (transform 133.76s, setup 0ms, import 603.46s, tests 733.27s, environment 740.67s)
+exit 0

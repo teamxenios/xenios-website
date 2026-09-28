@@ -1,0 +1,87 @@
+NOTICE:  trigger "research_assisted_order_events_append_only" for relation "public.research_assisted_order_events" does not exist, skipping
+NOTICE:  relation "research_status_recovery_tokens" already exists, skipping
+NOTICE:  relation "research_status_recovery_tokens_subject_idx" already exists, skipping
+NOTICE:  relation "research_status_recovery_sessions" already exists, skipping
+NOTICE:  relation "research_status_recovery_sessions_subject_idx" already exists, skipping
+ PASS_STATUS_RECOVERY_DISPOSABLE_BEHAVIOUR
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_tokens (SELECT)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_tokens (SELECT)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_tokens (SELECT)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_sessions (SELECT)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_sessions (SELECT)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_sessions (SELECT)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_tokens (INSERT)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_tokens (INSERT)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_tokens (INSERT)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_sessions (INSERT)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_sessions (INSERT)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_sessions (INSERT)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_tokens (UPDATE)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_tokens (UPDATE)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_tokens (UPDATE)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_sessions (UPDATE)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_sessions (UPDATE)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_sessions (UPDATE)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_tokens (DELETE)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_tokens (DELETE)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_tokens (DELETE)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_sessions (DELETE)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_sessions (DELETE)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_sessions (DELETE)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_tokens (TRUNCATE)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_tokens (TRUNCATE)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_tokens (TRUNCATE)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_sessions (TRUNCATE)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_sessions (TRUNCATE)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_sessions (TRUNCATE)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_tokens (REFERENCES)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_tokens (REFERENCES)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_tokens (REFERENCES)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_sessions (REFERENCES)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_sessions (REFERENCES)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_sessions (REFERENCES)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_tokens (TRIGGER)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_tokens (TRIGGER)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_tokens (TRIGGER)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_sessions (TRIGGER)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_sessions (TRIGGER)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_sessions (TRIGGER)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_tokens (MAINTAIN)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_tokens (MAINTAIN)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_tokens (MAINTAIN)
+NOTICE:  PASS T1 no table privilege for anon on research_status_recovery_sessions (MAINTAIN)
+NOTICE:  PASS T1 no table privilege for authenticated on research_status_recovery_sessions (MAINTAIN)
+NOTICE:  PASS T1 no table privilege for service_role on research_status_recovery_sessions (MAINTAIN)
+NOTICE:  PASS T2 research_status_recovery_end secdef+owner postgres+search_path+no PUBLIC/anon/authenticated exec
+NOTICE:  PASS T2 research_status_recovery_exchange secdef+owner postgres+search_path+no PUBLIC/anon/authenticated exec
+NOTICE:  PASS T2 research_status_recovery_match secdef+owner postgres+search_path+no PUBLIC/anon/authenticated exec
+NOTICE:  PASS T2 research_status_recovery_prepare_delivery secdef+owner postgres+search_path+no PUBLIC/anon/authenticated exec
+NOTICE:  PASS T2 research_status_recovery_status secdef+owner postgres+search_path+no PUBLIC/anon/authenticated exec
+NOTICE:  PASS T3 temp-table shadow ignored by match
+NOTICE:  PASS T4a match normalizes case/whitespace
+NOTICE:  PASS T4b fullwidth-confusable reference not matched
+NOTICE:  PASS T4c member order refuses prepare with null owner
+NOTICE:  PASS T4d member order refuses prepare with other owner
+NOTICE:  PASS T4e member order prepare with correct owner
+NOTICE:  PASS T5a 31-minute token refused
+NOTICE:  PASS T5b wrong source refused
+NOTICE:  PASS T5c EA token issued
+NOTICE:  PASS T6 same idempotency key with different digest refused
+NOTICE:  PASS T7a exchange exactly at expiry refused
+NOTICE:  PASS T7b session >24h refused
+NOTICE:  PASS T7c member token cannot be exchanged by digest of EA token
+NOTICE:  PASS T8 exchange refused after owner binding changed
+NOTICE:  PASS T9a member token exchange ok
+NOTICE:  PASS T9b second session from same token refused
+NOTICE:  PASS T9c outbox retry after consumption does not re-issue
+NOTICE:  PASS T9d status scoped to member order only
+NOTICE:  PASS T9e status projection has only allowed keys
+NOTICE:  PASS T10 session dies when order owner changes
+NOTICE:  PASS T11 end unknown session returns false
+NOTICE:  PASS T12 malformed digest status returns null
+NOTICE:  PASS T13a service_role cannot read tokens
+NOTICE:  PASS T13b anon cannot execute match
+NOTICE:  PASS T13c anon cannot read sessions
+NOTICE:  PASS T13d authenticated cannot execute status
+NOTICE:  PASS T14 no raw-token-shaped values persisted
+NOTICE:  INFO T15 order delete blocked by recovery token FK (on delete restrict)
