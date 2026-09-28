@@ -12,6 +12,6 @@ evidence packet for the next independent review.
 
 R-01, R-02 and R-03 pass focused and P-17 regression evidence. Do not deploy,
 apply the migration, send real email, or mutate managed environments from this
-handoff. Authoritative qualification remains incomplete for the single blocker
-group recorded in the packet: full-suite/site-record stalls and unavailable
-real 400% controlled-browser zoom.
+handoff. The full suite and site-record gate pass. Authoritative qualification
+remains incomplete only because true 400% controlled-browser zoom is
+unavailable; responsive viewport evidence is not substituted for that result.

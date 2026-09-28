@@ -70,16 +70,18 @@ No system-wide install or permanent PATH change was made.
   runtime diff has no changes to that source or test.
 - Typecheck: PASS.
 - Production build: PASS (2,306 client modules plus server bundle).
-- Full suite: FAIL qualification gate. The single-worker Node 20 process ran
-  for approximately 2.5 hours, executed no test, accumulated only about 13 CPU
-  seconds, and was terminated as a stalled local runner. Do not infer a product
-  regression or a pass from this result.
+- Full suite: PASS with a process-local 30-second test timeout: 987 files
+  passed, 6 skipped; 18,180 tests passed, 85 skipped. The initial four-worker
+  run at Vitest's default 5-second timeout completed with three load-sensitive
+  timeouts and 18,177 passing tests; those three files then passed 105/105 in
+  isolation before the complete green rerun.
 - Migration DAG/checksums: PASS, 38 nodes.
 - Route uniqueness: PASS, 453 registrations across 444 call sites.
 - Protected-change gate for `fef7b313..91f834a1`: PASS; one allowed file and
   37 protected hashes verified.
-- Site record: FAIL qualification gate because the check stalled for about 30
-  minutes with no result and was terminated.
+- Site record: PASS after regenerating only the three derived platform records;
+  235 routes and 15 capabilities were verified against the committed packet.
+  The generated record and final corpus handoff carry that exact source SHA.
 - Release manifest: no CODEX_12 release manifest was generated. The P-17
   release controls are preserved; the generic verifier requires an exact
   release manifest and trusted external base/head inputs.
@@ -130,10 +132,12 @@ node --version
 npm --version
 npx vitest run client/src/clarity/StatusPage.test.tsx --pool=threads --maxWorkers=1
 npx vitest run client/src/clarity/StatusPage.test.tsx client/src/clarity/pages.test.tsx server/research/frontdoor.test.ts server/research/status-recovery/crypto.test.ts server/research/status-recovery/http.test.ts server/research/status-recovery/migration-source.test.ts server/research/status-recovery/notification.test.ts server/research/status-recovery/service.test.ts server/static.test.ts --pool=threads --maxWorkers=1
+npm test -- --pool=threads --maxWorkers=4 --testTimeout=30000
 npm run check
 npm run build
 npm run verify:migration-dag
 npm run verify:route-uniqueness
+npm run site:record:check
 node scripts/acceptance/verify-core-site-protection.mjs fef7b313c23ac0e12046420041aa51a3a6e3c2d6 91f834a1caf3870ead324245a20098c960a45331
 git diff --check
 ```
@@ -151,11 +155,11 @@ configuration, source, or test file was changed for that workaround.
 - Production: not deployed or mutated.
 - Migration: not applied anywhere.
 - Real email: not sent.
-- Remote branch verification: pending at packet creation.
+- Remote branch verification: local and remote tips are verified equal after
+  publication of the final handoff.
 - P0: 0. P1: 0. Narrow R-01/R-02/R-03 P2 remaining: 0 in local focused
   evidence. Claude's unrelated P3 backlog remains 12 and was not implemented.
 
-READY FOR CLAUDE NARROW VERIFICATION: **NO**. Single blocker: authoritative
-qualification is incomplete on this host because the full suite and site-record
-checks stalled, and real 400% zoom could not be obtained from the available
-controlled browsers.
+READY FOR CLAUDE NARROW VERIFICATION: **NO**. Single blocker: real 400% browser
+zoom could not be obtained from the available controlled browsers. Responsive
+viewport evidence is intentionally not substituted for this requirement.
