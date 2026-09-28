@@ -1,9 +1,13 @@
 # Xenios P-17 — managed non-production staging qualification plan
 
-Prepared: 2026-09-28  
-Candidate runtime: `fef7b313c23ac0e12046420041aa51a3a6e3c2d6`  
-Runtime tree: `55bdc57d3992393f4b767cd7f9c6a00c53e25c60`  
-Migration SHA-256: `98cce457db8d82c72a399223117dcf4d98488dc153f3d1883e65a07e95220292`  
+Prepared: 2026-09-28
+
+Candidate runtime: `fef7b313c23ac0e12046420041aa51a3a6e3c2d6`
+
+Runtime tree: `55bdc57d3992393f4b767cd7f9c6a00c53e25c60`
+
+Migration SHA-256: `98cce457db8d82c72a399223117dcf4d98488dc153f3d1883e65a07e95220292`
+
 Current status: plan only; managed staging not run
 
 ## 1. Authority and environment identity gate
@@ -188,4 +192,3 @@ Required output:
 Stop without release recommendation if any required identity or authorization is missing; any checksum/tree differs; managed Postgres behavior differs from local evidence; apply-twice is not clean; privileges/ownership/search path/overloads differ; external delivery cannot be disabled; browser or race evidence is incomplete; cleanup cannot be proven; or any P0/P1 remains unresolved.
 
 Passing this plan would qualify only the named non-production environment and exact candidate. It would not authorize production migration, deployment, real email, real-user smoke, commerce activation, or any other production mutation.
-
