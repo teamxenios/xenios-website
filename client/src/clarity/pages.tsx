@@ -2,6 +2,7 @@ import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react"
 import { Link, useLocation } from "wouter";
 import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { contactService } from "@/lib/waitlist-service";
+import { loadAssistedOrderStatus } from "@/research/assisted-order/api";
 import { readAssistedOrderToken } from "@/research/assisted-order/storage";
 import type { StatusRecoveryStatusView } from "@shared/research/status-recovery/contract";
 import InquiryForm from "./InquiryForm";
@@ -639,9 +640,20 @@ export function StatusPage() {
       setPhase("care");
       return;
     }
-    if (/^XRR-\d{8}-[0-9A-F]{10}$/u.test(reference) && readAssistedOrderToken(reference)) {
-      navigate(`/research/early-access/order-request/${encodeURIComponent(reference)}`);
-      return;
+    if (/^XRR-\d{8}-[0-9A-F]{10}$/u.test(reference)) {
+      const statusToken = readAssistedOrderToken(reference);
+      if (statusToken) {
+        try {
+          const status = await loadAssistedOrderStatus(reference, statusToken);
+          if (status.publicReference === reference) {
+            navigate(`/research/early-access/order-request/${encodeURIComponent(reference)}`);
+            return;
+          }
+        } catch {
+          // A stale, expired, or wrong-subject browser token is not authority.
+          // Continue through the neutral public recovery path below.
+        }
+      }
     }
     setPhase("requesting");
     try {
