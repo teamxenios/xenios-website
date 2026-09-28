@@ -2598,9 +2598,37 @@
         ".xenios/sessions/codex-xenios-p17-secure-status-recovery-20260927.json",
         ".xenios/handoffs/*P17-SECURE-STATUS-RECOVERY*"
       ],
-      "state": "active",
+      "state": "released",
       "claimedAt": "2026-09-27T20:17:58.006Z",
       "heartbeatAt": "2026-09-27T20:17:58.006Z"
+    },
+    {
+      "id": "06c830be-7105-4002-83cd-7f1762fd83b8",
+      "task": "XENIOS-STATUS-UX-CLOSEOUT-20260928",
+      "session": "codex-xenios-status-ux-closeout-20260928",
+      "paths": [
+        "client/src/clarity/pages.tsx",
+        "client/src/clarity/StatusPage.test.tsx",
+        "client/src/clarity/pages.test.tsx",
+        "client/src/research/assisted-order/storage.ts",
+        "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
+        "e2e/status-ux-closeout/**",
+        "docs/ux/xenios-p17-secure-status-recovery-20260927/**",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "server/core-site-protection.test.ts",
+        "server/release-control-plane.test.ts",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+        "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-xenios-status-ux-closeout-20260928.json",
+        ".xenios/handoffs/*STATUS-UX-CLOSEOUT*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-28T16:26:06.384Z",
+      "heartbeatAt": "2026-09-28T16:26:06.456Z"
     }
   ],
   "rules": [

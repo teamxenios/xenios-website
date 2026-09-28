@@ -1,0 +1,10 @@
+{
+  "id": "codex-xenios-status-ux-closeout-20260928",
+  "tool": "OpenAI Codex desktop",
+  "lane": "P17 status UX closeout",
+  "branch": "codex/xenios-status-ux-closeout-20260928",
+  "state": "active",
+  "startedAt": "2026-09-28T16:25:45.701Z",
+  "heartbeatAt": "2026-09-28T16:26:06.456Z",
+  "note": "R-01/R-02/R-03 reproduced at source; installing local dependencies and preparing failing focused tests; external systems untouched"
+}

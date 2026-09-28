@@ -2481,8 +2481,8 @@
       "id": "XENIOS-P17-SECURE-STATUS-RECOVERY-20260927",
       "title": "Implement secure out-of-band order-scoped P-17 status recovery",
       "priority": "P1",
-      "state": "claimed",
-      "owner": "codex-xenios-p17-secure-status-recovery-20260927",
+      "state": "ready",
+      "owner": null,
       "baseSha": "5dcbc45f49a753bb857b8f6f035e83d212bd9648",
       "paths": [
         "shared/research/status-recovery/**",
@@ -2528,7 +2528,41 @@
       ],
       "dependsOn": [],
       "scopeNote": "Owner-authorized source-only secure P-17 recovery from frozen runtime 5dcbc45. One narrow additive migration candidate, existing durable outbox, and exact-subject status-only session are authorized. No migration apply, deploy, real email, environment/credential change, real customer mutation, commerce activation, or weakened owner isolation.",
-      "claimedAt": "2026-09-27T20:17:58.003Z"
+      "claimedAt": "2026-09-27T20:17:58.003Z",
+      "releasedAt": "2026-09-28T16:25:45.844Z"
+    },
+    {
+      "id": "XENIOS-STATUS-UX-CLOSEOUT-20260928",
+      "title": "Close Claude P2 status UX findings R-01, R-02 and R-03",
+      "priority": "P2",
+      "state": "claimed",
+      "owner": "codex-xenios-status-ux-closeout-20260928",
+      "baseSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
+      "paths": [
+        "client/src/clarity/pages.tsx",
+        "client/src/clarity/StatusPage.test.tsx",
+        "client/src/clarity/pages.test.tsx",
+        "client/src/research/assisted-order/storage.ts",
+        "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
+        "e2e/status-ux-closeout/**",
+        "docs/ux/xenios-p17-secure-status-recovery-20260927/**",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "server/core-site-protection.test.ts",
+        "server/release-control-plane.test.ts",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+        "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-xenios-status-ux-closeout-20260928.json",
+        ".xenios/handoffs/*STATUS-UX-CLOSEOUT*"
+      ],
+      "dependsOn": [
+        "XENIOS-P17-SECURE-STATUS-RECOVERY-20260927"
+      ],
+      "scopeNote": "Owner-authorized narrow repair of independently reproduced R-01 Care guidance, R-02 authorized shortcuts and R-03 same-tab fragment handling from exact runtime fef7b313. No migration changes unless reproduction proves necessary; no deploy, migration apply, staging or production mutation, real email, business-rule change or unrelated P3 work.",
+      "claimedAt": "2026-09-28T16:26:06.381Z"
     }
   ]
 }
