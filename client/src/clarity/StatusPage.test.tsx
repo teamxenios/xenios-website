@@ -101,11 +101,36 @@ describe("public status credential boundary", () => {
 
   it("continues only the exact XRR subject already authorized in this browser", async () => {
     sessionStorage.setItem(assistedOrderTokenKey(ORDER_REFERENCE), "synthetic-status-secret");
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      if (String(input) === `/api/research/early-access/assisted-orders/${ORDER_REFERENCE}`) {
+        return response(200, { publicReference: ORDER_REFERENCE });
+      }
+      return response(401, { ok: false });
+    }));
     const view = await renderPage();
     await submit(view, `  ${ORDER_REFERENCE.toLowerCase()}  `);
 
     expect(window.location.pathname).toBe(`/research/early-access/order-request/${ORDER_REFERENCE}`);
     expect(requestCalls().some(([url]) => String(url) === "/api/research/status-recovery/request")).toBe(false);
+  });
+
+  it("does not expose the same-browser shortcut when its stored token is expired", async () => {
+    sessionStorage.setItem(assistedOrderTokenKey(ORDER_REFERENCE), "expired-status-secret");
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      if (String(input) === `/api/research/early-access/assisted-orders/${ORDER_REFERENCE}`) {
+        return response(401, { ok: false, code: "unauthorized" });
+      }
+      if (String(input) === "/api/research/status-recovery/request") {
+        return response(202, { ok: true });
+      }
+      return response(401, { ok: false });
+    }));
+    const view = await renderPage();
+    await submit(view, ORDER_REFERENCE);
+
+    expect(window.location.pathname).toBe("/status");
+    expect(view.textContent).toContain("Check your email");
+    expect(requestCalls().some(([url]) => String(url) === "/api/research/status-recovery/request")).toBe(true);
   });
 
   it("shows account orders only after the server confirms an active member authority", async () => {
