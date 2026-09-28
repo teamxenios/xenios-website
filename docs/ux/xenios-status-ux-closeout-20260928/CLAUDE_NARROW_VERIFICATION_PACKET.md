@@ -8,9 +8,9 @@ Date: 2026-09-28
 - Reviewed parent runtime: `fef7b313c23ac0e12046420041aa51a3a6e3c2d6`
 - Reviewed parent tree: `55bdc57d3992393f4b767cd7f9c6a00c53e25c60`
 - Independent review: `claude/xenios-p17-clarity-review-20260927` at `81aee48`
-- Runtime fix: `263df232be7d42a65d74ec8f060bd7b96ff2545f`
-- Runtime tree: `6b58f3fca94938e14bcd89860e871def5056bd02`
-- Test-only tip: `269b5bb2dc81c725c833f46cbd4562730c836039`
+- Runtime fix: `91f834a1caf3870ead324245a20098c960a45331`
+- Runtime tree: `8610a554147afe37fd004cad2c89fd6eb8bcf677`
+- Test-only tip: `9b63a3bbfcfac86c21ace8a1e895f243d82743aa`
 - Release-control tip: `90da2dbf692490f783e150f8791cd2a054651aef`
 - Docs/handoff tip: the commit containing this packet
 
@@ -33,8 +33,9 @@ PASS in focused tests. `View account orders` appears only after a Supabase
 session token is independently confirmed by `GET /api/research/member/me` as an
 active member. Signed-out, 401, 403, and explicit sign-out cases do not retain
 the link. An exact XRR subject with an existing same-browser assisted-order
-status token continues only that subject's canonical route. Typed email is
-never used as authority.
+status token continues only after the server confirms that token; expired,
+invalid, wrong-subject, and unavailable authority fall through to neutral
+recovery. Typed email is never used as authority.
 
 ### R-03 — same-tab recovery links
 
@@ -61,8 +62,8 @@ No system-wide install or permanent PATH change was made.
 
 ## Test and build results
 
-- Focused R-01/R-02/R-03: 1 file, 14/14 PASS.
-- P-17 security regression: 9 files, 96/96 PASS.
+- Focused R-01/R-02/R-03: 1 file, 15/15 PASS.
+- P-17 security regression: 9 files, 97/97 PASS.
 - Authority/owner/outbox selection: 8 files, 144 passed and 6 failed. All six
   failures are confined to the pre-existing
   `server/research/outbox-enqueue-once.test.ts` initialization race; the exact
@@ -75,7 +76,7 @@ No system-wide install or permanent PATH change was made.
   regression or a pass from this result.
 - Migration DAG/checksums: PASS, 38 nodes.
 - Route uniqueness: PASS, 453 registrations across 444 call sites.
-- Protected-change gate for `fef7b313..263df232`: PASS; one allowed file and
+- Protected-change gate for `fef7b313..91f834a1`: PASS; one allowed file and
   37 protected hashes verified.
 - Site record: FAIL qualification gate because the check stalled for about 30
   minutes with no result and was terminated.
@@ -133,7 +134,7 @@ npm run check
 npm run build
 npm run verify:migration-dag
 npm run verify:route-uniqueness
-node scripts/acceptance/verify-core-site-protection.mjs fef7b313c23ac0e12046420041aa51a3a6e3c2d6 263df232be7d42a65d74ec8f060bd7b96ff2545f
+node scripts/acceptance/verify-core-site-protection.mjs fef7b313c23ac0e12046420041aa51a3a6e3c2d6 91f834a1caf3870ead324245a20098c960a45331
 git diff --check
 ```
 

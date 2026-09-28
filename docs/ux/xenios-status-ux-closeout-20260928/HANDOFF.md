@@ -4,9 +4,9 @@ Use `CLAUDE_NARROW_VERIFICATION_PACKET.md` in this directory as the controlling
 evidence packet for the next independent review.
 
 - Parent: `fef7b313c23ac0e12046420041aa51a3a6e3c2d6`
-- Runtime: `263df232be7d42a65d74ec8f060bd7b96ff2545f`
-- Runtime tree: `6b58f3fca94938e14bcd89860e871def5056bd02`
-- Test-only tip: `269b5bb2dc81c725c833f46cbd4562730c836039`
+- Runtime: `91f834a1caf3870ead324245a20098c960a45331`
+- Runtime tree: `8610a554147afe37fd004cad2c89fd6eb8bcf677`
+- Test-only tip: `9b63a3bbfcfac86c21ace8a1e895f243d82743aa`
 - Release-control tip: `90da2dbf692490f783e150f8791cd2a054651aef`
 - Branch: `codex/xenios-status-ux-closeout-20260928`
 
