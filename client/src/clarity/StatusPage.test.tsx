@@ -15,14 +15,6 @@ const ORDER_REFERENCE = "XRR-20260926-ABCDEF1234";
 const RECOVERY_TOKEN = "R".repeat(43);
 let root: Root | null = null;
 let host: HTMLDivElement | null = null;
-const fetchMock = vi.fn<typeof fetch>();
-
-beforeEach(() => {
-  vi.stubGlobal("fetch", fetchMock);
-  fetchMock.mockReset();
-  fetchMock.mockResolvedValue(new Response(JSON.stringify({ ok: false }), { status: 401, headers: { "Content-Type": "application/json" } }));
-  window.history.replaceState({}, "", "/status");
-});
 
 function response(status: number, body?: unknown): Response {
   return new Response(body === undefined ? null : JSON.stringify(body), {
@@ -188,6 +180,63 @@ describe("public status credential boundary", () => {
     expect(JSON.stringify(window.history.state)).not.toContain(RECOVERY_TOKEN);
     expect(Object.values(localStorage)).not.toContain(RECOVERY_TOKEN);
     expect(Object.values(sessionStorage)).not.toContain(RECOVERY_TOKEN);
+  });
+
+  it("captures an initial email-link fragment, scrubs it, and forgets it on refresh", async () => {
+    const view = await renderPage(`/status#recovery=${RECOVERY_TOKEN}`);
+
+    expect(window.location.hash).toBe("");
+    expect(window.location.href).not.toContain(RECOVERY_TOKEN);
+    expect(view.textContent).toContain("Secure status link ready");
+    expect(requestCalls()).toHaveLength(0);
+
+    act(() => root?.unmount());
+    root = createRoot(host!);
+    await act(async () => root?.render(<StatusPage />));
+    await settle();
+
+    expect(view.textContent).toContain("Send secure status link");
+    expect(view.textContent).not.toContain("Secure status link ready");
+    expect(requestCalls().some(([url]) => String(url) === "/api/research/status")).toBe(true);
+  });
+
+  it("keeps a restored status session until a new same-tab recovery fragment explicitly supersedes it", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      if (String(input) === "/api/research/status") {
+        return response(200, {
+          reference: ORDER_REFERENCE,
+          statusLabel: "Received",
+          whatHappened: "Your request was received.",
+          nextStep: "We are reviewing it.",
+          nextStepOwner: "xenios",
+          returnPath: "/status",
+          supportPath: "/support",
+          timeline: [],
+          updatedAt: "2026-09-28T00:00:00.000Z",
+        });
+      }
+      return response(401, { ok: false });
+    }));
+    const view = await renderPage();
+    expect(view.textContent).toContain(ORDER_REFERENCE);
+
+    await act(async () => {
+      window.history.pushState({}, "", `/status#recovery=${RECOVERY_TOKEN}`);
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    });
+    await settle();
+
+    expect(window.location.hash).toBe("");
+    expect(view.textContent).toContain("Secure status link ready");
+    expect(view.textContent).not.toContain(ORDER_REFERENCE);
+
+    await act(async () => {
+      window.history.pushState({}, "", "/support");
+      window.history.replaceState({}, "", "/status");
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    });
+    await settle();
+    expect(window.location.href).not.toContain(RECOVERY_TOKEN);
   });
 
   it("preserves explicit POST exchange after same-tab fragment capture", async () => {
