@@ -1,6 +1,8 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
+import { getSupabaseBrowser } from "@/lib/supabaseBrowser";
 import { contactService } from "@/lib/waitlist-service";
+import { readAssistedOrderToken } from "@/research/assisted-order/storage";
 import type { StatusRecoveryStatusView } from "@shared/research/status-recovery/contract";
 import InquiryForm from "./InquiryForm";
 import {
@@ -497,10 +499,42 @@ function SupportForm() {
 }
 
 export function StatusPage() {
+  const [, navigate] = useLocation();
   const [recoveryToken, setRecoveryToken] = useState<string | null>(null);
-  const [phase, setPhase] = useState<"checking" | "request" | "requesting" | "requested" | "exchange" | "exchanging" | "status">("checking");
+  const [phase, setPhase] = useState<"checking" | "request" | "requesting" | "requested" | "care" | "exchange" | "exchanging" | "status">("checking");
   const [statusView, setStatusView] = useState<StatusRecoveryStatusView | null>(null);
   const [exchangeError, setExchangeError] = useState(false);
+  const [accountOrdersAuthorized, setAccountOrdersAuthorized] = useState(false);
+  const restoreGeneration = useRef(0);
+  const exchangeErrorRef = useRef<HTMLDivElement | null>(null);
+
+  const captureRecoveryFragment = useCallback((): boolean => {
+    const fragment = window.location.hash.slice(1);
+    if (!fragment.startsWith("recovery=")) return false;
+
+    let fragmentToken = "";
+    try {
+      const candidate = decodeURIComponent(fragment.slice("recovery=".length));
+      if (/^[A-Za-z0-9_-]{43}$/u.test(candidate)) fragmentToken = candidate;
+    } catch {
+      fragmentToken = "";
+    }
+
+    // A recovery fragment is a bearer credential. Scrub it synchronously for
+    // both the initial document load and same-document hash navigation before
+    // React renders a state derived from it or another request can inherit it.
+    window.history.replaceState(
+      window.history.state,
+      "",
+      `${window.location.pathname}${window.location.search}`,
+    );
+    restoreGeneration.current += 1;
+    setStatusView(null);
+    setExchangeError(false);
+    setRecoveryToken(fragmentToken || null);
+    setPhase(fragmentToken ? "exchange" : "request");
+    return true;
+  }, []);
 
   useEffect(() => {
     const priorReferrer = document.querySelector<HTMLMetaElement>('meta[name="referrer"]');
@@ -509,48 +543,106 @@ export function StatusPage() {
     referrer.name = "referrer";
     referrer.content = "no-referrer";
 
-    const fragment = window.location.hash.slice(1);
-    let fragmentToken = "";
-    if (fragment.startsWith("recovery=")) {
-      try {
-        const candidate = decodeURIComponent(fragment.slice("recovery=".length));
-        if (/^[A-Za-z0-9_-]{43}$/u.test(candidate)) fragmentToken = candidate;
-      } catch {
-        fragmentToken = "";
-      }
-      window.history.replaceState(window.history.state, "", `${window.location.pathname}${window.location.search}`);
-    }
-    if (fragmentToken) {
-      // The credential arrived in a fragment, so it was never sent to the
-      // document server. Remove it before any navigation or referrer can carry
-      // it, and keep it only in component memory until explicit exchange.
-      setRecoveryToken(fragmentToken);
-      setPhase("exchange");
-    } else {
+    const fragmentCaptured = captureRecoveryFragment();
+    const handleLocationCredential = () => { captureRecoveryFragment(); };
+    window.addEventListener("hashchange", handleLocationCredential);
+    window.addEventListener("popstate", handleLocationCredential);
+
+    if (!fragmentCaptured) {
+      const generation = ++restoreGeneration.current;
       void fetch("/api/research/status", {
         method: "GET",
         credentials: "same-origin",
         cache: "no-store",
         headers: { Accept: "application/json" },
       }).then(async (response) => {
+        if (generation !== restoreGeneration.current) return;
         if (!response.ok) {
           setPhase("request");
           return;
         }
         setStatusView(await response.json() as StatusRecoveryStatusView);
+        if (generation !== restoreGeneration.current) return;
         setPhase("status");
-      }).catch(() => setPhase("request"));
+      }).catch(() => {
+        if (generation === restoreGeneration.current) setPhase("request");
+      });
     }
 
     return () => {
+      restoreGeneration.current += 1;
+      window.removeEventListener("hashchange", handleLocationCredential);
+      window.removeEventListener("popstate", handleLocationCredential);
       if (priorReferrer) priorReferrer.content = priorContent ?? "";
       else referrer.remove();
     };
+  }, [captureRecoveryFragment]);
+
+  useEffect(() => {
+    let cancelled = false;
+    let unsubscribe: () => void = () => undefined;
+
+    async function verifyMemberAuthority(accessToken: string | null | undefined): Promise<void> {
+      if (!cancelled) setAccountOrdersAuthorized(false);
+      if (!accessToken) return;
+      try {
+        const response = await fetch("/api/research/member/me", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          credentials: "same-origin",
+          cache: "no-store",
+        });
+        const body = await response.json().catch(() => null) as {
+          ok?: unknown;
+          member?: { status?: unknown };
+        } | null;
+        if (!cancelled) {
+          setAccountOrdersAuthorized(
+            response.ok && body?.ok === true && body.member?.status === "active",
+          );
+        }
+      } catch {
+        if (!cancelled) setAccountOrdersAuthorized(false);
+      }
+    }
+
+    void getSupabaseBrowser().then(async (client) => {
+      if (!client || cancelled) return;
+      const current = await client.auth.getSession();
+      await verifyMemberAuthority(current.data.session?.access_token);
+      if (cancelled) return;
+      const auth = client.auth as typeof client.auth & {
+        onAuthStateChange?: typeof client.auth.onAuthStateChange;
+      };
+      if (typeof auth.onAuthStateChange === "function") {
+        const listener = auth.onAuthStateChange((_event, session) => {
+          void verifyMemberAuthority(session?.access_token);
+        });
+        unsubscribe = () => listener.data.subscription.unsubscribe();
+      }
+    }).catch(() => setAccountOrdersAuthorized(false));
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
+
+  useEffect(() => {
+    if (exchangeError && phase === "request") exchangeErrorRef.current?.focus();
+  }, [exchangeError, phase]);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
+    const reference = String(form.get("reference") || "").trim().toUpperCase();
+    if (reference.startsWith("CARE-")) {
+      setPhase("care");
+      return;
+    }
+    if (/^XRR-\d{8}-[0-9A-F]{10}$/u.test(reference) && readAssistedOrderToken(reference)) {
+      navigate(`/research/early-access/order-request/${encodeURIComponent(reference)}`);
+      return;
+    }
     setPhase("requesting");
     try {
       await fetch("/api/research/status-recovery/request", {
@@ -559,7 +651,7 @@ export function StatusPage() {
         cache: "no-store",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          reference: String(form.get("reference") || ""),
+          reference,
           email: String(form.get("email") || ""),
         }),
       });
@@ -642,14 +734,15 @@ export function StatusPage() {
         )}
         {(phase === "request" || phase === "requesting") && (
           <form className="clarity-form clarity-form-narrow" onSubmit={(event) => void submit(event)}>
-            {exchangeError && <div className="clarity-form-alert" role="alert">This secure status link is invalid or has expired. Request a new link below.</div>}
+            {exchangeError && <div ref={exchangeErrorRef} className="clarity-form-alert" role="alert" tabIndex={-1}>This secure status link is invalid or has expired. Request a new link below.</div>}
             <label className="clarity-field"><span>Order or request reference</span><input name="reference" required autoComplete="off" /></label>
             <label className="clarity-field mt-5"><span>Email used for the order</span><input name="email" type="email" required autoComplete="email" /></label>
             <button className="btn btn-primary mt-6" type="submit" disabled={phase === "requesting"}>{phase === "requesting" ? "Requesting…" : "Send secure status link"}</button>
           </form>
         )}
         {phase === "requested" && <div className="clarity-confirmation" role="status"><h2 className="display-s">Check your email</h2><p className="body-m text-ink-2 mt-3">If the details match an eligible order, a secure status link will be sent to the email already associated with it. For privacy, we cannot confirm whether a matching order exists here.</p></div>}
-        <div className="clarity-actions mt-8"><Link href="/support" className="clarity-text-link">Contact Support</Link><Link href="/sign-in" className="clarity-text-link">Sign In</Link></div>
+        {phase === "care" && <div className="clarity-confirmation" role="status"><h2 className="display-s">Care status is handled separately</h2><p className="body-m text-ink-2 mt-3">Care requests are handled by the Care team and are not available through order-status recovery. This page cannot confirm whether a Care request exists or disclose its status.</p><div className="clarity-actions mt-6"><Link href="/care" className="clarity-text-link">Start Care</Link><Link href="/care/support" className="clarity-text-link">Care support</Link></div></div>}
+        <div className="clarity-actions mt-8"><Link href="/support" className="clarity-text-link">Contact Support</Link><Link href="/sign-in" className="clarity-text-link">Sign In</Link>{accountOrdersAuthorized && <Link href="/research/account/orders" className="clarity-text-link">View account orders</Link>}</div>
       </ContentSection>
     </PublicPage>
   );
