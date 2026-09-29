@@ -1,0 +1,8 @@
+archive: node-v20.19.0-win-x64.zip (29871567 bytes)
+source: https://nodejs.org/dist/v20.19.0/node-v20.19.0-win-x64.zip
+checksum file: https://nodejs.org/dist/v20.19.0/SHASUMS256.txt
+sha256: be72284c7bc62de07d5a9fd0ae196879842c085f11f7f2b60bf8864c0c9d6a4f (MATCH)
+extracted: C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/node20/node-v20.19.0-win-x64
+node --version: v20.19.0
+npm --version: 10.8.2
+PATH: unchanged; system Node v24.14.1 untouched; no admin used

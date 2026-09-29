@@ -1,0 +1,5 @@
+v20.19.0
+ Test Files  987 passed | 6 skipped (993)
+      Tests  18180 passed | 85 skipped (18265)
+   Duration  304.24s (transform 90.16s, setup 0ms, import 433.79s, tests 540.44s, environment 602.79s)
+exit 0
