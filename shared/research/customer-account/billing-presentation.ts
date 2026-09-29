@@ -32,9 +32,9 @@ export function billingPresentation(
     case "current":
       return { label: "Current", tone: "success", attention: false };
     case "past_due":
-      return { label: "Past due — attention required", tone: "danger", attention: true };
+      return { label: "Past due: attention required", tone: "danger", attention: true };
     case "disputed":
-      return { label: "Disputed — attention required", tone: "danger", attention: true };
+      return { label: "Disputed: attention required", tone: "danger", attention: true };
     case "cancelled":
       return { label: "Cancelled", tone: "neutral", attention: false };
     case "refunded":

@@ -153,7 +153,7 @@ function Review() {
       return <div className="account-review-admin"><ClientImportDryRunSummaryView report={SYNTHETIC_IMPORT_REPORT} attribution={{ sourcePartner: "Example advisory partner", relationshipOwner: "Assigned account lead" }} disposition={{ approved: 0, blocked: 31, skipped: 0 }} /></div>;
     case "overview":
     default:
-      return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.home} title="Your account, clearly organized." lead="Membership, commerce history, Care operations, documents, and support—each with its own source of truth."><AccountOverviewView data={FIXTURE_ACCOUNT_OVERVIEW} /></AccountFrame>;
+      return <AccountFrame path={ACCOUNT_PORTAL_ROUTES.home} title="Your account, clearly organized." lead="Membership, commerce history, Care operations, documents, and support, each with its own source of truth."><AccountOverviewView data={FIXTURE_ACCOUNT_OVERVIEW} /></AccountFrame>;
   }
 }
 

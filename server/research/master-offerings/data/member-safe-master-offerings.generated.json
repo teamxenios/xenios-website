@@ -1922,7 +1922,7 @@
    "brand": null,
    "aliases": [
     "LIBIDO CREAM (SCREAM CREAM)",
-    "LIBIDO CREAM (SCREAM CREAM) — Testosterone Cypionate 0.1% / Sildenafil Citrate 0.1% / Glycerin / Versabase Cream"
+    "LIBIDO CREAM (SCREAM CREAM): Testosterone Cypionate 0.1% / Sildenafil Citrate 0.1% / Glycerin / Versabase Cream"
    ],
    "displayState": "care_pathway",
    "stateExplanation": "Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.",
@@ -1930,7 +1930,7 @@
    "variants": [
     {
      "id": "mov_06beec21c59fe7842f18",
-     "label": "LIBIDO CREAM (SCREAM CREAM) — Testosterone Cypionate 0.1% / Sildenafil Citrate 0.1% / Glycerin / Versabase Cream",
+     "label": "LIBIDO CREAM (SCREAM CREAM): Testosterone Cypionate 0.1% / Sildenafil Citrate 0.1% / Glycerin / Versabase Cream",
      "displayState": "care_pathway"
     }
    ]

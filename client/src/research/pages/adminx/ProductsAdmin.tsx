@@ -613,7 +613,7 @@ function CreateProductDrawer({
             <option value="quantum">Quantum</option>
             <option value="non_product_program">Program</option>
             <option value="future_clinical">
-              Future clinical — catalog state only
+              Future clinical: catalog state only
             </option>
           </select>
         </div>

@@ -549,7 +549,7 @@ export function LotCoasBody({ token }: { token: string }) {
             <select className={inputClass} name="lotId" required defaultValue="">
               <option value="" disabled>Select a lot</option>
               {(lots.data?.lots ?? []).map((lot) => (
-                <option key={lot.id} value={lot.id}>{lot.lotCode} — {lot.sku}</option>
+                <option key={lot.id} value={lot.id}>{lot.lotCode}: {lot.sku}</option>
               ))}
             </select>
           </label>

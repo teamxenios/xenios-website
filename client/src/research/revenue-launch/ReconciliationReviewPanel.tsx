@@ -120,12 +120,12 @@ export function ReconciliationReviewContent({ review }: { review: AvailableRecon
               <p className="body-s text-ink-mute" style={{ overflowWrap: "anywhere" }}>Source assertion · {row.sourceId}</p>
               <h3 id={rowHeadingId} className="body-m font-700 mt-2" style={{ overflowWrap: "anywhere" }}>{row.productLabel}</h3>
               <dl className="grid min-w-0 gap-4 mt-4">
-                <FactValue label="Source configuration — assumptions preserved">{row.configurationLabel}</FactValue>
+                <FactValue label="Source configuration: assumptions preserved">{row.configurationLabel}</FactValue>
                 <FactValue label="Recorded issue kinds">{row.issueKinds.length ? row.issueKinds.join(", ") : "No issue kinds listed. This is not confirmation of all facts."}</FactValue>
               </dl>
               <div className="grid min-w-0 gap-5 mt-5 sm:grid-cols-2">
-                <Identity title="Exact recorded identity — not commerce approval" identity={row.exactIdentity} />
-                <Identity title="Proposed identity — not a confirmed binding or approval" identity={row.proposedIdentity} />
+                <Identity title="Exact recorded identity, not commerce approval" identity={row.exactIdentity} />
+                <Identity title="Proposed identity, not a confirmed binding or approval" identity={row.proposedIdentity} />
               </div>
               <div className="grid min-w-0 gap-4 mt-5 lg:grid-cols-2">
                 {RECONCILIATION_FACT_KINDS.map((kind) => (

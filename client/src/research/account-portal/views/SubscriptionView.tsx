@@ -52,8 +52,8 @@ export function AccountSubscriptionView({ data }: { data: SubscriptionPageDto })
         <p className="body-s text-ink-2 mt-3">Care enrollment is not a medication subscription. Provider review and pharmacy fulfillment each keep their own status.</p>
         <dl className="mt-5">
           <div className="account-data-row"><dt className="account-data-label">Enrollment</dt><dd className="account-data-value">{careUnavailable ? "Care status is managed through the provider/Tebra workflow." : careEnrollment.enrolled ? "Enrolled" : "Not enrolled"}</dd></div>
-          <div className="account-data-row"><dt className="account-data-label">Provider / Care stage</dt><dd className="account-data-value">{careUnavailable ? "—" : careEnrollment.status.stage ? sentenceCase(careEnrollment.status.stage) : "No stage recorded"}</dd></div>
-          <div className="account-data-row"><dt className="account-data-label">Pharmacy fulfillment</dt><dd className="account-data-value">{careUnavailable ? "—" : sentenceCase(careEnrollment.pharmacyState)}</dd></div>
+          <div className="account-data-row"><dt className="account-data-label">Provider / Care stage</dt><dd className="account-data-value">{careUnavailable ? "Not available" : careEnrollment.status.stage ? sentenceCase(careEnrollment.status.stage) : "No stage recorded"}</dd></div>
+          <div className="account-data-row"><dt className="account-data-label">Pharmacy fulfillment</dt><dd className="account-data-value">{careUnavailable ? "Not available" : sentenceCase(careEnrollment.pharmacyState)}</dd></div>
         </dl>
         <Link className="btn btn-secondary mt-6" href={ACCOUNT_PORTAL_ROUTES.care}>View Care timeline</Link>
       </section>

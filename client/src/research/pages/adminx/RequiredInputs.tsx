@@ -865,7 +865,7 @@ function RequiredInputCard({
           <p className="mono-label text-ink-mute">Evidence required</p>
           <ul className="body-s text-ink-2 mt-2 grid gap-1">
             {item.evidenceRequired.map((evidence) => (
-              <li key={evidence}>— {evidence}</li>
+              <li key={evidence}>• {evidence}</li>
             ))}
           </ul>
         </div>
@@ -891,7 +891,7 @@ function RequiredInputCard({
                     : ""}
                   {STATE_LABELS[event.toState]}
                 </span>
-                {" — "}
+                {": "}
                 {event.reason} · {event.actor} ·{" "}
                 {new Date(event.occurredAt).toLocaleString("en-US")}
               </li>

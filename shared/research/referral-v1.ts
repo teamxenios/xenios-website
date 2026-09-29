@@ -9,10 +9,10 @@ export function isRecommendationPath(pathname: string): boolean {
 
 /** A smaller subset of the existing auth policy, never a second redirect policy. */
 export const REFERRAL_DESTINATIONS = [
-  { path: "/health", label: "Xenios Health — choose Care or Research" },
-  { path: "/care", label: "Care — explore the appropriate care pathway" },
+  { path: "/health", label: "Xenios Health: choose Care or Research" },
+  { path: "/care", label: "Care: explore the appropriate care pathway" },
   { path: "/care/how-it-works", label: "How Care works" },
-  { path: "/research", label: "Research — nonclinical access and education" },
+  { path: "/research", label: "Research: nonclinical access and education" },
   { path: "/research/member/catalog", label: "Research member catalog" },
 ] as const;
 

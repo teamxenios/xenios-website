@@ -61,7 +61,7 @@ export function resolveNextAdministrativeAction(
     return { message: "Your membership payment is past due.", target: { kind: "membership" } };
   }
   if (membership.billing === "disputed") {
-    return { message: "Your membership billing needs attention — a payment is disputed.", target: { kind: "membership" } };
+      return { message: "Your membership billing needs attention because a payment is disputed.", target: { kind: "membership" } };
   }
   if (supportCases.some((item) => item.state === "waiting_on_customer")) {
     return { message: "A support case is waiting for your response.", target: { kind: "support" } };

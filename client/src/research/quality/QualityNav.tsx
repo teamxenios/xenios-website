@@ -3,7 +3,7 @@ import { Link } from "wouter";
 
 const LINKS = [
   { href: "/research/quality", label: "Quality system", note: "How material moves from receipt to a recorded decision." },
-  { href: "/research/testing", label: "Testing explained", note: "What a test can—and cannot—support." },
+  { href: "/research/testing", label: "Testing explained", note: "What a test can and cannot support." },
   { href: "/research/documents", label: "Documents", note: "Public records and secure member documents." },
 ] as const;
 

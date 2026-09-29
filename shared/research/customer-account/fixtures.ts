@@ -148,7 +148,7 @@ export const FIXTURE_DOCUMENTS: readonly DocumentSummaryDto[] = Object.freeze([
   Object.freeze({
     id: "doc-fixture-0002",
     kind: "coa" as const,
-    title: "Certificate of Analysis — Example Research Material B, lot FX-1",
+        title: "Certificate of Analysis: Example Research Material B, lot FX-1",
     issuedAt: "2026-08-12T10:00:00.000Z",
     downloadPath: "/api/research/customer-account/documents/doc-fixture-0002",
   }),

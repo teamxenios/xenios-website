@@ -46,7 +46,7 @@ export function ClientImportDryRunSummaryView({
       </section>
 
       <ResearchSecureNotice>
-        This is a counts-only staging projection. It creates no active accounts, sends no invitations, and displays no imported customer names, emails, phone numbers, source rows, or raw product text — exceptions carry canonical codes and non-reversible references only.
+        This is a counts-only staging projection. It creates no active accounts, sends no invitations, and displays no imported customer names, emails, phone numbers, source rows, or raw product text. Exceptions carry canonical codes and non-reversible references only.
       </ResearchSecureNotice>
 
       <section className="account-grid account-grid-3" aria-label="Import counts">
@@ -110,7 +110,7 @@ export function ClientImportDryRunSummaryView({
               // Non-reversible product-string reference (P1-11): operators
               // recompute it from the source file they hold; no raw input is
               // ever reflected into this surface.
-              { key: "ref", header: "Reference", render: (row) => <span className="tabular">{row.ref ?? "—"}</span> },
+              { key: "ref", header: "Reference", render: (row) => <span className="tabular">{row.ref ?? "Not available"}</span> },
               { key: "count", header: "Occurrences", render: (row) => <span className="tabular">{row.occurrences}</span> },
             ]}
           />

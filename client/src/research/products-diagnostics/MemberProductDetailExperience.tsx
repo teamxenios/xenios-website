@@ -209,7 +209,7 @@ export function MemberProductDetailExperience({
                     >
                       {product.variants.map((variant) => (
                         <option key={variant.id} value={variant.id}>
-                          {variant.label} — {variant.sku}
+                          {variant.label}: {variant.sku}
                         </option>
                       ))}
                     </select>

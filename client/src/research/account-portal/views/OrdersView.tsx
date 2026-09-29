@@ -122,7 +122,7 @@ export function AccountOrdersView({ data }: { data: CustomerOrdersDto }) {
               ? "No Research commerce records are attached to this account."
               : authoritativeResearchCount !== null
                 ? "The authoritative source reports commerce records, but no record rows are visible in this account view."
-              : "No Research commerce records are visible here yet — see the availability and completeness note above."}
+              : "No Research commerce records are visible here yet. See the availability and completeness note above."}
           </div>
         )}
       </section>

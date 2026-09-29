@@ -97,21 +97,21 @@ function RecipientFlow({ code, memberToken }: { code: string; memberToken?: stri
     <SeoHead title="A Xenios recommendation" description="Choose how to explore Xenios Care or nonclinical Research." path="/health" robots="noindex, nofollow" />
     <p className="mono-label text-ink-mute">A Xenios recommendation</p>
     <h1 className="display-m mt-3">An introduction, at your pace.</h1>
-    <p className="body-m text-ink-2 mt-4">Explore what is right for you. A recommendation is an introduction—not a medical recommendation or a promise of eligibility.</p>
+    <p className="body-m text-ink-2 mt-4">Explore what is right for you. A recommendation is an introduction, not a medical recommendation or a promise of eligibility.</p>
     {loading && <p role="status" className="mt-6">Checking your recommendation…</p>}
     {error && <section className="card mt-6"><p role="alert">{error}</p><div className="flex flex-wrap gap-3 mt-4"><button type="button" className="btn btn-secondary" style={touch} onClick={() => void resolve()}>Try again</button><Link href="/health" className="btn btn-primary" style={touch}>Explore Xenios Health</Link></div></section>}
     {context && <>
       <section className="card mt-6" aria-labelledby="recommendation-context-title">
         <p className="mono-label text-ink-mute">Shared by an approved Xenios partner</p>
         <h2 id="recommendation-context-title" className="body-l mt-3">{context.destinationPath.startsWith("/care") ? "Explore the Care pathway" : context.destinationPath.startsWith("/research") ? "Explore nonclinical Research" : "Choose where to begin"}</h2>
-        <p className="body-s text-ink-2 mt-3">Care and Research are distinct pathways. Care access is subject to intake, location, eligibility, and appropriate clinical review. Research materials are for nonclinical research only—not for human use.</p>
+        <p className="body-s text-ink-2 mt-3">Care and Research are distinct pathways. Care access is subject to intake, location, eligibility, and appropriate clinical review. Research materials are for nonclinical research only, not for human use.</p>
         {context.destinationPath === "/health" && <fieldset className="grid gap-3 mt-5" disabled={busy}>
           <legend className="body-m mb-3">What would you like to explore?</legend>
           <label className="card flex items-start gap-3" style={{ ...touch, cursor: "pointer" }}><input type="radio" name="recommendation-pathway" value="/care" checked={target === "/care"} onChange={() => setTarget("/care")} className="mt-1" /><span><span className="body-m block">Care</span><span className="body-s text-ink-2">Learn about the care pathway and its intake process.</span></span></label>
           <label className="card flex items-start gap-3" style={{ ...touch, cursor: "pointer" }}><input type="radio" name="recommendation-pathway" value="/research" checked={target === "/research"} onChange={() => setTarget("/research")} className="mt-1" /><span><span className="body-m block">Research</span><span className="body-s text-ink-2">Explore nonclinical access, education, and membership.</span></span></label>
         </fieldset>}
         <p className="body-s text-ink-mute mt-5">Continuing with this recommendation uses a site cookie to recognize the referral. If you sign in or create an eligible account, Xenios may connect it to that account. An earlier valid referral is not overwritten.</p>
-        <p className="body-s text-ink-mute mt-2">The partner receives limited referral status—not your private account or health details. Continuing does not create an account, enroll you as an affiliate, or place an order.</p>
+        <p className="body-s text-ink-mute mt-2">The partner receives limited referral status, not your private account or health details. Continuing does not create an account, enroll you as an affiliate, or place an order.</p>
         {captureError && <p role="alert" className="body-s mt-4">{captureError}</p>}
         <div className="flex flex-wrap gap-3 mt-5"><button type="button" className="btn btn-primary" style={touch} disabled={busy || !safeDestination(target)} onClick={() => void continueWithReferral()}>{busy ? "Recognizing your referral…" : captureError ? "Retry referral and continue" : "Continue with recommendation"}</button><button type="button" className="btn btn-ghost" style={touch} disabled={busy || !safeDestination(target)} onClick={() => { const path = safeDestination(target); if (path) navigate(path); }}>Continue without confirming referral</button></div>
         {context.destinationPath === "/health" && !target && <p className="body-s text-ink-mute mt-3">Choose Care or Research to continue.</p>}

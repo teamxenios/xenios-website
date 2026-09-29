@@ -140,13 +140,13 @@ export const RESEARCH_INQUIRY_CONFIRMATIONS: Readonly<
   Record<ResearchInquiryType, string>
 > = Object.freeze({
   practice:
-    "Your inquiry was received. This is an inquiry — it doesn't create an account or approve anything. Someone from our team will contact you. We don't promise a response time.",
+    "Your inquiry was received. This is an inquiry. It doesn't create an account or approve anything. Someone from our team will contact you. We don't promise a response time.",
   partner_interest:
-    "Your inquiry was received. This is an inquiry — it doesn't create an account or approve anything. Someone from our team will contact you. We don't promise a response time.",
+    "Your inquiry was received. This is an inquiry. It doesn't create an account or approve anything. Someone from our team will contact you. We don't promise a response time.",
   strategic:
-    "Your inquiry was received. This is an inquiry — it doesn't create an account or approve anything. Someone from our team will contact you. We don't promise a response time.",
+    "Your inquiry was received. This is an inquiry. It doesn't create an account or approve anything. Someone from our team will contact you. We don't promise a response time.",
   supplier:
-    "Your inquiry was received. This is an inquiry — it doesn't create supplier access. Someone from our team will contact you. We don't promise a response time.",
+    "Your inquiry was received. This is an inquiry. It doesn't create supplier access. Someone from our team will contact you. We don't promise a response time.",
   career_interest:
     "Your application was received. We'll contact you if we'd like to talk.",
 });

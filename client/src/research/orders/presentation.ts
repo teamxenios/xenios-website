@@ -98,7 +98,7 @@ export function formatOrderDate(value: string): string {
 
 /** A one-line product summary for the list row. */
 export function productSummary(order: CanonicalOrderView): string {
-  if (order.lines.length === 0) return "—";
+  if (order.lines.length === 0) return "Not available";
   const [first] = order.lines;
   const rest = order.lines.length - 1;
   const head = first.quantity > 1 ? `${first.displayName} ×${first.quantity}` : first.displayName;

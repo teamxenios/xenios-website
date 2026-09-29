@@ -6,7 +6,7 @@ import { QualityNav } from "./QualityNav";
 import "./quality.css";
 
 const READING_CHECKS = [
-  ["Exact sample", "Does the report identify the same SKU, material, and lot as the label—not merely a similar name?"],
+  ["Exact sample", "Does the report identify the same SKU, material, and lot as the label, rather than merely a similar name?"],
   ["Method and scope", "What method was used, what was measured, and which questions remain outside that method?"],
   ["Dates and custody", "When was the sample collected, received, tested, issued, and reviewed, and who controlled it along the way?"],
   ["Specification", "Is there a stated acceptance criterion, unit, and result, with qualifiers and exceptions preserved?"],
@@ -19,7 +19,7 @@ export default function TestingPage() {
     <div className="quality-page">
       <SeoHead
         title="Testing explained | Xenios Research"
-        description="Understand identity, purity, assay, microbial, contaminant, and stability evidence—and the limits of every result."
+        description="Understand identity, purity, assay, microbial, contaminant, and stability evidence, along with the limits of every result."
         path="/research/testing"
       />
       <PageIntro

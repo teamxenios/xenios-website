@@ -91,10 +91,10 @@ export default function InquiryForm({ kind, heading }: { kind: FormKind; heading
         <p className="body-l text-ink-2 mt-4">Reference: <strong className="text-ink">{receipt.reference}</strong></p>
         <p className="body-m text-ink-2 mt-4">
           {kind === "supplier"
-            ? "This is an inquiry — it doesn't create supplier access."
+            ? "This is an inquiry. It doesn't create supplier access."
             : kind === "career_interest"
               ? "We'll email you if we'd like to talk."
-              : "This is an inquiry — it doesn't create an account or approve anything."}
+              : "This is an inquiry. It doesn't create an account or approve anything."}
         </p>
         {kind !== "career_interest" && <p className="body-m text-ink-2 mt-2">Someone from our team will contact you at the email you provided. We don't promise a response time.</p>}
         <p className="body-s text-ink-mute mt-3">

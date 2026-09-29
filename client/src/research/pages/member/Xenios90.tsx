@@ -87,7 +87,7 @@ export default function Xenios90() {
               <h2 id="x90-milestones" className="body-m font-700">Milestones</h2>
               {body.plan.milestones.length ? (
                 <ul className="mt-3 grid gap-2">
-                  {body.plan.milestones.map((item) => <li key={item.id}>Month {item.targetMonth}: {item.label} — {item.done ? "Complete" : "Open"}</li>)}
+                  {body.plan.milestones.map((item) => <li key={item.id}>Month {item.targetMonth}: {item.label}; {item.done ? "Complete" : "Open"}</li>)}
                 </ul>
               ) : <p className="body-s text-ink-2 mt-3">No milestones are published.</p>}
             </section>

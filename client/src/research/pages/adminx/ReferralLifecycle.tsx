@@ -5,7 +5,7 @@ import { AdminScreen } from "./AdminResearchHome";
 
 const eventLabels = { link_issued: "Link issued", link_revoked: "Link revoked", capture_recorded: "Referral captured", account_bound: "Account linked" };
 const stateLabels = { ready: "Active", revoked: "Revoked", expired: "Expired", partner_inactive: "Partner inactive", unavailable: "Unavailable" };
-const availabilityLabels = { ready: "Available", revoked: "Revoked", expired: "Expired", partner_inactive: "Partner inactive", self_referral: "Self-referral — ineligible" };
+const availabilityLabels = { ready: "Available", revoked: "Revoked", expired: "Expired", partner_inactive: "Partner inactive", self_referral: "Self-referral: ineligible" };
 const hasStrings = (row: unknown, fields: string[]) => !!row && typeof row === "object" && fields.every(field => typeof (row as Record<string, unknown>)[field] === "string");
 export function validLifecycle(value: unknown): value is ReferralLifecycle {
   if (!value || typeof value !== "object") return false;

@@ -24,7 +24,7 @@ export const QUALITY_PROCESS = [
   },
   {
     title: "Review evidence",
-    body: "Required documents and third-party testing, where applicable, are checked for lot identity, method, sample, dates, issuing party, specification, and exceptions—not a headline number alone.",
+    body: "Required documents and third-party testing, where applicable, are checked for lot identity, method, sample, dates, issuing party, specification, and exceptions, not a headline number alone.",
   },
   {
     title: "Decide",

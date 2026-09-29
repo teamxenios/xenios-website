@@ -37,7 +37,7 @@ class MalformedOverlayError extends Error {
   constructor(where: string, problem: string) {
     super(`product-activation overlay is malformed at ${where}: ${problem}. ` +
       "Refusing to serve any activation projection from a config that cannot " +
-      "be read exactly — fix the config; nothing degrades to a default.");
+      "be read exactly. Fix the config; nothing degrades to a default.");
     this.name = "MalformedOverlayError";
   }
 }

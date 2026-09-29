@@ -179,7 +179,7 @@ export default function SignIn() {
           Policy or Terms it is collecting them under.
         */}
         <div className="max-w-[420px] mt-8 space-y-3 border-t border-line pt-6">
-          <p className="body-s text-ink-mute">Care patients: your clinical account is separate — use the secure link your Care team sent you.</p>
+          <p className="body-s text-ink-mute">Care patients: your clinical account is separate. Use the secure link your Care team sent you.</p>
           <p className="body-s text-ink-mute">New here? <Link href="/care/schedule" className="underline ra-documentation-link" data-testid="link-signin-gateway">Start Care</Link>{" · "}<Link href="/products" className="underline ra-documentation-link" data-testid="link-signin-apply">Explore Products</Link></p>
           <p className="body-s text-ink-mute">
             <Link href="/research/policies/privacy" className="underline ra-documentation-link" data-testid="link-signin-privacy">Privacy</Link>

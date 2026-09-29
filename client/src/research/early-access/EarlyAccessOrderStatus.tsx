@@ -112,8 +112,8 @@ export function EarlyAccessOrderStatus({
             {tracking.map((event, index) => (
               <li key={index} data-testid={`${testId}-tracking-${index}`}>
                 {event.label}
-                {event.carrier ? ` — ${event.carrier}` : ""}
-                {event.trackingNumber ? ` — ${event.trackingNumber}` : ""}
+                        {event.carrier ? `; ${event.carrier}` : ""}
+                        {event.trackingNumber ? `; ${event.trackingNumber}` : ""}
               </li>
             ))}
           </ul>

@@ -149,7 +149,7 @@ export function AssistedRequestConversionPanel({
           <dd data-testid="conversion-verified-by">
             {payment.settlement
               ? `${payment.settlement.verifiedByLabel} (${payment.settlement.verifiedByKind})`
-              : "—"}
+              : "Not available"}
           </dd>
         </div>
       </dl>
@@ -169,7 +169,7 @@ export function AssistedRequestConversionPanel({
             {payment.proofs.map((proof) => (
               <li key={proof.proofId}>
                 <span>{proof.customerReference}</span>
-                {proof.note ? <span> — {proof.note}</span> : null}
+                {proof.note ? <span>: {proof.note}</span> : null}
                 <ResearchStatusBadge
                   label={
                     proof.reviewOutcome === "pending"

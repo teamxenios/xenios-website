@@ -241,7 +241,7 @@ export function BiomarkerCenter({
                 {String(index + 1).padStart(2, "0")}
               </span>
               <span className={current ? "font-700 text-pulse" : complete ? "text-ink" : "text-ink-mute"}>
-                {step}{complete ? " — complete" : current ? " — current" : ""}
+                {step}{complete ? ": complete" : current ? ": current" : ""}
               </span>
             </li>
           );

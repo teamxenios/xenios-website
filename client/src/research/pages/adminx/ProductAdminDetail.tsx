@@ -281,7 +281,7 @@ function ProductDetailBody({ token, id }: { token: string; id: string }) {
                     </p>
                     <p className="body-s text-ink-2 mt-1">
                       {event.actor}
-                      {event.detail ? ` — ${event.detail}` : ""}
+                      {event.detail ? `: ${event.detail}` : ""}
                     </p>
                   </li>
                 ))}
@@ -819,7 +819,7 @@ export function PricePanel({
               >
                 {product.variants.map((variant) => (
                   <option key={variant.id} value={variant.id}>
-                    {variant.sku} — {variant.label}
+                    {variant.sku}: {variant.label}
                   </option>
                 ))}
               </select>

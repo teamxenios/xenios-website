@@ -40,7 +40,7 @@ function tone(state: string): QueueTone {
 }
 
 function sourceMetric<Item>(source: AdminOperationsSource<Item>, predicate?: (item: Item) => boolean): string {
-  if (source.availability === "unavailable") return "—";
+  if (source.availability === "unavailable") return "Not available";
   const count = predicate ? source.items.filter(predicate).length : source.items.length;
   return source.availability === "partial" ? `${count} visible` : String(count);
 }
@@ -49,7 +49,7 @@ function aggregateMetric(sources: Array<{
   availability: AdminOperationsAvailability;
   items: readonly unknown[] | null;
 }>): string {
-  if (sources.some((source) => source.availability === "unavailable")) return "—";
+  if (sources.some((source) => source.availability === "unavailable")) return "Not available";
   const visible = sources.reduce((total, source) => total + (source.items?.length ?? 0), 0);
   return sources.some((source) => source.availability === "partial") ? `${visible} visible` : String(visible);
 }
@@ -243,7 +243,7 @@ export function AdminCrmSupplierOperationsWorkspace({
         )}
       </Section>
 
-      <Section id="organizations" title="B2B organizations" source={sources.organizations} count={organizations.length} sourceCount={organizationRecords.length} filterActive={Boolean(needle) && organizationRecords.length > 0} description="Legal account, buyer coverage, payment terms, and commercial lifecycle—without private member wellness data.">
+      <Section id="organizations" title="B2B organizations" source={sources.organizations} count={organizations.length} sourceCount={organizationRecords.length} filterActive={Boolean(needle) && organizationRecords.length > 0} description="Legal account, buyer coverage, payment terms, and commercial lifecycle, without private member wellness data.">
         {organizations.length === 0 ? <Empty title={needle && organizationRecords.length > 0 ? "No matching records." : undefined} body={needle && organizationRecords.length > 0 ? "No organization records match this filter. Clear or change it to see the source rows." : "B2B prospects and active organizations will appear here."} /> : (
           <div className="grid gap-3">{organizations.map((org) => (
             <article className="card" key={org.organizationId}><div className="flex items-start justify-between gap-3 flex-wrap"><div><p className="body-m font-700">{org.legalName}</p><p className="body-s text-ink-mute">{org.buyerCount} buyers · owner {org.ownerLabel ?? "unassigned"}</p></div><ResearchStatusBadge label={words(org.accountState)} tone={tone(org.accountState)} /></div><p className="body-s text-ink-2 mt-3">Terms: {org.paymentTermsLabel ?? "not approved"} · open invoices {money(org.openInvoiceCents, org.currency)}</p><div className="mt-4"><QueueButton snapshot={snapshot} onQueue={onQueue} action="organization_review" targetType="organization" targetId={org.organizationId} reason="Human review of B2B organization account and commercial terms." label="Record account review" /></div></article>
@@ -347,7 +347,7 @@ export default function CrmSupplierOperations() {
 }
 
 export function AdminCustomerOperations() {
-  return <OperationsWorkspacePage title="Customer operations" lead="Authorized operational account evidence, order and invoice context, support ownership, exceptions, and audit history—without clinical or wellness data." />;
+  return <OperationsWorkspacePage title="Customer operations" lead="Authorized operational account evidence, order and invoice context, support ownership, exceptions, and audit history, without clinical or wellness data." />;
 }
 
 export function AdminSupplierOperations() {

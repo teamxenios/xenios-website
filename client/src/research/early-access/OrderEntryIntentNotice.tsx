@@ -32,7 +32,7 @@ export function OrderEntryIntentNotice({ intent, enabled, onResolved, showAssist
       {care ? <p className="body-s mt-2">This selection belongs in Xenios Care. It cannot be added to a Research request.</p> : (
         <>
           <p className="body-s mt-2 break-words">
-            {result?.kind === "matched" ? <><strong>{result.item.productName}</strong>{result.item.specification ? ` — ${result.item.specification}` : ""}. </> : null}
+        {result?.kind === "matched" ? <><strong>{result.item.productName}</strong>{result.item.specification ? `: ${result.item.specification}` : ""}. </> : null}
             Requested quantity: {intent.quantity}.
           </p>
           <p className="body-s mt-2" role="status">

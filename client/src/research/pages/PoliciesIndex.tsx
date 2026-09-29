@@ -52,7 +52,7 @@ export default function PoliciesIndex() {
       />
       <ResearchPublicShell
         eyebrow="Policies and documentation"
-        title="Read the document—and its status."
+        title="Read the document and its status."
         lead="A document can be visible without being approved for acceptance or final reliance. This index preserves that distinction instead of treating publication as authority."
       >
         <section className="grid gap-4 mt-8" aria-label="Research policy documents">

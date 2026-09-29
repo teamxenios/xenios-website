@@ -116,9 +116,9 @@ export function AccountOverviewView({
           ) : (
             <>
               {/* Only Lane 01's complete-history authoritative count is numeric. */}
-              <p className="account-stat-value mt-2 tabular">—</p>
+              <p className="account-stat-value mt-2 tabular">Not available</p>
               <p className="body-s text-ink-mute mt-1">
-                count unavailable — commerce history incomplete
+                count unavailable; commerce history incomplete
               </p>
             </>
           )}
@@ -220,7 +220,7 @@ export function AccountOverviewView({
                 ? "No Research commerce records are attached to this account yet."
                 : authoritativeResearchCount !== null
                   ? "The authoritative source reports commerce records, but no recent record rows are visible in this account view."
-                : "Commerce history is currently unavailable or incomplete — recent records may not be shown."}
+                : "Commerce history is currently unavailable or incomplete. Recent records may not be shown."}
             </div>
           )}
         </section>
@@ -231,8 +231,8 @@ export function AccountOverviewView({
           <div className="mt-5">
             {/* An unavailable Care source carries no enrollment claim (P1-D). */}
             <div className="account-data-row"><span className="account-data-label">Enrollment</span><span className="account-data-value">{careEnrollment.sourceState === "unavailable" ? "Care status is managed through the provider/Tebra workflow." : careEnrollment.enrolled ? "Enrolled" : "Not enrolled"}</span></div>
-            <div className="account-data-row"><span className="account-data-label">Provider stage</span><span className="account-data-value">{careEnrollment.sourceState === "unavailable" ? "—" : careEnrollment.status.stage ? sentenceCase(careEnrollment.status.stage) : "No stage recorded"}</span></div>
-            <div className="account-data-row"><span className="account-data-label">Pharmacy</span><span className="account-data-value">{careEnrollment.sourceState === "unavailable" ? "—" : sentenceCase(careEnrollment.pharmacyState)}</span></div>
+            <div className="account-data-row"><span className="account-data-label">Provider stage</span><span className="account-data-value">{careEnrollment.sourceState === "unavailable" ? "Not available" : careEnrollment.status.stage ? sentenceCase(careEnrollment.status.stage) : "No stage recorded"}</span></div>
+            <div className="account-data-row"><span className="account-data-label">Pharmacy</span><span className="account-data-value">{careEnrollment.sourceState === "unavailable" ? "Not available" : sentenceCase(careEnrollment.pharmacyState)}</span></div>
           </div>
           <Link className="btn btn-secondary mt-5" href={ACCOUNT_PORTAL_ROUTES.care}>Open Care status</Link>
         </section>

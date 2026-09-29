@@ -241,7 +241,7 @@ export default function CareAccessRequestForm() {
     } catch {
       setServerError({
         kind: "uncertain",
-        message: "We're not sure your request went through. Please don't resend yet — check your email for a copy in a few minutes, or use Contact Support with the time you submitted.",
+        message: "We're not sure your request went through. Please don't resend yet. Check your email for a copy in a few minutes, or use Contact Support with the time you submitted.",
       });
     } finally {
       setSubmitting(false);
@@ -266,7 +266,7 @@ export default function CareAccessRequestForm() {
             : "We couldn't send a copy to your email; keep this reference."}
         </p>
         <p className="body-m text-ink-2 mt-4">
-          This wasn't a medical intake — that happens later in a secure system, if Care fits.
+          This wasn't a medical intake. That happens later in a secure system, if Care fits.
         </p>
         <p className="body-m text-ink-2 mt-4">Questions? <a className="underline" href={CARE_ALTERNATE_CONTACT_PATH}>Contact Support</a>.</p>
       </div>

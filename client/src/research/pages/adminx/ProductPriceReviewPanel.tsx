@@ -31,10 +31,10 @@ function recordedTime(value: string | null, absent: string): ReactNode {
   if (value === null) return absent;
   if (typeof value !== "string" || readDraftEffectiveAt(value.slice(0, 10)) === null ||
       !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(value)) {
-    return "Unavailable — invalid recorded timestamp";
+    return "Unavailable: invalid recorded timestamp";
   }
   const date = new Date(value);
-  if (!Number.isFinite(date.getTime())) return "Unavailable — invalid recorded timestamp";
+  if (!Number.isFinite(date.getTime())) return "Unavailable: invalid recorded timestamp";
   return <time dateTime={value}>{date.toISOString()} (UTC)</time>;
 }
 
@@ -62,28 +62,28 @@ function PriceRecord({ product, price, headingId }: {
   return (
     <article aria-labelledby={headingId} className="card min-w-0">
       <h3 id={headingId} className="body-m font-700" style={{ overflowWrap: "anywhere" }}>
-        {variant ? `${variant.sku} — ${variant.label}` : "Variant identity unavailable"}
+        {variant ? `${variant.sku}: ${variant.label}` : "Variant identity unavailable"}
       </h3>
       <dl className="grid min-w-0 gap-4 mt-4 sm:grid-cols-2">
         <Fact label="Price ID">{price.id}</Fact>
-        <Fact label="Price version">{Number.isSafeInteger(price.version) && price.version > 0 ? price.version : "Unavailable — invalid version"}</Fact>
+        <Fact label="Price version">{Number.isSafeInteger(price.version) && price.version > 0 ? price.version : "Unavailable: invalid version"}</Fact>
         <Fact label="Recorded product ID">{price.productId}</Fact>
         <Fact label="Recorded variant ID">{price.variantId}</Fact>
-        <Fact label="Exact SKU">{variant?.sku ?? "Unavailable — no unique variant on this product"}</Fact>
+        <Fact label="Exact SKU">{variant?.sku ?? "Unavailable: no unique variant on this product"}</Fact>
         <Fact label="Audience">{price.audience}</Fact>
         <Fact label="Stored status">{price.status}</Fact>
-        <Fact label="Currency">{currencyValid ? price.currency : "Unavailable — invalid currency code"}</Fact>
-        <Fact label="Base amount (integer cents)">{Number.isSafeInteger(price.amountCents) && price.amountCents > 0 ? price.amountCents : "Unavailable — invalid amount"}</Fact>
+        <Fact label="Currency">{currencyValid ? price.currency : "Unavailable: invalid currency code"}</Fact>
+        <Fact label="Base amount (integer cents)">{Number.isSafeInteger(price.amountCents) && price.amountCents > 0 ? price.amountCents : "Unavailable: invalid amount"}</Fact>
         <Fact label="Approval note">{price.approvalNote?.trim() ? price.approvalNote : "Not recorded"}</Fact>
-        <Fact label="Effective from">{recordedTime(price.effectiveAt, "Unavailable — effective time missing")}</Fact>
+        <Fact label="Effective from">{recordedTime(price.effectiveAt, "Unavailable: effective time missing")}</Fact>
         <Fact label="Expires at">{recordedTime(price.expiresAt, "No expiry recorded")}</Fact>
       </dl>
-      {reversedWindow ? <p className="body-s mt-4" role="status">Price window unavailable — expiry does not follow the effective time.</p> : null}
+      {reversedWindow ? <p className="body-s mt-4" role="status">Price window unavailable: expiry does not follow the effective time.</p> : null}
       <h4 className="body-s font-700 mt-5">Canonical quantity tiers</h4>
       {!variant ? (
         <p className="body-s mt-2">Quantity-tier review unavailable until the exact product and variant identity can be resolved.</p>
       ) : tiers === null || !currencyValid ? (
-        <p className="body-s mt-2">Quantity-tier review unavailable — malformed canonical price data. No scalar fallback or tier repair has been applied.</p>
+        <p className="body-s mt-2">Quantity-tier review unavailable: malformed canonical price data. No scalar fallback or tier repair has been applied.</p>
       ) : (
         <>
           <p className="body-s text-ink-mute mt-2">

@@ -310,7 +310,7 @@ const RAW_HTTP_LITERAL_PUBLIC_METADATA: Readonly<Record<string, RawHttpDocumentM
     ),
     "/research/testing": metadata(
       "Testing explained | Xenios Research",
-      "Understand identity, purity, assay, microbial, contaminant, and stability evidence—and the limits of every result.",
+      "Understand identity, purity, assay, microbial, contaminant, and stability evidence, along with the limits of every result.",
     ),
     "/research/documents": metadata(
       "Quality documents | Xenios Research",

@@ -1290,7 +1290,7 @@ function buildLiveServices(
       satisfied,
       packageVersion,
       agreementList: packageDocuments
-        .map((document) => `• ${document.title} — version ${document.semver}`)
+    .map((document) => `• ${document.title}, version ${document.semver}`)
         .join("\n"),
     };
   }
@@ -1483,7 +1483,7 @@ function buildLiveServices(
           .digest("hex")
           .slice(0, 24),
         agreementList: selected
-          .map((document) => `• ${document.title} — version ${document.semver}`)
+    .map((document) => `• ${document.title}, version ${document.semver}`)
           .join("\n"),
       };
     };

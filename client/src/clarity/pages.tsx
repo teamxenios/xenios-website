@@ -59,7 +59,7 @@ export function IndividualsPage() {
       description="Choose the Xenios path that fits: Care or research products."
       path="/individuals"
       eyebrow="FOR INDIVIDUALS"
-      heading="Care or research products — here's how to choose."
+      heading="Care or research products: here's how to choose."
       lead="Care begins with a request for you. Research products are for research use. The paths are separate."
       actions={[{ label: "Start Care", href: "/care/schedule", kind: "primary" }, { label: "Explore Products", href: "/products" }]}
     >
@@ -237,7 +237,7 @@ export function PracticeReferralsPage() {
         ]} />
       </ContentSection>
       <ContentSection tone="soft" title="What you can see">
-        <p className="body-l text-ink-2 clarity-copy-width">Your workspace shows referral counts, credited orders and commission — and payout information once the program is active. Client names or client-level status require explicit client consent, which isn't available yet. Care information is never shared without written authorization and applicable authority.</p>
+        <p className="body-l text-ink-2 clarity-copy-width">Your workspace shows referral counts, credited orders and commission, plus payout information once the program is active. Client names or client-level status require explicit client consent, which isn't available yet. Care information is never shared without written authorization and applicable authority.</p>
         <BoundaryNote>Care services never earn commission.</BoundaryNote>
       </ContentSection>
     </PublicPage>
@@ -740,7 +740,7 @@ export function StatusPage() {
               <div><dt>Who owns the next step</dt><dd>{statusView.nextStepOwner === "customer" ? "You" : "Xenios"}</dd></div>
               <div><dt>Where to return</dt><dd><Link href={statusView.returnPath} className="clarity-text-link">Check order status</Link></dd></div>
             </dl>
-            {statusView.timeline.length > 0 && <ol className="clarity-status-timeline" aria-label="Order status timeline">{statusView.timeline.map((item, index) => <li key={`${item.occurredAt}-${index}`}><strong>{item.status.replaceAll("_", " ")}</strong>{item.customerMessage ? ` — ${item.customerMessage}` : ""}<time dateTime={item.occurredAt}>{new Date(item.occurredAt).toLocaleDateString()}</time></li>)}</ol>}
+            {statusView.timeline.length > 0 && <ol className="clarity-status-timeline" aria-label="Order status timeline">{statusView.timeline.map((item, index) => <li key={`${item.occurredAt}-${index}`}><strong>{item.status.replaceAll("_", " ")}</strong>{item.customerMessage ? `: ${item.customerMessage}` : ""}<time dateTime={item.occurredAt}>{new Date(item.occurredAt).toLocaleDateString()}</time></li>)}</ol>}
             <div className="clarity-actions mt-8"><Link href={statusView.supportPath} className="btn btn-secondary">Contact Support</Link><button className="btn btn-secondary" type="button" onClick={() => void endStatusSession()}>End secure status access</button></div>
           </article>
         )}

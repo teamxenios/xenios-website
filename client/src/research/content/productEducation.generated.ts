@@ -1053,7 +1053,7 @@ export const PRODUCT_EDUCATION_PRODUCTS = [
     variants: [
       {
         sourceRef: "8171756b3334d15a7419efbb4b5de0381f7194309dc86993a6baaa683bc865e9",
-        formulation: "LIBIDO CREAM (SCREAM CREAM) — Testosterone Cypionate 0.1% / Sildenafil Citrate 0.1% / Glycerin / Versabase Cream",
+        formulation: "LIBIDO CREAM (SCREAM CREAM): Testosterone Cypionate 0.1% / Sildenafil Citrate 0.1% / Glycerin / Versabase Cream",
         dosageForm: "Topical Cream",
         status: "clinical_review",
       },

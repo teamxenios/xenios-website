@@ -152,7 +152,7 @@ function RecommendationList({ items }: { items: readonly RecommendationItem[] })
       {items.map((item) => (
         <li key={item.id}>
           <span className="font-700">{item.title}</span>
-          <span className="body-s text-ink-2"> — {item.explanation}</span>
+          <span className="body-s text-ink-2">: {item.explanation}</span>
         </li>
       ))}
     </ul>

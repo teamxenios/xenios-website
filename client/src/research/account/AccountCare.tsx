@@ -11,7 +11,7 @@ export default function AccountCare() {
     <AccountPortalShell
       eyebrow="Care operations"
       title="Care, step by step."
-      lead="A neutral operational timeline for intake, provider review, and pharmacy fulfillment—without clinical detail or implied outcomes."
+      lead="A neutral operational timeline for intake, provider review, and pharmacy fulfillment, without clinical detail or implied outcomes."
     >
       <AccountResourceBoundary snapshot={snapshot}>
         {(data) => <AccountCareView data={data} />}

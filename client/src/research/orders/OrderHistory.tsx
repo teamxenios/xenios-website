@@ -138,7 +138,7 @@ export default function OrderHistory() {
       render: (order: CanonicalOrderView) =>
         order.tracking === null ? (
           // Not a failure and not a promise: there is simply no tracking yet.
-          <span className="text-ink-mute">—</span>
+                  <span className="text-ink-mute">Not available</span>
         ) : (
           <span className="tabular">
             {order.tracking.trackingNumber}

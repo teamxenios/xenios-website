@@ -59,7 +59,7 @@ function lineBlock(payload: Record<string, unknown>): string[] {
     const quantity = count(line.quantity);
     const unit = amount(line.unitPriceCents);
     const total = amount(line.lineEstimateCents);
-    const parts = [spec === "" ? name : `${name} — ${spec}`];
+  const parts = [spec === "" ? name : `${name}: ${spec}`];
     if (quantity !== null) parts.push(`qty ${quantity}`);
     // An unpriced line is truthful about being unpriced. It is never rendered
     // as $0.00, which would read as free.
