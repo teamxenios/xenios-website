@@ -8,6 +8,7 @@ import {
   type ReconciliationReviewResponse,
   type ReviewFact,
 } from "@shared/research/revenue-launch";
+import { formatReconciliationPresentationLabel } from "@shared/research/reconciliation-presentation";
 
 export type AvailableReconciliationReview = Extract<ReconciliationReviewResponse, { status: "AVAILABLE" }>;
 
@@ -118,9 +119,13 @@ export function ReconciliationReviewContent({ review }: { review: AvailableRecon
           return (
             <article key={row.sourceId} aria-labelledby={rowHeadingId} data-source-id={row.sourceId} className="card min-w-0">
               <p className="body-s text-ink-mute" style={{ overflowWrap: "anywhere" }}>Source assertion · {row.sourceId}</p>
-              <h3 id={rowHeadingId} className="body-m font-700 mt-2" style={{ overflowWrap: "anywhere" }}>{row.productLabel}</h3>
+              <h3 id={rowHeadingId} className="body-m font-700 mt-2" style={{ overflowWrap: "anywhere" }}>
+                {formatReconciliationPresentationLabel(row.productLabel)}
+              </h3>
               <dl className="grid min-w-0 gap-4 mt-4">
-                <FactValue label="Source configuration: assumptions preserved">{row.configurationLabel}</FactValue>
+                <FactValue label="Source configuration: assumptions preserved">
+                  {formatReconciliationPresentationLabel(row.configurationLabel)}
+                </FactValue>
                 <FactValue label="Recorded issue kinds">{row.issueKinds.length ? row.issueKinds.join(", ") : "No issue kinds listed. This is not confirmation of all facts."}</FactValue>
               </dl>
               <div className="grid min-w-0 gap-5 mt-5 sm:grid-cols-2">
