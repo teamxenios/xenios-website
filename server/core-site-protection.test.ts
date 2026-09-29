@@ -164,6 +164,7 @@ describe("the changed-file classifier", () => {
       "client/src/lib/attribution.ts",
     ];
     const pwaSensitiveWorkflowFiles = [
+      "client/public/offline.html",
       "client/src/pwa/PwaLifecycle.tsx",
     ];
     const reviewedHashLockedSeams = [
