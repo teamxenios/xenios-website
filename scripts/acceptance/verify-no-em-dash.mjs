@@ -5,6 +5,7 @@ import { existsSync } from "node:fs";
 import { extname, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
+import { formatReconciliationPresentationLabel } from "../../shared/research/reconciliation-presentation.ts";
 
 const SCRIPT_DIRECTORY = fileURLToPath(new URL(".", import.meta.url));
 const DEFAULT_ROOT = resolve(SCRIPT_DIRECTORY, "../..");
@@ -19,6 +20,10 @@ export const SOURCE_ROOTS = Object.freeze([
 export const BUILD_ROOTS = Object.freeze([
   "dist/public",
   "dist/index.cjs",
+]);
+
+export const RUNTIME_CONFIG_PROJECTIONS = Object.freeze([
+  "config/research/revenue-launch/seth-source-reconciliation-20260905.json",
 ]);
 
 const SOURCE_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".json", ".html", ".css"]);
@@ -128,6 +133,31 @@ export function scanBuildText(file, text) {
   return forbiddenMatchesInText(scannable).map((match) => finding(normalized, scannable, match.index, match.form));
 }
 
+export function scanRuntimeConfigText(file, text) {
+  const normalized = normalizePath(file);
+  if (!RUNTIME_CONFIG_PROJECTIONS.includes(normalized)) return [];
+  const parsed = JSON.parse(text);
+  const findings = [];
+  for (const phase of ["phaseA", "phaseB"]) {
+    const rows = Array.isArray(parsed?.[phase]) ? parsed[phase] : [];
+    for (const [index, row] of rows.entries()) {
+      if (row === null || typeof row !== "object") continue;
+      for (const field of ["sourceProduct", "sourceConfiguration"]) {
+        if (typeof row[field] !== "string") continue;
+        const output = formatReconciliationPresentationLabel(row[field]);
+        for (const match of forbiddenMatchesInText(output)) {
+          findings.push({
+            file: `${normalized}#/${phase}/${index}/${field}`,
+            line: 1,
+            form: match.form,
+          });
+        }
+      }
+    }
+  }
+  return findings;
+}
+
 async function filesUnder(path, extensions) {
   if (!existsSync(path)) return [];
   const entry = await import("node:fs/promises").then(({ stat }) => stat(path));
@@ -152,6 +182,12 @@ export async function scanSourceTree(root = DEFAULT_ROOT) {
       scannedFiles += 1;
       findings.push(...scanSourceText(file, await readFile(absolute, "utf8")));
     }
+  }
+  for (const runtimeConfig of RUNTIME_CONFIG_PROJECTIONS) {
+    const absolute = resolve(root, runtimeConfig);
+    if (!existsSync(absolute)) throw new Error(`Required runtime configuration is missing: ${runtimeConfig}`);
+    scannedFiles += 1;
+    findings.push(...scanRuntimeConfigText(runtimeConfig, await readFile(absolute, "utf8")));
   }
   return { scannedFiles, findings };
 }
