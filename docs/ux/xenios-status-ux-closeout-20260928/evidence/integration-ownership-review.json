@@ -1,0 +1,19 @@
+{
+  "artifactSchemaVersion": 1,
+  "kind": "xenios.integration-ownership-review",
+  "attestation": {
+    "baseSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
+    "headSha": "899395c4980cc554f9a2c6bdb3eb3d14e63ee65a",
+    "trustedBaseOwnershipPolicySha256": "4fd7c6d77663b01f4fe14a1a9d793c676a5827dbebb4092a017a586499b0a2fa",
+    "gitDiffPathInventorySha256": "9903d5e2bf3ededd7a881c4a95d8ec56d02de0aa286c323a0b95b65ae5f0bc69",
+    "ownershipFindingInventorySha256": "50f1ddf901039334b2f51e504195a75c163d68c0c4f6f827699a267281b23694",
+    "ownershipFindingCounts": {
+      "UNOWNED_FILE": 77,
+      "WRONG_LANE_OWNER": 13,
+      "OWNERSHIP_CONFLICT": 0
+    },
+    "reviewerIdentity": "Codex session codex-xenios-status-ux-closeout-20260928",
+    "reviewedAt": "2026-09-29T03:12:00.000Z",
+    "reviewArtifactPath": "docs/ux/xenios-status-ux-closeout-20260928/evidence/integration-ownership-review.json"
+  }
+}

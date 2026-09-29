@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 2,
+  "releaseId": "XENIOS-WEBSITE-ZOOM-NO-EM-DASH-CLOSEOUT-20260928",
+  "domain": "status-recovery-and-sitewide-copy-closeout",
+  "lane": "status-ux-closeout",
+  "owner": "Codex status UX closeout lane",
+  "createdAt": "2026-09-29T03:12:00.000Z",
+  "baseSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
+  "headSha": "899395c4980cc554f9a2c6bdb3eb3d14e63ee65a",
+  "currentProductionSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
+  "files": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/handoffs/2026-09-27T21-33-39-844Z-XENIOS-P17-SECURE-STATUS-RECOVERY-20260927-codex-xenios-p17-secure-status-recovery-20260927.md",
+    ".xenios/handoffs/2026-09-28-CODEX-12-FINAL-QUALIFICATION-STATUS.md",
+    ".xenios/handoffs/2026-09-28T21-15-00-000Z-XENIOS-STATUS-UX-CLOSEOUT-20260928-codex.md",
+    ".xenios/handoffs/2026-09-28T21-20-11-136Z-XENIOS-STATUS-UX-CLOSEOUT-20260928-codex-xenios-status-ux-closeout-20260928.md",
+    ".xenios/handoffs/2026-09-28T21-42-49-349Z-XENIOS-STATUS-UX-CLOSEOUT-20260928-codex-xenios-status-ux-closeout-20260928.md",
+    ".xenios/handoffs/2026-09-28T22-14-45-945Z-XENIOS-STATUS-UX-CLOSEOUT-20260928-codex-xenios-status-ux-closeout-20260928.md",
+    ".xenios/sessions/codex-xenios-p17-secure-status-recovery-20260927.json",
+    ".xenios/sessions/codex-xenios-status-ux-closeout-20260928.json",
+    "client/public/hino/collective/index.html",
+    "client/public/hino/index.html",
+    "client/public/hino/legacy/index.html",
+    "client/public/hino/media/index.html",
+    "client/public/hino/merch/index.html",
+    "client/public/hino/press/index.html",
+    "client/public/hino/retreat/index.html",
+    "client/public/hino/story/index.html",
+    "client/public/offline.html",
+    "client/src/care/CareAccessRequestForm.tsx",
+    "client/src/clarity/InquiryForm.tsx",
+    "client/src/clarity/StatusPage.test.tsx",
+    "client/src/clarity/pages.test.tsx",
+    "client/src/clarity/pages.tsx",
+    "client/src/research/account-portal/review/entry.tsx",
+    "client/src/research/account-portal/views/OrdersView.tsx",
+    "client/src/research/account-portal/views/OverviewView.tsx",
+    "client/src/research/account-portal/views/SubscriptionView.tsx",
+    "client/src/research/account/AccountCare.tsx",
+    "client/src/research/account/AccountOverview.tsx",
+    "client/src/research/content/productEducation.generated.ts",
+    "client/src/research/early-access/EarlyAccessOrderStatus.tsx",
+    "client/src/research/early-access/OrderEntryIntentNotice.tsx",
+    "client/src/research/orders/OrderHistory.tsx",
+    "client/src/research/orders/presentation.ts",
+    "client/src/research/pages/PoliciesIndex.tsx",
+    "client/src/research/pages/SignIn.tsx",
+    "client/src/research/pages/adminx/CrmSupplierOperations.tsx",
+    "client/src/research/pages/adminx/Inventory.tsx",
+    "client/src/research/pages/adminx/LotCoasAdmin.tsx",
+    "client/src/research/pages/adminx/ProductAdminDetail.tsx",
+    "client/src/research/pages/adminx/ProductPriceReviewPanel.tsx",
+    "client/src/research/pages/adminx/ProductsAdmin.tsx",
+    "client/src/research/pages/adminx/ReferralLifecycle.tsx",
+    "client/src/research/pages/adminx/RequiredInputs.tsx",
+    "client/src/research/pages/adminx/client-imports/ClientImportDryRunSummary.tsx",
+    "client/src/research/pages/gateway-editorial.css",
+    "client/src/research/pages/member/Xenios30.tsx",
+    "client/src/research/pages/member/Xenios90.tsx",
+    "client/src/research/payments/AssistedRequestConversionPanel.tsx",
+    "client/src/research/products-diagnostics/DiagnosticsExperience.tsx",
+    "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+    "client/src/research/quality/QualityNav.tsx",
+    "client/src/research/quality/TestingPage.tsx",
+    "client/src/research/quality/content.ts",
+    "client/src/research/recommendation/Recipient.tsx",
+    "client/src/research/revenue-launch/ReconciliationReviewPanel.tsx",
+    "docs/coordination/MIGRATION_DAG.json",
+    "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+    "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+    "docs/ux/xenios-p17-secure-status-recovery-20260927/HANDOFF.md",
+    "docs/ux/xenios-status-ux-closeout-20260928/CLAUDE_NARROW_VERIFICATION_PACKET.md",
+    "docs/ux/xenios-status-ux-closeout-20260928/HANDOFF.md",
+    "server/release-control-plane.test.ts",
+    "server/research/assisted-order/communications.ts",
+    "server/research/customer-account/service.ts",
+    "server/research/frontdoor.test.ts",
+    "server/research/inquiries/notification-templates.ts",
+    "server/research/kris-launch-a/data/kris-launch-a-catalog.generated.json",
+    "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+    "server/research/membership-activation/production-deps.ts",
+    "server/research/product-activation/overlay-source.ts",
+    "server/research/seo/raw-http-document-policy.ts",
+    "server/research/status-recovery/crypto.test.ts",
+    "server/research/status-recovery/http.test.ts",
+    "server/research/status-recovery/migration-source.test.ts",
+    "server/research/status-recovery/notification.test.ts",
+    "server/research/status-recovery/service.test.ts",
+    "server/static.test.ts",
+    "shared/research/customer-account/billing-presentation.ts",
+    "shared/research/customer-account/fixtures.ts",
+    "shared/research/inquiries.ts",
+    "shared/research/referral-v1.ts",
+    "supabase/MIGRATIONS.md",
+    "supabase/candidates/20260927203000_research_status_recovery.postcheck.sql",
+    "supabase/candidates/20260927203000_research_status_recovery.precheck.sql",
+    "supabase/candidates/20260927203000_research_status_recovery.rollback.md",
+    "supabase/verification/20260927_research_status_recovery_disposable.sql"
+  ],
+  "routes": [
+    { "method": "GET", "path": "/status" },
+    { "method": "POST", "path": "/api/research/status-recovery/request" },
+    { "method": "POST", "path": "/api/research/status-recovery/exchange" }
+  ],
+  "migrations": [],
+  "tables": [],
+  "functions": [],
+  "rls": [],
+  "privileges": [],
+  "environmentNames": [],
+  "sharedWiring": [
+    "Existing server-confirmed account ownership authority",
+    "Existing P-17 opaque recovery-token and durable outbox authority",
+    "Existing Care support path without Care-status disclosure"
+  ],
+  "tests": {
+    "focused": {
+      "status": "PASS",
+      "command": "npx vitest run client/src/clarity/StatusPage.test.tsx (15 passed); nine-file P-17 suite (97 passed); no-em-dash gate tests (8 passed)",
+      "checkedAt": "2026-09-29T03:12:00.000Z"
+    },
+    "fullSuite": {
+      "status": "PASS",
+      "command": "npm test -- --pool=threads --maxWorkers=4 --testTimeout=30000 (987 files passed, 6 skipped; 18180 tests passed, 85 skipped)",
+      "checkedAt": "2026-09-29T03:12:00.000Z"
+    },
+    "typecheck": {
+      "status": "PASS",
+      "command": "npm run check",
+      "checkedAt": "2026-09-29T03:12:00.000Z"
+    },
+    "build": {
+      "status": "PASS",
+      "command": "npm run build under Node 20.19.0; source and production-build no-em-dash scans both zero",
+      "checkedAt": "2026-09-29T03:12:00.000Z"
+    },
+    "diffCheck": {
+      "status": "PASS",
+      "command": "git diff --check fef7b313c23ac0e12046420041aa51a3a6e3c2d6..899395c4980cc554f9a2c6bdb3eb3d14e63ee65a",
+      "checkedAt": "2026-09-29T03:12:00.000Z"
+    }
+  },
+  "rollback": {
+    "strategy": "No deployment or managed mutation occurred. A later deployment rollback must redeploy the previously approved exact SHA without deleting recovery or outbox records.",
+    "steps": [
+      "Redeploy the exact previously approved production SHA through the authorized production-writer lane.",
+      "Do not delete or rewrite status-recovery, order, owner, Care or outbox records.",
+      "Do not apply the status-recovery migration as part of source rollback."
+    ],
+    "verification": [
+      "Verify the deployed commit matches the explicitly approved rollback SHA.",
+      "Verify /api/health and /status respond without exposing owner, Care or recovery authority.",
+      "Repeat signed-out, wrong-owner, expired-token and replay smoke checks."
+    ]
+  },
+  "smoke": {
+    "steps": [
+      "Load /status at desktop, mobile, true 200% and true 400% page zoom.",
+      "Exercise Care guidance, signed-in owner shortcut and same-tab recovery fragment handling.",
+      "Verify the raw token leaves the URL before explicit POST exchange and never enters logs or persistent browser storage."
+    ],
+    "expected": [
+      "R-01, R-02 and R-03 pass without owner, Care or order enumeration.",
+      "No customer-facing runtime or production-build em dash remains.",
+      "No migration, deploy, real email, staging write or production write occurs during this closeout."
+    ]
+  },
+  "evidence": [
+    {
+      "kind": "qualification-packet",
+      "checkedAt": "2026-09-29T03:12:00.000Z",
+      "reference": "docs/ux/xenios-status-ux-closeout-20260928/CLAUDE_NARROW_VERIFICATION_PACKET.md"
+    },
+    {
+      "kind": "protected-change-review",
+      "checkedAt": "2026-09-29T03:12:00.000Z",
+      "reference": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
+    }
+  ],
+  "integrationOwnershipReview": {
+    "baseSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
+    "headSha": "899395c4980cc554f9a2c6bdb3eb3d14e63ee65a",
+    "trustedBaseOwnershipPolicySha256": "4fd7c6d77663b01f4fe14a1a9d793c676a5827dbebb4092a017a586499b0a2fa",
+    "gitDiffPathInventorySha256": "9903d5e2bf3ededd7a881c4a95d8ec56d02de0aa286c323a0b95b65ae5f0bc69",
+    "ownershipFindingInventorySha256": "50f1ddf901039334b2f51e504195a75c163d68c0c4f6f827699a267281b23694",
+    "ownershipFindingCounts": {
+      "UNOWNED_FILE": 77,
+      "WRONG_LANE_OWNER": 13,
+      "OWNERSHIP_CONFLICT": 0
+    },
+    "reviewerIdentity": "Codex session codex-xenios-status-ux-closeout-20260928",
+    "reviewedAt": "2026-09-29T03:12:00.000Z",
+    "reviewArtifactPath": "docs/ux/xenios-status-ux-closeout-20260928/evidence/integration-ownership-review.json",
+    "reviewArtifactSha256": "3377533159d93ce0da2b55751877b4dc2541170222abbfbb7d6360be5455dc3a"
+  }
+}
