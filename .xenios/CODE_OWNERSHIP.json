@@ -2676,7 +2676,7 @@
         ".xenios/sessions/codex-xenios-status-ux-closeout-20260928.json",
         ".xenios/handoffs/*STATUS-UX-CLOSEOUT*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-29T13:28:41.899Z",
       "heartbeatAt": "2026-09-29T14:31:20.930Z"
     }

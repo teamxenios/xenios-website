@@ -2548,7 +2548,7 @@
       "id": "XENIOS-STATUS-UX-CLOSEOUT-20260928",
       "title": "Close status UX findings and F-01 runtime-fed admin copy",
       "priority": "P2",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-status-ux-closeout-20260928",
       "baseSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
       "paths": [
@@ -2587,9 +2587,9 @@
       "claimedAt": "2026-09-29T13:28:41.897Z",
       "handoff": {
         "session": "codex-xenios-status-ux-closeout-20260928",
-        "sha": "9c00121a5cabe88546fc873c28118800e17ac3b4",
-        "file": ".xenios/handoffs/2026-09-29T04-07-03-646Z-XENIOS-STATUS-UX-CLOSEOUT-20260928-codex-xenios-status-ux-closeout-20260928.md",
-        "at": "2026-09-29T04:07:03.649Z"
+        "sha": "3f7670a92f8c3e9e5bee24ac7ef8680e5765da5f",
+        "file": ".xenios/handoffs/2026-09-29T15-25-38-203Z-XENIOS-STATUS-UX-CLOSEOUT-20260928-codex-xenios-status-ux-closeout-20260928.md",
+        "at": "2026-09-29T15:25:38.224Z"
       }
     }
   ]
