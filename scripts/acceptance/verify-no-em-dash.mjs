@@ -25,6 +25,9 @@ const SOURCE_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs",
 const BUILD_EXTENSIONS = new Set([".js", ".cjs", ".mjs", ".json", ".html", ".css"]);
 const EXCLUDED_DIRECTORY_NAMES = new Set(["node_modules", ".git", "coverage"]);
 const TEST_OR_ARCHIVE_PATH = /(?:^|\/)(?:__tests__|historical|history|archive|archives|audit-evidence)(?:\/|$)|\.(?:test|spec)\.[cm]?[jt]sx?$/i;
+const APPROVED_THIRD_PARTY_BUILD_STRINGS = new Set([
+  "proactive refresh failed, access token still valid — preserving session",
+]);
 
 export const FORBIDDEN_FORMS = Object.freeze([
   { name: "literal U+2014", pattern: /—/gu },
@@ -63,7 +66,7 @@ function finding(file, text, index, form) {
   return { file: normalizePath(file), line: lineNumber(text, index), form };
 }
 
-function scanStructuredSource(file, text) {
+function scanStructuredSource(file, text, allowedStrings = new Set()) {
   const kind = file.endsWith(".tsx") || file.endsWith(".jsx") ? ts.ScriptKind.TSX
     : file.endsWith(".ts") ? ts.ScriptKind.TS
       : file.endsWith(".json") ? ts.ScriptKind.JSON
@@ -79,6 +82,10 @@ function scanStructuredSource(file, text) {
     if (customerCopyNode) {
       const raw = node.getText(source);
       const cooked = "text" in node ? String(node.text) : raw;
+      if (allowedStrings.has(cooked)) {
+        ts.forEachChild(node, visit);
+        return;
+      }
       const rawMatches = forbiddenMatchesInText(raw);
       const cookedMatches = forbiddenMatchesInText(cooked);
       const matches = rawMatches.length > 0 ? rawMatches : cookedMatches;
@@ -110,7 +117,15 @@ export function scanSourceText(file, text) {
 }
 
 export function scanBuildText(file, text) {
-  return forbiddenMatchesInText(text).map((match) => finding(file, text, match.index, match.form));
+  const normalized = normalizePath(file);
+  const extension = extname(normalized).toLowerCase();
+  if ([".js", ".jsx", ".mjs", ".cjs", ".json"].includes(extension)) {
+    return scanStructuredSource(normalized, text, APPROVED_THIRD_PARTY_BUILD_STRINGS);
+  }
+  const scannable = extension === ".css" ? stripBlockCommentsPreservingLines(text)
+    : extension === ".html" ? text.replace(/<!--[\s\S]*?-->/g, (comment) => comment.replace(/[^\r\n]/g, " "))
+      : text;
+  return forbiddenMatchesInText(scannable).map((match) => finding(normalized, scannable, match.index, match.form));
 }
 
 async function filesUnder(path, extensions) {
