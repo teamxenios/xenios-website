@@ -122,4 +122,19 @@ describe("PageShell skip link", () => {
     expect(css).toMatch(/\.clarity-header-care\.btn\s*\{[^}]*height:\s*44px[^}]*min-height:\s*44px/su);
     view.unmount();
   });
+
+  it("reserves sticky-header clearance when public controls receive keyboard focus", () => {
+    const view = render(
+      <PageShell>
+        <button type="button">Continue</button>
+      </PageShell>,
+    );
+    const css = readFileSync(resolve(__dirname, "../index.css"), "utf8");
+
+    expect(view.host.firstElementChild?.classList.contains("clarity-public-shell")).toBe(true);
+    expect(css).toMatch(
+      /\.clarity-public-shell\s+:where\([^)]*\):focus-visible\s*\{[^}]*scroll-margin-block:\s*84px 12px/su,
+    );
+    view.unmount();
+  });
 });
