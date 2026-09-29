@@ -1,219 +1,201 @@
 # Claude final website verification packet
 
-Date: 2026-09-28
+Date: 2026-09-29
 
 ## Exact source identity
 
 - Branch: `codex/xenios-status-ux-closeout-20260928`
-- Starting branch tip: `42c627b342095f8314d474d5424239152bd656a8`
+- Starting branch tip: `42c627b02adf97ec441c4c3512f0dbf28e2d01b3`
 - Independently reviewed parent: `fef7b313c23ac0e12046420041aa51a3a6e3c2d6`
 - Reviewed parent tree: `55bdc57d3992393f4b767cd7f9c6a00c53e25c60`
-- Claude review branch: `claude/xenios-p17-clarity-review-20260927`
-- Claude review commit: `81aee48`
-- Final runtime: `899395c4980cc554f9a2c6bdb3eb3d14e63ee65a`
-- Final runtime tree: `a09ffdf6f52537e0c289875a05f825c8a40ad75a`
-- Test-only tip: `cfba43d5115580b8603af0e52b52c2032f466472`
-- Release-control tip: `9b1d51417b5b1764f5596d9b7f693f9202e6d33d`
-- Generated-record tip: `8b0556f7b4261712240b44f01299d8b19bd0ab2b`
-- Release-manifest evidence tip: `1b2565c2d7f46854b481e6f74d2b053c739e1857`
-- Docs/handoff tip: the final pushed commit containing this packet and its corpus handoff
+- Prior website runtime: `899395c4980cc554f9a2c6bdb3eb3d14e63ee65a`
+- F-01 presentation runtime: `04b44d162f17acb6adfa26ca7628ea80f3f19dad`
+- Final runtime: `c213707a9d80ecc9f772b5790acb52f1fa503da7`
+- Final runtime tree: `09cbd1d25b7ab7dd2e60ae40ee2003226a9855e0`
+- Final test-only commit: `4cc31567e2e93b0708584c8cfb45fee17209bea4`
+- Final release-control commit: `7396f53dcedb154991f8f9b23accaee137286fdd`
+- Release-manifest commit: `b0ffa7ece1bcbcfb139eb814af35e59416b79540`
+- Generated-record tip: recorded in the final handoff after record refresh
+- Docs/handoff tip: the final pushed commit containing this packet and corpus handoff
 
-The final runtime commit changes 57 customer-visible or customer-delivered
-files. Its changes are limited to removal of customer-facing em dashes and one
-unavailable-state copy correction. It does not change P-17 authority, the
-secure migration, token/session authority, notification/outbox authority,
-server routes, database access, or deployment configuration.
+The runtime change after the F-01 closeout is deliberately narrow. A public
+shell marker and focus scroll clearance keep keyboard-focused controls below
+the existing sticky header at high browser zoom. No P-17 authority, secure
+migration, token/session authority, route, notification/outbox authority,
+database access, business rule, deployment configuration, or production
+configuration changed.
 
-## Commit and changed-path classification
+## Commit classification
 
 | Commit | Classification |
 | --- | --- |
-| `263df23` | runtime |
-| `3698fb9` | test-only |
-| `be58884` | test-only |
-| `269b5bb` | test-only |
-| `b59bc5c` | release-control/session registration |
-| `bf50fed` | release-control |
-| `90da2db` | test/release pin |
-| `b4f80fe` | documentation |
-| `c190033` | documentation |
-| `ec96534` | documentation |
-| `91f834a` | runtime |
-| `c6a6ca7` | runtime integration/merge |
-| `9b63a3b` | test-only |
-| `0bb04f3` | documentation |
-| `f5a7b8a` | documentation |
-| `a15abb8` | generated record |
-| `910ce30` | documentation/evidence |
-| `25fbbb5` | generated record/documentation |
-| `42c627b` | documentation |
-| `899395c` | runtime |
-| `c4396f3` | release-control |
-| `71eee2a` | test-only |
-| `94dbfb9` | release-control |
-| `696b7c2` | test-only |
-| `a0a429c` | test-only |
-| `858f971` | release-control |
-| `cfba43d` | test-only |
-| `9b1d514` | release-control |
-| `8b0556f` | generated record |
-| `1b2565c` | documentation/evidence and release manifest |
+| `04b44d1` | runtime: normalize runtime-fed reconciliation labels at the presentation boundary |
+| `f3f7fc1` | test-only: lock immutable-source and rendered-label behavior |
+| `8ff2d0e` | release-control: scan runtime-fed reconciliation copy |
+| `14c9a74` | continuity/session record |
+| `d60a80f` | release-control: protected package hash review |
+| `d9f83de` | release manifest and ownership evidence |
+| `b865019` | generated site record |
+| `c213707` | runtime: keep public controls visible during keyboard focus at high zoom |
+| `4cc3156` | test-only: lock public focus scroll clearance |
+| `ba60069` | continuity/session record |
+| `7396f53` | release-control: protected CSS hash review |
+| `b0ffa7e` | release manifest and ownership evidence rebound to final runtime |
 
-The exact changed paths are recoverable with:
+Exact changed paths are recorded in `RELEASE_MANIFEST.json`. Its 108 entries
+exactly equal `git diff --name-only --no-renames fef7b313..c213707`, with no
+omissions or extras.
 
-```powershell
-git diff --name-status fef7b313c23ac0e12046420041aa51a3a6e3c2d6..HEAD
-git show --stat --oneline 899395c4980cc554f9a2c6bdb3eb3d14e63ee65a
-```
+## F-01: runtime-fed admin reconciliation copy
 
-## Findings closed
+PASS. The immutable source file
+`config/research/revenue-launch/seth-source-reconciliation-20260905.json`
+remains unchanged:
 
-### R-01: Care reference guidance
+- SHA-256: `7E338D041A1889B6C3DBF25E474D5B0440CC8F72E70DC8E5119A175137094D93`
+- Git blob: `1c502e08fc10eb5328eccb02898cd1c537b5c388`
+- Raw Phase B literal em-dash count: 23
+- Rendered admin/operator em-dash count: 0
 
-PASS. Every input beginning with the public `CARE-` shape receives the same
-neutral Care guidance. The UI does not create a research recovery event,
-promise recovery email, confirm whether a Care reference exists, or disclose
-Care or clinical status. It directs the person only to the approved Care and
-support paths.
+The presentation formatter converts only the semantic product/configuration
+separator, for example `Capsule, 100 mg`. Evidence-only source fields and the
+immutable JSON are not rewritten. The permanent gate now scans the exact
+runtime-fed Phase A and Phase B presentation projection under
+`config/research`.
 
-### R-02: authorized status shortcuts
+## R-01: Care reference guidance
 
-PASS. `View account orders` is exposed only after a server-confirmed signed-in
-account owner is established. Signed-out, expired, wrong-owner, and
-browser-only email-match cases do not receive that link. The exact-subject
-same-browser shortcut requires valid server-confirmed status authority;
-expired, invalid, wrong-subject, and unrelated-order cases fall through to
-neutral recovery.
+PASS. Every `CARE-` shaped input receives the same neutral Care guidance. The
+UI does not create a Research recovery request, promise an email, confirm that
+a Care request exists, or disclose Care or clinical status. It directs the
+person to the approved Care paths.
 
-### R-03: same-tab secure recovery links
+At true 400% zoom the synthetic Care check produced no request to
+`/api/research/status-recovery/request`, no email promise, no Care-status
+disclosure, zero horizontal overflow, and a fully visible keyboard-focused
+`/care/support` link.
 
-PASS. Initial load, same-document navigation, address-bar paste, `hashchange`,
-replacement by a second token, malformed token, active status session,
-refresh, back/forward, explicit POST, expired/replayed failure, and error focus
-are covered. The fragment is removed immediately with history replacement,
-the token is held only in volatile state, and `View status` remains the
-explicit exchange gate. The raw token is absent from the resulting URL and
-rendered DOM.
+## R-02: authorized status shortcuts
 
-## Customer-facing em dash closeout
+PASS. `View account orders` requires a server-confirmed active signed-in
+member. The exact-subject same-browser shortcut requires server-confirmed
+status authority for that exact reference. Signed-out, expired, wrong-owner,
+browser-only email match, wrong-subject, and unrelated-order cases do not
+receive those links.
 
-The inventory uses the same source roots and exclusions as the permanent
-release scanner.
+The true-zoom browser ran signed out and confirmed that neither authorized
+shortcut leaked. Authorized-state behavior remains covered by the focused
+R-02 tests; the isolated preview intentionally contains no live owner account
+or durable order data.
 
-| Measurement | Starting tip `42c627b` | Runtime `899395c` |
+## R-03: same-tab secure recovery links
+
+PASS. The true 400% browser run used a synthetic 43-character token and
+confirmed:
+
+- same-tab hash navigation fired capture logic;
+- the fragment was synchronously removed from the URL and history;
+- the raw token was absent from the rendered DOM;
+- navigation issued no exchange request;
+- `View status` was fully visible and keyboard reachable;
+- the only consume attempt was the explicit POST to
+  `/api/research/status-recovery/exchange` after activating `View status`;
+- the synthetic invalid token converged on the safe invalid/expired alert;
+- refresh, back, and forward restored neither the token nor `View status` and
+  issued no replay POST.
+
+Initial-link, malformed, expired, replay, active-session, second-token, and
+owner-isolation cases are also locked by the focused P-17 regression suite.
+
+## True Chrome zoom evidence
+
+The page was the evidence-bound local production preview at
+`http://127.0.0.1:5001/status`. Its provenance endpoint reported runtime
+`c213707a9d80ecc9f772b5790acb52f1fa503da7`, tree
+`09cbd1d25b7ab7dd2e60ae40ee2003226a9855e0`, Node `v20.19.0`, npm `10.8.2`,
+345 distribution files, and distribution inventory
+`5c04c5c85f94def54f0840237210d55bb3bec53c0c3b5aa3bdbc5a0f455422c7`.
+
+These are real Chrome page-zoom results. No viewport emulation, CSS transform,
+or device-scale simulation is represented as zoom evidence.
+
+| Measurement | True 200% | True 400% |
 | --- | ---: | ---: |
-| Scanned source files | 1,330 | 1,330 |
-| Customer-facing literal U+2014 | 112 | 0 |
-| Customer-facing `&mdash;` | 0 | 0 |
-| Customer-facing `&#8212;` | 0 | 0 |
-| Customer-facing `&#x2014;` | 0 | 0 |
-| Customer-facing escaped `\\u2014` | 0 | 0 |
-| Total customer-facing forms | 112 | 0 |
-| Raw source-root forms | 701 | 589 |
-| Excluded non-customer forms | 589 | 589 |
+| Chrome devicePixelRatio | 3.0 | 6.0 |
+| Browser outer width | 1280 | 1280 |
+| Browser outer height | 752 | 752 |
+| `window.innerWidth` | 640 | 320 |
+| `window.innerHeight` | 304 | 152 |
+| `documentElement.clientWidth` | 632 | 316 |
+| `documentElement.scrollWidth` | 632 | 316 |
+| Horizontal overflow | 0 | 0 |
+| Horizontally clipped controls | 0 | 0 |
+| Customer-facing em dashes in rendered `/status` | 0 | 0 |
 
-All 112 customer-facing findings were fixed. The 589 excluded forms are in
-test fixtures, comments, historical material, or syntax that is not rendered
-to customers. The production-build scanner found zero customer-facing forms.
-`npm run test:no-em-dash` permanently exercises the gate, and the gate is part
-of release verification.
+At both zoom levels the heading, labels, fields, submit control, support links,
+and navigation remained readable and usable by scrolling. Forward and reverse
+keyboard traversal kept every content control below the sticky header. At
+400%, the reverse-focused submit control occupied `top=83.98` through
+`bottom=135.98` in the 152-pixel viewport, fully visible with no header
+intersection. At 200%, it occupied `top=84.09` through `bottom=140.09` in the
+304-pixel viewport, also fully visible.
 
-## Pinned runtime
+Before the repair, the same true-400% reverse traversal placed the submit
+control at `top=-0.02` through `bottom=51.98`, entirely beneath the 69-pixel
+sticky header. The final runtime fixes only that independently reproduced
+defect. Browser screenshots for the failing and passing 200%/400% states were
+captured inline in the controlling Codex task; no simulated screenshot is
+substituted.
 
-- Official archive: `node-v20.19.0-win-x64.zip` from nodejs.org
-- Official and actual SHA-256:
+## No-em-dash release gate
+
+- Gate tests: PASS, 9/9.
+- Runtime source scan: PASS, 1,332 files, zero forbidden customer-facing forms.
+- Production-build scan: PASS, 224 files, zero forbidden customer-facing forms.
+- Runtime-fed reconciliation projection: PASS, zero rendered forms.
+- Immutable evidence JSON: intentionally retains its 23 source forms.
+
+## Pinned runtime and automated qualification
+
+- Official archive: `node-v20.19.0-win-x64.zip`
+- Official and actual archive SHA-256:
   `BE72284C7BC62DE07D5A9FD0AE196879842C085F11F7F2B60BF8864C0C9D6A4F`
 - Node: `v20.19.0`
 - npm: `10.8.2`
 - Private runtime: `C:\Users\sboad\.codex\tmp\node-v20.19.0-win-x64`
-
-No system-wide install or permanent PATH change was made.
-
-## Automated qualification
-
-- Focused R-01/R-02/R-03: PASS, 15/15 tests.
-- P-17 security regression: PASS, 97/97 tests across nine files.
-- No-em-dash gate tests: PASS, 8/8 tests.
-- Source no-em-dash scan: PASS, 1,330 files and zero findings.
-- Production-build no-em-dash scan: PASS, 224 files and zero findings.
+- Focused status/F-01/P-17 regression: PASS, 104/104.
 - Typecheck: PASS.
-- Production build: PASS, 2,306 client modules plus server bundle.
-- Full suite: PASS, 987 files passed and 6 skipped; 18,180 tests passed and
+- Production build: PASS, 2,307 client modules plus server bundle.
+- Full suite: PASS, 987 files passed and 6 skipped; 18,182 tests passed and
   85 skipped.
 - Migration DAG/checksums: PASS, 38 nodes.
 - Route uniqueness: PASS, 453 registrations across 444 call sites.
-- Protected-change gate: PASS, 38 hashes plus the exact offline punctuation
-  seam.
+- Protected-change review: PASS, 38 exact hashes.
 - Site records: PASS, 235 routes and 15 capabilities.
-- Release manifest: PASS for expected base `fef7b313...` and exact runtime head
-  `899395c4...`.
+- Release manifest: PASS for base `fef7b313...` and final runtime `c213707...`.
 - `git diff --check`: PASS.
-
-## Exact production-build browser evidence
-
-The exact production build was served locally without backend credentials or
-external service access.
-
-At 390x844, 768x900, and 1440x1000, each of `/`, `/care`, `/research`,
-`/practices`, `/partners`, `/status`, `/sign-in`, and `/support` loaded with its
-expected heading, zero horizontal overflow, and zero clipped controls.
-
-True 200% page zoom passed on `/status`:
-
-- Browser outer width: 640 CSS pixels.
-- Browser inner width: 319 CSS pixels, an effective ratio of 2.01.
-- Inner height: 452; client width: 304; scroll width: 304.
-- Horizontal overflow: 0; clipped controls: 0.
-- Keyboard order: reference, email, submit.
-- Visible focus: purple solid 2.66667px on the email field; browser focus
-  outline on the button.
-- Neutral Care guidance was confirmed with a synthetic non-existing Care
-  reference and non-routable example address.
-- A synthetic 43-character recovery fragment was removed immediately, never
-  appeared in the DOM, and exposed `View status` before exchange.
-- Explicit keyboard activation of the POST exchange produced the safe
-  invalid/expired alert with focus moved to the alert.
-- Back, forward, and refresh retained a clean `/status` URL with no token.
-
-True 400% page zoom remains a single manual evidence step after three distinct
-supported attempts:
-
-1. The existing controlled Chrome tab was reset and zoomed in nine times. Its
-   measured 638/652 inner/outer widths did not change.
-2. Native Windows control was attempted, but the trusted UI RPC service was
-   not configured.
-3. A fresh named headed Chrome session was reset and zoomed in nine times. Its
-   measured 638/652 inner/outer widths also did not change.
-
-No viewport-width, CSS transform, or device-scale simulation is represented as
-true browser zoom. To close the remaining evidence gap manually, open
-`http://127.0.0.1:5001/status` in Chrome, use the three-dot menu to set Zoom to
-400%, and record the displayed zoom value, `innerWidth`, `innerHeight`,
-`document.documentElement.scrollWidth`, `clientWidth`, horizontal overflow,
-clipped controls, keyboard/focus behavior, and a screenshot.
 
 ## Exact local reproduction commands
 
 ```powershell
-$env:Path='C:\Users\sboad\.codex\tmp\node-v20.19.0-win-x64;'+$env:Path
-node --version
-npm --version
-npm run test:no-em-dash
-npm run verify:no-em-dash
-npx vitest run client/src/clarity/StatusPage.test.tsx --pool=threads --maxWorkers=1
-npx vitest run client/src/clarity/StatusPage.test.tsx client/src/clarity/pages.test.tsx server/research/frontdoor.test.ts server/research/status-recovery/crypto.test.ts server/research/status-recovery/http.test.ts server/research/status-recovery/migration-source.test.ts server/research/status-recovery/notification.test.ts server/research/status-recovery/service.test.ts server/static.test.ts --pool=threads --maxWorkers=1
-npm run check
-npm run build
-npm run verify:no-em-dash:build
-npm test -- --pool=threads --maxWorkers=4 --testTimeout=30000
-npm run verify:migration-dag
-npm run verify:route-uniqueness
-node scripts/acceptance/verify-core-site-protection.mjs fef7b313c23ac0e12046420041aa51a3a6e3c2d6 HEAD
-npm run site:record:check
+$node='C:\Users\sboad\.codex\tmp\node-v20.19.0-win-x64\node.exe'
+$npm='C:\Users\sboad\.codex\tmp\node-v20.19.0-win-x64\npm.cmd'
+& $node --version
+& $npm --version
+& $npm run test:no-em-dash
+& $npm run verify:no-em-dash
+& $npm exec vitest run client/src/components/PageShell.test.tsx client/src/clarity/StatusPage.test.tsx client/src/clarity/pages.test.tsx server/research/frontdoor.test.ts server/research/status-recovery/crypto.test.ts server/research/status-recovery/http.test.ts server/research/status-recovery/migration-source.test.ts server/research/status-recovery/notification.test.ts server/research/status-recovery/service.test.ts server/static.test.ts
+& $npm run check
+& $npm run build
+& $npm test
+& $npm run verify:migration-dag
+& $npm run verify:route-uniqueness
+& $node scripts/acceptance/verify-core-site-protection.mjs fef7b313c23ac0e12046420041aa51a3a6e3c2d6 c213707a9d80ecc9f772b5790acb52f1fa503da7
+& $npm run site:record:check
 $env:XENIOS_EXPECTED_PRODUCTION_SHA='fef7b313c23ac0e12046420041aa51a3a6e3c2d6'
-$env:XENIOS_EXPECTED_HEAD_SHA='899395c4980cc554f9a2c6bdb3eb3d14e63ee65a'
-npm run verify:release-manifest -- docs/ux/xenios-status-ux-closeout-20260928/RELEASE_MANIFEST.json
-git diff --check
+$env:XENIOS_EXPECTED_HEAD_SHA='c213707a9d80ecc9f772b5790acb52f1fa503da7'
+& $npm run verify:release-manifest -- docs/ux/xenios-status-ux-closeout-20260928/RELEASE_MANIFEST.json
+git diff --check fef7b313c23ac0e12046420041aa51a3a6e3c2d6..c213707a9d80ecc9f772b5790acb52f1fa503da7
 ```
 
 ## Evidence limitations and disposition
@@ -224,12 +206,10 @@ git diff --check
 - Production: NOT DEPLOYED and not mutated.
 - Migration: NOT APPLIED anywhere.
 - Real email: NOT SENT.
-- True 400% page zoom: MANUAL EVIDENCE REQUIRED.
-- 400% horizontal overflow: NOT RUN.
-- 400% clipped controls: NOT RUN.
+- Preview owner data: intentionally absent; R-02 authorized-state zoom layout is
+  inferred from the same shared control styles and independently covered by
+  focused authority tests.
 - P0: 0. P1: 0. P2: 0. Claude's unrelated P3 backlog remains 12 and was not
   implemented.
 
-READY FOR CLAUDE FINAL VERIFICATION: **NO**. The sole remaining step is the
-manual true 400% Chrome evidence capture described above. There is no known
-runtime, test, release-control, security, or source-closeout blocker.
+READY FOR CLAUDE FINAL VERIFICATION: **YES**.
