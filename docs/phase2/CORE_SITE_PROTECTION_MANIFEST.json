@@ -389,6 +389,12 @@
         "forbidden": "any other company, product, page, contact, or descriptive-content change"
       },
       {
+        "path": "client/public/offline.html",
+        "seam": "hash-locked customer-facing punctuation cleanup",
+        "allowed": "Only runtime candidate 899395c4980cc554f9a2c6bdb3eb3d14e63ee65a: replace the single customer-facing em dash with a sentence boundary. Offline behavior, privacy assurance, controls, styling and caching authority remain unchanged. The complete file is hash-pinned.",
+        "forbidden": "Any successor offline behavior, privacy promise, control, styling or caching change without a new protected-change review."
+      },
+      {
         "path": "client/src/lib/tracking.ts",
         "seam": "hash-locked Health privacy boundary",
         "allowed": "extend the existing fail-closed Research/Care tracking block and full-document privacy zoning to the exact normalized /health gateway and the founder-requested /r recommendation namespace, recorded in fileHashes",
@@ -660,7 +666,8 @@
       "2026-09-26: Codex release-control lead reviewed exact six-path diff 0574264..c4ea8a9 under explicit user audit-closeout direction. Original repair02d525b preserved. Re-pin only reviewed bytes; six exact paths remain hard hash locked and reported as seams. Focused tamper checks extended to each path. No deployment approval.",
       "2026-09-26: production-base classifier review also found four inherited account/admin UI paths whose prior reviewed bytes were not registered as seams. Lead re-read all four diffs against79414143; account chooser/navigation and server-confirmed admin entry only. Exact hard hashes retained/added; no global write zone widened.",
       "2026-09-26, owner-approved clarity amendment B-1: exact runtime candidate cfdfd4e66429cee03ad3c59113ce22dd1469f0ef, tree 560485b32d01061fef94f8849201417b40adc63f. Re-pin only the reviewed full-file bytes for the root, shared chrome, document metadata, global clarity styles, public sitemap, careers general-interest cleanup, legacy supporting CTAs and static redirect/document policy. App.tsx and server/index.ts remain reported seam baselines. Research, Care, account, commerce, admin and clinical authorities are not widened. No production mutation.",
-      "2026-09-27, owner-authorized P-17 source-only recovery lane at runtime fef7b31: re-pin client/src/index.css for the scoped status timeline, Home.tsx for the exact approved Care sentence, and server/static.ts for /status no-store/no-referrer plus removal of blocked third-party font links. No protected route is redesigned, no feature or commerce flag changes, and no staging or production mutation occurred."
+      "2026-09-27, owner-authorized P-17 source-only recovery lane at runtime fef7b31: re-pin client/src/index.css for the scoped status timeline, Home.tsx for the exact approved Care sentence, and server/static.ts for /status no-store/no-referrer plus removal of blocked third-party font links. No protected route is redesigned, no feature or commerce flag changes, and no staging or production mutation occurred.",
+      "2026-09-28, owner-directed zero-em-dash website closeout at runtime 899395c: client/public/offline.html replaces only the customer-facing em dash between the connectivity statement and the existing privacy assurance with a period. Exact complete bytes are hash-pinned; offline behavior, private-storage assurance, retry control, styling and caching authority are unchanged. Covered by client/src/pwa/pwa.test.ts."
     ],
     "files": {
       "client/index.html": "sha256:40620216427bcca3325ede1bb03153ce5e5bb71570acbf51cb601a418af74bfc",
@@ -687,6 +694,7 @@
       "client/src/lib/careers.ts": "sha256:6537ae7d836233b81405fd3888155a77bf0e54c02a6ae353b9c1351a6e8309a4",
       "client/public/sitemap.xml": "sha256:8b3e8e7e4e4f1b3055fd89620daee529b0dda888fe000acf2634035872be5749",
       "client/public/llms.txt": "sha256:b1e4c1940cd19229a1fba393ba9c82370c2bde5ccaedd5b5a2f9078a1f0aac37",
+      "client/public/offline.html": "sha256:bc8be20585465d8fa7daa06907bbe841c3d98d8e0b983d53de0da367762b62b9",
       "client/public/robots.txt": "sha256:b79293d54b5df7f4fda3b83b570eca294dd50d8f2cb9b1a9045f72d762570a81",
       "server/routes.ts": "sha256:f17d518ee2a3bcda2ff4d4ffca6bc8475c0ced5f7c9f5f85b19bd189e09ea2ae",
       "server/static.ts": "sha256:9cd3e1c363dd921fab780761baa888e9319f40ef177ca303072e3179b2c20004",
