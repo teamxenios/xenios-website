@@ -2584,12 +2584,12 @@
         "XENIOS-P17-SECURE-STATUS-RECOVERY-20260927"
       ],
       "scopeNote": "Owner-authorized narrow repair of independently reproduced R-01 Care guidance, R-02 authorized shortcuts, R-03 same-tab fragment handling and F-01 runtime-fed admin reconciliation copy. Preserve immutable evidence JSON. No deploy, migration apply, staging or production mutation, real email, business-rule change or unrelated P3 work.",
-      "claimedAt": "2026-09-29T13:28:41.897Z",
+      "claimedAt": "2026-09-29T17:06:28.269Z",
       "handoff": {
         "session": "codex-xenios-status-ux-closeout-20260928",
-        "sha": "3f7670a92f8c3e9e5bee24ac7ef8680e5765da5f",
-        "file": ".xenios/handoffs/2026-09-29T15-25-38-203Z-XENIOS-STATUS-UX-CLOSEOUT-20260928-codex-xenios-status-ux-closeout-20260928.md",
-        "at": "2026-09-29T15:25:38.224Z"
+        "sha": "3a7c15a402060519e6465938bffa76fb9c01acc8",
+        "file": ".xenios/handoffs/2026-09-29T17-26-20-712Z-XENIOS-STATUS-UX-CLOSEOUT-20260928-codex-xenios-status-ux-closeout-20260928.md",
+        "at": "2026-09-29T17:26:20.725Z"
       }
     }
   ]
