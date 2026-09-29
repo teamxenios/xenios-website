@@ -62,7 +62,7 @@ describe("admin referral lifecycle", () => {
     expect(host.textContent).not.toContain("No records returned");
   });
   it.each([
-    ["revoked", "Revoked"], ["expired", "Expired"], ["partner_inactive", "Partner inactive"], ["self_referral", "Self-referral — ineligible"],
+    ["revoked", "Revoked"], ["expired", "Expired"], ["partner_inactive", "Partner inactive"], ["self_referral", "Self-referral: ineligible"],
   ] as const)("shows %s availability even when a record's link is outside the bounded link snapshot", async (availability, label) => {
     const data = snapshot(); data.links = []; data.bindings[0].availability = availability; data.touches[0].availability = availability;
     fetcher.mockResolvedValue(response({ ok: true, ...data })); await render();

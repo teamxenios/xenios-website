@@ -41,7 +41,7 @@ describe("OrderEntryIntentNotice", () => {
   it("shows only the server-resolved product facts and an explicit retained assisted link", async () => {
     vi.mocked(loadOrderEntryIntent).mockResolvedValue({ kind: "matched", item, quantity: 100 });
     await render({ showAssistedAction: true });
-    expect(host.textContent).toContain("Current canonical Alpha — 10 mg");
+    expect(host.textContent).toContain("Current canonical Alpha: 10 mg");
     expect(host.textContent).toContain("Requested quantity: 100");
     expect(host.textContent).toContain("Opening this link does not add products, place an order, or charge you");
     expect(host.textContent).not.toContain("mov_alpha");

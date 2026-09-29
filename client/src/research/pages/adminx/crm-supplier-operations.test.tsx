@@ -193,7 +193,7 @@ describe("AdminCrmSupplierOperationsWorkspace", () => {
     expect(section.textContent).not.toContain("No records to show");
     const operationsMetric = Array.from(view.querySelectorAll('[data-testid="ra-metric"]'))
       .find((metric) => metric.textContent?.includes("Operations work"));
-    expect(operationsMetric?.textContent).toContain("—");
+    expect(operationsMetric?.textContent).toContain("Not available");
   });
 
   it("labels partial evidence as visible records with an unknown total", async () => {

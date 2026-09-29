@@ -228,7 +228,7 @@ describe("wiring", () => {
       resolve(__dirname, "../../public/offline.html"),
       "utf8",
     );
-    expect(offline).toContain("nothing private is stored");
+    expect(offline).toContain("Nothing private is stored");
   });
 });
 

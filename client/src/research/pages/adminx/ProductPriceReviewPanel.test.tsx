@@ -128,14 +128,14 @@ describe("canonical read-only price presentation", () => {
     [{ minimumQuantity: 1, amountCents: 2501 }, null],
   ])("refuses malformed tiers without inventing a scalar fallback (%j)", async (quantityTiers) => {
     await render(<ProductPriceReviewPanel product={productFixture({ quantityTiers: quantityTiers as AdminProductPrice["quantityTiers"] })} />);
-    expect(host.textContent).toContain("Quantity-tier review unavailable — malformed canonical price data");
+    expect(host.textContent).toContain("Quantity-tier review unavailable: malformed canonical price data");
     expect(host.querySelector("ol")).toBeNull();
     expect(host.textContent).not.toContain("Scalar price;");
   });
 
   it.each([0, -1, 1.5, Number.MAX_SAFE_INTEGER + 1, NaN])("refuses invalid base cents (%s)", async (amountCents) => {
     await render(<ProductPriceReviewPanel product={productFixture({ amountCents })} />);
-    expect(facts()).toContainEqual(["Base amount (integer cents)", "Unavailable — invalid amount"]);
+    expect(facts()).toContainEqual(["Base amount (integer cents)", "Unavailable: invalid amount"]);
     expect(host.querySelector("ol")).toBeNull();
   });
 
@@ -146,7 +146,7 @@ describe("canonical read-only price presentation", () => {
 
   it.each(["bad code", "usd", "", "<script>"])("does not crash or quote malformed currency (%s)", async (currency) => {
     await render(<ProductPriceReviewPanel product={productFixture({ currency })} />);
-    expect(facts()).toContainEqual(["Currency", "Unavailable — invalid currency code"]);
+    expect(facts()).toContainEqual(["Currency", "Unavailable: invalid currency code"]);
     expect(host.querySelector("ol")).toBeNull();
   });
 
@@ -169,9 +169,9 @@ describe("canonical read-only price presentation", () => {
 
   it("marks invalid or reversed dates and invalid version unavailable without crashing", async () => {
     await render(<ProductPriceReviewPanel product={productFixture({ effectiveAt: "2026-02-30T00:00:00Z", expiresAt: "invalid", version: 0 })} />);
-    expect(facts()).toContainEqual(["Effective from", "Unavailable — invalid recorded timestamp"]);
-    expect(facts()).toContainEqual(["Expires at", "Unavailable — invalid recorded timestamp"]);
-    expect(facts()).toContainEqual(["Price version", "Unavailable — invalid version"]);
+    expect(facts()).toContainEqual(["Effective from", "Unavailable: invalid recorded timestamp"]);
+    expect(facts()).toContainEqual(["Expires at", "Unavailable: invalid recorded timestamp"]);
+    expect(facts()).toContainEqual(["Price version", "Unavailable: invalid version"]);
     await render(<ProductPriceReviewPanel product={productFixture({ expiresAt: "2026-09-04T00:00:00Z" })} />);
     expect(host.textContent).toContain("expiry does not follow the effective time");
   });

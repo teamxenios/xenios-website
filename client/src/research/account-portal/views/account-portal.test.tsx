@@ -146,7 +146,7 @@ describe("customer account portal views", () => {
     expect(container.textContent).not.toContain("up to date");
     expect(container.textContent).toContain("Status unavailable");
     // The open-orders count is unknown over a partial history, never 0.
-    expect(container.textContent).toContain("count unavailable — commerce history incomplete");
+    expect(container.textContent).toContain("count unavailable; commerce history incomplete");
     expect(container.textContent).toContain("Some commerce history is currently unavailable.");
     expect(container.textContent).toContain(ORDER_HISTORY_SOURCE_LABELS.xec);
     expect(container.textContent).toContain(ORDER_HISTORY_SOURCE_LABELS.xrr);
@@ -524,14 +524,14 @@ describe("customer account portal views", () => {
       "/research/account/subscription",
     );
     expect(subscription.querySelector('a[href="https://billing.stripe.com/p/synthetic-session"]')).toBeNull();
-    expect(subscription.textContent).toContain("Past due — attention required");
+    expect(subscription.textContent).toContain("Past due: attention required");
     expect(subscription.querySelector('a[href="/research/account/support"]')?.textContent).toContain("Request billing support");
 
     const overview = await render(
       <AccountOverviewView data={{ ...FIXTURE_ACCOUNT_OVERVIEW, membership: endedAccessWithBilling }} />,
     );
     expect(overview.querySelector('a[href="https://billing.stripe.com/p/synthetic-session"]')).toBeNull();
-    expect(overview.textContent).toContain("Past due — attention required");
+    expect(overview.textContent).toContain("Past due: attention required");
     expect(overview.querySelector('a[href="/research/account/subscription"]')?.textContent).toContain("View billing history");
   });
 
@@ -593,7 +593,7 @@ describe("customer account portal views", () => {
       }} />,
       "/research/account/subscription",
     );
-    expect(container.textContent).toContain("Disputed — attention required");
+    expect(container.textContent).toContain("Disputed: attention required");
     expect(container.textContent).not.toContain("Current");
     const badge = Array.from(container.querySelectorAll(".ra-badge")).find(
       (element) => element.textContent?.includes("Disputed"),

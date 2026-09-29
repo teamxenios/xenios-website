@@ -317,7 +317,7 @@ describe("the admin conversion panel", () => {
     );
     expect(text("conversion-proofs")).toContain("Unverified claim");
     expect(text("conversion-verified-amount")).toBe("Not verified");
-    expect(text("conversion-verified-by")).toBe("—");
+    expect(text("conversion-verified-by")).toBe("Not available");
   });
 
   it("names the verifier once money is real", () => {
