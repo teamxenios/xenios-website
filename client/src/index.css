@@ -1255,6 +1255,9 @@ a.wordmark { text-decoration: none !important; }
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--rule);
 }
+.clarity-public-shell :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  scroll-margin-block: 84px 12px;
+}
 .clarity-nav-inner {
   min-height: 68px;
   display: flex;
