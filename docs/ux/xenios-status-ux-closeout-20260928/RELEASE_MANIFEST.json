@@ -4,9 +4,9 @@
   "domain": "status-recovery-and-sitewide-copy-closeout",
   "lane": "status-ux-closeout",
   "owner": "Codex status UX closeout lane",
-  "createdAt": "2026-09-29T03:12:00.000Z",
+  "createdAt": "2026-09-29T13:42:00.000Z",
   "baseSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
-  "headSha": "899395c4980cc554f9a2c6bdb3eb3d14e63ee65a",
+  "headSha": "04b44d162f17acb6adfa26ca7628ea80f3f19dad",
   "currentProductionSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
   "files": [
     ".xenios/ACTIVE_TASKS.json",
@@ -18,6 +18,7 @@
     ".xenios/handoffs/2026-09-28T21-20-11-136Z-XENIOS-STATUS-UX-CLOSEOUT-20260928-codex-xenios-status-ux-closeout-20260928.md",
     ".xenios/handoffs/2026-09-28T21-42-49-349Z-XENIOS-STATUS-UX-CLOSEOUT-20260928-codex-xenios-status-ux-closeout-20260928.md",
     ".xenios/handoffs/2026-09-28T22-14-45-945Z-XENIOS-STATUS-UX-CLOSEOUT-20260928-codex-xenios-status-ux-closeout-20260928.md",
+    ".xenios/handoffs/2026-09-29T04-07-03-646Z-XENIOS-STATUS-UX-CLOSEOUT-20260928-codex-xenios-status-ux-closeout-20260928.md",
     ".xenios/sessions/codex-xenios-p17-secure-status-recovery-20260927.json",
     ".xenios/sessions/codex-xenios-status-ux-closeout-20260928.json",
     "client/public/hino/collective/index.html",
@@ -29,6 +30,7 @@
     "client/public/hino/retreat/index.html",
     "client/public/hino/story/index.html",
     "client/public/offline.html",
+    "client/src/pwa/pwa.test.ts",
     "client/src/care/CareAccessRequestForm.tsx",
     "client/src/clarity/InquiryForm.tsx",
     "client/src/clarity/StatusPage.test.tsx",
@@ -38,10 +40,12 @@
     "client/src/research/account-portal/views/OrdersView.tsx",
     "client/src/research/account-portal/views/OverviewView.tsx",
     "client/src/research/account-portal/views/SubscriptionView.tsx",
+    "client/src/research/account-portal/views/account-portal.test.tsx",
     "client/src/research/account/AccountCare.tsx",
     "client/src/research/account/AccountOverview.tsx",
     "client/src/research/content/productEducation.generated.ts",
     "client/src/research/early-access/EarlyAccessOrderStatus.tsx",
+    "client/src/research/early-access/OrderEntryIntentNotice.test.tsx",
     "client/src/research/early-access/OrderEntryIntentNotice.tsx",
     "client/src/research/orders/OrderHistory.tsx",
     "client/src/research/orders/presentation.ts",
@@ -52,14 +56,18 @@
     "client/src/research/pages/adminx/LotCoasAdmin.tsx",
     "client/src/research/pages/adminx/ProductAdminDetail.tsx",
     "client/src/research/pages/adminx/ProductPriceReviewPanel.tsx",
+    "client/src/research/pages/adminx/ProductPriceReviewPanel.test.tsx",
     "client/src/research/pages/adminx/ProductsAdmin.tsx",
     "client/src/research/pages/adminx/ReferralLifecycle.tsx",
+    "client/src/research/pages/adminx/ReferralLifecycle.test.tsx",
     "client/src/research/pages/adminx/RequiredInputs.tsx",
     "client/src/research/pages/adminx/client-imports/ClientImportDryRunSummary.tsx",
+    "client/src/research/pages/adminx/crm-supplier-operations.test.tsx",
     "client/src/research/pages/gateway-editorial.css",
     "client/src/research/pages/member/Xenios30.tsx",
     "client/src/research/pages/member/Xenios90.tsx",
     "client/src/research/payments/AssistedRequestConversionPanel.tsx",
+    "client/src/research/payments/payments-ui.test.tsx",
     "client/src/research/products-diagnostics/DiagnosticsExperience.tsx",
     "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
     "client/src/research/quality/QualityNav.tsx",
@@ -74,6 +82,12 @@
     "docs/ux/xenios-p17-secure-status-recovery-20260927/HANDOFF.md",
     "docs/ux/xenios-status-ux-closeout-20260928/CLAUDE_NARROW_VERIFICATION_PACKET.md",
     "docs/ux/xenios-status-ux-closeout-20260928/HANDOFF.md",
+    "docs/ux/xenios-status-ux-closeout-20260928/RELEASE_MANIFEST.json",
+    "docs/ux/xenios-status-ux-closeout-20260928/evidence/integration-ownership-review.json",
+    "package.json",
+    "scripts/acceptance/verify-no-em-dash.mjs",
+    "scripts/acceptance/verify-no-em-dash.node-test.mjs",
+    "server/core-site-protection.test.ts",
     "server/release-control-plane.test.ts",
     "server/research/assisted-order/communications.ts",
     "server/research/customer-account/service.ts",
@@ -93,6 +107,7 @@
     "shared/research/customer-account/billing-presentation.ts",
     "shared/research/customer-account/fixtures.ts",
     "shared/research/inquiries.ts",
+    "shared/research/reconciliation-presentation.ts",
     "shared/research/referral-v1.ts",
     "supabase/MIGRATIONS.md",
     "supabase/candidates/20260927203000_research_status_recovery.postcheck.sql",
@@ -119,28 +134,28 @@
   "tests": {
     "focused": {
       "status": "PASS",
-      "command": "npx vitest run client/src/clarity/StatusPage.test.tsx (15 passed); nine-file P-17 suite (97 passed); no-em-dash gate tests (8 passed)",
-      "checkedAt": "2026-09-29T03:12:00.000Z"
+      "command": "npx vitest run F-01 plus status/P-17 suite (11 files, 104 passed); no-em-dash gate tests (9 passed)",
+      "checkedAt": "2026-09-29T13:42:00.000Z"
     },
     "fullSuite": {
       "status": "PASS",
-      "command": "npm test -- --pool=threads --maxWorkers=4 --testTimeout=30000 (987 files passed, 6 skipped; 18180 tests passed, 85 skipped)",
-      "checkedAt": "2026-09-29T03:12:00.000Z"
+      "command": "npm test -- --pool=threads --maxWorkers=4 --testTimeout=30000 (987 files passed, 6 skipped; 18181 tests passed, 85 skipped)",
+      "checkedAt": "2026-09-29T13:42:00.000Z"
     },
     "typecheck": {
       "status": "PASS",
       "command": "npm run check",
-      "checkedAt": "2026-09-29T03:12:00.000Z"
+      "checkedAt": "2026-09-29T13:42:00.000Z"
     },
     "build": {
       "status": "PASS",
       "command": "npm run build under Node 20.19.0; source and production-build no-em-dash scans both zero",
-      "checkedAt": "2026-09-29T03:12:00.000Z"
+      "checkedAt": "2026-09-29T13:42:00.000Z"
     },
     "diffCheck": {
       "status": "PASS",
-      "command": "git diff --check fef7b313c23ac0e12046420041aa51a3a6e3c2d6..899395c4980cc554f9a2c6bdb3eb3d14e63ee65a",
-      "checkedAt": "2026-09-29T03:12:00.000Z"
+      "command": "git diff --check fef7b313c23ac0e12046420041aa51a3a6e3c2d6..04b44d162f17acb6adfa26ca7628ea80f3f19dad",
+      "checkedAt": "2026-09-29T13:42:00.000Z"
     }
   },
   "rollback": {
@@ -171,29 +186,29 @@
   "evidence": [
     {
       "kind": "qualification-packet",
-      "checkedAt": "2026-09-29T03:12:00.000Z",
+      "checkedAt": "2026-09-29T13:42:00.000Z",
       "reference": "docs/ux/xenios-status-ux-closeout-20260928/CLAUDE_NARROW_VERIFICATION_PACKET.md"
     },
     {
       "kind": "protected-change-review",
-      "checkedAt": "2026-09-29T03:12:00.000Z",
+      "checkedAt": "2026-09-29T13:42:00.000Z",
       "reference": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
     }
   ],
   "integrationOwnershipReview": {
     "baseSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
-    "headSha": "899395c4980cc554f9a2c6bdb3eb3d14e63ee65a",
+    "headSha": "04b44d162f17acb6adfa26ca7628ea80f3f19dad",
     "trustedBaseOwnershipPolicySha256": "4fd7c6d77663b01f4fe14a1a9d793c676a5827dbebb4092a017a586499b0a2fa",
-    "gitDiffPathInventorySha256": "9903d5e2bf3ededd7a881c4a95d8ec56d02de0aa286c323a0b95b65ae5f0bc69",
-    "ownershipFindingInventorySha256": "50f1ddf901039334b2f51e504195a75c163d68c0c4f6f827699a267281b23694",
+    "gitDiffPathInventorySha256": "a43046e30c743ec34a49dd49fcfc9c6ca8f98b63d3b9147797a1eb348b42cffc",
+    "ownershipFindingInventorySha256": "58ba34aa904501a4d353820752bef096dfbf8923f7be2495ea8828529ffbe6e6",
     "ownershipFindingCounts": {
-      "UNOWNED_FILE": 77,
-      "WRONG_LANE_OWNER": 13,
+      "UNOWNED_FILE": 89,
+      "WRONG_LANE_OWNER": 16,
       "OWNERSHIP_CONFLICT": 0
     },
     "reviewerIdentity": "Codex session codex-xenios-status-ux-closeout-20260928",
-    "reviewedAt": "2026-09-29T03:12:00.000Z",
+    "reviewedAt": "2026-09-29T13:42:00.000Z",
     "reviewArtifactPath": "docs/ux/xenios-status-ux-closeout-20260928/evidence/integration-ownership-review.json",
-    "reviewArtifactSha256": "3377533159d93ce0da2b55751877b4dc2541170222abbfbb7d6360be5455dc3a"
+    "reviewArtifactSha256": "f3fd69626af8ecf16dc682c7d7ec830c33c602d2534585e175225282d287935f"
   }
 }
