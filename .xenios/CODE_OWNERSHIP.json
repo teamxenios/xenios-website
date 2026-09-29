@@ -2642,6 +2642,40 @@
       "state": "handoff",
       "claimedAt": "2026-09-28T16:26:06.384Z",
       "heartbeatAt": "2026-09-28T16:26:06.456Z"
+    },
+    {
+      "id": "31672111-e287-46ea-a035-ae63b879f1b5",
+      "task": "XENIOS-STATUS-UX-CLOSEOUT-20260928",
+      "session": "codex-xenios-status-ux-closeout-20260928",
+      "paths": [
+        "client/src/clarity/pages.tsx",
+        "client/src/clarity/StatusPage.test.tsx",
+        "client/src/clarity/pages.test.tsx",
+        "client/src/research/assisted-order/storage.ts",
+        "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
+        "client/src/research/revenue-launch/ReconciliationReviewPanel.tsx",
+        "client/src/research/revenue-launch/ReconciliationReviewPanel.test.tsx",
+        "shared/research/reconciliation-presentation.ts",
+        "scripts/acceptance/verify-no-em-dash.mjs",
+        "scripts/acceptance/verify-no-em-dash.node-test.mjs",
+        "package.json",
+        "e2e/status-ux-closeout/**",
+        "docs/ux/xenios-p17-secure-status-recovery-20260927/**",
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "server/core-site-protection.test.ts",
+        "server/release-control-plane.test.ts",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
+        "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.md",
+        "docs/platform/XENIOS_SITE_ROUTE_INVENTORY.generated.csv",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-xenios-status-ux-closeout-20260928.json",
+        ".xenios/handoffs/*STATUS-UX-CLOSEOUT*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-29T13:28:41.899Z",
+      "heartbeatAt": "2026-09-29T13:31:13.809Z"
     }
   ],
   "rules": [

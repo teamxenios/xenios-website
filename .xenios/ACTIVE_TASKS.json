@@ -2546,9 +2546,9 @@
     },
     {
       "id": "XENIOS-STATUS-UX-CLOSEOUT-20260928",
-      "title": "Close Claude P2 status UX findings R-01, R-02 and R-03",
+      "title": "Close status UX findings and F-01 runtime-fed admin copy",
       "priority": "P2",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-status-ux-closeout-20260928",
       "baseSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
       "paths": [
@@ -2557,6 +2557,12 @@
         "client/src/clarity/pages.test.tsx",
         "client/src/research/assisted-order/storage.ts",
         "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
+        "client/src/research/revenue-launch/ReconciliationReviewPanel.tsx",
+        "client/src/research/revenue-launch/ReconciliationReviewPanel.test.tsx",
+        "shared/research/reconciliation-presentation.ts",
+        "scripts/acceptance/verify-no-em-dash.mjs",
+        "scripts/acceptance/verify-no-em-dash.node-test.mjs",
+        "package.json",
         "e2e/status-ux-closeout/**",
         "docs/ux/xenios-p17-secure-status-recovery-20260927/**",
         "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
@@ -2574,8 +2580,8 @@
       "dependsOn": [
         "XENIOS-P17-SECURE-STATUS-RECOVERY-20260927"
       ],
-      "scopeNote": "Owner-authorized narrow repair of independently reproduced R-01 Care guidance, R-02 authorized shortcuts and R-03 same-tab fragment handling from exact runtime fef7b313. No migration changes unless reproduction proves necessary; no deploy, migration apply, staging or production mutation, real email, business-rule change or unrelated P3 work.",
-      "claimedAt": "2026-09-28T16:26:06.381Z",
+      "scopeNote": "Owner-authorized narrow repair of independently reproduced R-01 Care guidance, R-02 authorized shortcuts, R-03 same-tab fragment handling and F-01 runtime-fed admin reconciliation copy. Preserve immutable evidence JSON. No deploy, migration apply, staging or production mutation, real email, business-rule change or unrelated P3 work.",
+      "claimedAt": "2026-09-29T13:28:41.897Z",
       "handoff": {
         "session": "codex-xenios-status-ux-closeout-20260928",
         "sha": "9c00121a5cabe88546fc873c28118800e17ac3b4",
