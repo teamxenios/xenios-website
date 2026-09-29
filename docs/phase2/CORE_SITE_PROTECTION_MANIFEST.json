@@ -667,7 +667,8 @@
       "2026-09-26: production-base classifier review also found four inherited account/admin UI paths whose prior reviewed bytes were not registered as seams. Lead re-read all four diffs against79414143; account chooser/navigation and server-confirmed admin entry only. Exact hard hashes retained/added; no global write zone widened.",
       "2026-09-26, owner-approved clarity amendment B-1: exact runtime candidate cfdfd4e66429cee03ad3c59113ce22dd1469f0ef, tree 560485b32d01061fef94f8849201417b40adc63f. Re-pin only the reviewed full-file bytes for the root, shared chrome, document metadata, global clarity styles, public sitemap, careers general-interest cleanup, legacy supporting CTAs and static redirect/document policy. App.tsx and server/index.ts remain reported seam baselines. Research, Care, account, commerce, admin and clinical authorities are not widened. No production mutation.",
       "2026-09-27, owner-authorized P-17 source-only recovery lane at runtime fef7b31: re-pin client/src/index.css for the scoped status timeline, Home.tsx for the exact approved Care sentence, and server/static.ts for /status no-store/no-referrer plus removal of blocked third-party font links. No protected route is redesigned, no feature or commerce flag changes, and no staging or production mutation occurred.",
-      "2026-09-28, owner-directed zero-em-dash website closeout at runtime 899395c: client/public/offline.html replaces only the customer-facing em dash between the connectivity statement and the existing privacy assurance with a period. Exact complete bytes are hash-pinned; offline behavior, private-storage assurance, retry control, styling and caching authority are unchanged. Covered by client/src/pwa/pwa.test.ts."
+      "2026-09-28, owner-directed zero-em-dash website closeout at runtime 899395c: client/public/offline.html replaces only the customer-facing em dash between the connectivity statement and the existing privacy assurance with a period. Exact complete bytes are hash-pinned; offline behavior, private-storage assurance, retry control, styling and caching authority are unchanged. Covered by client/src/pwa/pwa.test.ts.",
+      "2026-09-29, owner-directed F-01 closeout: package.json changes only the no-em-dash release commands from node to the checked-in tsx runtime so the gate can execute the shared admin reconciliation presentation projection before scanning runtime-fed config/research labels. Dependencies, engines, application build logic, start command, deployment authority and production configuration are unchanged. Gate tests, exact build scan and the protected hash tripwire cover the reviewed bytes. old sha256:fc433ad2a054817a1a7319077af0b5cc7afaa4ac93e49d2a5f34ede9b79c56ee, new sha256:89d5d2160381ea23967d56fcf666643d51dbb779fc652d82181bd2379a53828b."
     ],
     "files": {
       "client/index.html": "sha256:40620216427bcca3325ede1bb03153ce5e5bb71570acbf51cb601a418af74bfc",
@@ -698,7 +699,7 @@
       "client/public/robots.txt": "sha256:b79293d54b5df7f4fda3b83b570eca294dd50d8f2cb9b1a9045f72d762570a81",
       "server/routes.ts": "sha256:f17d518ee2a3bcda2ff4d4ffca6bc8475c0ced5f7c9f5f85b19bd189e09ea2ae",
       "server/static.ts": "sha256:9cd3e1c363dd921fab780761baa888e9319f40ef177ca303072e3179b2c20004",
-      "package.json": "sha256:fc433ad2a054817a1a7319077af0b5cc7afaa4ac93e49d2a5f34ede9b79c56ee",
+      "package.json": "sha256:89d5d2160381ea23967d56fcf666643d51dbb779fc652d82181bd2379a53828b",
       "package-lock.json": "sha256:d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74",
       "postcss.config.js": "sha256:190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27",
       "vite.config.ts": "sha256:08f76e7d682a54b03c04ee003675891a605d53b0d422f1132e6354860a15b924",
