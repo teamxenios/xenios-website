@@ -5,6 +5,6 @@
   "branch": "codex/xenios-status-ux-closeout-20260928",
   "state": "active",
   "startedAt": "2026-09-28T16:25:45.701Z",
-  "heartbeatAt": "2026-09-29T13:31:13.809Z",
-  "note": "F-01 independently reproduced and fixed at admin presentation boundary; immutable source unchanged; focused tests, gate and typecheck pass; preparing authoritative Node 20 build and regression run"
+  "heartbeatAt": "2026-09-29T14:31:20.930Z",
+  "note": "True 400% browser review reproduced sticky-header keyboard focus obstruction; narrow scroll-margin repair committed at c213707 with test at 4cc3156. Rebuilding exact production preview for requalification."
 }

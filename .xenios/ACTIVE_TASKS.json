@@ -2552,6 +2552,9 @@
       "owner": "codex-xenios-status-ux-closeout-20260928",
       "baseSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
       "paths": [
+        "client/src/index.css",
+        "client/src/clarity/PublicShell.tsx",
+        "client/src/components/PageShell.test.tsx",
         "client/src/clarity/pages.tsx",
         "client/src/clarity/StatusPage.test.tsx",
         "client/src/clarity/pages.test.tsx",
