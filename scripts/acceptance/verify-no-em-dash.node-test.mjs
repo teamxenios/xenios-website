@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   forbiddenMatchesInText,
   isExcludedSourcePath,
+  scanBuildText,
   scanSourceText,
 } from "./verify-no-em-dash.mjs";
 
@@ -36,4 +37,14 @@ test("comments and excluded historical evidence do not create false failures", (
   assert.equal(scanSourceText("client/src/copy.ts", "// historical note — not rendered\nexport const copy = 'Approved: clear.';").length, 0);
   assert.equal(isExcludedSourcePath("server/historical/immutable-record.ts"), true);
   assert.equal(scanSourceText("server/historical/immutable-record.ts", "export const record = 'old — record';").length, 0);
+});
+
+test("build scan ignores comments, regex syntax, and the exact reviewed vendor diagnostic only", () => {
+  const generated = [
+    "// internal note — not rendered",
+    "const normalizer = /[–—]/g;",
+    "const vendor = 'proactive refresh failed, access token still valid — preserving session';",
+  ].join("\n");
+  assert.deepEqual(scanBuildText("dist/public/assets/index.js", generated), []);
+  assert.equal(scanBuildText("dist/public/assets/index.js", "const authored = 'Visible — copy';").length, 1);
 });
