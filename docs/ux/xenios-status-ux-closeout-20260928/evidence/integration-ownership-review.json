@@ -3,17 +3,17 @@
   "kind": "xenios.integration-ownership-review",
   "attestation": {
     "baseSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
-    "headSha": "04b44d162f17acb6adfa26ca7628ea80f3f19dad",
+    "headSha": "c213707a9d80ecc9f772b5790acb52f1fa503da7",
     "trustedBaseOwnershipPolicySha256": "4fd7c6d77663b01f4fe14a1a9d793c676a5827dbebb4092a017a586499b0a2fa",
-    "gitDiffPathInventorySha256": "a43046e30c743ec34a49dd49fcfc9c6ca8f98b63d3b9147797a1eb348b42cffc",
-    "ownershipFindingInventorySha256": "58ba34aa904501a4d353820752bef096dfbf8923f7be2495ea8828529ffbe6e6",
+    "gitDiffPathInventorySha256": "771424a30bc442f1ff8a4fcdc669dcaa22e1337502b4ac6b9bdc8bec9b32def8",
+    "ownershipFindingInventorySha256": "2d5d9cde9439d19c0b5708e34ece87f3226d223798e2103c138081e7d3845535",
     "ownershipFindingCounts": {
-      "UNOWNED_FILE": 89,
+      "UNOWNED_FILE": 92,
       "WRONG_LANE_OWNER": 16,
       "OWNERSHIP_CONFLICT": 0
     },
     "reviewerIdentity": "Codex session codex-xenios-status-ux-closeout-20260928",
-    "reviewedAt": "2026-09-29T13:42:00.000Z",
+    "reviewedAt": "2026-09-29T15:16:04.638Z",
     "reviewArtifactPath": "docs/ux/xenios-status-ux-closeout-20260928/evidence/integration-ownership-review.json"
   }
 }

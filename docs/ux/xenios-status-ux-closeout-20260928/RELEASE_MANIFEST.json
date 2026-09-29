@@ -4,9 +4,9 @@
   "domain": "status-recovery-and-sitewide-copy-closeout",
   "lane": "status-ux-closeout",
   "owner": "Codex status UX closeout lane",
-  "createdAt": "2026-09-29T13:42:00.000Z",
+  "createdAt": "2026-09-29T15:16:04.638Z",
   "baseSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
-  "headSha": "04b44d162f17acb6adfa26ca7628ea80f3f19dad",
+  "headSha": "c213707a9d80ecc9f772b5790acb52f1fa503da7",
   "currentProductionSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
   "files": [
     ".xenios/ACTIVE_TASKS.json",
@@ -33,9 +33,11 @@
     "client/src/pwa/pwa.test.ts",
     "client/src/care/CareAccessRequestForm.tsx",
     "client/src/clarity/InquiryForm.tsx",
+    "client/src/clarity/PublicShell.tsx",
     "client/src/clarity/StatusPage.test.tsx",
     "client/src/clarity/pages.test.tsx",
     "client/src/clarity/pages.tsx",
+    "client/src/index.css",
     "client/src/research/account-portal/review/entry.tsx",
     "client/src/research/account-portal/views/OrdersView.tsx",
     "client/src/research/account-portal/views/OverviewView.tsx",
@@ -75,6 +77,7 @@
     "client/src/research/quality/content.ts",
     "client/src/research/recommendation/Recipient.tsx",
     "client/src/research/revenue-launch/ReconciliationReviewPanel.tsx",
+    "client/src/research/revenue-launch/ReconciliationReviewPanel.test.tsx",
     "docs/coordination/MIGRATION_DAG.json",
     "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
     "docs/platform/XENIOS_SITE_SYSTEM_OF_RECORD.generated.json",
@@ -135,27 +138,27 @@
     "focused": {
       "status": "PASS",
       "command": "npx vitest run F-01 plus status/P-17 suite (11 files, 104 passed); no-em-dash gate tests (9 passed)",
-      "checkedAt": "2026-09-29T13:42:00.000Z"
+      "checkedAt": "2026-09-29T15:16:04.638Z"
     },
     "fullSuite": {
       "status": "PASS",
-      "command": "npm test -- --pool=threads --maxWorkers=4 --testTimeout=30000 (987 files passed, 6 skipped; 18181 tests passed, 85 skipped)",
-      "checkedAt": "2026-09-29T13:42:00.000Z"
+      "command": "npm test (987 files passed, 6 skipped; 18182 tests passed, 85 skipped)",
+      "checkedAt": "2026-09-29T15:16:04.638Z"
     },
     "typecheck": {
       "status": "PASS",
       "command": "npm run check",
-      "checkedAt": "2026-09-29T13:42:00.000Z"
+      "checkedAt": "2026-09-29T15:16:04.638Z"
     },
     "build": {
       "status": "PASS",
       "command": "npm run build under Node 20.19.0; source and production-build no-em-dash scans both zero",
-      "checkedAt": "2026-09-29T13:42:00.000Z"
+      "checkedAt": "2026-09-29T15:16:04.638Z"
     },
     "diffCheck": {
       "status": "PASS",
-      "command": "git diff --check fef7b313c23ac0e12046420041aa51a3a6e3c2d6..04b44d162f17acb6adfa26ca7628ea80f3f19dad",
-      "checkedAt": "2026-09-29T13:42:00.000Z"
+      "command": "git diff --check fef7b313c23ac0e12046420041aa51a3a6e3c2d6..c213707a9d80ecc9f772b5790acb52f1fa503da7",
+      "checkedAt": "2026-09-29T15:16:04.638Z"
     }
   },
   "rollback": {
@@ -186,29 +189,29 @@
   "evidence": [
     {
       "kind": "qualification-packet",
-      "checkedAt": "2026-09-29T13:42:00.000Z",
+      "checkedAt": "2026-09-29T15:16:04.638Z",
       "reference": "docs/ux/xenios-status-ux-closeout-20260928/CLAUDE_NARROW_VERIFICATION_PACKET.md"
     },
     {
       "kind": "protected-change-review",
-      "checkedAt": "2026-09-29T13:42:00.000Z",
+      "checkedAt": "2026-09-29T15:16:04.638Z",
       "reference": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json"
     }
   ],
   "integrationOwnershipReview": {
     "baseSha": "fef7b313c23ac0e12046420041aa51a3a6e3c2d6",
-    "headSha": "04b44d162f17acb6adfa26ca7628ea80f3f19dad",
+    "headSha": "c213707a9d80ecc9f772b5790acb52f1fa503da7",
     "trustedBaseOwnershipPolicySha256": "4fd7c6d77663b01f4fe14a1a9d793c676a5827dbebb4092a017a586499b0a2fa",
-    "gitDiffPathInventorySha256": "a43046e30c743ec34a49dd49fcfc9c6ca8f98b63d3b9147797a1eb348b42cffc",
-    "ownershipFindingInventorySha256": "58ba34aa904501a4d353820752bef096dfbf8923f7be2495ea8828529ffbe6e6",
+    "gitDiffPathInventorySha256": "771424a30bc442f1ff8a4fcdc669dcaa22e1337502b4ac6b9bdc8bec9b32def8",
+    "ownershipFindingInventorySha256": "2d5d9cde9439d19c0b5708e34ece87f3226d223798e2103c138081e7d3845535",
     "ownershipFindingCounts": {
-      "UNOWNED_FILE": 89,
+      "UNOWNED_FILE": 92,
       "WRONG_LANE_OWNER": 16,
       "OWNERSHIP_CONFLICT": 0
     },
     "reviewerIdentity": "Codex session codex-xenios-status-ux-closeout-20260928",
-    "reviewedAt": "2026-09-29T13:42:00.000Z",
+    "reviewedAt": "2026-09-29T15:16:04.638Z",
     "reviewArtifactPath": "docs/ux/xenios-status-ux-closeout-20260928/evidence/integration-ownership-review.json",
-    "reviewArtifactSha256": "f3fd69626af8ecf16dc682c7d7ec830c33c602d2534585e175225282d287935f"
+    "reviewArtifactSha256": "ec680ea1cf4fd101a49c38d210acc70db89029e0ea4c0169f3a9b430ee4182b9"
   }
 }
