@@ -1,0 +1,427 @@
+group_id,family,channel,product,specification,dosage_form,workbook_raw_price,workbook_display,half_up_cents,decided_cents,decision_source,last_recorded_live_cents_2026-08-20,served_variant_id,served_state,status
+GRP-0001,503A Clinical Formulations,Clinical / Provider Only,5-Amino-1Mq,5-AMINO-1MQ 5MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_a8af22bc4d1d96266669,care_pathway,MATCH
+GRP-0002,503A Clinical Formulations,Clinical / Provider Only,Anastrozole,ANASTROZOLE 0.25MG CAPSULE,Capsule,1.875,$1.88,188,188,book,188,mov_82974ab2f9c652c2cb12,care_pathway,MATCH
+GRP-0003,503A Clinical Formulations,Clinical / Provider Only,Anastrozole,ANASTROZOLE 0.5MG CAPSULE,Capsule,2.5,$2.50,250,250,book,250,mov_fce7784f2a27983462c2,care_pathway,MATCH
+GRP-0004,503A Clinical Formulations,Clinical / Provider Only,Anastrozole,ANASTROZOLE 1MG CAPSULE,Capsule,3.75,$3.75,375,375,book,375,mov_f16bed144ebe7ec20b61,care_pathway,MATCH
+GRP-0005,503A Clinical Formulations,Clinical / Provider Only,Anastrozole Tablet,ANASTROZOLE TABLET 1MG,Tablet,3.75,$3.75,375,375,book,375,mov_0599d5a40aa70a61481b,care_pathway,MATCH
+GRP-0006,503A Clinical Formulations,Clinical / Provider Only,Aod-9604,AOD-9604 1.2MG/ML (6MG/5ML),Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_2006e34fbd8f2b39c46a,care_pathway,MATCH
+GRP-0007,503A Clinical Formulations,Clinical / Provider Only,Aod-9604,AOD-9604 300MCG TROCHE,Troche,6.25,$6.25,625,625,book,625,mov_34d2979a224be8a574f4,care_pathway,MATCH
+GRP-0008,503A Clinical Formulations,Clinical / Provider Only,Aod-9604 + MOTS-C + Tesamorelin + Ipamorelin,AOD-9604/MOTS-C/TESAMORELIN/IPAMORELIN 1.2MG-2MG-2MG-2MG/ML (5ML),Compounded Vial / Liquid,312.5,$312.50,31250,31250,book,31250,mov_d6ddcf068903350cf948,care_pathway,MATCH
+GRP-0009,503A Clinical Formulations,Clinical / Provider Only,Ara 290,ARA 290 6MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_207ae3c3598581a1a4b5,care_pathway,MATCH
+GRP-0010,503A Clinical Formulations,Clinical / Provider Only,Ascorbic Acid,ASCORBIC ACID 500MG/ML INJ. (10ML),Injectable Solution,62.5,$62.50,6250,6250,book,6250,mov_4b3417df465b8cbf0690,care_pathway,MATCH
+GRP-0011,503A Clinical Formulations,Clinical / Provider Only,Ascorbic Acid,ASCORBIC ACID 500MG/ML INJ. (30ML),Injectable Solution,112.5,$112.50,11250,11250,book,11250,mov_0d6ca1ef7c59b4abaede,care_pathway,MATCH
+GRP-0012,503A Clinical Formulations,Clinical / Provider Only,BPC-157,BPC-157 3MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_b36510b5f969e35a01a9,care_pathway,MATCH
+GRP-0013,503A Clinical Formulations,Clinical / Provider Only,BPC-157,BPC-157 500MCG CAPSULE,Capsule,6.25,$6.25,625,625,book,625,mov_b9eda58c787ad7de3069,care_pathway,MATCH
+GRP-0014,503A Clinical Formulations,Clinical / Provider Only,BPC-157 + KPV,BPC-157/KPV 500MCG-500MCG CAPSULE,Capsule,11.25,$11.25,1125,1125,book,1125,mov_25a1cd02eb6cb9a7a07e,care_pathway,MATCH
+GRP-0015,503A Clinical Formulations,Clinical / Provider Only,BPC-157 + TB-500 + KPV + GHK-Cu 3-3-3-10Mg + Ml (5Ml),BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML),Compounded Vial / Liquid,300,$300.00,30000,30000,book,30000,mov_2c52bd3867d380a97a5e,care_pathway,MATCH
+GRP-0016,503A Clinical Formulations,Clinical / Provider Only,BPC-157 + TB-500 + KPV 3-3-3Mg + Ml (No Copper) (5Ml),BPC-157/TB500/KPV 3-3-3MG/ML (NO COPPER) (5ML),Compounded Vial / Liquid,300,$300.00,30000,30000,book,30000,mov_c0d8944f242c04c7fcc3,care_pathway,MATCH
+GRP-0017,503A Clinical Formulations,Clinical / Provider Only,BPC-157 + TB-500 3-3Mg + Ml (5Ml),BPC-157/TB500 3-3MG/ML (5ML),Compounded Vial / Liquid,250,$250.00,25000,25000,book,25000,mov_6965589a2e85194194e2,care_pathway,MATCH
+GRP-0018,503A Clinical Formulations,Clinical / Provider Only,BRANCHED CHAIN AMINO ACIDS (BCAA),Branched Chain Amino Acids (BCAA) ILE(0.4g) / L(0.3g) / V(1.2g) (30ml),Compounded Vial / Liquid,124.5,$124.50,12450,12450,book,12450,mov_d49dd5f366963d1c1b9f,care_pathway,MATCH
+GRP-0019,503A Clinical Formulations,Clinical / Provider Only,Benzocaine,BENZOCAINE 20% / LIDOCAINE 10% / TETRACAINE 10% TOPICAL CREAM 60ML PUMP,Topical Cream,112.5,$112.50,11250,11250,book,11250,mov_6a5f8633445131bc8421,care_pathway,MATCH
+GRP-0020,503A Clinical Formulations,Clinical / Provider Only,Bi-Est,BI-EST 1.25MG (80/20) CAPSULE,Capsule,1.25,$1.25,125,125,book,125,mov_cc5b7fced81f23f7378f,care_pathway,MATCH
+GRP-0021,503A Clinical Formulations,Clinical / Provider Only,Bi-Est,BI-EST 2.5MG (80/20) CAPSULE,Capsule,1.25,$1.25,125,125,book,125,mov_e1a1bec56d74854fd435,care_pathway,MATCH
+GRP-0022,503A Clinical Formulations,Clinical / Provider Only,Bi-Est,BI-EST 5MG (50/50) CAPSULE,Capsule,1.25,$1.25,125,125,book,125,mov_d45176011a0fd2aa21b7,care_pathway,MATCH
+GRP-0023,503A Clinical Formulations,Clinical / Provider Only,Bi-Est,BI-EST 5MG (80/20) CAPSULE,Capsule,1.25,$1.25,125,125,book,125,mov_a69bd4220917c3df075a,care_pathway,MATCH
+GRP-0024,503A Clinical Formulations,Clinical / Provider Only,Bi-Est,BI-EST 6MG (80/20) CAPSULE,Capsule,1.25,$1.25,125,125,book,125,mov_bd54445f33fdbb0fb7a5,care_pathway,MATCH
+GRP-0025,503A Clinical Formulations,Clinical / Provider Only,Bi-Est (80 + 20),BI-EST (80/20) 2MG/ML CREAM,Topical Cream,112.5,$112.50,11250,11250,book,11250,mov_11a2d542bd5c9d262d33,care_pathway,MATCH
+GRP-0026,503A Clinical Formulations,Clinical / Provider Only,Bi-Est (80 + 20),BI-EST (80/20) 3MG/ML CREAM,Topical Cream,112.5,$112.50,11250,11250,book,11250,mov_33922aadda137c9d24d5,care_pathway,MATCH
+GRP-0027,503A Clinical Formulations,Clinical / Provider Only,Bi-Pro-Test Cream,BI-PRO-TEST CREAM 0.25MG/100MG/0.25MG/GM,Topical Cream,162.5,$162.50,16250,16250,book,16250,mov_c03164465080ebb0f17b,care_pathway,MATCH
+GRP-0028,503A Clinical Formulations,Clinical / Provider Only,Bi-Pro-Test Cream,BI-PRO-TEST CREAM 0.25MG/100MG/1MG/GM,Topical Cream,162.5,$162.50,16250,16250,book,16250,mov_214b4eb089035b252d07,care_pathway,MATCH
+GRP-0029,503A Clinical Formulations,Clinical / Provider Only,Biotin,BIOTIN 10MG/ML (10ML),Compounded Vial / Liquid,162.5,$162.50,16250,16250,book,16250,mov_0770a6afb80c6564ad21,care_pathway,MATCH
+GRP-0030,503A Clinical Formulations,Clinical / Provider Only,CASHMERE CREAM,CASHMERE CREAM (GHK-CU 3% / NIACINAMIDE 4%) 30GM,Topical Cream,112.5,$112.50,11250,11250,book,11250,mov_25a060ad2d3a2f783068,care_pathway,MATCH
+GRP-0031,503A Clinical Formulations,Clinical / Provider Only,CJC-1295 + Ipamorelin 2-2Mg + Ml (5Ml),CJC-1295/IPAMORELIN 2-2MG/ML (5ML),Compounded Vial / Liquid,250,$250.00,25000,25000,book,25000,mov_6001aa9dea1a19370ece,care_pathway,MATCH
+GRP-0032,503A Clinical Formulations,Clinical / Provider Only,Cabergoline Tablets,CABERGOLINE TABLETS 0.5MG,Tablet,8.75,$8.75,875,875,book,875,mov_d2cc17167334831c9361,care_pathway,MATCH
+GRP-0033,503A Clinical Formulations,Clinical / Provider Only,"Cartalax (Aed, T-31)","CARTALAX (AED, t-31) 4MG/ML (5ML)",Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_4160422806e2085948f1,care_pathway,MATCH
+GRP-0034,503A Clinical Formulations,Clinical / Provider Only,Clomiphene,CLOMIPHENE 25MG CAPSULE,Capsule,1.875,$1.88,188,188,book,188,mov_083f7ccf9c4bd92d299f,care_pathway,MATCH
+GRP-0035,503A Clinical Formulations,Clinical / Provider Only,Clomiphene,CLOMIPHENE 50MG CAPSULE,Capsule,3.75,$3.75,375,375,book,375,mov_d3773942eddcd7a25bff,care_pathway,MATCH
+GRP-0036,503A Clinical Formulations,Clinical / Provider Only,Dhea,DHEA 100MG CAPSULE,Capsule,2.625,$2.62,263,263,book,263,mov_dbb6d5f4afbab86ad1c4,care_pathway,MATCH_HALF_UP (book display differs by 1c)
+GRP-0037,503A Clinical Formulations,Clinical / Provider Only,Dhea,DHEA 25MG CAPSULE,Capsule,2.375,$2.38,238,238,book,238,mov_020fdc809db231eb75be,care_pathway,MATCH
+GRP-0038,503A Clinical Formulations,Clinical / Provider Only,Dhea,DHEA 50MG CAPSULE,Capsule,2.5,$2.50,250,250,book,250,mov_fdcdf9c3b5b5168b4ea4,care_pathway,MATCH
+GRP-0039,503A Clinical Formulations,Clinical / Provider Only,Dihexa,DIHEXA 25MG CAPSULE,Capsule,34.375,$34.38,3438,3438,book,3438,mov_5f586b1eccde2c968f93,care_pathway,MATCH
+GRP-0040,503A Clinical Formulations,Clinical / Provider Only,Dihexa,DIHEXA 5MG CAPSULE,Capsule,8.75,$8.75,875,875,book,875,mov_120042d931e6c04de5a7,care_pathway,MATCH
+GRP-0041,503A Clinical Formulations,Clinical / Provider Only,Dsip,DSIP 2MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_d3e7a41afbedd44a48bc,care_pathway,MATCH
+GRP-0042,503A Clinical Formulations,Clinical / Provider Only,Elamipretide (Ss31),ELAMIPRETIDE (SS31) 15MG/ML (5ML),Compounded Vial / Liquid,250,$250.00,25000,25000,book,25000,mov_ff30e00f97f56347d9ee,care_pathway,MATCH
+GRP-0043,503A Clinical Formulations,Clinical / Provider Only,Enclomiphene,ENCLOMIPHENE 12.5MG CAPSULE,Capsule,2.5,$2.50,250,250,book,250,mov_7f82640f5ac1adc9483f,care_pathway,MATCH
+GRP-0044,503A Clinical Formulations,Clinical / Provider Only,Enclomiphene,ENCLOMIPHENE 25MG CAPSULE,Capsule,6.25,$6.25,625,625,book,625,mov_501ff7009923315e60b0,care_pathway,MATCH
+GRP-0045,503A Clinical Formulations,Clinical / Provider Only,Enclomiphene,ENCLOMIPHENE 50MG CAPSULE,Capsule,9.375,$9.38,938,938,book,938,mov_b7bfd79381bccbb3f0bc,care_pathway,MATCH
+GRP-0046,503A Clinical Formulations,Clinical / Provider Only,Epithalon,EPITHALON 10MG/ML (5ML),Compounded Vial / Liquid,325,$325.00,32500,32500,book,32500,mov_e6848a7677ae36f77ba1,care_pathway,MATCH
+GRP-0047,503A Clinical Formulations,Clinical / Provider Only,Epithalon,EPITHALON 2MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_73282e0789c7bb46a652,care_pathway,MATCH
+GRP-0048,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 0.25MG CAPSULE,Capsule,1.25,$1.25,125,125,book,125,mov_1257ce2cf99948f94deb,care_pathway,MATCH
+GRP-0049,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 0.5MG TABLET,Tablet,1.25,$1.25,125,125,book,125,mov_c540ba91fb1c51210f22,care_pathway,MATCH
+GRP-0050,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 0.75MG CAPSULE,Capsule,1.25,$1.25,125,125,book,125,mov_1b1c6fad6fe643bae46f,care_pathway,MATCH
+GRP-0051,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 1.25MG CAPSULE,Capsule,1.25,$1.25,125,125,book,125,mov_446a8e2fe9f0df430708,care_pathway,MATCH
+GRP-0052,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 1.5MG CAPSULE,Capsule,1.25,$1.25,125,125,book,125,mov_85b30027c9aab0079752,care_pathway,MATCH
+GRP-0053,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 1.75MG CAPSULE,Capsule,1.25,$1.25,125,125,book,125,mov_413281c7f02b2e6855d9,care_pathway,MATCH
+GRP-0054,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 10MG/ML CREAM,Topical Cream,100,$100.00,10000,10000,book,10000,mov_e7761f3515fdd7679bc0,care_pathway,MATCH
+GRP-0055,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 1MG TABLET,Tablet,1.25,$1.25,125,125,book,125,mov_0e4d058496289e517594,care_pathway,MATCH
+GRP-0056,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 2MG TABLET,Tablet,1.25,$1.25,125,125,book,125,mov_f8127b7d800d59a87749,care_pathway,MATCH
+GRP-0057,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 4MG/ML CREAM,Topical Cream,75,$75.00,7500,7500,book,7500,mov_90758b4e6a42d66e47f7,care_pathway,MATCH
+GRP-0058,503A Clinical Formulations,Clinical / Provider Only,Estradiol,ESTRADIOL 6MG/ML CREAM,Topical Cream,87.5,$87.50,8750,8750,book,8750,mov_831a50352c3ea54cf4e7,care_pathway,MATCH
+GRP-0059,503A Clinical Formulations,Clinical / Provider Only,Finasteride Tablet,FINASTERIDE TABLET 1MG,Tablet,2,$2.00,200,200,book,200,mov_14a952b1a5b4951dc063,care_pathway,MATCH
+GRP-0060,503A Clinical Formulations,Clinical / Provider Only,Finasteride Tablet,FINASTERIDE TABLET 5MG,Tablet,2.5,$2.50,250,250,book,250,mov_a66e2af49da46a4c4ab1,care_pathway,MATCH
+GRP-0061,503A Clinical Formulations,Clinical / Provider Only,Foxo4-Dri,FOXO4-DRI 2MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_865c8079b375e73ded35,care_pathway,MATCH
+GRP-0062,503A Clinical Formulations,Clinical / Provider Only,GHK-Cu,GHK-CU 1% HAIR RESTORATION SOLUTION 30ML,Solution,250,$250.00,25000,25000,book,25000,mov_df401fc790214eed84c8,care_pathway,MATCH
+GRP-0063,503A Clinical Formulations,Clinical / Provider Only,GHK-Cu,GHK-CU 10MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_605189187511069b1df9,care_pathway,MATCH
+GRP-0064,503A Clinical Formulations,Clinical / Provider Only,GHK-Cu + Epithalon 10-2Mg + Ml (5Ml),GHK-CU/EPITHALON 10-2MG/ML (5ML),Compounded Vial / Liquid,250,$250.00,25000,25000,book,25000,mov_93bfbdf802bda4de5731,care_pathway,MATCH
+GRP-0065,503A Clinical Formulations,Clinical / Provider Only,"GHK-Cu + Snap 8 Biocosmetic, Cream (GHK-Cu","GHK-CU + SNAP 8 BIOCOSMETIC, CREAM (GHK-CU 3% / ESTRIOL 0.3% / SNAP-8 1%) 30GM",Topical Cream,300,$300.00,30000,30000,book,30000,mov_d985257c3837f5268f9f,care_pathway,MATCH
+GRP-0066,503A Clinical Formulations,Clinical / Provider Only,"GHK-Cu + Snap 8 Serum, Gel (GHK-Cu","GHK-CU + SNAP 8 SERUM, GEL (GHK-CU 3% / SNAP-8 1% / NIACINAMIDE 3%) 30ML",Topical Gel / Serum,350,$350.00,35000,35000,book,35000,mov_ad44eb6b82099b20eb94,care_pathway,MATCH
+GRP-0067,503A Clinical Formulations,Clinical / Provider Only,"GHK-Cu Biocosmetic, Cream (GHK-Cu","GHK-CU BIOCOSMETIC, CREAM (GHK-CU 3% / ESTRIOL 0.3%) 30GM",Topical Cream,250,$250.00,25000,25000,book,25000,mov_44bbd9b12e9d570f0765,care_pathway,MATCH
+GRP-0068,503A Clinical Formulations,Clinical / Provider Only,"GHK-Cu Firming Serum, Gel (GHK-Cu","GHK-CU FIRMING SERUM, GEL (GHK-CU 3% / NIACINAMIDE 3%) 30ML",Topical Gel / Serum,300,$300.00,30000,30000,book,30000,mov_5375621d23911b130fd4,care_pathway,MATCH
+GRP-0069,503A Clinical Formulations,Clinical / Provider Only,Glutathione,GLUTATHIONE 200MG/ML (10ML),Compounded Vial / Liquid,50,$50.00,5000,5000,book,5000,mov_0130087ca998e9b5e5ca,care_pathway,MATCH
+GRP-0070,503A Clinical Formulations,Clinical / Provider Only,Glutathione,GLUTATHIONE 200MG/ML (30ML),Compounded Vial / Liquid,112.5,$112.50,11250,11250,book,11250,mov_b2d8d487c0104e5fbce5,care_pathway,MATCH
+GRP-0071,503A Clinical Formulations,Clinical / Provider Only,Glycine,GLYCINE 50MG/ML (10ML),Compounded Vial / Liquid,75,$75.00,7500,7500,book,7500,mov_36f2d080eb4e68f37a29,care_pathway,MATCH
+GRP-0072,503A Clinical Formulations,Clinical / Provider Only,Gonadorelin,GONADORELIN 200MCG/ML (5ML),Compounded Vial / Liquid,87.5,$87.50,8750,8750,book,8750,mov_ae5b51214dd47733e450,care_pathway,MATCH
+GRP-0073,503A Clinical Formulations,Clinical / Provider Only,"HCG Pregnyl 10,000Iu","HCG PREGNYL 10,000IU",Listed Unit,462.5,$462.50,46250,46250,book,46250,mov_711f953e5a7be900fb65,care_pathway,MATCH
+GRP-0074,503A Clinical Formulations,Clinical / Provider Only,IGF-Lr3,IGF-LR3 200MCG/ML (5ML),Compounded Vial / Liquid,362.5,$362.50,36250,36250,book,36250,mov_d8eb7bde501536d27911,care_pathway,MATCH
+GRP-0075,503A Clinical Formulations,Clinical / Provider Only,Ibutamoren,IBUTAMOREN 12.5MG CAPSULE,Capsule,4.125,$4.12,413,413,book,413,mov_a951f06b028846122b03,care_pathway,MATCH_HALF_UP (book display differs by 1c)
+GRP-0076,503A Clinical Formulations,Clinical / Provider Only,Ibutamoren,IBUTAMOREN 25MG CAPSULE,Capsule,6.625,$6.62,663,663,book,663,mov_766e97f7685af83b8f7e,care_pathway,MATCH_HALF_UP (book display differs by 1c)
+GRP-0077,503A Clinical Formulations,Clinical / Provider Only,Ketoconazole Cream (Ketoconazole,KETOCONAZOLE CREAM (KETOCONAZOLE 2% / NIACINAMIDE 4%) 30GM,Topical Cream,125,$125.00,12500,12500,book,12500,mov_b6edf8e84ad31102991a,care_pathway,MATCH
+GRP-0078,503A Clinical Formulations,Clinical / Provider Only,Kisspeptin,KISSPEPTIN 1MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_874168a9c2547434954b,care_pathway,MATCH
+GRP-0079,503A Clinical Formulations,Clinical / Provider Only,Kyzatrex (Oral Testosterone),KYZATREX (ORAL TESTOSTERONE) 200MG,Listed Unit,397.5,$397.50,39750,39750,book,39750,mov_1119581881eb8a50c333,care_pathway,MATCH
+GRP-0080,503A Clinical Formulations,Clinical / Provider Only,LIBIDO CREAM (SCREAM CREAM),LIBIDO CREAM (SCREAM CREAM) — Testosterone Cypionate 0.1% / Sildenafil Citrate 0.1% / Glycerin / Versabase Cream,Topical Cream,187.5,$187.50,18750,18750,book,18750,mov_06beec21c59fe7842f18,care_pathway,MATCH
+GRP-0081,503A Clinical Formulations,Clinical / Provider Only,LIVER SUPPORT,"LIVER SUPPORT (Vitamin E 50%, Milk Thistle, N-Acetylcysteine, Thiamine, Selenium) CAPSULE",Capsule,112.5,$112.50,11250,11250,book,11250,mov_b29938eebdaf1935c8cc,care_pathway,MATCH
+GRP-0082,503A Clinical Formulations,Clinical / Provider Only,Larazotide,LARAZOTIDE 250MCG CAPSULE,Capsule,4.5,$4.50,450,450,book,450,mov_604b1bc047026ab63573,care_pathway,MATCH
+GRP-0083,503A Clinical Formulations,Clinical / Provider Only,Larazotide,LARAZOTIDE 500MCG CAPSULE,Capsule,8.75,$8.75,875,875,book,875,mov_0513bbc222e4f0c5a177,care_pathway,MATCH
+GRP-0084,503A Clinical Formulations,Clinical / Provider Only,Larazotide + KPV,LARAZOTIDE/KPV 500MCG-500MCG CAPSULE,Capsule,8.75,$8.75,875,875,book,875,mov_6098cdbc2380cf999512,care_pathway,MATCH
+GRP-0085,503A Clinical Formulations,Clinical / Provider Only,Lidocaine,LIDOCAINE 23% / TETRACAINE 10% / PHENYLEPHRINE 0.5% TOPICAL CREAM 60ML PUMP,Topical Cream,112.5,$112.50,11250,11250,book,11250,mov_3d76ec41b628237167a8,care_pathway,MATCH
+GRP-0086,503A Clinical Formulations,Clinical / Provider Only,Lidocaine,LIDOCAINE 23% / TETRACAINE 10% TOPICAL CREAM 60ML PUMP,Topical Cream,112.5,$112.50,11250,11250,book,11250,mov_4a9d3e6bbd76bfa50d15,care_pathway,MATCH
+GRP-0087,503A Clinical Formulations,Clinical / Provider Only,Lidocaine,LIDOCAINE 23% / TETRACAINE 7% / PRILOCAINE 2% TOPICAL CREAM 60ML PUMP,Topical Cream,112.5,$112.50,11250,11250,book,11250,mov_c155002075aeaa1b29b1,care_pathway,MATCH
+GRP-0088,503A Clinical Formulations,Clinical / Provider Only,Lipo-B (Cyanocobalamin + Mic) (10Ml),LIPO-B (Cyanocobalamin/MIC) (10ML),Compounded Vial / Liquid,75,$75.00,7500,7500,book,7500,mov_92a9e34a7ee0402c096a,care_pathway,MATCH
+GRP-0089,503A Clinical Formulations,Clinical / Provider Only,Lipo-B (Cyanocobalamin + Mic) (30Ml),LIPO-B (Cyanocobalamin/MIC) (30ML),Compounded Vial / Liquid,112.5,$112.50,11250,11250,book,11250,mov_3f1723408696198377fc,care_pathway,MATCH
+GRP-0090,503A Clinical Formulations,Clinical / Provider Only,Lipo-C (Cyanocobalamin + Mic + L-Carnitine) (10Ml),LIPO-C (Cyanocobalamin/MIC/L-Carnitine) (10ML),Compounded Vial / Liquid,87.5,$87.50,8750,8750,book,8750,mov_c3a5f9fdcb1adfd3b4a8,care_pathway,MATCH
+GRP-0091,503A Clinical Formulations,Clinical / Provider Only,Lipo-C (Cyanocobalamin + Mic + L-Carnitine) (30Ml),LIPO-C (Cyanocobalamin/MIC/L-Carnitine) (30ML),Compounded Vial / Liquid,112.5,$112.50,11250,11250,book,11250,mov_e5b24db4e56bf2b69b37,care_pathway,MATCH
+GRP-0092,503A Clinical Formulations,Clinical / Provider Only,Low Dose Naltrexone,LOW DOSE NALTREXONE 1.5MG CAPSULE,Capsule,2.125,$2.12,213,213,book,213,mov_cda363a46b53964275df,care_pathway,MATCH_HALF_UP (book display differs by 1c)
+GRP-0093,503A Clinical Formulations,Clinical / Provider Only,MOTS-C,MOTS-C 10MG/ML (5ML),Compounded Vial / Liquid,325,$325.00,32500,32500,book,32500,mov_d80acaaeb3cd32ee515e,care_pathway,MATCH
+GRP-0094,503A Clinical Formulations,Clinical / Provider Only,MOTS-C,MOTS-C 2MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_088296ed03af733becdc,care_pathway,MATCH
+GRP-0095,503A Clinical Formulations,Clinical / Provider Only,MYERS' COCKTAIL,"MYERS’ COCKTAIL (Thiamine 10mg, Niacinamide 10mg, Pyridoxine 0.2mg, Riboflavin 20mg, Calcium Gluconate 0.04mL, Magnesium Chloride 0.1mL per mL) (10ML)",Compounded Vial / Liquid,75,$75.00,7500,7500,book,7500,mov_e6c2e63137540a5772ce,care_pathway,MATCH
+GRP-0096,503A Clinical Formulations,Clinical / Provider Only,MYERS' COCKTAIL,"MYERS’ COCKTAIL (Thiamine 10mg, Niacinamide 10mg, Pyridoxine 0.2mg, Riboflavin 20mg, Calcium Gluconate 0.04mL, Magnesium Chloride 0.1mL per mL) (30ML)",Compounded Vial / Liquid,125,$125.00,12500,12500,book,12500,mov_be5e04f5ca9c0870837a,care_pathway,MATCH
+GRP-0097,503A Clinical Formulations,Clinical / Provider Only,Magnesium Chloride,MAGNESIUM CHLORIDE 200MG/ML (50ML),Compounded Vial / Liquid,150,$150.00,15000,15000,book,15000,mov_3b7dbf989dec76e6a671,care_pathway,MATCH
+GRP-0098,503A Clinical Formulations,Clinical / Provider Only,Melanotan Ii,MELANOTAN II 1MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_f4021f331425d385220d,care_pathway,MATCH
+GRP-0099,503A Clinical Formulations,Clinical / Provider Only,Metformin HCl Er Tablet,METFORMIN HCl ER TABLET 1000MG,Tablet,3.75,$3.75,375,375,book,375,mov_8b5397cde4ee58ec1e07,care_pathway,MATCH
+GRP-0100,503A Clinical Formulations,Clinical / Provider Only,Metformin HCl Er Tablet,METFORMIN HCl ER TABLET 500MG,Tablet,1.875,$1.88,188,188,book,188,mov_59e2c67cd424c10da631,care_pathway,MATCH
+GRP-0101,503A Clinical Formulations,Clinical / Provider Only,Methylcobalamin,METHYLCOBALAMIN 5MG/ML (10ML),Compounded Vial / Liquid,75,$75.00,7500,7500,book,7500,mov_ecb762819fd1adedf67b,care_pathway,MATCH
+GRP-0102,503A Clinical Formulations,Clinical / Provider Only,Methylcobalamin,METHYLCOBALAMIN 5MG/ML (30ML),Compounded Vial / Liquid,162.5,$162.50,16250,16250,book,16250,mov_34cbeded6517f298752f,care_pathway,MATCH
+GRP-0103,503A Clinical Formulations,Clinical / Provider Only,Methylene Blue,METHYLENE BLUE 10MG CAPSULE,Capsule,5,$5.00,500,500,book,500,mov_fd3adb2c68e7a0e73082,care_pathway,MATCH
+GRP-0104,503A Clinical Formulations,Clinical / Provider Only,Methylene Blue,METHYLENE BLUE 15MG CAPSULE,Capsule,5.625,$5.62,563,563,book,563,mov_e85bb022ffa9419a8aeb,care_pathway,MATCH_HALF_UP (book display differs by 1c)
+GRP-0105,503A Clinical Formulations,Clinical / Provider Only,Methylene Blue,METHYLENE BLUE 25MG CAPSULE,Capsule,6.25,$6.25,625,625,book,625,mov_ba2c2b656d77472973a8,care_pathway,MATCH
+GRP-0106,503A Clinical Formulations,Clinical / Provider Only,Methylene Blue,METHYLENE BLUE 5MG CAPSULE,Capsule,4.375,$4.38,438,438,book,438,mov_733714050d78aabb611b,care_pathway,MATCH
+GRP-0107,503A Clinical Formulations,Clinical / Provider Only,Methylene Blue Anti-Aging Cream (Methylene Blue,METHYLENE BLUE ANTI-AGING CREAM (METHYLENE BLUE 0.0064% / ESTRIOL 0.003%) 30GM,Topical Cream,125,$125.00,12500,12500,book,12500,mov_71799025c4b9af0971a9,care_pathway,MATCH
+GRP-0108,503A Clinical Formulations,Clinical / Provider Only,Minoxidil,MINOXIDIL 5% / AZELAIC ACID 12.5% / FINASTERIDE 0.1% / KETOCONAZOLE 2% SOLUTION 60ML,Solution,225,$225.00,22500,22500,book,22500,mov_0c2ae18a59f6b2a23237,care_pathway,MATCH
+GRP-0109,503A Clinical Formulations,Clinical / Provider Only,Minoxidil,MINOXIDIL 5% / FINASTERIDE 0.1% SOLUTION 60ML,Solution,187.5,$187.50,18750,18750,book,18750,mov_9fa662797891a14f0be9,care_pathway,MATCH
+GRP-0110,503A Clinical Formulations,Clinical / Provider Only,Minoxidil,MINOXIDIL 5% / TRETINOIN 0.025% SOLUTION 60ML,Solution,187.5,$187.50,18750,18750,book,18750,mov_6a7975035b2f4714a9bf,care_pathway,MATCH
+GRP-0111,503A Clinical Formulations,Clinical / Provider Only,NAD+,NAD+ 100MG/ML (10ML),Compounded Vial / Liquid,250,$250.00,25000,25000,book,25000,mov_65872ff528db6aab8ef3,care_pathway,MATCH
+GRP-0112,503A Clinical Formulations,Clinical / Provider Only,NAD+,NAD+ 10MG/0.1ML (15ML) NASAL SPRAY,Nasal Spray,300,$300.00,30000,30000,book,30000,mov_de7158dd9892e7e78e1f,care_pathway,MATCH
+GRP-0113,503A Clinical Formulations,Clinical / Provider Only,Nandrolone,NANDROLONE 200MG/ML GRAPE SEED OIL (10ML),Compounded Vial / Liquid,300,$300.00,30000,30000,book,30000,mov_5745f9c60e751c5beb5a,care_pathway,MATCH
+GRP-0114,503A Clinical Formulations,Clinical / Provider Only,Nandrolone,NANDROLONE 200MG/ML GRAPE SEED OIL (5ML),Compounded Vial / Liquid,150,$150.00,15000,15000,book,15000,mov_eebe141c6db26ce760ae,care_pathway,MATCH
+GRP-0115,503A Clinical Formulations,Clinical / Provider Only,Ondansetron,ONDANSETRON 4MG ODT (ZOFRAN) 30 TABLETS (AntiNausea),ODT / Tablet,93.75,$93.75,9375,9375,book,9375,mov_70ed47e636867f37e9d3,care_pathway,MATCH
+GRP-0116,503A Clinical Formulations,Clinical / Provider Only,Oxandrolone,OXANDROLONE 25MG CAPSULE,Capsule,5.625,$5.62,563,563,book,563,mov_501c945615c2d707b54f,care_pathway,MATCH_HALF_UP (book display differs by 1c)
+GRP-0117,503A Clinical Formulations,Clinical / Provider Only,Oxandrolone,OXANDROLONE 50MG CAPSULE,Capsule,11.25,$11.25,1125,1125,book,1125,mov_ad59d7da55ab90677602,care_pathway,MATCH
+GRP-0118,503A Clinical Formulations,Clinical / Provider Only,Oxandrolone,OXANDROLONE 5MG CAPSULE,Capsule,3,$3.00,300,300,book,300,mov_9e07ff94148f40c5696e,care_pathway,MATCH
+GRP-0119,503A Clinical Formulations,Clinical / Provider Only,Oxymetholone,OXYMETHOLONE 25MG CAPSULE,Capsule,11.25,$11.25,1125,1125,book,1125,mov_a42926b88119a87e7adf,care_pathway,MATCH
+GRP-0120,503A Clinical Formulations,Clinical / Provider Only,Oxymetholone,OXYMETHOLONE 50MG CAPSULE,Capsule,15,$15.00,1500,1500,book,1500,mov_2631799a9d3ab0bbd690,care_pathway,MATCH
+GRP-0121,503A Clinical Formulations,Clinical / Provider Only,Oxytocin Nasal Spray,OXYTOCIN NASAL SPRAY 100 IU/ML (10ML),Nasal Spray,87.5,$87.50,8750,8750,book,8750,mov_a3e1de7953ea2638cdc7,care_pathway,MATCH
+GRP-0122,503A Clinical Formulations,Clinical / Provider Only,Oxytocin Nasal Spray,OXYTOCIN NASAL SPRAY 100 IU/ML (15ML),Nasal Spray,87.5,$87.50,8750,8750,book,8750,mov_99dfd47f74b9493e4baa,care_pathway,MATCH
+GRP-0123,503A Clinical Formulations,Clinical / Provider Only,Oxytocin Troche,OXYTOCIN TROCHE 120 IU,Troche,10,$10.00,1000,1000,book,1000,mov_d1b20c7ac216a711ee60,care_pathway,MATCH
+GRP-0124,503A Clinical Formulations,Clinical / Provider Only,Oxytocin Troche,OXYTOCIN TROCHE 50 IU,Troche,10,$10.00,1000,1000,book,1000,mov_8ed9566bd266d00fff4e,care_pathway,MATCH
+GRP-0125,503A Clinical Formulations,Clinical / Provider Only,PT-141,PT-141 2MG/ML (5ML),Compounded Vial / Liquid,187.5,$187.50,18750,18750,book,18750,mov_9d2102e83a22a6f70bad,care_pathway,MATCH
+GRP-0126,503A Clinical Formulations,Clinical / Provider Only,PT-141 Nasal Spray,PT-141 NASAL SPRAY 2.5MG/SPRAY (3ML),Nasal Spray,247.5,$247.50,24750,24750,book,24750,mov_fc8502227dcc0d508e25,care_pathway,MATCH
+GRP-0127,503A Clinical Formulations,Clinical / Provider Only,Peg-Mgf,PEG-MGF 0.4MG/ML (5ML),Compounded Vial / Liquid,250,$250.00,25000,25000,book,25000,mov_4a04f9b5609def65ae51,care_pathway,MATCH
+GRP-0128,503A Clinical Formulations,Clinical / Provider Only,Phentermine HCl,PHENTERMINE HCL 15MG CAPSULE,Capsule,1.625,$1.62,163,163,book,163,mov_d0a30ff29c793447a5e6,care_pathway,MATCH_HALF_UP (book display differs by 1c)
+GRP-0129,503A Clinical Formulations,Clinical / Provider Only,Phentermine HCl,PHENTERMINE HCL 30MG CAPSULE,Capsule,1.625,$1.62,163,163,book,163,mov_5ff63ad318f8664617ef,care_pathway,MATCH_HALF_UP (book display differs by 1c)
+GRP-0130,503A Clinical Formulations,Clinical / Provider Only,Phentermine HCl,PHENTERMINE HCL 45MG CAPSULE,Capsule,1.625,$1.62,163,163,book,163,mov_f00c4d257410a68c5920,care_pathway,MATCH_HALF_UP (book display differs by 1c)
+GRP-0131,503A Clinical Formulations,Clinical / Provider Only,Phentermine SR,PHENTERMINE SR 37.5MG CAPSULE,Capsule,1,$1.00,100,100,book,100,mov_f3647c2c73ef2f697eeb,care_pathway,MATCH
+GRP-0132,503A Clinical Formulations,Clinical / Provider Only,Phentermine SR,PHENTERMINE SR 45MG CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_4471c6380ef3088ef647,care_pathway,MATCH
+GRP-0133,503A Clinical Formulations,Clinical / Provider Only,Phenylephrine Inj,PHENYLEPHRINE INJ 0.1%,Injectable Solution,45,$45.00,4500,4500,book,4500,mov_bf9fd06375edc6da01d5,care_pathway,MATCH
+GRP-0134,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 100MG SR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_da50073bd180c9eedead,care_pathway,MATCH
+GRP-0135,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 125MG CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_b56ef587dd6b17bf8b0c,care_pathway,MATCH
+GRP-0136,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 125MG SR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_dc95dfc0855b432bb8a3,care_pathway,MATCH
+GRP-0137,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 150MG CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_21534608574ca9d6fbd5,care_pathway,MATCH
+GRP-0138,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 150MG SR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_4f2d35bd4e81caefabe8,care_pathway,MATCH
+GRP-0139,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 175MG SR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_e4d2a9494b75d6af6ff2,care_pathway,MATCH
+GRP-0140,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 200MG SR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_c0c333d9892dd582a721,care_pathway,MATCH
+GRP-0141,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 200MG/ML CREAM,Topical Cream,87.5,$87.50,8750,8750,book,8750,mov_9244125895144bc27dc7,care_pathway,MATCH
+GRP-0142,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 225MG SR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_486a506935156d81ba02,care_pathway,MATCH
+GRP-0143,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 250MG CAPSULE,Capsule,1.875,$1.88,188,188,book,188,mov_908f0621f69df1349570,care_pathway,MATCH
+GRP-0144,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 250MG SR CAPSULE,Capsule,1.875,$1.88,188,188,book,188,mov_8fc79749268ceced7f51,care_pathway,MATCH
+GRP-0145,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 250MG/ML CREAM,Topical Cream,87.5,$87.50,8750,8750,book,8750,mov_0146c6b245d5f09247a8,care_pathway,MATCH
+GRP-0146,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 25MG CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_6a7ce276b6726e5d0a90,care_pathway,MATCH
+GRP-0147,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 25MG SR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_3bb2af00aa17be6978cf,care_pathway,MATCH
+GRP-0148,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 300MG CAPSULE,Capsule,2.5,$2.50,250,250,book,250,mov_ba9acd2ddd6efbd40a18,care_pathway,MATCH
+GRP-0149,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 300MG SR CAPSULE,Capsule,2.5,$2.50,250,250,book,250,mov_189d42074e6b32a05462,care_pathway,MATCH
+GRP-0150,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 50MG CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_32f6214d6f971441ba65,care_pathway,MATCH
+GRP-0151,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 50MG SR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_bf88614f97a61d969acd,care_pathway,MATCH
+GRP-0152,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 50MG/ML CREAM,Topical Cream,69.375,$69.38,6938,6938,book,6938,mov_7db23839e0378f076ad5,care_pathway,MATCH
+GRP-0153,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 75MG CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_e454956f77357ddec871,care_pathway,MATCH
+GRP-0154,503A Clinical Formulations,Clinical / Provider Only,Progesterone,PROGESTERONE 75MG SR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_f72cf2f324eb23e46646,care_pathway,MATCH
+GRP-0155,503A Clinical Formulations,Clinical / Provider Only,SLU-PP-332,SLU-PP-332 250MCG PER CAPSULE,Capsule,7.5,$7.50,750,750,book,750,mov_4fcaab09d599d7b0b00d,care_pathway,MATCH
+GRP-0156,503A Clinical Formulations,Clinical / Provider Only,SLU-PP-332 + Bam 15 Capsule,SLU-PP-332/BAM 15 CAPSULE 100MCG/15MG PER CAPSULE,Capsule,8.75,$8.75,875,875,book,875,mov_03d3b84a967580d41b5e,care_pathway,MATCH
+GRP-0157,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 0.6MG-500MCG/ML (2ML) (1.2mg vial),Compounded Vial / Liquid,150,$150.00,15000,15000,book,15000,mov_4f115024566d5ce16ec5,care_pathway,MATCH
+GRP-0158,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 1.2MG-500MCG/ML (2ML) (2.4mg vial),Compounded Vial / Liquid,187.5,$187.50,18750,18750,book,18750,mov_72e17e552c98845046a8,care_pathway,MATCH
+GRP-0159,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 10MG-500MCG/ML (3ML) (30mg vial),Compounded Vial / Liquid,750,$750.00,75000,75000,book,75000,mov_d7fd93e24c3f34b7c5cd,care_pathway,MATCH
+GRP-0160,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 2.2MG-500MCG/ML (2ML) (4.4mg vial),Compounded Vial / Liquid,225,$225.00,22500,22500,book,22500,mov_b3ab2236ef6c69a31d69,care_pathway,MATCH
+GRP-0161,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 2.5MG-500MCG/ML (5ML) (12.5mg vial),Compounded Vial / Liquid,375,$375.00,37500,37500,book,37500,mov_d1a9e06120afca6f6372,care_pathway,MATCH
+GRP-0162,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 3.4MG-500MCG/ML (2ML) (6.8mg vial),Compounded Vial / Liquid,312.5,$312.50,31250,31250,book,31250,mov_142e69c895e4e9dfd108,care_pathway,MATCH
+GRP-0163,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 4.1MG-500MCG/ML (2ML) (8.2mg vial),Compounded Vial / Liquid,375,$375.00,37500,37500,book,37500,mov_6435ce73a40c29b2365f,care_pathway,MATCH
+GRP-0164,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 5.6MG-500MCG/ML (2ML) (11.2mg vial),Compounded Vial / Liquid,437.5,$437.50,43750,43750,book,43750,mov_022a35a6bdaceb5366fd,care_pathway,MATCH
+GRP-0165,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 5MG-500MCG/ML (3ML) (15mg vial),Compounded Vial / Liquid,475,$475.00,47500,47500,book,47500,mov_1d4475fa96d199f72b4b,care_pathway,MATCH
+GRP-0166,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + B12,SEMAGLUTIDE/B12 5MG-500MCG/ML (4ML) (20mg vial),Compounded Vial / Liquid,625,$625.00,62500,62500,book,62500,mov_b70d3fe84b66e6f7ed90,care_pathway,MATCH
+GRP-0167,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + Glycine,SEMAGLUTIDE/ GLYCINE 5MG-2.5MG/ML (2ML) (10mg vial),Compounded Vial / Liquid,437.5,$437.50,43750,43750,book,43750,mov_d79d9f58730e3ef24999,care_pathway,MATCH
+GRP-0168,503A Clinical Formulations,Clinical / Provider Only,Semaglutide + Glycine,SEMAGLUTIDE/ GLYCINE 5MG-2.5MG/ML (6ML) (30mg vial),Compounded Vial / Liquid,1062.5,"$1,062.50",106250,106250,book,106250,mov_fe37a77ef2c2e7312ce6,care_pathway,MATCH
+GRP-0169,503A Clinical Formulations,Clinical / Provider Only,Semax + Selank,SEMAX/SELANK 2.5MG/2.5MG/ML NASAL SPRAY (15ML),Nasal Spray,375,$375.00,37500,37500,book,37500,mov_7fc3aca6a879412d6576,care_pathway,MATCH
+GRP-0170,503A Clinical Formulations,Clinical / Provider Only,Sermorelin,SERMORELIN 3MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_57305ac71a306d9bd16d,care_pathway,MATCH
+GRP-0171,503A Clinical Formulations,Clinical / Provider Only,Sermorelin + Ipamorelin,SERMORELIN/IPAMORELIN 3MG-3.6MG/ML (5ML),Compounded Vial / Liquid,250,$250.00,25000,25000,book,25000,mov_5dc037b1279e30b6ce47,care_pathway,MATCH
+GRP-0172,503A Clinical Formulations,Clinical / Provider Only,Sildenafil,SILDENAFIL 100MG TABLET,Tablet,3.125,$3.12,313,313,book,313,mov_25ad4a66f23a5721d7bb,care_pathway,MATCH_HALF_UP (book display differs by 1c)
+GRP-0173,503A Clinical Formulations,Clinical / Provider Only,Sildenafil,SILDENAFIL 110MG CAPSULE,Capsule,7.5,$7.50,750,750,book,750,mov_c6abe9e1c6b987e29192,care_pathway,MATCH
+GRP-0174,503A Clinical Formulations,Clinical / Provider Only,Sildenafil,SILDENAFIL 50MG TABLET,Tablet,1.875,$1.88,188,188,book,188,mov_0753f47d752e1c799a66,care_pathway,MATCH
+GRP-0175,503A Clinical Formulations,Clinical / Provider Only,Sildenafil,SILDENAFIL 55MG CAPSULE,Capsule,5,$5.00,500,500,book,500,mov_86df1a74878cfd60f6c2,care_pathway,MATCH
+GRP-0176,503A Clinical Formulations,Clinical / Provider Only,Sildenafil + Tadalafil,SILDENAFIL/TADALAFIL 50MG-10MG CAPSULE,Capsule,5,$5.00,500,500,book,500,mov_08f0c1f6459b4238952b,care_pathway,MATCH
+GRP-0177,503A Clinical Formulations,Clinical / Provider Only,Sildenafil SR,SILDENAFIL SR 110MG CAPSULE,Capsule,7.5,$7.50,750,750,book,750,mov_7673a9b4ccaa340557f2,care_pathway,MATCH
+GRP-0178,503A Clinical Formulations,Clinical / Provider Only,Sildenafil SR,SILDENAFIL SR 36MG CAPSULE,Capsule,5,$5.00,500,500,book,500,mov_032788e5244937ceca28,care_pathway,MATCH
+GRP-0179,503A Clinical Formulations,Clinical / Provider Only,Sildenafil SR,SILDENAFIL SR 55MG CAPSULE,Capsule,6.25,$6.25,625,625,book,625,mov_56536dce04781fce3c09,care_pathway,MATCH
+GRP-0180,503A Clinical Formulations,Clinical / Provider Only,Sildenafil SR,SILDENAFIL SR 75MG CAPSULE,Capsule,7.5,$7.50,750,750,book,750,mov_e40e7a99246a86038f67,care_pathway,MATCH
+GRP-0181,503A Clinical Formulations,Clinical / Provider Only,Stanozolol,STANOZOLOL 10MG CAPSULE,Capsule,5,$5.00,500,500,book,500,mov_2e2f1b46c92d11a4bf52,care_pathway,MATCH
+GRP-0182,503A Clinical Formulations,Clinical / Provider Only,Stanozolol,STANOZOLOL 25MG CAPSULE,Capsule,6.25,$6.25,625,625,book,625,mov_5f3f1eed2571ae4dad88,care_pathway,MATCH
+GRP-0183,503A Clinical Formulations,Clinical / Provider Only,Stanozolol,STANOZOLOL 50MG CAPSULE,Capsule,10,$10.00,1000,1000,book,1000,mov_5ac6b7fa2fe42bcb614d,care_pathway,MATCH
+GRP-0184,503A Clinical Formulations,Clinical / Provider Only,Stanozolol,STANOZOLOL 5MG CAPSULE,Capsule,3.75,$3.75,375,375,book,375,mov_2bcb39d1057b8e1e977f,care_pathway,MATCH
+GRP-0185,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 114MCG/27MCG IR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_c9cc0c819f1d0150ce0a,care_pathway,MATCH
+GRP-0186,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 152MCG/36MCG IR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_bd2a02725bbd0f3ff49d,care_pathway,MATCH
+GRP-0187,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 19MCG/4.5MCG IR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_d9c1ca60e6c732f54002,care_pathway,MATCH
+GRP-0188,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 28.5MCG/6.8MCG IR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_c4f2fa86002933d62b8a,care_pathway,MATCH
+GRP-0189,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 38MCG/9MCG IR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_bb094c822d8aec5125d0,care_pathway,MATCH
+GRP-0190,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 50MCG/10MCG IR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_e5366505d715e538f8dc,care_pathway,MATCH
+GRP-0191,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 50MCG/15MCG IR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_9ba44985db0c90b04efe,care_pathway,MATCH
+GRP-0192,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 57MCG/13.5MCG IR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_44f5a6927157750fe913,care_pathway,MATCH
+GRP-0193,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 76MCG/18MCG IR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_41b49fab370e0087bcc0,care_pathway,MATCH
+GRP-0194,503A Clinical Formulations,Clinical / Provider Only,T4 + T3,T4/T3 95MCG/22.5MCG IR CAPSULE,Capsule,1.375,$1.38,138,138,book,138,mov_67677041b20e67446911,care_pathway,MATCH
+GRP-0195,503A Clinical Formulations,Clinical / Provider Only,Tadalafil,TADALAFIL 10MG TABLET,Tablet,6,$6.00,600,600,book,600,mov_6fa1343c6cfe7cacc9e8,care_pathway,MATCH
+GRP-0196,503A Clinical Formulations,Clinical / Provider Only,Tadalafil,TADALAFIL 12MG CAPSULE,Capsule,7.5,$7.50,750,750,book,750,mov_028599999058c362cc84,care_pathway,MATCH
+GRP-0197,503A Clinical Formulations,Clinical / Provider Only,Tadalafil,TADALAFIL 20MG TABLET,Tablet,7.5,$7.50,750,750,book,750,mov_6965dfbce32ee305eb45,care_pathway,MATCH
+GRP-0198,503A Clinical Formulations,Clinical / Provider Only,Tadalafil,TADALAFIL 24MG CAPSULE,Capsule,11.25,$11.25,1125,1125,book,1125,mov_8d910726a1f47aada8b1,care_pathway,MATCH
+GRP-0199,503A Clinical Formulations,Clinical / Provider Only,Tadalafil,TADALAFIL 5MG TABLET,Tablet,4.625,$4.62,463,463,book,463,mov_8916bc3cdec720be82c2,care_pathway,MATCH_HALF_UP (book display differs by 1c)
+GRP-0200,503A Clinical Formulations,Clinical / Provider Only,Tadalafil SR,TADALAFIL SR 12MG CAPSULE,Capsule,7.5,$7.50,750,750,book,750,mov_806be6cd914c527fad37,care_pathway,MATCH
+GRP-0201,503A Clinical Formulations,Clinical / Provider Only,Tadalafil SR,TADALAFIL SR 18MG CAPSULE,Capsule,8.75,$8.75,875,875,book,875,mov_4e912c763e1dbbd2fc68,care_pathway,MATCH
+GRP-0202,503A Clinical Formulations,Clinical / Provider Only,Tadalafil SR,TADALAFIL SR 24MG CAPSULE,Capsule,11.25,$11.25,1125,1125,book,1125,mov_16d6440006e72819c033,care_pathway,MATCH
+GRP-0203,503A Clinical Formulations,Clinical / Provider Only,Tadalafil SR,TADALAFIL SR 6MG CAPSULE,Capsule,3.75,$3.75,375,375,book,375,mov_6195e2808bfe7028279c,care_pathway,MATCH
+GRP-0204,503A Clinical Formulations,Clinical / Provider Only,Tadalafil Troche,TADALAFIL TROCHE 20MG,Troche,11.875,$11.88,1188,1188,book,1188,mov_65a56f5a4d64e1b6642d,care_pathway,MATCH
+GRP-0205,503A Clinical Formulations,Clinical / Provider Only,Tadalafil Troche,TADALAFIL TROCHE 25MG,Troche,11.875,$11.88,1188,1188,book,1188,mov_baf57ab8c9cc745ad5ac,care_pathway,MATCH
+GRP-0206,503A Clinical Formulations,Clinical / Provider Only,Tamoxifen,TAMOXIFEN 10MG TABLET,Tablet,3.125,$3.12,313,313,book,313,mov_7a9f5490412704a83cb5,care_pathway,MATCH_HALF_UP (book display differs by 1c)
+GRP-0207,503A Clinical Formulations,Clinical / Provider Only,Tb-500,TB-500 10MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_fca88a97ef3ed5104fd3,care_pathway,MATCH
+GRP-0208,503A Clinical Formulations,Clinical / Provider Only,Tesamorelin,TESAMORELIN 3MG/ML (5ML),Compounded Vial / Liquid,250,$250.00,25000,25000,book,25000,mov_752e7861ef035dc39c9a,care_pathway,MATCH
+GRP-0209,503A Clinical Formulations,Clinical / Provider Only,Tesamorelin,TESAMORELIN 8MG/ML (3ML),Compounded Vial / Liquid,500,$500.00,50000,50000,book,50000,mov_d63ddb8ba5aa52668a52,care_pathway,MATCH
+GRP-0210,503A Clinical Formulations,Clinical / Provider Only,Tesamorelin + Ipamorelin,TESAMORELIN/IPAMORELIN 2.4MG-1.2MG/ML (5ML),Compounded Vial / Liquid,300,$300.00,30000,30000,book,30000,mov_47e649fb60889ebbf1d4,care_pathway,MATCH
+GRP-0211,503A Clinical Formulations,Clinical / Provider Only,Tesofensine,TESOFENSINE 500MCG CAPSULE,Capsule,5.625,$5.62,563,563,book,563,mov_85f31586f4ca4262ebb4,care_pathway,MATCH_HALF_UP (book display differs by 1c)
+GRP-0212,503A Clinical Formulations,Clinical / Provider Only,Testosterone,TESTOSTERONE 100MG/GM TOPICAL CREAM,Topical Cream,112.5,$112.50,11250,11250,book,11250,mov_bb171e1e99b202b19469,care_pathway,MATCH
+GRP-0213,503A Clinical Formulations,Clinical / Provider Only,Testosterone,TESTOSTERONE 10MG/GM TOPICAL CREAM,Topical Cream,112.5,$112.50,11250,11250,book,11250,mov_ff9faa14357676165e39,care_pathway,MATCH
+GRP-0214,503A Clinical Formulations,Clinical / Provider Only,Testosterone,TESTOSTERONE 14MG/GM TOPICAL CREAM,Topical Cream,112.5,$112.50,11250,11250,book,11250,mov_22f8ede1ff7f158b8c9b,care_pathway,MATCH
+GRP-0215,503A Clinical Formulations,Clinical / Provider Only,Testosterone,TESTOSTERONE 200MG/GM TOPICAL CREAM,Topical Cream,112.5,$112.50,11250,11250,book,11250,mov_05e4dd8400058a9c51de,care_pathway,MATCH
+GRP-0216,503A Clinical Formulations,Clinical / Provider Only,Testosterone,TESTOSTERONE 30MG/GM TOPICAL CREAM,Topical Cream,112.5,$112.50,11250,11250,book,11250,mov_6a9fbc4e6522db1b9478,care_pathway,MATCH
+GRP-0217,503A Clinical Formulations,Clinical / Provider Only,Testosterone,TESTOSTERONE 50MG/GM TOPICAL CREAM,Topical Cream,112.5,$112.50,11250,11250,book,11250,mov_1af9bddcc747b4b0390d,care_pathway,MATCH
+GRP-0218,503A Clinical Formulations,Clinical / Provider Only,Testosterone Cyp,TESTOSTERONE CYP 200MG/ML COTTON SEED OIL (10ML),Compounded Vial / Liquid,75,$75.00,7500,7500,book,7500,mov_c2619837caf5d2ad4bec,care_pathway,MATCH
+GRP-0219,503A Clinical Formulations,Clinical / Provider Only,Testosterone Cyp,TESTOSTERONE CYP 200MG/ML GRAPE SEED OIL (10ML),Compounded Vial / Liquid,125,$125.00,12500,12500,book,12500,mov_256f409fa7eaaa527e9d,care_pathway,MATCH
+GRP-0220,503A Clinical Formulations,Clinical / Provider Only,Testosterone Cyp,TESTOSTERONE CYP 200MG/ML GRAPE SEED OIL (5ML),Compounded Vial / Liquid,62.5,$62.50,6250,6250,book,6250,mov_f75653e3644d8141ed92,care_pathway,MATCH
+GRP-0221,503A Clinical Formulations,Clinical / Provider Only,Testosterone Cyp,TESTOSTERONE CYP 200MG/ML MCT OIL (5ML),Compounded Vial / Liquid,75,$75.00,7500,7500,book,7500,mov_8f9c93d7bbd259a65618,care_pathway,MATCH
+GRP-0222,503A Clinical Formulations,Clinical / Provider Only,Testosterone Cyp,TESTOSTERONE CYP 20MG/ML GRAPE SEED OIL (2ML),Compounded Vial / Liquid,62.5,$62.50,6250,6250,book,6250,mov_3535cf2424e315083e81,care_pathway,MATCH
+GRP-0223,503A Clinical Formulations,Clinical / Provider Only,Testosterone Cyp,TESTOSTERONE CYP 50MG/ML GRAPE SEED OIL (2ML),Compounded Vial / Liquid,62.5,$62.50,6250,6250,book,6250,mov_c5aa915e3b3ad6ae9f0b,care_pathway,MATCH
+GRP-0224,503A Clinical Formulations,Clinical / Provider Only,Testosterone Ent,TESTOSTERONE ENT 200MG/ML GRAPE SEED OIL (5ML),Compounded Vial / Liquid,100,$100.00,10000,10000,book,10000,mov_0eabaf76ceae3e87a64f,care_pathway,MATCH
+GRP-0225,503A Clinical Formulations,Clinical / Provider Only,Testosterone Pro,TESTOSTERONE PRO 100MG/ML GRAPE SEED OIL (5ML),Compounded Vial / Liquid,137.5,$137.50,13750,13750,book,13750,mov_446e44fc4c64977ba9f9,care_pathway,MATCH
+GRP-0226,503A Clinical Formulations,Clinical / Provider Only,Thymosin Alpha-1,THYMOSIN ALPHA-1 3MG/ML (5ML),Compounded Vial / Liquid,200,$200.00,20000,20000,book,20000,mov_c66a440ab740f61ad674,care_pathway,MATCH
+GRP-0227,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 10.5MG-500MCG/ML (5ML) (52.5mg vial),Compounded Vial / Liquid,812.5,$812.50,81250,81250,book,81250,mov_f2bba077ccab5f665143,care_pathway,MATCH
+GRP-0228,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 10MG-500MCG/ML (3ML) (30mg vial),Compounded Vial / Liquid,750,$750.00,75000,75000,book,75000,mov_6e7b8674cb13d3043d5e,care_pathway,MATCH
+GRP-0229,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 12MG-500MCG/ML (2ML) (24mg vial),Compounded Vial / Liquid,375,$375.00,37500,37500,book,37500,mov_d053cb009060dae567d5,care_pathway,MATCH
+GRP-0230,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 17MG-500MCG/ML (2ML) (34mg vial),Compounded Vial / Liquid,562.5,$562.50,56250,56250,book,56250,mov_925c987182d69e2c89dd,care_pathway,MATCH
+GRP-0231,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 20MG-500MCG/ML (3ML) (60mg vial),Compounded Vial / Liquid,850,$850.00,85000,85000,book,85000,mov_de4cb33b4741a2dd2342,care_pathway,MATCH
+GRP-0232,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 22MG-500MCG/ML (2ML) (44mg vial),Compounded Vial / Liquid,687.5,$687.50,68750,68750,book,68750,mov_b08d21398772788f95f6,care_pathway,MATCH
+GRP-0233,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 28MG-500MCG/ML (2ML) (56mg vial),Compounded Vial / Liquid,812.5,$812.50,81250,81250,book,81250,mov_8c56e30aba0c1e1b9823,care_pathway,MATCH
+GRP-0234,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 30MG-500MCG/ML (6ML) (180mg vial),Compounded Vial / Liquid,2250,"$2,250.00",225000,225000,book,225000,mov_8c186c0019ff862aa8d0,care_pathway,MATCH
+GRP-0235,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 33MG-500MCG/ML (2ML) (66mg vial),Compounded Vial / Liquid,937.5,$937.50,93750,93750,book,93750,mov_c6a233a1c2fbc635930c,care_pathway,MATCH
+GRP-0236,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + B12,TIRZEPATIDE/B12 6MG-500MCG/ML (2ML) (12mg vial),Compounded Vial / Liquid,212.5,$212.50,21250,21250,book,21250,mov_45ca9ef521018807384e,care_pathway,MATCH
+GRP-0237,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + Glycine,TIRZEPATIDE/GLYCINE 15MG-2.5MG/0.5ML (2ML) (60mg vial),Compounded Vial / Liquid,750,$750.00,75000,75000,book,75000,mov_53827d2f649e8057a8fe,care_pathway,MATCH
+GRP-0238,503A Clinical Formulations,Clinical / Provider Only,Tirzepatide + Glycine,TIRZEPATIDE/GLYCINE 15MG-2.5MG/0.5ML (6ML) (180mg vial),Compounded Vial / Liquid,2250,"$2,250.00",225000,225000,book,225000,mov_d745d4d77478eca768bc,care_pathway,MATCH
+GRP-0239,503A Clinical Formulations,Clinical / Provider Only,Trimix (Papaverine,TRIMIX (Papaverine 30mg / Phentolamine 1mg / Alprostadil 20mcg per mL) (5ML),Compounded Vial / Liquid,162.5,$162.50,16250,16250,book,16250,mov_fdda4d40b1fdbb305d55,care_pathway,MATCH
+GRP-0240,503A Clinical Formulations,Clinical / Provider Only,VITAMIN B-COMPLEX,"VITAMIN B-COMPLEX (Thiamine 100mg, Niacinamide 100mg, Riboflavin-5- Phosphate 2mg, Pyridoxine 2mg per mL) (30ML)",Compounded Vial / Liquid,100,$100.00,10000,10000,book,10000,mov_f2e6a643b1e940ed8525,care_pathway,MATCH
+GRP-0241,503A Clinical Formulations,Clinical / Provider Only,Vardenafil,VARDENAFIL 20MG TROCHE,Troche,11.25,$11.25,1125,1125,book,1125,mov_8c43d8049cba3bbc8938,care_pathway,MATCH
+GRP-0242,503A Clinical Formulations,Clinical / Provider Only,"Vitamin D3 50,000Iu + Ml (30Ml)","VITAMIN D3 50,000IU/ML (30ML)",Compounded Vial / Liquid,137.5,$137.50,13750,13750,book,13750,mov_5247438c659e5c5a06e9,care_pathway,MATCH
+GRP-0243,Research Capsules,RUO Research,5-Amino-1MQ,5-AMINO-1MQ 50 mg,Capsule / Bottle,472.5,$472.50,47250,47250,book,47250,mov_2183aa9edb06f34ef3af,request_access,MATCH
+GRP-0244,Research Capsules,RUO Research,BAM15,BAM15 500 mcg,Capsule / Bottle,,Price on request,,,book,,,,PRICE_ON_REQUEST_NEVER_ZERO
+GRP-0245,Research Capsules,RUO Research,BPC-157,BPC-157 500 mcg,Capsule / Bottle,372.5,$372.50,37250,37250,book,37250,mov_753d3f94385adf791d1e,request_access,MATCH
+GRP-0246,Research Capsules,RUO Research,Blend BPC-157 + TB-500,BLEND BPC-157 + TB-500 500/500 mcg,Capsule / Bottle,600,$600.00,60000,60000,book,60000,mov_8293d0baa21eb4d561f8,request_access,MATCH
+GRP-0247,Research Capsules,RUO Research,Dihexa,DIHEXA 10 mg,Capsule / Bottle,297.5,$297.50,29750,29750,book,29750,mov_aef099fb39b3fa062f45,request_access,MATCH
+GRP-0248,Research Capsules,RUO Research,GHK-Cu,GHK-Cu 2 mg,Capsule / Bottle,290,$290.00,29000,29000,book,29000,mov_a2d32f69681dca2b17fb,request_access,MATCH
+GRP-0249,Research Capsules,RUO Research,KPV,KPV 500 mcg,Capsule / Bottle,290,$290.00,29000,29000,book,29000,mov_fe292b5f03527ec13e5e,request_access,MATCH
+GRP-0250,Research Capsules,RUO Research,SLU-PP-332,SLU-PP-332 250 mcg,Capsule / Bottle,247.5,$247.50,24750,24750,book,24750,mov_395e7047e013e2074f6a,request_access,MATCH
+GRP-0251,Research Capsules,RUO Research,SLU-PP-332,SLU-PP-332 500 mcg,Capsule / Bottle,297.5,$297.50,29750,29750,book,29750,mov_c58b682a44514760a74f,request_access,MATCH
+GRP-0252,Research Capsules,RUO Research,Sermorelin,SERMORELIN 500 mcg,Capsule / Bottle,337.5,$337.50,33750,33750,book,33750,mov_8e11e063f79d56a3a946,request_access,MATCH
+GRP-0253,Research Capsules,RUO Research,TB-500,TB-500 500 mcg,Capsule / Bottle,295,$295.00,29500,29500,book,29500,mov_257fd9d66f6284e3570e,request_access,MATCH
+GRP-0254,Research Capsules,RUO Research,Tesofensine,TESOFENSINE 500 mcg,Capsule / Bottle,297.5,$297.50,29750,29750,book,29750,mov_9e34d0c1acde46249621,request_access,MATCH
+GRP-0255,Research Capsules,RUO Research,Thymosin Alpha-1,Thymosin Alpha-1 500 mcg,Capsule / Bottle,340,$340.00,34000,34000,book,34000,mov_120b19d12e869b0070ff,request_access,MATCH
+GRP-0395,Research Capsules,Supplier Catalog / Classification Pending,Colostrum,Colostrum (100mg x 90 Capsules),Capsule / Bottle,222.5,$222.50,22250,22250,book,22250,mov_0a8df59fa70328b1c1ca,approval_required,MATCH
+GRP-0418,Research Capsules,Supplier Catalog / Classification Pending,Tesofensine,Tesofensine (500mcg) Capsules x100,Capsule / Bottle,500,$500.00,50000,50000,book,50000,mov_862b99ce1c9f144086dd,approval_required,MATCH
+GRP-0419,Research Capsules,Supplier Catalog / Classification Pending,Tesofensine,Tesofensine (500mcg) Capsules x30,Capsule / Bottle,175,$175.00,17500,17500,book,17500,mov_235641a298fed1c2637e,approval_required,MATCH
+GRP-0256,Research Peptides & Materials,RUO Research,5-Amino-1Mq,5-AMINO-1MQ 10 mg,Lyophilized Vial,171.875,$171.88,17188,17188,book,17188,mov_9262033fe69a14a50f1c,request_access,MATCH
+GRP-0261,Research Peptides & Materials,RUO Research,AOD-9604,AOD-9604 5 mg,Lyophilized Vial,49,$49.00,4900,4900,book,4900,mov_e0ce4fde8a3393202bdc,request_access,MATCH
+GRP-0257,Research Peptides & Materials,RUO Research,ARA-290,ARA-290 10 mg,Lyophilized Vial,195,$195.00,19500,19500,book,19500,mov_04f750af7277d98b7ad9,request_access,MATCH
+GRP-0258,Research Peptides & Materials,RUO Research,ARA-290,ARA-290 15 mg,Lyophilized Vial,237.5,$237.50,23750,23750,book,23750,mov_6509a8f595cfc3fc36bc,request_access,MATCH
+GRP-0259,Research Peptides & Materials,RUO Research,ARA-290,ARA-290 5 mg,Lyophilized Vial,165,$165.00,16500,16500,book,16500,mov_523c894b29954645c00a,request_access,MATCH
+GRP-0260,Research Peptides & Materials,RUO Research,Aod-9604,AOD-9604 10 mg,Lyophilized Vial,89,$89.00,8900,8900,book,8900,mov_d25066629d9cbdbad552,request_access,MATCH
+GRP-0262,Research Peptides & Materials,RUO Research,BPC-157,BPC-157 10 mg,Lyophilized Vial,49,$49.00,4900,4900,book,4900,mov_ca3e45ae9712aee91430,request_access,MATCH
+GRP-0263,Research Peptides & Materials,RUO Research,BPC-157,BPC-157 15 mg,Lyophilized Vial,167.5,$167.50,16750,16750,book,16750,mov_257330ea83ecbfc45fae,request_access,MATCH
+GRP-0264,Research Peptides & Materials,RUO Research,BPC-157,BPC-157 5 mg,Lyophilized Vial,33.5,$33.50,3350,3350,book,3350,mov_09db3e866424b64994d3,request_access,MATCH
+GRP-0265,Research Peptides & Materials,RUO Research,BPC-157 + TB-500,BPC-157 10 mg + TB-500 10 mg,Lyophilized Vial,99,$99.00,9900,9900,book,9900,mov_548802074a4f9ca45f5d,request_access,MATCH
+GRP-0266,Research Peptides & Materials,RUO Research,BPC-157 + TB-500,BPC-157 15 mg + TB-500 15 mg,Lyophilized Vial,181.25,$181.25,18125,18125,book,18125,mov_43ff04d9edfcdb5543a4,request_access,MATCH
+GRP-0267,Research Peptides & Materials,RUO Research,BPC-157 + TB-500,BPC-157 5 mg + TB-500 5 mg,Lyophilized Vial,79,$79.00,7900,7900,book,7900,mov_457168650622c3647dc9,request_access,MATCH
+GRP-0268,Research Peptides & Materials,RUO Research,CJC-1295 (No DAC) + Ipamorelin,CJC-1295 (No DAC) 10 mg + IPAMORELIN 10 mg,Lyophilized Vial,187.5,$187.50,18750,18750,book,18750,mov_420ac197458ecbcddb9a,request_access,MATCH
+GRP-0269,Research Peptides & Materials,RUO Research,CJC-1295 (No DAC) + Ipamorelin,CJC-1295 (No DAC) 5 mg + IPAMORELIN 5 mg,Lyophilized Vial,79,$79.00,7900,7900,book,7900,mov_082a1d9c8a0d21e4a5c9,request_access,MATCH
+GRP-0270,Research Peptides & Materials,RUO Research,CJC-1295 No Dac,CJC-1295 NO DAC 10 mg,Lyophilized Vial,105,$105.00,10500,10500,book,10500,mov_0d00b80820b69cc39796,request_access,MATCH
+GRP-0271,Research Peptides & Materials,RUO Research,CJC-1295 No Dac,CJC-1295 NO DAC 2 mg,Lyophilized Vial,162.5,$162.50,16250,16250,book,16250,mov_f7b635c1cc2be94922a0,request_access,MATCH
+GRP-0272,Research Peptides & Materials,RUO Research,CJC-1295 With Dac,CJC-1295 WITH DAC 2 mg,Lyophilized Vial,100,$100.00,10000,10000,book,10000,mov_9331f42ce573fb3f72e5,request_access,MATCH
+GRP-0273,Research Peptides & Materials,RUO Research,CJC-1295 With Dac,CJC-1295 WITH DAC 5 mg,Lyophilized Vial,187.5,$187.50,18750,18750,book,18750,mov_6c559c89db938c58e815,request_access,MATCH
+GRP-0274,Research Peptides & Materials,RUO Research,Cagrilintide,CAGRILINTIDE 10 mg,Lyophilized Vial,109,$109.00,10900,10900,book,10900,mov_bc725d0ad2a12e1ee57c,request_access,MATCH
+GRP-0275,Research Peptides & Materials,RUO Research,Cagrilintide,CAGRILINTIDE 5 mg,Lyophilized Vial,59,$59.00,5900,5900,book,5900,mov_19de1d73a1a3844c0190,request_access,MATCH
+GRP-0276,Research Peptides & Materials,RUO Research,Cagrilintide + Semaglutide,CAGRILINTIDE 10 mg + SEMAGLUTIDE 10 mg,Lyophilized Vial,231.25,$231.25,23125,23125,book,23125,mov_c7c5768303175886f6d1,request_access,MATCH
+GRP-0277,Research Peptides & Materials,RUO Research,Cagrilintide + Semaglutide,CAGRILINTIDE 5 mg + SEMAGLUTIDE 5 mg,Lyophilized Vial,187.5,$187.50,18750,18750,book,18750,mov_30965a433abef7359a7b,request_access,MATCH
+GRP-0278,Research Peptides & Materials,RUO Research,DSIP,DSIP 10 mg,Lyophilized Vial,49,$49.00,4900,4900,book,4900,mov_0efd31ea72138e78d999,request_access,MATCH
+GRP-0279,Research Peptides & Materials,RUO Research,DSIP + Selank,DSIP 2 mg + SELANK 10 mg,Lyophilized Vial,170,$170.00,17000,17000,book,17000,mov_7502e2415b8757cad0eb,request_access,MATCH
+GRP-0280,Research Peptides & Materials,RUO Research,Dihexa,DIHEXA 10 mg,Lyophilized Vial,175,$175.00,17500,17500,book,17500,mov_3f59629a005b238f4faa,request_access,MATCH
+GRP-0281,Research Peptides & Materials,RUO Research,Dsip,DSIP 5 mg,Lyophilized Vial,62.5,$62.50,6250,6250,book,6250,mov_718e52d07396abd5b2dc,request_access,MATCH
+GRP-0282,Research Peptides & Materials,RUO Research,Epithalon,EPITHALON 10 mg,Lyophilized Vial,62.5,$62.50,6250,6250,book,6250,mov_9421188f57af62413a4c,request_access,MATCH
+GRP-0283,Research Peptides & Materials,RUO Research,Epithalon,EPITHALON 20 mg,Lyophilized Vial,159.375,$159.38,15938,15938,book,15938,mov_017febfdb0edf96366f4,request_access,MATCH
+GRP-0284,Research Peptides & Materials,RUO Research,Epithalon,EPITHALON 30 mg,Lyophilized Vial,162.5,$162.50,16250,16250,book,16250,mov_29d962312f3386b5dd3f,request_access,MATCH
+GRP-0285,Research Peptides & Materials,RUO Research,Epithalon,EPITHALON 35 mg,Lyophilized Vial,175,$175.00,17500,17500,book,17500,mov_7808f3ed26c4fa0f19f6,request_access,MATCH
+GRP-0286,Research Peptides & Materials,RUO Research,Epithalon,EPITHALON 50 mg,Lyophilized Vial,112.5,$112.50,11250,11250,book,11250,mov_c4e5006693c890563310,request_access,MATCH
+GRP-0287,Research Peptides & Materials,RUO Research,GHK-Cu,GHK-Cu 100 mg,Lyophilized Vial,42,$42.00,4200,4200,book,4200,mov_35b19a790d7a247210c9,request_access,MATCH
+GRP-0288,Research Peptides & Materials,RUO Research,GHK-Cu,GHK-Cu 50 mg,Lyophilized Vial,49,$49.00,4900,4900,book,4900,mov_4522e672752616ff992d,request_access,MATCH
+GRP-0289,Research Peptides & Materials,RUO Research,GHK-Cu + Epithalon,GHK-Cu 50 mg + EPITHALON 10 mg,Lyophilized Vial,207.5,$207.50,20750,20750,book,20750,mov_8df703ff84f1bb8e1662,request_access,MATCH
+GRP-0290,Research Peptides & Materials,RUO Research,GHRP-2,GHRP-2 10 mg,Lyophilized Vial,162.5,$162.50,16250,16250,book,16250,mov_9774e642bf4c6b799a8c,request_access,MATCH
+GRP-0291,Research Peptides & Materials,RUO Research,GHRP-2,GHRP-2 5 mg,Lyophilized Vial,65,$65.00,6500,6500,book,6500,mov_a29c1130a8c45aff1f26,request_access,MATCH
+GRP-0292,Research Peptides & Materials,RUO Research,GHRP-6,GHRP-6 10 mg,Lyophilized Vial,162.5,$162.50,16250,16250,book,16250,mov_e21bffb0a8ad83a8137f,request_access,MATCH
+GRP-0293,Research Peptides & Materials,RUO Research,GHRP-6,GHRP-6 5 mg,Lyophilized Vial,65,$65.00,6500,6500,book,6500,mov_556cf3eb15555573aa54,request_access,MATCH
+GRP-0294,Research Peptides & Materials,RUO Research,GLOW (BPC-157 + TB-500 + GHK-Cu),BPC-157 10 mg + TB-500 10 mg + GHK-Cu 50 mg,Lyophilized Vial,139,$139.00,13900,13900,book,13900,mov_4bcfb9614bef8b2c671e,request_access,MATCH
+GRP-0295,Research Peptides & Materials,RUO Research,Glutathione,GLUTATHIONE 1500 mg,Lyophilized Vial,168.75,$168.75,16875,16875,book,16875,mov_77837ac2575c8df8ac73,request_access,MATCH
+GRP-0296,Research Peptides & Materials,RUO Research,Glutathione,GLUTATHIONE 500 mg,Lyophilized Vial,44.75,$44.75,4475,4475,book,4475,mov_77a80adce9e9cb1b93a0,request_access,MATCH
+GRP-0297,Research Peptides & Materials,RUO Research,Gonadorelin,GONADORELIN 5 mg,Lyophilized Vial,100,$100.00,10000,10000,book,10000,mov_b36b64d987325dca8df4,request_access,MATCH
+GRP-0298,Research Peptides & Materials,RUO Research,HCG,"HCG 10,000 IU",Lyophilized Vial,212.5,$212.50,21250,21250,book,21250,mov_e218a4fead30388a55ff,request_access,MATCH
+GRP-0299,Research Peptides & Materials,RUO Research,HCG,HCG 5000 IU,Lyophilized Vial,112.5,$112.50,11250,11250,book,11250,mov_b5c50d1bb9d8ad998062,request_access,MATCH
+GRP-0300,Research Peptides & Materials,RUO Research,Hexarelin,HEXARELIN 10 mg,Lyophilized Vial,84,$84.00,8400,8400,book,8400,mov_e562b76120d36c6ebf2d,request_access,MATCH
+GRP-0301,Research Peptides & Materials,RUO Research,IGF-1 Lr3,IGF-1 LR3 1 mg,Lyophilized Vial,142.5,$142.50,14250,14250,book,14250,mov_50c16caf05daa93ef289,request_access,MATCH
+GRP-0302,Research Peptides & Materials,RUO Research,Ipamorelin,IPAMORELIN 10 mg,Lyophilized Vial,59,$59.00,5900,5900,book,5900,mov_80aaef9ddc11edab6c89,request_access,MATCH
+GRP-0303,Research Peptides & Materials,RUO Research,Ipamorelin,IPAMORELIN 5 mg,Lyophilized Vial,153.125,$153.12,15313,15313,book,15313,mov_cd50ffa15bc031572636,request_access,MATCH_HALF_UP (book display differs by 1c)
+GRP-0305,Research Peptides & Materials,RUO Research,KLOW (BPC-157 + TB-500 + GHK-Cu + KPV),BPC-157 10 mg + TB-500 10 mg + GHK-Cu 50 mg + KPV 10 mg,Lyophilized Vial,139,$139.00,13900,13900,book,13900,mov_644f912141d81a0199b0,request_access,MATCH
+GRP-0304,Research Peptides & Materials,RUO Research,KLOW (BPC-157 + TB-500 + GHK-Cu + KPV),BPC-157 5 mg + TB-500 5 mg + GHK-Cu 10 mg + KPV 5 mg,Lyophilized Vial,335,$335.00,33500,33500,book,33500,mov_ecd380609ace639d27a6,request_access,MATCH
+GRP-0306,Research Peptides & Materials,RUO Research,KPV,KPV 10 mg,Lyophilized Vial,49,$49.00,4900,4900,book,4900,mov_15eddad2da8035493bd6,request_access,MATCH
+GRP-0307,Research Peptides & Materials,RUO Research,KPV,KPV 5 mg,Lyophilized Vial,112.5,$112.50,11250,11250,book,11250,mov_a4b4118c4d23b1546c8b,request_access,MATCH
+GRP-0308,Research Peptides & Materials,RUO Research,Kisspeptin,KISSPEPTIN 10 mg,Lyophilized Vial,65,$65.00,6500,6500,book,6500,mov_823a1410e1831e6d845f,request_access,MATCH
+GRP-0309,Research Peptides & Materials,RUO Research,Kisspeptin,KISSPEPTIN 5 mg,Lyophilized Vial,112.5,$112.50,11250,11250,book,11250,mov_4d4f3fc085df5aaf9ae8,request_access,MATCH
+GRP-0310,Research Peptides & Materials,RUO Research,Liraglutide,LIRAGLUTIDE 10 mg,Lyophilized Vial,181.25,$181.25,18125,18125,book,18125,mov_3e5e9840aea10ca2137e,request_access,MATCH
+GRP-0311,Research Peptides & Materials,RUO Research,Liraglutide,LIRAGLUTIDE 20 mg,Lyophilized Vial,218.75,$218.75,21875,21875,book,21875,mov_a75d9a7c5bfa0dec5ece,request_access,MATCH
+GRP-0312,Research Peptides & Materials,RUO Research,Ll-37 (Cap-18),LL-37 CAP-18 5 mg,Lyophilized Vial,125,$125.00,12500,12500,book,12500,mov_95104bb0edee8e97a3a6,request_access,MATCH
+GRP-0313,Research Peptides & Materials,RUO Research,MOTS-C,MOTS-C 10 mg,Lyophilized Vial,49,$49.00,4900,4900,book,4900,mov_72b54c1f1e71b4229c2a,request_access,MATCH
+GRP-0314,Research Peptides & Materials,RUO Research,Melanotan I,Melanotan I 10 mg,Lyophilized Vial,85,$85.00,8500,8500,book,8500,mov_fb757d24b8c1ae0e5efe,request_access,MATCH
+GRP-0315,Research Peptides & Materials,RUO Research,Melanotan II,Melanotan II 10 mg,Lyophilized Vial,39,$39.00,3900,3900,book,3900,mov_71e448565b155e87b979,request_access,MATCH
+GRP-0316,Research Peptides & Materials,RUO Research,Mgf,MGF 2 mg,Lyophilized Vial,117.5,$117.50,11750,11750,book,11750,mov_557749e5f12e1d27e367,request_access,MATCH
+GRP-0317,Research Peptides & Materials,RUO Research,NAD+,NAD+ 1000 mg,Lyophilized Vial,119,$119.00,11900,11900,book,11900,mov_26ba2e0fb6498f8e96ac,request_access,MATCH
+GRP-0318,Research Peptides & Materials,RUO Research,NAD+,NAD+ 500 mg,Lyophilized Vial,79,$79.00,7900,7900,book,7900,mov_60e645f13e186042b62b,request_access,MATCH
+GRP-0319,Research Peptides & Materials,RUO Research,Oxytocin,OXYTOCIN 2 mg,Lyophilized Vial,150,$150.00,15000,15000,book,15000,mov_cf7635f44beb5898b8fe,request_access,MATCH
+GRP-0320,Research Peptides & Materials,RUO Research,Oxytocin,OXYTOCIN 5 mg,Lyophilized Vial,39,$39.00,3900,3900,book,3900,mov_12b96a21ca34f80cdb6a,request_access,MATCH
+GRP-0321,Research Peptides & Materials,RUO Research,PT-141,PT-141 10 mg,Lyophilized Vial,45,$45.00,4500,4500,book,4500,mov_9cc6d7d3967d7507480b,request_access,MATCH
+GRP-0322,Research Peptides & Materials,RUO Research,Pinealon,PINEALON 10 mg,Lyophilized Vial,150,$150.00,15000,15000,book,15000,mov_2d03422d39648068a0e4,request_access,MATCH
+GRP-0323,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 10 mg,Lyophilized Vial,64.5,$64.50,6450,6450,book,6450,mov_0c4a5438cc87ab9d85b6,request_access,MATCH
+GRP-0324,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 15 mg,Lyophilized Vial,89.5,$89.50,8950,8950,book,8950,mov_8f14c1dd839544567d53,request_access,MATCH
+GRP-0325,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 20 mg,Lyophilized Vial,159,$159.00,15900,15900,book,15900,mov_e86aa92d94c61d407578,request_access,MATCH
+GRP-0326,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 30 mg,Lyophilized Vial,112,$112.00,11200,11200,book,11200,mov_7bd700ce0704d66e614e,request_access,MATCH
+GRP-0327,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 40 mg,Lyophilized Vial,189,$189.00,18900,18900,book,18900,mov_0881f51f4947326bf1e0,request_access,MATCH
+GRP-0329,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 5 mg,Lyophilized Vial,175,$175.00,17500,17500,book,17500,mov_0db878384f6f3f42fc1a,request_access,MATCH
+GRP-0328,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 50 mg,Lyophilized Vial,1075,"$1,075.00",107500,107500,book,107500,mov_469cd274fcf41edf3d8e,request_access,MATCH
+GRP-0330,Research Peptides & Materials,RUO Research,Retatrutide + Cagrilintide,RETATRUTIDE 10 mg + CAGRILINTIDE 2.5 mg,Lyophilized Vial,475,$475.00,47500,47500,book,47500,mov_d97f1f887a86b0c31947,request_access,MATCH
+GRP-0331,Research Peptides & Materials,RUO Research,Selank,SELANK 10 mg,Lyophilized Vial,49,$49.00,4900,4900,book,4900,mov_99e4c4e045d188c3026f,request_access,MATCH
+GRP-0332,Research Peptides & Materials,RUO Research,Selank,SELANK 5 mg,Lyophilized Vial,60,$60.00,6000,6000,book,6000,mov_538e701ea3907d766c38,request_access,MATCH
+GRP-0333,Research Peptides & Materials,RUO Research,Semaglutide,SEMAGLUTIDE 10 mg,Lyophilized Vial,89,$89.00,8900,8900,book,8900,mov_0f9bee8bdfc89ec9c2d3,request_access,MATCH
+GRP-0334,Research Peptides & Materials,RUO Research,Semaglutide,SEMAGLUTIDE 15 mg,Lyophilized Vial,313.2,$313.20,31320,31320,book,31320,mov_7b331364b57f9fdd335a,request_access,MATCH
+GRP-0335,Research Peptides & Materials,RUO Research,Semaglutide,SEMAGLUTIDE 20 mg,Lyophilized Vial,99,$99.00,9900,9900,book,9900,mov_ee0d20dec866e2090585,request_access,MATCH
+GRP-0336,Research Peptides & Materials,RUO Research,Semaglutide,SEMAGLUTIDE 5 mg,Lyophilized Vial,28,$28.00,2800,2800,book,2800,mov_3ff3d97173e8a1f7645b,request_access,MATCH
+GRP-0337,Research Peptides & Materials,RUO Research,Semaglutide + BPC-157,SEMAGLUTIDE+BPC-157 5 mg/650 mcgmg/mcg,Lyophilized Vial,200,$200.00,20000,20000,book,20000,mov_50fc8d22f6777f3f0d4d,request_access,MATCH
+GRP-0338,Research Peptides & Materials,RUO Research,Semax,SEMAX 10 mg,Lyophilized Vial,49,$49.00,4900,4900,book,4900,mov_bd3ee913aa6fedf2c743,request_access,MATCH
+GRP-0339,Research Peptides & Materials,RUO Research,Semax + Selank + DSIP,SEMAX 10 mg + SELANK 10 mg + DSIP 2 mg,Lyophilized Vial,247.5,$247.50,24750,24750,book,24750,mov_3e4c0914851a77ba8763,request_access,MATCH
+GRP-0340,Research Peptides & Materials,RUO Research,Sermorelin,SERMORELIN 10 mg,Lyophilized Vial,79,$79.00,7900,7900,book,7900,mov_6a43249c424441bf28bb,request_access,MATCH
+GRP-0341,Research Peptides & Materials,RUO Research,Sermorelin,SERMORELIN 5 mg,Lyophilized Vial,50.5,$50.50,5050,5050,book,5050,mov_e737e2f494af1ea61435,request_access,MATCH
+GRP-0342,Research Peptides & Materials,RUO Research,Snap-8,SNAP-8 10 mg,Lyophilized Vial,168.75,$168.75,16875,16875,book,16875,mov_1981dac64e329b0bf2f8,request_access,MATCH
+GRP-0343,Research Peptides & Materials,RUO Research,Ss-31,SS-31 10 mg,Lyophilized Vial,82.5,$82.50,8250,8250,book,8250,mov_dd89c37657eb69bce04f,request_access,MATCH
+GRP-0344,Research Peptides & Materials,RUO Research,Ss-31,SS-31 50 mg,Lyophilized Vial,250,$250.00,25000,25000,book,25000,mov_0d82ac64c7e39678212c,request_access,MATCH
+GRP-0345,Research Peptides & Materials,RUO Research,TB-500,TB-500 10 mg,Lyophilized Vial,112.5,$112.50,11250,11250,book,11250,mov_5d10608450270b22967f,request_access,MATCH
+GRP-0346,Research Peptides & Materials,RUO Research,TB-500,TB-500 5 mg,Lyophilized Vial,105,$105.00,10500,10500,book,10500,mov_3c9394000d1302336110,request_access,MATCH
+GRP-0347,Research Peptides & Materials,RUO Research,Tesamorelin,TESAMORELIN 10 mg,Lyophilized Vial,99,$99.00,9900,9900,book,9900,mov_b1fbc841c7fb09265cad,request_access,MATCH
+GRP-0348,Research Peptides & Materials,RUO Research,Tesamorelin,TESAMORELIN 5 mg,Lyophilized Vial,169.27499999999998,$169.27,16928,16928,book,16927,mov_52fd0b8a213ee19e40e8,request_access,"ROUNDING_FLOAT_ARTIFACT (half-up 16928, stored 16927)"
+GRP-0349,Research Peptides & Materials,RUO Research,Thymalin,THYMALIN 10 mg,Lyophilized Vial,162.5,$162.50,16250,16250,book,16250,mov_e813930dcd46c36e98e2,request_access,MATCH
+GRP-0350,Research Peptides & Materials,RUO Research,Thymosin Alpha-1,Thymosin Alpha-1 10 mg,Lyophilized Vial,99,$99.00,9900,9900,book,9900,mov_ba80c9a61870131db0cf,request_access,MATCH
+GRP-0351,Research Peptides & Materials,RUO Research,Thymosin Alpha-1,Thymosin Alpha-1 5 mg,Lyophilized Vial,49,$49.00,4900,4900,book,4900,mov_cacbbed2b1431c073e72,request_access,MATCH
+GRP-0352,Research Peptides & Materials,RUO Research,Thymosin Alpha-1 + KPV + LL-37,Thymosin Alpha-1 10 mg + KPV 10 mg + LL-37 5 mg,Lyophilized Vial,300,$300.00,30000,30000,book,30000,mov_11b73649761a6d35f28c,request_access,MATCH
+GRP-0353,Research Peptides & Materials,RUO Research,Thymosin Alpha-1 + KPV + LL-37,Thymosin Alpha-1 5 mg + KPV 5 mg + LL-37 5 mg,Lyophilized Vial,397.5,$397.50,39750,39750,book,39750,mov_971080f20e26e8775e2b,request_access,MATCH
+GRP-0354,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 10 mg,Lyophilized Vial,42,$42.00,4200,4200,book,4200,mov_bb52e1ff1819c70d9db1,request_access,MATCH
+GRP-0355,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 15 mg,Lyophilized Vial,56,$56.00,5600,5600,book,5600,mov_c46129d04e61dd2a9722,request_access,MATCH
+GRP-0356,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 20 mg,Lyophilized Vial,371.70000000000005,$371.70,37170,37170,book,37170,mov_02ca369a8834ebeb0b3b,request_access,MATCH
+GRP-0357,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 30 mg,Lyophilized Vial,79,$79.00,7900,7900,book,7900,mov_c6f57f9b117d418065ff,request_access,MATCH
+GRP-0358,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 40 mg,Lyophilized Vial,700,$700.00,70000,70000,book,70000,mov_20d811a3df0894211cbc,request_access,MATCH
+GRP-0360,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 5 mg,Lyophilized Vial,159.3,$159.30,15930,15930,book,15930,mov_8615d2aea357b8241ba3,request_access,MATCH
+GRP-0359,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 50 mg,Lyophilized Vial,537.5,$537.50,53750,53750,book,53750,mov_eb49bfc0ee44e7b83d52,request_access,MATCH
+GRP-0361,Research Peptides & Materials,RUO Research,Tirzepatide,TIRZEPATIDE 60 mg,Lyophilized Vial,119,$119.00,11900,11900,book,11900,mov_645c8c707682a45abcaa,request_access,MATCH
+GRP-0392,Research Peptides & Materials,Supplier Catalog / Classification Pending,BDNF,BDNF (Brain-derived neurotrophic factor) (10mg),Form not stated,200,$200.00,20000,20000,book,20000,mov_554ae2758dbe92e4baa6,approval_required,MATCH
+GRP-0393,Research Peptides & Materials,Supplier Catalog / Classification Pending,BPC-157,BPC-157 (20mg),Form not stated,157.5,$157.50,15750,15750,book,15750,mov_451f34fca5c1a293b145,approval_required,MATCH
+GRP-0394,Research Peptides & Materials,Supplier Catalog / Classification Pending,CJC-1295 With DAC,CJC-1295 - With DAC (10mg),Form not stated,125,$125.00,12500,12500,book,12500,mov_07317a1fe77fe228b793,approval_required,MATCH
+GRP-0396,Research Peptides & Materials,Supplier Catalog / Classification Pending,Curcumin,Curcumin (600mg),Form not stated,275,$275.00,27500,27500,book,27500,mov_1f87878d1e95e525b15d,approval_required,MATCH
+GRP-0397,Research Peptides & Materials,Supplier Catalog / Classification Pending,Follistatin 344,Follistatin 344 (95%) (1mg),Form not stated,287.5,$287.50,28750,28750,book,28750,mov_b96d05f393b7e3fb6a3f,approval_required,MATCH
+GRP-0398,Research Peptides & Materials,Supplier Catalog / Classification Pending,GHK-Cu,GHK-Cu (75mg),Form not stated,92.5,$92.50,9250,9250,book,9250,mov_361af70608afc9c98ec0,approval_required,MATCH
+GRP-0391,Research Peptides & Materials,Supplier Catalog / Classification Pending,GHRP-2 + Tesamorelin + MGF + Ipamorelin,4X Blend GHRP-2 (5mg) / Tesamorelin (5mg) / MGF (500mcg) / Ipamorelin (2.5mg),Form not stated,137.5,$137.50,13750,13750,book,13750,mov_b303ae9f0574c2d83337,approval_required,MATCH
+GRP-0399,Research Peptides & Materials,Supplier Catalog / Classification Pending,GLOW (GHK-Cu + BPC-157 + TB-500),GLOW GHK-Cu(27mg) / BPC-157 (5mg) / TB-500 (10mg),Form not stated,162.5,$162.50,16250,16250,book,16250,mov_5e74aacac728cfcbd11f,approval_required,MATCH
+GRP-0400,Research Peptides & Materials,Supplier Catalog / Classification Pending,Gonadorelin,Gonadorelin (10mg),Form not stated,137.5,$137.50,13750,13750,book,13750,mov_9a217007a7fb93111200,approval_required,MATCH
+GRP-0401,Research Peptides & Materials,Supplier Catalog / Classification Pending,HCG,HCG(120000iu),Form not stated,137.5,$137.50,13750,13750,book,13750,mov_13073979f2da65f4e160,approval_required,MATCH
+GRP-0403,Research Peptides & Materials,Supplier Catalog / Classification Pending,HGH,HGH (10iu),Form not stated,112.5,$112.50,11250,11250,book,11250,mov_64db7bf766cd1d66694d,approval_required,MATCH
+GRP-0402,Research Peptides & Materials,Supplier Catalog / Classification Pending,Hexarelin,Hexarelin (5mg),Form not stated,62.5,$62.50,6250,6250,book,4900,mov_7c55d415a9574e9ebda7,approval_required,SUPERSEDED_PROVENANCE_ROW (canonical GRP-0426)
+GRP-0404,Research Peptides & Materials,Supplier Catalog / Classification Pending,IGF-1 DES,IGF-1 DES (1mg),Form not stated,150,$150.00,15000,15000,book,15000,mov_69a9f7466c5385ab9811,approval_required,MATCH
+GRP-0405,Research Peptides & Materials,Supplier Catalog / Classification Pending,LL-37 Complex,LL-37 Complex (5mg),Form not stated,237.5,$237.50,23750,23750,book,23750,mov_7871c059b8a970a5b3d1,approval_required,MATCH
+GRP-0406,Research Peptides & Materials,Supplier Catalog / Classification Pending,MGF,MGF (IGF-1Ec) (5mg),Form not stated,130,$130.00,13000,13000,book,13000,mov_d2bd32bf961854a033b1,approval_required,MATCH
+GRP-0407,Research Peptides & Materials,Supplier Catalog / Classification Pending,Oxytocin,Oxytocin (10mg),Form not stated,107.5,$107.50,10750,10750,book,5900,mov_256cb0423eb6d2a77f65,approval_required,SUPERSEDED_PROVENANCE_ROW (canonical GRP-0425)
+GRP-0408,Research Peptides & Materials,Supplier Catalog / Classification Pending,PE-22-28,PE-22-28 (10mg),Form not stated,80,$80.00,8000,8000,book,8000,mov_0ba805e868711366428d,approval_required,MATCH
+GRP-0409,Research Peptides & Materials,Supplier Catalog / Classification Pending,PT-141,PT-141 (5mg),Form not stated,80,$80.00,8000,8000,book,8000,mov_dc6c3bf9bc23dd55adc1,approval_required,MATCH
+GRP-0410,Research Peptides & Materials,Supplier Catalog / Classification Pending,Retatrutide / GLP-3,GLP-3 (12mg),Form not stated,275,$275.00,27500,27500,book,27500,mov_973154f49c156dcf7a72,approval_required,MATCH
+GRP-0411,Research Peptides & Materials,Supplier Catalog / Classification Pending,Retatrutide / GLP-3,GLP-3 (24mg),Form not stated,500,$500.00,50000,50000,book,50000,mov_867e32ca427228fdd87e,approval_required,MATCH
+GRP-0414,Research Peptides & Materials,Supplier Catalog / Classification Pending,SS-31,SS-31 (15mg),Form not stated,125,$125.00,12500,12500,book,12500,mov_b67ab9e8cd671273f3c1,approval_required,MATCH
+GRP-0412,Research Peptides & Materials,Supplier Catalog / Classification Pending,Semaglutide / GLP-1,GLP-1 (2mg),Form not stated,100,$100.00,10000,10000,book,10000,mov_06849c26f971f74805ef,approval_required,MATCH
+GRP-0413,Research Peptides & Materials,Supplier Catalog / Classification Pending,Semax,Semax (30mg),Form not stated,75,$75.00,7500,7500,book,7500,mov_8bec8068d30d6f928040,approval_required,MATCH
+GRP-0415,Research Peptides & Materials,Supplier Catalog / Classification Pending,Survodutide,Survodutide (6mg),Form not stated,187.5,$187.50,18750,18750,book,18750,mov_32c1c33224d5fca42b1e,approval_required,MATCH
+GRP-0416,Research Peptides & Materials,Supplier Catalog / Classification Pending,Tesamorelin,Tesamorelin (8mg) x 4 pack,Form not stated,187.5,$187.50,18750,18750,book,18750,mov_96f011e65e7b6a72f8c9,approval_required,MATCH
+GRP-0388,Research Peptides & Materials,Supplier Catalog / Classification Pending,Tesamorelin + Ipamorelin,2X Blend Tesamorelin (10mg) / Ipamorelin (5mg),Form not stated,125,$125.00,12500,12500,book,12500,mov_287c60ca423250ef75d6,approval_required,MATCH
+GRP-0389,Research Peptides & Materials,Supplier Catalog / Classification Pending,Tesamorelin + Ipamorelin,2X Blend Tesamorelin (5mg) / Ipamorelin (5mg),Form not stated,117.5,$117.50,11750,11750,book,11750,mov_dc26bcbba0510c5bb57b,approval_required,MATCH
+GRP-0390,Research Peptides & Materials,Supplier Catalog / Classification Pending,Tesamorelin + MGF + Ipamorelin,3X Blend Tesamorelin (5mg) / MGF (500mcg) / Ipamorelin (2.5mg),Form not stated,117.5,$117.50,11750,11750,book,11750,mov_dd8bb706cb498b40864d,approval_required,MATCH
+GRP-0417,Research Peptides & Materials,Supplier Catalog / Classification Pending,Thymosin Alpha-1 + Thymulin,Thymosin Alpha 1 (TA1) Complex Thymulin (10mg/6.4mg),Form not stated,175,$175.00,17500,17500,book,17500,mov_2a06e3a4fa8fb02b64cf,approval_required,MATCH
+GRP-0362,Research Supplies,RUO Research,Acetic Acid 0.6%,ACETIC ACID 0.6% 5 mL,Liquid,37.5,$37.50,3750,3750,book,3750,mov_30d35dcbc0bc8d59ff5b,request_access,MATCH
+GRP-0363,Research Supplies,RUO Research,Reconstitution Solution,RECONSTITUTION SOLUTION 4 mL,Solution,30,$30.00,3000,3000,book,3000,mov_88fd1531d586cdebb896,request_access,MATCH
+GRP-0364,Shipping & Fulfillment,Clinical / Provider Only,FedEx Standard Overnight,FedEx Standard Overnight,Shipping Service,37.5,$37.50,3750,3750,book,,,,NOT_A_PRODUCT_SHIPPING_LINE
+GRP-0365,Shipping & Fulfillment,Clinical / Provider Only,Syringes & Alcohol Swabs,Syringes & Alcohol Swabs,Included Supply,,Price on request,,,book,,,,PRICE_ON_REQUEST_NEVER_ZERO
+GRP-0366,Supplements,Supplement,Annatto Pro 125,Retail unit / package,Supplement Unit,74.7,$74.70,7470,7470,book,7470,mov_9813dabbc127f6b382fb,request_access,MATCH
+GRP-0367,Supplements,Supplement,Brain Restore,Retail unit / package,Supplement Unit,168.75,$168.75,16875,16875,book,16875,mov_845dc69ae9dd6cd6ba34,request_access,MATCH
+GRP-0368,Supplements,Supplement,Chondro Jointaide,Retail unit / package,Supplement Unit,149.375,$149.38,14938,14938,book,14938,mov_2de19f71e09e8bc3febb,request_access,MATCH
+GRP-0369,Supplements,Supplement,Collagen Renew (Dynamic Multi),Retail unit / package,Supplement Unit,117.375,$117.38,11738,11738,book,11738,mov_7c6e65b041ae3bfe5262,request_access,MATCH
+GRP-0370,Supplements,Supplement,Fruits & Greens,Retail unit / package,Supplement Unit,68,$68.00,6800,6800,book,6800,mov_cdfb19499637f274f271,request_access,MATCH
+GRP-0371,Supplements,Supplement,GI Defend,Retail unit / package,Supplement Unit,108.125,$108.12,10813,10813,book,10813,mov_6f2d07f881d861bf3991,request_access,MATCH_HALF_UP (book display differs by 1c)
+GRP-0372,Supplements,Supplement,Hydrate,Retail unit / package,Supplement Unit,39.375,$39.38,3938,3938,book,3938,mov_d6a8b2cd129bda39d8fa,request_access,MATCH
+GRP-0373,Supplements,Supplement,Inflam-Eze (30-serving),Retail unit / package,Supplement Unit,163.75,$163.75,16375,16375,book,16375,mov_0f3fa003c76aadef763c,request_access,MATCH
+GRP-0374,Supplements,Supplement,Longevity Essentials NAD+,Retail unit / package,Supplement Unit,65.5,$65.50,6550,6550,book,6550,mov_e74adec4c45f9c9db404,request_access,MATCH
+GRP-0375,Supplements,Supplement,Magtein (Magnesium L-Threonate),Retail unit / package,Supplement Unit,88.75,$88.75,8875,8875,book,8875,mov_f5d63d95caa3d6d0a7a0,request_access,MATCH
+GRP-0376,Supplements,Supplement,Mito Recharge,Retail unit / package,Supplement Unit,86.25,$86.25,8625,8625,book,8625,mov_199a0126b086cc43cb1b,request_access,MATCH
+GRP-0377,Supplements,Supplement,Omega Pure EPA-DHA 2400,Retail unit / package,Supplement Unit,71.875,$71.88,7188,7188,book,7188,mov_b90f51978a7223e9fc58,request_access,MATCH
+GRP-0378,Supplements,Supplement,PRM Resolve,Retail unit / package,Supplement Unit,102.375,$102.38,10238,10238,book,10238,mov_ce2fc5bcfb622d8de591,request_access,MATCH
+GRP-0379,Supplements,Supplement,PeriMenopause Support,Retail unit / package,Supplement Unit,43.125,$43.12,4313,4313,book,4313,mov_80916d9782f415a13ad3,request_access,MATCH_HALF_UP (book display differs by 1c)
+GRP-0380,Supplements,Supplement,Rejuvenate+,Retail unit / package,Supplement Unit,94.875,$94.88,9488,9488,book,9488,mov_904af0a54faddfe2f21f,request_access,MATCH
+GRP-0381,Supplements,Supplement,Stress Essentials Balance,Retail unit / package,Supplement Unit,87.375,$87.38,8738,8738,book,8738,mov_8af22768144442c60424,request_access,MATCH
+GRP-0382,Supplements,Supplement,Stress Essentials Calm,Retail unit / package,Supplement Unit,87.375,$87.38,8738,8738,book,8738,mov_ffe0eef7766200ac8c53,request_access,MATCH
+GRP-0383,Supplements,Supplement,UltraBiotic Akkermansia Plus,Retail unit / package,Supplement Unit,78.75,$78.75,7875,7875,book,7875,mov_dbb59b83827a556051da,request_access,MATCH
+GRP-0384,Supplements,Supplement,UltraBiotic Prebiotic,Retail unit / package,Supplement Unit,107.375,$107.38,10738,10738,book,10738,mov_d91d7248ed06d7280a2d,request_access,MATCH
+GRP-0385,Supplements,Supplement,Uplift+,Retail unit / package,Supplement Unit,91.25,$91.25,9125,9125,book,9125,mov_4a105b161858064229f3,request_access,MATCH
+GRP-0386,Topicals & Regenerative,Nonclinical / Topical,Exosome Cream,EXOSOME CREAM 30 mL,Topical Cream,525,$525.00,52500,52500,book,52500,mov_a254cb6fc62c40bf975d,request_access,MATCH
+GRP-0387,Topicals & Regenerative,Nonclinical / Topical,GHKcu,GHK-Cu 30 mL,Topical Cream,400,$400.00,40000,40000,book,40000,mov_8578e13fb8475e39f618,request_access,MATCH
+GRP-0420,Topicals & Regenerative,Nonclinical / Topical,Radient XO Serum,Radient XO Serum (5 Billion Exosomes),Topical Serum,750,$750.00,75000,75000,book,75000,mov_ea6077e070c07548c709,request_access,MATCH
+GRP-0421,Research Peptides & Materials,RUO Research,Retatrutide,RETATRUTIDE 60 mg,Lyophilized Vial,249,$249.00,24900,24900,book,,,,MISSING_VARIANT_FOUNDER_DECISION_RECORDED_NOT_CREATED
+GRP-0422,Research Peptides & Materials,RUO Research,CJC-1295 + Ipamorelin,CJC-1295 WITH DAC + IPAMORELIN 5 mg total (split pending),Lyophilized Vial,99,$99.00,9900,9900,book,,,,HOLD_FORMULATION_UNCONFIRMED_NO_VARIANT
+GRP-0423,Research Peptides & Materials,RUO Research,MOTS-C,MOTS-C 40 mg,Lyophilized Vial,129,$129.00,12900,12900,book,,,,MISSING_VARIANT_FOUNDER_DECISION_RECORDED_NOT_CREATED
+GRP-0424,Research Peptides & Materials,RUO Research,Glutathione,GLUTATHIONE 600 mg,Lyophilized Vial,69,$69.00,6900,6900,book,,,,MISSING_VARIANT_FOUNDER_DECISION_RECORDED_NOT_CREATED
+GRP-0425,Research Peptides & Materials,RUO Research,Oxytocin,OXYTOCIN 10 mg,Lyophilized Vial,59,$59.00,5900,10750,founder-2026-08-21 merge keeps GRP-0425,,,,"FOUNDER_REPRICE_NOT_APPLIED (decided 10750, last recorded live 5900 on GEN-GRP-0407; runtime carries superseded identity)"
+GRP-0426,Research Peptides & Materials,RUO Research,Hexarelin,HEXARELIN 5 mg,Lyophilized Vial,49,$49.00,4900,6250,founder-2026-08-21 merge keeps GRP-0426,,,,"FOUNDER_REPRICE_NOT_APPLIED (decided 6250, last recorded live 4900 on GEN-GRP-0402; runtime carries superseded identity)"

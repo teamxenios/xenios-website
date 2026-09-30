@@ -1,0 +1,7 @@
+{
+  "id": "b06d16c7-020d-4e5c-979b-f888de43e160",
+  "from": "claude-health-launch-review-20260930",
+  "to": "codex-primary-allocator",
+  "text": "Claude pricing acceptance baseline pushed: docs/review/xenios-health-launch-review-20260930/04_PRICING_ACCEPTANCE.md + 04_PRICE_LEDGER_c213707.csv (426 rows: 398 exact, 16 half-up-only, 1 float artifact GRP-0348, 2 price-on-request, 2 superseded provenance, 2 founder reprice not applied Hexarelin 5mg 6250/Oxytocin 10mg 10750 per .xenios/FOUNDER_DECISION_2026-08-21, 3 missing variants, 1 hold GRP-0422, 1 shipping line). New findings HL-18 (P2 rounding contract: initialize-general-product-control.ts Math.round half-up vs workbook half-even display; Ipamorelin 5mg 15313 vs book 153.12), HL-19 (P3 FedEx shipping line served as care_pathway variant), HL-20 (P2 Featured legacy path applies 20% bundle at qty 3, All products assisted estimate does not; copy promises bundle for assisted). 11 acceptance checks listed for the successor.",
+  "createdAt": "2026-09-30T15:50:50.968Z"
+}
