@@ -1,0 +1,43 @@
+SUBSTITUTIONS ["requireSupabaseAdmin -> header stand-in stamping adminAuthUserId","member auth -> header stand-in","manual ledger authority -> SYNTHETIC in-memory ledger (production composes null)","outbox/audit -> in-memory capture","verifier grants inserted directly in SQL (no grant route exists)"]
+CASE {"case":"S1 admin issues quote (server-derived total)","result":{"status":201,"total":10000,"version":1,"priceSource":"catalog"}}
+CASE {"case":"S2 owner reads quote","result":{"status":200,"total":10000,"hasPricingBasis":false}}
+CASE {"case":"S3 owner accepts exact quote","result":{"status":200,"acceptanceId":true,"replayed":false}}
+CASE {"case":"S4 granted admin records independent manual observation","result":{"status":201,"replayed":false}}
+CASE {"case":"S5 verify -> paid","result":{"status":200,"state":"paid","replayed":false,"requestStatus":"paid","verifications_paidEvents":"1/1","customerNotificationIntents":0}}
+CASE {"case":"S6 identical retry","result":{"status":200,"replayed":true,"verifications_paidEvents":"1/1"}}
+CASE {"case":"S7 verified paid -> supplier_processing through mounted route","result":{"status":409,"code":"payment_verification_not_ready","requestStatus":"paid"}}
+CASE {"case":"S8 same transition at SQL layer","result":"ACCEPTED -> supplier_processing"}
+CASE {"case":"P1 PRODUCTION composition (manualEvidence=null): manual observation","result":{"quoteIssue":201,"status":409,"code":"manual_evidence_unavailable"}}
+CASE {"case":"N1 foreign member reads quote","result":404}
+CASE {"case":"N1b no credential reads quote","result":404}
+CASE {"case":"N1c status-token holder reads quote","result":200}
+CASE {"case":"N1d foreign member accepts","result":404}
+CASE {"case":"N2 accept with wrong total","result":{"status":409,"code":"quote_stale"}}
+CASE {"case":"N3 accept superseded v1 after v2 issued","result":{"status":404,"code":"not_found","v2":2}}
+CASE {"case":"N4 admin tries to reprice a priced line","result":{"status":409,"code":"financial_action_refused"}}
+CASE {"case":"N5 re-issue after acceptance (accepted quote immutable)","result":{"status":409,"code":"financial_action_refused"}}
+CASE {"case":"N6 accept expired quote","result":{"status":409,"code":"quote_stale"}}
+CASE {"case":"N7 verify against unaccepted quote","result":{"observe":409,"status":400,"code":"validation_error","requestStatus":"payment_review","verifications_paidEvents":"0/0"}}
+CASE {"case":"N8 1c underpayment","result":{"observe":201,"verify":409,"code":"payment_mismatch","requestStatus":"payment_review","correctedObservation":{"status":409,"code":"payment_reference_reused"}}}
+CASE {"case":"N9 1c overpayment","result":{"observe":201,"verify":409,"code":"payment_mismatch","requestStatus":"payment_review","correctedObservation":{"status":409,"code":"payment_reference_reused"}}}
+CASE {"case":"N10 wrong currency EUR","result":{"observe":201,"verify":409,"code":"payment_mismatch","requestStatus":"payment_review","correctedObservation":{"status":409,"code":"payment_reference_reused"}}}
+CASE {"case":"N10b lowercase usd","result":{"observe":201,"verify":409,"code":"payment_mismatch","requestStatus":"payment_review","correctedObservation":{"status":409,"code":"payment_reference_reused"}}}
+CASE {"case":"N11 verifier without grant (guarded admin uid, no grant)","result":{"status":403,"code":"forbidden","requestStatus":"payment_review"}}
+CASE {"case":"N12 different granted admin verifies (not the observer)","result":{"status":403,"code":"forbidden","requestStatus":"payment_review"}}
+CASE {"case":"N13 body injects verifier identity","result":{"status":403,"code":"forbidden"}}
+CASE {"case":"N14 valid observation under a different request path","result":{"status":404,"code":"not_found","requestStatus":"payment_review"}}
+CASE {"case":"N15 direct PostgREST call to obsolete unbound verify (service_role)","result":"REFUSED 42501"}
+CASE {"case":"N16 verify_bound as anon","result":"REFUSED 42501"}
+CASE {"case":"N16 verify_bound as authenticated","result":"REFUSED 42501"}
+CASE {"case":"N17 set_status paid with ANOTHER order's verification id","result":"REFUSED P0001 ASSISTED_ORDER_PAYMENT_VERIFICATION_REQUIRED"}
+CASE {"case":"N18 HTTP PATCH status paid","result":{"status":409,"code":"payment_verification_not_ready"}}
+CASE {"case":"N19 same bank evidence ref for a second order (synthetic ledger rejects mismatched request)","result":{"first":200,"second":{"status":409,"code":"manual_evidence_unverified"}}}
+CASE {"case":"N19b SQL alone: same source_evidence_ref accepted for a second order?","result":"ACCEPTED (source_evidence_ref not unique)"}
+CASE {"case":"N20 two concurrent identical verifies","result":{"a":[200,false],"b":[200,true],"verifications_paidEvents":"1/1","rollbackDelta":0}}
+CASE {"case":"N21 verify while not in payment_review (atomicity)","result":{"status":409,"code":"financial_action_refused","requestStatus":"payment_pending","verifications_paidEvents":"0/0"}}
+CASE {"case":"C1 cancel from payment_pending (free text)","result":200}
+CASE {"case":"C2 cancel from payment_review AFTER money observed (free text only)","result":{"status":200,"code":null,"requestStatus":"cancelled"}}
+CASE {"case":"C3 cancel verified paid order (HTTP)","result":{"status":500,"code":"assisted_order_unavailable"}}
+CASE {"case":"C3b cancel verified paid/supplier_processing order (SQL)","result":"REFUSED P0001 ASSISTED_ORDER_REFUND_AUTHORITY_NOT_READY"}
+CASE {"case":"C4 historical paid (no verification) -> supplier_processing (SQL)","result":"REFUSED P0001 ASSISTED_ORDER_HISTORICAL_PAID_UNRESOLVED"}
+CASE {"case":"Z rollback delta for whole run","result":23}
