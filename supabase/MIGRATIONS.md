@@ -306,3 +306,21 @@ fail-closed interim control, **not** a complete paid-order path or HL-12 closeou
 No managed environment, customer record, real money or hosted configuration
 was changed. See `verification/20260930_assisted_order_quote_paid_hold_local.md`
 for the local proof and safe rollback rule.
+
+## Assisted-order quote/payment SQL foundation pending HL-12 — pending 2026-09-30
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 82 | migrations/20260930202413_research_assisted_order_quote_payment_authority.sql | Add accepted quote/version/total and atomic verification records with bounded service-role RPCs; preserve denial for unsupported paid transitions | PENDING; source-only, not applied to managed staging or production |
+
+Source commit `c92d7a93e7b443cccd949f8903b62db77d425603` pins canonical
+Git blob SHA-256 `f59dc7d285a7c5714ec1a81ec2e0dfb469ef4434da355f15a85ca1e366c5a894`.
+It applied twice to disposable PostgreSQL 17 after its pending predecessors,
+and local SQL assertions passed. This is a **foundation, not HL-12 closeout**:
+the mounted application still rejects paid transitions, and no provider
+signature adapter or payment-attempt binding exists. Historical paid labels,
+refund/cancellation authority, managed RLS/PostgREST qualification and release
+approval remain open. See
+`../server/research/assisted-order/HEALTH_HL12_SQL_FOUNDATION_HANDOFF_20260930.md`
+and `verification/research_assisted_order_quote_payment_foundation_local.sql`.
+No hosted environment was contacted.

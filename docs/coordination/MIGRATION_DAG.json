@@ -829,6 +829,27 @@
         "evidence": "Applied twice on disposable PostgreSQL 17; a synthetic service-role paid transition with typed verification id was refused P0001 with zero paid events; PostgREST 14.13 returned in 115 ms. Historical paid labels were denied fulfillment and cancellation without financial authority. No managed environment contacted."
       },
       "notes": "Source-only temporary HL-12 paid hold. It prevents unsupported financial assertions but does not create an accepted quote or payment-verification authority, so purchasing remains incomplete. Managed application requires separate exact approval."
+    },
+    {
+      "id": "research_assisted_order_quote_payment_authority",
+      "path": "supabase/migrations/20260930202413_research_assisted_order_quote_payment_authority.sql",
+      "sourceSha": "c92d7a93e7b443cccd949f8903b62db77d425603",
+      "dependsOn": [
+        "research_assisted_order_quote_paid_hold"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "f59dc7d285a7c5714ec1a81ec2e0dfb469ef4434da355f15a85ca1e366c5a894"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "disable_assisted_order_payment_paths_and_roll_forward_under_controlled_change",
+        "procedure": "server/research/assisted-order/HEALTH_HL12_SQL_FOUNDATION_HANDOFF_20260930.md",
+        "evidence": "Exact canonical source bytes applied twice on disposable PostgreSQL 17 with synthetic roles and M71/HL-26/paid-hold predecessors. Local SQL assertions cover exact quote totals, owner binding, stale quote rejection, replay, ACL, append-only records, amount/currency mismatch, reused payment identity, wrong actor and interrupted-write rollback. No managed database or provider callback was contacted."
+      },
+      "notes": "Source-only HL-12 SQL foundation, not a complete payment implementation. The mounted application still rejects paid transitions; provider signature verification, payment-attempt binding, historical paid review and post-paid refund/cancellation authority remain open. No managed application is authorized."
     }
   ],
   "invariants": [

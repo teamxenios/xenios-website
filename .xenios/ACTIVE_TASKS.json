@@ -679,7 +679,7 @@
       "id": "ASSISTED-ORDER-CONVERSION",
       "title": "Close the assisted-order operator loop: quote issuance, customer acceptance, evidence tooling",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/research/assisted-order/**",
@@ -696,9 +696,9 @@
       "claimedAt": "2026-09-30T20:05:40.066Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
-        "sha": "f318859262812b8fc1fcb6d2c8e697d86a209349",
-        "file": ".xenios/handoffs/2026-09-30T19-40-12-455Z-ASSISTED-ORDER-CONVERSION-codex-xenios-health-launch-implementation-20260930.md",
-        "at": "2026-09-30T19:40:12.461Z"
+        "sha": "c92d7a93e7b443cccd949f8903b62db77d425603",
+        "file": ".xenios/handoffs/2026-09-30T20-40-59-214Z-ASSISTED-ORDER-CONVERSION-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-09-30T20:40:59.219Z"
       }
     },
     {
@@ -2685,17 +2685,17 @@
     },
     {
       "id": "ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930",
-      "title": "Register source-only assisted-order paid hold pending HL-12 authority",
+      "title": "Register source-only assisted-order financial migrations pending HL-12 authority",
       "priority": "P0",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "docs/coordination/MIGRATION_DAG.json",
         "supabase/MIGRATIONS.md"
       ],
       "dependsOn": [],
-      "scopeNote": "Register exact f318859 source-only fail-closed SQL; maintain PENDING managed state and explicitly preserve HL-12 as open.",
-      "claimedAt": "2026-09-30T19:36:05.314Z",
+      "scopeNote": "Register exact f318859 paid hold and c92d7a9 SQL foundation; maintain PENDING managed state and explicitly preserve HL-12 as open.",
+      "claimedAt": "2026-09-30T20:41:06.439Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
         "sha": "f318859262812b8fc1fcb6d2c8e697d86a209349",

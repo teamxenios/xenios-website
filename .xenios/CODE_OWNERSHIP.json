@@ -2837,9 +2837,21 @@
         "supabase/verification/*assisted_order_quote*",
         "server/research/commerce/persistence/admin-queues-store.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T20:05:40.077Z",
       "heartbeatAt": "2026-09-30T20:39:52.951Z"
+    },
+    {
+      "id": "1bf69716-141b-4d88-b3fe-48964396510d",
+      "task": "ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-30T20:41:06.441Z",
+      "heartbeatAt": "2026-09-30T20:41:06.441Z"
     }
   ],
   "rules": [
