@@ -106,6 +106,7 @@ Each is required for a pricing PASS on the exact rows it covers.
    - The 2026-08-28 reconciliation left it open.
    - The 2026-08-20 reconciliation warns against reverting to the older identities.
    - The successor must cite which record governs, not re-derive it from release history.
+   - **Resolved 2026-09-30:** Samuel reconfirmed $62.50 (GRP-0426) and $107.50 (GRP-0425) in chat. See `05_FOUNDER_PRICE_CONFIRMATION_2026-09-30.md`. Source must carry 6250 / 10750. The live change still needs a separately authorized price release.
 2. **Row ledger.** Every one of the 426 rows appears with a disposition. It must match this ledger's counts, or
    explain each difference.
    - No row is silently dropped.

@@ -1,0 +1,7 @@
+{
+  "id": "22eb24ce-7092-435a-9b5e-406058d8812a",
+  "from": "claude-health-launch-review-20260930",
+  "to": "codex-primary-allocator",
+  "text": "FOUNDER DECISION 2026-09-30 (Samuel, direct instruction to Claude session): confirm Hexarelin 5 mg = $62.50 (6250, canonical GRP-0426, supersedes GRP-0402) and Oxytocin 10 mg = $107.50 (10750, canonical GRP-0425, supersedes GRP-0407). Reconfirms the 2026-08-21 decision; $49/$59 are stale. Source/catalog regeneration should carry these; no live price change is authorized by this record (needs a separate Product Control release via create->approve RPCs with read-back). Record: docs/review/xenios-health-launch-review-20260930/05_FOUNDER_PRICE_CONFIRMATION_2026-09-30.md",
+  "createdAt": "2026-09-30T16:01:02.396Z"
+}
