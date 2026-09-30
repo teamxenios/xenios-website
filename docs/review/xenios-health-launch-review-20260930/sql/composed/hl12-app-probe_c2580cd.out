@@ -1,0 +1,14 @@
+CASE {"case":"P0 legitimate walk submitted->reviewing->payment_pending->payment_review via HTTP","result":"OK"}
+CASE {"case":"C1 paid with arbitrary text verification id 'x'","result":{"status":200,"code":null,"newStatus":"paid"}}
+CASE {"case":"C2 paid with whitespace verification id","result":{"status":500,"code":"assisted_order_unavailable","newStatus":null}}
+CASE {"case":"C3 paid with verifiedAmountCents 1 vs 10000 estimate","result":{"status":200,"code":null,"newStatus":"paid"}}
+CASE {"case":"C4 paid with currency EUR on USD request","result":{"status":200,"code":null,"newStatus":"paid"}}
+CASE {"case":"C6 same verification id on two orders","result":{"first":{"status":200,"code":null,"newStatus":"paid"},"second":{"status":200,"code":null,"newStatus":"paid"}}}
+CASE {"case":"C7 replay paid on an already-paid order","result":{"status":409,"code":"invalid_status_transition","newStatus":null}}
+CASE {"case":"C8 paid -> cancelled with only a cancellation reason (no refund evidence)","result":{"status":200,"code":null,"newStatus":"cancelled"}}
+CASE {"case":"C9 two concurrent verifiers on one order","result":{"a":{"status":200,"code":null,"newStatus":"paid"},"b":{"status":409,"code":"invalid_status_transition","newStatus":null}}}
+CASE {"case":"C10 no admin (stand-in guard)","result":{"status":401,"code":"admin_required","newStatus":null}}
+CASE {"case":"C11 body tries to set actor / expected status","result":{"status":200,"code":null,"newStatus":"paid"}}
+CASE {"case":"C12 skip to paid from reviewing","result":{"status":409,"code":"invalid_status_transition","newStatus":null}}
+CASE {"case":"C13 direct PostgREST set_status as anon","result":"REFUSED 42501 permission denied for function research_assisted_order_set_status"}
+CASE {"case":"C13 direct PostgREST set_status as authenticated","result":"REFUSED 42501 permission denied for function research_assisted_order_set_status"}
