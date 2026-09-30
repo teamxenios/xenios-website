@@ -299,6 +299,35 @@ Severity key:
 - **Correction:** refuse `available`, a price and an affiliate URL server-side until an approval record exists, or
   remove the member route. It must not become a launch dependency.
 
+## HL-15 · P2 · Order-request contact step does not identify invalid fields
+
+- **Seam:** the Early Access assisted-order contact step (`client/src/research/assisted-order/AssistedOrderPage.tsx`).
+- **Reproduced:** browser, J7 in `02_BROWSER_JOURNEYS_c213707.md`.
+- **Actual:** pressing Continue with empty required fields shows one generic alert: "Complete all required contact
+  and shipping fields." No field gets `aria-invalid`, no field is named, and focus stays on `BODY`.
+- **Expected:** WCAG 3.3.1 and 3.3.3. Each invalid field is marked and described, and focus moves to the first
+  invalid field or to an error summary that links to the fields.
+- **Consequence:** keyboard and screen-reader users cannot find what is missing. This is the only live purchase path.
+- **Correction:** add per-field error text with `aria-describedby` and `aria-invalid`, and focus the first
+  invalid field.
+
+## HL-16 · P3 · Focus falls to `BODY` on each step change and after submit
+
+- **Actual:** the step changes (1 to 2, 2 to 3, and submit to confirmation) leave focus on `BODY`. They are
+  announced through `role=status`, which partly mitigates this.
+- **Correction:** focus each step heading, or the confirmation `h1`.
+
+## HL-17 · P2 · Research shell "Research" and "Get access" links go to a route that redirects home
+
+- **Seam:**
+  - `client/src/App.tsx:258` redirects `/research/access-hub` to `/`.
+  - Linked from `client/src/lib/nav.ts:75` ("Get access"), `research/lib/routes.ts:11`,
+    `research/account/AccountSignIn.tsx:64` ("View all access options") and the research shell navigation seen
+    on the confirmation and status pages.
+- **Consequence:** a customer inside the ordering journey who presses "Research" or "Get access" leaves the
+  journey for home. This adds to the HL-01 loop.
+- **Correction:** point these links to the real ordering entry, or remove them.
+
 ## Additional P3 notes (verified)
 
 - `/individuals` says "No public price is shown" (`client/src/clarity/pages.tsx:83`), but the catalog projection
