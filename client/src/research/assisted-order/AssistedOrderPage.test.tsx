@@ -1008,6 +1008,15 @@ describe("AssistedOrderStatusPage verified identity", () => {
     act(() => root!.render(<AssistedOrderStatusPage />));
   }
 
+  it("does not present a historical paid label as fresh payment verification", async () => {
+    statusSession.memberToken = "synthetic-member-a";
+    api.loadAssistedOrderStatus.mockResolvedValue({ ...statusView, status: "paid", timeline: [] });
+    window.history.replaceState({}, "", `/research/early-access/order-request/${receipt.publicReference}`);
+    renderStatus(); await settle(20);
+    expect(host!.textContent).toContain("Payment record under review");
+    expect(host!.textContent).not.toContain("Your payment is confirmed");
+  });
+
   it("reads owner-linked requests with the current bearer and renders nullable estimates and opaque tracking", async () => {
     statusSession.memberToken = "synthetic-member-a";
     storeAssistedOrderReceipt(receipt);

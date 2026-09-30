@@ -37,10 +37,11 @@ function customerStatus(status: AssistedOrderStatusView["status"]): { label: str
     case "payment_pending":
       return { label: "Awaiting payment", line: "Use the payment details we emailed." };
     case "payment_review":
-      return { label: "Verifying payment", line: "We verify every payment by hand." };
+      return { label: "Payment review", line: "Contact Support for the current payment status." };
     case "paid":
+      return { label: "Payment record under review", line: "Contact Support before relying on this payment record." };
     case "supplier_processing":
-      return { label: "Preparing your order", line: "Your payment is confirmed." };
+      return { label: "Preparing your order", line: "Check the request timeline for the latest update." };
     case "shipped":
       return { label: "Shipped", line: "Tracking appears below when it is available." };
     case "delivered":

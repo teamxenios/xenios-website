@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import type {
   AssistedOrderCatalogItem,
+  AssistedOrderStatus,
   AssistedOrderSubmitInput,
 } from "../../../shared/research/assisted-order/contract";
 import type {
@@ -727,6 +728,35 @@ describe("AssistedOrderService", () => {
         documentId: ticket.documentId,
       }),
     ).toMatchObject({ status: "upload_pending" });
+  });
+
+  it("does not use a historical paid label to authorize fulfillment or cancellation", async () => {
+    const h = harness();
+    const receipt = await h.service.submit(memberViewer, input());
+    let fromStatus: AssistedOrderStatus = "submitted";
+    for (const toStatus of ["reviewing", "payment_pending", "payment_review", "paid"] as const) {
+      await h.repository.updateStatus({
+        requestId: receipt.requestId,
+        fromStatus,
+        toStatus,
+        actorId: "historical-import",
+        actorType: "system",
+        customerMessage: null,
+        internalNote: null,
+        evidence: {},
+        occurredAt: "2026-08-15T12:00:00.000Z",
+      });
+      fromStatus = toStatus;
+    }
+    await expect(h.service.updateStatus(adminViewer, receipt.requestId, {
+      status: "supplier_processing",
+      evidence: { supplierAssignmentId: "assignment-1" },
+    })).rejects.toMatchObject({ code: "payment_verification_not_ready" });
+    await expect(h.service.updateStatus(adminViewer, receipt.requestId, {
+      status: "cancelled",
+      evidence: { cancellationReason: "Customer requested cancellation" },
+    })).rejects.toMatchObject({ code: "payment_verification_not_ready" });
+    expect((await h.repository.getAdmin(receipt.requestId))?.status).toBe("paid");
   });
 
   it("refuses repeat document completion after owner authorization without a second completion audit", async () => {
