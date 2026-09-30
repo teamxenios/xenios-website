@@ -2849,9 +2849,25 @@
         "docs/coordination/MIGRATION_DAG.json",
         "supabase/MIGRATIONS.md"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T20:41:06.441Z",
       "heartbeatAt": "2026-09-30T20:41:06.441Z"
+    },
+    {
+      "id": "84687314-a014-4faf-85bc-f12ed724ac88",
+      "task": "ASSISTED-ORDER-CONVERSION",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/assisted-order/**",
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**",
+        "supabase/migrations/*assisted_order_quote*",
+        "supabase/verification/*assisted_order_quote*",
+        "server/research/commerce/persistence/admin-queues-store.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-30T20:43:49.730Z",
+      "heartbeatAt": "2026-09-30T20:43:49.730Z"
     }
   ],
   "rules": [

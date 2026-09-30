@@ -679,7 +679,7 @@
       "id": "ASSISTED-ORDER-CONVERSION",
       "title": "Close the assisted-order operator loop: quote issuance, customer acceptance, evidence tooling",
       "priority": "P0",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/research/assisted-order/**",
@@ -693,7 +693,7 @@
         "ASSISTED-ORDER-MOUNT"
       ],
       "scopeNote": "Founder-authorized HL-12 financial integrity: accepted versioned quote, amount/currency-bound authorized verification and durable paid transition across mounted app and forward SQL, qualified only on disposable local PostgreSQL. Existing mounted assisted-order bridge is present; prior blocked state is stale. No managed migration, hosted mutation, real money or fabricated historical verification.",
-      "claimedAt": "2026-09-30T20:05:40.066Z",
+      "claimedAt": "2026-09-30T20:43:49.727Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
         "sha": "c92d7a93e7b443cccd949f8903b62db77d425603",
@@ -2687,7 +2687,7 @@
       "id": "ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930",
       "title": "Register source-only assisted-order financial migrations pending HL-12 authority",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "docs/coordination/MIGRATION_DAG.json",
@@ -2698,9 +2698,9 @@
       "claimedAt": "2026-09-30T20:41:06.439Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
-        "sha": "f318859262812b8fc1fcb6d2c8e697d86a209349",
-        "file": ".xenios/handoffs/2026-09-30T19-37-10-515Z-ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930-codex-xenios-health-launch-implementation-20260930.md",
-        "at": "2026-09-30T19:37:10.519Z"
+        "sha": "a59c05be857d4117f25743384b4d3713fd586203",
+        "file": ".xenios/handoffs/2026-09-30T20-44-03-062Z-ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-09-30T20:44:03.066Z"
       }
     }
   ]
