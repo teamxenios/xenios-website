@@ -2602,7 +2602,7 @@
       "id": "XENIOS-HEALTH-CARE-PRICE-PROJECTION-20260930",
       "title": "Keep Care-only prices out of the Research assisted-order catalog projection",
       "priority": "P2",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "baseSha": "10d23aaed52136e59e50b6987b6bd8ecf3acc3fa",
       "paths": [
@@ -2619,7 +2619,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Founder-authorized source-only Health successor slice. Remove Care retail price fields from the Research catalog projection and show neutral Care pricing guidance. Preserve Product Control, Care, and order authority. No hosted mutation, migration apply, deployment, real email or payment.",
-      "claimedAt": "2026-09-30T17:12:25.115Z"
+      "claimedAt": "2026-09-30T17:12:25.115Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "c9d638ae36b5a85bebc1be5c0864685a92da764a",
+        "file": ".xenios/handoffs/2026-09-30T17-37-29-765Z-XENIOS-HEALTH-CARE-PRICE-PROJECTION-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-09-30T17:37:29.779Z"
+      }
     },
     {
       "id": "XENIOS-HEALTH-PUBLIC-CATALOG-ENTRY-20260930",

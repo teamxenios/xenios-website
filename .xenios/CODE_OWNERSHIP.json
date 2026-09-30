@@ -2766,7 +2766,7 @@
         ".xenios/sessions/codex-xenios-health-launch-implementation-20260930.json",
         ".xenios/handoffs/*HEALTH-CARE-PRICE-PROJECTION*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T17:12:25.117Z",
       "heartbeatAt": "2026-09-30T17:12:25.117Z"
     }
