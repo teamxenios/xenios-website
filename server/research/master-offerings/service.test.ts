@@ -37,13 +37,13 @@ describe("master offering catalog service", () => {
   it("keeps shipping charges out of every customer product projection while retaining an included supply", async () => {
     const research = offering();
     const shipping = offering({
-      id: "mo_shipping",
+      id: "mo_003b0c272099eeb1f114",
       slug: "fedex-standard-overnight",
       canonicalKey: "shipping|fedex",
       displayName: "FedEx Standard Overnight",
-      family: "shipping_and_fulfillment",
-      category: "Shipping & Fulfillment",
-      subcategory: "Shipping Service",
+      family: "provider_network",
+      category: "Renamed shipping category",
+      subcategory: "Renamed shipping label",
     });
     const includedSupply = offering({
       id: "mo_supply",
@@ -54,17 +54,27 @@ describe("master offering catalog service", () => {
       category: "Shipping & Fulfillment",
       subcategory: "Included Supply",
     });
+    const similarlyLabeledMerchandise = offering({
+      id: "mo_real_merchandise",
+      slug: "research-shipping-service-kit",
+      canonicalKey: "shipping|merchandise",
+      displayName: "Research shipping service kit",
+      family: "shipping_and_fulfillment",
+      category: "Shipping & Fulfillment",
+      subcategory: "Shipping Service",
+    });
     const service = new MasterOfferingCatalogService(
-      new InMemoryMasterOfferingCatalogReader([research, shipping, includedSupply]),
+      new InMemoryMasterOfferingCatalogReader([research, shipping, includedSupply, similarlyLabeledMerchandise]),
       noMasterOfferingCommerce,
     );
 
     const page = await service.list({ pageSize: 10 });
     expect(page.products.map((product) => product.slug)).toEqual([
       research.slug,
+      similarlyLabeledMerchandise.slug,
       includedSupply.slug,
     ]);
-    await expect(service.count({})).resolves.toBe(2);
+    await expect(service.count({})).resolves.toBe(3);
     await expect(service.detail(shipping.slug)).resolves.toBeNull();
     await expect(service.variant(shipping.slug, shipping.variants[0].id)).resolves.toBeNull();
     await expect(service.detail(includedSupply.slug)).resolves.not.toBeNull();

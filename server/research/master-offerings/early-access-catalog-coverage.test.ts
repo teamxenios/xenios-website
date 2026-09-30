@@ -25,6 +25,7 @@ import {
   createAssistedOrderMasterCatalogCallbacks,
   type AssistedOrderMasterCatalogService,
 } from "../assisted-order/production-catalog";
+import { MasterOfferingCatalogService } from "./service";
 import type { AssistedOrderCatalogItem } from "@shared/research/assisted-order/contract";
 import type { AdminProductDetail } from "@shared/research/product-admin";
 import { createMasterOfferingCatalogDependencies } from "./composition";
@@ -46,6 +47,8 @@ const SHIPPED_VARIANTS = 420;
 const TOTAL_VARIANTS = SHIPPED_VARIANTS - 1;
 const BOUND_VARIANTS = 417;
 const PRICE_ON_REQUEST_VARIANTS = 2;
+/** Reviewed GRP-0364 source identity in the committed member-safe artifact. */
+const SHIPPING_CHARGE_OFFERING_ID = "mo_003b0c272099eeb1f114";
 const UNBOUND_PRODUCT_NAMES = [
   "BAM15",
   "Syringes & Alcohol Swabs",
@@ -59,22 +62,24 @@ const PRICE_CENTS = 6500;
 
 /**
  * The 2026-08-25 composition counted all 420 artifact rows. The customer
- * projection now removes the one shipping-service charge while retaining
- * the other 419 rows and all 417 bound prices.
+ * projection now removes the GRP-0364 shipping charge and withholds Care
+ * retail prices from Research. Product Control still has 417 bound prices.
  *
  *   TOTAL             419   one shipping charge excluded from 420 source rows
- *   PRICED            417
- *   UNPRICED             2   BAM15, Syringes & Swabs
+ *   RESEARCH PRICED   175   417 authority prices minus 242 Care prices
+ *   CARE WITHHELD     242   priced in Product Control, hidden in Research
+ *   QUOTE ONLY          2   BAM15, Syringes & Swabs
  *   RUO                153   research use only
- *   PROVIDER REQUEST   242   503A / provider pathway, priced but never direct
+ *   PROVIDER REQUEST   242   503A / provider pathway, never direct
  *   AVAILABILITY         1   otherwise held row
  *   ACTIVATION          44   visible rows lacking direct launch authority
  *   PRICING REQUEST      1   the one generally orderable row lacking a price
  *   DIRECT REQUEST     131   rows the shared pathway authority admits
  */
 const MEASURED_TOTAL_VARIANTS = 419;
-const MEASURED_PRICED = 417;
-const MEASURED_UNPRICED = 2;
+const MEASURED_RESEARCH_PRICED = 175;
+const MEASURED_CARE_WITHHELD = 242;
+const MEASURED_QUOTE_ONLY = 2;
 const MEASURED_RUO = 153;
 const MEASURED_PROVIDER_REQUEST = 242;
 const MEASURED_AVAILABILITY_REVIEW = 1;
@@ -163,14 +168,14 @@ function productForPricing(productId: string): AdminProductDetail | null {
  *  between a 2-second file and one that times out under a loaded suite. */
 let sharedReader: ReturnType<typeof createMasterOfferingCatalogReaderFromEnv> | null = null;
 
-function callbacks() {
+function catalogDependencies() {
   const catalogReader = (sharedReader ??= createMasterOfferingCatalogReaderFromEnv());
   if (catalogReader === null) {
     throw new Error(
       "The committed master-offerings dataset was not found; coverage cannot be measured.",
     );
   }
-  const dependencies = createMasterOfferingCatalogDependencies(
+  return createMasterOfferingCatalogDependencies(
     {
       // The REAL production reader, composite key included.
       bindings: createProductionBindingReader(),
@@ -187,6 +192,10 @@ function callbacks() {
     },
     () => null,
   );
+}
+
+function callbacks() {
+  const dependencies = catalogDependencies();
   return createAssistedOrderMasterCatalogCallbacks({
     serviceFor: (viewer) =>
       dependencies.serviceForViewer(
@@ -235,13 +244,44 @@ async function walkWholeCatalog(
   return { items, reportedTotal, pages: page };
 }
 
+async function walkAuthorityPrices(): Promise<{
+  priced: number;
+  carePriced: number;
+  onRequest: number;
+}> {
+  const service = await catalogDependencies().serviceForViewer(
+    pricingViewerForCustomerViewer(EARLY_ACCESS_VIEWER) as never,
+  ) as MasterOfferingCatalogService;
+  let priced = 0;
+  let carePriced = 0;
+  let onRequest = 0;
+  for (let page = 1; ; page += 1) {
+    const selection = await service.select({ page, pageSize: 100 });
+    for (const offering of selection.offerings) {
+      for (const variant of offering.variants.filter((item) => item.visibility === "member")) {
+        const price = selection.prices.get(variant.id);
+        expect(price, `no price state for ${variant.id}`).toBeDefined();
+        if (price?.state === "priced") {
+          expect(price.amountCents).toBeGreaterThan(0);
+          priced += 1;
+          if (offering.family === "clinical_formulations_503a") carePriced += 1;
+        } else {
+          onRequest += 1;
+        }
+      }
+    }
+    if (page >= selection.page.totalPages) break;
+  }
+  return { priced, carePriced, onRequest };
+}
+
 describe("Early Access price coverage across the whole catalog", () => {
   it("preserves the source row but excludes the shipping charge from the customer catalog", async () => {
     const reader = (sharedReader ??= createMasterOfferingCatalogReaderFromEnv());
     expect(reader).not.toBeNull();
     const source = await reader!.readCatalog();
     expect(source).toHaveLength(SHIPPED_VARIANTS);
-    expect(source.filter((product) => product.subcategory === "Shipping Service").map((product) => product.displayName)).toEqual(["FedEx Standard Overnight"]);
+    expect(source.filter((product) => product.id === SHIPPING_CHARGE_OFFERING_ID).map((product) => product.displayName)).toEqual(["FedEx Standard Overnight"]);
     const { items } = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
     expect(items).toHaveLength(TOTAL_VARIANTS);
     expect(items.some((item) => item.productName === "FedEx Standard Overnight")).toBe(false);
@@ -259,12 +299,20 @@ describe("Early Access price coverage across the whole catalog", () => {
     );
   });
 
-  it("prices every bound row and leaves exactly the unbound ones on request", async () => {
+  it("retains 417 Product Control prices while withholding Care prices in Research", async () => {
+    expect(await walkAuthorityPrices()).toEqual({
+      priced: BOUND_VARIANTS,
+      carePriced: MEASURED_CARE_WITHHELD,
+      onRequest: PRICE_ON_REQUEST_VARIANTS,
+    });
     const { items } = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
     const priced = items.filter((item) => item.unitPriceCents !== null);
-    const onRequest = items.filter((item) => item.unitPriceCents === null);
+    const careWithheld = items.filter((item) => item.workflowMode === "provider_request");
+    const onRequest = items.filter((item) => item.unitPriceCents === null && item.workflowMode !== "provider_request");
 
-    expect(priced).toHaveLength(BOUND_VARIANTS);
+    expect(priced).toHaveLength(MEASURED_RESEARCH_PRICED);
+    expect(careWithheld).toHaveLength(MEASURED_CARE_WITHHELD);
+    expect(careWithheld.every((item) => item.unitPriceCents === null && item.priceVersion === null)).toBe(true);
     expect(onRequest).toHaveLength(PRICE_ON_REQUEST_VARIANTS);
     expect(onRequest.map((item) => item.productName).sort()).toEqual(
       [...UNBOUND_PRODUCT_NAMES].sort(),
@@ -281,9 +329,9 @@ describe("Early Access price coverage across the whole catalog", () => {
   });
 
   it("keeps a price and an ordering pathway as SEPARATE decisions", async () => {
-    // Showing a price is not permission to buy. A 503A Care row is priced AND
-    // stays on the provider pathway; a held row is priced AND stays on
-    // activation. Only a genuinely direct row gets a direct action.
+    // Product Control price and purchase authority are separate. Research
+    // presentation now hides the Care amount even though authority retains it.
+    // A held row can stay priced without becoming directly orderable.
     const { items } = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
     for (const item of items) {
       if (item.unitPriceCents === null) {
@@ -304,7 +352,7 @@ describe("Early Access price coverage across the whole catalog", () => {
     expect(
       care.filter((item) => item.workflowMode === "direct_order_request"),
     ).toHaveLength(0);
-    expect(care.every((item) => item.unitPriceCents !== null)).toBe(true);
+    expect(care.every((item) => item.unitPriceCents === null && item.priceVersion === null)).toBe(true);
   });
 
   it("prices against the audience production actually holds rows on", () => {
@@ -317,7 +365,7 @@ describe("Early Access price coverage across the whole catalog", () => {
     // from the same wrong constant. Checked against a literal from the
     // measurement, deliberately not against the constant itself.
     expect(EARLY_ACCESS_RETAIL_PRICE_AUDIENCE).toBe("member");
-    expect(MEASURED_PRICED + MEASURED_UNPRICED).toBe(MEASURED_TOTAL_VARIANTS);
+    expect(MEASURED_RESEARCH_PRICED + MEASURED_CARE_WITHHELD + MEASURED_QUOTE_ONLY).toBe(MEASURED_TOTAL_VARIANTS);
   });
 
   it("matches that measured composition when actually walked", async () => {
@@ -334,8 +382,8 @@ describe("Early Access price coverage across the whole catalog", () => {
       requestPricing: count((item) => item.workflowMode === "request_pricing"),
       directOrderRequest: count((item) => item.workflowMode === "direct_order_request"),
     }).toEqual({
-      priced: MEASURED_PRICED,
-      unpriced: MEASURED_UNPRICED,
+      priced: MEASURED_RESEARCH_PRICED,
+      unpriced: MEASURED_CARE_WITHHELD + MEASURED_QUOTE_ONLY,
       researchUseOnly: MEASURED_RUO,
       providerRequest: MEASURED_PROVIDER_REQUEST,
       availabilityReview: MEASURED_AVAILABILITY_REVIEW,

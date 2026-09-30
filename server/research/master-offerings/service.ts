@@ -66,12 +66,12 @@ export interface PricedMasterOfferingSelection {
   prices: MasterOfferingPriceMap;
 }
 
-/** A shipping fee is an order charge, not a customer-selectable product. */
+/** GRP-0364 is a shipping charge, not merchandise. Its reviewed source row
+ * maps to this offering id in the committed catalog and binding artifacts. */
+const SHIPPING_CHARGE_OFFERING_ID_GRP_0364 = "mo_003b0c272099eeb1f114";
+
 function isCustomerCatalogOffering(offering: NormalizedMasterOffering): boolean {
-  return !(
-    offering.family === "shipping_and_fulfillment" &&
-    offering.subcategory === "Shipping Service"
-  );
+  return offering.id !== SHIPPING_CHARGE_OFFERING_ID_GRP_0364;
 }
 
 /**
