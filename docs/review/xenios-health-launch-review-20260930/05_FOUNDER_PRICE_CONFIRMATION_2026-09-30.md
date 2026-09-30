@@ -58,3 +58,65 @@
   shipping line (HL-19). The successor's regenerated count must be explained against 421, not forced to it.
 - "For now": re-adding any of them later needs a new founder decision plus eligibility authority.
   - Retatrutide carries a human-use procurement exclusion.
+
+---
+
+# Founder decision REVERSED: include the three variants and every product row; list Superpower
+
+- **Recorded:** 2026-09-30, by the Claude reviewer `claude-health-launch-review-20260930`.
+- **Source:** Samuel Boadu's direct chat instruction to this session: "actually reverse the decision include reta,
+  mots and everything for products" and "for now put superpower in the offerings too".
+- This **supersedes** the "leave the three missing variants out for now" entry above.
+- The `EXCLUDED_BY_FOUNDER_2026-09-30` disposition is **withdrawn**.
+
+## Products: include everything
+
+| Workbook row | Variant | Recorded book price | Decision |
+| --- | --- | --- | --- |
+| GRP-0421 | Retatrutide 60 mg, RUO Research | $249.00 | **Include.** Create the canonical variant and publish the price. |
+| GRP-0423 | MOTS-C 40 mg, RUO Research | $129.00 | **Include.** Create the canonical variant and publish the price. |
+| GRP-0424 | Glutathione 600 mg, RUO Research | $69.00 | **Include.** Create the canonical variant and publish the price. |
+| All other product rows | per the 2026-08-21 reconciliation | per the ledger | **Include.** |
+
+**Intended catalog:** all 424 canonical variants from the 426 workbook rows, after the Hexarelin/Oxytocin merges.
+
+**Reviewer's reading of "everything for products" (founder to correct if wrong):**
+- Every product row is in scope.
+- GRP-0364 "FedEx Standard Overnight" ($37.50) is a shipping charge, not a product. It is kept as fulfillment
+  pricing, not a catalog item.
+- GRP-0422, the CJC-1295 with DAC + Ipamorelin 5 mg total ($99), is included and visible. It stays on a Request
+  Order path under its structured formulation hold, because the founder's own 2026-08-21 ruling says the component
+  split must not be invented.
+- GRP-0244 BAM15 and GRP-0365 Syringes & Alcohol Swabs are included as "Price on request", never $0.
+
+**Boundaries that still apply to every row:**
+- **Care:** Care (503A) rows keep the provider pathway.
+- **Research use:** research-use rows keep "Research use only. Not for human or veterinary use." Inclusion as a
+  research listing is not human-use or clinical authority.
+- **Retatrutide:** the pack's Retatrutide human-use procurement exclusion still applies to any human-use or Care
+  channel.
+
+**What the successor must deliver:** create each new variant with its exact identity (product, strength, form and
+pack basis) and never alias it to a neighbouring strength.
+
+**Live effect:** no live catalog or price change is authorized by this record. Creating Product Control variants
+and price rows in production is a separate, authorized hosted action, with read-back.
+
+## Superpower: list it in the offerings "for now"
+
+- This supersedes the earlier direction (prompts 10, 11, 16, 17) that Superpower was uncontracted and not to be an
+  active offer. Finding HL-14 is re-scoped from "unapproved surface" to "approved for listing, with guardrails".
+- **Guardrails the review will check** (from the same founder prompts and the existing `SuperpowerOfferConfig`
+  fields):
+  - **Price:** no price unless a real, dated source exists (`verifiedPriceDate`, `lastVerificationDate`). An unknown
+    price is shown as unknown, never invented or $0.
+  - **Claims:** no claim of a partnership, contract, clinician review, pharmacy or live availability that has not
+    been verified. The `disclosure` text must be truthful.
+  - **Affiliate link:** only a real, founder-supplied URL. None is fabricated.
+  - **Boundaries:** diagnostics stay separate from Research products and Care prescriptions, and there are no
+    clinical claims.
+  - **Dependencies:** the offer is not a launch dependency. The Health catalog and commerce closeout must not wait on
+    it.
+- **Open question for the founder:** does a signed agreement with Superpower (affiliate, resale or referral) exist?
+  Until one is confirmed, the recommended display is a disclosed listing (for example "Coming soon" or "Register
+  interest") rather than "Available" with a price.

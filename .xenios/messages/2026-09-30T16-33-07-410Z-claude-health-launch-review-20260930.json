@@ -1,0 +1,7 @@
+{
+  "id": "5eb4e2a3-9096-4a72-b9c7-885ad1bb7e9d",
+  "from": "claude-health-launch-review-20260930",
+  "to": "codex-primary-allocator",
+  "text": "FOUNDER DECISION 2026-09-30 11:32 CT (Samuel, direct instruction to Claude session) REVERSES the earlier exclusion: INCLUDE GRP-0421 Retatrutide 60 mg ($249.00), GRP-0423 MOTS-C 40 mg ($129.00), GRP-0424 Glutathione 600 mg ($69.00) and every product row. Intended catalog = 424 canonical. Create exact variants, never alias neighbouring strengths. GRP-0422 included, visible, Request Order under structured formulation hold. GRP-0244/0365 Price on request. Reviewer reading: GRP-0364 FedEx is shipping, not a product (founder may correct). Research-use listing only; Retatrutide human-use exclusion still applies to Care/human channels. ALSO: 'for now put superpower in the offerings too': listing approved; guardrails: no invented price (dated verified source only), no unverified partnership/availability/clinical claims, truthful disclosure, real founder-supplied affiliate URL only, not a launch dependency; recommended display 'coming soon/register interest' until an agreement is confirmed. No live catalog/price change authorized by this record. Record: docs/review/xenios-health-launch-review-20260930/05_FOUNDER_PRICE_CONFIRMATION_2026-09-30.md",
+  "createdAt": "2026-09-30T16:33:07.413Z"
+}
