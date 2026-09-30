@@ -124,6 +124,8 @@ for (const st of ["payment_pending", "payment_review"]) await call(prod.base, "P
 const pob = await call(prod.base, "POST", `/api/admin/research/assisted-orders/${p.id}/payment-observations/manual`, { admin: ADMIN, body: { quoteId: pg.data?.quoteId, observedAmountCents: 10000, observedCurrency: "USD", paymentReference: p.ref, sourceEvidenceRef: "ledger-x" } });
 rec("P1 PRODUCTION composition (manualEvidence=null): manual observation", { quoteIssue: pq.status, status: pob.status, code: pob.code });
 
+{ const pv = await call(prod.base, "POST", `/api/admin/research/assisted-orders/${s.id}/payment-observations/${ob.data?.observationId}/verify`, { admin: ADMIN });
+  rec("P2 PRODUCTION composition: verify an existing observation (no adapter)", { status: pv.status, code: pv.code }); }
 // ---- N: refusals ------------------------------------------------------------------------------
 const w = await seed(MEMBER); const wq = await toQuoted(w);
 rec("N1 foreign member reads quote", (await call(B, "GET", `/api/research/early-access/assisted-orders/${w.ref}/quote`, { member: OTHER })).status);
