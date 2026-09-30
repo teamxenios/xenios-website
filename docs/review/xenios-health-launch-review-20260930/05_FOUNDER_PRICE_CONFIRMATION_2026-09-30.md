@@ -29,3 +29,32 @@
 - **Existing orders:** accepted historical orders keep their immutable sold-price snapshots.
 - **Everything else:** this is not an approval of any other row. The 17 rounding rows (HL-18) and the three missing
   variants remain open.
+
+---
+
+# Founder decision: the three missing variants stay out for now
+
+- **Recorded:** 2026-09-30, by the Claude reviewer `claude-health-launch-review-20260930`.
+- **Source:** Samuel Boadu's direct chat instruction to this session: "Leave the three missing variants out for now".
+
+| Workbook row | Variant | Recorded book price | Decision |
+| --- | --- | --- | --- |
+| GRP-0421 | Retatrutide 60 mg | $249.00 | **Out for now.** No variant is created and it is not sold. |
+| GRP-0423 | MOTS-C 40 mg | $129.00 | **Out for now.** No variant is created and it is not sold. |
+| GRP-0424 | Glutathione 600 mg | $69.00 | **Out for now.** No variant is created and it is not sold. |
+
+## What this means for the successor
+
+- These rows remain in the workbook as evidence and in the row ledger with the disposition
+  `EXCLUDED_BY_FOUNDER_2026-09-30`. They are not silently dropped.
+- No Product Control catalog mutation or price row is created for them.
+- They must not be aliased to neighbouring strengths:
+  - Retatrutide 5–50 mg is not 60 mg.
+  - MOTS-C 10 mg is not 40 mg.
+  - Glutathione 500 mg and 1500 mg are not 600 mg.
+- The catalog count is 424 canonical minus these 3 = **421 intended variants**, including GRP-0422, which stays
+  visible under its formulation hold.
+- The served runtime today is 420, which includes the superseded identities for GRP-0402/GRP-0407 and the FedEx
+  shipping line (HL-19). The successor's regenerated count must be explained against 421, not forced to it.
+- "For now": re-adding any of them later needs a new founder decision plus eligibility authority.
+  - Retatrutide carries a human-use procurement exclusion.

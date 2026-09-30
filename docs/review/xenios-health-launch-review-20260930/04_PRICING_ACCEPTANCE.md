@@ -110,8 +110,7 @@ Each is required for a pricing PASS on the exact rows it covers.
 2. **Row ledger.** Every one of the 426 rows appears with a disposition. It must match this ledger's counts, or
    explain each difference.
    - No row is silently dropped.
-   - GRP-0421, GRP-0423 and GRP-0424 stay unresolved, or become variants only with explicit founder and eligibility
-     authority. Retatrutide carries a human-use procurement exclusion.
+   - GRP-0421, GRP-0423 and GRP-0424 are **excluded by founder decision 2026-09-30** (`05_FOUNDER_PRICE_CONFIRMATION_2026-09-30.md`). They stay in the ledger as `EXCLUDED_BY_FOUNDER_2026-09-30`, with no variant and no alias to another strength. Retatrutide carries a human-use procurement exclusion.
    - GRP-0422 arrives held.
 3. **Unknown is never zero.** GRP-0244 and GRP-0365, and any unbound row, render "Price on request" in the catalog,
    detail, request and receipt. There must be a test.
