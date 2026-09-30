@@ -1,0 +1,7 @@
+{
+  "id": "d80ac80e-060b-4cbe-8ecc-452ce8e62dc7",
+  "from": "claude-health-launch-review-20260930",
+  "to": "codex-primary-allocator",
+  "text": "FOUNDER DECISION 2026-09-30 (Samuel, direct instruction to Claude session): use the BOOK DISPLAY CENTS for the 17 HL-18 rounding rows. 16 rows are 1c below last recorded live (13 Care per-unit, GRP-0303 Ipamorelin 5 mg 15312, GRP-0371 10812, GRP-0379 4312); GRP-0348 Tesamorelin 5 mg stays 16927. Exact list: docs/review/xenios-health-launch-review-20260930/06_ROUNDING_ROWS_BOOK_DISPLAY_CENTS.csv. Contract: approved cents = book Price Display cents for every priced row; no CSV-text parsing, no Math.round on floats (169.27499999999998 -> 16927); line total = unit cents x quantity in integers. No live price change authorized by this record (needs a Product Control release with read-back); historical snapshots unchanged.",
+  "createdAt": "2026-09-30T16:40:07.929Z"
+}

@@ -156,3 +156,51 @@ These apply to both offerings for as long as no agreement exists.
   entry) with the same server-side guard. No hard-coded client-only card, and no second authority.
 - **Admin override:** an admin must not be able to switch either offering to "available" or add a price or affiliate
   URL without a recorded agreement. Today the Superpower offer is admin-configurable; see HL-14.
+
+---
+
+# Founder decision: the book display cents are approved for the 17 rounding rows (HL-18)
+
+- **Recorded:** 2026-09-30, by the Claude reviewer `claude-health-launch-review-20260930`.
+- **Source:** Samuel Boadu's direct chat instruction to this session: "use the book display cents for the 17
+  rounding rows".
+- **Row list** (generated from `04_PRICE_LEDGER_c213707.csv`, not hand-typed):
+  `06_ROUNDING_ROWS_BOOK_DISPLAY_CENTS.csv`.
+
+| Group | Channel | Variant | Book display (approved) | Last recorded live (2026-08-20) | Change |
+| --- | --- | --- | --- | --- | --- |
+| GRP-0036 | Care | DHEA 100 mg capsule | 262 | 263 | −1¢ |
+| GRP-0075 | Care | Ibutamoren 12.5 mg capsule | 412 | 413 | −1¢ |
+| GRP-0076 | Care | Ibutamoren 25 mg capsule | 662 | 663 | −1¢ |
+| GRP-0092 | Care | Low Dose Naltrexone 1.5 mg capsule | 212 | 213 | −1¢ |
+| GRP-0104 | Care | Methylene Blue 15 mg capsule | 562 | 563 | −1¢ |
+| GRP-0116 | Care | Oxandrolone 25 mg capsule | 562 | 563 | −1¢ |
+| GRP-0128 | Care | Phentermine HCl 15 mg capsule | 162 | 163 | −1¢ |
+| GRP-0129 | Care | Phentermine HCl 30 mg capsule | 162 | 163 | −1¢ |
+| GRP-0130 | Care | Phentermine HCl 45 mg capsule | 162 | 163 | −1¢ |
+| GRP-0172 | Care | Sildenafil 100 mg tablet | 312 | 313 | −1¢ |
+| GRP-0199 | Care | Tadalafil 5 mg tablet | 462 | 463 | −1¢ |
+| GRP-0206 | Care | Tamoxifen 10 mg tablet | 312 | 313 | −1¢ |
+| GRP-0211 | Care | Tesofensine 500 mcg capsule | 562 | 563 | −1¢ |
+| GRP-0303 | Research | Ipamorelin 5 mg | 15312 | 15313 | −1¢ |
+| GRP-0348 | Research | Tesamorelin 5 mg | 16927 | 16927 | none |
+| GRP-0371 | Supplement | GI Defend | 10812 | 10813 | −1¢ |
+| GRP-0379 | Supplement | PeriMenopause Support | 4312 | 4313 | −1¢ |
+
+## Resulting monetary contract (reviewer statement; founder may correct)
+
+- **Approved cents:** for every priced workbook row, the approved retail cents now equal the book's `Price Display`
+  cents.
+  - The other 398 exact rows already agree with their display.
+  - The Hexarelin 5 mg ($62.50) and Oxytocin 10 mg ($107.50) decisions are separate founder decisions.
+  - The implied conversion rule for any sub-cent book value is the display's rounding of the exact decimal: half to
+    even, for example 2.625 → 2.62 and 1.875 → 1.88.
+- **Forbidden:** source must not parse formatted CSV text or `Math.round` a binary float. GRP-0348's raw value
+  `169.27499999999998` must resolve to 16927.
+- **Line totals:** unit cents × quantity, in integers. The unit cents are the approved display cents. For example,
+  30 × DHEA 100 mg is 30 × 262 = 7860 cents, not 30 × 2.625 = 78.75. The customer sees one consistent unit price.
+- **Scope:** approved cents do not change Care routing. The 13 Care rows remain provider-pathway items and are not
+  research-purchasable.
+- **Live effect:** no live price change is authorized by this record. Publishing the 16 −1¢ rows is a Product Control
+  release through `research_admin_create_product_price` → `research_admin_approve_product_price`, one active row per
+  variant, with read-back. Accepted historical orders keep their sold-price snapshots.

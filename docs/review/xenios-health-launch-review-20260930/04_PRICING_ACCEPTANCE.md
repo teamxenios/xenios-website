@@ -123,7 +123,7 @@ Each is required for a pricing PASS on the exact rows it covers.
    - A kit or pack quantity cannot be read as a unit quantity.
    - Tests cover 1, 3 and 100 units, and the minimum and maximum bounds.
 6. **Discount parity.** Resolve HL-20, then test the bundle boundary at 2, 3 and 4 units on both doors.
-7. **Rounding.** Test the 17 HL-18 rows end to end: display, request estimate, quote, persisted sold-price snapshot
+7. **Rounding.** Founder decision 2026-09-30: the approved cents are the book display cents (`06_ROUNDING_ROWS_BOOK_DISPLAY_CENTS.csv`). Source must carry those cents: 16 rows −1¢ against the last recorded live, and GRP-0348 = 16927. Test the 17 HL-18 rows end to end: display, request estimate, quote, persisted sold-price snapshot
    and verified amount. Include GRP-0348 explicitly.
 8. **Stale and manipulated input.**
    - A client-sent unit price or total is ignored.

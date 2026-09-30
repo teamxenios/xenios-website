@@ -341,7 +341,7 @@ Severity key:
 
 See `04_PRICING_ACCEPTANCE.md`:
 
-- **HL-18 (P2):** the rounding contract is inconsistent. Stored cents are half-up via float `Math.round`, the book display rounds half-even, and GRP-0348 is a float artifact. 17 rows need founder confirmation.
+- **HL-18 (P2) (decision recorded 2026-09-30):** the founder approved the book display cents for all 17 rows, so the remaining work is source plus an authorized price release. the rounding contract is inconsistent. Stored cents are half-up via float `Math.round`, the book display rounds half-even, and GRP-0348 is a float artifact. 17 rows need founder confirmation.
 - **HL-19 (P3):** the FedEx shipping line is served as a `care_pathway` catalog variant.
 - **HL-20 (P2):** the 3-unit bundle discount is applied on the Featured legacy path but not on the All products assisted estimate, and the copy promises it for assisted requests.
 
