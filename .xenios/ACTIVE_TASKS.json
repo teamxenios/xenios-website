@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-09-21T16:38:05.000Z",
+  "updatedAt": "2026-09-30T19:51:00.000Z",
   "tasks": [
     {
       "id": "XENIOS-ORDERING-READINESS-20260923",
@@ -2753,6 +2753,27 @@
       "dependsOn": [],
       "scopeNote": "Pin only newly committed pending migration source SHAs and five literal finance routes; preserve all release assertions and rerun the gate.",
       "claimedAt": "2026-09-30T21:09:13.238Z"
+    },
+    {
+      "id": "XENIOS-PRODUCT-IMAGERY-20260930",
+      "title": "Build the canonical product imagery contract, coverage ledger, render queue, and truthful fallback assets",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-xenios-product-imagery-20260930",
+      "baseSha": "7600943f9ec7573f0a5cbfe7a7687ba851276a30",
+      "paths": [
+        "docs/product-imagery/**",
+        "scripts/product-imagery/**",
+        "client/public/research/products/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-xenios-product-imagery-20260930.json",
+        ".xenios/handoffs/*XENIOS-PRODUCT-IMAGERY-20260930*"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Founder-authorized isolated source-only product imagery v3 lane. Establish a mov-keyed coverage and Featured identity contract, render packet, deterministic validation, and bounded pre-v3 fallback candidates. Assets remain provisional, unreviewed, unwired, and permanently non-approvable because their source PNGs are not repository-durable; v3 rerender is required. The branch is non-deployable while those bytes remain in the public tree. No catalog, payment, release, deployment, hosted mutation, migration apply, real communication, or shared card/detail source edits without a later coordinated lease.",
+      "claimedAt": "2026-09-30T19:50:33.245Z"
     }
   ]
 }

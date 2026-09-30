@@ -1,0 +1,10 @@
+{
+  "id": "codex-xenios-product-imagery-20260930",
+  "tool": "codex",
+  "lane": "product-imagery-source",
+  "branch": "codex/xenios-product-imagery-20260930",
+  "state": "active",
+  "startedAt": "2026-09-30T19:49:48.411Z",
+  "heartbeatAt": "2026-09-30T21:17:42.255Z",
+  "note": "Product imagery v3 source lane active; pre-v3 public-tree candidates are unreviewed, unwired, permanently non-approvable, and non-deployable"
+}

@@ -109,7 +109,7 @@
       "state": "active",
       "startedAt": "2026-08-19T16:43:14.972Z",
       "heartbeatAt": "2026-08-21T16:08:18.141Z",
-      "note": ""
+      "note": "Product imagery v3 source lane active; pre-v3 public-tree candidates are unreviewed, unwired, permanently non-approvable, and non-deployable"
     },
     {
       "id": "claude-fable-s6-quote-payment",
@@ -569,6 +569,16 @@
       "startedAt": "2026-09-30T16:32:52.264Z",
       "heartbeatAt": "2026-09-30T20:48:08.908Z",
       "note": ""
+    },
+    {
+      "id": "codex-xenios-product-imagery-20260930",
+      "tool": "codex",
+      "lane": "product-imagery-source",
+      "branch": "codex/xenios-product-imagery-20260930",
+      "state": "active",
+      "startedAt": "2026-09-30T19:49:48.411Z",
+      "heartbeatAt": "2026-09-30T21:17:42.255Z",
+      "note": "Product imagery v3 source lane active; pre-v3 public-tree candidates are unreviewed, unwired, permanently non-approvable, and non-deployable"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
