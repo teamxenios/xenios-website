@@ -197,6 +197,9 @@ export class AssistedOrderFinanceService {
 
   public async verifyManual(viewer: AssistedOrderViewer, requestId: string, observationId: string): Promise<unknown> {
     const actor = adminActor(viewer);
+    if (!this.manualEvidence) {
+      throw new AssistedOrderConflictError("manual_evidence_unavailable", "Independent manual payment evidence is not configured.");
+    }
     const result = await this.call("research_assisted_order_payment_verify_bound", {
       p_request_id: uuid(requestId, "requestId"),
       p_observation_id: uuid(observationId, "observationId"),

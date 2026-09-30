@@ -119,15 +119,23 @@ describe("HL-12 mounted finance boundary", () => {
   });
 
   it("verifies only through the request-bound RPC with the guarded admin UUID", async () => {
-    const { rpc, service } = harness({ verificationId: QUOTE, state: "paid" });
+    const rpc = vi.fn(async () => ({ data: { verificationId: QUOTE, state: "paid" }, error: null }));
+    const evidence = { verify: async () => ({ observedAt: "2026-09-30T20:00:00.000Z" }) };
+    const service = new AssistedOrderFinanceService({ rpc } as SupabaseRpcClient, evidence);
     await service.verifyManual(admin, REQUEST, OBSERVATION);
     expect(rpc).toHaveBeenCalledWith("research_assisted_order_payment_verify_bound", {
       p_request_id: REQUEST, p_observation_id: OBSERVATION,
       p_verifier_auth_user_id: ADMIN,
     });
-    const wrongPath = harness(null);
-    await expect(wrongPath.service.verifyManual(admin, REQUEST, OBSERVATION))
+    const wrongPath = new AssistedOrderFinanceService({
+      rpc: async () => ({ data: null, error: null }),
+    }, evidence);
+    await expect(wrongPath.verifyManual(admin, REQUEST, OBSERVATION))
       .rejects.toHaveProperty("name", "AssistedOrderNotFoundError");
+    const unconfigured = harness();
+    await expect(unconfigured.service.verifyManual(admin, REQUEST, OBSERVATION))
+      .rejects.toMatchObject({ code: "manual_evidence_unavailable" });
+    expect(unconfigured.rpc).not.toHaveBeenCalled();
   });
 
   it("adds five finance descriptors only when the gated service exists and keeps tokens out of body/query", async () => {
