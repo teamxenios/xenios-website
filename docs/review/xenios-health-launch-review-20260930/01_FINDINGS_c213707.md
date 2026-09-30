@@ -24,6 +24,8 @@ Severity key:
 
 ---
 
+> **Lane status:** the Early Access cart lane is recorded disabled in production (`RESEARCH_EARLY_ACCESS_CART_ENABLED=false`, `docs/revenue-launch/20260905/production-refresh-20260906.json`). HL-02, HL-03, HL-05 and HL-06 are activation blockers for that lane, not failures users hit today. HL-05 and HL-06 were re-verified by Claude: `settlement.ts:246-247` sets the verified amount from the invoice; the only cart `payment_state` writers are `20260808100000...cart_completion.sql:377-382` (to `under_review`) and `:619` (to `payment_verified`).
+
 ## HL-01 · P1 · A newcomer cannot discover or reach the full catalog
 
 - **Seam:**
