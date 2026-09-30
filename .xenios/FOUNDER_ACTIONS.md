@@ -4,6 +4,14 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
 
 ## Open
 
+- Health payment setup (2026-09-30): when ready, name the card processor and the
+  intended independently verifiable manual payment workflow (provider API, bank
+  feed or controlled transaction import). Provider names and workflow are enough;
+  do not place credentials, account numbers or payment destinations here.
+  Provider-neutral implementation continues without this decision. Live setup,
+  finance grants, managed schema qualification and exact-SHA production promotion
+  remain separate authorized actions.
+
 - Native closeout (2026-09-21): designate the executor and confirm the exact
   managed qualification scope for the new Referral touch/XRR SQL candidates
   and the separate checkout candidate-2 amendment. Supply the canonical EA

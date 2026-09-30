@@ -182,3 +182,91 @@ The original fixture11 remained unchanged. Test script:
 `supabase/verification/research_assisted_order_quote_correction_race_local.mjs`.
 
 All migration statuses remain PENDING. No deployment or hosted mutation.
+
+## Integration run and review follow-through
+
+At tested HEAD `d6f99e04f3b9613ea5c309f06e199bb188d05097` (the runtime above),
+private Node v20.19.0 and npm10.8.2 ran `npm test -- --maxWorkers=2`.
+The completed aggregate is **18,382 passed, 2 failed, 85 skipped**, across
+1,001 files (994 pass,1 fail,6 skip),606.34 seconds, exit1. The two failures
+are the unchanged `server/routes.ts` and `server/index.ts` protected hashes.
+Do not label this run clean or transfer it to a subsequent runtime.
+
+Captured native final output (including the two failures and aggregate):
+`C:/Users/sboad/.codex/tmp/health-provider-neutral-d6f99e0/full-suite-final-output.txt`,
+SHA-256 `fe5e02f3aebdd68f29c492e922e813065b4c64f3bee860397c93d3990dddfb7f`.
+The PowerShell transcript in that directory records start/end/exit, but omitted
+native stdout; it is not the complete test log. The separate final-output file
+is explicitly partial console capture. Child worker provenance is preserved in
+`child-worker-provenance.json`, SHA-256
+`8eabbb45648c9d51b78f3296e4e0f5304b725cf695784d10484ededaa90d476d`.
+Runner PID20536 and
+observed child PIDs35680/35696 used the private full-path Node20 binary. No
+worker is claimed to use Node20 solely from the parent's reported version.
+Typecheck and production build passed separately before this run; source1336
+and build224 scanned files had zero forbidden customer-facing em dashes.
+
+Later independent reviewer tip `211a8fed26cc9c12633951b38353f30e4e6bf3d2`
+contains reports19,20,21. Report20 reviews `fe45550`, not this final successor.
+Its exact protected-file review passes the two prior seam edits, but the
+owner-authorized baseline amendment is still unrecorded and the gate stays red.
+Claude's SQL-01 provider forgery, F10 quote gateway and EA-01 capacity findings
+were taken into the next bounded source repairs. No claim of Claude acceptance
+of those repairs is made.
+
+`2dc7d6264d7c6286f49c711d729a268868752327` adds only exact anchored quote
+GET/HEAD and quote-accept POST gateway admissions. A real gateway reproducer
+first failed1/passed80; after repair gateway plus finance passed98/98. These
+admissions reach downstream ownership denial, never grant quote authority.
+`268e691` removes contradictory legacy `actionRequired` payment promises from
+presentation only. Its original reproducer failed1 with48 tests filtered out;
+the separate full UI rerun passed65/65. Nonfinancial instructions and stored
+records remain intact. EA-01 capacity repair separately passed76/76 across
+four files; exhausted budgets survive rotation, while below-budget entries can
+be evicted by oldest last attempt.
+
+Imagery truth refreshed read-only: worktree `c502` is now clean at pushed
+`5c96f9e86dc8dd7b6944bfd6c991e283cd49ccec`, not the earlier dirty checkpoint.
+Claude report21 says NOT MERGEABLE (IMG-01 unapproved public bytes plus image
+identity/runtime-authority gaps). No imagery was merged or modified here.
+
+The non-UTF8 legacy `.xenios/DECISIONS.md` was preserved rather than re-encoded
+incidentally. The current provider-neutral founder decision is recorded here
+and in the dated Health project/release entries: processor choice is deferred,
+and earlier Stripe preference is not a selection. No secret or payment
+destination is needed in these records.
+
+## Latest source after the reproduced defects
+
+Runtime `947f6ee7739bf2a1381b4b29a4f9d132c751d64c`, tree
+`03ccddee03fbad2966655c2ce1a3cb46c468d8d5`, supersedes the earlier checkpoint.
+This includes gateway2dc7d62, status268e691, capacity05e413c and SQL947f6ee.
+Migration85 is `20260930234614_research_assisted_order_quote_provider_hold.sql`,
+canonical SHA-256 `6596f26125c6279717168276fe96132056c9aa3ef150606583fbaf9045c208fe`.
+It depends on pending84 and is also PENDING. No previous SQL bytes changed.
+
+The Node20 disposable PostgreSQL17.11 proof reproduced predecessor SQL-01,
+then proved new/replayed provider observation and legacy verification refusal,
+NULL-safe request binding (SQL-10), provider insertion backstops, zero residue,
+manual correction/verification/replay, and actual role-based ACL denial. Existing
+provider verifications cause a preflight refusal requiring explicit historical
+reconciliation. Two agent proof runs and one root rerun passed separately;
+there were no failed development runs for this narrow migration. Root log:
+`C:/Users/sboad/.codex/tmp/health-provider-neutral-d6f99e0/provider-hold-proof.log`.
+The root rerun exited0 and removed only its own no-network/no-port container and
+tmpfs data. This is local SQL evidence only, not new PostgREST or managed proof.
+
+The actual whole-catalog reader separately passed13/13 after the application
+fixes. It still measures the420-row artifact/419 merchandise projection:
+175 numeric prices,242 withheld Care prices,2 genuine quote-only rows. The424
+intended canonical-row regeneration and provenance binding repair remain open.
+
+Open review items are not silently closed by these fixes. F1 actual independent
+manual evidence/grant workflow remains unavailable. F4 still needs durable
+autonomous effects (an actor revocation can prevent an endpoint retry). F9 is
+not a two-person-control policy. HIST-02, SQL-06/09, normalized currency,
+append-only grant/verifier authority, governed withdraw/refund/cancellation,
+provider authenticated-event quarantine/attempt persistence and composed
+supplier assignment eligibility remain work. Follow reports19/20 by finding ID;
+source fixes require Claude's exact-successor confirmation. No new browser or
+true-zoom result is asserted for this customer quote UI.

@@ -1,5 +1,20 @@
 # Externally blocked work
 
+## Health provider-neutral continuation, 2026-09-30
+
+The final card processor and independently verifiable manual payment source are
+not yet selected. This blocks only their actual adapters and activation, not
+provider-neutral engineering. Do not request secrets, account numbers or payment
+destinations in the corpus. The source handoff is
+`server/research/assisted-order/HEALTH_HL12_PROVIDER_NEUTRAL_HANDOFF_20260930.md`.
+
+Durable attempt/event storage, durable verification effects, governed financial
+resolution, HL-11 and product/public journeys remain engineering gaps, not
+external blockers. Existing historical paid labels must not be backfilled with
+invented verification. All new managed applies and production changes remain
+separately authorized. Historical production observations below retain their
+original dates and are not a fresh observation for this Health continuation.
+
 ## Native closeout — 2026-09-21
 
 The local continuation is recorded in `docs/release-candidate/LOCAL_CLOSEOUT_20260921.md`.

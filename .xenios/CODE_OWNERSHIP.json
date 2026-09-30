@@ -2946,7 +2946,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-30T23:03:13.639Z",
-      "heartbeatAt": "2026-09-30T23:18:47.424Z"
+      "heartbeatAt": "2026-09-30T23:52:00.496Z"
     },
     {
       "id": "f456972e-b752-4f5d-82ee-4e43df3dcf18",
@@ -2959,7 +2959,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-30T23:05:56.729Z",
-      "heartbeatAt": "2026-09-30T23:18:47.424Z"
+      "heartbeatAt": "2026-09-30T23:52:00.496Z"
     },
     {
       "id": "5fa93d23-61de-4bba-951e-23b0e2c95b1b",
@@ -2972,7 +2972,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-30T23:17:22.098Z",
-      "heartbeatAt": "2026-09-30T23:18:47.424Z"
+      "heartbeatAt": "2026-09-30T23:52:00.496Z"
     },
     {
       "id": "01a0de11-6786-4276-abbd-039547bab659",
@@ -2984,7 +2984,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-30T23:20:29.745Z",
-      "heartbeatAt": "2026-09-30T23:20:29.745Z"
+      "heartbeatAt": "2026-09-30T23:52:00.496Z"
     },
     {
       "id": "9765a5b8-98e3-4841-b394-56b17e66ded9",
@@ -2995,7 +2995,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-30T23:20:29.972Z",
-      "heartbeatAt": "2026-09-30T23:20:29.972Z"
+      "heartbeatAt": "2026-09-30T23:52:00.496Z"
     },
     {
       "id": "30a80641-b679-4bc6-8aeb-a91bedc648fb",
@@ -3009,7 +3009,34 @@
       ],
       "state": "active",
       "claimedAt": "2026-09-30T23:23:23.855Z",
-      "heartbeatAt": "2026-09-30T23:23:23.855Z"
+      "heartbeatAt": "2026-09-30T23:52:00.496Z"
+    },
+    {
+      "id": "dcba6b55-84ac-4019-95ba-d4fba7a08d42",
+      "task": "HEALTH-HL12-QUOTE-GATEWAY-20260930",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/index.ts",
+        "server/research/early-access-wall.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-30T23:40:25.007Z",
+      "heartbeatAt": "2026-09-30T23:52:00.496Z"
+    },
+    {
+      "id": "45b795cc-d414-4e44-b6ec-c7c179a7d1ee",
+      "task": "HEALTH-PROVIDER-NEUTRAL-CONTINUITY-20260930",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        ".xenios/DECISIONS.md",
+        ".xenios/BLOCKED_EXTERNAL.md",
+        ".xenios/FOUNDER_ACTIONS.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-30T23:40:25.146Z",
+      "heartbeatAt": "2026-09-30T23:52:00.496Z"
     }
   ],
   "rules": [

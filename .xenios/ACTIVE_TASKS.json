@@ -3,6 +3,37 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "HEALTH-HL12-QUOTE-GATEWAY-20260930",
+      "title": "Admit exact owner-guarded quote routes through the Research gateway",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/index.ts",
+        "server/research/early-access-wall.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Claude F10: exact method and reference anchored admissions only; downstream ownership remains mandatory. No namespace-wide bypass.",
+      "claimedAt": "2026-09-30T23:40:25.002Z"
+    },
+    {
+      "id": "HEALTH-PROVIDER-NEUTRAL-CONTINUITY-20260930",
+      "title": "Record provider-neutral Health decision and exact local evidence without changing hosted truth",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        ".xenios/DECISIONS.md",
+        ".xenios/BLOCKED_EXTERNAL.md",
+        ".xenios/FOUNDER_ACTIONS.md"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Append a dated Health checkpoint. Preserve historical runs and observed production evidence; no new production claim or authority.",
+      "claimedAt": "2026-09-30T23:40:25.140Z"
+    },
+    {
       "id": "HEALTH-HL24-25-ENTRY-RECOVERY-20260930",
       "title": "Give transient session and cart failures truthful retry paths",
       "priority": "P2",

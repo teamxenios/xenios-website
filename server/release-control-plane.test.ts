@@ -94,6 +94,7 @@ const HL12_PENDING_SOURCE_SHAS = new Map([
   ["supabase/migrations/20260930202413_research_assisted_order_quote_payment_authority.sql", "c92d7a93e7b443cccd949f8903b62db77d425603"],
   ["supabase/migrations/20260930205725_research_assisted_order_quote_access_finance_bound.sql", "5c8498ce7f4c2333ee75b52cdbb0e76e14f0a925"],
   ["supabase/migrations/20260930230541_research_assisted_order_quote_evidence_corrections.sql", "a46531b5df038ab07a0f0bb2ca51146c5b9952b4"],
+  ["supabase/migrations/20260930234614_research_assisted_order_quote_provider_hold.sql", "947f6ee7739bf2a1381b4b29a4f9d132c751d64c"],
 ]);
 // The Early Access durable-persistence chain (ledger rows 50-53), pending,
 // pinned to the reviewed source commits on claude/f5-ea-durable-persistence.
