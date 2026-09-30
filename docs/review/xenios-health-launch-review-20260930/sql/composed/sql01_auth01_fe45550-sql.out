@@ -1,0 +1,71 @@
+Pager usage is off.
+ submitted 
+-----------
+ t
+(1 row)
+
+ guest_request | early_access_session_hash 
+---------------+---------------------------
+ t             | sess-guest-owner
+(1 row)
+
+ to_reviewing 
+--------------
+ t
+(1 row)
+
+quote_id = 2c994f5d-f0bb-4983-ad93-65a774d56aa1
+=== AUTH-01 control: a wrong early-access session hash is refused (both sides non-null -> false) ===
+ wrong_session_result 
+----------------------
+ 
+(1 row)
+
+=== AUTH-01: an UNRELATED member id, no session, no token, against the guest request ===
+                                                                                                        unrelated_member_result                                                                                                         
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"quoteId": "2c994f5d-f0bb-4983-ad93-65a774d56aa1", "version": 1, "currency": "USD", "replayed": false, "acceptedAt": "2026-09-30T23:24:12.272611+00:00", "totalCents": 10000, "acceptanceId": "71120d50-6b5b-49fb-a9e7-14099d3bf7a0"}
+(1 row)
+
+ quote_state_after_unrelated_member 
+------------------------------------
+ accepted
+(1 row)
+
+=== HL12-SQL-01: forged provider observation + verification; service_role only, no grant, no attempt, invented ids ===
+ to_pending 
+------------
+ t
+(1 row)
+
+ to_review 
+-----------
+ t
+(1 row)
+
+obs_id = 39fe1b25-0b47-4c6f-a0c7-81012d416639
+                                                                    verify_result                                                                    
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+ {"state": "paid", "replayed": false, "requestId": "aaaaaaaa-0000-4000-8000-000000000001", "verificationId": "cd953d4b-93f5-497c-96c6-d4bd56c980b1"}
+(1 row)
+
+ request_status_after_forgery 
+------------------------------
+ paid
+(1 row)
+
+  method  | provider_name | provider_payment_id |    observed_by    
+----------+---------------+---------------------+-------------------
+ provider | anything      | pi_forged_by_claude | provider:anything
+(1 row)
+
+ verifications 
+---------------
+             1
+(1 row)
+
+ verifier_grants_in_db 
+-----------------------
+                     0
+(1 row)
+

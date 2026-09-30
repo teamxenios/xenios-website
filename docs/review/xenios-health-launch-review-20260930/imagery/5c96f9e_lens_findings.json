@@ -1,0 +1,816 @@
+[
+ {
+  "lens": "identity",
+  "r": {
+   "findings": [
+    {
+     "id": "IMG-ID-01",
+     "severity": "P2",
+     "claim": "The kept-identity form decision for Hexarelin 5 mg and Oxytocin 10 mg is keyed onto the superseded provenance rows. Acceptance C11 says to map by the kept identity only. The branch docs claim GRP-0402/0407 stay 'provenance only', but the manifest keys for these two products are the mov_ ids bound to GEN-GRP-0402 and GEN-GRP-0407. Those rows also carry the superseded rows' labels and their 'held' state. The reconciliation file the generator reads says the kept rows are directly orderable research-use rows.",
+     "citation": "scripts/product-imagery/lib.mjs:376-396 (override stored under `GEN-${supersededSourceRow}`, looked up by binding SKU at :436-439); docs/product-imagery/manifests/product-image-coverage.json:3723-3751 (manifestKey mov_256cb0423eb6d2a77f65, label 'Oxytocin (10mg)', sourceDisplayState approval_required, journeyClass held, sku GEN-GRP-0407) and :11220 (mov_7c55d415a9574e9ebda7, GEN-GRP-0402); render-queue.json:5014,7315 (exact renders targeted at these ids); config/research/master-catalog-reconciliation-20260821.json:31-33,56-57,62-64,82 ('still the RUO row, still directly orderable. GRP-0402 is kept as provenance'); docs/product-imagery/V3_ACCEPTANCE_TRACE.md:51 and PRODUCT_IMAGE_CONTRACT.md:63 (claim 'provenance only'); review branch 08_DECISION_ACCEPTANCE.md:36,45 (the regenerated GRP-0425/0426 get NEW ids)",
+     "correction": "Record these two rows as superseded-provenance keys. Do not treat them as the canonical image identity for Hexarelin 5 mg / Oxytocin 10 mg. Add a forward crosswalk (superseded mov_ to kept GRP-0425/0426 mov_) once the catalog is regenerated. Take journey class from the kept identity (research-use request path), not approval_required. Do not queue exact renders against mov_7c55…/mov_256cb…. Correct the trace and contract wording."
+    },
+    {
+     "id": "IMG-ID-02",
+     "severity": "P2",
+     "claim": "Coverage stops at today's 420-row runtime. It has no handling for the founder-included catalog. The 2026-09-30 reversal includes GRP-0421/0423/0424 and GRP-0422, with new identities for GRP-0425/0426: 424 canonical rows in total. The imagery docs never mention GRP-0421/0423/0424. The only mention on this branch tip is an inherited handoff that still calls them 'now-excluded'. The 419-row render queue therefore omits rows the founder has decided to sell, and 2 of its rows are to-be-superseded identities.",
+     "citation": "git grep 'GRP-042[1-6]' 5c96f9e -- docs/product-imagery scripts/product-imagery (only 0422/0425/0426 appear, e.g. PRODUCT_IMAGE_CONTRACT.md:95); .xenios/handoffs/2026-09-30T17-06-52-836Z-CATALOG-ACTION-UNIFICATION-codex-xenios-health-launch-implementation-20260930.md:28 ('three now-excluded rows GRP-0421/0423/0424'); config/research/master-catalog-reconciliation-20260821.json:119 (expected canonicalVariants 424); origin/claude/xenios-health-launch-review-20260930:docs/review/xenios-health-launch-review-20260930/05_FOUNDER_PRICE_CONFIRMATION_2026-09-30.md:64-81,87-89 (reversal: include, 424 canonical); verify.mjs:249-253 and product-imagery.test.mjs:15-18 (pin 420/419/417/2)",
+     "correction": "Add a documented pending-identity section listing GRP-0421..0426 with their intended treatment: request path for 0421/0423/0424/0425/0426, and held with no component split for 0422. Record that ledger and queue must be regenerated when the 424-row dataset lands. Replace the 420/419 pins with assertions derived from the dataset plus a reconciliation-count check against `expected.canonicalVariants`."
+    },
+    {
+     "id": "IMG-ID-03",
+     "severity": "P2",
+     "claim": "The image journey class is a hand-written copy of runtime authority, and it will drift. `journeyClassFor` checks for a missing binding (quote_required) before hold state. It never reads commerceHolds or reviewedFormulationHolds, and it never reads the variant displayState. Planned regeneration leaves the new rows unbound. GRP-0422 would then become quote_required with the 'request' scene rather than held, which breaks acceptance C5. The only test standing in for the GRP-0422 rule matches display-name and label text ('CJC-1295 With DAC', no '+'). That test pins a different row.",
+     "citation": "scripts/product-imagery/lib.mjs:226-250 (unbound check at :228-229 precedes displayState; only product.displayState read), :252-275, :360/376 (reconciliation read for merges only; lib.mjs never references commerceHolds); config/research/master-catalog-reconciliation-20260821.json:86-114 (GRP-0422 commerceHold); server/research/assisted-order/production-catalog.ts:137-141 (generators must use authorityFor 'rather than a replica that could drift'), :160-168 (runtime held includes formulation_hold, non_merchandise_family, variant state); scripts/product-imagery/product-imagery.test.mjs:337-342; review 08_DECISION_ACCEPTANCE.md:37-45,112-113",
+     "correction": "Derive the journey class from the runtime authority (`authorityFor` / structured hold ids). Failing that, consume the reconciliation commerceHolds by structured Group ID/mov_, and evaluate holds before the unbound fallback. Add a test that a held row stays held when it is unbound. Add a structured-id test for GRP-0422 that does not depend on name or specification text."
+    },
+    {
+     "id": "IMG-ID-04",
+     "severity": "P2",
+     "claim": "The source hashes recorded in the manifests are hashes of a Windows CRLF checkout, not of the committed git blobs. As a result the 'deterministic' build and verify results are not reproducible from the commit. On any LF checkout, `buildArtifacts()` computes different source hashes, so the deep-equal in verify.mjs and the last test fail. The summary markdown is written with LF and compared byte-exactly. A fresh CRLF checkout will probably fail that comparison too. That is inferred from the code; the check was not run, as instructed.",
+     "citation": "scripts/product-imagery/lib.mjs:67-69 (hashes working-tree bytes), :589-597, :755-775; docs/product-imagery/manifests/product-image-coverage.json:14 records 108e81b2… for the member-safe dataset, while `git show 5c96f9e:<path> | sha256sum` = b8634a5d… and the CRLF-converted blob = 108e81b2… (the same pattern holds for bindings e49a8d74…, closure 5af4db6c…, reconciliation 170e497d…, summary 144e4bfd…, service.ts 77f5da97…); no eol rule in any .gitattributes at 5c96f9e; scripts/product-imagery/verify.mjs:116-136; build.mjs:20,32; product-imagery.test.mjs:371-373",
+     "correction": "Hash the git blob bytes (`git show`/`git cat-file`) or normalize to LF before hashing, and record the blob OID. Alternatively, add a `.gitattributes` eol rule for the source JSON/TS and the generated markdown. Re-run build on an LF checkout and pin those hashes."
+    },
+    {
+     "id": "IMG-ID-05",
+     "severity": "P2",
+     "claim": "imageState shares the Early Access vocabulary (approved|pending|none) but not its derivation, so A7 is only half reconciled. Early Access computes imageState from Product Control media bound to the Product Control variant UUID. The ledger hard-codes 'none' per mov_ row. The integration handoff contradicts itself about which system is the exact-media authority. After wiring, one card could show an approved manifest image while its server row reports imageState 'none'. Featured (legacy PC variant media) and All products (mov_ manifest) would also have two image authorities.",
+     "citation": "server/research/early-access/catalog/early-access-catalog.ts:74,275-293 (approved requires image.variantId === PC variant.id); scripts/product-imagery/lib.mjs:498 (imageState 'none' constant), :785; docs/product-imagery/INTEGRATION_HANDOFF.md:49 (runtime manifest keyed by mov_), :73 (Product Admin media 'must no longer be a display ... authority'), :89 ('imageState ... remains exact-media authority'); PRODUCT_IMAGE_CONTRACT.md:39-52",
+     "correction": "Name one exact-media authority. Either make EA imageState derive from the mov_-keyed approved manifest through the crosswalk, or make manifest approval require the PC media record for the canonical PC variant. Add a parity test on Featured legacy rows: both lanes must report the same imageState and the same asset for the same mov_."
+    },
+    {
+     "id": "IMG-ID-06",
+     "severity": "P3",
+     "claim": "The resolver splits Product Control UUIDs into two namespaces. Canonical ids go in `productControl*`; legacy PEX/PEP ids go in `legacy*`. The Featured card row carries only an undifferentiated productId/variantId. A caller that passes a Featured row's ids as Product Control ids gets null and a fallback, while All products shows the mov_-keyed candidate. That is the image-versus-fallback split A3 forbids. No test covers legacy UUIDs supplied in the Product Control fields.",
+     "citation": "scripts/product-imagery/lib.mjs:1075-1092 (PC branch matches only canonical entry.productControl), :1094-1133 (legacy branch); 0 of 22 legacy variant UUIDs appear among canonical PC variant ids (parsed from product-image-identity-crosswalk.json); client/src/research/early-access/earlyAccessCatalogView.ts:47-48,88-89,118-119; product-imagery.test.mjs:128-133 (only the legacy* path is tested); INTEGRATION_HANDOFF.md:61",
+     "correction": "Accept a Product Control variant UUID in either namespace, since the sets are disjoint, and still fail closed on conflict. Otherwise expose a single `productControlVariantId` lookup that checks both. Add a negative/positive test feeding the Featured row shape exactly as the card receives it."
+    },
+    {
+     "id": "IMG-ID-07",
+     "severity": "P3",
+     "claim": "There are orphan and overloaded manifest entries. Two of the ten committed public assets are referenced by no ledger row as either fallback or formFallback: accessory and liquid. Vial and spray appear only as unselected formFallback. Only 6 assets are ever the selected fallback. Acceptance D2 requires no orphan manifest entry. Separately, 'pending' means five different things (imageState, coverageStatus, fallback taxonomyKey, formTaxonomy, queueStatus). The pedestal asset 'pending' is also used for all 33 held rows and 128 sellable request_access rows, including all 22 Featured rows.",
+     "citation": "scripts/product-imagery/config.mjs:286-303 (accessory), :322-339 (liquid), :411-431 (no form maps to either); product-image-coverage.json counts.byFallbackTaxonomy / byFormTaxonomy (lines ~103-128: bottle, care, pending, request, shipping_service, topical / bottle, pending, shipping_service, spray, topical, vial); fallback-assets.json assets[3],[5]; lib.mjs:498-499,563",
+     "correction": "Remove unreferenced assets from the public tree and the manifest, or map them explicitly. Add a verify check that every manifest asset is referenced by at least one row. Rename the form-neutral taxonomy (for example `form_neutral`) so it cannot be confused with EA imageState 'pending'."
+    },
+    {
+     "id": "IMG-ID-08",
+     "severity": "P3",
+     "claim": "Alt text identifies the product, not the variant. It is built from displayName plus the asset description, so 281 of 420 rows share their alt string with at least one other row. For example, the Featured BPC-157 5 mg and 10 mg rows have identical alt text, and 21 Progesterone rows share one string. Acceptance D7 asks alt to name the product and form, for example 'BPC-157 10 mg research vial, illustrative'.",
+     "citation": "scripts/product-imagery/lib.mjs:277-279; product-image-coverage.json:1475 and :18185 (both 'BPC-157: Empty studio pedestal indicating that visual identification is pending. Illustrative.'); verify.mjs:303-306",
+     "correction": "Include the variant label or strength in the recommended alt text, or document and test that adjacent card text carries variant identity and that the image uses alt=\"\"."
+    },
+    {
+     "id": "IMG-ID-09",
+     "severity": "P3",
+     "claim": "Several rules still depend on name or specification text rather than structured identity. The P0 queue priority uses normalized-title matching; 2 of 9 demand titles ('Melanotan-2', 'CJC-1295 + Ipamorelin') match zero rows without any error. The packaging-sensitive list is a closed substring list: it flags only 3 of 20 Supplement Unit rows and misses names that look like product lines, such as 'Radient XO Serum', which gets the generic topical pump. Forms not in the map fall through to 'pending' without failing. None of this affects the 22 Featured mappings, which are structured.",
+     "citation": "scripts/product-imagery/lib.mjs:168-185,200-209 (name matching), :38-53,187-198 (brand/claim lists), :274,:443 (`?? \"pending\"` default); scripts/product-imagery/config.mjs:219-229; render-queue.json P0 rows seq 1-21 (no Melanotan or CJC rows); product-image-coverage.json topical row 'Radient XO Serum (5 Billion Exosomes)' with visualRestriction generic_form_only_until_exact_evidence",
+     "correction": "Key demand priority and packaging sensitivity on mov_/Group ID lists reviewed by a human, and fail the build when a listed title matches nothing. Throw on any unmapped dosage form instead of defaulting."
+    },
+    {
+     "id": "IMG-ID-10",
+     "severity": "P3",
+     "claim": "The render queue and crosswalk are inconsistent with the journey-safe policy. The exact-render prompts ignore journey class. 242 Care rows and 6 held rows get product-form prompts, including Syringes ('Included Supply') and held Capsule/Bottle rows, while the ledger gives those rows non-product scenes. Crosswalk entries also lack `exposure`, so the excluded FedEx row resolves to a candidate like any merchandise row.",
+     "citation": "scripts/product-imagery/lib.mjs:281-303 (prompt uses form and restriction only), :543-576; render-queue.json seq 334 (Syringes prompt 'visual form classification is Included Supply'), seq 91/370/372; product-image-identity-crosswalk.json:6093 (FedEx entry with resolvedCandidate, no exposure field); lib.mjs:616-634",
+     "correction": "Carry journey class into the exact-render prompt: non-product composition for held, service and Care rows unless an exact reviewed asset exists. Add `exposure` to crosswalk entries and exclude non-merchandise rows from any runtime manifest."
+    },
+    {
+     "id": "IMG-ID-11",
+     "severity": "P3",
+     "claim": "The docs misstate some identity details. The handoff and reconciliation docs call the aliases '22 PEX/R360'. In fact 5 of the 22 use PEP- product SKUs (PEP-006/007/009x2/010), and the test checks only the R360 variant prefix. The contract says 'The current CJC-1295 With DAC row is held', but 2 of the 3 CJC-1295 With DAC rows (GRP-0272 2 mg, GRP-0273 5 mg) are request_access; only GRP-0394 (10mg) is held.",
+     "citation": "docs/product-imagery/HANDOFF_SUMMARY.md:19; BRANCH_RECONCILIATION.md:75; product-imagery.test.mjs:126; config/research/production-completion/catalog-live-identity-closure-20260922.json aliases (PEP-010, PEP-009, PEP-006, PEP-007); PRODUCT_IMAGE_CONTRACT.md:95; product-image-coverage.json rows mov_9331f42ce573fb3f72e5, mov_6c559c89db938c58e815 (request_access), mov_07317a1fe77fe228b793 (held)",
+     "correction": "Say 'PEX/PEP plus R360', as PRODUCT_IMAGE_CONTRACT.md:35 and INTEGRATION_HANDOFF.md:61 already do. Assert the product-SKU prefix set in the test. Name GRP-0394 explicitly in the contract."
+    },
+    {
+     "id": "IMG-ID-PASS-1",
+     "severity": "PASS-NOTE",
+     "claim": "The keys are complete and consistent. The coverage ledger has 420 rows; the crosswalk has 420 entries, 417 of them Product Control-bound; the render queue has 419 items. Every key is an existing mov_ in the committed member-safe dataset, with 0 duplicates and 0 orphans. coverageKey == manifestKey == offeringVariantId on every row. offeringId, slug, displayName, label, form, family, category and displayState match the dataset on all 420 rows. The FedEx row (mo_003b0c272099eeb1f114) is excluded and is absent from the queue. BAM15 (mov_038386172c35c2ad8cca, quote_required) and Syringes (mov_512ed6b875c04eee4753, held) are present, unbound, and in the queue. The ledger's source files are unchanged between the merge base 7600943 and the implementation tip 3775557. The 10 WebP blobs match their manifest sha256 and sizes. There are no runtime references.",
+     "citation": "product-image-coverage.json:78-94 (invariants), :567, :7477; product-image-identity-crosswalk.json:22-25; render-queue.json:13115-13116; server/research/master-offerings/service.ts:71-74; server/research/master-offerings/data/master-offering-bindings.generated.json unbound[]; git diff --stat 7600943 origin/codex/xenios-health-launch-implementation-20260930 over the source paths is empty",
+     "correction": "None."
+    },
+    {
+     "id": "IMG-ID-PASS-2",
+     "severity": "PASS-NOTE",
+     "claim": "The 22 Featured legacy mappings use structured identity only. The generator joins each closure alias by canonicalVariantId and throws if the binding's offeringId, PC productId, variantId or SKU drifts. All 22 aliases (19 legacy products) resolve to the same mov_ and GEN-GRP binding that the All products lane uses. All 22 canonical rows are Lyophilized Vial / request_access, so both lanes get the identical asset, href, alt, dimensions and notice.",
+     "citation": "scripts/product-imagery/lib.mjs:398-429; lib.mjs:960-1048 (consistency: unique legacy variant/SKU, one canonical per alias); config/research/production-completion/catalog-live-identity-closure-20260922.json aliases[0..21]; e.g. R360-BPC157-10MG-VIAL -> mov_ca3e45ae9712aee91430 / GEN-GRP-0262, R360-CAGRILINTIDE-10MG-VIAL -> mov_bc725d0ad2a12e1ee57c / GEN-GRP-0274",
+     "correction": "None."
+    },
+    {
+     "id": "IMG-ID-PASS-3",
+     "severity": "PASS-NOTE",
+     "claim": "Every dosage form in the dataset is mapped explicitly (19 source forms, config.mjs:411-431), and the counts match acceptance C10. Form: source rows -> form taxonomy -> selected fallback. Lyophilized Vial 106 -> pending -> pending 106. Compounded Vial/Liquid 84 -> vial -> care 84. Capsule 94 -> bottle -> care 94. Capsule/Bottle 16 -> bottle -> bottle 12, pending 3, request 1. Topical (Cream 28 + Gel/Serum 2 + Serum 1 = 31) -> topical -> care 28, topical 3. Troche 6 -> pending -> care 6. Solution 5 + Injectable Solution 3 = 8 -> pending -> care 7, pending 1. Listed Unit 2 -> pending -> care 2. ODT/Tablet 1 -> pending -> care 1. Supplement Unit 20 -> pending -> pending 20. Tablet 15 -> pending -> care 15. Nasal Spray 5 -> spray -> care 5. Liquid 1 and Included Supply 1 -> pending. Shipping Service 1 -> shipping_service. Form not stated 29 -> pending pedestal (27 form_neutral, plus 2 overridden to Lyophilized Vial that still get the pedestal); this includes GLP-1 2mg, GLP-3 12/24mg and Survodutide, all held. Journey totals: care 242, request_access 143, held 33, quote_required 1, shipping_service 1, coming 0. Held is never Coming soon.",
+     "citation": "scripts/product-imagery/config.mjs:411-431; product-image-coverage.json counts (lines ~96-131); rows mov_06849c26f971f74805ef, mov_973154f49c156dcf7a72, mov_867e32ca427228fdd87e, mov_32c1c33224d5fca42b1e",
+     "correction": "None."
+    },
+    {
+     "id": "IMG-ID-PASS-4",
+     "severity": "PASS-NOTE",
+     "claim": "The imageState vocabulary matches the existing Early Access values. The ledger uses the EA values (approved|pending|none) and has no separate imageStatus field. All 420 rows are 'none', which is correct under EA semantics because no exact-variant asset exists. Coverage state sits on a separate axis: coverageStatus is 'fallback' on all 420 rows, with 0 final and 0 provisional. The derivation gap is covered in IMG-ID-05.",
+     "citation": "product-image-coverage.json:57-61,129-131; server/research/early-access/catalog/early-access-catalog.ts:74,275-293; PRODUCT_IMAGE_CONTRACT.md:39-52",
+     "correction": "None beyond IMG-ID-05."
+    }
+   ],
+   "unknowns": [
+    "The build, verify and test scripts were not run, per instructions. IMG-ID-04 rests on byte evidence: git blob hashes versus CRLF-converted hashes versus the recorded hashes, plus this host's autocrlf=true checkout (the dataset file here starts with '{\\r\\n'). The failure of the COVERAGE_SUMMARY.md byte-compare on a fresh CRLF checkout is inferred from the code.",
+    "INTEGRATION_HANDOFF.md:9 cites read-only production checks at 2026-09-30T20:02:55Z and ~20:34Z: zero media rows, and 22 aliases with zero drift. No durable artifact of either check is committed, so they cannot be verified at 5c96f9e. The committed closure snapshot is from 2026-09-22.",
+    "The P1 queue priority ('default_catalog_first_page_24', lib.mjs:309-322) sorts by displayName|slug|id. It was not verified whether this matches the runtime All products default ordering.",
+    "Whether names such as 'Radient XO', 'Inflam-Eze', 'Chondro Jointaide' or 'Omega Pure EPA-DHA 2400' are third-party product-line marks cannot be determined from the repository.",
+    "Superpower and Mito Health are diagnostics offerings outside the master-offerings dataset, so the ledger has no key for them. No partner asset exists on the branch. Whether a diagnostics card needs an image identity is outside this ledger's scope.",
+    "Whether the EA Featured projection will only ever list the 22 legacy PEX/PEP records, or could also list canonical GEN-GRP records, affects how serious IMG-ID-06 is. The code at 5c96f9e does not settle this.",
+    "The branch cites acceptance baseline f4f899a7. The acceptance document's header says baseline 3e47f92, but its content is byte-identical at f4f899a and at the review branch tip (checked with git diff)."
+   ],
+   "counts": {
+    "mergeBase": "7600943f9ec7573f0a5cbfe7a7687ba851276a30",
+    "imageryCommits": 2,
+    "changedPaths": 35,
+    "datasetVariants": 420,
+    "coverageRows": 420,
+    "crosswalkEntries": 420,
+    "renderQueueItems": 419,
+    "exposedRows": 419,
+    "excludedShipping": 1,
+    "pcBoundRows": 417,
+    "exposedUnbound": 2,
+    "duplicateKeys": 0,
+    "orphanKeys": 0,
+    "fieldMismatchesVsDataset": 0,
+    "featuredAliases": 22,
+    "featuredLegacyProducts": 19,
+    "featuredAliasesPEXrows": 17,
+    "featuredAliasesPEProws": 5,
+    "featuredAliasMismatches": 0,
+    "formNotStated": 29,
+    "formNeutralUnknowns": 27,
+    "keptIdentityOverrides": 2,
+    "journey": {
+     "care": 242,
+     "request_access": 143,
+     "held": 33,
+     "quote_required": 1,
+     "shipping_service": 1,
+     "coming": 0
+    },
+    "selectedFallback": {
+     "care": 242,
+     "pending": 161,
+     "bottle": 12,
+     "topical": 3,
+     "request": 1,
+     "shipping_service": 1
+    },
+    "imageState": {
+     "none": 420
+    },
+    "coverageStatus": {
+     "fallback": 420
+    },
+    "manifestAssets": 10,
+    "assetsNeverReferenced": 2,
+    "altStringsSharedRows": 281,
+    "founderIncludedRowsMissing": [
+     "GRP-0421",
+     "GRP-0422",
+     "GRP-0423",
+     "GRP-0424",
+     "GRP-0425 (new id)",
+     "GRP-0426 (new id)"
+    ],
+    "P0": 0,
+    "P1": 0,
+    "P2": 5,
+    "P3": 6,
+    "PASS_NOTE": 4
+   }
+  },
+  "v": {
+   "verdicts": [
+    {
+     "id": "IMG-ID-01",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "Every citation checks out at 5c96f9e. lib.mjs:385 stores the override under `GEN-${supersededSourceRow}`, and lib.mjs:436-439 looks it up by binding SKU. Bindings map GEN-GRP-0402 to mov_7c55d415a9574e9ebda7 and GEN-GRP-0407 to mov_256cb0423eb6d2a77f65. The coverage rows (product-image-coverage.json:3723-3751, :11220-11249) carry the superseded labels, approval_required and journeyClass held. The render queue targets both ids (render-queue.json:5014, :7315). PRODUCT_IMAGE_CONTRACT.md:63 and V3_ACCEPTANCE_TRACE.md:44,51 misstate this as 'kept identities GRP-0425/0426'. The review's own 05_FOUNDER_PRICE_CONFIRMATION:57 calls the served 420-row runtime's GRP-0402/0407 'superseded identities', and 08:36,45 says regeneration gives 0425/0426 new ids and keeps 418 of today's ids. Downgraded to P3 for three reasons. (1) The kept identities do not exist in the 420-row runtime, so borrowing the kept row's form is the only way to honour C11's form rule today. (2) The selected pixel is the same form-neutral pedestal every other lyophilized or Form-not-stated row gets, so no wrong image is possible. (3) The forward risk is an orphaned key, which the 420 pin forces a rebuild to catch. Drop part of the correction: taking the journey class from the kept identity would break C9 ('follow the server state'). Today the runtime serves these rows as classification-pending 'Request Order' (production-catalog.ts:160-161, action-policy.ts:80-86), so the fix is to follow the runtime, not the kept identity."
+    },
+    {
+     "id": "IMG-ID-02",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "git grep finds no GRP-0421/0423/0424 in docs/product-imagery or scripts/product-imagery. Only 0422/0425/0426 appear (PRODUCT_IMAGE_CONTRACT.md:63,95; STYLE_GUIDE:36; V3 trace:44-45,51; test:274; verify:343). The inherited handoff (.xenios/handoffs/2026-09-30T17-06-52-836Z-...:28) still says 'now-excluded'. The reversal (05:64-81,87-89) was committed at 0f7295e, 11:40 CDT, before the imagery tip at 16:21 CDT. The pins are at verify.mjs:249-253 and test:15-18, and reconciliation.json:119 expects 424. Downgraded because the acceptance bar itself says to measure 'the real 419-row customer projection' (13 D1:80) and never names 0421/0423/0424. Regeneration is blocked upstream (HL-11, private intake). The hard pins fail closed, which forces a deliberate rebuild rather than silent drift. What remains is a real documentation and forward-planning gap, not a defect in today's artifact. The suggested check against expected.canonicalVariants (424) would fail against today's 420-row runtime, so it can only land together with regeneration."
+    },
+    {
+     "id": "IMG-ID-03",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P2",
+     "reason": "Confirmed, and understated: the drift already exists, it is not just a future risk. journeyClassFor (lib.mjs:226-250) reads only product.displayState, checks `!binding` before any hold, and never reads commerceHolds, variant displayState or reviewedFormulationHolds. It maps approval_required to 'held' (lib.mjs:236-238). The runtime's HELD_DISPLAY_STATES excludes approval_required (production-catalog.ts:109-116). The runtime treats those rows as classificationPending (:160-161), i.e. request_activation / 'Request Order' (action-policy.ts:80-86), and 'Apply' in the member lane (master-offerings/action.ts:260-265). So 32 of the 33 imagery-held rows are requestable at runtime, not held. They are 29 Form-not-stated rows plus Colostrum and two Tesofensine rows; the second group gets a pedestal instead of the bottle form. Conversely, the runtime holds available_this_week (production-catalog.ts:111), while imagery maps it to catalog_visible (lib.mjs:244-246); no row has that state today. This violates C9 ('visual state must follow the server state'). The GRP-0422 projection is also right: a new unbound research row would return quote_required at lib.mjs:229, while the runtime returns formulation_hold, i.e. held. The test at :337-342 matches the exact-case displayName 'CJC-1295 With DAC', which only GRP-0394 has. The other two rows are 'CJC-1295 With Dac', so the test pins GRP-0394, and GRP-0394 is itself runtime classification-pending, not held. P2 stands because this is a structural breach of an acceptance rule, even though pixels are unaffected today."
+    },
+    {
+     "id": "IMG-ID-04",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "Byte evidence reproduced. For the dataset, `git show 5c96f9e:<path> | sha256sum` gives b8634a5d, while the CRLF-converted blob gives 108e81b2, the recorded value (coverage.json:14). The same split holds for bindings (587595e6 vs e49a8d74), closure (2f9834d3 vs 5af4db6c), reconciliation (8ee32f7e vs 170e497d), summary (fc5228d3 vs 144e4bfd) and service.ts (1aa6b79d vs 77f5da97). lib.mjs:67-69 hashes working-tree bytes. The only .gitattributes files are client/public/research/products (webp only) and docs/legal, and there is no root eol rule. Local core.autocrlf=true. renderCoverageSummary is a template literal, and JS normalizes CRLF to LF in template literals. The committed COVERAGE_SUMMARY.md blob is LF, but a fresh autocrlf checkout makes it CRLF, so verify.mjs:132-136 would fail there. An LF checkout fails the ledger deep-equal instead. Both results are inferred; nothing was run. verify.mjs:245 normalizes CRLF for .gitattributes only, which shows the author knew about the hazard. Downgraded because product-imagery.test.mjs is not run by CI or `npm test`: vitest.config.ts:29 includes only server/shared/client *.test.ts(x), and package.json has no imagery script. The impact is evidence reproducibility (HANDOFF_SUMMARY.md:42-44 'pass'), not customers."
+    },
+    {
+     "id": "IMG-ID-05",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "earlyAccessImageState (early-access-catalog.ts:279-293) derives approved/pending/none from facts.image and requires image.variantId === the Product Control variant.id. The ledger hard-codes imageState 'none' (lib.mjs:498), and verify.mjs:292 asserts it. INTEGRATION_HANDOFF.md:73 says Product Admin media 'must no longer be a display or commerce authority'. :89 says imageState 'remains exact-media authority', while :49 makes the mov_-keyed approved manifest the display source. That leaves two approval records with no stated parity. Downgraded because A7 asks only for vocabulary reconciliation, which the ledger does. 'none' is correct today: the handoff at :9 reports zero PC media rows, though that is an unverifiable observation. No runtime code exists, so this is a design ambiguity to settle before wiring, not a present defect."
+    },
+    {
+     "id": "IMG-ID-06",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "The resolver (lib.mjs:1075-1092) matches productControl* only against canonical entry.productControl, and legacy ids only through legacy* (:1094-1133). Parsing the crosswalk shows that 0 of 22 legacy variant UUIDs and 0 of the legacy product UUIDs appear among canonical PC ids, so the namespaces are disjoint. The EA row view carries undifferentiated productId/variantId (earlyAccessCatalogView.ts:47-48, 88-89, 118-119). The tests exercise only the legacy* path for aliases (test:128-133). P3 is right. The resolver is script-side, not a runtime resolver. INTEGRATION_HANDOFF.md:61 tells Featured explicitly to use the legacy UUID path. Failing closed to a fallback is the designed behavior, so this is an integration hazard, not a present defect."
+    },
+    {
+     "id": "IMG-ID-07",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "FORM_TO_TAXONOMY (config.mjs:411-431) maps no form to accessory or liquid. Ledger counts: byFormTaxonomy contains bottle/pending/shipping_service/spray/topical/vial, and byFallbackTaxonomy contains bottle/care/pending/request/shipping_service/topical (coverage.json:108-123). So xenios-fallback-form-accessory-v1 (config.mjs:286-303) and -liquid-v1 (:322-339) are referenced by no row. verify.mjs:233-240 checks only files-to-manifest and never checks manifest-to-row references. Vial (84) and spray (5) appear only as unselected formFallback. 'pending' is overloaded as a taxonomy, an EA imageState value, a coverageStatus and a queueStatus. The pending pedestal serves all 33 held rows plus 128 request_access rows, all 22 Featured rows among them. P3: the assets are quarantined and non-deployable."
+    },
+    {
+     "id": "IMG-ID-08",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "recommendedAltText is `${displayName}: ${altDescription} Illustrative.` (lib.mjs:277-279). Recomputed: 281 rows share their alt string with at least one other row, across 226 distinct strings. The largest group is 21 Progesterone rows. The Featured BPC-157 5 mg (mov_09db…) and 10 mg (mov_ca3e…) rows are identical (coverage.json:1475, :18185). There are no em dashes and no 'Xenios' prefix. P3 is right. For a non-product pedestal, adding strength could imply the image depicts that variant, so the alt=\"\"-with-adjacent-text option is the safer resolution."
+    },
+    {
+     "id": "IMG-ID-09",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "Re-ran normalizeTitle matching (lib.mjs:168-209) against the dataset. 'Melanotan-2' and 'CJC-1295 + Ipamorelin' match 0 products; the dataset has 'Melanotan II' and 'CJC-1295 (No DAC) + Ipamorelin'. The P0 queue has 21 rows (render-queue counts) with no Melanotan or CJC. PACKAGING_SENSITIVE_NAMES (lib.mjs:38-47) flags only 3 of the 20 Supplement Unit rows (two UltraBiotic, one Magtein). Radient XO Serum is generic_form_only and gets the topical fallback. `?? \"pending\"` at lib.mjs:274 and :443 is confirmed. Low impact: the restriction label does not change fallback selection, and both restriction prompts already forbid imitating third-party packaging. The pending default is form-neutral, so it fails safe."
+    },
+    {
+     "id": "IMG-ID-10",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "exactRenderPrompt (lib.mjs:281-303) uses only the form and the restriction. No exact-queue prompt mentions a journey or scene. Queue composition: care 242, request 143, quote 1 and held 6 get form prompts; held 27 get neutral prompts. Seq 334 Syringes gets 'classification is Included Supply', and seq 91/370/372 (Colostrum, Tesofensine) get Capsule/Bottle prompts while the ledger gives those rows the pedestal. Crosswalk entries carry only manifestKey/offeringId/offeringVariantId/productControl/legacyFeaturedAliases/resolvedCandidate, with no exposure field, and the FedEx entry (crosswalk.json:6093) resolves a candidate. P3: every queue item is mayRenderNow=false and blocked on the v3 prompt."
+    },
+    {
+     "id": "IMG-ID-11",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "The PEX/PEP part is confirmed. The alias product SKUs include PEP-006, PEP-007, PEP-009 (×2) and PEP-010. HANDOFF_SUMMARY.md:19, BRANCH_RECONCILIATION.md:75, README.md:24, V3 trace:19, INTEGRATION_HANDOFF.md:9,138 and COVERAGE_SUMMARY.md:21 all say 'PEX/R360'. test:126 asserts only /^R360-/. The CJC sub-claim is overstated. PRODUCT_IMAGE_CONTRACT.md:95 names the exact-case display name 'CJC-1295 With DAC', which only GRP-0394 carries. GRP-0272/0273 are 'CJC-1295 With Dac', so the sentence is literally accurate, if ambiguous. The real error in that sentence is different: GRP-0394 is runtime classification-pending ('Request Order'), not held (see IMG-ID-03). This is a documentation nit."
+    },
+    {
+     "id": "IMG-ID-PASS-1",
+     "verdict": "CONFIRMED",
+     "reason": "Recomputed from the committed blobs: 420 variants and 420 rows, 0 field mismatches (offeringId, slug, displayName, label, family, category, form, displayState), 0 duplicate keys, and 419 queue items with FedEx absent and 0 orphans. Crosswalk invariants are 420/417 (crosswalk.json:22-23). The runtime exclusion is at service.ts:71-74. `git diff --stat 7600943 origin/codex/xenios-health-launch-implementation-20260930` over the six source paths is empty. All 10 WebP blob sha256 prefixes and sizes match their content-hashed filenames and the manifest."
+    },
+    {
+     "id": "IMG-ID-PASS-2",
+     "verdict": "CONFIRMED",
+     "reason": "lib.mjs:404-429 joins by canonicalVariantId and throws on offeringId, PC productId, variantId or SKU drift. Recomputed: all 22 aliases map to 22 distinct canonical mov_ ids with matching GEN-GRP SKUs, with 0 mismatches. The closure counts (unreconciledLiveVariants 0; 439 = 417 + 22) show that no Featured legacy unit sits outside the 22. All 22 canonical rows are Lyophilized Vial/request_access with the pending fallback, so both lanes resolve the same candidate. Example: R360-BPC157-10MG-VIAL -> mov_ca3e45ae9712aee91430 / GEN-GRP-0262."
+    },
+    {
+     "id": "IMG-ID-PASS-3",
+     "verdict": "CONFIRMED",
+     "reason": "The form, taxonomy and fallback breakdown was recomputed exactly: Topical Cream 26 care + 2 topical, Gel/Serum 2 care, Serum 1 topical; Solution 4 care + 1 pending; Injectable 3 care; Capsule/Bottle 12 bottle + 3 pending + 1 request. The four GLP-class/Survodutide keys are Form not stated, held, with the pending fallback (GEN-GRP-0412/0410/0411/0415). There are 0 coming rows. One caveat on the phrase 'held': 32 of the 33 imagery-held rows are runtime classification-pending, not held (IMG-ID-03)."
+    },
+    {
+     "id": "IMG-ID-PASS-4",
+     "verdict": "CONFIRMED",
+     "reason": "The ledger's vocabularies.imageState is [approved, pending, none] (coverage.json:57-61), matching EARLY_ACCESS_IMAGE_STATES (early-access-catalog.ts:74). byImageState is none:420, and coverageStatus is fallback on all 420 rows, as a separate field."
+    }
+   ],
+   "missed": [
+    "P2 (should be folded into IMG-ID-03): the journey-class drift from runtime already exists for 32 rows. lib.mjs:236-238 maps approval_required to 'held'. The runtime keeps approval_required out of HELD_DISPLAY_STATES (server/research/assisted-order/production-catalog.ts:109-116) and projects it as classificationPending (:160-161), i.e. workflowMode request_activation / 'Request Order' (shared/research/assisted-order/action-policy.ts:80-86), and 'Apply' in the member lane (server/research/master-offerings/action.ts:260-265). The 32 rows are 29 Form-not-stated peptides (GEN-GRP-0388..0417, including Hexarelin/Oxytocin and CJC-1295 With DAC GRP-0394), Colostrum and two Tesofensine rows. The runtime also holds available_this_week (production-catalog.ts:111), which imagery calls catalog_visible (lib.mjs:244-246). PRODUCT_IMAGE_CONTRACT.md:95 and V3_ACCEPTANCE_TRACE.md:45 ('The current CJC-1295 With DAC row is held') misstate the runtime state and conflict with acceptance C9.",
+    "P3: imagery hard-codes the reconciliation file (scripts/product-imagery/config.mjs:16-17, `master-catalog-reconciliation-20260821.json`). The runtime reads the newest `master-catalog-reconciliation-*.json` (server/research/master-offerings/reviewed-holds.ts:56-68). A dated 2026-09-30 decision file would change runtime holds and merges but not the image ledger. This is a third copy of the build/runtime split the review already flagged (08_DECISION_ACCEPTANCE.md A3).",
+    "P3: the mov_ manifest key is a content hash of Group ID + family + product + specification (server/research/master-offerings/normalize-catalog.ts:147,178). Any correction to product name or specification text re-keys the row and orphans any exact asset or approval recorded against the old mov_. The review already requires such a text change for GRP-0422 (08 B:50, remove '(split pending)'). The ledger records Group ID lineage only indirectly, via productControl.sku, and not at all for the unbound rows (BAM15 GRP-0244, Syringes GRP-0365). There is no re-key/rename crosswalk or rename detection beyond the hard 420 pin and deep-equal rebuild (verify.mjs:116-131,249).",
+    "Housekeeping, not a finding: during this read-only verification one `git show` redirect wrote a copy of product-image-coverage.json to /tmp/cov.json outside the repo, and a hook blocked removing it. Nothing in the repository was modified. The parsed exports live under the session scratchpad subdirectory `vid/`."
+   ]
+  }
+ },
+ {
+  "lens": "assets",
+  "r": {
+   "findings": [
+    {
+     "id": "IMG-INFRA-01",
+     "severity": "P1",
+     "claim": "The 10 image candidates are unreviewed and, by the lane's own record, can never be approved. They sit in Vite's default publicDir, so any production build of 5c96f9e, or of any branch it is merged into, copies them to dist/public and serves them at public same-origin URLs such as /research/products/fallbacks/xenios-journey-care-fallback-v1-58884347b983.webp. The 'non-deployable' status exists only as prose and JSON strings. No build step, CI job or runtime check enforces it. No UI references them today, so they are fetchable but not presented. Even so, merging this commit into the launch branch as-is would ship unapproved AI-generated bytes, or silently make the release candidate non-deployable.",
+     "citation": "Files: git ls-tree 5c96f9e -- client/public/research/products/fallbacks/ (10 files). Build and serve path: vite.config.ts:33-35 (root=client, outDir dist/public, no publicDir override, so publicDir is client/public); script/build.mjs:9 (viteBuild()); package.json:15 (build script); server/static.ts:182 (app.use(express.static(distPath))); .replit:15-18 (deployment build = npm run build, run = node ./dist/index.cjs). The lane's own admissions: docs/product-imagery/manifests/fallback-assets.json:16-20 (status blocked_nonapprovable_public_bytes; enforcement 'source_lane_contract_and_release_handoff_block_not_a_runtime_access_control'); docs/product-imagery/PRODUCT_IMAGE_CONTRACT.md:17; .xenios/handoffs/2026-09-30T21-20-04-779Z-XENIOS-PRODUCT-IMAGERY-20260930-codex-xenios-product-imagery-20260930.md:28",
+     "correction": "Do not merge 5c96f9e into the health-launch or launch-integration branch while these bytes are under client/public. Move them to a location that is never served, such as docs/product-imagery/candidates/ or a private reviewed bucket. Alternatively, add a fail-closed step to the npm build script that refuses any file under client/public/research/products/ unless its manifest entry is approved and deploymentEligibility is not 'blocked'. Only v3 rerenders with durable source evidence and a named approver should enter /research/products/fallbacks/."
+    },
+    {
+     "id": "IMG-INFRA-02",
+     "severity": "P2",
+     "claim": "No gate runs the imagery lane's validators. The invariants they assert (publicAssetsWired=0, deploymentEligibility=blocked, hash-matching filenames, size budget, no EXIF/XMP, 420/419 counts) are checked only when someone runs the scripts by hand. CI, npm build and vitest never execute them, so a later lane can wire runtime or add bytes without any failure.",
+     "citation": "scripts/product-imagery/product-imagery.test.mjs:1-2 (node:test, not vitest); vitest.config.ts:29 (include is server/**, shared/**, client/src/** only); .github/workflows/checks.yml:19,39,53 (vitest, npm run build, core-site protection and route uniqueness only); package.json:15 (build does not call scripts/product-imagery/verify.mjs); no product-imagery script in package.json",
+     "correction": "Add a package.json script, for example verify:product-imagery = node scripts/product-imagery/verify.mjs && node --test scripts/product-imagery/product-imagery.test.mjs. Run it in checks.yml and, preferably, in the build script, so a deployable build cannot contain unapproved public imagery."
+    },
+    {
+     "id": "IMG-INFRA-03",
+     "severity": "P2",
+     "claim": "Nothing at the path, filename or URL level separates provisional from approved. Review state exists only as strings in docs/ JSON. The candidate filenames follow the same <semantic>-fallback-v{n}-<sha12>.webp pattern and sit under the same /research/products/fallbacks/ prefix that the contract reserves for future approved fallbacks. The lane's own path allowlist accepts both. Every crosswalk entry and coverage row carries a populated href to a provisional asset. A future resolver that validates by prefix and hash, which is the contract's own URL rule, would therefore accept these bytes. The word 'provisional' also has two meanings: as a coverageStatus it means an exact candidate with incomplete evidence, but here it is the reviewStatus of non-exact fallbacks.",
+     "citation": "scripts/product-imagery/verify.mjs:26-29 (FILE_PATH_ALLOWLIST and PUBLIC_PATH_ALLOWLIST accept any <name>-<sha12>.webp under fallbacks/); docs/product-imagery/PRODUCT_IMAGE_CONTRACT.md:123-137 and :45-50; docs/product-imagery/INTEGRATION_HANDOFF.md:67-73; docs/product-imagery/manifests/product-image-identity-crosswalk.json:39-41 (resolvedCandidate.href); docs/product-imagery/manifests/product-image-coverage.json:164,173 (formFallback.href, fallback.href); docs/product-imagery/manifests/fallback-assets.json:28 (reviewStatus provisional)",
+     "correction": "Store candidates in a separate non-public namespace, or under a candidates/ prefix that the runtime allowlist rejects. Accept runtime images only through the approved-only generated manifest planned in INTEGRATION_HANDOFF.md:49. Add a test that each of the 10 current sha256 values and asset IDs is rejected by the runtime resolver. Rename one of the two 'provisional' meanings."
+    },
+    {
+     "id": "IMG-INFRA-04",
+     "severity": "P2",
+     "claim": "The runtime-reference scan behind publicAssetsWired=0 and customerSurfaceReferences=0 is narrower than its claim. It scans client/src, server, shared and supabase only. It skips client/public (sw.js, site.webmanifest, sitemap.xml, offline.html, llms.txt), client/index.html, config/ and content/. It also matches only the exact assetId, publicPath or basename, so a URL assembled from the prefix, or a runtime import of the docs manifests, would still report 0. An independent git grep at 5c96f9e found no references in any of those locations, so the current state is clean.",
+     "citation": "scripts/product-imagery/lib.mjs:71-77 (RUNTIME_REFERENCE_ROOTS), :129-133 (exact-token match); docs/product-imagery/manifests/product-image-coverage.json:39 (runtimeReferenceScan roots), :89 (publicAssetsWired: 0). Reviewer check: git grep -e 'products/fallbacks' -e 'xenios-fallback-' -e 'fallback-v1-' 5c96f9e -- client/public client/index.html config content (excluding the fallbacks directory) returns nothing",
+     "correction": "Extend the scan roots to client/public (excluding the fallbacks directory itself), client/index.html, config/ and content/. Also match the '/research/products/fallbacks/' prefix and any import of docs/product-imagery/manifests/."
+    },
+    {
+     "id": "IMG-INFRA-05",
+     "severity": "P3",
+     "claim": "Two committed public binaries have no consumer. xenios-form-accessory (31,370 B) and xenios-form-liquid (22,644 B) are not referenced by any coverage row, as either fallback or formFallback, yet they add 54,014 deployable bytes. The accessory image shows an empty sample tube in a rack, although its useRestriction says 'no_syringe_sample_or_device_claim'.",
+     "citation": "docs/product-imagery/manifests/fallback-assets.json:254-264 (accessory), :386-396 (liquid). Aggregated over the 420 rows of docs/product-imagery/manifests/product-image-coverage.json: fallback.assetId is care 242, pending 161, bottle 12, topical 3, request 1, shipping 1; formFallback.assetId is vial 84, topical 31, pending 189, bottle 110, spray 5, shipping 1",
+     "correction": "Remove unused candidates from the public tree. Keep their prompts in the render queue only, until a reviewed v3 asset has a real consumer."
+    },
+    {
+     "id": "IMG-INFRA-06",
+     "severity": "P3",
+     "claim": "Alt text and prompts live only in docs/product-imagery/manifests/*.json. The repository's no-em-dash gate does not scan docs/, and the lane's verify.mjs has no dash check, only a claim-term regex. There are no em or en dashes in any added file today; the only em dashes in the diff are two that already existed at the merge base in .xenios/ACTIVE_TASKS.json. The handoff says the official gate was not run.",
+     "citation": "scripts/acceptance/verify-no-em-dash.mjs:13-18 (SOURCE_ROOTS: client/src, client/public, server, shared), :25-27 (RUNTIME_CONFIG_PROJECTIONS); scripts/product-imagery/verify.mjs:39-40, :301-314 (no dash check); .xenios/ACTIVE_TASKS.json:545,596 (pre-existing em dashes, also at 7600943); handoff .md:46-47 (official gate failed with ERR_MODULE_NOT_FOUND)",
+     "correction": "Import FORBIDDEN_FORMS from verify-no-em-dash.mjs into verify.mjs and apply it to recommendedAltText, altDescription, illustrativeNotice and prompts, or add the manifests to the gate's scan list. Once the planned client/src/research/product-imagery/productImageManifest.generated.ts (INTEGRATION_HANDOFF.md:43) exists, the gate covers it by location."
+    },
+    {
+     "id": "IMG-INFRA-07",
+     "severity": "P3",
+     "claim": "Alt text names the product family (displayName), not the variant, so different variants get identical alt text. For example, BPC-157 5 mg and BPC-157 15 mg both read 'BPC-157: Empty studio pedestal indicating that visual identification is pending. Illustrative.' The acceptance bar's accessibility example names the product and strength ('BPC-157 10 mg research vial, illustrative').",
+     "citation": "scripts/product-imagery/verify.mjs:303-306 (requires the alt to start with displayName only); docs/product-imagery/manifests/product-image-coverage.json:1433 and :1475 (5 mg) vs :3844 and :3879 (15 mg); acceptance 13_IMAGE_LAYER_ACCEPTANCE.md:95-97 (D7)",
+     "correction": "Build recommendedAltText from displayName plus variantLabel or strength, and keep the scene description form-neutral where the form is unknown."
+    },
+    {
+     "id": "IMG-INFRA-08",
+     "severity": "P3",
+     "claim": "The size budget is applied at 1024x1024, which is several times a typical card's display size. There is no smaller rendition or srcset. journey-care is 114,964 B, 93.6% of the 122,880 B per-asset cap, and it would be the primary visual for 242 Care rows.",
+     "citation": "docs/product-imagery/manifests/fallback-assets.json:34-50 (deliveryBudget, 1024x1024 delivery), :591 (byteSize 114964); scripts/product-imagery/config.mjs:5-6; acceptance 13_IMAGE_LAYER_ACCEPTANCE.md:32 (B5: example budget of 120 KB WebP 'at 1x')",
+     "correction": "When v3 rerenders are produced, emit card-size renditions (for example 384 and 768 px) with srcset/sizes. Apply the per-asset budget at the 1x card size and keep 1024 px only as the detail or 2x variant."
+    },
+    {
+     "id": "IMG-INFRA-09",
+     "severity": "P3",
+     "claim": "Lease scope drift: the commit adds a .xenios/messages/ file that is not among the task's leased paths. This may be exempt by fleet convention.",
+     "citation": ".xenios/ACTIVE_TASKS.json:2764-2773 (lease paths); added path .xenios/messages/2026-09-30T21-20-51-041Z-codex-xenios-product-imagery-20260930.json",
+     "correction": "Confirm that .xenios/messages/** is exempt under the continuity OS, or add it to the lease."
+    },
+    {
+     "id": "IMG-INFRA-PASS-01",
+     "severity": "PASS-NOTE",
+     "claim": "No product runtime files changed. All 35 changed paths are under .xenios/**, client/public/research/products/**, docs/product-imagery/** and scripts/product-imagery/**. The Early Access card's no-photography policy and its test are untouched: not reversed, silently or otherwise. The reversal is deferred to a future integration lane.",
+     "citation": "git diff --name-status 7600943f9ec7573f0a5cbfe7a7687ba851276a30 5c96f9e (35 paths; the merge base with origin/codex/xenios-health-launch-implementation-20260930 is 7600943f); git diff --quiet over client/src server shared package.json package-lock.json vite.config.ts client/index.html client/public/sw.js client/public/site.webmanifest succeeds (no changes); client/src/research/early-access/EarlyAccessProductCard.tsx:201-202 and EarlyAccessProductCard.test.tsx:389-390 unchanged",
+     "correction": "None needed. The integration lane must reverse the no-photography policy deliberately, citing the founder scope change, as acceptance A1 requires."
+    },
+    {
+     "id": "IMG-INFRA-PASS-02",
+     "severity": "PASS-NOTE",
+     "claim": "The assets are under the permitted zone, not protected client/public/**. docs/, scripts/ and .xenios/ are infrastructure zones. No protected or seam file is touched. The .gitattributes rule ('*.webp binary') sits in the only writable place available, since a root .gitattributes would be a protection violation and none exists. Side effect: Vite will copy this dotfile into dist/public, but express.static ignores dotfiles by default.",
+     "citation": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json:190 (client/public/** protected), :271 (client/public/research/ allowed), :321-324 (docs/, scripts/, .xenios/ infrastructure); client/public/research/products/.gitattributes:1; git show 5c96f9e:.gitattributes fails (does not exist)",
+     "correction": "None needed."
+    },
+    {
+     "id": "IMG-INFRA-PASS-03",
+     "severity": "PASS-NOTE",
+     "claim": "Binary inventory, all verified. 10 WebP files under client/public/research/products/fallbacks/. Every one is RIFF/WEBP with a 'VP8 ' lossy header at 1024x1024, with no VP8X, EXIF or XMP chunk. In every filename the 12-hex suffix equals the first 12 characters of the file's sha256 (content-addressed). Sizes: accessory 31,370; bottle 10,154; liquid 22,644; pending 22,824; spray 10,898; topical 10,974; vial 25,374; journey-care 114,964; journey-request 18,982; service-shipping 24,152. Total 292,336 B, within the 409,600 B budget. The public raster total grows from 4,408,995 B to 4,701,331 B. Visual inspection of all 10: no text, labels, logos, people or third-party packaging. The vial visibly contains liquid; it is used only as formFallback for 84 'Compounded Vial / Liquid' Care rows, and all 108 lyophilized rows use the pending pedestal instead.",
+     "citation": "git ls-tree -r -l 5c96f9e -- client/public/research/products/; byte headers read with od (for example offset 12 'VP8 ', width and height 0x0400); sha256sum of each blob; docs/product-imagery/manifests/fallback-assets.json:34-38; scripts/product-imagery/verify.mjs:203-227; docs/product-imagery/PRODUCT_IMAGE_CONTRACT.md:65",
+     "correction": "None needed."
+    },
+    {
+     "id": "IMG-INFRA-PASS-04",
+     "severity": "PASS-NOTE",
+     "claim": "Provenance is recorded honestly, but it cannot support approval, which is consistent with the self-declared block. Recorded: generator ('OpenAI ImageGen through Codex imagegen'), full prompt, encodedAt, source PNG sha256 and dimensions, ffmpeg recipe, rightsStatus publication_rights_review_pending, ownershipClaim none_until_review, and an illustrative notice. Missing: pixelGeneratedAt is 'unknown' for all 10, reviewer and reviewedAt are null, and the source PNGs are local rather than repository-durable. These bytes therefore cannot meet acceptance A2, which is one more reason IMG-INFRA-01 matters.",
+     "citation": "docs/product-imagery/manifests/fallback-assets.json:21-33 (provenancePolicy), :67-72, :73-84 (sourceArtifact local_original_retained_outside_repository), :104-110 (illustrativeNotice, reviewRecord with reviewer null); the same pattern at :137, :173, :203, :239 and so on",
+     "correction": "For the v3 rerender, commit or durably store the source evidence, record the generator model and version, generation time, named approver and UTC time, and rights evidence before any byte enters a served path."
+    },
+    {
+     "id": "IMG-INFRA-PASS-05",
+     "severity": "PASS-NOTE",
+     "claim": "Service worker and CSP. The service worker precaches only /offline.html. It caches same-origin images cache-first on request, which is safe with immutable content-hashed names because new bytes get a new URL. Care pages' CSP img-src 'self' data: is satisfied by these same-origin paths, and Research pages send no CSP (helmet CSP disabled). A missing file under /research/products/fallbacks/<x>.webp does not match the single-segment /research/products/:slug pattern, so it should resolve as an unknown document (404) rather than the 200 SPA shell. That was not executed.",
+     "citation": "client/public/sw.js:25-29 (install precaches offline.html only), :123-137 (cache-first for image destinations, only response.ok and type basic); server/care-document-csp.ts:25 (imgSrc 'self', data:); server/index.ts:263 (contentSecurityPolicy: false); server/research/seo/raw-http-document-policy.ts:493 and :660-674 (':slug' compiled to [^/]+, anchored); client/src/research/section.tsx:429",
+     "correction": "None needed now. The integration lane should add the static-server tests planned in INTEGRATION_HANDOFF.md:75 (exact WebP bytes for GET and HEAD, and a missing deep image never returns the SPA shell), plus onError and naturalWidth>0 browser proof."
+    },
+    {
+     "id": "IMG-INFRA-PASS-06",
+     "severity": "PASS-NOTE",
+     "claim": "Identity and ledger shape. All 420 coverage and crosswalk rows are keyed with manifestKey equal to offeringVariantId (mov_). There are 0 duplicate keys and 22 legacy Featured alias rows. Every row has imageState 'none', coverageStatus 'fallback' and deploymentEligibility 'blocked'. The 29 'Form not stated' rows resolve to the pending, form-neutral asset. No alt text contains 'Xenios'. Third-party-marked rows (Kyzatrex, HCG Pregnyl, Ondansetron (ZOFRAN), Magtein, UltraBiotic x2, and LIBIDO CREAM with Versabase) use the Care-scene or pending visuals, never packaging. The lane cites the acceptance doc at f4f899a7, which is byte-identical to the review branch tip f82af52.",
+     "citation": "docs/product-imagery/manifests/product-image-coverage.json:77-100 (invariants), rows aggregated with node; docs/product-imagery/manifests/product-image-identity-crosswalk.json (420 entries, manifestKeyKind offering_variant_id); scripts/product-imagery/verify.mjs:286-364; git diff f4f899a7 origin/claude/xenios-health-launch-review-20260930 -- .../13_IMAGE_LAYER_ACCEPTANCE.md is empty",
+     "correction": "None needed for this lens."
+    }
+   ],
+   "counts": {
+    "changedPaths": 35,
+    "commitsReviewed": 2,
+    "mergeBase": "7600943f9ec7573f0a5cbfe7a7687ba851276a30",
+    "binaryFilesAdded": 10,
+    "binaryFormat": "WebP VP8 lossy 1024x1024, no EXIF/XMP",
+    "binaryTotalBytes": 292336,
+    "largestAssetBytes": 114964,
+    "perAssetBudgetBytes": 122880,
+    "totalBudgetBytes": 409600,
+    "gitattributesAdded": 1,
+    "assetsInProtectedClientPublic": 0,
+    "assetsInPermittedClientPublicResearch": 10,
+    "orphanAssetsNoCoverageReference": 2,
+    "runtimeFilesChanged": 0,
+    "runtimeReferencesFound": 0,
+    "coverageRows": 420,
+    "exposedRows": 419,
+    "legacyFeaturedAliasRows": 22,
+    "formNotStatedRows": 29,
+    "altTextsContainingXenios": 0,
+    "emDashesInAddedFiles": 0,
+    "approvedAssets": 0,
+    "P0": 0,
+    "P1": 1,
+    "P2": 3,
+    "P3": 5,
+    "PASS_NOTE": 6
+   },
+   "unknowns": [
+    "No build was run. The claim that Vite copies client/public, including the .gitattributes dotfile, into dist/public comes from the vite.config.ts defaults (root=client, no publicDir override) and script/build.mjs:9, not from observed build output.",
+    "Which branch the Replit autoscale deployment (.replit:15-18) builds from is not visible in git, so how quickly IMG-INFRA-01 becomes a live exposure depends on when and where this commit is merged.",
+    "How the server answers a missing /research/products/fallbacks/<x>.webp (expected 404 as an unknown document) was reasoned from raw-http-document-policy.ts pattern compilation, not executed.",
+    "The claimed byte-identical PNG-to-WebP reproduction (fallback-assets.json:51) cannot be verified from git, because the source PNGs are stored outside the repository.",
+    "Whether .xenios/messages/** is conventionally exempt from task lease paths under the continuity OS was not checked.",
+    "Pixel content was checked by viewing the 10 WebPs at full size, but no OCR or automated text or logo detection was run."
+   ]
+  },
+  "v": {
+   "verdicts": [
+    {
+     "id": "IMG-INFRA-01",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P1",
+     "reason": "Every citation re-opened at 5c96f9e. vite.config.ts:33-36 sets root=client and outDir=dist/public with no publicDir override. script/build.mjs:9 calls viteBuild(). package.json:15 builds and package.json:16 (render-build) is a second deploy path. server/static.ts:182 serves distPath through express.static. .replit:15-18 deploys with npm run build. The admissions at fallback-assets.json:16-20, PRODUCT_IMAGE_CONTRACT.md:17 and handoff:28 are verbatim. No gate references these paths: git grep for webp, public/research and products/fallbacks over scripts/acceptance and server/core-site-protection.test.ts hits only hino. The commit exists only on its own branch (git branch -r --contains 5c96f9e). P1 stands as a merge gate, because the acceptance bar explicitly says provisional assets must not be deployable. Caveats: (1) practical exposure is low: the URLs are unlinked and carry 12-hex hashes, and the contact sheet shows no text, labels or logos; (2) the lane self-discloses the block in four places, including its message to the implementation lane; (3) the build-script option in the correction touches protected, hash-pinned files (CORE_SITE_PROTECTION_MANIFEST.json:211-218, 703-706) and needs a founder-reviewed seam, so relocating the bytes out of client/public before merge is the only fix that needs no protected edit. Relocating before merge also keeps the unapproved bytes out of the launch branch's history."
+    },
+    {
+     "id": "IMG-INFRA-02",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P2",
+     "reason": "vitest.config.ts:29 includes only server/**, shared/** and client/src/**. product-imagery.test.mjs:1-2 uses node:test. checks.yml:19, 29, 39, 53-54 run vitest, check, build, core-site protection and route uniqueness only. package.json has no product-imagery script. Correction feasibility: package.json and vitest.config.ts are protected with hash tripwires (manifest:214, 217, 703). .github/workflows/checks.yml is an allowed exact file (manifest:284), so a CI step is the cheap path. However, checks.yml:4-7 triggers only on pull_request and on push to main, so CI does not gate a Replit deploy (.replit:15-18) of an arbitrary branch."
+    },
+    {
+     "id": "IMG-INFRA-03",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "The facts hold. verify.mjs:26-29 accepts any <name>-<sha12>.webp under fallbacks/. The contract routes all customer URLs through /research/products/fallbacks/ (123-129). crosswalk:39-41 and coverage:164, 173 carry populated hrefs. There are two meanings of 'provisional': contract:48 (a coverageStatus) versus fallback-assets.json:28 (a reviewStatus). Coverage invariants print \"provisional\": 0 at :84 beside \"assetReviewStatus\": \"all_provisional\" at :87. P2 is overstated because the resolver scenario is hypothetical and already mitigated: (a) INTEGRATION_HANDOFF.md:35 and :49 require an approved-only runtime manifest; (b) every href sits beside deploymentEligibility 'blocked' (crosswalk:46-49); (c) verify.mjs:142 and :156-171 hard-fail unless exactly these 10 assets are all provisional, blocked and unreviewed; (d) exact assets get a separate exact/ namespace (contract:131). The residual naming and namespace ambiguity is a P3 hardening item that largely overlaps IMG-INFRA-01."
+    },
+    {
+     "id": "IMG-INFRA-04",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "lib.mjs:71-77 and :129-133 are as described. Two corrections: the roots are only supabase/functions and supabase/migrations, not all of supabase; and the scan misses more than claimed, because .css is absent from RUNTIME_SOURCE_EXTENSIONS (lib.mjs:79-89), so the 13 CSS files under client/src are unscanned (e.g. a background-image url). A whole-tree git grep at 5c96f9e for products/fallbacks, xenios-fallback-, fallback-v1- and product-imagery/manifests, excluding the lane's own paths, returns nothing, so the current state is clean. Downgraded to P3: the scan is not enforced anywhere (IMG-INFRA-02), so its narrowness only affects manual runs, and no reference exists today."
+    },
+    {
+     "id": "IMG-INFRA-05",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "Aggregating the 420 coverage rows reproduces the exact counts. Accessory and liquid have zero consumers as either fallback or formFallback, and 31,370 + 22,644 = 54,014 B. Their only references are render-queue fallback-batch-001 and fallback-assets.json. They are unused by design: contract:67 routes Liquid/Solution and listed-unit forms to the form-neutral candidate. The 'sample' tension is overstated. The prompt (fallback-assets.json:265) deliberately asks for 'one empty clear capped sample tube' and forbids 'fluid, biological sample'. The rendered image, viewed on a contact sheet, matches the prompt: an empty tube in a steel rack beside a case. That is not a sample claim."
+    },
+    {
+     "id": "IMG-INFRA-06",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "verify-no-em-dash.mjs:13-18 and :25-27 do not cover docs/. verify.mjs:39-40 and :301-314 check claim terms only, and normalizedClaimText (31-37) strips all punctuation. A node scan of every changed file finds dashes only at .xenios/ACTIVE_TASKS.json:545 and :596, and both lines also exist at 7600943. The finding omits handoff:46 ('owned-path no-em-dash scan: pass, 29 files'), an uncommitted ad hoc scan. The correction as written is impractical: verify-no-em-dash.mjs imports 'typescript' and a .ts module (lines 7-8), so importing FORBIDDEN_FORMS into plain-node verify.mjs hits the same dependency failure recorded at handoff:47. Copy the five patterns, or run under tsx. Separately, V3_ACCEPTANCE_TRACE.md:34 marks B6 'implemented', which overclaims against acceptance D6 ('gate coverage of alt text')."
+    },
+    {
+     "id": "IMG-INFRA-07",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "verify.mjs:303-306 and coverage:1432-1433, 1475, 3843-3844 and 3879 are confirmed. The finding understates the breadth: only 226 distinct alt strings exist across 420 rows, 87 strings are shared by 281 rows, and only 2 alts contain the variantLabel. The builder is lib.mjs:278: `${product.displayName}: ${asset.altDescription} Illustrative.`. P3 stands because nothing is rendered yet, and contract:119 allows alt=\"\" where adjacent text identifies the product."
+    },
+    {
+     "id": "IMG-INFRA-08",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "fallback-assets.json:34-50 and :591, config.mjs:5-6 and acceptance :32 are confirmed. 114,964 / 122,880 = 93.6%. It is also under the acceptance's literal '120 KB' (120,000 B). The assertion that 1024 px is 'several times a typical card's display size' is uncited, and no card renders an image today. This is advisory for the v3 rerender."
+    },
+    {
+     "id": "IMG-INFRA-09",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P4 (informational)",
+     "reason": "The lease at ACTIVE_TASKS.json:2764-2773 and the CODE_OWNERSHIP entry added by this commit both omit .xenios/messages/**. The file is, however, the standard output of the OS 'message' command (scripts/agentic/xenios-os.mjs:185, writing messages/<stamp>-<from>.json). It is uniquely named and append-only, and it is the handoff notice to the implementation lane. The continuity OS directs sessions to read .xenios/messages/** (UNIVERSAL_MODEL_AGNOSTIC_CONTINUITY_OS.md:67). Only some lanes lease message globs (CODE_OWNERSHIP.json:371-372, 1168), so the convention is mixed. No conflict risk."
+    },
+    {
+     "id": "IMG-INFRA-PASS-01",
+     "verdict": "CONFIRMED",
+     "reason": "git diff --quiet 7600943 5c96f9e over client/src, server, shared, package.json, package-lock.json, vite.config.ts, vitest.config.ts, client/index.html, sw.js, site.webmanifest, config, content, supabase, script and .github succeeds. Of the 35 paths: 6 under .xenios, 11 under client/public/research/products, 13 under docs/product-imagery and 5 under scripts/product-imagery. EarlyAccessProductCard.tsx:198-204 and EarlyAccessProductCard.test.tsx:389-404 are intact."
+    },
+    {
+     "id": "IMG-INFRA-PASS-02",
+     "verdict": "CONFIRMED",
+     "reason": "CORE_SITE_PROTECTION_MANIFEST.json:190 protects client/public/**, :271 allows client/public/research/, and :321-325 lists docs/, scripts/, .xenios/ and e2e/ as infrastructure. client/public/research/products/.gitattributes is exactly '*.webp binary\\n'. No root .gitattributes exists at 5c96f9e. A new root file would match no zone, so the gate would flag it. The claims that Vite copies the dotfile and that express.static ignores dotfiles (falling through to the policy's 404) were not executed."
+    },
+    {
+     "id": "IMG-INFRA-PASS-03",
+     "verdict": "CONFIRMED",
+     "reason": "All 10 blobs were extracted to the scratchpad. Each sha256 prefix equals its filename's 12-hex suffix. Each file holds a single 'VP8 ' chunk (no VP8X, EXIF or XMP) at 1024x1024. The sizes match, and the total is 292,336 B. The client/public raster total grows from 4,408,995 B (23 files) to 4,701,331 B (33 files). A contact sheet shows no text, labels, logos, people or third-party packaging. The vial visibly contains liquid, and it is formFallback only for 84 Care rows of 'Compounded Vial / Liquid'. All 108 lyophilized rows resolve to pending/pending."
+    },
+    {
+     "id": "IMG-INFRA-PASS-04",
+     "verdict": "CONFIRMED",
+     "reason": "All 10 assets have pixelGeneratedAt 'unknown' (lines 71, 137, 203 and so on), reviewer and reviewedAt null, sourceArtifact status local_original_retained_outside_repository, and an illustrative notice. There is one generator string, with no model or version. fallback-assets.json:21-33, :73-84 and :104-110 are confirmed. Lines 173 and 239 are the reviewer lines for assets 2 and 3, consistent with the finding's 'same pattern'."
+    },
+    {
+     "id": "IMG-INFRA-PASS-05",
+     "verdict": "CONFIRMED",
+     "reason": "sw.js:25-29 precaches only /offline.html, and sw.js:123-137 caches image destinations cache-first only when the response is ok and of type basic. care-document-csp.ts:25 sets imgSrc 'self' and data:. server/index.ts:263 sets contentSecurityPolicy: false. raw-http-document-policy.ts:493 lists /research/products/:slug, and :660-674 compiles it to an anchored [^/]+. No /research prefix rule exists; unknown documents fall to status 404 (:787). One point the finding did not mention: this commit creates a real asset-only directory at /research/products/, which is also an SPA redirect route (section.tsx:425, 429). static.ts:111-120 redirects only directories that hold index.html, so the SPA handling is unchanged, the same pattern as the existing dist/public/research/*.jpg directory."
+    },
+    {
+     "id": "IMG-INFRA-PASS-06",
+     "verdict": "CONFIRMED",
+     "reason": "All 420 rows have manifestKey equal to offeringVariantId (mov_), with 0 duplicates. 22 rows carry 22 aliases. imageState is none, coverageStatus fallback and deploymentEligibility blocked for all 420. The 29 'Form not stated' rows (including GLP-1 2mg, GLP-3 12/24mg and Survodutide, all held) resolve to pending/pending. 0 alts contain 'Xenios'. The crosswalk has 420 entries. The acceptance blob cbf411a7 is identical at f4f899a7 and f82af52. One imprecision: LIBIDO CREAM (Versabase) has formFallback xenios-fallback-form-topical-v1, a generic unbranded pump, not only Care-scene or pending visuals. That is still form-only art, so the conclusion holds."
+    }
+   ],
+   "missed": [
+    "P2 (acceptance B1 unaddressed). shared/research/master-offerings/presentation-contract.ts:260-271 (safeImageHref) at 5c96f9e still accepts any https: host and any '/' path. The acceptance bar requires tightening it to the manifest prefix. No lane document or script names it: git grep 'presentation-contract' over docs/product-imagery and scripts/product-imagery returns 0 hits. The integration seam lists (INTEGRATION_HANDOFF.md:19-29, 81-128) omit it. V3_ACCEPTANCE_TRACE.md:29 marks B1 'prepared' on the strength of lane-local allowlists only (verify.mjs:26-29).",
+    "P3 (meaningful alt text). 7 coverage rows build alt text from a truncated upstream displayName with an unbalanced parenthesis, e.g. 'Trimix (Papaverine: Empty consultation setting representing a guided Care pathway; ...'. The rows are mov_fdda4d40b1fdbb305d55, mov_71799025c4b9af0971a9, mov_44bbd9b12e9d570f0765, mov_5375621d23911b130fd4, mov_ad44eb6b82099b20eb94, mov_d985257c3837f5268f9f and mov_b6edf8e84ad31102991a. The source is the displayName in server/research/master-offerings/data/member-safe-master-offerings.generated.json. lib.mjs:278 uses displayName only and never uses the complete variant.label.",
+    "P3 (acceptance D4 screening). verify.mjs:307-312 screens only the suffix after displayName. Screening the full alt string with the lane's own FORBIDDEN_ALT_CLAIM plus the section C claim-name terms flags 3 rows: LIBIDO CREAM (mov_06beec21c59fe7842f18), 'Methylene Blue Anti-Aging Cream' (mov_71799025c4b9af0971a9), and 'Low Dose Naltrexone' (a false positive on 'dose'). contract:93 and :117 deliberately allow canonical names, but D4 asks for alt screening with the section C terms. This needs an explicit acceptance decision rather than a silent pass.",
+    "P3 (trace overclaim). V3_ACCEPTANCE_TRACE.md:34 marks B6 'implemented' because the alt text is committed JSON. The JSON lives in docs/, outside the no-em-dash gate's SOURCE_ROOTS (verify-no-em-dash.mjs:13-18), so acceptance D6 ('gate coverage of alt text') is not met. The lane's own verifier has no dash check.",
+    "Correction-feasibility gap across IMG-INFRA-01 and IMG-INFRA-02. package.json, script/**, vite.config.ts and vitest.config.ts are protected with hash tripwires (CORE_SITE_PROTECTION_MANIFEST.json:211-218, 703-706), so a build-script gate requires a founder-reviewed seam. checks.yml is an allowed exact file (:284) but runs only on pull_request and push to main (checks.yml:4-7), so it cannot stop a Replit deploy (.replit:15-18) or render-build (package.json:16) of a merged branch. Relocating the 10 bytes out of client/public before merge is the only fix that needs no protected-file edit.",
+    "Context for IMG-INFRA-03. The lane's validator cannot represent an approved asset: verify.mjs:142 hard-codes assets.length === 10, and :156-171 require every asset to be provisional, blocked and unreviewed. The approved-only runtime manifest promised at INTEGRATION_HANDOFF.md:49 therefore has no generator or validator yet, and a v3 lane must rewrite verify.mjs rather than extend it."
+   ]
+  }
+ },
+ {
+  "lens": "truth",
+  "r": {
+   "findings": [
+    {
+     "id": "IMG-TRUTH-01",
+     "severity": "P1",
+     "claim": "The branch ships ten candidate images into the deployable public web tree. The lane itself says these exact bytes can never be approved, and the only thing stopping deployment is prose. The key requirement says provisional or fallback assets must not be deployable. Vite's root is client/ with the default publicDir, so every file under client/public/research/products/fallbacks/ is copied to dist/public and served at a same-origin URL. The manifest states the block is 'source_lane_contract_and_release_handoff_block_not_a_runtime_access_control'. verify.mjs is not wired into package.json (zero package.json diff lines), so nothing in CI or release fails a build that contains these bytes. The coverage ledger and crosswalk also give an href to these assets for all 420 rows, which invites a future integrator to wire them.",
+     "citation": "vite.config.ts:33,35 @5c96f9e; docs/product-imagery/manifests/fallback-assets.json:16-19 (branchDeploymentDisposition.enforcement); docs/product-imagery/README.md:11; docs/product-imagery/PRODUCT_IMAGE_CONTRACT.md:17; git diff 7600943..5c96f9e -- package.json is empty; product-image-identity-crosswalk.json entries[].resolvedCandidate.href",
+     "correction": "Move the ten WebPs out of client/public (for example docs/product-imagery/review-candidates/) until a v3 rerender is approved. Alternatively, add a release-gate check that fails any build whose dist/public contains an asset with deploymentEligibility=blocked. Also stop emitting hrefs for non-approvable assets in the coverage ledger and crosswalk; use an explicit 'no deployable candidate' state instead."
+    },
+    {
+     "id": "IMG-TRUTH-02",
+     "severity": "P2",
+     "claim": "The Hexarelin 5 mg and Oxytocin 10 mg form override is keyed on the superseded identity. The docs say the opposite. lib.mjs registers the override under `GEN-${supersededSourceRow}` (GEN-GRP-0402 and GEN-GRP-0407) and copies the kept row's Dosage Form onto it. The 420-row canonical catalog contains only these superseded rows: held (approval_required), source form 'Form not stated', bound to GEN-GRP-0402/0407. The kept GRP-0425/0426 rows have no binding at base. As a result, both rows get resolvedVisualForm 'Lyophilized Vial' and visualRestriction generic_form_only instead of form_neutral. Their exact-render prompts tell a future renderer to draw a lyophilized vial. This contradicts the style guide ('superseded GRP-0407 and GRP-0402 records are provenance, not visual selectors'), contract line 63, and acceptance C4 (29 Form-not-stated rows stay form-neutral) and C11 (map by the kept identity only). Today's pixels are still the neutral pedestal, so the impact is on future renders.",
+     "citation": "scripts/product-imagery/lib.mjs:385-386; docs/product-imagery/manifests/product-image-coverage.json:11220-11248 (mov_7c55d415a9574e9ebda7: sourceForm 'Form not stated', resolvedVisualForm 'Lyophilized Vial', visualRestriction generic_form_only_until_exact_evidence, journeyClass held, sku GEN-GRP-0402); render-queue.json:5045 and :7346 (prompts: 'reviewed visual form classification is Lyophilized Vial'); PRODUCT_IMAGE_STYLE_GUIDE.md:36; PRODUCT_IMAGE_CONTRACT.md:63; V3_ACCEPTANCE_TRACE.md:51; base master-offering-bindings.generated.json has only GEN-GRP-0402/0407 (lines 2642, 2670); MASTER_CATALOG_2026-08-16_SUMMARY.json GRP-0402/0407 Dosage Form 'Form not stated'",
+     "correction": "Apply a kept-identity form only to a canonical row actually bound to the kept source row (GEN-GRP-0425/0426). While the catalog still exposes the superseded held rows, keep them form_neutral_no_container_or_packaging and generate the 'form is not stated' prompt. Fix the trace, contract and style guide wording to match."
+    },
+    {
+     "id": "IMG-TRUTH-03",
+     "severity": "P2",
+     "claim": "The exact-render prompt template, used for all 419 queue rows, pastes the raw identity text into the generator input and leaves out most of the style guide's rejection criteria. Nothing validates the prompts, yet the acceptance trace claims prompt gates exist. What gets injected: third-party marks in 7 prompts (Kyzatrex, Pregnyl, ZOFRAN, Versabase, Magtein, UltraBiotic), fill volume in 110, concentration in 106, counts or pack sizes in 9 ('30 TABLETS', 'x 4 pack', 'x 90 Capsules'), plus 'HAIR RESTORATION' and 'Syringes'. The template (not counting the identity text) forbids people, hands, skin, body parts, before/after, outcome, administration, needle/syringe, COA, pharmacy, clinical or sourcing cues in 0 of 419 prompts. It also says 'Use only a generic unbranded form treatment unless exact packaging evidence is later approved', which opens a path to AI-rendered replicas of third-party packaging. verify.mjs checks queue prompts only for the ids and filename pattern. V3_ACCEPTANCE_TRACE.md:41 nevertheless says 'Prompt, normalized alt-description, metadata, and style gates reject these terms'.",
+     "citation": "scripts/product-imagery/lib.mjs:281-303 (esp. :290, :294, :297-299); render-queue.json:5665 (Kyzatrex), :5007 (HCG Pregnyl), :7122 (ZOFRAN 30 TABLETS AntiNausea), :5789 (LIBIDO/Versabase), :4232 (HAIR RESTORATION 30ML), :144 (1.2MG-2MG-2MG-2MG/ML (5ML)); scripts/product-imagery/verify.mjs:411-425; PRODUCT_IMAGE_STYLE_GUIDE.md:55-65; V3_ACCEPTANCE_TRACE.md:41",
+     "correction": "Build the prompt from structured, stripped facts (canonical name without marks, reviewed form) and never from variantLabel. Add the full rejection list from the style guide to the template (no people, hands, body, skin, hair, outcome, administration, needle, syringe, COA, lot, expiry, pharmacy, clinical, sourcing, volume, count). For marked rows, remove the 'unless exact packaging evidence' clause: real rights-cleared packaging must come from the rights holder, never a generator. Add a prompt validator (scan only the injected identity text against marks and cue patterns), and correct the trace."
+    },
+    {
+     "id": "IMG-TRUTH-04",
+     "severity": "P2",
+     "claim": "Two plans combine so that Care and held rows would get product imagery. The exact-variant queue plans product-form renders for all 242 Care rows and 33 held rows, and none of the 419 prompts carries the journey context (0 mention Care or held). Separately, the planned resolver puts an approved exact asset ahead of the journey-safe fallback. So the Care 'no product' scene and the held 'empty pedestal' treatment in the style guide only last until an exact asset exists. Examples: Care prescription rows such as Kyzatrex and Semaglutide + B12 would get product renders on the Research storefront, and held Syringes & Alcohol Swabs is queued as an 'Included Supply' form render with no needle or syringe prohibition. That conflicts with the style guide's Care, held and accessory rules and with acceptance C8/C9 (a distinct Care treatment that does not imply a Research purchase; held follows server state).",
+     "citation": "render-queue.json batches[1] journeyClass counts {care:242, held:33, request_access:143, quote_required:1}; render-queue.json:10473 (Syringes & Alcohol Swabs, held, 'Included Supply', generic form treatment); INTEGRATION_HANDOFF.md:51-55; PRODUCT_IMAGE_CONTRACT.md:141-145; PRODUCT_IMAGE_STYLE_GUIDE.md:28,40-42",
+     "correction": "Exclude Care, held, quote and service rows from exact product rendering, or make the journey class win over an exact asset in the resolver. Add journeyClass and the matching non-product constraint to every queue prompt. Add a resolver test: a Care or held row with an approved exact asset still shows the journey treatment."
+    },
+    {
+     "id": "IMG-TRUTH-05",
+     "severity": "P2",
+     "claim": "The visual journey class comes from a second, build-time derivation that disagrees with server authority, and the wiring plan resolves pixels from identity alone, so the visual cannot follow runtime state (acceptance C9). Specific disagreements: journeyClassFor maps any unbound row to quote_required, available_this_week to catalog_visible, and coming_soon/planned to 'coming'. The server treats available_this_week, coming_soon and planned as held, and also holds on formulation_hold and non_merchandise_family. journeyClassFor never consults the reviewed formulation holds. As a result, the claim that GRP-0422 is 'implemented by omission' relies only on the row being absent: if it enters the canonical source, the ledger would class it request_access rather than held. The resolver takes only an identity descriptor, so a row the server or release ledger holds at runtime keeps its build-time bottle or topical form image (15 request_access rows).",
+     "citation": "scripts/product-imagery/lib.mjs:226-246, :252-275; server/research/assisted-order/production-catalog.ts:109-116, :161-168 @5c96f9e; shared/research/master-offerings/formulation-hold.ts:11-20,55-60; INTEGRATION_HANDOFF.md:49-57; PRODUCT_IMAGE_CONTRACT.md:82; V3_ACCEPTANCE_TRACE.md:45; coverage counts byFallbackTaxonomy bottle 12 + topical 3 (request_access)",
+     "correction": "Have the resolver take the runtime pathway or availability (from earlyAccessCustomerPathway or authorityFor) as an input and choose the Care, held or quote fallback from it. Treat the ledger journeyClass as advisory only. Derive held from the same server set plus the reviewed formulation holds, and add a test that a runtime-held row never shows a product-form image."
+    },
+    {
+     "id": "IMG-TRUTH-06",
+     "severity": "P2",
+     "claim": "Third-party and claim-bearing detection hard-codes only the acceptance bar's examples, so similar marked or claim-bearing rows go unflagged. PACKAGING_SENSITIVE_NAMES has 8 needles and CLAIM_BEARING_NAMES has 3. Only 2 of the 20 retail 'Supplement Unit / Retail unit / package' rows (Magtein, UltraBiotic) get form_only_no_brand_logo_or_fabricated_packaging. The other 18 look like branded product lines, many with structure/function names: Inflam-Eze, GI Defend, Chondro Jointaide, Mito Recharge, Brain Restore, PeriMenopause Support, Rejuvenate+, Longevity Essentials NAD+, Omega Pure EPA-DHA 2400, and others. They are classed generic_form_only_until_exact_evidence and queued for 'xenios-{mov}-primary' AI renders. visualRestrictionFor returns a single value with the brand mark ranked first, so LIBIDO CREAM (Versabase) loses its claim-bearing restriction. 'Firming' (GHK-Cu Firming Serum) is not flagged at all. Acceptance C6 extends the rule to supplements with ingredient or product-line marks, 'for example' Magtein and UltraBiotic, so the list is not meant to be exhaustive.",
+     "citation": "scripts/product-imagery/lib.mjs:38-53, :187-198; product-image-coverage.json rows for Supplements (category 'Supplements', 20 rows) with visualRestriction values; product-image-coverage.json:982 (LIBIDO CREAM row); render-queue.json:6285 (Magtein) vs Inflam-Eze queue row (generic restriction)",
+     "correction": "Mark every 'Retail unit / package' supplement as third-party packaging-sensitive by data (category or family), not by name list. Make restrictions a set, so the brand and claim constraints both apply. Take retail third-party units out of AI exact rendering; they need rights-cleared official images or stay form-neutral."
+    },
+    {
+     "id": "IMG-TRUTH-07",
+     "severity": "P2",
+     "claim": "The Superpower / Mito Health requirement is marked 'implemented in contract' but is not handed off. Acceptance C7 says the 'Diagnostics partner' eyebrow is a partnership claim with no agreement behind it and must change. At 5c96f9e the eyebrow still reads 'Diagnostics partner', and INTEGRATION_HANDOFF's bounded surface plan never names DiagnosticsExperience.tsx. No Mito Health surface exists in client, server or shared code, so the 'name-only Coming soon card' cannot be checked. The imagery ledger has no Superpower or Mito Health row, only the name needles in lib.mjs.",
+     "citation": "client/src/research/products-diagnostics/DiagnosticsExperience.tsx:69 @5c96f9e; docs/product-imagery/V3_ACCEPTANCE_TRACE.md:47; docs/product-imagery/INTEGRATION_HANDOFF.md:77-132 (no DiagnosticsExperience entry); scripts/product-imagery/lib.mjs:45-46; review 13_IMAGE_LAYER_ACCEPTANCE.md:49",
+     "correction": "Change the trace row to 'blocked / handed off'. Add a DiagnosticsExperience item to the integration handoff: replace the 'Diagnostics partner' eyebrow, no partner logos, and a name-only status card whose Coming soon copy is distinct from held copy. Name an owner for the item."
+    },
+    {
+     "id": "IMG-TRUTH-08",
+     "severity": "P3",
+     "claim": "Alt text copies malformed upstream display names verbatim, and the alt-text claim screen is narrower than the acceptance bar requires. 7 names are truncated with an unbalanced parenthesis, for example 'Methylene Blue Anti-Aging Cream (Methylene Blue:' and 'Trimix (Papaverine:'. 6 names garble a '/ML' concentration into '+ Ml', for example 'CJC-1295 + Ipamorelin 2-2Mg + Ml (5Ml)' from 'CJC-1295/IPAMORELIN 2-2MG/ML (5ML)', which misstates the formulation. Alt text uses displayName only: 226 distinct alts across 420 rows, the 21 Progesterone variants are identical, and no alt names strength or form (acceptance D7). verify.mjs screens only the suffix after the name, so 'Anti-Aging', 'LIBIDO' and 'Omega Pure' pass. Its FORBIDDEN_ALT_CLAIM is a local list that lacks existing repo denylist terms (diagnose, prevent, prescription, sterile, endotoxin, guarantee, proven, fda approved). Acceptance D4 asks for the existing list plus section C terms across all alt text. COVERAGE_SUMMARY still calls every alt 'truthful'.",
+     "citation": "product-image-coverage.json:10221 (Methylene Blue), :22688 (Trimix), :7730 (GHK-Cu Firming Serum, Gel (GHK-Cu), :8702 (CJC-1295 2-2Mg + Ml), :7622 (Vitamin D3 50,000Iu + Ml), :982 (LIBIDO), :16267 (Omega Pure); scripts/product-imagery/lib.mjs:277-278; scripts/product-imagery/verify.mjs:39-40, :301-314; shared/research/catalog/peptide-copy.test.ts:26-40; COVERAGE_SUMMARY.md:21",
+     "correction": "Build alt text from a sanitized canonical name plus the variant strength and the literal form or scene (for example 'BPC-157 10 mg, form-neutral placeholder, illustrative'). Reject unbalanced or garbled names at build time. Screen the whole alt string with the repo denylist plus section C terms, with an explicit, reviewed allowlist for canonical names that carry claims."
+    },
+    {
+     "id": "IMG-TRUTH-09",
+     "severity": "P3",
+     "claim": "B6 (alt text in a gate-scanned format) is marked implemented, but the official no-em-dash gate does not scan where the alt text lives. The alt text is in docs/product-imagery/manifests/*.json, and the gate's SOURCE_ROOTS are client/src, client/public, server and shared only. verify.mjs has no dash check. The handoff admits the official gate did not run ('ERR_MODULE_NOT_FOUND'). Today the four manifests contain 0 em dashes and 0 en dashes. The planned generated TS manifest under client/src would be scanned once it exists.",
+     "citation": "scripts/acceptance/verify-no-em-dash.mjs:13-18 @5c96f9e; V3_ACCEPTANCE_TRACE.md:34; HANDOFF_SUMMARY.md:46-47; scripts/product-imagery/verify.mjs (no U+2014/U+2013 check)",
+     "correction": "Add docs/product-imagery/manifests to the gate or add a dash check to verify.mjs, and mark B6 'prepared' until the client/src generated manifest exists and passes the official gate."
+    },
+    {
+     "id": "IMG-TRUTH-10",
+     "severity": "P3",
+     "claim": "Coverage accounting overstates readiness. All 420 rows carry coverageStatus 'fallback' and none is 'pending', and COVERAGE_SUMMARY says every row has a candidate fallback. But every assigned asset is permanently non-approvable, so no row has a deployable image. The contract defines 'pending' as 'No suitable candidate exists', which is the honest state for every row. Acceptance D1's counts by imageStatus would read as complete coverage.",
+     "citation": "product-image-coverage.json:85-86 (invariants fallback 420, pending 0); scripts/product-imagery/lib.mjs:499, :720; PRODUCT_IMAGE_CONTRACT.md:45-52; COVERAGE_SUMMARY.md:21",
+     "correction": "Report coverage as pending (no deployable candidate) while approvalEligibility is blocked_permanent. Keep the candidate reference as review metadata only."
+    },
+    {
+     "id": "IMG-TRUTH-11",
+     "severity": "P3",
+     "claim": "The wiring plan leaves two identity and fallback cases undefined. (a) All-products rows for the 2 exposed unbound offerings (BAM15, Syringes) carry synthetic ids 'unbound:mo_…' and 'unbound:mov_…'. If the caller passes those as the Product Control variant id alongside the mov_ key, resolveCrosswalkManifestKey fails closed for exactly these rows, while detail pages keyed by mov_ still resolve: an A3 mismatch on the same product. (b) The handoff's step 2 'approved category or form fallback' does not say which ledger field is meant. formFallback points 84 Care rows at the vial candidate, a product-form image, whereas fallback and the crosswalk use the Care scene.",
+     "citation": "server/research/assisted-order/production-catalog.ts:135,178-179; shared/research/assisted-order/contract.ts:270-284 (sourceSelection.variantId optional); scripts/product-imagery/lib.mjs:1050+ (resolveCrosswalkManifestKey); INTEGRATION_HANDOFF.md:51-55, :98; product-image-coverage.json rows[0].formFallback (vial) vs fallback (care)",
+     "correction": "State that 'unbound:' ids are never passed as Product Control identity, and resolve by sourceSelection.variantId (mov_) when it is present. State that the runtime resolver uses the journey-aware `fallback` field (or a runtime-pathway choice), never `formFallback`, for Care, held and quote rows. Add a test that the unbound rows resolve identically on card and detail."
+    },
+    {
+     "id": "IMG-TRUTH-12",
+     "severity": "P3",
+     "claim": "There are three coordination and EA-reversal gaps in the surface plan. (a) It assigns edits to AssistedOrderPage.tsx but does not flag that client/src/research/assisted-order/** is under an active lease held by codex-xenios-health-launch-implementation-20260930. (b) The EA card's no-media test also pins the removal of the square placeholder for card height, so 22 cards fit above the fold. Adding a 1:1 image brings that height back, and the handoff does not address it. (c) Acceptance A1 asks that the 2026-09-30 founder scope change be cited in the code comment AND the tests; the handoff mentions only the comment. The lane itself stayed inside its leased paths and changed no client/src, server or shared file.",
+     "citation": ".xenios/CODE_OWNERSHIP.json @5c96f9e (active lease ASSISTED-ORDER-CONVERSION, paths client/src/research/assisted-order/**); INTEGRATION_HANDOFF.md:85-89, :91-98; client/src/research/early-access/EarlyAccessProductCard.test.tsx:389-404; 13_IMAGE_LAYER_ACCEPTANCE.md:16",
+     "correction": "Name the lease holder and require that they coordinate before AssistedOrderPage.tsx is touched. Specify a compact or thumbnail geometry that keeps the Featured fold budget. Require the founder scope-change citation in both the card comment and the replacement test."
+    },
+    {
+     "id": "IMG-TRUTH-13",
+     "severity": "P3",
+     "claim": "Three minor wording problems in the fallback prompts and asset semantics. (a) 8 of 10 fallback prompts ask for a 'clinical editorial photography aesthetic'. (b) The bottle prompt is framed as a 'supplement bottle' but is used for 12 RUO Research Capsules rows. (c) The pending pedestal was prompted for rows 'whose physical form is not yet stated', yet it is reused for 106 lyophilized rows whose form is stated and for both held and orderable request_access rows. Its empty pedestal with a halo reads like a product reveal. None of this puts text in the pixels, but it steers the look toward clinical or supplement positioning, and held and request rows share one image.",
+     "citation": "scripts/product-imagery/config.mjs:248,266,284,302,320,338,355,389 (prompts); coverage cross-tab 'Capsule / Bottle => bottle / fb=bottle': 12 (Research Capsules), 'Lyophilized Vial => pending': 106; config.mjs:411-431 (FORM_TO_TAXONOMY)",
+     "correction": "For v3, drop 'clinical' and 'supplement' from the style prompts. Word the neutral asset as 'no product depicted' rather than 'form not stated'. Make sure the runtime held and Coming soon copy is visually distinct, since the pixels are shared."
+    },
+    {
+     "id": "IMG-PASS-01",
+     "severity": "PASS-NOTE",
+     "claim": "Visual inspection of all ten decoded candidates found no text, numbers, logos, labels, lot, expiry, count or volume cues, and no people or hands. The vial candidate visibly contains clear liquid, as disclosed, and is assigned as the displayed fallback for 0 rows (only as formFallback on Care vial rows).",
+     "citation": "client/public/research/products/fallbacks/*.webp @5c96f9e (10 files); fallback-assets.json assets[0].useRestriction; coverage byFallbackTaxonomy (no vial)",
+     "correction": "None; keep this visual review in the v3 approval record with a named reviewer."
+    },
+    {
+     "id": "IMG-PASS-02",
+     "severity": "PASS-NOTE",
+     "claim": "Third-party and Care rows receive only non-product visuals today, and alt text is never prefixed with 'Xenios'. Kyzatrex, HCG Pregnyl, Ondansetron (ZOFRAN) and LIBIDO CREAM (Versabase) get the empty Care consultation scene. Magtein and UltraBiotic get the form-neutral pedestal. Alt text is always `${displayName}: <scene>. Illustrative.`, and 0 of 420 alts contain 'Xenios' or an em or en dash.",
+     "citation": "scripts/product-imagery/lib.mjs:277-278; product-image-coverage.json rows GEN-GRP-0079/0073/0115/0080/0375/0383/0384 fallback.taxonomyKey care|pending",
+     "correction": "None."
+    },
+    {
+     "id": "IMG-PASS-03",
+     "severity": "PASS-NOTE",
+     "claim": "All 29 'Form not stated' rows are held and use the form-neutral pedestal. That includes GLP-1 2 mg (GEN-GRP-0412), GLP-3 12/24 mg (0410/0411) and Survodutide (0415). The other 27 (all but Hexarelin and Oxytocin) carry form_neutral_no_container_or_packaging, with prompts that forbid any container. GRP-0422 is in neither the 420-row set nor the 22 Featured aliases, so no component split is fabricated.",
+     "citation": "render-queue.json Form-not-stated rows (29, journeyClass held); scripts/product-imagery/verify.mjs:331-364; base master-offering-bindings.generated.json (no GEN-GRP-0422)",
+     "correction": "None beyond IMG-TRUTH-02 and IMG-TRUTH-05."
+    },
+    {
+     "id": "IMG-PASS-04",
+     "severity": "PASS-NOTE",
+     "claim": "The wiring plan correctly makes removing the commerce media gate a hard prerequisite and requires the A6 isolation test. The gate is real: missing or unapproved primary media blocks cart selection. The handoff lists the TypeScript and persistent-cart SQL seams, requires Samuel's approval for any apply, and requires that image presence, absence or failure change no price, action, workflow, cart or availability. The branch edits no client/src, server, shared or supabase file.",
+     "citation": "server/research/commerce/cart-product-selection.ts:89-107 @5c96f9e; server/research/commerce/persistence/persistent-cart.ts:131; INTEGRATION_HANDOFF.md:13-31, :144; git diff --stat 7600943..5c96f9e (only docs/product-imagery, scripts/product-imagery, client/public/research/products, .xenios)",
+     "correction": "None."
+    },
+    {
+     "id": "IMG-PASS-05",
+     "severity": "PASS-NOTE",
+     "claim": "The handoff's headline counts and the Featured crosswalk check out. 420 canonical rows, 419 exposed (FedEx excluded), 417 bound, and 2 exposed unbound. The 22 PEX/PEP plus R360 aliases span 19 legacy products and map to 22 GEN-GRP-bound mov_ keys with identical asset, href, alt, dimensions and notice. The queue has 419 rows, all mayRenderNow=false. Mixed identities fail closed. The EA card already carries legacy productId and variantId, so Featured can resolve through the crosswalk without new allowlist fields.",
+     "citation": "product-image-identity-crosswalk.json invariants (legacyFeaturedAliasRows 22, legacyFeaturedProducts 19); product-image-coverage.json invariants; render-queue.json batches[1].items (419); client/src/research/early-access/earlyAccessCatalogView.ts:117-128",
+     "correction": "None."
+    },
+    {
+     "id": "IMG-PASS-06",
+     "severity": "PASS-NOTE",
+     "claim": "The Early Access no-product-photography policy was not reversed silently: the card comment and test are unchanged at 5c96f9e. The handoff plans a deliberate, cited reversal limited to the product card and keeps the no-image tests for the customer form, order summary and payment selector.",
+     "citation": "client/src/research/early-access/EarlyAccessProductCard.tsx:198-204; EarlyAccessProductCard.test.tsx:389-404; INTEGRATION_HANDOFF.md:85-89",
+     "correction": "See IMG-TRUTH-12 for the geometry and test-citation gaps."
+    }
+   ],
+   "counts": {
+    "P0": 0,
+    "P1": 1,
+    "P2": 6,
+    "P3": 6,
+    "PASS-NOTE": 6,
+    "canonicalRows": 420,
+    "exposedRows": 419,
+    "featuredAliases": 22,
+    "renderQueueRows": 419,
+    "queuePromptsWithThirdPartyMarks": 7,
+    "queuePromptsWithFillVolume": 110,
+    "queuePromptsWithConcentration": 106,
+    "queuePromptsWithCounts": 9,
+    "altTextsWithUnbalancedParens": 7,
+    "altTextsWithGarbledPlusMl": 6,
+    "distinctAltTexts": 226,
+    "altTextsContainingXenios": 0,
+    "altTextsWithEmOrEnDash": 0,
+    "formNotStatedRows": 29,
+    "careRowsInExactQueue": 242,
+    "heldRowsInExactQueue": 33
+   },
+   "unknowns": [
+    "Whether a committed record of the 2026-09-30 founder scope change exists that the EA card reversal could cite; none was located in the imagery lane.",
+    "Whether the canonical catalog is meant to expose the superseded Hexarelin/Oxytocin rows (GEN-GRP-0402/0407, held) instead of the kept GRP-0426/0425 RUO rows that the 2026-08-21 reconciliation calls directly orderable; this is catalog-lane state that IMG-TRUTH-02 depends on.",
+    "Whether the 18 unflagged supplement names (Inflam-Eze, GI Defend, Chondro Jointaide, Mito Recharge and others) are registered third-party marks; they were not checked against any brand or rights source.",
+    "Runtime availability of each Featured alias and of All-products rows was not observed (no production reads), so actual runtime-vs-ledger journey divergence today is unmeasured.",
+    "No Mito Health surface exists in client, server or shared code at 5c96f9e, so the acceptance bar's 'name-only Coming soon card' requirement could not be checked on a real surface.",
+    "The pixel review used decoded 384 px downscales of the 1024 px WebPs, so very fine embossed or low-contrast text could have been missed.",
+    "Per the read-only mandate, verify.mjs, build.mjs and the node tests were not run; the conclusions come from reading the source and parsing the committed JSON."
+   ]
+  },
+  "v": {
+   "verdicts": [
+    {
+     "id": "IMG-TRUTH-01",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P1",
+     "reason": "Every cited fact reproduces at 5c96f9e. vite.config.ts:33 sets root to client/ with the default publicDir, so client/public is copied to dist/public (:35). fallback-assets.json:16-19 says the enforcement is 'source_lane_contract_and_release_handoff_block_not_a_runtime_access_control'. The package.json diff is empty. vitest.config.ts:29 includes only server/, shared/ and client/src tests, so checks.yml:19 never runs product-imagery.test.mjs or verify.mjs. All 420 crosswalk entries carry resolvedCandidate.href. P1 is kept because this branch cannot be merged into a deployable line as-is. Two mitigating facts the finding omits: each href is paired with runtimeWiringEligibility=blocked and deploymentEligibility=blocked, and the README (:9-11) and contract (:17) state the block plainly. Branch containment: git branch -r --contains 5c96f9e lists only origin/codex/xenios-product-imagery-20260930."
+    },
+    {
+     "id": "IMG-TRUTH-02",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "The mechanics are accurate. lib.mjs:385-386 keys the override on GEN-${supersededSourceRow}. Bindings contain only GEN-GRP-0402 and 0407 (lines 2642 and 2670). The only exposed Hexarelin 5 mg and Oxytocin 10 mg rows (mov_7c55d415..., mov_256cb04...) are approval_required with subcategory 'Form not stated'. They get resolvedVisualForm 'Lyophilized Vial' and generic_form_only_until_exact_evidence (coverage :11220-11240). The prompts at render-queue :5045 and :7346 say 'reviewed visual form classification is Lyophilized Vial ... GRP-0402 is provenance only' while describing the GRP-0402-bound row. Downgraded for three reasons. Acceptance C11 itself asks these two products to be mapped by the kept identity (lyophilized vial), so applying the kept form to the only exposed row is arguably what C11 asks, not a contradiction of it. The pixels are the neutral pedestal today (fallback 'pending'). The queue is blocked (mayRenderNow=false). The real defect is wording: the docs, trace :44/:51 and COVERAGE_SUMMARY :44 call GRP-0402/0407 'provenance only' when they are the rows being styled, and the docs hide that the catalog exposes the held superseded rows."
+    },
+    {
+     "id": "IMG-TRUTH-03",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "Confirmed. lib.mjs:294 injects `${product.displayName}; ${variant.label}` verbatim. My parse finds 7 prompts with Kyzatrex, Pregnyl, ZOFRAN, Versabase, Magtein or UltraBiotic. Volume, concentration and count tallies depend on the regex (I get about 105, 114 and 5 or more), but the order of magnitude matches. People, hand, skin, body, before, outcome, administ, needle, syringe, COA, pharmacy, clinical and sourc each appear in 0 of 419 template texts. verify.mjs:411-424 checks only ids and the filename. No other prompt-content gate exists (verify.mjs:193 checks only prompt length), so the claim at V3_ACCEPTANCE_TRACE.md:41 that 'Prompt ... gates reject these terms' is false. Overstated part: lib.mjs:298-299 already bans label artwork, brand marks, fill volume, concentration and unit count, and says 'Never imitate third-party packaging'. So 'opens a path to AI-rendered replicas of third-party packaging' is contradicted by the template itself. Every one of the 419 prompts is also a labelled non-renderable draft awaiting the founder v3 prompt. That makes P3 (a trace overclaim plus template hygiene), not P2."
+    },
+    {
+     "id": "IMG-TRUTH-04",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "Partly overstated. The queue has care 242, held 33, request_access 143 and quote_required 1, and 0 prompts mention Care or held. The resolver order puts an approved exact asset first (INTEGRATION_HANDOFF.md:51-55, contract :141-145). The Syringes prompt (render-queue :10473) has no needle or syringe ban. However, 27 of the 33 held rows get the 'The form is not stated. Show no product ...' prompt. Only 6 held rows get form prompts: Hexarelin, Oxytocin, Syringes, Colostrum and 2 Tesofensine. So 'product-form renders for ... 33 held rows' is wrong. The quoted acceptance phrase 'does not imply a Research purchase' does not appear in 13_IMAGE_LAYER_ACCEPTANCE.md C8/C9. C8 asks for distinct status treatments, and the contract (:82) and handoff (:145) assign those to runtime text and badges. The Care concern is a design ambiguity (contract :61 says 'when needed'), not a clear acceptance violation, and nothing can render until named approval."
+    },
+    {
+     "id": "IMG-TRUTH-05",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "The code divergence is real. lib.mjs:229 maps unbound rows to quote_required, :239-246 maps coming_soon/planned to 'coming' and available_this_week to catalog_visible, and nothing consults formulation holds. Server production-catalog.ts:109-116 and :162-168 count available_this_week, coming_soon and planned as held, plus formulation_hold and non_merchandise_family. The impact today is nil. The 420-row catalog uses only care_pathway (244), request_access (144) and approval_required (32). No variant label matches FORMULATION_HOLD_MARKERS (formulation-hold.ts:55-60). Syringes (unbound shipping_and_fulfillment) is held in both derivations. The '15 request_access rows held at runtime' scenario is speculative, since no runtime hold was observed. Contract :82 already makes runtime authority the status source. What remains is a future-proofing gap for the resolver (acceptance C9)."
+    },
+    {
+     "id": "IMG-TRUTH-06",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "lib.mjs:38-53 has 8 packaging needles and 3 claim needles. visualRestrictionFor (:187-198) returns a single value, with brand ranked before claim, so LIBIDO CREAM gets form_only_no_brand_logo... and loses the claim restriction. 'GHK-Cu Firming Serum' is generic_form_only_until_exact_evidence. Count correction: 3 of the 20 Supplement rows are flagged (Magtein, UltraBiotic Prebiotic, UltraBiotic Akkermansia Plus), so 17 are unflagged, not 2 and 18. Downgraded because every Supplement row currently shows the form-neutral pedestal (fallback 'pending'). 'generic_form_only_until_exact_evidence' is still form-only art, which is what C6 asks for. Every queue prompt carries 'Never imitate third-party packaging'. Whether the 17 names are third-party marks is unverified."
+    },
+    {
+     "id": "IMG-TRUTH-07",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "DiagnosticsExperience.tsx:69 still reads 'Diagnostics partner'. The handoff never names DiagnosticsExperience.tsx. No Mito Health surface exists in client, server or shared. Trace :47 marks the row 'implemented in contract' and does not mention the eyebrow change that C7 requires. Downgraded because SuperpowerDiagnostics is referenced only by DiagnosticsExperience.test.tsx and re-exported through index.ts:4, and no route mounts it at 5c96f9e. The false partnership eyebrow is therefore not currently customer-visible. It is also pre-existing copy rather than something this branch introduced. The trace overclaim and the missing handoff item stand."
+    },
+    {
+     "id": "IMG-TRUTH-08",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "Reproduced exactly. 7 displayNames have unbalanced parentheses (Methylene Blue, Trimix, 4 GHK-Cu rows, Ketoconazole). 6 rows garble '/ML' into '+ Ml' (for example 'CJC-1295 + Ipamorelin 2-2Mg + Ml (5Ml)' from 'CJC-1295/IPAMORELIN 2-2MG/ML (5ML)'). There are 226 distinct alts across 420 rows, and the 21 Progesterone rows share 1 alt. lib.mjs:277-278 uses displayName only. verify.mjs:307-313 screens only the suffix. FORBIDDEN_ALT_CLAIM (verify.mjs:39-40) lacks diagnose, prevent, prescription, sterile, endotoxin, guarantee, proven and FDA-approved, all of which are in peptide-copy.test.ts:26-40. COVERAGE_SUMMARY.md:21 says 'truthful alt-text recommendation'. The malformed names originate upstream in the catalog lane, but the image lane copies them into rendered alt text."
+    },
+    {
+     "id": "IMG-TRUTH-09",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "verify-no-em-dash.mjs:13-18 SOURCE_ROOTS are client/src, client/public, server and shared, so docs/product-imagery/manifests is not scanned. scripts/product-imagery has no U+2014/U+2013 check. HANDOFF_SUMMARY.md:47 records the official gate failing with ERR_MODULE_NOT_FOUND. Two mitigations: HANDOFF_SUMMARY.md:46 records an owned-path dash scan (29 files, pass), and the alts contain 0 em or en dashes today. Acceptance B6's literal wording ('scanned format (.json/.ts)') is met by format but not by location, so marking B6 'implemented' is an overclaim at P3."
+    },
+    {
+     "id": "IMG-TRUTH-10",
+     "verdict": "REFUTED",
+     "reason": "The contract defines coverageStatus 'fallback' as 'A deliberately non-exact ... candidate is assigned' (PRODUCT_IMAGE_CONTRACT.md:49), which is literally true for all 420 rows. The contract also says coverageStatus 'is a separate source-work accounting field, not an image approval field' (:43). The same ledger honestly reports imageState 'none' for 420 of 420, approvedExactAssets 0, assetReviewStatus all_provisional, and approvalEligibility, runtimeWiringEligibility and deploymentEligibility blocked on every row (verify.mjs:315-321). COVERAGE_SUMMARY.md:21 follows 'every row has a candidate' immediately with 'unreviewed ... permanently non-approvable ... non-deployable'. Acceptance D1 asks for counts by imageStatus, and those read as zero coverage, not complete coverage. This is at most a naming nit, not a readiness overstatement."
+    },
+    {
+     "id": "IMG-TRUTH-11",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "(a) production-catalog.ts:135 and :178-179 mint 'unbound:mo_…/unbound:mov_…' ids. resolveCrosswalkManifestKey (lib.mjs:1075-1091) returns null when a supplied productControlVariantId does not match, so a caller that passes those ids alongside the mov_ key fails closed. contract.ts:280-284 makes sourceSelection.variantId optional. Handoff :98 ('resolve by the canonical offering variant first, then the exact canonical Product Control variant alias') leaves this case undefined. (b) All 84 rows with formFallback 'vial' are Care rows whose journey fallback is 'care', and handoff :54 does not say which field backs 'approved category or form fallback'. Both are specification gaps for a resolver that does not exist yet."
+    },
+    {
+     "id": "IMG-TRUTH-12",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "(a) CODE_OWNERSHIP.json leases[95] (ASSISTED-ORDER-CONVERSION, session codex-xenios-health-launch-implementation-20260930, state 'active') covers client/src/research/assisted-order/**, and handoff :91-98 assigns AssistedOrderPage.tsx without naming that holder. (b) EarlyAccessProductCard.test.tsx:397-403 pins removal of the square placeholder for the 22-card fold, while handoff :57 says 'Reserve intrinsic 1:1 dimensions' and does not address fold geometry. (c) Handoff :87 asks for the 2026-09-30 citation in the code comment only, while acceptance A1 asks for it in the comment and the tests. The lane changed no client/src, server, shared or supabase file (the diff --stat is empty)."
+    },
+    {
+     "id": "IMG-TRUTH-13",
+     "verdict": "CONFIRMED",
+     "correctedSeverity": "P3",
+     "reason": "8 of 10 fallback prompts contain 'clinical editorial' (config.mjs:248,266,284,302,320,338,355,389). The bottle prompt says 'supplement bottle' (:266) and serves the 12 research_capsules 'Capsule / Bottle' rows. The pending prompt (:355) is framed for rows 'whose physical form is not yet stated' but serves 108 'Lyophilized Vial' rows (106 plus the 2 overrides), including all 22 Featured rows, as well as the held rows. The decoded pending image shows a stone pedestal under a green arc. This is style guidance, and P3 or nit is right."
+    },
+    {
+     "id": "IMG-PASS-01",
+     "verdict": "CONFIRMED",
+     "reason": "I decoded all ten committed WebPs with ffmpeg (a 400 px contact sheet plus a full-resolution crop of the Care table). None shows text, numbers, logos, labels or people. The vial visibly contains clear liquid. No row uses 'vial' as its displayed fallback (byFallbackTaxonomy has no vial key); it appears only as formFallback on 84 Care rows. Two nuances: the shipping candidate shows a plain cardboard parcel, and the accessory candidate shows an empty test tube in a steel rack. Neither is displayed for any exposed row."
+    },
+    {
+     "id": "IMG-PASS-02",
+     "verdict": "CONFIRMED",
+     "reason": "Kyzatrex, HCG Pregnyl, Ondansetron (ZOFRAN) and LIBIDO CREAM are Care rows whose fallback is the Care scene. Magtein and both UltraBiotic rows are request_access with fallback 'pending'. lib.mjs:277-278 builds alt text as `${displayName}: ${altDescription} Illustrative.`. 0 of 420 alts contain 'Xenios', and 0 contain U+2013 or U+2014."
+    },
+    {
+     "id": "IMG-PASS-03",
+     "verdict": "CONFIRMED",
+     "reason": "There are 29 Form-not-stated rows, all held with fallback 'pending'. 27 are form_neutral_no_container_or_packaging, and the 2 exceptions are Hexarelin and Oxytocin (see IMG-TRUTH-02). All 27 of those neutral held rows get the 'Show no product' queue prompt. GLP-1 2 mg, GLP-3 12/24 mg and Survodutide are among them. No GRP-0422 binding or row exists."
+    },
+    {
+     "id": "IMG-PASS-04",
+     "verdict": "CONFIRMED",
+     "reason": "cart-product-selection.ts:89-106 blocks on media_missing, media_unapproved and media_ambiguous, and persistent-cart.ts:131 requires a valid media.id UUID. Handoff :13-31 makes removing that gate a prerequisite, with Samuel's approval required for the SQL apply, and :144 lists the isolation test. git diff --stat 7600943..5c96f9e for client/src, server, shared and supabase is empty."
+    },
+    {
+     "id": "IMG-PASS-05",
+     "verdict": "CONFIRMED",
+     "reason": "The coverage invariants are 420, 419, 417 and 2. The crosswalk invariants are 22 alias rows and 19 legacy products. The queue has 419 items, all with mayRenderNow=false (verify.mjs:414). My parse found 0 href or alt differences between the 22 alias entries and their coverage rows. Every Featured alias row is request_access with fallback 'pending', so today's parity is trivially identical. earlyAccessCatalogView.ts:117-119 carries productId and variantId through the allowlist."
+    },
+    {
+     "id": "IMG-PASS-06",
+     "verdict": "CONFIRMED",
+     "reason": "EarlyAccessProductCard.tsx:198-204 and EarlyAccessProductCard.test.tsx:389-404 are unchanged at 5c96f9e (no client/src diff). Handoff :85-89 plans a deliberate, cited reversal limited to the product card and keeps the form, order-summary and payment no-image tests."
+    }
+   ],
+   "missed": [
+    "P3: Acceptance B1 names `shared/research/master-offerings/presentation-contract.ts:260-271` for tightening. At 5c96f9e its `safeImageHref` still accepts any `https:` host and any single-slash path (:263-268). The handoff never names presentation-contract.ts as a seam (git grep finds no match in docs/product-imagery). V3_ACCEPTANCE_TRACE.md:29 marks B1 'prepared' based only on the lane's own allowlist regexes (verify.mjs:26-29). A future runtime manifest could therefore coexist with a discovery validator that still accepts arbitrary hosts.",
+    "P3: The imagery lane treats `config/research/master-catalog-reconciliation-20260821.json` as applied, but the 420-row canonical catalog does not reflect it. The reconciliation says the kept Hexarelin 5 mg and Oxytocin 10 mg results are RUO and 'still directly orderable' ($62.50 and $107.50). member-safe-master-offerings.generated.json instead exposes the approval_required GRP-0402/0407 rows ('Visible while classification and documentation are completed'), and no GRP-0425/0426 row exists. COVERAGE_SUMMARY.md:44 and V3_ACCEPTANCE_TRACE.md:44/:51 describe the two overrides as the 'kept identities' without disclosing this. The divergence should be handed to the catalog lane, not only noted as a reviewer unknown.",
+    "P3: Two candidate images conflict with the lane's own style guide, though neither is displayed for an exposed row. The shipping candidate (xenios-service-shipping-fallback-v1-a2885fe2f7ff.webp) depicts a cardboard parcel, whereas PRODUCT_IMAGE_STYLE_GUIDE.md:45 calls for 'an abstract route tile or unbranded transit symbol' and says FedEx 'is a fee, not merchandise'. The accessory candidate depicts an empty test tube in a steel rack, a specimen-style cue that sits against style guide :28 ('no ... biological sample').",
+    "P3: No CI job would detect drift. vitest.config.ts:29 includes only server/**, shared/** and client/src/** tests, and checks.yml runs only vitest, check, build and protection. product-imagery.test.mjs and verify.mjs, which rebuild the ledger from catalog, bindings and service.ts and assert equality at verify.mjs:116-136, never run in CI. Any catalog or binding change on the integration line will silently leave the committed 420-row ledger, crosswalk and queue stale. extractRuntimeExcludedOfferingIds (lib.mjs:211-224) regex-parses service.ts, so a refactor there would break the build script without CI noticing.",
+    "Note on the verifier method: IMG-TRUTH-03's volume, concentration and count tallies (110, 106, 9) depend on the regex. An independent parse gave about 105, 114 and 5 or more, while the third-party mark count (7) reproduces exactly. Cite them as approximate."
+   ]
+  }
+ }
+]
