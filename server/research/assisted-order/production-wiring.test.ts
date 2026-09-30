@@ -40,12 +40,46 @@ import {
 } from "./production-deps";
 import { createAssistedOrderProductionComposition } from "./production";
 import { AssistedOrderNotFoundError } from "./service";
+import { createAssistedOrderViewerResolvers } from "./express";
+import type { Request } from "express";
 import type { SupabaseRpcClient } from "./supabase-repository";
 import type { SupabaseStorageClient } from "./supabase-document-store";
 
 const REQUIRED_AGREEMENTS = [
   { kind: "assisted_order_request_notice", version: "v1" },
 ] as const;
+
+describe("verified assisted-order admin actor", () => {
+  const verifiedAuthUserId = "40000000-0000-4000-8000-000000000001";
+  const resolver = createAssistedOrderViewerResolvers({
+    resolveMember: async () => null,
+    earlyAccess: () => null,
+    earlyAccessBindings: () => null,
+    adminEmail: () => "research@xeniostechnology.com",
+  });
+
+  it("carries only the Auth UUID stamped by the verified admin guard", async () => {
+    const guardedRequest = {
+      adminAuthUserId: verifiedAuthUserId,
+      body: { authUserId: "50000000-0000-4000-8000-000000000001" },
+      query: { authUserId: "60000000-0000-4000-8000-000000000001" },
+    } as unknown as Request;
+    expect((await resolver.admin(guardedRequest)).authUserId).toBe(verifiedAuthUserId);
+  });
+
+  it("does not derive finance identity from a body, query, email, or invalid guard value", async () => {
+    const browserOnlyRequest = {
+      body: { authUserId: verifiedAuthUserId },
+      query: { authUserId: verifiedAuthUserId },
+    } as unknown as Request;
+    expect((await resolver.admin(browserOnlyRequest)).authUserId).toBeNull();
+    const malformedGuardRequest = {
+      adminAuthUserId: "not-a-uuid",
+      body: { authUserId: verifiedAuthUserId },
+    } as unknown as Request;
+    expect((await resolver.admin(malformedGuardRequest)).authUserId).toBeNull();
+  });
+});
 
 const FORM_PAIRS = ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map((a) => ({
   ...assistedOrderFormPair(a),

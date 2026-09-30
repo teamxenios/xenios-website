@@ -143,6 +143,10 @@ export async function requireSupabaseAdmin(req: Request, res: Response, next: Ne
       return res.status(403).json({ success: false, message: "Forbidden" });
     }
     (req as any).adminEmail = data.user.email;
+    // Financial operations need the verified Auth subject, not an email or
+    // browser-supplied actor id. The assisted-order viewer reads this only
+    // after this guard has verified the JWT and admin identity.
+    (req as any).adminAuthUserId = data.user.id;
     next();
   } catch (err) {
     console.error("[admin auth] error:", err);

@@ -2702,6 +2702,23 @@
         "file": ".xenios/handoffs/2026-09-30T20-44-03-062Z-ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930-codex-xenios-health-launch-implementation-20260930.md",
         "at": "2026-09-30T20:44:03.066Z"
       }
+    },
+    {
+      "id": "ASSISTED-ORDER-HL12-VERIFIED-ADMIN-ACTOR-20260930",
+      "title": "Carry verified admin Auth UUID into assisted-order financial actor context",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/routes.ts",
+        "server/research/assisted-order/express.ts",
+        "server/research/assisted-order/production-wiring.test.ts"
+      ],
+      "dependsOn": [
+        "ASSISTED-ORDER-MOUNT"
+      ],
+      "scopeNote": "Server-derived verified Supabase admin Auth UUID only. Never accept a request-body actor, invent a finance grant, or enable payment transitions by itself.",
+      "claimedAt": "2026-09-30T20:49:14.437Z"
     }
   ]
 }

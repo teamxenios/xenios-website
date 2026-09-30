@@ -187,14 +187,19 @@ export function createAssistedOrderViewerResolvers(wiring: AssistedOrderViewerWi
       }) as AssistedOrderViewer;
     },
 
-    async admin(_req: Request): Promise<AssistedOrderViewer> {
+    async admin(req: Request): Promise<AssistedOrderViewer> {
       // requireSupabaseAdmin has already verified the bearer against the
       // configured admin identity before this runs; these handlers are never
       // registered without that guard in front.
+      const guardedAuthUserId = (req as Request & { adminAuthUserId?: unknown }).adminAuthUserId;
+      const authUserId = typeof guardedAuthUserId === "string" &&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(guardedAuthUserId)
+        ? guardedAuthUserId
+        : null;
       return Object.freeze({
         actorType: "admin",
         memberId: null,
-        authUserId: null,
+        authUserId,
         earlyAccessSessionHash: null,
         earlyAccessCustomerRef: null,
         normalizedEmail: wiring.adminEmail() || null,
