@@ -1,0 +1,10 @@
+{
+  "id": "claude-health-launch-review-20260930",
+  "tool": "Claude Code (desktop, Opus 5.5, session 6abf1edf-2b16-476e-8305-23b9a0014e06)",
+  "lane": "independent-review",
+  "branch": "claude/xenios-health-launch-review-20260930",
+  "state": "active",
+  "startedAt": "2026-09-30T13:01:37.701Z",
+  "heartbeatAt": "2026-09-30T13:01:37.708Z",
+  "note": "Independent source/composed-behavior review through 2026-09-30 12:00 CT. Writes only docs/review/xenios-health-launch-review-20260930/** and own session/message records. No app/Auth/catalog/money/schema paths."
+}
