@@ -128,10 +128,10 @@ exercised this way, but the bridge is recorded as enabled in production.
 
 ## Artifacts
 
-The harness and outputs are kept in the reviewer scratchpad, not committed:
-- `hl12-app-probe.mts` and `hl12-c9-stress.mts`
-- `reset-infra.sh`
-- `sql/BYTES.txt`
+Committed under `sql/composed/`:
+- `hl12-app-probe.mts` and `hl12-c9-stress.mts` (harnesses)
+- `reset-infra.sh` (disposable PG and PostgREST setup)
+- `BYTES.txt` (exact SQL identities)
+- `hl12-app-probe_afb3aed.out` (case output)
 
-Repository-side, the case table above plus `sql/hl12_probe.sql` (from the earlier direct-SQL run) are the
-reproducible specification.
+The JWT secret is generated locally per run and is not committed. `sql/hl12_probe.sql` (the earlier direct-SQL run) remains the SQL-only specification.
