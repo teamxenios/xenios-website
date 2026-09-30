@@ -367,6 +367,16 @@ See `04_PRICING_ACCEPTANCE.md`:
 - **Consequence:** the last recorded live $49.00 / $59.00 would show under Request Order, against the founder-confirmed $62.50 / $107.50.
 - **Correction:** an authorized Product Control reprice (create → approve with read-back). This is not a source change.
 
+## HL-23 / HL-24 / HL-25
+
+See `07_REVIEW_93b0183_HL01_SLICE.md`:
+
+- **HL-23 (P2):** the open-access mint limiter has no decay, so shared-IP customers are locked out periodically.
+- **HL-24 (P2; P1 if production open access is off):** a newcomer who lands on the invitation or password wall has no help path.
+- **HL-25 (P2):** a failed cart-capability probe hides the whole storefront, including All products.
+
+All three are present at `c213707` and at `93b0183`.
+
 ## Additional P3 notes (verified)
 
 - `/individuals` says "No public price is shown" (`client/src/clarity/pages.tsx:83`), but the catalog projection
