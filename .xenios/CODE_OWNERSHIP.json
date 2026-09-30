@@ -2881,6 +2881,33 @@
       "state": "handoff",
       "claimedAt": "2026-09-30T20:49:14.439Z",
       "heartbeatAt": "2026-09-30T20:49:14.439Z"
+    },
+    {
+      "id": "cc87cc21-45f5-434a-af3c-c136c1987e7a",
+      "task": "ASSISTED-ORDER-CONVERSION",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/assisted-order/**",
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**",
+        "supabase/migrations/*assisted_order_quote*",
+        "supabase/verification/*assisted_order_quote*",
+        "server/research/commerce/persistence/admin-queues-store.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-30T20:56:39.863Z",
+      "heartbeatAt": "2026-09-30T20:56:39.863Z"
+    },
+    {
+      "id": "9ac40d7f-022f-4545-a8a2-b9b89a905afd",
+      "task": "ASSISTED-ORDER-HL12-FINANCE-ROUTE-MOUNT-20260930",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/index.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-30T20:57:09.922Z",
+      "heartbeatAt": "2026-09-30T20:57:09.922Z"
     }
   ],
   "rules": [

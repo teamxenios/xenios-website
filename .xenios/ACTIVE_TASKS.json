@@ -679,7 +679,7 @@
       "id": "ASSISTED-ORDER-CONVERSION",
       "title": "Close the assisted-order operator loop: quote issuance, customer acceptance, evidence tooling",
       "priority": "P0",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/research/assisted-order/**",
@@ -693,7 +693,7 @@
         "ASSISTED-ORDER-MOUNT"
       ],
       "scopeNote": "Founder-authorized HL-12 financial integrity: accepted versioned quote, amount/currency-bound authorized verification and durable paid transition across mounted app and forward SQL, qualified only on disposable local PostgreSQL. Existing mounted assisted-order bridge is present; prior blocked state is stale. No managed migration, hosted mutation, real money or fabricated historical verification.",
-      "claimedAt": "2026-09-30T20:43:49.727Z",
+      "claimedAt": "2026-09-30T20:56:39.850Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
         "sha": "cea4922107150de3276833348b299c50eb8e398b",
@@ -2725,6 +2725,21 @@
         "file": ".xenios/handoffs/2026-09-30T20-54-19-079Z-ASSISTED-ORDER-HL12-VERIFIED-ADMIN-ACTOR-20260930-codex-xenios-health-launch-implementation-20260930.md",
         "at": "2026-09-30T20:54:19.088Z"
       }
+    },
+    {
+      "id": "ASSISTED-ORDER-HL12-FINANCE-ROUTE-MOUNT-20260930",
+      "title": "Mount default-off assisted-order financial routes",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/index.ts"
+      ],
+      "dependsOn": [
+        "ASSISTED-ORDER-MOUNT"
+      ],
+      "scopeNote": "Only bounded quote/manual-finance endpoints behind a default-off flag and existing Research wall; no provider assertion, managed apply, or payment activation.",
+      "claimedAt": "2026-09-30T20:57:09.920Z"
     }
   ]
 }

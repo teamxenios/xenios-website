@@ -80,8 +80,8 @@ where request_id = '${requestId}'::uuid;
 assert.match(observationId, /^[0-9a-f-]{36}$/i);
 const verifySql = `
 set role service_role;
-select public.research_assisted_order_payment_verify(
-  '${observationId}'::uuid, '${financeActor}'::uuid
+select public.research_assisted_order_payment_verify_bound(
+  '${requestId}'::uuid, '${observationId}'::uuid, '${financeActor}'::uuid
 )::text;
 `;
 // Separate docker exec processes mean separate PostgreSQL connections. Both
