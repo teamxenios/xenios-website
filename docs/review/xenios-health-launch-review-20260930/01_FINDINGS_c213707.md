@@ -345,6 +345,28 @@ See `04_PRICING_ACCEPTANCE.md`:
 - **HL-19 (P3):** the FedEx shipping line is served as a `care_pathway` catalog variant.
 - **HL-20 (P2):** the 3-unit bundle discount is applied on the Featured legacy path but not on the All products assisted estimate, and the copy promises it for assisted requests.
 
+## HL-21 · P2 · The Retatrutide price ladder is not monotonic, and it is live as last recorded
+
+- **Evidence:** book and last recorded live (2026-08-20) agree:
+  - 5 mg $175.00
+  - 10 mg $64.50
+  - 15 mg $89.50
+  - 20 mg $159.00
+  - 30 mg $112.00
+  - 40 mg $189.00
+  - 50 mg $1,075.00
+  - new 60 mg $249.00
+
+  Rows GRP-0323..0330 and GRP-0421, in `04_PRICE_LEDGER_c213707.csv`.
+- **Consequence:** these are probable data-entry errors shown to customers. 5 mg costs more than 10 to 40 mg, 30 mg costs less than 20 mg, and 50 mg costs about 4× the 60 mg price.
+- **Correction:** founder confirmation or correction before publishing the 60 mg row or any further Retatrutide price.
+
+## HL-22 · P2 · Customers see stale Hexarelin 5 mg and Oxytocin 10 mg prices today
+
+- **Seam:** `server/research/assisted-order/production-catalog.ts:197` shows the price for any bound, priced row whatever its pathway. The served GRP-0402/0407 rows are bound.
+- **Consequence:** the last recorded live $49.00 / $59.00 would show under Request Order, against the founder-confirmed $62.50 / $107.50.
+- **Correction:** an authorized Product Control reprice (create → approve with read-back). This is not a source change.
+
 ## Additional P3 notes (verified)
 
 - `/individuals` says "No public price is shown" (`client/src/clarity/pages.tsx:83`), but the catalog projection
