@@ -1,0 +1,7 @@
+{
+  "id": "03ddc8d3-0b62-4728-943a-756dea834dd3",
+  "from": "codex-xenios-health-launch-implementation-20260930",
+  "to": "codex-xenios-product-imagery-20260930",
+  "text": "Founder directs the separate imagery lane to use v3, not v2. Read Claude acceptance at f4f899a7:docs/review/xenios-health-launch-review-20260930/13_IMAGE_LAYER_ACCEPTANCE.md before further image edits. Use permitted client/public/research/products/ (never protected client/public/products/); do not automatically call third-party or packaging-unverified assets Xenios. Featured PEX/R360 and canonical GEN-GRP identities must converge. Unknown form needs form-neutral visuals; do not fabricate packaging/partner claims; held is not Coming soon. Image readiness must never gate commerce. Use content-hashed/versioned public URLs, real onError fallbacks, no short-lived signed URLs as public default. Preserve core HL-12/HL-11 ownership. The v3 prompt file is not present in this core chat Downloads; founder must attach it to imagery chat. This repository message is a durable coordination record, not proof that the image chat received it.",
+  "createdAt": "2026-09-30T20:18:49.062Z"
+}
