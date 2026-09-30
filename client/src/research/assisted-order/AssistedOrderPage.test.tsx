@@ -266,6 +266,9 @@ describe("AssistedOrderPage", () => {
     expect(byTestId(`order-card-${careItem.variantId}`)).not.toBeNull();
     expect(byTestId(`order-card-care-${careItem.variantId}`)).not.toBeNull();
     expect(byTestId(`order-card-add-${careItem.variantId}`)).toBeNull();
+    const careCard = byTestId(`order-card-${careItem.variantId}`);
+    expect(careCard?.textContent).toContain("Ask the Care team about pricing");
+    expect(careCard?.textContent).not.toContain("$25.00");
     const careCta = byTestId<HTMLAnchorElement>(
       `order-card-care-cta-${careItem.variantId}`,
     );

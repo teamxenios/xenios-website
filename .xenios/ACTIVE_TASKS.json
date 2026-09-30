@@ -2599,6 +2599,29 @@
       }
     },
     {
+      "id": "XENIOS-HEALTH-CARE-PRICE-PROJECTION-20260930",
+      "title": "Keep Care-only prices out of the Research assisted-order catalog projection",
+      "priority": "P2",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "baseSha": "10d23aaed52136e59e50b6987b6bd8ecf3acc3fa",
+      "paths": [
+        "shared/research/assisted-order/action-policy.ts",
+        "shared/research/assisted-order/action-policy.test.ts",
+        "client/src/research/assisted-order/AssistedOrderPage.tsx",
+        "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+        "docs/ux/xenios-health-launch-implementation-20260930/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-xenios-health-launch-implementation-20260930.json",
+        ".xenios/handoffs/*HEALTH-CARE-PRICE-PROJECTION*"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Founder-authorized source-only Health successor slice. Remove Care retail price fields from the Research catalog projection and show neutral Care pricing guidance. Preserve Product Control, Care, and order authority. No hosted mutation, migration apply, deployment, real email or payment.",
+      "claimedAt": "2026-09-30T17:12:25.115Z"
+    },
+    {
       "id": "XENIOS-HEALTH-PUBLIC-CATALOG-ENTRY-20260930",
       "title": "Repair public Health-to-Research catalog navigation without changing product or payment authority",
       "priority": "P1",

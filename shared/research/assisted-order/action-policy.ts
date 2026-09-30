@@ -151,14 +151,16 @@ export function projectAssistedOrderCatalogItem(
     minimumQuantity: authority.minimumQuantity,
     maximumQuantity: authority.maximumQuantity,
     quantityIncrement: authority.quantityIncrement,
-    unitPriceCents: authority.unitPriceCents,
+    // Care pricing belongs to the Care pathway, not the Research request
+    // catalog response, even when Product Control has a price on record.
+    unitPriceCents: action.workflowMode === "provider_request" ? null : authority.unitPriceCents,
     currency: authority.currency,
     workflowMode: action.workflowMode,
     actionLabel: action.actionLabel,
     accessNotice: authority.accessNotice,
     researchUseOnly: authority.researchUseOnly,
     catalogVersion: authority.catalogVersion,
-    priceVersion: authority.priceVersion,
+    priceVersion: action.workflowMode === "provider_request" ? null : authority.priceVersion,
   });
 }
 

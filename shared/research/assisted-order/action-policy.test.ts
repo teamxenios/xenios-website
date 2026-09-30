@@ -95,6 +95,20 @@ describe("assisted order action policy", () => {
       workflowMode: "provider_request",
       actionLabel: "Continue through Care",
     });
+    expect(
+      projectAssistedOrderCatalogItem(
+        authority({
+          providerWorkflowRequired: true,
+          directEligible: true,
+          unitPriceCents: 9900,
+          priceVersion: "care-price-1",
+        }),
+      ),
+    ).toMatchObject({
+      workflowMode: "provider_request",
+      unitPriceCents: null,
+      priceVersion: null,
+    });
   });
 
   it("never presents a held or out-of-stock product as orderable", () => {

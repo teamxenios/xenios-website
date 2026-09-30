@@ -195,7 +195,7 @@ function ProductCard(props: {
         {item.minimumQuantity > 1 ? (
           <div><dt>Minimum</dt><dd>{item.minimumQuantity}</dd></div>
         ) : null}
-        <div><dt>Price</dt><dd>{money(item.unitPriceCents)}</dd></div>
+        <div><dt>Price</dt><dd>{careOnly ? "Ask the Care team about pricing" : money(item.unitPriceCents)}</dd></div>
       </dl>
       {item.researchUseOnly ? (
         <p className="xenios-order-notice"><strong>Research Use Only.</strong> Not for human or veterinary use.</p>
