@@ -69,14 +69,47 @@ describe("HL-23: bounded rolling anonymous mint window", () => {
     expect(limiter.tryAcquire("a", START + MINUTE)).toBe(true);
   });
 
-  it("does not let rotating keys evict any active budget at bounded capacity", () => {
+  it("evicts the below-budget key with the oldest last attempt, not oldest insertion", () => {
+    const limiter = createOpenAccessMintLimiter({ maxMints: 3, windowMinutes: 1, maxKeys: 2 });
+    expect(limiter.tryAcquire("a", START)).toBe(true);
+    expect(limiter.tryAcquire("b", START + 1)).toBe(true);
+    expect(limiter.tryAcquire("a", START + 2)).toBe(true);
+    expect(limiter.tryAcquire("new-client", START + 3)).toBe(true);
+    // a was used more recently than b, so its two reservations must survive.
+    expect(limiter.tryAcquire("a", START + 4)).toBe(true);
+    expect(limiter.tryAcquire("a", START + 5)).toBe(false);
+  });
+
+  it("preserves an exhausted budget even when its last attempt is the oldest", () => {
     const limiter = createOpenAccessMintLimiter({ maxMints: 2, windowMinutes: 1, maxKeys: 2 });
     expect(limiter.tryAcquire("a", START)).toBe(true);
-    expect(limiter.tryAcquire("b", START)).toBe(true);
-    expect(limiter.tryAcquire("rotation", START)).toBe(false);
     expect(limiter.tryAcquire("a", START)).toBe(true);
-    expect(limiter.tryAcquire("a", START)).toBe(false);
-    expect(limiter.tryAcquire("rotation", START + MINUTE)).toBe(true);
+    expect(limiter.tryAcquire("b", START + 1)).toBe(true);
+    for (let index = 2; index < 12; index += 1) {
+      expect(limiter.tryAcquire(`rotation-${index}`, START + index)).toBe(true);
+      expect(limiter.tryAcquire("a", START + index)).toBe(false);
+    }
+  });
+
+  it("refuses a new key only when every tracked budget is exhausted", () => {
+    const limiter = createOpenAccessMintLimiter({ maxMints: 2, windowMinutes: 1, maxKeys: 2 });
+    for (const key of ["a", "b"]) {
+      expect(limiter.tryAcquire(key, START)).toBe(true);
+      expect(limiter.tryAcquire(key, START)).toBe(true);
+    }
+    expect(limiter.tryAcquire("new-client", START + 1)).toBe(false);
+    expect(limiter.tryAcquire("a", START + 1)).toBe(false);
+    expect(limiter.tryAcquire("b", START + 1)).toBe(false);
+  });
+
+  it("recovers capacity when exhausted attempts expire without extending refusal", () => {
+    const limiter = createOpenAccessMintLimiter({ maxMints: 1, windowMinutes: 1, maxKeys: 2 });
+    expect(limiter.tryAcquire("a", START)).toBe(true);
+    expect(limiter.tryAcquire("b", START + 1)).toBe(true);
+    expect(limiter.tryAcquire("new-client", START + MINUTE - 1)).toBe(false);
+    expect(limiter.tryAcquire("new-client", START + MINUTE)).toBe(true);
+    expect(limiter.tryAcquire("b", START + MINUTE)).toBe(false);
+    expect(limiter.tryAcquire("another-client", START + MINUTE + 1)).toBe(true);
   });
 
   it("keeps a backward clock step from prematurely aging a new reservation", () => {

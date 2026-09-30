@@ -263,8 +263,10 @@ export interface OpenAccessMintLimiter {
  * a password failure. Old attempts expire individually, including when traffic
  * never reaches the threshold. A refused attempt does not extend the window.
  *
- * Memory is bounded by maxKeys * maxMints. Active entries are never evicted to
- * admit a new key: rotating client identities cannot erase an existing budget.
+ * Memory is bounded by maxKeys * maxMints. At capacity only the least-recent
+ * below-budget entry may be evicted. Exhausted budgets survive key rotation
+ * until their attempts age out, while one-off visitors cannot fill the map and
+ * refuse every new customer for the whole window.
  * This process-local protection is not a distributed, cross-instance quota.
  */
 export function createOpenAccessMintLimiter(options: Readonly<{
@@ -298,7 +300,19 @@ export function createOpenAccessMintLimiter(options: Readonly<{
       let attempts = expire(key, now);
       if (!attempts && entries.size >= maxKeys) {
         for (const candidate of entries.keys()) expire(candidate, now);
-        if (entries.size >= maxKeys) return false;
+        if (entries.size >= maxKeys) {
+          let evictable: string | null = null;
+          let oldestLastAttempt = Infinity;
+          for (const [candidate, candidateAttempts] of entries) {
+            const lastAttempt = candidateAttempts.at(-1)!;
+            if (candidateAttempts.length < maxMints && lastAttempt < oldestLastAttempt) {
+              evictable = candidate;
+              oldestLastAttempt = lastAttempt;
+            }
+          }
+          if (evictable === null) return false;
+          entries.delete(evictable);
+        }
       }
       attempts ??= [];
       if (attempts.length >= maxMints) return false;
