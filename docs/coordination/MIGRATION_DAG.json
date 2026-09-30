@@ -787,6 +787,27 @@
         "evidence": "Applied twice from exact source bytes on disposable PostgreSQL 17, then passed structural, ACL, forced-RLS, canonical-recipient, digest-only, expiry, revocation, owner-binding, single-use and parallel double-consume behavior checks. One of two concurrent exchanges succeeded and the durable token was consumed exactly once. The disposable container was removed. No managed Supabase, staging, or production environment was contacted."
       },
       "notes": "Owner-authorized P-17 source-only additive candidate. Stores token/session digests only, exposes only five service_role-only bounded SECURITY DEFINER functions, and creates no customer/order rows. Application outside a new explicitly authorized migration lane is forbidden."
+    },
+    {
+      "id": "research_assisted_order_quote_payment_guard",
+      "path": "supabase/migrations/20260930191323_research_assisted_order_quote_payment_guard.sql",
+      "sourceSha": "084063ac424a4c2ec55183c004c420aba43a3ba0",
+      "dependsOn": [
+        "research_assisted_order_bridge"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "4c4a6b1f59667ced8aeffa9571f6017d3eba9ecf62fd555bec122a3ce8e1a014"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "disable_assisted_order_bridge_and_roll_forward_under_controlled_change",
+        "procedure": "supabase/verification/20260930_assisted_order_quote_payment_guard_local.md",
+        "evidence": "Exact source SQL applied twice on disposable PostgreSQL 17. PostgREST 14.13 deterministic stale-status and non-pending-document requests returned P0001 in 89 ms and 8 ms; rollback counter stayed flat. No managed environment contacted. This corrects HL-26 only; HL-12 paid authority remains open."
+      },
+      "notes": "Source-only HL-26 deterministic-conflict correction. Despite the broad historical filename, this does not create an accepted quote or payment-verification record and must not be treated as HL-12 payment qualification. Managed application requires separate exact approval."
     }
   ],
   "invariants": [

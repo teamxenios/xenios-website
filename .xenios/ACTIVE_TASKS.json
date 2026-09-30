@@ -2656,6 +2656,26 @@
         "file": ".xenios/handoffs/2026-09-30T16-50-47-800Z-XENIOS-HEALTH-PUBLIC-CATALOG-ENTRY-20260930-codex-xenios-health-launch-implementation-20260930.md",
         "at": "2026-09-30T16:50:47.805Z"
       }
+    },
+    {
+      "id": "ASSISTED-ORDER-HL26-MIGRATION-REGISTRATION-20260930",
+      "title": "Register the source-only assisted-order deterministic-conflict migration",
+      "priority": "P1",
+      "state": "qa",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Register exact 084063a migration bytes and preserve PENDING managed state. No hosted apply or payment-integrity closeout.",
+      "claimedAt": "2026-09-30T19:24:34.791Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "084063ac424a4c2ec55183c004c420aba43a3ba0",
+        "file": ".xenios/handoffs/2026-09-30T19-26-36-687Z-ASSISTED-ORDER-HL26-MIGRATION-REGISTRATION-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-09-30T19:26:36.691Z"
+      }
     }
   ]
 }

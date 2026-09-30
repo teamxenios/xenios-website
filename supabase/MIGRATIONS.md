@@ -272,3 +272,20 @@ checks on disposable PostgreSQL 17, including an independent-connection
 double-consume race with one success maximum. No managed environment was
 contacted. Precheck, postcheck, rollback and disposable verifier artifacts live
 beside the candidate and under `supabase/verification/`.
+
+## Assisted-order deterministic conflict correction (HL-26) — pending 2026-09-30
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 80 | migrations/20260930191323_research_assisted_order_quote_payment_guard.sql | Replace the two M71 deterministic `40001` compare-and-set refusals with non-retryable, distinguishable `P0001` errors; preserve service-role-only RPC ACLs | PENDING; source-only, not applied to managed staging or production |
+
+The filename was created by Supabase CLI 2.51.0 for the larger assisted-order
+financial lane, but **this exact migration only corrects HL-26**. It does not
+create accepted quote or verified-payment authority and does not close HL-12.
+Source commit `084063ac424a4c2ec55183c004c420aba43a3ba0` pins canonical
+Git blob SHA-256 `4c4a6b1f59667ced8aeffa9571f6017d3eba9ecf62fd555bec122a3ce8e1a014`.
+It applied twice on a disposable PostgreSQL 17 instance, and PostgREST 14.13
+returned both deterministic refusals promptly without a retry loop. The
+proof and limitations are in
+`verification/20260930_assisted_order_quote_payment_guard_local.md`.
+No managed migration history, configuration, or operational rows changed.

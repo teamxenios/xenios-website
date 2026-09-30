@@ -2800,6 +2800,18 @@
       "state": "active",
       "claimedAt": "2026-09-30T19:11:42.995Z",
       "heartbeatAt": "2026-09-30T19:11:42.995Z"
+    },
+    {
+      "id": "b98c3e1c-a486-45bb-bfc6-0679084c380b",
+      "task": "ASSISTED-ORDER-HL26-MIGRATION-REGISTRATION-20260930",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-09-30T19:24:34.803Z",
+      "heartbeatAt": "2026-09-30T19:24:34.803Z"
     }
   ],
   "rules": [
