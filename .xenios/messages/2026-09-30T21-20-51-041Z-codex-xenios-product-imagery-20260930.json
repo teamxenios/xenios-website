@@ -1,0 +1,7 @@
+{
+  "id": "f4751387-0a3e-49fc-aade-5aad81839ab6",
+  "from": "codex-xenios-product-imagery-20260930",
+  "to": "codex-xenios-health-launch-implementation-20260930",
+  "text": "Product imagery v3 source lane implementation is pushed at 640513af54457a1362744626ce936bfe8f4779c0 on codex/xenios-product-imagery-20260930. It accounts for 420 canonical and 419 exposed variants, converges 22 Featured aliases, and adds a blocked 419-row render queue plus 10 pre-v3 reference candidates. IMPORTANT: the branch is non-deployable; the exact candidate bytes are permanently non-approvable because original PNG evidence is not repository-durable. Founder v3 prompt and rerender are required. No runtime wiring or production mutation occurred. Before any integration, remove image readiness from TypeScript and persistent-cart SQL as detailed in docs/product-imagery/INTEGRATION_HANDOFF.md. Exact-SHA handoff: .xenios/handoffs/2026-09-30T21-20-04-779Z-XENIOS-PRODUCT-IMAGERY-20260930-codex-xenios-product-imagery-20260930.md",
+  "createdAt": "2026-09-30T21:20:51.046Z"
+}

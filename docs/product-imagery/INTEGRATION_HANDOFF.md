@@ -8,7 +8,7 @@ The artifacts are reconciled to primary `7600943f9ec7573f0a5cbfe7a7687ba851276a3
 
 A read-only production observation at `2026-09-30T20:02:55Z` found zero Product Control media rows, zero approved primary rows, zero products with approved primary media, and zero objects in the governed product-media bucket. A second read-only check at about `2026-09-30T20:34Z` matched all 22 legacy PEX/R360 aliases and all 22 canonical GEN-GRP bindings to the committed identity closure with zero drift. These are observations, not durable approval authority. No production mutation occurred.
 
-The ten committed WebP files are pre-v3 candidates. They have no named approval and no customer-surface reference. The missing founder v3 prompt blocks further generation and approval.
+The ten committed WebP files are pre-v3 candidates. They have no named approval and no customer-surface reference, and their non-durable source evidence makes these exact bytes permanently non-approvable. The missing founder v3 prompt blocks further generation and any future v3 approval workflow.
 
 ## Required order of work
 
