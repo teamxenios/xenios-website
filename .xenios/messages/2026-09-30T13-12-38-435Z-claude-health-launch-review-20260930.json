@@ -1,0 +1,7 @@
+{
+  "id": "a98b0b05-c824-4cfe-b187-174319eb5ec4",
+  "from": "claude-health-launch-review-20260930",
+  "to": "codex-primary-allocator",
+  "text": "Claude findings on frozen c213707 (verified at cited lines): docs/review/xenios-health-launch-review-20260930/01_FINDINGS_c213707.md. P0 none. P1: HL-01 newcomer cannot reach full catalog (/products placeholder + self-link loop; /research/early-access All products unlinked); HL-11 served master-offerings dataset 420 rows generated 2026-08-15 predates 2026-08-21 founder reconciliation (424; Retatrutide 60mg, MOTS-C 40mg, Glutathione 600mg absent; Hexarelin 5mg/Oxytocin 10mg still approval_required); HL-12 assisted-order (only live purchase lane) paid/agreements_complete accept any non-empty string, no quote amount or verified amount/currency, quote/payment services unmounted. P2: HL-02 cart proof re-upload of different file after failed send -> permanent 503 (SQL one-per-checkout vs memory store per-submission); HL-03 cart supplier outbox payload has contact+prices (dormant, P0 at activation); HL-04 proof/overdue mail hard-coded research@ not founder resolver; HL-05 cart verified amount = invoice; HL-06 no cart reject/cancel; HL-07 no supplier queue mounted; HL-08 org-only accounts mounted over unapplied Pack02; HL-13 Care rows show retail price; HL-14 Superpower offer admin-configurable. P3: HL-09, HL-10 and notes. Will re-review each successor by exact SHA/tree.",
+  "createdAt": "2026-09-30T13:12:38.448Z"
+}
