@@ -35,7 +35,7 @@ export const RESEARCH_STEPS = [
 
 export const PATHWAY_TILES = [
   { title: "Start Care", body: "Start with a short, non-clinical request. No account is needed to begin.", href: "/care/schedule", label: "Start Care" },
-  { title: "Explore Research Products", body: "Learn how research ordering works. Products and Care stay separate.", href: "/products", label: "Explore Products" },
+  { title: "Explore Research Products", body: "Browse research-use products and see the next step for each. Products and Care stay separate.", href: "/research/early-access", label: "Explore Products" },
   { title: "For Practices", body: "Refer clients, understand the workspace, and ask about working with Xenios.", href: "/practices", label: "For Practices" },
 ] as const;
 
@@ -99,21 +99,19 @@ export function ProductsPage() {
   return (
     <PublicPage
       title="Research products"
-      description="Explore Xenios Care, research-product and practice pathways."
+      description="Browse Xenios research products and find the supported ordering path."
       path="/products"
       eyebrow="PRODUCT PATHWAYS"
       heading="Research products"
-      lead="Research products are for research use. Choose one of the three clear paths below while exact public product information is reviewed."
-      actions={[{ label: "Check Status", href: "/status", kind: "primary" }]}
+      lead="Research products are for research use only. Browse the catalog to see product options and the next step for each. Some items are held or require a different pathway."
+      actions={[{ label: "Browse Research Catalog", href: "/research/early-access", kind: "primary" }, { label: "How ordering works", href: "/research" }]}
     >
-      <ContentSection title="Choose a pathway" intro="Care, research ordering, and practice referrals remain distinct.">
+      <ContentSection title="Choose a pathway" intro="Research ordering, Care, and practice referrals have different requirements.">
         <PathwayTiles />
       </ContentSection>
-      <ContentSection tone="soft" title="Public product list">
-        <div className="clarity-empty-state">
-          <p className="body-l text-ink-2">We're preparing our public product list. Existing customers can <Link href="/sign-in" className="clarity-text-link">Sign In</Link> to see the full catalog.</p>
-          <ActionRow actions={[{ label: "Start Care", href: "/care/schedule", kind: "primary" }, { label: "Sign In", href: "/sign-in" }]} />
-        </div>
+      <ContentSection tone="soft" title="What happens after you browse">
+        <p className="body-l text-ink-2 clarity-copy-width">Choose an eligible research product and exact variant in the catalog. A request is not a paid order. Xenios confirms availability and any payment instructions before fulfillment can begin.</p>
+        <ActionRow actions={[{ label: "Browse Research Catalog", href: "/research/early-access", kind: "primary" }, { label: "Already have a reference? Check Status", href: "/status" }, { label: "Contact Support", href: "/support" }]} />
       </ContentSection>
       <ContentSection title="Research-use boundary">
         <BoundaryNote>Research products are for research use only. Not for human consumption. Not medical advice.</BoundaryNote>

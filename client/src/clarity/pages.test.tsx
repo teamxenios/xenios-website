@@ -1,7 +1,9 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { PATHWAY_TILES } from "./pages";
+import { Router } from "wouter";
+import { PATHWAY_TILES, ProductsPage } from "./pages";
 
 const homeSource = readFileSync(resolve(__dirname, "../pages/Home.tsx"), "utf8");
 const pagesSource = readFileSync(resolve(__dirname, "pages.tsx"), "utf8");
@@ -39,6 +41,17 @@ describe("owner-approved public clarity copy", () => {
       "For Practices",
     ]);
     expect(`${homeSource}\n${pagesSource}`).not.toMatch(/product count|\$\d|Buy now|Add to cart/iu);
+  });
+
+  it("takes a newcomer from products to the supported research catalog without a self-link", () => {
+    const html = renderToStaticMarkup(<Router ssrPath="/products"><ProductsPage /></Router>);
+    expect(PATHWAY_TILES[1].href).toBe("/research/early-access");
+    expect(html).toContain('href="/research/early-access"');
+    expect(html).toContain("Browse Research Catalog");
+    expect(html).toContain("A request is not a paid order");
+    expect(html).not.toContain("We're preparing our public product list");
+    const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/u)?.[1] ?? "";
+    expect(main).not.toContain('href="/products"');
   });
 
   it("preserves the complete approved CTA vocabulary and exact Care qualifier", () => {
