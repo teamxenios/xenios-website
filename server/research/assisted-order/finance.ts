@@ -1,4 +1,4 @@
-import { AssistedOrderValidationError } from "../../../shared/research/assisted-order/contract";
+import { AssistedOrderValidationError, isAssistedOrderStatus, type AssistedOrderStatus } from "../../../shared/research/assisted-order/contract";
 import { sha256AssistedOrderHasher } from "./defaults";
 import type { AssistedOrderViewer } from "./ports";
 import {
@@ -67,6 +67,7 @@ function rpcFailure(operation: string, error: NonNullable<Awaited<ReturnType<Sup
       error.details === "ASSISTED_ORDER_QUOTE_STALE" ? "quote_stale" :
       error.details === "ASSISTED_ORDER_PAYMENT_AMOUNT_CURRENCY_MISMATCH" ? "payment_mismatch" :
       error.details === "ASSISTED_ORDER_PAYMENT_REFERENCE_REUSED" ? "payment_reference_reused" :
+      error.details === "ASSISTED_ORDER_PAYMENT_EVIDENCE_REUSED" ? "payment_evidence_reused" :
       "financial_action_refused",
       "The financial action was refused. Refresh the request and review the recorded evidence.",
     );
@@ -91,6 +92,16 @@ export type AssistedOrderManualEvidenceAuthority = Readonly<{
     observedCurrency: string;
     verifierAuthUserId: string;
   }>): Promise<Readonly<{ observedAt: string }> | null>;
+}>;
+
+/** Immutable SQL receipt, not a browser-submitted paid assertion. */
+export type AssistedOrderPaymentVerificationReceipt = Readonly<{
+  verificationId: string;
+  requestId: string;
+  state: AssistedOrderStatus;
+  verifiedAt: string;
+  verifiedBy: string;
+  replayed: boolean;
 }>;
 
 export class AssistedOrderFinanceService {
@@ -179,6 +190,22 @@ export class AssistedOrderFinanceService {
     if (!independentlyVerified || !Number.isFinite(Date.parse(independentlyVerified.observedAt))) {
       throw new AssistedOrderConflictError("manual_evidence_unverified", "Independent payment evidence did not match this request.");
     }
+    if (body.supersedesObservationId !== undefined) {
+      const corrected = await this.call("research_assisted_order_payment_correct_manual", {
+        p_request_id: request,
+        p_observation_id: uuid(body.supersedesObservationId, "supersedesObservationId"),
+        p_actor_auth_user_id: actor.id,
+        p_quote_id: quoteId,
+        p_payment_reference: reference,
+        p_observed_amount_cents: amount,
+        p_observed_currency: currency,
+        p_source_evidence_ref: evidenceRef,
+        p_observed_at: independentlyVerified.observedAt,
+        p_reason: string(body.correctionReason, "correctionReason", 1000),
+      });
+      if (corrected === null) throw new AssistedOrderNotFoundError();
+      return corrected;
+    }
     return this.call("research_assisted_order_payment_observe", {
       p_request_id: request,
       p_quote_id: quoteId,
@@ -195,7 +222,7 @@ export class AssistedOrderFinanceService {
     });
   }
 
-  public async verifyManual(viewer: AssistedOrderViewer, requestId: string, observationId: string): Promise<unknown> {
+  public async verifyManual(viewer: AssistedOrderViewer, requestId: string, observationId: string): Promise<AssistedOrderPaymentVerificationReceipt> {
     const actor = adminActor(viewer);
     if (!this.manualEvidence) {
       throw new AssistedOrderConflictError("manual_evidence_unavailable", "Independent manual payment evidence is not configured.");
@@ -206,6 +233,26 @@ export class AssistedOrderFinanceService {
       p_verifier_auth_user_id: actor.id,
     });
     if (result === null) throw new AssistedOrderNotFoundError();
-    return result;
+    // Fail closed on an incomplete/misbound backend receipt. Downstream effects
+    // must never turn a typed id, arbitrary RPC object or request body into fact.
+    if (typeof result !== "object" || Array.isArray(result)) {
+      throw new Error("Payment verification receipt is unavailable");
+    }
+    const receipt = result as Record<string, unknown>;
+    if (typeof receipt.verificationId !== "string" || !UUID.test(receipt.verificationId) ||
+        receipt.requestId !== requestId || !isAssistedOrderStatus(receipt.state) || typeof receipt.replayed !== "boolean" ||
+        (!receipt.replayed && receipt.state !== "paid") ||
+        typeof receipt.verifiedAt !== "string" || !Number.isFinite(Date.parse(receipt.verifiedAt)) ||
+        typeof receipt.verifiedBy !== "string" || !receipt.verifiedBy.trim() || receipt.verifiedBy.length > 200) {
+      throw new Error("Payment verification receipt is unavailable");
+    }
+    return Object.freeze({
+      verificationId: receipt.verificationId,
+      requestId,
+      state: receipt.state,
+      verifiedAt: new Date(receipt.verifiedAt).toISOString(),
+      verifiedBy: receipt.verifiedBy,
+      replayed: receipt.replayed,
+    });
   }
 }

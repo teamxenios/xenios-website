@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import type { AssistedOrderStatusView } from "../../../../shared/research/assisted-order/contract";
+import { assistedOrderPaymentStatusCopy } from "../../../../shared/research/assisted-order/payment-status-copy";
 import { loadAssistedOrderStatus } from "./api";
 import { money } from "./wizard-state";
 import { readAssistedOrderToken } from "./storage";
 import { SecureDocumentUpload } from "./SecureDocumentUpload";
+import { CustomerQuotePanel } from "./CustomerQuotePanel";
 import { assistedOrderStatusErrorCopy } from "./customer-safe-errors";
 import { EarlyAccessStepper } from "../early-access/EarlyAccessStepper";
 import { EARLY_ACCESS_CUSTOMER_STEP_LABELS } from "../early-access/customerSteps";
@@ -22,7 +24,9 @@ function referenceFromPath(path: string): string {
 
 const PUBLIC_REFERENCE = /^XRR-\d{8}-[0-9A-F]{10}$/u;
 
-function customerStatus(status: AssistedOrderStatusView["status"]): { label: string; line: string } {
+function customerStatus(status: AssistedOrderStatusView["status"], paymentVerified = false): { label: string; line: string } {
+  const financialCopy = assistedOrderPaymentStatusCopy(status, paymentVerified);
+  if (financialCopy) return financialCopy;
   switch (status) {
     case "submitted":
     case "reviewing":
@@ -34,12 +38,6 @@ function customerStatus(status: AssistedOrderStatusView["status"]): { label: str
     case "identity_received":
     case "agreements_complete":
       return { label: "In review", line: "We're checking what you sent." };
-    case "payment_pending":
-      return { label: "Payment step paused", line: "Do not send funds based on this status. Contact Support for next steps." };
-    case "payment_review":
-      return { label: "Payment review", line: "Contact Support for the current payment status." };
-    case "paid":
-      return { label: "Payment record under review", line: "Contact Support before relying on this payment record." };
     case "supplier_processing":
       return { label: "Preparing your order", line: "Check the request timeline for the latest update." };
     case "shipped":
@@ -50,6 +48,8 @@ function customerStatus(status: AssistedOrderStatusView["status"]): { label: str
       return { label: "Closed", line: "This order is complete." };
     case "cancelled":
       return { label: "Cancelled", line: "Contact Support if this is unexpected." };
+    default:
+      return { label: "Update available", line: "Contact Support for the current request status." };
   }
 }
 
@@ -130,7 +130,7 @@ function VerifiedRequestStatus({ reference, memberToken, memberChecking }: {
         <>
           <section className="xenios-order-panel">
             <div className="xenios-order-card__header" style={{ flexWrap: "wrap" }}>
-              <div><p className="xenios-order-eyebrow">Current status</p><h2>{customerStatus(status.status).label}</h2><p>{customerStatus(status.status).line}</p></div>
+              <div><p className="xenios-order-eyebrow">Current status</p><h2>{customerStatus(status.status, status.paymentVerified).label}</h2><p>{customerStatus(status.status, status.paymentVerified).line}</p></div>
               <strong data-testid="assisted-request-status-estimate">Estimate: {money(status.estimatedTotalCents)}</strong>
             </div>
             {status.actionRequired ? <div className="xenios-order-notice"><strong>Action required:</strong> {status.actionRequired}</div> : null}
@@ -149,13 +149,17 @@ function VerifiedRequestStatus({ reference, memberToken, memberChecking }: {
             <ol className="xenios-order-timeline">
               {status.timeline.map((event, index) => (
                 <li key={`${event.occurredAt}-${index}`}>
-                  <strong>{customerStatus(event.status).label}</strong>
+                  <strong>{customerStatus(event.status, status.paymentVerified).label}</strong>
                   <time dateTime={event.occurredAt}>{new Date(event.occurredAt).toLocaleString()}</time>
-                  {event.customerMessage ? <p>{event.customerMessage}</p> : null}
+                  {assistedOrderPaymentStatusCopy(event.status, status.paymentVerified)
+                    ? <p>{assistedOrderPaymentStatusCopy(event.status, status.paymentVerified)!.line}</p>
+                    : event.customerMessage ? <p>{event.customerMessage}</p> : null}
                 </li>
               ))}
             </ol>
           </section>
+          <CustomerQuotePanel requestId={status.requestId} publicReference={status.publicReference}
+            statusToken={token} memberToken={memberToken} />
           {status.status === "identity_requested" ? (
             <SecureDocumentUpload
               requestId={status.requestId}

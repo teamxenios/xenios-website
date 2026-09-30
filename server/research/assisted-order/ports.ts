@@ -174,6 +174,11 @@ export type AssistedOrderRepository = Readonly<{
     authorization: AssistedOrderStatusAuthorization,
   ): Promise<AssistedOrderStatusView | null>;
   getAdmin(requestId: string): Promise<AssistedOrderAdminDetail | null>;
+  /** A status label or browser evidence ID is never a financial fact. */
+  getFinancialState?(requestId: string): Promise<Readonly<{
+    hasObservation: boolean;
+    paymentVerified: boolean;
+  }> | null>;
   listAdmin(
     query: AssistedOrderAdminListQuery,
   ): Promise<AssistedOrderAdminListPage>;
