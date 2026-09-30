@@ -679,18 +679,21 @@
       "id": "ASSISTED-ORDER-CONVERSION",
       "title": "Close the assisted-order operator loop: quote issuance, customer acceptance, evidence tooling",
       "priority": "P0",
-      "state": "blocked",
-      "owner": null,
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/research/assisted-order/**",
         "client/src/research/assisted-order/**",
         "shared/research/assisted-order/**",
         "supabase/migrations/*assisted_order_quote*",
+        "supabase/verification/*assisted_order_quote*",
         "server/research/commerce/persistence/admin-queues-store.ts"
       ],
       "dependsOn": [
         "ASSISTED-ORDER-MOUNT"
-      ]
+      ],
+      "scopeNote": "Founder-authorized HL-12 financial integrity: accepted versioned quote, amount/currency-bound authorized verification and durable paid transition across mounted app and forward SQL, qualified only on disposable local PostgreSQL. Existing mounted assisted-order bridge is present; prior blocked state is stale. No managed migration, hosted mutation, real money or fabricated historical verification.",
+      "claimedAt": "2026-09-30T19:11:42.990Z"
     },
     {
       "id": "ASSISTED-ORDER-CUSTOMER-FLOW",

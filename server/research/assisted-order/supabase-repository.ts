@@ -240,6 +240,21 @@ function fail(response: SupabaseRpcResponse, operation: string): never {
       message,
     );
   }
+  // The forward assisted-order SQL revision converts deterministic compare-and-
+  // set refusals to a non-retryable P0001. PostgREST retries 40001 forever if
+  // the precondition can never become true. Match only our exact detail codes.
+  if (code === "P0001" && error?.details === "ASSISTED_ORDER_STALE_STATUS") {
+    throw new AssistedOrderConflictError(
+      "status_changed",
+      "The request status changed. Refresh it before trying again.",
+    );
+  }
+  if (code === "P0001" && error?.details === "ASSISTED_ORDER_DOCUMENT_NOT_PENDING") {
+    throw new AssistedOrderConflictError(
+      "document_not_pending",
+      "This document upload has already been completed or is no longer pending.",
+    );
+  }
   // Serialization failures are retryable conflicts, not server faults.
   if (code === "40001") {
     throw new AssistedOrderConflictError(

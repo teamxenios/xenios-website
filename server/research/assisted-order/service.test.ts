@@ -735,6 +735,35 @@ describe("AssistedOrderService", () => {
     ).toMatchObject({ status: "upload_pending" });
   });
 
+  it("refuses repeat document completion after owner authorization without a second completion audit", async () => {
+    const h = harness();
+    const receipt = await h.service.submit(memberViewer, input());
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "reviewing" });
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "identity_requested" });
+    const ticket = await h.service.createDocumentUpload(memberViewer, receipt.requestId, {
+      publicReference: receipt.publicReference,
+      documentType: "government_id",
+      side: "front",
+      fileName: "identity.png",
+      mimeType: "image/png",
+      sizeBytes: 1000,
+    }, receipt.statusToken);
+    await h.service.completeDocumentUpload(
+      memberViewer, receipt.requestId, ticket.documentId,
+      receipt.publicReference, receipt.statusToken,
+    );
+    const authorizationCount = h.audit.mock.calls.filter(
+      ([event]) => event.eventType === "assisted_order.document_upload_completion_authorized",
+    ).length;
+    await expect(h.service.completeDocumentUpload(
+      memberViewer, receipt.requestId, ticket.documentId,
+      receipt.publicReference, receipt.statusToken,
+    )).rejects.toMatchObject({ code: "document_not_pending" });
+    expect(h.audit.mock.calls.filter(
+      ([event]) => event.eventType === "assisted_order.document_upload_completion_authorized",
+    )).toHaveLength(authorizationCount);
+  });
+
   it("keeps submitted and status truth durable in their domain transaction when supplemental audit fails", async () => {
     const h = harness(item(), {
       auditRecord: async () => {
@@ -851,6 +880,7 @@ describe("SupabaseAssistedOrderRepository error mapping", () => {
   function failingClient(error: {
     message: string;
     code?: string;
+    details?: string;
   }): SupabaseRpcClient {
     return { rpc: async () => ({ data: null, error }) };
   }
@@ -896,6 +926,41 @@ describe("SupabaseAssistedOrderRepository error mapping", () => {
     ).rejects.toMatchObject({
       name: "AssistedOrderConflictError",
       code: "serialization_conflict",
+    });
+  });
+
+  it("maps forward SQL deterministic status and document refusals to 409 conflicts", async () => {
+    const base = {
+      requestId: createRecord.requestId,
+      fromStatus: "reviewing" as const,
+      toStatus: "payment_pending" as const,
+      actorId: "operator",
+      actorType: "admin" as const,
+      customerMessage: null,
+      internalNote: null,
+      evidence: {},
+      occurredAt: createRecord.createdAt,
+    };
+    const statusRepository = new SupabaseAssistedOrderRepository(failingClient({
+      message: "Assisted order status changed concurrently.",
+      code: "P0001",
+      details: "ASSISTED_ORDER_STALE_STATUS",
+    }));
+    await expect(statusRepository.updateStatus(base)).rejects.toMatchObject({
+      name: "AssistedOrderConflictError", code: "status_changed",
+    });
+    const documentRepository = new SupabaseAssistedOrderRepository(failingClient({
+      message: "Assisted order document is not pending.",
+      code: "P0001",
+      details: "ASSISTED_ORDER_DOCUMENT_NOT_PENDING",
+    }));
+    await expect(documentRepository.completeDocument({
+      requestId: createRecord.requestId,
+      documentId: "33333333-3333-4333-8333-333333333333",
+      objectPath: "synthetic/path",
+      uploadedAt: createRecord.createdAt,
+    })).rejects.toMatchObject({
+      name: "AssistedOrderConflictError", code: "document_not_pending",
     });
   });
 

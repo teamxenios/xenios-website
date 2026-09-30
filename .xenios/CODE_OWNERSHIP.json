@@ -2784,6 +2784,22 @@
       "state": "handoff",
       "claimedAt": "2026-09-30T18:38:35.691Z",
       "heartbeatAt": "2026-09-30T18:38:35.769Z"
+    },
+    {
+      "id": "9e874362-e940-4448-b1b4-26f371f02c27",
+      "task": "ASSISTED-ORDER-CONVERSION",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/assisted-order/**",
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**",
+        "supabase/migrations/*assisted_order_quote*",
+        "supabase/verification/*assisted_order_quote*",
+        "server/research/commerce/persistence/admin-queues-store.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-30T19:11:42.995Z",
+      "heartbeatAt": "2026-09-30T19:11:42.995Z"
     }
   ],
   "rules": [

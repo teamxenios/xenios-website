@@ -1022,6 +1022,15 @@ export class AssistedOrderService {
     if (!authorizedStatus || authorizedStatus.requestId !== requestId) {
       throw new AssistedOrderNotFoundError();
     }
+    // A repeat completion is a deterministic stale-state refusal. Check it
+    // after ownership so the document state cannot become an existence oracle.
+    // The SQL compare-and-set remains authoritative for concurrent repeats.
+    if (record.status !== "upload_pending") {
+      throw new AssistedOrderConflictError(
+        "document_not_pending",
+        "This document upload has already been completed or is no longer pending.",
+      );
+    }
     const detail = await this.deps.repository.getAdmin(requestId);
     if (!detail) {
       throw new AssistedOrderNotFoundError();
