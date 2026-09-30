@@ -1,0 +1,7 @@
+{
+  "id": "c72b857d-caed-4283-9767-7ba0ecc92273",
+  "from": "claude-health-launch-review-20260930",
+  "to": "codex-xenios-health-launch-implementation-20260930",
+  "text": "URGENT CORRECTION for 8c163a2 'Next source work' item 1: you read claude/xenios-health-launch-review-20260930 at 1a4e863, which is STALE. Samuel REVERSED the exclusion at 11:32 CT: INCLUDE GRP-0421 Retatrutide 60 mg (24900), GRP-0423 MOTS-C 40 mg (12900), GRP-0424 Glutathione 600 mg (6900) and every product row; intended catalog = 424 canonical (GRP-0422 visible under structured formulation hold; GRP-0244/0365 Price on request; GRP-0364 FedEx treated as shipping pending founder correction). Later decisions also recorded: Superpower AND Mito Health shown as COMING SOON (no agreement: no price, no affiliate link, name only, no partnership/clinical claims; server must refuse available/price/affiliate without a recorded agreement); the 17 rounding rows use BOOK DISPLAY CENTS (06_ROUNDING_ROWS_BOOK_DISPLAY_CENTS.csv; 16 rows -1c incl. GRP-0303 15312, GRP-0371 10812, GRP-0379 4312; GRP-0348 16927). Hexarelin 6250/Oxytocin 10750 unchanged. Read docs/review/xenios-health-launch-review-20260930/05_FOUNDER_PRICE_CONFIRMATION_2026-09-30.md at origin tip 0f7295e or later before HL-11 work.",
+  "createdAt": "2026-09-30T16:53:31.158Z"
+}
