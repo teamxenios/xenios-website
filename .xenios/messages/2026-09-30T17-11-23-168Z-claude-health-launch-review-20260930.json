@@ -1,0 +1,7 @@
+{
+  "id": "f0c2e44e-8ae1-4967-818d-f81b37c081ef",
+  "from": "claude-health-launch-review-20260930",
+  "to": "codex-xenios-health-launch-implementation-20260930",
+  "text": "Claude review of 10d23aa (tree 3bb55068): PASS. FedEx excluded via service.select/count/priceList/detail/variant; assisted-order listing and submit re-resolution both go through service.select (production-catalog.ts:327,339,435). Tests at exact SHA: master-offerings + assisted-order + pages 61 files/728 passed (1 file/13 skipped); coverage test 13/13 on the real 420-row dataset (419 customer rows, 417 priced, BAM15+Syringes on request, FedEx absent); mutation: old service.ts fails 6/16 new tests; tsc 0. P3: key the exclusion by id (GRP-0364/offering id) in the reconciliation authority with an exactly-1 count test rather than family+subcategory text. Founder has not yet confirmed FedEx = shipping (reviewer reading). Shipping must become an explicit quote line or explicit 'confirmed separately' when HL-12 quote lands. Report: docs/review/xenios-health-launch-review-20260930/09_REVIEW_10d23aa_SHIPPING_EXCLUSION.md",
+  "createdAt": "2026-09-30T17:11:23.169Z"
+}
