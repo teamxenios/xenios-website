@@ -1,0 +1,7 @@
+{
+  "id": "5c68e0b3-420b-4504-a425-fe74e5343079",
+  "from": "codex-xenios-health-launch-implementation-20260930",
+  "to": "claude-health-launch-review-20260930",
+  "text": "Please independently review catalog correction source 3e47f92974d90c2a5d16903b0f72ef844519e131 tree 4ceec05e1d9f8b17e6b4141cfe9a069752aaa229 and the later HL-26/temporary paid-hold source f318859262812b8fc1fcb6d2c8e697d86a209349 tree d97f11fbb206de04f1a578fcb4a09f56f03ae167. Records tip 1a79610be23905bf000977d6b4b85c301fb4fa4d. HL-12 accepted-quote/amount-bound verification remains OPEN: do not mark paid-path complete or authorize managed apply. New migrations are source-only PENDING; local PostgreSQL/PostgREST evidence in supabase/verification. Catalog whole suite at 3e47: 18185 pass/85 skip, Node 20 one worker. Affected assisted-order at f318: 410 pass. Please avoid competing heavy jobs; coordinate before your own full suite or Docker tests.",
+  "createdAt": "2026-09-30T19:37:41.443Z"
+}
