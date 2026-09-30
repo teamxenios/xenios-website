@@ -600,6 +600,23 @@ describe("only real authority turns money real", () => {
       }),
     ).rejects.toBeInstanceOf(AssistedOrderPaymentValidationError);
   });
+
+  it("refuses a provider event with the wrong currency without a paid event", async () => {
+    const h = harness();
+    const opened = await h.service.open(adminViewer, REQUEST_ID);
+    await h.service.presentInstructions(adminViewer, opened.paymentId, "wire");
+    await h.service.beginReview(adminViewer, opened.paymentId);
+    await expect(h.service.recordProcessorSettlement({
+      paymentId: opened.paymentId,
+      providerId: "stripe",
+      providerEventId: "evt_wrong_currency",
+      verifiedAmountCents: TOTAL_CENTS,
+      currency: "EUR" as "USD",
+    })).rejects.toMatchObject({ code: "CURRENCY_MISMATCH" });
+    const record = await h.service.adminRecord(adminViewer, opened.paymentId);
+    expect(record.state).toBe("under_review");
+    expect(record.history.some((event) => event.to === "paid")).toBe(false);
+  });
 });
 
 describe("duplicate verification is idempotent", () => {

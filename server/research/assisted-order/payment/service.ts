@@ -605,6 +605,14 @@ export class AssistedOrderPaymentService {
     const providerId = nonBlank(fact.providerId, "providerId");
     const providerEventId = nonBlank(fact.providerEventId, "providerEventId");
     const record = await this.load(fact.paymentId);
+    // Type declarations do not authenticate a provider callback. A verified
+    // adapter must supply this fact, and runtime currency still needs checking.
+    if (fact.currency !== record.currency) {
+      throw new AssistedOrderPaymentConflictError(
+        "CURRENCY_MISMATCH",
+        "The provider currency does not match the accepted quote.",
+      );
+    }
 
     if (record.settlement) {
       if (record.state !== "paid") {
