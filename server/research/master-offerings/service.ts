@@ -66,6 +66,14 @@ export interface PricedMasterOfferingSelection {
   prices: MasterOfferingPriceMap;
 }
 
+/** A shipping fee is an order charge, not a customer-selectable product. */
+function isCustomerCatalogOffering(offering: NormalizedMasterOffering): boolean {
+  return !(
+    offering.family === "shipping_and_fulfillment" &&
+    offering.subcategory === "Shipping Service"
+  );
+}
+
 /**
  * Resolve commerce for every variant of every offering first, then answer the
  * synchronous projection from the immutable result. The same two-phase shape
@@ -138,7 +146,7 @@ export class MasterOfferingCatalogService {
   async select(
     query: MasterOfferingCatalogQuery,
   ): Promise<PricedMasterOfferingSelection> {
-    const products = await this.reader.readCatalog();
+    const products = (await this.reader.readCatalog()).filter(isCustomerCatalogOffering);
     const selection = selectMasterOfferings(products, query);
     // Commerce is resolved for the page's variants exactly as `detail` resolves
     // it for one offering's, so the action a card carries is the action the
@@ -172,7 +180,7 @@ export class MasterOfferingCatalogService {
 
   /** How many member-safe offerings match, without pricing or projecting any. */
   async count(query: MasterOfferingCatalogQuery): Promise<number> {
-    const products = await this.reader.readCatalog();
+    const products = (await this.reader.readCatalog()).filter(isCustomerCatalogOffering);
     return selectMasterOfferings(products, query).total;
   }
 
@@ -193,7 +201,7 @@ export class MasterOfferingCatalogService {
     | { ok: false; code: "too_large"; rowCount: number; maxRows: number }
   > {
     const maxRows = input.maxRows ?? MASTER_OFFERING_PRICE_LIST_MAX_ROWS;
-    const products = await this.reader.readCatalog();
+    const products = (await this.reader.readCatalog()).filter(isCustomerCatalogOffering);
     const offerings = matchMasterOfferings(products, input.query);
     const rowCount = offerings.reduce(
       (total, offering) =>
@@ -231,11 +239,13 @@ export class MasterOfferingCatalogService {
     if (typeof this.reader.readBySlug === "function") {
       const found = await this.reader.readBySlug(slug);
       if (found === null || found === undefined) return null;
-      return found.visibility === "member" && found.slug === slug ? found : null;
+      return found.visibility === "member" && found.slug === slug && isCustomerCatalogOffering(found)
+        ? found
+        : null;
     }
     const products = await this.reader.readCatalog();
     const matches = products.filter(
-      (product) => product.visibility === "member" && product.slug === slug,
+      (product) => product.visibility === "member" && product.slug === slug && isCustomerCatalogOffering(product),
     );
     return matches.length === 1 ? matches[0] : null;
   }

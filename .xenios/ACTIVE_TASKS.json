@@ -715,8 +715,8 @@
       "id": "CATALOG-ACTION-UNIFICATION",
       "title": "One buyer-scoped catalog pathway and price projection for every surface",
       "priority": "P1",
-      "state": "ready",
-      "owner": null,
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "shared/research/master-offerings/**",
         "server/research/master-offerings/**",
@@ -725,7 +725,7 @@
         "server/research/pricing/catalog-price-projection.ts"
       ],
       "dependsOn": [],
-      "claimedAt": "2026-08-20T17:51:40.938Z",
+      "claimedAt": "2026-09-30T16:51:25.739Z",
       "releasedAt": "2026-09-27T02:11:21.436Z"
     },
     {

@@ -41,13 +41,13 @@ import {
   loadBindingIndex,
 } from "./production-bindings";
 
-/** The shipped catalog, measured from the committed artifacts on 2026-08-20. */
-const TOTAL_VARIANTS = 420;
+/** The committed dataset has 420 rows; a shipping charge is not merchandise. */
+const SHIPPED_VARIANTS = 420;
+const TOTAL_VARIANTS = SHIPPED_VARIANTS - 1;
 const BOUND_VARIANTS = 417;
-const PRICE_ON_REQUEST_VARIANTS = 3;
+const PRICE_ON_REQUEST_VARIANTS = 2;
 const UNBOUND_PRODUCT_NAMES = [
   "BAM15",
-  "FedEx Standard Overnight",
   "Syringes & Alcohol Swabs",
 ];
 
@@ -58,26 +58,26 @@ const PRODUCTION_PRICED_PAIRS_MD5 = "062a30f0d3d0a0571e78837b5b92d4f6";
 const PRICE_CENTS = 6500;
 
 /**
- * The composition of the shipped catalog, re-measured by walking all 420 rows
- * through the shared canonical pathway authority on 2026-08-25 — not
- * estimated, and not read off a spreadsheet.
+ * The 2026-08-25 composition counted all 420 artifact rows. The customer
+ * projection now removes the one shipping-service charge while retaining
+ * the other 419 rows and all 417 bound prices.
  *
- *   TOTAL             420
+ *   TOTAL             419   one shipping charge excluded from 420 source rows
  *   PRICED            417
- *   UNPRICED             3   BAM15, FedEx Standard Overnight, Syringes & Swabs
+ *   UNPRICED             2   BAM15, Syringes & Swabs
  *   RUO                153   research use only
  *   PROVIDER REQUEST   242   503A / provider pathway, priced but never direct
- *   AVAILABILITY         2   non-merchandise or otherwise held rows
+ *   AVAILABILITY         1   otherwise held row
  *   ACTIVATION          44   visible rows lacking direct launch authority
  *   PRICING REQUEST      1   the one generally orderable row lacking a price
  *   DIRECT REQUEST     131   rows the shared pathway authority admits
  */
-const MEASURED_TOTAL_VARIANTS = 420;
+const MEASURED_TOTAL_VARIANTS = 419;
 const MEASURED_PRICED = 417;
-const MEASURED_UNPRICED = 3;
+const MEASURED_UNPRICED = 2;
 const MEASURED_RUO = 153;
 const MEASURED_PROVIDER_REQUEST = 242;
-const MEASURED_AVAILABILITY_REVIEW = 2;
+const MEASURED_AVAILABILITY_REVIEW = 1;
 const MEASURED_REQUEST_ACTIVATION = 44;
 const MEASURED_REQUEST_PRICING = 1;
 const MEASURED_DIRECT_ORDER_REQUEST = 131;
@@ -236,7 +236,19 @@ async function walkWholeCatalog(
 }
 
 describe("Early Access price coverage across the whole catalog", () => {
-  it("reaches every row in the dataset, not just the first page", async () => {
+  it("preserves the source row but excludes the shipping charge from the customer catalog", async () => {
+    const reader = (sharedReader ??= createMasterOfferingCatalogReaderFromEnv());
+    expect(reader).not.toBeNull();
+    const source = await reader!.readCatalog();
+    expect(source).toHaveLength(SHIPPED_VARIANTS);
+    expect(source.filter((product) => product.subcategory === "Shipping Service").map((product) => product.displayName)).toEqual(["FedEx Standard Overnight"]);
+    const { items } = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
+    expect(items).toHaveLength(TOTAL_VARIANTS);
+    expect(items.some((item) => item.productName === "FedEx Standard Overnight")).toBe(false);
+    expect(items.some((item) => item.productName === "Syringes & Alcohol Swabs")).toBe(true);
+  });
+
+  it("reaches every customer product in the dataset, not just the first page", async () => {
     const walk = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
     expect(walk.reportedTotal).toBe(TOTAL_VARIANTS);
     expect(walk.items).toHaveLength(TOTAL_VARIANTS);
@@ -381,7 +393,7 @@ describe("Early Access price coverage across the whole catalog", () => {
     // at the end — the exact shape of an earlier defect where a page clamp left
     // 320 of 420 rows unreachable.
     //
-    // So every one of the 420 rows is resolved individually and compared on the
+    // So every one of the 419 customer rows is resolved individually and compared on the
     // authoritative fingerprint, which covers productId, variantId, price,
     // priceVersion, catalogVersion and workflowMode together.
     const cb = callbacks();
@@ -408,7 +420,7 @@ describe("Early Access price coverage across the whole catalog", () => {
     }
     expect(unresolved).toEqual([]);
     expect(disagreed).toEqual([]);
-    // 420 resolves, each paging the real dataset. Deliberately the most
+    // 419 resolves, each paging the real dataset. Deliberately the most
     // expensive test in the lane, and it timed out at the 5s default under a
     // loaded suite. A generous explicit budget is the honest fix: quietly
     // sampling fewer rows would give back the very coverage it exists for.
