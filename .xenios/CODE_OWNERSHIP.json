@@ -2781,7 +2781,7 @@
         "server/research/catalog-display/**",
         "server/research/pricing/catalog-price-projection.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T18:38:35.691Z",
       "heartbeatAt": "2026-09-30T18:38:35.769Z"
     }
