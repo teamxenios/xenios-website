@@ -2865,7 +2865,7 @@
         "supabase/verification/*assisted_order_quote*",
         "server/research/commerce/persistence/admin-queues-store.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T20:43:49.730Z",
       "heartbeatAt": "2026-09-30T20:48:08.908Z"
     },
@@ -2878,7 +2878,7 @@
         "server/research/assisted-order/express.ts",
         "server/research/assisted-order/production-wiring.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T20:49:14.439Z",
       "heartbeatAt": "2026-09-30T20:49:14.439Z"
     }

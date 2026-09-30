@@ -679,7 +679,7 @@
       "id": "ASSISTED-ORDER-CONVERSION",
       "title": "Close the assisted-order operator loop: quote issuance, customer acceptance, evidence tooling",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/research/assisted-order/**",
@@ -696,9 +696,9 @@
       "claimedAt": "2026-09-30T20:43:49.727Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
-        "sha": "c92d7a93e7b443cccd949f8903b62db77d425603",
-        "file": ".xenios/handoffs/2026-09-30T20-40-59-214Z-ASSISTED-ORDER-CONVERSION-codex-xenios-health-launch-implementation-20260930.md",
-        "at": "2026-09-30T20:40:59.219Z"
+        "sha": "cea4922107150de3276833348b299c50eb8e398b",
+        "file": ".xenios/handoffs/2026-09-30T20-54-19-166Z-ASSISTED-ORDER-CONVERSION-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-09-30T20:54:19.169Z"
       }
     },
     {
@@ -2707,7 +2707,7 @@
       "id": "ASSISTED-ORDER-HL12-VERIFIED-ADMIN-ACTOR-20260930",
       "title": "Carry verified admin Auth UUID into assisted-order financial actor context",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/routes.ts",
@@ -2718,7 +2718,13 @@
         "ASSISTED-ORDER-MOUNT"
       ],
       "scopeNote": "Server-derived verified Supabase admin Auth UUID only. Never accept a request-body actor, invent a finance grant, or enable payment transitions by itself.",
-      "claimedAt": "2026-09-30T20:49:14.437Z"
+      "claimedAt": "2026-09-30T20:49:14.437Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "cea4922107150de3276833348b299c50eb8e398b",
+        "file": ".xenios/handoffs/2026-09-30T20-54-19-079Z-ASSISTED-ORDER-HL12-VERIFIED-ADMIN-ACTOR-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-09-30T20:54:19.088Z"
+      }
     }
   ]
 }
