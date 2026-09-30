@@ -324,3 +324,18 @@ approval remain open. See
 `../server/research/assisted-order/HEALTH_HL12_SQL_FOUNDATION_HANDOFF_20260930.md`
 and `verification/research_assisted_order_quote_payment_foundation_local.sql`.
 No hosted environment was contacted.
+
+## Assisted-order bound quote access and verification — pending 2026-09-30
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 83 | migrations/20260930205725_research_assisted_order_quote_access_finance_bound.sql | Owner-bound customer quote projection; request-bound payment verification; revoke unbound service-role verifier grant | PENDING; source-only, not applied to managed staging or production |
+
+Source commit `5c8498ce7f4c2333ee75b52cdbb0e76e14f0a925` pins canonical
+Git blob SHA-256 `452a94e5acd880a9e02e34681e9844692997d5d7d22802f4efef94b27f30e18f`.
+It applied twice on disposable PostgreSQL 17 after its pending predecessors.
+The owner projection, private-basis exclusion, wrong-request denial, ACL, and
+two-connection verification replay checks passed. This remains source-only
+and does not enable card, provider webhook, manual grant, refund, cancellation
+or historical-paid behavior. See
+`verification/research_assisted_order_quote_access_finance_bound_local.sql`.

@@ -2908,6 +2908,18 @@
       "state": "active",
       "claimedAt": "2026-09-30T20:57:09.922Z",
       "heartbeatAt": "2026-09-30T20:57:09.922Z"
+    },
+    {
+      "id": "2d71f356-af58-4db9-9252-87983f517062",
+      "task": "ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-30T21:00:15.040Z",
+      "heartbeatAt": "2026-09-30T21:00:15.040Z"
     }
   ],
   "rules": [

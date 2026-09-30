@@ -850,6 +850,25 @@
         "evidence": "Exact canonical source bytes applied twice on disposable PostgreSQL 17 with synthetic roles and M71/HL-26/paid-hold predecessors. Local SQL assertions cover exact quote totals, owner binding, stale quote rejection, replay, ACL, append-only records, amount/currency mismatch, reused payment identity, wrong actor and interrupted-write rollback. No managed database or provider callback was contacted."
       },
       "notes": "Source-only HL-12 SQL foundation, not a complete payment implementation. The mounted application still rejects paid transitions; provider signature verification, payment-attempt binding, historical paid review and post-paid refund/cancellation authority remain open. No managed application is authorized."
+    },
+    {
+      "id": "research_assisted_order_quote_access_finance_bound",
+      "path": "supabase/migrations/20260930205725_research_assisted_order_quote_access_finance_bound.sql",
+      "sourceSha": "5c8498ce7f4c2333ee75b52cdbb0e76e14f0a925",
+      "dependsOn": ["research_assisted_order_quote_payment_authority"],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "452a94e5acd880a9e02e34681e9844692997d5d7d22802f4efef94b27f30e18f"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "leave_financial_routes_disabled_and_roll_forward_under_controlled_change",
+        "procedure": "supabase/verification/research_assisted_order_quote_access_finance_bound_local.sql",
+        "evidence": "Exact source bytes applied twice on disposable PostgreSQL 17 after pending predecessors. Owner-bound quote projection, no private pricing basis, wrong-path verification denial, service-role ACL and correct-path replay passed. Two independent local service-role connections yielded one immutable verification, one paid event and one replay. No hosted database or money was contacted."
+      },
+      "notes": "Source-only HL-12 successor. It adds a customer quote projection and request-bound verifier RPC, revoking the unbound service-role verifier grant. This does not mount a provider adapter, enable paid application routes, or resolve historical paid/refund requirements. Managed application requires exact separate approval."
     }
   ],
   "invariants": [

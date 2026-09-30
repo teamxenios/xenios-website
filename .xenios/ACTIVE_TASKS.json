@@ -2687,15 +2687,15 @@
       "id": "ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930",
       "title": "Register source-only assisted-order financial migrations pending HL-12 authority",
       "priority": "P0",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "docs/coordination/MIGRATION_DAG.json",
         "supabase/MIGRATIONS.md"
       ],
       "dependsOn": [],
-      "scopeNote": "Register exact f318859 paid hold and c92d7a9 SQL foundation; maintain PENDING managed state and explicitly preserve HL-12 as open.",
-      "claimedAt": "2026-09-30T20:41:06.439Z",
+      "scopeNote": "Register exact f318859 paid hold, c92d7a9 SQL foundation and 5c8498c bound-access successor; maintain PENDING managed state and explicitly preserve HL-12 as open.",
+      "claimedAt": "2026-09-30T21:00:15.038Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
         "sha": "a59c05be857d4117f25743384b4d3713fd586203",
