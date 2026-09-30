@@ -59,6 +59,7 @@ export const EARLY_ACCESS_STEPS = EARLY_ACCESS_CUSTOMER_STEP_LABELS;
 type GateState =
   | { kind: "checking" }
   | { kind: "unavailable" }
+  | { kind: "error" }
   | { kind: "locked"; error: string | null; busy: boolean }
   | { kind: "authenticated"; expiresAt: string | null };
 
@@ -96,6 +97,14 @@ function bestEffort(action: () => void): void {
     // so a less-sensitive recovery hint never prevents a later credential
     // from being removed.
   }
+}
+
+function EntryHelpLinks() {
+  return <nav className="mt-6 flex flex-wrap gap-4" aria-label="Research ordering help">
+    <a className="btn btn-secondary" href="/support">Contact Support</a>
+    <a className="btn btn-secondary" href="/status">Check Status</a>
+    <a className="btn btn-secondary" href="/products">Back to Products</a>
+  </nav>;
 }
 
 /** Clears only customer-scoped browser artifacts owned by research ordering. */
@@ -173,10 +182,9 @@ export default function EarlyAccessRoute() {
           credentials: "same-origin",
           headers: { Accept: "application/json" },
         });
-        // The gate answers 503 when the deployment has it switched off or
-        // incompletely configured. That is a truthful unavailable state, not
-        // an error the customer can act on.
-        if (response.status === 503 || response.status === 404) {
+        // An absent endpoint cannot confirm access. A proxy or service 5xx,
+        // however, is retryable and is not evidence of a password requirement.
+        if (response.status === 404) {
           setState({ kind: "unavailable" });
           return;
         }
@@ -223,9 +231,9 @@ export default function EarlyAccessRoute() {
         // customer-facing password. Obtain a fresh anonymous identity, then
         // loop through the authoritative session endpoint once more instead
         // of trusting the unlock response body.
-        if (response.ok && body?.openAccess === true) {
+        if (response.ok && body?.authenticated === false && body.openAccess === true) {
           if (attemptedOpenAccess) {
-            setState({ kind: "unavailable" });
+            setState({ kind: "error" });
             return;
           }
           attemptedOpenAccess = true;
@@ -244,16 +252,18 @@ export default function EarlyAccessRoute() {
           if (opened.ok) {
             continue;
           }
-          // Could not obtain one. That is an unavailable deployment, not
-          // something a customer can fix by typing, so do not ask them to.
-          setState({ kind: "unavailable" });
+          // Do not infer a password requirement from an unsuccessful anonymous
+          // session mint. It may be transient or rate-limited; retry is explicit.
+          setState({ kind: "error" });
           return;
         }
-        setState({ kind: "locked", error: null, busy: false });
+        setState(definitivelyUnauthenticated
+          ? { kind: "locked", error: null, busy: false }
+          : { kind: "error" });
         return;
       }
     } catch {
-      setState({ kind: "locked", error: null, busy: false });
+      setState({ kind: "error" });
     }
   }, [resetCustomerContext]);
 
@@ -367,6 +377,10 @@ export default function EarlyAccessRoute() {
             await readSession();
             return;
           }
+          if (response.status >= 500 || response.status === 429) {
+            setState({ kind: "error" });
+            return;
+          }
           // One generic message for every refusal. The server deliberately does
           // not distinguish a wrong password from a disabled gate or a lockout,
           // and neither does this copy.
@@ -376,11 +390,7 @@ export default function EarlyAccessRoute() {
             error: "That password was not accepted. Check the password you were given and try again.",
           });
         } catch {
-          setState({
-            kind: "locked",
-            busy: false,
-            error: "We could not reach the access service. Please try again.",
-          });
+          setState({ kind: "error" });
         }
       })();
     },
@@ -413,7 +423,7 @@ export default function EarlyAccessRoute() {
     <>
       <SeoHead
         title="Research ordering | Xenios"
-        description="A private ordering experience for approved Xenios Research members."
+        description="Browse research products and use the available, server-confirmed ordering path."
         path="/research/early-access"
         robots="noindex, nofollow"
       />
@@ -425,25 +435,27 @@ export default function EarlyAccessRoute() {
         </section>
       )}
 
-      {state.kind === "unavailable" && (
+      {(state.kind === "unavailable" || state.kind === "error") && (
         <section className="container-x" style={{ paddingTop: 96, paddingBottom: 96 }}>
           <p className="mono-cap text-pulse mb-5">Research ordering</p>
-          <h1 className="display-s max-w-[22ch]">This area is not open yet.</h1>
-          <p className="mt-6 body-m text-ink-2 max-w-[58ch]" data-testid="early-access-unavailable">
-            Research ordering is being prepared. Nothing is wrong with your invitation, and no
-            action is needed from you right now.
+          <h1 className="display-s max-w-[22ch]">Research ordering is temporarily unavailable.</h1>
+          <p className="mt-6 body-m text-ink-2 max-w-[58ch]" role="alert" data-testid={state.kind === "error" ? "early-access-session-error" : "early-access-unavailable"}>
+            We could not confirm access to research ordering. Try again, or contact support for help getting started.
+            If you already have an order reference, you can check its status.
           </p>
+          <button className="btn btn-primary mt-6" type="button" onClick={() => recheckSession(null)} data-testid="early-access-session-retry">Try again</button>
+          <EntryHelpLinks />
         </section>
       )}
 
       {state.kind === "locked" && (
         <section className="container-x" style={{ paddingTop: 96, paddingBottom: 96 }}>
           <div className="max-w-[520px]">
-            <p className="mono-cap text-pulse mb-5">Invitation only</p>
+            <p className="mono-cap text-pulse mb-5">Research access</p>
             <h1 className="display-s max-w-[22ch]">Research ordering</h1>
             <p className="mt-6 body-m text-ink-2 max-w-[58ch]">
-              Enter the access password you were given. This area is limited to members approved
-              through the Xenios network.
+              If you received an access password, enter it below. New here or need help getting access?
+              Contact support to find the right next step.
             </p>
             <div className="mt-8">
               <EarlyAccessUnlockForm
@@ -452,6 +464,7 @@ export default function EarlyAccessRoute() {
                 error={state.error}
               />
             </div>
+            <EntryHelpLinks />
           </div>
         </section>
       )}
@@ -466,6 +479,7 @@ export default function EarlyAccessRoute() {
         /></div> : null}
         <EarlyAccessCartMount
           onExitEarlyAccess={signOut}
+          assistedOrderAvailable={bridgeState.kind === "enabled"}
           fallback={
         <section className="container-x" style={{ paddingTop: 32, paddingBottom: 48 }}>
           <div className="max-w-[1280px] min-w-0">
