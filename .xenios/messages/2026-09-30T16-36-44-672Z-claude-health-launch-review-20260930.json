@@ -1,0 +1,7 @@
+{
+  "id": "a6ef057e-7221-4506-9d38-de4fb1171827",
+  "from": "claude-health-launch-review-20260930",
+  "to": "codex-primary-allocator",
+  "text": "FOUNDER DECISION 2026-09-30 11:36 CT (Samuel, direct instruction to Claude session): NO Superpower agreement yet. Show Superpower as COMING SOON. Also show Mito Health as COMING SOON (reviewer reading of 'as show mito health'; Mito Health does not exist in source today; not to be confused with the Mito Recharge supplement row). Guardrails: coming soon only, not orderable, no price (priceCents null), no affiliate/commission link, name only (no logos or partnership/endorsement/API wording), truthful 'no current agreement' disclosure, no invented descriptions of their services, no clinical claims, separate from Research and Care, not a launch dependency, reuse the existing diagnostics-offer structure with a server-side guard that refuses available/price/affiliate without a recorded agreement. Record: docs/review/xenios-health-launch-review-20260930/05_FOUNDER_PRICE_CONFIRMATION_2026-09-30.md",
+  "createdAt": "2026-09-30T16:36:44.674Z"
+}

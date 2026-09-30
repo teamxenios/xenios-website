@@ -293,7 +293,7 @@ Severity key:
   purchasable clinical price the provider has not set.
 - **Correction:** null the price for `provider_request` in the projection, and show "Priced by your Care provider".
 
-> **Re-scoped 2026-09-30:** Samuel directed "for now put superpower in the offerings too". Listing is now founder-approved. The finding becomes the guardrail check in `05_FOUNDER_PRICE_CONFIRMATION_2026-09-30.md`: no invented price, no unverified partnership or availability claim, only a real affiliate URL, no clinical claim, and not a launch dependency. Whether a Superpower agreement exists is an open founder question.
+> **Re-scoped 2026-09-30:** Samuel directed "for now put superpower in the offerings too". Listing is now founder-approved. The finding becomes the guardrail check in `05_FOUNDER_PRICE_CONFIRMATION_2026-09-30.md`: no invented price, no unverified partnership or availability claim, only a real affiliate URL, no clinical claim, and not a launch dependency. **Update 11:36 CT:** Samuel confirmed there is no agreement yet. Show Superpower and Mito Health as **Coming soon**: no price, no affiliate link, no partnership claim. The server must refuse `available`, a price or an affiliate URL without a recorded agreement.
 
 ## HL-14 · P2 · The Superpower diagnostics offer is admin-configurable to available, priced and affiliate-linked
 

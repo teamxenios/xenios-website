@@ -120,3 +120,39 @@ and price rows in production is a separate, authorized hosted action, with read-
 - **Open question for the founder:** does a signed agreement with Superpower (affiliate, resale or referral) exist?
   Until one is confirmed, the recommended display is a disclosed listing (for example "Coming soon" or "Register
   interest") rather than "Available" with a price.
+
+---
+
+# Founder decision: Superpower and Mito Health shown as "Coming soon"
+
+- **Recorded:** 2026-09-30 11:36 CT, by the Claude reviewer `claude-health-launch-review-20260930`.
+- **Source:** Samuel Boadu's direct chat instruction to this session: "No agreement yet, show Superpower as coming
+  soon" and "as show mito health". The second instruction is read as "also show Mito Health", with the same
+  Coming soon treatment. The founder can correct this reading.
+
+| Offering | Agreement | Display | Status in source at `c213707` |
+| --- | --- | --- | --- |
+| Superpower (diagnostics) | **None yet** (founder, 2026-09-30) | **Coming soon** | Exists: `server/research/products-diagnostics/diagnostics.ts` `SuperpowerOfferConfig`, default `coming_soon`, member page `/research/member/diagnostics`, admin-configurable |
+| Mito Health | **None assumed**: no agreement stated | **Coming soon** | **Absent**: no reference anywhere in the repository. "Mito Recharge" is an unrelated supplement row and must not be confused with it. |
+
+## Guardrails the review will check
+
+These apply to both offerings for as long as no agreement exists.
+
+- **Status:** Coming soon only. Neither is "available", orderable or bookable. No checkout, cart or assisted-order line
+  may include them, and neither may become a dependency of the Health catalog or commerce path.
+- **Price:** no price is shown. The config `priceCents` stays null. No price is invented or copied from the partner's
+  own site.
+- **Affiliate link:** no affiliate link and no commission language while there is no agreement. An interest link, if
+  any, stays on Xenios (for example, register interest) and must be real.
+- **Brand:** the partner's name only. No logo, trademark artwork or wording that implies a partnership, endorsement,
+  integration or API. The disclosure must state plainly that there is no current agreement and that nothing is
+  available yet.
+- **Descriptions:** no invented description of what either company offers, how it tests, or its results or turnaround.
+  Any descriptive copy must be founder-approved text.
+- **Clinical boundary:** no clinical or diagnostic claims. Keep both separate from Research products (research use
+  only) and from Care (provider pathway).
+- **Mito Health implementation:** reuse the existing diagnostics-offer structure (generalized or with a second
+  entry) with the same server-side guard. No hard-coded client-only card, and no second authority.
+- **Admin override:** an admin must not be able to switch either offering to "available" or add a price or affiliate
+  URL without a recorded agreement. Today the Superpower offer is admin-configurable; see HL-14.
