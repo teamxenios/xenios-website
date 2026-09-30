@@ -3,6 +3,52 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "HEALTH-HL24-25-ENTRY-RECOVERY-20260930",
+      "title": "Give transient session and cart failures truthful retry paths",
+      "priority": "P2",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.test.tsx",
+        "client/src/research/early-access/cart/EarlyAccessCartMount.tsx",
+        "client/src/research/early-access/cart/EarlyAccessCartMount.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Local continuation delegated to catalog_journey_audit. Distinguish transient error from denied authority, allow retry without enabling uncertain commerce or minting access. No hosted changes.",
+      "claimedAt": "2026-09-30T23:23:23.847Z"
+    },
+    {
+      "id": "HEALTH-HL12-EVIDENCE-STATUS-COPY-20260930",
+      "title": "Render payment status from durable verification presence across both status surfaces",
+      "priority": "P2",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/status-recovery/status-copy.ts",
+        "server/research/status-recovery/supabase-store.ts",
+        "server/research/status-recovery/payment-status-copy.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Reviewer F7 correction only; preserve P17 token/session/owner authority. Local source/tests only. Root delegates copy/projection files to quote_customer_ui.",
+      "claimedAt": "2026-09-30T23:17:22.091Z"
+    },
+    {
+      "id": "HEALTH-HL23-OPEN-ACCESS-WINDOW-20260930",
+      "title": "Bound successful open-access session mints with a real time window",
+      "priority": "P2",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/early-access/private-access-routes.ts",
+        "server/research/early-access/private-access-rate-limit-switch.test.ts",
+        "server/research/early-access/open-access-window.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Provider-neutral Health continuation. Root delegates these exact files to catalog_journey_audit; root retains commits and shared records. Local tests only, no hosted activation.",
+      "claimedAt": "2026-09-30T23:05:56.672Z"
+    },
+    {
       "id": "XENIOS-ORDERING-READINESS-20260923",
       "title": "Complete customer-ready manual, assisted, and Care-gated ordering while native commerce remains dark",
       "priority": "P0",
@@ -679,7 +725,7 @@
       "id": "ASSISTED-ORDER-CONVERSION",
       "title": "Close the assisted-order operator loop: quote issuance, customer acceptance, evidence tooling",
       "priority": "P0",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/research/assisted-order/**",
@@ -693,7 +739,7 @@
         "ASSISTED-ORDER-MOUNT"
       ],
       "scopeNote": "Founder-authorized HL-12 financial integrity: accepted versioned quote, amount/currency-bound authorized verification and durable paid transition across mounted app and forward SQL, qualified only on disposable local PostgreSQL. Existing mounted assisted-order bridge is present; prior blocked state is stale. No managed migration, hosted mutation, real money or fabricated historical verification.",
-      "claimedAt": "2026-09-30T20:56:39.850Z",
+      "claimedAt": "2026-09-30T23:03:13.612Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
         "sha": "a4260ba4f34bda1114a3ceec88852370f64dcf9f",
@@ -2687,7 +2733,7 @@
       "id": "ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930",
       "title": "Register source-only assisted-order financial migrations pending HL-12 authority",
       "priority": "P0",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "docs/coordination/MIGRATION_DAG.json",
@@ -2695,7 +2741,7 @@
       ],
       "dependsOn": [],
       "scopeNote": "Register exact f318859 paid hold, c92d7a9 SQL foundation and 5c8498c bound-access successor; maintain PENDING managed state and explicitly preserve HL-12 as open.",
-      "claimedAt": "2026-09-30T21:00:15.038Z",
+      "claimedAt": "2026-09-30T23:20:29.740Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
         "sha": "a4260ba4f34bda1114a3ceec88852370f64dcf9f",
@@ -2751,14 +2797,14 @@
       "id": "ASSISTED-ORDER-HL12-RELEASE-TEST-20260930",
       "title": "Update exact migration and route-count release-control test fixtures",
       "priority": "P0",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/release-control-plane.test.ts"
       ],
       "dependsOn": [],
       "scopeNote": "Pin only newly committed pending migration source SHAs and five literal finance routes; preserve all release assertions and rerun the gate.",
-      "claimedAt": "2026-09-30T21:09:13.238Z",
+      "claimedAt": "2026-09-30T23:20:29.964Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
         "sha": "a4260ba4f34bda1114a3ceec88852370f64dcf9f",

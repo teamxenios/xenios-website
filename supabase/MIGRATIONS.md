@@ -339,3 +339,17 @@ two-connection verification replay checks passed. This remains source-only
 and does not enable card, provider webhook, manual grant, refund, cancellation
 or historical-paid behavior. See
 `verification/research_assisted_order_quote_access_finance_bound_local.sql`.
+
+## Assisted-order immutable evidence corrections, source-only 2026-09-30
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 84 | migrations/20260930230541_research_assisted_order_quote_evidence_corrections.sql | Single-use evidence, governed correction, actor UUID, financial projection and cancellation holds | PENDING; no managed apply |
+
+Source `a46531b5df038ab07a0f0bb2ca51146c5b9952b4`, canonical SHA-256
+`434885ea1f61f424f88ac827e8f57775be3ec9dc93c0896ecabd681cf69a0f66`.
+Depends on order 83. Applied twice on fresh disposable PostgreSQL 17.11 only.
+No historical paid labels, observations or grants are invented or backfilled.
+Ambiguous existing cross-order evidence refuses migration. Finance remains off;
+bank/provider activation, refunds and managed qualification remain separate.
+See the provider-neutral handoff and `verification/research_assisted_order_quote_corrections_local.sql`.

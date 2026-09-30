@@ -11,8 +11,10 @@ const reference = "XRR-20260930-ABCDEF0011";
 const requestId = "10000000-0000-4000-8000-000000000011";
 const memberId = "20000000-0000-4000-8000-000000000011";
 const financeActor = "40000000-0000-4000-8000-000000000011";
+const container = process.env.XENIOS_HL12_PG_CONTAINER ?? "xenios-hl12-schema-local";
+assert.match(container, /^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$/);
 const observationId = execFileSync("docker", [
-  "exec", "xenios-hl12-schema-local", "psql", "-X", "-A", "-t", "-U", "postgres",
+  "exec", container, "psql", "-X", "-A", "-t", "-U", "postgres",
   "-d", "postgres", "-c",
   `select id from public.research_assisted_order_payment_observations where request_id = '${requestId}'::uuid`,
 ], { encoding: "utf8" }).trim();
@@ -102,5 +104,23 @@ const correctReplay = await rpc("research_assisted_order_payment_verify_bound", 
 assert.equal(correctReplay.status, 200);
 assert.equal(correctReplay.data?.state, "paid");
 assert.equal(correctReplay.data?.replayed, true);
+assert.ok(Number.isFinite(Date.parse(correctReplay.data?.verifiedAt)));
+assert.equal(correctReplay.data?.verifiedBy, "synthetic-finance-race");
+
+const financial = await rpc("research_assisted_order_financial_state_by_reference", {
+  p_public_reference: reference,
+}, "service_role");
+assert.equal(financial.status, 200);
+assert.deepEqual(financial.data, { hasObservation: true, paymentVerified: true });
+const deniedFinancial = await rpc("research_assisted_order_financial_state_by_reference", {
+  p_public_reference: reference,
+});
+assert.ok([401, 403, 404].includes(deniedFinancial.status));
+for (const table of ["research_assisted_order_evidence_claims", "research_assisted_order_observation_corrections"]) {
+  const response = await fetch(`${origin}/${table}?select=*`, {
+    headers: { authorization: `Bearer ${jwt("service_role")}` },
+  });
+  assert.ok([401, 403, 404].includes(response.status), "Direct financial evidence table exposed");
+}
 
 process.stdout.write("HL-12 local PostgREST PASS: owner quote, wrong owner null, anon/direct-table/unbound denial, bound wrong-path null, correct replay.\n");

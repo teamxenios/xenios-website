@@ -109,6 +109,15 @@ begin
   exception when sqlstate 'P0001' then v_failed := true;
   end;
   if not v_failed then raise exception 'Observed money cancelled with free text'; end if;
+  insert into public.research_assisted_order_payment_verifier_grants(auth_user_id, actor_label, granted_by)
+    select v_member, actor_label, 'synthetic-grant' from public.research_assisted_order_payment_verifier_grants
+    where auth_user_id = v_actor;
+  v_failed := false;
+  begin
+    perform public.research_assisted_order_payment_verify_bound(v_request, v_new, v_member);
+  exception when sqlstate 'P0001' then v_failed := true;
+  end;
+  if not v_failed then raise exception 'Different UUID reused the observers label'; end if;
   perform public.research_assisted_order_payment_verify_bound(v_request, v_new, v_actor);
   if not (public.research_assisted_order_financial_state(v_request) ->> 'paymentVerified')::boolean then
     raise exception 'Verified financial projection absent';
@@ -120,6 +129,13 @@ begin
   exception when sqlstate 'P0001' then v_failed := true;
   end;
   if not v_failed then raise exception 'Verified payment corrected as observation'; end if;
+  perform public.research_assisted_order_set_status(v_request, 'paid', 'supplier_processing',
+    'synthetic', 'admin', null, null, '{"supplierAssignmentId":"synthetic-only"}'::jsonb);
+  v_result := public.research_assisted_order_payment_verify_bound(v_request, v_new, v_actor);
+  if v_result ->> 'state' <> 'supplier_processing' or v_result ->> 'replayed' <> 'true'
+    or v_result ->> 'verifiedAt' is null or v_result ->> 'verifiedBy' is null then
+    raise exception 'Verification replay after fulfillment lost immutable receipt';
+  end if;
   -- Opposite cancellation interleaving: clean cancellation wins, later observe denied.
   perform public.research_assisted_order_set_status(v_other, 'payment_review', 'cancelled',
     'synthetic', 'admin', null, null, '{"cancellationReason":"No money observed"}'::jsonb);
