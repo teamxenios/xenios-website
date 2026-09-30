@@ -679,7 +679,7 @@
       "id": "ASSISTED-ORDER-CONVERSION",
       "title": "Close the assisted-order operator loop: quote issuance, customer acceptance, evidence tooling",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/research/assisted-order/**",
@@ -696,9 +696,9 @@
       "claimedAt": "2026-09-30T20:56:39.850Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
-        "sha": "cea4922107150de3276833348b299c50eb8e398b",
-        "file": ".xenios/handoffs/2026-09-30T20-54-19-166Z-ASSISTED-ORDER-CONVERSION-codex-xenios-health-launch-implementation-20260930.md",
-        "at": "2026-09-30T20:54:19.169Z"
+        "sha": "a4260ba4f34bda1114a3ceec88852370f64dcf9f",
+        "file": ".xenios/handoffs/2026-09-30T21-30-24-907Z-ASSISTED-ORDER-CONVERSION-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-09-30T21:30:24.914Z"
       }
     },
     {
@@ -2687,7 +2687,7 @@
       "id": "ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930",
       "title": "Register source-only assisted-order financial migrations pending HL-12 authority",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "docs/coordination/MIGRATION_DAG.json",
@@ -2698,9 +2698,9 @@
       "claimedAt": "2026-09-30T21:00:15.038Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
-        "sha": "a59c05be857d4117f25743384b4d3713fd586203",
-        "file": ".xenios/handoffs/2026-09-30T20-44-03-062Z-ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930-codex-xenios-health-launch-implementation-20260930.md",
-        "at": "2026-09-30T20:44:03.066Z"
+        "sha": "a4260ba4f34bda1114a3ceec88852370f64dcf9f",
+        "file": ".xenios/handoffs/2026-09-30T21-30-25-569Z-ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-09-30T21:30:25.581Z"
       }
     },
     {
@@ -2730,7 +2730,7 @@
       "id": "ASSISTED-ORDER-HL12-FINANCE-ROUTE-MOUNT-20260930",
       "title": "Mount default-off assisted-order financial routes",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/index.ts"
@@ -2739,20 +2739,32 @@
         "ASSISTED-ORDER-MOUNT"
       ],
       "scopeNote": "Only bounded quote/manual-finance endpoints behind a default-off flag and existing Research wall; no provider assertion, managed apply, or payment activation.",
-      "claimedAt": "2026-09-30T20:57:09.920Z"
+      "claimedAt": "2026-09-30T20:57:09.920Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "a4260ba4f34bda1114a3ceec88852370f64dcf9f",
+        "file": ".xenios/handoffs/2026-09-30T21-30-25-114Z-ASSISTED-ORDER-HL12-FINANCE-ROUTE-MOUNT-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-09-30T21:30:25.128Z"
+      }
     },
     {
       "id": "ASSISTED-ORDER-HL12-RELEASE-TEST-20260930",
       "title": "Update exact migration and route-count release-control test fixtures",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/release-control-plane.test.ts"
       ],
       "dependsOn": [],
       "scopeNote": "Pin only newly committed pending migration source SHAs and five literal finance routes; preserve all release assertions and rerun the gate.",
-      "claimedAt": "2026-09-30T21:09:13.238Z"
+      "claimedAt": "2026-09-30T21:09:13.238Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "a4260ba4f34bda1114a3ceec88852370f64dcf9f",
+        "file": ".xenios/handoffs/2026-09-30T21-30-25-324Z-ASSISTED-ORDER-HL12-RELEASE-TEST-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-09-30T21:30:25.332Z"
+      }
     }
   ]
 }

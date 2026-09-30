@@ -2894,7 +2894,7 @@
         "supabase/verification/*assisted_order_quote*",
         "server/research/commerce/persistence/admin-queues-store.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T20:56:39.863Z",
       "heartbeatAt": "2026-09-30T20:56:39.863Z"
     },
@@ -2905,7 +2905,7 @@
       "paths": [
         "server/index.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T20:57:09.922Z",
       "heartbeatAt": "2026-09-30T20:57:09.922Z"
     },
@@ -2917,7 +2917,7 @@
         "docs/coordination/MIGRATION_DAG.json",
         "supabase/MIGRATIONS.md"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T21:00:15.040Z",
       "heartbeatAt": "2026-09-30T21:00:15.040Z"
     },
@@ -2928,7 +2928,7 @@
       "paths": [
         "server/release-control-plane.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T21:09:13.243Z",
       "heartbeatAt": "2026-09-30T21:09:13.243Z"
     }
