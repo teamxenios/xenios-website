@@ -48,9 +48,7 @@ export function AdminAssistedOrderDetailPage() {
     setBusy(true);
     setError(null);
     try {
-      const evidence = nextStatus === "paid"
-        ? { paymentVerificationId: evidenceId }
-        : nextStatus === "agreements_complete"
+      const evidence = nextStatus === "agreements_complete"
           ? { agreementAttestationId: evidenceId }
           : nextStatus === "supplier_processing"
             ? { supplierAssignmentId: evidenceId }
@@ -136,10 +134,11 @@ export function AdminAssistedOrderDetailPage() {
           </section>
           <form className="xenios-order-panel xenios-order-admin-action" onSubmit={update}>
             <h2>Update request</h2>
-            <label>New status<select value={nextStatus} onChange={(event) => setNextStatus(event.target.value as AssistedOrderStatus)}><option value="reviewing">Reviewing</option><option value="waiting_on_customer">Waiting on customer</option><option value="identity_requested">Identity requested</option><option value="identity_received">Identity received</option><option value="agreements_pending">Agreements pending</option><option value="agreements_complete">Agreements complete</option><option value="payment_pending">Payment pending</option><option value="payment_review">Payment review</option><option value="paid">Paid</option><option value="supplier_processing">Supplier processing</option><option value="shipped">Shipped</option><option value="delivered">Delivered</option><option value="closed">Closed</option><option value="cancelled">Cancelled</option></select></label>
+            <label>New status<select value={nextStatus} onChange={(event) => setNextStatus(event.target.value as AssistedOrderStatus)}><option value="reviewing">Reviewing</option><option value="waiting_on_customer">Waiting on customer</option><option value="identity_requested">Identity requested</option><option value="identity_received">Identity received</option><option value="agreements_pending">Agreements pending</option><option value="agreements_complete">Agreements complete</option><option value="payment_pending">Payment pending</option><option value="payment_review">Payment review</option><option value="supplier_processing">Supplier processing</option><option value="shipped">Shipped</option><option value="delivered">Delivered</option><option value="closed">Closed</option><option value="cancelled">Cancelled</option></select></label>
+            <p>Payment verification is not available here until the accepted quote and matched payment record are in place. Do not use a reference typed into this form as proof of payment.</p>
             <label>Customer message<textarea rows={3} value={customerMessage} onChange={(event) => setCustomerMessage(event.target.value)} /></label>
             <label>Internal note<textarea rows={3} value={internalNote} onChange={(event) => setInternalNote(event.target.value)} /></label>
-            {(["agreements_complete", "paid", "supplier_processing", "shipped", "cancelled"] as AssistedOrderStatus[]).includes(nextStatus) ? <label>Required canonical evidence or reason<input value={evidenceId} onChange={(event) => setEvidenceId(event.target.value)} required /></label> : null}
+            {(["agreements_complete", "supplier_processing", "shipped", "cancelled"] as AssistedOrderStatus[]).includes(nextStatus) ? <label>Required canonical evidence or reason<input value={evidenceId} onChange={(event) => setEvidenceId(event.target.value)} required /></label> : null}
             <button className="xenios-order-button" type="submit" disabled={busy}>{busy ? "Updating…" : "Update status"}</button>
           </form>
         </div>

@@ -194,10 +194,19 @@ function evidenceRequired(
       "Agreement completion requires canonical attestation evidence.",
     );
   }
-  if (status === "paid" && !input.evidence?.paymentVerificationId) {
+  if (status === "paid") {
+    if (!input.evidence?.paymentVerificationId?.trim()) {
+      throw new AssistedOrderConflictError(
+        "payment_evidence_required",
+        "Paid status requires canonical payment-verification evidence.",
+      );
+    }
+    // A browser-supplied identifier is not verification. The mounted bridge
+    // has no durable accepted quote/observed amount/verifier grant yet, so a
+    // paid transition must fail closed until the HL-12 SQL authority exists.
     throw new AssistedOrderConflictError(
-      "payment_evidence_required",
-      "Paid status requires canonical payment-verification evidence.",
+      "payment_verification_not_ready",
+      "Payment cannot be marked verified until an accepted quote and matched payment record are available.",
     );
   }
   if (status === "supplier_processing" && !input.evidence?.supplierAssignmentId) {
@@ -822,6 +831,14 @@ export class AssistedOrderService {
       throw new AssistedOrderAuthorizationError();
     }
     const current = await this.adminDetail(viewer, requestId);
+    // A historical paid label is not itself a verified financial record.
+    // Until HL-12 binds one, it cannot authorize fulfillment or reversal.
+    if (current.status === "paid" && input.status !== "paid") {
+      throw new AssistedOrderConflictError(
+        "payment_verification_not_ready",
+        "A paid label cannot establish fulfillment or reversal eligibility without verified financial evidence.",
+      );
+    }
     if (!allowedTransitions[current.status].includes(input.status)) {
       throw new AssistedOrderConflictError(
         "invalid_status_transition",

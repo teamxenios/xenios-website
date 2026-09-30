@@ -522,26 +522,20 @@ describe("AssistedOrderService", () => {
     ).rejects.toMatchObject({ code: "payment_evidence_required" });
   });
 
-  it("accepts paid only with canonical verification evidence", async () => {
+  it("refuses a typed verification identifier while the mounted financial authority is absent", async () => {
     const h = harness();
     const receipt = await h.service.submit(memberViewer, input());
     await h.service.updateStatus(adminViewer, receipt.requestId, { status: "reviewing" });
     await h.service.updateStatus(adminViewer, receipt.requestId, { status: "payment_pending" });
     await h.service.updateStatus(adminViewer, receipt.requestId, { status: "payment_review" });
-    const updated = await h.service.updateStatus(adminViewer, receipt.requestId, {
+    await expect(h.service.updateStatus(adminViewer, receipt.requestId, {
       status: "paid",
       evidence: { paymentVerificationId: "payment-verification-1" },
-    });
-    expect(updated.status).toBe("paid");
-    const auditEvent = h.audit.mock.calls
-      .map((call) => call[0])
-      .find((event) => event.eventType === "assisted_order.status_changed" && event.evidence.to === "paid");
-    expect(auditEvent?.evidence).toEqual({
-      from: "payment_review",
-      to: "paid",
-      authorityEvidenceKinds: ["payment_verification"],
-    });
-    expect(JSON.stringify(auditEvent)).not.toContain("payment-verification-1");
+    })).rejects.toMatchObject({ code: "payment_verification_not_ready" });
+    expect((await h.repository.getAdmin(receipt.requestId))?.status).toBe("payment_review");
+    expect(h.audit.mock.calls.some(([event]) =>
+      event.eventType === "assisted_order.status_changed" && event.evidence.to === "paid",
+    )).toBe(false);
   });
 
   it("does not collect government ID until identity is requested", async () => {
@@ -961,6 +955,27 @@ describe("SupabaseAssistedOrderRepository error mapping", () => {
       uploadedAt: createRecord.createdAt,
     })).rejects.toMatchObject({
       name: "AssistedOrderConflictError", code: "document_not_pending",
+    });
+  });
+
+  it("maps the temporary SQL paid hold to a conflict, not a paid receipt", async () => {
+    const repository = new SupabaseAssistedOrderRepository(failingClient({
+      message: "Assisted order financial authority is not ready.",
+      code: "P0001",
+      details: "ASSISTED_ORDER_FINANCIAL_AUTHORITY_NOT_READY",
+    }));
+    await expect(repository.updateStatus({
+      requestId: createRecord.requestId,
+      fromStatus: "payment_review",
+      toStatus: "paid",
+      actorId: "operator",
+      actorType: "admin",
+      customerMessage: null,
+      internalNote: null,
+      evidence: { paymentVerificationId: "typed-value-is-not-proof" },
+      occurredAt: createRecord.createdAt,
+    })).rejects.toMatchObject({
+      name: "AssistedOrderConflictError", code: "payment_verification_not_ready",
     });
   });
 

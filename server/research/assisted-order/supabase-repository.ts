@@ -255,6 +255,12 @@ function fail(response: SupabaseRpcResponse, operation: string): never {
       "This document upload has already been completed or is no longer pending.",
     );
   }
+  if (code === "P0001" && error?.details === "ASSISTED_ORDER_FINANCIAL_AUTHORITY_NOT_READY") {
+    throw new AssistedOrderConflictError(
+      "payment_verification_not_ready",
+      "Payment cannot be marked verified until an accepted quote and matched payment record are available.",
+    );
+  }
   // Serialization failures are retryable conflicts, not server faults.
   if (code === "40001") {
     throw new AssistedOrderConflictError(
