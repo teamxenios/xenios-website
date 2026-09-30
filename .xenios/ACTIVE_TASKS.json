@@ -2676,6 +2676,26 @@
         "file": ".xenios/handoffs/2026-09-30T19-26-36-687Z-ASSISTED-ORDER-HL26-MIGRATION-REGISTRATION-20260930-codex-xenios-health-launch-implementation-20260930.md",
         "at": "2026-09-30T19:26:36.691Z"
       }
+    },
+    {
+      "id": "ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930",
+      "title": "Register source-only assisted-order paid hold pending HL-12 authority",
+      "priority": "P0",
+      "state": "qa",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Register exact f318859 source-only fail-closed SQL; maintain PENDING managed state and explicitly preserve HL-12 as open.",
+      "claimedAt": "2026-09-30T19:36:05.314Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "f318859262812b8fc1fcb6d2c8e697d86a209349",
+        "file": ".xenios/handoffs/2026-09-30T19-37-10-515Z-ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-09-30T19:37:10.519Z"
+      }
     }
   ]
 }

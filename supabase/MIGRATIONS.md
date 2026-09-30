@@ -289,3 +289,20 @@ returned both deterministic refusals promptly without a retry loop. The
 proof and limitations are in
 `verification/20260930_assisted_order_quote_payment_guard_local.md`.
 No managed migration history, configuration, or operational rows changed.
+
+## Assisted-order paid-state hold pending HL-12 — pending 2026-09-30
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 81 | migrations/20260930193033_research_assisted_order_quote_paid_hold.sql | Temporarily deny new `paid` labels and downstream transitions from historical paid labels until accepted-quote and verified-payment authority is mounted | PENDING; source-only, not applied to managed staging or production |
+
+The source commit is `f318859262812b8fc1fcb6d2c8e697d86a209349`;
+canonical Git blob SHA-256 is
+`2a4ece6bb76e2e912285ae212331987708b44442a81ed66c91140fcb20376845`.
+It applied twice on disposable PostgreSQL 17. A service-role attempt to mark a
+synthetic request paid with the previously accepted free-text identifier `x`
+was refused with no paid event; PostgREST 14.13 returned promptly. This is a
+fail-closed interim control, **not** a complete paid-order path or HL-12 closeout.
+No managed environment, customer record, real money or hosted configuration
+was changed. See `verification/20260930_assisted_order_quote_paid_hold_local.md`
+for the local proof and safe rollback rule.

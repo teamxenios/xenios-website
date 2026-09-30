@@ -808,6 +808,27 @@
         "evidence": "Exact source SQL applied twice on disposable PostgreSQL 17. PostgREST 14.13 deterministic stale-status and non-pending-document requests returned P0001 in 89 ms and 8 ms; rollback counter stayed flat. No managed environment contacted. This corrects HL-26 only; HL-12 paid authority remains open."
       },
       "notes": "Source-only HL-26 deterministic-conflict correction. Despite the broad historical filename, this does not create an accepted quote or payment-verification record and must not be treated as HL-12 payment qualification. Managed application requires separate exact approval."
+    },
+    {
+      "id": "research_assisted_order_quote_paid_hold",
+      "path": "supabase/migrations/20260930193033_research_assisted_order_quote_paid_hold.sql",
+      "sourceSha": "f318859262812b8fc1fcb6d2c8e697d86a209349",
+      "dependsOn": [
+        "research_assisted_order_quote_payment_guard"
+      ],
+      "checksum": {
+        "algorithm": "sha256",
+        "value": "2a4ece6bb76e2e912285ae212331987708b44442a81ed66c91140fcb20376845"
+      },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "retain_fail_closed_hold_until_qualified_successor_or_disable_bridge_before_removal",
+        "procedure": "supabase/verification/20260930_assisted_order_quote_paid_hold_local.md",
+        "evidence": "Applied twice on disposable PostgreSQL 17; a synthetic service-role paid transition with typed verification id was refused P0001 with zero paid events; PostgREST 14.13 returned in 115 ms. Historical paid labels were denied fulfillment and cancellation without financial authority. No managed environment contacted."
+      },
+      "notes": "Source-only temporary HL-12 paid hold. It prevents unsupported financial assertions but does not create an accepted quote or payment-verification authority, so purchasing remains incomplete. Managed application requires separate exact approval."
     }
   ],
   "invariants": [
