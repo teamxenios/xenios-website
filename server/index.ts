@@ -147,6 +147,7 @@ import {
   type ExpressAssistedOrderRequest,
 } from "./research/assisted-order/express";
 import { createAssistedOrderRouteTable } from "./research/assisted-order/http";
+import { AssistedOrderFinanceService } from "./research/assisted-order/finance";
 import type { SupabaseRpcClient as AssistedOrderRpcClient } from "./research/assisted-order/supabase-repository";
 import type { SupabaseStorageClient as AssistedOrderStorageClient } from "./research/assisted-order/supabase-document-store";
 import { requireSupabaseAdmin } from "./routes";
@@ -996,6 +997,17 @@ async function composeAssistedOrderBridge(): Promise<
       earlyAccessPersistence.orderHistory?.bindings ?? null,
     adminEmail: () => (process.env.ADMIN_EMAIL || "").toLowerCase().trim(),
   });
+  // HL-12 is source-only until the exact pending migrations and financial
+  // evidence adapters are qualified. The flag defaults off; no live payment
+  // route is activated by a source deployment or by a browser callback.
+  const assistedOrderFinance =
+    process.env.RESEARCH_ASSISTED_ORDER_FINANCE_ENABLED === "true" &&
+    assistedOrderComposition.service !== null && supabaseConfigured()
+      ? new AssistedOrderFinanceService(
+          getSupabaseAdmin() as unknown as AssistedOrderRpcClient,
+          null, // No independent manual ledger authority is configured yet.
+        )
+      : null;
   const assistedOrderRoutes = assistedOrderComposition.service === null
     ? null
     : createAssistedOrderRouteTable<ExpressAssistedOrderRequest>(
@@ -1009,6 +1021,7 @@ async function composeAssistedOrderBridge(): Promise<
     // attribution. Referral V1 is now the one authority: the cookie names a
     // touch, and the partner behind it is re-read durably on each submit.
     createReferralV1AttributionResolver(buildReferralV1Dependencies()),
+    assistedOrderFinance,
   );
   const assistedOrderDoor = (
     method: "GET" | "POST" | "PATCH",
@@ -1050,6 +1063,15 @@ async function composeAssistedOrderBridge(): Promise<
   app.get("/api/admin/research/assisted-orders/:requestId", requireSupabaseAdmin, assistedOrderDoor("GET", "/api/admin/research/assisted-orders/:requestId"));
   app.patch("/api/admin/research/assisted-orders/:requestId/status", requireSupabaseAdmin, assistedOrderDoor("PATCH", "/api/admin/research/assisted-orders/:requestId/status"));
   app.post("/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url", requireSupabaseAdmin, assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/documents/:documentId/download-url"));
+  const assistedOrderFinanceDoor = (method: "GET" | "POST", path: string): RequestHandler =>
+    assistedOrderFinance
+      ? assistedOrderDoor(method, path)
+      : assistedOrderUnavailableDoor(path, "assisted_order_finance_disabled");
+  app.get("/api/research/early-access/assisted-orders/:publicReference/quote", assistedOrderFinanceDoor("GET", "/api/research/early-access/assisted-orders/:publicReference/quote"));
+  app.post("/api/research/early-access/assisted-orders/:publicReference/quote/accept", assistedOrderFinanceDoor("POST", "/api/research/early-access/assisted-orders/:publicReference/quote/accept"));
+  app.post("/api/admin/research/assisted-orders/:requestId/quote", requireSupabaseAdmin, assistedOrderFinanceDoor("POST", "/api/admin/research/assisted-orders/:requestId/quote"));
+  app.post("/api/admin/research/assisted-orders/:requestId/payment-observations/manual", requireSupabaseAdmin, assistedOrderFinanceDoor("POST", "/api/admin/research/assisted-orders/:requestId/payment-observations/manual"));
+  app.post("/api/admin/research/assisted-orders/:requestId/payment-observations/:observationId/verify", requireSupabaseAdmin, assistedOrderFinanceDoor("POST", "/api/admin/research/assisted-orders/:requestId/payment-observations/:observationId/verify"));
   if (assistedOrderComposition.service) {
     log(
       `assisted order bridge mounted (audit mode: ${assistedOrderComposition.auditMode})`,

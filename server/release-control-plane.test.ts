@@ -88,6 +88,12 @@ const STATUS_RECOVERY_SOURCE_SHA =
   "fef7b313c23ac0e12046420041aa51a3a6e3c2d6";
 const STATUS_RECOVERY_SOURCE_PATH =
   "supabase/candidates/20260927203000_research_status_recovery.sql";
+const HL12_PENDING_SOURCE_SHAS = new Map([
+  ["supabase/migrations/20260930191323_research_assisted_order_quote_payment_guard.sql", "084063ac424a4c2ec55183c004c420aba43a3ba0"],
+  ["supabase/migrations/20260930193033_research_assisted_order_quote_paid_hold.sql", "f318859262812b8fc1fcb6d2c8e697d86a209349"],
+  ["supabase/migrations/20260930202413_research_assisted_order_quote_payment_authority.sql", "c92d7a93e7b443cccd949f8903b62db77d425603"],
+  ["supabase/migrations/20260930205725_research_assisted_order_quote_access_finance_bound.sql", "5c8498ce7f4c2333ee75b52cdbb0e76e14f0a925"],
+]);
 // The Early Access durable-persistence chain (ledger rows 50-53), pending,
 // pinned to the reviewed source commits on claude/f5-ea-durable-persistence.
 const EA_PERSISTENCE_SOURCE_SHA = "8739b433e5a1588a72bfed3eae649e38e416fe0f";
@@ -1129,6 +1135,14 @@ describe("migration DAG validator", () => {
         expectedBaselineSha: PRODUCTION_SHA,
         expectedManagedMigrationPaths: managedMigrationPaths,
         canonicalBytes: (sourceSha, path) => {
+          const hl12SourceSha = HL12_PENDING_SOURCE_SHAS.get(path);
+          if (hl12SourceSha) {
+            expect(sourceSha).toBe(hl12SourceSha);
+            return execFileSync("git", ["cat-file", "blob", `${sourceSha}:${path}`], {
+              cwd: ROOT,
+              encoding: "buffer",
+            });
+          }
           if (
             path ===
             "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql"
@@ -2157,8 +2171,9 @@ describe("route uniqueness validator", () => {
     // The roster the operator scans, over the same research_orders authority as
     // the queue and the order file. Mounted rather than removed from the nav
     // because orders are launch-critical and the rest of that loop now works.
-    expect(result.callSites).toBe(444);
-    expect(result.routes).toHaveLength(453);
+    // Five default-off HL-12 finance doors are literal registrations too.
+    expect(result.callSites).toBe(449);
+    expect(result.routes).toHaveLength(458);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

@@ -2740,6 +2740,19 @@
       ],
       "scopeNote": "Only bounded quote/manual-finance endpoints behind a default-off flag and existing Research wall; no provider assertion, managed apply, or payment activation.",
       "claimedAt": "2026-09-30T20:57:09.920Z"
+    },
+    {
+      "id": "ASSISTED-ORDER-HL12-RELEASE-TEST-20260930",
+      "title": "Update exact migration and route-count release-control test fixtures",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/release-control-plane.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Pin only newly committed pending migration source SHAs and five literal finance routes; preserve all release assertions and rerun the gate.",
+      "claimedAt": "2026-09-30T21:09:13.238Z"
     }
   ]
 }

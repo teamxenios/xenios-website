@@ -2920,6 +2920,17 @@
       "state": "active",
       "claimedAt": "2026-09-30T21:00:15.040Z",
       "heartbeatAt": "2026-09-30T21:00:15.040Z"
+    },
+    {
+      "id": "4e453db0-e8a2-42eb-afcb-a44635d19de4",
+      "task": "ASSISTED-ORDER-HL12-RELEASE-TEST-20260930",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/release-control-plane.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-09-30T21:09:13.243Z",
+      "heartbeatAt": "2026-09-30T21:09:13.243Z"
     }
   ],
   "rules": [
