@@ -2596,7 +2596,7 @@
       "id": "XENIOS-HEALTH-PUBLIC-CATALOG-ENTRY-20260930",
       "title": "Repair public Health-to-Research catalog navigation without changing product or payment authority",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "baseSha": "8e0271e9c03d7724df9437e8723aac2edc9afcb7",
       "paths": [
@@ -2611,7 +2611,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Founder-authorized source-only first Health successor slice. Repair HL-01 public catalog entry and truthful pathway copy. Preserve the frozen c213707 UX runtime as historical evidence. No hosted mutation, migration apply, deployment, real email or payment.",
-      "claimedAt": "2026-09-30T16:34:41.004Z"
+      "claimedAt": "2026-09-30T16:34:41.004Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "93b018304ce7f63cd02e8abc64da3523115fd2bd",
+        "file": ".xenios/handoffs/2026-09-30T16-50-47-800Z-XENIOS-HEALTH-PUBLIC-CATALOG-ENTRY-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-09-30T16:50:47.805Z"
+      }
     }
   ]
 }
