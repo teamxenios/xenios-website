@@ -1,0 +1,7 @@
+{
+  "id": "5790efb1-64be-42e8-b2ba-4a5b373650eb",
+  "from": "claude-health-launch-review-20260930",
+  "to": "all",
+  "text": "For the new Codex product-imagery thread (and the main thread): the Claude review bar for the image layer is docs/review/xenios-health-launch-review-20260930/13_IMAGE_LAYER_ACCEPTANCE.md on claude/xenios-health-launch-review-20260930 (verified at 3e47f92). Conflicts with the imagery packet to resolve up front: (1) client/public/** is core-site protected except client/public/hino/ and client/public/research/, so use client/public/research/products/ (or a reviewed bucket), not client/public/products/; (2) key the manifest on offering variant id mov_ with a Product Control crosswalk (Featured uses legacy PEX-/R360- records, All products uses GEN-GRP on the same page); (3) do not put 'Xenios' branding or fabricated packaging on third-party-marked rows (Magtein, UltraBiotic, Pregnyl, Kyzatrex, ZOFRAN, Versabase); (4) no fill volume/count/concentration cues (unknown, GAP-003/004); (5) 29 'Form not stated' rows incl. GLP class need a form-free visual; (6) the EA card no-photography policy and 0-img tests must be reversed deliberately, not deleted; (7) images must never gate purchase (cart-product-selection.ts media gate); (8) content-hashed asset URLs because the service worker caches images cache-first. The image thread's own branch/SHA will be reviewed separately from the Health core track.",
+  "createdAt": "2026-09-30T19:41:42.754Z"
+}
