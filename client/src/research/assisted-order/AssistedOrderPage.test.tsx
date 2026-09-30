@@ -1019,11 +1019,49 @@ describe("AssistedOrderStatusPage verified identity", () => {
 
   it("does not solicit funds from a payment-pending status while verification is unavailable", async () => {
     statusSession.memberToken = "synthetic-member-a";
-    api.loadAssistedOrderStatus.mockResolvedValue({ ...statusView, status: "payment_pending", timeline: [] });
+    // Real legacy M71 projection, not the otherwise-null fixture above.
+    const legacyInstruction = "Follow the payment instructions provided by Xenios.";
+    const legacyView = { ...statusView, status: "payment_pending", actionRequired: legacyInstruction,
+      timeline: [{ status: "payment_pending", occurredAt: statusView.updatedAt, customerMessage: legacyInstruction }] };
+    api.loadAssistedOrderStatus.mockResolvedValue(legacyView);
     window.history.replaceState({}, "", `/research/early-access/order-request/${receipt.publicReference}`);
     renderStatus(); await settle(20);
     expect(host!.textContent).toContain("Do not send funds based on this status");
     expect(host!.textContent).not.toContain("Use the payment details we emailed");
+    expect(host!.textContent).not.toContain(legacyInstruction);
+    expect(legacyView.actionRequired).toBe(legacyInstruction);
+    expect(legacyView.timeline[0].customerMessage).toBe(legacyInstruction);
+  });
+
+  it.each([
+    ["payment_review", false, "Payment review"],
+    ["paid", false, "Payment record under review"],
+    ["paid", true, "Payment verified"],
+  ] as const)("keeps %s guidance evidence-bound with verified=%s despite legacy action text", async (status, paymentVerified, expectedLabel) => {
+    statusSession.memberToken = "synthetic-member-a";
+    const legacyInstruction = "Send funds immediately using the old payment details.";
+    api.loadAssistedOrderStatus.mockResolvedValue({ ...statusView, status, paymentVerified, actionRequired: legacyInstruction,
+      timeline: [{ status, occurredAt: statusView.updatedAt, customerMessage: legacyInstruction }] });
+    window.history.replaceState({}, "", `/research/early-access/order-request/${receipt.publicReference}`);
+    renderStatus(); await settle(20);
+    expect(host!.querySelector(".xenios-order-card__header h2")?.textContent).toBe(expectedLabel);
+    expect(host!.querySelector(".xenios-order-timeline strong")?.textContent).toBe(expectedLabel);
+    expect(host!.textContent).not.toContain(legacyInstruction);
+    expect(host!.textContent).not.toContain("Action required:");
+    if (paymentVerified) expect(host!.textContent).toContain("Fulfillment eligibility is checked separately");
+    else expect(host!.textContent).toContain("Contact Support");
+  });
+
+  it.each([
+    ["identity_requested", "Securely upload the requested identity documents."],
+    ["waiting_on_customer", "Additional information is required."],
+    ["agreements_pending", "Review and complete the required agreements."],
+  ] as const)("preserves the exact nonfinancial %s instruction", async (status, actionRequired) => {
+    statusSession.memberToken = "synthetic-member-a";
+    api.loadAssistedOrderStatus.mockResolvedValue({ ...statusView, status, actionRequired, timeline: [] });
+    window.history.replaceState({}, "", `/research/early-access/order-request/${receipt.publicReference}`);
+    renderStatus(); await settle(20);
+    expect(host!.textContent).toContain(`Action required: ${actionRequired}`);
   });
 
   it("reads owner-linked requests with the current bearer and renders nullable estimates and opaque tracking", async () => {

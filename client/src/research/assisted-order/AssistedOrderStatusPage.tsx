@@ -106,6 +106,11 @@ function VerifiedRequestStatus({ reference, memberToken, memberChecking }: {
     return () => { alive.current = false; ++generation.current; };
   }, [refresh]);
 
+  const financialCopy = status ? assistedOrderPaymentStatusCopy(status.status, status.paymentVerified) : null;
+  // Legacy SQL can still suggest sending funds. Payment guidance comes only
+  // from the evidence-aware status copy, without changing the stored record.
+  const actionRequired = financialCopy ? null : status?.actionRequired;
+
   return (
     <div className="xenios-order-page min-w-0" style={{ overflowWrap: "anywhere" }}>
       <header className="xenios-order-hero">
@@ -133,7 +138,7 @@ function VerifiedRequestStatus({ reference, memberToken, memberChecking }: {
               <div><p className="xenios-order-eyebrow">Current status</p><h2>{customerStatus(status.status, status.paymentVerified).label}</h2><p>{customerStatus(status.status, status.paymentVerified).line}</p></div>
               <strong data-testid="assisted-request-status-estimate">Estimate: {money(status.estimatedTotalCents)}</strong>
             </div>
-            {status.actionRequired ? <div className="xenios-order-notice"><strong>Action required:</strong> {status.actionRequired}</div> : null}
+            {actionRequired ? <div className="xenios-order-notice"><strong>Action required:</strong> {actionRequired}</div> : null}
             {typeof status.trackingReference === "string" && status.trackingReference.length > 0
               && status.trackingReference.length <= 500 && !/[\u0000-\u001f\u007f]/.test(status.trackingReference)
               ? <p data-testid="assisted-request-status-tracking" style={{ overflowWrap: "anywhere" }}>Recorded tracking reference: {status.trackingReference}</p> : null}
