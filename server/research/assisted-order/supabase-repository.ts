@@ -291,7 +291,8 @@ export class SupabaseAssistedOrderRepository implements AssistedOrderRepository 
     if (response.error) fail(response, "research_assisted_order_financial_state");
     if (response.data === null) return null;
     const value = response.data as Record<string, unknown>;
-    if (typeof value.hasObservation !== "boolean" || typeof value.paymentVerified !== "boolean") {
+    if (typeof value.hasObservation !== "boolean" || typeof value.paymentVerified !== "boolean" ||
+        (value.paymentVerified && !value.hasObservation)) {
       throw new Error("Financial state projection unavailable.");
     }
     return { hasObservation: value.hasObservation, paymentVerified: value.paymentVerified };
@@ -375,7 +376,11 @@ export class SupabaseAssistedOrderRepository implements AssistedOrderRepository 
       if (financial.error && financial.error.code !== "PGRST202") {
         fail(financial, "research_assisted_order_financial_state");
       }
-      const evidence = financial.data as { paymentVerified?: unknown } | null;
+      const evidence = financial.data as { hasObservation?: unknown; paymentVerified?: unknown } | null;
+      if (!financial.error && evidence !== null && (typeof evidence.hasObservation !== "boolean" ||
+          typeof evidence.paymentVerified !== "boolean" || (evidence.paymentVerified && !evidence.hasObservation))) {
+        throw new Error("Financial state projection unavailable.");
+      }
       return Object.freeze({ ...view, paymentVerified: !financial.error && evidence?.paymentVerified === true });
     }
     return view;
