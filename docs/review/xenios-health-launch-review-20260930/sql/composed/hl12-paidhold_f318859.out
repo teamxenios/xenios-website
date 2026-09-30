@@ -1,0 +1,11 @@
+CASE {"case":"H1 HTTP paid with arbitrary text","result":{"status":409,"code":"payment_verification_not_ready","newStatus":null}}
+CASE {"case":"H2 HTTP paid with whitespace id","result":{"status":409,"code":"payment_evidence_required","newStatus":null}}
+CASE {"case":"H3 HTTP paid with amount+currency+reference","result":{"status":409,"code":"payment_verification_not_ready","newStatus":null}}
+CASE {"case":"H4 direct PostgREST set_status payment_review->paid (SQL trigger)","result":"REFUSED P0001 ASSISTED_ORDER_FINANCIAL_AUTHORITY_NOT_READY"}
+CASE {"case":"H5 legitimate non-paid transitions still work (payment_review->payment_pending)","result":{"status":200,"code":null,"newStatus":"payment_pending"}}
+CASE {"case":"H6 historical paid row seeded (trigger disabled then re-enabled)","result":"paid"}
+CASE {"case":"H7 HTTP historical paid -> supplier_processing","result":{"status":409,"code":"payment_verification_not_ready","newStatus":null}}
+CASE {"case":"H8 HTTP historical paid -> cancelled","result":{"status":409,"code":"payment_verification_not_ready","newStatus":null}}
+CASE {"case":"H9 direct SQL historical paid -> supplier_processing","result":"REFUSED P0001 ASSISTED_ORDER_FINANCIAL_AUTHORITY_NOT_READY"}
+CASE {"case":"H10 direct SQL historical paid -> cancelled","result":"REFUSED P0001 ASSISTED_ORDER_FINANCIAL_AUTHORITY_NOT_READY"}
+CASE {"case":"H11 cancel from reviewing still works","result":{"status":200,"code":null,"newStatus":"cancelled"}}
