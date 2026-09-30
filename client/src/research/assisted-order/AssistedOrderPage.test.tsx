@@ -1017,6 +1017,15 @@ describe("AssistedOrderStatusPage verified identity", () => {
     expect(host!.textContent).not.toContain("Your payment is confirmed");
   });
 
+  it("does not solicit funds from a payment-pending status while verification is unavailable", async () => {
+    statusSession.memberToken = "synthetic-member-a";
+    api.loadAssistedOrderStatus.mockResolvedValue({ ...statusView, status: "payment_pending", timeline: [] });
+    window.history.replaceState({}, "", `/research/early-access/order-request/${receipt.publicReference}`);
+    renderStatus(); await settle(20);
+    expect(host!.textContent).toContain("Do not send funds based on this status");
+    expect(host!.textContent).not.toContain("Use the payment details we emailed");
+  });
+
   it("reads owner-linked requests with the current bearer and renders nullable estimates and opaque tracking", async () => {
     statusSession.memberToken = "synthetic-member-a";
     storeAssistedOrderReceipt(receipt);

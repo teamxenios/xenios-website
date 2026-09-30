@@ -195,7 +195,8 @@ function evidenceRequired(
     );
   }
   if (status === "paid") {
-    if (!input.evidence?.paymentVerificationId?.trim()) {
+    if (typeof input.evidence?.paymentVerificationId !== "string" ||
+        !input.evidence.paymentVerificationId.trim()) {
       throw new AssistedOrderConflictError(
         "payment_evidence_required",
         "Paid status requires canonical payment-verification evidence.",
@@ -247,7 +248,7 @@ function customerStatusMessage(status: AssistedOrderStatus): string {
     identity_received: "Your identity documentation has been received.",
     agreements_pending: "Required agreements are pending.",
     agreements_complete: "Required agreements are complete.",
-    payment_pending: "Payment instructions or payment are pending.",
+    payment_pending: "The payment step is paused. Do not send funds based on this status.",
     payment_review: "Your payment information is under review. Contact Support for the current status.",
     paid: "A payment record is under review. Contact Support before relying on it.",
     supplier_processing: "Your request is being processed for fulfillment.",

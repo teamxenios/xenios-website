@@ -35,7 +35,7 @@ function customerStatus(status: AssistedOrderStatusView["status"]): { label: str
     case "agreements_complete":
       return { label: "In review", line: "We're checking what you sent." };
     case "payment_pending":
-      return { label: "Awaiting payment", line: "Use the payment details we emailed." };
+      return { label: "Payment step paused", line: "Do not send funds based on this status. Contact Support for next steps." };
     case "payment_review":
       return { label: "Payment review", line: "Contact Support for the current payment status." };
     case "paid":

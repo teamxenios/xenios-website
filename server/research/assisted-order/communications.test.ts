@@ -194,6 +194,7 @@ describe("the admin order alert", () => {
     // Still says plainly that nothing is owed, so the operator knows there is
     // no money fact to reconcile yet.
     expect(body).toMatch(/nothing is due yet/i);
+    expect(body).toContain("Do not send payment instructions until the quote and payment workflow is available.");
   });
 
   it("keeps the customer email free of the address it never needed", () => {

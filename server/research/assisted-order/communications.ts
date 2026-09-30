@@ -205,8 +205,8 @@ export function renderAssistedOrderOutboxEmail(
         `${text(payload.fullLegalName)} <${text(payload.email)}>`,
         text(payload.mobilePhone) ? `Phone: ${text(payload.mobilePhone)}` : "",
         ``,
-        // Payment is MANUAL at launch: the operator answers this email with
-        // availability and payment instructions. The address has to be here
+        // The operator reviews availability before any payment workflow. The
+        // address has to be here
         // rather than one admin-screen login away, or the email cannot do the
         // job it exists to do. Admin recipient only; never the customer.
         `SHIPPING`,
@@ -222,8 +222,8 @@ export function renderAssistedOrderOutboxEmail(
         ...agreementBlock(payload),
         ...notesBlock(payload),
         ``,
-        `Next action: confirm availability, then reply to the customer with`,
-        `payment instructions. Nothing is owed or confirmed until you do.`,
+        `Next action: confirm availability and contact the customer with next steps.`,
+        `Do not send payment instructions until the quote and payment workflow is available.`,
         ``,
         adminPath ? `Review: ${SITE_ORIGIN}${adminPath}` : "",
       ].filter((line) => line !== "").join("\n"),

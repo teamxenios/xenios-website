@@ -730,6 +730,18 @@ describe("AssistedOrderService", () => {
     ).toMatchObject({ status: "upload_pending" });
   });
 
+  it("refuses a non-string payment verification identifier without a 500", async () => {
+    const h = harness();
+    const receipt = await h.service.submit(memberViewer, input());
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "reviewing" });
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "payment_pending" });
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "payment_review" });
+    await expect(h.service.updateStatus(adminViewer, receipt.requestId, {
+      status: "paid",
+      evidence: { paymentVerificationId: 42 as unknown as string },
+    })).rejects.toMatchObject({ code: "payment_evidence_required" });
+  });
+
   it("does not use a historical paid label to authorize fulfillment or cancellation", async () => {
     const h = harness();
     const receipt = await h.service.submit(memberViewer, input());
