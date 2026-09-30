@@ -266,6 +266,13 @@ Severity key:
   - An operator typo or a wrong amount is undetectable.
   - A "price on request" line gets an arbitrary price.
   - Nothing reconciles what was paid with what was sold.
+- **SQL evidence (Claude, 2026-09-30, disposable Supabase PG 17.6, `sql/hl12_probe.sql`):**
+  - `paid` ACCEPTED for arbitrary text, a 1¢ amount, EUR, a free-text actor, and one verification id reused on two orders.
+  - `paid` → `cancelled` ACCEPTED without refund evidence.
+  - Exact replay was REFUSED (compare-and-set).
+  - `set_status` is `service_role`-only.
+  - No amount column exists.
+  - This confirms HL-12 on the mounted SQL, not only the in-memory service.
 - **Smallest safe correction:**
   - Before `payment_pending`, persist a quote whose total equals the server-priced lines, with explicit operator
     pricing only for request-pricing lines, audited.
@@ -327,6 +334,14 @@ Severity key:
 - **Consequence:** a customer inside the ordering journey who presses "Research" or "Get access" leaves the
   journey for home. This adds to the HL-01 loop.
 - **Correction:** point these links to the real ordering entry, or remove them.
+
+## HL-18 / HL-19 / HL-20 · pricing
+
+See `04_PRICING_ACCEPTANCE.md`:
+
+- **HL-18 (P2):** the rounding contract is inconsistent. Stored cents are half-up via float `Math.round`, the book display rounds half-even, and GRP-0348 is a float artifact. 17 rows need founder confirmation.
+- **HL-19 (P3):** the FedEx shipping line is served as a `care_pathway` catalog variant.
+- **HL-20 (P2):** the 3-unit bundle discount is applied on the Featured legacy path but not on the All products assisted estimate, and the copy promises it for assisted requests.
 
 ## Additional P3 notes (verified)
 

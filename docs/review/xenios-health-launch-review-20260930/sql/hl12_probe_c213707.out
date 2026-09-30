@@ -1,0 +1,28 @@
+CREATE FUNCTION
+CREATE FUNCTION
+=== HL-12 cases (request estimate 10000 USD; expected behaviour: only amount-bound authorized verification may reach paid) ===
+                     case_                      |                                          result                                          
+------------------------------------------------+------------------------------------------------------------------------------------------
+ C1 arbitrary non-empty text as verification id | ACCEPTED
+ C2 whitespace-only verification id             | REFUSED(23514: assisted order status paid requires evidence field paymentVerificationId)
+ C3 wrong amount (1 cent vs 10000 estimate)     | ACCEPTED
+ C4 wrong currency (EUR)                        | ACCEPTED
+ C5 actor id is free text (non-admin string)    | ACCEPTED
+(5 rows)
+
+=== replay and reuse ===
+psql:/tmp/hl12_probe.sql:47: NOTICE:  C6 same verification id on two different orders: first=ACCEPTED second=ACCEPTED
+psql:/tmp/hl12_probe.sql:47: NOTICE:  C7 replayed paid transition on the same order: REFUSED(40001: assisted order status changed concurrently)
+psql:/tmp/hl12_probe.sql:47: NOTICE:  C8 cancel after paid without refund evidence: ACCEPTED
+DO
+=== grants on set_status ===
+   grantee    | privilege_type 
+--------------+----------------
+ service_role | EXECUTE
+(1 row)
+
+=== columns recording an amount at paid ===
+ column_name 
+-------------
+(0 rows)
+
