@@ -1,8 +1,8 @@
 # Xenios Health HL-12 partial source handoff
 
-Branch: `codex/xenios-health-launch-implementation-20260930`  
-Current source commit: `f318859262812b8fc1fcb6d2c8e697d86a209349`  
-Current source tree: `d97f11fbb206de04f1a578fcb4a09f56f03ae167`  
+Branch: `codex/xenios-health-launch-implementation-20260930`
+Current source commit: `f318859262812b8fc1fcb6d2c8e697d86a209349`
+Current source tree: `d97f11fbb206de04f1a578fcb4a09f56f03ae167`
 Records tip before this handoff: `d253e70f14e0b0bb6882e65a93def45a8c0bdba8`
 
 This is **not HL-12 completion**. The mounted paid path previously accepted a free-text verification ID. It now fails closed in the application and in a separate pending SQL trigger candidate. The admin form no longer offers a paid option until a real authority is mounted. Existing historical paid labels cannot drive fulfillment or cancellation through this bridge without that authority. Both new migrations are PENDING, source-only and not applied to managed staging or production.
