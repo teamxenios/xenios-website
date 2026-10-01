@@ -197,6 +197,28 @@ function ProductCard(props: {
         ) : null}
         <div><dt>Price</dt><dd>{careOnly ? "Ask the Care team about pricing" : money(item.unitPriceCents)}</dd></div>
       </dl>
+      <details className="xenios-order-details" data-testid={`order-card-details-${item.variantId}`}>
+        <summary>
+          Product details<span className="xenios-order-sr-only"> for {item.productName}{item.specification ? `, ${item.specification}` : ""}</span>
+        </summary>
+        <dl className="xenios-order-facts">
+          <div><dt>Specification</dt><dd>{item.specification || "Not stated in the current catalog"}</dd></div>
+          <div><dt>Format</dt><dd>{item.format || "Not stated in the current catalog"}</dd></div>
+          <div><dt>Pack basis</dt><dd>{item.packBasis || "Not stated in the current catalog"}</dd></div>
+        </dl>
+        {careOnly ? (
+          <p className="xenios-order-notice">Care options and quantities require separate provider review.</p>
+        ) : (
+          <>
+            <dl className="xenios-order-facts">
+              <div><dt>Minimum request quantity</dt><dd>{item.minimumQuantity}</dd></div>
+              <div><dt>Maximum request quantity</dt><dd>{item.maximumQuantity ?? "Not stated in the current catalog"}</dd></div>
+              <div><dt>Quantity increment</dt><dd>{item.quantityIncrement}</dd></div>
+            </dl>
+            <p className="xenios-order-notice">Request quantities only, not dosing instructions. Availability is confirmed separately.</p>
+          </>
+        )}
+      </details>
       {item.researchUseOnly ? (
         <p className="xenios-order-notice"><strong>Research Use Only.</strong> Not for human or veterinary use.</p>
       ) : null}
