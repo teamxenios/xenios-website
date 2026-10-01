@@ -6,7 +6,8 @@ No managed action is authorized by this record.
 
 Current source checkpoint: `2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd`.
 Tree: `55c15891b07be438a933d025a7381dd7f90a04e2`.
-Test-only and release-control commits: pending. Do not borrow ADP02's results.
+Test checkpoint: `1bb6ca0d956fda27a376225ff3652e41fdd832b6`.
+Release controls and final qualification: pending. Do not borrow ADP02's results.
 
 ## Continuity
 
@@ -117,6 +118,16 @@ clear holds or amend protection baselines as rollback.
   0.292 seconds test time. This is not effective PostgreSQL evidence.
   Log SHA-256:
   `8531cb8e01aa20c994c2ca99a725d5e646b2e261ad0e132fadb57ae4493b7338`.
+- `adp03-sql-local-run2`: failed, exit 1, 188.638 seconds. Eight SQL groups
+  and all 11 mounted HTTP groups (154 SQL calls) completed before an incorrect
+  fixture assertion: the established manual-verification receipt state is
+  `paid`, not ADP03's `verified`. That expectation was corrected without
+  changing runtime. Cleanup confirmed. Log SHA-256:
+  `74b65f76d659a57014c1933d564478d64d42170c94b3544dd1575da1bd4f267b`.
+  A separately inspected reverse-arbitration fixture now uses SQL
+  `IS DISTINCT FROM` so a null error detail cannot pass its expected refusal.
+  This latter fixture was not reached in run2; it was an inspection correction,
+  not a reproduced runtime failure. Run3 is a separate diagnostic.
 - Final composed SQL, affected checks, typecheck, build and aggregate: pending.
   No passing result is inferred.
 

@@ -6,7 +6,7 @@
       "status": "PUSHED_SOURCE_CHECKPOINT_NOT_QUALIFIED",
       "runtimeSourceSha": "2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd",
       "runtimeSourceTree": "55c15891b07be438a933d025a7381dd7f90a04e2",
-      "testOnlySha": null,
+      "testOnlySha": "1bb6ca0d956fda27a376225ff3652e41fdd832b6",
       "releaseControlSha": null,
       "aggregate": "NOT_RUN_FOR_ADP03",
       "baseRecordsSha": "4ad4bcfe8129b4069b79f3cce91773c894395c51",
