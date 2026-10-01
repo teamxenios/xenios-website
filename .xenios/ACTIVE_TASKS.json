@@ -3,6 +3,30 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "HEALTH-HL12-ADP02-PROVIDER-CREATE-RECOVERY-20261001",
+      "title": "Durable provider create ownership, response recovery and write-once external identity binding",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/assisted-order/payment/provider-execution*",
+        "server/research/assisted-order/payment/provider-adapter.ts",
+        "server/research/assisted-order/payment/provider-adapter.test.ts",
+        "server/research/assisted-order/provider-execution*",
+        "server/research/assisted-order/http.ts",
+        "server/index.ts",
+        "server/research/assisted-order/HEALTH_HL12_ADP02_*",
+        "supabase/migrations/*_research_assisted_order_quote_provider_execution.sql",
+        "supabase/verification/research_assisted_order_quote_provider_execution*",
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "server/release-control-plane.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Continue same branch after frozen ADP01 aggregate and pushed handoff77cdeae. Source-local/disposable SQL only: derive claims from immutable existing attempts, separate create grants/policy, fixed replay guarantee, retain late responses/conflicts, write-once scoped identity, no settlement/paid/refund/no-funds inference. Preserve journal-v2 held contract and all existing uncertainty guards; new execution readiness must require exact additive schema. Do not rewrite old migration bytes or weaken protection gates. Production source remains null, no webhook/live provider/configuration/grant/email/money. Root owns composition/records/controls; subagent ownership allocated explicitly before writing. Foreign imagery/media paths forbidden.",
+      "claimedAt": "2026-10-01T10:28:15.372Z"
+    },
+    {
       "id": "HEALTH-HL12-ADP01-DURABLE-PROVIDER-HOLD-20261001",
       "title": "Durable held provider reservations, authenticated event quarantine, and financial uncertainty fences",
       "priority": "P1",

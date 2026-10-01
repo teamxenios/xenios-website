@@ -3356,6 +3356,28 @@
       "state": "handoff",
       "claimedAt": "2026-10-01T08:55:59.653Z",
       "heartbeatAt": "2026-10-01T10:25:52.822Z"
+    },
+    {
+      "id": "2ffc6c3a-a66b-46cf-a00f-885da8f323c7",
+      "task": "HEALTH-HL12-ADP02-PROVIDER-CREATE-RECOVERY-20261001",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/assisted-order/payment/provider-execution*",
+        "server/research/assisted-order/payment/provider-adapter.ts",
+        "server/research/assisted-order/payment/provider-adapter.test.ts",
+        "server/research/assisted-order/provider-execution*",
+        "server/research/assisted-order/http.ts",
+        "server/index.ts",
+        "server/research/assisted-order/HEALTH_HL12_ADP02_*",
+        "supabase/migrations/*_research_assisted_order_quote_provider_execution.sql",
+        "supabase/verification/research_assisted_order_quote_provider_execution*",
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "server/release-control-plane.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-01T10:28:15.383Z",
+      "heartbeatAt": "2026-10-01T10:28:15.383Z"
     }
   ],
   "rules": [
