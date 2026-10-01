@@ -103,7 +103,7 @@ describe("public editorial page system", () => {
     expect(links).toContain("/research/support");
     expect(view.textContent).toContain("No public supplier workspace is promised");
     expect(view.textContent).toContain("must fail closed");
-    expect(view.textContent).toContain("Open early-access entry");
+    expect(view.textContent).toContain("Early Access requests");
     expect(view.textContent).toContain("non-clinical access request");
     expect(view.textContent).toContain("does not establish clinical availability");
     expect(view.textContent).not.toContain("Xenios Care is available nationwide");
@@ -112,6 +112,67 @@ describe("public editorial page system", () => {
     expect(view.querySelectorAll("article")).toHaveLength(13);
     expect(links).toContain("/activate");
     expect(view.textContent).toContain("No approval, commission, payout, or commercial term is implied publicly.");
+  });
+
+  it("describes Early Access entry without promising an open or passwordless experience", async () => {
+    const view = await renderPage(<AccessHub />);
+    const earlyAccess = Array.from(view.querySelectorAll("article")).find(
+      (article) => article.querySelector("h2")?.textContent === "Private Early Access",
+    );
+    expect(earlyAccess).toBeDefined();
+    if (!earlyAccess) throw new Error("The existing Early Access card must remain present");
+
+    expect(Array.from(earlyAccess.querySelectorAll("p"), (paragraph) => paragraph.textContent)).toEqual([
+      "Early Access requests",
+      "Check the current entry requirements and request options on the Early Access page. Each later action still depends on its own approval and availability.",
+      "Entry does not prove approval, availability, payment, shipment, or a Care decision.",
+    ]);
+    expect(Array.from(earlyAccess.querySelectorAll("a[href]"), (anchor) => ({
+      label: anchor.textContent,
+      href: anchor.getAttribute("href"),
+    }))).toEqual([
+      { label: "Check Early Access", href: "/research/early-access" },
+      { label: "Get support", href: "/research/support" },
+    ]);
+    expect(earlyAccess.textContent).not.toMatch(/passwordless|open early-access entry|enter private early access/i);
+    expect(earlyAccess.querySelector("form, input, select, textarea, button")).toBeNull();
+  });
+
+  it("preserves the canonical chooser and separate Care and Research destinations and permissions", async () => {
+    const view = await renderPage(<AccessHub />);
+    const chooser = view.querySelector("#account-access");
+    expect(chooser).not.toBeNull();
+    if (!chooser) throw new Error("The canonical account chooser must remain present");
+    expect(Array.from(chooser.querySelectorAll("a[href]"), (anchor) => ({
+      label: anchor.textContent,
+      href: anchor.getAttribute("href"),
+    }))).toEqual([
+      { label: "Sign In", href: "/sign-in" },
+      { label: "Activate Account", href: "/activate" },
+      { label: "Explore Products", href: "/products" },
+      { label: "Start Care", href: "/care/schedule" },
+      { label: "Become a Partner", href: "/partners" },
+      { label: "For Practices", href: "/practices" },
+      { label: "Submit Inquiry", href: "/suppliers#inquiry" },
+    ]);
+    expect(chooser.textContent).toContain("Each keeps its own review and permissions.");
+    expect(chooser.textContent).toContain("First-time setup for an account Xenios already approved");
+    expect(chooser.textContent).toContain("request an order when a product is approved");
+
+    const cards = Array.from(view.querySelectorAll("article"));
+    const care = cards.find((article) => article.querySelector("h2")?.textContent === "Xenios Care");
+    const research = cards.find((article) => article.querySelector("h2")?.textContent === "Xenios Research");
+    expect(care).toBeDefined();
+    expect(research).toBeDefined();
+    if (!care || !research) throw new Error("Care and Research must retain separate access cards");
+    expect(hrefs(care)).toEqual(["/care/schedule", "/care/how-it-works"]);
+    expect(hrefs(research)).toEqual(["/research/order", "/research/sign-in"]);
+    expect(care.textContent).toContain("The public request does not establish clinical availability, a provider relationship, treatment, or a prescription.");
+    expect(care.textContent).toContain("Any later service depends on location, clinician authority, clinical eligibility, pharmacy serviceability, and current availability.");
+    expect(research.textContent).toContain("Research access never includes personal-use guidance, prescribing, dosing, reconstitution, injection, or treatment recommendations.");
+    expect(view.textContent).toContain("Each workspace requires its own server authority.");
+    expect(view.textContent).toContain("The browser never chooses its own role.");
+    expect(view.textContent).toContain("The selected page explains its own availability.");
   });
 
   it("opens FAQ panels with explicit button and region relationships", async () => {

@@ -33,6 +33,13 @@ describe("the owner-approved clarity route map", () => {
     expect(appSource).toContain('<Route path="/care/*" component={CareRoutes} />');
   });
 
+  it("leaves the existing Research access hub to its section router instead of shadowing it with a home redirect", () => {
+    expect(appSource).not.toContain('<Route path="/research/access-hub"><Redirect to="/" /></Route>');
+    expect(appSource).toContain('<Route path="/research/*" component={ResearchRoutes} />');
+    const sectionSource = readFileSync(resolve(__dirname, "research/section.tsx"), "utf8");
+    expect(sectionSource).toContain('<Route path="/research/access-hub">{() => <L component={AccessHub} />}</Route>');
+  });
+
   it("removes the legacy public partners and FAQ redirects", () => {
     expect(appSource).not.toContain('<Route path="/partners"><Redirect to="/ecosystem" /></Route>');
     expect(appSource).not.toContain('<Route path="/faq"><Redirect to="/product" /></Route>');

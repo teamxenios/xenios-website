@@ -135,6 +135,74 @@ describe("the production static server answers documents through the raw HTTP po
     expect(res.headers.location).toBe("/");
   });
 
+  it("explicitly excludes the owned Access Hub document from legacy redirects", () => {
+    expect(Object.prototype.hasOwnProperty.call(PUBLIC_DOCUMENT_REDIRECTS, "/research/access-hub")).toBe(false);
+  });
+
+  it.each([
+    "/research/access-hub",
+    "/research/access-hub?utm_source=hl17&next=%2Fresearch%2Fmember",
+  ])("serves GET and HEAD for the Access Hub itself at %s", async (target) => {
+    const get = await request(app).get(target);
+    expect(get.status).toBe(200);
+    expect(get.headers.location).toBeUndefined();
+    expect(get.headers["content-type"]).toMatch(/text\/html/u);
+    // Public gate exemption is not search-publication authority: the canonical
+    // Research SEO allowlist still classifies Access Hub as private/noindex.
+    expect(get.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+    expect(get.headers.link).toBeUndefined();
+    expect(canonical(get.text)).toBeNull();
+    expect(robots(get.text)).toBe("noindex,nofollow,noarchive");
+    expect(get.text).toContain("<title>Private document, xenios</title>");
+    expect(get.text).toContain('name="description" content="This document is private and carries no public search or social authority."');
+    expect(get.text).not.toContain('property="og:');
+    expect(get.text).not.toContain("Care and research products | Xenios");
+    expect(get.text).not.toContain("template-organization");
+    expect(get.text).not.toContain("template-faq");
+    expect(get.text).not.toContain("application/ld+json");
+
+    const head = await request(app).head(target);
+    expect(head.status).toBe(200);
+    expect(head.headers.location).toBeUndefined();
+    for (const header of ["content-type", "content-length", "x-robots-tag", "link"]) {
+      expect(head.headers[header]).toBe(get.headers[header]);
+    }
+    expect(head.text).toBeUndefined();
+  });
+
+  it.each([undefined, "false"])("keeps Access Hub GET and HEAD noindex when RESEARCH_INDEXABLE is %s", async (flag) => {
+    const previous = process.env.RESEARCH_INDEXABLE;
+    try {
+      if (flag === undefined) delete process.env.RESEARCH_INDEXABLE;
+      else process.env.RESEARCH_INDEXABLE = flag;
+      const target = "/research/access-hub?utm_source=hl17";
+      const get = await request(app).get(target);
+      expect(get.status).toBe(200);
+      expect(get.headers.location).toBeUndefined();
+      expect(get.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+      expect(get.headers.link).toBeUndefined();
+      expect(robots(get.text)).toBe("noindex,nofollow,noarchive");
+      expect(canonical(get.text)).toBeNull();
+      expect(get.text).toContain("<title>Private document, xenios</title>");
+      expect(get.text).toContain('name="description" content="This document is private and carries no public search or social authority."');
+      expect(get.text).not.toContain('property="og:');
+      expect(get.text).not.toContain("template-organization");
+      expect(get.text).not.toContain("template-faq");
+
+      const head = await request(app).head(target);
+      expect(head.status).toBe(200);
+      expect(head.headers.location).toBeUndefined();
+      expect(head.headers.link).toBeUndefined();
+      expect(head.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
+      expect(head.headers["content-type"]).toBe(get.headers["content-type"]);
+      expect(head.headers["content-length"]).toBe(get.headers["content-length"]);
+      expect(head.text).toBeUndefined();
+    } finally {
+      if (previous === undefined) delete process.env.RESEARCH_INDEXABLE;
+      else process.env.RESEARCH_INDEXABLE = previous;
+    }
+  });
+
   it.each(Object.entries(PUBLIC_DOCUMENT_REDIRECTS))(
     "redirects only the exact legacy document %s to %s",
     async (source, destination) => {
