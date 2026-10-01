@@ -5,6 +5,10 @@ Local implementation on the continuing
 provider activation, independent Claude acceptance, managed qualification or
 permission to deploy. The payment provider choice remains deferred.
 
+Worktree: `C:/Users/sboad/.codex/worktrees/b22f/xenios-website`.
+Session: `codex-xenios-health-launch-implementation-20260930`.
+Slice base: `48a598f45161cccbf39d5945b85e14a9c31b6b6a`.
+
 Runtime source: `e9f221c974f45831a7ad1a13bcb2bd6d8198db42`.
 Runtime tree: `30e570b77d19de0ebdb8b40765334a8f98cea5e0`.
 Test-only tip: `9c1fe1eb49ccd956fa715a542e8c235e2b7d3efd`.
@@ -15,11 +19,49 @@ The final source/test pair adds the minimum database-authority revision check.
 All three source commits and three test commits are pushed.
 
 Release-control tip: `82950302a77754f0359ba5e1d31dad8ea677426f`.
-The final single-worker aggregate started at 2026-10-01T10:05:17.801Z from
+The final single-worker aggregate ran from2026-10-01T10:05:17.801Z to
+2026-10-01T10:23:57.413Z from
 clean checkpoint `1fb12f79a2ecfb9ad2280b0f7719d7be004084dc`, tree
-`62b42bfd968103e204caddc6617bdcf47e338d34`; completion is pending. Do not infer the
+`62b42bfd968103e204caddc6617bdcf47e338d34`: **18998 passed, one failed,
+85 skipped, exit1**. There were1011 passing files, one failed and six skipped;
+Vitest elapsed1118.25 seconds. Only the unchanged protected-seam assertion
+failed; no timeout occurred. Neither baseline was changed.
+Receipt: `HEALTH_HL12_ADP01_QUALIFICATION_20261001.json`, with41 distinct log
+entries, exact commands, verified log hashes, child-runtime evidence and full
+commit/path classification through records `ed56bf2450d34f3dacc92583de266022a756e692`.
+Aggregate log SHA-256:
+`85349107542e98f0bccd577f7d05a4e350858b9d42977ec7a93021727c0f4464`.
+Only records changed during the run; source/tests/controls stayed frozen.
+Endpoint and committed-diff checks are not continuous filesystem attestation.
+Do not infer the
 previous HL11 aggregate applies to this runtime. Its separate receipt remains
 `../master-offerings/HEALTH_HL11_QUALIFICATION_20261001.json`.
+
+## Changed-path classification
+
+Five runtime paths changed in this slice:
+
+| Path | Change |
+| --- | --- |
+| `server/research/assisted-order/payment/provider-journal.ts` | Held reservation, authenticated normalization, durable receipt and v2 readiness boundary |
+| `supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql` | Unapplied held journal, privileges, uncertainty serialization, isolation and schema integrity |
+| `server/research/assisted-order/http.ts` | Optional guarded held-reservation handler |
+| `server/index.ts` | Fifteen lines for the disabled/null-source production composition and admin mount |
+| `server/research/assisted-order/supabase-repository.ts` | Exact SQLSTATE/detail mappings for held uncertainty and unsupported isolation |
+
+The eight test/proof paths are `payment/provider-journal.test.ts`,
+`provider-journal-http.test.ts`, `provider-journal-sql.test.ts` under
+`server/research/assisted-order/`, and the five
+`supabase/verification/research_assisted_order_quote_provider_journal_`
+drivers: `harness.mjs`, `local.mjs`, `http.ts`, `isolation.mjs`, `legacy.mjs`.
+
+The three release-control paths are `docs/coordination/MIGRATION_DAG.json`,
+`supabase/MIGRATIONS.md` and `server/release-control-plane.test.ts`. The last
+adds checks; it does not change the core-site-protection assertion or hashes.
+Continuity, coordination and this handoff are records-only changes.
+The qualification receipt enumerates every commit and changed path from the
+slice base through its recorded `classification.throughHead`. Later receipt
+and canonical-handoff commits remain separate records-only successors.
 
 ## Implemented boundary
 
@@ -31,8 +73,9 @@ the grant, and returns a held receipt. Browser money, actor, source and
 idempotency fields are rejected.
 
 An internal ingress boundary authenticates original bounded bytes through the
-configured adapter. Only closed normalized facts and their SHA-256 digest reach
-SQL. Raw bodies, signatures and headers remain volatile and are not persisted
+configured adapter. Only closed normalized facts plus `payloadSha256`, the
+SHA-256 digest of the original authenticated bytes, reach SQL. SQL separately
+fingerprints the normalized event envelope. Raw bodies, signatures and headers remain volatile and are not persisted
 or logged by this boundary. A durable receipt is required before success.
 No external webhook route is mounted. Provider authentication in the tests is
 synthetic, not evidence of a working card provider or bank integration.
@@ -87,6 +130,9 @@ refuses before writes. Applying the successor over that old valid installation
 refuses with SQL55000 and leaves its records unchanged. No silently adopted
 upgrade or old managed installation is inferred. Exact source-byte preflight
 remains mandatory even with the runtime capability check.
+This old-v1 proof covers the new provider-service entry points; it is not a
+claim that every financial operation is compatible with an older schema. The
+exact migration-before-application prerequisites below remain mandatory.
 
 The unchanged eight-case reproduction now refuses every prohibited operation.
 The permanent matrix also covers 21 unsupported-isolation refusals, positive
@@ -144,7 +190,10 @@ production build, the unchanged no-em-dash gate (1347 source and225 build files,
 zero forbidden forms), 50-node DAG and460 registrations/451 route callsites.
 Release controls passed51 tests with one existing conditional skip. All seven
 commands exited0 and ended at the same clean checkpoint. These are distinct
-from the aggregate, which is still in progress.
+from the completed exit1 aggregate reported above; they do not override it.
+The conditional release-control skip is the existing PG16 verifier guarded by
+CI or `XENIOS_RUN_PG16_VERIFIER=1`; the explicit PG17.11 ADP01 proof is separate
+and does not relabel the PG16 check as executed.
 The preceding clean
 preflight at `b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62` passed 1058 affected tests,
 typecheck, build, 50-node DAG, 460 registrations/451 callsites and release-control
@@ -310,6 +359,32 @@ managed migration qualification, browser qualification and exact release
 approval remain distinct work. HL11 now has 424 canonical / 423 customer rows;
 its holds and price decisions are preserved. Product details and HL17 are next
 public-journey work, without changing imagery ownership or commercial authority.
+
+The next provider-independent code slice is ADP02: durable create-operation
+ownership/recovery and write-once provider identity binding attached to these
+existing attempts. It is not implemented by this handoff. Claim its exact paths
+after this frozen slice's qualification and handoff, on the same branch.
+Requirements carried forward from the read-only design review:
+
+- Persist the first dispatch, exact body fingerprint, stable key and explicit
+  adapter replay deadline before a network call. No guessed retention period.
+- Separate reservation grants from execution capability; install no policies
+  or grants that enable an operational source.
+- A known external identity is retrieved, never recreated. Timeout, missing
+  response or expired lease is uncertainty, never no-funds.
+- Retain late actual responses even when a worker loses its dispatch lease;
+  changed identities and cross-attempt reuse remain durable conflicts.
+- Require independently read provider-object scope, amount, currency and
+  request/quote/acceptance binding, not just returned IDs or echoed inputs.
+- Keep existing attempt state held, financial-state shape unchanged and N2,
+  cancellation and settlement guards intact. Creation-specific eligibility must
+  not relax the general uncertainty guard.
+- Validate the exact v2 predecessor before deliberately advancing its sealed
+  definition chain. New functions must not silently rebaseline live schema.
+- Prove concurrency, lost responses, restart, expiry, revocation, early events,
+  identity conflicts, isolation and rollback on disposable local SQL with
+  synthetic adapters. No provider selection, external execution or hosted
+  activation is authorized by that local implementation task.
 
 No deploy, merge, hosted configuration, managed migration, price release,
 account grant, real email, money, procurement or clinical action was performed.

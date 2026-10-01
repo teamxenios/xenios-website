@@ -23,7 +23,9 @@ provider execution or settlement. Final disposable SQL run3 passed, including
 the reproduced stale-snapshot repair and actual old-v1 schema refusal. Final
 preflight at clean1fb12f7 passed1065 affected tests, typecheck/build, no-em-dash,
 route/DAG and release controls (51 pass/one conditional skip). Its aggregate
-started2026-10-01T10:05:17.801Z and is not yet complete. Production source is
+completed2026-10-01T10:23:57.413Z:18998 pass,one fail,85 skip,exit1,1118.25s.
+Only the unchanged two-seam assertion failed; no timeouts occurred. Source/tests
+and controls stayed frozen. Prior failures remain separate. Production source is
 null, no webhook is mounted, no operational sources/grants were created, and
 no Claude acceptance is recorded. The global uncertainty hold has no resolution
 operation and cannot be activated as a complete payment workflow. See

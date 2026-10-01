@@ -1,0 +1,3573 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-01T10:24:29.444Z",
+  "status": "LOCAL_SOURCE_AND_TEST_EVIDENCE_NOT_RELEASE_OR_CLAUDE_ACCEPTANCE",
+  "aggregateStatus": "FAILED_NOT_RELEASE_READY",
+  "aggregateFailures": [
+    "FAIL  server/core-site-protection.test.ts > the protected file hash tripwire > verifies the seam baselines too, and they are all clean at HEAD"
+  ],
+  "branch": "codex/xenios-health-launch-implementation-20260930",
+  "runtimeSha": "e9f221c974f45831a7ad1a13bcb2bd6d8198db42",
+  "runtimeTree": "30e570b77d19de0ebdb8b40765334a8f98cea5e0",
+  "testOnlySha": "9c1fe1eb49ccd956fa715a542e8c235e2b7d3efd",
+  "releaseControlSha": "82950302a77754f0359ba5e1d31dad8ea677426f",
+  "qualificationCheckpoint": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+  "qualificationTree": "62b42bfd968103e204caddc6617bdcf47e338d34",
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "officialWindowsX64ArchiveSha256": "be72284c7bc62de07d5a9fd0ae196879842c085f11f7f2b60bf8864c0c9d6a4f",
+  "localEvidenceTooling": [
+    {
+      "name": "run-check.mjs",
+      "sha256": "081c783396adf1f90e44eb4c2f63674132644bab7617b36ba0babe4d5ad13b25",
+      "source": "import { spawn, execFileSync } from 'node:child_process';\nimport { createWriteStream, existsSync, writeFileSync } from 'node:fs';\nimport { resolve, dirname } from 'node:path';\nimport { createHash } from 'node:crypto';\n\nif (process.version !== 'v20.19.0') throw new Error('Pinned Node v20.19.0 required');\nconst [job, ...args] = process.argv.slice(2);\nif (!job || !/^[a-z0-9-]+$/.test(job) || args.length === 0) throw new Error('job and Node arguments required');\nconst cwd = 'C:/Users/sboad/.codex/worktrees/b22f/xenios-website';\nconst output = 'C:/Users/sboad/.codex/tmp/health-n2-20261001';\nif (existsSync(resolve(output, `${job}-start.json`))) throw new Error('Refusing to overwrite a previous run');\nconst git = (...values) => execFileSync('git', values, { cwd, encoding: 'utf8' }).trim();\nconst env = { ...process.env, PATH: `${dirname(process.execPath)};${process.env.PATH}`,\n  XENIOS_MASTER_OFFERINGS_DATASET: resolve(cwd, 'server/research/master-offerings/data/member-safe-master-offerings.generated.json') };\nconst npm = execFileSync(process.execPath, [resolve(dirname(process.execPath), 'node_modules/npm/bin/npm-cli.js'), '--version'], { encoding: 'utf8', env }).trim();\nconst record = { startedAt: new Date().toISOString(), head: git('rev-parse', 'HEAD'), tree: git('rev-parse', 'HEAD^{tree}'),\n  dirtyAtStart: git('status', '--short'), node: process.version, npm, execPath: process.execPath,\n  command: [process.execPath, ...args], cwd, dataset: env.XENIOS_MASTER_OFFERINGS_DATASET, runnerPid: process.pid };\nconst log = createWriteStream(resolve(output, `${job}.log`));\nconst digest = createHash('sha256');\nconst child = spawn(process.execPath, args, { cwd, env, stdio: ['ignore', 'pipe', 'pipe'] });\nrecord.childPid = child.pid;\nwriteFileSync(resolve(output, `${job}-start.json`), `${JSON.stringify(record, null, 2)}\\n`);\nconsole.log(JSON.stringify(record));\nconst provenance = [];\nfunction snapshot() {\n  try {\n    const rows = JSON.parse(execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',\n      \"Get-CimInstance Win32_Process -Filter \\\"name='node.exe'\\\" | Select-Object ProcessId,ParentProcessId,ExecutablePath | ConvertTo-Json -Compress\"], { encoding: 'utf8' }));\n    const all = Array.isArray(rows) ? rows : [rows];\n    const included = new Set([process.pid, child.pid]);\n    for (let pass = 0; pass < all.length; pass++) for (const row of all) if (included.has(row.ParentProcessId)) included.add(row.ProcessId);\n    provenance.push({ observedAt: new Date().toISOString(), processes: all.filter(row => included.has(row.ProcessId)) });\n    writeFileSync(resolve(output, `${job}-provenance.json`), `${JSON.stringify(provenance, null, 2)}\\n`);\n  } catch { provenance.push({ observedAt: new Date().toISOString(), unavailable: true }); }\n}\nconst first = setTimeout(snapshot, 4000);\nconst interval = setInterval(snapshot, 60000);\nfor (const stream of [child.stdout, child.stderr]) stream.on('data', chunk => { digest.update(chunk); log.write(chunk); process.stdout.write(chunk); });\nchild.on('error', error => console.error(error));\nchild.on('close', (exitCode, signal) => {\n  clearTimeout(first); clearInterval(interval); log.end();\n  const finishedAt = new Date().toISOString();\n  const result = { ...record, finishedAt, elapsedMs: Date.parse(finishedAt) - Date.parse(record.startedAt),\n    exitCode, signal, logSha256: digest.digest('hex'), finalHead: git('rev-parse', 'HEAD'), dirtyAtEnd: git('status', '--short') };\n  writeFileSync(resolve(output, `${job}-result.json`), `${JSON.stringify(result, null, 2)}\\n`);\n  console.log(`\\nCHECK_RESULT=${JSON.stringify(result)}`);\n  process.exitCode = exitCode ?? 1;\n});\n"
+    },
+    {
+      "name": "run-adp01-gates.mjs",
+      "sha256": "30b13311727c69c3cf9da856d6a30379064838c7eb32d6c2b6c87bee7620a1e1",
+      "source": "import { spawnSync } from 'node:child_process';\nimport { existsSync } from 'node:fs';\nimport { dirname, resolve } from 'node:path';\nif(process.version!=='v20.19.0')throw new Error('Pinned Node required');\nconst wrapper='C:/Users/sboad/.codex/tmp/health-n2-20261001/run-check.mjs';\nconst npm=resolve(dirname(process.execPath),'node_modules/npm/bin/npm-cli.js');\nconst phase=process.argv[2];\nlet jobs=(phase==='preflight'||phase==='preflight-v2') ? [\n  ['adp01-affected-final','node_modules/vitest/vitest.mjs','run','server/research/assisted-order',\n    'server/research/outbox-hl12-disposition.test.ts','server/research/outbox-hl12-effects.test.ts',\n    'server/research/master-offerings/early-access-catalog-coverage.test.ts','client/src/research/assisted-order','--maxWorkers=1','--no-file-parallelism'],\n  ['adp01-typecheck-final','node_modules/typescript/bin/tsc','--noEmit'],\n  ['adp01-build-final',npm,'run','build'],\n  ['adp01-dag-final','--import','tsx','scripts/acceptance/verify-migration-dag.ts'],\n  ['adp01-routes-final','--import','tsx','scripts/acceptance/verify-route-uniqueness.ts'],\n  ['adp01-protection-final','scripts/acceptance/verify-core-site-protection.mjs','48a598f45161cccbf39d5945b85e14a9c31b6b6a','HEAD'],\n  ['adp01-release-controls-final','node_modules/vitest/vitest.mjs','run','server/release-control-plane.test.ts','--maxWorkers=1','--no-file-parallelism'],\n] : phase==='aggregate' ? [\n  ['adp01-full-suite-final','node_modules/vitest/vitest.mjs','run','--maxWorkers=1','--no-file-parallelism'],\n] : null;\nif(!jobs)throw new Error('Choose preflight or aggregate');\nif(phase==='preflight-v2')jobs=jobs.map(([name,...args])=>[name+'-v2',...args]);\nfor(const args of jobs){\n  if(existsSync(`C:/Users/sboad/.codex/tmp/health-n2-20261001/${args[0]}-start.json`))throw new Error('Do not overwrite '+args[0]);\n  const result=spawnSync(process.execPath,[wrapper,...args],{cwd:'C:/Users/sboad/.codex/worktrees/b22f/xenios-website',stdio:'inherit',windowsHide:true});\n  if(result.status!==0){process.exitCode=result.status??1;break;}\n}\n"
+    },
+    {
+      "name": "collect-adp01-qualification.mjs",
+      "sha256": "5b0a1284cfff07e41e09e840c12a12a27da2b620447228439c3aae98ba576ed7",
+      "source": "import fs from 'node:fs';\nimport path from 'node:path';\nimport { execFileSync } from 'node:child_process';\nimport { createHash } from 'node:crypto';\n\nconst root = 'C:/Users/sboad/.codex/worktrees/b22f/xenios-website';\nconst scratch = 'C:/Users/sboad/.codex/tmp/health-n2-20261001';\nconst [source, tests, controls, checkpoint, fullJob] = process.argv.slice(2);\nif (![source, tests, controls, checkpoint].every(v => /^[a-f0-9]{40}$/.test(v ?? '')) || !/^adp01-full-suite-[a-z0-9-]+$/.test(fullJob ?? '')) throw new Error('Four full SHAs and exact aggregate job required');\nconst read = file => fs.readFileSync(file, 'utf8');\nconst json = file => JSON.parse(read(file));\nconst digest = bytes => createHash('sha256').update(bytes).digest('hex');\nconst sha = file => digest(fs.readFileSync(file));\nconst git = (...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim();\nconst clean = value => value.replace(/\\u001b\\[[0-9;]*m/g, '');\nconst counts = value => {\n  const text=clean(value), test=text.match(/^\\s*Tests\\s+(.+)$/m)?.[1], files=text.match(/^\\s*Test Files\\s+(.+)$/m)?.[1] ?? '';\n  const n=(s,state)=>Number(s.match(new RegExp('(\\\\d+) '+state))?.[1] ?? 0);\n  return test ? {passed:n(test,'passed'),failed:n(test,'failed'),skipped:n(test,'skipped'),filesPassed:n(files,'passed'),\n    filesFailed:n(files,'failed'),filesSkipped:n(files,'skipped'),duration:text.match(/^\\s*Duration\\s+(.+)$/m)?.[1] ?? null} : null;\n};\nconst jobs=fs.readdirSync(scratch).filter(n=>n.startsWith('adp01-')&&n.endsWith('.log')).sort().map(name=>{\n  const job=name.slice(0,-4), log=path.join(scratch,name), result=path.join(scratch,`${job}-result.json`), provenance=path.join(scratch,`${job}-provenance.json`);\n  const record=fs.existsSync(result)?json(result):null, snapshots=fs.existsSync(provenance)?json(provenance):null;\n  if(record?.logSha256 && record.logSha256!==sha(log))throw new Error('Log drift: '+job);\n  return {job,log,sha256:sha(log),counts:counts(read(log)),record,\n    childRuntimeProvenance:snapshots?{path:provenance,sha256:sha(provenance),snapshots}:null,\n    provenanceLimit:!record?'Subordinate log only; no independent runner command/HEAD/exit receipt. Interpret exact content, not inferred aggregate success.'\n      :!snapshots?.length?'Short run has no sampled child attestation; recorded launch path is not lifetime process proof.'\n      :'Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable.'};\n});\nconst full=jobs.find(j=>j.job===fullJob);\nif(!full?.record||!Number.isInteger(full.record.exitCode)||!full.record.finishedAt||!full.counts)throw new Error('Completed aggregate required, never infer success');\nconst samePath=(left,right)=>typeof left==='string'&&typeof right==='string'&&path.resolve(left).toLowerCase()===path.resolve(right).toLowerCase();\nconst pinnedNode='C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe';\nconst fullArgs=['node_modules/vitest/vitest.mjs','run','--maxWorkers=1','--no-file-parallelism'];\nif(full.record.node!=='v20.19.0'||full.record.npm!=='10.8.2'||!samePath(full.record.execPath,pinnedNode)||\n  !samePath(full.record.command?.[0],pinnedNode)||JSON.stringify(full.record.command?.slice(1))!==JSON.stringify(fullArgs)||\n  !samePath(full.record.cwd,root)||!samePath(full.record.dataset,path.join(root,'server/research/master-offerings/data/member-safe-master-offerings.generated.json')))\n  throw new Error('Aggregate runtime, exact command or real dataset provenance mismatch');\nif(full.record.head!==checkpoint||full.record.tree!==git('rev-parse',`${checkpoint}^{tree}`)||full.record.dirtyAtStart!=='')throw new Error('Aggregate did not start at exact clean checkpoint');\nconst isRecord=p=>p.startsWith('.xenios/')||/^server\\/research\\/assisted-order\\/HEALTH_HL12_ADP01_[^/]+\\.(md|json)$/.test(p);\nconst dirtyPaths=v=>(v??'').split('\\n').filter(Boolean).map(line=>line.replace(/^[ MADRCU?!]{1,2} /,'').replace(/^\"|\"$/g,''));\nif([...dirtyPaths(full.record.dirtyAtEnd),...dirtyPaths(git('status','--short'))].some(p=>!isRecord(p)))throw new Error('Non-record working changes after freeze');\nfor(const revision of [full.record.finalHead,git('rev-parse','HEAD')])if(git('diff','--name-only',checkpoint,revision).split('\\n').filter(Boolean).some(p=>!isRecord(p)))throw new Error('Non-record committed changes after freeze');\nfor(const revision of [source,tests,controls])git('merge-base','--is-ancestor',revision,checkpoint);\nconst base='48a598f45161cccbf39d5945b85e14a9c31b6b6a', throughHead=git('rev-parse','HEAD');\nconst controlPaths=['docs/coordination/MIGRATION_DAG.json','supabase/MIGRATIONS.md','server/release-control-plane.test.ts'];\nconst testPath=p=>p.endsWith('.test.ts')||p.startsWith('supabase/verification/research_assisted_order_quote_provider_journal');\nconst commits=git('rev-list','--reverse',`${base}..${throughHead}`).split('\\n').filter(Boolean).map(commit=>{\n  const paths=git('diff-tree','--no-commit-id','--name-only','-r',commit).split('\\n').filter(Boolean);\n  const kind=paths.every(isRecord)?'records_only':paths.every(p=>controlPaths.includes(p))?'release_controls':paths.every(testPath)?'test_only'\n    :paths.every(p=>!isRecord(p)&&!testPath(p)&&!controlPaths.includes(p))?'runtime_source':'MIXED_REQUIRES_REVIEW';\n  if(kind==='MIXED_REQUIRES_REVIEW')throw new Error('Unclassified mixed commit '+commit);\n  return {sha:commit,kind,subject:git('show','-s','--format=%s',commit),paths};\n});\nconst migration='supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql';\nfor(const [kind,expected] of [['runtime_source',source],['test_only',tests],['release_controls',controls]]){\n  const latest=commits.filter(commit=>commit.kind===kind).at(-1);\n  if(latest?.sha!==expected)throw new Error('Not latest classified '+kind+' tip: '+expected);\n}\nconst dag=json(path.join(root,'docs/coordination/MIGRATION_DAG.json'));\nconst chain=[], visited=new Set();\nfunction visit(id){\n  if(visited.has(id))return;\n  const node=dag.migrations.find(n=>n.id===id);if(!node)throw new Error('Missing migration '+id);\n  for(const parent of node.dependsOn)visit(parent);\n  const sourceSha=node.sourceSha??dag.productionSha, sourcePath=node.sourcePath??node.path;\n  const actual=digest(execFileSync('git',['show',`${sourceSha}:${sourcePath}`],{cwd:root}));\n  if(actual!==node.checksum.value)throw new Error('Prerequisite checksum drift '+id);\n  visited.add(id);chain.push({id,path:node.path,sourceSha,sourcePath,sha256:actual,dependsOn:node.dependsOn,\n    recordedAppliedToProduction:node.appliedToProduction,recordedManagedMigrationId:node.managedMigrationId,managedReobserved:false});\n}\nvisit('research_assisted_order_quote_provider_journal');\nconst receipt={schemaVersion:1,generatedAt:new Date().toISOString(),status:'LOCAL_SOURCE_AND_TEST_EVIDENCE_NOT_RELEASE_OR_CLAUDE_ACCEPTANCE',\n  aggregateStatus:full.record.exitCode===0?'PASS_LOCAL_ONLY':'FAILED_NOT_RELEASE_READY',\n  aggregateFailures:clean(read(full.log)).split('\\n').filter(l=>/^\\s*FAIL\\s/.test(l)).map(l=>l.trim()),\n  branch:git('branch','--show-current'),runtimeSha:source,runtimeTree:git('rev-parse',`${source}^{tree}`),testOnlySha:tests,releaseControlSha:controls,\n  qualificationCheckpoint:checkpoint,qualificationTree:git('rev-parse',`${checkpoint}^{tree}`),\n  node:full.record.node,npm:full.record.npm,officialWindowsX64ArchiveSha256:'be72284c7bc62de07d5a9fd0ae196879842c085f11f7f2b60bf8864c0c9d6a4f',\n  localEvidenceTooling:['run-check.mjs','run-adp01-gates.mjs','collect-adp01-qualification.mjs'].map(name=>({name,sha256:sha(path.join(scratch,name)),source:read(path.join(scratch,name))})),\n  migration:{path:migration,canonicalGitBlobSha256:digest(execFileSync('git',['show',`${source}:${migration}`],{cwd:root})),rawWorktreeSha256:sha(path.join(root,migration)),managedApplied:false},\n  migrationPrerequisites:{chain,limitation:'Repository source checks only. Historical managed labels are not refreshed observations. Synthetic harness role grants are not managed instructions.'},\n  boundary:{productionSource:null,webhookMounted:false,providerExecutionEnabled:false,settlementEnabled:false,refundEnabled:false,historicalPaidAdoption:false,syntheticAuthOnly:true},\n  classification:{base,throughHead,commits,limitation:'Ends at throughHead; this receipt and later canonical handoff are records-only successors reported after push.'},\n  fullSuite:full,jobs,\n  aggregateFreezeEvidence:{cleanStart:true,sourceOrTestWritesPerformedByThisSession:false,endpointAndCommittedDiffsRecordsOnly:true,continuousFilesystemAttestation:false,\n    limitation:'Checks endpoints and committed differences, not an unobserved write-and-revert between observations.'},\n  previousAggregate:{receipt:'server/research/master-offerings/HEALTH_HL11_QUALIFICATION_20261001.json',head:'f634e8630b92818ea494aa96f5f68c921441455b',passed:18894,failed:1,skipped:85,exitCode:1,reclassified:false},\n  limitations:[\n    'Independent Claude acceptance pending. Local synthetic adapter/auth stamps and psql RPC transport do not qualify actual provider authentication, managed PostgREST, hosted JWT or bank provenance.',\n    'No new browser/zoom evidence. Earlier browser records belong to their exact prior candidates.',\n    'All held attempts and authenticated uncertainty remain held; no settlement, external execution, refund, historical adoption or evidence-source activation is implemented by this slice.',\n    'Schema seal is a drift check, not a provider fact or protection against arbitrary database-owner DDL. Managed prerequisite definitions, ACLs, RLS, default privileges and history still require qualification.',\n    'Interrupted-write checks exercise rollback/response-loss boundaries, not physical DB crash recovery at every instruction.',\n    'Runtime snapshots walk node.exe-only ancestry: descendants reached through cmd.exe or another non-Node intermediary can be missed. In particular build snapshots show the runner/npm CLI, not independently observed Vite/tsx children. Process-local pinned PATH is launch configuration, not continuous child attestation.',\n    'Runner and collector source bytes are archived here; earlier scratch-only diagnostic reproduction scripts are not. Their recorded commands, log hashes and exit results remain evidence but are not a portable archived reproduction package.',\n    'Failed, skipped, diagnostic reproductions and timed-out runs remain distinct; focused passes cannot replace the aggregate exit status.',\n    'Protected seam baselines are unchanged. No old hash approval is reused.',\n    'Imagery/media decoupling remain independent and unintegrated; no approved public asset inference.',\n  ],managedMigrationApplied:false,hostedConfigurationChanged:false,productionMutated:false,stagingMutated:false,deployed:false,merged:false,\n  priceRelease:false,accountGrantsCreated:false,realEmailSent:false,realMoneyMoved:false};\nconst out=path.join(root,'server/research/assisted-order/HEALTH_HL12_ADP01_QUALIFICATION_20261001.json');\nfs.writeFileSync(out,JSON.stringify(receipt,null,2)+'\\n');\nconsole.log(JSON.stringify({out,fullSuite:full.counts,exitCode:full.record.exitCode,jobs:jobs.length}));\n"
+    }
+  ],
+  "migration": {
+    "path": "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql",
+    "canonicalGitBlobSha256": "15de2acb72835b520b1e902641e334643c18b7ea0ad9bcb8f6be4dca77668875",
+    "rawWorktreeSha256": "15de2acb72835b520b1e902641e334643c18b7ea0ad9bcb8f6be4dca77668875",
+    "managedApplied": false
+  },
+  "migrationPrerequisites": {
+    "chain": [
+      {
+        "id": "research_assisted_order_bridge",
+        "path": "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
+        "sourceSha": "310ef190fd7136828ee6fcace7ec3bfb7567896f",
+        "sourcePath": "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
+        "sha256": "3e59df2650dedb1d13dbe604c57ae35c0de9e28409c06cd41332b8ae9020d8d7",
+        "dependsOn": [],
+        "recordedAppliedToProduction": true,
+        "recordedManagedMigrationId": "20260819203614",
+        "managedReobserved": false
+      },
+      {
+        "id": "research_assisted_order_quote_payment_guard",
+        "path": "supabase/migrations/20260930191323_research_assisted_order_quote_payment_guard.sql",
+        "sourceSha": "084063ac424a4c2ec55183c004c420aba43a3ba0",
+        "sourcePath": "supabase/migrations/20260930191323_research_assisted_order_quote_payment_guard.sql",
+        "sha256": "4c4a6b1f59667ced8aeffa9571f6017d3eba9ecf62fd555bec122a3ce8e1a014",
+        "dependsOn": [
+          "research_assisted_order_bridge"
+        ],
+        "recordedAppliedToProduction": false,
+        "recordedManagedMigrationId": "PENDING",
+        "managedReobserved": false
+      },
+      {
+        "id": "research_assisted_order_quote_paid_hold",
+        "path": "supabase/migrations/20260930193033_research_assisted_order_quote_paid_hold.sql",
+        "sourceSha": "f318859262812b8fc1fcb6d2c8e697d86a209349",
+        "sourcePath": "supabase/migrations/20260930193033_research_assisted_order_quote_paid_hold.sql",
+        "sha256": "2a4ece6bb76e2e912285ae212331987708b44442a81ed66c91140fcb20376845",
+        "dependsOn": [
+          "research_assisted_order_quote_payment_guard"
+        ],
+        "recordedAppliedToProduction": false,
+        "recordedManagedMigrationId": "PENDING",
+        "managedReobserved": false
+      },
+      {
+        "id": "research_assisted_order_quote_payment_authority",
+        "path": "supabase/migrations/20260930202413_research_assisted_order_quote_payment_authority.sql",
+        "sourceSha": "c92d7a93e7b443cccd949f8903b62db77d425603",
+        "sourcePath": "supabase/migrations/20260930202413_research_assisted_order_quote_payment_authority.sql",
+        "sha256": "f59dc7d285a7c5714ec1a81ec2e0dfb469ef4434da355f15a85ca1e366c5a894",
+        "dependsOn": [
+          "research_assisted_order_quote_paid_hold"
+        ],
+        "recordedAppliedToProduction": false,
+        "recordedManagedMigrationId": "PENDING",
+        "managedReobserved": false
+      },
+      {
+        "id": "research_assisted_order_quote_access_finance_bound",
+        "path": "supabase/migrations/20260930205725_research_assisted_order_quote_access_finance_bound.sql",
+        "sourceSha": "5c8498ce7f4c2333ee75b52cdbb0e76e14f0a925",
+        "sourcePath": "supabase/migrations/20260930205725_research_assisted_order_quote_access_finance_bound.sql",
+        "sha256": "452a94e5acd880a9e02e34681e9844692997d5d7d22802f4efef94b27f30e18f",
+        "dependsOn": [
+          "research_assisted_order_quote_payment_authority"
+        ],
+        "recordedAppliedToProduction": false,
+        "recordedManagedMigrationId": "PENDING",
+        "managedReobserved": false
+      },
+      {
+        "id": "research_assisted_order_quote_evidence_corrections",
+        "path": "supabase/migrations/20260930230541_research_assisted_order_quote_evidence_corrections.sql",
+        "sourceSha": "a46531b5df038ab07a0f0bb2ca51146c5b9952b4",
+        "sourcePath": "supabase/migrations/20260930230541_research_assisted_order_quote_evidence_corrections.sql",
+        "sha256": "434885ea1f61f424f88ac827e8f57775be3ec9dc93c0896ecabd681cf69a0f66",
+        "dependsOn": [
+          "research_assisted_order_quote_access_finance_bound"
+        ],
+        "recordedAppliedToProduction": false,
+        "recordedManagedMigrationId": "PENDING",
+        "managedReobserved": false
+      },
+      {
+        "id": "research_assisted_order_quote_provider_hold",
+        "path": "supabase/migrations/20260930234614_research_assisted_order_quote_provider_hold.sql",
+        "sourceSha": "947f6ee7739bf2a1381b4b29a4f9d132c751d64c",
+        "sourcePath": "supabase/migrations/20260930234614_research_assisted_order_quote_provider_hold.sql",
+        "sha256": "6596f26125c6279717168276fe96132056c9aa3ef150606583fbaf9045c208fe",
+        "dependsOn": [
+          "research_assisted_order_quote_evidence_corrections"
+        ],
+        "recordedAppliedToProduction": false,
+        "recordedManagedMigrationId": "PENDING",
+        "managedReobserved": false
+      },
+      {
+        "id": "research_assisted_order_quote_history_immutability",
+        "path": "supabase/migrations/20261001024018_research_assisted_order_quote_history_immutability.sql",
+        "sourceSha": "915a5354376f0f5e9c850e5fddd2b51be78d2e43",
+        "sourcePath": "supabase/migrations/20261001024018_research_assisted_order_quote_history_immutability.sql",
+        "sha256": "0956316142dd52724729b1653f0d3732b2c45e17074e64ad7f8888582407243f",
+        "dependsOn": [
+          "research_assisted_order_quote_provider_hold"
+        ],
+        "recordedAppliedToProduction": false,
+        "recordedManagedMigrationId": "PENDING",
+        "managedReobserved": false
+      },
+      {
+        "id": "research_assisted_order_quote_audit_store",
+        "path": "supabase/migrations/20261001040349_research_assisted_order_quote_audit_store.sql",
+        "sourceSha": "3562c03f3bd26b4a9ec165c0f17b1f96256abb23",
+        "sourcePath": "supabase/migrations/20261001040349_research_assisted_order_quote_audit_store.sql",
+        "sha256": "a6814b1c8f0cd42b24cc9f3ca17e3950d82811ada75abb8dba698441900457b0",
+        "dependsOn": [
+          "research_assisted_order_bridge"
+        ],
+        "recordedAppliedToProduction": false,
+        "recordedManagedMigrationId": "PENDING",
+        "managedReobserved": false
+      },
+      {
+        "id": "research_assisted_order_quote_effects",
+        "path": "supabase/migrations/20261001040351_research_assisted_order_quote_effects.sql",
+        "sourceSha": "3562c03f3bd26b4a9ec165c0f17b1f96256abb23",
+        "sourcePath": "supabase/migrations/20261001040351_research_assisted_order_quote_effects.sql",
+        "sha256": "8121e537df0f3028b73be5c03b66912b8a04498c8d646aa7f5d1edba4071f743",
+        "dependsOn": [
+          "research_assisted_order_quote_history_immutability",
+          "research_assisted_order_quote_audit_store"
+        ],
+        "recordedAppliedToProduction": false,
+        "recordedManagedMigrationId": "PENDING",
+        "managedReobserved": false
+      },
+      {
+        "id": "research_assisted_order_quote_history_reissue",
+        "path": "supabase/migrations/20261001044200_research_assisted_order_quote_history_reissue.sql",
+        "sourceSha": "3da909542a152552331074176f966f820600e948",
+        "sourcePath": "supabase/migrations/20261001044200_research_assisted_order_quote_history_reissue.sql",
+        "sha256": "4f44f9df4a47148685d015ddf3d492b1d73ee6fea4e9ab674163ea1efb49cc69",
+        "dependsOn": [
+          "research_assisted_order_quote_effects"
+        ],
+        "recordedAppliedToProduction": false,
+        "recordedManagedMigrationId": "PENDING",
+        "managedReobserved": false
+      },
+      {
+        "id": "research_assisted_order_quote_no_funds_disposition",
+        "path": "supabase/migrations/20261001062651_research_assisted_order_quote_no_funds_disposition.sql",
+        "sourceSha": "cb9b8d66a3cec93dd4d9a26fab25ed1d399f9bbb",
+        "sourcePath": "supabase/migrations/20261001062651_research_assisted_order_quote_no_funds_disposition.sql",
+        "sha256": "512799646a0779dcaa88ea036a9920ff2f54c33b48ff831825e9870dcd0b8881",
+        "dependsOn": [
+          "research_assisted_order_quote_history_reissue"
+        ],
+        "recordedAppliedToProduction": false,
+        "recordedManagedMigrationId": "PENDING",
+        "managedReobserved": false
+      },
+      {
+        "id": "research_assisted_order_quote_provider_journal",
+        "path": "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql",
+        "sourceSha": "e9f221c974f45831a7ad1a13bcb2bd6d8198db42",
+        "sourcePath": "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql",
+        "sha256": "15de2acb72835b520b1e902641e334643c18b7ea0ad9bcb8f6be4dca77668875",
+        "dependsOn": [
+          "research_assisted_order_quote_no_funds_disposition"
+        ],
+        "recordedAppliedToProduction": false,
+        "recordedManagedMigrationId": "PENDING",
+        "managedReobserved": false
+      }
+    ],
+    "limitation": "Repository source checks only. Historical managed labels are not refreshed observations. Synthetic harness role grants are not managed instructions."
+  },
+  "boundary": {
+    "productionSource": null,
+    "webhookMounted": false,
+    "providerExecutionEnabled": false,
+    "settlementEnabled": false,
+    "refundEnabled": false,
+    "historicalPaidAdoption": false,
+    "syntheticAuthOnly": true
+  },
+  "classification": {
+    "base": "48a598f45161cccbf39d5945b85e14a9c31b6b6a",
+    "throughHead": "ed56bf2450d34f3dacc92583de266022a756e692",
+    "commits": [
+      {
+        "sha": "7b62d75e604b8285703d03ad7fa6020f4aabda6c",
+        "kind": "records_only",
+        "subject": "docs(health): claim bounded ADP01 provider journal implementation",
+        "paths": [
+          ".xenios/ACTIVE_TASKS.json",
+          ".xenios/CODE_OWNERSHIP.json",
+          ".xenios/PROJECT_STATE.json",
+          ".xenios/RELEASE_STATE.json",
+          ".xenios/SESSION_REGISTRY.json",
+          ".xenios/sessions/codex-xenios-health-launch-implementation-20260930.json"
+        ]
+      },
+      {
+        "sha": "5809b727617e3abe065df69e563374d13f2bcfa8",
+        "kind": "runtime_source",
+        "subject": "feat(health): add held provider journal and serialized financial uncertainty",
+        "paths": [
+          "server/index.ts",
+          "server/research/assisted-order/http.ts",
+          "server/research/assisted-order/payment/provider-journal.ts",
+          "server/research/assisted-order/supabase-repository.ts",
+          "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql"
+        ]
+      },
+      {
+        "sha": "61a9306d053d13556cf8022b47c792a79ebee8b6",
+        "kind": "test_only",
+        "subject": "test(hl12): prove held provider journal roles races and HTTP boundary",
+        "paths": [
+          "server/research/assisted-order/payment/provider-journal.test.ts",
+          "server/research/assisted-order/provider-journal-http.test.ts",
+          "server/research/assisted-order/provider-journal-sql.test.ts",
+          "supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs",
+          "supabase/verification/research_assisted_order_quote_provider_journal_http.ts",
+          "supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+        ]
+      },
+      {
+        "sha": "d1ea06ae89c0b08163e08f4653cc0648b1bd9a96",
+        "kind": "release_controls",
+        "subject": "chore(release): register held provider migration and guarded route census",
+        "paths": [
+          "docs/coordination/MIGRATION_DAG.json",
+          "server/release-control-plane.test.ts",
+          "supabase/MIGRATIONS.md"
+        ]
+      },
+      {
+        "sha": "41d77795fa906c0921e559d3111619ba6c20217c",
+        "kind": "records_only",
+        "subject": "docs(continuity): checkpoint held provider proof and pending isolation audit",
+        "paths": [
+          ".xenios/CODE_OWNERSHIP.json",
+          ".xenios/PROJECT_STATE.json",
+          ".xenios/RELEASE_STATE.json",
+          ".xenios/SESSION_REGISTRY.json",
+          ".xenios/sessions/codex-xenios-health-launch-implementation-20260930.json"
+        ]
+      },
+      {
+        "sha": "91a4e0e7ecae7f1ce83b13824413ea38be271e12",
+        "kind": "runtime_source",
+        "subject": "fix(hl12): refuse stale isolation snapshots before financial authority",
+        "paths": [
+          "server/research/assisted-order/supabase-repository.ts",
+          "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql"
+        ]
+      },
+      {
+        "sha": "ebd081e3af153432d5c4015f277405f253cc7aaa",
+        "kind": "test_only",
+        "subject": "test(hl12): reject stale isolation and preserve financial state",
+        "paths": [
+          "server/research/assisted-order/provider-journal-http.test.ts",
+          "server/research/assisted-order/provider-journal-sql.test.ts",
+          "supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs",
+          "supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+        ]
+      },
+      {
+        "sha": "2e04d5aded27944186640db7e3edac426aaaa316",
+        "kind": "release_controls",
+        "subject": "chore(release): pin isolation-hardened provider migration bytes",
+        "paths": [
+          "docs/coordination/MIGRATION_DAG.json",
+          "server/release-control-plane.test.ts",
+          "supabase/MIGRATIONS.md"
+        ]
+      },
+      {
+        "sha": "00c9df370387620723891e25bf112b5ba1ce1589",
+        "kind": "records_only",
+        "subject": "docs(continuity): preserve isolation defect and successor qualification boundary",
+        "paths": [
+          ".xenios/CODE_OWNERSHIP.json",
+          ".xenios/PROJECT_STATE.json",
+          ".xenios/RELEASE_STATE.json",
+          ".xenios/SESSION_REGISTRY.json",
+          ".xenios/messages/2026-10-01T09-36-30-147Z-codex-xenios-health-launch-implementation-20260930.json",
+          ".xenios/sessions/codex-xenios-health-launch-implementation-20260930.json"
+        ]
+      },
+      {
+        "sha": "938f72f97d6e4539ad25d4a18762ad1afb93bda8",
+        "kind": "release_controls",
+        "subject": "chore(release): record exact provider journal database qualification",
+        "paths": [
+          "docs/coordination/MIGRATION_DAG.json",
+          "supabase/MIGRATIONS.md"
+        ]
+      },
+      {
+        "sha": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "kind": "records_only",
+        "subject": "docs(hl12): checkpoint corrected provider authority and review limits",
+        "paths": [
+          ".xenios/PROJECT_STATE.json",
+          ".xenios/RELEASE_STATE.json",
+          "server/research/assisted-order/HEALTH_HL12_ADP01_HANDOFF_20261001.md"
+        ]
+      },
+      {
+        "sha": "e9f221c974f45831a7ad1a13bcb2bd6d8198db42",
+        "kind": "runtime_source",
+        "subject": "fix(hl12): require isolation-hardened database authority revision",
+        "paths": [
+          "server/research/assisted-order/payment/provider-journal.ts",
+          "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql"
+        ]
+      },
+      {
+        "sha": "9c1fe1eb49ccd956fa715a542e8c235e2b7d3efd",
+        "kind": "test_only",
+        "subject": "test(hl12): refuse genuinely valid obsolete database authority",
+        "paths": [
+          "server/research/assisted-order/payment/provider-journal.test.ts",
+          "server/research/assisted-order/provider-journal-http.test.ts",
+          "server/research/assisted-order/provider-journal-sql.test.ts",
+          "supabase/verification/research_assisted_order_quote_provider_journal_http.ts",
+          "supabase/verification/research_assisted_order_quote_provider_journal_legacy.mjs",
+          "supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+        ]
+      },
+      {
+        "sha": "a59c64d734e3662e254cdcc09b94994df86dda0e",
+        "kind": "release_controls",
+        "subject": "chore(release): pin minimum provider authority revision source",
+        "paths": [
+          "docs/coordination/MIGRATION_DAG.json",
+          "server/release-control-plane.test.ts",
+          "supabase/MIGRATIONS.md"
+        ]
+      },
+      {
+        "sha": "a61ca3f98cef9759586b088989f99212b0082912",
+        "kind": "records_only",
+        "subject": "docs(hl12): freeze minimum-authority successor for qualification",
+        "paths": [
+          ".xenios/CODE_OWNERSHIP.json",
+          ".xenios/PROJECT_STATE.json",
+          ".xenios/RELEASE_STATE.json",
+          ".xenios/SESSION_REGISTRY.json",
+          ".xenios/sessions/codex-xenios-health-launch-implementation-20260930.json",
+          "server/research/assisted-order/HEALTH_HL12_ADP01_HANDOFF_20261001.md"
+        ]
+      },
+      {
+        "sha": "242bb1d1af7172bffa42a14514dd06bd32d385c5",
+        "kind": "records_only",
+        "subject": "docs(coordination): extend serial provider qualification slot",
+        "paths": [
+          ".xenios/messages/2026-10-01T09-54-29-131Z-codex-xenios-health-launch-implementation-20260930.json"
+        ]
+      },
+      {
+        "sha": "82950302a77754f0359ba5e1d31dad8ea677426f",
+        "kind": "release_controls",
+        "subject": "chore(release): record final v2 database qualification",
+        "paths": [
+          "docs/coordination/MIGRATION_DAG.json",
+          "supabase/MIGRATIONS.md"
+        ]
+      },
+      {
+        "sha": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "kind": "records_only",
+        "subject": "docs(hl12): freeze final provider database proof for aggregate",
+        "paths": [
+          ".xenios/PROJECT_STATE.json",
+          ".xenios/RELEASE_STATE.json",
+          "server/research/assisted-order/HEALTH_HL12_ADP01_HANDOFF_20261001.md"
+        ]
+      },
+      {
+        "sha": "ed56bf2450d34f3dacc92583de266022a756e692",
+        "kind": "records_only",
+        "subject": "docs(health): record final ADP01 preflight and evidence limits",
+        "paths": [
+          ".xenios/BLOCKED_EXTERNAL.md",
+          ".xenios/CODE_OWNERSHIP.json",
+          ".xenios/FOUNDER_ACTIONS.md",
+          ".xenios/SESSION_REGISTRY.json",
+          ".xenios/messages/2026-10-01T10-06-53-879Z-codex-xenios-health-launch-implementation-20260930.json",
+          ".xenios/sessions/codex-xenios-health-launch-implementation-20260930.json",
+          "server/research/assisted-order/HEALTH_HL12_ADP01_HANDOFF_20261001.md"
+        ]
+      }
+    ],
+    "limitation": "Ends at throughHead; this receipt and later canonical handoff are records-only successors reported after push."
+  },
+  "fullSuite": {
+    "job": "adp01-full-suite-final",
+    "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-full-suite-final.log",
+    "sha256": "85349107542e98f0bccd577f7d05a4e350858b9d42977ec7a93021727c0f4464",
+    "counts": {
+      "passed": 18998,
+      "failed": 1,
+      "skipped": 85,
+      "filesPassed": 1011,
+      "filesFailed": 1,
+      "filesSkipped": 6,
+      "duration": "1118.25s (transform 35.57s, setup 0ms, import 249.87s, tests 319.26s, environment 278.54s)"
+    },
+    "record": {
+      "startedAt": "2026-10-01T10:05:17.801Z",
+      "head": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+      "tree": "62b42bfd968103e204caddc6617bdcf47e338d34",
+      "dirtyAtStart": "",
+      "node": "v20.19.0",
+      "npm": "10.8.2",
+      "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+      "command": [
+        "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+      "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+      "runnerPid": 29624,
+      "childPid": 33788,
+      "finishedAt": "2026-10-01T10:23:57.413Z",
+      "elapsedMs": 1119612,
+      "exitCode": 1,
+      "signal": null,
+      "logSha256": "85349107542e98f0bccd577f7d05a4e350858b9d42977ec7a93021727c0f4464",
+      "finalHead": "ed56bf2450d34f3dacc92583de266022a756e692",
+      "dirtyAtEnd": "M .xenios/PROJECT_STATE.json\n M .xenios/RELEASE_STATE.json\n M server/research/assisted-order/HEALTH_HL12_ADP01_HANDOFF_20261001.md"
+    },
+    "childRuntimeProvenance": {
+      "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-full-suite-final-provenance.json",
+      "sha256": "552286ae00bd0789adad5140d98d7fcce900cd47ec51e83e9d91e53f3b60c777",
+      "snapshots": [
+        {
+          "observedAt": "2026-10-01T10:05:22.548Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 2700,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:06:18.566Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 2700,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:07:18.493Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 38728,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:08:18.633Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 30888,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:09:18.680Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 10368,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:10:18.664Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 6704,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:11:19.065Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 25892,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:12:18.645Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 24284,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:13:18.694Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 37568,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:14:18.639Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 15824,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:15:18.662Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 38468,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:16:18.670Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 36728,
+              "ParentProcessId": 33788,
+              "ExecutablePath": null
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:17:18.714Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 28372,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:18:18.693Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 35448,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:19:18.728Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33392,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:20:18.745Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 30772,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:21:19.291Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 27624,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:22:18.866Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 18220,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T10:23:19.012Z",
+          "processes": [
+            {
+              "ProcessId": 29624,
+              "ParentProcessId": 29996,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 33788,
+              "ParentProcessId": 29624,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 7884,
+              "ParentProcessId": 33788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        }
+      ]
+    },
+    "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+  },
+  "jobs": [
+    {
+      "job": "adp01-affected-final-v2",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-affected-final-v2.log",
+      "sha256": "691314e379bdb0e98ef24508edaf206c057bb2da7750bfd0fcfdfd6ae8adcd9e",
+      "counts": {
+        "passed": 1065,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 40,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "55.70s (transform 2.49s, setup 0ms, import 9.62s, tests 33.57s, environment 2.68s)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T09:59:37.316Z",
+        "head": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "tree": "62b42bfd968103e204caddc6617bdcf47e338d34",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/assisted-order",
+          "server/research/outbox-hl12-disposition.test.ts",
+          "server/research/outbox-hl12-effects.test.ts",
+          "server/research/master-offerings/early-access-catalog-coverage.test.ts",
+          "client/src/research/assisted-order",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 16108,
+        "childPid": 38120,
+        "finishedAt": "2026-10-01T10:00:34.087Z",
+        "elapsedMs": 56771,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "691314e379bdb0e98ef24508edaf206c057bb2da7750bfd0fcfdfd6ae8adcd9e",
+        "finalHead": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-affected-final-v2-provenance.json",
+        "sha256": "09b11f325aece45598c7d6481e211a5abc3cb8504cda621c8c6d41a713777501",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:59:42.215Z",
+            "processes": [
+              {
+                "ProcessId": 16108,
+                "ParentProcessId": 7844,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 38120,
+                "ParentProcessId": 16108,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 36184,
+                "ParentProcessId": 38120,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33092,
+                "ParentProcessId": 36184,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 34656,
+                "ParentProcessId": 33092,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-affected-final",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-affected-final.log",
+      "sha256": "f10302117f6dbcdaad17b139ff9ffc1fadb99e9d3b5aa2b100bb8e689bee54b4",
+      "counts": {
+        "passed": 1058,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 40,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "94.71s (transform 2.85s, setup 0ms, import 11.09s, tests 51.32s, environment 21.01s)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T09:43:14.140Z",
+        "head": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "tree": "ee5972c9179842a55f300374bab8d4c24ca4841f",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/assisted-order",
+          "server/research/outbox-hl12-disposition.test.ts",
+          "server/research/outbox-hl12-effects.test.ts",
+          "server/research/master-offerings/early-access-catalog-coverage.test.ts",
+          "client/src/research/assisted-order",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 36024,
+        "childPid": 32024,
+        "finishedAt": "2026-10-01T09:44:49.997Z",
+        "elapsedMs": 95857,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "f10302117f6dbcdaad17b139ff9ffc1fadb99e9d3b5aa2b100bb8e689bee54b4",
+        "finalHead": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-affected-final-provenance.json",
+        "sha256": "12fb2a3d5e6d1950eaae670f9e3c160c063be6b5d97d0bd0d41d968c24c117e3",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:43:19.054Z",
+            "processes": [
+              {
+                "ProcessId": 36024,
+                "ParentProcessId": 38512,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 32024,
+                "ParentProcessId": 36024,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 36144,
+                "ParentProcessId": 32024,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:44:15.228Z",
+            "processes": [
+              {
+                "ProcessId": 36024,
+                "ParentProcessId": 38512,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 32024,
+                "ParentProcessId": 36024,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 37508,
+                "ParentProcessId": 32024,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 23580,
+                "ParentProcessId": 37508,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 28960,
+                "ParentProcessId": 23580,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-authority-v2-focused",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-authority-v2-focused.log",
+      "sha256": "81cfdc1f941adcd3239bf243586c7b54af791ca4f371219135fe3c8ec17c532d",
+      "counts": {
+        "passed": 95,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 2,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "1.47s (transform 230ms, setup 0ms, import 692ms, tests 292ms, environment 1ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T09:49:10.791Z",
+        "head": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "tree": "ee5972c9179842a55f300374bab8d4c24ca4841f",
+        "dirtyAtStart": "M server/research/assisted-order/payment/provider-journal.test.ts\n M server/research/assisted-order/payment/provider-journal.ts\n M server/research/assisted-order/provider-journal-http.test.ts\n M supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/assisted-order/payment/provider-journal.test.ts",
+          "server/research/assisted-order/provider-journal-http.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 36320,
+        "childPid": 35868,
+        "finishedAt": "2026-10-01T09:49:13.269Z",
+        "elapsedMs": 2478,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "81cfdc1f941adcd3239bf243586c7b54af791ca4f371219135fe3c8ec17c532d",
+        "finalHead": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "dirtyAtEnd": "M server/research/assisted-order/payment/provider-journal.test.ts\n M server/research/assisted-order/payment/provider-journal.ts\n M server/research/assisted-order/provider-journal-http.test.ts\n M supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-build-final-v2",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-build-final-v2.log",
+      "sha256": "edfc325724783f40423ee1f3dc2c5e86f2deed33c1da5d4bea727db2e4a25818",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T10:01:29.479Z",
+        "head": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "tree": "62b42bfd968103e204caddc6617bdcf47e338d34",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node_modules\\npm\\bin\\npm-cli.js",
+          "run",
+          "build"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 34400,
+        "childPid": 33612,
+        "finishedAt": "2026-10-01T10:01:56.972Z",
+        "elapsedMs": 27493,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "edfc325724783f40423ee1f3dc2c5e86f2deed33c1da5d4bea727db2e4a25818",
+        "finalHead": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-build-final-v2-provenance.json",
+        "sha256": "6681b842cae9e96157ac15eb60b82cd0b88cead88dc3cbe22eddb86e3667b1aa",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T10:01:34.612Z",
+            "processes": [
+              {
+                "ProcessId": 34400,
+                "ParentProcessId": 7844,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33612,
+                "ParentProcessId": 34400,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-build-final",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-build-final.log",
+      "sha256": "5eca23a2ce7b0122bd398335eb53ee64e3cefff80d6f81ac914149530949caa3",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:45:02.027Z",
+        "head": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "tree": "ee5972c9179842a55f300374bab8d4c24ca4841f",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node_modules\\npm\\bin\\npm-cli.js",
+          "run",
+          "build"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 38304,
+        "childPid": 2560,
+        "finishedAt": "2026-10-01T09:45:46.593Z",
+        "elapsedMs": 44566,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "5eca23a2ce7b0122bd398335eb53ee64e3cefff80d6f81ac914149530949caa3",
+        "finalHead": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-build-final-provenance.json",
+        "sha256": "7c6a77bc5f65f068f1dba1cc595f0b47131cd7fb6b760a535d40cf62dffbed26",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:45:07.241Z",
+            "processes": [
+              {
+                "ProcessId": 38304,
+                "ParentProcessId": 38512,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 2560,
+                "ParentProcessId": 38304,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-dag-final-v2",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-dag-final-v2.log",
+      "sha256": "dcf6f91548e42eaf923fee7a2fad253e9d15c9d3950d05a8e6cdd7c083e32612",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T10:01:57.348Z",
+        "head": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "tree": "62b42bfd968103e204caddc6617bdcf47e338d34",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "--import",
+          "tsx",
+          "scripts/acceptance/verify-migration-dag.ts"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 31032,
+        "childPid": 38664,
+        "finishedAt": "2026-10-01T10:02:04.861Z",
+        "elapsedMs": 7513,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "dcf6f91548e42eaf923fee7a2fad253e9d15c9d3950d05a8e6cdd7c083e32612",
+        "finalHead": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-dag-final-v2-provenance.json",
+        "sha256": "a2950d6b7e4eda4fdbf175d6a83cd643f0fe5d2ac6f440e850f8fa969c13fdca",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T10:02:02.356Z",
+            "processes": [
+              {
+                "ProcessId": 31032,
+                "ParentProcessId": 7844,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 38664,
+                "ParentProcessId": 31032,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-dag-final",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-dag-final.log",
+      "sha256": "dcf6f91548e42eaf923fee7a2fad253e9d15c9d3950d05a8e6cdd7c083e32612",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:45:46.966Z",
+        "head": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "tree": "ee5972c9179842a55f300374bab8d4c24ca4841f",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "--import",
+          "tsx",
+          "scripts/acceptance/verify-migration-dag.ts"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 38904,
+        "childPid": 30324,
+        "finishedAt": "2026-10-01T09:45:54.645Z",
+        "elapsedMs": 7679,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "dcf6f91548e42eaf923fee7a2fad253e9d15c9d3950d05a8e6cdd7c083e32612",
+        "finalHead": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-dag-final-provenance.json",
+        "sha256": "ca5053c72c431715e43f91ace31d3a908aea5efd65501667097491d2b44dd2f2",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:45:51.971Z",
+            "processes": [
+              {
+                "ProcessId": 38904,
+                "ParentProcessId": 38512,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 30324,
+                "ParentProcessId": 38904,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-dag-initial",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-dag-initial.log",
+      "sha256": "dcf6f91548e42eaf923fee7a2fad253e9d15c9d3950d05a8e6cdd7c083e32612",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:21:21.516Z",
+        "head": "5809b727617e3abe065df69e563374d13f2bcfa8",
+        "tree": "2fd7051f0dcf384f8e11b145c61ef8292a2dbd0d",
+        "dirtyAtStart": "M docs/coordination/MIGRATION_DAG.json\n M server/release-control-plane.test.ts\n M supabase/MIGRATIONS.md\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? server/research/assisted-order/provider-journal-sql.test.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_http.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "--import",
+          "tsx",
+          "scripts/acceptance/verify-migration-dag.ts"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 23768,
+        "childPid": 25688,
+        "finishedAt": "2026-10-01T09:21:37.865Z",
+        "elapsedMs": 16349,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "dcf6f91548e42eaf923fee7a2fad253e9d15c9d3950d05a8e6cdd7c083e32612",
+        "finalHead": "5809b727617e3abe065df69e563374d13f2bcfa8",
+        "dirtyAtEnd": "M docs/coordination/MIGRATION_DAG.json\n M server/release-control-plane.test.ts\n M supabase/MIGRATIONS.md\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? server/research/assisted-order/provider-journal-sql.test.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_http.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-dag-initial-provenance.json",
+        "sha256": "bdc5df6e1095f8f35f356b75408aa8675e7de570e18ffbc77d8f05ab90e54177",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:21:27.377Z",
+            "processes": [
+              {
+                "ProcessId": 23768,
+                "ParentProcessId": 37896,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 25688,
+                "ParentProcessId": 23768,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-full-suite-final",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-full-suite-final.log",
+      "sha256": "85349107542e98f0bccd577f7d05a4e350858b9d42977ec7a93021727c0f4464",
+      "counts": {
+        "passed": 18998,
+        "failed": 1,
+        "skipped": 85,
+        "filesPassed": 1011,
+        "filesFailed": 1,
+        "filesSkipped": 6,
+        "duration": "1118.25s (transform 35.57s, setup 0ms, import 249.87s, tests 319.26s, environment 278.54s)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T10:05:17.801Z",
+        "head": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "tree": "62b42bfd968103e204caddc6617bdcf47e338d34",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 29624,
+        "childPid": 33788,
+        "finishedAt": "2026-10-01T10:23:57.413Z",
+        "elapsedMs": 1119612,
+        "exitCode": 1,
+        "signal": null,
+        "logSha256": "85349107542e98f0bccd577f7d05a4e350858b9d42977ec7a93021727c0f4464",
+        "finalHead": "ed56bf2450d34f3dacc92583de266022a756e692",
+        "dirtyAtEnd": "M .xenios/PROJECT_STATE.json\n M .xenios/RELEASE_STATE.json\n M server/research/assisted-order/HEALTH_HL12_ADP01_HANDOFF_20261001.md"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-full-suite-final-provenance.json",
+        "sha256": "552286ae00bd0789adad5140d98d7fcce900cd47ec51e83e9d91e53f3b60c777",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T10:05:22.548Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 2700,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:06:18.566Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 2700,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:07:18.493Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 38728,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:08:18.633Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 30888,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:09:18.680Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 10368,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:10:18.664Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 6704,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:11:19.065Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 25892,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:12:18.645Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 24284,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:13:18.694Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 37568,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:14:18.639Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 15824,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:15:18.662Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 38468,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:16:18.670Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 36728,
+                "ParentProcessId": 33788,
+                "ExecutablePath": null
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:17:18.714Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 28372,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:18:18.693Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 35448,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:19:18.728Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33392,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:20:18.745Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 30772,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:21:19.291Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 27624,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:22:18.866Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 18220,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:23:19.012Z",
+            "processes": [
+              {
+                "ProcessId": 29624,
+                "ParentProcessId": 29996,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33788,
+                "ParentProcessId": 29624,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 7884,
+                "ParentProcessId": 33788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-http-isolation-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-http-isolation-run1.log",
+      "sha256": "620e06f9be441f78a025eacd7129d1fc846b11e7e0b80853cc58bf1722ab0a49",
+      "counts": {
+        "passed": 36,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 1,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "1.14s (transform 234ms, setup 0ms, import 689ms, tests 229ms, environment 0ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T09:32:29.061Z",
+        "head": "41d77795fa906c0921e559d3111619ba6c20217c",
+        "tree": "afb80c7455a77be187b4a483e65a3cb32b706c5e",
+        "dirtyAtStart": "M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/supabase-repository.ts\n M supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/assisted-order/provider-journal-http.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 30448,
+        "childPid": 8608,
+        "finishedAt": "2026-10-01T09:32:31.106Z",
+        "elapsedMs": 2045,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "620e06f9be441f78a025eacd7129d1fc846b11e7e0b80853cc58bf1722ab0a49",
+        "finalHead": "41d77795fa906c0921e559d3111619ba6c20217c",
+        "dirtyAtEnd": "M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/supabase-repository.ts\n M supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-http-run1-repro",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-http-run1-repro.log",
+      "sha256": "bcf36b6f2ec3d729b92da8300804c37093454825d7ab16dd2cd842f1f4b531ca",
+      "counts": {
+        "passed": 26,
+        "failed": 3,
+        "skipped": 0,
+        "filesPassed": 0,
+        "filesFailed": 1,
+        "filesSkipped": 0,
+        "duration": "2.12s (transform 292ms, setup 0ms, import 1.50s, tests 294ms, environment 0ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T09:08:08.857Z",
+        "head": "7b62d75e604b8285703d03ad7fa6020f4aabda6c",
+        "tree": "41844e487d4d6d499ba3b3ed11de025ded14fca3",
+        "dirtyAtStart": "M server/index.ts\n M server/research/assisted-order/http.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/assisted-order/provider-journal-http.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 38524,
+        "childPid": 6704,
+        "finishedAt": "2026-10-01T09:08:12.309Z",
+        "elapsedMs": 3452,
+        "exitCode": 1,
+        "signal": null,
+        "logSha256": "bcf36b6f2ec3d729b92da8300804c37093454825d7ab16dd2cd842f1f4b531ca",
+        "finalHead": "7b62d75e604b8285703d03ad7fa6020f4aabda6c",
+        "dirtyAtEnd": "M server/index.ts\n M server/research/assisted-order/http.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-http-run2",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-http-run2.log",
+      "sha256": "855c51de0aed71e5781a10e70f0b4176c5ba6e52297abc0346c301529f79a0ac",
+      "counts": {
+        "passed": 69,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 3,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "2.84s (transform 508ms, setup 0ms, import 1.49s, tests 570ms, environment 0ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T09:08:47.416Z",
+        "head": "7b62d75e604b8285703d03ad7fa6020f4aabda6c",
+        "tree": "41844e487d4d6d499ba3b3ed11de025ded14fca3",
+        "dirtyAtStart": "M server/index.ts\n M server/research/assisted-order/http.ts\n M server/research/assisted-order/supabase-repository.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/assisted-order/provider-journal-http.test.ts",
+          "server/research/assisted-order/member-history-status.test.ts",
+          "server/research/assisted-order/http-e2e.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 36092,
+        "childPid": 4548,
+        "finishedAt": "2026-10-01T09:08:51.146Z",
+        "elapsedMs": 3730,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "855c51de0aed71e5781a10e70f0b4176c5ba6e52297abc0346c301529f79a0ac",
+        "finalHead": "7b62d75e604b8285703d03ad7fa6020f4aabda6c",
+        "dirtyAtEnd": "M server/index.ts\n M server/research/assisted-order/http.ts\n M server/research/assisted-order/supabase-repository.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-http-run3-financial-transition",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-http-run3-financial-transition.log",
+      "sha256": "09952cbfe03c94c4d4615d1a2f85654421938e9699af53fa7d1d304d45223d0d",
+      "counts": {
+        "passed": 32,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 1,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "1.08s (transform 213ms, setup 0ms, import 653ms, tests 206ms, environment 0ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T09:11:21.776Z",
+        "head": "7b62d75e604b8285703d03ad7fa6020f4aabda6c",
+        "tree": "41844e487d4d6d499ba3b3ed11de025ded14fca3",
+        "dirtyAtStart": "M server/index.ts\n M server/research/assisted-order/http.ts\n M server/research/assisted-order/supabase-repository.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/assisted-order/provider-journal-http.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 20724,
+        "childPid": 8052,
+        "finishedAt": "2026-10-01T09:11:23.720Z",
+        "elapsedMs": 1944,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "09952cbfe03c94c4d4615d1a2f85654421938e9699af53fa7d1d304d45223d0d",
+        "finalHead": "7b62d75e604b8285703d03ad7fa6020f4aabda6c",
+        "dirtyAtEnd": "M server/index.ts\n M server/research/assisted-order/http.ts\n M server/research/assisted-order/supabase-repository.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-install-smoke1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-install-smoke1.log",
+      "sha256": "ea15597de1b95c482d91df4748cf71c0bca750c34cab243f9c3375c8197f10d0",
+      "counts": null,
+      "record": null,
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Subordinate log only; no independent runner command/HEAD/exit receipt. Interpret exact content, not inferred aggregate success."
+    },
+    {
+      "job": "adp01-isolation-permanent-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-isolation-permanent-run1.log",
+      "sha256": "fd172e46e9735793d916b777ff93c4a97b1430621f8611e571aca146566879fa",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:34:09.727Z",
+        "head": "41d77795fa906c0921e559d3111619ba6c20217c",
+        "tree": "afb80c7455a77be187b4a483e65a3cb32b706c5e",
+        "dirtyAtStart": "M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/provider-journal-sql.test.ts\n M server/research/assisted-order/supabase-repository.ts\n M supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n M supabase/verification/research_assisted_order_quote_provider_journal_local.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 31952,
+        "childPid": 23004,
+        "finishedAt": "2026-10-01T09:34:50.966Z",
+        "elapsedMs": 41239,
+        "exitCode": 2,
+        "signal": null,
+        "logSha256": "fd172e46e9735793d916b777ff93c4a97b1430621f8611e571aca146566879fa",
+        "finalHead": "91a4e0e7ecae7f1ce83b13824413ea38be271e12",
+        "dirtyAtEnd": "M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/provider-journal-sql.test.ts\n M supabase/verification/research_assisted_order_quote_provider_journal_local.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-isolation-permanent-run1-provenance.json",
+        "sha256": "03bb3c2ed1bcc31c946c4faec043b9c77481f70ac140598f78b13574b0e4ddb8",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:34:15.071Z",
+            "processes": [
+              {
+                "ProcessId": 31952,
+                "ParentProcessId": 33984,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 23004,
+                "ParentProcessId": 31952,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-isolation-permanent-run2",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-isolation-permanent-run2.log",
+      "sha256": "4e1a967dd9cbf0e44424f52f5f1eec3663b1a424b98791b54d5892211488291f",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:35:02.364Z",
+        "head": "91a4e0e7ecae7f1ce83b13824413ea38be271e12",
+        "tree": "4192a6ed5a049f8e9634caa29a3a2cf99accc5ad",
+        "dirtyAtStart": "M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/provider-journal-sql.test.ts\n M supabase/verification/research_assisted_order_quote_provider_journal_local.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 8708,
+        "childPid": 26832,
+        "finishedAt": "2026-10-01T09:35:42.712Z",
+        "elapsedMs": 40348,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "4e1a967dd9cbf0e44424f52f5f1eec3663b1a424b98791b54d5892211488291f",
+        "finalHead": "91a4e0e7ecae7f1ce83b13824413ea38be271e12",
+        "dirtyAtEnd": "M docs/coordination/MIGRATION_DAG.json\n M server/release-control-plane.test.ts\n M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/provider-journal-sql.test.ts\n M supabase/MIGRATIONS.md\n M supabase/verification/research_assisted_order_quote_provider_journal_local.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-isolation-permanent-run2-provenance.json",
+        "sha256": "881877fe7ed6216034f09872cacbe93a7dceb8a252e55dc1a28da4fc6e2947fa",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:35:07.243Z",
+            "processes": [
+              {
+                "ProcessId": 8708,
+                "ParentProcessId": 21336,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 26832,
+                "ParentProcessId": 8708,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-isolation-repro-fixed-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-isolation-repro-fixed-run1.log",
+      "sha256": "e9a467a024ac3fdc72977c8df1fd80eaa72eb588d4e3c02088350b56819730d7",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:33:27.323Z",
+        "head": "41d77795fa906c0921e559d3111619ba6c20217c",
+        "tree": "afb80c7455a77be187b4a483e65a3cb32b706c5e",
+        "dirtyAtStart": "M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/provider-journal-sql.test.ts\n M server/research/assisted-order/supabase-repository.ts\n M supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n M supabase/verification/research_assisted_order_quote_provider_journal_local.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "C:/Users/sboad/.codex/tmp/health-n2-20261001/adp01-isolation-repro.mjs"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 37944,
+        "childPid": 18592,
+        "finishedAt": "2026-10-01T09:34:00.767Z",
+        "elapsedMs": 33444,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "e9a467a024ac3fdc72977c8df1fd80eaa72eb588d4e3c02088350b56819730d7",
+        "finalHead": "41d77795fa906c0921e559d3111619ba6c20217c",
+        "dirtyAtEnd": "M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/provider-journal-sql.test.ts\n M server/research/assisted-order/supabase-repository.ts\n M supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n M supabase/verification/research_assisted_order_quote_provider_journal_local.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-isolation-repro-fixed-run1-provenance.json",
+        "sha256": "6a7f5d00899d3c2bc4c7818f5657cb73ef0c601421706d002008748a3559cd54",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:33:32.450Z",
+            "processes": [
+              {
+                "ProcessId": 37944,
+                "ParentProcessId": 30756,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 18592,
+                "ParentProcessId": 37944,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-isolation-repro-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-isolation-repro-run1.log",
+      "sha256": "9d18ffc2a5088d3bafa91acdd523baa96efe88b12402f7efd205762107781458",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:30:42.269Z",
+        "head": "41d77795fa906c0921e559d3111619ba6c20217c",
+        "tree": "afb80c7455a77be187b4a483e65a3cb32b706c5e",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "C:/Users/sboad/.codex/tmp/health-n2-20261001/adp01-isolation-repro.mjs"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 37908,
+        "childPid": 28244,
+        "finishedAt": "2026-10-01T09:31:11.545Z",
+        "elapsedMs": 29276,
+        "exitCode": 1,
+        "signal": null,
+        "logSha256": "9d18ffc2a5088d3bafa91acdd523baa96efe88b12402f7efd205762107781458",
+        "finalHead": "41d77795fa906c0921e559d3111619ba6c20217c",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-isolation-repro-run1-provenance.json",
+        "sha256": "cd6dbb10a2587111d2abd616d427254209730752380a0cd6c5b677b3049ea52b",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:30:47.094Z",
+            "processes": [
+              {
+                "ProcessId": 37908,
+                "ParentProcessId": 31052,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 28244,
+                "ParentProcessId": 37908,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-legacy-authority-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-legacy-authority-run1.log",
+      "sha256": "16c6ec556052ffc0e46637346c3267981c313f6aa869e18c19117beaf06be4a5",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:50:01.964Z",
+        "head": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "tree": "ee5972c9179842a55f300374bab8d4c24ca4841f",
+        "dirtyAtStart": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M server/research/assisted-order/payment/provider-journal.test.ts\n M server/research/assisted-order/payment/provider-journal.ts\n M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/provider-journal-sql.test.ts\n M supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n M supabase/verification/research_assisted_order_quote_provider_journal_http.ts\n M supabase/verification/research_assisted_order_quote_provider_journal_local.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_legacy.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "supabase/verification/research_assisted_order_quote_provider_journal_legacy.mjs"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 9832,
+        "childPid": 25008,
+        "finishedAt": "2026-10-01T09:50:18.266Z",
+        "elapsedMs": 16302,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "16c6ec556052ffc0e46637346c3267981c313f6aa869e18c19117beaf06be4a5",
+        "finalHead": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "dirtyAtEnd": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M server/research/assisted-order/payment/provider-journal.test.ts\n M server/research/assisted-order/payment/provider-journal.ts\n M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/provider-journal-sql.test.ts\n M supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n M supabase/verification/research_assisted_order_quote_provider_journal_http.ts\n M supabase/verification/research_assisted_order_quote_provider_journal_local.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_legacy.mjs"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-legacy-authority-run1-provenance.json",
+        "sha256": "ccfbd6680a449b49c31c2c3a443361ad46162ac4e1af25746cd9e47987435f0d",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:50:06.666Z",
+            "processes": [
+              {
+                "ProcessId": 9832,
+                "ParentProcessId": 9304,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 25008,
+                "ParentProcessId": 9832,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-normalization-run4",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-normalization-run4.log",
+      "sha256": "67f4940f24e6b5ad15835c7ecf32bd174153c95edc3f3bc96398ee059c7ffee5",
+      "counts": {
+        "passed": 85,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 2,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "1.39s (transform 254ms, setup 0ms, import 769ms, tests 222ms, environment 0ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T09:17:04.163Z",
+        "head": "7b62d75e604b8285703d03ad7fa6020f4aabda6c",
+        "tree": "41844e487d4d6d499ba3b3ed11de025ded14fca3",
+        "dirtyAtStart": "M server/index.ts\n M server/research/assisted-order/http.ts\n M server/research/assisted-order/supabase-repository.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/assisted-order/payment/provider-journal.test.ts",
+          "server/research/assisted-order/provider-journal-http.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 37816,
+        "childPid": 38032,
+        "finishedAt": "2026-10-01T09:17:06.435Z",
+        "elapsedMs": 2272,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "67f4940f24e6b5ad15835c7ecf32bd174153c95edc3f3bc96398ee059c7ffee5",
+        "finalHead": "7b62d75e604b8285703d03ad7fa6020f4aabda6c",
+        "dirtyAtEnd": "M server/index.ts\n M server/research/assisted-order/http.ts\n M server/research/assisted-order/supabase-repository.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-protection-final-v2",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-protection-final-v2.log",
+      "sha256": "9229f3168820eccf325215b8699f188b04531a84c9e644032dfcfaa6d8efe725",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T10:02:08.978Z",
+        "head": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "tree": "62b42bfd968103e204caddc6617bdcf47e338d34",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "scripts/acceptance/verify-core-site-protection.mjs",
+          "48a598f45161cccbf39d5945b85e14a9c31b6b6a",
+          "HEAD"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 38140,
+        "childPid": 11896,
+        "finishedAt": "2026-10-01T10:02:09.387Z",
+        "elapsedMs": 409,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "9229f3168820eccf325215b8699f188b04531a84c9e644032dfcfaa6d8efe725",
+        "finalHead": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-protection-final",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-protection-final.log",
+      "sha256": "c4db38f317fe5713da1094ca98f598b15800208e9c406c2e53458dbcce0c850d",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:45:59.335Z",
+        "head": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "tree": "ee5972c9179842a55f300374bab8d4c24ca4841f",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "scripts/acceptance/verify-core-site-protection.mjs",
+          "48a598f45161cccbf39d5945b85e14a9c31b6b6a",
+          "HEAD"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 37380,
+        "childPid": 32400,
+        "finishedAt": "2026-10-01T09:45:59.823Z",
+        "elapsedMs": 488,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "c4db38f317fe5713da1094ca98f598b15800208e9c406c2e53458dbcce0c850d",
+        "finalHead": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-release-controls-final-v2",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-release-controls-final-v2.log",
+      "sha256": "fde7b15fb4ee12cff826d01e63fb263bd72a389c8152b92c56f6e077c71d71fc",
+      "counts": {
+        "passed": 51,
+        "failed": 0,
+        "skipped": 1,
+        "filesPassed": 1,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "66.90s (transform 313ms, setup 0ms, import 1.34s, tests 65.33s, environment 0ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T10:02:09.786Z",
+        "head": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "tree": "62b42bfd968103e204caddc6617bdcf47e338d34",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/release-control-plane.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 37896,
+        "childPid": 36952,
+        "finishedAt": "2026-10-01T10:03:17.655Z",
+        "elapsedMs": 67869,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "fde7b15fb4ee12cff826d01e63fb263bd72a389c8152b92c56f6e077c71d71fc",
+        "finalHead": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-release-controls-final-v2-provenance.json",
+        "sha256": "2bfd3a05f2322466a8a5f37e474f96a6c8664af208c9daa53ae6c452da7d17ad",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T10:02:14.643Z",
+            "processes": [
+              {
+                "ProcessId": 37896,
+                "ParentProcessId": 7844,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 36952,
+                "ParentProcessId": 37896,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 32976,
+                "ParentProcessId": 36952,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T10:03:10.598Z",
+            "processes": [
+              {
+                "ProcessId": 37896,
+                "ParentProcessId": 7844,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 36952,
+                "ParentProcessId": 37896,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 32976,
+                "ParentProcessId": 36952,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-release-controls-final",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-release-controls-final.log",
+      "sha256": "f01152870c3655ba38538b2af4d56549e9c6591a1d5d8f62e21455a10708ec78",
+      "counts": {
+        "passed": 51,
+        "failed": 0,
+        "skipped": 1,
+        "filesPassed": 1,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "72.30s (transform 619ms, setup 0ms, import 3.87s, tests 67.93s, environment 0ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T09:46:00.319Z",
+        "head": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "tree": "ee5972c9179842a55f300374bab8d4c24ca4841f",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/release-control-plane.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 36984,
+        "childPid": 25940,
+        "finishedAt": "2026-10-01T09:47:13.923Z",
+        "elapsedMs": 73604,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "f01152870c3655ba38538b2af4d56549e9c6591a1d5d8f62e21455a10708ec78",
+        "finalHead": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-release-controls-final-provenance.json",
+        "sha256": "45cd31c1e6acd7891968dc4b06527db115232746a80331cfc254d621507897a1",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:46:05.536Z",
+            "processes": [
+              {
+                "ProcessId": 36984,
+                "ParentProcessId": 38512,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 25940,
+                "ParentProcessId": 36984,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 34416,
+                "ParentProcessId": 25940,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:47:01.258Z",
+            "processes": [
+              {
+                "ProcessId": 36984,
+                "ParentProcessId": 38512,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 25940,
+                "ParentProcessId": 36984,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 34416,
+                "ParentProcessId": 25940,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-routes-final-v2",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-routes-final-v2.log",
+      "sha256": "07b7fa9be42398e61dbfafe5039886cebfc31fc8c7af2027132b4cbf4257455e",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T10:02:05.238Z",
+        "head": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "tree": "62b42bfd968103e204caddc6617bdcf47e338d34",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "--import",
+          "tsx",
+          "scripts/acceptance/verify-route-uniqueness.ts"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 28224,
+        "childPid": 30444,
+        "finishedAt": "2026-10-01T10:02:08.592Z",
+        "elapsedMs": 3354,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "07b7fa9be42398e61dbfafe5039886cebfc31fc8c7af2027132b4cbf4257455e",
+        "finalHead": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-routes-final",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-routes-final.log",
+      "sha256": "07b7fa9be42398e61dbfafe5039886cebfc31fc8c7af2027132b4cbf4257455e",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:45:55.001Z",
+        "head": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "tree": "ee5972c9179842a55f300374bab8d4c24ca4841f",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "--import",
+          "tsx",
+          "scripts/acceptance/verify-route-uniqueness.ts"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 37276,
+        "childPid": 28856,
+        "finishedAt": "2026-10-01T09:45:58.861Z",
+        "elapsedMs": 3860,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "07b7fa9be42398e61dbfafe5039886cebfc31fc8c7af2027132b4cbf4257455e",
+        "finalHead": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-routes-initial",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-routes-initial.log",
+      "sha256": "07b7fa9be42398e61dbfafe5039886cebfc31fc8c7af2027132b4cbf4257455e",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:19:08.426Z",
+        "head": "5809b727617e3abe065df69e563374d13f2bcfa8",
+        "tree": "2fd7051f0dcf384f8e11b145c61ef8292a2dbd0d",
+        "dirtyAtStart": "?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_http.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "--import",
+          "tsx",
+          "scripts/acceptance/verify-route-uniqueness.ts"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 36020,
+        "childPid": 35860,
+        "finishedAt": "2026-10-01T09:19:11.967Z",
+        "elapsedMs": 3541,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "07b7fa9be42398e61dbfafe5039886cebfc31fc8c7af2027132b4cbf4257455e",
+        "finalHead": "5809b727617e3abe065df69e563374d13f2bcfa8",
+        "dirtyAtEnd": "?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? server/research/assisted-order/provider-journal-sql.test.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_http.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-service-initial",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-service-initial.log",
+      "sha256": "8cc7e339a343ed0ab3bbd30980c3f1e63aee0486cf0ed9b49e975a8907587915",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:03:36.138Z",
+        "head": "48a598f45161cccbf39d5945b85e14a9c31b6b6a",
+        "tree": "0b1cd194566a018e8bfe6895dabf36dd32287297",
+        "dirtyAtStart": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M server/index.ts\n M server/research/assisted-order/http.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/assisted-order/payment/provider-journal.test.ts",
+          "--maxWorkers=1",
+          "--minWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 24720,
+        "childPid": 34848,
+        "finishedAt": "2026-10-01T09:03:36.451Z",
+        "elapsedMs": 313,
+        "exitCode": 1,
+        "signal": null,
+        "logSha256": "8cc7e339a343ed0ab3bbd30980c3f1e63aee0486cf0ed9b49e975a8907587915",
+        "finalHead": "48a598f45161cccbf39d5945b85e14a9c31b6b6a",
+        "dirtyAtEnd": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M server/index.ts\n M server/research/assisted-order/http.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-service-run2",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-service-run2.log",
+      "sha256": "43a3c3d791bf3f10de096ce09b2c7b68e720681ebfdb47582eb04eee7e824c95",
+      "counts": {
+        "passed": 40,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 1,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "805ms (transform 253ms, setup 0ms, import 477ms, tests 65ms, environment 0ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T09:03:47.445Z",
+        "head": "48a598f45161cccbf39d5945b85e14a9c31b6b6a",
+        "tree": "0b1cd194566a018e8bfe6895dabf36dd32287297",
+        "dirtyAtStart": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M server/index.ts\n M server/research/assisted-order/http.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/assisted-order/payment/provider-journal.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 10908,
+        "childPid": 36952,
+        "finishedAt": "2026-10-01T09:03:49.833Z",
+        "elapsedMs": 2388,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "43a3c3d791bf3f10de096ce09b2c7b68e720681ebfdb47582eb04eee7e824c95",
+        "finalHead": "48a598f45161cccbf39d5945b85e14a9c31b6b6a",
+        "dirtyAtEnd": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M server/index.ts\n M server/research/assisted-order/http.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-sql-local-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-sql-local-run1.log",
+      "sha256": "7b474c364e1a65ce89fad81e8cd489fb61e9ea9fa3f43313b7ef12b42f9e4221",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:19:11.874Z",
+        "head": "5809b727617e3abe065df69e563374d13f2bcfa8",
+        "tree": "2fd7051f0dcf384f8e11b145c61ef8292a2dbd0d",
+        "dirtyAtStart": "?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? server/research/assisted-order/provider-journal-sql.test.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_http.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 33952,
+        "childPid": 37304,
+        "finishedAt": "2026-10-01T09:22:21.218Z",
+        "elapsedMs": 189344,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "7b474c364e1a65ce89fad81e8cd489fb61e9ea9fa3f43313b7ef12b42f9e4221",
+        "finalHead": "5809b727617e3abe065df69e563374d13f2bcfa8",
+        "dirtyAtEnd": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M docs/coordination/MIGRATION_DAG.json\n M server/release-control-plane.test.ts\n M supabase/MIGRATIONS.md\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? server/research/assisted-order/provider-journal-sql.test.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_http.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-sql-local-run1-provenance.json",
+        "sha256": "a04871b5f47752f3867315abc5d571a375d4f8f4a2cce150df97a72363543885",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:19:16.984Z",
+            "processes": [
+              {
+                "ProcessId": 33952,
+                "ParentProcessId": 37176,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 37304,
+                "ParentProcessId": 33952,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:20:12.607Z",
+            "processes": [
+              {
+                "ProcessId": 33952,
+                "ParentProcessId": 37176,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 37304,
+                "ParentProcessId": 33952,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:21:13.924Z",
+            "processes": [
+              {
+                "ProcessId": 33952,
+                "ParentProcessId": 37176,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 37304,
+                "ParentProcessId": 33952,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 37108,
+                "ParentProcessId": 37304,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:22:14.442Z",
+            "processes": [
+              {
+                "ProcessId": 33952,
+                "ParentProcessId": 37176,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 37304,
+                "ParentProcessId": 33952,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-sql-local-run2",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-sql-local-run2.log",
+      "sha256": "4d31da496917ce4083c319cc9650397e2a132d5d461c318eb560691b6186f8e4",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:37:44.847Z",
+        "head": "00c9df370387620723891e25bf112b5ba1ce1589",
+        "tree": "ec637adc79caca8321175751d7b1ae82a53b79a2",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 32928,
+        "childPid": 38468,
+        "finishedAt": "2026-10-01T09:41:37.828Z",
+        "elapsedMs": 232981,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "4d31da496917ce4083c319cc9650397e2a132d5d461c318eb560691b6186f8e4",
+        "finalHead": "00c9df370387620723891e25bf112b5ba1ce1589",
+        "dirtyAtEnd": "?? server/research/assisted-order/HEALTH_HL12_ADP01_HANDOFF_20261001.md"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-sql-local-run2-provenance.json",
+        "sha256": "2c1702a49d247419b21291003f0bc7c7d02ba365c780227e8d08f0a765284d13",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:37:49.808Z",
+            "processes": [
+              {
+                "ProcessId": 32928,
+                "ParentProcessId": 35444,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 38468,
+                "ParentProcessId": 32928,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31924,
+                "ParentProcessId": 38468,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:38:46.397Z",
+            "processes": [
+              {
+                "ProcessId": 32928,
+                "ParentProcessId": 35444,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 38468,
+                "ParentProcessId": 32928,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:39:45.855Z",
+            "processes": [
+              {
+                "ProcessId": 32928,
+                "ParentProcessId": 35444,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 38468,
+                "ParentProcessId": 32928,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:40:45.638Z",
+            "processes": [
+              {
+                "ProcessId": 32928,
+                "ParentProcessId": 35444,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 38468,
+                "ParentProcessId": 32928,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 30120,
+                "ParentProcessId": 38468,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-sql-local-run3",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-sql-local-run3.log",
+      "sha256": "587ee43fce6a016659e2afd585ccedb244892fb8b6523f5797770af503658e92",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:53:27.372Z",
+        "head": "a61ca3f98cef9759586b088989f99212b0082912",
+        "tree": "3c42b804aa8167193efe00ec74dfcd38dc41b283",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 37988,
+        "childPid": 21232,
+        "finishedAt": "2026-10-01T09:57:35.830Z",
+        "elapsedMs": 248458,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "587ee43fce6a016659e2afd585ccedb244892fb8b6523f5797770af503658e92",
+        "finalHead": "242bb1d1af7172bffa42a14514dd06bd32d385c5",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-sql-local-run3-provenance.json",
+        "sha256": "c7b9926ae50f79358982e17b858977a4334026cdbe884eb821c2660e36f21f3f",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:53:32.266Z",
+            "processes": [
+              {
+                "ProcessId": 37988,
+                "ParentProcessId": 37212,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 21232,
+                "ParentProcessId": 37988,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 2356,
+                "ParentProcessId": 21232,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:54:29.580Z",
+            "processes": [
+              {
+                "ProcessId": 37988,
+                "ParentProcessId": 37212,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 21232,
+                "ParentProcessId": 37988,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:55:28.329Z",
+            "processes": [
+              {
+                "ProcessId": 37988,
+                "ParentProcessId": 37212,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 21232,
+                "ParentProcessId": 37988,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:56:28.170Z",
+            "processes": [
+              {
+                "ProcessId": 37988,
+                "ParentProcessId": 37212,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 21232,
+                "ParentProcessId": 37988,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:57:28.224Z",
+            "processes": [
+              {
+                "ProcessId": 37988,
+                "ParentProcessId": 37212,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 21232,
+                "ParentProcessId": 37988,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-sql-static-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-sql-static-run1.log",
+      "sha256": "a3e57a73baf1ded472684dd34fb0db4a06f2126fefba7e47faa03ef3d670d16a",
+      "counts": {
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 1,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "312ms (transform 52ms, setup 0ms, import 86ms, tests 7ms, environment 0ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T09:23:06.022Z",
+        "head": "5809b727617e3abe065df69e563374d13f2bcfa8",
+        "tree": "2fd7051f0dcf384f8e11b145c61ef8292a2dbd0d",
+        "dirtyAtStart": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M docs/coordination/MIGRATION_DAG.json\n M server/release-control-plane.test.ts\n M supabase/MIGRATIONS.md\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? server/research/assisted-order/provider-journal-sql.test.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_http.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/assisted-order/provider-journal-sql.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 38212,
+        "childPid": 37264,
+        "finishedAt": "2026-10-01T09:23:07.263Z",
+        "elapsedMs": 1241,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "a3e57a73baf1ded472684dd34fb0db4a06f2126fefba7e47faa03ef3d670d16a",
+        "finalHead": "5809b727617e3abe065df69e563374d13f2bcfa8",
+        "dirtyAtEnd": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M docs/coordination/MIGRATION_DAG.json\n M server/release-control-plane.test.ts\n M supabase/MIGRATIONS.md\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? server/research/assisted-order/provider-journal-sql.test.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_http.ts\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-sql-static-run2",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-sql-static-run2.log",
+      "sha256": "24e57ed8ae68bc0f4a350cd9cd30e1e4e4a3ce0fdd152a12f802c0f0295f7aaf",
+      "counts": {
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 1,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "312ms (transform 53ms, setup 0ms, import 102ms, tests 8ms, environment 0ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T09:35:52.563Z",
+        "head": "91a4e0e7ecae7f1ce83b13824413ea38be271e12",
+        "tree": "4192a6ed5a049f8e9634caa29a3a2cf99accc5ad",
+        "dirtyAtStart": "M docs/coordination/MIGRATION_DAG.json\n M server/release-control-plane.test.ts\n M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/provider-journal-sql.test.ts\n M supabase/MIGRATIONS.md\n M supabase/verification/research_assisted_order_quote_provider_journal_local.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/assisted-order/provider-journal-sql.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 18904,
+        "childPid": 34604,
+        "finishedAt": "2026-10-01T09:35:53.791Z",
+        "elapsedMs": 1228,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "24e57ed8ae68bc0f4a350cd9cd30e1e4e4a3ce0fdd152a12f802c0f0295f7aaf",
+        "finalHead": "91a4e0e7ecae7f1ce83b13824413ea38be271e12",
+        "dirtyAtEnd": "M docs/coordination/MIGRATION_DAG.json\n M server/release-control-plane.test.ts\n M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/provider-journal-sql.test.ts\n M supabase/MIGRATIONS.md\n M supabase/verification/research_assisted_order_quote_provider_journal_local.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-sql-static-run3",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-sql-static-run3.log",
+      "sha256": "319ba3dcd68aa7a84ba586f1154740e2647ba74ee96d452d85bbef30873d4ea8",
+      "counts": {
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 1,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "296ms (transform 57ms, setup 0ms, import 88ms, tests 8ms, environment 0ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T09:50:44.779Z",
+        "head": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "tree": "ee5972c9179842a55f300374bab8d4c24ca4841f",
+        "dirtyAtStart": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M server/research/assisted-order/payment/provider-journal.test.ts\n M server/research/assisted-order/payment/provider-journal.ts\n M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/provider-journal-sql.test.ts\n M supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n M supabase/verification/research_assisted_order_quote_provider_journal_http.ts\n M supabase/verification/research_assisted_order_quote_provider_journal_local.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_legacy.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/assisted-order/provider-journal-sql.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 29580,
+        "childPid": 22660,
+        "finishedAt": "2026-10-01T09:50:45.927Z",
+        "elapsedMs": 1148,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "319ba3dcd68aa7a84ba586f1154740e2647ba74ee96d452d85bbef30873d4ea8",
+        "finalHead": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "dirtyAtEnd": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M server/research/assisted-order/payment/provider-journal.test.ts\n M server/research/assisted-order/payment/provider-journal.ts\n M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/provider-journal-sql.test.ts\n M supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n M supabase/verification/research_assisted_order_quote_provider_journal_http.ts\n M supabase/verification/research_assisted_order_quote_provider_journal_local.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_legacy.mjs"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-ts-boundary-run3",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-ts-boundary-run3.log",
+      "sha256": "a7069df31b87d5584d9f16e667d549b380f20a5d2129294358611b92d181a91f",
+      "counts": {
+        "passed": 190,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 5,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "3.02s (transform 372ms, setup 0ms, import 1.28s, tests 525ms, environment 1ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T09:09:43.093Z",
+        "head": "7b62d75e604b8285703d03ad7fa6020f4aabda6c",
+        "tree": "41844e487d4d6d499ba3b3ed11de025ded14fca3",
+        "dirtyAtStart": "M server/index.ts\n M server/research/assisted-order/http.ts\n M server/research/assisted-order/supabase-repository.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/assisted-order/payment/provider-journal.test.ts",
+          "server/research/assisted-order/provider-journal-http.test.ts",
+          "server/research/assisted-order/payment/provider-adapter.test.ts",
+          "server/research/assisted-order/disposition-http.test.ts",
+          "server/research/assisted-order/finance.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 24068,
+        "childPid": 37516,
+        "finishedAt": "2026-10-01T09:09:47.194Z",
+        "elapsedMs": 4101,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "a7069df31b87d5584d9f16e667d549b380f20a5d2129294358611b92d181a91f",
+        "finalHead": "7b62d75e604b8285703d03ad7fa6020f4aabda6c",
+        "dirtyAtEnd": "M server/index.ts\n M server/research/assisted-order/http.ts\n M server/research/assisted-order/supabase-repository.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Short run has no sampled child attestation; recorded launch path is not lifetime process proof."
+    },
+    {
+      "job": "adp01-typecheck-boundary",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-typecheck-boundary.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:15:13.947Z",
+        "head": "7b62d75e604b8285703d03ad7fa6020f4aabda6c",
+        "tree": "41844e487d4d6d499ba3b3ed11de025ded14fca3",
+        "dirtyAtStart": "M server/index.ts\n M server/research/assisted-order/http.ts\n M server/research/assisted-order/supabase-repository.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 36760,
+        "childPid": 29456,
+        "finishedAt": "2026-10-01T09:16:10.993Z",
+        "elapsedMs": 57046,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "finalHead": "7b62d75e604b8285703d03ad7fa6020f4aabda6c",
+        "dirtyAtEnd": "M server/index.ts\n M server/research/assisted-order/http.ts\n M server/research/assisted-order/supabase-repository.ts\n?? server/research/assisted-order/payment/provider-journal.test.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? server/research/assisted-order/provider-journal-http.test.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_local.mjs"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-typecheck-boundary-provenance.json",
+        "sha256": "de31a9dde4dbcd56fcf0c2a3c79bc663f685d5633555356a41ebe786d92448ad",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:15:19.118Z",
+            "processes": [
+              {
+                "ProcessId": 36760,
+                "ParentProcessId": 31524,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 29456,
+                "ParentProcessId": 36760,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-typecheck-final-v2",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-typecheck-final-v2.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T10:00:34.543Z",
+        "head": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "tree": "62b42bfd968103e204caddc6617bdcf47e338d34",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 33380,
+        "childPid": 36688,
+        "finishedAt": "2026-10-01T10:01:28.988Z",
+        "elapsedMs": 54445,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "finalHead": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-typecheck-final-v2-provenance.json",
+        "sha256": "4824b3a3233fb454106fbf1f13dc2983513bc57b09653228cb7450e9461740b6",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T10:00:39.610Z",
+            "processes": [
+              {
+                "ProcessId": 33380,
+                "ParentProcessId": 7844,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 36688,
+                "ParentProcessId": 33380,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-typecheck-final",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-typecheck-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:44:50.479Z",
+        "head": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "tree": "ee5972c9179842a55f300374bab8d4c24ca4841f",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 37276,
+        "childPid": 23880,
+        "finishedAt": "2026-10-01T09:45:01.570Z",
+        "elapsedMs": 11091,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "finalHead": "b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-typecheck-final-provenance.json",
+        "sha256": "75e1910e50282feb5ebda98be3dc64f968686174c414318b99f69697363ca954",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:44:55.576Z",
+            "processes": [
+              {
+                "ProcessId": 37276,
+                "ParentProcessId": 38512,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 23880,
+                "ParentProcessId": 37276,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-typecheck-initial",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-typecheck-initial.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:00:25.900Z",
+        "head": "48a598f45161cccbf39d5945b85e14a9c31b6b6a",
+        "tree": "0b1cd194566a018e8bfe6895dabf36dd32287297",
+        "dirtyAtStart": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M server/index.ts\n M server/research/assisted-order/http.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 34628,
+        "childPid": 32516,
+        "finishedAt": "2026-10-01T09:02:37.133Z",
+        "elapsedMs": 131233,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "finalHead": "48a598f45161cccbf39d5945b85e14a9c31b6b6a",
+        "dirtyAtEnd": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M server/index.ts\n M server/research/assisted-order/http.ts\n?? server/research/assisted-order/payment/provider-journal.ts\n?? supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-typecheck-initial-provenance.json",
+        "sha256": "0ce5815780e4d6983587c4bc0aa3c5b302d318fcdf6e60c5bf5616c3fdc1b173",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:00:32.314Z",
+            "processes": [
+              {
+                "ProcessId": 34628,
+                "ParentProcessId": 11484,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 32516,
+                "ParentProcessId": 34628,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:01:27.376Z",
+            "processes": [
+              {
+                "ProcessId": 34628,
+                "ParentProcessId": 11484,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 32516,
+                "ParentProcessId": 34628,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:02:29.810Z",
+            "processes": [
+              {
+                "ProcessId": 34628,
+                "ParentProcessId": 11484,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 32516,
+                "ParentProcessId": 34628,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    },
+    {
+      "job": "adp01-typecheck-isolation",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-typecheck-isolation.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T09:32:58.608Z",
+        "head": "41d77795fa906c0921e559d3111619ba6c20217c",
+        "tree": "afb80c7455a77be187b4a483e65a3cb32b706c5e",
+        "dirtyAtStart": "M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/supabase-repository.ts\n M supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n?? supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 33108,
+        "childPid": 33372,
+        "finishedAt": "2026-10-01T09:34:23.778Z",
+        "elapsedMs": 85170,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "finalHead": "41d77795fa906c0921e559d3111619ba6c20217c",
+        "dirtyAtEnd": "M server/research/assisted-order/provider-journal-http.test.ts\n M server/research/assisted-order/provider-journal-sql.test.ts\n M server/research/assisted-order/supabase-repository.ts\n M supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql\n M supabase/verification/research_assisted_order_quote_provider_journal_local.mjs\n?? supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\adp01-typecheck-isolation-provenance.json",
+        "sha256": "634518652ba50c807547eb3bad8bb21141a1f53414a22a981d3c86a30218798b",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T09:33:04.319Z",
+            "processes": [
+              {
+                "ProcessId": 33108,
+                "ParentProcessId": 38308,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33372,
+                "ParentProcessId": 33108,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T09:33:59.753Z",
+            "processes": [
+              {
+                "ProcessId": 33108,
+                "ParentProcessId": 38308,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 33372,
+                "ParentProcessId": 33108,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots only, not continuous attestation of every transient child; unavailable executable paths remain explicitly unavailable."
+    }
+  ],
+  "aggregateFreezeEvidence": {
+    "cleanStart": true,
+    "sourceOrTestWritesPerformedByThisSession": false,
+    "endpointAndCommittedDiffsRecordsOnly": true,
+    "continuousFilesystemAttestation": false,
+    "limitation": "Checks endpoints and committed differences, not an unobserved write-and-revert between observations."
+  },
+  "previousAggregate": {
+    "receipt": "server/research/master-offerings/HEALTH_HL11_QUALIFICATION_20261001.json",
+    "head": "f634e8630b92818ea494aa96f5f68c921441455b",
+    "passed": 18894,
+    "failed": 1,
+    "skipped": 85,
+    "exitCode": 1,
+    "reclassified": false
+  },
+  "limitations": [
+    "Independent Claude acceptance pending. Local synthetic adapter/auth stamps and psql RPC transport do not qualify actual provider authentication, managed PostgREST, hosted JWT or bank provenance.",
+    "No new browser/zoom evidence. Earlier browser records belong to their exact prior candidates.",
+    "All held attempts and authenticated uncertainty remain held; no settlement, external execution, refund, historical adoption or evidence-source activation is implemented by this slice.",
+    "Schema seal is a drift check, not a provider fact or protection against arbitrary database-owner DDL. Managed prerequisite definitions, ACLs, RLS, default privileges and history still require qualification.",
+    "Interrupted-write checks exercise rollback/response-loss boundaries, not physical DB crash recovery at every instruction.",
+    "Runtime snapshots walk node.exe-only ancestry: descendants reached through cmd.exe or another non-Node intermediary can be missed. In particular build snapshots show the runner/npm CLI, not independently observed Vite/tsx children. Process-local pinned PATH is launch configuration, not continuous child attestation.",
+    "Runner and collector source bytes are archived here; earlier scratch-only diagnostic reproduction scripts are not. Their recorded commands, log hashes and exit results remain evidence but are not a portable archived reproduction package.",
+    "Failed, skipped, diagnostic reproductions and timed-out runs remain distinct; focused passes cannot replace the aggregate exit status.",
+    "Protected seam baselines are unchanged. No old hash approval is reused.",
+    "Imagery/media decoupling remain independent and unintegrated; no approved public asset inference."
+  ],
+  "managedMigrationApplied": false,
+  "hostedConfigurationChanged": false,
+  "productionMutated": false,
+  "stagingMutated": false,
+  "deployed": false,
+  "merged": false,
+  "priceRelease": false,
+  "accountGrantsCreated": false,
+  "realEmailSent": false,
+  "realMoneyMoved": false
+}
