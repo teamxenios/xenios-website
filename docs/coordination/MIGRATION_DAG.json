@@ -997,6 +997,22 @@
         "evidence": "Final v2 run3 PASS247.813s/exit0 at cleana61ca3f,Node20.19.0/npm10.8.2,disposable no-network PostgreSQL17.11:131core refusals/14actual lock-wait races; isolation8stale+21unsupported cases+RCcontrols,0unsafe; actual valid-old-v1 rejected before writes/no schema adoption;8HTTPgroups/86SQLcalls. Fresh/populated exact reapply and3container cleanups confirmed. LogSHA256587ee43fce6a016659e2afd585ccedb244892fb8b6523f5797770af503658e92. Prior8unsafe exit1,fixturefailure and earlier passes remain separate. No managed/provider-authentication acceptance."
       },
       "notes": "ADP01 held-only foundation. Sources and source-scoped operator grants install empty. Server-created accepted-quote reservations and authenticated-adapter normalized event journal remain held; known or unbound uncertainty fences consequential financial writes. No provider execution, settlement, refund, historical adoption or new verification. Production source remains null; only a disabled admin reservation door is mounted, no webhook. SQL trusts configured server ingress and does not authenticate provider signatures. Schema seal checks definitions and metadata, not money or arbitrary owner DDL; outer exact bytes remain pinned here. Managed apply/activation require independent review and separate exact authorization."
+    },
+    {
+      "id": "research_assisted_order_quote_provider_execution",
+      "path": "supabase/migrations/20261001102904_research_assisted_order_quote_provider_execution.sql",
+      "sourceSha": "27463d764ba01219c67081a3548ffdc3ff7d2b40",
+      "dependsOn": ["research_assisted_order_quote_provider_journal"],
+      "checksum": { "algorithm": "sha256", "value": "5386c62508e5f3ae9a3584c936ece35e04fe13c1fef42f1627e3784327de7035" },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "disable_provider_dispatch_preserve_claims_results_bindings_and_all_financial_holds_then_roll_forward",
+        "procedure": "supabase/MIGRATIONS.md",
+        "evidence": "Timing-corrected local run2 PASS20 SQL groups116 refusals4 lock-wait races23 isolation cases11 HTTP groups108 SQL calls,229.430s,exit0,Node20.19.0/npm10.8.2/PG17.11. First/populated repeat apply and exact no-network container cleanup passed. LogSHA256 a41cb98ea2191e910f09c9765df8c42c940ba0cf36b08924404157072c4c6dc7. Prior run1 pass precedes separately reproduced clock defect; failed clock reproduction, fixture errors and typecheck remain separate. Final checked-in proof additionally strengthens the clock fixture and replica/overload cases; its execution is recorded in the ADP02 handoff, not inferred here."
+      },
+      "notes": "ADP02 held preparation/readback only. Exact final ADP01 v2 predecessor definition required; existing journal v2 contract preserved. New execution capability requires database_budget_monotonic_v1, durable pre-transport claim, immutable initial key/body/replay window and write-once scoped payment/session identities. Empty execution policy/grant tables, production source unconditionally null, no webhook/settlement/refund/uncertainty resolution. Late issued-claim facts survive revocation without granting fresh dispatch. Database clock and actual provider replay/arrival/abort semantics remain operational prerequisites; local synthetic transport is not provider authenticity or exactly-once money proof. All managed activation requires separate exact authority."
     }
   ],
   "invariants": [

@@ -101,6 +101,7 @@ const HL12_PENDING_SOURCE_SHAS = new Map([
   ["supabase/migrations/20261001044200_research_assisted_order_quote_history_reissue.sql", "3da909542a152552331074176f966f820600e948"],
   ["supabase/migrations/20261001062651_research_assisted_order_quote_no_funds_disposition.sql", "cb9b8d66a3cec93dd4d9a26fab25ed1d399f9bbb"],
   ["supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql", "e9f221c974f45831a7ad1a13bcb2bd6d8198db42"],
+  ["supabase/migrations/20261001102904_research_assisted_order_quote_provider_execution.sql", "27463d764ba01219c67081a3548ffdc3ff7d2b40"],
 ]);
 // The Early Access durable-persistence chain (ledger rows 50-53), pending,
 // pinned to the reviewed source commits on claude/f5-ea-durable-persistence.
@@ -2182,9 +2183,10 @@ describe("route uniqueness validator", () => {
     // Five default-off HL-12 finance doors are literal registrations too.
     // The separately default-off N2 no-funds cancellation adds one guarded POST.
     // ADP01 adds one guarded held-reservation POST, with a null production source.
+    // ADP02 adds one distinct guarded prepare/readback POST, also source-null.
     // Measured from the same static graph; no duplicate route is allowed.
-    expect(result.callSites).toBe(451);
-    expect(result.routes).toHaveLength(460);
+    expect(result.callSites).toBe(452);
+    expect(result.routes).toHaveLength(461);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });

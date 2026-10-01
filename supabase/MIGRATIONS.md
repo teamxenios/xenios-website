@@ -594,3 +594,72 @@ Do not drop records, disable uncertainty or replay older financial functions.
 
 Proof: `verification/research_assisted_order_quote_provider_journal_local.mjs`.
 No hosted changes, real email, money, grants or deployment were performed.
+
+## HL-12 ADP02 provider create/recovery, source-only 2026-10-01
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 92 | migrations/20261001102904_research_assisted_order_quote_provider_execution.sql | Durable create ownership, bounded recovery, immutable results and write-once external identity | PENDING; no managed apply |
+
+Source `27463d764ba01219c67081a3548ffdc3ff7d2b40`, canonical Git-blob SHA-256
+`5386c62508e5f3ae9a3584c936ece35e04fe13c1fef42f1627e3784327de7035`.
+Requires the exact final ledger91 definition and complete effective prerequisite
+chain. Prior migrations are unchanged. A self-consistent different ADP01
+definition is not an acceptable predecessor. The new seal detects drift; it
+does not establish external provider authenticity or prevent arbitrary owner DDL.
+
+Five forced-RLS, RPC-only tables preserve create policy, scoped execution grants,
+claims, normalized results and external identity bindings. No configuration or
+operational grant is seeded. Existing journal v2 held capability is preserved;
+execution v1 additionally requires `dispatchTiming: database_budget_monotonic_v1`.
+Actual READ COMMITTED is required, including replay and early-return paths.
+
+Claims derive accepted quote economics and fix the initial create key/body and
+replay deadline. The application commits a claim before transport and holds no
+database transaction open across the call. A database-issued dispatch budget is
+reduced by monotonic elapsed time measured before that claim RPC. An application
+clock behind the database cannot renew the budget. Expired or missing evidence
+is uncertainty, not no funds. Once a provider payment identity is bound, later
+dispatch is retrieval only; payment/session identities cannot be replaced.
+
+Late facts from issued claims are retained after lease/grant/policy revocation.
+Revocation prevents future claims, not recall of an already authorized external
+request. Earlier result replay returns the original observation; current binding
+is a separate context read. Existing global and financial holds remain intact.
+The bound-readback exception cannot create, settle or clear uncertainty.
+
+First corrected local run2 passed 20 SQL groups, 116 refusals, four actual
+lock-wait races, 23 isolation cases and 11 mounted HTTP/service/SQL groups
+(108 calls), plus exact repeat application and no-network PostgreSQL17.11
+cleanup. Node20.19.0/npm10.8.2; exit0,229.430s. Log SHA-256:
+`a41cb98ea2191e910f09c9765df8c42c940ba0cf36b08924404157072c4c6dc7`.
+The prior run1 pass does not cover the subsequent clock defect or correction.
+The original two-failure clock reproduction, a later fixture failure, and a
+failed typecheck remain separate evidence. Final hardened proof and exact
+source/test/control/aggregate results belong to
+`../server/research/assisted-order/HEALTH_HL12_ADP02_HANDOFF_20261001.md`.
+The checked-in driver is
+`verification/research_assisted_order_quote_provider_execution_local.mjs`.
+
+This is not settlement or complete payment authority. Production composition
+supplies a null source regardless of the flag. No provider, webhook, policy,
+execution grant, payment verification, paid transition, refund or real email is
+enabled. Local synthetic actors and normalized adapter objects are not managed
+JWT/PostgREST qualification or independently authenticated money evidence.
+
+Source/adapter revision and per-source policy rotation are not implemented;
+immutable configuration and unique provider/account/mode identity must not be
+bypassed with invented aliases. Database clock discipline and actual provider
+replay, delayed transmission, expired-key and abort semantics require separate
+qualification. Client timing is not an exactly-once external-effect guarantee.
+
+Managed preflight must positively identify the non-production target and hosted
+origin, verify exact bytes/history/effective functions/ACLs/RLS/default grants,
+PostgREST READ COMMITTED and canonical audit/outbox dependencies, then obtain new
+scoped authority before any write. A history version count alone is insufficient.
+Rollback disables dispatch while preserving all claims, results, identities,
+journal facts and holds, followed by reviewed roll-forward. Do not delete
+evidence, disable guards or replay older financial function bodies.
+
+No managed apply, hosted configuration, operational grant, price release,
+real payment, real email, deployment or production mutation was performed.
