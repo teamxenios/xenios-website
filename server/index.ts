@@ -152,6 +152,7 @@ import { AssistedOrderFinanceService } from "./research/assisted-order/finance";
 import { AssistedOrderDispositionService } from "./research/assisted-order/financial-disposition";
 import { resolveDispositionEffectsRecovery } from "./research/assisted-order/disposition-effects";
 import { buildAssistedProviderJournal } from "./research/assisted-order/payment/provider-journal";
+import { buildAssistedProviderExecution } from "./research/assisted-order/payment/provider-execution";
 import type { SupabaseRpcClient as AssistedOrderRpcClient } from "./research/assisted-order/supabase-repository";
 import type { SupabaseStorageClient as AssistedOrderStorageClient } from "./research/assisted-order/supabase-document-store";
 import { requireSupabaseAdmin } from "./routes";
@@ -1051,6 +1052,14 @@ async function composeAssistedOrderBridge(): Promise<
     rpc: supabaseConfigured() ? getSupabaseAdmin() as unknown as AssistedOrderRpcClient : null,
     source: null,
   });
+  // A distinct create authority never inherits permission from a reservation.
+  // No reviewed provider or replay guarantee is configured in production.
+  const assistedProviderExecution = buildAssistedProviderExecution({
+    enabled: process.env.RESEARCH_ASSISTED_ORDER_PROVIDER_EXECUTION_ENABLED === "true" &&
+      assistedOrderComposition.service !== null,
+    rpc: supabaseConfigured() ? getSupabaseAdmin() as unknown as AssistedOrderRpcClient : null,
+    source: null,
+  });
   const assistedOrderRoutes = assistedOrderComposition.service === null
     ? null
     : createAssistedOrderRouteTable<ExpressAssistedOrderRequest>(
@@ -1068,6 +1077,7 @@ async function composeAssistedOrderBridge(): Promise<
     assistedOrderPaymentEffects,
     assistedOrderDispositions,
     assistedProviderJournal,
+    assistedProviderExecution,
   );
   const assistedOrderDoor = (
     method: "GET" | "POST" | "PATCH",
@@ -1126,6 +1136,10 @@ async function composeAssistedOrderBridge(): Promise<
     assistedProviderJournal
       ? assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/provider-attempts")
       : assistedOrderUnavailableDoor("/api/admin/research/assisted-orders/:requestId/provider-attempts", "assisted_order_provider_disabled"));
+  app.post("/api/admin/research/assisted-orders/:requestId/provider-attempts/:attemptId/prepare", requireSupabaseAdmin,
+    assistedProviderExecution
+      ? assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/provider-attempts/:attemptId/prepare")
+      : assistedOrderUnavailableDoor("/api/admin/research/assisted-orders/:requestId/provider-attempts/:attemptId/prepare", "assisted_order_provider_execution_disabled"));
   if (assistedOrderComposition.service) {
     log(
       `assisted order bridge mounted (audit mode: ${assistedOrderComposition.auditMode})`,

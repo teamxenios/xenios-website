@@ -26,6 +26,7 @@ import type { PaymentEffectsRecovery } from "./payment-effects";
 import type { AssistedOrderDispositionService } from "./financial-disposition";
 import { AssistedOrderDispositionEffectsError, type DispositionEffectsRecovery } from "./disposition-effects";
 import type { AssistedProviderJournalService } from "./payment/provider-journal";
+import type { AssistedProviderExecutionService } from "./payment/provider-execution";
 
 export const ASSISTED_ORDER_STATUS_TOKEN_HEADER =
   "x-xenios-order-status-token";
@@ -224,6 +225,7 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
   paymentEffects?: PaymentEffectsRecovery | null,
   disposition?: Readonly<{ service: AssistedOrderDispositionService; effects: DispositionEffectsRecovery }> | null,
   providerJournal?: AssistedProviderJournalService | null,
+  providerExecution?: AssistedProviderExecutionService | null,
 ): readonly AssistedOrderRouteDescriptor[] {
   const viewer = (request: AssistedOrderHttpRequest): Promise<AssistedOrderViewer> =>
     viewerResolver.resolve(request as Request);
@@ -474,6 +476,17 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
       auth: "admin",
       handler: (request) => handle(async () => ok(201, await providerJournal.reserveHeld(
         await viewer(request), request.params.requestId ?? "", request.body,
+      ))),
+    });
+  }
+
+  if (providerExecution) {
+    routes.push({
+      method: "POST",
+      path: "/api/admin/research/assisted-orders/:requestId/provider-attempts/:attemptId/prepare",
+      auth: "admin",
+      handler: (request) => handle(async () => ok(200, await providerExecution.prepare(
+        await viewer(request), request.params.requestId ?? "", request.params.attemptId ?? "", request.body,
       ))),
     });
   }
