@@ -105,8 +105,32 @@ clear holds or amend protection baselines as rollback.
   `1470740bf17a0fbb9a2eeaffe9173712861a17da15d52b5492ca1f28e2c91e6f`;
   it is not the same SQL tested by smoke1. The difference was found by inspection,
   not a claimed reproduced exploit or failing diagnostic run.
+- `adp03-sql-local-run1`: failed, exit 1, 104.360 seconds. The wrong-event
+  fixture selected a private journal table inside a service-role command and
+  received the correct ACL denial (42501), before its intended settlement
+  refusal. The fixture now uses the append RPC's returned journal ID within
+  the same rolled-back transaction. Runtime and permissions were not changed.
+  Two SQL groups completed before failure. Exact disposable cleanup confirmed.
+  Log SHA-256:
+  `f15976e89cd64cdd9df03c6b9c95480f6fc2c9581a5ec4bfda8e3714f8c5f8ab`.
+- `adp03-sql-static-run1`: eight source-contract tests passed, exit 0,
+  0.292 seconds test time. This is not effective PostgreSQL evidence.
+  Log SHA-256:
+  `8531cb8e01aa20c994c2ca99a725d5e646b2e261ad0e132fadb57ae4493b7338`.
 - Final composed SQL, affected checks, typecheck, build and aggregate: pending.
   No passing result is inferred.
+
+Peer inspection found no additional concrete authority defect; it is not
+independent Claude acceptance. Proof limits remain explicit: synthetic admin
+admission and normalized capture facts; local service-role SQL, not managed
+PostgREST/JWT or processor authentication; real lock waits observed through
+`wait_event_type = Lock`, without exact blocker/lock-target telemetry. Reverse
+financial contention cases acquire the parent lock around an already-denied
+competitor; they are not two admissible financial winners. Provider verification
+F4 is composed with real SQL/audit recovery; ordinary supplier-progression
+notification/audit sinks are synthetic no-ops. Partial-graph tests are synthetic
+privileged staged writes plus actual transactional rollback, not an interruption
+inside a live provider call.
 
 ## Unchanged external and release holds
 
