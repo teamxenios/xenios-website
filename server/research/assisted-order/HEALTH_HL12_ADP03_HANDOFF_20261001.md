@@ -6,8 +6,11 @@ No managed action is authorized by this record.
 
 Current source checkpoint: `2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd`.
 Tree: `55c15891b07be438a933d025a7381dd7f90a04e2`.
-Test checkpoint: `1bb6ca0d956fda27a376225ff3652e41fdd832b6`.
-Release controls and final qualification: pending. Do not borrow ADP02's results.
+Final test checkpoint: `c3ab4bdf100fc70765928bfa13c24de5358f0a08` (cumulative
+test-only commits `1bb6ca0`, `2259a2e`, `c3ab4bd`).
+Pending-source control checkpoint: `2d966b59d0af14e5f4d06571d9caa673fcb0c8b5`;
+`applyTwiceVerified` remains false until current complete proof. Final controls
+and qualification remain pending. Do not borrow ADP02's results.
 
 ## Continuity
 
@@ -131,6 +134,28 @@ clear holds or amend protection baselines as rollback.
 - Final composed SQL, affected checks, typecheck, build and aggregate: pending.
   No passing result is inferred.
 
+`adp03-sql-local-run3` failed, exit 1, 224.027 seconds. Thirteen SQL groups
+and 11 HTTP groups / 154 SQL calls completed before the bare link-only insertion
+test received the deferred foreign-key refusal (23503) rather than its expected
+custom completeness refusal. It was rejected, not committed. The test will
+explicitly force the named completeness constraint, instead of depending on
+internal deferred-trigger order. No source change. Exact cleanup confirmed.
+Log SHA-256 `2bb0c36a7c219d836254af58e314e0a0f692482e7dc769a7375dd4e5e82ab001`.
+
+Additional-races-only diagnostics are separate from comprehensive proof:
+
+- `adp03-races-smoke1`: failed, exit 1, 78.643 seconds. The cancellation
+  contention fixture expected the original bridge's 40001, but the effective
+  successor correctly refused with P0001 / `ASSISTED_ORDER_STALE_STATUS`.
+  Its expectation was corrected, not runtime. Cleanup confirmed; log SHA-256
+  `ff673523654f9ee2f533d0fcd5daac5b86de85b14ed47992b5d0a25b99b763c1`.
+- `adp03-races-smoke2`: passed, four groups, 12 actual lock waits, 14 refusals,
+  five rollback boundaries; exit 0, 111.849 seconds proof / 112.451 wrapper.
+  Exact no-network PostgreSQL 17.11 container removed. Log SHA-256
+  `3a5988e1eaa8a48915c9f7dcb3da5f3315d6aab7b1ec4d4e841c15384e4dc6f5`.
+  This privately invoked the committed additional-races module only; it does
+  not qualify the whole main proof, nor does it replace its failed earlier runs.
+
 Peer inspection found no additional concrete authority defect; it is not
 independent Claude acceptance. Proof limits remain explicit: synthetic admin
 admission and normalized capture facts; local service-role SQL, not managed
@@ -154,6 +179,17 @@ Claude acceptance or new P0/P1/P2 census is claimed.
 
 The protection manifest is not edited. New startup bytes need independent
 review and any exact owner amendment; an older approval is not reusable.
+Canonical Git blob hash pairs at source `2f0a975` are:
+
+| Protected seam | Pinned baseline | Current source |
+| --- | --- | --- |
+| `server/index.ts` | `1d6594d6389e2ac67d9af85213854e05387899dfe0102fa577e447565e68c315` | `ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521` |
+| `server/research/index.ts` | `b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070` | `5b9f683b183a095e258908e0e0086888c71b7666b0e384367b1bfde0c4124188` |
+
+The raw CRLF checkout hash for `server/index.ts` is different from its canonical
+Git blob hash. Do not substitute the wrapper's raw-byte hash for this reviewed
+baseline pair. No owner amendment is implied by recording it.
+
 Managed roles, grants, RLS, PostgREST, history, secrets, isolated outbox and
 rollback still need separate exact target qualification and fresh authority.
 
