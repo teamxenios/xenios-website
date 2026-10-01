@@ -3037,6 +3037,85 @@
       "state": "handoff",
       "claimedAt": "2026-09-30T23:40:25.146Z",
       "heartbeatAt": "2026-10-01T00:27:34.068Z"
+    },
+    {
+      "id": "e22e1222-09ce-4787-9cd7-12a2d2bae3c6",
+      "task": "HEALTH-EXACT-PROTECTED-HASH-AMENDMENT-20261001",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+        "docs/phase2/HEALTH_PROTECTED_HASH_APPROVAL_20261001.md"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-10-01T02:38:00.822Z",
+      "heartbeatAt": "2026-10-01T02:55:42.298Z"
+    },
+    {
+      "id": "5d8025fa-a13e-452f-8d66-f542d9631f98",
+      "task": "ASSISTED-ORDER-CONVERSION",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/assisted-order/**",
+        "client/src/research/assisted-order/**",
+        "shared/research/assisted-order/**",
+        "supabase/migrations/*assisted_order_quote*",
+        "supabase/verification/*assisted_order_quote*",
+        "server/research/commerce/persistence/admin-queues-store.ts"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-10-01T02:38:00.902Z",
+      "heartbeatAt": "2026-10-01T02:55:42.298Z"
+    },
+    {
+      "id": "62159736-2e85-41aa-9e56-30446b22340f",
+      "task": "HEALTH-HL12-EVIDENCE-STATUS-COPY-20260930",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/status-recovery/status-copy.ts",
+        "server/research/status-recovery/supabase-store.ts",
+        "server/research/status-recovery/payment-status-copy.test.ts"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-10-01T02:38:00.979Z",
+      "heartbeatAt": "2026-10-01T02:55:42.298Z"
+    },
+    {
+      "id": "d55511fd-3707-470c-841d-68218ac94df0",
+      "task": "ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-10-01T02:38:01.055Z",
+      "heartbeatAt": "2026-10-01T02:55:42.298Z"
+    },
+    {
+      "id": "3c60a5c7-9598-4ce5-a397-a92dad58370e",
+      "task": "ASSISTED-ORDER-HL12-RELEASE-TEST-20260930",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/release-control-plane.test.ts"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-10-01T02:38:01.145Z",
+      "heartbeatAt": "2026-10-01T02:55:42.298Z"
+    },
+    {
+      "id": "a6589918-e293-45ae-919e-6aaf2ff35175",
+      "task": "HEALTH-PROVIDER-NEUTRAL-CONTINUITY-20260930",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        ".xenios/DECISIONS.md",
+        ".xenios/BLOCKED_EXTERNAL.md",
+        ".xenios/FOUNDER_ACTIONS.md"
+      ],
+      "state": "handoff",
+      "claimedAt": "2026-10-01T02:38:01.229Z",
+      "heartbeatAt": "2026-10-01T02:55:42.298Z"
     }
   ],
   "rules": [

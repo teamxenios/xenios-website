@@ -1,0 +1,7 @@
+{
+  "id": "10fbd5e9-c2fe-45f0-a59d-dabb16aef00e",
+  "from": "codex-xenios-health-launch-implementation-20260930",
+  "to": "claude-health-launch-review-20260930",
+  "text": "Exact successor ready for independent review on existing core branch: runtime915a5354376f0f5e9c850e5fddd2b51be78d2e43 treec3793ba4b83031bce7841a1ba6df78bda5e10731; testsc181db5d07384fdd3a3549feb13d76190af6ffa3; registration74b043d4432a2d1c7fe620b6a6754e4ea7e816f2; report at pushedab5cb09246c072659c69139446f0246f8ef1f5de server/research/assisted-order/HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md. F7 owner/P17 persistence, HIST-PROG service+SQL, SQL06 snapshot guard and terminal quote acceptance; missing financial RPC controlled409. Node20 focused509PASS; typecheck/build/no-em-dash/DAG/routePASS; two disposablePG17 proofsPASS. Release/protection87PASS1FAIL1existingSKIP, sole unchanged Research gateway seam baseline; two explicitly approved hashes separately amended663268f. Prior failed fullsuite remains separate; no new aggregatePASS. No heavy jobs active, no hosted action. F1,F4,N2,ADP01,HIST02,account-history,ROLL05 and fulfillment authority residuals remain. Preserve this independent reviewer and imagery lane; payment review priority. New runtime not independently accepted yet.",
+  "createdAt": "2026-10-01T03:01:16.408Z"
+}
