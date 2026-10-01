@@ -50,6 +50,11 @@ fact, verification, source or grant is created. The next resolution slice must
 positively establish independent event/object/order binding and retain original
 history; elapsed time, a note, missing observations or a chosen order cannot do
 that. G2-G4 and refund/void/dispute remain open.
+In these proofs, manual-only means no durable ADP01 reservation; it does not
+prove absence of legacy provider observations. Existing historical inventory
+and reconciliation holds remain required. An internal read-only audit found
+no concrete new safety escape in the seven changed business functions; it is
+not independent Claude acceptance or an additional executed test.
 
 The legacy B2B component correction binds supplier/partner confirmations
 and clipboard output to the exact submitted email, pathway and summary. An
@@ -199,6 +204,30 @@ that review; no fresh zero-defect assertion is made.
 Continue with evidence-backed provider reconciliation shared by G1-G4 and the
 financial-disposition model, preserving the immutable historical ledger. Do not
 hardwire a processor or substitute optional visual work for payment correctness.
+
+The next exact financial slice should first reproduce a reachable remaining
+G1 case: an already bound payment/session exists, but a later valid-scope event
+omits attempt metadata. Both current TS normalization and SQL classification
+retain the object identity while classifying the event unknown_attempt. The
+event remains unbound and therefore holds unrelated same-source attempts.
+Implement an immutable risk-attribution receipt only from a preexisting exact
+same-source payment binding and its durable bound create result. Derive the
+target in SQL, never from an operator-selected request/attempt. Preserve the
+original journal, remove only that row's source-wide effect, and retain a hold
+on its derived target; do not turn attribution into settlement permission.
+Prove missing/conflicting session identity, source/account/mode, actor grants,
+changed replay, interruption, and both real event/settlement lock orders. Truly
+early events before binding need independently verified provider reconciliation,
+not a relaxed identity-conflict check. This paragraph is a next-slice design,
+not implemented authority or a new passing test.
+
+Next public-journey work must use the effective outer App/static composition.
+The support view's generic-response error currently says not recorded although
+the write may have committed before response loss (SupportView.tsx:195,
+account-portal/api.ts:47-54 and routes.ts:164-169). Reproduce that ambiguity,
+retain the draft and real denial/rate-limit distinctions, and correct the copy
+without inventing idempotency. Separately reproduce and scope the measured
+JOURNEY-FRAGMENT-01 fixed-header overlap before any protected source change.
 The imagery lane received the new private5-6 calibration authorization through
 its existing chat; public publication and Batch1 mass rendering are not cleared.
 The existing Claude should review exact successors and retain separate core and
