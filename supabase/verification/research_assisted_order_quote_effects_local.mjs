@@ -103,6 +103,9 @@ try {
   assert.ok(ready,"Disposable PostgreSQL did not become ready");
   process.stdout.write(`Runtime ${process.version}; PostgreSQL ${await psql("show server_version;")}\n`);
   for(const path of predecessors.slice(0,2))await psql(await readFile(path,"utf8"));
+  // PRE80 also inspects the canonical legacy outbox, before financial tables exist.
+  await psql("create schema extensions;create extension pgcrypto with schema extensions;");
+  await psql(await readFile("supabase/research-notification-outbox.sql","utf8"));
   await psql(`begin;${fixture(97,false)}update public.research_assisted_order_requests set status='paid' where id='${request(97)}';commit;`);
   const financialSchemaAbsent=json(await psql(`select json_build_object(
     'quotes',to_regclass('public.research_assisted_order_quotes') is null,
@@ -111,12 +114,21 @@ try {
   assert.ok(Object.values(financialSchemaAbsent).every(value=>value===true));
   const pre80=await psql(await readFile("supabase/verification/research_assisted_order_quote_pre80_preflight.sql","utf8"));
   const pre80Rows=pre80.split(/\r?\n/).filter(Boolean);
-  assert.equal(pre80Rows.length,2);assert.deepEqual(pre80Rows[0].split("|").slice(0,5),["paid","1","0","1","0"]);
+  assert.equal(pre80Rows.length,3);assert.deepEqual(pre80Rows[0].split("|").slice(0,5),["paid","1","0","1","0"]);
   assert.equal(pre80Rows[1],"1");
-  process.stdout.write("PRE80 "+JSON.stringify({aggregate:pre80Rows[0],nonterminalFrozenRows:1,financialSchemaAbsent})+"\n");
+  const notificationCensus=JSON.parse(pre80Rows[2]);
+  assert.deepEqual(notificationCensus,{
+    schemaVersion:"hl12_pre80_notification_census_v1",
+    legacy_paid_notices:0,
+    reserved_verification_keys:0,
+    adoption_required_outbox_rows:0,
+    invalid_status_envelopes:0,
+    delivery_status_counts:{},
+    notification_chain_gate:"CLEAR_COUNTS_ONLY_NOT_AUTHORIZATION",
+  });
+  // Notification counts alone do not clear the original frozen paid-request hold.
+  process.stdout.write("PRE80 "+JSON.stringify({aggregate:pre80Rows[0],nonterminalFrozenRows:1,financialSchemaAbsent,notificationCensus})+"\n");
   for(const path of predecessors.slice(2))await psql(await readFile(path,"utf8"));
-  await psql("create schema extensions;create extension pgcrypto with schema extensions;");
-  await psql(await readFile("supabase/research-notification-outbox.sql","utf8"));
   // Model permissive managed defaults, then require the migrations to revoke.
   await psql(`alter role service_role bypassrls;grant usage on schema public to anon,authenticated,service_role;
     grant select,insert,update,delete,truncate on public.research_notification_outbox,public.research_notification_attempts to service_role;
