@@ -33,7 +33,8 @@ pinned at `3416f8de6a58e9ea0fdf4e1c77bab4421e010df2`:
 - Binding canonical Git-blob SHA-256:
   `587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24`.
 
-The identity delta is418 retained +6 new -2 superseded, producing424. The new
+The identity delta is 420 predecessor - 2 superseded + 6 new = 424, equivalently
+418 retained + 6 new = 424. The new
 source identities are GRP-0421 through GRP-0426. Their identities are generated
 from untouched source fields, not customer-facing rewrites or row offsets.
 The previous417 Product Control pairs become415 active retained pairs and two
@@ -102,6 +103,9 @@ hypothetical publication counts are not active purchase availability.
 Earlier failed runs remain separate: the coverage run's expected timestamp
 literal lacked the original milliseconds, and the initial explicit-root
 reader regression lacked a pinned authority lookup in the selected root.
+The later compatibility reproduction separately failed three cases before
+the revision/scan reader paths supplied the same pinned authority. Those failed
+runs are retained, not combined with the passing reruns.
 Compatibility regressions passed104 tests/eight files. The broader actual
 catalog/assisted-order/client run passed1367 tests with13 conditional skips
 across83 passing files/one skipped, exit0,169.98s. Its application/test source
@@ -126,10 +130,15 @@ Clean checkpoint `fbfa12bfc0c18dd433fc6eafbbab571b298f5f72`, tree
 `80b59f68209ff6f2c2aed0988f315943109c565b`, passed typecheck in 8.607 seconds
 and build in 39.354 seconds. The unchanged no-em-dash gate scanned 1,345 source
 and 225 production-build files with zero forbidden forms. The resource-controlled
-aggregate started at 2026-10-01T08:00:09.322Z on that clean checkpoint using
-one worker and no file parallelism. It is still running at this records update;
-no aggregate pass or count is inferred. Source and tests remain frozen during
-the run. Any intermediate HEAD changes are records only.
+aggregate ran from 2026-10-01T08:00:09.322Z to 08:19:42.263Z on that clean
+checkpoint using one worker and no file parallelism: 18,889 PASS / 5 FAIL /
+85 SKIP, 1,006 passing files / 3 failed / 6 skipped, exit 1, 1,171.51 seconds.
+Four assertions still expected the old catalog census or label-based missing
+rows; the fifth is the unchanged protected-seam baseline assertion. No timeout
+occurred. This failed run is preserved in `HEALTH_HL11_QUALIFICATION_20261001.json`,
+log SHA-256 `a603add1c5c8ffd21b351ce66391a5b167ebbe06efa3056a5ecde4c6f82fc9a0`.
+Source and tests remained frozen during the run; intermediate HEAD changes were
+records only. The census correction and subsequent qualification remain pending.
 
 The binding generator also reproduced and repaired an identity-only schema
 gap: unexpected fields could survive a reviewed input spread. Exact five-field

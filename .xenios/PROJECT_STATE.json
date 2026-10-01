@@ -11,7 +11,7 @@
     "releaseControlSha": "9ce940f6914a957e244dac95ff2b0252550bd2b8",
     "successorScope": "HL11 approved426 source rows to424 canonical/423 customer variants;418 retained identities,6 new unbound,2 superseded;415 retained Product Control pairs and2 archived. Structured raw-ID hold in both projections; no price release or hosted identity changes. Includes prior default-off N2 no-funds slice.",
     "currentHL11Qualification": {
-      "status": "SOURCE_TESTS_PUSHED_FULL_SUITE_RUNNING",
+      "status": "AGGREGATE_FAILED_FOUR_STALE_CENSUS_ASSERTIONS_AND_UNCHANGED_SEAM_GATE",
       "source": "4cba24af1d42ad59fe44856859cc1721846e6df5",
       "tests": "fbfa12bfc0c18dd433fc6eafbbab571b298f5f72",
       "testedHead": "fbfa12bfc0c18dd433fc6eafbbab571b298f5f72",
@@ -24,7 +24,8 @@
       "build": "PASS_CLEAN_fbfa12b_39.354_SECONDS_1345_SOURCE_225_BUILD_ZERO_FORBIDDEN_FORMS",
       "priorFailedBuild": "hl11-build-final at ea452a2 exit1: escaped em-dash input matcher. Narrow exact-ID presentation fix; gate unchanged. Failure preserved separately.",
       "finalDisplayAndCoverage": "35 PASS/3 files,exit0,6.52s",
-      "fullSuite": "RUNNING_ON_CLEAN_fbfa12b_MAX_WORKERS_1_NO_FILE_PARALLELISM_REAL_READER_SOURCE_TESTS_FROZEN",
+      "fullSuite": "18889 PASS/5 FAIL/85 SKIP,1006 passing files/3 failed/6 skipped,exit1,1171.51s. Four stale census assertions plus unchanged seam assertion; no timeouts or source/test writes. Census correction pending.",
+      "finishedAt": "2026-10-01T08:19:42.263Z",
       "independentReview": "PENDING_NOT_CLAUDE_ACCEPTED"
     },
     "currentN2Qualification": {
@@ -83,7 +84,7 @@
     "productionMutated": false,
     "productionReobserved": false
   },
-  "updatedAt": "2026-10-01T08:07:00.000Z",
+  "updatedAt": "2026-10-01T08:20:00.000Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",

@@ -6,9 +6,9 @@
     "runtimeSourceTree": "6395273fc4370b7df713a2b72b019785f547d1fb",
     "testOnlySha": "fbfa12bfc0c18dd433fc6eafbbab571b298f5f72",
     "releaseControlSha": "9ce940f6914a957e244dac95ff2b0252550bd2b8",
-    "currentAggregateStatus": "HL11_RUNNING_CLEAN_fbfa12b_PRIOR_N2_FAILURE_PRESERVED",
+    "currentAggregateStatus": "HL11_FAILED_FOUR_STALE_CENSUS_ASSERTIONS_AND_UNCHANGED_SEAM_GATE",
     "currentHL11Qualification": {
-      "status": "SOURCE_TESTS_PUSHED_FULL_SUITE_RUNNING",
+      "status": "AGGREGATE_FAILED_CENSUS_CORRECTION_PENDING",
       "testedHead": "fbfa12bfc0c18dd433fc6eafbbab571b298f5f72",
       "testedTree": "80b59f68209ff6f2c2aed0988f315943109c565b",
       "startedAt": "2026-10-01T08:00:09.322Z",
@@ -18,7 +18,8 @@
       "typecheck": "PASS_CLEAN_fbfa12b_8.607_SECONDS",
       "build": "PASS_CLEAN_fbfa12b_39.354_SECONDS_1345_SOURCE_225_BUILD_ZERO_FORBIDDEN_FORMS",
       "priorFailedBuild": "hl11-build-final at ea452a2 exit1 retained separately; exact-ID presentation fix passed35 tests without gate changes",
-      "fullSuite": "RUNNING_SINGLE_WORKER_NO_FILE_PARALLELISM_REAL_READER_SOURCE_TESTS_FROZEN",
+      "fullSuite": "18889 PASS/5 FAIL/85 SKIP,exit1,1171.51s. Four stale census assertions plus unchanged seam assertion; no timeouts or source/test writes.",
+      "finishedAt": "2026-10-01T08:19:42.263Z",
       "claudeAccepted": false
     },
     "currentN2Qualification": {
@@ -63,7 +64,7 @@
     "realMoneyMoved": false,
     "releaseAuthority": "Source implementation and disposable local testing only. Provider choice deferred. No hosted authority carried from historical entries below."
   },
-  "updatedAt": "2026-10-01T08:07:00.000Z",
+  "updatedAt": "2026-10-01T08:20:00.000Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",

@@ -1,0 +1,2188 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-01T08:20:04.056Z",
+  "status": "LOCAL_IMPLEMENTATION_WITH_EXPLICIT_REMAINING_GATES_NOT_RELEASE_READY",
+  "branch": "codex/xenios-health-launch-implementation-20260930",
+  "runtimeSha": "4cba24af1d42ad59fe44856859cc1721846e6df5",
+  "runtimeTree": "6395273fc4370b7df713a2b72b019785f547d1fb",
+  "testOnlySha": "fbfa12bfc0c18dd433fc6eafbbab571b298f5f72",
+  "inheritedReleaseControlSha": "9ce940f6914a957e244dac95ff2b0252550bd2b8",
+  "qualificationCheckpoint": "fbfa12bfc0c18dd433fc6eafbbab571b298f5f72",
+  "qualificationTree": "80b59f68209ff6f2c2aed0988f315943109c565b",
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "officialWindowsX64ArchiveSha256": "be72284c7bc62de07d5a9fd0ae196879842c085f11f7f2b60bf8864c0c9d6a4f",
+  "sourceEvidence": {
+    "workbook": "C:/Users/sboad/Downloads/XENIOS_MASTER_CATALOG_AFFILIATE_PRICING_2026-08-16.xlsx",
+    "rawSha256": "6478ad0d3f710b75c6bf0c5f5e56ff1189ab2a2a4439cab23c2a28498134ea6f",
+    "sourceRows": 426,
+    "canonicalVariants": 424,
+    "customerRows": 423,
+    "sourceWorkbookUnmodified": true,
+    "privateIntakeCommitted": false,
+    "retainedIdentities": 418,
+    "addedIdentities": 6,
+    "supersededIdentities": 2
+  },
+  "projection": {
+    "fixtureOnly": true,
+    "displayedNumeric": 173,
+    "careWithheld": 242,
+    "quoteOnly": 2,
+    "unreleasedBindingPending": 6,
+    "retainedAuthorityPrices": 415,
+    "shippingExcludedByStableIdentity": 1,
+    "allCustomerSubmitFingerprintsChecked": 423,
+    "newPriceRowsCreated": 0,
+    "hostedReadBackRefreshed": false
+  },
+  "bindings": {
+    "active": 415,
+    "unbound": 9,
+    "archived": 2,
+    "retainedAuthority": {
+      "mode": "reviewed_predecessor_subset",
+      "predecessorSourceSha": "3416f8de6a58e9ea0fdf4e1c77bab4421e010df2",
+      "predecessorBindingsCanonicalSha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
+      "predecessorDatasetCanonicalSha256": "b8634a5d1c1e02bade42661eeefaa2d8321e76e750178f932d0ae4c8b3178643",
+      "predecessorReconciliationCanonicalSha256": "8ee32f7e15af318c1d52d8e5a077dadbe0b874fc031093b5789d0cbb98d4cd09",
+      "predecessorWorkbookSha256": "1be4f6720675fc6b90c172d52c19d2fb9a8d53f5beab6592ca96c701119c791d",
+      "candidateReconciliationFile": "master-catalog-reconciliation-20260821.json",
+      "candidateReconciliationSha256": "d63eade14720c36547fe07b17f954000cc704094a376f246352757af33597976",
+      "candidateReconciliationHashPolicy": "utf8_crlf_to_lf_source_text",
+      "historicalPairCount": 417,
+      "historicalPairMd5": "062a30f0d3d0a0571e78837b5b92d4f6",
+      "retainedPairCount": 415,
+      "retainedPairMd5": "86fdd019d3153e75920090136579b184",
+      "productionReadBackRefreshed": false,
+      "sourceRows": 426,
+      "canonicalVariants": 424,
+      "retainedIdentities": 418,
+      "newIdentities": 6
+    },
+    "productionReadBack": {
+      "at": "2026-08-15T05:05:00.000Z",
+      "source": "production Supabase project yvzeduaxbwgcwllhywff, research_product_variants where sku like 'GEN-GRP-%', joined product_id; read back after the 11-chunk general Product Control initialization verified 217 products / 417 variants / 417 approved member prices"
+    }
+  },
+  "artifactCanonicalHashes": [
+    {
+      "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+      "sha256": "f2df53646aba339784c09c91f0f1ff21c4817c7e8c84f70a0a5e568563137832"
+    },
+    {
+      "path": "server/research/master-offerings/data/master-offerings-audit.generated.json",
+      "sha256": "efd3894bfeeea884ce59c96fa08d412047713b612df3492ad11cb958cbca4f22"
+    },
+    {
+      "path": "server/research/master-offerings/data/master-offerings-manifest.generated.json",
+      "sha256": "1e1f44137445e6a4b2136d5ece8bf12e0b2558eabfb24869f9ac21cc7caceb10"
+    },
+    {
+      "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+      "sha256": "09bfb1d1cb064218345f4b006d2cc4c72d6cf63017ac8d3e8cd8a3469f1e7829"
+    }
+  ],
+  "classification": {
+    "sourceCommits": [
+      "9c3358b8aecfb91f59629ee99c43d99201fc4a78",
+      "4cba24af1d42ad59fe44856859cc1721846e6df5"
+    ],
+    "testCommits": [
+      "fe306740b146e644ded7fa74767657b07a0c3f68",
+      "fbfa12bfc0c18dd433fc6eafbbab571b298f5f72"
+    ],
+    "source": [
+      "config/research/master-catalog-reconciliation-20260821.json",
+      "scripts/research/build-master-offering-bindings.ts",
+      "scripts/research/build-master-offerings-from-catalog.ts",
+      "scripts/research/verify-master-offerings-dataset.ts",
+      "server/research/assisted-order/production-catalog.ts",
+      "server/research/assisted-order/production-deps.ts",
+      "server/research/master-offerings/action.ts",
+      "server/research/master-offerings/catalog-reconciliation.ts",
+      "server/research/master-offerings/catalog-revision-artifact.ts",
+      "server/research/master-offerings/catalog-revision.ts",
+      "server/research/master-offerings/composition.ts",
+      "server/research/master-offerings/data/master-offering-bindings.generated.json",
+      "server/research/master-offerings/data/master-offerings-audit.generated.json",
+      "server/research/master-offerings/data/master-offerings-manifest.generated.json",
+      "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+      "server/research/master-offerings/dataset-reader.ts",
+      "server/research/master-offerings/normalize-catalog.ts",
+      "server/research/master-offerings/reconciliation-authority.ts",
+      "server/research/master-offerings/reviewed-holds.ts",
+      "shared/research/master-offerings/pathway-authority.ts"
+    ],
+    "tests": [
+      "server/research/assisted-order/production-catalog.test.ts",
+      "server/research/master-offerings/binding-generation.test.ts",
+      "server/research/master-offerings/catalog-reconciliation.test.ts",
+      "server/research/master-offerings/catalog-revision-reconciliation.test.ts",
+      "server/research/master-offerings/dataset-reader.test.ts",
+      "server/research/master-offerings/early-access-catalog-coverage.test.ts",
+      "server/research/master-offerings/normalize-catalog.test.ts",
+      "server/research/master-offerings/order-intake-matrix.test.ts",
+      "server/research/master-offerings/pathway-authority.test.ts",
+      "server/research/master-offerings/production-bindings.test.ts",
+      "server/research/master-offerings/production-loader.test.ts",
+      "server/research/master-offerings/real-catalog-sort-facets.test.ts",
+      "server/research/master-offerings/reconciliation-authority.test.ts",
+      "server/research/master-offerings/reviewed-holds.test.ts",
+      "shared/research/master-offerings/pathway-authority.test.ts"
+    ]
+  },
+  "fullSuite": {
+    "job": "hl11-full-suite-final",
+    "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-full-suite-final.log",
+    "sha256": "a603add1c5c8ffd21b351ce66391a5b167ebbe06efa3056a5ecde4c6f82fc9a0",
+    "counts": {
+      "passed": 18889,
+      "failed": 5,
+      "skipped": 85,
+      "filesPassed": 1006,
+      "filesFailed": 3,
+      "filesSkipped": 6,
+      "duration": "1171.51s (transform 34.24s, setup 0ms, import 264.18s, tests 313.57s, environment 304.27s)"
+    },
+    "record": {
+      "startedAt": "2026-10-01T08:00:09.322Z",
+      "head": "fbfa12bfc0c18dd433fc6eafbbab571b298f5f72",
+      "tree": "80b59f68209ff6f2c2aed0988f315943109c565b",
+      "dirtyAtStart": "",
+      "node": "v20.19.0",
+      "npm": "10.8.2",
+      "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+      "command": [
+        "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--maxWorkers=1",
+        "--no-file-parallelism"
+      ],
+      "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+      "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+      "runnerPid": 25668,
+      "childPid": 31820,
+      "finishedAt": "2026-10-01T08:19:42.263Z",
+      "elapsedMs": 1172941,
+      "exitCode": 1,
+      "signal": null,
+      "logSha256": "a603add1c5c8ffd21b351ce66391a5b167ebbe06efa3056a5ecde4c6f82fc9a0",
+      "finalHead": "8a6f5e7832891df2d357a4c43903443c565f352a",
+      "dirtyAtEnd": "M server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md"
+    },
+    "childRuntimeProvenance": {
+      "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-full-suite-final-provenance.json",
+      "sha256": "a36babfa58e53b1c7a47ba467a73cf1e35486d767fdeba8985105bf9001c75d1",
+      "snapshots": [
+        {
+          "observedAt": "2026-10-01T08:00:14.088Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 9752,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:01:10.079Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 9752,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:02:10.317Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 26212,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:03:10.152Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 36528,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:04:10.149Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 3288,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:05:10.209Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 26008,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:06:10.259Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 35244,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:07:10.386Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 26428,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:08:10.200Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 23416,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:09:10.208Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 37164,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:10:10.220Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 34068,
+              "ParentProcessId": 31820,
+              "ExecutablePath": null
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:11:11.192Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 34436,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:12:10.691Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 36784,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:13:10.299Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 17364,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:14:11.071Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 25752,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:15:10.472Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 23824,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:16:10.348Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 10936,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:17:10.505Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 11948,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:18:10.506Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 10984,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-01T08:19:10.765Z",
+          "processes": [
+            {
+              "ProcessId": 25668,
+              "ParentProcessId": 25788,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 31820,
+              "ParentProcessId": 25668,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 38896,
+              "ParentProcessId": 31820,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        }
+      ]
+    },
+    "provenanceLimit": "Sampled snapshots only; at least one process path was unavailable. Other snapshots attest recorded executables, not every transient process for its complete lifetime."
+  },
+  "aggregateFreezeEvidence": {
+    "sourceOrTestWritesPerformedByThisSession": false,
+    "cleanStart": true,
+    "endpointAndCommittedDiffsRecordsOnly": true,
+    "continuousFilesystemAttestation": false,
+    "limitation": "Clean start, final/current worktree status and committed differences are checked. They do not independently prove absence of an unobserved write-and-revert between samples."
+  },
+  "changesSinceFreeze": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/BLOCKED_EXTERNAL.md",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/PROJECT_STATE.json",
+    ".xenios/RELEASE_STATE.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/messages/2026-10-01T08-00-19-779Z-codex-xenios-health-launch-implementation-20260930.json",
+    ".xenios/sessions/codex-xenios-health-launch-implementation-20260930.json",
+    "server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md"
+  ],
+  "jobs": [
+    {
+      "job": "hl11-affected-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-affected-run1.log",
+      "sha256": "442b9b024c2a980643e1941869c2bc13bf2d5f17d3fbc571c29f645fbb911d94",
+      "counts": {
+        "passed": 1367,
+        "failed": 0,
+        "skipped": 13,
+        "filesPassed": 83,
+        "filesFailed": 0,
+        "filesSkipped": 1,
+        "duration": "169.98s (transform 4.81s, setup 0ms, import 22.28s, tests 95.52s, environment 24.86s)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T07:49:09.692Z",
+        "head": "d58a8611dab9c5bc400153f22d4a9f0da24498db",
+        "tree": "e027f33b634b4a0473df4bb8b063ffa5a7b521d3",
+        "dirtyAtStart": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/catalog-revision-artifact.ts\n M server/research/master-offerings/catalog-revision.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offering-bindings.generated.json\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/order-intake-matrix.test.ts\n M server/research/master-offerings/pathway-authority.test.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/production-loader.test.ts\n M server/research/master-offerings/real-catalog-sort-facets.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/catalog-revision-reconciliation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/master-offerings",
+          "server/research/assisted-order",
+          "client/src/research/assisted-order",
+          "shared/research/master-offerings/pathway-authority.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 2788,
+        "childPid": 31524,
+        "finishedAt": "2026-10-01T07:52:01.293Z",
+        "elapsedMs": 171601,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "442b9b024c2a980643e1941869c2bc13bf2d5f17d3fbc571c29f645fbb911d94",
+        "finalHead": "d58a8611dab9c5bc400153f22d4a9f0da24498db",
+        "dirtyAtEnd": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/catalog-revision-artifact.ts\n M server/research/master-offerings/catalog-revision.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offering-bindings.generated.json\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/order-intake-matrix.test.ts\n M server/research/master-offerings/pathway-authority.test.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/production-loader.test.ts\n M server/research/master-offerings/real-catalog-sort-facets.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/catalog-revision-reconciliation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-affected-run1-provenance.json",
+        "sha256": "a3563a75e4d9b04dfdacb750211c09f6509b30bcee5f51f8220740a554914b4e",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T07:49:15.853Z",
+            "processes": [
+              {
+                "ProcessId": 2788,
+                "ParentProcessId": 32160,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31524,
+                "ParentProcessId": 2788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 30268,
+                "ParentProcessId": 31524,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T07:50:10.657Z",
+            "processes": [
+              {
+                "ProcessId": 2788,
+                "ParentProcessId": 32160,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31524,
+                "ParentProcessId": 2788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 37516,
+                "ParentProcessId": 31524,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 37872,
+                "ParentProcessId": 37516,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 25944,
+                "ParentProcessId": 37872,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T07:51:11.001Z",
+            "processes": [
+              {
+                "ProcessId": 2788,
+                "ParentProcessId": 32160,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31524,
+                "ParentProcessId": 2788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 37948,
+                "ParentProcessId": 31524,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots, not continuous attestation of every transient child for its complete lifetime."
+    },
+    {
+      "job": "hl11-binding-generation-hardening-pass-run2",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-binding-generation-hardening-pass-run2.log",
+      "sha256": "5eb734ceaed78c1e0e76e43100aa586edbf51dc13980ae0c460235dbb90dfef4",
+      "counts": {
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 1,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "1.42s (transform 148ms, setup 0ms, import 321ms, tests 862ms, environment 0ms)"
+      },
+      "record": null,
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Subordinate focused log only: command, tested HEAD, numeric exit status and child-process snapshots were not independently captured in a runner result. Counts are parsed from the log, not inferred aggregate evidence."
+    },
+    {
+      "job": "hl11-binding-generation-hardening-repro-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-binding-generation-hardening-repro-run1.log",
+      "sha256": "2a2d566331a7d50f7433f24c4dfcf69442f4c9e696e98144815897db419c0f95",
+      "counts": {
+        "passed": 7,
+        "failed": 2,
+        "skipped": 0,
+        "filesPassed": 0,
+        "filesFailed": 1,
+        "filesSkipped": 0,
+        "duration": "2.05s (transform 259ms, setup 0ms, import 504ms, tests 1.21s, environment 0ms)"
+      },
+      "record": null,
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Subordinate focused log only: command, tested HEAD, numeric exit status and child-process snapshots were not independently captured in a runner result. Counts are parsed from the log, not inferred aggregate evidence."
+    },
+    {
+      "job": "hl11-binding-generation-real-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-binding-generation-real-run1.log",
+      "sha256": "f2285a7fdb1f38a186f44bac3a72c69c3a484a6586582ae51715648015d6c514",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T07:42:06.804Z",
+        "head": "e1df85eed05c1b9e141759f9d08eb8297be7c726",
+        "tree": "34f4d2555b2e3ae15949ccab15a665277d6f9fe1",
+        "dirtyAtStart": "M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/tsx/dist/cli.mjs",
+          "scripts/research/build-master-offering-bindings.ts",
+          "--retain-reviewed",
+          "--intake",
+          ".local/research/hl11-20261001/private-intake.json",
+          "--candidate-dataset",
+          ".local/research/hl11-20261001/reconciled-generated/member-safe-master-offerings.generated.json",
+          "--predecessor-dataset",
+          ".local/research/hl11-20261001/predecessor-member-safe-master-offerings.generated.json",
+          "--reviewed-bindings",
+          ".local/research/hl11-20261001/predecessor-master-offering-bindings.generated.json",
+          "--predecessor-source-sha",
+          "3416f8de6a58e9ea0fdf4e1c77bab4421e010df2",
+          "--output",
+          ".local/research/hl11-20261001/reconciled-generated"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 31148,
+        "childPid": 34820,
+        "finishedAt": "2026-10-01T07:42:07.760Z",
+        "elapsedMs": 956,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "f2285a7fdb1f38a186f44bac3a72c69c3a484a6586582ae51715648015d6c514",
+        "finalHead": "e1df85eed05c1b9e141759f9d08eb8297be7c726",
+        "dirtyAtEnd": "M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "No independent child-process snapshot was captured for this short run; any recorded executable is the runner/launch command, not a sampled child attestation."
+    },
+    {
+      "job": "hl11-binding-generation-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-binding-generation-run1.log",
+      "sha256": "75e13856a953e548bd9f269761581a059f2126b40135b0a75fd27dc2d1931980",
+      "counts": {
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 1,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "1.20s (transform 143ms, setup 0ms, import 292ms, tests 636ms, environment 0ms)"
+      },
+      "record": null,
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Subordinate focused log only: command, tested HEAD, numeric exit status and child-process snapshots were not independently captured in a runner result. Counts are parsed from the log, not inferred aggregate evidence."
+    },
+    {
+      "job": "hl11-binding-order-tests",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-binding-order-tests.log",
+      "sha256": "d725174424db8d8cc3c5c0452dc2794e84d38ff91bf15e5d01e632c3f060e3ba",
+      "counts": {
+        "passed": 36,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 3,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "8.18s (transform 610ms, setup 0ms, import 1.78s, tests 5.69s, environment 0ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T07:54:34.508Z",
+        "head": "d58a8611dab9c5bc400153f22d4a9f0da24498db",
+        "tree": "e027f33b634b4a0473df4bb8b063ffa5a7b521d3",
+        "dirtyAtStart": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/catalog-revision-artifact.ts\n M server/research/master-offerings/catalog-revision.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offering-bindings.generated.json\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/order-intake-matrix.test.ts\n M server/research/master-offerings/pathway-authority.test.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/production-loader.test.ts\n M server/research/master-offerings/real-catalog-sort-facets.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/catalog-revision-reconciliation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/master-offerings/binding-generation.test.ts",
+          "server/research/master-offerings/production-bindings.test.ts",
+          "server/research/master-offerings/early-access-catalog-coverage.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 6336,
+        "childPid": 17456,
+        "finishedAt": "2026-10-01T07:54:43.725Z",
+        "elapsedMs": 9217,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "d725174424db8d8cc3c5c0452dc2794e84d38ff91bf15e5d01e632c3f060e3ba",
+        "finalHead": "d58a8611dab9c5bc400153f22d4a9f0da24498db",
+        "dirtyAtEnd": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/catalog-revision-artifact.ts\n M server/research/master-offerings/catalog-revision.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offering-bindings.generated.json\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/order-intake-matrix.test.ts\n M server/research/master-offerings/pathway-authority.test.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/production-loader.test.ts\n M server/research/master-offerings/real-catalog-sort-facets.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/catalog-revision-reconciliation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-binding-order-tests-provenance.json",
+        "sha256": "bb833ca67f2549f773e3aacab559c9c628aaeca21bedcad45b4af40307c0403f",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T07:54:39.373Z",
+            "processes": [
+              {
+                "ProcessId": 6336,
+                "ParentProcessId": 33060,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 17456,
+                "ParentProcessId": 6336,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 8780,
+                "ParentProcessId": 17456,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots, not continuous attestation of every transient child for its complete lifetime."
+    },
+    {
+      "job": "hl11-bindings-export-final",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-bindings-export-final.log",
+      "sha256": "f2285a7fdb1f38a186f44bac3a72c69c3a484a6586582ae51715648015d6c514",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T07:49:07.019Z",
+        "head": "d58a8611dab9c5bc400153f22d4a9f0da24498db",
+        "tree": "e027f33b634b4a0473df4bb8b063ffa5a7b521d3",
+        "dirtyAtStart": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/catalog-revision-artifact.ts\n M server/research/master-offerings/catalog-revision.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offering-bindings.generated.json\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/order-intake-matrix.test.ts\n M server/research/master-offerings/pathway-authority.test.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/production-loader.test.ts\n M server/research/master-offerings/real-catalog-sort-facets.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/catalog-revision-reconciliation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/tsx/dist/cli.mjs",
+          "scripts/research/build-master-offering-bindings.ts",
+          "--retain-reviewed",
+          "--intake",
+          ".local/research/hl11-20261001/private-intake.json",
+          "--candidate-dataset",
+          "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+          "--predecessor-dataset",
+          ".local/research/hl11-20261001/predecessor-member-safe-master-offerings.generated.json",
+          "--reviewed-bindings",
+          ".local/research/hl11-20261001/predecessor-master-offering-bindings.generated.json",
+          "--predecessor-source-sha",
+          "3416f8de6a58e9ea0fdf4e1c77bab4421e010df2",
+          "--output",
+          "server/research/master-offerings/data"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 35596,
+        "childPid": 26752,
+        "finishedAt": "2026-10-01T07:49:08.463Z",
+        "elapsedMs": 1444,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "f2285a7fdb1f38a186f44bac3a72c69c3a484a6586582ae51715648015d6c514",
+        "finalHead": "d58a8611dab9c5bc400153f22d4a9f0da24498db",
+        "dirtyAtEnd": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/catalog-revision-artifact.ts\n M server/research/master-offerings/catalog-revision.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offering-bindings.generated.json\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/order-intake-matrix.test.ts\n M server/research/master-offerings/pathway-authority.test.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/production-loader.test.ts\n M server/research/master-offerings/real-catalog-sort-facets.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/catalog-revision-reconciliation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "No independent child-process snapshot was captured for this short run; any recorded executable is the runner/launch command, not a sampled child attestation."
+    },
+    {
+      "job": "hl11-bindings-export-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-bindings-export-run1.log",
+      "sha256": "f2285a7fdb1f38a186f44bac3a72c69c3a484a6586582ae51715648015d6c514",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T07:42:25.060Z",
+        "head": "e1df85eed05c1b9e141759f9d08eb8297be7c726",
+        "tree": "34f4d2555b2e3ae15949ccab15a665277d6f9fe1",
+        "dirtyAtStart": "M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/tsx/dist/cli.mjs",
+          "scripts/research/build-master-offering-bindings.ts",
+          "--retain-reviewed",
+          "--intake",
+          ".local/research/hl11-20261001/private-intake.json",
+          "--candidate-dataset",
+          "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+          "--predecessor-dataset",
+          ".local/research/hl11-20261001/predecessor-member-safe-master-offerings.generated.json",
+          "--reviewed-bindings",
+          ".local/research/hl11-20261001/predecessor-master-offering-bindings.generated.json",
+          "--predecessor-source-sha",
+          "3416f8de6a58e9ea0fdf4e1c77bab4421e010df2",
+          "--output",
+          "server/research/master-offerings/data"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 21840,
+        "childPid": 20824,
+        "finishedAt": "2026-10-01T07:42:25.943Z",
+        "elapsedMs": 883,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "f2285a7fdb1f38a186f44bac3a72c69c3a484a6586582ae51715648015d6c514",
+        "finalHead": "e1df85eed05c1b9e141759f9d08eb8297be7c726",
+        "dirtyAtEnd": "M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offering-bindings.generated.json\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "No independent child-process snapshot was captured for this short run; any recorded executable is the runner/launch command, not a sampled child attestation."
+    },
+    {
+      "job": "hl11-bindings-order-export",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-bindings-order-export.log",
+      "sha256": "f2285a7fdb1f38a186f44bac3a72c69c3a484a6586582ae51715648015d6c514",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T07:54:33.062Z",
+        "head": "d58a8611dab9c5bc400153f22d4a9f0da24498db",
+        "tree": "e027f33b634b4a0473df4bb8b063ffa5a7b521d3",
+        "dirtyAtStart": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/catalog-revision-artifact.ts\n M server/research/master-offerings/catalog-revision.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offering-bindings.generated.json\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/order-intake-matrix.test.ts\n M server/research/master-offerings/pathway-authority.test.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/production-loader.test.ts\n M server/research/master-offerings/real-catalog-sort-facets.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/catalog-revision-reconciliation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/tsx/dist/cli.mjs",
+          "scripts/research/build-master-offering-bindings.ts",
+          "--retain-reviewed",
+          "--intake",
+          ".local/research/hl11-20261001/private-intake.json",
+          "--candidate-dataset",
+          "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+          "--predecessor-dataset",
+          ".local/research/hl11-20261001/predecessor-member-safe-master-offerings.generated.json",
+          "--reviewed-bindings",
+          ".local/research/hl11-20261001/predecessor-master-offering-bindings.generated.json",
+          "--predecessor-source-sha",
+          "3416f8de6a58e9ea0fdf4e1c77bab4421e010df2",
+          "--output",
+          "server/research/master-offerings/data"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 16744,
+        "childPid": 37144,
+        "finishedAt": "2026-10-01T07:54:34.116Z",
+        "elapsedMs": 1054,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "f2285a7fdb1f38a186f44bac3a72c69c3a484a6586582ae51715648015d6c514",
+        "finalHead": "d58a8611dab9c5bc400153f22d4a9f0da24498db",
+        "dirtyAtEnd": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/catalog-revision-artifact.ts\n M server/research/master-offerings/catalog-revision.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offering-bindings.generated.json\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/order-intake-matrix.test.ts\n M server/research/master-offerings/pathway-authority.test.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/production-loader.test.ts\n M server/research/master-offerings/real-catalog-sort-facets.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/catalog-revision-reconciliation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "No independent child-process snapshot was captured for this short run; any recorded executable is the runner/launch command, not a sampled child attestation."
+    },
+    {
+      "job": "hl11-build-final",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-build-final.log",
+      "sha256": "0643703249fa9de8eee77823f0168c4451de5364dbf1eda5f0e82628a014979f",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T07:57:21.408Z",
+        "head": "ea452a2d15a479b45a1abc359eafbbcc82217ce8",
+        "tree": "b7c7d492ab5c8176d49222d907f1f6d1c134b7e0",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "build"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 30800,
+        "childPid": 10360,
+        "finishedAt": "2026-10-01T07:57:32.571Z",
+        "elapsedMs": 11163,
+        "exitCode": 1,
+        "signal": null,
+        "logSha256": "0643703249fa9de8eee77823f0168c4451de5364dbf1eda5f0e82628a014979f",
+        "finalHead": "ea452a2d15a479b45a1abc359eafbbcc82217ce8",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-build-final-provenance.json",
+        "sha256": "7b3065a878f0832c9ffc485a72ba098a5e946415bd1a6d556a0553a308a2eca4",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T07:57:27.606Z",
+            "processes": [
+              {
+                "ProcessId": 30800,
+                "ParentProcessId": 37312,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 10360,
+                "ParentProcessId": 30800,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots, not continuous attestation of every transient child for its complete lifetime."
+    },
+    {
+      "job": "hl11-build-fixed",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-build-fixed.log",
+      "sha256": "f01ebd1bd4c9b85ba14c1b37086f0f8433eb69012ee20b2d6e65b9de234ee631",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T07:58:58.614Z",
+        "head": "fbfa12bfc0c18dd433fc6eafbbab571b298f5f72",
+        "tree": "80b59f68209ff6f2c2aed0988f315943109c565b",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "build"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 19800,
+        "childPid": 24980,
+        "finishedAt": "2026-10-01T07:59:37.968Z",
+        "elapsedMs": 39354,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "f01ebd1bd4c9b85ba14c1b37086f0f8433eb69012ee20b2d6e65b9de234ee631",
+        "finalHead": "fbfa12bfc0c18dd433fc6eafbbab571b298f5f72",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-build-fixed-provenance.json",
+        "sha256": "a1b489c95e75e34f8efca878c8a650646a5d6d7e47b1264b13fe6777233c3156",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T07:59:03.841Z",
+            "processes": [
+              {
+                "ProcessId": 19800,
+                "ParentProcessId": 4440,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 24980,
+                "ParentProcessId": 19800,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots, not continuous attestation of every transient child for its complete lifetime."
+    },
+    {
+      "job": "hl11-catalog-export-final",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-catalog-export-final.log",
+      "sha256": "2da8e10141522f263e91a5d1a469f3b1b04109e931210463f0b9f055c0af84b3",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T07:49:05.075Z",
+        "head": "d58a8611dab9c5bc400153f22d4a9f0da24498db",
+        "tree": "e027f33b634b4a0473df4bb8b063ffa5a7b521d3",
+        "dirtyAtStart": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/catalog-revision-artifact.ts\n M server/research/master-offerings/catalog-revision.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offering-bindings.generated.json\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/order-intake-matrix.test.ts\n M server/research/master-offerings/pathway-authority.test.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/production-loader.test.ts\n M server/research/master-offerings/real-catalog-sort-facets.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/catalog-revision-reconciliation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/tsx/dist/cli.mjs",
+          "scripts/research/build-master-offerings-from-catalog.ts",
+          ".local/research/hl11-20261001/private-intake.json",
+          "server/research/master-offerings/data"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 38244,
+        "childPid": 6500,
+        "finishedAt": "2026-10-01T07:49:06.597Z",
+        "elapsedMs": 1522,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "2da8e10141522f263e91a5d1a469f3b1b04109e931210463f0b9f055c0af84b3",
+        "finalHead": "d58a8611dab9c5bc400153f22d4a9f0da24498db",
+        "dirtyAtEnd": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/catalog-revision-artifact.ts\n M server/research/master-offerings/catalog-revision.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offering-bindings.generated.json\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/order-intake-matrix.test.ts\n M server/research/master-offerings/pathway-authority.test.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/production-loader.test.ts\n M server/research/master-offerings/real-catalog-sort-facets.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/catalog-revision-reconciliation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "No independent child-process snapshot was captured for this short run; any recorded executable is the runner/launch command, not a sampled child attestation."
+    },
+    {
+      "job": "hl11-catalog-export-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-catalog-export-run1.log",
+      "sha256": "2da8e10141522f263e91a5d1a469f3b1b04109e931210463f0b9f055c0af84b3",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T07:42:23.996Z",
+        "head": "e1df85eed05c1b9e141759f9d08eb8297be7c726",
+        "tree": "34f4d2555b2e3ae15949ccab15a665277d6f9fe1",
+        "dirtyAtStart": "M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/tsx/dist/cli.mjs",
+          "scripts/research/build-master-offerings-from-catalog.ts",
+          ".local/research/hl11-20261001/private-intake.json",
+          "server/research/master-offerings/data"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 31756,
+        "childPid": 37796,
+        "finishedAt": "2026-10-01T07:42:24.734Z",
+        "elapsedMs": 738,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "2da8e10141522f263e91a5d1a469f3b1b04109e931210463f0b9f055c0af84b3",
+        "finalHead": "e1df85eed05c1b9e141759f9d08eb8297be7c726",
+        "dirtyAtEnd": "M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "No independent child-process snapshot was captured for this short run; any recorded executable is the runner/launch command, not a sampled child attestation."
+    },
+    {
+      "job": "hl11-catalog-generation-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-catalog-generation-run1.log",
+      "sha256": "0e07cf5f49a687eaf0133c086ab42ea70188d7585a74c9d5942933b16db4d872",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T07:39:21.317Z",
+        "head": "3416f8de6a58e9ea0fdf4e1c77bab4421e010df2",
+        "tree": "6d9e8fc66ef523a01e103d012b38d38a9133b9de",
+        "dirtyAtStart": "M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offerings-from-catalog.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/tsx/dist/cli.mjs",
+          "scripts/research/build-master-offerings-from-catalog.ts",
+          ".local/research/hl11-20261001/private-intake.json",
+          ".local/research/hl11-20261001/reconciled-generated"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 23116,
+        "childPid": 9356,
+        "finishedAt": "2026-10-01T07:39:22.572Z",
+        "elapsedMs": 1255,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "0e07cf5f49a687eaf0133c086ab42ea70188d7585a74c9d5942933b16db4d872",
+        "finalHead": "3416f8de6a58e9ea0fdf4e1c77bab4421e010df2",
+        "dirtyAtEnd": "M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offerings-from-catalog.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "No independent child-process snapshot was captured for this short run; any recorded executable is the runner/launch command, not a sampled child attestation."
+    },
+    {
+      "job": "hl11-catalog-reader-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-catalog-reader-run1.log",
+      "sha256": "80089e7b71a2f28e9a53a37d08d6aa4b48edcfce4ce19e762f68beb6ebd6b42e",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T07:39:23.250Z",
+        "head": "3416f8de6a58e9ea0fdf4e1c77bab4421e010df2",
+        "tree": "6d9e8fc66ef523a01e103d012b38d38a9133b9de",
+        "dirtyAtStart": "M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/tsx/dist/cli.mjs",
+          "scripts/research/verify-master-offerings-dataset.ts",
+          ".local/research/hl11-20261001/reconciled-generated/member-safe-master-offerings.generated.json",
+          "424",
+          "424"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 28480,
+        "childPid": 30364,
+        "finishedAt": "2026-10-01T07:39:24.790Z",
+        "elapsedMs": 1540,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "80089e7b71a2f28e9a53a37d08d6aa4b48edcfce4ce19e762f68beb6ebd6b42e",
+        "finalHead": "3416f8de6a58e9ea0fdf4e1c77bab4421e010df2",
+        "dirtyAtEnd": "M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "No independent child-process snapshot was captured for this short run; any recorded executable is the runner/launch command, not a sampled child attestation."
+    },
+    {
+      "job": "hl11-coverage-six-files-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-coverage-six-files-run1.log",
+      "sha256": "2ab8d18165f6558eda14ab41d4185db882fae5cbb2e92bf77a5dda5aa54ae236",
+      "counts": {
+        "passed": 86,
+        "failed": 1,
+        "skipped": 1,
+        "filesPassed": 5,
+        "filesFailed": 1,
+        "filesSkipped": 0,
+        "duration": "7.59s (transform 585ms, setup 0ms, import 1.74s, tests 4.57s, environment 1ms)"
+      },
+      "record": null,
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Subordinate focused log only: command, tested HEAD, numeric exit status and child-process snapshots were not independently captured in a runner result. Counts are parsed from the log, not inferred aggregate evidence."
+    },
+    {
+      "job": "hl11-coverage-six-files-run2",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-coverage-six-files-run2.log",
+      "sha256": "5d3aaada209950c9c7edea6ea06052549cad524af54f987adc084e9a68f66738",
+      "counts": {
+        "passed": 87,
+        "failed": 0,
+        "skipped": 1,
+        "filesPassed": 6,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "13.83s (transform 1.10s, setup 0ms, import 3.41s, tests 7.52s, environment 1ms)"
+      },
+      "record": null,
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "Subordinate focused log only: command, tested HEAD, numeric exit status and child-process snapshots were not independently captured in a runner result. Counts are parsed from the log, not inferred aggregate evidence."
+    },
+    {
+      "job": "hl11-display-fix-tests",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-display-fix-tests.log",
+      "sha256": "60a5227dce624688b616d9aba91c435a30452ba470d33197dae5a144db06894f",
+      "counts": {
+        "passed": 35,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 3,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "6.52s (transform 537ms, setup 0ms, import 1.42s, tests 4.48s, environment 0ms)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T07:58:21.644Z",
+        "head": "ea452a2d15a479b45a1abc359eafbbcc82217ce8",
+        "tree": "b7c7d492ab5c8176d49222d907f1f6d1c134b7e0",
+        "dirtyAtStart": "M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "server/research/master-offerings/normalize-catalog.test.ts",
+          "server/research/master-offerings/binding-generation.test.ts",
+          "server/research/master-offerings/early-access-catalog-coverage.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 38672,
+        "childPid": 31092,
+        "finishedAt": "2026-10-01T07:58:29.043Z",
+        "elapsedMs": 7399,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "60a5227dce624688b616d9aba91c435a30452ba470d33197dae5a144db06894f",
+        "finalHead": "ea452a2d15a479b45a1abc359eafbbcc82217ce8",
+        "dirtyAtEnd": "M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-display-fix-tests-provenance.json",
+        "sha256": "9eeeb098117b52c969d66a1cfceeafb56655cf7702d35c3f1aee2bdd84b0dfe3",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T07:58:26.344Z",
+            "processes": [
+              {
+                "ProcessId": 38672,
+                "ParentProcessId": 22456,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31092,
+                "ParentProcessId": 38672,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 34096,
+                "ParentProcessId": 31092,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots, not continuous attestation of every transient child for its complete lifetime."
+    },
+    {
+      "job": "hl11-full-suite-final",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-full-suite-final.log",
+      "sha256": "a603add1c5c8ffd21b351ce66391a5b167ebbe06efa3056a5ecde4c6f82fc9a0",
+      "counts": {
+        "passed": 18889,
+        "failed": 5,
+        "skipped": 85,
+        "filesPassed": 1006,
+        "filesFailed": 3,
+        "filesSkipped": 6,
+        "duration": "1171.51s (transform 34.24s, setup 0ms, import 264.18s, tests 313.57s, environment 304.27s)"
+      },
+      "record": {
+        "startedAt": "2026-10-01T08:00:09.322Z",
+        "head": "fbfa12bfc0c18dd433fc6eafbbab571b298f5f72",
+        "tree": "80b59f68209ff6f2c2aed0988f315943109c565b",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 25668,
+        "childPid": 31820,
+        "finishedAt": "2026-10-01T08:19:42.263Z",
+        "elapsedMs": 1172941,
+        "exitCode": 1,
+        "signal": null,
+        "logSha256": "a603add1c5c8ffd21b351ce66391a5b167ebbe06efa3056a5ecde4c6f82fc9a0",
+        "finalHead": "8a6f5e7832891df2d357a4c43903443c565f352a",
+        "dirtyAtEnd": "M server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-full-suite-final-provenance.json",
+        "sha256": "a36babfa58e53b1c7a47ba467a73cf1e35486d767fdeba8985105bf9001c75d1",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T08:00:14.088Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 9752,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:01:10.079Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 9752,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:02:10.317Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 26212,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:03:10.152Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 36528,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:04:10.149Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 3288,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:05:10.209Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 26008,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:06:10.259Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 35244,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:07:10.386Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 26428,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:08:10.200Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 23416,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:09:10.208Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 37164,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:10:10.220Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 34068,
+                "ParentProcessId": 31820,
+                "ExecutablePath": null
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:11:11.192Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 34436,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:12:10.691Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 36784,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:13:10.299Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 17364,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:14:11.071Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 25752,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:15:10.472Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 23824,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:16:10.348Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 10936,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:17:10.505Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 11948,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:18:10.506Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 10984,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T08:19:10.765Z",
+            "processes": [
+              {
+                "ProcessId": 25668,
+                "ParentProcessId": 25788,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 31820,
+                "ParentProcessId": 25668,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 38896,
+                "ParentProcessId": 31820,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled snapshots only; at least one process path was unavailable. Other snapshots attest recorded executables, not every transient process for its complete lifetime."
+    },
+    {
+      "job": "hl11-owned-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-owned-run1.log",
+      "sha256": "d7fb006f98dc78f85347ba587dad6dfabeb5a6a639def8118c8c9814d0aa0086",
+      "counts": {
+        "passed": 97,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 7,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "2.82s (transform 400ms, setup 0ms, import 1.06s, tests 154ms, environment 1ms)"
+      },
+      "record": {
+        "run": "hl11-owned-run1",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "testFilesPassed": 7,
+        "testsPassed": 97,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "durationSeconds": 2.82,
+        "exitStatus": 0,
+        "scope": "Focused owned-file synthetic and pinned-record tests; not whole-catalog generated-data qualification or full suite",
+        "log": "C:/Users/sboad/.codex/tmp/health-n2-20261001/hl11-owned-run1.log"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "No independent child-process snapshot was captured for this short run; any recorded executable is the runner/launch command, not a sampled child attestation."
+    },
+    {
+      "job": "hl11-owned-run2-cwd-repro",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-owned-run2-cwd-repro.log",
+      "sha256": "9104cb3162318fe2293cb044b66f29a8414b832d7a879b15dd3f7d9d2da19b4a",
+      "counts": {
+        "passed": 22,
+        "failed": 1,
+        "skipped": 0,
+        "filesPassed": 0,
+        "filesFailed": 1,
+        "filesSkipped": 0,
+        "duration": "1.49s (transform 399ms, setup 0ms, import 989ms, tests 107ms, environment 0ms)"
+      },
+      "record": {
+        "run": "hl11-owned-run2-cwd-repro",
+        "node": "v20.19.0",
+        "command": "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe node_modules/vitest/vitest.mjs run server/research/master-offerings/dataset-reader.test.ts --maxWorkers=1 --no-file-parallelism",
+        "testFilesFailed": 1,
+        "testsPassed": 22,
+        "testsFailed": 1,
+        "testsSkipped": 0,
+        "durationSeconds": 1.49,
+        "exitStatus": 1,
+        "finding": "Explicit dataset cwd was not carried into pinned reconciliation lookup; negative test reproduced this newly introduced inconsistency before correction",
+        "log": "C:/Users/sboad/.codex/tmp/health-n2-20261001/hl11-owned-run2-cwd-repro.log"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "No independent child-process snapshot was captured for this short run; any recorded executable is the runner/launch command, not a sampled child attestation."
+    },
+    {
+      "job": "hl11-owned-run3",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-owned-run3.log",
+      "sha256": "67daffd3731ffff8dcb9a68e50d3945abbb24fecc65b65d1638c3d80b40e226a",
+      "counts": {
+        "passed": 98,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 7,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "3.51s (transform 556ms, setup 0ms, import 1.43s, tests 197ms, environment 1ms)"
+      },
+      "record": {
+        "run": "hl11-owned-run3",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "command": "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe node_modules/vitest/vitest.mjs run server/research/master-offerings/reconciliation-authority.test.ts server/research/master-offerings/catalog-reconciliation.test.ts server/research/master-offerings/normalize-catalog.test.ts server/research/master-offerings/reviewed-holds.test.ts server/research/master-offerings/dataset-reader.test.ts shared/research/master-offerings/pathway-authority.test.ts server/research/assisted-order/production-catalog.test.ts --maxWorkers=1 --no-file-parallelism",
+        "testFilesPassed": 7,
+        "testsPassed": 98,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "durationSeconds": 3.51,
+        "exitStatus": 0,
+        "scope": "Final owned-file focused tests after explicit-cwd correction and generic confidential-export failure logging; not whole-catalog generated-data qualification or full suite",
+        "earlierRuns": [
+          "hl11-owned-run1: 97 pass, exit0, 2.82s",
+          "hl11-owned-run2-cwd-repro: 22 pass, 1 fail, exit1, 1.49s; preserved negative reproduction"
+        ],
+        "log": "C:/Users/sboad/.codex/tmp/health-n2-20261001/hl11-owned-run3.log"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "No independent child-process snapshot was captured for this short run; any recorded executable is the runner/launch command, not a sampled child attestation."
+    },
+    {
+      "job": "hl11-owned-run4-integration-repro",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-owned-run4-integration-repro.log",
+      "sha256": "bbe337c661b056744c54f9175a68682c3739fc855fd97e1ddcf960f343807a06",
+      "counts": {
+        "passed": 30,
+        "failed": 3,
+        "skipped": 0,
+        "filesPassed": 0,
+        "filesFailed": 3,
+        "filesSkipped": 0,
+        "duration": "1.71s (transform 510ms, setup 0ms, import 935ms, tests 155ms, environment 0ms)"
+      },
+      "record": {
+        "run": "hl11-owned-run4-integration-repro",
+        "node": "v20.19.0",
+        "command": "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe node_modules/vitest/vitest.mjs run server/research/master-offerings/reconciliation-authority.test.ts server/research/master-offerings/dataset-reader.test.ts server/research/master-offerings/catalog-revision-reconciliation.test.ts --maxWorkers=1 --no-file-parallelism",
+        "testsPassed": 30,
+        "testsFailed": 3,
+        "testsSkipped": 0,
+        "durationSeconds": 1.71,
+        "exitStatus": 1,
+        "finding": "Reproduced exact pinned record parent lookup failure, nested dataset-reader failure, and real424 revision-helper missing-authority failure before correction",
+        "log": "C:/Users/sboad/.codex/tmp/health-n2-20261001/hl11-owned-run4-integration-repro.log"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "No independent child-process snapshot was captured for this short run; any recorded executable is the runner/launch command, not a sampled child attestation."
+    },
+    {
+      "job": "hl11-owned-run5",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-owned-run5.log",
+      "sha256": "95c4a5f4c3862f1903f4af2cea5a265885e5847efe433e9ffeb8fca6f40b0330",
+      "counts": {
+        "passed": 104,
+        "failed": 0,
+        "skipped": 0,
+        "filesPassed": 8,
+        "filesFailed": 0,
+        "filesSkipped": 0,
+        "duration": "3.06s (transform 429ms, setup 0ms, import 1.17s, tests 254ms, environment 1ms)"
+      },
+      "record": {
+        "run": "hl11-owned-run5",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "command": "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe node_modules/vitest/vitest.mjs run server/research/master-offerings/reconciliation-authority.test.ts server/research/master-offerings/catalog-reconciliation.test.ts server/research/master-offerings/normalize-catalog.test.ts server/research/master-offerings/reviewed-holds.test.ts server/research/master-offerings/dataset-reader.test.ts shared/research/master-offerings/pathway-authority.test.ts server/research/assisted-order/production-catalog.test.ts server/research/master-offerings/catalog-revision-reconciliation.test.ts --maxWorkers=1 --no-file-parallelism",
+        "testFilesPassed": 8,
+        "testsPassed": 104,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "durationSeconds": 3.06,
+        "exitStatus": 0,
+        "scope": "Owned tests plus current424 artifact revision and nested-root regressions; no full suite or hosted actions",
+        "previousFailure": "hl11-owned-run4-integration-repro: 30pass/3fail, exit1, 1.71s; retained unchanged",
+        "log": "C:/Users/sboad/.codex/tmp/health-n2-20261001/hl11-owned-run5.log"
+      },
+      "childRuntimeProvenance": null,
+      "provenanceLimit": "No independent child-process snapshot was captured for this short run; any recorded executable is the runner/launch command, not a sampled child attestation."
+    },
+    {
+      "job": "hl11-typecheck-final",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-typecheck-final.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T07:57:13.633Z",
+        "head": "ea452a2d15a479b45a1abc359eafbbcc82217ce8",
+        "tree": "b7c7d492ab5c8176d49222d907f1f6d1c134b7e0",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 37288,
+        "childPid": 26256,
+        "finishedAt": "2026-10-01T07:57:20.929Z",
+        "elapsedMs": 7296,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "finalHead": "ea452a2d15a479b45a1abc359eafbbcc82217ce8",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-typecheck-final-provenance.json",
+        "sha256": "d70f6663961ff9a293a9e5a757a7d678de98444236a1842767fd70fcde70afc7",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T07:57:18.381Z",
+            "processes": [
+              {
+                "ProcessId": 37288,
+                "ParentProcessId": 37312,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 26256,
+                "ParentProcessId": 37288,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots, not continuous attestation of every transient child for its complete lifetime."
+    },
+    {
+      "job": "hl11-typecheck-fixed",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-typecheck-fixed.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T07:58:49.590Z",
+        "head": "fbfa12bfc0c18dd433fc6eafbbab571b298f5f72",
+        "tree": "80b59f68209ff6f2c2aed0988f315943109c565b",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 22660,
+        "childPid": 11524,
+        "finishedAt": "2026-10-01T07:58:58.197Z",
+        "elapsedMs": 8607,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "finalHead": "fbfa12bfc0c18dd433fc6eafbbab571b298f5f72",
+        "dirtyAtEnd": ""
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-typecheck-fixed-provenance.json",
+        "sha256": "8b39c555cd9b51621e021224ba03cb52274eac4e72ee212889afd8836cab0e95",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T07:58:54.589Z",
+            "processes": [
+              {
+                "ProcessId": 22660,
+                "ParentProcessId": 4440,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 11524,
+                "ParentProcessId": 22660,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots, not continuous attestation of every transient child for its complete lifetime."
+    },
+    {
+      "job": "hl11-typecheck-run1",
+      "log": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-typecheck-run1.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "counts": null,
+      "record": {
+        "startedAt": "2026-10-01T07:52:26.978Z",
+        "head": "d58a8611dab9c5bc400153f22d4a9f0da24498db",
+        "tree": "e027f33b634b4a0473df4bb8b063ffa5a7b521d3",
+        "dirtyAtStart": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/catalog-revision-artifact.ts\n M server/research/master-offerings/catalog-revision.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offering-bindings.generated.json\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/order-intake-matrix.test.ts\n M server/research/master-offerings/pathway-authority.test.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/production-loader.test.ts\n M server/research/master-offerings/real-catalog-sort-facets.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/catalog-revision-reconciliation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 35844,
+        "childPid": 32832,
+        "finishedAt": "2026-10-01T07:53:34.892Z",
+        "elapsedMs": 67914,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "finalHead": "d58a8611dab9c5bc400153f22d4a9f0da24498db",
+        "dirtyAtEnd": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M config/research/master-catalog-reconciliation-20260821.json\n M scripts/research/build-master-offering-bindings.ts\n M scripts/research/build-master-offerings-from-catalog.ts\n M scripts/research/verify-master-offerings-dataset.ts\n M server/research/assisted-order/production-catalog.test.ts\n M server/research/assisted-order/production-catalog.ts\n M server/research/assisted-order/production-deps.ts\n M server/research/master-offerings/action.ts\n M server/research/master-offerings/catalog-reconciliation.test.ts\n M server/research/master-offerings/catalog-reconciliation.ts\n M server/research/master-offerings/catalog-revision-artifact.ts\n M server/research/master-offerings/catalog-revision.ts\n M server/research/master-offerings/composition.ts\n M server/research/master-offerings/data/master-offering-bindings.generated.json\n M server/research/master-offerings/data/master-offerings-audit.generated.json\n M server/research/master-offerings/data/master-offerings-manifest.generated.json\n M server/research/master-offerings/data/member-safe-master-offerings.generated.json\n M server/research/master-offerings/dataset-reader.test.ts\n M server/research/master-offerings/dataset-reader.ts\n M server/research/master-offerings/early-access-catalog-coverage.test.ts\n M server/research/master-offerings/normalize-catalog.test.ts\n M server/research/master-offerings/normalize-catalog.ts\n M server/research/master-offerings/order-intake-matrix.test.ts\n M server/research/master-offerings/pathway-authority.test.ts\n M server/research/master-offerings/production-bindings.test.ts\n M server/research/master-offerings/production-loader.test.ts\n M server/research/master-offerings/real-catalog-sort-facets.test.ts\n M server/research/master-offerings/reviewed-holds.test.ts\n M server/research/master-offerings/reviewed-holds.ts\n M shared/research/master-offerings/pathway-authority.ts\n?? server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md\n?? server/research/master-offerings/binding-generation.test.ts\n?? server/research/master-offerings/catalog-revision-reconciliation.test.ts\n?? server/research/master-offerings/reconciliation-authority.test.ts\n?? server/research/master-offerings/reconciliation-authority.ts\n?? shared/research/master-offerings/pathway-authority.test.ts"
+      },
+      "childRuntimeProvenance": {
+        "path": "C:\\Users\\sboad\\.codex\\tmp\\health-n2-20261001\\hl11-typecheck-run1-provenance.json",
+        "sha256": "5708f79beec35888b66496ce9161c2beb4db7deff9eff8de4c36fadd3aaae769",
+        "snapshots": [
+          {
+            "observedAt": "2026-10-01T07:52:31.656Z",
+            "processes": [
+              {
+                "ProcessId": 35844,
+                "ParentProcessId": 21756,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 32832,
+                "ParentProcessId": 35844,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          },
+          {
+            "observedAt": "2026-10-01T07:53:28.015Z",
+            "processes": [
+              {
+                "ProcessId": 35844,
+                "ParentProcessId": 21756,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              },
+              {
+                "ProcessId": 32832,
+                "ParentProcessId": 35844,
+                "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+              }
+            ]
+          }
+        ]
+      },
+      "provenanceLimit": "Sampled process snapshots, not continuous attestation of every transient child for its complete lifetime."
+    }
+  ],
+  "previousN2Aggregate": {
+    "receipt": "server/research/assisted-order/HEALTH_HL12_N2_QUALIFICATION_cb9b8d6.json",
+    "head": "03bf5933a08352e14865622358f0adfbb7f27c7f",
+    "passed": 18856,
+    "failed": 1,
+    "skipped": 85,
+    "exitCode": 1,
+    "reclassified": false
+  },
+  "limitations": [
+    "These are local tests and source inspection, not independent Claude acceptance or managed/live evidence.",
+    "Price doubles are historical/synthetic fixtures; original read-back timestamp is unchanged, not a refreshed hosted observation.",
+    "All six new source identities remain unbound; no invented prices, transferred UUIDs, published availability or new commercial terms.",
+    "Failed, skipped and timed-out runs remain separate. Current aggregate result is explicit, never replaced by focused passes.",
+    "Private original workbook/export required for regeneration. Public derived artifacts contain no procurement economics.",
+    "Runtime lineage validation is not a cryptographic signature over every product byte; reviewed trusted deployment files remain required.",
+    "No new browser/zoom, provider authentication, bank evidence, managed PostgREST, hosted session or email-delivery proof.",
+    "Protected seam baselines unchanged; independent exact successor review and owner decisions remain required.",
+    "Imagery and media-commerce-decoupling remain separate, unintegrated and unapproved."
+  ],
+  "managedMigrationApplied": false,
+  "hostedConfigurationChanged": false,
+  "productionMutated": false,
+  "stagingMutated": false,
+  "deployed": false,
+  "merged": false,
+  "priceRelease": false,
+  "accountGrantsCreated": false,
+  "realEmailSent": false,
+  "realMoneyMoved": false
+}

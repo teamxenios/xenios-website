@@ -21,8 +21,10 @@ materializes 424 canonical variants and 423 customer rows locally, preserving
 415 Product Control pairs, nine unbound rows and two archived bindings. It does
 not release prices or publish the six new bindings. Clean typecheck/build and
 the unchanged no-em-dash gate passed at test tip `fbfa12b`; the single-worker
-aggregate started there at 2026-10-01T08:00:09.322Z and remains running at this
-records update. Earlier failed build and test runs remain separate. See
+aggregate there finished at 2026-10-01T08:19:42.263Z: 18,889 passed, five failed,
+85 skipped, exit 1. Four stale catalog expectations are being corrected; the
+unchanged seam-baseline assertion remains an independent gate. Earlier failed
+build and test runs remain separate. See
 `server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md`.
 
 The preceding N2 source was `cb9b8d6`. Claude23 reviewed915a535 and
