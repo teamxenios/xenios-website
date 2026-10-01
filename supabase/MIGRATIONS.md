@@ -477,3 +477,45 @@ pre/postchecks are bounded and count-only, require the financial predecessors,
 and record fingerprints rather than attesting arbitrary predecessor replay.
 Proof: `verification/research_assisted_order_quote_history_reissue_local.mjs`.
 No managed database, hosted PostgREST, email, money or production action occurred.
+
+## HL-12 N2 positive no-funds disposition, source-only 2026-10-01
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 90 | migrations/20261001062651_research_assisted_order_quote_no_funds_disposition.sql | Source-scoped terminal no-funds evidence, atomic explicit cancellation and canonical audit/outbox recovery | PENDING; no managed apply |
+
+Source `cb9b8d66a3cec93dd4d9a26fab25ed1d399f9bbb`, canonical Git-blob SHA-256
+`512799646a0779dcaa88ea036a9920ff2f54c33b48ff831825e9870dcd0b8881`.
+Depends on89 and its full financial/audit/outbox predecessor chain. Run4 of the
+proof also requires the legacy canonical outbox (ledger3,
+`research-notification-outbox.sql`), `extensions.pgcrypto`, exact effective
+predecessor guards and the trusted canonical audit/HMAC adapter. These non-DAG
+prerequisites must be checked rather than inferred from a migration count. The
+disposable no-network PostgreSQL17.11 proof passed in137.830s on Node20.19.0:
+exact bytes applied twice,116 expected refusals,13 races and9 composed mounted
+HTTP/service/SQL groups (65 service-role calls). Runs1-3 failed synthetic fixture
+checks; they remain separate failures. The disposable container was removed.
+
+Only a positive independently sourced terminal `never_received` receipt plus
+explicit cancellation is supported. The exact source grant is checked before
+lookup and commit; a complete immutable graph, accepted quote and single-use
+receipt bind the decision. The transaction preserves original facts and creates
+the cancellation, event and held canonical outbox obligation together. Canonical
+audit completion precedes notification release and recovers independently of the
+original actor grant or evidence adapter. No second audit or delivery queue.
+
+Grants install empty. The production evidence adapter remains null and the route
+default-off. Void/refund/provider/historical-paid outcomes remain held. Source
+authenticity, actual grant procedure, cancellation policy and the exact managed
+history/permissions/PostgREST prerequisites require separate qualification and
+authorization. Synthetic auth/evidence and local psql are not those approvals.
+
+Rollback means disable disposition entry and preserve all evidence, terminal
+decisions, audits and notices, then roll forward through reviewed repair. Do not
+drop financial records, replay predecessor function bodies or invent historical
+verification. Required pre/postchecks also refuse an obsolete two-argument
+context overload and drifted prerequisite guards. Local proof:
+`verification/research_assisted_order_quote_no_funds_disposition_local.mjs`.
+Detailed boundaries and failed-run accounting:
+`../server/research/assisted-order/HEALTH_HL12_N2_NO_FUNDS_HANDOFF_20261001.md`.
+No hosted configuration, managed migration, email, money or production mutation.

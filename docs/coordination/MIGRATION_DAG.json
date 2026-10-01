@@ -965,6 +965,22 @@
         "evidence": "One disposable no-network PostgreSQL17.11 run under Node20.19.0 PASS79.490s. Reproduced three predecessor refusals; applied twice; retained exact economics implementation and other authority bodies; actual expiry, financial holds, rollback, ACLs and seven deterministic independent-connection lock races passed. No managed apply or historical verification backfill."
       },
       "notes": "Narrow source-only HIST-02/HIST-02-R1 repair. Existing quote_issue signature and stored-line economics preserved. Payment_pending/payment_review may issue a first or replacement unaccepted quote only absent accepted quote, any observation, verification and paid history under the parent lock. Accepted stale prices, provider evidence, historical payment and N2 outcomes remain held."
+    },
+    {
+      "id": "research_assisted_order_quote_no_funds_disposition",
+      "path": "supabase/migrations/20261001062651_research_assisted_order_quote_no_funds_disposition.sql",
+      "sourceSha": "cb9b8d66a3cec93dd4d9a26fab25ed1d399f9bbb",
+      "dependsOn": ["research_assisted_order_quote_history_reissue"],
+      "checksum": { "algorithm": "sha256", "value": "512799646a0779dcaa88ea036a9920ff2f54c33b48ff831825e9870dcd0b8881" },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "keep_dispositions_disabled_preserve_terminal_evidence_audits_and_notices_then_roll_forward",
+        "procedure": "server/research/assisted-order/HEALTH_HL12_N2_NO_FUNDS_HANDOFF_20261001.md",
+        "evidence": "Final separate run4 PASS137.830s on disposable no-network PostgreSQL17.11 under Node20.19.0. Exact bytes applied twice; 116 expected refusals,13 independent-connection races and9 mounted HTTP/service/SQL groups (65 real service-role calls) passed. Private ACLs, source-scoped grants, complete graph binding, single-use receipt, atomic cancellation/held outbox, audit recovery, deferred cross-order corrections and cleanup verified. Runs1-3 failed fixture checks and remain separate. No managed apply."
+      },
+      "notes": "First N2 source-only slice accepts positive independently sourced terminal never_received evidence plus explicit cancellation only. No absent/timeout/zero-balance inference, refund/void/provider/historical-paid adoption or evidence deletion. Grants install empty; production evidence adapter remains null and route default-off. Existing canonical audit/outbox prerequisites and exact effective predecessor guards require managed preflight; local synthetic auth/evidence and psql transport do not qualify hosted JWT, bank authenticity or PostgREST."
     }
   ],
   "invariants": [

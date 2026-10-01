@@ -99,6 +99,7 @@ const HL12_PENDING_SOURCE_SHAS = new Map([
   ["supabase/migrations/20261001040349_research_assisted_order_quote_audit_store.sql", "3562c03f3bd26b4a9ec165c0f17b1f96256abb23"],
   ["supabase/migrations/20261001040351_research_assisted_order_quote_effects.sql", "3562c03f3bd26b4a9ec165c0f17b1f96256abb23"],
   ["supabase/migrations/20261001044200_research_assisted_order_quote_history_reissue.sql", "3da909542a152552331074176f966f820600e948"],
+  ["supabase/migrations/20261001062651_research_assisted_order_quote_no_funds_disposition.sql", "cb9b8d66a3cec93dd4d9a26fab25ed1d399f9bbb"],
 ]);
 // The Early Access durable-persistence chain (ledger rows 50-53), pending,
 // pinned to the reviewed source commits on claude/f5-ea-durable-persistence.
@@ -2178,8 +2179,10 @@ describe("route uniqueness validator", () => {
     // the queue and the order file. Mounted rather than removed from the nav
     // because orders are launch-critical and the rest of that loop now works.
     // Five default-off HL-12 finance doors are literal registrations too.
-    expect(result.callSites).toBe(449);
-    expect(result.routes).toHaveLength(458);
+    // The separately default-off N2 no-funds cancellation adds one guarded POST.
+    // Measured from the same static graph; no duplicate route is allowed.
+    expect(result.callSites).toBe(450);
+    expect(result.routes).toHaveLength(459);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });
