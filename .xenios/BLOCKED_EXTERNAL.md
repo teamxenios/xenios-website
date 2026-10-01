@@ -8,14 +8,28 @@ provider-neutral engineering. Do not request secrets, account numbers or payment
 destinations in the corpus. The source handoff is
 `server/research/assisted-order/HEALTH_HL12_PROVIDER_NEUTRAL_HANDOFF_20260930.md`.
 
-Durable attempt/event storage, governed financial
-resolution, HL-11 and product/public journeys remain engineering gaps, not
-external blockers. Existing historical paid labels must not be backfilled with
+Provider execution, settlement, governed uncertainty and financial resolution,
+and product/public journeys remain engineering gaps, not external blockers.
+ADP01 held attempt/event storage and HL11 reconciliation are locally implemented;
+independent review, genuine source/price holds and operational release remain.
+Existing historical paid labels must not be backfilled with
 invented verification. All new managed applies and production changes remain
 separately authorized. Historical production observations below retain their
 original dates and are not a fresh observation for this Health continuation.
 
-Current local source `4cba24af1d42ad59fe44856859cc1721846e6df5`, tree
+Current ADP01 source is `e9f221c974f45831a7ad1a13bcb2bd6d8198db42`, tree
+`30e570b77d19de0ebdb8b40765334a8f98cea5e0`. This is a held foundation, not
+provider execution or settlement. Final disposable SQL run3 passed, including
+the reproduced stale-snapshot repair and actual old-v1 schema refusal. Final
+preflight at clean1fb12f7 passed1065 affected tests, typecheck/build, no-em-dash,
+route/DAG and release controls (51 pass/one conditional skip). Its aggregate
+started2026-10-01T10:05:17.801Z and is not yet complete. Production source is
+null, no webhook is mounted, no operational sources/grants were created, and
+no Claude acceptance is recorded. The global uncertainty hold has no resolution
+operation and cannot be activated as a complete payment workflow. See
+`server/research/assisted-order/HEALTH_HL12_ADP01_HANDOFF_20261001.md`.
+
+The last completed HL11 aggregate candidate `4cba24af1d42ad59fe44856859cc1721846e6df5`, tree
 `6395273fc4370b7df713a2b72b019785f547d1fb`, is not release-ready. HL-11 now
 materializes 424 canonical variants and 423 customer rows locally, preserving
 415 Product Control pairs, nine unbound rows and two archived bindings. It does
@@ -46,7 +60,7 @@ The current unchanged baseline assertion reports both new server/index.ts wiring
 and the existing Research gateway. Neither baseline is amended.
 The old exact two-hash approval at663268f does not cover the new bytes.
 Prior exact95e040a aggregate remains18398 pass/5 fail/85 skip,exit1, not a
-current-runtime PASS. Remaining N2 void/refund, ADP-01, historical disposition, HL-11 review and broader
+current-runtime PASS. Remaining N2 void/refund, ADP execution/settlement and uncertainty resolution, historical disposition, HL-11 review and broader
 launch work remain engineering gaps, not reasons to wait for processor choice.
 F1 still needs an actual independent evidence source and operational grant
 procedure. N2 can continue default-off pending disposition/refund policy and

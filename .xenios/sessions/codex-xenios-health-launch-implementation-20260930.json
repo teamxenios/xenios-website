@@ -5,6 +5,6 @@
   "branch": "codex/xenios-health-launch-implementation-20260930",
   "state": "active",
   "startedAt": "2026-09-30T16:32:52.264Z",
-  "heartbeatAt": "2026-10-01T09:49:52.689Z",
-  "note": "ADP01 preflight atcleanb5ed3db PASS1058affected/typecheck/buildzeroemdash/DAG50/routes460/control51pass1conditional skip. Before firstaggregate adding minimalv2 authority handshake so oldvalidv1 cannot mask isolation repair;95focusedpass, actualoldSQLproof next. No sourcebaselineamendment/providerexecution/hostedchanges. Priorproofs remainseparate."
+  "heartbeatAt": "2026-10-01T10:06:53.150Z",
+  "note": "ADP01 final-v2 preflight at clean1fb12f7:1065 affected PASS,typecheck/build source1347/build225 zero-em-dash,DAG50/routes460,controls51pass1skip. Single-worker real-dataset aggregate started10:05:17UTC; known seam assertion red, completion pending. Runtime/tests/controls frozen. Local SQL run3 passed, no hosted changes."
 }

@@ -15,7 +15,9 @@ The final source/test pair adds the minimum database-authority revision check.
 All three source commits and three test commits are pushed.
 
 Release-control tip: `82950302a77754f0359ba5e1d31dad8ea677426f`.
-Final aggregate evidence is pending. Do not infer the
+The final single-worker aggregate started at 2026-10-01T10:05:17.801Z from
+clean checkpoint `1fb12f79a2ecfb9ad2280b0f7719d7be004084dc`, tree
+`62b42bfd968103e204caddc6617bdcf47e338d34`; completion is pending. Do not infer the
 previous HL11 aggregate applies to this runtime. Its separate receipt remains
 `../master-offerings/HEALTH_HL11_QUALIFICATION_20261001.json`.
 
@@ -136,7 +138,14 @@ the actual old-v1 refusal/no-adoption proof, and8 HTTP groups/86 SQL calls.
 Fresh/populated repeat installation and all3 sequential container cleanups pass.
 Log SHA-256: `587ee43fce6a016659e2afd585ccedb244892fb8b6523f5797770af503658e92`.
 The only commit during that run changed a coordination message, not source/tests.
-Final aggregate qualification is pending. The preceding clean
+Final v2 preflight at clean `1fb12f79a2ecfb9ad2280b0f7719d7be004084dc`
+passed 1065 affected tests in 40 files with no skips (55.70 seconds), typecheck,
+production build, the unchanged no-em-dash gate (1347 source and225 build files,
+zero forbidden forms), 50-node DAG and460 registrations/451 route callsites.
+Release controls passed51 tests with one existing conditional skip. All seven
+commands exited0 and ended at the same clean checkpoint. These are distinct
+from the aggregate, which is still in progress.
+The preceding clean
 preflight at `b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62` passed 1058 affected tests,
 typecheck, build, 50-node DAG, 460 registrations/451 callsites and release-control
 51 pass/one conditional skip. No full aggregate was started before v2; those
@@ -168,6 +177,60 @@ Express/service composition, but not managed Supabase defaults, PostgREST,
 hosted JWT, actual provider signatures, bank authenticity or email delivery.
 Rollback/response-loss checks are not physical crash recovery at every database
 instruction. Child-process snapshots are sampled, not continuous attestation.
+They walk Node-only ancestry and can miss grandchildren launched through a
+non-Node intermediary such as cmd.exe. In particular the build samples attest
+the runner/npm CLI, not independently observed Vite/tsx children. Process-local
+pinned PATH describes launch configuration, not proof of every transient child.
+
+## Exact local reproduction
+
+Use the existing isolated implementation worktree and the clean qualification
+checkpoint above, including its test-only and release-control successors. Do
+not test just the runtime commit and claim it includes the later tests. Do not
+reset or switch a dirty/shared checkout to reproduce this packet.
+
+The commands below are the underlying commands recorded by the local wrapper.
+The generated qualification receipt archives the runner and collector source
+bytes, and records each exact command array, start/end
+revision, duration, exit status, log hash and available child-process samples.
+The wrapper's scratch logs are local evidence; the committed receipt retains
+their paths and hashes, not an assertion that another machine has those logs.
+Earlier scratch-only diagnostic reproduction scripts are not archived; their
+logged runs are retained but are not a portable archived reproduction package.
+Run heavy commands serially in a coordinated job slot. Docker Desktop must be
+available for the disposable SQL proof; it uses PostgreSQL17.11 without a
+published port or network. No managed URL or credential is required.
+
+```powershell
+$adpNode = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe'
+$adpNpm = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js'
+$adpPriorPath = $env:PATH
+$adpPriorDataset = $env:XENIOS_MASTER_OFFERINGS_DATASET
+try {
+  $env:PATH = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64;' + $adpPriorPath
+  $env:XENIOS_MASTER_OFFERINGS_DATASET = Join-Path (Get-Location) 'server/research/master-offerings/data/member-safe-master-offerings.generated.json'
+  & $adpNode --version
+  & $adpNode $adpNpm --version
+  & $adpNode supabase/verification/research_assisted_order_quote_provider_journal_local.mjs
+  & $adpNode node_modules/vitest/vitest.mjs run server/research/assisted-order server/research/outbox-hl12-disposition.test.ts server/research/outbox-hl12-effects.test.ts server/research/master-offerings/early-access-catalog-coverage.test.ts client/src/research/assisted-order --maxWorkers=1 --no-file-parallelism
+  & $adpNode node_modules/typescript/bin/tsc --noEmit
+  & $adpNode $adpNpm run build
+  & $adpNode --import tsx scripts/acceptance/verify-migration-dag.ts
+  & $adpNode --import tsx scripts/acceptance/verify-route-uniqueness.ts
+  & $adpNode scripts/acceptance/verify-core-site-protection.mjs 48a598f45161cccbf39d5945b85e14a9c31b6b6a HEAD
+  & $adpNode node_modules/vitest/vitest.mjs run server/release-control-plane.test.ts --maxWorkers=1 --no-file-parallelism
+  & $adpNode node_modules/vitest/vitest.mjs run --maxWorkers=1 --no-file-parallelism
+} finally {
+  $env:PATH = $adpPriorPath
+  $env:XENIOS_MASTER_OFFERINGS_DATASET = $adpPriorDataset
+}
+```
+
+Capture each command's exit immediately; the last command's exit cannot stand
+for this whole list. The production typecheck follows tsconfig exclusions; it
+does not independently typecheck test files or the SQL verification TypeScript
+driver. Those fixtures have executed test evidence, not a standalone strict
+typecheck claim. Browser/zoom qualification is not part of these commands.
 
 ## Protection and independent-review boundary
 
@@ -225,8 +288,8 @@ is an additional real prerequisite, not a newly added DAG node.
 Before any authorized managed window, positively identify the non-production
 project and hosted origin, inspect exact history/effective schema, and run the
 bounded PII-free M71-only pre-80 check. Nonterminal historical-paid rows require
-governed resolution or explicit acceptance of their freeze. Absence of an
-observation is not a count of zero. Verify actual PostgREST transaction mode,
+governed resolution or explicit acceptance of their freeze. A zero recorded
+observation count does not establish that no funds were received. Verify actual PostgREST transaction mode,
 role/function overrides, function ownership/BYPASSRLS behavior, exact function,
 table and column privileges, forced RLS and enabled guards. Verify the complete
 canonical audit/outbox configuration without recording secrets.
