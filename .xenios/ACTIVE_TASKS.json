@@ -6,7 +6,7 @@
       "id": "HEALTH-HL11-CANONICAL-424-RECONCILIATION-20261001",
       "title": "Materialize 424 canonical variants with retained identity authority and genuine holds",
       "priority": "P2",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "config/research/master-catalog-reconciliation-20260821.json",
@@ -48,7 +48,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Preparation during frozen N2 aggregate is read-only plus ignored private scratch. Source/tests start only after aggregate completes. Retain418 identities and415 historical Product Control pairs, explicitly supersede2 rows, add6 real source identities unbound. One pinned reconciliation authority and structured GRP0422 hold; preserve raw hashed identity before presentation cleanup. No hosted identity/price writes or invented availability, commissions, discounts. No media-decoupling direct-commerce-selections.test.ts or imagery-owned paths. Root retains coverage/artifacts; subordinate exact file allocation recorded in coordination messages.",
-      "claimedAt": "2026-10-01T07:19:17.655Z"
+      "claimedAt": "2026-10-01T07:19:17.655Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "c73da35cc223a2253ce8074948ed9ff063012748",
+        "file": ".xenios/handoffs/2026-10-01T08-54-20-408Z-HEALTH-HL11-CANONICAL-424-RECONCILIATION-20261001-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T08:54:20.415Z"
+      }
     },
     {
       "id": "HEALTH-HL12-N2-NO-FUNDS-DISPOSITION-20261001",

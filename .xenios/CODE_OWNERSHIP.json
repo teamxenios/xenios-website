@@ -3332,7 +3332,7 @@
         "server/research/master-offerings/HEALTH_HL11_*",
         ".local/research/hl11-20261001/**"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T07:19:17.659Z",
       "heartbeatAt": "2026-10-01T08:48:43.447Z"
     }
