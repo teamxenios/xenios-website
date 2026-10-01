@@ -179,6 +179,8 @@ describe("ADP-01 generic status SQL hold stays a controlled conflict", () => {
   it.each([
     { code: "P0001", details: "ASSISTED_ORDER_PROVIDER_UNCERTAINTY_HELD_OTHER" },
     { code: "XX000", details: "ASSISTED_ORDER_PROVIDER_UNCERTAINTY_HELD" },
+    { code: "P0001", details: "ASSISTED_ORDER_PROVIDER_TRANSACTION_ISOLATION_REQUIRED_OTHER" },
+    { code: "XX000", details: "ASSISTED_ORDER_PROVIDER_TRANSACTION_ISOLATION_REQUIRED" },
     { code: "P0001", details: undefined },
   ])("does not disguise other database errors as a provider hold %#", async (error) => {
     const repository = new SupabaseAssistedOrderRepository({ rpc: async () => ({ data: null,
@@ -192,7 +194,12 @@ describe("ADP-01 generic status SQL hold stays a controlled conflict", () => {
   it.each([
     { from: "reviewing", to: "cancelled", evidence: { cancellationReason: "synthetic cancellation" } },
     { from: "paid", to: "supplier_processing", evidence: { supplierAssignmentId: "synthetic-assignment" } },
-  ] as const)("refuses $from to $to through real service/repository without effects", async ({ from, to, evidence }) => {
+  ].flatMap((transition) => [
+    { ...transition, detail: "ASSISTED_ORDER_PROVIDER_UNCERTAINTY_HELD", error: "provider_payment_on_hold",
+      message: "This financial action remains on hold while provider payment activity is unresolved." },
+    { ...transition, detail: "ASSISTED_ORDER_PROVIDER_TRANSACTION_ISOLATION_REQUIRED", error: "financial_action_unavailable",
+      message: "This financial action is unavailable. No change has been made." },
+  ]))("refuses $from to $to for $detail through real service/repository without effects", async ({ from, to, evidence, detail, error, message }) => {
     const rpc = vi.fn<SupabaseRpcClient["rpc"]>(async (name) => {
       if (name === "research_assisted_order_admin_get") return { data: {
         requestId: REQUEST, publicReference: "XRR-20261001-ABCDEF0011", status: from,
@@ -204,7 +211,7 @@ describe("ADP-01 generic status SQL hold stays a controlled conflict", () => {
         data: { hasObservation: from === "paid", paymentVerified: from === "paid" }, error: null,
       };
       if (name === "research_assisted_order_set_status") return { data: null, error: { code: "P0001",
-        details: "ASSISTED_ORDER_PROVIDER_UNCERTAINTY_HELD", message: "synthetic private provider account and event" } };
+        details: detail, message: "synthetic private provider account and event" } };
       throw new Error("Unexpected status RPC");
     });
     const enqueue = vi.fn(), record = vi.fn();
@@ -214,8 +221,7 @@ describe("ADP-01 generic status SQL hold stays a controlled conflict", () => {
     const h = mounted({ enabled: false, service });
     const response = await request(h.app).patch(STATUS_URL).set("authorization", BEARER).send({ status: to, evidence });
     expect(response.status).toBe(409);
-    expect(response.body).toEqual({ error: "provider_payment_on_hold",
-      message: "This financial action remains on hold while provider payment activity is unresolved." });
+    expect(response.body).toEqual({ error, message });
     expect(response.headers["cache-control"]).toBe("no-store");
     expect(rpc.mock.calls.map(([name]) => name)).toContain("research_assisted_order_set_status");
     expect(h.rpc).not.toHaveBeenCalled();

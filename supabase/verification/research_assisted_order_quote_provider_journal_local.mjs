@@ -109,6 +109,13 @@ async function provisionSources() {
 
 const startedAt = performance.now();
 try {
+  // Qualify stale RR/SSI snapshots in a separate sequential disposable
+  // database before the READ COMMITTED race matrix below. No two containers
+  // or qualification jobs overlap, and neither adopts managed state.
+  const isolationProof=await promisify(execFile)(process.execPath,
+    ['supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs'],
+    {windowsHide:true,maxBuffer:2*1024*1024,timeout:120_000});
+  process.stdout.write(isolationProof.stdout);process.stderr.write(isolationProof.stderr);
   await db.start();
   await db.baseline();
   const stableFunctions = `select md5(string_agg(pg_get_functiondef(oid),'' order by oid)) from pg_proc where proname in

@@ -7,6 +7,7 @@ const sql=read("supabase/migrations/20261001085559_research_assisted_order_quote
 const proof=read("supabase/verification/research_assisted_order_quote_provider_journal_local.mjs");
 const harness=read("supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs");
 const http=read("supabase/verification/research_assisted_order_quote_provider_journal_http.ts");
+const isolation=read("supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs");
 const body=(name:string,delimiter:string)=>sql.split(`create function public.${name}(`)[1]?.split(`$${delimiter}$;`)[0]??"";
 
 describe("ADP01 provider-neutral held journal SQL source contract",()=>{
@@ -61,6 +62,21 @@ describe("ADP01 provider-neutral held journal SQL source contract",()=>{
       "enable always trigger","has_any_column_privilege","permitted and role_name='service_role'",
       "research_assisted_order_provider_attempt_reserve(uuid,uuid,integer,uuid,text,text,jsonb,uuid,text)",
       "research_assisted_order_provider_event_append(text,text,jsonb,jsonb)"])expect(sql).toContain(token);
+  });
+  it("refuses stale isolation rather than assuming a row lock refreshes an old snapshot",()=>{
+    expect(sql).toContain("current_setting('transaction_isolation')");
+    expect(sql).toContain("'read committed'");
+    expect(sql).toContain("ASSISTED_ORDER_PROVIDER_TRANSACTION_ISOLATION_REQUIRED");
+    for(const [name,delimiter] of [["provider_uncertainty","uncertainty"],["provider_attempt_reserve","reserve"],
+      ["provider_journal_guard","journal_guard"],["provider_journal_authority","authority"]]) {
+      expect(body(`research_assisted_order_${name}`,delimiter)).toContain("provider_require_read_committed()");
+    }
+    for(const token of ["repeatable-read/reservation/cancel","repeatable-read/reservation/manual-verify","repeatable-read/reservation/no-funds",
+      "serializable/reservation/cancel","repeatable-read/global/manual-verify","repeatable-read/global/no-funds",
+      "repeatable-read/global/cancel","serializable/global/cancel","await tx.ready", "await db.psql(reserve(n))",
+      "['read uncommitted','repeatable read','serializable']","assert.equal(state.financial.paymentVerified,false,label)",
+      "begin isolation level read committed", "Migration changed during isolation qualification"])expect(isolation).toContain(token);
+    expect(proof).toContain("research_assisted_order_quote_provider_journal_isolation.mjs");
   });
   it("includes real-role no-network rollback, lock-wait, drift, scope and mounted-application qualification",()=>{
     for(const token of ["'v20.19.0'","'--network', 'none'","'--pull=never'","wait_event_type='Lock'","CLEANUP removed exact"])
