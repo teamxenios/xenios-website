@@ -3493,7 +3493,7 @@
         "docs/health-launch/HL12_ADPG1_QUARANTINE_ISOLATION_20261001.md",
         "docs/health-launch/evidence/hl12-adpg1-quarantine-isolation-20261001/"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T16:06:10.733Z",
       "heartbeatAt": "2026-10-01T18:24:01.294Z"
     },
@@ -3505,7 +3505,7 @@
         "client/src/research/b2b/PartnershipInquiryForm.tsx",
         "client/src/research/b2b/PartnershipInquiryForm.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T16:07:30.171Z",
       "heartbeatAt": "2026-10-01T18:24:01.294Z"
     }

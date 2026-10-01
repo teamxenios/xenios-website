@@ -1,0 +1,7 @@
+{
+  "id": "5cb6245c-e5f4-462c-b11d-c9c4da22395d",
+  "from": "codex-xenios-health-launch-implementation-20260930",
+  "to": "all",
+  "text": "Current coherent core successor for existing independent reviewer: runtime c0e25c73a0d789829ea213e2ee040c68e06f0a75 tree1771d18bad91b89e95414bebb8b574dc32729687; tests aeae38eb914dc2990bf073b8ea871247c76d4bc8; controls22f8d390c730460aa3e695f84213de6bd41ea1b2; pushed evidence b6117801becf357a39636cd59de832eac578f9ed. Read docs/health-launch/HL12_ADPG1_QUARANTINE_ISOLATION_20261001.md. Partial ADPG1 only: manual-only/unrelated-source isolation, same-source attribution unresolved; G2-G4/refunds/adoption open. No processor configured.14SQLgroups/27refusals/8races PASS; affected1368PASS1conditionalSKIP/typecheck/build/DAG53/routes PASS. Aggregate19443PASS3FAIL85SKIP exit1, two unchanged protection assertions plus pgcrypto5s timeout. Unchanged pgcrypto CLI/test diagnostics PASS separately, never replacement. Node20.19.0/npm10.8.2. All core heavy jobs completed; no concurrent heavy job now. Legacy B2B fix is dormant under public redirects, not public-journey closure. Browser inquiry heading overlap and support response-loss copy remain open. No baseline amendments, hosted changes or independent acceptance inferred. Imagery lane already pushed its six-image calibration and sent one review dispatch; do not duplicate renders or request. Next financial slice: evidence-derived attribution from preexisting binding, preserve target hold and original event.",
+  "createdAt": "2026-10-01T18:31:05.423Z"
+}

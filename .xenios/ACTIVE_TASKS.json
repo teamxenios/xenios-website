@@ -7,7 +7,7 @@
       "title": "Bind partner and supplier inquiry receipts to the submitted snapshot",
       "qualificationNote": "Legacy-component correction only. Actual App/static composition redirects all four legacy entrypoints to clarity forms, so this does not close a mounted public-journey issue. Component tests pass; no real POST/email attempted; no independent acceptance.",
       "priority": "P2",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "client/src/research/b2b/PartnershipInquiryForm.tsx",
@@ -15,14 +15,20 @@
       ],
       "dependsOn": [],
       "scopeNote": "Bounded parallel full-site correction inside core lane. Delegate catalog_journey_audit one-writer ownership of exact form and tests after verifying real paths. Pending request A must not label edited unsent draft B submitted. No endpoint, authority, protected seam, imagery or hosted edits; deterministic mocked tests only, no real contact submission. Root commits after review.",
-      "claimedAt": "2026-10-01T16:07:30.160Z"
+      "claimedAt": "2026-10-01T16:07:30.160Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "b6117801becf357a39636cd59de832eac578f9ed",
+        "file": ".xenios/handoffs/2026-10-01T18-31-05-338Z-HEALTH-PARTNERSHIP-SUBMITTED-RECEIPT-20261001-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T18:31:05.342Z"
+      }
     },
     {
       "id": "HEALTH-HL12-ADPG1-QUARANTINE-ISOLATION-20261001",
       "title": "Isolate unattributed provider quarantine from unrelated orders",
       "qualificationNote": "Partial ADP-G1 only: manual-only and unrelated-source contamination corrected locally, same-source attribution unresolved.14SQLgroups/27refusals/8races PASS; aggregate19443PASS3FAIL85SKIP remains failed. Review exact c0e25c73 runtime. G2-G4/refund/adoption and hosted qualification remain separate; no finding acceptance inferred.",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "supabase/migrations/*_research_assisted_order_provider_quarantine_isolation.sql",
@@ -36,7 +42,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Continue exact pushed1af1d48, preserve completed LENS01 detection. Additive effective SQL successor with no predecessor byte edits; eliminate unrelated manual-order global hold while preserving genuine provider uncertainty, original journal and no operator-selected financial attribution. Root owns migration/controls/records; delegate disjoint new disposable proof and source-contract tests after design. No actual provider, grants, refund facts, historical adoption, protected amendments or hosted changes. G2-G4/refunds remain separate next slices; isolation alone is not complete reconciliation or activation readiness.",
-      "claimedAt": "2026-10-01T16:06:10.722Z"
+      "claimedAt": "2026-10-01T16:06:10.722Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "b6117801becf357a39636cd59de832eac578f9ed",
+        "file": ".xenios/handoffs/2026-10-01T18-31-05-247Z-HEALTH-HL12-ADPG1-QUARANTINE-ISOLATION-20261001-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T18:31:05.257Z"
+      }
     },
     {
       "id": "HEALTH-HL12-LENS01-PREAPPLY-CENSUS-20261001",
