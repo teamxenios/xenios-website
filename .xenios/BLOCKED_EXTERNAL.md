@@ -15,25 +15,27 @@ invented verification. All new managed applies and production changes remain
 separately authorized. Historical production observations below retain their
 original dates and are not a fresh observation for this Health continuation.
 
-Current local source3da9095 is not release-ready. Claude23 reviewed915a535 and
-closed HIST-PROG/F7-R1/SQL-06/SQL-13/ROLL-06; it has not reviewed3da9095. F4,
-account-history copy, uppercase UUID handling and HIST-02 are locally implemented:
-1255 affected-area tests, separate20 HTTP/6 SQL tests, final typecheck/build and
-both final disposable SQL proofs pass. Current aggregate at5b3dc77 remains
-18657 pass/4 fail/85 skip,exit1: one seam assertion and three5s scan timeouts.
-Separate unchanged serial diagnostic25 pass/3 files,exit0,does not make that
-aggregate clean. Logs, runtime provenance, hashes and prior failed runs remain
-distinct in the exact successor receipt.
-Release/protection remains87 pass/1 fail/1 skip: one unchanged baseline assertion
-reports both new server/index.ts wiring and the existing Research gateway.
+Current local sourcecb9b8d6 is not release-ready. Claude23 reviewed915a535 and
+closed HIST-PROG/F7-R1/SQL-06/SQL-13/ROLL-06; no acceptance of this successor is
+recorded. F4/account-history/X2/HIST-02 and first N2 no-funds cancellation are
+locally implemented. N2 affected run2 passed1020 tests/39 files; final typecheck
+and build passed; disposable PG17.11 run4 passed116 refusals/13 races/9 composed
+HTTP-SQL groups. Earlier fixture/reproduction failures remain separate.
+Current aggregate at03bf593 completed18856 pass/1 fail/85 skip,exit1,1081.49s.
+Only the unchanged seam assertion failed; no timeout occurred. The earlier
+5b3dc77 aggregate remains18657 pass/4 fail/85 skip,exit1,including three5s scan
+timeouts. Its unchanged serial diagnostic25 pass does not make that run clean.
+Logs, exact runtime provenance and hashes remain in the separate receipts.
+The current unchanged baseline assertion reports both new server/index.ts wiring
+and the existing Research gateway. Neither baseline is amended.
 The old exact two-hash approval at663268f does not cover the new bytes.
 Prior exact95e040a aggregate remains18398 pass/5 fail/85 skip,exit1, not a
-current-runtime PASS. N2, ADP-01, historical disposition, HL-11 and broader
+current-runtime PASS. Remaining N2 void/refund, ADP-01, historical disposition, HL-11 and broader
 launch work remain engineering gaps, not reasons to wait for processor choice.
 F1 still needs an actual independent evidence source and operational grant
 procedure. N2 can continue default-off pending disposition/refund policy and
 historical reconciliation decisions; absence is not proof of no-funds. See
-`server/research/assisted-order/HEALTH_HL12_EFFECTS_REISSUE_HANDOFF_20261001.md`.
+`server/research/assisted-order/HEALTH_HL12_N2_NO_FUNDS_HANDOFF_20261001.md`.
 
 ## Native closeout — 2026-09-21
 

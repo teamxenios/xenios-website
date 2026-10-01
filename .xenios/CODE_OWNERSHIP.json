@@ -3273,7 +3273,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T06:26:41.223Z",
-      "heartbeatAt": "2026-10-01T07:09:37.962Z"
+      "heartbeatAt": "2026-10-01T07:37:23.884Z"
     },
     {
       "id": "bf834f90-14a8-4e7a-abb9-f12913cd262c",
@@ -3288,7 +3288,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T06:26:41.299Z",
-      "heartbeatAt": "2026-10-01T07:09:37.962Z"
+      "heartbeatAt": "2026-10-01T07:37:23.884Z"
     },
     {
       "id": "50a8e190-b0e1-479e-8b7b-7be25b0ad42f",
@@ -3325,7 +3325,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T07:19:17.659Z",
-      "heartbeatAt": "2026-10-01T07:19:17.659Z"
+      "heartbeatAt": "2026-10-01T07:37:23.884Z"
     }
   ],
   "rules": [

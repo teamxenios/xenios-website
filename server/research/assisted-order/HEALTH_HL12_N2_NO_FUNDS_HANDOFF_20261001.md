@@ -1,8 +1,10 @@
 # HL-12 N2: positive no-funds evidence and explicit cancellation
 
-Source and tests frozen for qualification. Not release approval or independent
-Claude acceptance. The aggregate and final build remain pending at this records
-checkpoint; the prior failed aggregate is not a pass for this successor.
+Source and tests locally qualified with an explicit failed release gate. Not
+release approval or independent Claude acceptance. The final aggregate completed
+18,856 PASS /1 FAIL /85 SKIP, exit1. The only failure is the unchanged protected
+seam-baseline assertion covering two paths; no timeouts occurred in this run.
+The prior failed aggregate remains a separate failure.
 
 ## Exact candidate
 
@@ -20,6 +22,23 @@ tests/local-proof files. Release controls register ledger90/DAG49 and the exact
 Coordination and handoff commits do not change the runtime candidate.
 
 ## Current local evidence
+
+Full suite at clean frozen `03bf5933a08352e14865622358f0adfbb7f27c7f` completed
+at2026-10-01T07:29:10.419Z: 1004 passing files,1 failed,6 skipped;
+18,856 passing tests,1 failed,85 skipped;1081.49s,exit1. No source/test writes
+occurred during the run. Later HEAD changes were records only. Private Node
+v20.19.0/npm10.8.2 and process snapshots attest the runner, Vitest and rotating
+child workers using the same isolated Node executable. The real catalog dataset
+reader was enabled, with one worker and no file parallelism.
+
+Final build at the same clean checkpoint passed in24.080s. Its no-em-dash gate
+checked1343 source files and225 production-build files with zero forbidden forms.
+Exact commands, revisions, timestamps, log hashes, child-runtime snapshots, all
+14 wrapper runs and four separate SQL runs are indexed in
+`HEALTH_HL12_N2_QUALIFICATION_cb9b8d6.json`. Full-suite log SHA-256:
+`6f985a2fff6ef3ceef46b3eee225fa94ed2869be0698a7a1baeb37eb93dcb7f5`.
+Neither the narrower protection CLI pass nor earlier passing diagnostics
+overrides the aggregate failure at `server/core-site-protection.test.ts:387`.
 
 Final N2 disposable SQL run4 passed in137.830s, exit0, PostgreSQL17.11:
 116 expected refusals,13 independent-connection races and9 composed mounted
@@ -151,6 +170,12 @@ The unchanged Research gateway remains actual
 `b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070`.
 Neither baseline is amended here. The hard-file CLI result is not equivalent to
 the still-required clean-seam assertion and exact owner approval.
+The bounded N2 CLI comparison from records `8de6c81` to frozen `03bf593` passed:
+27 changed paths,38 curated hard-file hashes verified, seven explicitly listed
+test paths and one touched seam (`server/index.ts`). It reports both changed
+seam contents without failing. This narrower CLI PASS does not override the
+whole-suite seam-baseline failure and does not qualify the entire historical
+branch-versus-main diff.
 
 No managed migration, hosted configuration, deployment, merge, price release,
 account grant, real email, money movement, procurement or clinical action was
@@ -195,3 +220,50 @@ Development failures must remain separate from later passes:
 
 These are not relabeled as successful runs. Their local logs and exact hashes,
 and the final proof/full-suite result, belong in the qualification receipt.
+
+## Exact local reproduction
+
+Use a clean checkout containing source, tests and controls above. Do not check
+out the source commit alone and expect later test/proof files to be present.
+The clean qualification checkpoint is
+`03bf5933a08352e14865622358f0adfbb7f27c7f`, tree
+`65bc1b1016146a9e54f9b52edd10402f49533c8d`. Later coordination-only changes do not
+alter the runtime or test files. These commands are local only:
+
+```powershell
+$nodeExe = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe'
+$npmCli = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js'
+$env:PATH = "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64;$env:PATH"
+$env:XENIOS_MASTER_OFFERINGS_DATASET = (Join-Path (Get-Location) 'server/research/master-offerings/data/member-safe-master-offerings.generated.json')
+& $nodeExe --version
+& $nodeExe $npmCli --version
+& $nodeExe node_modules/typescript/bin/tsc --noEmit
+& $nodeExe $npmCli run build
+& $nodeExe node_modules/vitest/vitest.mjs run server/research/assisted-order server/research/outbox-hl12-disposition.test.ts server/research/outbox-hl12-effects.test.ts server/research/master-offerings/early-access-catalog-coverage.test.ts client/src/research/assisted-order --maxWorkers=1 --no-file-parallelism
+& $nodeExe supabase/verification/research_assisted_order_quote_no_funds_disposition_local.mjs
+& $nodeExe node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-migration-dag.ts
+& $nodeExe node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-route-uniqueness.ts
+& $nodeExe node_modules/vitest/vitest.mjs run --maxWorkers=1 --no-file-parallelism
+```
+
+PATH above affects only the current PowerShell process and children, never the
+machine/user setting. Docker is required for the disposable PostgreSQL command.
+Do not run it alongside another heavy qualification job. This concise focused
+command is a reproduction selection; exact executed selections and counts belong
+to each logged run, not an inferred result for this command.
+
+## Narrow independent-review request
+
+Review the exact N2 source and its F4/HIST-02 predecessors, not `915a535` again.
+Prioritize scoped-source authorization before lookup/replay, immutable complete
+graph identity, grant and graph races, positive terminal receipt freshness,
+single-use evidence, atomic cancellation and held outbox, grant-independent
+canonical audit recovery, truthful post-commit503, and last-mile notice validation.
+Recheck provider/historical-paid holds and separate fulfillment gates. New
+provider-journal work must hold N2 while any provider attempt is uncertain.
+
+Return finding IDs, exact reviewed SHA/tree, executed versus inspected evidence,
+protected old/new hash disposition and managed preflight prerequisites. No
+protection amendment, real evidence source/grants, managed migration, mail or
+production action is authorized by this packet. N2's remaining void/refund and
+historical outcomes must stay visible even if this narrow no-funds slice passes.
