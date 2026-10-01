@@ -15,7 +15,8 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
   a separately reviewed preservation/no-send adoption mechanism and exact founder
   approval exist. A decision to freeze legacy orders alone is insufficient.
   No notice deletion, resend, invented verification or predicate bypass is
-  authorized. The missing census is engineering work and continues locally.
+  authorized. The missing census is now corrected locally at510e957, with
+  actual disposable SQL proof; adoption and managed qualification remain held.
 
 - Health payment setup (2026-09-30): when ready, name the card processor and the
   intended independently verifiable manual payment workflow (provider API, bank

@@ -1,6 +1,6 @@
 # HL12 LENS-01 pre-apply census correction
 
-Status: local qualification in progress. Detection only; legacy adoption remains unresolved and managed application is not authorized.
+Status: bounded local qualification complete. Detection only; legacy adoption remains unresolved and managed application is not authorized.
 
 Branch: `codex/xenios-health-launch-implementation-20260930`.
 Session: `codex-xenios-health-launch-implementation-20260930`.
@@ -30,4 +30,53 @@ ADP-G1 through ADP-G4, real F1 evidence/grant workflow, refund/void/dispute, SEA
 
 ## Local evidence
 
-Results and exact qualification identities will be appended after the frozen scripts complete. New SQL proof uses only synthetic records in an owned no-network disposable database. Static source checks are supplemental, not substitutes for query execution. No new whole-catalog or full-suite result is implied by setting the existing dataset environment.
+Release-control/census source: `510e957170e044a2d449058567ea6961b6d52eae`, tree `4e14a032c9d9303ff698455b28be0b4708d0d371`. Test-only successor: `eab674057ef9ea81bad575e6a330fc25cdeaadf9`. Exact clean qualification checkpoint: `610dde1930737b9d91494352d9d342a7000a4a5f`, tree `793a0d3dc0edc0584525ef90f45b350430074eeb`.
+
+Seven separate executions are archived at `evidence/hl12-lens01-preapply-census-20261001/raw-checks-final.json`, SHA256 `119547caee27f4620812d5b7b50534b9435cee1ef4ad786c71aef562e87debd4` (106,523 bytes). Exact raw logs, all seven matching receipt hashes, commands, start/end identities, dirty states and available process snapshots are preserved. Collector source/hash is embedded. This is packaging, not another test run.
+
+| Run | Result | Wrapper seconds | Revision |
+| --- | --- | --- | --- |
+| `lens01-focused` | 107 PASS, 2 files, 0 SKIP, exit0; Vitest9.04s | 20.712 | `abf151a`, frozen precommit census/tests |
+| `lens01-outbox-focused` | 16 PASS, 2 files, 0 SKIP, exit0; Vitest31.31s | 39.956 | `abf151a`, frozen precommit census/tests |
+| `lens01-effects-local` | FAIL, exit1; incorrect extra `node` argument, module-not-found before any DB operation | 3.497 | `abf151a` |
+| `lens01-effects-local-corrected` | PASS, exit0; existing comprehensive effects proof, PostgreSQL17.11;413.813s proof, exact-container cleanup | 415.780 | `abf151a`, frozen existing proof/census; new independent proof and records developed separately |
+| `lens01-census-local` | PASS, exit0;9 groups,11 expected refusals,6 isolated databases;41.767s proof; cleanup confirmed | 42.896 | clean `610dde1`, clean end |
+| `lens01-typecheck-final` | PASS, exit0 | 36.858 | clean `610dde1` |
+| `lens01-dag-final` | PASS, exit0;52 nodes, canonical checksums verified | 9.234 | clean `610dde1` |
+
+The first focused invocation accidentally included a third nonexistent filter path, `server/research/notifications/outbox-hl12-payment-effects.test.ts`; only the two actual files ran. It is not a three-file pass. The subsequent separate16-test run uses the real outbox files. The command-assembly failure is not relabelled as a SQL test failure or a clean pass. No test run timed out. The dedicated proof deliberately produces a2s database lock-timeout refusal to verify unavailable evidence; that is an expected test case, not a timed-out runner.
+
+All runs invoke private Node `v20.19.0`, npm `10.8.2`. The verified official Windows archive SHA256 remains `be72284c7bc62de07d5a9fd0ae196879842c085f11f7f2b60bf8864c0c9d6a4f`. Test workers use one worker/no file parallelism; core heavy jobs were serialized and coordination was requested in the repository mailbox. This does not attest the absence of other workers' activity. The existing real catalog dataset environment is present, but this SQL proof does not read the catalog and is not new whole-catalog evidence. Bounded process snapshots show pinned executables where sampled, not continuous attestation; fast failures may lack snapshots. Docker's PostgreSQL runtime is independently recorded as17.11 with image digest `sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24` for the new proof.
+
+The new proof independently reproduces old census output0 against8 paid notices plus2 reserved keys with one overlap, so9 adoption rows across all seven historical delivery statuses. It separately proves reserved-key-only refusal,12 malformed envelopes, a genuine synthetic predecessor verification, missing outbox, permission and RLS denial, and an actual lock timeout. Before/after stored-row/attempt/schema serializations match across refused88; no binding column appears. A separate clean-notification target applies88 twice without fabricating verification, even though its independent historical-request freeze remains nonzero. Exact unchanged source bytes and cleanup of all six databases with the owned no-network/no-port container are asserted.
+
+The old census is loaded from exact Git revision `abf151a47006bce54bd35c76b5a6ec006500e097` and embedded with its hash `c4c4f01b16dec06d6155e9dae1db0817847856937be285924348c4ac1630448c`. The new census SHA256 is `02f77640557395d6ed0e919c629fcd1c5ab3a2c6aa511144beb93d1ed183ca1c`; pre88 `1f4cec17bded2f6e5ccfd5334be0ff9206ac30630602b91dce45ac974171eef7`; proof `e7b46618f0f2543277f2b795b24eefc658e65845ec8b273b33b46989cfc157ee`.
+
+### Reproduction and changed-path classification
+
+Run from the repository root with the private Node directory prepended to the process-local PATH only. The exact executed argument arrays are in the receipts.
+
+```powershell
+$node20 = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe'
+$env:PATH = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64;' + $env:PATH
+$env:XENIOS_MASTER_OFFERINGS_DATASET = (Resolve-Path 'server/research/master-offerings/data/member-safe-master-offerings.generated.json').Path
+& $node20 node_modules/vitest/vitest.mjs run server/research/assisted-order/payment-effects-sql.test.ts server/research/assisted-order/payment-effects.test.ts --maxWorkers=1 --no-file-parallelism
+& $node20 node_modules/vitest/vitest.mjs run server/research/outbox-hl12-effects.test.ts server/research/outbox-hl12-disposition.test.ts --maxWorkers=1 --no-file-parallelism
+& $node20 supabase/verification/research_assisted_order_quote_effects_local.mjs
+& $node20 supabase/verification/research_assisted_order_quote_pre80_preflight_local.mjs
+& $node20 node_modules/typescript/bin/tsc --noEmit
+& $node20 --import tsx scripts/acceptance/verify-migration-dag.ts
+```
+
+- Release controls: the two read-only census SQL files and `supabase/MIGRATIONS.md`.
+- Tests: the new pre80 local proof, compatibility changes to the existing effects local proof, and two added static source-contract tests in `payment-effects-sql.test.ts`. Existing assertions are retained.
+- Records: this packet, raw evidence/receipts and the scoped `.xenios` task/lease/session/state/message/handoff entries.
+- Application runtime, all migration bytes, dependency files, protected baselines and imagery/media sources: unchanged by LENS-01.
+
+No build rerun was needed for this control/test-only slice. The current application runtime's clean build at47074f2 remains its own evidence:1353 source/226 build files, zero forbidden forms. Protection remains red exactly as recorded in the admin-session packet. No fresh full aggregate or browser/native-zoom result is inferred. ADP03's earlier19,357 PASS/1 FAIL/85 SKIP remains a failed earlier aggregate, not current release qualification.
+
+## Exact next reviewer work and engineering order
+
+Review this control source and its test-only successor separately from the admin runtime. Verify exact predicates, all-delivery-state coverage, no false zero, no historical adoption, unchanged migration checksums and preserved failed-run classification. LENS-01 detection is locally corrected; adoption and the managed executor remain unresolved. No whole finding closure or production-ready census is asserted.
+
+Next financial priority is ADP-G1, followed by G2–G4 and governed refund/void/dispute. Read-only design inspection found global checks in six effective functions: provider_uncertainty (91), provider_create_context (92), provider_settlement_guard, financial_eligibility, provider_settlement_row_allowed and provider_financial_guard (93). A local TypeScript helper or a NULL-to-request equality substitution is insufficient. Any future append-only attribution must positively bind independent source/account/mode/event evidence, preserve the original journal, enforce distinct proposal/approval authority, invalidate stale contexts and retain a hold on the attributed target even if already settled. Unresolved money is not no-funds, and an operator-picked target is not evidence. The sealed SQL graph, canonical audit contract and all six decisions require a consistent additive successor and disposable race/rollback proof. This is a design note, not an implemented resolution or grant procedure.

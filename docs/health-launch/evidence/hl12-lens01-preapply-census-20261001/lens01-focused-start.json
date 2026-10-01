@@ -1,0 +1,23 @@
+{
+  "startedAt": "2026-10-01T15:21:46.403Z",
+  "head": "abf151a47006bce54bd35c76b5a6ec006500e097",
+  "tree": "4bdaf94b1324ca1b17170d1133a1ce74f93b24fb",
+  "dirtyAtStart": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M server/research/assisted-order/payment-effects-sql.test.ts\n M supabase/MIGRATIONS.md\n M supabase/verification/research_assisted_order_quote_effects_local.mjs\n M supabase/verification/research_assisted_order_quote_effects_precheck.sql\n M supabase/verification/research_assisted_order_quote_pre80_preflight.sql",
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "server/research/assisted-order/payment-effects-sql.test.ts",
+    "server/research/assisted-order/payment-effects.test.ts",
+    "server/research/notifications/outbox-hl12-payment-effects.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+  "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+  "runnerPid": 39972,
+  "childPid": 35420
+}

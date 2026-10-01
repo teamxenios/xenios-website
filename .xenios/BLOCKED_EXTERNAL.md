@@ -3,8 +3,9 @@
 ## Health provider-neutral continuation, 2026-09-30
 
 2026-10-01 report24 reconciliation: reviewer76607458 independently reviewed
-8f240828, closing F4/HIST02 at source. F1 remains external; LENS01 census,
-ADP-G1..4, refund/void/dispute and later UI qualification are engineering gaps,
+8f240828, closing F4/HIST02 at source. F1 remains external. LENS01 detection
+is corrected locally at510e957 (9groups/11expectedrefusals/6DBs PASS); adoption
+is unresolved. ADP-G1..4, refund/void/dispute and later UI qualification are engineering gaps,
 not reasons to stop unrelated implementation. Legacy notice adoption and the
 Access Hub B-1 reversal need explicit founder dispositions before promotion.
 The admin session fix at6d64d3e is locally tested114PASS with typecheck/build;

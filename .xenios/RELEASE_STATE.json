@@ -2,6 +2,16 @@
   "schemaVersion": 1,
   "healthProviderNeutral20260930": {
     "status": "NOT_READY_FOR_PRODUCTION_PROMOTION",
+    "currentLENS01Work": {
+      "controlSourceSha": "510e957170e044a2d449058567ea6961b6d52eae",
+      "testOnlySha": "eab674057ef9ea81bad575e6a330fc25cdeaadf9",
+      "cleanTestedHead": "610dde1930737b9d91494352d9d342a7000a4a5f",
+      "result": "Census proof PASS9groups11expectedrefusals6DBs,42.896s wrapper; effects proof PASS415.780s;107+16 unit passes in separate runs; typecheck/DAG52 PASS. Bad command-before-DB failure retained. All cleanup verified by respective harnesses. No runtime/migration edits, no new build/full-suite/browser claim.",
+      "disposition": "LENS01 detection locally corrected, adoption unresolved; nonzero/unavailable census blocks chain before80. No founder legacy disposition, executor qualification or managed approval.",
+      "handoff": "docs/health-launch/HL12_LENS01_PREAPPLY_CENSUS_20261001.md",
+      "claudeAccepted": false,
+      "managedQualified": false
+    },
     "currentAdminSessionWork": {
       "runtimeSourceSha": "6d64d3e5d90fef9e49d3414244f77f486231b59e",
       "runtimeSourceTree": "10c6783e01a7b2fe9b1b60693ab501a6a5229ba4",
@@ -59,8 +69,8 @@
     },
     "runtimeSourceSha": "6d64d3e5d90fef9e49d3414244f77f486231b59e",
     "runtimeSourceTree": "10c6783e01a7b2fe9b1b60693ab501a6a5229ba4",
-    "testOnlySha": "7a35394e68add4066dee6c0c83425996405f4f5a",
-    "releaseControlSha": "edf8526bdefc34b8e87fa6e46585573535dba6cd",
+    "testOnlySha": "eab674057ef9ea81bad575e6a330fc25cdeaadf9",
+    "releaseControlSha": "510e957170e044a2d449058567ea6961b6d52eae",
     "currentAggregateStatus": "NOT_RUN_FOR_ADMIN_SESSION_HL01_OR_HL17; PRIOR_ADP03_COMPLETED_19357_PASS_1_FAIL_85_SKIP_EXIT_1_NO_TIMEOUTS_PROTECTED_SEAM_ASSERTION_NOT_SUCCESSOR_PROOF",
     "currentADP01Status": "PUSHED_e9f221c_SOURCE_9c1fe1e_TESTS_8295030_CONTROLS_FINAL_V2_SQL_RUN3_AND_PREFLIGHT_PASS_AGGREGATE18998P1F85S_EXIT1_NO_INDEPENDENT_OR_HOSTED_ACCEPTANCE",
     "currentADP02Status": "PUSHED_27463d7_SOURCE_8f56a7f_TESTS_a16f562_CONTROLS_FINAL_LOCAL_SQL_PASS_CLEANUP_PREFLIGHT1216PASS_TYPECHECK_BUILD_DAG51_ROUTES461_CONTROL51PASS1SKIP_AGGREGATE19149P1F85S_EXIT1_NO_INDEPENDENT_OR_HOSTED_ACCEPTANCE_PRODUCTION_SOURCE_NULL",
@@ -159,7 +169,7 @@
     "realMoneyMoved": false,
     "releaseAuthority": "Source implementation and disposable local testing only. Provider choice deferred. No hosted authority carried from historical entries below."
   },
-  "updatedAt": "2026-10-01T15:16:00.000Z",
+  "updatedAt": "2026-10-01T15:38:00.000Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",

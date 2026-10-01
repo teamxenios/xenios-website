@@ -1,0 +1,17 @@
+[
+  {
+    "observedAt": "2026-10-01T15:34:48.242Z",
+    "processes": [
+      {
+        "ProcessId": 37848,
+        "ParentProcessId": 34052,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 39208,
+        "ParentProcessId": 37848,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  }
+]

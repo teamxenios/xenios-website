@@ -4,7 +4,21 @@
     "task": "ASSISTED-ORDER-CONVERSION",
     "session": "codex-xenios-health-launch-implementation-20260930",
     "branch": "codex/xenios-health-launch-implementation-20260930",
-    "status": "ADMIN_SESSION_LOCAL_QUALIFICATION_COMPLETE_LENS01_NEXT_RELEASE_HELD",
+    "status": "LENS01_DETECTION_LOCAL_PASS_ADOPTION_UNRESOLVED_ADPG1_NEXT_RELEASE_HELD",
+    "currentLENS01Work": {
+      "task": "HEALTH-HL12-LENS01-PREAPPLY-CENSUS-20261001",
+      "classification": "RELEASE_CONTROL_AND_TESTS_ONLY_NO_APPLICATION_OR_MIGRATION_CHANGE",
+      "controlSourceSha": "510e957170e044a2d449058567ea6961b6d52eae",
+      "controlSourceTree": "4e14a032c9d9303ff698455b28be0b4708d0d371",
+      "testOnlySha": "eab674057ef9ea81bad575e6a330fc25cdeaadf9",
+      "cleanTestedHead": "610dde1930737b9d91494352d9d342a7000a4a5f",
+      "localResult": "New PostgreSQL17.11 census proof9groups11expectedrefusals6isolatedDBs PASS42.896s wrapper; exact cleanup. Existing comprehensive effects proof PASS415.780s; first command-assembly failure retained before DB execution. Unit107PASS2files plus separate16PASS2files, no skips; first command had unmatched third path, not3filepass. Clean typecheck36.858s/DAG52nodes9.234s PASS. Node20.19.0/npm10.8.2, serial core jobs.",
+      "handoff": "docs/health-launch/HL12_LENS01_PREAPPLY_CENSUS_20261001.md",
+      "rawArchiveSha256": "119547caee27f4620812d5b7b50534b9435cee1ef4ad786c71aef562e87debd4",
+      "findingDisposition": "Detection locally corrected; legacy adoption and exact managed executor still unresolved. Not complete LENS01 closure or managed qualification.",
+      "claudeAccepted": false,
+      "hostedChangesAuthorized": false
+    },
     "currentAdminSessionWork": {
       "task": "HEALTH-ADMIN-ASSISTED-SESSION-ISOLATION-20261001",
       "runtimeSourceSha": "6d64d3e5d90fef9e49d3414244f77f486231b59e",
@@ -65,8 +79,8 @@
     },
     "runtimeSourceSha": "6d64d3e5d90fef9e49d3414244f77f486231b59e",
     "runtimeSourceTree": "10c6783e01a7b2fe9b1b60693ab501a6a5229ba4",
-    "testOnlySha": "7a35394e68add4066dee6c0c83425996405f4f5a",
-    "releaseControlSha": "edf8526bdefc34b8e87fa6e46585573535dba6cd",
+    "testOnlySha": "eab674057ef9ea81bad575e6a330fc25cdeaadf9",
+    "releaseControlSha": "510e957170e044a2d449058567ea6961b6d52eae",
     "successorScope": "Mounted assisted-order admin session/request/query lifetime isolation; 3 Research runtime files, no server authority/SQL change. Prior HL01/HL17/ADP03 runs stay separate. Latest report24 prioritizes LENS01 census next, then ADP-G1..4 before activation. No hosted, price or image integration changes.",
     "currentADP02Work": {
       "status": "FINAL_LOCAL_SQL_AND_PREFLIGHT_PASS_AGGREGATE_FAILED_SEAM_ASSERTION_NOT_CLAUDE_ACCEPTED",
@@ -187,12 +201,12 @@
     "imageryObservedHead": "e13ca4b3e80c7a8032c3f279b1cd3efd95de36fa",
     "imageryStatus": "Remote tip observed at final HL01 records check. Lane reports private source c0373b73ae5258618d35773a451eca3333339584/tree3984cc9b7da15906114fc1adcfd02a485dc37d69, records d7a53ab327c96f0a80284f2124168c3699baf2dc:25 retained Batch0 candidates,423 private provisional slots,40 browser views. These results not independently repeated by core. Zero public/approved/integrated assets. Separate media-commerce-decoupling remains unintegrated; no ownership collision or rerender.",
     "imageryIntegrated": false,
-    "remainingEngineering": ["LENS01: mirror migration88 legacy paid notice/reserved key predicates in pre80/pre88 census and chain NO-GO; preserve immutable migration bytes and unresolved adoption hold", "ADP-G1..4: governed scoped uncertainty resolution, attempt expiry/abandon, recovered execution and post-settlement benign events before source provision", "REFUND-ABSENT: governed void/refund/dispute and historical outcomes; authorized reconciliation UI remains pending", "HL11-F1..7 review reconciliation; six new identities unbound, approved prices not released", "HL01/details, later HL17 focus and admin-session successor independent review; remaining public/account/partner/supplier journeys", "safe reviewed image integration and separate media-decoupling review", "SEAM-GOV01 Access Hub founder product disposition, exact owner hash amendments, clean current aggregate, native-zoom/full browser qualification and managed prerequisites"],
+    "remainingEngineering": ["ADP-G1 next: governed evidence-backed attribution/resolution across all six effective SQL decision sites; preserve target holds even after settlement and unmodified journal history. G2..4, attempt expiry/abandon, recovered execution and benign late-event review remain", "LENS01 detection locally corrected; legacy notification adoption mechanism/founder disposition and exact managed executor still unresolved, no chain apply", "REFUND-ABSENT: governed void/refund/dispute and historical outcomes; authorized reconciliation UI remains pending", "HL11-F1..7 review reconciliation; six new identities unbound, approved prices not released", "HL01/details, later HL17 focus and admin-session successor independent review; remaining public/account/partner/supplier journeys", "safe reviewed image integration and separate media-decoupling review", "SEAM-GOV01 Access Hub founder product disposition asked nonblocking, no answer recorded; exact owner hash amendments, clean current aggregate, native-zoom/full browser qualification and managed prerequisites"],
     "managedMigrationApplied": false,
     "productionMutated": false,
     "productionReobserved": false
   },
-  "updatedAt": "2026-10-01T15:16:00.000Z",
+  "updatedAt": "2026-10-01T15:38:00.000Z",
   "nativeCloseout20260921": {
     "task": "XENIOS-NATIVE-FINISH-20260910",
     "session": "codex-native-closeout-20260921",
