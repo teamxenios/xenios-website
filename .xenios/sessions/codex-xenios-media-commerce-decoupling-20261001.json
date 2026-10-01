@@ -1,0 +1,10 @@
+{
+  "id": "codex-xenios-media-commerce-decoupling-20261001",
+  "tool": "OpenAI Codex desktop",
+  "lane": "media-commerce-decoupling",
+  "branch": "codex/xenios-media-commerce-decoupling-20261001",
+  "state": "active",
+  "startedAt": "2026-10-01T04:49:46.964Z",
+  "heartbeatAt": "2026-10-01T04:51:36.875Z",
+  "note": "Claimed exact Health-coordinated media/commerce decoupling paths at base 67d75c9; source-only; new SQL candidate remains unapplied; no production or shared UI changes."
+}

@@ -3211,6 +3211,38 @@
       "state": "active",
       "claimedAt": "2026-10-01T04:03:25.817Z",
       "heartbeatAt": "2026-10-01T04:42:35.935Z"
+    },
+    {
+      "id": "abd2ae97-1f1a-46e6-a5f2-641c1e1a1446",
+      "task": "XENIOS-IMAGE-COMMERCE-DECOUPLING-20261001",
+      "session": "codex-xenios-media-commerce-decoupling-20261001",
+      "paths": [
+        "shared/research/product-admin.ts",
+        "shared/research/cart-product-selection.ts",
+        "server/research/commerce/cart-product-selection.ts",
+        "server/research/commerce/cart-product-selection.test.ts",
+        "server/research/catalog/member-catalog-projection.ts",
+        "server/research/catalog/member-catalog-projection.test.ts",
+        "client/src/research/adapters/cartProductSelection.ts",
+        "client/src/research/adapters/cartProductSelection.test.ts",
+        "client/src/research/adapters/memberCatalog.ts",
+        "client/src/research/adapters/memberCatalog.test.ts",
+        "server/research/master-offerings/direct-commerce-selections.test.ts",
+        "server/research/commerce/persistence/persistent-cart.ts",
+        "server/research/commerce/persistence/persistent-cart.test.ts",
+        "supabase/candidates/20261001*_research_media_commerce_decoupling*",
+        "supabase/verification/research_media_commerce_decoupling_local.mjs",
+        "docs/product-imagery/media-commerce-decoupling/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-xenios-media-commerce-decoupling-20261001.json",
+        ".xenios/messages/*codex-xenios-media-commerce-decoupling-20261001*",
+        ".xenios/handoffs/*XENIOS-IMAGE-COMMERCE-DECOUPLING-20261001*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-01T04:51:36.789Z",
+      "heartbeatAt": "2026-10-01T04:51:36.875Z"
     }
   ],
   "rules": [
