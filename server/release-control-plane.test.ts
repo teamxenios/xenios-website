@@ -2185,9 +2185,10 @@ describe("route uniqueness validator", () => {
     // The separately default-off N2 no-funds cancellation adds one guarded POST.
     // ADP01 adds one guarded held-reservation POST, with a null production source.
     // ADP02 adds one distinct guarded prepare/readback POST, also source-null.
+    // ADP03 adds one distinct guarded full-capture settlement POST, source-null.
     // Measured from the same static graph; no duplicate route is allowed.
-    expect(result.callSites).toBe(452);
-    expect(result.routes).toHaveLength(461);
+    expect(result.callSites).toBe(453);
+    expect(result.routes).toHaveLength(462);
     expect(validateRouteUniqueness(result.routes)).toEqual([]);
   }, 60_000);
 });
