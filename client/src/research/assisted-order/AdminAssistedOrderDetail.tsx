@@ -1,4 +1,5 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useLocation } from "wouter";
 import type {
   AssistedOrderAdminDetail,
   AssistedOrderStatus,
@@ -7,22 +8,29 @@ import {
   createAssistedOrderDocumentDownload,
   loadAssistedOrderAdminDetail,
   updateAssistedOrderStatus,
+  AssistedOrderApiError,
 } from "./api";
-import { useAdminSession } from "../pages/adminx/auth";
+import { AdminAssistedOrderSession, type AssistedOrderAdminScope } from "./AdminAssistedOrderSession";
 import { money } from "./wizard-state";
 import "./assisted-order.css";
 
-function requestIdFromPath(): string {
-  const parts = window.location.pathname.split("/").filter(Boolean);
-  return decodeURIComponent(parts[parts.length - 1] ?? "");
+function requestIdFromPath(path: string): string | null {
+  const parts = path.split("/").filter(Boolean);
+  try { return decodeURIComponent(parts[parts.length - 1] ?? "") || null; }
+  catch { return null; }
 }
 
 export function AdminAssistedOrderDetailPage() {
-  // The canonical admin session (pages/adminx/auth): a Supabase browser session
-  // yields the access token every /api/admin/* call carries, and the SERVER
-  // decides authority per request. The browser never grants it.
-  const { state: sessionState, token } = useAdminSession();
-  const requestId = useMemo(requestIdFromPath, []);
+  const [location] = useLocation();
+  const requestId = useMemo(() => requestIdFromPath(location), [location]);
+  return <AdminAssistedOrderSession title="Assisted order request">
+    {(scope) => requestId
+      ? <AdminAssistedOrderDetail key={requestId} {...scope} requestId={requestId} />
+      : <main className="xenios-order-page"><p role="alert">A valid request is required.</p></main>}
+  </AdminAssistedOrderSession>;
+}
+
+function AdminAssistedOrderDetail({ token, isCurrent, deny, requestId }: AssistedOrderAdminScope & { requestId: string }) {
   const [detail, setDetail] = useState<AssistedOrderAdminDetail | null>(null);
   const [nextStatus, setNextStatus] = useState<AssistedOrderStatus>("reviewing");
   const [customerMessage, setCustomerMessage] = useState("");
@@ -30,21 +38,44 @@ export function AdminAssistedOrderDetailPage() {
   const [evidenceId, setEvidenceId] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const mounted = useRef(true);
+  const updating = useRef(false);
+  const readEpoch = useRef(0);
 
-  const refresh = () => {
-    // No token, no call: an unauthorized read is never attempted.
-    if (!token) return;
-    setError(null);
-    loadAssistedOrderAdminDetail(token, requestId).then(setDetail).catch((reason) => setError(reason instanceof Error ? reason.message : "The request could not be loaded."));
+  useLayoutEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
+  const current = () => mounted.current && isCurrent();
+  const failed = (reason: unknown, fallback: string) => {
+    if (!current()) return;
+    if (reason instanceof AssistedOrderApiError && [401, 403].includes(reason.status)) {
+      deny();
+      return;
+    }
+    setError(reason instanceof Error ? reason.message : fallback);
   };
-  useEffect(refresh, [requestId, token]);
+
+  useEffect(() => {
+    let alive = true;
+    const epoch = ++readEpoch.current;
+    setError(null);
+    setDetail(null);
+    if (isCurrent()) void loadAssistedOrderAdminDetail(token, requestId).then((result) => {
+      if (!alive || !current() || readEpoch.current !== epoch) return;
+      if (result.requestId !== requestId) throw new Error("The request could not be loaded.");
+      setDetail(result);
+    }).catch((reason) => {
+      if (alive && current() && readEpoch.current === epoch) failed(reason, "The request could not be loaded.");
+    });
+    return () => { alive = false; };
+  }, [requestId, token, isCurrent]);
 
   const update = async (event: FormEvent) => {
     event.preventDefault();
-    if (!token) {
-      setError("Your admin session has expired. Sign in again before changing a status.");
-      return;
-    }
+    if (!current() || !detail || updating.current) return;
+    updating.current = true;
+    ++readEpoch.current;
     setBusy(true);
     setError(null);
     try {
@@ -63,24 +94,32 @@ export function AdminAssistedOrderDetailPage() {
         internalNote: internalNote || undefined,
         evidence,
       });
+      if (!current()) return;
+      if (result.requestId !== requestId) {
+        setDetail(null);
+        throw new Error("The updated request could not be verified.");
+      }
       setDetail(result);
       setCustomerMessage("");
       setInternalNote("");
       setEvidenceId("");
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "The status could not be updated.");
+      failed(reason, "The status could not be updated.");
     } finally {
-      setBusy(false);
+      updating.current = false;
+      if (current()) setBusy(false);
     }
   };
 
   const download = async (documentId: string) => {
-    if (!token) {
-      setError("Your admin session has expired. Sign in again to open an identity document.");
-      return;
+    if (!current() || !detail) return;
+    try {
+      const ticket = await createAssistedOrderDocumentDownload(token, requestId, documentId);
+      if (!current()) return;
+      window.open(ticket.url, "_blank", "noopener,noreferrer");
+    } catch (reason) {
+      failed(reason, "The identity document could not be opened.");
     }
-    const ticket = await createAssistedOrderDocumentDownload(token, requestId, documentId);
-    window.open(ticket.url, "_blank", "noopener,noreferrer");
   };
 
   return (

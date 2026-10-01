@@ -3,34 +3,35 @@ import type {
   AssistedOrderAdminListItem,
   AssistedOrderStatus,
 } from "../../../../shared/research/assisted-order/contract";
-import { loadAssistedOrderAdminList } from "./api";
-import { useAdminSession } from "../pages/adminx/auth";
+import { AssistedOrderApiError, loadAssistedOrderAdminList } from "./api";
+import { AdminAssistedOrderSession, type AssistedOrderAdminScope } from "./AdminAssistedOrderSession";
 import { money } from "./wizard-state";
 import "./assisted-order.css";
 
 export function AdminAssistedOrderQueue() {
-  // The canonical admin session (pages/adminx/auth): a Supabase browser session
-  // yields the access token every /api/admin/* call carries, and the SERVER
-  // decides authority per request. The browser never grants it.
-  const { state: sessionState, token } = useAdminSession();
-  const [items, setItems] = useState<readonly AssistedOrderAdminListItem[]>([]);
-  const [total, setTotal] = useState(0);
+  return <AdminAssistedOrderSession title="Assisted order requests">
+    {(scope) => <AdminAssistedOrderQueueBody {...scope} />}
+  </AdminAssistedOrderSession>;
+}
+
+function AdminAssistedOrderQueueBody({ token, isCurrent, deny }: AssistedOrderAdminScope) {
+  const [result, setResult] = useState<Readonly<{ queryKey: string; items: readonly AssistedOrderAdminListItem[]; total: number }> | null>(null);
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<"" | AssistedOrderStatus>("");
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const queryKey = JSON.stringify([search, status, page]);
+  const items = result?.queryKey === queryKey ? result.items : [];
+  const total = result?.queryKey === queryKey ? result.total : 0;
 
   useEffect(() => {
-    // No token, no call. The queue stays empty and the surface renders an
-    // honest session state rather than a request that cannot be authorized.
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+    let alive = true;
+    setResult(null);
+    setLoading(true);
+    setError(null);
     const timer = window.setTimeout(() => {
-      setLoading(true);
-      setError(null);
+      if (!alive || !isCurrent()) return;
       loadAssistedOrderAdminList(token, {
         status: status || undefined,
         search: search || undefined,
@@ -38,34 +39,17 @@ export function AdminAssistedOrderQueue() {
         pageSize: 25,
       })
         .then((result) => {
-          setItems(result.items);
-          setTotal(result.total);
+          if (alive && isCurrent()) setResult({ queryKey, items: result.items, total: result.total });
         })
-        .catch((reason) =>
-          setError(reason instanceof Error ? reason.message : "The queue could not be loaded."),
-        )
-        .finally(() => setLoading(false));
+        .catch((reason) => {
+          if (!alive || !isCurrent()) return;
+          if (reason instanceof AssistedOrderApiError && [401, 403].includes(reason.status)) deny();
+          else setError(reason instanceof Error ? reason.message : "The queue could not be loaded.");
+        })
+        .finally(() => { if (alive && isCurrent()) setLoading(false); });
     }, 200);
-    return () => window.clearTimeout(timer);
-  }, [search, status, page, token]);
-
-  if (sessionState !== "ready") {
-    return (
-      <main className="xenios-order-page">
-        <header className="xenios-order-hero">
-          <p className="xenios-order-eyebrow">Research operations</p>
-          <h1>Assisted order requests</h1>
-        </header>
-        <div className="xenios-order-error" role="alert">
-          {sessionState === "loading"
-            ? "Checking your admin session…"
-            : sessionState === "unconfigured"
-              ? "Admin sign-in is not configured for this deployment."
-              : "Sign in with your Xenios admin account to review assisted order requests."}
-        </div>
-      </main>
-    );
-  }
+    return () => { alive = false; window.clearTimeout(timer); };
+  }, [search, status, page, token, isCurrent, deny, queryKey]);
 
   return (
     <main className="xenios-order-page">
