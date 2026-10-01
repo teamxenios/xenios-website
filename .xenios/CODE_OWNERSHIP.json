@@ -2964,7 +2964,7 @@
         ".xenios/sessions/codex-xenios-product-imagery-20260930.json",
         ".xenios/handoffs/*XENIOS-PRODUCT-IMAGERY-20260930*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T02:31:21.980Z",
       "heartbeatAt": "2026-10-01T04:29:35.005Z"
     },
