@@ -12,11 +12,12 @@ import {
 } from "./productEducation";
 
 type MemberSafeOffering = {
+  id: string;
   canonicalName: string;
   displayName: string;
   aliases: string[];
   displayState: string;
-  variants: Array<{ label: string }>;
+  variants: Array<{ id: string; label: string }>;
 };
 
 const masterOfferings = JSON.parse(
@@ -100,7 +101,7 @@ describe("Care + Research product education reconciliation", () => {
     }
   });
 
-  it("gives every currently displayed product and variant a structured profile", () => {
+  it("gives every canonical catalog product and variant a structured profile", () => {
     let representedVariants = 0;
     for (const product of masterOfferings.products) {
       const lane = product.displayState === "care_pathway"
@@ -129,8 +130,31 @@ describe("Care + Research product education reconciliation", () => {
       }
     }
 
-    expect(masterOfferings.products).toHaveLength(420);
-    expect(representedVariants).toBe(420);
+    // Canonical artifact coverage includes the separate shipping row. This is
+    // not a claim that all 424 are customer merchandise or purchase-enabled.
+    expect(masterOfferings.products).toHaveLength(424);
+    expect(representedVariants).toBe(424);
+    const offeringIds = new Set(masterOfferings.products.map((product) => product.id));
+    const variantIds = new Set(masterOfferings.products.flatMap((product) =>
+      product.variants.map((variant) => variant.id)));
+    expect(offeringIds.size).toBe(424);
+    expect(variantIds.size).toBe(424);
+
+    for (const [offeringId, variantId] of [
+      ["mo_c4698a34aaaf7aec47b2", "mov_14b4034bef7ef37d9fc8"],
+      ["mo_2babbadce5172426bde2", "mov_f61758881da2b7bfa539"],
+      ["mo_f40119d9a74b2af15be6", "mov_cb3642e564392fa86dda"],
+      ["mo_c77c4659a519b58ac795", "mov_be54afb7419ed7240752"],
+      ["mo_3eec45f31e19795343f1", "mov_c26ef47dfbbe46f7e090"],
+      ["mo_a535d8a2951bc7c6c0a3", "mov_3c8ca424d78153fd931a"],
+    ]) {
+      const product = masterOfferings.products.find((row) => row.id === offeringId);
+      expect(product?.variants.map((variant) => variant.id)).toEqual([variantId]);
+    }
+    expect(offeringIds.has("mo_2aaac3a06aa0dd6b2923")).toBe(false);
+    expect(offeringIds.has("mo_1dd0658eb7bf15f91900")).toBe(false);
+    expect(variantIds.has("mov_7c55d415a9574e9ebda7")).toBe(false);
+    expect(variantIds.has("mov_256cb0423eb6d2a77f65")).toBe(false);
   });
 
   it("uses guide-grounded limitations for representative Research, blend, and clinical profiles", () => {
