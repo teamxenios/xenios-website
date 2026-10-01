@@ -395,3 +395,57 @@ financial records as rollback. See
 `verification/research_assisted_order_quote_history_immutability_local.mjs`
 and `server/research/assisted-order/HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md`.
 No managed, hosted PostgREST or production behavior is qualified by these runs.
+
+## Assisted-order durable audit and payment effects, source-only 2026-10-01
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 87 | migrations/20261001040349_research_assisted_order_quote_audit_store.sql | Promote the existing canonical durable audit candidate without byte changes | PENDING; no managed apply |
+| 88 | migrations/20261001040351_research_assisted_order_quote_effects.sql | Atomic held intent in canonical outbox; audit-before-release recovery and dispatch guard | PENDING; no managed apply |
+
+Both pin source `3562c03f3bd26b4a9ec165c0f17b1f96256abb23`.
+Canonical Git-byte SHA-256 values:
+
+- 87: `a6814b1c8f0cd42b24cc9f3ca17e3950d82811ada75abb8dba698441900457b0`.
+- 88: `8121e537df0f3028b73be5c03b66912b8a04498c8d646aa7f5d1edba4071f743`.
+
+87 requires M71 and the canonical outbox (ledger order3,
+`research-notification-outbox.sql`, historically RUN2026-07-18). 88 requires
+86 and 87. Existing candidate and promoted87 are one logical migration, not
+permission to replay both on a managed target. Final separate disposable
+PostgreSQL17.11 proof passed in96.570s under Node20.19.0, including apply twice,
+atomic rollback, private ACLs, revoked-grant recovery, rotated-key concurrency,
+readiness, actor/status validation, keyset pagination and a pre80 inventory.
+Earlier failures and narrower passes remain distinct in the successor handoff.
+
+### Future rollout and rollback constraints (not apply authorization)
+
+1. Positively identify the separately approved non-production project/origin
+   and managed ledger. No target or hosted configuration was reobserved here.
+   Before80, use `verification/research_assisted_order_quote_pre80_preflight.sql`
+   against M71 only. It is read-only, count-only and bounded by10s statement/2s
+   lock timeouts. Missing schema, timeout or error means unavailable, not zero.
+2. Nonterminal historically frozen rows above zero are NO-GO until a reviewed
+   disposition exists or Samuel explicitly accepts that exact freeze impact.
+   Do not fabricate verification for old paid labels. Keep finance unset/off,
+   verifier grants empty and status writes frozen during any approved window.
+3. Apply individually approved, byte-pinned pending files in DAG order with a
+   reviewed transactional mechanism. Older80/81/83 files lack BEGIN; do not
+   assume the entire chain is atomic or use a blind bulk migration replay.
+4. Deploy any later approved app only after at least84 for cancellation
+   compatibility; this successor's financial routes additionally require87/88,
+   the canonical durable audit and exact readiness. Keep finance off until
+   manual evidence authority, grants and managed qualification are approved.
+5. Qualify actual managed function owner/BYPASSRLS, financial_state EXECUTE,
+   browser-role denials, PostgREST, search paths and O/A-enabled guards. A
+   replica-only trigger is not a normal-session readiness pass. Pre/postchecks
+   do not prove arbitrary predecessor replay safe or hosted behavior correct.
+6. Rollback means disable the financial paths, preserve quotes, observations,
+   verifications, audit and outbox obligations, and roll forward under reviewed
+   change. Never erase financial history, remove holds, synthesize old payment
+   verification or replay193033/202413/205725/230541 over their successors.
+
+Proof: `verification/research_assisted_order_quote_effects_local.mjs`.
+Pre/postchecks: `verification/research_assisted_order_quote_effects_precheck.sql`
+and `verification/research_assisted_order_quote_effects_postcheck.sql`.
+No managed apply, delivery, real evidence import or provider execution occurred.

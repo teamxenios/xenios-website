@@ -917,6 +917,38 @@
         "evidence": "Two separate disposable no-network PostgreSQL17.11 runs passed under Node20.19.0. Exact bytes applied twice, legacy progression and quote mutation reproduced then rolled back, immutable snapshots and historical holds passed, authorized verification/progression and independent-connection races passed. No managed apply."
       },
       "notes": "Source-only HIST-PROG/SQL-06 and terminal quote-acceptance guard. No historical paid verification backfill, quote repricing, no-funds resolution, refunds, provider activation or notification dispatch. Pre/postchecks require the preceding financial schema, preserve PII-free counts and record effective function fingerprints; arbitrary predecessor replay remains prohibited and unqualified."
+    },
+    {
+      "id": "research_assisted_order_quote_audit_store",
+      "path": "supabase/migrations/20261001040349_research_assisted_order_quote_audit_store.sql",
+      "sourceSha": "3562c03f3bd26b4a9ec165c0f17b1f96256abb23",
+      "dependsOn": ["research_assisted_order_bridge"],
+      "checksum": { "algorithm": "sha256", "value": "a6814b1c8f0cd42b24cc9f3ca17e3950d82811ada75abb8dba698441900457b0" },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "keep_finance_disabled_preserve_canonical_audit_and_roll_forward",
+        "procedure": "supabase/MIGRATIONS.md",
+        "evidence": "Byte-identical promotion of existing canonical audit-store candidate. Applied twice on disposable no-network PostgreSQL17.11 under Node20.19.0 in the final payment-effects proof; private ACL and audit binding checks passed. No managed apply."
+      },
+      "notes": "Source-only promotion, not a new audit authority. Also requires the canonical notification outbox (ledger order3, research-notification-outbox.sql; historically RUN2026-07-18, not a new DAG migration). Exact managed prerequisites and actor-HMAC configuration require separate qualification."
+    },
+    {
+      "id": "research_assisted_order_quote_effects",
+      "path": "supabase/migrations/20261001040351_research_assisted_order_quote_effects.sql",
+      "sourceSha": "3562c03f3bd26b4a9ec165c0f17b1f96256abb23",
+      "dependsOn": ["research_assisted_order_quote_history_immutability", "research_assisted_order_quote_audit_store"],
+      "checksum": { "algorithm": "sha256", "value": "8121e537df0f3028b73be5c03b66912b8a04498c8d646aa7f5d1edba4071f743" },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "keep_finance_disabled_preserve_verification_intents_and_audits_then_roll_forward",
+        "procedure": "supabase/MIGRATIONS.md",
+        "evidence": "Final separate local proof PASS96.570s on disposable PostgreSQL17.11. Applied twice; verification/paid/held-intent rollback, private helper ACLs, real role denials, revoked-grant recovery, audit-key rotation/concurrent completion, readiness checks, malformed status/actor refusal and tied-timestamp keyset pagination passed. Synthetic rows only; no email or managed apply."
+      },
+      "notes": "Source-only F4 successor extending the canonical outbox, not a second queue. Refuses existing genuine verifications without effects and malformed financial notices; no historical adoption/backfill. SQL structurally binds canonical audit receipts; HMAC alias cryptography remains the trusted existing server adapter. Finance stays default-off; manual evidence provider/grant workflow and managed qualification remain absent."
     }
   ],
   "invariants": [
