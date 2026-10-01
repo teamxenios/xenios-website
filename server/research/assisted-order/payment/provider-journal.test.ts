@@ -11,7 +11,8 @@ const scope = { provider: "synthetic", accountId: "synthetic-account", mode: "te
 const command = { quoteId: QUOTE, quoteVersion: 1, acceptanceId: ACCEPTANCE };
 const viewer: AssistedOrderViewer = { actorType: "admin", authUserId: ACTOR, memberId: null,
   earlyAccessSessionHash: null, normalizedEmail: null, capabilities: new Set(["assisted_orders:manage"]) };
-const authority = { schemaVersion: "assisted_order_provider_journal_v1", settlementEnabled: false, refundEnabled: false, liveExecutionEnabled: false };
+const authority = { schemaVersion: "assisted_order_provider_journal_v2", transactionIsolation: "read_committed_only",
+  settlementEnabled: false, refundEnabled: false, liveExecutionEnabled: false };
 const attempt = { schemaVersion: "assisted_order_provider_attempt_v1", attemptId: ATTEMPT, requestId: REQUEST,
   ...command, sourceId: "synthetic-source", expectedAmountCents: 16927, currency: "USD", state: "held", reservedAt: WHEN, replayed: false };
 const event = () => ({ ...scope, eventId: "synthetic-event", providerPaymentId: "synthetic-payment", providerSessionId: null,
@@ -95,6 +96,18 @@ describe("durable held provider service, no live transport", () => {
     expect(h.rpc).not.toHaveBeenCalled();
   });
 
+  it.each([
+    { schemaVersion: "assisted_order_provider_journal_v1", settlementEnabled: false, refundEnabled: false, liveExecutionEnabled: false },
+    { ...authority, transactionIsolation: undefined }, { ...authority, transactionIsolation: "repeatable_read" },
+    { ...authority, schemaVersion: "assisted_order_provider_journal_v1" }, { ...authority, extraAuthority: true },
+  ])("rejects old or incompatible authority before every consequential boundary %#", async (incompatible) => {
+    const h = setup({ authority: incompatible });
+    await expect(h.service.reserveHeld(viewer, REQUEST, command)).rejects.toMatchObject({ code: "provider_journal_unavailable" });
+    await expect(h.service.uncertainty(REQUEST)).rejects.toMatchObject({ code: "provider_journal_unavailable" });
+    expect(await h.service.receiveAuthenticated(envelope())).toEqual({ ok: false, code: "persistence_unavailable" });
+    expect(h.rpc.mock.calls.map(([name]) => name)).toEqual(Array(3).fill("research_assisted_order_provider_journal_authority"));
+  });
+
   it("authenticates exact bytes and stores only digest and closed normalized facts", async () => {
     const h = setup({ normalized: { ...event(), rawBody: "private data", clientSecret: "private secret", headers: { signature: "private" } } });
     const input = envelope();
@@ -176,7 +189,10 @@ describe("durable held provider service, no live transport", () => {
     const h = setup();
     expect(await h.service.uncertainty(REQUEST)).toEqual({ schemaVersion: "assisted_order_provider_uncertainty_v1",
       requestId: REQUEST, held: true, reason: "provider_attempt_held" });
-    expect(h.rpc).toHaveBeenCalledExactlyOnceWith("research_assisted_order_provider_uncertainty", { p_request_id: REQUEST });
+    expect(h.rpc.mock.calls).toEqual([
+      ["research_assisted_order_provider_journal_authority"],
+      ["research_assisted_order_provider_uncertainty", { p_request_id: REQUEST }],
+    ]);
   });
 
   it("freezes configured scope rather than adopting a later adapter mutation", async () => {

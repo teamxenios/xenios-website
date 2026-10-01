@@ -16,7 +16,7 @@ import type { SupabaseRpcClient } from "../../server/research/assisted-order/sup
 assert.equal(process.version,"v20.19.0");
 const container=process.argv[2],phase=process.argv[3];
 assert.match(container??"",/^[a-f0-9]{64}$/);
-assert.ok(phase==="bound"||phase==="quarantine");
+assert.ok(phase==="bound"||phase==="quarantine"||phase==="legacy");
 const inspected=JSON.parse((await promisify(execFile)("docker",["inspect",container,"--format","{{json .}}"],{windowsHide:true})).stdout);
 assert.equal(inspected.State.Running,true);assert.equal(inspected.HostConfig.NetworkMode,"none");
 assert.equal(Object.keys(inspected.HostConfig.PortBindings??{}).length,0);
@@ -97,6 +97,24 @@ async function event(n:number,key:string) {
 }
 const pass=(label:string)=>{groups++;process.stdout.write(`HTTP_SQL PASS ${label}\n`);};
 const h=mounted();
+if(phase==="legacy") {
+  const oldAuthority=JSON.parse(await psql("set role service_role;select public.research_assisted_order_provider_journal_authority()::text;"));
+  assert.deepEqual(oldAuthority,{schemaVersion:"assisted_order_provider_journal_v1",settlementEnabled:false,refundEnabled:false,liveExecutionEnabled:false});
+  const before=await facts(800),beforeCount=await count();
+  const response=await h.post(800,await command(800));
+  assert.equal(response.status,409,JSON.stringify(response.body));assert.equal(response.body.error,"provider_journal_unavailable");
+  assert.deepEqual(calls,["research_assisted_order_provider_journal_authority"]);
+  assert.equal(await psql("select count(*) from public.research_assisted_order_provider_attempts;"),"0");
+  normalized={...scope,eventId:"synthetic-valid-old-authority-ingress",kind:"captured"};
+  assert.deepEqual(await h.provider.receiveAuthenticated(envelope("legacy")),{ok:false,code:"persistence_unavailable"});
+  assert.deepEqual(calls,["research_assisted_order_provider_journal_authority","research_assisted_order_provider_journal_authority"]);
+  await assert.rejects(h.provider.uncertainty(requestId(800)),/Provider payment processing remains unavailable/);
+  assert.deepEqual(calls,Array(3).fill("research_assisted_order_provider_journal_authority"));
+  assert.equal(authCalls,1);assert.equal(await count(),beforeCount);assert.deepEqual(await facts(800),before);
+  pass("new application receives genuinely self-valid old v1 SQL authority and refuses before reservation or journal write");
+  process.stdout.write(`HTTP_SQL COMPLETE ${JSON.stringify({phase,groups,sqlCalls,authCalls,node:process.version,syntheticAuth:true,providerConfigured:false,managedStateMutated:false})}\n`);
+  process.exit(0);
+}
 const before=await facts(800);
 assert.deepEqual(before,{status:"payment_review",observations:0,verifications:0,financial:{hasObservation:false,paymentVerified:false},audit:0,outbox:0});
 if(phase==="bound") {

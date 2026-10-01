@@ -109,6 +109,10 @@ async function provisionSources() {
 
 const startedAt = performance.now();
 try {
+  const legacyProof=await promisify(execFile)(process.execPath,
+    ['supabase/verification/research_assisted_order_quote_provider_journal_legacy.mjs'],
+    {windowsHide:true,maxBuffer:2*1024*1024,timeout:120_000});
+  process.stdout.write(legacyProof.stdout);process.stderr.write(legacyProof.stderr);
   // Qualify stale RR/SSI snapshots in a separate sequential disposable
   // database before the READ COMMITTED race matrix below. No two containers
   // or qualification jobs overlap, and neither adopts managed state.
@@ -381,7 +385,8 @@ try {
     }
   }
   assert.deepEqual(json(await db.psql(service(`select ${prefix}provider_journal_authority()::text;`))), {
-    schemaVersion:'assisted_order_provider_journal_v1',settlementEnabled:false,refundEnabled:false,liveExecutionEnabled:false,
+    schemaVersion:'assisted_order_provider_journal_v2',transactionIsolation:'read_committed_only',
+    settlementEnabled:false,refundEnabled:false,liveExecutionEnabled:false,
   });
   console.log('PASS actual-role RLS/ACL/exact function allowlist, immutable source identity/revocation, always-enabled guards and delete/update/truncate/cascade refusals.');
 

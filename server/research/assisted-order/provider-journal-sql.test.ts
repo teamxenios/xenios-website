@@ -8,6 +8,7 @@ const proof=read("supabase/verification/research_assisted_order_quote_provider_j
 const harness=read("supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs");
 const http=read("supabase/verification/research_assisted_order_quote_provider_journal_http.ts");
 const isolation=read("supabase/verification/research_assisted_order_quote_provider_journal_isolation.mjs");
+const legacy=read("supabase/verification/research_assisted_order_quote_provider_journal_legacy.mjs");
 const body=(name:string,delimiter:string)=>sql.split(`create function public.${name}(`)[1]?.split(`$${delimiter}$;`)[0]??"";
 
 describe("ADP01 provider-neutral held journal SQL source contract",()=>{
@@ -77,6 +78,16 @@ describe("ADP01 provider-neutral held journal SQL source contract",()=>{
       "['read uncommitted','repeatable read','serializable']","assert.equal(state.financial.paymentVerified,false,label)",
       "begin isolation level read committed", "Migration changed during isolation qualification"])expect(isolation).toContain(token);
     expect(proof).toContain("research_assisted_order_quote_provider_journal_isolation.mjs");
+  });
+  it("uses an exact minimum authority contract and refuses genuinely valid old v1 without adoption",()=>{
+    const authority=body("research_assisted_order_provider_journal_authority","authority");
+    expect(authority).toContain("'assisted_order_provider_journal_v2'");
+    expect(authority).toContain("'transactionIsolation','read_committed_only'");
+    for(const token of ["5809b727617e3abe065df69e563374d13f2bcfa8","'git',['show'",
+      "Old valid schema must actually self-attest successfully","await db.refused(current,'55000')",
+      "Refused successor must not alter prior records","'legacy'"])expect(legacy).toContain(token);
+    expect(http).toContain("new application receives genuinely self-valid old v1 SQL authority");
+    expect(proof).toContain("research_assisted_order_quote_provider_journal_legacy.mjs");
   });
   it("includes real-role no-network rollback, lock-wait, drift, scope and mounted-application qualification",()=>{
     for(const token of ["'v20.19.0'","'--network', 'none'","'--pull=never'","wait_event_type='Lock'","CLEANUP removed exact"])

@@ -23,16 +23,16 @@ const STATUS_PATH = "/api/admin/research/assisted-orders/:requestId/status";
 const STATUS_URL = STATUS_PATH.replace(":requestId", REQUEST);
 const command = { quoteId: QUOTE, quoteVersion: 1, acceptanceId: ACCEPTANCE };
 const scope = { provider: "synthetic", accountId: "synthetic-account", mode: "test" as const };
-const authority = { schemaVersion: "assisted_order_provider_journal_v1", settlementEnabled: false,
+const authority = { schemaVersion: "assisted_order_provider_journal_v2", transactionIsolation: "read_committed_only", settlementEnabled: false,
   refundEnabled: false, liveExecutionEnabled: false };
 const attempt = () => ({ schemaVersion: "assisted_order_provider_attempt_v1", attemptId: ATTEMPT,
   requestId: REQUEST, ...command, sourceId: "synthetic-source", expectedAmountCents: 16927, currency: "USD",
   state: "held", reservedAt: WHEN, replayed: false });
 
-function mounted(options: { enabled?: boolean; noSource?: boolean; forceNullService?: boolean; omitStamp?: boolean;
+function mounted(options: { enabled?: boolean; noSource?: boolean; forceNullService?: boolean; omitStamp?: boolean; authority?: unknown;
   reservation?: unknown; reserveError?: SupabaseRpcResponse["error"]; service?: AssistedOrderService } = {}) {
   const rpc = vi.fn<SupabaseRpcClient["rpc"]>(async (name) => {
-    if (name === "research_assisted_order_provider_journal_authority") return { data: authority, error: null };
+    if (name === "research_assisted_order_provider_journal_authority") return { data: options.authority ?? authority, error: null };
     if (name === "research_assisted_order_provider_attempt_reserve") return {
       data: options.reserveError ? null : options.reservation ?? attempt(), error: options.reserveError ?? null,
     };
@@ -69,6 +69,16 @@ function mounted(options: { enabled?: boolean; noSource?: boolean; forceNullServ
 }
 
 describe("ADP-01 mounted held reservation protocol", () => {
+  it("refuses a valid old v1 authority before reservation without exposing database facts", async () => {
+    const h = mounted({ authority: { schemaVersion: "assisted_order_provider_journal_v1", settlementEnabled: false,
+      refundEnabled: false, liveExecutionEnabled: false } });
+    const response = await request(h.app).post(URL).set("authorization", BEARER).send(command);
+    expect(response.status).toBe(409);
+    expect(response.body).toEqual({ error: "provider_journal_unavailable", message: "Provider payment processing remains unavailable." });
+    expect(h.rpc.mock.calls.map(([name]) => name)).toEqual(["research_assisted_order_provider_journal_authority"]);
+    for (const operation of h.external) expect(operation).not.toHaveBeenCalled();
+  });
+
   it("passes exact accepted-quote identities with the guarded actor, never a payment operation", async () => {
     const h = mounted();
     const response = await request(h.app).post(URL).set("authorization", BEARER).send(command);
