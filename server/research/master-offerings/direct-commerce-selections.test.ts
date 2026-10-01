@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
+import { PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
 import type {
   CartProductSelectionRequest,
   CartProductSelectionSource,
@@ -89,7 +89,7 @@ function readiness(domain: string): DomainReadiness {
 }
 
 function requiredInputs(productId = "product-a"): RequiredInput[] {
-  return PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map((binding, index) => ({
+  return PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map((binding, index) => ({
     id: `input-${index}`,
     key: binding.key,
     domain: binding.domain,
@@ -270,7 +270,24 @@ describe("the direct-commerce flag", () => {
     if (result.ok) {
       expect(result.selection.sku).toBe("SKU-A");
       expect(result.selection.price.amountCents).toBe(14900);
+      expect(result.selection).not.toHaveProperty("media");
     }
+  });
+
+  it("delegates identically when presentation media is absent or malformed", async () => {
+    const withoutMedia = source();
+    withoutMedia.media = [];
+    const malformedMedia = source();
+    malformedMedia.media = [{} as never];
+    const first = await createProductControlSelectionAuthority({
+      readSelectionSource: () => withoutMedia,
+    }).select(request);
+    const second = await createProductControlSelectionAuthority({
+      readSelectionSource: () => malformedMedia,
+    }).select(request);
+
+    expect(first).toEqual(second);
+    expect(first).not.toHaveProperty("selection.media");
   });
 });
 

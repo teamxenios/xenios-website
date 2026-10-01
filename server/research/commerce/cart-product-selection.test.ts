@@ -1,5 +1,8 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
+import {
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS,
+  PRODUCT_PRESENTATION_INPUT_BINDINGS,
+} from "@shared/research/product-admin";
 import type {
   CartProductSelectionRequest,
   CartProductSelectionSource,
@@ -99,7 +102,7 @@ function readiness(domain: string): DomainReadiness {
 }
 
 function requiredInputs(productId = "product-a"): RequiredInput[] {
-  return PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map((binding, index) => ({
+  return PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map((binding, index) => ({
     id: `input-${index}`,
     key: binding.key,
     domain: binding.domain,
@@ -363,9 +366,78 @@ describe("Website 3 cart product selection", () => {
         variantId: "variant-a",
         sku: "SKU-A",
         price: { id: "price-a", version: 2 },
-        media: { id: "media-a" },
       },
     });
+    expect(selectCartProduct(request, first)).not.toHaveProperty(
+      "selection.media",
+    );
+  });
+
+  it("keeps all media and legacy image-input states outside selection authority", () => {
+    const baseline = selectCartProduct(request, source());
+    const imageBinding = PRODUCT_PRESENTATION_INPUT_BINDINGS[0];
+    const imageInput: RequiredInput = {
+      ...requiredInputs()[0],
+      id: "image-input",
+      key: imageBinding.key,
+      domain: imageBinding.domain,
+      recordType: imageBinding.recordType,
+      currentState: "rejected",
+    };
+    const cases: CartProductSelectionSource[] = [
+      { ...source(), media: [] },
+      {
+        ...source(),
+        media: [{ ...source().media[0], state: "pending_upload" }],
+      },
+      {
+        ...source(),
+        media: [{ ...source().media[0], state: "rejected", approvedBy: null }],
+      },
+      {
+        ...source(),
+        media: [source().media[0], { ...source().media[0], id: "media-copy" }],
+      },
+      { ...source(), media: [{} as never] },
+      {
+        ...source(),
+        media: [],
+        requiredInputs: [...requiredInputs(), imageInput],
+      },
+      {
+        ...source(),
+        media: [],
+        requiredInputs: [
+          ...requiredInputs(),
+          imageInput,
+          { ...imageInput, id: "image-input-copy", currentState: "verified" },
+        ],
+      },
+      ...(
+        [
+          "missing",
+          "entered",
+          "under_review",
+          "expired",
+          "superseded",
+          "not_applicable",
+        ] as const
+      ).map((currentState) => ({
+        ...source(),
+        media: [],
+        requiredInputs: [
+          ...requiredInputs(),
+          { ...imageInput, currentState },
+        ],
+      })),
+    ];
+
+    for (const value of cases) {
+      expect(selectCartProduct(request, value)).toEqual(baseline);
+      expect(selectCartProduct(request, value)).not.toHaveProperty(
+        "selection.media",
+      );
+    }
   });
 
   it("fails closed when the exact variant belongs to another product", () => {
@@ -590,6 +662,16 @@ describe("Website 3 cart product selection", () => {
     const truncated = source();
     truncated.requiredInputs = truncated.requiredInputs.slice(0, -1);
     expect(selectCartProduct(request, truncated)).toEqual({
+      ok: false,
+      code: "required_inputs_incomplete",
+    });
+
+    const unknown = source();
+    unknown.requiredInputs = [
+      ...unknown.requiredInputs,
+      { ...unknown.requiredInputs[0], id: "unknown-input", key: "products.unknown" },
+    ];
+    expect(selectCartProduct(request, unknown)).toEqual({
       ok: false,
       code: "required_inputs_incomplete",
     });

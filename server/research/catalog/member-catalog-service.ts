@@ -131,14 +131,23 @@ async function signedMediaPresentations(
       ): Promise<MemberCatalogMediaPresentation | null> => {
       const expectedStorageKey = `${media.productId}/${media.id}/${media.filename}`;
       if (media.storageKey !== expectedStorageKey) return null;
-      const { data, error } = await db.storage
-        .from(MEDIA_BUCKET)
-        .createSignedUrl(media.storageKey, MEMBER_CATALOG_SIGNED_MEDIA_TTL_SECONDS);
-      if (error || !data?.signedUrl) return null;
+      let signedUrl: string | null = null;
+      try {
+        const { data, error } = await db.storage
+          .from(MEDIA_BUCKET)
+          .createSignedUrl(
+            media.storageKey,
+            MEMBER_CATALOG_SIGNED_MEDIA_TTL_SECONDS,
+          );
+        if (!error && data?.signedUrl) signedUrl = data.signedUrl;
+      } catch {
+        return null;
+      }
+      if (signedUrl === null) return null;
       return {
         mediaId: media.id,
         productId: media.productId,
-        href: data.signedUrl,
+        href: signedUrl,
         altText: media.altText,
         filename: media.filename,
         sourceVersion: fingerprint({

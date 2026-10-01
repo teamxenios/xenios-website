@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { beforeAll, describe, expect, it } from "vitest";
 import type { RequiredInput } from "@shared/research/required-inputs";
 import {
+  WEBSITE3_REQUIRED_INPUT_PRESENTATIONS,
   Website3RequiredInputNotice,
   Website3RequiredInputValue,
 } from "./RequiredInputState";
@@ -294,6 +295,17 @@ describe("Website 3 required-input presentation", () => {
   });
 
   it("places exact product-data inputs in the internal supplement surface", () => {
+    const legacyImageInput: RequiredInput = {
+      ...canonical("missing"),
+      id: "legacy-image-input",
+      key: "product_content.primary_image",
+      domain: "product_content",
+      label: "APPROVED PRODUCT IMAGE REQUIRED",
+      description: "A legacy image description that claimed release blocking.",
+      whyRequired: "A legacy release-blocking explanation.",
+      nextAction: "Satisfy the legacy release gate.",
+      blockingLevel: "blocks_display",
+    };
     const html = renderToStaticMarkup(
       <SupplementComingSoon
         supplements={[
@@ -304,12 +316,17 @@ describe("Website 3 required-input presentation", () => {
             description: "Product records are under review.",
           },
         ]}
-        requiredInputs={[]}
+        requiredInputs={[legacyImageInput]}
       />,
     );
 
     expect(html).toContain("VERIFIED SUPPLEMENT PRODUCT DATA REQUIRED");
-    expect(html).toContain("APPROVED PRODUCT IMAGE REQUIRED");
+    expect(html).toContain("PRODUCT IMAGE PRESENTATION");
+    expect(html).not.toContain("APPROVED PRODUCT IMAGE REQUIRED");
+    expect(html).not.toContain("legacy release");
     expect(html).toContain("STORAGE INFORMATION REQUIRED");
+    expect(
+      WEBSITE3_REQUIRED_INPUT_PRESENTATIONS.approvedProductImage.blockingLevel,
+    ).toBe("informational");
   });
 });

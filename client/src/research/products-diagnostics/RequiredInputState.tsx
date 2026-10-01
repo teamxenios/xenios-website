@@ -52,12 +52,12 @@ export const WEBSITE3_REQUIRED_INPUT_PRESENTATIONS = {
   approvedProductImage: {
     key: "product_content.primary_image",
     domain: "product_content",
-    label: "APPROVED PRODUCT IMAGE REQUIRED",
-    description: "Upload and approve the primary image and accessible alternative text.",
-    whyRequired: "The published product needs verified media that matches the exact record.",
-    nextAction: "Add the approved image and alternative text.",
+    label: "PRODUCT IMAGE PRESENTATION",
+    description: "Optionally upload and approve a primary image with accessible alternative text.",
+    whyRequired: "Approved media improves presentation but never controls catalog, commerce, or fulfillment eligibility.",
+    nextAction: "Optionally add an approved image and alternative text.",
     adminEntryHref: "/admin/research/products",
-    blockingLevel: "blocks_display",
+    blockingLevel: "informational",
   },
   storageInformation: {
     key: "product_content.storage_information",
@@ -295,10 +295,19 @@ export function Website3RequiredInputNotice({
     return null;
   }
   const presentation = WEBSITE3_REQUIRED_INPUT_PRESENTATIONS[slot];
-  const label = canonical?.label ?? presentation.label;
-  const description = canonical?.description ?? presentation.description;
-  const whyRequired = canonical?.whyRequired ?? presentation.whyRequired;
-  const nextAction = canonical?.nextAction ?? presentation.nextAction;
+  const presentationOnly = slot === "approvedProductImage";
+  const label = presentationOnly
+    ? presentation.label
+    : canonical?.label ?? presentation.label;
+  const description = presentationOnly
+    ? presentation.description
+    : canonical?.description ?? presentation.description;
+  const whyRequired = presentationOnly
+    ? presentation.whyRequired
+    : canonical?.whyRequired ?? presentation.whyRequired;
+  const nextAction = presentationOnly
+    ? presentation.nextAction
+    : canonical?.nextAction ?? presentation.nextAction;
   const href = canonical?.adminEntryHref ?? presentation.adminEntryHref;
   const state = canonical?.currentState ?? "missing";
 

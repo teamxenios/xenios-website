@@ -31,19 +31,13 @@ const selection: PersistentCartSelection = {
     expiresAt: null,
     version: 3,
   },
-  media: {
-    id: "88888888-8888-4888-8888-888888888888",
-    kind: "primary_image",
-    altText: "Product",
-  },
   canonicalReadiness: {
     ready: true,
-    verifiedInputCount: 4,
+    verifiedInputCount: 3,
     inputVersions: [
       { id: "55555555-5555-4555-8555-555555555551", version: 2 },
       { id: "55555555-5555-4555-8555-555555555552", version: 2 },
       { id: "55555555-5555-4555-8555-555555555553", version: 2 },
-      { id: "55555555-5555-4555-8555-555555555554", version: 2 },
     ],
     domainVersions: [
       { domain: "products", version: 4 },
@@ -110,6 +104,69 @@ describe("persistent cart repository", () => {
     });
     expect(result).toEqual({ ok: false, code: "invalid_input" });
     expect(rpc).not.toHaveBeenCalled();
+  });
+
+  it("requires exactly three distinct commerce readiness references", async () => {
+    const rpc = vi.fn();
+    const repo = createPersistentCartRepository({ rpc });
+    const base = {
+      expectedCartVersion: null,
+      expectedItemVersion: null,
+      quantity: 1,
+      idempotencyKey: "readiness-count-123456",
+      expiresAt: cart.expiresAt,
+    };
+    const refs = selection.canonicalReadiness.inputVersions;
+    for (const inputVersions of [
+      refs.slice(0, 2),
+      [...refs, { id: "55555555-5555-4555-8555-555555555554", version: 2 }],
+      [refs[0], refs[0], refs[2]],
+    ]) {
+      await expect(
+        repo.putAnonymousItem(secret, {
+          ...base,
+          selection: {
+            ...selection,
+            canonicalReadiness: {
+              ...selection.canonicalReadiness,
+              verifiedInputCount: inputVersions.length,
+              inputVersions,
+            },
+          },
+        }),
+      ).resolves.toEqual({ ok: false, code: "invalid_input" });
+    }
+    expect(rpc).not.toHaveBeenCalled();
+  });
+
+  it("strips legacy media before put and claim persistence", async () => {
+    const rpc = vi.fn(async () => ({ data: cart, error: null }));
+    const repo = createPersistentCartRepository({ rpc });
+    const legacy = {
+      ...selection,
+      media: { id: "not-a-uuid", kind: "gallery_image", altText: 42 },
+    } as unknown as PersistentCartSelection;
+
+    await repo.putAnonymousItem(secret, {
+      expectedCartVersion: null,
+      expectedItemVersion: null,
+      quantity: 1,
+      selection: legacy,
+      idempotencyKey: "legacy-media-put-123456",
+      expiresAt: cart.expiresAt,
+    });
+    await repo.claimAnonymousCart(member, {
+      anonymousSecret: secret,
+      selections: [legacy],
+      expectedAnonymousCartVersion: 1,
+      expectedMemberCartVersion: null,
+      idempotencyKey: "legacy-media-claim-123456",
+      expiresAt: cart.expiresAt,
+    });
+
+    expect(rpc.mock.calls[0][1].p_selection).toEqual(selection);
+    expect(rpc.mock.calls[1][1].p_selections).toEqual([selection]);
+    expect(JSON.stringify(rpc.mock.calls)).not.toContain("gallery_image");
   });
 
   it("binds non-retail audiences to members and keeps anonymous carts retail-only", async () => {

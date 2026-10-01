@@ -59,6 +59,7 @@ export type CartProductSelectionSource = {
   products: readonly AdminProductSummary[];
   variants: readonly AdminProductVariant[];
   prices: readonly AdminProductPrice[];
+  /** Presentation-only compatibility input. Selection authority ignores it. */
   media: readonly AdminProductMedia[];
   requiredInputs: readonly RequiredInput[];
   readiness: readonly DomainReadiness[];
@@ -122,7 +123,8 @@ export type CartProductSelection = {
     expiresAt: string | null;
     version: number;
   };
-  media: {
+  /** @deprecated Presentation is not selection authority and new writes omit it. */
+  media?: {
     id: string;
     kind: "primary_image";
     altText: string;

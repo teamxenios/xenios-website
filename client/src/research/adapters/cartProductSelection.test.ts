@@ -22,21 +22,18 @@ const valid = {
       expiresAt: null,
       version: 2,
     },
-    media: {
-      id: "media-a",
-      kind: "primary_image",
-      altText: "Product A",
-    },
     canonicalReadiness: {
       ready: true,
-      verifiedInputCount: 4,
+      verifiedInputCount: 3,
       inputVersions: [
         { id: "input-a", version: 1 },
         { id: "input-b", version: 1 },
         { id: "input-c", version: 1 },
-        { id: "input-d", version: 1 },
       ],
-      domainVersions: [{ domain: "products", version: 2 }],
+      domainVersions: [
+        { domain: "product_content", version: 2 },
+        { domain: "products", version: 2 },
+      ],
     },
     inventoryEligibility: {
       productId: "product-a",
@@ -62,6 +59,25 @@ describe("cart product selection client adapter", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it("accepts and strips legacy media regardless of presentation shape", () => {
+    for (const media of [
+      { id: "media-a", kind: "primary_image", altText: "Product A" },
+      null,
+      {},
+      { id: "", kind: "gallery_image", altText: 42 },
+    ]) {
+      const result = adaptCartProductSelection({
+        ...valid,
+        selection: { ...valid.selection, media },
+      });
+      expect(result).toEqual(valid);
+      expect(result).not.toHaveProperty("selection.media");
+    }
+    expect(
+      adaptCartProductSelection({ ok: false, code: "media_unapproved" }),
+    ).toEqual({ ok: false, code: "media_unapproved" });
+  });
+
   it("fails closed for malformed price or readiness identity", () => {
     expect(
       adaptCartProductSelection({
@@ -84,6 +100,31 @@ describe("cart product selection client adapter", () => {
         },
       }),
     ).toEqual({ ok: false, code: "invalid_projection" });
+    for (const canonicalReadiness of [
+      {
+        ...valid.selection.canonicalReadiness,
+        verifiedInputCount: 2,
+        inputVersions: valid.selection.canonicalReadiness.inputVersions.slice(0, 2),
+      },
+      {
+        ...valid.selection.canonicalReadiness,
+        domainVersions: [{ domain: "products", version: 2 }],
+      },
+      {
+        ...valid.selection.canonicalReadiness,
+        domainVersions: [
+          { domain: "products", version: 2 },
+          { domain: "inventory", version: 2 },
+        ],
+      },
+    ]) {
+      expect(
+        adaptCartProductSelection({
+          ...valid,
+          selection: { ...valid.selection, canonicalReadiness },
+        }),
+      ).toEqual({ ok: false, code: "invalid_projection" });
+    }
   });
 
   it("rejects cross-product inventory and preserves canonical failures", () => {

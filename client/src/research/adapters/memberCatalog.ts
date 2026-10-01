@@ -22,6 +22,7 @@ import {
   type MemberProductDetail,
   type MemberProductDetailResult,
 } from "@shared/research/member-catalog";
+import { PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
 import { PRODUCT_LANES } from "@shared/research/catalog";
 import { adaptCartProductSelection } from "./cartProductSelection";
 
@@ -32,6 +33,9 @@ const DISPLAY_STATES = new Set([
   "pricing_pending",
   "catalog_only",
 ]);
+const COMMERCE_READINESS_DOMAINS = Array.from(
+  new Set(PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map(({ domain }) => domain)),
+).sort();
 const FORBIDDEN_KEYS = new Set([
   "storageKey",
   "privateStorageKey",
@@ -174,7 +178,7 @@ function media(
   value: unknown,
   productId: string,
   evaluatedAt: string,
-): MemberCatalogMediaPresentation | null | undefined {
+): MemberCatalogMediaPresentation | null {
   if (value === null) return null;
   if (
     !isObject(value) ||
@@ -194,7 +198,7 @@ function media(
     !text(value.altText) ||
     !text(value.sourceVersion)
   ) {
-    return undefined;
+    return null;
   }
   return {
     mediaId: value.mediaId,
@@ -257,6 +261,11 @@ function readiness(value: unknown): MemberCatalogReadiness | null | undefined {
   if (
     inputs === null ||
     domains === null ||
+    inputs.length !== PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.length ||
+    domains.length !== COMMERCE_READINESS_DOMAINS.length ||
+    !COMMERCE_READINESS_DOMAINS.every((domain) =>
+      domains.some((item) => item.domain === domain),
+    ) ||
     !Number.isInteger(value.verifiedInputCount) ||
     Number(value.verifiedInputCount) !== inputs.length
   ) {
@@ -303,11 +312,9 @@ function card(value: unknown, evaluatedAt: string): MemberCatalogCard | null {
   }
   if (
     safePrice === undefined ||
-    safeMedia === undefined ||
     safeReadiness === undefined ||
     (value.displayState === "available" &&
       (safePrice === null ||
-        safeMedia === null ||
         safeReadiness === null ||
         safeSelection === null)) ||
     (value.displayState !== "available" && safeSelection !== null) ||
@@ -318,8 +325,6 @@ function card(value: unknown, evaluatedAt: string): MemberCatalogCard | null {
         safeSelection.price.currency !== safePrice?.currency ||
         safeSelection.price.effectiveAt !== safePrice?.effectiveAt ||
         safeSelection.price.expiresAt !== safePrice?.expiresAt ||
-        safeSelection.media.id !== safeMedia?.mediaId ||
-        safeSelection.media.altText !== safeMedia?.altText ||
         JSON.stringify(safeSelection.canonicalReadiness) !==
           JSON.stringify(safeReadiness)))
   ) {
@@ -486,8 +491,6 @@ function detail(value: unknown): MemberProductDetail | null {
               item.selection.price.currency !== item.price?.currency ||
               item.selection.price.effectiveAt !== item.price?.effectiveAt ||
               item.selection.price.expiresAt !== item.price?.expiresAt ||
-              item.selection.media.id !== base.media?.mediaId ||
-              item.selection.media.altText !== base.media?.altText ||
               JSON.stringify(item.selection.canonicalReadiness) !==
                 JSON.stringify(safeReadiness))))
     ) ||

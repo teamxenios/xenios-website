@@ -128,7 +128,6 @@ function validMutation(
     validUuid(input.selection.productId) &&
     validUuid(input.selection.variantId) &&
     validUuid(input.selection.price.id) &&
-    validUuid(input.selection.media.id) &&
     Boolean(input.selection.sku.trim()) &&
     (owner === "anonymous"
       ? input.selection.audience === "retail" &&
@@ -154,14 +153,21 @@ function validMutation(
     input.selection.price.amountCents >= 0 &&
     Number.isSafeInteger(input.selection.price.version) &&
     input.selection.price.version >= 1 &&
-    input.selection.canonicalReadiness.inputVersions.length === 4 &&
-    new Set(input.selection.canonicalReadiness.inputVersions.map((value) => value.id)).size === 4 &&
+    input.selection.canonicalReadiness.inputVersions.length === 3 &&
+    new Set(input.selection.canonicalReadiness.inputVersions.map((value) => value.id)).size === 3 &&
     input.selection.canonicalReadiness.domainVersions.length === 2 &&
     new Set(input.selection.canonicalReadiness.domainVersions.map((value) => value.domain)).size === 2 &&
     input.selection.canonicalReadiness.verifiedInputCount ===
       input.selection.canonicalReadiness.inputVersions.length &&
     Number.isFinite(Date.parse(input.selection.evaluatedAt))
   );
+}
+
+function canonicalSelection(
+  selection: PutPersistentCartItemInput["selection"],
+): Omit<PutPersistentCartItemInput["selection"], "media"> {
+  const { media: _legacyPresentation, ...canonical } = selection;
+  return canonical;
 }
 
 function validAnonymousSelection(selection: PutPersistentCartItemInput["selection"]): boolean {
@@ -224,7 +230,7 @@ export function createPersistentCartRepository(
       p_expected_cart_version: input.expectedCartVersion,
       p_expected_item_version: input.expectedItemVersion,
       p_quantity: input.quantity,
-      p_selection: input.selection,
+      p_selection: canonicalSelection(input.selection),
       p_idempotency_key_hash: hashCartIdempotencyKey(input.idempotencyKey),
       p_expires_at: input.expiresAt,
     });
@@ -289,7 +295,7 @@ export function createPersistentCartRepository(
       return call("research_persistent_cart_claim", {
         p_member_id: memberId.toLowerCase(),
         p_anonymous_hash: hashCartSecret(input.anonymousSecret),
-        p_selections: input.selections,
+        p_selections: input.selections.map(canonicalSelection),
         p_expected_anonymous_cart_version: input.expectedAnonymousCartVersion,
         p_member_cart_id: input.memberCartId ?? null,
         p_expected_member_cart_version: input.expectedMemberCartVersion,

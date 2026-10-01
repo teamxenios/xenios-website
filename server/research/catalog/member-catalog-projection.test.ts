@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
+import {
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS,
+  PRODUCT_PRESENTATION_INPUT_BINDINGS,
+} from "@shared/research/product-admin";
 import type { AdminProductDetail } from "@shared/research/product-admin";
 import type {
   MemberCatalogProjectionSource,
@@ -15,7 +18,7 @@ import {
 const AT = "2026-07-26T22:00:00+00:00";
 
 function requiredInputs(productId: string): RequiredInput[] {
-  return PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map((binding, index) => ({
+  return PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map((binding, index) => ({
     id: `${productId}-input-${index}`,
     key: binding.key,
     domain: binding.domain,
@@ -45,6 +48,24 @@ function requiredInputs(productId: string): RequiredInput[] {
     version: index + 1,
     auditHistory: [],
   }));
+}
+
+function legacyPrimaryImageInput(
+  productId: string,
+  currentState: RequiredInput["currentState"] = "verified",
+): RequiredInput {
+  const binding = PRODUCT_PRESENTATION_INPUT_BINDINGS.find(
+    ({ key }) => key === "product_content.primary_image",
+  )!;
+  return {
+    ...requiredInputs(productId)[0],
+    id: `${productId}-legacy-primary-image`,
+    key: binding.key,
+    domain: binding.domain,
+    recordType: binding.recordType,
+    currentState,
+    version: 99,
+  };
 }
 
 function readiness(domain: string): DomainReadiness {
@@ -213,6 +234,13 @@ function source(products: AdminProductDetail[]): MemberCatalogProjectionInput {
   };
 }
 
+function nonMediaDetail(input: MemberCatalogProjectionInput) {
+  const detail = projectMemberProductDetail(input, "product-a");
+  if (detail === null) return null;
+  const { media: _media, ...commerceProjection } = detail;
+  return commerceProjection;
+}
+
 describe("member catalog projection", () => {
   it("projects only public Product Control facts through exact readiness and cart seams", () => {
     const result = projectMemberCatalog(source([product()]));
@@ -292,7 +320,9 @@ describe("member catalog projection", () => {
 
   it("renders canonical failures truthfully without exposing technical required-input keys", () => {
     const input = source([product()]);
-    input.requiredInputs = input.requiredInputs.slice(1);
+    input.requiredInputs = input.requiredInputs.filter(
+      ({ key }) => key !== "products.family",
+    );
     const result = projectMemberCatalog(input);
     expect(result.items).toEqual([]);
     expect(JSON.stringify(result)).not.toContain("PRODUCT-A-SKU");
@@ -300,7 +330,7 @@ describe("member catalog projection", () => {
     expect(JSON.stringify(result)).not.toContain("product_content.primary_image");
   });
 
-  it("suppresses each required-input-backed field before member projection", () => {
+  it("suppresses each commerce-required field before member projection", () => {
     const unresolvedStates = [
       "missing",
       "rejected",
@@ -328,23 +358,6 @@ describe("member catalog projection", () => {
         expect(skuDetail?.variants).toEqual([]);
       }
       expect(JSON.stringify(skuDetail)).not.toContain("PRODUCT-A-SKU");
-
-      const image = source([product()]);
-      image.requiredInputs = image.requiredInputs.map((item) =>
-        item.key === "product_content.primary_image"
-          ? { ...item, currentState: state }
-          : item,
-      );
-      if (state === "superseded") {
-        expect(projectMemberProductDetail(image, "product-a")).toBeNull();
-      } else {
-        expect(
-          projectMemberProductDetail(image, "product-a")?.media,
-        ).toBeNull();
-      }
-      expect(JSON.stringify(projectMemberCatalog(image))).not.toContain(
-        "product-a-media",
-      );
 
       const storage = source([product()]);
       storage.requiredInputs = storage.requiredInputs.map((item) =>
@@ -466,6 +479,79 @@ describe("member catalog projection", () => {
     });
   });
 
+  it("keeps catalog and commerce projection invariant across every media state", () => {
+    const baselineInput = source([product()]);
+    const baseline = nonMediaDetail(baselineInput);
+    const mediaIndependentCases: MemberCatalogProjectionInput[] = [];
+
+    for (const mediaState of ["pending_upload", "rejected"] as const) {
+      const stateProduct = product();
+      stateProduct.media = stateProduct.media.map((item) => ({
+        ...item,
+        state: mediaState,
+        approvedBy: null,
+      }));
+      mediaIndependentCases.push(source([stateProduct]));
+    }
+
+    mediaIndependentCases.push(source([product(undefined, { media: [] })]));
+
+    const duplicateProduct = product();
+    duplicateProduct.media = [
+      ...duplicateProduct.media,
+      {
+        ...duplicateProduct.media[0],
+        id: "product-a-media-duplicate",
+        storageKey:
+          "product-a/product-a-media-duplicate/product-a-duplicate.webp",
+        filename: "product-a-duplicate.webp",
+      },
+    ];
+    mediaIndependentCases.push(source([duplicateProduct]));
+
+    const unsafePresentation = source([product()]);
+    unsafePresentation.source.mediaPresentations = [
+      {
+        ...unsafePresentation.source.mediaPresentations[0],
+        href: "https://tracking.example.com/product-a",
+      },
+    ];
+    mediaIndependentCases.push(unsafePresentation);
+
+    for (const input of mediaIndependentCases) {
+      expect(nonMediaDetail(input)).toEqual(baseline);
+      expect(projectMemberProductDetail(input, "product-a")?.media).toBeNull();
+    }
+
+    for (const state of [
+      "verified",
+      "missing",
+      "rejected",
+      "expired",
+      "superseded",
+    ] as const) {
+      const legacyInput = source([product()]);
+      legacyInput.requiredInputs = [
+        ...legacyInput.requiredInputs,
+        legacyPrimaryImageInput("product-a", state),
+      ];
+      expect(nonMediaDetail(legacyInput)).toEqual(baseline);
+      expect(projectMemberProductDetail(legacyInput, "product-a")?.media)
+        .toMatchObject({ mediaId: "product-a-media" });
+    }
+
+    const duplicateLegacyInputs = source([product()]);
+    duplicateLegacyInputs.requiredInputs = [
+      ...duplicateLegacyInputs.requiredInputs,
+      legacyPrimaryImageInput("product-a"),
+      {
+        ...legacyPrimaryImageInput("product-a"),
+        id: "product-a-legacy-primary-image-duplicate",
+      },
+    ];
+    expect(nonMediaDetail(duplicateLegacyInputs)).toEqual(baseline);
+  });
+
   it("rejects unsafe or mismatched media presentations", () => {
     const input = source([product()]);
     input.source.mediaPresentations = [
@@ -477,7 +563,7 @@ describe("member catalog projection", () => {
     expect(projectMemberCatalog(input).items[0]).toMatchObject({
       media: null,
       selection: null,
-      displayState: "documentation_pending",
+      displayState: "unavailable",
     });
 
     for (const href of [

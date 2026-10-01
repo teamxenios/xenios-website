@@ -3223,13 +3223,20 @@
         "server/research/commerce/cart-product-selection.test.ts",
         "server/research/catalog/member-catalog-projection.ts",
         "server/research/catalog/member-catalog-projection.test.ts",
+        "server/research/catalog/member-catalog-service.ts",
+        "server/research/catalog/member-catalog-service.test.ts",
         "client/src/research/adapters/cartProductSelection.ts",
         "client/src/research/adapters/cartProductSelection.test.ts",
         "client/src/research/adapters/memberCatalog.ts",
         "client/src/research/adapters/memberCatalog.test.ts",
+        "client/src/research/products-diagnostics/RequiredInputState.tsx",
+        "client/src/research/products-diagnostics/RequiredInputState.test.tsx",
+        "client/src/research/pages/adminx/ProductAdminDetail.tsx",
         "server/research/master-offerings/direct-commerce-selections.test.ts",
         "server/research/commerce/persistence/persistent-cart.ts",
         "server/research/commerce/persistence/persistent-cart.test.ts",
+        "server/research/products-diagnostics/product-admin-production.ts",
+        "server/research/products-diagnostics/product-admin-production.test.ts",
         "supabase/candidates/20261001*_research_media_commerce_decoupling*",
         "supabase/verification/research_media_commerce_decoupling_local.mjs",
         "docs/product-imagery/media-commerce-decoupling/**",
@@ -3242,7 +3249,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T04:51:36.789Z",
-      "heartbeatAt": "2026-10-01T04:51:36.875Z"
+      "heartbeatAt": "2026-10-01T06:05:34.000Z"
     }
   ],
   "rules": [

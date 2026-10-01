@@ -4,7 +4,10 @@ import type {
   AdminProductPrice,
   AdminProductVariant,
 } from "@shared/research/product-admin";
-import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
+import {
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS,
+  PRODUCT_PRESENTATION_INPUT_BINDINGS,
+} from "@shared/research/product-admin";
 import type {
   MemberCatalog,
   MemberCatalogCard,
@@ -129,35 +132,56 @@ function exactlyOne<T>(
   return matches.length === 1 ? matches[0] : null;
 }
 
-type ProductDisplayBindingKey =
-  (typeof PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS)[number]["key"];
+type ProductCommerceBindingKey =
+  (typeof PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS)[number]["key"];
 
-type ProductDisplayBindings = Record<ProductDisplayBindingKey, boolean>;
+type ProductCommerceBindings = Record<ProductCommerceBindingKey, boolean>;
 
-function resolvedProductDisplayBindings(
+function resolvedProductCommerceBindings(
   productId: string,
   items: readonly RequiredInput[],
   evaluatedAt: string,
-): ProductDisplayBindings {
+): ProductCommerceBindings {
   const unresolved = () =>
     Object.fromEntries(
-      PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map(({ key }) => [key, false]),
-    ) as ProductDisplayBindings;
-  const activeDisplayItems = items.filter(
+      PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map(({ key }) => [key, false]),
+    ) as ProductCommerceBindings;
+  const activeProductItems = items.filter(
     (item) =>
       item.recordId === productId &&
       item.currentState !== "superseded" &&
       item.blockingLevel === "blocks_display",
   );
+  const knownBinding = (item: RequiredInput) =>
+    [
+      ...PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS,
+      ...PRODUCT_PRESENTATION_INPUT_BINDINGS,
+    ].some(
+      (binding) =>
+        item.key === binding.key &&
+        item.domain === binding.domain &&
+        item.recordType === binding.recordType,
+    );
+  if (activeProductItems.some((item) => !knownBinding(item))) {
+    return unresolved();
+  }
+  const activeCommerceItems = activeProductItems.filter((item) =>
+    PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.some(
+      (binding) =>
+        item.key === binding.key &&
+        item.domain === binding.domain &&
+        item.recordType === binding.recordType,
+    ),
+  );
   if (
-    activeDisplayItems.length !==
-    PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.length
+    activeCommerceItems.length !==
+    PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.length
   ) {
     return unresolved();
   }
   const evaluatedMicros = parseProductControlTimestampMicros(evaluatedAt);
-  const entries = PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map((binding) => {
-    const active = activeDisplayItems.filter(
+  const entries = PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map((binding) => {
+    const active = activeCommerceItems.filter(
       (item) =>
         item.key === binding.key &&
         item.domain === binding.domain &&
@@ -192,13 +216,13 @@ function resolvedProductDisplayBindings(
   }
   return Object.fromEntries(
     entries.map(({ key, verified }) => [key, verified]),
-  ) as ProductDisplayBindings;
+  ) as ProductCommerceBindings;
 }
 
-function allProductDisplayBindingsResolved(
-  bindings: ProductDisplayBindings,
+function allProductCommerceBindingsResolved(
+  bindings: ProductCommerceBindings,
 ): boolean {
-  return PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.every(
+  return PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.every(
     ({ key }) => bindings[key],
   );
 }
@@ -342,8 +366,7 @@ function variantProjection(
   variant: AdminProductVariant,
   input: MemberCatalogProjectionInput,
   resolver: CurrentPriceResolver,
-  safePresentationAvailable: boolean,
-  displayBindingsReady: boolean,
+  commerceBindingsReady: boolean,
 ): MemberCatalogVariant {
   const price = currentPrice(resolver, product, variant, input.source);
   const inventory = exactlyOne(
@@ -356,37 +379,35 @@ function variantProjection(
     variant.id,
     input.source,
   );
-  const selectionResult = !displayBindingsReady
+  const selectionResult = !commerceBindingsReady
     ? { ok: false as const, code: "required_inputs_incomplete" as const }
-    : !safePresentationAvailable
-      ? { ok: false as const, code: "media_unapproved" as const }
-      : lotCoa === null ||
-          !["verified", "not_applicable"].includes(lotCoa.state)
-        ? { ok: false as const, code: "inventory_unavailable" as const }
-        : selectCartProduct(
-        {
-          productId: product.id,
-          variantId: variant.id,
-          audience: input.source.audienceEligibility!.audience,
-          currency: input.source.currency,
-          evaluatedAt: input.source.evaluatedAt,
-        },
-        {
-          products: [product],
-          variants: product.variants,
-          prices: product.prices,
-          media: product.media,
-          requiredInputs: input.requiredInputs,
-          readiness: input.readiness,
-          audienceEligibility: input.source.audienceEligibility,
-          inventoryEligibility: inventory,
-        },
-        // This synchronous projection has no durable activation-ledger reader.
-        // It may display catalog facts but must never manufacture a purchase
-        // selection from them. The request-time commerce authority supplies a
-        // resolved value in its own async composition.
-        null,
-          );
+    : lotCoa === null ||
+        !["verified", "not_applicable"].includes(lotCoa.state)
+      ? { ok: false as const, code: "inventory_unavailable" as const }
+      : selectCartProduct(
+          {
+            productId: product.id,
+            variantId: variant.id,
+            audience: input.source.audienceEligibility!.audience,
+            currency: input.source.currency,
+            evaluatedAt: input.source.evaluatedAt,
+          },
+          {
+            products: [product],
+            variants: product.variants,
+            prices: product.prices,
+            media: product.media,
+            requiredInputs: input.requiredInputs,
+            readiness: input.readiness,
+            audienceEligibility: input.source.audienceEligibility,
+            inventoryEligibility: inventory,
+          },
+          // This synchronous projection has no durable activation-ledger reader.
+          // It may display catalog facts but must never manufacture a purchase
+          // selection from them. The request-time commerce authority supplies a
+          // resolved value in its own async composition.
+          null,
+        );
 
   return {
     id: variant.id,
@@ -439,7 +460,7 @@ function readinessFrom(
 function displayState(
   product: AdminProductDetail,
   variants: readonly MemberCatalogVariant[],
-  bindings: ProductDisplayBindings,
+  bindings: ProductCommerceBindings,
 ): MemberCatalogDisplayState {
   if (
     product.lane === "future_clinical" ||
@@ -447,7 +468,7 @@ function displayState(
   ) {
     return "catalog_only";
   }
-  if (!allProductDisplayBindingsResolved(bindings)) {
+  if (!allProductCommerceBindingsResolved(bindings)) {
     return "documentation_pending";
   }
   if (variants.some((variant) => variant.selection !== null)) return "available";
@@ -456,10 +477,7 @@ function displayState(
   );
   if (
     failures.includes("required_inputs_incomplete") ||
-    failures.includes("readiness_incomplete") ||
-    failures.includes("media_missing") ||
-    failures.includes("media_unapproved") ||
-    failures.includes("media_ambiguous")
+    failures.includes("readiness_incomplete")
   ) {
     return "documentation_pending";
   }
@@ -492,7 +510,7 @@ function projectProduct(
   input: MemberCatalogProjectionInput,
   resolver: CurrentPriceResolver,
 ): MemberProductDetail | null {
-  const bindings = resolvedProductDisplayBindings(
+  const bindings = resolvedProductCommerceBindings(
     product.id,
     input.requiredInputs,
     input.source.evaluatedAt,
@@ -501,9 +519,7 @@ function projectProduct(
   const nontransactional =
     product.lane === "future_clinical" ||
     product.lane === "non_product_program";
-  const media = bindings["product_content.primary_image"]
-    ? safeMedia(product, input.source)
-    : null;
+  const media = safeMedia(product, input.source);
   const variants =
     nontransactional || !bindings["products.sku"]
       ? []
@@ -516,8 +532,7 @@ function projectProduct(
             variant,
             input,
             resolver,
-            media !== null,
-            allProductDisplayBindingsResolved(bindings),
+            allProductCommerceBindingsResolved(bindings),
           ),
         );
   const state = displayState(product, variants, bindings);

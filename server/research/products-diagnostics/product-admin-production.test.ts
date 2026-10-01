@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
+import {
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS,
+  PRODUCT_PRESENTATION_INPUT_BINDINGS,
+} from "@shared/research/product-admin";
 import { productReleaseGateFromRequiredInputs } from "./product-admin-production";
 
 type Readiness = {
@@ -31,7 +34,7 @@ function ready(domain: string, count = 2): Readiness {
 }
 
 function canonicalRows(productId = "product-1") {
-  return PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map((binding) => ({
+  return PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map((binding) => ({
     key: binding.key,
     domain: binding.domain,
     record_type: binding.recordType,
@@ -134,6 +137,39 @@ describe("productReleaseGateFromRequiredInputs", () => {
       displayReady: true,
       commerceReady: false,
       blockingKeys: [],
+    });
+  });
+
+  it("keeps presentation state outside release eligibility", async () => {
+    const baseline = await evaluate(canonicalRows());
+    const imageBinding = PRODUCT_PRESENTATION_INPUT_BINDINGS[0];
+    const imageRow = {
+      key: imageBinding.key,
+      domain: imageBinding.domain,
+      record_type: imageBinding.recordType,
+      record_id: "product-1",
+      current_state: "rejected",
+      blocking_level: "blocks_display",
+    };
+
+    for (const imageRows of [
+      [imageRow],
+      [{ ...imageRow, current_state: "expired" }],
+      [imageRow, { ...imageRow, current_state: "verified" }],
+    ]) {
+      await expect(evaluate([...canonicalRows(), ...imageRows])).resolves.toEqual(
+        baseline,
+      );
+    }
+
+    const missingStorage = canonicalRows().filter(
+      (row) => row.key !== "product_content.storage_information",
+    );
+    await expect(evaluate([...missingStorage, imageRow])).resolves.toMatchObject({
+      displayReady: false,
+      blockingKeys: expect.arrayContaining([
+        "product_content.storage_information",
+      ]),
     });
   });
 });

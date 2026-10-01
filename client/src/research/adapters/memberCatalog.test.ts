@@ -42,9 +42,16 @@ const cardBase = {
   price,
   readiness: {
     ready: true,
-    verifiedInputCount: 1,
-    inputVersions: [{ id: "input-a", version: 1 }],
-    domainVersions: [{ domain: "products", version: 1 }],
+    verifiedInputCount: 3,
+    inputVersions: [
+      { id: "input-a", version: 1 },
+      { id: "input-b", version: 1 },
+      { id: "input-c", version: 1 },
+    ],
+    domainVersions: [
+      { domain: "product_content", version: 1 },
+      { domain: "products", version: 1 },
+    ],
   },
   selection: null,
   variantCount: 1,
@@ -62,16 +69,18 @@ const selection = {
     evaluatedAt: AT,
   },
   price,
-  media: {
-    id: "media-a",
-    kind: "primary_image",
-    altText: "Product A package",
-  },
   canonicalReadiness: {
     ready: true,
-    verifiedInputCount: 1,
-    inputVersions: [{ id: "input-a", version: 1 }],
-    domainVersions: [{ domain: "products", version: 1 }],
+    verifiedInputCount: 3,
+    inputVersions: [
+      { id: "input-a", version: 1 },
+      { id: "input-b", version: 1 },
+      { id: "input-c", version: 1 },
+    ],
+    domainVersions: [
+      { domain: "product_content", version: 1 },
+      { domain: "products", version: 1 },
+    ],
   },
   inventoryEligibility: {
     productId: "product-a",
@@ -147,9 +156,39 @@ describe("member catalog browser adapter", () => {
         lanes: ["research_material"],
       },
     });
+
+    for (const mediaValue of [null, undefined]) {
+      const mediaIndependentCard = { ...card, media: mediaValue };
+      expect(
+        adaptMemberCatalog({
+          ok: true,
+          catalog: {
+            audience: "member",
+            currency: "USD",
+            evaluatedAt: AT,
+            items: [mediaIndependentCard],
+            categories: ["Research"],
+            lanes: ["research_material"],
+          },
+        }),
+      ).toMatchObject({
+        ok: true,
+        catalog: {
+          items: [
+            {
+              id: "product-a",
+              displayState: "available",
+              media: null,
+              price,
+              selection,
+            },
+          ],
+        },
+      });
+    }
   });
 
-  it("rejects private fields, unsafe media, duplicate identity, and raw timestamps", () => {
+  it("sanitizes unsafe media while rejecting private fields, duplicate identity, and raw timestamps", () => {
     const base = {
       ok: true,
       catalog: {
@@ -165,6 +204,20 @@ describe("member catalog browser adapter", () => {
       adaptMemberCatalog({
         ...base,
         catalog: { ...base.catalog, privateStorageKey: "private/object" },
+      }),
+    ).toEqual({ ok: false, code: "invalid_projection" });
+    expect(
+      adaptMemberCatalog({
+        ...base,
+        catalog: {
+          ...base.catalog,
+          items: [
+            {
+              ...card,
+              media: { ...media, storageKey: "private/object" },
+            },
+          ],
+        },
       }),
     ).toEqual({ ok: false, code: "invalid_projection" });
     for (const mediaOverride of [
@@ -204,7 +257,12 @@ describe("member catalog browser adapter", () => {
             ],
           },
         }),
-      ).toEqual({ ok: false, code: "invalid_projection" });
+      ).toMatchObject({
+        ok: true,
+        catalog: {
+          items: [{ id: "product-a", displayState: "available", media: null }],
+        },
+      });
     }
     for (const path of [
       "private-coa/product-a/media-a/product-a.webp",
@@ -230,7 +288,12 @@ describe("member catalog browser adapter", () => {
             ],
           },
         }),
-      ).toEqual({ ok: false, code: "invalid_projection" });
+      ).toMatchObject({
+        ok: true,
+        catalog: {
+          items: [{ id: "product-a", displayState: "available", media: null }],
+        },
+      });
     }
     const signedCard = {
       ...card,
@@ -260,7 +323,12 @@ describe("member catalog browser adapter", () => {
           ],
         },
       }),
-    ).toEqual({ ok: false, code: "invalid_projection" });
+    ).toMatchObject({
+      ok: true,
+      catalog: {
+        items: [{ id: "product-a", displayState: "available", media: null }],
+      },
+    });
     expect(
       adaptMemberCatalog({
         ...base,
@@ -303,6 +371,35 @@ describe("member catalog browser adapter", () => {
       ok: true,
       product: detail,
     });
+
+    for (const mediaValue of [
+      null,
+      { ...media, href: "https://tracking.example.com/object" },
+    ]) {
+      expect(
+        adaptMemberProductDetail({
+          ok: true,
+          product: { ...detail, media: mediaValue },
+        }),
+      ).toMatchObject({
+        ok: true,
+        product: {
+          id: "product-a",
+          displayState: "available",
+          media: null,
+          price,
+          selection,
+          variants: [
+            {
+              id: "variant-a",
+              availability: "available",
+              lotCoaState: "verified",
+              selection,
+            },
+          ],
+        },
+      });
+    }
   });
 
   it("rejects cross-product variants, malformed readiness, and leaked inventory detail", () => {

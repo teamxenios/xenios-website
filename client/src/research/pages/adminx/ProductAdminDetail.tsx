@@ -1056,8 +1056,8 @@ function MediaPanel({
         />
       ) : (
         <ResearchEmptyState
-          title="APPROVED PRODUCT IMAGE REQUIRED"
-          body="Upload and approve a primary product image before this product can be released."
+          title="PRODUCT IMAGE NOT YET AVAILABLE"
+          body="You can optionally upload and approve a primary product image for presentation. Image state does not determine product release or commerce eligibility."
         />
       )}
       <details className="card mt-4">

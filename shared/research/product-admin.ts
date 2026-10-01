@@ -68,19 +68,35 @@ export const PRODUCT_MEDIA_STATES = [
   "rejected",
   "archived",
 ] as const;
-export const PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS = [
+/** Facts that may govern catalog and commerce readiness. Presentation is not one. */
+export const PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS = [
   { key: "products.sku", domain: "products", recordType: "product" },
   { key: "products.family", domain: "products", recordType: "product" },
-  {
-    key: "product_content.primary_image",
-    domain: "product_content",
-    recordType: "product",
-  },
   {
     key: "product_content.storage_information",
     domain: "product_content",
     recordType: "product",
   },
+] as const;
+
+/** Optional presentation facts. Their state must never govern commerce. */
+export const PRODUCT_PRESENTATION_INPUT_BINDINGS = [
+  {
+    key: "product_content.primary_image",
+    domain: "product_content",
+    recordType: "product",
+  },
+] as const;
+
+/**
+ * Legacy admin/display inventory. Runtime release and commerce code must use
+ * PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS instead.
+ */
+export const PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS = [
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS[0],
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS[1],
+  PRODUCT_PRESENTATION_INPUT_BINDINGS[0],
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS[2],
 ] as const;
 
 

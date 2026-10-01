@@ -1,5 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
+import {
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS,
+  PRODUCT_PRESENTATION_INPUT_BINDINGS,
+} from "@shared/research/product-admin";
 import { readInChunks } from "../catalog/chunked-ids";
 import { getSupabaseAdmin } from "../../supabase";
 import type {
@@ -946,14 +949,24 @@ export function productReleaseGateFromRequiredInputs(
       const rows = (Array.isArray(data) ? data : []).filter(
         (row: any) => row.current_state !== "superseded",
       );
-      const expected = PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS;
+      const expected = PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS;
       const expectedKeys = new Set<string>(
         expected.map((binding) => binding.key),
+      );
+      const authorityRows = rows.filter(
+        (row: any) =>
+          !PRODUCT_PRESENTATION_INPUT_BINDINGS.some(
+            (binding) =>
+              row.key === binding.key &&
+              row.domain === binding.domain &&
+              row.record_type === binding.recordType &&
+              row.record_id === productId,
+          ),
       );
       const blockingKeys: string[] = [];
 
       for (const binding of expected) {
-        const matches = rows.filter(
+        const matches = authorityRows.filter(
           (row: any) =>
             row.key === binding.key &&
             row.domain === binding.domain &&
@@ -974,8 +987,8 @@ export function productReleaseGateFromRequiredInputs(
       }
 
       if (
-        rows.length !== expected.length ||
-        rows.some((row: any) => !expectedKeys.has(String(row.key)))
+        authorityRows.length !== expected.length ||
+        authorityRows.some((row: any) => !expectedKeys.has(String(row.key)))
       ) {
         blockingKeys.push("product.required_inputs.record_set");
       }
