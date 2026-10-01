@@ -13,6 +13,10 @@ const viewer: AssistedOrderViewer = { actorType: "admin", authUserId: ACTOR, mem
 const authority = { schemaVersion: "assisted_order_provider_execution_v1", transactionIsolation: "read_committed_only",
   dispatchTiming: "database_budget_monotonic_v1",
   durableCreateOwnership: true, providerIdentityBinding: "write_once", settlementEnabled: false, refundEnabled: false, liveExecutionEnabled: false };
+const evidenceAuthority = { schemaVersion: "assisted_order_provider_execution_v2", transactionIsolation: "read_committed_only",
+  dispatchTiming: "database_budget_monotonic_v1", durableCreateOwnership: true, providerIdentityBinding: "write_once",
+  settlementPolicy: "separate_scoped_admin_capture_v1", refundPolicy: "record_and_hold_only_v1",
+  dispatchPolicy: "explicit_source_create_policy_and_grant_v1" };
 const context = { schemaVersion: "assisted_order_provider_execution_context_v1", requestId: REQUEST, attemptId: ATTEMPT,
   sourceId: "synthetic-source", adapterRevision: "synthetic-v1", scope, policyRevision: policy.revision,
   replayGuarantee: policy.replayGuarantee, createReplaySeconds: policy.createReplaySeconds,
@@ -64,6 +68,27 @@ const results = (h: ReturnType<typeof setup>) => h.rpc.mock.calls.filter(([name]
 afterEach(() => vi.useRealTimers());
 
 describe("durable provider execution coordinator, synthetic transport only", () => {
+  it.each([authority, evidenceAuthority])("supports each complete reviewed authority without marking paid %#", async (capability) => {
+    const h = setup({ authority: capability });
+    expect(await prepare(h)).toMatchObject({ state: "held", outcome: "recorded" });
+    expect(h.calls).toEqual(["execution_authority", "create_context", "create_claim", "create", "create_result_append"]);
+  });
+  it.each([
+    { ...evidenceAuthority, transactionIsolation: undefined }, { ...evidenceAuthority, dispatchTiming: undefined },
+    { ...evidenceAuthority, dispatchTiming: "application_wall_clock" }, { ...evidenceAuthority, durableCreateOwnership: false },
+    { ...evidenceAuthority, providerIdentityBinding: "replaceable" }, { ...evidenceAuthority, settlementPolicy: undefined },
+    { ...evidenceAuthority, settlementPolicy: "automatic" }, { ...evidenceAuthority, refundPolicy: "execute" },
+    { ...evidenceAuthority, dispatchPolicy: undefined }, { ...evidenceAuthority, dispatchPolicy: "reservation_grant" },
+    { ...evidenceAuthority, settlementEnabled: false }, { ...evidenceAuthority, schemaVersion: "assisted_order_provider_execution_v1" },
+    { ...authority, schemaVersion: "assisted_order_provider_execution_v2" },
+    { ...evidenceAuthority, schemaVersion: "assisted_order_provider_execution_v3" },
+  ])("refuses incomplete or mixed evidence-scoped execution capability %#", async (capability) => {
+    const h = setup({ authority: capability });
+    await expect(prepare(h)).rejects.toMatchObject({ code: "provider_execution_unavailable" });
+    expect(h.calls).toEqual(["execution_authority"]);
+    expect(h.create).not.toHaveBeenCalled(); expect(h.retrieve).not.toHaveBeenCalled();
+  });
+
   it("requires explicit source composition and does not configure a provider", async () => {
     const h = setup();
     expect(buildAssistedProviderExecution({ enabled: false, rpc: { rpc: h.rpc }, source: h.source })).toBeNull();

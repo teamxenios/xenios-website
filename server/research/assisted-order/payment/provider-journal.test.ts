@@ -13,6 +13,9 @@ const viewer: AssistedOrderViewer = { actorType: "admin", authUserId: ACTOR, mem
   earlyAccessSessionHash: null, normalizedEmail: null, capabilities: new Set(["assisted_orders:manage"]) };
 const authority = { schemaVersion: "assisted_order_provider_journal_v2", transactionIsolation: "read_committed_only",
   settlementEnabled: false, refundEnabled: false, liveExecutionEnabled: false };
+const evidenceAuthority = { schemaVersion: "assisted_order_provider_journal_v3", transactionIsolation: "read_committed_only",
+  journalPolicy: "authenticated_durable_evidence_only_v1", settlementPolicy: "separate_scoped_admin_capture_v1",
+  refundPolicy: "record_and_hold_only_v1" };
 const attempt = { schemaVersion: "assisted_order_provider_attempt_v1", attemptId: ATTEMPT, requestId: REQUEST,
   ...command, sourceId: "synthetic-source", expectedAmountCents: 16927, currency: "USD", state: "held", reservedAt: WHEN, replayed: false };
 const event = () => ({ ...scope, eventId: "synthetic-event", providerPaymentId: "synthetic-payment", providerSessionId: null,
@@ -42,6 +45,34 @@ function setup(options: { normalized?: unknown; noSource?: boolean; authenticate
 }
 
 describe("durable held provider service, no live transport", () => {
+  it.each([authority, evidenceAuthority])("supports the complete reviewed capability contract %# without acquiring settlement power", async (capability) => {
+    const h = setup({ authority: capability });
+    expect(await h.service.reserveHeld(viewer, REQUEST, command)).toEqual(attempt);
+    expect(await h.service.uncertainty(REQUEST)).toMatchObject({ held: true });
+    expect(await h.service.receiveAuthenticated(envelope())).toEqual({ ok: true, receipt });
+    expect(h.rpc.mock.calls.map(([name]) => name)).toEqual([
+      "research_assisted_order_provider_journal_authority", "research_assisted_order_provider_attempt_reserve",
+      "research_assisted_order_provider_journal_authority", "research_assisted_order_provider_uncertainty",
+      "research_assisted_order_provider_journal_authority", "research_assisted_order_provider_event_append",
+    ]);
+  });
+
+  it.each([
+    { ...evidenceAuthority, transactionIsolation: undefined }, { ...evidenceAuthority, journalPolicy: undefined },
+    { ...evidenceAuthority, settlementPolicy: undefined }, { ...evidenceAuthority, refundPolicy: undefined },
+    { ...evidenceAuthority, journalPolicy: "browser_verified" }, { ...evidenceAuthority, settlementPolicy: "automatic" },
+    { ...evidenceAuthority, refundPolicy: "execute" }, { ...evidenceAuthority, settlementEnabled: false },
+    { ...evidenceAuthority, schemaVersion: "assisted_order_provider_journal_v2" },
+    { ...authority, schemaVersion: "assisted_order_provider_journal_v3" },
+    { ...evidenceAuthority, schemaVersion: "assisted_order_provider_journal_v4" },
+  ])("refuses partial, mixed or invented successor authority %#", async (capability) => {
+    const h = setup({ authority: capability });
+    await expect(h.service.reserveHeld(viewer, REQUEST, command)).rejects.toMatchObject({ code: "provider_journal_unavailable" });
+    await expect(h.service.uncertainty(REQUEST)).rejects.toMatchObject({ code: "provider_journal_unavailable" });
+    expect(await h.service.receiveAuthenticated(envelope())).toEqual({ ok: false, code: "persistence_unavailable" });
+    expect(h.rpc.mock.calls.map(([name]) => name)).toEqual(Array(3).fill("research_assisted_order_provider_journal_authority"));
+  });
+
   it("requires explicit composition and an actual configured source", () => {
     const h = setup();
     expect(buildAssistedProviderJournal({ enabled: false, rpc: { rpc: h.rpc }, source: h.source })).toBeNull();

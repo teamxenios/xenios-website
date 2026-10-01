@@ -15,6 +15,7 @@ import {
 } from "./audit-store";
 import {
   PAYMENT_EFFECTS_SCHEMA,
+  PAYMENT_EFFECTS_ADMIN_CAPTURE_SCHEMA,
   paymentEffectDispatchAllowed,
   resolvePaymentEffectsRecovery,
 } from "./payment-effects";
@@ -102,6 +103,30 @@ async function harness(hook?: Hook, suppliedAudit?: ResolvedAssistedOrderAuditAu
 }
 
 describe("payment-effects authority resolution", () => {
+  it("accepts the exact separately governed admin-capture authority without changing audit attribution", async () => {
+    const { recovery, rpc } = await harness((name) => name === `${PREFIX}authority` ? {
+      data: { ...authorityEnvelope(), schemaVersion: PAYMENT_EFFECTS_ADMIN_CAPTURE_SCHEMA,
+        intentPolicy: "verification_atomic_canonical_outbox_admin_v2" }, error: null,
+    } : undefined);
+    await recovery.recover(VERIFICATION, REQUEST);
+    expect(rpc.mock.calls[1][1]?.p_event).toMatchObject({ actorType: "admin", occurredAt: WHEN,
+      evidence: { from: "payment_review", to: "paid", authorityEvidenceKinds: ["payment_verification"] } });
+  });
+
+  it.each([
+    { ...authorityEnvelope(), schemaVersion: PAYMENT_EFFECTS_ADMIN_CAPTURE_SCHEMA },
+    { ...authorityEnvelope(), intentPolicy: "verification_atomic_canonical_outbox_admin_v2" },
+    { ...authorityEnvelope(), schemaVersion: PAYMENT_EFFECTS_ADMIN_CAPTURE_SCHEMA,
+      intentPolicy: "verification_atomic_canonical_outbox_admin_v2", auditPolicy: "autonomous_webhook_as_admin" },
+    { ...authorityEnvelope(), schemaVersion: PAYMENT_EFFECTS_ADMIN_CAPTURE_SCHEMA,
+      intentPolicy: "verification_atomic_canonical_outbox_admin_v2", historicalAdoption: true },
+    { ...authorityEnvelope(), schemaVersion: PAYMENT_EFFECTS_ADMIN_CAPTURE_SCHEMA,
+      intentPolicy: "verification_atomic_canonical_outbox_admin_v2", liveEnabled: true },
+  ])("refuses mixed-version or widened capture authority %#", async (data) => {
+    const rpc = { rpc: vi.fn(async () => ({ data, error: null })) };
+    expect(await resolvePaymentEffectsRecovery({ enabled: true, rpc, audit: await auditAuthority() })).toBeNull();
+  });
+
   it("requires the flag, RPC, and real resolved audit authority before probing", async () => {
     const rpc = { rpc: vi.fn() };
     const audit = await auditAuthority();
