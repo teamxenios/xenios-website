@@ -1,0 +1,94 @@
+PRIVATE FOUNDER PROTOTYPE
+XENIOS HEALTH
+Home
+Featured
+Products
+Care
+Status & account
+QA grid
+Explore catalog
+
+CUSTOMER JOURNEYS
+
+Request, quote, status, account, support.
+
+Structural presentation for the full customer loop, with no live forms, customer data, payment, or external service.
+
+REQUEST PRESENTATION
+
+From identity to a governed request
+
+The selected product, variant, price state, and pathway stay visible before the customer proceeds.
+
+1
+Confirm exact product and specification
+2
+Review pathway and truthful price state
+3
+Sign in or recover access
+4
+Submit through the runtime authority
+
+QUOTE REVIEW
+
+Economics stay explicit
+
+A quote-only product never appears as free or directly purchasable. The visual carries no price authority.
+
+Product
+Exact canonical identity
+Price
+Price on request
+Next step
+Request a quote
+
+ORDER STATUS
+
+Progress without guesswork
+
+One clear timeline distinguishes request received, review, confirmed next step, and completion.
+
+1
+Request received
+Identity and timestamp recorded
+2
+Review in progress
+No availability or payment claim implied
+3
+Next step confirmed
+Customer sees the governed action
+
+ACCOUNT AND ORDER HISTORY
+
+A quiet record of what happened
+
+Prototype rows are synthetic labels, not customer or payment evidence.
+
+Request XR-0124
+Under review
+View status
+Quote XQ-0087
+Action needed
+Review quote
+Care intake XC-0041
+Received
+View pathway
+
+HELP AND SUPPORT
+
+Answers close to the moment of uncertainty.
+
+Product identity questions, Care pathway guidance, quote help, account recovery, and order-status support share one clear destination. No prototype button sends a real message.
+
+PRODUCT HELP
+CARE GUIDANCE
+QUOTE SUPPORT
+ACCOUNT RECOVERY
+ORDER STATUS
+XENIOS HEALTH
+
+A private visual model for founder review. Nothing here is a live offer.
+
+Structural wireframe
+423-target QA grid
+Help & support

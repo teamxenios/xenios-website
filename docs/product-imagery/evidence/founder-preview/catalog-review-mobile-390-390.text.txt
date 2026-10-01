@@ -1,0 +1,128 @@
+INTERNAL QA ONLY
+XENIOS
+HEALTH
+Polished preview
+Wireframe
+Full QA grid
+No runtime wiring
+
+FOUNDER AND QA REVIEW
+
+423-target visual grid
+
+Every customer target has a canonical identity and a deliberate private visual slot. No visual below is final or public.
+
+423
+TARGETS
+423
+PROVISIONAL
+0
+FINAL
+SEARCH GRID
+PATHWAY
+All pathways
+Research
+Care
+Held
+Quote only
+Binding pending
+VISUAL STATE
+All visual states
+Provisional
+Final
+Fallback
+6 rows
+GRP-0001
+5-Amino-1Mq
+5-AMINO-1MQ 5MG/ML (5ML)
+batch0-21-care_pathway_neutral
+
+
+Provisional State Safe Render
+liquid_vial
+CARE PATHWAY
+
+Care pricing withheld
+Provisional
+
+Exact render missing
+Retained Binding
+GRP-0256
+5-Amino-1Mq
+5-AMINO-1MQ 10 mg
+batch0-01-peptide_lyophilized_vial
+
+
+Provisional Class Render
+peptide_lyophilized_vial
+RESEARCH ACCESS
+
+Price omitted from static preview
+Provisional
+
+Exact render missing
+Retained Binding
+GRP-0243
+5-Amino-1MQ
+5-AMINO-1MQ 50 mg
+batch0-07-capsule_bottle
+
+
+Provisional Class Render
+capsule_bottle
+RESEARCH ACCESS
+
+Price omitted from static preview
+Provisional
+
+Exact render missing
+Retained Binding
+GRP-0362
+Acetic Acid 0.6%
+ACETIC ACID 0.6% 5 mL
+batch0-06-oral_liquid_neutral
+
+
+Provisional Class Render
+oral_liquid_neutral
+RESEARCH ACCESS
+
+Price omitted from static preview
+Provisional
+
+Exact render missing
+Retained Binding
+GRP-0002
+Anastrozole
+ANASTROZOLE 0.25MG CAPSULE
+batch0-21-care_pathway_neutral
+
+
+Provisional State Safe Render
+capsule_bottle
+CARE PATHWAY
+
+Care pricing withheld
+Provisional
+
+Exact render missing
+Retained Binding
+GRP-0003
+Anastrozole
+ANASTROZOLE 0.5MG CAPSULE
+batch0-21-care_pathway_neutral
+
+
+Provisional State Safe Render
+capsule_bottle
+CARE PATHWAY
+
+Care pricing withheld
+Provisional
+
+Exact render missing
+Retained Binding
+Evidence page 1 of 71, rows 1-6 of 423.
+Next
+
+Every image is non-public review evidence. Exact renders missing: 423.

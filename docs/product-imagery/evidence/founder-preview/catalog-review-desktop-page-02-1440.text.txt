@@ -1,0 +1,424 @@
+INTERNAL QA ONLY
+423 CUSTOMER TARGETS - ALL IMAGERY PROVISIONAL
+XENIOS
+HEALTH
+Polished preview
+Wireframe
+Full QA grid
+No runtime wiring
+
+FOUNDER AND QA REVIEW
+
+423-target visual grid
+
+Every customer target has a canonical identity and a deliberate private visual slot. No visual below is final or public.
+
+423
+TARGETS
+423
+PROVISIONAL
+0
+FINAL
+SEARCH GRID
+PATHWAY
+All pathways
+Research
+Care
+Held
+Quote only
+Binding pending
+VISUAL STATE
+All visual states
+Provisional
+Final
+Fallback
+48 rows
+VISUAL	CANONICAL ID	PRODUCT	CURRENT IMAGE OR FALLBACK	IMAGE CLASS	PATHWAY / STATUS	FINALITY	BINDING
+
+	GRP-0367
+Brain Restore
+Retail unit / package
+	batch0-16-supplement_retail_unit_neutral
+Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0018
+BRANCHED CHAIN AMINO ACIDS (BCAA)
+Branched Chain Amino Acids (BCAA) ILE(0.4g) / L(0.3g) / V(1.2g) (30ml)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0032
+Cabergoline Tablets
+CABERGOLINE TABLETS 0.5MG
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	tablet_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0274
+Cagrilintide
+CAGRILINTIDE 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0275
+Cagrilintide
+CAGRILINTIDE 5 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0276
+Cagrilintide + Semaglutide
+CAGRILINTIDE 10 mg + SEMAGLUTIDE 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0277
+Cagrilintide + Semaglutide
+CAGRILINTIDE 5 mg + SEMAGLUTIDE 5 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0033
+Cartalax (Aed, T-31)
+CARTALAX (AED, t-31) 4MG/ML (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0030
+CASHMERE CREAM
+CASHMERE CREAM (GHK-CU 3% / NIACINAMIDE 4%) 30GM
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0368
+Chondro Jointaide
+Retail unit / package
+	batch0-16-supplement_retail_unit_neutral
+Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0268
+CJC-1295 (No DAC) + Ipamorelin
+CJC-1295 (No DAC) 10 mg + IPAMORELIN 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0269
+CJC-1295 (No DAC) + Ipamorelin
+CJC-1295 (No DAC) 5 mg + IPAMORELIN 5 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0422
+CJC-1295 + Ipamorelin
+CJC-1295 WITH DAC + IPAMORELIN 5 mg total
+	batch0-22-held_neutral
+Provisional State Safe Render	peptide_lyophilized_vial	FORMULATION HELD
+Pricing not released	Provisional
+Exact render missing	Unbound
+
+	GRP-0031
+CJC-1295 + Ipamorelin 2-2Mg + Ml (5Ml)
+CJC-1295/IPAMORELIN 2-2MG/ML (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0270
+CJC-1295 No Dac
+CJC-1295 NO DAC 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0271
+CJC-1295 No Dac
+CJC-1295 NO DAC 2 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0272
+CJC-1295 With Dac
+CJC-1295 WITH DAC 2 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0273
+CJC-1295 With Dac
+CJC-1295 WITH DAC 5 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0394
+CJC-1295 With DAC
+CJC-1295 - With DAC (10mg)
+	batch0-20-neutral_product_identity
+Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0034
+Clomiphene
+CLOMIPHENE 25MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0035
+Clomiphene
+CLOMIPHENE 50MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0369
+Collagen Renew (Dynamic Multi)
+Retail unit / package
+	batch0-16-supplement_retail_unit_neutral
+Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0395
+Colostrum
+Colostrum (100mg x 90 Capsules)
+	batch0-07-capsule_bottle
+Provisional Class Render	capsule_bottle	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0396
+Curcumin
+Curcumin (600mg)
+	batch0-20-neutral_product_identity
+Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0036
+Dhea
+DHEA 100MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0037
+Dhea
+DHEA 25MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0038
+Dhea
+DHEA 50MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0039
+Dihexa
+DIHEXA 25MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0040
+Dihexa
+DIHEXA 5MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0247
+Dihexa
+DIHEXA 10 mg
+	batch0-07-capsule_bottle
+Provisional Class Render	capsule_bottle	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0280
+Dihexa
+DIHEXA 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0041
+Dsip
+DSIP 2MG/ML (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0281
+Dsip
+DSIP 5 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0278
+DSIP
+DSIP 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0279
+DSIP + Selank
+DSIP 2 mg + SELANK 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0042
+Elamipretide (Ss31)
+ELAMIPRETIDE (SS31) 15MG/ML (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0043
+Enclomiphene
+ENCLOMIPHENE 12.5MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0044
+Enclomiphene
+ENCLOMIPHENE 25MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0045
+Enclomiphene
+ENCLOMIPHENE 50MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0046
+Epithalon
+EPITHALON 10MG/ML (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0047
+Epithalon
+EPITHALON 2MG/ML (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0282
+Epithalon
+EPITHALON 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0283
+Epithalon
+EPITHALON 20 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0284
+Epithalon
+EPITHALON 30 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0285
+Epithalon
+EPITHALON 35 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0286
+Epithalon
+EPITHALON 50 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0048
+Estradiol
+ESTRADIOL 0.25MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0049
+Estradiol
+ESTRADIOL 0.5MG TABLET
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	tablet_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+Evidence page 2 of 9, rows 49-96 of 423.
+Previous Next
+
+Every image is non-public review evidence. Exact renders missing: 423.

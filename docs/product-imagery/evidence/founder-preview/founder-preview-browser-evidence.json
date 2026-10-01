@@ -1,0 +1,2237 @@
+{
+  "schemaVersion": 1,
+  "kind": "private_founder_preview_responsive_browser_evidence",
+  "generatedAt": "2026-10-01T13:51:06.888Z",
+  "privatePrototype": true,
+  "productionQualified": false,
+  "deploymentAuthorized": false,
+  "sourceCoreCommit": "4cba24af1d42ad59fe44856859cc1721846e6df5",
+  "sourceCoreTree": "6395273fc4370b7df713a2b72b019785f547d1fb",
+  "imageryReviewTarget": "184d820a2a20152649b67892ec0a5467857d5290",
+  "browser": {
+    "name": "chromium",
+    "version": "149.0.7827.55",
+    "revision": "1228",
+    "protocolVersion": "1.3"
+  },
+  "serverBoundary": {
+    "origin": "loopback_ephemeral",
+    "documentRoot": "docs/product-imagery",
+    "externalNetworkAllowed": false
+  },
+  "counts": {
+    "captures": 40,
+    "customerTargets": 423,
+    "gridCanonicalIdsCovered": 423,
+    "brokenImages": 0,
+    "severeConsoleMessages": 0,
+    "networkBoundaryViolations": 0
+  },
+  "captures": [
+    {
+      "name": "wireframe-desktop",
+      "path": "/founder-preview/wireframe.html",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/wireframe-desktop-1440.png",
+        "sha256": "111b69afd354b02cf72f6c5b9718562938dd99f60e3719585c6d45e5b65079b6",
+        "byteSize": 148463,
+        "width": 1440,
+        "height": 3824,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 3824,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 3824,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 3824
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/wireframe-desktop-1440.text.txt",
+        "sha256": "7c8d88830c4a84f7100dfa49bbf4484c089996e038ed2530a1c2704e0cf659eb"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 0,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 5
+    },
+    {
+      "name": "wireframe-mobile-390",
+      "path": "/founder-preview/wireframe.html",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": false,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/wireframe-mobile-390-390.png",
+        "sha256": "2d4e8df96d62c95706bc7c63cc182a99e087b68cc26ecda9191e485c0b90b3e3",
+        "byteSize": 27213,
+        "width": 390,
+        "height": 844,
+        "coverage": {
+          "fullPage": false,
+          "truncated": false,
+          "capturedWidthPx": 390,
+          "capturedHeightPx": 844
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/wireframe-mobile-390-390.text.txt",
+        "sha256": "fd2338f28367d92b6f9ceb7086532cf84edc6ab857d2409accae7395b1e7abb2"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 0,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "home-desktop",
+      "path": "/founder-preview/index.html?view=home",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/home-desktop-1440.png",
+        "sha256": "812f6bdfb08f90d5facaf97a045223e6999e9ae04bca9aa713ead208bf839bcc",
+        "byteSize": 2787181,
+        "width": 1440,
+        "height": 7400,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 7400,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 7400,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 7400
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/home-desktop-1440.text.txt",
+        "sha256": "d2962945ce592081c38c97ed5a1b9f513356eb5d41f65bcd70c4f12189f4d830"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 9,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 5
+    },
+    {
+      "name": "home-tablet",
+      "path": "/founder-preview/index.html?view=home",
+      "viewport": {
+        "width": 834,
+        "height": 1112,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": false,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/home-tablet-834.png",
+        "sha256": "9a402b55f4e6722a18185b9de78bfc3eed8c74c673756c3a6b812cce593b0afd",
+        "byteSize": 245231,
+        "width": 834,
+        "height": 1112,
+        "coverage": {
+          "fullPage": false,
+          "truncated": false,
+          "capturedWidthPx": 834,
+          "capturedHeightPx": 1112
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/home-tablet-834.text.txt",
+        "sha256": "d2962945ce592081c38c97ed5a1b9f513356eb5d41f65bcd70c4f12189f4d830"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 9,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 2
+    },
+    {
+      "name": "home-mobile-390",
+      "path": "/founder-preview/index.html?view=home",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/home-mobile-390-390.png",
+        "sha256": "7c7cf8f5989edb21a724ef6956f116b8b54463aa05bfa29ec8365a5f66c9d488",
+        "byteSize": 1462872,
+        "width": 390,
+        "height": 10186,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 390,
+          "contentHeightCssPx": 10186,
+          "postContentWidthCssPx": 390,
+          "postContentHeightCssPx": 10186,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 390,
+          "capturedHeightPx": 10186
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/home-mobile-390-390.text.txt",
+        "sha256": "293cca53865b456e30df00939f64bad29a6540927c53cadc5107f0a55b401560"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 9,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "home-mobile-320",
+      "path": "/founder-preview/index.html?view=home",
+      "viewport": {
+        "width": 320,
+        "height": 760,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": false,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/home-mobile-320-320.png",
+        "sha256": "5c425165f414a6b84dde1ebe4e530278a6fcca8465bd923b6235374ba6700a49",
+        "byteSize": 54322,
+        "width": 320,
+        "height": 760,
+        "coverage": {
+          "fullPage": false,
+          "truncated": false,
+          "capturedWidthPx": 320,
+          "capturedHeightPx": 760
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/home-mobile-320-320.text.txt",
+        "sha256": "293cca53865b456e30df00939f64bad29a6540927c53cadc5107f0a55b401560"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 9,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "products-desktop",
+      "path": "/founder-preview/index.html?view=products",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": false,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-desktop-1440.png",
+        "sha256": "fa2aceb049037874e98883bae20e89fc7276d8a88a4eaaf9abfe79021162eeb0",
+        "byteSize": 602718,
+        "width": 1440,
+        "height": 1000,
+        "coverage": {
+          "fullPage": false,
+          "truncated": false,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 1000
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-desktop-1440.text.txt",
+        "sha256": "f5b336d2adcdb239914e95ab48574fbd7f67014ee8629aea8aa8efe511c0d5bd"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 423,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 10
+    },
+    {
+      "name": "products-search-bam15-desktop",
+      "path": "/founder-preview/index.html?view=products",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": false,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-search-bam15-desktop-1440.png",
+        "sha256": "115129821dc3b435bc0874ede19c27e5d5aeb6fca5338d9c5db6da439252f530",
+        "byteSize": 445217,
+        "width": 1440,
+        "height": 1000,
+        "coverage": {
+          "fullPage": false,
+          "truncated": false,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 1000
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-search-bam15-desktop-1440.text.txt",
+        "sha256": "ff30789d7e0ff35095a51c85a9b06d87ae9e2861095b79c214f5a5c4eb33140d"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 1,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "interaction": {
+        "control": "catalog-search",
+        "value": "BAM15",
+        "expectedCount": 1,
+        "expectedCanonicalId": "GRP-0244",
+        "observedCount": 1,
+        "observedCanonicalIds": [
+          "GRP-0244"
+        ],
+        "observedCountLabel": "1 product"
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "products-pathway-held-desktop",
+      "path": "/founder-preview/index.html?view=products",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": false,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-pathway-held-desktop-1440.png",
+        "sha256": "70c5143722f583af1c4e36d7a48257fcf3ca0c16b770df021287d107e85d030d",
+        "byteSize": 450544,
+        "width": 1440,
+        "height": 1000,
+        "coverage": {
+          "fullPage": false,
+          "truncated": false,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 1000
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-pathway-held-desktop-1440.text.txt",
+        "sha256": "ab8d94368907b76bb904a114d574694498c3ac0039002c993be2510fdca443e0"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 1,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "interaction": {
+        "control": "catalog-pathway",
+        "value": "held",
+        "expectedCount": 1,
+        "expectedCanonicalId": "GRP-0422",
+        "observedCount": 1,
+        "observedCanonicalIds": [
+          "GRP-0422"
+        ],
+        "observedCountLabel": "1 product"
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "products-tablet",
+      "path": "/founder-preview/index.html?view=products",
+      "viewport": {
+        "width": 834,
+        "height": 1112,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": false,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-tablet-834.png",
+        "sha256": "cc0978659b07eb109712b36ca3793f8efac7733ceacc1584f315e897601e9c6f",
+        "byteSize": 443370,
+        "width": 834,
+        "height": 1112,
+        "coverage": {
+          "fullPage": false,
+          "truncated": false,
+          "capturedWidthPx": 834,
+          "capturedHeightPx": 1112
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-tablet-834.text.txt",
+        "sha256": "f5b336d2adcdb239914e95ab48574fbd7f67014ee8629aea8aa8efe511c0d5bd"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 423,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 8
+    },
+    {
+      "name": "products-mobile-390",
+      "path": "/founder-preview/index.html?view=products",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": false,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-mobile-390-390.png",
+        "sha256": "ab63cd48d38539f4496358a7e24c84207e0a23196caa19bfc95cc831474c6bf5",
+        "byteSize": 101261,
+        "width": 390,
+        "height": 844,
+        "coverage": {
+          "fullPage": false,
+          "truncated": false,
+          "capturedWidthPx": 390,
+          "capturedHeightPx": 844
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-mobile-390-390.text.txt",
+        "sha256": "cd3180b4ddaf172dbb5625c88e57c9b52ca6dc0dd2e1786d3b6000a2722939dd"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 423,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "products-mobile-320",
+      "path": "/founder-preview/index.html?view=products",
+      "viewport": {
+        "width": 320,
+        "height": 760,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": false,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-mobile-320-320.png",
+        "sha256": "ee8c8baabe7ffdd340a5c7549e578b5475667d2479a2da0d211cd83ab6db1775",
+        "byteSize": 86076,
+        "width": 320,
+        "height": 760,
+        "coverage": {
+          "fullPage": false,
+          "truncated": false,
+          "capturedWidthPx": 320,
+          "capturedHeightPx": 760
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-mobile-320-320.text.txt",
+        "sha256": "cd3180b4ddaf172dbb5625c88e57c9b52ca6dc0dd2e1786d3b6000a2722939dd"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 423,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "featured-desktop",
+      "path": "/founder-preview/index.html?view=featured",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/featured-desktop-1440.png",
+        "sha256": "b3c31d0e64326934845144887dcec960cc8f447733a1ef421af8847435f4d051",
+        "byteSize": 1045819,
+        "width": 1440,
+        "height": 2606,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 2606,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 2606,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 2606
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/featured-desktop-1440.text.txt",
+        "sha256": "80d0b940a48ede62d5a667d24967fe9dfc4aba394e593f80b6d70d098827d886"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 8,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "featured-mobile-390",
+      "path": "/founder-preview/index.html?view=featured",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": false,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/featured-mobile-390-390.png",
+        "sha256": "b1d98cb208a50c58a9b5ba8f824d7877d2e86f6a52fa013b0a575ecb0bc93508",
+        "byteSize": 168537,
+        "width": 390,
+        "height": 844,
+        "coverage": {
+          "fullPage": false,
+          "truncated": false,
+          "capturedWidthPx": 390,
+          "capturedHeightPx": 844
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/featured-mobile-390-390.text.txt",
+        "sha256": "4755e901594038199b4722ccf9842f0c7ab29b1e276449867358ec6e67ab1f02"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 8,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 1
+    },
+    {
+      "name": "research-detail-desktop",
+      "path": "/founder-preview/product-detail.html?id=GRP-0256",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-desktop-1440.png",
+        "sha256": "b858e58a2ead6d7688557184cf634fdc9f36da998e538ab2ce0416d770949af8",
+        "byteSize": 1235161,
+        "width": 1440,
+        "height": 2718,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 2718,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 2718,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 2718
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-desktop-1440.text.txt",
+        "sha256": "6d0123779e3f39ca2fbbf404870515dbaa5745881217c3ba3b36125238ce0d22"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 5,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": "GRP-0256",
+      "detailAssetJob": "batch0-01-peptide_lyophilized_vial",
+      "networkRequestCount": 0
+    },
+    {
+      "name": "research-detail-tablet",
+      "path": "/founder-preview/product-detail.html?id=GRP-0256",
+      "viewport": {
+        "width": 834,
+        "height": 1112,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": false,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-tablet-834.png",
+        "sha256": "83c24a1cd40556c02f1b55498656557304d1894a677b4fa906190c151e174121",
+        "byteSize": 646932,
+        "width": 834,
+        "height": 1112,
+        "coverage": {
+          "fullPage": false,
+          "truncated": false,
+          "capturedWidthPx": 834,
+          "capturedHeightPx": 1112
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-tablet-834.text.txt",
+        "sha256": "6d0123779e3f39ca2fbbf404870515dbaa5745881217c3ba3b36125238ce0d22"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 5,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": "GRP-0256",
+      "detailAssetJob": "batch0-01-peptide_lyophilized_vial",
+      "networkRequestCount": 1
+    },
+    {
+      "name": "research-detail-mobile-390",
+      "path": "/founder-preview/product-detail.html?id=GRP-0256",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-mobile-390-390.png",
+        "sha256": "8a2c2b90d7475c7878be46b295ad0d009aa3f42120a11272bcd9cad263d9323c",
+        "byteSize": 1015765,
+        "width": 390,
+        "height": 4969,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 390,
+          "contentHeightCssPx": 4969,
+          "postContentWidthCssPx": 390,
+          "postContentHeightCssPx": 4969,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 390,
+          "capturedHeightPx": 4969
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-mobile-390-390.text.txt",
+        "sha256": "1b35de41a1059ae270f935186abdeb5743aa782f036c6a5d3a31fbb9160fdf77"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 5,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": "GRP-0256",
+      "detailAssetJob": "batch0-01-peptide_lyophilized_vial",
+      "networkRequestCount": 0
+    },
+    {
+      "name": "research-detail-mobile-320",
+      "path": "/founder-preview/product-detail.html?id=GRP-0256",
+      "viewport": {
+        "width": 320,
+        "height": 760,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": false,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-mobile-320-320.png",
+        "sha256": "bea607c6ab76d7740548996e8d5680fbad31e5ed0f095f0f8a148c137262bec5",
+        "byteSize": 151688,
+        "width": 320,
+        "height": 760,
+        "coverage": {
+          "fullPage": false,
+          "truncated": false,
+          "capturedWidthPx": 320,
+          "capturedHeightPx": 760
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-mobile-320-320.text.txt",
+        "sha256": "1b35de41a1059ae270f935186abdeb5743aa782f036c6a5d3a31fbb9160fdf77"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 5,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": "GRP-0256",
+      "detailAssetJob": "batch0-01-peptide_lyophilized_vial",
+      "networkRequestCount": 0
+    },
+    {
+      "name": "care-desktop",
+      "path": "/founder-preview/index.html?view=care",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/care-desktop-1440.png",
+        "sha256": "766f60cbe3aabadcb7f57e3566462ccfee0ac8b597b89532eaa719071e271121",
+        "byteSize": 902419,
+        "width": 1440,
+        "height": 3180,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 3180,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 3180,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 3180
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/care-desktop-1440.text.txt",
+        "sha256": "3abd9aa7c6c4cec8243f2ceb93521a58e8ad919ca707c4819d6a620f1c20c6d3"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 8,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "care-mobile-390",
+      "path": "/founder-preview/index.html?view=care",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": false,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/care-mobile-390-390.png",
+        "sha256": "774b0883bcbc43543af432fa014616e2645a812eecf6cca5f5edf446a07bb57d",
+        "byteSize": 103448,
+        "width": 390,
+        "height": 844,
+        "coverage": {
+          "fullPage": false,
+          "truncated": false,
+          "capturedWidthPx": 390,
+          "capturedHeightPx": 844
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/care-mobile-390-390.text.txt",
+        "sha256": "80c30bbe155ce0c3fe2922d37bcd6c07017c3803149524ec0f727eb5ec83d107"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 8,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "held-detail-desktop",
+      "path": "/founder-preview/product-detail.html?id=GRP-0422",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/held-detail-desktop-1440.png",
+        "sha256": "8cffafe8781f8b073048eda32f33df02374a17ce0d2c06c9d46010aa6ec76fdf",
+        "byteSize": 1262255,
+        "width": 1440,
+        "height": 2718,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 2718,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 2718,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 2718
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/held-detail-desktop-1440.text.txt",
+        "sha256": "f0bf6063fa1d6c54c02232dcec0a288fb45afe51b93c55745b6ab006d0824265"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 5,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": "GRP-0422",
+      "detailAssetJob": "batch0-22-held_neutral",
+      "networkRequestCount": 0
+    },
+    {
+      "name": "held-detail-mobile-390",
+      "path": "/founder-preview/product-detail.html?id=GRP-0422",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/held-detail-mobile-390-390.png",
+        "sha256": "6464cc7227bc32895b4260edfbc6fc0fe2a2c93093ada81223156da5de0abd8e",
+        "byteSize": 1014210,
+        "width": 390,
+        "height": 5037,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 390,
+          "contentHeightCssPx": 5037,
+          "postContentWidthCssPx": 390,
+          "postContentHeightCssPx": 5037,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 390,
+          "capturedHeightPx": 5037
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/held-detail-mobile-390-390.text.txt",
+        "sha256": "fde54f3f1638e3d2dfd5c78cba22f07f4e95e4ef8d670992b6dc7c6c5310473c"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 5,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": "GRP-0422",
+      "detailAssetJob": "batch0-22-held_neutral",
+      "networkRequestCount": 0
+    },
+    {
+      "name": "quote-detail-desktop",
+      "path": "/founder-preview/product-detail.html?id=GRP-0244",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/quote-detail-desktop-1440.png",
+        "sha256": "aa29d23a7f17f9edccc75221f2ed9ff363b305536b035923741b97c4a5fc2599",
+        "byteSize": 1245757,
+        "width": 1440,
+        "height": 2718,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 2718,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 2718,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 2718
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/quote-detail-desktop-1440.text.txt",
+        "sha256": "39913a20c1c24dbde9295f7383386696540d342de0344ededd9509b032337e6a"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 5,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": "GRP-0244",
+      "detailAssetJob": "batch0-23-quote_only_neutral",
+      "networkRequestCount": 0
+    },
+    {
+      "name": "quote-detail-mobile-320",
+      "path": "/founder-preview/product-detail.html?id=GRP-0244",
+      "viewport": {
+        "width": 320,
+        "height": 760,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/quote-detail-mobile-320-320.png",
+        "sha256": "214e9ff85318dee9f4cf9d3a74d9b3ba1b6b9524a3f61e3459986a9eeccb594d",
+        "byteSize": 721010,
+        "width": 320,
+        "height": 4769,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 320,
+          "contentHeightCssPx": 4769,
+          "postContentWidthCssPx": 320,
+          "postContentHeightCssPx": 4769,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 320,
+          "capturedHeightPx": 4769
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/quote-detail-mobile-320-320.text.txt",
+        "sha256": "d52672a8ffacbde0e299bef12c319696e4212e5fa530a24209058287f2a5be77"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 5,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": "GRP-0244",
+      "detailAssetJob": "batch0-23-quote_only_neutral",
+      "networkRequestCount": 0
+    },
+    {
+      "name": "coming-soon-desktop",
+      "path": "/founder-preview/index.html?view=coming",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/coming-soon-desktop-1440.png",
+        "sha256": "8ef804efdc9de068a6972f3ea53b3e5776ec78e3bf5f7f00ad271b6cd8e88922",
+        "byteSize": 451246,
+        "width": 1440,
+        "height": 1579,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 1579,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 1579,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 1579
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/coming-soon-desktop-1440.text.txt",
+        "sha256": "3e17c3436d4693bc22e0a63e956ce382320b20cf01f53ebddf2c80d663f6d376"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 0,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "coming-soon-mobile-390",
+      "path": "/founder-preview/index.html?view=coming",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/coming-soon-mobile-390-390.png",
+        "sha256": "6f457edbce02542d51b716f9fcd7edb23ddde86c7bcd14d1c176b458aeca41e1",
+        "byteSize": 170953,
+        "width": 390,
+        "height": 1629,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 390,
+          "contentHeightCssPx": 1629,
+          "postContentWidthCssPx": 390,
+          "postContentHeightCssPx": 1629,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 390,
+          "capturedHeightPx": 1629
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/coming-soon-mobile-390-390.text.txt",
+        "sha256": "d70d504cd1a1ec069ba75f479d6b30e243233bafffe1697242cad1c91d84ce1c"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 0,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "status-account-support-desktop",
+      "path": "/founder-preview/index.html?view=journeys",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/status-account-support-desktop-1440.png",
+        "sha256": "fc79c2a1411e51ccf7ad348cb2355704fb21cecae92b044e6041cbc1b7108840",
+        "byteSize": 498582,
+        "width": 1440,
+        "height": 2407,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 2407,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 2407,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 2407
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/status-account-support-desktop-1440.text.txt",
+        "sha256": "09445ea1ca1541c318434ea6c8a10c7dcc17a5850f0b22d490b475612a0eec87"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 0,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "status-account-support-mobile-390",
+      "path": "/founder-preview/index.html?view=journeys",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/status-account-support-mobile-390-390.png",
+        "sha256": "c965afcf1929bd5f45e935fe8936ff3ee4c3cb1b9c626ad4941781204228c39a",
+        "byteSize": 261795,
+        "width": 390,
+        "height": 3424,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 390,
+          "contentHeightCssPx": 3424,
+          "postContentWidthCssPx": 390,
+          "postContentHeightCssPx": 3424,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 390,
+          "capturedHeightPx": 3424
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/status-account-support-mobile-390-390.text.txt",
+        "sha256": "f69693d0b8c22f11684fd1ebc56dbfef813a236a9ecfdd2325af1dfba3d0146d"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 0,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "catalog-review-tablet",
+      "path": "/founder-preview/catalog-review.html?page=1&limit=12",
+      "viewport": {
+        "width": 834,
+        "height": 1112,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": false,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-tablet-834.png",
+        "sha256": "f1bba07ce776cd9034f7c648f3e0e13860ab54157619975a86bc42b6d9b3b87e",
+        "byteSize": 164628,
+        "width": 834,
+        "height": 1112,
+        "coverage": {
+          "fullPage": false,
+          "truncated": false,
+          "capturedWidthPx": 834,
+          "capturedHeightPx": 1112
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-tablet-834.text.txt",
+        "sha256": "6565d2b8aed2f2dfe913d84c85d90d37046d0ff0f7af414249593f56890701c8"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 12,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 5
+    },
+    {
+      "name": "catalog-review-mobile-390",
+      "path": "/founder-preview/catalog-review.html?page=1&limit=6",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-mobile-390-390.png",
+        "sha256": "58671b69c439ae534915c006bb858c855ed56eb44045d6338060b339955f8e83",
+        "byteSize": 225637,
+        "width": 390,
+        "height": 4160,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 390,
+          "contentHeightCssPx": 4160,
+          "postContentWidthCssPx": 390,
+          "postContentHeightCssPx": 4160,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 390,
+          "capturedHeightPx": 4160
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-mobile-390-390.text.txt",
+        "sha256": "e54c8d2ff05560b4ecc0f482975fad39b81ee72aba6227241caa0a30c607845b"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 6,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "catalog-review-mobile-320",
+      "path": "/founder-preview/catalog-review.html?page=1&limit=6",
+      "viewport": {
+        "width": 320,
+        "height": 760,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-mobile-320-320.png",
+        "sha256": "ebc9713089ffc21c836d903db160ec482d218b05dd146e66a75613f9c59ae860",
+        "byteSize": 229264,
+        "width": 320,
+        "height": 4231,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 320,
+          "contentHeightCssPx": 4231,
+          "postContentWidthCssPx": 320,
+          "postContentHeightCssPx": 4231,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 320,
+          "capturedHeightPx": 4231
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-mobile-320-320.text.txt",
+        "sha256": "e54c8d2ff05560b4ecc0f482975fad39b81ee72aba6227241caa0a30c607845b"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 6,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "catalog-review-desktop-page-01",
+      "path": "/founder-preview/catalog-review.html?page=1&limit=48",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-01-1440.png",
+        "sha256": "64e5879b84f0a7249d9e5ce62e9143f1a886698bf6daa3b94b9196bb5c8d0d7f",
+        "byteSize": 1020411,
+        "width": 1440,
+        "height": 4957,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 4957,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 4957,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 4957
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-01-1440.text.txt",
+        "sha256": "ef75e1c9c3e5413cd462ed74677d7b85fae5e247d6bc3b0ed1ba46a9a9e373a2"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 48,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "reviewCanonicalIds": [
+        "GRP-0001",
+        "GRP-0256",
+        "GRP-0243",
+        "GRP-0362",
+        "GRP-0002",
+        "GRP-0003",
+        "GRP-0004",
+        "GRP-0005",
+        "GRP-0366",
+        "GRP-0006",
+        "GRP-0007",
+        "GRP-0260",
+        "GRP-0261",
+        "GRP-0008",
+        "GRP-0009",
+        "GRP-0257",
+        "GRP-0258",
+        "GRP-0259",
+        "GRP-0010",
+        "GRP-0011",
+        "GRP-0244",
+        "GRP-0392",
+        "GRP-0019",
+        "GRP-0020",
+        "GRP-0021",
+        "GRP-0022",
+        "GRP-0023",
+        "GRP-0024",
+        "GRP-0025",
+        "GRP-0026",
+        "GRP-0027",
+        "GRP-0028",
+        "GRP-0029",
+        "GRP-0246",
+        "GRP-0012",
+        "GRP-0013",
+        "GRP-0245",
+        "GRP-0262",
+        "GRP-0263",
+        "GRP-0264",
+        "GRP-0393",
+        "GRP-0014",
+        "GRP-0265",
+        "GRP-0266",
+        "GRP-0267",
+        "GRP-0015",
+        "GRP-0016",
+        "GRP-0017"
+      ],
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 5
+    },
+    {
+      "name": "catalog-review-desktop-page-02",
+      "path": "/founder-preview/catalog-review.html?page=2&limit=48",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-02-1440.png",
+        "sha256": "ecbb5ad69f301c5d1b22c1286a8d893ea2c5760d90c5ce699f59104ece175f49",
+        "byteSize": 992417,
+        "width": 1440,
+        "height": 4947,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 4947,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 4947,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 4947
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-02-1440.text.txt",
+        "sha256": "8ba8c1f6d45033577aa3d233a7384f2d2c260244da11972914567dcb91581d91"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 48,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "reviewCanonicalIds": [
+        "GRP-0367",
+        "GRP-0018",
+        "GRP-0032",
+        "GRP-0274",
+        "GRP-0275",
+        "GRP-0276",
+        "GRP-0277",
+        "GRP-0033",
+        "GRP-0030",
+        "GRP-0368",
+        "GRP-0268",
+        "GRP-0269",
+        "GRP-0422",
+        "GRP-0031",
+        "GRP-0270",
+        "GRP-0271",
+        "GRP-0272",
+        "GRP-0273",
+        "GRP-0394",
+        "GRP-0034",
+        "GRP-0035",
+        "GRP-0369",
+        "GRP-0395",
+        "GRP-0396",
+        "GRP-0036",
+        "GRP-0037",
+        "GRP-0038",
+        "GRP-0039",
+        "GRP-0040",
+        "GRP-0247",
+        "GRP-0280",
+        "GRP-0041",
+        "GRP-0281",
+        "GRP-0278",
+        "GRP-0279",
+        "GRP-0042",
+        "GRP-0043",
+        "GRP-0044",
+        "GRP-0045",
+        "GRP-0046",
+        "GRP-0047",
+        "GRP-0282",
+        "GRP-0283",
+        "GRP-0284",
+        "GRP-0285",
+        "GRP-0286",
+        "GRP-0048",
+        "GRP-0049"
+      ],
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "catalog-review-desktop-page-03",
+      "path": "/founder-preview/catalog-review.html?page=3&limit=48",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-03-1440.png",
+        "sha256": "5c35e5862221b5c16314ced695b00893058057a449f0e4a696ade5ef5e2ef7fa",
+        "byteSize": 1021044,
+        "width": 1440,
+        "height": 4957,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 4957,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 4957,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 4957
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-03-1440.text.txt",
+        "sha256": "631300f46116dcf44b85caea2bb77ad479b5c258b7895b36936cf8a4eec8412f"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 48,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "reviewCanonicalIds": [
+        "GRP-0050",
+        "GRP-0051",
+        "GRP-0052",
+        "GRP-0053",
+        "GRP-0054",
+        "GRP-0055",
+        "GRP-0056",
+        "GRP-0057",
+        "GRP-0058",
+        "GRP-0386",
+        "GRP-0059",
+        "GRP-0060",
+        "GRP-0397",
+        "GRP-0061",
+        "GRP-0370",
+        "GRP-0062",
+        "GRP-0063",
+        "GRP-0248",
+        "GRP-0287",
+        "GRP-0288",
+        "GRP-0398",
+        "GRP-0289",
+        "GRP-0064",
+        "GRP-0065",
+        "GRP-0066",
+        "GRP-0067",
+        "GRP-0068",
+        "GRP-0387",
+        "GRP-0290",
+        "GRP-0291",
+        "GRP-0391",
+        "GRP-0292",
+        "GRP-0293",
+        "GRP-0371",
+        "GRP-0294",
+        "GRP-0399",
+        "GRP-0069",
+        "GRP-0070",
+        "GRP-0295",
+        "GRP-0296",
+        "GRP-0424",
+        "GRP-0071",
+        "GRP-0072",
+        "GRP-0297",
+        "GRP-0400",
+        "GRP-0298",
+        "GRP-0299",
+        "GRP-0401"
+      ],
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 1
+    },
+    {
+      "name": "catalog-review-desktop-page-04",
+      "path": "/founder-preview/catalog-review.html?page=4&limit=48",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-04-1440.png",
+        "sha256": "abf77cf343e423ba5bd04687f26975e072350cac5f7016c2f4b83df3e23fc59f",
+        "byteSize": 999326,
+        "width": 1440,
+        "height": 4957,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 4957,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 4957,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 4957
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-04-1440.text.txt",
+        "sha256": "ad1de6ec266ca17675e4c158365500af6e80453c377d303046b66abf5355a90c"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 48,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "reviewCanonicalIds": [
+        "GRP-0073",
+        "GRP-0300",
+        "GRP-0426",
+        "GRP-0403",
+        "GRP-0372",
+        "GRP-0075",
+        "GRP-0076",
+        "GRP-0404",
+        "GRP-0301",
+        "GRP-0074",
+        "GRP-0373",
+        "GRP-0302",
+        "GRP-0303",
+        "GRP-0077",
+        "GRP-0078",
+        "GRP-0308",
+        "GRP-0309",
+        "GRP-0304",
+        "GRP-0305",
+        "GRP-0249",
+        "GRP-0306",
+        "GRP-0307",
+        "GRP-0079",
+        "GRP-0082",
+        "GRP-0083",
+        "GRP-0084",
+        "GRP-0080",
+        "GRP-0085",
+        "GRP-0086",
+        "GRP-0087",
+        "GRP-0088",
+        "GRP-0089",
+        "GRP-0090",
+        "GRP-0091",
+        "GRP-0310",
+        "GRP-0311",
+        "GRP-0081",
+        "GRP-0312",
+        "GRP-0405",
+        "GRP-0374",
+        "GRP-0092",
+        "GRP-0097",
+        "GRP-0375",
+        "GRP-0314",
+        "GRP-0098",
+        "GRP-0315",
+        "GRP-0099",
+        "GRP-0100"
+      ],
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "catalog-review-desktop-page-05",
+      "path": "/founder-preview/catalog-review.html?page=5&limit=48",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-05-1440.png",
+        "sha256": "9f88144fc839501306a91d6ae95bc41a266536b8cc53f3582938477be7418c94",
+        "byteSize": 983575,
+        "width": 1440,
+        "height": 4957,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 4957,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 4957,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 4957
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-05-1440.text.txt",
+        "sha256": "aafc2e6fc0a4496468d345756fae89cfeb27b02aed15431c3fbe77fba9317b07"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 48,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "reviewCanonicalIds": [
+        "GRP-0101",
+        "GRP-0102",
+        "GRP-0103",
+        "GRP-0104",
+        "GRP-0105",
+        "GRP-0106",
+        "GRP-0107",
+        "GRP-0316",
+        "GRP-0406",
+        "GRP-0108",
+        "GRP-0109",
+        "GRP-0110",
+        "GRP-0376",
+        "GRP-0093",
+        "GRP-0094",
+        "GRP-0313",
+        "GRP-0423",
+        "GRP-0095",
+        "GRP-0096",
+        "GRP-0111",
+        "GRP-0112",
+        "GRP-0317",
+        "GRP-0318",
+        "GRP-0113",
+        "GRP-0114",
+        "GRP-0377",
+        "GRP-0115",
+        "GRP-0116",
+        "GRP-0117",
+        "GRP-0118",
+        "GRP-0119",
+        "GRP-0120",
+        "GRP-0319",
+        "GRP-0320",
+        "GRP-0425",
+        "GRP-0121",
+        "GRP-0122",
+        "GRP-0123",
+        "GRP-0124",
+        "GRP-0408",
+        "GRP-0127",
+        "GRP-0379",
+        "GRP-0128",
+        "GRP-0129",
+        "GRP-0130",
+        "GRP-0131",
+        "GRP-0132",
+        "GRP-0133"
+      ],
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "catalog-review-desktop-page-06",
+      "path": "/founder-preview/catalog-review.html?page=6&limit=48",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-06-1440.png",
+        "sha256": "4f90bb145826c243285a2b4484ada636d3d7b0020b71bf56a904e0b211b0ca28",
+        "byteSize": 999400,
+        "width": 1440,
+        "height": 4947,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 4947,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 4947,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 4947
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-06-1440.text.txt",
+        "sha256": "5de431bf48ff89e749ac458cc6cc7146d2d56d00389554b5b9e03b3471be5d6b"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 48,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "reviewCanonicalIds": [
+        "GRP-0322",
+        "GRP-0378",
+        "GRP-0134",
+        "GRP-0135",
+        "GRP-0136",
+        "GRP-0137",
+        "GRP-0138",
+        "GRP-0139",
+        "GRP-0140",
+        "GRP-0141",
+        "GRP-0142",
+        "GRP-0143",
+        "GRP-0144",
+        "GRP-0145",
+        "GRP-0146",
+        "GRP-0147",
+        "GRP-0148",
+        "GRP-0149",
+        "GRP-0150",
+        "GRP-0151",
+        "GRP-0152",
+        "GRP-0153",
+        "GRP-0154",
+        "GRP-0125",
+        "GRP-0321",
+        "GRP-0409",
+        "GRP-0126",
+        "GRP-0420",
+        "GRP-0363",
+        "GRP-0380",
+        "GRP-0323",
+        "GRP-0324",
+        "GRP-0325",
+        "GRP-0326",
+        "GRP-0327",
+        "GRP-0328",
+        "GRP-0329",
+        "GRP-0421",
+        "GRP-0410",
+        "GRP-0411",
+        "GRP-0330",
+        "GRP-0331",
+        "GRP-0332",
+        "GRP-0333",
+        "GRP-0334",
+        "GRP-0335",
+        "GRP-0336",
+        "GRP-0412"
+      ],
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 1
+    },
+    {
+      "name": "catalog-review-desktop-page-07",
+      "path": "/founder-preview/catalog-review.html?page=7&limit=48",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-07-1440.png",
+        "sha256": "e385309ae956e5226b62267f5adac3961aa496d6e854281830e7ed871e4040c8",
+        "byteSize": 1005863,
+        "width": 1440,
+        "height": 4947,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 4947,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 4947,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 4947
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-07-1440.text.txt",
+        "sha256": "5558bc8de5ebb1c1e035c739832b06900db9192d88abd9d806b1ee510c993763"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 48,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "reviewCanonicalIds": [
+        "GRP-0157",
+        "GRP-0158",
+        "GRP-0159",
+        "GRP-0160",
+        "GRP-0161",
+        "GRP-0162",
+        "GRP-0163",
+        "GRP-0164",
+        "GRP-0165",
+        "GRP-0166",
+        "GRP-0337",
+        "GRP-0167",
+        "GRP-0168",
+        "GRP-0338",
+        "GRP-0413",
+        "GRP-0169",
+        "GRP-0339",
+        "GRP-0170",
+        "GRP-0252",
+        "GRP-0340",
+        "GRP-0341",
+        "GRP-0171",
+        "GRP-0172",
+        "GRP-0173",
+        "GRP-0174",
+        "GRP-0175",
+        "GRP-0176",
+        "GRP-0177",
+        "GRP-0178",
+        "GRP-0179",
+        "GRP-0180",
+        "GRP-0155",
+        "GRP-0250",
+        "GRP-0251",
+        "GRP-0156",
+        "GRP-0342",
+        "GRP-0343",
+        "GRP-0344",
+        "GRP-0414",
+        "GRP-0181",
+        "GRP-0182",
+        "GRP-0183",
+        "GRP-0184",
+        "GRP-0381",
+        "GRP-0382",
+        "GRP-0415",
+        "GRP-0365",
+        "GRP-0185"
+      ],
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 1
+    },
+    {
+      "name": "catalog-review-desktop-page-08",
+      "path": "/founder-preview/catalog-review.html?page=8&limit=48",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-08-1440.png",
+        "sha256": "1578d4afc780e879f809db38720c3448049a762ebd7de8d3aed9e51aef847a8b",
+        "byteSize": 1013573,
+        "width": 1440,
+        "height": 4947,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 4947,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 4947,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 4947
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-08-1440.text.txt",
+        "sha256": "c607e74910de6b6e589aba6fbf9d0486e9fe32cc578c452fe1f3603b1130c8ae"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 48,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "reviewCanonicalIds": [
+        "GRP-0186",
+        "GRP-0187",
+        "GRP-0188",
+        "GRP-0189",
+        "GRP-0190",
+        "GRP-0191",
+        "GRP-0192",
+        "GRP-0193",
+        "GRP-0194",
+        "GRP-0195",
+        "GRP-0196",
+        "GRP-0197",
+        "GRP-0198",
+        "GRP-0199",
+        "GRP-0200",
+        "GRP-0201",
+        "GRP-0202",
+        "GRP-0203",
+        "GRP-0204",
+        "GRP-0205",
+        "GRP-0206",
+        "GRP-0207",
+        "GRP-0253",
+        "GRP-0345",
+        "GRP-0346",
+        "GRP-0208",
+        "GRP-0209",
+        "GRP-0347",
+        "GRP-0348",
+        "GRP-0416",
+        "GRP-0210",
+        "GRP-0388",
+        "GRP-0389",
+        "GRP-0390",
+        "GRP-0211",
+        "GRP-0254",
+        "GRP-0418",
+        "GRP-0419",
+        "GRP-0212",
+        "GRP-0213",
+        "GRP-0214",
+        "GRP-0215",
+        "GRP-0216",
+        "GRP-0217",
+        "GRP-0218",
+        "GRP-0219",
+        "GRP-0220",
+        "GRP-0221"
+      ],
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
+    {
+      "name": "catalog-review-desktop-page-09",
+      "path": "/founder-preview/catalog-review.html?page=9&limit=48",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-09-1440.png",
+        "sha256": "a70e4f11b59f66196f457bb851611e7eda3dd2791bf32838ab6c2c8aa301e8a0",
+        "byteSize": 840464,
+        "width": 1440,
+        "height": 4192,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 4192,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 4192,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 4192
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-09-1440.text.txt",
+        "sha256": "fe7620946a1a7e635b170ffa15f36798a46165016da202a62680ba2eafd3dd88"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 39,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "reviewCanonicalIds": [
+        "GRP-0222",
+        "GRP-0223",
+        "GRP-0224",
+        "GRP-0225",
+        "GRP-0349",
+        "GRP-0226",
+        "GRP-0255",
+        "GRP-0350",
+        "GRP-0351",
+        "GRP-0352",
+        "GRP-0353",
+        "GRP-0417",
+        "GRP-0354",
+        "GRP-0355",
+        "GRP-0356",
+        "GRP-0357",
+        "GRP-0358",
+        "GRP-0359",
+        "GRP-0360",
+        "GRP-0361",
+        "GRP-0227",
+        "GRP-0228",
+        "GRP-0229",
+        "GRP-0230",
+        "GRP-0231",
+        "GRP-0232",
+        "GRP-0233",
+        "GRP-0234",
+        "GRP-0235",
+        "GRP-0236",
+        "GRP-0237",
+        "GRP-0238",
+        "GRP-0239",
+        "GRP-0383",
+        "GRP-0384",
+        "GRP-0385",
+        "GRP-0241",
+        "GRP-0240",
+        "GRP-0242"
+      ],
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 1
+    }
+  ]
+}

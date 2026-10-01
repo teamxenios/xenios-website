@@ -1,0 +1,109 @@
+PRIVATE FOUNDER PROTOTYPE
+PROVISIONAL IMAGERY - NO PUBLICATION OR TRANSACTION AUTHORITY
+XENIOS HEALTH
+Home
+Featured
+Products
+Care
+Status & account
+QA grid
+Explore catalog
+
+FEATURED PRODUCTS
+
+High-visibility identity, consistently presented.
+
+Featured, catalog, and detail surfaces resolve to one canonical row and one provisional asset reference.
+
+PROVISIONAL CLASS VISUAL
+RESEARCH ACCESS
+GRP-0246
+Blend BPC-157 + TB-500
+
+BLEND BPC-157 + TB-500 500/500 mcg
+
+Price state
+Price omitted from static preview
+View product
+PROVISIONAL STATE VISUAL
+CARE PATHWAY
+GRP-0008
+Aod-9604 + MOTS-C + Tesamorelin + Ipamorelin
+
+AOD-9604/MOTS-C/TESAMORELIN/IPAMORELIN 1.2MG-2MG-2MG-2MG/ML (5ML)
+
+Price state
+Care pricing withheld
+Review Care pathway
+PROVISIONAL CLASS VISUAL
+RESEARCH ACCESS
+GRP-0374
+Longevity Essentials NAD+
+
+Retail unit / package
+
+Price state
+Price omitted from static preview
+View product
+PROVISIONAL CLASS VISUAL
+RESEARCH ACCESS
+GRP-0319
+Oxytocin
+
+OXYTOCIN 2 mg
+
+Price state
+Price omitted from static preview
+View product
+PROVISIONAL CLASS VISUAL
+RESEARCH ACCESS
+GRP-0300
+Hexarelin
+
+HEXARELIN 10 mg
+
+Price state
+Price omitted from static preview
+View product
+PROVISIONAL CLASS VISUAL
+RESEARCH ACCESS
+GRP-0268
+CJC-1295 (No DAC) + Ipamorelin
+
+CJC-1295 (No DAC) 10 mg + IPAMORELIN 10 mg
+
+Price state
+Price omitted from static preview
+View product
+PROVISIONAL CLASS VISUAL
+RESEARCH ACCESS
+GRP-0269
+CJC-1295 (No DAC) + Ipamorelin
+
+CJC-1295 (No DAC) 5 mg + IPAMORELIN 5 mg
+
+Price state
+Price omitted from static preview
+View product
+PROVISIONAL STATE VISUAL
+CARE PATHWAY
+GRP-0015
+BPC-157 + TB-500 + KPV + GHK-Cu 3-3-3-10Mg + Ml (5Ml)
+
+BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML)
+
+Price state
+Care pricing withheld
+Review Care pathway
+i
+Prototype boundary
+
+These 423 slots are joined from the frozen 424-variant core candidate at 4cba24af1d42. The candidate is not independently accepted, Batch 0 is not approved, and media/commerce integration is not accepted. Image state does not create or remove catalog, price, availability, quote, cart, workflow, or fulfillment authority.
+
+XENIOS HEALTH
+
+A private visual model for founder review. Nothing here is a live offer.
+
+Structural wireframe
+423-target QA grid
+Help & support

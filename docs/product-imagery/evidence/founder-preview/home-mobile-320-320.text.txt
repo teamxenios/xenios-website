@@ -1,0 +1,167 @@
+PRIVATE FOUNDER PROTOTYPE
+XENIOS HEALTH
+Home
+Featured
+Products
+Care
+Status & account
+QA grid
+Explore catalog
+
+XENIOS HEALTH
+
+A calmer way to navigate research and care.
+
+One considered catalog. Clear pathways. Product identity and presentation kept separate from commerce authority.
+
+Explore 423 products
+Review Care pathway
+
+Private design study
+Organic material language, quiet typography, and no implied package or manufacturer.
+
+426
+reviewed source rows
+424
+canonical variants
+423
+customer visual slots
+0
+images approved for public use
+
+FEATURED
+
+Start with what matters.
+
+Recognizable identities use the same canonical image reference on cards and detail views. Every image below remains private and provisional.
+
+View Featured
+PROVISIONAL CLASS VISUAL
+RESEARCH ACCESS
+GRP-0246
+Blend BPC-157 + TB-500
+
+BLEND BPC-157 + TB-500 500/500 mcg
+
+View product
+PROVISIONAL STATE VISUAL
+CARE PATHWAY
+GRP-0008
+Aod-9604 + MOTS-C + Tesamorelin + Ipamorelin
+
+AOD-9604/MOTS-C/TESAMORELIN/IPAMORELIN 1.2MG-2MG-2MG-2MG/ML (5ML)
+
+Review Care pathway
+PROVISIONAL CLASS VISUAL
+RESEARCH ACCESS
+GRP-0374
+Longevity Essentials NAD+
+
+Retail unit / package
+
+View product
+PROVISIONAL CLASS VISUAL
+RESEARCH ACCESS
+GRP-0319
+Oxytocin
+
+OXYTOCIN 2 mg
+
+View product
+PROVISIONAL CLASS VISUAL
+RESEARCH ACCESS
+GRP-0300
+Hexarelin
+
+HEXARELIN 10 mg
+
+View product
+PROVISIONAL CLASS VISUAL
+RESEARCH ACCESS
+GRP-0268
+CJC-1295 (No DAC) + Ipamorelin
+
+CJC-1295 (No DAC) 10 mg + IPAMORELIN 10 mg
+
+View product
+PROVISIONAL CLASS VISUAL
+RESEARCH ACCESS
+GRP-0269
+CJC-1295 (No DAC) + Ipamorelin
+
+CJC-1295 (No DAC) 5 mg + IPAMORELIN 5 mg
+
+View product
+PROVISIONAL STATE VISUAL
+CARE PATHWAY
+GRP-0015
+BPC-157 + TB-500 + KPV + GHK-Cu 3-3-3-10Mg + Ml (5Ml)
+
+BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML)
+
+Review Care pathway
+
+ONE CATALOG, DISTINCT PATHWAYS
+
+Clarity before action.
+
+Presentation explains the next step without inventing price, availability, or transaction eligibility.
+
+01
+Research
+
+Browse exact identity and specification. Runtime Product Control supplies any price and request capability.
+
+02
+Care
+
+Provider review stays visibly distinct from Research. Care pricing is withheld from this static preview.
+
+03
+Quote and held
+
+Quote-only and held identities remain present with an honest non-transaction state and a clear next step.
+
+XENIOS CARE
+
+Care begins with review.
+
+Clinical formulations use a provider-guided pathway, subject to applicable state availability and pharmacy requirements. This prototype contains no checkout and makes no suitability claim.
+
+See the Care presentation
+
+ON THE HORIZON
+
+Coming soon, without overclaiming.
+
+Names only. No logos, packaging, partnership claims, price, or checkout.
+
+COMING SOON
+Superpower
+
+Intentional non-image presentation. Details and transaction pathways are not announced.
+
+COMING SOON
+Mito Health
+
+Intentional non-image presentation. Details and transaction pathways are not announced.
+
+i
+Prototype boundary
+
+These 423 slots are joined from the frozen 424-variant core candidate at 4cba24af1d42. The candidate is not independently accepted, Batch 0 is not approved, and media/commerce integration is not accepted. Image state does not create or remove catalog, price, availability, quote, cart, workflow, or fulfillment authority.
+
+BATCH 0 VISUAL GRAMMAR
+
+Twenty-five studies, still under review.
+
+The contact sheet is evidence, not a public asset library. Exact output hashes and provenance remain in the imagery manifests.
+
+25 of 25 rendered. 0 approved. 0 public. No derivative is authorized for runtime use.
+XENIOS HEALTH
+
+A private visual model for founder review. Nothing here is a live offer.
+
+Structural wireframe
+423-target QA grid
+Help & support

@@ -1,0 +1,424 @@
+INTERNAL QA ONLY
+423 CUSTOMER TARGETS - ALL IMAGERY PROVISIONAL
+XENIOS
+HEALTH
+Polished preview
+Wireframe
+Full QA grid
+No runtime wiring
+
+FOUNDER AND QA REVIEW
+
+423-target visual grid
+
+Every customer target has a canonical identity and a deliberate private visual slot. No visual below is final or public.
+
+423
+TARGETS
+423
+PROVISIONAL
+0
+FINAL
+SEARCH GRID
+PATHWAY
+All pathways
+Research
+Care
+Held
+Quote only
+Binding pending
+VISUAL STATE
+All visual states
+Provisional
+Final
+Fallback
+48 rows
+VISUAL	CANONICAL ID	PRODUCT	CURRENT IMAGE OR FALLBACK	IMAGE CLASS	PATHWAY / STATUS	FINALITY	BINDING
+
+	GRP-0101
+Methylcobalamin
+METHYLCOBALAMIN 5MG/ML (10ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0102
+Methylcobalamin
+METHYLCOBALAMIN 5MG/ML (30ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0103
+Methylene Blue
+METHYLENE BLUE 10MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0104
+Methylene Blue
+METHYLENE BLUE 15MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0105
+Methylene Blue
+METHYLENE BLUE 25MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0106
+Methylene Blue
+METHYLENE BLUE 5MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0107
+Methylene Blue Anti-Aging Cream (Methylene Blue
+METHYLENE BLUE ANTI-AGING CREAM (METHYLENE BLUE 0.0064% / ESTRIOL 0.003%) 30GM
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0316
+Mgf
+MGF 2 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0406
+MGF
+MGF (IGF-1Ec) (5mg)
+	batch0-20-neutral_product_identity
+Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0108
+Minoxidil
+MINOXIDIL 5% / AZELAIC ACID 12.5% / FINASTERIDE 0.1% / KETOCONAZOLE 2% SOLUTION 60ML
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	solution_container_neutral	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0109
+Minoxidil
+MINOXIDIL 5% / FINASTERIDE 0.1% SOLUTION 60ML
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	solution_container_neutral	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0110
+Minoxidil
+MINOXIDIL 5% / TRETINOIN 0.025% SOLUTION 60ML
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	solution_container_neutral	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0376
+Mito Recharge
+Retail unit / package
+	batch0-16-supplement_retail_unit_neutral
+Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0093
+MOTS-C
+MOTS-C 10MG/ML (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0094
+MOTS-C
+MOTS-C 2MG/ML (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0313
+MOTS-C
+MOTS-C 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0423
+MOTS-C
+MOTS-C 40 mg
+	batch0-20-neutral_product_identity
+Provisional Identity Neutral Render	peptide_lyophilized_vial	BINDING PENDING
+Pricing not released	Provisional
+Exact render missing	Unbound
+
+	GRP-0095
+MYERS' COCKTAIL
+MYERS’ COCKTAIL (Thiamine 10mg, Niacinamide 10mg, Pyridoxine 0.2mg, Riboflavin 20mg, Calcium Gluconate 0.04mL, Magnesium Chloride 0.1mL per mL) (10ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0096
+MYERS' COCKTAIL
+MYERS’ COCKTAIL (Thiamine 10mg, Niacinamide 10mg, Pyridoxine 0.2mg, Riboflavin 20mg, Calcium Gluconate 0.04mL, Magnesium Chloride 0.1mL per mL) (30ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0111
+NAD+
+NAD+ 100MG/ML (10ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0112
+NAD+
+NAD+ 10MG/0.1ML (15ML) NASAL SPRAY
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	nasal_spray	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0317
+NAD+
+NAD+ 1000 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0318
+NAD+
+NAD+ 500 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0113
+Nandrolone
+NANDROLONE 200MG/ML GRAPE SEED OIL (10ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0114
+Nandrolone
+NANDROLONE 200MG/ML GRAPE SEED OIL (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0377
+Omega Pure EPA-DHA 2400
+Retail unit / package
+	batch0-16-supplement_retail_unit_neutral
+Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0115
+Ondansetron
+ONDANSETRON 4MG ODT (ZOFRAN) 30 TABLETS (AntiNausea)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	odt_container	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0116
+Oxandrolone
+OXANDROLONE 25MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0117
+Oxandrolone
+OXANDROLONE 50MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0118
+Oxandrolone
+OXANDROLONE 5MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0119
+Oxymetholone
+OXYMETHOLONE 25MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0120
+Oxymetholone
+OXYMETHOLONE 50MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0319
+Oxytocin
+OXYTOCIN 2 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0320
+Oxytocin
+OXYTOCIN 5 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0425
+Oxytocin
+OXYTOCIN 10 mg
+	batch0-20-neutral_product_identity
+Provisional Identity Neutral Render	peptide_lyophilized_vial	BINDING PENDING
+Pricing not released	Provisional
+Exact render missing	Unbound
+
+	GRP-0121
+Oxytocin Nasal Spray
+OXYTOCIN NASAL SPRAY 100 IU/ML (10ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	nasal_spray	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0122
+Oxytocin Nasal Spray
+OXYTOCIN NASAL SPRAY 100 IU/ML (15ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	nasal_spray	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0123
+Oxytocin Troche
+OXYTOCIN TROCHE 120 IU
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	troche_container	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0124
+Oxytocin Troche
+OXYTOCIN TROCHE 50 IU
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	troche_container	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0408
+PE-22-28
+PE-22-28 (10mg)
+	batch0-20-neutral_product_identity
+Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0127
+Peg-Mgf
+PEG-MGF 0.4MG/ML (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0379
+PeriMenopause Support
+Retail unit / package
+	batch0-16-supplement_retail_unit_neutral
+Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0128
+Phentermine HCl
+PHENTERMINE HCL 15MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0129
+Phentermine HCl
+PHENTERMINE HCL 30MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0130
+Phentermine HCl
+PHENTERMINE HCL 45MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0131
+Phentermine SR
+PHENTERMINE SR 37.5MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0132
+Phentermine SR
+PHENTERMINE SR 45MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0133
+Phenylephrine Inj
+PHENYLEPHRINE INJ 0.1%
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	injectable_solution_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+Evidence page 5 of 9, rows 193-240 of 423.
+Previous Next
+
+Every image is non-public review evidence. Exact renders missing: 423.

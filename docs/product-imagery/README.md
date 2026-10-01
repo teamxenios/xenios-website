@@ -13,6 +13,8 @@ Current safety state:
 - catalog accounting is reconciled to the frozen HL-11 candidate, but runtime integration remains blocked on independent acceptance of that core candidate, independent named exact-SHA per-asset approval, acceptance of the separately leased commerce/media decoupling slice, and a coordinated shared UI lease;
 - no production mutation or deployment is authorized by this lane.
 
+Private founder review now also has a generated full-catalog visual prototype under `founder-preview/`, with responsive evidence under `evidence/founder-preview/`. It covers all 423 customer targets and reuses the 25 Batch 0 renders only as provisional, non-public visual studies. It grants no image, price, catalog, commerce, Care, runtime, or deployment approval. See `FOUNDER_VISUAL_PROTOTYPE_2026-10-01.md` for the exact source pins, counts, screenshots, local preview command, prepared-but-unauthorized Batch 1 candidates, and remaining gates.
+
 Authoritative generated artifacts:
 
 - `COVERAGE_SUMMARY.md` — corrected counts and the imagery-branch/core-candidate distinction;
@@ -27,5 +29,8 @@ Authoritative generated artifacts:
 - `evidence/batch0-render-receipts.json` — exact observed renderer and output bindings, not approval.
 - `evidence/batch0-contact-sheet.json` — the hash-bound 5×5 review-sheet record; independent approval remains pending.
 - `evidence/batch0-browser-review.json` — headless-browser evidence that all 25 exact originals decode at 1254×1254, plus a hash-bound full-page screenshot; this is QA evidence, not approval.
+- `founder-preview/catalog-data.json` - generated 423-target private preview projection pinned to the frozen core candidate.
+- `manifests/batch-001-prepared.json` - 25 exact-product candidates with render and publication authorization explicitly false.
+- `evidence/founder-preview/founder-preview-browser-evidence.json` - 40 responsive and interaction captures covering 423 of 423 QA IDs with zero broken images or network-boundary violations.
 
 Run `node scripts/product-imagery/build.mjs`, `node --test scripts/product-imagery/product-imagery.test.mjs`, and `node scripts/product-imagery/verify.mjs` after any source or evidence change.

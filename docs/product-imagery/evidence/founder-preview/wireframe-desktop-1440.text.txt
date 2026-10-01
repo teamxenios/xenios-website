@@ -1,0 +1,58 @@
+PRIVATE FOUNDER PROTOTYPE
+STRUCTURAL WIREFRAME - LAYOUT AND HIERARCHY ONLY
+XENIOS HEALTH
+Home
+Products
+Detail
+Care
+Account
+Polished preview
+STRUCTURAL MAP
+DESKTOP AND MOBILE REFLOW
+Xenios Health information architecture
+
+Low-fidelity hierarchy for founder review. Boxes indicate function, not final visual styling.
+
+01 / GLOBAL NAVIGATION + HOME
+ENTRY AND ORIENTATION
+Hero: positioning, Research / Care choice, primary actions
+Abstract visual / no product claim
+426 source
+424 canonical
+423 customer
+0 public images
+Featured shelf: canonical card identities
+02 / CATALOG
+DISCOVERY
+Search + category + pathway filters + result count
+Product card 1: visual / exact name / spec / price state / pathway / CTA
+Product card 2: visual / exact name / spec / price state / pathway / CTA
+Product card 3: visual / exact name / spec / price state / pathway / CTA
+Product card 4: visual / exact name / spec / price state / pathway / CTA
+Product card 5: visual / exact name / spec / price state / pathway / CTA
+Product card 6: visual / exact name / spec / price state / pathway / CTA
+Product card 7: visual / exact name / spec / price state / pathway / CTA
+Product card 8: visual / exact name / spec / price state / pathway / CTA
+Pagination or continuous review
+03 / PRODUCT DETAIL
+IDENTITY CONTINUITY
+Same canonical image identity as product card
+Name / form and strength / price state / pathway / CTA / support / disclosures
+04 / CARE + REQUEST / QUOTE
+DISTINCT PATHWAYS
+Care: provider review and eligibility
+Research request: identity and authority handoff
+Quote-only: no price or cart implied
+Held state: visible reason and truthful next step
+05 / STATUS + ACCOUNT + SUPPORT
+AFTER THE REQUEST
+Order / request progress timeline
+Account and order history
+Help, recovery, and support
+06 / INTERNAL VISUAL QA
+ALL 423 TARGETS
+Dense grid: ID / name / visual / class / status / pathway / finality
+Batch 0 contact sheet
+Batch 1 candidate ledger
+
+Private structure study. Not production.

@@ -1,0 +1,424 @@
+INTERNAL QA ONLY
+423 CUSTOMER TARGETS - ALL IMAGERY PROVISIONAL
+XENIOS
+HEALTH
+Polished preview
+Wireframe
+Full QA grid
+No runtime wiring
+
+FOUNDER AND QA REVIEW
+
+423-target visual grid
+
+Every customer target has a canonical identity and a deliberate private visual slot. No visual below is final or public.
+
+423
+TARGETS
+423
+PROVISIONAL
+0
+FINAL
+SEARCH GRID
+PATHWAY
+All pathways
+Research
+Care
+Held
+Quote only
+Binding pending
+VISUAL STATE
+All visual states
+Provisional
+Final
+Fallback
+48 rows
+VISUAL	CANONICAL ID	PRODUCT	CURRENT IMAGE OR FALLBACK	IMAGE CLASS	PATHWAY / STATUS	FINALITY	BINDING
+
+	GRP-0322
+Pinealon
+PINEALON 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0378
+PRM Resolve
+Retail unit / package
+	batch0-16-supplement_retail_unit_neutral
+Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0134
+Progesterone
+PROGESTERONE 100MG SR CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0135
+Progesterone
+PROGESTERONE 125MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0136
+Progesterone
+PROGESTERONE 125MG SR CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0137
+Progesterone
+PROGESTERONE 150MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0138
+Progesterone
+PROGESTERONE 150MG SR CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0139
+Progesterone
+PROGESTERONE 175MG SR CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0140
+Progesterone
+PROGESTERONE 200MG SR CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0141
+Progesterone
+PROGESTERONE 200MG/ML CREAM
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0142
+Progesterone
+PROGESTERONE 225MG SR CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0143
+Progesterone
+PROGESTERONE 250MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0144
+Progesterone
+PROGESTERONE 250MG SR CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0145
+Progesterone
+PROGESTERONE 250MG/ML CREAM
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0146
+Progesterone
+PROGESTERONE 25MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0147
+Progesterone
+PROGESTERONE 25MG SR CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0148
+Progesterone
+PROGESTERONE 300MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0149
+Progesterone
+PROGESTERONE 300MG SR CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0150
+Progesterone
+PROGESTERONE 50MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0151
+Progesterone
+PROGESTERONE 50MG SR CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0152
+Progesterone
+PROGESTERONE 50MG/ML CREAM
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0153
+Progesterone
+PROGESTERONE 75MG CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0154
+Progesterone
+PROGESTERONE 75MG SR CAPSULE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0125
+PT-141
+PT-141 2MG/ML (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0321
+PT-141
+PT-141 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0409
+PT-141
+PT-141 (5mg)
+	batch0-20-neutral_product_identity
+Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0126
+PT-141 Nasal Spray
+PT-141 NASAL SPRAY 2.5MG/SPRAY (3ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	nasal_spray	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0420
+Radient XO Serum
+Radient XO Serum (5 Billion Exosomes)
+	batch0-13-serum_dropper_or_pump
+Provisional Class Render	serum_dropper_or_pump	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0363
+Reconstitution Solution
+RECONSTITUTION SOLUTION 4 mL
+	batch0-04-solution_container_neutral
+Provisional Class Render	solution_container_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0380
+Rejuvenate+
+Retail unit / package
+	batch0-16-supplement_retail_unit_neutral
+Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0323
+Retatrutide
+RETATRUTIDE 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0324
+Retatrutide
+RETATRUTIDE 15 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0325
+Retatrutide
+RETATRUTIDE 20 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0326
+Retatrutide
+RETATRUTIDE 30 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0327
+Retatrutide
+RETATRUTIDE 40 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0328
+Retatrutide
+RETATRUTIDE 50 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0329
+Retatrutide
+RETATRUTIDE 5 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0421
+Retatrutide
+RETATRUTIDE 60 mg
+	batch0-20-neutral_product_identity
+Provisional Identity Neutral Render	peptide_lyophilized_vial	BINDING PENDING
+Pricing not released	Provisional
+Exact render missing	Unbound
+
+	GRP-0410
+Retatrutide / GLP-3
+GLP-3 (12mg)
+	batch0-20-neutral_product_identity
+Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0411
+Retatrutide / GLP-3
+GLP-3 (24mg)
+	batch0-20-neutral_product_identity
+Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0330
+Retatrutide + Cagrilintide
+RETATRUTIDE 10 mg + CAGRILINTIDE 2.5 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0331
+Selank
+SELANK 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0332
+Selank
+SELANK 5 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0333
+Semaglutide
+SEMAGLUTIDE 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0334
+Semaglutide
+SEMAGLUTIDE 15 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0335
+Semaglutide
+SEMAGLUTIDE 20 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0336
+Semaglutide
+SEMAGLUTIDE 5 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0412
+Semaglutide / GLP-1
+GLP-1 (2mg)
+	batch0-20-neutral_product_identity
+Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+Evidence page 6 of 9, rows 241-288 of 423.
+Previous Next
+
+Every image is non-public review evidence. Exact renders missing: 423.

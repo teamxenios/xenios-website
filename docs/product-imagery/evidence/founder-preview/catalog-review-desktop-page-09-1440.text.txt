@@ -1,0 +1,352 @@
+INTERNAL QA ONLY
+423 CUSTOMER TARGETS - ALL IMAGERY PROVISIONAL
+XENIOS
+HEALTH
+Polished preview
+Wireframe
+Full QA grid
+No runtime wiring
+
+FOUNDER AND QA REVIEW
+
+423-target visual grid
+
+Every customer target has a canonical identity and a deliberate private visual slot. No visual below is final or public.
+
+423
+TARGETS
+423
+PROVISIONAL
+0
+FINAL
+SEARCH GRID
+PATHWAY
+All pathways
+Research
+Care
+Held
+Quote only
+Binding pending
+VISUAL STATE
+All visual states
+Provisional
+Final
+Fallback
+39 rows
+VISUAL	CANONICAL ID	PRODUCT	CURRENT IMAGE OR FALLBACK	IMAGE CLASS	PATHWAY / STATUS	FINALITY	BINDING
+
+	GRP-0222
+Testosterone Cyp
+TESTOSTERONE CYP 20MG/ML GRAPE SEED OIL (2ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0223
+Testosterone Cyp
+TESTOSTERONE CYP 50MG/ML GRAPE SEED OIL (2ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0224
+Testosterone Ent
+TESTOSTERONE ENT 200MG/ML GRAPE SEED OIL (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0225
+Testosterone Pro
+TESTOSTERONE PRO 100MG/ML GRAPE SEED OIL (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0349
+Thymalin
+THYMALIN 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0226
+Thymosin Alpha-1
+THYMOSIN ALPHA-1 3MG/ML (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0255
+Thymosin Alpha-1
+Thymosin Alpha-1 500 mcg
+	batch0-07-capsule_bottle
+Provisional Class Render	capsule_bottle	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0350
+Thymosin Alpha-1
+Thymosin Alpha-1 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0351
+Thymosin Alpha-1
+Thymosin Alpha-1 5 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0352
+Thymosin Alpha-1 + KPV + LL-37
+Thymosin Alpha-1 10 mg + KPV 10 mg + LL-37 5 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0353
+Thymosin Alpha-1 + KPV + LL-37
+Thymosin Alpha-1 5 mg + KPV 5 mg + LL-37 5 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0417
+Thymosin Alpha-1 + Thymulin
+Thymosin Alpha 1 (TA1) Complex Thymulin (10mg/6.4mg)
+	batch0-20-neutral_product_identity
+Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0354
+Tirzepatide
+TIRZEPATIDE 10 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0355
+Tirzepatide
+TIRZEPATIDE 15 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0356
+Tirzepatide
+TIRZEPATIDE 20 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0357
+Tirzepatide
+TIRZEPATIDE 30 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0358
+Tirzepatide
+TIRZEPATIDE 40 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0359
+Tirzepatide
+TIRZEPATIDE 50 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0360
+Tirzepatide
+TIRZEPATIDE 5 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0361
+Tirzepatide
+TIRZEPATIDE 60 mg
+	batch0-01-peptide_lyophilized_vial
+Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0227
+Tirzepatide + B12
+TIRZEPATIDE/B12 10.5MG-500MCG/ML (5ML) (52.5mg vial)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0228
+Tirzepatide + B12
+TIRZEPATIDE/B12 10MG-500MCG/ML (3ML) (30mg vial)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0229
+Tirzepatide + B12
+TIRZEPATIDE/B12 12MG-500MCG/ML (2ML) (24mg vial)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0230
+Tirzepatide + B12
+TIRZEPATIDE/B12 17MG-500MCG/ML (2ML) (34mg vial)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0231
+Tirzepatide + B12
+TIRZEPATIDE/B12 20MG-500MCG/ML (3ML) (60mg vial)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0232
+Tirzepatide + B12
+TIRZEPATIDE/B12 22MG-500MCG/ML (2ML) (44mg vial)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0233
+Tirzepatide + B12
+TIRZEPATIDE/B12 28MG-500MCG/ML (2ML) (56mg vial)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0234
+Tirzepatide + B12
+TIRZEPATIDE/B12 30MG-500MCG/ML (6ML) (180mg vial)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0235
+Tirzepatide + B12
+TIRZEPATIDE/B12 33MG-500MCG/ML (2ML) (66mg vial)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0236
+Tirzepatide + B12
+TIRZEPATIDE/B12 6MG-500MCG/ML (2ML) (12mg vial)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0237
+Tirzepatide + Glycine
+TIRZEPATIDE/GLYCINE 15MG-2.5MG/0.5ML (2ML) (60mg vial)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0238
+Tirzepatide + Glycine
+TIRZEPATIDE/GLYCINE 15MG-2.5MG/0.5ML (6ML) (180mg vial)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0239
+Trimix (Papaverine
+TRIMIX (Papaverine 30mg / Phentolamine 1mg / Alprostadil 20mcg per mL) (5ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0383
+UltraBiotic Akkermansia Plus
+Retail unit / package
+	batch0-16-supplement_retail_unit_neutral
+Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0384
+UltraBiotic Prebiotic
+Retail unit / package
+	batch0-16-supplement_retail_unit_neutral
+Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0385
+Uplift+
+Retail unit / package
+	batch0-16-supplement_retail_unit_neutral
+Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0241
+Vardenafil
+VARDENAFIL 20MG TROCHE
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	troche_container	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0240
+VITAMIN B-COMPLEX
+VITAMIN B-COMPLEX (Thiamine 100mg, Niacinamide 100mg, Riboflavin-5- Phosphate 2mg, Pyridoxine 2mg per mL) (30ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0242
+Vitamin D3 50,000Iu + Ml (30Ml)
+VITAMIN D3 50,000IU/ML (30ML)
+	batch0-21-care_pathway_neutral
+Provisional State Safe Render	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+Evidence page 9 of 9, rows 385-423 of 423.
+Previous
+
+Every image is non-public review evidence. Exact renders missing: 423.

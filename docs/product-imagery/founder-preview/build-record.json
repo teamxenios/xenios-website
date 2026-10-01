@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "kind": "founder_preview_build_record",
+  "generatedAt": "2026-10-01T13:51:06.888Z",
+  "dataSha256": "9db496b3e6507353836f92f4ab94383b3b1f16c6d7fe7200f1862f71f6cdff40",
+  "customerTargets": 423,
+  "finalExactAssets": 0,
+  "provisionalVisualSlots": 423,
+  "missingExactRenders": 423,
+  "outputRoot": "docs/product-imagery/founder-preview",
+  "publicTreeTouched": false,
+  "deploymentAuthorized": false
+}
