@@ -3353,7 +3353,7 @@
         "supabase/MIGRATIONS.md",
         "server/release-control-plane.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T08:55:59.653Z",
       "heartbeatAt": "2026-10-01T10:25:52.822Z"
     }

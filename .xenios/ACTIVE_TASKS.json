@@ -6,7 +6,7 @@
       "id": "HEALTH-HL12-ADP01-DURABLE-PROVIDER-HOLD-20261001",
       "title": "Durable held provider reservations, authenticated event quarantine, and financial uncertainty fences",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/research/assisted-order/payment/provider-journal*",
@@ -23,7 +23,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Local-only additive SQL and provider-neutral server service; empty source configuration, no provider execution or paid/refund authority. Request-first serialized uncertainty fences cover existing financial SQL. Do not edit old migrations, protection baselines, foreign media/image paths, or hosted configuration. Integration mount paths require a separate lease before editing.",
-      "claimedAt": "2026-10-01T08:55:59.651Z"
+      "claimedAt": "2026-10-01T08:55:59.651Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "e86c224d9cf8e0ea88ab9dd4b6f641c2fb38d896",
+        "file": ".xenios/handoffs/2026-10-01T10-26-46-556Z-HEALTH-HL12-ADP01-DURABLE-PROVIDER-HOLD-20261001-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T10:26:46.559Z"
+      }
     },
     {
       "id": "HEALTH-HL11-CANONICAL-424-RECONCILIATION-20261001",
