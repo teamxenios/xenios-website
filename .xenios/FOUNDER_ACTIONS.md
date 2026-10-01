@@ -12,6 +12,12 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
   finance grants, managed schema qualification and exact-SHA production promotion
   remain separate authorized actions.
 
+- Protected baseline decision: the exact prior routes.ts/index.ts bytes passed
+  Claude report19, but no answer to the narrow baseline-amendment request is
+  recorded. The newer Research gateway edit2dc7d62 also requires exact QA review
+  before a protection-owner baseline recut. No test or gate has been weakened;
+  this is not an approval request for hosted changes, deployment or migration.
+
 - Native closeout (2026-09-21): designate the executor and confirm the exact
   managed qualification scope for the new Referral touch/XRR SQL candidates
   and the separate checkout candidate-2 amendment. Supply the canonical EA

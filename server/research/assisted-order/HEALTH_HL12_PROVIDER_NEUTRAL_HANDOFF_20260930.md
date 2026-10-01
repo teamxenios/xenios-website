@@ -3,9 +3,14 @@
 This is an implementation handoff, not production GO or an HL-12 completion claim.
 Branch: `codex/xenios-health-launch-implementation-20260930`.
 Starting records: `377555759cdf6cbd9bf1e7167ac61c107b19a832`.
-Independent Claude report read: reviewer branch at
+Current runtime: `947f6ee7739bf2a1381b4b29a4f9d132c751d64c`.
+Runtime tree: `03ccddee03fbad2966655c2ce1a3cb46c468d8d5`.
+Tested release-control/records HEAD: `95e040a300e23ce5eb4ebc0dd7e5039f76aa818c`.
+Initial independent Claude report read: reviewer branch at
 `e6b5293834a85634c3fc9c657d52fa5fe92b5531`, report 18 for runtime `7600943`.
-Claude has not been represented as reviewing this successor.
+Later reports19-21 were read at `211a8fed26cc9c12633951b38353f30e4e6bf3d2`;
+the latest reviewed core runtime is `fe45550`, not this successor.
+Claude has not been represented as reviewing this successor or running now.
 
 ## Decision and authority
 
@@ -81,9 +86,10 @@ None is relabeled as a successful run. The previous whole-suite result at
 
 - Durable server-created provider attempt/event store, atomic replay/single-use
   integration and mounted provider-neutral ingress; only then implement the
-  selected authenticated provider transport. Current provider observation SQL
-  does not carry merchant-account/mode scope and must not be exposed as an
-  unauthenticated webhook or used as the final provider authority.
+  selected authenticated provider transport. The historical provider schema
+  lacks merchant-account/mode scope. Current migration85 explicitly refuses
+  new/replayed provider observations and legacy provider verification until
+  durable authenticated authority exists. It is a hold, not that authority.
 - Real independently authorized manual feed/controlled import adapter and an
   audited founder-authorized finance grant procedure. No invented bank feed or
   grant is supplied. Same observer UUID remains the current policy; two-person
@@ -104,11 +110,15 @@ None is relabeled as a successful run. The previous whole-suite result at
   Oxytocin10750, Care presentation holds and FedEx GRP-0364 shipping identity.
   No new price release, discount or commission is authorized.
 - Product details, remaining public/account/partner/supplier/admin journeys and
-  imagery integration remain in queue. Preserve the separate dirty c502 imagery
-  worktree and existing Claude reviewer. No optional program-card redesign.
-- Protected `server/routes.ts` and `server/index.ts` baselines remain unrepinned
-  pending exact independent review of the prior seam edits. Do not weaken this
-  gate or promote the source merely because local focused tests pass.
+  imagery integration remain in queue. Preserve the separate clean/pushed c502
+  imagery worktree at5c96f9e, its unresolved NOT MERGEABLE review, and the existing
+  Claude reviewer. No optional program-card redesign.
+- The prior `server/routes.ts` and `server/index.ts` bytes passed Claude report19
+  review; explicit owner-authorized baseline amendment remains unrecorded.
+  The new `server/research/index.ts` gateway edit additionally needs exact QA
+  confirmation. Research index is a permitted reported seam, not a hard file
+  lock, but the unchanged clean-seam test still fails its drift. No baseline
+  was repinned, allowance widened, assertion skipped or timeout increased.
 
 ## Historical-paid reconciliation and rollback runbook
 
@@ -144,10 +154,11 @@ workers inherit Node20; do not edit the permanent/system PATH.
 1. Run `node_modules/vitest/vitest.mjs run server/research/assisted-order client/src/research/assisted-order shared/research/assisted-order server/research/status-recovery server/release-control-plane.test.ts --maxWorkers=1 --no-file-parallelism`.
 2. Run `node_modules/typescript/bin/tsc --noEmit -p tsconfig.json`.
 3. Run private `npm.cmd run build` (includes source/build no-em-dash gates).
-4. Use only a disposable `postgres:17-alpine` container. Wait for `pg_isready`.
+4. For reproduction of the earlier correction/foundation proofs, use only a
+   disposable `postgres:17-alpine` container. Wait for `pg_isready`.
    Apply `supabase/verification/research-assisted-order-bridge-disposable-bootstrap.sql`,
    M71, then pending migrations191323,193033,202413,205725,230541 in that order.
-   Reapply only230541 to test idempotent schema application.
+   Reapply only230541 to test that historical correction schema's idempotence.
 5. Set `XENIOS_HL12_PG_CONTAINER` to that disposable name. Run
    `supabase/verification/research_assisted_order_quote_payment_concurrency_local.mjs`.
    Pipe the correction, foundation and bound-access local SQL proof files into
@@ -155,8 +166,16 @@ workers inherit Node20; do not edit the permanent/system PATH.
 6. Local PostgREST16.3 may bind only127.0.0.1:31334 using the synthetic secret
    embedded in the local test script. Run the local PostgREST proof. No hosted
    URL or credential is an acceptable substitute. Stop disposable resources.
+7. For the current provider-hold proof, run
+   `node supabase/verification/research_assisted_order_quote_provider_hold_local.mjs`.
+   This self-contained script creates and removes its own no-network/no-port
+   disposable database. It tests the predecessor chain through230541, proves
+   the old provider flaw, and tests234614 preflight/rollback and repeat apply.
+   The intended current source migration order is M71,191323,193033,202413,
+   205725,230541,234614. Do not casually replay an older replacement-function
+   migration after234614 or substitute a managed database for this proof.
 
-## Frozen source checkpoint
+## Earlier frozen source checkpoint
 
 Runtime source: `3c897f4dc019b6f420aa85da5e0d792814cd801e`.
 Runtime tree: `70673c588919ca626ce5cb7db4c6984f9e8684d8`.
@@ -270,3 +289,84 @@ provider authenticated-event quarantine/attempt persistence and composed
 supplier assignment eligibility remain work. Follow reports19/20 by finding ID;
 source fixes require Claude's exact-successor confirmation. No new browser or
 true-zoom result is asserted for this customer quote UI.
+
+## Final local qualification of tested HEAD95e040a
+
+The machine-readable receipt is `HEALTH_HL12_QUALIFICATION_95e040a.json` beside
+this document. `HEALTH_HL12_CHANGED_PATHS_95e040a.json` classifies every one of
+the50 changed paths from starting records3775557 through tested HEAD95e040a:
+18 application files,2 pending migrations,17 tests/local proofs,3 release-control
+files and10 records. Later checkpoint commits are records only, not new runtime.
+
+Private Node v20.19.0 / npm10.8.2: typecheck PASS (exit0), production build PASS
+(exit0), source1336/build224 scanned files with zero forbidden em-dash forms.
+The existing chunk-size/dynamic-import warnings are retained in the build log.
+The local archive SHA-256 is
+`be72284c7bc62de07d5a9fd0ae196879842c085f11f7f2b60bf8864c0c9d6a4f`,
+matching the previously obtained official SHASUMS256 entry. No system install
+or permanent PATH change. Full-suite runner16052 and observed workers33428/3092
+used the same full-path private Node binary; the receipt indexes actual process
+provenance rather than inferring child versions from npm's parent.
+
+`npm test -- --maxWorkers=2` completed **18,398 passed /5 failed /85 skipped**,
+1,001 files (991 pass/4 fail/6 skip),1588.11s,exit1. Started
+2026-09-30T23:57:54.8438456Z and finished2026-10-01T00:24:26.5160629Z.
+No source/test/gate bytes changed during that run. Native stdout/stderr is in
+`C:/Users/sboad/.codex/tmp/health-provider-neutral-95e040a/full-suite.log`, SHA-256
+`84c558cd196e9b544d77a5e8b11055362fa07be76b97fa97c6066cc30044e409`.
+The protected tests failed two assertions covering THREE mismatch paths:
+`server/routes.ts`, `server/index.ts` and the newly changed
+`server/research/index.ts`. Expected/actual hashes are in the receipt.
+The other three failures are the unchanged5000ms scan timeouts in
+`rls-invariants.test.ts`, `preview-harness.guard.test.ts` and
+`customer-price-authority.test.ts`.
+
+Diagnostic runs remain separate: three-file serial rerun13 pass/1 timeout,
+exit1,21.23s (only price scan still timed out). A read-only standalone reproduction
+then scanned1279 production TS/TSX files,13 identifiers and13,146,773 bytes in
+140.17ms with zero forbidden occurrences. The unchanged price-test file alone
+then passed5/5,exit0,1.06s with the original5000ms limit. These results do NOT
+convert the aggregate to PASS. Free host memory was observed near420MiB during
+the long run; execution contention is plausible, not a conclusively established
+root cause. No full-suite retry solely to rewrite the record was performed.
+
+Separate final controls: migration DAG PASS44 canonical-checksummed nodes;
+route uniqueness PASS458 registrations across449 call sites. No current release
+manifest acceptance, browser/true-zoom result or managed qualification is implied.
+The prior d6f99e0 and7600943 aggregate runs and failed development reproductions
+above remain separate. The receipt hashes all final local logs, including the
+failed isolated rerun. Raw logs remain local; committed receipts do not claim
+the raw logs themselves are in Git.
+
+## Next exact engineering queue and independent reviewer handoff
+
+Review exact947f6ee/tree03ccddee, prioritizing SQL-01/SQL-10 provider and NULL
+binding repairs, F2/F3/F5/F6/F7/F8 behavior, F10 gateway, EA-01 capacity and
+quote UI. Preserve every unresolved finding and distinguish a fail-closed hold
+from a completed operational workflow. Obtain exact gateway QA confirmation
+before any deliberate protection-owner baseline recut in its own approved commit.
+No review of this successor or clean aggregate is asserted.
+
+Next provider-independent work is F4 durable verification effects: extend the
+canonical outbox with a non-sendable held intent committed with verification,
+then reuse the existing durable audit authority for idempotent recovery without
+the original actor's still-active grant. Qualify interrupted/concurrent writes,
+held dispatch denial, actual ACLs and historical no-backfill on disposable SQL.
+This is a proposed next slice, not implemented in947f6ee. Do not create a second
+audit/outbox authority or activate a mail provider. Durable provider attempts,
+normalized authenticated events/quarantine and governed refund/cancellation
+follow without waiting for a processor selection.
+
+Parallel public work can continue exact HL-11 source reconciliation and the
+existing admin quote panel, retaining source-backed holds. The approved master
+workbook exists at `C:/Users/sboad/Downloads/XENIOS_MASTER_CATALOG_AFFILIATE_PRICING_2026-08-16.xlsx`,
+SHA-256 `6478ad0d3f710b75c6bf0c5f5e56ff1189ab2a2a4439cab23c2a28498134ea6f`;
+do not ask the founder to repeat it or bind new identities by array position.
+424 intended canonical rows are not the already-tested420-row artifact. Preserve
+Care price withholding, Product Control money, approved cents, GRP-0364 shipping,
+the GRP-0422 hold and both Coming soon-only blood-test cards. Do not integrate
+the NOT MERGEABLE imagery candidate. No optional program-card redesign.
+
+Hosted mutations, managed migration applies, account grants, real email, real
+money, price release, procurement, clinical actions and deployment: NONE.
+Independent successor acceptance and production readiness: NOT CLAIMED.

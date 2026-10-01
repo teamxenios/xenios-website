@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 1,
+  "classification": "LOCAL_SOURCE_QUALIFICATION_NOT_RELEASE_APPROVAL",
+  "branch": "codex/xenios-health-launch-implementation-20260930",
+  "runtimeSha": "947f6ee7739bf2a1381b4b29a4f9d132c751d64c",
+  "runtimeTree": "03ccddee03fbad2966655c2ce1a3cb46c468d8d5",
+  "testedHead": "95e040a300e23ce5eb4ebc0dd7e5039f76aa818c",
+  "runtimeAndTestsUnchangedDuringQualification": true,
+  "node": {
+    "version": "v20.19.0",
+    "npmVersion": "10.8.2",
+    "executable": "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe",
+    "archiveSha256": "be72284c7bc62de07d5a9fd0ae196879842c085f11f7f2b60bf8864c0c9d6a4f",
+    "runnerPid": 16052,
+    "observedWorkerPids": [
+      33428,
+      3092
+    ],
+    "workerEvidence": "child-worker-provenance.json",
+    "scope": "Observed runner and these child processes used the private full-path Node20 binary. No permanent PATH or system-wide install."
+  },
+  "logDirectory": "C:/Users/sboad/.codex/tmp/health-provider-neutral-95e040a",
+  "runs": [
+    {
+      "id": "typecheck",
+      "command": "node_modules/typescript/bin/tsc --noEmit -p tsconfig.json",
+      "exitStatus": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "id": "production-build",
+      "command": "npm run build",
+      "exitStatus": 0,
+      "log": "build.log",
+      "sourceNoEmDash": {
+        "files": 1336,
+        "violations": 0
+      },
+      "buildNoEmDash": {
+        "files": 224,
+        "violations": 0
+      },
+      "browserQualification": false
+    },
+    {
+      "id": "whole-suite",
+      "command": "npm test -- --maxWorkers=2",
+      "startedAt": "2026-09-30T23:57:54.8438456Z",
+      "finishedAt": "2026-10-01T00:24:26.5160629Z",
+      "exitStatus": 1,
+      "passed": 18398,
+      "failed": 5,
+      "skipped": 85,
+      "total": 18488,
+      "files": {
+        "passed": 991,
+        "failed": 4,
+        "skipped": 6,
+        "total": 1001
+      },
+      "durationSeconds": 1588.11,
+      "log": "full-suite.log",
+      "capture": "Complete native stdout/stderr via Tee-Object; exit/timestamps separately observed from shell result.",
+      "failures": [
+        {
+          "file": "server/core-site-protection.test.ts",
+          "tests": 2,
+          "kind": "PROTECTED_HASH_ASSERTIONS",
+          "paths": [
+            "server/routes.ts",
+            "server/index.ts",
+            "server/research/index.ts"
+          ]
+        },
+        {
+          "file": "server/rls-invariants.test.ts",
+          "tests": 1,
+          "kind": "TEST_TIMEOUT_5000MS"
+        },
+        {
+          "file": "server/research/early-access/preview-harness.guard.test.ts",
+          "tests": 1,
+          "kind": "TEST_TIMEOUT_5000MS"
+        },
+        {
+          "file": "server/research/products-diagnostics/customer-price-authority.test.ts",
+          "tests": 1,
+          "kind": "TEST_TIMEOUT_5000MS"
+        }
+      ]
+    },
+    {
+      "id": "isolated-timeout-diagnostic",
+      "command": "node_modules/vitest/vitest.mjs run server/rls-invariants.test.ts server/research/early-access/preview-harness.guard.test.ts server/research/products-diagnostics/customer-price-authority.test.ts --maxWorkers=1 --no-file-parallelism",
+      "exitStatus": 1,
+      "passed": 13,
+      "failed": 1,
+      "skipped": 0,
+      "durationSeconds": 21.23,
+      "log": "isolated-timeout-rerun.log",
+      "failure": "customer-price-authority scan still exceeded unchanged 5000ms timeout; RLS and preview guard passed"
+    },
+    {
+      "id": "standalone-price-scan-diagnostic",
+      "command": "Read-only Node20 reproduction of the existing productionSourceFiles and 13 identifier scan, without Vitest; not a substitute test gate",
+      "exitStatus": 0,
+      "files": 1279,
+      "bytes": 13146773,
+      "identifiers": 13,
+      "offenders": 0,
+      "scanMs": 140.1734,
+      "log": "price-scan-diagnostic.log"
+    },
+    {
+      "id": "single-price-file-rerun",
+      "command": "node_modules/vitest/vitest.mjs run server/research/products-diagnostics/customer-price-authority.test.ts --maxWorkers=1 --no-file-parallelism",
+      "exitStatus": 0,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "durationSeconds": 1.06,
+      "log": "price-scan-single-rerun.log",
+      "timeoutMs": 5000
+    },
+    {
+      "id": "migration-dag",
+      "command": "node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-migration-dag.ts",
+      "exitStatus": 0,
+      "nodes": 44,
+      "canonicalChecksumsVerified": true,
+      "log": "migration-dag.log"
+    },
+    {
+      "id": "route-uniqueness",
+      "command": "node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-route-uniqueness.ts",
+      "exitStatus": 0,
+      "registrations": 458,
+      "callSites": 449,
+      "log": "route-uniqueness.log"
+    }
+  ],
+  "aggregateRemainsFailed": true,
+  "testOrGateRelaxations": false,
+  "priorRun": {
+    "testedHead": "d6f99e04f3b9613ea5c309f06e199bb188d05097",
+    "passed": 18382,
+    "failed": 2,
+    "skipped": 85,
+    "durationSeconds": 606.34,
+    "exitStatus": 1,
+    "separateEvidencePreserved": true
+  },
+  "protectedBaselines": [
+    {
+      "file": "server/routes.ts",
+      "expected": "f17d518ee2a3bcda2ff4d4ffca6bc8475c0ced5f7c9f5f85b19bd189e09ea2ae",
+      "actual": "7c21ea1ac26c6359c46d6070a9295a41b16f93355b3475a44f7831c668069137",
+      "review": "Claude report19 passes exact bytes; explicit owner baseline amendment not recorded"
+    },
+    {
+      "file": "server/index.ts",
+      "expected": "598ffd2e79038c35b5c9e6662cb05258a6b27a33bc3ee96b8b23757f9e2fd888",
+      "actual": "1d6594d6389e2ac67d9af85213854e05387899dfe0102fa577e447565e68c315",
+      "review": "Claude report19 passes exact bytes; explicit owner baseline amendment not recorded"
+    },
+    {
+      "file": "server/research/index.ts",
+      "expected": "b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070",
+      "actual": "5b9f683b183a095e258908e0e0086888c71b7666b0e384367b1bfde0c4124188",
+      "review": "New exact quote gateway repair2dc7d62; independent successor review and scoped baseline authorization required"
+    }
+  ],
+  "logSha256": {
+    "typecheck.log": "7ca10eb57cd94ec4a8334fbc39acf9e04b042c1fe79312b0f7bb0f8845c268e8",
+    "build.log": "dacfa0a78bb286399882a98a85f435972c3ac9e7ca22d02d1d4e0db27e8b9143",
+    "child-worker-provenance.json": "79107700436a625c868ccc9e9a3a03d81444f7562a2ec98ab9a41a84b56abec1",
+    "full-suite.log": "84c558cd196e9b544d77a5e8b11055362fa07be76b97fa97c6066cc30044e409",
+    "isolated-timeout-rerun.log": "8c1996bd087eeea1e1425192f647c3e988ef5ca06ef62b82907cdcfe156ce292",
+    "price-scan-diagnostic.log": "398edfc8c70153705a622a7f57af9702bbfe077963c232e8baeb9eb503cdd935",
+    "price-scan-single-rerun.log": "d301b7aa7cf8dd82a237373dac4cea7f82c97864d5b6a0b82e27312f7fec65f1",
+    "migration-dag.log": "c82e1b1a9dcad0dc1a07bfce80b483c2a278df527b94c065be1c36f6392d7531",
+    "route-uniqueness.log": "8f8fef46ee1231e01ad24bca1123c3e6938f8ca1aeed5401355b589b13fdfcb4"
+  },
+  "limitations": [
+    "Heavy-job coordination used repository messaging and process observation, not proof that Claude was running or had read a message.",
+    "Host free memory was observed near420MiB during the aggregate. Later passing reruns suggest execution contention, but the exact timeout cause was not conclusively proven.",
+    "All failed, skipped and successful runs are distinct; isolated success does not turn the aggregate into a pass.",
+    "No browser, true zoom, managed Supabase, live payment, real email or deployment qualification of this successor.",
+    "Logs are local evidence paths with hashes; this receipt does not falsely claim they are committed to Git.",
+    "Provider-neutral authority remains incomplete; see the handoff's explicit engineering queue."
+  ],
+  "hostedMutations": false,
+  "managedMigrationApplied": false,
+  "realEmailSent": false,
+  "realMoneyMoved": false,
+  "readyForProduction": false,
+  "independentSuccessorReview": "REQUESTED_NOT_RECEIVED"
+}
