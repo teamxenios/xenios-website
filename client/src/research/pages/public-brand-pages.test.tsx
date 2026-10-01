@@ -175,6 +175,27 @@ describe("public editorial page system", () => {
     expect(view.textContent).toContain("The selected page explains its own availability.");
   });
 
+  it("reserves the hub chooser's sticky-header scroll offset before focus without styling sibling sections", async () => {
+    const view = await renderPage(<AccessHub />);
+    const chooser = view.querySelector<HTMLElement>("#account-access");
+    expect(chooser).not.toBeNull();
+    if (!chooser?.parentElement) throw new Error("The existing chooser wrapper must remain present");
+    const wrapper = chooser.parentElement;
+    const boundedOffsetClass = "[&>#account-access]:scroll-mt-[84px]";
+
+    // JSDOM cannot establish emitted CSS or geometry. This pins a persistent,
+    // direct-child-only rule before either the router or hub focuses the target.
+    expect(document.activeElement).not.toBe(chooser);
+    expect(chooser.hasAttribute("tabindex")).toBe(false);
+    expect(Array.from(wrapper.classList)).toEqual(["card", "mt-6", boundedOffsetClass]);
+    expect(Array.from(wrapper.children)).toEqual([chooser]);
+    expect(Array.from(view.querySelectorAll<HTMLElement>("[class]")).filter(
+      (element) => element.classList.contains(boundedOffsetClass),
+    )).toEqual([wrapper]);
+    expect(wrapper.nextElementSibling?.getAttribute("aria-labelledby")).toBe("access-first-question");
+    expect(wrapper.nextElementSibling?.className).toBe("card bg-paper-2 mt-6");
+  });
+
   it("opens FAQ panels with explicit button and region relationships", async () => {
     const view = await renderPage(<Faq />);
     const buttons = Array.from(view.querySelectorAll<HTMLButtonElement>('[data-testid^="button-faq-"]'));
