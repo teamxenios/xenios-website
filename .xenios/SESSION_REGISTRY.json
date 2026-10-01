@@ -567,8 +567,8 @@
       "branch": "codex/xenios-health-launch-implementation-20260930",
       "state": "active",
       "startedAt": "2026-09-30T16:32:52.264Z",
-      "heartbeatAt": "2026-10-01T13:35:24.363Z",
-      "note": "ADP03 frozen at 2f0a975, handoff b907cf6. HL17 redirect and cold-focus reproductions captured; bounded Access Hub fix in progress; no hosted writes."
+      "heartbeatAt": "2026-10-01T14:08:42.169Z",
+      "note": "HL17 corrected runtime 8a31b0f: final focused tests and browser evidence closeout; no hosted changes."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

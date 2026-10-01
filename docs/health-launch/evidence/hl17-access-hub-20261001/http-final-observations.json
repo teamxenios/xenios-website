@@ -1,0 +1,13 @@
+{
+  "observedAt": "2026-10-01T14:10:05.2699457Z",
+  "source": "8a31b0fa664f3570ae0bf66a7a65f62c051b2e08",
+  "origin": "http://127.0.0.1:53791",
+  "command": "PowerShell Invoke-WebRequest -UseBasicParsing -MaximumRedirection 0; GET and HEAD for each recorded path",
+  "checks": [
+    {"method":"GET","path":"/research/access-hub","status":200,"location":null,"robots":["noindex,nofollow,noarchive"],"cache":null,"referrer":null,"bodyBytes":1448,"neutralPrivateTitle":true,"canonical":false},
+    {"method":"GET","path":"/research/access-hub?utm_source=hl17","status":200,"location":null,"robots":["noindex,nofollow,noarchive"],"cache":["no-store"],"referrer":["no-referrer"],"bodyBytes":1448,"neutralPrivateTitle":true,"canonical":false},
+    {"method":"HEAD","path":"/research/access-hub","status":200,"location":null,"robots":["noindex,nofollow,noarchive"],"cache":null,"referrer":null,"bodyBytes":0,"neutralPrivateTitle":false,"canonical":false},
+    {"method":"HEAD","path":"/research/access-hub?utm_source=hl17","status":200,"location":null,"robots":["noindex,nofollow,noarchive"],"cache":["no-store"],"referrer":["no-referrer"],"bodyBytes":0,"neutralPrivateTitle":false,"canonical":false}
+  ],
+  "limits": ["Local bounded middleware preview, not full production composition.", "HEAD title/canonical booleans reflect empty bodies, not HTML metadata qualification."]
+}
