@@ -3,6 +3,26 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "HEALTH-HL12-LENS01-PREAPPLY-CENSUS-20261001",
+      "title": "Detect legacy payment notification adoption blockers before the HL12 chain",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "supabase/verification/research_assisted_order_quote_pre80_preflight.sql",
+        "supabase/verification/research_assisted_order_quote_effects_precheck.sql",
+        "supabase/verification/research_assisted_order_quote_effects_local.mjs",
+        "supabase/verification/research_assisted_order_quote_pre80_preflight_local.mjs",
+        "server/research/assisted-order/payment-effects-sql.test.ts",
+        "supabase/MIGRATIONS.md",
+        "docs/health-launch/HL12_LENS01_PREAPPLY_CENSUS_20261001.md",
+        "docs/health-launch/evidence/hl12-lens01-preapply-census-20261001/"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Claude report24 LENS01: read-only PII-free pre80 and pre88 exact guard census; fail closed unavailable; documented chain no-go and unchanged-byte transaction/timeouts procedure. Root SQL/docs; delegate disjoint local proof and existing proof/test compatibility. Preserve all immutable migration bytes, baseline gates, no historical adoption/record deletion/relabeling/backfill, no managed contact or writes. Local disposable synthetic proof only. Detection does not close unresolved adoption or grant any founder disposition.",
+      "claimedAt": "2026-10-01T15:18:39.115Z"
+    },
+    {
       "id": "HEALTH-ADMIN-ASSISTED-SESSION-ISOLATION-20261001",
       "title": "Isolate mounted assisted-order admin data and pending actions to the current session",
       "priority": "P1",

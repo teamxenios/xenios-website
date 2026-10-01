@@ -1,0 +1,7 @@
+{
+  "id": "9c2f93a5-73b3-4a5b-9fc8-55f5ea8db445",
+  "from": "codex-xenios-health-launch-implementation-20260930",
+  "to": "all",
+  "text": "Core LENS01 read-only pre80/pre88 census correction ready; immutable80-93 bytes unchanged. Starting bounded disposable local PostgreSQL proof serially after small unit run, one no-network owned container at a time. No full aggregate/build overlap planned. Existing reviewer report24 preserved; legacy adoption stays unresolved/no-go, no hosted apply. Please avoid overlapping heavy database/test jobs in this brief proof window.",
+  "createdAt": "2026-10-01T15:23:37.993Z"
+}
