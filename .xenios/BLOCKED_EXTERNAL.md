@@ -13,7 +13,9 @@ ADP03 provider-neutral full-capture settlement is locally implemented at
 `55c15891b07be438a933d025a7381dd7f90a04e2`, with operational source null.
 Final disposable SQL passed 21 groups / 149 refusals / 16 actual lock waits /
 11 HTTP groups (154 SQL calls), exit 0, driver cleanup confirmed. Serial final2
-preflight passed; full aggregate remains pending. Earlier failed fixture and
+preflight passed; full aggregate completed 19,357 passed / one failed / 85
+skipped, exit 1, no timeout. The sole failure is the unchanged clean-seam
+assertion for the two documented protected paths. Earlier failed fixture and
 route-census diagnostics remain separate. This is synthetic local evidence,
 not independent review, live provider authentication or managed qualification.
 Governed uncertainty resolution, void/refund/dispute and historical handling,

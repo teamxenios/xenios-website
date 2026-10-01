@@ -1,7 +1,8 @@
 # HL-12 ADP03 governed provider capture settlement
 
-Status: final local SQL and serial preflight passed; aggregate pending.
-Not a final frozen candidate, independently accepted successor or release.
+Status: frozen local candidate. Final SQL and serial preflight passed;
+aggregate failed the unchanged strict protected-seam assertion.
+Ready for exact independent review, not an accepted successor or release.
 No managed action is authorized by this record.
 
 Current source checkpoint: `2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd`.
@@ -10,8 +11,8 @@ Final test checkpoint: `c3ab4bdf100fc70765928bfa13c24de5358f0a08` (cumulative
 test-only commits `1bb6ca0`, `2259a2e`, `c3ab4bd`).
 Final release-control checkpoint: `edf8526bdefc34b8e87fa6e46585573535dba6cd`
 (cumulative `2d966b5`, `6198127`, `edf8526`). The complete current local SQL proof
-supports `applyTwiceVerified`; this is not managed qualification. Aggregate
-remains pending. Do not borrow ADP02's results.
+supports `applyTwiceVerified`; this is not managed qualification. The completed
+ADP03 aggregate below is separate from ADP02's results.
 
 ## Continuity
 
@@ -196,7 +197,7 @@ it is not the conditional PostgreSQL 16 or managed-platform qualification.
   `IS DISTINCT FROM` so a null error detail cannot pass its expected refusal.
   This latter fixture was not reached in run2; it was an inspection correction,
   not a reproduced runtime failure. Run3 is a separate diagnostic.
-- Final composed SQL and serial preflight completed below. Aggregate pending;
+- Final composed SQL, serial preflight and failed aggregate completed below;
   no aggregate pass is inferred.
 
 `adp03-sql-local-run3` failed, exit 1, 224.027 seconds. Thirteen SQL groups
@@ -278,14 +279,45 @@ command; Node v20.19.0/npm 10.8.2, real dataset reader, one Vitest worker:
 Build retains existing mixed-import and chunk-size warnings. The protection CLI
 pass is not the strict baseline assertion's pass. Child-process sampling is
 bounded, not continuous runtime attestation; build sampling observed wrapper/npm,
-not every nested build process. Exact commands, hashes and receipts will be
-included in the qualification JSON after the aggregate completes.
+not every nested build process. Exact commands, hashes and receipts are in
+`HEALTH_HL12_ADP03_QUALIFICATION_20261001.json`.
 
 Aggregate launch guard: the first launcher invocation refused before spawning
 Vitest because the records commit had not been created (a message filename was
 mistyped in the explicit Git staging list). Exit 1, no test execution or test
 result. The unchanged clean-checkpoint assertion correctly prevented a dirty
 start. This is separate from any subsequent aggregate result.
+
+## Completed aggregate (failed, not timed out)
+
+Job `adp03-full-suite-final`, Node v20.19.0/npm 10.8.2, real dataset reader,
+one worker and no file parallelism:
+
+- Start: 2026-10-01T13:00:56.897Z, clean
+  `dc41f1a073aace6556a8a4f3a1f9e817c57ae02c`, tree
+  `4ca883bc43422f02ebee12c6e423216e4a07861d`.
+- Finish: 2026-10-01T13:20:31.463Z, clean
+  `8cf46772ab5b15528fd6d46030741af38d3bbfb4`.
+- 19,357 passed, one failed, 85 skipped; 1,018 passing files, one failed file,
+  six skipped files. Exit 1, null signal; no timeout reported.
+- 1,173.16 seconds Vitest / 1,174.566 seconds wrapper.
+- Sole failed test: `server/core-site-protection.test.ts:387`, the unchanged
+  clean-seam assertion reporting the two exact baseline mismatches below.
+- Source, tests and controls match the frozen identities at recorded boundaries;
+  only records commits occurred during the run. This is not continuous
+  filesystem attestation. Both start and end were clean.
+- Log SHA-256:
+  `03719e7d35db5b42b0b2a9dab6c4bf702ffbe54f9a0f4779881944d7237c3ab5`.
+- Twenty process samples identified 19 distinct child workers using the pinned
+  Node path; the last sampled worker's executable path was unavailable. This
+  does not attest every worker's full lifetime or resolve that missing path.
+
+The full receipt preserves all earlier ADP03 run results, skipped cases,
+commands, source/control hashes, process samples and commit/path classification.
+Final SQL raw output is embedded. Other full logs are local artifacts with
+hashes and receipts, not a fully portable archive of every intermediate run.
+No isolated pass changes this aggregate's failed status. No protected hash or
+assertion was weakened or amended.
 
 ## Unchanged external and release holds
 
