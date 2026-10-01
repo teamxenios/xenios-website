@@ -8,13 +8,20 @@ const view = () => ({ requestId: "20000000-0000-4000-8000-000000000001", publicR
   lines: [], timeline: [], documents: [], actionRequired: null, trackingReference: "OPAQUE-REFERENCE" });
 
 describe("additive customer status reader", () => {
-  it("uses the canonical authorization arguments unchanged and projects only trackingReference", async () => {
-    const rpc = vi.fn(async () => ({ data: { ...view(), internalNote: "not-visible" }, error: null }));
+  it("preserves canonical authorization and adds only evidence-bound payment and tracking projections", async () => {
+    const rpc = vi.fn()
+      .mockResolvedValueOnce({ data: { ...view(), internalNote: "not-visible" }, error: null })
+      .mockResolvedValueOnce({ data: { hasObservation: false, paymentVerified: false }, error: null });
     const result = await new SupabaseAssistedOrderRepository({ rpc }).getStatus(authorization);
-    expect(rpc).toHaveBeenCalledExactlyOnceWith("research_assisted_order_customer_status", {
+    expect(rpc).toHaveBeenNthCalledWith(1, "research_assisted_order_customer_status", {
       p_public_reference: reference, p_member_id: authorization.memberId,
       p_early_access_session_hash: null, p_status_token_hash: null,
     });
+    expect(rpc).toHaveBeenNthCalledWith(2, "research_assisted_order_financial_state", {
+      p_request_id: view().requestId,
+    });
+    expect(rpc).toHaveBeenCalledTimes(2);
+    expect(result?.paymentVerified).toBe(false);
     expect(result?.trackingReference).toBe("OPAQUE-REFERENCE");
     expect(result).not.toHaveProperty("internalNote");
   });
