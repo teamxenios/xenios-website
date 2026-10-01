@@ -1,0 +1,28 @@
+{
+  "startedAt": "2026-10-01T18:24:26.225Z",
+  "head": "c2c100d0989b0ce800b8f74a0737e0afaf30e0f8",
+  "tree": "df952811cfdfe8a4b1035a6ee6dcdc69904945e6",
+  "dirtyAtStart": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M docs/health-launch/HL12_ADPG1_QUARANTINE_ISOLATION_20261001.md",
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "server/pgcrypto-qualification.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+  "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+  "runnerPid": 35400,
+  "childPid": 40532,
+  "finishedAt": "2026-10-01T18:24:28.125Z",
+  "elapsedMs": 1900,
+  "exitCode": 0,
+  "signal": null,
+  "logSha256": "7d1de9d78752fe28ad02076015f3bbb36c14843892f4f7894a55b1525e4be41f",
+  "finalHead": "c2c100d0989b0ce800b8f74a0737e0afaf30e0f8",
+  "dirtyAtEnd": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M docs/health-launch/HL12_ADPG1_QUARANTINE_ISOLATION_20261001.md"
+}

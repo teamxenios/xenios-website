@@ -5,6 +5,7 @@
     {
       "id": "HEALTH-PARTNERSHIP-SUBMITTED-RECEIPT-20261001",
       "title": "Bind partner and supplier inquiry receipts to the submitted snapshot",
+      "qualificationNote": "Legacy-component correction only. Actual App/static composition redirects all four legacy entrypoints to clarity forms, so this does not close a mounted public-journey issue. Component tests pass; no real POST/email attempted; no independent acceptance.",
       "priority": "P2",
       "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",
@@ -19,6 +20,7 @@
     {
       "id": "HEALTH-HL12-ADPG1-QUARANTINE-ISOLATION-20261001",
       "title": "Isolate unattributed provider quarantine from unrelated orders",
+      "qualificationNote": "Partial ADP-G1 only: manual-only and unrelated-source contamination corrected locally, same-source attribution unresolved.14SQLgroups/27refusals/8races PASS; aggregate19443PASS3FAIL85SKIP remains failed. Review exact c0e25c73 runtime. G2-G4/refund/adoption and hosted qualification remain separate; no finding acceptance inferred.",
       "priority": "P1",
       "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",

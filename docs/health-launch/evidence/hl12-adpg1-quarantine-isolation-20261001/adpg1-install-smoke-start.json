@@ -1,0 +1,19 @@
+{
+  "startedAt": "2026-10-01T16:13:26.602Z",
+  "head": "aba12d6b593194e4f4a7608849163830d069d57c",
+  "tree": "61e54304be71c59652193feff2252af780545be3",
+  "dirtyAtStart": "M client/src/research/b2b/PartnershipInquiryForm.test.tsx\n M client/src/research/b2b/PartnershipInquiryForm.tsx\n?? server/research/assisted-order/provider-quarantine-sql.test.ts\n?? supabase/migrations/20261001160730_research_assisted_order_provider_quarantine_isolation.sql",
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+    "--input-type=module",
+    "-e",
+    "import {readFile} from \"node:fs/promises\"; import {ProviderSettlementHarness} from \"./supabase/verification/research_assisted_order_quote_provider_settlement_harness.mjs\"; const db=new ProviderSettlementHarness(); try {await db.start(); await db.baseline(); await db.install(); const sql=await readFile(\"supabase/migrations/20261001160730_research_assisted_order_provider_quarantine_isolation.sql\",\"utf8\"); await db.psql(sql); await db.psql(sql); console.log(\"ADPG1 INSTALL TWICE PASS\");} finally {await db.stop(); console.log(\"ADPG1 OWNED CONTAINER CLEANED\");}"
+  ],
+  "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+  "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+  "runnerPid": 10908,
+  "childPid": 39444
+}

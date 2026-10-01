@@ -1,0 +1,27 @@
+{
+  "startedAt": "2026-10-01T18:00:04.245Z",
+  "head": "8722ece67315a62cd19d8f7e6f8ef1a8ff15a719",
+  "tree": "8bc944215b708d663eee37101522adeb9e969363",
+  "dirtyAtStart": "",
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+  "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+  "runnerPid": 44612,
+  "childPid": 35500,
+  "finishedAt": "2026-10-01T18:23:51.212Z",
+  "elapsedMs": 1426967,
+  "exitCode": 1,
+  "signal": null,
+  "logSha256": "4a86e028630c90b7f7cb05d12e4e4ff83f2df4f51b26f9d1017023a308ee1882",
+  "finalHead": "c2c100d0989b0ce800b8f74a0737e0afaf30e0f8",
+  "dirtyAtEnd": "M docs/health-launch/HL12_ADPG1_QUARANTINE_ISOLATION_20261001.md"
+}

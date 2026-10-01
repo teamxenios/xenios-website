@@ -1,0 +1,18 @@
+{
+  "startedAt": "2026-10-01T16:18:38.205Z",
+  "head": "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
+  "tree": "1771d18bad91b89e95414bebb8b574dc32729687",
+  "dirtyAtStart": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M client/src/research/b2b/PartnershipInquiryForm.test.tsx\n M docs/coordination/MIGRATION_DAG.json\n M server/release-control-plane.test.ts\n M supabase/MIGRATIONS.md\n?? server/research/assisted-order/provider-quarantine-sql.test.ts\n?? supabase/verification/research_assisted_order_provider_quarantine_local.mjs\n?? supabase/verification/research_assisted_order_provider_quarantine_races.mjs",
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit"
+  ],
+  "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+  "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+  "runnerPid": 29584,
+  "childPid": 19528
+}

@@ -1,0 +1,30 @@
+{
+  "startedAt": "2026-10-01T16:14:22.826Z",
+  "head": "aba12d6b593194e4f4a7608849163830d069d57c",
+  "tree": "61e54304be71c59652193feff2252af780545be3",
+  "dirtyAtStart": "M client/src/research/b2b/PartnershipInquiryForm.test.tsx\n M client/src/research/b2b/PartnershipInquiryForm.tsx\n?? server/research/assisted-order/provider-quarantine-sql.test.ts\n?? supabase/migrations/20261001160730_research_assisted_order_provider_quarantine_isolation.sql",
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "server/research/assisted-order",
+    "client/src/research/b2b",
+    "client/src/research/pages/PartnershipPages.test.tsx",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+  "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+  "runnerPid": 38636,
+  "childPid": 10600,
+  "finishedAt": "2026-10-01T16:15:33.681Z",
+  "elapsedMs": 70855,
+  "exitCode": 0,
+  "signal": null,
+  "logSha256": "376734ad36daa77b0604543918c1321901827ef541ce0416136116885a031f40",
+  "finalHead": "aba12d6b593194e4f4a7608849163830d069d57c",
+  "dirtyAtEnd": "M client/src/research/b2b/PartnershipInquiryForm.test.tsx\n M client/src/research/b2b/PartnershipInquiryForm.tsx\n?? server/research/assisted-order/provider-quarantine-sql.test.ts\n?? supabase/migrations/20261001160730_research_assisted_order_provider_quarantine_isolation.sql\n?? supabase/verification/research_assisted_order_provider_quarantine_local.mjs\n?? supabase/verification/research_assisted_order_provider_quarantine_races.mjs"
+}

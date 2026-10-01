@@ -72,7 +72,26 @@ is claimed. The source remains a separately classified legacy-component fix.
 
 ## Local qualification
 
-The full-suite run is still in progress. Completed clean-checkout checks at
+The full-suite run completed **FAILED**, exit1:19,443 PASS /3 FAIL /85 SKIP,
+1,020 passing files /2 failed /6 skipped (1,028 total). It started from clean
+`8722ece67315a62cd19d8f7e6f8ef1a8ff15a719`, tree
+`8bc944215b708d663eee37101522adeb9e969363`, at18:00:04.245Z and ended
+18:23:51.212Z on2026-10-01 (1,425.26s Vitest /1,426.967s wrapper). End HEAD
+was `c2c100d0989b0ce800b8f74a0737e0afaf30e0f8`, with only this handoff dirty.
+Committed changes during the run were records only; source, tests and controls
+did not change at the recorded boundaries. This is not continuous filesystem
+attestation or a claim that the entire checkout stayed clean.
+
+Two failures are the unchanged strict protection assertions: static.ts hard
+hash, and App.tsx/server/index.ts/server/research/index.ts seam hashes. The
+third is the real-repository pgcrypto scan exceeding its unchanged5,000ms
+limit (recorded case13,749ms). It reported a timeout, not an offending SQL call.
+An immediately subsequent unchanged CLI scan passed256 SQL files and the
+unchanged test passed17 cases in807ms Vitest /1.900s wrapper. These support a
+timing-related diagnosis but do not establish the cause of the slowdown and
+**do not replace the failed aggregate**. No limit, allowlist or assertion changed.
+
+Completed clean-checkout checks at
 `8722ece67315a62cd19d8f7e6f8ef1a8ff15a719` are: affected tests 1,368 PASS /
 one existing conditional database SKIP across43 files; typecheck PASS;
 build PASS (1,353 runtime-source and226 production-build files, zero forbidden
@@ -80,8 +99,42 @@ customer-facing em-dash forms); DAG53 PASS; routes462 registrations/453 call
 sites PASS. The CLI protection gate FAIL remains unchanged:37 hard hashes pass,
 static hash mismatch, three seam warnings, plus inherited broad-branch
 out-of-zone paths against origin/main. No baseline or assertion was weakened.
-The final receipt archive and complete aggregate result will be recorded before
-this handoff is issued. Existing failed, filtered and diagnostic runs stay distinct.
+Existing failed, filtered and diagnostic runs stay distinct in the archive below.
+
+### Complete execution index
+
+Each row is a separate invocation. Times below are wrapper wall-clock seconds.
+The16-run [raw evidence archive](evidence/hl12-adpg1-quarantine-isolation-20261001/raw-checks-final.json)
+contains exact commands, full tested revisions, start/end dirty state, log bytes,
+receipt bytes and available process samples. All16 log hashes were verified.
+Archive SHA256: `2540281ff0c2921dff83df246301b3eb948c078cc201c15f115bbd284d8f63b5`.
+Collector SHA256: `0ad7e3cbdc712662b3b48fd812acb558ea2c8aa95829f78ccd1caa680a6f2431`.
+
+| Job | Result | Exit | Seconds |
+| --- | --- | ---: | ---: |
+| partnership-receipt-repro |1 FAIL,12 name-filter SKIP; original defect |1 |27.191 |
+| partnership-receipt-focused-run1 |35 PASS,5 files |0 |13.795 |
+| adpg1-install-smoke |Exact migration applied twice locally |0 |13.253 |
+| adpg1-affected-run1 |1,317 PASS,42 files; unmatched extra file filter does not count as coverage |0 |70.855 |
+| adpg1-quarantine-local-run1 |Fixture missing supplierAssignmentId,23514 before expected P0001 |1 |45.107 |
+| adpg1-typecheck-run1 |TS2322 clipboard mock return annotation |2 |21.647 |
+| adpg1-quarantine-local-run2 |14 groups,27 refusals,8 races,1 predecessor reproduction |0 |151.965 |
+| adpg1-affected-final |1,368 PASS,1 conditional DB SKIP,43 files |0 |256.490 |
+| adpg1-typecheck-final |PASS |0 |11.385 |
+| adpg1-build-final |PASS; zero forbidden forms,1,353 source/226 build files |0 |44.222 |
+| adpg1-dag-final |PASS,53 nodes |0 |9.775 |
+| adpg1-routes-final |PASS,462 registrations/453 call sites |0 |3.099 |
+| adpg1-protection-final |FAIL; unchanged protected/broad-branch deltas |1 |0.637 |
+| adpg1-full-suite-final |19,443 PASS,3 FAIL,85 SKIP; includes pgcrypto timeout |1 |1,426.967 |
+| adpg1-pgcrypto-cli-diagnostic |PASS,256 SQL files,1 pinned historical exemption |0 |1.220 |
+| adpg1-pgcrypto-test-diagnostic |17 PASS,1 file,unchanged5s test limit |0 |1.900 |
+
+Aggregate raw log SHA256:
+`4a86e028630c90b7f7cb05d12e4e4ff83f2df4f51b26f9d1017023a308ee1882`.
+The two pgcrypto diagnostics were at c2c100d0 with dirty records/heartbeat only;
+they are not clean-checkout or aggregate executions. Both finished before the
+4-second provenance sampler, so no child-worker snapshots exist for them.
+Their receipts establish launcher executable/Node/npm, not sampled descendants.
 
 Disposable PostgreSQL17.11 run2 passed14 groups,27 refusals and8 real
 explicit-release lock races, including an executed old-M93 reproduction.
@@ -133,6 +186,13 @@ SHA-256 remains `be72284c7bc62de07d5a9fd0ae196879842c085f11f7f2b60bf8864c0c9d6a4
 Only process-local PATH is prepended; the wrapper records exact commands,
 revisions, dirty state, log hashes and sampled worker executable provenance.
 Sampling is not continuous process or filesystem attestation.
+The aggregate has24 snapshots from18:00:09.017Z through18:23:05.210Z. Every
+non-null executable path is the pinned Node20 binary; missing executable paths
+remain unknown, not inferred from parentage or relabelled as verified workers.
+Specifically PID37108 at18:08:05.470Z had a null executable path; all other
+recorded process paths were available. Diagnostics started only after aggregate
+completion; this core lane ran no concurrent heavy jobs. That does not prove
+absence of every unrelated host workload.
 
 The Supabase and Postgres skills informed private ACLs, exact schema checks and
 the unchanged lock/isolation boundary. Current [Supabase function security](https://supabase.com/docs/guides/database/functions)
@@ -158,7 +218,7 @@ $node20 = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe'
 $env:PATH = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64;' + $env:PATH
 $env:XENIOS_MASTER_OFFERINGS_DATASET = (Resolve-Path 'server/research/master-offerings/data/member-safe-master-offerings.generated.json').Path
 & $node20 supabase/verification/research_assisted_order_provider_quarantine_local.mjs
-& $node20 node_modules/vitest/vitest.mjs run server/research/assisted-order client/src/research/b2b --maxWorkers=1 --no-file-parallelism
+& $node20 node_modules/vitest/vitest.mjs run server/research/assisted-order client/src/research/b2b server/release-control-plane.test.ts --maxWorkers=1 --no-file-parallelism
 & $node20 node_modules/typescript/bin/tsc --noEmit
 & $node20 C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js run build
 & $node20 --import tsx scripts/acceptance/verify-migration-dag.ts
@@ -230,6 +290,17 @@ without inventing idempotency. Separately reproduce and scope the measured
 JOURNEY-FRAGMENT-01 fixed-header overlap before any protected source change.
 The imagery lane received the new private5-6 calibration authorization through
 its existing chat; public publication and Batch1 mass rendering are not cleared.
+Later readback of the existing "Xenios Health product imagery" chat reports
+completed six-image private calibration source
+`aa4f31f9b650e68a7c7c2c749f00417d20607665`, tree
+`354ddc3aff94de3307dfd09df03dde87066799ea`, records
+`8b06da560978c8c4b1ce325da8813373bffbc845`. Its report records423 slots,
+24 tests and45 responsive captures, with exactly one Claude dispatch
+`150973dc-18f8-429b-ae70-7c5d62a024e7`. These are that lane's reported results,
+not re-executed core evidence or calibration acceptance. Do not rerender or
+resend its review request. Its latest check still finds no Claude calibration
+decisions, no HL11 acceptedSha and unresolved MC-01 on the separately owned
+media-commerce branch. No imagery or media source was integrated here.
 The existing Claude should review exact successors and retain separate core and
 imagery verdicts. Repository messaging requests coordination; it is not evidence
 that Claude is running or has accepted these bytes.

@@ -5,7 +5,9 @@
 2026-10-01 successor c0e25c73 adds bounded ADP-G1 source/account/mode exposure
 isolation. Disposable14groups/27refusals/8races passed;1,368 focused tests,
 typecheck/build/DAG/routes passed with one existing conditional database skip.
-The aggregate is running separately and already has failures. Same-source
+The aggregate completed19,443 PASS/3 FAIL/85 SKIP,exit1:two unchanged
+protection assertions and one pgcrypto5-second timeout. Unchanged CLI256SQL
+and17-test diagnostics passed separately and do not replace that aggregate. Same-source
 event attribution, G2-G4 and governed refunds remain engineering work, not
 external blockers. F1, owner baseline decisions and historical adoption remain
 held. No managed action occurred. Browser evidence exposed that the separate
