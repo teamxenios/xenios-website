@@ -3247,7 +3247,7 @@
         ".xenios/messages/*codex-xenios-media-commerce-decoupling-20261001*",
         ".xenios/handoffs/*XENIOS-IMAGE-COMMERCE-DECOUPLING-20261001*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T04:51:36.789Z",
       "heartbeatAt": "2026-10-01T06:05:34.000Z"
     }

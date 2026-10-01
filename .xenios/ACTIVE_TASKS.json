@@ -2937,7 +2937,7 @@
       "id": "XENIOS-IMAGE-COMMERCE-DECOUPLING-20261001",
       "title": "Remove product-media readiness from catalog and cart commerce authority",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-media-commerce-decoupling-20261001",
       "baseSha": "67d75c968085ca0d8256636f6cf46aebcaa1a597",
       "paths": [
@@ -2973,7 +2973,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Source-only removal of media/image readiness from product selection, member catalog and persistent-cart commerce authority. Preserve price, inventory, Product Control, required non-media inputs, audience, holds, Care, quote, fulfillment and quality gates. New SQL is an unapplied candidate only. No public image publication, shared UI wiring, protected manifest change, existing migration edit, ledger/DAG edit, assisted-order edit, managed write, deployment or production mutation. Exact ownership was coordinated with the active Health implementation thread on 2026-10-01.",
-      "claimedAt": "2026-10-01T04:51:36.782Z"
+      "claimedAt": "2026-10-01T04:51:36.782Z",
+      "handoff": {
+        "session": "codex-xenios-media-commerce-decoupling-20261001",
+        "sha": "f453d7e25ac3bdee4e42365d2b0b6a513b9e6da5",
+        "file": ".xenios/handoffs/2026-10-01T06-07-18-428Z-XENIOS-IMAGE-COMMERCE-DECOUPLING-20261001-codex-xenios-media-commerce-decoupling-20261001.md",
+        "at": "2026-10-01T06:07:18.433Z"
+      }
     }
   ]
 }
