@@ -15,8 +15,12 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
 - Protected baseline: the user's exact routes.ts/index.ts approval is applied
   and pushed at663268f. That action is complete; do not ask for it again. The
   separate Research gateway baseline remains unchanged and outside the two-hash
-  approval. Its exact review/protection-owner recut is still an integration
-  requirement, not permission to weaken the clean-baseline assertion or deploy.
+  approval. Claude23 reviewed its exact diff as safe for an explicit owner
+  amendment, but none is authorized here. F4 source3562c03 also changes
+  server/index.ts again; these new bytes need their own exact Claude review and
+  owner amendment. Do not reuse the old approval. Both hash pairs are recorded
+  in HEALTH_HL12_DURABLE_EFFECTS_HANDOFF_20261001.md. These are integration
+  requirements, not permission to weaken the clean-baseline assertion or deploy.
 
 - Native closeout (2026-09-21): designate the executor and confirm the exact
   managed qualification scope for the new Referral touch/XRR SQL candidates

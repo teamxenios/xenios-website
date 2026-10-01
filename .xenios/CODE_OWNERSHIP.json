@@ -3131,7 +3131,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T03:57:40.605Z",
-      "heartbeatAt": "2026-10-01T04:21:43.195Z"
+      "heartbeatAt": "2026-10-01T04:42:35.935Z"
     },
     {
       "id": "cd6498de-0fad-46e9-b0b7-104808a5f080",
@@ -3149,7 +3149,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T03:57:40.691Z",
-      "heartbeatAt": "2026-10-01T04:21:43.195Z"
+      "heartbeatAt": "2026-10-01T04:42:35.935Z"
     },
     {
       "id": "070ccff4-75dc-49ff-af43-45fd075621c8",
@@ -3161,7 +3161,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T03:57:40.768Z",
-      "heartbeatAt": "2026-10-01T04:21:43.195Z"
+      "heartbeatAt": "2026-10-01T04:42:35.935Z"
     },
     {
       "id": "c64d9608-0473-47e0-8471-41d207d4b2e6",
@@ -3176,7 +3176,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T03:57:40.842Z",
-      "heartbeatAt": "2026-10-01T04:21:43.195Z"
+      "heartbeatAt": "2026-10-01T04:42:35.935Z"
     },
     {
       "id": "9519a7ba-683c-44f0-8728-4353edb78ffe",
@@ -3187,7 +3187,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T04:03:25.657Z",
-      "heartbeatAt": "2026-10-01T04:21:43.195Z"
+      "heartbeatAt": "2026-10-01T04:42:35.935Z"
     },
     {
       "id": "80c6d22b-751f-4826-b26c-fdcfb6fffcab",
@@ -3199,7 +3199,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T04:03:25.732Z",
-      "heartbeatAt": "2026-10-01T04:21:43.195Z"
+      "heartbeatAt": "2026-10-01T04:42:35.935Z"
     },
     {
       "id": "7bd8264b-418d-4a2e-9ccb-0ce607147627",
@@ -3210,7 +3210,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T04:03:25.817Z",
-      "heartbeatAt": "2026-10-01T04:21:43.195Z"
+      "heartbeatAt": "2026-10-01T04:42:35.935Z"
     }
   ],
   "rules": [

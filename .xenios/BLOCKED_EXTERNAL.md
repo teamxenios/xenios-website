@@ -8,22 +8,24 @@ provider-neutral engineering. Do not request secrets, account numbers or payment
 destinations in the corpus. The source handoff is
 `server/research/assisted-order/HEALTH_HL12_PROVIDER_NEUTRAL_HANDOFF_20260930.md`.
 
-Durable attempt/event storage, durable verification effects, governed financial
+Durable attempt/event storage, governed financial
 resolution, HL-11 and product/public journeys remain engineering gaps, not
 external blockers. Existing historical paid labels must not be backfilled with
 invented verification. All new managed applies and production changes remain
 separately authorized. Historical production observations below retain their
 original dates and are not a fresh observation for this Health continuation.
 
-Current local source915a535 is not release-ready. The exact owner-approved
-routes.ts/index.ts hash amendment is pushed at663268f; the separate Research
-gateway clean-baseline assertion remains red and was not included in that
-approval. Current focused509 tests, typecheck, build and two disposable SQL
-proofs pass. Prior exact95e040a aggregate remains18398 pass/5 fail/85 skip,exit1,
-not a current-runtime PASS. New HIST-PROG/SQL-06 and owner/P-17 status fixes need
-Claude review. F4, N2, ADP-01, HIST-02, account history and broader launch work
-remain engineering gaps, not excuses to wait for a processor decision. See
-`server/research/assisted-order/HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md`.
+Current local source3562c03 is not release-ready. Claude23 reviewed915a535 and
+closed HIST-PROG/F7-R1/SQL-06/SQL-13/ROLL-06; it has not reviewed3562c03. F4,
+account-history copy and uppercase UUID handling are now locally implemented:
+1255 focused tests, final typecheck/build and final disposable SQL proof pass.
+Release/protection remains87 pass/1 fail/1 skip: one unchanged baseline assertion
+reports both new server/index.ts wiring and the existing Research gateway.
+The old exact two-hash approval at663268f does not cover the new bytes.
+Prior exact95e040a aggregate remains18398 pass/5 fail/85 skip,exit1, not a
+current-runtime PASS. N2, ADP-01, HIST-02, HL-11 and broader launch work remain
+engineering gaps, not reasons to wait for processor choice. See
+`server/research/assisted-order/HEALTH_HL12_DURABLE_EFFECTS_HANDOFF_20261001.md`.
 
 ## Native closeout — 2026-09-21
 
