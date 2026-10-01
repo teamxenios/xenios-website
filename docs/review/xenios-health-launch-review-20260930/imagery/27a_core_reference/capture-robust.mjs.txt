@@ -1,0 +1,42 @@
+// Robust per-capture browser: one headless Chrome per (viewport, route). Loopback only.
+// usage: node capture-robust.mjs <outDir> <origin> <prefix> <receiptName> <viewports csv> <route:name,...> [openDetails]
+import { mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
+const LIB = 'C:/xenios-wt/closeout-review/scripts/evidence/lib/';
+const { launchChromium } = await import(pathToFileURL(LIB + 'chrome.mjs').href);
+const { CdpConnection, PageSession, sleep } = await import(pathToFileURL(LIB + 'cdp.mjs').href);
+const [OUT, ORIGIN, PREFIX, RECEIPT, VPS, ROUTES, OPEN] = process.argv.slice(2);
+mkdirSync(OUT, { recursive: true });
+const VIEW = { 'desktop-1440': { width: 1440, height: 900, mobile: false }, 'mobile-390': { width: 390, height: 844, mobile: true } };
+const routes = ROUTES.split(',').map(s => { const i = s.lastIndexOf(':'); return [s.slice(i + 1), s.slice(0, i)]; });
+const rp = join(OUT, RECEIPT);
+const receipt = existsSync(rp) ? JSON.parse(readFileSync(rp, 'utf8')) : { schemaVersion: 'claude_core_ui_capture_v1', origin: ORIGIN, captures: [] };
+const INFO = `(() => ({ url: location.pathname + location.hash, title: document.title,
+  h1: [...document.querySelectorAll('h1')].map(h => h.textContent.trim().slice(0, 120)),
+  bodyBg: getComputedStyle(document.body).backgroundColor, font: getComputedStyle(document.body).fontFamily,
+  h1Style: (() => { const h = document.querySelector('h1'); if (!h) return null; const s = getComputedStyle(h);
+    return { fontSize: s.fontSize, fontWeight: s.fontWeight, lineHeight: s.lineHeight, letterSpacing: s.letterSpacing, color: s.color }; })(),
+  header: (() => { const h = document.querySelector('header'); if (!h) return null; const r = h.getBoundingClientRect();
+    return { height: Math.round(r.height), bg: getComputedStyle(h).backgroundColor }; })(),
+  cards: document.querySelectorAll('article,[class*=card]').length, details: document.querySelectorAll('details').length,
+  scrollWidth: document.documentElement.scrollWidth, height: document.documentElement.scrollHeight }))()`;
+for (const vname of VPS.split(',')) for (const [name, path] of routes) {
+  const chrome = await launchChromium({ chromePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe' });
+  const conn = new CdpConnection(chrome.wsUrl); await conn.open();
+  const page = await PageSession.create(conn);
+  try {
+    await page.setViewport({ ...VIEW[vname], deviceScaleFactor: 1 });
+    try { await page.navigate(ORIGIN + path, { maxSettleMs: 12000 }); } catch (e) { console.log('SETTLE-TOLERATED', path, String(e).slice(0, 100)); await sleep(3000); }
+    await sleep(2000);
+    if (OPEN === 'openDetails') { await page.evaluate(`document.querySelectorAll('details').forEach((d,i)=>{ if(i<2) d.open=true; })`); await sleep(500); }
+    const info = await page.evaluate(INFO);
+    const shot = await page.screenshot({ fullPage: true });
+    const file = `${PREFIX}-${name}-${vname}.png`;
+    writeFileSync(join(OUT, file), shot.bytes);
+    receipt.captures.push({ route: path, viewport: vname, file, sha256: createHash('sha256').update(shot.bytes).digest('hex'), coverage: shot.coverage, info, chrome: chrome.browserVersion });
+    console.log('CAPTURED', file, JSON.stringify(info.h1).slice(0, 80), info.font.slice(0, 15), 'cards=' + info.cards, 'details=' + info.details);
+  } catch (e) { receipt.captures.push({ route: path, viewport: vname, error: String(e).slice(0, 300) }); console.log('FAILED', path, vname, String(e).slice(0, 160)); }
+  finally { await page.close().catch(() => {}); await conn.close().catch(() => {}); await chrome.close(); writeFileSync(rp, JSON.stringify(receipt, null, 1)); }
+}

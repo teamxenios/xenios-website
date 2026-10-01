@@ -1,0 +1,1097 @@
+{
+ "schemaVersion": "claude_core_ui_capture_v1",
+ "origin": "http://127.0.0.1:5287",
+ "worktreeHead": "854901160330ce524cc8349d64cc54c5100819df",
+ "runtime": "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
+ "serverMode": "RESEARCH_PUBLIC=true; tsx server/index.ts NODE_ENV=production (node dist/index.cjs built by script/build.mjs at 8549011); synthetic SUPABASE_URL=http://127.0.0.1:9 (unreachable); signed out; assisted-order bridge disabled",
+ "chrome": "154.0.8037.58",
+ "captures": [
+  {
+   "route": "/",
+   "viewport": "desktop-1440",
+   "file": "core-home-desktop-1440.png",
+   "sha256": "ef8bcd1a7bb4902b371065d638f655714ff81420f076b6e26a5b24b0b723fe16",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 1440,
+    "contentHeightCssPx": 8952,
+    "postContentWidthCssPx": 1440,
+    "postContentHeightCssPx": 8952,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 1440,
+    "capturedHeightPx": 8952
+   },
+   "info": {
+    "url": "/",
+    "title": "Care and research products | Xenios",
+    "h1": [
+     "Care and research products, clearly separated."
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "76px",
+     "fontWeight": "800",
+     "lineHeight": "76px",
+     "letterSpacing": "-1.672px",
+     "color": "rgb(14, 14, 14)",
+     "fontFamily": "\"Inter Tight\", system-ui, sans-serif"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)",
+     "position": "sticky",
+     "links": [
+      "Xenios",
+      "For Individuals⌄",
+      "For Practices⌄",
+      "Partners",
+      "How It Works",
+      "Quality",
+      "About",
+      "Careers",
+      "For Individuals⌄",
+      "For Practices⌄",
+      "Partners",
+      "How It Works",
+      "Sign In",
+      "Start Care",
+      "Menu"
+     ]
+    },
+    "footer": true,
+    "scrollWidth": 1440,
+    "height": 8952
+   }
+  },
+  {
+   "route": "/individuals",
+   "viewport": "desktop-1440",
+   "file": "core-individuals-desktop-1440.png",
+   "sha256": "53b17e7c6ce92077b2802b3022cbeebd2c1f3878127d5ac70a728f00864a9361",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 1440,
+    "contentHeightCssPx": 2757,
+    "postContentWidthCssPx": 1440,
+    "postContentHeightCssPx": 2757,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 1440,
+    "capturedHeightPx": 2757
+   },
+   "info": {
+    "url": "/individuals",
+    "title": "For Individuals | Xenios",
+    "h1": [
+     "Care or research products: here's how to choose."
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "76px",
+     "fontWeight": "800",
+     "lineHeight": "76px",
+     "letterSpacing": "-1.672px",
+     "color": "rgb(14, 14, 14)",
+     "fontFamily": "\"Inter Tight\", system-ui, sans-serif"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)",
+     "position": "sticky",
+     "links": [
+      "Xenios",
+      "For Individuals⌄",
+      "For Practices⌄",
+      "Partners",
+      "How It Works",
+      "Quality",
+      "About",
+      "Careers",
+      "For Individuals⌄",
+      "For Practices⌄",
+      "Partners",
+      "How It Works",
+      "Sign In",
+      "Start Care",
+      "Menu"
+     ]
+    },
+    "footer": true,
+    "scrollWidth": 1440,
+    "height": 2757
+   }
+  },
+  {
+   "route": "/products",
+   "viewport": "desktop-1440",
+   "file": "core-products-desktop-1440.png",
+   "sha256": "1e43898abc5c20abbc80626d0be4ca7d919f10a1b423596600a154f15bd0f85b",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 1440,
+    "contentHeightCssPx": 2772,
+    "postContentWidthCssPx": 1440,
+    "postContentHeightCssPx": 2772,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 1440,
+    "capturedHeightPx": 2772
+   },
+   "info": {
+    "url": "/products",
+    "title": "Research products | Xenios",
+    "h1": [
+     "Research products"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "76px",
+     "fontWeight": "800",
+     "lineHeight": "76px",
+     "letterSpacing": "-1.672px",
+     "color": "rgb(14, 14, 14)",
+     "fontFamily": "\"Inter Tight\", system-ui, sans-serif"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)",
+     "position": "sticky",
+     "links": [
+      "Xenios",
+      "For Individuals⌄",
+      "For Practices⌄",
+      "Partners",
+      "How It Works",
+      "Quality",
+      "About",
+      "Careers",
+      "For Individuals⌄",
+      "For Practices⌄",
+      "Partners",
+      "How It Works",
+      "Sign In",
+      "Start Care",
+      "Menu"
+     ]
+    },
+    "footer": true,
+    "scrollWidth": 1440,
+    "height": 2772
+   }
+  },
+  {
+   "route": "/products/bpc-157",
+   "viewport": "desktop-1440",
+   "file": "core-product-slug-desktop-1440.png",
+   "sha256": "62effd649b6a23cddb2d9af8df8311cab49ba55eb67e1c3aa0fe9c024138f801",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 1440,
+    "contentHeightCssPx": 1153,
+    "postContentWidthCssPx": 1440,
+    "postContentHeightCssPx": 1153,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 1440,
+    "capturedHeightPx": 1153
+   },
+   "info": {
+    "url": "/products/bpc-157",
+    "title": "Product not listed | Xenios",
+    "h1": [
+     "We couldn't find that product."
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "76px",
+     "fontWeight": "800",
+     "lineHeight": "76px",
+     "letterSpacing": "-1.672px",
+     "color": "rgb(14, 14, 14)",
+     "fontFamily": "\"Inter Tight\", system-ui, sans-serif"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)",
+     "position": "sticky",
+     "links": [
+      "Xenios",
+      "For Individuals⌄",
+      "For Practices⌄",
+      "Partners",
+      "How It Works",
+      "Quality",
+      "About",
+      "Careers",
+      "For Individuals⌄",
+      "For Practices⌄",
+      "Partners",
+      "How It Works",
+      "Sign In",
+      "Start Care",
+      "Menu"
+     ]
+    },
+    "footer": true,
+    "scrollWidth": 1440,
+    "height": 1153
+   }
+  },
+  {
+   "route": "/care",
+   "viewport": "desktop-1440",
+   "file": "core-care-desktop-1440.png",
+   "sha256": "2368cbaa7427d5c26cf0a30dc8ee6fb542aa909a11983ff06c6a4fe8e01c55c2",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 1440,
+    "contentHeightCssPx": 3124,
+    "postContentWidthCssPx": 1440,
+    "postContentHeightCssPx": 3124,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 1440,
+    "capturedHeightPx": 3124
+   },
+   "info": {
+    "url": "/care",
+    "title": "Start Care with a short request. | Xenios Care",
+    "h1": [
+     "Start Care with a short request."
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "51.2px",
+     "fontWeight": "800",
+     "lineHeight": "54.272px",
+     "letterSpacing": "-1.024px",
+     "color": "rgb(14, 14, 14)",
+     "fontFamily": "\"Inter Tight\", system-ui, sans-serif"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)",
+     "position": "sticky",
+     "links": [
+      "Xenios",
+      "For Individuals⌄",
+      "For Practices⌄",
+      "Partners",
+      "How It Works",
+      "Quality",
+      "About",
+      "Careers",
+      "For Individuals⌄",
+      "For Practices⌄",
+      "Partners",
+      "How It Works",
+      "Sign In",
+      "Start Care",
+      "Menu"
+     ]
+    },
+    "footer": true,
+    "scrollWidth": 1440,
+    "height": 3124
+   }
+  },
+  {
+   "route": "/research",
+   "viewport": "desktop-1440",
+   "file": "core-research-desktop-1440.png",
+   "sha256": "6846de8d2febfbdfcbe36b1e8e04f37209b292a4cefec6d9a8bf29a00f626abf",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 1440,
+    "contentHeightCssPx": 3088,
+    "postContentWidthCssPx": 1440,
+    "postContentHeightCssPx": 3088,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 1440,
+    "capturedHeightPx": 3088
+   },
+   "info": {
+    "url": "/research",
+    "title": "How research orders work | Xenios",
+    "h1": [
+     "How research orders work"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "76px",
+     "fontWeight": "800",
+     "lineHeight": "76px",
+     "letterSpacing": "-1.672px",
+     "color": "rgb(14, 14, 14)",
+     "fontFamily": "\"Inter Tight\", system-ui, sans-serif"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)",
+     "position": "sticky",
+     "links": [
+      "Xenios",
+      "For Individuals⌄",
+      "For Practices⌄",
+      "Partners",
+      "How It Works",
+      "Quality",
+      "About",
+      "Careers",
+      "For Individuals⌄",
+      "For Practices⌄",
+      "Partners",
+      "How It Works",
+      "Sign In",
+      "Start Care",
+      "Menu"
+     ]
+    },
+    "footer": true,
+    "scrollWidth": 1440,
+    "height": 3088
+   }
+  },
+  {
+   "route": "/research/early-access",
+   "viewport": "desktop-1440",
+   "file": "core-early-access-desktop-1440.png",
+   "sha256": "dca930d64b5bd3ff8353a1de8e350428109e90be6328f5fc738761bf435fb8ea",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 1440,
+    "contentHeightCssPx": 1656,
+    "postContentWidthCssPx": 1440,
+    "postContentHeightCssPx": 1656,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 1440,
+    "capturedHeightPx": 1656
+   },
+   "info": {
+    "url": "/research/early-access",
+    "title": "Research ordering | Xenios",
+    "h1": [
+     "Research ordering"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "35.04px",
+     "fontWeight": "700",
+     "lineHeight": "38.544px",
+     "letterSpacing": "-0.63072px",
+     "color": "rgb(14, 14, 14)",
+     "fontFamily": "\"Inter Tight\", system-ui, sans-serif"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)",
+     "position": "sticky",
+     "links": [
+      "Xenios",
+      "For Individuals⌄",
+      "For Practices⌄",
+      "Partners",
+      "How It Works",
+      "Quality",
+      "About",
+      "Careers",
+      "For Individuals⌄",
+      "For Practices⌄",
+      "Partners",
+      "How It Works",
+      "Sign In",
+      "Start Care",
+      "Menu"
+     ]
+    },
+    "footer": true,
+    "scrollWidth": 1440,
+    "height": 1656
+   }
+  },
+  {
+   "route": "/research/early-access/order-request",
+   "viewport": "desktop-1440",
+   "file": "core-order-request-desktop-1440.png",
+   "sha256": "d1833df4d10b7b5b2762998ec63452daa5e9fc68867741e52a7bcd4ed909e5b7",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 1440,
+    "contentHeightCssPx": 1285,
+    "postContentWidthCssPx": 1440,
+    "postContentHeightCssPx": 1285,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 1440,
+    "capturedHeightPx": 1285
+   },
+   "info": {
+    "url": "/research/early-access/order-request",
+    "title": "Private document, xenios",
+    "h1": [
+     "Request an order"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "67.2px",
+     "fontWeight": "700",
+     "lineHeight": "65.856px",
+     "letterSpacing": "-2.688px",
+     "color": "rgb(23, 33, 27)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 0,
+    "details": 1,
+    "scrollWidth": 1440,
+    "height": 1285
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/status",
+   "viewport": "desktop-1440",
+   "file": "core-status-desktop-1440.png",
+   "sha256": "515332f7f0a994c1ca344fc3905328b73de74b12efb9c39a04ae1610e0e615ec",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 1440,
+    "contentHeightCssPx": 1714,
+    "postContentWidthCssPx": 1440,
+    "postContentHeightCssPx": 1714,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 1440,
+    "capturedHeightPx": 1714
+   },
+   "info": {
+    "url": "/status",
+    "title": "Check order status | Xenios",
+    "h1": [
+     "Check order status"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "76px",
+     "fontWeight": "800",
+     "lineHeight": "76px",
+     "letterSpacing": "-1.672px",
+     "color": "rgb(14, 14, 14)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 0,
+    "details": 0,
+    "scrollWidth": 1440,
+    "height": 1714
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/sign-in",
+   "viewport": "desktop-1440",
+   "file": "core-sign-in-desktop-1440.png",
+   "sha256": "b13f1f2e009c2ae830b43c6aa48a63944b2132fbd91a46b064ca50ff04ecb819",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 1440,
+    "contentHeightCssPx": 2903,
+    "postContentWidthCssPx": 1440,
+    "postContentHeightCssPx": 2903,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 1440,
+    "capturedHeightPx": 2903
+   },
+   "info": {
+    "url": "/sign-in",
+    "title": "Sign in | Xenios",
+    "h1": [
+     "Sign in"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "51.2px",
+     "fontWeight": "800",
+     "lineHeight": "54.272px",
+     "letterSpacing": "-1.024px",
+     "color": "rgb(14, 14, 14)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 21,
+    "details": 0,
+    "scrollWidth": 1440,
+    "height": 2903
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/quality",
+   "viewport": "desktop-1440",
+   "file": "core-quality-desktop-1440.png",
+   "sha256": "7642fab4efafd7c5c23a6b25f9036aa70d0a7840276bb5fe4c0a82b8c372003c",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 1440,
+    "contentHeightCssPx": 2275,
+    "postContentWidthCssPx": 1440,
+    "postContentHeightCssPx": 2275,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 1440,
+    "capturedHeightPx": 2275
+   },
+   "info": {
+    "url": "/quality",
+    "title": "Quality and documentation | Xenios",
+    "h1": [
+     "Quality and documentation"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "76px",
+     "fontWeight": "800",
+     "lineHeight": "76px",
+     "letterSpacing": "-1.672px",
+     "color": "rgb(14, 14, 14)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 5,
+    "details": 0,
+    "scrollWidth": 1440,
+    "height": 2275
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/partners",
+   "viewport": "desktop-1440",
+   "file": "core-partners-desktop-1440.png",
+   "sha256": "9619e03a5592f8a14e09e424c5ec7ff0752b9fb62f851914eab71b6254658299",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 1440,
+    "contentHeightCssPx": 4860,
+    "postContentWidthCssPx": 1440,
+    "postContentHeightCssPx": 4860,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 1440,
+    "capturedHeightPx": 4860
+   },
+   "info": {
+    "url": "/partners",
+    "title": "Partners | Xenios",
+    "h1": [
+     "Become a Xenios partner"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "76px",
+     "fontWeight": "800",
+     "lineHeight": "76px",
+     "letterSpacing": "-1.672px",
+     "color": "rgb(14, 14, 14)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 0,
+    "details": 0,
+    "scrollWidth": 1440,
+    "height": 4860
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/support",
+   "viewport": "desktop-1440",
+   "file": "core-support-desktop-1440.png",
+   "sha256": "c4c737d9a9fa2039141efde085282f4a98abff00608d19004503de566c2b06bb",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 1440,
+    "contentHeightCssPx": 2763,
+    "postContentWidthCssPx": 1440,
+    "postContentHeightCssPx": 2763,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 1440,
+    "capturedHeightPx": 2763
+   },
+   "info": {
+    "url": "/support",
+    "title": "Support | Xenios",
+    "h1": [
+     "How can we help?"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "76px",
+     "fontWeight": "800",
+     "lineHeight": "76px",
+     "letterSpacing": "-1.672px",
+     "color": "rgb(14, 14, 14)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 18,
+    "details": 0,
+    "scrollWidth": 1440,
+    "height": 2763
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/",
+   "viewport": "mobile-390",
+   "file": "core-home-mobile-390.png",
+   "sha256": "0a3a273287306917657170fb410492d0e23d8b996b6342f8c5cfbdb8e55b7f91",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 390,
+    "contentHeightCssPx": 10942,
+    "postContentWidthCssPx": 390,
+    "postContentHeightCssPx": 10942,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 390,
+    "capturedHeightPx": 10942
+   },
+   "info": {
+    "url": "/",
+    "title": "Care and research products | Xenios",
+    "h1": [
+     "Care and research products, clearly separated."
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "32px",
+     "fontWeight": "800",
+     "lineHeight": "32px",
+     "letterSpacing": "-0.704px",
+     "color": "rgb(14, 14, 14)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 33,
+    "details": 6,
+    "scrollWidth": 390,
+    "height": 10942
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/products",
+   "viewport": "mobile-390",
+   "file": "core-products-mobile-390.png",
+   "sha256": "06f59cda008e9f89bce6004e83a289efe8d3b0872ac4262c33aeb718a0fb9432",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 390,
+    "contentHeightCssPx": 4231,
+    "postContentWidthCssPx": 390,
+    "postContentHeightCssPx": 4231,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 390,
+    "capturedHeightPx": 4231
+   },
+   "info": {
+    "url": "/products",
+    "title": "Research products | Xenios",
+    "h1": [
+     "Research products"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "32px",
+     "fontWeight": "800",
+     "lineHeight": "32px",
+     "letterSpacing": "-0.704px",
+     "color": "rgb(14, 14, 14)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 9,
+    "details": 0,
+    "scrollWidth": 390,
+    "height": 4231
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/care",
+   "viewport": "mobile-390",
+   "file": "core-care-mobile-390.png",
+   "sha256": "ed77c5563dbcbf7b211dd62a5f4f5ee2c2c3ec85ddd2cba056df411e75395af8",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 390,
+    "contentHeightCssPx": 4827,
+    "postContentWidthCssPx": 390,
+    "postContentHeightCssPx": 4827,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 390,
+    "capturedHeightPx": 4827
+   },
+   "info": {
+    "url": "/care",
+    "title": "Start Care with a short request. | Xenios Care",
+    "h1": [
+     "Start Care with a short request."
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "28px",
+     "fontWeight": "800",
+     "lineHeight": "29.68px",
+     "letterSpacing": "-0.56px",
+     "color": "rgb(14, 14, 14)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 4,
+    "details": 0,
+    "scrollWidth": 390,
+    "height": 4827
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/research",
+   "viewport": "mobile-390",
+   "file": "core-research-mobile-390.png",
+   "sha256": "0a990a7dde62c28d5a6e43e9bfb09b7982bb18279ff07d2ef4a0aa47346f6bd7",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 390,
+    "contentHeightCssPx": 3966,
+    "postContentWidthCssPx": 390,
+    "postContentHeightCssPx": 3966,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 390,
+    "capturedHeightPx": 3966
+   },
+   "info": {
+    "url": "/research",
+    "title": "How research orders work | Xenios",
+    "h1": [
+     "How research orders work"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "32px",
+     "fontWeight": "800",
+     "lineHeight": "32px",
+     "letterSpacing": "-0.704px",
+     "color": "rgb(14, 14, 14)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 0,
+    "details": 0,
+    "scrollWidth": 390,
+    "height": 3966
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/research/early-access",
+   "viewport": "mobile-390",
+   "file": "core-early-access-mobile-390.png",
+   "sha256": "c27439b5b7303bf21fb8ab66fba07787c1995293f46ebbf7799c53d5de865dac",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 390,
+    "contentHeightCssPx": 2894,
+    "postContentWidthCssPx": 390,
+    "postContentHeightCssPx": 2894,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 390,
+    "capturedHeightPx": 2894
+   },
+   "info": {
+    "url": "/research/early-access",
+    "title": "Research ordering | Xenios",
+    "h1": [
+     "Research ordering"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "24px",
+     "fontWeight": "700",
+     "lineHeight": "26.4px",
+     "letterSpacing": "-0.432px",
+     "color": "rgb(14, 14, 14)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 1,
+    "details": 1,
+    "scrollWidth": 390,
+    "height": 2894
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/research/early-access/order-request",
+   "viewport": "mobile-390",
+   "file": "core-order-request-mobile-390.png",
+   "sha256": "0d5ab85d7894302234650207ea4906897d577d35428913f56c2a5b7387c665ae",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 390,
+    "contentHeightCssPx": 3265,
+    "postContentWidthCssPx": 390,
+    "postContentHeightCssPx": 3265,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 390,
+    "capturedHeightPx": 3265
+   },
+   "info": {
+    "url": "/research/early-access/order-request",
+    "title": "Private document, xenios",
+    "h1": [
+     "Request an order"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "32px",
+     "fontWeight": "700",
+     "lineHeight": "31.36px",
+     "letterSpacing": "-1.28px",
+     "color": "rgb(23, 33, 27)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 0,
+    "details": 1,
+    "scrollWidth": 390,
+    "height": 3265
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/status",
+   "viewport": "mobile-390",
+   "file": "core-status-mobile-390.png",
+   "sha256": "9b0f88cfc36001ec9a92f2450986c4634e593c5d858d3d2a3be281b79cfa7e05",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 390,
+    "contentHeightCssPx": 2695,
+    "postContentWidthCssPx": 390,
+    "postContentHeightCssPx": 2695,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 390,
+    "capturedHeightPx": 2695
+   },
+   "info": {
+    "url": "/status",
+    "title": "Check order status | Xenios",
+    "h1": [
+     "Check order status"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "32px",
+     "fontWeight": "800",
+     "lineHeight": "32px",
+     "letterSpacing": "-0.704px",
+     "color": "rgb(14, 14, 14)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 0,
+    "details": 0,
+    "scrollWidth": 390,
+    "height": 2695
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/sign-in",
+   "viewport": "mobile-390",
+   "file": "core-sign-in-mobile-390.png",
+   "sha256": "433fa3409c7fc343bedbf163369fe5670c77286f0a3fd2cc919a81fa01278516",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 390,
+    "contentHeightCssPx": 4974,
+    "postContentWidthCssPx": 390,
+    "postContentHeightCssPx": 4974,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 390,
+    "capturedHeightPx": 4974
+   },
+   "info": {
+    "url": "/sign-in",
+    "title": "Sign in | Xenios",
+    "h1": [
+     "Sign in"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "28px",
+     "fontWeight": "800",
+     "lineHeight": "29.68px",
+     "letterSpacing": "-0.56px",
+     "color": "rgb(14, 14, 14)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 21,
+    "details": 0,
+    "scrollWidth": 390,
+    "height": 4974
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/support",
+   "viewport": "mobile-390",
+   "file": "core-support-mobile-390.png",
+   "sha256": "25f6626c3ae22225296789afc2abd0ec3e8a3a61283026a8dcbc65dee995a9a7",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 390,
+    "contentHeightCssPx": 4515,
+    "postContentWidthCssPx": 390,
+    "postContentHeightCssPx": 4515,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 390,
+    "capturedHeightPx": 4515
+   },
+   "info": {
+    "url": "/support",
+    "title": "Support | Xenios",
+    "h1": [
+     "How can we help?"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "32px",
+     "fontWeight": "800",
+     "lineHeight": "32px",
+     "letterSpacing": "-0.704px",
+     "color": "rgb(14, 14, 14)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 18,
+    "details": 0,
+    "scrollWidth": 390,
+    "height": 4515
+   },
+   "chrome": "154.0.8037.58"
+  }
+ ]
+}

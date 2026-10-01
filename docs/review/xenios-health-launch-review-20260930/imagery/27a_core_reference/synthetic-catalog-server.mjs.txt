@@ -1,0 +1,50 @@
+// Claude reviewer: serve the exact production client (dist/public built at 8549011) through the real
+// researchPageGate + serveStatic, with read-only SYNTHETIC catalog/config fixtures (no prices, no authority).
+// Loopback only. Mirrors the fixture pattern of Codex's HL01 private launcher; independently written.
+import { createRequire } from 'node:module';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import http from 'node:http';
+const repo = 'C:/xenios-wt/closeout-review';
+process.env.RESEARCH_PUBLIC = 'true';
+const require = createRequire(join(repo, 'package.json'));
+const { register } = await import(pathToFileURL(require.resolve('tsx/esm/api')).href);
+register({ tsconfig: join(repo, 'tsconfig.json') });
+const { researchPageGate } = await import(pathToFileURL(join(repo, 'server/research/index.ts')).href);
+const { serveStatic } = await import(pathToFileURL(join(repo, 'server/static.ts')).href);
+const { ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS, ASSISTED_ORDER_FORM_ID, assistedOrderFormPair } = await import(pathToFileURL(join(repo, 'shared/research/assisted-order/form.ts')).href);
+const { assistedOrderActionGroupFor, assistedOrderWorkflowModes } = await import(pathToFileURL(join(repo, 'shared/research/assisted-order/contract.ts')).href);
+const wizardConfig = { enabled: true, code: null, formId: ASSISTED_ORDER_FORM_ID,
+  requiredAgreements: [{ kind: 'synthetic_review_terms', version: 'claude-ui-drift-only-v1' }],
+  formAcknowledgments: ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS.map(a => ({ id: a.id, scope: a.scope, ...assistedOrderFormPair(a), copy: a.copy })) };
+const base = { family: 'research_peptides_materials', channel: 'synthetic-review', specification: 'Synthetic exact variant 10 mg', format: 'Lyophilized vial',
+  packBasis: 'Single vial', minimumQuantity: 1, maximumQuantity: 4, quantityIncrement: 1, unitPriceCents: null, currency: 'USD',
+  accessNotice: 'Synthetic UI example only. Not an approved product, price, availability or ordering offer.', researchUseOnly: true,
+  catalogVersion: 'synthetic-claude-drift-v1', priceVersion: null };
+const rows = [
+  { ...base, productId: 's-research', variantId: 's-research-a', productName: 'Synthetic Research Item', workflowMode: 'direct_order_request', actionLabel: 'Add to order request' },
+  { ...base, productId: 's-research', variantId: 's-research-b', productName: 'Synthetic Research Item', specification: 'Synthetic exact variant 5 mg', workflowMode: 'direct_order_request', actionLabel: 'Add to order request' },
+  { ...base, productId: 's-capsule', variantId: 's-capsule-a', productName: 'Synthetic Capsule Item', format: 'Capsule bottle', packBasis: '60 capsules', workflowMode: 'direct_order_request', actionLabel: 'Add to order request' },
+  { ...base, productId: 's-care', variantId: 's-care-a', productName: 'Synthetic Care Item', family: 'clinical_formulations_503a', workflowMode: 'provider_request', actionLabel: 'Continue through Care', researchUseOnly: false },
+  { ...base, productId: 's-quote', variantId: 's-quote-a', productName: 'Synthetic Quote Item', workflowMode: 'request_pricing', actionLabel: 'Request pricing', researchUseOnly: false },
+  { ...base, productId: 's-held', variantId: 's-held-a', productName: 'Synthetic Held Item', workflowMode: 'availability_review', actionLabel: 'Request availability' },
+];
+const express = require('express');
+const app = express();
+app.disable('x-powered-by');
+app.use((req, res, next) => { if (!['127.0.0.1', '::ffff:127.0.0.1', '::1'].includes(req.socket.remoteAddress)) return res.status(403).end();
+  if (req.method !== 'GET' && req.method !== 'HEAD') return res.status(405).json({ ok: false, code: 'review_read_only' }); next(); });
+app.use(researchPageGate);
+app.get('/api/config', (_q, r) => r.json({ metaPixelId: null, turnstileSiteKey: null, calendlyUrl: '', supabaseUrl: null, supabaseAnonKey: null }));
+app.get('/api/research/me', (_q, r) => r.json({ configured: true, authed: false, publicMode: true }));
+app.get('/api/research/early-access/assisted-orders/config', (_q, r) => r.json(wizardConfig));
+app.get('/api/research/early-access/assisted-orders/catalog', (q, r) => {
+  const needle = String(q.query.q ?? '').toLowerCase(); const page = Number(q.query.page ?? 1), pageSize = Number(q.query.pageSize ?? 24);
+  const m = rows.filter(x => (!needle || `${x.productName} ${x.specification}`.toLowerCase().includes(needle)) && (!q.query.family || x.family === q.query.family)
+    && (!q.query.action || assistedOrderActionGroupFor(x.workflowMode) === q.query.action) && (!q.query.workflowMode || x.workflowMode === q.query.workflowMode));
+  r.json({ items: m.slice((page - 1) * pageSize, page * pageSize), total: m.length, page, pageSize, families: [...new Set(rows.map(x => x.family))],
+    channels: ['synthetic-review'], workflowModes: [...assistedOrderWorkflowModes] });
+});
+app.use('/api', (_q, r) => r.status(404).json({ ok: false, code: 'review_api_unavailable' }));
+serveStatic(app, join(repo, 'dist/public'));
+http.createServer(app).listen(5288, '127.0.0.1', () => console.log('CATALOG_REVIEW_READY 127.0.0.1:5288'));

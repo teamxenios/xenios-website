@@ -77,6 +77,11 @@ runtime, Product Control or exact-asset approval.
 **Prototype verdict: PASS for private founder review.** It is truthful and safe as a private prototype. It is not
 publication, runtime or Product Control evidence.
 
+**Amended by `27a_FOUNDER_PREVIEW_UI_FIDELITY_8b06da5.md`.** This PASS covers truth and safety only. UI fidelity
+against the actual core site is **FAIL**: the preview is a parallel design system, so it is not a basis for UI or
+design decisions. Batch 1 gains a fourth correction: decide which surfaces carry imagery and the canonical media slot
+before rendering.
+
 ## Batch 1: **NOT READY**
 
 These are the smallest global corrections. The first three are rendering and planning work in the imagery lane only.
