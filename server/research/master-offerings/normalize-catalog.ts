@@ -150,7 +150,9 @@ export function normalizeMasterCatalog(
     // Identity always hashes untouched source text. These are presentation-only
     // decisions, never category, price, hold or purchase authority.
     const displaySpecification = presentationSpecifications.get(groupId) ??
-      (groupId === "GRP-0080" ? specification.replace(" \u2014 ", ": ") : specification);
+      (id === "mo_3d043e2a35ceaa045986" && variantId === "mov_06beec21c59fe7842f18"
+        ? "LIBIDO CREAM (SCREAM CREAM): Testosterone Cypionate 0.1% / Sildenafil Citrate 0.1% / Glycerin / Versabase Cream"
+        : specification);
     if (!displaySpecification.trim()) {
       throw new MasterCatalogNormalizeError("A reviewed display specification cannot be blank.");
     }
