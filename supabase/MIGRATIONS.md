@@ -519,3 +519,49 @@ context overload and drifted prerequisite guards. Local proof:
 Detailed boundaries and failed-run accounting:
 `../server/research/assisted-order/HEALTH_HL12_N2_NO_FUNDS_HANDOFF_20261001.md`.
 No hosted configuration, managed migration, email, money or production mutation.
+
+## HL-12 ADP01 held provider journal, source-only 2026-10-01
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 91 | migrations/20261001085559_research_assisted_order_quote_provider_journal.sql | Held accepted-quote reservations, authenticated-adapter journal/quarantine and serialized financial uncertainty | PENDING; no managed apply |
+
+Source `5809b727617e3abe065df69e563374d13f2bcfa8`, canonical Git-blob SHA-256
+`5ab6ebcce2bf812d37921aa366d2d144d6ef659fc9f786a8a1c301964b2a5067`.
+Requires ledger90 and its complete effective financial, audit and outbox chain.
+Install smoke1 passed first and second exact application plus service-role
+readiness on disposable no-network PostgreSQL17.11 under Node20.19.0; cleanup
+was confirmed. Comprehensive local run1 then passed 131 refusals, 14 actual
+lock-wait races and seven composed HTTP/service/SQL groups across two Node
+processes (75 service-role calls), including populated repeat installation.
+Log SHA-256: `7b474c364e1a65ce89fad81e8cd489fb61e9ea9fa3f43313b7ef12b42f9e4221`.
+The subsequent negative-auth fixture type correction passed seven static tests;
+its exact committed proof rerun remains pending. No failed SQL run is hidden.
+Do not treat local proof as release, payment or managed acceptance.
+
+Only held records are supported. SQL derives reservation economics from the
+current accepted quote, checks a separate named source grant, and preserves
+normalized authenticated event claims separately from SQL-established identity.
+Unknown/conflicting events remain immutable uncertainty, not no-funds evidence.
+Request-first/fence locking also constrains existing quote, observation,
+verification, disposition, cancellation and consequential progression writes.
+The existing two-key financial-state projection is unchanged.
+
+Sources/grants install empty. The production source is null even if the new
+feature flag is set. Only an admin reservation door is registered; no webhook,
+provider create call, checkout session, paid transition or refund execution is
+enabled. Local trusted-adapter inputs are synthetic; SQL does not authenticate
+provider signatures. Actual source/provider selection, provenance, authorization,
+adapter execution, settlement and managed PostgREST remain separate work.
+
+Repeat installation verifies the installation-definition and schema-metadata
+seal without rewriting existing data. That seal is not proof of bank/provider
+authenticity or protection against an arbitrary database owner. Exact outer
+migration bytes are pinned by the release DAG. Managed qualification must verify
+the effective prerequisite functions, guards, role permissions and history, not
+infer them from a version count. Rollback preserves all attempts, events and
+holds with provider entry/execution disabled, then uses a reviewed roll-forward.
+Do not drop records, disable uncertainty or replay older financial functions.
+
+Proof: `verification/research_assisted_order_quote_provider_journal_local.mjs`.
+No hosted changes, real email, money, grants or deployment were performed.

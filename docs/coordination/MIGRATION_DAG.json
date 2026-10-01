@@ -981,6 +981,22 @@
         "evidence": "Final separate run4 PASS137.830s on disposable no-network PostgreSQL17.11 under Node20.19.0. Exact bytes applied twice; 116 expected refusals,13 independent-connection races and9 mounted HTTP/service/SQL groups (65 real service-role calls) passed. Private ACLs, source-scoped grants, complete graph binding, single-use receipt, atomic cancellation/held outbox, audit recovery, deferred cross-order corrections and cleanup verified. Runs1-3 failed fixture checks and remain separate. No managed apply."
       },
       "notes": "First N2 source-only slice accepts positive independently sourced terminal never_received evidence plus explicit cancellation only. No absent/timeout/zero-balance inference, refund/void/provider/historical-paid adoption or evidence deletion. Grants install empty; production evidence adapter remains null and route default-off. Existing canonical audit/outbox prerequisites and exact effective predecessor guards require managed preflight; local synthetic auth/evidence and psql transport do not qualify hosted JWT, bank authenticity or PostgREST."
+    },
+    {
+      "id": "research_assisted_order_quote_provider_journal",
+      "path": "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql",
+      "sourceSha": "5809b727617e3abe065df69e563374d13f2bcfa8",
+      "dependsOn": ["research_assisted_order_quote_no_funds_disposition"],
+      "checksum": { "algorithm": "sha256", "value": "5ab6ebcce2bf812d37921aa366d2d144d6ef659fc9f786a8a1c301964b2a5067" },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "keep_provider_execution_disabled_preserve_attempts_journal_and_uncertainty_then_roll_forward",
+        "procedure": "supabase/MIGRATIONS.md",
+        "evidence": "Local run1 PASS on disposable no-network PostgreSQL17.11 under Node20.19.0: 131 refusals,14 actual lock-wait races,7 HTTP/service/SQL groups across two Node processes and75 service-role calls; populated exact reapply and cleanup confirmed. Log SHA256 7b474c364e1a65ce89fad81e8cd489fb61e9ea9fa3f43313b7ef12b42f9e4221. A later typed negative-auth fixture correction passed7 static tests and awaits exact-commit rerun. No managed/provider-authentication acceptance."
+      },
+      "notes": "ADP01 held-only foundation. Sources and source-scoped operator grants install empty. Server-created accepted-quote reservations and authenticated-adapter normalized event journal remain held; known or unbound uncertainty fences consequential financial writes. No provider execution, settlement, refund, historical adoption or new verification. Production source remains null; only a disabled admin reservation door is mounted, no webhook. SQL trusts configured server ingress and does not authenticate provider signatures. Schema seal checks definitions and metadata, not money or arbitrary owner DDL; outer exact bytes remain pinned here. Managed apply/activation require independent review and separate exact authorization."
     }
   ],
   "invariants": [
