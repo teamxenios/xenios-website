@@ -3246,6 +3246,49 @@
       "state": "handoff",
       "claimedAt": "2026-10-01T04:03:25.817Z",
       "heartbeatAt": "2026-10-01T05:26:25.136Z"
+    },
+    {
+      "id": "8014e6e6-b82b-4f75-975d-84ecc42fa014",
+      "task": "HEALTH-HL12-N2-NO-FUNDS-DISPOSITION-20261001",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "shared/research/assisted-order/financial-disposition.ts",
+        "server/research/assisted-order/financial-disposition.ts",
+        "server/research/assisted-order/financial-disposition.test.ts",
+        "server/research/assisted-order/disposition-effects.ts",
+        "server/research/assisted-order/disposition-effects.test.ts",
+        "server/research/assisted-order/disposition-http.test.ts",
+        "server/research/assisted-order/disposition-sql.test.ts",
+        "server/research/assisted-order/http.ts",
+        "server/research/assisted-order/production-wiring.test.ts",
+        "server/research/assisted-order/HEALTH_HL12_N2_*",
+        "server/index.ts",
+        "server/research/outbox.ts",
+        "server/research/outbox-hl12-disposition.test.ts",
+        "supabase/migrations/*_research_assisted_order_quote_no_funds_disposition.sql",
+        "supabase/verification/research_assisted_order_quote_no_funds_disposition*",
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "server/release-control-plane.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-01T06:26:41.223Z",
+      "heartbeatAt": "2026-10-01T06:26:41.370Z"
+    },
+    {
+      "id": "bf834f90-14a8-4e7a-abb9-f12913cd262c",
+      "task": "HEALTH-PROVIDER-NEUTRAL-CONTINUITY-20260930",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        ".xenios/DECISIONS.md",
+        ".xenios/BLOCKED_EXTERNAL.md",
+        ".xenios/FOUNDER_ACTIONS.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-01T06:26:41.299Z",
+      "heartbeatAt": "2026-10-01T06:26:41.370Z"
     }
   ],
   "rules": [

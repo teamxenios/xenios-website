@@ -3,6 +3,36 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "HEALTH-HL12-N2-NO-FUNDS-DISPOSITION-20261001",
+      "title": "Positive independent no-funds disposition and atomic cancellation, N2 first slice",
+      "priority": "P2",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "shared/research/assisted-order/financial-disposition.ts",
+        "server/research/assisted-order/financial-disposition.ts",
+        "server/research/assisted-order/financial-disposition.test.ts",
+        "server/research/assisted-order/disposition-effects.ts",
+        "server/research/assisted-order/disposition-effects.test.ts",
+        "server/research/assisted-order/disposition-http.test.ts",
+        "server/research/assisted-order/disposition-sql.test.ts",
+        "server/research/assisted-order/http.ts",
+        "server/research/assisted-order/production-wiring.test.ts",
+        "server/research/assisted-order/HEALTH_HL12_N2_*",
+        "server/index.ts",
+        "server/research/outbox.ts",
+        "server/research/outbox-hl12-disposition.test.ts",
+        "supabase/migrations/*_research_assisted_order_quote_no_funds_disposition.sql",
+        "supabase/verification/research_assisted_order_quote_no_funds_disposition*",
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "server/release-control-plane.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Continue source3da9095/records8de6c81 without repeating prior slices. SQL agent owns only new named migration/proof/source-contract test; app agent owns new disposition contracts/service/recovery/tests and http.ts; root owns index/outbox integration, registration and records. Positive independently sourced never-received receipt and whole observation/correction graph required. Preserve original payment facts. Void/refund/provider/historical-paid edges explicitly held, no operational policy invented. Null adapter, defaults off, empty grants. No managed writes or foreign imagery paths.",
+      "claimedAt": "2026-10-01T06:26:41.213Z"
+    },
+    {
       "id": "XENIOS-IMAGE-COMMERCE-DECOUPLING-20261001",
       "title": "Reserved external lane: remove only media readiness from commerce authority",
       "priority": "P0",
@@ -129,7 +159,7 @@
       "id": "HEALTH-PROVIDER-NEUTRAL-CONTINUITY-20260930",
       "title": "Record provider-neutral Health decision and exact local evidence without changing hosted truth",
       "priority": "P1",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         ".xenios/PROJECT_STATE.json",
@@ -140,7 +170,7 @@
       ],
       "dependsOn": [],
       "scopeNote": "Append a dated Health checkpoint. Preserve historical runs and observed production evidence; no new production claim or authority.",
-      "claimedAt": "2026-10-01T03:57:40.838Z",
+      "claimedAt": "2026-10-01T06:26:41.297Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
         "sha": "a745470137bb0c4ec00729eb44351f31e14409af",

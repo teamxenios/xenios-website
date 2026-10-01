@@ -565,10 +565,10 @@
       "tool": "OpenAI Codex desktop",
       "lane": "health-launch-implementation",
       "branch": "codex/xenios-health-launch-implementation-20260930",
-      "state": "handoff_ready",
+      "state": "active",
       "startedAt": "2026-09-30T16:32:52.264Z",
-      "heartbeatAt": "2026-10-01T05:26:25.136Z",
-      "note": "Exact source3da9095 locally tested with failed aggregate18657pass/4fail/85skip exit1 and distinct25pass diagnostic. Records a745470 pushed; root leases in handoff/QA, not acceptance. No root heavy jobs. Next N2; foreign media lane preserved."
+      "heartbeatAt": "2026-10-01T06:26:41.370Z",
+      "note": "N2 first executable slice: positive independent no-funds receipt, whole graph binding, atomic cancel/audit/outbox. Adapters off/grants empty; void/refund/historical/provider edges held. No full suite yet."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
