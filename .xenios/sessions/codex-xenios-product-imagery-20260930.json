@@ -5,6 +5,6 @@
   "branch": "codex/xenios-product-imagery-20260930",
   "state": "active",
   "startedAt": "2026-09-30T19:49:48.411Z",
-  "heartbeatAt": "2026-10-01T04:29:35.005Z",
-  "note": "Batch0 25/25 rendered; exact receipts/contact/browser evidence complete; 12/12 focused tests and verifier pass; no public assets or production mutation; preparing exact-SHA handoff."
+  "heartbeatAt": "2026-10-01T04:43:00.913Z",
+  "note": "Reclaimed QA lane to correct durable reviewer dispatch for Batch0 exact SHA 184d820; no Batch1 rendering, public assets, shared runtime edits, or production mutation before review."
 }
