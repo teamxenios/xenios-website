@@ -6,12 +6,15 @@
     "branch": "codex/xenios-health-launch-implementation-20260930",
     "status": "ADP03_SOURCE_IMPLEMENTATION_IN_PROGRESS_ADP02_FROZEN_AND_HANDED_OFF_NOT_RELEASE_READY",
     "currentADP03Work": {
-      "status": "LEASED_SOURCE_WORK_IN_PROGRESS_NOT_QUALIFIED",
+      "status": "PUSHED_SOURCE_CHECKPOINT_NOT_QUALIFIED",
+      "runtimeSourceSha": "2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd",
+      "runtimeSourceTree": "55c15891b07be438a933d025a7381dd7f90a04e2",
+      "localEvidence": "Initial focused98PASS, unit358PASS after retained339P19fixtureF, HTTP23PASS, typecheckPASS. Smoke1 passed prior d419da94 SQL; source1470740 additionally advances inherited replica guards. Comprehensive proof pending; no aggregate for ADP03 yet.",
       "task": "HEALTH-HL12-ADP03-GOVERNED-CAPTURE-SETTLEMENT-20261001",
       "baseRecordsSha": "4ad4bcfe8129b4069b79f3cce91773c894395c51",
       "migration": "supabase/migrations/20261001115512_research_assisted_order_quote_provider_settlement.sql",
       "scope": "Explicit source-scoped admin authorization of authenticated full capture, canonical verification and held F4 obligation; separate current fulfillment eligibility. No live adapter, autonomous callback-as-admin or historical adoption.",
-      "ownership": "SQL provider_finance_audit; settlement service and capability parsers catalog_journey_audit; new SQL/HTTP proofs quote_customer_ui; root composition/F4/state/controls. No foreign imagery/media edits.",
+      "ownership": "SQL and new verification provider_settlement_races.mjs provider_finance_audit; settlement service/capability parsers and private collector catalog_journey_audit; main SQL/HTTP proofs quote_customer_ui; root composition/F4/state/controls. No foreign imagery/media edits.",
       "productionSource": null,
       "hostedChangesAuthorized": false,
       "independentReview": "NOT_YET_A_FROZEN_SUCCESSOR"

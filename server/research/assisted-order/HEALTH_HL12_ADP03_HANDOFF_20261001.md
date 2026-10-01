@@ -1,7 +1,12 @@
 # HL-12 ADP03 governed provider capture settlement
 
-Status: implementation in progress. Not a frozen candidate, independently
-accepted successor or release. No managed action is authorized by this record.
+Status: source checkpoint pushed; comprehensive qualification in progress.
+Not a final frozen candidate, independently accepted successor or release.
+No managed action is authorized by this record.
+
+Current source checkpoint: `2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd`.
+Tree: `55c15891b07be438a933d025a7381dd7f90a04e2`.
+Test-only and release-control commits: pending. Do not borrow ADP02's results.
 
 ## Continuity
 
@@ -41,6 +46,12 @@ the held obligation; a subsequent atomic completion binds the canonical audit
 receipt and releases that obligation. A failed completion must not erase the
 financial record or invent that the original transaction never happened.
 Recovery must survive actor revocation, process restart and audit-key rotation.
+This preserves F4's audit-before-notification-dispatch policy, not a new
+audit-before-fulfillment policy. While audit completion is pending, a complete
+verified financial graph can remain eligible for the existing separately gated
+supplier progression. The payment notification must remain held until its
+canonical audit completes. HTTP 503 can mean committed verification with
+follow-up pending, never proof that no financial transition happened.
 
 Historical verification and current fulfillment eligibility are different.
 The existing customer financial projection stays exactly
@@ -69,8 +80,33 @@ clear holds or amend protection baselines as rollback.
   conflict projection, not effective SQL or provider authenticity.
   Log SHA-256:
   `cd090d1218346303da2620dfb5d9e3e97985083a1b84da1c04c7c27a5e74c64d`.
-- Effective local SQL, composed HTTP/SQL, final focused checks, typecheck,
-  build and aggregate: pending. No passing result is inferred.
+- `adp03-service-unit-run1`: 339 passed, 19 failed, exit 1. New expectations
+  omitted the explicit undefined argument in authority RPC mock calls. The
+  failed run is retained, not relabeled. Log SHA-256
+  `6b25568ac129209f764940f09771b0492cc5ae4e755f5aaec64404831ed27ddf`.
+- `adp03-service-unit-run2`: corrected expectations, 358 passed in three files,
+  exit 0, 1.36 seconds. Log SHA-256
+  `159230969c2280e7757c38395a371c98f934a5e258deb877e14da5c1a2f47192`.
+- `adp03-http-initial`: 23 passed, exit 0, 2.14 seconds; mounted protocol
+  with synthetic admission, not hosted JWT/SQL qualification. Log SHA-256
+  `93a56143679023be5dea3a3a763b330912bde38940fb03076481679860d010be`.
+- `adp03-typecheck-initial`: passed, exit 0, 76.909 seconds. This diagnostic
+  briefly overlapped the HTTP test above; it is not a serial final preflight.
+  All these diagnostics tested uncommitted source and retain dirty-state receipts.
+- `adp03-install-smoke1`: disposable PostgreSQL 17.11, exact no-network container
+  cleanup confirmed; install/reapply, capability versions, actual full synthetic
+  capture, replay, eligibility and populated reapply passed. SQL SHA-256
+  `d419da94f92a086b94f4f8c17cefa2077da3a8f315490005c7c086b2282151cf`;
+  proof 16.794 seconds, wrapper 17.311 seconds, exit 0. Log SHA-256
+  `21ecbdb70ea6bf595a47ed3c3878ca622a4166dc19a3d9a3459c7aa633559989`.
+  This smoke is not the comprehensive adversarial/HTTP proof.
+  The subsequent source checkpoint adds inspected replica-mode immutability
+  hardening. Its migration SHA-256 is
+  `1470740bf17a0fbb9a2eeaffe9173712861a17da15d52b5492ca1f28e2c91e6f`;
+  it is not the same SQL tested by smoke1. The difference was found by inspection,
+  not a claimed reproduced exploit or failing diagnostic run.
+- Final composed SQL, affected checks, typecheck, build and aggregate: pending.
+  No passing result is inferred.
 
 ## Unchanged external and release holds
 
