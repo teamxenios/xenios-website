@@ -990,11 +990,11 @@
       "checksum": { "algorithm": "sha256", "value": "4cc0893878271afa636ffad843c032e16372e84bab88eff95d125b77a57421a5" },
       "appliedToProduction": false,
       "managedMigrationId": "PENDING",
-      "applyTwiceVerified": false,
+      "applyTwiceVerified": true,
       "rollback": {
         "strategy": "keep_provider_execution_disabled_preserve_attempts_journal_and_uncertainty_then_roll_forward",
         "procedure": "supabase/MIGRATIONS.md",
-        "evidence": "Prior bytes at5809 passed run1:131 refusals/14 races/7 HTTP-SQL groups, but a separate stale RR/SERIALIZABLE snapshot reproduction failed with8 unsafe outcomes. Source91a4e0e now explicitly requires READ COMMITTED; original8-case reproduction passes without financial writes. Comprehensive exact successor/reapply qualification pending. Previous run1 is not relabeled as covering this correction. No managed/provider-authentication acceptance."
+        "evidence": "Exact successor run2 PASS232.403s at clean00c9df3,Node20.19.0/npm10.8.2,disposable no-network PostgreSQL17.11:131 refusals/14 actual lock-wait races/7 HTTP-SQL groups/75calls; separate isolation8stale cases+21unsupported-mode refusals+RCpositive controls,0unsafe. Exact populated reapply and both container cleanups confirmed. LogSHA2564d31da496917ce4083c319cc9650397e2a132d5d461c318eb560691b6186f8e4. Prior initial pass,8unsafe reproduction exit1 and later fixturefailure remain distinct. No managed/provider-authentication acceptance."
       },
       "notes": "ADP01 held-only foundation. Sources and source-scoped operator grants install empty. Server-created accepted-quote reservations and authenticated-adapter normalized event journal remain held; known or unbound uncertainty fences consequential financial writes. No provider execution, settlement, refund, historical adoption or new verification. Production source remains null; only a disabled admin reservation door is mounted, no webhook. SQL trusts configured server ingress and does not authenticate provider signatures. Schema seal checks definitions and metadata, not money or arbitrary owner DDL; outer exact bytes remain pinned here. Managed apply/activation require independent review and separate exact authorization."
     }

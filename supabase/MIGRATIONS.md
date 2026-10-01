@@ -542,8 +542,15 @@ The current source requires actual READ COMMITTED before provider authority and
 covered financial decisions, without changing caller settings. The original
 eight-case reproduction now passes with no paid/cancel/disposition writes;
 fixed log SHA-256: `e9a467a024ac3fdc72977c8df1fd80eaa72eb588d4e3c02088350b56819730d7`.
-Comprehensive exact successor/reapply qualification remains pending. Neither
-the failed isolation run nor the prior bytes' successful run is reclassified.
+Comprehensive exact successor run2 passed at clean checkpoint
+`00c9df370387620723891e25bf112b5ba1ce1589` in 232.403 seconds: 131 refusal checks,
+14 actual lock-wait races, seven HTTP/SQL groups (75 calls), plus the separate
+eight stale-snapshot and 21 unsupported-isolation cases with positive READ
+COMMITTED controls. Exact populated repeat application and both disposable
+container cleanups passed. Log SHA-256:
+`4d31da496917ce4083c319cc9650397e2a132d5d461c318eb560691b6186f8e4`.
+Neither the failed isolation run, the later permanent-test fixture failure nor
+the prior bytes' successful run is reclassified.
 Do not treat local proof as release, payment or managed acceptance.
 
 Only held records are supported. SQL derives reservation economics from the
