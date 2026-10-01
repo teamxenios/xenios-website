@@ -7,8 +7,8 @@ Status: pushed candidate frozen for final local qualification, not a release.
 - Runtime: `27463d764ba01219c67081a3548ffdc3ff7d2b40`.
 - Runtime tree: `467c8556390ff9274a4adda5826eed7ab9603b23`.
 - Test-only: `8f56a7f500da36dbe37818b50f26b611ecb78b23`.
-- Release controls: `0d214411800e01c956ec0f31ef90a46db9e16182`.
-- Final local SQL, preflight and aggregate results are pending below. Earlier
+- Release controls: `a16f562d94dc907728fd0d8c708d48d098e3c1f8`.
+- Final local SQL passed; preflight and aggregate results are pending below. Earlier
   diagnostics do not constitute the final full-suite result.
 
 ## Continuity and scope
@@ -177,6 +177,25 @@ Early diagnostics retained separately:
 - `adp02-routes-initial`: passed, 461 registrations across 452 call sites,
   exit 0. This includes the new default-off, source-null admin prepare route.
 
+Final clean database qualification `adp02-sql-local-final` ran at
+`4166afd204f7e60594d15bd4578744e769d24d30`, tree
+`c302243ba81f15ffd26707b6ab9ddf06bb1eb87d`: 21 SQL groups, 138 expected
+refusals, four actual lock-wait races, 23 isolation cases (included in refusals),
+and 11 mounted HTTP/service/SQL groups with 108 SQL calls passed. Exit 0;
+234.589 seconds proof, 235.123 seconds wrapper; PostgreSQL 17.11. The no-network,
+no-published-port disposable container was removed. Runtime hashes and HEAD
+were unchanged; only this handoff record was dirty at the end. Log SHA-256:
+`c4d07d78db04dac1b02ee45dac8d7a77c19a3480878c9c88c68d0aaa083c6eff`.
+
+The final clock case fixes application wall time explicitly inside the issued
+window while the real database lease has expired: zero transport calls. All
+five replica-mode write guards and an unexpected executable authority overload
+were exercised. Grant-only and policy-only revocation were tested independently.
+Actual old ADP01 v2 execution refusal was tested; the uncommitted pre-timing
+ADP02 schema was not independently reinstalled. Sampled Node process paths are
+not continuous lifetime attestation. This local pass does not replace the
+pending aggregate, managed qualification or independent review.
+
 Protected seam hashes at this runtime (canonical Git blobs, not CRLF checkout
 bytes) remain a required independent review and possible owner amendment:
 
@@ -203,13 +222,78 @@ exit status, elapsed time and log hash. Child-runtime samples do not constitute
 continuous ancestry attestation; intermediates such as `cmd.exe` can hide
 grandchildren from Node-only CIM sampling. Missing observations remain missing.
 
-## Open work and release holds
+## Local reproduction boundary
+
+Use a separate clean review checkout of the recorded qualification checkpoint,
+with the exact Node 20.19.0 dependencies already installed. Do not reset another
+worker's checkout or run simultaneous heavy jobs. The runtime SHA alone does
+not include the later test-only and release-control commits; compare the named
+commits to establish the tested source equivalence. Exact original invocation,
+working directory, real dataset and child-runtime observations belong to the
+qualification receipt. Fresh reproduction must use new log names.
+
+From that checkout, these are the underlying commands (no managed connection):
+
+```powershell
+$xeniosNode20 = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe'
+$xeniosNpm20 = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js'
+$xeniosOriginalPath = $env:PATH
+$xeniosOriginalDataset = $env:XENIOS_MASTER_OFFERINGS_DATASET
+try {
+  $env:PATH = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64;' + $xeniosOriginalPath
+  $env:XENIOS_MASTER_OFFERINGS_DATASET = Join-Path (Get-Location) 'server/research/master-offerings/data/member-safe-master-offerings.generated.json'
+  & $xeniosNode20 --version
+  & $xeniosNode20 $xeniosNpm20 --version
+  & $xeniosNode20 supabase/verification/research_assisted_order_quote_provider_execution_local.mjs
+  if ($LASTEXITCODE -ne 0) { throw 'Local SQL proof failed; preserve this run.' }
+  & $xeniosNode20 node_modules/vitest/vitest.mjs run server/research/assisted-order server/research/outbox-hl12-disposition.test.ts server/research/outbox-hl12-effects.test.ts server/research/master-offerings/early-access-catalog-coverage.test.ts client/src/research/assisted-order --maxWorkers=1 --no-file-parallelism
+  if ($LASTEXITCODE -ne 0) { throw 'Affected tests failed; preserve this run.' }
+  & $xeniosNode20 node_modules/typescript/bin/tsc --noEmit
+  if ($LASTEXITCODE -ne 0) { throw 'Typecheck failed.' }
+  & $xeniosNode20 $xeniosNpm20 run build
+  if ($LASTEXITCODE -ne 0) { throw 'Build or no-em-dash gate failed.' }
+  & $xeniosNode20 --import tsx scripts/acceptance/verify-migration-dag.ts
+  if ($LASTEXITCODE -ne 0) { throw 'Migration DAG failed.' }
+  & $xeniosNode20 --import tsx scripts/acceptance/verify-route-uniqueness.ts
+  if ($LASTEXITCODE -ne 0) { throw 'Route uniqueness failed.' }
+  & $xeniosNode20 scripts/acceptance/verify-core-site-protection.mjs 77cdeaec34ae19bbcc9615f75887d21fe86f0746 HEAD
+  if ($LASTEXITCODE -ne 0) { throw 'Hard protection check failed.' }
+  & $xeniosNode20 node_modules/vitest/vitest.mjs run server/release-control-plane.test.ts --maxWorkers=1 --no-file-parallelism
+  if ($LASTEXITCODE -ne 0) { throw 'Release controls failed.' }
+  & $xeniosNode20 node_modules/vitest/vitest.mjs run --maxWorkers=1 --no-file-parallelism
+  # Preserve the aggregate's actual exit status, failures and skips. A passing
+  # protection CLI with seam warnings is not a passing protection assertion.
+  $xeniosAggregateExit = $LASTEXITCODE
+  Write-Output "Aggregate exit status: $xeniosAggregateExit"
+} finally {
+  $env:PATH = $xeniosOriginalPath
+  $env:XENIOS_MASTER_OFFERINGS_DATASET = $xeniosOriginalDataset
+}
+```
+
+The SQL proof uses the existing cached PostgreSQL 17.11 image, `--pull=never`,
+no network and no published ports; it inspects the actual version and removes
+only its exact owned disposable container. It is not a managed migration runner.
+Project `tsc` excludes test files and the verification TypeScript fixture; their
+execution through Vitest/tsx is not a separate strict typecheck of those files.
+
+## Remaining work
 
 The selected payment/evidence provider and real authorized grant procedure remain
-external dependencies. Provider-specific authenticated event ingestion and
-settlement, governed void/refund, historical reconciliation, managed qualification,
+external dependencies for actual adapters and activation. Provider-neutral
+settlement, governed void/refund, historical reconciliation and public journeys
+remain engineering work, not blocked on choosing a processor. Managed qualification,
 independent successor review and the separate protection amendment remain open.
 Do not infer that a processor decision blocks this provider-neutral engineering.
+
+The next financial slice must bind a qualified durable capture journal entry to
+the existing canonical observation/verification/paid-event authority, with one
+immutable capture link, exact single-use evidence and atomic existing outbox
+obligation. Current `bound` journal classification is not capture authority.
+Generic provider-string verification must remain refused. System-versus-admin
+audit attribution and separate fulfillment eligibility need explicit coverage;
+an own-attempt exception cannot become a blanket uncertainty bypass. None of
+that settlement work is represented as implemented by this held-only slice.
 
 The current 424-canonical / 423-customer catalog reconciliation and genuine
 holds remain intact. Care prices remain withheld in the Research projection,
@@ -222,5 +306,5 @@ non-public candidates, zero approved/public/integrated assets. No re-render or
 integration is authorized merely by the stale earlier zero-render checkpoint.
 Independent Claude review remains separate; no ADP02 acceptance is claimed.
 
-Deployment status: not deployed. No hosted configuration, account grant, price
+Deployment status: not deployed. No hosted configuration, operational account grant, price
 release, real email, money, procurement or clinical action was performed.
