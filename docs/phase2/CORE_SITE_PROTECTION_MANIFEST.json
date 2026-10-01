@@ -1,5 +1,6 @@
 {
   "$comment": [
+    "2026-10-01: founder exact two-hash baseline amendment, task HEALTH-EXACT-PROTECTED-HASH-AMENDMENT-20261001. Approval and independent review provenance: docs/phase2/HEALTH_PROTECTED_HASH_APPROVAL_20261001.md. Only server/routes.ts hard hash and server/index.ts seam hash are amended. No later bytes, Research index baseline, route/zone expansion or production action is authorized.",
     "The authoritative core-site protection record for Phase 2.",
     "Samuel's directive: the main xenios website outside /health, /research and /care must not be",
     "redesigned, rewritten, or behaviorally modified. Every Research and Care candidate",
@@ -698,7 +699,7 @@
       "client/public/llms.txt": "sha256:b1e4c1940cd19229a1fba393ba9c82370c2bde5ccaedd5b5a2f9078a1f0aac37",
       "client/public/offline.html": "sha256:bc8be20585465d8fa7daa06907bbe841c3d98d8e0b983d53de0da367762b62b9",
       "client/public/robots.txt": "sha256:b79293d54b5df7f4fda3b83b570eca294dd50d8f2cb9b1a9045f72d762570a81",
-      "server/routes.ts": "sha256:f17d518ee2a3bcda2ff4d4ffca6bc8475c0ced5f7c9f5f85b19bd189e09ea2ae",
+      "server/routes.ts": "sha256:7c21ea1ac26c6359c46d6070a9295a41b16f93355b3475a44f7831c668069137",
       "server/static.ts": "sha256:9cd3e1c363dd921fab780761baa888e9319f40ef177ca303072e3179b2c20004",
       "package.json": "sha256:89d5d2160381ea23967d56fcf666643d51dbb779fc652d82181bd2379a53828b",
       "package-lock.json": "sha256:d25eb6b816b616cfa1dc7b1769c14971b944e5385bfae9be41e75d1cf5e64f74",
@@ -1251,7 +1252,7 @@
     ],
     "files": {
       "client/src/App.tsx": "sha256:3b3b808b23cccdf8d2e2179fd30349b3ae299137a8a4a5f33525e0a304828d80",
-      "server/index.ts": "sha256:598ffd2e79038c35b5c9e6662cb05258a6b27a33bc3ee96b8b23757f9e2fd888",
+      "server/index.ts": "sha256:1d6594d6389e2ac67d9af85213854e05387899dfe0102fa577e447565e68c315",
       "server/research/index.ts": "sha256:b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070",
       "server/care/index.ts": "sha256:c902efc3ca97affb55692a06c3c249cd84e336caa3ec6e8f79462a1cf5460b0c",
       "shared/research/flags.ts": "sha256:5478a395b8108cf040999fc320f90e38b156f0cfdaf2e6589dcaa0514f6f7db3"
