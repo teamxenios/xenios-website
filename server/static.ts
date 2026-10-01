@@ -16,7 +16,6 @@ const EXTERNAL_FONT_LINK =
 export const PUBLIC_DOCUMENT_REDIRECTS: Readonly<Record<string, string>> =
   Object.freeze({
     "/health": "/",
-    "/research/access-hub": "/",
     "/research/partners": "/partners",
     "/research/affiliates": "/partners",
     "/research/organizations": "/practices",

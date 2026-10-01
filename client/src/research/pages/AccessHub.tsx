@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "wouter";
 import SeoHead from "@/components/SeoHead";
 import { ResearchPublicShell } from "../ui/shells";
@@ -52,11 +53,11 @@ const ACCESS_OPTIONS = [
   },
   {
     id: "private",
-    eyebrow: "Open early-access entry",
+    eyebrow: "Early Access requests",
     title: "Private Early Access",
-    body: "Open the separate passwordless Early Access request and ordering experience. Any later action still depends on its own current authorization and evidence.",
+    body: "Check the current entry requirements and request options on the Early Access page. Each later action still depends on its own approval and availability.",
     availability: "Entry does not prove approval, availability, payment, shipment, or a Care decision.",
-    primary: { label: "Enter Private Early Access", href: "/research/early-access" },
+    primary: { label: "Check Early Access", href: "/research/early-access" },
     secondary: { label: "Get support", href: "/research/support" },
   },
 ] as const;
@@ -71,6 +72,29 @@ function Action({ href, label, primary = false }: { href: string; label: string;
 }
 
 export default function AccessHub() {
+  useEffect(() => {
+    // This lazy page can mount after the outer router's fragment frame. Retry
+    // only its own chooser on mount; later hash navigation stays router-owned.
+    if (window.location.hash !== "#account-access") return;
+    let releaseTabIndex: (() => void) | undefined;
+    const frame = window.requestAnimationFrame(() => {
+      if (window.location.pathname !== "/research/access-hub" || window.location.hash !== "#account-access") return;
+      const target = document.getElementById("account-access");
+      if (!target || document.activeElement === target) return;
+      target.scrollIntoView({ block: "start" });
+      if (!target.hasAttribute("tabindex")) {
+        target.setAttribute("tabindex", "-1");
+        releaseTabIndex = () => target.removeAttribute("tabindex");
+        target.addEventListener("blur", releaseTabIndex, { once: true });
+      }
+      target.focus({ preventScroll: true });
+    });
+    return () => {
+      window.cancelAnimationFrame(frame);
+      releaseTabIndex?.();
+    };
+  }, []);
+
   return (
     <>
       <SeoHead

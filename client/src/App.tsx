@@ -255,7 +255,6 @@ function Router() {
       <Route path="/research/how-it-works"><Redirect to="/how-it-works" /></Route>
       <Route path="/research/contact"><Redirect to="/support" /></Route>
       <Route path="/research/support"><Redirect to="/support" /></Route>
-      <Route path="/research/access-hub"><Redirect to="/" /></Route>
       <Route path="/research" component={ResearchOverviewPage} />
       <Route path="/research/*" component={ResearchRoutes} />
       <Route path="/care/eligibility" component={CareEligibilityRoutes} />
