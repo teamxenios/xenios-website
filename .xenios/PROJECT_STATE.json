@@ -10,6 +10,14 @@
     "testOnlySha": "f634e8630b92818ea494aa96f5f68c921441455b",
     "releaseControlSha": "9ce940f6914a957e244dac95ff2b0252550bd2b8",
     "successorScope": "HL11 approved426 source rows to424 canonical/423 customer variants;418 retained identities,6 new unbound,2 superseded;415 retained Product Control pairs and2 archived. Structured raw-ID hold in both projections; no price release or hosted identity changes. Includes prior default-off N2 no-funds slice.",
+    "currentADP01Work": {
+      "status": "IMPLEMENTING_UNCOMMITTED_NOT_QUALIFIED",
+      "baseRecordsSha": "48a598f45161cccbf39d5945b85e14a9c31b6b6a",
+      "scope": "Durable held reservation and authenticated provider event journal/quarantine with serialized financial uncertainty; no provider execution or settlement. Existing runtime identities above identify the last qualified HL11 source, not dirty ADP01 work.",
+      "productionSource": null,
+      "webhookMounted": false,
+      "hostedChangesAuthorized": false
+    },
     "currentHL11Qualification": {
       "status": "COMPLETED_FAILED_EXIT_1_UNCHANGED_PROTECTED_SEAM_ASSERTION",
       "source": "4cba24af1d42ad59fe44856859cc1721846e6df5",
@@ -69,7 +77,7 @@
     "focusedResult": "HL11 1367 PASS/13 conditional SKIP,83 passing files/1 skipped,exit0,169.98s. Later binding order36 PASS and exact-ID display35 PASS are separate runs. N2 SQL and focused results retained in currentN2Qualification; no new SQL in HL11.",
     "fullSuiteTestedHead": "f634e8630b92818ea494aa96f5f68c921441455b",
     "fullSuiteResult": "18894 passed,1 failed,85 skipped;exit1,1099.22s; Node20.19.0 npm10.8.2 maxWorkers1 no-file-parallelism. Only unchanged protection assertion covering two paths, no timeouts. No source/test writes during run.",
-    "fullSuiteIsFinalSuccessor": true,
+    "fullSuiteIsFinalSuccessor": false,
     "previousRuntimeSourceSha": "cb9b8d66a3cec93dd4d9a26fab25ed1d399f9bbb",
     "priorFullSuites": ["5b3dc7702695374adb19b22b033026123bb34540:18657 passed,4 failed,85 skipped;exit1,912.99s; one seam assertion and three5s scan timeouts, not reclassified", "95e040a300e23ce5eb4ebc0dd7e5039f76aa818c:18398 passed,5 failed,85 skipped;exit1,1588.11s", "d6f99e04f3b9613ea5c309f06e199bb188d05097:18382 passed,2 failed,85 skipped;exit1,606.34s"],
     "isolatedDiagnostics": "Current unchanged serial scan diagnostic25 pass/3 files,exit0,9.92s,original5s limits. Supports timing-related diagnosis only; aggregate remains failed. Prior95e040a diagnostics13 pass/1 timeout and later5 pass remain separate in prior receipt.",

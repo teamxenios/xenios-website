@@ -3288,7 +3288,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T06:26:41.299Z",
-      "heartbeatAt": "2026-10-01T08:48:43.447Z"
+      "heartbeatAt": "2026-10-01T09:04:06.050Z"
     },
     {
       "id": "50a8e190-b0e1-479e-8b7b-7be25b0ad42f",
@@ -3335,6 +3335,27 @@
       "state": "handoff",
       "claimedAt": "2026-10-01T07:19:17.659Z",
       "heartbeatAt": "2026-10-01T08:48:43.447Z"
+    },
+    {
+      "id": "6bd4b292-8112-4639-a442-b708a7711f1b",
+      "task": "HEALTH-HL12-ADP01-DURABLE-PROVIDER-HOLD-20261001",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/assisted-order/payment/provider-journal*",
+        "server/research/assisted-order/provider-journal*",
+        "server/research/assisted-order/supabase-repository.ts",
+        "server/research/assisted-order/http.ts",
+        "server/index.ts",
+        "server/research/assisted-order/HEALTH_HL12_ADP01_*",
+        "supabase/migrations/*_research_assisted_order_quote_provider_journal.sql",
+        "supabase/verification/research_assisted_order_quote_provider_journal*",
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "server/release-control-plane.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-01T08:55:59.653Z",
+      "heartbeatAt": "2026-10-01T09:04:06.050Z"
     }
   ],
   "rules": [

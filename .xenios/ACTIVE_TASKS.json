@@ -3,6 +3,29 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "HEALTH-HL12-ADP01-DURABLE-PROVIDER-HOLD-20261001",
+      "title": "Durable held provider reservations, authenticated event quarantine, and financial uncertainty fences",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/assisted-order/payment/provider-journal*",
+        "server/research/assisted-order/provider-journal*",
+        "server/research/assisted-order/supabase-repository.ts",
+        "server/research/assisted-order/http.ts",
+        "server/index.ts",
+        "server/research/assisted-order/HEALTH_HL12_ADP01_*",
+        "supabase/migrations/*_research_assisted_order_quote_provider_journal.sql",
+        "supabase/verification/research_assisted_order_quote_provider_journal*",
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "server/release-control-plane.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Local-only additive SQL and provider-neutral server service; empty source configuration, no provider execution or paid/refund authority. Request-first serialized uncertainty fences cover existing financial SQL. Do not edit old migrations, protection baselines, foreign media/image paths, or hosted configuration. Integration mount paths require a separate lease before editing.",
+      "claimedAt": "2026-10-01T08:55:59.651Z"
+    },
+    {
       "id": "HEALTH-HL11-CANONICAL-424-RECONCILIATION-20261001",
       "title": "Materialize 424 canonical variants with retained identity authority and genuine holds",
       "priority": "P2",

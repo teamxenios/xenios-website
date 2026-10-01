@@ -7,6 +7,7 @@
     "testOnlySha": "f634e8630b92818ea494aa96f5f68c921441455b",
     "releaseControlSha": "9ce940f6914a957e244dac95ff2b0252550bd2b8",
     "currentAggregateStatus": "HL11_COMPLETED_FAILED_UNCHANGED_SEAM_ASSERTION_PRIOR_FAILURES_PRESERVED",
+    "currentADP01Status": "UNCOMMITTED_IMPLEMENTATION_NO_AGGREGATE_QUALIFICATION_NO_HOSTED_AUTHORITY",
     "currentHL11Qualification": {
       "status": "COMPLETED_FAILED_EXIT_1_UNCHANGED_PROTECTED_SEAM_ASSERTION",
       "testedHead": "f634e8630b92818ea494aa96f5f68c921441455b",
@@ -45,7 +46,7 @@
     "protectedFileGate": "Exact prior two-hash owner approval at663268f preserved. New server/index.ts recovery wiring and unchanged Research gateway differ from seam baselines; unchanged assertion FAILS. Neither baseline amended. CLI38 hard hashes PASS, not release approval.",
     "focusedResult": "HL11 1367 PASS/13 conditional SKIP,exit0,169.98s; later binding order36 PASS and final display35 PASS are separate runs. Prior N2 SQL/focused results retained. Current successor independently unreviewed.",
     "fullSuiteTestedHead": "f634e8630b92818ea494aa96f5f68c921441455b",
-    "fullSuiteIsCurrentRuntime": true,
+    "fullSuiteIsCurrentRuntime": false,
     "previousRuntimeSourceSha": "cb9b8d66a3cec93dd4d9a26fab25ed1d399f9bbb",
     "fullSuite": "18894 PASS/1 FAIL/85 SKIP,exit1,1099.22s. Only unchanged seam assertion covering two paths. No timeouts or source/test writes during run.",
     "isolatedDiagnostics": "25 PASS/3 files,exit0,9.92s,unchanged serial scan diagnostic with original5s limits. Does not reclassify failed aggregate.",
