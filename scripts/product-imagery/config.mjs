@@ -1,9 +1,11 @@
-export const ARTIFACT_GENERATED_AT = "2026-10-01T02:45:00.000Z";
+export const ARTIFACT_GENERATED_AT = "2026-10-01T03:50:00.000Z";
 export const CONTRACT_SCHEMA_VERSION = 4;
 export const SOURCE_BASE_COMMIT = "49234f8a2dd804845245a18056a73904b320158a";
 export const SOURCE_BASE_TREE = "36e1db47986916c3a96c82324ba43fbcec6e7861";
 export const ASSET_BYTE_BUDGET = 120 * 1024;
 export const ASSET_TOTAL_BYTE_BUDGET = 400 * 1024;
+export const ASSET_PIXEL_BUDGET = 2048 * 2048;
+export const PNG_DECODED_PIXEL_BUDGET = 8 * 1024 * 1024;
 
 export const CATALOG_SOURCE_PATH =
   "server/research/master-offerings/data/member-safe-master-offerings.generated.json";
@@ -34,6 +36,18 @@ export const RENDERER_PACKET_PATH =
   "docs/product-imagery/manifests/renderer-packet-v3.json";
 export const BATCH0_PROVENANCE_PATH =
   "docs/product-imagery/manifests/batch-000-provenance.json";
+export const BATCH0_RENDER_RECEIPTS_PATH =
+  "docs/product-imagery/evidence/batch0-render-receipts.json";
+export const BATCH0_CONTACT_SHEET_PATH =
+  "docs/product-imagery/evidence/batch0-contact-sheet-sha256-02bcd3fa1fb3.png";
+export const BATCH0_CONTACT_SHEET_RECORD_PATH =
+  "docs/product-imagery/evidence/batch0-contact-sheet.json";
+export const BATCH0_BROWSER_REVIEW_PAGE_PATH =
+  "docs/product-imagery/evidence/batch0-browser-review.html";
+export const BATCH0_BROWSER_REVIEW_RECORD_PATH =
+  "docs/product-imagery/evidence/batch0-browser-review.json";
+export const BATCH0_BROWSER_REVIEW_SCREENSHOT_PATH =
+  "docs/product-imagery/evidence/batch0-browser-review-full-sha256-7910254c2a8d.png";
 export const STATE_AUTHORITY_AUDIT_PATH =
   "docs/product-imagery/manifests/state-authority-audit.json";
 export const BATCH0_ASSET_MANIFEST_PATH =
@@ -401,7 +415,7 @@ export const DOSAGE_FORM_TO_IMAGE_CLASS = new Map([
   ["ODT / Tablet", "odt_container"],
   ["Nasal Spray", "nasal_spray"],
   ["Topical Cream", "cream_tube_or_pump"],
-  ["Topical Gel / Serum", "gel_tube_or_pump"],
+  ["Topical Gel / Serum", "packaging_unverified"],
   ["Topical Serum", "serum_dropper_or_pump"],
   ["Solution", "solution_container_neutral"],
   ["Liquid", "oral_liquid_neutral"],

@@ -7,7 +7,7 @@ The exact founder v3 specification is checked in under `specs/` with SHA-256 `e3
 Current safety state:
 
 - all ten pre-v3 WebPs were removed from `client/public` and preserved as permanently nonapprovable evidence under `evidence/pre-v3-nonapprovable/`;
-- Batch 0 output stays under non-public evidence and has zero runtime/public authority;
+- all 25 Batch 0 originals are rendered, receipt-bound, output-SHA-addressed, and retained under non-public evidence with zero runtime/public authority;
 - no image is approved or wired;
 - imagery owns no price, action, workflow, Care, hold, availability, cart, or fulfillment state;
 - runtime integration remains blocked on catalog/binding regeneration, independent named exact-SHA image approval, and the separately leased commerce/media decoupling work;
@@ -24,5 +24,8 @@ Authoritative generated artifacts:
 - `manifests/batch-000-assets.json` — output hashes, renderer provenance, and approval state;
 - `manifests/fallback-assets.json` — the ten quarantined pre-v3 files;
 - `manifests/render-queue.json` — the 25-item Batch 0 queue only.
+- `evidence/batch0-render-receipts.json` — exact observed renderer and output bindings, not approval.
+- `evidence/batch0-contact-sheet.json` — the hash-bound 5×5 review-sheet record; independent approval remains pending.
+- `evidence/batch0-browser-review.json` — headless-browser evidence that all 25 exact originals decode at 1254×1254, plus a hash-bound full-page screenshot; this is QA evidence, not approval.
 
 Run `node scripts/product-imagery/build.mjs`, `node --test scripts/product-imagery/product-imagery.test.mjs`, and `node scripts/product-imagery/verify.mjs` after any source or evidence change.

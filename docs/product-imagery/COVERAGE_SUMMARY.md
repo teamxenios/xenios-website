@@ -30,8 +30,8 @@ The reviewed 424-row target is **not materialized** in the runtime catalog yet. 
 | Measure | Count |
 | --- | ---: |
 | Sanitized class jobs | 25 |
-| Rendered, non-public | 0 |
-| Pending renders | 25 |
+| Rendered, non-public | 25 |
+| Pending renders | 0 |
 | Independently approved | 0 |
 | Public | 0 |
 
@@ -43,14 +43,13 @@ Renderer payloads contain no canonical product name, mark, strength, quantity, p
 | --- | ---: |
 | capsule_bottle | 110 |
 | cream_tube_or_pump | 28 |
-| gel_tube_or_pump | 2 |
 | injectable_solution_vial | 3 |
 | liquid_vial | 84 |
 | nasal_spray | 5 |
 | neutral_product_identity | 27 |
 | odt_container | 1 |
 | oral_liquid_neutral | 1 |
-| packaging_unverified | 2 |
+| packaging_unverified | 4 |
 | peptide_lyophilized_vial | 112 |
 | serum_dropper_or_pump | 1 |
 | shipping_service | 1 |

@@ -151,10 +151,10 @@ const FIXTURES = Object.freeze([
     alt: "Neutral unbranded topical-container study for Progesterone.",
   },
   {
-    groupId: "GRP-0068",
-    movId: "mov_5375621d23911b130fd4",
-    displayIdentity: "GHK-Cu serum/gel",
-    alt: "Neutral unbranded topical-container study for GHK-Cu serum and gel.",
+    groupId: null,
+    movId: null,
+    displayIdentity: "Class-only generic topical gel",
+    alt: "Neutral unbranded generic topical-gel class study; no product package is represented.",
   },
   {
     groupId: "GRP-0420",
@@ -211,11 +211,11 @@ const FIXTURES = Object.freeze([
     alt: "Neutral guided-Care pathway study for Anastrozole; no product is represented.",
   },
   {
-    groupId: "GRP-0394",
-    movId: "mov_07317a1fe77fe228b793",
-    displayIdentity: "CJC-1295 With DAC",
-    alt: "Held-state neutral study for CJC-1295 With DAC; no physical package is represented.",
-    qaGroupIds: ["GRP-0422"],
+    groupId: "GRP-0422",
+    movId: "mov_f61758881da2b7bfa539",
+    displayIdentity: "CJC-1295 + Ipamorelin formulation-hold row",
+    alt: "Held-state neutral study for the CJC-1295 and Ipamorelin formulation-hold row; no component split or physical package is represented.",
+    qaGroupIds: ["GRP-0394"],
   },
   {
     groupId: "GRP-0244",

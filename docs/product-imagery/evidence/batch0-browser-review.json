@@ -1,0 +1,210 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-01T04:03:15.1420859Z",
+  "kind": "batch0_headless_browser_decode_evidence",
+  "authority": "browser_qa_evidence_only_not_independent_approval",
+  "browser": {
+    "name": "Google Chrome",
+    "version": "154.0.8037.58",
+    "mode": "headless=new",
+    "fileAccess": "local_evidence_only"
+  },
+  "reviewPage": {
+    "repositoryPath": "docs/product-imagery/evidence/batch0-browser-review.html",
+    "sha256": "c0bbaecdfb83d32b65b9f1e5a605854a7ad9ac0ab9f1ff75ebf4f329903124f6"
+  },
+  "result": {
+    "passed": true,
+    "expectedCount": 25,
+    "observedCount": 25,
+    "expectedNaturalWidth": 1254,
+    "expectedNaturalHeight": 1254,
+    "decodeFailures": 0,
+    "publicRuntimeEligibility": "blocked",
+    "independentNamedApproval": "pending"
+  },
+  "screenshot": {
+    "repositoryPath": "docs/product-imagery/evidence/batch0-browser-review-full-sha256-7910254c2a8d.png",
+    "sha256": "7910254c2a8dfc4d58384a1f0c60c6094490be40823ed2c7322d28cdebae7e8e",
+    "byteSize": 1590543,
+    "width": 1440,
+    "height": 3200
+  },
+  "observations": [
+    {
+      "jobId": "batch0-01-peptide_lyophilized_vial",
+      "outputSha256": "1429cc628fbb079ce79ffe474323aa6324351435429d0fa59d85f2f9f0371a7a",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-02-liquid_vial",
+      "outputSha256": "7ad28e3ed06e17f17951b1d4b2f0c9c9f8566b279d287999b1abe2a871a1eb73",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-03-injectable_solution_vial",
+      "outputSha256": "517615a8635e86a1b8d2d1d8df0965f849e2504855987a94bc83e6b1e63d4ce9",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-04-solution_container_neutral",
+      "outputSha256": "a2ccace4a9eefba47adb052c10e00126e07f083d4c0fbd7bfb382152d47972c8",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-05-nasal_spray",
+      "outputSha256": "0d816d709b7f6126c3108f382ef543ef5655aa45e13886dfb0e4d4a43aea4ed0",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-06-oral_liquid_neutral",
+      "outputSha256": "dd69c37315b1a41dc7133a84fa5d99675962770bee6cea7c3fe126020c92da86",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-07-capsule_bottle",
+      "outputSha256": "cf55112517dd92455875e272cb0718d1a604070c222604052d060661b54d76a4",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-08-tablet_bottle",
+      "outputSha256": "07aff4fc3ce282200a44e44250781d4cbbd2bc7cb20bc0d92943008e62dbbde4",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-09-odt_container",
+      "outputSha256": "66ea035793cb702a1c35b9f50bbffe20a578738f37d49ee826f86df382e8c94d",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-10-troche_container",
+      "outputSha256": "7948e76307ed998743d820aa61fe1cb1f3d417557a358c5d78b372bc642c71fb",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-11-cream_tube_or_pump",
+      "outputSha256": "44c6b05516dfde075786f976208eb8924fbc06f764455c2e47a800ef3444d034",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-12-gel_tube_or_pump",
+      "outputSha256": "ff5606a1b8f965a817347ab9bd8afcfafdf021a78de50d00be4655bf0ecdd7fb",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-13-serum_dropper_or_pump",
+      "outputSha256": "6eb84e5b60d0e7f3a4c31b7bae05a681500c91aaf3feb45f6c522fcf654a9934",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-14-supplement_bottle_generic",
+      "outputSha256": "be43add833f737c65f5491bebdd18b61a18521221c96adefb5dd826844762bf0",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-15-supplement_tub_generic",
+      "outputSha256": "a1e5296b7c340b5b47694e2a84a9ea96e2040e5e2604bc06fe92273944f2817d",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-16-supplement_retail_unit_neutral",
+      "outputSha256": "21d79f258dfa000a91614fe86a7eb69b5ebd4913f45baed37a67ccf6fe8fba16",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-17-accessory_pack",
+      "outputSha256": "130fb372499ec331354f02c8a2cf42f20381de277ce6ba6e373a8b9e52d04e46",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-18-syringe_supply_pack_neutral",
+      "outputSha256": "df5b5e7961e9cf2ec444d7b200dee1c46b32e0573ac6c9230fc64254e6e8d8e0",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-19-packaging_unverified",
+      "outputSha256": "dd0c7c2441c170764ea8573119daaa6803a9460dc5db241e04971a283ee29bab",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-20-neutral_product_identity",
+      "outputSha256": "5e27192132c4c3e5b5491d7fab6712ae6d67942fa184f6613d2858924e9ad14e",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-21-care_pathway_neutral",
+      "outputSha256": "6b3ddfc3319c3b2cf1f364c21afd1d1131cd2465795c395bf55c2f0dc90bb677",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-22-held_neutral",
+      "outputSha256": "a3ed9d7b398476bd1fefa0c6c21f61d965416d44a65b242db8c8e631011e209b",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-23-quote_only_neutral",
+      "outputSha256": "f40588cac3fcfce436ccb1784c44bc5f1d00cffe72fcc7789cb21cf16b6bf414",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-24-coming_soon_offering",
+      "outputSha256": "4a3c5a4fa13e5e0fa8f859326a1557e6607606e1e6925f59eaf7d7ea242ec901",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    },
+    {
+      "jobId": "batch0-25-shipping_service",
+      "outputSha256": "b6b4a05fce1f9452ffa2127649d7cfe578966590db2ada67650d1084af9ef257",
+      "naturalWidth": 1254,
+      "naturalHeight": 1254,
+      "complete": true
+    }
+  ]
+}

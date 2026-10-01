@@ -16,20 +16,22 @@ The resolver must converge canonical mo/mov, group/SKU, exact Product Control ID
 
 The request-only packet contains 25 generic class jobs. A renderer payload contains no canonical name, maker, ingredient, formulation, strength, concentration, volume, count, price, label, logo, trademark, claim, certification, people, administration, purchase cue, or visible text. Fixture identities and alt text live in a physically separate provenance artifact that must never be sent to the renderer.
 
-Each target filename is bound to its compiled-prompt hash. Asset receipts bind the founder-spec hash, renderer-payload hash, prompt hash, and output SHA-256. The renderer is recorded as OpenAI built-in imagegen; model and request IDs are recorded as not exposed when the tool does not return them.
+Each request staging filename is bound to its compiled-prompt hash. After rendering, the retained immutable evidence filename is bound to the output SHA-256. Asset receipts bind that final path and exact byte size to the founder-spec hash, renderer-payload hash, prompt hash, render-contract hash, source image identifier, observation time, and output SHA-256. The renderer is recorded as OpenAI built-in imagegen; model and request IDs are recorded as not exposed when the tool does not return them.
 
 ## Evidence and publication
 
 The ten pre-v3 WebPs are permanently nonapprovable evidence and must stay outside public roots. Batch 0 sources are also non-public review evidence. A public derivative requires all of:
 
 1. exact output SHA-256 and content-hashed same-origin path;
-2. named independent approver, UTC time, and durable review record tied to that SHA;
+2. named independent approver, UTC time, and a content-hashed JSON review record whose parsed approver, time, decision, exact public-asset SHA, scope, image class, manifest key, source-receipt SHA, and source-output SHA all match the registry entry;
 3. rights/provenance review and truthful identity scope;
-4. positive intrinsic dimensions and reviewed alt text;
+4. positive intrinsic dimensions within the decoded-pixel budget and reviewed alt text;
 5. a separately hashed derivative; and
 6. all repository, release, and production gates.
 
 Until then, the resolver returns intentional no-image. It may not trust a status string or arbitrary URL as approval.
+
+The current exact-byte publication verifier accepts only content-hashed PNG paths because PNG is the only implemented decoder. Adding AVIF or WebP requires a format-specific decoder and equivalent intrinsic-dimension, decompression, hash, and byte-budget checks before the registry schema may admit that extension.
 
 ## State visuals
 

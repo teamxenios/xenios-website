@@ -321,11 +321,13 @@ export function gitTextBlobOid(bytes) {
 }
 
 function sourceDescriptor(repoRoot, absolutePath, bytes) {
+  const normalized = Buffer.from(bytes.toString("utf8").replace(/\r\n/g, "\n"), "utf8");
   return {
     path: path.relative(repoRoot, absolutePath).split(path.sep).join("/"),
-    byteSize: bytes.length,
-    sha256: sha256(bytes),
-    gitBlobOid: gitTextBlobOid(bytes),
+    byteSize: normalized.length,
+    sha256: sha256(normalized),
+    sha256Semantics: "lf_normalized_repository_text_bytes",
+    gitBlobOid: gitBlobOid(normalized),
   };
 }
 
