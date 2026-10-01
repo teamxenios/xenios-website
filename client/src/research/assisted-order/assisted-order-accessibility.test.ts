@@ -56,4 +56,11 @@ describe("assisted-order pointer target source contracts", () => {
     expect(details).not.toMatch(/\b(?:overflow|overflow-x|overflow-y):\s*(?:hidden|clip)\b/u);
     expect(details).not.toMatch(/\b(?:height|max-height):\s*\d/u);
   });
+
+  it("wraps long facts in the outer product card before details are opened without hiding overflow", () => {
+    const card = declarationsFor(".xenios-order-card");
+    expect(card).toMatch(/\bmin-width:\s*0\s*;/u);
+    expect(card).toMatch(/\boverflow-wrap:\s*anywhere\s*;/u);
+    expect(card).not.toMatch(/\b(?:overflow|overflow-x|overflow-y):\s*(?:hidden|clip)\b/u);
+  });
 });
