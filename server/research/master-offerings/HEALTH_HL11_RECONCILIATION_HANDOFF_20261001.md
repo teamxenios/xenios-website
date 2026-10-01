@@ -6,12 +6,13 @@ independent acceptance, managed qualification or permission to deploy.
 
 Runtime source: `4cba24af1d42ad59fe44856859cc1721846e6df5`.
 Runtime tree: `6395273fc4370b7df713a2b72b019785f547d1fb`.
-Test-only tip: `fbfa12bfc0c18dd433fc6eafbbab571b298f5f72`.
+Test-only tip: `f634e8630b92818ea494aa96f5f68c921441455b`.
 Inherited release-control commit: `9ce940f6914a957e244dac95ff2b0252550bd2b8`.
 The main materialization is `9c3358b8aecfb91f59629ee99c43d99201fc4a78`, with
 tests `fe306740b146e644ded7fa74767657b07a0c3f68`. The final source/test pair
-adds only an exact-identity display fix and its regression. All four commits
-are pushed. Their union changes 20 source/build/data paths and 15 test paths,
+adds only an exact-identity display fix and its regression at `fbfa12b`. The
+subsequent test-only census fix is `f634e86`. All five source/test commits
+are pushed. Their union changes 20 source/build/data paths and 17 test paths,
 no migration, route, protection baseline or release-control setting.
 
 ## Source and identity
@@ -138,7 +139,33 @@ rows; the fifth is the unchanged protected-seam baseline assertion. No timeout
 occurred. This failed run is preserved in `HEALTH_HL11_QUALIFICATION_20261001.json`,
 log SHA-256 `a603add1c5c8ffd21b351ce66391a5b167ebbe06efa3056a5ecde4c6f82fc9a0`.
 Source and tests remained frozen during the run; intermediate HEAD changes were
-records only. The census correction and subsequent qualification remain pending.
+records only. That aggregate is not relabeled as a passing run.
+
+Test-only successor `f634e8630b92818ea494aa96f5f68c921441455b`, tree
+`94be21be11440e77f754f3ef899638b3a6d74690`, corrects those four stale expectations.
+Every original profile assertion remains, with 424 unique offering and variant
+IDs and explicit checks for all six new pairs and both absent predecessors.
+The payment-policy test now reconciles all 139 canonical peptide pairs against
+141 preserved source rows, rather than treating display labels as identity.
+Its formerly passing CJC-absence assertion is replaced with exact presence,
+structured hold even after renaming, and continued composition refusal.
+The historical workbook policy remains 111 candidates; it does not confer
+current pricing or purchase permission. The new identities remain unbound.
+
+Separate focused runs passed 5 profile tests, 23 payment-policy tests, and then
+43 combined tests including real-reader whole-catalog coverage. Clean typecheck
+at `f634e86` passed in 10.693 seconds; build passed in 26.348 seconds, scanning
+1,346 source files and 225 build files with zero forbidden em-dash forms. The
+extra scanned source file is the qualification receipt, not new runtime code.
+Route uniqueness passed 459 registrations / 450 call sites. Migration DAG
+verification passed 49 nodes and canonical checksums. Bounded protection CLI
+comparison from `3416f8de6a58e9ea0fdf4e1c77bab4421e010df2` passed across 47 paths
+and 38 protected hashes; it does not override the separate seam assertion.
+
+The second resource-controlled full suite started on clean `f634e86` at
+2026-10-01T08:27:01.439Z, with one worker, no file parallelism and the actual
+dataset reader enabled. Source and tests are frozen. Its aggregate result is
+pending and cannot be inferred from focused passes or the first failed run.
 
 The binding generator also reproduced and repaired an identity-only schema
 gap: unexpected fields could survive a reviewed input spread. Exact five-field
