@@ -1,75 +1,32 @@
 {
-  "schemaVersion": 3,
-  "manifestGeneratedAt": "2026-09-30T20:30:00.000Z",
-  "acceptanceBaseline": {
-    "commit": "f4f899a7",
-    "path": "docs/review/xenios-health-launch-review-20260930/13_IMAGE_LAYER_ACCEPTANCE.md",
-    "founderPromptStatus": "missing_founder_attachment_required"
+  "schemaVersion": 4,
+  "generatedAt": "2026-10-01T02:45:00.000Z",
+  "kind": "pre_v3_nonapprovable_quarantine_manifest",
+  "publicRuntimeAuthority": false,
+  "counts": {
+    "quarantined": 10,
+    "public": 0,
+    "approvable": 0
   },
-  "promptContract": {
-    "status": "pre_v3_candidates_quarantined",
-    "founderV3PromptStatus": "missing_founder_attachment_required",
-    "consequence": "Do not generate further pixels, approve, wire, or publish these candidates until the founder-supplied v3 prompt is attached and reconciled."
-  },
-  "generationMode": "openai_imagegen_then_ffmpeg_webp",
-  "reviewDisposition": "All ten assets are unreviewed AI-generated fallback candidates created before the founder v3 prompt was available. None is approved, published, wired, an exact product image, official packaging, or a supplier photograph.",
-  "branchDeploymentDisposition": {
-    "status": "blocked_nonapprovable_public_bytes",
-    "reason": "These candidate files live in the deployable public tree for source review, but their original PNG evidence is not repository-durable. These exact bytes are permanently ineligible for approval. This branch and any commit containing them must not be deployed until they are removed or replaced by v3 rerenders whose durable evidence and every publication prerequisite pass.",
-    "enforcement": "source_lane_contract_and_release_handoff_block_not_a_runtime_access_control"
-  },
-  "provenancePolicy": {
-    "sourceType": "ai_generated_candidate",
-    "provenanceTag": "generated_catalog_fallback_candidate",
-    "generator": "OpenAI ImageGen through Codex imagegen",
-    "rightsStatus": "publication_rights_review_pending",
-    "ownershipClaim": "none_until_review",
-    "identityStatus": "form_or_pathway_only_not_exact_variant",
-    "reviewStatus": "provisional",
-    "approvalEligibility": "blocked_permanent_rerender_under_v3_required",
-    "runtimeWiringEligibility": "blocked",
-    "deploymentEligibility": "blocked",
-    "sourceDurabilityDisposition": "original_png_is_local_not_repository_durable_so_these_exact_bytes_cannot_be_approved"
-  },
-  "deliveryBudget": {
-    "perAssetBytes": 122880,
-    "totalBytes": 409600,
-    "actualTotalBytes": 292336
-  },
-  "optimization": {
-    "sourceFormat": "PNG",
-    "sourceDimensions": {
-      "width": 1254,
-      "height": 1254
-    },
-    "deliveryFormat": "WebP",
-    "deliveryDimensions": {
-      "width": 1024,
-      "height": 1024
-    },
-    "encoder": "ffmpeg 8.1.1 libwebp scale=1024:1024:flags=lanczos quality 82 compression_level 6 metadata stripped",
-    "lineageVerification": "Each recorded source PNG reproduced its committed WebP byte-for-byte with the documented pipeline on 2026-09-30. Source filesystem times are observational, mutable evidence; opaque exec filenames are local artifact identifiers, not ImageGen run IDs."
-  },
+  "priorPublicDirectory": "client/public/research/products/fallbacks",
+  "quarantineDirectory": "docs/product-imagery/evidence/pre-v3-nonapprovable",
   "assets": [
     {
-      "sequence": 1,
       "assetId": "xenios-fallback-form-vial-v1",
-      "taxonomyKey": "vial",
-      "semanticClass": "form_fallback",
-      "useRestriction": "generic_liquid_vial_only_not_for_lyophilized_or_exact_product_use",
-      "filePath": "client/public/research/products/fallbacks/xenios-form-vial-fallback-v1-16e20b949b28.webp",
-      "publicPath": "/research/products/fallbacks/xenios-form-vial-fallback-v1-16e20b949b28.webp",
+      "disposition": "permanently_nonapprovable_pre_v3_evidence",
+      "reviewStatus": "rejected_requires_v3_rerender",
+      "runtimeWiringEligibility": "blocked",
+      "deploymentEligibility": "blocked",
+      "publicPath": null,
+      "removedPublicPath": "/research/products/fallbacks/xenios-form-vial-fallback-v1-16e20b949b28.webp",
+      "repositoryPath": "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-form-vial-fallback-v1-16e20b949b28.webp",
       "sha256": "16e20b949b2863d8f7f27bb7de5b0cf799d18cb8f53a2df0a4f32981b862ba30",
+      "gitBlobOid": "e55ee4475d1a5222135bb1dc9398866c1b3e6632",
       "byteSize": 25374,
       "width": 1024,
       "height": 1024,
-      "altDescription": "Representative unlabeled vial form; no exact product is depicted.",
-      "prompt": "Product-mockup asset for Xenios Research catalog fallback taxonomy. A single generic clear research vial with a restrained matte silver cap, centered upright on a warm off-white seamless studio background, soft diffused daylight, subtle grounding shadow, premium minimal clinical editorial photography aesthetic, neutral cool-gray and muted deep-green accents only in the background lighting. The vial must be completely unbranded and unlabeled: no words, letters, numbers, logo, dosage, strength, ingredient, barcode, claims, syringe, needle, people, hands, packaging, medical procedure, or purchase cues. This is explicitly a form-level placeholder illustration, not an exact product, supplier photograph, medicine claim, or proof of availability. Square 1:1 composition with generous safe margins for responsive card crops, object occupying about 62 percent of frame, crisp realistic glass and cap materials, no decorative props.",
-      "sourceType": "ai_generated_candidate",
-      "provenanceTag": "generated_catalog_fallback_candidate",
-      "generator": "OpenAI ImageGen through Codex imagegen",
-      "pixelGeneratedAt": "unknown",
-      "encodedAt": "2026-09-30T20:09:56.198Z",
+      "legacyTaxonomyKey": "vial",
+      "legacyPromptSha256": "1fde6bab6d45ca3d32e959fcf842b3a68e7f327597e13f6cfbf9451e57440f02",
       "sourceArtifact": {
         "status": "local_original_retained_outside_repository",
         "evidenceRef": "codex-generated-image/exec-97cb2d09-5f0e-482b-85ec-9319c2680a29.png",
@@ -79,63 +36,25 @@
         "width": 1254,
         "height": 1254,
         "observedCreatedAt": "2026-09-30T19:53:43.826Z",
-        "observedLastWriteAt": "2026-09-30T19:53:43.827Z",
-        "timestampEvidence": "observed_local_filesystem_utc_not_cryptographic_generation_evidence"
-      },
-      "transformation": {
-        "inputFormat": "PNG",
-        "inputDimensions": {
-          "width": 1254,
-          "height": 1254
-        },
-        "operation": "ffmpeg 8.1.1 -vf scale=1024:1024:flags=lanczos -c:v libwebp -quality 82 -compression_level 6 -map_metadata -1",
-        "outputSha256": "16e20b949b2863d8f7f27bb7de5b0cf799d18cb8f53a2df0a4f32981b862ba30",
-        "verification": "byte_identical_reproduction_from_recorded_source_png"
-      },
-      "promptContractVersion": "pre_v3_candidate_quarantined",
-      "rightsStatus": "publication_rights_review_pending",
-      "ownershipClaim": "none_until_review",
-      "identityStatus": "form_or_pathway_only_not_exact_variant",
-      "coverageStatus": "fallback",
-      "reviewStatus": "provisional",
-      "approvalEligibility": "blocked_permanent_rerender_under_v3_required",
-      "runtimeWiringEligibility": "blocked",
-      "deploymentEligibility": "blocked",
-      "illustrativeNotice": "Illustrative fallback candidate. Exact product packaging is not shown.",
-      "reviewRecord": {
-        "disposition": "unreviewed",
-        "reviewer": null,
-        "reviewedAt": null,
-        "evidenceRef": null
-      },
-      "forbiddenUses": [
-        "supplier_or_brand_photograph_claim",
-        "official_or_xenios_packaging_claim",
-        "exact_product_or_variant_claim",
-        "Product_Control_primary_image_approval",
-        "availability_or_purchase_evidence",
-        "cart_or_payment_authority"
-      ]
+        "observedLastWriteAt": "2026-09-30T19:53:43.827Z"
+      }
     },
     {
-      "sequence": 2,
       "assetId": "xenios-fallback-form-bottle-v1",
-      "taxonomyKey": "bottle",
-      "semanticClass": "form_fallback",
-      "useRestriction": "generic_container_only_no_official_or_third_party_packaging_claim",
-      "filePath": "client/public/research/products/fallbacks/xenios-form-bottle-fallback-v1-45d1a44583e9.webp",
-      "publicPath": "/research/products/fallbacks/xenios-form-bottle-fallback-v1-45d1a44583e9.webp",
+      "disposition": "permanently_nonapprovable_pre_v3_evidence",
+      "reviewStatus": "rejected_requires_v3_rerender",
+      "runtimeWiringEligibility": "blocked",
+      "deploymentEligibility": "blocked",
+      "publicPath": null,
+      "removedPublicPath": "/research/products/fallbacks/xenios-form-bottle-fallback-v1-45d1a44583e9.webp",
+      "repositoryPath": "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-form-bottle-fallback-v1-45d1a44583e9.webp",
       "sha256": "45d1a44583e932b5286ab307c67125ad37acbf249334d89aff9acfe3f42fb2d6",
+      "gitBlobOid": "64d2f5ac21475bf70f806550922f1204a04c5df4",
       "byteSize": 10154,
       "width": 1024,
       "height": 1024,
-      "altDescription": "Representative unlabeled bottle form; no exact product is depicted.",
-      "prompt": "Product-mockup asset for Xenios Research catalog fallback taxonomy. A single generic matte-white supplement bottle with a restrained brushed-silver cap, centered upright on the same warm off-white seamless studio background as a premium clinical editorial catalog, soft diffused daylight, subtle grounding shadow, restrained cool-gray and muted deep-green background accents. Bottle must be completely unbranded with a perfectly blank surface: no label, words, letters, numbers, logo, ingredient, dosage, capsules visible, claims, barcode, certification marks, people, hands, props, or purchase cues. This is explicitly a form-level placeholder illustration, not an exact product, supplier photograph, medicine claim, or proof of availability. Square 1:1 composition with generous responsive crop safe margins, object about 62 percent of frame, realistic materials, no decorative objects.",
-      "sourceType": "ai_generated_candidate",
-      "provenanceTag": "generated_catalog_fallback_candidate",
-      "generator": "OpenAI ImageGen through Codex imagegen",
-      "pixelGeneratedAt": "unknown",
-      "encodedAt": "2026-09-30T20:09:54.062Z",
+      "legacyTaxonomyKey": "bottle",
+      "legacyPromptSha256": "f55e57d84fee8c150dafb0731545ed5b18d6c4f6ae7062fee02576d6a16a797a",
       "sourceArtifact": {
         "status": "local_original_retained_outside_repository",
         "evidenceRef": "codex-generated-image/exec-6eb9798e-3ba1-4eee-b11c-2fa28529f490.png",
@@ -145,63 +64,25 @@
         "width": 1254,
         "height": 1254,
         "observedCreatedAt": "2026-09-30T19:54:27.072Z",
-        "observedLastWriteAt": "2026-09-30T19:54:27.073Z",
-        "timestampEvidence": "observed_local_filesystem_utc_not_cryptographic_generation_evidence"
-      },
-      "transformation": {
-        "inputFormat": "PNG",
-        "inputDimensions": {
-          "width": 1254,
-          "height": 1254
-        },
-        "operation": "ffmpeg 8.1.1 -vf scale=1024:1024:flags=lanczos -c:v libwebp -quality 82 -compression_level 6 -map_metadata -1",
-        "outputSha256": "45d1a44583e932b5286ab307c67125ad37acbf249334d89aff9acfe3f42fb2d6",
-        "verification": "byte_identical_reproduction_from_recorded_source_png"
-      },
-      "promptContractVersion": "pre_v3_candidate_quarantined",
-      "rightsStatus": "publication_rights_review_pending",
-      "ownershipClaim": "none_until_review",
-      "identityStatus": "form_or_pathway_only_not_exact_variant",
-      "coverageStatus": "fallback",
-      "reviewStatus": "provisional",
-      "approvalEligibility": "blocked_permanent_rerender_under_v3_required",
-      "runtimeWiringEligibility": "blocked",
-      "deploymentEligibility": "blocked",
-      "illustrativeNotice": "Illustrative fallback candidate. Exact product packaging is not shown.",
-      "reviewRecord": {
-        "disposition": "unreviewed",
-        "reviewer": null,
-        "reviewedAt": null,
-        "evidenceRef": null
-      },
-      "forbiddenUses": [
-        "supplier_or_brand_photograph_claim",
-        "official_or_xenios_packaging_claim",
-        "exact_product_or_variant_claim",
-        "Product_Control_primary_image_approval",
-        "availability_or_purchase_evidence",
-        "cart_or_payment_authority"
-      ]
+        "observedLastWriteAt": "2026-09-30T19:54:27.073Z"
+      }
     },
     {
-      "sequence": 3,
       "assetId": "xenios-fallback-form-spray-v1",
-      "taxonomyKey": "spray",
-      "semanticClass": "form_fallback",
-      "useRestriction": "generic_spray_form_only_no_administration_or_exact_packaging_claim",
-      "filePath": "client/public/research/products/fallbacks/xenios-form-spray-fallback-v1-387cf64b2ba4.webp",
-      "publicPath": "/research/products/fallbacks/xenios-form-spray-fallback-v1-387cf64b2ba4.webp",
+      "disposition": "permanently_nonapprovable_pre_v3_evidence",
+      "reviewStatus": "rejected_requires_v3_rerender",
+      "runtimeWiringEligibility": "blocked",
+      "deploymentEligibility": "blocked",
+      "publicPath": null,
+      "removedPublicPath": "/research/products/fallbacks/xenios-form-spray-fallback-v1-387cf64b2ba4.webp",
+      "repositoryPath": "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-form-spray-fallback-v1-387cf64b2ba4.webp",
       "sha256": "387cf64b2ba4367f45587a4a6ebcf7fd64ba6222795a4bedf18c3c6aae19bad9",
+      "gitBlobOid": "2fa90b81a343d38eecd39c9fd4a165532c673a02",
       "byteSize": 10898,
       "width": 1024,
       "height": 1024,
-      "altDescription": "Representative unlabeled spray form; no exact product is depicted.",
-      "prompt": "Product-mockup asset for Xenios Research catalog fallback taxonomy. A single generic compact pump-spray bottle with a protective cap, matte frosted-white body and restrained brushed-silver hardware, centered upright on a warm off-white seamless studio background, soft diffused daylight, subtle grounding shadow, premium minimal clinical editorial photography aesthetic, restrained cool-gray and muted deep-green accents only in background lighting. Entire container completely unbranded and blank: no label, words, letters, numbers, logo, ingredient, dosage, claims, barcode, nostril, person, hand, spray plume, medical procedure, packaging, or purchase cues. This is explicitly a form-level placeholder illustration, not an exact product, supplier photograph, treatment claim, or proof of availability. Square 1:1 composition with generous safe margins for card crops, object about 58 percent of frame, crisp realistic materials, no props.",
-      "sourceType": "ai_generated_candidate",
-      "provenanceTag": "generated_catalog_fallback_candidate",
-      "generator": "OpenAI ImageGen through Codex imagegen",
-      "pixelGeneratedAt": "unknown",
-      "encodedAt": "2026-09-30T20:09:55.380Z",
+      "legacyTaxonomyKey": "spray",
+      "legacyPromptSha256": "b116b868dd4b09ad4cd619fac0a356aab54519b4abce656237e70593467eb53d",
       "sourceArtifact": {
         "status": "local_original_retained_outside_repository",
         "evidenceRef": "codex-generated-image/exec-d6dbf70a-0785-4fb2-90fe-18c4be61c6f8.png",
@@ -211,63 +92,25 @@
         "width": 1254,
         "height": 1254,
         "observedCreatedAt": "2026-09-30T19:54:52.646Z",
-        "observedLastWriteAt": "2026-09-30T19:54:52.648Z",
-        "timestampEvidence": "observed_local_filesystem_utc_not_cryptographic_generation_evidence"
-      },
-      "transformation": {
-        "inputFormat": "PNG",
-        "inputDimensions": {
-          "width": 1254,
-          "height": 1254
-        },
-        "operation": "ffmpeg 8.1.1 -vf scale=1024:1024:flags=lanczos -c:v libwebp -quality 82 -compression_level 6 -map_metadata -1",
-        "outputSha256": "387cf64b2ba4367f45587a4a6ebcf7fd64ba6222795a4bedf18c3c6aae19bad9",
-        "verification": "byte_identical_reproduction_from_recorded_source_png"
-      },
-      "promptContractVersion": "pre_v3_candidate_quarantined",
-      "rightsStatus": "publication_rights_review_pending",
-      "ownershipClaim": "none_until_review",
-      "identityStatus": "form_or_pathway_only_not_exact_variant",
-      "coverageStatus": "fallback",
-      "reviewStatus": "provisional",
-      "approvalEligibility": "blocked_permanent_rerender_under_v3_required",
-      "runtimeWiringEligibility": "blocked",
-      "deploymentEligibility": "blocked",
-      "illustrativeNotice": "Illustrative fallback candidate. Exact product packaging is not shown.",
-      "reviewRecord": {
-        "disposition": "unreviewed",
-        "reviewer": null,
-        "reviewedAt": null,
-        "evidenceRef": null
-      },
-      "forbiddenUses": [
-        "supplier_or_brand_photograph_claim",
-        "official_or_xenios_packaging_claim",
-        "exact_product_or_variant_claim",
-        "Product_Control_primary_image_approval",
-        "availability_or_purchase_evidence",
-        "cart_or_payment_authority"
-      ]
+        "observedLastWriteAt": "2026-09-30T19:54:52.648Z"
+      }
     },
     {
-      "sequence": 4,
       "assetId": "xenios-fallback-form-accessory-v1",
-      "taxonomyKey": "accessory",
-      "semanticClass": "form_fallback",
-      "useRestriction": "generic_non_medical_accessory_only_no_syringe_sample_or_device_claim",
-      "filePath": "client/public/research/products/fallbacks/xenios-form-accessory-fallback-v1-8bed268b0a33.webp",
-      "publicPath": "/research/products/fallbacks/xenios-form-accessory-fallback-v1-8bed268b0a33.webp",
+      "disposition": "permanently_nonapprovable_pre_v3_evidence",
+      "reviewStatus": "rejected_requires_v3_rerender",
+      "runtimeWiringEligibility": "blocked",
+      "deploymentEligibility": "blocked",
+      "publicPath": null,
+      "removedPublicPath": "/research/products/fallbacks/xenios-form-accessory-fallback-v1-8bed268b0a33.webp",
+      "repositoryPath": "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-form-accessory-fallback-v1-8bed268b0a33.webp",
       "sha256": "8bed268b0a3367418b36635e4022bc8c512f32518f150931721768be781f25f5",
+      "gitBlobOid": "e36436233f8453ccf0a11b58120fde5f32585eec",
       "byteSize": 31370,
       "width": 1024,
       "height": 1024,
-      "altDescription": "Representative unbranded research accessory form; no exact product is depicted.",
-      "prompt": "Product-mockup asset for Xenios Research catalog fallback taxonomy. A generic non-medical research accessory arrangement: one empty clear capped sample tube resting in a minimal brushed-silver tabletop rack beside a small neutral protective case, centered on a warm off-white seamless studio background, soft diffused daylight, subtle shadows, premium restrained clinical editorial photography aesthetic, cool-gray and muted deep-green background accents. Everything completely unbranded and blank: no label, words, letters, numbers, logo, ingredient, dosage, fluid, biological sample, syringe, needle, gloves, people, hands, medical procedure, shipping carrier, claims, barcode, or purchase cues. This is explicitly a category-level placeholder illustration, not an exact product, supplier photograph, clinical device, or proof of availability. Square 1:1 composition with generous responsive crop safe margins, objects together occupying about 58 percent of frame, realistic materials, no decorative props.",
-      "sourceType": "ai_generated_candidate",
-      "provenanceTag": "generated_catalog_fallback_candidate",
-      "generator": "OpenAI ImageGen through Codex imagegen",
-      "pixelGeneratedAt": "unknown",
-      "encodedAt": "2026-09-30T20:09:53.695Z",
+      "legacyTaxonomyKey": "accessory",
+      "legacyPromptSha256": "7dc23ada30d718f19bd0077c9eaa0b490d3275e5c080d36466718119ba6cfc2c",
       "sourceArtifact": {
         "status": "local_original_retained_outside_repository",
         "evidenceRef": "codex-generated-image/exec-c41b850e-9f08-4db9-98a7-61637ecc6927.png",
@@ -277,63 +120,25 @@
         "width": 1254,
         "height": 1254,
         "observedCreatedAt": "2026-09-30T19:55:25.284Z",
-        "observedLastWriteAt": "2026-09-30T19:55:25.285Z",
-        "timestampEvidence": "observed_local_filesystem_utc_not_cryptographic_generation_evidence"
-      },
-      "transformation": {
-        "inputFormat": "PNG",
-        "inputDimensions": {
-          "width": 1254,
-          "height": 1254
-        },
-        "operation": "ffmpeg 8.1.1 -vf scale=1024:1024:flags=lanczos -c:v libwebp -quality 82 -compression_level 6 -map_metadata -1",
-        "outputSha256": "8bed268b0a3367418b36635e4022bc8c512f32518f150931721768be781f25f5",
-        "verification": "byte_identical_reproduction_from_recorded_source_png"
-      },
-      "promptContractVersion": "pre_v3_candidate_quarantined",
-      "rightsStatus": "publication_rights_review_pending",
-      "ownershipClaim": "none_until_review",
-      "identityStatus": "form_or_pathway_only_not_exact_variant",
-      "coverageStatus": "fallback",
-      "reviewStatus": "provisional",
-      "approvalEligibility": "blocked_permanent_rerender_under_v3_required",
-      "runtimeWiringEligibility": "blocked",
-      "deploymentEligibility": "blocked",
-      "illustrativeNotice": "Illustrative fallback candidate. Exact product packaging is not shown.",
-      "reviewRecord": {
-        "disposition": "unreviewed",
-        "reviewer": null,
-        "reviewedAt": null,
-        "evidenceRef": null
-      },
-      "forbiddenUses": [
-        "supplier_or_brand_photograph_claim",
-        "official_or_xenios_packaging_claim",
-        "exact_product_or_variant_claim",
-        "Product_Control_primary_image_approval",
-        "availability_or_purchase_evidence",
-        "cart_or_payment_authority"
-      ]
+        "observedLastWriteAt": "2026-09-30T19:55:25.285Z"
+      }
     },
     {
-      "sequence": 5,
       "assetId": "xenios-fallback-form-topical-v1",
-      "taxonomyKey": "topical",
-      "semanticClass": "form_fallback",
-      "useRestriction": "generic_topical_container_only_no_treatment_or_exact_packaging_claim",
-      "filePath": "client/public/research/products/fallbacks/xenios-form-topical-fallback-v1-d4cafdac87e7.webp",
-      "publicPath": "/research/products/fallbacks/xenios-form-topical-fallback-v1-d4cafdac87e7.webp",
+      "disposition": "permanently_nonapprovable_pre_v3_evidence",
+      "reviewStatus": "rejected_requires_v3_rerender",
+      "runtimeWiringEligibility": "blocked",
+      "deploymentEligibility": "blocked",
+      "publicPath": null,
+      "removedPublicPath": "/research/products/fallbacks/xenios-form-topical-fallback-v1-d4cafdac87e7.webp",
+      "repositoryPath": "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-form-topical-fallback-v1-d4cafdac87e7.webp",
       "sha256": "d4cafdac87e772d1f3329ef2e207852db233381dedbccf78dfdae64f3d754a94",
+      "gitBlobOid": "95f22efff6ab86ef38b97c30f9ce45311b7f86b0",
       "byteSize": 10974,
       "width": 1024,
       "height": 1024,
-      "altDescription": "Representative unlabeled topical pump form; no exact product is depicted.",
-      "prompt": "Product-mockup asset for Xenios Research catalog fallback taxonomy. A single generic matte-white airless topical pump container with restrained brushed-silver collar, centered upright on a warm off-white seamless studio background, soft diffused daylight, subtle grounding shadow, premium minimal clinical editorial photography aesthetic, cool-gray and muted deep-green accents only in background lighting. Completely unbranded and blank: no label, words, letters, numbers, logo, ingredient, dosage, skin, person, hand, application gesture, medical claim, packaging, barcode, or purchase cues. This is explicitly a form-level placeholder illustration, not an exact product, supplier photograph, treatment claim, or proof of availability. Square 1:1 composition with generous responsive crop safe margins, object about 58 percent of frame, crisp realistic materials, no props.",
-      "sourceType": "ai_generated_candidate",
-      "provenanceTag": "generated_catalog_fallback_candidate",
-      "generator": "OpenAI ImageGen through Codex imagegen",
-      "pixelGeneratedAt": "unknown",
-      "encodedAt": "2026-09-30T20:09:55.769Z",
+      "legacyTaxonomyKey": "topical",
+      "legacyPromptSha256": "4cc7ebe0222fdf936ebb03f4827eb7a7ca96101c6949408bfd78d7ba423e228f",
       "sourceArtifact": {
         "status": "local_original_retained_outside_repository",
         "evidenceRef": "codex-generated-image/exec-4de080f7-21c3-446c-932c-79fa02beca71.png",
@@ -343,63 +148,25 @@
         "width": 1254,
         "height": 1254,
         "observedCreatedAt": "2026-09-30T19:57:30.755Z",
-        "observedLastWriteAt": "2026-09-30T19:57:30.756Z",
-        "timestampEvidence": "observed_local_filesystem_utc_not_cryptographic_generation_evidence"
-      },
-      "transformation": {
-        "inputFormat": "PNG",
-        "inputDimensions": {
-          "width": 1254,
-          "height": 1254
-        },
-        "operation": "ffmpeg 8.1.1 -vf scale=1024:1024:flags=lanczos -c:v libwebp -quality 82 -compression_level 6 -map_metadata -1",
-        "outputSha256": "d4cafdac87e772d1f3329ef2e207852db233381dedbccf78dfdae64f3d754a94",
-        "verification": "byte_identical_reproduction_from_recorded_source_png"
-      },
-      "promptContractVersion": "pre_v3_candidate_quarantined",
-      "rightsStatus": "publication_rights_review_pending",
-      "ownershipClaim": "none_until_review",
-      "identityStatus": "form_or_pathway_only_not_exact_variant",
-      "coverageStatus": "fallback",
-      "reviewStatus": "provisional",
-      "approvalEligibility": "blocked_permanent_rerender_under_v3_required",
-      "runtimeWiringEligibility": "blocked",
-      "deploymentEligibility": "blocked",
-      "illustrativeNotice": "Illustrative fallback candidate. Exact product packaging is not shown.",
-      "reviewRecord": {
-        "disposition": "unreviewed",
-        "reviewer": null,
-        "reviewedAt": null,
-        "evidenceRef": null
-      },
-      "forbiddenUses": [
-        "supplier_or_brand_photograph_claim",
-        "official_or_xenios_packaging_claim",
-        "exact_product_or_variant_claim",
-        "Product_Control_primary_image_approval",
-        "availability_or_purchase_evidence",
-        "cart_or_payment_authority"
-      ]
+        "observedLastWriteAt": "2026-09-30T19:57:30.756Z"
+      }
     },
     {
-      "sequence": 6,
       "assetId": "xenios-fallback-form-liquid-v1",
-      "taxonomyKey": "liquid",
-      "semanticClass": "form_fallback",
-      "useRestriction": "generic_liquid_container_only_no_administration_or_exact_packaging_claim",
-      "filePath": "client/public/research/products/fallbacks/xenios-form-liquid-fallback-v1-db47a5d0f44e.webp",
-      "publicPath": "/research/products/fallbacks/xenios-form-liquid-fallback-v1-db47a5d0f44e.webp",
+      "disposition": "permanently_nonapprovable_pre_v3_evidence",
+      "reviewStatus": "rejected_requires_v3_rerender",
+      "runtimeWiringEligibility": "blocked",
+      "deploymentEligibility": "blocked",
+      "publicPath": null,
+      "removedPublicPath": "/research/products/fallbacks/xenios-form-liquid-fallback-v1-db47a5d0f44e.webp",
+      "repositoryPath": "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-form-liquid-fallback-v1-db47a5d0f44e.webp",
       "sha256": "db47a5d0f44e2b938b76e0490ea8b0d1add6c1f6435fcb5371f035339c8ba93f",
+      "gitBlobOid": "b204f96c89d4798f392e1bfe5fa97c47794bcc13",
       "byteSize": 22644,
       "width": 1024,
       "height": 1024,
-      "altDescription": "Representative unlabeled liquid bottle form; no exact product is depicted.",
-      "prompt": "Product-mockup asset for Xenios Research catalog fallback taxonomy. A single generic sealed amber-glass liquid bottle with a plain matte-white child-resistant cap, centered upright on a warm off-white seamless studio background, soft diffused daylight, subtle grounding shadow, premium restrained clinical editorial photography aesthetic, cool-gray and muted deep-green background accents. Bottle completely unbranded with a blank surface: no label, words, letters, numbers, logo, ingredient, dosage, dropper, spoon, syringe, claims, barcode, people, hands, medical procedure, packaging, or purchase cues. This is explicitly a form-level placeholder illustration, not an exact product, supplier photograph, medicine claim, or proof of availability. Square 1:1 composition with generous safe margins, object about 58 percent of frame, realistic glass, no props.",
-      "sourceType": "ai_generated_candidate",
-      "provenanceTag": "generated_catalog_fallback_candidate",
-      "generator": "OpenAI ImageGen through Codex imagegen",
-      "pixelGeneratedAt": "unknown",
-      "encodedAt": "2026-09-30T20:09:54.513Z",
+      "legacyTaxonomyKey": "liquid",
+      "legacyPromptSha256": "b95f8340c90f1f1540bdd22d4dacf7212b705e98051d37315be21fb24436cd9f",
       "sourceArtifact": {
         "status": "local_original_retained_outside_repository",
         "evidenceRef": "codex-generated-image/exec-68f0785a-920d-4ab8-8bf0-5f0d49f2cb30.png",
@@ -409,63 +176,25 @@
         "width": 1254,
         "height": 1254,
         "observedCreatedAt": "2026-09-30T19:58:02.370Z",
-        "observedLastWriteAt": "2026-09-30T19:58:02.381Z",
-        "timestampEvidence": "observed_local_filesystem_utc_not_cryptographic_generation_evidence"
-      },
-      "transformation": {
-        "inputFormat": "PNG",
-        "inputDimensions": {
-          "width": 1254,
-          "height": 1254
-        },
-        "operation": "ffmpeg 8.1.1 -vf scale=1024:1024:flags=lanczos -c:v libwebp -quality 82 -compression_level 6 -map_metadata -1",
-        "outputSha256": "db47a5d0f44e2b938b76e0490ea8b0d1add6c1f6435fcb5371f035339c8ba93f",
-        "verification": "byte_identical_reproduction_from_recorded_source_png"
-      },
-      "promptContractVersion": "pre_v3_candidate_quarantined",
-      "rightsStatus": "publication_rights_review_pending",
-      "ownershipClaim": "none_until_review",
-      "identityStatus": "form_or_pathway_only_not_exact_variant",
-      "coverageStatus": "fallback",
-      "reviewStatus": "provisional",
-      "approvalEligibility": "blocked_permanent_rerender_under_v3_required",
-      "runtimeWiringEligibility": "blocked",
-      "deploymentEligibility": "blocked",
-      "illustrativeNotice": "Illustrative fallback candidate. Exact product packaging is not shown.",
-      "reviewRecord": {
-        "disposition": "unreviewed",
-        "reviewer": null,
-        "reviewedAt": null,
-        "evidenceRef": null
-      },
-      "forbiddenUses": [
-        "supplier_or_brand_photograph_claim",
-        "official_or_xenios_packaging_claim",
-        "exact_product_or_variant_claim",
-        "Product_Control_primary_image_approval",
-        "availability_or_purchase_evidence",
-        "cart_or_payment_authority"
-      ]
+        "observedLastWriteAt": "2026-09-30T19:58:02.381Z"
+      }
     },
     {
-      "sequence": 7,
       "assetId": "xenios-fallback-form-pending-v1",
-      "taxonomyKey": "pending",
-      "semanticClass": "non_product_state",
-      "useRestriction": "form_neutral_non_product_state_only",
-      "filePath": "client/public/research/products/fallbacks/xenios-form-pending-fallback-v1-a3fae1cdfaf0.webp",
-      "publicPath": "/research/products/fallbacks/xenios-form-pending-fallback-v1-a3fae1cdfaf0.webp",
+      "disposition": "permanently_nonapprovable_pre_v3_evidence",
+      "reviewStatus": "rejected_requires_v3_rerender",
+      "runtimeWiringEligibility": "blocked",
+      "deploymentEligibility": "blocked",
+      "publicPath": null,
+      "removedPublicPath": "/research/products/fallbacks/xenios-form-pending-fallback-v1-a3fae1cdfaf0.webp",
+      "repositoryPath": "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-form-pending-fallback-v1-a3fae1cdfaf0.webp",
       "sha256": "a3fae1cdfaf0e1bfb9ad7229c256563c6791410189566bd0cec0f0f3f44d6586",
+      "gitBlobOid": "c72afc78f2c6c49c57ffb6db60eccda06c40bb86",
       "byteSize": 22824,
       "width": 1024,
       "height": 1024,
-      "altDescription": "Empty studio pedestal indicating that visual identification is pending.",
-      "prompt": "Non-product fallback asset for Xenios Research catalog entries whose physical form is not yet stated. An empty warm off-white seamless studio set with one low matte stone pedestal and a restrained translucent deep-green arc of light behind it, premium minimal clinical editorial aesthetic, soft diffused daylight, subtle shadows, calm spacious composition. Absolutely no product, container, parcel, object for sale, label, words, letters, numbers, logo, ingredient, dosage, claim, people, hands, medical device, or purchase cues. This image must communicate that visual identification is pending without pretending to depict the item. Square 1:1 composition with generous responsive crop safe margins.",
-      "sourceType": "ai_generated_candidate",
-      "provenanceTag": "generated_catalog_fallback_candidate",
-      "generator": "OpenAI ImageGen through Codex imagegen",
-      "pixelGeneratedAt": "unknown",
-      "encodedAt": "2026-09-30T20:09:54.914Z",
+      "legacyTaxonomyKey": "pending",
+      "legacyPromptSha256": "3d8b230fb3effd4b51b4b45fe32461fc0f9ea359ef6d1e4812a3834052de4ae0",
       "sourceArtifact": {
         "status": "local_original_retained_outside_repository",
         "evidenceRef": "codex-generated-image/exec-c7484889-2b7d-4c8b-8efb-3e98d8a04aca.png",
@@ -475,63 +204,25 @@
         "width": 1254,
         "height": 1254,
         "observedCreatedAt": "2026-09-30T19:58:28.429Z",
-        "observedLastWriteAt": "2026-09-30T19:58:28.429Z",
-        "timestampEvidence": "observed_local_filesystem_utc_not_cryptographic_generation_evidence"
-      },
-      "transformation": {
-        "inputFormat": "PNG",
-        "inputDimensions": {
-          "width": 1254,
-          "height": 1254
-        },
-        "operation": "ffmpeg 8.1.1 -vf scale=1024:1024:flags=lanczos -c:v libwebp -quality 82 -compression_level 6 -map_metadata -1",
-        "outputSha256": "a3fae1cdfaf0e1bfb9ad7229c256563c6791410189566bd0cec0f0f3f44d6586",
-        "verification": "byte_identical_reproduction_from_recorded_source_png"
-      },
-      "promptContractVersion": "pre_v3_candidate_quarantined",
-      "rightsStatus": "publication_rights_review_pending",
-      "ownershipClaim": "none_until_review",
-      "identityStatus": "form_or_pathway_only_not_exact_variant",
-      "coverageStatus": "fallback",
-      "reviewStatus": "provisional",
-      "approvalEligibility": "blocked_permanent_rerender_under_v3_required",
-      "runtimeWiringEligibility": "blocked",
-      "deploymentEligibility": "blocked",
-      "illustrativeNotice": "Illustrative fallback candidate. Exact product packaging is not shown.",
-      "reviewRecord": {
-        "disposition": "unreviewed",
-        "reviewer": null,
-        "reviewedAt": null,
-        "evidenceRef": null
-      },
-      "forbiddenUses": [
-        "supplier_or_brand_photograph_claim",
-        "official_or_xenios_packaging_claim",
-        "exact_product_or_variant_claim",
-        "Product_Control_primary_image_approval",
-        "availability_or_purchase_evidence",
-        "cart_or_payment_authority"
-      ]
+        "observedLastWriteAt": "2026-09-30T19:58:28.429Z"
+      }
     },
     {
-      "sequence": 8,
       "assetId": "xenios-fallback-service-shipping-v1",
-      "taxonomyKey": "shipping_service",
-      "semanticClass": "non_merchandise_service",
-      "useRestriction": "shipping_service_symbol_only_not_merchandise_or_carrier_claim",
-      "filePath": "client/public/research/products/fallbacks/xenios-service-shipping-fallback-v1-a2885fe2f7ff.webp",
-      "publicPath": "/research/products/fallbacks/xenios-service-shipping-fallback-v1-a2885fe2f7ff.webp",
+      "disposition": "permanently_nonapprovable_pre_v3_evidence",
+      "reviewStatus": "rejected_requires_v3_rerender",
+      "runtimeWiringEligibility": "blocked",
+      "deploymentEligibility": "blocked",
+      "publicPath": null,
+      "removedPublicPath": "/research/products/fallbacks/xenios-service-shipping-fallback-v1-a2885fe2f7ff.webp",
+      "repositoryPath": "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-service-shipping-fallback-v1-a2885fe2f7ff.webp",
       "sha256": "a2885fe2f7ffde1d6030c758dbd7ac3c19e21cdb9824ba52e0b8987181aacf2d",
+      "gitBlobOid": "fc946c75273c9afd493a43f7ede3b5f23ec7c339",
       "byteSize": 24152,
       "width": 1024,
       "height": 1024,
-      "altDescription": "Abstract shipping service illustration; no merchandise is depicted.",
-      "prompt": "Non-merchandise service fallback asset for a generic shipping-and-fulfillment catalog row. A premium restrained studio still life showing one abstract matte off-white route tile with a subtle embossed path line and two small neutral waypoint dots, beside a closed unbranded kraft transit box shown only as a logistics symbol, on a warm off-white seamless background with soft diffused daylight, cool-gray and muted deep-green accents, subtle shadows. No carrier branding, FedEx colors or logo, product label, words, letters, numbers, barcode, price, shopping bag, add-to-cart cue, merchandise contents, delivery person, vehicle, claims, or medical objects. This is explicitly a service illustration, not merchandise, not a product photograph, and not proof of availability. Square 1:1 composition with generous crop safe margins.",
-      "sourceType": "ai_generated_candidate",
-      "provenanceTag": "generated_catalog_fallback_candidate",
-      "generator": "OpenAI ImageGen through Codex imagegen",
-      "pixelGeneratedAt": "unknown",
-      "encodedAt": "2026-09-30T20:09:57.755Z",
+      "legacyTaxonomyKey": "shipping_service",
+      "legacyPromptSha256": "a5e63a8b52a92664cd9104287cb55a6315150b274010c03bbeb549442c9cbdbd",
       "sourceArtifact": {
         "status": "local_original_retained_outside_repository",
         "evidenceRef": "codex-generated-image/exec-5aca9786-5b93-400e-8167-34b549123042.png",
@@ -541,63 +232,25 @@
         "width": 1254,
         "height": 1254,
         "observedCreatedAt": "2026-09-30T19:58:54.168Z",
-        "observedLastWriteAt": "2026-09-30T19:58:54.178Z",
-        "timestampEvidence": "observed_local_filesystem_utc_not_cryptographic_generation_evidence"
-      },
-      "transformation": {
-        "inputFormat": "PNG",
-        "inputDimensions": {
-          "width": 1254,
-          "height": 1254
-        },
-        "operation": "ffmpeg 8.1.1 -vf scale=1024:1024:flags=lanczos -c:v libwebp -quality 82 -compression_level 6 -map_metadata -1",
-        "outputSha256": "a2885fe2f7ffde1d6030c758dbd7ac3c19e21cdb9824ba52e0b8987181aacf2d",
-        "verification": "byte_identical_reproduction_from_recorded_source_png"
-      },
-      "promptContractVersion": "pre_v3_candidate_quarantined",
-      "rightsStatus": "publication_rights_review_pending",
-      "ownershipClaim": "none_until_review",
-      "identityStatus": "form_or_pathway_only_not_exact_variant",
-      "coverageStatus": "fallback",
-      "reviewStatus": "provisional",
-      "approvalEligibility": "blocked_permanent_rerender_under_v3_required",
-      "runtimeWiringEligibility": "blocked",
-      "deploymentEligibility": "blocked",
-      "illustrativeNotice": "Illustrative fallback candidate. Exact product packaging is not shown.",
-      "reviewRecord": {
-        "disposition": "unreviewed",
-        "reviewer": null,
-        "reviewedAt": null,
-        "evidenceRef": null
-      },
-      "forbiddenUses": [
-        "supplier_or_brand_photograph_claim",
-        "official_or_xenios_packaging_claim",
-        "exact_product_or_variant_claim",
-        "Product_Control_primary_image_approval",
-        "availability_or_purchase_evidence",
-        "cart_or_payment_authority"
-      ]
+        "observedLastWriteAt": "2026-09-30T19:58:54.178Z"
+      }
     },
     {
-      "sequence": 9,
       "assetId": "xenios-fallback-journey-care-v1",
-      "taxonomyKey": "care",
-      "semanticClass": "non_product_pathway",
-      "useRestriction": "care_pathway_scene_only_no_product_treatment_or_outcome_claim",
-      "filePath": "client/public/research/products/fallbacks/xenios-journey-care-fallback-v1-58884347b983.webp",
-      "publicPath": "/research/products/fallbacks/xenios-journey-care-fallback-v1-58884347b983.webp",
+      "disposition": "permanently_nonapprovable_pre_v3_evidence",
+      "reviewStatus": "rejected_requires_v3_rerender",
+      "runtimeWiringEligibility": "blocked",
+      "deploymentEligibility": "blocked",
+      "publicPath": null,
+      "removedPublicPath": "/research/products/fallbacks/xenios-journey-care-fallback-v1-58884347b983.webp",
+      "repositoryPath": "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-journey-care-fallback-v1-58884347b983.webp",
       "sha256": "58884347b983a381671771504e6b322d0893b345f4c911ff43ca36b1cfb22030",
+      "gitBlobOid": "03042ce66c1835a2190345e203ad7a81b287ea31",
       "byteSize": 114964,
       "width": 1024,
       "height": 1024,
-      "altDescription": "Empty consultation setting representing a guided Care pathway; no product is depicted.",
-      "prompt": "Non-product pathway fallback asset for Xenios Research Care catalog entries. A quiet premium consultation setting with two empty curved chairs facing a small round table, a single closed neutral folder on the table, warm off-white seamless architectural background, soft diffused daylight, subtle shadows, restrained cool-gray and muted deep-green accents, calm clinical editorial photography aesthetic. No people, faces, clinicians, product containers, medicine, medical equipment, prescription pad, stethoscope, laptop screen, words, letters, numbers, logo, claims, price, shopping bag, parcel, or purchase cues. This image must communicate a guided Care pathway, not merchandise, not treatment outcome, not a direct-order item, and not proof of availability. Square 1:1 composition with generous responsive crop safe margins.",
-      "sourceType": "ai_generated_candidate",
-      "provenanceTag": "generated_catalog_fallback_candidate",
-      "generator": "OpenAI ImageGen through Codex imagegen",
-      "pixelGeneratedAt": "unknown",
-      "encodedAt": "2026-09-30T20:09:56.934Z",
+      "legacyTaxonomyKey": "care",
+      "legacyPromptSha256": "e828a2c05f797509f411dc8aff3e572fbbc371fd493891b7bcf07232121c2077",
       "sourceArtifact": {
         "status": "local_original_retained_outside_repository",
         "evidenceRef": "codex-generated-image/exec-c99a5bcf-aa55-4f88-9d62-3cfb2bb8d939.png",
@@ -607,63 +260,25 @@
         "width": 1254,
         "height": 1254,
         "observedCreatedAt": "2026-09-30T20:00:29.652Z",
-        "observedLastWriteAt": "2026-09-30T20:00:29.653Z",
-        "timestampEvidence": "observed_local_filesystem_utc_not_cryptographic_generation_evidence"
-      },
-      "transformation": {
-        "inputFormat": "PNG",
-        "inputDimensions": {
-          "width": 1254,
-          "height": 1254
-        },
-        "operation": "ffmpeg 8.1.1 -vf scale=1024:1024:flags=lanczos -c:v libwebp -quality 82 -compression_level 6 -map_metadata -1",
-        "outputSha256": "58884347b983a381671771504e6b322d0893b345f4c911ff43ca36b1cfb22030",
-        "verification": "byte_identical_reproduction_from_recorded_source_png"
-      },
-      "promptContractVersion": "pre_v3_candidate_quarantined",
-      "rightsStatus": "publication_rights_review_pending",
-      "ownershipClaim": "none_until_review",
-      "identityStatus": "form_or_pathway_only_not_exact_variant",
-      "coverageStatus": "fallback",
-      "reviewStatus": "provisional",
-      "approvalEligibility": "blocked_permanent_rerender_under_v3_required",
-      "runtimeWiringEligibility": "blocked",
-      "deploymentEligibility": "blocked",
-      "illustrativeNotice": "Illustrative fallback candidate. Exact product packaging is not shown.",
-      "reviewRecord": {
-        "disposition": "unreviewed",
-        "reviewer": null,
-        "reviewedAt": null,
-        "evidenceRef": null
-      },
-      "forbiddenUses": [
-        "supplier_or_brand_photograph_claim",
-        "official_or_xenios_packaging_claim",
-        "exact_product_or_variant_claim",
-        "Product_Control_primary_image_approval",
-        "availability_or_purchase_evidence",
-        "cart_or_payment_authority"
-      ]
+        "observedLastWriteAt": "2026-09-30T20:00:29.653Z"
+      }
     },
     {
-      "sequence": 10,
       "assetId": "xenios-fallback-journey-request-v1",
-      "taxonomyKey": "request",
-      "semanticClass": "non_product_pathway",
-      "useRestriction": "review_pathway_scene_only_no_approval_quote_or_purchase_claim",
-      "filePath": "client/public/research/products/fallbacks/xenios-journey-request-fallback-v1-5ea6de457764.webp",
-      "publicPath": "/research/products/fallbacks/xenios-journey-request-fallback-v1-5ea6de457764.webp",
+      "disposition": "permanently_nonapprovable_pre_v3_evidence",
+      "reviewStatus": "rejected_requires_v3_rerender",
+      "runtimeWiringEligibility": "blocked",
+      "deploymentEligibility": "blocked",
+      "publicPath": null,
+      "removedPublicPath": "/research/products/fallbacks/xenios-journey-request-fallback-v1-5ea6de457764.webp",
+      "repositoryPath": "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-journey-request-fallback-v1-5ea6de457764.webp",
       "sha256": "5ea6de4577648a5536e951c8ac69e59140f06bc58404e899d5ce70bb862eaf43",
+      "gitBlobOid": "b3edc7ea2d512569a9177e5585a8c88ef7a962f3",
       "byteSize": 18982,
       "width": 1024,
       "height": 1024,
-      "altDescription": "Abstract review checkpoint representing request access or quote follow-up; no product is depicted.",
-      "prompt": "Non-product pathway fallback asset for Xenios Research request-access or quote-required catalog entries. A premium restrained studio still life with a blank matte off-white document folio, one small brushed-silver review token, and a muted deep-green translucent checkpoint arch, on a warm off-white seamless background with soft diffused daylight and subtle shadows. No product container, merchandise, parcel, person, hand, pen, signature, words, letters, numbers, logo, currency, price, shopping cart, barcode, medical object, claim, or approval mark. This image must communicate review and follow-up, not direct purchase, not an accepted quote, not availability, and not an exact product. Square 1:1 composition with generous responsive crop safe margins.",
-      "sourceType": "ai_generated_candidate",
-      "provenanceTag": "generated_catalog_fallback_candidate",
-      "generator": "OpenAI ImageGen through Codex imagegen",
-      "pixelGeneratedAt": "unknown",
-      "encodedAt": "2026-09-30T20:09:57.320Z",
+      "legacyTaxonomyKey": "request",
+      "legacyPromptSha256": "bdb9bd4c0af04be8ac1ef9a56cfdefff0c27b25b0226b2bf7743419ff67cdf37",
       "sourceArtifact": {
         "status": "local_original_retained_outside_repository",
         "evidenceRef": "codex-generated-image/exec-2d2714f0-6165-461f-812f-f399ea184eca.png",
@@ -673,43 +288,8 @@
         "width": 1254,
         "height": 1254,
         "observedCreatedAt": "2026-09-30T20:01:02.892Z",
-        "observedLastWriteAt": "2026-09-30T20:01:02.892Z",
-        "timestampEvidence": "observed_local_filesystem_utc_not_cryptographic_generation_evidence"
-      },
-      "transformation": {
-        "inputFormat": "PNG",
-        "inputDimensions": {
-          "width": 1254,
-          "height": 1254
-        },
-        "operation": "ffmpeg 8.1.1 -vf scale=1024:1024:flags=lanczos -c:v libwebp -quality 82 -compression_level 6 -map_metadata -1",
-        "outputSha256": "5ea6de4577648a5536e951c8ac69e59140f06bc58404e899d5ce70bb862eaf43",
-        "verification": "byte_identical_reproduction_from_recorded_source_png"
-      },
-      "promptContractVersion": "pre_v3_candidate_quarantined",
-      "rightsStatus": "publication_rights_review_pending",
-      "ownershipClaim": "none_until_review",
-      "identityStatus": "form_or_pathway_only_not_exact_variant",
-      "coverageStatus": "fallback",
-      "reviewStatus": "provisional",
-      "approvalEligibility": "blocked_permanent_rerender_under_v3_required",
-      "runtimeWiringEligibility": "blocked",
-      "deploymentEligibility": "blocked",
-      "illustrativeNotice": "Illustrative fallback candidate. Exact product packaging is not shown.",
-      "reviewRecord": {
-        "disposition": "unreviewed",
-        "reviewer": null,
-        "reviewedAt": null,
-        "evidenceRef": null
-      },
-      "forbiddenUses": [
-        "supplier_or_brand_photograph_claim",
-        "official_or_xenios_packaging_claim",
-        "exact_product_or_variant_claim",
-        "Product_Control_primary_image_approval",
-        "availability_or_purchase_evidence",
-        "cart_or_payment_authority"
-      ]
+        "observedLastWriteAt": "2026-09-30T20:01:02.892Z"
+      }
     }
   ]
 }

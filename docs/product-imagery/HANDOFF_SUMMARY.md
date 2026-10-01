@@ -1,5 +1,7 @@
 # Product imagery v3 source-lane handoff
 
+> Historical pre-v3 handoff for SHA `640513af`. Superseded by the corrected v3 manifests and `COVERAGE_SUMMARY.md`; its 420/419 queue and public-byte statements are not current completion claims.
+
 Branch: `codex/xenios-product-imagery-20260930`
 
 Pushed implementation SHA: `640513af54457a1362744626ce936bfe8f4779c0`

@@ -1,7 +1,7 @@
-export const ARTIFACT_GENERATED_AT = "2026-09-30T20:30:00.000Z";
-export const CONTRACT_SCHEMA_VERSION = 3;
-export const SOURCE_BASE_COMMIT = "7600943f9ec7573f0a5cbfe7a7687ba851276a30";
-export const SOURCE_BASE_TREE = "2fd41b918c8d77c5593319a6d921477f789b737e";
+export const ARTIFACT_GENERATED_AT = "2026-10-01T02:45:00.000Z";
+export const CONTRACT_SCHEMA_VERSION = 4;
+export const SOURCE_BASE_COMMIT = "49234f8a2dd804845245a18056a73904b320158a";
+export const SOURCE_BASE_TREE = "36e1db47986916c3a96c82324ba43fbcec6e7861";
 export const ASSET_BYTE_BUDGET = 120 * 1024;
 export const ASSET_TOTAL_BYTE_BUDGET = 400 * 1024;
 
@@ -17,6 +17,12 @@ export const CATALOG_RECONCILIATION_SOURCE_PATH =
   "config/research/master-catalog-reconciliation-20260821.json";
 export const MASTER_CATALOG_SUMMARY_SOURCE_PATH =
   "docs/research-launch/MASTER_CATALOG_2026-08-16_SUMMARY.json";
+export const REVIEWED_CATALOG_SOURCE_PATH =
+  "docs/research-launch/XENIOS_RETAIL_ONLY_MASTER_CATALOG_426_VARIANTS.csv";
+export const FOUNDER_V3_SPEC_PATH =
+  "docs/product-imagery/specs/Xenios_Product_Imagery_Parallel_Codex_Mega_Prompt_v3.md";
+export const FOUNDER_V3_SPEC_SHA256 =
+  "e37a13d7b99ac1f2416e00e29a92df3e7677ce7c92bce9dbf019de83d08b8b5c";
 
 export const FALLBACK_ASSET_MANIFEST_PATH =
   "docs/product-imagery/manifests/fallback-assets.json";
@@ -24,6 +30,18 @@ export const COVERAGE_LEDGER_PATH =
   "docs/product-imagery/manifests/product-image-coverage.json";
 export const RENDER_QUEUE_PATH =
   "docs/product-imagery/manifests/render-queue.json";
+export const RENDERER_PACKET_PATH =
+  "docs/product-imagery/manifests/renderer-packet-v3.json";
+export const BATCH0_PROVENANCE_PATH =
+  "docs/product-imagery/manifests/batch-000-provenance.json";
+export const STATE_AUTHORITY_AUDIT_PATH =
+  "docs/product-imagery/manifests/state-authority-audit.json";
+export const BATCH0_ASSET_MANIFEST_PATH =
+  "docs/product-imagery/manifests/batch-000-assets.json";
+export const BATCH0_EVIDENCE_DIRECTORY =
+  "docs/product-imagery/evidence/batch0-render-candidates";
+export const PRE_V3_QUARANTINE_DIRECTORY =
+  "docs/product-imagery/evidence/pre-v3-nonapprovable";
 export const IDENTITY_CROSSWALK_PATH =
   "docs/product-imagery/manifests/product-image-identity-crosswalk.json";
 export const COVERAGE_SUMMARY_PATH =
@@ -32,7 +50,9 @@ export const COVERAGE_SUMMARY_PATH =
 export const V3_ACCEPTANCE = Object.freeze({
   commit: "f4f899a7",
   path: "docs/review/xenios-health-launch-review-20260930/13_IMAGE_LAYER_ACCEPTANCE.md",
-  founderPromptStatus: "missing_founder_attachment_required",
+  founderPromptStatus: "attached_read_and_checksummed",
+  founderSpecPath: FOUNDER_V3_SPEC_PATH,
+  founderSpecSha256: FOUNDER_V3_SPEC_SHA256,
 });
 
 export const FALLBACK_ASSET_PROVENANCE = Object.freeze({
@@ -198,36 +218,6 @@ export const FALLBACK_ASSET_PROVENANCE = Object.freeze({
   },
 });
 
-export const COVERAGE_STATUSES = [
-  "final",
-  "provisional",
-  "fallback",
-  "pending",
-];
-
-export const JOURNEY_CLASSES = [
-  "catalog_visible",
-  "request_access",
-  "quote_required",
-  "care",
-  "held",
-  "coming",
-  "shipping_service",
-  "unavailable",
-];
-
-export const CURRENT_DEMAND_TITLES = [
-  "BPC-157 + TB-500",
-  "AOD-9604 + MOTS-C + Tesamorelin + Ipamorelin",
-  "Melanotan-2",
-  "Retatrutide",
-  "Thymosin Alpha-1 + KPV + LL-37",
-  "CJC-1295 + Ipamorelin",
-  "IGF-1 LR3",
-  "DSIP",
-  "NAD+",
-];
-
 export const FALLBACK_ASSETS = [
   {
     assetId: "xenios-fallback-form-vial-v1",
@@ -236,9 +226,8 @@ export const FALLBACK_ASSETS = [
     useRestriction:
       "generic_liquid_vial_only_not_for_lyophilized_or_exact_product_use",
     filePath:
-      "client/public/research/products/fallbacks/xenios-form-vial-fallback-v1-16e20b949b28.webp",
-    publicPath:
-      "/research/products/fallbacks/xenios-form-vial-fallback-v1-16e20b949b28.webp",
+      "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-form-vial-fallback-v1-16e20b949b28.webp",
+    publicPath: null,
     sha256: "16e20b949b2863d8f7f27bb7de5b0cf799d18cb8f53a2df0a4f32981b862ba30",
     byteSize: 25374,
     width: 1024,
@@ -254,9 +243,8 @@ export const FALLBACK_ASSETS = [
     useRestriction:
       "generic_container_only_no_official_or_third_party_packaging_claim",
     filePath:
-      "client/public/research/products/fallbacks/xenios-form-bottle-fallback-v1-45d1a44583e9.webp",
-    publicPath:
-      "/research/products/fallbacks/xenios-form-bottle-fallback-v1-45d1a44583e9.webp",
+      "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-form-bottle-fallback-v1-45d1a44583e9.webp",
+    publicPath: null,
     sha256: "45d1a44583e932b5286ab307c67125ad37acbf249334d89aff9acfe3f42fb2d6",
     byteSize: 10154,
     width: 1024,
@@ -272,9 +260,8 @@ export const FALLBACK_ASSETS = [
     useRestriction:
       "generic_spray_form_only_no_administration_or_exact_packaging_claim",
     filePath:
-      "client/public/research/products/fallbacks/xenios-form-spray-fallback-v1-387cf64b2ba4.webp",
-    publicPath:
-      "/research/products/fallbacks/xenios-form-spray-fallback-v1-387cf64b2ba4.webp",
+      "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-form-spray-fallback-v1-387cf64b2ba4.webp",
+    publicPath: null,
     sha256: "387cf64b2ba4367f45587a4a6ebcf7fd64ba6222795a4bedf18c3c6aae19bad9",
     byteSize: 10898,
     width: 1024,
@@ -290,9 +277,8 @@ export const FALLBACK_ASSETS = [
     useRestriction:
       "generic_non_medical_accessory_only_no_syringe_sample_or_device_claim",
     filePath:
-      "client/public/research/products/fallbacks/xenios-form-accessory-fallback-v1-8bed268b0a33.webp",
-    publicPath:
-      "/research/products/fallbacks/xenios-form-accessory-fallback-v1-8bed268b0a33.webp",
+      "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-form-accessory-fallback-v1-8bed268b0a33.webp",
+    publicPath: null,
     sha256: "8bed268b0a3367418b36635e4022bc8c512f32518f150931721768be781f25f5",
     byteSize: 31370,
     width: 1024,
@@ -308,9 +294,8 @@ export const FALLBACK_ASSETS = [
     useRestriction:
       "generic_topical_container_only_no_treatment_or_exact_packaging_claim",
     filePath:
-      "client/public/research/products/fallbacks/xenios-form-topical-fallback-v1-d4cafdac87e7.webp",
-    publicPath:
-      "/research/products/fallbacks/xenios-form-topical-fallback-v1-d4cafdac87e7.webp",
+      "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-form-topical-fallback-v1-d4cafdac87e7.webp",
+    publicPath: null,
     sha256: "d4cafdac87e772d1f3329ef2e207852db233381dedbccf78dfdae64f3d754a94",
     byteSize: 10974,
     width: 1024,
@@ -326,9 +311,8 @@ export const FALLBACK_ASSETS = [
     useRestriction:
       "generic_liquid_container_only_no_administration_or_exact_packaging_claim",
     filePath:
-      "client/public/research/products/fallbacks/xenios-form-liquid-fallback-v1-db47a5d0f44e.webp",
-    publicPath:
-      "/research/products/fallbacks/xenios-form-liquid-fallback-v1-db47a5d0f44e.webp",
+      "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-form-liquid-fallback-v1-db47a5d0f44e.webp",
+    publicPath: null,
     sha256: "db47a5d0f44e2b938b76e0490ea8b0d1add6c1f6435fcb5371f035339c8ba93f",
     byteSize: 22644,
     width: 1024,
@@ -343,9 +327,8 @@ export const FALLBACK_ASSETS = [
     semanticClass: "non_product_state",
     useRestriction: "form_neutral_non_product_state_only",
     filePath:
-      "client/public/research/products/fallbacks/xenios-form-pending-fallback-v1-a3fae1cdfaf0.webp",
-    publicPath:
-      "/research/products/fallbacks/xenios-form-pending-fallback-v1-a3fae1cdfaf0.webp",
+      "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-form-pending-fallback-v1-a3fae1cdfaf0.webp",
+    publicPath: null,
     sha256: "a3fae1cdfaf0e1bfb9ad7229c256563c6791410189566bd0cec0f0f3f44d6586",
     byteSize: 22824,
     width: 1024,
@@ -360,9 +343,8 @@ export const FALLBACK_ASSETS = [
     semanticClass: "non_merchandise_service",
     useRestriction: "shipping_service_symbol_only_not_merchandise_or_carrier_claim",
     filePath:
-      "client/public/research/products/fallbacks/xenios-service-shipping-fallback-v1-a2885fe2f7ff.webp",
-    publicPath:
-      "/research/products/fallbacks/xenios-service-shipping-fallback-v1-a2885fe2f7ff.webp",
+      "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-service-shipping-fallback-v1-a2885fe2f7ff.webp",
+    publicPath: null,
     sha256: "a2885fe2f7ffde1d6030c758dbd7ac3c19e21cdb9824ba52e0b8987181aacf2d",
     byteSize: 24152,
     width: 1024,
@@ -377,9 +359,8 @@ export const FALLBACK_ASSETS = [
     semanticClass: "non_product_pathway",
     useRestriction: "care_pathway_scene_only_no_product_treatment_or_outcome_claim",
     filePath:
-      "client/public/research/products/fallbacks/xenios-journey-care-fallback-v1-58884347b983.webp",
-    publicPath:
-      "/research/products/fallbacks/xenios-journey-care-fallback-v1-58884347b983.webp",
+      "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-journey-care-fallback-v1-58884347b983.webp",
+    publicPath: null,
     sha256: "58884347b983a381671771504e6b322d0893b345f4c911ff43ca36b1cfb22030",
     byteSize: 114964,
     width: 1024,
@@ -395,9 +376,8 @@ export const FALLBACK_ASSETS = [
     useRestriction:
       "review_pathway_scene_only_no_approval_quote_or_purchase_claim",
     filePath:
-      "client/public/research/products/fallbacks/xenios-journey-request-fallback-v1-5ea6de457764.webp",
-    publicPath:
-      "/research/products/fallbacks/xenios-journey-request-fallback-v1-5ea6de457764.webp",
+      "docs/product-imagery/evidence/pre-v3-nonapprovable/xenios-journey-request-fallback-v1-5ea6de457764.webp",
+    publicPath: null,
     sha256: "5ea6de4577648a5536e951c8ac69e59140f06bc58404e899d5ce70bb862eaf43",
     byteSize: 18982,
     width: 1024,
@@ -408,24 +388,25 @@ export const FALLBACK_ASSETS = [
   },
 ];
 
-export const FORM_TO_TAXONOMY = new Map([
-  ["Lyophilized Vial", "pending"],
-  ["Compounded Vial / Liquid", "vial"],
-  ["Injectable Solution", "pending"],
-  ["Capsule", "bottle"],
-  ["Capsule / Bottle", "bottle"],
-  ["Supplement Unit", "pending"],
-  ["Tablet", "pending"],
-  ["Troche", "pending"],
-  ["ODT / Tablet", "pending"],
-  ["Nasal Spray", "spray"],
-  ["Topical Cream", "topical"],
-  ["Topical Gel / Serum", "topical"],
-  ["Topical Serum", "topical"],
-  ["Solution", "pending"],
-  ["Liquid", "pending"],
-  ["Included Supply", "pending"],
-  ["Listed Unit", "pending"],
+// Presentation taxonomy only. Commerce state is deliberately absent.
+export const DOSAGE_FORM_TO_IMAGE_CLASS = new Map([
+  ["Lyophilized Vial", "peptide_lyophilized_vial"],
+  ["Compounded Vial / Liquid", "liquid_vial"],
+  ["Injectable Solution", "injectable_solution_vial"],
+  ["Capsule", "capsule_bottle"],
+  ["Capsule / Bottle", "capsule_bottle"],
+  ["Supplement Unit", "supplement_retail_unit_neutral"],
+  ["Tablet", "tablet_bottle"],
+  ["Troche", "troche_container"],
+  ["ODT / Tablet", "odt_container"],
+  ["Nasal Spray", "nasal_spray"],
+  ["Topical Cream", "cream_tube_or_pump"],
+  ["Topical Gel / Serum", "gel_tube_or_pump"],
+  ["Topical Serum", "serum_dropper_or_pump"],
+  ["Solution", "solution_container_neutral"],
+  ["Liquid", "oral_liquid_neutral"],
+  ["Included Supply", "syringe_supply_pack_neutral"],
+  ["Listed Unit", "packaging_unverified"],
   ["Shipping Service", "shipping_service"],
-  ["Form not stated", "pending"],
+  ["Form not stated", "neutral_product_identity"],
 ]);

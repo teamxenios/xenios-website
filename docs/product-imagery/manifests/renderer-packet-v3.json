@@ -1,0 +1,1452 @@
+{
+  "schemaVersion": 4,
+  "generatedAt": "2026-10-01T02:45:00.000Z",
+  "kind": "v3_batch_000_request_only_renderer_packet",
+  "founderSpec": {
+    "path": "docs/product-imagery/specs/Xenios_Product_Imagery_Parallel_Codex_Mega_Prompt_v3.md",
+    "sha256": "e37a13d7b99ac1f2416e00e29a92df3e7677ce7c92bce9dbf019de83d08b8b5c",
+    "sha256Semantics": "exact_working_tree_bytes",
+    "gitBlobOid": "8aec7a37fd6b81d0b4d6e68146253145d40368e3",
+    "gitBlobOidSemantics": "lf_normalized_repository_text_blob",
+    "byteSize": 24475
+  },
+  "policy": {
+    "rendererPayloadContainsCanonicalIdentity": false,
+    "visibleText": "none",
+    "labels": "none",
+    "trademarks": "none",
+    "claims": "none",
+    "use": "non_public_review_evidence_only"
+  },
+  "counts": {
+    "rendererJobs": 25,
+    "namedProductPrompts": 0
+  },
+  "rendererJobs": [
+    {
+      "jobId": "batch0-01-peptide_lyophilized_vial",
+      "batch": 0,
+      "imageClass": "peptide_lyophilized_vial",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-01-peptide_lyophilized_vial-9ff66717f5a3.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-01-peptide_lyophilized_vial-9ff66717f5a3.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "peptide_lyophilized_vial",
+        "subject": "A single sealed clear-glass vial containing a small dry white lyophilized cake, with a plain stopper and matte-silver crimp cap.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single sealed clear-glass vial containing a small dry white lyophilized cake, with a plain stopper and matte-silver crimp cap. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "9ff66717f5a378ce953696cf91274100316e1e18d615129d54242c60f6b7b1a5"
+    },
+    {
+      "jobId": "batch0-02-liquid_vial",
+      "batch": 0,
+      "imageClass": "liquid_vial",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-02-liquid_vial-cc7d8d90179a.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-02-liquid_vial-cc7d8d90179a.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "liquid_vial",
+        "subject": "A single sealed clear-glass vial containing a colorless liquid, with a plain stopper and matte-silver crimp cap.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single sealed clear-glass vial containing a colorless liquid, with a plain stopper and matte-silver crimp cap. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "cc7d8d90179a188737e7bc48d7afcf9d4e8c8f5acd7cadf2cae29cf54eaa4f27"
+    },
+    {
+      "jobId": "batch0-03-injectable_solution_vial",
+      "batch": 0,
+      "imageClass": "injectable_solution_vial",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-03-injectable_solution_vial-5830ece3ce8f.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-03-injectable_solution_vial-5830ece3ce8f.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "injectable_solution_vial",
+        "subject": "A single sealed clear-glass solution vial with a plain stopper and matte-silver crimp cap; no delivery accessories are present.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single sealed clear-glass solution vial with a plain stopper and matte-silver crimp cap; no delivery accessories are present. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "5830ece3ce8fb260c3d1fbffced2da1fe1cf518f50ee8d5584e5c431f5474d76"
+    },
+    {
+      "jobId": "batch0-04-solution_container_neutral",
+      "batch": 0,
+      "imageClass": "solution_container_neutral",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-04-solution_container_neutral-90d3e858ecc9.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-04-solution_container_neutral-90d3e858ecc9.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "solution_container_neutral",
+        "subject": "A single sealed neutral solution container in frosted glass with a plain matte-white closure and no asserted package design.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single sealed neutral solution container in frosted glass with a plain matte-white closure and no asserted package design. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "90d3e858ecc9835ab93f60a53ae73df822d2de04452e9d8eef30e9f0f95234fb"
+    },
+    {
+      "jobId": "batch0-05-nasal_spray",
+      "batch": 0,
+      "imageClass": "nasal_spray",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-05-nasal_spray-9f21957a5091.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-05-nasal_spray-9f21957a5091.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "nasal_spray",
+        "subject": "A single compact frosted-white pump-spray container with its protective cap closed and no emitted spray.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single compact frosted-white pump-spray container with its protective cap closed and no emitted spray. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "9f21957a50919739c61b71788f620c0eb2505790d353ec970cb39b634f08d1cf"
+    },
+    {
+      "jobId": "batch0-06-oral_liquid_neutral",
+      "batch": 0,
+      "imageClass": "oral_liquid_neutral",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-06-oral_liquid_neutral-9aff310018ca.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-06-oral_liquid_neutral-9aff310018ca.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "oral_liquid_neutral",
+        "subject": "A single sealed amber-glass liquid container with a plain matte-white child-resistant closure and no dosing accessories.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single sealed amber-glass liquid container with a plain matte-white child-resistant closure and no dosing accessories. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "9aff310018ca1b3cef9416882d07fb7a094470b3069a0838fd0e4bc0473ded10"
+    },
+    {
+      "jobId": "batch0-07-capsule_bottle",
+      "batch": 0,
+      "imageClass": "capsule_bottle",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-07-capsule_bottle-2e171bb43f23.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-07-capsule_bottle-2e171bb43f23.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "capsule_bottle",
+        "subject": "A single closed matte-white bottle with a plain child-resistant cap; its contents are not visible.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single closed matte-white bottle with a plain child-resistant cap; its contents are not visible. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "2e171bb43f23f7bcd8067a60d91c2abbbb342ebc07229ae601256f94a3e753dd"
+    },
+    {
+      "jobId": "batch0-08-tablet_bottle",
+      "batch": 0,
+      "imageClass": "tablet_bottle",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-08-tablet_bottle-1757c9d7faea.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-08-tablet_bottle-1757c9d7faea.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "tablet_bottle",
+        "subject": "A single closed low-profile matte-white bottle with a plain child-resistant cap; its contents are not visible.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single closed low-profile matte-white bottle with a plain child-resistant cap; its contents are not visible. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "1757c9d7faeac47cdcc91c1e5d3f77b35a43b43b888c1f92f9885a95b1c59713"
+    },
+    {
+      "jobId": "batch0-09-odt_container",
+      "batch": 0,
+      "imageClass": "odt_container",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-09-odt_container-e50cfab542c9.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-09-odt_container-e50cfab542c9.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "odt_container",
+        "subject": "A single closed compact round container with a smooth matte-white finish and no visible dosage form.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single closed compact round container with a smooth matte-white finish and no visible dosage form. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "e50cfab542c9c58a6543e5d690a85607474ad4a0a29136a5a24ae7d6619fb2df"
+    },
+    {
+      "jobId": "batch0-10-troche_container",
+      "batch": 0,
+      "imageClass": "troche_container",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-10-troche_container-0ef8d4f34eee.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-10-troche_container-0ef8d4f34eee.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "troche_container",
+        "subject": "A single closed low-profile rectangular container with rounded corners and a smooth matte-white finish.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single closed low-profile rectangular container with rounded corners and a smooth matte-white finish. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "0ef8d4f34eee2181348bc4d57bee69852a0e43e52d03026938d292f1e02b85de"
+    },
+    {
+      "jobId": "batch0-11-cream_tube_or_pump",
+      "batch": 0,
+      "imageClass": "cream_tube_or_pump",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-11-cream_tube_or_pump-c65b3524d598.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-11-cream_tube_or_pump-c65b3524d598.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "cream_tube_or_pump",
+        "subject": "A single closed matte-white airless topical pump with a restrained brushed-silver collar.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single closed matte-white airless topical pump with a restrained brushed-silver collar. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "c65b3524d598c6ee9fdbdf4df0732afc9ce492fbbbe92bbf7090da505ce6fcd7"
+    },
+    {
+      "jobId": "batch0-12-gel_tube_or_pump",
+      "batch": 0,
+      "imageClass": "gel_tube_or_pump",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-12-gel_tube_or_pump-c209169068bd.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-12-gel_tube_or_pump-c209169068bd.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "gel_tube_or_pump",
+        "subject": "A single sealed matte-white topical tube with a plain flush cap and a soft realistic material finish.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single sealed matte-white topical tube with a plain flush cap and a soft realistic material finish. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "c209169068bd357685619899276837b2373795e132831761b4ff8caa4f086910"
+    },
+    {
+      "jobId": "batch0-13-serum_dropper_or_pump",
+      "batch": 0,
+      "imageClass": "serum_dropper_or_pump",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-13-serum_dropper_or_pump-5ec7988668bc.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-13-serum_dropper_or_pump-5ec7988668bc.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "serum_dropper_or_pump",
+        "subject": "A single closed frosted-glass serum pump bottle with a plain matte-white actuator and restrained silver collar.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single closed frosted-glass serum pump bottle with a plain matte-white actuator and restrained silver collar. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "5ec7988668bc3e1e86e180efe68bdc41f3b9b99d0706967a0b1c1d3a8cd630e1"
+    },
+    {
+      "jobId": "batch0-14-supplement_bottle_generic",
+      "batch": 0,
+      "imageClass": "supplement_bottle_generic",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-14-supplement_bottle_generic-d80889d39c34.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-14-supplement_bottle_generic-d80889d39c34.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "supplement_bottle_generic",
+        "subject": "A single closed opaque-white supplement-style bottle with a plain matte-white cap; its contents are not visible.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single closed opaque-white supplement-style bottle with a plain matte-white cap; its contents are not visible. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "d80889d39c34567c69898b29d87b73baf3ef3d5c0fabd186f9aad791ce2f769b"
+    },
+    {
+      "jobId": "batch0-15-supplement_tub_generic",
+      "batch": 0,
+      "imageClass": "supplement_tub_generic",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-15-supplement_tub_generic-e1b7ec4baaf9.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-15-supplement_tub_generic-e1b7ec4baaf9.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "supplement_tub_generic",
+        "subject": "A single closed low, wide cylindrical tub with a smooth matte-white body and matching plain lid.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single closed low, wide cylindrical tub with a smooth matte-white body and matching plain lid. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "e1b7ec4baaf9b07dd70993ef430eba4e413766e20bd399a9fada4adb53b1b1a6"
+    },
+    {
+      "jobId": "batch0-16-supplement_retail_unit_neutral",
+      "batch": 0,
+      "imageClass": "supplement_retail_unit_neutral",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-16-supplement_retail_unit_neutral-b4a08ad2f8a2.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-16-supplement_retail_unit_neutral-b4a08ad2f8a2.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "supplement_retail_unit_neutral",
+        "subject": "A neutral retail-unit proxy made from nested blank matte-white sleeves and soft-edged geometric forms, without asserting actual packaging.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A neutral retail-unit proxy made from nested blank matte-white sleeves and soft-edged geometric forms, without asserting actual packaging. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "b4a08ad2f8a22d5881d537ad4f4146623fc49bcfa0795f90cb9f05aa811e9094"
+    },
+    {
+      "jobId": "batch0-17-accessory_pack",
+      "batch": 0,
+      "imageClass": "accessory_pack",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-17-accessory_pack-400343ec2b18.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-17-accessory_pack-400343ec2b18.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "accessory_pack",
+        "subject": "A small sealed unbranded accessory case beside two empty capped sample tubes, arranged as a neutral category study.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A small sealed unbranded accessory case beside two empty capped sample tubes, arranged as a neutral category study. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "400343ec2b1803784c6d6ce71598ce0c99a8d2dcd2d4e1aaefed1729fb4fbe20"
+    },
+    {
+      "jobId": "batch0-18-syringe_supply_pack_neutral",
+      "batch": 0,
+      "imageClass": "syringe_supply_pack_neutral",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-18-syringe_supply_pack_neutral-abf6ac0ab3ad.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-18-syringe_supply_pack_neutral-abf6ac0ab3ad.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "syringe_supply_pack_neutral",
+        "subject": "A single sealed tamper-evident supply pouch with blank matte surfaces; no contents or use instructions are visible.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A single sealed tamper-evident supply pouch with blank matte surfaces; no contents or use instructions are visible. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "abf6ac0ab3ad26695e5312b9fcb6877b8cf48390cd9160b1788fc749fac0f6b2"
+    },
+    {
+      "jobId": "batch0-19-packaging_unverified",
+      "batch": 0,
+      "imageClass": "packaging_unverified",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-19-packaging_unverified-681a1e29ade9.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-19-packaging_unverified-681a1e29ade9.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "packaging_unverified",
+        "subject": "A blank matte-white carton-shaped proxy beside a sealed generic container, both deliberately non-identifying and not presented as actual packaging.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A blank matte-white carton-shaped proxy beside a sealed generic container, both deliberately non-identifying and not presented as actual packaging. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "681a1e29ade94a75f6fc7e348bfe9a39739d8b225866cd969a803add5de5ab14"
+    },
+    {
+      "jobId": "batch0-20-neutral_product_identity",
+      "batch": 0,
+      "imageClass": "neutral_product_identity",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-20-neutral_product_identity-f54b6074d294.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-20-neutral_product_identity-f54b6074d294.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "neutral_product_identity",
+        "subject": "An empty low matte-stone pedestal with a translucent deep-green arc behind it; no physical item or package is depicted.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. An empty low matte-stone pedestal with a translucent deep-green arc behind it; no physical item or package is depicted. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "f54b6074d294d9c03618b301b04322636c6ab671c15195a63b9eee7d839efb51"
+    },
+    {
+      "jobId": "batch0-21-care_pathway_neutral",
+      "batch": 0,
+      "imageClass": "care_pathway_neutral",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-21-care_pathway_neutral-fccca2e981de.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-21-care_pathway_neutral-fccca2e981de.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "care_pathway_neutral",
+        "subject": "A quiet empty consultation setting with two unoccupied curved chairs and a small round table holding one closed blank folio.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A quiet empty consultation setting with two unoccupied curved chairs and a small round table holding one closed blank folio. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "fccca2e981de7d3c2761be6b8c08b3838f6efcba99c1e6b5232abac1310668f4"
+    },
+    {
+      "jobId": "batch0-22-held_neutral",
+      "batch": 0,
+      "imageClass": "held_neutral",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-22-held_neutral-140501a8a2b1.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-22-held_neutral-140501a8a2b1.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "held_neutral",
+        "subject": "An empty matte-stone display plinth behind a restrained translucent deep-green barrier form, with no physical item depicted.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. An empty matte-stone display plinth behind a restrained translucent deep-green barrier form, with no physical item depicted. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "140501a8a2b11e244f854bc3399fd84c9fb25cba2d2a049e69e9377d40414616"
+    },
+    {
+      "jobId": "batch0-23-quote_only_neutral",
+      "batch": 0,
+      "imageClass": "quote_only_neutral",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-23-quote_only_neutral-b085c3c3ce4f.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-23-quote_only_neutral-b085c3c3ce4f.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "quote_only_neutral",
+        "subject": "A blank matte-white document folio beside one small brushed-silver review token and a translucent deep-green checkpoint arch.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. A blank matte-white document folio beside one small brushed-silver review token and a translucent deep-green checkpoint arch. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "b085c3c3ce4f47dc77906502b29f25c352e3df0305ec9a6bb76da580eea64c2f"
+    },
+    {
+      "jobId": "batch0-24-coming_soon_offering",
+      "batch": 0,
+      "imageClass": "coming_soon_offering",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-24-coming_soon_offering-fc1c9ffe8b06.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-24-coming_soon_offering-fc1c9ffe8b06.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "coming_soon_offering",
+        "subject": "An empty covered pedestal framed by two nested translucent deep-green arches, presented as an abstract future-offering study.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. An empty covered pedestal framed by two nested translucent deep-green arches, presented as an abstract future-offering study. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "fc1c9ffe8b06f389727fcc66b571d12ffbee8886a86ed21908f925ca2173091c"
+    },
+    {
+      "jobId": "batch0-25-shipping_service",
+      "batch": 0,
+      "imageClass": "shipping_service",
+      "evidenceTarget": {
+        "visibility": "non_public_evidence",
+        "filename": "batch0-25-shipping_service-8cfa641faffb.png",
+        "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-25-shipping_service-8cfa641faffb.png"
+      },
+      "rendererPayload": {
+        "schema": "renderer-neutral-batch0-v1",
+        "imageClass": "shipping_service",
+        "subject": "An abstract matte-ceramic route sculpture with two neutral waypoint stones and a restrained deep-green path accent; no parcel or carrier object is present.",
+        "style": {
+          "medium": "photorealistic editorial studio still life",
+          "aesthetic": "premium, restrained, calm, minimal, and materially realistic",
+          "background": "warm-white seamless studio background",
+          "accent": "one subtle deep-green environmental accent, never applied as a mark",
+          "lighting": "soft diffused studio light with a restrained grounding shadow",
+          "composition": "square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins"
+        },
+        "policies": {
+          "provenanceBoundary": "fixture_metadata_excluded_from_renderer_input",
+          "identity": "generic_class_only",
+          "visibleText": "none",
+          "labels": "none",
+          "logos": "none",
+          "brandMarks": "none",
+          "trademarks": "none",
+          "claims": "none",
+          "certifications": "none",
+          "people": "none",
+          "hands": "none",
+          "administration": "none",
+          "commercialCues": "none",
+          "numericFacts": "none",
+          "packagingAuthority": "not_asserted",
+          "outputUse": "non_public_review_evidence_only"
+        },
+        "forbiddenObjects": [
+          "readable words, letters, or numbers",
+          "labels or label-like panels",
+          "logos, brand marks, or trademarks",
+          "certification marks or regulatory seals",
+          "medical, performance, or outcome claims",
+          "people, faces, hands, or body parts",
+          "administration, application, or procedure scenes",
+          "needles, syringes, or exposed sharps",
+          "active droppers, spray plumes, or dispensing gestures",
+          "currency, prices, carts, checkout elements, or sale badges",
+          "barcodes or QR codes",
+          "carrier marks, delivery branding, or commercial signage"
+        ]
+      },
+      "rendererPrompt": "Create one square 1:1 studio still life for internal visual review. An abstract matte-ceramic route sculpture with two neutral waypoint stones and a restrained deep-green path accent; no parcel or carrier object is present. Medium and aesthetic: photorealistic editorial studio still life; premium, restrained, calm, minimal, and materially realistic. Set: warm-white seamless studio background; one subtle deep-green environmental accent, never applied as a mark. Lighting: soft diffused studio light with a restrained grounding shadow. Composition: square 1:1 frame, centered subject, front three-quarter view, and generous crop-safe margins. Use only the generic class description. Do not add or infer a named identity, maker, ingredient, formulation, strength, concentration, volume, count, or price. No visible text of any kind: no words, letters, numbers, labels, logos, brand marks, trademarks, claims, certifications, seals, barcodes, or QR codes. No people, faces, hands, body parts, administration, application, procedure, or active dispensing. No currency, price, cart, checkout, sale, carrier, partnership, availability, or other commercial cue. Forbidden objects and cues: readable words, letters, or numbers; labels or label-like panels; logos, brand marks, or trademarks; certification marks or regulatory seals; medical, performance, or outcome claims; people, faces, hands, or body parts; administration, application, or procedure scenes; needles, syringes, or exposed sharps; active droppers, spray plumes, or dispensing gestures; currency, prices, carts, checkout elements, or sale badges; barcodes or QR codes; carrier marks, delivery branding, or commercial signage.",
+      "rendererPromptSha256": "8cfa641faffbb13668349f19da946926a706ace01d0aee34cbf133bf255ee731"
+    }
+  ]
+}

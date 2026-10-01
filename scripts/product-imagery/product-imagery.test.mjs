@@ -1,373 +1,284 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { BATCH0_JOBS, compileRendererPrompt, validateRendererJob } from "./batch0-config.mjs";
+import { buildReviewedCatalogProjection, gitTextBlobOid } from "./catalog-v3.mjs";
 import {
   assertIdentityCrosswalkConsistency,
   buildArtifacts,
-  extractRuntimeExcludedOfferingIds,
-  journeyClassFor,
+  listPublicFallbackWebps,
+  listPublicProductImages,
+  listRuntimeEvidenceReferences,
   resolveCrosswalkManifestKey,
+  resolveProductImage,
+  validateBatch0FixtureJoin,
 } from "./lib.mjs";
 import { verifyRepository } from "./verify.mjs";
 
-test("builds complete canonical coverage without treating the shipping fee as merchandise", () => {
-  const { coverageLedger } = buildArtifacts();
-  assert.equal(coverageLedger.rows.length, 420);
-  assert.equal(coverageLedger.invariants.exposedRows, 419);
-  assert.equal(coverageLedger.invariants.boundRows, 417);
-  assert.equal(coverageLedger.invariants.exposedUnboundRows, 2);
-  const shipping = coverageLedger.rows.find(
-    (row) => row.offeringId === "mo_003b0c272099eeb1f114",
-  );
-  assert.equal(shipping.exposure, "excluded_shipping_service");
-  assert.equal(shipping.assetRequired, false);
-  assert.equal(shipping.purchaseImplication, "none");
-});
+const FORBIDDEN_COVERAGE_FIELDS = new Set([
+  "displayState",
+  "workflowMode",
+  "action",
+  "price",
+  "priceCents",
+  "cartEligible",
+  "sellable",
+  "inventory",
+  "formulationHold",
+]);
 
-test("keeps image journey language closed and action neutral", () => {
-  const bound = { productId: "p", variantId: "v" };
-  const product = (displayState, family = "supplements") => ({
-    displayState,
-    family,
-  });
-  assert.equal(
-    journeyClassFor({ product: product("care_pathway"), binding: bound, excluded: false }),
-    "care",
-  );
-  assert.equal(
-    journeyClassFor({ product: product("request_access"), binding: null, excluded: false }),
-    "quote_required",
-  );
-  assert.equal(
-    journeyClassFor({ product: product("approval_required"), binding: bound, excluded: false }),
-    "held",
-  );
-  assert.equal(
-    journeyClassFor({ product: product("coming_soon"), binding: bound, excluded: false }),
-    "coming",
-  );
-  assert.equal(
-    journeyClassFor({ product: product("available_now"), binding: bound, excluded: false }),
-    "catalog_visible",
-  );
-  assert.equal(
-    journeyClassFor({ product: product("care_pathway"), binding: null, excluded: true }),
-    "shipping_service",
-  );
-});
+test("projects the reviewed 426 rows to 424 identity-and-form-only rows", () => {
+  const projection = buildReviewedCatalogProjection();
+  assert.equal(projection.sourceRowCount, 426);
+  assert.equal(projection.canonicalRowCount, 424);
+  assert.equal(projection.runtimeCatalogAuthority, false);
+  for (const row of projection.rows) {
+    for (const field of FORBIDDEN_COVERAGE_FIELDS) {
+      assert.equal(Object.hasOwn(row, field), false, `${row.groupId} owns ${field}`);
+    }
+  }
 
-test("derives the runtime exclusion instead of accepting a second hand-maintained list", () => {
+  const oxytocin = projection.rows.find((row) => row.groupId === "GRP-0425");
+  const hexarelin = projection.rows.find((row) => row.groupId === "GRP-0426");
   assert.deepEqual(
-    [...extractRuntimeExcludedOfferingIds(
-      'const SHIPPING_CHARGE_OFFERING_ID_GRP_0364 = "mo_003b0c272099eeb1f114";',
-    )],
-    ["mo_003b0c272099eeb1f114"],
+    [oxytocin.offeringVariantId, oxytocin.sourceGroupIds],
+    ["mov_c26ef47dfbbe46f7e090", ["GRP-0425", "GRP-0407"]],
   );
-  assert.throws(() => extractRuntimeExcludedOfferingIds(""));
-  assert.throws(() =>
-    extractRuntimeExcludedOfferingIds(
-      'const SHIPPING_CHARGE_OFFERING_ID_A = "mo_1"; const SHIPPING_CHARGE_OFFERING_ID_B = "mo_2";',
-    ),
+  assert.deepEqual(
+    [hexarelin.offeringVariantId, hexarelin.sourceGroupIds],
+    ["mov_3c8ca424d78153fd931a", ["GRP-0426", "GRP-0402"]],
+  );
+  assert.equal(projection.rows.some((row) => row.groupId === "GRP-0402"), false);
+  assert.equal(projection.rows.some((row) => row.groupId === "GRP-0407"), false);
+});
+
+test("separates mounted 420/419 truth from the reviewed 424/423 target", () => {
+  const { stateAuthorityAudit } = buildArtifacts();
+  assert.deepEqual(
+    [
+      stateAuthorityAudit.currentlyMounted.canonicalRows,
+      stateAuthorityAudit.currentlyMounted.exposedRows,
+      stateAuthorityAudit.reviewedTarget.canonicalRows,
+      stateAuthorityAudit.reviewedTarget.exposedRows,
+    ],
+    [420, 419, 424, 423],
+  );
+  assert.equal(stateAuthorityAudit.authority.imageSystemOwnsBusinessState, false);
+  assert.equal(stateAuthorityAudit.reviewedTarget.exactCurrentIdentityRows, 418);
+  assert.equal(stateAuthorityAudit.reviewedTarget.reviewedIdentityReplacementRows, 2);
+  assert.equal(stateAuthorityAudit.reviewedTarget.genuineNewIdentityRows, 4);
+  assert.equal(stateAuthorityAudit.reviewedTarget.careRows, 242);
+  assert.deepEqual(
+    stateAuthorityAudit.reviewedTarget.structuredFormulationHoldGroupIds,
+    ["GRP-0422"],
+  );
+  assert.equal(stateAuthorityAudit.reviewedTarget.priceOnRequestRows, 2);
+  assert.equal(stateAuthorityAudit.reviewedTarget.catalogComingSoonRows, 0);
+  assert.equal(stateAuthorityAudit.reviewedTarget.separateComingSoonOffersIntended, 2);
+  assert.equal(stateAuthorityAudit.materializationGap.targetMaterialized, false);
+});
+
+test("builds a 424-row coverage ledger with no business-state authority", () => {
+  const { coverageLedger } = buildArtifacts();
+  assert.equal(coverageLedger.rows.length, 424);
+  assert.equal(coverageLedger.invariants.reviewedSourceRows, 426);
+  assert.equal(coverageLedger.invariants.rowsWithBusinessStateFields, 0);
+  assert.equal(coverageLedger.invariants.rowsWithPriceFields, 0);
+  assert.equal(coverageLedger.invariants.publicAssetsWired, 0);
+  assert.equal(
+    coverageLedger.rows.filter((row) => row.dosageForm === "Form not stated").length,
+    27,
+  );
+  for (const row of coverageLedger.rows) {
+    assert.equal(row.manifestKey, row.offeringVariantId);
+    assert.equal(row.exactAsset, null);
+    assert.equal(row.classCandidate.publicPath, null);
+    for (const field of FORBIDDEN_COVERAGE_FIELDS) {
+      assert.equal(Object.hasOwn(row, field), false, `${row.groupId} owns ${field}`);
+    }
+  }
+});
+
+test("converges canonical, Product Control, legacy, and Hex/Oxy forward identities", () => {
+  const { coverageLedger, identityCrosswalk } = buildArtifacts();
+  assert.equal(identityCrosswalk.invariants.canonicalEntries, 424);
+  assert.equal(identityCrosswalk.invariants.exactCurrentBindings, 415);
+  assert.equal(identityCrosswalk.invariants.targetBindingsNotMaterialized, 9);
+  assert.equal(identityCrosswalk.invariants.historicalForwardAliases, 2);
+  assert.equal(identityCrosswalk.invariants.legacyFeaturedAliases, 22);
+  assert.equal(identityCrosswalk.invariants.supersededManifestOwners, 0);
+  assert.equal(assertIdentityCrosswalkConsistency(identityCrosswalk, coverageLedger), true);
+
+  const cases = [
+    {
+      kept: "mov_3c8ca424d78153fd931a",
+      old: {
+        groupId: "GRP-0402",
+        offeringVariantId: "mov_7c55d415a9574e9ebda7",
+        productControlVariantId: "5c705967-53dc-4fd0-9a35-c3c51abf937a",
+      },
+    },
+    {
+      kept: "mov_c26ef47dfbbe46f7e090",
+      old: {
+        groupId: "GRP-0407",
+        offeringVariantId: "mov_256cb0423eb6d2a77f65",
+        productControlVariantId: "ed16b4d7-7a0e-4f34-a01f-b81966aac0b0",
+      },
+    },
+  ];
+  for (const value of cases) {
+    assert.equal(
+      resolveCrosswalkManifestKey(identityCrosswalk, value.old),
+      value.kept,
+    );
+    assert.equal(
+      resolveCrosswalkManifestKey(identityCrosswalk, { offeringVariantId: value.kept }),
+      value.kept,
+    );
+  }
+  assert.equal(
+    resolveCrosswalkManifestKey(identityCrosswalk, {
+      offeringVariantId: cases[0].kept,
+      productControlVariantId: cases[1].old.productControlVariantId,
+    }),
+    null,
   );
 });
 
-test("quarantines ten pre-v3 candidates and blocks every exact render", () => {
-  const { assetManifest, renderQueue } = buildArtifacts();
-  assert.equal(assetManifest.assets.length, 10);
-  assert(assetManifest.assets.every((asset) => asset.reviewStatus === "provisional"));
+test("keeps all 25 renderer payloads generic and fixture identity physically separate", () => {
+  const { rendererPacket, batch0Provenance, renderQueue } = buildArtifacts();
+  assert.equal(BATCH0_JOBS.length, 25);
+  assert.equal(rendererPacket.rendererJobs.length, 25);
+  assert.equal(Object.hasOwn(rendererPacket, "provenanceRecords"), false);
+  assert.equal(batch0Provenance.provenanceRecords.length, 25);
+  assert.equal(rendererPacket.counts.namedProductPrompts, 0);
+  assert.equal(renderQueue.exactNamedVariantQueueRemoved, true);
+  assert.equal(renderQueue.counts.items, 25);
+
+  const fixtureNames = BATCH0_JOBS.map((job) => job.fixture.displayIdentity.toLowerCase());
+  for (const job of BATCH0_JOBS) {
+    assert.equal(validateRendererJob(job), true);
+    const prompt = compileRendererPrompt(job).toLowerCase();
+    for (const fixtureName of fixtureNames) {
+      assert.equal(prompt.includes(fixtureName), false, `${job.jobId} leaked ${fixtureName}`);
+    }
+    const packetJob = rendererPacket.rendererJobs.find((item) => item.jobId === job.jobId);
+    assert.equal(Object.hasOwn(packetJob, "fixture"), false);
+    assert.equal(JSON.stringify(packetJob).includes(job.fixture.displayIdentity), false);
+  }
+});
+
+test("rejects sanitizer extension, duplicate QA IDs, and mismatched fixture identities", () => {
+  const extended = structuredClone(BATCH0_JOBS[0]);
+  extended.rendererPayload.forbiddenObjects.push("Hexarelin");
+  assert.throws(() => validateRendererJob(extended));
+
+  const duplicateQa = structuredClone(BATCH0_JOBS[21]);
+  duplicateQa.fixture.qaGroupIds.push("GRP-0422");
+  assert.throws(() => validateRendererJob(duplicateQa));
+
+  const mismatched = structuredClone(BATCH0_JOBS);
+  mismatched[0].fixture.movId = "mov_c26ef47dfbbe46f7e090";
+  assert.throws(() =>
+    validateBatch0FixtureJoin(buildReviewedCatalogProjection(), mismatched),
+  );
+});
+
+test("normalizes Git text identity across LF and CRLF checkouts", () => {
+  assert.equal(gitTextBlobOid(Buffer.from("one\ntwo\n")), gitTextBlobOid(Buffer.from("one\r\ntwo\r\n")));
+});
+
+test("quarantines all ten pre-v3 WebPs outside public and preserves exact hashes", () => {
+  const { assetManifest } = buildArtifacts();
+  assert.equal(assetManifest.counts.quarantined, 10);
+  assert.equal(assetManifest.counts.public, 0);
+  assert.equal(assetManifest.counts.approvable, 0);
+  assert.deepEqual(listPublicFallbackWebps(), []);
+  assert.deepEqual(listPublicProductImages(), []);
+  assert.deepEqual(listRuntimeEvidenceReferences(), []);
   assert(
     assetManifest.assets.every(
       (asset) =>
-        asset.reviewRecord.disposition === "unreviewed" &&
-        asset.approvalEligibility ===
-          "blocked_permanent_rerender_under_v3_required" &&
-        asset.runtimeWiringEligibility === "blocked" &&
+        asset.publicPath === null &&
+        asset.repositoryPath.startsWith("docs/product-imagery/evidence/pre-v3-nonapprovable/") &&
+        asset.sha256.length === 64 &&
         asset.deploymentEligibility === "blocked",
     ),
   );
-  assert.equal(
-    assetManifest.branchDeploymentDisposition.status,
-    "blocked_nonapprovable_public_bytes",
-  );
-  assert.equal(
-    assetManifest.promptContract.founderV3PromptStatus,
-    "missing_founder_attachment_required",
-  );
-  const exact = renderQueue.batches.find(
-    (batch) => batch.batchId === "exact-variant-queue-001",
-  );
-  assert.equal(exact.items.length, 419);
-  assert(exact.items.every((item) => item.queueStatus === "pending"));
-  assert(
-    exact.items.every(
-      (item) =>
-        item.promptStatus === "draft_blocked_missing_founder_v3_prompt",
-    ),
-  );
-  assert(exact.items.every((item) => item.mayRenderNow === false));
 });
 
-test("converges Featured PEX and R360 aliases with canonical GEN-GRP rows", () => {
+test("resolver remains presentation-only and returns no image before named approval", () => {
   const { coverageLedger, identityCrosswalk } = buildArtifacts();
-  assert.equal(identityCrosswalk.invariants.legacyFeaturedAliasRows, 22);
-  assert.equal(identityCrosswalk.invariants.legacyFeaturedProducts, 19);
-  assert.equal(
-    assertIdentityCrosswalkConsistency(identityCrosswalk, coverageLedger),
-    true,
-  );
+  const row = coverageLedger.rows[0];
+  const none = resolveProductImage({
+    identityCrosswalk,
+    coverageLedger,
+    identity: { offeringVariantId: row.offeringVariantId },
+    runtimePresentationState: "care_pathway",
+  });
+  assert.deepEqual(none, {
+    status: "intentional_no_image_until_named_approval",
+    manifestKey: row.manifestKey,
+    image: null,
+  });
 
-  const aliasEntries = identityCrosswalk.entries.filter(
-    (entry) => entry.legacyFeaturedAliases.length > 0,
-  );
-  assert.equal(aliasEntries.length, 22);
-  for (const entry of aliasEntries) {
-    assert.match(entry.productControl.sku, /^GEN-GRP-/);
-    const alias = entry.legacyFeaturedAliases[0];
-    assert.match(alias.variantSku, /^R360-/);
-    assert.equal(
-      resolveCrosswalkManifestKey(identityCrosswalk, {
-        legacyProductId: alias.productId,
-        legacyVariantId: alias.variantId,
-      }),
-      entry.manifestKey,
-    );
-    assert.equal(
-      resolveCrosswalkManifestKey(identityCrosswalk, {
-        legacyProductSku: alias.productSku,
-        legacyVariantSku: alias.variantSku,
-      }),
-      entry.manifestKey,
-    );
-    assert.equal(
-      resolveCrosswalkManifestKey(identityCrosswalk, {
-        productControlVariantId: entry.productControl.variantId,
-      }),
-      entry.manifestKey,
-    );
-    assert.equal(
-      resolveCrosswalkManifestKey(identityCrosswalk, {
-        offeringId: entry.offeringId,
-        offeringVariantId: entry.offeringVariantId,
-        productControlProductId: entry.productControl.productId,
-        productControlVariantId: entry.productControl.variantId,
-        legacyProductId: alias.productId,
-        legacyVariantId: alias.variantId,
-        legacyProductSku: alias.productSku,
-        legacyVariantSku: alias.variantSku,
-      }),
-      entry.manifestKey,
-    );
-    const coverage = coverageLedger.rows.find(
-      (row) => row.manifestKey === entry.manifestKey,
-    );
-    assert.deepEqual(entry.resolvedCandidate, {
-      assetId: coverage.fallback.assetId,
-      href: coverage.fallback.href,
-      recommendedAltText: coverage.fallback.recommendedAltText,
-      width: coverage.fallback.width,
-      height: coverage.fallback.height,
-      illustrativeNotice: coverage.fallback.illustrativeNotice,
-      reviewStatus: coverage.fallback.reviewStatus,
-      approvalEligibility: coverage.fallback.approvalEligibility,
-      runtimeWiringEligibility: coverage.fallback.runtimeWiringEligibility,
-      deploymentEligibility: coverage.fallback.deploymentEligibility,
-    });
-  }
+  const approved = {
+    assetId: "approved-care",
+    imageClass: "care_pathway_neutral",
+    reviewStatus: "approved",
+    sha256: "a".repeat(64),
+    publicPath: "/research/products/approved-care-aaaaaaaaaaaa.webp",
+    alt: "Abstract Care pathway visual.",
+    width: 1024,
+    height: 1024,
+    approval: {
+      namedApprover: "independent-reviewer",
+      approvedAt: "2026-10-01T03:00:00.000Z",
+      approvalRecord: "docs/review/exact-sha-review.md",
+      exactSha256: "a".repeat(64),
+    },
+  };
+  const exact = {
+    ...approved,
+    assetId: "approved-exact",
+    imageClass: row.imageClass,
+    manifestKey: row.manifestKey,
+    sha256: "b".repeat(64),
+    publicPath: "/research/products/approved-exact-bbbbbbbbbbbb.webp",
+    approval: { ...approved.approval, exactSha256: "b".repeat(64) },
+  };
+  const resolved = resolveProductImage({
+    identityCrosswalk,
+    coverageLedger,
+    approvedAssets: [exact, approved],
+    identity: { groupId: row.groupId },
+    runtimePresentationState: "care_pathway",
+  });
+  assert.equal(resolved.status, "approved_image");
+  assert.equal(resolved.image.src, approved.publicPath);
+  assert.equal(Object.hasOwn(resolved, "action"), false);
+  assert.equal(Object.hasOwn(resolved, "workflowMode"), false);
 
-  const first = aliasEntries[0].legacyFeaturedAliases[0];
-  const second = aliasEntries
-    .map((entry) => entry.legacyFeaturedAliases[0])
-    .find(
-      (alias) =>
-        alias.productId !== first.productId &&
-        alias.productSku !== first.productSku,
-    );
-  assert(second);
-  assert.equal(
-    resolveCrosswalkManifestKey(identityCrosswalk, {
-      legacyProductId: first.productId,
-      legacyVariantId: second.variantId,
-    }),
-    null,
-  );
+  const invalidState = resolveProductImage({
+    identityCrosswalk,
+    coverageLedger,
+    approvedAssets: [approved],
+    identity: { groupId: row.groupId },
+    runtimePresentationState: "buy_now",
+  });
+  assert.equal(invalidState.status, "invalid_external_presentation_state");
 
-  const firstEntry = aliasEntries.find((entry) =>
-    entry.legacyFeaturedAliases.some(
-      (alias) => alias.variantId === first.variantId,
-    ),
-  );
-  const secondEntry = aliasEntries.find((entry) =>
-    entry.legacyFeaturedAliases.some(
-      (alias) => alias.variantId === second.variantId,
-    ),
-  );
-  assert(firstEntry);
-  assert(secondEntry);
-  assert.equal(
-    resolveCrosswalkManifestKey(identityCrosswalk, {
-      offeringVariantId: firstEntry.offeringVariantId,
-      legacyProductId: second.productId,
-      legacyVariantId: second.variantId,
-    }),
-    null,
-  );
-  assert.equal(
-    resolveCrosswalkManifestKey(identityCrosswalk, {
-      productControlVariantId: firstEntry.productControl.variantId,
-      legacyProductSku: second.productSku,
-      legacyVariantSku: second.variantSku,
-    }),
-    null,
-  );
-  assert.equal(
-    resolveCrosswalkManifestKey(identityCrosswalk, {
-      offeringVariantId: firstEntry.offeringVariantId,
-      productControlVariantId: secondEntry.productControl.variantId,
-    }),
-    null,
-  );
-  assert.equal(
-    resolveCrosswalkManifestKey(identityCrosswalk, {
-      productControlProductId: secondEntry.productControl.productId,
-      productControlVariantId: firstEntry.productControl.variantId,
-    }),
-    null,
-  );
-  assert.equal(
-    resolveCrosswalkManifestKey(identityCrosswalk, {
-      legacyProductSku: first.productSku,
-      legacyVariantSku: second.variantSku,
-    }),
-    null,
-  );
-
-  const mutated = structuredClone(identityCrosswalk);
-  [mutated.entries[0].manifestKey, mutated.entries[1].manifestKey] = [
-    mutated.entries[1].manifestKey,
-    mutated.entries[0].manifestKey,
-  ];
-  assert.throws(() =>
-    assertIdentityCrosswalkConsistency(mutated, coverageLedger),
-  );
-
-  const presentationMutated = structuredClone(identityCrosswalk);
-  presentationMutated.entries[0].resolvedCandidate.width += 1;
-  assert.throws(() =>
-    assertIdentityCrosswalkConsistency(presentationMutated, coverageLedger),
-  );
+  const forged = resolveProductImage({
+    identityCrosswalk,
+    coverageLedger,
+    approvedAssets: [{ ...approved, publicPath: "https://evil.example/image.webp" }],
+    identity: { groupId: row.groupId },
+    runtimePresentationState: "care_pathway",
+  });
+  assert.equal(forged.status, "intentional_no_image_until_named_approval");
 });
 
-test("keeps unknown forms neutral, sensitive packaging generic, and held distinct", () => {
-  const { coverageLedger } = buildArtifacts();
-  const unknown = coverageLedger.rows.filter(
-    (row) => row.sourceForm === "Form not stated",
-  );
-  assert.equal(unknown.length, 29);
-  const reviewedOverrides = unknown.filter(
-    (row) => row.visualFormEvidence !== null,
-  );
-  assert.equal(reviewedOverrides.length, 2);
-  assert.deepEqual(
-    reviewedOverrides
-      .map((row) => row.visualFormEvidence.canonicalSourceRow)
-      .sort(),
-    ["GRP-0425", "GRP-0426"],
-  );
-  assert(
-    reviewedOverrides.every(
-      (row) =>
-        row.resolvedVisualForm === "Lyophilized Vial" &&
-        row.formTaxonomy === "pending" &&
-        row.fallback.taxonomyKey === "pending",
-    ),
-  );
-  assert(
-    unknown
-      .filter((row) => row.visualFormEvidence === null)
-      .every(
-      (row) =>
-        row.formTaxonomy === "pending" &&
-        !["vial", "bottle", "spray", "topical", "liquid", "accessory"].includes(
-          row.fallback.taxonomyKey,
-        ),
-      ),
-  );
-
-  const lyophilized = coverageLedger.rows.filter(
-    (row) => row.resolvedVisualForm === "Lyophilized Vial",
-  );
-  assert(lyophilized.length > 0);
-  assert(
-    lyophilized.every(
-      (row) =>
-        row.formTaxonomy === "pending" &&
-        row.fallback.taxonomyKey !== "vial",
-    ),
-  );
-
-  const containerAmbiguousLiquids = coverageLedger.rows.filter((row) =>
-    ["Liquid", "Solution"].includes(row.resolvedVisualForm),
-  );
-  assert(containerAmbiguousLiquids.length > 0);
-  assert(
-    containerAmbiguousLiquids.every(
-      (row) =>
-        row.formTaxonomy === "pending" &&
-        row.fallback.taxonomyKey !== "liquid",
-    ),
-  );
-  assert(
-    coverageLedger.rows.every(
-      (row) =>
-        row.fallback.recommendedAltText.startsWith(`${row.displayName}: `) &&
-        !row.fallback.recommendedAltText.startsWith("This catalog item:"),
-    ),
-  );
-
-  const packagingSensitive = coverageLedger.rows.filter((row) =>
-    row.visualRestriction.includes("no_brand_logo_or_fabricated_packaging"),
-  );
-  assert(packagingSensitive.length > 0);
-  assert(
-    packagingSensitive.every(
-      (row) => row.fallback.identityScope !== "exact_variant",
-    ),
-  );
-
-  const cjcWithDac = coverageLedger.rows.find(
-    (row) => row.displayName === "CJC-1295 With DAC",
-  );
-  assert.equal(cjcWithDac.journeyClass, "held");
-  assert.equal(cjcWithDac.fallback.taxonomyKey, "pending");
-  assert(!cjcWithDac.variantLabel.includes("+"));
-
-  const syringes = coverageLedger.rows.find(
-    (row) => row.displayName === "Syringes & Alcohol Swabs",
-  );
-  assert.equal(syringes.journeyClass, "held");
-  assert.notEqual(syringes.journeyClass, "coming");
-  assert.equal(syringes.fallback.taxonomyKey, "pending");
-});
-
-test("imagery rows contain no price, workflow, action, or cart authority", () => {
-  const { coverageLedger } = buildArtifacts();
-  const forbiddenAuthorityFields = [
-    "price",
-    "priceCents",
-    "workflowMode",
-    "action",
-    "cartEligible",
-    "sellable",
-    "inventory",
-  ];
-  for (const row of coverageLedger.rows) {
-    for (const field of forbiddenAuthorityFields) {
-      assert.equal(Object.hasOwn(row, field), false, `${row.coverageKey} owns ${field}`);
-    }
-    assert.equal(row.purchaseImplication, "none");
-  }
-});
-
-test("checked-in v3 manifests, bytes, alt text, and queue are deterministic", () => {
+test("checked-in v3 manifests and evidence are deterministic", () => {
   assert.equal(verifyRepository().ok, true);
 });

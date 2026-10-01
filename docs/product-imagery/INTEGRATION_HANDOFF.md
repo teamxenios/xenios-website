@@ -1,5 +1,7 @@
 # Product imagery v3 integration handoff
 
+> Historical pre-v3 integration plan. Keep its no-image commerce-safety principle, but use the corrected 424/423 target, 420/419 mounted runtime, v3 Batch 0 evidence, and approval gates in `PRODUCT_IMAGE_CONTRACT.md`.
+
 ## Current state
 
 This lane is source-only. It does not edit shared cards, detail pages, API contracts, Product Control, cart selection, persistent-cart SQL, actions, prices, payment, release, or deployment code. It is explicitly non-deployable while the pre-v3 candidate bytes remain in the public tree. Their source PNGs are not repository-durable, so these exact bytes are permanently non-approvable: remove them or replace them with fully evidenced v3 rerenders before any deployment.

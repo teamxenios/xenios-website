@@ -33,7 +33,7 @@ These candidates depict a broad form only. They must never be labeled as a produ
 
 Use the empty form-neutral candidate when exact packaging or container form is not established. This includes the 27 unresolved `Form not stated` rows and, until an appropriate candidate exists, troche, ODT, tablet, listed unit, included supply, injectable solution container, and supplement unit packaging.
 
-Two source rows are controlled identity exceptions. Founder-reviewed reconciliation keeps GRP-0425 for Oxytocin 10 mg and GRP-0426 for Hexarelin 5 mg as lyophilized vial identities. The superseded GRP-0407 and GRP-0402 records are provenance, not visual selectors. Because the current vial candidate contains visible liquid, these kept identities still receive the form-neutral candidate until a suitable v3 vial is approved.
+Two source rows are controlled identity exceptions. Founder-reviewed reconciliation keeps GRP-0425 for Oxytocin 10 mg and GRP-0426 for Hexarelin 5 mg as lyophilized vial identities. The superseded GRP-0407 and GRP-0402 records are provenance and forward aliases, not visual selectors. No pre-v3 vial is assigned to either row; only independently approved v3 evidence may become a runtime selector.
 
 ## Non-product treatments
 

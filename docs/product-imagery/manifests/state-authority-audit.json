@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 4,
+  "generatedAt": "2026-10-01T02:45:00.000Z",
+  "kind": "catalog_state_observation_not_image_authority",
+  "authority": {
+    "imageSystemOwnsBusinessState": false,
+    "imageSystemOwnsPrice": false,
+    "imageSystemOwnsWorkflowOrAction": false,
+    "rule": "Runtime commerce and Product Control supply state. Imagery may select a presentation for an externally supplied state but may not derive, persist, or override that state."
+  },
+  "sources": {
+    "currentlyMountedCatalog": {
+      "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
+      "sha256": "108e81b2a4483ea5b35506aee583a960751fa64aabc63a215129cdc4adbe37a7",
+      "sha256Semantics": "exact_working_tree_bytes",
+      "gitBlobOid": "9ebe73b7f141b11d998f7d0d1d6ad2b2909328b4",
+      "gitBlobOidSemantics": "lf_normalized_repository_text_blob",
+      "byteSize": 342146
+    },
+    "currentlyMountedBindings": {
+      "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
+      "sha256": "e49a8d74daed1553e567962c8e6e8d9b1c7029fe3e83ef665c7bafc72242b1f9",
+      "sha256Semantics": "exact_working_tree_bytes",
+      "gitBlobOid": "7760d5d8fb559c9c9c6cfc7622827fb4977b61d5",
+      "gitBlobOidSemantics": "lf_normalized_repository_text_blob",
+      "byteSize": 111197
+    },
+    "currentExposureCode": {
+      "path": "server/research/master-offerings/service.ts",
+      "sha256": "77f5da97d26646ac693227ec510087ba9a130fd1c32399483f35f50e6956462e",
+      "sha256Semantics": "exact_working_tree_bytes",
+      "gitBlobOid": "6b9bc96b54574ec7ea6b818df5bc4191822c828e",
+      "gitBlobOidSemantics": "lf_normalized_repository_text_blob",
+      "byteSize": 12376
+    },
+    "reviewedCatalog": {
+      "path": "docs/research-launch/XENIOS_RETAIL_ONLY_MASTER_CATALOG_426_VARIANTS.csv",
+      "byteSize": 69339,
+      "sha256": "b219621373f52329cb9b33b57aa4d9000bcf9aad5e29742bbccbe2b0bb8ed14b",
+      "gitBlobOid": "064238177f0a6810d2e07a0d4329bab966ce6ab1"
+    },
+    "reviewedReconciliation": {
+      "path": "config/research/master-catalog-reconciliation-20260821.json",
+      "sha256": "170e497d587d7857b5efca23d639192c566d06625c0a720751b9d121942b2a72",
+      "sha256Semantics": "exact_working_tree_bytes",
+      "gitBlobOid": "50a4b0eadac3bb999a26cb359bdccbb21d2ea362",
+      "gitBlobOidSemantics": "lf_normalized_repository_text_blob",
+      "byteSize": 5813
+    }
+  },
+  "currentlyMounted": {
+    "status": "materialized_runtime_truth",
+    "canonicalRows": 420,
+    "exposedRows": 419,
+    "bindingRows": 417,
+    "unboundRows": 3,
+    "displayStateCounts": {
+      "approval_required": 32,
+      "care_pathway": 244,
+      "request_access": 144
+    },
+    "commerceWorkflowCounts": {
+      "provider_request": 242,
+      "direct_order_request": 131,
+      "request_activation": 44,
+      "availability_review": 1,
+      "request_pricing": 1
+    },
+    "careRows": 242,
+    "structuredFormulationHoldRowsRepresented": 0,
+    "priceOnRequestRows": 2,
+    "catalogComingSoonRows": 0,
+    "excludedShippingGroupIds": [
+      "GRP-0364"
+    ]
+  },
+  "reviewedTarget": {
+    "status": "reviewed_source_truth_not_yet_materialized",
+    "canonicalRows": 424,
+    "exposedRows": 423,
+    "exactCurrentIdentityRows": 418,
+    "reviewedIdentityReplacementRows": 2,
+    "reviewedIdentityReplacementGroupIds": [
+      "GRP-0425",
+      "GRP-0426"
+    ],
+    "genuineNewIdentityRows": 4,
+    "genuineNewIdentityGroupIds": [
+      "GRP-0421",
+      "GRP-0422",
+      "GRP-0423",
+      "GRP-0424"
+    ],
+    "currentProductControlResolvableAfterForwardAliases": 417,
+    "currentExposedUnboundAfterForwardAliases": 6,
+    "expectedBindingRowsAfterRegeneration": 421,
+    "expectedUnboundRowsAfterRegeneration": 3,
+    "sourceChannelCounts": {
+      "Clinical / Provider Only": 244,
+      "Nonclinical / Topical": 3,
+      "RUO Research": 127,
+      "Supplement": 20,
+      "Supplier Catalog / Classification Pending": 30
+    },
+    "commerceWorkflowCountsAfterRegenerationAndPriceBinding": {
+      "provider_request": 242,
+      "direct_order_request": 136,
+      "request_activation": 42,
+      "availability_review": 2,
+      "request_pricing": 1
+    },
+    "careRows": 242,
+    "structuredFormulationHoldRows": 1,
+    "structuredFormulationHoldGroupIds": [
+      "GRP-0422"
+    ],
+    "priceOnRequestRows": 2,
+    "priceOnRequestGroupIds": [
+      "GRP-0244",
+      "GRP-0365"
+    ],
+    "catalogComingSoonRows": 0,
+    "separateComingSoonOffersIntended": 2,
+    "separateComingSoonOfferNames": [
+      "Superpower",
+      "Mito Health"
+    ],
+    "excludedShippingGroupIds": [
+      "GRP-0364"
+    ]
+  },
+  "materializationGap": {
+    "catalogRows": 4,
+    "exposedRows": 4,
+    "targetMaterialized": false,
+    "blocksRuntimeImageWiring": true
+  }
+}

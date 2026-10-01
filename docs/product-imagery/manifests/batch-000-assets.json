@@ -1,0 +1,616 @@
+{
+  "schemaVersion": 4,
+  "generatedAt": "2026-10-01T02:45:00.000Z",
+  "kind": "batch_000_v3_non_public_asset_manifest",
+  "publicRuntimeAuthority": false,
+  "promotionRule": "A derivative may enter client/public only after an independent named reviewer approves the exact source SHA-256 and the derivative is separately hashed.",
+  "counts": {
+    "jobs": 25,
+    "rendered": 0,
+    "pending": 25,
+    "approved": 0,
+    "public": 0
+  },
+  "assets": [
+    {
+      "jobId": "batch0-01-peptide_lyophilized_vial",
+      "imageClass": "peptide_lyophilized_vial",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-01-peptide_lyophilized_vial-9ff66717f5a3.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "9ff66717f5a378ce953696cf91274100316e1e18d615129d54242c60f6b7b1a5",
+      "rendererPayloadSha256": "4e420570525ad9dcf0a4e739edfac3cb942903733120a07054103f4cab6ea0f8",
+      "renderContractSha256": "ec99bccf60808d1b2d1bae3b218b092c05da994b6eb9624f83ed97c3ff66a842",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-02-liquid_vial",
+      "imageClass": "liquid_vial",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-02-liquid_vial-cc7d8d90179a.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "cc7d8d90179a188737e7bc48d7afcf9d4e8c8f5acd7cadf2cae29cf54eaa4f27",
+      "rendererPayloadSha256": "1a11c9ea35167c5473720102943567a104d604593393c4fd65fd62ace538cb4e",
+      "renderContractSha256": "88e52a14af1b54dae9534d3cae1544ab788531e02918ec8e0b8303c26031b4a7",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-03-injectable_solution_vial",
+      "imageClass": "injectable_solution_vial",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-03-injectable_solution_vial-5830ece3ce8f.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "5830ece3ce8fb260c3d1fbffced2da1fe1cf518f50ee8d5584e5c431f5474d76",
+      "rendererPayloadSha256": "298382671d8f387cb226634d9320a6ba4648b2f0f47c6c885e616b322b966af8",
+      "renderContractSha256": "10f11779e6f953288fef9007d5a79973fc303eda3c50a397ed9e9a5ee4771eb3",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-04-solution_container_neutral",
+      "imageClass": "solution_container_neutral",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-04-solution_container_neutral-90d3e858ecc9.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "90d3e858ecc9835ab93f60a53ae73df822d2de04452e9d8eef30e9f0f95234fb",
+      "rendererPayloadSha256": "7377c32649c923f5a2975a02b6bd331a2588814ae4e4e3d72ef6b7e4653d98ee",
+      "renderContractSha256": "37c6457aa7ea99bff82e62b6b61f968eb5999dca6424322ce9283deec44dd05d",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-05-nasal_spray",
+      "imageClass": "nasal_spray",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-05-nasal_spray-9f21957a5091.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "9f21957a50919739c61b71788f620c0eb2505790d353ec970cb39b634f08d1cf",
+      "rendererPayloadSha256": "bdd1279de961474893af63612aa3ecd06db60fff44677acefe5074048eb50101",
+      "renderContractSha256": "fd966ffd01b1c1047f02ee85e826a22f8f38f17d8e413e2779cb8dd10ef9f253",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-06-oral_liquid_neutral",
+      "imageClass": "oral_liquid_neutral",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-06-oral_liquid_neutral-9aff310018ca.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "9aff310018ca1b3cef9416882d07fb7a094470b3069a0838fd0e4bc0473ded10",
+      "rendererPayloadSha256": "fe19e5012f5b82a2f26e99255fb47dc6e5ca1d1d15eb8e13c35caae5627fdbf6",
+      "renderContractSha256": "bc3c1f3413a5a7187378d3ec15ce307e213fb114eccd21d41929f9f7d4192703",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-07-capsule_bottle",
+      "imageClass": "capsule_bottle",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-07-capsule_bottle-2e171bb43f23.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "2e171bb43f23f7bcd8067a60d91c2abbbb342ebc07229ae601256f94a3e753dd",
+      "rendererPayloadSha256": "d6f5fec1b4f2143e03f80e5e6175d5ffa4d67e850e0d16616cb547801dfcacc9",
+      "renderContractSha256": "8ea1a7283e38578368e3241f39f15b7e0f3c965ad1beea979e72079ed684fb96",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-08-tablet_bottle",
+      "imageClass": "tablet_bottle",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-08-tablet_bottle-1757c9d7faea.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "1757c9d7faeac47cdcc91c1e5d3f77b35a43b43b888c1f92f9885a95b1c59713",
+      "rendererPayloadSha256": "a0c8aeda4580a78280f4947bb66b33bd2d4416f6892d526c7e8018c22e6f110e",
+      "renderContractSha256": "825c8e72c2dff7a2b1289cd5b6292f5b97d75b9e786068e82925c2f9607009fb",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-09-odt_container",
+      "imageClass": "odt_container",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-09-odt_container-e50cfab542c9.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "e50cfab542c9c58a6543e5d690a85607474ad4a0a29136a5a24ae7d6619fb2df",
+      "rendererPayloadSha256": "aa1706848b47dcb1d5b2105d58512254ba68757e01815a0e8eb329bbb5c4c717",
+      "renderContractSha256": "168b4cae16646657e57ccc27bfcce1094155eee612a330a0f1f9df660831c237",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-10-troche_container",
+      "imageClass": "troche_container",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-10-troche_container-0ef8d4f34eee.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "0ef8d4f34eee2181348bc4d57bee69852a0e43e52d03026938d292f1e02b85de",
+      "rendererPayloadSha256": "9e867c7c8ce96b7bbf9296b76ef072214eb72e54891b06405f35c953343b9e80",
+      "renderContractSha256": "88ca242b9848dc975dafd0c1e06dee9476dc675e97166dcc35b34d8481230c65",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-11-cream_tube_or_pump",
+      "imageClass": "cream_tube_or_pump",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-11-cream_tube_or_pump-c65b3524d598.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "c65b3524d598c6ee9fdbdf4df0732afc9ce492fbbbe92bbf7090da505ce6fcd7",
+      "rendererPayloadSha256": "581a8ac4dd9b0a5b6df9721fb69fa83b47726743f903d6a11e0c8fee3cd785dd",
+      "renderContractSha256": "094c7b8a588625f7b49a592ce4b43ab80b13380362b6a16dfb7d29618d919e99",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-12-gel_tube_or_pump",
+      "imageClass": "gel_tube_or_pump",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-12-gel_tube_or_pump-c209169068bd.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "c209169068bd357685619899276837b2373795e132831761b4ff8caa4f086910",
+      "rendererPayloadSha256": "49b8a5e718d2856eddd4d7a8bb00f99be6536501b1353fe408f541c695173f8a",
+      "renderContractSha256": "00003d2660f8022801073d58c260b6cd354c433777e45a66b614b2f2b1640658",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-13-serum_dropper_or_pump",
+      "imageClass": "serum_dropper_or_pump",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-13-serum_dropper_or_pump-5ec7988668bc.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "5ec7988668bc3e1e86e180efe68bdc41f3b9b99d0706967a0b1c1d3a8cd630e1",
+      "rendererPayloadSha256": "8e48753801e9397dcbf73f4df6746b43ce98c7db5c5c4d6c2844c476261e2485",
+      "renderContractSha256": "05f8db846bd76a8c9a7ec73b0cc33956428b2f88ca7e30a38ff55b41034c0d17",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-14-supplement_bottle_generic",
+      "imageClass": "supplement_bottle_generic",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-14-supplement_bottle_generic-d80889d39c34.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "d80889d39c34567c69898b29d87b73baf3ef3d5c0fabd186f9aad791ce2f769b",
+      "rendererPayloadSha256": "af17d14a308c062947e76846b8a204f3bd9866f16779d85b5c7eb69099408697",
+      "renderContractSha256": "bcece9cb11b496a985351dba5b824c8a00b3cbdace1bdaa85e297bd716b553f4",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-15-supplement_tub_generic",
+      "imageClass": "supplement_tub_generic",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-15-supplement_tub_generic-e1b7ec4baaf9.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "e1b7ec4baaf9b07dd70993ef430eba4e413766e20bd399a9fada4adb53b1b1a6",
+      "rendererPayloadSha256": "e0016191bcd66245ce7cbd03aa2e9f66be83d1b40ff1ff3349ee392cfeeb3347",
+      "renderContractSha256": "9973e6adc6cff0262d337129783a8d19edd642a56d22054a0ed01e3b767442b8",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-16-supplement_retail_unit_neutral",
+      "imageClass": "supplement_retail_unit_neutral",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-16-supplement_retail_unit_neutral-b4a08ad2f8a2.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "b4a08ad2f8a22d5881d537ad4f4146623fc49bcfa0795f90cb9f05aa811e9094",
+      "rendererPayloadSha256": "8a229ea25495cc32150efaff0ebea53dfce30b0237832fa467df186386fb2408",
+      "renderContractSha256": "2f42212a1ff40e19aaaae62dfcf17b25a6a60d30744d648e12eb55709564c7c3",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-17-accessory_pack",
+      "imageClass": "accessory_pack",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-17-accessory_pack-400343ec2b18.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "400343ec2b1803784c6d6ce71598ce0c99a8d2dcd2d4e1aaefed1729fb4fbe20",
+      "rendererPayloadSha256": "37b218c0495486547064b0cbb716f2285198ab5c701b0ec280485c299a44fe88",
+      "renderContractSha256": "a1285c01df3d4e837d5f15b8ce533c3885f1eecae249027ac9b8c560b53a8ebd",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-18-syringe_supply_pack_neutral",
+      "imageClass": "syringe_supply_pack_neutral",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-18-syringe_supply_pack_neutral-abf6ac0ab3ad.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "abf6ac0ab3ad26695e5312b9fcb6877b8cf48390cd9160b1788fc749fac0f6b2",
+      "rendererPayloadSha256": "1a4db8c816506872f90fd20263214b32da4f0d93b783a9e475ed9133cd0950a5",
+      "renderContractSha256": "c3d9c3959a3d7f27f758cc710332f1c66fa026541b6170a68b20b7db04fcb03a",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-19-packaging_unverified",
+      "imageClass": "packaging_unverified",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-19-packaging_unverified-681a1e29ade9.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "681a1e29ade94a75f6fc7e348bfe9a39739d8b225866cd969a803add5de5ab14",
+      "rendererPayloadSha256": "942c0368068029b3d0cc6dda7c4f3ae6171b66fa795411c9a3664960e4e956d8",
+      "renderContractSha256": "7d9e2aa55c03ad7382fab1ad2966b2470def7c383b7cf57c9f9e21ad1ef08c0d",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-20-neutral_product_identity",
+      "imageClass": "neutral_product_identity",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-20-neutral_product_identity-f54b6074d294.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "f54b6074d294d9c03618b301b04322636c6ab671c15195a63b9eee7d839efb51",
+      "rendererPayloadSha256": "977655e76637cd0385d8cce3e4422274bc839d91d94dc0360128739e32a598ce",
+      "renderContractSha256": "e6111a7523ca049f764c68b64390edb912f03c85224299759a9078287988c367",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-21-care_pathway_neutral",
+      "imageClass": "care_pathway_neutral",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-21-care_pathway_neutral-fccca2e981de.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "fccca2e981de7d3c2761be6b8c08b3838f6efcba99c1e6b5232abac1310668f4",
+      "rendererPayloadSha256": "4d1f5cf5b0fa26c1cb7103f5eaf45ed8281e593767d5263e396b7bfc129b01bb",
+      "renderContractSha256": "3807583633bf809dc1163a3ebb6cebf2b847fd80cc8e5c54983dd40bf526010e",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-22-held_neutral",
+      "imageClass": "held_neutral",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-22-held_neutral-140501a8a2b1.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "140501a8a2b11e244f854bc3399fd84c9fb25cba2d2a049e69e9377d40414616",
+      "rendererPayloadSha256": "96aa23428008422f4c78733fb0bd36fc27935b594729255358c9028f908ac6a8",
+      "renderContractSha256": "f1b31203b14c673c21b49b8281576f3aad2b541d31fdf2efe978c88319941309",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-23-quote_only_neutral",
+      "imageClass": "quote_only_neutral",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-23-quote_only_neutral-b085c3c3ce4f.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "b085c3c3ce4f47dc77906502b29f25c352e3df0305ec9a6bb76da580eea64c2f",
+      "rendererPayloadSha256": "3bc54b53fb74e1d047e5b42bafbec995d784602b888af5d8fc379c8ee4f0543e",
+      "renderContractSha256": "90e0d97c0bec4aba68951e782db46de4991610f3f47f6a9fdea4a7bfcbd1ed9c",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-24-coming_soon_offering",
+      "imageClass": "coming_soon_offering",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-24-coming_soon_offering-fc1c9ffe8b06.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "fc1c9ffe8b06f389727fcc66b571d12ffbee8886a86ed21908f925ca2173091c",
+      "rendererPayloadSha256": "4dc8171acef01f5d1fb64c17389c3921da854b40d194774d7ac96c3508c8cd41",
+      "renderContractSha256": "420ef2e4ee012d00cbaed1c5fb59594e32c68a99afae3c82db204ecf0ac8de1a",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    },
+    {
+      "jobId": "batch0-25-shipping_service",
+      "imageClass": "shipping_service",
+      "visibility": "non_public_review_evidence",
+      "reviewStatus": "render_pending",
+      "publicPath": null,
+      "repositoryPath": "docs/product-imagery/evidence/batch0-render-candidates/batch0-25-shipping_service-8cfa641faffb.png",
+      "renderer": {
+        "provider": "OpenAI",
+        "interface": "built_in_imagegen",
+        "model": "not_exposed_by_tool",
+        "requestId": "not_exposed_by_tool"
+      },
+      "promptSha256": "8cfa641faffbb13668349f19da946926a706ace01d0aee34cbf133bf255ee731",
+      "rendererPayloadSha256": "f0bffd4517021906c426d4aa3b2e25434bf9a5055e95c8c2a026749bedf4cc7d",
+      "renderContractSha256": "0f29968dfb46675f235678b1f66f109f25003c6c675c34813e91d3f73f8bdfdb",
+      "receiptSha256": null,
+      "source": null,
+      "approval": {
+        "namedApprover": null,
+        "approvedAt": null,
+        "approvalRecord": null
+      }
+    }
+  ]
+}

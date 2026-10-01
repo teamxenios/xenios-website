@@ -1,5 +1,7 @@
 # Prior imagery branch reconciliation
 
+> Historical reconciliation record for the pre-v3 branch. Superseded for current counts, paths, and render authorization by `COVERAGE_SUMMARY.md`, `README.md`, and the v3 manifests.
+
 Primary reconciled: `7600943f9ec7573f0a5cbfe7a7687ba851276a30`, tree `2fd41b918c8d77c5593319a6d921477f789b737e`.
 
 The independent acceptance bar was read from `f4f899a7:docs/review/xenios-health-launch-review-20260930/13_IMAGE_LAYER_ACCEPTANCE.md`. That review commit is divergent from primary, so only the document was used as evidence. No review-branch commit was cherry-picked.

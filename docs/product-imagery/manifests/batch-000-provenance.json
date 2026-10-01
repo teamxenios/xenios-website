@@ -1,0 +1,314 @@
+{
+  "schemaVersion": 4,
+  "generatedAt": "2026-10-01T02:45:00.000Z",
+  "kind": "v3_batch_000_fixture_provenance_not_renderer_input",
+  "rendererPacketPath": "docs/product-imagery/manifests/renderer-packet-v3.json",
+  "warning": "Do not send this provenance artifact to the renderer.",
+  "counts": {
+    "provenanceRecords": 25
+  },
+  "provenanceRecords": [
+    {
+      "jobId": "batch0-01-peptide_lyophilized_vial",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0264",
+        "movId": "mov_09db3e866424b64994d3",
+        "displayIdentity": "BPC-157 5 mg",
+        "alt": "Neutral unbranded dry-vial study for BPC-157 5 mg.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-02-liquid_vial",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0001",
+        "movId": "mov_a8af22bc4d1d96266669",
+        "displayIdentity": "5-Amino-1MQ",
+        "alt": "Neutral unbranded liquid-vial study for 5-Amino-1MQ.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-03-injectable_solution_vial",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0010",
+        "movId": "mov_4b3417df465b8cbf0690",
+        "displayIdentity": "Ascorbic Acid",
+        "alt": "Neutral unbranded sealed-vial study for Ascorbic Acid.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-04-solution_container_neutral",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0363",
+        "movId": "mov_88fd1531d586cdebb896",
+        "displayIdentity": "Reconstitution Solution",
+        "alt": "Neutral unbranded solution-container study for Reconstitution Solution.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-05-nasal_spray",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0112",
+        "movId": "mov_de7158dd9892e7e78e1f",
+        "displayIdentity": "NAD+",
+        "alt": "Neutral unbranded capped-spray study for NAD+.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-06-oral_liquid_neutral",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0362",
+        "movId": "mov_30d35dcbc0bc8d59ff5b",
+        "displayIdentity": "Acetic Acid",
+        "alt": "Neutral unbranded liquid-container study for Acetic Acid.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-07-capsule_bottle",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0249",
+        "movId": "mov_fe292b5f03527ec13e5e",
+        "displayIdentity": "KPV",
+        "alt": "Neutral unbranded closed-bottle study for KPV.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-08-tablet_bottle",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0005",
+        "movId": "mov_0599d5a40aa70a61481b",
+        "displayIdentity": "Anastrozole Tablet",
+        "alt": "Neutral unbranded closed-bottle study for Anastrozole Tablet.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-09-odt_container",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0115",
+        "movId": "mov_70ed47e636867f37e9d3",
+        "displayIdentity": "Ondansetron",
+        "alt": "Neutral unbranded closed-container study for Ondansetron.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-10-troche_container",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0007",
+        "movId": "mov_34d2979a224be8a574f4",
+        "displayIdentity": "AOD-9604",
+        "alt": "Neutral unbranded closed-container study for AOD-9604.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-11-cream_tube_or_pump",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0145",
+        "movId": "mov_0146c6b245d5f09247a8",
+        "displayIdentity": "Progesterone",
+        "alt": "Neutral unbranded topical-container study for Progesterone.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-12-gel_tube_or_pump",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0068",
+        "movId": "mov_5375621d23911b130fd4",
+        "displayIdentity": "GHK-Cu serum/gel",
+        "alt": "Neutral unbranded topical-container study for GHK-Cu serum and gel.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-13-serum_dropper_or_pump",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0420",
+        "movId": "mov_ea6077e070c07548c709",
+        "displayIdentity": "Radient XO",
+        "alt": "Neutral unbranded serum-container study for Radient XO.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-14-supplement_bottle_generic",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": null,
+        "movId": null,
+        "displayIdentity": "Class-only generic supplement bottle",
+        "alt": "Neutral unbranded generic supplement-bottle class study.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-15-supplement_tub_generic",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": null,
+        "movId": null,
+        "displayIdentity": "Class-only generic supplement tub",
+        "alt": "Neutral unbranded generic supplement-tub class study.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-16-supplement_retail_unit_neutral",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0375",
+        "movId": "mov_f5d63d95caa3d6d0a7a0",
+        "displayIdentity": "Magtein",
+        "alt": "Neutral packaging-unassertive retail-unit study for Magtein.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-17-accessory_pack",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": null,
+        "movId": null,
+        "displayIdentity": "Class-only generic accessory pack",
+        "alt": "Neutral unbranded generic accessory-pack class study.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-18-syringe_supply_pack_neutral",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0365",
+        "movId": "mov_512ed6b875c04eee4753",
+        "displayIdentity": "Syringes & Alcohol Swabs",
+        "alt": "Neutral sealed-supply-pack study for Syringes and Alcohol Swabs.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-19-packaging_unverified",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0073",
+        "movId": "mov_711f953e5a7be900fb65",
+        "displayIdentity": "Pregnyl",
+        "alt": "Packaging-unverified neutral-container study for Pregnyl.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-20-neutral_product_identity",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0392",
+        "movId": "mov_554ae2758dbe92e4baa6",
+        "displayIdentity": "BDNF",
+        "alt": "Form-neutral identity study for BDNF; no physical package is represented.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-21-care_pathway_neutral",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0002",
+        "movId": "mov_82974ab2f9c652c2cb12",
+        "displayIdentity": "Anastrozole",
+        "alt": "Neutral guided-Care pathway study for Anastrozole; no product is represented.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-22-held_neutral",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0394",
+        "movId": "mov_07317a1fe77fe228b793",
+        "displayIdentity": "CJC-1295 With DAC",
+        "alt": "Held-state neutral study for CJC-1295 With DAC; no physical package is represented.",
+        "qaGroupIds": [
+          "GRP-0422"
+        ]
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-23-quote_only_neutral",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0244",
+        "movId": "mov_038386172c35c2ad8cca",
+        "displayIdentity": "BAM15",
+        "alt": "Neutral review-pathway study for BAM15; no price or package is represented.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-24-coming_soon_offering",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": null,
+        "movId": null,
+        "displayIdentity": "Superpower / Mito Health shared coming-soon class",
+        "alt": "Shared neutral coming-soon decorative study for Superpower and Mito Health; no partnership or package is represented.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    },
+    {
+      "jobId": "batch0-25-shipping_service",
+      "fixture": {
+        "provenanceOnly": true,
+        "groupId": "GRP-0364",
+        "movId": "mov_9b65ad5bb184691e19e0",
+        "displayIdentity": "FedEx Standard Overnight",
+        "alt": "Abstract shipping-service study for FedEx Standard Overnight; no carrier mark or merchandise is represented.",
+        "qaGroupIds": []
+      },
+      "boundary": "excluded_from_renderer_payload_and_compiled_prompt"
+    }
+  ]
+}

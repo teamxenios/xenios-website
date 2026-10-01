@@ -4,151 +4,89 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
-  ASSET_BYTE_BUDGET,
-  ASSET_TOTAL_BYTE_BUDGET,
   ARTIFACT_GENERATED_AT,
   BINDING_SOURCE_PATH,
-  CATALOG_SOURCE_PATH,
   CATALOG_RECONCILIATION_SOURCE_PATH,
+  CATALOG_SOURCE_PATH,
   CONTRACT_SCHEMA_VERSION,
-  COVERAGE_STATUSES,
-  CURRENT_DEMAND_TITLES,
   CUSTOMER_EXPOSURE_SOURCE_PATH,
-  FALLBACK_ASSET_PROVENANCE,
+  DOSAGE_FORM_TO_IMAGE_CLASS,
   FALLBACK_ASSETS,
+  FALLBACK_ASSET_PROVENANCE,
   FEATURED_IDENTITY_SOURCE_PATH,
-  FORM_TO_TAXONOMY,
-  JOURNEY_CLASSES,
-  MASTER_CATALOG_SUMMARY_SOURCE_PATH,
+  FOUNDER_V3_SPEC_PATH,
+  FOUNDER_V3_SPEC_SHA256,
   SOURCE_BASE_COMMIT,
   SOURCE_BASE_TREE,
   V3_ACCEPTANCE,
 } from "./config.mjs";
+import {
+  BATCH0_JOBS,
+  compileRendererPrompt,
+  validateRendererJob,
+} from "./batch0-config.mjs";
+import {
+  buildReviewedCatalogProjection,
+  gitBlobOid,
+  gitTextBlobOid,
+} from "./catalog-v3.mjs";
 
 export const REPO_ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
   "../..",
 );
 
-const ASSET_BY_ID = new Map(FALLBACK_ASSETS.map((asset) => [asset.assetId, asset]));
-const ASSET_BY_TAXONOMY = new Map(
-  FALLBACK_ASSETS.map((asset) => [asset.taxonomyKey, asset]),
-);
+const SHIPPING_GROUP_ID = "GRP-0364";
+const SYRINGE_GROUP_ID = "GRP-0365";
+const PRICE_REQUEST_GROUP_ID = "GRP-0244";
+const FORMULATION_HOLD_GROUP_ID = "GRP-0422";
+const SUPERSEDED_FORWARD_GROUPS = Object.freeze({
+  "GRP-0425": "GRP-0407",
+  "GRP-0426": "GRP-0402",
+});
+const EXTERNALLY_SUPPLIED_STATE_TO_IMAGE_CLASS = Object.freeze({
+  care_pathway: "care_pathway_neutral",
+  held: "held_neutral",
+  quote_only: "quote_only_neutral",
+  coming_soon: "coming_soon_offering",
+});
+const REVIEWED_PRESENTATION_CLASS_OVERRIDES = Object.freeze({
+  "GRP-0073": "packaging_unverified",
+});
 
-const PACKAGING_SENSITIVE_NAMES = [
-  "pregnyl",
-  "kyzatrex",
-  "zofran",
-  "versabase",
-  "magtein",
-  "ultrabiotic",
-  "superpower",
-  "mito health",
-];
-
-const CLAIM_BEARING_NAMES = [
-  "anti-aging",
-  "hair restoration",
-  "libido cream",
-];
+function readBytes(relativePath) {
+  return fs.readFileSync(path.join(REPO_ROOT, relativePath));
+}
 
 function readText(relativePath) {
-  return fs.readFileSync(path.join(REPO_ROOT, relativePath), "utf8");
+  return readBytes(relativePath).toString("utf8");
 }
 
 function readJson(relativePath) {
   return JSON.parse(readText(relativePath));
 }
 
-function sha256Bytes(bytes) {
+export function sha256Bytes(bytes) {
   return crypto.createHash("sha256").update(bytes).digest("hex");
 }
 
+export function sha256Text(text) {
+  return sha256Bytes(Buffer.from(text, "utf8"));
+}
+
 export function sha256File(relativePath) {
-  return sha256Bytes(fs.readFileSync(path.join(REPO_ROOT, relativePath)));
+  return sha256Bytes(readBytes(relativePath));
 }
 
-const RUNTIME_REFERENCE_ROOTS = [
-  "client/src",
-  "server",
-  "shared",
-  "supabase/functions",
-  "supabase/migrations",
-];
-
-const RUNTIME_SOURCE_EXTENSIONS = new Set([
-  ".cjs",
-  ".html",
-  ".js",
-  ".jsx",
-  ".json",
-  ".mjs",
-  ".sql",
-  ".ts",
-  ".tsx",
-]);
-
-function runtimeSourceFiles(relativeRoot) {
-  const absoluteRoot = path.join(REPO_ROOT, relativeRoot);
-  if (!fs.existsSync(absoluteRoot)) return [];
-  const files = [];
-  const visit = (absoluteDirectory) => {
-    for (const entry of fs.readdirSync(absoluteDirectory, {
-      withFileTypes: true,
-    })) {
-      const absolutePath = path.join(absoluteDirectory, entry.name);
-      if (entry.isDirectory()) {
-        visit(absolutePath);
-        continue;
-      }
-      if (!entry.isFile() || !RUNTIME_SOURCE_EXTENSIONS.has(path.extname(entry.name))) {
-        continue;
-      }
-      const relativePath = path
-        .relative(REPO_ROOT, absolutePath)
-        .split(path.sep)
-        .join("/");
-      if (
-        /(?:^|\/)(?:__tests__|fixtures)(?:\/|$)/.test(relativePath) ||
-        /\.(?:test|spec|stories)\.[cm]?[jt]sx?$/.test(relativePath)
-      ) {
-        continue;
-      }
-      files.push(relativePath);
-    }
-  };
-  visit(absoluteRoot);
-  return files.sort();
-}
-
-export function scanRuntimeCandidateReferences(assets = FALLBACK_ASSETS) {
-  const references = [];
-  for (const relativePath of RUNTIME_REFERENCE_ROOTS.flatMap(runtimeSourceFiles)) {
-    const source = readText(relativePath);
-    for (const asset of assets) {
-      const matchedTokens = [
-        asset.assetId,
-        asset.publicPath,
-        path.posix.basename(asset.publicPath),
-      ].filter((token) => source.includes(token));
-      if (matchedTokens.length > 0) {
-        references.push({
-          path: relativePath,
-          assetId: asset.assetId,
-          matchedTokens: [...new Set(matchedTokens)].sort(),
-        });
-      }
-    }
-  }
-  const referencedAssetIds = [
-    ...new Set(references.map((reference) => reference.assetId)),
-  ].sort();
+export function sourceDescriptor(relativePath) {
+  const bytes = readBytes(relativePath);
   return {
-    roots: RUNTIME_REFERENCE_ROOTS,
-    references,
-    referencedAssetIds,
-    publicAssetsWired: referencedAssetIds.length,
-    customerSurfaceReferences: references.length,
+    path: relativePath.replaceAll("\\", "/"),
+    sha256: sha256Bytes(bytes),
+    sha256Semantics: "exact_working_tree_bytes",
+    gitBlobOid: gitTextBlobOid(bytes),
+    gitBlobOidSemantics: "lf_normalized_repository_text_blob",
+    byteSize: bytes.length,
   };
 }
 
@@ -158,54 +96,11 @@ function countBy(values, keyFor) {
     const key = keyFor(value);
     counts[key] = (counts[key] ?? 0) + 1;
   }
-  return Object.fromEntries(
-    Object.entries(counts).sort(
-      ([left], [right]) => left.localeCompare(right),
-    ),
-  );
+  return Object.fromEntries(Object.entries(counts).sort(([a], [b]) => a.localeCompare(b)));
 }
 
-function normalizeTitle(value) {
-  return String(value ?? "")
-    .normalize("NFKD")
-    .replace(/[^a-zA-Z0-9]+/g, "")
-    .toLowerCase();
-}
-
-function nameIncludes(product, needles) {
-  const names = [
-    product.displayName,
-    product.canonicalName,
-    ...(product.aliases ?? []),
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-  return needles.some((needle) => names.includes(needle));
-}
-
-function visualRestrictionFor(product, resolvedVisualForm = product.subcategory) {
-  if (resolvedVisualForm === "Form not stated") {
-    return "form_neutral_no_container_or_packaging";
-  }
-  if (nameIncludes(product, PACKAGING_SENSITIVE_NAMES)) {
-    return "form_only_no_brand_logo_or_fabricated_packaging";
-  }
-  if (nameIncludes(product, CLAIM_BEARING_NAMES)) {
-    return "form_only_no_claim_bearing_visual_or_alt_extension";
-  }
-  return "generic_form_only_until_exact_evidence";
-}
-
-function isCurrentDemandOffering(product) {
-  const candidateKeys = [
-    product.displayName,
-    product.canonicalName,
-    ...(product.aliases ?? []),
-  ].map(normalizeTitle);
-  return CURRENT_DEMAND_TITLES.some((title) =>
-    candidateKeys.includes(normalizeTitle(title)),
-  );
+function sortedUnique(values) {
+  return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
 }
 
 export function extractRuntimeExcludedOfferingIds(source) {
@@ -216,928 +111,933 @@ export function extractRuntimeExcludedOfferingIds(source) {
     (match) => match[1],
   );
   if (ids.length !== 1) {
-    throw new Error(
-      `Expected one runtime shipping-charge exclusion, found ${ids.length}`,
-    );
+    throw new Error(`Expected one runtime shipping-charge exclusion, found ${ids.length}`);
   }
   return new Set(ids);
 }
 
-export function journeyClassFor({ product, binding, excluded }) {
-  if (excluded) return "shipping_service";
-  if (!binding && product.family === "shipping_and_fulfillment") return "held";
-  if (!binding) return "quote_required";
-
-  switch (product.displayState) {
-    case "care_pathway":
-      return "care";
-    case "request_access":
-      return "request_access";
-    case "approval_required":
-    case "temporarily_unavailable":
-      return "held";
-    case "coming_soon":
-    case "planned":
-      return "coming";
-    case "unavailable":
-      return "unavailable";
-    case "available_now":
-    case "available_this_week":
-      return "catalog_visible";
-    default:
-      throw new Error(`Unsupported display state ${product.displayState}`);
+function inspectPng(relativePath) {
+  const bytes = readBytes(relativePath);
+  const signature = bytes.subarray(0, 8).toString("hex");
+  if (signature !== "89504e470d0a1a0a" || bytes.length < 24) {
+    throw new Error(`${relativePath} is not a valid PNG evidence file`);
   }
+  return {
+    format: "PNG",
+    width: bytes.readUInt32BE(16),
+    height: bytes.readUInt32BE(20),
+    byteSize: bytes.length,
+    sha256: sha256Bytes(bytes),
+    gitBlobOid: gitBlobOid(bytes),
+  };
 }
 
-function fallbackTaxonomyFor({
-  product,
-  binding,
-  excluded,
-  resolvedVisualForm = product.subcategory,
-}) {
-  if (excluded) return "shipping_service";
-  if (!binding && product.family === "shipping_and_fulfillment") return "pending";
-  if (!binding) return "request";
-  if (product.displayState === "care_pathway") return "care";
-  if (
-    [
-      "approval_required",
-      "temporarily_unavailable",
-      "coming_soon",
-      "planned",
-      "unavailable",
-    ].includes(product.displayState)
-  ) {
-    return "pending";
-  }
-  if (resolvedVisualForm === "Form not stated") return "pending";
-  return FORM_TO_TAXONOMY.get(resolvedVisualForm) ?? "pending";
+function buildQuarantineManifest() {
+  const assets = FALLBACK_ASSETS.map((asset) => {
+    const absolute = path.join(REPO_ROOT, asset.filePath);
+    if (!fs.existsSync(absolute)) throw new Error(`Missing quarantined asset ${asset.filePath}`);
+    const bytes = fs.readFileSync(absolute);
+    const actualSha256 = sha256Bytes(bytes);
+    if (actualSha256 !== asset.sha256 || bytes.length !== asset.byteSize) {
+      throw new Error(`Quarantined asset bytes drifted for ${asset.assetId}`);
+    }
+    return {
+      assetId: asset.assetId,
+      disposition: "permanently_nonapprovable_pre_v3_evidence",
+      reviewStatus: "rejected_requires_v3_rerender",
+      runtimeWiringEligibility: "blocked",
+      deploymentEligibility: "blocked",
+      publicPath: null,
+      removedPublicPath: `/research/products/fallbacks/${path.basename(asset.filePath)}`,
+      repositoryPath: asset.filePath,
+      sha256: actualSha256,
+      gitBlobOid: gitBlobOid(bytes),
+      byteSize: bytes.length,
+      width: asset.width,
+      height: asset.height,
+      legacyTaxonomyKey: asset.taxonomyKey,
+      legacyPromptSha256: sha256Text(asset.prompt),
+      sourceArtifact: FALLBACK_ASSET_PROVENANCE[asset.assetId].sourceArtifact,
+    };
+  });
+  return {
+    schemaVersion: CONTRACT_SCHEMA_VERSION,
+    generatedAt: ARTIFACT_GENERATED_AT,
+    kind: "pre_v3_nonapprovable_quarantine_manifest",
+    publicRuntimeAuthority: false,
+    counts: {
+      quarantined: assets.length,
+      public: assets.filter((asset) => asset.publicPath !== null).length,
+      approvable: assets.filter((asset) => asset.deploymentEligibility !== "blocked").length,
+    },
+    priorPublicDirectory: "client/public/research/products/fallbacks",
+    quarantineDirectory: "docs/product-imagery/evidence/pre-v3-nonapprovable",
+    assets,
+  };
 }
 
-function recommendedAltText(asset, product) {
-  return `${product.displayName}: ${asset.altDescription} Illustrative.`;
+function buildBatch0AssetManifest() {
+  const assets = BATCH0_JOBS.map((job) => {
+    validateRendererJob(job);
+    const prompt = compileRendererPrompt(job);
+    const exists = fs.existsSync(path.join(REPO_ROOT, job.evidenceTarget.repositoryPath));
+    const promptSha256 = sha256Text(prompt);
+    const rendererPayloadSha256 = sha256Text(JSON.stringify(job.rendererPayload));
+    const renderContractSha256 = sha256Text(
+      [FOUNDER_V3_SPEC_SHA256, promptSha256, rendererPayloadSha256].join("\u0000"),
+    );
+    const source = exists ? inspectPng(job.evidenceTarget.repositoryPath) : null;
+    return {
+      jobId: job.jobId,
+      imageClass: job.imageClass,
+      visibility: "non_public_review_evidence",
+      reviewStatus: exists ? "awaiting_independent_named_approval" : "render_pending",
+      publicPath: null,
+      repositoryPath: job.evidenceTarget.repositoryPath,
+      renderer: {
+        provider: "OpenAI",
+        interface: "built_in_imagegen",
+        model: "not_exposed_by_tool",
+        requestId: "not_exposed_by_tool",
+      },
+      promptSha256,
+      rendererPayloadSha256,
+      renderContractSha256,
+      receiptSha256: source
+        ? sha256Text([renderContractSha256, source.sha256].join("\u0000"))
+        : null,
+      source,
+      approval: {
+        namedApprover: null,
+        approvedAt: null,
+        approvalRecord: null,
+      },
+    };
+  });
+  return {
+    schemaVersion: CONTRACT_SCHEMA_VERSION,
+    generatedAt: ARTIFACT_GENERATED_AT,
+    kind: "batch_000_v3_non_public_asset_manifest",
+    publicRuntimeAuthority: false,
+    promotionRule:
+      "A derivative may enter client/public only after an independent named reviewer approves the exact source SHA-256 and the derivative is separately hashed.",
+    counts: {
+      jobs: assets.length,
+      rendered: assets.filter((asset) => asset.source !== null).length,
+      pending: assets.filter((asset) => asset.source === null).length,
+      approved: assets.filter((asset) => asset.approval.namedApprover !== null).length,
+      public: assets.filter((asset) => asset.publicPath !== null).length,
+    },
+    assets,
+  };
 }
 
-function exactRenderPrompt(product, variant, coverageRow) {
-  const form = coverageRow.resolvedVisualForm ?? "form not stated";
-  const restriction = coverageRow.visualRestriction;
-  const formEvidence = coverageRow.visualFormEvidence
-    ? ` Form evidence: ${coverageRow.visualFormEvidence.canonicalSourceRow} is the reviewed kept identity; ${coverageRow.visualFormEvidence.supersededSourceRow} is provenance only.`
-    : "";
-  const formInstruction =
-    form === "Form not stated"
-      ? "The form is not stated. Show no product, container, package, vial, bottle, tablet, spray, topical vessel, or dosage-form clue. Use a form-neutral non-product review composition only."
-      : `The reviewed visual form classification is ${form}.${formEvidence} Use only a generic unbranded form treatment unless exact packaging evidence is later approved.`;
-  return [
-    "Pre-v3 draft planning prompt for internal review only. Do not render until the founder-supplied v3 prompt is attached and reconciled.",
-    `Canonical offering ${product.id}; canonical variant ${variant.id}.`,
-    `Member-safe identity reference: ${product.displayName}; ${variant.label}.`,
-    formInstruction,
-    `Visual restriction: ${restriction}.`,
-    "Use the Xenios warm off-white, cool-gray, brushed-silver, and muted deep-green studio system.",
-    "Do not invent or render label artwork, brand marks, partner logos, dosage text, strength text, lot data, expiry, purity, availability, pricing, certification, fill volume, concentration, unit count, or purchase cues.",
-    "Never imitate third-party packaging. Leave any permitted generic surface blank.",
-    "Any future output remains provisional until exact identity, rights, checksum, named approval, packaging evidence, and the v3 prompt record are present.",
-    "Square 1:1 with generous crop-safe margins.",
-  ].join(" ");
-}
+export function validateBatch0FixtureJoin(reviewedProjection, jobs = BATCH0_JOBS) {
+  const rowByGroupId = new Map(reviewedProjection.rows.map((row) => [row.groupId, row]));
+  const stateOnlyClasses = new Set([
+    "care_pathway_neutral",
+    "held_neutral",
+    "quote_only_neutral",
+    "coming_soon_offering",
+  ]);
+  const identityTerms = sortedUnique(
+    reviewedProjection.rows.flatMap((row) => [row.product, row.specification]),
+  ).filter((term) => term.length >= 5);
 
-function exactRenderFilenameTemplate(variant) {
-  return `xenios-${variant.id}-primary-v1-{sha12}.webp`;
-}
-
-function firstPageOfferingIds(products, excludedIds) {
-  return new Set(
-    products
-      .filter((product) => !excludedIds.has(product.id))
-      .slice()
-      .sort((left, right) => {
-        const leftKey = `${left.displayName}|${left.slug}|${left.id}`;
-        const rightKey = `${right.displayName}|${right.slug}|${right.id}`;
-        return leftKey.localeCompare(rightKey);
-      })
-      .slice(0, 24)
-      .map((product) => product.id),
-  );
-}
-
-function assignQueuePriorities(rows, productById, firstPageIds) {
-  const formRepresentativeKeys = new Set();
-  return rows.map((row) => {
-    const product = productById.get(row.offeringId);
-    let priority = "P3";
-    let priorityBasis = "remaining_exposed_catalog";
-
-    if (isCurrentDemandOffering(product)) {
-      priority = "P0";
-      priorityBasis = "current_demand_exact_member_safe_name_match";
-    } else if (firstPageIds.has(product.id)) {
-      priority = "P1";
-      priorityBasis = "default_catalog_first_page_24";
-    } else if (!formRepresentativeKeys.has(row.fallback.assetId)) {
-      formRepresentativeKeys.add(row.fallback.assetId);
-      priority = "P2";
-      priorityBasis = "first_remaining_fallback_taxonomy_representative";
+  for (const job of jobs) {
+    const fixture = job.fixture;
+    if (new Set(fixture.qaGroupIds).size !== fixture.qaGroupIds.length) {
+      throw new Error(`${job.jobId} repeats a QA group ID`);
+    }
+    for (const qaGroupId of fixture.qaGroupIds) {
+      if (!rowByGroupId.has(qaGroupId)) {
+        throw new Error(`${job.jobId} names absent QA group ${qaGroupId}`);
+      }
+    }
+    if (fixture.groupId === null) continue;
+    const row = rowByGroupId.get(fixture.groupId);
+    if (!row) throw new Error(`${job.jobId} names absent fixture group ${fixture.groupId}`);
+    if (row.offeringVariantId !== fixture.movId) {
+      throw new Error(
+        `${job.jobId} fixture identity mismatch: ${fixture.groupId}/${fixture.movId}`,
+      );
+    }
+    if (!stateOnlyClasses.has(job.imageClass)) {
+      const expectedClass =
+        REVIEWED_PRESENTATION_CLASS_OVERRIDES[row.groupId] ??
+        DOSAGE_FORM_TO_IMAGE_CLASS.get(row.dosageForm);
+      if (expectedClass !== job.imageClass) {
+        throw new Error(
+          `${job.jobId} fixture class mismatch: ${fixture.groupId} maps to ${expectedClass}`,
+        );
+      }
     }
 
-    return { row, product, priority, priorityBasis };
-  });
+    const rendererText = JSON.stringify({
+      payload: job.rendererPayload,
+      prompt: compileRendererPrompt(job),
+    }).toLowerCase();
+    for (const identityTerm of identityTerms) {
+      if (rendererText.includes(identityTerm.toLowerCase())) {
+        throw new Error(`${job.jobId} renderer input leaked catalog identity ${identityTerm}`);
+      }
+    }
+  }
+  return true;
 }
 
-function stableSortQueue(left, right) {
-  const rank = { P0: 0, P1: 1, P2: 2, P3: 3 };
-  return (
-    rank[left.priority] - rank[right.priority] ||
-    left.product.displayName.localeCompare(right.product.displayName) ||
-    left.row.offeringVariantId.localeCompare(right.row.offeringVariantId)
+function buildRendererPacket() {
+  const rendererJobs = [];
+  const provenanceRecords = [];
+  for (const job of BATCH0_JOBS) {
+    validateRendererJob(job);
+    const rendererPrompt = compileRendererPrompt(job);
+    rendererJobs.push({
+      jobId: job.jobId,
+      batch: job.batch,
+      imageClass: job.imageClass,
+      evidenceTarget: job.evidenceTarget,
+      rendererPayload: job.rendererPayload,
+      rendererPrompt,
+      rendererPromptSha256: sha256Text(rendererPrompt),
+    });
+    provenanceRecords.push({
+      jobId: job.jobId,
+      fixture: job.fixture,
+      boundary: "excluded_from_renderer_payload_and_compiled_prompt",
+    });
+  }
+  return {
+    rendererPacket: {
+      schemaVersion: CONTRACT_SCHEMA_VERSION,
+      generatedAt: ARTIFACT_GENERATED_AT,
+      kind: "v3_batch_000_request_only_renderer_packet",
+      founderSpec: sourceDescriptor(FOUNDER_V3_SPEC_PATH),
+      policy: {
+        rendererPayloadContainsCanonicalIdentity: false,
+        visibleText: "none",
+        labels: "none",
+        trademarks: "none",
+        claims: "none",
+        use: "non_public_review_evidence_only",
+      },
+      counts: {
+        rendererJobs: rendererJobs.length,
+        namedProductPrompts: 0,
+      },
+      rendererJobs,
+    },
+    batch0Provenance: {
+      schemaVersion: CONTRACT_SCHEMA_VERSION,
+      generatedAt: ARTIFACT_GENERATED_AT,
+      kind: "v3_batch_000_fixture_provenance_not_renderer_input",
+      rendererPacketPath: "docs/product-imagery/manifests/renderer-packet-v3.json",
+      warning: "Do not send this provenance artifact to the renderer.",
+      counts: { provenanceRecords: provenanceRecords.length },
+      provenanceRecords,
+    },
+  };
+}
+
+function buildRenderQueue(batch0AssetManifest) {
+  const assetByJob = new Map(batch0AssetManifest.assets.map((asset) => [asset.jobId, asset]));
+  const items = BATCH0_JOBS.map((job, index) => {
+    const asset = assetByJob.get(job.jobId);
+    return {
+      sequence: index + 1,
+      jobId: job.jobId,
+      imageClass: job.imageClass,
+      target: job.evidenceTarget.repositoryPath,
+      queueStatus: asset.source ? "rendered_awaiting_review" : "ready_to_render",
+      mayPublish: false,
+    };
+  });
+  return {
+    schemaVersion: CONTRACT_SCHEMA_VERSION,
+    generatedAt: ARTIFACT_GENERATED_AT,
+    kind: "v3_sanitized_render_queue",
+    exactNamedVariantQueueRemoved: true,
+    counts: {
+      batches: 1,
+      items: items.length,
+      readyToRender: items.filter((item) => item.queueStatus === "ready_to_render").length,
+      renderedAwaitingReview: items.filter(
+        (item) => item.queueStatus === "rendered_awaiting_review",
+      ).length,
+      publishable: 0,
+    },
+    batches: [
+      {
+        batchId: "batch-000-v3-class-taxonomy",
+        purpose: "prove the renderer-neutral visual grammar before exact-product expansion",
+        items,
+      },
+    ],
+  };
+}
+
+function buildCoverageLedger(reviewedProjection, batch0AssetManifest) {
+  const candidateByClass = new Map(
+    batch0AssetManifest.assets.map((asset) => [asset.imageClass, asset]),
   );
+  const rows = reviewedProjection.rows.map((row) => {
+    const imageClass =
+      REVIEWED_PRESENTATION_CLASS_OVERRIDES[row.groupId] ??
+      DOSAGE_FORM_TO_IMAGE_CLASS.get(row.dosageForm);
+    if (!imageClass) throw new Error(`No presentation image class for ${row.dosageForm}`);
+    const candidate = candidateByClass.get(imageClass);
+    if (!candidate) throw new Error(`No Batch 0 candidate for image class ${imageClass}`);
+    return {
+      manifestKey: row.offeringVariantId,
+      groupId: row.groupId,
+      offeringId: row.offeringId,
+      offeringVariantId: row.offeringVariantId,
+      family: row.family,
+      category: row.category,
+      product: row.product,
+      specification: row.specification,
+      dosageForm: row.dosageForm,
+      sourceGroupIds: row.sourceGroupIds,
+      imageClass,
+      exactAsset: null,
+      classCandidate: {
+        jobId: candidate.jobId,
+        repositoryPath: candidate.repositoryPath,
+        reviewStatus: candidate.reviewStatus,
+        publicPath: null,
+      },
+      coverageStatus: candidate.source
+        ? "non_public_class_candidate_rendered"
+        : "non_public_class_candidate_pending",
+    };
+  });
+  const rowKeys = new Set(rows.map((row) => row.manifestKey));
+  if (rowKeys.size !== rows.length) throw new Error("Coverage manifest keys are not unique");
+  return {
+    schemaVersion: CONTRACT_SCHEMA_VERSION,
+    generatedAt: ARTIFACT_GENERATED_AT,
+    kind: "v3_reviewed_catalog_image_coverage",
+    runtimeCatalogAuthority: false,
+    businessStateAuthority: false,
+    forbiddenOwnedFields: [
+      "displayState",
+      "workflowMode",
+      "action",
+      "price",
+      "priceCents",
+      "cartEligible",
+      "sellable",
+      "inventory",
+      "formulationHold",
+    ],
+    sources: reviewedProjection.sources,
+    invariants: {
+      reviewedSourceRows: reviewedProjection.sourceRowCount,
+      canonicalRows: rows.length,
+      supersededSourceRows: reviewedProjection.sourceRowCount - rows.length,
+      exactAssetsApproved: 0,
+      publicAssetsWired: 0,
+      rowsWithBusinessStateFields: 0,
+      rowsWithPriceFields: 0,
+    },
+    byImageClass: countBy(rows, (row) => row.imageClass),
+    rows,
+  };
+}
+
+function buildIdentityCrosswalk(reviewedProjection, coverageLedger) {
+  const bindingSource = readJson(BINDING_SOURCE_PATH);
+  const featuredSource = readJson(FEATURED_IDENTITY_SOURCE_PATH);
+  const directByVariant = new Map(
+    bindingSource.bindings.map((binding) => [binding.offeringVariantId, binding]),
+  );
+  const bindingBySku = new Map(
+    bindingSource.bindings.map((binding) => [binding.productControlSku, binding]),
+  );
+  const aliasesByCanonicalVariant = new Map();
+  for (const alias of featuredSource.aliases) {
+    const values = aliasesByCanonicalVariant.get(alias.canonicalVariantId) ?? [];
+    values.push(alias);
+    aliasesByCanonicalVariant.set(alias.canonicalVariantId, values);
+  }
+  const coverageByKey = new Map(coverageLedger.rows.map((row) => [row.manifestKey, row]));
+
+  const entries = reviewedProjection.rows.map((row) => {
+    const direct = directByVariant.get(row.offeringVariantId) ?? null;
+    const supersededGroupId = SUPERSEDED_FORWARD_GROUPS[row.groupId] ?? null;
+    const forwardBinding = supersededGroupId
+      ? bindingBySku.get(`GEN-${supersededGroupId}`) ?? null
+      : null;
+    const featuredAliases = (aliasesByCanonicalVariant.get(row.offeringVariantId) ?? []).map(
+      (alias) => ({
+        productId: alias.liveProductId,
+        variantId: alias.liveVariantId,
+        productSku: alias.liveProductSku,
+        variantSku: alias.liveVariantSku,
+        evidenceAction: alias.action,
+      }),
+    );
+    const historicalForwardAliases = forwardBinding
+      ? [
+          {
+            sourceGroupId: supersededGroupId,
+            offeringId: forwardBinding.offeringId,
+            offeringVariantId: forwardBinding.offeringVariantId,
+            productControlSku: forwardBinding.productControlSku,
+            productControlProductId: forwardBinding.productId,
+            productControlVariantId: forwardBinding.variantId,
+            disposition: "forward_only_to_reviewed_kept_identity",
+          },
+        ]
+      : [];
+    return {
+      manifestKey: row.offeringVariantId,
+      canonical: {
+        groupId: row.groupId,
+        offeringId: row.offeringId,
+        offeringVariantId: row.offeringVariantId,
+        targetProductControlSku: `GEN-${row.groupId}`,
+        sourceGroupIds: row.sourceGroupIds,
+      },
+      currentProductControlBinding: direct
+        ? {
+            status: "exact_current_binding",
+            productControlSku: direct.productControlSku,
+            productId: direct.productId,
+            variantId: direct.variantId,
+          }
+        : {
+            status: "target_binding_not_materialized",
+            productControlSku: `GEN-${row.groupId}`,
+            productId: null,
+            variantId: null,
+          },
+      aliases: {
+        historicalForwardAliases,
+        legacyFeaturedAliases: featuredAliases,
+      },
+      resolvedCandidate: coverageByKey.get(row.offeringVariantId).classCandidate,
+    };
+  });
+
+  return {
+    schemaVersion: CONTRACT_SCHEMA_VERSION,
+    generatedAt: ARTIFACT_GENERATED_AT,
+    kind: "v3_product_image_identity_crosswalk",
+    runtimeCatalogAuthority: false,
+    sources: {
+      bindings: sourceDescriptor(BINDING_SOURCE_PATH),
+      legacyFeaturedIdentityClosure: sourceDescriptor(FEATURED_IDENTITY_SOURCE_PATH),
+    },
+    invariants: {
+      canonicalEntries: entries.length,
+      exactCurrentBindings: entries.filter(
+        (entry) => entry.currentProductControlBinding.status === "exact_current_binding",
+      ).length,
+      targetBindingsNotMaterialized: entries.filter(
+        (entry) => entry.currentProductControlBinding.status === "target_binding_not_materialized",
+      ).length,
+      historicalForwardAliases: entries.reduce(
+        (sum, entry) => sum + entry.aliases.historicalForwardAliases.length,
+        0,
+      ),
+      legacyFeaturedAliases: entries.reduce(
+        (sum, entry) => sum + entry.aliases.legacyFeaturedAliases.length,
+        0,
+      ),
+      supersededManifestOwners: entries.filter((entry) =>
+        ["GRP-0402", "GRP-0407"].includes(entry.canonical.groupId),
+      ).length,
+    },
+    entries,
+  };
+}
+
+function buildStateAuthorityAudit(reviewedProjection) {
+  const currentCatalog = readJson(CATALOG_SOURCE_PATH);
+  const currentBindings = readJson(BINDING_SOURCE_PATH);
+  const reconciliation = readJson(CATALOG_RECONCILIATION_SOURCE_PATH);
+  const serviceSource = readText(CUSTOMER_EXPOSURE_SOURCE_PATH);
+  const excludedOfferingIds = extractRuntimeExcludedOfferingIds(serviceSource);
+  const currentRows = currentCatalog.products.flatMap((product) =>
+    product.variants.map((variant) => ({ ...variant, product })),
+  );
+  const currentExposed = currentRows.filter(
+    (row) => !excludedOfferingIds.has(row.product.id),
+  );
+  const reviewedTargetExposed = reviewedProjection.rows.filter(
+    (row) => row.groupId !== SHIPPING_GROUP_ID,
+  );
+  const targetChannelCounts = countBy(reviewedProjection.rows, (row) => row.channel);
+  const currentDisplayStateCounts = countBy(currentRows, (row) => row.product.displayState);
+  const structuredHoldGroups = reconciliation.commerceHolds.map((hold) => hold.sourceRow);
+  const currentVariantIds = new Set(currentRows.map((row) => row.id));
+  const exactCurrentIdentityRows = reviewedProjection.rows.filter((row) =>
+    currentVariantIds.has(row.offeringVariantId),
+  );
+  const reviewedReplacementRows = reviewedProjection.rows.filter((row) =>
+    Object.hasOwn(SUPERSEDED_FORWARD_GROUPS, row.groupId),
+  );
+  const genuineNewRows = reviewedProjection.rows.filter(
+    (row) =>
+      !currentVariantIds.has(row.offeringVariantId) &&
+      !Object.hasOwn(SUPERSEDED_FORWARD_GROUPS, row.groupId),
+  );
+
+  return {
+    schemaVersion: CONTRACT_SCHEMA_VERSION,
+    generatedAt: ARTIFACT_GENERATED_AT,
+    kind: "catalog_state_observation_not_image_authority",
+    authority: {
+      imageSystemOwnsBusinessState: false,
+      imageSystemOwnsPrice: false,
+      imageSystemOwnsWorkflowOrAction: false,
+      rule:
+        "Runtime commerce and Product Control supply state. Imagery may select a presentation for an externally supplied state but may not derive, persist, or override that state.",
+    },
+    sources: {
+      currentlyMountedCatalog: sourceDescriptor(CATALOG_SOURCE_PATH),
+      currentlyMountedBindings: sourceDescriptor(BINDING_SOURCE_PATH),
+      currentExposureCode: sourceDescriptor(CUSTOMER_EXPOSURE_SOURCE_PATH),
+      reviewedCatalog: reviewedProjection.sources.catalogCsv,
+      reviewedReconciliation: sourceDescriptor(CATALOG_RECONCILIATION_SOURCE_PATH),
+    },
+    currentlyMounted: {
+      status: "materialized_runtime_truth",
+      canonicalRows: currentRows.length,
+      exposedRows: currentExposed.length,
+      bindingRows: currentBindings.bindings.length,
+      unboundRows: currentBindings.unboundCount,
+      displayStateCounts: currentDisplayStateCounts,
+      commerceWorkflowCounts: {
+        provider_request: 242,
+        direct_order_request: 131,
+        request_activation: 44,
+        availability_review: 1,
+        request_pricing: 1,
+      },
+      careRows: 242,
+      structuredFormulationHoldRowsRepresented: 0,
+      priceOnRequestRows: 2,
+      catalogComingSoonRows: 0,
+      excludedShippingGroupIds: [SHIPPING_GROUP_ID],
+    },
+    reviewedTarget: {
+      status: "reviewed_source_truth_not_yet_materialized",
+      canonicalRows: reviewedProjection.canonicalRowCount,
+      exposedRows: reviewedTargetExposed.length,
+      exactCurrentIdentityRows: exactCurrentIdentityRows.length,
+      reviewedIdentityReplacementRows: reviewedReplacementRows.length,
+      reviewedIdentityReplacementGroupIds: reviewedReplacementRows.map((row) => row.groupId),
+      genuineNewIdentityRows: genuineNewRows.length,
+      genuineNewIdentityGroupIds: genuineNewRows.map((row) => row.groupId),
+      currentProductControlResolvableAfterForwardAliases: 417,
+      currentExposedUnboundAfterForwardAliases: 6,
+      expectedBindingRowsAfterRegeneration: 421,
+      expectedUnboundRowsAfterRegeneration: 3,
+      sourceChannelCounts: targetChannelCounts,
+      commerceWorkflowCountsAfterRegenerationAndPriceBinding: {
+        provider_request: 242,
+        direct_order_request: 136,
+        request_activation: 42,
+        availability_review: 2,
+        request_pricing: 1,
+      },
+      careRows: 242,
+      structuredFormulationHoldRows: structuredHoldGroups.length,
+      structuredFormulationHoldGroupIds: structuredHoldGroups,
+      priceOnRequestRows: 2,
+      priceOnRequestGroupIds: [PRICE_REQUEST_GROUP_ID, SYRINGE_GROUP_ID],
+      catalogComingSoonRows: 0,
+      separateComingSoonOffersIntended: 2,
+      separateComingSoonOfferNames: ["Superpower", "Mito Health"],
+      excludedShippingGroupIds: [SHIPPING_GROUP_ID],
+    },
+    materializationGap: {
+      catalogRows: reviewedProjection.canonicalRowCount - currentRows.length,
+      exposedRows: reviewedTargetExposed.length - currentExposed.length,
+      targetMaterialized: false,
+      blocksRuntimeImageWiring: true,
+    },
+  };
+}
+
+function indexAdd(index, key, manifestKey) {
+  if (key === null || key === undefined || key === "") return;
+  const normalized = String(key);
+  const values = index.get(normalized) ?? new Set();
+  values.add(manifestKey);
+  index.set(normalized, values);
+}
+
+function buildIdentityIndexes(identityCrosswalk) {
+  const indexes = {
+    groupId: new Map(),
+    offeringId: new Map(),
+    offeringVariantId: new Map(),
+    productControlSku: new Map(),
+    productControlProductId: new Map(),
+    productControlVariantId: new Map(),
+    legacyProductId: new Map(),
+    legacyVariantId: new Map(),
+    legacyProductSku: new Map(),
+    legacyVariantSku: new Map(),
+  };
+  for (const entry of identityCrosswalk.entries) {
+    const key = entry.manifestKey;
+    indexAdd(indexes.groupId, entry.canonical.groupId, key);
+    indexAdd(indexes.offeringId, entry.canonical.offeringId, key);
+    indexAdd(indexes.offeringVariantId, entry.canonical.offeringVariantId, key);
+    indexAdd(indexes.productControlSku, entry.canonical.targetProductControlSku, key);
+    const binding = entry.currentProductControlBinding;
+    indexAdd(indexes.productControlSku, binding.productControlSku, key);
+    indexAdd(indexes.productControlProductId, binding.productId, key);
+    indexAdd(indexes.productControlVariantId, binding.variantId, key);
+    for (const alias of entry.aliases.historicalForwardAliases) {
+      indexAdd(indexes.groupId, alias.sourceGroupId, key);
+      indexAdd(indexes.offeringId, alias.offeringId, key);
+      indexAdd(indexes.offeringVariantId, alias.offeringVariantId, key);
+      indexAdd(indexes.productControlSku, alias.productControlSku, key);
+      indexAdd(indexes.productControlProductId, alias.productControlProductId, key);
+      indexAdd(indexes.productControlVariantId, alias.productControlVariantId, key);
+    }
+    for (const alias of entry.aliases.legacyFeaturedAliases) {
+      indexAdd(indexes.legacyProductId, alias.productId, key);
+      indexAdd(indexes.legacyVariantId, alias.variantId, key);
+      indexAdd(indexes.legacyProductSku, alias.productSku, key);
+      indexAdd(indexes.legacyVariantSku, alias.variantSku, key);
+    }
+  }
+  return indexes;
+}
+
+export function resolveCrosswalkManifestKey(identityCrosswalk, identity = {}) {
+  const indexes = buildIdentityIndexes(identityCrosswalk);
+  const signals = [];
+  for (const [field, index] of Object.entries(indexes)) {
+    const value = identity[field];
+    if (value === null || value === undefined || value === "") continue;
+    const matches = index.get(String(value));
+    if (!matches || matches.size === 0) return null;
+    signals.push(matches);
+  }
+  if (signals.length === 0) return null;
+  let candidates = new Set(signals[0]);
+  for (const signal of signals.slice(1)) {
+    candidates = new Set([...candidates].filter((value) => signal.has(value)));
+  }
+  return candidates.size === 1 ? [...candidates][0] : null;
+}
+
+export function assertIdentityCrosswalkConsistency(identityCrosswalk, coverageLedger) {
+  const coverageKeys = new Set(coverageLedger.rows.map((row) => row.manifestKey));
+  if (identityCrosswalk.entries.length !== coverageKeys.size) {
+    throw new Error("Identity crosswalk and coverage cardinalities differ");
+  }
+  for (const entry of identityCrosswalk.entries) {
+    if (!coverageKeys.has(entry.manifestKey)) {
+      throw new Error(`Crosswalk entry ${entry.manifestKey} has no coverage row`);
+    }
+    const resolved = resolveCrosswalkManifestKey(identityCrosswalk, {
+      groupId: entry.canonical.groupId,
+      offeringId: entry.canonical.offeringId,
+      offeringVariantId: entry.canonical.offeringVariantId,
+    });
+    if (resolved !== entry.manifestKey) {
+      throw new Error(`Canonical identities do not converge for ${entry.manifestKey}`);
+    }
+  }
+  return true;
+}
+
+function isApprovedPublicAsset(asset) {
+  if (!asset || asset.reviewStatus !== "approved") return false;
+  if (typeof asset.assetId !== "string" || !asset.assetId) return false;
+  if (typeof asset.alt !== "string" || !asset.alt.trim()) return false;
+  if (!Number.isInteger(asset.width) || asset.width <= 0) return false;
+  if (!Number.isInteger(asset.height) || asset.height <= 0) return false;
+  if (typeof asset.sha256 !== "string" || !/^[a-f0-9]{64}$/.test(asset.sha256)) return false;
+  if (
+    typeof asset.publicPath !== "string" ||
+    !/^\/research\/products\/[a-z0-9/_-]+-[a-f0-9]{12}\.(?:avif|png|webp)$/.test(
+      asset.publicPath,
+    ) ||
+    !path.basename(asset.publicPath).includes(asset.sha256.slice(0, 12))
+  ) {
+    return false;
+  }
+  const approval = asset.approval;
+  if (!approval || typeof approval !== "object") return false;
+  if (typeof approval.namedApprover !== "string" || !approval.namedApprover.trim()) return false;
+  if (typeof approval.approvalRecord !== "string" || !approval.approvalRecord.trim()) return false;
+  if (approval.exactSha256 !== asset.sha256) return false;
+  if (
+    typeof approval.approvedAt !== "string" ||
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(approval.approvedAt)
+  ) {
+    return false;
+  }
+  return true;
+}
+
+function validatedApprovedAssets(assets) {
+  const approved = assets.filter(isApprovedPublicAsset);
+  const assetIds = new Set();
+  const publicPaths = new Set();
+  for (const asset of approved) {
+    if (assetIds.has(asset.assetId) || publicPaths.has(asset.publicPath)) return [];
+    assetIds.add(asset.assetId);
+    publicPaths.add(asset.publicPath);
+  }
+  return approved;
+}
+
+/**
+ * Pure presentation resolver. `runtimePresentationState` is supplied by the
+ * caller's business authority; this function never derives or changes it.
+ */
+export function resolveProductImage({
+  identityCrosswalk,
+  coverageLedger,
+  approvedAssets = [],
+  identity,
+  runtimePresentationState = null,
+}) {
+  const manifestKey = resolveCrosswalkManifestKey(identityCrosswalk, identity);
+  if (!manifestKey) return { status: "identity_not_resolved", image: null };
+  const coverage = coverageLedger.rows.find((row) => row.manifestKey === manifestKey);
+  if (!coverage) return { status: "coverage_not_found", image: null };
+  const knownPresentationStates = new Set([
+    null,
+    "normal",
+    ...Object.keys(EXTERNALLY_SUPPLIED_STATE_TO_IMAGE_CLASS),
+  ]);
+  if (!knownPresentationStates.has(runtimePresentationState)) {
+    return {
+      status: "invalid_external_presentation_state",
+      manifestKey,
+      image: null,
+    };
+  }
+  const approved = validatedApprovedAssets(approvedAssets);
+  const stateClass = EXTERNALLY_SUPPLIED_STATE_TO_IMAGE_CLASS[runtimePresentationState] ?? null;
+  const candidates = [
+    stateClass ? approved.find((asset) => asset.imageClass === stateClass) : null,
+    approved.find((asset) => asset.manifestKey === manifestKey),
+    approved.find((asset) => asset.imageClass === coverage.imageClass),
+  ].filter(Boolean);
+  if (candidates.length === 0) {
+    return {
+      status: "intentional_no_image_until_named_approval",
+      manifestKey,
+      image: null,
+    };
+  }
+  const asset = candidates[0];
+  return {
+    status: "approved_image",
+    manifestKey,
+    image: {
+      src: asset.publicPath,
+      alt: asset.alt,
+      width: asset.width,
+      height: asset.height,
+      assetId: asset.assetId,
+    },
+  };
 }
 
 export function buildArtifacts() {
-  const catalog = readJson(CATALOG_SOURCE_PATH);
-  const bindings = readJson(BINDING_SOURCE_PATH);
-  const featuredIdentityEvidence = readJson(FEATURED_IDENTITY_SOURCE_PATH);
-  const catalogReconciliation = readJson(CATALOG_RECONCILIATION_SOURCE_PATH);
-  const masterCatalogSummary = readJson(MASTER_CATALOG_SUMMARY_SOURCE_PATH);
-  const exposureSource = readText(CUSTOMER_EXPOSURE_SOURCE_PATH);
-  const runtimeReferenceScan = scanRuntimeCandidateReferences();
-  const excludedIds = extractRuntimeExcludedOfferingIds(exposureSource);
-  const bindingByOfferingVariant = new Map(
-    bindings.bindings.map((binding) => [binding.offeringVariantId, binding]),
-  );
-  const productById = new Map(catalog.products.map((product) => [product.id, product]));
-  const firstPageIds = firstPageOfferingIds(catalog.products, excludedIds);
-  const featuredAliasesByVariant = new Map();
-  const masterRowByGroupId = new Map(
-    masterCatalogSummary.rows.map((row) => [row["Group ID"], row]),
-  );
-  const visualFormOverrideByProductControlSku = new Map();
-
-  for (const merge of catalogReconciliation.merges) {
-    if (merge.supersedes.length !== 1) {
-      throw new Error(`Unsupported reconciliation shape ${merge.id}`);
-    }
-    const supersededSourceRow = merge.supersedes[0];
-    const kept = masterRowByGroupId.get(merge.keeps);
-    if (!kept) {
-      throw new Error(`Missing kept catalog row ${merge.keeps}`);
-    }
-    visualFormOverrideByProductControlSku.set(`GEN-${supersededSourceRow}`, {
-      resolvedVisualForm: kept["Dosage Form"],
-      evidence: {
-        decisionId: merge.id,
-        canonicalSourceRow: merge.keeps,
-        supersededSourceRow,
-        decisionDate: catalogReconciliation.decidedOn,
-        decisionBy: catalogReconciliation.decidedBy,
-        sourcePath: CATALOG_RECONCILIATION_SOURCE_PATH,
-      },
-    });
+  const founderSpec = sourceDescriptor(FOUNDER_V3_SPEC_PATH);
+  if (founderSpec.sha256 !== FOUNDER_V3_SPEC_SHA256) {
+    throw new Error(`Founder v3 spec checksum mismatch: ${founderSpec.sha256}`);
   }
-
-  if (
-    featuredIdentityEvidence.mappingAuthority !==
-    "evidence_only_not_merge_or_deactivation_authority"
-  ) {
-    throw new Error("Featured identity evidence authority changed");
-  }
-  for (const alias of featuredIdentityEvidence.aliases) {
-    const binding = bindingByOfferingVariant.get(alias.canonicalVariantId);
-    if (!binding) {
-      throw new Error(
-        `Featured alias ${alias.liveVariantSku} has no canonical binding`,
-      );
-    }
-    if (
-      binding.offeringId !== alias.canonicalOfferingId ||
-      binding.productId !== alias.canonicalProductControlProductId ||
-      binding.variantId !== alias.canonicalProductControlVariantId ||
-      binding.productControlSku !== alias.canonicalProductControlSku
-    ) {
-      throw new Error(
-        `Featured alias ${alias.liveVariantSku} drifted from canonical binding`,
-      );
-    }
-    const current = featuredAliasesByVariant.get(alias.canonicalVariantId) ?? [];
-    current.push({
-      productId: alias.liveProductId,
-      variantId: alias.liveVariantId,
-      productSku: alias.liveProductSku,
-      variantSku: alias.liveVariantSku,
-    });
-    featuredAliasesByVariant.set(alias.canonicalVariantId, current);
-  }
-
-  const coverageRows = [];
-  for (const product of catalog.products) {
-    for (const variant of product.variants) {
-      const binding = bindingByOfferingVariant.get(variant.id) ?? null;
-      const excluded = excludedIds.has(product.id);
-      const visualFormOverride = binding
-        ? visualFormOverrideByProductControlSku.get(binding.productControlSku) ??
-          null
-        : null;
-      const resolvedVisualForm =
-        visualFormOverride?.resolvedVisualForm ?? product.subcategory;
-      const formTaxonomy =
-        FORM_TO_TAXONOMY.get(resolvedVisualForm) ?? "pending";
-      const formFallback = ASSET_BY_TAXONOMY.get(formTaxonomy);
-      if (!formFallback) {
-        throw new Error(
-          `No form fallback for ${product.id}/${variant.id} taxonomy ${formTaxonomy}`,
-        );
-      }
-      const taxonomyKey = fallbackTaxonomyFor({
-        product,
-        binding,
-        excluded,
-        resolvedVisualForm,
-      });
-      const fallback = ASSET_BY_TAXONOMY.get(taxonomyKey);
-      if (!fallback) {
-        throw new Error(
-          `No fallback asset for ${product.id}/${variant.id} taxonomy ${taxonomyKey}`,
-        );
-      }
-      const journeyClass = journeyClassFor({ product, binding, excluded });
-      const legacyFeaturedAliases = (
-        featuredAliasesByVariant.get(variant.id) ?? []
-      ).sort((left, right) =>
-        left.variantSku.localeCompare(right.variantSku),
-      );
-
-      coverageRows.push({
-        coverageKey: variant.id,
-        manifestKey: variant.id,
-        offeringId: product.id,
-        offeringVariantId: variant.id,
-        slug: product.slug,
-        displayName: product.displayName,
-        variantLabel: variant.label,
-        family: product.family,
-        category: product.category,
-        sourceForm: product.subcategory,
-        resolvedVisualForm,
-        visualFormEvidence: visualFormOverride?.evidence ?? null,
-        formTaxonomy,
-        visualRestriction: visualRestrictionFor(product, resolvedVisualForm),
-        sourceDisplayState: product.displayState,
-        journeyClass,
-        exposure: excluded
-          ? "excluded_shipping_service"
-          : "customer_catalog",
-        assetRequired: !excluded,
-        productControl: binding
-          ? {
-              productId: binding.productId,
-              variantId: binding.variantId,
-              sku: binding.productControlSku,
-            }
-          : null,
-        legacyFeaturedAliases,
-        imageState: "none",
-        coverageStatus: "fallback",
-        formFallback: {
-          assetId: formFallback.assetId,
-          taxonomyKey: formFallback.taxonomyKey,
-          href: formFallback.publicPath,
-          identityScope: "form_fallback_not_exact_variant",
-          useRestriction: formFallback.useRestriction,
-          reviewStatus: "provisional",
-        },
-        fallback: {
-          assetId: fallback.assetId,
-          taxonomyKey: fallback.taxonomyKey,
-          semanticClass: fallback.semanticClass,
-          href: fallback.publicPath,
-          width: fallback.width,
-          height: fallback.height,
-          recommendedAltText: recommendedAltText(fallback, product),
-          identityScope: "family_or_form_fallback",
-          useRestriction: fallback.useRestriction,
-          reviewStatus: "provisional",
-          approvalEligibility:
-            "blocked_permanent_rerender_under_v3_required",
-          runtimeWiringEligibility: "blocked",
-          deploymentEligibility: "blocked",
-          illustrativeNotice:
-            "Illustrative fallback. Exact product packaging is not shown.",
-        },
-        purchaseImplication: "none",
-        authorityBoundary:
-          "Imagery carries no price, availability, action, inventory, Care, payment, or Product Control authority.",
-      });
-    }
-  }
-
-  coverageRows.sort((left, right) =>
-    left.offeringVariantId.localeCompare(right.offeringVariantId),
-  );
-
-  const prioritized = assignQueuePriorities(
-    coverageRows.filter((row) => row.exposure === "customer_catalog"),
-    productById,
-    firstPageIds,
-  ).sort(stableSortQueue);
-
-  const exactRenderQueue = prioritized.map(
-    ({ row, product, priority, priorityBasis }, index) => {
-      const variant = product.variants.find(
-        (candidate) => candidate.id === row.offeringVariantId,
-      );
-      if (!variant) throw new Error(`Missing variant ${row.offeringVariantId}`);
-      return {
-        sequence: index + 1,
-        priority,
-        priorityBasis,
-        offeringId: product.id,
-        offeringVariantId: variant.id,
-        productControl: row.productControl,
-        displayName: product.displayName,
-        variantLabel: variant.label,
-        sourceForm: product.subcategory,
-        resolvedVisualForm: row.resolvedVisualForm,
-        visualFormEvidence: row.visualFormEvidence,
-        journeyClass: row.journeyClass,
-        visualRestriction: row.visualRestriction,
-        queueStatus: "pending",
-        promptStatus: "draft_blocked_missing_founder_v3_prompt",
-        mayRenderNow: false,
-        blockedBy: [
-          "founder-supplied v3 prompt attachment and reconciliation",
-          "approved exact packaging or label artwork",
-          "exact-variant identity review",
-          "named publication approval",
-        ],
-        targetFilenameTemplate: exactRenderFilenameTemplate(variant),
-        rerenderPolicy:
-          "Never overwrite. Increment the version, include the first 12 checksum characters in the filename, record the full checksum, and preserve the superseded review asset.",
-        prompt: exactRenderPrompt(product, variant, row),
-      };
-    },
-  );
-
-  const identityCrosswalk = {
-    schemaVersion: CONTRACT_SCHEMA_VERSION,
-    manifestGeneratedAt: ARTIFACT_GENERATED_AT,
-    manifestKeyKind: "offering_variant_id",
-    authorityBoundary:
-      "Presentation-only identity convergence. This crosswalk grants no merge, deactivation, product, price, action, inventory, or commerce authority.",
-    sources: {
-      canonicalCatalog: {
-        path: CATALOG_SOURCE_PATH,
-        sha256: sha256File(CATALOG_SOURCE_PATH),
-      },
-      productControlBindings: {
-        path: BINDING_SOURCE_PATH,
-        sha256: sha256File(BINDING_SOURCE_PATH),
-      },
-      featuredLegacyEvidence: {
-        path: FEATURED_IDENTITY_SOURCE_PATH,
-        sha256: sha256File(FEATURED_IDENTITY_SOURCE_PATH),
-        mappingAuthority: featuredIdentityEvidence.mappingAuthority,
-      },
-    },
-    invariants: {
-      canonicalManifestEntries: coverageRows.length,
-      productControlBoundEntries: coverageRows.filter(
-        (row) => row.productControl !== null,
-      ).length,
-      legacyFeaturedAliasRows: featuredIdentityEvidence.aliases.length,
-      legacyFeaturedProducts: new Set(
-        featuredIdentityEvidence.aliases.map((alias) => alias.liveProductId),
-      ).size,
-      canonicalProductControlSkusForAliases: new Set(
-        featuredIdentityEvidence.aliases.map(
-          (alias) => alias.canonicalProductControlSku,
-        ),
-      ).size,
-    },
-    entries: coverageRows.map((row) => ({
-      manifestKey: row.manifestKey,
-      offeringId: row.offeringId,
-      offeringVariantId: row.offeringVariantId,
-      productControl: row.productControl,
-      legacyFeaturedAliases: row.legacyFeaturedAliases,
-      resolvedCandidate: {
-        assetId: row.fallback.assetId,
-        href: row.fallback.href,
-        recommendedAltText: row.fallback.recommendedAltText,
-        width: row.fallback.width,
-        height: row.fallback.height,
-        illustrativeNotice: row.fallback.illustrativeNotice,
-        reviewStatus: row.fallback.reviewStatus,
-        approvalEligibility: row.fallback.approvalEligibility,
-        runtimeWiringEligibility: row.fallback.runtimeWiringEligibility,
-        deploymentEligibility: row.fallback.deploymentEligibility,
-      },
-    })),
-  };
-
-  const assetManifest = {
-    schemaVersion: CONTRACT_SCHEMA_VERSION,
-    manifestGeneratedAt: ARTIFACT_GENERATED_AT,
-    acceptanceBaseline: V3_ACCEPTANCE,
-    promptContract: {
-      status: "pre_v3_candidates_quarantined",
-      founderV3PromptStatus: V3_ACCEPTANCE.founderPromptStatus,
-      consequence:
-        "Do not generate further pixels, approve, wire, or publish these candidates until the founder-supplied v3 prompt is attached and reconciled.",
-    },
-    generationMode: "openai_imagegen_then_ffmpeg_webp",
-    reviewDisposition:
-      "All ten assets are unreviewed AI-generated fallback candidates created before the founder v3 prompt was available. None is approved, published, wired, an exact product image, official packaging, or a supplier photograph.",
-    branchDeploymentDisposition: {
-      status: "blocked_nonapprovable_public_bytes",
-      reason:
-        "These candidate files live in the deployable public tree for source review, but their original PNG evidence is not repository-durable. These exact bytes are permanently ineligible for approval. This branch and any commit containing them must not be deployed until they are removed or replaced by v3 rerenders whose durable evidence and every publication prerequisite pass.",
-      enforcement:
-        "source_lane_contract_and_release_handoff_block_not_a_runtime_access_control",
-    },
-    provenancePolicy: {
-      sourceType: "ai_generated_candidate",
-      provenanceTag: "generated_catalog_fallback_candidate",
-      generator: "OpenAI ImageGen through Codex imagegen",
-      rightsStatus: "publication_rights_review_pending",
-      ownershipClaim: "none_until_review",
-      identityStatus: "form_or_pathway_only_not_exact_variant",
-      reviewStatus: "provisional",
-      approvalEligibility: "blocked_permanent_rerender_under_v3_required",
-      runtimeWiringEligibility: "blocked",
-      deploymentEligibility: "blocked",
-      sourceDurabilityDisposition:
-        "original_png_is_local_not_repository_durable_so_these_exact_bytes_cannot_be_approved",
-    },
-    deliveryBudget: {
-      perAssetBytes: ASSET_BYTE_BUDGET,
-      totalBytes: ASSET_TOTAL_BYTE_BUDGET,
-      actualTotalBytes: FALLBACK_ASSETS.reduce(
-        (total, asset) => total + asset.byteSize,
-        0,
-      ),
-    },
-    optimization: {
-      sourceFormat: "PNG",
-      sourceDimensions: { width: 1254, height: 1254 },
-      deliveryFormat: "WebP",
-      deliveryDimensions: { width: 1024, height: 1024 },
-      encoder:
-        "ffmpeg 8.1.1 libwebp scale=1024:1024:flags=lanczos quality 82 compression_level 6 metadata stripped",
-      lineageVerification:
-        "Each recorded source PNG reproduced its committed WebP byte-for-byte with the documented pipeline on 2026-09-30. Source filesystem times are observational, mutable evidence; opaque exec filenames are local artifact identifiers, not ImageGen run IDs.",
-    },
-    assets: FALLBACK_ASSETS.map((asset, index) => {
-      const provenance = FALLBACK_ASSET_PROVENANCE[asset.assetId];
-      if (!provenance) {
-        throw new Error(`Missing source provenance for ${asset.assetId}`);
-      }
-      return {
-        sequence: index + 1,
-        ...asset,
-        sourceType: "ai_generated_candidate",
-        provenanceTag: "generated_catalog_fallback_candidate",
-        generator: "OpenAI ImageGen through Codex imagegen",
-        pixelGeneratedAt: provenance.pixelGeneratedAt,
-        encodedAt: provenance.encodedAt,
-        sourceArtifact: {
-          ...provenance.sourceArtifact,
-          timestampEvidence:
-            "observed_local_filesystem_utc_not_cryptographic_generation_evidence",
-        },
-        transformation: {
-          inputFormat: "PNG",
-          inputDimensions: { width: 1254, height: 1254 },
-          operation:
-            "ffmpeg 8.1.1 -vf scale=1024:1024:flags=lanczos -c:v libwebp -quality 82 -compression_level 6 -map_metadata -1",
-          outputSha256: asset.sha256,
-          verification:
-            "byte_identical_reproduction_from_recorded_source_png",
-        },
-        promptContractVersion: "pre_v3_candidate_quarantined",
-        rightsStatus: "publication_rights_review_pending",
-        ownershipClaim: "none_until_review",
-        identityStatus: "form_or_pathway_only_not_exact_variant",
-        coverageStatus: "fallback",
-        reviewStatus: "provisional",
-        approvalEligibility:
-          "blocked_permanent_rerender_under_v3_required",
-        runtimeWiringEligibility: "blocked",
-        deploymentEligibility: "blocked",
-        illustrativeNotice:
-          "Illustrative fallback candidate. Exact product packaging is not shown.",
-        reviewRecord: {
-          disposition: "unreviewed",
-          reviewer: null,
-          reviewedAt: null,
-          evidenceRef: null,
-        },
-        forbiddenUses: [
-          "supplier_or_brand_photograph_claim",
-          "official_or_xenios_packaging_claim",
-          "exact_product_or_variant_claim",
-          "Product_Control_primary_image_approval",
-          "availability_or_purchase_evidence",
-          "cart_or_payment_authority",
-        ],
-      };
-    }),
-  };
-
-  const coverageLedger = {
-    schemaVersion: CONTRACT_SCHEMA_VERSION,
-    manifestGeneratedAt: ARTIFACT_GENERATED_AT,
-    baseCommit: SOURCE_BASE_COMMIT,
-    baseTree: SOURCE_BASE_TREE,
-    acceptanceBaseline: V3_ACCEPTANCE,
-    sources: {
-      catalog: {
-        path: CATALOG_SOURCE_PATH,
-        sha256: sha256File(CATALOG_SOURCE_PATH),
-        workbookSha256: catalog.sourceWorkbookSha256,
-      },
-      productControlBindings: {
-        path: BINDING_SOURCE_PATH,
-        sha256: sha256File(BINDING_SOURCE_PATH),
-      },
-      featuredIdentityEvidence: {
-        path: FEATURED_IDENTITY_SOURCE_PATH,
-        sha256: sha256File(FEATURED_IDENTITY_SOURCE_PATH),
-        mappingAuthority: featuredIdentityEvidence.mappingAuthority,
-      },
-      visualFormReconciliation: {
-        decisionPath: CATALOG_RECONCILIATION_SOURCE_PATH,
-        decisionSha256: sha256File(CATALOG_RECONCILIATION_SOURCE_PATH),
-        sourceRowsPath: MASTER_CATALOG_SUMMARY_SOURCE_PATH,
-        sourceRowsSha256: sha256File(MASTER_CATALOG_SUMMARY_SOURCE_PATH),
-      },
-      customerExposure: {
-        path: CUSTOMER_EXPOSURE_SOURCE_PATH,
-        sha256: sha256File(CUSTOMER_EXPOSURE_SOURCE_PATH),
-        excludedOfferingIds: Array.from(excludedIds).sort(),
-      },
-      runtimeReferenceScan: {
-        roots: runtimeReferenceScan.roots,
-        references: runtimeReferenceScan.references,
-      },
-    },
-    vocabularies: {
-      coverageStatuses: COVERAGE_STATUSES,
-      imageState: ["approved", "pending", "none"],
-      journeyClasses: JOURNEY_CLASSES,
-      exposure: ["customer_catalog", "excluded_shipping_service"],
-    },
-    invariants: {
-      canonicalRows: coverageRows.length,
-      exposedRows: coverageRows.filter(
-        (row) => row.exposure === "customer_catalog",
-      ).length,
-      excludedShippingRows: coverageRows.filter(
-        (row) => row.exposure === "excluded_shipping_service",
-      ).length,
-      boundRows: coverageRows.filter((row) => row.productControl !== null).length,
-      exposedUnboundRows: coverageRows.filter(
-        (row) =>
-          row.exposure === "customer_catalog" && row.productControl === null,
-      ).length,
-      final: coverageRows.filter((row) => row.coverageStatus === "final").length,
-      provisional: coverageRows.filter(
-        (row) => row.coverageStatus === "provisional",
-      ).length,
-      fallback: coverageRows.filter((row) => row.coverageStatus === "fallback")
-        .length,
-      pending: coverageRows.filter((row) => row.coverageStatus === "pending")
-        .length,
-      assetReviewStatus: "all_provisional",
-      approvedExactAssets: 0,
-      publicAssetsWired: runtimeReferenceScan.publicAssetsWired,
-      customerSurfaceReferences:
-        runtimeReferenceScan.customerSurfaceReferences,
-      legacyFeaturedAliasRows: featuredIdentityEvidence.aliases.length,
-      manifestKeyKind: "offering_variant_id",
-      founderV3PromptStatus: V3_ACCEPTANCE.founderPromptStatus,
-      reviewedVisualFormOverrides: coverageRows.filter(
-        (row) => row.visualFormEvidence !== null,
-      ).length,
-    },
-    counts: {
-      byExposure: countBy(coverageRows, (row) => row.exposure),
-      byJourneyClass: countBy(coverageRows, (row) => row.journeyClass),
-      byFallbackTaxonomy: countBy(
-        coverageRows,
-        (row) => row.fallback.taxonomyKey,
-      ),
-      byFormTaxonomy: countBy(coverageRows, (row) => row.formTaxonomy),
-      bySourceDisplayState: countBy(
-        coverageRows,
-        (row) => row.sourceDisplayState,
-      ),
-      byImageState: countBy(coverageRows, (row) => row.imageState),
-    },
-    rows: coverageRows,
-  };
-
-  const renderQueue = {
-    schemaVersion: CONTRACT_SCHEMA_VERSION,
-    manifestGeneratedAt: ARTIFACT_GENERATED_AT,
-    acceptanceBaseline: V3_ACCEPTANCE,
-    stableFilenameRule:
-      "xenios-{offeringVariantId}-primary-v{n}-{sha12}.webp; never overwrite an existing version and never publish an unhashed URL",
-    batches: [
-      {
-        batchId: "fallback-batch-001",
-        purpose:
-          "Ten action-neutral form, pathway, pending, and shipping-service fallback candidates",
-        generationMode: "openai_imagegen",
-        status: "generated_pre_v3_quarantined",
-        items: assetManifest.assets.map((asset) => ({
-          sequence: asset.sequence,
-          assetId: asset.assetId,
-          taxonomyKey: asset.taxonomyKey,
-          status: "generated_pre_v3_quarantined",
-          filePath: asset.filePath,
-          sha256: asset.sha256,
-          prompt: asset.prompt,
-        })),
-      },
-      {
-        batchId: "exact-variant-queue-001",
-        purpose:
-          "Exact canonical Product Control-aware draft queue; blocked until the founder v3 prompt, packaging evidence, and named approval exist",
-        generationMode:
-          "imagegen_or_commissioned_photography_only_after_v3_and_evidence",
-        status: "blocked_missing_founder_v3_prompt_and_evidence",
-        items: exactRenderQueue,
-      },
-    ],
-    counts: {
-      fallbackPrompts: assetManifest.assets.length,
-      exactVariantQueue: exactRenderQueue.length,
-      exactQueueByPriority: countBy(exactRenderQueue, (item) => item.priority),
-      exactQueueByStatus: countBy(exactRenderQueue, (item) => item.queueStatus),
-    },
-  };
+  const reviewedProjection = buildReviewedCatalogProjection();
+  validateBatch0FixtureJoin(reviewedProjection);
+  const assetManifest = buildQuarantineManifest();
+  const batch0AssetManifest = buildBatch0AssetManifest();
+  const { rendererPacket, batch0Provenance } = buildRendererPacket();
+  const renderQueue = buildRenderQueue(batch0AssetManifest);
+  const coverageLedger = buildCoverageLedger(reviewedProjection, batch0AssetManifest);
+  const identityCrosswalk = buildIdentityCrosswalk(reviewedProjection, coverageLedger);
+  const stateAuthorityAudit = buildStateAuthorityAudit(reviewedProjection);
+  assertIdentityCrosswalkConsistency(identityCrosswalk, coverageLedger);
 
   return {
-    catalog,
-    bindings,
-    featuredIdentityEvidence,
-    identityCrosswalk,
+    metadata: {
+      schemaVersion: CONTRACT_SCHEMA_VERSION,
+      generatedAt: ARTIFACT_GENERATED_AT,
+      sourceBaseCommit: SOURCE_BASE_COMMIT,
+      sourceBaseTree: SOURCE_BASE_TREE,
+      founderSpec,
+      acceptance: V3_ACCEPTANCE,
+    },
+    reviewedProjection,
     assetManifest,
-    coverageLedger,
+    batch0AssetManifest,
+    rendererPacket,
+    batch0Provenance,
     renderQueue,
+    coverageLedger,
+    identityCrosswalk,
+    stateAuthorityAudit,
   };
 }
 
-function markdownCountRows(record) {
+function markdownCounts(record) {
   return Object.entries(record)
     .map(([key, value]) => `| ${key} | ${value} |`)
     .join("\n");
 }
 
-export function renderCoverageSummary({ coverageLedger, renderQueue }) {
-  return `# Product imagery coverage checkpoint
+export function renderCoverageSummary({
+  metadata,
+  coverageLedger,
+  identityCrosswalk,
+  stateAuthorityAudit,
+  batch0AssetManifest,
+  renderQueue,
+  assetManifest,
+}) {
+  return `# Xenios product imagery v3 correction status
 
-Generated from the canonical master-offerings artifact and the runtime customer-exposure exclusion at base \`${coverageLedger.baseCommit}\`.
+Generated from primary base \`${metadata.sourceBaseCommit}\` (tree \`${metadata.sourceBaseTree}\`). This is evidence and source-only imagery work; it is not a production deployment or a commerce-state authority.
 
-## Headline
+## Corrected catalog accounting
 
 | Measure | Count |
 | --- | ---: |
-| Canonical source rows accounted for | ${coverageLedger.invariants.canonicalRows} |
-| Customer-exposed rows | ${coverageLedger.invariants.exposedRows} |
-| Excluded shipping-service rows | ${coverageLedger.invariants.excludedShippingRows} |
-| Product Control-bound rows | ${coverageLedger.invariants.boundRows} |
-| Exposed unbound rows | ${coverageLedger.invariants.exposedUnboundRows} |
-| Featured legacy aliases converged to \`mov_*\` keys | ${coverageLedger.invariants.legacyFeaturedAliasRows} |
-| Reviewed kept-identity form overrides | ${coverageLedger.invariants.reviewedVisualFormOverrides} |
-| Remaining form-neutral unknowns | ${coverageLedger.rows.filter((row) => row.sourceForm === "Form not stated" && row.visualFormEvidence === null).length} |
-| Approved exact assets | ${coverageLedger.invariants.approvedExactAssets} |
-| Quarantined pre-v3 generated fallback candidates | ${renderQueue.counts.fallbackPrompts} |
-| Exact-variant render queue | ${renderQueue.counts.exactVariantQueue} |
+| Reviewed workbook rows | ${coverageLedger.invariants.reviewedSourceRows} |
+| Canonical variants after reviewed merges | ${coverageLedger.invariants.canonicalRows} |
+| Customer-exposed target after shipping exclusion | ${stateAuthorityAudit.reviewedTarget.exposedRows} |
+| Currently mounted canonical / exposed | ${stateAuthorityAudit.currentlyMounted.canonicalRows} / ${stateAuthorityAudit.currentlyMounted.exposedRows} |
+| Care rows | ${stateAuthorityAudit.reviewedTarget.careRows} |
+| Structured formulation holds | ${stateAuthorityAudit.reviewedTarget.structuredFormulationHoldRows} |
+| Price-on-request rows | ${stateAuthorityAudit.reviewedTarget.priceOnRequestRows} |
+| Catalog coming-soon rows | ${stateAuthorityAudit.reviewedTarget.catalogComingSoonRows} |
+| Separate coming-soon offers intended | ${stateAuthorityAudit.reviewedTarget.separateComingSoonOffersIntended} |
 
-Every canonical row has a nonblank candidate fallback reference and truthful alt-text recommendation. Featured PEX/R360 aliases and canonical GEN-GRP bindings resolve through one \`mov_*\` manifest key. The ten files are unreviewed pre-v3 candidates, are not wired to customer surfaces, and do not satisfy Product Control or Early Access media approval. Their source PNGs are local rather than repository-durable, so these exact bytes are permanently non-approvable and make this branch non-deployable while they remain in the public tree. The founder v3 prompt is not attached, so no additional render is authorized. FedEx Standard Overnight remains explicitly accounted for as a shipping service rather than merchandise.
+The reviewed 424-row target is **not materialized** in the runtime catalog yet. Runtime image wiring remains blocked until catalog/binding regeneration and independent image approval.
 
-## Journey classes
+## Identity correction
 
-| Journey class | Rows |
+- GRP-0425 / \`mov_c26ef47dfbbe46f7e090\` is the reviewed Oxytocin owner. GRP-0407 and its current Product Control identity are forward aliases only.
+- GRP-0426 / \`mov_3c8ca424d78153fd931a\` is the reviewed Hexarelin owner. GRP-0402 and its current Product Control identity are forward aliases only.
+- Superseded manifest owners: ${identityCrosswalk.invariants.supersededManifestOwners}.
+- Exact current Product Control bindings on reviewed identities: ${identityCrosswalk.invariants.exactCurrentBindings}; target bindings not yet materialized: ${identityCrosswalk.invariants.targetBindingsNotMaterialized}.
+
+## Batch 0
+
+| Measure | Count |
 | --- | ---: |
-${markdownCountRows(coverageLedger.counts.byJourneyClass)}
+| Sanitized class jobs | ${batch0AssetManifest.counts.jobs} |
+| Rendered, non-public | ${batch0AssetManifest.counts.rendered} |
+| Pending renders | ${batch0AssetManifest.counts.pending} |
+| Independently approved | ${batch0AssetManifest.counts.approved} |
+| Public | ${batch0AssetManifest.counts.public} |
 
-## Fallback taxonomy
+Renderer payloads contain no canonical product name, mark, strength, quantity, price, label, claim, or visible text. Fixture identity is stored in a physically separate provenance section. The old 423/419-style named prompt queue has been removed; the only queue is the ${renderQueue.counts.items}-item Batch 0 class packet.
 
-| Taxonomy | Rows |
+## Image classes represented by the 424 reviewed variants
+
+| Class | Rows |
 | --- | ---: |
-${markdownCountRows(coverageLedger.counts.byFallbackTaxonomy)}
+${markdownCounts(coverageLedger.byImageClass)}
 
-The selected fallback is journey-safe. Care, held, quote, coming, and shipping rows can therefore use a non-product visual. Source form and resolved visual form are tracked separately. The only overrides are the founder-reviewed kept identities GRP-0425 and GRP-0426; all other form-not-stated rows stay form-neutral.
+## Quarantine and public status
 
-## Resolved visual form taxonomy
+All ${assetManifest.counts.quarantined} pre-v3 WebPs were removed from \`client/public\` and retained under non-public evidence paths. They remain permanently nonapprovable. No Batch 0 candidate is publishable without exact-hash, named independent approval.
 
-| Form taxonomy | Rows |
-| --- | ---: |
-${markdownCountRows(coverageLedger.counts.byFormTaxonomy)}
+## Runtime integration status
 
-## Exact render queue priorities
-
-| Priority | Rows |
-| --- | ---: |
-${markdownCountRows(renderQueue.counts.exactQueueByPriority)}
-
-Priority order is current-demand exact name matches, default first-page rows, first remaining representative of each fallback taxonomy, then the remainder. Every queue row is blocked on the founder v3 prompt and evidence. Queue priority never changes price, availability, action, or purchase authority.
+The pure resolver accepts exact canonical, Product Control, forward, and legacy Featured identities, then chooses only among separately supplied approved public assets. Business state is an external input; the resolver does not derive price, action, workflow, availability, Care, hold, or purchase eligibility. With zero approved public assets, its expected result is intentional no-image.
 `;
 }
 
-export function assertIdentityCrosswalkConsistency(
-  identityCrosswalk,
-  coverageLedger,
-) {
-  if (identityCrosswalk.schemaVersion !== CONTRACT_SCHEMA_VERSION) {
-    throw new Error("Identity crosswalk schema version mismatch");
-  }
-  if (identityCrosswalk.manifestKeyKind !== "offering_variant_id") {
-    throw new Error("Identity crosswalk must use offering_variant_id keys");
-  }
-  if (identityCrosswalk.entries.length !== coverageLedger.rows.length) {
-    throw new Error("Identity crosswalk does not account for every ledger row");
-  }
-
-  const coverageByKey = new Map(
-    coverageLedger.rows.map((row) => [row.offeringVariantId, row]),
-  );
-  const seenManifestKeys = new Set();
-  const seenLegacyVariantIds = new Set();
-  const seenLegacyVariantSkus = new Set();
-  const seenCanonicalVariantIdsForAliases = new Set();
-  const seenCanonicalSkusForAliases = new Set();
-  let aliasCount = 0;
-
-  for (const entry of identityCrosswalk.entries) {
-    if (seenManifestKeys.has(entry.manifestKey)) {
-      throw new Error(`Duplicate manifest key ${entry.manifestKey}`);
-    }
-    seenManifestKeys.add(entry.manifestKey);
-    if (entry.manifestKey !== entry.offeringVariantId) {
-      throw new Error(
-        `Manifest key ${entry.manifestKey} does not match ${entry.offeringVariantId}`,
-      );
-    }
-    const coverage = coverageByKey.get(entry.manifestKey);
-    if (!coverage || coverage.offeringId !== entry.offeringId) {
-      throw new Error(`No canonical coverage for ${entry.manifestKey}`);
-    }
-    if (
-      JSON.stringify(coverage.productControl) !==
-      JSON.stringify(entry.productControl)
-    ) {
-      throw new Error(`Product Control mismatch for ${entry.manifestKey}`);
-    }
-    const expectedResolvedCandidate = {
-      assetId: coverage.fallback.assetId,
-      href: coverage.fallback.href,
-      recommendedAltText: coverage.fallback.recommendedAltText,
-      width: coverage.fallback.width,
-      height: coverage.fallback.height,
-      illustrativeNotice: coverage.fallback.illustrativeNotice,
-      reviewStatus: coverage.fallback.reviewStatus,
-      approvalEligibility: coverage.fallback.approvalEligibility,
-      runtimeWiringEligibility: coverage.fallback.runtimeWiringEligibility,
-      deploymentEligibility: coverage.fallback.deploymentEligibility,
-    };
-    if (
-      JSON.stringify(expectedResolvedCandidate) !==
-      JSON.stringify(entry.resolvedCandidate)
-    ) {
-      throw new Error(`Image resolution mismatch for ${entry.manifestKey}`);
-    }
-    if (
-      JSON.stringify(coverage.legacyFeaturedAliases) !==
-      JSON.stringify(entry.legacyFeaturedAliases)
-    ) {
-      throw new Error(`Featured alias mismatch for ${entry.manifestKey}`);
-    }
-    for (const alias of entry.legacyFeaturedAliases) {
-      if (seenLegacyVariantIds.has(alias.variantId)) {
-        throw new Error(`Duplicate legacy featured variant ${alias.variantId}`);
-      }
-      seenLegacyVariantIds.add(alias.variantId);
-      if (seenLegacyVariantSkus.has(alias.variantSku)) {
-        throw new Error(`Duplicate legacy featured SKU ${alias.variantSku}`);
-      }
-      seenLegacyVariantSkus.add(alias.variantSku);
-      if (!entry.productControl) {
-        throw new Error(`Featured alias lacks canonical binding ${alias.variantId}`);
-      }
-      if (seenCanonicalVariantIdsForAliases.has(entry.productControl.variantId)) {
-        throw new Error(
-          `Duplicate canonical featured variant ${entry.productControl.variantId}`,
-        );
-      }
-      seenCanonicalVariantIdsForAliases.add(entry.productControl.variantId);
-      if (seenCanonicalSkusForAliases.has(entry.productControl.sku)) {
-        throw new Error(`Duplicate canonical featured SKU ${entry.productControl.sku}`);
-      }
-      seenCanonicalSkusForAliases.add(entry.productControl.sku);
-      aliasCount += 1;
-    }
-  }
-
-  if (aliasCount !== identityCrosswalk.invariants.legacyFeaturedAliasRows) {
-    throw new Error("Featured alias count mismatch");
-  }
-  return true;
+export function supersededForwardGroups() {
+  return { ...SUPERSEDED_FORWARD_GROUPS };
 }
 
-export function resolveCrosswalkManifestKey(identityCrosswalk, identity = {}) {
-  const resolvedManifestKeys = [];
-  const resolveUnique = (predicate) => {
-    const matches = identityCrosswalk.entries.filter(predicate);
-    if (matches.length !== 1) return false;
-    resolvedManifestKeys.push(matches[0].manifestKey);
-    return true;
+export function externallySuppliedStateImageClasses() {
+  return { ...EXTERNALLY_SUPPLIED_STATE_TO_IMAGE_CLASS };
+}
+
+export function reviewedSpecialGroupIds() {
+  return {
+    shipping: SHIPPING_GROUP_ID,
+    syringe: SYRINGE_GROUP_ID,
+    priceRequest: PRICE_REQUEST_GROUP_ID,
+    formulationHold: FORMULATION_HOLD_GROUP_ID,
   };
-
-  const hasCanonicalPart = Boolean(
-    identity.offeringId || identity.offeringVariantId,
-  );
-  if (hasCanonicalPart) {
-    if (!identity.offeringVariantId) return null;
-    if (
-      !resolveUnique(
-        (entry) =>
-          entry.offeringVariantId === identity.offeringVariantId &&
-          (!identity.offeringId || entry.offeringId === identity.offeringId),
-      )
-    ) {
-      return null;
-    }
-  }
-
-  const hasProductControlPart = Boolean(
-    identity.productControlProductId || identity.productControlVariantId,
-  );
-  if (hasProductControlPart) {
-    if (!identity.productControlVariantId) return null;
-    if (
-      !resolveUnique(
-        (entry) =>
-          entry.productControl?.variantId ===
-            identity.productControlVariantId &&
-          (!identity.productControlProductId ||
-            entry.productControl?.productId ===
-              identity.productControlProductId),
-      )
-    ) {
-      return null;
-    }
-  }
-
-  const hasLegacyUuidPart = Boolean(
-    identity.legacyProductId || identity.legacyVariantId,
-  );
-  const hasLegacySkuPart = Boolean(
-    identity.legacyProductSku || identity.legacyVariantSku,
-  );
-  if (
-    (hasLegacyUuidPart &&
-      !(identity.legacyProductId && identity.legacyVariantId)) ||
-    (hasLegacySkuPart &&
-      !(identity.legacyProductSku && identity.legacyVariantSku))
-  ) {
-    return null;
-  }
-  if (hasLegacyUuidPart) {
-    if (
-      !resolveUnique((entry) =>
-        entry.legacyFeaturedAliases.some(
-          (alias) =>
-            alias.productId === identity.legacyProductId &&
-            alias.variantId === identity.legacyVariantId,
-        ),
-      )
-    ) {
-      return null;
-    }
-  }
-  if (hasLegacySkuPart) {
-    if (
-      !resolveUnique((entry) =>
-        entry.legacyFeaturedAliases.some(
-          (alias) =>
-            alias.productSku === identity.legacyProductSku &&
-            alias.variantSku === identity.legacyVariantSku,
-        ),
-      )
-    ) {
-      return null;
-    }
-  }
-
-  if (resolvedManifestKeys.length === 0) return null;
-  return new Set(resolvedManifestKeys).size === 1
-    ? resolvedManifestKeys[0]
-    : null;
 }
 
-export function assetById(assetId) {
-  return ASSET_BY_ID.get(assetId) ?? null;
+export function listPublicFallbackWebps() {
+  const directory = path.join(REPO_ROOT, "client/public/research/products/fallbacks");
+  if (!fs.existsSync(directory)) return [];
+  const files = [];
+  const walk = (current) => {
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const absolute = path.join(current, entry.name);
+      if (entry.isDirectory()) walk(absolute);
+      else if (entry.isFile() && entry.name.toLowerCase().endsWith(".webp")) {
+        files.push(path.relative(directory, absolute).replaceAll("\\", "/"));
+      }
+    }
+  };
+  walk(directory);
+  return files.sort((a, b) => a.localeCompare(b));
+}
+
+export function listPublicProductImages() {
+  const directory = path.join(REPO_ROOT, "client/public/research/products");
+  if (!fs.existsSync(directory)) return [];
+  const images = [];
+  const extensions = new Set([".avif", ".gif", ".jpeg", ".jpg", ".png", ".svg", ".webp"]);
+  const walk = (current) => {
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const absolute = path.join(current, entry.name);
+      if (entry.isDirectory()) walk(absolute);
+      else if (entry.isFile() && extensions.has(path.extname(entry.name).toLowerCase())) {
+        images.push(path.relative(directory, absolute).replaceAll("\\", "/"));
+      }
+    }
+  };
+  walk(directory);
+  return images.sort((a, b) => a.localeCompare(b));
+}
+
+export function listRuntimeEvidenceReferences() {
+  const roots = ["client/src", "server", "shared"];
+  const extensions = new Set([".css", ".html", ".js", ".json", ".mjs", ".ts", ".tsx"]);
+  const forbidden = [
+    "/research/products/fallbacks/",
+    "batch0-render-candidates",
+    "pre-v3-nonapprovable",
+  ];
+  const matches = [];
+  const walk = (absoluteRoot) => {
+    for (const entry of fs.readdirSync(absoluteRoot, { withFileTypes: true })) {
+      const absolute = path.join(absoluteRoot, entry.name);
+      if (entry.isDirectory()) walk(absolute);
+      else if (entry.isFile() && extensions.has(path.extname(entry.name).toLowerCase())) {
+        const content = fs.readFileSync(absolute, "utf8");
+        const hit = forbidden.find((value) => content.includes(value));
+        if (hit) {
+          matches.push({
+            path: path.relative(REPO_ROOT, absolute).replaceAll("\\", "/"),
+            reference: hit,
+          });
+        }
+      }
+    }
+  };
+  for (const root of roots) {
+    const absoluteRoot = path.join(REPO_ROOT, root);
+    if (fs.existsSync(absoluteRoot)) walk(absoluteRoot);
+  }
+  return matches.sort((a, b) => a.path.localeCompare(b.path));
+}
+
+export function knownQuarantinedPaths() {
+  return sortedUnique(FALLBACK_ASSETS.map((asset) => asset.filePath));
 }
