@@ -1,0 +1,64 @@
+infra ready: 17.6
+fixture: provider observation recorded before the hold
+### apply hold
+exit=1
+ERROR:  Provider payment authority is not ready
+DETAIL:  ASSISTED_ORDER_PROVIDER_AUTHORITY_NOT_READY
+ERROR:  Provider payment authority is not ready
+DETAIL:  ASSISTED_ORDER_PROVIDER_AUTHORITY_NOT_READY
+ERROR:  permission denied for function research_assisted_order_payment_verify
+ request_status 
+ payment_review
+(1 row)
+ service_role_unbound_verify | quote_accept_null_safe | verify_bound_null_safe 
+ f                           | t                      | t
+(1 row)
+### re-apply 07_20260930202413_research_assisted_order_quote_payment_authority
+ERROR:  Provider payment authority is not ready
+DETAIL:  ASSISTED_ORDER_PROVIDER_AUTHORITY_NOT_READY
+ERROR:  Provider payment authority is not ready
+DETAIL:  ASSISTED_ORDER_PROVIDER_AUTHORITY_NOT_READY
+ERROR:  Provider payment authority is not ready
+DETAIL:  ASSISTED_ORDER_PROVIDER_AUTHORITY_NOT_READY
+ request_status 
+ payment_review
+(1 row)
+ service_role_unbound_verify | quote_accept_null_safe | verify_bound_null_safe 
+ t                           | f                      | t
+(1 row)
+### re-apply 08_20260930205725_research_assisted_order_quote_access_finance_bound
+ERROR:  Provider payment authority is not ready
+DETAIL:  ASSISTED_ORDER_PROVIDER_AUTHORITY_NOT_READY
+ERROR:  Provider payment authority is not ready
+DETAIL:  ASSISTED_ORDER_PROVIDER_AUTHORITY_NOT_READY
+ERROR:  permission denied for function research_assisted_order_payment_verify
+ request_status 
+ payment_review
+(1 row)
+ service_role_unbound_verify | quote_accept_null_safe | verify_bound_null_safe 
+ f                           | f                      | f
+(1 row)
+### re-apply 09_20260930230541_research_assisted_order_quote_evidence_corrections
+ERROR:  Provider payment authority is not ready
+DETAIL:  ASSISTED_ORDER_PROVIDER_AUTHORITY_NOT_READY
+ERROR:  Provider payment authority is not ready
+DETAIL:  ASSISTED_ORDER_PROVIDER_AUTHORITY_NOT_READY
+ERROR:  permission denied for function research_assisted_order_payment_verify
+ request_status 
+ payment_review
+(1 row)
+ service_role_unbound_verify | quote_accept_null_safe | verify_bound_null_safe 
+ f                           | t                      | f
+(1 row)
+### re-apply 10_20260930234614_research_assisted_order_quote_provider_hold
+ERROR:  Provider payment authority is not ready
+DETAIL:  ASSISTED_ORDER_PROVIDER_AUTHORITY_NOT_READY
+ERROR:  Provider payment authority is not ready
+DETAIL:  ASSISTED_ORDER_PROVIDER_AUTHORITY_NOT_READY
+ERROR:  permission denied for function research_assisted_order_payment_verify
+ request_status 
+ payment_review
+(1 row)
+ service_role_unbound_verify | quote_accept_null_safe | verify_bound_null_safe 
+ f                           | t                      | t
+(1 row)

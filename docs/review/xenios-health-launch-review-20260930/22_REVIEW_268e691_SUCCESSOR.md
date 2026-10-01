@@ -255,3 +255,81 @@ means a code citation only.
 - N2: governed no-funds or void;
 - F4: a durable effects-pending record and reconciler, plus a durable audit gate on the finance flag;
 - the P3 mappings.
+
+---
+
+## Addendum: successor `947f6ee` / records `95e040a`, which landed during this review
+
+- **Identity:**
+  - **Runtime:** `947f6ee7739bf2a1381b4b29a4f9d132c751d64c`, tree `03ccddee03fbad2966655c2ce1a3cb46c468d8d5`.
+  - **Records tip:** `95e040a300e23ce5eb4ebc0dd7e5039f76aa818c`, tree `18fdb975…`. Relative to `947f6ee`, it changes
+    records plus `server/release-control-plane.test.ts` only.
+- **Delta from `268e691`:**
+
+  | Commit | Kind | Content |
+  | --- | --- | --- |
+  | `05e413c` | runtime | EA-01 mint limiter |
+  | `947f6ee` | schema | Migration 85, `20260930234614_…quote_provider_hold.sql`: blob `8b390d8e`, sha256 `6596f261…08fe`. This equals the DAG (44 nodes, dependsOn 84). |
+  | `95e040a` | records | Handoff and registrations |
+
+  Predecessor migration bytes are unchanged.
+- **Protected files:** still `7c21ea1a…` and `1d6594d6…`. The prior PASS still applies.
+
+### Executed results (same disposable stack, migration 85 added; outputs in `sql/composed/hold/`)
+
+**Main composed probe re-run** (56 cases):
+- The **only** differences from `268e691` are the SQL-01 cases. The forged provider observe is **REFUSED**, P0001
+  `ASSISTED_ORDER_PROVIDER_AUTHORITY_NOT_READY`.
+- The request stays in `payment_review`, and both customer surfaces show "Payment review", not "Payment verified".
+- Every manual-path case is identical: no regression.
+
+**Hold checks** (`provider_hold_*.sql`):
+- **Phase A:** with a pre-existing provider verification, the migration **refuses** with 55000
+  `PROVIDER_VERIFICATIONS_RECONCILIATION_REQUIRED` and rolls back. No triggers are left behind.
+- **Phase B:** with a provider observation created by the permissive 84 function before the hold:
+  - `verify_bound` on it is refused;
+  - a new forged observation is refused;
+  - `verify_bound(NULL, …)` returns NULL, so **SQL-10 is closed**;
+  - the unbound verify is denied to `service_role`;
+  - even an owner-role direct INSERT of a provider verification is refused by the new trigger.
+- **Re-apply sequence:** re-applying 85, then `202413`, then `205725`, then `230541`, then 85 again:
+  - the **provider path stays refused in every state**, because the insert triggers backstop older function bodies;
+  - **ROLL-05 is narrowed but remains (P3):** re-applying `202413` re-grants the unbound verify to `service_role`
+    and restores NULL-unsafe `quote_accept`; re-applying `205725` restores NULL-unsafe `verify_bound`;
+  - re-applying forward to 85 restores all three.
+- **N2 confirmed again:** the stranded pre-hold provider observation makes its order permanently uncancellable.
+  The 85 preflight counts provider *verifications* but not provider *observations*, so it should also report them.
+
+**Unit tests** (single worker, Node 20.19.0, at `95e040a`): `server/research/early-access`,
+`server/research/early-access-wall.test.ts` and `server/release-control-plane.test.ts` gave **163 files, 2,551
+passed, 26 skipped, 0 failed**. `tsc` was not re-run, because no TypeScript runtime changed except
+`private-access-routes.ts`, which the suite covers.
+
+### Status changes at `947f6ee`
+
+| Id | Status |
+| --- | --- |
+| **SQL-01** | **CLOSED (fail-closed hold).** No provider evidence is accepted or verifiable by any `service_role` caller, in any re-apply order. A durable, server-created payment-attempt and event authority is still **required before any provider ingress is mounted**; that stays tracked under ADP-01. |
+| SQL-10 | CLOSED |
+| EA-01 | CLOSED. At capacity, the oldest below-budget entry is evicted; exhausted budgets survive. This matches the correction sent. |
+| Everything else in this report | Unchanged: no app TypeScript changed apart from EA. |
+
+### Disposition at `947f6ee` / `95e040a`
+
+| Item | Status |
+| --- | --- |
+| Open P1 | **F1**: production composes no independent manual evidence authority, and there is no grant procedure. |
+| Open P2 | F7-R1, HIST-PROG, N2, F4 (durable effects and audit), ADP-01 (latent), HIST-02, SQL-06 |
+| Protected gate | Red until the owner-authorized amendment for exactly the reviewed hashes is recorded |
+| **Production promotion** | **NOT READY** |
+
+**Next correction for Codex.** F1 needs the founder's real evidence source, so it is not Codex-only. The next
+engineering correction is the customer and payment truth pair:
+1. **F7-R1:** read financial state for any status at or after `paid` on the status page, `/status` and account history.
+2. **HIST-PROG:** hold later transitions for rows that have a `paid` event but no verification, and add the exact
+   pre-apply and post-apply preflight queries, including provider-observation counts.
+
+**Then:**
+- N2: a governed no-funds or void resolution;
+- F4: a durable effects-pending record, a reconciler and a durable-audit gate;
+- ROLL-05: preflights in older migrations that refuse when a successor exists.
