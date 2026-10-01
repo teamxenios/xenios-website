@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "healthProviderNeutral20260930": {
     "status": "NOT_READY_FOR_PRODUCTION_PROMOTION",
+    "currentHL17Work": {
+      "task": "HEALTH-HL17-ACCESS-HUB-RESTORE-20261001",
+      "runtimeSourceSha": "0d22757ab458862c4a9ded6eae7812cc17a06116",
+      "runtimeSourceTree": "afeaa20d6501e49a92bf456ae72fcb383e9e1a47",
+      "testOnlySha": "bd236fa55e2ce6b042e5cc809056e6bf16e6a65f",
+      "status": "FOCUSED_PASS_BUILD_BROWSER_PENDING_PROTECTED_CHANGE_HELD",
+      "focused": "285 PASS/18 files, exit0,24.52s; typecheck exit0 91.444s, source stable precommit",
+      "protection": "App seam mismatch plus static hard-hash mismatch; no manifest or assertion changed",
+      "aggregate": "NOT_RUN_FOR_HL17; previous ADP03 failed aggregate is not evidence for this successor",
+      "claudeAccepted": false,
+      "managedQualified": false,
+      "productionMutated": false
+    },
     "currentADP03Work": {
       "status": "LOCAL_SQL_PREFLIGHT_PASS_AGGREGATE_FAILED_SEAM_ASSERTION",
       "runtimeSourceSha": "2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd",
@@ -18,9 +31,9 @@
       "managedQualified": false,
       "productionMutated": false
     },
-    "runtimeSourceSha": "2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd",
-    "runtimeSourceTree": "55c15891b07be438a933d025a7381dd7f90a04e2",
-    "testOnlySha": "c3ab4bdf100fc70765928bfa13c24de5358f0a08",
+    "runtimeSourceSha": "0d22757ab458862c4a9ded6eae7812cc17a06116",
+    "runtimeSourceTree": "afeaa20d6501e49a92bf456ae72fcb383e9e1a47",
+    "testOnlySha": "bd236fa55e2ce6b042e5cc809056e6bf16e6a65f",
     "releaseControlSha": "edf8526bdefc34b8e87fa6e46585573535dba6cd",
     "currentAggregateStatus": "ADP03_COMPLETED_19357_PASS_1_FAIL_85_SKIP_EXIT_1_NO_TIMEOUTS_PROTECTED_SEAM_ASSERTION_NOT_RELEASE_READY_PREDECESSORS_PRESERVED_SEPARATELY",
     "currentADP01Status": "PUSHED_e9f221c_SOURCE_9c1fe1e_TESTS_8295030_CONTROLS_FINAL_V2_SQL_RUN3_AND_PREFLIGHT_PASS_AGGREGATE18998P1F85S_EXIT1_NO_INDEPENDENT_OR_HOSTED_ACCEPTANCE",

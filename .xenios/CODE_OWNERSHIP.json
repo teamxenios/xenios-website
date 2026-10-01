@@ -3288,7 +3288,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T06:26:41.299Z",
-      "heartbeatAt": "2026-10-01T13:26:26.914Z"
+      "heartbeatAt": "2026-10-01T13:35:24.363Z"
     },
     {
       "id": "50a8e190-b0e1-479e-8b7b-7be25b0ad42f",
@@ -3409,6 +3409,24 @@
       "state": "handoff",
       "claimedAt": "2026-10-01T11:55:12.111Z",
       "heartbeatAt": "2026-10-01T13:26:26.914Z"
+    },
+    {
+      "id": "1d83dba6-1e9d-4b80-8f92-2ee0c7a3bc85",
+      "task": "HEALTH-HL17-ACCESS-HUB-RESTORE-20261001",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "client/src/App.tsx",
+        "server/static.ts",
+        "client/src/research/pages/AccessHub.tsx",
+        "client/src/App.routes.test.ts",
+        "client/src/App.access-hub.test.tsx",
+        "server/static.test.ts",
+        "client/src/research/pages/public-brand-pages.test.tsx",
+        "docs/health-launch/HL17_ACCESS_HUB_20261001.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-01T13:28:09.746Z",
+      "heartbeatAt": "2026-10-01T13:35:24.363Z"
     }
   ],
   "rules": [

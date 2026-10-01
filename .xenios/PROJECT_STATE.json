@@ -4,7 +4,20 @@
     "task": "ASSISTED-ORDER-CONVERSION",
     "session": "codex-xenios-health-launch-implementation-20260930",
     "branch": "codex/xenios-health-launch-implementation-20260930",
-    "status": "ADP03_FROZEN_LOCAL_QUALIFICATION_COMPLETE_AGGREGATE_FAILED_SEAM_ASSERTION_NOT_RELEASE_READY",
+    "status": "HL17_SOURCE_FROZEN_FOCUSED_PASS_BROWSER_BUILD_PENDING_NOT_RELEASE_READY",
+    "currentHL17Work": {
+      "task": "HEALTH-HL17-ACCESS-HUB-RESTORE-20261001",
+      "runtimeSourceSha": "0d22757ab458862c4a9ded6eae7812cc17a06116",
+      "runtimeSourceTree": "afeaa20d6501e49a92bf456ae72fcb383e9e1a47",
+      "testOnlySha": "bd236fa55e2ce6b042e5cc809056e6bf16e6a65f",
+      "status": "285_FOCUSED_PASS_TYPECHECK_PASS_BUILD_BROWSER_PENDING",
+      "scope": "Two exact home redirects removed; neutral Early Access copy; reproduced page-local canonical cold-fragment focus. No authority/search policy/global focus changes.",
+      "protection": "Unchanged manifest; new App seam and static hard-hash mismatches require exact independent review and separate owner disposition. No amendment authority inferred.",
+      "aggregate": "NOT_RUN_FOR_HL17; ADP03 aggregate preserved separately, not successor evidence",
+      "handoff": "docs/health-launch/HL17_ACCESS_HUB_20261001.md",
+      "hostedChangesAuthorized": false,
+      "claudeAccepted": false
+    },
     "currentADP03Work": {
       "status": "LOCAL_SQL_PREFLIGHT_PASS_AGGREGATE_FAILED_SEAM_ASSERTION",
       "runtimeSourceSha": "2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd",
@@ -24,9 +37,9 @@
       "hostedChangesAuthorized": false,
       "independentReview": "EXACT_FROZEN_SUCCESSOR_READY_FOR_REVIEW_NOT_CLAUDE_ACCEPTED"
     },
-    "runtimeSourceSha": "2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd",
-    "runtimeSourceTree": "55c15891b07be438a933d025a7381dd7f90a04e2",
-    "testOnlySha": "c3ab4bdf100fc70765928bfa13c24de5358f0a08",
+    "runtimeSourceSha": "0d22757ab458862c4a9ded6eae7812cc17a06116",
+    "runtimeSourceTree": "afeaa20d6501e49a92bf456ae72fcb383e9e1a47",
+    "testOnlySha": "bd236fa55e2ce6b042e5cc809056e6bf16e6a65f",
     "releaseControlSha": "edf8526bdefc34b8e87fa6e46585573535dba6cd",
     "successorScope": "ADP03 explicit scoped admin full-capture settlement into canonical verification with atomic held F4 obligation and separate current fulfillment eligibility. Immutable history is not present permission. Sources remain null; no live provider, refund, uncertainty resolution or historical adoption. Prior ADP02/ADP01/HL11/N2 results remain separate; no hosted/price changes.",
     "currentADP02Work": {
