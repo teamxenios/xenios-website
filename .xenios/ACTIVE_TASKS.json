@@ -3,6 +3,40 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "HEALTH-HL12-ACCOUNT-HISTORY-TRUTH-20261001",
+      "title": "Project verified payment truth into both owned request-history surfaces",
+      "priority": "P2",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "shared/research/assisted-order/member-history.ts",
+        "server/research/assisted-order/member-order-history.ts",
+        "server/research/assisted-order/member-order-history.test.ts",
+        "client/src/research/member-orders/request-read.ts",
+        "client/src/research/member-orders/request-read.test.ts",
+        "client/src/research/member-orders/AssistedRequests.tsx",
+        "client/src/research/account-portal/views/orders-requests.test.tsx",
+        "client/src/research/pages/member/Orders.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Existing owner-authorized history RPC and canonical financial state only. No parallel authority, price, SQL, provider activation or hosted action. Delegated to quote_customer_ui under existing primary session.",
+      "claimedAt": "2026-10-01T03:57:40.688Z"
+    },
+    {
+      "id": "HEALTH-HL12-CANONICAL-OUTBOX-RECOVERY-20261001",
+      "title": "Make verified-payment audit and canonical outbox effects atomic and recoverable",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/outbox.ts",
+        "server/research/outbox-hl12-effects.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Narrow canonical outbox boundary only, coordinated with ASSISTED-ORDER-CONVERSION. Preserve existing dispatch and provider hold. No new outbox, real mail, hosted writes or protected baseline amendments.",
+      "claimedAt": "2026-10-01T03:57:40.765Z"
+    },
+    {
       "id": "HEALTH-EXACT-PROTECTED-HASH-AMENDMENT-20261001",
       "title": "Record founder approval for exactly two independently reviewed baseline hashes",
       "priority": "P1",
@@ -46,7 +80,7 @@
       "id": "HEALTH-PROVIDER-NEUTRAL-CONTINUITY-20260930",
       "title": "Record provider-neutral Health decision and exact local evidence without changing hosted truth",
       "priority": "P1",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         ".xenios/PROJECT_STATE.json",
@@ -57,7 +91,7 @@
       ],
       "dependsOn": [],
       "scopeNote": "Append a dated Health checkpoint. Preserve historical runs and observed production evidence; no new production claim or authority.",
-      "claimedAt": "2026-10-01T02:38:01.225Z",
+      "claimedAt": "2026-10-01T03:57:40.838Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
         "sha": "ab5cb09246c072659c69139446f0246f8ef1f5de",
@@ -806,7 +840,7 @@
       "id": "ASSISTED-ORDER-CONVERSION",
       "title": "Close the assisted-order operator loop: quote issuance, customer acceptance, evidence tooling",
       "priority": "P0",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/research/assisted-order/**",
@@ -820,7 +854,7 @@
         "ASSISTED-ORDER-MOUNT"
       ],
       "scopeNote": "Founder-authorized HL-12 financial integrity: accepted versioned quote, amount/currency-bound authorized verification and durable paid transition across mounted app and forward SQL, qualified only on disposable local PostgreSQL. Existing mounted assisted-order bridge is present; prior blocked state is stale. No managed migration, hosted mutation, real money or fabricated historical verification.",
-      "claimedAt": "2026-10-01T02:38:00.898Z",
+      "claimedAt": "2026-10-01T03:57:40.590Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
         "sha": "ab5cb09246c072659c69139446f0246f8ef1f5de",
@@ -2814,7 +2848,7 @@
       "id": "ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930",
       "title": "Register source-only assisted-order financial migrations pending HL-12 authority",
       "priority": "P0",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "docs/coordination/MIGRATION_DAG.json",
@@ -2822,7 +2856,7 @@
       ],
       "dependsOn": [],
       "scopeNote": "Register exact f318859 paid hold, c92d7a9 SQL foundation and 5c8498c bound-access successor; maintain PENDING managed state and explicitly preserve HL-12 as open.",
-      "claimedAt": "2026-10-01T02:38:01.052Z",
+      "claimedAt": "2026-10-01T04:03:25.729Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
         "sha": "ab5cb09246c072659c69139446f0246f8ef1f5de",
@@ -2857,7 +2891,7 @@
       "id": "ASSISTED-ORDER-HL12-FINANCE-ROUTE-MOUNT-20260930",
       "title": "Mount default-off assisted-order financial routes",
       "priority": "P0",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/index.ts"
@@ -2866,7 +2900,7 @@
         "ASSISTED-ORDER-MOUNT"
       ],
       "scopeNote": "Only bounded quote/manual-finance endpoints behind a default-off flag and existing Research wall; no provider assertion, managed apply, or payment activation.",
-      "claimedAt": "2026-09-30T20:57:09.920Z",
+      "claimedAt": "2026-10-01T04:03:25.654Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
         "sha": "a4260ba4f34bda1114a3ceec88852370f64dcf9f",
@@ -2878,14 +2912,14 @@
       "id": "ASSISTED-ORDER-HL12-RELEASE-TEST-20260930",
       "title": "Update exact migration and route-count release-control test fixtures",
       "priority": "P0",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/release-control-plane.test.ts"
       ],
       "dependsOn": [],
       "scopeNote": "Pin only newly committed pending migration source SHAs and five literal finance routes; preserve all release assertions and rerun the gate.",
-      "claimedAt": "2026-10-01T02:38:01.139Z",
+      "claimedAt": "2026-10-01T04:03:25.814Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
         "sha": "ab5cb09246c072659c69139446f0246f8ef1f5de",
