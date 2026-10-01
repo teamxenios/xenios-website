@@ -1,0 +1,8 @@
+# Claude independent LENS-01 execution, 2026-10-01. Disposable supabase/postgres:17.6.1.171, --network none, removed after.
+# Applied: bootstrap, bridge 20260815150000, affiliate 20260820190000, member history (M71 candidate), status recovery, canonical outbox (pre-80 state).
+# Census = supabase/verification/research_assisted_order_quote_pre80_preflight.sql at 8549011.
+clean pre-80: {"schemaVersion": "hl12_pre80_notification_census_v1", "legacy_paid_notices": 0, "delivery_status_counts": {}, "notification_chain_gate": "CLEAR_COUNTS_ONLY_NOT_AUTHORIZATION", "invalid_status_envelopes": 0, "reserved_verification_keys": 0, "adoption_required_outbox_rows": 0}
+# Inserted 3 synthetic envelopes: legacy paid notice (delivered), legacy paid notice (cancelled delivery, orphan reference), shipped notice (sent).
+with envelopes: {"schemaVersion": "hl12_pre80_notification_census_v1", "legacy_paid_notices": 2, "delivery_status_counts": {"cancelled": 1, "delivered": 1}, "notification_chain_gate": "NO_GO", "invalid_status_envelopes": 0, "reserved_verification_keys": 0, "adoption_required_outbox_rows": 2}
+# Then applied 80..87 (exact committed bytes) and M88 20261001040351 (sha256 8121e537...f743, equal to the 8549011 blob):
+M88: ERROR:  Existing financial effects require deliberate adoption / DETAIL:  ASSISTED_ORDER_EFFECTS_ADOPTION_REQUIRED ; assisted_order_* outbox columns added: 0

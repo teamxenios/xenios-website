@@ -1,0 +1,158 @@
+// Claude independent ADP-G1 review probe (untracked, removed after the run).
+// Reuses Codex's disposable no-network harness ONLY for provisioning; every
+// scenario, assertion and observation below is the reviewer's own.
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { ProviderSettlementHarness, prefix, adapterRevision, scope, id, request, actor, q, j, service, json,
+  statusExpr, digest } from './research_assisted_order_quote_provider_settlement_harness.mjs';
+
+const MIG = 'supabase/migrations/20261001160730_research_assisted_order_provider_quarantine_isolation.sql';
+const migration = await readFile(MIG, 'utf8');
+const db = new ProviderSettlementHarness();
+const out = [];
+const rec = (k, v) => { out.push({ k, v }); console.log(`ADPG1R ${k} ${JSON.stringify(v)}`); };
+const call = e => service(`select ${e}::text;`);
+const tryCall = async sql => { try { return { ok: true, v: await db.psql(sql) }; } catch (e) {
+  const m = /DETAIL:\s+(\S+)/.exec(e.stderr ?? ''); const s = /ERROR:\s+(\w+):/.exec(e.stderr ?? '');
+  return { ok: false, state: s?.[1], detail: m?.[1] ?? (e.stderr ?? '').split('\n').find(l => l.includes('ERROR')) }; } };
+const unc = async n => json(await db.psql(call(`${prefix}provider_uncertainty('${request(n)}')`)));
+const elig = async n => db.eligibility(n);
+const attempts = n => db.psql(`select count(*) from ${prefix}provider_attempts where request_id='${request(n)}';`);
+const journal = () => db.psql(`select coalesce(jsonb_agg(to_jsonb(r) order by id),'[]')::text from ${prefix}provider_event_journal r;`);
+let strayN = 0;
+const stray = (c, over = {}) => {
+  strayN++;
+  const ev = { schemaVersion: 'assisted_order_provider_event_v1', eventId: `claude-review-stray-${strayN}`,
+    payloadSha256: digest(`claude-review-stray-bytes-${strayN}`), kind: 'captured', occurredAt: new Date().toISOString(),
+    claimedAttemptId: null, claimedRequestId: null, claimedQuoteId: null, claimedQuoteVersion: null, claimedAcceptanceId: null,
+    claimedCanonicalOrderId: null, providerPaymentId: `claude-review-foreign-charge-${strayN}`, providerSessionId: null,
+    adjustmentId: null, observedAmountCents: 1234, currency: 'USD', ...over };
+  return `${prefix}provider_event_append(${q(c.sourceId)},${q(c.revision)},${j(c.scope)},${j(ev)})`;
+};
+async function source(name, s) {
+  const c = { sourceId: `claude-review-${name}`, revision: adapterRevision, scope: { ...scope, ...s } };
+  await db.provision({ source: c.sourceId, configuredScope: c.scope }); return c;
+}
+async function candidate(n, c) {
+  await db.setup(n); await db.reserve(n, c); await db.claim(n, id(6, n), c);
+  assert.equal((await db.append(n, db.result(n, c.scope), c)).classification, 'bound');
+  assert.equal((await db.captureAppend(n, db.capture(n), c)).classification, 'bound');
+}
+const st = (n, from, to, ev) => tryCall(call(statusExpr(n, from, to, ev)));
+const manualPaid = async n => { await db.observe(n); return json(await db.psql(call(db.verifyExpr(n)))); };
+
+try {
+  await db.start(); await db.baseline(); await db.install();
+  const A = await source('a', { provider: 'claude-prov-x', accountId: 'acct-a', mode: 'test' });
+  const B = await source('b', { provider: 'claude-prov-x', accountId: 'acct-b', mode: 'test' });
+  const C = await source('c', { provider: 'claude-prov-x', accountId: 'acct-a', mode: 'live' });
+  const D = await source('d', { provider: 'claude-prov-y', accountId: 'acct-a', mode: 'test' });
+  const E = await source('e', { provider: 'claude-prov-x', accountId: 'acct-e', mode: 'test' });
+  const F = await source('f', { provider: 'claude-prov-x', accountId: 'acct-f', mode: 'test' });
+  const G = await source('g', { provider: 'claude-prov-x', accountId: 'acct-g', mode: 'test' });
+  // Orders prepared BEFORE the successor migration.
+  for (const n of [2000, 2002, 2003, 2012, 2013, 2014]) await db.setup(n);
+  await db.setup(2001, { accept: false });
+  await db.setup(2010); await db.reserve(2010, A); // exposed to A, no capture
+  await candidate(2011, A); assert.equal((await db.settle(2011, A)).state, 'verified');
+  rec('pre.2011.paid->supplier_processing', await st(2011, 'paid', 'supplier_processing', { supplierAssignmentId: 'claude-2011' }));
+  for (const [n, c] of [[2020, B], [2030, C], [2040, D]]) await candidate(n, c);
+  for (const n of [2050, 2051, 2052, 2053]) { await candidate(n, E); assert.equal((await db.settle(n, E)).state, 'verified'); }
+  rec('pre.2050.to_supplier', await st(2050, 'paid', 'supplier_processing', { supplierAssignmentId: 'claude-2050' }));
+  rec('pre.2051.to_supplier', await st(2051, 'paid', 'supplier_processing', { supplierAssignmentId: 'claude-2051' }));
+  rec('pre.2051.to_shipped', await st(2051, 'supplier_processing', 'shipped', { trackingId: 'claude-track-2051' }));
+  const auth = {};
+  for (const f of ['provider_journal_authority', 'provider_execution_authority', 'provider_settlement_authority', 'payment_effects_authority'])
+    auth[f] = json(await db.psql(call(`${prefix}${f}()`)));
+
+  // Predecessor behaviour, then install the exact successor twice.
+  rec('m93.stray_on_A', json(await db.psql(call(stray(A)))).classification);
+  rec('m93.manual_2000_uncertainty', await unc(2000));
+  const before = await db.snapshot();
+  await db.psql(migration); await db.psql(migration);
+  assert.deepEqual(await db.snapshot(), before, 'install must not rewrite financial rows');
+  for (const [f, v] of Object.entries(auth)) assert.deepEqual(json(await db.psql(call(`${prefix}${f}()`))), v, `${f} DTO changed`);
+  rec('install.authority_dtos_unchanged', Object.keys(auth));
+  rec('install.settlement_authority', auth.provider_settlement_authority);
+
+  // 1/8 unrelated manual-only orders under an A quarantine.
+  rec('S1.2000.uncertainty', await unc(2000));
+  rec('S1.2000.manual_verify', (await manualPaid(2000)).state);
+  rec('S1.2000.to_supplier', await st(2000, 'paid', 'supplier_processing', { supplierAssignmentId: 'claude-2000' }));
+  rec('S1.2000.to_shipped', await st(2000, 'supplier_processing', 'shipped', { trackingId: 'claude-track-2000' }));
+  rec('S1.2001.accept_after_quarantine', (await tryCall(call(`${prefix}quote_accept('${db.quotes.get(2001)}',1,5000,'${id(2, 2001)}')`))).ok);
+  rec('S1.2003.cancel', await st(2003, 'payment_review', 'cancelled', { cancellationReason: 'Claude review cancel' }));
+  rec('S1.legacy_990.eligibility', await db.eligibility(990));
+  // operator/attacker-claimed request on A must not create exposure or evidence
+  const claimed = json(await db.psql(call(stray(A, { claimedRequestId: request(2002), claimedQuoteId: db.quotes.get(2002) }))));
+  rec('S16.claimed_request_receipt', { classification: claimed.classification, requestId: claimed.requestId, attemptId: claimed.attemptId });
+  rec('S16.2002.uncertainty', await unc(2002));
+  rec('S16.2002.manual_verify', (await manualPaid(2002)).state);
+  rec('S16.2002.financial', (await db.financial(2002)).financial);
+
+  // 4/7 same-source order exposed BEFORE the event.
+  rec('S4.2010.uncertainty', await unc(2010));
+  rec('S4.2010.manual_observe', await tryCall(call(db.observeExpr(2010))));
+  rec('S4.2010.cancel', await st(2010, 'payment_review', 'cancelled', { cancellationReason: 'Customer abandoned card checkout' }));
+  rec('S4.2010.eligibility', await elig(2010));
+  // 5/6 event BEFORE attempt: reservation refused with no residue.
+  const fBefore = await db.financial(2012), jBefore = await journal();
+  const attemptsBefore = await db.psql(`select count(*) from ${prefix}provider_attempts;`);
+  rec('S5.2012.reserve_on_A', await tryCall(call(db.reserveExpr(2012, A))));
+  rec('S5.2012.attempt_rows', await attempts(2012));
+  rec('S5.residue', { attemptsTotalUnchanged: attemptsBefore === await db.psql(`select count(*) from ${prefix}provider_attempts;`),
+    financialUnchanged: JSON.stringify(fBefore) === JSON.stringify(await db.financial(2012)), journalUnchanged: jBefore === await journal() });
+  rec('S5.2012.manual_fallback', (await manualPaid(2012)).state);
+  // 2/3 sources B (other account), C (same account, live), D (other provider)
+  for (const [n, c] of [[2020, B], [2030, C], [2040, D]]) {
+    rec(`S2.${n}.${c.sourceId}.settle`, (await db.settle(n, c)).state);
+    rec(`S2.${n}.eligibility`, (await elig(n)).fulfillmentEligible);
+    rec(`S2.${n}.to_supplier`, (await st(n, 'paid', 'supplier_processing', { supplierAssignmentId: `claude-${n}` })).ok);
+  }
+  rec('S2.fresh_on_B', (await db.reserve(2013, B)).attemptId ? 'reserved' : 'refused');
+
+  // 10 legitimate exposure, settled, then a later unrelated unbound event on E.
+  rec('S10.stray_on_E', json(await db.psql(call(stray(E)))).classification);
+  for (const n of [2050, 2051, 2052, 2053]) rec(`S10.${n}.eligibility`, await elig(n));
+  rec('S10.2050.supplier->shipped', await st(2050, 'supplier_processing', 'shipped', { trackingId: 'claude-track-2050' }));
+  rec('S10.2051.shipped->delivered', await st(2051, 'shipped', 'delivered', {}));
+  rec('S10.2052.paid->supplier', await st(2052, 'paid', 'supplier_processing', { supplierAssignmentId: 'claude-2052' }));
+  rec('S10.2053.paid->cancelled', await st(2053, 'paid', 'cancelled', { cancellationReason: 'Customer asked to cancel' }));
+  rec('S10.2052.financial_still_verified', (await db.financial(2052)).financial);
+  rec('S10.A_settled_2011.supplier->shipped', await st(2011, 'supplier_processing', 'shipped', { trackingId: 'claude-track-2011' }));
+  rec('S10.fresh_on_E', await tryCall(call(db.reserveExpr(2014, E))));
+
+  // Revoked source: does a late event still land (and hold)?
+  await db.setup(2060); await db.reserve(2060, G);
+  await db.psql(`update ${prefix}provider_sources set revoked_at=clock_timestamp() where source_id=${q(G.sourceId)};`);
+  const gEvent = await tryCall(call(stray(G)));
+  rec('R.revoked_G.append', gEvent.ok ? json(gEvent.v).classification : gEvent);
+  rec('R.revoked_G.2060.uncertainty', await unc(2060));
+
+  // 9 concurrency invariant on F: reservations and unbound events interleaved.
+  const ns = [2101, 2102, 2103, 2104, 2105, 2106, 2107, 2108];
+  for (const n of ns) await db.setup(n);
+  await db.setup(2109);
+  const jobs = [...ns.map(n => tryCall(call(db.reserveExpr(n, F)))),
+    tryCall(call(stray(F))), tryCall(call(stray(F))),
+    (async () => { await db.observe(2109); return tryCall(call(db.verifyExpr(2109))); })()];
+  const res = await Promise.all(jobs);
+  const tally = {}; for (const r of res) { const k = r.ok ? 'ok' : `${r.state}:${r.detail}`; tally[k] = (tally[k] ?? 0) + 1; }
+  rec('S9.outcomes', tally);
+  let violations = 0;
+  for (const n of ns) { const a = Number(await attempts(n)), u = await unc(n); if (a > 0 && !u.held) violations++; }
+  rec('S9.exposed_but_not_held', violations);
+  rec('S9.unrelated_manual_2109', res.at(-1).ok);
+  rec('S9.F_now_quarantined', await db.psql(`select ${prefix}provider_source_quarantine_held(${q(F.sourceId)});`));
+
+  // Effective-body scan, resolution surface, immutability.
+  rec('scan.unscoped_unbound_checks', (await db.psql(`select string_agg(p.proname,',' order by p.proname) from pg_proc p join pg_namespace s on s.oid=p.pronamespace
+    where s.nspname='public' and p.prosrc ilike '%established_request_id is null%';`)));
+  rec('scan.resolution_functions', await db.psql(`select coalesce(string_agg(proname,',' order by proname),'none') from pg_proc p join pg_namespace s on s.oid=p.pronamespace
+    where s.nspname='public' and proname like 'research_assisted_order%' and proname ~ '(dismiss|resolv|attribut|release|unquarantine|adjudicat|review_event)';`));
+  rec('scan.journal_update', await tryCall(`update ${prefix}provider_event_journal set established_request_id='${request(2000)}' where established_request_id is null;`));
+  rec('scan.journal_delete', await tryCall(`delete from ${prefix}provider_event_journal where established_request_id is null;`));
+  rec('scan.unbound_rows_by_source', await db.psql(`select string_agg(source_id||'='||c,',' order by source_id) from (select source_id,count(*) c
+    from ${prefix}provider_event_journal where established_request_id is null group by 1) x;`));
+  console.log('ADPG1R COMPLETE ' + JSON.stringify({ records: out.length, refusals: db.refusals }));
+} finally { await db.stop(); }

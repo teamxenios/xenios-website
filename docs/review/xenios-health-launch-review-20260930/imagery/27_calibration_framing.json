@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "claude_review_calibration_framing_v1",
+  "source": "aa4f31f9b650e68a7c7c2c749f00417d20607665",
+  "method": "PIL: grayscale minus GaussianBlur(30), threshold 18, Min/Max(5) open, getbbox; horizon = argmax |blur(y+20)-blur(y-20)| at x=40 for y in [200,H-100]",
+  "canvas": [1254, 1254],
+  "lockTarget": {"subjectHeightPct": 68, "cameraDeg": 20},
+  "reviewerTolerance": {"subjectHeightPct": [61, 75], "horizonBandPx": "consistent with 01/02 (653-721)"},
+  "studies": {
+    "calibration-01-vial":                {"bbox": [407, 204, 827, 1019], "heightPct": 65, "widthPct": 33, "horizonLeftPx": 653, "decision": "ACCEPTABLE"},
+    "calibration-02-bottle":              {"bbox": [348, 224, 895, 1077], "heightPct": 68, "widthPct": 44, "horizonLeftPx": 721, "decision": "ACCEPTABLE"},
+    "calibration-03-topical":             {"bbox": [398, 124, 829, 1097], "heightPct": 78, "widthPct": 34, "horizonLeftPx": 807, "decision": "NEEDS CHANGE"},
+    "calibration-04-care-state":          {"bbox": [103, 113, 1098, 955], "heightPct": 67, "widthPct": 79, "horizonLeftPx": 480, "decision": "NEEDS CHANGE"},
+    "calibration-05-restrictive-state":   {"bbox": [185, 106, 1039, 1166], "heightPct": 85, "widthPct": 68, "horizonLeftPx": 724, "decision": "NEEDS CHANGE"},
+    "calibration-06-unverified-identity": {"bbox": [248, 122, 1030, 1056], "heightPct": 74, "widthPct": 62, "horizonLeftPx": 859, "horizonNote": "soft gradient; low confidence", "decision": "ACCEPTABLE"}
+  },
+  "limits": "Bounding boxes can include contact shadows; horizon detection is approximate on soft gradients. Visual judgements are separate from these measurements."
+}
