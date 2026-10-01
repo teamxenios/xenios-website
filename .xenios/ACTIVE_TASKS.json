@@ -6,7 +6,7 @@
       "id": "HEALTH-ADMIN-ASSISTED-SESSION-ISOLATION-20261001",
       "title": "Isolate mounted assisted-order admin data and pending actions to the current session",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "client/src/research/assisted-order/AdminAssistedOrderSession.tsx",
@@ -18,7 +18,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Bounded prerequisite discovered while preparing authorized financial reconciliation context. Reproduce mounted detail retention on sign-out/token switch, delayed GET/PATCH/ticket results, and queue stale-response restoration. Use existing canonical admin session and server-authorized API; no new role/grants, finance commands, endpoints, protected seams, shared auth hook, SQL or hosted writes. Root owns runtime; delegate new test file only. Not financial reconciliation completion or release clearance.",
-      "claimedAt": "2026-10-01T14:56:20.623Z"
+      "claimedAt": "2026-10-01T14:56:20.623Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "2a16d74790dcc4862e0c4d62c1217bc932d655c4",
+        "file": ".xenios/handoffs/2026-10-01T15-17-27-837Z-HEALTH-ADMIN-ASSISTED-SESSION-ISOLATION-20261001-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T15:17:27.844Z"
+      }
     },
     {
       "id": "HEALTH-HL01-CATALOG-DETAIL-DISCLOSURE-20261001",

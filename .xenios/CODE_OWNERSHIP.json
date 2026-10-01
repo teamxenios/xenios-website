@@ -3457,7 +3457,7 @@
         "docs/health-launch/ADMIN_ASSISTED_SESSION_ISOLATION_20261001.md",
         "docs/health-launch/evidence/admin-assisted-session-isolation-20261001/"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T14:56:20.631Z",
       "heartbeatAt": "2026-10-01T15:11:25.044Z"
     }
