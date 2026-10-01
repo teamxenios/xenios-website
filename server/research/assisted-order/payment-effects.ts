@@ -9,6 +9,7 @@ import type { SupabaseRpcClient } from "./supabase-repository";
 import { isAssistedOrderStatus } from "../../../shared/research/assisted-order/contract";
 
 export const PAYMENT_EFFECTS_SCHEMA = "research_assisted_order_payment_effects_v1";
+export const PAYMENT_EFFECTS_ADMIN_CAPTURE_SCHEMA = "research_assisted_order_payment_effects_v2";
 const PREFIX = "research_assisted_order_payment_effects_";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
 const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
@@ -146,7 +147,8 @@ export async function resolvePaymentEffectsRecovery(input: Readonly<{
   try {
     const { data, error } = await input.rpc.rpc(`${PREFIX}authority`);
     if (error || !object(data) || !keys(data, ["schemaVersion", "intentPolicy", "auditPolicy", "historicalAdoption"]) ||
-        data.schemaVersion !== PAYMENT_EFFECTS_SCHEMA || data.intentPolicy !== "verification_atomic_canonical_outbox_v1" ||
+        !((data.schemaVersion === PAYMENT_EFFECTS_SCHEMA && data.intentPolicy === "verification_atomic_canonical_outbox_v1") ||
+          (data.schemaVersion === PAYMENT_EFFECTS_ADMIN_CAPTURE_SCHEMA && data.intentPolicy === "verification_atomic_canonical_outbox_admin_v2")) ||
         data.auditPolicy !== "canonical_audit_before_dispatch_v1" || data.historicalAdoption !== false) return null;
     return new Recovery(input.rpc, input.audit);
   } catch { return null; }

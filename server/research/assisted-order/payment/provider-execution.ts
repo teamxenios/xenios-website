@@ -19,11 +19,19 @@ const currency = z.string().regex(/^[A-Z]{3}$/);
 const scopeSchema = z.object({ provider: namespace, accountId: identifier, mode: z.enum(["test", "live"]) }).strict();
 const policySchema = z.object({ revision: namespace, replayGuarantee: z.literal("same_key_same_body"),
   createReplaySeconds: z.number().int().min(1).max(86_400) }).strict();
-const authoritySchema = z.object({ schemaVersion: z.literal("assisted_order_provider_execution_v1"),
+const heldAuthoritySchema = z.object({ schemaVersion: z.literal("assisted_order_provider_execution_v1"),
   transactionIsolation: z.literal("read_committed_only"), durableCreateOwnership: z.literal(true),
   dispatchTiming: z.literal("database_budget_monotonic_v1"),
   providerIdentityBinding: z.literal("write_once"), settlementEnabled: z.literal(false),
   refundEnabled: z.literal(false), liveExecutionEnabled: z.literal(false) }).strict();
+const evidenceAuthoritySchema = z.object({ schemaVersion: z.literal("assisted_order_provider_execution_v2"),
+  transactionIsolation: z.literal("read_committed_only"), dispatchTiming: z.literal("database_budget_monotonic_v1"),
+  durableCreateOwnership: z.literal(true), providerIdentityBinding: z.literal("write_once"),
+  settlementPolicy: z.literal("separate_scoped_admin_capture_v1"), refundPolicy: z.literal("record_and_hold_only_v1"),
+  dispatchPolicy: z.literal("explicit_source_create_policy_and_grant_v1") }).strict();
+// Versioned complete contracts, not aliases. In particular, the old v1 shape
+// without the database/monotonic timing repair is still refused.
+const authoritySchema = z.discriminatedUnion("schemaVersion", [heldAuthoritySchema, evidenceAuthoritySchema]);
 const contextShape = {
   schemaVersion: z.literal("assisted_order_provider_execution_context_v1"), requestId: uuid, attemptId: uuid,
   sourceId: namespace, adapterRevision: namespace, scope: scopeSchema, policyRevision: namespace,

@@ -27,6 +27,7 @@ import type { AssistedOrderDispositionService } from "./financial-disposition";
 import { AssistedOrderDispositionEffectsError, type DispositionEffectsRecovery } from "./disposition-effects";
 import type { AssistedProviderJournalService } from "./payment/provider-journal";
 import type { AssistedProviderExecutionService } from "./payment/provider-execution";
+import type { AssistedProviderSettlementService } from "./payment/provider-settlement";
 
 export const ASSISTED_ORDER_STATUS_TOKEN_HEADER =
   "x-xenios-order-status-token";
@@ -226,6 +227,7 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
   disposition?: Readonly<{ service: AssistedOrderDispositionService; effects: DispositionEffectsRecovery }> | null,
   providerJournal?: AssistedProviderJournalService | null,
   providerExecution?: AssistedProviderExecutionService | null,
+  providerSettlement?: AssistedProviderSettlementService | null,
 ): readonly AssistedOrderRouteDescriptor[] {
   const viewer = (request: AssistedOrderHttpRequest): Promise<AssistedOrderViewer> =>
     viewerResolver.resolve(request as Request);
@@ -488,6 +490,28 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
       handler: (request) => handle(async () => ok(200, await providerExecution.prepare(
         await viewer(request), request.params.requestId ?? "", request.params.attemptId ?? "", request.body,
       ))),
+    });
+  }
+
+  if (providerSettlement) {
+    routes.push({
+      method: "POST",
+      path: "/api/admin/research/assisted-orders/:requestId/provider-events/:journalId/settle",
+      auth: "admin",
+      handler: (request) => handle(async () => {
+        const resolvedViewer = await viewer(request);
+        if (!paymentEffects) throw new AssistedOrderConflictError(
+          "payment_verification_not_ready", "Financial verification is unavailable until durable recovery is ready.",
+        );
+        const receipt = await providerSettlement.settle(
+          resolvedViewer, request.params.requestId ?? "", request.params.journalId ?? "", request.body,
+        );
+        // The financial transaction already left a held canonical outbox row.
+        // Recovery uses the stored actual admin and can resume after failure;
+        // this receipt never grants current supplier or fulfillment eligibility.
+        await paymentEffects.recover(receipt.verificationId, receipt.requestId);
+        return ok(200, receipt);
+      }),
     });
   }
 

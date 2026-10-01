@@ -267,6 +267,12 @@ function fail(response: SupabaseRpcResponse, operation: string): never {
       "This financial action remains on hold while provider payment activity is unresolved.",
     );
   }
+  if (code === "P0001" && error?.details === "ASSISTED_ORDER_PROVIDER_FULFILLMENT_HELD") {
+    throw new AssistedOrderConflictError(
+      "provider_fulfillment_on_hold",
+      "Payment verification is recorded, but fulfillment remains on hold while provider activity is reviewed.",
+    );
+  }
   if (code === "P0001" && error?.details === "ASSISTED_ORDER_PROVIDER_TRANSACTION_ISOLATION_REQUIRED") {
     throw new AssistedOrderConflictError(
       "financial_action_unavailable",

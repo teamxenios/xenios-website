@@ -38,11 +38,21 @@ const uncertaintySchema = z.object({
   schemaVersion: z.literal("assisted_order_provider_uncertainty_v1"), requestId: uuid, held: z.boolean(),
   reason: z.enum(["provider_attempt_held", "provider_unbound_event_held"]).nullable(),
 }).strict().refine((value) => value.held === (value.reason !== null));
-const authoritySchema = z.object({
+const heldAuthoritySchema = z.object({
   schemaVersion: z.literal("assisted_order_provider_journal_v2"),
   transactionIsolation: z.literal("read_committed_only"), settlementEnabled: z.literal(false),
   refundEnabled: z.literal(false), liveExecutionEnabled: z.literal(false),
 }).strict();
+const evidenceAuthoritySchema = z.object({
+  schemaVersion: z.literal("assisted_order_provider_journal_v3"),
+  transactionIsolation: z.literal("read_committed_only"),
+  journalPolicy: z.literal("authenticated_durable_evidence_only_v1"),
+  settlementPolicy: z.literal("separate_scoped_admin_capture_v1"),
+  refundPolicy: z.literal("record_and_hold_only_v1"),
+}).strict();
+// Both reviewed installations retain this exact held journal contract. New
+// settlement authority is separate; neither version lets ingress mark paid.
+const authoritySchema = z.discriminatedUnion("schemaVersion", [heldAuthoritySchema, evidenceAuthoritySchema]);
 
 /**
  * The configured adapter authenticates original bytes, timestamp, account and
