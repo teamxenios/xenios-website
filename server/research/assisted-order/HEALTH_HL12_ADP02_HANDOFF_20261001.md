@@ -21,6 +21,21 @@ Status: pushed candidate frozen for final local qualification, not a release.
 - New migration: `supabase/migrations/20261001102904_research_assisted_order_quote_provider_execution.sql`.
 - Existing ADP01 migration, tests and qualification records remain unchanged.
 
+Changed-path classification for this slice:
+
+- Runtime (four paths): `payment/provider-execution.ts`, assisted-order
+  `http.ts`, `server/index.ts`, and the new provider-execution migration.
+- Tests (six paths): `payment/provider-execution.test.ts`,
+  `provider-execution-http.test.ts`, `provider-execution-sql.test.ts`, and the
+  three provider-execution verification harness/HTTP/local files.
+- Release controls: `docs/coordination/MIGRATION_DAG.json`,
+  `supabase/MIGRATIONS.md`, `server/release-control-plane.test.ts`. The final
+  control commit records the final local proof; earlier control commit remains
+  separate. No manifest baseline, threshold or safety expectation was lowered.
+- Records: `.xenios/**` and `HEALTH_HL12_ADP02_*` handoff/evidence files only.
+  The qualification receipt classifies every commit since predecessor handoff
+  `77cdeaec34ae19bbcc9615f75887d21fe86f0746`, with exact paths and identities.
+
 This successor implements provider-independent preparation and readback only.
 It does not authorize settlement, payment verification, paid status, capture,
 void, refund, fulfillment, historical-paid adoption, or removal of uncertainty.
@@ -296,6 +311,23 @@ execution through Vitest/tsx is not a separate strict typecheck of those files.
 
 ## Remaining work
 
+Independent review accounting remains by finding ID, not inferred fresh severity
+totals. Claude report 23 at `e7b74feb04567cac16d5b8bd089a7ae1218721d2`
+reviewed runtime `915a535`, not this successor. Its closed HIST-PROG, F7-R1,
+SQL-06, SQL-13 and ROLL-06 findings remain that run's results. F1 is still an
+operational evidence/grant dependency. Later local F4/X3, X2/account-history,
+HIST-02, N2 and ADP-01/02 implementations require independent verification;
+N2 void/refund/dispute and historical resolution remain incomplete. HL-11
+canonical reconciliation is local and does not release held prices.
+
+Keep HIST-FREEZE, ROLL-05, ROLL-06-R1/NEW-APP-ORDER, GUARD-NEWSTATE,
+ERR-ORDER/AVAIL/TEST-GAP/QUOTE-CONTRACT, NEW-RECORD-*, and managed precheck,
+go/no-go, application-order and effective-role prerequisites visible until
+their exact successors are adjudicated. Later local trigger/TRUNCATE checks
+are not an automatic independent closure of TRIG-ENABLED/TRUNC-EVID.
+CSP-02/03/04/05 and any later recorded CSP findings are not silently closed.
+This packet does not claim a new P0/P1/P2 census or production readiness.
+
 The selected payment/evidence provider and real authorized grant procedure remain
 external dependencies for actual adapters and activation. Provider-neutral
 settlement, governed void/refund, historical reconciliation and public journeys
@@ -311,6 +343,37 @@ Generic provider-string verification must remain refused. System-versus-admin
 audit attribution and separate fulfillment eligibility need explicit coverage;
 an own-attempt exception cannot become a blanket uncertainty bypass. None of
 that settlement work is represented as implemented by this held-only slice.
+
+The smallest complete next slice is explicit source-scoped admin authorization
+of a stored full capture. It must use an independently authenticated journal
+fact, exact ADP02 provider identity, current accepted quote and a distinct
+settlement grant. The command supplies no amount, currency, provider reference
+or verified flag. Its real granted admin is the authorizer, not an invented
+stand-in for an autonomous webhook. Restrict fresh settlement to
+`payment_review`; preserve provider fact time separately from authorization time.
+
+This next implementation must deliberately extend four current barriers:
+generic provider verification stays refused; own-attempt uncertainty needs
+operation-specific complete capture lineage; F4 must accept only that lineage
+while preserving actual admin audit and held canonical outbox; and the schema
+integrity check must replace its blanket provider-verification prohibition with
+exact graph validation. Partial link/observation/claim/verification/event/outbox
+writes must fail at commit. A helper-only implementation is insufficient.
+
+Financial verification remains historical truth after an adverse event. Separate
+fulfillment eligibility must still refuse global uncertainty, conflicts,
+refunds/disputes and unreviewed capture facts. An immutable journal receipt's
+`held` label is not a live customer financial state. Do not alter the exact
+two-key financial projection or infer no-funds from failed/cancelled events.
+
+Capability versions must distinguish new settlement support from actual
+operational activation. Once real provider activity exists, rollback requires
+new-schema-compatible journal ingress and effects recovery with create and
+settlement disabled. An arbitrary old binary can fail closed yet stop durable
+late-event receipt; it is not automatically an operationally safe rollback.
+No provider activity or such rollout occurred here. This is next-slice design,
+not implemented ADP03 functionality, an approved operational policy or a new
+hosted authorization.
 
 The current 424-canonical / 423-customer catalog reconciliation and genuine
 holds remain intact. Care prices remain withheld in the Research projection,
