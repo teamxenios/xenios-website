@@ -55,14 +55,14 @@ Final canonical-LF SHA256: Page `287df7646acc7457ac3c29a5c9569a53c0cef5f6d075d13
 
 ## Corrected-source checks
 
-All four runs remain distinct from the initial five runs. Exact argv, revisions, dirty states, elapsed times, exits, log hashes and raw bytes are in `evidence/hl01-catalog-details-20261001/raw-checks-corrected.json`, with individual start/result/provenance receipts alongside it.
+All four runs remain distinct from the initial five runs. Exact argv, revisions, dirty states, elapsed times, exits, log hashes and raw bytes are in `evidence/hl01-catalog-details-20261001/raw-checks-corrected.json`, with individual start/result receipts and provenance snapshots where available alongside it. The short protection run has no child-provenance snapshot.
 
 | Job | Actual result |
 | --- | --- |
 | `hl01-wrap-focused` | 79 pass / 3 files / zero skips, exit0,52.10s Vitest/55.233s wrapper. Page, accessibility and whole-catalog coverage with the real dataset reader. Stable corrected CSS/test bytes before their commits; starting records `ceee1b6` and dirty state are retained. |
 | `hl01-build-wrap-final` | Clean `c23b979`, exit0,49.828s; 1,352 source/225 production files and zero forbidden em-dash forms. |
 | `hl01-typecheck-wrap-final` | Clean `c23b979`, exit0,17.820s. |
-| `hl01-protection-final` | Clean `c23b979`, exit1,0.943s;37 hard hashes pass, static hard hash fails, three permitted-seam warnings. No baseline amended. |
+| `hl01-protection-final` | Clean `c23b979`, exit1,0.943s;37 hard hashes pass, static hard hash fails, three permitted-seam warnings. Separately reports inherited out-of-zone changes across `origin/main..HEAD`. No baseline amended. |
 
 The earlier route check passed462 registrations/453 call sites. The only runtime delta after it is CSS wrapping, not routing. It is not relabelled as a new route execution.
 
@@ -94,7 +94,7 @@ URL: `http://127.0.0.1:56969/research/early-access/order-request`. Chrome tab109
 
 The first final JSON accidentally saved an empty observation array despite console output during interaction. `chrome-final-observations.json` and its screenshot remain preserved as incomplete packaging, not measurement proof. Root repeated the interactions and saved `chrome-final-recapture.json` and `chrome-final-recapture.png`; the saved JSON was read back and its nine observations validated. This recapture, not the empty JSON, supports the final claims. JSON SHA256 `3bbbb087329bf50c03c7f6d749566ecc335d0bf57c369bd02c63c416def3cf6c`; PNG SHA256 `7a4319b882ae5824835f054a1facaa64de50c9f36a92b808af21c32f57737010`. Corrected-run archive SHA256 `91c14e4e40d4dea84562945d8361be03e43222312a2c614c592ec3718cb51d87`; final preview receipt SHA256 `8ff8cbd6bc2b19760760f96b4a60626d899d0adfa2964b0926a0d3665c23417f`.
 
-All nine measurements: innerWidth319, innerHeight304 CSS pixels, document clientWidth311/scrollWidth311, horizontal overflow0, DPR3. Native browser zoom percentage was not observed, and no viewport override was applied. This is narrow actual-Chrome evidence, not a true200%/400% zoom claim.
+All nine measurements: innerWidth319, innerHeight304 CSS pixels, document clientWidth311/scrollWidth311, horizontal overflow0. Eight record DPR3; the first omits DPR. Native browser zoom percentage was not observed, and no viewport override was applied. This is narrow actual-Chrome evidence, not a true200%/400% zoom claim.
 
 Visual inspection found `chrome-final-recapture.png` captured a pre-scroll frame during focus settling. That image remains retained, not offered as the focused-control screenshot. A fresh AX/screenshot observation confirmed the expanded focused detail; the settled `chrome-final-stable.png` was saved and visually inspected (SHA256 `c1ea8605cafcadaf14d6187965483ca61e68efacab4cccec582bba3283c5036a`). Use that image for the final visible disclosure/focus evidence, together with the timestamped geometry JSON.
 
@@ -112,7 +112,7 @@ At the final records check the remote Claude branch remained `e7b74feb04567cac16
 
 ## Continuing holds
 
-No full-suite pass is claimed for this successor. Prior ADP03 aggregate remains19,357 pass/1 fail/85 skip, exit1, on its own exact predecessor. Final resource-controlled aggregate remains required at the integration boundary, before integration or release. The unchanged protection manifest retains the static hard-hash failure and App plus two inherited server-seam mismatches. No owner approval or baseline amendment is inferred.
+No full-suite pass is claimed for this successor. Prior ADP03 aggregate remains19,357 pass/1 fail/85 skip, exit1, on its own exact predecessor. Final resource-controlled aggregate remains required at the integration boundary, before integration or release. The unchanged protection gate retains the static hard-hash failure, App plus two inherited server-seam mismatches, and a separate broad-branch out-of-zone failure against `origin/main..HEAD`. The latter is not introduced by this two-file Research-local slice, but remains a release-review hold. No owner approval or baseline amendment is inferred.
 
 The latest observed independent reviewer branch is `e7b74feb04567cac16d5b8bd089a7ae1218721d2`, reviewing older source, not this successor. Financial review of frozen ADP03 has priority. F1 still requires a real independent evidence source and operational grant procedure; N2 void/refund/dispute/historical reconciliation remain governed engineering/operational work, not permission to fabricate historical verification. All hosted qualification is separate.
 
