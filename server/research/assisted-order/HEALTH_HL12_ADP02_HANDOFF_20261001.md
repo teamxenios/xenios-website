@@ -1,6 +1,15 @@
 # HL-12 ADP02 provider create ownership and recovery
 
-Status: implementation in progress, not a qualified runtime or release.
+Status: pushed candidate frozen for final local qualification, not a release.
+
+## Exact candidate
+
+- Runtime: `27463d764ba01219c67081a3548ffdc3ff7d2b40`.
+- Runtime tree: `467c8556390ff9274a4adda5826eed7ab9603b23`.
+- Test-only: `8f56a7f500da36dbe37818b50f26b611ecb78b23`.
+- Release controls: `0d214411800e01c956ec0f31ef90a46db9e16182`.
+- Final local SQL, preflight and aggregate results are pending below. Earlier
+  diagnostics do not constitute the final full-suite result.
 
 ## Continuity and scope
 
@@ -44,7 +53,7 @@ unimplemented and unqualified.
 The first comprehensive diagnostic exposed no failure in its included cases,
 but a later targeted clock reproduction did: a behind or backward-jumping
 application wall clock could permit create after the database replay deadline.
-That failed run is retained below. The narrow correction being implemented
+That failed run is retained below. The implemented narrow correction
 adds a database-issued dispatch duration and capability, and deducts monotonic
 elapsed time measured before the claim RPC. An application wall clock cannot
 grant a fresh replay window. Final qualification must include this correction;
@@ -109,9 +118,9 @@ or downgrade the active schema to make a hold disappear.
 
 ## Evidence accounting
 
-All current ADP02 runs are work-in-progress diagnostics. Final exact source,
-test, release-control and records SHAs and final commands/results will be added
-only after the implementation is frozen and locally qualified.
+The diagnostic runs below preceded the committed freeze. Final exact commands,
+results and records tip will be added after local qualification. The runtime,
+test and control commits above are distinct and pushed.
 
 The predecessor aggregate remains a separate run: 18,998 passed, one failed,
 85 skipped, exit 1, no timeouts. Its sole failure is the unamended protected
@@ -154,6 +163,36 @@ Early diagnostics retained separately:
 - `adp02-execution-unit-run4`: corrected parameterized fixture, 130 passed,
   zero skipped, exit 0. Log SHA-256
   `db3a883e47f12ec93a9a5c75b0a3a35c64f8e2c7bb17d1aff1fcc99ae47bf2c3`.
+- `adp02-sql-local-run2`: corrected timing source, 20 SQL groups, 116 refusals,
+  four lock-wait races, 23 isolation cases and 11 HTTP groups (108 SQL calls),
+  exit 0, 229.430 seconds; cleanup confirmed. Independent grant-only and
+  policy-only revocations passed. Its relative-clock fixture was subsequently
+  strengthened, and replica-mode/overload cases were added for the final run.
+- `adp02-typecheck-initial`: failed, exit 2, TS2345. The expired dispatch branch
+  used an internal failure string outside the shared provider contract. A narrow
+  correction uses the existing `REJECTED` value and an explicit return type;
+  no shared enum or gate was widened.
+- `adp02-execution-unit-run5`: type correction, 130 passed, exit 0.
+- `adp02-typecheck-fixed`: passed, exit 0, 10.365 seconds.
+- `adp02-routes-initial`: passed, 461 registrations across 452 call sites,
+  exit 0. This includes the new default-off, source-null admin prepare route.
+
+Protected seam hashes at this runtime (canonical Git blobs, not CRLF checkout
+bytes) remain a required independent review and possible owner amendment:
+
+| Path | Pinned baseline | Current runtime |
+| --- | --- | --- |
+| `server/index.ts` | `1d6594d6389e2ac67d9af85213854e05387899dfe0102fa577e447565e68c315` | `dde2f0bedf94f64600c19741b5137b53b857e98651150f07e4c82a52395db3be` |
+| `server/research/index.ts` | `b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070` | `5b9f683b183a095e258908e0e0086888c71b7666b0e384367b1bfde0c4124188` |
+
+Do not reuse a previous runtime's hash pair as approval for this one. This
+slice changes only the startup file of these two paths; the second seam is a
+previously unresolved baseline. No protection manifest amendment was made.
+
+The exact pre-timing service and migration and the timing-fixed pre-typecheck
+service are privately archived with hashes matching the recorded diagnostics.
+Original uncommitted test bytes were not independently hashed, so byte-for-byte
+archival reproduction of every intermediate fixture is not claimed.
 
 The authoritative local runtime is the private official Windows x64 Node
 `v20.19.0`, npm `10.8.2`; archive SHA-256
