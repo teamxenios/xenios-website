@@ -1,0 +1,25 @@
+{
+  "startedAt": "2026-10-01T14:26:44.461Z",
+  "head": "ceee1b618c039434f5271c3026326af3e3b00152",
+  "tree": "744dc07643f41dcd063a3e24e3e80b57ff7d5e2a",
+  "dirtyAtStart": "",
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit"
+  ],
+  "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+  "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+  "runnerPid": 37804,
+  "childPid": 26212,
+  "finishedAt": "2026-10-01T14:28:17.091Z",
+  "elapsedMs": 92630,
+  "exitCode": 0,
+  "signal": null,
+  "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "finalHead": "ceee1b618c039434f5271c3026326af3e3b00152",
+  "dirtyAtEnd": ""
+}

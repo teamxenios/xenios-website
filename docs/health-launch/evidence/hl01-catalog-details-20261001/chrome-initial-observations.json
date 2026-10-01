@@ -1,0 +1,269 @@
+{
+  "source": "c37e29a43d9d77c9706fc2650395d7056823135a",
+  "tree": "209710239a972a39322a147287410c4a593bf1ee",
+  "nativeZoom": null,
+  "viewportOverride": false,
+  "syntheticFixture": true,
+  "observations": [
+    {
+      "scenario": "initial-closed",
+      "at": "2026-10-01T14:29:15.439Z",
+      "activeTag": "BODY",
+      "activeText": "\n    Skip to contentXeniosFor Individuals⌄For Practices⌄PartnersHow It WorksQualityAboutCareersFor Individuals⌄For Practices⌄PartnersHow It WorksSign InStart CareMenuCareResearchHow it worksQualityFAQ",
+      "clientWidth": 311,
+      "detailsWidths": [
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        }
+      ],
+      "dpr": 3,
+      "emptyRequest": true,
+      "innerHeight": 304,
+      "innerWidth": 319,
+      "openDetails": [],
+      "overflow": 464,
+      "scrollWidth": 775,
+      "summaries": [
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Research, Synthetic exact variant A",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Research, Synthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Care, Synthetic exact variant A",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Price Request, Synthetic exact variant A",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Activation Request, Synthetic exact variant A",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Held, Synthetic exact variant A",
+          "width": 249.33334350585935
+        }
+      ],
+      "url": "http://127.0.0.1:57682/research/early-access/order-request"
+    },
+    {
+      "scenario": "enter-opens",
+      "at": "2026-10-01T14:29:15.587Z",
+      "activeTag": "SUMMARY",
+      "activeText": "Product details for Synthetic Research, Synthetic exact variant A",
+      "clientWidth": 311,
+      "detailsWidths": [
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        }
+      ],
+      "dpr": 3,
+      "emptyRequest": true,
+      "innerHeight": 304,
+      "innerWidth": 319,
+      "openDetails": [
+        "order-card-details-synthetic-research-a"
+      ],
+      "overflow": 464,
+      "scrollWidth": 775,
+      "summaries": [
+        {
+          "height": 44,
+          "outline": "solid",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Research, Synthetic exact variant A",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Research, Synthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Care, Synthetic exact variant A",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Price Request, Synthetic exact variant A",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Activation Request, Synthetic exact variant A",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Held, Synthetic exact variant A",
+          "width": 249.33334350585935
+        }
+      ],
+      "url": "http://127.0.0.1:57682/research/early-access/order-request"
+    },
+    {
+      "scenario": "long-fact-open",
+      "at": "2026-10-01T14:29:29.169Z",
+      "activeTag": "SUMMARY",
+      "activeText": "Product details for Synthetic Research, Synthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOP",
+      "clientWidth": 311,
+      "detailsWidths": [
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        },
+        {
+          "clientWidth": 249,
+          "scrollWidth": 249
+        }
+      ],
+      "dpr": 3,
+      "emptyRequest": true,
+      "innerHeight": 304,
+      "innerWidth": 319,
+      "openDetails": [
+        "order-card-details-synthetic-research-a",
+        "order-card-details-synthetic-research-b"
+      ],
+      "overflow": 464,
+      "scrollWidth": 775,
+      "summaries": [
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Research, Synthetic exact variant A",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "solid",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Research, Synthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Care, Synthetic exact variant A",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Price Request, Synthetic exact variant A",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Activation Request, Synthetic exact variant A",
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "outline": "none",
+          "outlineWidth": "3px",
+          "text": "Product details for Synthetic Held, Synthetic exact variant A",
+          "width": 249.33334350585935
+        }
+      ],
+      "url": "http://127.0.0.1:57682/research/early-access/order-request"
+    }
+  ]
+}

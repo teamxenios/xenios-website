@@ -1,0 +1,30 @@
+{
+  "startedAt": "2026-10-01T14:17:01.712Z",
+  "head": "faba3f5bbd66ad4bfb4c251409774ff9ed52f239",
+  "tree": "679211542c0af4cd4831bee2a12f916bd5f1bc37",
+  "dirtyAtStart": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+    "-t",
+    "offers native product details before adding a catalog variant",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+  "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+  "runnerPid": 39908,
+  "childPid": 27708,
+  "finishedAt": "2026-10-01T14:17:51.566Z",
+  "elapsedMs": 49854,
+  "exitCode": 1,
+  "signal": null,
+  "logSha256": "fe5cd823e69dbc66162abd111ec030e94b182bdb649970eb4e0e30c64a1476b5",
+  "finalHead": "faba3f5bbd66ad4bfb4c251409774ff9ed52f239",
+  "dirtyAtEnd": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M client/src/research/assisted-order/AssistedOrderPage.test.tsx\n M client/src/research/assisted-order/assisted-order-accessibility.test.ts"
+}
