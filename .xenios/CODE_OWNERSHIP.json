@@ -3441,7 +3441,7 @@
         "docs/health-launch/HL01_CATALOG_DETAILS_20261001.md",
         "docs/health-launch/evidence/hl01-catalog-details-20261001/"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T14:15:39.796Z",
       "heartbeatAt": "2026-10-01T14:41:52.993Z"
     }

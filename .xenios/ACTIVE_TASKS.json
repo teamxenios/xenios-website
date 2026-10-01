@@ -6,7 +6,7 @@
       "id": "HEALTH-HL01-CATALOG-DETAIL-DISCLOSURE-20261001",
       "title": "Inspect exact catalog variant facts and request limits before selecting a product",
       "priority": "P2",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "client/src/research/assisted-order/AssistedOrderPage.tsx",
@@ -18,7 +18,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "After pushed HL17 handoff faba3f5. Native per-card detail disclosure in existing AssistedOrderPage only. Read current projected facts and request limits; no inferred format/pack basis, dosage, price, availability or new public product route. Preserve composite variant identity, Care price withholding and independent path, all five workflow actions, held denial, selection/fingerprint/server authority and existing visible restrictions. No image/media paths, SQL, provider, release-control or hosted edits. Root owns runtime and records; delegate disjoint tests after claim. No claims that native zoom or full release qualification follows from DOM checks.",
-      "claimedAt": "2026-10-01T14:15:39.788Z"
+      "claimedAt": "2026-10-01T14:15:39.788Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "3a35b6346ac7826b1d4edbcd1f6b403fb0efd3b1",
+        "file": ".xenios/handoffs/2026-10-01T14-52-23-249Z-HEALTH-HL01-CATALOG-DETAIL-DISCLOSURE-20261001-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T14:52:23.262Z"
+      }
     },
     {
       "id": "HEALTH-HL17-ACCESS-HUB-RESTORE-20261001",
