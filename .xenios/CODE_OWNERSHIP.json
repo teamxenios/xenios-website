@@ -3422,7 +3422,8 @@
         "client/src/App.access-hub.test.tsx",
         "server/static.test.ts",
         "client/src/research/pages/public-brand-pages.test.tsx",
-        "docs/health-launch/HL17_ACCESS_HUB_20261001.md"
+        "docs/health-launch/HL17_ACCESS_HUB_20261001.md",
+        "docs/health-launch/evidence/hl17-access-hub-20261001/"
       ],
       "state": "active",
       "claimedAt": "2026-10-01T13:28:09.746Z",

@@ -16,7 +16,8 @@
         "client/src/App.access-hub.test.tsx",
         "server/static.test.ts",
         "client/src/research/pages/public-brand-pages.test.tsx",
-        "docs/health-launch/HL17_ACCESS_HUB_20261001.md"
+        "docs/health-launch/HL17_ACCESS_HUB_20261001.md",
+        "docs/health-launch/evidence/hl17-access-hub-20261001/"
       ],
       "dependsOn": [],
       "scopeNote": "After pushed frozen ADP03 handoff b907cf6 only. Reproduce and remove the exact client and server access-hub-to-home shadows; reuse existing page, public exemption and chooser. Configuration-neutral Early Access wording. No new route, authority, provider tree, global ScrollToTop change, imagery, SQL or hosted action. Reproduce cold-fragment focus before any page-local correction. Minimum protected diff with new review, old/new canonical hashes, unchanged manifest and held hard static baseline until separately approved amendment. Root owns runtime/records; delegate disjoint tests explicitly. No new full-suite pass may be borrowed from ADP03.",

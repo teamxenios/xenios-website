@@ -1,0 +1,21 @@
+{
+  "startedAt": "2026-10-01T13:34:10.085Z",
+  "head": "b907cf680362b36b4dfb8a29cb51a4064e0ec54b",
+  "tree": "620520f5ed38dc7427fed57daf598bfc74d14e49",
+  "dirtyAtStart": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M client/src/App.routes.test.ts\n M client/src/research/pages/public-brand-pages.test.tsx\n M server/static.test.ts\n?? client/src/App.access-hub.test.tsx",
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "client/src/research/pages/public-brand-pages.test.tsx",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+  "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+  "runnerPid": 25720,
+  "childPid": 22640
+}

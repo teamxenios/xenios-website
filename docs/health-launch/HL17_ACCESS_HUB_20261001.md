@@ -32,6 +32,34 @@ Captured with private verified Node v20.19.0/npm 10.8.2 and one Vitest worker, r
 | `hl17-focused-client` | 55 pass; exit 0 | Page-local focus and copy fix; before additional unmount test. |
 | `hl17-focused-final` | 285 pass / 18 files; exit 0 | Final source and tests; includes status recovery, account boundaries, static microsite and SEO/path policy regressions; 24.52s Vitest / 26.048s wrapper. |
 | `hl17-typecheck` | pass; exit 0 | `tsc --noEmit`, 91.444s wrapper, precommit stable source. |
+| `hl17-build-final` | pass; exit 0 | Clean `8f240828df93ad45f31609d85460bd9d111047ec`, 35.483s; 1,352 source / 225 production files scanned, zero forbidden em-dash forms. |
+| `hl17-routes-final` | pass; exit 0 | Same clean revision; 462 registrations / 453 call sites; 2.580s. |
+| `hl17-protection-final` | fail; exit 1 | Same clean revision; 37 hard hashes pass, static hard hash fails; three seam warnings. |
+| `hl17-protection-tests-final` | 35 pass, 2 fail; exit 1 | Same clean revision; unchanged hard-hash and seam-baseline assertions fail. |
+
+All ten runs are retained separately under `docs/health-launch/evidence/hl17-access-hub-20261001/`: raw logs, exact commands/start/end revisions, exit status and SHA-256 hashes, and process samples when available. There are no filtered or conditional skips in these ten runs. Build warnings about an existing mixed static/dynamic admin import, chunk size and npm configuration are preserved. Process snapshots are bounded samples, not proof of every grandchild's lifetime; fast checks can finish before the first sample. The build sample observes the pinned wrapper/npm pair, not all build grandchildren.
+
+The additional new hard-hash failure is `server/static.ts`; the seam assertion now reports App plus inherited `server/index.ts` and `server/research/index.ts`. No test expectation or baseline was changed to hide these failures.
+
+## Local reproduction
+
+From the branch worktree, use the already verified private Node binary. Official Windows x64 archive SHA-256: `be72284c7bc62de07d5a9fd0ae196879842c085f11f7f2b60bf8864c0c9d6a4f`. No system installation or permanent PATH change.
+
+```powershell
+$xeniosNode = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe'
+$env:PATH = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64;' + $env:PATH
+$env:XENIOS_MASTER_OFFERINGS_DATASET = (Resolve-Path 'server/research/master-offerings/data/member-safe-master-offerings.generated.json').Path
+& $xeniosNode --version
+& $xeniosNode 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js' --version
+& $xeniosNode node_modules/vitest/vitest.mjs run client/src/App.access-hub.test.tsx client/src/App.routes.test.ts client/src/research/pages/public-brand-pages.test.tsx server/static.test.ts server/research/seo/raw-http-document-policy.test.ts client/src/research/seo/route-policy.test.ts shared/research/paths.test.ts shared/care/paths.test.ts client/src/clarity/StatusPage.test.tsx client/src/clarity/AccountAuthorityPages.test.tsx client/src/clarity/public-surfaces.test.tsx server/research/status-recovery server/research/hino-static-site.test.ts --maxWorkers=1 --no-file-parallelism
+& $xeniosNode node_modules/typescript/bin/tsc --noEmit
+& $xeniosNode 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js' run build
+& $xeniosNode node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-route-uniqueness.ts
+& $xeniosNode scripts/acceptance/verify-core-site-protection.mjs
+& $xeniosNode node_modules/vitest/vitest.mjs run server/core-site-protection.test.ts --maxWorkers=1 --no-file-parallelism
+```
+
+The final two commands currently fail by design of the unchanged gate. Do not interpret them as expected passes. Exact captured invocations, dirty states and result hashes are authoritative in the individual JSON receipts.
 
 The four metadata failures were corrected in tests against the existing policy implementation. Runtime search policy was not changed. The first route run includes React lazy-resource `act` warnings; the successful client run does not report those warnings. This is mounted JSDOM evidence, not browser or hosted authentication evidence.
 
