@@ -94,7 +94,7 @@ export async function runSettlementRaces(db){
   const competitors=[
     {label:'manual observation',number:1620,expression:number=>db.observeExpr(number),after:expected('UNCERTAINTY_HELD')},
     {label:'ordinary cancellation',number:1622,expression:number=>statusExpr(number,'payment_review','cancelled',{cancellationReason:'Synthetic race'}),
-      after:['40001']},
+      after:['P0001','ASSISTED_ORDER_STALE_STATUS']},
     {label:'no-funds commit',number:1624,expression:null,after:expected('UNCERTAINTY_HELD')},
   ];
   for(const competitor of competitors){
