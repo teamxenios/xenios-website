@@ -198,10 +198,26 @@ returns boolean language sql immutable set search_path='' as $scope$
     and revision=s.adapter_revision,false);
 $scope$;
 
+-- The fence serializes READ COMMITTED decisions, whose individual queries see
+-- the winning transaction's committed facts. Locks alone do not advance an
+-- already-frozen REPEATABLE READ/SERIALIZABLE snapshot, including a mixed-
+-- isolation caller. Refuse unsupported modes; never downgrade a transaction
+-- or infer that a stale snapshot proves absence of provider activity.
+create function public.research_assisted_order_provider_require_read_committed()
+returns void language plpgsql set search_path='' as $isolation$
+begin
+  if current_setting('transaction_isolation') is distinct from 'read committed' then
+    raise exception 'Provider financial authority requires a fresh READ COMMITTED transaction'
+      using errcode='P0001',detail='ASSISTED_ORDER_PROVIDER_TRANSACTION_ISOLATION_REQUIRED';
+  end if;
+end
+$isolation$;
+
 create function public.research_assisted_order_provider_uncertainty(p_request_id uuid)
 returns jsonb language plpgsql security definer set search_path='' as $uncertainty$
 declare reason text;
 begin
+  perform public.research_assisted_order_provider_require_read_committed();
   perform 1 from public.research_assisted_order_requests where id=p_request_id for update;
   if not found then return null;end if;
   perform 1 from public.research_assisted_order_provider_fence where id for share;
@@ -275,6 +291,7 @@ returns jsonb language plpgsql security definer set search_path='' as $reserve$
 declare a public.research_assisted_order_provider_attempts%rowtype; q public.research_assisted_order_quotes%rowtype;
   s public.research_assisted_order_provider_sources%rowtype; label text;
 begin
+  perform public.research_assisted_order_provider_require_read_committed();
   perform 1 from public.research_assisted_order_requests where id=p_request_id for update;
   if not found then return null;end if;
   if p_quote_id is null or p_quote_version is null or p_quote_version<1 or p_acceptance_id is null
@@ -407,6 +424,7 @@ returns trigger language plpgsql security definer set search_path='' as $journal
 declare request_uuid uuid; attempt_uuid uuid; c jsonb; s public.research_assisted_order_provider_sources%rowtype;
   identity_key text; fingerprint text;
 begin
+  perform public.research_assisted_order_provider_require_read_committed();
   perform public.research_assisted_order_provider_event_validate(new.event);
   if new.event_identity is not null or new.event_fingerprint is not null or new.established_request_id is not null
     or new.established_attempt_id is not null or new.classification is not null or new.reason is not null
@@ -549,6 +567,7 @@ create function public.research_assisted_order_provider_journal_authority()
 returns jsonb language plpgsql stable security definer set search_path='' as $authority$
 declare seal text; p record; role_name text; permitted boolean; relation_name text;
 begin
+  perform public.research_assisted_order_provider_require_read_committed();
   seal:=obj_description('public.research_assisted_order_provider_fence'::regclass,'pg_class');
   if seal is null or seal !~ '^ADP01_SCHEMA_V1:[0-9a-f]{64}:[0-9a-f]{64}$'
     or split_part(seal,':',3) is distinct from public.research_assisted_order_provider_schema_fingerprint()

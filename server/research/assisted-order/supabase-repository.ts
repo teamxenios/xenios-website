@@ -267,6 +267,12 @@ function fail(response: SupabaseRpcResponse, operation: string): never {
       "This financial action remains on hold while provider payment activity is unresolved.",
     );
   }
+  if (code === "P0001" && error?.details === "ASSISTED_ORDER_PROVIDER_TRANSACTION_ISOLATION_REQUIRED") {
+    throw new AssistedOrderConflictError(
+      "financial_action_unavailable",
+      "This financial action is unavailable. No change has been made.",
+    );
+  }
   if (code === "P0001" && [
     "ASSISTED_ORDER_REFUND_AUTHORITY_NOT_READY",
     "ASSISTED_ORDER_HISTORICAL_PAID_UNRESOLVED",
