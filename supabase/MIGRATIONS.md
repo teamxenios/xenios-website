@@ -423,15 +423,51 @@ Earlier failures and narrower passes remain distinct in the successor handoff.
 1. Positively identify the separately approved non-production project/origin
    and managed ledger. No target or hosted configuration was reobserved here.
    Before80, use `verification/research_assisted_order_quote_pre80_preflight.sql`
-   against M71 only. It is read-only, count-only and bounded by10s statement/2s
-   lock timeouts. Missing schema, timeout or error means unavailable, not zero.
+   against M71 plus the historical canonical outbox, without financial tables.
+   It is read-only, aggregate-only and bounded by10s statement/2s lock timeouts.
+   A repeatable-read snapshot keeps its result sets coherent. `row_security=off`
+   refuses a reader whose RLS visibility could produce a misleading zero; it
+   neither grants access nor bypasses policies. Missing schema, permission/RLS
+   failure, timeout or partial results mean unavailable, not zero. Require all
+   result sets and successful transaction completion.
 2. Nonterminal historically frozen rows above zero are NO-GO until a reviewed
    disposition exists or Samuel explicitly accepts that exact freeze impact.
    Do not fabricate verification for old paid labels. Keep finance unset/off,
    verifier grants empty and status writes frozen during any approved window.
+   In-flight `payment_pending`/`payment_review` counts are a separate F1 impact:
+   first quotes are supported by89, but no real paid progression exists until
+   the independent evidence source and grant procedure are approved. Do not
+   label those rows unquotable or silently accept that operational freeze.
+   **LENS-01 chain NO-GO before80:** any legacy paid status notice, reserved
+   payment-verification event key or invalid canonical status envelope blocks
+   the entire planned80–93 chain. This includes all delivery statuses, even
+   sent, delivered and cancelled, and notices for terminal or absent requests.
+   The census reports distinct-row union counts so overlapping predicates do
+   not double-count. A founder decision accepting frozen request rows does not
+   waive notification adoption. Legacy paid writers and dispatch must be
+   frozen for a later authorized window, followed by a fresh complete census;
+   an old zero-count snapshot is not apply permission.
+   Adoption remains unresolved. Preserve original notice bytes and delivery
+   attempts. No deletion, template/key relabeling, resend, fabricated
+   verification link or M88 predicate bypass is authorized. A future governed
+   no-send adoption requires a separately reviewed pre88 mechanism and exact
+   founder disposition; merely setting delivery status to cancelled does not
+   satisfy88. Do not begin the chain while these counts are nonzero.
 3. Apply individually approved, byte-pinned pending files in DAG order with a
-   reviewed transactional mechanism. Older80/81/83 files lack BEGIN; do not
-   assume the entire chain is atomic or use a blind bulk migration replay.
+   reviewed transactional mechanism. Files80/81/83/**87** lack BEGIN; preserve
+   their exact bytes and use an independently reviewed outer transaction with
+   local lock/statement timeouts. File88 has its own BEGIN/COMMIT and no built-in
+   timeouts: set bounded connection-level lock/statement timeouts before
+   sending its unchanged bytes. Do not assume a generic outer transaction
+   survives an embedded COMMIT. Rehearse and approve exact timeout values for
+   the named target, including88's ACCESS EXCLUSIVE shared-outbox DDL.
+   No exact managed executor is yet qualified. It must stop on first error,
+   preserve per-file transaction outcomes and actual history, and never infer
+   chain-wide atomicity or use blind bulk replay. Immediately before88 repeat
+   `verification/research_assisted_order_quote_effects_precheck.sql`, which
+   mirrors the legacy outbox predicates and includes any existing verification.
+   Its nonzero/unavailable result is NO-GO, not adoption. This precheck is for
+   initial installation; use the postcheck for an already-installed88 target.
 4. Deploy any later approved app only after at least84 for cancellation
    compatibility; this successor's financial routes additionally require87/88,
    the canonical durable audit and exact readiness. Keep finance off until
@@ -444,6 +480,13 @@ Earlier failures and narrower passes remain distinct in the successor handoff.
    verifications, audit and outbox obligations, and roll forward under reviewed
    change. Never erase financial history, remove holds, synthesize old payment
    verification or replay193033/202413/205725/230541 over their successors.
+   Report24 additionally identifies bridge20260815150000, provider234614,
+   effects040351 and no-funds062651 as unsafe predecessor replays. Exact
+   install-twice local tests do not authorize replay across later migrations.
+
+LENS-01 evidence is tracked in
+`../docs/health-launch/HL12_LENS01_PREAPPLY_CENSUS_20261001.md`.
+Census correction is detection only, not adoption or managed qualification.
 
 Proof: `verification/research_assisted_order_quote_effects_local.mjs`.
 Pre/postchecks: `verification/research_assisted_order_quote_effects_precheck.sql`
