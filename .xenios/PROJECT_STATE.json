@@ -14,6 +14,8 @@
       "status": "SOURCE_IMPLEMENTATION_IN_PROGRESS_NOT_QUALIFIED",
       "task": "HEALTH-HL12-ADP02-PROVIDER-CREATE-RECOVERY-20261001",
       "baseRecordsSha": "77cdeaec34ae19bbcc9615f75887d21fe86f0746",
+      "earlyDiagnostic": "Comprehensive run1 PASS19 SQL groups105 refusals4 lock-wait races23 isolation cases10 HTTP groups100 SQL calls,225.589s,exit0,exact local cleanup. Source hashes frozen through run. This precedes timing correction and combines three revocations rather than isolating them. Unit107PASS/static8PASS/HTTP50PASS remain separate diagnostics.",
+      "clockReproduction": "adp02-clock-repro-run1 confirmed2FAIL/107filteredSKIP exit1: behind/backward application wall clock permits create after simulated SQL deadline. Log06361da000b6249fc184efddde54b1da43798f7ca7cb32a4d5fc4deb7cf01d81. Correcting with DB-issued budget and pre-RPC monotonic elapsed; prior pass does not cover fix. No hosted provider configured.",
       "scope": "Durable create-operation ownership/recovery and write-once independently normalized provider-object binding; no settlement/refund/no-funds inference. Reuse immutable held attempts and preserve journal-v2 contract. New source work is not covered by ADP01 aggregate.",
       "migration": "supabase/migrations/20261001102904_research_assisted_order_quote_provider_execution.sql",
       "productionSource": null,

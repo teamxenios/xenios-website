@@ -41,12 +41,28 @@ contains no processor SDK, credentials, provider defaults or live configuration.
 An actual provider adapter and independently verified operational policy remain
 unimplemented and unqualified.
 
+The first comprehensive diagnostic exposed no failure in its included cases,
+but a later targeted clock reproduction did: a behind or backward-jumping
+application wall clock could permit create after the database replay deadline.
+That failed run is retained below. The narrow correction being implemented
+adds a database-issued dispatch duration and capability, and deducts monotonic
+elapsed time measured before the claim RPC. An application wall clock cannot
+grant a fresh replay window. Final qualification must include this correction;
+the earlier comprehensive pass cannot be relabeled as covering it.
+This does not attest database clock discipline or a real provider's delayed
+delivery, abort and expired-key semantics. Those require operational adapter
+qualification. Client timing alone is not a guarantee of exactly one external
+network call or one provider-side effect.
+
 Normalized allowlisted results are retained immutably, including unknown and
 conflicting observations. Raw responses, signatures, client secrets and tokens
 are neither persisted nor returned. Provider payment and optional session
 identities are write-once and scoped to the existing unique source/account/mode.
 A later observation may establish a previously absent optional session identity,
 but cannot replace a non-null one. No result makes an order paid.
+Result replay returns its own immutable observation, not later binding state.
+The separate context read reports the current binding. A public `recorded`
+receipt does not clear a later conflict, global hold or financial restriction.
 
 Timeout, interrupted persistence and response loss do not mean no funds.
 Recovery uses the same key and body only within an explicitly granted replay
@@ -60,6 +76,11 @@ Bound-object retrieval may proceed despite an existing journal or global hold
 after the active lease ends. This narrow readback exception cannot create a
 second object, replace a binding, settle money or clear the hold. A configured
 source/policy/actor and exact accepted quote are still required.
+
+Source adapter revisions and per-source policies are immutable except for first
+revocation. Operational source/policy rotation is not implemented here. The
+unique provider/account/mode namespace cannot be bypassed with a replacement
+source alias; a controlled, reviewed successor would be required for rotation.
 
 ## Database boundary
 
@@ -109,6 +130,30 @@ Early diagnostics retained separately:
   This tested earlier migration bytes, before a subsequently identified missing
   session-identity comparison against earlier journal observations. A passing
   installation smoke did not demonstrate that semantic case.
+- `adp02-execution-unit-run2`: 107 passed, exit 0, before clock correction.
+- `adp02-sql-local-run1`: 19 SQL groups, 105 expected refusals, four actual
+  lock-wait races, 23 isolation cases and ten HTTP/service/SQL groups (100 calls)
+  passed; all four recorded runtime hashes stayed unchanged. Exact disposable
+  PostgreSQL 17.11 container cleanup passed. This run precedes clock correction
+  and combines source, grant and policy revocation in one scenario, not three
+  independent revocation proofs.
+- `adp02-sql-static-run1`: eight source-contract tests passed, exit 0. Static
+  tests are separate from effective database behavior.
+- `adp02-clock-repro-run1`: two failed, 107 filtered/skipped, exit 1. Both
+  behind and backward-jumping application-clock cases dispatched after the
+  simulated database deadline. This is a real reproduced timing defect, not
+  an environmental timeout. Log SHA-256
+  `06361da000b6249fc184efddde54b1da43798f7ca7cb32a4d5fc4deb7cf01d81`.
+- `adp02-clock-fixed-run1`: the same two clock regression assertions passed,
+  128 other tests filtered/skipped, exit 0. The claim fixture now includes the
+  newly required database timing fields. This is a targeted pass, not a suite.
+- `adp02-execution-unit-run3`: 124 passed, six failed, exit 1. Newly added
+  monotonic-clock parameterized cases supplied a number instead of a readings
+  array, making the fixture return undefined before claim. The run remains
+  failed; it is not replaced by the subsequent correction.
+- `adp02-execution-unit-run4`: corrected parameterized fixture, 130 passed,
+  zero skipped, exit 0. Log SHA-256
+  `db3a883e47f12ec93a9a5c75b0a3a35c64f8e2c7bb17d1aff1fcc99ae47bf2c3`.
 
 The authoritative local runtime is the private official Windows x64 Node
 `v20.19.0`, npm `10.8.2`; archive SHA-256
