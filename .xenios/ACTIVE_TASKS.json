@@ -3,6 +3,40 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "HEALTH-PARTNERSHIP-SUBMITTED-RECEIPT-20261001",
+      "title": "Bind partner and supplier inquiry receipts to the submitted snapshot",
+      "priority": "P2",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "client/src/research/b2b/PartnershipInquiryForm.tsx",
+        "client/src/research/b2b/PartnershipInquiryForm.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Bounded parallel full-site correction inside core lane. Delegate catalog_journey_audit one-writer ownership of exact form and tests after verifying real paths. Pending request A must not label edited unsent draft B submitted. No endpoint, authority, protected seam, imagery or hosted edits; deterministic mocked tests only, no real contact submission. Root commits after review.",
+      "claimedAt": "2026-10-01T16:07:30.160Z"
+    },
+    {
+      "id": "HEALTH-HL12-ADPG1-QUARANTINE-ISOLATION-20261001",
+      "title": "Isolate unattributed provider quarantine from unrelated orders",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "supabase/migrations/*_research_assisted_order_provider_quarantine_isolation.sql",
+        "supabase/verification/research_assisted_order_provider_quarantine_*",
+        "server/research/assisted-order/provider-quarantine-sql.test.ts",
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "server/release-control-plane.test.ts",
+        "docs/health-launch/HL12_ADPG1_QUARANTINE_ISOLATION_20261001.md",
+        "docs/health-launch/evidence/hl12-adpg1-quarantine-isolation-20261001/"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Continue exact pushed1af1d48, preserve completed LENS01 detection. Additive effective SQL successor with no predecessor byte edits; eliminate unrelated manual-order global hold while preserving genuine provider uncertainty, original journal and no operator-selected financial attribution. Root owns migration/controls/records; delegate disjoint new disposable proof and source-contract tests after design. No actual provider, grants, refund facts, historical adoption, protected amendments or hosted changes. G2-G4/refunds remain separate next slices; isolation alone is not complete reconciliation or activation readiness.",
+      "claimedAt": "2026-10-01T16:06:10.722Z"
+    },
+    {
       "id": "HEALTH-HL12-LENS01-PREAPPLY-CENSUS-20261001",
       "title": "Detect legacy payment notification adoption blockers before the HL12 chain",
       "priority": "P1",

@@ -3288,7 +3288,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T06:26:41.299Z",
-      "heartbeatAt": "2026-10-01T15:40:02.454Z"
+      "heartbeatAt": "2026-10-01T16:06:10.805Z"
     },
     {
       "id": "50a8e190-b0e1-479e-8b7b-7be25b0ad42f",
@@ -3478,6 +3478,36 @@
       "state": "handoff",
       "claimedAt": "2026-10-01T15:18:39.122Z",
       "heartbeatAt": "2026-10-01T15:29:19.986Z"
+    },
+    {
+      "id": "ef5cfbc0-6744-43a1-b5ad-ace25256c557",
+      "task": "HEALTH-HL12-ADPG1-QUARANTINE-ISOLATION-20261001",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "supabase/migrations/*_research_assisted_order_provider_quarantine_isolation.sql",
+        "supabase/verification/research_assisted_order_provider_quarantine_*",
+        "server/research/assisted-order/provider-quarantine-sql.test.ts",
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "server/release-control-plane.test.ts",
+        "docs/health-launch/HL12_ADPG1_QUARANTINE_ISOLATION_20261001.md",
+        "docs/health-launch/evidence/hl12-adpg1-quarantine-isolation-20261001/"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-01T16:06:10.733Z",
+      "heartbeatAt": "2026-10-01T16:06:10.805Z"
+    },
+    {
+      "id": "8fa95d74-b85d-43d5-8388-06066e74085a",
+      "task": "HEALTH-PARTNERSHIP-SUBMITTED-RECEIPT-20261001",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "client/src/research/b2b/PartnershipInquiryForm.tsx",
+        "client/src/research/b2b/PartnershipInquiryForm.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-01T16:07:30.171Z",
+      "heartbeatAt": "2026-10-01T16:07:30.171Z"
     }
   ],
   "rules": [
