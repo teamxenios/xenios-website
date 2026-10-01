@@ -8,6 +8,7 @@
     "releaseControlSha": "82950302a77754f0359ba5e1d31dad8ea677426f",
     "currentAggregateStatus": "ADP01_COMPLETED_FAILED_UNCHANGED_SEAM_ASSERTION_PRIOR_FAILED_AGGREGATES_PRESERVED",
     "currentADP01Status": "PUSHED_e9f221c_SOURCE_9c1fe1e_TESTS_8295030_CONTROLS_FINAL_V2_SQL_RUN3_AND_PREFLIGHT_PASS_AGGREGATE18998P1F85S_EXIT1_NO_INDEPENDENT_OR_HOSTED_ACCEPTANCE",
+    "currentADP02Status": "SOURCE_WIP_FROM_77cdeae_NOT_QUALIFIED_ADP01_RESULTS_DO_NOT_COVER_NEW_EDITS_PRODUCTION_SOURCE_NULL",
     "currentHL11Qualification": {
       "status": "COMPLETED_FAILED_EXIT_1_UNCHANGED_PROTECTED_SEAM_ASSERTION",
       "testedHead": "f634e8630b92818ea494aa96f5f68c921441455b",
@@ -46,7 +47,7 @@
     "protectedFileGate": "Exact prior two-hash owner approval at663268f preserved. New server/index.ts recovery wiring and unchanged Research gateway differ from seam baselines; unchanged assertion FAILS. Neither baseline amended. CLI38 hard hashes PASS, not release approval.",
     "focusedResult": "FinalADP01v2 clean1fb12f7:1065pass40files0skip exit0,55.70s. SQLrun3pass131core refusals14races8stale21unsupported8HTTPgroups86calls3cleanups. Current successor independently unreviewed.",
     "fullSuiteTestedHead": "1fb12f79a2ecfb9ad2280b0f7719d7be004084dc",
-    "fullSuiteIsCurrentRuntime": true,
+    "fullSuiteIsCurrentRuntime": false,
     "previousRuntimeSourceSha": "4cba24af1d42ad59fe44856859cc1721846e6df5",
     "fullSuite": "18998PASS1FAIL85SKIP,1011pass1fail6skipfiles,exit1,1118.25s; finished2026-10-01T10:23:57.413Z. Only unchanged seam assertion, no timeouts. Source/tests/controls frozen; records-only changes.",
     "fullSuiteLogSha256": "85349107542e98f0bccd577f7d05a4e350858b9d42977ec7a93021727c0f4464",
