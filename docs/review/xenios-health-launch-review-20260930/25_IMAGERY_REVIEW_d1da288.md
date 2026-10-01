@@ -14,7 +14,7 @@
   - **Tip:** `b38db0ae2ee0c679ec2eeb31b324f6204669dfb7`, tree `28b26619…`.
   - **Runtime:** `f453d7e`.
   - **Merge base:** `67d75c9`. It is **not merged** into core, and its only overlap with core is `.xenios` records.
-- **The founder visual prototype is not pushed.** That review is **NOT RUN.**
+- **The founder visual prototype** landed during this review (`c0373b7`). A focused check is in the addendum.
 
 **Method:**
 - Claude extracted all 37 committed images, verified their bytes, and viewed the contact sheet and the key renders.
@@ -150,5 +150,40 @@ Fix: read media best-effort, take it out of the stability token, and add tests.
 | Batch 0 | **Private-prototype use only, per the asset table.** Reject 06, 09, 16, 19, 21 and 24 for any use beyond internal comparison. |
 | Batch 1 | **Not yet.** Lock global art direction first with a five- or six-image calibration set (palette, props, scale, camera, state treatments, truthful class subjects). Then prepare Batch 1. |
 | Media-commerce decoupling | **PARTIAL.** Fix MC-01 before merging; sequence the TypeScript and SQL halves. |
-| Founder visual prototype | **NOT RUN** (not pushed). It may use acceptable Batch 0 assets plus truthful neutral fallbacks, with no public path. |
+| Founder visual prototype | **Pushed during the review (`c0373b7`).** Focused check PASS on safety and data truth. Replace the untruthful #21/#16/#06 uses; see the addendum. |
 | **Publication blockers** | A-class assets 16 and 19; zero approved assets; IMG-INT-01; MC-01; no runtime state adapter (IMG-INT-02); TRUTH-07 in core; C2PA provenance capture; your approval. |
+
+## Addendum: private founder prototype (`c0373b7`, handoff `d7a53ab`, review dispatch `e13ca4b`)
+
+This landed during the review. It got a focused check (structure, data truth and screenshots), not a full journey
+review.
+
+- **Structure and publication safety: PASS.**
+  - It is a static preview under `docs/product-imagery/founder-preview/`, with its own build, serve and capture
+    scripts under `scripts/product-imagery/`.
+  - `git diff d1da288..e13ca4b` touches nothing outside `docs/`, `scripts/product-imagery/` and `.xenios/`, so the
+    public tree is untouched.
+  - The build record says `publicTreeTouched:false` and `deploymentAuthorized:false`.
+  - Images are served from `docs/` by the preview's own server.
+- **Data truth: PASS.**
+  - 423 customer targets, from 426 → 424 → 423.
+  - **No prices**: every row shows an honest withheld state ("Care pricing withheld", "Pricing not released").
+  - Pathways: Care 242, Research 173, quote-only 2 (BAM15 and Syringes), held 1 (GRP-0422, held visual), and binding
+    pending 5 (GRP-0421 and 0423–0426).
+  - Superpower and Mito Health are intentional non-image "Coming soon" panels: no price, checkout, logo or
+    partnership claim.
+  - A persistent "PRIVATE FOUNDER PROTOTYPE" banner. Every card is labelled "Provisional class/state visual".
+- **Visual direction: largely on brief.**
+  - A near-black hero with an iridescent purple-to-teal liquid form, ivory surfaces and crisp black type.
+  - The screenshots show the **product imagery clashing** with that UI: green botanicals and spa props against the
+    purple-to-teal brand system. This visibly confirms GA-1.
+- **Fix in the prototype now (truth rule: "Batch 0 only where truthful"):**
+  - **All 242 Care rows use #21** (the in-person lounge, rejected B). It dominates the catalog and the Featured
+    shelf.
+  - **All 20 retail supplement units use #16**, which fabricates a carton plus jar (rejected **A**) and covers
+    Magtein, UltraBiotic and others.
+  - The acetic-acid diluent uses **#06**, the amber tincture bottle (rejected B).
+  - Swap these for the neutral identity or state panels until truthful renders exist.
+  - The lyophilized-vial render shows white powder for the blue GHK-Cu rows.
+- **Verdict:** useful for founder design review now. Fix the three substitutions above, then lock the art direction
+  before Batch 1. **The full journey and mobile review of the prototype is the next imagery review item.**
