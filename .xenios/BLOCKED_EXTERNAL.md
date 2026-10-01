@@ -15,17 +15,25 @@ invented verification. All new managed applies and production changes remain
 separately authorized. Historical production observations below retain their
 original dates and are not a fresh observation for this Health continuation.
 
-Current local source3562c03 is not release-ready. Claude23 reviewed915a535 and
-closed HIST-PROG/F7-R1/SQL-06/SQL-13/ROLL-06; it has not reviewed3562c03. F4,
-account-history copy and uppercase UUID handling are now locally implemented:
-1255 focused tests, final typecheck/build and final disposable SQL proof pass.
+Current local source3da9095 is not release-ready. Claude23 reviewed915a535 and
+closed HIST-PROG/F7-R1/SQL-06/SQL-13/ROLL-06; it has not reviewed3da9095. F4,
+account-history copy, uppercase UUID handling and HIST-02 are locally implemented:
+1255 affected-area tests, separate20 HTTP/6 SQL tests, final typecheck/build and
+both final disposable SQL proofs pass. Current aggregate at5b3dc77 remains
+18657 pass/4 fail/85 skip,exit1: one seam assertion and three5s scan timeouts.
+Separate unchanged serial diagnostic25 pass/3 files,exit0,does not make that
+aggregate clean. Logs, runtime provenance, hashes and prior failed runs remain
+distinct in the exact successor receipt.
 Release/protection remains87 pass/1 fail/1 skip: one unchanged baseline assertion
 reports both new server/index.ts wiring and the existing Research gateway.
 The old exact two-hash approval at663268f does not cover the new bytes.
 Prior exact95e040a aggregate remains18398 pass/5 fail/85 skip,exit1, not a
-current-runtime PASS. N2, ADP-01, HIST-02, HL-11 and broader launch work remain
-engineering gaps, not reasons to wait for processor choice. See
-`server/research/assisted-order/HEALTH_HL12_DURABLE_EFFECTS_HANDOFF_20261001.md`.
+current-runtime PASS. N2, ADP-01, historical disposition, HL-11 and broader
+launch work remain engineering gaps, not reasons to wait for processor choice.
+F1 still needs an actual independent evidence source and operational grant
+procedure. N2 can continue default-off pending disposition/refund policy and
+historical reconciliation decisions; absence is not proof of no-funds. See
+`server/research/assisted-order/HEALTH_HL12_EFFECTS_REISSUE_HANDOFF_20261001.md`.
 
 ## Native closeout — 2026-09-21
 

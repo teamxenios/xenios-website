@@ -7,11 +7,18 @@
       "session": "codex-xenios-media-commerce-decoupling-20261001",
       "paths": [
         "shared/research/product-admin.ts",
+        "server/research/products-diagnostics/product-admin-production.ts",
+        "server/research/products-diagnostics/product-admin-production.test.ts",
+        "client/src/research/products-diagnostics/RequiredInputState.tsx",
+        "client/src/research/products-diagnostics/RequiredInputState.test.tsx",
+        "client/src/research/pages/adminx/ProductAdminDetail.tsx",
         "shared/research/cart-product-selection.ts",
         "server/research/commerce/cart-product-selection.ts",
         "server/research/commerce/cart-product-selection.test.ts",
         "server/research/catalog/member-catalog-projection.ts",
         "server/research/catalog/member-catalog-projection.test.ts",
+        "server/research/catalog/member-catalog-service.ts",
+        "server/research/catalog/member-catalog-service.test.ts",
         "client/src/research/adapters/cartProductSelection.ts",
         "client/src/research/adapters/cartProductSelection.test.ts",
         "client/src/research/adapters/memberCatalog.ts",
@@ -25,9 +32,9 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T04:51:36.789Z",
-      "heartbeatAt": "2026-10-01T04:51:36.875Z",
+      "heartbeatAt": "2026-10-01T05:13:11.863Z",
       "externalLeaseCommit": "2c635af56eddc3e6fa691776faceef6bd9805b0d",
-      "scopeNote": "Read-only mirror/reservation of the external active lease. Heartbeat is the exact observed external value, not refreshed by core. Branch-local continuity paths deliberately excluded; no external source is merged."
+      "scopeNote": "Mirror/reservation of the external active lease plus exact path expansions explicitly coordinated in the existing image chat. Heartbeat is the latest independently read external value, not refreshed by core. Branch-local continuity paths deliberately excluded; no external source is merged."
     },
     {
       "id": "84d610f3-9fc3-4472-bfe3-87bb038d2123",
@@ -3159,7 +3166,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T03:57:40.605Z",
-      "heartbeatAt": "2026-10-01T04:42:35.935Z"
+      "heartbeatAt": "2026-10-01T05:26:25.136Z"
     },
     {
       "id": "cd6498de-0fad-46e9-b0b7-104808a5f080",
@@ -3189,7 +3196,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T03:57:40.768Z",
-      "heartbeatAt": "2026-10-01T04:42:35.935Z"
+      "heartbeatAt": "2026-10-01T05:26:25.136Z"
     },
     {
       "id": "c64d9608-0473-47e0-8471-41d207d4b2e6",
@@ -3204,7 +3211,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T03:57:40.842Z",
-      "heartbeatAt": "2026-10-01T04:42:35.935Z"
+      "heartbeatAt": "2026-10-01T05:26:25.136Z"
     },
     {
       "id": "9519a7ba-683c-44f0-8728-4353edb78ffe",
@@ -3215,7 +3222,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T04:03:25.657Z",
-      "heartbeatAt": "2026-10-01T04:42:35.935Z"
+      "heartbeatAt": "2026-10-01T05:26:25.136Z"
     },
     {
       "id": "80c6d22b-751f-4826-b26c-fdcfb6fffcab",
@@ -3227,7 +3234,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T04:03:25.732Z",
-      "heartbeatAt": "2026-10-01T04:42:35.935Z"
+      "heartbeatAt": "2026-10-01T05:26:25.136Z"
     },
     {
       "id": "7bd8264b-418d-4a2e-9ccb-0ce607147627",
@@ -3238,7 +3245,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T04:03:25.817Z",
-      "heartbeatAt": "2026-10-01T04:42:35.935Z"
+      "heartbeatAt": "2026-10-01T05:26:25.136Z"
     }
   ],
   "rules": [

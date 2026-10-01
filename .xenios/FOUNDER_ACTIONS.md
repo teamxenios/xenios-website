@@ -12,6 +12,14 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
   finance grants, managed schema qualification and exact-SHA production promotion
   remain separate authorized actions.
 
+- Financial disposition activation: before enabling no-funds, void or refund
+  operations, confirm the independently verifiable evidence workflow, scoped
+  disposition-versus-refund authority, historical reconciliation criteria and
+  applicable cancellation/refund policy. Missing observations or a free-text
+  note cannot prove no-funds; returned money is a refund, not no-funds. This
+  does not block default-off provider-neutral N2 engineering. Do not supply raw
+  bank evidence or credentials in the corpus.
+
 - Protected baseline: the user's exact routes.ts/index.ts approval is applied
   and pushed at663268f. That action is complete; do not ask for it again. The
   separate Research gateway baseline remains unchanged and outside the two-hash
