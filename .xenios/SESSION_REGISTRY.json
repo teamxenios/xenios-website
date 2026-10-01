@@ -567,8 +567,8 @@
       "branch": "codex/xenios-health-launch-implementation-20260930",
       "state": "active",
       "startedAt": "2026-09-30T16:32:52.264Z",
-      "heartbeatAt": "2026-10-01T06:26:41.370Z",
-      "note": "N2 first executable slice: positive independent no-funds receipt, whole graph binding, atomic cancel/audit/outbox. Adapters off/grants empty; void/refund/historical/provider edges held. No full suite yet."
+      "heartbeatAt": "2026-10-01T06:54:18.654Z",
+      "note": "N2 audit fixes and local SQL proof active. App165 pass, affected814 pass, build1343/225 zero em dash. Run1 SQL failed in adversarial fixture after9 races; preserved/cleaned. Exact source namespace prelookup hardening underway. No hosted changes."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
