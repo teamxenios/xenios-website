@@ -2944,7 +2944,7 @@
         "supabase/verification/*assisted_order_quote*",
         "server/research/commerce/persistence/admin-queues-store.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T23:03:13.639Z",
       "heartbeatAt": "2026-10-01T00:27:34.068Z"
     },
@@ -2957,7 +2957,7 @@
         "server/research/early-access/private-access-rate-limit-switch.test.ts",
         "server/research/early-access/open-access-window.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T23:05:56.729Z",
       "heartbeatAt": "2026-10-01T00:27:34.068Z"
     },
@@ -2970,7 +2970,7 @@
         "server/research/status-recovery/supabase-store.ts",
         "server/research/status-recovery/payment-status-copy.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T23:17:22.098Z",
       "heartbeatAt": "2026-10-01T00:27:34.068Z"
     },
@@ -2982,7 +2982,7 @@
         "docs/coordination/MIGRATION_DAG.json",
         "supabase/MIGRATIONS.md"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T23:20:29.745Z",
       "heartbeatAt": "2026-10-01T00:27:34.068Z"
     },
@@ -2993,7 +2993,7 @@
       "paths": [
         "server/release-control-plane.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T23:20:29.972Z",
       "heartbeatAt": "2026-10-01T00:27:34.068Z"
     },
@@ -3007,7 +3007,7 @@
         "client/src/research/early-access/cart/EarlyAccessCartMount.tsx",
         "client/src/research/early-access/cart/EarlyAccessCartMount.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T23:23:23.855Z",
       "heartbeatAt": "2026-10-01T00:27:34.068Z"
     },
@@ -3019,7 +3019,7 @@
         "server/research/index.ts",
         "server/research/early-access-wall.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T23:40:25.007Z",
       "heartbeatAt": "2026-10-01T00:27:34.068Z"
     },
@@ -3034,7 +3034,7 @@
         ".xenios/BLOCKED_EXTERNAL.md",
         ".xenios/FOUNDER_ACTIONS.md"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-09-30T23:40:25.146Z",
       "heartbeatAt": "2026-10-01T00:27:34.068Z"
     }

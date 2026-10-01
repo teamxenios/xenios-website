@@ -565,10 +565,10 @@
       "tool": "OpenAI Codex desktop",
       "lane": "health-launch-implementation",
       "branch": "codex/xenios-health-launch-implementation-20260930",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-09-30T16:32:52.264Z",
-      "heartbeatAt": "2026-10-01T00:27:34.068Z",
-      "note": "Source 947f6ee frozen; HEAD95e040a full suite completed 18398 pass/5 fail/85 skip. Isolated timeout diagnostics running; no hosted writes."
+      "heartbeatAt": "2026-10-01T00:36:14.145Z",
+      "note": "Partial source947f6ee/tree03ccddee and evidence bfe7162 pushed. Exact HEAD95e040a full suite18398 pass/5 fail/85 skip; diagnostic runs retained separately. Node20 typecheck/build/DAG/routes pass. All eight leases handed off; F4 and broader Health work remain. No hosted writes or running full-suite jobs."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
