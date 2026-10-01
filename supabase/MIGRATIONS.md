@@ -641,6 +641,16 @@ source/test/control/aggregate results belong to
 The checked-in driver is
 `verification/research_assisted_order_quote_provider_execution_local.mjs`.
 
+Final clean-checkpoint proof at `4166afd204f7e60594d15bd4578744e769d24d30`
+passed 21 SQL groups, 138 refusals, four lock-wait races, 23 isolation cases
+and 11 HTTP groups/108 calls in234.589 seconds, exit0. Explicit in-window
+application time versus expired DB lease proved zero transport calls; actual
+replica-mode write guards and unexpected overload/readiness/reapply checks
+passed. Source hashes remained frozen, and the exact disposable container was
+removed. Final log SHA-256:
+`c4d07d78db04dac1b02ee45dac8d7a77c19a3480878c9c88c68d0aaa083c6eff`.
+This does not relabel previous runs or imply managed qualification.
+
 This is not settlement or complete payment authority. Production composition
 supplies a null source regardless of the flag. No provider, webhook, policy,
 execution grant, payment verification, paid transition, refund or real email is
