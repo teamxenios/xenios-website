@@ -59,8 +59,9 @@ canonical audit completes. HTTP 503 can mean committed verification with
 follow-up pending, never proof that no financial transition happened.
 
 Historical verification and current fulfillment eligibility are different.
-The existing customer financial projection stays exactly
-`{hasObservation, paymentVerified}`. Later uncertainty must block progression
+The existing service-role `financial_state` RPC stays exactly
+`{hasObservation, paymentVerified}`; the customer status projection exposes
+optional `paymentVerified`, not that entire RPC shape. Later uncertainty must block progression
 without rewriting historical verification. An old immutable receipt never
 grants present eligibility. Existing supplier and fulfillment checks remain.
 
@@ -75,6 +76,69 @@ that retains late-event ingress and effects recovery while disabling create and
 settlement. Arbitrary older code may fail closed yet stop durable receipt of
 late facts. Do not replay older function bodies, down-migrate, delete facts,
 clear holds or amend protection baselines as rollback.
+
+## Changed-path classification
+
+Relative to base records `4ad4bcfe8129b4069b79f3cce91773c894395c51`:
+
+- Runtime, eight paths: `server/index.ts`; assisted-order `http.ts`,
+  `payment-effects.ts`, `supabase-repository.ts`,
+  `payment/provider-execution.ts`, `payment/provider-journal.ts`,
+  `payment/provider-settlement.ts`; and the new settlement migration named above.
+- Tests/proofs, eleven paths: assisted-order `payment-effects.test.ts`,
+  `supabase-repository.test.ts`, `provider-settlement-http.test.ts`,
+  `provider-settlement-sql.test.ts`, `payment/provider-execution.test.ts`,
+  `payment/provider-journal.test.ts`, `payment/provider-settlement.test.ts`;
+  `supabase/verification/research_assisted_order_quote_provider_settlement_`
+  files ending in `harness.mjs`, `http.ts`, `local.mjs`, `races.mjs`.
+- Release controls, three paths: `docs/coordination/MIGRATION_DAG.json`,
+  `supabase/MIGRATIONS.md`, `server/release-control-plane.test.ts`.
+- Records only: `.xenios/**` and assisted-order `HEALTH_HL12_ADP03_*` records.
+  Private scratch runners are not runtime or repository release controls.
+
+The qualification receipt enumerates every changed path and every commit in
+these categories, including intermediate fixture/control corrections. The
+runtime SHA identifies source, not the later tree containing tests and records.
+
+## Exact local reproduction
+
+Use the combined qualification checkpoint containing the stated source, tests
+and controls. Running only the runtime commit would omit the new test files.
+Run each command serially; preserve each exit status and log independently.
+These commands are local only and do not authorize a hosted database target.
+
+```powershell
+Set-Location 'C:/Users/sboad/.codex/worktrees/b22f/xenios-website'
+$adp03Node = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe'
+$adp03Npm = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js'
+$adp03SavedPath = $env:PATH
+$adp03SavedDataset = $env:XENIOS_MASTER_OFFERINGS_DATASET
+$env:PATH = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64;' + $adp03SavedPath
+$env:XENIOS_MASTER_OFFERINGS_DATASET = Join-Path (Get-Location) 'server/research/master-offerings/data/member-safe-master-offerings.generated.json'
+& $adp03Node --version
+& $adp03Node $adp03Npm --version
+& $adp03Node supabase/verification/research_assisted_order_quote_provider_settlement_local.mjs
+& $adp03Node node_modules/vitest/vitest.mjs run server/research/assisted-order server/research/outbox-hl12-disposition.test.ts server/research/outbox-hl12-effects.test.ts server/research/master-offerings/early-access-catalog-coverage.test.ts client/src/research/assisted-order --maxWorkers=1 --no-file-parallelism
+& $adp03Node node_modules/typescript/bin/tsc --noEmit
+& $adp03Node $adp03Npm run build
+& $adp03Node --import tsx scripts/acceptance/verify-migration-dag.ts
+& $adp03Node --import tsx scripts/acceptance/verify-route-uniqueness.ts
+& $adp03Node scripts/acceptance/verify-core-site-protection.mjs 4ad4bcfe8129b4069b79f3cce91773c894395c51 HEAD
+& $adp03Node node_modules/vitest/vitest.mjs run server/release-control-plane.test.ts --maxWorkers=1 --no-file-parallelism
+& $adp03Node node_modules/vitest/vitest.mjs run --maxWorkers=1 --no-file-parallelism
+$env:PATH = $adp03SavedPath
+$env:XENIOS_MASTER_OFFERINGS_DATASET = $adp03SavedDataset
+```
+
+The actual executions use the private `run-check.mjs` wrapper to retain separate
+start/result JSON, stdout/stderr hash and bounded process snapshots. Its full
+command arrays are in the receipt. The official Windows x64 Node archive
+SHA-256 is `be72284c7bc62de07d5a9fd0ae196879842c085f11f7f2b60bf8864c0c9d6a4f`.
+Node v20.19.0/npm 10.8.2 were invoked by full path; PATH changes were process-local.
+The full suite retains conditional skips, including the separately gated PG16
+verifier (`XENIOS_RUN_PG16_VERIFIER`/CI); do not label skipped cases as passes.
+The SQL proof uses disposable PostgreSQL 17.11 with no network/published ports;
+it is not the conditional PostgreSQL 16 or managed-platform qualification.
 
 ## In-progress evidence
 
@@ -138,9 +202,10 @@ clear holds or amend protection baselines as rollback.
 `adp03-sql-local-run3` failed, exit 1, 224.027 seconds. Thirteen SQL groups
 and 11 HTTP groups / 154 SQL calls completed before the bare link-only insertion
 test received the deferred foreign-key refusal (23503) rather than its expected
-custom completeness refusal. It was rejected, not committed. The test will
-explicitly force the named completeness constraint, instead of depending on
-internal deferred-trigger order. No source change. Exact cleanup confirmed.
+custom completeness refusal. It was rejected, not committed. The corrected test
+explicitly forces the named completeness constraint, with a separate default
+COMMIT assertion for 23503, instead of depending on internal deferred-trigger
+order. No source change. Exact cleanup confirmed.
 Log SHA-256 `2bb0c36a7c219d836254af58e314e0a0f692482e7dc769a7375dd4e5e82ab001`.
 
 Additional-races-only diagnostics are separate from comprehensive proof:
@@ -159,8 +224,10 @@ Additional-races-only diagnostics are separate from comprehensive proof:
 
 Peer inspection found no additional concrete authority defect; it is not
 independent Claude acceptance. Proof limits remain explicit: synthetic admin
-admission and normalized capture facts; local service-role SQL, not managed
-PostgREST/JWT or processor authentication; real lock waits observed through
+admission and normalized capture facts; the composed harness does not execute
+`requireSupabaseAdmin` or JWT verification. It supplies a synthetic actor stamp,
+then uses real viewer resolution, routes, services, repository and local SQL.
+This is not managed PostgREST/JWT or processor authentication; real lock waits observed through
 `wait_event_type = Lock`, without exact blocker/lock-target telemetry. Reverse
 financial contention cases acquire the parent lock around an already-denied
 competitor; they are not two admissible financial winners. Provider verification
@@ -178,7 +245,9 @@ inside a live provider call.
 PostgreSQL 17.11; 21 SQL groups, 149 expected refusals, 16 actual lock waits,
 20 isolation cases included in the refusal count, 11 HTTP groups / 154 SQL
 calls. Proof 327.110 seconds, wrapper 327.851 seconds, exit 0. Ten raw runtime
-source hashes stayed unchanged. No network or published ports. The driver
+source hashes matched at start and end, not a continuous file attestation.
+The PostgreSQL container had no network or published ports; composed HTTP uses
+local Supertest. The driver
 removed its exact owned container and confirmed subsequent inspect not_found;
 this is driver evidence, not an independent hosted cleanup attestation.
 Log SHA-256: `7e116fb768efd2e9dd9eabbf2e3039b69fce07a102d95987f73016f8ce9855ef`.
@@ -219,6 +288,46 @@ result. The unchanged clean-checkpoint assertion correctly prevented a dirty
 start. This is separate from any subsequent aggregate result.
 
 ## Unchanged external and release holds
+
+Independent reviewer handoff: continue the existing Claude session, do not
+repeat its `915a535` review as though it covered this source. Latest remote
+reviewer tip observed read-only at 13:01 UTC was
+`e7b74feb04567cac16d5b8bd089a7ae1218721d2`; report 23 covers runtime
+`915a5354376f0f5e9c850e5fddd2b51be78d2e43`, not ADP01/02/03. Repository messages
+record review dispatch and heavy-job coordination, not reviewer receipt,
+execution or acceptance. Review this exact source/test/control combination for:
+
+1. Strict capability compatibility and the unconditionally null startup source.
+2. Actual admin admission plus separate source/account/mode/policy/grant scope;
+   synthetic local middleware is an explicitly unproven production boundary.
+3. Quote, attempt, capture, single-use evidence and exact economics binding;
+   wrong actor/source/account, old schema, mixed versions and arbitrary body
+   fields must not authorize settlement.
+4. Atomic observation/claim/verification/paid-event/held-outbox completeness,
+   replica-mode guards, concurrency, partial writes and source/grant revocation.
+5. Replay after later facts or progression returns immutable history without
+   clearing holds or granting present fulfillment eligibility.
+6. Audit-before-notification-dispatch and recoverable F4 effects after actor
+   revocation, response loss, restart and signing-key rotation.
+7. Separate existing supplier gates, late-fact holds, no historical adoption,
+   and compatibility-preserving rollout/rollback with late-event retention.
+8. Exact startup protected diff/hash disposition, unchanged Research gateway
+   baseline, test strength, failed/skipped-run separation and managed limits.
+
+Prior finding identities remain visible: F1 operational evidence/grants; N2
+void/refund/dispute and historical outcomes; HIST-FREEZE; ROLL-05;
+ROLL-06-R1 / NEW-APP-ORDER; GUARD-NEWSTATE; ERR-ORDER / AVAIL / TEST-GAP /
+QUOTE-CONTRACT; NEW-RECORD-*; CSP-02/03/04/05/08. Successor-local F4, X2,
+account-history, HIST-02, N2 no-funds, ADP01/02/03 and HL11 work is not an
+independent closure or a new severity census. Preserve the predecessor's
+adjudicated findings until an exact successor review replaces them.
+
+Future refund work must distinguish immutable captured-payment verification
+from current balance/disposition. A refund received before settlement currently
+prevents settlement; a later refund preserves verification and holds progress.
+Neither case has governed refund-resolution authority. The existing no-funds
+record is not a refund record. Do not widen that enum, invent refund finality,
+rewrite payment history, clear uncertainty or enable live refund execution.
 
 The real independent manual evidence source and grant workflow remain F1's
 operational dependency. Provider authentication, actual replay guarantees,
