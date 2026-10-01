@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import {
   buildPartnershipInquirySummary,
   PARTNERSHIP_INQUIRY_LIMITS,
@@ -12,6 +12,12 @@ import { contactService } from "@/lib/waitlist-service";
 
 type CopyState = "idle" | "copied" | "manual";
 type ValidatedField = Exclude<keyof PartnershipInquiryDraft, "pathway">;
+type SubmittedInquiryReceipt = Readonly<{
+  email: string;
+  pathway: PartnershipPathwayId;
+  summary: string;
+  autoReplySent: boolean;
+}>;
 
 interface ValidationIssue {
   field: ValidatedField;
@@ -73,20 +79,39 @@ export default function PartnershipInquiryForm({
 }) {
   const [draft, setDraft] = useState<PartnershipInquiryDraft>(() => blankDraft(initialPathway));
   const [validation, setValidation] = useState<ValidationIssue[]>([]);
-  const [prepared, setPrepared] = useState(false);
-  const [autoReplySent, setAutoReplySent] = useState(false);
+  const [receipt, setReceipt] = useState<SubmittedInquiryReceipt | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [copyState, setCopyState] = useState<CopyState>("idle");
   const errorRef = useRef<HTMLDivElement>(null);
   const summary = useMemo(() => buildPartnershipInquirySummary(draft), [draft]);
+  const mountedRef = useRef(false);
+  const submissionRef = useRef<object | null>(null);
+  const receiptRef = useRef<SubmittedInquiryReceipt | null>(null);
+  const copyGenerationRef = useRef(0);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      submissionRef.current = null;
+      receiptRef.current = null;
+      copyGenerationRef.current++;
+    };
+  }, []);
+
+  function clearReceipt() {
+    receiptRef.current = null;
+    copyGenerationRef.current++;
+    setReceipt(null);
+    setCopyState("idle");
+  }
 
   function update<K extends keyof PartnershipInquiryDraft>(key: K, value: PartnershipInquiryDraft[K]) {
     setDraft((current) => ({ ...current, [key]: value }));
     setValidation((current) => current.filter((issue) => issue.field !== key));
-    setPrepared(false);
+    clearReceipt();
     setSubmitError(null);
-    setCopyState("idle");
   }
 
   function issueFor(field: ValidatedField): string | undefined {
@@ -99,6 +124,8 @@ export default function PartnershipInquiryForm({
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    // The immediate guard also covers multiple submit events in one render.
+    if (!mountedRef.current || submissionRef.current !== null) return;
     const nextValidation: ValidationIssue[] = [];
     if (!draft.name.trim()) nextValidation.push({ field: "name", message: "Add your name." });
     else if (draft.name.length > PARTNERSHIP_INQUIRY_LIMITS.name)
@@ -152,42 +179,61 @@ export default function PartnershipInquiryForm({
 
     setValidation(nextValidation);
     if (nextValidation.length > 0) {
-      setPrepared(false);
+      clearReceipt();
       queueMicrotask(() => errorRef.current?.focus());
       return;
     }
 
+    const attempt = {};
+    submissionRef.current = attempt;
+    const isCurrent = () => mountedRef.current && submissionRef.current === attempt;
+    // Capture exactly the values sent by this attempt. The editable draft is
+    // not evidence that any subsequent changes were accepted for delivery.
+    const submitted = { email: draft.businessEmail.trim(), pathway: draft.pathway, summary };
+    clearReceipt();
     setSubmitting(true);
     setSubmitError(null);
     try {
-      const receipt = await contactService.submit({
+      const result = await contactService.submit({
         name: draft.name.trim(),
-        email: draft.businessEmail.trim(),
-        persona: pathwayContactPersona(draft.pathway),
-        subject: `Xenios Research: ${pathwayTitle(draft.pathway)}`,
-        message: summary,
+        email: submitted.email,
+        persona: pathwayContactPersona(submitted.pathway),
+        subject: `Xenios Research: ${pathwayTitle(submitted.pathway)}`,
+        message: submitted.summary,
       });
-      setAutoReplySent(receipt.autoReplySent === true);
-      setPrepared(true);
+      if (!isCurrent()) return;
+      const accepted = { ...submitted, autoReplySent: result.autoReplySent === true };
+      receiptRef.current = accepted;
+      copyGenerationRef.current++;
+      setReceipt(accepted);
       setCopyState("idle");
     } catch (error) {
-      setPrepared(false);
+      if (!isCurrent()) return;
+      clearReceipt();
       setSubmitError(error instanceof Error ? error.message : "The inquiry could not be submitted. Please try again.");
     } finally {
-      setSubmitting(false);
+      if (isCurrent()) {
+        submissionRef.current = null;
+        setSubmitting(false);
+      }
     }
   }
 
   async function copySummary() {
+    const submitted = receiptRef.current;
+    if (!mountedRef.current || submitted === null) return;
+    const generation = ++copyGenerationRef.current;
+    const isCurrent = () => mountedRef.current && receiptRef.current === submitted
+      && copyGenerationRef.current === generation;
     try {
       if (!navigator.clipboard?.writeText) {
-        setCopyState("manual");
+        if (isCurrent()) setCopyState("manual");
         return;
       }
-      await navigator.clipboard.writeText(summary);
-      setCopyState("copied");
+      await navigator.clipboard.writeText(submitted.summary);
+      if (isCurrent()) setCopyState("copied");
     } catch {
-      setCopyState("manual");
+      if (isCurrent()) setCopyState("manual");
     }
   }
 
@@ -386,23 +432,23 @@ export default function PartnershipInquiryForm({
         {submitError && <p className="body-s mt-4" role="alert">{submitError} Your details remain in this form. Receipt has not been confirmed.</p>}
       </form>
 
-      {prepared && (
+      {receipt !== null && (
         <div className="xr-b2b-prepared mt-8" role="status" aria-live="polite">
           <p className="mono-cap text-pulse">Inquiry submitted</p>
-          <h3 className="body-l font-700 mt-2">Your {pathwayTitle(draft.pathway)} inquiry was accepted for delivery.</h3>
+          <h3 className="body-l font-700 mt-2">Your {pathwayTitle(receipt.pathway)} inquiry was accepted for delivery.</h3>
           <p className="body-s text-ink-2 mt-3 max-w-[64ch]">
-            This is a business inquiry, not an account approval. The team can use {draft.businessEmail.trim()} for follow-up. {" "}
-            {autoReplySent ? "A confirmation email was also accepted for delivery; inbox delivery is not guaranteed." : "A confirmation email could not be confirmed. You do not need to resubmit your inquiry."} If the relationship requires account access, application or activation instructions follow a separate review.
+            This is a business inquiry, not an account approval. The team can use {receipt.email} for follow-up. {" "}
+            {receipt.autoReplySent ? "A confirmation email was also accepted for delivery; inbox delivery is not guaranteed." : "A confirmation email could not be confirmed. You do not need to resubmit your inquiry."} If the relationship requires account access, application or activation instructions follow a separate review.
           </p>
           <dl className="body-s text-ink-2 mt-4 grid gap-2">
-            <div><dt className="font-700 inline">Submitted email: </dt><dd className="inline">{draft.businessEmail.trim()}</dd></div>
-            <div><dt className="font-700 inline">Relationship type: </dt><dd className="inline">{pathwayTitle(draft.pathway)}</dd></div>
+            <div><dt className="font-700 inline">Submitted email: </dt><dd className="inline">{receipt.email}</dd></div>
+            <div><dt className="font-700 inline">Relationship type: </dt><dd className="inline">{pathwayTitle(receipt.pathway)}</dd></div>
             <div><dt className="font-700 inline">Next owner: </dt><dd className="inline">Xenios business review</dd></div>
           </dl>
           <label htmlFor="b2b-summary" className="form-label mt-5">
             Request summary
           </label>
-          <textarea id="b2b-summary" className="input-field xr-b2b-summary" value={summary} readOnly rows={13} />
+          <textarea id="b2b-summary" className="input-field xr-b2b-summary" value={receipt.summary} readOnly rows={13} />
           <div className="mt-4 flex flex-wrap gap-3 items-center">
             <button type="button" className="btn btn-secondary" onClick={() => void copySummary()}>
               {copyState === "copied" ? "Copied" : "Copy summary"}
