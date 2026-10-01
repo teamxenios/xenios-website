@@ -11,7 +11,7 @@
     "releaseControlSha": "a16f562d94dc907728fd0d8c708d48d098e3c1f8",
     "successorScope": "ADP02 durable held create/readback ownership and immutable external binding, fixed database-issued timing budget deducted monotonically before RPC. Sources remain null; no live provider, settlement/refund or uncertainty resolution. Prior ADP01, HL11 and N2 results remain separate; no hosted/price changes.",
     "currentADP02Work": {
-      "status": "PUSHED_SOURCE_TEST_CONTROLS_FROZEN_FINAL_LOCAL_QUALIFICATION_PENDING",
+      "status": "FINAL_LOCAL_SQL_AND_PREFLIGHT_PASS_FROZEN_AGGREGATE_PENDING",
       "task": "HEALTH-HL12-ADP02-PROVIDER-CREATE-RECOVERY-20261001",
       "runtimeSourceSha": "27463d764ba01219c67081a3548ffdc3ff7d2b40",
       "runtimeSourceTree": "467c8556390ff9274a4adda5826eed7ab9603b23",
@@ -20,6 +20,7 @@
       "finalLocalSql": "PASS at clean4166afd204f7e60594d15bd4578744e769d24d30/treec302243ba81f15ffd26707b6ab9ddf06bb1eb87d:21SQLgroups138refusals4lockraces23isolation11HTTPgroups108SQLcalls;234.589s proof235.123s wrapper,exit0,PG17.11,cleanup. Logc4d07d78db04dac1b02ee45dac8d7a77c19a3480878c9c88c68d0aaa083c6eff. Runtime hashes/HEAD unchanged; handoff record dirty only. In-window fixed appclock/expired DBlease refused transport; replica/overload and independent grant/policy revocations passed.",
       "currentDiagnostic": "Earlier SQLrun2 PASS20groups116refusals4races23isolation11HTTPgroups108calls,229.430s preserved separately. Unit130PASS; firsttscfailedTS2345, correctedtscPASS10.365s. Routeuniqueness461registrations452callsitesPASS. Final preflight/aggregate not run yet.",
       "baseRecordsSha": "77cdeaec34ae19bbcc9615f75887d21fe86f0746",
+      "finalPreflight": "1216PASS43files0skip81.18s;typecheck21.261s/build45.243s PASS;source1349/build225 zero forbidden forms;DAG51/routes461registrations452callsites PASS;controls51PASS1conditionalPG16SKIP75.98s;CLI38hardhashesPASS2seamwarnings. Starts4569a27clean then records-only8c46259/edits; each dirty state preserved. Source/tests/controls unchanged. Aggregate pending.",
       "earlyDiagnostic": "Comprehensive run1 PASS19 SQL groups105 refusals4 lock-wait races23 isolation cases10 HTTP groups100 SQL calls,225.589s,exit0,exact local cleanup. Source hashes frozen through run. This precedes timing correction and combines three revocations rather than isolating them. Unit107PASS/static8PASS/HTTP50PASS remain separate diagnostics.",
       "clockReproduction": "adp02-clock-repro-run1 confirmed2FAIL/107filteredSKIP exit1: behind/backward application wall clock permits create after simulated SQL deadline. Log06361da000b6249fc184efddde54b1da43798f7ca7cb32a4d5fc4deb7cf01d81. Correcting with DB-issued budget and pre-RPC monotonic elapsed; prior pass does not cover fix. No hosted provider configured.",
       "scope": "Durable create-operation ownership/recovery and write-once independently normalized provider-object binding; no settlement/refund/no-funds inference. Reuse immutable held attempts and preserve journal-v2 contract. New source work is not covered by ADP01 aggregate.",
@@ -122,7 +123,7 @@
     "imageryObservedHead": "d1da2882f282f588609406f98d79f75993848be0",
     "imageryStatus": "Observed source8ec70f2:25 generic Batch0 class candidates,zero approved/public/integrated. Records d1da2882 align424/423 accounting; prior420/419 evidence retained. Separate media-commerce-decoupling remains unintegrated. No rerender or approval inferred from stale packet.",
     "imageryIntegrated": false,
-    "remainingEngineering": ["ADP01 independent review; provider create-operation ownership/recovery, immutable external identity binding, settlement and governed uncertainty resolution remain unimplemented", "F4/account-history/X2/HIST-02 and N2 independent successor verification", "remaining N2 void/refund/dispute and historical outcomes", "HL11 independent review; six new identities unbound, prices not released", "exact-variant Early Access details, HL17 and remaining public/account/partner/supplier/admin journeys; preserve existing HL23/24/25 implementations", "safe reviewed image integration and separate media-decoupling review", "two protected seam reviews/owner amendments, clean release aggregate, browser qualification and exact successor review"],
+    "remainingEngineering": ["ADP01/ADP02 independent review; held create/readback and immutable identity implemented locally but no operational adapter; canonical settlement and governed uncertainty resolution remain unimplemented", "F4/account-history/X2/HIST-02 and N2 independent successor verification", "remaining N2 void/refund/dispute and historical outcomes", "HL11 independent review; six new identities unbound, prices not released", "exact-variant Early Access details, HL17 and remaining public/account/partner/supplier/admin journeys; preserve existing HL23/24/25 implementations", "safe reviewed image integration and separate media-decoupling review", "two protected seam reviews/owner amendments, clean release aggregate, browser qualification and exact successor review"],
     "managedMigrationApplied": false,
     "productionMutated": false,
     "productionReobserved": false

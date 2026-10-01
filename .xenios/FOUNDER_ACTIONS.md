@@ -24,13 +24,13 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
   and pushed at663268f. That action is complete; do not ask for it again. The
   separate Research gateway baseline remains unchanged and outside the two-hash
   approval. Claude23 reviewed its exact diff as safe for an explicit owner
-  amendment, but none is authorized here. ADP01 sourcee9f221c also changes
-  server/index.ts after the N2 wiring; these new bytes need their own exact Claude review and
+  amendment, but none is authorized here. ADP02 source27463d7 also changes
+  server/index.ts after the ADP01 wiring; these new bytes need their own exact Claude review and
   owner amendment. Do not reuse the old approval. Both hash pairs are recorded
-  in server/research/assisted-order/HEALTH_HL12_ADP01_HANDOFF_20261001.md.
+  in server/research/assisted-order/HEALTH_HL12_ADP02_HANDOFF_20261001.md.
   Current server/index.ts canonical hash is
-  6dafafe47d5da5b3933b6fc5e4c4d54929da7f530698bb257ef66e5757a81cfc;
-  the older N2 hash is not the current approval target. These are integration
+  dde2f0bedf94f64600c19741b5137b53b857e98651150f07e4c82a52395db3be;
+  neither the ADP01 nor older N2 hash is the current approval target. These are integration
   requirements, not permission to weaken the clean-baseline assertion or deploy.
 
 - Native closeout (2026-09-21): designate the executor and confirm the exact

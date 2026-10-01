@@ -8,7 +8,7 @@ Status: pushed candidate frozen for final local qualification, not a release.
 - Runtime tree: `467c8556390ff9274a4adda5826eed7ab9603b23`.
 - Test-only: `8f56a7f500da36dbe37818b50f26b611ecb78b23`.
 - Release controls: `a16f562d94dc907728fd0d8c708d48d098e3c1f8`.
-- Final local SQL passed; preflight and aggregate results are pending below. Earlier
+- Final local SQL and preflight passed; aggregate result is pending below. Earlier
   diagnostics do not constitute the final full-suite result.
 
 ## Continuity and scope
@@ -195,6 +195,23 @@ Actual old ADP01 v2 execution refusal was tested; the uncommitted pre-timing
 ADP02 schema was not independently reinstalled. Sampled Node process paths are
 not continuous lifetime attestation. This local pass does not replace the
 pending aggregate, managed qualification or independent review.
+
+Final serial preflight used Node 20.19.0/npm 10.8.2 and the real dataset reader:
+1,216 affected tests passed in 43 files, no skips, 81.18 seconds; typecheck
+passed in 21.261 seconds; build passed in 45.243 seconds with zero forbidden
+forms across 1,349 source and 225 production-build files. Migration DAG passed
+51 nodes; route uniqueness passed 461 registrations/452 call sites. Release
+controls passed 51 tests with one existing conditional PostgreSQL 16 skip,
+75.98 seconds. Local PostgreSQL 17.11 proof does not replace that skipped test.
+The protection CLI verified 38 hard hashes and warned on two changed seams;
+it does not replace the stricter aggregate seam assertion. No gate was weakened.
+
+Preflight began at clean `4569a2719a22d2b0a1730c8734d4e12447074886`;
+later commands ran across records-only coordination commits/edits at
+`8c462596281e6607e551f95d59c17b9980acae93`. Source, tests and controls stayed
+frozen. Exact per-command dirty states remain in the receipts; not every
+preflight command began with a clean records directory. The aggregate must
+start at its own clean committed checkpoint and preserve its actual exit status.
 
 Protected seam hashes at this runtime (canonical Git blobs, not CRLF checkout
 bytes) remain a required independent review and possible owner amendment:
