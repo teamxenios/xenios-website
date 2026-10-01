@@ -6,7 +6,7 @@
       "id": "HEALTH-HL12-ACCOUNT-HISTORY-TRUTH-20261001",
       "title": "Project verified payment truth into both owned request-history surfaces",
       "priority": "P2",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "shared/research/assisted-order/member-history.ts",
@@ -20,7 +20,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Existing owner-authorized history RPC and canonical financial state only. No parallel authority, price, SQL, provider activation or hosted action. Delegated to quote_customer_ui under existing primary session.",
-      "claimedAt": "2026-10-01T03:57:40.688Z"
+      "claimedAt": "2026-10-01T03:57:40.688Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "1ac68cdd5c8150351de0908cda08aae8cac38431",
+        "file": ".xenios/handoffs/2026-10-01T04-46-16-663Z-HEALTH-HL12-ACCOUNT-HISTORY-TRUTH-20261001-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T04:46:16.669Z"
+      }
     },
     {
       "id": "HEALTH-HL12-CANONICAL-OUTBOX-RECOVERY-20261001",
