@@ -3289,6 +3289,43 @@
       "state": "active",
       "claimedAt": "2026-10-01T06:26:41.299Z",
       "heartbeatAt": "2026-10-01T07:09:37.962Z"
+    },
+    {
+      "id": "50a8e190-b0e1-479e-8b7b-7be25b0ad42f",
+      "task": "HEALTH-HL11-CANONICAL-424-RECONCILIATION-20261001",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "config/research/master-catalog-reconciliation-20260821.json",
+        "scripts/research/build-master-offerings-from-catalog.ts",
+        "scripts/research/build-master-offering-bindings.ts",
+        "scripts/research/verify-master-offerings-dataset.ts",
+        "server/research/master-offerings/catalog-reconciliation.ts",
+        "server/research/master-offerings/catalog-reconciliation.test.ts",
+        "server/research/master-offerings/reconciliation-authority.ts",
+        "server/research/master-offerings/reconciliation-authority.test.ts",
+        "server/research/master-offerings/normalize-catalog.ts",
+        "server/research/master-offerings/normalize-catalog.test.ts",
+        "server/research/master-offerings/reviewed-holds.ts",
+        "server/research/master-offerings/reviewed-holds.test.ts",
+        "server/research/master-offerings/dataset-reader.ts",
+        "server/research/master-offerings/dataset-reader.test.ts",
+        "server/research/master-offerings/action.ts",
+        "server/research/master-offerings/composition.ts",
+        "server/research/master-offerings/production-bindings.test.ts",
+        "server/research/master-offerings/early-access-catalog-coverage.test.ts",
+        "server/research/master-offerings/binding-generation.test.ts",
+        "server/research/master-offerings/data/*.generated.json",
+        "shared/research/master-offerings/pathway-authority.ts",
+        "shared/research/master-offerings/pathway-authority.test.ts",
+        "server/research/assisted-order/production-catalog.ts",
+        "server/research/assisted-order/production-catalog.test.ts",
+        "server/research/assisted-order/production-deps.ts",
+        "server/research/master-offerings/HEALTH_HL11_*",
+        ".local/research/hl11-20261001/**"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-01T07:19:17.659Z",
+      "heartbeatAt": "2026-10-01T07:19:17.659Z"
     }
   ],
   "rules": [
