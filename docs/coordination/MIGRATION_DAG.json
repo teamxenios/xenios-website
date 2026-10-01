@@ -1013,6 +1013,22 @@
         "evidence": "Final clean4166afd proof PASS21 SQL groups138 refusals4 lock-wait races23 isolation cases11 HTTP groups108 SQL calls,234.589s,exit0,Node20.19.0/npm10.8.2/PG17.11. Explicit in-window application clock versus expired DB lease, replica-mode guards, RPC overload refusal, first/populated repeat apply and exact no-network cleanup passed. Four source hashes stayed frozen. LogSHA256 c4d07d78db04dac1b02ee45dac8d7a77c19a3480878c9c88c68d0aaa083c6eff. Earlier run2 and pre-timing run1 remain separate, as do failed clock reproduction, fixture errors and typecheck. No managed or provider authentication acceptance."
       },
       "notes": "ADP02 held preparation/readback only. Exact final ADP01 v2 predecessor definition required; existing journal v2 contract preserved. New execution capability requires database_budget_monotonic_v1, durable pre-transport claim, immutable initial key/body/replay window and write-once scoped payment/session identities. Empty execution policy/grant tables, production source unconditionally null, no webhook/settlement/refund/uncertainty resolution. Late issued-claim facts survive revocation without granting fresh dispatch. Database clock and actual provider replay/arrival/abort semantics remain operational prerequisites; local synthetic transport is not provider authenticity or exactly-once money proof. All managed activation requires separate exact authority."
+    },
+    {
+      "id": "research_assisted_order_quote_provider_settlement",
+      "path": "supabase/migrations/20261001115512_research_assisted_order_quote_provider_settlement.sql",
+      "sourceSha": "2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd",
+      "dependsOn": ["research_assisted_order_quote_provider_execution"],
+      "checksum": { "algorithm": "sha256", "value": "1470740bf17a0fbb9a2eeaffe9173712861a17da15d52b5492ca1f28e2c91e6f" },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": false,
+      "rollback": {
+        "strategy": "disable_create_and_settlement_preserve_compatible_late_event_ingress_effects_and_all_financial_facts_then_roll_forward",
+        "procedure": "supabase/MIGRATIONS.md",
+        "evidence": "Current exact source qualification pending. Earlier d419da94 smoke1 passed install, full synthetic capture, replay and populated reapply on disposable no-network PostgreSQL17.11; current1470740 adds inspected replica immutability hardening and must be tested separately. No managed apply or operational rollback acceptance."
+      },
+      "notes": "ADP03 source-only explicit source-scoped admin full-capture settlement. Empty independent settlement policy/grant tables. Complete lineage derives canonical observation/evidence claim/verification/paid event/held F4 outbox; deferred closure, separate fulfillment eligibility and immutable replay. Supported journal-v3/execution-v2 capability plus strict compatible old readers; production source remains unconditionally null. No adapter, webhook, operational grant, partial capture, refund/void, historical adoption, price release or email. Actual provider authentication and managed qualification require separate evidence and authority. An old ADP02 binary refuses new capabilities and is not an operationally safe late-event rollback after real activity."
     }
   ],
   "invariants": [

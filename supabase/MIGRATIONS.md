@@ -673,3 +673,49 @@ evidence, disable guards or replay older financial function bodies.
 
 No managed apply, hosted configuration, operational grant, price release,
 real payment, real email, deployment or production mutation was performed.
+
+## Pending HL-12 ADP03 governed full-capture settlement
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 93 | migrations/20261001115512_research_assisted_order_quote_provider_settlement.sql | Explicit separately granted admin settlement of authenticated full capture into canonical payment records, with separate fulfillment eligibility | PENDING; no managed apply |
+
+Source checkpoint `2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd`; canonical SQL
+SHA-256 `1470740bf17a0fbb9a2eeaffe9173712861a17da15d52b5492ca1f28e2c91e6f`.
+This requires the exact timing-qualified ADP02 definition, its preceding chain,
+and the canonical audit/outbox. It creates no operational source, policy, grant,
+payment, price or customer rows. Final exact-byte local qualification is pending.
+The older `d419da94` smoke is a separate result, not qualification of these bytes.
+
+The financial transaction creates canonical observation, single-use evidence,
+verification, paid event and held F4 obligation atomically. It is not a parallel
+payment ledger or an autonomous webhook acting as an admin. The real
+source-scoped authorizer is retained, while provider occurrence time remains
+separate. Generic provider strings and legacy paid labels cannot become payment
+authority. Partial captures, voids, refunds, disputes and historical adoption are
+not implemented by this narrow slice.
+
+Historical financial verification remains true after later adverse evidence;
+current supplier progression is held by a separate eligibility check. Exact
+receipt replay does not authorize present fulfillment or clear uncertainty.
+F4 recovery requires canonical audit before notification dispatch. A pending
+audit obligation does not by itself erase otherwise valid financial eligibility.
+
+The source-null startup is default-off even with its flag enabled. Future
+activation must qualify independent provider authentication, source/account/mode,
+policy semantics, actor grants, deployment order and synthetic outbox isolation.
+No provider choice or real account is invented by this migration.
+
+Rollback after real provider activity requires code compatible with the new
+journal and execution capability versions so late facts remain durably accepted
+and held effects can recover. Disable new create and settlement; preserve all
+facts and holds; roll forward with reviewed source. An arbitrary older binary
+may fail safely on authorization but stop late-event receipt. Do not down-migrate,
+delete payment evidence, replay older financial functions or amend protection
+baselines as a rollback mechanism.
+
+Managed target identity, migration history and exact bytes, effective roles and
+default ACLs, forced RLS, PostgREST READ COMMITTED, audit/outbox prerequisites,
+cleanup and rollback require fresh exact non-production authorization. No
+staging or production mutation, operational grant, money, real email or deploy
+has been performed by this source work.
