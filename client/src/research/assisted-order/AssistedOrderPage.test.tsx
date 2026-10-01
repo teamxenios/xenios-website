@@ -185,6 +185,13 @@ function click(element: Element | null) {
   });
 }
 
+function detailFacts(details: HTMLDetailsElement): Record<string, string> {
+  return Object.fromEntries(Array.from(details.querySelectorAll("dt")).map((term) => [
+    term.textContent ?? "",
+    term.nextElementSibling?.textContent ?? "",
+  ]));
+}
+
 function typeInto(input: HTMLInputElement | null, value: string) {
   expect(input).not.toBeNull();
   const setter = Object.getOwnPropertyDescriptor(
@@ -260,6 +267,216 @@ afterEach(() => {
 });
 
 describe("AssistedOrderPage", () => {
+  it("offers native product details before adding a catalog variant", async () => {
+    render();
+    await settle();
+
+    const details = byTestId<HTMLDetailsElement>(`order-card-details-${directRuoItem.variantId}`);
+    expect(details).not.toBeNull();
+    expect(details?.tagName).toBe("DETAILS");
+    expect(details?.open).toBe(false);
+    expect(details?.firstElementChild?.tagName).toBe("SUMMARY");
+    expect(details?.firstElementChild?.textContent).toBe("Product details for Alpha Peptide, 10 mg");
+    expect(byTestId(`order-card-${directRuoItem.variantId}`)?.querySelector('input[type="number"]')).toBeNull();
+    expect(document.body.textContent).toContain("No products selected yet.");
+  });
+
+  it("opens and closes current product facts without selecting, persisting, navigating or calling an API", async () => {
+    render();
+    await settle();
+
+    const details = byTestId<HTMLDetailsElement>(`order-card-details-${directRuoItem.variantId}`)!;
+    expect(details).not.toBeNull();
+    const summary = details.firstElementChild as HTMLElement;
+    const locationBefore = window.location.href;
+    const historyLengthBefore = window.history.length;
+    const historyStateBefore = window.history.state;
+    const draftBefore = sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY);
+    const apiCallsBefore = Object.values(api).map((method) => method.mock.calls.length);
+    const storageWrite = vi.spyOn(Storage.prototype, "setItem");
+    const storageRemove = vi.spyOn(Storage.prototype, "removeItem");
+    const storageClear = vi.spyOn(Storage.prototype, "clear");
+
+    expect(details.classList.contains("xenios-order-details")).toBe(true);
+    expect(summary.getAttribute("role")).toBeNull();
+    expect(summary.getAttribute("aria-expanded")).toBeNull();
+    expect(summary.querySelector("a, button, input")).toBeNull();
+    summary.focus();
+    expect(document.activeElement).toBe(summary);
+    click(summary);
+    expect(details.open).toBe(true);
+    expect(detailFacts(details)).toEqual({
+      Specification: "10 mg",
+      Format: "Vial",
+      "Pack basis": "Per vial",
+      "Minimum request quantity": "1",
+      "Maximum request quantity": "100",
+      "Quantity increment": "1",
+    });
+    expect(details.textContent).toContain("Request quantities only, not dosing instructions. Availability is confirmed separately.");
+    expect(details.querySelector("a, button, input")).toBeNull();
+    expect(details.textContent).not.toContain("$25.00");
+    expect(details.textContent).not.toContain(directRuoItem.catalogVersion);
+    expect(details.textContent).not.toContain(directRuoItem.priceVersion);
+    click(summary);
+    expect(details.open).toBe(false);
+    await settle(20);
+
+    expect(Object.values(api).map((method) => method.mock.calls.length)).toEqual(apiCallsBefore);
+    expect(api.submitAssistedOrder).not.toHaveBeenCalled();
+    expect(storageWrite).not.toHaveBeenCalled();
+    expect(storageRemove).not.toHaveBeenCalled();
+    expect(storageClear).not.toHaveBeenCalled();
+    expect(sessionStorage.getItem(ASSISTED_ORDER_DRAFT_KEY)).toBe(draftBefore);
+    expect(window.location.href).toBe(locationBefore);
+    expect(window.history.length).toBe(historyLengthBefore);
+    expect(window.history.state).toEqual(historyStateBefore);
+    expect(byTestId(`order-card-${directRuoItem.variantId}`)?.querySelector('input[type="number"]')).toBeNull();
+    expect(document.body.textContent).toContain("No products selected yet.");
+  });
+
+  it("keeps same-name sibling variant details separate and independently openable", async () => {
+    const sibling: AssistedOrderCatalogItem = {
+      ...directRuoItem,
+      variantId: "var-a-second",
+      specification: "20 mg",
+      format: "Powder",
+      packBasis: "Per container",
+      minimumQuantity: 5,
+      maximumQuantity: 25,
+      quantityIncrement: 5,
+    };
+    api.loadAssistedOrderCatalog.mockResolvedValue(catalogPage([directRuoItem, sibling]));
+    render();
+    await settle();
+
+    const first = byTestId<HTMLDetailsElement>(`order-card-details-${directRuoItem.variantId}`)!;
+    const second = byTestId<HTMLDetailsElement>(`order-card-details-${sibling.variantId}`)!;
+    expect(first).not.toBeNull();
+    expect(second).not.toBeNull();
+    expect(first.firstElementChild?.textContent).toBe("Product details for Alpha Peptide, 10 mg");
+    expect(second.firstElementChild?.textContent).toBe("Product details for Alpha Peptide, 20 mg");
+    click(first.firstElementChild);
+    expect(first.open).toBe(true);
+    expect(second.open).toBe(false);
+    click(second.firstElementChild);
+    expect(first.open).toBe(true);
+    expect(second.open).toBe(true);
+    expect(detailFacts(first).Specification).toBe("10 mg");
+    expect(detailFacts(first)["Maximum request quantity"]).toBe("100");
+    expect(detailFacts(second)).toEqual({
+      Specification: "20 mg",
+      Format: "Powder",
+      "Pack basis": "Per container",
+      "Minimum request quantity": "5",
+      "Maximum request quantity": "25",
+      "Quantity increment": "5",
+    });
+    expect(document.body.textContent).toContain("No products selected yet.");
+  });
+
+  it("states missing detail facts without inferring a form, zero maximum or unlimited availability", async () => {
+    const unstated: AssistedOrderCatalogItem = {
+      ...directRuoItem,
+      productName: "Capsule-labelled material",
+      specification: null,
+      format: null,
+      packBasis: null,
+      maximumQuantity: null,
+    };
+    api.loadAssistedOrderCatalog.mockResolvedValue(catalogPage([unstated]));
+    render();
+    await settle();
+
+    const details = byTestId<HTMLDetailsElement>(`order-card-details-${unstated.variantId}`)!;
+    expect(details).not.toBeNull();
+    expect(details.firstElementChild?.textContent).toBe("Product details for Capsule-labelled material");
+    click(details.firstElementChild);
+    expect(detailFacts(details)).toEqual({
+      Specification: "Not stated in the current catalog",
+      Format: "Not stated in the current catalog",
+      "Pack basis": "Not stated in the current catalog",
+      "Minimum request quantity": "1",
+      "Maximum request quantity": "Not stated in the current catalog",
+      "Quantity increment": "1",
+    });
+    expect(details.textContent).not.toMatch(/unlimited|in stock|maximum request quantity0/iu);
+    expect(api.submitAssistedOrder).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    directRuoItem,
+    careItem,
+    pricePendingItem,
+    pendingItem,
+    heldItem,
+  ])("keeps $workflowMode price, warnings and actions outside read-only details", async (item) => {
+    api.loadAssistedOrderCatalog.mockResolvedValue(catalogPage([item]));
+    render();
+    await settle();
+
+    const card = byTestId(`order-card-${item.variantId}`)!;
+    const details = byTestId<HTMLDetailsElement>(`order-card-details-${item.variantId}`)!;
+    expect(card).not.toBeNull();
+    expect(details).not.toBeNull();
+    click(details.firstElementChild);
+    expect(details.open).toBe(true);
+    expect(details.querySelector("a, button, input")).toBeNull();
+    expect(Array.from(details.querySelectorAll("dt"), (term) => term.textContent)).not.toContain("Price");
+    const outsideDetails = card.cloneNode(true) as HTMLElement;
+    outsideDetails.querySelector("details")?.remove();
+    expect(outsideDetails.querySelector("h3")?.textContent).toBe(item.productName);
+    expect(outsideDetails.textContent).toContain(item.specification);
+    if (item.researchUseOnly) {
+      expect(outsideDetails.textContent).toContain("Not for human or veterinary use.");
+    }
+
+    if (item.workflowMode === "provider_request") {
+      // This fixture intentionally carries numeric cents. Neither an open nor
+      // a closed disclosure may turn that into public Care pricing.
+      expect(item.unitPriceCents).toBe(2500);
+      expect(card.textContent).not.toContain("$25.00");
+      expect(outsideDetails.textContent).toContain("Ask the Care team about pricing");
+      expect(details.textContent).toContain("Care options and quantities require separate provider review.");
+      expect(detailFacts(details)).toEqual({ Specification: "10 mg", Format: "Vial", "Pack basis": "Per vial" });
+      expect(details.textContent).not.toContain("Request quantities only");
+      expect(byTestId(`order-card-add-${item.variantId}`)).toBeNull();
+      expect(byTestId<HTMLAnchorElement>(`order-card-care-cta-${item.variantId}`)?.getAttribute("href")).toBe("/care");
+    } else {
+      expect(details.textContent).toContain("Request quantities only, not dosing instructions. Availability is confirmed separately.");
+      expect(outsideDetails.textContent).toContain(item.unitPriceCents === null ? "Price on request" : "$25.00");
+      if (item.workflowMode === "availability_review") {
+        expect(outsideDetails.textContent).toContain("temporarily unavailable or held");
+        expect(byTestId(`order-card-add-${item.variantId}`)).toBeNull();
+        expect(byTestId(`order-card-care-cta-${item.variantId}`)).toBeNull();
+      } else {
+        const add = byTestId<HTMLButtonElement>(`order-card-add-${item.variantId}`);
+        expect(add?.textContent).toBe(item.actionLabel);
+        expect(details.contains(add)).toBe(false);
+        if (item.workflowMode === "request_activation") {
+          expect(outsideDetails.textContent).toContain("Xenios will review availability, classification");
+        }
+        click(add);
+        expect(card.querySelector<HTMLInputElement>('input[type="number"]')?.value).toBe(String(item.minimumQuantity));
+      }
+    }
+    expect(api.submitAssistedOrder).not.toHaveBeenCalled();
+  });
+
+  it("does not turn embedded product inspection into authority to continue the request", async () => {
+    render({ embedded: true, continuationEnabled: false });
+    await settle();
+    const details = byTestId<HTMLDetailsElement>(`order-card-details-${directRuoItem.variantId}`)!;
+    expect(details).not.toBeNull();
+    click(details.firstElementChild);
+    expect(details.open).toBe(true);
+    expect(byTestId("order-contact-name")).toBeNull();
+    expect(byTestId("order-submit")).toBeNull();
+    expect(document.getElementById("order-continuation-gate")?.textContent).toContain("Complete the required agreement and account checks");
+    expect(document.body.textContent).toContain("No products selected yet.");
+    expect(api.submitAssistedOrder).not.toHaveBeenCalled();
+  });
+
   it("keeps Care products out of the research request path", async () => {
     render();
     await settle();
@@ -353,11 +570,17 @@ describe("AssistedOrderPage", () => {
     render();
     await settle();
     expect(byTestId(`order-card-${directRuoItem.variantId}`)).not.toBeNull();
+    const originalDetails = byTestId<HTMLDetailsElement>(`order-card-details-${directRuoItem.variantId}`)!;
+    expect(originalDetails).not.toBeNull();
+    click(originalDetails.firstElementChild);
+    expect(originalDetails.open).toBe(true);
 
     typeInto(byTestId<HTMLInputElement>("order-filter-search"), "Pending");
     await settle(230);
     expect(byTestId("order-catalog-skeletons")).not.toBeNull();
     expect(byTestId(`order-card-${directRuoItem.variantId}`)).toBeNull();
+    expect(byTestId(`order-card-details-${directRuoItem.variantId}`)).toBeNull();
+    expect(originalDetails.isConnected).toBe(false);
     const obsoleteSignal = api.loadAssistedOrderCatalog.mock.calls.at(-1)?.[1] as AbortSignal;
     expect(obsoleteSignal.aborted).toBe(false);
 
@@ -367,6 +590,8 @@ describe("AssistedOrderPage", () => {
     await settle();
     expect(byTestId(`order-card-${pendingItem.variantId}`)).not.toBeNull();
     expect(byTestId(`order-card-${directRuoItem.variantId}`)).toBeNull();
+    expect(byTestId<HTMLDetailsElement>(`order-card-details-${pendingItem.variantId}`)?.open).toBe(false);
+    expect(byTestId(`order-card-details-${directRuoItem.variantId}`)).toBeNull();
   });
 
   it("shows a customer-safe retry state without leaking a raw catalog error", async () => {
@@ -449,6 +674,15 @@ describe("AssistedOrderPage", () => {
     render();
     await settle();
 
+    const details = byTestId<HTMLDetailsElement>(`order-card-details-${bulkItem.variantId}`)!;
+    expect(details).not.toBeNull();
+    click(details.firstElementChild);
+    expect(detailFacts(details)).toMatchObject({
+      "Minimum request quantity": "10",
+      "Maximum request quantity": "100",
+      "Quantity increment": "10",
+    });
+    expect(byTestId(`order-card-${bulkItem.variantId}`)?.querySelector('input[type="number"]')).toBeNull();
     click(byTestId(`order-card-add-${bulkItem.variantId}`));
     const card = byTestId(`order-card-${bulkItem.variantId}`)!;
     const quantity = card.querySelector<HTMLInputElement>('input[type="number"]')!;
@@ -458,6 +692,7 @@ describe("AssistedOrderPage", () => {
     expect(quantity.step).toBe("10");
     click(card.querySelector('button[aria-label="Increase quantity"]'));
     expect(quantity.value).toBe("20");
+    expect(detailFacts(details)["Quantity increment"]).toBe("10");
   });
 
   it("prefills exact server-mapped intent only after the customer chooses Add", async () => {
@@ -573,9 +808,18 @@ describe("AssistedOrderPage", () => {
   it("removes a selected row if a fresh catalog response makes it held", async () => {
     api.loadAssistedOrderCatalog
       .mockResolvedValueOnce(catalogPage([directRuoItem]))
-      .mockResolvedValueOnce(catalogPage([{ ...directRuoItem, workflowMode: "availability_review" }]));
+      .mockResolvedValueOnce(catalogPage([{
+        ...directRuoItem,
+        workflowMode: "availability_review",
+        specification: "20 mg reviewed variant",
+        format: null,
+        maximumQuantity: 7,
+      }]));
     render();
     await settle();
+    const originalDetails = byTestId<HTMLDetailsElement>(`order-card-details-${directRuoItem.variantId}`)!;
+    expect(originalDetails).not.toBeNull();
+    click(originalDetails.firstElementChild);
     click(byTestId(`order-card-add-${directRuoItem.variantId}`));
 
     typeInto(byTestId<HTMLInputElement>("order-filter-search"), "Alpha");
@@ -587,6 +831,18 @@ describe("AssistedOrderPage", () => {
     expect(document.body.textContent).toContain("No products selected yet.");
     expect(byTestId("order-estimate")?.textContent).toBe("Price on request");
     expect(byTestId(`order-card-add-${directRuoItem.variantId}`)).toBeNull();
+    expect(originalDetails.isConnected).toBe(false);
+    const currentDetails = byTestId<HTMLDetailsElement>(`order-card-details-${directRuoItem.variantId}`)!;
+    expect(currentDetails).not.toBeNull();
+    expect(currentDetails.open).toBe(false);
+    click(currentDetails.firstElementChild);
+    expect(detailFacts(currentDetails)).toMatchObject({
+      Specification: "20 mg reviewed variant",
+      Format: "Not stated in the current catalog",
+      "Maximum request quantity": "7",
+    });
+    expect(currentDetails.textContent).not.toContain("10 mg");
+    expect(currentDetails.querySelector("a, button, input")).toBeNull();
   });
 
   it("does not expose a raw acknowledgment configuration failure", async () => {
