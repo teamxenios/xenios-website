@@ -226,8 +226,12 @@ try{
 
   const direct=`insert into ${prefix}provider_settlements(request_id,journal_id,source_id,adapter_revision,expected_scope,policy_revision,actor_auth_user_id)
     values('${request(1301)}','${db.journals.get(1301).journalId}','${sourceId}','${adapterRevision}',${j(scope)},'${settlementPolicyRevision}','${actor}');`;
+  // Default COMMIT checks may report the missing observation FK first. Prove
+  // that independent refusal, then explicitly check the canonical complete
+  // constraint before other deferred constraints, in both replication modes.
+  await unchangedRefusal(1301,`begin;${direct}commit;`,'23503');
   for(const replica of [false,true]){
-    await unchangedRefusal(1301,`begin;${replica?'set local session_replication_role=replica;':''}${direct}commit;`,...expected('SETTLEMENT_CONFLICT'));
+    await unchangedRefusal(1301,`begin;${replica?'set local session_replication_role=replica;':''}${direct}set constraints adp03_settlement_complete immediate;commit;`,...expected('SETTLEMENT_CONFLICT'));
     await db.refused(`begin;${replica?'set local session_replication_role=replica;':''}insert into ${prefix}provider_settlement_policies(source_id,policy_revision,capture_semantics,granted_by)
       values('${sourceId}','synthetic-invalid','single_full_capture',' padded actor ');commit;`,...expected('SETTLEMENT_GRANT_REQUIRED'));
     await db.refused(`begin;${replica?'set local session_replication_role=replica;':''}insert into ${prefix}provider_settlement_grants(source_id,auth_user_id,actor_label,granted_by)
