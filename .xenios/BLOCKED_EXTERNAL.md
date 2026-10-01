@@ -2,6 +2,17 @@
 
 ## Health provider-neutral continuation, 2026-09-30
 
+2026-10-01 successor c0e25c73 adds bounded ADP-G1 source/account/mode exposure
+isolation. Disposable14groups/27refusals/8races passed;1,368 focused tests,
+typecheck/build/DAG/routes passed with one existing conditional database skip.
+The aggregate is running separately and already has failures. Same-source
+event attribution, G2-G4 and governed refunds remain engineering work, not
+external blockers. F1, owner baseline decisions and historical adoption remain
+held. No managed action occurred. Browser evidence exposed that the separate
+B2B receipt fix is dormant under current clarity redirects, not a mounted
+public fix, and recorded inquiry-heading/header overlap. Neither is reported
+as public-journey acceptance. See the ADPG1 handoff for exact limits.
+
 2026-10-01 report24 reconciliation: reviewer76607458 independently reviewed
 8f240828, closing F4/HIST02 at source. F1 remains external. LENS01 detection
 is corrected locally at510e957 (9groups/11expectedrefusals/6DBs PASS); adoption

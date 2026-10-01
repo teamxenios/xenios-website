@@ -1,0 +1,37 @@
+{
+  "at": "2026-10-01T18:04:51.948Z",
+  "url": "http://127.0.0.1:63145/partners#inquiry",
+  "state": {
+    "clientWidth": 311,
+    "focused": {
+      "id": "",
+      "tag": "BODY"
+    },
+    "header": {
+      "bottom": 69,
+      "height": 69,
+      "left": 0,
+      "right": 311.3333435058594,
+      "top": 0,
+      "width": 311.3333435058594,
+      "x": 0,
+      "y": 0
+    },
+    "heading": {
+      "bottom": 99.88021087646484,
+      "height": 52.79166793823242,
+      "left": 39,
+      "right": 272.3333435058594,
+      "top": 47.08854293823242,
+      "width": 233.33334350585935,
+      "x": 39,
+      "y": 47.08854293823242
+    },
+    "innerHeight": 332,
+    "innerWidth": 319,
+    "overflow": 0,
+    "scrollWidth": 311
+  },
+  "observation": "Install suggestion dismissed locally; inquiry heading remains partly behind fixed header. No claim of passed accessibility or native zoom qualification.",
+  "dom": "- region \"Notifications (F8)\":\n  - list\n- link \"Skip to content\":\n  - /url: \"#site-main\"\n- banner:\n  - link \"Xenios home\":\n    - /url: /\n    - generic: Xenios\n  - link \"Sign In\":\n    - /url: /sign-in\n  - link \"Start Care\":\n    - /url: /care/schedule\n  - button \"Open site menu\": Menu\n- main:\n  - paragraph: PARTNERS\n  - heading \"Become a Xenios partner\" [level=1]\n  - paragraph: For creators, coaches and professionals who want to recommend Xenios and earn commission on eligible orders.\n  - link \"Submit Inquiry\":\n    - /url: /partners#inquiry\n  - link \"Sign In\":\n    - /url: /sign-in\n  - heading \"Referral partners\" [level=2]\n  - list:\n    - generic: \"01\"\n    - heading \"Tell us you're interested\" [level=3]\n    - paragraph: Partner applications open soon. Submit an inquiry for now.\n    - generic: \"02\"\n    - heading \"We review the fit\" [level=3]\n    - paragraph: An inquiry is not an application, account or approval.\n    - generic: \"03\"\n    - heading \"Agreement and activation\" [level=3]\n    - paragraph: If approved later, you receive an agreement and account activation instructions.\n    - generic: \"04\"\n    - heading \"Use your link\" [level=3]\n    - paragraph: Approved partners receive resources and a link for eligible referrals.\n    - generic: \"05\"\n    - heading \"Track activity\" [level=3]\n    - paragraph: The partner workspace shows safe commercial activity and commission under the agreement.\n  - generic: Partner applications open soon. Tell us you're interested and we'll contact you when they do.\n  - form \"Tell us about your interest\":\n    - heading \"Tell us about your interest\" [level=3]\n    - paragraph: Please don't include patient, health, payment, credential or password information.\n    - generic: Name\n    - textbox \"Name\"\n    - generic: Email\n    - textbox \"Email\"\n    - generic: Phone (optional)\n    - textbox \"Phone (optional)\"\n    - generic: Message\n    - textbox \"Message\"\n    - text: Leave this field empty\n    - textbox\n    - button \"Submit Inquiry\"\n  - heading \"Strategic partnerships\" [level=2]\n  - paragraph: Distribution, technology, education or other business relationships.\n  - form \"Tell us about the partnership\":\n    - heading \"Tell us about the partnership\" [level=3]\n    - paragraph: Please don't include patient, health, payment, credential or password information.\n    - generic: Name\n    - textbox \"Name\"\n    - generic: Email\n    - textbox \"Email\"\n    - generic: Phone (optional)\n    - textbox \"Phone (optional)\"\n    - generic: Organization name\n    - textbox \"Organization name\"\n    - generic: Organization website (optional)\n    - textbox \"Organization website (optional)\"\n    - generic: Message\n    - textbox \"Message\"\n    - text: Leave this field empty\n    - textbox\n    - button \"Submit Inquiry\"\n  - heading \"Already approved?\" [level=2]\n  - link \"Activate Account\":\n    - /url: /activate\n  - link \"Sign In\":\n    - /url: /sign-in\n- contentinfo:\n  - link \"Xenios home\":\n    - /url: /\n    - generic: Xenios\n  - paragraph: Care, research products and tools for the professionals who support people's health.\n  - link \"team@xeniostechnology.com\":\n    - /url: mailto:team@xeniostechnology.com\n  - navigation \"Individuals footer links\":\n    - paragraph: Individuals\n    - link \"Start Care\":\n      - /url: /care/schedule\n    - link \"Explore Products\":\n      - /url: /products\n    - link \"How It Works\":\n      - /url: /how-it-works\n    - link \"Check Status\":\n      - /url: /status\n    - link \"FAQ\":\n      - /url: /faq\n  - navigation \"Practices & partners footer links\":\n    - paragraph: Practices & partners\n    - link \"For Practices\":\n      - /url: /practices\n    - link \"Become a Partner\":\n      - /url: /partners\n    - link \"Suppliers\":\n      - /url: /suppliers\n    - link \"Workspace for coaches\":\n      - /url: /workspace\n  - navigation \"Company footer links\":\n    - paragraph: Company\n    - link \"About\":\n      - /url: /about\n    - link \"Careers\":\n      - /url: /careers\n    - link \"Quality\":\n      - /url: /quality\n    - link \"Press\":\n      - /url: /press\n    - link \"Investors\":\n      - /url: /investors\n  - navigation \"Support footer links\":\n    - paragraph: Support\n    - link \"Support\":\n      - /url: /support\n    - link \"Contact\":\n      - /url: /contact\n    - link \"Sign In\":\n      - /url: /sign-in\n  - navigation \"Legal footer links\":\n    - paragraph: Legal\n    - link \"Privacy\":\n      - /url: /privacy\n    - link \"Terms\":\n      - /url: /terms\n    - link \"Research Use Policy\":\n      - /url: /research/policies\n    - link \"Disclosures\":\n      - /url: /disclosures\n    - link \"Accessibility\":\n      - /url: /research/policies/accessibility\n  - paragraph: © 2026 Xenios Technologies, Inc."
+}

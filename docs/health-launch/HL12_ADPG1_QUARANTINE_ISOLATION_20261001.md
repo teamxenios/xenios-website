@@ -9,7 +9,9 @@ Branch: `codex/xenios-health-launch-implementation-20260930`.
 Session: `codex-xenios-health-launch-implementation-20260930`.
 Runtime source: `c0e25c73a0d789829ea213e2ee040c68e06f0a75`.
 Runtime tree: `1771d18bad91b89e95414bebb8b574dc32729687`.
-The preceding component-only source is `c9677cb`; the final runtime includes
+Test-only SHA: `aeae38eb914dc2990bf073b8ea871247c76d4bc8`.
+Release-control SHA: `22f8d390c730460aa3e695f84213de6bd41ea1b2`.
+The preceding component-only source is `c9677cbe2a9a8f64a790c922c96476a072cf1cca`; the final runtime includes
 that form correction and the additive SQL successor.
 
 ## Implemented scope and remaining limits
@@ -30,11 +32,13 @@ uniquely bind provider namespace, account and test/live mode. Claimed request
 metadata never establishes exposure. Revocation, expired leases and terminal
 request status never erase it.
 
-The seventh updated function refuses a first reservation into an already
+The seventh affected business-rule function refuses a first reservation into an already
 quarantined source before insertion. This preserves the otherwise valid
 manual-only order instead of stranding it through a new held attempt. Existing
 request-then-fence locks and READ COMMITTED requirements are retained. Two
-private helpers and one partial source index are added. The exact predecessor
+private helpers and one partial source index are added. The fingerprint and
+integrity functions are additionally advanced for the seal (nine replaced
+functions in total). The exact predecessor
 seal is validated and the effective graph resealed atomically; old migration
 bytes, function OIDs, RPC allowlist and authority response shapes are preserved.
 
@@ -47,19 +51,77 @@ positively establish independent event/object/order binding and retain original
 history; elapsed time, a note, missing observations or a chosen order cannot do
 that. G2-G4 and refund/void/dispute remain open.
 
-The independent public-journey correction binds supplier/partner confirmations
+The legacy B2B component correction binds supplier/partner confirmations
 and clipboard output to the exact submitted email, pathway and summary. An
 editable later draft is not labelled submitted by a delayed response. Same-tab
 duplicate submissions and stale unmount/clipboard completions are guarded.
 This is presentation and mounted-component request ownership, not durable
 network idempotency, transport cancellation or proof of real email delivery.
 The canonical contact endpoint and all business/account authorities are unchanged.
+**The browser pass discovered that this is not a current mounted public-journey
+fix.** App.tsx redirects all four legacy B2B entrypoints to newer clarity pages
+before the Research router. The component regressions mount the form directly;
+they do not prove current /partners behavior. No protected route was changed to
+make this component reachable, and no current public receipt regression closure
+is claimed. The source remains a separately classified legacy-component fix.
 
 ## Local qualification
 
-Qualification is in progress in the separate saved runs. The final receipt
-archive and completed gate results will be recorded before this handoff is
-issued. Existing failed, filtered and diagnostic executions remain distinct.
+The full-suite run is still in progress. Completed clean-checkout checks at
+`8722ece67315a62cd19d8f7e6f8ef1a8ff15a719` are: affected tests 1,368 PASS /
+one existing conditional database SKIP across43 files; typecheck PASS;
+build PASS (1,353 runtime-source and226 production-build files, zero forbidden
+customer-facing em-dash forms); DAG53 PASS; routes462 registrations/453 call
+sites PASS. The CLI protection gate FAIL remains unchanged:37 hard hashes pass,
+static hash mismatch, three seam warnings, plus inherited broad-branch
+out-of-zone paths against origin/main. No baseline or assertion was weakened.
+The final receipt archive and complete aggregate result will be recorded before
+this handoff is issued. Existing failed, filtered and diagnostic runs stay distinct.
+
+Disposable PostgreSQL17.11 run2 passed14 groups,27 refusals and8 real
+explicit-release lock races, including an executed old-M93 reproduction.
+It applied94 first/twice/populated, preserved source hashes and records, and
+removed its exact no-network container. This ran at committed runtime c0e25c73
+with then-uncommitted tests and controls; it is not a clean-checkout claim.
+The harness's subsequent inspect returned an error after successful removal;
+this is not independent continuous resource attestation. The earlier install
+smoke, missing-supplierAssignmentId fixture failure, and TS2322 test-mock typing
+failure remain separate executions, not reclassified passes.
+
+## Browser evidence and open observations
+
+The clean production build was served through actual pageGate/static middleware
+at `http://127.0.0.1:63145/partners#inquiry`, with disabled integration config,
+signed-out viewer fixture, a fresh loopback origin and a private347-file snapshot.
+Distribution inventory SHA256:
+`be74889162cb0c6d0ef3437c9bdf4805bb47a6650a3230218988798b4ec46d53`.
+Launcher SHA256:
+`fe89aae8b3d2eb2d7a26a0ceba7c773086a19f036c67636d9ac723df216b951b`.
+Build receipt SHA256:
+`e280bdfa2433e75d6062acd656edf0992d54f6f74268e3813cf8c70554de687f`.
+
+Chrome confirmed the current clarity inquiry forms and /research/partners
+redirect to /partners. No legacy #b2b-email control was mounted. The initially
+planned delayed legacy receipt check therefore could not qualify that form;
+no POST was attempted. Actual Submit Inquiry navigation focused #inquiry.
+Observed319x332 CSS viewport, document client/scroll311 and horizontal overflow0
+are measurements only: native page zoom is UNVERIFIED, not200% or400% evidence.
+
+JOURNEY-FRAGMENT-01 is an open, newly observed layout issue, not a pass: the
+69px fixed header overlaps the inquiry heading (heading top47.089/bottom99.880).
+The install suggestion initially covered additional content; it was dismissed
+locally and the heading overlap remained. Screenshots and DOM/measurement JSON
+preserve both states. No severity or independent acceptance is inferred.
+The account-support ambiguous-response copy issue is separately queued from
+read-only code inspection; it was not browser-reproduced or repaired in this slice.
+
+The preview was stopped with Ctrl-C. It reported final integrity PASS, exact
+snapshot removal and zero accepted/completed/interrupted/refused synthetic
+contacts. The PTY shell returned exit1 on interruption; it is not a zero-exit
+test. A subsequent read-only check found no process42108/listener63145 and no
+snapshot directory. Existing unrelated previews were not stopped. The preview
+never mounted real Auth, contact delivery, SQL, mail, payment or worker services;
+in-process network denial/CSP is not an OS sandbox or production-CSP proof.
 
 All commands use private Node `v20.19.0`, npm `10.8.2`. The official archive
 SHA-256 remains `be72284c7bc62de07d5a9fd0ae196879842c085f11f7f2b60bf8864c0c9d6a4f`.

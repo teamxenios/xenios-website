@@ -2,6 +2,26 @@
   "schemaVersion": 1,
   "healthProviderNeutral20260930": {
     "status": "NOT_READY_FOR_PRODUCTION_PROMOTION",
+    "currentADPG1Work": {
+      "task": "HEALTH-HL12-ADPG1-QUARANTINE-ISOLATION-20261001",
+      "runtimeSourceSha": "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
+      "runtimeSourceTree": "1771d18bad91b89e95414bebb8b574dc32729687",
+      "testOnlySha": "aeae38eb914dc2990bf073b8ea871247c76d4bc8",
+      "releaseControlSha": "22f8d390c730460aa3e695f84213de6bd41ea1b2",
+      "cleanQualificationHead": "8722ece67315a62cd19d8f7e6f8ef1a8ff15a719",
+      "status": "PARTIAL_G1_LOCAL_SQL_PASS_FULL_SUITE_RUNNING_RELEASE_HELD",
+      "localSql": "Run2 committed runtime with dirty tests/controls PASS14groups27refusals8explicit-release-races1predecessor-reproduction,151.965s wrapper,exit0,PostgreSQL17.11 no-network exact-container cleanup. Raw log7eef3ad5d3ed103188437fcaf479c1ebdd7a9b6e432ff0d534da0948e751f74d. Fixture run1 failure preserved.",
+      "cleanPreflight": "1368PASS1existingConditionalDatabaseSKIP/43files exit0,256.490s; typecheck11.385s/build44.222s PASS.1353source226build zero forbidden forms; DAG53/routes462registrations453callSites PASS. Protection unchanged FAIL37hardpass/staticfail/3seamwarnings plus inherited out-of-zone paths.",
+      "aggregate": "Running from clean8722ece at2026-10-01T18:00:04.245Z, Node20.19.0/npm10.8.2, oneworker/no-fileparallelism, actual dataset reader. Source/tests/controls frozen; only records change. Final counts/exit not yet available. Known protection failures plus pgcrypto test failure under investigation, not a clean result.",
+      "findingDisposition": "Manual-only/unrelated-source contamination corrected; same-source attribution and governed resolution remain open. G2-G4, refund/void/dispute and LENS01 adoption remain unresolved; F1 activation blocked, not engineering.",
+      "legacyComponentScope": "c9677cbe legacy B2B receipt snapshot correction is unit/component tested but not a current mounted public-journey fix. App/static redirect every legacy root to separate clarity InquiryForm; no routing change.",
+      "browser": "Exact production-client loopback Chrome recorded /research/partners redirect and /partners inquiry focus,319x332 CSS/client-scroll311/overflow0; native zoom unknown. Changed legacy form absent, receipt regression NOT browser-qualified. JOURNEY-FRAGMENT-01 heading overlaps fixed header; open unreviewed observation. Preview stopped with integrityPASS and exact snapshot removal; PTY interruption exit1, zero contact posts.",
+      "handoff": "docs/health-launch/HL12_ADPG1_QUARANTINE_ISOLATION_20261001.md",
+      "claudeAccepted": false,
+      "managedQualified": false,
+      "hostedChangesAuthorized": false,
+      "productionMutated": false
+    },
     "currentLENS01Work": {
       "controlSourceSha": "510e957170e044a2d449058567ea6961b6d52eae",
       "testOnlySha": "eab674057ef9ea81bad575e6a330fc25cdeaadf9",
@@ -67,11 +87,11 @@
       "managedQualified": false,
       "productionMutated": false
     },
-    "runtimeSourceSha": "6d64d3e5d90fef9e49d3414244f77f486231b59e",
-    "runtimeSourceTree": "10c6783e01a7b2fe9b1b60693ab501a6a5229ba4",
-    "testOnlySha": "eab674057ef9ea81bad575e6a330fc25cdeaadf9",
-    "releaseControlSha": "510e957170e044a2d449058567ea6961b6d52eae",
-    "currentAggregateStatus": "NOT_RUN_FOR_ADMIN_SESSION_HL01_OR_HL17; PRIOR_ADP03_COMPLETED_19357_PASS_1_FAIL_85_SKIP_EXIT_1_NO_TIMEOUTS_PROTECTED_SEAM_ASSERTION_NOT_SUCCESSOR_PROOF",
+    "runtimeSourceSha": "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
+    "runtimeSourceTree": "1771d18bad91b89e95414bebb8b574dc32729687",
+    "testOnlySha": "aeae38eb914dc2990bf073b8ea871247c76d4bc8",
+    "releaseControlSha": "22f8d390c730460aa3e695f84213de6bd41ea1b2",
+    "currentAggregateStatus": "RUNNING_ADPG1_FROM_CLEAN_8722ece; source/tests/controls frozen, records only. Final counts/exit pending; protection and pgcrypto failures observed, not clean. Prior ADP03 aggregate remains separate.",
     "currentADP01Status": "PUSHED_e9f221c_SOURCE_9c1fe1e_TESTS_8295030_CONTROLS_FINAL_V2_SQL_RUN3_AND_PREFLIGHT_PASS_AGGREGATE18998P1F85S_EXIT1_NO_INDEPENDENT_OR_HOSTED_ACCEPTANCE",
     "currentADP02Status": "PUSHED_27463d7_SOURCE_8f56a7f_TESTS_a16f562_CONTROLS_FINAL_LOCAL_SQL_PASS_CLEANUP_PREFLIGHT1216PASS_TYPECHECK_BUILD_DAG51_ROUTES461_CONTROL51PASS1SKIP_AGGREGATE19149P1F85S_EXIT1_NO_INDEPENDENT_OR_HOSTED_ACCEPTANCE_PRODUCTION_SOURCE_NULL",
     "currentADP02Qualification": {
