@@ -38,384 +38,384 @@ VISUAL	CANONICAL ID	PRODUCT	CURRENT IMAGE OR FALLBACK	IMAGE CLASS	PATHWAY / STAT
 	GRP-0050
 Estradiol
 ESTRADIOL 0.75MG CAPSULE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0051
 Estradiol
 ESTRADIOL 1.25MG CAPSULE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0052
 Estradiol
 ESTRADIOL 1.5MG CAPSULE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0053
 Estradiol
 ESTRADIOL 1.75MG CAPSULE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0054
 Estradiol
 ESTRADIOL 10MG/ML CREAM
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0055
 Estradiol
 ESTRADIOL 1MG TABLET
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	tablet_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	tablet_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0056
 Estradiol
 ESTRADIOL 2MG TABLET
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	tablet_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	tablet_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0057
 Estradiol
 ESTRADIOL 4MG/ML CREAM
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0058
 Estradiol
 ESTRADIOL 6MG/ML CREAM
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0386
 Exosome Cream
 EXOSOME CREAM 30 mL
-	batch0-11-cream_tube_or_pump
-Provisional Class Render	cream_tube_or_pump	RESEARCH ACCESS
+	calibration-03-topical
+Provisional Calibration Class Render	cream_tube_or_pump	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0059
 Finasteride Tablet
 FINASTERIDE TABLET 1MG
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	tablet_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	tablet_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0060
 Finasteride Tablet
 FINASTERIDE TABLET 5MG
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	tablet_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	tablet_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0397
 Follistatin 344
 Follistatin 344 (95%) (1mg)
-	batch0-20-neutral_product_identity
-Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Truth Safe Neutral Render	neutral_product_identity	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0061
 Foxo4-Dri
 FOXO4-DRI 2MG/ML (5ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0370
 Fruits & Greens
 Retail unit / package
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0062
 GHK-Cu
 GHK-CU 1% HAIR RESTORATION SOLUTION 30ML
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	solution_container_neutral	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	solution_container_neutral	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0063
 GHK-Cu
 GHK-CU 10MG/ML (5ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0248
 GHK-Cu
 GHK-Cu 2 mg
-	batch0-07-capsule_bottle
-Provisional Class Render	capsule_bottle	RESEARCH ACCESS
+	calibration-02-bottle
+Provisional Calibration Class Render	capsule_bottle	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0287
 GHK-Cu
 GHK-Cu 100 mg
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Reviewer Directed Neutral Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0288
 GHK-Cu
 GHK-Cu 50 mg
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Reviewer Directed Neutral Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0398
 GHK-Cu
 GHK-Cu (75mg)
-	batch0-20-neutral_product_identity
-Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Truth Safe Neutral Render	neutral_product_identity	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0289
 GHK-Cu + Epithalon
 GHK-Cu 50 mg + EPITHALON 10 mg
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Reviewer Directed Neutral Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0064
 GHK-Cu + Epithalon 10-2Mg + Ml (5Ml)
 GHK-CU/EPITHALON 10-2MG/ML (5ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0065
 GHK-Cu + Snap 8 Biocosmetic, Cream (GHK-Cu
 GHK-CU + SNAP 8 BIOCOSMETIC, CREAM (GHK-CU 3% / ESTRIOL 0.3% / SNAP-8 1%) 30GM
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0066
 GHK-Cu + Snap 8 Serum, Gel (GHK-Cu
 GHK-CU + SNAP 8 SERUM, GEL (GHK-CU 3% / SNAP-8 1% / NIACINAMIDE 3%) 30ML
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	packaging_unverified	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	packaging_unverified	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0067
 GHK-Cu Biocosmetic, Cream (GHK-Cu
 GHK-CU BIOCOSMETIC, CREAM (GHK-CU 3% / ESTRIOL 0.3%) 30GM
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0068
 GHK-Cu Firming Serum, Gel (GHK-Cu
 GHK-CU FIRMING SERUM, GEL (GHK-CU 3% / NIACINAMIDE 3%) 30ML
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	packaging_unverified	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	packaging_unverified	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0387
 GHKcu
 GHK-Cu 30 mL
-	batch0-11-cream_tube_or_pump
-Provisional Class Render	cream_tube_or_pump	RESEARCH ACCESS
+	calibration-03-topical
+Provisional Calibration Class Render	cream_tube_or_pump	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0290
 GHRP-2
 GHRP-2 10 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0291
 GHRP-2
 GHRP-2 5 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0391
 GHRP-2 + Tesamorelin + MGF + Ipamorelin
 4X Blend GHRP-2 (5mg) / Tesamorelin (5mg) / MGF (500mcg) / Ipamorelin (2.5mg)
-	batch0-20-neutral_product_identity
-Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Truth Safe Neutral Render	neutral_product_identity	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0292
 GHRP-6
 GHRP-6 10 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0293
 GHRP-6
 GHRP-6 5 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0371
 GI Defend
 Retail unit / package
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0294
 GLOW (BPC-157 + TB-500 + GHK-Cu)
 BPC-157 10 mg + TB-500 10 mg + GHK-Cu 50 mg
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Reviewer Directed Neutral Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0399
 GLOW (GHK-Cu + BPC-157 + TB-500)
 GLOW GHK-Cu(27mg) / BPC-157 (5mg) / TB-500 (10mg)
-	batch0-20-neutral_product_identity
-Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Truth Safe Neutral Render	neutral_product_identity	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0069
 Glutathione
 GLUTATHIONE 200MG/ML (10ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0070
 Glutathione
 GLUTATHIONE 200MG/ML (30ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0295
 Glutathione
 GLUTATHIONE 1500 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0296
 Glutathione
 GLUTATHIONE 500 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0424
 Glutathione
 GLUTATHIONE 600 mg
-	batch0-20-neutral_product_identity
-Provisional Identity Neutral Render	peptide_lyophilized_vial	BINDING PENDING
+	calibration-06-unverified-identity
+Provisional Calibration Identity Neutral Render	peptide_lyophilized_vial	BINDING PENDING
 Pricing not released	Provisional
 Exact render missing	Unbound
 
 	GRP-0071
 Glycine
 GLYCINE 50MG/ML (10ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0072
 Gonadorelin
 GONADORELIN 200MCG/ML (5ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0297
 Gonadorelin
 GONADORELIN 5 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0400
 Gonadorelin
 Gonadorelin (10mg)
-	batch0-20-neutral_product_identity
-Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Truth Safe Neutral Render	neutral_product_identity	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0298
 HCG
 HCG 10,000 IU
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0299
 HCG
 HCG 5000 IU
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0401
 HCG
 HCG(120000iu)
-	batch0-20-neutral_product_identity
-Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Truth Safe Neutral Render	neutral_product_identity	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 Evidence page 3 of 9, rows 97-144 of 423.

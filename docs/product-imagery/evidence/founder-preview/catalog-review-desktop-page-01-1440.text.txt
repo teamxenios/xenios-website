@@ -38,384 +38,384 @@ VISUAL	CANONICAL ID	PRODUCT	CURRENT IMAGE OR FALLBACK	IMAGE CLASS	PATHWAY / STAT
 	GRP-0001
 5-Amino-1Mq
 5-AMINO-1MQ 5MG/ML (5ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0256
 5-Amino-1Mq
 5-AMINO-1MQ 10 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0243
 5-Amino-1MQ
 5-AMINO-1MQ 50 mg
-	batch0-07-capsule_bottle
-Provisional Class Render	capsule_bottle	RESEARCH ACCESS
+	calibration-02-bottle
+Provisional Calibration Class Render	capsule_bottle	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0362
 Acetic Acid 0.6%
 ACETIC ACID 0.6% 5 mL
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	oral_liquid_neutral	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Reviewer Directed Neutral Render	oral_liquid_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0002
 Anastrozole
 ANASTROZOLE 0.25MG CAPSULE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0003
 Anastrozole
 ANASTROZOLE 0.5MG CAPSULE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0004
 Anastrozole
 ANASTROZOLE 1MG CAPSULE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0005
 Anastrozole Tablet
 ANASTROZOLE TABLET 1MG
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	tablet_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	tablet_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0366
 Annatto Pro 125
 Retail unit / package
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0006
 Aod-9604
 AOD-9604 1.2MG/ML (6MG/5ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0007
 Aod-9604
 AOD-9604 300MCG TROCHE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	troche_container	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	troche_container	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0260
 Aod-9604
 AOD-9604 10 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0261
 AOD-9604
 AOD-9604 5 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0008
 Aod-9604 + MOTS-C + Tesamorelin + Ipamorelin
 AOD-9604/MOTS-C/TESAMORELIN/IPAMORELIN 1.2MG-2MG-2MG-2MG/ML (5ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0009
 Ara 290
 ARA 290 6MG/ML (5ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0257
 ARA-290
 ARA-290 10 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0258
 ARA-290
 ARA-290 15 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0259
 ARA-290
 ARA-290 5 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0010
 Ascorbic Acid
 ASCORBIC ACID 500MG/ML INJ. (10ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	injectable_solution_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	injectable_solution_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0011
 Ascorbic Acid
 ASCORBIC ACID 500MG/ML INJ. (30ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	injectable_solution_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	injectable_solution_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0244
 BAM15
 BAM15 500 mcg
-	batch0-23-quote_only_neutral
-Provisional State Safe Render	capsule_bottle	QUOTE ONLY
+	calibration-05-restrictive-state
+Provisional Calibration State Render	capsule_bottle	QUOTE ONLY
 Price on request	Provisional
 Exact render missing	Unbound
 
 	GRP-0392
 BDNF
 BDNF (Brain-derived neurotrophic factor) (10mg)
-	batch0-20-neutral_product_identity
-Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Truth Safe Neutral Render	neutral_product_identity	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0019
 Benzocaine
 BENZOCAINE 20% / LIDOCAINE 10% / TETRACAINE 10% TOPICAL CREAM 60ML PUMP
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0020
 Bi-Est
 BI-EST 1.25MG (80/20) CAPSULE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0021
 Bi-Est
 BI-EST 2.5MG (80/20) CAPSULE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0022
 Bi-Est
 BI-EST 5MG (50/50) CAPSULE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0023
 Bi-Est
 BI-EST 5MG (80/20) CAPSULE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0024
 Bi-Est
 BI-EST 6MG (80/20) CAPSULE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0025
 Bi-Est (80 + 20)
 BI-EST (80/20) 2MG/ML CREAM
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0026
 Bi-Est (80 + 20)
 BI-EST (80/20) 3MG/ML CREAM
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0027
 Bi-Pro-Test Cream
 BI-PRO-TEST CREAM 0.25MG/100MG/0.25MG/GM
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0028
 Bi-Pro-Test Cream
 BI-PRO-TEST CREAM 0.25MG/100MG/1MG/GM
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0029
 Biotin
 BIOTIN 10MG/ML (10ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0246
 Blend BPC-157 + TB-500
 BLEND BPC-157 + TB-500 500/500 mcg
-	batch0-07-capsule_bottle
-Provisional Class Render	capsule_bottle	RESEARCH ACCESS
+	calibration-02-bottle
+Provisional Calibration Class Render	capsule_bottle	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0012
 BPC-157
 BPC-157 3MG/ML (5ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0013
 BPC-157
 BPC-157 500MCG CAPSULE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0245
 BPC-157
 BPC-157 500 mcg
-	batch0-07-capsule_bottle
-Provisional Class Render	capsule_bottle	RESEARCH ACCESS
+	calibration-02-bottle
+Provisional Calibration Class Render	capsule_bottle	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0262
 BPC-157
 BPC-157 10 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0263
 BPC-157
 BPC-157 15 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0264
 BPC-157
 BPC-157 5 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0393
 BPC-157
 BPC-157 (20mg)
-	batch0-20-neutral_product_identity
-Provisional Class Render	neutral_product_identity	RESEARCH ACCESS
+	calibration-06-unverified-identity
+Provisional Calibration Truth Safe Neutral Render	neutral_product_identity	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0014
 BPC-157 + KPV
 BPC-157/KPV 500MCG-500MCG CAPSULE
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0265
 BPC-157 + TB-500
 BPC-157 10 mg + TB-500 10 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0266
 BPC-157 + TB-500
 BPC-157 15 mg + TB-500 15 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0267
 BPC-157 + TB-500
 BPC-157 5 mg + TB-500 5 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	calibration-01-vial
+Provisional Calibration Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0015
 BPC-157 + TB-500 + KPV + GHK-Cu 3-3-3-10Mg + Ml (5Ml)
 BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0016
 BPC-157 + TB-500 + KPV 3-3-3Mg + Ml (No Copper) (5Ml)
 BPC-157/TB500/KPV 3-3-3MG/ML (NO COPPER) (5ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0017
 BPC-157 + TB-500 3-3Mg + Ml (5Ml)
 BPC-157/TB500 3-3MG/ML (5ML)
-	batch0-20-neutral_product_identity
-Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
+	calibration-04-care-state
+Provisional Calibration Reviewer Directed State Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 Evidence page 1 of 9, rows 1-48 of 423.

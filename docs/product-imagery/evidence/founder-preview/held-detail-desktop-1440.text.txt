@@ -30,7 +30,7 @@ This identity remains visible for review but is not transaction-ready. This stat
 
 Prototype action only
 Catalog visibility does not establish availability, suitability, or purchase eligibility.
-The card and this detail view use the same canonical identity and Batch 0 asset job: batch0-22-held_neutral.
+The card and this detail view use the same canonical identity and private visual source job: calibration-05-restrictive-state.
 No package, manufacturer, certification, clinical benefit, or partner relationship is asserted.
 
 SAME CATEGORY

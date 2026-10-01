@@ -50,7 +50,7 @@ Help, recovery, and support
 06 / INTERNAL VISUAL QA
 ALL 423 TARGETS
 Dense grid: ID / name / visual / class / status / pathway / finality
-Batch 0 contact sheet
+Calibration contact sheet + preserved Batch 0 evidence
 Batch 1 candidate ledger
 
 Private structure study. Not production.

@@ -1,0 +1,17 @@
+body { margin: 0; background: #100f0f; color: #f5f0e8; }
+.calibration-shell { max-width: 1320px; margin: 0 auto; padding: 42px 32px 64px; }
+.calibration-kicker { color: #b8aaa0; letter-spacing: .18em; text-transform: uppercase; font-size: 12px; }
+.calibration-header { display: grid; gap: 12px; margin-bottom: 30px; }
+.calibration-header h1 { margin: 0; font-size: clamp(34px, 5vw, 64px); line-height: .98; }
+.calibration-header p { margin: 0; color: #cfc3b8; max-width: 840px; }
+.calibration-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.calibration-card { overflow: hidden; border: 1px solid #3a3431; border-radius: 24px; background: #191716; box-shadow: 0 28px 80px rgba(0,0,0,.3); }
+.calibration-card img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.calibration-card__copy { display: grid; gap: 6px; padding: 18px 20px 22px; }
+.calibration-card p, .calibration-card h2, .calibration-card small { margin: 0; }
+.calibration-card p { color: #aa9d94; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
+.calibration-card h2 { font-size: 18px; text-transform: capitalize; }
+.calibration-card small { color: #9d9189; line-height: 1.35; }
+.calibration-boundary { margin-top: 22px; padding: 18px 20px; border-radius: 18px; background: #211d1b; color: #cfc3b8; }
+@media (max-width: 900px) { .calibration-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .calibration-shell { padding: 24px 16px 40px; } .calibration-grid { grid-template-columns: 1fr; } }

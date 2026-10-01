@@ -112,6 +112,8 @@ function safeName(value) {
 function plannedCaptures(data) {
   const representative = data.representativeCanonicalIds;
   const captures = [
+    { name: "calibration-contact-sheet-desktop", path: "/founder-preview/calibration.html", width: 1440, height: 1000, fullPage: true },
+    { name: "calibration-contact-sheet-mobile-390", path: "/founder-preview/calibration.html", width: 390, height: 844, fullPage: true },
     { name: "wireframe-desktop", path: "/founder-preview/wireframe.html", width: 1440, height: 1000, fullPage: true },
     { name: "wireframe-mobile-390", path: "/founder-preview/wireframe.html", width: 390, height: 844, fullPage: false },
     { name: "home-desktop", path: "/founder-preview/index.html?view=home", width: 1440, height: 1000, fullPage: true },
@@ -262,7 +264,7 @@ export async function captureFounderPreview() {
       }))()`);
       assert.equal(state.ready.customerTargets, 423);
       assert.ok(
-        ["home", "products", "featured", "detail", "care", "journeys", "coming", "review", "wireframe"].includes(
+        ["home", "products", "featured", "detail", "care", "journeys", "coming", "review", "wireframe", "calibration"].includes(
           state.ready.view,
         ),
         `${planned.name} did not expose a recognized preview view`,

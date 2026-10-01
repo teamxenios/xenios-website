@@ -1,0 +1,36 @@
+PRIVATE INTERNAL ART-DIRECTION GATE
+One system. Six truth-safe studies.
+
+Fixed camera, scale, crop, background, lighting and label treatment. These studies calibrate visual direction only; they are not exact product assets, Product Control approval, publication approval or runtime authority.
+
+CALIBRATION-01-VIAL
+
+Lyophilized Vial Form Study
+Private calibration · SHA e04c2e5981ec · not publication approved
+
+CALIBRATION-02-BOTTLE
+
+Capsule Tablet Bottle Form Study
+Private calibration · SHA e3681f630199 · not publication approved
+
+CALIBRATION-03-TOPICAL
+
+Topical Form Study
+Private calibration · SHA dd8510c7ce07 · not publication approved
+
+CALIBRATION-04-CARE-STATE
+
+Care Pathway State Study
+Private calibration · SHA 76c10c66c93f · not publication approved
+
+CALIBRATION-05-RESTRICTIVE-STATE
+
+Held Or Quote Only State Study
+Private calibration · SHA 36bc99f4833d · not publication approved
+
+CALIBRATION-06-UNVERIFIED-IDENTITY
+
+Unknown Unverified Packaging State Study
+Private calibration · SHA 77069db7b832 · not publication approved
+
+No botanicals, spa cues, invented contents, clinic or laboratory setting, third-party branding, price, availability or clinical claim. Batch 1 remains blocked pending named global art-direction review.

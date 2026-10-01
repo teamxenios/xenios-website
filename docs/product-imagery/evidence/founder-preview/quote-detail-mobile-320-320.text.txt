@@ -29,7 +29,7 @@ A reviewed quote is required before any order pathway is available. This static 
 
 Prototype action only
 Catalog visibility does not establish availability, suitability, or purchase eligibility.
-The card and this detail view use the same canonical identity and Batch 0 asset job: batch0-23-quote_only_neutral.
+The card and this detail view use the same canonical identity and private visual source job: calibration-05-restrictive-state.
 No package, manufacturer, certification, clinical benefit, or partner relationship is asserted.
 
 SAME CATEGORY

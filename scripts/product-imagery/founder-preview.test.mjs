@@ -56,17 +56,29 @@ test("applies the exact reviewer substitutions without exposing a rejected Batch
   assert.equal(care.length, 242);
   assert.equal(supplementRetail.length, 20);
   assert.equal(lyophilizedGhkCu.length, 6);
-  assert.ok(care.every((row) => row.image.jobId === "batch0-20-neutral_product_identity"));
+  assert.ok(care.every((row) => row.image.jobId === "calibration-04-care-state"));
   assert.ok(
-    supplementRetail.every((row) => row.image.jobId === "batch0-20-neutral_product_identity"),
+    supplementRetail.every((row) => row.image.jobId === "calibration-06-unverified-identity"),
   );
-  assert.equal(aceticAcid.image.jobId, "batch0-20-neutral_product_identity");
+  assert.equal(aceticAcid.image.jobId, "calibration-06-unverified-identity");
   assert.ok(
-    lyophilizedGhkCu.every((row) => row.image.jobId === "batch0-20-neutral_product_identity"),
+    lyophilizedGhkCu.every((row) => row.image.jobId === "calibration-06-unverified-identity"),
   );
   assert.equal(data.counts.reviewerDirectedNeutralSlots, 269);
   assert.equal(data.counts.rejectedBatch0AssetSlots, 0);
+  assert.equal(data.counts.calibrationRenders, 6);
+  assert.equal(data.counts.calibrationVisualSlots, 423);
+  assert.equal(data.counts.batch0VisualSlots, 0);
+  assert.equal(
+    new Set(
+      data.rows
+        .filter((row) => row.image.sourceLane === "private_calibration")
+        .map((row) => row.image.jobId),
+    ).size,
+    6,
+  );
   assert.ok(data.rows.every((row) => !REJECTED_BATCH0_JOB_IDS.has(row.image.jobId)));
+  assert.ok(data.rows.every((row) => row.image.sourceLane === "private_calibration"));
 });
 
 test("gives every customer target a safe, non-public provisional slot", () => {
@@ -135,7 +147,7 @@ test("prepares exactly 22 Featured owners plus three deterministic diversity job
   assert.ok(data.batch1.every((job) => job.status === "prepared_not_authorized_to_render"));
 });
 
-test("keeps the five-study art-direction calibration plan preparation-only", () => {
+test("keeps the six-study calibration private and blocked from publication or Batch 1", () => {
   const plan = JSON.parse(
     readFileSync(
       join(
@@ -145,18 +157,85 @@ test("keeps the five-study art-direction calibration plan preparation-only", () 
       "utf8",
     ),
   );
-  assert.equal(plan.count, 5);
+  assert.equal(plan.count, 6);
   assert.equal(plan.requiredBeforeBatch1, true);
-  assert.equal(plan.renderAuthorization, false);
+  assert.equal(plan.privateInternalRenderAuthorization, true);
+  assert.equal(plan.calibrationRendered, true);
+  assert.equal(plan.calibrationApproved, false);
+  assert.equal(plan.batch1RenderAuthorization, false);
   assert.equal(plan.publicationAuthorization, false);
+  assert.equal(plan.runtimeIntegrationAuthorization, false);
   assert.deepEqual(
     plan.studies.map((study) => study.archetype),
-    ["vial", "bottle", "topical", "care_treatment", "held_or_coming_soon"],
+    [
+      "lyophilized_vial_form_study",
+      "capsule_tablet_bottle_form_study",
+      "topical_form_study",
+      "care_pathway_state_study",
+      "held_or_quote_only_state_study",
+      "unknown_unverified_packaging_state_study",
+    ],
   );
-  assert.ok(plan.studies.every((study) => study.renderAuthorization === false));
+  assert.ok(plan.studies.every((study) => study.useInPrivatePrototypeAuthorized === true));
   assert.ok(plan.studies.every((study) => study.publicationAuthorization === false));
-  assert.ok(plan.studies.every((study) => /deferred/.test(study.promptStatus)));
-  assert.match(plan.sharedDirection.props, /no botanicals/i);
+  assert.ok(plan.studies.every((study) => study.runtimeIntegrationAuthorization === false));
+  assert.ok(plan.studies.every((study) => study.promptStatus === "rendered_from_frozen_prompt"));
+  assert.ok(plan.sharedDirection.globalAvoid.includes("botanical or spa cues"));
+});
+
+test("leads the founder home with calibration while retaining Batch 0 as evidence", () => {
+  const data = buildFounderPreviewData();
+  const previewSource = readFileSync(join(PREVIEW_ROOT, "preview.js"), "utf8");
+  assert.equal(
+    data.calibration.contactSheet.src,
+    "/evidence/calibration-contact-sheet-sha256-017cffad1438.png",
+  );
+  assert.equal(
+    data.batch0ContactSheet.src,
+    "/evidence/batch0-contact-sheet-sha256-02bcd3fa1fb3.png",
+  );
+  assert.match(previewSource, /data\.calibration\.contactSheet\.src/);
+  assert.doesNotMatch(previewSource, /src="\$\{esc\(data\.batch0ContactSheet\.src\)\}"/);
+  assert.match(previewSource, /private visual source job/);
+});
+
+test("records structural C2PA provenance for all six private calibration PNGs", () => {
+  const provenance = JSON.parse(
+    readFileSync(
+      join(
+        REPO_ROOT,
+        "docs/product-imagery/manifests/global-art-direction-calibration-c2pa-provenance.json",
+      ),
+      "utf8",
+    ),
+  );
+  const receipts = JSON.parse(
+    readFileSync(
+      join(
+        REPO_ROOT,
+        "docs/product-imagery/evidence/calibration-render-receipts.json",
+      ),
+      "utf8",
+    ),
+  );
+  const receiptShaByJob = new Map(
+    receipts.observations.map((observation) => [observation.jobId, observation.outputSha256]),
+  );
+  assert.equal(provenance.extraction.officialC2paValidatorUsed, false);
+  assert.match(provenance.extraction.authority, /not_cryptographic_validation/);
+  assert.equal(provenance.summary.assets, 6);
+  assert.equal(provenance.summary.caBxPresent, 6);
+  assert.equal(provenance.summary.sha256MatchesReceipts, 6);
+  assert.equal(provenance.summary.uniqueInstanceIds, 6);
+  assert.equal(provenance.summary.publicOrPublicationApproval, false);
+  assert.ok(
+    provenance.assets.every(
+      (asset) =>
+        asset.outputSha256 === receiptShaByJob.get(asset.jobId) &&
+        asset.generator.name === "ChatGPT" &&
+        asset.generator.model === "gpt-image",
+    ),
+  );
 });
 
 test("records structural C2PA provenance for all 25 Batch 0 PNGs", () => {
@@ -213,7 +292,7 @@ test("records responsive browser proof for each reviewer-directed substitution c
     ["review-fix-ghk-cu-detail-desktop", "GRP-0287"],
     ["review-fix-supplement-detail-desktop", "GRP-0366"],
   ];
-  assert.equal(evidence.counts.captures, 43);
+  assert.equal(evidence.counts.captures, 45);
   assert.equal(evidence.counts.gridCanonicalIdsCovered, 423);
   assert.equal(evidence.counts.brokenImages, 0);
   assert.equal(evidence.counts.severeConsoleMessages, 0);
@@ -222,13 +301,19 @@ test("records responsive browser proof for each reviewer-directed substitution c
     const capture = capturesByName.get(name);
     assert.ok(capture, `Missing reviewer-fix capture ${name}`);
     assert.equal(capture.detailCanonicalId, canonicalId);
-    assert.equal(capture.detailAssetJob, "batch0-20-neutral_product_identity");
+    assert.equal(capture.detailAssetJob, "calibration-06-unverified-identity");
     assert.equal(capture.assertions.horizontalOverflow, false);
   }
 });
 
 test("keeps the preview static, local, noindex, and free of live forms", () => {
-  for (const file of ["index.html", "wireframe.html", "catalog-review.html", "product-detail.html"]) {
+  for (const file of [
+    "index.html",
+    "wireframe.html",
+    "catalog-review.html",
+    "product-detail.html",
+    "calibration.html",
+  ]) {
     const source = readFileSync(join(PREVIEW_ROOT, file), "utf8");
     assert.match(source, /noindex/);
     assert.doesNotMatch(source, /<form\b/i);

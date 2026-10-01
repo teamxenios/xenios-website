@@ -2,7 +2,7 @@
 
 Date: 2026-10-01
 
-Status: reviewer-corrected private prototype awaiting full journey and mobile re-review. It is not production-qualified, publication-approved, runtime-wired, deployed, or a source of commerce, price, Care, availability, or fulfillment truth.
+Status: reviewer-corrected private prototype with a founder-authorized six-study calibration rendered for named Claude direction review. It is not production-qualified, publication-approved, runtime-wired, deployed, or a source of commerce, price, Care, availability, or fulfillment truth.
 
 ## Outcome
 
@@ -42,8 +42,12 @@ These pins are evidence inputs only. The HL-11 candidate remains `FAILED_NOT_REL
 | Batch 0 assets independently approved | 0 |
 | Reviewer-directed neutral substitutions | 269 |
 | Reviewed-rejected assets selected in product slots | 0 |
+| Private calibration studies rendered | 6 |
+| Calibration-backed prototype slots | 423 |
+| Batch 0 assets selected into prototype slots | 0 |
+| Calibration / Batch 1 / publication approvals | 0 / 0 / 0 |
 
-The 25 Batch 0 assets remain private, provisional presentation studies only. None was rerendered, copied into a public tree, or granted product-specific truth. Following Claude's review, all 242 Care rows, all 20 supplement-retail rows, the acetic-acid diluent, and six lyophilized GHK-Cu rows now use the neutral identity study. The build rejects any attempted selection of Batch 0 jobs 06, 09, 16, 19, 21, or 24. Held, quote-only, and binding-pending states remain restrictive. All customer-facing numeric prices remain withheld because this lane has no price-release authority.
+The 25 Batch 0 assets remain private, provisional presentation studies only. None was rerendered, copied into a public tree, or granted product-specific truth, and none is selected into a current prototype slot. Under Samuel's explicit private-internal calibration authorization, six new studies were generated from one fixed visual contract: vial, bottle, topical, Care state, held/quote-only state, and unknown/unverified-packaging state. The prototype uses those studies for all 423 slots. All 242 Care rows, all 20 supplement-retail rows, the acetic-acid diluent, and six lyophilized GHK-Cu rows use truth-safe calibration states. Rows without a matching calibrated form use the neutral unverified-identity state rather than an older green/botanical Batch 0 fallback. The build rejects any attempted selection of Batch 0 jobs 06, 09, 16, 19, 21, or 24. Held, quote-only, and binding-pending states remain restrictive. All customer-facing numeric prices remain withheld because this lane has no price-release authority.
 
 ## Claude review disposition
 
@@ -55,7 +59,7 @@ Claude's exact-SHA review passed the prototype's structure, publication safety, 
 - neutralized lyophilized GHK-Cu rows rather than displaying a false white-powder cue;
 - proves in tests and generated accounting that no reviewed-rejected asset is selected.
 
-This is a response to review, not an approval. Claude still needs to complete the full journey and mobile review of the corrected prototype. Batch 1 remains blocked behind a separately reviewed five-to-six-image calibration set with fixed camera, scale, lighting, brand palette, truthful class subjects, and no botanical props.
+This is a response to review, not an approval. Claude still needs to complete the full journey and mobile review of the corrected prototype and return an exact-SHA decision for the six-study calibration. Batch 1 remains blocked until that named global direction decision is recorded.
 
 ## C2PA provenance capture
 
@@ -65,9 +69,11 @@ Job 19's embedded creation claim precedes the local receipt observation by about
 
 This pass structurally decoded the embedded claims and re-bound them to the repository bytes. It did not cryptographically validate COSE/RFC3161 signatures, certificates, revocation, assertion hashes, or asset binding because a pinned official C2PA validator is not present. The manifest preserves that limitation; authoritative approval still requires a pinned official `c2patool` pass.
 
+The same repository-contained structural decoder was applied to the six calibration PNGs. All six contain one `caBX` manifest, all six repository-byte hashes match their receipts, and all six instance IDs are unique. Embedded generator claims identify `ChatGPT` / `gpt-image` and `OpenAI Media Service API`. This remains structural provenance only: it is not cryptographic validation, rights clearance, Product Control approval, publication approval, or runtime authority.
+
 ## Review surfaces
 
-- Home: founder-level visual direction, Featured, Care, Coming soon, authority boundary, and the Batch 0 contact sheet.
+- Home: founder-level visual direction, Featured, Care, Coming soon, authority boundary, and the current six-study calibration sheet; Batch 0 remains preserved evidence rather than the lead direction.
 - Products: all 423 targets with exact catalog name/specification, truthful price state, pathway/status, CTA, search, and filters.
 - Featured: legacy Featured identities resolved to their current canonical owners.
 - Product detail: the exact same image identity as its source card, with explicit provisional status.
@@ -80,7 +86,7 @@ This pass structurally decoded the embedded claims and re-bound them to the repo
 
 ## Browser evidence
 
-The automated pass produced 43 screenshots. Chromium 149 reported:
+The automated pass produced 45 screenshots. Chromium 149 reported:
 
 - 423 of 423 QA canonical IDs covered
 - 0 broken images
@@ -92,6 +98,8 @@ The automated pass produced 43 screenshots. Chromium 149 reported:
 
 Representative evidence:
 
+- `evidence/founder-preview/calibration-contact-sheet-desktop-1440.png`
+- `evidence/founder-preview/calibration-contact-sheet-mobile-390-390.png`
 - `evidence/founder-preview/home-desktop-1440.png`
 - `evidence/founder-preview/home-tablet-834.png`
 - `evidence/founder-preview/home-mobile-390-390.png`
@@ -124,15 +132,16 @@ The machine-readable capture record is `evidence/founder-preview/founder-preview
 - `GRP-0362` - Acetic Acid 0.6%
 - `GRP-0366` - Annatto Pro 125
 
-This manifest is planning input only. It contains no ready renderer prompt. A separate five-to-six-image global art-direction calibration set must be prepared, rendered only with explicit authority, and approved before Batch 1 can be considered. HL-11 independent acceptance, media/commerce integration acceptance, and exact repository ownership gates must also clear.
+This manifest is planning input only. It contains no Batch 1 renderer prompt. The six-image global art-direction calibration has now been rendered under explicit private-internal authority, but it remains unapproved and cannot authorize Batch 1. HL-11 independent acceptance, media/commerce integration acceptance, and exact repository ownership gates must also clear.
 
-`manifests/global-art-direction-calibration-prepared.json` records the five-study calibration plan requested by Claude: vial, bottle, topical, Care state, and held/coming-soon state. It fixes the intended palette, camera, scale, lighting, no-botanical rule, and truth boundary while setting every render and publication flag to false. It contains no renderer-ready prompt and creates no pixels.
+`prompts/global-art-direction-calibration-v1.json` freezes the exact six renderer prompts and shared visual lock. `manifests/global-art-direction-calibration.json` binds the six outputs to exact SHA-256 values, and `manifests/global-art-direction-calibration-prepared.json` records the rendered-private-review-pending state. Private prototype use is authorized; calibration approval, Batch 1 mass rendering, publication, Product Control approval, and runtime integration all remain false.
 
 ## Run and reproduce locally
 
 Build the catalog projection and prepared Batch 1 manifest:
 
 ```powershell
+node scripts/product-imagery/build-calibration-evidence.mjs
 node scripts/product-imagery/build-founder-preview.mjs
 ```
 
@@ -159,7 +168,7 @@ The server exposes only `docs/product-imagery`, binds only to `127.0.0.1`, denie
 Future integration depends on shared owners, not on this prototype:
 
 1. Claude acceptance of the reviewer-directed prototype corrections and completion of the full journey/mobile review.
-2. A separately approved global art-direction calibration set before any Batch 1 rendering.
+2. Claude's exact-SHA approval or correction decision for the rendered six-study global art-direction calibration before any Batch 1 rendering.
 3. Independent acceptance of the frozen HL-11 catalog candidate.
 4. Acceptance of the media/commerce decoupling slice after its MC-01 failure-mode correction.
 5. A coordinated shared UI lease for one canonical resolver and one resilient image component.

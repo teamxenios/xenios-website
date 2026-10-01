@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "batch_001_exact_identity_jobs_prepared_not_authorized",
-  "generatedAt": "2026-10-01T15:24:00.000Z",
+  "generatedAt": "2026-10-01T16:12:00.000Z",
   "runtimeAuthority": false,
   "renderAuthorization": false,
   "publicationAuthorization": false,
@@ -9,9 +9,9 @@
   "imageryReviewTargetCommit": "184d820a2a20152649b67892ec0a5467857d5290",
   "imageryReviewCommit": "023e9ec8899ded7f66f52ef3c21a799501d98084",
   "calibrationSetRequired": true,
-  "calibrationSetRendered": false,
+  "calibrationSetRendered": true,
   "calibrationSetApproved": false,
-  "gate": "Do not render Batch 1 until a separate five-to-six-image calibration set locks the global art direction, then independent HL-11 catalog acceptance, media-commerce integration acceptance, and exact repository ownership gates all clear.",
+  "gate": "Do not mass-render Batch 1 until Claude accepts the six-image global art-direction calibration, then independent HL-11 catalog acceptance, media-commerce integration acceptance, and exact repository ownership gates all clear.",
   "count": 25,
   "jobs": [
     {

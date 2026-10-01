@@ -29,7 +29,7 @@ Runtime Product Control remains the only price and purchase authority. This stat
 
 Prototype action only
 Catalog visibility does not establish availability, suitability, or purchase eligibility.
-The card and this detail view use the same canonical identity and Batch 0 asset job: batch0-01-peptide_lyophilized_vial.
+The card and this detail view use the same canonical identity and private visual source job: calibration-01-vial.
 No package, manufacturer, certification, clinical benefit, or partner relationship is asserted.
 
 SAME CATEGORY

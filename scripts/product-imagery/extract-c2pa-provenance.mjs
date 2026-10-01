@@ -250,7 +250,7 @@ function embeddedRfc3161GeneralizedTime(coseSign1) {
   };
 }
 
-function extractC2paStructural(pngPath) {
+export function extractC2paStructural(pngPath) {
   const bytes = fs.readFileSync(pngPath);
   const caBx = exactlyOne(
     pngChunks(bytes).filter((chunk) => chunk.type === "caBX"),
@@ -323,7 +323,7 @@ function utcNanoseconds(value) {
   return BigInt(epochMs) * 1_000_000n + BigInt((match[7] || "").padEnd(9, "0").slice(0, 9));
 }
 
-function deltaMilliseconds(later, earlier) {
+export function deltaMilliseconds(later, earlier) {
   const delta = utcNanoseconds(later) - utcNanoseconds(earlier);
   const sign = delta < 0n ? "-" : "";
   const absolute = delta < 0n ? -delta : delta;

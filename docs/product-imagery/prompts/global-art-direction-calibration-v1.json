@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "kind": "private_internal_global_art_direction_calibration_prompts",
+  "authorization": {
+    "receivedAt": "2026-10-01T16:00:00.000Z",
+    "sourceSha256": "e2326d80b0d9abd1d431818672bb1cec749b7ca6ba399444745b8cdff6c2dd12",
+    "scope": "six private internal calibration renders before Batch 1",
+    "publicationAuthorized": false,
+    "runtimeIntegrationAuthorized": false,
+    "batch1MassRenderingAuthorized": false
+  },
+  "sharedLock": {
+    "canvas": "square 1:1 product-card study",
+    "camera": "fixed 20-degree elevated three-quarter view with an 85 mm product-photography perspective",
+    "scale": "primary subject occupies approximately 68 percent of canvas height with generous even padding",
+    "crop": "centered full-object crop; no clipped edges",
+    "background": "seamless deep-taupe to near-black studio cyclorama with no room context",
+    "lighting": "broad warm key from upper left, restrained cool fill from right, soft controlled shadow down-right, subtle purple-to-teal edge reflection only",
+    "surface": "low matte warm-graphite plinth",
+    "labelTreatment": "blank matte-ivory label plane with no words, symbols, dosage, claims, or branding when a label surface is present",
+    "palette": "near-black, deep taupe, warm graphite, restrained brushed metal, ivory highlights, subtle purple-to-teal accent",
+    "globalAvoid": [
+      "leaves",
+      "plants",
+      "herbs",
+      "botanical or spa cues",
+      "wellness props",
+      "liquid splashes",
+      "clinic rooms",
+      "laboratory rooms",
+      "people or hands",
+      "medical crosses",
+      "logos",
+      "brand names",
+      "legible text",
+      "certification marks",
+      "watermarks"
+    ]
+  },
+  "jobs": [
+    {
+      "sequence": 1,
+      "id": "calibration-01-vial",
+      "archetype": "lyophilized_vial_form_study",
+      "prompt": "Use case: product-mockup\nAsset type: private internal Xenios product-card art-direction calibration\nPrimary request: Create one premium studio study of a generic unbranded crimp-vial form. This is a visual-system calibration, not an exact product depiction.\nScene/backdrop: seamless deep-taupe to near-black studio cyclorama; low matte warm-graphite plinth; no room context.\nSubject: one compact opaque warm-graphite glass vial with a restrained brushed-dark-metal crimp cap and one blank matte-ivory label band. Contents must be completely invisible: no powder, cake, liquid, fill line, color, particles, or formulation cue.\nStyle/medium: photorealistic premium controlled product photography.\nComposition/framing: square 1:1; fixed 20-degree elevated three-quarter view; 85 mm product-photography perspective; centered full object; subject about 68 percent of canvas height; generous even padding; no clipped edges.\nLighting/mood: broad warm key from upper left; restrained cool fill from right; soft controlled shadow down-right; subtle purple-to-teal reflection only along one metallic edge.\nColor palette: near-black, deep taupe, warm graphite, restrained brushed metal, ivory highlight, subtle purple-to-teal accent.\nText: none. The label is completely blank.\nConstraints: no claim about contents, manufacturer, pharmacy, sterility, prescription status, certification, or exact package identity. No other objects or props.\nAvoid: leaves, plants, herbs, botanical or spa cues, wellness props, liquid splashes, clinic rooms, laboratory rooms, people, hands, syringes, needles, medical crosses, logos, brand names, legible text, certification marks, watermarks."
+    },
+    {
+      "sequence": 2,
+      "id": "calibration-02-bottle",
+      "archetype": "capsule_tablet_bottle_form_study",
+      "prompt": "Use case: product-mockup\nAsset type: private internal Xenios product-card art-direction calibration\nPrimary request: Create one premium studio study of a generic unbranded capsule-or-tablet bottle form. This is a visual-system calibration, not an exact product depiction.\nScene/backdrop: seamless deep-taupe to near-black studio cyclorama; low matte warm-graphite plinth; no room context.\nSubject: one opaque cylindrical warm-graphite bottle with a simple flush charcoal cap and one blank matte-ivory label band. Contents must be invisible; show no tablets, capsules, fill line, transparent window, carton, or retail decoration.\nStyle/medium: photorealistic premium controlled product photography.\nComposition/framing: square 1:1; fixed 20-degree elevated three-quarter view; 85 mm product-photography perspective; centered full object; subject about 68 percent of canvas height; generous even padding; no clipped edges.\nLighting/mood: broad warm key from upper left; restrained cool fill from right; soft controlled shadow down-right; subtle purple-to-teal reflection only along one cap edge.\nColor palette: near-black, deep taupe, warm graphite, restrained brushed metal, ivory highlight, subtle purple-to-teal accent.\nText: none. The label is completely blank.\nConstraints: no claim about contents, count, formulation, manufacturer, pharmacy, prescription status, certification, or exact package identity. No other objects or props.\nAvoid: loose pills, leaves, plants, herbs, botanical or spa cues, wellness props, liquid splashes, clinic rooms, laboratory rooms, people, hands, medical crosses, logos, brand names, legible text, certification marks, watermarks."
+    },
+    {
+      "sequence": 3,
+      "id": "calibration-03-topical",
+      "archetype": "topical_form_study",
+      "prompt": "Use case: product-mockup\nAsset type: private internal Xenios product-card art-direction calibration\nPrimary request: Create one premium studio study of a generic unbranded topical dispenser form. This is a visual-system calibration, not an exact product depiction.\nScene/backdrop: seamless deep-taupe to near-black studio cyclorama; low matte warm-graphite plinth; no room context.\nSubject: one sealed soft-touch warm-graphite topical tube with a simple charcoal cap and one blank matte-ivory label plane. The tube is opaque; show no cream, gel, liquid, applicator, carton, or usage scene.\nStyle/medium: photorealistic premium controlled product photography.\nComposition/framing: square 1:1; fixed 20-degree elevated three-quarter view; 85 mm product-photography perspective; centered full object; subject about 68 percent of canvas height; generous even padding; no clipped edges.\nLighting/mood: broad warm key from upper left; restrained cool fill from right; soft controlled shadow down-right; subtle purple-to-teal reflection only along one cap edge.\nColor palette: near-black, deep taupe, warm graphite, restrained brushed metal, ivory highlight, subtle purple-to-teal accent.\nText: none. The label plane is completely blank.\nConstraints: no claim about contents, formulation, manufacturer, pharmacy, prescription status, certification, or exact package identity. No other objects or props.\nAvoid: skin, people, hands, leaves, plants, herbs, botanical or spa cues, wellness props, liquid splashes, clinic rooms, laboratory rooms, medical crosses, logos, brand names, legible text, certification marks, watermarks."
+    },
+    {
+      "sequence": 4,
+      "id": "calibration-04-care-state",
+      "archetype": "care_pathway_state_study",
+      "prompt": "Use case: stylized-concept\nAsset type: private internal Xenios product-card art-direction calibration\nPrimary request: Create one premium abstract Care-pathway visual that communicates guided progression without depicting a physical product, provider, patient, clinic, or treatment.\nScene/backdrop: seamless deep-taupe to near-black studio cyclorama; low matte warm-graphite plinth; no room context.\nSubject: two restrained offset graphite portal forms joined by one narrow brushed-metal bridge and one small matte-ivory plane, expressing a governed pathway. The geometry is abstract, architectural only at miniature sculpture scale, and not a real room or facility.\nStyle/medium: photorealistic premium studio photograph of a minimal abstract sculpture.\nComposition/framing: square 1:1; fixed 20-degree elevated three-quarter view; 85 mm product-photography perspective; centered full sculpture; subject about 68 percent of canvas height; generous even padding; no clipped edges.\nLighting/mood: broad warm key from upper left; restrained cool fill from right; soft controlled shadow down-right; subtle purple-to-teal reflection only along the bridge edge.\nColor palette: near-black, deep taupe, warm graphite, restrained brushed metal, ivory highlight, subtle purple-to-teal accent.\nText: none.\nConstraints: pathway-oriented only; no eligibility, provider, appointment, treatment, clinical-result, pharmacy, or availability claim. No other objects or props.\nAvoid: people, faces, hands, medical staff, beds, exam rooms, reception desks, clinic rooms, laboratory rooms, devices, syringes, pills, vials, medical crosses, leaves, plants, herbs, botanical or spa cues, wellness props, logos, brand names, legible text, certification marks, watermarks."
+    },
+    {
+      "sequence": 5,
+      "id": "calibration-05-restrictive-state",
+      "archetype": "held_or_quote_only_state_study",
+      "prompt": "Use case: stylized-concept\nAsset type: private internal Xenios product-card art-direction calibration\nPrimary request: Create one premium abstract restrictive-state visual for a held or quote-only offering, without depicting a product or implying availability.\nScene/backdrop: seamless deep-taupe to near-black studio cyclorama; low matte warm-graphite plinth; no room context.\nSubject: one closed warm-graphite panel inside a restrained dark-metal frame, crossed by one horizontal brushed-metal control band with a small matte-ivory marker. It should communicate intentional pause and governed review, not danger or failure.\nStyle/medium: photorealistic premium studio photograph of a minimal abstract sculpture.\nComposition/framing: square 1:1; fixed 20-degree elevated three-quarter view; 85 mm product-photography perspective; centered full sculpture; subject about 68 percent of canvas height; generous even padding; no clipped edges.\nLighting/mood: broad warm key from upper left; restrained cool fill from right; soft controlled shadow down-right; subtle purple-to-teal reflection only along the control-band edge.\nColor palette: near-black, deep taupe, warm graphite, restrained brushed metal, ivory highlight, subtle purple-to-teal accent.\nText: none.\nConstraints: no product, package, partner, price, quote amount, checkout, availability, fulfillment, or clinical claim. No other objects or props.\nAvoid: padlock icons, warning triangles, stop signs, people, hands, medical objects, clinic rooms, laboratory rooms, leaves, plants, herbs, botanical or spa cues, wellness props, logos, brand names, legible text, certification marks, watermarks."
+    },
+    {
+      "sequence": 6,
+      "id": "calibration-06-unverified-identity",
+      "archetype": "unknown_unverified_packaging_state_study",
+      "prompt": "Use case: stylized-concept\nAsset type: private internal Xenios product-card art-direction calibration\nPrimary request: Create one premium neutral identity visual for an offering whose packaging is unknown or unverified. It must avoid suggesting any container or package shape.\nScene/backdrop: seamless deep-taupe to near-black studio cyclorama; low matte warm-graphite plinth; no room context.\nSubject: a compact arrangement of three nested non-container geometric material samples: one warm-graphite disc, one slim brushed-metal arc, and one small matte-ivory plane. The forms must read as an abstract identity marker, not as a bottle, vial, tube, box, pouch, jar, device, pill, or product.\nStyle/medium: photorealistic premium studio photograph of a minimal abstract sculpture.\nComposition/framing: square 1:1; fixed 20-degree elevated three-quarter view; 85 mm product-photography perspective; centered full sculpture; subject about 68 percent of canvas height; generous even padding; no clipped edges.\nLighting/mood: broad warm key from upper left; restrained cool fill from right; soft controlled shadow down-right; subtle purple-to-teal reflection only along the metal arc edge.\nColor palette: near-black, deep taupe, warm graphite, restrained brushed metal, ivory highlight, subtle purple-to-teal accent.\nText: none.\nConstraints: no package, contents, formulation, manufacturer, pharmacy, prescription, partner, certification, availability, or clinical claim. No other objects or props.\nAvoid: bottles, vials, tubes, boxes, pouches, jars, droppers, devices, pills, liquids, powders, people, hands, clinic rooms, laboratory rooms, leaves, plants, herbs, botanical or spa cues, wellness props, logos, brand names, legible text, certification marks, watermarks."
+    }
+  ]
+}

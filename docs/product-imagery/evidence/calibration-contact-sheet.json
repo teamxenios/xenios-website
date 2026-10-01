@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "kind": "private_internal_calibration_contact_sheet",
+  "generatedAt": "2026-10-01T16:12:00.000Z",
+  "sourceCapture": "docs/product-imagery/evidence/founder-preview/calibration-contact-sheet-desktop-1440.png",
+  "repositoryPath": "docs/product-imagery/evidence/calibration-contact-sheet-sha256-017cffad1438.png",
+  "outputSha256": "017cffad14383a88e3d9b24dcae110ca0456d97511b19546f93a867e48bf4957",
+  "byteSize": 1150507,
+  "width": 1440,
+  "height": 1451,
+  "studies": 6,
+  "publicationAuthorization": false,
+  "runtimeIntegrationAuthorization": false,
+  "reviewStatus": "awaiting_claude_global_art_direction_review"
+}

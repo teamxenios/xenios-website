@@ -44,7 +44,7 @@ Blend BPC-157 + TB-500
 BLEND BPC-157 + TB-500 500/500 mcg
 
 View product
-PROVISIONAL CLASS VISUAL
+PROVISIONAL STATE VISUAL
 CARE PATHWAY
 GRP-0008
 Aod-9604 + MOTS-C + Tesamorelin + Ipamorelin
@@ -92,7 +92,7 @@ CJC-1295 (No DAC) + Ipamorelin
 CJC-1295 (No DAC) 5 mg + IPAMORELIN 5 mg
 
 View product
-PROVISIONAL CLASS VISUAL
+PROVISIONAL STATE VISUAL
 CARE PATHWAY
 GRP-0015
 BPC-157 + TB-500 + KPV + GHK-Cu 3-3-3-10Mg + Ml (5Ml)
@@ -149,15 +149,15 @@ Intentional non-image presentation. Details and transaction pathways are not ann
 i
 Prototype boundary
 
-These 423 slots are joined from the frozen 424-variant core candidate at 4cba24af1d42. The candidate is not independently accepted, Batch 0 is not approved, and media/commerce integration is not accepted. Image state does not create or remove catalog, price, availability, quote, cart, workflow, or fulfillment authority.
+These 423 slots are joined from the frozen 424-variant core candidate at 4cba24af1d42. The candidate is not independently accepted, Batch 0 and the calibration set are not approved, and media/commerce integration is not accepted. Image state does not create or remove catalog, price, availability, quote, cart, workflow, or fulfillment authority.
 
-BATCH 0 VISUAL GRAMMAR
+GLOBAL CALIBRATION
 
-Twenty-five studies, still under review.
+Six studies, ready for direction review.
 
-The contact sheet is evidence, not a public asset library. Exact output hashes and provenance remain in the imagery manifests.
+This fixed-system calibration is the current private art-direction proposal. The original Batch 0 studies and rejected evidence remain preserved in the manifests, but they do not set this direction.
 
-25 of 25 rendered. 0 approved. 0 public. No derivative is authorized for runtime use.
+6 of 6 rendered for private review. 0 approved. 0 public. Batch 1 and runtime use remain blocked.
 XENIOS HEALTH
 
 A private visual model for founder review. Nothing here is a live offer.

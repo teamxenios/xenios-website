@@ -1,0 +1,283 @@
+{
+  "schemaVersion": 1,
+  "kind": "private_internal_calibration_c2pa_structural_provenance",
+  "generatedAt": "2026-10-01T16:12:00.000Z",
+  "sourceReceipts": "docs/product-imagery/evidence/calibration-render-receipts.json",
+  "extraction": {
+    "method": "offline_structural_png_cabx_jumbf_cbor_decode",
+    "decoder": "repository_self_contained_fail_closed_cbor_subset",
+    "decoderSource": "scripts/product-imagery/extract-c2pa-provenance.mjs",
+    "officialC2paValidatorUsed": false,
+    "authority": "structural_evidence_not_cryptographic_validation_or_approval",
+    "limitations": [
+      "PNG CRC values were not revalidated by this extractor.",
+      "COSE and RFC3161 signatures, certificate chains, revocation, assertion hashes, and asset binding were not cryptographically validated.",
+      "A pinned official c2patool remains required for authoritative C2PA validation."
+    ]
+  },
+  "summary": {
+    "assets": 6,
+    "caBxPresent": 6,
+    "sha256MatchesReceipts": 6,
+    "uniqueInstanceIds": 6,
+    "generatorName": "ChatGPT",
+    "generatorModel": "gpt-image",
+    "claimGenerator": "OpenAI Media Service API",
+    "digitalSourceType": "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia",
+    "publicOrPublicationApproval": false
+  },
+  "assets": [
+    {
+      "jobId": "calibration-01-vial",
+      "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-01-vial-sha256-e04c2e5981ec.png",
+      "outputSha256": "e04c2e5981eccdd5753ebfbdd8927e6e04ae804d2e0537eb9eceb5c7e9d3f6fe",
+      "caBxBytes": 21881,
+      "decodedCborBoxes": 4,
+      "instanceId": "xmp:iid:3b813544-287f-4214-9fcd-6125072258f0",
+      "claimGenerator": {
+        "name": "OpenAI Media Service API",
+        "specVersion": "2.2.0",
+        "c2paRsVersion": "0.79.2"
+      },
+      "generator": {
+        "name": "ChatGPT",
+        "model": "gpt-image",
+        "digitalSourceType": "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia"
+      },
+      "actions": [
+        "c2pa.created",
+        "c2pa.converted",
+        "c2pa.watermarked.unbound"
+      ],
+      "actionTimes": {
+        "c2pa.created": "2026-10-01T16:08:11.625425862Z",
+        "c2pa.converted": "2026-10-01T16:08:11.625435508Z",
+        "c2pa.watermarked.unbound": "2026-10-01T16:08:11.621984891Z"
+      },
+      "embeddedRfc3161Timestamp": {
+        "generalizedTime": "20261001160811.637835Z",
+        "iso": "2026-10-01T16:08:11.637835Z",
+        "tokenCount": 1,
+        "coseTag": 18,
+        "detachedPayload": true
+      },
+      "receiptObservation": {
+        "generatedAtObserved": "2026-10-01T16:08:11.8321876Z",
+        "receiptMinusCreatedMs": "206.761738",
+        "receiptMinusEmbeddedRfc3161Ms": "194.352600",
+        "embeddedRfc3161MinusCreatedMs": "12.409138",
+        "authority": "observational_only_not_signed_receipt_time"
+      }
+    },
+    {
+      "jobId": "calibration-02-bottle",
+      "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-02-bottle-sha256-e3681f630199.png",
+      "outputSha256": "e3681f630199c0b5743a589ab29b04ebaf246cece82658fb1b811b79ecaeef7f",
+      "caBxBytes": 23654,
+      "decodedCborBoxes": 4,
+      "instanceId": "xmp:iid:8c338249-c401-4142-9efd-d839bab324fc",
+      "claimGenerator": {
+        "name": "OpenAI Media Service API",
+        "specVersion": "2.2.0",
+        "c2paRsVersion": "0.79.2"
+      },
+      "generator": {
+        "name": "ChatGPT",
+        "model": "gpt-image",
+        "digitalSourceType": "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia"
+      },
+      "actions": [
+        "c2pa.created",
+        "c2pa.converted",
+        "c2pa.watermarked.unbound"
+      ],
+      "actionTimes": {
+        "c2pa.created": "2026-10-01T16:09:14.401482465Z",
+        "c2pa.converted": "2026-10-01T16:09:14.401487441Z",
+        "c2pa.watermarked.unbound": "2026-10-01T16:09:14.399900142Z"
+      },
+      "embeddedRfc3161Timestamp": {
+        "generalizedTime": "20261001160914.417787Z",
+        "iso": "2026-10-01T16:09:14.417787Z",
+        "tokenCount": 1,
+        "coseTag": 18,
+        "detachedPayload": true
+      },
+      "receiptObservation": {
+        "generatedAtObserved": "2026-10-01T16:09:14.3482234Z",
+        "receiptMinusCreatedMs": "-53.259065",
+        "receiptMinusEmbeddedRfc3161Ms": "-69.563600",
+        "embeddedRfc3161MinusCreatedMs": "16.304535",
+        "authority": "observational_only_not_signed_receipt_time"
+      }
+    },
+    {
+      "jobId": "calibration-03-topical",
+      "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-03-topical-sha256-dd8510c7ce07.png",
+      "outputSha256": "dd8510c7ce07525fe9dc1195cb6dc0bf12964167a0a4ebd9923648151a6a4173",
+      "caBxBytes": 21881,
+      "decodedCborBoxes": 4,
+      "instanceId": "xmp:iid:7367985b-ed88-4602-bcae-92262eeb0846",
+      "claimGenerator": {
+        "name": "OpenAI Media Service API",
+        "specVersion": "2.2.0",
+        "c2paRsVersion": "0.79.2"
+      },
+      "generator": {
+        "name": "ChatGPT",
+        "model": "gpt-image",
+        "digitalSourceType": "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia"
+      },
+      "actions": [
+        "c2pa.created",
+        "c2pa.converted",
+        "c2pa.watermarked.unbound"
+      ],
+      "actionTimes": {
+        "c2pa.created": "2026-10-01T16:09:38.976570888Z",
+        "c2pa.converted": "2026-10-01T16:09:38.976574295Z",
+        "c2pa.watermarked.unbound": "2026-10-01T16:09:38.974764341Z"
+      },
+      "embeddedRfc3161Timestamp": {
+        "generalizedTime": "20261001160938.991792Z",
+        "iso": "2026-10-01T16:09:38.991792Z",
+        "tokenCount": 1,
+        "coseTag": 18,
+        "detachedPayload": true
+      },
+      "receiptObservation": {
+        "generatedAtObserved": "2026-10-01T16:09:39.5158697Z",
+        "receiptMinusCreatedMs": "539.298812",
+        "receiptMinusEmbeddedRfc3161Ms": "524.077700",
+        "embeddedRfc3161MinusCreatedMs": "15.221112",
+        "authority": "observational_only_not_signed_receipt_time"
+      }
+    },
+    {
+      "jobId": "calibration-04-care-state",
+      "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-04-care-state-sha256-76c10c66c93f.png",
+      "outputSha256": "76c10c66c93fd3365bd40eefa450ffa01ddb13351dce6ae9aecacefb8abf9750",
+      "caBxBytes": 23654,
+      "decodedCborBoxes": 4,
+      "instanceId": "xmp:iid:4d074f34-2ec7-43be-ac17-7c6affd11d82",
+      "claimGenerator": {
+        "name": "OpenAI Media Service API",
+        "specVersion": "2.2.0",
+        "c2paRsVersion": "0.79.2"
+      },
+      "generator": {
+        "name": "ChatGPT",
+        "model": "gpt-image",
+        "digitalSourceType": "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia"
+      },
+      "actions": [
+        "c2pa.created",
+        "c2pa.converted",
+        "c2pa.watermarked.unbound"
+      ],
+      "actionTimes": {
+        "c2pa.created": "2026-10-01T16:10:01.498164393Z",
+        "c2pa.converted": "2026-10-01T16:10:01.498168429Z",
+        "c2pa.watermarked.unbound": "2026-10-01T16:10:01.496711797Z"
+      },
+      "embeddedRfc3161Timestamp": {
+        "generalizedTime": "20261001161001.511026Z",
+        "iso": "2026-10-01T16:10:01.511026Z",
+        "tokenCount": 1,
+        "coseTag": 18,
+        "detachedPayload": true
+      },
+      "receiptObservation": {
+        "generatedAtObserved": "2026-10-01T16:10:01.8689052Z",
+        "receiptMinusCreatedMs": "370.740807",
+        "receiptMinusEmbeddedRfc3161Ms": "357.879200",
+        "embeddedRfc3161MinusCreatedMs": "12.861607",
+        "authority": "observational_only_not_signed_receipt_time"
+      }
+    },
+    {
+      "jobId": "calibration-05-restrictive-state",
+      "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-05-restrictive-state-sha256-36bc99f4833d.png",
+      "outputSha256": "36bc99f4833d83923cb837664f89e07258ad94fbd04a5ddb7b27ca77ccf655f2",
+      "caBxBytes": 21881,
+      "decodedCborBoxes": 4,
+      "instanceId": "xmp:iid:dfee5b09-26d6-49e1-9bd1-8fef70a1025a",
+      "claimGenerator": {
+        "name": "OpenAI Media Service API",
+        "specVersion": "2.2.0",
+        "c2paRsVersion": "0.79.2"
+      },
+      "generator": {
+        "name": "ChatGPT",
+        "model": "gpt-image",
+        "digitalSourceType": "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia"
+      },
+      "actions": [
+        "c2pa.created",
+        "c2pa.converted",
+        "c2pa.watermarked.unbound"
+      ],
+      "actionTimes": {
+        "c2pa.created": "2026-10-01T16:10:26.142925778Z",
+        "c2pa.converted": "2026-10-01T16:10:26.142927857Z",
+        "c2pa.watermarked.unbound": "2026-10-01T16:10:26.141497762Z"
+      },
+      "embeddedRfc3161Timestamp": {
+        "generalizedTime": "20261001161026.155005Z",
+        "iso": "2026-10-01T16:10:26.155005Z",
+        "tokenCount": 1,
+        "coseTag": 18,
+        "detachedPayload": true
+      },
+      "receiptObservation": {
+        "generatedAtObserved": "2026-10-01T16:10:26.1145985Z",
+        "receiptMinusCreatedMs": "-28.327278",
+        "receiptMinusEmbeddedRfc3161Ms": "-40.406500",
+        "embeddedRfc3161MinusCreatedMs": "12.079222",
+        "authority": "observational_only_not_signed_receipt_time"
+      }
+    },
+    {
+      "jobId": "calibration-06-unverified-identity",
+      "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-06-unverified-identity-sha256-77069db7b832.png",
+      "outputSha256": "77069db7b8324baf4780b37c585926a92b432e2fef24cbcdf019d38782cd7d8b",
+      "caBxBytes": 21881,
+      "decodedCborBoxes": 4,
+      "instanceId": "xmp:iid:ee688fe8-2573-49ed-aa67-1eb13dfc1c0f",
+      "claimGenerator": {
+        "name": "OpenAI Media Service API",
+        "specVersion": "2.2.0",
+        "c2paRsVersion": "0.79.2"
+      },
+      "generator": {
+        "name": "ChatGPT",
+        "model": "gpt-image",
+        "digitalSourceType": "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia"
+      },
+      "actions": [
+        "c2pa.created",
+        "c2pa.converted",
+        "c2pa.watermarked.unbound"
+      ],
+      "actionTimes": {
+        "c2pa.created": "2026-10-01T16:10:51.498951190Z",
+        "c2pa.converted": "2026-10-01T16:10:51.498953229Z",
+        "c2pa.watermarked.unbound": "2026-10-01T16:10:51.497965168Z"
+      },
+      "embeddedRfc3161Timestamp": {
+        "generalizedTime": "20261001161051.512606Z",
+        "iso": "2026-10-01T16:10:51.512606Z",
+        "tokenCount": 1,
+        "coseTag": 18,
+        "detachedPayload": true
+      },
+      "receiptObservation": {
+        "generatedAtObserved": "2026-10-01T16:10:51.3263698Z",
+        "receiptMinusCreatedMs": "-172.581390",
+        "receiptMinusEmbeddedRfc3161Ms": "-186.236200",
+        "embeddedRfc3161MinusCreatedMs": "13.654810",
+        "authority": "observational_only_not_signed_receipt_time"
+      }
+    }
+  ]
+}

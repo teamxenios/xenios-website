@@ -577,8 +577,8 @@
       "branch": "codex/xenios-product-imagery-20260930",
       "state": "active",
       "startedAt": "2026-09-30T19:49:48.411Z",
-      "heartbeatAt": "2026-10-01T15:36:58.841Z",
-      "note": "Claude exact-SHA imagery review 7660745 received. Applied reviewer-directed neutral substitutions with zero rejected asset slots, captured C2PA structural provenance, added preparation-only calibration plan, and regenerated 43 responsive captures. No rendering, public/runtime wiring, deployment, or production mutation."
+      "heartbeatAt": "2026-10-01T18:06:09.288Z",
+      "note": "Rendered six founder-authorized private calibration studies; all 423 prototype slots now use calibration assets; 45 responsive captures clean; awaiting final read-only audit before exact-SHA push."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

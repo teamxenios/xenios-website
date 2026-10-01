@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "kind": "founder_preview_build_record",
-  "generatedAt": "2026-10-01T15:24:00.000Z",
-  "dataSha256": "43bbf1d82f3eb0f502bf8b1f744d1e67b219631e770387b77c5f089ce6ebc1d8",
+  "generatedAt": "2026-10-01T16:12:00.000Z",
+  "dataSha256": "861b736919ffaf81df4f12318e876a3e0112a100621cd25a5a46e286fe46de23",
   "customerTargets": 423,
   "finalExactAssets": 0,
   "provisionalVisualSlots": 423,
@@ -12,6 +12,9 @@
   "reviewerDirectedNeutralSlots": 269,
   "rejectedBatch0AssetSlots": 0,
   "c2paProvenancePath": "docs/product-imagery/manifests/batch-000-c2pa-provenance.json",
+  "calibrationC2paProvenancePath": "docs/product-imagery/manifests/global-art-direction-calibration-c2pa-provenance.json",
+  "calibrationRenders": 6,
+  "calibrationApproved": false,
   "outputRoot": "docs/product-imagery/founder-preview",
   "publicTreeTouched": false,
   "deploymentAuthorized": false

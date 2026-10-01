@@ -113,8 +113,8 @@
         </section>
         <section class="section dark-section">
           <div class="content-width">
-            <div class="section-heading"><div><p class="eyebrow">Batch 0 visual grammar</p><h2>Twenty-five studies, still under review.</h2><p>The contact sheet is evidence, not a public asset library. Exact output hashes and provenance remain in the imagery manifests.</p></div></div>
-            <figure class="contact-sheet"><img src="${esc(data.batch0ContactSheet.src)}" alt="Batch 0 contact sheet with 25 provisional class and state studies" /><figcaption>25 of 25 rendered. 0 approved. 0 public. No derivative is authorized for runtime use.</figcaption></figure>
+            <div class="section-heading"><div><p class="eyebrow">Global calibration</p><h2>Six studies, ready for direction review.</h2><p>This fixed-system calibration is the current private art-direction proposal. The original Batch 0 studies and rejected evidence remain preserved in the manifests, but they do not set this direction.</p></div></div>
+            <figure class="contact-sheet"><a href="calibration.html"><img src="${esc(data.calibration.contactSheet.src)}" alt="Six-study global art-direction calibration contact sheet" /></a><figcaption>6 of 6 rendered for private review. 0 approved. 0 public. Batch 1 and runtime use remain blocked.</figcaption></figure>
           </div>
         </section>
       </div>`;
@@ -129,7 +129,7 @@
   }
 
   function boundaryNote() {
-    return `<aside class="boundary-note"><div class="boundary-icon">i</div><div><h3>Prototype boundary</h3><p>These 423 slots are joined from the frozen 424-variant core candidate at ${esc(data.sources.coreCatalog.commit.slice(0, 12))}. The candidate is not independently accepted, Batch 0 is not approved, and media/commerce integration is not accepted. Image state does not create or remove catalog, price, availability, quote, cart, workflow, or fulfillment authority.</p></div></aside>`;
+    return `<aside class="boundary-note"><div class="boundary-icon">i</div><div><h3>Prototype boundary</h3><p>These 423 slots are joined from the frozen 424-variant core candidate at ${esc(data.sources.coreCatalog.commit.slice(0, 12))}. The candidate is not independently accepted, Batch 0 and the calibration set are not approved, and media/commerce integration is not accepted. Image state does not create or remove catalog, price, availability, quote, cart, workflow, or fulfillment authority.</p></div></aside>`;
   }
 
   function renderProducts() {
@@ -224,7 +224,7 @@
             </div>
             <ul class="disclosure-list">
               <li>Catalog visibility does not establish availability, suitability, or purchase eligibility.</li>
-              <li>The card and this detail view use the same canonical identity and Batch 0 asset job: ${esc(row.image.jobId)}.</li>
+              <li>The card and this detail view use the same canonical identity and private visual source job: ${esc(row.image.jobId)}.</li>
               <li>No package, manufacturer, certification, clinical benefit, or partner relationship is asserted.</li>
             </ul>
           </section>
@@ -332,7 +332,7 @@
         <section class="wire-section" id="wire-detail"><div class="wire-label"><span>03 / Product detail</span><span>Identity continuity</span></div><div class="wire-grid"><div class="wire-box wire-span-6 wire-xl">Same canonical image identity as product card</div><div class="wire-box white wire-span-6 wire-xl">Name / form and strength / price state / pathway / CTA / support / disclosures</div></div></section>
         <section class="wire-section" id="wire-care"><div class="wire-label"><span>04 / Care + request / quote</span><span>Distinct pathways</span></div><div class="wire-grid"><div class="wire-box dark wire-span-4 wire-tall">Care: provider review and eligibility</div><div class="wire-box white wire-span-4 wire-tall">Research request: identity and authority handoff</div><div class="wire-box wire-span-4 wire-tall">Quote-only: no price or cart implied</div><div class="wire-box white wire-span-12">Held state: visible reason and truthful next step</div></div></section>
         <section class="wire-section" id="wire-account"><div class="wire-label"><span>05 / Status + account + support</span><span>After the request</span></div><div class="wire-grid"><div class="wire-box white wire-span-4 wire-tall">Order / request progress timeline</div><div class="wire-box white wire-span-4 wire-tall">Account and order history</div><div class="wire-box white wire-span-4 wire-tall">Help, recovery, and support</div></div></section>
-        <section class="wire-section"><div class="wire-label"><span>06 / Internal visual QA</span><span>All 423 targets</span></div><div class="wire-grid"><div class="wire-box wire-span-12 wire-tall">Dense grid: ID / name / visual / class / status / pathway / finality</div><div class="wire-box white wire-span-6">Batch 0 contact sheet</div><div class="wire-box white wire-span-6">Batch 1 candidate ledger</div></div></section>
+        <section class="wire-section"><div class="wire-label"><span>06 / Internal visual QA</span><span>All 423 targets</span></div><div class="wire-grid"><div class="wire-box wire-span-12 wire-tall">Dense grid: ID / name / visual / class / status / pathway / finality</div><div class="wire-box white wire-span-6">Calibration contact sheet + preserved Batch 0 evidence</div><div class="wire-box white wire-span-6">Batch 1 candidate ledger</div></div></section>
       </div>`;
   }
 

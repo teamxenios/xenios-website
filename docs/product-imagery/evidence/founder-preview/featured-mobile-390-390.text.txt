@@ -24,7 +24,7 @@ BLEND BPC-157 + TB-500 500/500 mcg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL CLASS VISUAL
+PROVISIONAL STATE VISUAL
 CARE PATHWAY
 GRP-0008
 Aod-9604 + MOTS-C + Tesamorelin + Ipamorelin
@@ -84,7 +84,7 @@ CJC-1295 (No DAC) 5 mg + IPAMORELIN 5 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL CLASS VISUAL
+PROVISIONAL STATE VISUAL
 CARE PATHWAY
 GRP-0015
 BPC-157 + TB-500 + KPV + GHK-Cu 3-3-3-10Mg + Ml (5Ml)
@@ -97,7 +97,7 @@ Review Care pathway
 i
 Prototype boundary
 
-These 423 slots are joined from the frozen 424-variant core candidate at 4cba24af1d42. The candidate is not independently accepted, Batch 0 is not approved, and media/commerce integration is not accepted. Image state does not create or remove catalog, price, availability, quote, cart, workflow, or fulfillment authority.
+These 423 slots are joined from the frozen 424-variant core candidate at 4cba24af1d42. The candidate is not independently accepted, Batch 0 and the calibration set are not approved, and media/commerce integration is not accepted. Image state does not create or remove catalog, price, availability, quote, cart, workflow, or fulfillment authority.
 
 XENIOS HEALTH
 

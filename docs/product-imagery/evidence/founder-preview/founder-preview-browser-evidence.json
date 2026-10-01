@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "kind": "private_founder_preview_responsive_browser_evidence",
-  "generatedAt": "2026-10-01T15:24:00.000Z",
+  "generatedAt": "2026-10-01T16:12:00.000Z",
   "privatePrototype": true,
   "productionQualified": false,
   "deploymentAuthorized": false,
@@ -20,7 +20,7 @@
     "externalNetworkAllowed": false
   },
   "counts": {
-    "captures": 43,
+    "captures": 45,
     "customerTargets": 423,
     "gridCanonicalIdsCovered": 423,
     "brokenImages": 0,
@@ -28,6 +28,98 @@
     "networkBoundaryViolations": 0
   },
   "captures": [
+    {
+      "name": "calibration-contact-sheet-desktop",
+      "path": "/founder-preview/calibration.html",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/calibration-contact-sheet-desktop-1440.png",
+        "sha256": "017cffad14383a88e3d9b24dcae110ca0456d97511b19546f93a867e48bf4957",
+        "byteSize": 1150507,
+        "width": 1440,
+        "height": 1451,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 1451,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 1451,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 1451
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/calibration-contact-sheet-desktop-1440.text.txt",
+        "sha256": "a127b12dcf93e1fcdecbba1a65f09e90c53731994ec54a9df707ccc75ce530a9"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 6,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 11
+    },
+    {
+      "name": "calibration-contact-sheet-mobile-390",
+      "path": "/founder-preview/calibration.html",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/calibration-contact-sheet-mobile-390-390.png",
+        "sha256": "0a4eec5af1ab76e20cf82b0781aec6d275ce05289ef05f8554a00fed265566ab",
+        "byteSize": 921355,
+        "width": 390,
+        "height": 3419,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 390,
+          "contentHeightCssPx": 3419,
+          "postContentWidthCssPx": 390,
+          "postContentHeightCssPx": 3419,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 390,
+          "capturedHeightPx": 3419
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/founder-preview/calibration-contact-sheet-mobile-390-390.text.txt",
+        "sha256": "a127b12dcf93e1fcdecbba1a65f09e90c53731994ec54a9df707ccc75ce530a9"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 6,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 0
+    },
     {
       "name": "wireframe-desktop",
       "path": "/founder-preview/wireframe.html",
@@ -39,8 +131,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/wireframe-desktop-1440.png",
-        "sha256": "111b69afd354b02cf72f6c5b9718562938dd99f60e3719585c6d45e5b65079b6",
-        "byteSize": 148463,
+        "sha256": "407844bf9687809b5612d6f0a77c9c9ff26d347227367ab43e991c5048f0f738",
+        "byteSize": 149319,
         "width": 1440,
         "height": 3824,
         "coverage": {
@@ -59,7 +151,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/wireframe-desktop-1440.text.txt",
-        "sha256": "7c8d88830c4a84f7100dfa49bbf4484c089996e038ed2530a1c2704e0cf659eb"
+        "sha256": "e572770381358d9fd5ec38acccfc7d0cf1e3f22f493a7274ab5a62005ae95d68"
       },
       "assertions": {
         "previewReady": true,
@@ -72,7 +164,7 @@
       },
       "detailCanonicalId": null,
       "detailAssetJob": null,
-      "networkRequestCount": 5
+      "networkRequestCount": 0
     },
     {
       "name": "wireframe-mobile-390",
@@ -98,7 +190,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/wireframe-mobile-390-390.text.txt",
-        "sha256": "fd2338f28367d92b6f9ceb7086532cf84edc6ab857d2409accae7395b1e7abb2"
+        "sha256": "e50f6f97c0cdef8855a362f4239a9d4776e85767d5658e75576614c591498bc9"
       },
       "assertions": {
         "previewReady": true,
@@ -124,27 +216,27 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/home-desktop-1440.png",
-        "sha256": "efb508e069b1f703f6ef90625dafbc8b2276b70512f7295ff78efb7998602f66",
-        "byteSize": 2774364,
+        "sha256": "c52635b9e4e6876724810058f1ffb7c87e06212f9be53b7fc9757de8c98c8de0",
+        "byteSize": 2374454,
         "width": 1440,
-        "height": 7400,
+        "height": 7409,
         "coverage": {
           "fullPage": true,
           "truncated": false,
           "layoutStable": true,
           "contentWidthCssPx": 1440,
-          "contentHeightCssPx": 7400,
+          "contentHeightCssPx": 7409,
           "postContentWidthCssPx": 1440,
-          "postContentHeightCssPx": 7400,
+          "postContentHeightCssPx": 7409,
           "maxHeightCssPx": 24000,
           "devicePixelRatio": 1,
           "capturedWidthPx": 1440,
-          "capturedHeightPx": 7400
+          "capturedHeightPx": 7409
         }
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/home-desktop-1440.text.txt",
-        "sha256": "ff89da056e5fe6d3791a18a228261b267898d1c6983fabe1042db5827665f57d"
+        "sha256": "89f5eef86fb9439cc179a4f482b78064491c2095a10ab377dd73da2792dee8fd"
       },
       "assertions": {
         "previewReady": true,
@@ -157,7 +249,7 @@
       },
       "detailCanonicalId": null,
       "detailAssetJob": null,
-      "networkRequestCount": 4
+      "networkRequestCount": 5
     },
     {
       "name": "home-tablet",
@@ -183,7 +275,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/home-tablet-834.text.txt",
-        "sha256": "ff89da056e5fe6d3791a18a228261b267898d1c6983fabe1042db5827665f57d"
+        "sha256": "89f5eef86fb9439cc179a4f482b78064491c2095a10ab377dd73da2792dee8fd"
       },
       "assertions": {
         "previewReady": true,
@@ -209,27 +301,27 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/home-mobile-390-390.png",
-        "sha256": "d0f1d3c5f0aceefbb6d7033e2a763212353ac425c51b23bc75379bf9f01705aa",
-        "byteSize": 1453202,
+        "sha256": "d7cdfee4b494cc93b948afd8629afb30874cbd7abd4cd486c874c28eca5d0c9a",
+        "byteSize": 1469623,
         "width": 390,
-        "height": 10186,
+        "height": 10232,
         "coverage": {
           "fullPage": true,
           "truncated": false,
           "layoutStable": true,
           "contentWidthCssPx": 390,
-          "contentHeightCssPx": 10186,
+          "contentHeightCssPx": 10232,
           "postContentWidthCssPx": 390,
-          "postContentHeightCssPx": 10186,
+          "postContentHeightCssPx": 10232,
           "maxHeightCssPx": 24000,
           "devicePixelRatio": 1,
           "capturedWidthPx": 390,
-          "capturedHeightPx": 10186
+          "capturedHeightPx": 10232
         }
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/home-mobile-390-390.text.txt",
-        "sha256": "8b0a4963fa90b4b9d93f9a82599b4ad188877117406927bb6d536a18333d4417"
+        "sha256": "cd58bcccd60b8eb3f6550d4ca158693228a8665e8216f4d3c954a8d3d50e8efc"
       },
       "assertions": {
         "previewReady": true,
@@ -268,7 +360,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/home-mobile-320-320.text.txt",
-        "sha256": "8b0a4963fa90b4b9d93f9a82599b4ad188877117406927bb6d536a18333d4417"
+        "sha256": "cd58bcccd60b8eb3f6550d4ca158693228a8665e8216f4d3c954a8d3d50e8efc"
       },
       "assertions": {
         "previewReady": true,
@@ -294,8 +386,8 @@
       "fullPage": false,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-desktop-1440.png",
-        "sha256": "de95d23b7d5577159aa660b54be9137ef049de4666c24bc27a4d06d5b3c80a09",
-        "byteSize": 603216,
+        "sha256": "14e557782b78dc132745191edabb5d5cf9ea5f3b0d34fdacfb31d0ff292e564b",
+        "byteSize": 605053,
         "width": 1440,
         "height": 1000,
         "coverage": {
@@ -307,7 +399,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-desktop-1440.text.txt",
-        "sha256": "37992120db2a87ba6f3ce483e6149c9a4d3fdaf8c76f556ec5a78b762870e517"
+        "sha256": "f5b336d2adcdb239914e95ab48574fbd7f67014ee8629aea8aa8efe511c0d5bd"
       },
       "assertions": {
         "previewReady": true,
@@ -320,7 +412,7 @@
       },
       "detailCanonicalId": null,
       "detailAssetJob": null,
-      "networkRequestCount": 7
+      "networkRequestCount": 5
     },
     {
       "name": "products-search-bam15-desktop",
@@ -333,8 +425,8 @@
       "fullPage": false,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-search-bam15-desktop-1440.png",
-        "sha256": "115129821dc3b435bc0874ede19c27e5d5aeb6fca5338d9c5db6da439252f530",
-        "byteSize": 445217,
+        "sha256": "b00db0e96d6bd5313effed7fda4cfeb6c36f95d79277601244a2ff60f21fcc23",
+        "byteSize": 456086,
         "width": 1440,
         "height": 1000,
         "coverage": {
@@ -383,8 +475,8 @@
       "fullPage": false,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-pathway-held-desktop-1440.png",
-        "sha256": "70c5143722f583af1c4e36d7a48257fcf3ca0c16b770df021287d107e85d030d",
-        "byteSize": 450544,
+        "sha256": "6d60df4cbcd9f71142785c5d007c3db2028e945750bdbcb026246b8f0fa17526",
+        "byteSize": 456497,
         "width": 1440,
         "height": 1000,
         "coverage": {
@@ -433,8 +525,8 @@
       "fullPage": false,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-tablet-834.png",
-        "sha256": "e450577b287926072696bd3f6bf3b7ad5e1cafee4055234f7331bda959fad9ae",
-        "byteSize": 430673,
+        "sha256": "6d7416b8392ca8d3e63feadb175df17c8dd789ffe3e7643e081f35bd8496cf13",
+        "byteSize": 441636,
         "width": 834,
         "height": 1112,
         "coverage": {
@@ -446,7 +538,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-tablet-834.text.txt",
-        "sha256": "37992120db2a87ba6f3ce483e6149c9a4d3fdaf8c76f556ec5a78b762870e517"
+        "sha256": "f5b336d2adcdb239914e95ab48574fbd7f67014ee8629aea8aa8efe511c0d5bd"
       },
       "assertions": {
         "previewReady": true,
@@ -459,7 +551,7 @@
       },
       "detailCanonicalId": null,
       "detailAssetJob": null,
-      "networkRequestCount": 7
+      "networkRequestCount": 5
     },
     {
       "name": "products-mobile-390",
@@ -472,8 +564,8 @@
       "fullPage": false,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-mobile-390-390.png",
-        "sha256": "443cd1c1ef9080dbba7bfdf1be142c6e9146281c33b23c72334975695cda1f34",
-        "byteSize": 101043,
+        "sha256": "e0c458e106235211a8e214b106e8a6e63c6330ba168751eb26ad0b126344b9a3",
+        "byteSize": 100461,
         "width": 390,
         "height": 844,
         "coverage": {
@@ -485,7 +577,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-mobile-390-390.text.txt",
-        "sha256": "159e76d74bf0da9400c0917e16dfcdb052d31ef2c4ccd7006443bbf99a46abbe"
+        "sha256": "cd3180b4ddaf172dbb5625c88e57c9b52ca6dc0dd2e1786d3b6000a2722939dd"
       },
       "assertions": {
         "previewReady": true,
@@ -524,7 +616,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/products-mobile-320-320.text.txt",
-        "sha256": "159e76d74bf0da9400c0917e16dfcdb052d31ef2c4ccd7006443bbf99a46abbe"
+        "sha256": "cd3180b4ddaf172dbb5625c88e57c9b52ca6dc0dd2e1786d3b6000a2722939dd"
       },
       "assertions": {
         "previewReady": true,
@@ -550,8 +642,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/featured-desktop-1440.png",
-        "sha256": "a5aad6f72cbfe5d80b07cb4a7015d117c48ac2699143839a7b5817530ff4126e",
-        "byteSize": 1032696,
+        "sha256": "c995fa16a2f6d3d5f4776afe7c403b630471049d5900cfa1031f5d349b168edc",
+        "byteSize": 1042340,
         "width": 1440,
         "height": 2606,
         "coverage": {
@@ -570,7 +662,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/featured-desktop-1440.text.txt",
-        "sha256": "d2a5390b89580ddd03f0f7b72858ec76fadf3dcc1ef9047a37f42cf0cbae8b0b"
+        "sha256": "810618360d41f06090050501b4b58ba7f704b17f17403bfb9bb688ce965c4fb0"
       },
       "assertions": {
         "previewReady": true,
@@ -596,8 +688,8 @@
       "fullPage": false,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/featured-mobile-390-390.png",
-        "sha256": "b1d98cb208a50c58a9b5ba8f824d7877d2e86f6a52fa013b0a575ecb0bc93508",
-        "byteSize": 168537,
+        "sha256": "5bcb3f71cc891b4cf2ac2feaae0e760f1a8ca370afa5e1e29fddfa1a47d739f3",
+        "byteSize": 164767,
         "width": 390,
         "height": 844,
         "coverage": {
@@ -609,7 +701,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/featured-mobile-390-390.text.txt",
-        "sha256": "506512928ef63ccd95c4d51ff0e26b0f6c5e76167d3cdd0c0b63319c01f4db5f"
+        "sha256": "f7ebc1cffe7bf5c69648570b60be6748db493a493846f9dc065ecdc569eb7b35"
       },
       "assertions": {
         "previewReady": true,
@@ -635,8 +727,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-desktop-1440.png",
-        "sha256": "b858e58a2ead6d7688557184cf634fdc9f36da998e538ab2ce0416d770949af8",
-        "byteSize": 1235161,
+        "sha256": "4548d32fb1c3ad7fd65f31ed1cc2ab9fd3e613e59336ecd3efde8117be81b0d4",
+        "byteSize": 1348349,
         "width": 1440,
         "height": 2718,
         "coverage": {
@@ -655,7 +747,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-desktop-1440.text.txt",
-        "sha256": "6d0123779e3f39ca2fbbf404870515dbaa5745881217c3ba3b36125238ce0d22"
+        "sha256": "5ba6bdef43932787f666f1ddbcd830aaa797a9094f1c858e3ecf4b23f10611b3"
       },
       "assertions": {
         "previewReady": true,
@@ -667,7 +759,7 @@
         "networkBoundaryViolations": 0
       },
       "detailCanonicalId": "GRP-0256",
-      "detailAssetJob": "batch0-01-peptide_lyophilized_vial",
+      "detailAssetJob": "calibration-01-vial",
       "networkRequestCount": 0
     },
     {
@@ -681,8 +773,8 @@
       "fullPage": false,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-tablet-834.png",
-        "sha256": "83c24a1cd40556c02f1b55498656557304d1894a677b4fa906190c151e174121",
-        "byteSize": 646932,
+        "sha256": "033db14d3dfb2e17573557f8fa23692f25b99274eb8af7b690395fb93ce863fa",
+        "byteSize": 719266,
         "width": 834,
         "height": 1112,
         "coverage": {
@@ -694,7 +786,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-tablet-834.text.txt",
-        "sha256": "6d0123779e3f39ca2fbbf404870515dbaa5745881217c3ba3b36125238ce0d22"
+        "sha256": "5ba6bdef43932787f666f1ddbcd830aaa797a9094f1c858e3ecf4b23f10611b3"
       },
       "assertions": {
         "previewReady": true,
@@ -706,7 +798,7 @@
         "networkBoundaryViolations": 0
       },
       "detailCanonicalId": "GRP-0256",
-      "detailAssetJob": "batch0-01-peptide_lyophilized_vial",
+      "detailAssetJob": "calibration-01-vial",
       "networkRequestCount": 1
     },
     {
@@ -720,8 +812,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-mobile-390-390.png",
-        "sha256": "8a2c2b90d7475c7878be46b295ad0d009aa3f42120a11272bcd9cad263d9323c",
-        "byteSize": 1015765,
+        "sha256": "fa22e6866dfb7fcba4436df58cf93cf668ee57f75dfbe6019bc6fc18fe406891",
+        "byteSize": 1080840,
         "width": 390,
         "height": 4969,
         "coverage": {
@@ -740,7 +832,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-mobile-390-390.text.txt",
-        "sha256": "1b35de41a1059ae270f935186abdeb5743aa782f036c6a5d3a31fbb9160fdf77"
+        "sha256": "5a8c29570ac607a6308c9e9bd4e75b6efe6138e230c309cd896283aa8f1d6989"
       },
       "assertions": {
         "previewReady": true,
@@ -752,7 +844,7 @@
         "networkBoundaryViolations": 0
       },
       "detailCanonicalId": "GRP-0256",
-      "detailAssetJob": "batch0-01-peptide_lyophilized_vial",
+      "detailAssetJob": "calibration-01-vial",
       "networkRequestCount": 0
     },
     {
@@ -766,8 +858,8 @@
       "fullPage": false,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-mobile-320-320.png",
-        "sha256": "bea607c6ab76d7740548996e8d5680fbad31e5ed0f095f0f8a148c137262bec5",
-        "byteSize": 151688,
+        "sha256": "b4539413bc5e2be81f41a46bb8c74b0aec51d302cd1f3add22f3a82f03b88aca",
+        "byteSize": 156914,
         "width": 320,
         "height": 760,
         "coverage": {
@@ -779,7 +871,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/research-detail-mobile-320-320.text.txt",
-        "sha256": "1b35de41a1059ae270f935186abdeb5743aa782f036c6a5d3a31fbb9160fdf77"
+        "sha256": "5a8c29570ac607a6308c9e9bd4e75b6efe6138e230c309cd896283aa8f1d6989"
       },
       "assertions": {
         "previewReady": true,
@@ -791,7 +883,7 @@
         "networkBoundaryViolations": 0
       },
       "detailCanonicalId": "GRP-0256",
-      "detailAssetJob": "batch0-01-peptide_lyophilized_vial",
+      "detailAssetJob": "calibration-01-vial",
       "networkRequestCount": 0
     },
     {
@@ -805,8 +897,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/review-fix-acetic-acid-detail-desktop-1440.png",
-        "sha256": "eb8e244bbd4708f4987680472ffa419604a1eb99334de7f1f4be0d52456f29ed",
-        "byteSize": 1226306,
+        "sha256": "26be982e3d37e407d48db5ce29fd83abc4d5db888e47850d51f2ee0758da5e81",
+        "byteSize": 1538629,
         "width": 1440,
         "height": 2718,
         "coverage": {
@@ -825,7 +917,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/review-fix-acetic-acid-detail-desktop-1440.text.txt",
-        "sha256": "c0e83312b54d128ffa7d26fdac9a2f82b9ab7850c6ce6bcb3f657374a363cfaa"
+        "sha256": "e3ed13ca65691d1ff99e8369ece49db71c7cde42e3856285a50a4254e2f13ffc"
       },
       "assertions": {
         "previewReady": true,
@@ -837,7 +929,7 @@
         "networkBoundaryViolations": 0
       },
       "detailCanonicalId": "GRP-0362",
-      "detailAssetJob": "batch0-20-neutral_product_identity",
+      "detailAssetJob": "calibration-06-unverified-identity",
       "networkRequestCount": 0
     },
     {
@@ -851,8 +943,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/review-fix-ghk-cu-detail-desktop-1440.png",
-        "sha256": "03877cfcfea5bdf2328e56b0e8dbd332b74d81a75db055f75a45a9d4ca6920d2",
-        "byteSize": 1259020,
+        "sha256": "e4129ef380e06c2dac0dab64201606173a15f03d6b2cd40946dcdc2376e3f366",
+        "byteSize": 1562121,
         "width": 1440,
         "height": 2718,
         "coverage": {
@@ -871,7 +963,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/review-fix-ghk-cu-detail-desktop-1440.text.txt",
-        "sha256": "b4079be432fba5a92150cb6469c439cf7c96e453a206c17ddb6c5e43155b5834"
+        "sha256": "63dae4317a091a1a468173c9e1133e4015483c5033f73d2018e13e9021e7daca"
       },
       "assertions": {
         "previewReady": true,
@@ -883,8 +975,8 @@
         "networkBoundaryViolations": 0
       },
       "detailCanonicalId": "GRP-0287",
-      "detailAssetJob": "batch0-20-neutral_product_identity",
-      "networkRequestCount": 0
+      "detailAssetJob": "calibration-06-unverified-identity",
+      "networkRequestCount": 1
     },
     {
       "name": "review-fix-supplement-detail-desktop",
@@ -897,8 +989,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/review-fix-supplement-detail-desktop-1440.png",
-        "sha256": "998213df23fa688dc91228059ff143d461217e6d9904fcd03f0d9a13418ed640",
-        "byteSize": 1290877,
+        "sha256": "2873be11050924c435a84c0021d13669b9ad5d976f40187ddcd0decbea5deac3",
+        "byteSize": 1602827,
         "width": 1440,
         "height": 2739,
         "coverage": {
@@ -917,7 +1009,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/review-fix-supplement-detail-desktop-1440.text.txt",
-        "sha256": "a99b9847297b52e8b5560a71205f0e849df4b24ab211fd86371365e4c41a73ca"
+        "sha256": "31404ff05a2afb0da8dcf3868b370f5efa3de6e2a15206198ce0901d4741aa1a"
       },
       "assertions": {
         "previewReady": true,
@@ -929,7 +1021,7 @@
         "networkBoundaryViolations": 0
       },
       "detailCanonicalId": "GRP-0366",
-      "detailAssetJob": "batch0-20-neutral_product_identity",
+      "detailAssetJob": "calibration-06-unverified-identity",
       "networkRequestCount": 0
     },
     {
@@ -943,8 +1035,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/care-desktop-1440.png",
-        "sha256": "376e38b74c6a6a700d886e3a9cd459f8cb7e2cde4bf2945c3be49044784af1d5",
-        "byteSize": 870277,
+        "sha256": "4b46e399d9f1d792c8e8f494ca6d4897fc2f925c9001cf738422c8478260ca29",
+        "byteSize": 877722,
         "width": 1440,
         "height": 3180,
         "coverage": {
@@ -963,7 +1055,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/care-desktop-1440.text.txt",
-        "sha256": "3fbd0561ef283a8906dbe66353e81d7cbe0482bb15395ca872df1e21940b54bc"
+        "sha256": "3abd9aa7c6c4cec8243f2ceb93521a58e8ad919ca707c4819d6a620f1c20c6d3"
       },
       "assertions": {
         "previewReady": true,
@@ -1002,7 +1094,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/care-mobile-390-390.text.txt",
-        "sha256": "f33e06c131a1a69cc4ec9c770cb3611f5d0a1be6e40933f637b36f534808f07b"
+        "sha256": "80c30bbe155ce0c3fe2922d37bcd6c07017c3803149524ec0f727eb5ec83d107"
       },
       "assertions": {
         "previewReady": true,
@@ -1028,8 +1120,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/held-detail-desktop-1440.png",
-        "sha256": "8cffafe8781f8b073048eda32f33df02374a17ce0d2c06c9d46010aa6ec76fdf",
-        "byteSize": 1262255,
+        "sha256": "32913be8ac109d1b6dfea451138d31a8a0e7f14da9950edcbbfb74da552386f5",
+        "byteSize": 1468417,
         "width": 1440,
         "height": 2718,
         "coverage": {
@@ -1048,7 +1140,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/held-detail-desktop-1440.text.txt",
-        "sha256": "f0bf6063fa1d6c54c02232dcec0a288fb45afe51b93c55745b6ab006d0824265"
+        "sha256": "fb90899246ade8d1778b903be96b94dc82fcb6865a467d2d6f3bc2c9cf247cac"
       },
       "assertions": {
         "previewReady": true,
@@ -1060,7 +1152,7 @@
         "networkBoundaryViolations": 0
       },
       "detailCanonicalId": "GRP-0422",
-      "detailAssetJob": "batch0-22-held_neutral",
+      "detailAssetJob": "calibration-05-restrictive-state",
       "networkRequestCount": 0
     },
     {
@@ -1074,8 +1166,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/held-detail-mobile-390-390.png",
-        "sha256": "6464cc7227bc32895b4260edfbc6fc0fe2a2c93093ada81223156da5de0abd8e",
-        "byteSize": 1014210,
+        "sha256": "8d7fd0fa856e0d53324b9420d3a668fbd7f7589f6a93f1539cffd57b53666070",
+        "byteSize": 1089413,
         "width": 390,
         "height": 5037,
         "coverage": {
@@ -1094,7 +1186,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/held-detail-mobile-390-390.text.txt",
-        "sha256": "fde54f3f1638e3d2dfd5c78cba22f07f4e95e4ef8d670992b6dc7c6c5310473c"
+        "sha256": "deb65118c961171d2523420fffc034310c68914f601c446d92503a1a22d50fbc"
       },
       "assertions": {
         "previewReady": true,
@@ -1106,7 +1198,7 @@
         "networkBoundaryViolations": 0
       },
       "detailCanonicalId": "GRP-0422",
-      "detailAssetJob": "batch0-22-held_neutral",
+      "detailAssetJob": "calibration-05-restrictive-state",
       "networkRequestCount": 0
     },
     {
@@ -1120,8 +1212,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/quote-detail-desktop-1440.png",
-        "sha256": "aa29d23a7f17f9edccc75221f2ed9ff363b305536b035923741b97c4a5fc2599",
-        "byteSize": 1245757,
+        "sha256": "00d03aad00969a2ba17a1872702018d51c5467b2fef196a72b3e6dd66a34def6",
+        "byteSize": 1462875,
         "width": 1440,
         "height": 2718,
         "coverage": {
@@ -1140,7 +1232,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/quote-detail-desktop-1440.text.txt",
-        "sha256": "39913a20c1c24dbde9295f7383386696540d342de0344ededd9509b032337e6a"
+        "sha256": "be5524749d1347fe93d2666e198026543e4eb360e02b0bd0307b71f38c1fb059"
       },
       "assertions": {
         "previewReady": true,
@@ -1152,7 +1244,7 @@
         "networkBoundaryViolations": 0
       },
       "detailCanonicalId": "GRP-0244",
-      "detailAssetJob": "batch0-23-quote_only_neutral",
+      "detailAssetJob": "calibration-05-restrictive-state",
       "networkRequestCount": 0
     },
     {
@@ -1166,8 +1258,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/quote-detail-mobile-320-320.png",
-        "sha256": "214e9ff85318dee9f4cf9d3a74d9b3ba1b6b9524a3f61e3459986a9eeccb594d",
-        "byteSize": 721010,
+        "sha256": "7ce8d1c9ea2620b370e918cb24270a08654c33ac77c2e3d253b51acff45e4d66",
+        "byteSize": 790637,
         "width": 320,
         "height": 4769,
         "coverage": {
@@ -1186,7 +1278,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/quote-detail-mobile-320-320.text.txt",
-        "sha256": "d52672a8ffacbde0e299bef12c319696e4212e5fa530a24209058287f2a5be77"
+        "sha256": "b95621e5c32ee5259b9d2fe97ce51b82da0d4386f83cc658b8a7da4b9d971ce1"
       },
       "assertions": {
         "previewReady": true,
@@ -1198,7 +1290,7 @@
         "networkBoundaryViolations": 0
       },
       "detailCanonicalId": "GRP-0244",
-      "detailAssetJob": "batch0-23-quote_only_neutral",
+      "detailAssetJob": "calibration-05-restrictive-state",
       "networkRequestCount": 0
     },
     {
@@ -1396,8 +1488,8 @@
       "fullPage": false,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-tablet-834.png",
-        "sha256": "53f5ae4f7d3bd78d1ecb0fd2dbec103ddd46829d43511fec619043c9d3e398fe",
-        "byteSize": 169914,
+        "sha256": "2aa29bf36ffa22e925cfcb17c9c4c168fe97b8205ba38c27f307124279d362c6",
+        "byteSize": 168897,
         "width": 834,
         "height": 1112,
         "coverage": {
@@ -1409,7 +1501,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-tablet-834.text.txt",
-        "sha256": "0c90e6d119079d740da99e46b0d37ab651b959e87902943fdb66d622b4c8d2f4"
+        "sha256": "06b13ec7ea2b718a42e7d0e1f12e7a48cf7af718bdc33f248c266da1c247f978"
       },
       "assertions": {
         "previewReady": true,
@@ -1422,7 +1514,7 @@
       },
       "detailCanonicalId": null,
       "detailAssetJob": null,
-      "networkRequestCount": 3
+      "networkRequestCount": 4
     },
     {
       "name": "catalog-review-mobile-390",
@@ -1435,27 +1527,27 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-mobile-390-390.png",
-        "sha256": "eed5a1e8bde0cbebcb5d93ee188bf4a9b1748fc3fa0be5b12578ba4d09749bab",
-        "byteSize": 228155,
+        "sha256": "f86207b42d23f8f48570fcb7c812f020b01270882cdb17df84d2825cfabf58ca",
+        "byteSize": 231543,
         "width": 390,
-        "height": 4160,
+        "height": 4221,
         "coverage": {
           "fullPage": true,
           "truncated": false,
           "layoutStable": true,
           "contentWidthCssPx": 390,
-          "contentHeightCssPx": 4160,
+          "contentHeightCssPx": 4221,
           "postContentWidthCssPx": 390,
-          "postContentHeightCssPx": 4160,
+          "postContentHeightCssPx": 4221,
           "maxHeightCssPx": 24000,
           "devicePixelRatio": 1,
           "capturedWidthPx": 390,
-          "capturedHeightPx": 4160
+          "capturedHeightPx": 4221
         }
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-mobile-390-390.text.txt",
-        "sha256": "d2643a5ec56b5e4d4ed412048f39ea761e5425d237f41f6f4d0ed1c3df7ccf14"
+        "sha256": "f0ae19764fddc03ce9ae3d4f37b0b807f68263e4aeb558e1fe00dcad507d456b"
       },
       "assertions": {
         "previewReady": true,
@@ -1481,27 +1573,27 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-mobile-320-320.png",
-        "sha256": "513367c9da4aa42f7e2db05431be46789a7609062ccdd6228a4fc4e088298ea4",
-        "byteSize": 232172,
+        "sha256": "1bddf5c3fbed3068bfafd1186d34044db6179995da90a745138b91ef50b16228",
+        "byteSize": 228533,
         "width": 320,
-        "height": 4301,
+        "height": 4298,
         "coverage": {
           "fullPage": true,
           "truncated": false,
           "layoutStable": true,
           "contentWidthCssPx": 320,
-          "contentHeightCssPx": 4301,
+          "contentHeightCssPx": 4298,
           "postContentWidthCssPx": 320,
-          "postContentHeightCssPx": 4301,
+          "postContentHeightCssPx": 4298,
           "maxHeightCssPx": 24000,
           "devicePixelRatio": 1,
           "capturedWidthPx": 320,
-          "capturedHeightPx": 4301
+          "capturedHeightPx": 4298
         }
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-mobile-320-320.text.txt",
-        "sha256": "d2643a5ec56b5e4d4ed412048f39ea761e5425d237f41f6f4d0ed1c3df7ccf14"
+        "sha256": "f0ae19764fddc03ce9ae3d4f37b0b807f68263e4aeb558e1fe00dcad507d456b"
       },
       "assertions": {
         "previewReady": true,
@@ -1527,8 +1619,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-01-1440.png",
-        "sha256": "670d658db96ff7da7c6f3ebd24c30641c60cb0f36ca4ce2a0ba332f27601877d",
-        "byteSize": 1036842,
+        "sha256": "3821ef58ad2e80905fda01065c190446c8ac45ffc6aa584a4321ee01e61e500f",
+        "byteSize": 1003049,
         "width": 1440,
         "height": 4957,
         "coverage": {
@@ -1547,7 +1639,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-01-1440.text.txt",
-        "sha256": "a7eaeda7cc0e98c63dcae22c02a1ec89addca15941d8f52e0f57856cc5ac7907"
+        "sha256": "a4acafab532ab5b99ec50818b910f34373b0fc030c4bfee6e2b55c0ecd887202"
       },
       "assertions": {
         "previewReady": true,
@@ -1610,7 +1702,7 @@
       ],
       "detailCanonicalId": null,
       "detailAssetJob": null,
-      "networkRequestCount": 3
+      "networkRequestCount": 4
     },
     {
       "name": "catalog-review-desktop-page-02",
@@ -1623,8 +1715,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-02-1440.png",
-        "sha256": "d1ce3aff366767391866d44cd3a7fc21cad215a747e181ea30b05de5556e0643",
-        "byteSize": 992247,
+        "sha256": "2b9becb5cff852843f3367526aca2ed8e4683c0539261df26a06a60897905261",
+        "byteSize": 973701,
         "width": 1440,
         "height": 4947,
         "coverage": {
@@ -1643,7 +1735,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-02-1440.text.txt",
-        "sha256": "9e17d572b53f8abb82441fccc773650394a3bab5fee9742e0b08c67ad0687552"
+        "sha256": "9696bbd37980958932c85b1c9312668c44bf5e86a773e246d2c789e961a3b1af"
       },
       "assertions": {
         "previewReady": true,
@@ -1719,8 +1811,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-03-1440.png",
-        "sha256": "2557167637ea09ef2d4d25038451ea9562394635641dd216793c50fd069646e7",
-        "byteSize": 1033869,
+        "sha256": "3d2adebe47cc47eb6b4a583863270616571b4c5e199a94769e64a6d5f0068738",
+        "byteSize": 1012108,
         "width": 1440,
         "height": 4957,
         "coverage": {
@@ -1739,7 +1831,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-03-1440.text.txt",
-        "sha256": "7a83b1bc58e69a9606d4a45f9822066bca4804c03574a23a47968a193cae454a"
+        "sha256": "42d432f5c81b4b9d6ba977a1f282f855b8c5b3ab6e686d6467dc1c3ced6b70cf"
       },
       "assertions": {
         "previewReady": true,
@@ -1815,8 +1907,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-04-1440.png",
-        "sha256": "c4b842b068a3fdcb89925ace004939bd8483a82c16b280be10002b4a91084227",
-        "byteSize": 1024388,
+        "sha256": "0d613ab3fe6d3848ff2989682be3d73d0f08449012d2b01e884b6090d83333e0",
+        "byteSize": 1010311,
         "width": 1440,
         "height": 4957,
         "coverage": {
@@ -1835,7 +1927,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-04-1440.text.txt",
-        "sha256": "ed5f1c84ab9d06b57d04c61b1606158970dce4109e3832ea008344695285c232"
+        "sha256": "0b5ea620a20edea640a62fbb3a8a19efed8d2a9d80c91ffa68e40012189ec716"
       },
       "assertions": {
         "previewReady": true,
@@ -1911,8 +2003,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-05-1440.png",
-        "sha256": "70fd498afabccfbec8baa8afab7cee04bd41463f416d65ca837110f24589b20c",
-        "byteSize": 1007071,
+        "sha256": "bc09d1d9b47647f0025ec5728da3c3be6cf57807b5c49b6c0934b13093954de1",
+        "byteSize": 998614,
         "width": 1440,
         "height": 4957,
         "coverage": {
@@ -1931,7 +2023,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-05-1440.text.txt",
-        "sha256": "267365e385159a6cbd8289de775d68ce875f5a0d33781e3f5e6daaea4b47d5a2"
+        "sha256": "68bf0c20c9e6f3b20fb07845e2b68ea87253997b3a0ee72e068ab0b0559632cc"
       },
       "assertions": {
         "previewReady": true,
@@ -2007,8 +2099,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-06-1440.png",
-        "sha256": "e01a9bacb95108d2d2d936fed3a8aebf0ed8a688e15ce85b4b1a7b55562af68a",
-        "byteSize": 992400,
+        "sha256": "49ef0796042498a39c636ae19e5bb3074a412553e0b616a8f00ed36969871775",
+        "byteSize": 975670,
         "width": 1440,
         "height": 4947,
         "coverage": {
@@ -2027,7 +2119,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-06-1440.text.txt",
-        "sha256": "3e89fac9e2ac1126deae68bb26c07f25a0c4dcaa2c5ee777b843c2c08d4ae461"
+        "sha256": "8a5c12d97f5c258c00e6f4b742ece87479dd7c4d4037aa96dfc4f7219f3c2ea8"
       },
       "assertions": {
         "previewReady": true,
@@ -2090,7 +2182,7 @@
       ],
       "detailCanonicalId": null,
       "detailAssetJob": null,
-      "networkRequestCount": 2
+      "networkRequestCount": 0
     },
     {
       "name": "catalog-review-desktop-page-07",
@@ -2103,8 +2195,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-07-1440.png",
-        "sha256": "5489f96a3fa42e11ad424a7c72ea4e97ffa4799ebb38dc1314f01530b5653ea8",
-        "byteSize": 1009626,
+        "sha256": "8a569ad725ecee174b834181811f86577d3c6abaf9e29a5e5171addc265cd2c5",
+        "byteSize": 982040,
         "width": 1440,
         "height": 4947,
         "coverage": {
@@ -2123,7 +2215,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-07-1440.text.txt",
-        "sha256": "3a0afa6018cc982063f4302e0796245392658d038928bbc4ad85a39d62f793e3"
+        "sha256": "3d57c561969945a047dc580a6b7828f00e81318031115504e2e48964dc209ede"
       },
       "assertions": {
         "previewReady": true,
@@ -2186,7 +2278,7 @@
       ],
       "detailCanonicalId": null,
       "detailAssetJob": null,
-      "networkRequestCount": 1
+      "networkRequestCount": 3
     },
     {
       "name": "catalog-review-desktop-page-08",
@@ -2199,8 +2291,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-08-1440.png",
-        "sha256": "a93407195b694a645fad083222245bf5e1e40166d7094b641d49ab3825095903",
-        "byteSize": 1010144,
+        "sha256": "0452560d0843a5509784c57be7c3d1d28e734899892df292115e0f8ad5dcf587",
+        "byteSize": 975945,
         "width": 1440,
         "height": 4947,
         "coverage": {
@@ -2219,7 +2311,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-08-1440.text.txt",
-        "sha256": "f0369b1d2270f0280cb2ee506c079bc8da25c3096d72c1c813b61500fa018566"
+        "sha256": "76fdaff09c25a89c3dba066544c25066bd81bc5d05f4ccafd586442121854ab6"
       },
       "assertions": {
         "previewReady": true,
@@ -2295,8 +2387,8 @@
       "fullPage": true,
       "screenshot": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-09-1440.png",
-        "sha256": "7bd7d7ea1fd4da3c57ec2a1644d849879af6476ca79817e707e60708ed7d1f95",
-        "byteSize": 857383,
+        "sha256": "bea74c43c562347ea75124b26f93598356435602bb79a1e120941f97a14db2f2",
+        "byteSize": 843883,
         "width": 1440,
         "height": 4192,
         "coverage": {
@@ -2315,7 +2407,7 @@
       },
       "text": {
         "repositoryPath": "docs/product-imagery/evidence/founder-preview/catalog-review-desktop-page-09-1440.text.txt",
-        "sha256": "fc66a6a1dc667a7f9e64655d2cc12faf8e5764b877cc173bcd647f7c0d88024e"
+        "sha256": "7b61d97e76fcf6d21147c4b238cb8c509823c397d0e3a5ca039a78a15909aa4d"
       },
       "assertions": {
         "previewReady": true,
@@ -2369,7 +2461,7 @@
       ],
       "detailCanonicalId": null,
       "detailAssetJob": null,
-      "networkRequestCount": 0
+      "networkRequestCount": 1
     }
   ]
 }
