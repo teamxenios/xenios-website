@@ -4,6 +4,19 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
 
 ## Open
 
+- Access Hub product disposition (SEAM-GOV-01, Claude report24 at76607458):
+  HL17 restored `/research/access-hub`, reversing the September26 owner-approved
+  B-1 redirect. Choose restore-hub or retain-redirect before any protected
+  static/App amendment or promotion. Technical safety review is not this product
+  approval. Current hashes remain unchanged in the protection manifest.
+
+- Legacy financial notification disposition (LENS-01): no migration80–93 chain
+  may start on a target with legacy paid notices/reserved verification keys until
+  a separately reviewed preservation/no-send adoption mechanism and exact founder
+  approval exist. A decision to freeze legacy orders alone is insufficient.
+  No notice deletion, resend, invented verification or predicate bypass is
+  authorized. The missing census is engineering work and continues locally.
+
 - Health payment setup (2026-09-30): when ready, name the card processor and the
   intended independently verifiable manual payment workflow (provider API, bank
   feed or controlled transaction import). Provider names and workflow are enough;

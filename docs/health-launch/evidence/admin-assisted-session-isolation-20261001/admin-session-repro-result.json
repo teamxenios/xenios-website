@@ -1,0 +1,28 @@
+{
+  "startedAt": "2026-10-01T14:59:18.326Z",
+  "head": "ccaf555ac42871eeb4d24a0ddd814ec95eb57406",
+  "tree": "90bb06ee7ef8419ba9f0b8836e169152f780dca3",
+  "dirtyAtStart": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n?? client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+  "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+  "runnerPid": 10728,
+  "childPid": 5100,
+  "finishedAt": "2026-10-01T14:59:42.242Z",
+  "elapsedMs": 23916,
+  "exitCode": 1,
+  "signal": null,
+  "logSha256": "db4d188cd8fdadf92c16d071de07c698337aaaefab877c22ba05b2b3006045ec",
+  "finalHead": "ccaf555ac42871eeb4d24a0ddd814ec95eb57406",
+  "dirtyAtEnd": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n?? client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx"
+}

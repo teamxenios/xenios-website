@@ -2,6 +2,15 @@
 
 ## Health provider-neutral continuation, 2026-09-30
 
+2026-10-01 report24 reconciliation: reviewer76607458 independently reviewed
+8f240828, closing F4/HIST02 at source. F1 remains external; LENS01 census,
+ADP-G1..4, refund/void/dispute and later UI qualification are engineering gaps,
+not reasons to stop unrelated implementation. Legacy notice adoption and the
+Access Hub B-1 reversal need explicit founder dispositions before promotion.
+The admin session fix at6d64d3e is locally tested114PASS with typecheck/build;
+it has no managed/Claude/browser acceptance. Prior financial aggregate and
+browser screenshots remain evidence for their own revisions only.
+
 The final card processor and independently verifiable manual payment source are
 not yet selected. This blocks only their actual adapters and activation, not
 provider-neutral engineering. Do not request secrets, account numbers or payment
