@@ -87,6 +87,46 @@ describe("HL-12 production recovery composition seam", () => {
   });
 });
 
+describe("N2 disposition production composition seam", () => {
+  const startup = readFileSync("server/index.ts", "utf8");
+  const outbox = readFileSync("server/research/outbox.ts", "utf8");
+
+  it("mounts a separate default-off, readiness-probed authority with no live evidence adapter", () => {
+    const start = startup.indexOf("const assistedOrderDispositionEffects = await resolveDispositionEffectsRecovery(");
+    const end = startup.indexOf("const assistedOrderRoutes =", start);
+    expect(start).toBeGreaterThan(-1);
+    expect(end).toBeGreaterThan(start);
+    const composition = startup.slice(start, end);
+    expect(composition).toMatch(/enabled:\s*process\.env\.RESEARCH_ASSISTED_ORDER_DISPOSITIONS_ENABLED === "true"\s*&&\s*assistedOrderComposition\.service !== null/);
+    expect(composition).toContain("audit: assistedOrderAudit.authority");
+    expect(composition).toMatch(/rpc:\s*supabaseConfigured\(\)\s*\?\s*getSupabaseAdmin\(\)/);
+    expect(composition).toMatch(/const assistedOrderDispositions = assistedOrderDispositionEffects !== null/);
+    expect(composition).toMatch(/new AssistedOrderDispositionService\([\s\S]*?null, \/\/ No independently sourced no-funds evidence workflow is configured\./);
+    expect(composition).not.toMatch(/auditWrite|as ResolvedAssistedOrderAuditAuthority|process\.env\.[A-Z_]*(STRIPE|SQUARE)/);
+    const mount = startup.slice(end, startup.indexOf("const assistedOrderDoor =", end));
+    expect(mount).toMatch(/assistedOrderPaymentEffects,\s*assistedOrderDispositions,/);
+  });
+
+  it("registers exactly one admin-guarded explicit cancellation door, never a customer or GET consume", () => {
+    const route = "/api/admin/research/assisted-orders/:requestId/financial-dispositions/no-funds/cancel";
+    expect(startup).toContain(`app.post("${route}", requireSupabaseAdmin,`);
+    expect(startup).toContain(`assistedOrderUnavailableDoor("${route}", "assisted_order_dispositions_disabled")`);
+    expect(startup).not.toContain(`app.get("${route}"`);
+    expect(startup).not.toContain("/api/research/early-access/assisted-orders/:requestId/financial-dispositions");
+  });
+
+  it("recovers on the existing worker and checks dispatch before materializing or sending any credential", () => {
+    expect(startup).toContain("configureDispositionEffectsRecovery(assistedOrderDispositionEffects)");
+    expect(startup.match(/startOutboxWorker\(log\)/g)).toHaveLength(1);
+    const tick = outbox.slice(outbox.indexOf("export async function runOutboxTick("));
+    expect(tick.indexOf("await dispositionEffectsRecovery.runBatch()")).toBeGreaterThan(-1);
+    expect(tick.indexOf("await dispositionEffectsRecovery.runBatch()")).toBeLessThan(tick.indexOf(".from(OUTBOX)"));
+    const dispatch = outbox.slice(outbox.indexOf("async function dispatch("));
+    expect(dispatch.indexOf("await dispositionEffectDispatchAllowed(")).toBeGreaterThan(-1);
+    expect(dispatch.indexOf("await dispositionEffectDispatchAllowed(")).toBeLessThan(dispatch.indexOf("makeResearchToken("));
+  });
+});
+
 describe("verified assisted-order admin actor", () => {
   const verifiedAuthUserId = "40000000-0000-4000-8000-000000000001";
   const resolver = createAssistedOrderViewerResolvers({
