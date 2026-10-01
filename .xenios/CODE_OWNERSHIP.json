@@ -3288,7 +3288,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T06:26:41.299Z",
-      "heartbeatAt": "2026-10-01T15:29:19.986Z"
+      "heartbeatAt": "2026-10-01T15:40:02.454Z"
     },
     {
       "id": "50a8e190-b0e1-479e-8b7b-7be25b0ad42f",
@@ -3475,7 +3475,7 @@
         "docs/health-launch/HL12_LENS01_PREAPPLY_CENSUS_20261001.md",
         "docs/health-launch/evidence/hl12-lens01-preapply-census-20261001/"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T15:18:39.122Z",
       "heartbeatAt": "2026-10-01T15:29:19.986Z"
     }
