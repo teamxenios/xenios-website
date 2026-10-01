@@ -684,8 +684,21 @@ Source checkpoint `2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd`; canonical SQL
 SHA-256 `1470740bf17a0fbb9a2eeaffe9173712861a17da15d52b5492ca1f28e2c91e6f`.
 This requires the exact timing-qualified ADP02 definition, its preceding chain,
 and the canonical audit/outbox. It creates no operational source, policy, grant,
-payment, price or customer rows. Final exact-byte local qualification is pending.
-The older `d419da94` smoke is a separate result, not qualification of these bytes.
+payment, price or customer rows. Final exact-byte local qualification passed at
+clean `9fb174c6f72ade139fc9db7b5a1a816432acf63b`: 21 SQL groups, 149 refusals,
+16 actual lock waits, 20 isolation cases and 11 mounted HTTP groups / 154 SQL
+calls. Node 20.19.0/npm 10.8.2/PostgreSQL 17.11; exit 0, 327.110 seconds proof,
+327.851 seconds wrapper. First, repeat and populated apply preserved invariants;
+five rollback boundaries left no partial financial graph. Ten source hashes and
+the clean checkout stayed unchanged. Exact no-network container removal and
+post-removal not-found inspection passed. Log SHA-256
+`7e116fb768efd2e9dd9eabbf2e3039b69fce07a102d95987f73016f8ce9855ef`.
+Earlier fixture failures and the older `d419da94` smoke remain separate runs.
+Local synthetic admin/provider facts and service-role SQL are not managed
+PostgREST/JWT or real provider authentication. The reverse competitor cases
+prove parent-lock arbitration around denied commands, not two valid financial
+winners; ordinary fulfillment effects use synthetic sinks. This local proof
+does not waive independent review, remaining release gates or managed authority.
 
 The financial transaction creates canonical observation, single-use evidence,
 verification, paid event and held F4 obligation atomically. It is not a parallel
