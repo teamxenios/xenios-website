@@ -151,6 +151,7 @@ import { createAssistedOrderRouteTable } from "./research/assisted-order/http";
 import { AssistedOrderFinanceService } from "./research/assisted-order/finance";
 import { AssistedOrderDispositionService } from "./research/assisted-order/financial-disposition";
 import { resolveDispositionEffectsRecovery } from "./research/assisted-order/disposition-effects";
+import { buildAssistedProviderJournal } from "./research/assisted-order/payment/provider-journal";
 import type { SupabaseRpcClient as AssistedOrderRpcClient } from "./research/assisted-order/supabase-repository";
 import type { SupabaseStorageClient as AssistedOrderStorageClient } from "./research/assisted-order/supabase-document-store";
 import { requireSupabaseAdmin } from "./routes";
@@ -1041,6 +1042,15 @@ async function composeAssistedOrderBridge(): Promise<
   if (process.env.RESEARCH_ASSISTED_ORDER_DISPOSITIONS_ENABLED === "true" && !assistedOrderDispositions) {
     log("assisted-order dispositions unavailable: durable audit and disposition-effects readiness required", "assisted-order");
   }
+  // Held reservations only, independently disabled from manual finance. A flag
+  // cannot manufacture the missing reviewed provider source/adapter. No raw
+  // event callback or external provider execution is enabled by this mount.
+  const assistedProviderJournal = buildAssistedProviderJournal({
+    enabled: process.env.RESEARCH_ASSISTED_ORDER_PROVIDER_JOURNAL_ENABLED === "true" &&
+      assistedOrderComposition.service !== null,
+    rpc: supabaseConfigured() ? getSupabaseAdmin() as unknown as AssistedOrderRpcClient : null,
+    source: null,
+  });
   const assistedOrderRoutes = assistedOrderComposition.service === null
     ? null
     : createAssistedOrderRouteTable<ExpressAssistedOrderRequest>(
@@ -1057,6 +1067,7 @@ async function composeAssistedOrderBridge(): Promise<
     assistedOrderFinance,
     assistedOrderPaymentEffects,
     assistedOrderDispositions,
+    assistedProviderJournal,
   );
   const assistedOrderDoor = (
     method: "GET" | "POST" | "PATCH",
@@ -1111,6 +1122,10 @@ async function composeAssistedOrderBridge(): Promise<
     assistedOrderDispositions
       ? assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/financial-dispositions/no-funds/cancel")
       : assistedOrderUnavailableDoor("/api/admin/research/assisted-orders/:requestId/financial-dispositions/no-funds/cancel", "assisted_order_dispositions_disabled"));
+  app.post("/api/admin/research/assisted-orders/:requestId/provider-attempts", requireSupabaseAdmin,
+    assistedProviderJournal
+      ? assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/provider-attempts")
+      : assistedOrderUnavailableDoor("/api/admin/research/assisted-orders/:requestId/provider-attempts", "assisted_order_provider_disabled"));
   if (assistedOrderComposition.service) {
     log(
       `assisted order bridge mounted (audit mode: ${assistedOrderComposition.auditMode})`,

@@ -25,6 +25,7 @@ import type { AssistedOrderFinanceService } from "./finance";
 import type { PaymentEffectsRecovery } from "./payment-effects";
 import type { AssistedOrderDispositionService } from "./financial-disposition";
 import { AssistedOrderDispositionEffectsError, type DispositionEffectsRecovery } from "./disposition-effects";
+import type { AssistedProviderJournalService } from "./payment/provider-journal";
 
 export const ASSISTED_ORDER_STATUS_TOKEN_HEADER =
   "x-xenios-order-status-token";
@@ -222,6 +223,7 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
   finance?: AssistedOrderFinanceService | null,
   paymentEffects?: PaymentEffectsRecovery | null,
   disposition?: Readonly<{ service: AssistedOrderDispositionService; effects: DispositionEffectsRecovery }> | null,
+  providerJournal?: AssistedProviderJournalService | null,
 ): readonly AssistedOrderRouteDescriptor[] {
   const viewer = (request: AssistedOrderHttpRequest): Promise<AssistedOrderViewer> =>
     viewerResolver.resolve(request as Request);
@@ -462,6 +464,17 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
         await disposition.effects.recover(receipt.dispositionId, receipt.requestId);
         return ok(200, receipt);
       }),
+    });
+  }
+
+  if (providerJournal) {
+    routes.push({
+      method: "POST",
+      path: "/api/admin/research/assisted-orders/:requestId/provider-attempts",
+      auth: "admin",
+      handler: (request) => handle(async () => ok(201, await providerJournal.reserveHeld(
+        await viewer(request), request.params.requestId ?? "", request.body,
+      ))),
     });
   }
 

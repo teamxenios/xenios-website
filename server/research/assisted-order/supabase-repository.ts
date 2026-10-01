@@ -261,6 +261,12 @@ function fail(response: SupabaseRpcResponse, operation: string): never {
       "Payment cannot be marked verified until an accepted quote and matched payment record are available.",
     );
   }
+  if (code === "P0001" && error?.details === "ASSISTED_ORDER_PROVIDER_UNCERTAINTY_HELD") {
+    throw new AssistedOrderConflictError(
+      "provider_payment_on_hold",
+      "This financial action remains on hold while provider payment activity is unresolved.",
+    );
+  }
   if (code === "P0001" && [
     "ASSISTED_ORDER_REFUND_AUTHORITY_NOT_READY",
     "ASSISTED_ORDER_HISTORICAL_PAID_UNRESOLVED",
