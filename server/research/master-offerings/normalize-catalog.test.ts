@@ -133,4 +133,14 @@ describe("the master-catalog normalizer", () => {
     expect(JSON.stringify([product.variants[0].label, ...product.aliases])).not.toContain("\u2014");
     expect(product.displayState).toBe("care_pathway");
   });
+
+  it("does not apply a reviewed label to a different identity that reuses the source row number", () => {
+    const product = normalizeMasterCatalog([row({
+      "Group ID": "GRP-0080",
+      Product: "Different source item",
+      "Normalized Specification": "Different exact source specification",
+    })]).products[0];
+    expect(product.id).not.toBe("mo_3d043e2a35ceaa045986");
+    expect(product.variants[0].label).toBe("Different exact source specification");
+  });
 });
