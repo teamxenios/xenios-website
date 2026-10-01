@@ -2,9 +2,9 @@
 
 Status: implementation and local qualification in progress. Not approved for release.
 
-Source: `0d22757ab458862c4a9ded6eae7812cc17a06116`.
-Runtime tree: `afeaa20d6501e49a92bf456ae72fcb383e9e1a47`.
-Tests: `bd236fa55e2ce6b042e5cc809056e6bf16e6a65f`.
+Source: `8a31b0fa664f3570ae0bf66a7a65f62c051b2e08`.
+Runtime tree: `6d209a70a3231c5c6c1362338293bfc5e9e6f871`.
+Tests: `091bcde3e1f6f39ba84c02c78412fca72c567b4d` (cumulative with `bd236fa55e2ce6b042e5cc809056e6bf16e6a65f`).
 Release controls inherited unchanged from ADP03 `edf8526bdefc34b8e87fa6e46585573535dba6cd`.
 
 Branch: `codex/xenios-health-launch-implementation-20260930`.
@@ -78,6 +78,14 @@ Canonical UTF-8 CRLF-to-LF SHA-256 pairs (base records to frozen source):
 Codex subagent read-only diff review found no additional blocking defect. This is not independent Claude acceptance or owner approval. Original HL-17 finding is retained in reviewer commit `e7b74feb04567cac16d5b8bd089a7ae1218721d2`, `docs/review/xenios-health-launch-review-20260930/01_FINDINGS_c213707.md:329`. A fresh-origin local browser check cannot prove eviction of a previously cached permanent 301 in an existing production visitor's browser.
 
 ## Evidence boundaries and continuing holds
+
+### Browser-discovered correction
+
+The first local production-browser pass at source `0d22757ab458862c4a9ded6eae7812cc17a06116` (tree `afeaa20d6501e49a92bf456ae72fcb383e9e1a47`) found actual heading clipping despite passing mounted tests. Cold fragment, reload and same-tab fragment placed the chooser top at approximately 0px, its heading at 34.32px, behind a sticky header ending at 69px. Horizontal overflow was zero. The recorded viewport was 319x332 CSS pixels, DPR3, with no viewport override. Native zoom percentage was not observed and is not inferred.
+
+`chrome-initial-observation.json`, `chrome-cold-fragment.png`, `preview-initial-receipt.json` and `preview-initial.mjs` preserve that failed browser observation and exact source/build/snapshot provenance. The original preview process30316 was interrupted and ended exit1; its private snapshot was retained, not claimed gracefully cleaned.
+
+Root cause: shared CSS provides 84px scroll margin only after `:focus-visible`, but both existing helpers scroll before focusing. Successor `8a31b0f` adds only `[&>#account-access]:scroll-mt-[84px]` to this page's chooser wrapper, making the margin persistent before native or scripted scrolling. No shared chooser/global CSS/global router behavior changed. `hl17-focus-clearance` passed57/3files, exit0,69.85s Vitest/76.620s wrapper, before the source/test commits. New test asserts the bounded wrapper contract before focus; emitted CSS and geometry still require the successor browser pass.
 
 No new full-suite claim exists for HL-17 yet. The ADP03 aggregate (19,357 pass / 1 fail / 85 skip, exit 1) belongs only to that frozen predecessor and remains a failed aggregate. Browser review, exact protected hashes and final source/test identities will be appended after qualification.
 
