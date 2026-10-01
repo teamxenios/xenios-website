@@ -50,7 +50,7 @@
 .xenios-order-filter-actions button:disabled { opacity: .45; cursor: default; }
 .xenios-order-result-count { color: var(--muted); font-size: .86rem; margin: 0 0 12px; }
 .xenios-order-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.xenios-order-card { border: 1px solid var(--line); border-radius: 18px; padding: 20px; background: var(--surface); display: flex; flex-direction: column; gap: 16px; min-height: 280px; }
+.xenios-order-card { border: 1px solid var(--line); border-radius: 18px; padding: 20px; background: var(--surface); display: flex; flex-direction: column; gap: 16px; min-height: 280px; min-width: 0; overflow-wrap: anywhere; }
 .xenios-order-card__header { display: flex; justify-content: space-between; gap: 16px; }
 .xenios-order-card h3 { margin: 5px 0 0; font-size: 1.15rem; line-height: 1.25; }
 .xenios-order-mode { align-self: flex-start; border-radius: 999px; padding: 6px 9px; background: var(--soft); font-size: .72rem; font-weight: 750; white-space: nowrap; }
