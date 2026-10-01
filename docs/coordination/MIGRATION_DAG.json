@@ -990,11 +990,11 @@
       "checksum": { "algorithm": "sha256", "value": "15de2acb72835b520b1e902641e334643c18b7ea0ad9bcb8f6be4dca77668875" },
       "appliedToProduction": false,
       "managedMigrationId": "PENDING",
-      "applyTwiceVerified": false,
+      "applyTwiceVerified": true,
       "rollback": {
         "strategy": "keep_provider_execution_disabled_preserve_attempts_journal_and_uncertainty_then_roll_forward",
         "procedure": "supabase/MIGRATIONS.md",
-        "evidence": "Prior isolation-only source91a4e0e passed run2:131refusals14races7HTTPgroups plus8stale+21isolation refusals; log4d31da496917ce4083c319cc9650397e2a132d5d461c318eb560691b6186f8e4. Current v2 minimum-authority sourcee9f221c passes actual old5809-valid-schema rejection before any write and refuses old-install adoption; legacylog16c6ec556052ffc0e46637346c3267981c313f6aa869e18c19117beaf06be4a5. Exact current comprehensive/reapply pending. Prior failures remain separate, no managed acceptance."
+        "evidence": "Final v2 run3 PASS247.813s/exit0 at cleana61ca3f,Node20.19.0/npm10.8.2,disposable no-network PostgreSQL17.11:131core refusals/14actual lock-wait races; isolation8stale+21unsupported cases+RCcontrols,0unsafe; actual valid-old-v1 rejected before writes/no schema adoption;8HTTPgroups/86SQLcalls. Fresh/populated exact reapply and3container cleanups confirmed. LogSHA256587ee43fce6a016659e2afd585ccedb244892fb8b6523f5797770af503658e92. Prior8unsafe exit1,fixturefailure and earlier passes remain separate. No managed/provider-authentication acceptance."
       },
       "notes": "ADP01 held-only foundation. Sources and source-scoped operator grants install empty. Server-created accepted-quote reservations and authenticated-adapter normalized event journal remain held; known or unbound uncertainty fences consequential financial writes. No provider execution, settlement, refund, historical adoption or new verification. Production source remains null; only a disabled admin reservation door is mounted, no webhook. SQL trusts configured server ingress and does not authenticate provider signatures. Schema seal checks definitions and metadata, not money or arbitrary owner DDL; outer exact bytes remain pinned here. Managed apply/activation require independent review and separate exact authorization."
     }

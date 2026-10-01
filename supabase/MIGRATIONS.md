@@ -560,8 +560,13 @@ Legacy proof at the actual old5809 bytes passed, including refusal to adopt
 the new migration over the old valid installation and unchanged old records.
 Log SHA-256: `16c6ec556052ffc0e46637346c3267981c313f6aa869e18c19117beaf06be4a5`.
 This does not claim any old managed installation exists. Exact v2 comprehensive
-reapplication qualification is pending; migration history alone cannot replace
-the version handshake and effective-schema preflight.
+run3 passed in247.813 seconds at clean `a61ca3f98cef9759586b088989f99212b0082912`:
+131 core refusals,14 lock-wait races,8 stale-snapshot cases,21 unsupported-mode
+refusals and READ COMMITTED positives,actual old-v1 refusal/no-adoption,8 HTTP
+groups/86 SQL calls,exact populated reapply and3 disposable container cleanups.
+Log SHA-256: `587ee43fce6a016659e2afd585ccedb244892fb8b6523f5797770af503658e92`.
+Migration history alone cannot replace the version handshake and effective-schema
+preflight. These are local synthetic proofs, not managed qualification.
 
 Only held records are supported. SQL derives reservation economics from the
 current accepted quote, checks a separate named source grant, and preserves
