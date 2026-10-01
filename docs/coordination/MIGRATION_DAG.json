@@ -1029,6 +1029,22 @@
         "evidence": "Final clean9fb174c6f72ade139fc9db7b5a1a816432acf63b exact1470740 SQL proof PASS:21 groups149 refusals16 real lock waits20 isolation cases11 mounted HTTP groups154 SQL calls,327.110s proof327.851s wrapper,exit0,Node20.19.0/npm10.8.2/PG17.11. First/repeat/populated apply, replica guards, schema/ACL drift, canonical recovery/restart and five rollback boundaries passed. Ten source hashes and clean HEAD stayed unchanged. Exact no-network container removal plus not_found inspect confirmed. Log7e116fb768efd2e9dd9eabbf2e3039b69fce07a102d95987f73016f8ce9855ef. Earlier fixture failures and narrower smokes remain separate. Synthetic admission/provider facts and local service-role SQL are not managed PostgREST/JWT, real provider authentication or operational rollback acceptance."
       },
       "notes": "ADP03 source-only explicit source-scoped admin full-capture settlement. Empty independent settlement policy/grant tables. Complete lineage derives canonical observation/evidence claim/verification/paid event/held F4 outbox; deferred closure, separate fulfillment eligibility and immutable replay. Supported journal-v3/execution-v2 capability plus strict compatible old readers; production source remains unconditionally null. No adapter, webhook, operational grant, partial capture, refund/void, historical adoption, price release or email. Actual provider authentication and managed qualification require separate evidence and authority. An old ADP02 binary refuses new capabilities and is not an operationally safe late-event rollback after real activity."
+    },
+    {
+      "id": "research_assisted_order_provider_quarantine_isolation",
+      "path": "supabase/migrations/20261001160730_research_assisted_order_provider_quarantine_isolation.sql",
+      "sourceSha": "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
+      "dependsOn": ["research_assisted_order_quote_provider_settlement"],
+      "checksum": { "algorithm": "sha256", "value": "91a20f681038a5e845137feb6556c4041b1645f6b2c8f9122bc7c9e85280f477" },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "disable_new_provider_work_preserve_quarantine_and_financial_history_then_roll_forward",
+        "procedure": "supabase/MIGRATIONS.md",
+        "evidence": "Run2 at runtime c0e25c73 PASS14 SQL groups27 refusals8 explicit-release lock races1 actual predecessor reproduction,150.637s proof151.965s wrapper,exit0,Node20.19.0/npm10.8.2/PostgreSQL17.11. Exact successor first/repeat/populated apply, request/source account/mode isolation, manual fallback/progression, immutable replay, replica/ACL/schema drift, and frozen source hashes passed. Exact no-network container removed and inspect absence verified. Tests and controls were uncommitted but hash-recorded; this is not a clean-checkout claim. Log7eef3ad5d3ed103188437fcaf479c1ebdd7a9b6e432ff0d534da0948e751f74d. Separate initial13.253s install smoke passed. Earlier fixture-only run1 failure preserved; no managed rollback qualification."
+      },
+      "notes": "Bounded ADP-G1 exposure isolation only. Unknown events remain immutable source quarantine; all six effective global predicates now use immutable request/source exposure, with prospective source refusal before first reservation. Manual-only and unrelated account/mode orders no longer inherit global holds. Same-source provider-exposed orders remain conservatively held. No attribution, dismissal, new resolution/grant, refund/void, G2-G4 closure, predecessor mutation or operational activation."
     }
   ],
   "invariants": [

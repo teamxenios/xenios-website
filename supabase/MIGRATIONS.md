@@ -775,3 +775,42 @@ default ACLs, forced RLS, PostgREST READ COMMITTED, audit/outbox prerequisites,
 cleanup and rollback require fresh exact non-production authorization. No
 staging or production mutation, operational grant, money, real email or deploy
 has been performed by this source work.
+
+## Provider quarantine exposure isolation (ADP-G1 bounded successor)
+
+| Order | File | Purpose | Status |
+|---|---|---|---|
+| 94 | migrations/20261001160730_research_assisted_order_provider_quarantine_isolation.sql | Keep unattributed events in source quarantine without contaminating unrelated manual-only orders | PENDING; no managed apply |
+
+Exact source is `c0e25c73a0d789829ea213e2ee040c68e06f0a75`, canonical LF
+SHA-256 `91a20f681038a5e845137feb6556c4041b1645f6b2c8f9122bc7c9e85280f477`.
+Apply only after exact93. The file has its own transaction and5s lock/60s
+statement limits. It validates the complete exact predecessor seal, changes
+seven effective function bodies and seals the successor atomically. Exact
+reapplication checks rather than repairs drift. Never replay91,92 or93 after94.
+Existing80-93 and the corrected pre80/pre88 census bytes are unchanged.
+
+The request's immutable provider reservation establishes its exposure to one
+configured source, itself uniquely bound to provider namespace/account/mode.
+Claimed order metadata cannot establish that exposure. Revocation, expired
+leases and terminal request status do not erase exposure. A first reservation
+into an already-quarantined source is refused before insertion, preserving the
+manual-only request. All callers retain the request-then-fence READ COMMITTED
+boundary. Unrelated source/account/mode holds do not cross this boundary.
+
+This is intentionally NOT complete G1 resolution. Same-source provider-exposed
+orders remain conservatively held until actual attribution is proven. No event
+is deleted, rewritten, dismissed, assigned to an operator-selected target or
+treated as money/no-money evidence. No new source, grant, refund, verification,
+historical-notice adoption or customer communication is introduced. G2-G4 and
+governed refund/void/dispute remain open before any provider activation.
+
+Disposable PostgreSQL17.11 run2 passed14 behavioral groups,27 refusals and8
+explicit-release lock races, with actual predecessor reproduction and exact
+container cleanup. The earlier fixture failure and install smoke remain
+separate. Exact receipts are recorded in the successor handoff. Source and
+local synthetic qualification never replace fresh managed role/default-ACL/RLS,
+PostgREST and operational evidence. Legacy LENS01 adoption and F1 remain held.
+Rollback is disable new provider work, preserve compatible late-event ingress
+and all financial/quarantine history, then reviewed roll-forward. No destructive
+down-migration, old function replay or baseline amendment is authorized.
