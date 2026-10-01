@@ -593,7 +593,8 @@ begin
         raise exception 'Provider effective relation privileges drifted' using errcode='55000';end if;
     end loop;
   end loop;
-  return jsonb_build_object('schemaVersion','assisted_order_provider_journal_v1',
+  return jsonb_build_object('schemaVersion','assisted_order_provider_journal_v2',
+    'transactionIsolation','read_committed_only',
     'settlementEnabled',false,'refundEnabled',false,'liveExecutionEnabled',false);
 end
 $authority$;

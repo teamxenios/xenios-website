@@ -39,7 +39,8 @@ const uncertaintySchema = z.object({
   reason: z.enum(["provider_attempt_held", "provider_unbound_event_held"]).nullable(),
 }).strict().refine((value) => value.held === (value.reason !== null));
 const authoritySchema = z.object({
-  schemaVersion: z.literal("assisted_order_provider_journal_v1"), settlementEnabled: z.literal(false),
+  schemaVersion: z.literal("assisted_order_provider_journal_v2"),
+  transactionIsolation: z.literal("read_committed_only"), settlementEnabled: z.literal(false),
   refundEnabled: z.literal(false), liveExecutionEnabled: z.literal(false),
 }).strict();
 
@@ -123,6 +124,7 @@ export class AssistedProviderJournalService {
 
   async uncertainty(requestId: string): Promise<Readonly<z.infer<typeof uncertaintySchema>>> {
     if (!uuid.safeParse(requestId).success) throw new Error("Provider uncertainty unavailable");
+    await this.assertAuthority();
     const response = await this.rpc.rpc("research_assisted_order_provider_uncertainty", { p_request_id: requestId });
     assertRpc(response);
     const parsed = uncertaintySchema.safeParse(response.data);
@@ -199,7 +201,12 @@ export class AssistedProviderJournalService {
   private async assertAuthority(): Promise<void> {
     const response = await this.rpc.rpc("research_assisted_order_provider_journal_authority");
     assertRpc(response);
-    if (!authoritySchema.safeParse(response.data).success) throw new Error("Provider journal authority unavailable");
+    // An older installation may validate its own seal while lacking the
+    // isolation repair. Require the reviewed capability revision, not v1's
+    // similarly shaped held flags, before any reservation, journal or read.
+    if (!authoritySchema.safeParse(response.data).success) {
+      throw new AssistedOrderConflictError("provider_journal_unavailable", "Provider payment processing remains unavailable.");
+    }
   }
 }
 
