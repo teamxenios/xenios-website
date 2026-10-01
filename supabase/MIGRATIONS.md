@@ -449,3 +449,31 @@ Proof: `verification/research_assisted_order_quote_effects_local.mjs`.
 Pre/postchecks: `verification/research_assisted_order_quote_effects_precheck.sql`
 and `verification/research_assisted_order_quote_effects_postcheck.sql`.
 No managed apply, delivery, real evidence import or provider execution occurred.
+
+## Assisted-order payment-stage quote reissue, source-only 2026-10-01
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 89 | migrations/20261001044200_research_assisted_order_quote_history_reissue.sql | First/replacement unaccepted quote in payment stages, without bypassing financial history | PENDING; no managed apply |
+
+Source `3da909542a152552331074176f966f820600e948`, canonical SHA-256
+`4f44f9df4a47148685d015ddf3d492b1d73ee6fea4e9ab674163ea1efb49cc69`.
+Depends on88. One disposable PostgreSQL17.11 run passed in79.490s under
+Node20.19.0 after reproducing both payment-stage first-quote refusals and true
+expired-offer reissue refusal on the predecessor. Applied twice; exact prior
+economics tail and other effective authority bodies preserved. Seven actual
+independent-connection races, immutable snapshots, stale/owner/amount denial,
+financial-history holds, rollback, ACL and guard-drift checks passed.
+
+No accepted quote is repriced, even if expired. Any observation, including
+superseded/provider evidence, verification or paid event retains the governed
+reconciliation hold. Quotes use canonical stored lines and prices; no price
+release, historical verification or no-funds conclusion is manufactured.
+
+The87/88 rollout and rollback constraints above also apply to89. Preserve all
+issued/accepted/superseded snapshots and evidence; disable financial routes and
+roll forward instead of replaying old bodies or erasing records. Read-only
+pre/postchecks are bounded and count-only, require the financial predecessors,
+and record fingerprints rather than attesting arbitrary predecessor replay.
+Proof: `verification/research_assisted_order_quote_history_reissue_local.mjs`.
+No managed database, hosted PostgREST, email, money or production action occurred.

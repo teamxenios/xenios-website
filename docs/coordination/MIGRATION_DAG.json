@@ -949,6 +949,22 @@
         "evidence": "Final separate local proof PASS96.570s on disposable PostgreSQL17.11. Applied twice; verification/paid/held-intent rollback, private helper ACLs, real role denials, revoked-grant recovery, audit-key rotation/concurrent completion, readiness checks, malformed status/actor refusal and tied-timestamp keyset pagination passed. Synthetic rows only; no email or managed apply."
       },
       "notes": "Source-only F4 successor extending the canonical outbox, not a second queue. Refuses existing genuine verifications without effects and malformed financial notices; no historical adoption/backfill. SQL structurally binds canonical audit receipts; HMAC alias cryptography remains the trusted existing server adapter. Finance stays default-off; manual evidence provider/grant workflow and managed qualification remain absent."
+    },
+    {
+      "id": "research_assisted_order_quote_history_reissue",
+      "path": "supabase/migrations/20261001044200_research_assisted_order_quote_history_reissue.sql",
+      "sourceSha": "3da909542a152552331074176f966f820600e948",
+      "dependsOn": ["research_assisted_order_quote_effects"],
+      "checksum": { "algorithm": "sha256", "value": "4f44f9df4a47148685d015ddf3d492b1d73ee6fea4e9ab674163ea1efb49cc69" },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "keep_finance_disabled_preserve_all_quotes_and_evidence_then_roll_forward",
+        "procedure": "supabase/MIGRATIONS.md",
+        "evidence": "One disposable no-network PostgreSQL17.11 run under Node20.19.0 PASS79.490s. Reproduced three predecessor refusals; applied twice; retained exact economics implementation and other authority bodies; actual expiry, financial holds, rollback, ACLs and seven deterministic independent-connection lock races passed. No managed apply or historical verification backfill."
+      },
+      "notes": "Narrow source-only HIST-02/HIST-02-R1 repair. Existing quote_issue signature and stored-line economics preserved. Payment_pending/payment_review may issue a first or replacement unaccepted quote only absent accepted quote, any observation, verification and paid history under the parent lock. Accepted stale prices, provider evidence, historical payment and N2 outcomes remain held."
     }
   ],
   "invariants": [
