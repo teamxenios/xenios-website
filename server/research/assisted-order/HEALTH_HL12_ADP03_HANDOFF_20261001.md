@@ -1,6 +1,6 @@
 # HL-12 ADP03 governed provider capture settlement
 
-Status: source checkpoint pushed; comprehensive qualification in progress.
+Status: final local SQL and serial preflight passed; aggregate pending.
 Not a final frozen candidate, independently accepted successor or release.
 No managed action is authorized by this record.
 
@@ -8,9 +8,10 @@ Current source checkpoint: `2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd`.
 Tree: `55c15891b07be438a933d025a7381dd7f90a04e2`.
 Final test checkpoint: `c3ab4bdf100fc70765928bfa13c24de5358f0a08` (cumulative
 test-only commits `1bb6ca0`, `2259a2e`, `c3ab4bd`).
-Pending-source control checkpoint: `2d966b59d0af14e5f4d06571d9caa673fcb0c8b5`;
-`applyTwiceVerified` remains false until current complete proof. Final controls
-and qualification remain pending. Do not borrow ADP02's results.
+Final release-control checkpoint: `edf8526bdefc34b8e87fa6e46585573535dba6cd`
+(cumulative `2d966b5`, `6198127`, `edf8526`). The complete current local SQL proof
+supports `applyTwiceVerified`; this is not managed qualification. Aggregate
+remains pending. Do not borrow ADP02's results.
 
 ## Continuity
 
@@ -131,8 +132,8 @@ clear holds or amend protection baselines as rollback.
   `IS DISTINCT FROM` so a null error detail cannot pass its expected refusal.
   This latter fixture was not reached in run2; it was an inspection correction,
   not a reproduced runtime failure. Run3 is a separate diagnostic.
-- Final composed SQL, affected checks, typecheck, build and aggregate: pending.
-  No passing result is inferred.
+- Final composed SQL and serial preflight completed below. Aggregate pending;
+  no aggregate pass is inferred.
 
 `adp03-sql-local-run3` failed, exit 1, 224.027 seconds. Thirteen SQL groups
 and 11 HTTP groups / 154 SQL calls completed before the bare link-only insertion
@@ -167,6 +168,55 @@ F4 is composed with real SQL/audit recovery; ordinary supplier-progression
 notification/audit sinks are synthetic no-ops. Partial-graph tests are synthetic
 privileged staged writes plus actual transactional rollback, not an interruption
 inside a live provider call.
+
+## Final local SQL and preflight
+
+`adp03-sql-local-final`: PASS at clean start/end
+`9fb174c6f72ade139fc9db7b5a1a816432acf63b`, tree
+`1ab5050dadb23404f5b57737795152993e97ff6d`, from
+2026-10-01T12:41:37.037Z to 12:47:04.888Z. Node v20.19.0/npm 10.8.2,
+PostgreSQL 17.11; 21 SQL groups, 149 expected refusals, 16 actual lock waits,
+20 isolation cases included in the refusal count, 11 HTTP groups / 154 SQL
+calls. Proof 327.110 seconds, wrapper 327.851 seconds, exit 0. Ten raw runtime
+source hashes stayed unchanged. No network or published ports. The driver
+removed its exact owned container and confirmed subsequent inspect not_found;
+this is driver evidence, not an independent hosted cleanup attestation.
+Log SHA-256: `7e116fb768efd2e9dd9eabbf2e3039b69fce07a102d95987f73016f8ce9855ef`.
+
+First preflight at clean `6198127ce37af2194d091e662884d27a79e1d9cd`
+is NOT a passing preflight. Affected 1,424, typecheck, build,
+DAG, route uniqueness and protection CLI passed, then controls finished
+50 passed / one failed / one conditional skip, exit 1. The route census still
+expected 452 call sites / 461 registrations instead of the actual 453 / 462.
+`edf8526` corrected those exact counts without weakening uniqueness. Failed log:
+`2e4665261d3a4697481d473ffef2081595781b1b35d8e0e28566700952372159`.
+
+All seven checks were rerun serially under new `-final2` job identities at clean
+`edf8526bdefc34b8e87fa6e46585573535dba6cd`, tree
+`2a46f7a5b39f30f31e7dbca16e336fbd6c1727b4`. Same clean start/end for every
+command; Node v20.19.0/npm 10.8.2, real dataset reader, one Vitest worker:
+
+| Check | Actual result | Wrapper seconds |
+| --- | --- | --- |
+| Affected catalog/assisted-order | 1,424 passed, 47 files, zero skips | 65.158 |
+| Typecheck | PASS, exit 0 | 11.187 |
+| Production build / no-em-dash | PASS; 1,351 source / 225 build files, zero forbidden forms | 27.271 |
+| Migration DAG | PASS, 52 nodes | 9.710 |
+| Route uniqueness | PASS, 453 call sites / 462 registrations | 4.931 |
+| Protection CLI | PASS, 38 hard hashes; two seam warnings remain | 0.403 |
+| Release controls | 51 passed, one conditional PostgreSQL 16 skip | 81.766 |
+
+Build retains existing mixed-import and chunk-size warnings. The protection CLI
+pass is not the strict baseline assertion's pass. Child-process sampling is
+bounded, not continuous runtime attestation; build sampling observed wrapper/npm,
+not every nested build process. Exact commands, hashes and receipts will be
+included in the qualification JSON after the aggregate completes.
+
+Aggregate launch guard: the first launcher invocation refused before spawning
+Vitest because the records commit had not been created (a message filename was
+mistyped in the explicit Git staging list). Exit 1, no test execution or test
+result. The unchanged clean-checkpoint assertion correctly prevented a dirty
+start. This is separate from any subsequent aggregate result.
 
 ## Unchanged external and release holds
 

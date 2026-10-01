@@ -8,7 +8,15 @@ provider-neutral engineering. Do not request secrets, account numbers or payment
 destinations in the corpus. The source handoff is
 `server/research/assisted-order/HEALTH_HL12_PROVIDER_NEUTRAL_HANDOFF_20260930.md`.
 
-Provider-neutral settlement, governed uncertainty and financial resolution,
+ADP03 provider-neutral full-capture settlement is locally implemented at
+`2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd`, tree
+`55c15891b07be438a933d025a7381dd7f90a04e2`, with operational source null.
+Final disposable SQL passed 21 groups / 149 refusals / 16 actual lock waits /
+11 HTTP groups (154 SQL calls), exit 0, driver cleanup confirmed. Serial final2
+preflight passed; full aggregate remains pending. Earlier failed fixture and
+route-census diagnostics remain separate. This is synthetic local evidence,
+not independent review, live provider authentication or managed qualification.
+Governed uncertainty resolution, void/refund/dispute and historical handling,
 and product/public journeys remain engineering gaps, not external blockers.
 ADP02 held create/readback ownership is now implemented locally at runtime
 `27463d764ba01219c67081a3548ffdc3ff7d2b40`, tree

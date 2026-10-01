@@ -4,13 +4,14 @@
     "task": "ASSISTED-ORDER-CONVERSION",
     "session": "codex-xenios-health-launch-implementation-20260930",
     "branch": "codex/xenios-health-launch-implementation-20260930",
-    "status": "ADP03_SOURCE_IMPLEMENTATION_IN_PROGRESS_ADP02_FROZEN_AND_HANDED_OFF_NOT_RELEASE_READY",
+    "status": "ADP03_LOCAL_SQL_PREFLIGHT_PASS_AGGREGATE_PENDING_NOT_RELEASE_READY",
     "currentADP03Work": {
-      "status": "PUSHED_SOURCE_CHECKPOINT_NOT_QUALIFIED",
+      "status": "LOCAL_SQL_PREFLIGHT_PASS_AGGREGATE_PENDING",
       "runtimeSourceSha": "2f0a975c1e051e7f23ccd3a9d5492431b8df1cdd",
       "runtimeSourceTree": "55c15891b07be438a933d025a7381dd7f90a04e2",
       "testOnlySha": "c3ab4bdf100fc70765928bfa13c24de5358f0a08",
-      "localEvidence": "Initial focused 98 PASS, unit 358 PASS after retained 339 PASS / 19 fixture failures, HTTP 23 PASS, static 8 PASS, typecheck PASS. Smoke1 passed prior d419da94 SQL. Comprehensive runs1/2/3 failed fixture expectations (ACL, manual receipt state, deferred FK ordering); no runtime change. Races smoke1 failed effective stale-status expectation; corrected smoke2 passed 4 groups / 12 actual waits / 14 refusals / 5 rollback boundaries. Exact cleanup confirmed. Current complete final proof and aggregate pending; all failures retained separately.",
+      "releaseControlSha": "edf8526bdefc34b8e87fa6e46585573535dba6cd",
+      "localEvidence": "Final clean9fb174c SQL PASS21groups149refusals16lockwaits20isolation11HTTPgroups154calls,327.851s exit0 PG17.11, exact driver cleanup. Final2 seven serial checks cleanedf8526 PASS1424affected/47files, typecheck/build zero forbidden em-dash forms, DAG52/routes462registrations453callsites, CLI38hardhashes with2seamwarnings, controls51PASS1conditionalPG16SKIP. Aggregate pending. Earlier unit19fail, comprehensiveSQLruns1/2/3 fixture failures, races-smoke1 expectation failure and first controls50PASS1FAIL1SKIP remain separate; runtime unchanged. Node20.19.0/npm10.8.2, real dataset, one worker.",
       "task": "HEALTH-HL12-ADP03-GOVERNED-CAPTURE-SETTLEMENT-20261001",
       "baseRecordsSha": "4ad4bcfe8129b4069b79f3cce91773c894395c51",
       "migration": "supabase/migrations/20261001115512_research_assisted_order_quote_provider_settlement.sql",
@@ -18,7 +19,7 @@
       "ownership": "SQL and new verification provider_settlement_races.mjs provider_finance_audit; settlement service/capability parsers and private collector catalog_journey_audit; main SQL/HTTP proofs quote_customer_ui; root composition/F4/state/controls. No foreign imagery/media edits.",
       "productionSource": null,
       "hostedChangesAuthorized": false,
-      "independentReview": "NOT_YET_A_FROZEN_SUCCESSOR"
+      "independentReview": "SOURCE_TESTS_CONTROLS_FROZEN_FOR_AGGREGATE_NOT_CLAUDE_ACCEPTED"
     },
     "runtimeSourceSha": "27463d764ba01219c67081a3548ffdc3ff7d2b40",
     "runtimeSourceTree": "467c8556390ff9274a4adda5826eed7ab9603b23",
