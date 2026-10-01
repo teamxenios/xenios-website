@@ -12,11 +12,11 @@ Use this file only for irreducible founder decisions or actions. Engineering sho
   finance grants, managed schema qualification and exact-SHA production promotion
   remain separate authorized actions.
 
-- Protected baseline decision: the exact prior routes.ts/index.ts bytes passed
-  Claude report19, but no answer to the narrow baseline-amendment request is
-  recorded. The newer Research gateway edit2dc7d62 also requires exact QA review
-  before a protection-owner baseline recut. No test or gate has been weakened;
-  this is not an approval request for hosted changes, deployment or migration.
+- Protected baseline: the user's exact routes.ts/index.ts approval is applied
+  and pushed at663268f. That action is complete; do not ask for it again. The
+  separate Research gateway baseline remains unchanged and outside the two-hash
+  approval. Its exact review/protection-owner recut is still an integration
+  requirement, not permission to weaken the clean-baseline assertion or deploy.
 
 - Native closeout (2026-09-21): designate the executor and confirm the exact
   managed qualification scope for the new Referral touch/XRR SQL candidates

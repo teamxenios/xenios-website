@@ -15,13 +15,15 @@ invented verification. All new managed applies and production changes remain
 separately authorized. Historical production observations below retain their
 original dates and are not a fresh observation for this Health continuation.
 
-The final local source947f6ee is not release-ready: its exact95e040a aggregate
-is18398 pass/5 fail/85 skip,exit1. Three scan timeouts have separately recorded
-diagnostics; two hash assertions span three paths. Prior routes/index bytes
-have independent review but no recorded owner baseline amendment. The newer
-Research gateway repair still needs exact-successor QA confirmation before a
-deliberate baseline recut. These do not block independent implementation, and
-neither isolated test success nor a baseline recut would establish production GO.
+Current local source915a535 is not release-ready. The exact owner-approved
+routes.ts/index.ts hash amendment is pushed at663268f; the separate Research
+gateway clean-baseline assertion remains red and was not included in that
+approval. Current focused509 tests, typecheck, build and two disposable SQL
+proofs pass. Prior exact95e040a aggregate remains18398 pass/5 fail/85 skip,exit1,
+not a current-runtime PASS. New HIST-PROG/SQL-06 and owner/P-17 status fixes need
+Claude review. F4, N2, ADP-01, HIST-02, account history and broader launch work
+remain engineering gaps, not excuses to wait for a processor decision. See
+`server/research/assisted-order/HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md`.
 
 ## Native closeout — 2026-09-21
 
