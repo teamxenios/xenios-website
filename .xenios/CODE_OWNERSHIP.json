@@ -3164,7 +3164,7 @@
         "supabase/verification/*assisted_order_quote*",
         "server/research/commerce/persistence/admin-queues-store.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T03:57:40.605Z",
       "heartbeatAt": "2026-10-01T05:26:25.136Z"
     },
@@ -3194,7 +3194,7 @@
         "server/research/outbox.ts",
         "server/research/outbox-hl12-effects.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T03:57:40.768Z",
       "heartbeatAt": "2026-10-01T05:26:25.136Z"
     },
@@ -3209,7 +3209,7 @@
         ".xenios/BLOCKED_EXTERNAL.md",
         ".xenios/FOUNDER_ACTIONS.md"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T03:57:40.842Z",
       "heartbeatAt": "2026-10-01T05:26:25.136Z"
     },
@@ -3220,7 +3220,7 @@
       "paths": [
         "server/index.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T04:03:25.657Z",
       "heartbeatAt": "2026-10-01T05:26:25.136Z"
     },
@@ -3232,7 +3232,7 @@
         "docs/coordination/MIGRATION_DAG.json",
         "supabase/MIGRATIONS.md"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T04:03:25.732Z",
       "heartbeatAt": "2026-10-01T05:26:25.136Z"
     },
@@ -3243,7 +3243,7 @@
       "paths": [
         "server/release-control-plane.test.ts"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T04:03:25.817Z",
       "heartbeatAt": "2026-10-01T05:26:25.136Z"
     }
