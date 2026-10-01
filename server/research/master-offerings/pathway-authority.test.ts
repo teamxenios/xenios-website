@@ -14,6 +14,7 @@ import {
   type MasterOfferingFamily,
 } from "@shared/research/master-offerings/contract";
 import { resolveMasterOfferingAction } from "./action";
+import { reviewedHeldVariantIds } from "./reviewed-holds";
 import { authorityFor } from "../assisted-order/production-catalog";
 import { offering, variant } from "./test-fixtures";
 import { cartSelection } from "./testing/cart-selection.test-support";
@@ -219,11 +220,12 @@ describe("the action resolver consults the authority", () => {
 });
 
 // ---------------------------------------------------------------------------
-// The real catalog. These two tests are the point of the lane: they prove the
-// change is inert on today's data and that the two lanes now answer alike.
+// The real reconciled catalog. Pathway eligibility alone is never a binding,
+// price, publication decision or commerce grant.
 // ---------------------------------------------------------------------------
 
 interface DatasetVariant {
+  offeringVariantId: string;
   family: MasterOfferingFamily;
   displayState: MasterOfferingDisplayState;
   variantDisplayState: MasterOfferingDisplayState;
@@ -238,13 +240,14 @@ function realCatalogVariants(): DatasetVariant[] {
       displayName: string;
       family: MasterOfferingFamily;
       displayState: MasterOfferingDisplayState;
-      variants: Array<{ label: string; displayState: MasterOfferingDisplayState }>;
+      variants: Array<{ id: string; label: string; displayState: MasterOfferingDisplayState }>;
     }>;
   };
   const rows: DatasetVariant[] = [];
   for (const product of parsed.products) {
     for (const presentation of product.variants) {
       rows.push({
+        offeringVariantId: presentation.id,
         family: product.family,
         displayState: product.displayState,
         variantDisplayState: presentation.displayState,
@@ -256,7 +259,7 @@ function realCatalogVariants(): DatasetVariant[] {
   return rows;
 }
 
-describe("the 420-row acceptance matrix", () => {
+describe("the 424-row reconciled acceptance matrix", () => {
   // The exhaustive per-row verdict for the catalog as it actually ships.
   //
   // This is the artifact the peptide launch is graded against: every variant,
@@ -267,7 +270,11 @@ describe("the 420-row acceptance matrix", () => {
   const matrix = () => {
     const byReason = new Map<string, DatasetVariant[]>();
     for (const row of realCatalogVariants()) {
-      const reason = directPurchaseRefusal(row) ?? "direct_eligible";
+      const reason = directPurchaseRefusal({
+        ...row,
+        specification: row.variantLabel,
+        reviewedHoldVariantIds: reviewedHeldVariantIds(),
+      }) ?? "direct_eligible";
       const bucket = byReason.get(reason) ?? [];
       bucket.push(row);
       byReason.set(reason, bucket);
@@ -275,24 +282,29 @@ describe("the 420-row acceptance matrix", () => {
     return byReason;
   };
 
-  it("holds no row today, because the CJC-1295 WITH DAC row is not in the artifact yet", () => {
-    // Flips to 1 the moment the workbook regeneration lands GRP-0422.
-    expect(matrix().get("formulation_hold") ?? []).toHaveLength(0);
+  it("holds exactly GRP-0422 by raw identity after the display marker is removed", () => {
+    const held = matrix().get("formulation_hold") ?? [];
+    expect(held).toHaveLength(1);
+    expect(held[0].offeringVariantId).toBe("mov_f61758881da2b7bfa539");
+    expect(held[0].variantLabel).not.toMatch(/split pending/i);
+    expect(directPurchaseRefusal({
+      ...held[0], specification: "Renamed reviewed formulation",
+      reviewedHoldVariantIds: reviewedHeldVariantIds(),
+    })).toBe("formulation_hold");
   });
 
-  it("accounts for all 420 variants exactly once", () => {
+  it("accounts for all 424 variants exactly once", () => {
     const buckets = matrix();
     const total = [...buckets.values()].reduce((sum, rows) => sum + rows.length, 0);
-    expect(total).toBe(420);
+    expect(total).toBe(424);
+    expect(new Set([...buckets.values()].flat().map((row) => row.offeringVariantId)).size).toBe(424);
   });
 
   it("refuses every classification-pending peptide, so none can be bought", () => {
-    // The founder's target says 29 classification-pending rows are Request
-    // Order, never a cart. Before this rule the resolver checked visibility and
-    // the binding only, so all 29 would have offered Add to Cart the moment the
-    // direct-commerce flag was turned on.
+    // Two former pending twins are superseded, leaving 27 distinct pending
+    // peptide identities. Reconciliation does not permit any of them to buy.
     const pending = matrix().get("classification_pending") ?? [];
-    expect(pending).toHaveLength(29);
+    expect(pending).toHaveLength(27);
     expect(new Set(pending.map((row) => row.family))).toEqual(
       new Set(["research_peptides_materials"]),
     );
@@ -315,11 +327,11 @@ describe("the 420-row acceptance matrix", () => {
     expect(matrix().get("care_pathway_display_state") ?? []).toHaveLength(0);
   });
 
-  it("leaves exactly the 106 confirmed-RUO peptide rows directly eligible today", () => {
+  it("leaves 111 confirmed-RUO peptide identities pathway-eligible without granting commerce", () => {
     const eligible = matrix().get("direct_eligible") ?? [];
     const peptides = eligible.filter((row) => row.family === "research_peptides_materials");
 
-    expect(peptides).toHaveLength(106);
+    expect(peptides).toHaveLength(111);
     for (const row of peptides) {
       expect(row.displayState).toBe("request_access");
     }
@@ -343,27 +355,18 @@ describe("the 420-row acceptance matrix", () => {
     });
   });
 
-  it("still has none of the six rows the founder decided on 2026-08-20", () => {
-    // 106 confirmed RUO today, 112 in the founder's target. The difference is
-    // two classification corrections (Hexarelin 5 mg, Oxytocin 10 mg), three
-    // new variants (Retatrutide 60 mg, MOTS-C 40 mg, Glutathione 600 mg) and
-    // the formulation-blocked CJC-1295 WITH DAC + Ipamorelin combo.
-    //
-    // Creating those variants is a Product Control catalog mutation, which this
-    // lane may not perform. So the gap is asserted rather than assumed: when
-    // the artifact is regenerated with them, this test fails and the matrix
-    // above is the checklist for what the new numbers must be.
+  it("includes the reconciled peptide variants without keeping the two superseded identities", () => {
+    // Canonical ingestion is not a Product Control mutation. Coverage tests
+    // separately require all six new identities to stay unbound and unpriced.
     const rows = realCatalogVariants();
     const peptides = rows.filter((row) => row.family === "research_peptides_materials");
-    expect(peptides).toHaveLength(135);
+    expect(peptides).toHaveLength(139);
 
-    const has = (needle: string) =>
-      peptides.some((row) =>
-        `${row.productName} ${row.variantLabel}`.toLowerCase().includes(needle.toLowerCase()),
-      );
-    expect(has("Retatrutide 60")).toBe(false);
-    expect(has("MOTS-C 40")).toBe(false);
-    expect(has("Glutathione 600")).toBe(false);
+    for (const specification of [/retatrutide.*60\s*mg/i, /mots-c.*40\s*mg/i, /glutathione.*600\s*mg/i]) {
+      expect(peptides.filter((row) => specification.test(`${row.productName} ${row.variantLabel}`))).toHaveLength(1);
+    }
+    expect(rows.some((row) => row.offeringVariantId === "mov_7c55d415a9574e9ebda7")).toBe(false);
+    expect(rows.some((row) => row.offeringVariantId === "mov_256cb0423eb6d2a77f65")).toBe(false);
   });
 
   it("refuses every 503A row on family, so a display-state edit cannot release one", () => {

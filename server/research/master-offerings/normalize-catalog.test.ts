@@ -93,4 +93,44 @@ describe("the master-catalog normalizer", () => {
     };
     walk(catalog.products, "$");
   });
+
+  it("cleans the reviewed hold label only after hashing the untouched source identity", () => {
+    const source = row({
+      "Group ID": "GRP-0422",
+      Product: "CJC-1295 + Ipamorelin",
+      "Normalized Specification": "CJC-1295 WITH DAC + IPAMORELIN 5 mg total (split pending)",
+    });
+    const raw = normalizeMasterCatalog([source]).products[0];
+    const presentation = normalizeMasterCatalog([source], new Map([
+      ["GRP-0422", "CJC-1295 WITH DAC + IPAMORELIN 5 mg total"],
+    ])).products[0];
+    expect(presentation.id).toBe(raw.id);
+    expect(presentation.variants[0].id).toBe(raw.variants[0].id);
+    expect(presentation.id).toBe("mo_2babbadce5172426bde2");
+    expect(presentation.variants[0].id).toBe("mov_f61758881da2b7bfa539");
+    expect(presentation.variants[0].label).toBe("CJC-1295 WITH DAC + IPAMORELIN 5 mg total");
+    expect(presentation.aliases.join(" ")).not.toContain("split pending");
+    expect(presentation.family).toBe(raw.family);
+    expect(presentation.displayState).toBe(raw.displayState);
+    expect(JSON.stringify(presentation)).not.toContain("GRP-0422");
+  });
+
+  it("preserves the reviewed colon label and raw identity for retained GRP-0080", () => {
+    const source = row({
+      "Group ID": "GRP-0080",
+      Family: "503A Clinical Formulations",
+      Channel: "Clinical / Provider Only",
+      Product: "LIBIDO CREAM (SCREAM CREAM)",
+      "Normalized Specification": "LIBIDO CREAM (SCREAM CREAM) \u2014 Testosterone Cypionate 0.1% / Sildenafil Citrate 0.1% / Glycerin / Versabase Cream",
+    });
+    const product = normalizeMasterCatalog([source]).products[0];
+    expect(product.id).toBe("mo_3d043e2a35ceaa045986");
+    expect(product.variants[0].id).toBe("mov_06beec21c59fe7842f18");
+    expect(product.variants[0].label).toBe(
+      "LIBIDO CREAM (SCREAM CREAM): Testosterone Cypionate 0.1% / Sildenafil Citrate 0.1% / Glycerin / Versabase Cream",
+    );
+    expect(product.aliases).toContain(product.variants[0].label);
+    expect(JSON.stringify([product.variants[0].label, ...product.aliases])).not.toContain("\u2014");
+    expect(product.displayState).toBe("care_pathway");
+  });
 });

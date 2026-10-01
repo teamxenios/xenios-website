@@ -75,6 +75,8 @@ function callbacks(
   // alphabetically first hundred offerings.
   clampPageSize = Number.POSITIVE_INFINITY,
   reviewedFormulationHolds: ReadonlySet<string> = new Set(),
+  reviewedFormulationHoldVariantIds?: ReadonlySet<string>,
+  resolvedOfferingVariantId = "var_1",
 ) {
   const service = {
     select: async (
@@ -110,14 +112,59 @@ function callbacks(
       bound ? { productId: "pc-prod-1", variantId: "pc-var-1" } : null,
     offeringVariantFor: (identity) =>
       bound && identity.productId === "pc-prod-1" && identity.variantId === "pc-var-1"
-        ? "var_1"
+        ? resolvedOfferingVariantId
         : null,
     catalogVersion: "catalog-test-v1",
     reviewedFormulationHolds,
+    reviewedFormulationHoldVariantIds,
   });
 }
 
 describe("assisted-order production catalog mapping", () => {
+  it("holds a renamed canonical identity in both list and submission re-read by default", async () => {
+    const heldId = "mov_f61758881da2b7bfa539";
+    const held = offering({
+      id: "mo_2babbadce5172426bde2",
+      variants: [{
+        id: heldId,
+        label: "CJC-1295 WITH DAC + IPAMORELIN 5 mg total",
+        displayState: "request_access",
+        visibility: "member",
+        sourceReferences: [],
+      }],
+    });
+    const source = callbacks(
+      [held], new Map([[heldId, priced(5000)]]), true, 100, new Set(), undefined, heldId,
+    );
+    const page = await source.list(viewer, { page: 1, pageSize: 24 });
+    const resolved = await source.resolve(viewer, "pc-prod-1", "pc-var-1");
+    expect(page.items[0].workflowMode).toBe("availability_review");
+    expect(resolved?.workflowMode).toBe("availability_review");
+    expect(page.items[0].sourceSelection?.variantId).toBe(heldId);
+    expect(resolved?.sourceSelection?.variantId).toBe(heldId);
+    expect(page.items[0].specification).not.toContain("split pending");
+    expect(source.fingerprint(page.items[0])).toBe(source.fingerprint(resolved!));
+  });
+
+  it("keeps an unbound held identity visible without manufacturing a price", async () => {
+    const heldId = "mov_f61758881da2b7bfa539";
+    const held = offering({
+      id: "mo_2babbadce5172426bde2",
+      variants: [{
+        id: heldId, label: "Clean presentation", displayState: "request_access",
+        visibility: "member", sourceReferences: [],
+      }],
+    });
+    const source = callbacks([held], new Map([[heldId, priced(5000)]]), false);
+    const page = await source.list(viewer, { page: 1, pageSize: 24 });
+    const item = page.items[0];
+    const resolved = await source.resolve(viewer, item.productId, item.variantId);
+    expect(item.workflowMode).toBe("availability_review");
+    expect(item.unitPriceCents).toBeNull();
+    expect(resolved?.workflowMode).toBe("availability_review");
+    expect(resolved?.unitPriceCents).toBeNull();
+  });
+
   it("carries exact Master Offering provenance across a different Product Control identity", async () => {
     const source = callbacks([offering()], new Map([["var_1", priced(5000)]]));
     const page = await source.list(viewer, { page: 1, pageSize: 24 });

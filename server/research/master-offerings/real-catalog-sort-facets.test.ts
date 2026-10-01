@@ -7,8 +7,9 @@
  * and the display states are distributed the way the real business is rather
  * than the way a fixture generator is.
  *
- * The generated dataset is not committed, so this suite skips when it is
- * absent. Generate it with:
+ * The member-safe dataset is committed; the private intake is not. The
+ * explicit missing-artifact skip below is not proof of real catalog coverage.
+ * Generate the private source and reviewed canonical artifact with:
  *   python scripts/research/export-master-offerings.py <workbook>
  *   npx tsx scripts/research/build-master-offerings.ts \
  *     .local/research/master-offerings/private-intake.json
@@ -23,6 +24,7 @@ import {
   type MasterOfferingCatalogQuery,
 } from "@shared/research/master-offerings/contract";
 import { loadMasterOfferingDataset } from "./dataset-reader";
+import { readPinnedReconciliationAuthority } from "./reconciliation-authority";
 import type { NormalizedMasterOffering } from "./model";
 import {
   masterOfferingCategorySlug,
@@ -50,9 +52,10 @@ const DATASET_PATH = [
 
 /**
  * The counts the catalog ingestion contract verified independently against the
- * MASTER CATALOG workbook: 420 selected rows, each exactly one offering.
+ * MASTER CATALOG workbook: 426 source rows become 424 canonical offerings
+ * after two reviewed supersessions. Visibility does not approve commerce.
  */
-const MEMBER_OFFERINGS = 420;
+const MEMBER_OFFERINGS = 424;
 const ADMIN_HOLDS = 11;
 
 const available = fs.existsSync(DATASET_PATH);
@@ -60,7 +63,7 @@ const withRealCatalog = available ? describe : describe.skip;
 
 function loadCatalog(): readonly NormalizedMasterOffering[] {
   const raw = JSON.parse(fs.readFileSync(DATASET_PATH, "utf8")) as unknown;
-  const products = loadMasterOfferingDataset(raw).products;
+  const products = loadMasterOfferingDataset(raw, readPinnedReconciliationAuthority()).products;
   warmMasterOfferingSearch(products);
   return products;
 }
@@ -290,7 +293,7 @@ withRealCatalog("the real generated catalog", () => {
     }
   });
 
-  it("counts every facet in one traversal of eleven hundred offerings", () => {
+  it("counts every facet in one traversal of the complete canonical catalog", () => {
     let traversals = 0;
     const counted = {
       [Symbol.iterator]() {

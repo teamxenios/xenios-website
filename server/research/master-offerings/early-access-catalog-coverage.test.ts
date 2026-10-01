@@ -10,22 +10,25 @@
 // page clamp left 320 of 420 rows unreachable. A coverage proof that stops at
 // page 1 would have passed while the catalog was broken.
 //
-// MEASURED AGAINST PRODUCTION, 2026-08-20, so the price double below is
-// faithful rather than permissive: the set of (productId, variantId) pairs
-// holding an active, in-window, member-audience price on a published product
-// and an approved variant is EXACTLY the set of pairs in the committed binding
-// artifact — both sides md5 062a30f0d3d0a0571e78837b5b92d4f6 over the sorted
-// `productId|variantId` lines, 417 pairs, zero of them non-positive
-// (min $1.00, max $2,250.00). So "bound" and "priced" really are the same set
-// in production, and pricing exactly the bound pairs here reproduces it.
+// HISTORICAL PRODUCTION EVIDENCE, 2026-08-20: 417 active, in-window,
+// member-audience Product Control price pairs had md5
+// 062a30f0d3d0a0571e78837b5b92d4f6 over sorted productId|variantId lines.
+// That historical set is NOT a current production read-back or new price approval.
+// HL-11 retains 415 exact pairs and archives two superseded pairs without
+// transferring their authority to the six new canonical identities. The price
+// double below exercises only the retained pairs. All new identities remain
+// unbound and unpriced even when the reviewed source records intended cents.
 
 import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
   createAssistedOrderMasterCatalogCallbacks,
+  authorityFor,
   type AssistedOrderMasterCatalogService,
 } from "../assisted-order/production-catalog";
 import { MasterOfferingCatalogService } from "./service";
+import { reviewedHeldVariantIds } from "./reviewed-holds";
 import type { AssistedOrderCatalogItem } from "@shared/research/assisted-order/contract";
 import type { AdminProductDetail } from "@shared/research/product-admin";
 import { createMasterOfferingCatalogDependencies } from "./composition";
@@ -40,13 +43,19 @@ import {
   bindingsByOfferingVariantId,
   createProductionBindingReader,
   loadBindingIndex,
+  MASTER_OFFERING_COMMITTED_BINDINGS_PATH,
 } from "./production-bindings";
 
-/** The committed dataset has 420 rows; a shipping charge is not merchandise. */
-const SHIPPED_VARIANTS = 420;
+/** 426 source rows reconcile to 424 identities; shipping is not merchandise. */
+const SHIPPED_VARIANTS = 424;
 const TOTAL_VARIANTS = SHIPPED_VARIANTS - 1;
-const BOUND_VARIANTS = 417;
+const BOUND_VARIANTS = 415;
 const PRICE_ON_REQUEST_VARIANTS = 2;
+const BINDING_PENDING_VARIANTS = 6;
+const HELD_VARIANT_ID = "mov_f61758881da2b7bfa539";
+const NEW_SOURCE_GROUPS = [
+  "GRP-0421", "GRP-0422", "GRP-0423", "GRP-0424", "GRP-0425", "GRP-0426",
+];
 /** Reviewed GRP-0364 source identity in the committed member-safe artifact. */
 const SHIPPING_CHARGE_OFFERING_ID = "mo_003b0c272099eeb1f114";
 const UNBOUND_PRODUCT_NAMES = [
@@ -54,46 +63,48 @@ const UNBOUND_PRODUCT_NAMES = [
   "Syringes & Alcohol Swabs",
 ];
 
-/** The production price-set fingerprint these coverage numbers were measured against. */
-const PRODUCTION_PRICED_PAIRS_MD5 = "062a30f0d3d0a0571e78837b5b92d4f6";
+/** Historical evidence and its reviewed LOCAL subset are distinct fingerprints. */
+const HISTORICAL_PRICED_PAIRS_MD5 = "062a30f0d3d0a0571e78837b5b92d4f6";
+const RETAINED_PRICED_PAIRS_MD5 = "86fdd019d3153e75920090136579b184";
 
 /** A plain, positive price, so a $0 anywhere in the walk is unambiguously a bug. */
 const PRICE_CENTS = 6500;
 
 /**
- * The 2026-08-25 composition counted all 420 artifact rows. The customer
- * projection now removes the GRP-0364 shipping charge and withholds Care
- * retail prices from Research. Product Control still has 417 bound prices.
+ * Candidate expectations, checked through the real reader below, not a new
+ * production measurement. Policy delta from the predecessor:
+ * - remove two superseded priced/pending identities (175 -> 173 visible prices);
+ * - retain all 242 canonical Care prices, withheld only in Research;
+ * - add six new identities without borrowing bindings or approving prices;
+ * - preserve the two genuine quote-only rows and the separate shipping row.
  *
- *   TOTAL             419   one shipping charge excluded from 420 source rows
- *   RESEARCH PRICED   175   417 authority prices minus 242 Care prices
+ *   CUSTOMER TOTAL    423   424 canonical identities minus shipping
+ *   RESEARCH PRICED   173   415 retained authority prices minus 242 Care prices
  *   CARE WITHHELD     242   priced in Product Control, hidden in Research
  *   QUOTE ONLY          2   BAM15, Syringes & Swabs
- *   RUO                153   research use only
- *   PROVIDER REQUEST   242   503A / provider pathway, never direct
- *   AVAILABILITY         1   otherwise held row
- *   ACTIVATION          44   visible rows lacking direct launch authority
- *   PRICING REQUEST      1   the one generally orderable row lacking a price
- *   DIRECT REQUEST     131   rows the shared pathway authority admits
+ *   BINDING PENDING     6   new identities, no Product Control/price release
+ *
+ * The action census below must also pass after candidate generation; these
+ * are test expectations, not observed results before the real-reader run.
  */
-const MEASURED_TOTAL_VARIANTS = 419;
-const MEASURED_RESEARCH_PRICED = 175;
-const MEASURED_CARE_WITHHELD = 242;
-const MEASURED_QUOTE_ONLY = 2;
-const MEASURED_RUO = 153;
-const MEASURED_PROVIDER_REQUEST = 242;
-const MEASURED_AVAILABILITY_REVIEW = 1;
-const MEASURED_REQUEST_ACTIVATION = 44;
-const MEASURED_REQUEST_PRICING = 1;
-const MEASURED_DIRECT_ORDER_REQUEST = 131;
+const EXPECTED_TOTAL_VARIANTS = 423;
+const EXPECTED_RESEARCH_PRICED = 173;
+const EXPECTED_CARE_WITHHELD = 242;
+const EXPECTED_QUOTE_ONLY = 2;
+const EXPECTED_BINDING_PENDING = 6;
+const EXPECTED_RUO = 157;
+const EXPECTED_PROVIDER_REQUEST = 242;
+const EXPECTED_AVAILABILITY_REVIEW = 2;
+const EXPECTED_REQUEST_ACTIVATION = 42;
+const EXPECTED_REQUEST_PRICING = 6;
+const EXPECTED_DIRECT_ORDER_REQUEST = 131;
 /** The 503A channel specifically, which is the complete provider-request set. */
-const MEASURED_503A = 242;
+const EXPECTED_503A = 242;
 
 /**
- * Named rows, with their REAL production prices read from
- * research_product_prices on 2026-08-20, so at least part of this walk is
- * checked against the actual money a customer will be shown rather than
- * against a placeholder.
+ * Historical named-row fixture from research_product_prices on 2026-08-20.
+ * These unchanged cents exercise amount projection, not current production
+ * truth or new approval. The remaining retained pairs use a positive double.
  */
 const REAL_PRICES: Record<string, number> = {
   // Kisspeptin 10 mg -> $65.00, the row the founder called out by name.
@@ -104,6 +115,27 @@ const REAL_PRICES: Record<string, number> = {
   // does not truncate or mis-scale large amounts.
   "2fe736d6-b165-4390-b542-8df06ea96046": 107500,
 };
+
+type BindingArtifact = {
+  unbound: Array<{
+    offeringId: string;
+    offeringVariantId: string;
+    sourceGroupId: string;
+    reasonCode: "quote_only" | "binding_pending" | "shipping_service";
+  }>;
+  supersededBindings: Array<{
+    binding: { productId: string; variantId: string; offeringVariantId: string };
+  }>;
+};
+const bindingArtifact = JSON.parse(
+  readFileSync(MASTER_OFFERING_COMMITTED_BINDINGS_PATH, "utf8"),
+) as BindingArtifact;
+const unboundByVariant = new Map(
+  bindingArtifact.unbound.map((entry) => [entry.offeringVariantId, entry]),
+);
+function unboundReason(item: AssistedOrderCatalogItem) {
+  return unboundByVariant.get(item.sourceSelection?.variantId ?? "")?.reasonCode;
+}
 
 const bindingIndex = loadBindingIndex().index;
 const byVariant = bindingsByOfferingVariantId(bindingIndex);
@@ -215,6 +247,7 @@ function callbacks() {
         `${identity.productId}\u0000${identity.variantId}`,
       ) ?? null,
     catalogVersion: "catalog-coverage",
+    reviewedFormulationHoldVariantIds: reviewedHeldVariantIds(),
   });
 }
 
@@ -247,14 +280,16 @@ async function walkWholeCatalog(
 async function walkAuthorityPrices(): Promise<{
   priced: number;
   carePriced: number;
-  onRequest: number;
+  quoteOnly: number;
+  bindingPending: number;
 }> {
   const service = await catalogDependencies().serviceForViewer(
     pricingViewerForCustomerViewer(EARLY_ACCESS_VIEWER) as never,
   ) as MasterOfferingCatalogService;
   let priced = 0;
   let carePriced = 0;
-  let onRequest = 0;
+  let quoteOnly = 0;
+  let bindingPending = 0;
   for (let page = 1; ; page += 1) {
     const selection = await service.select({ page, pageSize: 100 });
     for (const offering of selection.offerings) {
@@ -266,13 +301,17 @@ async function walkAuthorityPrices(): Promise<{
           priced += 1;
           if (offering.family === "clinical_formulations_503a") carePriced += 1;
         } else {
-          onRequest += 1;
+          const reason = unboundByVariant.get(variant.id)?.reasonCode;
+          expect(reason, `unexpected missing authority price: ${variant.id}`)
+            .toMatch(/^(quote_only|binding_pending)$/);
+          if (reason === "quote_only") quoteOnly += 1;
+          if (reason === "binding_pending") bindingPending += 1;
         }
       }
     }
     if (page >= selection.page.totalPages) break;
   }
-  return { priced, carePriced, onRequest };
+  return { priced, carePriced, quoteOnly, bindingPending };
 }
 
 describe("Early Access price coverage across the whole catalog", () => {
@@ -299,24 +338,101 @@ describe("Early Access price coverage across the whole catalog", () => {
     );
   });
 
-  it("retains 417 Product Control prices while withholding Care prices in Research", async () => {
+  it("keeps authority prices, Care presentation holds, quote-only and unreleased identities separate", async () => {
     expect(await walkAuthorityPrices()).toEqual({
       priced: BOUND_VARIANTS,
-      carePriced: MEASURED_CARE_WITHHELD,
-      onRequest: PRICE_ON_REQUEST_VARIANTS,
+      carePriced: EXPECTED_CARE_WITHHELD,
+      quoteOnly: PRICE_ON_REQUEST_VARIANTS,
+      bindingPending: BINDING_PENDING_VARIANTS,
     });
     const { items } = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
     const priced = items.filter((item) => item.unitPriceCents !== null);
     const careWithheld = items.filter((item) => item.workflowMode === "provider_request");
-    const onRequest = items.filter((item) => item.unitPriceCents === null && item.workflowMode !== "provider_request");
+    const quoteOnly = items.filter((item) => unboundReason(item) === "quote_only");
+    const bindingPending = items.filter((item) => unboundReason(item) === "binding_pending");
 
-    expect(priced).toHaveLength(MEASURED_RESEARCH_PRICED);
-    expect(careWithheld).toHaveLength(MEASURED_CARE_WITHHELD);
-    expect(careWithheld.every((item) => item.unitPriceCents === null && item.priceVersion === null)).toBe(true);
-    expect(onRequest).toHaveLength(PRICE_ON_REQUEST_VARIANTS);
-    expect(onRequest.map((item) => item.productName).sort()).toEqual(
+    expect(priced).toHaveLength(EXPECTED_RESEARCH_PRICED);
+    expect(careWithheld).toHaveLength(EXPECTED_CARE_WITHHELD);
+    expect(quoteOnly).toHaveLength(EXPECTED_QUOTE_ONLY);
+    expect(bindingPending).toHaveLength(EXPECTED_BINDING_PENDING);
+    expect(quoteOnly.map((item) => item.productName).sort()).toEqual(
       [...UNBOUND_PRODUCT_NAMES].sort(),
     );
+    for (const item of [...careWithheld, ...quoteOnly, ...bindingPending]) {
+      expect(item.unitPriceCents).toBeNull();
+      expect(item.priceVersion).toBeNull();
+      expect(item.workflowMode).not.toBe("direct_order_request");
+    }
+    // Every row is in exactly one reviewed bucket, not "all null means missing".
+    const accounted = [...priced, ...careWithheld, ...quoteOnly, ...bindingPending];
+    expect(accounted).toHaveLength(TOTAL_VARIANTS);
+    expect(new Set(accounted.map((item) => item.variantId)).size).toBe(TOTAL_VARIANTS);
+    expect(accounted.map((item) => item.variantId).sort()).toEqual(
+      items.map((item) => item.variantId).sort(),
+    );
+  });
+
+  it("preserves all six unreleased source identities and refuses borrowed or forged submit identities", async () => {
+    const pending = bindingArtifact.unbound.filter((entry) => entry.reasonCode === "binding_pending");
+    expect(pending.map((entry) => entry.sourceGroupId).sort()).toEqual(NEW_SOURCE_GROUPS);
+    const cb = callbacks();
+    const { items } = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
+    for (const entry of pending) {
+      const listed = items.find((item) => item.sourceSelection?.variantId === entry.offeringVariantId);
+      expect(listed, entry.sourceGroupId).toBeDefined();
+      expect(listed!.productId).toBe(`unbound:${entry.offeringId}`);
+      expect(listed!.variantId).toBe(`unbound:${entry.offeringVariantId}`);
+      expect(listed!.unitPriceCents).toBeNull();
+      expect(listed!.priceVersion).toBeNull();
+      expect(listed!.workflowMode).not.toBe("direct_order_request");
+      const resolved = await cb.resolve(EARLY_ACCESS_VIEWER, listed!.productId, listed!.variantId);
+      expect(resolved).not.toBeNull();
+      expect(cb.fingerprint(resolved!)).toBe(cb.fingerprint(listed!));
+      expect(await cb.resolve(EARLY_ACCESS_VIEWER, "unbound:mo_forged", listed!.variantId)).toBeNull();
+    }
+    // Old paid-price identities are archived evidence, never aliases that
+    // silently resolve to the newly reconciled Hexarelin/Oxytocin identities.
+    expect(bindingArtifact.supersededBindings).toHaveLength(2);
+    for (const { binding } of bindingArtifact.supersededBindings) {
+      expect(await cb.resolve(EARLY_ACCESS_VIEWER, binding.productId, binding.variantId)).toBeNull();
+    }
+  });
+
+  it("keeps the GRP-0422 hold on its raw identity after display wording changes", async () => {
+    const holds = reviewedHeldVariantIds();
+    expect(holds.has(HELD_VARIANT_ID)).toBe(true);
+    const { items } = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
+    const held = items.find((item) => item.sourceSelection?.variantId === HELD_VARIANT_ID);
+    expect(held).toBeDefined();
+    expect(held!.specification).not.toMatch(/split pending/i);
+    expect(held!.workflowMode).toBe("availability_review");
+    const cb = callbacks();
+    const reread = await cb.resolve(EARLY_ACCESS_VIEWER, held!.productId, held!.variantId);
+    expect(reread?.workflowMode).toBe("availability_review");
+    expect(cb.fingerprint(reread!)).toBe(cb.fingerprint(held!));
+
+    const reader = (sharedReader ??= createMasterOfferingCatalogReaderFromEnv());
+    const source = (await reader!.readCatalog()).find(
+      (offering) => offering.variants.some((variant) => variant.id === HELD_VARIANT_ID),
+    )!;
+    expect(source).toBeDefined();
+    const variant = source.variants.find((item) => item.id === HELD_VARIANT_ID)!;
+    // Even a perfect price and binding cannot undo the reviewed raw-ID hold.
+    // Empty text holds and neutral renamed copy isolate the identity contract.
+    const renamed = { ...source, displayName: "Renamed research material", displayState: "request_access" as const };
+    const renamedVariant = { ...variant, label: "Reviewed formulation", displayState: "request_access" as const };
+    const authority = authorityFor(
+      renamed, renamedVariant,
+      {
+        state: "priced", amountCents: PRICE_CENTS, currency: "USD", display: "$65.00",
+        basis: "exact_listed_unit", priceId: "synthetic-price", priceVersion: 1,
+        effectiveAt: "2026-08-01T00:00:00.000Z", expiresAt: null,
+      },
+      { productId: "00000000-0000-4000-8000-000000000001", variantId: "00000000-0000-4000-8000-000000000002" },
+      "identity-hold-regression", new Set<string>(), holds,
+    );
+    expect(authority.held).toBe(true);
+    expect(authority.directEligible).toBe(false);
   });
 
   it("never shows a zero or negative price anywhere in the catalog", async () => {
@@ -348,27 +464,23 @@ describe("Early Access price coverage across the whole catalog", () => {
     const care = items.filter(
       (item) => item.channel === "503A Clinical Formulations",
     );
-    expect(care.length).toBe(MEASURED_503A);
+    expect(care.length).toBe(EXPECTED_503A);
     expect(
       care.filter((item) => item.workflowMode === "direct_order_request"),
     ).toHaveLength(0);
     expect(care.every((item) => item.unitPriceCents === null && item.priceVersion === null)).toBe(true);
   });
 
-  it("prices against the audience production actually holds rows on", () => {
-    // THE value the whole repair turns on, and the one thing no other test in
-    // this file could catch: production holds 417 active price rows and every
-    // one is audience "member", with zero on retail, private_early_access,
-    // professional or wholesale. Point the authority at any of those and the
-    // live catalog silently returns to "Price on request" — while every other
-    // assertion here stays green, because they would all build their fixtures
-    // from the same wrong constant. Checked against a literal from the
-    // measurement, deliberately not against the constant itself.
+  it("retains the literal member audience documented by the historical price fixture", () => {
+    // The historical 417-row read-back used audience "member", not retail,
+    // private_early_access, professional or wholesale. The fixture literal
+    // prevents changing the constant and its test double in lockstep.
+    // This local test does not refresh that historical hosted measurement.
     expect(EARLY_ACCESS_RETAIL_PRICE_AUDIENCE).toBe("member");
-    expect(MEASURED_RESEARCH_PRICED + MEASURED_CARE_WITHHELD + MEASURED_QUOTE_ONLY).toBe(MEASURED_TOTAL_VARIANTS);
+    expect(EXPECTED_RESEARCH_PRICED + EXPECTED_CARE_WITHHELD + EXPECTED_QUOTE_ONLY + EXPECTED_BINDING_PENDING).toBe(EXPECTED_TOTAL_VARIANTS);
   });
 
-  it("matches that measured composition when actually walked", async () => {
+  it("matches the reviewed candidate composition when actually walked", async () => {
     const { items } = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
     const count = (predicate: (item: AssistedOrderCatalogItem) => boolean) =>
       items.filter(predicate).length;
@@ -382,14 +494,14 @@ describe("Early Access price coverage across the whole catalog", () => {
       requestPricing: count((item) => item.workflowMode === "request_pricing"),
       directOrderRequest: count((item) => item.workflowMode === "direct_order_request"),
     }).toEqual({
-      priced: MEASURED_RESEARCH_PRICED,
-      unpriced: MEASURED_CARE_WITHHELD + MEASURED_QUOTE_ONLY,
-      researchUseOnly: MEASURED_RUO,
-      providerRequest: MEASURED_PROVIDER_REQUEST,
-      availabilityReview: MEASURED_AVAILABILITY_REVIEW,
-      requestActivation: MEASURED_REQUEST_ACTIVATION,
-      requestPricing: MEASURED_REQUEST_PRICING,
-      directOrderRequest: MEASURED_DIRECT_ORDER_REQUEST,
+      priced: EXPECTED_RESEARCH_PRICED,
+      unpriced: EXPECTED_CARE_WITHHELD + EXPECTED_QUOTE_ONLY + EXPECTED_BINDING_PENDING,
+      researchUseOnly: EXPECTED_RUO,
+      providerRequest: EXPECTED_PROVIDER_REQUEST,
+      availabilityReview: EXPECTED_AVAILABILITY_REVIEW,
+      requestActivation: EXPECTED_REQUEST_ACTIVATION,
+      requestPricing: EXPECTED_REQUEST_PRICING,
+      directOrderRequest: EXPECTED_DIRECT_ORDER_REQUEST,
     });
   });
 
@@ -405,14 +517,13 @@ describe("Early Access price coverage across the whole catalog", () => {
     expect(withoutGrant.items.map((item) => item.variantId)).toEqual(
       withGrant.items.map((item) => item.variantId),
     );
-    // ...and that ungranted viewer still sees no price at all, which is the
-    // state production is in right now.
+    // The ungranted local viewer sees no price; no current hosted-state claim.
     expect(
       withoutGrant.items.filter((item) => item.unitPriceCents !== null),
     ).toHaveLength(0);
   });
 
-  it("shows the founder-named rows at their real production prices", async () => {
+  it("preserves the named 2026-08-20 price fixture without treating it as new approval", async () => {
     const { items } = await walkWholeCatalog(EARLY_ACCESS_VIEWER);
     const kisspeptin10 = items.find(
       (item) => item.variantId === "55b1eadd-514f-407f-b390-d202f11117ed",
@@ -425,8 +536,8 @@ describe("Early Access price coverage across the whole catalog", () => {
     );
     expect(retatrutide50?.unitPriceCents).toBe(107500);
 
-    // BAM15 has NO active price row in production, so it must stay on request
-    // and must never be presented as directly orderable.
+    // BAM15 is one of the two genuine quote-only rows in this reviewed
+    // fixture, distinct from the six unreleased identity/price rows.
     const bam15 = items.find((item) => item.productName === "BAM15");
     expect(bam15).toBeTruthy();
     expect(bam15?.unitPriceCents).toBeNull();
@@ -441,7 +552,7 @@ describe("Early Access price coverage across the whole catalog", () => {
     // at the end — the exact shape of an earlier defect where a page clamp left
     // 320 of 420 rows unreachable.
     //
-    // So every one of the 419 customer rows is resolved individually and compared on the
+    // So every one of the 423 customer rows is resolved individually and compared on the
     // authoritative fingerprint, which covers productId, variantId, price,
     // priceVersion, catalogVersion and workflowMode together.
     const cb = callbacks();
@@ -468,7 +579,7 @@ describe("Early Access price coverage across the whole catalog", () => {
     }
     expect(unresolved).toEqual([]);
     expect(disagreed).toEqual([]);
-    // 419 resolves, each paging the real dataset. Deliberately the most
+    // 423 resolves, each paging the real dataset. Deliberately the most
     // expensive test in the lane, and it timed out at the 5s default under a
     // loaded suite. A generous explicit budget is the honest fix: quietly
     // sampling fewer rows would give back the very coverage it exists for.
@@ -545,31 +656,18 @@ describe("Early Access price coverage across the whole catalog", () => {
     }
   });
 
-  it("still matches the production price set that was measured against it", () => {
-    // Comparing the artifact's size to a constant proves nothing about
-    // production. This compares the artifact's CONTENT to a fingerprint taken
-    // FROM production on 2026-08-20:
-    //
-    //   md5(string_agg(product_id || '|' || variant_id, chr(10) order by ...))
-    //   over active, in-window, member-audience prices on published products
-    //   and approved variants  ->  062a30f0...92d4f6 across 417 rows.
-    //
-    // It cannot notice production drifting on its own — no offline test can —
-    // which is why the failure message points at re-measuring rather than at
-    // editing the constant.
-    const digest = createHash("md5")
-      .update(
-        Array.from(bindingIndex.values())
-          .map((binding) => binding.productId + "|" + binding.variantId)
-          .sort()
-          .join("\n"),
-      )
-      .digest("hex");
+  it("pins the retained local subset without relabeling the historical production fingerprint", () => {
+    const pairLines = Array.from(bindingIndex.values())
+      .map((binding) => binding.productId + "|" + binding.variantId);
+    const digestOf = (pairs: string[]) => createHash("md5")
+      .update([...pairs].sort().join("\n")).digest("hex");
     expect(bindingIndex.size).toBe(BOUND_VARIANTS);
-    expect(
-      digest,
-      "the binding artifact changed: re-measure the production price set before trusting any coverage number in this file",
-    ).toBe(PRODUCTION_PRICED_PAIRS_MD5);
+    expect(digestOf(pairLines)).toBe(RETAINED_PRICED_PAIRS_MD5);
+    const archived = bindingArtifact.supersededBindings.map(
+      ({ binding }) => binding.productId + "|" + binding.variantId,
+    );
+    expect(new Set([...pairLines, ...archived]).size).toBe(417);
+    expect(digestOf([...pairLines, ...archived])).toBe(HISTORICAL_PRICED_PAIRS_MD5);
     expect(earlyAccessRetailPricingViewer().pricingGrant?.audience).toBe(
       EARLY_ACCESS_RETAIL_PRICE_AUDIENCE,
     );

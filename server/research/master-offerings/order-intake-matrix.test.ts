@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 import { resolveMasterOfferingAction } from "./action";
-import { reviewedHeldSpecifications } from "./reviewed-holds";
+import { reviewedHeldSpecifications, reviewedHeldVariantIds } from "./reviewed-holds";
 import type {
   MasterOfferingDisplayState,
   MasterOfferingFamily,
@@ -38,6 +38,8 @@ beforeAll(async () => {
 // ---------------------------------------------------------------------------
 
 interface Row {
+  /** Supplied for every real dataset row; synthetic policy fixtures may omit it. */
+  offeringVariantId?: string;
   family: MasterOfferingFamily;
   productName: string;
   variantLabel: string;
@@ -52,13 +54,14 @@ function shippedRows(): Row[] {
       displayName: string;
       family: MasterOfferingFamily;
       displayState: MasterOfferingDisplayState;
-      variants: Array<{ label: string; displayState: MasterOfferingDisplayState }>;
+      variants: Array<{ id: string; label: string; displayState: MasterOfferingDisplayState }>;
     }>;
   };
   const rows: Row[] = [];
   for (const product of parsed.products) {
     for (const presentation of product.variants) {
       rows.push({
+        offeringVariantId: presentation.id,
         family: product.family,
         productName: product.displayName,
         variantLabel: presentation.label,
@@ -73,7 +76,7 @@ function shippedRows(): Row[] {
 /** One row, with commerce made as favourable as it can legally be. */
 function resolvedAction(row: Row) {
   const variant: NormalizedMasterOfferingVariant = {
-    id: "mov_matrix_variant",
+    id: row.offeringVariantId ?? "mov_matrix_variant",
     label: row.variantLabel,
     displayState: row.variantDisplayState,
     visibility: "member",
@@ -111,7 +114,10 @@ function resolvedAction(row: Row) {
       selection,
     },
     undefined,
-    { reviewedFormulationHolds: reviewedHeldSpecifications() },
+    {
+      reviewedFormulationHolds: reviewedHeldSpecifications(),
+      reviewedFormulationHoldVariantIds: reviewedHeldVariantIds(),
+    },
   );
 }
 
@@ -129,8 +135,10 @@ const publicationCandidateOrderable = (row: Row) =>
 describe("order intake matrix: what the customer's button says", () => {
   it("resolves every shipped variant, none skipped", () => {
     const rows = shippedRows();
-    expect(rows).toHaveLength(420);
+    expect(rows).toHaveLength(424);
+    expect(new Set(rows.map((row) => row.offeringVariantId)).size).toBe(424);
     for (const row of rows) {
+      expect(row.offeringVariantId).toMatch(/^mov_/);
       expect(resolvedAction(row).kind).toBeTruthy();
     }
   });
@@ -139,12 +147,12 @@ describe("order intake matrix: what the customer's button says", () => {
     expect(shippedRows().filter(orderable)).toEqual([]);
   });
 
-  it("would offer direct ordering to 106 confirmed-RUO candidates only after explicit available-now publication", () => {
+  it("would offer direct ordering to 111 confirmed-RUO candidates only after explicit available-now publication and commerce approval", () => {
     const peptides = shippedRows().filter(
       (row) => row.family === "research_peptides_materials" && publicationCandidateOrderable(row),
     );
 
-    expect(peptides).toHaveLength(106);
+    expect(peptides).toHaveLength(111);
     for (const row of peptides) {
       expect(row.variantDisplayState).toBe("request_access");
     }
@@ -185,7 +193,7 @@ describe("order intake matrix: what the customer's button says", () => {
         row.variantDisplayState === "approval_required",
     );
 
-    expect(pending).toHaveLength(29);
+    expect(pending).toHaveLength(27);
     for (const row of pending) {
       expect(resolvedAction(row).kind).not.toBe("add_to_cart");
     }
@@ -214,18 +222,14 @@ describe("order intake matrix: what the customer's button says", () => {
   });
 
   it("refuses the formulation-held combination under its canonical name", () => {
-    // GRP-0422 is not in the shipped artifact yet, so it is resolved directly
-    // rather than read from it. Under the RUO classification with a perfect
-    // selection, the hold is the only thing between it and a cart.
-    expect(
-      publicationCandidateOrderable({
-        family: "research_peptides_materials",
-        productName: "CJC-1295 + Ipamorelin",
-        variantLabel: "CJC-1295 WITH DAC + IPAMORELIN 5 mg total",
-        displayState: "request_access",
-        variantDisplayState: "request_access",
-      }),
-    ).toBe(false);
+    const held = shippedRows().find((row) => row.offeringVariantId === "mov_f61758881da2b7bfa539");
+    expect(held).toBeDefined();
+    expect(held!.variantLabel).toBe("CJC-1295 WITH DAC + IPAMORELIN 5 mg total");
+    expect(publicationCandidateOrderable(held!)).toBe(false);
+    // Presentation wording is not authority to remove a source-identity hold.
+    expect(publicationCandidateOrderable({
+      ...held!, productName: "Renamed research material", variantLabel: "Reviewed formulation",
+    })).toBe(false);
   });
 
   it("keeps the standalone WITH DAC strengths eligible after explicit available-now publication", () => {
@@ -244,24 +248,19 @@ describe("order intake matrix: what the customer's button says", () => {
     }
   });
 
-  it("records the gap between what ships today and the founder's target", () => {
-    // CANDIDATE AFTER AVAILABLE-NOW PUBLICATION: 106 direct. The exact runtime
-    // remains at zero above because the reconciled artifact has not been
-    // regenerated/published into the repo. GRP-0425/0426 are absent, so the
-    // runtime still carries the PENDING twins of Hexarelin 5 mg and Oxytocin 10 mg.
-    //
-    // TARGET: 139 canonical peptide variants = 111 direct + 1 formulation
-    // blocked + 27 classification pending.
-    //
-    // This is the tripwire. When the regeneration lands it fails, and the
-    // numbers below are the checklist for what it must become.
+  it("matches the reconciled classification target without manufacturing current commerce approval", () => {
+    // Hypothetical publication with the sealed synthetic selection above:
+    // 139 canonical peptides = 111 eligible + 1 held + 27 pending.
+    // Current Add to Cart stays zero. The six new identities are still unbound
+    // in the real composition, which this favourable-policy fixture does not
+    // replace. Ingestion is not a binding, price or publication approval.
     const rows = shippedRows();
-    expect(rows.filter((r) => r.family === "research_peptides_materials")).toHaveLength(135);
+    expect(rows.filter((r) => r.family === "research_peptides_materials")).toHaveLength(139);
     expect(
       rows.filter((r) => r.family === "research_peptides_materials" && publicationCandidateOrderable(r)),
-    ).toHaveLength(106);
-    // 131 = the 106 peptides plus the 25 non-peptide rows above.
-    expect(rows.filter(publicationCandidateOrderable)).toHaveLength(131);
+    ).toHaveLength(111);
+    // 136 hypothetical candidates = 111 peptides plus 25 non-peptide rows.
+    expect(rows.filter(publicationCandidateOrderable)).toHaveLength(136);
 
     const TARGET = Object.freeze({
       canonicalPeptideVariants: 139,
@@ -278,11 +277,10 @@ describe("order intake matrix: what the customer's button says", () => {
 // ---------------------------------------------------------------------------
 // A row the customer cannot order still has to show what it costs.
 //
-// The founder's routing table says GRP-0422 is VISIBLE, RETAIL PRICED, and
-// Request Order. Those are three separate properties and only one of them is a
-// routing decision. Price and action are resolved independently — the action
-// resolver never sees the price, and the projection sets them side by side —
-// so this pins the independence rather than assuming it.
+// The synthetic $99 fixture below proves price/action independence only. It
+// does not release the source's intended cents or create a Product Control
+// price for GRP-0422. The real six unbound identities stay unpriced in coverage.
+// A future separately approved price may coexist with a formulation hold.
 //
 // The regression it guards against is a plausible and well-meant one: someone
 // deciding that a product you cannot buy should not show a price. That would
@@ -303,7 +301,7 @@ const RETAIL_PRICE: MasterOfferingPriceView = {
 
 function projectRow(row: Row, price: MasterOfferingPriceView) {
   const variant: NormalizedMasterOfferingVariant = {
-    id: "mov_matrix_variant",
+    id: row.offeringVariantId ?? "mov_matrix_variant",
     label: row.variantLabel,
     displayState: row.variantDisplayState,
     visibility: "member",
@@ -341,7 +339,10 @@ function projectRow(row: Row, price: MasterOfferingPriceView) {
       selection,
     }),
     price,
-    { reviewedFormulationHolds: reviewedHeldSpecifications() },
+    {
+      reviewedFormulationHolds: reviewedHeldSpecifications(),
+      reviewedFormulationHoldVariantIds: reviewedHeldVariantIds(),
+    },
   );
 }
 

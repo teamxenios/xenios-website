@@ -30,8 +30,9 @@ const COMMITTED = path.resolve(REPO_ROOT, MASTER_OFFERINGS_COMMITTED_DATASET_PAT
  * you meant, and then update these two numbers in the same commit as the data.
  * What must never happen is the catalog silently becoming a different catalog.
  */
-const PINNED_OFFERINGS = 420;
-const PINNED_VARIANTS = 420;
+// HL-11: 426 source rows, two superseded identities, 424 canonical variants.
+const PINNED_OFFERINGS = 424;
+const PINNED_VARIANTS = 424;
 
 describe("the committed dataset artifact", () => {
   it("is present in the repository, not only on somebody's machine", () => {

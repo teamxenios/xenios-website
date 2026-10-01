@@ -4,6 +4,7 @@ import {
   normalizeSpecification,
   readReviewedCommerceHolds,
   reviewedHeldSpecifications,
+  reviewedHeldVariantIds,
 } from "./reviewed-holds";
 import { isFormulationHeld } from "@shared/research/master-offerings/formulation-hold";
 import { isDirectPurchaseForbidden } from "@shared/research/master-offerings/pathway-authority";
@@ -23,6 +24,8 @@ describe("the reviewed commerce holds", () => {
     const holds = readReviewedCommerceHolds();
     expect(holds.map((hold) => hold.sourceRow)).toEqual(["GRP-0422"]);
     expect(holds[0].specification).toBe(CANONICAL_HELD_SPEC);
+    expect(holds[0].offeringId).toBe("mo_2babbadce5172426bde2");
+    expect([...reviewedHeldVariantIds()]).toEqual(["mov_f61758881da2b7bfa539"]);
   });
 
   it("holds the CANONICAL specification, which carries no marker to match", () => {
@@ -143,16 +146,18 @@ describe("the hold is on by default", () => {
       new URL("./composition.ts", import.meta.url),
       "utf8",
     );
-    expect(source).toContain("reviewedFormulationHolds: reviewedHeldSpecifications(");
+    expect(source).toContain("reviewedFormulationHoldVariantIds: reviewedHeldVariantIds(");
   });
 
-  it("leaves the held row purchasable if the reviewed set is not supplied", async () => {
-    // Documents the exact regression the composition line prevents, so anyone
-    // who deletes that line sees this test explain what they just switched off.
+  it("refuses the exact held row by default even when its label changes", async () => {
     const product = offering({
       family: "research_peptides_materials",
       displayState: "available_now",
-      variants: [variant({ displayState: "available_now", label: CANONICAL_HELD_SPEC })],
+      variants: [variant({
+        id: "mov_f61758881da2b7bfa539",
+        displayState: "available_now",
+        label: "Reviewed customer wording",
+      })],
     });
     const presentation = product.variants[0];
     const selection = await cartSelection();
@@ -165,14 +170,13 @@ describe("the hold is on by default", () => {
       selection,
     };
 
-    // No reviewed set: sellable. This is what "the hold was consulted by
-    // nobody" looked like in the running system.
-    expect(resolveMasterOfferingAction(product, presentation, commerce).kind).toBe("add_to_cart");
+    // Omitted caller wiring is not a bypass: the action consults pinned policy.
+    expect(resolveMasterOfferingAction(product, presentation, commerce).kind).not.toBe("add_to_cart");
 
-    // With it: refused.
+    // Explicit structured authority gives the same refusal.
     expect(
       resolveMasterOfferingAction(product, presentation, commerce, undefined, {
-        reviewedFormulationHolds: reviewedHeldSpecifications(),
+        reviewedFormulationHoldVariantIds: reviewedHeldVariantIds(),
       }).kind,
     ).not.toBe("add_to_cart");
   });

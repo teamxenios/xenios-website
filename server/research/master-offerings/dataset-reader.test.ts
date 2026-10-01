@@ -12,6 +12,7 @@ import {
 import { MASTER_OFFERINGS_COMMITTED_DATASET_PATH } from "./dataset-location";
 import { noMasterOfferingCommerce } from "./customer-projection";
 import { MasterOfferingCatalogService } from "./service";
+import { readPinnedReconciliationAuthority } from "./reconciliation-authority";
 
 function generatedOffering(overrides: Record<string, unknown> = {}) {
   return {
@@ -63,6 +64,81 @@ function dataset(overrides: Record<string, unknown> = {}) {
 }
 
 describe("generated dataset loading", () => {
+  function reconciledDataset() {
+    const authority = readPinnedReconciliationAuthority();
+    const held = authority.reconciliation.commerceHolds[0];
+    const products = Array.from({ length: 424 }, (_, index) => generatedOffering({
+      id: index === 0 ? held.catalogIdentity.offeringId : "mo_fixture_" + index,
+      slug: "fixture-" + index,
+      variants: [{
+        id: index === 0 ? held.catalogIdentity.offeringVariantId : "mov_fixture_" + index,
+        label: index === 0 ? held.specification : "5 mg vial",
+        displayState: "request_access",
+      }],
+    }));
+    return {
+      authority,
+      raw: dataset({
+        sourceWorkbookSha256: authority.reconciliation.sourceWorkbook.sha256,
+        workbookSourceRowCount: 426,
+        sourceRowCount: 424,
+        reconciliation: {
+          file: authority.file,
+          sha256: authority.sha256,
+          sourceRows: 426,
+          canonicalRows: 424,
+          commerceHeldRows: [held.sourceRow],
+          provenance: { [held.sourceRow]: [held.sourceRow] },
+        },
+        products,
+      }),
+    };
+  }
+
+  it("requires exact pinned authority and lineage for the reviewed 424-variant dataset", () => {
+    const { raw, authority } = reconciledDataset();
+    const loaded = loadMasterOfferingDataset(raw, authority);
+    expect(loaded.products).toHaveLength(424);
+    expect(loaded.summary.countsAgree).toBe(true);
+    expect(loaded.products[0].sourceReferences).toEqual([]);
+    expect(loaded.products[0].variants[0].sourceReferences).toEqual([]);
+    expect(JSON.stringify(loaded.products)).not.toContain("GRP-0422");
+    expect(JSON.stringify(loaded.products)).not.toContain(authority.sha256);
+    expect(() => loadMasterOfferingDataset(raw)).toThrow(/pinned authority/);
+  });
+
+  it("refuses stale, missing and wrongly joined reconciliation metadata", () => {
+    const { raw, authority } = reconciledDataset();
+    const bad: any[] = [];
+    const clone = () => JSON.parse(JSON.stringify(raw));
+    const missing = clone(); delete missing.reconciliation; bad.push(missing);
+    const noHash = clone(); delete noHash.reconciliation.sha256; bad.push(noHash);
+    const stale = clone(); stale.reconciliation.sha256 = "0".repeat(64); bad.push(stale);
+    const unheld = clone(); unheld.reconciliation.commerceHeldRows = []; bad.push(unheld);
+    const lostJoin = clone(); lostJoin.products[0].variants[0].id = "mov_wrong"; bad.push(lostJoin);
+    const wrongParent = clone(); wrongParent.products[0].id = "mo_wrong"; bad.push(wrongParent);
+    const lostSource = clone(); lostSource.reconciliation.provenance = {}; bad.push(lostSource);
+    const wrongCount = clone(); wrongCount.products.pop(); bad.push(wrongCount);
+    for (const value of bad) {
+      expect(() => loadMasterOfferingDataset(value, authority)).toThrow(/pinned authority/);
+    }
+  });
+
+  it("does not read another working directory's authority for an explicit deployment root", () => {
+    const { raw } = reconciledDataset();
+    const files = {
+      statMtimeMs: () => 1,
+      readText: () => JSON.stringify(raw),
+    };
+    const missingRoot = "/nonexistent-xenios-reconciliation-root";
+    const reader = new GeneratedMasterOfferingCatalogReader("catalog.json", files, missingRoot);
+    expect(() => reader.readCatalog()).toThrow(/pinned reconciliation authority is unavailable/);
+    const composed = createMasterOfferingCatalogReaderFromEnv(
+      { [MASTER_OFFERINGS_DATASET_ENV_VAR]: "catalog.json" }, files, { exists: () => true }, missingRoot,
+    );
+    expect(() => composed?.readCatalog()).toThrow(/pinned reconciliation authority is unavailable/);
+  });
+
   it("loads member-safe offerings and counts them itself", () => {
     const loaded = loadMasterOfferingDataset(dataset());
     expect(loaded.products).toHaveLength(1);
@@ -340,6 +416,13 @@ describe("the reader on disk", () => {
     expect(location?.filePath).toBe(
       path.resolve("/srv/app", MASTER_OFFERINGS_COMMITTED_DATASET_PATH),
     );
+  });
+
+  it("loads the committed artifact and its pinned authority from a nested working directory", () => {
+    const reader = createMasterOfferingCatalogReaderFromEnv(
+      {}, undefined, undefined, path.resolve(process.cwd(), "server", "research"),
+    );
+    expect(reader?.readCatalog()).toHaveLength(424);
   });
 
   it("lets an operator override the committed artifact, and does not fall back on a typo", () => {

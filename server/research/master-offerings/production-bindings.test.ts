@@ -2,11 +2,14 @@
  * The committed binding artifact is reviewed state, so these tests hold it to
  * the same closed accounting the build enforced when it was generated: every
  * catalog variant is either bound to exactly one Product Control identity or
- * is one of the three known exclusions, nothing else. A regenerated artifact
+ * is one of nine explained unbound rows, nothing else. Two superseded bindings
+ * remain archived evidence, never authority transferred to new identities.
+ * A regenerated artifact
  * that drifts from the committed dataset fails here before it can ship.
  */
 
 import fs from "node:fs";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import os from "node:os";
 import { describe, expect, it } from "vitest";
@@ -31,13 +34,93 @@ interface DatasetShape {
   products: Array<{ id: string; variants: Array<{ id: string }> }>;
 }
 
+type BindingEntry = {
+  offeringId: string;
+  offeringVariantId: string;
+  productControlSku: string;
+  productId: string;
+  variantId: string;
+};
 interface ArtifactShape {
   schemaVersion: number;
   boundCount: number;
   unboundCount: number;
   invariants: Record<string, unknown>;
-  bindings: Array<Record<string, string>>;
-  unbound: Array<{ offeringId: string; offeringVariantId: string; reason: string }>;
+  bindings: BindingEntry[];
+  unbound: Array<{
+    offeringId: string;
+    offeringVariantId: string;
+    sourceGroupId: string;
+    reason: string;
+    reasonCode: "binding_pending" | "shipping_service" | "quote_only";
+  }>;
+  supersededBindings: Array<{
+    binding: BindingEntry;
+    sourceGroupId: string;
+    supersededBySourceGroupId: string;
+    successorOfferingId: string;
+    successorOfferingVariantId: string;
+    disposition: "archived_not_transferred";
+    sourceRows: string[];
+  }>;
+  retainedAuthority: {
+    mode: string;
+    predecessorSourceSha: string;
+    predecessorBindingsCanonicalSha256: string;
+    predecessorDatasetCanonicalSha256: string;
+    predecessorReconciliationCanonicalSha256: string;
+    candidateReconciliationFile: string;
+    candidateReconciliationSha256: string;
+    candidateReconciliationHashPolicy: string;
+    predecessorWorkbookSha256: string;
+    historicalPairCount: number;
+    historicalPairMd5: string;
+    retainedPairCount: number;
+    retainedPairMd5: string;
+    productionReadBackRefreshed: boolean;
+    sourceRows: number;
+    canonicalVariants: number;
+    retainedIdentities: number;
+    newIdentities: number;
+  };
+  productionReadBack: { at: string; source: string };
+  reconciliation: {
+    file: string;
+    sha256: string;
+    provenance: Record<string, string[]>;
+    commerceHeldRows: string[];
+  };
+}
+
+const HISTORICAL_PAIR_MD5 = "062a30f0d3d0a0571e78837b5b92d4f6";
+const RETAINED_PAIR_MD5 = "86fdd019d3153e75920090136579b184";
+const NEW_SOURCE_GROUPS = [
+  "GRP-0421", "GRP-0422", "GRP-0423", "GRP-0424", "GRP-0425", "GRP-0426",
+];
+const ARCHIVED_BINDINGS: Record<string, BindingEntry> = {
+  "GRP-0402": {
+    offeringId: "mo_2aaac3a06aa0dd6b2923",
+    offeringVariantId: "mov_7c55d415a9574e9ebda7",
+    productControlSku: "GEN-GRP-0402",
+    productId: "3d9261e4-0428-4850-8b57-f4ca9f0e9472",
+    variantId: "5c705967-53dc-4fd0-9a35-c3c51abf937a",
+  },
+  "GRP-0407": {
+    offeringId: "mo_1dd0658eb7bf15f91900",
+    offeringVariantId: "mov_256cb0423eb6d2a77f65",
+    productControlSku: "GEN-GRP-0407",
+    productId: "a51871dd-cb32-4058-bde4-1f336b840cfa",
+    variantId: "ed16b4d7-7a0e-4f34-a01f-b81966aac0b0",
+  },
+};
+const SUPERSEDED_BY: Record<string, string> = {
+  "GRP-0402": "GRP-0426",
+  "GRP-0407": "GRP-0425",
+};
+function pairDigest(entries: readonly BindingEntry[]): string {
+  return createHash("md5").update(
+    entries.map((entry) => `${entry.productId}|${entry.variantId}`).sort().join("\n"),
+  ).digest("hex");
 }
 
 function readRepoJson<T>(repoRelative: string): T {
@@ -52,7 +135,7 @@ describe("the committed binding artifact", () => {
     const { index, problem } = loadBindingIndex();
     expect(problem).toBeNull();
     expect(index.size).toBe(artifact.boundCount);
-    expect(index.size).toBe(417);
+    expect(index.size).toBe(415);
   });
 
   it("re-keys by offering variant id with no loss, which is what the order seam looks up", () => {
@@ -66,7 +149,7 @@ describe("the committed binding artifact", () => {
     const byVariant = bindingsByOfferingVariantId(index);
 
     expect(byVariant.size).toBe(index.size);
-    expect(byVariant.size).toBe(417);
+    expect(byVariant.size).toBe(415);
 
     for (const binding of Array.from(index.values())) {
       const resolved = byVariant.get(binding.offeringVariantId);
@@ -83,7 +166,7 @@ describe("the committed binding artifact", () => {
   });
 
   it("accounts for every dataset variant exactly once", () => {
-    expect(dataset.products).toHaveLength(420);
+    expect(dataset.products).toHaveLength(424);
     const bound = new Set(
       artifact.bindings.map((entry) => `${entry.offeringId}|${entry.offeringVariantId}`),
     );
@@ -91,7 +174,10 @@ describe("the committed binding artifact", () => {
       artifact.unbound.map((entry) => `${entry.offeringId}|${entry.offeringVariantId}`),
     );
     expect(bound.size).toBe(artifact.bindings.length);
-    expect(excluded.size).toBe(3);
+    expect(excluded.size).toBe(9);
+    expect(artifact.unboundCount).toBe(9);
+    expect(artifact.unbound).toHaveLength(9);
+    expect(bound.size + excluded.size).toBe(424);
     for (const product of dataset.products) {
       expect(product.variants).toHaveLength(1);
       const key = `${product.id}|${product.variants[0].id}`;
@@ -106,6 +192,85 @@ describe("the committed binding artifact", () => {
     );
     for (const key of bound) expect(datasetKeys.has(key)).toBe(true);
     for (const key of excluded) expect(datasetKeys.has(key)).toBe(true);
+  });
+
+  it("pins the local retained subset without claiming a refreshed production read-back", () => {
+    const authority = artifact.retainedAuthority;
+    expect(authority).toMatchObject({
+      mode: "reviewed_predecessor_subset",
+      historicalPairCount: 417,
+      historicalPairMd5: HISTORICAL_PAIR_MD5,
+      retainedPairCount: 415,
+      retainedPairMd5: RETAINED_PAIR_MD5,
+      productionReadBackRefreshed: false,
+      sourceRows: 426,
+      canonicalVariants: 424,
+      retainedIdentities: 418,
+      newIdentities: 6,
+    });
+    expect(authority.predecessorSourceSha).toMatch(/^[0-9a-f]{40}$/);
+    for (const digest of [
+      authority.predecessorBindingsCanonicalSha256,
+      authority.predecessorDatasetCanonicalSha256,
+      authority.predecessorReconciliationCanonicalSha256,
+      authority.predecessorWorkbookSha256,
+    ]) expect(digest).toMatch(/^[0-9a-f]{64}$/);
+    expect(authority.candidateReconciliationFile).toBe("master-catalog-reconciliation-20260821.json");
+    expect(authority.candidateReconciliationHashPolicy).toBe("utf8_crlf_to_lf_source_text");
+    const candidateReconciliationHash = createHash("sha256").update(
+      fs.readFileSync(path.resolve("config", "research", authority.candidateReconciliationFile), "utf8").replace(/\r\n/g, "\n"),
+    ).digest("hex");
+    expect(authority.candidateReconciliationSha256).toBe(candidateReconciliationHash);
+    expect(artifact.reconciliation.file).toBe(authority.candidateReconciliationFile);
+    expect(artifact.reconciliation.sha256).toBe(candidateReconciliationHash);
+    expect(pairDigest(artifact.bindings)).toBe(RETAINED_PAIR_MD5);
+    const historical = [
+      ...artifact.bindings,
+      ...artifact.supersededBindings.map((entry) => entry.binding),
+    ];
+    expect(historical).toHaveLength(417);
+    expect(new Set(historical.map((entry) => `${entry.productId}|${entry.variantId}`)).size).toBe(417);
+    expect(pairDigest(historical)).toBe(HISTORICAL_PAIR_MD5);
+    // This metadata is the original historical binding read-back, verbatim.
+    // Its date differs from the separately recorded 2026-08-20 price census.
+    expect(artifact.productionReadBack).toEqual({
+      at: "2026-08-15T05:05:00.000Z",
+      source: "production Supabase project yvzeduaxbwgcwllhywff, research_product_variants where sku like 'GEN-GRP-%', joined product_id; read back after the 11-chunk general Product Control initialization verified 217 products / 417 variants / 417 approved member prices",
+    });
+  });
+
+  it("archives both superseded pairs exactly and never transfers them to the successors", async () => {
+    expect(artifact.supersededBindings.map((entry) => entry.sourceGroupId).sort())
+      .toEqual(["GRP-0402", "GRP-0407"]);
+    const reader = createProductionBindingReader();
+    for (const entry of artifact.supersededBindings) {
+      const old = ARCHIVED_BINDINGS[entry.sourceGroupId];
+      const nextGroup = SUPERSEDED_BY[entry.sourceGroupId];
+      expect(entry.binding).toEqual(old);
+      expect(entry.disposition).toBe("archived_not_transferred");
+      expect(entry.supersededBySourceGroupId).toBe(nextGroup);
+      expect(entry.sourceRows).toEqual([nextGroup, entry.sourceGroupId]);
+      expect(artifact.reconciliation.provenance[nextGroup]).toEqual(entry.sourceRows);
+      expect(artifact.bindings.some((binding) =>
+        binding.offeringVariantId === old.offeringVariantId || binding.variantId === old.variantId,
+      )).toBe(false);
+      expect(dataset.products.some((product) =>
+        product.id === old.offeringId || product.variants.some((variant) => variant.id === old.offeringVariantId),
+      )).toBe(false);
+      const successor = artifact.unbound.find((unbound) => unbound.sourceGroupId === nextGroup);
+      expect(successor).toMatchObject({
+        offeringId: entry.successorOfferingId,
+        offeringVariantId: entry.successorOfferingVariantId,
+        reasonCode: "binding_pending",
+      });
+      expect(await reader.readBinding({
+        offeringId: old.offeringId, offeringVariantId: old.offeringVariantId,
+      })).toBeNull();
+      expect(await reader.readBinding({
+        offeringId: entry.successorOfferingId,
+        offeringVariantId: entry.successorOfferingVariantId,
+      })).toBeNull();
+    }
   });
 
   it("carries identity only: five fields, no price, no authority", () => {
@@ -186,7 +351,7 @@ describe("the production binding reader", () => {
     fs.writeFileSync(
       file,
       JSON.stringify({
-        schemaVersion: 1,
+        ...artifact,
         boundCount: 2,
         bindings: [good, { offeringId: "mo_x", offeringVariantId: "mov_x" }],
       }),
@@ -201,25 +366,38 @@ describe("the production binding reader", () => {
   });
 });
 
-describe("the unbound explanations name the right rows", () => {
-  // The three exclusions are identity facts from the 426-row retail source:
-  // GRP-0364 FedEx Standard Overnight is the shipping service row, while
-  // GRP-0244 BAM15 and GRP-0365 Syringes & Alcohol Swabs are price-on-request
-  // rows. An earlier artifact attached the shipping explanation to BAM15 and
-  // the price-pending explanation to FedEx; this pins each reason to the row
-  // kind the source actually records so a regenerated artifact cannot drift.
+describe("unbound reasons are source-identity facts, not a shared null-price label", () => {
   const artifact = readRepoJson<ArtifactShape>(MASTER_OFFERING_COMMITTED_BINDINGS_PATH);
   const dataset = readRepoJson<{ products: Array<{ id: string; displayName: string }> }>(DATASET_PATH);
   const nameOf = (offeringId: string) =>
     dataset.products.find((product) => product.id === offeringId)?.displayName ?? null;
 
-  it("keys shipping and price-pending reasons to the right offerings", () => {
-    const byName = new Map(artifact.unbound.map((entry) => [nameOf(entry.offeringId), entry.reason]));
-    expect(Array.from(byName.keys()).sort()).toEqual(
-      ["BAM15", "FedEx Standard Overnight", "Syringes & Alcohol Swabs"],
-    );
-    expect(byName.get("FedEx Standard Overnight")).toMatch(/^shipping service row/);
-    expect(byName.get("BAM15")).toMatch(/^price pending/);
-    expect(byName.get("Syringes & Alcohol Swabs")).toMatch(/^price pending/);
+  it("separates six unreleased identities, two genuine quote-only rows and one shipping service", () => {
+    const bySource = new Map(artifact.unbound.map((entry) => [entry.sourceGroupId, entry]));
+    expect(bySource.size).toBe(9);
+    expect(artifact.unbound.filter((entry) => entry.reasonCode === "binding_pending")
+      .map((entry) => entry.sourceGroupId).sort()).toEqual(NEW_SOURCE_GROUPS);
+    expect(artifact.unbound.filter((entry) => entry.reasonCode === "quote_only")
+      .map((entry) => entry.sourceGroupId).sort()).toEqual(["GRP-0244", "GRP-0365"]);
+    expect(artifact.unbound.filter((entry) => entry.reasonCode === "shipping_service")
+      .map((entry) => entry.sourceGroupId)).toEqual(["GRP-0364"]);
+    expect(nameOf(bySource.get("GRP-0244")!.offeringId)).toBe("BAM15");
+    expect(nameOf(bySource.get("GRP-0365")!.offeringId)).toBe("Syringes & Alcohol Swabs");
+    expect(bySource.get("GRP-0364")).toMatchObject({
+      offeringId: "mo_003b0c272099eeb1f114",
+      offeringVariantId: "mov_9b65ad5bb184691e19e0",
+      reasonCode: "shipping_service",
+    });
+    expect(nameOf(bySource.get("GRP-0364")!.offeringId)).toBe("FedEx Standard Overnight");
+    expect(bySource.get("GRP-0364")!.reason).toMatch(/^shipping service row/);
+    expect(bySource.get("GRP-0244")!.reason).toMatch(/^price pending/);
+    expect(bySource.get("GRP-0365")!.reason).toMatch(/^price pending/);
+    for (const entry of artifact.unbound) expect(entry.reason.trim().length).toBeGreaterThan(0);
+    expect(bySource.get("GRP-0422")).toMatchObject({
+      offeringId: "mo_2babbadce5172426bde2",
+      offeringVariantId: "mov_f61758881da2b7bfa539",
+      reasonCode: "binding_pending",
+    });
+    expect(artifact.reconciliation.commerceHeldRows).toEqual(["GRP-0422"]);
   });
 });

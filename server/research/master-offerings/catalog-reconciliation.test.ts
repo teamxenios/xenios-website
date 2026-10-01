@@ -74,6 +74,9 @@ describe("the reviewed catalog reconciliation", () => {
       "GRP-0425",
       "GRP-0407",
     ]);
+    expect(provenance.sourceRowsByCanonical.get("GRP-0422")).toEqual(["GRP-0422"]);
+    expect(provenance.sourceRowsByCanonical.get("GRP-0001")).toEqual(["GRP-0001"]);
+    expect(provenance.sourceRowsByCanonical.size).toBe(4);
   });
 
   it("records the formulation hold without touching the row's classification", () => {
@@ -94,6 +97,13 @@ describe("the reviewed catalog reconciliation", () => {
     expect(() => applyCatalogReconciliation(rows, reviewed())).toThrow(
       CatalogReconciliationError,
     );
+  });
+
+  it("REFUSES a missing or duplicate source Group ID before any join", () => {
+    expect(() => applyCatalogReconciliation([...workbookRows(), row("GRP-0422")], reviewed()))
+      .toThrow(/Missing or duplicate source Group ID/);
+    expect(() => applyCatalogReconciliation([...workbookRows(), row("")], reviewed()))
+      .toThrow(/Missing or duplicate source Group ID/);
   });
 
   it("REFUSES a merge whose superseded row is already absent", () => {
@@ -155,5 +165,9 @@ describe("the reviewed catalog reconciliation", () => {
     );
     // Every decision names the workbook it was reviewed against.
     expect(artifact.sourceWorkbook.sha256).toHaveLength(64);
+    expect(artifact.commerceHolds[0].catalogIdentity).toEqual({
+      offeringId: "mo_2babbadce5172426bde2",
+      offeringVariantId: "mov_f61758881da2b7bfa539",
+    });
   });
 });
