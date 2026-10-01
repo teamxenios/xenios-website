@@ -30,6 +30,7 @@ export function readAssistedRequestHistory(rows: unknown, source: unknown): Assi
       || typeof row.publicReference !== "string" || !/^XRR-\d{8}-[0-9A-F]{10}$/.test(row.publicReference)
       || references.has(row.publicReference) || typeof row.status !== "string"
       || !assistedOrderStatuses.some((status) => status === row.status)
+      || !(row.paymentVerified === undefined || typeof row.paymentVerified === "boolean")
       || !date(row.createdAt) || !date(row.updatedAt) || !cents(row.estimatedTotalCents)
       || row.currency !== "USD" || !Array.isArray(row.lines) || row.lines.length < 1 || row.lines.length > ASSISTED_ORDER_MAX_LINES
       || !(row.trackingReference === null || text(row.trackingReference))) return null;
@@ -45,7 +46,8 @@ export function readAssistedRequestHistory(rows: unknown, source: unknown): Assi
     ids.add(row.requestId); references.add(row.publicReference);
     requests.push({ kind: "assisted_request", requestId: row.requestId, publicReference: row.publicReference,
       status: row.status as AssistedOrderHistoryRequest["status"], createdAt: row.createdAt, updatedAt: row.updatedAt,
-      estimatedTotalCents: row.estimatedTotalCents, currency: "USD", lines, trackingReference: row.trackingReference });
+      estimatedTotalCents: row.estimatedTotalCents, currency: "USD", lines, trackingReference: row.trackingReference,
+      ...(row.paymentVerified === undefined ? {} : { paymentVerified: row.paymentVerified }) });
   }
   return { requests, source: { connected: source.connected, complete: source.complete } };
 }

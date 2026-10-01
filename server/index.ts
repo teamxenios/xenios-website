@@ -13,7 +13,7 @@ import { registerPrivateEarlyAccessApi } from "./research/early-access/register"
 import { buildEarlyAccessPersistence } from "./research/early-access/persistence/production-deps";
 import { registerMemberApi } from "./research/members";
 import { registerMemberAccessApi } from "./research/guards";
-import { enqueueNotification, registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
+import { configurePaymentEffectsRecovery, enqueueNotification, registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
 import { registerRecruitingMail } from "./research/recruiting-mail";
 import { registerReferralFraudAdmin } from "./research/fraud-admin";
 import { registerMemberPlatformApi } from "./research/member-platform";
@@ -141,6 +141,7 @@ import { buildAssistedOrderProduction } from "./research/assisted-order/producti
 import { createAssistedMemberHistoryReader, withAssistedOrderRequestHistory } from "./research/assisted-order/member-order-history";
 import { assistedOrderAuditLogLine } from "./research/assisted-order/audit-observability";
 import { resolveAssistedOrderAuditAuthority } from "./research/assisted-order/audit-store";
+import { resolvePaymentEffectsRecovery } from "./research/assisted-order/payment-effects";
 import {
   assistedOrderExpressHandler,
   createAssistedOrderViewerResolvers,
@@ -1000,9 +1001,17 @@ async function composeAssistedOrderBridge(): Promise<
   // HL-12 is source-only until the exact pending migrations and financial
   // evidence adapters are qualified. The flag defaults off; no live payment
   // route is activated by a source deployment or by a browser callback.
-  const assistedOrderFinance =
-    process.env.RESEARCH_ASSISTED_ORDER_FINANCE_ENABLED === "true" &&
-    assistedOrderComposition.service !== null && supabaseConfigured()
+  const assistedOrderPaymentEffects = await resolvePaymentEffectsRecovery({
+    enabled: process.env.RESEARCH_ASSISTED_ORDER_FINANCE_ENABLED === "true" &&
+      assistedOrderComposition.service !== null,
+    rpc: supabaseConfigured() ? getSupabaseAdmin() as unknown as AssistedOrderRpcClient : null,
+    audit: assistedOrderAudit.authority,
+  });
+  configurePaymentEffectsRecovery(assistedOrderPaymentEffects);
+  if (process.env.RESEARCH_ASSISTED_ORDER_FINANCE_ENABLED === "true" && !assistedOrderPaymentEffects) {
+    log("assisted-order finance unavailable: durable audit and payment-effects readiness required", "assisted-order");
+  }
+  const assistedOrderFinance = assistedOrderPaymentEffects !== null
       ? new AssistedOrderFinanceService(
           getSupabaseAdmin() as unknown as AssistedOrderRpcClient,
           null, // No independent manual ledger authority is configured yet.
@@ -1022,6 +1031,7 @@ async function composeAssistedOrderBridge(): Promise<
     // touch, and the partner behind it is re-read durably on each submit.
     createReferralV1AttributionResolver(buildReferralV1Dependencies()),
     assistedOrderFinance,
+    assistedOrderPaymentEffects,
   );
   const assistedOrderDoor = (
     method: "GET" | "POST" | "PATCH",

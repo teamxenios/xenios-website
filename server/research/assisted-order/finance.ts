@@ -22,7 +22,7 @@ function uuid(value: unknown, field: string): string {
   if (typeof value !== "string" || !UUID.test(value)) {
     throw new AssistedOrderValidationError(field, `A valid ${field} is required.`);
   }
-  return value;
+  return value.toLowerCase();
 }
 
 function string(value: unknown, field: string, max = 500): string {
@@ -44,7 +44,7 @@ function adminActor(viewer: AssistedOrderViewer): { id: string; label: string } 
       !viewer.authUserId || !UUID.test(viewer.authUserId)) {
     throw new AssistedOrderAuthorizationError();
   }
-  return { id: viewer.authUserId, label: string(viewer.actorLabel, "admin actor", 200) };
+  return { id: viewer.authUserId.toLowerCase(), label: string(viewer.actorLabel, "admin actor", 200) };
 }
 
 function customerAuthority(viewer: AssistedOrderViewer, rawStatusToken?: string) {
@@ -227,8 +227,9 @@ export class AssistedOrderFinanceService {
     if (!this.manualEvidence) {
       throw new AssistedOrderConflictError("manual_evidence_unavailable", "Independent manual payment evidence is not configured.");
     }
+    const request = uuid(requestId, "requestId");
     const result = await this.call("research_assisted_order_payment_verify_bound", {
-      p_request_id: uuid(requestId, "requestId"),
+      p_request_id: request,
       p_observation_id: uuid(observationId, "observationId"),
       p_verifier_auth_user_id: actor.id,
     });
@@ -240,15 +241,16 @@ export class AssistedOrderFinanceService {
     }
     const receipt = result as Record<string, unknown>;
     if (typeof receipt.verificationId !== "string" || !UUID.test(receipt.verificationId) ||
-        receipt.requestId !== requestId || !isAssistedOrderStatus(receipt.state) || typeof receipt.replayed !== "boolean" ||
+        receipt.requestId !== request || !isAssistedOrderStatus(receipt.state) || typeof receipt.replayed !== "boolean" ||
         (!receipt.replayed && receipt.state !== "paid") ||
         typeof receipt.verifiedAt !== "string" || !Number.isFinite(Date.parse(receipt.verifiedAt)) ||
-        typeof receipt.verifiedBy !== "string" || !receipt.verifiedBy.trim() || receipt.verifiedBy.length > 200) {
+        typeof receipt.verifiedBy !== "string" || !receipt.verifiedBy || receipt.verifiedBy.length > 512 ||
+        receipt.verifiedBy !== receipt.verifiedBy.trim() || /[\u0000-\u001f\u007f]/u.test(receipt.verifiedBy)) {
       throw new Error("Payment verification receipt is unavailable");
     }
     return Object.freeze({
-      verificationId: receipt.verificationId,
-      requestId,
+      verificationId: receipt.verificationId.toLowerCase(),
+      requestId: request,
       state: receipt.state,
       verifiedAt: new Date(receipt.verifiedAt).toISOString(),
       verifiedBy: receipt.verifiedBy,

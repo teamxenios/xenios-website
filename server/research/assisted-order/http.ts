@@ -22,6 +22,7 @@ import type {
   AssistedOrderViewer,
 } from "./ports";
 import type { AssistedOrderFinanceService } from "./finance";
+import type { PaymentEffectsRecovery } from "./payment-effects";
 
 export const ASSISTED_ORDER_STATUS_TOKEN_HEADER =
   "x-xenios-order-status-token";
@@ -152,7 +153,7 @@ function errorResponse(error: unknown): AssistedOrderHttpResponse {
   if (error instanceof AssistedOrderVerificationEffectsError) {
     return ok(503, {
       error: "payment_verification_effects_pending",
-      message: "Payment verification was recorded, but its notification or audit is pending. Retry the verification action.",
+      message: "Payment verification was recorded. Its audit and notification follow-up is pending and will be retried automatically.",
     });
   }
   if (error instanceof AssistedOrderValidationError) {
@@ -211,6 +212,7 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
   // trusted instead.
   attribution?: AssistedOrderAttributionResolver | null,
   finance?: AssistedOrderFinanceService | null,
+  paymentEffects?: PaymentEffectsRecovery | null,
 ): readonly AssistedOrderRouteDescriptor[] {
   const viewer = (request: AssistedOrderHttpRequest): Promise<AssistedOrderViewer> =>
     viewerResolver.resolve(request as Request);
@@ -423,11 +425,16 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
         auth: "admin",
         handler: (request) => handle(async () => {
           const resolvedViewer = await viewer(request);
+          if (!paymentEffects) throw new AssistedOrderConflictError(
+            "payment_verification_not_ready", "Financial verification is unavailable until durable recovery is ready.",
+          );
           const receipt = await finance.verifyManual(
             resolvedViewer, request.params.requestId ?? "", request.params.observationId ?? "",
           );
-          // Replays must retry interrupted effects using immutable receipt keys.
-          await service.recordPaymentVerificationEffects(resolvedViewer, receipt);
+          // The SQL transaction already persisted the held notification. This
+          // opportunistic completion is also recoverable by the bounded worker,
+          // without replaying verification or relying on the actor's next login.
+          await paymentEffects.recover(receipt.verificationId, receipt.requestId);
           return ok(200, receipt);
         }),
       },

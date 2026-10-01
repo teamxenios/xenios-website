@@ -36,6 +36,11 @@ const envelopeSchema = z.object({
   complete: z.boolean(),
   requests: z.array(requestSchema).max(ASSISTED_MEMBER_HISTORY_LIMIT),
 }).strict();
+const financialSchema = z.object({
+  hasObservation: z.boolean(),
+  paymentVerified: z.boolean(),
+}).strict().refine((state) => !state.paymentVerified || state.hasObservation);
+const FINANCIAL_READ_CONCURRENCY = 4;
 
 export type AssistedMemberHistoryReader = Readonly<{
   readForMember(memberId: string): Promise<Readonly<{
@@ -64,8 +69,26 @@ export function createAssistedMemberHistoryReader(rpc: AssistedMemberHistoryRpc 
           || new Set(requests.map((row) => row.requestId)).size !== requests.length
           || new Set(requests.map((row) => row.publicReference)).size !== requests.length
           || (!complete && requests.length !== ASSISTED_MEMBER_HISTORY_LIMIT)) return unavailableRead();
+        // Validate EVERY ownership proof before these service-role reads. The
+        // old history envelope cannot supply its own financial authority.
+        // Read all returned rows because a legacy current label can regress
+        // after paid; no browser or operational label may erase that evidence.
+        const verified: boolean[] = [];
+        for (let start = 0; start < requests.length; start += FINANCIAL_READ_CONCURRENCY) {
+          const batch = await Promise.all(requests.slice(start, start + FINANCIAL_READ_CONCURRENCY).map(async (request) => {
+            const financial = await rpc.rpc("research_assisted_order_financial_state", { p_request_id: request.requestId });
+            if (financial.error) {
+              const error = financial.error;
+              if (typeof error === "object" && error !== null && "code" in error && error.code === "PGRST202") return false;
+              throw new Error("Assisted request financial projection unavailable");
+            }
+            if (financial.data === null) return false;
+            return financialSchema.parse(financial.data).paymentVerified;
+          }));
+          verified.push(...batch);
+        }
         return {
-          requests: requests.map(({ actorMemberId: _owner, ...request }) => request),
+          requests: requests.map(({ actorMemberId: _owner, ...request }, index) => ({ ...request, paymentVerified: verified[index] })),
           source: { connected: true, complete },
         };
       } catch {

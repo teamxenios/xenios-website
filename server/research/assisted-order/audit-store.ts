@@ -88,7 +88,7 @@ type SafeAssistedOrderAuditEvidence =
     }>
   | Readonly<{ documentId: string }>;
 
-type SafeAssistedOrderAuditRecord = Readonly<{
+export type SafeAssistedOrderAuditRecord = Readonly<{
   eventId: string;
   eventKey: string;
   eventFingerprint: string;
@@ -126,8 +126,17 @@ export type ResolvedAssistedOrderAuditAuthority = Readonly<{
   schemaVersion: typeof ASSISTED_ORDER_AUDIT_SCHEMA_VERSION;
   attestation: typeof ASSISTED_ORDER_AUDIT_ATTESTATION;
   sink: AssistedOrderAuditSink;
+  /** Prepare the same bounded/HMAC envelope for an atomic database operation. */
+  prepare(event: AssistedOrderAuditEvent): SafeAssistedOrderAuditRecord;
   [authorityBrand]: true;
 }>;
+
+export function isResolvedAssistedOrderAuditAuthority(
+  value: unknown,
+): value is ResolvedAssistedOrderAuditAuthority {
+  return typeof value === "object" && value !== null &&
+    (value as Partial<ResolvedAssistedOrderAuditAuthority>)[authorityBrand] === true;
+}
 
 export type AssistedOrderAuditAuthorityResolution =
   | Readonly<{
@@ -636,6 +645,7 @@ export async function resolveAssistedOrderAuditAuthority(input: Readonly<{
       schemaVersion: ASSISTED_ORDER_AUDIT_SCHEMA_VERSION,
       attestation: ASSISTED_ORDER_AUDIT_ATTESTATION,
       sink,
+      prepare: (event: AssistedOrderAuditEvent) => safeRecord(event, actorKeyId, actorKey),
       [authorityBrand]: true as const,
     }),
     refusalReason: null,

@@ -6,6 +6,8 @@ export type AssistedOrderHistoryRequest = Readonly<{
   requestId: string;
   publicReference: string;
   status: AssistedOrderStatus;
+  /** Output-only financial authority, read server-side after member ownership. */
+  paymentVerified?: boolean;
   createdAt: string;
   updatedAt: string;
   estimatedTotalCents: number | null;

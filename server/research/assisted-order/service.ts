@@ -28,7 +28,6 @@ import {
 } from "../../../shared/research/assisted-order/contract";
 import { quantityIsAllowed } from "../../../shared/research/assisted-order/action-policy";
 import { normalizeDeclaredAffiliateCode } from "../partners/declared-affiliate-code";
-import type { AssistedOrderPaymentVerificationReceipt } from "./finance";
 import {
   ASSISTED_ORDER_FORM_ACKNOWLEDGMENTS,
   ASSISTED_ORDER_FORM_ID,
@@ -934,65 +933,6 @@ export class AssistedOrderService {
     });
 
     return updated;
-  }
-
-  /**
-   * Called only after the mounted finance RPC returns its immutable receipt.
-   * Always retry on SQL replay: an earlier process may have stopped between
-   * payment commit, audit and outbox. The canonical sinks dedupe on the stable
-   * verification identity; failures are visible, never swallowed. This is NOT
-   * an atomic paid+outbox transaction or an autonomous reconciliation worker.
-   */
-  public async recordPaymentVerificationEffects(
-    viewer: AssistedOrderViewer,
-    receipt: AssistedOrderPaymentVerificationReceipt,
-  ): Promise<void> {
-    requireCapability(viewer, "assisted_orders:manage");
-    if (viewer.actorType !== "admin") throw new AssistedOrderAuthorizationError();
-    const financial = await this.deps.repository.getFinancialState?.(receipt.requestId);
-    if (financial?.paymentVerified !== true) {
-      throw new AssistedOrderConflictError("payment_verification_not_ready", "Verified financial evidence is unavailable.");
-    }
-    // Recipient and reference come from the server's stored request, never the
-    // verification browser body, provider payload or free-text evidence.
-    const detail = await this.deps.repository.getAdmin(receipt.requestId);
-    if (!detail) throw new AssistedOrderNotFoundError();
-    try {
-      await this.deps.audit.record(Object.freeze({
-        eventId: receipt.verificationId,
-        eventType: "assisted_order.status_changed",
-        requestId: receipt.requestId,
-        actorType: "admin",
-        actorId: receipt.verifiedBy,
-        evidence: Object.freeze({
-          from: "payment_review",
-          to: "paid",
-          authorityEvidenceKinds: Object.freeze(["payment_verification"] as const),
-        }),
-        occurredAt: receipt.verifiedAt,
-      }));
-      await this.deps.outbox.enqueue(Object.freeze({
-        eventId: receipt.verificationId,
-        eventType: "assisted_order.status_changed",
-        requestId: detail.requestId,
-        publicReference: detail.publicReference,
-        recipientKind: "customer",
-        recipientAddress: detail.email,
-        templateKey: "research.assisted_order.status_changed.customer",
-        templateVersion: "v1",
-        payload: Object.freeze({
-          publicReference: detail.publicReference,
-          status: "paid",
-          customerMessage: "Payment verified. Fulfillment is reviewed separately.",
-        }),
-        dedupeKey: `assisted-order:${detail.requestId}:payment-verification:${receipt.verificationId}`,
-        createdAt: receipt.verifiedAt,
-      }));
-    } catch {
-      // Do not print sink errors, evidence, recipient or the original payload.
-      // Caller receives a visible retryable state, and retry uses the same keys.
-      throw new AssistedOrderVerificationEffectsError();
-    }
   }
 
   public async createDocumentUpload(
