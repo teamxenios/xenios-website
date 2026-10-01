@@ -15,7 +15,10 @@ ADP02 held create/readback ownership is now implemented locally at runtime
 `467c8556390ff9274a4adda5826eed7ab9603b23`, with source null and no live adapter.
 Final disposable SQL passed 21 groups/138 refusals/four lock races/23 isolation
 cases/11 HTTP groups (108 SQL calls), exit 0, cleanup confirmed. Its preflight
-and aggregate are still pending; it is not settlement or release acceptance.
+passed; its completed aggregate is 19,149 passed, one failed, 85 skipped,
+exit 1, no timeouts, at clean53f41ee. The sole failure is the unchanged seam
+assertion covering the two recorded hashes. It is not settlement or release
+acceptance; see the ADP02 handoff and qualification receipt.
 ADP01 held attempt/event storage and HL11 reconciliation are locally implemented;
 independent review, genuine source/price holds and operational release remain.
 Existing historical paid labels must not be backfilled with

@@ -3,6 +3,38 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "HEALTH-HL12-ADP03-GOVERNED-CAPTURE-SETTLEMENT-20261001",
+      "title": "Governed provider-neutral capture settlement into canonical payment authority and separate fulfillment eligibility",
+      "priority": "P1",
+      "state": "ready",
+      "owner": null,
+      "paths": [
+        "server/research/assisted-order/payment/provider-settlement*",
+        "server/research/assisted-order/payment/provider-journal.ts",
+        "server/research/assisted-order/payment/provider-journal.test.ts",
+        "server/research/assisted-order/payment/provider-execution.ts",
+        "server/research/assisted-order/payment/provider-execution.test.ts",
+        "server/research/assisted-order/provider-settlement*",
+        "server/research/assisted-order/payment-effects.ts",
+        "server/research/assisted-order/payment-effects.test.ts",
+        "server/research/assisted-order/ports.ts",
+        "server/research/assisted-order/service.ts",
+        "server/research/assisted-order/service.test.ts",
+        "server/research/assisted-order/supabase-repository.ts",
+        "server/research/assisted-order/supabase-repository.test.ts",
+        "server/research/assisted-order/http.ts",
+        "server/index.ts",
+        "server/research/assisted-order/HEALTH_HL12_ADP03_*",
+        "supabase/migrations/*_research_assisted_order_quote_provider_settlement.sql",
+        "supabase/verification/research_assisted_order_quote_provider_settlement*",
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "server/release-control-plane.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Begin only after frozen ADP02 qualification and pushed exact handoff. Add explicit source-scoped admin settlement of an authenticated full capture journal record with current accepted immutable quote, exact ADP02 identity/economics, independent settlement grant/policy and atomic canonical observation/claim/verification/paid event/held F4 outbox. No browser economics or verified flag, no generic provider-string verification, no autonomous webhook-as-admin. Separate current fulfillment eligibility from historical verification. Preserve global/local uncertainty, manual/N2/historical holds, old source migration bytes and all pricing. Strict dual readiness parsers permit supported old held schemas, settlement only new exact schema. Source remains null/default-off; no actual adapter, operational grant, historical backfill, hosted change, money or email. Root allocates disjoint subagent paths; foreign image/media paths and protection manifest forbidden."
+    },
+    {
       "id": "HEALTH-HL12-ADP02-PROVIDER-CREATE-RECOVERY-20261001",
       "title": "Durable provider create ownership, response recovery and write-once external identity binding",
       "priority": "P1",

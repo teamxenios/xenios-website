@@ -1,6 +1,7 @@
 # HL-12 ADP02 provider create ownership and recovery
 
-Status: pushed candidate frozen for final local qualification, not a release.
+Status: local qualification completed; aggregate failed the unchanged protection
+assertion. Pushed source candidate for independent review, not a release.
 
 ## Exact candidate
 
@@ -8,8 +9,9 @@ Status: pushed candidate frozen for final local qualification, not a release.
 - Runtime tree: `467c8556390ff9274a4adda5826eed7ab9603b23`.
 - Test-only: `8f56a7f500da36dbe37818b50f26b611ecb78b23`.
 - Release controls: `a16f562d94dc907728fd0d8c708d48d098e3c1f8`.
-- Final local SQL and preflight passed; aggregate result is pending below. Earlier
-  diagnostics do not constitute the final full-suite result.
+- Final local SQL and preflight passed. Aggregate: 19,149 passed, one failed,
+  85 skipped, exit 1. Earlier diagnostics remain separate runs.
+- Complete qualification receipt: `HEALTH_HL12_ADP02_QUALIFICATION_20261001.json`.
 
 ## Continuity and scope
 
@@ -134,7 +136,7 @@ or downgrade the active schema to make a hold disappear.
 ## Evidence accounting
 
 The diagnostic runs below preceded the committed freeze. Final exact commands,
-results and records tip will be added after local qualification. The runtime,
+results and raw receipt references are recorded below. The runtime,
 test and control commits above are distinct and pushed.
 
 The predecessor aggregate remains a separate run: 18,998 passed, one failed,
@@ -209,7 +211,7 @@ were exercised. Grant-only and policy-only revocation were tested independently.
 Actual old ADP01 v2 execution refusal was tested; the uncommitted pre-timing
 ADP02 schema was not independently reinstalled. Sampled Node process paths are
 not continuous lifetime attestation. This local pass does not replace the
-pending aggregate, managed qualification or independent review.
+aggregate, managed qualification or independent review.
 
 Final serial preflight used Node 20.19.0/npm 10.8.2 and the real dataset reader:
 1,216 affected tests passed in 43 files, no skips, 81.18 seconds; typecheck
@@ -225,8 +227,35 @@ Preflight began at clean `4569a2719a22d2b0a1730c8734d4e12447074886`;
 later commands ran across records-only coordination commits/edits at
 `8c462596281e6607e551f95d59c17b9980acae93`. Source, tests and controls stayed
 frozen. Exact per-command dirty states remain in the receipts; not every
-preflight command began with a clean records directory. The aggregate must
-start at its own clean committed checkpoint and preserve its actual exit status.
+preflight command began with a clean records directory. The aggregate began
+at its own clean committed checkpoint and retained its actual exit status.
+
+Final aggregate `adp02-full-suite-final` completed:
+
+- Start: `2026-10-01T11:26:09.866Z`, clean
+  `53f41eeddc7d2f2f6f66dd073f51cec141dc6bbe`, tree
+  `0f48f08d2f6fcd0f3463cf80807ee31c90bbab85`.
+- Finish: `2026-10-01T11:44:31.086Z`, clean
+  `994e0e1c645838486e66b8a9a7130ea1f7e5f998`; records-only commits during run.
+- Command: private Node 20.19.0 `node_modules/vitest/vitest.mjs run
+  --maxWorkers=1 --no-file-parallelism`, real dataset reader enabled.
+- Tests: 19,149 passed, one failed, 85 skipped; files: 1,014 passed,
+  one failed, six skipped. Exit 1; 1,099.83 seconds test time, 1,101.220 seconds
+  wrapper time. No timeouts. Not a passing aggregate.
+- Sole failure: `server/core-site-protection.test.ts:387`, unchanged assertion
+  requiring clean seam baselines, reporting both exact hash pairs below.
+- Log SHA-256:
+  `37b833a266ce3459a9826e7d09189d70297f5d7e031fc66cb2cdfb2785025398`.
+- Runtime, tests and release controls stayed frozen. Endpoint/committed-diff
+  checks and sampled child runtimes are recorded, not continuous attestation.
+
+The qualification collector requires the exact final SQL proof, all seven
+successful preflight receipts and the completed aggregate. It archives the
+final SQL log/clock/HTTP/cleanup receipts and 25 separately identified local
+jobs, retaining earlier failures and filtered skips. Other logs remain local
+paths plus hashes and receipts, not all embedded portable log contents.
+Existing build chunk-size/mixed-import warnings were not suppressed or repaired
+as part of this financial slice. No new browser/zoom qualification is claimed.
 
 Protected seam hashes at this runtime (canonical Git blobs, not CRLF checkout
 bytes) remain a required independent review and possible owner amendment:
