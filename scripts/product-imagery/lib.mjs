@@ -26,6 +26,7 @@ import {
   FOUNDER_V3_SPEC_PATH,
   FOUNDER_V3_SPEC_SHA256,
   PNG_DECODED_PIXEL_BUDGET,
+  OBSERVED_CORE_HL11,
   SOURCE_BASE_COMMIT,
   SOURCE_BASE_TREE,
   V3_ACCEPTANCE,
@@ -890,14 +891,22 @@ function buildStateAuthorityAudit(reviewedProjection) {
         "Runtime commerce and Product Control supply state. Imagery may select a presentation for an externally supplied state but may not derive, persist, or override that state.",
     },
     sources: {
-      currentlyMountedCatalog: sourceDescriptor(CATALOG_SOURCE_PATH),
-      currentlyMountedBindings: sourceDescriptor(BINDING_SOURCE_PATH),
+      imageryBranchBaselineCatalog: sourceDescriptor(CATALOG_SOURCE_PATH),
+      imageryBranchBaselineBindings: sourceDescriptor(BINDING_SOURCE_PATH),
       currentExposureCode: sourceDescriptor(CUSTOMER_EXPOSURE_SOURCE_PATH),
       reviewedCatalog: reviewedProjection.sources.catalogCsv,
       reviewedReconciliation: sourceDescriptor(CATALOG_RECONCILIATION_SOURCE_PATH),
+      observedCoreCandidate: OBSERVED_CORE_HL11,
+    },
+    imageryBranchBaseline: {
+      status: "pre_hl11_branch_snapshot_not_current_core_truth",
+      canonicalRows: currentRows.length,
+      exposedRows: currentExposed.length,
+      bindingRows: currentBindings.bindings.length,
+      unboundRows: currentBindings.unboundCount,
     },
     currentlyMounted: {
-      status: "materialized_runtime_truth",
+      status: "deprecated_alias_for_imagery_branch_baseline_not_current_core_truth",
       canonicalRows: currentRows.length,
       exposedRows: currentExposed.length,
       bindingRows: currentBindings.bindings.length,
@@ -916,27 +925,27 @@ function buildStateAuthorityAudit(reviewedProjection) {
       catalogComingSoonRows: 0,
       excludedShippingGroupIds: [SHIPPING_GROUP_ID],
     },
+    observedCoreCandidate: {
+      ...OBSERVED_CORE_HL11,
+      catalogMaterialized: true,
+      customerProjectionMaterialized: true,
+      integratedIntoImageryBranch: false,
+    },
     reviewedTarget: {
-      status: "reviewed_source_truth_not_yet_materialized",
+      status:
+        "materialized_in_observed_core_candidate_pending_independent_review_and_image_integration",
       canonicalRows: reviewedProjection.canonicalRowCount,
       exposedRows: reviewedTargetExposed.length,
-      exactCurrentIdentityRows: exactCurrentIdentityRows.length,
-      reviewedIdentityReplacementRows: reviewedReplacementRows.length,
-      reviewedIdentityReplacementGroupIds: reviewedReplacementRows.map((row) => row.groupId),
-      genuineNewIdentityRows: genuineNewRows.length,
-      genuineNewIdentityGroupIds: genuineNewRows.map((row) => row.groupId),
-      currentProductControlResolvableAfterForwardAliases: 417,
-      currentExposedUnboundAfterForwardAliases: 6,
-      expectedBindingRowsAfterRegeneration: 421,
-      expectedUnboundRowsAfterRegeneration: 3,
-      sourceChannelCounts: targetChannelCounts,
-      commerceWorkflowCountsAfterRegenerationAndPriceBinding: {
-        provider_request: 242,
-        direct_order_request: 136,
-        request_activation: 42,
-        availability_review: 2,
-        request_pricing: 1,
+      deltaFromImageryBranchBaseline: {
+        retainedIdentityRows: exactCurrentIdentityRows.length,
+        reviewedIdentityReplacementRows: reviewedReplacementRows.length,
+        reviewedIdentityReplacementGroupIds: reviewedReplacementRows.map(
+          (row) => row.groupId,
+        ),
+        genuineNewIdentityRows: genuineNewRows.length,
+        genuineNewIdentityGroupIds: genuineNewRows.map((row) => row.groupId),
       },
+      sourceChannelCounts: targetChannelCounts,
       careRows: 242,
       structuredFormulationHoldRows: structuredHoldGroups.length,
       structuredFormulationHoldGroupIds: structuredHoldGroups,
@@ -947,11 +956,25 @@ function buildStateAuthorityAudit(reviewedProjection) {
       separateComingSoonOfferNames: ["Superpower", "Mito Health"],
       excludedShippingGroupIds: [SHIPPING_GROUP_ID],
     },
-    materializationGap: {
-      catalogRows: reviewedProjection.canonicalRowCount - currentRows.length,
-      exposedRows: reviewedTargetExposed.length - currentExposed.length,
-      targetMaterialized: false,
+    catalogAccounting: {
+      imageryBranchBaselineGap: {
+        canonicalRows: reviewedProjection.canonicalRowCount - currentRows.length,
+        customerRows: reviewedTargetExposed.length - currentExposed.length,
+      },
+      observedCoreCandidateGap: {
+        canonicalRows: reviewedProjection.canonicalRowCount - OBSERVED_CORE_HL11.canonicalRows,
+        customerRows: reviewedTargetExposed.length - OBSERVED_CORE_HL11.customerRows,
+        materializedInObservedCandidate: true,
+        independentlyAccepted: false,
+      },
+      targetIntegratedIntoImageryBranch: false,
       blocksRuntimeImageWiring: true,
+      remainingGates: [
+        "core_hl11_candidate_independent_acceptance",
+        "claude_exact_sha_per_asset_batch0_review",
+        "media_commerce_decoupling_integration_acceptance",
+        "shared_runtime_ui_lease",
+      ],
     },
   };
 }
@@ -1441,21 +1464,24 @@ Generated from primary base \`${metadata.sourceBaseCommit}\` (tree \`${metadata.
 | Reviewed workbook rows | ${coverageLedger.invariants.reviewedSourceRows} |
 | Canonical variants after reviewed merges | ${coverageLedger.invariants.canonicalRows} |
 | Customer-exposed target after shipping exclusion | ${stateAuthorityAudit.reviewedTarget.exposedRows} |
-| Currently mounted canonical / exposed | ${stateAuthorityAudit.currentlyMounted.canonicalRows} / ${stateAuthorityAudit.currentlyMounted.exposedRows} |
+| Imagery branch baseline before HL-11 | ${stateAuthorityAudit.imageryBranchBaseline.canonicalRows} / ${stateAuthorityAudit.imageryBranchBaseline.exposedRows} |
+| Observed core HL-11 candidate canonical / customer | ${stateAuthorityAudit.observedCoreCandidate.canonicalRows} / ${stateAuthorityAudit.observedCoreCandidate.customerRows} |
+| Observed core new canonical identities awaiting binding | ${stateAuthorityAudit.observedCoreCandidate.newUnboundCanonicalIdentities} |
 | Care rows | ${stateAuthorityAudit.reviewedTarget.careRows} |
 | Structured formulation holds | ${stateAuthorityAudit.reviewedTarget.structuredFormulationHoldRows} |
 | Price-on-request rows | ${stateAuthorityAudit.reviewedTarget.priceOnRequestRows} |
 | Catalog coming-soon rows | ${stateAuthorityAudit.reviewedTarget.catalogComingSoonRows} |
 | Separate coming-soon offers intended | ${stateAuthorityAudit.reviewedTarget.separateComingSoonOffersIntended} |
 
-The reviewed 424-row target is **not materialized** in the runtime catalog yet. Runtime image wiring remains blocked until catalog/binding regeneration and independent image approval.
+The reviewed 424-row / 423-customer target is materialized in the observed core HL-11 candidate at source commit \`${stateAuthorityAudit.observedCoreCandidate.sourceCommit}\` (tree \`${stateAuthorityAudit.observedCoreCandidate.sourceTree}\`), with qualification records at \`${stateAuthorityAudit.observedCoreCandidate.recordsCommit}\`. It is not merged into this imagery branch, independently Claude-accepted, deployed, or image-approved. Runtime image wiring remains blocked on independent core-candidate acceptance, exact-SHA per-asset review, media/commerce decoupling acceptance, and a coordinated shared UI lease.
 
 ## Identity correction
 
 - GRP-0425 / \`mov_c26ef47dfbbe46f7e090\` is the reviewed Oxytocin owner. GRP-0407 and its current Product Control identity are forward aliases only.
 - GRP-0426 / \`mov_3c8ca424d78153fd931a\` is the reviewed Hexarelin owner. GRP-0402 and its current Product Control identity are forward aliases only.
 - Superseded manifest owners: ${identityCrosswalk.invariants.supersededManifestOwners}.
-- Exact current Product Control bindings on reviewed identities: ${identityCrosswalk.invariants.exactCurrentBindings}; target bindings not yet materialized: ${identityCrosswalk.invariants.targetBindingsNotMaterialized}.
+- Imagery-branch baseline exact Product Control bindings on reviewed identities: ${identityCrosswalk.invariants.exactCurrentBindings}; baseline target bindings not materialized: ${identityCrosswalk.invariants.targetBindingsNotMaterialized}.
+- Observed core HL-11 retains ${stateAuthorityAudit.observedCoreCandidate.retainedProductControlBindings} Product Control bindings, archives ${stateAuthorityAudit.observedCoreCandidate.archivedSupersededBindings}, and leaves ${stateAuthorityAudit.observedCoreCandidate.newUnboundCanonicalIdentities} new canonical identities unbound without inventing price or UUID authority.
 
 ## Batch 0
 

@@ -2877,7 +2877,7 @@
       "id": "XENIOS-PRODUCT-IMAGERY-20260930",
       "title": "Build the canonical product imagery contract, coverage ledger, render queue, and truthful fallback assets",
       "priority": "P1",
-      "state": "qa",
+      "state": "claimed",
       "owner": "codex-xenios-product-imagery-20260930",
       "baseSha": "49234f8a2dd804845245a18056a73904b320158a",
       "paths": [
@@ -2893,7 +2893,7 @@
       ],
       "dependsOn": [],
       "scopeNote": "Founder-authorized continuation of the isolated product imagery v3 lane against primary Health base 49234f8. Reconcile current catalog truth, quarantine pre-v3 public candidates, sanitize the renderer-neutral packet, and render/validate Batch 0 with durable provenance. No payment, release, deployment, hosted mutation, managed migration, real communication, or shared card/detail/catalog source edits without a later coordinated lease.",
-      "claimedAt": "2026-10-01T04:43:00.837Z",
+      "claimedAt": "2026-10-01T08:51:59.742Z",
       "handoff": {
         "session": "codex-xenios-product-imagery-20260930",
         "sha": "184d820a2a20152649b67892ec0a5467857d5290",

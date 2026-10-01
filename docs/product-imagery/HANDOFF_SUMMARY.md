@@ -21,7 +21,9 @@ This is a pushed source-and-evidence checkpoint for exact-SHA review. It is not 
 | Reviewed workbook rows | 426 |
 | Canonical variants after the two reviewed merges | 424 |
 | Customer-exposed target after excluding GRP-0364 shipping | 423 |
-| Currently mounted canonical / exposed | 420 / 419 |
+| Imagery-branch baseline canonical / exposed | 420 / 419 |
+| Observed core HL-11 candidate canonical / customer | 424 / 423 |
+| Observed core new canonical identities left unbound | 6 |
 | Care rows in the reviewed target | 242 |
 | Structured formulation holds | 1 (`GRP-0422`) |
 | Price-on-request rows | 2 |
@@ -34,7 +36,7 @@ This is a pushed source-and-evidence checkpoint for exact-SHA review. It is not 
 | Rendered source bytes | 37,900,363 |
 | Quarantined pre-v3 WebPs | 10 |
 
-The 424/423 target is reviewed source truth, not yet materialized runtime truth. The image layer records that gap and does not change catalog, price, action, Care, hold, workflow, cart, or fulfillment state.
+The 424/423 target is materialized in the observed core HL-11 candidate at source commit `4cba24af1d42ad59fe44856859cc1721846e6df5` (tree `6395273fc4370b7df713a2b72b019785f547d1fb`) with final qualification records at `c73da35cc223a2253ce8074948ed9ff063012748`. This imagery branch still contains the 420/419 baseline, and the core candidate is not deployed, independently accepted, or an approval of price or pixels. The image layer records that distinction and does not change catalog, price, action, Care, hold, workflow, cart, or fulfillment state.
 
 ## Corrected identity and authority
 
@@ -141,8 +143,8 @@ Review must cover the exact 25 output hashes, mapping/identity convergence, gene
 No card, detail, Featured, search/filter, catalog, API, shared component, Product Control, payment, SQL, Render, Supabase, or production file was changed. Runtime integration is deliberately blocked by:
 
 1. named Claude review of the exact pushed successor and exact candidate hashes;
-2. materialization of the reviewed 424-row catalog and regenerated bindings by the owning catalog lane;
-3. a separately leased core change removing any media-readiness dependency from commerce;
+2. independent acceptance of the frozen core HL-11 candidate and preservation of its six intentionally unbound new identities without invented Product Control or price authority;
+3. acceptance for integration of the separately leased core change removing any media-readiness dependency from commerce;
 4. a coordinated shared UI lease for one canonical resolver and one resilient image component; and
 5. explicit founder authorization for every future production mutation.
 

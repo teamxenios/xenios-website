@@ -577,8 +577,8 @@
       "branch": "codex/xenios-product-imagery-20260930",
       "state": "active",
       "startedAt": "2026-09-30T19:49:48.411Z",
-      "heartbeatAt": "2026-10-01T04:43:00.913Z",
-      "note": "Reclaimed QA lane to correct durable reviewer dispatch for Batch0 exact SHA 184d820; no Batch1 rendering, public assets, shared runtime edits, or production mutation before review."
+      "heartbeatAt": "2026-10-01T09:09:53.111Z",
+      "note": "Core HL-11 imagery accounting reconciled: exact source 4cba24af/tree 6395273f, test f634e863/tree 94be21be, records c73da35c, branch tip 48a598f. State audit scopes 420/419 imagery baseline versus 424/423 core candidate, 415 active/9 unbound/2 archived, aggregate FAILED_NOT_RELEASE_READY, and four remaining gates. Batch0 unchanged at 25 non-public and 0 approved/public/runtime. Focused 12/12, verifier, diff-check, and independent read-only audit pass."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

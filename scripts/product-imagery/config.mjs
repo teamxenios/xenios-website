@@ -2,6 +2,54 @@ export const ARTIFACT_GENERATED_AT = "2026-10-01T03:50:00.000Z";
 export const CONTRACT_SCHEMA_VERSION = 4;
 export const SOURCE_BASE_COMMIT = "49234f8a2dd804845245a18056a73904b320158a";
 export const SOURCE_BASE_TREE = "36e1db47986916c3a96c82324ba43fbcec6e7861";
+export const OBSERVED_CORE_HL11 = Object.freeze({
+  status: "frozen_core_candidate_not_release_ready_pending_independent_review",
+  branch: "codex/xenios-health-launch-implementation-20260930",
+  observedBranchTip: "48a598f45161cccbf39d5945b85e14a9c31b6b6a",
+  sourceCommit: "4cba24af1d42ad59fe44856859cc1721846e6df5",
+  sourceTree: "6395273fc4370b7df713a2b72b019785f547d1fb",
+  testCommit: "f634e8630b92818ea494aa96f5f68c921441455b",
+  testTree: "94be21be11440e77f754f3ef899638b3a6d74690",
+  recordsCommit: "c73da35cc223a2253ce8074948ed9ff063012748",
+  observedAt: "2026-10-01T08:59:28.187Z",
+  handoffPath:
+    "server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md",
+  qualificationPath:
+    "server/research/master-offerings/HEALTH_HL11_QUALIFICATION_20261001.json",
+  sourceRows: 426,
+  canonicalRows: 424,
+  customerRows: 423,
+  retainedCanonicalIdentities: 418,
+  newUnboundCanonicalIdentities: 6,
+  supersededCanonicalIdentities: 2,
+  retainedProductControlBindings: 415,
+  totalUnboundBindings: 9,
+  archivedSupersededBindings: 2,
+  customerProjectionCounts: Object.freeze({
+    displayedNumeric: 173,
+    careWithheld: 242,
+    quoteOnly: 2,
+    unreleasedBindingPending: 6,
+  }),
+  commerceWorkflowCounts: Object.freeze({
+    provider_request: 242,
+    direct_order_request: 131,
+    request_activation: 42,
+    availability_review: 2,
+    request_pricing: 6,
+  }),
+  fullSuite: Object.freeze({
+    passed: 18894,
+    failed: 1,
+    skipped: 85,
+    failureScope: "unchanged_protected_seam_assertion_covering_two_paths",
+  }),
+  qualificationStatus: "LOCAL_IMPLEMENTATION_WITH_EXPLICIT_REMAINING_GATES_NOT_RELEASE_READY",
+  aggregateStatus: "FAILED_NOT_RELEASE_READY",
+  independentReview: "pending_not_claude_accepted",
+  priceRelease: false,
+  imageApproval: false,
+});
 export const ASSET_BYTE_BUDGET = 120 * 1024;
 export const ASSET_TOTAL_BYTE_BUDGET = 400 * 1024;
 export const ASSET_PIXEL_BUDGET = 2048 * 2048;

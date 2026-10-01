@@ -59,21 +59,51 @@ test("projects the reviewed 426 rows to 424 identity-and-form-only rows", () => 
   assert.equal(projection.rows.some((row) => row.groupId === "GRP-0407"), false);
 });
 
-test("separates mounted 420/419 truth from the reviewed 424/423 target", () => {
+test("separates the imagery branch baseline from the observed 424/423 core candidate", () => {
   const { stateAuthorityAudit } = buildArtifacts();
   assert.deepEqual(
     [
-      stateAuthorityAudit.currentlyMounted.canonicalRows,
-      stateAuthorityAudit.currentlyMounted.exposedRows,
+      stateAuthorityAudit.imageryBranchBaseline.canonicalRows,
+      stateAuthorityAudit.imageryBranchBaseline.exposedRows,
+      stateAuthorityAudit.observedCoreCandidate.canonicalRows,
+      stateAuthorityAudit.observedCoreCandidate.customerRows,
       stateAuthorityAudit.reviewedTarget.canonicalRows,
       stateAuthorityAudit.reviewedTarget.exposedRows,
     ],
-    [420, 419, 424, 423],
+    [420, 419, 424, 423, 424, 423],
+  );
+  assert.equal(stateAuthorityAudit.observedCoreCandidate.catalogMaterialized, true);
+  assert.equal(stateAuthorityAudit.observedCoreCandidate.imageApproval, false);
+  assert.equal(
+    stateAuthorityAudit.observedCoreCandidate.aggregateStatus,
+    "FAILED_NOT_RELEASE_READY",
+  );
+  assert.equal(
+    stateAuthorityAudit.observedCoreCandidate.recordsCommit,
+    "c73da35cc223a2253ce8074948ed9ff063012748",
   );
   assert.equal(stateAuthorityAudit.authority.imageSystemOwnsBusinessState, false);
-  assert.equal(stateAuthorityAudit.reviewedTarget.exactCurrentIdentityRows, 418);
-  assert.equal(stateAuthorityAudit.reviewedTarget.reviewedIdentityReplacementRows, 2);
-  assert.equal(stateAuthorityAudit.reviewedTarget.genuineNewIdentityRows, 4);
+  assert.equal(
+    stateAuthorityAudit.reviewedTarget.deltaFromImageryBranchBaseline.retainedIdentityRows,
+    418,
+  );
+  assert.equal(
+    stateAuthorityAudit.reviewedTarget.deltaFromImageryBranchBaseline
+      .reviewedIdentityReplacementRows,
+    2,
+  );
+  assert.equal(
+    stateAuthorityAudit.reviewedTarget.deltaFromImageryBranchBaseline
+      .genuineNewIdentityRows,
+    4,
+  );
+  assert.deepEqual(stateAuthorityAudit.observedCoreCandidate.commerceWorkflowCounts, {
+    provider_request: 242,
+    direct_order_request: 131,
+    request_activation: 42,
+    availability_review: 2,
+    request_pricing: 6,
+  });
   assert.equal(stateAuthorityAudit.reviewedTarget.careRows, 242);
   assert.deepEqual(
     stateAuthorityAudit.reviewedTarget.structuredFormulationHoldGroupIds,
@@ -82,7 +112,26 @@ test("separates mounted 420/419 truth from the reviewed 424/423 target", () => {
   assert.equal(stateAuthorityAudit.reviewedTarget.priceOnRequestRows, 2);
   assert.equal(stateAuthorityAudit.reviewedTarget.catalogComingSoonRows, 0);
   assert.equal(stateAuthorityAudit.reviewedTarget.separateComingSoonOffersIntended, 2);
-  assert.equal(stateAuthorityAudit.materializationGap.targetMaterialized, false);
+  assert.deepEqual(stateAuthorityAudit.catalogAccounting.imageryBranchBaselineGap, {
+    canonicalRows: 4,
+    customerRows: 4,
+  });
+  assert.deepEqual(stateAuthorityAudit.catalogAccounting.observedCoreCandidateGap, {
+    canonicalRows: 0,
+    customerRows: 0,
+    materializedInObservedCandidate: true,
+    independentlyAccepted: false,
+  });
+  assert.equal(
+    stateAuthorityAudit.catalogAccounting.targetIntegratedIntoImageryBranch,
+    false,
+  );
+  assert.equal(
+    stateAuthorityAudit.catalogAccounting.remainingGates.includes(
+      "core_hl11_candidate_independent_acceptance",
+    ),
+    true,
+  );
 });
 
 test("builds a 424-row coverage ledger with no business-state authority", () => {

@@ -1,16 +1,16 @@
 # Product imagery v3 integration handoff
 
-> Historical pre-v3 integration plan. Keep its no-image commerce-safety principle, but use the corrected 424/423 target, 420/419 mounted runtime, v3 Batch 0 evidence, and approval gates in `PRODUCT_IMAGE_CONTRACT.md`.
+> Historical pre-v3 integration plan. Keep its no-image commerce-safety principle, but use the 420/419 imagery-branch baseline, the observed 424/423 core HL-11 candidate, the v3 Batch 0 evidence, and the current gates in `PRODUCT_IMAGE_CONTRACT.md`. This file does not authorize rendering, publication, runtime wiring, or production mutation.
 
 ## Current state
 
-This lane is source-only. It does not edit shared cards, detail pages, API contracts, Product Control, cart selection, persistent-cart SQL, actions, prices, payment, release, or deployment code. It is explicitly non-deployable while the pre-v3 candidate bytes remain in the public tree. Their source PNGs are not repository-durable, so these exact bytes are permanently non-approvable: remove them or replace them with fully evidenced v3 rerenders before any deployment.
+This lane is source-only. It does not edit shared cards, detail pages, API contracts, Product Control, cart selection, persistent-cart SQL, actions, prices, payment, release, or deployment code. The ten pre-v3 candidates have been removed from the public tree and preserved as permanently nonapprovable evidence. Batch 0 now contains 25 receipt-bound non-public PNGs, but zero assets are independently approved, public, or runtime-wired.
 
 The artifacts are reconciled to primary `7600943f9ec7573f0a5cbfe7a7687ba851276a30`, tree `2fd41b918c8d77c5593319a6d921477f789b737e`, and the independent acceptance bar at `f4f899a7`. The acceptance commit and primary are divergent; only the review document is used as evidence. No commit from the review branch should be cherry-picked wholesale.
 
 A read-only production observation at `2026-09-30T20:02:55Z` found zero Product Control media rows, zero approved primary rows, zero products with approved primary media, and zero objects in the governed product-media bucket. A second read-only check at about `2026-09-30T20:34Z` matched all 22 legacy PEX/R360 aliases and all 22 canonical GEN-GRP bindings to the committed identity closure with zero drift. These are observations, not durable approval authority. No production mutation occurred.
 
-The ten committed WebP files are pre-v3 candidates. They have no named approval and no customer-surface reference, and their non-durable source evidence makes these exact bytes permanently non-approvable. The missing founder v3 prompt blocks further generation and any future v3 approval workflow.
+The ten quarantined WebP files are pre-v3 candidates. They have no named approval and no customer-surface reference, and their non-durable source evidence makes these exact bytes permanently nonapprovable. The founder v3 prompt is now checked in and hash-bound; Batch 0 is complete, and further rendering remains blocked on exact-SHA per-asset review and the current integration gates.
 
 ## Required order of work
 
@@ -135,7 +135,7 @@ Do not broaden the first integration to the unavailable `/products/:slug` route,
 
 ## Required tests
 
-- 420 canonical keys, 419 customer rows, one excluded fee, zero missing ledger rows
+- 424 canonical keys, 423 customer rows, one excluded fee, zero missing ledger rows, six new identities intentionally unbound, and two superseded identities archived
 - 22 Featured aliases, 19 legacy products, zero duplicate or orphan identity
 - canonical UUID and legacy PEX/R360 lookup resolve to the same `mov_*` and same presentation
 - swapped manifest key mutation fails
@@ -150,6 +150,6 @@ Do not broaden the first integration to the unavailable `/products/:slug` route,
 
 ## Browser and release evidence
 
-After named approval and a separately authorized deployment, inspect 320, 390, 768, and 1440 pixel widths plus keyboard behavior. For every rendered image, require `naturalWidth > 0`, reserved geometry, allowed same-origin hashed source, and truthful alt behavior. Walk all 419 customer rows and all 22 Featured aliases. Record zero blank images, zero broken images, and zero signed URLs.
+After named approval and a separately authorized deployment, inspect 320, 390, 768, and 1440 pixel widths plus keyboard behavior. For every rendered image, require `naturalWidth > 0`, reserved geometry, allowed same-origin hashed source, and truthful alt behavior. Walk all 423 customer rows and all 22 Featured aliases. Record zero blank images, zero broken images, and zero signed URLs.
 
-Until all prerequisites are complete, the correct state is: complete source ledger, complete identity crosswalk, complete blocked draft queue, ten quarantined candidates, zero approved exact assets, zero runtime references, and no deployment.
+Until all prerequisites are complete, the correct state is: complete source ledger, complete identity crosswalk, 25 non-public receipt-bound Batch 0 assets, ten quarantined pre-v3 candidates, zero approved exact assets, zero runtime references, and no deployment.

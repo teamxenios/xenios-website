@@ -9,21 +9,24 @@ Generated from primary base `49234f8a2dd804845245a18056a73904b320158a` (tree `36
 | Reviewed workbook rows | 426 |
 | Canonical variants after reviewed merges | 424 |
 | Customer-exposed target after shipping exclusion | 423 |
-| Currently mounted canonical / exposed | 420 / 419 |
+| Imagery branch baseline before HL-11 | 420 / 419 |
+| Observed core HL-11 candidate canonical / customer | 424 / 423 |
+| Observed core new canonical identities awaiting binding | 6 |
 | Care rows | 242 |
 | Structured formulation holds | 1 |
 | Price-on-request rows | 2 |
 | Catalog coming-soon rows | 0 |
 | Separate coming-soon offers intended | 2 |
 
-The reviewed 424-row target is **not materialized** in the runtime catalog yet. Runtime image wiring remains blocked until catalog/binding regeneration and independent image approval.
+The reviewed 424-row / 423-customer target is materialized in the observed core HL-11 candidate at source commit `4cba24af1d42ad59fe44856859cc1721846e6df5` (tree `6395273fc4370b7df713a2b72b019785f547d1fb`), with qualification records at `c73da35cc223a2253ce8074948ed9ff063012748`. It is not merged into this imagery branch, independently Claude-accepted, deployed, or image-approved. Runtime image wiring remains blocked on independent core-candidate acceptance, exact-SHA per-asset review, media/commerce decoupling acceptance, and a coordinated shared UI lease.
 
 ## Identity correction
 
 - GRP-0425 / `mov_c26ef47dfbbe46f7e090` is the reviewed Oxytocin owner. GRP-0407 and its current Product Control identity are forward aliases only.
 - GRP-0426 / `mov_3c8ca424d78153fd931a` is the reviewed Hexarelin owner. GRP-0402 and its current Product Control identity are forward aliases only.
 - Superseded manifest owners: 0.
-- Exact current Product Control bindings on reviewed identities: 415; target bindings not yet materialized: 9.
+- Imagery-branch baseline exact Product Control bindings on reviewed identities: 415; baseline target bindings not materialized: 9.
+- Observed core HL-11 retains 415 Product Control bindings, archives 2, and leaves 6 new canonical identities unbound without inventing price or UUID authority.
 
 ## Batch 0
 

@@ -45,7 +45,10 @@ console.log(
       ok: true,
       canonicalRows: artifacts.coverageLedger.invariants.canonicalRows,
       targetExposedRows: artifacts.stateAuthorityAudit.reviewedTarget.exposedRows,
-      mountedRows: artifacts.stateAuthorityAudit.currentlyMounted.canonicalRows,
+      imageryBranchBaselineRows:
+        artifacts.stateAuthorityAudit.imageryBranchBaseline.canonicalRows,
+      observedCoreCandidateRows:
+        artifacts.stateAuthorityAudit.observedCoreCandidate.canonicalRows,
       quarantinedAssets: artifacts.assetManifest.assets.length,
       batch0Rendered: artifacts.batch0AssetManifest.counts.rendered,
       batch0Pending: artifacts.batch0AssetManifest.counts.pending,

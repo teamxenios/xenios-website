@@ -9,7 +9,7 @@
     "rule": "Runtime commerce and Product Control supply state. Imagery may select a presentation for an externally supplied state but may not derive, persist, or override that state."
   },
   "sources": {
-    "currentlyMountedCatalog": {
+    "imageryBranchBaselineCatalog": {
       "path": "server/research/master-offerings/data/member-safe-master-offerings.generated.json",
       "sha256": "b8634a5d1c1e02bade42661eeefaa2d8321e76e750178f932d0ae4c8b3178643",
       "sha256Semantics": "lf_normalized_repository_text_bytes",
@@ -17,7 +17,7 @@
       "gitBlobOidSemantics": "lf_normalized_repository_text_blob",
       "byteSize": 332047
     },
-    "currentlyMountedBindings": {
+    "imageryBranchBaselineBindings": {
       "path": "server/research/master-offerings/data/master-offering-bindings.generated.json",
       "sha256": "587595e68cb1b47a8ee7f55728eb65d64c2f55f36ad242080232743a9c53ae24",
       "sha256Semantics": "lf_normalized_repository_text_bytes",
@@ -47,10 +47,63 @@
       "gitBlobOid": "50a4b0eadac3bb999a26cb359bdccbb21d2ea362",
       "gitBlobOidSemantics": "lf_normalized_repository_text_blob",
       "byteSize": 5674
+    },
+    "observedCoreCandidate": {
+      "status": "frozen_core_candidate_not_release_ready_pending_independent_review",
+      "branch": "codex/xenios-health-launch-implementation-20260930",
+      "observedBranchTip": "48a598f45161cccbf39d5945b85e14a9c31b6b6a",
+      "sourceCommit": "4cba24af1d42ad59fe44856859cc1721846e6df5",
+      "sourceTree": "6395273fc4370b7df713a2b72b019785f547d1fb",
+      "testCommit": "f634e8630b92818ea494aa96f5f68c921441455b",
+      "testTree": "94be21be11440e77f754f3ef899638b3a6d74690",
+      "recordsCommit": "c73da35cc223a2253ce8074948ed9ff063012748",
+      "observedAt": "2026-10-01T08:59:28.187Z",
+      "handoffPath": "server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md",
+      "qualificationPath": "server/research/master-offerings/HEALTH_HL11_QUALIFICATION_20261001.json",
+      "sourceRows": 426,
+      "canonicalRows": 424,
+      "customerRows": 423,
+      "retainedCanonicalIdentities": 418,
+      "newUnboundCanonicalIdentities": 6,
+      "supersededCanonicalIdentities": 2,
+      "retainedProductControlBindings": 415,
+      "totalUnboundBindings": 9,
+      "archivedSupersededBindings": 2,
+      "customerProjectionCounts": {
+        "displayedNumeric": 173,
+        "careWithheld": 242,
+        "quoteOnly": 2,
+        "unreleasedBindingPending": 6
+      },
+      "commerceWorkflowCounts": {
+        "provider_request": 242,
+        "direct_order_request": 131,
+        "request_activation": 42,
+        "availability_review": 2,
+        "request_pricing": 6
+      },
+      "fullSuite": {
+        "passed": 18894,
+        "failed": 1,
+        "skipped": 85,
+        "failureScope": "unchanged_protected_seam_assertion_covering_two_paths"
+      },
+      "qualificationStatus": "LOCAL_IMPLEMENTATION_WITH_EXPLICIT_REMAINING_GATES_NOT_RELEASE_READY",
+      "aggregateStatus": "FAILED_NOT_RELEASE_READY",
+      "independentReview": "pending_not_claude_accepted",
+      "priceRelease": false,
+      "imageApproval": false
     }
   },
+  "imageryBranchBaseline": {
+    "status": "pre_hl11_branch_snapshot_not_current_core_truth",
+    "canonicalRows": 420,
+    "exposedRows": 419,
+    "bindingRows": 417,
+    "unboundRows": 3
+  },
   "currentlyMounted": {
-    "status": "materialized_runtime_truth",
+    "status": "deprecated_alias_for_imagery_branch_baseline_not_current_core_truth",
     "canonicalRows": 420,
     "exposedRows": 419,
     "bindingRows": 417,
@@ -75,40 +128,80 @@
       "GRP-0364"
     ]
   },
+  "observedCoreCandidate": {
+    "status": "frozen_core_candidate_not_release_ready_pending_independent_review",
+    "branch": "codex/xenios-health-launch-implementation-20260930",
+    "observedBranchTip": "48a598f45161cccbf39d5945b85e14a9c31b6b6a",
+    "sourceCommit": "4cba24af1d42ad59fe44856859cc1721846e6df5",
+    "sourceTree": "6395273fc4370b7df713a2b72b019785f547d1fb",
+    "testCommit": "f634e8630b92818ea494aa96f5f68c921441455b",
+    "testTree": "94be21be11440e77f754f3ef899638b3a6d74690",
+    "recordsCommit": "c73da35cc223a2253ce8074948ed9ff063012748",
+    "observedAt": "2026-10-01T08:59:28.187Z",
+    "handoffPath": "server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md",
+    "qualificationPath": "server/research/master-offerings/HEALTH_HL11_QUALIFICATION_20261001.json",
+    "sourceRows": 426,
+    "canonicalRows": 424,
+    "customerRows": 423,
+    "retainedCanonicalIdentities": 418,
+    "newUnboundCanonicalIdentities": 6,
+    "supersededCanonicalIdentities": 2,
+    "retainedProductControlBindings": 415,
+    "totalUnboundBindings": 9,
+    "archivedSupersededBindings": 2,
+    "customerProjectionCounts": {
+      "displayedNumeric": 173,
+      "careWithheld": 242,
+      "quoteOnly": 2,
+      "unreleasedBindingPending": 6
+    },
+    "commerceWorkflowCounts": {
+      "provider_request": 242,
+      "direct_order_request": 131,
+      "request_activation": 42,
+      "availability_review": 2,
+      "request_pricing": 6
+    },
+    "fullSuite": {
+      "passed": 18894,
+      "failed": 1,
+      "skipped": 85,
+      "failureScope": "unchanged_protected_seam_assertion_covering_two_paths"
+    },
+    "qualificationStatus": "LOCAL_IMPLEMENTATION_WITH_EXPLICIT_REMAINING_GATES_NOT_RELEASE_READY",
+    "aggregateStatus": "FAILED_NOT_RELEASE_READY",
+    "independentReview": "pending_not_claude_accepted",
+    "priceRelease": false,
+    "imageApproval": false,
+    "catalogMaterialized": true,
+    "customerProjectionMaterialized": true,
+    "integratedIntoImageryBranch": false
+  },
   "reviewedTarget": {
-    "status": "reviewed_source_truth_not_yet_materialized",
+    "status": "materialized_in_observed_core_candidate_pending_independent_review_and_image_integration",
     "canonicalRows": 424,
     "exposedRows": 423,
-    "exactCurrentIdentityRows": 418,
-    "reviewedIdentityReplacementRows": 2,
-    "reviewedIdentityReplacementGroupIds": [
-      "GRP-0425",
-      "GRP-0426"
-    ],
-    "genuineNewIdentityRows": 4,
-    "genuineNewIdentityGroupIds": [
-      "GRP-0421",
-      "GRP-0422",
-      "GRP-0423",
-      "GRP-0424"
-    ],
-    "currentProductControlResolvableAfterForwardAliases": 417,
-    "currentExposedUnboundAfterForwardAliases": 6,
-    "expectedBindingRowsAfterRegeneration": 421,
-    "expectedUnboundRowsAfterRegeneration": 3,
+    "deltaFromImageryBranchBaseline": {
+      "retainedIdentityRows": 418,
+      "reviewedIdentityReplacementRows": 2,
+      "reviewedIdentityReplacementGroupIds": [
+        "GRP-0425",
+        "GRP-0426"
+      ],
+      "genuineNewIdentityRows": 4,
+      "genuineNewIdentityGroupIds": [
+        "GRP-0421",
+        "GRP-0422",
+        "GRP-0423",
+        "GRP-0424"
+      ]
+    },
     "sourceChannelCounts": {
       "Clinical / Provider Only": 244,
       "Nonclinical / Topical": 3,
       "RUO Research": 127,
       "Supplement": 20,
       "Supplier Catalog / Classification Pending": 30
-    },
-    "commerceWorkflowCountsAfterRegenerationAndPriceBinding": {
-      "provider_request": 242,
-      "direct_order_request": 136,
-      "request_activation": 42,
-      "availability_review": 2,
-      "request_pricing": 1
     },
     "careRows": 242,
     "structuredFormulationHoldRows": 1,
@@ -130,10 +223,24 @@
       "GRP-0364"
     ]
   },
-  "materializationGap": {
-    "catalogRows": 4,
-    "exposedRows": 4,
-    "targetMaterialized": false,
-    "blocksRuntimeImageWiring": true
+  "catalogAccounting": {
+    "imageryBranchBaselineGap": {
+      "canonicalRows": 4,
+      "customerRows": 4
+    },
+    "observedCoreCandidateGap": {
+      "canonicalRows": 0,
+      "customerRows": 0,
+      "materializedInObservedCandidate": true,
+      "independentlyAccepted": false
+    },
+    "targetIntegratedIntoImageryBranch": false,
+    "blocksRuntimeImageWiring": true,
+    "remainingGates": [
+      "core_hl11_candidate_independent_acceptance",
+      "claude_exact_sha_per_asset_batch0_review",
+      "media_commerce_decoupling_integration_acceptance",
+      "shared_runtime_ui_lease"
+    ]
   }
 }

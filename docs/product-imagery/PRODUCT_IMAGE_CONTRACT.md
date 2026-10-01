@@ -6,7 +6,7 @@ The image system is presentation-only. Catalog, Product Control, commerce, Care,
 
 ## Catalog and identity
 
-The reviewed evidence is 426 source rows reconciled to 424 canonical variants. The customer-exposed target is 423 after excluding GRP-0364 as a shipping fee. The currently mounted runtime is still 420 canonical / 419 exposed; target materialization is a separate catalog task.
+The reviewed evidence is 426 source rows reconciled to 424 canonical variants. The customer-exposed target is 423 after excluding GRP-0364 as a shipping fee. The imagery branch baseline remains 420 canonical / 419 exposed. The observed core HL-11 candidate materializes 424/423 at source commit `4cba24af1d42ad59fe44856859cc1721846e6df5` (tree `6395273fc4370b7df713a2b72b019785f547d1fb`) with qualification records at `c73da35cc223a2253ce8074948ed9ff063012748`; it is not deployed, independently accepted, or an approval of price or pixels.
 
 Every image entry is keyed by the reviewed `mov_*` identity. GRP-0425 / `mov_c26ef47dfbbe46f7e090` owns Oxytocin 10 mg; GRP-0407 and its current Product Control IDs are forward aliases only. GRP-0426 / `mov_3c8ca424d78153fd931a` owns Hexarelin 5 mg; GRP-0402 and its current Product Control IDs are forward aliases only. Superseded rows may never own manifests or pixels.
 
@@ -39,4 +39,4 @@ Restrictive externally supplied presentation states take precedence over an exac
 
 ## Integration gate
 
-Do not wire these candidates into customer surfaces until the 424 catalog and bindings are materialized, exact candidate hashes receive independent approval, and the separately leased commerce/media dependency is removed and tested. Any Supabase, Render, migration, storage, or production write requires Samuel's current explicit approval and is outside this source lane.
+Do not wire these candidates into customer surfaces until the frozen core candidate is accepted by its owning lane, each exact candidate hash receives independent approval, the separately leased commerce/media dependency is removed and accepted, and a coordinated shared UI lease is active. The six new canonical identities remain intentionally unbound; imagery may not invent Product Control UUID, SKU, price, or release authority for them. Any Supabase, Render, migration, storage, or production write requires Samuel's current explicit approval and is outside this source lane.

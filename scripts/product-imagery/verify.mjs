@@ -167,13 +167,56 @@ export function verifyRepository() {
   assert.equal(coverageLedger.invariants.reviewedSourceRows, 426);
   assert.equal(coverageLedger.invariants.supersededSourceRows, 2);
   assert.equal(coverageLedger.invariants.publicAssetsWired, 0);
-  assert.equal(stateAuthorityAudit.currentlyMounted.canonicalRows, 420);
-  assert.equal(stateAuthorityAudit.currentlyMounted.exposedRows, 419);
+  assert.equal(stateAuthorityAudit.imageryBranchBaseline.canonicalRows, 420);
+  assert.equal(stateAuthorityAudit.imageryBranchBaseline.exposedRows, 419);
+  assert.equal(stateAuthorityAudit.observedCoreCandidate.canonicalRows, 424);
+  assert.equal(stateAuthorityAudit.observedCoreCandidate.customerRows, 423);
+  assert.equal(stateAuthorityAudit.observedCoreCandidate.imageApproval, false);
+  assert.equal(
+    stateAuthorityAudit.observedCoreCandidate.aggregateStatus,
+    "FAILED_NOT_RELEASE_READY",
+  );
+  assert.equal(
+    stateAuthorityAudit.observedCoreCandidate.recordsCommit,
+    "c73da35cc223a2253ce8074948ed9ff063012748",
+  );
+  assert.deepEqual(stateAuthorityAudit.catalogAccounting.imageryBranchBaselineGap, {
+    canonicalRows: 4,
+    customerRows: 4,
+  });
+  assert.deepEqual(stateAuthorityAudit.catalogAccounting.observedCoreCandidateGap, {
+    canonicalRows: 0,
+    customerRows: 0,
+    materializedInObservedCandidate: true,
+    independentlyAccepted: false,
+  });
+  assert.equal(
+    stateAuthorityAudit.catalogAccounting.targetIntegratedIntoImageryBranch,
+    false,
+  );
   assert.equal(stateAuthorityAudit.reviewedTarget.canonicalRows, 424);
   assert.equal(stateAuthorityAudit.reviewedTarget.exposedRows, 423);
-  assert.equal(stateAuthorityAudit.reviewedTarget.exactCurrentIdentityRows, 418);
-  assert.equal(stateAuthorityAudit.reviewedTarget.reviewedIdentityReplacementRows, 2);
-  assert.equal(stateAuthorityAudit.reviewedTarget.genuineNewIdentityRows, 4);
+  assert.equal(
+    stateAuthorityAudit.reviewedTarget.deltaFromImageryBranchBaseline.retainedIdentityRows,
+    418,
+  );
+  assert.equal(
+    stateAuthorityAudit.reviewedTarget.deltaFromImageryBranchBaseline
+      .reviewedIdentityReplacementRows,
+    2,
+  );
+  assert.equal(
+    stateAuthorityAudit.reviewedTarget.deltaFromImageryBranchBaseline
+      .genuineNewIdentityRows,
+    4,
+  );
+  assert.deepEqual(stateAuthorityAudit.observedCoreCandidate.commerceWorkflowCounts, {
+    provider_request: 242,
+    direct_order_request: 131,
+    request_activation: 42,
+    availability_review: 2,
+    request_pricing: 6,
+  });
   assert.equal(stateAuthorityAudit.reviewedTarget.careRows, 242);
   assert.equal(stateAuthorityAudit.reviewedTarget.structuredFormulationHoldRows, 1);
   assert.deepEqual(
@@ -183,7 +226,12 @@ export function verifyRepository() {
   assert.equal(stateAuthorityAudit.reviewedTarget.priceOnRequestRows, 2);
   assert.equal(stateAuthorityAudit.reviewedTarget.catalogComingSoonRows, 0);
   assert.equal(stateAuthorityAudit.reviewedTarget.separateComingSoonOffersIntended, 2);
-  assert.equal(stateAuthorityAudit.materializationGap.targetMaterialized, false);
+  assert.equal(
+    stateAuthorityAudit.catalogAccounting.remainingGates.includes(
+      "core_hl11_candidate_independent_acceptance",
+    ),
+    true,
+  );
 
   for (const row of coverageLedger.rows) {
     for (const field of FORBIDDEN_ROW_FIELDS) {
@@ -298,7 +346,8 @@ export function verifyRepository() {
     ok: true,
     reviewedSourceRows: coverageLedger.invariants.reviewedSourceRows,
     canonicalRows: coverageLedger.invariants.canonicalRows,
-    mountedRows: stateAuthorityAudit.currentlyMounted.canonicalRows,
+    imageryBranchBaselineRows: stateAuthorityAudit.imageryBranchBaseline.canonicalRows,
+    observedCoreCandidateRows: stateAuthorityAudit.observedCoreCandidate.canonicalRows,
     targetExposedRows: stateAuthorityAudit.reviewedTarget.exposedRows,
     quarantinedPreV3Assets: assetManifest.counts.quarantined,
     batch0Jobs: batch0AssetManifest.counts.jobs,

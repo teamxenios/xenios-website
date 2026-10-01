@@ -1,6 +1,6 @@
 # Xenios product imagery v3 lane
 
-This directory holds the corrected, non-production imagery source lane. The reviewed catalog evidence contains 426 workbook rows reconciled to 424 canonical variants and 423 customer-exposed targets after excluding the shipping fee. The mounted runtime remains the older 420/419 projection; the 424 target is not materialized and must not be reported as live.
+This directory holds the corrected, non-production imagery source lane. The reviewed catalog evidence contains 426 workbook rows reconciled to 424 canonical variants and 423 customer-exposed targets after excluding the shipping fee. This imagery branch still carries the older 420/419 catalog snapshot, while the observed core HL-11 candidate materializes 424/423 at source commit `4cba24af1d42ad59fe44856859cc1721846e6df5` (tree `6395273fc4370b7df713a2b72b019785f547d1fb`) with qualification records at `c73da35cc223a2253ce8074948ed9ff063012748`. That candidate is not deployed or independently accepted, and it does not confer image approval.
 
 The exact founder v3 specification is checked in under `specs/` with SHA-256 `e37a13d7b99ac1f2416e00e29a92df3e7677ce7c92bce9dbf019de83d08b8b5c`. Renderer requests and fixture provenance are separate artifacts. The only active render packet is the 25-class Batch 0 packet; there is no named 423- or 419-row exact-product prompt queue.
 
@@ -10,15 +10,15 @@ Current safety state:
 - all 25 Batch 0 originals are rendered, receipt-bound, output-SHA-addressed, and retained under non-public evidence with zero runtime/public authority;
 - no image is approved or wired;
 - imagery owns no price, action, workflow, Care, hold, availability, cart, or fulfillment state;
-- runtime integration remains blocked on catalog/binding regeneration, independent named exact-SHA image approval, and the separately leased commerce/media decoupling work;
+- catalog accounting is reconciled to the frozen HL-11 candidate, but runtime integration remains blocked on independent acceptance of that core candidate, independent named exact-SHA per-asset approval, acceptance of the separately leased commerce/media decoupling slice, and a coordinated shared UI lease;
 - no production mutation or deployment is authorized by this lane.
 
 Authoritative generated artifacts:
 
-- `COVERAGE_SUMMARY.md` — corrected counts and runtime gap;
+- `COVERAGE_SUMMARY.md` — corrected counts and the imagery-branch/core-candidate distinction;
 - `manifests/product-image-coverage.json` — 424 identity/form presentation rows with no business-state fields;
 - `manifests/product-image-identity-crosswalk.json` — canonical, Product Control, legacy Featured, and Hex/Oxy forward identities;
-- `manifests/state-authority-audit.json` — explicit mounted-versus-target accounting without granting imagery authority;
+- `manifests/state-authority-audit.json` — explicit imagery-branch-baseline versus observed-core-candidate accounting without granting imagery authority;
 - `manifests/renderer-packet-v3.json` — request-only sanitized renderer inputs;
 - `manifests/batch-000-provenance.json` — fixture identities that must never be sent to the renderer;
 - `manifests/batch-000-assets.json` — output hashes, renderer provenance, and approval state;

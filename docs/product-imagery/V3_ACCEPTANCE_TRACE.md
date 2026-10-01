@@ -3,8 +3,8 @@
 | Requirement | Current evidence | Status |
 | --- | --- | --- |
 | Founder v3 spec attached exactly | Checked-in spec SHA-256 `e37a13d7b99ac1f2416e00e29a92df3e7677ce7c92bce9dbf019de83d08b8b5c` | pass |
-| Reviewed catalog accounting | 426 source rows, two reviewed merges, 424 canonical targets, 423 exposed after shipping exclusion | pass, target not runtime-materialized |
-| Mounted truth distinguished | State audit reports current 420/419 separately from target 424/423 | pass |
+| Reviewed catalog accounting | 426 source rows, two reviewed merges, 424 canonical targets, 423 exposed after shipping exclusion; exact core source `4cba24af` / tree `6395273f` and qualification records `c73da35c` | pass, materialized in observed core candidate pending independent acceptance |
+| Branch and core truth distinguished | State audit reports the imagery-branch 420/419 baseline separately from the observed core 424/423 candidate | pass |
 | Hex/Oxy identity correction | GRP-0425 and GRP-0426 are owners; GRP-0407/0402 and Product Control identities are forward-only | pass |
 | Business state outside imagery | Coverage rows contain no display state, price, workflow, action, Care, hold, cart, sellability, or inventory field | pass |
 | Formulation hold | GRP-0422 is the sole reviewed structured hold in the state audit; imagery does not own it | pass |
@@ -18,9 +18,9 @@
 | Public/runtime assets | zero approved, zero public, zero runtime evidence references | pass, expected |
 | Resolver safety | canonical/PC/legacy/forward convergence; restrictive external state first; unknown state and unsealed assets fail closed | source pass, not UI-wired |
 | Independent named visual review | exact output hashes not yet independently approved | pending |
-| Catalog/binding regeneration | reviewed 424 target not yet materialized | blocked outside this lane |
+| Catalog/binding regeneration | observed core candidate materializes 424/423, retains 415 Product Control bindings, archives two superseded bindings, and leaves six new canonical identities intentionally unbound with no price release | source pass, independent acceptance pending |
 | Commerce/media decoupling | separate shared-source and forward-migration lease required | blocked outside this lane |
 | UI/browser integration | waits on approved bytes and prior gates | blocked |
 | Production mutation | none performed; current explicit approval required for any future mutation | pass |
 
-Focused source gates are `node --test scripts/product-imagery/product-imagery.test.mjs` and `node scripts/product-imagery/verify.mjs`. A passing source gate does not substitute for independent pixel review, browser QA, catalog regeneration, release review, or production authorization.
+Focused source gates are `node --test scripts/product-imagery/product-imagery.test.mjs` and `node scripts/product-imagery/verify.mjs`. A passing source gate does not substitute for independent pixel review, responsive runtime browser QA, core-candidate acceptance, release review, or production authorization.
