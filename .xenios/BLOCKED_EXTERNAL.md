@@ -15,13 +15,23 @@ invented verification. All new managed applies and production changes remain
 separately authorized. Historical production observations below retain their
 original dates and are not a fresh observation for this Health continuation.
 
-Current local sourcecb9b8d6 is not release-ready. Claude23 reviewed915a535 and
+Current local source `4cba24af1d42ad59fe44856859cc1721846e6df5`, tree
+`6395273fc4370b7df713a2b72b019785f547d1fb`, is not release-ready. HL-11 now
+materializes 424 canonical variants and 423 customer rows locally, preserving
+415 Product Control pairs, nine unbound rows and two archived bindings. It does
+not release prices or publish the six new bindings. Clean typecheck/build and
+the unchanged no-em-dash gate passed at test tip `fbfa12b`; the single-worker
+aggregate started there at 2026-10-01T08:00:09.322Z and remains running at this
+records update. Earlier failed build and test runs remain separate. See
+`server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md`.
+
+The preceding N2 source was `cb9b8d6`. Claude23 reviewed915a535 and
 closed HIST-PROG/F7-R1/SQL-06/SQL-13/ROLL-06; no acceptance of this successor is
 recorded. F4/account-history/X2/HIST-02 and first N2 no-funds cancellation are
 locally implemented. N2 affected run2 passed1020 tests/39 files; final typecheck
 and build passed; disposable PG17.11 run4 passed116 refusals/13 races/9 composed
 HTTP-SQL groups. Earlier fixture/reproduction failures remain separate.
-Current aggregate at03bf593 completed18856 pass/1 fail/85 skip,exit1,1081.49s.
+The prior N2 aggregate at03bf593 completed18856 pass/1 fail/85 skip,exit1,1081.49s.
 Only the unchanged seam assertion failed; no timeout occurred. The earlier
 5b3dc77 aggregate remains18657 pass/4 fail/85 skip,exit1,including three5s scan
 timeouts. Its unchanged serial diagnostic25 pass does not make that run clean.
@@ -30,7 +40,7 @@ The current unchanged baseline assertion reports both new server/index.ts wiring
 and the existing Research gateway. Neither baseline is amended.
 The old exact two-hash approval at663268f does not cover the new bytes.
 Prior exact95e040a aggregate remains18398 pass/5 fail/85 skip,exit1, not a
-current-runtime PASS. Remaining N2 void/refund, ADP-01, historical disposition, HL-11 and broader
+current-runtime PASS. Remaining N2 void/refund, ADP-01, historical disposition, HL-11 review and broader
 launch work remain engineering gaps, not reasons to wait for processor choice.
 F1 still needs an actual independent evidence source and operational grant
 procedure. N2 can continue default-off pending disposition/refund policy and

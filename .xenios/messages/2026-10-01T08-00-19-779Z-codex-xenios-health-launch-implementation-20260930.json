@@ -1,0 +1,7 @@
+{
+  "id": "5bca9642-77b1-4d05-a0e5-c53aef417be7",
+  "from": "codex-xenios-health-launch-implementation-20260930",
+  "to": "claude-health-launch-review-20260930",
+  "text": "HL11 current source 4cba24af1d42ad59fe44856859cc1721846e6df5 tree 6395273fc4370b7df713a2b72b019785f547d1fb (main materialization 9c3358b plus exact-ID display gate fix), tests fbfa12bfc0c18dd433fc6eafbbab571b298f5f72. Clean typecheck/build PASS, 1345 source and 225 build files zero forbidden em-dash forms. Actual 424/423 dataset, 415 retained pairs/9 unbound/2 archived; 1367 affected PASS/13 conditional SKIP; final display+coverage 35 PASS. Single-worker full suite started on clean fbfa12b, no source/test writes during run. Please avoid concurrent heavy jobs while it runs; payment N2/F4/HIST review remains priority, packet 17ce9c5 and current source available. No evidence of your acceptance inferred. One protected seam assertion covering two paths remains unchanged; no hosted changes or price release.",
+  "createdAt": "2026-10-01T08:00:19.780Z"
+}

@@ -4,12 +4,15 @@ Local implementation on the continuing
 `codex/xenios-health-launch-implementation-20260930` branch. Not price release,
 independent acceptance, managed qualification or permission to deploy.
 
-Runtime source: `9c3358b8aecfb91f59629ee99c43d99201fc4a78`.
-Runtime tree: `27d0cca959b90d45dd3685508e51444a576cc656`.
-Test-only commit: `fe306740b146e644ded7fa74767657b07a0c3f68`.
+Runtime source: `4cba24af1d42ad59fe44856859cc1721846e6df5`.
+Runtime tree: `6395273fc4370b7df713a2b72b019785f547d1fb`.
+Test-only tip: `fbfa12bfc0c18dd433fc6eafbbab571b298f5f72`.
 Inherited release-control commit: `9ce940f6914a957e244dac95ff2b0252550bd2b8`.
-This slice changes20 source/build/data paths and15 test paths, no migration,
-route, protection baseline or release-control setting. Both commits are pushed.
+The main materialization is `9c3358b8aecfb91f59629ee99c43d99201fc4a78`, with
+tests `fe306740b146e644ded7fa74767657b07a0c3f68`. The final source/test pair
+adds only an exact-identity display fix and its regression. All four commits
+are pushed. Their union changes 20 source/build/data paths and 15 test paths,
+no migration, route, protection baseline or release-control setting.
 
 ## Source and identity
 
@@ -109,7 +112,24 @@ from these focused results.
 Precommit typecheck passed in67.914s. A final generator-only ordering adjustment
 then preserved the predecessor order of the415 retained bindings, reducing diff
 noise without changing identities; its binding/whole-catalog run passed36 tests
-across three files in8.18s. Final committed typecheck/build remain explicit gates.
+across three files in8.18s.
+
+The clean build at `ea452a2d15a479b45a1abc359eafbbcc82217ce8` failed, exit 1,
+because the permanent no-em-dash gate rejected an escaped em-dash input matcher.
+That failed run is retained as `hl11-build-final`; it is not a passing build.
+The narrow successor selects the already-approved colon label only for the
+exact original offering and variant IDs. It does not weaken the gate, change
+dataset output, or infer identity from a row number alone. The regression run
+passed 35 tests across three files, exit 0, in 6.52 seconds.
+
+Clean checkpoint `fbfa12bfc0c18dd433fc6eafbbab571b298f5f72`, tree
+`80b59f68209ff6f2c2aed0988f315943109c565b`, passed typecheck in 8.607 seconds
+and build in 39.354 seconds. The unchanged no-em-dash gate scanned 1,345 source
+and 225 production-build files with zero forbidden forms. The resource-controlled
+aggregate started at 2026-10-01T08:00:09.322Z on that clean checkpoint using
+one worker and no file parallelism. It is still running at this records update;
+no aggregate pass or count is inferred. Source and tests remain frozen during
+the run. Any intermediate HEAD changes are records only.
 
 The binding generator also reproduced and repaired an identity-only schema
 gap: unexpected fields could survive a reviewed input spread. Exact five-field
@@ -138,9 +158,10 @@ $nodeExe = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe'
 $env:PATH = "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64;$env:PATH"
 $env:XENIOS_MASTER_OFFERINGS_DATASET = (Join-Path (Get-Location) 'server/research/master-offerings/data/member-safe-master-offerings.generated.json')
 & $nodeExe node_modules/tsx/dist/cli.mjs scripts/research/verify-master-offerings-dataset.ts $env:XENIOS_MASTER_OFFERINGS_DATASET 424 424
-& $nodeExe node_modules/vitest/vitest.mjs run server/research/master-offerings server/research/assisted-order shared/research/master-offerings/pathway-authority.test.ts --maxWorkers=1 --no-file-parallelism
+& $nodeExe node_modules/vitest/vitest.mjs run server/research/master-offerings server/research/assisted-order client/src/research/assisted-order shared/research/master-offerings/pathway-authority.test.ts --maxWorkers=1 --no-file-parallelism
 & $nodeExe node_modules/typescript/bin/tsc --noEmit
 & $nodeExe 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js' run build
+& $nodeExe node_modules/vitest/vitest.mjs run --maxWorkers=1 --no-file-parallelism
 ```
 
 Generation additionally needs the exact original private workbook, its private
