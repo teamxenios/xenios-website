@@ -111,9 +111,11 @@ export class SupabaseStatusRecoveryStore implements StatusRecoveryStore {
       });
     }) : [];
     let paymentVerified = false;
-    if (status === "paid") {
+    if (["paid", "supplier_processing", "shipped", "delivered"].includes(status) ||
+        timeline.some((event) => event.status === "paid")) {
       // Never perform this existence-bearing service-role read until the
       // original P-17 session RPC has authorized and returned this subject.
+      // Fulfillment progress must not relabel a verified historical payment.
       const financial = await this.client.rpc("research_assisted_order_financial_state_by_reference", {
         p_public_reference: reference,
       });

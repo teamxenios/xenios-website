@@ -842,14 +842,19 @@ export class AssistedOrderService {
     const current = await this.adminDetail(viewer, requestId);
     // Read independently from the durable authority. SQL rechecks under its
     // request lock, so this preflight cannot authorize a raced transition.
-    const needsFinance = (current.status === "paid" && input.status !== "paid") ||
-      (input.status === "cancelled" && ["payment_pending", "payment_review", "supplier_processing"].includes(current.status));
+    // An old paid label may already have advanced, or a legacy writer may
+    // have regressed its current label. Neither can erase the financial hold.
+    // Current post-payment states also cover historical rows with lost events.
+    const hasPaymentHistory = ["paid", "supplier_processing", "shipped", "delivered", "closed"].includes(current.status) ||
+      current.timeline.some((event) => event.status === "paid");
+    const needsFinance = input.status !== current.status &&
+      (hasPaymentHistory || input.status === "cancelled");
     const financial = needsFinance
       ? await this.deps.repository.getFinancialState?.(current.requestId) : null;
-    if (current.status === "paid" && input.status !== "paid" && financial?.paymentVerified !== true) {
+    if (needsFinance && hasPaymentHistory && financial?.paymentVerified !== true) {
       throw new AssistedOrderConflictError(
         "payment_verification_not_ready",
-        "A paid label cannot establish fulfillment or reversal eligibility without verified financial evidence.",
+        "Payment history cannot establish fulfillment or reversal eligibility without verified financial evidence.",
       );
     }
     if (input.status === "cancelled" && needsFinance &&

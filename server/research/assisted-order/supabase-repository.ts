@@ -288,6 +288,14 @@ export class SupabaseAssistedOrderRepository implements AssistedOrderRepository 
     const response = await this.client.rpc("research_assisted_order_financial_state", {
       p_request_id: requestId,
     });
+    // A missing pending migration cannot establish that no money was observed.
+    // Keep writes held, but report a controlled conflict rather than HTTP 500.
+    if (response.error?.code === "PGRST202") {
+      throw new AssistedOrderConflictError(
+        "payment_verification_not_ready",
+        "Financial verification is unavailable. This transition remains on hold.",
+      );
+    }
     if (response.error) fail(response, "research_assisted_order_financial_state");
     if (response.data === null) return null;
     const value = response.data as Record<string, unknown>;
@@ -369,9 +377,12 @@ export class SupabaseAssistedOrderRepository implements AssistedOrderRepository 
     if (!Object.prototype.hasOwnProperty.call(response.data, "trackingReference")) throw new Error("Status projection unavailable.");
     const view = decodeStatusView(response.data);
     if (view.publicReference !== authorization.publicReference) throw new Error("Status reference mismatch.");
-    if (view.status === "paid") {
+    if (["paid", "supplier_processing", "shipped", "delivered"].includes(view.status) ||
+        view.timeline.some((event) => event.status === "paid")) {
       // Owner authorization has already succeeded. A missing pending finance
       // migration means unknown evidence, never an inferred verified payment.
+      // Payment evidence outlives the current fulfillment status. Keep it for
+      // historical paid events, including closed/cancelled request timelines.
       const financial = await this.client.rpc("research_assisted_order_financial_state", { p_request_id: view.requestId });
       if (financial.error && financial.error.code !== "PGRST202") {
         fail(financial, "research_assisted_order_financial_state");
