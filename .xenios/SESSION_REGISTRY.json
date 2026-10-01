@@ -567,8 +567,8 @@
       "branch": "codex/xenios-health-launch-implementation-20260930",
       "state": "active",
       "startedAt": "2026-09-30T16:32:52.264Z",
-      "heartbeatAt": "2026-10-01T09:37:20.693Z",
-      "note": "ADP01 source91a4e0e/tree4192a6e tests ebd081e controls2e04d5a pushed. Real stale-snapshot defect8unsafe reproduced and preserved exit1; narrow READ COMMITTED-only fix originalrepro PASS, permanent8+21 PASS, HTTP36/typecheckPASS. Exact comprehensive/aggregate next, sources frozen. Heavy slot coordinated to10:05UTC. No hosted effects."
+      "heartbeatAt": "2026-10-01T09:49:52.689Z",
+      "note": "ADP01 preflight atcleanb5ed3db PASS1058affected/typecheck/buildzeroemdash/DAG50/routes460/control51pass1conditional skip. Before firstaggregate adding minimalv2 authority handshake so oldvalidv1 cannot mask isolation repair;95focusedpass, actualoldSQLproof next. No sourcebaselineamendment/providerexecution/hostedchanges. Priorproofs remainseparate."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

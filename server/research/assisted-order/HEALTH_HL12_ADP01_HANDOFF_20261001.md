@@ -5,15 +5,16 @@ Local implementation on the continuing
 provider activation, independent Claude acceptance, managed qualification or
 permission to deploy. The payment provider choice remains deferred.
 
-Runtime source: `91a4e0e7ecae7f1ce83b13824413ea38be271e12`.
-Runtime tree: `4192a6ed5a049f8e9634caa29a3a2cf99accc5ad`.
-Test-only tip: `ebd081e3af153432d5c4015f277405f253cc7aaa`.
+Runtime source: `e9f221c974f45831a7ad1a13bcb2bd6d8198db42`.
+Runtime tree: `30e570b77d19de0ebdb8b40765334a8f98cea5e0`.
+Test-only tip: `9c1fe1eb49ccd956fa715a542e8c235e2b7d3efd`.
 The foundation source is `5809b727617e3abe065df69e563374d13f2bcfa8`, with
-tests `61a9306d053d13556cf8022b47c792a79ebee8b6`. The final source/test pair
-repairs and reproduces a real transaction-isolation defect found during local
-adversarial review. Both source commits and both test commits are pushed.
+tests `61a9306d053d13556cf8022b47c792a79ebee8b6`. The isolation repair is
+`91a4e0e7ecae7f1ce83b13824413ea38be271e12`, tests `ebd081e3af153432d5c4015f277405f253cc7aaa`.
+The final source/test pair adds the minimum database-authority revision check.
+All three source commits and three test commits are pushed.
 
-Release-control tip: `938f72f97d6e4539ad25d4a18762ad1afb93bda8`.
+Release-control tip: `a59c64d734e3662e254cdcc09b94994df86dda0e`.
 Final aggregate evidence is pending. Do not infer the
 previous HL11 aggregate applies to this runtime. Its separate receipt remains
 `../master-offerings/HEALTH_HL11_QUALIFICATION_20261001.json`.
@@ -54,7 +55,7 @@ unchanged. Historical paid labels are never converted to invented evidence.
 Pending migration:
 `20261001085559_research_assisted_order_quote_provider_journal.sql`.
 Exact canonical Git-blob SHA-256:
-`4cc0893878271afa636ffad843c032e16372e84bab88eff95d125b77a57421a5`.
+`15de2acb72835b520b1e902641e334643c18b7ea0ad9bcb8f6be4dca77668875`.
 This successor replaces only unapplied source bytes; no managed history was
 rewritten. The predecessor bytes/hash remain available at `5809b727`.
 
@@ -74,6 +75,16 @@ The successor requires the actual transaction mode to be READ COMMITTED before
 covered provider authority or new financial decisions. It never changes the
 caller setting or silently downgrades isolation. Replays and missing-request
 early returns on the new provider doors also enforce this precondition.
+
+The application additionally requires exact authority revision v2 and
+`transactionIsolation: read_committed_only`. An older self-valid v1 SQL schema
+cannot satisfy readiness for reservation, journal ingress or uncertainty reads.
+The real old5809 schema is tested on a separate disposable database, not mocked
+as broken: it successfully attests its own v1 seal, but the new mounted service
+refuses before writes. Applying the successor over that old valid installation
+refuses with SQL55000 and leaves its records unchanged. No silently adopted
+upgrade or old managed installation is inferred. Exact source-byte preflight
+remains mandatory even with the runtime capability check.
 
 The unchanged eight-case reproduction now refuses every prohibited operation.
 The permanent matrix also covers 21 unsupported-isolation refusals, positive
@@ -103,7 +114,7 @@ Official archive SHA-256:
 Commands invoke its full binary path and set PATH only for child processes.
 The real catalog reader is enabled, not replaced by a stub.
 
-The final comprehensive database run2 tested clean checkpoint
+The isolation-only comprehensive database run2 tested clean checkpoint
 `00c9df370387620723891e25bf112b5ba1ce1589`, tree
 `ec637adc79caca8321175751d7b1ae82a53b79a2`. It passed 131 core refusals,
 14 actual lock-wait races, eight separate stale-snapshot cases, 21 unsupported
@@ -114,6 +125,13 @@ passed. Proof elapsed 232.403 seconds; wrapper elapsed 232.981 seconds, exit 0.
 Log SHA-256: `4d31da496917ce4083c319cc9650397e2a132d5d461c318eb560691b6186f8e4`.
 The sampled runner, main, isolation and HTTP child paths use the private pinned
 Node binary; both HTTP phase reports also assert `v20.19.0` independently.
+The subsequent final v2 legacy proof passed with one HTTP group/10 SQL calls;
+its log SHA-256 is `16c6ec556052ffc0e46637346c3267981c313f6aa869e18c19117beaf06be4a5`.
+V2 comprehensive and aggregate qualification are pending. The preceding clean
+preflight at `b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62` passed 1058 affected tests,
+typecheck, build, 50-node DAG, 460 registrations/451 callsites and release-control
+51 pass/one conditional skip. No full aggregate was started before v2; those
+preflight results are not relabeled as final v2 results.
 
 Retain these separate development results:
 
