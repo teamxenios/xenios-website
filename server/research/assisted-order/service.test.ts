@@ -40,9 +40,7 @@ import {
   AssistedOrderConflictError,
   AssistedOrderNotFoundError,
   AssistedOrderService,
-  AssistedOrderVerificationEffectsError,
 } from "./service";
-import type { AssistedOrderPaymentVerificationReceipt } from "./finance";
 
 const memberViewer: AssistedOrderViewer = Object.freeze({
   actorType: "member",
@@ -267,92 +265,6 @@ function harness(
 }
 
 describe("AssistedOrderService", () => {
-  it("retries payment verification effects with immutable identities after interrupted outbox writes", async () => {
-    const h = harness();
-    const submitted = await h.service.submit(memberViewer, input());
-    const receipt: AssistedOrderPaymentVerificationReceipt = {
-      verificationId: "55555555-5555-4555-8555-555555555555", requestId: submitted.requestId,
-      state: "paid", verifiedAt: "2026-08-15T12:15:00.000Z", verifiedBy: "persisted-finance-actor",
-      replayed: false,
-    };
-    vi.spyOn(h.repository, "getFinancialState").mockResolvedValue({ hasObservation: true, paymentVerified: true });
-    const originalDetail = (await h.repository.getAdmin(submitted.requestId))!;
-    vi.spyOn(h.repository, "getAdmin").mockResolvedValue({ ...originalDetail, status: "paid" });
-    h.audit.mockClear();
-    // Synthetic idempotent captures model the existing durable sink contracts;
-    // this is not a database qualification claim.
-    const auditEvents = new Map<string, unknown>();
-    h.audit.mockImplementation(async (event) => {
-      const earlier = auditEvents.get(event.eventId);
-      if (earlier) expect(event).toEqual(earlier);
-      auditEvents.set(event.eventId, event);
-    });
-    const notificationEvents = new Map<string, AssistedOrderNotificationIntent>();
-    const enqueue = vi.fn(async (intent: AssistedOrderNotificationIntent) => {
-      const earlier = notificationEvents.get(intent.dedupeKey);
-      if (earlier) expect(intent).toEqual(earlier);
-      notificationEvents.set(intent.dedupeKey, intent);
-    }).mockRejectedValueOnce(new Error("private outbox error"));
-    (h.deps.outbox as { enqueue: typeof enqueue }).enqueue = enqueue;
-    await expect(h.service.recordPaymentVerificationEffects(adminViewer, receipt))
-      .rejects.toBeInstanceOf(AssistedOrderVerificationEffectsError);
-    expect(auditEvents.size).toBe(1);
-    expect(notificationEvents.size).toBe(0);
-    vi.spyOn(h.repository, "getAdmin").mockResolvedValue({ ...originalDetail, status: "supplier_processing", updatedAt: "2026-08-16T12:00:00Z" });
-    await h.service.recordPaymentVerificationEffects({ ...adminViewer, actorLabel: "changed-caller-label" },
-      { ...receipt, replayed: true, state: "supplier_processing" });
-    await h.service.recordPaymentVerificationEffects(adminViewer, { ...receipt, replayed: true });
-    expect(auditEvents.size).toBe(1);
-    expect(notificationEvents.size).toBe(1);
-    expect(h.audit).toHaveBeenCalledTimes(3);
-    expect(auditEvents.get(receipt.verificationId)).toMatchObject({
-      actorId: receipt.verifiedBy, occurredAt: receipt.verifiedAt,
-      evidence: { from: "payment_review", to: "paid", authorityEvidenceKinds: ["payment_verification"] },
-    });
-    expect([...notificationEvents.values()][0]).toMatchObject({
-      eventId: receipt.verificationId, recipientAddress: originalDetail.email,
-      createdAt: receipt.verifiedAt,
-      dedupeKey: `assisted-order:${receipt.requestId}:payment-verification:${receipt.verificationId}`,
-      payload: { publicReference: originalDetail.publicReference, status: "paid",
-        customerMessage: "Payment verified. Fulfillment is reviewed separately." },
-    });
-  });
-
-  it("makes financial audit failures visible and retries them before enqueuing customer notice", async () => {
-    const h = harness();
-    const submitted = await h.service.submit(memberViewer, input());
-    const receipt: AssistedOrderPaymentVerificationReceipt = {
-      verificationId: "55555555-5555-4555-8555-555555555556", requestId: submitted.requestId,
-      state: "paid", verifiedAt: "2026-08-15T12:15:00.000Z", verifiedBy: "persisted-finance-actor", replayed: false,
-    };
-    vi.spyOn(h.repository, "getFinancialState").mockResolvedValue({ hasObservation: true, paymentVerified: true });
-    h.notifications.length = 0;
-    h.audit.mockRejectedValueOnce(new Error("private audit error"));
-    await expect(h.service.recordPaymentVerificationEffects(adminViewer, receipt))
-      .rejects.toBeInstanceOf(AssistedOrderVerificationEffectsError);
-    expect(h.notifications).toHaveLength(0);
-    await h.service.recordPaymentVerificationEffects(adminViewer, { ...receipt, replayed: true });
-    expect(h.notifications).toHaveLength(1);
-  });
-
-  it("never emits verified copy for historical labels or an unauthorized effects caller", async () => {
-    const h = harness();
-    const submitted = await h.service.submit(memberViewer, input());
-    const receipt: AssistedOrderPaymentVerificationReceipt = {
-      verificationId: "55555555-5555-4555-8555-555555555556", requestId: submitted.requestId,
-      state: "paid", verifiedAt: "2026-08-15T12:15:00.000Z", verifiedBy: "persisted-finance-actor", replayed: false,
-    };
-    h.audit.mockClear();
-    h.notifications.length = 0;
-    vi.spyOn(h.repository, "getFinancialState").mockResolvedValue({ hasObservation: false, paymentVerified: false });
-    await expect(h.service.recordPaymentVerificationEffects(adminViewer, receipt))
-      .rejects.toMatchObject({ code: "payment_verification_not_ready" });
-    await expect(h.service.recordPaymentVerificationEffects(memberViewer, receipt))
-      .rejects.toBeInstanceOf(AssistedOrderAuthorizationError);
-    expect(h.audit).not.toHaveBeenCalled();
-    expect(h.notifications).toHaveLength(0);
-  });
-
   it("refuses forged request agreement fields without durable server standing", async () => {
     const h = harness(item(), {
       submissionStanding: { accepted: async () => false },

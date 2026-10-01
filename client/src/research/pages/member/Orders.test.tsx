@@ -154,6 +154,68 @@ describe("member order history uses the current canonical account", () => {
 });
 
 describe("truthful order-source and failure presentation", () => {
+  it("retains verified payment evidence after history advances to shipped", async () => {
+    serve(() => response({ ok: true, orders: [], requests: [{ ...assistedRequest(), status: "shipped", paymentVerified: true }],
+      requestsSource: { connected: true, complete: true } }));
+    await render();
+    const history = host.querySelector('[data-testid="assisted-request-history"]')!;
+    expect(history.textContent).toContain("Request status: shipped");
+    expect(history.textContent).toContain("Payment verified");
+  });
+  it.each([
+    ["paid", true, "Payment verified"], ["paid", false, "Payment record under review"],
+    ["paid", undefined, "Payment record under review"], ["payment_pending", undefined, "Payment step paused"],
+    ["payment_review", undefined, "Payment review"], ["supplier_processing", true, "Payment verified"],
+    ["delivered", false, "Payment record under review"], ["closed", true, "Payment verified"],
+    ["cancelled", true, "Payment verified"], ["reviewing", true, "Payment verified"],
+  ] as const)("renders %s with evidence=%s without a raw paid assertion", async (status, paymentVerified, label) => {
+    serve(() => response({ ok: true, orders: [], requests: [{ ...assistedRequest(), status, paymentVerified }],
+      requestsSource: { connected: true, complete: true } }));
+    await render();
+    const history = host.querySelector('[data-testid="assisted-request-history"]')!;
+    expect(history.querySelector('[data-testid="assisted-request-payment"]')?.textContent).toContain(label);
+    expect(history.textContent).not.toContain("Request status: paid");
+    if (paymentVerified === true) expect(history.textContent).toContain("Fulfillment eligibility is checked separately.");
+    else expect(history.textContent).not.toContain("Payment verified");
+    if (status === "payment_pending") expect(history.textContent).toContain("Do not send funds based on this status.");
+    if (!["paid", "payment_pending", "payment_review"].includes(status)) {
+      expect(history.textContent).toContain(`Request status: ${status.replaceAll("_", " ")}`);
+    }
+  });
+
+  it("clears verified payment with the old principal before the new owner read completes", async () => {
+    serve(() => response({ ok: true, orders: [], requests: [{ ...assistedRequest(), status: "paid", paymentVerified: true }],
+      requestsSource: { connected: true, complete: true } }));
+    await render(); expect(text()).toContain("Payment verified");
+    const next = deferred<Response>(); serve(() => next.promise); session.token = "synthetic-customer-b"; await render();
+    expect(snapshots.at(-1)).not.toContain("Payment verified");
+    expect(text()).not.toContain("XRR-20260921-ABCDEF1234");
+    await act(async () => next.resolve(response({ ok: true, orders: [], requests: [{ ...assistedRequest(),
+      publicReference: "XRR-20260921-ABCDEF9999", status: "paid", paymentVerified: false }],
+      requestsSource: { connected: true, complete: true } })));
+    expect(text()).toContain("Payment record under review");
+    expect(text()).not.toContain("Payment verified");
+  });
+
+  it("does not publish a late verified response from the prior principal", async () => {
+    const prior = deferred<Response>(); serve(() => prior.promise); await render();
+    serve(() => response({ ok: true, orders: [], requests: [], requestsSource: { connected: true, complete: true } }));
+    session.token = "synthetic-customer-b"; await render();
+    await act(async () => prior.resolve(response({ ok: true, orders: [], requests: [{ ...assistedRequest(), status: "paid", paymentVerified: true }],
+      requestsSource: { connected: true, complete: true } })));
+    expect(text()).not.toContain("Payment verified");
+    expect(text()).not.toContain("XRR-20260921-ABCDEF1234");
+    expect(text()).toContain("No assisted order requests were returned");
+  });
+
+  it.each(["true", 1, null])("does not display malformed financial authority (%j)", async (paymentVerified) => {
+    serve(() => response({ ok: true, orders: [], requests: [{ ...assistedRequest(), status: "paid", paymentVerified }],
+      requestsSource: { connected: true, complete: true } }));
+    await render();
+    expect(text()).toContain("Assisted request history is unavailable.");
+    expect(text()).not.toContain("Payment verified");
+    expect(text()).not.toContain("Request status: paid");
+  });
   it("renders XRR requests separately from paid-order rows and keeps nullable estimates", async () => {
     serve(() => response({ ok: true, orders: [order()], requests: [assistedRequest()], requestsSource: { connected: true, complete: true } }));
     await render();

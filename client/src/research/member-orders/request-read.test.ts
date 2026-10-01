@@ -12,6 +12,22 @@ const request = () => ({
 });
 
 describe("assisted requests remain a separately verified history projection", () => {
+  it("retains verified payment evidence after history advances to shipped", () => {
+    const row = { ...request(), status: "shipped", paymentVerified: true };
+    expect(readAssistedRequestHistory([row], source)?.requests[0]).toMatchObject({ status: "shipped", paymentVerified: true });
+  });
+  it.each([true, false, undefined])("preserves only the optional typed server verification flag (%s)", (paymentVerified) => {
+    const decoded = readAssistedRequestHistory([{ ...request(), paymentVerified, paymentCaptured: true,
+      verificationId: "PRIVATE", payment: { captured: true } }], source)?.requests[0];
+    expect(decoded?.paymentVerified).toBe(paymentVerified);
+    expect(decoded).not.toHaveProperty("paymentCaptured");
+    expect(decoded).not.toHaveProperty("verificationId");
+    expect(decoded).not.toHaveProperty("payment");
+    if (paymentVerified === undefined) expect(decoded).not.toHaveProperty("paymentVerified");
+  });
+  it.each(["true", 1, null, {}, []])("refuses malformed financial flags instead of coercing them (%j)", (paymentVerified) => {
+    expect(readAssistedRequestHistory([{ ...request(), paymentVerified }], source)).toBeNull();
+  });
   it("keeps nullable estimates and strips unrelated private/payment/carrier fields", () => {
     const row = request();
     expect(readAssistedRequestHistory([{ ...row, paymentCaptured: true, privateNote: "NOT-FOR-VIEW", carrier: "Invented",

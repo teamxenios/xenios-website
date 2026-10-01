@@ -35,6 +35,93 @@ function harness(data: unknown = quote) {
   return { rpc, service };
 }
 
+describe("X2 canonical UUID finance boundary", () => {
+  // Alphabetic digits matter: uppercasing the historical all-numeric fixtures
+  // cannot reproduce Postgres returning canonical lowercase UUID text.
+  const requestId = "a1000000-0000-4000-8000-000000000abc";
+  const observationId = "b2000000-0000-4000-8000-000000000def";
+  const quoteId = "c3000000-0000-4000-8000-000000000abc";
+  const lineId = "d4000000-0000-4000-8000-000000000def";
+  const databaseReceipt = { ...verification, requestId, verificationId: quoteId };
+  const configuredEvidence = () => ({ verify: vi.fn(async () => ({ observedAt: "2026-09-30T20:00:00.000Z" })) });
+
+  it("matches the lowercase committed receipt after uppercase request and observation inputs", async () => {
+    const rpc = vi.fn(async () => ({ data: databaseReceipt, error: null }));
+    const service = new AssistedOrderFinanceService({ rpc }, configuredEvidence());
+    await expect(service.verifyManual(admin, requestId.toUpperCase(), observationId.toUpperCase()))
+      .resolves.toEqual(databaseReceipt);
+    expect(rpc).toHaveBeenCalledExactlyOnceWith("research_assisted_order_payment_verify_bound", {
+      p_request_id: requestId, p_observation_id: observationId, p_verifier_auth_user_id: ADMIN,
+    });
+  });
+
+  it("returns 200 and recovers the canonical receipt after uppercase mounted path inputs", async () => {
+    const rpc = vi.fn(async () => ({ data: databaseReceipt, error: null }));
+    const finance = new AssistedOrderFinanceService({ rpc }, configuredEvidence());
+    const effects = { recover: vi.fn(), runBatch: vi.fn() };
+    const routes = createAssistedOrderRouteTable({} as AssistedOrderService,
+      { resolve: async () => admin }, null, finance, effects);
+    const route = routes.find((entry) => entry.method === "POST" && entry.path.endsWith("/:observationId/verify"))!;
+    const response = await route.handler({ method: "POST", path: route.path, headers: {}, query: {}, body: {},
+      params: { requestId: requestId.toUpperCase(), observationId: observationId.toUpperCase() } });
+    expect(response).toMatchObject({ status: 200, body: databaseReceipt });
+    expect(effects.recover).toHaveBeenCalledExactlyOnceWith(quoteId, requestId);
+    expect(rpc).toHaveBeenCalledExactlyOnceWith("research_assisted_order_payment_verify_bound", {
+      p_request_id: requestId, p_observation_id: observationId, p_verifier_auth_user_id: ADMIN,
+    });
+  });
+
+  it("canonicalizes quote issue request and line UUIDs without changing approved cents or copy", async () => {
+    const { rpc, service } = harness();
+    await service.issueQuote(admin, requestId.toUpperCase(), {
+      lineDecisions: [{ lineId: lineId.toUpperCase(), unitPriceCents: 16927, pricingBasis: "Approved Case-Sensitive Basis" }],
+      validUntil: "2026-10-01T00:00:00.000Z",
+    });
+    expect(rpc).toHaveBeenCalledExactlyOnceWith("research_assisted_order_quote_issue", {
+      p_request_id: requestId,
+      p_line_decisions: [{ lineId, unitPriceCents: 16927, pricingBasis: "Approved Case-Sensitive Basis" }],
+      p_valid_until: "2026-10-01T00:00:00.000Z", p_actor_id: admin.actorLabel, p_customer_note: null,
+    });
+  });
+
+  it("canonicalizes quote acceptance UUID before matching the owner projection", async () => {
+    const projected = { ...quote, quoteId, requestId, totalCents: 16927 };
+    const { rpc, service } = harness(projected);
+    await expect(service.acceptQuote(owner, REFERENCE, {
+      quoteId: quoteId.toUpperCase(), version: 1, expectedTotalCents: 16927,
+    })).resolves.toEqual(projected);
+    expect(rpc).toHaveBeenLastCalledWith("research_assisted_order_quote_accept", {
+      p_quote_id: quoteId, p_version: 1, p_expected_total_cents: 16927,
+      p_member_id: MEMBER, p_early_access_session_hash: null, p_status_token_hash: null,
+    });
+    const beforeInvalidReference = rpc.mock.calls.length;
+    await expect(service.getQuote(owner, REFERENCE.toLowerCase())).rejects.toHaveProperty("name", "AssistedOrderNotFoundError");
+    expect(rpc).toHaveBeenCalledTimes(beforeInvalidReference);
+  });
+
+  it.each([false, true])("canonicalizes observation UUIDs before independent evidence and SQL; correction=%s", async (correction) => {
+    const rpc = vi.fn(async () => ({ data: { observationId }, error: null }));
+    const evidence = configuredEvidence();
+    const service = new AssistedOrderFinanceService({ rpc }, evidence);
+    await service.observeManual(admin, requestId.toUpperCase(), {
+      quoteId: quoteId.toUpperCase(), observedAmountCents: 16927, observedCurrency: "USD",
+      paymentReference: "Case-Sensitive-AbC123", sourceEvidenceRef: "Ledger:CasePreserved",
+      ...(correction ? { supersedesObservationId: observationId.toUpperCase(), correctionReason: "Approved Correction" } : {}),
+    });
+    expect(evidence.verify).toHaveBeenCalledExactlyOnceWith({
+      evidenceRef: "Ledger:CasePreserved", requestId, quoteId, paymentReference: "Case-Sensitive-AbC123",
+      observedAmountCents: 16927, observedCurrency: "USD", verifierAuthUserId: ADMIN,
+    });
+    expect(rpc).toHaveBeenCalledExactlyOnceWith(correction
+      ? "research_assisted_order_payment_correct_manual" : "research_assisted_order_payment_observe", expect.objectContaining({
+      p_request_id: requestId, p_quote_id: quoteId, p_observed_amount_cents: 16927,
+      p_observed_currency: "USD", p_payment_reference: "Case-Sensitive-AbC123",
+      p_source_evidence_ref: "Ledger:CasePreserved",
+      ...(correction ? { p_observation_id: observationId } : {}),
+    }));
+  });
+});
+
 describe("HL-12 mounted finance boundary", () => {
   it("only a guarded Auth UUID can issue a quote, with no browser total authority", async () => {
     const { rpc, service } = harness();
@@ -161,17 +248,36 @@ describe("HL-12 mounted finance boundary", () => {
   it.each([
     { verificationId: "typed-proof" }, { requestId: MEMBER }, { state: "reviewing" },
     { verifiedAt: null }, { verifiedBy: "" }, { replayed: undefined },
+    { verifiedBy: " padded " }, { verifiedBy: "operator\nprivate" },
+    { verifiedBy: "operator\u0000private" }, { verifiedBy: "operator\u007fprivate" }, { verifiedBy: "a".repeat(513) },
   ])("rejects malformed or misbound verification receipts before effects: %j", async (change) => {
     const evidence = { verify: async () => ({ observedAt: "2026-09-30T20:00:00Z" }) };
     const finance = new AssistedOrderFinanceService({ rpc: async () => ({ data: { ...verification, ...change }, error: null }) }, evidence);
-    const effects = vi.fn();
-    const mounted = createAssistedOrderRouteTable({ recordPaymentVerificationEffects: effects } as unknown as AssistedOrderService,
-      { resolve: async () => admin }, null, finance);
+    const effects = { recover: vi.fn(), runBatch: vi.fn() };
+    const mounted = createAssistedOrderRouteTable({} as AssistedOrderService,
+      { resolve: async () => admin }, null, finance, effects);
     const route = mounted.find((entry) => entry.method === "POST" && entry.path.endsWith("/:observationId/verify"))!;
     const response = await route.handler({ method: "POST", path: route.path, headers: {}, query: {}, body: {},
       params: { requestId: REQUEST, observationId: OBSERVATION } });
     expect(response.status).toBe(500);
-    expect(effects).not.toHaveBeenCalled();
+    expect(effects.recover).not.toHaveBeenCalled();
+  });
+
+  it.each([201, 512])("accepts the canonical audit actor-label boundary of %s characters", async (length) => {
+    const verifiedBy = "a".repeat(length);
+    const receipt = { ...verification, verifiedBy };
+    const rpc = vi.fn(async () => ({ data: receipt, error: null }));
+    const finance = new AssistedOrderFinanceService({ rpc }, {
+      verify: async () => ({ observedAt: "2026-09-30T20:00:00.000Z" }),
+    });
+    const effects = { recover: vi.fn(), runBatch: vi.fn() };
+    const routes = createAssistedOrderRouteTable({} as AssistedOrderService,
+      { resolve: async () => admin }, null, finance, effects);
+    const route = routes.find((entry) => entry.method === "POST" && entry.path.endsWith("/:observationId/verify"))!;
+    const response = await route.handler({ method: "POST", path: route.path, headers: {}, query: {}, body: {},
+      params: { requestId: REQUEST, observationId: OBSERVATION } });
+    expect(response).toMatchObject({ status: 200, body: receipt });
+    expect(effects.recover).toHaveBeenCalledExactlyOnceWith(QUOTE, REQUEST);
   });
 
   it("mounted verification retries effects even after a SQL replay and exposes pending effect failure", async () => {
@@ -180,17 +286,19 @@ describe("HL-12 mounted finance boundary", () => {
       .mockResolvedValueOnce({ data: verification, error: null })
       .mockResolvedValueOnce({ data: { ...verification, state: "supplier_processing", replayed: true }, error: null });
     const finance = new AssistedOrderFinanceService({ rpc }, evidence);
-    const effects = vi.fn().mockRejectedValueOnce(new AssistedOrderVerificationEffectsError()).mockResolvedValueOnce(undefined);
-    const mounted = createAssistedOrderRouteTable({ recordPaymentVerificationEffects: effects } as unknown as AssistedOrderService,
-      { resolve: async () => admin }, null, finance);
+    const effects = { recover: vi.fn().mockRejectedValueOnce(new AssistedOrderVerificationEffectsError()).mockResolvedValueOnce(undefined), runBatch: vi.fn() };
+    const mounted = createAssistedOrderRouteTable({} as AssistedOrderService,
+      { resolve: async () => admin }, null, finance, effects);
     const route = mounted.find((entry) => entry.method === "POST" && entry.path.endsWith("/:observationId/verify"))!;
     const request: AssistedOrderHttpRequest = { method: "POST", path: route.path, headers: {}, query: {},
       params: { requestId: REQUEST, observationId: OBSERVATION }, body: { recipient: "forged@example.test", customerMessage: "forged", verifiedAt: "forged" } };
     expect(await route.handler(request)).toMatchObject({ status: 503, body: { error: "payment_verification_effects_pending" } });
     expect(await route.handler(request)).toMatchObject({ status: 200, body: { replayed: true, state: "supplier_processing" } });
-    expect(effects).toHaveBeenCalledTimes(2);
-    expect(effects.mock.calls[0]).toEqual([admin, verification]);
-    expect(effects.mock.calls[1][1]).toEqual({ ...verification, state: "supplier_processing", replayed: true });
+    expect(effects.recover).toHaveBeenCalledTimes(2);
+    expect(effects.recover.mock.calls).toEqual([[QUOTE, REQUEST], [QUOTE, REQUEST]]);
+    expect(effects.recover.mock.invocationCallOrder[0]).toBeGreaterThan(rpc.mock.invocationCallOrder[0]);
+    expect(effects.recover.mock.invocationCallOrder[1]).toBeGreaterThan(rpc.mock.invocationCallOrder[1]);
+    expect(effects.runBatch).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -200,13 +308,44 @@ describe("HL-12 mounted finance boundary", () => {
     const finance = new AssistedOrderFinanceService({ rpc: async () => ({ data, error }) }, {
       verify: async () => ({ observedAt: "2026-09-30T20:00:00Z" }),
     });
-    const effects = vi.fn();
-    const routes = createAssistedOrderRouteTable({ recordPaymentVerificationEffects: effects } as unknown as AssistedOrderService,
-      { resolve: async () => admin }, null, finance);
+    const effects = { recover: vi.fn(), runBatch: vi.fn() };
+    const routes = createAssistedOrderRouteTable({} as AssistedOrderService,
+      { resolve: async () => admin }, null, finance, effects);
     const route = routes.find((entry) => entry.method === "POST" && entry.path.endsWith("/:observationId/verify"))!;
     expect((await route.handler({ method: "POST", path: route.path, headers: {}, query: {}, body: {},
       params: { requestId: REQUEST, observationId: OBSERVATION } })).status).toBe(status);
-    expect(effects).not.toHaveBeenCalled();
+    expect(effects.recover).not.toHaveBeenCalled();
+  });
+
+  it("refuses before any financial write when mounted recovery is unavailable", async () => {
+    const rpc = vi.fn(async () => ({ data: verification, error: null }));
+    const evidence = { verify: vi.fn(async () => ({ observedAt: "2026-09-30T20:00:00.000Z" })) };
+    const finance = new AssistedOrderFinanceService({ rpc }, evidence);
+    const routes = createAssistedOrderRouteTable({} as AssistedOrderService,
+      { resolve: async () => admin }, null, finance, null);
+    const route = routes.find((entry) => entry.method === "POST" && entry.path.endsWith("/:observationId/verify"))!;
+    const response = await route.handler({ method: "POST", path: route.path, headers: {}, query: {}, body: {},
+      params: { requestId: REQUEST, observationId: OBSERVATION } });
+    expect(response).toMatchObject({ status: 409, body: { error: "payment_verification_not_ready" } });
+    expect(JSON.stringify(response)).not.toContain("Payment was recorded");
+    expect(rpc).not.toHaveBeenCalled();
+    expect(evidence.verify).not.toHaveBeenCalled();
+  });
+
+  it.each([owner, { ...admin, authUserId: null }])("refuses an unguarded verifier before money or recovery access %#", async (viewer) => {
+    const rpc = vi.fn(async () => ({ data: verification, error: null }));
+    const finance = new AssistedOrderFinanceService({ rpc }, {
+      verify: async () => ({ observedAt: "2026-09-30T20:00:00.000Z" }),
+    });
+    const effects = { recover: vi.fn(), runBatch: vi.fn() };
+    const routes = createAssistedOrderRouteTable({} as AssistedOrderService,
+      { resolve: async () => viewer }, null, finance, effects);
+    const route = routes.find((entry) => entry.method === "POST" && entry.path.endsWith("/:observationId/verify"))!;
+    const response = await route.handler({ method: "POST", path: route.path, headers: {}, query: {}, body: {},
+      params: { requestId: REQUEST, observationId: OBSERVATION } });
+    expect(response.status).toBe(403);
+    expect(rpc).not.toHaveBeenCalled();
+    expect(effects.recover).not.toHaveBeenCalled();
   });
 
   it("adds five finance descriptors only when the gated service exists and keeps tokens out of body/query", async () => {

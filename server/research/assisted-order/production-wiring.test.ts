@@ -8,6 +8,7 @@
 // so re-dropping either wire fails HERE, before a packet is written.
 
 import { describe, expect, it, vi } from "vitest";
+import { readFileSync } from "node:fs";
 import {
   ASSISTED_ORDER_AUDIT_ACTOR_HMAC_KEY_ENV_VAR,
   ASSISTED_ORDER_AUDIT_ACTOR_KEY_ID_ENV_VAR,
@@ -48,6 +49,43 @@ import type { SupabaseStorageClient } from "./supabase-document-store";
 const REQUIRED_AGREEMENTS = [
   { kind: "assisted_order_request_notice", version: "v1" },
 ] as const;
+
+describe("HL-12 production recovery composition seam", () => {
+  // Startup has live side effects. These bounded source assertions check its
+  // actual mount; behavior is exercised in payment-effects and outbox tests.
+  const startup = readFileSync("server/index.ts", "utf8");
+  const outbox = readFileSync("server/research/outbox.ts", "utf8");
+
+  it("only mounts finance behind the probed effects and canonical audit authority", () => {
+    const start = startup.indexOf("const assistedOrderPaymentEffects = await resolvePaymentEffectsRecovery(");
+    const end = startup.indexOf("const assistedOrderRoutes =", start);
+    expect(start).toBeGreaterThan(-1);
+    expect(end).toBeGreaterThan(start);
+    const composition = startup.slice(start, end);
+    expect(composition).toMatch(/enabled:\s*process\.env\.RESEARCH_ASSISTED_ORDER_FINANCE_ENABLED === "true"\s*&&\s*assistedOrderComposition\.service !== null/);
+    expect(composition).toContain("audit: assistedOrderAudit.authority");
+    expect(composition).toMatch(/rpc:\s*supabaseConfigured\(\)\s*\?\s*getSupabaseAdmin\(\)/);
+    expect(composition).toMatch(/const assistedOrderFinance = assistedOrderPaymentEffects !== null\s*\? new AssistedOrderFinanceService\(/);
+    expect(composition).toContain(": null;");
+    expect(composition).not.toMatch(/auditWrite|auditLogLine|as ResolvedAssistedOrderAuditAuthority/);
+    const mount = startup.slice(end, startup.indexOf("const assistedOrderDoor =", end));
+    expect(mount).toMatch(/assistedOrderFinance,\s*assistedOrderPaymentEffects,/);
+  });
+
+  it("uses the existing outbox worker to recover before claiming notifications", () => {
+    expect(startup).toContain("configurePaymentEffectsRecovery(assistedOrderPaymentEffects)");
+    expect(startup.match(/startOutboxWorker\(log\)/g)).toHaveLength(1);
+    const tickStart = outbox.indexOf("export async function runOutboxTick(");
+    const tick = outbox.slice(tickStart);
+    expect(tickStart).toBeGreaterThan(-1);
+    expect(tick.indexOf("await paymentEffectsRecovery.runBatch()")).toBeGreaterThan(-1);
+    expect(tick.indexOf("await paymentEffectsRecovery.runBatch()")).toBeLessThan(tick.indexOf(".from(OUTBOX)"));
+    const dispatchStart = outbox.indexOf("async function dispatch(");
+    const dispatch = outbox.slice(dispatchStart, outbox.indexOf("export ", dispatchStart));
+    expect(dispatch.indexOf("await paymentEffectDispatchAllowed(")).toBeGreaterThan(-1);
+    expect(dispatch.indexOf("await paymentEffectDispatchAllowed(")).toBeLessThan(dispatch.indexOf("makeResearchToken("));
+  });
+});
 
 describe("verified assisted-order admin actor", () => {
   const verifiedAuthUserId = "40000000-0000-4000-8000-000000000001";

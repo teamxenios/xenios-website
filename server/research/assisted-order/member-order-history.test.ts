@@ -15,7 +15,9 @@ const row = () => ({
   trackingReference: "SYNTHETIC-REFERENCE",
 });
 const envelope = () => ({ schemaVersion: "assisted_member_history_v1", memberId: member, complete: true, requests: [row()] });
-const rpcFor = (data: unknown) => ({ rpc: vi.fn(async () => ({ data, error: null })) });
+const rpcFor = (data: unknown, financial: unknown = { hasObservation: false, paymentVerified: false }) => ({
+  rpc: vi.fn(async (name: string) => ({ data: name === ASSISTED_MEMBER_HISTORY_RPC ? data : financial, error: null })),
+});
 const paidOrder = { orderId: "native-owned", recordKind: "order" as const, state: "payment_captured" as const,
   placedAt: "2026-09-20T10:00:00Z", totalCents: 100, shipments: [], shipmentsSource: "connected" as const,
   payment: { amountDueCents: 100, amountCapturedCents: 100, amountRefundedCents: 0, currency: "USD" as const } };
@@ -26,15 +28,24 @@ const base = () => ({
 });
 
 describe("member-bound assisted request history", () => {
-  it("uses only the member-scoped RPC and strips server ownership proof", async () => {
+  it("retains verified payment evidence after history advances to shipped", async () => {
+    const rpc = { rpc: vi.fn().mockResolvedValueOnce({ data: envelope(), error: null })
+      .mockResolvedValueOnce({ data: { hasObservation: true, paymentVerified: true }, error: null }) };
+    const result = await createAssistedMemberHistoryReader(rpc).readForMember(member);
+    expect(result.requests[0]).toMatchObject({ status: "shipped", paymentVerified: true });
+  });
+  it("uses the member-scoped RPC before private financial reads and strips server ownership proof", async () => {
     const rpc = rpcFor(envelope());
     const result = await createAssistedMemberHistoryReader(rpc).readForMember(member);
-    expect(rpc.rpc).toHaveBeenCalledExactlyOnceWith(ASSISTED_MEMBER_HISTORY_RPC, { p_member_id: member });
+    expect(rpc.rpc).toHaveBeenCalledTimes(2);
+    expect(rpc.rpc).toHaveBeenNthCalledWith(1, ASSISTED_MEMBER_HISTORY_RPC, { p_member_id: member });
+    expect(rpc.rpc).toHaveBeenNthCalledWith(2, "research_assisted_order_financial_state", { p_request_id: row().requestId });
     expect(result.source).toEqual(complete);
     expect(result.requests[0]).toMatchObject({ kind: "assisted_request", estimatedTotalCents: null, trackingReference: "SYNTHETIC-REFERENCE" });
     expect(result.requests[0]).not.toHaveProperty("actorMemberId");
     expect(result.requests[0]).not.toHaveProperty("payment");
     expect(result.requests[0]).not.toHaveProperty("trackingUrl");
+    expect(result.requests[0].paymentVerified).toBe(false);
   });
 
   it("empty is complete only after a valid empty member-bound read", async () => {
@@ -53,6 +64,7 @@ describe("member-bound assisted request history", () => {
     ["unknown provenance", (data) => ({ ...data, schemaVersion: "untrusted" })],
     ["wrong record kind", (data) => ({ ...data, requests: [{ ...row(), kind: "order" }] })],
     ["private extra field", (data) => ({ ...data, requests: [{ ...row(), internalNote: "private" }] })],
+    ["unsolicited financial authority", (data) => ({ ...data, requests: [{ ...row(), paymentVerified: true }] })],
     ["invalid timestamp", (data) => ({ ...data, requests: [{ ...row(), createdAt: "yesterday" }] })],
     ["negative estimate", (data) => ({ ...data, requests: [{ ...row(), estimatedTotalCents: -1 }] })],
     ["duplicate request", (data) => ({ ...data, requests: [row(), row()] })],
@@ -63,8 +75,89 @@ describe("member-bound assisted request history", () => {
     ["over limit", (data) => ({ ...data, requests: Array.from({ length: 101 }, row) })],
   ];
   it.each(invalid)("fails %s closed without returning mixed data", async (_label, change) => {
-    expect(await createAssistedMemberHistoryReader(rpcFor(change(envelope()))).readForMember(member))
+    const rpc = rpcFor(change(envelope()));
+    expect(await createAssistedMemberHistoryReader(rpc).readForMember(member))
       .toEqual({ requests: [], source: disconnected });
+    expect(rpc.rpc).toHaveBeenCalledOnce();
+  });
+
+  it("waits for the complete member-owned envelope before any financial existence read", async () => {
+    let resolve!: (value: { data: unknown; error: null }) => void;
+    const rpc = { rpc: vi.fn().mockReturnValueOnce(new Promise((done) => { resolve = done; }))
+      .mockResolvedValue({ data: { hasObservation: true, paymentVerified: true }, error: null }) };
+    const pending = createAssistedMemberHistoryReader(rpc).readForMember(member);
+    expect(rpc.rpc).toHaveBeenCalledOnce();
+    resolve({ data: envelope(), error: null });
+    expect((await pending).requests[0].paymentVerified).toBe(true);
+    expect(rpc.rpc).toHaveBeenNthCalledWith(2, "research_assisted_order_financial_state", { p_request_id: row().requestId });
+  });
+
+  it.each(["paid", "supplier_processing", "shipped", "delivered", "closed", "cancelled", "reviewing"])(
+    "derives financial truth for %s from the existing verification authority, not the current label", async (status) => {
+      for (const paymentVerified of [true, false]) {
+        const rpc = rpcFor({ ...envelope(), requests: [{ ...row(), status }] }, { hasObservation: true, paymentVerified });
+        const result = await createAssistedMemberHistoryReader(rpc).readForMember(member);
+        expect(result.requests[0]).toMatchObject({ status, paymentVerified });
+        expect(result.requests[0]).not.toHaveProperty("hasObservation");
+      }
+    });
+
+  it.each([null, { hasObservation: false, paymentVerified: false }, { hasObservation: true, paymentVerified: false }])(
+    "keeps absent/unverified payment authority neutral without hiding valid history", async (financial) => {
+      const result = await createAssistedMemberHistoryReader(rpcFor(envelope(), financial)).readForMember(member);
+      expect(result.source).toEqual(complete);
+      expect(result.requests[0].paymentVerified).toBe(false);
+    });
+
+  it("keeps a missing financial migration neutral rather than inferring payment", async () => {
+    const rpc = { rpc: vi.fn().mockResolvedValueOnce({ data: envelope(), error: null })
+      .mockResolvedValueOnce({ data: { paymentVerified: true }, error: { code: "PGRST202" } }) };
+    const result = await createAssistedMemberHistoryReader(rpc).readForMember(member);
+    expect(result.source).toEqual(complete);
+    expect(result.requests[0].paymentVerified).toBe(false);
+  });
+
+  it.each([{}, [], { paymentVerified: true }, { hasObservation: false, paymentVerified: true },
+    { hasObservation: true, paymentVerified: "true" }, { hasObservation: true, paymentVerified: true, privateNote: "SECRET" }])(
+    "fails malformed financial authority closed without leaking private fields (%j)", async (financial) => {
+      expect(await createAssistedMemberHistoryReader(rpcFor(envelope(), financial)).readForMember(member))
+        .toEqual({ requests: [], source: disconnected });
+    });
+
+  it.each(["42501", "XX000", "throw"])("does not hide financial error %s as a verified or complete empty history", async (code) => {
+    const rpc = { rpc: vi.fn().mockResolvedValueOnce({ data: envelope(), error: null }) };
+    if (code === "throw") rpc.rpc.mockRejectedValueOnce(new Error("private financial detail"));
+    else rpc.rpc.mockResolvedValueOnce({ data: null, error: { code, message: "private financial detail" } });
+    const result = await createAssistedMemberHistoryReader(rpc).readForMember(member);
+    expect(result).toEqual({ requests: [], source: disconnected });
+  });
+
+  it("bounds financial reads to four at once and preserves row identity and result ordering", async () => {
+    const requests = Array.from({ length: 9 }, (_, i) => ({ ...row(), requestId: `20000000-0000-4000-8000-${String(i).padStart(12, "0")}`,
+      publicReference: `XRR-20260921-${i.toString(16).toUpperCase().padStart(10, "0")}` }));
+    const pending: { requestId: string; resolve: (value: unknown) => void }[] = [];
+    let active = 0; let maximum = 0;
+    const rpc = { rpc: vi.fn(async (name: string, args: Record<string, unknown>) => {
+      if (name === ASSISTED_MEMBER_HISTORY_RPC) return { data: { ...envelope(), requests }, error: null };
+      active++; maximum = Math.max(maximum, active);
+      const data = await new Promise((resolve) => pending.push({ requestId: String(args.p_request_id), resolve }));
+      active--;
+      return { data, error: null };
+    }) };
+    const result = createAssistedMemberHistoryReader(rpc).readForMember(member);
+    for (const count of [4, 8, 9]) {
+      await vi.waitFor(() => expect(pending).toHaveLength(count));
+      const start = count === 4 ? 0 : count === 8 ? 4 : 8;
+      for (let index = count - 1; index >= start; index--) {
+        expect(pending[index].requestId).toBe(requests[index].requestId);
+        pending[index].resolve({ hasObservation: true, paymentVerified: index % 2 === 0 });
+      }
+    }
+    const read = await result;
+    expect(maximum).toBe(4);
+    expect(read.requests.map((request) => [request.requestId, request.paymentVerified]))
+      .toEqual(requests.map((request, index) => [request.requestId, index % 2 === 0]));
+    expect(rpc.rpc).toHaveBeenCalledTimes(10);
   });
 
   it("preserves bounded partial records without a complete-history assertion", async () => {
@@ -122,10 +215,11 @@ describe("member-bound assisted request history", () => {
     registerCommerceApi(app as never, { orders } as CommerceDependencies, { requireActiveMember: guard, requireAdmin: guard, requireMember: guard });
     let body: any;
     const response = { set: () => response, status: () => response, json: (value: unknown) => { body = value; return response; } };
-    await routes.get("get /api/research/orders")!({ researchMember: { id: member }, query: { memberId: other }, body: { memberId: other } }, response);
+    await routes.get("get /api/research/orders")!({ researchMember: { id: member }, query: { memberId: other, paymentVerified: true }, body: { memberId: other, paymentVerified: true } }, response);
     expect(rpc.rpc).toHaveBeenCalledWith(ASSISTED_MEMBER_HISTORY_RPC, { p_member_id: member });
     expect(body.orders).toHaveLength(1);
     expect(body.requests).toHaveLength(1);
+    expect(body.requests[0].paymentVerified).toBe(false);
     expect(body.requestsSource).toEqual(complete);
     expect(JSON.stringify(body)).not.toContain("actorMemberId");
   });

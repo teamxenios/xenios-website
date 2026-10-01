@@ -35,6 +35,65 @@ afterEach(async () => {
 });
 
 describe("mounted account orders request history", () => {
+  it("retains verified payment evidence after history advances to shipped", async () => {
+    fetcher.mockResolvedValue(response(data([{ ...request(), status: "shipped", paymentVerified: true }])));
+    await render();
+    const history = host.querySelector('[data-testid="assisted-request-history"]')!;
+    expect(history.textContent).toContain("Request status: shipped");
+    expect(history.textContent).toContain("Payment verified");
+  });
+  it.each([
+    ["paid", true, "Payment verified"], ["paid", false, "Payment record under review"],
+    ["paid", undefined, "Payment record under review"], ["payment_pending", undefined, "Payment step paused"],
+    ["payment_review", undefined, "Payment review"], ["supplier_processing", true, "Payment verified"],
+    ["delivered", false, "Payment record under review"], ["closed", true, "Payment verified"],
+    ["cancelled", true, "Payment verified"], ["reviewing", true, "Payment verified"],
+  ] as const)("renders %s with evidence=%s without a raw paid assertion", async (status, paymentVerified, label) => {
+    fetcher.mockResolvedValue(response(data([{ ...request(), status, paymentVerified }])));
+    await render();
+    const history = host.querySelector('[data-testid="assisted-request-history"]')!;
+    expect(history.querySelector('[data-testid="assisted-request-payment"]')?.textContent).toContain(label);
+    expect(history.textContent).not.toContain("Request status: paid");
+    if (paymentVerified === true) expect(history.textContent).toContain("Fulfillment eligibility is checked separately.");
+    else expect(history.textContent).not.toContain("Payment verified");
+    if (status === "payment_pending") expect(history.textContent).toContain("Do not send funds based on this status.");
+    if (!["paid", "payment_pending", "payment_review"].includes(status)) {
+      expect(history.textContent).toContain(`Request status: ${status.replaceAll("_", " ")}`);
+    }
+  });
+
+  it("clears verified payment with the old principal before the new owner read completes", async () => {
+    fetcher.mockResolvedValue(response(data([{ ...request(), status: "paid", paymentVerified: true }])));
+    await render(); expect(host.textContent).toContain("Payment verified");
+    let resolve!: (value: Response) => void;
+    fetcher.mockImplementation(() => new Promise<Response>((done) => { resolve = done; }));
+    session.memberToken = "member-b"; await render();
+    expect(host.textContent).not.toContain("Payment verified");
+    expect(host.textContent).not.toContain("XRR-20260921-ABCDEF1234");
+    await act(async () => resolve(response(data([{ ...request(), publicReference: "XRR-20260921-ABCDEF9999",
+      status: "paid", paymentVerified: false }]))));
+    expect(host.textContent).toContain("Payment record under review");
+    expect(host.textContent).not.toContain("Payment verified");
+  });
+
+  it("does not publish a late verified response from the prior principal", async () => {
+    let resolve!: (value: Response) => void;
+    fetcher.mockImplementation(() => new Promise<Response>((done) => { resolve = done; }));
+    await render();
+    fetcher.mockResolvedValue(response(data([]))); session.memberToken = "member-b"; await render();
+    await act(async () => resolve(response(data([{ ...request(), status: "paid", paymentVerified: true }]))));
+    expect(host.textContent).not.toContain("Payment verified");
+    expect(host.textContent).not.toContain("XRR-20260921-ABCDEF1234");
+    expect(host.textContent).toContain("No assisted order requests were returned");
+  });
+
+  it.each(["true", 1, null])("does not display malformed financial authority (%j)", async (paymentVerified) => {
+    fetcher.mockResolvedValue(response(data([{ ...request(), status: "paid", paymentVerified }])));
+    await render();
+    expect(host.textContent).toContain("Assisted request history is unavailable.");
+    expect(host.textContent).not.toContain("Payment verified");
+    expect(host.textContent).not.toContain("Request status: paid");
+  });
   it("uses the canonical bearer read and renders a separate nullable request estimate with the partial-source warning", async () => {
     await render();
     expect(fetcher).toHaveBeenCalledWith("/api/research/customer-account/orders", expect.objectContaining({ cache: "no-store" }));

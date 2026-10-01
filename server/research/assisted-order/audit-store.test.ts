@@ -15,6 +15,7 @@ import {
   AssistedOrderAuditStoreError,
   assistedOrderAuditActorTypes,
   assistedOrderAuditEventTypes,
+  isResolvedAssistedOrderAuditAuthority,
   resolveAssistedOrderAuditAuthority,
 } from "./audit-store";
 
@@ -395,6 +396,42 @@ describe("durable assisted-order audit event projection", () => {
       sink.record(submittedEvent(mutation as never)),
     ).rejects.toBeInstanceOf(AssistedOrderAuditStoreError);
     expect(calls).toHaveLength(1);
+  });
+});
+
+describe("resolved safe audit preparation", () => {
+  it("requires a resolver brand rather than named properties or a callback logger", async () => {
+    const result = await resolveAssistedOrderAuditAuthority({ env: exactEnv(), rpc: rpcHarness().rpc });
+    if (!result.available) throw new Error(result.refusalReason);
+    expect(isResolvedAssistedOrderAuditAuthority(result.authority)).toBe(true);
+    expect(isResolvedAssistedOrderAuditAuthority(null)).toBe(false);
+    expect(isResolvedAssistedOrderAuditAuthority({ sink: { record: vi.fn() } })).toBe(false);
+    expect(isResolvedAssistedOrderAuditAuthority(Object.fromEntries(Object.entries(result.authority)))).toBe(false);
+    expect(Object.isFrozen(result.authority)).toBe(true);
+  });
+
+  it("prepares exactly the same safe immutable envelope as the canonical append sink without writing", async () => {
+    const h = rpcHarness();
+    const result = await resolveAssistedOrderAuditAuthority({ env: exactEnv(), rpc: h.rpc });
+    if (!result.available) throw new Error(result.refusalReason);
+    const event: AssistedOrderAuditEvent = { eventId: EVENT_ID, requestId: REQUEST_ID,
+      eventType: "assisted_order.status_changed", actorType: "admin", actorId: MEMBER_ID,
+      evidence: { from: "payment_review", to: "paid", authorityEvidenceKinds: ["payment_verification"] },
+      occurredAt: OCCURRED_AT };
+    const prepared = result.authority.prepare(event);
+    expect(h.calls).toHaveLength(1);
+    await result.authority.sink.record(event);
+    expect(h.calls[1].args?.p_event).toEqual(prepared);
+    expect(prepared.actorAlias).toMatch(/^aa1:primary-20260828:[a-f0-9]{64}$/);
+    expect(JSON.stringify(prepared)).not.toContain(MEMBER_ID);
+    expect(Object.isFrozen(prepared)).toBe(true);
+    expect(Object.isFrozen(prepared.evidence)).toBe(true);
+    expect("authorityEvidenceKinds" in prepared.evidence && Object.isFrozen(prepared.evidence.authorityEvidenceKinds)).toBe(true);
+    expect(() => Reflect.apply(result.authority.prepare, undefined, [{ ...event, rawPaymentEvidence: "private" }]))
+      .toThrow(AssistedOrderAuditStoreError);
+    expect(() => Reflect.apply(result.authority.prepare, undefined, [{ ...event, evidence: { ...event.evidence, rawReference: "private" } }]))
+      .toThrow(AssistedOrderAuditStoreError);
+    expect(h.calls).toHaveLength(2);
   });
 });
 
