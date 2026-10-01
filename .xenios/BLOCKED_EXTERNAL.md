@@ -25,8 +25,9 @@ aggregate there finished at 2026-10-01T08:19:42.263Z: 18,889 passed, five failed
 85 skipped, exit 1. Four stale catalog expectations were corrected in test-only
 `f634e8630b92818ea494aa96f5f68c921441455b`; the 43-test integrated run passed.
 Clean typecheck/build and route/DAG checks passed there. The second single-worker
-aggregate started at 2026-10-01T08:27:01.439Z and remains running; the unchanged
-seam-baseline assertion remains an independent gate. Earlier failed
+aggregate completed at 2026-10-01T08:45:21.963Z: 18,894 passed, one failed,
+85 skipped, exit 1, no timeouts. The unchanged seam-baseline assertion is the
+sole failure and remains an independent gate. Earlier failed
 build and test runs remain separate. See
 `server/research/master-offerings/HEALTH_HL11_RECONCILIATION_HANDOFF_20261001.md`.
 

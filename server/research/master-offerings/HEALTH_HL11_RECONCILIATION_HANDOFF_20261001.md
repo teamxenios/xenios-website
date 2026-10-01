@@ -162,10 +162,25 @@ verification passed 49 nodes and canonical checksums. Bounded protection CLI
 comparison from `3416f8de6a58e9ea0fdf4e1c77bab4421e010df2` passed across 47 paths
 and 38 protected hashes; it does not override the separate seam assertion.
 
-The second resource-controlled full suite started on clean `f634e86` at
-2026-10-01T08:27:01.439Z, with one worker, no file parallelism and the actual
-dataset reader enabled. Source and tests are frozen. Its aggregate result is
-pending and cannot be inferred from focused passes or the first failed run.
+The second resource-controlled full suite ran on clean `f634e86` from
+2026-10-01T08:27:01.439Z to 08:45:21.963Z, with one worker, no file parallelism
+and the actual dataset reader enabled. It completed 18,894 PASS / 1 FAIL /
+85 SKIP, 1,008 passing files / 1 failed / 6 skipped, exit 1, 1,099.22 seconds.
+No timeout occurred. The sole failure is the unchanged protection-baseline
+assertion at `server/core-site-protection.test.ts:387`, covering two paths.
+This is not a clean aggregate or release approval. All four stale catalog
+assertions are corrected; no test or gate was skipped or weakened to do so.
+Source and tests were unchanged during the run; later commits and working edits
+were records only. Log SHA-256:
+`44365f536b452e1b7ec0f7fe9be175a1b90921ef946ee7e3b5fff3414116e853`.
+
+The final receipt indexes each run separately, with exact commands, starting
+revision/tree, completion status and log checksums where captured. It includes
+sampled Node worker paths and explicitly identifies missing path samples and
+short subordinate logs without full command/revision/exit provenance. Those
+limits are not upgraded into continuous attestation. The records-only Git
+differences and clean aggregate start are checked; an unobserved transient
+write-and-revert is not independently monitored by this collector.
 
 The binding generator also reproduced and repaired an identity-only schema
 gap: unexpected fields could survive a reviewed input spread. Exact five-field
@@ -187,7 +202,9 @@ separate media-commerce-decoupling branch are not integrated or approved here.
 ## Local reproduction
 
 Use the pinned private Node20.19.0 executable and npm10.8.2. The environment
-variable below is process-local, not a hosted configuration change:
+variables below are process-local, not hosted configuration changes. Use the
+clean qualification checkout `f634e8630b92818ea494aa96f5f68c921441455b` for
+these tests: checking out the runtime commit alone omits the later regressions.
 
 ```powershell
 $nodeExe = 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe'
@@ -197,6 +214,9 @@ $env:XENIOS_MASTER_OFFERINGS_DATASET = (Join-Path (Get-Location) 'server/researc
 & $nodeExe node_modules/vitest/vitest.mjs run server/research/master-offerings server/research/assisted-order client/src/research/assisted-order shared/research/master-offerings/pathway-authority.test.ts --maxWorkers=1 --no-file-parallelism
 & $nodeExe node_modules/typescript/bin/tsc --noEmit
 & $nodeExe 'C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js' run build
+& $nodeExe node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-migration-dag.ts
+& $nodeExe node_modules/tsx/dist/cli.mjs scripts/acceptance/verify-route-uniqueness.ts
+& $nodeExe scripts/acceptance/verify-core-site-protection.mjs 3416f8de6a58e9ea0fdf4e1c77bab4421e010df2 f634e8630b92818ea494aa96f5f68c921441455b
 & $nodeExe node_modules/vitest/vitest.mjs run --maxWorkers=1 --no-file-parallelism
 ```
 
@@ -207,13 +227,72 @@ SHA and canonical Git blobs, then keeps only exact reviewed pairs. It does not
 query or write a database. Exact executed generation arguments and log hashes
 belong in the final qualification receipt.
 
+The executed exporter was the bundled Python executable at
+`C:/Users/sboad/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe`,
+running `scripts/research/export-kris-launch-a.py` with the exact original workbook,
+`--master-only` and ignored output `.local/research/hl11-20261001/private-intake.json`.
+The two generation wrappers were `hl11-catalog-export-final` and
+`hl11-bindings-order-export`. Their command arrays are indexed in the receipt.
+Export to the reviewed artifact directory additionally required process-local
+`XENIOS_ALLOW_REVIEWED_CATALOG_OUTPUT=true`; it was removed afterward. This is
+an explicit local output safeguard, not authorization to publish catalog prices.
+Use fresh ignored scratch for regeneration and never overwrite the evidence
+inputs. Generated timestamps can differ on a later run; exact candidate artifact
+bytes are pinned by canonical Git-blob hashes, not claimed to be time-independent.
+
 ## Independent handoff and remaining work
+
+Latest remote reviewer tip observed: `e7b74feb04567cac16d5b8bd089a7ae1218721d2`.
+Its report `23_REVIEW_915a535_SUCCESSOR.md` reviews runtime
+`915a5354376f0f5e9c850e5fddd2b51be78d2e43`, not this successor. Its finding
+closures remain scoped to that revision. F1 still needs an actual independent
+manual-payment evidence source and operational grant procedure. Later local
+F4, HIST-02, account-history and first N2 repairs are not independently accepted.
+ADP-01 durable provider history and remaining governed financial outcomes remain
+engineering work, not reasons to wait for a processor decision.
+
+The unchanged protection assertion reports the following exact hash pairs.
+These are review inputs, not owner amendments or authorization to deploy:
+
+| Path | Pinned SHA-256 | Current SHA-256 |
+| --- | --- | --- |
+| `server/index.ts` | `1d6594d6389e2ac67d9af85213854e05387899dfe0102fa577e447565e68c315` | `216273c135e859b54a6bc5a4e58abc563d1e44e2415470b9718d499340b4e666` |
+| `server/research/index.ts` | `b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070` | `5b9f683b183a095e258908e0e0086888c71b7666b0e384367b1bfde0c4124188` |
+
+HL-11 changes neither path. The reviewer assessed the current Research gateway
+bytes as suitable for a separately authorized owner amendment; that assessment
+does not cover the newer recovery wiring in `server/index.ts`. The older
+two-hash approval at `663268f` is already applied and is not reusable here.
 
 Claude should independently review the exact successor and policy delta,
 especially raw identity versus presentation, held submit resolution, retained
 binding provenance, superseded identity denial and absence of implied price
 release. N2/F4/HIST payment review retains priority if both are ready together.
 Sending a packet is not evidence of execution or acceptance.
+
+Read-only continuation audit, not another implementation or browser result:
+
+- Next payment slice is ADP-01: durable held reservation and authenticated
+  event/quarantine history. Do not invent external-call timestamps for a held
+  reservation or write provider observation, verification, paid or refund facts.
+  N2 cancellation and fresh manual verification must see provider uncertainty;
+  preserve the existing two-field financial-state contract separately. An
+  authenticated unbound event needs conservative, serialized uncertainty handling,
+  not a guessed request owner. Production adapter stays null and installation
+  sources/grants stay empty. Local proof must cover both race orderings.
+- Next public slice is read-only exact-variant detail inside the existing
+  authorized Early Access projection. Reuse server-projected identity, price,
+  pathway and restrictions; held/unbound visibility is not purchase permission.
+  Do not enable the dormant public storefront without its exact-copy publication
+  authority. `/products/:slug` still uses the unavailable page in `App.tsx`.
+- HL-17 access-hub links still meet a home redirect. A narrow repair needs the
+  protected routing/nav ownership and review, not a blanket baseline amendment.
+- HL-23 limiter and HL-24/25 retry/newcomer-help code already exist. Preserve
+  them and qualify the exact composed/browser behavior rather than rebuilding.
+- Supplier fulfillment registration lacks a production caller. Supplier identity
+  and positive paid-release authority are prerequisites; mounting alone is not
+  a complete supplier journey. Existing partner/admin/account systems remain
+  canonical. Do not create parallel roles, financial rules or live grants.
 
 Remaining work includes provider-neutral durable attempts/authenticated event
 journal, N2 void/refund and historical outcomes, independent exact successor
