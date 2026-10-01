@@ -38,72 +38,72 @@ VISUAL	CANONICAL ID	PRODUCT	CURRENT IMAGE OR FALLBACK	IMAGE CLASS	PATHWAY / STAT
 	GRP-0050
 Estradiol
 ESTRADIOL 0.75MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0051
 Estradiol
 ESTRADIOL 1.25MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0052
 Estradiol
 ESTRADIOL 1.5MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0053
 Estradiol
 ESTRADIOL 1.75MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0054
 Estradiol
 ESTRADIOL 10MG/ML CREAM
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0055
 Estradiol
 ESTRADIOL 1MG TABLET
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	tablet_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	tablet_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0056
 Estradiol
 ESTRADIOL 2MG TABLET
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	tablet_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	tablet_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0057
 Estradiol
 ESTRADIOL 4MG/ML CREAM
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0058
 Estradiol
 ESTRADIOL 6MG/ML CREAM
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -118,16 +118,16 @@ Exact render missing	Retained Binding
 	GRP-0059
 Finasteride Tablet
 FINASTERIDE TABLET 1MG
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	tablet_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	tablet_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0060
 Finasteride Tablet
 FINASTERIDE TABLET 5MG
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	tablet_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	tablet_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -142,32 +142,32 @@ Exact render missing	Retained Binding
 	GRP-0061
 Foxo4-Dri
 FOXO4-DRI 2MG/ML (5ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0370
 Fruits & Greens
 Retail unit / package
-	batch0-16-supplement_retail_unit_neutral
-Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0062
 GHK-Cu
 GHK-CU 1% HAIR RESTORATION SOLUTION 30ML
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	solution_container_neutral	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	solution_container_neutral	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0063
 GHK-Cu
 GHK-CU 10MG/ML (5ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -182,16 +182,16 @@ Exact render missing	Retained Binding
 	GRP-0287
 GHK-Cu
 GHK-Cu 100 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0288
 GHK-Cu
 GHK-Cu 50 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
@@ -206,48 +206,48 @@ Exact render missing	Retained Binding
 	GRP-0289
 GHK-Cu + Epithalon
 GHK-Cu 50 mg + EPITHALON 10 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0064
 GHK-Cu + Epithalon 10-2Mg + Ml (5Ml)
 GHK-CU/EPITHALON 10-2MG/ML (5ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0065
 GHK-Cu + Snap 8 Biocosmetic, Cream (GHK-Cu
 GHK-CU + SNAP 8 BIOCOSMETIC, CREAM (GHK-CU 3% / ESTRIOL 0.3% / SNAP-8 1%) 30GM
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0066
 GHK-Cu + Snap 8 Serum, Gel (GHK-Cu
 GHK-CU + SNAP 8 SERUM, GEL (GHK-CU 3% / SNAP-8 1% / NIACINAMIDE 3%) 30ML
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	packaging_unverified	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	packaging_unverified	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0067
 GHK-Cu Biocosmetic, Cream (GHK-Cu
 GHK-CU BIOCOSMETIC, CREAM (GHK-CU 3% / ESTRIOL 0.3%) 30GM
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0068
 GHK-Cu Firming Serum, Gel (GHK-Cu
 GHK-CU FIRMING SERUM, GEL (GHK-CU 3% / NIACINAMIDE 3%) 30ML
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	packaging_unverified	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	packaging_unverified	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -302,16 +302,16 @@ Exact render missing	Retained Binding
 	GRP-0371
 GI Defend
 Retail unit / package
-	batch0-16-supplement_retail_unit_neutral
-Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0294
 GLOW (BPC-157 + TB-500 + GHK-Cu)
 BPC-157 10 mg + TB-500 10 mg + GHK-Cu 50 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
@@ -326,16 +326,16 @@ Exact render missing	Retained Binding
 	GRP-0069
 Glutathione
 GLUTATHIONE 200MG/ML (10ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0070
 Glutathione
 GLUTATHIONE 200MG/ML (30ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -366,16 +366,16 @@ Exact render missing	Unbound
 	GRP-0071
 Glycine
 GLYCINE 50MG/ML (10ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0072
 Gonadorelin
 GONADORELIN 200MCG/ML (5ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 

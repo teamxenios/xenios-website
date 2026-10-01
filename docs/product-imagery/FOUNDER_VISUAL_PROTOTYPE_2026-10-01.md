@@ -2,7 +2,7 @@
 
 Date: 2026-10-01
 
-Status: complete private prototype for founder review. It is not production-qualified, publication-approved, runtime-wired, deployed, or a source of commerce, price, Care, availability, or fulfillment truth.
+Status: reviewer-corrected private prototype awaiting full journey and mobile re-review. It is not production-qualified, publication-approved, runtime-wired, deployed, or a source of commerce, price, Care, availability, or fulfillment truth.
 
 ## Outcome
 
@@ -15,9 +15,11 @@ The build is pinned to the frozen core HL-11 candidate:
 - Test commit: `f634e8630b92818ea494aa96f5f68c921441455b`
 - Qualification records: `c73da35cc223a2253ce8074948ed9ff063012748`
 - Imagery review target: `184d820a2a20152649b67892ec0a5467857d5290`
+- Claude reviewer tip: `76607458e30a64746d227150ff1dbab3475dd64a`
+- Focused prototype review: `023e9ec8899ded7f66f52ef3c21a799501d98084`
 - Media/commerce candidate: `b38db0ae2ee0c679ec2eeb31b324f6204669dfb7`
 
-These pins are evidence inputs only. The HL-11 candidate remains `FAILED_NOT_RELEASE_READY` with independent acceptance false. The media/commerce candidate is not accepted for integration. The imagery review target does not yet have named exact-SHA, per-asset approval.
+These pins are evidence inputs only. The HL-11 candidate remains `FAILED_NOT_RELEASE_READY` with independent acceptance false. The media/commerce candidate is not accepted for integration. Claude supplied exact-SHA, per-asset decisions, but did not approve any image for publication or authorize Batch 1 rendering.
 
 ## Catalog and visual accounting
 
@@ -38,8 +40,30 @@ These pins are evidence inputs only. The HL-11 candidate remains `FAILED_NOT_REL
 | Exact-product renders still missing | 423 |
 | Existing Batch 0 class renders preserved privately | 25 |
 | Batch 0 assets independently approved | 0 |
+| Reviewer-directed neutral substitutions | 269 |
+| Reviewed-rejected assets selected in product slots | 0 |
 
-The 25 Batch 0 assets were reused as private, provisional presentation studies only. None was rerendered, copied into a public tree, or granted product-specific truth. Care, held, quote-only, and binding-pending rows use state-neutral provisional studies. All customer-facing numeric prices remain withheld because this lane has no price-release authority.
+The 25 Batch 0 assets remain private, provisional presentation studies only. None was rerendered, copied into a public tree, or granted product-specific truth. Following Claude's review, all 242 Care rows, all 20 supplement-retail rows, the acetic-acid diluent, and six lyophilized GHK-Cu rows now use the neutral identity study. The build rejects any attempted selection of Batch 0 jobs 06, 09, 16, 19, 21, or 24. Held, quote-only, and binding-pending states remain restrictive. All customer-facing numeric prices remain withheld because this lane has no price-release authority.
+
+## Claude review disposition
+
+Claude's exact-SHA review passed the prototype's structure, publication safety, and data truth. It accepted 12 Batch 0 studies for private-prototype use, requested changes to seven, and rejected six. The prototype now implements every immediately actionable truth correction without creating new pixels:
+
+- removed the rejected physical-clinic lounge from all Care rows;
+- removed fabricated supplement retail packaging from all 20 affected rows;
+- removed the tincture bottle from acetic acid;
+- neutralized lyophilized GHK-Cu rows rather than displaying a false white-powder cue;
+- proves in tests and generated accounting that no reviewed-rejected asset is selected.
+
+This is a response to review, not an approval. Claude still needs to complete the full journey and mobile review of the corrected prototype. Batch 1 remains blocked behind a separately reviewed five-to-six-image calibration set with fixed camera, scale, lighting, brand palette, truthful class subjects, and no botanical props.
+
+## C2PA provenance capture
+
+`manifests/batch-000-c2pa-provenance.json` now records the embedded C2PA structure for all 25 source PNGs. Every file contains one `caBX` manifest; all 25 repository bytes match their receipt SHA-256; all 25 instance IDs are unique; and the embedded creation action identifies `ChatGPT` / `gpt-image`, `OpenAI Media Service API`, C2PA 2.2.0, and trained-algorithmic media. RFC3161 token timestamps are captured separately from local receipt observations.
+
+Job 19's embedded creation claim precedes the local receipt observation by about 592.5 seconds. That is consistent with delayed tool delivery or local file write of an already-manifested render, but cannot be proven without provider logs or cryptographic validation. The receipt clock is explicitly observational and is not used as generation-order or signature-validity evidence.
+
+This pass structurally decoded the embedded claims and re-bound them to the repository bytes. It did not cryptographically validate COSE/RFC3161 signatures, certificates, revocation, assertion hashes, or asset binding because a pinned official C2PA validator is not present. The manifest preserves that limitation; authoritative approval still requires a pinned official `c2patool` pass.
 
 ## Review surfaces
 
@@ -56,7 +80,7 @@ The 25 Batch 0 assets were reused as private, provisional presentation studies o
 
 ## Browser evidence
 
-The automated pass produced 40 screenshots. Chromium 149 reported:
+The automated pass produced 43 screenshots. Chromium 149 reported:
 
 - 423 of 423 QA canonical IDs covered
 - 0 broken images
@@ -79,6 +103,9 @@ Representative evidence:
 - `evidence/founder-preview/featured-desktop-1440.png`
 - `evidence/founder-preview/research-detail-desktop-1440.png`
 - `evidence/founder-preview/research-detail-mobile-320-320.png`
+- `evidence/founder-preview/review-fix-acetic-acid-detail-desktop-1440.png`
+- `evidence/founder-preview/review-fix-ghk-cu-detail-desktop-1440.png`
+- `evidence/founder-preview/review-fix-supplement-detail-desktop-1440.png`
 - `evidence/founder-preview/care-mobile-390-390.png`
 - `evidence/founder-preview/held-detail-desktop-1440.png`
 - `evidence/founder-preview/quote-detail-desktop-1440.png`
@@ -91,13 +118,15 @@ The machine-readable capture record is `evidence/founder-preview/founder-preview
 
 ## Batch 1 preparation
 
-`manifests/batch-001-prepared.json` contains 25 deterministic candidates and explicitly sets both render and publication authorization to false. It contains the 22 current canonical owners of legacy Featured identities plus three class-diversity candidates:
+`manifests/batch-001-prepared.json` contains 25 deterministic inventory candidates and explicitly sets both render and publication authorization to false. It contains the 22 current canonical owners of legacy Featured identities plus three class-diversity candidates:
 
 - `GRP-0243` - 5-Amino-1MQ
 - `GRP-0362` - Acetic Acid 0.6%
 - `GRP-0366` - Annatto Pro 125
 
-This manifest is planning input only. It contains no ready renderer prompt and must not be used until the existing Batch 0 exact-SHA asset review, HL-11 independent acceptance, media/commerce integration acceptance, and exact repository ownership gates all clear.
+This manifest is planning input only. It contains no ready renderer prompt. A separate five-to-six-image global art-direction calibration set must be prepared, rendered only with explicit authority, and approved before Batch 1 can be considered. HL-11 independent acceptance, media/commerce integration acceptance, and exact repository ownership gates must also clear.
+
+`manifests/global-art-direction-calibration-prepared.json` records the five-study calibration plan requested by Claude: vial, bottle, topical, Care state, and held/coming-soon state. It fixes the intended palette, camera, scale, lighting, no-botanical rule, and truth boundary while setting every render and publication flag to false. It contains no renderer-ready prompt and creates no pixels.
 
 ## Run and reproduce locally
 
@@ -118,6 +147,7 @@ Then open `http://127.0.0.1:5178/founder-preview/index.html?view=home`.
 Run focused checks and regenerate responsive evidence:
 
 ```powershell
+node scripts/product-imagery/extract-c2pa-provenance.mjs
 node --test scripts/product-imagery/founder-preview.test.mjs
 node scripts/product-imagery/capture-founder-preview.mjs
 ```
@@ -128,10 +158,11 @@ The server exposes only `docs/product-imagery`, binds only to `127.0.0.1`, denie
 
 Future integration depends on shared owners, not on this prototype:
 
-1. Named per-asset review against the exact imagery target and each exact asset SHA.
-2. Independent acceptance of the frozen HL-11 catalog candidate.
-3. Acceptance of the media/commerce decoupling slice.
-4. A coordinated shared UI lease for one canonical resolver and one resilient image component.
-5. Founder authorization for any publication, deployment, managed SQL, Supabase write, Render write, or production mutation.
+1. Claude acceptance of the reviewer-directed prototype corrections and completion of the full journey/mobile review.
+2. A separately approved global art-direction calibration set before any Batch 1 rendering.
+3. Independent acceptance of the frozen HL-11 catalog candidate.
+4. Acceptance of the media/commerce decoupling slice after its MC-01 failure-mode correction.
+5. A coordinated shared UI lease for one canonical resolver and one resilient image component.
+6. Founder authorization for any publication, deployment, managed SQL, Supabase write, Render write, or production mutation.
 
 Until those gates clear, the preview stays private and informational. Its CSS, markup, search behavior, and visual layout are not runtime authority, and its provisional image assignments must not be copied into production.

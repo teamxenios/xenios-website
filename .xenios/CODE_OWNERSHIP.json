@@ -3149,6 +3149,25 @@
       "state": "handoff",
       "claimedAt": "2026-10-01T14:41:27.100Z",
       "heartbeatAt": "2026-10-01T14:42:04.224Z"
+    },
+    {
+      "id": "06fbb437-bdc3-4a5c-99b9-e708019c7678",
+      "task": "XENIOS-PRODUCT-IMAGERY-20260930",
+      "session": "codex-xenios-product-imagery-20260930",
+      "paths": [
+        "docs/product-imagery/**",
+        "scripts/product-imagery/**",
+        "client/public/research/products/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/sessions/codex-xenios-product-imagery-20260930.json",
+        ".xenios/messages/*codex-xenios-product-imagery-20260930*",
+        ".xenios/handoffs/*XENIOS-PRODUCT-IMAGERY-20260930*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-01T15:14:42.576Z",
+      "heartbeatAt": "2026-10-01T15:36:58.841Z"
     }
   ],
   "rules": [

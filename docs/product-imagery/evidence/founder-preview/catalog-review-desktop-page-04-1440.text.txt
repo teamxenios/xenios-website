@@ -38,8 +38,8 @@ VISUAL	CANONICAL ID	PRODUCT	CURRENT IMAGE OR FALLBACK	IMAGE CLASS	PATHWAY / STAT
 	GRP-0073
 HCG Pregnyl 10,000Iu
 HCG PREGNYL 10,000IU
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	packaging_unverified	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	packaging_unverified	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -70,24 +70,24 @@ Exact render missing	Retained Binding
 	GRP-0372
 Hydrate
 Retail unit / package
-	batch0-16-supplement_retail_unit_neutral
-Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0075
 Ibutamoren
 IBUTAMOREN 12.5MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0076
 Ibutamoren
 IBUTAMOREN 25MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -110,16 +110,16 @@ Exact render missing	Retained Binding
 	GRP-0074
 IGF-Lr3
 IGF-LR3 200MCG/ML (5ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0373
 Inflam-Eze (30-serving)
 Retail unit / package
-	batch0-16-supplement_retail_unit_neutral
-Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
@@ -142,16 +142,16 @@ Exact render missing	Retained Binding
 	GRP-0077
 Ketoconazole Cream (Ketoconazole
 KETOCONAZOLE CREAM (KETOCONAZOLE 2% / NIACINAMIDE 4%) 30GM
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0078
 Kisspeptin
 KISSPEPTIN 1MG/ML (5ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -174,16 +174,16 @@ Exact render missing	Retained Binding
 	GRP-0304
 KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)
 BPC-157 5 mg + TB-500 5 mg + GHK-Cu 10 mg + KPV 5 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0305
 KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)
 BPC-157 10 mg + TB-500 10 mg + GHK-Cu 50 mg + KPV 10 mg
-	batch0-01-peptide_lyophilized_vial
-Provisional Class Render	peptide_lyophilized_vial	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	peptide_lyophilized_vial	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
@@ -214,96 +214,96 @@ Exact render missing	Retained Binding
 	GRP-0079
 Kyzatrex (Oral Testosterone)
 KYZATREX (ORAL TESTOSTERONE) 200MG
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	packaging_unverified	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	packaging_unverified	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0082
 Larazotide
 LARAZOTIDE 250MCG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0083
 Larazotide
 LARAZOTIDE 500MCG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0084
 Larazotide + KPV
 LARAZOTIDE/KPV 500MCG-500MCG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0080
 LIBIDO CREAM (SCREAM CREAM)
 LIBIDO CREAM (SCREAM CREAM): Testosterone Cypionate 0.1% / Sildenafil Citrate 0.1% / Glycerin / Versabase Cream
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0085
 Lidocaine
 LIDOCAINE 23% / TETRACAINE 10% / PHENYLEPHRINE 0.5% TOPICAL CREAM 60ML PUMP
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0086
 Lidocaine
 LIDOCAINE 23% / TETRACAINE 10% TOPICAL CREAM 60ML PUMP
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0087
 Lidocaine
 LIDOCAINE 23% / TETRACAINE 7% / PRILOCAINE 2% TOPICAL CREAM 60ML PUMP
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0088
 Lipo-B (Cyanocobalamin + Mic) (10Ml)
 LIPO-B (Cyanocobalamin/MIC) (10ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0089
 Lipo-B (Cyanocobalamin + Mic) (30Ml)
 LIPO-B (Cyanocobalamin/MIC) (30ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0090
 Lipo-C (Cyanocobalamin + Mic + L-Carnitine) (10Ml)
 LIPO-C (Cyanocobalamin/MIC/L-Carnitine) (10ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0091
 Lipo-C (Cyanocobalamin + Mic + L-Carnitine) (30Ml)
 LIPO-C (Cyanocobalamin/MIC/L-Carnitine) (30ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -326,8 +326,8 @@ Exact render missing	Retained Binding
 	GRP-0081
 LIVER SUPPORT
 LIVER SUPPORT (Vitamin E 50%, Milk Thistle, N-Acetylcysteine, Thiamine, Selenium) CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -350,32 +350,32 @@ Exact render missing	Retained Binding
 	GRP-0374
 Longevity Essentials NAD+
 Retail unit / package
-	batch0-16-supplement_retail_unit_neutral
-Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0092
 Low Dose Naltrexone
 LOW DOSE NALTREXONE 1.5MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0097
 Magnesium Chloride
 MAGNESIUM CHLORIDE 200MG/ML (50ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0375
 Magtein (Magnesium L-Threonate)
 Retail unit / package
-	batch0-16-supplement_retail_unit_neutral
-Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
@@ -390,8 +390,8 @@ Exact render missing	Retained Binding
 	GRP-0098
 Melanotan Ii
 MELANOTAN II 1MG/ML (5ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -406,16 +406,16 @@ Exact render missing	Retained Binding
 	GRP-0099
 Metformin HCl Er Tablet
 METFORMIN HCl ER TABLET 1000MG
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	tablet_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	tablet_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0100
 Metformin HCl Er Tablet
 METFORMIN HCl ER TABLET 500MG
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	tablet_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	tablet_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 Evidence page 4 of 9, rows 145-192 of 423.

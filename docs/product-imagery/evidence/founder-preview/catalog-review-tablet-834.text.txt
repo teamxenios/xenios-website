@@ -38,8 +38,8 @@ VISUAL	CANONICAL ID	PRODUCT	CURRENT IMAGE OR FALLBACK	IMAGE CLASS	PATHWAY / STAT
 	GRP-0001
 5-Amino-1Mq
 5-AMINO-1MQ 5MG/ML (5ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -62,64 +62,64 @@ Exact render missing	Retained Binding
 	GRP-0362
 Acetic Acid 0.6%
 ACETIC ACID 0.6% 5 mL
-	batch0-06-oral_liquid_neutral
-Provisional Class Render	oral_liquid_neutral	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	oral_liquid_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0002
 Anastrozole
 ANASTROZOLE 0.25MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0003
 Anastrozole
 ANASTROZOLE 0.5MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0004
 Anastrozole
 ANASTROZOLE 1MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0005
 Anastrozole Tablet
 ANASTROZOLE TABLET 1MG
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	tablet_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	tablet_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0366
 Annatto Pro 125
 Retail unit / package
-	batch0-16-supplement_retail_unit_neutral
-Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0006
 Aod-9604
 AOD-9604 1.2MG/ML (6MG/5ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0007
 Aod-9604
 AOD-9604 300MCG TROCHE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	troche_container	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	troche_container	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 

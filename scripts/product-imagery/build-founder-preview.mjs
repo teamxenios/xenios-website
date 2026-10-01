@@ -15,13 +15,23 @@ export const CORE_SOURCE_TREE = "6395273fc4370b7df713a2b72b019785f547d1fb";
 export const CORE_TEST_SHA = "f634e8630b92818ea494aa96f5f68c921441455b";
 export const CORE_RECORDS_SHA = "c73da35cc223a2253ce8074948ed9ff063012748";
 export const IMAGERY_REVIEW_TARGET_SHA = "184d820a2a20152649b67892ec0a5467857d5290";
+export const IMAGERY_REVIEWER_TIP_SHA = "76607458e30a64746d227150ff1dbab3475dd64a";
+export const PROTOTYPE_REVIEW_SHA = "023e9ec8899ded7f66f52ef3c21a799501d98084";
 export const MEDIA_COMMERCE_SHA = "b38db0ae2ee0c679ec2eeb31b324f6204669dfb7";
 export const SHIPPING_GROUP_ID = "GRP-0364";
 export const HELD_GROUP_IDS = new Set(["GRP-0422"]);
 export const QUOTE_ONLY_GROUP_IDS = new Set(["GRP-0244", "GRP-0365"]);
 export const EXPECTED_CUSTOMER_ROWS = 423;
 export const EXPECTED_CANONICAL_ROWS = 424;
-export const PREVIEW_GENERATED_AT = "2026-10-01T13:51:06.888Z";
+export const PREVIEW_GENERATED_AT = "2026-10-01T15:24:00.000Z";
+export const REJECTED_BATCH0_JOB_IDS = new Set([
+  "batch0-06-oral_liquid_neutral",
+  "batch0-09-odt_container",
+  "batch0-16-supplement_retail_unit_neutral",
+  "batch0-19-packaging_unverified",
+  "batch0-21-care_pathway_neutral",
+  "batch0-24-coming_soon_offering",
+]);
 
 const CORE_CATALOG_PATH =
   "server/research/master-offerings/data/member-safe-master-offerings.generated.json";
@@ -90,9 +100,13 @@ function classifyPathway({ groupId, family, unbound }) {
   };
 }
 
-function chooseAsset({ coverage, pathway, assetsByClass }) {
+function chooseAsset({ coverage, pathway, assetsByClass, productName, specification }) {
   let selectedClass = coverage.imageClass;
   let mode = "provisional_class_render";
+  let reviewerDirective = null;
+  const isLyophilizedGhkCu =
+    coverage.imageClass === "peptide_lyophilized_vial" &&
+    /GHK[\s-]?Cu/i.test(`${productName} ${specification}`);
   if (pathway.key === "held") {
     selectedClass = "held_neutral";
     mode = "provisional_state_safe_render";
@@ -100,14 +114,35 @@ function chooseAsset({ coverage, pathway, assetsByClass }) {
     selectedClass = "quote_only_neutral";
     mode = "provisional_state_safe_render";
   } else if (pathway.key === "care") {
-    selectedClass = "care_pathway_neutral";
-    mode = "provisional_state_safe_render";
+    selectedClass = "neutral_product_identity";
+    mode = "provisional_reviewer_directed_neutral_render";
+    reviewerDirective = "replace_rejected_care_lounge";
   } else if (pathway.key === "pending") {
     selectedClass = "neutral_product_identity";
     mode = "provisional_identity_neutral_render";
+  } else if (coverage.imageClass === "supplement_retail_unit_neutral") {
+    selectedClass = "neutral_product_identity";
+    mode = "provisional_reviewer_directed_neutral_render";
+    reviewerDirective = "replace_rejected_fabricated_supplement_packaging";
+  } else if (coverage.groupId === "GRP-0362") {
+    selectedClass = "neutral_product_identity";
+    mode = "provisional_reviewer_directed_neutral_render";
+    reviewerDirective = "replace_rejected_acetic_acid_tincture";
+  } else if (coverage.imageClass === "packaging_unverified") {
+    selectedClass = "neutral_product_identity";
+    mode = "provisional_reviewer_directed_neutral_render";
+    reviewerDirective = "replace_rejected_unverified_packaging";
+  } else if (isLyophilizedGhkCu) {
+    selectedClass = "neutral_product_identity";
+    mode = "provisional_reviewer_directed_neutral_render";
+    reviewerDirective = "avoid_false_white_powder_cue_for_ghk_cu";
   }
   const asset = assetsByClass.get(selectedClass) ?? assetsByClass.get(coverage.imageClass);
   assert.ok(asset, `No safe provisional asset for ${coverage.groupId} / ${selectedClass}`);
+  assert.ok(
+    !REJECTED_BATCH0_JOB_IDS.has(asset.jobId),
+    `Rejected Batch 0 asset selected for ${coverage.groupId}: ${asset.jobId}`,
+  );
   assert.equal(asset.visibility, "non_public_review_evidence");
   assert.equal(asset.reviewStatus, "awaiting_independent_named_approval");
   assert.equal(asset.publicPath, null);
@@ -121,6 +156,7 @@ function chooseAsset({ coverage, pathway, assetsByClass }) {
     height: asset.source.height,
     visualState: "provisional",
     visualMode: mode,
+    reviewerDirective,
     reviewStatus: asset.reviewStatus,
     publicationStatus: "private_preview_only_not_publication_approved",
   };
@@ -232,7 +268,13 @@ export function buildFounderPreviewData() {
         family: core.product.family,
         unbound,
       });
-      const image = chooseAsset({ coverage: coverageRow, pathway, assetsByClass });
+      const image = chooseAsset({
+        coverage: coverageRow,
+        pathway,
+        assetsByClass,
+        productName: core.product.displayName,
+        specification: core.variant.label,
+      });
       return {
         canonicalId: coverageRow.groupId,
         manifestKey: coverageRow.manifestKey,
@@ -268,6 +310,11 @@ export function buildFounderPreviewData() {
   assert.equal(rows.filter((row) => row.bindingState.state === "unbound").length, 8);
   assert.equal(rows.filter((row) => row.finality === "provisional").length, 423);
   assert.equal(new Set(rows.map((row) => row.manifestKey)).size, 423);
+  assert.equal(
+    rows.filter((row) => REJECTED_BATCH0_JOB_IDS.has(row.image.jobId)).length,
+    0,
+    "Reviewed-rejected Batch 0 assets must not appear in the private prototype",
+  );
 
   const featuredCanonicalIds = chooseFeatured(rows);
   const batch1 = batchOneCandidates(rows, crosswalk);
@@ -286,6 +333,8 @@ export function buildFounderPreviewData() {
     held: rows.filter((row) => row.pathway.key === "held").length,
     quoteOnly: rows.filter((row) => row.pathway.key === "quote").length,
     bindingPending: rows.filter((row) => row.pathway.key === "pending").length,
+    reviewerDirectedNeutralSlots: rows.filter((row) => row.image.reviewerDirective !== null).length,
+    rejectedBatch0AssetSlots: rows.filter((row) => REJECTED_BATCH0_JOB_IDS.has(row.image.jobId)).length,
   };
 
   const data = {
@@ -315,7 +364,11 @@ export function buildFounderPreviewData() {
       },
       imageryReviewTarget: {
         commit: IMAGERY_REVIEW_TARGET_SHA,
-        exactPerAssetDecisionReceived: false,
+        reviewerTipCommit: IMAGERY_REVIEWER_TIP_SHA,
+        prototypeReviewCommit: PROTOTYPE_REVIEW_SHA,
+        exactPerAssetDecisionReceived: true,
+        publicApprovalReceived: false,
+        disposition: "private_prototype_only_with_reviewer_directed_substitutions",
       },
       mediaCommerceCandidate: {
         commit: MEDIA_COMMERCE_SHA,
@@ -324,7 +377,8 @@ export function buildFounderPreviewData() {
     },
     warnings: [
       "PRIVATE FOUNDER PROTOTYPE - NOT A PRODUCTION OR PUBLICATION BUILD",
-      "Every displayed Batch 0 image remains provisional and non-public pending exact-SHA review.",
+      "Every displayed Batch 0 image remains provisional and non-public; exact-SHA review is not publication approval.",
+      "Reviewed-rejected Batch 0 assets are excluded; reviewer-directed rows use the neutral identity study.",
       "Prices are intentionally withheld in this static preview; Product Control remains the runtime authority.",
       "Image state never changes catalog, price, availability, workflow, quote, cart, or fulfillment authority.",
     ],
@@ -388,14 +442,73 @@ export function writeFounderPreviewArtifacts(data = buildFounderPreviewData()) {
     publicationAuthorization: false,
     sourceCoreCommit: CORE_SOURCE_SHA,
     imageryReviewTargetCommit: IMAGERY_REVIEW_TARGET_SHA,
+    imageryReviewCommit: PROTOTYPE_REVIEW_SHA,
+    calibrationSetRequired: true,
+    calibrationSetRendered: false,
+    calibrationSetApproved: false,
     gate:
-      "Do not render until exact per-asset imagery review, independent HL-11 catalog acceptance, media-commerce integration acceptance, and exact repository ownership gates all clear.",
+      "Do not render Batch 1 until a separate five-to-six-image calibration set locks the global art direction, then independent HL-11 catalog acceptance, media-commerce integration acceptance, and exact repository ownership gates all clear.",
     count: data.batch1.length,
     jobs: data.batch1,
   };
   writeFileSync(
     join(MANIFEST_ROOT, "batch-001-prepared.json"),
     `${JSON.stringify(batch1, null, 2)}\n`,
+  );
+  const calibrationPlan = {
+    schemaVersion: 1,
+    kind: "global_art_direction_calibration_plan_prepared_not_authorized",
+    generatedAt: data.generatedAt,
+    sourceReviewCommit: PROTOTYPE_REVIEW_SHA,
+    requiredBeforeBatch1: true,
+    renderAuthorization: false,
+    publicationAuthorization: false,
+    approvalStatus: "awaiting_explicit_render_authority_and_named_calibration_review",
+    sharedDirection: {
+      palette: "near-black, taupe, ivory, restrained purple-to-teal accent",
+      camera: "one fixed three-quarter camera height and focal treatment across object studies",
+      scale: "one fixed subject-height band with consistent negative space",
+      lighting: "one controlled studio lighting plan aligned to the brand system",
+      props: "no botanicals, spa props, invented packaging, logos, or manufacturer cues",
+      truthRule: "the subject form and visible contents must match the authorized class evidence",
+    },
+    count: 5,
+    studies: [
+      {
+        id: "calibration-01-vial",
+        archetype: "vial",
+        truthBoundary: "unlabeled vial; contents and color remain unspecified until identity evidence exists",
+      },
+      {
+        id: "calibration-02-bottle",
+        archetype: "bottle",
+        truthBoundary: "unlabeled form-appropriate bottle; no retail carton, Rx mimic, or brand cue",
+      },
+      {
+        id: "calibration-03-topical",
+        archetype: "topical",
+        truthBoundary: "neutral tube or pump matched to the authorized dosage form",
+      },
+      {
+        id: "calibration-04-care-state",
+        archetype: "care_treatment",
+        truthBoundary: "abstract pathway treatment; no clinic, room, provider, device, or eligibility claim",
+      },
+      {
+        id: "calibration-05-restrictive-state",
+        archetype: "held_or_coming_soon",
+        truthBoundary: "text-led state treatment; no product, package, partner, or availability cue",
+      },
+    ].map((study) => ({
+      ...study,
+      promptStatus: "deferred_pending_explicit_render_authority",
+      renderAuthorization: false,
+      publicationAuthorization: false,
+    })),
+  };
+  writeFileSync(
+    join(MANIFEST_ROOT, "global-art-direction-calibration-prepared.json"),
+    `${JSON.stringify(calibrationPlan, null, 2)}\n`,
   );
   const buildRecord = {
     schemaVersion: 1,
@@ -406,6 +519,11 @@ export function writeFounderPreviewArtifacts(data = buildFounderPreviewData()) {
     finalExactAssets: data.counts.finalExactAssets,
     provisionalVisualSlots: data.counts.provisionalVisualSlots,
     missingExactRenders: data.counts.missingExactRenders,
+    reviewerTipCommit: IMAGERY_REVIEWER_TIP_SHA,
+    prototypeReviewCommit: PROTOTYPE_REVIEW_SHA,
+    reviewerDirectedNeutralSlots: data.counts.reviewerDirectedNeutralSlots,
+    rejectedBatch0AssetSlots: data.counts.rejectedBatch0AssetSlots,
+    c2paProvenancePath: "docs/product-imagery/manifests/batch-000-c2pa-provenance.json",
     outputRoot: relative(REPO_ROOT, PREVIEW_ROOT).replaceAll("\\", "/"),
     publicTreeTouched: false,
     deploymentAuthorized: false,
@@ -414,7 +532,7 @@ export function writeFounderPreviewArtifacts(data = buildFounderPreviewData()) {
     join(PREVIEW_ROOT, "build-record.json"),
     `${JSON.stringify(buildRecord, null, 2)}\n`,
   );
-  return { data, batch1, buildRecord };
+  return { data, batch1, calibrationPlan, buildRecord };
 }
 
 if (resolve(process.argv[1] ?? "") === fileURLToPath(import.meta.url)) {

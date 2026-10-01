@@ -38,7 +38,7 @@ Account and status surfaces explain what is known without inventing progress.
 CARE CATALOG PREVIEW
 
 Same identity, distinct pathway.
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0001
 5-Amino-1Mq
@@ -48,7 +48,7 @@ GRP-0001
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0002
 Anastrozole
@@ -58,7 +58,7 @@ ANASTROZOLE 0.25MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0003
 Anastrozole
@@ -68,7 +68,7 @@ ANASTROZOLE 0.5MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0004
 Anastrozole
@@ -78,7 +78,7 @@ ANASTROZOLE 1MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0005
 Anastrozole Tablet
@@ -88,7 +88,7 @@ ANASTROZOLE TABLET 1MG
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0006
 Aod-9604
@@ -98,7 +98,7 @@ AOD-9604 1.2MG/ML (6MG/5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0007
 Aod-9604
@@ -108,7 +108,7 @@ AOD-9604 300MCG TROCHE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0008
 Aod-9604 + MOTS-C + Tesamorelin + Ipamorelin

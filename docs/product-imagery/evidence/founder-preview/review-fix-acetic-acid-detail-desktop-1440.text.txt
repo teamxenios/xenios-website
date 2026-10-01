@@ -1,0 +1,48 @@
+PRIVATE FOUNDER PROTOTYPE
+PROVISIONAL IMAGE - AUTHORITATIVE PRODUCT STATE SHOWN AS TEXT
+XENIOS
+HEALTH
+Featured
+Products
+Care
+QA grid
+Back to products
+PRIVATE PROVISIONAL VISUAL
+RESEARCH ACCESS
+GRP-0362
+Acetic Acid 0.6%
+
+ACETIC ACID 0.6% 5 mL
+
+Authorized form
+Liquid
+Price state
+Price omitted from static preview
+Pathway
+Research access
+Visual class
+Oral Liquid Neutral
+Visual state
+Provisional, private, not publication-approved
+View product
+
+Runtime Product Control remains the only price and purchase authority. This static preview does not submit a request or establish availability.
+
+Prototype action only
+Catalog visibility does not establish availability, suitability, or purchase eligibility.
+The card and this detail view use the same canonical identity and Batch 0 asset job: batch0-20-neutral_product_identity.
+No package, manufacturer, certification, clinical benefit, or partner relationship is asserted.
+
+SAME CATEGORY
+
+Continue exploring.
+PROVISIONAL CLASS VISUAL
+RESEARCH ACCESS
+GRP-0363
+Reconstitution Solution
+
+RECONSTITUTION SOLUTION 4 mL
+
+View product
+
+Static preview. No checkout, quote submission, or availability assertion.

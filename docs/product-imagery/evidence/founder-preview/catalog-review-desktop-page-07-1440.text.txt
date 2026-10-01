@@ -38,80 +38,80 @@ VISUAL	CANONICAL ID	PRODUCT	CURRENT IMAGE OR FALLBACK	IMAGE CLASS	PATHWAY / STAT
 	GRP-0157
 Semaglutide + B12
 SEMAGLUTIDE/B12 0.6MG-500MCG/ML (2ML) (1.2mg vial)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0158
 Semaglutide + B12
 SEMAGLUTIDE/B12 1.2MG-500MCG/ML (2ML) (2.4mg vial)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0159
 Semaglutide + B12
 SEMAGLUTIDE/B12 10MG-500MCG/ML (3ML) (30mg vial)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0160
 Semaglutide + B12
 SEMAGLUTIDE/B12 2.2MG-500MCG/ML (2ML) (4.4mg vial)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0161
 Semaglutide + B12
 SEMAGLUTIDE/B12 2.5MG-500MCG/ML (5ML) (12.5mg vial)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0162
 Semaglutide + B12
 SEMAGLUTIDE/B12 3.4MG-500MCG/ML (2ML) (6.8mg vial)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0163
 Semaglutide + B12
 SEMAGLUTIDE/B12 4.1MG-500MCG/ML (2ML) (8.2mg vial)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0164
 Semaglutide + B12
 SEMAGLUTIDE/B12 5.6MG-500MCG/ML (2ML) (11.2mg vial)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0165
 Semaglutide + B12
 SEMAGLUTIDE/B12 5MG-500MCG/ML (3ML) (15mg vial)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0166
 Semaglutide + B12
 SEMAGLUTIDE/B12 5MG-500MCG/ML (4ML) (20mg vial)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -126,16 +126,16 @@ Exact render missing	Retained Binding
 	GRP-0167
 Semaglutide + Glycine
 SEMAGLUTIDE/ GLYCINE 5MG-2.5MG/ML (2ML) (10mg vial)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0168
 Semaglutide + Glycine
 SEMAGLUTIDE/ GLYCINE 5MG-2.5MG/ML (6ML) (30mg vial)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -158,8 +158,8 @@ Exact render missing	Retained Binding
 	GRP-0169
 Semax + Selank
 SEMAX/SELANK 2.5MG/2.5MG/ML NASAL SPRAY (15ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	nasal_spray	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	nasal_spray	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -174,8 +174,8 @@ Exact render missing	Retained Binding
 	GRP-0170
 Sermorelin
 SERMORELIN 3MG/ML (5ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -206,88 +206,88 @@ Exact render missing	Retained Binding
 	GRP-0171
 Sermorelin + Ipamorelin
 SERMORELIN/IPAMORELIN 3MG-3.6MG/ML (5ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0172
 Sildenafil
 SILDENAFIL 100MG TABLET
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	tablet_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	tablet_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0173
 Sildenafil
 SILDENAFIL 110MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0174
 Sildenafil
 SILDENAFIL 50MG TABLET
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	tablet_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	tablet_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0175
 Sildenafil
 SILDENAFIL 55MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0176
 Sildenafil + Tadalafil
 SILDENAFIL/TADALAFIL 50MG-10MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0177
 Sildenafil SR
 SILDENAFIL SR 110MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0178
 Sildenafil SR
 SILDENAFIL SR 36MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0179
 Sildenafil SR
 SILDENAFIL SR 55MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0180
 Sildenafil SR
 SILDENAFIL SR 75MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0155
 SLU-PP-332
 SLU-PP-332 250MCG PER CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -310,8 +310,8 @@ Exact render missing	Retained Binding
 	GRP-0156
 SLU-PP-332 + Bam 15 Capsule
 SLU-PP-332/BAM 15 CAPSULE 100MCG/15MG PER CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -350,48 +350,48 @@ Exact render missing	Retained Binding
 	GRP-0181
 Stanozolol
 STANOZOLOL 10MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0182
 Stanozolol
 STANOZOLOL 25MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0183
 Stanozolol
 STANOZOLOL 50MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0184
 Stanozolol
 STANOZOLOL 5MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0381
 Stress Essentials Balance
 Retail unit / package
-	batch0-16-supplement_retail_unit_neutral
-Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0382
 Stress Essentials Calm
 Retail unit / package
-	batch0-16-supplement_retail_unit_neutral
-Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
@@ -414,8 +414,8 @@ Exact render missing	Unbound
 	GRP-0185
 T4 + T3
 T4/T3 114MCG/27MCG IR CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 Evidence page 7 of 9, rows 289-336 of 423.

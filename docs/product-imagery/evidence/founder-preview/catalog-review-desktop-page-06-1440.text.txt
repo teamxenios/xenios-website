@@ -46,184 +46,184 @@ Exact render missing	Retained Binding
 	GRP-0378
 PRM Resolve
 Retail unit / package
-	batch0-16-supplement_retail_unit_neutral
-Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0134
 Progesterone
 PROGESTERONE 100MG SR CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0135
 Progesterone
 PROGESTERONE 125MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0136
 Progesterone
 PROGESTERONE 125MG SR CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0137
 Progesterone
 PROGESTERONE 150MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0138
 Progesterone
 PROGESTERONE 150MG SR CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0139
 Progesterone
 PROGESTERONE 175MG SR CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0140
 Progesterone
 PROGESTERONE 200MG SR CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0141
 Progesterone
 PROGESTERONE 200MG/ML CREAM
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0142
 Progesterone
 PROGESTERONE 225MG SR CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0143
 Progesterone
 PROGESTERONE 250MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0144
 Progesterone
 PROGESTERONE 250MG SR CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0145
 Progesterone
 PROGESTERONE 250MG/ML CREAM
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0146
 Progesterone
 PROGESTERONE 25MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0147
 Progesterone
 PROGESTERONE 25MG SR CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0148
 Progesterone
 PROGESTERONE 300MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0149
 Progesterone
 PROGESTERONE 300MG SR CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0150
 Progesterone
 PROGESTERONE 50MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0151
 Progesterone
 PROGESTERONE 50MG SR CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0152
 Progesterone
 PROGESTERONE 50MG/ML CREAM
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	cream_tube_or_pump	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	cream_tube_or_pump	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0153
 Progesterone
 PROGESTERONE 75MG CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0154
 Progesterone
 PROGESTERONE 75MG SR CAPSULE
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	capsule_bottle	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	capsule_bottle	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
 	GRP-0125
 PT-141
 PT-141 2MG/ML (5ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	liquid_vial	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	liquid_vial	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -246,8 +246,8 @@ Exact render missing	Retained Binding
 	GRP-0126
 PT-141 Nasal Spray
 PT-141 NASAL SPRAY 2.5MG/SPRAY (3ML)
-	batch0-21-care_pathway_neutral
-Provisional State Safe Render	nasal_spray	CARE PATHWAY
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	nasal_spray	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -270,8 +270,8 @@ Exact render missing	Retained Binding
 	GRP-0380
 Rejuvenate+
 Retail unit / package
-	batch0-16-supplement_retail_unit_neutral
-Provisional Class Render	supplement_retail_unit_neutral	RESEARCH ACCESS
+	batch0-20-neutral_product_identity
+Provisional Reviewer Directed Neutral Render	supplement_retail_unit_neutral	RESEARCH ACCESS
 Price omitted from static preview	Provisional
 Exact render missing	Retained Binding
 

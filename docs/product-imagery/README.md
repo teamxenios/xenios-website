@@ -10,10 +10,11 @@ Current safety state:
 - all 25 Batch 0 originals are rendered, receipt-bound, output-SHA-addressed, and retained under non-public evidence with zero runtime/public authority;
 - no image is approved or wired;
 - imagery owns no price, action, workflow, Care, hold, availability, cart, or fulfillment state;
-- catalog accounting is reconciled to the frozen HL-11 candidate, but runtime integration remains blocked on independent acceptance of that core candidate, independent named exact-SHA per-asset approval, acceptance of the separately leased commerce/media decoupling slice, and a coordinated shared UI lease;
+- Claude's exact-SHA review is recorded at reviewer tip `76607458e30a64746d227150ff1dbab3475dd64a`; it authorizes private-prototype use only where marked and grants zero public approvals;
+- catalog accounting is reconciled to the frozen HL-11 candidate, but runtime integration remains blocked on independent acceptance of that core candidate, reviewer acceptance of the corrected prototype and calibration direction, acceptance of the separately leased commerce/media decoupling slice, and a coordinated shared UI lease;
 - no production mutation or deployment is authorized by this lane.
 
-Private founder review now also has a generated full-catalog visual prototype under `founder-preview/`, with responsive evidence under `evidence/founder-preview/`. It covers all 423 customer targets and reuses the 25 Batch 0 renders only as provisional, non-public visual studies. It grants no image, price, catalog, commerce, Care, runtime, or deployment approval. See `FOUNDER_VISUAL_PROTOTYPE_2026-10-01.md` for the exact source pins, counts, screenshots, local preview command, prepared-but-unauthorized Batch 1 candidates, and remaining gates.
+Private founder review now also has a generated full-catalog visual prototype under `founder-preview/`, with responsive evidence under `evidence/founder-preview/`. It covers all 423 customer targets and uses only non-public Batch 0 studies. Reviewer-directed neutral substitutions cover 269 slots, and zero reviewed-rejected assets are selected. It grants no image, price, catalog, commerce, Care, runtime, or deployment approval. See `FOUNDER_VISUAL_PROTOTYPE_2026-10-01.md` for the exact source pins, counts, screenshots, local preview command, prepared-but-unauthorized calibration and Batch 1 candidates, and remaining gates.
 
 Authoritative generated artifacts:
 
@@ -24,6 +25,7 @@ Authoritative generated artifacts:
 - `manifests/renderer-packet-v3.json` — request-only sanitized renderer inputs;
 - `manifests/batch-000-provenance.json` — fixture identities that must never be sent to the renderer;
 - `manifests/batch-000-assets.json` — output hashes, renderer provenance, and approval state;
+- `manifests/batch-000-c2pa-provenance.json` - structurally decoded embedded generator, instance, action-time, and RFC3161 evidence for all 25 PNGs; not cryptographic validation or approval.
 - `manifests/fallback-assets.json` — the ten quarantined pre-v3 files;
 - `manifests/render-queue.json` — the 25-item Batch 0 queue only.
 - `evidence/batch0-render-receipts.json` — exact observed renderer and output bindings, not approval.
@@ -31,6 +33,7 @@ Authoritative generated artifacts:
 - `evidence/batch0-browser-review.json` — headless-browser evidence that all 25 exact originals decode at 1254×1254, plus a hash-bound full-page screenshot; this is QA evidence, not approval.
 - `founder-preview/catalog-data.json` - generated 423-target private preview projection pinned to the frozen core candidate.
 - `manifests/batch-001-prepared.json` - 25 exact-product candidates with render and publication authorization explicitly false.
-- `evidence/founder-preview/founder-preview-browser-evidence.json` - 40 responsive and interaction captures covering 423 of 423 QA IDs with zero broken images or network-boundary violations.
+- `manifests/global-art-direction-calibration-prepared.json` - five preparation-only calibration studies with render and publication authorization explicitly false.
+- `evidence/founder-preview/founder-preview-browser-evidence.json` - 43 responsive and interaction captures covering 423 of 423 QA IDs with zero broken images or network-boundary violations.
 
 Run `node scripts/product-imagery/build.mjs`, `node --test scripts/product-imagery/product-imagery.test.mjs`, and `node scripts/product-imagery/verify.mjs` after any source or evidence change.

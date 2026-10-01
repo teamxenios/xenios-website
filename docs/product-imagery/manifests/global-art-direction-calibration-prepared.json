@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "kind": "global_art_direction_calibration_plan_prepared_not_authorized",
+  "generatedAt": "2026-10-01T15:24:00.000Z",
+  "sourceReviewCommit": "023e9ec8899ded7f66f52ef3c21a799501d98084",
+  "requiredBeforeBatch1": true,
+  "renderAuthorization": false,
+  "publicationAuthorization": false,
+  "approvalStatus": "awaiting_explicit_render_authority_and_named_calibration_review",
+  "sharedDirection": {
+    "palette": "near-black, taupe, ivory, restrained purple-to-teal accent",
+    "camera": "one fixed three-quarter camera height and focal treatment across object studies",
+    "scale": "one fixed subject-height band with consistent negative space",
+    "lighting": "one controlled studio lighting plan aligned to the brand system",
+    "props": "no botanicals, spa props, invented packaging, logos, or manufacturer cues",
+    "truthRule": "the subject form and visible contents must match the authorized class evidence"
+  },
+  "count": 5,
+  "studies": [
+    {
+      "id": "calibration-01-vial",
+      "archetype": "vial",
+      "truthBoundary": "unlabeled vial; contents and color remain unspecified until identity evidence exists",
+      "promptStatus": "deferred_pending_explicit_render_authority",
+      "renderAuthorization": false,
+      "publicationAuthorization": false
+    },
+    {
+      "id": "calibration-02-bottle",
+      "archetype": "bottle",
+      "truthBoundary": "unlabeled form-appropriate bottle; no retail carton, Rx mimic, or brand cue",
+      "promptStatus": "deferred_pending_explicit_render_authority",
+      "renderAuthorization": false,
+      "publicationAuthorization": false
+    },
+    {
+      "id": "calibration-03-topical",
+      "archetype": "topical",
+      "truthBoundary": "neutral tube or pump matched to the authorized dosage form",
+      "promptStatus": "deferred_pending_explicit_render_authority",
+      "renderAuthorization": false,
+      "publicationAuthorization": false
+    },
+    {
+      "id": "calibration-04-care-state",
+      "archetype": "care_treatment",
+      "truthBoundary": "abstract pathway treatment; no clinic, room, provider, device, or eligibility claim",
+      "promptStatus": "deferred_pending_explicit_render_authority",
+      "renderAuthorization": false,
+      "publicationAuthorization": false
+    },
+    {
+      "id": "calibration-05-restrictive-state",
+      "archetype": "held_or_coming_soon",
+      "truthBoundary": "text-led state treatment; no product, package, partner, or availability cue",
+      "promptStatus": "deferred_pending_explicit_render_authority",
+      "renderAuthorization": false,
+      "publicationAuthorization": false
+    }
+  ]
+}

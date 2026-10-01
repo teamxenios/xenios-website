@@ -7,6 +7,9 @@ import {
   CORE_SOURCE_TREE,
   EXPECTED_CANONICAL_ROWS,
   EXPECTED_CUSTOMER_ROWS,
+  IMAGERY_REVIEWER_TIP_SHA,
+  PROTOTYPE_REVIEW_SHA,
+  REJECTED_BATCH0_JOB_IDS,
   SHIPPING_GROUP_ID,
   buildFounderPreviewData,
 } from "./build-founder-preview.mjs";
@@ -28,10 +31,42 @@ test("builds the pinned 424-to-423 private preview without commerce authority", 
   assert.equal(data.pricingAuthority, false);
   assert.equal(data.deploymentAuthorized, false);
   assert.equal(data.sources.coreCatalog.independentAcceptance, false);
-  assert.equal(data.sources.imageryReviewTarget.exactPerAssetDecisionReceived, false);
+  assert.equal(data.sources.imageryReviewTarget.exactPerAssetDecisionReceived, true);
+  assert.equal(data.sources.imageryReviewTarget.publicApprovalReceived, false);
+  assert.equal(data.sources.imageryReviewTarget.reviewerTipCommit, IMAGERY_REVIEWER_TIP_SHA);
+  assert.equal(data.sources.imageryReviewTarget.prototypeReviewCommit, PROTOTYPE_REVIEW_SHA);
   assert.equal(data.sources.mediaCommerceCandidate.acceptedForIntegration, false);
   assert.ok(!data.rows.some((row) => row.canonicalId === SHIPPING_GROUP_ID));
   assert.equal(new Set(data.rows.map((row) => row.manifestKey)).size, 423);
+});
+
+test("applies the exact reviewer substitutions without exposing a rejected Batch 0 asset", () => {
+  const data = buildFounderPreviewData();
+  const care = data.rows.filter((row) => row.pathway.key === "care");
+  const supplementRetail = data.rows.filter(
+    (row) => row.imageClass === "supplement_retail_unit_neutral",
+  );
+  const aceticAcid = data.rows.find((row) => row.canonicalId === "GRP-0362");
+  const lyophilizedGhkCu = data.rows.filter(
+    (row) =>
+      row.imageClass === "peptide_lyophilized_vial" &&
+      /GHK[\s-]?Cu/i.test(`${row.name} ${row.specification}`),
+  );
+
+  assert.equal(care.length, 242);
+  assert.equal(supplementRetail.length, 20);
+  assert.equal(lyophilizedGhkCu.length, 6);
+  assert.ok(care.every((row) => row.image.jobId === "batch0-20-neutral_product_identity"));
+  assert.ok(
+    supplementRetail.every((row) => row.image.jobId === "batch0-20-neutral_product_identity"),
+  );
+  assert.equal(aceticAcid.image.jobId, "batch0-20-neutral_product_identity");
+  assert.ok(
+    lyophilizedGhkCu.every((row) => row.image.jobId === "batch0-20-neutral_product_identity"),
+  );
+  assert.equal(data.counts.reviewerDirectedNeutralSlots, 269);
+  assert.equal(data.counts.rejectedBatch0AssetSlots, 0);
+  assert.ok(data.rows.every((row) => !REJECTED_BATCH0_JOB_IDS.has(row.image.jobId)));
 });
 
 test("gives every customer target a safe, non-public provisional slot", () => {
@@ -98,6 +133,98 @@ test("prepares exactly 22 Featured owners plus three deterministic diversity job
   assert.ok(data.batch1.every((job) => job.renderAuthorization === false));
   assert.ok(data.batch1.every((job) => job.publicationAuthorization === false));
   assert.ok(data.batch1.every((job) => job.status === "prepared_not_authorized_to_render"));
+});
+
+test("keeps the five-study art-direction calibration plan preparation-only", () => {
+  const plan = JSON.parse(
+    readFileSync(
+      join(
+        REPO_ROOT,
+        "docs/product-imagery/manifests/global-art-direction-calibration-prepared.json",
+      ),
+      "utf8",
+    ),
+  );
+  assert.equal(plan.count, 5);
+  assert.equal(plan.requiredBeforeBatch1, true);
+  assert.equal(plan.renderAuthorization, false);
+  assert.equal(plan.publicationAuthorization, false);
+  assert.deepEqual(
+    plan.studies.map((study) => study.archetype),
+    ["vial", "bottle", "topical", "care_treatment", "held_or_coming_soon"],
+  );
+  assert.ok(plan.studies.every((study) => study.renderAuthorization === false));
+  assert.ok(plan.studies.every((study) => study.publicationAuthorization === false));
+  assert.ok(plan.studies.every((study) => /deferred/.test(study.promptStatus)));
+  assert.match(plan.sharedDirection.props, /no botanicals/i);
+});
+
+test("records structural C2PA provenance for all 25 Batch 0 PNGs", () => {
+  const provenance = JSON.parse(
+    readFileSync(
+      join(REPO_ROOT, "docs/product-imagery/manifests/batch-000-c2pa-provenance.json"),
+      "utf8",
+    ),
+  );
+  const receipts = JSON.parse(
+    readFileSync(
+      join(REPO_ROOT, "docs/product-imagery/evidence/batch0-render-receipts.json"),
+      "utf8",
+    ),
+  );
+  const receiptShaByJob = new Map(
+    receipts.observations.map((observation) => [observation.jobId, observation.outputSha256]),
+  );
+  assert.equal(provenance.extraction.officialC2paValidatorUsed, false);
+  assert.match(provenance.extraction.authority, /not_cryptographic_validation/);
+  assert.equal(provenance.summary.assets, 25);
+  assert.equal(provenance.summary.caBxPresent, 25);
+  assert.equal(provenance.summary.sha256MatchesReceipts, 25);
+  assert.equal(provenance.summary.uniqueInstanceIds, 25);
+  assert.equal(provenance.summary.generatorName, "ChatGPT");
+  assert.equal(provenance.summary.generatorModel, "gpt-image");
+  assert.equal(provenance.summary.publicOrPublicationApproval, false);
+  assert.equal(new Set(provenance.assets.map((asset) => asset.instanceId)).size, 25);
+  assert.ok(
+    provenance.assets.every(
+      (asset) =>
+        asset.outputSha256 === receiptShaByJob.get(asset.jobId) &&
+        asset.generator.name === "ChatGPT" &&
+        asset.generator.model === "gpt-image" &&
+        asset.embeddedRfc3161Timestamp.iso.startsWith("2026-10-01T"),
+    ),
+  );
+  assert.equal(provenance.job19Observation.receiptMinusCreatedMs, "592529.415118");
+});
+
+test("records responsive browser proof for each reviewer-directed substitution class", () => {
+  const evidence = JSON.parse(
+    readFileSync(
+      join(
+        REPO_ROOT,
+        "docs/product-imagery/evidence/founder-preview/founder-preview-browser-evidence.json",
+      ),
+      "utf8",
+    ),
+  );
+  const capturesByName = new Map(evidence.captures.map((capture) => [capture.name, capture]));
+  const expected = [
+    ["review-fix-acetic-acid-detail-desktop", "GRP-0362"],
+    ["review-fix-ghk-cu-detail-desktop", "GRP-0287"],
+    ["review-fix-supplement-detail-desktop", "GRP-0366"],
+  ];
+  assert.equal(evidence.counts.captures, 43);
+  assert.equal(evidence.counts.gridCanonicalIdsCovered, 423);
+  assert.equal(evidence.counts.brokenImages, 0);
+  assert.equal(evidence.counts.severeConsoleMessages, 0);
+  assert.equal(evidence.counts.networkBoundaryViolations, 0);
+  for (const [name, canonicalId] of expected) {
+    const capture = capturesByName.get(name);
+    assert.ok(capture, `Missing reviewer-fix capture ${name}`);
+    assert.equal(capture.detailCanonicalId, canonicalId);
+    assert.equal(capture.detailAssetJob, "batch0-20-neutral_product_identity");
+    assert.equal(capture.assertions.horizontalOverflow, false);
+  }
 });
 
 test("keeps the preview static, local, noindex, and free of live forms", () => {

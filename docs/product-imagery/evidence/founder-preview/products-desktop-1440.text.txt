@@ -33,7 +33,7 @@ Held
 Quote only
 Binding pending
 423 products
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0001
 5-Amino-1Mq
@@ -73,7 +73,7 @@ ACETIC ACID 0.6% 5 mL
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0002
 Anastrozole
@@ -83,7 +83,7 @@ ANASTROZOLE 0.25MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0003
 Anastrozole
@@ -93,7 +93,7 @@ ANASTROZOLE 0.5MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0004
 Anastrozole
@@ -103,7 +103,7 @@ ANASTROZOLE 1MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0005
 Anastrozole Tablet
@@ -123,7 +123,7 @@ Retail unit / package
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0006
 Aod-9604
@@ -133,7 +133,7 @@ AOD-9604 1.2MG/ML (6MG/5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0007
 Aod-9604
@@ -163,7 +163,7 @@ AOD-9604 5 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0008
 Aod-9604 + MOTS-C + Tesamorelin + Ipamorelin
@@ -173,7 +173,7 @@ AOD-9604/MOTS-C/TESAMORELIN/IPAMORELIN 1.2MG-2MG-2MG-2MG/ML (5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0009
 Ara 290
@@ -213,7 +213,7 @@ ARA-290 5 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0010
 Ascorbic Acid
@@ -223,7 +223,7 @@ ASCORBIC ACID 500MG/ML INJ. (10ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0011
 Ascorbic Acid
@@ -253,7 +253,7 @@ BDNF (Brain-derived neurotrophic factor) (10mg)
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0019
 Benzocaine
@@ -263,7 +263,7 @@ BENZOCAINE 20% / LIDOCAINE 10% / TETRACAINE 10% TOPICAL CREAM 60ML PUMP
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0020
 Bi-Est
@@ -273,7 +273,7 @@ BI-EST 1.25MG (80/20) CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0021
 Bi-Est
@@ -283,7 +283,7 @@ BI-EST 2.5MG (80/20) CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0022
 Bi-Est
@@ -293,7 +293,7 @@ BI-EST 5MG (50/50) CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0023
 Bi-Est
@@ -303,7 +303,7 @@ BI-EST 5MG (80/20) CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0024
 Bi-Est
@@ -313,7 +313,7 @@ BI-EST 6MG (80/20) CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0025
 Bi-Est (80 + 20)
@@ -323,7 +323,7 @@ BI-EST (80/20) 2MG/ML CREAM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0026
 Bi-Est (80 + 20)
@@ -333,7 +333,7 @@ BI-EST (80/20) 3MG/ML CREAM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0027
 Bi-Pro-Test Cream
@@ -343,7 +343,7 @@ BI-PRO-TEST CREAM 0.25MG/100MG/0.25MG/GM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0028
 Bi-Pro-Test Cream
@@ -353,7 +353,7 @@ BI-PRO-TEST CREAM 0.25MG/100MG/1MG/GM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0029
 Biotin
@@ -373,7 +373,7 @@ BLEND BPC-157 + TB-500 500/500 mcg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0012
 BPC-157
@@ -383,7 +383,7 @@ BPC-157 3MG/ML (5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0013
 BPC-157
@@ -443,7 +443,7 @@ BPC-157 (20mg)
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0014
 BPC-157 + KPV
@@ -483,7 +483,7 @@ BPC-157 5 mg + TB-500 5 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0015
 BPC-157 + TB-500 + KPV + GHK-Cu 3-3-3-10Mg + Ml (5Ml)
@@ -493,7 +493,7 @@ BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0016
 BPC-157 + TB-500 + KPV 3-3-3Mg + Ml (No Copper) (5Ml)
@@ -503,7 +503,7 @@ BPC-157/TB500/KPV 3-3-3MG/ML (NO COPPER) (5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0017
 BPC-157 + TB-500 3-3Mg + Ml (5Ml)
@@ -523,7 +523,7 @@ Retail unit / package
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0018
 BRANCHED CHAIN AMINO ACIDS (BCAA)
@@ -533,7 +533,7 @@ Branched Chain Amino Acids (BCAA) ILE(0.4g) / L(0.3g) / V(1.2g) (30ml)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0032
 Cabergoline Tablets
@@ -583,7 +583,7 @@ CAGRILINTIDE 5 mg + SEMAGLUTIDE 5 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0033
 Cartalax (Aed, T-31)
@@ -593,7 +593,7 @@ CARTALAX (AED, t-31) 4MG/ML (5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0030
 CASHMERE CREAM
@@ -643,7 +643,7 @@ CJC-1295 WITH DAC + IPAMORELIN 5 mg total
 Price state
 Pricing not released
 View hold details
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0031
 CJC-1295 + Ipamorelin 2-2Mg + Ml (5Ml)
@@ -703,7 +703,7 @@ CJC-1295 - With DAC (10mg)
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0034
 Clomiphene
@@ -713,7 +713,7 @@ CLOMIPHENE 25MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0035
 Clomiphene
@@ -753,7 +753,7 @@ Curcumin (600mg)
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0036
 Dhea
@@ -763,7 +763,7 @@ DHEA 100MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0037
 Dhea
@@ -773,7 +773,7 @@ DHEA 25MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0038
 Dhea
@@ -783,7 +783,7 @@ DHEA 50MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0039
 Dihexa
@@ -793,7 +793,7 @@ DIHEXA 25MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0040
 Dihexa
@@ -823,7 +823,7 @@ DIHEXA 10 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0041
 Dsip
@@ -863,7 +863,7 @@ DSIP 2 mg + SELANK 10 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0042
 Elamipretide (Ss31)
@@ -873,7 +873,7 @@ ELAMIPRETIDE (SS31) 15MG/ML (5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0043
 Enclomiphene
@@ -883,7 +883,7 @@ ENCLOMIPHENE 12.5MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0044
 Enclomiphene
@@ -893,7 +893,7 @@ ENCLOMIPHENE 25MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0045
 Enclomiphene
@@ -903,7 +903,7 @@ ENCLOMIPHENE 50MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0046
 Epithalon
@@ -913,7 +913,7 @@ EPITHALON 10MG/ML (5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0047
 Epithalon
@@ -973,7 +973,7 @@ EPITHALON 50 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0048
 Estradiol
@@ -983,7 +983,7 @@ ESTRADIOL 0.25MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0049
 Estradiol
@@ -993,7 +993,7 @@ ESTRADIOL 0.5MG TABLET
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0050
 Estradiol
@@ -1003,7 +1003,7 @@ ESTRADIOL 0.75MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0051
 Estradiol
@@ -1013,7 +1013,7 @@ ESTRADIOL 1.25MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0052
 Estradiol
@@ -1023,7 +1023,7 @@ ESTRADIOL 1.5MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0053
 Estradiol
@@ -1033,7 +1033,7 @@ ESTRADIOL 1.75MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0054
 Estradiol
@@ -1043,7 +1043,7 @@ ESTRADIOL 10MG/ML CREAM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0055
 Estradiol
@@ -1053,7 +1053,7 @@ ESTRADIOL 1MG TABLET
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0056
 Estradiol
@@ -1063,7 +1063,7 @@ ESTRADIOL 2MG TABLET
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0057
 Estradiol
@@ -1073,7 +1073,7 @@ ESTRADIOL 4MG/ML CREAM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0058
 Estradiol
@@ -1093,7 +1093,7 @@ EXOSOME CREAM 30 mL
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0059
 Finasteride Tablet
@@ -1103,7 +1103,7 @@ FINASTERIDE TABLET 1MG
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0060
 Finasteride Tablet
@@ -1123,7 +1123,7 @@ Follistatin 344 (95%) (1mg)
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0061
 Foxo4-Dri
@@ -1143,7 +1143,7 @@ Retail unit / package
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0062
 GHK-Cu
@@ -1153,7 +1153,7 @@ GHK-CU 1% HAIR RESTORATION SOLUTION 30ML
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0063
 GHK-Cu
@@ -1213,7 +1213,7 @@ GHK-Cu 50 mg + EPITHALON 10 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0064
 GHK-Cu + Epithalon 10-2Mg + Ml (5Ml)
@@ -1223,7 +1223,7 @@ GHK-CU/EPITHALON 10-2MG/ML (5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0065
 GHK-Cu + Snap 8 Biocosmetic, Cream (GHK-Cu
@@ -1233,7 +1233,7 @@ GHK-CU + SNAP 8 BIOCOSMETIC, CREAM (GHK-CU 3% / ESTRIOL 0.3% / SNAP-8 1%) 30GM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0066
 GHK-Cu + Snap 8 Serum, Gel (GHK-Cu
@@ -1243,7 +1243,7 @@ GHK-CU + SNAP 8 SERUM, GEL (GHK-CU 3% / SNAP-8 1% / NIACINAMIDE 3%) 30ML
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0067
 GHK-Cu Biocosmetic, Cream (GHK-Cu
@@ -1253,7 +1253,7 @@ GHK-CU BIOCOSMETIC, CREAM (GHK-CU 3% / ESTRIOL 0.3%) 30GM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0068
 GHK-Cu Firming Serum, Gel (GHK-Cu
@@ -1353,7 +1353,7 @@ GLOW GHK-Cu(27mg) / BPC-157 (5mg) / TB-500 (10mg)
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0069
 Glutathione
@@ -1363,7 +1363,7 @@ GLUTATHIONE 200MG/ML (10ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0070
 Glutathione
@@ -1403,7 +1403,7 @@ GLUTATHIONE 600 mg
 Price state
 Pricing not released
 Request availability review
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0071
 Glycine
@@ -1413,7 +1413,7 @@ GLYCINE 50MG/ML (10ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0072
 Gonadorelin
@@ -1473,7 +1473,7 @@ HCG(120000iu)
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0073
 HCG Pregnyl 10,000Iu
@@ -1523,7 +1523,7 @@ Retail unit / package
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0075
 Ibutamoren
@@ -1533,7 +1533,7 @@ IBUTAMOREN 12.5MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0076
 Ibutamoren
@@ -1563,7 +1563,7 @@ IGF-1 LR3 1 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0074
 IGF-Lr3
@@ -1603,7 +1603,7 @@ IPAMORELIN 5 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0077
 Ketoconazole Cream (Ketoconazole
@@ -1613,7 +1613,7 @@ KETOCONAZOLE CREAM (KETOCONAZOLE 2% / NIACINAMIDE 4%) 30GM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0078
 Kisspeptin
@@ -1693,7 +1693,7 @@ KPV 5 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0079
 Kyzatrex (Oral Testosterone)
@@ -1703,7 +1703,7 @@ KYZATREX (ORAL TESTOSTERONE) 200MG
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0082
 Larazotide
@@ -1713,7 +1713,7 @@ LARAZOTIDE 250MCG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0083
 Larazotide
@@ -1723,7 +1723,7 @@ LARAZOTIDE 500MCG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0084
 Larazotide + KPV
@@ -1733,7 +1733,7 @@ LARAZOTIDE/KPV 500MCG-500MCG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0080
 LIBIDO CREAM (SCREAM CREAM)
@@ -1743,7 +1743,7 @@ LIBIDO CREAM (SCREAM CREAM): Testosterone Cypionate 0.1% / Sildenafil Citrate 0.
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0085
 Lidocaine
@@ -1753,7 +1753,7 @@ LIDOCAINE 23% / TETRACAINE 10% / PHENYLEPHRINE 0.5% TOPICAL CREAM 60ML PUMP
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0086
 Lidocaine
@@ -1763,7 +1763,7 @@ LIDOCAINE 23% / TETRACAINE 10% TOPICAL CREAM 60ML PUMP
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0087
 Lidocaine
@@ -1773,7 +1773,7 @@ LIDOCAINE 23% / TETRACAINE 7% / PRILOCAINE 2% TOPICAL CREAM 60ML PUMP
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0088
 Lipo-B (Cyanocobalamin + Mic) (10Ml)
@@ -1783,7 +1783,7 @@ LIPO-B (Cyanocobalamin/MIC) (10ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0089
 Lipo-B (Cyanocobalamin + Mic) (30Ml)
@@ -1793,7 +1793,7 @@ LIPO-B (Cyanocobalamin/MIC) (30ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0090
 Lipo-C (Cyanocobalamin + Mic + L-Carnitine) (10Ml)
@@ -1803,7 +1803,7 @@ LIPO-C (Cyanocobalamin/MIC/L-Carnitine) (10ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0091
 Lipo-C (Cyanocobalamin + Mic + L-Carnitine) (30Ml)
@@ -1833,7 +1833,7 @@ LIRAGLUTIDE 20 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0081
 LIVER SUPPORT
@@ -1873,7 +1873,7 @@ Retail unit / package
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0092
 Low Dose Naltrexone
@@ -1883,7 +1883,7 @@ LOW DOSE NALTREXONE 1.5MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0097
 Magnesium Chloride
@@ -1913,7 +1913,7 @@ Melanotan I 10 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0098
 Melanotan Ii
@@ -1933,7 +1933,7 @@ Melanotan II 10 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0099
 Metformin HCl Er Tablet
@@ -1943,7 +1943,7 @@ METFORMIN HCl ER TABLET 1000MG
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0100
 Metformin HCl Er Tablet
@@ -1953,7 +1953,7 @@ METFORMIN HCl ER TABLET 500MG
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0101
 Methylcobalamin
@@ -1963,7 +1963,7 @@ METHYLCOBALAMIN 5MG/ML (10ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0102
 Methylcobalamin
@@ -1973,7 +1973,7 @@ METHYLCOBALAMIN 5MG/ML (30ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0103
 Methylene Blue
@@ -1983,7 +1983,7 @@ METHYLENE BLUE 10MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0104
 Methylene Blue
@@ -1993,7 +1993,7 @@ METHYLENE BLUE 15MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0105
 Methylene Blue
@@ -2003,7 +2003,7 @@ METHYLENE BLUE 25MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0106
 Methylene Blue
@@ -2013,7 +2013,7 @@ METHYLENE BLUE 5MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0107
 Methylene Blue Anti-Aging Cream (Methylene Blue
@@ -2043,7 +2043,7 @@ MGF (IGF-1Ec) (5mg)
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0108
 Minoxidil
@@ -2053,7 +2053,7 @@ MINOXIDIL 5% / AZELAIC ACID 12.5% / FINASTERIDE 0.1% / KETOCONAZOLE 2% SOLUTION 
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0109
 Minoxidil
@@ -2063,7 +2063,7 @@ MINOXIDIL 5% / FINASTERIDE 0.1% SOLUTION 60ML
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0110
 Minoxidil
@@ -2083,7 +2083,7 @@ Retail unit / package
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0093
 MOTS-C
@@ -2093,7 +2093,7 @@ MOTS-C 10MG/ML (5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0094
 MOTS-C
@@ -2123,7 +2123,7 @@ MOTS-C 40 mg
 Price state
 Pricing not released
 Request availability review
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0095
 MYERS' COCKTAIL
@@ -2133,7 +2133,7 @@ MYERS’ COCKTAIL (Thiamine 10mg, Niacinamide 10mg, Pyridoxine 0.2mg, Riboflavin
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0096
 MYERS' COCKTAIL
@@ -2143,7 +2143,7 @@ MYERS’ COCKTAIL (Thiamine 10mg, Niacinamide 10mg, Pyridoxine 0.2mg, Riboflavin
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0111
 NAD+
@@ -2153,7 +2153,7 @@ NAD+ 100MG/ML (10ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0112
 NAD+
@@ -2183,7 +2183,7 @@ NAD+ 500 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0113
 Nandrolone
@@ -2193,7 +2193,7 @@ NANDROLONE 200MG/ML GRAPE SEED OIL (10ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0114
 Nandrolone
@@ -2213,7 +2213,7 @@ Retail unit / package
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0115
 Ondansetron
@@ -2223,7 +2223,7 @@ ONDANSETRON 4MG ODT (ZOFRAN) 30 TABLETS (AntiNausea)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0116
 Oxandrolone
@@ -2233,7 +2233,7 @@ OXANDROLONE 25MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0117
 Oxandrolone
@@ -2243,7 +2243,7 @@ OXANDROLONE 50MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0118
 Oxandrolone
@@ -2253,7 +2253,7 @@ OXANDROLONE 5MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0119
 Oxymetholone
@@ -2263,7 +2263,7 @@ OXYMETHOLONE 25MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0120
 Oxymetholone
@@ -2303,7 +2303,7 @@ OXYTOCIN 10 mg
 Price state
 Pricing not released
 Request availability review
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0121
 Oxytocin Nasal Spray
@@ -2313,7 +2313,7 @@ OXYTOCIN NASAL SPRAY 100 IU/ML (10ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0122
 Oxytocin Nasal Spray
@@ -2323,7 +2323,7 @@ OXYTOCIN NASAL SPRAY 100 IU/ML (15ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0123
 Oxytocin Troche
@@ -2333,7 +2333,7 @@ OXYTOCIN TROCHE 120 IU
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0124
 Oxytocin Troche
@@ -2353,7 +2353,7 @@ PE-22-28 (10mg)
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0127
 Peg-Mgf
@@ -2373,7 +2373,7 @@ Retail unit / package
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0128
 Phentermine HCl
@@ -2383,7 +2383,7 @@ PHENTERMINE HCL 15MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0129
 Phentermine HCl
@@ -2393,7 +2393,7 @@ PHENTERMINE HCL 30MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0130
 Phentermine HCl
@@ -2403,7 +2403,7 @@ PHENTERMINE HCL 45MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0131
 Phentermine SR
@@ -2413,7 +2413,7 @@ PHENTERMINE SR 37.5MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0132
 Phentermine SR
@@ -2423,7 +2423,7 @@ PHENTERMINE SR 45MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0133
 Phenylephrine Inj
@@ -2453,7 +2453,7 @@ Retail unit / package
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0134
 Progesterone
@@ -2463,7 +2463,7 @@ PROGESTERONE 100MG SR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0135
 Progesterone
@@ -2473,7 +2473,7 @@ PROGESTERONE 125MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0136
 Progesterone
@@ -2483,7 +2483,7 @@ PROGESTERONE 125MG SR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0137
 Progesterone
@@ -2493,7 +2493,7 @@ PROGESTERONE 150MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0138
 Progesterone
@@ -2503,7 +2503,7 @@ PROGESTERONE 150MG SR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0139
 Progesterone
@@ -2513,7 +2513,7 @@ PROGESTERONE 175MG SR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0140
 Progesterone
@@ -2523,7 +2523,7 @@ PROGESTERONE 200MG SR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0141
 Progesterone
@@ -2533,7 +2533,7 @@ PROGESTERONE 200MG/ML CREAM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0142
 Progesterone
@@ -2543,7 +2543,7 @@ PROGESTERONE 225MG SR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0143
 Progesterone
@@ -2553,7 +2553,7 @@ PROGESTERONE 250MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0144
 Progesterone
@@ -2563,7 +2563,7 @@ PROGESTERONE 250MG SR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0145
 Progesterone
@@ -2573,7 +2573,7 @@ PROGESTERONE 250MG/ML CREAM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0146
 Progesterone
@@ -2583,7 +2583,7 @@ PROGESTERONE 25MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0147
 Progesterone
@@ -2593,7 +2593,7 @@ PROGESTERONE 25MG SR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0148
 Progesterone
@@ -2603,7 +2603,7 @@ PROGESTERONE 300MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0149
 Progesterone
@@ -2613,7 +2613,7 @@ PROGESTERONE 300MG SR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0150
 Progesterone
@@ -2623,7 +2623,7 @@ PROGESTERONE 50MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0151
 Progesterone
@@ -2633,7 +2633,7 @@ PROGESTERONE 50MG SR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0152
 Progesterone
@@ -2643,7 +2643,7 @@ PROGESTERONE 50MG/ML CREAM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0153
 Progesterone
@@ -2653,7 +2653,7 @@ PROGESTERONE 75MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0154
 Progesterone
@@ -2663,7 +2663,7 @@ PROGESTERONE 75MG SR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0125
 PT-141
@@ -2693,7 +2693,7 @@ PT-141 (5mg)
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0126
 PT-141 Nasal Spray
@@ -2913,7 +2913,7 @@ GLP-1 (2mg)
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0157
 Semaglutide + B12
@@ -2923,7 +2923,7 @@ SEMAGLUTIDE/B12 0.6MG-500MCG/ML (2ML) (1.2mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0158
 Semaglutide + B12
@@ -2933,7 +2933,7 @@ SEMAGLUTIDE/B12 1.2MG-500MCG/ML (2ML) (2.4mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0159
 Semaglutide + B12
@@ -2943,7 +2943,7 @@ SEMAGLUTIDE/B12 10MG-500MCG/ML (3ML) (30mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0160
 Semaglutide + B12
@@ -2953,7 +2953,7 @@ SEMAGLUTIDE/B12 2.2MG-500MCG/ML (2ML) (4.4mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0161
 Semaglutide + B12
@@ -2963,7 +2963,7 @@ SEMAGLUTIDE/B12 2.5MG-500MCG/ML (5ML) (12.5mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0162
 Semaglutide + B12
@@ -2973,7 +2973,7 @@ SEMAGLUTIDE/B12 3.4MG-500MCG/ML (2ML) (6.8mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0163
 Semaglutide + B12
@@ -2983,7 +2983,7 @@ SEMAGLUTIDE/B12 4.1MG-500MCG/ML (2ML) (8.2mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0164
 Semaglutide + B12
@@ -2993,7 +2993,7 @@ SEMAGLUTIDE/B12 5.6MG-500MCG/ML (2ML) (11.2mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0165
 Semaglutide + B12
@@ -3003,7 +3003,7 @@ SEMAGLUTIDE/B12 5MG-500MCG/ML (3ML) (15mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0166
 Semaglutide + B12
@@ -3023,7 +3023,7 @@ SEMAGLUTIDE+BPC-157 5 mg/650 mcgmg/mcg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0167
 Semaglutide + Glycine
@@ -3033,7 +3033,7 @@ SEMAGLUTIDE/ GLYCINE 5MG-2.5MG/ML (2ML) (10mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0168
 Semaglutide + Glycine
@@ -3063,7 +3063,7 @@ Semax (30mg)
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0169
 Semax + Selank
@@ -3083,7 +3083,7 @@ SEMAX 10 mg + SELANK 10 mg + DSIP 2 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0170
 Sermorelin
@@ -3123,7 +3123,7 @@ SERMORELIN 5 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0171
 Sermorelin + Ipamorelin
@@ -3133,7 +3133,7 @@ SERMORELIN/IPAMORELIN 3MG-3.6MG/ML (5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0172
 Sildenafil
@@ -3143,7 +3143,7 @@ SILDENAFIL 100MG TABLET
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0173
 Sildenafil
@@ -3153,7 +3153,7 @@ SILDENAFIL 110MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0174
 Sildenafil
@@ -3163,7 +3163,7 @@ SILDENAFIL 50MG TABLET
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0175
 Sildenafil
@@ -3173,7 +3173,7 @@ SILDENAFIL 55MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0176
 Sildenafil + Tadalafil
@@ -3183,7 +3183,7 @@ SILDENAFIL/TADALAFIL 50MG-10MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0177
 Sildenafil SR
@@ -3193,7 +3193,7 @@ SILDENAFIL SR 110MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0178
 Sildenafil SR
@@ -3203,7 +3203,7 @@ SILDENAFIL SR 36MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0179
 Sildenafil SR
@@ -3213,7 +3213,7 @@ SILDENAFIL SR 55MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0180
 Sildenafil SR
@@ -3223,7 +3223,7 @@ SILDENAFIL SR 75MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0155
 SLU-PP-332
@@ -3253,7 +3253,7 @@ SLU-PP-332 500 mcg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0156
 SLU-PP-332 + Bam 15 Capsule
@@ -3303,7 +3303,7 @@ SS-31 (15mg)
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0181
 Stanozolol
@@ -3313,7 +3313,7 @@ STANOZOLOL 10MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0182
 Stanozolol
@@ -3323,7 +3323,7 @@ STANOZOLOL 25MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0183
 Stanozolol
@@ -3333,7 +3333,7 @@ STANOZOLOL 50MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0184
 Stanozolol
@@ -3383,7 +3383,7 @@ Syringes & Alcohol Swabs
 Price state
 Price on request
 Request a quote
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0185
 T4 + T3
@@ -3393,7 +3393,7 @@ T4/T3 114MCG/27MCG IR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0186
 T4 + T3
@@ -3403,7 +3403,7 @@ T4/T3 152MCG/36MCG IR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0187
 T4 + T3
@@ -3413,7 +3413,7 @@ T4/T3 19MCG/4.5MCG IR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0188
 T4 + T3
@@ -3423,7 +3423,7 @@ T4/T3 28.5MCG/6.8MCG IR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0189
 T4 + T3
@@ -3433,7 +3433,7 @@ T4/T3 38MCG/9MCG IR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0190
 T4 + T3
@@ -3443,7 +3443,7 @@ T4/T3 50MCG/10MCG IR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0191
 T4 + T3
@@ -3453,7 +3453,7 @@ T4/T3 50MCG/15MCG IR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0192
 T4 + T3
@@ -3463,7 +3463,7 @@ T4/T3 57MCG/13.5MCG IR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0193
 T4 + T3
@@ -3473,7 +3473,7 @@ T4/T3 76MCG/18MCG IR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0194
 T4 + T3
@@ -3483,7 +3483,7 @@ T4/T3 95MCG/22.5MCG IR CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0195
 Tadalafil
@@ -3493,7 +3493,7 @@ TADALAFIL 10MG TABLET
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0196
 Tadalafil
@@ -3503,7 +3503,7 @@ TADALAFIL 12MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0197
 Tadalafil
@@ -3513,7 +3513,7 @@ TADALAFIL 20MG TABLET
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0198
 Tadalafil
@@ -3523,7 +3523,7 @@ TADALAFIL 24MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0199
 Tadalafil
@@ -3533,7 +3533,7 @@ TADALAFIL 5MG TABLET
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0200
 Tadalafil SR
@@ -3543,7 +3543,7 @@ TADALAFIL SR 12MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0201
 Tadalafil SR
@@ -3553,7 +3553,7 @@ TADALAFIL SR 18MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0202
 Tadalafil SR
@@ -3563,7 +3563,7 @@ TADALAFIL SR 24MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0203
 Tadalafil SR
@@ -3573,7 +3573,7 @@ TADALAFIL SR 6MG CAPSULE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0204
 Tadalafil Troche
@@ -3583,7 +3583,7 @@ TADALAFIL TROCHE 20MG
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0205
 Tadalafil Troche
@@ -3593,7 +3593,7 @@ TADALAFIL TROCHE 25MG
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0206
 Tamoxifen
@@ -3603,7 +3603,7 @@ TAMOXIFEN 10MG TABLET
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0207
 Tb-500
@@ -3643,7 +3643,7 @@ TB-500 5 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0208
 Tesamorelin
@@ -3653,7 +3653,7 @@ TESAMORELIN 3MG/ML (5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0209
 Tesamorelin
@@ -3693,7 +3693,7 @@ Tesamorelin (8mg) x 4 pack
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0210
 Tesamorelin + Ipamorelin
@@ -3733,7 +3733,7 @@ Tesamorelin + MGF + Ipamorelin
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0211
 Tesofensine
@@ -3773,7 +3773,7 @@ Tesofensine (500mcg) Capsules x30
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0212
 Testosterone
@@ -3783,7 +3783,7 @@ TESTOSTERONE 100MG/GM TOPICAL CREAM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0213
 Testosterone
@@ -3793,7 +3793,7 @@ TESTOSTERONE 10MG/GM TOPICAL CREAM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0214
 Testosterone
@@ -3803,7 +3803,7 @@ TESTOSTERONE 14MG/GM TOPICAL CREAM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0215
 Testosterone
@@ -3813,7 +3813,7 @@ TESTOSTERONE 200MG/GM TOPICAL CREAM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0216
 Testosterone
@@ -3823,7 +3823,7 @@ TESTOSTERONE 30MG/GM TOPICAL CREAM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0217
 Testosterone
@@ -3833,7 +3833,7 @@ TESTOSTERONE 50MG/GM TOPICAL CREAM
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0218
 Testosterone Cyp
@@ -3843,7 +3843,7 @@ TESTOSTERONE CYP 200MG/ML COTTON SEED OIL (10ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0219
 Testosterone Cyp
@@ -3853,7 +3853,7 @@ TESTOSTERONE CYP 200MG/ML GRAPE SEED OIL (10ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0220
 Testosterone Cyp
@@ -3863,7 +3863,7 @@ TESTOSTERONE CYP 200MG/ML GRAPE SEED OIL (5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0221
 Testosterone Cyp
@@ -3873,7 +3873,7 @@ TESTOSTERONE CYP 200MG/ML MCT OIL (5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0222
 Testosterone Cyp
@@ -3883,7 +3883,7 @@ TESTOSTERONE CYP 20MG/ML GRAPE SEED OIL (2ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0223
 Testosterone Cyp
@@ -3893,7 +3893,7 @@ TESTOSTERONE CYP 50MG/ML GRAPE SEED OIL (2ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0224
 Testosterone Ent
@@ -3903,7 +3903,7 @@ TESTOSTERONE ENT 200MG/ML GRAPE SEED OIL (5ML)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0225
 Testosterone Pro
@@ -3923,7 +3923,7 @@ THYMALIN 10 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0226
 Thymosin Alpha-1
@@ -4073,7 +4073,7 @@ TIRZEPATIDE 60 mg
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0227
 Tirzepatide + B12
@@ -4083,7 +4083,7 @@ TIRZEPATIDE/B12 10.5MG-500MCG/ML (5ML) (52.5mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0228
 Tirzepatide + B12
@@ -4093,7 +4093,7 @@ TIRZEPATIDE/B12 10MG-500MCG/ML (3ML) (30mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0229
 Tirzepatide + B12
@@ -4103,7 +4103,7 @@ TIRZEPATIDE/B12 12MG-500MCG/ML (2ML) (24mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0230
 Tirzepatide + B12
@@ -4113,7 +4113,7 @@ TIRZEPATIDE/B12 17MG-500MCG/ML (2ML) (34mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0231
 Tirzepatide + B12
@@ -4123,7 +4123,7 @@ TIRZEPATIDE/B12 20MG-500MCG/ML (3ML) (60mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0232
 Tirzepatide + B12
@@ -4133,7 +4133,7 @@ TIRZEPATIDE/B12 22MG-500MCG/ML (2ML) (44mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0233
 Tirzepatide + B12
@@ -4143,7 +4143,7 @@ TIRZEPATIDE/B12 28MG-500MCG/ML (2ML) (56mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0234
 Tirzepatide + B12
@@ -4153,7 +4153,7 @@ TIRZEPATIDE/B12 30MG-500MCG/ML (6ML) (180mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0235
 Tirzepatide + B12
@@ -4163,7 +4163,7 @@ TIRZEPATIDE/B12 33MG-500MCG/ML (2ML) (66mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0236
 Tirzepatide + B12
@@ -4173,7 +4173,7 @@ TIRZEPATIDE/B12 6MG-500MCG/ML (2ML) (12mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0237
 Tirzepatide + Glycine
@@ -4183,7 +4183,7 @@ TIRZEPATIDE/GLYCINE 15MG-2.5MG/0.5ML (2ML) (60mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0238
 Tirzepatide + Glycine
@@ -4193,7 +4193,7 @@ TIRZEPATIDE/GLYCINE 15MG-2.5MG/0.5ML (6ML) (180mg vial)
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0239
 Trimix (Papaverine
@@ -4233,7 +4233,7 @@ Retail unit / package
 Price state
 Price omitted from static preview
 View product
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0241
 Vardenafil
@@ -4243,7 +4243,7 @@ VARDENAFIL 20MG TROCHE
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0240
 VITAMIN B-COMPLEX
@@ -4253,7 +4253,7 @@ VITAMIN B-COMPLEX (Thiamine 100mg, Niacinamide 100mg, Riboflavin-5- Phosphate 2m
 Price state
 Care pricing withheld
 Review Care pathway
-PROVISIONAL STATE VISUAL
+PROVISIONAL CLASS VISUAL
 CARE PATHWAY
 GRP-0242
 Vitamin D3 50,000Iu + Ml (30Ml)

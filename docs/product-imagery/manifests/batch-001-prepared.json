@@ -1,13 +1,17 @@
 {
   "schemaVersion": 1,
   "kind": "batch_001_exact_identity_jobs_prepared_not_authorized",
-  "generatedAt": "2026-10-01T13:51:06.888Z",
+  "generatedAt": "2026-10-01T15:24:00.000Z",
   "runtimeAuthority": false,
   "renderAuthorization": false,
   "publicationAuthorization": false,
   "sourceCoreCommit": "4cba24af1d42ad59fe44856859cc1721846e6df5",
   "imageryReviewTargetCommit": "184d820a2a20152649b67892ec0a5467857d5290",
-  "gate": "Do not render until exact per-asset imagery review, independent HL-11 catalog acceptance, media-commerce integration acceptance, and exact repository ownership gates all clear.",
+  "imageryReviewCommit": "023e9ec8899ded7f66f52ef3c21a799501d98084",
+  "calibrationSetRequired": true,
+  "calibrationSetRendered": false,
+  "calibrationSetApproved": false,
+  "gate": "Do not render Batch 1 until a separate five-to-six-image calibration set locks the global art direction, then independent HL-11 catalog acceptance, media-commerce integration acceptance, and exact repository ownership gates all clear.",
   "count": 25,
   "jobs": [
     {
