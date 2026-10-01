@@ -3288,7 +3288,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T06:26:41.299Z",
-      "heartbeatAt": "2026-10-01T14:08:42.169Z"
+      "heartbeatAt": "2026-10-01T14:19:43.960Z"
     },
     {
       "id": "50a8e190-b0e1-479e-8b7b-7be25b0ad42f",
@@ -3428,6 +3428,22 @@
       "state": "handoff",
       "claimedAt": "2026-10-01T13:28:09.746Z",
       "heartbeatAt": "2026-10-01T14:08:42.169Z"
+    },
+    {
+      "id": "7dffe9ad-6181-4bac-b90f-ff17acf7f4f1",
+      "task": "HEALTH-HL01-CATALOG-DETAIL-DISCLOSURE-20261001",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "client/src/research/assisted-order/AssistedOrderPage.tsx",
+        "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+        "client/src/research/assisted-order/assisted-order.css",
+        "client/src/research/assisted-order/assisted-order-accessibility.test.ts",
+        "docs/health-launch/HL01_CATALOG_DETAILS_20261001.md",
+        "docs/health-launch/evidence/hl01-catalog-details-20261001/"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-01T14:15:39.796Z",
+      "heartbeatAt": "2026-10-01T14:19:43.960Z"
     }
   ],
   "rules": [

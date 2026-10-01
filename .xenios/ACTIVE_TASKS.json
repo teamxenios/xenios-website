@@ -3,6 +3,24 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "HEALTH-HL01-CATALOG-DETAIL-DISCLOSURE-20261001",
+      "title": "Inspect exact catalog variant facts and request limits before selecting a product",
+      "priority": "P2",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "client/src/research/assisted-order/AssistedOrderPage.tsx",
+        "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+        "client/src/research/assisted-order/assisted-order.css",
+        "client/src/research/assisted-order/assisted-order-accessibility.test.ts",
+        "docs/health-launch/HL01_CATALOG_DETAILS_20261001.md",
+        "docs/health-launch/evidence/hl01-catalog-details-20261001/"
+      ],
+      "dependsOn": [],
+      "scopeNote": "After pushed HL17 handoff faba3f5. Native per-card detail disclosure in existing AssistedOrderPage only. Read current projected facts and request limits; no inferred format/pack basis, dosage, price, availability or new public product route. Preserve composite variant identity, Care price withholding and independent path, all five workflow actions, held denial, selection/fingerprint/server authority and existing visible restrictions. No image/media paths, SQL, provider, release-control or hosted edits. Root owns runtime and records; delegate disjoint tests after claim. No claims that native zoom or full release qualification follows from DOM checks.",
+      "claimedAt": "2026-10-01T14:15:39.788Z"
+    },
+    {
       "id": "HEALTH-HL17-ACCESS-HUB-RESTORE-20261001",
       "title": "Restore the existing Research access hub across client and direct document navigation",
       "priority": "P2",
