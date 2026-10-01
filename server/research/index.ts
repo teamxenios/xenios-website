@@ -423,8 +423,9 @@ export function registerResearchApi(app: Express) {
 
   // The assisted-order parameterized doors, anchored on the exact generated
   // shapes and nothing else: the public reference XRR-<8 digits>-<10 upper hex>
-  // for the customer status read, and the lowercase v4 uuid ids for the two
-  // document writes. A lookalike segment, an extra segment, and a wrong method
+  // for customer status/quote reads and explicit quote acceptance, and the
+  // lowercase uuid ids for the two document writes. A lookalike segment,
+  // an extra segment, and a wrong method
   // all fail the match and stay walled, so a future route under this namespace
   // is walled by default until it is listed on purpose. Each handler still
   // owns its own, STRONGER gate: the session or member viewer, then ownership
@@ -435,7 +436,10 @@ export function registerResearchApi(app: Express) {
   const ASSISTED_ORDER_UUID_SEGMENT =
     "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
   const EARLY_ACCESS_ASSISTED_ORDER_READ = new RegExp(
-    `^/early-access/assisted-orders/(?:${ASSISTED_ORDER_REFERENCE_SEGMENT})$`,
+    `^/early-access/assisted-orders/(?:${ASSISTED_ORDER_REFERENCE_SEGMENT})(?:/quote)?$`,
+  );
+  const EARLY_ACCESS_ASSISTED_ORDER_QUOTE_ACCEPT = new RegExp(
+    `^/early-access/assisted-orders/(?:${ASSISTED_ORDER_REFERENCE_SEGMENT})/quote/accept$`,
   );
   const EARLY_ACCESS_ASSISTED_ORDER_WRITE = new RegExp(
     `^/early-access/assisted-orders/(?:${ASSISTED_ORDER_UUID_SEGMENT})/documents(?:/(?:${ASSISTED_ORDER_UUID_SEGMENT})/complete|/upload-url)$`,
@@ -734,6 +738,7 @@ export function registerResearchApi(app: Express) {
         (EARLY_ACCESS_OPEN_WRITE_PATHS.has(req.path) ||
           EARLY_ACCESS_ORDER_WRITE.test(req.path) ||
           EARLY_ACCESS_CART_WRITE.test(req.path) ||
+          EARLY_ACCESS_ASSISTED_ORDER_QUOTE_ACCEPT.test(req.path) ||
           EARLY_ACCESS_ASSISTED_ORDER_WRITE.test(req.path)))
     ) {
       return next();

@@ -261,6 +261,16 @@ function fail(response: SupabaseRpcResponse, operation: string): never {
       "Payment cannot be marked verified until an accepted quote and matched payment record are available.",
     );
   }
+  if (code === "P0001" && [
+    "ASSISTED_ORDER_REFUND_AUTHORITY_NOT_READY",
+    "ASSISTED_ORDER_HISTORICAL_PAID_UNRESOLVED",
+    "ASSISTED_ORDER_PAYMENT_VERIFICATION_REQUIRED",
+  ].includes(error?.details ?? "")) {
+    throw new AssistedOrderConflictError(
+      "financial_resolution_required",
+      "This transition requires verified payment or a governed financial resolution.",
+    );
+  }
   // Serialization failures are retryable conflicts, not server faults.
   if (code === "40001") {
     throw new AssistedOrderConflictError(
@@ -273,6 +283,20 @@ function fail(response: SupabaseRpcResponse, operation: string): never {
 
 export class SupabaseAssistedOrderRepository implements AssistedOrderRepository {
   public constructor(private readonly client: SupabaseRpcClient) {}
+
+  public async getFinancialState(requestId: string) {
+    const response = await this.client.rpc("research_assisted_order_financial_state", {
+      p_request_id: requestId,
+    });
+    if (response.error) fail(response, "research_assisted_order_financial_state");
+    if (response.data === null) return null;
+    const value = response.data as Record<string, unknown>;
+    if (typeof value.hasObservation !== "boolean" || typeof value.paymentVerified !== "boolean" ||
+        (value.paymentVerified && !value.hasObservation)) {
+      throw new Error("Financial state projection unavailable.");
+    }
+    return { hasObservation: value.hasObservation, paymentVerified: value.paymentVerified };
+  }
 
   public async createOrReplay(
     record: AssistedOrderCreateRecord,
@@ -345,6 +369,20 @@ export class SupabaseAssistedOrderRepository implements AssistedOrderRepository 
     if (!Object.prototype.hasOwnProperty.call(response.data, "trackingReference")) throw new Error("Status projection unavailable.");
     const view = decodeStatusView(response.data);
     if (view.publicReference !== authorization.publicReference) throw new Error("Status reference mismatch.");
+    if (view.status === "paid") {
+      // Owner authorization has already succeeded. A missing pending finance
+      // migration means unknown evidence, never an inferred verified payment.
+      const financial = await this.client.rpc("research_assisted_order_financial_state", { p_request_id: view.requestId });
+      if (financial.error && financial.error.code !== "PGRST202") {
+        fail(financial, "research_assisted_order_financial_state");
+      }
+      const evidence = financial.data as { hasObservation?: unknown; paymentVerified?: unknown } | null;
+      if (!financial.error && evidence !== null && (typeof evidence.hasObservation !== "boolean" ||
+          typeof evidence.paymentVerified !== "boolean" || (evidence.paymentVerified && !evidence.hasObservation))) {
+        throw new Error("Financial state projection unavailable.");
+      }
+      return Object.freeze({ ...view, paymentVerified: !financial.error && evidence?.paymentVerified === true });
+    }
     return view;
   }
 

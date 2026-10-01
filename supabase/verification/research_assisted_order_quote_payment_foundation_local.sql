@@ -19,6 +19,7 @@ declare
   v_verified jsonb;
   v_finance_actor uuid := '40000000-0000-4000-8000-000000000001';
   v_bad_observation uuid;
+  v_detail text;
 begin
   if has_table_privilege('anon', 'public.research_assisted_order_quotes', 'SELECT')
      or has_table_privilege('authenticated', 'public.research_assisted_order_payment_observations', 'SELECT')
@@ -246,6 +247,10 @@ begin
       'synthetic-finance-operator', now()
     );
   exception when unique_violation then v_failed := true;
+    when sqlstate 'P0001' then
+      get stacked diagnostics v_detail = PG_EXCEPTION_DETAIL;
+      if v_detail not in ('ASSISTED_ORDER_PAYMENT_REFERENCE_REUSED', 'ASSISTED_ORDER_PAYMENT_REVIEW_REQUIRED') then raise; end if;
+      v_failed := true;
   end;
   if not v_failed then raise exception 'Payment reference reused'; end if;
   raise notice 'HL-12 quote foundation PASS: exact lines/total, owner, stale total, replay, ACL';

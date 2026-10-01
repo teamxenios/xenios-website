@@ -349,6 +349,41 @@ describe("the assisted order admissions are exact", () => {
   const UUID = "0f9c1a2b-3d4e-4f50-8a1b-2c3d4e5f6071";
   const OTHER_UUID = "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d";
 
+  // These sentinels prove the wall reaches the downstream owner-guarded
+  // finance door. Financial ownership itself is tested by finance.test.ts;
+  // passing this gateway is deliberately not an authorization decision.
+  it.each([false, true])("reaches exact quote doors in public mode %s", async (publicMode) => {
+    process.env.RESEARCH_PUBLIC = String(publicMode);
+    const app = makeApp();
+    const read = `/api/research/early-access/assisted-orders/${REFERENCE}/quote`;
+    const accept = `${read}/accept`;
+    app.get(read, (_req, res) => res.status(403).json({ code: "quote_owner_guard" }));
+    app.post(accept, (_req, res) => res.status(403).json({ code: "quote_accept_owner_guard" }));
+    const quote = await request(app).get(read);
+    expect(quote.status).toBe(403);
+    expect(quote.body).toEqual({ code: "quote_owner_guard" });
+    const accepted = await request(app).post(accept).send({});
+    expect(accepted.status).toBe(403);
+    expect(accepted.body).toEqual({ code: "quote_accept_owner_guard" });
+    // Express's ordinary HEAD-to-GET behavior is admitted, never a write.
+    expect((await request(app).head(read)).status).toBe(403);
+  });
+
+  it.each([
+    ["get", `/api/research/early-access/assisted-orders/${REFERENCE}/quote/accept`],
+    ["post", `/api/research/early-access/assisted-orders/${REFERENCE}/quote`],
+    ["patch", `/api/research/early-access/assisted-orders/${REFERENCE}/quote/accept`],
+    ["post", `/api/research/early-access/assisted-orders/${REFERENCE}/quote/accept/extra`],
+    ["get", `/api/research/early-access/assisted-orders/${REFERENCE}/quote/extra`],
+    ["get", "/api/research/early-access/assisted-orders/XRR-20260815-a1b2c3d4e5/quote"],
+    ["post", "/api/research/early-access/assisted-orders/not-a-reference/quote/accept"],
+    ["get", `/api/research/early-access/assisted-orders/${UUID}/quote`],
+  ] as const)("keeps unlisted financial path %s %s walled", async (method, path) => {
+    const res = await request(makeApp())[method](path);
+    expect(res.status).toBe(401);
+    expect(res.body?.message).toBe(WALLED);
+  });
+
   it.each([
     "/api/research/early-access/assisted-orders/config",
     "/api/research/early-access/assisted-orders/catalog",

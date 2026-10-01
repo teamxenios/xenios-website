@@ -2,7 +2,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   ASSISTED_ORDER_STATUS_TOKEN_HEADER,
+  acceptAssistedOrderQuote,
   createAssistedOrderUploadTicket,
+  loadAssistedOrderQuote,
   loadAssistedOrderStatus,
   uploadAssistedOrderDocument,
 } from "./api";
@@ -17,6 +19,89 @@ function successfulJson(body: unknown): Response {
 
 afterEach(() => {
   vi.unstubAllGlobals();
+});
+
+describe("owner-bound customer quote transport and projection", () => {
+  const publicReference = "XRR-20260930-ABCDEF1234";
+  const quote = {
+    requestId: "11111111-1111-4111-8111-111111111111", publicReference,
+    quoteId: "22222222-2222-4222-8222-222222222222", version: 3, state: "issued",
+    lines: [{ lineId: "33333333-3333-4333-8333-333333333333", productName: "Synthetic research item",
+      specification: "10 mg", quantity: 2, unitPriceCents: 16927, lineTotalCents: 33854, currency: "USD" }],
+    totalCents: 33854, currency: "USD" as const, validUntil: "2099-09-30T20:00:00Z",
+    customerNote: null, acceptanceId: null, acceptedAt: null,
+  };
+  const acceptance = { quoteId: quote.quoteId, version: quote.version, totalCents: quote.totalCents,
+    currency: quote.currency, acceptanceId: "44444444-4444-4444-8444-444444444444", acceptedAt: "2026-09-30T12:00:00Z" };
+
+  it("gets an owner quote with only the member header and discards unprojected private fields", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(successfulJson({ ...quote, pricing_basis: { private: true } }));
+    vi.stubGlobal("fetch", fetchMock);
+    const actual = await loadAssistedOrderQuote(publicReference, "old-guest", "member-current");
+    expect(actual).toEqual(quote);
+    expect(actual).not.toHaveProperty("pricing_basis");
+    expect(fetchMock).toHaveBeenCalledWith(`/api/research/early-access/assisted-orders/${publicReference}/quote`,
+      expect.objectContaining({ credentials: "include", cache: "no-store", redirect: "error",
+        headers: { accept: "application/json", Authorization: "Bearer member-current" } }));
+  });
+
+  it("accepts only the displayed quote echo with a header-only guest credential", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(successfulJson({ ...acceptance, replayed: false }));
+    vi.stubGlobal("fetch", fetchMock);
+    expect(await acceptAssistedOrderQuote(publicReference, quote, "guest?private=token")).toEqual(acceptance);
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe(`/api/research/early-access/assisted-orders/${publicReference}/quote/accept`);
+    expect(init).toMatchObject({ method: "POST", credentials: "include", cache: "no-store", redirect: "error",
+      headers: { [ASSISTED_ORDER_STATUS_TOKEN_HEADER]: "guest?private=token" } });
+    expect(JSON.parse(String(init?.body))).toEqual({ quoteId: quote.quoteId, version: 3, expectedTotalCents: 33854 });
+    expect(String(url) + String(init?.body)).not.toContain("guest?private=token");
+  });
+
+  it("preserves form-not-stated line identities while displaying a null specification as empty", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(successfulJson({ ...quote,
+      lines: [{ ...quote.lines[0], specification: null }] })));
+    const result = await loadAssistedOrderQuote(publicReference);
+    expect(result.lines[0]).toEqual({ ...quote.lines[0], specification: "" });
+    expect(result.quoteId).toBe(quote.quoteId);
+    expect(result.requestId).toBe(quote.requestId);
+    expect(result.totalCents).toBe(quote.totalCents);
+  });
+
+  it("accepts ordinary multiline customer notes as literal text", async () => {
+    const customerNote = "Review the exact quantity.\nContact Support with questions.";
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(successfulJson({ ...quote, customerNote })));
+    expect((await loadAssistedOrderQuote(publicReference)).customerNote).toBe(customerNote);
+  });
+
+  it("member acceptance never inherits the prior guest credential or adds a token to the body", async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockResolvedValue(successfulJson(acceptance));
+    vi.stubGlobal("fetch", fetchMock);
+    await acceptAssistedOrderQuote(publicReference, quote, "old-guest", "member-current");
+    expect(fetchMock.mock.calls[0][1]?.headers).toMatchObject({ Authorization: "Bearer member-current" });
+    expect(fetchMock.mock.calls[0][1]?.headers).not.toHaveProperty(ASSISTED_ORDER_STATUS_TOKEN_HEADER);
+    expect(String(fetchMock.mock.calls[0][1]?.body)).not.toMatch(/old-guest|member-current/);
+  });
+
+  it.each([
+    { publicReference: "XRR-20260930-ABCDEF9999" }, { totalCents: 0 }, { totalCents: 33855 },
+    { currency: "EUR" }, { version: 0 }, { state: "paid" }, { lines: [] },
+    { lines: [...quote.lines, ...quote.lines], totalCents: 67708 },
+    { lines: [{ ...quote.lines[0], currency: "EUR" }] },
+    { lines: [{ ...quote.lines[0], specification: undefined }] },
+    { lines: [{ ...quote.lines[0], unitPriceCents: 0 }] },
+    { state: "accepted" }, { validUntil: "not-a-date" },
+  ])("refuses unusable financial quote data %j", async (override) => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(successfulJson({ ...quote, ...override })));
+    await expect(loadAssistedOrderQuote(publicReference)).rejects.toMatchObject({ code: "quote_unusable" });
+  });
+
+  it.each([null, { ...acceptance, currency: "EUR" }, { ...acceptance, version: 4 },
+    { ...acceptance, totalCents: 33855 }, { ...acceptance, quoteId: "other" },
+    { ...acceptance, acceptanceId: null }, { ...acceptance, acceptedAt: null }])(
+    "does not turn an absent or mismatched acceptance response into a success", async (body) => {
+      vi.stubGlobal("fetch", vi.fn().mockResolvedValue(successfulJson(body)));
+      await expect(acceptAssistedOrderQuote(publicReference, quote)).rejects.toMatchObject({ code: "quote_unusable" });
+    });
 });
 
 describe("loadAssistedOrderStatus", () => {

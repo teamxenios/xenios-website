@@ -14,6 +14,7 @@ import {
   AssistedOrderConflictError,
   AssistedOrderNotFoundError,
   AssistedOrderService,
+  AssistedOrderVerificationEffectsError,
 } from "./service";
 import type {
   AssistedOrderAttributionResolver,
@@ -148,6 +149,12 @@ function statusTokenFromHeader(
 }
 
 function errorResponse(error: unknown): AssistedOrderHttpResponse {
+  if (error instanceof AssistedOrderVerificationEffectsError) {
+    return ok(503, {
+      error: "payment_verification_effects_pending",
+      message: "Payment verification was recorded, but its notification or audit is pending. Retry the verification action.",
+    });
+  }
   if (error instanceof AssistedOrderValidationError) {
     return ok(400, {
       error: "validation_error",
@@ -414,9 +421,15 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
         method: "POST",
         path: "/api/admin/research/assisted-orders/:requestId/payment-observations/:observationId/verify",
         auth: "admin",
-        handler: (request) => handle(async () => ok(200, await finance.verifyManual(
-          await viewer(request), request.params.requestId ?? "", request.params.observationId ?? "",
-        ))),
+        handler: (request) => handle(async () => {
+          const resolvedViewer = await viewer(request);
+          const receipt = await finance.verifyManual(
+            resolvedViewer, request.params.requestId ?? "", request.params.observationId ?? "",
+          );
+          // Replays must retry interrupted effects using immutable receipt keys.
+          await service.recordPaymentVerificationEffects(resolvedViewer, receipt);
+          return ok(200, receipt);
+        }),
       },
     );
   }

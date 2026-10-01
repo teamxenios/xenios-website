@@ -40,7 +40,9 @@ import {
   AssistedOrderConflictError,
   AssistedOrderNotFoundError,
   AssistedOrderService,
+  AssistedOrderVerificationEffectsError,
 } from "./service";
+import type { AssistedOrderPaymentVerificationReceipt } from "./finance";
 
 const memberViewer: AssistedOrderViewer = Object.freeze({
   actorType: "member",
@@ -265,6 +267,92 @@ function harness(
 }
 
 describe("AssistedOrderService", () => {
+  it("retries payment verification effects with immutable identities after interrupted outbox writes", async () => {
+    const h = harness();
+    const submitted = await h.service.submit(memberViewer, input());
+    const receipt: AssistedOrderPaymentVerificationReceipt = {
+      verificationId: "55555555-5555-4555-8555-555555555555", requestId: submitted.requestId,
+      state: "paid", verifiedAt: "2026-08-15T12:15:00.000Z", verifiedBy: "persisted-finance-actor",
+      replayed: false,
+    };
+    vi.spyOn(h.repository, "getFinancialState").mockResolvedValue({ hasObservation: true, paymentVerified: true });
+    const originalDetail = (await h.repository.getAdmin(submitted.requestId))!;
+    vi.spyOn(h.repository, "getAdmin").mockResolvedValue({ ...originalDetail, status: "paid" });
+    h.audit.mockClear();
+    // Synthetic idempotent captures model the existing durable sink contracts;
+    // this is not a database qualification claim.
+    const auditEvents = new Map<string, unknown>();
+    h.audit.mockImplementation(async (event) => {
+      const earlier = auditEvents.get(event.eventId);
+      if (earlier) expect(event).toEqual(earlier);
+      auditEvents.set(event.eventId, event);
+    });
+    const notificationEvents = new Map<string, AssistedOrderNotificationIntent>();
+    const enqueue = vi.fn(async (intent: AssistedOrderNotificationIntent) => {
+      const earlier = notificationEvents.get(intent.dedupeKey);
+      if (earlier) expect(intent).toEqual(earlier);
+      notificationEvents.set(intent.dedupeKey, intent);
+    }).mockRejectedValueOnce(new Error("private outbox error"));
+    (h.deps.outbox as { enqueue: typeof enqueue }).enqueue = enqueue;
+    await expect(h.service.recordPaymentVerificationEffects(adminViewer, receipt))
+      .rejects.toBeInstanceOf(AssistedOrderVerificationEffectsError);
+    expect(auditEvents.size).toBe(1);
+    expect(notificationEvents.size).toBe(0);
+    vi.spyOn(h.repository, "getAdmin").mockResolvedValue({ ...originalDetail, status: "supplier_processing", updatedAt: "2026-08-16T12:00:00Z" });
+    await h.service.recordPaymentVerificationEffects({ ...adminViewer, actorLabel: "changed-caller-label" },
+      { ...receipt, replayed: true, state: "supplier_processing" });
+    await h.service.recordPaymentVerificationEffects(adminViewer, { ...receipt, replayed: true });
+    expect(auditEvents.size).toBe(1);
+    expect(notificationEvents.size).toBe(1);
+    expect(h.audit).toHaveBeenCalledTimes(3);
+    expect(auditEvents.get(receipt.verificationId)).toMatchObject({
+      actorId: receipt.verifiedBy, occurredAt: receipt.verifiedAt,
+      evidence: { from: "payment_review", to: "paid", authorityEvidenceKinds: ["payment_verification"] },
+    });
+    expect([...notificationEvents.values()][0]).toMatchObject({
+      eventId: receipt.verificationId, recipientAddress: originalDetail.email,
+      createdAt: receipt.verifiedAt,
+      dedupeKey: `assisted-order:${receipt.requestId}:payment-verification:${receipt.verificationId}`,
+      payload: { publicReference: originalDetail.publicReference, status: "paid",
+        customerMessage: "Payment verified. Fulfillment is reviewed separately." },
+    });
+  });
+
+  it("makes financial audit failures visible and retries them before enqueuing customer notice", async () => {
+    const h = harness();
+    const submitted = await h.service.submit(memberViewer, input());
+    const receipt: AssistedOrderPaymentVerificationReceipt = {
+      verificationId: "55555555-5555-4555-8555-555555555556", requestId: submitted.requestId,
+      state: "paid", verifiedAt: "2026-08-15T12:15:00.000Z", verifiedBy: "persisted-finance-actor", replayed: false,
+    };
+    vi.spyOn(h.repository, "getFinancialState").mockResolvedValue({ hasObservation: true, paymentVerified: true });
+    h.notifications.length = 0;
+    h.audit.mockRejectedValueOnce(new Error("private audit error"));
+    await expect(h.service.recordPaymentVerificationEffects(adminViewer, receipt))
+      .rejects.toBeInstanceOf(AssistedOrderVerificationEffectsError);
+    expect(h.notifications).toHaveLength(0);
+    await h.service.recordPaymentVerificationEffects(adminViewer, { ...receipt, replayed: true });
+    expect(h.notifications).toHaveLength(1);
+  });
+
+  it("never emits verified copy for historical labels or an unauthorized effects caller", async () => {
+    const h = harness();
+    const submitted = await h.service.submit(memberViewer, input());
+    const receipt: AssistedOrderPaymentVerificationReceipt = {
+      verificationId: "55555555-5555-4555-8555-555555555556", requestId: submitted.requestId,
+      state: "paid", verifiedAt: "2026-08-15T12:15:00.000Z", verifiedBy: "persisted-finance-actor", replayed: false,
+    };
+    h.audit.mockClear();
+    h.notifications.length = 0;
+    vi.spyOn(h.repository, "getFinancialState").mockResolvedValue({ hasObservation: false, paymentVerified: false });
+    await expect(h.service.recordPaymentVerificationEffects(adminViewer, receipt))
+      .rejects.toMatchObject({ code: "payment_verification_not_ready" });
+    await expect(h.service.recordPaymentVerificationEffects(memberViewer, receipt))
+      .rejects.toBeInstanceOf(AssistedOrderAuthorizationError);
+    expect(h.audit).not.toHaveBeenCalled();
+    expect(h.notifications).toHaveLength(0);
+  });
+
   it("refuses forged request agreement fields without durable server standing", async () => {
     const h = harness(item(), {
       submissionStanding: { accepted: async () => false },
@@ -769,6 +857,41 @@ describe("AssistedOrderService", () => {
       evidence: { cancellationReason: "Customer requested cancellation" },
     })).rejects.toMatchObject({ code: "payment_verification_not_ready" });
     expect((await h.repository.getAdmin(receipt.requestId))?.status).toBe("paid");
+  });
+
+  it("allows a verified paid request to advance only with separate supplier evidence", async () => {
+    const h = harness();
+    const receipt = await h.service.submit(memberViewer, input());
+    let fromStatus: AssistedOrderStatus = "submitted";
+    for (const toStatus of ["reviewing", "payment_pending", "payment_review", "paid"] as const) {
+      await h.repository.updateStatus({ requestId: receipt.requestId, fromStatus, toStatus,
+        actorId: "synthetic-finance", actorType: "system", customerMessage: null,
+        internalNote: null, evidence: {}, occurredAt: "2026-08-15T12:00:00.000Z" });
+      fromStatus = toStatus;
+    }
+    vi.spyOn(h.repository, "getFinancialState").mockResolvedValue({ hasObservation: true, paymentVerified: true });
+    await expect(h.service.updateStatus(adminViewer, receipt.requestId, {
+      status: "supplier_processing",
+    })).rejects.toMatchObject({ code: "supplier_assignment_required" });
+    await expect(h.service.updateStatus(adminViewer, receipt.requestId, {
+      status: "cancelled", evidence: { cancellationReason: "Not a refund" },
+    })).rejects.toMatchObject({ code: "financial_resolution_required" });
+    expect((await h.service.updateStatus(adminViewer, receipt.requestId, {
+      status: "supplier_processing", evidence: { supplierAssignmentId: "assignment-1" },
+    })).status).toBe("supplier_processing");
+  });
+
+  it("does not cancel unresolved observed money with a free-text reason", async () => {
+    const h = harness();
+    const receipt = await h.service.submit(memberViewer, input());
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "reviewing" });
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "payment_pending" });
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "payment_review" });
+    vi.spyOn(h.repository, "getFinancialState").mockResolvedValue({ hasObservation: true, paymentVerified: false });
+    await expect(h.service.updateStatus(adminViewer, receipt.requestId, {
+      status: "cancelled", evidence: { cancellationReason: "Customer request" },
+    })).rejects.toMatchObject({ code: "financial_resolution_required" });
+    expect((await h.repository.getAdmin(receipt.requestId))?.status).toBe("payment_review");
   });
 
   it("refuses repeat document completion after owner authorization without a second completion audit", async () => {

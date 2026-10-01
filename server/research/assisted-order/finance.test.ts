@@ -4,7 +4,7 @@ import { AssistedOrderFinanceService } from "./finance";
 import { createAssistedOrderRouteTable, ASSISTED_ORDER_STATUS_TOKEN_HEADER } from "./http";
 import type { AssistedOrderHttpRequest } from "./http";
 import type { AssistedOrderViewer } from "./ports";
-import type { AssistedOrderService } from "./service";
+import { AssistedOrderVerificationEffectsError, type AssistedOrderService } from "./service";
 import type { SupabaseRpcClient } from "./supabase-repository";
 
 const REQUEST = "10000000-0000-4000-8000-000000000011";
@@ -15,6 +15,8 @@ const OBSERVATION = "60000000-0000-4000-8000-000000000011";
 const REFERENCE = "XRR-20260930-ABCDEF0011";
 const quote = { requestId: REQUEST, publicReference: REFERENCE, quoteId: QUOTE,
   version: 1, totalCents: 5000, currency: "USD", state: "issued", lines: [] };
+const verification = { verificationId: QUOTE, requestId: REQUEST, state: "paid",
+  verifiedAt: "2026-09-30T20:01:00.000Z", verifiedBy: "admin@example.test", replayed: false };
 
 const admin: AssistedOrderViewer = {
   actorType: "admin", memberId: null, authUserId: ADMIN,
@@ -118,16 +120,93 @@ describe("HL-12 mounted finance boundary", () => {
         p_observed_at: "2026-09-30T20:00:00.000Z", p_provider_name: null }));
   });
 
+  it("corrects only independently checked evidence and binds the replaced observation to the request/quote", async () => {
+    const rpc = vi.fn(async () => ({ data: { observationId: QUOTE }, error: null }));
+    const evidence = { verify: vi.fn(async () => ({ observedAt: "2026-09-30T20:00:00.000Z" })) };
+    const service = new AssistedOrderFinanceService({ rpc } as SupabaseRpcClient, evidence);
+    await service.observeManual(admin, REQUEST, {
+      quoteId: QUOTE, observedAmountCents: 5000, observedCurrency: "USD",
+      paymentReference: REFERENCE, sourceEvidenceRef: "ledger:correction",
+      supersedesObservationId: OBSERVATION, correctionReason: "Corrected controlled import",
+    });
+    expect(evidence.verify).toHaveBeenCalledOnce();
+    expect(rpc).toHaveBeenCalledWith("research_assisted_order_payment_correct_manual", {
+      p_request_id: REQUEST, p_observation_id: OBSERVATION, p_actor_auth_user_id: ADMIN,
+      p_quote_id: QUOTE, p_payment_reference: REFERENCE, p_observed_amount_cents: 5000,
+      p_observed_currency: "USD", p_source_evidence_ref: "ledger:correction",
+      p_observed_at: "2026-09-30T20:00:00.000Z", p_reason: "Corrected controlled import",
+    });
+  });
+
   it("verifies only through the request-bound RPC with the guarded admin UUID", async () => {
-    const { rpc, service } = harness({ verificationId: QUOTE, state: "paid" });
+    const rpc = vi.fn(async () => ({ data: verification, error: null }));
+    const evidence = { verify: async () => ({ observedAt: "2026-09-30T20:00:00.000Z" }) };
+    const service = new AssistedOrderFinanceService({ rpc } as SupabaseRpcClient, evidence);
     await service.verifyManual(admin, REQUEST, OBSERVATION);
     expect(rpc).toHaveBeenCalledWith("research_assisted_order_payment_verify_bound", {
       p_request_id: REQUEST, p_observation_id: OBSERVATION,
       p_verifier_auth_user_id: ADMIN,
     });
-    const wrongPath = harness(null);
-    await expect(wrongPath.service.verifyManual(admin, REQUEST, OBSERVATION))
+    const wrongPath = new AssistedOrderFinanceService({
+      rpc: async () => ({ data: null, error: null }),
+    }, evidence);
+    await expect(wrongPath.verifyManual(admin, REQUEST, OBSERVATION))
       .rejects.toHaveProperty("name", "AssistedOrderNotFoundError");
+    const unconfigured = harness();
+    await expect(unconfigured.service.verifyManual(admin, REQUEST, OBSERVATION))
+      .rejects.toMatchObject({ code: "manual_evidence_unavailable" });
+    expect(unconfigured.rpc).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    { verificationId: "typed-proof" }, { requestId: MEMBER }, { state: "reviewing" },
+    { verifiedAt: null }, { verifiedBy: "" }, { replayed: undefined },
+  ])("rejects malformed or misbound verification receipts before effects: %j", async (change) => {
+    const evidence = { verify: async () => ({ observedAt: "2026-09-30T20:00:00Z" }) };
+    const finance = new AssistedOrderFinanceService({ rpc: async () => ({ data: { ...verification, ...change }, error: null }) }, evidence);
+    const effects = vi.fn();
+    const mounted = createAssistedOrderRouteTable({ recordPaymentVerificationEffects: effects } as unknown as AssistedOrderService,
+      { resolve: async () => admin }, null, finance);
+    const route = mounted.find((entry) => entry.method === "POST" && entry.path.endsWith("/:observationId/verify"))!;
+    const response = await route.handler({ method: "POST", path: route.path, headers: {}, query: {}, body: {},
+      params: { requestId: REQUEST, observationId: OBSERVATION } });
+    expect(response.status).toBe(500);
+    expect(effects).not.toHaveBeenCalled();
+  });
+
+  it("mounted verification retries effects even after a SQL replay and exposes pending effect failure", async () => {
+    const evidence = { verify: async () => ({ observedAt: "2026-09-30T20:00:00Z" }) };
+    const rpc = vi.fn()
+      .mockResolvedValueOnce({ data: verification, error: null })
+      .mockResolvedValueOnce({ data: { ...verification, state: "supplier_processing", replayed: true }, error: null });
+    const finance = new AssistedOrderFinanceService({ rpc }, evidence);
+    const effects = vi.fn().mockRejectedValueOnce(new AssistedOrderVerificationEffectsError()).mockResolvedValueOnce(undefined);
+    const mounted = createAssistedOrderRouteTable({ recordPaymentVerificationEffects: effects } as unknown as AssistedOrderService,
+      { resolve: async () => admin }, null, finance);
+    const route = mounted.find((entry) => entry.method === "POST" && entry.path.endsWith("/:observationId/verify"))!;
+    const request: AssistedOrderHttpRequest = { method: "POST", path: route.path, headers: {}, query: {},
+      params: { requestId: REQUEST, observationId: OBSERVATION }, body: { recipient: "forged@example.test", customerMessage: "forged", verifiedAt: "forged" } };
+    expect(await route.handler(request)).toMatchObject({ status: 503, body: { error: "payment_verification_effects_pending" } });
+    expect(await route.handler(request)).toMatchObject({ status: 200, body: { replayed: true, state: "supplier_processing" } });
+    expect(effects).toHaveBeenCalledTimes(2);
+    expect(effects.mock.calls[0]).toEqual([admin, verification]);
+    expect(effects.mock.calls[1][1]).toEqual({ ...verification, state: "supplier_processing", replayed: true });
+  });
+
+  it.each([
+    { data: null, error: null, status: 404 },
+    { data: null, error: { code: "P0001", details: "ASSISTED_ORDER_MANUAL_VERIFIER_REQUIRED", message: "no grant" }, status: 403 },
+  ])("does not notify or audit a refused verification: $status", async ({ data, error, status }) => {
+    const finance = new AssistedOrderFinanceService({ rpc: async () => ({ data, error }) }, {
+      verify: async () => ({ observedAt: "2026-09-30T20:00:00Z" }),
+    });
+    const effects = vi.fn();
+    const routes = createAssistedOrderRouteTable({ recordPaymentVerificationEffects: effects } as unknown as AssistedOrderService,
+      { resolve: async () => admin }, null, finance);
+    const route = routes.find((entry) => entry.method === "POST" && entry.path.endsWith("/:observationId/verify"))!;
+    expect((await route.handler({ method: "POST", path: route.path, headers: {}, query: {}, body: {},
+      params: { requestId: REQUEST, observationId: OBSERVATION } })).status).toBe(status);
+    expect(effects).not.toHaveBeenCalled();
   });
 
   it("adds five finance descriptors only when the gated service exists and keeps tokens out of body/query", async () => {

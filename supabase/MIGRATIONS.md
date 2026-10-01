@@ -339,3 +339,36 @@ two-connection verification replay checks passed. This remains source-only
 and does not enable card, provider webhook, manual grant, refund, cancellation
 or historical-paid behavior. See
 `verification/research_assisted_order_quote_access_finance_bound_local.sql`.
+
+## Assisted-order immutable evidence corrections, source-only 2026-09-30
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 84 | migrations/20260930230541_research_assisted_order_quote_evidence_corrections.sql | Single-use evidence, governed correction, actor UUID, financial projection and cancellation holds | PENDING; no managed apply |
+
+Source `a46531b5df038ab07a0f0bb2ca51146c5b9952b4`, canonical SHA-256
+`434885ea1f61f424f88ac827e8f57775be3ec9dc93c0896ecabd681cf69a0f66`.
+Depends on order 83. Applied twice on fresh disposable PostgreSQL 17.11 only.
+No historical paid labels, observations or grants are invented or backfilled.
+Ambiguous existing cross-order evidence refuses migration. Finance remains off;
+bank/provider activation, refunds and managed qualification remain separate.
+See the provider-neutral handoff and `verification/research_assisted_order_quote_corrections_local.sql`.
+
+## Assisted-order provider authority hold, source-only 2026-09-30
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 85 | migrations/20260930234614_research_assisted_order_quote_provider_hold.sql | Refuse invented provider facts before attempt/event authority; NULL-safe bound verification | PENDING; no managed apply |
+
+Source `947f6ee7739bf2a1381b4b29a4f9d132c751d64c`, canonical SHA-256
+`6596f26125c6279717168276fe96132056c9aa3ef150606583fbaf9045c208fe`.
+Depends on order84. Exact file applied twice to disposable PostgreSQL17.11.
+Actual service-role forgery reproduced against predecessor and refused after
+repair. Historical provider verifications stop the migration for reconciliation;
+no records are deleted or backfilled. Manual correction/verification/replay and
+actual ACL denials passed. The old foundation header's blanket-hold statement
+is historical and inaccurate for its provider branch; this additive hold is the
+explicit corrected containment. Prior migration bytes remain immutable.
+No provider selected, mounted, configured or activated. See
+`verification/research_assisted_order_quote_provider_hold_local.mjs` and the
+provider-neutral handoff. No new managed or PostgREST qualification is claimed.

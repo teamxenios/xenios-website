@@ -132,6 +132,7 @@ export interface PrivateAccessRouteDependencies {
   readonly randomToken: () => string;
   readonly logger?: PrivateAccessLogger;
   readonly attempts?: PrivateAccessAttemptLimiter;
+  readonly openAccessMints?: OpenAccessMintLimiter;
   /** Injected so the rate-limit switch is testable without touching process.env. */
   readonly env?: NodeJS.ProcessEnv;
   readonly cookies?: PrivateAccessCookiePort;
@@ -251,6 +252,78 @@ export type PrivateAccessAttemptLimiterOptions = Readonly<{
 type AttemptEntry = { failures: number; lockedUntil: number | null; lastSeen: number };
 
 export const PRIVATE_ACCESS_ATTEMPT_MAX_KEYS = 10_000;
+
+export interface OpenAccessMintLimiter {
+  /** Atomically reserve one attempt before any asynchronous session write. */
+  tryAcquire(key: string, now: number): boolean;
+}
+
+/**
+ * Anonymous session creation is a bounded rolling-window resource budget, not
+ * a password failure. Old attempts expire individually, including when traffic
+ * never reaches the threshold. A refused attempt does not extend the window.
+ *
+ * Memory is bounded by maxKeys * maxMints. At capacity only the least-recent
+ * below-budget entry may be evicted. Exhausted budgets survive key rotation
+ * until their attempts age out, while one-off visitors cannot fill the map and
+ * refuse every new customer for the whole window.
+ * This process-local protection is not a distributed, cross-instance quota.
+ */
+export function createOpenAccessMintLimiter(options: Readonly<{
+  maxMints: number;
+  windowMinutes: number;
+  maxKeys?: number;
+}>): OpenAccessMintLimiter {
+  const { maxMints, windowMinutes } = options;
+  const maxKeys = options.maxKeys ?? PRIVATE_ACCESS_ATTEMPT_MAX_KEYS;
+  const windowMs = windowMinutes * 60_000;
+  if (![maxMints, maxKeys, windowMs].every((value) => Number.isSafeInteger(value) && value > 0)) {
+    throw new RangeError("The anonymous session budget requires positive bounded values.");
+  }
+  const entries = new Map<string, number[]>();
+
+  function expire(key: string, now: number): number[] | undefined {
+    const previous = entries.get(key);
+    if (!previous) return undefined;
+    const current = previous.filter((attemptAt) => attemptAt > now - windowMs);
+    if (current.length === 0) {
+      entries.delete(key);
+      return undefined;
+    }
+    entries.set(key, current);
+    return current;
+  }
+
+  return {
+    tryAcquire(key, now) {
+      if (!Number.isSafeInteger(now) || now < 0 || readClientKey(key) === null) return false;
+      let attempts = expire(key, now);
+      if (!attempts && entries.size >= maxKeys) {
+        for (const candidate of entries.keys()) expire(candidate, now);
+        if (entries.size >= maxKeys) {
+          let evictable: string | null = null;
+          let oldestLastAttempt = Infinity;
+          for (const [candidate, candidateAttempts] of entries) {
+            const lastAttempt = candidateAttempts.at(-1)!;
+            if (candidateAttempts.length < maxMints && lastAttempt < oldestLastAttempt) {
+              evictable = candidate;
+              oldestLastAttempt = lastAttempt;
+            }
+          }
+          if (evictable === null) return false;
+          entries.delete(evictable);
+        }
+      }
+      attempts ??= [];
+      if (attempts.length >= maxMints) return false;
+      // A backward clock step must not turn a newly reserved attempt into an
+      // already-expired entry when the clock catches up again.
+      attempts.push(Math.max(now, attempts.at(-1) ?? now));
+      entries.set(key, attempts);
+      return true;
+    },
+  };
+}
 
 /**
  * A bounded per-client failure counter with a lockout window.
@@ -529,7 +602,14 @@ function limiterOf(deps: PrivateAccessRouteDependencies): PrivateAccessAttemptLi
  * lifetimes are reconciled before anything is returned.
  */
 export function createUnlockRoute(deps: PrivateAccessRouteDependencies): PrivateAccessUnlockRoute {
-  const limiter = limiterOf(deps);
+  const openAccess = deps.config.openAccess === true;
+  const limiter = openAccess ? createPrivateAccessUnlimitedAttempts() : limiterOf(deps);
+  const mintLimiter = openAccess
+    ? deps.openAccessMints ?? createOpenAccessMintLimiter({
+      maxMints: deps.config.maxAttempts,
+      windowMinutes: deps.config.lockoutMinutes,
+    })
+    : null;
   const cookies = cookiePortOf(deps);
   const verify = deps.verifyPassword ?? verifyPrivateAccessPassword;
   const ownerId = deps.ownerId ?? PRIVATE_ACCESS_DEFAULT_OWNER_ID;
@@ -555,7 +635,7 @@ export function createUnlockRoute(deps: PrivateAccessRouteDependencies): Private
         return;
       }
 
-      if (limiter.isLocked(clientKey, now)) {
+      if (mintLimiter !== null ? !mintLimiter.tryAcquire(clientKey, now) : limiter.isLocked(clientKey, now)) {
         log(deps.logger, "private_access.unlock.locked");
         denyUnlock(response);
         return;
@@ -580,9 +660,8 @@ export function createUnlockRoute(deps: PrivateAccessRouteDependencies): Private
       // written. What changes is what the caller must prove to obtain an
       // anonymous session — nothing — not what that session then permits.
       //
-      // The limiter stays because it now bounds session MINTING rather than
-      // password guessing: without it, one caller could ask for unlimited
-      // durable session rows.
+      // Open access reserves from its separate rolling mint budget before any
+      // asynchronous write. Password failures still use their existing limiter.
       if (!deps.config.openAccess) {
         const password = readPresentedPassword(request?.body);
         if (password === null || !verify(password, deps.config.passwordHash)) {
@@ -645,18 +724,7 @@ export function createUnlockRoute(deps: PrivateAccessRouteDependencies): Private
         return;
       }
 
-      if (deps.config.openAccess === true) {
-        // COUNT THE ISSUANCE. With no password there is nothing to guess, so
-        // every call reaches this line — and a reset here would clear the very
-        // counter it should be filling, leaving session minting completely
-        // unbounded for any caller. The limiter's increment is named for the
-        // guessing it used to bound, but the mechanism is a per-client attempt
-        // counter, and bounding how many durable session rows one client can
-        // demand is exactly what it is still needed for.
-        limiter.recordFailure(clientKey, now);
-      } else {
-        limiter.reset(clientKey);
-      }
+      if (!openAccess) limiter.reset(clientKey);
       // The CONTINUITY cookie rides beside the session cookie, minted once
       // per browser: a later unlock that already carries a valid credential
       // keeps it, which is exactly what lets a purchaser renew their session

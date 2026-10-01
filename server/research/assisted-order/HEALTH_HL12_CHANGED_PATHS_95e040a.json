@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "baseSha": "377555759cdf6cbd9bf1e7167ac61c107b19a832",
+  "endSha": "95e040a300e23ce5eb4ebc0dd7e5039f76aa818c",
+  "classification": "Exact changed-path classification for this provider-neutral source/release-control slice; subsequent handoff commits are records only.",
+  "totalPaths": 50,
+  "testOnlySha": null,
+  "testOnlyNote": "No test-only commit in this interval. 4decc9f also changes the runtime decoder despite its test-prefixed subject.",
+  "commits": [
+    { "sha": "c0425997604fd10fb3f15f21ffb1d5dc2f178525", "class": "runtime_and_tests", "scope": "provider-neutral adapter boundary" },
+    { "sha": "fe455502436ea59e2913502b165dcebf11d93283", "class": "runtime_and_tests", "scope": "rolling anonymous mint budget" },
+    { "sha": "a46531b5df038ab07a0f0bb2ca51146c5b9952b4", "class": "pending_sql_and_local_proof", "scope": "immutable evidence correction and single-use authority" },
+    { "sha": "0065e6c20d5079a2ce8f0a3f2b9dc18b181cb16e", "class": "runtime_and_tests", "scope": "quote UI, financial projection, effects and status" },
+    { "sha": "4decc9fc1b3950de104ce0fdbce87f354db4bdfa", "class": "runtime_and_tests", "scope": "strict financial projection decoder" },
+    { "sha": "3c897f4dc019b6f420aa85da5e0d792814cd801e", "class": "runtime_and_tests", "scope": "session/cart recovery" },
+    { "sha": "d6f99e04f3b9613ea5c309f06e199bb188d05097", "class": "release_control_records_and_local_proof", "scope": "migration registration, correction race and earlier handoff" },
+    { "sha": "2dc7d6264d7c6286f49c711d729a268868752327", "class": "runtime_and_tests", "scope": "exact quote gateway admission" },
+    { "sha": "268e691649d4eb363e959d698d9674f171f19a13", "class": "runtime_and_tests", "scope": "legacy payment promise suppression" },
+    { "sha": "05e413ce3ff6bf159e0511707f8ee5f156301ce0", "class": "runtime_and_tests", "scope": "mint-budget capacity hardening" },
+    { "sha": "947f6ee7739bf2a1381b4b29a4f9d132c751d64c", "class": "pending_sql_and_local_proof", "scope": "provider authority hold and NULL-safe request binding" },
+    { "sha": "95e040a300e23ce5eb4ebc0dd7e5039f76aa818c", "class": "release_control_and_records", "scope": "provider-hold registration and evidence preservation" }
+  ],
+  "groups": {
+    "runtime": [
+      "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
+      "client/src/research/assisted-order/CustomerQuotePanel.tsx",
+      "client/src/research/assisted-order/api.ts",
+      "client/src/research/early-access/EarlyAccessRoute.tsx",
+      "client/src/research/early-access/cart/EarlyAccessCartMount.tsx",
+      "server/research/assisted-order/finance.ts",
+      "server/research/assisted-order/http.ts",
+      "server/research/assisted-order/memory-repository.ts",
+      "server/research/assisted-order/payment/provider-adapter.ts",
+      "server/research/assisted-order/ports.ts",
+      "server/research/assisted-order/service.ts",
+      "server/research/assisted-order/supabase-repository.ts",
+      "server/research/early-access/private-access-routes.ts",
+      "server/research/index.ts",
+      "server/research/status-recovery/status-copy.ts",
+      "server/research/status-recovery/supabase-store.ts",
+      "shared/research/assisted-order/contract.ts",
+      "shared/research/assisted-order/payment-status-copy.ts"
+    ],
+    "pendingSql": [
+      "supabase/migrations/20260930230541_research_assisted_order_quote_evidence_corrections.sql",
+      "supabase/migrations/20260930234614_research_assisted_order_quote_provider_hold.sql"
+    ],
+    "tests": [
+      "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+      "client/src/research/assisted-order/CustomerQuotePanel.test.tsx",
+      "client/src/research/assisted-order/api.test.ts",
+      "client/src/research/early-access/EarlyAccessRoute.test.tsx",
+      "client/src/research/early-access/cart/EarlyAccessCartMount.test.tsx",
+      "server/research/assisted-order/finance.test.ts",
+      "server/research/assisted-order/financial-projection.test.ts",
+      "server/research/assisted-order/payment/provider-adapter.test.ts",
+      "server/research/assisted-order/service.test.ts",
+      "server/research/early-access-wall.test.ts",
+      "server/research/early-access/open-access-window.test.ts",
+      "server/research/status-recovery/payment-status-copy.test.ts",
+      "supabase/verification/research_assisted_order_quote_access_postgrest_local.mjs",
+      "supabase/verification/research_assisted_order_quote_correction_race_local.mjs",
+      "supabase/verification/research_assisted_order_quote_corrections_local.sql",
+      "supabase/verification/research_assisted_order_quote_payment_foundation_local.sql",
+      "supabase/verification/research_assisted_order_quote_provider_hold_local.mjs"
+    ],
+    "releaseControl": [
+      "docs/coordination/MIGRATION_DAG.json",
+      "server/release-control-plane.test.ts",
+      "supabase/MIGRATIONS.md"
+    ],
+    "records": [
+      ".xenios/ACTIVE_TASKS.json",
+      ".xenios/BLOCKED_EXTERNAL.md",
+      ".xenios/CODE_OWNERSHIP.json",
+      ".xenios/FOUNDER_ACTIONS.md",
+      ".xenios/PROJECT_STATE.json",
+      ".xenios/RELEASE_STATE.json",
+      ".xenios/SESSION_REGISTRY.json",
+      ".xenios/messages/2026-09-30T23-31-16-861Z-codex-xenios-health-launch-implementation-20260930.json",
+      ".xenios/sessions/codex-xenios-health-launch-implementation-20260930.json",
+      "server/research/assisted-order/HEALTH_HL12_PROVIDER_NEUTRAL_HANDOFF_20260930.md"
+    ]
+  }
+}

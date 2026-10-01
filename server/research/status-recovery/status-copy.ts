@@ -2,6 +2,7 @@ import type {
   StatusRecoveryStatusView,
   StatusRecoveryTimelineItem,
 } from "../../../shared/research/status-recovery/contract";
+import { assistedOrderPaymentStatusCopy } from "../../../shared/research/assisted-order/payment-status-copy";
 
 const STATUS_COPY: Readonly<Record<string, Readonly<{
   label: string;
@@ -16,9 +17,6 @@ const STATUS_COPY: Readonly<Record<string, Readonly<{
   identity_received: Object.freeze({ label: "Identity information received", happened: "Xenios received the requested identity information.", nextStep: "Xenios will continue the review.", owner: "xenios" }),
   agreements_pending: Object.freeze({ label: "Agreement needed", happened: "An agreement step is still required.", nextStep: "Follow the secure agreement instructions Xenios provided.", owner: "customer" }),
   agreements_complete: Object.freeze({ label: "Agreements complete", happened: "The required agreement step is complete.", nextStep: "Xenios will confirm the next order step.", owner: "xenios" }),
-  payment_pending: Object.freeze({ label: "Payment pending", happened: "The order is waiting for the approved payment step.", nextStep: "Use only payment instructions sent through the approved Xenios process.", owner: "customer" }),
-  payment_review: Object.freeze({ label: "Payment under review", happened: "Xenios is reviewing the submitted payment information.", nextStep: "Wait for Xenios to confirm the review result.", owner: "xenios" }),
-  paid: Object.freeze({ label: "Payment verified", happened: "Xenios recorded payment as verified.", nextStep: "Xenios will coordinate fulfillment.", owner: "xenios" }),
   supplier_processing: Object.freeze({ label: "Processing", happened: "The order is being prepared for fulfillment.", nextStep: "Wait for a shipping update from Xenios.", owner: "xenios" }),
   shipped: Object.freeze({ label: "Shipped", happened: "The order has shipped.", nextStep: "Use the tracking update Xenios sent through the authorized order channel.", owner: "customer" }),
   delivered: Object.freeze({ label: "Delivered", happened: "The order is recorded as delivered.", nextStep: "Contact support if the delivery record does not match what happened.", owner: "customer" }),
@@ -31,8 +29,9 @@ export function buildStatusRecoveryView(input: Readonly<{
   status: string;
   updatedAt: string;
   timeline: readonly StatusRecoveryTimelineItem[];
+  paymentVerified?: boolean;
 }>): StatusRecoveryStatusView {
-  const copy = STATUS_COPY[input.status] ?? Object.freeze({
+  const copy = assistedOrderPaymentStatusCopy(input.status, input.paymentVerified) ?? STATUS_COPY[input.status] ?? Object.freeze({
     label: "Update available",
     happened: "Xenios recorded an update for this request.",
     nextStep: "Contact support if you need help with this reference.",
@@ -49,6 +48,13 @@ export function buildStatusRecoveryView(input: Readonly<{
     returnPath: "/status" as const,
     supportPath: "/support" as const,
     updatedAt: input.updatedAt,
-    timeline: Object.freeze(input.timeline.map((item) => Object.freeze({ ...item }))),
+    timeline: Object.freeze(input.timeline.map((item) => {
+      const financialCopy = assistedOrderPaymentStatusCopy(item.status, input.paymentVerified);
+      // Old free-text payment promises are not evidence. The safe projection
+      // does not rewrite the stored audit event; it presents today's authority.
+      return Object.freeze(financialCopy
+        ? { ...item, status: financialCopy.label, customerMessage: financialCopy.line }
+        : { ...item });
+    })),
   });
 }

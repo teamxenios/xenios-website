@@ -3,6 +3,113 @@
   "updatedAt": "2026-09-30T19:51:00.000Z",
   "tasks": [
     {
+      "id": "HEALTH-HL12-QUOTE-GATEWAY-20260930",
+      "title": "Admit exact owner-guarded quote routes through the Research gateway",
+      "priority": "P1",
+      "state": "qa",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/index.ts",
+        "server/research/early-access-wall.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Claude F10: exact method and reference anchored admissions only; downstream ownership remains mandatory. No namespace-wide bypass.",
+      "claimedAt": "2026-09-30T23:40:25.002Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "bfe7162814fd3eff702ce1d1870900fa3e5cfddc",
+        "file": ".xenios/handoffs/2026-10-01T00-36-13-787Z-HEALTH-HL12-QUOTE-GATEWAY-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T00:36:13.793Z"
+      }
+    },
+    {
+      "id": "HEALTH-PROVIDER-NEUTRAL-CONTINUITY-20260930",
+      "title": "Record provider-neutral Health decision and exact local evidence without changing hosted truth",
+      "priority": "P1",
+      "state": "qa",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        ".xenios/PROJECT_STATE.json",
+        ".xenios/RELEASE_STATE.json",
+        ".xenios/DECISIONS.md",
+        ".xenios/BLOCKED_EXTERNAL.md",
+        ".xenios/FOUNDER_ACTIONS.md"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Append a dated Health checkpoint. Preserve historical runs and observed production evidence; no new production claim or authority.",
+      "claimedAt": "2026-09-30T23:40:25.140Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "bfe7162814fd3eff702ce1d1870900fa3e5cfddc",
+        "file": ".xenios/handoffs/2026-10-01T00-36-13-969Z-HEALTH-PROVIDER-NEUTRAL-CONTINUITY-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T00:36:13.977Z"
+      }
+    },
+    {
+      "id": "HEALTH-HL24-25-ENTRY-RECOVERY-20260930",
+      "title": "Give transient session and cart failures truthful retry paths",
+      "priority": "P2",
+      "state": "qa",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "client/src/research/early-access/EarlyAccessRoute.tsx",
+        "client/src/research/early-access/EarlyAccessRoute.test.tsx",
+        "client/src/research/early-access/cart/EarlyAccessCartMount.tsx",
+        "client/src/research/early-access/cart/EarlyAccessCartMount.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Local continuation delegated to catalog_journey_audit. Distinguish transient error from denied authority, allow retry without enabling uncertain commerce or minting access. No hosted changes.",
+      "claimedAt": "2026-09-30T23:23:23.847Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "bfe7162814fd3eff702ce1d1870900fa3e5cfddc",
+        "file": ".xenios/handoffs/2026-10-01T00-36-13-635Z-HEALTH-HL24-25-ENTRY-RECOVERY-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T00:36:13.643Z"
+      }
+    },
+    {
+      "id": "HEALTH-HL12-EVIDENCE-STATUS-COPY-20260930",
+      "title": "Render payment status from durable verification presence across both status surfaces",
+      "priority": "P2",
+      "state": "qa",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/status-recovery/status-copy.ts",
+        "server/research/status-recovery/supabase-store.ts",
+        "server/research/status-recovery/payment-status-copy.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Reviewer F7 correction only; preserve P17 token/session/owner authority. Local source/tests only. Root delegates copy/projection files to quote_customer_ui.",
+      "claimedAt": "2026-09-30T23:17:22.091Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "bfe7162814fd3eff702ce1d1870900fa3e5cfddc",
+        "file": ".xenios/handoffs/2026-10-01T00-36-13-044Z-HEALTH-HL12-EVIDENCE-STATUS-COPY-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T00:36:13.052Z"
+      }
+    },
+    {
+      "id": "HEALTH-HL23-OPEN-ACCESS-WINDOW-20260930",
+      "title": "Bound successful open-access session mints with a real time window",
+      "priority": "P2",
+      "state": "qa",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/early-access/private-access-routes.ts",
+        "server/research/early-access/private-access-rate-limit-switch.test.ts",
+        "server/research/early-access/open-access-window.test.ts"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Provider-neutral Health continuation. Root delegates these exact files to catalog_journey_audit; root retains commits and shared records. Local tests only, no hosted activation.",
+      "claimedAt": "2026-09-30T23:05:56.672Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "bfe7162814fd3eff702ce1d1870900fa3e5cfddc",
+        "file": ".xenios/handoffs/2026-10-01T00-36-12-873Z-HEALTH-HL23-OPEN-ACCESS-WINDOW-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T00:36:12.890Z"
+      }
+    },
+    {
       "id": "XENIOS-ORDERING-READINESS-20260923",
       "title": "Complete customer-ready manual, assisted, and Care-gated ordering while native commerce remains dark",
       "priority": "P0",
@@ -679,7 +786,7 @@
       "id": "ASSISTED-ORDER-CONVERSION",
       "title": "Close the assisted-order operator loop: quote issuance, customer acceptance, evidence tooling",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/research/assisted-order/**",
@@ -693,12 +800,12 @@
         "ASSISTED-ORDER-MOUNT"
       ],
       "scopeNote": "Founder-authorized HL-12 financial integrity: accepted versioned quote, amount/currency-bound authorized verification and durable paid transition across mounted app and forward SQL, qualified only on disposable local PostgreSQL. Existing mounted assisted-order bridge is present; prior blocked state is stale. No managed migration, hosted mutation, real money or fabricated historical verification.",
-      "claimedAt": "2026-09-30T20:56:39.850Z",
+      "claimedAt": "2026-09-30T23:03:13.612Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
-        "sha": "cea4922107150de3276833348b299c50eb8e398b",
-        "file": ".xenios/handoffs/2026-09-30T20-54-19-166Z-ASSISTED-ORDER-CONVERSION-codex-xenios-health-launch-implementation-20260930.md",
-        "at": "2026-09-30T20:54:19.169Z"
+        "sha": "bfe7162814fd3eff702ce1d1870900fa3e5cfddc",
+        "file": ".xenios/handoffs/2026-10-01T00-36-14-137Z-ASSISTED-ORDER-CONVERSION-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T00:36:14.145Z"
       }
     },
     {
@@ -2687,7 +2794,7 @@
       "id": "ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930",
       "title": "Register source-only assisted-order financial migrations pending HL-12 authority",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "docs/coordination/MIGRATION_DAG.json",
@@ -2695,12 +2802,12 @@
       ],
       "dependsOn": [],
       "scopeNote": "Register exact f318859 paid hold, c92d7a9 SQL foundation and 5c8498c bound-access successor; maintain PENDING managed state and explicitly preserve HL-12 as open.",
-      "claimedAt": "2026-09-30T21:00:15.038Z",
+      "claimedAt": "2026-09-30T23:20:29.740Z",
       "handoff": {
         "session": "codex-xenios-health-launch-implementation-20260930",
-        "sha": "a59c05be857d4117f25743384b4d3713fd586203",
-        "file": ".xenios/handoffs/2026-09-30T20-44-03-062Z-ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930-codex-xenios-health-launch-implementation-20260930.md",
-        "at": "2026-09-30T20:44:03.066Z"
+        "sha": "bfe7162814fd3eff702ce1d1870900fa3e5cfddc",
+        "file": ".xenios/handoffs/2026-10-01T00-36-13-247Z-ASSISTED-ORDER-HL12-PAID-HOLD-REGISTRATION-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T00:36:13.255Z"
       }
     },
     {
@@ -2730,7 +2837,7 @@
       "id": "ASSISTED-ORDER-HL12-FINANCE-ROUTE-MOUNT-20260930",
       "title": "Mount default-off assisted-order financial routes",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/index.ts"
@@ -2739,20 +2846,32 @@
         "ASSISTED-ORDER-MOUNT"
       ],
       "scopeNote": "Only bounded quote/manual-finance endpoints behind a default-off flag and existing Research wall; no provider assertion, managed apply, or payment activation.",
-      "claimedAt": "2026-09-30T20:57:09.920Z"
+      "claimedAt": "2026-09-30T20:57:09.920Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "a4260ba4f34bda1114a3ceec88852370f64dcf9f",
+        "file": ".xenios/handoffs/2026-09-30T21-30-25-114Z-ASSISTED-ORDER-HL12-FINANCE-ROUTE-MOUNT-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-09-30T21:30:25.128Z"
+      }
     },
     {
       "id": "ASSISTED-ORDER-HL12-RELEASE-TEST-20260930",
       "title": "Update exact migration and route-count release-control test fixtures",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/release-control-plane.test.ts"
       ],
       "dependsOn": [],
       "scopeNote": "Pin only newly committed pending migration source SHAs and five literal finance routes; preserve all release assertions and rerun the gate.",
-      "claimedAt": "2026-09-30T21:09:13.238Z"
+      "claimedAt": "2026-09-30T23:20:29.964Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "bfe7162814fd3eff702ce1d1870900fa3e5cfddc",
+        "file": ".xenios/handoffs/2026-10-01T00-36-13-432Z-ASSISTED-ORDER-HL12-RELEASE-TEST-20260930-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T00:36:13.441Z"
+      }
     },
     {
       "id": "XENIOS-PRODUCT-IMAGERY-20260930",
@@ -2760,7 +2879,7 @@
       "priority": "P1",
       "state": "claimed",
       "owner": "codex-xenios-product-imagery-20260930",
-      "baseSha": "7600943f9ec7573f0a5cbfe7a7687ba851276a30",
+      "baseSha": "49234f8a2dd804845245a18056a73904b320158a",
       "paths": [
         "docs/product-imagery/**",
         "scripts/product-imagery/**",
@@ -2772,7 +2891,7 @@
         ".xenios/handoffs/*XENIOS-PRODUCT-IMAGERY-20260930*"
       ],
       "dependsOn": [],
-      "scopeNote": "Founder-authorized isolated source-only product imagery v3 lane. Establish a mov-keyed coverage and Featured identity contract, render packet, deterministic validation, and bounded pre-v3 fallback candidates. Assets remain provisional, unreviewed, unwired, and permanently non-approvable because their source PNGs are not repository-durable; v3 rerender is required. The branch is non-deployable while those bytes remain in the public tree. No catalog, payment, release, deployment, hosted mutation, migration apply, real communication, or shared card/detail source edits without a later coordinated lease.",
+      "scopeNote": "Founder-authorized continuation of the isolated product imagery v3 lane against primary Health base 49234f8. Reconcile current catalog truth, quarantine pre-v3 public candidates, sanitize the renderer-neutral packet, and render/validate Batch 0 with durable provenance. No payment, release, deployment, hosted mutation, managed migration, real communication, or shared card/detail/catalog source edits without a later coordinated lease.",
       "claimedAt": "2026-10-01T02:31:21.952Z",
       "handoff": {
         "session": "codex-xenios-product-imagery-20260930",

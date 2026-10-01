@@ -869,6 +869,38 @@
         "evidence": "Exact source bytes applied twice on disposable PostgreSQL 17 after pending predecessors. Owner-bound quote projection, no private pricing basis, wrong-path verification denial, service-role ACL and correct-path replay passed. Two independent local service-role connections yielded one immutable verification, one paid event and one replay. No hosted database or money was contacted."
       },
       "notes": "Source-only HL-12 successor. It adds a customer quote projection and request-bound verifier RPC, revoking the unbound service-role verifier grant. This does not mount a provider adapter, enable paid application routes, or resolve historical paid/refund requirements. Managed application requires exact separate approval."
+    },
+    {
+      "id": "research_assisted_order_quote_evidence_corrections",
+      "path": "supabase/migrations/20260930230541_research_assisted_order_quote_evidence_corrections.sql",
+      "sourceSha": "a46531b5df038ab07a0f0bb2ca51146c5b9952b4",
+      "dependsOn": ["research_assisted_order_quote_access_finance_bound"],
+      "checksum": { "algorithm": "sha256", "value": "434885ea1f61f424f88ac827e8f57775be3ec9dc93c0896ecabd681cf69a0f66" },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "keep_finance_disabled_and_preserve_all_evidence_then_roll_forward",
+        "procedure": "server/research/assisted-order/HEALTH_HL12_PROVIDER_NEUTRAL_HANDOFF_20260930.md",
+        "evidence": "Applied twice on fresh disposable PostgreSQL 17.11. Synthetic correction, single-use evidence, UUID actor, cancellation, NULL owner/acceptance, rollback and existing two-connection verification proofs pass. No hosted environment contacted."
+      },
+      "notes": "Source-only: append-only correction, durable evidence claims, observer UUID, stable verification replay and private financial projection. No evidence provider, actor grant, refund execution, historical backfill, or payment activation."
+    },
+    {
+      "id": "research_assisted_order_quote_provider_hold",
+      "path": "supabase/migrations/20260930234614_research_assisted_order_quote_provider_hold.sql",
+      "sourceSha": "947f6ee7739bf2a1381b4b29a4f9d132c751d64c",
+      "dependsOn": ["research_assisted_order_quote_evidence_corrections"],
+      "checksum": { "algorithm": "sha256", "value": "6596f26125c6279717168276fe96132056c9aa3ef150606583fbaf9045c208fe" },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "keep_finance_disabled_preserve_evidence_and_roll_forward_without_reopening_provider_assertions",
+        "procedure": "server/research/assisted-order/HEALTH_HL12_PROVIDER_NEUTRAL_HANDOFF_20260930.md",
+        "evidence": "Node20.19.0 disposable no-network PostgreSQL17.11 proof reproduced predecessor provider forgery; preflight refused historical provider verifications with complete rollback; exact migration applied twice; service-role provider observation/verification refused; NULL/wrong request refused; manual correction/verify/replay and actual ACL denials passed. Container removed. No managed apply."
+      },
+      "notes": "Source-only SQL-01/SQL-10 containment. No provider attempt authority is invented. Existing provider verifications require explicit reconciliation before rollout. Pending observation facts preserved, unbound verifier private, manual path unchanged. New authenticated provider event/attempt authority remains engineering work."
     }
   ],
   "invariants": [

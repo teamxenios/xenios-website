@@ -192,6 +192,117 @@ export function loadAssistedOrderStatus(
   );
 }
 
+/** Customer-safe projection from the owner-bound quote RPC, not price authority. */
+export type AssistedOrderCustomerQuote = Readonly<{
+  requestId: string;
+  publicReference: string;
+  quoteId: string;
+  version: number;
+  state: "issued" | "accepted" | "superseded" | "withdrawn" | "expired";
+  lines: readonly Readonly<{
+    lineId: string;
+    productName: string;
+    specification: string;
+    quantity: number;
+    unitPriceCents: number;
+    lineTotalCents: number;
+    currency: "USD";
+  }>[];
+  totalCents: number;
+  currency: "USD";
+  validUntil: string;
+  customerNote: string | null;
+  acceptanceId: string | null;
+  acceptedAt: string | null;
+}>;
+
+export type AssistedOrderQuoteAcceptance = Readonly<{
+  quoteId: string;
+  version: number;
+  totalCents: number;
+  currency: "USD";
+  acceptanceId: string;
+  acceptedAt: string;
+}>;
+
+const QUOTE_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const quoteRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+const quoteId = (value: unknown): value is string => typeof value === "string" && QUOTE_UUID.test(value);
+const quoteInteger = (value: unknown): value is number => Number.isSafeInteger(value) && (value as number) > 0;
+const quoteDate = (value: unknown): value is string => typeof value === "string" && Number.isFinite(Date.parse(value));
+const quoteText = (value: unknown, max: number): value is string =>
+  typeof value === "string" && value.length <= max && !/[\u0000-\u001f\u007f]/u.test(value);
+const quoteNote = (value: unknown): value is string => typeof value === "string" && value.length <= 1000 &&
+  !/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/u.test(value);
+
+function invalidQuote(): never {
+  throw new AssistedOrderApiError(502, "quote_unusable", "The quote could not be verified. Please refresh it.");
+}
+
+function customerQuote(value: unknown, publicReference: string): AssistedOrderCustomerQuote {
+  if (!quoteRecord(value) || !quoteId(value.requestId) || value.publicReference !== publicReference ||
+      !quoteId(value.quoteId) || !quoteInteger(value.version) || !quoteInteger(value.totalCents) ||
+      value.totalCents > 100000000 || value.currency !== "USD" || !quoteDate(value.validUntil) ||
+      !["issued", "accepted", "superseded", "withdrawn", "expired"].includes(String(value.state)) ||
+      !Array.isArray(value.lines) || value.lines.length === 0 || value.lines.length > 100 ||
+      !(value.customerNote === null || quoteNote(value.customerNote))) invalidQuote();
+  const lines = value.lines.map((line: unknown) => {
+    if (!quoteRecord(line) || !quoteId(line.lineId) || !quoteText(line.productName, 500) ||
+        !line.productName.trim() || !(line.specification === null || quoteText(line.specification, 1000)) ||
+        !quoteInteger(line.quantity) || line.quantity > 100 || !quoteInteger(line.unitPriceCents) ||
+        !quoteInteger(line.lineTotalCents) || line.lineTotalCents !== line.unitPriceCents * line.quantity ||
+        line.currency !== value.currency) invalidQuote();
+    return { lineId: line.lineId, productName: line.productName, specification: line.specification ?? "",
+      quantity: line.quantity, unitPriceCents: line.unitPriceCents, lineTotalCents: line.lineTotalCents,
+      currency: "USD" as const };
+  });
+  if (new Set(lines.map((line) => line.lineId)).size !== lines.length ||
+      lines.reduce((sum, line) => sum + line.lineTotalCents, 0) !== value.totalCents) invalidQuote();
+  if (value.state === "accepted"
+    ? !quoteId(value.acceptanceId) || !quoteDate(value.acceptedAt)
+    : value.acceptanceId !== null || value.acceptedAt !== null) invalidQuote();
+  return { requestId: value.requestId, publicReference, quoteId: value.quoteId, version: value.version,
+    state: value.state as AssistedOrderCustomerQuote["state"], lines, totalCents: value.totalCents,
+    currency: "USD", validUntil: value.validUntil, customerNote: value.customerNote as string | null,
+    acceptanceId: value.acceptanceId as string | null, acceptedAt: value.acceptedAt as string | null };
+}
+
+export async function loadAssistedOrderQuote(
+  publicReference: string,
+  statusToken?: string,
+  memberToken?: string | null,
+  signal?: AbortSignal,
+): Promise<AssistedOrderCustomerQuote> {
+  const value = await request<unknown>(
+    `/api/research/early-access/assisted-orders/${encodeURIComponent(publicReference)}/quote`,
+    { cache: "no-store", redirect: "error", signal, headers: requestOwnerHeaders(statusToken, memberToken) },
+  );
+  return customerQuote(value, publicReference);
+}
+
+export async function acceptAssistedOrderQuote(
+  publicReference: string,
+  quote: Pick<AssistedOrderCustomerQuote, "quoteId" | "version" | "totalCents" | "currency">,
+  statusToken?: string,
+  memberToken?: string | null,
+  signal?: AbortSignal,
+): Promise<AssistedOrderQuoteAcceptance> {
+  const value = await request<unknown>(
+    `/api/research/early-access/assisted-orders/${encodeURIComponent(publicReference)}/quote/accept`,
+    { method: "POST", cache: "no-store", redirect: "error", signal,
+      headers: requestOwnerHeaders(statusToken, memberToken),
+      // An echo of the displayed quote only. The server rechecks ownership and
+      // immutable quote terms; this is neither a price override nor payment.
+      body: JSON.stringify({ quoteId: quote.quoteId, version: quote.version, expectedTotalCents: quote.totalCents }) },
+  );
+  if (!quoteRecord(value) || value.quoteId !== quote.quoteId || value.version !== quote.version ||
+      value.totalCents !== quote.totalCents || value.currency !== quote.currency ||
+      !quoteId(value.acceptanceId) || !quoteDate(value.acceptedAt)) invalidQuote();
+  return { quoteId: quote.quoteId, version: quote.version, totalCents: quote.totalCents,
+    currency: quote.currency, acceptanceId: value.acceptanceId, acceptedAt: value.acceptedAt };
+}
+
 export function createAssistedOrderUploadTicket(
   requestId: string,
   input: AssistedOrderUploadRequest,

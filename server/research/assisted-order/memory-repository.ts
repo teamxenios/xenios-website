@@ -18,6 +18,10 @@ import type {
 
 /** Test/dev adapter only. Production composition must use the durable repository. */
 export class InMemoryAssistedOrderRepository implements AssistedOrderRepository {
+  public async getFinancialState(_requestId: string) {
+    // This adapter does not implement the durable quote/evidence authority.
+    return { hasObservation: false, paymentVerified: false };
+  }
   private readonly submissions = new Map<string, AssistedOrderStoredSubmission>();
   private readonly requests = new Map<string, AssistedOrderCreateRecord>();
   private readonly tokens = new Map<string, string>();

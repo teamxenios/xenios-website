@@ -98,6 +98,9 @@ export class SupabaseStatusRecoveryStore implements StatusRecoveryStore {
     if (response.data === null) return null;
     const value = record(response.data);
     if (!value) throw new Error("Status recovery status is invalid.");
+    const reference = requiredText(value.publicReference);
+    const status = requiredText(value.status);
+    const updatedAt = requiredText(value.updatedAt);
     const timeline = Array.isArray(value.timeline) ? value.timeline.map((entry) => {
       const item = record(entry);
       if (!item) throw new Error("Status recovery timeline is invalid.");
@@ -107,11 +110,31 @@ export class SupabaseStatusRecoveryStore implements StatusRecoveryStore {
         customerMessage: optionalText(item.customerMessage),
       });
     }) : [];
+    let paymentVerified = false;
+    if (status === "paid") {
+      // Never perform this existence-bearing service-role read until the
+      // original P-17 session RPC has authorized and returned this subject.
+      const financial = await this.client.rpc("research_assisted_order_financial_state_by_reference", {
+        p_public_reference: reference,
+      });
+      if (financial.error && financial.error.code !== "PGRST202") {
+        fail("research_assisted_order_financial_state_by_reference", financial.error);
+      }
+      if (!financial.error && financial.data !== null) {
+        const state = record(financial.data);
+        if (!state || typeof state.hasObservation !== "boolean" || typeof state.paymentVerified !== "boolean" ||
+            (state.paymentVerified && !state.hasObservation)) {
+          throw new Error("Status recovery financial projection is invalid.");
+        }
+        paymentVerified = state.paymentVerified;
+      }
+    }
     return buildStatusRecoveryView({
-      reference: requiredText(value.publicReference),
-      status: requiredText(value.status),
-      updatedAt: requiredText(value.updatedAt),
+      reference,
+      status,
+      updatedAt,
       timeline,
+      paymentVerified,
     });
   }
 

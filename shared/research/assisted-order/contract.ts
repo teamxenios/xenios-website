@@ -257,6 +257,8 @@ export type AssistedOrderStatusView = Readonly<{
   status: AssistedOrderStatus;
   createdAt: string;
   updatedAt: string;
+  /** Derived only after an authorized status read from canonical financial evidence. */
+  paymentVerified?: boolean;
   estimatedTotalCents: number | null;
   currency: typeof ASSISTED_ORDER_CURRENCY;
   lines: readonly AssistedOrderLineSnapshot[];
