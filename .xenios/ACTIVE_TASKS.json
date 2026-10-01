@@ -6,8 +6,8 @@
       "id": "HEALTH-HL12-ADP03-GOVERNED-CAPTURE-SETTLEMENT-20261001",
       "title": "Governed provider-neutral capture settlement into canonical payment authority and separate fulfillment eligibility",
       "priority": "P1",
-      "state": "ready",
-      "owner": null,
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/research/assisted-order/payment/provider-settlement*",
         "server/research/assisted-order/payment/provider-journal.ts",
@@ -32,7 +32,8 @@
         "server/release-control-plane.test.ts"
       ],
       "dependsOn": [],
-      "scopeNote": "Begin only after frozen ADP02 qualification and pushed exact handoff. Add explicit source-scoped admin settlement of an authenticated full capture journal record with current accepted immutable quote, exact ADP02 identity/economics, independent settlement grant/policy and atomic canonical observation/claim/verification/paid event/held F4 outbox. No browser economics or verified flag, no generic provider-string verification, no autonomous webhook-as-admin. Separate current fulfillment eligibility from historical verification. Preserve global/local uncertainty, manual/N2/historical holds, old source migration bytes and all pricing. Strict dual readiness parsers permit supported old held schemas, settlement only new exact schema. Source remains null/default-off; no actual adapter, operational grant, historical backfill, hosted change, money or email. Root allocates disjoint subagent paths; foreign image/media paths and protection manifest forbidden."
+      "scopeNote": "Begin only after frozen ADP02 qualification and pushed exact handoff. Add explicit source-scoped admin settlement of an authenticated full capture journal record with current accepted immutable quote, exact ADP02 identity/economics, independent settlement grant/policy and atomic canonical observation/claim/verification/paid event/held F4 outbox. No browser economics or verified flag, no generic provider-string verification, no autonomous webhook-as-admin. Separate current fulfillment eligibility from historical verification. Preserve global/local uncertainty, manual/N2/historical holds, old source migration bytes and all pricing. Strict dual readiness parsers permit supported old held schemas, settlement only new exact schema. Source remains null/default-off; no actual adapter, operational grant, historical backfill, hosted change, money or email. Root allocates disjoint subagent paths; foreign image/media paths and protection manifest forbidden.",
+      "claimedAt": "2026-10-01T11:55:12.108Z"
     },
     {
       "id": "HEALTH-HL12-ADP02-PROVIDER-CREATE-RECOVERY-20261001",

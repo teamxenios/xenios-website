@@ -2,6 +2,16 @@
   "schemaVersion": 1,
   "healthProviderNeutral20260930": {
     "status": "NOT_READY_FOR_PRODUCTION_PROMOTION",
+    "currentADP03Work": {
+      "status": "SOURCE_IMPLEMENTATION_IN_PROGRESS_NOT_QUALIFIED",
+      "baseRecordsSha": "4ad4bcfe8129b4069b79f3cce91773c894395c51",
+      "migration": "supabase/migrations/20261001115512_research_assisted_order_quote_provider_settlement.sql",
+      "scope": "Provider-neutral explicit admin full-capture settlement and separate fulfillment eligibility; no operational source, live money, hosted grants or historical adoption.",
+      "priorADP02ResultsRemainSeparate": true,
+      "claudeAccepted": false,
+      "managedQualified": false,
+      "productionMutated": false
+    },
     "runtimeSourceSha": "27463d764ba01219c67081a3548ffdc3ff7d2b40",
     "runtimeSourceTree": "467c8556390ff9274a4adda5826eed7ab9603b23",
     "testOnlySha": "8f56a7f500da36dbe37818b50f26b611ecb78b23",

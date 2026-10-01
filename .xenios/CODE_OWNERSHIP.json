@@ -3288,7 +3288,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T06:26:41.299Z",
-      "heartbeatAt": "2026-10-01T11:36:08.434Z"
+      "heartbeatAt": "2026-10-01T11:55:12.194Z"
     },
     {
       "id": "50a8e190-b0e1-479e-8b7b-7be25b0ad42f",
@@ -3378,6 +3378,37 @@
       "state": "handoff",
       "claimedAt": "2026-10-01T10:28:15.383Z",
       "heartbeatAt": "2026-10-01T11:36:08.434Z"
+    },
+    {
+      "id": "2495d504-7b3d-41c8-bafc-babd70e95cb4",
+      "task": "HEALTH-HL12-ADP03-GOVERNED-CAPTURE-SETTLEMENT-20261001",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "server/research/assisted-order/payment/provider-settlement*",
+        "server/research/assisted-order/payment/provider-journal.ts",
+        "server/research/assisted-order/payment/provider-journal.test.ts",
+        "server/research/assisted-order/payment/provider-execution.ts",
+        "server/research/assisted-order/payment/provider-execution.test.ts",
+        "server/research/assisted-order/provider-settlement*",
+        "server/research/assisted-order/payment-effects.ts",
+        "server/research/assisted-order/payment-effects.test.ts",
+        "server/research/assisted-order/ports.ts",
+        "server/research/assisted-order/service.ts",
+        "server/research/assisted-order/service.test.ts",
+        "server/research/assisted-order/supabase-repository.ts",
+        "server/research/assisted-order/supabase-repository.test.ts",
+        "server/research/assisted-order/http.ts",
+        "server/index.ts",
+        "server/research/assisted-order/HEALTH_HL12_ADP03_*",
+        "supabase/migrations/*_research_assisted_order_quote_provider_settlement.sql",
+        "supabase/verification/research_assisted_order_quote_provider_settlement*",
+        "docs/coordination/MIGRATION_DAG.json",
+        "supabase/MIGRATIONS.md",
+        "server/release-control-plane.test.ts"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-01T11:55:12.111Z",
+      "heartbeatAt": "2026-10-01T11:55:12.194Z"
     }
   ],
   "rules": [
