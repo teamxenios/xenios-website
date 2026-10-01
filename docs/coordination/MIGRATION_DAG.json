@@ -901,6 +901,22 @@
         "evidence": "Node20.19.0 disposable no-network PostgreSQL17.11 proof reproduced predecessor provider forgery; preflight refused historical provider verifications with complete rollback; exact migration applied twice; service-role provider observation/verification refused; NULL/wrong request refused; manual correction/verify/replay and actual ACL denials passed. Container removed. No managed apply."
       },
       "notes": "Source-only SQL-01/SQL-10 containment. No provider attempt authority is invented. Existing provider verifications require explicit reconciliation before rollout. Pending observation facts preserved, unbound verifier private, manual path unchanged. New authenticated provider event/attempt authority remains engineering work."
+    },
+    {
+      "id": "research_assisted_order_quote_history_immutability",
+      "path": "supabase/migrations/20261001024018_research_assisted_order_quote_history_immutability.sql",
+      "sourceSha": "915a5354376f0f5e9c850e5fddd2b51be78d2e43",
+      "dependsOn": ["research_assisted_order_quote_provider_hold"],
+      "checksum": { "algorithm": "sha256", "value": "0956316142dd52724729b1653f0d3732b2c45e17074e64ad7f8888582407243f" },
+      "appliedToProduction": false,
+      "managedMigrationId": "PENDING",
+      "applyTwiceVerified": true,
+      "rollback": {
+        "strategy": "keep_finance_disabled_preserve_history_and_snapshots_then_roll_forward",
+        "procedure": "server/research/assisted-order/HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md",
+        "evidence": "Two separate disposable no-network PostgreSQL17.11 runs passed under Node20.19.0. Exact bytes applied twice, legacy progression and quote mutation reproduced then rolled back, immutable snapshots and historical holds passed, authorized verification/progression and independent-connection races passed. No managed apply."
+      },
+      "notes": "Source-only HIST-PROG/SQL-06 and terminal quote-acceptance guard. No historical paid verification backfill, quote repricing, no-funds resolution, refunds, provider activation or notification dispatch. Pre/postchecks require the preceding financial schema, preserve PII-free counts and record effective function fingerprints; arbitrary predecessor replay remains prohibited and unqualified."
     }
   ],
   "invariants": [

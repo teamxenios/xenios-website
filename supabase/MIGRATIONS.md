@@ -372,3 +372,26 @@ explicit corrected containment. Prior migration bytes remain immutable.
 No provider selected, mounted, configured or activated. See
 `verification/research_assisted_order_quote_provider_hold_local.mjs` and the
 provider-neutral handoff. No new managed or PostgREST qualification is claimed.
+
+## Assisted-order history and quote immutability, source-only 2026-10-01
+
+| Order | File | Purpose | Status |
+| --- | --- | --- | --- |
+| 86 | migrations/20261001024018_research_assisted_order_quote_history_immutability.sql | Historical post-paid progression hold, immutable quote snapshots, terminal acceptance refusal | PENDING; no managed apply |
+
+Source `915a5354376f0f5e9c850e5fddd2b51be78d2e43`, canonical SHA-256
+`0956316142dd52724729b1653f0d3732b2c45e17074e64ad7f8888582407243f`.
+Depends on order85. Two separate disposable PostgreSQL17.11 proof runs under
+Node20.19.0 passed, including apply twice. Existing historical paid labels are
+held across later statuses, not converted into verification. Accepted quote
+identity/economics/terms are immutable; issued quotes may still be superseded.
+Owner/session isolation, concurrent verification/progression and accept/cancel
+serialization passed. Provider holds and private verifier ACLs remain in place.
+Pre/postchecks require the preceding financial schema and emit no customer or
+payment evidence identifiers. Effective function fingerprints are recorded,
+not an authorization to replay older migrations. Keep finance disabled and
+roll forward under separate exact-SHA approval; do not remove guards or erase
+financial records as rollback. See
+`verification/research_assisted_order_quote_history_immutability_local.mjs`
+and `server/research/assisted-order/HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md`.
+No managed, hosted PostgREST or production behavior is qualified by these runs.
