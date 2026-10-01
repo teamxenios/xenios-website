@@ -14,7 +14,7 @@ tests `61a9306d053d13556cf8022b47c792a79ebee8b6`. The isolation repair is
 The final source/test pair adds the minimum database-authority revision check.
 All three source commits and three test commits are pushed.
 
-Release-control tip: `a59c64d734e3662e254cdcc09b94994df86dda0e`.
+Release-control tip: `82950302a77754f0359ba5e1d31dad8ea677426f`.
 Final aggregate evidence is pending. Do not infer the
 previous HL11 aggregate applies to this runtime. Its separate receipt remains
 `../master-offerings/HEALTH_HL11_QUALIFICATION_20261001.json`.
@@ -127,7 +127,16 @@ The sampled runner, main, isolation and HTTP child paths use the private pinned
 Node binary; both HTTP phase reports also assert `v20.19.0` independently.
 The subsequent final v2 legacy proof passed with one HTTP group/10 SQL calls;
 its log SHA-256 is `16c6ec556052ffc0e46637346c3267981c313f6aa869e18c19117beaf06be4a5`.
-V2 comprehensive and aggregate qualification are pending. The preceding clean
+Final v2 comprehensive run3 passed at clean
+`a61ca3f98cef9759586b088989f99212b0082912`, tree
+`3c42b804aa8167193efe00ec74dfcd38dc41b283`, in247.813 seconds (248.458 wrapper),
+exit0. It includes131 core refusals/14 actual lock-wait races,8 stale-snapshot
+cases/21 unsupported-isolation refusals and positive READ COMMITTED controls,
+the actual old-v1 refusal/no-adoption proof, and8 HTTP groups/86 SQL calls.
+Fresh/populated repeat installation and all3 sequential container cleanups pass.
+Log SHA-256: `587ee43fce6a016659e2afd585ccedb244892fb8b6523f5797770af503658e92`.
+The only commit during that run changed a coordination message, not source/tests.
+Final aggregate qualification is pending. The preceding clean
 preflight at `b5ed3db38cdb2482c3aaebc642cbdcb7f717bf62` passed 1058 affected tests,
 typecheck, build, 50-node DAG, 460 registrations/451 callsites and release-control
 51 pass/one conditional skip. No full aggregate was started before v2; those
@@ -197,12 +206,40 @@ rather than unadjusted individual lens severities:
 | F1 | Open P1 | Actual independent manual evidence adapter and operational grant procedure still absent |
 
 HIST-FREEZE, ROLL-05, ROLL-06-R1/NEW-APP-ORDER, QUOTE-CONTRACT, ERR-ORDER,
-AVAIL, TEST-GAP, CSP-02/03/04/05/08 and managed preflight/executor/history/role
+AVAIL, TEST-GAP, GUARD-NEWSTATE, NEW-RECORD-*, CSP-02/03/04/05/08 and managed preflight/executor/history/role
 qualifications remain visible for reconciliation. New bounded trigger,
 truncation and seal checks do not automatically close every earlier
 TRIG-ENABLED, TRUNC-EVID or POSTCHECK-COVERAGE observation. Report23's counts
 were P0 none, P1 F1, P2 F4/N2/HIST-02/ADP-01. Those are dated predecessor
 counts, not a current successor P0/P1/P2 adjudication.
+
+## Managed prerequisites, not execution authorization
+
+The exact DAG source blobs and SHA-256 values are in the qualification receipt.
+The dependency order is ledger71 ->80 ->81 ->82 ->83 ->84 ->85 ->86, with
+71 ->87 and 86+87 ->88 ->89 ->90 ->91. Ledger71 is historically recorded under
+managed version20260819203614; 80 through91 are recorded pending. Neither
+statement is a fresh managed observation. Canonical notification outbox ledger3
+is an additional real prerequisite, not a newly added DAG node.
+
+Before any authorized managed window, positively identify the non-production
+project and hosted origin, inspect exact history/effective schema, and run the
+bounded PII-free M71-only pre-80 check. Nonterminal historical-paid rows require
+governed resolution or explicit acceptance of their freeze. Absence of an
+observation is not a count of zero. Verify actual PostgREST transaction mode,
+role/function overrides, function ownership/BYPASSRLS behavior, exact function,
+table and column privileges, forced RLS and enabled guards. Verify the complete
+canonical audit/outbox configuration without recording secrets.
+
+Keep financial writes and all adapters/grants disabled during any separately
+approved window. The recorded rollout requires at least84 before the successor
+app; durable effects also require87/88, N2 requires90 and this provider boundary
+requires91. Files80/81/83 lack their own BEGIN, so specify a transactional apply
+mechanism per file; never assume the whole chain is atomic. Do not replay older
+authority functions as rollback. Preserve every financial fact and use a
+reviewed roll-forward repair. The synthetic roles, permissive default grants,
+TRUNCATE grants and fixtures in the local harness must never be copied into a
+managed project. No such window or operation is authorized by this handoff.
 
 Provider selection, actual manual evidence authority/grants, provider execution
 and settlement, void/refund/dispute resolution, historical reconciliation,
