@@ -526,8 +526,8 @@ No hosted configuration, managed migration, email, money or production mutation.
 | --- | --- | --- | --- |
 | 91 | migrations/20261001085559_research_assisted_order_quote_provider_journal.sql | Held accepted-quote reservations, authenticated-adapter journal/quarantine and serialized financial uncertainty | PENDING; no managed apply |
 
-Source `91a4e0e7ecae7f1ce83b13824413ea38be271e12`, canonical Git-blob SHA-256
-`4cc0893878271afa636ffad843c032e16372e84bab88eff95d125b77a57421a5`.
+Source `e9f221c974f45831a7ad1a13bcb2bd6d8198db42`, canonical Git-blob SHA-256
+`15de2acb72835b520b1e902641e334643c18b7ea0ad9bcb8f6be4dca77668875`.
 Requires ledger90 and its complete effective financial, audit and outbox chain.
 The prior `5809b727` bytes' install smoke1 passed first and second application plus service-role
 readiness on disposable no-network PostgreSQL17.11 under Node20.19.0; cleanup
@@ -542,7 +542,7 @@ The current source requires actual READ COMMITTED before provider authority and
 covered financial decisions, without changing caller settings. The original
 eight-case reproduction now passes with no paid/cancel/disposition writes;
 fixed log SHA-256: `e9a467a024ac3fdc72977c8df1fd80eaa72eb588d4e3c02088350b56819730d7`.
-Comprehensive exact successor run2 passed at clean checkpoint
+Comprehensive isolation-only successor run2 passed at clean checkpoint
 `00c9df370387620723891e25bf112b5ba1ce1589` in 232.403 seconds: 131 refusal checks,
 14 actual lock-wait races, seven HTTP/SQL groups (75 calls), plus the separate
 eight stale-snapshot and 21 unsupported-isolation cases with positive READ
@@ -552,6 +552,16 @@ container cleanups passed. Log SHA-256:
 Neither the failed isolation run, the later permanent-test fixture failure nor
 the prior bytes' successful run is reclassified.
 Do not treat local proof as release, payment or managed acceptance.
+
+The final narrow successor adds an exact v2 authority capability requiring
+`transactionIsolation: read_committed_only`. The application rejects a genuinely
+self-valid old v1 database before reservation, journal or uncertainty access.
+Legacy proof at the actual old5809 bytes passed, including refusal to adopt
+the new migration over the old valid installation and unchanged old records.
+Log SHA-256: `16c6ec556052ffc0e46637346c3267981c313f6aa869e18c19117beaf06be4a5`.
+This does not claim any old managed installation exists. Exact v2 comprehensive
+reapplication qualification is pending; migration history alone cannot replace
+the version handshake and effective-schema preflight.
 
 Only held records are supported. SQL derives reservation economics from the
 current accepted quote, checks a separate named source grant, and preserves

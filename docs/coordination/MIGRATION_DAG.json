@@ -985,16 +985,16 @@
     {
       "id": "research_assisted_order_quote_provider_journal",
       "path": "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql",
-      "sourceSha": "91a4e0e7ecae7f1ce83b13824413ea38be271e12",
+      "sourceSha": "e9f221c974f45831a7ad1a13bcb2bd6d8198db42",
       "dependsOn": ["research_assisted_order_quote_no_funds_disposition"],
-      "checksum": { "algorithm": "sha256", "value": "4cc0893878271afa636ffad843c032e16372e84bab88eff95d125b77a57421a5" },
+      "checksum": { "algorithm": "sha256", "value": "15de2acb72835b520b1e902641e334643c18b7ea0ad9bcb8f6be4dca77668875" },
       "appliedToProduction": false,
       "managedMigrationId": "PENDING",
-      "applyTwiceVerified": true,
+      "applyTwiceVerified": false,
       "rollback": {
         "strategy": "keep_provider_execution_disabled_preserve_attempts_journal_and_uncertainty_then_roll_forward",
         "procedure": "supabase/MIGRATIONS.md",
-        "evidence": "Exact successor run2 PASS232.403s at clean00c9df3,Node20.19.0/npm10.8.2,disposable no-network PostgreSQL17.11:131 refusals/14 actual lock-wait races/7 HTTP-SQL groups/75calls; separate isolation8stale cases+21unsupported-mode refusals+RCpositive controls,0unsafe. Exact populated reapply and both container cleanups confirmed. LogSHA2564d31da496917ce4083c319cc9650397e2a132d5d461c318eb560691b6186f8e4. Prior initial pass,8unsafe reproduction exit1 and later fixturefailure remain distinct. No managed/provider-authentication acceptance."
+        "evidence": "Prior isolation-only source91a4e0e passed run2:131refusals14races7HTTPgroups plus8stale+21isolation refusals; log4d31da496917ce4083c319cc9650397e2a132d5d461c318eb560691b6186f8e4. Current v2 minimum-authority sourcee9f221c passes actual old5809-valid-schema rejection before any write and refuses old-install adoption; legacylog16c6ec556052ffc0e46637346c3267981c313f6aa869e18c19117beaf06be4a5. Exact current comprehensive/reapply pending. Prior failures remain separate, no managed acceptance."
       },
       "notes": "ADP01 held-only foundation. Sources and source-scoped operator grants install empty. Server-created accepted-quote reservations and authenticated-adapter normalized event journal remain held; known or unbound uncertainty fences consequential financial writes. No provider execution, settlement, refund, historical adoption or new verification. Production source remains null; only a disabled admin reservation door is mounted, no webhook. SQL trusts configured server ingress and does not authenticate provider signatures. Schema seal checks definitions and metadata, not money or arbitrary owner DDL; outer exact bytes remain pinned here. Managed apply/activation require independent review and separate exact authorization."
     }
