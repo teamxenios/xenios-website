@@ -2,6 +2,20 @@
   "schemaVersion": 1,
   "healthProviderNeutral20260930": {
     "status": "NOT_READY_FOR_PRODUCTION_PROMOTION",
+    "currentHL01Work": {
+      "task": "HEALTH-HL01-CATALOG-DETAIL-DISCLOSURE-20261001",
+      "runtimeSourceSha": "ed5c5ad50585bf05c43b22134e196d49b8d98456",
+      "runtimeSourceTree": "7a694e71c5d7f6ed3fee2c31fd8a616a3f1de326",
+      "testOnlySha": "928dfc60b2ffee3ded364c7f6a301b728e71e0dd",
+      "status": "LOCAL_CHECKS_PASS_NATIVE_ZOOM_UNVERIFIED_PROTECTION_HELD",
+      "focused": "Initial151PASS8files; corrected79PASS3files0skip,real dataset. Final clean c23b979 typecheck17.820s/build49.828s exit0,1352source225build zero forbidden forms. Nine saved Chrome recapture observations319x304CSS/client311/scroll311,overflow0,keyboard/Care/held/filter/reload pass; no native zoom claim. Failed reproduction, initial overflow464 and empty packaging retained separately.",
+      "protection": "Unchanged CLI exit1:37 hard hash passes,static hash fail,3 seam warnings; no amendment",
+      "aggregate": "NOT_RUN_FOR_HL01_OR_HL17; previous failed ADP03 aggregate is not successor evidence",
+      "handoff": "docs/health-launch/HL01_CATALOG_DETAILS_20261001.md",
+      "claudeAccepted": false,
+      "managedQualified": false,
+      "productionMutated": false
+    },
     "currentHL17Work": {
       "task": "HEALTH-HL17-ACCESS-HUB-RESTORE-20261001",
       "runtimeSourceSha": "8a31b0fa664f3570ae0bf66a7a65f62c051b2e08",
@@ -31,11 +45,11 @@
       "managedQualified": false,
       "productionMutated": false
     },
-    "runtimeSourceSha": "8a31b0fa664f3570ae0bf66a7a65f62c051b2e08",
-    "runtimeSourceTree": "6d209a70a3231c5c6c1362338293bfc5e9e6f871",
-    "testOnlySha": "091bcde3e1f6f39ba84c02c78412fca72c567b4d",
+    "runtimeSourceSha": "ed5c5ad50585bf05c43b22134e196d49b8d98456",
+    "runtimeSourceTree": "7a694e71c5d7f6ed3fee2c31fd8a616a3f1de326",
+    "testOnlySha": "928dfc60b2ffee3ded364c7f6a301b728e71e0dd",
     "releaseControlSha": "edf8526bdefc34b8e87fa6e46585573535dba6cd",
-    "currentAggregateStatus": "NOT_RUN_FOR_HL17; PRIOR_ADP03_COMPLETED_19357_PASS_1_FAIL_85_SKIP_EXIT_1_NO_TIMEOUTS_PROTECTED_SEAM_ASSERTION_NOT_SUCCESSOR_PROOF",
+    "currentAggregateStatus": "NOT_RUN_FOR_HL01_OR_HL17; PRIOR_ADP03_COMPLETED_19357_PASS_1_FAIL_85_SKIP_EXIT_1_NO_TIMEOUTS_PROTECTED_SEAM_ASSERTION_NOT_SUCCESSOR_PROOF",
     "currentADP01Status": "PUSHED_e9f221c_SOURCE_9c1fe1e_TESTS_8295030_CONTROLS_FINAL_V2_SQL_RUN3_AND_PREFLIGHT_PASS_AGGREGATE18998P1F85S_EXIT1_NO_INDEPENDENT_OR_HOSTED_ACCEPTANCE",
     "currentADP02Status": "PUSHED_27463d7_SOURCE_8f56a7f_TESTS_a16f562_CONTROLS_FINAL_LOCAL_SQL_PASS_CLEANUP_PREFLIGHT1216PASS_TYPECHECK_BUILD_DAG51_ROUTES461_CONTROL51PASS1SKIP_AGGREGATE19149P1F85S_EXIT1_NO_INDEPENDENT_OR_HOSTED_ACCEPTANCE_PRODUCTION_SOURCE_NULL",
     "currentADP02Qualification": {
@@ -103,10 +117,10 @@
     },
     "branch": "codex/xenios-health-launch-implementation-20260930",
     "report": "server/research/assisted-order/HEALTH_HL12_ADP03_HANDOFF_20261001.md",
-    "protectedFileGate": "Exact prior two-hash owner approval at663268f preserved. New server/index.ts recovery wiring and unchanged Research gateway differ from seam baselines; unchanged assertion FAILS. Neither baseline amended. CLI38 hard hashes PASS, not release approval.",
+    "protectedFileGate": "Exact prior two-hash owner approval at663268f preserved. HL17 App seam/static hard-hash differences plus inherited server/index.ts recovery wiring and Research gateway seam mismatches need exact review/disposition. Unchanged CLI37 hard hashes PASS,1FAIL,3 seam warnings,exit1. No new baseline amended or approved.",
     "focusedResult": "FinalADP03:1424pass47files0skip exit0,63.98s cleanedf8526. SQL21groups149refusals16waits20isolation(included in refusals),11HTTP154calls exact driver cleanup. No independent successor acceptance.",
     "fullSuiteTestedHead": "dc41f1a073aace6556a8a4f3a1f9e817c57ae02c",
-    "fullSuiteIsCurrentRuntime": true,
+    "fullSuiteIsCurrentRuntime": false,
     "previousRuntimeSourceSha": "27463d764ba01219c67081a3548ffdc3ff7d2b40",
     "fullSuite": "19357PASS1FAIL85SKIP,1018pass1fail6skipfiles,exit1,1173.16s test/1174.566s wrapper;2026-10-01T13:00:56.897Z to13:20:31.463Z. Sole unchanged seam assertion, no timeouts. Source/tests/controls frozen at boundaries; records-only commits to clean8cf4677. Not a passing aggregate.",
     "fullSuiteLogSha256": "03719e7d35db5b42b0b2a9dab6c4bf702ffbe54f9a0f4779881944d7237c3ab5",
@@ -133,7 +147,7 @@
     "realMoneyMoved": false,
     "releaseAuthority": "Source implementation and disposable local testing only. Provider choice deferred. No hosted authority carried from historical entries below."
   },
-  "updatedAt": "2026-10-01T14:10:05.269Z",
+  "updatedAt": "2026-10-01T14:47:50.000Z",
   "nativeCloseout20260921": {
     "status": "LOCAL_ENGINEERING_QUALIFIED_MANAGED_RELEASE_BLOCKED",
     "productionStateVerifier": "BLOCKED_MISSING_TRUSTED_INPUTS_AND_STALE_EVIDENCE",

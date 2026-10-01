@@ -1,0 +1,16 @@
+{
+  "source": "ed5c5ad50585bf05c43b22134e196d49b8d98456",
+  "tree": "7a694e71c5d7f6ed3fee2c31fd8a616a3f1de326",
+  "buildHead": "c23b979bcd60a0fb550c7be1ba3ef55988eb506b",
+  "nativeZoom": null,
+  "viewportOverride": false,
+  "syntheticFixture": true,
+  "observations": [],
+  "console": [],
+  "limits": [
+    "Six synthetic product rows, not live prices, availability or authorization.",
+    "No native zoom percentage observed.",
+    "No Add, Care CTA, submission or purchase was activated.",
+    "One read-only measurement timed out before initial capture; one post-reload locator wait timed out while diagnostics already reported visible. Subsequent direct state observations confirmed rendering; no user action was blindly retried."
+  ]
+}

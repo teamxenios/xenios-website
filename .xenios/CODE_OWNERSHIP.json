@@ -3288,7 +3288,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T06:26:41.299Z",
-      "heartbeatAt": "2026-10-01T14:19:43.960Z"
+      "heartbeatAt": "2026-10-01T14:41:52.993Z"
     },
     {
       "id": "50a8e190-b0e1-479e-8b7b-7be25b0ad42f",
@@ -3443,7 +3443,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T14:15:39.796Z",
-      "heartbeatAt": "2026-10-01T14:19:43.960Z"
+      "heartbeatAt": "2026-10-01T14:41:52.993Z"
     }
   ],
   "rules": [

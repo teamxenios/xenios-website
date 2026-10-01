@@ -1,0 +1,771 @@
+{
+  "source": "ed5c5ad50585bf05c43b22134e196d49b8d98456",
+  "tree": "7a694e71c5d7f6ed3fee2c31fd8a616a3f1de326",
+  "buildHead": "c23b979bcd60a0fb550c7be1ba3ef55988eb506b",
+  "nativeZoom": null,
+  "viewportOverride": false,
+  "syntheticFixture": true,
+  "observations": [
+    {
+      "scenario": "current-open",
+      "at": "2026-10-01T14:42:47.124Z",
+      "clientWidth": 311,
+      "emptyRequest": true,
+      "innerHeight": 304,
+      "innerWidth": 319,
+      "openDetails": [
+        "order-card-details-synthetic-research-a"
+      ],
+      "overflow": 0,
+      "scrollWidth": 311,
+      "url": "http://127.0.0.1:56969/research/early-access/order-request"
+    },
+    {
+      "scenario": "long-fact-enter-open",
+      "at": "2026-10-01T14:43:02.183Z",
+      "activeRect": {
+        "bottom": 173.9166717529297,
+        "height": 44,
+        "left": 31,
+        "right": 280.3333435058594,
+        "top": 129.9166717529297,
+        "width": 249.33334350585935,
+        "x": 31,
+        "y": 129.9166717529297
+      },
+      "activeTag": "SUMMARY",
+      "activeText": "Product details for Synthetic Research, Synthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOP",
+      "clientWidth": 311,
+      "details": [
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-research-a",
+          "open": true,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Research, Synthetic exact variant A\nSpecification\nSynthetic exact variant A\nFormat\nSynthetic vial\nPack basis\nSynthetic single unit\nMinimum request quantity\n1\nMaximum request quantity\n4\nQuantity increment\n1\n\nRequest quantities only, not dosing instructions. Availability is confirmed separately."
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-research-b",
+          "open": true,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Research, Synthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\nSpecification\nSynthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\nFormat\nNot stated in the current catalog\nPack basis\nNot stated in the current catalog\nMinimum request quantity\n1\nMaximum request quantity\nNot stated in the current catalog\nQuantity increment\n1\n\nRequest quantities only, not dosing instructions. Availability is confirmed separately."
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-care-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Care, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-pricing-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Price Request, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-activation-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Activation Request, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-held-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Held, Synthetic exact variant A"
+        }
+      ],
+      "dpr": 3,
+      "emptyRequest": true,
+      "headerBottom": 69,
+      "innerHeight": 304,
+      "innerWidth": 319,
+      "openDetails": [
+        "order-card-details-synthetic-research-a",
+        "order-card-details-synthetic-research-b"
+      ],
+      "outline": "rgb(24, 61, 45) solid 3px",
+      "overflow": 0,
+      "scrollWidth": 311,
+      "summaries": [
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        }
+      ],
+      "url": "http://127.0.0.1:56969/research/early-access/order-request"
+    },
+    {
+      "scenario": "space-closes-long-fact",
+      "at": "2026-10-01T14:43:11.713Z",
+      "activeRect": {
+        "bottom": 209.9166717529297,
+        "height": 44,
+        "left": 31,
+        "right": 280.3333435058594,
+        "top": 165.9166717529297,
+        "width": 249.33334350585935,
+        "x": 31,
+        "y": 165.9166717529297
+      },
+      "activeTag": "SUMMARY",
+      "activeText": "Product details for Synthetic Research, Synthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOP",
+      "clientWidth": 311,
+      "details": [
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-research-a",
+          "open": true,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Research, Synthetic exact variant A\nSpecification\nSynthetic exact variant A\nFormat\nSynthetic vial\nPack basis\nSynthetic single unit\nMinimum request quantity\n1\nMaximum request quantity\n4\nQuantity increment\n1\n\nRequest quantities only, not dosing instructions. Availability is confirmed separately."
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-research-b",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Research, Synthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-care-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Care, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-pricing-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Price Request, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-activation-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Activation Request, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-held-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Held, Synthetic exact variant A"
+        }
+      ],
+      "dpr": 3,
+      "emptyRequest": true,
+      "headerBottom": 69,
+      "innerHeight": 304,
+      "innerWidth": 319,
+      "openDetails": [
+        "order-card-details-synthetic-research-a"
+      ],
+      "outline": "rgb(24, 61, 45) solid 3px",
+      "overflow": 0,
+      "scrollWidth": 311,
+      "summaries": [
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        }
+      ],
+      "url": "http://127.0.0.1:56969/research/early-access/order-request"
+    },
+    {
+      "scenario": "tab-to-add-without-activation",
+      "at": "2026-10-01T14:43:15.259Z",
+      "activeRect": {
+        "bottom": 210.0416717529297,
+        "height": 44,
+        "left": 31,
+        "right": 224.953125,
+        "top": 166.0416717529297,
+        "width": 193.953125,
+        "x": 31,
+        "y": 166.0416717529297
+      },
+      "activeTag": "BUTTON",
+      "activeText": "Add to order request",
+      "clientWidth": 311,
+      "details": [
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-research-a",
+          "open": true,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Research, Synthetic exact variant A\nSpecification\nSynthetic exact variant A\nFormat\nSynthetic vial\nPack basis\nSynthetic single unit\nMinimum request quantity\n1\nMaximum request quantity\n4\nQuantity increment\n1\n\nRequest quantities only, not dosing instructions. Availability is confirmed separately."
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-research-b",
+          "open": true,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Research, Synthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\nSpecification\nSynthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\nFormat\nNot stated in the current catalog\nPack basis\nNot stated in the current catalog\nMinimum request quantity\n1\nMaximum request quantity\nNot stated in the current catalog\nQuantity increment\n1\n\nRequest quantities only, not dosing instructions. Availability is confirmed separately."
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-care-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Care, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-pricing-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Price Request, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-activation-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Activation Request, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-held-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Held, Synthetic exact variant A"
+        }
+      ],
+      "dpr": 3,
+      "emptyRequest": true,
+      "headerBottom": 69,
+      "innerHeight": 304,
+      "innerWidth": 319,
+      "openDetails": [
+        "order-card-details-synthetic-research-a",
+        "order-card-details-synthetic-research-b"
+      ],
+      "outline": "rgba(24, 61, 45, 0.32) solid 3px",
+      "overflow": 0,
+      "scrollWidth": 311,
+      "summaries": [
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        }
+      ],
+      "url": "http://127.0.0.1:56969/research/early-access/order-request"
+    },
+    {
+      "scenario": "care-specific-guidance",
+      "at": "2026-10-01T14:43:26.660Z",
+      "activeRect": {
+        "bottom": 174.0416717529297,
+        "height": 44,
+        "left": 31,
+        "right": 280.3333435058594,
+        "top": 130.0416717529297,
+        "width": 249.33334350585935,
+        "x": 31,
+        "y": 130.0416717529297
+      },
+      "activeTag": "SUMMARY",
+      "activeText": "Product details for Synthetic Care, Synthetic exact variant A",
+      "clientWidth": 311,
+      "details": [
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-research-a",
+          "open": true,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Research, Synthetic exact variant A\nSpecification\nSynthetic exact variant A\nFormat\nSynthetic vial\nPack basis\nSynthetic single unit\nMinimum request quantity\n1\nMaximum request quantity\n4\nQuantity increment\n1\n\nRequest quantities only, not dosing instructions. Availability is confirmed separately."
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-research-b",
+          "open": true,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Research, Synthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\nSpecification\nSynthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\nFormat\nNot stated in the current catalog\nPack basis\nNot stated in the current catalog\nMinimum request quantity\n1\nMaximum request quantity\nNot stated in the current catalog\nQuantity increment\n1\n\nRequest quantities only, not dosing instructions. Availability is confirmed separately."
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-care-a",
+          "open": true,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Care, Synthetic exact variant A\nSpecification\nSynthetic exact variant A\nFormat\nNot stated in the current catalog\nPack basis\nNot stated in the current catalog\n\nCare options and quantities require separate provider review."
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-pricing-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Price Request, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-activation-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Activation Request, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-held-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Held, Synthetic exact variant A"
+        }
+      ],
+      "dpr": 3,
+      "emptyRequest": true,
+      "headerBottom": 69,
+      "innerHeight": 304,
+      "innerWidth": 319,
+      "openDetails": [
+        "order-card-details-synthetic-research-a",
+        "order-card-details-synthetic-research-b",
+        "order-card-details-synthetic-care-a"
+      ],
+      "outline": "rgb(24, 61, 45) solid 3px",
+      "overflow": 0,
+      "scrollWidth": 311,
+      "summaries": [
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        }
+      ],
+      "url": "http://127.0.0.1:56969/research/early-access/order-request"
+    },
+    {
+      "scenario": "held-inspectable-not-addable",
+      "at": "2026-10-01T14:43:37.929Z",
+      "activeRect": {
+        "bottom": 173.90625,
+        "height": 44,
+        "left": 31,
+        "right": 280.3333435058594,
+        "top": 129.90625,
+        "width": 249.33334350585935,
+        "x": 31,
+        "y": 129.90625
+      },
+      "activeTag": "SUMMARY",
+      "activeText": "Product details for Synthetic Held, Synthetic exact variant A",
+      "clientWidth": 311,
+      "details": [
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-research-a",
+          "open": true,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Research, Synthetic exact variant A\nSpecification\nSynthetic exact variant A\nFormat\nSynthetic vial\nPack basis\nSynthetic single unit\nMinimum request quantity\n1\nMaximum request quantity\n4\nQuantity increment\n1\n\nRequest quantities only, not dosing instructions. Availability is confirmed separately."
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-research-b",
+          "open": true,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Research, Synthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\nSpecification\nSynthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\nFormat\nNot stated in the current catalog\nPack basis\nNot stated in the current catalog\nMinimum request quantity\n1\nMaximum request quantity\nNot stated in the current catalog\nQuantity increment\n1\n\nRequest quantities only, not dosing instructions. Availability is confirmed separately."
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-care-a",
+          "open": true,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Care, Synthetic exact variant A\nSpecification\nSynthetic exact variant A\nFormat\nNot stated in the current catalog\nPack basis\nNot stated in the current catalog\n\nCare options and quantities require separate provider review."
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-pricing-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Price Request, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-activation-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Activation Request, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-held-a",
+          "open": true,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Held, Synthetic exact variant A\nSpecification\nSynthetic exact variant A\nFormat\nNot stated in the current catalog\nPack basis\nNot stated in the current catalog\nMinimum request quantity\n1\nMaximum request quantity\n4\nQuantity increment\n1\n\nRequest quantities only, not dosing instructions. Availability is confirmed separately."
+        }
+      ],
+      "dpr": 3,
+      "emptyRequest": true,
+      "headerBottom": 69,
+      "innerHeight": 304,
+      "innerWidth": 319,
+      "openDetails": [
+        "order-card-details-synthetic-research-a",
+        "order-card-details-synthetic-research-b",
+        "order-card-details-synthetic-care-a",
+        "order-card-details-synthetic-held-a"
+      ],
+      "outline": "rgb(24, 61, 45) solid 3px",
+      "overflow": 0,
+      "scrollWidth": 311,
+      "summaries": [
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        }
+      ],
+      "url": "http://127.0.0.1:56969/research/early-access/order-request"
+    },
+    {
+      "scenario": "filtered-care-new-closed-node",
+      "at": "2026-10-01T14:44:01.276Z",
+      "activeRect": {
+        "bottom": 210.7291679382324,
+        "height": 45.66666793823242,
+        "left": 29,
+        "right": 282.3333435058594,
+        "top": 165.0625,
+        "width": 253.33334350585935,
+        "x": 29,
+        "y": 165.0625
+      },
+      "activeTag": "INPUT",
+      "activeText": "",
+      "clientWidth": 311,
+      "details": [
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-care-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Care, Synthetic exact variant A"
+        }
+      ],
+      "dpr": 3,
+      "emptyRequest": true,
+      "headerBottom": 69,
+      "innerHeight": 304,
+      "innerWidth": 319,
+      "openDetails": [],
+      "outline": "rgba(24, 61, 45, 0.32) solid 3px",
+      "overflow": 0,
+      "scrollWidth": 311,
+      "summaries": [
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        }
+      ],
+      "url": "http://127.0.0.1:56969/research/early-access/order-request"
+    },
+    {
+      "scenario": "reload-all-closed",
+      "at": "2026-10-01T14:44:11.084Z",
+      "activeRect": {
+        "bottom": 6514.6826171875,
+        "height": 6514.6826171875,
+        "left": 0,
+        "right": 311.3333435058594,
+        "top": 0,
+        "width": 311.3333435058594,
+        "x": 0,
+        "y": 0
+      },
+      "activeTag": "BODY",
+      "activeText": "\n    Skip to contentXeniosFor Individuals⌄For Practices⌄PartnersHow It WorksQualityAboutCareersFor Individuals⌄For Practices⌄PartnersHow It WorksSign InStart CareMenuCareResearchHow it worksQualityFAQ",
+      "clientWidth": 311,
+      "details": [
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-research-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Research, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-research-b",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Research, Synthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-care-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Care, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-pricing-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Price Request, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-activation-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Activation Request, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-held-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Held, Synthetic exact variant A"
+        }
+      ],
+      "dpr": 3,
+      "emptyRequest": true,
+      "headerBottom": 69,
+      "innerHeight": 304,
+      "innerWidth": 319,
+      "openDetails": [],
+      "outline": "rgb(14, 14, 14) none 3px",
+      "overflow": 0,
+      "scrollWidth": 311,
+      "summaries": [
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        }
+      ],
+      "url": "http://127.0.0.1:56969/research/early-access/order-request"
+    },
+    {
+      "scenario": "final-first-detail-open",
+      "at": "2026-10-01T14:44:31.870Z",
+      "activeRect": {
+        "bottom": 174.125,
+        "height": 44,
+        "left": 31,
+        "right": 280.3333435058594,
+        "top": 130.125,
+        "width": 249.33334350585935,
+        "x": 31,
+        "y": 130.125
+      },
+      "activeTag": "SUMMARY",
+      "activeText": "Product details for Synthetic Research, Synthetic exact variant A",
+      "clientWidth": 311,
+      "details": [
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-research-a",
+          "open": true,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Research, Synthetic exact variant A\nSpecification\nSynthetic exact variant A\nFormat\nSynthetic vial\nPack basis\nSynthetic single unit\nMinimum request quantity\n1\nMaximum request quantity\n4\nQuantity increment\n1\n\nRequest quantities only, not dosing instructions. Availability is confirmed separately."
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-research-b",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Research, Synthetic second exact variant with an intentionally long description for narrow-screen wrapping: SYNTHETIC-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-care-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Care, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-pricing-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Price Request, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-activation-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Activation Request, Synthetic exact variant A"
+        },
+        {
+          "clientWidth": 249,
+          "id": "order-card-details-synthetic-held-a",
+          "open": false,
+          "scrollWidth": 249,
+          "text": "Product details\nfor Synthetic Held, Synthetic exact variant A"
+        }
+      ],
+      "dpr": 3,
+      "emptyRequest": true,
+      "headerBottom": 69,
+      "innerHeight": 304,
+      "innerWidth": 319,
+      "openDetails": [
+        "order-card-details-synthetic-research-a"
+      ],
+      "outline": "rgb(24, 61, 45) solid 3px",
+      "overflow": 0,
+      "scrollWidth": 311,
+      "summaries": [
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        },
+        {
+          "height": 44,
+          "width": 249.33334350585935
+        }
+      ],
+      "url": "http://127.0.0.1:56969/research/early-access/order-request"
+    }
+  ],
+  "console": [],
+  "limits": [
+    "Independent recapture after discovering chrome-final-observations.json saved an empty list; original file retained as failed packaging evidence.",
+    "Six synthetic product rows, not live pricing, availability, authorization or financial tests. No Add, Care CTA or transaction activated.",
+    "No native zoom percentage observed. No viewport override applied.",
+    "Prior read-only measurement timeout and post-reload locator timeout retained separately; recapture had one ambiguous read-only result locator, resolved using its observed unique test id. No failed write action retried."
+  ]
+}
