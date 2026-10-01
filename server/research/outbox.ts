@@ -1,5 +1,6 @@
 import { renderCommerceReceiptOutboxEmail } from "./commerce/receipt-repair";
 import { paymentEffectDispatchAllowed, type PaymentEffectsRecovery } from "./assisted-order/payment-effects";
+import { dispositionEffectDispatchAllowed, type DispositionEffectsRecovery } from "./assisted-order/disposition-effects";
 import type { Express } from "express";
 import { getSupabaseAdmin, supabaseConfigured } from "../supabase";
 import { requireSupabaseAdmin } from "../routes";
@@ -249,6 +250,9 @@ export async function sendFoundingEmail(input: {
 async function dispatch(job: any): Promise<{ ok: boolean; providerId: string | null; error?: string; nonRetryable?: boolean }> {
   if (!await paymentEffectDispatchAllowed(getSupabaseAdmin() as any, job)) {
     return { ok: false, providerId: null, error: "verified payment notification authority unavailable" };
+  }
+  if (!await dispositionEffectDispatchAllowed(getSupabaseAdmin() as any, job)) {
+    return { ok: false, providerId: null, error: "financial disposition notification authority unavailable" };
   }
   const payload = job.payload ?? {};
   const firstName = String(payload.firstName ?? "there");
@@ -570,6 +574,10 @@ let paymentEffectsRecovery: PaymentEffectsRecovery | null = null;
 export function configurePaymentEffectsRecovery(recovery: PaymentEffectsRecovery | null): void {
   paymentEffectsRecovery = recovery;
 }
+let dispositionEffectsRecovery: DispositionEffectsRecovery | null = null;
+export function configureDispositionEffectsRecovery(recovery: DispositionEffectsRecovery | null): void {
+  dispositionEffectsRecovery = recovery;
+}
 
 export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: number; retried: number; failed: number }> {
   const result = { sent: 0, retried: 0, failed: 0 };
@@ -583,6 +591,14 @@ export async function runOutboxTick(now: Date = new Date()): Promise<{ sent: num
       if (recovered.failed > 0) console.error("[outbox] verified payment effects remain held:", recovered.failed);
     } catch {
       console.error("[outbox] verified payment effects recovery unavailable");
+    }
+  }
+  if (dispositionEffectsRecovery) {
+    try {
+      const recovered = await dispositionEffectsRecovery.runBatch();
+      if (recovered.failed > 0) console.error("[outbox] financial disposition effects remain held:", recovered.failed);
+    } catch {
+      console.error("[outbox] financial disposition effects recovery unavailable");
     }
   }
 

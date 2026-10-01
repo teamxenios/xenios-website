@@ -13,7 +13,7 @@ import { registerPrivateEarlyAccessApi } from "./research/early-access/register"
 import { buildEarlyAccessPersistence } from "./research/early-access/persistence/production-deps";
 import { registerMemberApi } from "./research/members";
 import { registerMemberAccessApi } from "./research/guards";
-import { configurePaymentEffectsRecovery, enqueueNotification, registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
+import { configureDispositionEffectsRecovery, configurePaymentEffectsRecovery, enqueueNotification, registerOutboxAdmin, startOutboxWorker } from "./research/outbox";
 import { registerRecruitingMail } from "./research/recruiting-mail";
 import { registerReferralFraudAdmin } from "./research/fraud-admin";
 import { registerMemberPlatformApi } from "./research/member-platform";
@@ -149,6 +149,8 @@ import {
 } from "./research/assisted-order/express";
 import { createAssistedOrderRouteTable } from "./research/assisted-order/http";
 import { AssistedOrderFinanceService } from "./research/assisted-order/finance";
+import { AssistedOrderDispositionService } from "./research/assisted-order/financial-disposition";
+import { resolveDispositionEffectsRecovery } from "./research/assisted-order/disposition-effects";
 import type { SupabaseRpcClient as AssistedOrderRpcClient } from "./research/assisted-order/supabase-repository";
 import type { SupabaseStorageClient as AssistedOrderStorageClient } from "./research/assisted-order/supabase-document-store";
 import { requireSupabaseAdmin } from "./routes";
@@ -1017,6 +1019,28 @@ async function composeAssistedOrderBridge(): Promise<
           null, // No independent manual ledger authority is configured yet.
         )
       : null;
+  // N2 is a distinct, default-off authority. Its independent evidence adapter
+  // remains unconfigured; generic admins and payment-verifier grants cannot
+  // substitute for the separately scoped no-funds grant and positive receipt.
+  const assistedOrderDispositionEffects = await resolveDispositionEffectsRecovery({
+    enabled: process.env.RESEARCH_ASSISTED_ORDER_DISPOSITIONS_ENABLED === "true" &&
+      assistedOrderComposition.service !== null,
+    rpc: supabaseConfigured() ? getSupabaseAdmin() as unknown as AssistedOrderRpcClient : null,
+    audit: assistedOrderAudit.authority,
+  });
+  configureDispositionEffectsRecovery(assistedOrderDispositionEffects);
+  const assistedOrderDispositions = assistedOrderDispositionEffects !== null
+    ? {
+        service: new AssistedOrderDispositionService(
+          getSupabaseAdmin() as unknown as AssistedOrderRpcClient,
+          null, // No independently sourced no-funds evidence workflow is configured.
+        ),
+        effects: assistedOrderDispositionEffects,
+      }
+    : null;
+  if (process.env.RESEARCH_ASSISTED_ORDER_DISPOSITIONS_ENABLED === "true" && !assistedOrderDispositions) {
+    log("assisted-order dispositions unavailable: durable audit and disposition-effects readiness required", "assisted-order");
+  }
   const assistedOrderRoutes = assistedOrderComposition.service === null
     ? null
     : createAssistedOrderRouteTable<ExpressAssistedOrderRequest>(
@@ -1032,6 +1056,7 @@ async function composeAssistedOrderBridge(): Promise<
     createReferralV1AttributionResolver(buildReferralV1Dependencies()),
     assistedOrderFinance,
     assistedOrderPaymentEffects,
+    assistedOrderDispositions,
   );
   const assistedOrderDoor = (
     method: "GET" | "POST" | "PATCH",
@@ -1082,6 +1107,10 @@ async function composeAssistedOrderBridge(): Promise<
   app.post("/api/admin/research/assisted-orders/:requestId/quote", requireSupabaseAdmin, assistedOrderFinanceDoor("POST", "/api/admin/research/assisted-orders/:requestId/quote"));
   app.post("/api/admin/research/assisted-orders/:requestId/payment-observations/manual", requireSupabaseAdmin, assistedOrderFinanceDoor("POST", "/api/admin/research/assisted-orders/:requestId/payment-observations/manual"));
   app.post("/api/admin/research/assisted-orders/:requestId/payment-observations/:observationId/verify", requireSupabaseAdmin, assistedOrderFinanceDoor("POST", "/api/admin/research/assisted-orders/:requestId/payment-observations/:observationId/verify"));
+  app.post("/api/admin/research/assisted-orders/:requestId/financial-dispositions/no-funds/cancel", requireSupabaseAdmin,
+    assistedOrderDispositions
+      ? assistedOrderDoor("POST", "/api/admin/research/assisted-orders/:requestId/financial-dispositions/no-funds/cancel")
+      : assistedOrderUnavailableDoor("/api/admin/research/assisted-orders/:requestId/financial-dispositions/no-funds/cancel", "assisted_order_dispositions_disabled"));
   if (assistedOrderComposition.service) {
     log(
       `assisted order bridge mounted (audit mode: ${assistedOrderComposition.auditMode})`,

@@ -23,6 +23,8 @@ import type {
 } from "./ports";
 import type { AssistedOrderFinanceService } from "./finance";
 import type { PaymentEffectsRecovery } from "./payment-effects";
+import type { AssistedOrderDispositionService } from "./financial-disposition";
+import { AssistedOrderDispositionEffectsError, type DispositionEffectsRecovery } from "./disposition-effects";
 
 export const ASSISTED_ORDER_STATUS_TOKEN_HEADER =
   "x-xenios-order-status-token";
@@ -150,6 +152,12 @@ function statusTokenFromHeader(
 }
 
 function errorResponse(error: unknown): AssistedOrderHttpResponse {
+  if (error instanceof AssistedOrderDispositionEffectsError) {
+    return ok(503, {
+      error: "financial_disposition_effects_pending",
+      message: "Cancellation was recorded. Its audit and notification follow-up is pending and will be retried automatically.",
+    });
+  }
   if (error instanceof AssistedOrderVerificationEffectsError) {
     return ok(503, {
       error: "payment_verification_effects_pending",
@@ -213,6 +221,7 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
   attribution?: AssistedOrderAttributionResolver | null,
   finance?: AssistedOrderFinanceService | null,
   paymentEffects?: PaymentEffectsRecovery | null,
+  disposition?: Readonly<{ service: AssistedOrderDispositionService; effects: DispositionEffectsRecovery }> | null,
 ): readonly AssistedOrderRouteDescriptor[] {
   const viewer = (request: AssistedOrderHttpRequest): Promise<AssistedOrderViewer> =>
     viewerResolver.resolve(request as Request);
@@ -439,6 +448,21 @@ export function createAssistedOrderRouteTable<Request extends AssistedOrderHttpR
         }),
       },
     );
+  }
+
+  if (disposition) {
+    routes.push({
+      method: "POST",
+      path: "/api/admin/research/assisted-orders/:requestId/financial-dispositions/no-funds/cancel",
+      auth: "admin",
+      handler: (request) => handle(async () => {
+        const resolvedViewer = await viewer(request);
+        if (!disposition.effects) throw new AssistedOrderConflictError("financial_disposition_not_ready", "Cancellation authority is unavailable.");
+        const receipt = await disposition.service.cancelWithNoFunds(resolvedViewer, request.params.requestId ?? "", request.body);
+        await disposition.effects.recover(receipt.dispositionId, receipt.requestId);
+        return ok(200, receipt);
+      }),
+    });
   }
 
   for (const route of [...routes]) {
