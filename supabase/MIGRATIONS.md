@@ -526,17 +526,24 @@ No hosted configuration, managed migration, email, money or production mutation.
 | --- | --- | --- | --- |
 | 91 | migrations/20261001085559_research_assisted_order_quote_provider_journal.sql | Held accepted-quote reservations, authenticated-adapter journal/quarantine and serialized financial uncertainty | PENDING; no managed apply |
 
-Source `5809b727617e3abe065df69e563374d13f2bcfa8`, canonical Git-blob SHA-256
-`5ab6ebcce2bf812d37921aa366d2d144d6ef659fc9f786a8a1c301964b2a5067`.
+Source `91a4e0e7ecae7f1ce83b13824413ea38be271e12`, canonical Git-blob SHA-256
+`4cc0893878271afa636ffad843c032e16372e84bab88eff95d125b77a57421a5`.
 Requires ledger90 and its complete effective financial, audit and outbox chain.
-Install smoke1 passed first and second exact application plus service-role
+The prior `5809b727` bytes' install smoke1 passed first and second application plus service-role
 readiness on disposable no-network PostgreSQL17.11 under Node20.19.0; cleanup
 was confirmed. Comprehensive local run1 then passed 131 refusals, 14 actual
 lock-wait races and seven composed HTTP/service/SQL groups across two Node
 processes (75 service-role calls), including populated repeat installation.
 Log SHA-256: `7b474c364e1a65ce89fad81e8cd489fb61e9ea9fa3f43313b7ef12b42f9e4221`.
-The subsequent negative-auth fixture type correction passed seven static tests;
-its exact committed proof rerun remains pending. No failed SQL run is hidden.
+The separate isolation reproduction then failed with eight prohibited commits
+under stale REPEATABLE READ/SERIALIZABLE snapshots against READ COMMITTED writers.
+Failed log SHA-256: `9d18ffc2a5088d3bafa91acdd523baa96efe88b12402f7efd205762107781458`.
+The current source requires actual READ COMMITTED before provider authority and
+covered financial decisions, without changing caller settings. The original
+eight-case reproduction now passes with no paid/cancel/disposition writes;
+fixed log SHA-256: `e9a467a024ac3fdc72977c8df1fd80eaa72eb588d4e3c02088350b56819730d7`.
+Comprehensive exact successor/reapply qualification remains pending. Neither
+the failed isolation run nor the prior bytes' successful run is reclassified.
 Do not treat local proof as release, payment or managed acceptance.
 
 Only held records are supported. SQL derives reservation economics from the
