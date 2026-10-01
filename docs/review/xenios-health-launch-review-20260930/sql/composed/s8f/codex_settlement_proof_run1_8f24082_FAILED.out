@@ -1,0 +1,53 @@
+{"phase":"source-start","sourceHashes":{"supabase/migrations/20261001115512_research_assisted_order_quote_provider_settlement.sql":"b1dc38ee11daf55475ef42f003834a7802a183139063108014d41c7aa1444f5d","server/research/assisted-order/payment/provider-settlement.ts":"c1ad092df32a30bf974a12a9bbbf658946e4168f866cad3d45f0d13b792860ac","server/research/assisted-order/payment-effects.ts":"4be22c7a88ac5725689daebde04efdb4247d11f95f9f49a3f36ac01b177e1187","server/research/assisted-order/service.ts":"970a110e76de72be9c936241ad8c40689e45f3c8b3d1f1bfdb714bfaa7cbcd1e","server/research/assisted-order/supabase-repository.ts":"e5641785660df469d4df9a16b42abf0f6bbd501e787d04727fe9b1e6159af2ad","server/research/assisted-order/http.ts":"22758f863bd9f0e6c7dd294dedc6b4e7ad12a828f600d9b753ac396e5a213cfe","server/index.ts":"8a0f109f80f2aa4f3794b55f6d5bea677d4889f03f572ee61a52c7b8e7cc3d17","server/research/assisted-order/payment/provider-journal.ts":"8b2d0676b3484abeca3217012977d9352816f6bc6f5775f575643b5accd99481","server/research/assisted-order/payment/provider-execution.ts":"5cdfe2daa6564ab539765284e7783d4a6bb968aadbfd61f670df8019e1b985d6","server/research/assisted-order/ports.ts":"69ed6d372cf74aa01722c71cd413021ccf8f6c651fc16b5d1b27f0c9b802e1fd"},"node":"v20.19.0"}
+{"node":"v20.19.0","postgres":"17.11","imageId":"sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24","imageDigests":["postgres@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24"],"network":"none","publishedPorts":false,"syntheticOnly":true}
+SETTLEMENT_SQL ENV {"containerId":"90702d1574bf645ad4bb6f8c24c51c514c425719745071e6eea4832a70cddcf8","image":"postgres:17-alpine","networkMode":"none","publishedPorts":0,"postgresVersion":"17.11","node":"v20.19.0"}
+SETTLEMENT_HTTP_SQL PASS actual self-valid ADP02 held authority does not enable settlement or canonical financial writes
+SETTLEMENT_HTTP_SQL COMPLETE {"phase":"legacy","groups":1,"sqlCalls":7,"node":"v20.19.0","syntheticAuth":true,"syntheticCaptureFacts":true,"realProviderAuthenticated":false,"emailSent":false,"managedStateMutated":false}
+SETTLEMENT_SQL PASS exact additive install/reapply admits only separately granted settlement and real provider-capable canonical F4 authority
+SETTLEMENT_SQL PASS wrong actor/source/account/mode/revision/policy and cross-request journal refuse before canonical writes; only nonexistent identities return null
+SETTLEMENT_SQL PASS wrong economics, acceptance/version/request/attempt/order, payment/session/adjustment and non-capture chronology cannot become verification
+SETTLEMENT_SQL PASS extra captures, adverse/global journal facts, unknown/conflicting create results and unresolved create claim remain held
+SETTLEMENT_SQL PASS unaccepted/historical paths remain refused; already accepted exact quote remains valid after its acceptance deadline, not an invented settlement expiry
+SETTLEMENT_SQL PASS one accepted full capture writes canonical observation/evidence claim/verification/paid event/held outbox atomically, with immutable single-use replay
+SETTLEMENT_SQL PASS exact receipt replay survives independent source/policy/grant revocation and fulfillment without granting a new actor or changing current workflow
+SETTLEMENT_HTTP_SQL PASS mounted settlement atomically verifies exact capture, redacts receipt and completes one admin canonical audit/outbox obligation; replay is read-only
+SETTLEMENT_HTTP_SQL PASS missing F4, browser financial claims, missing actor and wrong source/scope/policy/grant refuse without canonical writes
+SETTLEMENT_HTTP_SQL PASS eligible supplier progression can precede notification audit; new adverse fact independently blocks next mounted progression while payment remains verified
+SETTLEMENT_HTTP_SQL PASS postcommit interruptions retain verified facts and truthful503 while exact outbox stays held, including audit-appended-before-release
+SETTLEMENT_HTTP_SQL PASS lost SQL commit receipt is not falsely acknowledged or rolled back; durable held obligation awaits restart
+SETTLEMENT_HTTP_SQL PASS transaction interruption rolls back settlement/observation/claim/verification/event/outbox together, then retries exactly
+SETTLEMENT_HTTP_SQL PASS concurrent mounted commands share one verification and F4 completion, not duplicate paid/audit/outbox writes
+SETTLEMENT_HTTP_SQL PASS cross-request journal identity remains held without exposing or settling another request
+SETTLEMENT_HTTP_SQL COMPLETE {"phase":"core","groups":8,"sqlCalls":101,"node":"v20.19.0","syntheticAuth":true,"syntheticCaptureFacts":true,"realProviderAuthenticated":false,"emailSent":false,"managedStateMutated":false}
+SETTLEMENT_HTTP_SQL PASS new Node process and rotated key recover actual canonical provider obligations once, including interrupted audit and concurrent completion
+SETTLEMENT_HTTP_SQL PASS financial hold blocks progression after recovery and receipt replay without inventing audit-before-fulfillment policy
+SETTLEMENT_HTTP_SQL COMPLETE {"phase":"restart","groups":2,"sqlCalls":46,"node":"v20.19.0","syntheticAuth":true,"syntheticCaptureFacts":true,"realProviderAuthenticated":false,"emailSent":false,"managedStateMutated":false}
+SETTLEMENT_SQL PASS mounted service performs actual settlement and F4 closure/restart/key rotation/concurrent completion, with synthetic admission only
+SETTLEMENT_SQL PASS manual verification remains its distinct authority; generic manual/no-funds entry cannot reuse settled or held provider lineage
+SETTLEMENT_SQL PASS real request/fence lock waits serialize duplicate settlement and both capture-race orderings; late fact holds fulfillment without erasing verification
+SETTLEMENT_SQL PASS new create-claim/readback graph never silently expands the reviewed financial lineage or grants fulfillment
+SETTLEMENT_SQL PASS stale RR/SERIALIZABLE and unsupported modes refuse before missing/replay shortcuts; explicit READ COMMITTED succeeds
+SETTLEMENT_SQL PASS forced RLS, table and column ACLs, exact RPC signatures, immutable owner writes and replica-mode delete/update/truncate are enforced
+SETTLEMENT_SQL PASS bare privileged settlement insert cannot commit a partial canonical graph, and replica configuration inserts retain actor constraints
+SETTLEMENT_SQL PASS replica-mode predecessor guards refuse moving unrelated observation, evidence claim, correction or timeline history into settled lineage
+SETTLEMENT_SQL PASS populated candidate reapply preserves records while old predecessor replay, column grants, disabled guards/RLS and executable overload drift refuse
+SETTLEMENT_SQL PASS six actual config-row lock waits linearize distinct source, settlement-policy and settlement-grant revocation in both orders
+SETTLEMENT_SQL PASS identical opaque payment/session IDs remain separate across exact accounts and test-live namespaces, while same-source reuse and scope substitution refuse
+{"settlementArbitration":"manual observation","first":"settlement","actualLockWait":true,"reverseFinancialCommandAdmissible":false,"manufacturedManualObservation":false}
+{"settlementArbitration":"manual observation","first":"denied-command","actualLockWait":true,"reverseFinancialCommandAdmissible":false,"manufacturedManualObservation":false}
+{"settlementArbitration":"ordinary cancellation","first":"settlement","actualLockWait":true,"reverseFinancialCommandAdmissible":false,"manufacturedManualObservation":false}
+AssertionError [ERR_ASSERTION]: Peer must wait on a real database lock
+
+false !== true
+
+    at ProviderSettlementHarness.lockedRace (file:///C:/xenios-wt/closeout-review/supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs:135:12)
+    at async runSettlementRaces (file:///C:/xenios-wt/closeout-review/supabase/verification/research_assisted_order_quote_provider_settlement_races.mjs:131:23)
+    at async file:///C:/xenios-wt/closeout-review/supabase/verification/research_assisted_order_quote_provider_settlement_local.mjs:267:20 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: 'strictEqual'
+}
+CLEANUP removed exact disposable no-network container
+SETTLEMENT_SQL CLEANUP {"containerId":"90702d1574bf645ad4bb6f8c24c51c514c425719745071e6eea4832a70cddcf8","removed":true,"postRemovalInspect":"not_found"}

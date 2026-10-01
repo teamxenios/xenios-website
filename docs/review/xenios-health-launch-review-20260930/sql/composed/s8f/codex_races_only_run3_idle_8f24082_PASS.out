@@ -1,0 +1,14 @@
+{"node":"v20.19.0","postgres":"17.11","imageId":"sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24","imageDigests":["postgres@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24"],"network":"none","publishedPorts":false,"syntheticOnly":true}
+SETTLEMENT_SQL PASS six actual config-row lock waits linearize distinct source, settlement-policy and settlement-grant revocation in both orders
+SETTLEMENT_SQL PASS identical opaque payment/session IDs remain separate across exact accounts and test-live namespaces, while same-source reuse and scope substitution refuse
+{"settlementArbitration":"manual observation","first":"settlement","actualLockWait":true,"reverseFinancialCommandAdmissible":false,"manufacturedManualObservation":false}
+{"settlementArbitration":"manual observation","first":"denied-command","actualLockWait":true,"reverseFinancialCommandAdmissible":false,"manufacturedManualObservation":false}
+{"settlementArbitration":"ordinary cancellation","first":"settlement","actualLockWait":true,"reverseFinancialCommandAdmissible":false,"manufacturedManualObservation":false}
+{"settlementArbitration":"ordinary cancellation","first":"denied-command","actualLockWait":true,"reverseFinancialCommandAdmissible":false,"manufacturedManualObservation":false}
+{"settlementArbitration":"no-funds commit","first":"settlement","actualLockWait":true,"reverseFinancialCommandAdmissible":false,"manufacturedManualObservation":false}
+{"settlementArbitration":"no-funds commit","first":"denied-command","actualLockWait":true,"reverseFinancialCommandAdmissible":false,"manufacturedManualObservation":false}
+SETTLEMENT_SQL PASS six actual parent-lock waits arbitrate settlement against denied manual observation, ordinary cancel and stale no-funds commit; pre-lock generic verification refusals are not counted as races
+SETTLEMENT_SQL PASS five rollback boundaries preserve zero partial canonical evidence: link, observation plus claim, verification plus held outbox, paid event, and service-role savepoint abort
+SETTLEMENT_RACES COMPLETE {"groups":4,"actualLockWaitRaces":12,"refusals":14,"rollbackBoundaries":5,"configLockRaces":6,"financialParentLockArbitrations":6,"genericVerificationLockRaces":0,"schemaModified":false,"sealRebased":false,"providerFactsSynthetic":true}
+CLAUDE_RACES_ONLY COMPLETE {"groups":4,"actualLockWaitRaces":12,"refusals":14,"rollbackBoundaries":5,"configLockRaces":6,"financialParentLockArbitrations":6,"genericVerificationLockRaces":0,"schemaModified":false,"sealRebased":false,"providerFactsSynthetic":true,"seconds":98}
+CLEANUP removed exact disposable no-network container

@@ -1,0 +1,8 @@
+LENS-01 executed on disposable supabase/postgres:17.6.1.171, stack applied through migration 87 (sql-upto87):
+1. owner insert into research_notification_outbox: template research.assisted_order.status_changed.customer, payload.status 'paid' (the shape production runtime 79414143 enqueues on every paid transition)
+2. apply 20261001040351 (88):
+   psql:/tmp/88.sql:45: ERROR:  Existing financial effects require deliberate adoption
+   DETAIL:  ASSISTED_ORDER_EFFECTS_ADOPTION_REQUIRED
+   assisted_order_verification_id column added: 0 (whole migration rolled back)
+3. committed supabase/verification/research_assisted_order_quote_pre80_preflight.sql on the same database:
+   nonterminal_frozen_rows_requiring_decision = 0 (the census does not predict the 88 abort)
