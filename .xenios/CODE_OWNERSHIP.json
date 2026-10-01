@@ -3425,7 +3425,7 @@
         "docs/health-launch/HL17_ACCESS_HUB_20261001.md",
         "docs/health-launch/evidence/hl17-access-hub-20261001/"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T13:28:09.746Z",
       "heartbeatAt": "2026-10-01T14:08:42.169Z"
     }
