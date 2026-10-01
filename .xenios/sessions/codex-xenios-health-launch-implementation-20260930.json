@@ -5,6 +5,6 @@
   "branch": "codex/xenios-health-launch-implementation-20260930",
   "state": "active",
   "startedAt": "2026-09-30T16:32:52.264Z",
-  "heartbeatAt": "2026-10-01T09:29:26.578Z",
-  "note": "ADP01 pushed source5809b727/tests61a9306/controls d1ea06a. SQL run1 PASS131refusals14races7HTTPgroups75SQLcalls; synthetic only. Narrow repeatable-read stale-snapshot uncertainty repro next; aggregate deferred until resolved. Source null, no webhook/provider execution or hosted actions."
+  "heartbeatAt": "2026-10-01T09:37:20.693Z",
+  "note": "ADP01 source91a4e0e/tree4192a6e tests ebd081e controls2e04d5a pushed. Real stale-snapshot defect8unsafe reproduced and preserved exit1; narrow READ COMMITTED-only fix originalrepro PASS, permanent8+21 PASS, HTTP36/typecheckPASS. Exact comprehensive/aggregate next, sources frozen. Heavy slot coordinated to10:05UTC. No hosted effects."
 }
