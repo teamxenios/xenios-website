@@ -23,7 +23,7 @@ import { SupabaseStatusRecoveryStore } from "file:///C:/xenios-wt/closeout-revie
 import { assistedOrderPaymentStatusCopy } from "file:///C:/xenios-wt/closeout-review/shared/research/assisted-order/payment-status-copy.ts";
 const { registerResearchApi } = await import("file:///C:/xenios-wt/closeout-review/server/research/index.ts");
 
-const REST = "http://127.0.0.1:55431";
+const REST = "http://127.0.0.1:38431";
 const SECRET = fs.readFileSync(process.argv[2], "utf8").trim();
 const b64 = (o) => Buffer.from(JSON.stringify(o)).toString("base64url");
 function jwt(role) { const n = Math.floor(Date.now() / 1000); const h = b64({ alg: "HS256", typ: "JWT" }); const p = b64({ role, iat: n, exp: n + 3600 }); return `${h}.${p}.${crypto.createHmac("sha256", SECRET).update(`${h}.${p}`).digest("base64url")}`; }

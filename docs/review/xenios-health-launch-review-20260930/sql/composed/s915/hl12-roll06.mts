@@ -72,7 +72,7 @@ async function call(base, method, path, { body, member, admin, token } = {}) {
   return { status: r.status, code: j?.code ?? j?.error ?? (j?.message === "Access required." ? "WALLED" : null), data: j };
 }
 const out = []; const rec = (c, r) => { out.push({ case: c, result: r }); console.log("CASE", JSON.stringify({ case: c, result: r })); };
-let n = 0; const ref = () => "XRR-20260930-" + (0xF400000000 + ++n).toString(16).toUpperCase();
+let n = 0; const ref = () => "XRR-20260930-" + (0xF500000000 + ++n).toString(16).toUpperCase();
 async function seed(member, { unit = 5000, qty = 2, guestHash = null } = {}) {
   const id = crypto.randomUUID(); const r = ref();
   const { error } = await sr.rpc("research_assisted_order_submit", { p_request: {
@@ -134,36 +134,15 @@ async function surfaces(label, o) {
 }
 
 const r0 = rollbacks();
-console.log("EXTRA cases for 268e691 (same substitutions as the main probe)");
-// HIST-PROGRESSED: historical row already past an UNVERIFIED paid label
-{ const h2 = await seed(MEMBER);
-  psql(`alter table public.research_assisted_order_requests disable trigger user; alter table public.research_assisted_order_events disable trigger user; update public.research_assisted_order_requests set status='supplier_processing' where id='${h2.id}'; insert into public.research_assisted_order_events(request_id,status,actor_type,actor_id,customer_message) values ('${h2.id}','paid','admin','legacy','Payment received.'),('${h2.id}','supplier_processing','admin','legacy',null); alter table public.research_assisted_order_requests enable trigger user; alter table public.research_assisted_order_events enable trigger user;`);
-  const sh = await patch(h2, "shipped", { trackingId: "TRACK-123" });
-  const dl = await patch(h2, "delivered");
-  rec("X1 historical supplier_processing (passed through UNVERIFIED paid) -> shipped -> delivered via HTTP", { shipped: [sh.status, sh.code], delivered: [dl.status, dl.code], requestStatus: status(h2.id), verifications: psql(`select count(*) from public.research_assisted_order_payment_verifications where request_id='${h2.id}'`) }); }
-// NEW-3: uppercase request id in the verify path
-{ const { o, quoteId } = await accepted(); const x = await observe(o, quoteId);
-  const up = await admin("POST", `/${o.id.toUpperCase()}/payment-observations/${x.data?.observationId}/verify`);
-  const up2 = await admin("POST", `/${o.id.toUpperCase()}/payment-observations/${x.data?.observationId}/verify`);
-  rec("X2 verify with UPPERCASE request id", { first: [up.status, up.code], retry: [up2.status, up2.code], requestStatus: status(o.id), verifications_paidEvents: counts(o.id), effects: verificationEffects(o.id) });
-  const low = await verify(o, x.data?.observationId); rec("X2b lowercase retry", { status: low.status, effects: verificationEffects(o.id) }); }
-// EFFECTS-RETRY-AUTHORITY: grant revoked after an interrupted effect
-{ const G = crypto.randomUUID(); psql(`insert into public.research_assisted_order_payment_verifier_grants(auth_user_id, actor_label, granted_by) values ('${G}','finance-c@example.invalid','claude-probe')`);
-  const { o, quoteId } = await accepted(); const x = await observe(o, quoteId, 10000, "USD", null, G);
-  failOutboxOnce = true; const v1 = await verify(o, x.data?.observationId, G);
-  psql(`update public.research_assisted_order_payment_verifier_grants set revoked_at = now() where auth_user_id='${G}'`);
-  const v2 = await verify(o, x.data?.observationId, G); const v3 = await verify(o, x.data?.observationId, ADMIN);
-  rec("X3 effects interrupted, then observer grant revoked", { first: [v1.status, v1.code], retryRevoked: [v2.status, v2.code], retryOtherAdmin: [v3.status, v3.code], requestStatus: status(o.id), effects: verificationEffects(o.id) }); }
-// QJ-01: a quote for a line with quantity > 100 (server side accepts; client decoder caps at 100)
-{ const big = await seed(MEMBER, { unit: 500, qty: 150 }); const bq = await toQuoted(big); const bg = await custQuote(big, { member: MEMBER });
-  rec("X5 quantity 150 line: submit, issue, owner GET quote (server)", { issue: [bq.status, bq.code], ownerGet: [bg.status, bg.data?.lines?.[0]?.quantity, bg.data?.totalCents] }); }
-// NEW-1 / APP-FIRST: application at 268e691 against a database WITHOUT 230541's financial_state function
-{ const c = await seed(MEMBER); await patch(c, "reviewing"); await patch(c, "payment_pending");
+console.log("ROLL-06-R1: app at 915a535 without the finance function, cancel from early statuses");
+{ const a = await seed(MEMBER); const b = await seed(MEMBER); await patch(b, "reviewing");
   psql("alter function public.research_assisted_order_financial_state(uuid) rename to research_assisted_order_financial_state_hidden");
   psql("notify pgrst, 'reload schema'"); await new Promise((r) => setTimeout(r, 3000));
-  const cx = await patch(c, "cancelled", { cancellationReason: "customer withdrew" });
-  rec("X4 app-before-230541: cancel payment_pending (no observation) when financial_state is absent", { status: cx.status, code: cx.code, requestStatus: status(c.id) });
-  psql("alter function public.research_assisted_order_financial_state_hidden(uuid) rename to research_assisted_order_financial_state"); psql("notify pgrst, 'reload schema'"); }
-rec("Z rollback delta", rollbacks() - r0);
+  const ca = await patch(a, "cancelled", { cancellationReason: "duplicate request" });
+  const cb = await patch(b, "cancelled", { cancellationReason: "customer withdrew" });
+  rec("R1 cancel from submitted / reviewing with no quote or money, finance function absent", { submitted: [ca.status, ca.code, status(a.id)], reviewing: [cb.status, cb.code, status(b.id)] });
+  psql("alter function public.research_assisted_order_financial_state_hidden(uuid) rename to research_assisted_order_financial_state"); psql("notify pgrst, 'reload schema'"); await new Promise((r) => setTimeout(r, 2500));
+  const c = await seed(MEMBER); const cc = await patch(c, "cancelled", { cancellationReason: "duplicate request" });
+  rec("R2 control: cancel from submitted with the finance function present", [cc.status, cc.code, status(c.id)]); }
 for (const x of [prod, synth]) { x.s.close(); x.s.closeAllConnections?.(); }
 process.exit(0);

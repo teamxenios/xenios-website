@@ -1,0 +1,84 @@
+##### baseline (01..11 applied)
+
+ c_cancelled 
+--- AUTH-01: unrelated member accepts the guest quote
+ unrelated_member 
+ NULL (refused)
+--- SQL-13: owner accepts the issued quote on the CANCELLED request
+ERROR:  The request is not open for quote acceptance
+DETAIL:  ASSISTED_ORDER_QUOTE_ACCEPTANCE_CLOSED
+--- trigger and function-body state
+ hl12_triggers_enabled | accept_null_safe | accept_status_check | verify_bound_null_safe | observe_provider_refusal | service_role_unbound_verify 
+-----------------------+------------------+---------------------+------------------------+--------------------------+-----------------------------
+                     7 | t                | t                   | t                      | t                        | f
+##### after re-applying 11_20261001024018_research_assisted_order_quote_history_immutability
+
+ c_cancelled 
+--- AUTH-01: unrelated member accepts the guest quote
+ unrelated_member 
+ NULL (refused)
+--- SQL-13: owner accepts the issued quote on the CANCELLED request
+ERROR:  The request is not open for quote acceptance
+DETAIL:  ASSISTED_ORDER_QUOTE_ACCEPTANCE_CLOSED
+--- trigger and function-body state
+ hl12_triggers_enabled | accept_null_safe | accept_status_check | verify_bound_null_safe | observe_provider_refusal | service_role_unbound_verify 
+-----------------------+------------------+---------------------+------------------------+--------------------------+-----------------------------
+                     7 | t                | t                   | t                      | t                        | f
+##### after re-applying 09_20260930230541_research_assisted_order_quote_evidence_corrections
+
+ c_cancelled 
+--- AUTH-01: unrelated member accepts the guest quote
+ unrelated_member 
+ NULL (refused)
+--- SQL-13: owner accepts the issued quote on the CANCELLED request
+ERROR:  The request is not open for quote acceptance
+DETAIL:  ASSISTED_ORDER_QUOTE_ACCEPTANCE_CLOSED
+  set state = 'accepted', accepted_at = now(), acceptance_id = gen_random_uuid()
+  where id = p_quote_id returning *"
+--- trigger and function-body state
+ hl12_triggers_enabled | accept_null_safe | accept_status_check | verify_bound_null_safe | observe_provider_refusal | service_role_unbound_verify 
+-----------------------+------------------+---------------------+------------------------+--------------------------+-----------------------------
+                     7 | t                | f                   | t                      | f                        | f
+##### after re-applying 07_20260930202413_research_assisted_order_quote_payment_authority
+
+ c_cancelled 
+--- AUTH-01: unrelated member accepts the guest quote
+           unrelated_member           
+ 2d5cfe27-ce13-4a9d-8b04-7fd9d2f42cb6
+--- SQL-13: owner accepts the issued quote on the CANCELLED request
+ERROR:  The request is not open for quote acceptance
+DETAIL:  ASSISTED_ORDER_QUOTE_ACCEPTANCE_CLOSED
+  set state = 'accepted', accepted_at = now(), acceptance_id = gen_random_uuid()
+  where id = p_quote_id returning *"
+--- trigger and function-body state
+ hl12_triggers_enabled | accept_null_safe | accept_status_check | verify_bound_null_safe | observe_provider_refusal | service_role_unbound_verify 
+-----------------------+------------------+---------------------+------------------------+--------------------------+-----------------------------
+                     7 | f                | f                   | t                      | f                        | t
+##### after re-applying 10_20260930234614_research_assisted_order_quote_provider_hold
+
+ c_cancelled 
+--- AUTH-01: unrelated member accepts the guest quote
+           unrelated_member           
+ cf67225e-e751-47c2-be1d-67d8615eae1b
+--- SQL-13: owner accepts the issued quote on the CANCELLED request
+ERROR:  The request is not open for quote acceptance
+DETAIL:  ASSISTED_ORDER_QUOTE_ACCEPTANCE_CLOSED
+  set state = 'accepted', accepted_at = now(), acceptance_id = gen_random_uuid()
+  where id = p_quote_id returning *"
+--- trigger and function-body state
+ hl12_triggers_enabled | accept_null_safe | accept_status_check | verify_bound_null_safe | observe_provider_refusal | service_role_unbound_verify 
+-----------------------+------------------+---------------------+------------------------+--------------------------+-----------------------------
+                     7 | f                | f                   | t                      | t                        | f
+##### after re-applying 11_20261001024018_research_assisted_order_quote_history_immutability
+
+ c_cancelled 
+--- AUTH-01: unrelated member accepts the guest quote
+ unrelated_member 
+ NULL (refused)
+--- SQL-13: owner accepts the issued quote on the CANCELLED request
+ERROR:  The request is not open for quote acceptance
+DETAIL:  ASSISTED_ORDER_QUOTE_ACCEPTANCE_CLOSED
+--- trigger and function-body state
+ hl12_triggers_enabled | accept_null_safe | accept_status_check | verify_bound_null_safe | observe_provider_refusal | service_role_unbound_verify 
+-----------------------+------------------+---------------------+------------------------+--------------------------+-----------------------------
+                     7 | t                | t                   | t                      | t                        | f

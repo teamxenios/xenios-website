@@ -72,7 +72,7 @@ async function call(base, method, path, { body, member, admin, token } = {}) {
   return { status: r.status, code: j?.code ?? j?.error ?? (j?.message === "Access required." ? "WALLED" : null), data: j };
 }
 const out = []; const rec = (c, r) => { out.push({ case: c, result: r }); console.log("CASE", JSON.stringify({ case: c, result: r })); };
-let n = 0; const ref = () => "XRR-20260930-" + (0xF400000000 + ++n).toString(16).toUpperCase();
+let n = 0; const ref = () => "XRR-20260930-" + (0xF300000000 + ++n).toString(16).toUpperCase();
 async function seed(member, { unit = 5000, qty = 2, guestHash = null } = {}) {
   const id = crypto.randomUUID(); const r = ref();
   const { error } = await sr.rpc("research_assisted_order_submit", { p_request: {
@@ -134,36 +134,94 @@ async function surfaces(label, o) {
 }
 
 const r0 = rollbacks();
-console.log("EXTRA cases for 268e691 (same substitutions as the main probe)");
-// HIST-PROGRESSED: historical row already past an UNVERIFIED paid label
-{ const h2 = await seed(MEMBER);
-  psql(`alter table public.research_assisted_order_requests disable trigger user; alter table public.research_assisted_order_events disable trigger user; update public.research_assisted_order_requests set status='supplier_processing' where id='${h2.id}'; insert into public.research_assisted_order_events(request_id,status,actor_type,actor_id,customer_message) values ('${h2.id}','paid','admin','legacy','Payment received.'),('${h2.id}','supplier_processing','admin','legacy',null); alter table public.research_assisted_order_requests enable trigger user; alter table public.research_assisted_order_events enable trigger user;`);
-  const sh = await patch(h2, "shipped", { trackingId: "TRACK-123" });
-  const dl = await patch(h2, "delivered");
-  rec("X1 historical supplier_processing (passed through UNVERIFIED paid) -> shipped -> delivered via HTTP", { shipped: [sh.status, sh.code], delivered: [dl.status, dl.code], requestStatus: status(h2.id), verifications: psql(`select count(*) from public.research_assisted_order_payment_verifications where request_id='${h2.id}'`) }); }
-// NEW-3: uppercase request id in the verify path
-{ const { o, quoteId } = await accepted(); const x = await observe(o, quoteId);
-  const up = await admin("POST", `/${o.id.toUpperCase()}/payment-observations/${x.data?.observationId}/verify`);
-  const up2 = await admin("POST", `/${o.id.toUpperCase()}/payment-observations/${x.data?.observationId}/verify`);
-  rec("X2 verify with UPPERCASE request id", { first: [up.status, up.code], retry: [up2.status, up2.code], requestStatus: status(o.id), verifications_paidEvents: counts(o.id), effects: verificationEffects(o.id) });
-  const low = await verify(o, x.data?.observationId); rec("X2b lowercase retry", { status: low.status, effects: verificationEffects(o.id) }); }
-// EFFECTS-RETRY-AUTHORITY: grant revoked after an interrupted effect
-{ const G = crypto.randomUUID(); psql(`insert into public.research_assisted_order_payment_verifier_grants(auth_user_id, actor_label, granted_by) values ('${G}','finance-c@example.invalid','claude-probe')`);
+console.log("915a535 targeted cases (same substitutions as the successor probe)");
+const legacy = (o, finalStatus, events) => psql(`alter table public.research_assisted_order_requests disable trigger user; alter table public.research_assisted_order_events disable trigger user; update public.research_assisted_order_requests set status='${finalStatus}' where id='${o.id}'; ${events.map((e) => `insert into public.research_assisted_order_events(request_id,status,actor_type,actor_id,customer_message) values ('${o.id}','${e}','admin','legacy',null);`).join(" ")} alter table public.research_assisted_order_requests enable trigger user; alter table public.research_assisted_order_events enable trigger user;`);
+const sqlSet = (o, from, to, evidence = {}) => sr.rpc("research_assisted_order_set_status", { p_request_id: o.id, p_expected_status: from, p_new_status: to, p_actor_id: "x", p_actor_type: "admin", p_evidence: evidence }).then((r) => r.error ? "REFUSED " + (r.error.details || r.error.code) : "ACCEPTED");
+const NEXT = { paid: ["supplier_processing", { supplierAssignmentId: "assign-h" }], supplier_processing: ["shipped", { trackingId: "TRACK-H" }], shipped: ["delivered", {}], delivered: ["closed", {}] };
+
+// ---- A. historical progression (no verification) --------------------------------------------------------------
+for (const [start, events] of [["paid", ["paid"]], ["supplier_processing", ["paid", "supplier_processing"]], ["shipped", ["paid", "supplier_processing", "shipped"]], ["delivered", ["paid", "supplier_processing", "shipped", "delivered"]], ["closed", ["paid", "supplier_processing", "shipped", "delivered", "closed"]]]) {
+  const o = await seed(MEMBER); legacy(o, start, events);
+  const res = { start };
+  if (NEXT[start]) { const [to, ev] = NEXT[start]; const h = await patch(o, to, ev); res.forwardHttp = `${to}: ${h.status} ${h.code ?? ""}`.trim(); res.forwardSql = await sqlSet(o, start, to, ev); }
+  const c = await patch(o, "cancelled", { cancellationReason: "legacy cleanup" }); res.cancelHttp = `${c.status} ${c.code ?? ""}`.trim();
+  res.finalStatus = status(o.id);
+  rec(`A-${start} historical ${start} without verification`, res);
+}
+{ const o = await seed(MEMBER); legacy(o, "supplier_processing", []);
+  rec("A-lost-events supplier_processing with NO events, forward", { http: await patch(o, "shipped", { trackingId: "T" }).then((r) => `${r.status} ${r.code ?? ""}`), sql: await sqlSet(o, "supplier_processing", "shipped", { trackingId: "T" }) }); }
+{ const o = await seed(MEMBER); legacy(o, "payment_review", ["paid"]);
+  rec("A-regressed payment_review label with a prior paid event", { backToPending: await patch(o, "payment_pending").then((r) => `${r.status} ${r.code ?? ""}`), cancel: await patch(o, "cancelled", { cancellationReason: "x" }).then((r) => `${r.status} ${r.code ?? ""}`), sqlBack: await sqlSet(o, "payment_review", "payment_pending") }); }
+
+// ---- B. verified progression to closed, with surfaces ---------------------------------------------------------
+{ const vp = await paidOrder(); const o = vp.o; const steps = {};
+  for (const [to, ev] of [["supplier_processing", { supplierAssignmentId: "assign-v" }], ["shipped", { trackingId: "TRACK-V" }], ["delivered", {}], ["closed", {}]]) { const r = await patch(o, to, ev); steps[to] = `${r.status} ${r.code ?? ""}`.trim(); if (to === "shipped") await surfaces("B-F7 verified order at shipped", o); }
+  rec("B verified paid -> supplier_processing -> shipped -> delivered -> closed (HTTP)", { verify: vp.v.status, steps, finalStatus: status(o.id) });
+  await surfaces("B-F7 verified order at closed", o); }
+
+// ---- C. quote immutability -------------------------------------------------------------------------------------
+{ const o = await seed(MEMBER); const q1 = await toQuoted(o); const qid = q1.data?.quoteId;
+  const res = {};
+  res.issuedTotal = psqlTry(`update public.research_assisted_order_quotes set total_cents = total_cents + 1 where id='${qid}'`);
+  res.issuedSupersedeWithAcceptance = psqlTry(`update public.research_assisted_order_quotes set state='superseded', acceptance_id=gen_random_uuid(), accepted_at=now() where id='${qid}'`);
+  res.issuedDelete = psqlTry(`delete from public.research_assisted_order_quotes where id='${qid}'`);
+  const q = (await custQuote(o, { member: MEMBER })).data; const acc = await custAccept(o, q, { member: MEMBER });
+  res.accept = acc.status;
+  res.acceptedTotal = psqlTry(`update public.research_assisted_order_quotes set total_cents = 1 where id='${qid}'`);
+  res.acceptedToSuperseded = psqlTry(`update public.research_assisted_order_quotes set state='superseded', accepted_at=null, acceptance_id=null where id='${qid}'`);
+  res.acceptedAcceptedAt = psqlTry(`update public.research_assisted_order_quotes set accepted_at = accepted_at - interval '1 day' where id='${qid}'`);
+  res.acceptedDelete = psqlTry(`delete from public.research_assisted_order_quotes where id='${qid}'`);
+  res.serviceRoleUpdate = (await sr.from("research_assisted_order_quotes").update({ total_cents: 1 }).eq("id", qid)).error?.code ?? "ALLOWED";
+  res.serviceRoleDelete = (await sr.from("research_assisted_order_quotes").delete().eq("id", qid)).error?.code ?? "ALLOWED";
+  res.reissueAfterAcceptance = await admin("POST", `/${o.id}/quote`, { lineDecisions: [{ lineId: o.lineId }], validUntil: inFuture(86400) }).then((r) => `${r.status} ${r.code ?? ""}`.trim());
+  res.quoteRowAfter = psql(`select state||' total='||total_cents||' acceptance='||(acceptance_id is not null) from public.research_assisted_order_quotes where id='${qid}'`);
+  rec("C quote snapshot immutability (owner role via psql, service_role via PostgREST)", res); }
+{ const o = await seed(MEMBER); const q1 = await toQuoted(o); const q2 = await admin("POST", `/${o.id}/quote`, { lineDecisions: [{ lineId: o.lineId }], validUntil: inFuture(86400) });
+  rec("C2 legitimate re-issue supersedes v1 (issued -> superseded still allowed)", { v2: [q2.status, q2.data?.version], states: psql(`select string_agg(version||':'||state, ',' order by version) from public.research_assisted_order_quotes where request_id='${o.id}'`) }); }
+{ const o = await seed(MEMBER); await toQuoted(o); await patch(o, "payment_pending"); const q = (await custQuote(o, { member: MEMBER })).data;
+  await patch(o, "cancelled", { cancellationReason: "customer withdrew" });
+  const acc = await custAccept(o, q, { member: MEMBER });
+  const sqlAcc = await sr.rpc("research_assisted_order_quote_accept", { p_quote_id: q.quoteId, p_version: q.version, p_expected_total_cents: q.totalCents, p_member_id: MEMBER, p_early_access_session_hash: null, p_status_token_hash: null });
+  rec("C3/SQL-13 accept an issued quote on a CANCELLED request", { http: [acc.status, acc.code], sql: sqlAcc.error ? "REFUSED " + sqlAcc.error.details : "ACCEPTED", quoteState: psql(`select state from public.research_assisted_order_quotes where id='${q.quoteId}'`) }); }
+
+// ---- D. accept vs cancel races ---------------------------------------------------------------------------------
+{ const outcomes = [];
+  for (let i = 0; i < 8; i++) {
+    const o = await seed(MEMBER); await toQuoted(o); await patch(o, "payment_pending"); const q = (await custQuote(o, { member: MEMBER })).data;
+    const [acc, can] = await Promise.all([custAccept(o, q, { member: MEMBER }), patch(o, "cancelled", { cancellationReason: "race" })]);
+    const row = psql(`select r.status||'|'||q.state||'|'||coalesce(to_char(q.accepted_at,'HH24:MI:SS.US'),'-')||'|'||coalesce((select to_char(min(e.occurred_at),'HH24:MI:SS.US') from public.research_assisted_order_events e where e.request_id=r.id and e.status='cancelled'),'-') from public.research_assisted_order_requests r join public.research_assisted_order_quotes q on q.request_id=r.id where r.id='${o.id}'`);
+    const [rs, qs, at, ct] = row.split("|");
+    outcomes.push({ accept: acc.status, cancel: can.status, request: rs, quote: qs, acceptedBeforeCancel: qs === "accepted" && rs === "cancelled" ? at < ct : null });
+  }
+  rec("D accept vs cancel concurrent x8", { outcomes, anyAcceptedAfterCancelCommit: outcomes.some((x) => x.acceptedBeforeCancel === false) }); }
+
+// ---- E. HIST-02 first quote for payment-stage rows ---------------------------------------------------------------
+for (const stage of ["payment_pending", "payment_review"]) {
+  const o = await seed(MEMBER); await patch(o, "reviewing"); await patch(o, "payment_pending"); if (stage === "payment_review") await patch(o, "payment_review");
+  const qi = await admin("POST", `/${o.id}/quote`, { lineDecisions: [{ lineId: o.lineId }], validUntil: inFuture(86400) });
+  rec(`E/HIST-02 first quote for an existing ${stage} order`, { status: qi.status, code: qi.code, requestStatus: status(o.id) });
+}
+
+// ---- F. F4 with a revoked grant ----------------------------------------------------------------------------------
+{ const G = crypto.randomUUID(); psql(`insert into public.research_assisted_order_payment_verifier_grants(auth_user_id, actor_label, granted_by) values ('${G}','finance-d@example.invalid','claude-probe')`);
   const { o, quoteId } = await accepted(); const x = await observe(o, quoteId, 10000, "USD", null, G);
   failOutboxOnce = true; const v1 = await verify(o, x.data?.observationId, G);
   psql(`update public.research_assisted_order_payment_verifier_grants set revoked_at = now() where auth_user_id='${G}'`);
   const v2 = await verify(o, x.data?.observationId, G); const v3 = await verify(o, x.data?.observationId, ADMIN);
-  rec("X3 effects interrupted, then observer grant revoked", { first: [v1.status, v1.code], retryRevoked: [v2.status, v2.code], retryOtherAdmin: [v3.status, v3.code], requestStatus: status(o.id), effects: verificationEffects(o.id) }); }
-// QJ-01: a quote for a line with quantity > 100 (server side accepts; client decoder caps at 100)
-{ const big = await seed(MEMBER, { unit: 500, qty: 150 }); const bq = await toQuoted(big); const bg = await custQuote(big, { member: MEMBER });
-  rec("X5 quantity 150 line: submit, issue, owner GET quote (server)", { issue: [bq.status, bq.code], ownerGet: [bg.status, bg.data?.lines?.[0]?.quantity, bg.data?.totalCents] }); }
-// NEW-1 / APP-FIRST: application at 268e691 against a database WITHOUT 230541's financial_state function
+  rec("F/F4 effects interrupted then observer grant revoked", { first: [v1.status, v1.code], retryRevoked: [v2.status, v2.code], retryOtherAdmin: [v3.status, v3.code], requestStatus: status(o.id), effects: verificationEffects(o.id), durableObligationTables: psql(`select coalesce(string_agg(table_name, ','), 'none') from information_schema.tables where table_schema='public' and table_name ~ '(effect|pending_effect|reconcil)'`) }); }
+
+// ---- G. app-before-024018-and-230541 (financial_state absent) -----------------------------------------------------
 { const c = await seed(MEMBER); await patch(c, "reviewing"); await patch(c, "payment_pending");
   psql("alter function public.research_assisted_order_financial_state(uuid) rename to research_assisted_order_financial_state_hidden");
   psql("notify pgrst, 'reload schema'"); await new Promise((r) => setTimeout(r, 3000));
   const cx = await patch(c, "cancelled", { cancellationReason: "customer withdrew" });
-  rec("X4 app-before-230541: cancel payment_pending (no observation) when financial_state is absent", { status: cx.status, code: cx.code, requestStatus: status(c.id) });
-  psql("alter function public.research_assisted_order_financial_state_hidden(uuid) rename to research_assisted_order_financial_state"); psql("notify pgrst, 'reload schema'"); }
+  rec("G/ROLL-06 cancel payment_pending when financial_state is absent", { status: cx.status, code: cx.code, requestStatus: status(c.id) });
+  psql("alter function public.research_assisted_order_financial_state_hidden(uuid) rename to research_assisted_order_financial_state"); psql("notify pgrst, 'reload schema'"); await new Promise((r) => setTimeout(r, 2000)); }
+
+// ---- H. TRUNCATE (last: destructive if unguarded) ----------------------------------------------------------------
+rec("H1 owner TRUNCATE quotes", psqlTry("truncate public.research_assisted_order_quotes"));
+rec("H2 owner TRUNCATE requests CASCADE", psqlTry("truncate public.research_assisted_order_requests cascade"));
+rec("H3 quote rows still present", psql("select count(*) from public.research_assisted_order_quotes"));
 rec("Z rollback delta", rollbacks() - r0);
 for (const x of [prod, synth]) { x.s.close(); x.s.closeAllConnections?.(); }
 process.exit(0);

@@ -1,0 +1,650 @@
+[
+ {
+  "lens": "sql",
+  "statuses": [
+   {
+    "id": "HIST-PROG",
+    "status": "CLOSED",
+    "evidence": "At SQL, closed for status changes out of paid, post-paid or paid-history rows. 20261001024018:31-50 adds BEFORE UPDATE OF status trigger hl12_history_progression. It refuses any status change when old.status is paid/supplier_processing/shipped/delivered/closed or a 'paid' event exists (lines 35-37), unless financial_state(old.id).paymentVerified is true (38-41). That covers unverified historical supplier_processing->shipped, shipped->delivered, delivered->closed, rows with no timeline event (old.status list), rows regressed to pre-paid statuses that still have a paid event (event check) and cancellation from all of these. The verify path payment_review->paid is not blocked: at UPDATE time no paid event exists yet, and in the regressed case the verification row inserted earlier in the same transaction (230541:464-476 / 234614:214-226) makes financial_state true. Verified rows can still progress paid->...->closed. Proof local.mjs:207-216 and the verified run through closed. The trigger fires alphabetically before hl12_observed_cancel and research_assisted_order_paid_hold, and all three are additive. paid_hold (202413:533-569) still blocks paid without a verification and refuses cancel from paid/supplier_processing. Guard locking and cost are trivial: indexed events lookup plus two indexed reads in financial_state, no extra locks. The guard is SECURITY INVOKER calling SECURITY DEFINER financial_state, so EXECUTE is checked against set_status's owner; that works when one owner owns both (true in the superuser local proof; not verified on managed). Residuals: GUARD-NEWSTATE (P3) and held rows with no disposition path (see N2)."
+   },
+   {
+    "id": "SQL-06",
+    "status": "CLOSED",
+    "evidence": "At SQL, for every runtime role. 024018:54-95 adds a BEFORE UPDATE OR DELETE row trigger and a BEFORE TRUNCATE statement trigger. DELETE and TRUNCATE are refused (57-60), including TRUNCATE requests/quotes ... CASCADE, because PG fires BEFORE TRUNCATE triggers on every table the cascade includes (proof local.mjs truncate-cascade case). An UPDATE must go issued->accepted or issued->superseded with every other column byte-identical, compared via to_jsonb(new)-{state,accepted_at,acceptance_id} (62-70). Accepted and superseded rows are frozen; issued->issued edits such as extending valid_until are refused. to_jsonb compares safely: jsonb normalises key order, both sides serialise in the same session TimeZone, there are no generated columns, and numeric scale-only differences inside lines are economically identical. quote_issue's supersede (202413:342-343) and quote_accept's update (024018:165-167) are the only RPC writers and both pass. No role can UPDATE/DELETE/TRUNCATE directly (postcondition 206-210). Owner-level bypasses are inherent and not fixed: DISABLE/DROP TRIGGER, session_replication_role=replica, and ALTER COLUMN TYPE ... USING rewrites, which fire no row triggers. INSERT is unguarded, but only the owner can insert. See TRIG-ENABLED and TRUNC-EVID."
+   },
+   {
+    "id": "SQL-13",
+    "status": "CLOSED",
+    "evidence": "024018:128-136 refuses cancelled/closed requests, and post-paid or paid-history requests without verified finance, before the replay. 151-158 limits new acceptance to reviewing..payment_review with no paid event. The trigger backstop at 73-84 repeats that rule for any issued->accepted UPDATE, so it survives a replay of the 202413/230541 quote_accept bodies. Lock order is request FOR UPDATE then quote FOR UPDATE (115-118), the same as quote_issue (202413:267-268), set_status's row UPDATE, observe (234614:89-90) and verify. Accept-vs-cancel and accept-vs-supersede therefore serialise. Under READ COMMITTED, the later quote SELECT sees the superseded state and raises QUOTE_STALE. An accepted receipt on a cancelled or closed request now raises ACCEPTANCE_CLOSED instead of replaying; verified paid..delivered rows still replay."
+   },
+   {
+    "id": "HIST-02",
+    "status": "OPEN",
+    "evidence": "024018 does not touch quote_issue. 202413:269-274 still allows only reviewing/waiting_on_customer/identity_received/agreements_pending/agreements_complete. set_status (191323:37-38) and service.ts:101-102 offer no route from payment_pending/payment_review back to a quote-ready status. Nothing allows a first quote for those rows. The handoff confirms it is OPEN. Broader reach: see HIST-02-R1."
+   },
+   {
+    "id": "SQL-01",
+    "status": "CLOSED",
+    "evidence": "The provider hold remains intact. `git diff 947f6ee 61853e2` on 20260930234614 is empty (blob sha256 6596f261...). 024018 does not redefine observe/verify/verify_bound or the provider triggers. Its preflight requires provider_payment_hold_guard() and both hl12_provider_* triggers with tgenabled<>'D' (10-20), and refuses existing provider verifications (22-25). It re-revokes unbound payment_verify (181-182). Its postcondition asserts verify is private and verify_bound is service_role-only (188-205). Caveat: the tgenabled check accepts 'R' (see TRIG-ENABLED)."
+   },
+   {
+    "id": "ROLL-05",
+    "status": "OPEN",
+    "evidence": "Replaying older migrations still regresses function bodies and ACLs. 202413 replayed after 024018 re-grants unbound payment_verify to service_role (202413:695-698), whose 202413 body lacks the observed_by_auth_user_id binding and the provider pre-check, and restores quote_accept's NULL-boolean authorization bypass (`if not v_authorized`, 202413:392). 205725 replayed restores the NULL p_request_id bypass in verify_bound (205725:68). 230541 replayed restores quote_accept without status checks (230541:223-281). New since the last review: HIST-PROG, the quote snapshot and acceptance-status backstop (SQL-06/SQL-13) and the provider holds (SQL-01) are now triggers, and those survive such replays. 024018 itself embeds a full quote_accept body (97-174), so replaying it later would regress any future successor. The postcheck fingerprints omit payment_verify, so a regressed verify body goes undetected (see POSTCHECK-COVERAGE)."
+   },
+   {
+    "id": "N2",
+    "status": "OPEN",
+    "evidence": "No governed no-funds/void/refund RPC exists. hl12_observed_cancel is unchanged (230541:376-390). 024018 widens the hold: unverified paid-history rows, including pre-paid rows with a paid event, can no longer even be cancelled (024018:34-41), and no disposition path exists for them."
+   },
+   {
+    "id": "F1",
+    "status": "OPEN",
+    "evidence": "No SQL change in the delta. payment_verifier_grants (202413:69-75) is still never populated and has no grant procedure. 024018 adds no evidence authority. App composition was not re-reviewed under this lens."
+   },
+   {
+    "id": "F4",
+    "status": "OPEN",
+    "evidence": "The delta adds no durable effects-pending, outbox or audit table. 024018 and service.ts:842-869 change only status preflight and holds. App recovery was not re-reviewed under this lens."
+   },
+   {
+    "id": "ADP-01",
+    "status": "OPEN",
+    "evidence": "The latent gap remains. No provider attempt, event or quarantine table exists in any migration; grep finds 'quarantine' only in unrelated inventory/library migrations. Provider holds (234614) still refuse provider facts."
+   },
+   {
+    "id": "F7-R1",
+    "status": "NOT_ASSESSED",
+    "evidence": "App projection copy is outside the SQL lens. The delta changes supabase-repository.ts:380-381 and status-recovery/supabase-store.ts:114-115 to read financial_state for post-paid statuses or a paid timeline. The SQL financial_state/financial_state_by_reference bodies are unchanged (230541:351-371). The handoff says account-history copy is still a residual."
+   }
+  ],
+  "unknowns": [
+   "Managed role attributes were not verified. The local proof ran SECURITY DEFINER functions owned by superuser postgres. On managed Supabase, the INVOKER history and snapshot guards read FORCE-RLS tables, and EXECUTE on financial_state is checked against set_status's owner. Correctness there assumes the function owner has BYPASSRLS and owns or can execute financial_state.",
+   "Unknown whether the managed postgres role can SET session_replication_role=replica. If it can, that disables every non-ALWAYS HL12 trigger.",
+   "Unknown which line endings were applied in the two proof runs in the Codex worktree (C:/Users/sboad/.codex/worktrees/b22f). Recorded function fingerprints depend on CRLF vs LF.",
+   "The precheck has never run on a managed DB. Production counts of history-held rows, provider observations and payment-state rows without an accepted or live quote are unknown.",
+   "Whether any off-system or supplier queue acts on held supplier_processing/shipped rows without a status change. The status trigger cannot stop fulfilment that never writes status.",
+   "Policy is unstated: accepted quotes never expire and cannot be withdrawn, and payment_verify does not check valid_until on the accepted quote, so payment can be verified indefinitely at the accepted price.",
+   "Hosted PostgREST mapping of the new details ASSISTED_ORDER_QUOTE_ACCEPTANCE_CLOSED and ASSISTED_ORDER_QUOTE_IMMUTABLE is not qualified. Locally both map to a generic financial_action_refused conflict."
+  ],
+  "findings": [
+   {
+    "id": "HIST-02-R1",
+    "severity": "P2",
+    "claim": "The HIST-02 dead end also hits live rows, not just historical ones. 024018 now explicitly supports quote acceptance in payment_pending/payment_review. A request moved to payment_pending before acceptance, or before any quote, is one quote expiry (at most 30 days) from being permanently unquotable. Its only exit is cancellation.",
+    "citation": "024018:76-77,151-153 and 159-163 (expired quote -> QUOTE_STALE). 202413:260-261 (validity <= 30 days), 269-274 (quote_issue excludes payment_pending/payment_review). 191323:31,36-38 (reviewing->payment_pending allowed with no quote; payment_pending->{payment_review,cancelled}; payment_review->{paid,payment_pending,cancelled}). service.ts:93-102 has the same matrix and no accepted-quote precondition. Precheck counts payment_workflow_without_accepted_quote but not rows whose only issued quote has expired.",
+    "correction": "Pick one: (a) allow quote_issue in payment_pending/payment_review when there is no accepted quote, no observation and no paid history; or (b) require an accepted, unexpired quote before set_status/service enter payment_pending. Add a precheck count of payment_pending/payment_review rows whose latest quote is issued with valid_until <= now().",
+    "repro": "Request in reviewing -> quote_issue v1 with valid_until = now()+1 day -> set_status reviewing->payment_pending (allowed). After expiry, quote_accept raises ASSISTED_ORDER_QUOTE_STALE (024018:159-163) and quote_issue raises 'Request is not quote-ready' (202413:269-273). No set_status route returns to a quote-ready status. Variant: set_status reviewing->payment_pending with no quote at all."
+   },
+   {
+    "id": "TRIG-ENABLED",
+    "severity": "P3",
+    "claim": "The preflight and postcheck treat a trigger as active whenever tgenabled<>'D'. That also accepts 'R' (replica-only), which never fires in normal origin sessions, so a demoted provider or history hold passes both checks. None of the HL12 guards is ENABLE ALWAYS, so SET session_replication_role=replica also bypasses all of them.",
+    "citation": "024018:12-17. postcheck.sql:38,41,44,47,50. 234614:51-57 and 024018:49,91,94 create default (origin) triggers.",
+    "correction": "Assert tgenabled in ('O','A'), or ='A' after making the financial guards ALWAYS. Consider `ALTER TABLE ... ENABLE ALWAYS TRIGGER` for hl12_history_progression, hl12_quote_snapshot_*, hl12_provider_*, research_assisted_order_paid_hold and hl12_observed_cancel.",
+    "repro": "As owner: ALTER TABLE public.research_assisted_order_payment_verifications ENABLE REPLICA TRIGGER hl12_provider_verification_hold. The 024018 preflight passes, the postcheck reports provider_verification_hold=true, and in origin sessions the trigger does not fire."
+   },
+   {
+    "id": "TRUNC-EVID",
+    "severity": "P3",
+    "claim": "TRUNCATE is refused only on quotes. The events table, which 024018 now uses as the HIST-PROG paid-history marker, can still be truncated by the owner, as can verifications, evidence_claims and corrections. observations can be truncated with CASCADE, which also wipes verifications and corrections. The append-only and immutable triggers on those tables are row-level UPDATE/DELETE only.",
+    "citation": "024018:36-37 (guard depends on events). bridge 20260815150000:339-356 (events append-only is row-level only). 202413:154-162 and 230541:53-58 (row-level only). 024018:93-95 (TRUNCATE guard on quotes only).",
+    "correction": "Add BEFORE TRUNCATE statement guards on events, payment_observations, payment_verifications, evidence_claims, observation_corrections and verifier_grants. Record that owner DDL (DISABLE/DROP TRIGGER, ALTER COLUMN TYPE USING) remains an inherent owner-level bypass, mitigated only by role separation.",
+    "repro": "As owner: TRUNCATE public.research_assisted_order_events. A paid-event row regressed to reviewing (proof fixture 64) then passes 024018:34-37 on set_status reviewing->payment_pending. Or: TRUNCATE public.research_assisted_order_payment_observations CASCADE, which lifts hl12_observed_cancel (230541:379-381)."
+   },
+   {
+    "id": "GUARD-NEWSTATE",
+    "severity": "P3",
+    "claim": "hl12_history_progression keys only on OLD.status and an existing paid event. A direct write that jumps from an unpaid status straight into supplier_processing/shipped/delivered/closed, or an INSERT with such a status, passes every trigger. paid_hold blocks only NEW='paid', and the set_status matrix is the only barrier.",
+    "citation": "024018:34-37 (old.status only, BEFORE UPDATE only). 202413:536-553 (INSERT blocks only 'paid'). local.mjs:111 shows the direct-write path (update ... set status='supplier_processing' from reviewing), and nothing re-tests it after the guard.",
+    "correction": "Also refuse when NEW.status is in the post-paid set (or on INSERT with such a status) unless financial_state is verified, so the data boundary does not rely on the RPC matrix.",
+    "repro": "As owner after 024018: UPDATE research_assisted_order_requests SET status='shipped' WHERE status='payment_review' AND no paid event. All three BEFORE UPDATE triggers pass."
+   },
+   {
+    "id": "POSTCHECK-COVERAGE",
+    "severity": "P3",
+    "claim": "Neither the preflight nor the postcheck asserts the guards 024018 says 'remain installed' (research_assisted_order_paid_hold, hl12_observed_cancel, paid_event_evidence, hl12_evidence_claim). The fingerprints also omit payment_verify, paid_hold_guard, financial_state, quote_issue and set_status, so a regressed verify body from a 202413 replay passes. The local proof applies the working-tree bytes, which are CRLF on this autocrlf=true Windows checkout, and only normalises them for the reported sha. md5(pg_get_functiondef) fingerprints are therefore line-ending dependent and may not match an LF managed apply.",
+    "citation": "024018:8-27,29-30. postcheck.sql:36-65. local.mjs:14,204-205,319. The worktree file sha256 is a9f0a61e... (CRLF) and the git blob is 0956316142dd... (matches DAG/MIGRATIONS.md).",
+    "correction": "Assert presence and enabled state (O/A) of every financial trigger. Fingerprint every HL12 function, including payment_verify. Normalise or apply LF canonical bytes in the proof, or record which line endings were applied.",
+    "repro": "Run 202413 before 024018. 024018 re-revokes verify's ACL, but the 202413 verify body (no auth-UUID binding) stays in place and the postcheck passes."
+   },
+   {
+    "id": "QUOTE-CONTRACT",
+    "severity": "P3",
+    "claim": "The quote state machine is inconsistent across surfaces. quote_get projects 'issued' for cancelled, closed and history-held requests that quote_accept will always refuse. quote_issue still issues and supersedes quotes on paid-history rows regressed to quote-ready statuses, though they can never be accepted. Replay is refused for verified closed rows but allowed for verified delivered rows. The unmounted TS quote engine models issued->withdrawn/expired/declined and 'withdraw accepted', which the snapshot guard now forbids.",
+    "citation": "205725:27-43 (no request-status projection). 202413:267-278 (no paid-event check). 024018:128-136,62-70. quote/service.ts:236-240,419-466.",
+    "correction": "Project request acceptability, or 'closed', in quote_get. Make quote_issue refuse paid-history rows. Align or remove the TS withdraw/expire/decline states, or add governed SQL transitions for them.",
+    "repro": "Cancel a request with an unexpired issued quote. quote_get returns state='issued', and accept returns ASSISTED_ORDER_QUOTE_ACCEPTANCE_CLOSED, which maps to a generic 409 financial_action_refused (finance.ts:66-71)."
+   },
+   {
+    "id": "PN-LOCKS",
+    "severity": "PASS-NOTE",
+    "claim": "Lock ordering is consistent and no deadlock was found: request row first, then quote, across quote_accept, quote_issue, set_status, observe, correct_manual and verify. The snapshot trigger's backstop is a lockless read inside the caller's request lock. The migration's DROP/CREATE TRIGGER waits for in-flight writers within lock_timeout 5s.",
+    "citation": "024018:115-118,73-84. 202413:267-268. 234614:89-90,176-177. 230541:305-306.",
+    "correction": "None."
+   },
+   {
+    "id": "PN-REG",
+    "severity": "PASS-NOTE",
+    "claim": "Registration is consistent. DAG node dependsOn research_assisted_order_quote_provider_hold, MIGRATIONS.md order 86 depends on 85, and the canonical checksum 0956316142dd52724729b1653f0d3732b2c45e17074e64ad7f8888582407243f matches `git show 61853e2:<file> | sha256sum` and the 915a535 blob. The migration bytes are unchanged after 915a535. Re-applying 024018 itself is idempotent (create or replace, drop-if-exists/create trigger, restated ACLs).",
+    "citation": "docs/coordination/MIGRATION_DAG.json:906-919. supabase/MIGRATIONS.md:376-397.",
+    "correction": "None."
+   }
+  ],
+  "verified": [
+   {
+    "id": "HIST-02-R1",
+    "severity": "P2",
+    "claim": "The HIST-02 dead end also hits live rows, not just historical ones. 024018 now explicitly supports quote acceptance in payment_pending/payment_review. A request moved to payment_pending before acceptance, or before any quote, is one quote expiry (at most 30 days) from being permanently unquotable. Its only exit is cancellation.",
+    "citation": "024018:76-77,151-153 and 159-163 (expired quote -> QUOTE_STALE). 202413:260-261 (validity <= 30 days), 269-274 (quote_issue excludes payment_pending/payment_review). 191323:31,36-38 (reviewing->payment_pending allowed with no quote; payment_pending->{payment_review,cancelled}; payment_review->{paid,payment_pending,cancelled}). service.ts:93-102 has the same matrix and no accepted-quote precondition. Precheck counts payment_workflow_without_accepted_quote but not rows whose only issued quote has expired.",
+    "correction": "Pick one: (a) allow quote_issue in payment_pending/payment_review when there is no accepted quote, no observation and no paid history; or (b) require an accepted, unexpired quote before set_status/service enter payment_pending. Add a precheck count of payment_pending/payment_review rows whose latest quote is issued with valid_until <= now().",
+    "repro": "Request in reviewing -> quote_issue v1 with valid_until = now()+1 day -> set_status reviewing->payment_pending (allowed). After expiry, quote_accept raises ASSISTED_ORDER_QUOTE_STALE (024018:159-163) and quote_issue raises 'Request is not quote-ready' (202413:269-273). No set_status route returns to a quote-ready status. Variant: set_status reviewing->payment_pending with no quote at all.",
+    "lens": "sql",
+    "verdict": {
+     "verdict": "DOWNGRADE",
+     "adjustedSeverity": "P3 (fold into the existing HIST-02 entry; not a separate P2)",
+     "reasoning": "The mechanics the finding describes are accurate at 61853e2. But the delta did not introduce them, the stated consequence is overstated, and one supporting claim is wrong.\n\nWhat checks out:\n- set_status (191323:31) allows reviewing -> payment_pending with no quote precondition.\n- 191323:37-38 allow payment_pending -> {payment_review, cancelled} and payment_review -> {paid, payment_pending, cancelled}. Neither returns to a quote-ready status.\n- service.ts:86-109 has the same matrix. updateStatus (service.ts:848-873) adds no accepted-quote precondition.\n- quote_issue is defined only in 202413. Its validity window is at most 30 days (202413:260-261), and it refuses any status outside reviewing/waiting_on_customer/identity_received/agreements_pending/agreements_complete (202413:269-273).\n- quote_accept in 024018 raises ASSISTED_ORDER_QUOTE_STALE when valid_until <= now() (024018:159-163). So a row that moves to payment_pending or payment_review without an accepted quote can never be quoted again.\n\nWhy this is a downgrade:\n1. **Not new, and the delta did not worsen it.** The predecessor quote_accept (230541:223-281) had no request-status check at all (SQL-13). It already allowed acceptance in payment_pending, and it already refused expired quotes (230541:266). 024018:128-136 and 151-158 narrow acceptance to an allowlist. They do not newly open payment_pending/payment_review. The root cause is the quote_issue status allowlist, which is exactly HIST-02. The finding's no-quote variant is HIST-02 verbatim. The handoff tracks it as OPEN (server/research/assisted-order/HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md:42 and :133). The expired-quote case is the same defect reached by another path.\n2. **Cancellation is always reachable, so the consequence is bounded.** A payment observation requires an accepted quote with an acceptance_id (202413:167-181, ASSISTED_ORDER_QUOTE_NOT_ACCEPTED). So a row in this state can never hold an observation. That means:\n   - The N2 cancel block can never trap it: the SQL guard (230541:376-387) checks for observations, and the service check (service.ts:860-865) checks hasObservation/paymentVerified.\n   - paid needs a verification bound to an accepted quote (202413:188-201, 533-550), so these rows have no paid history and the history-progression guard (024018:31-45) does not apply.\n   \n   The worst case is that the operator cancels and the customer resubmits. No money moves, no evidence is lost, and there is no integrity breach. The state can only be reached when an operator sends a row to payment_pending before the customer accepts. The customer copy for that status says payment is paused and funds should not be sent (service.ts:259).\n3. **The precheck claim is wrong.** payment_workflow_without_accepted_quote (supabase/verification/research_assisted_order_quote_history_immutability_precheck.sql:24, also postcheck:24) counts every payment_pending/payment_review row with no accepted quote (accepted_quote defined at precheck:13-14). That already includes rows whose only issued quote expired. The query does not separate them from rows whose issued quote is still live, which is a P3-level visibility refinement at most.\n\nResidual value: the finding correctly points out that live rows, not only historical ones, can enter the HIST-02 state, because neither SQL nor the service requires an accepted quote before payment_pending. That belongs in the HIST-02 scope note. Its proposed options are reasonable: allow quote_issue when there is no accepted quote, no observation and no paid history, or gate entry to payment_pending on an accepted, unexpired quote. Severity stays at or below the existing HIST-02 rating. It is not an independent P2.",
+     "counterEvidence": "- 230541:223-281: the prior quote_accept had no status gate and already refused expired quotes (230541:266). 024018 narrows acceptance and does not widen it.\n- 202413:167-181: observations require an accepted quote, so these rows can never hold an observation and cancellation is never blocked (230541:376-387, service.ts:860-865).\n- 202413:188-201 and 533-550: paid requires a verification tied to an accepted quote, so these rows have no paid history.\n- precheck.sql:13-14 and :24: payment_workflow_without_accepted_quote already counts rows whose issued quote expired.\n- HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md:42 and :133: HIST-02 (quote_issue refusing payment_pending/payment_review) is already tracked OPEN as the same root cause."
+    }
+   }
+  ]
+ },
+ {
+  "lens": "ts",
+  "statuses": [
+   {
+    "id": "F7-R1",
+    "status": "CLOSED",
+    "evidence": "Both read surfaces now do the financial read in every case where the copy depends on it. Owner status: supabase-repository.ts:380-395 reads research_assisted_order_financial_state when status is paid/supplier_processing/shipped/delivered OR the timeline has a paid event. /status (P-17): supabase-store.ts:114-132 applies the same condition. The timeline is the full append-only event list (bridge 20260815150000:436-455 and 337-356; status_recovery 20260927203000:284-295), so closed and cancelled rows with a paid event are covered. The copy uses paymentVerified only for status==='paid' or a paid timeline item (payment-status-copy.ts:45; status-copy.ts:34,52; AssistedOrderStatusPage.tsx:138,157-161). The read is skipped only for closed/cancelled rows with no paid event, and nothing payment-related renders there, so no wrong copy results. Account history is a separate residual (see HIST-COPY). Client-render proof is missing (see TEST-GAP)."
+   },
+   {
+    "id": "HIST-PROG",
+    "status": "CLOSED",
+    "evidence": "TS: service.ts:848-858. hasPaymentHistory = status in {paid,supplier_processing,shipped,delivered,closed} OR admin timeline has a paid event. Any status change, including cancel, then needs financial.paymentVerified===true. If getFinancialState is missing or returns null, the change is blocked. The timeline source is admin_get -> timeline_json, which is the full append-only ledger. The SQL backstop is 20261001024018:31-50 with the same predicate. The only TS status writer is service.updateStatus -> research_assisted_order_set_status (supabase-repository.ts:464). Tests (service.test.ts:866-918, http-e2e.test.ts:325-356) prove the TS preflight only, against a mocked financial port. This fix creates a permanent dead state for legacy rows (see HIST-FREEZE)."
+   },
+   {
+    "id": "F4",
+    "status": "OPEN",
+    "evidence": "No change in the delta. recordPaymentVerificationEffects (service.ts:946-995) still runs inline after the verify RPC and has no durable effects-pending row or sweeper. If the process dies between the verify commit and audit/outbox, only a replay of POST .../verify repairs it (http.ts:422-432). That replay must pass the verifier-grant and observer-identity check before reaching the replay branch (provider_hold 234614:186-195, replay 203-208). Any other admin gets a 403, so effects become unrecoverable if the original observer's grant is revoked. The production audit sink is still log_line_nondurable (production-deps.ts:174-197). updateStatus effects are Promise.allSettled plus logger.warn only (service.ts:888-933), so a committed status change can silently lose its customer notification and audit."
+   },
+   {
+    "id": "N2",
+    "status": "OPEN",
+    "evidence": "There is still no governed no-funds, void or refund path. The scope has widened: every cancel now consults finance (service.ts:850-851), and any observation blocks it at any status, including reviewing (service.ts:860-865, asserted by service.test.ts:920-930). financial_state.hasObservation counts superseded or corrected observations too (20260930230541:353-354), so one mistaken observation blocks cancellation forever. A verified payment always returns financial_resolution_required, with no resolution route."
+   },
+   {
+    "id": "ROLL-06",
+    "status": "PARTIAL",
+    "evidence": "getFinancialState maps PGRST202 to AssistedOrderConflictError payment_verification_not_ready, i.e. HTTP 409 (supabase-repository.ts:291-297). This is proven through the mounted route with the real repository method over a fake RPC (http-e2e.test.ts:358-381). Read paths treat PGRST202 as unverified (supabase-repository.ts:387; supabase-store.ts:122). Not covered: other absent-schema RPCs (finance routes, customer_status candidate) still return generic 500, and nothing enforces migrate-then-deploy. Because of the cancellation widening, an app-before-migration rollout now blocks every cancellation (see ROLL-06-R1). The handoff (HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md:41) admits the fix is narrow."
+   },
+   {
+    "id": "F1",
+    "status": "OPEN",
+    "evidence": "No change to finance.ts, production.ts or production-deps.ts in 947f6ee..61853e2 (git diff --stat lists only service.ts, supabase-repository.ts and status-recovery/supabase-store.ts as runtime code). The handoff (line 43) records F1 as OPEN P1. No evidence authority or grant procedure is composed."
+   },
+   {
+    "id": "HIST-02",
+    "status": "OPEN",
+    "evidence": "20261001024018 does not redefine quote_issue. The effective body (20260930202413:268-273) still accepts only reviewing, waiting_on_customer, identity_received, agreements_pending and agreements_complete, so payment_pending and payment_review rows cannot get a first quote."
+   },
+   {
+    "id": "SQL-06",
+    "status": "CLOSED",
+    "evidence": "Checked from source only, not executed. 20261001024018:54-95 refuses DELETE and TRUNCATE (row and statement triggers). It allows only issued -> accepted/superseded, with all other columns unchanged. A no-op UPDATE passes. Table INSERT/UPDATE/DELETE are already revoked from service_role (20260930202413:138). The postcondition at 206-210 asserts the ACL."
+   },
+   {
+    "id": "SQL-13",
+    "status": "CLOSED",
+    "evidence": "Checked from source only. quote_accept now takes the request lock first (20261001024018:112-118). It refuses cancelled/closed requests and paid history without verification (128-136), and refuses a new acceptance outside pre-payment statuses or with paid history (151-158). A trigger backstop (73-84) covers stale or raced callers."
+   },
+   {
+    "id": "SQL-01",
+    "status": "CLOSED",
+    "evidence": "Provider hold is intact. The 024018 preflight requires the provider hold guard and both enabled hl12 provider triggers (10-20), and refuses if any provider verifications exist (22-25). It does not redefine payment_observe or payment_verify, and it restates the payment_verify revoke (181-182, postcondition 189-196)."
+   },
+   {
+    "id": "ADP-01",
+    "status": "OPEN",
+    "evidence": "No provider adapter, attempt, event or quarantine persistence code in the delta (no server/research/assisted-order/payment changes in git diff --stat 947f6ee 61853e2). The handoff (line 46) says OPEN."
+   },
+   {
+    "id": "ROLL-05",
+    "status": "OPEN",
+    "evidence": "024018:97-174 redefines quote_accept again. Replaying 20260930230541:223 or 20260930202413:362 would restore an older accept body without the status checks. The new trigger backstop (024018:73-84) partly mitigates acceptance, but not the other regressed bodies or ACLs."
+   }
+  ],
+  "unknowns": [
+   "How many managed-production assisted requests are currently paid, supplier_processing, shipped, delivered or closed, or have paid history. The precheck has not been run on the managed DB in any evidence available, and that count decides whether HIST-FREEZE is P2 or P1.",
+   "Whether the release plan enforces migrate-then-deploy for 915a535. No runtime gate exists, and the handoff only disclaims app-before-migration rollout.",
+   "Whether the deployed PostgREST version returns PGRST202, or another code, for a missing function or a stale schema cache. The mapping assumes PGRST202.",
+   "No tests, builds or SQL proofs were run in this read-only review. The pass counts in the handoff are unverified here.",
+   "Whether payment_observe requires an accepted quote, which would mean a cancel from submitted can never meet an observation and the finance read there adds only availability risk. Not traced in this TS lens.",
+   "Whether any product decision accepts showing 'Payment record under review' indefinitely to customers with legacy delivered or closed orders."
+  ],
+  "findings": [
+   {
+    "id": "HIST-FREEZE",
+    "severity": "P2",
+    "claim": "The HIST-PROG fix leaves every legacy paid or post-paid request permanently stuck. It can never be shipped, delivered, closed, cancelled or verified, and the customer is shown 'Payment record under review' forever. None of the finance migrations is applied in production, so no production row has a verification or an accepted quote: every request that reached paid under the old writer, including in-flight supplier_processing orders with real money, falls into this dead state once 191323..024018 apply. Severity becomes P1 if the managed precheck shows non-delivered rows in this state.",
+    "citation": "service.ts:848-858 blocks every transition, including cancel, without verification. allowedTransitions paid:[supplier_processing,cancelled] (service.ts:103) has no path back to payment_review. payment_verify needs an accepted quote (20260930234614_..._provider_hold.sql:180) and status payment_review (:210). quote_accept refuses any request with paid history (20261001024018:128-136,151-158). quote_issue refuses non-pre-payment statuses (20260930202413:268-273). The quotes table is new in pending migration 202413. The precheck only counts these rows (research_assisted_order_quote_history_immutability_precheck.sql:19-22); nothing gates on the count. Copy: payment-status-copy.ts:23-29,45. The migration header (024018:2-3) excludes legacy disposition.",
+    "correction": "Run the PII-free precheck on the managed target before any apply. Define a governed legacy disposition: an independently evidenced, dual-control historical settlement record that financial_state recognises, or an explicit legacy-hold state with its own customer copy and operator exit (refund or fulfil). Gate the migration apply, or the runtime release, on historical_progression_holds = 0 or on that disposition existing."
+   },
+   {
+    "id": "ROLL-06-R1",
+    "severity": "P2",
+    "claim": "Every cancellation now depends on the pending financial RPC, so deploying the app before the migrations disables all admin cancellations. updateStatus calls getFinancialState for any cancel, including submitted and reviewing requests with no quote or money. While research_assisted_order_financial_state is absent (migration 230541 is PENDING), the PGRST202 mapping returns 409 payment_verification_not_ready for every cancel. At 947f6ee, cancels from submitted, reviewing and similar statuses never consulted finance. The error code and the 'Financial verification is unavailable' message are also misleading for a request that never had a payment step. Nothing at boot checks that the RPC exists, and the test suite enshrines the behaviour.",
+    "citation": "service.ts:850-851 (needsFinance includes any input.status==='cancelled') and :860-865 (!financial blocks). supabase-repository.ts:293-297. http-e2e.test.ts:358-381 asserts a 409 for a 'reviewing' cancellation when the schema is absent. git diff 947f6ee 915a535 shows the old condition was limited to payment_pending/payment_review/supplier_processing. production-deps.ts has no financial_state probe (grep shows no non-test use outside the repository and service).",
+    "correction": "Enforce migrate-then-deploy with a startup readiness probe for research_assisted_order_financial_state(uuid) that refuses to mount (or explicitly disables cancellation) when it is absent. Return a distinct code such as financial_authority_unavailable instead of reusing payment_verification_not_ready. Make the release plan state that 915a535 must not deploy before 230541..024018."
+   },
+   {
+    "id": "HIST-COPY",
+    "severity": "P3",
+    "claim": "Account history still shows the raw operational label 'Request status: paid' (and shipped/delivered) with no evidence binding. For a legacy unverified paid row, this contradicts the status page, which shows 'Payment record under review'. A disclaimer softens it, but the two customer surfaces give different payment answers for the same request.",
+    "citation": "client/src/research/member-orders/AssistedRequests.tsx:26 renders request.status. member-order-history.ts:20 passes the raw status enum with no financial projection. Disclaimer at AssistedRequests.tsx:14. Status page: AssistedOrderStatusPage.tsx:138,157 via payment-status-copy.ts:45. The handoff (line 37) admits this residual.",
+    "correction": "Render paid through the same evidence-bound copy, using a batched, owner-authorised financial read in the history RPC. Otherwise show an evidence-neutral label such as 'Payment step recorded - open status for details' and never the bare word 'paid'."
+   },
+   {
+    "id": "ERR-ORDER",
+    "severity": "P3",
+    "claim": "The finance gates run before the allowedTransitions check. Impossible transitions (shipped/delivered/closed -> cancelled, closed -> anything) therefore trigger a service-role financial read and return payment_verification_not_ready or financial_resolution_required instead of invalid_status_transition. That tells operators a financial resolution could unlock cancellation after shipment. The HTTP 'keeps cancellation behind financial resolution' test cancels from closed, a transition that is invalid anyway, so it proves the check ordering, not the hold. A legal verified cancel is covered only by service.test.ts:932-951.",
+    "citation": "service.ts:852-866 come before :867-872. http-e2e.test.ts:383-403 (cancel from closed at :399-402). http-e2e.test.ts:325-356 also cancels from shipped/delivered.",
+    "correction": "Run the allowedTransitions check before any financial read. Change the HTTP test to cancel a verified request from paid or supplier_processing (legal transitions)."
+   },
+   {
+    "id": "AVAIL",
+    "severity": "P3",
+    "claim": "Customer status reads now depend on the finance RPC for every post-payment view, not just paid. Any non-PGRST202 financial error (42501 after a grant regression, a timeout) now returns 500 on the owner status page, P-17 /status, and document upload/complete authorization, all of which reuse getStatus. Previously only status==='paid' made this read.",
+    "citation": "supabase-repository.ts:380-389 and supabase-store.ts:114-124 (fail on any non-PGRST202 error). getStatus is reused as an authorization check at service.ts:1005-1017 and :1111-1123.",
+    "correction": "In read and authorization paths, degrade to paymentVerified=false (unverified copy) on any financial read error and raise an operator alert. Alternatively, give the document-flow authorization a status read with no financial side lookup."
+   },
+   {
+    "id": "TEST-GAP",
+    "severity": "P3",
+    "claim": "The new tests prove the TS preflight and projection logic only against mocked financial ports. No client-render test covers a post-paid status with a paid timeline event and paymentVerified=true or false. The SQL history guard and verified progression are exercised only by the separate local SQL proof, never in a composed app test.",
+    "citation": "AssistedOrderPage.test.tsx:1036-1052 covers only status payment_review/paid. service.test.ts:866-930 and http-e2e.test.ts:325-403 spy on or mock getFinancialState. financial-projection.test.ts:29-87 and payment-status-copy.test.ts:56-138 use a fake rpc.",
+    "correction": "Add a client test that renders supplier_processing, closed and cancelled with a paid timeline event and both paymentVerified values. Add a composed test against a real PostgREST/DB, or at least the SQL proof, for verified progression and the HIST-FREEZE rows."
+   },
+   {
+    "id": "PN-CLOSED-LIST",
+    "severity": "PASS-NOTE",
+    "claim": "The read predicate omits 'closed', while the service and SQL guard predicates include it. This causes no wrong copy, because payment copy is derived only from status==='paid' or a paid timeline item, and both trigger the read. It is an inconsistency to keep in mind if closed copy ever becomes payment-aware.",
+    "citation": "supabase-repository.ts:380; supabase-store.ts:114; service.ts:848; 20261001024018:35.",
+    "correction": "Optional: share one exported predicate across service, repository and store."
+   }
+  ],
+  "verified": [
+   {
+    "id": "HIST-FREEZE",
+    "severity": "P2",
+    "claim": "The HIST-PROG fix leaves every legacy paid or post-paid request permanently stuck. It can never be shipped, delivered, closed, cancelled or verified, and the customer is shown 'Payment record under review' forever. None of the finance migrations is applied in production, so no production row has a verification or an accepted quote: every request that reached paid under the old writer, including in-flight supplier_processing orders with real money, falls into this dead state once 191323..024018 apply. Severity becomes P1 if the managed precheck shows non-delivered rows in this state.",
+    "citation": "service.ts:848-858 blocks every transition, including cancel, without verification. allowedTransitions paid:[supplier_processing,cancelled] (service.ts:103) has no path back to payment_review. payment_verify needs an accepted quote (20260930234614_..._provider_hold.sql:180) and status payment_review (:210). quote_accept refuses any request with paid history (20261001024018:128-136,151-158). quote_issue refuses non-pre-payment statuses (20260930202413:268-273). The quotes table is new in pending migration 202413. The precheck only counts these rows (research_assisted_order_quote_history_immutability_precheck.sql:19-22); nothing gates on the count. Copy: payment-status-copy.ts:23-29,45. The migration header (024018:2-3) excludes legacy disposition.",
+    "correction": "Run the PII-free precheck on the managed target before any apply. Define a governed legacy disposition: an independently evidenced, dual-control historical settlement record that financial_state recognises, or an explicit legacy-hold state with its own customer copy and operator exit (refund or fulfil). Gate the migration apply, or the runtime release, on historical_progression_holds = 0 or on that disposition existing.",
+    "lens": "ts",
+    "verdict": {
+     "verdict": "DOWNGRADE",
+     "adjustedSeverity": "P3",
+     "reasoning": "The citations check out, and the finding correctly describes how the code behaves. What is wrong is the claim that this is a new P2 defect. The freeze is fail-closed containment that was designed on purpose and written down. It goes back to the previously reviewed chain, and its missing exit is already tracked under open findings.\n\nWhat the code at 61853e2 confirms:\n- service.ts:848-858 refuses any status change on a row with payment history unless `financial_state.paymentVerified` is true.\n- service.ts:103 only allows `paid` to go to `supplier_processing` or `cancelled`.\n- In the provider-hold migration 234614, verify needs an accepted quote (:180-185) and status `payment_review` (:210-213).\n- `quote_accept` in 024018 refuses rows with paid history (:128-136, :151-158).\n- `quote_issue` in 202413 refuses `payment_review` and every later status (:268-273).\nSo there is no exit for legacy rows. Even after F1 is composed, a legacy paid row cannot be verified.\n\nWhy this is not a new P2:\n1. The freeze is intended and older than this delta.\n   - M81, 20260930193033 (lines 1-6, 27-31), already refused every transition out of an old `paid` label.\n   - M82, 202413:530-532, says in so many words: \"An old paid label without one remains frozen pending a separately evidenced historical-row resolution; this migration invents no backfill.\" It also blocks cancelling from `paid` or `supplier_processing` (:563-567).\n   - The prior reviewer's HIST-PROG asked for exactly this hold to cover `supplier_processing`, `shipped` and `delivered`. HIST-FREEZE is the other side of a requested fix, not a regression.\n2. The missing exit is already recorded as open.\n   - The 024018 header (:2-3) excludes any legacy disposition.\n   - HEALTH_HL12_PROVIDER_NEUTRAL_HANDOFF_20260930.md:123-136 has a historical-paid reconciliation runbook. It requires aggregate counts of unverified historical paid rows before any managed apply, keeps those rows on hold, and says \"That historical resolution operation is not yet implemented.\"\n   - MIGRATION_DAG.json:852 and :919 list historical paid review and no-funds/refund as open.\n   - The governed void/refund/no-funds part is N2. The evidence authority is F1. Both are open and listed in the handoff table.\n3. Nothing in production is stuck today.\n   - Migrations 80-86 are all PENDING (MIGRATIONS.md:280-380).\n   - Finance stays disabled, and BLOCKED_EXTERNAL.md:17 says runtime 915a535 is not release-ready.\n   - The step up to P1 depends on precheck data that does not exist yet. It is speculative.\n4. The copy claim is overstated.\n   - `payment-status-copy.ts:45` returns the unverified copy only when the status is `paid`. For every other status it returns null (:46).\n   - status-copy.ts:34 then falls back to the normal fulfillment copy, so a legacy `supplier_processing` or `shipped` row keeps its fulfillment headline.\n   - \"Payment record under review\" appears as the headline only when the current status is `paid`. Otherwise it shows only on the paid timeline event (AssistedOrderStatusPage.tsx:159-160), not as the headline.\n5. The blast radius this delta adds is smaller than claimed.\n   - `paid` rows were already frozen.\n   - Cancel was already blocked for `paid` and `supplier_processing`.\n   - `shipped` and `delivered` have no cancel transition at all.\n   - `closed` has no transitions.\n   - What 915a535 newly blocks is `supplier_processing`→`shipped`, `shipped`→`delivered` and `delivered`→`closed` on unverified legacy rows, plus rows whose status was moved back after a paid event. These are status labels; physical fulfillment is not gated by them.\n\nWhat is left is a P3 release-gate and tracking item:\n- The precheck can serve as the gate, but it cannot run on today's production schema. It reads the quotes and verifications tables, which only exist once M82-85 are applied. The handoff admits this (\"not valid on a managed target lacking 80-85\").\n- So any count taken before the apply needs a separate read-only query that works against the M71-only schema. Nothing automated gates the apply on `historical_progression_holds`.\n- Recommendation: make \"count is 0, or a reviewed historical-resolution operation exists\" an explicit precondition for the managed apply and the runtime release. Track the legacy disposition as a named item next to N2 and F1, not as a new P2 defect.",
+     "counterEvidence": "- 20260930193033 (M81), lines 1-6 and 27-31: the hold already froze every transition out of a historical `paid` label in the previously reviewed chain.\n- 20260930202413:530-532: legacy paid rows are documented as \"frozen pending a separately evidenced historical-row resolution\". Lines 563-567 already block cancelling from `paid` or `supplier_processing`.\n- 20261001024018:2-3: the header explicitly excludes any legacy disposition.\n- HEALTH_HL12_PROVIDER_NEUTRAL_HANDOFF_20260930.md:123-136: the runbook requires aggregate counts before a managed apply, keeps unresolved rows on hold, and states the historical resolution operation is not yet implemented.\n- HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md: N2, F1 and HIST-02 are listed OPEN.\n- MIGRATIONS.md:280-380: migrations 80-86 are all PENDING. BLOCKED_EXTERNAL.md:17: runtime 915a535 is not release-ready.\n- shared/research/assisted-order/payment-status-copy.ts:45-46: the unverified copy is returned only for status `paid`, null otherwise. server/research/status-recovery/status-copy.ts:34 falls back to fulfillment copy for post-paid statuses.\n- The 947f6ee to 915a535 diff of service.ts:845-852: `paid` rows were already held; the delta only adds post-paid progression, which is the hold HIST-PROG asked for."
+    }
+   },
+   {
+    "id": "ROLL-06-R1",
+    "severity": "P2",
+    "claim": "Every cancellation now depends on the pending financial RPC, so deploying the app before the migrations disables all admin cancellations. updateStatus calls getFinancialState for any cancel, including submitted and reviewing requests with no quote or money. While research_assisted_order_financial_state is absent (migration 230541 is PENDING), the PGRST202 mapping returns 409 payment_verification_not_ready for every cancel. At 947f6ee, cancels from submitted, reviewing and similar statuses never consulted finance. The error code and the 'Financial verification is unavailable' message are also misleading for a request that never had a payment step. Nothing at boot checks that the RPC exists, and the test suite enshrines the behaviour.",
+    "citation": "service.ts:850-851 (needsFinance includes any input.status==='cancelled') and :860-865 (!financial blocks). supabase-repository.ts:293-297. http-e2e.test.ts:358-381 asserts a 409 for a 'reviewing' cancellation when the schema is absent. git diff 947f6ee 915a535 shows the old condition was limited to payment_pending/payment_review/supplier_processing. production-deps.ts has no financial_state probe (grep shows no non-test use outside the repository and service).",
+    "correction": "Enforce migrate-then-deploy with a startup readiness probe for research_assisted_order_financial_state(uuid) that refuses to mount (or explicitly disables cancellation) when it is absent. Return a distinct code such as financial_authority_unavailable instead of reusing payment_verification_not_ready. Make the release plan state that 915a535 must not deploy before 230541..024018.",
+    "lens": "ts",
+    "verdict": {
+     "verdict": "DOWNGRADE",
+     "adjustedSeverity": "P3",
+     "reasoning": "The mechanics check out against the code at 61853e2, but the impact does not hold up at P2.\n\nWhat the code confirms:\n- service.ts:850-851 sets `needsFinance = input.status !== current.status && (hasPaymentHistory || input.status === \"cancelled\")`, so every real cancellation now calls getFinancialState.\n- service.ts:860-865 refuses the cancel when `!financial`.\n- supabase-repository.ts:293-297 turns PGRST202 into a 409 `payment_verification_not_ready` with the message \"Financial verification is unavailable\".\n- `git diff 947f6ee 915a535` shows the old cancel condition covered only payment_pending, payment_review and supplier_processing. So when the RPC is missing, cancels from submitted or reviewing used to succeed and now return 409.\n- http-e2e.test.ts:357-381 asserts this 409 for \"reviewing\". No boot probe exists: the only non-test callers of financial_state are the repository and the status-recovery store.\n\nWhy this is P3 and not P2:\n\n1. The refusal is a deliberate fail-closed choice, and it is correct for a state that can actually happen. Migrations are applied one at a time. In M82 (20260930202413):\n   - The observations table is created at :77.\n   - quote_issue accepts requests in 'reviewing', 'waiting_on_customer', 'identity_received', 'agreements_pending' and 'agreements_complete' (:268-273).\n   - quote_accept has no status check (SQL-13).\n   - payment_observe only needs an accepted quote (insert guard :167-180).\n\n   But the projection RPC research_assisted_order_financial_state (M84 :351) and the SQL cancel guard (M84 :376-387) arrive only in 230541. With M80-M83 applied and M84 missing, a reviewing or agreements_* request can hold observed money while the RPC returns PGRST202 and no SQL guard blocks the cancel. The app preflight is then the only thing stopping a cancel over observed funds. Treating \"unknown\" as \"no money\" there would be the real bug.\n\n   The broader app check also matches the SQL rule exactly: M84's trigger refuses any cancel from any status once an observation exists. So the claim that the request \"never had a payment step\" is something the app cannot know without the projection.\n\n2. The scenario needs an app-before-migration deploy, and the records already treat that as unsupported:\n   - HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md:41 says the ROLL-06 fix \"does not ... qualify app-before-migration rollout\".\n   - Handoff :123 requires a managed plan built on the actual migration history.\n   - RELEASE_STATE.json:4 is NOT_READY_FOR_PRODUCTION_PROMOTION, with managedMigrationsApplied false at :24.\n   - The repo's convention is migrate first: MIGRATIONS.md:87 says M75 was built \"so it can be applied BEFORE the runtime\".\n\n   The previous runtime 947f6ee was not safe to deploy before its migrations either. Without the RPC it returned an uncontrolled 500 on paid transitions and on payment-stage cancels. Deploying either runtime first would also run it without the M81/M85 SQL holds its safety claims depend on, including the SQL-01 provider hold. Losing admin cancels in that window is the smallest of those problems.\n\n3. The harm is limited. Admins lose cancellation only during a misordered deploy window. The refusal is a controlled 409 that leaves every row unchanged (the test checks before == after, no update call, no notification). No money, integrity or privacy effect follows, and applying the pending chain fixes it.\n\nWhat remains valid, as P3 hygiene folded into the open ROLL-06:\n- Reusing `payment_verification_not_ready` and \"Financial verification is unavailable\" for a schema or authority outage is misleading on requests with no payment step. A distinct code such as financial_authority_unavailable would be clearer.\n- There is no startup readiness probe for financial_state(uuid).\n- The release plan should state outright that 915a535 must not deploy before 230541..024018 are applied and visible to PostgREST. Today it only says that rollout order is not qualified.",
+     "counterEvidence": "1. Fail-closed is intended and needed. M82 (supabase/migrations/20260930202413_research_assisted_order_quote_payment_authority.sql) creates payment_observations at :77 and lets quote_issue run from reviewing, waiting_on_customer, identity_received, agreements_pending and agreements_complete (:268-273). quote_accept has no status check, and the observation insert guard needs only an accepted quote (:167-180). The financial_state RPC (M84 20260930230541:351) and the any-status observed_cancel_guard (M84 :376-387) arrive later. In the M80-M83-applied / M84-absent state, a reviewing request can carry observed money while PGRST202 is returned and no SQL guard exists. The preflight at service.ts:860-865 is then the only barrier, and reading PGRST202 as no-funds would allow a cancel over observed money. The comment at supabase-repository.ts:291-292 says so explicitly.\n\n2. The broader app condition mirrors M84's SQL rule, which refuses cancels from every status once an observation exists.\n\n3. App-before-migration rollout is already excluded:\n   - HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md:41 says the fix \"does not ... qualify app-before-migration rollout\"; :123 requires a managed plan built on the actual history.\n   - .xenios/RELEASE_STATE.json:4 is NOT_READY_FOR_PRODUCTION_PROMOTION; :24 shows managedMigrationsApplied false.\n   - supabase/MIGRATIONS.md:87 documents the migrate-before-runtime convention.\n\n4. 947f6ee was not app-first safe either. With the RPC missing it returned 500 on paid transitions and on payment-stage cancels, and it would have run without the M81/M85 SQL holds.\n\n5. The impact is a controlled 409 with no state change (http-e2e.test.ts:357-381 checks the row is unchanged, no update call, no notification). It goes away once the migrations are applied."
+    }
+   }
+  ]
+ },
+ {
+  "lens": "seam",
+  "statuses": [
+   {
+    "id": "F1",
+    "status": "OPEN",
+    "evidence": "server/index.ts:1003-1010 builds AssistedOrderFinanceService(getSupabaseAdmin(), null) with the comment 'No independent manual ledger authority is configured yet.' finance.ts:175-177 then refuses observeManual with manual_evidence_unavailable. This fails closed, but there is still no evidence authority and no grant procedure. Nothing in the 947f6ee..61853e2 delta changes this."
+   },
+   {
+    "id": "SQL-01",
+    "status": "CLOSED",
+    "evidence": "The provider hold is still intact. The preflight in 20261001024018 (lines 8-27) refuses to run unless research_assisted_order_provider_payment_hold_guard() exists and both hl12_provider_observation_hold and hl12_provider_verification_hold are present and enabled. It also refuses if any method='provider' verification exists. The migration does not redefine any provider function or trigger. Checked at source level only; the migration is PENDING and was not executed."
+   },
+   {
+    "id": "SQL-13",
+    "status": "CLOSED",
+    "evidence": "Source-level, migration PENDING. 20261001024018:97-171 quote_accept refuses cancelled/closed requests, and paid-history rows that are not verified (lines 128-136). New acceptance requires a pre-payment status and no paid event (lines 151-158). The exact accepted replay (lines 142-148) is a read-only receipt. The snapshot guard trigger backs this up (lines 72-84)."
+   },
+   {
+    "id": "SQL-06",
+    "status": "CLOSED",
+    "evidence": "Source-level, migration PENDING. 20261001024018:54-95 adds research_assisted_order_quote_snapshot_guard with a BEFORE UPDATE OR DELETE row trigger and a BEFORE TRUNCATE statement trigger. Only issued->accepted/superseded is allowed, and only state/accepted_at/acceptance_id may change. The postcondition at lines 184-213 asserts that no role holds UPDATE/DELETE/TRUNCATE on quotes."
+   },
+   {
+    "id": "HIST-PROG",
+    "status": "CLOSED",
+    "evidence": "Source-level, migration PENDING. 20261001024018:31-51 adds a BEFORE UPDATE OF status trigger. It refuses any status change when the old status is paid/supplier_processing/shipped/delivered/closed, or a paid event exists, and financial_state paymentVerified is not true. Side effect: such rows also cannot be cancelled or closed, which interacts with N2."
+   },
+   {
+    "id": "ROLL-05",
+    "status": "OPEN",
+    "evidence": "The delta adds a third body for quote_accept: 20260930202413:362, 20260930230541:223, 20261001024018:97. Re-running either predecessor after 024018 would replace the status-checked body. The snapshot trigger (024018:72-84) partly backstops acceptance status, but other function bodies would regress. The only mitigation is procedural: handoff HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md:123 says to never replay old financial migrations."
+   },
+   {
+    "id": "F4",
+    "status": "NOT_ASSESSED",
+    "evidence": "Outside the core-site protection lens."
+   },
+   {
+    "id": "F7-R1",
+    "status": "NOT_ASSESSED",
+    "evidence": "Outside the core-site protection lens."
+   },
+   {
+    "id": "N2",
+    "status": "NOT_ASSESSED",
+    "evidence": "Outside the lens. Noted only that the HIST-PROG guard (024018:31-46) blocks every status change, including cancel, for unverified paid-history rows."
+   },
+   {
+    "id": "HIST-02",
+    "status": "NOT_ASSESSED",
+    "evidence": "quote_issue was not reviewed under this lens."
+   },
+   {
+    "id": "ADP-01",
+    "status": "NOT_ASSESSED",
+    "evidence": "Outside the core-site protection lens."
+   }
+  ],
+  "unknowns": [
+   "No tests, gate script or build were run (read-only constraint). That core-site-protection.test.ts:385-389 is red at 61853e2 is inferred from the hashes plus handoff HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md:75. It was not executed.",
+   "Express 5.2.1 behaviour (case-insensitive and non-strict routing, HEAD falling back to GET, raw req.path within a mount) is based on documented defaults and the absence of any app.set override. It was not exercised.",
+   "Whether Samuel has explicitly approved re-pinning the server/research/index.ts seam baseline is unknown. 663268f and its approval doc explicitly exclude it.",
+   "The founder approval attachment behind 663268f ('Pasted text.txt', sha256 6cbc2b4e199b858fe254ca3625e85c811fcb17adc4ac78538670b01df6528c90) is not in the repo, so its provenance cannot be verified from git.",
+   "Lease HEALTH-HL12-QUOTE-GATEWAY-20260930 shows claimedAt 2026-09-30T23:40:25Z, before the 2dc7d62 commit time of 23:48:08Z. It was only recorded in git at 95e040a, so whether the claim came before the actual edit cannot be proven.",
+   "The protection CLI evidence was run with base 49234f8. A changed-file classification of the full candidate against the true integration base was not assessed; the local origin/main is stale at 6077a6b (2026-08-04), 1359 commits behind.",
+   "How quote_get, quote_accept and the history/snapshot guards behave on the managed DB is unknown. Every migration from 191323 through 20261001024018 is PENDING."
+  ],
+  "findings": [
+   {
+    "id": "CSP-01",
+    "severity": "P2",
+    "claim": "The seam baseline for server/research/index.ts was never re-pinned after 2dc7d62. Because of that, server/core-site-protection.test.ts:385-389 ('verifies the seam baselines too, and they are all clean at HEAD') fails at 61853e2. The gate CLI only reports seam drift without failing (CORE_SITE_PROTECTION.md:80-82), but the release evidence cannot claim core protection is green. 663268f's own comment (manifest line 3) and docs/phase2/HEALTH_PROTECTED_HASH_APPROVAL_20261001.md:30-35 explicitly leave this file out of the approval.",
+    "citation": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json:1256 pins sha256:b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070, which is the 9b5e61b blob 32d5a2a. The 61853e2 blob 6220347 is sha256:5b9f683b183a095e258908e0e0086888c71b7666b0e384367b1bfde0c4124188, and it has no CR, so the raw and LF-normalised hashes match. git log --full-history -m 9b5e61b..61853e2 -- server/research/index.ts shows only 2dc7d62. 2dc7d62^ has the same blob as 9b5e61b, and the single merge in the range does not touch the file. The test is at server/core-site-protection.test.ts:385-389.",
+    "correction": "An owner amendment is appropriate, because the seam diff is safe (see CSP-06). It must follow CORE_SITE_PROTECTION.md:102-106: done by the protection owner, in its own commit, citing Samuel's explicit approval. Change only seamBaselineHashes.files['server/research/index.ts'] from sha256:b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070 to sha256:5b9f683b183a095e258908e0e0086888c71b7666b0e384367b1bfde0c4124188. Add a dated entry at the top of seamBaselineHashes.$comment in the existing convention (see lines 1218-1222), naming 2dc7d62, lease HEALTH-HL12-QUOTE-GATEWAY-20260930, the exact admissions, and the approval reference. Do not fold it into the existing two-hash approval, and do not weaken the test."
+   },
+   {
+    "id": "CSP-06",
+    "severity": "PASS-NOTE",
+    "claim": "The 2dc7d62 seam edit is minimal, anchored, method-gated and fails closed. It reaches only the two owner-bound finance doors. The diff (+8/-3) touches only four things: comment wording (lines 426-430), the READ regex gaining an optional '/quote' suffix (lines 438-440), a new POST-only ACCEPT regex (lines 441-443), and one line in the POST admission chain (line 741).",
+    "citation": "Wall: server/research/index.ts:691-763. The wall is registered at module load (server/index.ts:415), before the bridge doors in the async boot (server/index.ts:1349, 1070-1071). Express 5.2.1 / path-to-regexp 8.4.2 run with default case-insensitive, non-strict routing, and no app.set override exists. req.path is relative to the mount, not decoded, and excludes the query string. The regexes have no flags, end in $, and use an ASCII \\d. So case variants, a trailing '/', '%2F', lowercase hex, extra segments and wrong methods all fall to the 401 at line 761, while the router itself would have matched them. Leading '//' is collapsed before the wall (server/index.ts:225-230). GET/HEAD .../quote matches only server/index.ts:1070, and POST .../quote/accept matches only :1071. No regex, array, app.all, or /api/research-prefix router can capture these paths. Both doors return 503 when finance is off (1066-1069). When finance is on, they call finance.getQuote/acceptQuote (finance.ts:145-171), which are bound to the owner in SQL: quote_get at 20260930205725:18-26 and quote_accept at 20261001024018:120-127, by member id, EA session hash, or unrevoked unexpired token hash, with a uniform null/404. CSRF on accept is mitigated by the SameSite=Strict EA cookie (private-access-cookie-session.ts:242), the JSON body, and the UUID quoteId.",
+    "correction": "No change to the seam is needed. This review is the QA confirmation required by CORE_SITE_PROTECTION.md:143-144 that the diff contains no unrelated change."
+   },
+   {
+    "id": "CSP-07",
+    "severity": "PASS-NOTE",
+    "claim": "663268f changed exactly three manifest tokens: one top-level $comment line, fileHashes server/routes.ts f17d518e->7c21ea1a, and seamBaselineHashes server/index.ts 598ffd2e->1d6594d6. It also added the approval doc. The bytes at 61853e2 match both approved hashes. The manifest is unchanged after 663268f and parses as valid JSON.",
+    "citation": "git diff --word-diff 663268f^ 663268f shows exactly those three changes. At 947f6ee, 663268f, 915a535 and 61853e2, the LF sha256 of server/routes.ts is 7c21ea1ac26c6359c46d6070a9295a41b16f93355b3475a44f7831c668069137 and of server/index.ts is 1d6594d6389e2ac67d9af85213854e05387899dfe0102fa577e447565e68c315. Each approved delta is a single commit: routes.ts c4ea8a9->8047e39 (+4 lines, adminAuthUserId) and index.ts fef7b31->7600943 (+22 lines, finance service plus 5 door registrations, no middleware order change).",
+    "correction": "None."
+   },
+   {
+    "id": "CSP-02",
+    "severity": "P3",
+    "claim": "Since 2dc7d62, unauthenticated internet callers reach the finance customer doors. When finance is enabled, a request with no member, no EA session and no token still makes a service-role RPC (research_assisted_order_quote_get) on every hit, with no rate limit. The status door, by contrast, stops at requireCapability before touching the DB. While finance is disabled, the 503 body also shows the reason 'assisted_order_finance_disabled' to anonymous callers.",
+    "citation": "finance.ts:50-58 (customerAuthority passes all-null authority), finance.ts:145-151 and 155-160 (RPC is always called), service.ts:771-772 (status short-circuits on capability), server/index.ts:891-903 (the unavailable door returns reason). No rate limiter appears in server/research/assisted-order/*.ts.",
+    "correction": "In getQuote/acceptQuote, return 404 without an RPC when memberId, earlyAccessSessionHash and the token are all absent. Add durable rate limiting to the customer quote doors before setting RESEARCH_ASSISTED_ORDER_FINANCE_ENABLED=true."
+   },
+   {
+    "id": "CSP-03",
+    "severity": "P3",
+    "claim": "A status token alone, with no session or member, can accept a quote, which is a financial commitment. Yet the recorded decision in service.ts describes the token as granting read access. The seam now exposes this to anyone holding the token. Document uploads set a precedent for token-authorised writes, but acceptance carries more consequence.",
+    "citation": "service.ts:750-756 (token 'grants read access to THAT request only'), finance.ts:52-57 (token hash is sufficient authority), 20261001024018:120-127 (token branch authorises accept), client/src/research/assisted-order/api.ts:284-296 (client sends the token on accept).",
+    "correction": "Record an explicit owner decision that the bearer status token is enough authority to accept, or require a member or EA session viewer for quote_accept."
+   },
+   {
+    "id": "CSP-04",
+    "severity": "P3",
+    "claim": "The tests added in 2dc7d62 do not pin the router-vs-wall mismatches. The Express router is case-insensitive and non-strict, so the case-sensitive anchored regex is the only thing keeping variants walled. A future refactor, such as adding an 'i' flag or a prefix match, would widen admission without any test failing.",
+    "citation": "server/research/early-access-wall.test.ts:355-384 covers wrong methods, extra segments, a lowercase reference and a UUID. It has no '/QUOTE', '/Quote/Accept', 'quote/' trailing slash, '%2Fquote', or lowercase-hex-reference POST accept case.",
+    "correction": "Add walled-401 cases for uppercase and mixed-case leaves, a trailing slash on both doors, an encoded slash, and a lowercase-hex reference on accept."
+   },
+   {
+    "id": "CSP-05",
+    "severity": "P3",
+    "claim": "663268f breaks the manifest's convention for recording amendments. Its note sits in the top-level $comment rather than as dated entries with old/new hashes in fileHashes.$comment and seamBaselineHashes.$comment. The old/new pairs exist only in the approval doc, and the founder approval itself (a pasted attachment, sha256 6cbc2b4e...) is not in git.",
+    "citation": "Manifest line 3 compared with the existing entries at lines 718-722 and 1218-1250. The approval doc is docs/phase2/HEALTH_PROTECTED_HASH_APPROVAL_20261001.md:3-12.",
+    "correction": "For the next amendment, including CSP-01, add the dated per-section entry with the old/new sha256 and a verifiable approval reference."
+   },
+   {
+    "id": "CSP-08",
+    "severity": "P3",
+    "claim": "The approved server/index.ts bytes contain a stale comment saying 'config probe plus nine operational doors (ten registrations total)', while 15 assisted-order doors are registered now. This is comment-only drift inside founder-pinned bytes.",
+    "citation": "server/index.ts:908-912 and 1044-1045 against the registrations at 1053-1074.",
+    "correction": "Correct it only under a future approved index.ts amendment, not as a drive-by edit."
+   }
+  ],
+  "verified": [
+   {
+    "id": "CSP-01",
+    "severity": "P2",
+    "claim": "The seam baseline for server/research/index.ts was never re-pinned after 2dc7d62. Because of that, server/core-site-protection.test.ts:385-389 ('verifies the seam baselines too, and they are all clean at HEAD') fails at 61853e2. The gate CLI only reports seam drift without failing (CORE_SITE_PROTECTION.md:80-82), but the release evidence cannot claim core protection is green. 663268f's own comment (manifest line 3) and docs/phase2/HEALTH_PROTECTED_HASH_APPROVAL_20261001.md:30-35 explicitly leave this file out of the approval.",
+    "citation": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json:1256 pins sha256:b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070, which is the 9b5e61b blob 32d5a2a. The 61853e2 blob 6220347 is sha256:5b9f683b183a095e258908e0e0086888c71b7666b0e384367b1bfde0c4124188, and it has no CR, so the raw and LF-normalised hashes match. git log --full-history -m 9b5e61b..61853e2 -- server/research/index.ts shows only 2dc7d62. 2dc7d62^ has the same blob as 9b5e61b, and the single merge in the range does not touch the file. The test is at server/core-site-protection.test.ts:385-389.",
+    "correction": "An owner amendment is appropriate, because the seam diff is safe (see CSP-06). It must follow CORE_SITE_PROTECTION.md:102-106: done by the protection owner, in its own commit, citing Samuel's explicit approval. Change only seamBaselineHashes.files['server/research/index.ts'] from sha256:b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070 to sha256:5b9f683b183a095e258908e0e0086888c71b7666b0e384367b1bfde0c4124188. Add a dated entry at the top of seamBaselineHashes.$comment in the existing convention (see lines 1218-1222), naming 2dc7d62, lease HEALTH-HL12-QUOTE-GATEWAY-20260930, the exact admissions, and the approval reference. Do not fold it into the existing two-hash approval, and do not weaken the test.",
+    "lens": "seam",
+    "verdict": {
+     "verdict": "DOWNGRADE",
+     "adjustedSeverity": "P3",
+     "reasoning": "The facts in CSP-01 check out at 61853e2. The severity and the stated impact do not.\n\nWhat I confirmed:\n- docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json:1256 pins server/research/index.ts at sha256:b8db03cf...3070. That is blob 32d5a2a at 9b5e61b; I recomputed the hash with git show | sha256sum.\n- The 61853e2 blob 6220347 hashes to sha256:5b9f683b...4188 and has no CR bytes.\n- The range 9b5e61b..61853e2, with --full-history -m, touches the file only in 2dc7d62.\n- server/core-site-protection.test.ts:385-389 runs verifyHashes over seamBaselineHashes.files and expects no mismatches, so that test is red.\n- CORE_SITE_PROTECTION.md:80-82 says seam drift is reported, not failed, so the gate CLI still passes.\n- The manifest $comment (line 3) and HEALTH_PROTECTED_HASH_APPROVAL_20261001.md:30-35 explicitly leave this file out of the two-hash approval.\n\nWhy I lowered it to P3:\n1. Nothing is hidden. The finding says release evidence \"cannot claim core protection is green\", but no record claims it. The handoff at server/research/assisted-order/HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md reports it openly:\n   - line 75: \"87 passed, 1 failed ... the sole failure is the unchanged Research gateway clean-seam baseline\"\n   - line 78: the CLI reported the Research gateway as seam drift, \"not hidden\"\n   - line 105: calls it a known integration blocker and says not to claim a full-suite pass\n   - line 125: the clean-baseline test stays red; do not weaken the assertion\n   The approval doc (line 35) says the same.\n2. This is not new in the reviewed delta. 2dc7d62 is an ancestor of the previously reviewed runtime 947f6ee, and 947f6ee:server/research/index.ts is already blob 6220347. No commit in 947f6ee..61853e2 touches the file. The delta did not cause the drift.\n3. There is no runtime or security impact. The 2dc7d62 seam diff is narrow:\n   - The read regex (index.ts:438-440) gains an optional anchored /quote suffix and is still reached only under GET/HEAD (index.ts:732-736).\n   - The new quote-accept regex (index.ts:441-443) is anchored to the exact XRR reference shape plus /quote/accept, and is admitted only under POST (index.ts:737-741).\n   - Both let requests past the wall to the downstream owner guards; neither grants access by itself. No protected main-site route, middleware order or guard changed.\n4. The fix is a single owner-approved re-pin that only the protection owner can make, citing Samuel's approval (CORE_SITE_PROTECTION.md:102-106). It is a governance and evidence-hygiene item, not a code defect a reviewer should hold at P2.\n\nWhat remains, at P3: the integration or merge gate cannot be called fully green until the owner amends seamBaselineHashes.files['server/research/index.ts'] to sha256:5b9f683b...4188 in its own commit, with its own dated $comment entry and approval reference, without folding it into the two-hash approval and without weakening the test. The proposed correction is otherwise sound.",
+     "counterEvidence": "The red test is already disclosed, so the evidence claims nothing false:\n- HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md:75 (1 failed, the Research gateway clean-seam baseline), :78 (seam drift \"not hidden\"), :105 (known integration blocker, no full-suite pass claimed), :125 (test stays red, do not weaken).\n- HEALTH_PROTECTED_HASH_APPROVAL_20261001.md:30-35 says the same.\n\nThe drift is not from the delta:\n- 2dc7d62 is an ancestor of the previously reviewed 947f6ee (git merge-base --is-ancestor), and 947f6ee:server/research/index.ts is already blob 6220347.\n- git log 947f6ee..61853e2 -- server/research/index.ts is empty.\n\nThe seam diff is safe and the gate design tolerates it:\n- server/research/index.ts:438-443 and :732-742 are anchored regexes scoped to one method each, and they only pass requests on to the downstream owner guards.\n- CORE_SITE_PROTECTION.md:80-82 says seam drift is reported, not failed, so the gate CLI passes by design."
+    }
+   }
+  ]
+ },
+ {
+  "lens": "ops",
+  "statuses": [
+   {
+    "id": "F1",
+    "status": "OPEN",
+    "evidence": "server/index.ts:1003-1009 at 61853e2 still builds AssistedOrderFinanceService(getSupabaseAdmin(), null) behind RESEARCH_ASSISTED_ORDER_FINANCE_ENABLED. The comment at :1008 says no independent manual ledger authority is configured. No grant procedure exists anywhere in the delta; grants are still inserted only by SQL (202413:67-75). The handoff records it correctly as OPEN P1 (HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md:43)."
+   },
+   {
+    "id": "F4",
+    "status": "OPEN",
+    "evidence": "The delta does not touch outbox or audit. service.ts:888 still fans out effects with Promise.allSettled after repository.updateStatus commits, and there is still no durable effects-pending row or reconciler. The handoff records F4 as OPEN with the correct remedy (handoff:45). I did not re-observe the production audit mode (log_line_nondurable)."
+   },
+   {
+    "id": "F7-R1",
+    "status": "PARTIAL",
+    "evidence": "The owner status read now covers paid/supplier_processing/shipped/delivered or any paid timeline event (supabase-repository.ts:380-381), and so does P-17 (status-recovery/supabase-store.ts:114-115). Account history is not covered, which the handoff admits (handoff:37). That leaves the reviewer's third surface (report22:173) open. A closed row whose paid event is missing is also not read."
+   },
+   {
+    "id": "HIST-PROG",
+    "status": "CLOSED",
+    "evidence": "Closed at source; not applied anywhere managed. 20261001024018:31-50 holds any status change when old.status is in paid/supplier_processing/shipped/delivered/closed or a paid event exists, and financial_state paymentVerified is not true. The app mirrors this at service.ts:848-859. The local proof refuses cases 61-65, including the no-history case and cancellation (proof .mjs:213-224). The pre-apply count requested in the same reviewer item exists only for the post-85 state; see the NEW-PRE80-PREFLIGHT finding."
+   },
+   {
+    "id": "N2",
+    "status": "OPEN",
+    "evidence": "The observed-cancel guard (230541:377-391) and the paid/supplier_processing->cancelled refusal (202413:562-566) are unchanged, and no no-funds/void record exists. 024018 also blocks cancellation of rows with unverified paid history (:34-41). Recorded as OPEN at handoff:44."
+   },
+   {
+    "id": "HIST-02",
+    "status": "OPEN",
+    "evidence": "quote_issue still refuses payment_pending/payment_review (202413:269-273) and was not redefined in 024018. The precheck now measures exposure as payment_workflow_without_accepted_quote (precheck.sql:24). Recorded as OPEN at handoff:42."
+   },
+   {
+    "id": "SQL-06",
+    "status": "CLOSED",
+    "evidence": "Closed at source; pending managed apply. 024018:54-95 adds a row-level BEFORE UPDATE/DELETE trigger and a statement-level BEFORE TRUNCATE trigger. Only issued->accepted and issued->superseded are allowed, with every other column compared through to_jsonb minus state/accepted_at/acceptance_id. The proof refuses 14 column mutations, DELETE and TRUNCATE CASCADE as superuser (.mjs:227-241). Protection is owner-bypassable only by disabling triggers."
+   },
+   {
+    "id": "SQL-13",
+    "status": "CLOSED",
+    "evidence": "Closed at source. quote_accept now refuses cancelled/closed and unverified paid-history requests even for a receipt replay (024018:128-136). New acceptance requires a pre-payment status and no paid event (:151-158). The trigger backstop at :73-84 also catches a stale predecessor quote_accept body. The handoff does not cross-reference the ID; it shows up as 'Terminal quote acceptance' (handoff:40)."
+   },
+   {
+    "id": "ADP-01",
+    "status": "OPEN",
+    "evidence": "provider-adapter.ts is not in the 947f6ee..61853e2 diff, and there is still no durable attempt/event/quarantine store. Recorded as OPEN at handoff:46."
+   },
+   {
+    "id": "SQL-01",
+    "status": "CLOSED",
+    "evidence": "Migration 234614's git blob is unchanged: SHA-256 6596f261... at both 947f6ee and 61853e2. 024018's preflight (:10-25) refuses to run unless both hl12_provider_* triggers exist and are not disabled and there are no provider verifications. 024018 redefines no provider function and restates the payment_verify revoke (:181-182)."
+   },
+   {
+    "id": "ROLL-05",
+    "status": "OPEN",
+    "evidence": "quote_accept now exists in three files (202413, 230541, 024018). Replaying 202413 after 86 still re-grants the unbound payment_verify to service_role (202413:695-698) and restores quote_accept without a status gate; only the trigger backstop (024018:73-84) blunts the second effect. No predecessor-refusal preflight was added. The postcheck's md5 fingerprints (postcheck.sql:57-65) have no committed expected values and omit payment_verify, paid_hold_guard, financial_state, observed_cancel_guard, quote_issue and set_status. Recorded as OPEN at handoff:47."
+   },
+   {
+    "id": "ROLL-06",
+    "status": "PARTIAL",
+    "evidence": "PGRST202 now maps to a controlled 409 (supabase-repository.ts:293-298). The reviewer's other ask, writing the order (migrations 80-84 with postchecks, then the app; report22:185), is not written in the handoff, MIGRATIONS.md or the DAG. 915a535 also widened the absent-schema dependency to every cancellation (see NEW-APP-ORDER)."
+   },
+   {
+    "id": "RUNBOOK",
+    "status": "PARTIAL",
+    "evidence": "report22:188 asked for exact pre-apply and post-apply PII-free SQL, plus a named RESEARCH_ASSISTED_ORDER_FINANCE_ENABLED=false and an SQL revoke. Precheck and postcheck exist, but the precheck only runs after 84/85 (handoff:123). The flag and revoke are not named in the new handoff, MIGRATIONS.md:376-397 or DAG :905-920. The handoff's finding table omits this item."
+   }
+  ],
+  "unknowns": [
+   "The current managed migration ledger and whether production holds any historical paid/post-paid assisted-order rows. The last ledger observation is 2026-09-26 (44 versions, CURRENT_PRODUCTION_STATE evidence audit-closeout-migrations-20260926). No aggregate has been refreshed, and the supabase-xenios-prod MCP failed authentication in this session (it was not used anyway, since the review is read-only).",
+   "Whether the currently deployed production runtime maps the new P0001 guard refusals (80 HL-26, 81/82 paid hold, 86 HISTORICAL_PAID_UNRESOLVED / QUOTE_ACCEPTANCE_CLOSED) to controlled responses or to 500s during the window between applying the migrations and deploying 915a535.",
+   "Whether md5(pg_get_functiondef) fingerprints from local PostgreSQL 17.11 would match managed 17.6 byte-for-byte. No expected values are committed in any case.",
+   "Whether managed Supabase role ownership and default privileges reproduce the local superuser proof for the new trigger functions and TRUNCATE trigger. This is inferred safe from M71's production behavior but has not been rehearsed on a managed-equivalent target for HL-12.",
+   "I did not inspect account-history copy (the F7-R1 residual) and did not re-run any test, build or SQL proof. The 509-pass focused run, the two local PG proofs, typecheck/build and the DAG/route gates are taken from records only.",
+   "The production audit mode (log_line_nondurable) relevant to F4 was not re-observed."
+  ],
+  "findings": [
+   {
+    "id": "NEW-PRE80-PREFLIGHT",
+    "severity": "P2",
+    "claim": "There is still no exact executable pre-apply historical-paid read for the state managed actually has today. The committed precheck fails on a managed target lacking 80-85, so the go/no-go count that gates an irreversible freeze cannot be taken before the chain starts.",
+    "citation": "supabase/verification/research_assisted_order_quote_history_immutability_precheck.sql:8-31 reads research_assisted_order_payment_verifications/quotes/payment_observations, which 202413 creates at :42-125, and observed_by_auth_user_id, which 230541 adds at :69. The handoff admits it at :123. Production has M71 only (DAG bridge node, managed id 20260819203614). report22:188 says the preflight 'cannot run before apply'; report22:229 says there is 'no authorized managed preflight read'.",
+    "correction": "Commit a pre-80 read-only file that touches only research_assisted_order_requests and research_assisted_order_events. It should emit four counts: status='paid'; status in supplier_processing/shipped/delivered/closed; rows with any paid event; and the union of those (the exact future hold set, since no verifications can exist before 82). It should also count status in payment_pending/payment_review (HIST-02 exposure). It should assert that to_regclass of every 82/84 table and to_regprocedure of financial_state are null, and select the schema_migrations versions. Record a founder go/no-go rule for non-zero results."
+   },
+   {
+    "id": "NEW-APP-ORDER",
+    "severity": "P2",
+    "claim": "The app-versus-migration order is still unwritten, and 915a535 widened the dependency. Every admin cancellation, from any status including submitted and reviewing, now needs migration 84's financial_state RPC. Deploying 915a535 before 84 therefore blocks all ordinary cancellations with a 409. The handoff calls the change 'narrow' and does not mention this.",
+    "citation": "service.ts:850-851: needsFinance = status changes && (hasPaymentHistory || cancelled). service.ts:860-861 refuses when !financial. supabase-repository.ts:293-298 maps PGRST202 to 409 payment_verification_not_ready. At 947f6ee, service.ts:845-846 read finance for cancellation only from payment_pending/payment_review/supplier_processing. http-e2e.test.ts:357-375 asserts a 409 on reviewing cancellation when the schema is absent. Handoff:41. Provider-neutral runbook:145-146 claims nonfinancial support journeys remain available.",
+    "correction": "Write the order into the handoff and MIGRATIONS.md. Apply 80-86 with postchecks in one maintenance window while the current production runtime stays live. Deploy 915a535 only after 84 at minimum. P-17 additionally needs M79 plus 84. Owner status needs research_assisted_order_customer_status (managed-observed 20260921172323; not a DAG node). Alternatively, limit the cancellation finance read to statuses where an observation can exist."
+   },
+   {
+    "id": "NEW-ROLLBACK-SWITCH",
+    "severity": "P3",
+    "claim": "The rollback and disable-ingress procedure for 86 still names no switch and no SQL. It only says to keep finance disabled and roll forward. If a guard blocks a legitimate transition, there is no pre-reviewed forward migration or exact operator procedure.",
+    "citation": "DAG MIGRATION_DAG.json:914-918 (rollback strategy keep_finance_disabled_preserve_history_and_snapshots_then_roll_forward, procedure = handoff). Handoff:123. MIGRATIONS.md:392-396. The flag exists only at server/index.ts:1003-1004 and older handoffs.",
+    "correction": "Name RESEARCH_ASSISTED_ORDER_FINANCE_ENABLED unset/false and state that it gates quote/observe/verify routes only, not admin status transitions or guards. Add the explicit revoke (or explain why the existing ACL suffices). State that guard removal is forbidden and a forward fix needs a new reviewed migration."
+   },
+   {
+    "id": "NEW-GO-NOGO",
+    "severity": "P3",
+    "claim": "The pre- and postchecks emit counts and booleans but carry no decision rule and no expected fingerprints. The postcheck also does not verify the paid-hold, paid-event and observed-cancel triggers that the migration header says remain installed. A managed run cannot fail on a regressed function body or a missing older hold.",
+    "citation": "postcheck.sql:34-55 checks only the hl12_history/quote/provider triggers and four ACLs; postcheck.sql:57-65 fingerprints are printed with no expected values. Migration header comment 024018:29-30. The local proof only prints FUNCTION_FINGERPRINTS (.mjs:210) and asserts nothing about them.",
+    "correction": "Commit the expected md5 values (with the PostgreSQL version they were generated on). Add pg_trigger checks for research_assisted_order_paid_hold, research_assisted_order_paid_event_evidence and hl12_observed_cancel. Check tgenabled in ('O','A') rather than <> 'D', because a replica-only trigger ('R') passes the current test without firing. Document that provider_verifications must be 0 and that non-zero historical_progression_holds freezes those orders until a resolution operation exists."
+   },
+   {
+    "id": "NEW-PRECHECK-COVERAGE",
+    "severity": "P3",
+    "claim": "The precheck covers rows past paid without verification, provider observations (total and unverified), provider verifications and manual observations missing an actor UUID. It omits two of the four counts the 0930 runbook requires, cross-order duplicate evidence and current pending effects. It also omits a count of requests stranded by any manual or superseded observation (N2) and a count of active verifier grants (F1).",
+    "citation": "HEALTH_HL12_PROVIDER_NEUTRAL_HANDOFF_20260930.md:125-128 versus precheck.sql:17-32. report22:175 notes that superseded, mismatched or provider observations all block cancellation.",
+    "correction": "Add aggregate counts for: grouped duplicate evidence (reuse 230541:11-15); assisted-order outbox/audit rows pending; requests with any observation and no verification; and active rows in research_assisted_order_payment_verifier_grants. Keep everything aggregate and PII-free."
+   },
+   {
+    "id": "NEW-APPLY-MECHANISM",
+    "severity": "P3",
+    "claim": "The records never say how each file is applied, and the chain mixes transaction styles. 80, 81 and 83 have no BEGIN/COMMIT. 82, 84, 85 and 86 use explicit BEGIN/COMMIT with SET LOCAL timeouts. psql in autocommit applies 80, 81 and 83 non-atomically, while psql -1 or a tool-level wrapper interacts with the explicit transactions. Per-file atomicity therefore depends on an unstated tool.",
+    "citation": "20260930191323 (no begin; 0 matches), 20260930193033 (none), 20260930205725 (none; create function at :4 and :55 precedes revokes at :48/:74-79), 20260930202413:5, 230541:4, 234614:8 and 024018:4 (begin;). Handoff:123 and MIGRATIONS.md say nothing about the mechanism.",
+    "correction": "Specify the exact apply command per file and whether it runs inside one transaction, ON_ERROR_STOP=1, and how the managed history row is recorded. Rehearse that exact mechanism once on a disposable managed-equivalent target."
+   },
+   {
+    "id": "NEW-EVIDENCE-TRUNCATE",
+    "severity": "P3",
+    "claim": "Only quotes received TRUNCATE protection. The HIST-PROG and N2 holds depend on research_assisted_order_events, payment_observations and payment_verifications, which block row UPDATE/DELETE but not TRUNCATE. An owner-level TRUNCATE of events erases the paid-history hold for regressed rows, and truncating observations (with dependents) lifts the observed-money cancel hold. This is owner-level only, but it is the same tier at which SQL-06 is claimed.",
+    "citation": "024018:93-95 adds a TRUNCATE trigger on quotes only. bridge 20260815150000:349-355 covers events before update/delete only. 230541:53-58 does the same for claims/corrections. The 024018:36-37 hold depends on events.",
+    "correction": "Add statement-level BEFORE TRUNCATE guards to events, observations, verifications, claims and corrections in the next forward migration, or record that the boundary is explicitly owner-trusted."
+   },
+   {
+    "id": "NEW-RECORD-LOCKS",
+    "severity": "P3",
+    "claim": "The handoff says terminal acceptance was 'repaired with parent-first locks'. The predecessors already locked the request before the quote, so the actual repair is the new status and paid-history gates plus the trigger backstop.",
+    "citation": "Handoff:27,40. Predecessor lock order: 202413:381,383 and 230541:242,244. Real fix: 024018:128-158 and :73-84.",
+    "correction": "Reword to say the repair is the request-status/paid-history refusal under the existing parent-first lock, plus the quote-trigger backstop."
+   },
+   {
+    "id": "NEW-RECORD-RUNS",
+    "severity": "P3",
+    "claim": "The DAG and MIGRATIONS.md describe 'two separate' passing disposable runs of the exact proof. Per the handoff, run2 used a tightened TRUNCATE assertion, and the proof file has a single commit (240628f, blob 0b2dcf2d...). Only run2 is evidence for the committed proof bytes.",
+    "citation": "MIGRATION_DAG.json:917 evidence; MIGRATIONS.md:384-385; handoff:71-72,85. The proof is unchanged across 240628f, c181db5 and 61853e2.",
+    "correction": "Qualify the records: run1 used a pre-commit proof revision, and run2 is the committed proof with LF SHA-256 0b2dcf2d1e1b2bbdf9707cb620cc71c7308281e85594251a60b50632f84872a4."
+   },
+   {
+    "id": "NEW-REVIEWER-REPRESENTATION",
+    "severity": "P3",
+    "claim": "The handoff is accurate on review status: the latest reviewed runtime is 947f6ee, 915a535 is unreviewed, and F1 is OPEN P1. Its finding table drops the reviewer's RUNBOOK/ROLLBACK item and ROLL-06's request to write the order. It also does not map 'Terminal quote acceptance' to SQL-13 or repeat the P2 severities for F4, N2, HIST-02 and ADP-01. PROJECT_STATE remainingEngineering omits the rollout plan items.",
+    "citation": "Handoff:17,33-47 versus report22 (c2e4bea:docs/review/xenios-health-launch-review-20260930/22_REVIEW_268e691_SUCCESSOR.md):185,188,191,322. .xenios/PROJECT_STATE.json healthProviderNeutral20260930.remainingEngineering.",
+    "correction": "Add rows for RUNBOOK (PARTIAL), ROLL-06 (order not written) and SQL-13 (source-fixed, pending review), carrying the reviewer's severities."
+   },
+   {
+    "id": "PASS-CHECKSUMS",
+    "severity": "PASS-NOTE",
+    "claim": "All seven pending HL-12 checksums in the DAG and MIGRATIONS.md match the git blob SHA-256 at their pinned sourceSha and at 61853e2, and every sourceSha is an ancestor of 61853e2. Values: 191323 4c4a6b1f...; 193033 2a4ece6b...; 202413 f59dc7d2...; 205725 452a94e5...; 230541 434885ea...; 234614 6596f261...; 024018 0956316142dd52724729b1653f0d3732b2c45e17074e64ad7f8888582407243f. The DAG has 45 nodes for 45 migration files, with no missing dependencies. The handoff's migration and proof hashes match. All six .xenios/handoffs copies are byte-identical to the canonical handoff. The manifest's routes.ts and index.ts hashes match the blobs.",
+    "citation": "Computed from `git show <sha>:<path> | sha256sum`. MIGRATION_DAG.json:792-920; MIGRATIONS.md:286-387; handoff:84-85.",
+    "correction": "None."
+   },
+   {
+    "id": "PASS-PRECHECK-EXACT-POST85",
+    "severity": "PASS-NOTE",
+    "claim": "For the post-85, pre-86 state and for post-86, the pre- and postcheck SQL is exact, executable and PII-free (aggregate counts only, inside a read-only transaction rolled back at the end). Its payment_verified predicate is identical to financial_state paymentVerified (230541:356-361). Its hold predicate is identical to the 024018:35-39 trigger: count(*) filter (where (status in ('paid','supplier_processing','shipped','delivered','closed') or has_paid_history) and not payment_verified). It does count rows past paid without verification (unverified_current_post_paid; unverified_paid_history_any_status) and provider observations (provider_observations; unverified_provider_observations). The postcheck repeats the facts block for equality, which the local proof asserts at .mjs:206-207.",
+    "citation": "precheck.sql:3-34; postcheck.sql:3-33; 024018:34-41; 230541:351-363.",
+    "correction": "None for this state. See NEW-PRE80-PREFLIGHT for the managed pre-chain state."
+   },
+   {
+    "id": "PASS-PREREQS",
+    "severity": "PASS-NOTE",
+    "claim": "Managed-migration prerequisites for this candidate, as derivable at 61853e2. Items marked MISSING are not in the records.\n(0) Separate founder exact-SHA approval naming the target project and all seven blob SHAs.\n(1) Pre-80 read-only reads: schema_migrations must show M71 (20260819203614) and none of the seven versions (20260921172323 is present but is not a DAG node); 82/84 objects must be absent; anon/authenticated/service_role roles must exist (enforced by 202413:13-17); historical-paid counts from requests and events (MISSING); pending effects (MISSING); fingerprints of the deployed set_status/document_complete that 80 replaces (MISSING).\n(2) Freeze: RESEARCH_ASSISTED_ORDER_FINANCE_ENABLED unset (server/index.ts:1003-1004); verifier grants table empty; admin status writes paused for the window (MISSING).\n(3) Apply one file at a time in order 191323, 193033, 202413, 205725, 230541, 234614, 20261001024018. Each must be atomic (mechanism MISSING) and pass its embedded preflight/postcondition: 202413 no direct grants; 230541 no cross-order evidence; 234614 needs 84 objects, no provider verifications, verifications lock; 024018 needs enabled provider triggers and no provider verifications.\n(4) Run the precheck after 85 and before 86, in the same window; it is valid only in that state.\n(5) Run the postcheck after 86: facts must equal the precheck and all booleans must be true; record the fingerprints (no expected values committed).\n(6) Deploy app 915a535 only after 84 (P-17 also needs M79). Expect the old production runtime to receive the new P0001 guards in the meantime. The order is not written anywhere (MISSING).\n(7) Rollback: none reversible. Preserve rows and guards, roll forward with a new reviewed migration, and never replay 193033/202413/205725/230541 (ROLL-05).\n(8) Go/no-go: provider_verifications must be 0, or 85/86 abort. Non-zero historical_progression_holds means indefinite freeze with no resolution operation (provider-neutral runbook:133-135), so it needs a founder decision (MISSING).",
+    "citation": "Files and lines as cited in the other findings; DAG :792-920; handoff:123.",
+    "correction": "Fill in the MISSING items before any managed plan is approved."
+   }
+  ],
+  "verified": [
+   {
+    "id": "NEW-PRE80-PREFLIGHT",
+    "severity": "P2",
+    "claim": "There is still no exact executable pre-apply historical-paid read for the state managed actually has today. The committed precheck fails on a managed target lacking 80-85, so the go/no-go count that gates an irreversible freeze cannot be taken before the chain starts.",
+    "citation": "supabase/verification/research_assisted_order_quote_history_immutability_precheck.sql:8-31 reads research_assisted_order_payment_verifications/quotes/payment_observations, which 202413 creates at :42-125, and observed_by_auth_user_id, which 230541 adds at :69. The handoff admits it at :123. Production has M71 only (DAG bridge node, managed id 20260819203614). report22:188 says the preflight 'cannot run before apply'; report22:229 says there is 'no authorized managed preflight read'.",
+    "correction": "Commit a pre-80 read-only file that touches only research_assisted_order_requests and research_assisted_order_events. It should emit four counts: status='paid'; status in supplier_processing/shipped/delivered/closed; rows with any paid event; and the union of those (the exact future hold set, since no verifications can exist before 82). It should also count status in payment_pending/payment_review (HIST-02 exposure). It should assert that to_regclass of every 82/84 table and to_regprocedure of financial_state are null, and select the schema_migrations versions. Record a founder go/no-go rule for non-zero results.",
+    "lens": "ops",
+    "verdict": {
+     "verdict": "DOWNGRADE",
+     "adjustedSeverity": "P3",
+     "reasoning": "The facts in the finding check out at 61853e2, but they do not support P2.\n\nWhat is accurate:\n- supabase/verification/research_assisted_order_quote_history_immutability_precheck.sql:8-14 and :25-31 read research_assisted_order_payment_verifications, _quotes and _payment_observations. Migration 202413 creates those tables at :42, :77 and :103.\n- The precheck reads observed_by_auth_user_id at :30. Migration 230541 adds that column at :69.\n- So the precheck cannot run on a database that has only M71. supabase/MIGRATIONS.md:83 records M71 as applied under managed id 20260819203614, and lists 80-86 as PENDING.\n- The handoff says this itself at HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md:123.\n- No committed pre-80 read exists. The only precheck under supabase/verification is this one.\n- The report22 citations are real. They are in docs/review/xenios-health-launch-review-20260930/22_REVIEW_268e691_SUCCESSOR.md, lines 188 and 229, on reviewer commit c2e4bea.\n\nWhy P3 and not P2:\n1. **Not new, not a regression.** The prior reviewer already filed this exact gap as \"RUNBOOK / ROLLBACK\" at report22:188, and placed it in the P3 table marked \"Source; downgraded\". The complaint was that the preflight was prose and \"cannot run before apply\". The delta made it better, not worse: an exact PII-free SQL precheck now exists. What is left is only the pre-80 slice of that existing P3. The \"NEW-\" label and the jump to P2 have no basis in anything 915a535 changed.\n2. **The freeze added by this delta can be counted before it is applied.** Migration 86 adds the post-paid historical hold. The committed precheck runs after 85 and before 86. Its historical_progression_holds count at :22 measures exactly the rows 86 will hold. Its payment_workflow_without_accepted_quote count at :24 covers the HIST-02 exposure. The only freeze that starts before any count is possible is migration 81's hold on rows currently at status 'paid' (193033:24-33). That hold predates this delta and was already in the chain at the last review.\n3. **\"Irreversible\" overstates it.** The holds are triggers, and they fail closed. The 81 header (:5-6) says a successor migration replaces the trigger. The paid-hold notes (20260930_assisted_order_quote_paid_hold_local.md:11) describe an authorized forward-migration removal. The handoff (:123) and MIGRATIONS.md (row 86 notes) prescribe roll-forward under separate exact-SHA approval. Replaying old migrations is forbidden, but un-holding through a reviewed successor is not.\n4. **No harmful path exists while nothing is authorized.** All of 80-86 are PENDING. Handoff:123 requires the actual managed migration history and an exact approved target before any managed plan. report22:229 already marks production promotion NOT READY, alongside P1 F1 and other blockers. The missing \"authorized managed preflight read\" there is an authorization gap. Committing a SQL file would not close it.\n\nThe proposed correction is still worth doing. It is a cheap runbook addition: a requests/events-only count that is exact before 82 because no verifications exist yet, plus to_regclass/to_regprocedure absence assertions and a schema_migrations snapshot. Track it under the existing RUNBOOK P3, not as a new P2.",
+     "counterEvidence": "- report22:188 (c2e4bea) already classifies \"preflight is prose, not SQL, and cannot run before apply\" as P3, downgraded. The delta improved this by committing an exact SQL precheck.\n- The precheck can run after 85 and before 86. Its counts at :22 (historical_progression_holds) and :24 (payment_pending/payment_review without an accepted quote) gate exactly the new hold that 86 introduces.\n- The only freeze before any count is 193033:24-33, which holds rows currently at 'paid'. It predates 915a535.\n- The holds are reversible by an authorized roll-forward: 193033:5-6, 20260930_assisted_order_quote_paid_hold_local.md:11, and handoff:123.\n- Handoff:123 requires actual managed history and an exact approved target before any managed plan.\n- Promotion is already NOT READY on P1 F1 (report22:224, :229). The missing authorized preflight read is a governance gap, not a code defect."
+    }
+   },
+   {
+    "id": "NEW-APP-ORDER",
+    "severity": "P2",
+    "claim": "The app-versus-migration order is still unwritten, and 915a535 widened the dependency. Every admin cancellation, from any status including submitted and reviewing, now needs migration 84's financial_state RPC. Deploying 915a535 before 84 therefore blocks all ordinary cancellations with a 409. The handoff calls the change 'narrow' and does not mention this.",
+    "citation": "service.ts:850-851: needsFinance = status changes && (hasPaymentHistory || cancelled). service.ts:860-861 refuses when !financial. supabase-repository.ts:293-298 maps PGRST202 to 409 payment_verification_not_ready. At 947f6ee, service.ts:845-846 read finance for cancellation only from payment_pending/payment_review/supplier_processing. http-e2e.test.ts:357-375 asserts a 409 on reviewing cancellation when the schema is absent. Handoff:41. Provider-neutral runbook:145-146 claims nonfinancial support journeys remain available.",
+    "correction": "Write the order into the handoff and MIGRATIONS.md. Apply 80-86 with postchecks in one maintenance window while the current production runtime stays live. Deploy 915a535 only after 84 at minimum. P-17 additionally needs M79 plus 84. Owner status needs research_assisted_order_customer_status (managed-observed 20260921172323; not a DAG node). Alternatively, limit the cancellation finance read to statuses where an observation can exist.",
+    "lens": "ops",
+    "verdict": {
+     "verdict": "DOWNGRADE",
+     "adjustedSeverity": "P3",
+     "reasoning": "The code does what the finding says. The P2 rating and the claim that the handoff is silent are overstated.\n\nWhat the code does at 61853e2:\n- service.ts:848-853 builds needsFinance from `input.status !== current.status && (hasPaymentHistory || input.status === \"cancelled\")`. When that is true it calls getFinancialState.\n- service.ts:860-861 refuses any cancellation when `!financial`.\n- supabase-repository.ts:293-298 turns PGRST202 (financial-state RPC missing) into a 409 payment_verification_not_ready. That RPC is created only by migration 84 (20260930230541, MIGRATIONS.md:347).\n- At 947f6ee, the finance read for cancellation covered only payment_pending, payment_review and supplier_processing (see the diff of the old needsFinance).\n- The live M71 set_status RPC already allows submitted/reviewing to cancelled (allowedTransitions, service.ts:88-95). The bridge flag has been enabled in production before (PHASE_ZERO_PRODUCTION_PACKET.md:44).\n- So if 915a535 is deployed before 84, an admin cancellation from submitted, reviewing or any other pre-payment status returns 409 where 947f6ee would have succeeded. The dependency really did get wider, and http-e2e.test.ts:357-375 asserts exactly that 409 for a reviewing cancellation.\n\nWhy this is P3, not P2:\n1. **It fails closed.** The result is a controlled 409 with no write and no notification. There is no money, data or integrity risk. Other pre-payment transitions such as submitted to reviewing never read finance, so they keep working. The only effect is lost availability of admin cancellation, and only in a deploy done in the wrong order.\n2. **Migrations-first was already required.** At 947f6ee, paid-to-anything transitions and payment_pending, payment_review and supplier_processing cancellations already called the same RPC. With no PGRST202 mapping back then, a missing schema produced a generic 500 (old fail() path). So 915a535 did not create a new ordering constraint. It widened an existing one and changed 500 to 409. This is the existing open ROLL-06 item, not a new class of defect.\n3. **The handoff is not silent.**\n   - Handoff:24 says \"all cancellation checks consult the financial authority\".\n   - Handoff:41 labels the ROLL-06 repair \"narrow\" (the word applies to the 409 repair, not to the service change). It also states it does not \"qualify app-before-migration rollout\".\n   - Handoff:123 says migration 86 needs 85 and its predecessors, and that a managed plan must first identify the actual migration history.\n   - What is missing is an explicit \"apply 84 before deploying 915a535\" step and a note on how many cancellations are affected. That is a documentation gap.\n4. **The runbook line is used out of context.** Provider-neutral runbook:145-146 describes rollback after the migrations are applied (disable financial ingress, roll forward). In that state the RPC exists, and a submitted/reviewing cancellation with no observation passes service.ts:860-861. It says nothing about app-before-migration order, and it predates 915a535.\n5. **No deploy is approved or planned.** Every production change needs separate founder approval, and the records say this runtime is not release-qualified.\n\nOn the proposed fix: writing the order (84, or the whole 80-86 chain, before the app) into the handoff and MIGRATIONS.md is a reasonable low-cost P3 action. The alternative, narrowing the cancellation finance read, would undo deliberate defense-in-depth. The comment at service.ts:845-847 says current labels may have been regressed by legacy writers.",
+     "counterEvidence": "- C:/xenios-wt/closeout-review/server/research/assisted-order/HEALTH_HL12_HISTORY_QUOTE_HANDOFF_20261001.md:24 says all cancellation checks consult the financial authority.\n- Same handoff, line 41: it does not \"qualify app-before-migration rollout\".\n- Same handoff, line 123: a managed plan must first identify migration history and depends on 80-85.\n- Diff 947f6ee..915a535 of supabase-repository.ts: before the PGRST202 mapping, a missing RPC fell through to fail(), which produced a generic 500. So at 947f6ee, paid-transition and payment_pending/payment_review/supplier_processing cancellations already needed M84 and failed harder without it.\n- service.ts:860-861 refuses with a controlled 409 and performs no write.\n- HEALTH_HL12_PROVIDER_NEUTRAL_HANDOFF_20260930.md:143-146 is a post-migration rollback context, not an app-before-migration claim."
+    }
+   }
+  ]
+ }
+]
