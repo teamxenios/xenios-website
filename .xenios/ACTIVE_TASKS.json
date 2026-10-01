@@ -45,7 +45,7 @@
       "id": "HEALTH-HL12-N2-NO-FUNDS-DISPOSITION-20261001",
       "title": "Positive independent no-funds disposition and atomic cancellation, N2 first slice",
       "priority": "P2",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "shared/research/assisted-order/financial-disposition.ts",
@@ -69,7 +69,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Continue source3da9095/records8de6c81 without repeating prior slices. SQL agent owns only new named migration/proof/source-contract test; app agent owns new disposition contracts/service/recovery/tests and http.ts; root owns index/outbox integration, registration and records. Positive independently sourced never-received receipt and whole observation/correction graph required. Preserve original payment facts. Void/refund/provider/historical-paid edges explicitly held, no operational policy invented. Null adapter, defaults off, empty grants. No managed writes or foreign imagery paths.",
-      "claimedAt": "2026-10-01T06:26:41.213Z"
+      "claimedAt": "2026-10-01T06:26:41.213Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "17ce9c5787244398b357da0e4c6a0a5db10e20f5",
+        "file": ".xenios/handoffs/2026-10-01T07-38-03-602Z-HEALTH-HL12-N2-NO-FUNDS-DISPOSITION-20261001-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T07:38:03.607Z"
+      }
     },
     {
       "id": "XENIOS-IMAGE-COMMERCE-DECOUPLING-20261001",
