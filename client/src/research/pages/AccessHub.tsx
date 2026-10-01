@@ -107,7 +107,7 @@ export default function AccessHub() {
         title="Choose the path that matches what you need."
         lead="Personal health starts with Xenios Care. Legitimate nonclinical work starts with Xenios Research. Organizations, partners, suppliers, Early Access, and support retain their own authorities and next steps."
       >
-        <div className="card mt-6">
+        <div className="card mt-6 [&>#account-access]:scroll-mt-[84px]">
           <AccountAccessChooser compact />
         </div>
         <section className="card bg-paper-2 mt-6" aria-labelledby="access-first-question">
