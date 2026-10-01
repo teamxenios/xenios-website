@@ -53,6 +53,16 @@ describe("evidence-bound common customer payment copy", () => {
 });
 
 describe("P-17 financial projection occurs only after subject authorization", () => {
+  it("retains durable payment verification after the order advances past paid", async () => {
+    const rpc = vi.fn().mockResolvedValueOnce(response({ ...paid, status: "supplier_processing" }))
+      .mockResolvedValueOnce(response({ hasObservation: true, paymentVerified: true }));
+    const view = await new SupabaseStatusRecoveryStore({ rpc }).getStatus("session-digest", now);
+    expect(view?.statusLabel).toBe("Processing");
+    expect(view?.timeline[0].status).toBe("Payment verified");
+    expect(view?.timeline[0].customerMessage).toBe(assistedOrderPaymentStatusCopy("paid", true)?.line);
+    expect(rpc).toHaveBeenNthCalledWith(2, "research_assisted_order_financial_state_by_reference", { p_public_reference: reference });
+  });
+
   it("waits for the owner status result, then binds the financial read to its returned reference", async () => {
     let resolve!: (value: ReturnType<typeof response>) => void;
     const statusPromise = new Promise<ReturnType<typeof response>>((done) => { resolve = done; });
@@ -79,14 +89,52 @@ describe("P-17 financial projection occurs only after subject authorization", ()
     expect(rpc).toHaveBeenCalledTimes(1);
   });
 
-  it.each(["submitted", "reviewing", "payment_pending", "payment_review", "supplier_processing", "shipped"])(
-    "never calls the evidence RPC for status %s or trusts an unsolicited status-response flag", async (status) => {
-      const rpc = vi.fn().mockResolvedValue(response({ ...paid, status, paymentVerified: true }));
+  it.each(["submitted", "reviewing", "payment_pending", "payment_review", "closed", "cancelled"])(
+    "never calls the evidence RPC for status %s without paid history or trusts an unsolicited status-response flag", async (status) => {
+      const rpc = vi.fn().mockResolvedValue(response({ ...paid, status, timeline: [], paymentVerified: true }));
       const view = await new SupabaseStatusRecoveryStore({ rpc }).getStatus("session-digest", now);
       expect(rpc).toHaveBeenCalledTimes(1);
       expect(view?.statusLabel).not.toBe("Payment verified");
-      expect(view?.timeline[0].status).toBe("Payment record under review");
+      expect(view?.timeline).toEqual([]);
     });
+
+  it.each(["supplier_processing", "shipped", "delivered", "closed", "cancelled", "reviewing"])(
+    "preserves historical paid evidence without changing the current %s status", async (status) => {
+      for (const paymentVerified of [true, false]) {
+        const source = { ...paid, status, paymentVerified: !paymentVerified };
+        const rpc = vi.fn().mockResolvedValueOnce(response(source))
+          .mockResolvedValueOnce(response({ hasObservation: true, paymentVerified }));
+        const view = await new SupabaseStatusRecoveryStore({ rpc }).getStatus("session-digest", now);
+        expect(view?.status).toBe(status);
+        expect(view?.statusLabel).not.toBe("Payment verified");
+        expect(view?.timeline[0].status).toBe(assistedOrderPaymentStatusCopy("paid", paymentVerified)?.label);
+        expect(view?.timeline[0].customerMessage).toBe(assistedOrderPaymentStatusCopy("paid", paymentVerified)?.line);
+        expect(rpc).toHaveBeenCalledTimes(2);
+        expect(source.timeline[0].customerMessage).toBe("Old unsupported paid and fulfillment promise");
+      }
+    });
+
+  it.each(["supplier_processing", "shipped", "delivered"])(
+    "reads evidence for %s even if the status timeline omits paid", async (status) => {
+      const rpc = vi.fn().mockResolvedValueOnce(response({ ...paid, status, timeline: [] }))
+        .mockResolvedValueOnce(response({ hasObservation: true, paymentVerified: true }));
+      const view = await new SupabaseStatusRecoveryStore({ rpc }).getStatus("session-digest", now);
+      expect(view?.status).toBe(status);
+      expect(view?.timeline).toEqual([]);
+      expect(rpc).toHaveBeenNthCalledWith(2, "research_assisted_order_financial_state_by_reference", { p_public_reference: reference });
+    });
+
+  it("keeps later historical paid records neutral without evidence and fails closed on evidence errors", async () => {
+    const progressed = { ...paid, status: "delivered", paymentVerified: true };
+    for (const financial of [response(null), response({ hasObservation: false, paymentVerified: false }),
+      response(null, { code: "PGRST202" })]) {
+      const rpc = vi.fn().mockResolvedValueOnce(response(progressed)).mockResolvedValueOnce(financial);
+      const view = await new SupabaseStatusRecoveryStore({ rpc }).getStatus("session-digest", now);
+      expect(view?.timeline[0].status).toBe("Payment record under review");
+    }
+    const rpc = vi.fn().mockResolvedValueOnce(response(progressed)).mockResolvedValueOnce(response(null, { code: "42501" }));
+    await expect(new SupabaseStatusRecoveryStore({ rpc }).getStatus("session-digest", now)).rejects.toThrow();
+  });
 
   it.each([null, { hasObservation: false, paymentVerified: false }, { hasObservation: true, paymentVerified: false }])(
     "keeps a paid record neutral when canonical evidence is absent or unverified", async (financial) => {

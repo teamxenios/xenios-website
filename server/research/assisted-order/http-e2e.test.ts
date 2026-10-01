@@ -11,9 +11,10 @@
 
 import express, { type RequestHandler } from "express";
 import request from "supertest";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type {
   AssistedOrderCatalogQuery,
+  AssistedOrderStatus,
   AssistedOrderSubmitInput,
 } from "../../../shared/research/assisted-order/contract";
 import {
@@ -27,6 +28,7 @@ import {
 } from "./express";
 import { createAssistedOrderRouteTable } from "./http";
 import { InMemoryAssistedOrderRepository } from "./memory-repository";
+import { SupabaseAssistedOrderRepository } from "./supabase-repository";
 import type { AssistedOrderAttributionResolver, AssistedOrderDocumentStore } from "./ports";
 import { createAssistedOrderProductionComposition } from "./production";
 import type { EarlyAccessCustomer } from "../early-access/routes/ports";
@@ -135,9 +137,10 @@ function buildApp(
     onNotification?: () => void;
     onStandingViewer?: (customerRef: string | null) => void;
     attribution?: AssistedOrderAttributionResolver;
+    repository?: InMemoryAssistedOrderRepository;
   }> = {},
 ) {
-  const repository = new InMemoryAssistedOrderRepository();
+  const repository = options.repository ?? new InMemoryAssistedOrderRepository();
   const composition = createAssistedOrderProductionComposition({
     enabled: true,
     auditMode: "log_line_nondurable",
@@ -291,6 +294,115 @@ function readAdminQueue(app: ReturnType<typeof buildApp>) {
     .get("/api/admin/research/assisted-orders")
     .set("authorization", ADMIN_BEARER);
 }
+
+describe("HIST-PROG mounted historical-payment transition hold", () => {
+  async function historicalRequest(current: AssistedOrderStatus, includePaidEvent: boolean) {
+    const repository = new InMemoryAssistedOrderRepository();
+    const onNotification = vi.fn();
+    const app = buildApp(undefined, { repository, onNotification });
+    const submitted = await request(app).post("/api/research/early-access/assisted-orders")
+      .set("x-test-member", "1").set("Cookie", EARLY_ACCESS_COOKIE).send(submitInput());
+    expect(submitted.status).toBe(201);
+    const requestId: string = submitted.body.requestId;
+    // Deliberate historical fixture: seed old operational labels through the
+    // test repository only. This creates no quote, observation or verification.
+    if (includePaidEvent) {
+      await repository.updateStatus({ requestId, fromStatus: "submitted", toStatus: "paid",
+        actorId: "historical-fixture", actorType: "admin", customerMessage: "Old paid label",
+        internalNote: null, evidence: {}, occurredAt: "2026-08-19T13:00:00.000Z" });
+    }
+    await repository.updateStatus({ requestId, fromStatus: includePaidEvent ? "paid" : "submitted", toStatus: current,
+      actorId: "historical-fixture", actorType: "admin", customerMessage: "Old operational label",
+      internalNote: null, evidence: {}, occurredAt: "2026-08-19T14:00:00.000Z" });
+    return { app, repository, requestId, onNotification };
+  }
+
+  describe.each([true, false])("with historical paid event = %s", (includePaidEvent) => {
+    it.each([
+      ["supplier_processing", "shipped"],
+      ["shipped", "delivered"],
+      ["delivered", "closed"],
+    ] as const)("refuses %s advancement to %s and cancellation without durable verification", async (current, next) => {
+      const h = await historicalRequest(current, includePaidEvent);
+      const before = await h.repository.getAdmin(h.requestId);
+      const financial = vi.spyOn(h.repository, "getFinancialState");
+      const update = vi.spyOn(h.repository, "updateStatus");
+      const notificationsBefore = h.onNotification.mock.calls.length;
+      for (const target of [next, "cancelled"] as const) {
+        const result = await request(h.app).patch(`/api/admin/research/assisted-orders/${h.requestId}/status`)
+          .set("authorization", ADMIN_BEARER)
+          .send({ status: target, evidence: { trackingId: "synthetic-tracking", cancellationReason: "Synthetic request" } });
+        expect(result.status).toBe(409);
+        expect(result.body).toMatchObject({ error: "payment_verification_not_ready" });
+        expect(await h.repository.getAdmin(h.requestId)).toEqual(before);
+      }
+      expect(financial).toHaveBeenCalledTimes(2);
+      expect(financial).toHaveBeenCalledWith(h.requestId);
+      expect(update).not.toHaveBeenCalled();
+      expect(h.onNotification).toHaveBeenCalledTimes(notificationsBefore);
+    });
+  });
+
+  it("keeps the admin guard before financial lookup and status mutation", async () => {
+    const h = await historicalRequest("supplier_processing", true);
+    const financial = vi.spyOn(h.repository, "getFinancialState");
+    const update = vi.spyOn(h.repository, "updateStatus");
+    const result = await request(h.app).patch(`/api/admin/research/assisted-orders/${h.requestId}/status`)
+      .set("x-test-member", "1").send({ status: "shipped", evidence: { trackingId: "synthetic-tracking" } });
+    expect(result.status).toBe(401);
+    expect(financial).not.toHaveBeenCalled();
+    expect(update).not.toHaveBeenCalled();
+  });
+
+  it.each(["reviewing", "supplier_processing"] as const)(
+    "returns a controlled conflict for %s cancellation when financial schema is absent", async (current) => {
+      const h = await historicalRequest(current, false);
+      const before = await h.repository.getAdmin(h.requestId);
+      const rpc = vi.fn().mockResolvedValue({ data: null, error: { code: "PGRST202", message: "Synthetic missing function" } });
+      const durable = new SupabaseAssistedOrderRepository({ rpc });
+      // Keep the real Supabase error projection in the mounted service path;
+      // substitute only the infrastructure RPC response, not its exception.
+      vi.spyOn(h.repository, "getFinancialState").mockImplementation(async (requestId) => {
+        const result = await durable.getFinancialState(requestId);
+        if (!result) throw new Error("Expected unavailable-schema conflict, not no-funds evidence");
+        return result;
+      });
+      const update = vi.spyOn(h.repository, "updateStatus");
+      const notificationsBefore = h.onNotification.mock.calls.length;
+      const result = await request(h.app).patch(`/api/admin/research/assisted-orders/${h.requestId}/status`)
+        .set("authorization", ADMIN_BEARER).send({ status: "cancelled", evidence: { cancellationReason: "Synthetic request" } });
+      expect(result.status).toBe(409);
+      expect(result.body).toMatchObject({ error: "payment_verification_not_ready" });
+      expect(rpc).toHaveBeenCalledOnce();
+      expect(rpc).toHaveBeenCalledWith("research_assisted_order_financial_state", { p_request_id: h.requestId });
+      expect(update).not.toHaveBeenCalled();
+      expect(h.onNotification).toHaveBeenCalledTimes(notificationsBefore);
+      expect(await h.repository.getAdmin(h.requestId)).toEqual(before);
+    });
+
+  it("allows verified progression but keeps cancellation behind financial resolution", async () => {
+    const h = await historicalRequest("paid", false);
+    // Synthetic infrastructure-port evidence only. Actual SQL verification is
+    // covered by the separate disposable-database lane, not this HTTP harness.
+    const financial = vi.spyOn(h.repository, "getFinancialState")
+      .mockResolvedValue({ hasObservation: true, paymentVerified: true });
+    for (const status of ["supplier_processing", "shipped", "delivered", "closed"] as const) {
+      const result = await request(h.app).patch(`/api/admin/research/assisted-orders/${h.requestId}/status`)
+        .set("authorization", ADMIN_BEARER)
+        .send({ status, evidence: { supplierAssignmentId: "synthetic-assignment", trackingId: "synthetic-tracking" } });
+      expect(result.status, `${status}: ${JSON.stringify(result.body)}`).toBe(200);
+      expect(result.body.status).toBe(status);
+      expect((await h.repository.getAdmin(h.requestId))?.status).toBe(status);
+    }
+    expect(financial).toHaveBeenCalledTimes(4);
+    const before = await h.repository.getAdmin(h.requestId);
+    const cancel = await request(h.app).patch(`/api/admin/research/assisted-orders/${h.requestId}/status`)
+      .set("authorization", ADMIN_BEARER).send({ status: "cancelled", evidence: { cancellationReason: "Synthetic request" } });
+    expect(cancel.status).toBe(409);
+    expect(cancel.body).toMatchObject({ error: "financial_resolution_required" });
+    expect(await h.repository.getAdmin(h.requestId)).toEqual(before);
+  });
+});
 
 describe("Phase Zero HTTP journey: CTA -> catalog -> submit -> XRR -> status -> admin queue", () => {
   it("resolves the submit viewer once and passes only its canonical Auth UUID to attribution", async () => {

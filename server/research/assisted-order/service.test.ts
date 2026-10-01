@@ -859,6 +859,76 @@ describe("AssistedOrderService", () => {
     expect((await h.repository.getAdmin(receipt.requestId))?.status).toBe("paid");
   });
 
+  it.each([
+    ["supplier_processing", "shipped"],
+    ["shipped", "delivered"],
+    ["delivered", "closed"],
+  ] as const)("holds historical %s before %s without financial verification", async (fromStatus, toStatus) => {
+    const h = harness();
+    const receipt = await h.service.submit(memberViewer, input());
+    // Historical fixture, not a new payment assertion: the old writer could
+    // already have progressed beyond paid before the current guard existed.
+    await h.repository.updateStatus({ requestId: receipt.requestId, fromStatus: "submitted", toStatus: "paid",
+      actorId: "historical-import", actorType: "system", customerMessage: null, internalNote: null,
+      evidence: {}, occurredAt: "2026-08-15T12:00:00.000Z" });
+    await h.repository.updateStatus({ requestId: receipt.requestId, fromStatus: "paid", toStatus: fromStatus,
+      actorId: "historical-import", actorType: "system", customerMessage: null, internalNote: null,
+      evidence: {}, occurredAt: "2026-08-15T12:00:01.000Z" });
+    const write = vi.spyOn(h.repository, "updateStatus");
+    const read = vi.spyOn(h.repository, "getFinancialState");
+    await expect(h.service.updateStatus(adminViewer, receipt.requestId, {
+      status: toStatus, evidence: { trackingId: "synthetic-tracking" },
+    })).rejects.toMatchObject({ code: "payment_verification_not_ready" });
+    expect(read).toHaveBeenCalledWith(receipt.requestId);
+    expect(write).not.toHaveBeenCalled();
+    expect((await h.repository.getAdmin(receipt.requestId))?.status).toBe(fromStatus);
+  });
+
+  it("holds post-payment states with missing history and regressed states with paid history", async () => {
+    for (const historyPresent of [false, true]) {
+      const h = harness();
+      const receipt = await h.service.submit(memberViewer, input());
+      const original = (await h.repository.getAdmin(receipt.requestId))!;
+      const current = historyPresent ? "payment_review" : "supplier_processing";
+      vi.spyOn(h.repository, "getAdmin").mockResolvedValue({ ...original, status: current,
+        timeline: historyPresent ? [{ status: "paid", occurredAt: original.createdAt, customerMessage: null }] : [] });
+      vi.spyOn(h.repository, "getFinancialState").mockResolvedValue(null);
+      const write = vi.spyOn(h.repository, "updateStatus");
+      await expect(h.service.updateStatus(adminViewer, receipt.requestId, {
+        status: historyPresent ? "payment_pending" : "shipped", evidence: { trackingId: "synthetic-tracking" },
+      })).rejects.toMatchObject({ code: "payment_verification_not_ready" });
+      expect(write).not.toHaveBeenCalled();
+    }
+  });
+
+  it("allows verified progression through shipping, delivery and closure without creating new payment facts", async () => {
+    const h = harness();
+    const receipt = await h.service.submit(memberViewer, input());
+    await h.repository.updateStatus({ requestId: receipt.requestId, fromStatus: "submitted", toStatus: "supplier_processing",
+      actorId: "synthetic-finance", actorType: "system", customerMessage: null, internalNote: null,
+      evidence: {}, occurredAt: "2026-08-15T12:00:00.000Z" });
+    const read = vi.spyOn(h.repository, "getFinancialState").mockResolvedValue({ hasObservation: true, paymentVerified: true });
+    for (const status of ["shipped", "delivered", "closed"] as const) {
+      expect((await h.service.updateStatus(adminViewer, receipt.requestId, {
+        status, evidence: { trackingId: "synthetic-tracking" },
+      })).status).toBe(status);
+    }
+    expect(read).toHaveBeenCalledTimes(3);
+    expect((await h.repository.getAdmin(receipt.requestId))?.timeline.filter((event) => event.status === "paid")).toHaveLength(0);
+  });
+
+  it("does not cancel observed money merely because the request has an earlier workflow label", async () => {
+    const h = harness();
+    const receipt = await h.service.submit(memberViewer, input());
+    await h.service.updateStatus(adminViewer, receipt.requestId, { status: "reviewing" });
+    vi.spyOn(h.repository, "getFinancialState").mockResolvedValue({ hasObservation: true, paymentVerified: false });
+    const write = vi.spyOn(h.repository, "updateStatus");
+    await expect(h.service.updateStatus(adminViewer, receipt.requestId, {
+      status: "cancelled", evidence: { cancellationReason: "Not evidence of no funds" },
+    })).rejects.toMatchObject({ code: "financial_resolution_required" });
+    expect(write).not.toHaveBeenCalled();
+  });
+
   it("allows a verified paid request to advance only with separate supplier evidence", async () => {
     const h = harness();
     const receipt = await h.service.submit(memberViewer, input());
