@@ -5,6 +5,7 @@ import {
   requiresProviderPathway,
 } from "@shared/research/master-offerings/pathway-authority";
 import { productRequestHref } from "@shared/research/product-request-sources";
+import { reviewedHeldVariantIds } from "./reviewed-holds";
 import { isResolvedCurrentLiveProductVariantActivationAuthority } from "../product-activation/authority-repository";
 import type {
   MasterOfferingCommerceIdentityBinding,
@@ -59,16 +60,12 @@ export interface MasterOfferingActionCapabilities {
    */
   manualEarlyAccessPurchase?: boolean;
   /**
-   * The normalized specifications the founder's reviewed reconciliation
-   * currently holds out of direct purchase.
-   *
-   * Optional so existing callers compile, but a purchase-deciding composition
-   * MUST supply it: without it a reviewed hold is invisible here, and the only
-   * thing standing between a formulation-unresolved product and a cart is the
-   * declared marker, which the canonical rewrite removes from the customer-
-   * facing specification. `reviewedHeldSpecifications()` is the reader.
+   * Legacy text-based refusal for older audit fixtures. Production supplies
+   * reviewedFormulationHoldVariantIds; when omitted the resolver reads the
+   * pinned reviewed identities itself. This cannot grant direct commerce.
    */
   reviewedFormulationHolds?: ReadonlySet<string> | null;
+  reviewedFormulationHoldVariantIds?: ReadonlySet<string>;
 }
 
 export const DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES: MasterOfferingActionCapabilities =
@@ -144,6 +141,8 @@ export function resolveMasterOfferingAction(
   capabilities: MasterOfferingActionCapabilities = DEFAULT_MASTER_OFFERING_ACTION_CAPABILITIES,
 ): MasterOfferingAction {
   const selection = commerce.selection;
+  const reviewedHoldVariantIds = capabilities.reviewedFormulationHoldVariantIds ??
+    reviewedHeldVariantIds();
   // A provider-pathway row can never be a direct purchase, whatever Product
   // Control says about it.
   //
@@ -176,6 +175,8 @@ export function resolveMasterOfferingAction(
     // authority is consulted.
     specification: variant.label,
     reviewedHolds: capabilities.reviewedFormulationHolds,
+    offeringVariantId: variant.id,
+    reviewedHoldVariantIds,
   });
   if (
     !forbidden &&
@@ -240,6 +241,8 @@ export function resolveMasterOfferingAction(
       variantDisplayState: variant.displayState,
       specification: variant.label,
       reviewedHolds: capabilities.reviewedFormulationHolds,
+      offeringVariantId: variant.id,
+      reviewedHoldVariantIds,
     })
   ) {
     return {

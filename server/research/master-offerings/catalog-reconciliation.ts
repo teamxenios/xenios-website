@@ -45,6 +45,8 @@ export interface ReconciliationMerge {
 export interface ReconciliationHold {
   readonly id: string;
   readonly sourceRow: string;
+  /** Exact join validated against the raw source before presentation cleanup. */
+  readonly catalogIdentity: Readonly<{ offeringId: string; offeringVariantId: string }>;
   readonly product: string;
   readonly specification: string;
   readonly retailPriceCents: number;
@@ -106,7 +108,10 @@ export function applyCatalogReconciliation<
   const byGroupId = new Map<string, TRow>();
   for (const row of rows) {
     const id = groupIdOf(row);
-    if (id) byGroupId.set(id, row);
+    if (!id || byGroupId.has(id)) {
+      throw new CatalogReconciliationError("Missing or duplicate source Group ID.");
+    }
+    byGroupId.set(id, row);
   }
 
   const superseded = new Set<string>();
@@ -153,6 +158,10 @@ export function applyCatalogReconciliation<
   }
 
   const kept = rows.filter((row) => !superseded.has(groupIdOf(row)));
+  for (const row of kept) {
+    const id = groupIdOf(row);
+    if (!sourceRowsByCanonical.has(id)) sourceRowsByCanonical.set(id, [id]);
+  }
 
   return {
     rows: kept,

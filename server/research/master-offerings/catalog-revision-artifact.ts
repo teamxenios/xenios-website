@@ -34,6 +34,7 @@ import {
   MasterOfferingDatasetUnavailable,
 } from "./dataset-reader";
 import { MASTER_OFFERING_STATE_EXPLANATIONS } from "./normalize";
+import { readPinnedReconciliationAuthority, RECONCILED_WORKBOOK_SHA256 } from "./reconciliation-authority";
 import type { RawMasterOfferingRow } from "./model";
 
 export type GeneratedArtifact = Record<string, unknown>;
@@ -109,7 +110,11 @@ export function assertGeneratedArtifactSafe(
 ): ArtifactScanResult {
   let loaded;
   try {
-    loaded = loadMasterOfferingDataset(artifact);
+    const authority = isRecord(artifact) &&
+      (artifact.sourceWorkbookSha256 === RECONCILED_WORKBOOK_SHA256 || artifact.reconciliation !== undefined)
+      ? readPinnedReconciliationAuthority()
+      : undefined;
+    loaded = loadMasterOfferingDataset(artifact, authority);
   } catch (error) {
     if (error instanceof MasterOfferingDatasetUnavailable) {
       throw new ArtifactRefused(error.reason);

@@ -1,6 +1,6 @@
 /**
  * Build the member-safe master-offerings dataset from the MASTER CATALOG
- * workbook's private intake (the 420-row canonical selection).
+ * workbook's private intake (426 source rows, 424 reconciled variants).
  *
  * Usage:
  *   npx tsx scripts/research/build-master-offerings-from-catalog.ts \
@@ -36,11 +36,8 @@ import {
   applyCatalogReconciliation,
   assertReconciledAccounting,
   CatalogReconciliationError,
-  type CatalogReconciliation,
 } from "../../server/research/master-offerings/catalog-reconciliation";
-
-/** The reviewed reconciliation currently in force. */
-const RECONCILIATION_FILE = "master-catalog-reconciliation-20260821.json";
+import { readPinnedReconciliationAuthority } from "../../server/research/master-offerings/reconciliation-authority";
 
 const PRIVATE_MASTER_COLUMNS = [
   "Selected Supplier",
@@ -206,7 +203,7 @@ function assertPublicSafe(value: unknown, terms: readonly string[]): void {
   for (const term of terms) {
     if (term && serialized.includes(term)) {
       fail(
-        `confidential value beginning "${term.slice(0, 12)}..." appears in the member output`,
+        "confidential source content appears in the member output; export refused",
       );
     }
   }
@@ -238,12 +235,11 @@ fs.mkdirSync(output, { recursive: true });
 // The applier refuses rather than shrugs: a merge whose rows have moved, or a
 // hold that matches nothing, fails the build here instead of putting a
 // formulation-unresolved product on sale.
-const reconciliation: CatalogReconciliation = JSON.parse(
-  fs.readFileSync(
-    path.resolve(process.cwd(), "config", "research", RECONCILIATION_FILE),
-    "utf8",
-  ),
-);
+const reconciliationAuthority = readPinnedReconciliationAuthority();
+const reconciliation = reconciliationAuthority.reconciliation;
+if (intake.sources.masterCatalog.sha256 !== reconciliation.sourceWorkbook.sha256) {
+  fail("private intake does not match the pinned reviewed source workbook");
+}
 let reconciled;
 try {
   reconciled = applyCatalogReconciliation(
@@ -257,8 +253,19 @@ try {
 
 let catalog;
 try {
+  // Bind source-row policy to exact raw identities before changing display text.
+  for (const hold of reconciliation.commerceHolds) {
+    const rows = reconciled.rows.filter((row) => row["Group ID"] === hold.sourceRow);
+    if (rows.length !== 1) fail("reviewed hold must identify one canonical source row");
+    const raw = normalizeMasterCatalog(rows as unknown as RawMasterCatalogRow[]).products[0];
+    if (raw.id !== hold.catalogIdentity.offeringId ||
+        raw.variants[0].id !== hold.catalogIdentity.offeringVariantId) {
+      fail("reviewed hold identity does not match the untouched source row");
+    }
+  }
   catalog = normalizeMasterCatalog(
     reconciled.rows as unknown as RawMasterCatalogRow[],
+    new Map(reconciliation.commerceHolds.map((hold) => [hold.sourceRow, hold.specification])),
   );
 } catch (error) {
   if (error instanceof MasterCatalogNormalizeError) fail(error.message);
@@ -305,11 +312,13 @@ const publicCatalog = {
   sourceWorkbookSha256: intake.sources.masterCatalog.sha256,
   sourceRowCount: catalog.sourceRowCount,
   // Source rows and canonical variants are different numbers and must never be
-  // quoted interchangeably: the workbook lists 426 rows, a customer can buy 424
-  // products. The superseded rows survive in `reconciliation.provenance`.
+  // quoted interchangeably: the workbook lists 426 rows and 424 canonical
+  // variants. Visibility never means purchasability; shipping and holds remain
+  // separate. Superseded rows survive in reconciliation.provenance.
   workbookSourceRowCount: reconciled.provenance.sourceRowCount,
   reconciliation: {
-    file: RECONCILIATION_FILE,
+    file: reconciliationAuthority.file,
+    sha256: reconciliationAuthority.sha256,
     decidedOn: reconciliation.decidedOn,
     sourceRows: reconciled.provenance.sourceRowCount,
     canonicalRows: reconciled.provenance.canonicalRowCount,
@@ -356,6 +365,10 @@ const audit = {
   generatedAt,
   sourceWorkbookSha256: intake.sources.masterCatalog.sha256,
   sourceRowCount: catalog.sourceRowCount,
+  // Preserve the historical sourceRowCount key while naming the distinct
+  // workbook-source and canonical-variant counts explicitly.
+  workbookSourceRowCount: reconciled.provenance.sourceRowCount,
+  canonicalVariantCount: publicCatalog.variantCount,
   memberSafeCanonicalProducts: catalog.products.length,
   memberSafeVariants: publicCatalog.variantCount,
   familyCounts: catalog.familyCounts,

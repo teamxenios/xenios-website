@@ -87,6 +87,10 @@
     {
       "id": "cjc-1295-with-dac-ipamorelin",
       "sourceRow": "GRP-0422",
+      "catalogIdentity": {
+        "offeringId": "mo_2babbadce5172426bde2",
+        "offeringVariantId": "mov_f61758881da2b7bfa539"
+      },
       "product": "CJC-1295 + Ipamorelin",
       "specification": "CJC-1295 WITH DAC + IPAMORELIN 5 mg total",
       "retailPriceCents": 9900,

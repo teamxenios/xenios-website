@@ -31,6 +31,7 @@ import {
   MasterOfferingDatasetUnavailable,
 } from "./dataset-reader";
 import { normalizeOfferingText } from "./normalize";
+import { readPinnedReconciliationAuthority, RECONCILED_WORKBOOK_SHA256 } from "./reconciliation-authority";
 import type {
   MasterOfferingAdminHold,
   MasterOfferingImportIssue,
@@ -202,8 +203,12 @@ export function catalogRevisionFromGeneratedArtifact(input: {
 }): CatalogRevision {
   let sourceWorkbookSha256 = "";
   try {
+    const authority = isRecord(input.parsed) &&
+      (input.parsed.sourceWorkbookSha256 === RECONCILED_WORKBOOK_SHA256 || input.parsed.reconciliation !== undefined)
+      ? readPinnedReconciliationAuthority()
+      : undefined;
     sourceWorkbookSha256 =
-      loadMasterOfferingDataset(input.parsed).summary.sourceWorkbookSha256;
+      loadMasterOfferingDataset(input.parsed, authority).summary.sourceWorkbookSha256;
   } catch (error) {
     if (error instanceof MasterOfferingDatasetUnavailable) {
       throw new CatalogRevisionUnreadable(error.reason);

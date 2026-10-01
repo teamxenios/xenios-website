@@ -25,9 +25,9 @@ import {
   MasterOfferingDatasetUnavailable,
 } from "../../server/research/master-offerings/dataset-reader";
 
-/** The independently verified foundation result, for reference in the output. */
-const FOUNDATION_OFFERINGS = 420;
-const FOUNDATION_VARIANTS = 420;
+/** Reviewed canonical target: 426 source rows with two explicit supersessions. */
+const CANONICAL_OFFERINGS = 424;
+const CANONICAL_VARIANTS = 424;
 
 function fail(message: string): never {
   process.stderr.write(`FAIL: ${message}\n`);
@@ -43,10 +43,10 @@ if (!filePath) {
 
 const expectedOfferings = expectedOfferingsRaw
   ? Number(expectedOfferingsRaw)
-  : FOUNDATION_OFFERINGS;
+  : CANONICAL_OFFERINGS;
 const expectedVariants = expectedVariantsRaw
   ? Number(expectedVariantsRaw)
-  : FOUNDATION_VARIANTS;
+  : CANONICAL_VARIANTS;
 
 let summary;
 try {

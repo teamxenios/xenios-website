@@ -29,6 +29,7 @@ import {
 import { EARLY_ACCESS_POLICY_MAX_QUANTITY } from "../../../shared/research/early-access-quantity";
 import type { AssistedOrderViewer } from "./ports";
 import type { NormalizedMasterOffering } from "../master-offerings/model";
+import { reviewedHeldVariantIds } from "../master-offerings/reviewed-holds";
 import type { MasterOfferingPriceView } from "../../../shared/research/master-offerings/pricing-contract";
 import {
   MASTER_OFFERING_FAMILIES,
@@ -76,6 +77,7 @@ export type AssistedOrderMasterCatalogInput = Readonly<{
   catalogVersion: string;
   /** Canonical, founder-reviewed formulation holds from the reconciliation record. */
   reviewedFormulationHolds?: ReadonlySet<string>;
+  reviewedFormulationHoldVariantIds?: ReadonlySet<string>;
 }>;
 
 /**
@@ -146,6 +148,7 @@ export function authorityFor(
   identity: AssistedOrderCommerceIdentity | null,
   catalogVersion: string,
   reviewedFormulationHolds?: ReadonlySet<string>,
+  reviewedFormulationHoldVariantIds: ReadonlySet<string> = reviewedHeldVariantIds(),
 ): AssistedOrderCatalogAuthority {
   const priced = price !== undefined && price.state === "priced";
   const pathwaySubject = {
@@ -154,6 +157,8 @@ export function authorityFor(
     variantDisplayState: variant.displayState,
     specification: variant.label,
     reviewedHolds: reviewedFormulationHolds,
+    offeringVariantId: variant.id,
+    reviewedHoldVariantIds: reviewedFormulationHoldVariantIds,
   } as const;
   const refusal = directPurchaseRefusal(pathwaySubject);
   const providerWorkflowRequired = requiresProviderPathway(pathwaySubject);
@@ -251,6 +256,8 @@ export function createAssistedOrderMasterCatalogCallbacks(
   ): Promise<AssistedOrderCatalogItem | null>;
   fingerprint(item: AssistedOrderCatalogItem): string;
 }> {
+  const reviewedHoldVariantIds = input.reviewedFormulationHoldVariantIds ??
+    reviewedHeldVariantIds();
   return Object.freeze({
     async list(viewer, query) {
       const service = input.serviceFor(viewer);
@@ -308,6 +315,7 @@ export function createAssistedOrderMasterCatalogCallbacks(
                 identity,
                 input.catalogVersion,
                 input.reviewedFormulationHolds,
+                reviewedHoldVariantIds,
               ),
             );
             if (item) projected.push(item);
@@ -459,6 +467,7 @@ export function createAssistedOrderMasterCatalogCallbacks(
                 syntheticIdentity ? null : { productId, variantId },
                 input.catalogVersion,
                 input.reviewedFormulationHolds,
+                reviewedHoldVariantIds,
               ),
             );
           }

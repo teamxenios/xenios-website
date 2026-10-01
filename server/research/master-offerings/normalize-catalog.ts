@@ -114,6 +114,7 @@ export interface NormalizedMasterCatalog {
 
 export function normalizeMasterCatalog(
   rows: readonly RawMasterCatalogRow[],
+  presentationSpecifications: ReadonlyMap<string, string> = new Map(),
 ): NormalizedMasterCatalog {
   const products: NormalizedMasterOffering[] = [];
   const seenIds = new Set<string>();
@@ -145,7 +146,15 @@ export function normalizeMasterCatalog(
     // strengths of one product distinct. Both feed the hash so a workbook
     // reorder cannot move an id.
     const id = hashId("mo", `${groupId}\u0000${family}\u0000${product}\u0000${specification}`);
-    const slug = slugify(`${family} ${product} ${specification}`);
+    const variantId = hashId("mov", `${id}\u0000${specification}`);
+    // Identity always hashes untouched source text. These are presentation-only
+    // decisions, never category, price, hold or purchase authority.
+    const displaySpecification = presentationSpecifications.get(groupId) ??
+      (groupId === "GRP-0080" ? specification.replace(" \u2014 ", ": ") : specification);
+    if (!displaySpecification.trim()) {
+      throw new MasterCatalogNormalizeError("A reviewed display specification cannot be blank.");
+    }
+    const slug = slugify(`${family} ${product} ${displaySpecification}`);
     if (seenIds.has(id) || seenSlugs.has(slug)) {
       throw new MasterCatalogNormalizeError(
         `sheet row ${row.sheetRow}: duplicate offering identity (${product} | ${specification}); the source must disambiguate, the build never guesses`,
@@ -168,15 +177,15 @@ export function normalizeMasterCatalog(
       category: workbookFamily,
       subcategory: dosageForm,
       brand: null,
-      aliases: [product, specification],
+      aliases: [product, displaySpecification],
       displayState: presentation.displayState,
       stateExplanation: presentation.stateExplanation,
       copyState: "draft",
       visibility: "member",
       variants: [
         {
-          id: hashId("mov", `${id}\u0000${specification}`),
-          label: specification,
+          id: variantId,
+          label: displaySpecification,
           displayState: presentation.displayState,
           visibility: "member",
           sourceReferences: [],

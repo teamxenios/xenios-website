@@ -25,7 +25,7 @@
 
 import type { CartPurchaseAudience } from "@shared/research/cart-product-selection";
 import type { CustomerPriceAudience } from "@shared/research/pricing";
-import { reviewedHeldSpecifications } from "./reviewed-holds";
+import { reviewedHeldVariantIds } from "./reviewed-holds";
 import {
   authorizeAudienceFromServerIdentity,
   createAuthoritativePriceResolver,
@@ -134,7 +134,7 @@ export function createMasterOfferingCatalogDependencies(
     // this line every held product is purchasable and every unit test still
     // passes. Read at composition so an unreadable record fails the service
     // rather than silently selling.
-    reviewedFormulationHolds: reviewedHeldSpecifications(input.cwd),
+    reviewedFormulationHoldVariantIds: reviewedHeldVariantIds(input.cwd),
   };
 
   return {

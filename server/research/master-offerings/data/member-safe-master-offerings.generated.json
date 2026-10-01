@@ -1,10 +1,1297 @@
 {
  "schemaVersion": 1,
- "generatedAt": "2026-08-15T04:10:09.357Z",
- "sourceWorkbookSha256": "1be4f6720675fc6b90c172d52c19d2fb9a8d53f5beab6592ca96c701119c791d",
- "sourceRowCount": 420,
- "canonicalProductCount": 420,
- "variantCount": 420,
+ "generatedAt": "2026-10-01T07:49:06.496Z",
+ "sourceWorkbookSha256": "6478ad0d3f710b75c6bf0c5f5e56ff1189ab2a2a4439cab23c2a28498134ea6f",
+ "sourceRowCount": 424,
+ "workbookSourceRowCount": 426,
+ "reconciliation": {
+  "file": "master-catalog-reconciliation-20260821.json",
+  "sha256": "d63eade14720c36547fe07b17f954000cc704094a376f246352757af33597976",
+  "decidedOn": "2026-08-21",
+  "sourceRows": 426,
+  "canonicalRows": 424,
+  "provenance": {
+   "GRP-0426": [
+    "GRP-0426",
+    "GRP-0402"
+   ],
+   "GRP-0425": [
+    "GRP-0425",
+    "GRP-0407"
+   ],
+   "GRP-0001": [
+    "GRP-0001"
+   ],
+   "GRP-0002": [
+    "GRP-0002"
+   ],
+   "GRP-0003": [
+    "GRP-0003"
+   ],
+   "GRP-0004": [
+    "GRP-0004"
+   ],
+   "GRP-0005": [
+    "GRP-0005"
+   ],
+   "GRP-0006": [
+    "GRP-0006"
+   ],
+   "GRP-0007": [
+    "GRP-0007"
+   ],
+   "GRP-0008": [
+    "GRP-0008"
+   ],
+   "GRP-0009": [
+    "GRP-0009"
+   ],
+   "GRP-0010": [
+    "GRP-0010"
+   ],
+   "GRP-0011": [
+    "GRP-0011"
+   ],
+   "GRP-0012": [
+    "GRP-0012"
+   ],
+   "GRP-0013": [
+    "GRP-0013"
+   ],
+   "GRP-0014": [
+    "GRP-0014"
+   ],
+   "GRP-0015": [
+    "GRP-0015"
+   ],
+   "GRP-0016": [
+    "GRP-0016"
+   ],
+   "GRP-0017": [
+    "GRP-0017"
+   ],
+   "GRP-0018": [
+    "GRP-0018"
+   ],
+   "GRP-0019": [
+    "GRP-0019"
+   ],
+   "GRP-0020": [
+    "GRP-0020"
+   ],
+   "GRP-0021": [
+    "GRP-0021"
+   ],
+   "GRP-0022": [
+    "GRP-0022"
+   ],
+   "GRP-0023": [
+    "GRP-0023"
+   ],
+   "GRP-0024": [
+    "GRP-0024"
+   ],
+   "GRP-0025": [
+    "GRP-0025"
+   ],
+   "GRP-0026": [
+    "GRP-0026"
+   ],
+   "GRP-0027": [
+    "GRP-0027"
+   ],
+   "GRP-0028": [
+    "GRP-0028"
+   ],
+   "GRP-0029": [
+    "GRP-0029"
+   ],
+   "GRP-0030": [
+    "GRP-0030"
+   ],
+   "GRP-0031": [
+    "GRP-0031"
+   ],
+   "GRP-0032": [
+    "GRP-0032"
+   ],
+   "GRP-0033": [
+    "GRP-0033"
+   ],
+   "GRP-0034": [
+    "GRP-0034"
+   ],
+   "GRP-0035": [
+    "GRP-0035"
+   ],
+   "GRP-0036": [
+    "GRP-0036"
+   ],
+   "GRP-0037": [
+    "GRP-0037"
+   ],
+   "GRP-0038": [
+    "GRP-0038"
+   ],
+   "GRP-0039": [
+    "GRP-0039"
+   ],
+   "GRP-0040": [
+    "GRP-0040"
+   ],
+   "GRP-0041": [
+    "GRP-0041"
+   ],
+   "GRP-0042": [
+    "GRP-0042"
+   ],
+   "GRP-0043": [
+    "GRP-0043"
+   ],
+   "GRP-0044": [
+    "GRP-0044"
+   ],
+   "GRP-0045": [
+    "GRP-0045"
+   ],
+   "GRP-0046": [
+    "GRP-0046"
+   ],
+   "GRP-0047": [
+    "GRP-0047"
+   ],
+   "GRP-0048": [
+    "GRP-0048"
+   ],
+   "GRP-0049": [
+    "GRP-0049"
+   ],
+   "GRP-0050": [
+    "GRP-0050"
+   ],
+   "GRP-0051": [
+    "GRP-0051"
+   ],
+   "GRP-0052": [
+    "GRP-0052"
+   ],
+   "GRP-0053": [
+    "GRP-0053"
+   ],
+   "GRP-0054": [
+    "GRP-0054"
+   ],
+   "GRP-0055": [
+    "GRP-0055"
+   ],
+   "GRP-0056": [
+    "GRP-0056"
+   ],
+   "GRP-0057": [
+    "GRP-0057"
+   ],
+   "GRP-0058": [
+    "GRP-0058"
+   ],
+   "GRP-0059": [
+    "GRP-0059"
+   ],
+   "GRP-0060": [
+    "GRP-0060"
+   ],
+   "GRP-0061": [
+    "GRP-0061"
+   ],
+   "GRP-0062": [
+    "GRP-0062"
+   ],
+   "GRP-0063": [
+    "GRP-0063"
+   ],
+   "GRP-0064": [
+    "GRP-0064"
+   ],
+   "GRP-0065": [
+    "GRP-0065"
+   ],
+   "GRP-0066": [
+    "GRP-0066"
+   ],
+   "GRP-0067": [
+    "GRP-0067"
+   ],
+   "GRP-0068": [
+    "GRP-0068"
+   ],
+   "GRP-0069": [
+    "GRP-0069"
+   ],
+   "GRP-0070": [
+    "GRP-0070"
+   ],
+   "GRP-0071": [
+    "GRP-0071"
+   ],
+   "GRP-0072": [
+    "GRP-0072"
+   ],
+   "GRP-0073": [
+    "GRP-0073"
+   ],
+   "GRP-0074": [
+    "GRP-0074"
+   ],
+   "GRP-0075": [
+    "GRP-0075"
+   ],
+   "GRP-0076": [
+    "GRP-0076"
+   ],
+   "GRP-0077": [
+    "GRP-0077"
+   ],
+   "GRP-0078": [
+    "GRP-0078"
+   ],
+   "GRP-0079": [
+    "GRP-0079"
+   ],
+   "GRP-0080": [
+    "GRP-0080"
+   ],
+   "GRP-0081": [
+    "GRP-0081"
+   ],
+   "GRP-0082": [
+    "GRP-0082"
+   ],
+   "GRP-0083": [
+    "GRP-0083"
+   ],
+   "GRP-0084": [
+    "GRP-0084"
+   ],
+   "GRP-0085": [
+    "GRP-0085"
+   ],
+   "GRP-0086": [
+    "GRP-0086"
+   ],
+   "GRP-0087": [
+    "GRP-0087"
+   ],
+   "GRP-0088": [
+    "GRP-0088"
+   ],
+   "GRP-0089": [
+    "GRP-0089"
+   ],
+   "GRP-0090": [
+    "GRP-0090"
+   ],
+   "GRP-0091": [
+    "GRP-0091"
+   ],
+   "GRP-0092": [
+    "GRP-0092"
+   ],
+   "GRP-0093": [
+    "GRP-0093"
+   ],
+   "GRP-0094": [
+    "GRP-0094"
+   ],
+   "GRP-0095": [
+    "GRP-0095"
+   ],
+   "GRP-0096": [
+    "GRP-0096"
+   ],
+   "GRP-0097": [
+    "GRP-0097"
+   ],
+   "GRP-0098": [
+    "GRP-0098"
+   ],
+   "GRP-0099": [
+    "GRP-0099"
+   ],
+   "GRP-0100": [
+    "GRP-0100"
+   ],
+   "GRP-0101": [
+    "GRP-0101"
+   ],
+   "GRP-0102": [
+    "GRP-0102"
+   ],
+   "GRP-0103": [
+    "GRP-0103"
+   ],
+   "GRP-0104": [
+    "GRP-0104"
+   ],
+   "GRP-0105": [
+    "GRP-0105"
+   ],
+   "GRP-0106": [
+    "GRP-0106"
+   ],
+   "GRP-0107": [
+    "GRP-0107"
+   ],
+   "GRP-0108": [
+    "GRP-0108"
+   ],
+   "GRP-0109": [
+    "GRP-0109"
+   ],
+   "GRP-0110": [
+    "GRP-0110"
+   ],
+   "GRP-0111": [
+    "GRP-0111"
+   ],
+   "GRP-0112": [
+    "GRP-0112"
+   ],
+   "GRP-0113": [
+    "GRP-0113"
+   ],
+   "GRP-0114": [
+    "GRP-0114"
+   ],
+   "GRP-0115": [
+    "GRP-0115"
+   ],
+   "GRP-0116": [
+    "GRP-0116"
+   ],
+   "GRP-0117": [
+    "GRP-0117"
+   ],
+   "GRP-0118": [
+    "GRP-0118"
+   ],
+   "GRP-0119": [
+    "GRP-0119"
+   ],
+   "GRP-0120": [
+    "GRP-0120"
+   ],
+   "GRP-0121": [
+    "GRP-0121"
+   ],
+   "GRP-0122": [
+    "GRP-0122"
+   ],
+   "GRP-0123": [
+    "GRP-0123"
+   ],
+   "GRP-0124": [
+    "GRP-0124"
+   ],
+   "GRP-0125": [
+    "GRP-0125"
+   ],
+   "GRP-0126": [
+    "GRP-0126"
+   ],
+   "GRP-0127": [
+    "GRP-0127"
+   ],
+   "GRP-0128": [
+    "GRP-0128"
+   ],
+   "GRP-0129": [
+    "GRP-0129"
+   ],
+   "GRP-0130": [
+    "GRP-0130"
+   ],
+   "GRP-0131": [
+    "GRP-0131"
+   ],
+   "GRP-0132": [
+    "GRP-0132"
+   ],
+   "GRP-0133": [
+    "GRP-0133"
+   ],
+   "GRP-0134": [
+    "GRP-0134"
+   ],
+   "GRP-0135": [
+    "GRP-0135"
+   ],
+   "GRP-0136": [
+    "GRP-0136"
+   ],
+   "GRP-0137": [
+    "GRP-0137"
+   ],
+   "GRP-0138": [
+    "GRP-0138"
+   ],
+   "GRP-0139": [
+    "GRP-0139"
+   ],
+   "GRP-0140": [
+    "GRP-0140"
+   ],
+   "GRP-0141": [
+    "GRP-0141"
+   ],
+   "GRP-0142": [
+    "GRP-0142"
+   ],
+   "GRP-0143": [
+    "GRP-0143"
+   ],
+   "GRP-0144": [
+    "GRP-0144"
+   ],
+   "GRP-0145": [
+    "GRP-0145"
+   ],
+   "GRP-0146": [
+    "GRP-0146"
+   ],
+   "GRP-0147": [
+    "GRP-0147"
+   ],
+   "GRP-0148": [
+    "GRP-0148"
+   ],
+   "GRP-0149": [
+    "GRP-0149"
+   ],
+   "GRP-0150": [
+    "GRP-0150"
+   ],
+   "GRP-0151": [
+    "GRP-0151"
+   ],
+   "GRP-0152": [
+    "GRP-0152"
+   ],
+   "GRP-0153": [
+    "GRP-0153"
+   ],
+   "GRP-0154": [
+    "GRP-0154"
+   ],
+   "GRP-0155": [
+    "GRP-0155"
+   ],
+   "GRP-0156": [
+    "GRP-0156"
+   ],
+   "GRP-0157": [
+    "GRP-0157"
+   ],
+   "GRP-0158": [
+    "GRP-0158"
+   ],
+   "GRP-0159": [
+    "GRP-0159"
+   ],
+   "GRP-0160": [
+    "GRP-0160"
+   ],
+   "GRP-0161": [
+    "GRP-0161"
+   ],
+   "GRP-0162": [
+    "GRP-0162"
+   ],
+   "GRP-0163": [
+    "GRP-0163"
+   ],
+   "GRP-0164": [
+    "GRP-0164"
+   ],
+   "GRP-0165": [
+    "GRP-0165"
+   ],
+   "GRP-0166": [
+    "GRP-0166"
+   ],
+   "GRP-0167": [
+    "GRP-0167"
+   ],
+   "GRP-0168": [
+    "GRP-0168"
+   ],
+   "GRP-0169": [
+    "GRP-0169"
+   ],
+   "GRP-0170": [
+    "GRP-0170"
+   ],
+   "GRP-0171": [
+    "GRP-0171"
+   ],
+   "GRP-0172": [
+    "GRP-0172"
+   ],
+   "GRP-0173": [
+    "GRP-0173"
+   ],
+   "GRP-0174": [
+    "GRP-0174"
+   ],
+   "GRP-0175": [
+    "GRP-0175"
+   ],
+   "GRP-0176": [
+    "GRP-0176"
+   ],
+   "GRP-0177": [
+    "GRP-0177"
+   ],
+   "GRP-0178": [
+    "GRP-0178"
+   ],
+   "GRP-0179": [
+    "GRP-0179"
+   ],
+   "GRP-0180": [
+    "GRP-0180"
+   ],
+   "GRP-0181": [
+    "GRP-0181"
+   ],
+   "GRP-0182": [
+    "GRP-0182"
+   ],
+   "GRP-0183": [
+    "GRP-0183"
+   ],
+   "GRP-0184": [
+    "GRP-0184"
+   ],
+   "GRP-0185": [
+    "GRP-0185"
+   ],
+   "GRP-0186": [
+    "GRP-0186"
+   ],
+   "GRP-0187": [
+    "GRP-0187"
+   ],
+   "GRP-0188": [
+    "GRP-0188"
+   ],
+   "GRP-0189": [
+    "GRP-0189"
+   ],
+   "GRP-0190": [
+    "GRP-0190"
+   ],
+   "GRP-0191": [
+    "GRP-0191"
+   ],
+   "GRP-0192": [
+    "GRP-0192"
+   ],
+   "GRP-0193": [
+    "GRP-0193"
+   ],
+   "GRP-0194": [
+    "GRP-0194"
+   ],
+   "GRP-0195": [
+    "GRP-0195"
+   ],
+   "GRP-0196": [
+    "GRP-0196"
+   ],
+   "GRP-0197": [
+    "GRP-0197"
+   ],
+   "GRP-0198": [
+    "GRP-0198"
+   ],
+   "GRP-0199": [
+    "GRP-0199"
+   ],
+   "GRP-0200": [
+    "GRP-0200"
+   ],
+   "GRP-0201": [
+    "GRP-0201"
+   ],
+   "GRP-0202": [
+    "GRP-0202"
+   ],
+   "GRP-0203": [
+    "GRP-0203"
+   ],
+   "GRP-0204": [
+    "GRP-0204"
+   ],
+   "GRP-0205": [
+    "GRP-0205"
+   ],
+   "GRP-0206": [
+    "GRP-0206"
+   ],
+   "GRP-0207": [
+    "GRP-0207"
+   ],
+   "GRP-0208": [
+    "GRP-0208"
+   ],
+   "GRP-0209": [
+    "GRP-0209"
+   ],
+   "GRP-0210": [
+    "GRP-0210"
+   ],
+   "GRP-0211": [
+    "GRP-0211"
+   ],
+   "GRP-0212": [
+    "GRP-0212"
+   ],
+   "GRP-0213": [
+    "GRP-0213"
+   ],
+   "GRP-0214": [
+    "GRP-0214"
+   ],
+   "GRP-0215": [
+    "GRP-0215"
+   ],
+   "GRP-0216": [
+    "GRP-0216"
+   ],
+   "GRP-0217": [
+    "GRP-0217"
+   ],
+   "GRP-0218": [
+    "GRP-0218"
+   ],
+   "GRP-0219": [
+    "GRP-0219"
+   ],
+   "GRP-0220": [
+    "GRP-0220"
+   ],
+   "GRP-0221": [
+    "GRP-0221"
+   ],
+   "GRP-0222": [
+    "GRP-0222"
+   ],
+   "GRP-0223": [
+    "GRP-0223"
+   ],
+   "GRP-0224": [
+    "GRP-0224"
+   ],
+   "GRP-0225": [
+    "GRP-0225"
+   ],
+   "GRP-0226": [
+    "GRP-0226"
+   ],
+   "GRP-0227": [
+    "GRP-0227"
+   ],
+   "GRP-0228": [
+    "GRP-0228"
+   ],
+   "GRP-0229": [
+    "GRP-0229"
+   ],
+   "GRP-0230": [
+    "GRP-0230"
+   ],
+   "GRP-0231": [
+    "GRP-0231"
+   ],
+   "GRP-0232": [
+    "GRP-0232"
+   ],
+   "GRP-0233": [
+    "GRP-0233"
+   ],
+   "GRP-0234": [
+    "GRP-0234"
+   ],
+   "GRP-0235": [
+    "GRP-0235"
+   ],
+   "GRP-0236": [
+    "GRP-0236"
+   ],
+   "GRP-0237": [
+    "GRP-0237"
+   ],
+   "GRP-0238": [
+    "GRP-0238"
+   ],
+   "GRP-0239": [
+    "GRP-0239"
+   ],
+   "GRP-0240": [
+    "GRP-0240"
+   ],
+   "GRP-0241": [
+    "GRP-0241"
+   ],
+   "GRP-0242": [
+    "GRP-0242"
+   ],
+   "GRP-0243": [
+    "GRP-0243"
+   ],
+   "GRP-0244": [
+    "GRP-0244"
+   ],
+   "GRP-0245": [
+    "GRP-0245"
+   ],
+   "GRP-0246": [
+    "GRP-0246"
+   ],
+   "GRP-0247": [
+    "GRP-0247"
+   ],
+   "GRP-0248": [
+    "GRP-0248"
+   ],
+   "GRP-0249": [
+    "GRP-0249"
+   ],
+   "GRP-0250": [
+    "GRP-0250"
+   ],
+   "GRP-0251": [
+    "GRP-0251"
+   ],
+   "GRP-0252": [
+    "GRP-0252"
+   ],
+   "GRP-0253": [
+    "GRP-0253"
+   ],
+   "GRP-0254": [
+    "GRP-0254"
+   ],
+   "GRP-0255": [
+    "GRP-0255"
+   ],
+   "GRP-0395": [
+    "GRP-0395"
+   ],
+   "GRP-0418": [
+    "GRP-0418"
+   ],
+   "GRP-0419": [
+    "GRP-0419"
+   ],
+   "GRP-0256": [
+    "GRP-0256"
+   ],
+   "GRP-0261": [
+    "GRP-0261"
+   ],
+   "GRP-0257": [
+    "GRP-0257"
+   ],
+   "GRP-0258": [
+    "GRP-0258"
+   ],
+   "GRP-0259": [
+    "GRP-0259"
+   ],
+   "GRP-0260": [
+    "GRP-0260"
+   ],
+   "GRP-0262": [
+    "GRP-0262"
+   ],
+   "GRP-0263": [
+    "GRP-0263"
+   ],
+   "GRP-0264": [
+    "GRP-0264"
+   ],
+   "GRP-0265": [
+    "GRP-0265"
+   ],
+   "GRP-0266": [
+    "GRP-0266"
+   ],
+   "GRP-0267": [
+    "GRP-0267"
+   ],
+   "GRP-0268": [
+    "GRP-0268"
+   ],
+   "GRP-0269": [
+    "GRP-0269"
+   ],
+   "GRP-0270": [
+    "GRP-0270"
+   ],
+   "GRP-0271": [
+    "GRP-0271"
+   ],
+   "GRP-0272": [
+    "GRP-0272"
+   ],
+   "GRP-0273": [
+    "GRP-0273"
+   ],
+   "GRP-0274": [
+    "GRP-0274"
+   ],
+   "GRP-0275": [
+    "GRP-0275"
+   ],
+   "GRP-0276": [
+    "GRP-0276"
+   ],
+   "GRP-0277": [
+    "GRP-0277"
+   ],
+   "GRP-0278": [
+    "GRP-0278"
+   ],
+   "GRP-0279": [
+    "GRP-0279"
+   ],
+   "GRP-0280": [
+    "GRP-0280"
+   ],
+   "GRP-0281": [
+    "GRP-0281"
+   ],
+   "GRP-0282": [
+    "GRP-0282"
+   ],
+   "GRP-0283": [
+    "GRP-0283"
+   ],
+   "GRP-0284": [
+    "GRP-0284"
+   ],
+   "GRP-0285": [
+    "GRP-0285"
+   ],
+   "GRP-0286": [
+    "GRP-0286"
+   ],
+   "GRP-0287": [
+    "GRP-0287"
+   ],
+   "GRP-0288": [
+    "GRP-0288"
+   ],
+   "GRP-0289": [
+    "GRP-0289"
+   ],
+   "GRP-0290": [
+    "GRP-0290"
+   ],
+   "GRP-0291": [
+    "GRP-0291"
+   ],
+   "GRP-0292": [
+    "GRP-0292"
+   ],
+   "GRP-0293": [
+    "GRP-0293"
+   ],
+   "GRP-0294": [
+    "GRP-0294"
+   ],
+   "GRP-0295": [
+    "GRP-0295"
+   ],
+   "GRP-0296": [
+    "GRP-0296"
+   ],
+   "GRP-0297": [
+    "GRP-0297"
+   ],
+   "GRP-0298": [
+    "GRP-0298"
+   ],
+   "GRP-0299": [
+    "GRP-0299"
+   ],
+   "GRP-0300": [
+    "GRP-0300"
+   ],
+   "GRP-0301": [
+    "GRP-0301"
+   ],
+   "GRP-0302": [
+    "GRP-0302"
+   ],
+   "GRP-0303": [
+    "GRP-0303"
+   ],
+   "GRP-0305": [
+    "GRP-0305"
+   ],
+   "GRP-0304": [
+    "GRP-0304"
+   ],
+   "GRP-0306": [
+    "GRP-0306"
+   ],
+   "GRP-0307": [
+    "GRP-0307"
+   ],
+   "GRP-0308": [
+    "GRP-0308"
+   ],
+   "GRP-0309": [
+    "GRP-0309"
+   ],
+   "GRP-0310": [
+    "GRP-0310"
+   ],
+   "GRP-0311": [
+    "GRP-0311"
+   ],
+   "GRP-0312": [
+    "GRP-0312"
+   ],
+   "GRP-0313": [
+    "GRP-0313"
+   ],
+   "GRP-0314": [
+    "GRP-0314"
+   ],
+   "GRP-0315": [
+    "GRP-0315"
+   ],
+   "GRP-0316": [
+    "GRP-0316"
+   ],
+   "GRP-0317": [
+    "GRP-0317"
+   ],
+   "GRP-0318": [
+    "GRP-0318"
+   ],
+   "GRP-0319": [
+    "GRP-0319"
+   ],
+   "GRP-0320": [
+    "GRP-0320"
+   ],
+   "GRP-0321": [
+    "GRP-0321"
+   ],
+   "GRP-0322": [
+    "GRP-0322"
+   ],
+   "GRP-0323": [
+    "GRP-0323"
+   ],
+   "GRP-0324": [
+    "GRP-0324"
+   ],
+   "GRP-0325": [
+    "GRP-0325"
+   ],
+   "GRP-0326": [
+    "GRP-0326"
+   ],
+   "GRP-0327": [
+    "GRP-0327"
+   ],
+   "GRP-0329": [
+    "GRP-0329"
+   ],
+   "GRP-0328": [
+    "GRP-0328"
+   ],
+   "GRP-0330": [
+    "GRP-0330"
+   ],
+   "GRP-0331": [
+    "GRP-0331"
+   ],
+   "GRP-0332": [
+    "GRP-0332"
+   ],
+   "GRP-0333": [
+    "GRP-0333"
+   ],
+   "GRP-0334": [
+    "GRP-0334"
+   ],
+   "GRP-0335": [
+    "GRP-0335"
+   ],
+   "GRP-0336": [
+    "GRP-0336"
+   ],
+   "GRP-0337": [
+    "GRP-0337"
+   ],
+   "GRP-0338": [
+    "GRP-0338"
+   ],
+   "GRP-0339": [
+    "GRP-0339"
+   ],
+   "GRP-0340": [
+    "GRP-0340"
+   ],
+   "GRP-0341": [
+    "GRP-0341"
+   ],
+   "GRP-0342": [
+    "GRP-0342"
+   ],
+   "GRP-0343": [
+    "GRP-0343"
+   ],
+   "GRP-0344": [
+    "GRP-0344"
+   ],
+   "GRP-0345": [
+    "GRP-0345"
+   ],
+   "GRP-0346": [
+    "GRP-0346"
+   ],
+   "GRP-0347": [
+    "GRP-0347"
+   ],
+   "GRP-0348": [
+    "GRP-0348"
+   ],
+   "GRP-0349": [
+    "GRP-0349"
+   ],
+   "GRP-0350": [
+    "GRP-0350"
+   ],
+   "GRP-0351": [
+    "GRP-0351"
+   ],
+   "GRP-0352": [
+    "GRP-0352"
+   ],
+   "GRP-0353": [
+    "GRP-0353"
+   ],
+   "GRP-0354": [
+    "GRP-0354"
+   ],
+   "GRP-0355": [
+    "GRP-0355"
+   ],
+   "GRP-0356": [
+    "GRP-0356"
+   ],
+   "GRP-0357": [
+    "GRP-0357"
+   ],
+   "GRP-0358": [
+    "GRP-0358"
+   ],
+   "GRP-0360": [
+    "GRP-0360"
+   ],
+   "GRP-0359": [
+    "GRP-0359"
+   ],
+   "GRP-0361": [
+    "GRP-0361"
+   ],
+   "GRP-0392": [
+    "GRP-0392"
+   ],
+   "GRP-0393": [
+    "GRP-0393"
+   ],
+   "GRP-0394": [
+    "GRP-0394"
+   ],
+   "GRP-0396": [
+    "GRP-0396"
+   ],
+   "GRP-0397": [
+    "GRP-0397"
+   ],
+   "GRP-0398": [
+    "GRP-0398"
+   ],
+   "GRP-0391": [
+    "GRP-0391"
+   ],
+   "GRP-0399": [
+    "GRP-0399"
+   ],
+   "GRP-0400": [
+    "GRP-0400"
+   ],
+   "GRP-0401": [
+    "GRP-0401"
+   ],
+   "GRP-0403": [
+    "GRP-0403"
+   ],
+   "GRP-0404": [
+    "GRP-0404"
+   ],
+   "GRP-0405": [
+    "GRP-0405"
+   ],
+   "GRP-0406": [
+    "GRP-0406"
+   ],
+   "GRP-0408": [
+    "GRP-0408"
+   ],
+   "GRP-0409": [
+    "GRP-0409"
+   ],
+   "GRP-0410": [
+    "GRP-0410"
+   ],
+   "GRP-0411": [
+    "GRP-0411"
+   ],
+   "GRP-0414": [
+    "GRP-0414"
+   ],
+   "GRP-0412": [
+    "GRP-0412"
+   ],
+   "GRP-0413": [
+    "GRP-0413"
+   ],
+   "GRP-0415": [
+    "GRP-0415"
+   ],
+   "GRP-0416": [
+    "GRP-0416"
+   ],
+   "GRP-0388": [
+    "GRP-0388"
+   ],
+   "GRP-0389": [
+    "GRP-0389"
+   ],
+   "GRP-0390": [
+    "GRP-0390"
+   ],
+   "GRP-0417": [
+    "GRP-0417"
+   ],
+   "GRP-0362": [
+    "GRP-0362"
+   ],
+   "GRP-0363": [
+    "GRP-0363"
+   ],
+   "GRP-0364": [
+    "GRP-0364"
+   ],
+   "GRP-0365": [
+    "GRP-0365"
+   ],
+   "GRP-0366": [
+    "GRP-0366"
+   ],
+   "GRP-0367": [
+    "GRP-0367"
+   ],
+   "GRP-0368": [
+    "GRP-0368"
+   ],
+   "GRP-0369": [
+    "GRP-0369"
+   ],
+   "GRP-0370": [
+    "GRP-0370"
+   ],
+   "GRP-0371": [
+    "GRP-0371"
+   ],
+   "GRP-0372": [
+    "GRP-0372"
+   ],
+   "GRP-0373": [
+    "GRP-0373"
+   ],
+   "GRP-0374": [
+    "GRP-0374"
+   ],
+   "GRP-0375": [
+    "GRP-0375"
+   ],
+   "GRP-0376": [
+    "GRP-0376"
+   ],
+   "GRP-0377": [
+    "GRP-0377"
+   ],
+   "GRP-0378": [
+    "GRP-0378"
+   ],
+   "GRP-0379": [
+    "GRP-0379"
+   ],
+   "GRP-0380": [
+    "GRP-0380"
+   ],
+   "GRP-0381": [
+    "GRP-0381"
+   ],
+   "GRP-0382": [
+    "GRP-0382"
+   ],
+   "GRP-0383": [
+    "GRP-0383"
+   ],
+   "GRP-0384": [
+    "GRP-0384"
+   ],
+   "GRP-0385": [
+    "GRP-0385"
+   ],
+   "GRP-0386": [
+    "GRP-0386"
+   ],
+   "GRP-0387": [
+    "GRP-0387"
+   ],
+   "GRP-0420": [
+    "GRP-0420"
+   ],
+   "GRP-0421": [
+    "GRP-0421"
+   ],
+   "GRP-0422": [
+    "GRP-0422"
+   ],
+   "GRP-0423": [
+    "GRP-0423"
+   ],
+   "GRP-0424": [
+    "GRP-0424"
+   ]
+  },
+  "commerceHeldRows": [
+   "GRP-0422"
+  ]
+ },
+ "canonicalProductCount": 424,
+ "variantCount": 424,
  "invariants": {
   "containsSupplierIdentity": false,
   "containsWholesaleCost": false,
@@ -9016,30 +10303,6 @@
    ]
   },
   {
-   "id": "mo_2aaac3a06aa0dd6b2923",
-   "slug": "research-peptides-materials-hexarelin-hexarelin-5mg",
-   "displayName": "Hexarelin",
-   "canonicalName": "Hexarelin",
-   "family": "research_peptides_materials",
-   "category": "Research Peptides & Materials",
-   "subcategory": "Form not stated",
-   "brand": null,
-   "aliases": [
-    "Hexarelin",
-    "Hexarelin (5mg)"
-   ],
-   "displayState": "approval_required",
-   "stateExplanation": "Visible while classification and documentation are completed. Register interest and the team follows up when it activates.",
-   "copyState": "draft",
-   "variants": [
-    {
-     "id": "mov_7c55d415a9574e9ebda7",
-     "label": "Hexarelin (5mg)",
-     "displayState": "approval_required"
-    }
-   ]
-  },
-  {
    "id": "mo_b223f1eabb29e09a69e9",
    "slug": "research-peptides-materials-igf-1-des-igf-1-des-1mg",
    "displayName": "IGF-1 DES",
@@ -9107,30 +10370,6 @@
     {
      "id": "mov_d2bd32bf961854a033b1",
      "label": "MGF (IGF-1Ec) (5mg)",
-     "displayState": "approval_required"
-    }
-   ]
-  },
-  {
-   "id": "mo_1dd0658eb7bf15f91900",
-   "slug": "research-peptides-materials-oxytocin-oxytocin-10mg",
-   "displayName": "Oxytocin",
-   "canonicalName": "Oxytocin",
-   "family": "research_peptides_materials",
-   "category": "Research Peptides & Materials",
-   "subcategory": "Form not stated",
-   "brand": null,
-   "aliases": [
-    "Oxytocin",
-    "Oxytocin (10mg)"
-   ],
-   "displayState": "approval_required",
-   "stateExplanation": "Visible while classification and documentation are completed. Register interest and the team follows up when it activates.",
-   "copyState": "draft",
-   "variants": [
-    {
-     "id": "mov_256cb0423eb6d2a77f65",
-     "label": "Oxytocin (10mg)",
      "displayState": "approval_required"
     }
    ]
@@ -10091,6 +11330,150 @@
     {
      "id": "mov_ea6077e070c07548c709",
      "label": "Radient XO Serum (5 Billion Exosomes)",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_c4698a34aaaf7aec47b2",
+   "slug": "research-peptides-materials-retatrutide-retatrutide-60-mg",
+   "displayName": "Retatrutide",
+   "canonicalName": "Retatrutide",
+   "family": "research_peptides_materials",
+   "category": "Research Peptides & Materials",
+   "subcategory": "Lyophilized Vial",
+   "brand": null,
+   "aliases": [
+    "Retatrutide",
+    "RETATRUTIDE 60 mg"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Research use only. Request access and the team confirms availability for this exact item.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_14b4034bef7ef37d9fc8",
+     "label": "RETATRUTIDE 60 mg",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_2babbadce5172426bde2",
+   "slug": "research-peptides-materials-cjc-1295-plus-ipamorelin-cjc-1295-with-dac-plus-ipamorelin-5-mg-total",
+   "displayName": "CJC-1295 + Ipamorelin",
+   "canonicalName": "CJC-1295 + Ipamorelin",
+   "family": "research_peptides_materials",
+   "category": "Research Peptides & Materials",
+   "subcategory": "Lyophilized Vial",
+   "brand": null,
+   "aliases": [
+    "CJC-1295 + Ipamorelin",
+    "CJC-1295 WITH DAC + IPAMORELIN 5 mg total"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Research use only. Request access and the team confirms availability for this exact item.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_f61758881da2b7bfa539",
+     "label": "CJC-1295 WITH DAC + IPAMORELIN 5 mg total",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_f40119d9a74b2af15be6",
+   "slug": "research-peptides-materials-mots-c-mots-c-40-mg",
+   "displayName": "MOTS-C",
+   "canonicalName": "MOTS-C",
+   "family": "research_peptides_materials",
+   "category": "Research Peptides & Materials",
+   "subcategory": "Lyophilized Vial",
+   "brand": null,
+   "aliases": [
+    "MOTS-C",
+    "MOTS-C 40 mg"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Research use only. Request access and the team confirms availability for this exact item.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_cb3642e564392fa86dda",
+     "label": "MOTS-C 40 mg",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_c77c4659a519b58ac795",
+   "slug": "research-peptides-materials-glutathione-glutathione-600-mg",
+   "displayName": "Glutathione",
+   "canonicalName": "Glutathione",
+   "family": "research_peptides_materials",
+   "category": "Research Peptides & Materials",
+   "subcategory": "Lyophilized Vial",
+   "brand": null,
+   "aliases": [
+    "Glutathione",
+    "GLUTATHIONE 600 mg"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Research use only. Request access and the team confirms availability for this exact item.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_be54afb7419ed7240752",
+     "label": "GLUTATHIONE 600 mg",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_3eec45f31e19795343f1",
+   "slug": "research-peptides-materials-oxytocin-oxytocin-10-mg",
+   "displayName": "Oxytocin",
+   "canonicalName": "Oxytocin",
+   "family": "research_peptides_materials",
+   "category": "Research Peptides & Materials",
+   "subcategory": "Lyophilized Vial",
+   "brand": null,
+   "aliases": [
+    "Oxytocin",
+    "OXYTOCIN 10 mg"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Research use only. Request access and the team confirms availability for this exact item.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_c26ef47dfbbe46f7e090",
+     "label": "OXYTOCIN 10 mg",
+     "displayState": "request_access"
+    }
+   ]
+  },
+  {
+   "id": "mo_a535d8a2951bc7c6c0a3",
+   "slug": "research-peptides-materials-hexarelin-hexarelin-5-mg",
+   "displayName": "Hexarelin",
+   "canonicalName": "Hexarelin",
+   "family": "research_peptides_materials",
+   "category": "Research Peptides & Materials",
+   "subcategory": "Lyophilized Vial",
+   "brand": null,
+   "aliases": [
+    "Hexarelin",
+    "HEXARELIN 5 mg"
+   ],
+   "displayState": "request_access",
+   "stateExplanation": "Research use only. Request access and the team confirms availability for this exact item.",
+   "copyState": "draft",
+   "variants": [
+    {
+     "id": "mov_3c8ca424d78153fd931a",
+     "label": "HEXARELIN 5 mg",
      "displayState": "request_access"
     }
    ]

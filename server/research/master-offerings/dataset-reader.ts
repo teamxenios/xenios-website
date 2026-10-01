@@ -23,6 +23,12 @@
 
 import fs from "node:fs";
 import {
+  assertDatasetReconciliationAuthority,
+  readPinnedReconciliationAuthority,
+  RECONCILED_WORKBOOK_SHA256,
+  type ReviewedReconciliationAuthority,
+} from "./reconciliation-authority";
+import {
   MASTER_OFFERING_COPY_STATES,
   isMasterOfferingDisplayState,
   isMasterOfferingFamily,
@@ -321,6 +327,7 @@ function readOffering(value: unknown): NormalizedMasterOffering {
  */
 export function loadMasterOfferingDataset(
   raw: unknown,
+  reconciliationAuthority?: ReviewedReconciliationAuthority,
 ): LoadedMasterOfferingDataset {
   if (!isRecord(raw)) {
     throw new MasterOfferingDatasetUnavailable("dataset is not an object");
@@ -329,6 +336,11 @@ export function loadMasterOfferingDataset(
     throw new MasterOfferingDatasetUnavailable(
       `unsupported schema version ${String(raw.schemaVersion)}`,
     );
+  }
+  try {
+    assertDatasetReconciliationAuthority(raw, reconciliationAuthority);
+  } catch {
+    throw new MasterOfferingDatasetUnavailable("dataset reconciliation does not match the pinned authority");
   }
   if (!isRecord(raw.invariants)) {
     throw new MasterOfferingDatasetUnavailable("dataset declares no invariants");
@@ -434,6 +446,7 @@ export class GeneratedMasterOfferingCatalogReader
   constructor(
     private readonly filePath: string,
     private readonly files: DatasetFileSystem = nodeFileSystem,
+    private readonly reconciliationRoot: string = process.cwd(),
   ) {
     if (!filePath.trim()) {
       throw new MasterOfferingDatasetUnavailable("no dataset path configured");
@@ -456,7 +469,15 @@ export class GeneratedMasterOfferingCatalogReader
     } catch {
       throw new MasterOfferingDatasetUnavailable("dataset is not valid JSON");
     }
-    const loaded = loadMasterOfferingDataset(parsed);
+    const needsAuthority = isRecord(parsed) &&
+      (parsed.sourceWorkbookSha256 === RECONCILED_WORKBOOK_SHA256 || parsed.reconciliation !== undefined);
+    let authority: ReviewedReconciliationAuthority | undefined;
+    try {
+      authority = needsAuthority ? readPinnedReconciliationAuthority(this.reconciliationRoot) : undefined;
+    } catch {
+      throw new MasterOfferingDatasetUnavailable("pinned reconciliation authority is unavailable");
+    }
+    const loaded = loadMasterOfferingDataset(parsed, authority);
     // Pay the search normalization cost here, once per dataset, rather than on
     // whichever member happens to type the first query.
     warmMasterOfferingSearch(loaded.products);
@@ -510,7 +531,7 @@ export function createMasterOfferingCatalogReaderFromEnv(
 ): GeneratedMasterOfferingCatalogReader | null {
   const location = resolveMasterOfferingDatasetLocation({ env, cwd, probe });
   if (location === null) return null;
-  return new GeneratedMasterOfferingCatalogReader(location.filePath, files);
+  return new GeneratedMasterOfferingCatalogReader(location.filePath, files, cwd);
 }
 
 /**

@@ -1,12 +1,12 @@
 {
  "schemaVersion": 1,
  "input": {
-  "filename": "XENIOS_MASTER_CATALOG_ONLY_2026-08-13.xlsx",
-  "sha256": "1be4f6720675fc6b90c172d52c19d2fb9a8d53f5beab6592ca96c701119c791d",
+  "filename": "XENIOS_MASTER_CATALOG_AFFILIATE_PRICING_2026-08-16.xlsx",
+  "sha256": "6478ad0d3f710b75c6bf0c5f5e56ff1189ab2a2a4439cab23c2a28498134ea6f",
   "sheet": "MASTER CATALOG"
  },
  "output": {
-  "directory": "C:\\xenios-wt\\fable-p0-kris-parity\\server\\research\\master-offerings\\data",
+  "directory": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data",
   "files": [
    "member-safe-master-offerings.generated.json",
    "master-offerings-audit.generated.json",

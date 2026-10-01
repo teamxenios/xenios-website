@@ -33,7 +33,7 @@ import {
   type ResolvedAssistedOrderAuditAuthority,
 } from "./audit-store";
 import { enqueueNotificationOnce } from "../outbox";
-import { reviewedHeldSpecifications } from "../master-offerings/reviewed-holds";
+import { reviewedHeldVariantIds } from "../master-offerings/reviewed-holds";
 
 export const ASSISTED_ORDER_BRIDGE_ENABLED_ENV_VAR =
   "RESEARCH_ASSISTED_ORDER_BRIDGE_ENABLED";
@@ -127,7 +127,7 @@ export function buildAssistedOrderProduction(
       // formulation holds as the canonical member catalog. Reading the
       // fail-closed record here makes the production seam impossible to
       // compose with an accidental empty/default hold set.
-      reviewedFormulationHolds: reviewedHeldSpecifications(),
+      reviewedFormulationHoldVariantIds: reviewedHeldVariantIds(),
     }),
   );
 

@@ -136,6 +136,10 @@ export interface MasterOfferingPathwaySubject {
    * Supplied by the server composition, which reads the founder's record.
    */
   reviewedHolds?: ReadonlySet<string> | null;
+  /** Exact canonical identity supplied by the server's selected catalog row. */
+  offeringVariantId?: string;
+  /** Structured reviewed policy. Absence is not an empty resolved authority. */
+  reviewedHoldVariantIds?: ReadonlySet<string> | null;
 }
 
 /**
@@ -163,6 +167,13 @@ export function directPurchaseRefusal(
   // The founder's fourth clause: no explicit hold. A row whose own
   // specification declares its composition unresolved cannot be sold, however
   // complete its family, classification and price are.
+  if (subject.reviewedHoldVariantIds !== undefined &&
+      (subject.reviewedHoldVariantIds === null || !subject.offeringVariantId ||
+       subject.reviewedHoldVariantIds.has(subject.offeringVariantId))) {
+    return "formulation_hold";
+  }
+  // Legacy declared markers remain a conservative refusal for unreconciled
+  // source fixtures. Production reviewed policy never matches display text.
   if (isFormulationHeld(subject.specification, subject.reviewedHolds)) {
     return "formulation_hold";
   }
