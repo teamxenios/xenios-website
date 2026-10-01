@@ -38,7 +38,7 @@
       "id": "HEALTH-HL12-ADP02-PROVIDER-CREATE-RECOVERY-20261001",
       "title": "Durable provider create ownership, response recovery and write-once external identity binding",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "paths": [
         "server/research/assisted-order/payment/provider-execution*",
@@ -56,7 +56,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Continue same branch after frozen ADP01 aggregate and pushed handoff77cdeae. Source-local/disposable SQL only: derive claims from immutable existing attempts, separate create grants/policy, fixed replay guarantee, retain late responses/conflicts, write-once scoped identity, no settlement/paid/refund/no-funds inference. Preserve journal-v2 held contract and all existing uncertainty guards; new execution readiness must require exact additive schema. Do not rewrite old migration bytes or weaken protection gates. Production source remains null, no webhook/live provider/configuration/grant/email/money. Root owns composition/records/controls; subagent ownership allocated explicitly before writing. Foreign imagery/media paths forbidden.",
-      "claimedAt": "2026-10-01T10:28:15.372Z"
+      "claimedAt": "2026-10-01T10:28:15.372Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "9aa4700f8329f1b22736bd4bd8c3aefc788b0f8d",
+        "file": ".xenios/handoffs/2026-10-01T11-54-53-512Z-HEALTH-HL12-ADP02-PROVIDER-CREATE-RECOVERY-20261001-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-01T11:54:53.523Z"
+      }
     },
     {
       "id": "HEALTH-HL12-ADP01-DURABLE-PROVIDER-HOLD-20261001",
