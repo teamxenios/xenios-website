@@ -1,0 +1,8 @@
+EXTRA cases for 268e691 (same substitutions as the main probe)
+CASE {"case":"X1 historical supplier_processing (passed through UNVERIFIED paid) -> shipped -> delivered via HTTP","result":{"shipped":[200,null],"delivered":[200,null],"requestStatus":"delivered","verifications":"0"}}
+CASE {"case":"X2 verify with UPPERCASE request id","result":{"first":[500,"assisted_order_unavailable"],"retry":[500,"assisted_order_unavailable"],"requestStatus":"paid","verifications_paidEvents":"1/1","effects":{"outbox":0,"audit":0,"message":null}}}
+CASE {"case":"X2b lowercase retry","result":{"status":200,"effects":{"outbox":1,"audit":1,"message":"Payment verified. Fulfillment is reviewed separately."}}}
+CASE {"case":"X3 effects interrupted, then observer grant revoked","result":{"first":[503,"payment_verification_effects_pending"],"retryRevoked":[403,"forbidden"],"retryOtherAdmin":[403,"forbidden"],"requestStatus":"paid","effects":{"outbox":0,"audit":1,"message":null}}}
+CASE {"case":"X5 quantity 150 line: submit, issue, owner GET quote (server)","result":{"issue":[201,null],"ownerGet":[200,150,75000]}}
+CASE {"case":"X4 app-before-230541: cancel payment_pending (no observation) when financial_state is absent","result":{"status":500,"code":"assisted_order_unavailable","requestStatus":"payment_pending"}}
+CASE {"case":"Z rollback delta","result":2}
