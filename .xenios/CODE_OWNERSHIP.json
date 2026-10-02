@@ -3222,7 +3222,7 @@
         ".xenios/messages/*codex-xenios-product-imagery-20260930*",
         ".xenios/handoffs/*XENIOS-PRODUCT-IMAGERY-20260930*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-02T02:05:05.527Z",
       "heartbeatAt": "2026-10-02T02:05:05.624Z"
     }
