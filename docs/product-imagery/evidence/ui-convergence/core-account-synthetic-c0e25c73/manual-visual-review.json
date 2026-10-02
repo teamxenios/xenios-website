@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "kind": "manual-screenshot-privacy-and-layout-review",
+  "sourceCommit": "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
+  "sourceTree": "1771d18bad91b89e95414bebb8b574dc32729687",
+  "reviewScope": "six exact-Core dev-only synthetic account, order-history, and order-detail screenshots",
+  "reviewedCaptures": 6,
+  "desktopCaptures": 3,
+  "mobileCaptures": 3,
+  "observations": {
+    "realCustomerDataObserved": false,
+    "realCredentialsObserved": false,
+    "syntheticFixtureIdentityVisible": true,
+    "syntheticInvalidDomainAddressVisibleOnOverview": true,
+    "horizontalOverflowObserved": false,
+    "truncatedFullPageCaptureObserved": false,
+    "brokenLayoutObserved": false
+  },
+  "result": "PASS_SYNTHETIC_PRESENTATION_ONLY",
+  "limitations": [
+    "The screenshots are UI-presentation evidence from a development-only fixture harness.",
+    "They do not prove authentication, routing guards, live APIs, Product Control, pricing, payment, fulfillment, runtime integration, publication, deployment, or production readiness."
+  ]
+}

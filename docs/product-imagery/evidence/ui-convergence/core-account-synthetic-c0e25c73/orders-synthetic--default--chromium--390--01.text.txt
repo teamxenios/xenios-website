@@ -1,0 +1,103 @@
+Skip to account content
+
+XENIOS / RESEARCH + CARE
+
+One private view for account access, commerce and billing history, Care operations, and support.
+
+PRIVATE ACCOUNT
+Overview
+Commerce
+Browse products
+Billing history
+Care status
+Interests
+Documents
+Profile
+Security
+Support
+
+COMMERCE + FULFILLMENT
+
+Commerce history, without ambiguity.
+
+Research commerce records and Care/pharmacy fulfillment remain visibly separate.
+
+RESEARCH COMMERCE HISTORY
+
+Records and available status
+
+Payment, fulfillment, tracking, and approved lot-document availability are shown only when the commerce record carries that evidence.
+
+PARTIAL HISTORY · TOTAL UNAVAILABLE
+
+Some commerce history is currently unavailable.
+
+These sources do not provide a complete history: Research cart checkouts (XEC), assisted order requests (XRR).
+
+REQUEST
+
+XRR-20260820-TESTFIX01
+
+Example Research Material A
+
+10 mg
+
+Requested
+Aug 20, 2026
+Quantity
+2
+Lot / COA
+Approved document not shown
+PAYMENT: UNPAID
+FULFILLMENT: UNFULFILLED
+Open record details
+
+REQUEST
+
+XRR-20260811-TESTFIX02
+
+Example Research Material B
+
+5 mg
+
+Requested
+Aug 11, 2026
+Quantity
+1
+Lot / COA
+Approved document available
+PAYMENT: PAID
+FULFILLMENT: SHIPPED
+Open record details
+Track shipment
+Open documents
+Assisted order requests (XRR)
+
+Requests are separate from order records. A request status or estimate does not establish captured payment, a carrier, or a shipment.
+
+Assisted request history is unavailable.
+
+This is not confirmation that no requests exist.
+
+CARE / PHARMACY
+
+Separate operational fulfillment
+
+Care intake, provider review, and pharmacy fulfillment remain separate from Research commerce records and membership.
+
+1 RECORD
+
+UPDATED AUG 24, 2026, 10:30 AM
+
+Care fulfillment record
+Intake
+Submitted
+Provider review
+Pending
+Pharmacy
+None
+NONE
+
+Administrative account information only. Care, provider review, and pharmacy fulfillment remain separate.
+
+Privacy

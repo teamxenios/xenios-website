@@ -1,0 +1,302 @@
+{
+  "schemaVersion": 1,
+  "kind": "exact-core-dev-only-synthetic-account-order-ui-evidence",
+  "capturedAt": "2026-10-02T02:23:42.502Z",
+  "claimScope": "UI_PRESENTATION_ONLY",
+  "source": {
+    "commit": "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
+    "tree": "1771d18bad91b89e95414bebb8b574dc32729687",
+    "harness": "client/src/research/account-portal/review/index.html",
+    "fixture": "shared/research/customer-account/fixtures.ts",
+    "captureHelper": {
+      "path": "scripts/product-imagery/capture-core-account-reference.mjs",
+      "sha256": "63ca94d8ebe46700eb12d8f1a29e7eba3ee0846124133751d885169119416fb1"
+    }
+  },
+  "execution": {
+    "loopbackOnly": true,
+    "coreSourceEdited": false,
+    "realCredentialsUsed": false,
+    "realCustomerDataUsed": false,
+    "hostedReadsOrWrites": false,
+    "productionMutation": false
+  },
+  "limitations": {
+    "provesUiPresentationOnly": true,
+    "provesAuthentication": false,
+    "provesLiveApiAdapters": false,
+    "provesProductControl": false,
+    "provesPricingAvailabilityOrCommerce": false,
+    "provesDependencyInstallSeal": false,
+    "grantsRuntimePublicationDeploymentOrProductionApproval": false
+  },
+  "counts": {
+    "screens": 3,
+    "viewports": 2,
+    "captures": 6,
+    "horizontalOverflow": 0,
+    "severeConsoleMessages": 0,
+    "failedResponses": 0,
+    "networkBoundaryViolations": 0
+  },
+  "captures": [
+    {
+      "name": "account-overview-synthetic--default--chromium--1440--01",
+      "screen": "overview",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "urlPath": "/src/research/account-portal/review/index.html?screen=overview",
+      "png": "docs/product-imagery/evidence/ui-convergence/core-account-synthetic-c0e25c73/account-overview-synthetic--default--chromium--1440--01.png",
+      "text": "docs/product-imagery/evidence/ui-convergence/core-account-synthetic-c0e25c73/account-overview-synthetic--default--chromium--1440--01.text.txt",
+      "pngSha256": "f71e8e3a27ee2cbf6cfd842940e760c0c6f4576c7f35a04f6a1e3d6b9e9a945f",
+      "pngBytes": 240947,
+      "dimensions": {
+        "width": 1440,
+        "height": 3450
+      },
+      "coverage": {
+        "fullPage": true,
+        "truncated": false,
+        "layoutStable": true,
+        "contentWidthCssPx": 1440,
+        "contentHeightCssPx": 3450,
+        "postContentWidthCssPx": 1440,
+        "postContentHeightCssPx": 3450,
+        "maxHeightCssPx": 24000,
+        "devicePixelRatio": 1,
+        "capturedWidthPx": 1440,
+        "capturedHeightPx": 3450
+      },
+      "assertions": {
+        "exactCoreSha": true,
+        "exactCoreTree": true,
+        "loopbackOnly": true,
+        "syntheticRepositoryFixturesOnly": true,
+        "authenticatedSessionProven": false,
+        "liveApiProven": false,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "failedResponses": 0,
+        "networkBoundaryViolations": 0
+      }
+    },
+    {
+      "name": "account-overview-synthetic--default--chromium--390--01",
+      "screen": "overview",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "urlPath": "/src/research/account-portal/review/index.html?screen=overview",
+      "png": "docs/product-imagery/evidence/ui-convergence/core-account-synthetic-c0e25c73/account-overview-synthetic--default--chromium--390--01.png",
+      "text": "docs/product-imagery/evidence/ui-convergence/core-account-synthetic-c0e25c73/account-overview-synthetic--default--chromium--390--01.text.txt",
+      "pngSha256": "6e0a6d3e3bc2402cdaf491b0b1958a5cdb2b712444a3dc178cab9dadd69e28b7",
+      "pngBytes": 200564,
+      "dimensions": {
+        "width": 390,
+        "height": 5605
+      },
+      "coverage": {
+        "fullPage": true,
+        "truncated": false,
+        "layoutStable": true,
+        "contentWidthCssPx": 390,
+        "contentHeightCssPx": 5605,
+        "postContentWidthCssPx": 390,
+        "postContentHeightCssPx": 5605,
+        "maxHeightCssPx": 24000,
+        "devicePixelRatio": 1,
+        "capturedWidthPx": 390,
+        "capturedHeightPx": 5605
+      },
+      "assertions": {
+        "exactCoreSha": true,
+        "exactCoreTree": true,
+        "loopbackOnly": true,
+        "syntheticRepositoryFixturesOnly": true,
+        "authenticatedSessionProven": false,
+        "liveApiProven": false,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "failedResponses": 0,
+        "networkBoundaryViolations": 0
+      }
+    },
+    {
+      "name": "orders-synthetic--default--chromium--1440--01",
+      "screen": "orders",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "urlPath": "/src/research/account-portal/review/index.html?screen=orders",
+      "png": "docs/product-imagery/evidence/ui-convergence/core-account-synthetic-c0e25c73/orders-synthetic--default--chromium--1440--01.png",
+      "text": "docs/product-imagery/evidence/ui-convergence/core-account-synthetic-c0e25c73/orders-synthetic--default--chromium--1440--01.text.txt",
+      "pngSha256": "075cb3dbf9d1b58a68277e9bed4e46309b8b2734e062f1aad5aa1f69de6ba175",
+      "pngBytes": 159653,
+      "dimensions": {
+        "width": 1440,
+        "height": 2640
+      },
+      "coverage": {
+        "fullPage": true,
+        "truncated": false,
+        "layoutStable": true,
+        "contentWidthCssPx": 1440,
+        "contentHeightCssPx": 2640,
+        "postContentWidthCssPx": 1440,
+        "postContentHeightCssPx": 2640,
+        "maxHeightCssPx": 24000,
+        "devicePixelRatio": 1,
+        "capturedWidthPx": 1440,
+        "capturedHeightPx": 2640
+      },
+      "assertions": {
+        "exactCoreSha": true,
+        "exactCoreTree": true,
+        "loopbackOnly": true,
+        "syntheticRepositoryFixturesOnly": true,
+        "authenticatedSessionProven": false,
+        "liveApiProven": false,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "failedResponses": 0,
+        "networkBoundaryViolations": 0
+      }
+    },
+    {
+      "name": "orders-synthetic--default--chromium--390--01",
+      "screen": "orders",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "urlPath": "/src/research/account-portal/review/index.html?screen=orders",
+      "png": "docs/product-imagery/evidence/ui-convergence/core-account-synthetic-c0e25c73/orders-synthetic--default--chromium--390--01.png",
+      "text": "docs/product-imagery/evidence/ui-convergence/core-account-synthetic-c0e25c73/orders-synthetic--default--chromium--390--01.text.txt",
+      "pngSha256": "7b8f3b3eaea32e212c778db24eb3477dcdbffaf5c3214066268badd36d2c1da7",
+      "pngBytes": 128161,
+      "dimensions": {
+        "width": 390,
+        "height": 3630
+      },
+      "coverage": {
+        "fullPage": true,
+        "truncated": false,
+        "layoutStable": true,
+        "contentWidthCssPx": 390,
+        "contentHeightCssPx": 3630,
+        "postContentWidthCssPx": 390,
+        "postContentHeightCssPx": 3630,
+        "maxHeightCssPx": 24000,
+        "devicePixelRatio": 1,
+        "capturedWidthPx": 390,
+        "capturedHeightPx": 3630
+      },
+      "assertions": {
+        "exactCoreSha": true,
+        "exactCoreTree": true,
+        "loopbackOnly": true,
+        "syntheticRepositoryFixturesOnly": true,
+        "authenticatedSessionProven": false,
+        "liveApiProven": false,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "failedResponses": 0,
+        "networkBoundaryViolations": 0
+      }
+    },
+    {
+      "name": "order-detail-synthetic--default--chromium--1440--01",
+      "screen": "order-detail",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "urlPath": "/src/research/account-portal/review/index.html?screen=order-detail",
+      "png": "docs/product-imagery/evidence/ui-convergence/core-account-synthetic-c0e25c73/order-detail-synthetic--default--chromium--1440--01.png",
+      "text": "docs/product-imagery/evidence/ui-convergence/core-account-synthetic-c0e25c73/order-detail-synthetic--default--chromium--1440--01.text.txt",
+      "pngSha256": "1e34f905a2d1401540eb87d905e418c37dffa402c6930bf200dd1554d68c48da",
+      "pngBytes": 117443,
+      "dimensions": {
+        "width": 1440,
+        "height": 1965
+      },
+      "coverage": {
+        "fullPage": true,
+        "truncated": false,
+        "layoutStable": true,
+        "contentWidthCssPx": 1440,
+        "contentHeightCssPx": 1965,
+        "postContentWidthCssPx": 1440,
+        "postContentHeightCssPx": 1965,
+        "maxHeightCssPx": 24000,
+        "devicePixelRatio": 1,
+        "capturedWidthPx": 1440,
+        "capturedHeightPx": 1965
+      },
+      "assertions": {
+        "exactCoreSha": true,
+        "exactCoreTree": true,
+        "loopbackOnly": true,
+        "syntheticRepositoryFixturesOnly": true,
+        "authenticatedSessionProven": false,
+        "liveApiProven": false,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "failedResponses": 0,
+        "networkBoundaryViolations": 0
+      }
+    },
+    {
+      "name": "order-detail-synthetic--default--chromium--390--01",
+      "screen": "order-detail",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "urlPath": "/src/research/account-portal/review/index.html?screen=order-detail",
+      "png": "docs/product-imagery/evidence/ui-convergence/core-account-synthetic-c0e25c73/order-detail-synthetic--default--chromium--390--01.png",
+      "text": "docs/product-imagery/evidence/ui-convergence/core-account-synthetic-c0e25c73/order-detail-synthetic--default--chromium--390--01.text.txt",
+      "pngSha256": "1cbba203bd3ef79848ff5b48cf9b93cdb9fdd76f88167d78b1891b27a3f2ffd2",
+      "pngBytes": 96167,
+      "dimensions": {
+        "width": 390,
+        "height": 2455
+      },
+      "coverage": {
+        "fullPage": true,
+        "truncated": false,
+        "layoutStable": true,
+        "contentWidthCssPx": 390,
+        "contentHeightCssPx": 2455,
+        "postContentWidthCssPx": 390,
+        "postContentHeightCssPx": 2455,
+        "maxHeightCssPx": 24000,
+        "devicePixelRatio": 1,
+        "capturedWidthPx": 390,
+        "capturedHeightPx": 2455
+      },
+      "assertions": {
+        "exactCoreSha": true,
+        "exactCoreTree": true,
+        "loopbackOnly": true,
+        "syntheticRepositoryFixturesOnly": true,
+        "authenticatedSessionProven": false,
+        "liveApiProven": false,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "failedResponses": 0,
+        "networkBoundaryViolations": 0
+      }
+    }
+  ]
+}

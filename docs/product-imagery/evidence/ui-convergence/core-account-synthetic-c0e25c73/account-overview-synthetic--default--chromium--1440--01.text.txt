@@ -1,0 +1,161 @@
+Skip to account content
+
+XENIOS / RESEARCH + CARE
+
+One private view for account access, commerce and billing history, Care operations, and support.
+
+PRIVATE ACCOUNT
+Overview
+Commerce
+Browse products
+Billing history
+Care status
+Interests
+Documents
+Profile
+Security
+Support
+
+PRIVATE ACCOUNT
+
+Your account, clearly organized.
+
+Membership, commerce history, Care operations, documents, and support, each with its own source of truth.
+
+NEXT ADMINISTRATIVE ACTION
+
+Confirm your shipping address for your open order.
+
+This is an account step only. It is not a medical recommendation or a promise of product approval.
+
+Review with support
+
+ACCOUNT ACCESS
+
+Active
+
+Recorded account status. Paid membership is not required for approved customer access.
+
+RESEARCH HISTORY
+
+Not available
+
+count unavailable; commerce history incomplete
+
+View commerce history
+
+CARE OPERATIONS
+
+Provider review
+
+View separate Care timeline
+
+ACCOUNT IDENTITY
+
+Test Customer
+Email
+SYNTHETIC-EMAIL-REDACTED
+Account
+ACTIVE
+Account since
+Jul 1, 2026
+
+HISTORICAL BILLING
+
+Xenios Research Membership
+BILLING: CURRENT
+
+Recorded renewal evidence: Sep 26, 2026
+
+Historical billing does not determine account approval and does not guarantee treatment, a provider decision, or fulfillment. This view does not refund payments or cancel existing recurring charges.
+
+View billing history
+
+RESEARCH COMMERCE HISTORY
+
+Recent activity
+All records
+
+Some commerce history is currently unavailable.
+
+These sources do not provide a complete history: Research cart checkouts (XEC), assisted order requests (XRR).
+
+REQUEST · XRR-20260820-TESTFIX01 · REQUESTED AUG 20, 2026
+
+Example Research Material A
+
+10 mg · Qty 2
+
+FULFILLMENT: UNFULFILLED
+Open record details
+
+REQUEST · XRR-20260811-TESTFIX02 · REQUESTED AUG 11, 2026
+
+Example Research Material B
+
+5 mg · Qty 1
+
+FULFILLMENT: SHIPPED
+Open record details
+Track shipment
+
+CARE ENROLLMENT
+
+Operational status
+Enrollment
+Enrolled
+Provider stage
+Provider review
+Pharmacy
+None
+Open Care status
+
+SAVED INTERESTS
+
+Availability without implied ordering
+
+Each status is shown exactly from the account projection. A saved interest is not an order, reservation, provider decision, or activation approval.
+
+BPC157-TB500
+
+BPC-157 / TB-500 blends
+
+This saved interest records demand only. It is not an order and does not reserve inventory.
+
+Recorded Aug 26, 2026.
+
+REQUEST ONLY
+Ask account support
+
+RETATRUTIDE
+
+Retatrutide
+
+This saved interest records demand only. It is not an order and does not reserve inventory.
+
+Recorded Aug 26, 2026.
+
+REQUEST ONLY
+Ask account support
+
+DOCUMENTS
+
+2 visible
+
+Receipts, approved COAs, and account documents.
+
+SUPPORT
+
+1 visible open
+
+Order, account, Care, and pharmacy support.
+
+BILLING
+
+Manual / offline
+
+Historical billing records remain separate from product subscriptions and fulfillment. Review outstanding charges with support.
+
+Administrative account information only. Care, provider review, and pharmacy fulfillment remain separate.
+
+Privacy

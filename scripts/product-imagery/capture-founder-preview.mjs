@@ -72,13 +72,14 @@ class NativeCdpConnection {
   send(method, params = {}, sessionId, { timeoutMs } = {}) {
     const id = this.nextId++;
     return new Promise((resolveSend, reject) => {
-      const timeout = Number.isFinite(timeoutMs) && timeoutMs > 0
+      const effectiveTimeoutMs = Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 60_000;
+      const timeout = effectiveTimeoutMs > 0
         ? setTimeout(() => {
             const pending = this.pending.get(id);
             if (!pending) return;
             this.pending.delete(id);
-            pending.reject(new Error(`${method}: timed out after ${timeoutMs}ms`));
-          }, timeoutMs)
+            pending.reject(new Error(`${method}: timed out after ${effectiveTimeoutMs}ms`));
+          }, effectiveTimeoutMs)
         : null;
       this.pending.set(id, { resolve: resolveSend, reject, method, timeout });
       try {
@@ -112,6 +113,19 @@ function safeName(value) {
   return value.replace(/[^a-z0-9-]+/gi, "-").replace(/^-|-$/g, "").toLowerCase();
 }
 
+async function writeEvidenceFile(path, contents) {
+  const retryable = new Set(["EACCES", "EBUSY", "EPERM", "UNKNOWN"]);
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    try {
+      writeFileSync(path, contents);
+      return;
+    } catch (error) {
+      if (!retryable.has(error?.code) || attempt === 19) throw error;
+      await sleep(100 + attempt * 50);
+    }
+  }
+}
+
 function plannedCaptures(data) {
   const viewportMatrix = [
     { key: "desktop-1440", width: 1440, height: 1000 },
@@ -136,6 +150,7 @@ function plannedCaptures(data) {
     { name: "quote-only", path: "/founder-preview/index.html?view=quote" },
     { name: "coming-soon", path: "/founder-preview/index.html?view=coming" },
     { name: "account-status", path: "/founder-preview/index.html?view=journeys" },
+    { name: "three-way-comparison", path: "/founder-preview/index.html?view=three-way" },
     { name: "founder-decisions", path: "/founder-preview/index.html?view=decisions" },
     { name: "catalog-qa-grid", path: "/founder-preview/catalog-review.html?page=1&limit=12" },
   ];
@@ -294,6 +309,7 @@ export async function captureFounderPreview() {
           "coming",
           "decisions",
           "core",
+          "three-way",
           "review",
           "wireframe",
           "calibration",
@@ -318,7 +334,7 @@ export async function captureFounderPreview() {
       });
       const fileName = `${safeName(planned.name)}.png`;
       const screenshotPath = join(EVIDENCE_ROOT, fileName);
-      writeFileSync(screenshotPath, screenshot.bytes);
+      await writeEvidenceFile(screenshotPath, screenshot.bytes);
       const decoded = pngDimensions(screenshot.bytes, fileName);
       const textFileName = `${safeName(planned.name)}.text.txt`;
       const normalizedBodyText = `${state.bodyText}\n`
@@ -326,7 +342,7 @@ export async function captureFounderPreview() {
         .map((line) => line.replace(/[ \t]+$/u, ""))
         .join("\n")
         .replace(/\n+$/u, "\n");
-      writeFileSync(join(EVIDENCE_ROOT, textFileName), normalizedBodyText);
+      await writeEvidenceFile(join(EVIDENCE_ROOT, textFileName), normalizedBodyText);
       const consoleMessages = page.console.slice(consoleStart);
       const severeConsole = consoleMessages.filter((entry) =>
         ["error", "assert"].includes(String(entry.type).toLowerCase()),
@@ -436,7 +452,7 @@ export async function captureFounderPreview() {
       captures: records,
     };
     const evidencePath = join(EVIDENCE_ROOT, "founder-preview-browser-evidence.json");
-    writeFileSync(evidencePath, `${JSON.stringify(evidence, null, 2)}\n`);
+    await writeEvidenceFile(evidencePath, `${JSON.stringify(evidence, null, 2)}\n`);
     console.log(
       `Founder preview browser evidence: ${records.length} captures, ${gridIds.size}/423 QA IDs, 0 broken images.`,
     );

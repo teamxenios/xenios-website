@@ -1,0 +1,168 @@
+Skip to content
+
+PRIVATE FOUNDER DECISION PREVIEW
+Core baseline c0e25c73 · imagery source 8b06da56 · no publication or transaction authority
+
+DECISION COMPARISONS
+CURRENT CORE EVIDENCE
+423-SLOT QA
+Xenios
+Start Care
+Menu
+PRIVATE PREVIEW
+Home
+Products
+Featured
+Card policy
+Media geometry
+Care
+Account / status
+Founder decisions
+
+COMPLETE A / B / C REVIEW PACKAGE
+
+Actual Core, old preview, proposed delta.
+
+Every image below is labeled by authority. The complete 207-row machine-readable matrix records surface, actual Core behavior, old preview behavior, proposed Xenios Health delta, accidental versus intentional status, and required action.
+
+Open 207-row matrix
+Review A-E decisions
+
+THREE-WAY EVIDENCE
+
+Global home shell
+
+The corrected candidate mirrors the dominant public Core shell. Any Health-specific brand change remains decision A.
+
+A · ACTUAL CORE
+Actual Core home
+
+c0e25c73 public render
+
+B · CURRENT / OLD PREVIEW
+Old founder preview
+
+8b06da56 custom parallel shell
+
+C · PROPOSED XENIOS HEALTH
+Corrected private candidate
+
+Core-converged proposal; not accepted
+
+THREE-WAY EVIDENCE
+
+Member catalog and cards
+
+Actual member catalog presentation is kept distinct from the proposal to add public imagery.
+
+A · ACTUAL CORE
+Actual Core synthetic catalog
+
+Exact Core component; UI presentation only
+
+B · CURRENT / OLD PREVIEW
+Old image-led products
+
+8b06da56 drift baseline
+
+C · PROPOSED XENIOS HEALTH
+Proposed Core-style products
+
+Private image-policy proposal
+
+THREE-WAY EVIDENCE
+
+Member product detail
+
+The same frozen pixels are shown with contain; public product detail remains unavailable in Core.
+
+A · ACTUAL CORE
+Actual Core synthetic detail
+
+Exact Core component; UI presentation only
+
+B · CURRENT / OLD PREVIEW
+Old preview detail
+
+8b06da56 reconstructed detail
+
+C · PROPOSED XENIOS HEALTH
+Proposed geometry comparison
+
+Current 4:3 versus proposed 1:1
+
+THREE-WAY EVIDENCE
+
+Private account overview
+
+The exact Core column uses the dev-only synthetic fixture harness and does not prove authentication.
+
+A · ACTUAL CORE
+Actual Core synthetic account
+
+Exact Core fixture; UI presentation only
+
+B · CURRENT / OLD PREVIEW
+Old combined account/status
+
+8b06da56 hand-built approximation
+
+C · PROPOSED XENIOS HEALTH
+Corrected account/status study
+
+Private proposal; no session
+
+THREE-WAY EVIDENCE
+
+Commerce and order history
+
+Core's real presentation separates commerce records from Care and membership. The preview columns remain non-transactional studies.
+
+A · ACTUAL CORE
+Actual Core synthetic history
+
+Exact Core fixture; UI presentation only
+
+B · CURRENT / OLD PREVIEW
+Old combined history panel
+
+No authenticated or live commerce proof
+
+C · PROPOSED XENIOS HEALTH
+Corrected governed-state panel
+
+No payment, order, or fulfillment authority
+
+THREE-WAY EVIDENCE
+
+Care pathway
+
+The proposed surface converges on Core hierarchy while keeping all clinical, state, and pharmacy authority outside imagery.
+
+A · ACTUAL CORE
+Actual Core Care
+
+c0e25c73 public render
+
+B · CURRENT / OLD PREVIEW
+Old preview Care
+
+8b06da56 dark pathway drift
+
+C · PROPOSED XENIOS HEALTH
+Corrected Care candidate
+
+Core-converged private proposal
+
+No approval is implied
+
+This comparison grants no image, founder-decision, Core, catalog, Product Control, price, commerce, runtime, publication, deployment, hosted-write, managed-SQL, or production authority.
+
+Xenios
+
+Private UI-convergence evidence. Synthetic data only. Nothing here is a live offer.
+
+Founder decisions
+Current Core evidence
+Six frozen calibration studies
+Full QA grid

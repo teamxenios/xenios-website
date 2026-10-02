@@ -18,6 +18,7 @@ import {
   buildFounderPreviewData,
 } from "./build-founder-preview.mjs";
 import { startFounderPreviewServer } from "./serve-founder-preview.mjs";
+import { buildThreeWayMatrix } from "./build-ui-convergence-matrix.mjs";
 
 const REPO_ROOT = resolve(new URL("../..", import.meta.url).pathname.replace(/^\/(.:)/, "$1"));
 const PREVIEW_ROOT = join(REPO_ROOT, "docs/product-imagery/founder-preview");
@@ -356,8 +357,8 @@ test("records responsive browser proof for each reviewer-directed substitution c
   ];
   assert.equal(evidence.schemaVersion, 2);
   assert.equal(evidence.partialDebugCapture, false);
-  assert.equal(evidence.counts.captures, 134);
-  assert.equal(evidence.counts.responsiveMatrixCaptures, 120);
+  assert.equal(evidence.counts.captures, 144);
+  assert.equal(evidence.counts.responsiveMatrixCaptures, 130);
   assert.deepEqual(evidence.counts.responsiveWidths, [
     1440, 1280, 1024, 834, 768, 430, 390, 375, 360, 320,
   ]);
@@ -372,6 +373,7 @@ test("records responsive browser proof for each reviewer-directed substitution c
     "quote-only",
     "coming-soon",
     "account-status",
+    "three-way-comparison",
     "founder-decisions",
     "catalog-qa-grid",
   ]);
@@ -387,6 +389,71 @@ test("records responsive browser proof for each reviewer-directed substitution c
     assert.equal(capture.detailAssetJob, "calibration-06-unverified-identity");
     assert.equal(capture.assertions.horizontalOverflow, false);
   }
+});
+
+test("materializes every Claude drift row as an explicit A/B/C decision record", () => {
+  const matrix = buildThreeWayMatrix();
+  assert.equal(matrix.counts.rows, 207);
+  assert.equal(matrix.counts.materialMismatches, 111);
+  assert.deepEqual(matrix.counts.byClassification, {
+    "allowed-exploration": 25,
+    "core-internal-inconsistency": 33,
+    "material-drift": 111,
+    "minor-drift": 38,
+  });
+  assert.equal(new Set(matrix.rows.map((row) => row.rowKey)).size, 207);
+  assert.ok(matrix.rows.every((row) =>
+    row.surface &&
+    row.actualCoreBehavior &&
+    row.currentOldPreviewBehavior &&
+    row.proposedXeniosHealthDelta &&
+    row.accidentalOrIntentional &&
+    row.actionRequired &&
+    row.exactSuccessorVerificationRequired === true &&
+    row.approved === false
+  ));
+  assert.ok(
+    matrix.rows
+      .filter((row) => row.baselineClassification === "material-drift")
+      .every((row) => row.accidentalOrIntentional === "accidental_preview_drift"),
+  );
+  assert.ok(Object.values(matrix.authority).every((value) => value === false));
+});
+
+test("records exact-Core synthetic account and order UI without expanding its authority", () => {
+  const evidenceRoot = join(
+    REPO_ROOT,
+    "docs/product-imagery/evidence/ui-convergence/core-account-synthetic-c0e25c73",
+  );
+  const receipt = JSON.parse(
+    readFileSync(join(evidenceRoot, "synthetic-account-order-evidence.json"), "utf8"),
+  );
+  const pii = JSON.parse(readFileSync(join(evidenceRoot, "pii-scan.json"), "utf8"));
+  const manual = JSON.parse(
+    readFileSync(join(evidenceRoot, "manual-visual-review.json"), "utf8"),
+  );
+  assert.equal(receipt.source.commit, CORE_UI_REFERENCE_SHA);
+  assert.equal(receipt.source.tree, CORE_UI_REFERENCE_TREE);
+  assert.equal(receipt.claimScope, "UI_PRESENTATION_ONLY");
+  assert.deepEqual(receipt.counts, {
+    screens: 3,
+    viewports: 2,
+    captures: 6,
+    horizontalOverflow: 0,
+    severeConsoleMessages: 0,
+    failedResponses: 0,
+    networkBoundaryViolations: 0,
+  });
+  assert.equal(receipt.execution.loopbackOnly, true);
+  assert.equal(receipt.execution.realCredentialsUsed, false);
+  assert.equal(receipt.execution.realCustomerDataUsed, false);
+  assert.equal(receipt.limitations.provesAuthentication, false);
+  assert.equal(receipt.limitations.provesLiveApiAdapters, false);
+  assert.equal(receipt.limitations.provesPricingAvailabilityOrCommerce, false);
+  assert.equal(pii.summary.result, "CLEAN");
+  assert.equal(pii.summary.total, 0);
+  assert.equal(manual.result, "PASS_SYNTHETIC_PRESENTATION_ONLY");
+  assert.equal(manual.observations.realCustomerDataObserved, false);
 });
 
 test("keeps the preview static, local, noindex, and free of live forms", () => {

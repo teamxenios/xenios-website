@@ -1,0 +1,65 @@
+Skip to account content
+
+XENIOS / RESEARCH + CARE
+
+One private view for account access, commerce and billing history, Care operations, and support.
+
+PRIVATE ACCOUNT
+Overview
+Commerce
+Browse products
+Billing history
+Care status
+Interests
+Documents
+Profile
+Security
+Support
+
+COMMERCE HISTORY
+
+Commerce record details.
+
+Payment, fulfillment, and available line detail from one exact member-scoped record.
+
+MEMBER-SCOPED REQUEST
+
+XRR-20260811-TESTFIX02
+
+Requested Aug 11, 2026, 4:03 AM.
+
+PAYMENT: PAID
+FULFILLMENT: SHIPPED
+Reference
+XRR-20260811-TESTFIX02
+Item
+Example Research Material B
+Variant
+5 mg
+Quantity
+1
+Approved lot / COA document
+Available in documents
+Shipment reported
+
+Shipment is recorded separately from payment. Use the recorded tracking link when available; this page does not establish a delivery date.
+
+Payment is recorded. It does not establish shipment, delivery, product eligibility, or Care approval.
+
+Support can review the record. Opening support does not create a payment, shipment, refund, or Care request.
+
+Track shipment
+Open documents
+Ask account support
+
+RECORD BOUNDARY
+
+What this page can confirm
+
+This page shows only the commerce record returned for this signed-in account. Payment and fulfillment remain separate facts; neither is inferred from the reference format.
+
+Back to commerce history
+
+Administrative account information only. Care, provider review, and pharmacy fulfillment remain separate.
+
+Privacy

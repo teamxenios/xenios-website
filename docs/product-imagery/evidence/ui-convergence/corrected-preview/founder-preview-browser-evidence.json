@@ -31,8 +31,8 @@
     "externalNetworkAllowed": false
   },
   "counts": {
-    "captures": 134,
-    "responsiveMatrixCaptures": 120,
+    "captures": 144,
+    "responsiveMatrixCaptures": 130,
     "responsiveWidths": [
       1440,
       1280,
@@ -56,6 +56,7 @@
       "quote-only",
       "coming-soon",
       "account-status",
+      "three-way-comparison",
       "founder-decisions",
       "catalog-qa-grid"
     ],
@@ -4865,6 +4866,486 @@
       "detailCanonicalId": null,
       "detailAssetJob": null,
       "networkRequestCount": 10
+    },
+    {
+      "name": "three-way-comparison-desktop-1440",
+      "surface": "three-way-comparison",
+      "responsiveMatrix": true,
+      "path": "/founder-preview/index.html?view=three-way",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-desktop-1440.png",
+        "sha256": "a7c80e7162a46cf7139602c0c0563ed50cef1b78653b53d835808b70d78cddbb",
+        "byteSize": 1452692,
+        "width": 1440,
+        "height": 7407,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1440,
+          "contentHeightCssPx": 7407,
+          "postContentWidthCssPx": 1440,
+          "postContentHeightCssPx": 7407,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1440,
+          "capturedHeightPx": 7407
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-desktop-1440.text.txt",
+        "sha256": "46e38e548982706cf36d4e9c6f071f672a57e052e7197db96928d4a530ca9030"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 20,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 26
+    },
+    {
+      "name": "three-way-comparison-desktop-1280",
+      "surface": "three-way-comparison",
+      "responsiveMatrix": true,
+      "path": "/founder-preview/index.html?view=three-way",
+      "viewport": {
+        "width": 1280,
+        "height": 900,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-desktop-1280.png",
+        "sha256": "32ce6df8a63eefad0121ace24a678d6887b1a9486100a57fd9d259382315677e",
+        "byteSize": 1450049,
+        "width": 1280,
+        "height": 7301,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1280,
+          "contentHeightCssPx": 7301,
+          "postContentWidthCssPx": 1280,
+          "postContentHeightCssPx": 7301,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1280,
+          "capturedHeightPx": 7301
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-desktop-1280.text.txt",
+        "sha256": "46e38e548982706cf36d4e9c6f071f672a57e052e7197db96928d4a530ca9030"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 20,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 26
+    },
+    {
+      "name": "three-way-comparison-tablet-1024",
+      "surface": "three-way-comparison",
+      "responsiveMatrix": true,
+      "path": "/founder-preview/index.html?view=three-way",
+      "viewport": {
+        "width": 1024,
+        "height": 768,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-tablet-1024.png",
+        "sha256": "c06d9ebbe736c9ea5c6f817ccf1944013471fcf4761269a7936740f4805aaf49",
+        "byteSize": 1196054,
+        "width": 1024,
+        "height": 7136,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 1024,
+          "contentHeightCssPx": 7136,
+          "postContentWidthCssPx": 1024,
+          "postContentHeightCssPx": 7136,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 1024,
+          "capturedHeightPx": 7136
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-tablet-1024.text.txt",
+        "sha256": "58c6ff70bd02bc5cbffbdfa212cb4c8b817edffc13deaa4c62fe43def0392a22"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 20,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 26
+    },
+    {
+      "name": "three-way-comparison-tablet-834",
+      "surface": "three-way-comparison",
+      "responsiveMatrix": true,
+      "path": "/founder-preview/index.html?view=three-way",
+      "viewport": {
+        "width": 834,
+        "height": 1112,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-tablet-834.png",
+        "sha256": "26451c93eef7d1299d2e075e016c7aa5ac7dbfa1836102e93b9fb12adb79497e",
+        "byteSize": 1388788,
+        "width": 834,
+        "height": 12434,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 834,
+          "contentHeightCssPx": 12434,
+          "postContentWidthCssPx": 834,
+          "postContentHeightCssPx": 12434,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 834,
+          "capturedHeightPx": 12434
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-tablet-834.text.txt",
+        "sha256": "58c6ff70bd02bc5cbffbdfa212cb4c8b817edffc13deaa4c62fe43def0392a22"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 20,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 26
+    },
+    {
+      "name": "three-way-comparison-tablet-768",
+      "surface": "three-way-comparison",
+      "responsiveMatrix": true,
+      "path": "/founder-preview/index.html?view=three-way",
+      "viewport": {
+        "width": 768,
+        "height": 1024,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-tablet-768.png",
+        "sha256": "a1b99f1094a58099fcee16effe8ae177d5bd439d99cdd4f38a0699e76733b5bd",
+        "byteSize": 1354062,
+        "width": 768,
+        "height": 12400,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 768,
+          "contentHeightCssPx": 12400,
+          "postContentWidthCssPx": 768,
+          "postContentHeightCssPx": 12400,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 768,
+          "capturedHeightPx": 12400
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-tablet-768.text.txt",
+        "sha256": "58c6ff70bd02bc5cbffbdfa212cb4c8b817edffc13deaa4c62fe43def0392a22"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 20,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 26
+    },
+    {
+      "name": "three-way-comparison-mobile-430",
+      "surface": "three-way-comparison",
+      "responsiveMatrix": true,
+      "path": "/founder-preview/index.html?view=three-way",
+      "viewport": {
+        "width": 430,
+        "height": 932,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-mobile-430.png",
+        "sha256": "9005c5cd2546833b1c45fe936448677537bb3c752b3771aa490d5417bab8ba8d",
+        "byteSize": 1121008,
+        "width": 430,
+        "height": 12712,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 430,
+          "contentHeightCssPx": 12712,
+          "postContentWidthCssPx": 430,
+          "postContentHeightCssPx": 12712,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 430,
+          "capturedHeightPx": 12712
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-mobile-430.text.txt",
+        "sha256": "3b1ab44d4f3bf616989391327184f744594b5fd54399674ee52d54395e2e496d"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 20,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 26
+    },
+    {
+      "name": "three-way-comparison-mobile-390",
+      "surface": "three-way-comparison",
+      "responsiveMatrix": true,
+      "path": "/founder-preview/index.html?view=three-way",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-mobile-390.png",
+        "sha256": "5f3c328b7e8c8f61f2cb8c8f6022cbb2085269abc4adfcf78d8d01b8f379321e",
+        "byteSize": 1089698,
+        "width": 390,
+        "height": 12788,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 390,
+          "contentHeightCssPx": 12788,
+          "postContentWidthCssPx": 390,
+          "postContentHeightCssPx": 12788,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 390,
+          "capturedHeightPx": 12788
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-mobile-390.text.txt",
+        "sha256": "3b1ab44d4f3bf616989391327184f744594b5fd54399674ee52d54395e2e496d"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 20,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 26
+    },
+    {
+      "name": "three-way-comparison-mobile-375",
+      "surface": "three-way-comparison",
+      "responsiveMatrix": true,
+      "path": "/founder-preview/index.html?view=three-way",
+      "viewport": {
+        "width": 375,
+        "height": 812,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-mobile-375.png",
+        "sha256": "81066b9c80c2628cf617a975dfadb7c90f610f79b138c209b0ef02c17370c979",
+        "byteSize": 1073865,
+        "width": 375,
+        "height": 12837,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 375,
+          "contentHeightCssPx": 12837,
+          "postContentWidthCssPx": 375,
+          "postContentHeightCssPx": 12837,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 375,
+          "capturedHeightPx": 12837
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-mobile-375.text.txt",
+        "sha256": "3b1ab44d4f3bf616989391327184f744594b5fd54399674ee52d54395e2e496d"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 20,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 26
+    },
+    {
+      "name": "three-way-comparison-mobile-360",
+      "surface": "three-way-comparison",
+      "responsiveMatrix": true,
+      "path": "/founder-preview/index.html?view=three-way",
+      "viewport": {
+        "width": 360,
+        "height": 800,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-mobile-360.png",
+        "sha256": "097c2083bbdfe6162d71281c87764a1fecfa98e66127798ed7ea3314ceda6e10",
+        "byteSize": 1064164,
+        "width": 360,
+        "height": 12886,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 360,
+          "contentHeightCssPx": 12886,
+          "postContentWidthCssPx": 360,
+          "postContentHeightCssPx": 12886,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 360,
+          "capturedHeightPx": 12886
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-mobile-360.text.txt",
+        "sha256": "cace16308fb170a0921ae03a9617164af1577d8c583115b455fa05b30dd85366"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 20,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 26
+    },
+    {
+      "name": "three-way-comparison-mobile-320",
+      "surface": "three-way-comparison",
+      "responsiveMatrix": true,
+      "path": "/founder-preview/index.html?view=three-way",
+      "viewport": {
+        "width": 320,
+        "height": 760,
+        "deviceScaleFactor": 1
+      },
+      "fullPage": true,
+      "screenshot": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-mobile-320.png",
+        "sha256": "eb856b630d5558553d962642216b663ae7ed5a34fbbd12d52d7fb0f4e722f00e",
+        "byteSize": 987893,
+        "width": 320,
+        "height": 13017,
+        "coverage": {
+          "fullPage": true,
+          "truncated": false,
+          "layoutStable": true,
+          "contentWidthCssPx": 320,
+          "contentHeightCssPx": 13017,
+          "postContentWidthCssPx": 320,
+          "postContentHeightCssPx": 13017,
+          "maxHeightCssPx": 24000,
+          "devicePixelRatio": 1,
+          "capturedWidthPx": 320,
+          "capturedHeightPx": 13017
+        }
+      },
+      "text": {
+        "repositoryPath": "docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-mobile-320.text.txt",
+        "sha256": "cace16308fb170a0921ae03a9617164af1577d8c583115b455fa05b30dd85366"
+      },
+      "assertions": {
+        "previewReady": true,
+        "customerTargets": 423,
+        "imagesTotal": 20,
+        "imagesBroken": 0,
+        "horizontalOverflow": false,
+        "severeConsoleMessages": 0,
+        "networkBoundaryViolations": 0
+      },
+      "detailCanonicalId": null,
+      "detailAssetJob": null,
+      "networkRequestCount": 26
     },
     {
       "name": "founder-decisions-desktop-1440",

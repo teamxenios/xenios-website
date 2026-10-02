@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 4,
+  "kind": "evidence-pii-scan",
+  "candidateSha": "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
+  "scannedAtUtc": "2026-10-02T02:23:42.966Z",
+  "evidenceRoot": ".",
+  "textFilesScanned": 8,
+  "textArtifacts": [
+    "account-overview-synthetic--default--chromium--1440--01.text.txt",
+    "account-overview-synthetic--default--chromium--390--01.text.txt",
+    "manual-visual-review.json",
+    "order-detail-synthetic--default--chromium--1440--01.text.txt",
+    "order-detail-synthetic--default--chromium--390--01.text.txt",
+    "orders-synthetic--default--chromium--1440--01.text.txt",
+    "orders-synthetic--default--chromium--390--01.text.txt",
+    "synthetic-account-order-evidence.json"
+  ],
+  "fileInventory": [
+    {
+      "path": "account-overview-synthetic--default--chromium--1440--01.png",
+      "bytes": 240947,
+      "sha256": "f71e8e3a27ee2cbf6cfd842940e760c0c6f4576c7f35a04f6a1e3d6b9e9a945f"
+    },
+    {
+      "path": "account-overview-synthetic--default--chromium--1440--01.text.txt",
+      "bytes": 2978,
+      "sha256": "ba34316e04534be82488e321a138b8b03b1ace95fb0d141c0149d99056bebd46"
+    },
+    {
+      "path": "account-overview-synthetic--default--chromium--390--01.png",
+      "bytes": 200564,
+      "sha256": "6e0a6d3e3bc2402cdaf491b0b1958a5cdb2b712444a3dc178cab9dadd69e28b7"
+    },
+    {
+      "path": "account-overview-synthetic--default--chromium--390--01.text.txt",
+      "bytes": 2978,
+      "sha256": "ba34316e04534be82488e321a138b8b03b1ace95fb0d141c0149d99056bebd46"
+    },
+    {
+      "path": "manual-visual-review.json",
+      "bytes": 1063,
+      "sha256": "912245a3b6699c99eded0320b49b68d59f5e999755d7fd1ac2f4dbb46d96d088"
+    },
+    {
+      "path": "order-detail-synthetic--default--chromium--1440--01.png",
+      "bytes": 117443,
+      "sha256": "1e34f905a2d1401540eb87d905e418c37dffa402c6930bf200dd1554d68c48da"
+    },
+    {
+      "path": "order-detail-synthetic--default--chromium--1440--01.text.txt",
+      "bytes": 1442,
+      "sha256": "6c88d8a3f4039ae91a15691ebb8a9ff12ee4c71b465fe5ada2e7c7d5e78b3dc9"
+    },
+    {
+      "path": "order-detail-synthetic--default--chromium--390--01.png",
+      "bytes": 96167,
+      "sha256": "1cbba203bd3ef79848ff5b48cf9b93cdb9fdd76f88167d78b1891b27a3f2ffd2"
+    },
+    {
+      "path": "order-detail-synthetic--default--chromium--390--01.text.txt",
+      "bytes": 1442,
+      "sha256": "6c88d8a3f4039ae91a15691ebb8a9ff12ee4c71b465fe5ada2e7c7d5e78b3dc9"
+    },
+    {
+      "path": "orders-synthetic--default--chromium--1440--01.png",
+      "bytes": 159653,
+      "sha256": "075cb3dbf9d1b58a68277e9bed4e46309b8b2734e062f1aad5aa1f69de6ba175"
+    },
+    {
+      "path": "orders-synthetic--default--chromium--1440--01.text.txt",
+      "bytes": 1906,
+      "sha256": "24c5db286fcd000141103d148226f968049d3d8e6e4b490c79caee6cf2c83858"
+    },
+    {
+      "path": "orders-synthetic--default--chromium--390--01.png",
+      "bytes": 128161,
+      "sha256": "7b8f3b3eaea32e212c778db24eb3477dcdbffaf5c3214066268badd36d2c1da7"
+    },
+    {
+      "path": "orders-synthetic--default--chromium--390--01.text.txt",
+      "bytes": 1906,
+      "sha256": "24c5db286fcd000141103d148226f968049d3d8e6e4b490c79caee6cf2c83858"
+    },
+    {
+      "path": "synthetic-account-order-evidence.json",
+      "bytes": 10775,
+      "sha256": "60d81fb108adf00388e275cefaa787ccff1a8c5bb016e7838cc02cd81f3121cd"
+    }
+  ],
+  "inventorySha256": "0f7de70a3f836bfdca9e109b00564f51d742c5f5ee5d20472c3e0b6db67c81f5",
+  "scanCoverage": {
+    "result": "COMPLETE",
+    "classifiedFiles": 14,
+    "totalFiles": 14,
+    "textFiles": 8,
+    "manualImageFiles": 6,
+    "unscannableFiles": 0
+  },
+  "summary": {
+    "total": 0,
+    "byId": {},
+    "result": "CLEAN"
+  },
+  "findings": [],
+  "screenshots": [
+    "account-overview-synthetic--default--chromium--1440--01.png",
+    "account-overview-synthetic--default--chromium--390--01.png",
+    "order-detail-synthetic--default--chromium--1440--01.png",
+    "order-detail-synthetic--default--chromium--390--01.png",
+    "orders-synthetic--default--chromium--1440--01.png",
+    "orders-synthetic--default--chromium--390--01.png"
+  ],
+  "unscannableArtifacts": [],
+  "screenshotReview": "COMPLETE: all six PNGs were reviewed under manual-visual-review.json; each capture's *.text.txt page text was also scanned."
+}

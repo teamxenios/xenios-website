@@ -11,6 +11,8 @@ SQL change, or production mutation.
 
 Primary full-page evidence:
 
+- `docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-desktop-1440.png`
+- `docs/product-imagery/evidence/ui-convergence/corrected-preview/three-way-comparison-mobile-390.png`
 - `docs/product-imagery/evidence/ui-convergence/corrected-preview/founder-decisions-desktop-1440.png`
 - `docs/product-imagery/evidence/ui-convergence/corrected-preview/founder-decisions-tablet-834.png`
 - `docs/product-imagery/evidence/ui-convergence/corrected-preview/founder-decisions-mobile-390.png`
@@ -19,13 +21,21 @@ Primary full-page evidence:
 All ten widths are present in the same evidence directory.
 
 Current Core references used by the comparison include actual public renders
-and exact-source synthetic member catalog/detail renders at 1440 and 390:
+and exact-source synthetic member catalog, detail, account, order-history, and
+order-detail renders at 1440 and 390:
 
 - `docs/product-imagery/evidence/ui-convergence/core-reference/`
 - `docs/product-imagery/evidence/ui-convergence/core-synthetic-c0e25c73/synthetic/captures/`
+- `docs/product-imagery/evidence/ui-convergence/core-account-synthetic-c0e25c73/`
 
-The synthetic member renders are `UI_PRESENTATION_ONLY`. They do not prove
-authentication, live APIs, Product Control, pricing, availability, or commerce.
+The synthetic member and account renders are `UI_PRESENTATION_ONLY`. The
+account review document intentionally bypasses authentication and injects
+repository-owned fixtures. None of these captures prove authentication, live
+APIs, Product Control, pricing, availability, payment, or fulfillment.
+
+The complete structured comparison is
+`docs/product-imagery/UI_CONVERGENCE_THREE_WAY_MATRIX_2026-10-01.json` with 207
+rows, including all 111 material mismatches.
 
 ## Decisions that require Samuel
 

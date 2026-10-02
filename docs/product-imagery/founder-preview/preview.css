@@ -1138,6 +1138,92 @@ h3 {
   color: var(--ink-mute);
 }
 
+.triptych-stack,
+.triptych-group,
+.triptych-grid,
+.triptych-card,
+.triptych-label {
+  display: grid;
+}
+
+.triptych-stack {
+  gap: clamp(56px, 8vw, 112px);
+}
+
+.triptych-group {
+  gap: 24px;
+  padding-bottom: clamp(40px, 6vw, 72px);
+  border-bottom: 1px solid var(--rule);
+}
+
+.triptych-group:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.triptych-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+.triptych-card {
+  min-width: 0;
+  align-content: start;
+  gap: 0;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--paper);
+  overflow: hidden;
+}
+
+.triptych-card.proposed {
+  border-color: color-mix(in srgb, var(--pulse) 46%, var(--rule));
+}
+
+.triptych-label {
+  gap: 6px;
+  min-height: 86px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.triptych-label span {
+  color: var(--ink-mute);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.triptych-label strong {
+  font-size: 17px;
+  line-height: 1.2;
+}
+
+.triptych-shot {
+  display: grid;
+  place-items: start center;
+  height: 380px;
+  padding: 12px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper-2);
+  overflow: hidden;
+}
+
+.triptych-shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: top center;
+}
+
+.triptych-card > p {
+  margin: 0;
+  padding: 14px 16px 18px;
+  color: var(--ink-mute);
+  font-size: 13px;
+}
+
 .qa-shell {
   padding-block: 40px var(--section-y);
 }
@@ -1430,6 +1516,14 @@ h3 {
 
   .comparison-pair {
     gap: 24px;
+  }
+
+  .triptych-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .triptych-shot {
+    height: 520px;
   }
 }
 

@@ -273,8 +273,63 @@
       ["Synthetic member catalog mobile", "/evidence/ui-convergence/core-synthetic-c0e25c73/synthetic/captures/catalog-synthetic--default--chromium--390--01.png", "Exact Core component at 390; UI presentation only"],
       ["Synthetic member detail", "/evidence/ui-convergence/core-synthetic-c0e25c73/synthetic/captures/product-detail-synthetic--default--chromium--1440--01.png", "Exact Core component at 1440; UI presentation only"],
       ["Synthetic member detail mobile", "/evidence/ui-convergence/core-synthetic-c0e25c73/synthetic/captures/product-detail-synthetic--default--chromium--390--01.png", "Exact Core component at 390; UI presentation only"],
+      ["Synthetic account overview", "/evidence/ui-convergence/core-account-synthetic-c0e25c73/account-overview-synthetic--default--chromium--1440--01.png", "Exact Core dev-only fixture at 1440; UI presentation only"],
+      ["Synthetic account overview mobile", "/evidence/ui-convergence/core-account-synthetic-c0e25c73/account-overview-synthetic--default--chromium--390--01.png", "Exact Core dev-only fixture at 390; UI presentation only"],
+      ["Synthetic order history", "/evidence/ui-convergence/core-account-synthetic-c0e25c73/orders-synthetic--default--chromium--1440--01.png", "Exact Core dev-only fixture at 1440; UI presentation only"],
+      ["Synthetic order history mobile", "/evidence/ui-convergence/core-account-synthetic-c0e25c73/orders-synthetic--default--chromium--390--01.png", "Exact Core dev-only fixture at 390; UI presentation only"],
+      ["Synthetic order detail", "/evidence/ui-convergence/core-account-synthetic-c0e25c73/order-detail-synthetic--default--chromium--1440--01.png", "Exact Core dev-only fixture at 1440; UI presentation only"],
+      ["Synthetic order detail mobile", "/evidence/ui-convergence/core-account-synthetic-c0e25c73/order-detail-synthetic--default--chromium--390--01.png", "Exact Core dev-only fixture at 390; UI presentation only"],
     ];
-    return `<div class="page-shell"><section class="page-hero"><div class="container-x"><p class="eyebrow">Rendered Core evidence</p><h1>Actual current UI, not a reconstructed mood board.</h1><p class="lead">These screenshots were captured from exact Core source c0e25c73 by Claude review ae5c410 and the repository's exact-source synthetic harness. Signed-in member behavior is represented by source-faithful synthetic components because no real credentials or customer data were used.</p></div></section><section class="section"><div class="container-x evidence-grid">${images.map(([title, src, note]) => `<figure class="evidence-card"><img data-safe-image src="${esc(src)}" alt="${esc(title)}" loading="lazy" /><figcaption><strong>${esc(title)}</strong><span>${esc(note)}</span></figcaption></figure>`).join("")}</div></section><section class="section soft"><div class="container-x"><aside class="boundary-note"><h3>Evidence limitation</h3><p>Public screenshots are actual renders. Synthetic product components prove presentation only; they do not prove member authentication, API adapters, live Product Control, pricing, availability, or commerce behavior.</p></aside></div></section></div>`;
+    return `<div class="page-shell"><section class="page-hero"><div class="container-x"><p class="eyebrow">Rendered Core evidence</p><h1>Actual current UI, not a reconstructed mood board.</h1><p class="lead">These screenshots were captured from exact Core source c0e25c73 by Claude review ae5c410 and repository-owned synthetic harnesses. Member, account, and order views use only dev-only fixtures; no real credentials or customer data were used.</p></div></section><section class="section"><div class="container-x evidence-grid">${images.map(([title, src, note]) => `<figure class="evidence-card"><img data-safe-image src="${esc(src)}" alt="${esc(title)}" loading="lazy" /><figcaption><strong>${esc(title)}</strong><span>${esc(note)}</span></figcaption></figure>`).join("")}</div></section><section class="section soft"><div class="container-x"><aside class="boundary-note"><h3>Evidence limitation</h3><p>Public screenshots are actual renders. Synthetic product, account, and order components prove presentation only; they do not prove authentication, route guards, API adapters, live Product Control, pricing, payment, fulfillment, or commerce behavior.</p></aside></div></section></div>`;
+  }
+
+  function renderThreeWayComparison() {
+    const comparisons = [
+      {
+        title: "Global home shell",
+        note: "The corrected candidate mirrors the dominant public Core shell. Any Health-specific brand change remains decision A.",
+        actual: ["Actual Core home", "/evidence/ui-convergence/core-reference/core-home-desktop-1440.png", "c0e25c73 public render"],
+        old: ["Old founder preview", "/evidence/founder-preview/home-desktop-1440.png", "8b06da56 custom parallel shell"],
+        proposed: ["Corrected private candidate", "/evidence/ui-convergence/corrected-preview/home-desktop-1440.png", "Core-converged proposal; not accepted"],
+      },
+      {
+        title: "Member catalog and cards",
+        note: "Actual member catalog presentation is kept distinct from the proposal to add public imagery.",
+        actual: ["Actual Core synthetic catalog", "/evidence/ui-convergence/core-synthetic-c0e25c73/synthetic/captures/catalog-synthetic--default--chromium--1440--01.png", "Exact Core component; UI presentation only"],
+        old: ["Old image-led products", "/evidence/founder-preview/products-desktop-1440.png", "8b06da56 drift baseline"],
+        proposed: ["Proposed Core-style products", "/evidence/ui-convergence/corrected-preview/products-desktop-1440.png", "Private image-policy proposal"],
+      },
+      {
+        title: "Member product detail",
+        note: "The same frozen pixels are shown with contain; public product detail remains unavailable in Core.",
+        actual: ["Actual Core synthetic detail", "/evidence/ui-convergence/core-synthetic-c0e25c73/synthetic/captures/product-detail-synthetic--default--chromium--1440--01.png", "Exact Core component; UI presentation only"],
+        old: ["Old preview detail", "/evidence/founder-preview/research-detail-desktop-1440.png", "8b06da56 reconstructed detail"],
+        proposed: ["Proposed geometry comparison", "/evidence/ui-convergence/corrected-preview/product-detail-comparison-desktop-1440.png", "Current 4:3 versus proposed 1:1"],
+      },
+      {
+        title: "Private account overview",
+        note: "The exact Core column uses the dev-only synthetic fixture harness and does not prove authentication.",
+        actual: ["Actual Core synthetic account", "/evidence/ui-convergence/core-account-synthetic-c0e25c73/account-overview-synthetic--default--chromium--1440--01.png", "Exact Core fixture; UI presentation only"],
+        old: ["Old combined account/status", "/evidence/founder-preview/status-account-support-desktop-1440.png", "8b06da56 hand-built approximation"],
+        proposed: ["Corrected account/status study", "/evidence/ui-convergence/corrected-preview/account-status-desktop-1440.png", "Private proposal; no session"],
+      },
+      {
+        title: "Commerce and order history",
+        note: "Core's real presentation separates commerce records from Care and membership. The preview columns remain non-transactional studies.",
+        actual: ["Actual Core synthetic history", "/evidence/ui-convergence/core-account-synthetic-c0e25c73/orders-synthetic--default--chromium--1440--01.png", "Exact Core fixture; UI presentation only"],
+        old: ["Old combined history panel", "/evidence/founder-preview/status-account-support-desktop-1440.png", "No authenticated or live commerce proof"],
+        proposed: ["Corrected governed-state panel", "/evidence/ui-convergence/corrected-preview/account-status-desktop-1440.png", "No payment, order, or fulfillment authority"],
+      },
+      {
+        title: "Care pathway",
+        note: "The proposed surface converges on Core hierarchy while keeping all clinical, state, and pharmacy authority outside imagery.",
+        actual: ["Actual Core Care", "/evidence/ui-convergence/core-reference/core-care-desktop-1440.png", "c0e25c73 public render"],
+        old: ["Old preview Care", "/evidence/founder-preview/care-desktop-1440.png", "8b06da56 dark pathway drift"],
+        proposed: ["Corrected Care candidate", "/evidence/ui-convergence/corrected-preview/care-desktop-1440.png", "Core-converged private proposal"],
+      },
+    ];
+    const card = (column, entry, className = "") => `<article class="triptych-card ${esc(className)}"><div class="triptych-label"><span>${esc(column)}</span><strong>${esc(entry[0])}</strong></div><a class="triptych-shot" href="${esc(entry[1])}" aria-label="Open full ${esc(entry[0])} screenshot"><img data-safe-image src="${esc(entry[1])}" alt="${esc(entry[0])}" loading="eager" /></a><p>${esc(entry[2])}</p></article>`;
+    return `<div class="page-shell"><section class="page-hero"><div class="container-x"><p class="eyebrow">Complete A / B / C review package</p><h1>Actual Core, old preview, proposed delta.</h1><p class="lead">Every image below is labeled by authority. The complete 207-row machine-readable matrix records surface, actual Core behavior, old preview behavior, proposed Xenios Health delta, accidental versus intentional status, and required action.</p><div class="hero-actions"><a class="btn btn-primary" href="../UI_CONVERGENCE_THREE_WAY_MATRIX_2026-10-01.json">Open 207-row matrix</a><a class="btn btn-secondary" href="index.html?view=decisions">Review A-E decisions</a></div></div></section><section class="section"><div class="container-x triptych-stack">${comparisons.map((comparison) => `<section class="triptych-group"><div class="section-heading"><div><p class="eyebrow">Three-way evidence</p><h2>${esc(comparison.title)}</h2><p>${esc(comparison.note)}</p></div></div><div class="triptych-grid">${card("A · ACTUAL CORE", comparison.actual, "actual")}${card("B · CURRENT / OLD PREVIEW", comparison.old, "old")}${card("C · PROPOSED XENIOS HEALTH", comparison.proposed, "proposed")}</div></section>`).join("")}</div></section><section class="section soft"><div class="container-x"><aside class="boundary-note"><h3>No approval is implied</h3><p>This comparison grants no image, founder-decision, Core, catalog, Product Control, price, commerce, runtime, publication, deployment, hosted-write, managed-SQL, or production authority.</p></aside></div></section></div>`;
   }
 
   function renderReview() {
@@ -348,6 +403,7 @@
     coming: renderComingSoon,
     decisions: renderDecisions,
     core: renderCoreEvidence,
+    "three-way": renderThreeWayComparison,
     review: renderReview,
     wireframe: renderWireframe,
   };
