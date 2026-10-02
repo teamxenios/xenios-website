@@ -1,0 +1,159 @@
+Skip to content
+
+PRIVATE FOUNDER DECISION PREVIEW
+Core baseline c0e25c73 · imagery source 8b06da56 · no publication or transaction authority
+
+DECISION COMPARISONS
+CURRENT CORE EVIDENCE
+423-SLOT QA
+Xenios
+Start Care
+Menu
+PRIVATE PREVIEW
+Home
+Products
+Featured
+Card policy
+Media geometry
+Care
+Account / status
+Founder decisions
+
+FEATURED · PRIVATE PROPOSAL
+
+Current hierarchy, proposed imagery.
+
+The eight high-visibility identities use the current Core card rhythm and one canonical private asset reference across card and detail.
+
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH CAPSULES
+RESEARCH ACCESS
+Blend BPC-157 + TB-500
+
+BLEND BPC-157 + TB-500 500/500 MCG
+
+Runtime Product Control remains the only price and purchase authority.
+
+CATEGORY
+Research Capsules
+PRICE STATE
+Price omitted from static preview
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+CLINICAL FORMULATIONS 503A
+CARE PATHWAY
+Aod-9604 + MOTS-C + Tesamorelin + Ipamorelin
+
+AOD-9604/MOTS-C/TESAMORELIN/IPAMORELIN 1.2MG-2MG-2MG-2MG/ML (5ML)
+
+Provider review and applicable state and pharmacy requirements govern this pathway.
+
+CATEGORY
+503A Clinical Formulations
+PRICE STATE
+Care pricing withheld
+Review Care pathway
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+SUPPLEMENTS
+RESEARCH ACCESS
+Longevity Essentials NAD+
+
+RETAIL UNIT / PACKAGE
+
+Runtime Product Control remains the only price and purchase authority.
+
+CATEGORY
+Supplements
+PRICE STATE
+Price omitted from static preview
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH PEPTIDES MATERIALS
+RESEARCH ACCESS
+Oxytocin
+
+OXYTOCIN 2 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+CATEGORY
+Research Peptides & Materials
+PRICE STATE
+Price omitted from static preview
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH PEPTIDES MATERIALS
+RESEARCH ACCESS
+Hexarelin
+
+HEXARELIN 10 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+CATEGORY
+Research Peptides & Materials
+PRICE STATE
+Price omitted from static preview
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH PEPTIDES MATERIALS
+RESEARCH ACCESS
+CJC-1295 (No DAC) + Ipamorelin
+
+CJC-1295 (NO DAC) 10 MG + IPAMORELIN 10 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+CATEGORY
+Research Peptides & Materials
+PRICE STATE
+Price omitted from static preview
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH PEPTIDES MATERIALS
+RESEARCH ACCESS
+CJC-1295 (No DAC) + Ipamorelin
+
+CJC-1295 (NO DAC) 5 MG + IPAMORELIN 5 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+CATEGORY
+Research Peptides & Materials
+PRICE STATE
+Price omitted from static preview
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+CLINICAL FORMULATIONS 503A
+CARE PATHWAY
+BPC-157 + TB-500 + KPV + GHK-Cu 3-3-3-10Mg + Ml (5Ml)
+
+BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML)
+
+Provider review and applicable state and pharmacy requirements govern this pathway.
+
+CATEGORY
+503A Clinical Formulations
+PRICE STATE
+Care pricing withheld
+Review Care pathway
+Authority boundary
+
+These 423 private slots remain joined to the frozen catalog candidate at 4cba24af1d42. Core UI reference c0e25c73 is separate UI evidence. Neither source is image approval, publication authority, Product Control authority, price release, runtime integration, deployment authority, or production approval.
+
+Xenios
+
+Private UI-convergence evidence. Synthetic data only. Nothing here is a live offer.
+
+Founder decisions
+Current Core evidence
+Six frozen calibration studies
+Full QA grid

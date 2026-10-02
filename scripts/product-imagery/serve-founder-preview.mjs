@@ -12,6 +12,7 @@ const MIME = new Map([
   [".json", "application/json; charset=utf-8"],
   [".png", "image/png"],
   [".webp", "image/webp"],
+  [".woff2", "font/woff2"],
 ]);
 
 function resolveRequestPath(rawPath) {
@@ -29,7 +30,7 @@ function responseHeaders(contentType) {
     "Cache-Control": "no-store, max-age=0",
     "Content-Type": contentType,
     "Content-Security-Policy":
-      "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'none'; connect-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'",
+      "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; frame-src 'none'; form-action 'none'; base-uri 'none'; frame-ancestors 'none'",
     "Cross-Origin-Opener-Policy": "same-origin",
     "Cross-Origin-Resource-Policy": "same-origin",
     "Referrer-Policy": "no-referrer",

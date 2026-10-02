@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "kind": "exact_core_synthetic_member_catalog_detail_ui_evidence",
+  "capturedAtUtc": "2026-10-02T00:03:20.6470180Z",
+  "source": {
+    "commit": "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
+    "tree": "1771d18bad91b89e95414bebb8b574dc32729687",
+    "checkoutTrackedChangesAfterCapture": 0,
+    "nodeVersion": "v20.19.0",
+    "npmVersion": "10.8.2",
+    "packageLockSha256": "d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8",
+    "distFileCount": 347,
+    "distInventorySha256": "e9f33f92b88c5080cda38254a2dd318bb42ce7218d49a41dd04291b96bc7ebc3"
+  },
+  "scope": {
+    "requestedTargetsComplete": true,
+    "memberCatalogAndDetailOnly": true,
+    "uiPresentationOnly": true,
+    "realCredentialsUsed": false,
+    "realCustomerDataUsed": false,
+    "externalMutationAuthorized": false,
+    "externalMutationPerformed": false,
+    "provesAuthentication": false,
+    "provesLiveApiAdapters": false,
+    "provesProductControl": false,
+    "provesPricingOrAvailability": false,
+    "provesCommerce": false
+  },
+  "privacyReview": {
+    "machineScan": "CLEAN",
+    "machineScanPath": "pii-scan.json",
+    "textFindings": 0,
+    "unscannableArtifacts": 0,
+    "manualPngReviewCompleted": true,
+    "manualPngsReviewed": 4,
+    "realCustomerOrCredentialDataObserved": false
+  },
+  "harness": {
+    "script": "scripts/evidence/capture-synthetic-journeys.mjs",
+    "fullJourneyRunCompleted": false,
+    "targetCapturesCompletedBeforeLaterAccountHarnessFailure": true,
+    "laterFailure": "Timed out waiting for #ms-email while entering an out-of-scope account persona",
+    "targetDisposition": "ACCEPTED_AS_BOUNDED_MEMBER_UI_REFERENCE"
+  },
+  "captures": [
+    {
+      "name": "catalog-synthetic--default--chromium--1440--01",
+      "surface": "synthetic_member_catalog",
+      "viewportWidth": 1440,
+      "automationStatus": "AUTOMATED_PASS",
+      "png": {
+        "path": "synthetic/captures/catalog-synthetic--default--chromium--1440--01.png",
+        "bytes": 166010,
+        "width": 1440,
+        "height": 1856,
+        "sha256": "a84f2d1a79e0eb1a829e22f8cc01852cfd190f710597195eaf6ce270593a8545"
+      },
+      "renderedText": {
+        "path": "synthetic/captures/catalog-synthetic--default--chromium--1440--01.text.txt",
+        "bytes": 2528,
+        "sha256": "1b0bbfb204ede1515a4485440399450f66562073e4b3b0ac812406a85b5a5541"
+      }
+    },
+    {
+      "name": "catalog-synthetic--default--chromium--390--01",
+      "surface": "synthetic_member_catalog",
+      "viewportWidth": 390,
+      "automationStatus": "AUTOMATED_PASS",
+      "png": {
+        "path": "synthetic/captures/catalog-synthetic--default--chromium--390--01.png",
+        "bytes": 158363,
+        "width": 390,
+        "height": 3277,
+        "sha256": "1c673322179eb24932472c126b15e305e0d9c14e995fcb8acbcbcb8c7d638b60"
+      },
+      "renderedText": {
+        "path": "synthetic/captures/catalog-synthetic--default--chromium--390--01.text.txt",
+        "bytes": 1829,
+        "sha256": "63a3e7bd8da641fc80fa0eaf06e89452ded0a9cd21c888cf8c57fdfa3626096f"
+      }
+    },
+    {
+      "name": "product-detail-synthetic--default--chromium--1440--01",
+      "surface": "synthetic_member_product_detail",
+      "viewportWidth": 1440,
+      "automationStatus": "AUTOMATED_PASS",
+      "png": {
+        "path": "synthetic/captures/product-detail-synthetic--default--chromium--1440--01.png",
+        "bytes": 100430,
+        "width": 1440,
+        "height": 1492,
+        "sha256": "082176be5ac12c4bd163a63c5fb8ff6671f9bd0902030dfe994fb2bb93b5aa0f"
+      },
+      "renderedText": {
+        "path": "synthetic/captures/product-detail-synthetic--default--chromium--1440--01.text.txt",
+        "bytes": 1309,
+        "sha256": "18a1cfc66c735e69b761007c0aa8afae890a7ccbef20f7937a141868823d386a"
+      }
+    },
+    {
+      "name": "product-detail-synthetic--default--chromium--390--01",
+      "surface": "synthetic_member_product_detail",
+      "viewportWidth": 390,
+      "automationStatus": "AUTOMATED_PASS",
+      "png": {
+        "path": "synthetic/captures/product-detail-synthetic--default--chromium--390--01.png",
+        "bytes": 94892,
+        "width": 390,
+        "height": 1901,
+        "sha256": "771fe1203e0d29260d7157446908b1dcebf4f17611c611ac9874f22159c8fc23"
+      },
+      "renderedText": {
+        "path": "synthetic/captures/product-detail-synthetic--default--chromium--390--01.text.txt",
+        "bytes": 1309,
+        "sha256": "18a1cfc66c735e69b761007c0aa8afae890a7ccbef20f7937a141868823d386a"
+      }
+    }
+  ]
+}

@@ -10,7 +10,10 @@ import { startFounderPreviewServer } from "./serve-founder-preview.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(HERE, "../..");
-const EVIDENCE_ROOT = join(REPO_ROOT, "docs/product-imagery/evidence/founder-preview");
+const EVIDENCE_ROOT = join(
+  REPO_ROOT,
+  "docs/product-imagery/evidence/ui-convergence/corrected-preview",
+);
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 
 function pngDimensions(bytes, label) {
@@ -110,23 +113,50 @@ function safeName(value) {
 }
 
 function plannedCaptures(data) {
-  const representative = data.representativeCanonicalIds;
-  const captures = [
-    { name: "calibration-contact-sheet-desktop", path: "/founder-preview/calibration.html", width: 1440, height: 1000, fullPage: true },
-    { name: "calibration-contact-sheet-mobile-390", path: "/founder-preview/calibration.html", width: 390, height: 844, fullPage: true },
-    { name: "wireframe-desktop", path: "/founder-preview/wireframe.html", width: 1440, height: 1000, fullPage: true },
-    { name: "wireframe-mobile-390", path: "/founder-preview/wireframe.html", width: 390, height: 844, fullPage: false },
-    { name: "home-desktop", path: "/founder-preview/index.html?view=home", width: 1440, height: 1000, fullPage: true },
-    { name: "home-tablet", path: "/founder-preview/index.html?view=home", width: 834, height: 1112, fullPage: false },
-    { name: "home-mobile-390", path: "/founder-preview/index.html?view=home", width: 390, height: 844, fullPage: true },
-    { name: "home-mobile-320", path: "/founder-preview/index.html?view=home", width: 320, height: 760, fullPage: false },
-    { name: "products-desktop", path: "/founder-preview/index.html?view=products", width: 1440, height: 1000, fullPage: false },
+  const viewportMatrix = [
+    { key: "desktop-1440", width: 1440, height: 1000 },
+    { key: "desktop-1280", width: 1280, height: 900 },
+    { key: "tablet-1024", width: 1024, height: 768 },
+    { key: "tablet-834", width: 834, height: 1112 },
+    { key: "tablet-768", width: 768, height: 1024 },
+    { key: "mobile-430", width: 430, height: 932 },
+    { key: "mobile-390", width: 390, height: 844 },
+    { key: "mobile-375", width: 375, height: 812 },
+    { key: "mobile-360", width: 360, height: 800 },
+    { key: "mobile-320", width: 320, height: 760 },
+  ];
+  const surfaces = [
+    { name: "home", path: "/founder-preview/index.html?view=home" },
+    { name: "products", path: "/founder-preview/index.html?view=products" },
+    { name: "featured", path: "/founder-preview/index.html?view=featured" },
+    { name: "product-card-comparison", path: "/founder-preview/index.html?view=cards" },
+    { name: "product-detail-comparison", path: "/founder-preview/index.html?view=details" },
+    { name: "care", path: "/founder-preview/index.html?view=care" },
+    { name: "held", path: "/founder-preview/index.html?view=held" },
+    { name: "quote-only", path: "/founder-preview/index.html?view=quote" },
+    { name: "coming-soon", path: "/founder-preview/index.html?view=coming" },
+    { name: "account-status", path: "/founder-preview/index.html?view=journeys" },
+    { name: "founder-decisions", path: "/founder-preview/index.html?view=decisions" },
+    { name: "catalog-qa-grid", path: "/founder-preview/catalog-review.html?page=1&limit=12" },
+  ];
+  const captures = surfaces.flatMap((surface) =>
+    viewportMatrix.map((viewport) => ({
+      name: `${surface.name}-${viewport.key}`,
+      path: surface.path,
+      width: viewport.width,
+      height: viewport.height,
+      fullPage: true,
+      responsiveMatrix: true,
+      surface: surface.name,
+    })),
+  );
+  captures.push(
     {
       name: "products-search-bam15-desktop",
       path: "/founder-preview/index.html?view=products",
       width: 1440,
       height: 1000,
-      fullPage: false,
+      fullPage: true,
       interaction: { control: "catalog-search", value: "BAM15", expectedCount: 1, expectedCanonicalId: "GRP-0244" },
     },
     {
@@ -134,35 +164,13 @@ function plannedCaptures(data) {
       path: "/founder-preview/index.html?view=products",
       width: 1440,
       height: 1000,
-      fullPage: false,
+      fullPage: true,
       interaction: { control: "catalog-pathway", value: "held", expectedCount: 1, expectedCanonicalId: "GRP-0422" },
     },
-    { name: "products-tablet", path: "/founder-preview/index.html?view=products", width: 834, height: 1112, fullPage: false },
-    { name: "products-mobile-390", path: "/founder-preview/index.html?view=products", width: 390, height: 844, fullPage: false },
-    { name: "products-mobile-320", path: "/founder-preview/index.html?view=products", width: 320, height: 760, fullPage: false },
-    { name: "featured-desktop", path: "/founder-preview/index.html?view=featured", width: 1440, height: 1000, fullPage: true },
-    { name: "featured-mobile-390", path: "/founder-preview/index.html?view=featured", width: 390, height: 844, fullPage: false },
-    { name: "research-detail-desktop", path: `/founder-preview/product-detail.html?id=${representative.research}`, width: 1440, height: 1000, fullPage: true },
-    { name: "research-detail-tablet", path: `/founder-preview/product-detail.html?id=${representative.research}`, width: 834, height: 1112, fullPage: false },
-    { name: "research-detail-mobile-390", path: `/founder-preview/product-detail.html?id=${representative.research}`, width: 390, height: 844, fullPage: true },
-    { name: "research-detail-mobile-320", path: `/founder-preview/product-detail.html?id=${representative.research}`, width: 320, height: 760, fullPage: false },
     { name: "review-fix-acetic-acid-detail-desktop", path: "/founder-preview/product-detail.html?id=GRP-0362", width: 1440, height: 1000, fullPage: true },
     { name: "review-fix-ghk-cu-detail-desktop", path: "/founder-preview/product-detail.html?id=GRP-0287", width: 1440, height: 1000, fullPage: true },
     { name: "review-fix-supplement-detail-desktop", path: "/founder-preview/product-detail.html?id=GRP-0366", width: 1440, height: 1000, fullPage: true },
-    { name: "care-desktop", path: "/founder-preview/index.html?view=care", width: 1440, height: 1000, fullPage: true },
-    { name: "care-mobile-390", path: "/founder-preview/index.html?view=care", width: 390, height: 844, fullPage: false },
-    { name: "held-detail-desktop", path: `/founder-preview/product-detail.html?id=${representative.held}`, width: 1440, height: 1000, fullPage: true },
-    { name: "held-detail-mobile-390", path: `/founder-preview/product-detail.html?id=${representative.held}`, width: 390, height: 844, fullPage: true },
-    { name: "quote-detail-desktop", path: `/founder-preview/product-detail.html?id=${representative.quote}`, width: 1440, height: 1000, fullPage: true },
-    { name: "quote-detail-mobile-320", path: `/founder-preview/product-detail.html?id=${representative.quote}`, width: 320, height: 760, fullPage: true },
-    { name: "coming-soon-desktop", path: "/founder-preview/index.html?view=coming", width: 1440, height: 1000, fullPage: true },
-    { name: "coming-soon-mobile-390", path: "/founder-preview/index.html?view=coming", width: 390, height: 844, fullPage: true },
-    { name: "status-account-support-desktop", path: "/founder-preview/index.html?view=journeys", width: 1440, height: 1000, fullPage: true },
-    { name: "status-account-support-mobile-390", path: "/founder-preview/index.html?view=journeys", width: 390, height: 844, fullPage: true },
-    { name: "catalog-review-tablet", path: "/founder-preview/catalog-review.html?page=1&limit=12", width: 834, height: 1112, fullPage: false },
-    { name: "catalog-review-mobile-390", path: "/founder-preview/catalog-review.html?page=1&limit=6", width: 390, height: 844, fullPage: true },
-    { name: "catalog-review-mobile-320", path: "/founder-preview/catalog-review.html?page=1&limit=6", width: 320, height: 760, fullPage: true },
-  ];
+  );
   const gridPageSize = 48;
   for (let page = 1; page <= Math.ceil(data.rows.length / gridPageSize); page += 1) {
     captures.push({
@@ -212,6 +220,11 @@ async function prepareImages(page) {
 
 export async function captureFounderPreview() {
   const { data } = writeFounderPreviewArtifacts();
+  const captureFilter = String(process.env.XENIOS_CAPTURE_ONLY ?? "").trim().toLowerCase();
+  const planned = plannedCaptures(data).filter(
+    (capture) => !captureFilter || capture.name.toLowerCase().includes(captureFilter),
+  );
+  assert.ok(planned.length > 0, `No founder preview captures matched ${captureFilter}`);
   mkdirSync(EVIDENCE_ROOT, { recursive: true });
   const preview = await startFounderPreviewServer({ port: 0 });
   let browser;
@@ -221,9 +234,11 @@ export async function captureFounderPreview() {
   try {
     browser = await launchChromium();
     connection = await new NativeCdpConnection(browser.wsUrl).open();
-    const page = await PageSession.create(connection);
-    await page.enforceNetworkBoundary(preview.origin);
-    for (const planned of plannedCaptures(data)) {
+    for (const plannedCapture of planned) {
+      const planned = plannedCapture;
+      const page = await PageSession.create(connection);
+      await page.enforceNetworkBoundary(preview.origin);
+      try {
       const consoleStart = page.console.length;
       const networkStart = page.network.length;
       const boundaryStart = page.networkBoundaryViolations.length;
@@ -264,7 +279,25 @@ export async function captureFounderPreview() {
       }))()`);
       assert.equal(state.ready.customerTargets, 423);
       assert.ok(
-        ["home", "products", "featured", "detail", "care", "journeys", "coming", "review", "wireframe", "calibration"].includes(
+        [
+          "home",
+          "products",
+          "featured",
+          "detail",
+          "cards",
+          "details",
+          "care",
+          "held",
+          "quote",
+          "pending",
+          "journeys",
+          "coming",
+          "decisions",
+          "core",
+          "review",
+          "wireframe",
+          "calibration",
+        ].includes(
           state.ready.view,
         ),
         `${planned.name} did not expose a recognized preview view`,
@@ -283,11 +316,11 @@ export async function captureFounderPreview() {
         fullPage: planned.fullPage,
         maxHeight: 24000,
       });
-      const fileName = `${safeName(planned.name)}-${planned.width}.png`;
+      const fileName = `${safeName(planned.name)}.png`;
       const screenshotPath = join(EVIDENCE_ROOT, fileName);
       writeFileSync(screenshotPath, screenshot.bytes);
       const decoded = pngDimensions(screenshot.bytes, fileName);
-      const textFileName = `${safeName(planned.name)}-${planned.width}.text.txt`;
+      const textFileName = `${safeName(planned.name)}.text.txt`;
       const normalizedBodyText = `${state.bodyText}\n`
         .split(/\r?\n/)
         .map((line) => line.replace(/[ \t]+$/u, ""))
@@ -303,6 +336,8 @@ export async function captureFounderPreview() {
       assert.deepEqual(boundaryViolations, [], `${planned.name} attempted external network access`);
       records.push({
         name: planned.name,
+        surface: planned.surface ?? null,
+        responsiveMatrix: planned.responsiveMatrix === true,
         path: planned.path,
         viewport: { width: planned.width, height: planned.height, deviceScaleFactor: 1 },
         fullPage: planned.fullPage,
@@ -341,18 +376,34 @@ export async function captureFounderPreview() {
         networkRequestCount: page.network.slice(networkStart).length,
       });
       console.log(`captured ${planned.name} ${decoded.width}x${decoded.height}`);
+      } finally {
+        await page.close().catch(() => {});
+      }
     }
-    assert.equal(gridIds.size, 423, "Desktop grid evidence must cover all 423 canonical IDs");
-    assert.deepEqual([...gridIds].sort(), data.rows.map((row) => row.canonicalId).sort());
+    if (!captureFilter) {
+      assert.equal(gridIds.size, 423, "Desktop grid evidence must cover all 423 canonical IDs");
+      assert.deepEqual([...gridIds].sort(), data.rows.map((row) => row.canonicalId).sort());
+    }
     const evidence = {
-      schemaVersion: 1,
-      kind: "private_founder_preview_responsive_browser_evidence",
+      schemaVersion: 2,
+      kind: "private_founder_preview_core_ui_convergence_browser_evidence",
       generatedAt: data.generatedAt,
       privatePrototype: true,
       productionQualified: false,
       deploymentAuthorized: false,
+      partialDebugCapture: Boolean(captureFilter),
+      captureFilter: captureFilter || null,
       sourceCoreCommit: data.sources.coreCatalog.commit,
       sourceCoreTree: data.sources.coreCatalog.tree,
+      coreUiReference: {
+        commit: "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
+        tree: "1771d18bad91b89e95414bebb8b574dc32729687",
+        role: "dominant_public_ui_reference_only",
+      },
+      uiReviewBaseline: {
+        commit: "ae5c410ab6e5c27df94c5bdc5b6533ab821b6d4c",
+        tree: "36dd5df64f5da1caf8a1212c89195caf870a907d",
+      },
       imageryReviewTarget: data.sources.imageryReviewTarget.commit,
       browser: {
         name: browser.browserName,
@@ -367,6 +418,9 @@ export async function captureFounderPreview() {
       },
       counts: {
         captures: records.length,
+        responsiveMatrixCaptures: records.filter((record) => record.responsiveMatrix).length,
+        responsiveWidths: [...new Set(records.filter((record) => record.responsiveMatrix).map((record) => record.viewport.width))],
+        responsiveSurfaces: [...new Set(records.filter((record) => record.responsiveMatrix).map((record) => record.surface))],
         customerTargets: data.rows.length,
         gridCanonicalIdsCovered: gridIds.size,
         brokenImages: records.reduce((sum, record) => sum + record.assertions.imagesBroken, 0),

@@ -1,0 +1,120 @@
+Skip to content
+
+PRIVATE FOUNDER DECISION PREVIEW
+Core baseline c0e25c73 · imagery source 8b06da56 · no publication or transaction authority
+
+DECISION COMPARISONS
+CURRENT CORE EVIDENCE
+423-SLOT QA
+Xenios
+Sign In
+Start Care
+Menu
+PRIVATE PREVIEW
+Home
+Products
+Featured
+Card policy
+Media geometry
+Care
+Account / status
+Founder decisions
+
+FOUNDER DECISION E · MEDIA GEOMETRY
+
+Current 4:3 member slot versus proposed 1:1 slot.
+
+Both views use the exact same frozen source pixels with contain. No saturation, grade, vignette, tint, or crop is applied.
+
+CURRENT CORE MEMBER PRESENTATION
+4:3
+CURRENT MEMBER SLOT · 4:3 CONTAIN
+GRP-0256
+RESEARCH ACCESS
+5-Amino-1Mq
+
+5-AMINO-1MQ 10 mg
+
+FORM
+Lyophilized Vial
+PRICE STATE
+Price omitted from static preview
+PATHWAY
+Research access
+IMAGE STATUS
+Private, provisional, not publication-approved
+View product
+
+Runtime Product Control remains the only price and purchase authority. This static preview cannot submit, reserve, prescribe, quote, or order.
+
+Prototype action only
+Catalog visibility does not establish availability, suitability, or purchase eligibility.
+Card and detail use the exact same source asset SHA-256: e04c2e5981eccdd5753ebfbdd8927e6e04ae804d2e0537eb9eceb5c7e9d3f6fe
+No package, manufacturer, certification, clinical benefit, or partner relationship is asserted.
+PROPOSED XENIOS HEALTH PRESENTATION
+1:1
+PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS
+GRP-0256
+RESEARCH ACCESS
+5-Amino-1Mq
+
+5-AMINO-1MQ 10 mg
+
+FORM
+Lyophilized Vial
+PRICE STATE
+Price omitted from static preview
+PATHWAY
+Research access
+IMAGE STATUS
+Private, provisional, not publication-approved
+View product
+
+Runtime Product Control remains the only price and purchase authority. This static preview cannot submit, reserve, prescribe, quote, or order.
+
+Prototype action only
+Catalog visibility does not establish availability, suitability, or purchase eligibility.
+Card and detail use the exact same source asset SHA-256: e04c2e5981eccdd5753ebfbdd8927e6e04ae804d2e0537eb9eceb5c7e9d3f6fe
+No package, manufacturer, certification, clinical benefit, or partner relationship is asserted.
+
+SAFE FALLBACK
+
+No approved image means no borrowed image.
+
+The fallback preserves identity and state without selecting a lookalike product.
+
+Approved image unavailable
+
+The product remains identifiable by text. No substitute image is borrowed.
+
+SAFE FALLBACK · NO BORROWED ASSET
+GRP-0424
+BINDING PENDING
+Glutathione
+
+GLUTATHIONE 600 mg
+
+FORM
+Lyophilized Vial
+PRICE STATE
+Pricing not released
+PATHWAY
+Binding pending
+IMAGE STATUS
+Private, provisional, not publication-approved
+Request availability review
+
+The canonical identity is retained without borrowing a price or Product Control binding. This static preview cannot submit, reserve, prescribe, quote, or order.
+
+Prototype action only
+Catalog visibility does not establish availability, suitability, or purchase eligibility.
+Card and detail use the exact same source asset SHA-256: 77069db7b8324baf4780b37c585926a92b432e2fef24cbcdf019d38782cd7d8b
+No package, manufacturer, certification, clinical benefit, or partner relationship is asserted.
+Xenios
+
+Private UI-convergence evidence. Synthetic data only. Nothing here is a live offer.
+
+Founder decisions
+Current Core evidence
+Six frozen calibration studies
+Full QA grid

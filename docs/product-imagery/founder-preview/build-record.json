@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 1,
-  "kind": "founder_preview_build_record",
+  "schemaVersion": 2,
+  "kind": "founder_preview_core_ui_convergence_build_record",
   "generatedAt": "2026-10-01T16:12:00.000Z",
   "dataSha256": "861b736919ffaf81df4f12318e876a3e0112a100621cd25a5a46e286fe46de23",
   "customerTargets": 423,
@@ -9,6 +9,32 @@
   "missingExactRenders": 423,
   "reviewerTipCommit": "76607458e30a64746d227150ff1dbab3475dd64a",
   "prototypeReviewCommit": "023e9ec8899ded7f66f52ef3c21a799501d98084",
+  "uiReference": {
+    "commit": "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
+    "tree": "1771d18bad91b89e95414bebb8b574dc32729687",
+    "role": "dominant_public_ui_reference_only"
+  },
+  "uiFidelityReview": {
+    "commit": "ae5c410ab6e5c27df94c5bdc5b6533ab821b6d4c",
+    "tree": "36dd5df64f5da1caf8a1212c89195caf870a907d",
+    "verdictOnPriorPrototype": "FAIL"
+  },
+  "proposalState": {
+    "healthSpecificBrandingApproved": false,
+    "rectangularCtaUnificationApproved": false,
+    "restrainedPurpleTealAccentApproved": false,
+    "publicProductImageryApproved": false,
+    "squareCanonicalMediaApproved": false
+  },
+  "imagePresentation": {
+    "proposedCanonicalAspectRatio": "1:1",
+    "objectFit": "contain",
+    "cssColorManipulation": false,
+    "cssVignette": false,
+    "hiddenCrop": false,
+    "cardDetailSourceIdentityRequired": true,
+    "safeFallbackRequired": true
+  },
   "reviewerDirectedNeutralSlots": 269,
   "rejectedBatch0AssetSlots": 0,
   "c2paProvenancePath": "docs/product-imagery/manifests/batch-000-c2pa-provenance.json",

@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 4,
+  "kind": "evidence-pii-scan",
+  "candidateSha": "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
+  "scannedAtUtc": "2026-10-02T01:50:10.639Z",
+  "evidenceRoot": ".",
+  "textFilesScanned": 5,
+  "textArtifacts": [
+    "synthetic-catalog-detail-evidence.json",
+    "synthetic/captures/catalog-synthetic--default--chromium--1440--01.text.txt",
+    "synthetic/captures/catalog-synthetic--default--chromium--390--01.text.txt",
+    "synthetic/captures/product-detail-synthetic--default--chromium--1440--01.text.txt",
+    "synthetic/captures/product-detail-synthetic--default--chromium--390--01.text.txt"
+  ],
+  "fileInventory": [
+    {
+      "path": "synthetic-catalog-detail-evidence.json",
+      "bytes": 4535,
+      "sha256": "687d51cb256c4dd5297843a83d4142da8df7e78e567bc4628bdb312390de2e51"
+    },
+    {
+      "path": "synthetic/captures/catalog-synthetic--default--chromium--1440--01.png",
+      "bytes": 166010,
+      "sha256": "a84f2d1a79e0eb1a829e22f8cc01852cfd190f710597195eaf6ce270593a8545"
+    },
+    {
+      "path": "synthetic/captures/catalog-synthetic--default--chromium--1440--01.text.txt",
+      "bytes": 2528,
+      "sha256": "1b0bbfb204ede1515a4485440399450f66562073e4b3b0ac812406a85b5a5541"
+    },
+    {
+      "path": "synthetic/captures/catalog-synthetic--default--chromium--390--01.png",
+      "bytes": 158363,
+      "sha256": "1c673322179eb24932472c126b15e305e0d9c14e995fcb8acbcbcb8c7d638b60"
+    },
+    {
+      "path": "synthetic/captures/catalog-synthetic--default--chromium--390--01.text.txt",
+      "bytes": 1829,
+      "sha256": "63a3e7bd8da641fc80fa0eaf06e89452ded0a9cd21c888cf8c57fdfa3626096f"
+    },
+    {
+      "path": "synthetic/captures/product-detail-synthetic--default--chromium--1440--01.png",
+      "bytes": 100430,
+      "sha256": "082176be5ac12c4bd163a63c5fb8ff6671f9bd0902030dfe994fb2bb93b5aa0f"
+    },
+    {
+      "path": "synthetic/captures/product-detail-synthetic--default--chromium--1440--01.text.txt",
+      "bytes": 1309,
+      "sha256": "18a1cfc66c735e69b761007c0aa8afae890a7ccbef20f7937a141868823d386a"
+    },
+    {
+      "path": "synthetic/captures/product-detail-synthetic--default--chromium--390--01.png",
+      "bytes": 94892,
+      "sha256": "771fe1203e0d29260d7157446908b1dcebf4f17611c611ac9874f22159c8fc23"
+    },
+    {
+      "path": "synthetic/captures/product-detail-synthetic--default--chromium--390--01.text.txt",
+      "bytes": 1309,
+      "sha256": "18a1cfc66c735e69b761007c0aa8afae890a7ccbef20f7937a141868823d386a"
+    }
+  ],
+  "inventorySha256": "5f2d3f113e9129bf63ca8333a88a285b408351fead30a15502485d3792c98f23",
+  "scanCoverage": {
+    "result": "COMPLETE",
+    "classifiedFiles": 9,
+    "totalFiles": 9,
+    "textFiles": 5,
+    "manualImageFiles": 4,
+    "unscannableFiles": 0
+  },
+  "summary": {
+    "total": 0,
+    "byId": {},
+    "result": "CLEAN"
+  },
+  "findings": [],
+  "screenshots": [
+    "synthetic/captures/catalog-synthetic--default--chromium--1440--01.png",
+    "synthetic/captures/catalog-synthetic--default--chromium--390--01.png",
+    "synthetic/captures/product-detail-synthetic--default--chromium--1440--01.png",
+    "synthetic/captures/product-detail-synthetic--default--chromium--390--01.png"
+  ],
+  "unscannableArtifacts": [],
+  "screenshotReview": "MANUAL_PENDING: validated PNG pixels cannot be text-scanned; each capture's *.text.txt page text was scanned instead."
+}

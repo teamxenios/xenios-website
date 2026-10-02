@@ -1,0 +1,82 @@
+Skip to content
+
+PRIVATE FOUNDER DECISION PREVIEW
+Core baseline c0e25c73 · imagery source 8b06da56 · no publication or transaction authority
+
+DECISION COMPARISONS
+CURRENT CORE EVIDENCE
+423-SLOT QA
+Xenios
+Start Care
+Menu
+PRIVATE PREVIEW
+Home
+Products
+Featured
+Card policy
+Media geometry
+Care
+Account / status
+Founder decisions
+
+CURRENT CORE ROUTE FAMILIES
+
+Account and status remain separate governed surfaces.
+
+These synthetic panels mirror current Core hierarchy and terminology without real credentials, customer data, payment evidence, or hosted services.
+
+STATUS
+
+Check a request
+
+Use the exact reference and contact details from a submission. This prototype performs no lookup.
+
+Reference
+Check status
+
+ACCOUNT
+
+Sign in securely
+
+Access protected history and actions only after authentication. This preview has no session or credential handling.
+
+Email
+Continue
+
+RECORDED PROGRESS
+
+Request timeline
+1
+Request received
+Identity and timestamp recorded
+2
+Review in progress
+No availability or payment claim implied
+3
+Next step confirmed
+Only the governed action appears
+
+ORDER HISTORY
+
+Synthetic account rows
+Request XR-0124
+Under review
+Quote XQ-0087
+Action needed
+Care intake XC-0041
+Received
+
+SUPPORT
+
+Help near the point of uncertainty.
+
+Product identity questions, access recovery, request status, and Care questions route separately. No combined preview control claims to replace those Core flows.
+
+Xenios
+
+Private UI-convergence evidence. Synthetic data only. Nothing here is a live offer.
+
+Founder decisions
+Current Core evidence
+Six frozen calibration studies
+Full QA grid

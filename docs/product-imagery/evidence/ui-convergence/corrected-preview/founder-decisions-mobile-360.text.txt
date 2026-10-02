@@ -1,0 +1,145 @@
+Skip to content
+
+PRIVATE FOUNDER DECISION PREVIEW
+Core baseline c0e25c73 · imagery source 8b06da56 · no publication or transaction authority
+
+DECISION COMPARISONS
+CURRENT CORE EVIDENCE
+423-SLOT QA
+Xenios
+Menu
+PRIVATE PREVIEW
+Home
+Products
+Featured
+Card policy
+Media geometry
+Care
+Account / status
+Founder decisions
+
+FIVE DECISIONS, NO SILENT ADOPTION
+
+See the choices in the real Xenios UI.
+
+The left column records current Core. The right column is a private proposal. Nothing on this page changes production policy.
+
+FOUNDER DECISION
+
+A. Header brand
+
+Choose whether the Health experience keeps the generic public name or adopts a Health-specific label.
+
+CURRENT CORE
+OBSERVED
+Xenios
+
+Current brand authority: Xenios.
+
+PROPOSED XENIOS HEALTH
+DECISION REQUIRED
+Xenios Health
+
+Proposed Health-experience wordmark.
+
+FOUNDER DECISION
+
+B. Primary action language
+
+Choose whether later Core work should remove the remaining green-pill island.
+
+CURRENT CORE
+OBSERVED
+Start Care
+Legacy green pill
+
+Core is internally mixed. The dominant public shell already uses black rectangular primary actions.
+
+PROPOSED XENIOS HEALTH
+DECISION REQUIRED
+Primary action
+Secondary action
+
+Proposed consistent rectangular system.
+
+FOUNDER DECISION
+
+C. Purple-to-teal accent
+
+Choose whether a restrained purple-to-teal accent becomes part of the Health UI.
+
+CURRENT CORE
+OBSERVED
+CURRENT ACTIVE TOKEN
+Flat purple emphasis
+
+Teal exists as a token but is not an approved global gradient system.
+
+PROPOSED XENIOS HEALTH
+DECISION REQUIRED
+Restrained divider and focus emphasis
+
+No giant gradient headline and no image recoloring.
+
+FOUNDER DECISION
+
+D. Public product imagery
+
+Choose between current text-only public cards and an intentional image-enabled catalog with a safe fallback.
+
+CURRENT CORE
+OBSERVED
+CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY
+RESEARCH PEPTIDES MATERIALS
+RESEARCH ACCESS
+5-Amino-1Mq
+
+5-AMINO-1MQ 10 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+View product
+PROPOSED XENIOS HEALTH
+DECISION REQUIRED
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH PEPTIDES MATERIALS
+RESEARCH ACCESS
+5-Amino-1Mq
+
+5-AMINO-1MQ 10 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+View product
+
+FOUNDER DECISION
+
+E. Canonical media shape
+
+Choose whether future Product Control media should standardize on a square canonical slot.
+
+CURRENT CORE
+OBSERVED
+CURRENT MEMBER SLOT · 4:3 CONTAIN · CONTAIN · UNCHANGED PIXELS
+
+Current optional member media behavior.
+
+PROPOSED XENIOS HEALTH
+DECISION REQUIRED
+PROPOSED CANONICAL SLOT · 1:1 CONTAIN · CONTAIN · UNCHANGED PIXELS
+
+Proposed same-pixels card and detail geometry.
+
+Authority boundary
+
+These 423 private slots remain joined to the frozen catalog candidate at 4cba24af1d42. Core UI reference c0e25c73 is separate UI evidence. Neither source is image approval, publication authority, Product Control authority, price release, runtime integration, deployment authority, or production approval.
+
+Xenios
+
+Private UI-convergence evidence. Synthetic data only. Nothing here is a live offer.
+
+Founder decisions
+Current Core evidence
+Six frozen calibration studies
+Full QA grid

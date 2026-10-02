@@ -1,0 +1,218 @@
+Skip to content
+
+PRIVATE FOUNDER DECISION PREVIEW
+Core baseline c0e25c73 · imagery source 8b06da56 · no publication or transaction authority
+
+DECISION COMPARISONS
+CURRENT CORE EVIDENCE
+423-SLOT QA
+Xenios
+Start Care
+Menu
+PRIVATE PREVIEW
+Home
+Products
+Featured
+Card policy
+Media geometry
+Care
+Account / status
+Founder decisions
+
+FOUNDER DECISION D · PUBLIC IMAGERY
+
+No-image policy versus image-enabled policy.
+
+Each pair holds product identity, state, copy, and action constant. Only the proposed media policy changes.
+
+RESEARCH
+
+5-Amino-1Mq · 5-AMINO-1MQ 10 mg
+
+Current Core remains authoritative on pathways. The right side tests one square private asset without implying production approval.
+
+CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY
+RESEARCH PEPTIDES MATERIALS
+RESEARCH ACCESS
+5-Amino-1Mq
+
+5-AMINO-1MQ 10 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+CATEGORY
+Research Peptides & Materials
+PRICE STATE
+Price omitted from static preview
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH PEPTIDES MATERIALS
+RESEARCH ACCESS
+5-Amino-1Mq
+
+5-AMINO-1MQ 10 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+CATEGORY
+Research Peptides & Materials
+PRICE STATE
+Price omitted from static preview
+View product
+
+CARE
+
+5-Amino-1Mq · 5-AMINO-1MQ 5MG/ML (5ML)
+
+Current Core remains authoritative on pathways. The right side tests one square private asset without implying production approval.
+
+CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY
+CLINICAL FORMULATIONS 503A
+CARE PATHWAY
+5-Amino-1Mq
+
+5-AMINO-1MQ 5MG/ML (5ML)
+
+Provider review and applicable state and pharmacy requirements govern this pathway.
+
+CATEGORY
+503A Clinical Formulations
+PRICE STATE
+Care pricing withheld
+Review Care pathway
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+CLINICAL FORMULATIONS 503A
+CARE PATHWAY
+5-Amino-1Mq
+
+5-AMINO-1MQ 5MG/ML (5ML)
+
+Provider review and applicable state and pharmacy requirements govern this pathway.
+
+CATEGORY
+503A Clinical Formulations
+PRICE STATE
+Care pricing withheld
+Review Care pathway
+
+HELD
+
+CJC-1295 + Ipamorelin · CJC-1295 WITH DAC + IPAMORELIN 5 mg total
+
+Current Core remains authoritative on pathways. The right side tests one square private asset without implying production approval.
+
+CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY
+RESEARCH PEPTIDES MATERIALS
+FORMULATION HELD
+CJC-1295 + Ipamorelin
+
+CJC-1295 WITH DAC + IPAMORELIN 5 MG TOTAL
+
+This identity remains visible for review but is not transaction-ready.
+
+CATEGORY
+Research Peptides & Materials
+PRICE STATE
+Pricing not released
+View hold details
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH PEPTIDES MATERIALS
+FORMULATION HELD
+CJC-1295 + Ipamorelin
+
+CJC-1295 WITH DAC + IPAMORELIN 5 MG TOTAL
+
+This identity remains visible for review but is not transaction-ready.
+
+CATEGORY
+Research Peptides & Materials
+PRICE STATE
+Pricing not released
+View hold details
+
+QUOTE ONLY
+
+BAM15 · BAM15 500 mcg
+
+Current Core remains authoritative on pathways. The right side tests one square private asset without implying production approval.
+
+CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY
+RESEARCH CAPSULES
+QUOTE ONLY
+BAM15
+
+BAM15 500 MCG
+
+A reviewed quote is required before any order pathway is available.
+
+CATEGORY
+Research Capsules
+PRICE STATE
+Price on request
+Request a quote
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH CAPSULES
+QUOTE ONLY
+BAM15
+
+BAM15 500 MCG
+
+A reviewed quote is required before any order pathway is available.
+
+CATEGORY
+Research Capsules
+PRICE STATE
+Price on request
+Request a quote
+
+PACKAGING UNVERIFIED
+
+Glutathione · GLUTATHIONE 600 mg
+
+Current Core remains authoritative on pathways. The right side tests one square private asset without implying production approval.
+
+CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY
+RESEARCH PEPTIDES MATERIALS
+BINDING PENDING
+Glutathione
+
+GLUTATHIONE 600 MG
+
+The canonical identity is retained without borrowing a price or Product Control binding.
+
+CATEGORY
+Research Peptides & Materials
+PRICE STATE
+Pricing not released
+Request availability review
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Approved image unavailable
+
+The product remains identifiable by text. No substitute image is borrowed.
+
+SAFE FALLBACK · NO BORROWED ASSET
+RESEARCH PEPTIDES MATERIALS
+BINDING PENDING
+Glutathione
+
+GLUTATHIONE 600 MG
+
+The canonical identity is retained without borrowing a price or Product Control binding.
+
+CATEGORY
+Research Peptides & Materials
+PRICE STATE
+Pricing not released
+Request availability review
+Xenios
+
+Private UI-convergence evidence. Synthetic data only. Nothing here is a live offer.
+
+Founder decisions
+Current Core evidence
+Six frozen calibration studies
+Full QA grid

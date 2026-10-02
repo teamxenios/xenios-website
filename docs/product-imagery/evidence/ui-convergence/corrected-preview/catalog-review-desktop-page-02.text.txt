@@ -1,0 +1,380 @@
+Skip to content
+
+INTERNAL QA ONLY
+423 customer targets · six frozen calibration studies · zero public approvals
+
+DECISION COMPARISONS
+PRODUCT PREVIEW
+Xenios
+Preview home
+Card policy
+Media geometry
+Full QA grid
+NO RUNTIME WIRING
+
+FULL CATALOG QA
+
+423 private media placements.
+
+Every row remains provisional. The table verifies canonical identity, unchanged source asset, pathway, binding, and image finality.
+
+Compare policy
+Authority boundary
+
+These 423 private slots remain joined to the frozen catalog candidate at 4cba24af1d42. Core UI reference c0e25c73 is separate UI evidence. Neither source is image approval, publication authority, Product Control authority, price release, runtime integration, deployment authority, or production approval.
+
+Search
+Pathway
+All pathways
+Research
+Care
+Held
+Quote only
+Binding pending
+Visual state
+All visual states
+Provisional
+Final
+Fallback
+48 ROWS
+VISUAL	CANONICAL ID	PRODUCT	PRIVATE SOURCE	IMAGE CLASS	PATHWAY / STATUS	FINALITY	BINDING
+
+	GRP-0367	Brain Restore
+Retail unit / package
+	calibration-06-unverified-identity
+77069db7b832	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0018	BRANCHED CHAIN AMINO ACIDS (BCAA)
+Branched Chain Amino Acids (BCAA) ILE(0.4g) / L(0.3g) / V(1.2g) (30ml)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0032	Cabergoline Tablets
+CABERGOLINE TABLETS 0.5MG
+	calibration-04-care-state
+76c10c66c93f	tablet_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0274	Cagrilintide
+CAGRILINTIDE 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0275	Cagrilintide
+CAGRILINTIDE 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0276	Cagrilintide + Semaglutide
+CAGRILINTIDE 10 mg + SEMAGLUTIDE 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0277	Cagrilintide + Semaglutide
+CAGRILINTIDE 5 mg + SEMAGLUTIDE 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0033	Cartalax (Aed, T-31)
+CARTALAX (AED, t-31) 4MG/ML (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0030	CASHMERE CREAM
+CASHMERE CREAM (GHK-CU 3% / NIACINAMIDE 4%) 30GM
+	calibration-04-care-state
+76c10c66c93f	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0368	Chondro Jointaide
+Retail unit / package
+	calibration-06-unverified-identity
+77069db7b832	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0268	CJC-1295 (No DAC) + Ipamorelin
+CJC-1295 (No DAC) 10 mg + IPAMORELIN 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0269	CJC-1295 (No DAC) + Ipamorelin
+CJC-1295 (No DAC) 5 mg + IPAMORELIN 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0422	CJC-1295 + Ipamorelin
+CJC-1295 WITH DAC + IPAMORELIN 5 mg total
+	calibration-05-restrictive-state
+36bc99f4833d	peptide_lyophilized_vial	FORMULATION HELD
+Pricing not released	Provisional
+Exact render missing	Unbound
+
+	GRP-0031	CJC-1295 + Ipamorelin 2-2Mg + Ml (5Ml)
+CJC-1295/IPAMORELIN 2-2MG/ML (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0270	CJC-1295 No Dac
+CJC-1295 NO DAC 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0271	CJC-1295 No Dac
+CJC-1295 NO DAC 2 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0272	CJC-1295 With Dac
+CJC-1295 WITH DAC 2 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0273	CJC-1295 With Dac
+CJC-1295 WITH DAC 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0394	CJC-1295 With DAC
+CJC-1295 - With DAC (10mg)
+	calibration-06-unverified-identity
+77069db7b832	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0034	Clomiphene
+CLOMIPHENE 25MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0035	Clomiphene
+CLOMIPHENE 50MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0369	Collagen Renew (Dynamic Multi)
+Retail unit / package
+	calibration-06-unverified-identity
+77069db7b832	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0395	Colostrum
+Colostrum (100mg x 90 Capsules)
+	calibration-02-bottle
+e3681f630199	capsule_bottle	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0396	Curcumin
+Curcumin (600mg)
+	calibration-06-unverified-identity
+77069db7b832	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0036	Dhea
+DHEA 100MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0037	Dhea
+DHEA 25MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0038	Dhea
+DHEA 50MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0039	Dihexa
+DIHEXA 25MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0040	Dihexa
+DIHEXA 5MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0247	Dihexa
+DIHEXA 10 mg
+	calibration-02-bottle
+e3681f630199	capsule_bottle	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0280	Dihexa
+DIHEXA 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0041	Dsip
+DSIP 2MG/ML (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0281	Dsip
+DSIP 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0278	DSIP
+DSIP 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0279	DSIP + Selank
+DSIP 2 mg + SELANK 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0042	Elamipretide (Ss31)
+ELAMIPRETIDE (SS31) 15MG/ML (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0043	Enclomiphene
+ENCLOMIPHENE 12.5MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0044	Enclomiphene
+ENCLOMIPHENE 25MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0045	Enclomiphene
+ENCLOMIPHENE 50MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0046	Epithalon
+EPITHALON 10MG/ML (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0047	Epithalon
+EPITHALON 2MG/ML (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0282	Epithalon
+EPITHALON 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0283	Epithalon
+EPITHALON 20 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0284	Epithalon
+EPITHALON 30 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0285	Epithalon
+EPITHALON 35 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0286	Epithalon
+EPITHALON 50 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0048	Estradiol
+ESTRADIOL 0.25MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0049	Estradiol
+ESTRADIOL 0.5MG TABLET
+	calibration-04-care-state
+76c10c66c93f	tablet_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+Evidence page 2 of 9, rows 49-96 of 423.
+Previous Next
+
+Every image is non-public review evidence. Exact product renders missing: 423.

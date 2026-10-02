@@ -1,0 +1,380 @@
+Skip to content
+
+INTERNAL QA ONLY
+423 customer targets · six frozen calibration studies · zero public approvals
+
+DECISION COMPARISONS
+PRODUCT PREVIEW
+Xenios
+Preview home
+Card policy
+Media geometry
+Full QA grid
+NO RUNTIME WIRING
+
+FULL CATALOG QA
+
+423 private media placements.
+
+Every row remains provisional. The table verifies canonical identity, unchanged source asset, pathway, binding, and image finality.
+
+Compare policy
+Authority boundary
+
+These 423 private slots remain joined to the frozen catalog candidate at 4cba24af1d42. Core UI reference c0e25c73 is separate UI evidence. Neither source is image approval, publication authority, Product Control authority, price release, runtime integration, deployment authority, or production approval.
+
+Search
+Pathway
+All pathways
+Research
+Care
+Held
+Quote only
+Binding pending
+Visual state
+All visual states
+Provisional
+Final
+Fallback
+48 ROWS
+VISUAL	CANONICAL ID	PRODUCT	PRIVATE SOURCE	IMAGE CLASS	PATHWAY / STATUS	FINALITY	BINDING
+
+	GRP-0186	T4 + T3
+T4/T3 152MCG/36MCG IR CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0187	T4 + T3
+T4/T3 19MCG/4.5MCG IR CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0188	T4 + T3
+T4/T3 28.5MCG/6.8MCG IR CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0189	T4 + T3
+T4/T3 38MCG/9MCG IR CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0190	T4 + T3
+T4/T3 50MCG/10MCG IR CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0191	T4 + T3
+T4/T3 50MCG/15MCG IR CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0192	T4 + T3
+T4/T3 57MCG/13.5MCG IR CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0193	T4 + T3
+T4/T3 76MCG/18MCG IR CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0194	T4 + T3
+T4/T3 95MCG/22.5MCG IR CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0195	Tadalafil
+TADALAFIL 10MG TABLET
+	calibration-04-care-state
+76c10c66c93f	tablet_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0196	Tadalafil
+TADALAFIL 12MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0197	Tadalafil
+TADALAFIL 20MG TABLET
+	calibration-04-care-state
+76c10c66c93f	tablet_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0198	Tadalafil
+TADALAFIL 24MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0199	Tadalafil
+TADALAFIL 5MG TABLET
+	calibration-04-care-state
+76c10c66c93f	tablet_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0200	Tadalafil SR
+TADALAFIL SR 12MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0201	Tadalafil SR
+TADALAFIL SR 18MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0202	Tadalafil SR
+TADALAFIL SR 24MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0203	Tadalafil SR
+TADALAFIL SR 6MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0204	Tadalafil Troche
+TADALAFIL TROCHE 20MG
+	calibration-04-care-state
+76c10c66c93f	troche_container	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0205	Tadalafil Troche
+TADALAFIL TROCHE 25MG
+	calibration-04-care-state
+76c10c66c93f	troche_container	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0206	Tamoxifen
+TAMOXIFEN 10MG TABLET
+	calibration-04-care-state
+76c10c66c93f	tablet_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0207	Tb-500
+TB-500 10MG/ML (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0253	TB-500
+TB-500 500 mcg
+	calibration-02-bottle
+e3681f630199	capsule_bottle	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0345	TB-500
+TB-500 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0346	TB-500
+TB-500 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0208	Tesamorelin
+TESAMORELIN 3MG/ML (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0209	Tesamorelin
+TESAMORELIN 8MG/ML (3ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0347	Tesamorelin
+TESAMORELIN 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0348	Tesamorelin
+TESAMORELIN 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0416	Tesamorelin
+Tesamorelin (8mg) x 4 pack
+	calibration-06-unverified-identity
+77069db7b832	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0210	Tesamorelin + Ipamorelin
+TESAMORELIN/IPAMORELIN 2.4MG-1.2MG/ML (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0388	Tesamorelin + Ipamorelin
+2X Blend Tesamorelin (10mg) / Ipamorelin (5mg)
+	calibration-06-unverified-identity
+77069db7b832	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0389	Tesamorelin + Ipamorelin
+2X Blend Tesamorelin (5mg) / Ipamorelin (5mg)
+	calibration-06-unverified-identity
+77069db7b832	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0390	Tesamorelin + MGF + Ipamorelin
+3X Blend Tesamorelin (5mg) / MGF (500mcg) / Ipamorelin (2.5mg)
+	calibration-06-unverified-identity
+77069db7b832	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0211	Tesofensine
+TESOFENSINE 500MCG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0254	Tesofensine
+TESOFENSINE 500 mcg
+	calibration-02-bottle
+e3681f630199	capsule_bottle	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0418	Tesofensine
+Tesofensine (500mcg) Capsules x100
+	calibration-02-bottle
+e3681f630199	capsule_bottle	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0419	Tesofensine
+Tesofensine (500mcg) Capsules x30
+	calibration-02-bottle
+e3681f630199	capsule_bottle	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0212	Testosterone
+TESTOSTERONE 100MG/GM TOPICAL CREAM
+	calibration-04-care-state
+76c10c66c93f	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0213	Testosterone
+TESTOSTERONE 10MG/GM TOPICAL CREAM
+	calibration-04-care-state
+76c10c66c93f	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0214	Testosterone
+TESTOSTERONE 14MG/GM TOPICAL CREAM
+	calibration-04-care-state
+76c10c66c93f	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0215	Testosterone
+TESTOSTERONE 200MG/GM TOPICAL CREAM
+	calibration-04-care-state
+76c10c66c93f	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0216	Testosterone
+TESTOSTERONE 30MG/GM TOPICAL CREAM
+	calibration-04-care-state
+76c10c66c93f	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0217	Testosterone
+TESTOSTERONE 50MG/GM TOPICAL CREAM
+	calibration-04-care-state
+76c10c66c93f	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0218	Testosterone Cyp
+TESTOSTERONE CYP 200MG/ML COTTON SEED OIL (10ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0219	Testosterone Cyp
+TESTOSTERONE CYP 200MG/ML GRAPE SEED OIL (10ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0220	Testosterone Cyp
+TESTOSTERONE CYP 200MG/ML GRAPE SEED OIL (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0221	Testosterone Cyp
+TESTOSTERONE CYP 200MG/ML MCT OIL (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+Evidence page 8 of 9, rows 337-384 of 423.
+Previous Next
+
+Every image is non-public review evidence. Exact product renders missing: 423.

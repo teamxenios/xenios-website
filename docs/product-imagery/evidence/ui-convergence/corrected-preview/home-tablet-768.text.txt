@@ -1,0 +1,182 @@
+Skip to content
+
+PRIVATE FOUNDER DECISION PREVIEW
+Core baseline c0e25c73 · imagery source 8b06da56 · no publication or transaction authority
+
+DECISION COMPARISONS
+CURRENT CORE EVIDENCE
+423-SLOT QA
+Xenios
+Sign In
+Start Care
+Menu
+PRIVATE PREVIEW
+Home
+Products
+Featured
+Card policy
+Media geometry
+Care
+Account / status
+Founder decisions
+
+PRIVATE CORE-CONVERGED PROTOTYPE
+
+Clear pathways for research and care.
+
+This corrected preview uses the dominant current Xenios public shell, typography, spacing, buttons, cards, and breakpoints. Product media remains an explicitly proposed future policy.
+
+Explore products
+Compare founder decisions
+
+WHAT CHANGED
+
+Core UI first. Imagery proposal second.
+
+No black gradient hero, orb artwork, pill-button language, hidden crop, vignette, saturation, tint, or invented public product route.
+
+426
+reviewed source rows
+424
+canonical variants
+423
+private visual slots
+0
+public image approvals
+
+PROPOSED PLACEMENT
+
+Featured products in the real UI language.
+
+The product card anatomy follows current Core controls and spacing. The square media slot is intentionally labeled as a proposal, not production truth.
+
+Compare no-image policy
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH CAPSULES
+RESEARCH ACCESS
+Blend BPC-157 + TB-500
+
+BLEND BPC-157 + TB-500 500/500 MCG
+
+Runtime Product Control remains the only price and purchase authority.
+
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+CLINICAL FORMULATIONS 503A
+CARE PATHWAY
+Aod-9604 + MOTS-C + Tesamorelin + Ipamorelin
+
+AOD-9604/MOTS-C/TESAMORELIN/IPAMORELIN 1.2MG-2MG-2MG-2MG/ML (5ML)
+
+Provider review and applicable state and pharmacy requirements govern this pathway.
+
+Review Care pathway
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+SUPPLEMENTS
+RESEARCH ACCESS
+Longevity Essentials NAD+
+
+RETAIL UNIT / PACKAGE
+
+Runtime Product Control remains the only price and purchase authority.
+
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH PEPTIDES MATERIALS
+RESEARCH ACCESS
+Oxytocin
+
+OXYTOCIN 2 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH PEPTIDES MATERIALS
+RESEARCH ACCESS
+Hexarelin
+
+HEXARELIN 10 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH PEPTIDES MATERIALS
+RESEARCH ACCESS
+CJC-1295 (No DAC) + Ipamorelin
+
+CJC-1295 (NO DAC) 10 MG + IPAMORELIN 10 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH PEPTIDES MATERIALS
+RESEARCH ACCESS
+CJC-1295 (No DAC) + Ipamorelin
+
+CJC-1295 (NO DAC) 5 MG + IPAMORELIN 5 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+CLINICAL FORMULATIONS 503A
+CARE PATHWAY
+BPC-157 + TB-500 + KPV + GHK-Cu 3-3-3-10Mg + Ml (5Ml)
+
+BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML)
+
+Provider review and applicable state and pharmacy requirements govern this pathway.
+
+Review Care pathway
+
+ONE CATALOG, GOVERNED PATHWAYS
+
+Identity is not commerce authority.
+
+Imagery explains an identity or state without creating a price, availability, request, order, or fulfillment right.
+
+01
+Research
+
+Educational catalog context remains separate from medical advice and personal recommendation.
+
+02
+Care
+
+Provider review, state availability, and pharmacy requirements remain explicit.
+
+03
+Held and quote-only
+
+Restricted identities remain visible without a purchase affordance or invented price.
+
+FROZEN CALIBRATION
+
+Six studies preserved exactly.
+
+The same six private calibration assets are used only to test placement. No new image was rendered and Batch 1 remains blocked.
+
+6 rendered · 0 approved · 0 public · 0 Batch 1 render authorizations
+Authority boundary
+
+These 423 private slots remain joined to the frozen catalog candidate at 4cba24af1d42. Core UI reference c0e25c73 is separate UI evidence. Neither source is image approval, publication authority, Product Control authority, price release, runtime integration, deployment authority, or production approval.
+
+Xenios
+
+Private UI-convergence evidence. Synthetic data only. Nothing here is a live offer.
+
+Founder decisions
+Current Core evidence
+Six frozen calibration studies
+Full QA grid

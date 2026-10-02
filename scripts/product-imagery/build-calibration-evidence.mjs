@@ -192,7 +192,7 @@ function calibrationCss() {
 .calibration-header p { margin: 0; color: #cfc3b8; max-width: 840px; }
 .calibration-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
 .calibration-card { overflow: hidden; border: 1px solid #3a3431; border-radius: 24px; background: #191716; box-shadow: 0 28px 80px rgba(0,0,0,.3); }
-.calibration-card img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
+.calibration-card img { display: block; width: 100%; aspect-ratio: 1; object-fit: contain; }
 .calibration-card__copy { display: grid; gap: 6px; padding: 18px 20px 22px; }
 .calibration-card p, .calibration-card h2, .calibration-card small { margin: 0; }
 .calibration-card p { color: #aa9d94; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }

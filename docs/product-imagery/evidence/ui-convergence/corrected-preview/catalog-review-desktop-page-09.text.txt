@@ -1,0 +1,317 @@
+Skip to content
+
+INTERNAL QA ONLY
+423 customer targets · six frozen calibration studies · zero public approvals
+
+DECISION COMPARISONS
+PRODUCT PREVIEW
+Xenios
+Preview home
+Card policy
+Media geometry
+Full QA grid
+NO RUNTIME WIRING
+
+FULL CATALOG QA
+
+423 private media placements.
+
+Every row remains provisional. The table verifies canonical identity, unchanged source asset, pathway, binding, and image finality.
+
+Compare policy
+Authority boundary
+
+These 423 private slots remain joined to the frozen catalog candidate at 4cba24af1d42. Core UI reference c0e25c73 is separate UI evidence. Neither source is image approval, publication authority, Product Control authority, price release, runtime integration, deployment authority, or production approval.
+
+Search
+Pathway
+All pathways
+Research
+Care
+Held
+Quote only
+Binding pending
+Visual state
+All visual states
+Provisional
+Final
+Fallback
+39 ROWS
+VISUAL	CANONICAL ID	PRODUCT	PRIVATE SOURCE	IMAGE CLASS	PATHWAY / STATUS	FINALITY	BINDING
+
+	GRP-0222	Testosterone Cyp
+TESTOSTERONE CYP 20MG/ML GRAPE SEED OIL (2ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0223	Testosterone Cyp
+TESTOSTERONE CYP 50MG/ML GRAPE SEED OIL (2ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0224	Testosterone Ent
+TESTOSTERONE ENT 200MG/ML GRAPE SEED OIL (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0225	Testosterone Pro
+TESTOSTERONE PRO 100MG/ML GRAPE SEED OIL (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0349	Thymalin
+THYMALIN 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0226	Thymosin Alpha-1
+THYMOSIN ALPHA-1 3MG/ML (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0255	Thymosin Alpha-1
+Thymosin Alpha-1 500 mcg
+	calibration-02-bottle
+e3681f630199	capsule_bottle	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0350	Thymosin Alpha-1
+Thymosin Alpha-1 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0351	Thymosin Alpha-1
+Thymosin Alpha-1 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0352	Thymosin Alpha-1 + KPV + LL-37
+Thymosin Alpha-1 10 mg + KPV 10 mg + LL-37 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0353	Thymosin Alpha-1 + KPV + LL-37
+Thymosin Alpha-1 5 mg + KPV 5 mg + LL-37 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0417	Thymosin Alpha-1 + Thymulin
+Thymosin Alpha 1 (TA1) Complex Thymulin (10mg/6.4mg)
+	calibration-06-unverified-identity
+77069db7b832	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0354	Tirzepatide
+TIRZEPATIDE 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0355	Tirzepatide
+TIRZEPATIDE 15 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0356	Tirzepatide
+TIRZEPATIDE 20 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0357	Tirzepatide
+TIRZEPATIDE 30 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0358	Tirzepatide
+TIRZEPATIDE 40 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0359	Tirzepatide
+TIRZEPATIDE 50 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0360	Tirzepatide
+TIRZEPATIDE 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0361	Tirzepatide
+TIRZEPATIDE 60 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0227	Tirzepatide + B12
+TIRZEPATIDE/B12 10.5MG-500MCG/ML (5ML) (52.5mg vial)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0228	Tirzepatide + B12
+TIRZEPATIDE/B12 10MG-500MCG/ML (3ML) (30mg vial)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0229	Tirzepatide + B12
+TIRZEPATIDE/B12 12MG-500MCG/ML (2ML) (24mg vial)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0230	Tirzepatide + B12
+TIRZEPATIDE/B12 17MG-500MCG/ML (2ML) (34mg vial)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0231	Tirzepatide + B12
+TIRZEPATIDE/B12 20MG-500MCG/ML (3ML) (60mg vial)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0232	Tirzepatide + B12
+TIRZEPATIDE/B12 22MG-500MCG/ML (2ML) (44mg vial)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0233	Tirzepatide + B12
+TIRZEPATIDE/B12 28MG-500MCG/ML (2ML) (56mg vial)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0234	Tirzepatide + B12
+TIRZEPATIDE/B12 30MG-500MCG/ML (6ML) (180mg vial)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0235	Tirzepatide + B12
+TIRZEPATIDE/B12 33MG-500MCG/ML (2ML) (66mg vial)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0236	Tirzepatide + B12
+TIRZEPATIDE/B12 6MG-500MCG/ML (2ML) (12mg vial)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0237	Tirzepatide + Glycine
+TIRZEPATIDE/GLYCINE 15MG-2.5MG/0.5ML (2ML) (60mg vial)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0238	Tirzepatide + Glycine
+TIRZEPATIDE/GLYCINE 15MG-2.5MG/0.5ML (6ML) (180mg vial)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0239	Trimix (Papaverine
+TRIMIX (Papaverine 30mg / Phentolamine 1mg / Alprostadil 20mcg per mL) (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0383	UltraBiotic Akkermansia Plus
+Retail unit / package
+	calibration-06-unverified-identity
+77069db7b832	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0384	UltraBiotic Prebiotic
+Retail unit / package
+	calibration-06-unverified-identity
+77069db7b832	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0385	Uplift+
+Retail unit / package
+	calibration-06-unverified-identity
+77069db7b832	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0241	Vardenafil
+VARDENAFIL 20MG TROCHE
+	calibration-04-care-state
+76c10c66c93f	troche_container	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0240	VITAMIN B-COMPLEX
+VITAMIN B-COMPLEX (Thiamine 100mg, Niacinamide 100mg, Riboflavin-5- Phosphate 2mg, Pyridoxine 2mg per mL) (30ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0242	Vitamin D3 50,000Iu + Ml (30Ml)
+VITAMIN D3 50,000IU/ML (30ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+Evidence page 9 of 9, rows 385-423 of 423.
+Previous
+
+Every image is non-public review evidence. Exact product renders missing: 423.

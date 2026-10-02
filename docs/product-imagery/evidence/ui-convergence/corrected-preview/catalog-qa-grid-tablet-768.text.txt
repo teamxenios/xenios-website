@@ -1,0 +1,125 @@
+Skip to content
+
+INTERNAL QA ONLY
+423 customer targets · six frozen calibration studies · zero public approvals
+
+DECISION COMPARISONS
+PRODUCT PREVIEW
+Xenios
+NO RUNTIME WIRING
+Menu
+
+FULL CATALOG QA
+
+423 private media placements.
+
+Every row remains provisional. The table verifies canonical identity, unchanged source asset, pathway, binding, and image finality.
+
+Compare policy
+Authority boundary
+
+These 423 private slots remain joined to the frozen catalog candidate at 4cba24af1d42. Core UI reference c0e25c73 is separate UI evidence. Neither source is image approval, publication authority, Product Control authority, price release, runtime integration, deployment authority, or production approval.
+
+Search
+Pathway
+All pathways
+Research
+Care
+Held
+Quote only
+Binding pending
+Visual state
+All visual states
+Provisional
+Final
+Fallback
+12 ROWS
+VISUAL	CANONICAL ID	PRODUCT	PRIVATE SOURCE	IMAGE CLASS	PATHWAY / STATUS	FINALITY	BINDING
+
+	GRP-0001	5-Amino-1Mq
+5-AMINO-1MQ 5MG/ML (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0256	5-Amino-1Mq
+5-AMINO-1MQ 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0243	5-Amino-1MQ
+5-AMINO-1MQ 50 mg
+	calibration-02-bottle
+e3681f630199	capsule_bottle	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0362	Acetic Acid 0.6%
+ACETIC ACID 0.6% 5 mL
+	calibration-06-unverified-identity
+77069db7b832	oral_liquid_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0002	Anastrozole
+ANASTROZOLE 0.25MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0003	Anastrozole
+ANASTROZOLE 0.5MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0004	Anastrozole
+ANASTROZOLE 1MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0005	Anastrozole Tablet
+ANASTROZOLE TABLET 1MG
+	calibration-04-care-state
+76c10c66c93f	tablet_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0366	Annatto Pro 125
+Retail unit / package
+	calibration-06-unverified-identity
+77069db7b832	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0006	Aod-9604
+AOD-9604 1.2MG/ML (6MG/5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0007	Aod-9604
+AOD-9604 300MCG TROCHE
+	calibration-04-care-state
+76c10c66c93f	troche_container	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0260	Aod-9604
+AOD-9604 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+Evidence page 1 of 36, rows 1-12 of 423.
+Next
+
+Every image is non-public review evidence. Exact product renders missing: 423.

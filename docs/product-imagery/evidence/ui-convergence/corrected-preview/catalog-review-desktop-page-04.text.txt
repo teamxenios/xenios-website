@@ -1,0 +1,380 @@
+Skip to content
+
+INTERNAL QA ONLY
+423 customer targets · six frozen calibration studies · zero public approvals
+
+DECISION COMPARISONS
+PRODUCT PREVIEW
+Xenios
+Preview home
+Card policy
+Media geometry
+Full QA grid
+NO RUNTIME WIRING
+
+FULL CATALOG QA
+
+423 private media placements.
+
+Every row remains provisional. The table verifies canonical identity, unchanged source asset, pathway, binding, and image finality.
+
+Compare policy
+Authority boundary
+
+These 423 private slots remain joined to the frozen catalog candidate at 4cba24af1d42. Core UI reference c0e25c73 is separate UI evidence. Neither source is image approval, publication authority, Product Control authority, price release, runtime integration, deployment authority, or production approval.
+
+Search
+Pathway
+All pathways
+Research
+Care
+Held
+Quote only
+Binding pending
+Visual state
+All visual states
+Provisional
+Final
+Fallback
+48 ROWS
+VISUAL	CANONICAL ID	PRODUCT	PRIVATE SOURCE	IMAGE CLASS	PATHWAY / STATUS	FINALITY	BINDING
+
+	GRP-0073	HCG Pregnyl 10,000Iu
+HCG PREGNYL 10,000IU
+	calibration-04-care-state
+76c10c66c93f	packaging_unverified	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0300	Hexarelin
+HEXARELIN 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0426	Hexarelin
+HEXARELIN 5 mg
+	calibration-06-unverified-identity
+77069db7b832	peptide_lyophilized_vial	BINDING PENDING
+Pricing not released	Provisional
+Exact render missing	Unbound
+
+	GRP-0403	HGH
+HGH (10iu)
+	calibration-06-unverified-identity
+77069db7b832	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0372	Hydrate
+Retail unit / package
+	calibration-06-unverified-identity
+77069db7b832	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0075	Ibutamoren
+IBUTAMOREN 12.5MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0076	Ibutamoren
+IBUTAMOREN 25MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0404	IGF-1 DES
+IGF-1 DES (1mg)
+	calibration-06-unverified-identity
+77069db7b832	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0301	IGF-1 Lr3
+IGF-1 LR3 1 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0074	IGF-Lr3
+IGF-LR3 200MCG/ML (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0373	Inflam-Eze (30-serving)
+Retail unit / package
+	calibration-06-unverified-identity
+77069db7b832	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0302	Ipamorelin
+IPAMORELIN 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0303	Ipamorelin
+IPAMORELIN 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0077	Ketoconazole Cream (Ketoconazole
+KETOCONAZOLE CREAM (KETOCONAZOLE 2% / NIACINAMIDE 4%) 30GM
+	calibration-04-care-state
+76c10c66c93f	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0078	Kisspeptin
+KISSPEPTIN 1MG/ML (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0308	Kisspeptin
+KISSPEPTIN 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0309	Kisspeptin
+KISSPEPTIN 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0304	KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)
+BPC-157 5 mg + TB-500 5 mg + GHK-Cu 10 mg + KPV 5 mg
+	calibration-06-unverified-identity
+77069db7b832	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0305	KLOW (BPC-157 + TB-500 + GHK-Cu + KPV)
+BPC-157 10 mg + TB-500 10 mg + GHK-Cu 50 mg + KPV 10 mg
+	calibration-06-unverified-identity
+77069db7b832	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0249	KPV
+KPV 500 mcg
+	calibration-02-bottle
+e3681f630199	capsule_bottle	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0306	KPV
+KPV 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0307	KPV
+KPV 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0079	Kyzatrex (Oral Testosterone)
+KYZATREX (ORAL TESTOSTERONE) 200MG
+	calibration-04-care-state
+76c10c66c93f	packaging_unverified	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0082	Larazotide
+LARAZOTIDE 250MCG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0083	Larazotide
+LARAZOTIDE 500MCG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0084	Larazotide + KPV
+LARAZOTIDE/KPV 500MCG-500MCG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0080	LIBIDO CREAM (SCREAM CREAM)
+LIBIDO CREAM (SCREAM CREAM): Testosterone Cypionate 0.1% / Sildenafil Citrate 0.1% / Glycerin / Versabase Cream
+	calibration-04-care-state
+76c10c66c93f	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0085	Lidocaine
+LIDOCAINE 23% / TETRACAINE 10% / PHENYLEPHRINE 0.5% TOPICAL CREAM 60ML PUMP
+	calibration-04-care-state
+76c10c66c93f	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0086	Lidocaine
+LIDOCAINE 23% / TETRACAINE 10% TOPICAL CREAM 60ML PUMP
+	calibration-04-care-state
+76c10c66c93f	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0087	Lidocaine
+LIDOCAINE 23% / TETRACAINE 7% / PRILOCAINE 2% TOPICAL CREAM 60ML PUMP
+	calibration-04-care-state
+76c10c66c93f	cream_tube_or_pump	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0088	Lipo-B (Cyanocobalamin + Mic) (10Ml)
+LIPO-B (Cyanocobalamin/MIC) (10ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0089	Lipo-B (Cyanocobalamin + Mic) (30Ml)
+LIPO-B (Cyanocobalamin/MIC) (30ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0090	Lipo-C (Cyanocobalamin + Mic + L-Carnitine) (10Ml)
+LIPO-C (Cyanocobalamin/MIC/L-Carnitine) (10ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0091	Lipo-C (Cyanocobalamin + Mic + L-Carnitine) (30Ml)
+LIPO-C (Cyanocobalamin/MIC/L-Carnitine) (30ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0310	Liraglutide
+LIRAGLUTIDE 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0311	Liraglutide
+LIRAGLUTIDE 20 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0081	LIVER SUPPORT
+LIVER SUPPORT (Vitamin E 50%, Milk Thistle, N-Acetylcysteine, Thiamine, Selenium) CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0312	Ll-37 (Cap-18)
+LL-37 CAP-18 5 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0405	LL-37 Complex
+LL-37 Complex (5mg)
+	calibration-06-unverified-identity
+77069db7b832	neutral_product_identity	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0374	Longevity Essentials NAD+
+Retail unit / package
+	calibration-06-unverified-identity
+77069db7b832	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0092	Low Dose Naltrexone
+LOW DOSE NALTREXONE 1.5MG CAPSULE
+	calibration-04-care-state
+76c10c66c93f	capsule_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0097	Magnesium Chloride
+MAGNESIUM CHLORIDE 200MG/ML (50ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0375	Magtein (Magnesium L-Threonate)
+Retail unit / package
+	calibration-06-unverified-identity
+77069db7b832	supplement_retail_unit_neutral	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0314	Melanotan I
+Melanotan I 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0098	Melanotan Ii
+MELANOTAN II 1MG/ML (5ML)
+	calibration-04-care-state
+76c10c66c93f	liquid_vial	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0315	Melanotan II
+Melanotan II 10 mg
+	calibration-01-vial
+e04c2e5981ec	peptide_lyophilized_vial	RESEARCH ACCESS
+Price omitted from static preview	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0099	Metformin HCl Er Tablet
+METFORMIN HCl ER TABLET 1000MG
+	calibration-04-care-state
+76c10c66c93f	tablet_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+
+	GRP-0100	Metformin HCl Er Tablet
+METFORMIN HCl ER TABLET 500MG
+	calibration-04-care-state
+76c10c66c93f	tablet_bottle	CARE PATHWAY
+Care pricing withheld	Provisional
+Exact render missing	Retained Binding
+Evidence page 4 of 9, rows 145-192 of 423.
+Previous Next
+
+Every image is non-public review evidence. Exact product renders missing: 423.

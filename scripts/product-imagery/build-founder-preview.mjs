@@ -17,6 +17,10 @@ export const CORE_RECORDS_SHA = "c73da35cc223a2253ce8074948ed9ff063012748";
 export const IMAGERY_REVIEW_TARGET_SHA = "184d820a2a20152649b67892ec0a5467857d5290";
 export const IMAGERY_REVIEWER_TIP_SHA = "76607458e30a64746d227150ff1dbab3475dd64a";
 export const PROTOTYPE_REVIEW_SHA = "023e9ec8899ded7f66f52ef3c21a799501d98084";
+export const CORE_UI_REFERENCE_SHA = "c0e25c73a0d789829ea213e2ee040c68e06f0a75";
+export const CORE_UI_REFERENCE_TREE = "1771d18bad91b89e95414bebb8b574dc32729687";
+export const UI_FIDELITY_REVIEW_SHA = "ae5c410ab6e5c27df94c5bdc5b6533ab821b6d4c";
+export const UI_FIDELITY_REVIEW_TREE = "36dd5df64f5da1caf8a1212c89195caf870a907d";
 export const MEDIA_COMMERCE_SHA = "b38db0ae2ee0c679ec2eeb31b324f6204669dfb7";
 export const SHIPPING_GROUP_ID = "GRP-0364";
 export const HELD_GROUP_IDS = new Set(["GRP-0422"]);
@@ -554,8 +558,8 @@ export function writeFounderPreviewArtifacts(data = buildFounderPreviewData()) {
     `${JSON.stringify(calibrationPlan, null, 2)}\n`,
   );
   const buildRecord = {
-    schemaVersion: 1,
-    kind: "founder_preview_build_record",
+    schemaVersion: 2,
+    kind: "founder_preview_core_ui_convergence_build_record",
     generatedAt: data.generatedAt,
     dataSha256: sha256(dataJson),
     customerTargets: data.rows.length,
@@ -564,6 +568,32 @@ export function writeFounderPreviewArtifacts(data = buildFounderPreviewData()) {
     missingExactRenders: data.counts.missingExactRenders,
     reviewerTipCommit: IMAGERY_REVIEWER_TIP_SHA,
     prototypeReviewCommit: PROTOTYPE_REVIEW_SHA,
+    uiReference: {
+      commit: CORE_UI_REFERENCE_SHA,
+      tree: CORE_UI_REFERENCE_TREE,
+      role: "dominant_public_ui_reference_only",
+    },
+    uiFidelityReview: {
+      commit: UI_FIDELITY_REVIEW_SHA,
+      tree: UI_FIDELITY_REVIEW_TREE,
+      verdictOnPriorPrototype: "FAIL",
+    },
+    proposalState: {
+      healthSpecificBrandingApproved: false,
+      rectangularCtaUnificationApproved: false,
+      restrainedPurpleTealAccentApproved: false,
+      publicProductImageryApproved: false,
+      squareCanonicalMediaApproved: false,
+    },
+    imagePresentation: {
+      proposedCanonicalAspectRatio: "1:1",
+      objectFit: "contain",
+      cssColorManipulation: false,
+      cssVignette: false,
+      hiddenCrop: false,
+      cardDetailSourceIdentityRequired: true,
+      safeFallbackRequired: true,
+    },
     reviewerDirectedNeutralSlots: data.counts.reviewerDirectedNeutralSlots,
     rejectedBatch0AssetSlots: data.counts.rejectedBatch0AssetSlots,
     c2paProvenancePath: "docs/product-imagery/manifests/batch-000-c2pa-provenance.json",

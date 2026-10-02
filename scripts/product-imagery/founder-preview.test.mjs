@@ -5,12 +5,16 @@ import test from "node:test";
 import {
   CORE_SOURCE_SHA,
   CORE_SOURCE_TREE,
+  CORE_UI_REFERENCE_SHA,
+  CORE_UI_REFERENCE_TREE,
   EXPECTED_CANONICAL_ROWS,
   EXPECTED_CUSTOMER_ROWS,
   IMAGERY_REVIEWER_TIP_SHA,
   PROTOTYPE_REVIEW_SHA,
   REJECTED_BATCH0_JOB_IDS,
   SHIPPING_GROUP_ID,
+  UI_FIDELITY_REVIEW_SHA,
+  UI_FIDELITY_REVIEW_TREE,
   buildFounderPreviewData,
 } from "./build-founder-preview.mjs";
 import { startFounderPreviewServer } from "./serve-founder-preview.mjs";
@@ -183,7 +187,7 @@ test("keeps the six-study calibration private and blocked from publication or Ba
   assert.ok(plan.sharedDirection.globalAvoid.includes("botanical or spa cues"));
 });
 
-test("leads the founder home with calibration while retaining Batch 0 as evidence", () => {
+test("leads the founder home with frozen calibration while retaining Batch 0 as evidence", () => {
   const data = buildFounderPreviewData();
   const previewSource = readFileSync(join(PREVIEW_ROOT, "preview.js"), "utf8");
   assert.equal(
@@ -196,7 +200,65 @@ test("leads the founder home with calibration while retaining Batch 0 as evidenc
   );
   assert.match(previewSource, /data\.calibration\.contactSheet\.src/);
   assert.doesNotMatch(previewSource, /src="\$\{esc\(data\.batch0ContactSheet\.src\)\}"/);
-  assert.match(previewSource, /private visual source job/);
+  assert.match(previewSource, /Six studies preserved exactly/);
+  assert.match(previewSource, /0 Batch 1 render authorizations/);
+});
+
+test("records Core UI and review provenance without treating proposals as approval", () => {
+  const record = JSON.parse(
+    readFileSync(join(PREVIEW_ROOT, "build-record.json"), "utf8"),
+  );
+  assert.equal(record.schemaVersion, 2);
+  assert.equal(record.uiReference.commit, CORE_UI_REFERENCE_SHA);
+  assert.equal(record.uiReference.tree, CORE_UI_REFERENCE_TREE);
+  assert.equal(record.uiFidelityReview.commit, UI_FIDELITY_REVIEW_SHA);
+  assert.equal(record.uiFidelityReview.tree, UI_FIDELITY_REVIEW_TREE);
+  assert.equal(record.uiFidelityReview.verdictOnPriorPrototype, "FAIL");
+  assert.ok(Object.values(record.proposalState).every((approved) => approved === false));
+  assert.deepEqual(record.imagePresentation, {
+    proposedCanonicalAspectRatio: "1:1",
+    objectFit: "contain",
+    cssColorManipulation: false,
+    cssVignette: false,
+    hiddenCrop: false,
+    cardDetailSourceIdentityRequired: true,
+    safeFallbackRequired: true,
+  });
+  assert.equal(record.publicTreeTouched, false);
+  assert.equal(record.deploymentAuthorized, false);
+});
+
+test("shows explicit current-versus-proposed decisions and all five no-image states", () => {
+  const source = readFileSync(join(PREVIEW_ROOT, "preview.js"), "utf8");
+  for (const marker of [
+    "Current Core",
+    "Proposed Xenios Health",
+    "A. Header brand",
+    "B. Primary action language",
+    "C. Purple-to-teal accent",
+    "D. Public product imagery",
+    "E. Canonical media shape",
+    '"Research", representatives.research',
+    '"Care", representatives.care',
+    '"Held", representatives.held',
+    '"Quote only", representatives.quote',
+    '"Packaging unverified", representatives.pending',
+  ]) {
+    assert.ok(source.includes(marker), `Missing founder comparison marker: ${marker}`);
+  }
+  assert.match(source, /Synthetic member catalog/);
+  assert.match(source, /Synthetic member detail/);
+});
+
+test("removes preview-only image filters, vignettes, and forced crops", () => {
+  for (const file of ["preview.css", "calibration.css"]) {
+    const source = readFileSync(join(PREVIEW_ROOT, file), "utf8");
+    assert.doesNotMatch(source, /\bfilter\s*:/i);
+    assert.doesNotMatch(source, /object-fit\s*:\s*cover/i);
+  }
+  const previewCss = readFileSync(join(PREVIEW_ROOT, "preview.css"), "utf8");
+  assert.match(previewCss, /\.product-media img\s*\{[^}]*object-fit:\s*contain/s);
+  assert.match(previewCss, /\.detail-media img\s*\{[^}]*object-fit:\s*contain/s);
 });
 
 test("records structural C2PA provenance for all six private calibration PNGs", () => {
@@ -281,7 +343,7 @@ test("records responsive browser proof for each reviewer-directed substitution c
     readFileSync(
       join(
         REPO_ROOT,
-        "docs/product-imagery/evidence/founder-preview/founder-preview-browser-evidence.json",
+        "docs/product-imagery/evidence/ui-convergence/corrected-preview/founder-preview-browser-evidence.json",
       ),
       "utf8",
     ),
@@ -292,11 +354,32 @@ test("records responsive browser proof for each reviewer-directed substitution c
     ["review-fix-ghk-cu-detail-desktop", "GRP-0287"],
     ["review-fix-supplement-detail-desktop", "GRP-0366"],
   ];
-  assert.equal(evidence.counts.captures, 45);
+  assert.equal(evidence.schemaVersion, 2);
+  assert.equal(evidence.partialDebugCapture, false);
+  assert.equal(evidence.counts.captures, 134);
+  assert.equal(evidence.counts.responsiveMatrixCaptures, 120);
+  assert.deepEqual(evidence.counts.responsiveWidths, [
+    1440, 1280, 1024, 834, 768, 430, 390, 375, 360, 320,
+  ]);
+  assert.deepEqual(evidence.counts.responsiveSurfaces, [
+    "home",
+    "products",
+    "featured",
+    "product-card-comparison",
+    "product-detail-comparison",
+    "care",
+    "held",
+    "quote-only",
+    "coming-soon",
+    "account-status",
+    "founder-decisions",
+    "catalog-qa-grid",
+  ]);
   assert.equal(evidence.counts.gridCanonicalIdsCovered, 423);
   assert.equal(evidence.counts.brokenImages, 0);
   assert.equal(evidence.counts.severeConsoleMessages, 0);
   assert.equal(evidence.counts.networkBoundaryViolations, 0);
+  assert.ok(evidence.captures.every((capture) => capture.assertions.horizontalOverflow === false));
   for (const [name, canonicalId] of expected) {
     const capture = capturesByName.get(name);
     assert.ok(capture, `Missing reviewer-fix capture ${name}`);
@@ -333,8 +416,14 @@ test("serves only the product-imagery tree with a deny-by-default browser policy
   const page = await fetch(`${preview.origin}/founder-preview/index.html`);
   assert.equal(page.status, 200);
   assert.match(page.headers.get("content-security-policy"), /connect-src 'none'/);
+  assert.match(page.headers.get("content-security-policy"), /font-src 'self'/);
   assert.match(page.headers.get("x-robots-tag"), /noindex/);
-  assert.match(await page.text(), /Private founder prototype/);
+  assert.match(await page.text(), /Private founder decision preview/);
+  const font = await fetch(
+    `${preview.origin}/founder-preview/fonts/inter-tight-latin-700-normal.woff2`,
+  );
+  assert.equal(font.status, 200);
+  assert.match(font.headers.get("content-type"), /font\/woff2/);
   const dataResponse = await fetch(`${preview.origin}/founder-preview/catalog-data.json`);
   assert.equal(dataResponse.status, 200);
   assert.equal((await dataResponse.json()).rows.length, 423);

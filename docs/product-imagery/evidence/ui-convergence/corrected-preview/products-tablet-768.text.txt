@@ -1,0 +1,237 @@
+Skip to content
+
+PRIVATE FOUNDER DECISION PREVIEW
+Core baseline c0e25c73 · imagery source 8b06da56 · no publication or transaction authority
+
+DECISION COMPARISONS
+CURRENT CORE EVIDENCE
+423-SLOT QA
+Xenios
+Sign In
+Start Care
+Menu
+PRIVATE PREVIEW
+Home
+Products
+Featured
+Card policy
+Media geometry
+Care
+Account / status
+Founder decisions
+
+PRODUCTS · PROPOSED MEDIA PLACEMENT
+
+Browse exact identities and governed states.
+
+The current public policy is text-only. This private surface shows the proposed square-image alternative without changing Core or creating a transaction path.
+
+Search products
+Category
+All categories
+503A Clinical Formulations
+Research Capsules
+Research Peptides & Materials
+Research Supplies
+Shipping & Fulfillment
+Supplements
+Topicals & Regenerative
+Pathway
+All pathways
+Research
+Care
+Held
+Quote only
+Binding pending
+423 PRODUCTS · SHOWING 12
+
+Proposal, not approval: every card below uses a 1:1 contain slot with unchanged source pixels. Current Core public cards remain no-image until Samuel decides otherwise.
+
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+CLINICAL FORMULATIONS 503A
+CARE PATHWAY
+5-Amino-1Mq
+
+5-AMINO-1MQ 5MG/ML (5ML)
+
+Provider review and applicable state and pharmacy requirements govern this pathway.
+
+CATEGORY
+503A Clinical Formulations
+PRICE STATE
+Care pricing withheld
+Review Care pathway
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH PEPTIDES MATERIALS
+RESEARCH ACCESS
+5-Amino-1Mq
+
+5-AMINO-1MQ 10 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+CATEGORY
+Research Peptides & Materials
+PRICE STATE
+Price omitted from static preview
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH CAPSULES
+RESEARCH ACCESS
+5-Amino-1MQ
+
+5-AMINO-1MQ 50 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+CATEGORY
+Research Capsules
+PRICE STATE
+Price omitted from static preview
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH SUPPLIES
+RESEARCH ACCESS
+Acetic Acid 0.6%
+
+ACETIC ACID 0.6% 5 ML
+
+Runtime Product Control remains the only price and purchase authority.
+
+CATEGORY
+Research Supplies
+PRICE STATE
+Price omitted from static preview
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+CLINICAL FORMULATIONS 503A
+CARE PATHWAY
+Anastrozole
+
+ANASTROZOLE 0.25MG CAPSULE
+
+Provider review and applicable state and pharmacy requirements govern this pathway.
+
+CATEGORY
+503A Clinical Formulations
+PRICE STATE
+Care pricing withheld
+Review Care pathway
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+CLINICAL FORMULATIONS 503A
+CARE PATHWAY
+Anastrozole
+
+ANASTROZOLE 0.5MG CAPSULE
+
+Provider review and applicable state and pharmacy requirements govern this pathway.
+
+CATEGORY
+503A Clinical Formulations
+PRICE STATE
+Care pricing withheld
+Review Care pathway
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+CLINICAL FORMULATIONS 503A
+CARE PATHWAY
+Anastrozole
+
+ANASTROZOLE 1MG CAPSULE
+
+Provider review and applicable state and pharmacy requirements govern this pathway.
+
+CATEGORY
+503A Clinical Formulations
+PRICE STATE
+Care pricing withheld
+Review Care pathway
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+CLINICAL FORMULATIONS 503A
+CARE PATHWAY
+Anastrozole Tablet
+
+ANASTROZOLE TABLET 1MG
+
+Provider review and applicable state and pharmacy requirements govern this pathway.
+
+CATEGORY
+503A Clinical Formulations
+PRICE STATE
+Care pricing withheld
+Review Care pathway
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+SUPPLEMENTS
+RESEARCH ACCESS
+Annatto Pro 125
+
+RETAIL UNIT / PACKAGE
+
+Runtime Product Control remains the only price and purchase authority.
+
+CATEGORY
+Supplements
+PRICE STATE
+Price omitted from static preview
+View product
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+CLINICAL FORMULATIONS 503A
+CARE PATHWAY
+Aod-9604
+
+AOD-9604 1.2MG/ML (6MG/5ML)
+
+Provider review and applicable state and pharmacy requirements govern this pathway.
+
+CATEGORY
+503A Clinical Formulations
+PRICE STATE
+Care pricing withheld
+Review Care pathway
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+CLINICAL FORMULATIONS 503A
+CARE PATHWAY
+Aod-9604
+
+AOD-9604 300MCG TROCHE
+
+Provider review and applicable state and pharmacy requirements govern this pathway.
+
+CATEGORY
+503A Clinical Formulations
+PRICE STATE
+Care pricing withheld
+Review Care pathway
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH PEPTIDES MATERIALS
+RESEARCH ACCESS
+Aod-9604
+
+AOD-9604 10 MG
+
+Runtime Product Control remains the only price and purchase authority.
+
+CATEGORY
+Research Peptides & Materials
+PRICE STATE
+Price omitted from static preview
+View product
+Xenios
+
+Private UI-convergence evidence. Synthetic data only. Nothing here is a live offer.
+
+Founder decisions
+Current Core evidence
+Six frozen calibration studies
+Full QA grid

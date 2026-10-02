@@ -1,0 +1,94 @@
+Skip to content
+
+PRIVATE FOUNDER DECISION PREVIEW
+Core baseline c0e25c73 · imagery source 8b06da56 · no publication or transaction authority
+
+DECISION COMPARISONS
+CURRENT CORE EVIDENCE
+423-SLOT QA
+Xenios
+For Individuals
+For Practices
+Partners
+How It Works
+Quality
+About
+Careers
+Sign In
+Start Care
+PRIVATE PREVIEW
+Home
+Products
+Featured
+Card policy
+Media geometry
+Care
+Account / status
+Founder decisions
+
+QUOTE-ONLY STATE
+
+BAM15 stays visible without becoming orderable.
+
+The image is private presentation evidence. Text remains the authority for price, availability, binding, and next action.
+
+PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS
+GRP-0244
+QUOTE ONLY
+BAM15
+
+BAM15 500 mcg
+
+FORM
+Capsule / Bottle
+PRICE STATE
+Price on request
+PATHWAY
+Quote only
+IMAGE STATUS
+Private, provisional, not publication-approved
+Request a quote
+
+A reviewed quote is required before any order pathway is available. This static preview cannot submit, reserve, prescribe, quote, or order.
+
+Prototype action only
+Catalog visibility does not establish availability, suitability, or purchase eligibility.
+Card and detail use the exact same source asset SHA-256: 36bc99f4833d83923cb837664f89e07258ad94fbd04a5ddb7b27ca77ccf655f2
+No package, manufacturer, certification, clinical benefit, or partner relationship is asserted.
+CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY
+RESEARCH CAPSULES
+QUOTE ONLY
+BAM15
+
+BAM15 500 MCG
+
+A reviewed quote is required before any order pathway is available.
+
+CATEGORY
+Research Capsules
+PRICE STATE
+Price on request
+Request a quote
+PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+RESEARCH CAPSULES
+QUOTE ONLY
+BAM15
+
+BAM15 500 MCG
+
+A reviewed quote is required before any order pathway is available.
+
+CATEGORY
+Research Capsules
+PRICE STATE
+Price on request
+Request a quote
+Xenios
+
+Private UI-convergence evidence. Synthetic data only. Nothing here is a live offer.
+
+Founder decisions
+Current Core evidence
+Six frozen calibration studies
+Full QA grid

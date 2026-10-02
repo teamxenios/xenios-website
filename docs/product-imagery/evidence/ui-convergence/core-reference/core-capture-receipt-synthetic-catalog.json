@@ -1,0 +1,94 @@
+{
+ "schemaVersion": "claude_core_ui_capture_v1",
+ "origin": "http://127.0.0.1:5288",
+ "captures": [
+  {
+   "route": "/research/early-access/order-request",
+   "viewport": "desktop-1440",
+   "file": "core-synthetic-catalog-order-request-cards-desktop-1440.png",
+   "sha256": "03f80f99f80a035e0c8c9da95b175cc8b6ed83b9ff8b6aafcbf4f9a4b847eb99",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 1440,
+    "contentHeightCssPx": 2891,
+    "postContentWidthCssPx": 1440,
+    "postContentHeightCssPx": 2891,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 1440,
+    "capturedHeightPx": 2891
+   },
+   "info": {
+    "url": "/research/early-access/order-request",
+    "title": "Private document, xenios",
+    "h1": [
+     "Request an order"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "67.2px",
+     "fontWeight": "700",
+     "lineHeight": "65.856px",
+     "letterSpacing": "-2.688px",
+     "color": "rgb(23, 33, 27)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 13,
+    "details": 7,
+    "scrollWidth": 1440,
+    "height": 2891
+   },
+   "chrome": "154.0.8037.58"
+  },
+  {
+   "route": "/research/early-access/order-request",
+   "viewport": "mobile-390",
+   "file": "core-synthetic-catalog-order-request-cards-mobile-390.png",
+   "sha256": "295a31a7ee608a50e5e8e0605c77510c50e6b47169e136bfb001713c001074a6",
+   "coverage": {
+    "fullPage": true,
+    "truncated": false,
+    "layoutStable": true,
+    "contentWidthCssPx": 390,
+    "contentHeightCssPx": 6552,
+    "postContentWidthCssPx": 390,
+    "postContentHeightCssPx": 6552,
+    "maxHeightCssPx": 24000,
+    "devicePixelRatio": 1,
+    "capturedWidthPx": 390,
+    "capturedHeightPx": 6552
+   },
+   "info": {
+    "url": "/research/early-access/order-request",
+    "title": "Private document, xenios",
+    "h1": [
+     "Request an order"
+    ],
+    "bodyBg": "rgb(255, 255, 255)",
+    "font": "\"Inter Tight\", system-ui, -apple-system, sans-serif",
+    "h1Style": {
+     "fontSize": "32px",
+     "fontWeight": "700",
+     "lineHeight": "31.36px",
+     "letterSpacing": "-1.28px",
+     "color": "rgb(23, 33, 27)"
+    },
+    "header": {
+     "height": 69,
+     "bg": "color(srgb 1 1 1 / 0.94)"
+    },
+    "cards": 13,
+    "details": 7,
+    "scrollWidth": 390,
+    "height": 6552
+   },
+   "chrome": "154.0.8037.58"
+  }
+ ]
+}

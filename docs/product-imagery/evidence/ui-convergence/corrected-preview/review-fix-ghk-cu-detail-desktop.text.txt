@@ -1,0 +1,60 @@
+Skip to content
+
+PRIVATE FOUNDER DECISION PREVIEW
+Provisional image · same source pixels on card and detail · no runtime authority
+
+MEDIA COMPARISON
+423-SLOT QA
+Xenios
+For Individuals
+For Practices
+Partners
+How It Works
+Quality
+About
+Careers
+Sign In
+Start Care
+PRIVATE PREVIEW
+Products
+Card policy
+Media geometry
+Founder decisions
+
+PROPOSED PRODUCT DETAIL · PRIVATE ONLY
+
+Intentional square media placement.
+
+This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present.
+
+PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS
+GRP-0287
+RESEARCH ACCESS
+GHK-Cu
+
+GHK-Cu 100 mg
+
+FORM
+Lyophilized Vial
+PRICE STATE
+Price omitted from static preview
+PATHWAY
+Research access
+IMAGE STATUS
+Private, provisional, not publication-approved
+View product
+
+Runtime Product Control remains the only price and purchase authority. This static preview cannot submit, reserve, prescribe, quote, or order.
+
+Prototype action only
+Catalog visibility does not establish availability, suitability, or purchase eligibility.
+Card and detail use the exact same source asset SHA-256: 77069db7b8324baf4780b37c585926a92b432e2fef24cbcdf019d38782cd7d8b
+No package, manufacturer, certification, clinical benefit, or partner relationship is asserted.
+Authority boundary
+
+These 423 private slots remain joined to the frozen catalog candidate at 4cba24af1d42. Core UI reference c0e25c73 is separate UI evidence. Neither source is image approval, publication authority, Product Control authority, price release, runtime integration, deployment authority, or production approval.
+
+Static comparison. No checkout, quote submission, price release, or availability assertion.
+
+Compare media geometry
+Full QA grid
