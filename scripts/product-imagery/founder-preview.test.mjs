@@ -486,6 +486,7 @@ test("records responsive browser proof for each reviewer-directed substitution c
   assert.equal(evidence.counts.decisionCaptures, 10);
   assert.equal(evidence.counts.cardComparisonCaptures, 10);
   assert.equal(evidence.counts.geometryComparisonCaptures, 20);
+  assert.equal(evidence.counts.threeWayTriptychCaptures, 10);
   assert.ok(evidence.counts.proposalAuthorityCaptures >= 30);
   assert.ok(evidence.captures.every((capture) => capture.assertions.horizontalOverflow === false));
   assert.ok(evidence.captures.every((capture) => capture.assertions.failedResponses === 0));
@@ -519,11 +520,40 @@ test("records responsive browser proof for each reviewer-directed substitution c
     assert.equal(capture.fidelity.decisions.bButton.borderRadius, "999px");
     assert.equal(capture.fidelity.decisions.bButton.fontWeight, "750");
     assert.equal(capture.fidelity.decisions.dCoreContentMatches, true);
+    assert.equal(capture.fidelity.decisions.marks.length, 2);
+    assert.ok(capture.fidelity.decisions.marks.every((mark) => mark.visible));
+    assert.ok(capture.fidelity.decisions.marks.every(
+      (mark) => mark.backgroundColor !== "rgba(0, 0, 0, 0)",
+    ));
   }
   for (const capture of evidence.captures.filter((record) => record.surface === "product-card-comparison")) {
     const pairs = capture.fidelity.cards.pairs;
     assert.equal(pairs.length, 6);
     assert.ok(pairs.every((pair) => pair.coreContentMatches));
+    for (const pair of pairs) {
+      for (const card of [pair.current, pair.proposed]) {
+        assert.equal(card.anatomy.gap, "6px");
+        assert.deepEqual(
+          [
+            card.anatomy.paddingTop,
+            card.anatomy.paddingRight,
+            card.anatomy.paddingBottom,
+            card.anatomy.paddingLeft,
+          ],
+          ["16px", "16px", "16px", "16px"],
+        );
+        assert.match(card.anatomy.categoryFontFamily, /JetBrains Mono/);
+        assert.match(card.anatomy.specificationFontFamily, /JetBrains Mono/);
+        assert.equal(card.anatomy.titleFontWeight, "500");
+        for (const action of card.actionStyles) {
+          assert.equal(action.backgroundColor, "rgb(14, 14, 14)");
+          assert.equal(action.color, "rgb(255, 255, 255)");
+          assert.equal(action.borderRadius, "4px");
+          assert.equal(action.fontWeight, "700");
+          assert.ok(Math.abs(action.width - card.anatomy.contentWidth) <= 0.5);
+        }
+      }
+    }
     for (const key of ["held", "quote-only", "binding-pending"]) {
       const pair = pairs.find((candidate) => candidate.kind === key);
       assert.ok(pair);
@@ -536,6 +566,16 @@ test("records responsive browser proof for each reviewer-directed substitution c
     assert.equal(packaging.canonicalId, "GRP-0073");
     assert.equal(capture.fidelity.cards.packagingRow.imageClass, "packaging_unverified");
     assert.equal(capture.fidelity.cards.packagingRow.assetJob, "calibration-06-unverified-identity");
+    for (const key of ["care", "packaging-unverified"]) {
+      const pair = pairs.find((candidate) => candidate.kind === key);
+      for (const card of [pair.current, pair.proposed]) {
+        assert.equal(card.availability, "AVAILABILITY_CONFIRMATION_REQUIRED");
+        assert.equal(card.actionAllowed, "true");
+        assert.deepEqual(card.actionTexts, ["Request availability"]);
+        assert.equal(card.actionCount, 1);
+        assert.equal(card.quantityCount, 1);
+      }
+    }
   }
   for (const capture of evidence.captures.filter(
     (record) => ["product-detail-comparison", "founder-decisions"].includes(record.surface),
@@ -556,6 +596,18 @@ test("records responsive browser proof for each reviewer-directed substitution c
     assert.ok(captures.every((capture) => capture.fidelity.authorityCopy.proposalLabel));
     assert.ok(captures.every((capture) => capture.fidelity.authorityCopy.actualCoreDenial));
     assert.ok(captures.every((capture) => capture.fidelity.authorityCopy.actualCoreEvidenceLink));
+  }
+  for (const capture of evidence.captures.filter((record) => record.surface === "three-way-comparison")) {
+    assert.equal(capture.fidelity.triptychs.length, 6);
+    for (const group of capture.fidelity.triptychs) {
+      assert.deepEqual(
+        group.cards.map((card) => card.label),
+        ["A · ACTUAL CORE", "B · CURRENT / OLD PREVIEW", "C · PROPOSED XENIOS HEALTH"],
+      );
+      assert.match(group.cards[0].source, /^\/evidence\/ui-convergence\/(core-reference|core-synthetic-c0e25c73|core-account-synthetic-c0e25c73)\//);
+      assert.match(group.cards[1].source, /^\/evidence\/founder-preview\//);
+      assert.match(group.cards[2].source, /^\/evidence\/ui-convergence\/corrected-preview\//);
+    }
   }
   for (const [name, canonicalId] of expected) {
     const capture = capturesByName.get(name);

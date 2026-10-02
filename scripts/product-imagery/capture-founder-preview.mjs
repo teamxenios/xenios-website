@@ -312,8 +312,16 @@ async function inspectPreviewState(page) {
     const cardSummary = (card) => {
       if (!card) return null;
       const body = card.querySelector(".core-card-content");
+      const category = card.querySelector(".core-card-category");
+      const specification = card.querySelector(".specification");
+      const title = card.querySelector(".core-card-content h3");
       const actions = Array.from(card.querySelectorAll(".core-card-action"));
       const image = card.querySelector(".product-media img");
+      const bodyStyle = body ? getComputedStyle(body) : null;
+      const categoryStyle = category ? getComputedStyle(category) : null;
+      const specificationStyle = specification ? getComputedStyle(specification) : null;
+      const titleStyle = title ? getComputedStyle(title) : null;
+      const bodyBounds = body?.getBoundingClientRect();
       return {
         role: card.dataset.cardRole ?? null,
         canonicalId: card.dataset.canonicalId ?? null,
@@ -331,11 +339,45 @@ async function inspectPreviewState(page) {
         actionCount: actions.length,
         actionTexts: actions.map(text),
         actionHeights: actions.map((action) => Number(action.getBoundingClientRect().height.toFixed(2))),
+        actionStyles: actions.map((action) => {
+          const style = getComputedStyle(action);
+          const bounds = action.getBoundingClientRect();
+          return {
+            backgroundColor: style.backgroundColor,
+            color: style.color,
+            display: style.display,
+            borderRadius: style.borderRadius,
+            fontWeight: style.fontWeight,
+            width: Number(bounds.width.toFixed(2)),
+          };
+        }),
         interactiveCount: card.querySelectorAll("button, a, input, select, textarea, [role='button']").length,
         assetSha256: card.querySelector(".product-media")?.dataset.assetSha256 ?? null,
         imageSrc: image?.currentSrc ?? null,
         imageObjectFit: image ? getComputedStyle(image).objectFit : null,
         researchNotice: text(body).includes("Research use only: not for human or veterinary use."),
+        anatomy: bodyStyle ? {
+          gap: bodyStyle.rowGap,
+          paddingTop: bodyStyle.paddingTop,
+          paddingRight: bodyStyle.paddingRight,
+          paddingBottom: bodyStyle.paddingBottom,
+          paddingLeft: bodyStyle.paddingLeft,
+          contentWidth: Number((
+            bodyBounds.width - parseFloat(bodyStyle.paddingLeft) - parseFloat(bodyStyle.paddingRight)
+          ).toFixed(2)),
+          categoryFontFamily: categoryStyle?.fontFamily ?? null,
+          categoryFontSize: categoryStyle?.fontSize ?? null,
+          categoryFontWeight: categoryStyle?.fontWeight ?? null,
+          categoryTextTransform: categoryStyle?.textTransform ?? null,
+          specificationFontFamily: specificationStyle?.fontFamily ?? null,
+          specificationFontSize: specificationStyle?.fontSize ?? null,
+          specificationFontWeight: specificationStyle?.fontWeight ?? null,
+          specificationTextTransform: specificationStyle?.textTransform ?? null,
+          titleFontFamily: titleStyle?.fontFamily ?? null,
+          titleFontSize: titleStyle?.fontSize ?? null,
+          titleFontWeight: titleStyle?.fontWeight ?? null,
+          titleLineHeight: titleStyle?.lineHeight ?? null,
+        } : null,
       };
     };
     const cardPairs = Array.from(document.querySelectorAll("[data-comparison-kind]")).map((section) => {
@@ -408,6 +450,16 @@ async function inspectPreviewState(page) {
     ).map(summarizeElement);
 
     const detailRoot = document.querySelector("[data-detail-policy]");
+    const triptychs = Array.from(document.querySelectorAll(".triptych-group")).map((group) => {
+      const cards = Array.from(group.querySelectorAll(".triptych-card"));
+      return {
+        title: text(group.querySelector(".section-heading h2")),
+        cards: cards.map((card) => ({
+          label: text(card.querySelector(".triptych-label > span")),
+          source: card.querySelector(".triptych-shot img")?.getAttribute("src") ?? null,
+        })),
+      };
+    });
     const rawBodyText = document.body.innerText;
     const normalizedBodyText = text(document.body);
     return {
@@ -508,6 +560,7 @@ async function inspectPreviewState(page) {
         actualCoreEvidenceLink: Array.from(document.querySelectorAll("a"))
           .some((link) => /Actual Core evidence/i.test(text(link))),
       },
+      triptychs,
       accentRuleCount: accentRules.length,
     };
   })()`);
@@ -577,10 +630,50 @@ function assertFounderPreviewFidelity(state, planned) {
       assert.equal(pair.proposed.fallbackCount, 0, `${planned.name} ${pair.kind} must not borrow a fallback`);
       assert.equal(pair.proposed.imageObjectFit, "contain", `${planned.name} ${pair.kind} must preserve contain`);
       for (const card of [pair.current, pair.proposed]) {
+        assert.equal(card.anatomy.gap, "6px", `${planned.name} ${pair.kind} body gap must match Core`);
+        assert.deepEqual(
+          [
+            card.anatomy.paddingTop,
+            card.anatomy.paddingRight,
+            card.anatomy.paddingBottom,
+            card.anatomy.paddingLeft,
+          ],
+          ["16px", "16px", "16px", "16px"],
+          `${planned.name} ${pair.kind} body padding must match Core`,
+        );
+        assert.match(card.anatomy.categoryFontFamily, /JetBrains Mono/);
+        assert.equal(card.anatomy.categoryFontSize, "12px");
+        assert.equal(card.anatomy.categoryFontWeight, "600");
+        assert.equal(card.anatomy.categoryTextTransform, "uppercase");
+        assert.match(card.anatomy.specificationFontFamily, /JetBrains Mono/);
+        assert.equal(card.anatomy.specificationFontSize, "12px");
+        assert.equal(card.anatomy.specificationFontWeight, "600");
+        assert.equal(card.anatomy.specificationTextTransform, "uppercase");
+        assert.match(card.anatomy.titleFontFamily, /Inter Tight/);
+        assert.equal(card.anatomy.titleFontWeight, "500");
+        assert.ok(
+          Math.abs(
+            parseFloat(card.anatomy.titleLineHeight) /
+              parseFloat(card.anatomy.titleFontSize) -
+              1.375,
+          ) < 0.01,
+          `${planned.name} ${pair.kind} title leading must match Core`,
+        );
         for (const height of card.actionHeights) {
           assert.ok(
             Math.abs(height - expectedActionHeight) <= 0.5,
             `${planned.name} ${pair.kind} action must be ${expectedActionHeight}px`,
+          );
+        }
+        for (const action of card.actionStyles) {
+          assert.equal(action.backgroundColor, "rgb(14, 14, 14)", `${planned.name} action must be Core black`);
+          assert.equal(action.color, "rgb(255, 255, 255)", `${planned.name} action text must be white`);
+          assert.equal(action.display, "flex", `${planned.name} action must use the Core flex treatment`);
+          assert.equal(action.borderRadius, "4px", `${planned.name} action radius must match Core`);
+          assert.equal(action.fontWeight, "700", `${planned.name} action weight must match Core`);
+          assert.ok(
+            Math.abs(action.width - card.anatomy.contentWidth) <= 0.5,
+            `${planned.name} action must fill the card content width`,
           );
         }
       }
@@ -600,6 +693,20 @@ function assertFounderPreviewFidelity(state, planned) {
     assert.equal(research.proposed.researchNotice, true, `${planned.name} proposed Research card must retain RUO copy`);
     assert.deepEqual(research.current.actionTexts, ["Select"]);
     assert.deepEqual(research.proposed.actionTexts, ["Select"]);
+    for (const card of [research.current, research.proposed]) {
+      assert.equal(card.availability, "AVAILABLE");
+      assert.equal(card.actionAllowed, "true");
+      assert.equal(card.actionCount, 1);
+      assert.equal(card.quantityCount, 1);
+    }
+    const care = state.cards.pairs.find((pair) => pair.kind === "care");
+    for (const card of [care.current, care.proposed]) {
+      assert.equal(card.availability, "AVAILABILITY_CONFIRMATION_REQUIRED");
+      assert.equal(card.actionAllowed, "true");
+      assert.deepEqual(card.actionTexts, ["Request availability"]);
+      assert.equal(card.actionCount, 1);
+      assert.equal(card.quantityCount, 1);
+    }
     const packaging = state.cards.pairs.find((pair) => pair.kind === "packaging-unverified");
     assert.equal(packaging.canonicalId, "GRP-0073", `${planned.name} must use the real packaging witness`);
     assert.equal(state.cards.packagingRow.canonicalId, "GRP-0073");
@@ -614,6 +721,13 @@ function assertFounderPreviewFidelity(state, planned) {
     assert.equal(state.cards.packagingRow.reviewerDirective, "replace_rejected_unverified_packaging");
     assert.equal(packaging.proposed.assetJob, "calibration-06-unverified-identity");
     assert.equal(packaging.proposed.assetSha256, state.cards.packagingRow.outputSha256);
+    for (const card of [packaging.current, packaging.proposed]) {
+      assert.equal(card.availability, "AVAILABILITY_CONFIRMATION_REQUIRED");
+      assert.equal(card.actionAllowed, "true");
+      assert.deepEqual(card.actionTexts, ["Request availability"]);
+      assert.equal(card.actionCount, 1);
+      assert.equal(card.quantityCount, 1);
+    }
   }
 
   if (["held", "quote"].includes(state.ready.view)) {
@@ -669,6 +783,10 @@ function assertFounderPreviewFidelity(state, planned) {
     assert.ok(state.decisions.marks.every((item) => item.visible));
     assert.ok(state.decisions.marks.every((item) => /xenios-mark-transparent\.png/.test(item.maskImage)));
     assert.ok(
+      state.decisions.marks.every((item) => item.backgroundColor !== "rgba(0, 0, 0, 0)"),
+      `${planned.name} decision A marks must inherit a visible currentColor`,
+    );
+    assert.ok(
       state.decisions.brandNames.every((item) => item.visible === (width >= 520)),
       `${planned.name} decision A names must mirror the Core 520px breakpoint`,
     );
@@ -693,6 +811,37 @@ function assertFounderPreviewFidelity(state, planned) {
     assert.equal(state.decisions.dCoreContentMatches, true, `${planned.name} decision D must change only media`);
   } else {
     assert.equal(state.accentRuleCount, 0, `${planned.name} must not leak the unapproved gradient`);
+  }
+
+  if (state.ready.view === "three-way") {
+    assert.equal(state.triptychs.length, 6, `${planned.name} must retain all six A/B/C triptychs`);
+    assert.equal(
+      state.triptychs.reduce((sum, group) => sum + group.cards.length, 0),
+      18,
+      `${planned.name} must render exactly 18 authority-labelled comparison cards`,
+    );
+    for (const group of state.triptychs) {
+      assert.deepEqual(
+        group.cards.map((card) => card.label),
+        ["A · ACTUAL CORE", "B · CURRENT / OLD PREVIEW", "C · PROPOSED XENIOS HEALTH"],
+        `${planned.name} ${group.title} must preserve A/B/C authority labels`,
+      );
+      assert.match(
+        group.cards[0].source,
+        /^\/evidence\/ui-convergence\/(core-reference|core-synthetic-c0e25c73|core-account-synthetic-c0e25c73)\//,
+        `${planned.name} ${group.title} Actual Core must use captured or exact-source evidence`,
+      );
+      assert.match(
+        group.cards[1].source,
+        /^\/evidence\/founder-preview\//,
+        `${planned.name} ${group.title} old column must use the retained baseline`,
+      );
+      assert.match(
+        group.cards[2].source,
+        /^\/evidence\/ui-convergence\/corrected-preview\//,
+        `${planned.name} ${group.title} proposal must use corrected-preview evidence`,
+      );
+    }
   }
 
   if (["home", "care", "journeys"].includes(state.ready.view)) {
@@ -859,6 +1008,7 @@ export async function captureFounderPreview() {
           geometry: state.geometry,
           detail: state.detail,
           authorityCopy: state.authorityCopy,
+          triptychs: state.triptychs,
           accentRuleCount: state.accentRuleCount,
         },
         reviewCanonicalIds: planned.gridEvidence ? state.reviewIds : undefined,
@@ -956,6 +1106,9 @@ export async function captureFounderPreview() {
         ).length,
         geometryComparisonCaptures: records.filter(
           (record) => record.fidelity.geometry.roles.length === 3,
+        ).length,
+        threeWayTriptychCaptures: records.filter(
+          (record) => record.fidelity.triptychs.length === 6,
         ).length,
         proposalAuthorityCaptures: records.filter(
           (record) => record.fidelity.authorityCopy.proposalLabel,
