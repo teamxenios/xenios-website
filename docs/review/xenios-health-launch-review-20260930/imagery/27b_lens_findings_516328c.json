@@ -1,0 +1,723 @@
+{
+ "schemaVersion": "claude_lens_findings_v1",
+ "reviewed": "516328cfbe8f76c23f115744161be7ec150e6334",
+ "carriedTo": "797b064d9c07012b95133e588222b2b2293ff341",
+ "workflowRun": "wf_c6f65bdd-c69",
+ "lenses": [
+  {
+   "lens": "core-fidelity",
+   "verdict": "LENS 1 (Core UI fidelity), verdict FAIL with 5 MATERIAL findings. The successor at 516328c fixes the parallel design system from 8b06da5 at the token level. Color tokens, Inter Tight and JetBrains Mono, container-x max widths and gutters at every Core breakpoint, the 69px sticky header, the desktop nav labels and order, and the 4px black/outlined button geometry (52/60/64 at <768/768/1024) all match c0e25c73. The 1440 and 1280 header rows now look like production. But the preview still does not faithfully mirror production in five ways an approver would notice. (1) The Xenios mark renders invisibly everywhere: a white PNG is used as an <img>, whereas Core draws it as a currentColor mask. That covers the header at all widths, the footer, and both columns of decision A. (2) The mobile and tablet header is effectively inverted. Core always shows Sign In, Start Care and Menu and hides the brand name below 520px. The preview hides Sign In at 700px and below and Start Care at 374px and below, shows the \"Xenios\" name, and moves the condensed nav from 1024 to 1160. (3) The heading ladder is one tier below Core (page h1 51.2px against Core's 76px; section h2 35px against 51.2px), and the clamp min/max values were changed (mobile h1 34px and 30px against Core's 32px). (4) Copy and page structure written for the preview replace Core's on Home, Care and Account/Status. These pages carry eyebrows claiming \"Core-converged\", \"source-faithful shell\" and \"Current Core route families\", with no PROPOSED label and no matching founder decision. (5) The \"CURRENT CORE\" card in decision D is rebuilt in the preview's own card layout, including a primary action on the held card that Core deliberately never renders. The drift matrix overstates fidelity for the header, footer, card radius and grid. The remaining drift is MINOR.",
+   "findings": [
+    {
+     "id": "L1-M1",
+     "severity": "MATERIAL",
+     "area": "Header/footer brand mark; decision A",
+     "evidence": "Preview index.html:28 and :71, plus preview.js:253 (decision A demo), render <img src=\"brand/xenios-mark-transparent.png\">. preview.css:250-254 styles it as a plain image. The PNG has 37,078 opaque pixels and every one is in the 224-255 RGB bucket, i.e. white. Core index.css:226-235 (.wordmark-mark) instead tints that file through a CSS mask with background-color: currentColor (black), used at Navbar.tsx:110 and Footer.tsx:20. Pixel scan: in core-home-desktop-1440.png the mark shows dark pixels at x128-159, y26-41. In the same box of corrected-preview/home-desktop-1440.png (x100-160, y55-125) there are only 5 dark pixels, all on the edge of the 'X' in 'Xenios'. In home-mobile-390.png the header row (y148-204, x0-67) has 0 dark pixels, and 'Xenios' starts at x=68, after an empty 34px slot. Crop ui_conv_crops/lens1/brand_zoom_1440.png shows Core with the mark and the preview without it. founder-decisions-desktop-1440.png at about y1170-1130/0.75 (crop decisions_1440_0.png, decision A panels) shows bare 'Xenios' and 'Xenios Health' with a blank left gap. Yet FOUNDER_UI_DECISION_PACKET section A says 'Current Core: mark plus Xenios' and 'Proposed: mark plus Xenios Health'.",
+     "claim": "The Core mark is invisible on white across the preview: the global header at all 10 widths, the footer (only faintly visible on the gray footer), and both sides of decision A. An approver judging the header brand lockup never sees the current or proposed lockup as it would render in production.",
+     "fix": "Render the mark as Core does: <span class=\"wordmark-mark\"> with background-color: currentColor and a mask on the same PNG. Or ship a dark variant of the asset. Re-capture header, footer and decision A at all widths."
+    },
+    {
+     "id": "L1-M2",
+     "severity": "MATERIAL",
+     "area": "Header actions, mobile brand lockup, condensed-nav breakpoint",
+     "evidence": "Core Navbar.tsx:120-126 renders Sign In, Start Care and Menu unconditionally. index.css:1459-1466 (max-width 519) only shrinks them (Sign In 13px, padding 6px; Start Care padding 9px) and visually hides .clarity-brand-name (line 1460), so the phone header is mark + Sign In + Start Care + Menu. That is confirmed in core-home-mobile-390.png y0-69 and core-status-mobile-390.png y0-55 (crops hdr_mobile_stack.png and care_status_mobile.png). The preview has .clarity-header-link{display:none} at max-width 700 (preview.css:1496-1498), .clarity-header-care.btn{display:none} at max-width 374 (1505-1508), and .clarity-brand-name at 19px (1492-1494). Probe header text: 430/390/375 'Xenios Start Care Menu'; 360/320 'Xenios Menu'. The condensed nav appears at min-width 1160 (preview.css:1436-1440), whereas Core shows it at 1024 (index.css:1477). Probe at 1024: 'Xenios Sign In Start Care Menu', with no For Individuals, For Practices, Partners or How It Works (crop hdr_1024_834.png). The footer also shows 'Xenios' on mobile (home-mobile-390.png bottom 500px, crop footer_mobile_390.png), but UI_CONVERGENCE_DRIFT_MATRIX rows 'Header actions' ('Sign In, rectangular Start Care, and Menu behavior at Core breakpoints') and 'Footer' ('Mobile footer name leak remains documented, not silently fixed') say otherwise.",
+     "claim": "The phone and tablet header does not show current production. Core phones show no brand name, only the mark, plus Sign In and Start Care. The preview shows the name (with an invisible mark) and drops Sign In below 701px and Start Care below 375px; at 1024 it drops the four primary links. This is the surface where decision A's brand string would appear on phones, so the current-state baseline for A is misrepresented. Two claims in the drift matrix are false.",
+     "fix": "Port Core's rules exactly: no display:none on .clarity-header-link or .clarity-header-care; at max-width 519 apply Core's padding/font reductions and the visually-hidden brand name; condensed nav at 1024. Correct the two drift-matrix rows, and either show the Core mobile lockup as the current state for decision A or label any departure as proposed."
+    },
+    {
+     "id": "L1-M3",
+     "severity": "MATERIAL",
+     "area": "Typography scale per page type",
+     "evidence": "Core PublicPage h1 uses display-l (primitives.tsx:52) and ContentSection h2 uses display-m (primitives.tsx:81). Receipt (27a core-capture-receipt.json): /products, /status, /research, /quality, /support and /partners h1 are 76px/800 at 1440 and 32px at 390; /care is 51.2px/28px (CarePublicPages.tsx:76, display-m). The preview maps .page-hero h1 to display-m (preview.css:428-436) and .section-heading h2 / .comparison-section h2 to display-s (438-445). Probe at 1440: products, featured, cards, details, held, quote, coming, journeys and decisions h1 all measure 51.2px, against Core /products and /status at 76px; section h2 computes to 35.04px against Core's 51.2px. The tokens themselves were retuned: display-l is clamp(34px, 5vw + 0.25rem, 88px) against Core's clamp(32px, ..., 96px) (preview.css:419-426 vs index.css:127-133); display-m is clamp(30px, ..., 60px) against clamp(28px, ..., 64px); display-s is 25/46 against 24/48. Probe at 430 and below: home h1 34px against Core 32px; every other page h1 30px against Core 32px (display-l) or 28px (display-m). Visible in products_hero_1440.png ('Research products' 76px vs 'Browse exact identities...' 51px) and status_side_1440.png. Meanwhile the home lead (preview.js:93) claims it 'uses the dominant current Xenios public shell, typography...'.",
+     "claim": "Ten of the 12 preview surfaces put page h1 and section h2 one tier below Core's dominant public hierarchy, and mobile sizes match no Core treatment. Approvers see a lighter heading hierarchy than production, which also changes how product images read against the copy in decisions D and E. The four-H1 inconsistency is recorded, but the preview chose the minority Care/sign-in tier as its baseline and altered the clamps.",
+     "fix": "Copy Core's .display-l/.display-m/.display-s/.h3 declarations verbatim. Use display-l for page-hero h1 and display-m for section h2, matching PublicPage and ContentSection. Keep display-m only on the Care view, mirroring Core /care. Re-capture."
+    },
+    {
+     "id": "L1-M4",
+     "severity": "MATERIAL",
+     "area": "Homepage and page copy/structure (Home, Care, Account/Status, Products)",
+     "evidence": "Home: preview.js:91-92 sets the eyebrow 'Private Core-converged prototype' and the h1 'Clear pathways for research and care.'. Core Home.tsx:43-44 has 'CARE · RESEARCH PRODUCTS · PRACTICES' and 'Care and research products, clearly separated.'. Core's home sections (Home.tsx:48-108: 6-card audience grid, PathwayTiles, How Care works, How research orders work, For Practices, Partners, Quality, FAQ, dark CTA row) are all absent. The preview replaces them with a 426/424/423/0 accounting strip, a featured image grid, a dark 'Identity is not commerce authority' band and a calibration sheet (home_hero_1440.png; home-desktop-1440.png y0-5617). Care: preview.js:229 eyebrow 'Care · source-faithful shell' with h1 'Care begins with licensed review.', against Core 'Start Care with a short request.' (CarePublicPages.tsx:104). The Care tab row, current-status card, 'How Care works', 'What Care is not', 'This site is not emergency care' and the footer '911' line are missing (care_side_1440.png). Account/status: preview.js:239 eyebrow 'Current Core route families' with lead 'mirror current Core hierarchy and terminology', but it shows a reference-only 'Check status' plus an inline timeline and account rows. Core /status (pages.tsx:719, 748-750) requires reference + email and 'Send secure status link', with h1 'Check order status' (status_side_1440.png). Products: h1 'Browse exact identities and governed states.' and a 423-card grid, against Core's 'Research products' gateway with 'Browse Research Catalog' / 'How ordering works' (products_hero_1440.png). Products at least labels its media as proposed; none of the copy or structure changes are labelled PROPOSED, and none appear in FOUNDER_UI_DECISION_PACKET A-E or the drift matrix (grep for home, headline or copy finds nothing).",
+     "claim": "Copy and page structure written for the preview silently replace Core on Home, Care and Account/Status, under eyebrows that assert Core fidelity. An approver cannot tell that production says 'Care and research products, clearly separated.' or uses a secure-link status flow. Because these changes sit outside decisions A-E, they could be carried into implementation without any decision.",
+     "fix": "For surfaces presented as current Core, reproduce Core's h1, eyebrow, lead, CTAs and section order verbatim (synthetic data allowed), and put proposals in clearly labelled PROPOSED blocks. Otherwise relabel those views as preview-authored scaffolding rather than 'Core-converged' or 'source-faithful'. If new home or Care copy or structure is intended, add it to the decision packet as an explicit decision."
+    },
+    {
+     "id": "L1-M5",
+     "severity": "MATERIAL",
+     "area": "Cards: the 'CURRENT CORE' card in the decision D comparison",
+     "evidence": "preview.js:52-63 (currentPolicyCard) is labelled 'Current Core · text-only public / Early Access policy'. It reuses the preview card layout: family mono label plus pill status badge, preview h3 (700 weight, 20-29px), specification, a Category/Price state fact grid, and a full-width card-cta.primary (52-64px) with labels 'View product', 'Review Care pathway', 'View hold details' and 'Request a quote'. Core's EarlyAccessProductCard.tsx:196-310 is a compact `card ... p-4` with category mono-label, name in body-m font-medium (line 213), strength, description, '$X per unit' or 'Not available to order', a quantity selector, and availability copy ('Available to order' / 'Temporarily unavailable'). Its only action is 'Select' or 'Request availability', and the held state renders NO action control (lines 257 and 300 are gated on `sellable`). The held pair in product-card-comparison-desktop-1440.text.txt:105-126 shows 'FORMULATION HELD ... View hold details' as a black primary CTA on the CURRENT CORE card. The vocabulary 'Research access' and 'Formulation held' is also not Core's card vocabulary.",
+     "claim": "The left-hand 'current' card in decision D is not current Core. It is the proposed card with the image removed. For the held state it shows a primary action that Core explicitly refuses to render. Holding the layout constant is a legitimate experimental design, but the 'CURRENT CORE' label misrepresents production card anatomy and held-state behaviour to the approver.",
+     "fix": "Either render the CURRENT CORE side with Core's actual EarlyAccessProductCard anatomy and states (no action on held), or relabel it 'Proposed anatomy · no-image variant' and place a real Core card capture beside it (for example core-synthetic-catalog-order-request-cards or the member catalog capture)."
+    },
+    {
+     "id": "L1-m1",
+     "severity": "MINOR",
+     "area": "Mobile menu/drawer and nav popovers",
+     "evidence": "The preview's Menu is <a href=\"#preview-navigation\"> (index.html:49), which jumps to the private subnav (index.html:53). Core Menu opens a right-side dialog drawer (Navbar.tsx:135-149; index.css .clarity-nav-overlay/.clarity-nav-panel, about lines 1323-1349): 'CHOOSE A PATH', a 12-link grid, and stacked Start Care / Explore Products / Sign In buttons. Core's 'For Individuals ⌄' and 'For Practices ⌄' are popover triggers with chevrons (Navbar.tsx:176). The preview uses plain links without chevrons (hdr_desktop_1440.png). Neither evidence set captures an open menu.",
+     "claim": "Menu and audience-popover behaviour are not represented, despite the drift matrix's 'Menu behavior at Core breakpoints' claim.",
+     "fix": "Add a static open-drawer state that copies Core's panel markup and capture it at 390 and 320. Add the chevron popover triggers."
+    },
+    {
+     "id": "L1-m2",
+     "severity": "MINOR",
+     "area": "Buttons",
+     "evidence": "Core .btn has a fixed height: 52, then 56 at >=390, 60 at >=768, 64 at >=1024 (index.css:278-304). The preview uses min-height and steps to 56 at >=375 (preview.css:1301-1312), so at 375 buttons are 56px against Core's 52px. Ghost buttons inherit the .btn steps; the probe measured 'Compare no-image policy' at 56/60/64px from 375 up, while Core .btn-ghost is height:auto with min-height 44 (index.css:320-334). Core makes .clarity-actions .btn width:100% at max-width 519 (index.css:1465); the preview hero buttons keep intrinsic width on phones (home_hero_mobile.png).",
+     "claim": "Small button-geometry drift on phones and in ghost buttons. The 64px hero buttons at >=1024 are correct.",
+     "fix": "Port the Core .btn and .btn-ghost rules verbatim, plus the full-width action row at 519px and below."
+    },
+    {
+     "id": "L1-m3",
+     "severity": "MINOR",
+     "area": "Card radius and informational panels",
+     "evidence": "Core public information, status, form and confirmation cards use 18px radius (.clarity-card index.css:1363; .clarity-status-card 1435; .clarity-form 1405). Preview pathway-card, journey-panel, coming-card, metric and comparison-card are 4px (preview.css:597-607); only .hero-aside is 18px (508). The drift matrix claims '18px informational comparison panels only', but comparison-card is 4px. See status_side_1440.png: Core's rounded status card against the preview's square journey panels.",
+     "claim": "Informational and status panels use the research-card radius instead of Core's public clarity-card radius.",
+     "fix": "Use 18px for informational, status and form panels (clarity-card equivalents) and keep 4px for research product cards. Fix the drift-matrix row."
+    },
+    {
+     "id": "L1-m4",
+     "severity": "MINOR",
+     "area": "Catalog grid density and filters",
+     "evidence": "The preview .product-grid has 2 columns at >=600, 3 at >=1024 and 4 at >=1280 (preview.css:1320-1323, 1415ff, 1461). Core's widest catalog grid is EarlyAccessCatalogGrid.tsx:70 `sm:grid-cols-2 xl:grid-cols-3` (2 at 640, 3 at 1280); .clarity-grid is also 3. products-desktop-1440.png shows 4 columns (crop prev_products_cards_1440.png). The filter labels are Search/Category/Pathway with a mono uppercase '423 PRODUCTS · SHOWING 12' count and no Clear filters. Core uses Search/Family/Action plus 'Clear filters' with a plain '6 results. Sorted by product name.' (assisted order), or Search/Family/Category/Listing state/Sort with 'Showing 3 of 6 offerings' (member catalog), per core_order_cards_1440_top.png and core_member_catalog_1440_top.png.",
+     "claim": "The four-column storefront density flagged against 8b06da5 persists at 1280/1440, and the filter vocabulary matches no Core catalog. The drift-matrix 'Core-style ... responsive grid' claim overstates this.",
+     "fix": "Cap at 3 columns (xl at 1280) with Core's 640 breakpoint. Mirror one named Core filter set (assisted-order or member) and its count format."
+    },
+    {
+     "id": "L1-m5",
+     "severity": "MINOR",
+     "area": "Footer",
+     "evidence": "The preview footer (index.html:66-82; preview.css:1269-1290) has a paper-2 gray background, 44px padding, one sentence and 4 private links, with no link groups, support email, copyright or Care emergency line. Core Footer.tsx has a white background, 68/28px padding, brand and email, 5 groups (Individuals, Practices & partners, Company, Support, Legal), the copyright, and 'If this is an emergency, call 911.' on care routes (crops core_footer_1440.png vs prev_products_footer_1440.png). The drift matrix claims 'Core-style brand, disclosure, and link grouping'.",
+     "claim": "The footer is a preview utility footer, not Core's.",
+     "fix": "Render Core's footer structure, keeping preview links in the private subnav or the prototype bar, or relabel the footer as preview chrome and fix the drift-matrix row."
+    },
+    {
+     "id": "L1-m6",
+     "severity": "MINOR",
+     "area": "Section and hero spacing",
+     "evidence": "Preview --section-y is 64/80/96 (preview.css:74, 1345, 1402), while Core .clarity-section uses clamp(64px, 8vw, 112px) (index.css:1355): at 1440 that is 96 against 112, at 1280 96 against 102.4, at 834 80 against 66.7. The preview hero uses clamp(72px, 9vw, 136px) on both sides (preview.css:471-473); Core uses top clamp(72px, 10vw, 148px) and bottom clamp(64px, 9vw, 128px) (index.css:1351), giving 129.6/129.6 against 144/128 at 1440. The preview .page-hero h1 max-width is 20ch, against Core's 18ch (15ch on home).",
+     "claim": "Vertical rhythm differs slightly from Core at desktop and tablet.",
+     "fix": "Port .clarity-hero, .clarity-section and the max-width rules verbatim."
+    },
+    {
+     "id": "L1-m7",
+     "severity": "MINOR",
+     "area": "Forms",
+     "evidence": "Preview fields are 4px radius, 1px ink border, fixed 52px height (preview.css:805-817). Core public forms use .clarity-field inputs (index.css:1411-1423): 10px radius, gray-300 border, min-height 52, label 15px/750, and an 18px-radius form card. See status_side_1440.png and care_status_mobile.png.",
+     "claim": "The status and account panels use the legacy .input-field look rather than the public clarity-field look used on /status.",
+     "fix": "Use the clarity-field styles for public status and sign-in panels."
+    },
+    {
+     "id": "L1-m8",
+     "severity": "MINOR",
+     "area": "Accent on the Core-converged home (decision C bleed)",
+     "evidence": "preview.js:96 places .accent-rule (linear-gradient(90deg, --pulse, --teal), preview.css:512-516) at the top of the home hero aside at every width (home_hero_1440.png at about x1030-1300, y1335; home_hero_mobile.png). There is no PROPOSED label, but the drift matrix says 'Restrained 4px divider only on proposal examples', and decision C says current Core is flat purple.",
+     "claim": "The proposed decision-C treatment appears unlabelled in the baseline home hero.",
+     "fix": "Remove it from the home hero or tag it 'Proposed · decision C'."
+    },
+    {
+     "id": "L1-m9",
+     "severity": "MINOR",
+     "area": "Header micro-styling",
+     "evidence": "Preview .clarity-nav background is rgba(255,255,255,.97) with no backdrop-filter (preview.css ~211-217); Core uses color-mix(paper 94%) with backdrop-filter: blur(14px) (index.css:1250-1257). Brand name weight is 900 against 850, and at 520-700px the name is 19px against Core's 22px.",
+     "claim": "Negligible visual differences in the sticky header.",
+     "fix": "Copy the Core declarations."
+    }
+   ],
+   "confirmed": [
+    "The core-reference PNGs in the successor (15 files) are byte-identical to Claude's 27a captures (SHA-256 prefixes match one for one).",
+    "Container tokens match Core at 375/390/768/820/1024/1280/1440: preview.css:72-73 and 1301-1478 vs index.css:64-91. The content edge at 1440 is identical (brand text starts at x=158 in both captures).",
+    "The header is 68px inner + 1px rule = 69px, sticky, with a white background. Desktop nav labels and order exactly match Core's PRIMARY list (7 items), the condensed set is the first 4, nav type is 14px/700 ink-2, and the header Start Care button is 44px/13px/4px black. At 1440 and 1280 the header matches Core except for the missing mark and chevrons.",
+    "Color tokens are identical (paper #fff, paper-2 #F4F4F5, ink #0E0E0E, ink-2, ink-mute, rule, pulse #7C3AED, teal #14B8C7, lilac). Inter Tight and JetBrains Mono are bundled and loaded.",
+    "Home h1 at 1440/1280/1024/834/768 computes to 76/68/55.2/45.7/42.4px at weight 800, the same as Core display-l at those widths. Care h1 desktop is 51.2px, matching Core /care.",
+    "Primary and secondary buttons: 4px radius, black fill or ink outline, 52/60/64px at <768/768/1024. The 64px hero buttons the probe measured equal Core .btn at >=1024 (index.css:304); Core's base .btn is 52px, rising to 56px at >=390.",
+    "Lead and eyebrow type matches Core body-l and mono-cap within rounding; h3 is within about 1px at 1440.",
+    "Preview-only chrome (black 'Private founder decision preview' bar and gray 'Private preview' subnav) is visibly labelled and kept separate from the Core nav row.",
+    "The Products, Featured, product-card-comparison and product-detail views label imagery as proposed: eyebrow 'proposed media placement', a 'Proposal, not approval' note, and a per-card 'Proposed Xenios Health · private decision study' kicker. The decisions page labels the left column CURRENT CORE / OBSERVED and the right column PROPOSED XENIOS HEALTH / DECISION REQUIRED.",
+    "CORE_UI_INCONSISTENCIES.md records the Core inconsistencies relevant to this lens (four H1 treatments #6, card radius #8/#20, hero scale #21, filter vocabulary #23, mobile brand-name hiding #4, three form systems) instead of resolving them in Core."
+   ],
+   "verdicts": [
+    {
+     "id": "L1-M1",
+     "upheld": true,
+     "severity": "MATERIAL",
+     "note": "Confirmed. brand/xenios-mark-transparent.png is byte-identical to Core's file, and every non-transparent pixel is white (PIL: 38,868 alpha>0 px, all in the top RGB bucket). The preview draws it as a plain <img> at index.html:28 and :71 and at preview.js:253 (decision A), styled at preview.css:250-254 with no filter or mask. Core instead tints it to currentColor through a CSS mask (index.css:226-235), used at Navbar.tsx:110 and Footer.tsx:20. Crops: verify-L1/hdr_1440.png shows the Core mark at x~128 and an empty slot in the preview. hdr_390.png shows Core phone = mark only, preview = bare 'Xenios'. dec_A_1440.png shows both decision-A panels as bare text. footer_1440.png and footer_390.png show the mark only as a faint white ghost on gray. The packet says A is 'mark plus Xenios' / 'mark plus Xenios Health', and the drift-matrix Wordmark row says the header 'renders exact Core mark plus Xenios'. Neither is true in the evidence, so the decision-A lockup is misrepresented."
+    },
+    {
+     "id": "L1-M2",
+     "upheld": true,
+     "severity": "MATERIAL",
+     "note": "Confirmed against source and captures. Core Navbar.tsx:120-126 always renders Sign In, Start Care and Menu. At max-width 519, index.css:1459-1466 only shrinks them and visually hides .clarity-brand-name. The condensed nav appears at min-width 1024 (index.css:1476-1477). The preview hides Sign In at <=700 (preview.css:1496-1498), hides Start Care at <=374 (1505-1508), keeps a 19px name, and shows the condensed nav only from 1160 (1436-1440). The probe's header text agrees: 430/390/375 'Xenios Start Care Menu'; 360/320 'Xenios Menu'; 1024 'Xenios Sign In Start Care Menu' with no primary links. hdr_390.png shows Core = mark + Sign In + Start Care + Menu against preview = name + Start Care + Menu. The mobile footer shows 'Xenios' (footer_390.png), even though CORE_UI_INCONSISTENCIES item 4 says Core hides it. So the drift-matrix Header actions row ('at Core breakpoints') and Footer row ('not silently fixed') are false. 27a had flagged this exact mobile-nav row as material. On phones, Core shows no brand string at all, which bears directly on decision A."
+    },
+    {
+     "id": "L1-M3",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "The facts hold. Core PublicPage h1 is display-l (primitives.tsx:52) and ContentSection h2 is display-m (primitives.tsx:81; Home.tsx uses ContentSection throughout). The preview maps .page-hero h1 to display-m (preview.css:428-436) and section h2 to display-s (438-445). Its clamps differ from Core (index.css:127-148) as well. The probe gives 51.2px page h1 on the 10 non-home/non-Care surfaces against Core /products and /status at 76px; Core receipt values are from core-capture-receipt.json. products_hero_1440.png shows the visible tier gap. Downgraded because nothing about A-E is misrepresented: each comparison pair sits under the same heading, so the effect is symmetric. The two views with direct Core analogs match on h1: home is 76px, as in Core, and Care is 51.2px, as in Core /care. The preview Products grid is not Core /products, which is a gateway; Core's actual catalog surfaces use 67.2px and 35.04px. At 1440 the retuned clamps compute to the same values as Core, so the token drift is visible only as a 2px difference at phone widths. This is real fidelity drift but not misleading."
+    },
+    {
+     "id": "L1-M4",
+     "upheld": true,
+     "severity": "MATERIAL",
+     "note": "Confirmed. Care (preview.js:229) has the eyebrow 'Care · source-faithful shell' and h1 'Care begins with licensed review.', followed by a dark 01/02/03 band. Core /care (CarePublicPages.tsx:76-262, core-care-desktop-1440.png) instead has 'Start Care with a short request.', tabs, a current-status card, 'How Care works', 'What Care is not' and an emergency section (care_core_1440.png vs care_prev_1440.png). Account/status (preview.js:239) claims its panels 'mirror current Core hierarchy and terminology', but it offers a reference-only 'Check status'. Core /status (clarity/pages.tsx:719, 748-750) requires reference plus email and uses 'Send secure status link' (status_1440.png). That misstates production's status-lookup model. Home copy and structure are clearly preview-authored, which is the weakest leg of the finding. Even so, 27a listed both the home headline and the 'invented status/account composition' as material drift, and the drift matrix now claims 'Core-style Care hierarchy' and status panels 'using Core hierarchy'. None of these deviations is labelled PROPOSED or appears in packet A-E."
+    },
+    {
+     "id": "L1-M5",
+     "upheld": true,
+     "severity": "MATERIAL",
+     "note": "Confirmed. currentPolicyCard (preview.js:52-63) is the proposed card with the image removed. Its full-width primary CTA comes from row.pathway.cta: 'View hold details' for held and 'Request a quote' for quote. Both Core public cards refuse an action on held rows. EarlyAccessProductCard.tsx:246-310 gates every control on `sellable`, with the comment 'Absent is the only state that cannot be misread'. The assisted-order card shows only explanatory text, and AssistedOrderPage.test.tsx:496-501 asserts that no add or Care CTA appears for held items. Core's synthetic held card (core_order_cards_overview.png) has no button. The preview's 'CURRENT CORE' held card does have a black primary button (held_pair_1440.png; product-card-comparison-desktop-1440.text.txt:105-126). The cards-page lead does say actions are held constant across the pair. However, the card kicker, the decision-page column header 'CURRENT CORE / OBSERVED', and the drift-matrix row 'Text-only current Core card shown for ... held' all present it as observed Core. That misrepresents production held-state behaviour inside decision D evidence."
+    },
+    {
+     "id": "L1-m1",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. index.html:49 makes Menu an anchor to #preview-navigation. Core opens a dialog drawer (Navbar.tsx:134-152) and has chevron popover triggers (Navbar.tsx:165-176). hdr_1440.png shows Core 'For Individuals ⌄' against the preview without chevrons. Neither evidence set captures an open menu. It doesn't bear on any decision."
+    },
+    {
+     "id": "L1-m2",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. Core .btn is a fixed height of 52/56/64, stepping up at 390, 768 and 1024 (index.css:278-304). The preview steps to 56 at 375 (preview.css:1301-1312), so it is 56 vs 52 at 375. The preview's media .btn rule comes after .btn-ghost, so ghost buttons inherit 56/60/64; the probe measured 'Compare no-image policy' at 64px at 1440, while Core .btn-ghost is height:auto, min-height 44 (index.css:320-334). Core makes .clarity-actions .btn full width at <=519 (index.css:1465). hero_390.png shows Core full-width buttons and the preview's intrinsic-width ones."
+    },
+    {
+     "id": "L1-m3",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. Preview .comparison-card, .journey-panel, .coming-card, .pathway-card and .metric are all 4px (preview.css:597-607); only .hero-aside is 18px (508). Core .clarity-card, .clarity-form and .clarity-status-card are 18px (index.css:1363, 1405, 1435). The drift-matrix claim '18px informational comparison panels only' is contradicted by the 4px comparison-card. status_1440.png shows the difference."
+    },
+    {
+     "id": "L1-m4",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. Preview .product-grid goes to 4 columns at >=1280 (preview.css:1460). Core catalogs top out at 3: EarlyAccessCatalogGrid.tsx:70 'sm:grid-cols-2 xl:grid-cols-3', ProductCatalogExperience lg:3, and assisted-order .xenios-order-cards 2. Preview filters are Search/Category/Pathway with a '423 products · showing 12' count. Core assisted-order uses Search/Family/Action, 'Clear filters' and '6 results. Sorted by product name.' (core_order_cards_overview.png). One caveat: 27a explicitly allowed catalog-density exploration, so the 4 columns alone are not a defect. The defect is the drift-matrix claim of a 'Core-style ... responsive grid' and filters. MINOR."
+    },
+    {
+     "id": "L1-m5",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. The preview footer (index.html:66-82; preview.css:1269-1290) is gray (paper-2), with 44px padding, one sentence and 4 preview-only links. The Core footer (index.css:1446-1454; Footer.tsx) is white, with 68/28px padding, 5 link groups, an email and a copyright (care_core_1440.png and status_1440.png vs footer_1440.png). 27a specifically said preview-only links belong in a review switcher, not the footer. The drift-matrix 'link grouping' claim is false."
+    },
+    {
+     "id": "L1-m6",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. Preview --section-y is 64/80/96 (preview.css:74, 1345, 1402), while Core .clarity-section is clamp(64px, 8vw, 112px) (index.css:1355): 112 vs 96 at 1440, ~67 vs 80 at 834. Preview .hero/.page-hero padding is clamp(72px, 9vw, 136px) on both sides (preview.css:471-473), against Core's top clamp(72px, 10vw, 148px) and bottom clamp(64px, 9vw, 128px) (index.css:1351). Preview .page-hero h1 max-width is 20ch (preview.css:431) against Core 18ch (index.css:1352). These are small rhythm differences."
+    },
+    {
+     "id": "L1-m7",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. Preview .field input is 4px radius, 1px ink border, 52px (preview.css:805-817), which matches Core's legacy .input-field (index.css:346-363). Core /status uses .clarity-field (pages.tsx:748-749): 10px radius, gray-300 border, 15px/750 label (index.css:1408-1423), inside an 18px .clarity-form card. Visible in status_1440.png."
+    },
+    {
+     "id": "L1-m8",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. preview.js:96 places .accent-rule, a purple-to-teal linear-gradient (preview.css:512-516), at the top of the home hero aside with no PROPOSED label. It is visible in hero_390.png. The drift matrix says the gradient appears 'only on proposal examples' and decision C calls current Core flat purple. The aside is meta 'What changed' content, so the impact is small."
+    },
+    {
+     "id": "L1-m9",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Mostly confirmed. Preview .clarity-nav is rgba(255,255,255,.97) with no backdrop-filter (preview.css:221-227), against Core color-mix 94% plus blur(14px) (index.css:1250-1257). The brand name is 19px at 520-700 (preview.css:1492-1494) against Core 22px. The 900 vs 850 weight point does not change rendering: Core loads only static Inter Tight 500/600/700/800/900 (fonts.ts:4-8), so 850 already renders the 900 face. What remains is a negligible visual difference."
+    }
+   ]
+  },
+  {
+   "lens": "decisions-labelling",
+   "verdict": "LENS 2 (CURRENT CORE vs PROPOSED): PARTIAL PASS with two MATERIAL fidelity defects. All five decisions appear side by side on view=decisions at all ten widths, under consistent \"CURRENT CORE / OBSERVED\" and \"PROPOSED XENIOS HEALTH / DECISION REQUIRED\" labels. No proposed brand string leaks into any header. Image-enabled cards on home, products, featured and care each carry a PROPOSED kicker and a media chip. C-current (flat --pulse) and E-current (4:3 contain) are faithful to Core source. Two \"current\" columns do not match production, though. (1) Decision A: the Core mark is invisible in every preview header, footer and A demo panel. The preview draws the white xenios-mark PNG as an <img>, where Core uses it as a currentColor mask. On phones the preview also shows the \"Xenios\" name, which Core hides below 520px, and it hides Sign In and Start Care, which Core keeps. So the founder judges a lockup that does not exist in production and is not told that Core shows no brand name on phones. (2) Decision D: the card labelled \"Current Core · text-only public / Early Access policy\" is the preview's own proposed card with the media removed. It matches neither EarlyAccessProductCard nor the assisted-order card, which is the only public card a signed-out visitor can see. Critically, it gives the held item a black primary \"View hold details\" action, where Core shows no action at all. It also quietly uses the proposed black-rectangle buttons (B) instead of Core's green pills. Smaller issues: the purple-to-teal divider appears unlabelled on the home page; the green pill is the wrong green and is called \"Legacy\"; E has no rendered Core evidence; the proposed square image on the held and quote pages is marked only by a small chip; and the packet wording leans toward the proposed options in places.",
+   "findings": [
+    {
+     "id": "L2-M1",
+     "severity": "MATERIAL",
+     "area": "Decision A - header brand (current-core fidelity)",
+     "evidence": "The preview draws the brand mark as a plain image (docs/product-imagery/founder-preview/index.html:28 and :71, styled at preview.css:250-254). The PNG is pure white: all 37,078 opaque pixels fall in the white bin, and it is byte-identical to Core client/public/brand/xenios-mark-transparent.png. Core instead uses that PNG as a mask filled with the text colour (closeout-review client/src/index.css:227-235). Result: no mark is visible in founder-decisions-desktop-1440.png at y~0-115 (header), y~895-1135 (A pair, both columns) or y~5080-5100 (footer). Compare core-reference/core-home-desktop-1440.png at y~20-50, where the black V mark sits beside 'Xenios'. Mobile: Core hides .clarity-brand-name below 520px and keeps Sign In and Start Care (index.css:1459-1466); core-home-mobile-390.png at y~0-60 shows mark + Sign In + Start Care + Menu. The preview does the opposite: name shown at 19px, Sign In hidden at <=700px, Start Care hidden at <=374px (preview.css:1482-1508). See home-mobile-390.png and founder-decisions-mobile-320.png at y~150-215 ('Xenios' + Menu only). Footer: core-home-mobile-390.png shows the mark only at y~9300-9330; the preview shows the 'Xenios' name (home-mobile-390.png y~9405-9440). This contradicts the drift matrix at lines 16 ('Current header renders exact Core mark plus Xenios') and 19 ('Mobile footer name leak ... not silently fixed').",
+     "claim": "The 'current' lockup the founder compares against is not Core: the mark is missing at every width, and on phones the preview shows a brand name that Core hides while hiding actions Core shows. So the decision A comparison (mark + Xenios vs mark + Xenios Health) is shown without the mark. It also hides a scope fact: under current Core rules a Health-specific name would not appear in the phone header at all.",
+     "fix": "Render the mark like Core does (a mask over the PNG filled with the text colour, 0.68em high) in the header, footer and A panels. Copy Core's <=519px rules (hide the name, keep Sign In and Start Care) and drop the 700px and 374px deviations. On the A panels, add a note that Core shows the mark only below 520px, and show the proposed 'Xenios Health' lockup at a phone width as well. Correct drift-matrix rows 16 and 19."
+    },
+    {
+     "id": "L2-M2",
+     "severity": "MATERIAL",
+     "area": "Decision D - current public text-only card (current-core fidelity)",
+     "evidence": "currentPolicyCard (preview.js:52-64) is proposedProductCard (preview.js:66-79) minus the media block. It carries a pill status badge, a 22px title, a Category/Price-state fact grid and a black full-width card-cta that links to product-detail.html, the proposed square detail page. Core EarlyAccessProductCard.tsx has a different anatomy: category, body-m name, strength, description, '$X per unit' or 'Not available to order', a quantity selector, an availability line and a Select button. For TEMPORARILY_HELD it renders no action at all ('Absent is the only state that cannot be misread'). Core's EA route is password-gated: core-reference/core-early-access-desktop-1440.png (full height 1656) shows only the 'Enter your access password' form, yet preview.js:266 captions it 'Actual current text-only product-card treatment'. The only signed-out public cards are the assisted-order cards (AssistedOrderPage.tsx:179-300; core-synthetic-catalog-order-request-cards-desktop-1440.png y~600-2330). They show the raw family code (e.g. RESEARCH_PEPTIDES_MATERIALS), 18px radius, Specification/Format/Basis/Price facts, a 'Product details' disclosure and a Research Use Only notice. Their actions are green pills: 'Add to order request', 'Continue through Care', 'Request pricing'. The held card has no button, only the 'temporarily unavailable or held' notice (y~1911-2330). The preview's 'current' cards instead show: held = black 'View hold details' (product-card-comparison-desktop-1440.png y~3495-4450, button at y~3804; repeated at founder-decisions and held-desktop-1440 bottom pair); quote = black 'Request a quote' with 'Price on request' (y~4795-5750); care = black 'Review Care pathway' with 'Care pricing withheld'; research = black 'View product' with 'Price omitted from static preview'. The drift matrix (line 28) calls this the 'Text-only current Core card'.",
+     "claim": "A founder reading the D comparison is misled about production in three ways. Current public cards look nothing like this. Held items in Core have no action at all, a truth-critical behaviour, but the preview shows a primary button. And the 'current' column quietly adopts the proposed B button system instead of Core's green pills. Holding everything except the image constant is a valid experiment, but then the left card is a controlled baseline, not 'Current Core'.",
+     "fix": "Either (a) rename the left card a 'controlled no-image baseline (preview anatomy)' and add separate, faithful CURRENT CORE cards next to it (EA card with price/quantity/Select and no action on held; assisted-order card with green pill, RUO notice and no button on held), or (b) render the left column with the real Core anatomy for each state. Remove the held action from any card labelled current. Don't link a 'current' card to the proposed detail page. Fix the caption at preview.js:266."
+    },
+    {
+     "id": "L2-m1",
+     "severity": "MINOR",
+     "area": "Decision C - proposed accent shown unlabelled",
+     "evidence": "preview.js:96 puts <div class=\"accent-rule\"> (preview.css:512-516, linear-gradient pulse to teal) at the top of the home hero aside, on a page whose lead says it 'uses the dominant current Xenios public shell'. Visible in home-desktop-1440.png at y~405-690 (gradient bar at y~430). There is no PROPOSED label. Drift matrix line 26 says the divider appears 'only on proposal examples'.",
+     "claim": "Proposed C is shown as if it were already part of the Core-converged shell, outside the decision panel.",
+     "fix": "Remove the accent rule from the home aside, or replace it with flat --pulse. Otherwise label it 'Proposed C'. Correct matrix row 26."
+    },
+    {
+     "id": "L2-m2",
+     "severity": "MINOR",
+     "area": "Decision B - current green pill fidelity and framing",
+     "evidence": "The preview's .legacy-pill uses #385f44 (preview.css:922-932; sampled rgb(56,95,68) in founder-decisions-desktop-1440.png at y~1555-1600). Core's assisted-order accent is #183d2d (assisted-order.css:7 and :42), sampled at rgb(24,61,45) in core-synthetic-catalog-order-request-cards-desktop-1440.png at y~2270-2300. Core pills are 44px high with 12px/20px padding; the preview pill is 52px with 24px padding. The pill text is the placeholder 'Legacy green pill' rather than a real Core label. The B framing ('remove the remaining green-pill island' at preview.js:254; 'legacy' in packet line 93 and matrix row 18) calls the live signed-out order-request flow 'legacy'.",
+     "claim": "The current-B sample is a tinted approximation, and the wording frames Core's live assisted-order controls as obsolete before the founder decides.",
+     "fix": "Use #183d2d, Core's pill size and a real label (e.g. 'Add to order request'), ideally a crop from the Core capture. Rename it 'assisted-order pill (current)' and phrase the decision neutrally (keep, scope, or converge)."
+    },
+    {
+     "id": "L2-m3",
+     "severity": "MINOR",
+     "area": "Decision E - current 4:3 member slot evidence and rendering",
+     "evidence": "The ratio and contain fit match Core source (MemberCatalogExperience.tsx:116-129, MemberProductDetailExperience.tsx:167-176). However, the 'exact-source synthetic member catalog/detail' captures that packet lines 21-22, matrix line 44 and preview.js:272-275 offer as current-Core references are of the Full catalog route. The capture text reads 'Full catalog'; that route is /research/member/catalog (section.tsx:384, master-offerings). They are not the /research/member/products route (section.tsx:381, MemberCatalogExperience) that carries the 4:3 slot. Neither capture shows any media slot (core_member_cat1440 and core_member_det1440 crops). The preview's 4:3 slot has a grey #f4f4f5 letterbox (preview.css:618-640) and is full-bleed; Core's image sits inside a padded white .card (index.css:486-491) with no background, so its letterbox would be white. The E label reads '4:3 CONTAIN · CONTAIN · UNCHANGED PIXELS' (preview.js:41 combined with :257; founder-decisions-desktop-1440.png y~3900-4280). The view=details 'Current Core member presentation' column uses the preview's own detail anatomy (canonical ID, h1, 'Image status' fact, 'Prototype action only' button) instead of MemberProductDetailExperience (product-detail-comparison-desktop-1440.png y~745-1800).",
+     "claim": "E-current is right on geometry but has no rendered Core proof, and the cited member renders come from a surface with no image slot. The founder may not realise the main member Full catalog has no media at all.",
+     "fix": "Label the 4:3 sample as source-attributed (file:line), not rendered. Say that /research/member/catalog has no media slot. Use a white letterbox inside a padded card. Remove the duplicated 'contain'."
+    },
+    {
+     "id": "L2-m4",
+     "severity": "MINOR",
+     "area": "Proposed imagery labelling on held, quote and fallback surfaces",
+     "evidence": "view=held and view=quote (preview.js:232-236) lead with a full proposed 1:1 image detail (held-desktop-1440.png y~800-1340). The only proposal marker is the 10px chip 'PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS' (y~1305-1325); the eyebrow is just 'Held state' and the lead does not say 'proposed'. A black 'Prototype action only' button sits on the held item (y~1210-1290). The view=details 'Safe fallback' section (preview.js:224) carries no CURRENT or PROPOSED label. Its disclosure says 'Card and detail use the exact same source asset SHA-256: 77069db7…' while no image is shown (preview.js:200; product-detail-comparison-desktop-1440.png y~2950-3010). Core already ships a member-detail no-image fallback, 'An approved product image is not available.' (MemberProductDetailExperience.tsx:177-181), which the preview never shows as current.",
+     "claim": "The labelling is present but weak on the most prominent element of the held and quote pages. The fallback copy makes an asset-identity claim for an image that is not rendered, and the proposed fallback looks new when Core already has one on member detail.",
+     "fix": "Add a section-level 'PROPOSED XENIOS HEALTH' kicker above the detail on held and quote pages. Drop the primary button styling on held. Make the SHA disclosure conditional on an image being present. Show Core's existing member fallback as the current reference."
+    },
+    {
+     "id": "L2-m5",
+     "severity": "MINOR",
+     "area": "Decision packet framing",
+     "evidence": "FOUNDER_UI_DECISION_PACKET_2026-10-01.md line 63, D: 'lift or scope the current public no-photography policy' (keeping it is not offered). Line 45, B: 'approve convergence'. Line 54, C: 'approve the restrained accent'. Lines 93-95 list 'replace remaining legacy CTA instances', 'add the approved accent token' and 'define a single Product Control media DTO' as follow-on work, which assumes the proposed B, C and D outcomes. Line 4 claims the prototype 'now uses the actual Core UI language' (see M1 and M2). Lines 34-36 (A-current: 'mark plus Xenios') omit that Core already ships 'Xenios Health' copy (CareContactForm.tsx:51,138; DashboardShareCard.tsx:75,83). That is recorded only in CORE_UI_INCONSISTENCIES.md items 3 and 24.",
+     "claim": "The packet mostly stays neutral (A and E are neutral; the preview's own D note is neutral), but B, C and D are worded as approvals of the proposals rather than open choices.",
+     "fix": "Rephrase B, C and D as 'keep current / adopt proposed / scope', and make the follow-on items conditional on each outcome. Cross-reference the existing 'Xenios Health' usages in decision A. Soften the line 4 claim until M1 and M2 are fixed."
+    }
+   ],
+   "confirmed": [
+    "view=decisions shows all five decisions A-E as side-by-side pairs labelled 'CURRENT CORE / OBSERVED' and 'PROPOSED XENIOS HEALTH / DECISION REQUIRED' (preview.js:246-260). Captures exist at all 10 widths; I inspected 1440 and 320, and the pairs stack in order on mobile.",
+    "No proposed brand string leaks into a shell: every preview page header and footer reads 'Xenios', never 'Xenios Health' (index.html:29, product-detail.html, catalog-review.html; probe header text at all widths).",
+    "C-current is faithful: flat --pulse #7C3AED is Core's routed accent, and teal is a token only. The pulse-to-teal and purple-blue-teal gradients (RotatingHero/.gradient-pill, .agent-line, .cs-*) are unrouted in Core c0e25c73 (RotatingHero is imported nowhere).",
+    "E-current geometry matches Core source: 4:3 aspect ratio with object-fit contain (MemberCatalogExperience.tsx:116-129, MemberProductDetailExperience.tsx:167-176). The preview also uses contain with the same source pixels for the proposed 1:1.",
+    "Packet A ('retain the global Core name or approve a Health-specific display name and its scope') and E ('retain 4:3, adopt 1:1, or define a separate approved mapping') are neutral. The preview's D note ('Choose between current text-only public cards and an intentional image-enabled catalog') is neutral.",
+    "Image-enabled cards appearing by default on home (8), products (12), featured (8) and care (6) each carry the 'Proposed Xenios Health · private decision study' kicker and a 'Proposed square media' chip. Section eyebrows say 'Proposed placement', 'Products · proposed media placement' with a 'Proposal, not approval' note, 'Featured · private proposal' and 'Proposed Care card placement'.",
+    "product-detail.html is framed as a proposal: eyebrow 'Proposed product detail · private only', h1 'Intentional square media placement', lead 'This is not a live public product route'.",
+    "The D comparison (view=cards) covers Research, Care, held, quote-only and packaging-unverified, each with a no-image card and an image-enabled card or safe fallback. Packaging-unverified uses 'Approved image unavailable' with no borrowed asset.",
+    "B-proposed shows a 4px black rectangular primary and an outlined secondary. The 'Start Care' button in B-current matches Core's black 4px button.",
+    "build-record.json proposalState has all five approvals false (Health branding, rectangular CTA, accent, public imagery, square media), so no decision is recorded as adopted.",
+    "Packet D current text ('public Early Access and assisted-order product cards are text-only; optional media exists on gated member surfaces') matches Core source: the EarlyAccessProductCard 'NO media block' comment, the assisted-order card has no img, and media is present only in the gated member experiences."
+   ],
+   "verdicts": [
+    {
+     "id": "L2-M1",
+     "upheld": true,
+     "severity": "MATERIAL",
+     "note": "Confirmed. The founder-preview brand/xenios-mark-transparent.png is byte-identical to Core's file (sha256 85c0da98...), and every opaque pixel is white. The preview draws it as a plain <img> (index.html:28 and :71, preview.css:250-254). Core instead uses the PNG as a mask filled with currentColor (closeout-review client/src/index.css:227-235). Crops: in fd1440_header (founder-decisions-desktop-1440.png y0-200) and fd1440_A (y850-1200) there is blank space where the mark should be, in the header and in both A columns. core-home-desktop-1440 y0-120 shows the black V mark. In the footer the mark is only a faint white shape on grey (y4950-5124, home-mobile-390 y9300-9683), not the Core black mark. Mobile: Core's <=519px rule hides the brand name (index.css:1459-1466), and core-home-mobile-390 shows mark + Sign In + Start Care + Menu. The preview's 700px rule hides Sign In and shows the name at 19px (preview.css:1482-1508). home-mobile-390 shows Xenios + Start Care + Menu. One evidence detail is slightly off: only at 320 is it 'Xenios + Menu' (founder-decisions-mobile-320), not at 390. Core's mobile footer shows the mark only (y9250-9450), while the preview shows the name. Drift matrix line 16 ('renders exact Core mark plus Xenios') is false, and line 19 claims the mobile footer behaviour was not silently fixed, which contradicts the capture. Decision A is the brand lockup itself, so misrepresenting the current lockup and its phone behaviour stays MATERIAL."
+    },
+    {
+     "id": "L2-M2",
+     "upheld": true,
+     "severity": "MATERIAL",
+     "note": "Confirmed. currentPolicyCard (preview.js:52-64) is proposedProductCard minus the media, with a black card-cta to product-detail.html. Its kicker reads 'Current Core · text-only public / Early Access policy', and in D it sits under 'Current Core / Observed' (preview.js:247, :256). Core EarlyAccessProductCard.tsx:237-311 has a different anatomy: price per unit or 'Not available to order', a quantity selector, an availability line and Select. It renders no action when TEMPORARILY_HELD (lines 248-256 and 300-311). Core AssistedOrderPage.tsx:175-300 renders family code, facts, a 'Product details' disclosure, an RUO notice and green .xenios-order-button pills. Its held card shows only the 'temporarily unavailable or held' notice (core-synthetic-catalog-order-request-cards-desktop-1440 y1450-2400). The preview's held 'current' card has a black 'View hold details' button (product-card-comparison-desktop-1440 y3400-4500), and its quote card has 'Request a quote' (y4700-5800). The core-early-access-desktop-1440 capture shows only the 'Enter your access password' gate with no cards, so the caption at preview.js:266 ('Actual current text-only product-card treatment') is false. The cards view lead (preview.js:218) says identity, state, copy and action are held constant. That partly discloses a controlled baseline, but the 'Current Core / Observed' labels and the held action misrepresent truth-critical production behaviour."
+    },
+    {
+     "id": "L2-m1",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. preview.js:96 puts <div class=\"accent-rule\"> (preview.css:512-516, linear-gradient from --pulse to --teal) inside the home hero aside, with no PROPOSED label. The page lead says it 'uses the dominant current Xenios public shell'. The crop of home-desktop-1440.png y200-750 shows the purple-to-teal bar on top of the 'What changed' panel. This contradicts drift matrix row 26 ('only on proposal examples'). It is small and outside the decision panels, so MINOR is correct."
+    },
+    {
+     "id": "L2-m2",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. In founder-decisions-desktop-1440 at y1500-1650 the pill samples rgb(56,95,68), which is #385f44 (preview.css:922-932), and is about 52px tall (y1551-1602). The Core capture samples rgb(24,61,45), which is #183d2d (assisted-order.css:7 and :42), about 44px tall (y1353-1396), with 12px/20px padding. The pill text is the placeholder 'Legacy green pill', not a real Core label. The B note (preview.js:254) speaks of removing the remaining 'green-pill island', and packet line 45 asks to 'approve convergence'. Both frame the live control as legacy. This is presentation framing and an approximation, so MINOR."
+    },
+    {
+     "id": "L2-m3",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. The 4:3 contain geometry matches MemberCatalogExperience.tsx:116-129 and MemberProductDetailExperience.tsx:167-176. The cited synthetic captures come from the master-offerings harness. capture-synthetic-journeys.mjs:96-125 renders MasterOfferingCatalogSurface and MasterOfferingDetail, the catalog h1 is 'Full catalog' and its logicalRoute is /research/member/catalog. Neither component has an image (grep finds no <img>/media). /research/member/products uses MemberCatalogExperience via pages/member/Products.tsx and ProductPage.tsx. The product-detail capture crop shows no media slot. The preview's .product-media has a #f4f4f5 background and is full-bleed (preview.css:60, 618-640). Core's image sits in a padded white .card (index.css:486-491). The E chip renders '4:3 CONTAIN · CONTAIN · UNCHANGED PIXELS' (founder-decisions crop y3200-4400). The details view 'Current Core member presentation' column uses the preview's own detail anatomy, including 'Image status' and 'Prototype action only' (product-detail-comparison-desktop-1440 y700-1850). The geometry is right and only the evidence attribution and letterbox differ, so MINOR."
+    },
+    {
+     "id": "L2-m4",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. The held-desktop-1440 crop at y150-1400 opens with a large 1:1 image under the eyebrow 'Held state'. The only proposal marker is the small chip 'PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS'. The lead says 'private presentation evidence', not 'proposed'. A black 'Prototype action only' button sits on the held item. In the safe-fallback section (product-detail-comparison y2200-3100, preview.js:224) there is no CURRENT or PROPOSED label. It still shows 'Card and detail use the exact same source asset SHA-256: 77069db7…' with no image rendered (preview.js:200 is unconditional). Core already ships 'An approved product image is not available.' on member detail (MemberProductDetailExperience.tsx:177-181), and the preview never shows it as current. The labelling is weak, but the button reads 'prototype only' and is aria-disabled, so MINOR is correct."
+    },
+    {
+     "id": "L2-m5",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed in FOUNDER_UI_DECISION_PACKET_2026-10-01.md. Line 45 (B) asks to 'approve convergence', line 54 (C) to 'approve the restrained accent', and line 63 (D) to 'lift or scope', with no keep option. A (lines 36-37) and E (line 79) offer retain or adopt. Follow-on lines 93-94 ('Replace remaining legacy CTA instances', 'Add the approved accent token') assume the proposed B and C outcomes. Line 4 claims 'actual Core UI language', which is undercut by M1 and M2. Line 34 says A-current is 'mark plus Xenios', but Core already ships 'Xenios Health' copy: CareContactForm.tsx:51 and :138, DashboardShareCard.tsx:75 and :83, and Recipient.tsx:102. That is recorded only in CORE_UI_INCONSISTENCIES.md items 3 and 24. The rendered decision notes are mostly neutral, so this is framing and stays MINOR."
+    }
+   ]
+  },
+  {
+   "lens": "member-media",
+   "verdict": "LENS 3 (member/public reference and media): PARTIAL PASS, with 2 MATERIAL and 4 MINOR findings. Media identity holds for 422 of the 423 rows. Card (preview.js:39-40), detail (preview.js:192) and QA thumb (preview.js:292) all render the same row.image.src. A browser check of the full QA grid matched the catalog src on 423 of 423 rows. All 423 srcs hash to their outputSha256, there are only 6 unique calibration files and no Batch 0 asset. The 4:3 and 1:1 media-shape comparisons use the same file (calibration-01-vial e04c2e59) with object-fit contain at 1440, 390 and 320. No row shows a product image from a different product class. The 15 public Core references are byte-identical to Claude's 27a captures. The synthetic captures are genuinely rendered from c0e25c73 source with fixture data only, and are labelled UI-presentation-only. Two problems would mislead an approver. (1) The 'synthetic member catalog/detail' references come from the master-offerings Full catalog components, not MemberCatalogExperience/MemberProductDetailExperience. Those components have no media slot, so the 'current optional 4:3 member media' side of decision E has no rendered Core evidence. It also is not the current state of the master-offerings catalog the 423 slots are joined to. (2) The 'packaging-unverified' safe-fallback example is really a binding-pending row (GRP-0424). Its fallback appears only on the comparison pages; its own detail page and QA row show an image. The fallback panel also cites an asset SHA it does not display, and the real packaging_unverified rows always show an image. The fallback therefore does not show what the preview itself does for that state.",
+   "findings": [
+    {
+     "id": "L3-M1",
+     "severity": "MATERIAL",
+     "area": "Member Core reference provenance / decision E 'current 4:3'",
+     "evidence": "core-synthetic-c0e25c73/synthetic/captures/catalog-synthetic--default--chromium--1440--01.png (whole image, h1 'Full catalog', fixture 'BPC-157 2/3', '$99.00', 'Buy Now') and product-detail-synthetic--...--1440--01.png (whole image). Both come from Core's dev-only Vite harness client/src/research/master-offerings/__harness__/harness.tsx, which renders MasterOfferingCatalogSurface / MasterOfferingDetail ('Not routed... not built', header comment; root.render at end of file). capture-synthetic-journeys.mjs:96-128 uses serverHarness 'catalog-component-vite-harness' and labels the detail logicalRoute '/research/member/products/:slug' (line 117). In Core that route renders MemberProductDetailExperience (section.tsx:382); MasterOffering detail routes at /research/member/catalog/:family/:slug (section.tsx:383). shared/research/master-offerings/contract.ts has 0 image/media fields, and MasterOfferingCard.tsx/MasterOfferingDetail.tsx contain no <img>. The 4:3 contain slot exists only in MemberCatalogExperience.tsx:116-130 and MemberProductDetailExperience.tsx:167-176 (/research/member/products), and no capture renders them. catalog-data.json sources.coreCatalog.path is server/research/master-offerings/..., so the 423 slots belong to the no-media master-offerings catalog. FOUNDER_UI_DECISION_PACKET:22-27,75 and UI_CONVERGENCE_DRIFT_MATRIX:30 ('Current 4:3 contain behavior shown and source-attributed') name no component; git grep finds no MemberCatalogExperience or MasterOffering reference under docs/product-imagery. The 'Current Core member presentation' panel (preview.js:224, detailSurface(row,{ratio:'landscape',current:true}); product-detail-comparison-desktop-1440.png y~900-1500) reuses the proposed detail anatomy with only the ratio changed. It has no variant select, SKU, certificate status or availability, and it adds a paper-2 letterbox, border and radius that Core does not have.",
+     "claim": "The approver is shown 'synthetic member catalog/detail' as the Core member reference and told current member media is an optional 4:3 slot. The rendered member surfaces actually have no media slot, and the 4:3 surface is never rendered. Decision E is framed as 'retain 4:3 vs adopt 1:1' when the incumbent for the master-offerings catalog is no image at all. The two member surfaces' different media behaviour, plus the unrouted CatalogDiscoveryPresentation's intrinsic-aspect image, is not recorded in CORE_UI_INCONSISTENCIES.md.",
+     "fix": "Name the rendered components (MasterOfferingCatalogSurface/MasterOfferingDetail via the dev harness) in the receipt, the core-view captions and the packet. Add a rendered synthetic MemberCatalogExperience/MemberProductDetailExperience capture with media present and absent, or relabel the 4:3 side as 'source-only, /research/member/products'. Record in CORE_UI_INCONSISTENCIES.md that the member Full catalog has no media slot, /research/member/products has a fixed 4:3 contain slot, and the discovery presentation uses intrinsic aspect. Also record the wrong harness logicalRoute. Restate decision E's 'current' column as per-surface."
+    },
+    {
+     "id": "L3-M2",
+     "severity": "MATERIAL",
+     "area": "Safe fallback / packaging-unverified / same-canonicalId media identity",
+     "evidence": "product-card-comparison-desktop-1440.png y~5945-6720: eyebrow 'PACKAGING UNVERIFIED' above the GRP-0424 Glutathione card with badge 'BINDING PENDING'. catalog-data.json shows GRP-0424 with imageClass peptide_lyophilized_vial and bindingState binding_pending. The real packaging_unverified rows GRP-0066/0068/0073/0079 render calibration-04-care-state (76c10c66) in the QA grid and on product-detail.html?id=GRP-0066 (my probe: ui_conv_crops/lens3/probe-lens3.json). For GRP-0424, the fallback is hard-coded only in view=cards/details/pending (preview.js:218 label==='Packaging unverified', :224, :235). product-detail.html?id=GRP-0424 renders calibration-06-unverified-identity (77069db7) at 1440/390/320 (probe), and so does the QA row (catalog-review-desktop-page-03.png y~4395-4480). The fallback card's CTA links to that detail page with the image (preview.js:76). The fallback detail panel still says 'Card and detail use the exact same source asset SHA-256: 77069db7...' and 'Image status: Private, provisional' (preview.js:198,200; product-detail-comparison-desktop-1440.text.txt:117; png y~2990-3020). catalog-data counts.fallbackOnlySlots = 0, and the pending state view is not among the 134 receipt captures.",
+     "claim": "The requested packaging-unverified example is not a packaging-unverified row, and it has no image-enabled counterpart. Its fallback is a presentation override that contradicts the same canonicalId's detail page and QA row, and its own disclosure. Card/detail/QA identity breaks for this one row. An approver deciding D/E would wrongly believe the preview shows packaging-unverified products as a no-image fallback.",
+     "fix": "Use an actual packaging_unverified row (e.g. GRP-0066) or rename the example 'Binding pending'. Make the fallback data-driven (a row flag used by card, detail and QA alike), or show both the image-enabled and fallback variants for that row and say which the proposal would ship. Suppress the asset-SHA and image-status lines when the fallback renders. Capture view=pending in the receipt."
+    },
+    {
+     "id": "L3-m3",
+     "severity": "MINOR",
+     "area": "4:3 vs 1:1 comparison presentation",
+     "evidence": "preview.css:649-657 makes .media-policy-label an absolutely positioned chip at left 10px / bottom 10px with background rgba(14,14,14,.9), drawn over the image. My probe measured it covering 2.58% of the visible image (1440 cards) up to 22.07% (1440 details 4:3, versus 15.11% for 1:1), and 18.96% / 18.75% at 320 in the decisions view, where it covers the vial base (founder-decisions-mobile-320.png y~4820-4855 and y~5230-5275). The label text is duplicated: 'CURRENT MEMBER SLOT · 4:3 CONTAIN · CONTAIN · UNCHANGED PIXELS', because preview.js:41 appends ' · contain · unchanged pixels' to labels passed at preview.js:257 (founder-decisions-desktop-1440.text.txt:132,138). The source is square-native (1254x1254), so the 4:3 side is always pillarboxed, with #f4f4f5 bands Core's 4:3 img would not draw. This is not disclosed.",
+     "claim": "The pixels are unchanged, but the comparison hides part of the image, more on the 4:3 side at desktop, and repeats copy. Using a square-native asset means the 4:3 side looks worse by construction, and the page does not say so.",
+     "fix": "Move the policy label below or outside the media box. Fix the duplicated suffix. State that the test asset is 1:1 native, and render the 4:3 side with Core's background (none or white), or add a 4:3-native example."
+    },
+    {
+     "id": "L3-m4",
+     "severity": "MINOR",
+     "area": "Public Core reference captions and evidence coverage",
+     "evidence": "preview.js:266 captions core-early-access-desktop-1440.png 'Actual current text-only product-card treatment'. That image shows only the invitation password gate ('Research ordering / Enter your access password'), with no product cards (crop ui_conv_crops/lens3/core_ea_1440.png). The ?view=core page is the only place the actual Core renders sit inside the preview, and it is not in the 134-capture receipt (founder-preview-browser-evidence.json counts.responsiveSurfaces has no 'core'). The CURRENT CORE columns in the decision pages are preview reconstructions (currentPolicyCard, preview.js:52-64). My probe rendered view=core at 1440/390/320: 12 images loaded, no overflow.",
+     "claim": "One reference caption is wrong. The actual-Core comparison page has no committed evidence, so the decision captures compare against reconstructions only.",
+     "fix": "Re-caption as 'Early Access password gate (cards not reachable signed out)' and point to the order-request synthetic capture plus EarlyAccessProductCard.tsx:199-201 for the text-only claim. Add view=core to the capture matrix, or embed the matching actual Core crop beside each CURRENT CORE column."
+    },
+    {
+     "id": "L3-m5",
+     "severity": "MINOR",
+     "area": "Synthetic receipt provenance",
+     "evidence": "synthetic-catalog-detail-evidence.json is a hand-authored summary. The harness's own synthetic-journey-evidence.json was never written because the run failed at '#ms-email', so the per-capture AUTOMATED_PASS and semanticContract results are not preserved. The receipt lists the dist inventory (production build), but the captures came from the Vite dev harness, rendered bare inside <main style=padding:16> with no member shell, header or footer; stray list bullets show beside the cards (catalog-synthetic 1440 y~1060-1750). pii-scan.json says screenshotReview 'MANUAL_PENDING' while the evidence JSON says manualPngReviewCompleted true. The fixture copy shown to the founder includes '$99.00', 'Buy Now' and 'shipped from the Austin facility'.",
+     "claim": "The provenance is accurate but partly self-attested and under-specified (dev harness versus production build). The two receipts disagree on manual PNG review status.",
+     "fix": "Record serverHarness 'catalog-component-vite-harness', the harness file and the rendered component names in the receipt, and drop or segregate the dist inventory. Reconcile the manual-review status, and keep the harness console log as the source of the AUTOMATED_PASS claims."
+    },
+    {
+     "id": "L3-m6",
+     "severity": "MINOR",
+     "area": "Decision D image-enabled examples",
+     "evidence": "The Care (GRP-0001), held (GRP-0422) and quote (GRP-0244) image-enabled cards show abstract non-product state studies: calibration-04 arch and calibration-05 framed block (contact sheet ui_conv_crops/lens3/calib6.png). 306 of 423 slots use such art (242 care-state, 61 unverified-identity disc, 3 restrictive). The visible label says only 'Proposed square media · contain · unchanged pixels'; the alt text alone says 'Care Pathway Neutral study'.",
+     "claim": "Not a lookalike substitution, but the page does not tell the approver that most image-enabled cards would show placeholder art rather than product imagery.",
+     "fix": "Label non-product state studies visibly (e.g. 'State placeholder · not a product image') and state the 117 product-form / 306 placeholder split in the decision D section."
+    }
+   ],
+   "confirmed": [
+    "The 15 public and order-request Core reference PNGs in evidence/ui-convergence/core-reference are sha256-identical to Claude's 27a_core_reference captures. Their receipt records a production build of c0e25c73, signed out, with synthetic config.",
+    "The synthetic member captures come from Core source c0e25c73. The receipt tree 1771d18b matches c0e25c73, the harness is present at that SHA, and the closeout-review worktree has no diff in master-offerings, products-diagnostics or scripts/evidence. The rendered text matches the harness.tsx fixture exactly. Committed blob hashes of the PNGs, the text files and the evidence JSON match the receipt and the pii-scan inventory (the working-copy .txt hashes differ only because of CRLF conversion).",
+    "The synthetic captures are synthetic-only: fixture data only, no real credentials or customer data (I checked the 1440 PNGs visually), and pii-scan reports CLEAN.",
+    "The synthetic captures are labelled presentation-only in FOUNDER_UI_DECISION_PACKET:27, in the receipt (scope.uiPresentationOnly), in the core-view captions ('UI presentation only') and in the core view's evidence-limitation aside.",
+    "catalog-data.js parses equal to catalog-data.json, and build-record dataSha256 861b7369 matches.",
+    "Every one of the 423 rows' image.src bytes hashes to its outputSha256. Only 6 unique files are used, all calibration renders. No Batch 0 asset is referenced (rejected jobs 06/09/16/19/21/24 are absent), and batch0ContactSheet is never rendered.",
+    "Card, detail and QA thumb use the same row.image.src and outputSha256 (preview.js:39-40, 192, 292). In the browser, the full QA grid matched the catalog src on 423 of 423 rows, and detail pages for GRP-0256, GRP-0066 and GRP-0424 matched the catalog src. The one exception is the GRP-0424 fallback override (L3-M2).",
+    "No row substitutes an image from a different product class. Product-form studies are used only for matching forms: 100 Lyophilized Vial rows get the vial, 15 Capsule/Bottle rows the bottle, 2 Topical Cream rows the tube. The other 306 rows get abstract non-product state studies.",
+    "The fallback markup contains no <img> and borrows no lookalike asset. The runtime error fallback (preview.js:321-333) also borrows none.",
+    "The 4:3 vs 1:1 comparison uses the exact same file (calibration-01-vial e04c2e59) in both the decisions and details views at 1440, 390 and 320, with object-fit contain on both sides and no crop.",
+    "The Core source supports the policy claims: MemberCatalogExperience and MemberProductDetailExperience use a 4:3 contain image when media is present, and EarlyAccessProductCard is deliberately text-only (EarlyAccessProductCard.tsx:199-201).",
+    "My probe rendered view=core at 1440, 390 and 320: all 12 Core reference images loaded with no horizontal overflow (probe at scratchpad/ui_conv_crops/lens3/probe-lens3.json, script probe-lens3.mjs; no repository files touched)."
+   ],
+   "verdicts": [
+    {
+     "id": "L3-M1",
+     "upheld": true,
+     "severity": "MATERIAL",
+     "note": "Confirmed. Core harness.tsx:1-4 reads 'Dev-only harness. Not routed...' and harness.tsx:202-216 renders MasterOfferingCatalogSurface/MasterOfferingDetail bare inside <main style padding 16>. capture-synthetic-journeys.mjs:96-128 uses serverHarness 'catalog-component-vite-harness' and gives the detail logicalRoute '/research/member/products/:slug'. In Core, section.tsx:382 routes that path to MemberProductPage (MemberProductDetailExperience) and :383 routes master-offering detail at /research/member/catalog/:family/:slug. contract.ts has 0 image/media matches and no master-offerings component has <img> except the unrouted CatalogDiscoveryPresentation.tsx:58 (height auto, intrinsic aspect; not imported by any non-test file). The 4:3 contain slot exists only in MemberCatalogExperience.tsx:116-130 and MemberProductDetailExperience.tsx:167-176. Both member surfaces are in member nav (layout.tsx:36 'Products' -> /research/member/products, :37 'Full catalog' -> /research/member/catalog). The successor's own crops (syn_cat_1440, syn_det_1440) show no media slot. catalog-data.json sources.coreCatalog.path is server/research/master-offerings/... In the preview, preview.js:224 and :257 label a reconstruction 'Current Core member presentation' / 'Current Core · Observed', using the proposed detail anatomy plus a paper-2/border/4px radius (preview.css:968-983) that Core's img does not have. The drift matrix's claim at :30 ('shown and source-attributed') is false: no component is named in the packet, matrix, preview or receipt. Corrections to the finding: (a) the 'git grep finds no reference under docs/product-imagery' claim is wrong. The pre-existing INTEGRATION_HANDOFF.md:102-117 names both MasterOfferingCard/Detail and MemberCatalogExperience/MemberProductDetailExperience as separate surfaces. (b) CORE_UI_INCONSISTENCIES.md #19 and the addendum (:115) partly record the anatomy divergence and the gated 4:3 slot, but not that the Full catalog has no media. (c) The wrong logicalRoute lives in Core's script, not in the successor receipt. (d) The 4:3-vs-1:1 framing of E was mandated by the task brief. The successor defect is presenting an unrendered, unattributed reconstruction as the 'Observed' incumbent next to 'exact Core' member renders that have no media. That still misleads about production, so MATERIAL stands."
+    },
+    {
+     "id": "L3-M2",
+     "upheld": true,
+     "severity": "MATERIAL",
+     "note": "Confirmed. preview.js:216 maps 'Packaging unverified' to representatives.pending = GRP-0424. In catalog-data.json, GRP-0424 has imageClass peptide_lyophilized_vial, pathway 'Binding pending' and bindingState reason 'binding_pending'. The only packaging_unverified rows are GRP-0066/0068/0073/0079, all on calibration-04-care-state. The fallback is keyed on the label string (preview.js:218 label==='Packaging unverified', :224 detailSurface(pending,{fallback:true}), :235 state==='pending'). renderDetail (product-detail.html?id=GRP-0424) calls detailSurface(row) without the fallback flag and shows calibration-06 77069db7 (probe at 1440/390/320). The QA row shows the same image (qa_p03 crop: GRP-0424, calibration-06-unverified-identity, BINDING PENDING, Unbound). The fallback detail text still says 'Card and detail use the exact same source asset SHA-256: 77069db7...' and 'Image status: Private, provisional' (product-detail-comparison-desktop-1440.text.txt ~107-117). counts.fallbackOnlySlots=0, and receipt responsiveSurfaces has no 'pending'. Mitigating context: GLOBAL_ART_DIRECTION_CALIBRATION:33 assigns calibration-06 to an 'unknown/unverified packaging state', so the label has a loose origin. It still mislabels a binding-pending row. No image-enabled packaging-unverified example exists. The drift matrix's :41 claim of a packaging-unverified safe fallback is a presentation override that the data, the detail page and the QA grid all contradict. An approver deciding D would be misled about what the proposal does for unverified products."
+    },
+    {
+     "id": "L3-m3",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. In preview.css:649-664, .media-policy-label is absolute at left/bottom 10px with background rgba(14,14,14,.9). Probe overlap measurements match: 22.07% (4:3) vs 15.11% (1:1) in details at 1440, 4.93% in decisions at 1440, and 18.96%/18.75% at 320. The fd320 crop shows the chip covering the vial base on the 4:3 side. Duplicate copy is confirmed: preview.js:41 appends ' · contain · unchanged pixels' to the labels passed at :257, rendering 'CURRENT MEMBER SLOT · 4:3 CONTAIN · CONTAIN · UNCHANGED PIXELS' (founder-decisions-desktop-1440.text.txt). The asset is 1254x1254 and is pillarboxed in the 4:3 box with paper-2 #f4f4f5 bands (preview.css:617-631). Core's 4:3 img has no background. Nothing discloses that the asset is square-native. Pixels are unchanged, so this is presentation bias, not manipulation: MINOR."
+    },
+    {
+     "id": "L3-m4",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. preview.js:266 captions core-early-access-desktop-1440.png 'Actual current text-only product-card treatment'. The capture (core_ea_1440 crop) shows only the 'Research ordering / Enter your access password' gate, with no product cards. The receipt records h1 'Research ordering' and cards: None at 1440. The text-only claim itself is true at source (EarlyAccessProductCard.tsx:199-203 'NO media block'), so only the caption and its evidence pointer are wrong. view=core is absent from the receipt's responsiveSurfaces (12 surfaces listed, no 'core'). The decision-page CURRENT CORE columns are reconstructions (currentPolicyCard preview.js:52-64). MINOR."
+    },
+    {
+     "id": "L3-m5",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. capture-synthetic-journeys.mjs writes synthetic-journey-evidence.json only at the end of main() (:1869-1870). The run failed at '#ms-email' (:1116), which the receipt acknowledges, so the receipt is a hand-authored summary with its own kind 'exact_core_synthetic_member_catalog_detail_ui_evidence'. Per-capture AUTOMATED_PASS/semanticContract results are asserted but not preserved in committed evidence. The receipt's source block lists distFileCount 347 and a dist inventory hash, but the captures came from the Vite dev harness (catalog-harness.html -> harness.tsx). serverHarness and the component names are not recorded. Bare <main padding 16> with no member shell is confirmed in harness.tsx:204-215. Stray list bullets are visible in the catalog crop. pii-scan.json screenshotReview reads 'MANUAL_PENDING...' while the evidence JSON says manualPngReviewCompleted true. Fixture copy '$99.00', 'Buy Now' and 'shipped from the Austin facility' is visible. This is a provenance/precision gap, not a false claim: MINOR."
+    },
+    {
+     "id": "L3-m6",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Facts confirmed. Representatives: GRP-0001 Care uses calibration-04-care-state (arch); GRP-0422 held and GRP-0244 quote use calibration-05-restrictive-state (framed block). Job counts are 242 care-state + 61 unverified-identity + 3 restrictive = 306 non-product studies, against 100 vial + 15 bottle + 2 topical = 117 product-form. The visible chip says only 'Proposed square media · contain · unchanged pixels'. Packet decision D does not state the split. Softening context: GLOBAL_ART_DIRECTION_CALIBRATION:31-33 defines these as intentional state studies (Care pathway, held/quote, unverified packaging), not accidental placeholders. The home view says the six calibration assets are 'used only to test placement', and the alt text names the neutral study. The art is visibly abstract, so no product lookalike misleads. The decision-relevant share is still undisclosed on the D surfaces, so MINOR."
+    }
+   ]
+  },
+  {
+   "lens": "state-identity",
+   "verdict": "LENS 4 (product state truth and catalog identity): PASS on identity, FAIL on Core-state fidelity. The catalog identity holds up. There are 423 unique rows, and catalog-data.js is deep-equal to catalog-data.json, whose sha256 861b7369… matches build-record dataSha256. Every row's offeringId, variantId, name, category, family, slug and specification matches the Core 4cba24af catalog with 0 mismatches. The 426/424/423 accounting checks out: the merges GRP-0402→0426 and GRP-0407→0425 match, and GRP-0364 is excluded. The QA grid covers 423/423. No Batch 0 asset is referenced on any of the 18 pages or views. The six calibration PNGs are byte-identical to their recorded hashes. Images never change commerce state: in every no-image/image-enabled pair the state, price wording, CTA text and CTA href are identical, at all 10 widths and in the live DOM. There are no fake prices. The state semantics shown to the approver are not Core's, though. The column labelled \"CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY\" uses state, price and CTA wording that the imagery lane wrote itself: \"Review Care pathway\", \"Care pricing withheld\", \"Quote only\"/\"Request a quote\", \"Formulation held\"/\"View hold details\", \"Binding pending\". Its held card has a black primary action button. Core renders \"Continue through Care\" / \"Ask the Care team about pricing\", \"Request pricing\", and \"Temporarily Unavailable\" with no control for held, and the successor's own Core reference capture shows exactly that. The \"packaging-unverified\" example is actually a binding-pending row (GRP-0424). Its image-enabled side is forced to the fallback, while the same row shows an image in the products grid and on its own linked detail page. An approver would be misled about current production wording and about how decision D treats unverified packaging.",
+   "findings": [
+    {
+     "id": "L4-1",
+     "severity": "MATERIAL",
+     "area": "Current Core card state, price and CTA vocabulary (held, Care, quote-only, binding-pending, Research)",
+     "evidence": "preview.js:52-64: currentPolicyCard labels the card 'Current Core · text-only public / Early Access policy' (line 54) and renders pathway.cta as a black primary link (line 61). The copy comes from scripts/product-imagery/build-founder-preview.mjs:61-104 (classifyPathway), which the imagery lane wrote itself. Rendered in corrected-preview/product-card-comparison-desktop-1440.png. Care, y~2197-3000: 'Care pathway' badge, 'Care pricing withheld', 'Review Care pathway'. Held, y~3496-4450: 'FORMULATION HELD', 'Pricing not released', black primary 'View hold details' button at y~3804. Quote, y~4796-5750: 'QUOTE ONLY' badge, CTA 'Request a quote'. Pending, y~6094-7050: 'BINDING PENDING', 'Request availability review', and customer-facing text about 'Product Control binding'. The same text appears at all 10 widths (*.text.txt) and on held-* and quote-only-*. Core shows different wording, including in the successor's own capture core-reference/core-synthetic-catalog-order-request-cards-desktop-1440.png. Care card, y~1500-1893: price 'Ask the Care team about pricing', CTA 'Continue through Care'. Quote card, y~1914-2329 left: badge and CTA 'Request pricing', price 'Price on request'. Held card, y~1914-2329 right: 'Temporarily Unavailable', NO button, text 'cannot be added to an order request right now'. Core source (closeout-review 8549011): client/src/research/assisted-order/AssistedOrderPage.tsx:104-110 (workflow labels), :198 (Care price), :232-254 (Care CTA; held = notice only); shared/research/assisted-order/action-policy.ts:52-60 'Continue through Care', :64-75 held 'Request review', :88-94 'Request pricing'; shared/research/storefront/contract.ts:175-189 (TEMPORARILY_HELD is a 'truthful end state rendered as words rather than buttons'); client/src/research/early-access/EarlyAccessProductCard.tsx:237-256 (held row renders NO purchase controls). The successor's own CORE_UI_INCONSISTENCIES.md item 15 records that held labels are not rendered as actions. At Core candidate 4cba24af, early-access-catalog-coverage.test.ts:91,97-99, Research rows display numeric prices (173), the 8 unbound rows project as request_pricing 6 + availability_review 2, and none is 'Request availability review'.",
+     "claim": "The left column claims to be current Core, but its badges, price states and CTAs do not exist in Core. It also shows an action on a held product where Core shows none. The founder therefore compares the proposal against a baseline that is not production. Parity between the two cards holds, so images do not change eligibility, but the CURRENT CORE claim is false for every non-Research state.",
+     "fix": "Take current-card state, price and CTA from Core vocabulary for each representative, and use the same text on the proposed card so the pair stays identical. Care: 'Care pathway' / 'Ask the Care team about pricing' / 'Continue through Care'. Quote: 'Request pricing' / 'Price on request' / 'Request pricing'. Held: 'Temporarily Unavailable', no CTA, plus Core's held notice. Binding-pending: the Core-projected workflow label. Research: say explicitly that Core shows a numeric price that this preview withholds. If the imagery lane's own wording is kept, retitle the column (for example 'state copy normalized by preview, not Core wording') and record the delta in the drift matrix."
+    },
+    {
+     "id": "L4-2",
+     "severity": "MATERIAL",
+     "area": "Packaging-unverified comparison: wrong representative, no image-enabled variant, and card/detail contradiction",
+     "evidence": "preview.js:216 maps the 'Packaging unverified' section to representatives.pending, which is GRP-0424 Glutathione (chosen as the first pending row at build-founder-preview.mjs:454). preview.js:218 forces fallback on the proposed card. GRP-0424 has imageClass peptide_lyophilized_vial and badge 'BINDING PENDING' (product-card-comparison-desktop-1440.png y~5950-7050, fallback panel y~6129-6719; the same at all widths). The four real packaging_unverified-class rows (GRP-0066, GRP-0068, GRP-0073, GRP-0079) are Care rows that show the calibration-04 care-state image, and none appears in any comparison. GRP-0424 itself renders calibration-06-unverified-identity (77069db7…) in the products grid; a browser search for 'glutathione' showed img present, fallback=false. It also renders that image on product-detail.html?id=GRP-0424, which is the href of the fallback card's own CTA (detailSurface, preview.js:189-202, called without fallback). That detail page then claims 'Card and detail use the exact same source asset SHA-256' (preview.js:200). In total, 61 rows use the 'unknown_unverified_packaging_state_study' image in the grid. FOUNDER_UI_DECISION_PACKET_2026-10-01.md (section D) states 'The comparison includes … packaging-unverified states'. UI_CONVERGENCE_DRIFT_MATRIX row 'Packaging-unverified state' says a safe text fallback is shown. No capture of view=pending exists.",
+     "claim": "The required image-enabled packaging-unverified example is missing. The row labelled packaging-unverified is not one, and the proposal is applied two ways: fallback in the comparison, a calibration-06 image in the grid and on the detail page. For decision D, the founder cannot see how an image-enabled catalog would actually treat unverified packaging.",
+     "fix": "Choose a genuine packaging_unverified row, or define packaging-unverified explicitly as an image-truth state separate from Binding pending. Show both its no-image and its image-enabled variant. Apply one stated rule (calibration-06 study or safe fallback) consistently on the comparison, products grid, QA grid and detail page. Keep binding-pending as its own state labelled as such. Capture view=pending at all widths."
+    },
+    {
+     "id": "L4-3",
+     "severity": "MINOR",
+     "area": "Approval-required rows flattened into 'Research access'",
+     "evidence": "Core 4cba24af member-safe-master-offerings.generated.json has displayState approval_required for 30 rows ('Visible while classification and documentation are completed…'). Core labels this 'Approval Required' (shared/research/master-offerings/contract.ts:91-95) and projects it as request_activation 'Request Order' (AssistedOrderPage.tsx:108; Core candidate request_activation = 42, early-access-catalog-coverage.test.ts:98). The preview's classifyPathway fallthrough (build-founder-preview.mjs:97-103) labels all 30 'Research access', with 'Runtime Product Control remains the only price and purchase authority.' and CTA 'View product'. Examples: GRP-0393 BPC-157 (20mg), GRP-0403 HGH (10iu), GRP-0412 GLP-1 (2mg), GRP-0388-0419. They appear that way in the 423-row QA grid's 'Pathway / status' column (catalog-review-desktop-page-0*.text.txt).",
+     "claim": "The QA grid, presented as the per-row truth table, states the wrong pathway for 30 rows (7%). It creates no commerce affordance: price is omitted and the CTA is neutral, and none of these rows appears in a decision comparison.",
+     "fix": "Add an approval-required / classification-pending pathway key that mirrors Core's label and Core's projected action, and use it in the QA grid and product cards."
+    },
+    {
+     "id": "L4-4",
+     "severity": "MINOR",
+     "area": "Products catalog filter cannot be cleared (stale count)",
+     "evidence": "preview.js:162 uses `pageSize`, which is declared only inside renderProducts (preview.js:127) and is out of scope in activateCatalogFilters. Browser check: searching 'glutathione' gave '5 products'; clearing the search threw 'Uncaught ReferenceError: pageSize is not defined', and the grid stayed at 5 filtered cards with the count still '5 products' while the search box was empty. The capture harness only exercised setting a filter (receipt interaction captures products-search-bam15 and products-pathway-held), never clearing one.",
+     "claim": "After a filter is cleared, the catalog surface misstates its own size and contents.",
+     "fix": "Hoist pageSize to shared scope or pass it in, and add a clear-filter interaction capture."
+    },
+    {
+     "id": "L4-5",
+     "severity": "MINOR",
+     "area": "Core evidence caption mislabels the Early Access capture",
+     "evidence": "preview.js:266 captions core-reference/core-early-access-desktop-1440.png as 'Current Early Access cards — Actual current text-only product-card treatment'. That image (full height 0-1656) is the 'Research ordering' access-password gate and contains no product cards. Text-only card treatment is evidenced only by core-synthetic-catalog-order-request-cards-desktop-1440.png.",
+     "claim": "The approver is pointed to a capture that does not show the claim in its caption.",
+     "fix": "Re-caption it as the Early Access password gate, and cite the synthetic order-request capture as the card evidence."
+    },
+    {
+     "id": "L4-6",
+     "severity": "MINOR",
+     "area": "Held, quote and pending detail render an enabled-looking primary action",
+     "evidence": "preview.js:199 renders `<span class=\"btn btn-primary\" aria-disabled=\"true\">Prototype action only</span>` on every detail surface, and preview.css has no aria-disabled styling. Rendered as a full black primary button in held-desktop-1440.png (crop y~150-1450, button ~y 1230) and held-mobile-320.png y~1785-1840. Core held: EarlyAccessProductCard.tsx:248-256 and AssistedOrderPage.tsx:247-254 render no control.",
+     "claim": "The held surface's headline says the product is not orderable, but a primary-action affordance appears on it anyway.",
+     "fix": "For held (and other non-actionable Core states), omit the button or give it a visibly disabled style."
+    },
+    {
+     "id": "L4-7",
+     "severity": "MINOR",
+     "area": "Coming soon surface provenance",
+     "evidence": "preview.js:242-244 (view=coming) shows Superpower and Mito Health as text-only 'Coming soon' cards with 0 images, with no CURRENT CORE / PROPOSED label. Core c0e25c73 has Superpower as a diagnostics 'Coming soon' offer (client/src/research/products-diagnostics/DiagnosticsExperience.tsx:51) but no 'Mito Health' anywhere in client/ or shared/. The item comes from the imagery v3 spec (HANDOFF_SUMMARY.md:31).",
+     "claim": "An approver could read Mito Health as an existing Core coming-soon offer. No price, CTA, logo or image is shown, so commerce is unaffected.",
+     "fix": "Label the surface as an imagery-lane proposal and note that only Superpower has a Core counterpart."
+    }
+   ],
+   "confirmed": [
+    "Exactly 423 rows with 423 unique canonical IDs. preview.js:7 refuses any denominator other than 423. catalog-data.js is deep-equal to catalog-data.json, whose sha256 861b736919ff… matches build-record dataSha256.",
+    "426/424/423 identity holds. GRP-0001..GRP-0426 = 425 source groups referenced by rows plus the excluded GRP-0364. The merges GRP-0402→GRP-0426 and GRP-0407→GRP-0425 match Core reconciliation provenance. Core 4cba24af has 424 canonical products = 423 + FedEx Standard Overnight (GRP-0364).",
+    "Every row's offeringId, offeringVariantId, displayName, category, family, slug and variant label (specification) matches the Core 4cba24af member-safe catalog (0 mismatches).",
+    "GRP-0364 is absent from catalog-data, every QA text capture and the receipt's reviewCanonicalIds.",
+    "QA grid: catalog-review.html renders 423 rows (browser DOM count). The nine desktop page text captures cover 423/423 IDs with no extras, and the receipt's reviewCanonicalIds union is 423. The responsive QA captures at 10 widths show the first 12 rows.",
+    "No Batch 0 asset is selected. All 423 rows have sourceLane private_calibration and use only the six calibration jobs. Zero batch0 image srcs across 18 pages and views (home, products, featured, cards, details, care, held, quote, pending, journeys, coming, decisions, core, wireframe, catalog-review, product-detail, calibration, wireframe.html). batch0ContactSheet is unused by preview.js. build-record rejectedBatch0AssetSlots = 0.",
+    "The six calibration PNGs hash to e04c2e59…, e3681f63…, dd8510c7…, 76c10c66…, 36bc99f4…, 77069db7… exactly, are unchanged versus 8b06da5, and are the only outputSha256 values referenced by rows.",
+    "Pathway counts match the Core candidate projection: 173 Research priced, 242 Care withheld, 2 quote-only, 6 unreleased = held 1 + binding-pending 5. Held GRP-0422 is grounded in Core's reviewed commerce hold. Quote-only GRP-0244 and GRP-0365 are grounded in Core priceOnRequestGroupIds and the quote_only binding reason.",
+    "No-image versus image-enabled parity: in the cards view (Research, Care, Held, Quote only, 'Packaging unverified'), the held and quote views, the pending view and the decision-D pair, both cards carry identical badge, specification, explanation, category, price state, CTA text and CTA href. Verified in the DOM and in the text captures at all 10 widths (0 mismatches). Images never change commerce eligibility.",
+    "No fake prices: no currency amount appears in catalog-data, preview source or any corrected-preview text capture. Price fields are only withheld/on-request phrases, and the data warnings state prices are withheld.",
+    "Quote-only price wording 'Price on request' and the Care badge 'Care pathway' match Core.",
+    "The held and quote surfaces state the product 'stays visible without becoming orderable', and detail copy says the preview cannot submit, reserve, prescribe, quote or order.",
+    "Coming soon shows names only, with 0 images and no price, checkout, logo or partnership claim."
+   ],
+   "verdicts": [
+    {
+     "id": "L4-1",
+     "upheld": true,
+     "severity": "MATERIAL",
+     "note": "Confirmed. preview.js:52-64 labels the left card 'Current Core · text-only public / Early Access policy' and renders pathway.cta as a black primary link. The drift matrix (line 9) says CURRENT CORE 'means observed Core behavior', but the copy comes from classifyPathway (build-founder-preview.mjs:61-104). git grep of client/ and shared/ at closeout-review 8549011 finds 0 hits for 'View hold details', 'Request a quote', 'Request availability review', 'Review Care pathway', 'Care pricing withheld', 'Formulation held', 'Binding pending' and 'Pricing not released'. Core's own synthetic order-request capture (crops at y 1434-1895 and 1914-2329) shows: Care 'Ask the Care team about pricing' / 'Continue through Care'; Quote 'Request pricing' / 'Price on request'; Held 'Temporarily Unavailable' with no button and only the 'cannot be added to an order request right now' notice. This matches AssistedOrderPage.tsx:104-110, :198 and :232-254, and EarlyAccessProductCard.tsx:248-256. In the preview capture product-card-comparison-desktop-1440.png (y 3400-4500), the 'Current Core' held card shows a full-width black 'View hold details' button. The lane vocabulary appears 2x in all 10 comparison widths, and 3x in all held-* and quote-only-* text captures. Research is honestly labelled 'Price omitted from static preview'. Image/no-image parity holds, but the baseline labelled as observed Core is not production for Care, held, quote or pending. That misleads an approver about production. MATERIAL stands."
+    },
+    {
+     "id": "L4-2",
+     "upheld": true,
+     "severity": "MATERIAL",
+     "note": "Confirmed. preview.js:216 maps 'Packaging unverified' to representatives.pending = GRP-0424 Glutathione. In catalog-data.json that row has imageClass peptide_lyophilized_vial, bindingState binding_pending, and image calibration-06-unverified-identity (77069db7). The comparison crop (y 5900-7100) shows the eyebrow 'PACKAGING UNVERIFIED' over a 'BINDING PENDING' badge, and the proposed card is forced to a safe fallback. So neither column shows an image-enabled packaging-unverified variant, although the decision packet (lines 70-71) says the comparison includes packaging-unverified states. The 4 real packaging_unverified rows (GRP-0066/0068/0073/0079) are Care rows. The care branch in chooseAsset (build-founder-preview.mjs:129) precedes the packaging_unverified branch (:148), so they render calibration-04, and none is in a comparison. The same GRP-0424 renders calibration-06 in the products grid (renderProducts calls proposedProductCard without fallback), in the QA grid, and on product-detail.html?id=GRP-0424. In product-detail-comparison-desktop-1440.text.txt (lines 96-117), the fallback detail says 'Card and detail use the exact same source asset SHA-256: 77069db7…' while showing no image. 61 rows use calibration-06. The receipt's captured views contain no 'pending', and no pending/unverified capture files exist. The proposed rule is applied inconsistently and the required example is missing, which misleads decision D. MATERIAL stands."
+    },
+    {
+     "id": "L4-3",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. A cross-tab of 4cba24af member-safe-master-offerings.generated.json variant displayState against the preview pathway keys gives approval_required -> research = 30 rows, with stateExplanation 'Visible while classification and documentation are completed…'. The contract label at 4cba24af shared/research/master-offerings/contract.ts is 'Approval Required'. Core action-policy.ts:80-86 maps classificationPending to 'Request Order'. The QA text (catalog-review-desktop-page-01.text.txt:322-327) shows GRP-0393 BPC-157 (20mg) as 'RESEARCH ACCESS / Price omitted from static preview'. None of these rows is a comparison representative (research representative GRP-0256 is request_access), and no commerce affordance is created. MINOR is correct."
+    },
+    {
+     "id": "L4-4",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed from source. `const pageSize` is declared only inside renderProducts (preview.js:127). activateCatalogFilters (preview.js:146-174) references it at :162 in `hasFilter ? filtered : filtered.slice(0, pageSize)`. With a filter active, the ternary short-circuits. When cleared, it evaluates pageSize, which is out of scope under 'use strict', so it throws a ReferenceError before count.textContent and grid.innerHTML update, leaving the stale filtered state. There is no global pageSize in catalog-data.js or the HTML. The receipt captures only filter-set interactions. This is a private preview interaction bug: MINOR."
+    },
+    {
+     "id": "L4-5",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. preview.js:266 captions core-early-access-desktop-1440.png as 'Current Early Access cards — Actual current text-only product-card treatment'. The full image (1440x1656, viewed downscaled) is the 'Research ordering' access-password gate ('Enter your access password', Unlock, Contact Support / Check Status / Back to Products) and has no product cards. Card evidence exists only in core-synthetic-catalog-order-request-cards-desktop-1440.png, which is listed separately at preview.js:271. MINOR."
+    },
+    {
+     "id": "L4-6",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. detailSurface (preview.js:199) always renders `<span class=\"btn btn-primary\" aria-disabled=\"true\">Prototype action only</span>`, and preview.css has no aria-disabled or disabled rule. held-desktop-1440.png (crop y 150-1450) shows the headline 'stays visible without becoming orderable' above a full-width black 'Prototype action only' button in the 'View hold details' panel. held-mobile-320.png (y ~1785-1840) is the same. Core held renders no control (EarlyAccessProductCard.tsx:248-256; AssistedOrderPage.tsx:246-253). The button text admits it is a prototype, and held-action affordance is not one of the five labelled decisions, so this is unlabelled drift but low risk. MINOR."
+    },
+    {
+     "id": "L4-7",
+     "upheld": true,
+     "severity": "NONE",
+     "note": "Partly confirmed. Severity is overstated. preview.js:242-244 renders Superpower and Mito Health as text-only 'Coming soon' cards with no CURRENT/PROPOSED label. Core client/ and shared/ have Superpower (DiagnosticsExperience.tsx:50-51 'Coming soon') and no 'Mito Health'. However, Core's own launch records at closeout-review 8549011 state 'Superpower/Mito Health remain Coming soon' (docs/health-launch/HL01_CATALOG_DETAILS_20261001.md:119; server/research/assisted-order/HEALTH_HL12_DURABLE_EFFECTS_HANDOFF_20261001.md:108; the HL11/HL12 handoffs). So Mito Health being Coming soon is recorded program state, not only an imagery-lane spec item. The surface does not claim Core runtime renders it, and shows no price, CTA, logo or image. An approver reading it as an intended Coming-soon offer would be correct. The only gap is that runtime UI exists for Superpower alone, which is a documentation nit with no decision or production misdirection."
+    }
+   ]
+  },
+  {
+   "lens": "responsive-inconsistencies",
+   "verdict": "LENS 5 verdict: the evidence files are sound, but how the preview handles current-state truth fails. On evidence integrity, the corrected-preview set is complete and matches its receipt. There are 134 full-page PNGs, and the 120 matrix captures cover all 12 surfaces at all 10 widths with none missing. Every PNG's SHA-256, byte size and dimensions match founder-preview-browser-evidence.json, and all are fullPage, not truncated and layoutStable. The text-dump hashes match once CRLF is normalised to LF (the mismatch comes from autocrlf on checkout, not tampering). All 134 entries assert 0 overflow, 0 broken images, 0 severe console messages and 0 network violations. The 9 catalog-review pages cover 423/423 IDs. The 17 core-reference files are byte-identical to Claude's 27a_core_reference. CORE_UI_INCONSISTENCIES.md records all 28 core-internal rows and the 5 critic addenda (ADD-07 to ADD-11). Its claim that the preview \"does not silently resolve any item below\" is not true, though, and three problems would mislead an approver. (1) Every card labelled \"CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY\" uses the preview's own vocabulary, prices and actions, not Core's, and puts a black primary CTA on held and binding-pending items, where Core renders no control. (2) The live assisted-order launch catalog appears only as a mis-coloured \"Legacy green pill\" chip. No current-Core card shows its real anatomy, and the one page that embeds its screenshot (view=core) was never captured. (3) The header does not follow Core at 1024 or below 520/700/375px, and the brand mark is invisible at every width. The drift matrix overclaims on the wordmark, header actions and breakpoints, the footer, accent placement, and current card policy. I did not decide any founder design question.",
+   "findings": [
+    {
+     "id": "L5-M1",
+     "severity": "MATERIAL",
+     "area": "Mislabelled CURRENT CORE card states; silent resolution of items 9, 14, 15, 23, 25, 28",
+     "evidence": "preview.js:52-64 (currentPolicyCard renders row.pathway.label / .price / .cta as a black `card-cta primary`, family via titleCase preview.js:22-25,56). catalog-data.json pathway objects: research 'Research access'/'View product'/'Price omitted from static preview'; care 'Care pathway'/'Review Care pathway'/'Care pricing withheld'; held 'Formulation held'/'View hold details'/'Pricing not released'; quote 'Quote only'/'Request a quote'; pending 'Binding pending'/'Request availability review'. Captures: product-card-comparison-desktop-1440.png y~3500-3960 (held CURRENT CORE card, black 'View hold details' button at y~3772-3836); product-card-comparison-tablet-768.png y~2920-3360; product-card-comparison-mobile-430.png y~4090-4530; text dump product-card-comparison-desktop-1440.text.txt:113-126 and :184-198 (pending current card with 'Request availability review'); founder-decisions-desktop-1440.png y~2575-3400 (D current card 'RESEARCH ACCESS'/'View product'); held-desktop-1440.text.txt:31-55 (held detail with a black primary 'Prototype action only'). Core truth: EarlyAccessProductCard.tsx:253-312 (a held row renders NO purchase control; availability copy 'Temporarily unavailable'; actions 'Select'/'Request availability'); AssistedOrderPage.tsx:104-110 (badges Order request / Care pathway / Request pricing / Request Order / Temporarily Unavailable) and :180-305 (Specification/Format/Basis/Price facts, 'Product details' disclosure, 'Research Use Only. Not for human or veterinary use.' notice, held = notice with no button, Care price 'Ask the Care team about pricing'); action-policy.ts:55-110 ('Continue through Care', 'Request pricing', 'Add to order request'). Badge colours: preview held/pending red (preview.css:716-722) and Care purple (710-714), vs Core availability_review neutral #f2f2f2/#555 and provider_request slate #3c4d79 (assisted-order.css:57-60). The preview title-cases raw family codes, while Core assisted-order shows raw RESEARCH_PEPTIDES_MATERIALS (inconsistency item 14). The products filter options Research/Care/Held/Quote only/Binding pending (preview.js:137) are aligned to the invented chips, which resolves item 23.",
+     "claim": "The left column the founder is told 'records current Core' is neither Core card. It uses preview-invented badge, price and CTA vocabulary, invents a fourth badge style, drops the RUO notice, and gives held and binding-pending identities a primary action that Core deliberately omits. This silently replaces Core's recorded vocabulary and price-wording inconsistencies (items 9, 14, 15, 23, 25, 28) with a new vocabulary under a CURRENT CORE label. An approver comparing decision D would be misled about what production shows today, especially for held items. Drift matrix row 28 ('Text-only current Core card shown for Research, Care, held, quote-only, and packaging-unverified') overclaims.",
+     "fix": "Render the left column from actual Core anatomy and verbatim strings per state. Use EarlyAccessProductCard for Research (category, strength, price/'Not available to order', availability line, Select). Use the AssistedOrderPage card for Care, quote and held (workflowLabels, facts, RUO notice, Care pricing copy, no button on availability_review). Use Core badge colours. If the preview vocabulary must stay, relabel the column 'Preview baseline, not Core vocabulary' and record the substitution in CORE_UI_INCONSISTENCIES.md."
+    },
+    {
+     "id": "L5-M2",
+     "severity": "MATERIAL",
+     "area": "Assisted-order green island hidden and pre-framed as legacy (items 7, 13, 18, 20; decision B)",
+     "evidence": "preview.js:254 shows Core's B column as one chip labelled 'Legacy green pill' next to 'Start Care'. founder-decisions-desktop-1440.png y~1455-1714 (B row). preview.css:922-932 styles it #385f44, 52px tall, 24px padding, vs Core .xenios-order-button #183d2d, 44px, 12/20px padding, weight 750 (assisted-order.css:7,39). UI_CONVERGENCE_DRIFT_MATRIX_2026-10-01.md:18 calls it a 'Mixed legacy CTA island'. FOUNDER_UI_DECISION_PACKET_2026-10-01.md:93 says 'Replace remaining legacy CTA instances'. Core: the assisted-order page is the mounted launch catalog at /research/early-access/order-request (27a copy-nav lens; AssistedOrderPage.tsx), with 18px cards, a green pill primary action and 22px panels. No captured preview surface renders a current-Core assisted-order card: every CURRENT CORE card uses 4px and black (preview.css:598-607, 314-336). The only place the real order-request screenshot appears is index.html?view=core (preview.js:271), and the receipt has 0 captures of that path (capture path counts: view=core absent). Claude's probe also has none.",
+     "claim": "The current launch order-request surface is reduced to a single mis-coloured chip and called 'legacy'. That frames decision B and hides the green island instead of mirroring and flagging it. An approver would be misled into thinking pills are a deprecated remnant rather than the live launch catalog's primary action, and never sees the actual current catalog card next to the proposal.",
+     "fix": "Rename the chip 'Current launch order-request catalog (assisted-order)', use #183d2d and the Core button geometry, and add a current-Core assisted-order card (18px radius, green pill, facts and RUO notice) beside the Early Access card in decisions B and D. Capture view=core at all ten widths. Remove 'legacy' from the drift matrix row 18 and packet line 93 wording until Core decides."
+    },
+    {
+     "id": "L5-M3",
+     "severity": "MATERIAL",
+     "area": "Mobile and tablet header drift vs Core; invisible brand mark (affects decision A)",
+     "evidence": "Header y-ranges: home-tablet-1024.png y76-145 shows Xenios / Sign In / Start Care / Menu with no nav links, because the preview reveals the condensed nav only at >=1160 (preview.css:1436-1440). Core shows the 4-item condensed nav from 1024 (index.css:1476-1477; Navbar.tsx:116-118, with the For Individuals/For Practices dropdown chevron). home-mobile-430/390/375.png y146-215 show 'Xenios' / Start Care / Menu: Sign In is hidden at <=700 (preview.css:1482,1496-1497), but Core always renders Sign In (Navbar.tsx:120; index.css:1462 only shrinks it). home-mobile-360/320.png y146-215 show 'Xenios' / Menu only: Start Care is hidden at <=374 (preview.css:1505-1507), but Core keeps it (index.css:1463). Below 520px Core hides the brand name, leaving only the mark (index.css:1459-1460; core-home-mobile-390.png y0-68 shows mark, Sign In, Start Care, Menu), while the preview never hides it (preview.css:256-261, 1492-1494). Probe header text: 390 'Xenios Start Care Menu', 320 'Xenios Menu'. Mark: index.html:28,71 use <img src='brand/xenios-mark-transparent.png'>. That asset is a white glyph on transparent (all opaque pixels >=224 per channel), and Core renders it as a CSS mask filled with currentColor (index.css:227-235). Pixels where the mark should be are 100% #FFFFFF: home-desktop-1440.png x100-160 y45-105; founder-decisions-desktop-1440.png x140-200 y980-1060 (A current) and x740-815 y980-1060 (A proposed). The Core mark is visible in core-home-desktop-1440.png at about x125-140, y30-40. The probe reports the img as loaded and not broken, so it did not catch this.",
+     "claim": "At 1024 and at every width below 701px the shared shell labelled data-surface='current-core-shell' is not Core. On phones Core shows mark only + Sign In + Start Care + Menu, while the preview shows name only (+ Start Care) + Menu. The mark is invisible everywhere, including both decision A tiles. An approver judging decision A ('mark plus Xenios' vs 'mark plus Xenios Health') would see neither the mark nor Core's phone behaviour, where no name is shown. Drift matrix rows 16 ('exact Core mark'), 18 ('Menu behavior at Core breakpoints') and 22 ('Core-aligned ... rules') overclaim: the containers match, but the header uses the non-Core breakpoints 1160/700/374 and misses 519 and 1024.",
+     "fix": "Render the mark as Core does (mask with currentColor, or a dark-fill asset). Copy Core's header media rules exactly: condensed nav at 1024, desktop nav at 1280, sr-only brand name below 520, Sign In and Start Care kept at all widths with 6px/9px padding. Add the popover chevrons. Then recapture all 10 widths and correct drift matrix rows 16, 18 and 22."
+    },
+    {
+     "id": "L5-m4",
+     "severity": "MINOR",
+     "area": "Footer: item 4 silently 'fixed'; footer grouping overclaim",
+     "evidence": "home-mobile-390.png y~9400-9430 and home-mobile-320.png show the footer with a faint mark plus visible 'Xenios' (index.html:70-73; no hide rule in preview.css). Core hides the footer name below 520 (index.css:1459-1460; core-home-mobile-390.png footer at y~9300-9330 shows mark only). The preview footer has 1 disclosure line and 4 private links (index.html:67-83), while Core has 5 labelled groups, the contact email and a copyright line (core-home-mobile-390.png bottom 1700px). UI_CONVERGENCE_DRIFT_MATRIX_2026-10-01.md:19 claims 'Core-style brand, disclosure, and link grouping' and 'Mobile footer name leak remains documented, not silently fixed'.",
+     "claim": "The preview does not reproduce Core's mobile footer behaviour (item 4), so it is silently resolved, and the footer is not Core link grouping. Drift matrix row 19 overclaims on both points, and 'leak' inverts the issue: Core hides the name.",
+     "fix": "Mirror the Core footer structure and the below-520 hide, or keep the private footer but change row 19 to say it is a private footer that does not mirror Core's mobile name hiding."
+    },
+    {
+     "id": "L5-m5",
+     "severity": "MINOR",
+     "area": "Purple-to-teal accent on a non-proposal baseline surface (item 10, decision C)",
+     "evidence": "preview.js:96 puts <div class='accent-rule'> (preview.css:512-516, linear-gradient pulse to teal) in the home hero aside, which is the default view presented as 'Private Core-converged prototype'. home-desktop-1440.png y~428-434, x~1030-1300. UI_CONVERGENCE_DRIFT_MATRIX_2026-10-01.md:26 claims 'Restrained 4px divider only on proposal examples'. CORE_UI_INCONSISTENCIES.md item 10 says current routed Clarity uses flat --pulse.",
+     "claim": "The proposed C accent appears on the Core-converged baseline home, which partially adopts decision C without a label. The drift matrix row 26 claim is false.",
+     "fix": "Remove the accent-rule from the home hero, or label it PROPOSED; correct row 26."
+    },
+    {
+     "id": "L5-m6",
+     "severity": "MINOR",
+     "area": "Decision E current state and Core evidence captions",
+     "evidence": "preview.js:189-203 renders the 'Current Core member presentation' panel (product-detail-comparison-desktop-1440.png y~745-1750) with the preview detail anatomy: canonical id GRP-0256, 'RESEARCH ACCESS', Price state/Pathway/Image status, 'Prototype action only'. Core MemberProductDetailExperience.tsx:165-181 differs. The letterbox is grey #f4f4f5 (preview.css:617-631, 968-983) where Core's 4:3 img sits on the white .card (index.css:486-491; MemberCatalogExperience.tsx:116-130). The E label is duplicated as 'CURRENT MEMBER SLOT · 4:3 CONTAIN · CONTAIN · UNCHANGED PIXELS' (preview.js:41 + :257; founder-decisions-desktop-1440.png y~4276). The 'exact Core' synthetic member renders are FullCatalogPage/MasterOfferingDetail with no media slot at all (core-synthetic-c0e25c73/synthetic/captures/product-detail-synthetic--default--chromium--1440--01.png; MasterOfferingDetail.tsx has no <img>), so the 4:3 'current' state is source-only, and the routed media-less member detail is not flagged (items 19, ADD-11). preview.js:266 captions core-early-access-desktop-1440.png 'Current Early Access cards / Actual current text-only product-card treatment', but that capture is the invitation-password gate with no cards.",
+     "claim": "E's 'current' side is a reconstruction in preview anatomy with a grey letterbox that makes 4:3 look less finished. The rendered Core evidence cited for member media shows a different member detail with no image slot, and one Core evidence caption mislabels a password page as product cards.",
+     "fix": "Label the E current panel 'source-reconstructed from MemberProductDetailExperience (no rendered Core capture)', use a white letterbox, and de-duplicate the label. State that the routed MasterOfferingDetail renders no media. Recaption core-early-access-desktop-1440.png as 'Early Access gate (cards require unlock; source-only)'."
+    },
+    {
+     "id": "L5-m7",
+     "severity": "MINOR",
+     "area": "Responsive evidence coverage gaps",
+     "evidence": "Receipt capture paths: no index.html?view=core and no index.html?view=pending (the dedicated packaging-unverified state, preview.js:346). Claude's probe also lacks both. The catalog-qa-grid matrix captures use catalog-review.html?page=1&limit=12 (12 rows per width); 423/423 coverage comes only from the nine 1440 desktop pages at limit=48 (verified: union of GRP ids in catalog-review-desktop-page-0[1-9].text.txt = 423).",
+     "claim": "The 12x10 matrix is complete as claimed, but the page carrying the 'actual public Core references plus synthetic member catalog/detail' requirement and the dedicated packaging-unverified page have no rendered evidence at any width.",
+     "fix": "Add view=core and view=pending to the matrix (or at least 1440/768/390/320), and note in the drift matrix that responsive QA-grid captures show 12 rows."
+    },
+    {
+     "id": "L5-m8",
+     "severity": "MINOR",
+     "area": "Card vs detail anatomy divergence; label overlay on media at narrow widths",
+     "evidence": "The card (preview.js:66-79) shows family label, badge, Category/Price state facts and CTA 'View product'. The detail (preview.js:189-203) swaps the family for internal canonical id 'GRP-0256', adds Form/Pathway/Image status, places an asset SHA-256 in the customer body, and replaces the CTA with a black 'Prototype action only' (also on held: held-desktop-1440.text.txt:31-55). The .media-policy-label (preview.css:643-660) is absolutely positioned over product pixels. At 320 it wraps to 2-3 lines and covers about 20% of the 4:3 image height (founder-decisions-mobile-320.png, E current panel, y~5100-5300).",
+     "claim": "The card-to-detail pair does not share one anatomy (Core has none either, item 19, but neither preview side mirrors a Core one). Review labels occlude product pixels at narrow widths, more so on the 4:3 side.",
+     "fix": "Hold one field set constant across card and detail, keep internal IDs and SHA out of the customer-facing body, render no action on held, and place media labels below the image instead of over it."
+    },
+    {
+     "id": "L5-m9",
+     "severity": "MINOR",
+     "area": "Other recorded inconsistencies resolved by omission or choice",
+     "evidence": "Item 5: Core Care tab sub-nav (core-care-desktop-1440.png y~537-600, CarePublicPages.tsx:36-52) is absent from the preview Care page (care-desktop-1440.text.txt:28-50), whose eyebrow claims 'CARE · SOURCE-FAITHFUL SHELL'. Items 6/21: the probe shows h1 51.2px/800 on every non-home surface including the catalog (Core order-request 67.2/700, Early Access 35.04/700). ADD-07: one field system (.input-field 4px, ink border, preview.css:805-817) is used for status, account and catalog, while Core /status uses .clarity-field (10px, gray-300; index.css:1409-1427) and the catalog uses 12px assisted-order fields. ADD-09: a third timeline pattern of black numbered circles (preview.css:1074-1084), not clarity-status-timeline or xenios-order-timeline. The account history still lists 'Care intake XC-0041' next to research request and quote rows (preview.js:239), while drift matrix row 43 claims separate surfaces.",
+     "claim": "Each is small, but each picks one Core variant (or invents one) without the flag that CORE_UI_INCONSISTENCIES.md's handling rule promises.",
+     "fix": "Either mirror the surface-specific Core variant (Care tabs, per-surface h1 tier, per-surface field and timeline) or add a visible 'Core inconsistent; preview uses X' note and list each choice in CORE_UI_INCONSISTENCIES.md."
+    }
+   ],
+   "confirmed": [
+    "Corrected-preview evidence contains exactly 134 PNGs (and 134 .text.txt), matching receipt counts.captures=134 and captures[] length 134.",
+    "Responsive matrix complete: 120 captures with responsiveMatrix=true; every one of the 12 surfaces (home, products, featured, product-card-comparison, product-detail-comparison, care, held, quote-only, coming-soon, account-status, founder-decisions, catalog-qa-grid) is present at all 10 widths (1440, 1280, 1024, 834, 768, 430, 390, 375, 360, 320); none missing. The 14 extra captures are 9 catalog-review pages, 3 review-fix details, and the products-search-bam15 and products-pathway-held captures.",
+    "For all 134 entries, the PNG sha256, byteSize and width x height match the receipt; viewport width equals image width; fullPage=true, truncated=false, layoutStable=true.",
+    "Text-dump sha256 values match the committed LF content (the worktree has CRLF from core.autocrlf=true; git ls-files --eol shows i/lf w/crlf). This is not an integrity defect.",
+    "The receipt's per-capture assertions total 0 horizontalOverflow, 0 imagesBroken, 0 severeConsoleMessages and 0 networkBoundaryViolations, agreeing with counts and with Claude's probe.",
+    "The receipt pins coreUiReference c0e25c73/1771d18 and uiReviewBaseline ae5c410/36dd5df. sourceCoreCommit 4cba24af is the catalog source and is an ancestor of c0e25c73 (96 commits).",
+    "423/423 canonical IDs appear across catalog-review-desktop-page-01..09 text dumps; catalog-data counts 426 reviewed / 424 canonical / 423 targets.",
+    "All 423 rows use only the six calibration assets (calibration-01..06); rejectedBatch0AssetSlots=0; no Batch 0 job (06, 09, 16, 19, 21, 24) is referenced.",
+    "All 17 core-reference files are byte-identical (sha256) to Claude's 27a_core_reference originals.",
+    "CORE_UI_INCONSISTENCIES.md records all 28 core-internal-inconsistency rows from 27a_ui_drift_matrix.json (chrome CI-1..5, type CORE-01..06, catalog CC-34..39, surfaces PS-K1..K6, copy CI-1..5) and the five critic addenda (ADD-07 form/focus, ADD-08 weights, ADD-09 timelines, ADD-10 dead gradient tokens, ADD-11 imagery policy vs 4:3 slots).",
+    "Preview container max-width and gutters match Core index.css:64-93 at 375/390/768/820/1024/1280/1440.",
+    "All five decisions A-E render as side-by-side CURRENT CORE / PROPOSED XENIOS HEALTH panels, and the labels stay visible at 320 (founder-decisions-mobile-320.png).",
+    "The card-policy surface pairs no-image vs image-enabled cards for Research, Care, held, quote-only and packaging-unverified (the proposed side uses the safe 'Approved image unavailable' fallback).",
+    "Decision E shows 4:3 and 1:1 slots with the same source asset and object-fit: contain.",
+    "The global shell uses 'Xenios'; 'Xenios Health' appears only as the decision A proposal.",
+    "The 4px product-card / 18px info-panel radius split follows the 27a CORE-03 recommendation and is disclosed in CORE_UI_INCONSISTENCIES.md, so it is not a silent radius choice.",
+    "Decision B's current column does record that Core contains a green pill (the issue is the framing and fidelity, not total omission)."
+   ],
+   "verdicts": [
+    {
+     "id": "L5-M1",
+     "upheld": true,
+     "severity": "MATERIAL",
+     "note": "Confirmed. preview.js:52-64 renders the CURRENT CORE card from catalog-data pathway objects. Its badge, price and CTA strings are 'Research access'/'View product', 'Care pathway'/'Review Care pathway', 'Formulation held'/'View hold details', 'Quote only'/'Request a quote' and 'Binding pending'/'Request availability review'. A grep of Core client/src and shared finds none of these as card badges or CTAs; only 'Care pathway' (workflowLabels) and 'Price on request' exist in Core. Crops: product-card-comparison-desktop-1440.png y3400-4000, tablet-768 y2900-3400 and mobile-430 y4050-4550 all show the held CURRENT CORE card with a red FORMULATION HELD pill and a black full-width 'View hold details' button. Core does the opposite: EarlyAccessProductCard.tsx:257-311 renders no control when held, AssistedOrderPage.tsx:246-253 renders a notice with no button, and assisted-order.css:60 makes the availability_review badge neutral #f2f2f2/#555. founder-decisions-desktop-1440.png y2500-3450 labels the D card 'CURRENT CORE / OBSERVED', and the page lead says 'The left column records current Core'. The card has a RESEARCH ACCESS pill and a 'View product' CTA, while Core's Early Access card has category, strength, price or 'Not available to order', availability copy and 'Select'. The actual order-request card (core-synthetic-catalog-order-request-cards-desktop-1440.png) has 18px radius, raw family codes, Specification/Format/Basis/Price facts, RUO notice and a green pill. Two qualifiers. The cards page heading says the pair holds 'copy and action constant', so the media delta itself is fair. The 'drops RUO notice' point applies only to the assisted-order anatomy; Early Access has no separate RUO element. Severity stays MATERIAL: an approver is shown a non-Core card, including a held primary action Core deliberately omits, under an 'observed current Core' label, and drift matrix row 28 overclaims."
+    },
+    {
+     "id": "L5-M2",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Partly confirmed, severity overstated. Confirmed: preview.js:254 renders one chip literally labelled 'Legacy green pill' (founder-decisions-desktop-1440.png y~1455-1714). preview.css:922-932 styles it #385f44, min-height 52px, padding 0 24px. Core .xenios-order-button is var(--accent) #183d2d, 44px, 12px 20px, weight 750; that is assisted-order.css:42, not :39 as cited. The page is mounted at /research/early-access/order-request (research/section.tsx:312). No preview capture renders a current-Core assisted-order card, and the receipt has 0 view=core captures. Not 'hidden', though. FOUNDER_UI_DECISION_PACKET:41-46 says plainly that 'the assisted-order island still uses green pills' and asks whether any green-pill exception remains. The packet also points the approver to the core-reference directory, which contains core-synthetic-catalog-order-request-cards-*.png showing the real green-pill cards. 27a itself advised mirroring Clarity and flagging the island, not rendering it. What remains is evaluative framing ('Legacy', 'remaining' in the B note, drift row 18, packet line 93) plus an off-colour, off-geometry chip. That biases decision B but does not misstate production existence, so MINOR."
+    },
+    {
+     "id": "L5-M3",
+     "upheld": true,
+     "severity": "MATERIAL",
+     "note": "Confirmed by crops, source and probe. The asset brand/xenios-mark-transparent.png is byte-identical to Core's, and all 38,868 non-transparent pixels are pure #FFFFFF. Core paints it as a currentColor mask (index.css:227-235). The preview uses a plain <img> (index.html:28,71), so it is invisible on white. Crops: home-desktop-1440 header shows blank space before 'Xenios', while core-home-desktop-1440 shows the mark and dropdown chevrons. founder-decisions-desktop-1440 y880-1140 shows both A tiles as text only, with no mark. The probe gives header text at 1024 as 'Xenios Sign In Start Care Menu' (no condensed nav, because preview.css:1436 uses 1160 while Core index.css:1476-1477 uses 1024). At 430/390/375 it is 'Xenios Start Care Menu' (Sign In hidden by preview.css:1496-1497, which Core never does; Navbar.tsx:120). At 360/320 it is 'Xenios Menu' (Start Care hidden by preview.css:1505-1507; Core keeps it per index.css:1463). core-home-mobile-390 y0-60 shows Core's mark only plus Sign In, Start Care and Menu, with the name sr-only below 520 (index.css:1459-1460); the preview never hides the name. The 834 and 768 headers match apart from the mark. The packet's own primary evidence for the decisions (founder-decisions mobile-390 and 320) carries this non-Core header, and the decision A tiles show no mark. Drift rows 16, 18 and 22 overclaim. MATERIAL stands."
+    },
+    {
+     "id": "L5-m4",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. The home-mobile-390 and -320 bottom crops show a faint mark on soft gray plus a visible 'Xenios', one disclosure line and four private links (index.html:67-83). The core-home-mobile-390 footer shows the mark only, the description, contact email, five labelled groups (Individuals, Practices & Partners, Company, Support, Legal) and a copyright line. Core hides the name below 520 (index.css:1459-1460; inconsistency item 4). Drift matrix row 19 claims 'Core-style brand, disclosure, and link grouping' and 'Mobile footer name leak remains documented, not silently fixed'. The grouping claim is false, the preview does not reproduce item 4, and 'leak' inverts the issue. Private footer content is defensible, so MINOR."
+    },
+    {
+     "id": "L5-m5",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. preview.js:96 places <div class='accent-rule'> (preview.css:512-516, linear-gradient pulse to teal) in the home hero aside. Pixel check of home-desktop-1440.png at y430-433 gives (96,91,227) at x1100 and (23,180,200) at x1290; the crop shows a 4px purple-to-teal bar above 'WHAT CHANGED' with no PROPOSED label. The page is the default 'Private Core-converged prototype' view. Drift matrix row 26 ('Restrained 4px divider only on proposal examples') is false, and CORE_UI_INCONSISTENCIES item 10 says routed Clarity uses flat --pulse. The element is small and decorative, so MINOR."
+    },
+    {
+     "id": "L5-m6",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed with one correction. The E 'Current Core member presentation' panel (product-detail-comparison-desktop-1440.png y700-1800) uses the preview's detail anatomy: GRP-0256, RESEARCH ACCESS pill, Form/Price state/Pathway/Image status facts, black 'Prototype action only'. Core MemberProductDetailExperience.tsx:165-199 instead has a classification label and ResearchStatusBadge ('Available'/'Catalog information'/...), and its 4:3 img sits on a white .card (index.css:486-491). The preview letterbox is #f4f4f5 (preview.css:60,617-623,968-975), so pillarbox bars show. The duplicate label 'CURRENT MEMBER SLOT · 4:3 CONTAIN · CONTAIN · UNCHANGED PIXELS' appears at founder-decisions-desktop-1440.text.txt:132; the proposed side also duplicates 'CONTAIN'. The synthetic member detail capture renders the Full catalog/MasterOffering surface ('Choose a variant', no img in MasterOfferingDetail*.tsx), so the 4:3 state has no rendered Core capture. core-early-access-desktop-1440.png is the invitation password gate with no cards, yet preview.js:266 captions it 'Actual current text-only product-card treatment'. Correction: MemberProductDetailExperience is itself routed at /research/member/products/:slug (section.tsx:382, pages/member/ProductPage.tsx). Both member details are therefore routed, and the 'routed media-less detail' sub-claim is muddled. MINOR."
+    },
+    {
+     "id": "L5-m7",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed from founder-preview-browser-evidence.json, which has 134 captures. The paths include no index.html?view=core and no view=pending, and Claude's probe has neither. The catalog-qa-grid captures use catalog-review.html?page=1&limit=12; catalog-qa-grid-mobile-320.text.txt contains 12 GRP ids and 'Evidence page 1 of 36, rows 1-12 of 423'. The union of GRP ids across catalog-review-desktop-page-01..09 text is 423. The packaging-unverified state does appear in the cards and details captures (safe fallback), so only the dedicated page and the Core-evidence page lack renders. MINOR."
+    },
+    {
+     "id": "L5-m8",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Confirmed. The card (preview.js:66-79) and the detail (preview.js:189-203) use different field sets. The detail swaps family for canonical id, adds Form/Pathway/Image status, puts the full asset SHA-256 in the body list, and shows a black 'Prototype action only' even on held (held-desktop-1440.text.txt:36-56). The .media-policy-label is absolutely positioned over the image (preview.css:649-665). In the founder-decisions-mobile-320.png crops, the E current 4:3 label wraps to 2 lines (~40px of a ~190px slot, about 20%) and overlaps the bottom of the product. The E proposed 1:1 label wraps to 3 lines. Core has no canonical pair (item 19), and the held detail is under a PROPOSED slot label, so this is MINOR."
+    },
+    {
+     "id": "L5-m9",
+     "upheld": true,
+     "severity": "MINOR",
+     "note": "Mostly confirmed. Core /care renders CareNavigation tab buttons (CarePublicPages.tsx:36-52; core-care-desktop-1440 crop shows Care overview/Start Care/Care account/How Care works/Clinical review/Support). The preview Care page has none of these, yet its eyebrow says 'CARE · SOURCE-FAITHFUL SHELL'. The probe shows h1 51.2px/800 on every non-home preview surface at 1440. The Core receipt shows 76px/800 for /products, /research, /status, /quality and /support; 51.2 only for /care and /sign-in; 35.04/700 for Early Access; and 67.2/700 for order-request. The preview therefore applies the Care tier everywhere without a flag. The preview field (.field input: 4px, ink border, preview.css:805-817) differs from Core .clarity-field (10px, gray-300, index.css:1411-1423). The preview timeline uses black numbered circles (preview.css:1074-1084), unlike clarity-status-timeline or .xenios-order-timeline, which uses a 3px accent left border (assisted-order.css:130-133). One weak sub-point: Core's account portal does include a Care view (account-portal/views/CareView.tsx), so a Care row in synthetic account history is not clearly contrary to drift row 43. MINOR."
+    }
+   ]
+  }
+ ]
+}
