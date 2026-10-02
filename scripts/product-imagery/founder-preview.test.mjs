@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import test from "node:test";
@@ -10,7 +11,11 @@ import {
   EXPECTED_CANONICAL_ROWS,
   EXPECTED_CUSTOMER_ROWS,
   IMAGERY_REVIEWER_TIP_SHA,
+  PACKAGING_UNVERIFIED_WITNESS_ID,
   PROTOTYPE_REVIEW_SHA,
+  REVIEWED_PREVIEW_RECORDS_SHA,
+  REVIEWED_PREVIEW_SHA,
+  REVIEWED_PREVIEW_TREE,
   REJECTED_BATCH0_JOB_IDS,
   SHIPPING_GROUP_ID,
   UI_FIDELITY_REVIEW_SHA,
@@ -48,6 +53,12 @@ test("builds the pinned 424-to-423 private preview without commerce authority", 
 test("applies the exact reviewer substitutions without exposing a rejected Batch 0 asset", () => {
   const data = buildFounderPreviewData();
   const care = data.rows.filter((row) => row.pathway.key === "care");
+  const packagingUnverified = care.filter(
+    (row) => row.imageClass === "packaging_unverified",
+  );
+  const ordinaryCare = care.filter(
+    (row) => row.imageClass !== "packaging_unverified",
+  );
   const supplementRetail = data.rows.filter(
     (row) => row.imageClass === "supplement_retail_unit_neutral",
   );
@@ -59,9 +70,16 @@ test("applies the exact reviewer substitutions without exposing a rejected Batch
   );
 
   assert.equal(care.length, 242);
+  assert.equal(packagingUnverified.length, 4);
+  assert.equal(ordinaryCare.length, 238);
   assert.equal(supplementRetail.length, 20);
   assert.equal(lyophilizedGhkCu.length, 6);
-  assert.ok(care.every((row) => row.image.jobId === "calibration-04-care-state"));
+  assert.ok(ordinaryCare.every((row) => row.image.jobId === "calibration-04-care-state"));
+  assert.ok(
+    packagingUnverified.every(
+      (row) => row.image.jobId === "calibration-06-unverified-identity",
+    ),
+  );
   assert.ok(
     supplementRetail.every((row) => row.image.jobId === "calibration-06-unverified-identity"),
   );
@@ -209,12 +227,16 @@ test("records Core UI and review provenance without treating proposals as approv
   const record = JSON.parse(
     readFileSync(join(PREVIEW_ROOT, "build-record.json"), "utf8"),
   );
-  assert.equal(record.schemaVersion, 2);
+  assert.equal(record.schemaVersion, 3);
   assert.equal(record.uiReference.commit, CORE_UI_REFERENCE_SHA);
   assert.equal(record.uiReference.tree, CORE_UI_REFERENCE_TREE);
   assert.equal(record.uiFidelityReview.commit, UI_FIDELITY_REVIEW_SHA);
   assert.equal(record.uiFidelityReview.tree, UI_FIDELITY_REVIEW_TREE);
-  assert.equal(record.uiFidelityReview.verdictOnPriorPrototype, "FAIL");
+  assert.equal(record.uiFidelityReview.reviewedSourceCommit, REVIEWED_PREVIEW_SHA);
+  assert.equal(record.uiFidelityReview.reviewedSourceTree, REVIEWED_PREVIEW_TREE);
+  assert.equal(record.uiFidelityReview.reviewedRecordsCommit, REVIEWED_PREVIEW_RECORDS_SHA);
+  assert.equal(record.uiFidelityReview.verdictOnPriorPrototype, "FAIL_NARROW");
+  assert.equal(record.uiFidelityReview.automaticSuccessorReviewRequested, false);
   assert.ok(Object.values(record.proposalState).every((approved) => approved === false));
   assert.deepEqual(record.imagePresentation, {
     proposedCanonicalAspectRatio: "1:1",
@@ -243,12 +265,73 @@ test("shows explicit current-versus-proposed decisions and all five no-image sta
     '"Care", representatives.care',
     '"Held", representatives.held',
     '"Quote only", representatives.quote',
-    '"Packaging unverified", representatives.pending',
+    '"Binding pending", representatives.pending',
+    '"Packaging unverified", representatives.packagingUnverified',
   ]) {
     assert.ok(source.includes(marker), `Missing founder comparison marker: ${marker}`);
   }
   assert.match(source, /Synthetic member catalog/);
   assert.match(source, /Synthetic member detail/);
+});
+
+test("pins the real packaging-unverified witness to the neutral calibration asset", () => {
+  const data = buildFounderPreviewData();
+  const packaging = data.rows
+    .filter((row) => row.imageClass === "packaging_unverified")
+    .sort((left, right) => left.canonicalId.localeCompare(right.canonicalId));
+  assert.deepEqual(
+    packaging.map((row) => row.canonicalId),
+    ["GRP-0066", "GRP-0068", "GRP-0073", "GRP-0079"],
+  );
+  assert.equal(data.representativeCanonicalIds.packagingUnverified, PACKAGING_UNVERIFIED_WITNESS_ID);
+  for (const row of packaging) {
+    assert.equal(row.bindingState.state, "retained_binding");
+    assert.equal(row.image.jobId, "calibration-06-unverified-identity");
+    assert.equal(row.image.assetImageClass, "neutral_product_identity");
+    assert.equal(
+      row.image.outputSha256,
+      "77069db7b8324baf4780b37c585926a92b432e2fef24cbcdf019d38782cd7d8b",
+    );
+    assert.equal(row.image.reviewerDirective, "replace_rejected_unverified_packaging");
+    assert.notEqual(row.image.jobId, "batch0-19-packaging_unverified");
+    assert.notEqual(row.image.jobId, "calibration-04-care-state");
+  }
+  const source = readFileSync(join(PREVIEW_ROOT, "preview.js"), "utf8");
+  assert.match(source, /representatives\.packagingUnverified/);
+  assert.match(source, /proposedProductCard\(row\)/);
+  assert.doesNotMatch(source, /fallback:\s*label === "Packaging unverified"/);
+});
+
+test("mirrors the Core mark, responsive header, card anatomy, and evidence labels", () => {
+  const css = readFileSync(join(PREVIEW_ROOT, "preview.css"), "utf8");
+  const source = readFileSync(join(PREVIEW_ROOT, "preview.js"), "utf8");
+  const htmlFiles = ["index.html", "product-detail.html", "catalog-review.html", "wireframe.html"]
+    .map((file) => readFileSync(join(PREVIEW_ROOT, file), "utf8"));
+  assert.match(css, /\.wordmark-mark\s*\{[^}]*background-color:\s*currentColor[^}]*mask:/s);
+  assert.ok(htmlFiles.every((html) => !/<img[^>]+class="wordmark-mark"/i.test(html)));
+  assert.ok(htmlFiles.every((html) => /<span class="wordmark-mark" aria-hidden="true"><\/span>/.test(html)));
+  assert.match(css, /@media \(max-width: 519px\)[^{]*\{[\s\S]*?\.clarity-brand-name,[\s\S]*?clip: rect\(0 0 0 0\)/);
+  assert.match(css, /@media \(min-width: 1024px\)[^{]*\{[\s\S]*?\.clarity-condensed-nav\s*\{\s*display: flex/);
+  assert.doesNotMatch(css, /@media \(min-width: 1160px\)/);
+  assert.doesNotMatch(css, /\.clarity-header-link\s*\{\s*display:\s*none/);
+  assert.doesNotMatch(css, /\.clarity-header-care\.btn\s*\{\s*display:\s*none/);
+  for (const marker of [
+    "Research use only: not for human or veterinary use.",
+    "Available to order",
+    "Availability confirmed by our team before payment",
+    "Temporarily unavailable",
+    "Request availability",
+    "No action is rendered for this restrictive state.",
+    "CURRENT PUBLIC CORE CATALOG",
+    "SIGNED-IN MEMBER CATALOG / DETAIL",
+    "SOURCE-VERIFIED",
+    "NOT LIVE/OBSERVED RENDER",
+    'data-approved="false"',
+  ]) {
+    assert.ok(source.includes(marker), `Missing fidelity marker: ${marker}`);
+  }
+  assert.doesNotMatch(source, /Legacy green pill/);
+  assert.doesNotMatch(source, /Core-converged|source-faithful shell/);
 });
 
 test("removes preview-only image filters, vignettes, and forced crops", () => {
@@ -355,7 +438,23 @@ test("records responsive browser proof for each reviewer-directed substitution c
     ["review-fix-ghk-cu-detail-desktop", "GRP-0287"],
     ["review-fix-supplement-detail-desktop", "GRP-0366"],
   ];
-  assert.equal(evidence.schemaVersion, 2);
+  assert.equal(evidence.schemaVersion, 3);
+  assert.equal(evidence.reviewedSource.commit, REVIEWED_PREVIEW_SHA);
+  assert.equal(evidence.reviewedSource.tree, REVIEWED_PREVIEW_TREE);
+  assert.equal(evidence.reviewedSource.recordsCommit, REVIEWED_PREVIEW_RECORDS_SHA);
+  assert.equal(evidence.fidelityReview.commit, UI_FIDELITY_REVIEW_SHA);
+  assert.equal(evidence.fidelityReview.tree, UI_FIDELITY_REVIEW_TREE);
+  assert.equal(evidence.fidelityReview.verdict, "FAIL_NARROW");
+  assert.match(evidence.implementationSource.commit, /^[0-9a-f]{40}$/);
+  assert.match(evidence.implementationSource.tree, /^[0-9a-f]{40}$/);
+  assert.equal(
+    execFileSync(
+      "git",
+      ["show", "-s", "--format=%T", evidence.implementationSource.commit],
+      { cwd: REPO_ROOT, encoding: "utf8" },
+    ).trim(),
+    evidence.implementationSource.tree,
+  );
   assert.equal(evidence.partialDebugCapture, false);
   assert.equal(evidence.counts.captures, 144);
   assert.equal(evidence.counts.responsiveMatrixCaptures, 130);
@@ -380,8 +479,84 @@ test("records responsive browser proof for each reviewer-directed substitution c
   assert.equal(evidence.counts.gridCanonicalIdsCovered, 423);
   assert.equal(evidence.counts.brokenImages, 0);
   assert.equal(evidence.counts.severeConsoleMessages, 0);
+  assert.equal(evidence.counts.failedResponses, 0);
   assert.equal(evidence.counts.networkBoundaryViolations, 0);
+  assert.equal(evidence.counts.truncatedScreenshots, 0);
+  assert.equal(evidence.counts.unstableLayouts, 0);
+  assert.equal(evidence.counts.decisionCaptures, 10);
+  assert.equal(evidence.counts.cardComparisonCaptures, 10);
+  assert.equal(evidence.counts.geometryComparisonCaptures, 20);
+  assert.ok(evidence.counts.proposalAuthorityCaptures >= 30);
   assert.ok(evidence.captures.every((capture) => capture.assertions.horizontalOverflow === false));
+  assert.ok(evidence.captures.every((capture) => capture.assertions.failedResponses === 0));
+  assert.ok(evidence.captures.every((capture) => capture.assertions.screenshotTruncated === false));
+  assert.ok(evidence.captures.every((capture) => capture.assertions.layoutStable === true));
+  for (const capture of evidence.captures) {
+    const width = capture.viewport.width;
+    const header = capture.fidelity.header;
+    assert.equal(header.mark.tag, "SPAN");
+    assert.equal(header.mark.visible, true);
+    assert.equal(header.mark.rect.width, 34);
+    assert.equal(header.mark.rect.height, 15);
+    assert.match(header.mark.maskImage, /xenios-mark-transparent\.png/);
+    assert.equal(header.elements.signIn.visible, true);
+    assert.equal(header.elements.startCare.visible, true);
+    assert.equal(header.elements.brandName.visible, width >= 520);
+    assert.equal(header.elements.condensedNav.visible, width >= 1024 && width < 1280);
+    assert.equal(header.elements.desktopNav.visible, width >= 1280);
+    assert.equal(header.elements.menu.visible, width < 1280);
+    assert.deepEqual(header.overlapPairs, []);
+  }
+  for (const capture of evidence.captures.filter((record) => record.surface === "founder-decisions")) {
+    assert.deepEqual(capture.fidelity.decisions.sections.map((decision) => decision.id), ["A", "B", "C", "D", "E"]);
+    assert.ok(capture.fidelity.decisions.sections.every((decision) => decision.approved === "false"));
+    assert.equal(capture.fidelity.decisions.approvedTrueCount, 0);
+    assert.equal(capture.fidelity.decisions.legacyLabelCount, 0);
+    assert.equal(capture.fidelity.decisions.accentRules.length, 1);
+    assert.equal(capture.fidelity.decisions.accentRules[0].role, "proposed");
+    assert.equal(capture.fidelity.decisions.bButton.backgroundColor, "rgb(24, 61, 45)");
+    assert.equal(capture.fidelity.decisions.bButton.height, 44);
+    assert.equal(capture.fidelity.decisions.bButton.borderRadius, "999px");
+    assert.equal(capture.fidelity.decisions.bButton.fontWeight, "750");
+    assert.equal(capture.fidelity.decisions.dCoreContentMatches, true);
+  }
+  for (const capture of evidence.captures.filter((record) => record.surface === "product-card-comparison")) {
+    const pairs = capture.fidelity.cards.pairs;
+    assert.equal(pairs.length, 6);
+    assert.ok(pairs.every((pair) => pair.coreContentMatches));
+    for (const key of ["held", "quote-only", "binding-pending"]) {
+      const pair = pairs.find((candidate) => candidate.kind === key);
+      assert.ok(pair);
+      assert.equal(pair.current.actionCount, 0);
+      assert.equal(pair.proposed.actionCount, 0);
+      assert.equal(pair.current.quantityCount, 0);
+      assert.equal(pair.proposed.quantityCount, 0);
+    }
+    const packaging = pairs.find((candidate) => candidate.kind === "packaging-unverified");
+    assert.equal(packaging.canonicalId, "GRP-0073");
+    assert.equal(capture.fidelity.cards.packagingRow.imageClass, "packaging_unverified");
+    assert.equal(capture.fidelity.cards.packagingRow.assetJob, "calibration-06-unverified-identity");
+  }
+  for (const capture of evidence.captures.filter(
+    (record) => ["product-detail-comparison", "founder-decisions"].includes(record.surface),
+  )) {
+    const roles = capture.fidelity.geometry.roles;
+    assert.deepEqual(roles.map((role) => role.role), ["public-no-image", "member-4x3", "proposed-1x1"]);
+    assert.equal(roles[0].imageCount, 0);
+    assert.equal(roles[0].mediaCount, 0);
+    assert.equal(roles[1].src, roles[2].src);
+    assert.equal(roles[1].assetSha256, roles[2].assetSha256);
+    assert.equal(roles[1].objectFit, "contain");
+    assert.equal(roles[2].objectFit, "contain");
+    assert.match(roles[1].bodyText, /NOT LIVE\/OBSERVED RENDER/);
+  }
+  for (const surface of ["home", "care", "account-status"]) {
+    const captures = evidence.captures.filter((record) => record.surface === surface);
+    assert.equal(captures.length, 10);
+    assert.ok(captures.every((capture) => capture.fidelity.authorityCopy.proposalLabel));
+    assert.ok(captures.every((capture) => capture.fidelity.authorityCopy.actualCoreDenial));
+    assert.ok(captures.every((capture) => capture.fidelity.authorityCopy.actualCoreEvidenceLink));
+  }
   for (const [name, canonicalId] of expected) {
     const capture = capturesByName.get(name);
     assert.ok(capture, `Missing reviewer-fix capture ${name}`);

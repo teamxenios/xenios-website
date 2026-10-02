@@ -1,11 +1,19 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { launchChromium } from "../evidence/lib/chrome.mjs";
 import { PageSession, sleep } from "../evidence/lib/cdp.mjs";
-import { writeFounderPreviewArtifacts } from "./build-founder-preview.mjs";
+import {
+  REVIEWED_PREVIEW_RECORDS_SHA,
+  REVIEWED_PREVIEW_SHA,
+  REVIEWED_PREVIEW_TREE,
+  UI_FIDELITY_REVIEW_SHA,
+  UI_FIDELITY_REVIEW_TREE,
+  writeFounderPreviewArtifacts,
+} from "./build-founder-preview.mjs";
 import { startFounderPreviewServer } from "./serve-founder-preview.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -15,6 +23,8 @@ const EVIDENCE_ROOT = join(
   "docs/product-imagery/evidence/ui-convergence/corrected-preview",
 );
 const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
+const git = (...args) =>
+  execFileSync("git", args, { cwd: REPO_ROOT, encoding: "utf8" }).trim();
 
 function pngDimensions(bytes, label) {
   assert.ok(Buffer.isBuffer(bytes), `${label} must be a Buffer`);
@@ -233,8 +243,471 @@ async function prepareImages(page) {
   throw new Error("Preview images did not finish loading");
 }
 
+async function inspectPreviewState(page) {
+  return page.evaluate(String.raw`(() => {
+    const text = (element) => String(element?.innerText ?? element?.textContent ?? "")
+      .replace(/\s+/g, " ")
+      .trim();
+    const rect = (element) => {
+      if (!element) return null;
+      const value = element.getBoundingClientRect();
+      return {
+        left: Number(value.left.toFixed(2)),
+        right: Number(value.right.toFixed(2)),
+        top: Number(value.top.toFixed(2)),
+        bottom: Number(value.bottom.toFixed(2)),
+        width: Number(value.width.toFixed(2)),
+        height: Number(value.height.toFixed(2)),
+      };
+    };
+    const visible = (element) => {
+      if (!element) return false;
+      const style = getComputedStyle(element);
+      const bounds = element.getBoundingClientRect();
+      if (
+        style.display === "none" ||
+        style.visibility === "hidden" ||
+        Number(style.opacity) === 0 ||
+        bounds.width <= 0 ||
+        bounds.height <= 0
+      ) return false;
+      if (bounds.width <= 1.1 && bounds.height <= 1.1 && style.clip !== "auto") return false;
+      return true;
+    };
+    const summarizeElement = (element) => ({
+      exists: Boolean(element),
+      visible: visible(element),
+      text: text(element),
+      rect: rect(element),
+    });
+    const header = document.querySelector(".clarity-nav");
+    const headerElements = {
+      brand: header?.querySelector(".clarity-brand-link"),
+      brandName: header?.querySelector(".clarity-brand-name"),
+      desktopNav: header?.querySelector(".clarity-desktop-nav"),
+      condensedNav: header?.querySelector(".clarity-condensed-nav"),
+      signIn: header?.querySelector(".clarity-header-link"),
+      startCare: header?.querySelector(".clarity-header-care"),
+      menu: header?.querySelector(".clarity-menu-button"),
+    };
+    const mark = header?.querySelector(".wordmark-mark");
+    const markStyle = mark ? getComputedStyle(mark) : null;
+    const visibleHeaderRects = Object.entries(headerElements)
+      .map(([name, element]) => ({ name, element, summary: summarizeElement(element) }))
+      .filter((entry) => entry.summary.visible && entry.summary.rect);
+    const overlapPairs = [];
+    for (let leftIndex = 0; leftIndex < visibleHeaderRects.length; leftIndex += 1) {
+      for (let rightIndex = leftIndex + 1; rightIndex < visibleHeaderRects.length; rightIndex += 1) {
+        const left = visibleHeaderRects[leftIndex];
+        const right = visibleHeaderRects[rightIndex];
+        if (left.element.contains(right.element) || right.element.contains(left.element)) continue;
+        const horizontal = Math.min(left.summary.rect.right, right.summary.rect.right) -
+          Math.max(left.summary.rect.left, right.summary.rect.left);
+        const vertical = Math.min(left.summary.rect.bottom, right.summary.rect.bottom) -
+          Math.max(left.summary.rect.top, right.summary.rect.top);
+        if (horizontal > 0.5 && vertical > 0.5) overlapPairs.push([left.name, right.name]);
+      }
+    }
+
+    const cardSummary = (card) => {
+      if (!card) return null;
+      const body = card.querySelector(".core-card-content");
+      const actions = Array.from(card.querySelectorAll(".core-card-action"));
+      const image = card.querySelector(".product-media img");
+      return {
+        role: card.dataset.cardRole ?? null,
+        canonicalId: card.dataset.canonicalId ?? null,
+        imageClass: card.dataset.imageClass ?? null,
+        availability: card.dataset.coreAvailability ?? null,
+        actionAllowed: card.dataset.actionAllowed ?? null,
+        assetJob: card.dataset.assetJob ?? null,
+        contentKey: body?.dataset.cardContentKey ?? null,
+        contentText: text(body),
+        imageCount: card.querySelectorAll(".product-media img").length,
+        mediaCount: card.querySelectorAll(".product-media").length,
+        fallbackCount: card.querySelectorAll("[data-media-policy='safe-fallback']").length,
+        policyKickerCount: card.querySelectorAll(".policy-kicker").length,
+        quantityCount: card.querySelectorAll(".core-quantity").length,
+        actionCount: actions.length,
+        actionTexts: actions.map(text),
+        actionHeights: actions.map((action) => Number(action.getBoundingClientRect().height.toFixed(2))),
+        interactiveCount: card.querySelectorAll("button, a, input, select, textarea, [role='button']").length,
+        assetSha256: card.querySelector(".product-media")?.dataset.assetSha256 ?? null,
+        imageSrc: image?.currentSrc ?? null,
+        imageObjectFit: image ? getComputedStyle(image).objectFit : null,
+        researchNotice: text(body).includes("Research use only: not for human or veterinary use."),
+      };
+    };
+    const cardPairs = Array.from(document.querySelectorAll("[data-comparison-kind]")).map((section) => {
+      const current = cardSummary(section.querySelector("[data-card-role='current']"));
+      const proposed = cardSummary(section.querySelector("[data-card-role='proposed']"));
+      return {
+        kind: section.dataset.comparisonKind,
+        canonicalId: section.dataset.comparisonCanonicalId,
+        current,
+        proposed,
+        coreContentMatches: Boolean(
+          current && proposed &&
+          current.contentKey === proposed.contentKey &&
+          current.contentText === proposed.contentText
+        ),
+      };
+    });
+    const restrictiveCards = Array.from(
+      document.querySelectorAll("[data-core-availability='TEMPORARILY_HELD']"),
+    ).map(cardSummary);
+    const packagingId = window.XENIOS_FOUNDER_PREVIEW_DATA?.representativeCanonicalIds
+      ?.packagingUnverified ?? null;
+    const packagingRow = window.XENIOS_FOUNDER_PREVIEW_DATA?.rows
+      ?.find((row) => row.canonicalId === packagingId) ?? null;
+
+    const geometryRoot = document.querySelector(".geometry-three-grid");
+    const geometryRoles = geometryRoot
+      ? Array.from(geometryRoot.querySelectorAll("[data-geometry-role]")).map((role) => {
+          const media = role.querySelector(".product-media");
+          const image = role.querySelector(".product-media img");
+          const bounds = media?.getBoundingClientRect();
+          return {
+            role: role.dataset.geometryRole,
+            label: text(role.querySelector(".comparison-label")),
+            bodyText: text(role),
+            imageCount: role.querySelectorAll(".product-media img").length,
+            mediaCount: role.querySelectorAll(".product-media").length,
+            src: image?.currentSrc ?? null,
+            assetSha256: media?.dataset.assetSha256 ?? null,
+            objectFit: image ? getComputedStyle(image).objectFit : null,
+            measuredRatio: bounds && bounds.height > 0
+              ? Number((bounds.width / bounds.height).toFixed(4))
+              : null,
+          };
+        })
+      : [];
+
+    const decisionSections = Array.from(document.querySelectorAll("[data-decision]"));
+    const coreOrderButton = document.querySelector("[data-decision='B'] .core-order-button");
+    const coreOrderStyle = coreOrderButton ? getComputedStyle(coreOrderButton) : null;
+    const decisionDCurrent = cardSummary(
+      document.querySelector("[data-decision='D'] [data-card-role='current']"),
+    );
+    const decisionDProposed = cardSummary(
+      document.querySelector("[data-decision='D'] [data-card-role='proposed']"),
+    );
+    const accentRules = Array.from(document.querySelectorAll(".accent-rule"));
+    const decisionMarks = Array.from(
+      document.querySelectorAll("[data-decision='A'] .wordmark-mark"),
+    ).map((element) => {
+      const style = getComputedStyle(element);
+      return {
+        visible: visible(element),
+        maskImage: style.maskImage || style.webkitMaskImage,
+        backgroundColor: style.backgroundColor,
+      };
+    });
+    const decisionBrandNames = Array.from(
+      document.querySelectorAll("[data-decision='A'] .decision-brand-name"),
+    ).map(summarizeElement);
+
+    const detailRoot = document.querySelector("[data-detail-policy]");
+    const rawBodyText = document.body.innerText;
+    const normalizedBodyText = text(document.body);
+    return {
+      title: document.title,
+      ready: window.__XENIOS_PREVIEW_READY__,
+      viewport: { width: innerWidth, height: innerHeight },
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth,
+      bodyText: rawBodyText,
+      reviewIds: Array.from(document.querySelectorAll("#qa-body tr")).map((row) => row.dataset.canonicalId),
+      catalogCount: text(document.querySelector("#catalog-count")) || null,
+      catalogCanonicalIds: Array.from(document.querySelectorAll("#catalog-grid .product-card")).map((card) => card.dataset.canonicalId),
+      detailCanonicalId: document.querySelector("[data-detail-canonical-id]")?.dataset.detailCanonicalId ?? null,
+      detailAssetJob: document.querySelector("[data-detail-asset-job]")?.dataset.detailAssetJob ?? null,
+      header: {
+        exists: Boolean(header),
+        rect: rect(header),
+        mark: {
+          tag: mark?.tagName ?? null,
+          visible: visible(mark),
+          rect: rect(mark),
+          maskImage: markStyle ? markStyle.maskImage || markStyle.webkitMaskImage : null,
+          backgroundColor: markStyle?.backgroundColor ?? null,
+        },
+        elements: Object.fromEntries(
+          Object.entries(headerElements).map(([name, element]) => [name, summarizeElement(element)]),
+        ),
+        overlapPairs,
+      },
+      decisions: {
+        sections: decisionSections.map((section) => ({
+          id: section.dataset.decision,
+          approved: section.dataset.approved,
+          currentLabels: Array.from(
+            section.querySelectorAll("[data-decision-role='current'] .comparison-label"),
+          ).map(text),
+          proposedLabels: Array.from(
+            section.querySelectorAll("[data-decision-role='proposed'] .comparison-label"),
+          ).map(text),
+        })),
+        approvedTrueCount: document.querySelectorAll("[data-decision][data-approved='true']").length,
+        marks: decisionMarks,
+        brandNames: decisionBrandNames,
+        bButton: coreOrderButton ? {
+          text: text(coreOrderButton),
+          backgroundColor: coreOrderStyle.backgroundColor,
+          color: coreOrderStyle.color,
+          height: Number(coreOrderButton.getBoundingClientRect().height.toFixed(2)),
+          borderRadius: coreOrderStyle.borderRadius,
+          paddingTop: coreOrderStyle.paddingTop,
+          paddingRight: coreOrderStyle.paddingRight,
+          paddingBottom: coreOrderStyle.paddingBottom,
+          paddingLeft: coreOrderStyle.paddingLeft,
+          fontWeight: coreOrderStyle.fontWeight,
+          fontFamily: coreOrderStyle.fontFamily,
+        } : null,
+        legacyLabelCount: Array.from(decisionSections)
+          .filter((section) => /legacy/i.test(text(section))).length,
+        accentRules: accentRules.map((element) => ({
+          role: element.closest("[data-decision-role]")?.dataset.decisionRole ?? null,
+          backgroundImage: getComputedStyle(element).backgroundImage,
+        })),
+        dCoreContentMatches: Boolean(
+          decisionDCurrent && decisionDProposed &&
+          decisionDCurrent.contentKey === decisionDProposed.contentKey &&
+          decisionDCurrent.contentText === decisionDProposed.contentText
+        ),
+      },
+      cards: {
+        pairs: cardPairs,
+        restrictiveCards,
+        packagingRow: packagingRow ? {
+          canonicalId: packagingRow.canonicalId,
+          imageClass: packagingRow.imageClass,
+          bindingState: packagingRow.bindingState.state,
+          assetJob: packagingRow.image.jobId,
+          assetImageClass: packagingRow.image.assetImageClass,
+          outputSha256: packagingRow.image.outputSha256,
+          reviewerDirective: packagingRow.image.reviewerDirective,
+        } : null,
+      },
+      geometry: {
+        canonicalId: geometryRoot?.dataset.geometryCanonicalId ?? null,
+        assetSha256: geometryRoot?.dataset.geometryAssetSha256 ?? null,
+        roles: geometryRoles,
+      },
+      detail: detailRoot ? {
+        policy: detailRoot.dataset.detailPolicy,
+        availability: detailRoot.dataset.coreAvailability,
+        actionAllowed: detailRoot.dataset.actionAllowed,
+        actionCount: detailRoot.querySelectorAll(".detail-core-action").length,
+        interactiveCount: detailRoot.querySelectorAll("button, a, input, select, textarea, [role='button']").length,
+        restrictionCopyCount: detailRoot.querySelectorAll(".restriction-copy").length,
+      } : null,
+      authorityCopy: {
+        proposalLabel: /PROPOSED XENIOS HEALTH/.test(normalizedBodyText),
+        actualCoreDenial: /not an Actual Core|not Actual Core/i.test(normalizedBodyText),
+        actualCoreEvidenceLink: Array.from(document.querySelectorAll("a"))
+          .some((link) => /Actual Core evidence/i.test(text(link))),
+      },
+      accentRuleCount: accentRules.length,
+    };
+  })()`);
+}
+
+function assertFounderPreviewFidelity(state, planned) {
+  const width = planned.width;
+  assert.equal(state.header.exists, true, `${planned.name} must render the Core header`);
+  assert.equal(state.header.mark.tag, "SPAN", `${planned.name} must use the masked span mark`);
+  assert.equal(state.header.mark.visible, true, `${planned.name} must keep the mark visible`);
+  assert.equal(state.header.mark.rect.width, 34, `${planned.name} mark width must match Core`);
+  assert.equal(state.header.mark.rect.height, 15, `${planned.name} mark height must match Core`);
+  assert.match(
+    state.header.mark.maskImage,
+    /xenios-mark-transparent\.png/,
+    `${planned.name} must use the Core currentColor mask asset`,
+  );
+  assert.notEqual(
+    state.header.mark.backgroundColor,
+    "rgba(0, 0, 0, 0)",
+    `${planned.name} masked mark must inherit a visible currentColor`,
+  );
+  assert.equal(state.header.elements.signIn.visible, true, `${planned.name} must keep Sign In visible`);
+  assert.equal(state.header.elements.startCare.visible, true, `${planned.name} must keep Start Care visible`);
+  assert.equal(
+    state.header.elements.brandName.visible,
+    width >= 520,
+    `${planned.name} brand-name visibility must switch at 520px`,
+  );
+  assert.equal(
+    state.header.elements.desktopNav.visible,
+    width >= 1280,
+    `${planned.name} desktop navigation must switch at 1280px`,
+  );
+  assert.equal(
+    state.header.elements.condensedNav.visible,
+    width >= 1024 && width < 1280,
+    `${planned.name} condensed navigation must occupy 1024-1279px`,
+  );
+  assert.equal(
+    state.header.elements.menu.visible,
+    width < 1280,
+    `${planned.name} menu visibility must mirror Core`,
+  );
+  assert.deepEqual(state.header.overlapPairs, [], `${planned.name} header controls must not overlap`);
+  for (const [name, element] of Object.entries(state.header.elements)) {
+    if (!element.visible || !element.rect) continue;
+    assert.ok(element.rect.left >= -1, `${planned.name} ${name} must remain inside the viewport`);
+    assert.ok(element.rect.right <= width + 1, `${planned.name} ${name} must remain inside the viewport`);
+  }
+
+  if (state.ready.view === "cards") {
+    assert.deepEqual(
+      state.cards.pairs.map((pair) => pair.kind),
+      ["research", "care", "held", "quote-only", "binding-pending", "packaging-unverified"],
+      `${planned.name} must render the six exact comparison witnesses`,
+    );
+    const expectedActionHeight = width >= 1024 ? 64 : width >= 768 ? 60 : width >= 390 ? 56 : 52;
+    for (const pair of state.cards.pairs) {
+      assert.equal(pair.coreContentMatches, true, `${planned.name} ${pair.kind} must change only media`);
+      assert.equal(pair.current.imageCount, 0, `${planned.name} current ${pair.kind} must be text-only`);
+      assert.equal(pair.current.mediaCount, 0, `${planned.name} current ${pair.kind} must have no media slot`);
+      assert.equal(pair.current.policyKickerCount, 0, `${planned.name} current ${pair.kind} must not inject preview copy`);
+      assert.equal(pair.proposed.imageCount, 1, `${planned.name} proposed ${pair.kind} must use one image`);
+      assert.equal(pair.proposed.mediaCount, 1, `${planned.name} proposed ${pair.kind} must use one media slot`);
+      assert.equal(pair.proposed.policyKickerCount, 0, `${planned.name} proposed ${pair.kind} must preserve Core card copy`);
+      assert.equal(pair.proposed.fallbackCount, 0, `${planned.name} ${pair.kind} must not borrow a fallback`);
+      assert.equal(pair.proposed.imageObjectFit, "contain", `${planned.name} ${pair.kind} must preserve contain`);
+      for (const card of [pair.current, pair.proposed]) {
+        for (const height of card.actionHeights) {
+          assert.ok(
+            Math.abs(height - expectedActionHeight) <= 0.5,
+            `${planned.name} ${pair.kind} action must be ${expectedActionHeight}px`,
+          );
+        }
+      }
+    }
+    for (const kind of ["held", "quote-only", "binding-pending"]) {
+      const pair = state.cards.pairs.find((candidate) => candidate.kind === kind);
+      assert.ok(pair, `${planned.name} must include ${kind}`);
+      for (const card of [pair.current, pair.proposed]) {
+        assert.equal(card.actionAllowed, "false", `${planned.name} ${kind} must be restrictive`);
+        assert.equal(card.actionCount, 0, `${planned.name} ${kind} must render no action`);
+        assert.equal(card.quantityCount, 0, `${planned.name} ${kind} must render no quantity control`);
+        assert.equal(card.interactiveCount, 0, `${planned.name} ${kind} must render no enabled-looking control`);
+      }
+    }
+    const research = state.cards.pairs.find((pair) => pair.kind === "research");
+    assert.equal(research.current.researchNotice, true, `${planned.name} current Research card must retain RUO copy`);
+    assert.equal(research.proposed.researchNotice, true, `${planned.name} proposed Research card must retain RUO copy`);
+    assert.deepEqual(research.current.actionTexts, ["Select"]);
+    assert.deepEqual(research.proposed.actionTexts, ["Select"]);
+    const packaging = state.cards.pairs.find((pair) => pair.kind === "packaging-unverified");
+    assert.equal(packaging.canonicalId, "GRP-0073", `${planned.name} must use the real packaging witness`);
+    assert.equal(state.cards.packagingRow.canonicalId, "GRP-0073");
+    assert.equal(state.cards.packagingRow.imageClass, "packaging_unverified");
+    assert.equal(state.cards.packagingRow.bindingState, "retained_binding");
+    assert.equal(state.cards.packagingRow.assetJob, "calibration-06-unverified-identity");
+    assert.equal(state.cards.packagingRow.assetImageClass, "neutral_product_identity");
+    assert.equal(
+      state.cards.packagingRow.outputSha256,
+      "77069db7b8324baf4780b37c585926a92b432e2fef24cbcdf019d38782cd7d8b",
+    );
+    assert.equal(state.cards.packagingRow.reviewerDirective, "replace_rejected_unverified_packaging");
+    assert.equal(packaging.proposed.assetJob, "calibration-06-unverified-identity");
+    assert.equal(packaging.proposed.assetSha256, state.cards.packagingRow.outputSha256);
+  }
+
+  if (["held", "quote"].includes(state.ready.view)) {
+    assert.equal(state.detail.actionAllowed, "false", `${planned.name} detail must remain restrictive`);
+    assert.equal(state.detail.actionCount, 0, `${planned.name} detail must have no action`);
+    assert.equal(state.detail.interactiveCount, 0, `${planned.name} detail must have no enabled-looking control`);
+    assert.equal(state.detail.restrictionCopyCount, 1, `${planned.name} must explain the absent action`);
+    assert.ok(state.cards.restrictiveCards.length >= 2, `${planned.name} must retain both restrictive cards`);
+    assert.ok(
+      state.cards.restrictiveCards.every(
+        (card) => card.actionCount === 0 && card.quantityCount === 0 && card.interactiveCount === 0,
+      ),
+      `${planned.name} restrictive cards must expose no action or quantity control`,
+    );
+  }
+
+  if (["details", "decisions"].includes(state.ready.view)) {
+    assert.deepEqual(
+      state.geometry.roles.map((role) => role.role),
+      ["public-no-image", "member-4x3", "proposed-1x1"],
+      `${planned.name} must expose the three distinct evidence levels`,
+    );
+    const publicRole = state.geometry.roles[0];
+    const memberRole = state.geometry.roles[1];
+    const proposedRole = state.geometry.roles[2];
+    assert.equal(publicRole.imageCount, 0, `${planned.name} public Core must have no image`);
+    assert.equal(publicRole.mediaCount, 0, `${planned.name} public Core must have no media slot`);
+    assert.equal(memberRole.imageCount, 1, `${planned.name} member source study must show geometry`);
+    assert.equal(proposedRole.imageCount, 1, `${planned.name} proposal must show geometry`);
+    assert.equal(memberRole.objectFit, "contain");
+    assert.equal(proposedRole.objectFit, "contain");
+    assert.equal(memberRole.src, proposedRole.src, `${planned.name} geometry studies must use the same pixels`);
+    assert.equal(memberRole.assetSha256, proposedRole.assetSha256, `${planned.name} geometry studies must use one SHA`);
+    assert.equal(memberRole.assetSha256, state.geometry.assetSha256);
+    assert.ok(Math.abs(memberRole.measuredRatio - 4 / 3) < 0.01, `${planned.name} member frame must be 4:3`);
+    assert.ok(Math.abs(proposedRole.measuredRatio - 1) < 0.01, `${planned.name} proposal frame must be 1:1`);
+    assert.match(memberRole.bodyText, /SOURCE-VERIFIED/i);
+    assert.match(memberRole.bodyText, /NOT LIVE\/OBSERVED RENDER/i);
+    assert.match(proposedRole.bodyText, /UNAPPROVED/i);
+  }
+
+  if (state.ready.view === "decisions") {
+    assert.deepEqual(state.decisions.sections.map((decision) => decision.id), ["A", "B", "C", "D", "E"]);
+    assert.ok(state.decisions.sections.every((decision) => decision.approved === "false"));
+    assert.equal(state.decisions.approvedTrueCount, 0);
+    for (const decision of state.decisions.sections.filter((entry) => entry.id !== "E")) {
+      assert.equal(decision.currentLabels.length, 1, `${planned.name} ${decision.id} needs a current label`);
+      assert.equal(decision.proposedLabels.length, 1, `${planned.name} ${decision.id} needs a proposed label`);
+      assert.match(decision.currentLabels[0], /CURRENT CORE/);
+      assert.match(decision.proposedLabels[0], /PROPOSED XENIOS HEALTH/);
+    }
+    assert.equal(state.decisions.marks.length, 2, `${planned.name} decision A must show two masked marks`);
+    assert.ok(state.decisions.marks.every((item) => item.visible));
+    assert.ok(state.decisions.marks.every((item) => /xenios-mark-transparent\.png/.test(item.maskImage)));
+    assert.ok(
+      state.decisions.brandNames.every((item) => item.visible === (width >= 520)),
+      `${planned.name} decision A names must mirror the Core 520px breakpoint`,
+    );
+    assert.deepEqual(state.decisions.bButton, {
+      text: "Request availability",
+      backgroundColor: "rgb(24, 61, 45)",
+      color: "rgb(255, 255, 255)",
+      height: 44,
+      borderRadius: "999px",
+      paddingTop: "12px",
+      paddingRight: "20px",
+      paddingBottom: "12px",
+      paddingLeft: "20px",
+      fontWeight: "750",
+      fontFamily: state.decisions.bButton.fontFamily,
+    });
+    assert.match(state.decisions.bButton.fontFamily, /Inter Tight/);
+    assert.equal(state.decisions.legacyLabelCount, 0, `${planned.name} must not invent a Legacy label`);
+    assert.equal(state.decisions.accentRules.length, 1, `${planned.name} must isolate the accent proposal`);
+    assert.equal(state.decisions.accentRules[0].role, "proposed");
+    assert.match(state.decisions.accentRules[0].backgroundImage, /linear-gradient/);
+    assert.equal(state.decisions.dCoreContentMatches, true, `${planned.name} decision D must change only media`);
+  } else {
+    assert.equal(state.accentRuleCount, 0, `${planned.name} must not leak the unapproved gradient`);
+  }
+
+  if (["home", "care", "journeys"].includes(state.ready.view)) {
+    assert.equal(state.authorityCopy.proposalLabel, true, `${planned.name} must identify preview-authored proposal copy`);
+    assert.equal(state.authorityCopy.actualCoreDenial, true, `${planned.name} must deny Actual Core authority`);
+    assert.equal(state.authorityCopy.actualCoreEvidenceLink, true, `${planned.name} must link to Actual Core evidence`);
+  }
+}
+
 export async function captureFounderPreview() {
   const { data } = writeFounderPreviewArtifacts();
+  const implementationSource = {
+    commit: git("rev-parse", "HEAD"),
+    tree: git("rev-parse", "HEAD^{tree}"),
+  };
   const captureFilter = String(process.env.XENIOS_CAPTURE_ONLY ?? "").trim().toLowerCase();
   const planned = plannedCaptures(data).filter(
     (capture) => !captureFilter || capture.name.toLowerCase().includes(captureFilter),
@@ -279,19 +752,7 @@ export async function captureFounderPreview() {
       }
       const images = await prepareImages(page);
       await page.settle({ quietMs: 250, maxSettleMs: 5000 });
-      const state = await page.evaluate(`(() => ({
-        title: document.title,
-        ready: window.__XENIOS_PREVIEW_READY__,
-        viewport: { width: innerWidth, height: innerHeight },
-        scrollWidth: document.documentElement.scrollWidth,
-        clientWidth: document.documentElement.clientWidth,
-        bodyText: document.body.innerText,
-        reviewIds: Array.from(document.querySelectorAll("#qa-body tr")).map((row) => row.dataset.canonicalId),
-        catalogCount: document.querySelector("#catalog-count")?.textContent?.trim() ?? null,
-        catalogCanonicalIds: Array.from(document.querySelectorAll("#catalog-grid .product-card")).map((card) => card.dataset.canonicalId),
-        detailCanonicalId: document.querySelector("[data-detail-canonical-id]")?.dataset.detailCanonicalId ?? null,
-        detailAssetJob: document.querySelector("[data-detail-asset-job]")?.dataset.detailAssetJob ?? null,
-      }))()`);
+      const state = await inspectPreviewState(page);
       assert.equal(state.ready.customerTargets, 423);
       assert.ok(
         [
@@ -322,6 +783,7 @@ export async function captureFounderPreview() {
         state.scrollWidth <= state.clientWidth + 1,
         `${planned.name} horizontally overflows: ${state.scrollWidth} > ${state.clientWidth}`,
       );
+      assertFounderPreviewFidelity(state, planned);
       if (planned.gridEvidence) for (const id of state.reviewIds) gridIds.add(id);
       if (planned.interaction) {
         assert.equal(state.catalogCanonicalIds.length, planned.interaction.expectedCount);
@@ -347,9 +809,16 @@ export async function captureFounderPreview() {
       const severeConsole = consoleMessages.filter((entry) =>
         ["error", "assert"].includes(String(entry.type).toLowerCase()),
       );
+      const networkRecords = page.network.slice(networkStart);
+      const failedResponses = networkRecords.filter(
+        (entry) => (entry.failed && !entry.canceled) || entry.status >= 400,
+      );
       const boundaryViolations = page.networkBoundaryViolations.slice(boundaryStart);
       assert.deepEqual(severeConsole, [], `${planned.name} emitted browser errors`);
+      assert.deepEqual(failedResponses, [], `${planned.name} emitted failed local responses`);
       assert.deepEqual(boundaryViolations, [], `${planned.name} attempted external network access`);
+      assert.equal(screenshot.coverage.truncated, false, `${planned.name} screenshot must not truncate`);
+      assert.equal(screenshot.coverage.layoutStable, true, `${planned.name} layout must remain stable during capture`);
       records.push({
         name: planned.name,
         surface: planned.surface ?? null,
@@ -376,7 +845,21 @@ export async function captureFounderPreview() {
           imagesBroken: images.broken.length,
           horizontalOverflow: false,
           severeConsoleMessages: severeConsole.length,
+          failedResponses: failedResponses.length,
           networkBoundaryViolations: boundaryViolations.length,
+          screenshotTruncated: screenshot.coverage.truncated,
+          layoutStable: screenshot.coverage.layoutStable,
+          headerFidelity: true,
+          boundedSurfaceFidelity: true,
+        },
+        fidelity: {
+          header: state.header,
+          decisions: state.decisions,
+          cards: state.cards,
+          geometry: state.geometry,
+          detail: state.detail,
+          authorityCopy: state.authorityCopy,
+          accentRuleCount: state.accentRuleCount,
         },
         reviewCanonicalIds: planned.gridEvidence ? state.reviewIds : undefined,
         interaction: planned.interaction
@@ -389,7 +872,7 @@ export async function captureFounderPreview() {
           : undefined,
         detailCanonicalId: state.detailCanonicalId,
         detailAssetJob: state.detailAssetJob,
-        networkRequestCount: page.network.slice(networkStart).length,
+        networkRequestCount: networkRecords.length,
       });
       console.log(`captured ${planned.name} ${decoded.width}x${decoded.height}`);
       } finally {
@@ -401,8 +884,8 @@ export async function captureFounderPreview() {
       assert.deepEqual([...gridIds].sort(), data.rows.map((row) => row.canonicalId).sort());
     }
     const evidence = {
-      schemaVersion: 2,
-      kind: "private_founder_preview_core_ui_convergence_browser_evidence",
+      schemaVersion: 3,
+      kind: "private_founder_preview_final_ui_fidelity_browser_evidence",
       generatedAt: data.generatedAt,
       privatePrototype: true,
       productionQualified: false,
@@ -411,14 +894,21 @@ export async function captureFounderPreview() {
       captureFilter: captureFilter || null,
       sourceCoreCommit: data.sources.coreCatalog.commit,
       sourceCoreTree: data.sources.coreCatalog.tree,
+      implementationSource,
       coreUiReference: {
         commit: "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
         tree: "1771d18bad91b89e95414bebb8b574dc32729687",
         role: "dominant_public_ui_reference_only",
       },
-      uiReviewBaseline: {
-        commit: "ae5c410ab6e5c27df94c5bdc5b6533ab821b6d4c",
-        tree: "36dd5df64f5da1caf8a1212c89195caf870a907d",
+      reviewedSource: {
+        commit: REVIEWED_PREVIEW_SHA,
+        tree: REVIEWED_PREVIEW_TREE,
+        recordsCommit: REVIEWED_PREVIEW_RECORDS_SHA,
+      },
+      fidelityReview: {
+        commit: UI_FIDELITY_REVIEW_SHA,
+        tree: UI_FIDELITY_REVIEW_TREE,
+        verdict: "FAIL_NARROW",
       },
       imageryReviewTarget: data.sources.imageryReviewTarget.commit,
       browser: {
@@ -444,10 +934,32 @@ export async function captureFounderPreview() {
           (sum, record) => sum + record.assertions.severeConsoleMessages,
           0,
         ),
+        failedResponses: records.reduce(
+          (sum, record) => sum + record.assertions.failedResponses,
+          0,
+        ),
         networkBoundaryViolations: records.reduce(
           (sum, record) => sum + record.assertions.networkBoundaryViolations,
           0,
         ),
+        truncatedScreenshots: records.filter(
+          (record) => record.assertions.screenshotTruncated,
+        ).length,
+        unstableLayouts: records.filter(
+          (record) => !record.assertions.layoutStable,
+        ).length,
+        decisionCaptures: records.filter(
+          (record) => record.fidelity.decisions.sections.length === 5,
+        ).length,
+        cardComparisonCaptures: records.filter(
+          (record) => record.fidelity.cards.pairs.length === 6,
+        ).length,
+        geometryComparisonCaptures: records.filter(
+          (record) => record.fidelity.geometry.roles.length === 3,
+        ).length,
+        proposalAuthorityCaptures: records.filter(
+          (record) => record.fidelity.authorityCopy.proposalLabel,
+        ).length,
       },
       captures: records,
     };

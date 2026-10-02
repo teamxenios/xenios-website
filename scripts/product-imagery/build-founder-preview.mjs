@@ -19,15 +19,20 @@ export const IMAGERY_REVIEWER_TIP_SHA = "76607458e30a64746d227150ff1dbab3475dd64
 export const PROTOTYPE_REVIEW_SHA = "023e9ec8899ded7f66f52ef3c21a799501d98084";
 export const CORE_UI_REFERENCE_SHA = "c0e25c73a0d789829ea213e2ee040c68e06f0a75";
 export const CORE_UI_REFERENCE_TREE = "1771d18bad91b89e95414bebb8b574dc32729687";
-export const UI_FIDELITY_REVIEW_SHA = "ae5c410ab6e5c27df94c5bdc5b6533ab821b6d4c";
-export const UI_FIDELITY_REVIEW_TREE = "36dd5df64f5da1caf8a1212c89195caf870a907d";
+export const REVIEWED_PREVIEW_SHA = "797b064d9c07012b95133e588222b2b2293ff341";
+export const REVIEWED_PREVIEW_TREE = "e5108ca4e038e420b0effe680f7f815db05002a8";
+export const REVIEWED_PREVIEW_RECORDS_SHA = "8dcba8ff14ce553445bbb28ca430dabe667c73e0";
+export const UI_FIDELITY_REVIEW_SHA = "893e32c93031705ebbe94531a0d9a8110967fb16";
+export const UI_FIDELITY_REVIEW_TREE = "e5053ca2de75082e8161acbd1f2136e014c2a58c";
 export const MEDIA_COMMERCE_SHA = "b38db0ae2ee0c679ec2eeb31b324f6204669dfb7";
 export const SHIPPING_GROUP_ID = "GRP-0364";
+export const PACKAGING_UNVERIFIED_WITNESS_ID = "GRP-0073";
 export const HELD_GROUP_IDS = new Set(["GRP-0422"]);
 export const QUOTE_ONLY_GROUP_IDS = new Set(["GRP-0244", "GRP-0365"]);
 export const EXPECTED_CUSTOMER_ROWS = 423;
 export const EXPECTED_CANONICAL_ROWS = 424;
-export const PREVIEW_GENERATED_AT = "2026-10-01T16:12:00.000Z";
+export const PREVIEW_GENERATED_AT = "2026-10-02T15:39:03.536Z";
+export const FROZEN_RENDER_PLAN_GENERATED_AT = "2026-10-01T16:12:00.000Z";
 export const REJECTED_BATCH0_JOB_IDS = new Set([
   "batch0-06-oral_liquid_neutral",
   "batch0-09-odt_container",
@@ -126,6 +131,11 @@ function chooseAsset({
     selectedClass = "quote_only_neutral";
     mode = "provisional_calibration_state_render";
     calibrationId = "calibration-05-restrictive-state";
+  } else if (coverage.imageClass === "packaging_unverified") {
+    selectedClass = "neutral_product_identity";
+    mode = "provisional_calibration_reviewer_directed_neutral_render";
+    reviewerDirective = "replace_rejected_unverified_packaging";
+    calibrationId = "calibration-06-unverified-identity";
   } else if (pathway.key === "care") {
     selectedClass = "care_pathway_neutral";
     mode = "provisional_calibration_reviewer_directed_state_render";
@@ -144,11 +154,6 @@ function chooseAsset({
     selectedClass = "neutral_product_identity";
     mode = "provisional_calibration_reviewer_directed_neutral_render";
     reviewerDirective = "replace_rejected_acetic_acid_tincture";
-    calibrationId = "calibration-06-unverified-identity";
-  } else if (coverage.imageClass === "packaging_unverified") {
-    selectedClass = "neutral_product_identity";
-    mode = "provisional_calibration_reviewer_directed_neutral_render";
-    reviewerDirective = "replace_rejected_unverified_packaging";
     calibrationId = "calibration-06-unverified-identity";
   } else if (isLyophilizedGhkCu) {
     selectedClass = "neutral_product_identity";
@@ -328,6 +333,7 @@ export function buildFounderPreviewData() {
         family: core.product.family,
         category: core.product.category,
         subcategory: core.product.subcategory,
+        stateExplanation: core.product.stateExplanation,
         specification: core.variant.label,
         dosageForm: coverageRow.dosageForm,
         imageClass: coverageRow.imageClass,
@@ -349,6 +355,13 @@ export function buildFounderPreviewData() {
   assert.equal(rows.filter((row) => row.pathway.key === "care").length, 242);
   assert.equal(rows.filter((row) => row.pathway.key === "quote").length, 2);
   assert.equal(rows.filter((row) => row.pathway.key === "held").length, 1);
+  assert.deepEqual(
+    rows
+      .filter((row) => row.imageClass === "packaging_unverified")
+      .map((row) => row.canonicalId)
+      .sort(),
+    ["GRP-0066", "GRP-0068", "GRP-0073", "GRP-0079"],
+  );
   assert.equal(rows.filter((row) => row.bindingState.state === "unbound").length, 8);
   assert.equal(rows.filter((row) => row.finality === "provisional").length, 423);
   assert.equal(new Set(rows.map((row) => row.manifestKey)).size, 423);
@@ -452,6 +465,11 @@ export function buildFounderPreviewData() {
       held: rows.find((row) => row.pathway.key === "held")?.canonicalId,
       quote: rows.find((row) => row.pathway.key === "quote")?.canonicalId,
       pending: rows.find((row) => row.pathway.key === "pending")?.canonicalId,
+      packagingUnverified: rows.find(
+        (row) =>
+          row.canonicalId === PACKAGING_UNVERIFIED_WITNESS_ID &&
+          row.imageClass === "packaging_unverified",
+      )?.canonicalId,
     },
     comingSoon: [
       {
@@ -506,7 +524,7 @@ export function writeFounderPreviewArtifacts(data = buildFounderPreviewData()) {
   const batch1 = {
     schemaVersion: 1,
     kind: "batch_001_exact_identity_jobs_prepared_not_authorized",
-    generatedAt: data.generatedAt,
+    generatedAt: FROZEN_RENDER_PLAN_GENERATED_AT,
     runtimeAuthority: false,
     renderAuthorization: false,
     publicationAuthorization: false,
@@ -528,7 +546,7 @@ export function writeFounderPreviewArtifacts(data = buildFounderPreviewData()) {
   const calibrationPlan = {
     schemaVersion: 1,
     kind: "global_art_direction_calibration_state_rendered_private_review_pending",
-    generatedAt: data.generatedAt,
+    generatedAt: FROZEN_RENDER_PLAN_GENERATED_AT,
     sourceReviewCommit: PROTOTYPE_REVIEW_SHA,
     requiredBeforeBatch1: true,
     privateInternalRenderAuthorization: true,
@@ -558,7 +576,7 @@ export function writeFounderPreviewArtifacts(data = buildFounderPreviewData()) {
     `${JSON.stringify(calibrationPlan, null, 2)}\n`,
   );
   const buildRecord = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     kind: "founder_preview_core_ui_convergence_build_record",
     generatedAt: data.generatedAt,
     dataSha256: sha256(dataJson),
@@ -576,7 +594,11 @@ export function writeFounderPreviewArtifacts(data = buildFounderPreviewData()) {
     uiFidelityReview: {
       commit: UI_FIDELITY_REVIEW_SHA,
       tree: UI_FIDELITY_REVIEW_TREE,
-      verdictOnPriorPrototype: "FAIL",
+      reviewedSourceCommit: REVIEWED_PREVIEW_SHA,
+      reviewedSourceTree: REVIEWED_PREVIEW_TREE,
+      reviewedRecordsCommit: REVIEWED_PREVIEW_RECORDS_SHA,
+      verdictOnPriorPrototype: "FAIL_NARROW",
+      automaticSuccessorReviewRequested: false,
     },
     proposalState: {
       healthSpecificBrandingApproved: false,

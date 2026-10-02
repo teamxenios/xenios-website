@@ -1,7 +1,9 @@
 # Founder UI decision packet
 
-Purpose: let Samuel decide five production directions from a private prototype
-that now uses the actual Core UI language.
+Purpose: let Samuel evaluate five production directions from a private
+prototype that keeps source-verified Core behavior distinct from explicitly
+labelled Xenios Health proposals. Actual Core captures remain separate evidence;
+preview-authored copy is never presented as an Actual Core render.
 
 This packet does not approve a design, image, catalog, price, Product Control
 binding, runtime integration, publication, deployment, hosted write, managed
@@ -43,17 +45,20 @@ rows, including all 111 material mismatches.
 
 - Current Core: mark plus `Xenios`.
 - Proposed Health experience: mark plus `Xenios Health`.
+- Both samples use Core's visible `currentColor` mask treatment. The mark stays
+  visible while the name is visually hidden below 520px, matching Core.
 - Decision needed: retain the global Core name or approve a Health-specific
   display name and its scope.
 
 ### B. Primary action system
 
-- Current Core: dominant public Clarity uses black rectangular actions, but the
-  assisted-order island still uses green pills.
+- Current Core: dominant public Clarity uses black rectangular actions, while
+  the source-verified assisted-order action is `#183d2d`, 44px high, pill
+  radius, and Inter Tight 750.
 - Proposed: black rectangular primary actions with outlined or underlined
   secondary actions everywhere in the Health experience.
-- Decision needed: approve convergence and define whether any green-pill
-  exception remains.
+- Decision needed: keep the current mixed action systems, or approve a later
+  scoped convergence and define its exact exception policy.
 
 ### C. Purple-to-teal use
 
@@ -61,15 +66,19 @@ rows, including all 111 material mismatches.
   but no routed global gradient system is authoritative.
 - Proposed: a thin divider, focus/highlight, or small emphasis only. No giant
   gradient headline and no image recoloring.
-- Decision needed: approve the restrained accent and the surfaces where it may
-  appear.
+- Decision needed: keep the current flat-purple system, or approve the
+  restrained proposed accent and the surfaces where it may appear. The
+  purple-to-teal treatment appears only in the proposed C column.
 
 ### D. Public product imagery
 
-- Current Core: public Early Access and assisted-order product cards are
-  text-only. Optional media exists on gated member surfaces.
+- Current Core: the public `EarlyAccessProductCard` anatomy is text-only and
+  preserves its mono category, strength/specification, typography, spacing,
+  quantity, availability, and exact action behavior. Held, quote-only, and
+  binding-pending witnesses render no action or quantity control.
 - Proposed: public catalog and product detail may show an approved image, with a
-  truthful no-image fallback when approval is absent.
+  truthful no-image fallback when approval is absent. In each comparison, only
+  the proposed media slot changes; all Core card content remains identical.
 - Decision needed: lift or scope the current public no-photography policy.
 
 Evidence:
@@ -77,16 +86,25 @@ Evidence:
 - `docs/product-imagery/evidence/ui-convergence/corrected-preview/product-card-comparison-desktop-1440.png`
 - `docs/product-imagery/evidence/ui-convergence/corrected-preview/product-card-comparison-mobile-390.png`
 
-The comparison includes Research, Care, held, quote-only, and
-packaging-unverified states.
+The comparison includes Research, Care, held, quote-only, binding-pending, and
+packaging-unverified states. Packaging-unverified uses authoritative witness
+`GRP-0073` and the reviewer-directed neutral calibration-06 asset; `GRP-0424`
+remains correctly classified as binding-pending. No package form or third-party
+packaging is fabricated.
 
 ### E. Canonical media shape
 
-- Current Core member media: optional 4:3 slot with `object-fit: contain`.
+- Current public Core catalog: no product-image slot.
+- Signed-in member catalog/detail: source supports an optional 4:3 slot with
+  `object-fit: contain`. This panel is explicitly labelled
+  `SOURCE-VERIFIED COMPONENT BEHAVIOR` and `NOT LIVE/OBSERVED RENDER` because
+  the current harness does not prove that optional-media state through a live
+  member render.
 - Proposed future Product Control media: canonical square 1:1 slot with
   `object-fit: contain`, identical source pixels on card and detail, and no
   filter, vignette, tint, or hidden crop.
-- Decision needed: retain 4:3, adopt 1:1, or define a separate approved mapping.
+- Decision needed: retain the current surface-specific policy, adopt the
+  proposed 1:1 contract, or define a separate approved mapping.
 
 Evidence:
 
@@ -100,7 +118,8 @@ work rather than new design choices. They still require exact task/path
 ownership, Core integration acceptance, tests, and the normal production gate.
 
 - Apply the chosen brand string only in the approved shell and route scope.
-- Replace remaining legacy CTA instances with the approved button primitives.
+- If convergence is chosen, update only the approved CTA scope with the selected
+  button primitives.
 - Add the approved accent token and enforce its limited usage in component tests.
 - Define a single Product Control media DTO and approved/no-image state.
 - Use one canonical media reference on card and detail.
