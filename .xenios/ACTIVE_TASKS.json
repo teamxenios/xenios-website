@@ -2877,7 +2877,7 @@
       "id": "XENIOS-PRODUCT-IMAGERY-20260930",
       "title": "Build the canonical product imagery contract, coverage ledger, render queue, and truthful fallback assets",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-product-imagery-20260930",
       "baseSha": "49234f8a2dd804845245a18056a73904b320158a",
       "paths": [
@@ -2896,9 +2896,9 @@
       "claimedAt": "2026-10-01T23:14:00.284Z",
       "handoff": {
         "session": "codex-xenios-product-imagery-20260930",
-        "sha": "aa4f31f9b650e68a7c7c2c749f00417d20607665",
-        "file": ".xenios/handoffs/2026-10-01T18-08-55-965Z-XENIOS-PRODUCT-IMAGERY-20260930-codex-xenios-product-imagery-20260930.md",
-        "at": "2026-10-01T18:08:55.974Z"
+        "sha": "516328cfbe8f76c23f115744161be7ec150e6334",
+        "file": ".xenios/handoffs/2026-10-02T02-01-05-653Z-XENIOS-PRODUCT-IMAGERY-20260930-codex-xenios-product-imagery-20260930.md",
+        "at": "2026-10-02T02:01:05.669Z"
       }
     }
   ]
