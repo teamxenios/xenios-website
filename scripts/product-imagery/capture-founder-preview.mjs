@@ -470,7 +470,7 @@ async function inspectPreviewState(page) {
       clientWidth: document.documentElement.clientWidth,
       bodyText: rawBodyText,
       reviewIds: Array.from(document.querySelectorAll("#qa-body tr")).map((row) => row.dataset.canonicalId),
-      catalogCount: text(document.querySelector("#catalog-count")) || null,
+      catalogCount: document.querySelector("#catalog-count")?.textContent?.trim() ?? null,
       catalogCanonicalIds: Array.from(document.querySelectorAll("#catalog-grid .product-card")).map((card) => card.dataset.canonicalId),
       detailCanonicalId: document.querySelector("[data-detail-canonical-id]")?.dataset.detailCanonicalId ?? null,
       detailAssetJob: document.querySelector("[data-detail-asset-job]")?.dataset.detailAssetJob ?? null,
