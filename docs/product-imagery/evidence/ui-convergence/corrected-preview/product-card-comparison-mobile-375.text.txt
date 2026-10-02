@@ -7,6 +7,7 @@ DECISION COMPARISONS
 CURRENT CORE EVIDENCE
 423-SLOT QA
 Xenios
+Sign In
 Start Care
 Menu
 PRIVATE PREVIEW
@@ -19,195 +20,292 @@ Care
 Account / status
 Founder decisions
 
-FOUNDER DECISION D · PUBLIC IMAGERY
+FOUNDER DECISION D · UNAPPROVED
 
-No-image policy versus image-enabled policy.
+Actual text-only anatomy versus image-enabled proposal.
 
-Each pair holds product identity, state, copy, and action constant. Only the proposed media policy changes.
+Each pair holds canonical identity, synthetic Core component state, copy, quantity treatment, and action constant. Only the proposed media slot changes. No amount or live commerce behavior is asserted.
 
 RESEARCH
 
 5-Amino-1Mq · 5-AMINO-1MQ 10 mg
 
-Current Core remains authoritative on pathways. The right side tests one square private asset without implying production approval.
+The left side mirrors current Core EarlyAccessProductCard anatomy without media. The right side adds one neutral 1:1 contain slot and changes nothing else. Both are static UI evidence.
 
-CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY
-RESEARCH PEPTIDES MATERIALS
-RESEARCH ACCESS
+CURRENT CORE
+TEXT-ONLY EARLY ACCESS CARD ANATOMY
+
+RESEARCH PEPTIDES & MATERIALS
+
 5-Amino-1Mq
 
 5-AMINO-1MQ 10 MG
 
-Runtime Product Control remains the only price and purchase authority.
+Research use only. Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-CATEGORY
-Research Peptides & Materials
-PRICE STATE
-Price omitted from static preview
-View product
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
+PROPOSED XENIOS HEALTH
+UNAPPROVED · SAME CORE CARD PLUS MEDIA
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-RESEARCH PEPTIDES MATERIALS
-RESEARCH ACCESS
+
+RESEARCH PEPTIDES & MATERIALS
+
 5-Amino-1Mq
 
 5-AMINO-1MQ 10 MG
 
-Runtime Product Control remains the only price and purchase authority.
+Research use only. Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-CATEGORY
-Research Peptides & Materials
-PRICE STATE
-Price omitted from static preview
-View product
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
 
 CARE
 
 5-Amino-1Mq · 5-AMINO-1MQ 5MG/ML (5ML)
 
-Current Core remains authoritative on pathways. The right side tests one square private asset without implying production approval.
+The left side mirrors current Core EarlyAccessProductCard anatomy without media. The right side adds one neutral 1:1 contain slot and changes nothing else. Both are static UI evidence.
 
-CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+CURRENT CORE
+TEXT-ONLY EARLY ACCESS CARD ANATOMY
+
+503A CLINICAL FORMULATIONS
+
 5-Amino-1Mq
 
 5-AMINO-1MQ 5MG/ML (5ML)
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
+PROPOSED XENIOS HEALTH
+UNAPPROVED · SAME CORE CARD PLUS MEDIA
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 5-Amino-1Mq
 
 5-AMINO-1MQ 5MG/ML (5ML)
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 
 HELD
 
 CJC-1295 + Ipamorelin · CJC-1295 WITH DAC + IPAMORELIN 5 mg total
 
-Current Core remains authoritative on pathways. The right side tests one square private asset without implying production approval.
+The left side mirrors current Core EarlyAccessProductCard anatomy without media. The right side adds one neutral 1:1 contain slot and changes nothing else. Both are static UI evidence.
 
-CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY
-RESEARCH PEPTIDES MATERIALS
-FORMULATION HELD
+CURRENT CORE
+TEXT-ONLY EARLY ACCESS CARD ANATOMY
+
+RESEARCH PEPTIDES & MATERIALS
+
 CJC-1295 + Ipamorelin
 
 CJC-1295 WITH DAC + IPAMORELIN 5 MG TOTAL
 
-This identity remains visible for review but is not transaction-ready.
+Research use only. Request access and the team confirms availability for this exact item.
 
-CATEGORY
-Research Peptides & Materials
-PRICE STATE
-Pricing not released
-View hold details
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Not available to order
+
+Temporarily unavailable
+
+PROPOSED XENIOS HEALTH
+UNAPPROVED · SAME CORE CARD PLUS MEDIA
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-RESEARCH PEPTIDES MATERIALS
-FORMULATION HELD
+
+RESEARCH PEPTIDES & MATERIALS
+
 CJC-1295 + Ipamorelin
 
 CJC-1295 WITH DAC + IPAMORELIN 5 MG TOTAL
 
-This identity remains visible for review but is not transaction-ready.
+Research use only. Request access and the team confirms availability for this exact item.
 
-CATEGORY
-Research Peptides & Materials
-PRICE STATE
-Pricing not released
-View hold details
+Not available to order
+
+Temporarily unavailable
 
 QUOTE ONLY
 
 BAM15 · BAM15 500 mcg
 
-Current Core remains authoritative on pathways. The right side tests one square private asset without implying production approval.
+The left side mirrors current Core EarlyAccessProductCard anatomy without media. The right side adds one neutral 1:1 contain slot and changes nothing else. Both are static UI evidence.
 
-CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY
+CURRENT CORE
+TEXT-ONLY EARLY ACCESS CARD ANATOMY
+
 RESEARCH CAPSULES
-QUOTE ONLY
+
 BAM15
 
 BAM15 500 MCG
 
-A reviewed quote is required before any order pathway is available.
+Research use only. Request access and the team confirms availability for this exact item.
 
-CATEGORY
-Research Capsules
-PRICE STATE
-Price on request
-Request a quote
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Not available to order
+
+Temporarily unavailable
+
+PROPOSED XENIOS HEALTH
+UNAPPROVED · SAME CORE CARD PLUS MEDIA
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+
 RESEARCH CAPSULES
-QUOTE ONLY
+
 BAM15
 
 BAM15 500 MCG
 
-A reviewed quote is required before any order pathway is available.
+Research use only. Request access and the team confirms availability for this exact item.
 
-CATEGORY
-Research Capsules
-PRICE STATE
-Price on request
-Request a quote
+Not available to order
 
-PACKAGING UNVERIFIED
+Temporarily unavailable
+
+BINDING PENDING
 
 Glutathione · GLUTATHIONE 600 mg
 
-Current Core remains authoritative on pathways. The right side tests one square private asset without implying production approval.
+The left side mirrors current Core EarlyAccessProductCard anatomy without media. The right side adds one neutral 1:1 contain slot and changes nothing else. Both are static UI evidence.
 
-CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY
-RESEARCH PEPTIDES MATERIALS
-BINDING PENDING
+CURRENT CORE
+TEXT-ONLY EARLY ACCESS CARD ANATOMY
+
+RESEARCH PEPTIDES & MATERIALS
+
 Glutathione
 
 GLUTATHIONE 600 MG
 
-The canonical identity is retained without borrowing a price or Product Control binding.
+Research use only. Request access and the team confirms availability for this exact item.
 
-CATEGORY
-Research Peptides & Materials
-PRICE STATE
-Pricing not released
-Request availability review
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
-Approved image unavailable
+Not available to order
 
-The product remains identifiable by text. No substitute image is borrowed.
+Temporarily unavailable
 
-SAFE FALLBACK · NO BORROWED ASSET
-RESEARCH PEPTIDES MATERIALS
-BINDING PENDING
+PROPOSED XENIOS HEALTH
+UNAPPROVED · SAME CORE CARD PLUS MEDIA
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+
+RESEARCH PEPTIDES & MATERIALS
+
 Glutathione
 
 GLUTATHIONE 600 MG
 
-The canonical identity is retained without borrowing a price or Product Control binding.
+Research use only. Request access and the team confirms availability for this exact item.
 
-CATEGORY
-Research Peptides & Materials
-PRICE STATE
-Pricing not released
-Request availability review
+Not available to order
+
+Temporarily unavailable
+
+PACKAGING UNVERIFIED
+
+HCG Pregnyl 10,000Iu · HCG PREGNYL 10,000IU
+
+The left side mirrors current Core EarlyAccessProductCard anatomy without media. The right side adds one neutral 1:1 contain slot and changes nothing else. Both are static UI evidence.
+
+CURRENT CORE
+TEXT-ONLY EARLY ACCESS CARD ANATOMY
+
+503A CLINICAL FORMULATIONS
+
+HCG Pregnyl 10,000Iu
+
+HCG PREGNYL 10,000IU
+
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
+
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
+PROPOSED XENIOS HEALTH
+UNAPPROVED · SAME CORE CARD PLUS MEDIA
+PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+
+503A CLINICAL FORMULATIONS
+
+HCG Pregnyl 10,000Iu
+
+HCG PREGNYL 10,000IU
+
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
+
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 Xenios
 
 Private UI-convergence evidence. Synthetic data only. Nothing here is a live offer.

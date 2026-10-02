@@ -42,11 +42,11 @@ PATHWAY
 Research access
 IMAGE STATUS
 Private, provisional, not publication-approved
-View product
+Available to order
 
-Runtime Product Control remains the only price and purchase authority. This static preview cannot submit, reserve, prescribe, quote, or order.
+Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use. This static preview cannot submit, reserve, prescribe, quote, or order.
 
-Prototype action only
+Select
 Catalog visibility does not establish availability, suitability, or purchase eligibility.
 Card and detail use the exact same source asset SHA-256: 77069db7b8324baf4780b37c585926a92b432e2fef24cbcdf019d38782cd7d8b
 No package, manufacturer, certification, clinical benefit, or partner relationship is asserted.

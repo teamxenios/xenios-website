@@ -7,6 +7,7 @@ DECISION COMPARISONS
 CURRENT CORE EVIDENCE
 423-SLOT QA
 Xenios
+Sign In
 Start Care
 Menu
 PRIVATE PREVIEW
@@ -19,21 +20,22 @@ Care
 Account / status
 Founder decisions
 
-PRIVATE CORE-CONVERGED PROTOTYPE
+PROPOSED XENIOS HEALTH · PRIVATE PREVIEW
 
 Clear pathways for research and care.
 
-This corrected preview uses the dominant current Xenios public shell, typography, spacing, buttons, cards, and breakpoints. Product media remains an explicitly proposed future policy.
+This page is preview-authored proposal copy presented inside the current Core shell. It is not an Actual Core homepage, and product media remains an unapproved future policy.
 
 Explore products
 Compare founder decisions
 
-WHAT CHANGED
+PROPOSAL BOUNDARY
 
-Core UI first. Imagery proposal second.
+Preview-authored, not Actual Core.
 
-No black gradient hero, orb artwork, pill-button language, hidden crop, vignette, saturation, tint, or invented public product route.
+The purple-to-teal option is absent here and appears only in founder decision C. No hidden crop, vignette, saturation, tint, or invented public product route is implied.
 
+View Actual Core evidence
 426
 reviewed source rows
 424
@@ -43,101 +45,193 @@ private visual slots
 0
 public image approvals
 
-PROPOSED PLACEMENT
+PROPOSED XENIOS HEALTH PLACEMENT
 
-Featured products in the real UI language.
+Featured products in a private decision study.
 
-The product card anatomy follows current Core controls and spacing. The square media slot is intentionally labeled as a proposal, not production truth.
+The non-image card anatomy mirrors the current Core component. The square media slot and all surrounding page copy remain proposals, not production truth.
 
 Compare no-image policy
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+
 RESEARCH CAPSULES
-RESEARCH ACCESS
+
 Blend BPC-157 + TB-500
 
 BLEND BPC-157 + TB-500 500/500 MCG
 
-Runtime Product Control remains the only price and purchase authority.
+Research use only. Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-View product
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 Aod-9604 + MOTS-C + Tesamorelin + Ipamorelin
 
 AOD-9604/MOTS-C/TESAMORELIN/IPAMORELIN 1.2MG-2MG-2MG-2MG/ML (5ML)
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-Review Care pathway
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+
 SUPPLEMENTS
-RESEARCH ACCESS
+
 Longevity Essentials NAD+
 
 RETAIL UNIT / PACKAGE
 
-Runtime Product Control remains the only price and purchase authority.
+Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-View product
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-RESEARCH PEPTIDES MATERIALS
-RESEARCH ACCESS
+
+RESEARCH PEPTIDES & MATERIALS
+
 Oxytocin
 
 OXYTOCIN 2 MG
 
-Runtime Product Control remains the only price and purchase authority.
+Research use only. Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-View product
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-RESEARCH PEPTIDES MATERIALS
-RESEARCH ACCESS
+
+RESEARCH PEPTIDES & MATERIALS
+
 Hexarelin
 
 HEXARELIN 10 MG
 
-Runtime Product Control remains the only price and purchase authority.
+Research use only. Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-View product
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-RESEARCH PEPTIDES MATERIALS
-RESEARCH ACCESS
+
+RESEARCH PEPTIDES & MATERIALS
+
 CJC-1295 (No DAC) + Ipamorelin
 
 CJC-1295 (NO DAC) 10 MG + IPAMORELIN 10 MG
 
-Runtime Product Control remains the only price and purchase authority.
+Research use only. Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-View product
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-RESEARCH PEPTIDES MATERIALS
-RESEARCH ACCESS
+
+RESEARCH PEPTIDES & MATERIALS
+
 CJC-1295 (No DAC) + Ipamorelin
 
 CJC-1295 (NO DAC) 5 MG + IPAMORELIN 5 MG
 
-Runtime Product Control remains the only price and purchase authority.
+Research use only. Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-View product
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 BPC-157 + TB-500 + KPV + GHK-Cu 3-3-3-10Mg + Ml (5Ml)
 
 BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML)
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-Review Care pathway
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 
 ONE CATALOG, GOVERNED PATHWAYS
 

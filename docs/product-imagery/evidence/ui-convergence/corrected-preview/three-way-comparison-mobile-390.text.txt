@@ -7,6 +7,7 @@ DECISION COMPARISONS
 CURRENT CORE EVIDENCE
 423-SLOT QA
 Xenios
+Sign In
 Start Care
 Menu
 PRIVATE PREVIEW
@@ -32,7 +33,7 @@ THREE-WAY EVIDENCE
 
 Global home shell
 
-The corrected candidate mirrors the dominant public Core shell. Any Health-specific brand change remains decision A.
+The Actual Core column is a captured public render. The proposed column is preview-authored Xenios Health copy inside the current shell; any brand change remains unapproved decision A.
 
 A · ACTUAL CORE
 Actual Core home
@@ -45,20 +46,20 @@ Old founder preview
 8b06da56 custom parallel shell
 
 C · PROPOSED XENIOS HEALTH
-Corrected private candidate
+Proposed Xenios Health home
 
-Core-converged proposal; not accepted
+Preview-authored proposal; unapproved
 
 THREE-WAY EVIDENCE
 
-Member catalog and cards
+Catalog and cards
 
-Actual member catalog presentation is kept distinct from the proposal to add public imagery.
+The exact-source synthetic Full Catalog component has no media slot. Optional 4:3 member media is source-verified separately and is not claimed by this screenshot.
 
 A · ACTUAL CORE
-Actual Core synthetic catalog
+Actual Core synthetic Full Catalog
 
-Exact Core component; UI presentation only
+Exact MasterOffering component; no media; UI presentation only
 
 B · CURRENT / OLD PREVIEW
 Old image-led products
@@ -66,20 +67,20 @@ Old image-led products
 8b06da56 drift baseline
 
 C · PROPOSED XENIOS HEALTH
-Proposed Core-style products
+Proposed image-enabled products
 
-Private image-policy proposal
+Preview-authored private image-policy proposal
 
 THREE-WAY EVIDENCE
 
-Member product detail
+Product detail and media geometry
 
-The same frozen pixels are shown with contain; public product detail remains unavailable in Core.
+The exact-source synthetic Full Catalog detail has no media. Decision E separately labels member 4:3 behavior as source-verified, not live or observed.
 
 A · ACTUAL CORE
-Actual Core synthetic detail
+Actual Core synthetic Full Catalog detail
 
-Exact Core component; UI presentation only
+Exact MasterOffering component; no media; UI presentation only
 
 B · CURRENT / OLD PREVIEW
 Old preview detail
@@ -89,7 +90,7 @@ Old preview detail
 C · PROPOSED XENIOS HEALTH
 Proposed geometry comparison
 
-Current 4:3 versus proposed 1:1
+Public no-media, source-verified member 4:3, proposed 1:1
 
 THREE-WAY EVIDENCE
 
@@ -108,9 +109,9 @@ Old combined account/status
 8b06da56 hand-built approximation
 
 C · PROPOSED XENIOS HEALTH
-Corrected account/status study
+Proposed account/status study
 
-Private proposal; no session
+Preview-authored proposal; no session
 
 THREE-WAY EVIDENCE
 
@@ -129,15 +130,15 @@ Old combined history panel
 No authenticated or live commerce proof
 
 C · PROPOSED XENIOS HEALTH
-Corrected governed-state panel
+Proposed governed-state panel
 
-No payment, order, or fulfillment authority
+Preview-authored; no payment, order, or fulfillment authority
 
 THREE-WAY EVIDENCE
 
 Care pathway
 
-The proposed surface converges on Core hierarchy while keeping all clinical, state, and pharmacy authority outside imagery.
+The Actual Core column is a captured public render. The proposed Care page is explicitly preview-authored and keeps clinical, state, and pharmacy authority outside imagery.
 
 A · ACTUAL CORE
 Actual Core Care
@@ -150,9 +151,9 @@ Old preview Care
 8b06da56 dark pathway drift
 
 C · PROPOSED XENIOS HEALTH
-Corrected Care candidate
+Proposed Xenios Health Care
 
-Core-converged private proposal
+Preview-authored private proposal; unapproved
 
 No approval is implied
 

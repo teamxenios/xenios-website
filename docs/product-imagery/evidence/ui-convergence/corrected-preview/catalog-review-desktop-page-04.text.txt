@@ -6,11 +6,15 @@ INTERNAL QA ONLY
 DECISION COMPARISONS
 PRODUCT PREVIEW
 Xenios
-Preview home
-Card policy
-Media geometry
-Full QA grid
-NO RUNTIME WIRING
+For Individuals
+For Practices
+Partners
+How It Works
+Quality
+About
+Careers
+Sign In
+Start Care
 
 FULL CATALOG QA
 
@@ -41,8 +45,8 @@ VISUAL	CANONICAL ID	PRODUCT	PRIVATE SOURCE	IMAGE CLASS	PATHWAY / STATUS	FINALITY
 
 	GRP-0073	HCG Pregnyl 10,000Iu
 HCG PREGNYL 10,000IU
-	calibration-04-care-state
-76c10c66c93f	packaging_unverified	CARE PATHWAY
+	calibration-06-unverified-identity
+77069db7b832	packaging_unverified	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -195,8 +199,8 @@ Exact render missing	Retained Binding
 
 	GRP-0079	Kyzatrex (Oral Testosterone)
 KYZATREX (ORAL TESTOSTERONE) 200MG
-	calibration-04-care-state
-76c10c66c93f	packaging_unverified	CARE PATHWAY
+	calibration-06-unverified-identity
+77069db7b832	packaging_unverified	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 

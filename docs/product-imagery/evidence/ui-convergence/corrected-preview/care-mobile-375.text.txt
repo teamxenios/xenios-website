@@ -7,6 +7,7 @@ DECISION COMPARISONS
 CURRENT CORE EVIDENCE
 423-SLOT QA
 Xenios
+Sign In
 Start Care
 Menu
 PRIVATE PREVIEW
@@ -19,123 +20,177 @@ Care
 Account / status
 Founder decisions
 
-CARE · SOURCE-FAITHFUL SHELL
+PROPOSED XENIOS HEALTH · PREVIEW-AUTHORED CARE PAGE
 
 Care begins with licensed review.
 
-Clinical formulations remain distinct from Research. Eligibility, state availability, pharmacy requirements, clinical review, and price stay outside imagery authority.
+This is proposal copy, not an Actual Core Care render. Actual Core evidence appears in the three-way comparison. Eligibility, state availability, pharmacy requirements, clinical review, and price stay outside imagery authority.
 
-Start Care
-Review proposals
+Preview proposed journey
+View Actual Core evidence
 01
 Choose a topic
 
-Start with a need or category, never a treatment promise.
+Proposed copy: start with a need or category, never a treatment promise.
 
 02
 Complete review
 
-Required intake and licensed review remain explicit.
+Proposed copy: required intake and licensed review remain explicit.
 
 03
 See governed status
 
-Account and status surfaces show only recorded progress.
+Proposed copy: account and status surfaces show only recorded progress.
 
 PROPOSED CARE CARD PLACEMENT
 
 Private media test, not a Care offer.
 Compare text-only
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 5-Amino-1Mq
 
 5-AMINO-1MQ 5MG/ML (5ML)
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 Anastrozole
 
 ANASTROZOLE 0.25MG CAPSULE
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 Anastrozole
 
 ANASTROZOLE 0.5MG CAPSULE
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 Anastrozole
 
 ANASTROZOLE 1MG CAPSULE
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 Anastrozole Tablet
 
 ANASTROZOLE TABLET 1MG
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 Aod-9604
 
 AOD-9604 1.2MG/ML (6MG/5ML)
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 Care boundary
 
 This prototype gives no diagnosis, prescription, dosing, emergency, or medical advice. If this is an emergency, call 911 or seek immediate local emergency care.

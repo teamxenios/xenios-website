@@ -6,11 +6,15 @@ INTERNAL QA ONLY
 DECISION COMPARISONS
 PRODUCT PREVIEW
 Xenios
-Preview home
-Card policy
-Media geometry
-Full QA grid
-NO RUNTIME WIRING
+For Individuals
+For Practices
+Partners
+How It Works
+Quality
+About
+Careers
+Sign In
+Start Care
 
 FULL CATALOG QA
 

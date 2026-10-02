@@ -7,6 +7,10 @@ DECISION COMPARISONS
 CURRENT CORE EVIDENCE
 423-SLOT QA
 Xenios
+For Individuals
+For Practices
+Partners
+How It Works
 Sign In
 Start Care
 Menu
@@ -47,186 +51,284 @@ Binding pending
 
 Proposal, not approval: every card below uses a 1:1 contain slot with unchanged source pixels. Current Core public cards remain no-image until Samuel decides otherwise.
 
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 5-Amino-1Mq
 
 5-AMINO-1MQ 5MG/ML (5ML)
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-RESEARCH PEPTIDES MATERIALS
-RESEARCH ACCESS
+
+RESEARCH PEPTIDES & MATERIALS
+
 5-Amino-1Mq
 
 5-AMINO-1MQ 10 MG
 
-Runtime Product Control remains the only price and purchase authority.
+Research use only. Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-CATEGORY
-Research Peptides & Materials
-PRICE STATE
-Price omitted from static preview
-View product
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+
 RESEARCH CAPSULES
-RESEARCH ACCESS
+
 5-Amino-1MQ
 
 5-AMINO-1MQ 50 MG
 
-Runtime Product Control remains the only price and purchase authority.
+Research use only. Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-CATEGORY
-Research Capsules
-PRICE STATE
-Price omitted from static preview
-View product
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+
 RESEARCH SUPPLIES
-RESEARCH ACCESS
+
 Acetic Acid 0.6%
 
 ACETIC ACID 0.6% 5 ML
 
-Runtime Product Control remains the only price and purchase authority.
+Research use only. Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-CATEGORY
-Research Supplies
-PRICE STATE
-Price omitted from static preview
-View product
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 Anastrozole
 
 ANASTROZOLE 0.25MG CAPSULE
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 Anastrozole
 
 ANASTROZOLE 0.5MG CAPSULE
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 Anastrozole
 
 ANASTROZOLE 1MG CAPSULE
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 Anastrozole Tablet
 
 ANASTROZOLE TABLET 1MG
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
+
 SUPPLEMENTS
-RESEARCH ACCESS
+
 Annatto Pro 125
 
 RETAIL UNIT / PACKAGE
 
-Runtime Product Control remains the only price and purchase authority.
+Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-CATEGORY
-Supplements
-PRICE STATE
-Price omitted from static preview
-View product
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 Aod-9604
 
 AOD-9604 1.2MG/ML (6MG/5ML)
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-CLINICAL FORMULATIONS 503A
-CARE PATHWAY
+
+503A CLINICAL FORMULATIONS
+
 Aod-9604
 
 AOD-9604 300MCG TROCHE
 
-Provider review and applicable state and pharmacy requirements govern this pathway.
+Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
 
-CATEGORY
-503A Clinical Formulations
-PRICE STATE
-Care pricing withheld
-Review Care pathway
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Availability confirmed by our team before payment
+
+Our team confirms availability with the supplier before any payment instructions are shown.
+
+Request availability
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-RESEARCH PEPTIDES MATERIALS
-RESEARCH ACCESS
+
+RESEARCH PEPTIDES & MATERIALS
+
 Aod-9604
 
 AOD-9604 10 MG
 
-Runtime Product Control remains the only price and purchase authority.
+Research use only. Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-CATEGORY
-Research Peptides & Materials
-PRICE STATE
-Price omitted from static preview
-View product
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
 Xenios
 
 Private UI-convergence evidence. Synthetic data only. Nothing here is a live offer.

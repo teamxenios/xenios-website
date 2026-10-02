@@ -6,11 +6,15 @@ INTERNAL QA ONLY
 DECISION COMPARISONS
 PRODUCT PREVIEW
 Xenios
-Preview home
-Card policy
-Media geometry
-Full QA grid
-NO RUNTIME WIRING
+For Individuals
+For Practices
+Partners
+How It Works
+Quality
+About
+Careers
+Sign In
+Start Care
 
 FULL CATALOG QA
 
@@ -209,8 +213,8 @@ Exact render missing	Retained Binding
 
 	GRP-0066	GHK-Cu + Snap 8 Serum, Gel (GHK-Cu
 GHK-CU + SNAP 8 SERUM, GEL (GHK-CU 3% / SNAP-8 1% / NIACINAMIDE 3%) 30ML
-	calibration-04-care-state
-76c10c66c93f	packaging_unverified	CARE PATHWAY
+	calibration-06-unverified-identity
+77069db7b832	packaging_unverified	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 
@@ -223,8 +227,8 @@ Exact render missing	Retained Binding
 
 	GRP-0068	GHK-Cu Firming Serum, Gel (GHK-Cu
 GHK-CU FIRMING SERUM, GEL (GHK-CU 3% / NIACINAMIDE 3%) 30ML
-	calibration-04-care-state
-76c10c66c93f	packaging_unverified	CARE PATHWAY
+	calibration-06-unverified-identity
+77069db7b832	packaging_unverified	CARE PATHWAY
 Care pricing withheld	Provisional
 Exact render missing	Retained Binding
 

@@ -7,6 +7,10 @@ DECISION COMPARISONS
 CURRENT CORE EVIDENCE
 423-SLOT QA
 Xenios
+For Individuals
+For Practices
+Partners
+How It Works
 Sign In
 Start Care
 Menu
@@ -20,118 +24,165 @@ Care
 Account / status
 Founder decisions
 
-FIVE DECISIONS, NO SILENT ADOPTION
+FIVE UNAPPROVED FOUNDER DECISIONS
 
-See the choices in the real Xenios UI.
+Current evidence versus explicit proposals.
 
-The left column records current Core. The right column is a private proposal. Nothing on this page changes production policy.
+A, B, C, D, and E all remain approved: false. The left column is source-verified current behavior at Core c0e25c73. The right column is a private proposal. Nothing on this page records a founder selection or changes production policy.
 
-FOUNDER DECISION
+FOUNDER DECISION · UNAPPROVED
 
 A. Header brand
 
-Choose whether the Health experience keeps the generic public name or adopts a Health-specific label.
+Keep the current Xenios display name, or choose whether a Health-specific name should be proposed for a later scoped implementation.
 
 CURRENT CORE
-OBSERVED
+SOURCE-VERIFIED
 Xenios
 
-Current brand authority: Xenios.
+Current brand authority: Xenios. Below 520px the current responsive header visually hides the name while retaining the visible mark.
 
 PROPOSED XENIOS HEALTH
-DECISION REQUIRED
+UNAPPROVED · DECISION REQUIRED
 Xenios Health
 
-Proposed Health-experience wordmark.
+Proposed Health-experience display name. No new logo is introduced.
 
-FOUNDER DECISION
+FOUNDER DECISION · UNAPPROVED
 
 B. Primary action language
 
-Choose whether later Core work should remove the remaining green-pill island.
+Keep Core's mixed action systems, or choose whether a later owned Core change should converge them.
 
 CURRENT CORE
-OBSERVED
-Start Care
-Legacy green pill
+SOURCE-VERIFIED
+Request availability
 
-Core is internally mixed. The dominant public shell already uses black rectangular primary actions.
+CURRENT CORE assisted-order action: #183d2d, 44px minimum height, pill radius, Inter Tight 750.
 
 PROPOSED XENIOS HEALTH
-DECISION REQUIRED
+UNAPPROVED · DECISION REQUIRED
 Primary action
 Secondary action
 
-Proposed consistent rectangular system.
+PROPOSED consistent black rectangular system.
 
-FOUNDER DECISION
+FOUNDER DECISION · UNAPPROVED
 
 C. Purple-to-teal accent
 
-Choose whether a restrained purple-to-teal accent becomes part of the Health UI.
+Keep the current flat purple emphasis, or choose whether a restrained purple-to-teal accent should be proposed for a later scoped implementation.
 
 CURRENT CORE
-OBSERVED
+SOURCE-VERIFIED
 CURRENT ACTIVE TOKEN
 Flat purple emphasis
 
 Teal exists as a token but is not an approved global gradient system.
 
 PROPOSED XENIOS HEALTH
-DECISION REQUIRED
+UNAPPROVED · DECISION REQUIRED
 Restrained divider and focus emphasis
 
 No giant gradient headline and no image recoloring.
 
-FOUNDER DECISION
+FOUNDER DECISION · UNAPPROVED
 
 D. Public product imagery
 
-Choose between current text-only public cards and an intentional image-enabled catalog with a safe fallback.
+Keep the current text-only card, or choose whether a later owned Core change should add approved imagery with a truthful no-image state.
 
 CURRENT CORE
-OBSERVED
-CURRENT CORE · TEXT-ONLY PUBLIC / EARLY ACCESS POLICY
-RESEARCH PEPTIDES MATERIALS
-RESEARCH ACCESS
+SOURCE-VERIFIED
+
+RESEARCH PEPTIDES & MATERIALS
+
 5-Amino-1Mq
 
 5-AMINO-1MQ 10 MG
 
-Runtime Product Control remains the only price and purchase authority.
+Research use only. Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-View product
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
 PROPOSED XENIOS HEALTH
-DECISION REQUIRED
-PROPOSED XENIOS HEALTH · PRIVATE DECISION STUDY
+UNAPPROVED · DECISION REQUIRED
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
-RESEARCH PEPTIDES MATERIALS
-RESEARCH ACCESS
+
+RESEARCH PEPTIDES & MATERIALS
+
 5-Amino-1Mq
 
 5-AMINO-1MQ 10 MG
 
-Runtime Product Control remains the only price and purchase authority.
+Research use only. Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
 
-View product
+Amount withheld in private UI evidence
 
-FOUNDER DECISION
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
+
+FOUNDER DECISION · UNAPPROVED
 
 E. Canonical media shape
 
-Choose whether future Product Control media should standardize on a square canonical slot.
+Keep current surface-specific behavior, or choose whether a later Product Control media contract should propose a 1:1 canonical slot.
 
-CURRENT CORE
-OBSERVED
-CURRENT MEMBER SLOT · 4:3 CONTAIN · CONTAIN · UNCHANGED PIXELS
+CURRENT PUBLIC CORE CATALOG
+NO IMAGE SLOT
 
-Current optional member media behavior.
+RESEARCH PEPTIDES & MATERIALS
+
+5-Amino-1Mq
+
+5-AMINO-1MQ 10 MG
+
+Research use only. Request access and the team confirms availability for this exact item. Research use only: not for human or veterinary use.
+
+Amount withheld in private UI evidence
+
+How many units
+-
+1
++
+
+Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
+
+Available to order
+
+Select
+
+Actual source policy: the current public / Early Access card anatomy has no product-media element or placeholder.
+
+SIGNED-IN MEMBER CATALOG / DETAIL
+SOURCE-VERIFIED
+4:3 CONTAIN · SOURCE-VERIFIED COMPONENT BEHAVIOR · CONTAIN · UNCHANGED PIXELS
+
+NOT LIVE/OBSERVED RENDER. Source verification only: MemberCatalogExperience and MemberProductDetailExperience support optional 4:3 contain media on /research/member/products. With null media, catalog omits the slot and detail reports that an approved image is unavailable.
 
 PROPOSED XENIOS HEALTH
-DECISION REQUIRED
-PROPOSED CANONICAL SLOT · 1:1 CONTAIN · CONTAIN · UNCHANGED PIXELS
+UNAPPROVED · 1:1
+1:1 CONTAIN · SAME SOURCE PIXELS · CONTAIN · UNCHANGED PIXELS
 
-Proposed same-pixels card and detail geometry.
+Proposed square canonical slot. This uses the identical private source file and SHA-256 as the 4:3 source-verified study.
 
 Authority boundary
 
