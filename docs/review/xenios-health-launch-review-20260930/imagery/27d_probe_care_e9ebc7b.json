@@ -1,0 +1,4332 @@
+[
+ {
+  "width": 1440,
+  "path": "/founder-preview/index.html?view=cards",
+  "scrollW": 1440,
+  "clientW": 1440,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 4,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1440,
+  "path": "/founder-preview/index.html?view=decisions",
+  "scrollW": 1440,
+  "clientW": 1440,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1440,
+  "path": "/founder-preview/index.html?view=care",
+  "scrollW": 1440,
+  "clientW": 1440,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 6,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1440,
+  "path": "/founder-preview/index.html?view=products",
+  "scrollW": 1440,
+  "clientW": 1440,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 7,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1440,
+  "path": "/founder-preview/index.html?view=featured",
+  "scrollW": 1440,
+  "clientW": 1440,
+  "targets": [],
+  "allCareCards": 2,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1440,
+  "path": "/founder-preview/product-detail.html?id=GRP-0001",
+  "scrollW": 1440,
+  "clientW": 1440,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "a geometry Founder decisions PROPOSED PRODUCT DETAIL · PRIVATE ONLY Intentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0001 CARE PATHWAY 5-Amino-1Mq 5-AMINO-1MQ 5MG/ML (5ML) FORM Compounded Vial / Liquid PRICE STATE Care pricing wi"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1440,
+  "path": "/founder-preview/product-detail.html?id=GRP-0073",
+  "scrollW": 1440,
+  "clientW": 1440,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "a geometry Founder decisions PROPOSED PRODUCT DETAIL · PRIVATE ONLY Intentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0073 CARE PATHWAY HCG Pregnyl 10,000Iu HCG PREGNYL 10,000IU FORM Listed Unit PRICE STATE Care pricing withheld P"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1280,
+  "path": "/founder-preview/index.html?view=cards",
+  "scrollW": 1280,
+  "clientW": 1280,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 4,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1280,
+  "path": "/founder-preview/index.html?view=decisions",
+  "scrollW": 1280,
+  "clientW": 1280,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1280,
+  "path": "/founder-preview/index.html?view=care",
+  "scrollW": 1280,
+  "clientW": 1280,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 6,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1280,
+  "path": "/founder-preview/index.html?view=products",
+  "scrollW": 1280,
+  "clientW": 1280,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 7,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1280,
+  "path": "/founder-preview/index.html?view=featured",
+  "scrollW": 1280,
+  "clientW": 1280,
+  "targets": [],
+  "allCareCards": 2,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1280,
+  "path": "/founder-preview/product-detail.html?id=GRP-0001",
+  "scrollW": 1280,
+  "clientW": 1280,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "a geometry Founder decisions PROPOSED PRODUCT DETAIL · PRIVATE ONLY Intentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0001 CARE PATHWAY 5-Amino-1Mq 5-AMINO-1MQ 5MG/ML (5ML) FORM Compounded Vial / Liquid PRICE STATE Care pricing wi"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1280,
+  "path": "/founder-preview/product-detail.html?id=GRP-0073",
+  "scrollW": 1280,
+  "clientW": 1280,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "a geometry Founder decisions PROPOSED PRODUCT DETAIL · PRIVATE ONLY Intentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0073 CARE PATHWAY HCG Pregnyl 10,000Iu HCG PREGNYL 10,000IU FORM Listed Unit PRICE STATE Care pricing withheld P"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1024,
+  "path": "/founder-preview/index.html?view=cards",
+  "scrollW": 1024,
+  "clientW": 1024,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 4,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1024,
+  "path": "/founder-preview/index.html?view=decisions",
+  "scrollW": 1024,
+  "clientW": 1024,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1024,
+  "path": "/founder-preview/index.html?view=care",
+  "scrollW": 1024,
+  "clientW": 1024,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 6,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1024,
+  "path": "/founder-preview/index.html?view=products",
+  "scrollW": 1024,
+  "clientW": 1024,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 7,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1024,
+  "path": "/founder-preview/index.html?view=featured",
+  "scrollW": 1024,
+  "clientW": 1024,
+  "targets": [],
+  "allCareCards": 2,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1024,
+  "path": "/founder-preview/product-detail.html?id=GRP-0001",
+  "scrollW": 1024,
+  "clientW": 1024,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "r decisions PROPOSED PRODUCT DETAIL · PRIVATE ONLY Intentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0001 CARE PATHWAY 5-Amino-1Mq 5-AMINO-1MQ 5MG/ML (5ML) FORM Compounded Vial / Liquid PRICE STATE Care pricing withheld PATHWAY Ca"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 1024,
+  "path": "/founder-preview/product-detail.html?id=GRP-0073",
+  "scrollW": 1024,
+  "clientW": 1024,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "r decisions PROPOSED PRODUCT DETAIL · PRIVATE ONLY Intentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0073 CARE PATHWAY HCG Pregnyl 10,000Iu HCG PREGNYL 10,000IU FORM Listed Unit PRICE STATE Care pricing withheld PATHWAY Care pathw"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 834,
+  "path": "/founder-preview/index.html?view=cards",
+  "scrollW": 834,
+  "clientW": 834,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 4,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 834,
+  "path": "/founder-preview/index.html?view=decisions",
+  "scrollW": 834,
+  "clientW": 834,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 834,
+  "path": "/founder-preview/index.html?view=care",
+  "scrollW": 834,
+  "clientW": 834,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 6,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 834,
+  "path": "/founder-preview/index.html?view=products",
+  "scrollW": 834,
+  "clientW": 834,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 7,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 834,
+  "path": "/founder-preview/index.html?view=featured",
+  "scrollW": 834,
+  "clientW": 834,
+  "targets": [],
+  "allCareCards": 2,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 834,
+  "path": "/founder-preview/product-detail.html?id=GRP-0001",
+  "scrollW": 834,
+  "clientW": 834,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "ntentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0001 CARE PATHWAY 5-Amino-1Mq 5-AMINO-1MQ 5MG/ML (5ML) FORM Compounded Vial / Liquid PRICE STATE Care pricing withheld PATHWAY Care pathway IMAGE STATUS Private, provisional, not pu"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 834,
+  "path": "/founder-preview/product-detail.html?id=GRP-0073",
+  "scrollW": 834,
+  "clientW": 834,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "ntentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0073 CARE PATHWAY HCG Pregnyl 10,000Iu HCG PREGNYL 10,000IU FORM Listed Unit PRICE STATE Care pricing withheld PATHWAY Care pathway IMAGE STATUS Private, provisional, not publicatio"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 768,
+  "path": "/founder-preview/index.html?view=cards",
+  "scrollW": 768,
+  "clientW": 768,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 4,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 768,
+  "path": "/founder-preview/index.html?view=decisions",
+  "scrollW": 768,
+  "clientW": 768,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 768,
+  "path": "/founder-preview/index.html?view=care",
+  "scrollW": 768,
+  "clientW": 768,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 6,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 768,
+  "path": "/founder-preview/index.html?view=products",
+  "scrollW": 768,
+  "clientW": 768,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 7,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 768,
+  "path": "/founder-preview/index.html?view=featured",
+  "scrollW": 768,
+  "clientW": 768,
+  "targets": [],
+  "allCareCards": 2,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 768,
+  "path": "/founder-preview/product-detail.html?id=GRP-0001",
+  "scrollW": 768,
+  "clientW": 768,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "ntentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0001 CARE PATHWAY 5-Amino-1Mq 5-AMINO-1MQ 5MG/ML (5ML) FORM Compounded Vial / Liquid PRICE STATE Care pricing withheld PATHWAY Care pathway IMAGE STATUS Private, provisional, not pu"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 768,
+  "path": "/founder-preview/product-detail.html?id=GRP-0073",
+  "scrollW": 768,
+  "clientW": 768,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "ntentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0073 CARE PATHWAY HCG Pregnyl 10,000Iu HCG PREGNYL 10,000IU FORM Listed Unit PRICE STATE Care pricing withheld PATHWAY Care pathway IMAGE STATUS Private, provisional, not publicatio"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 430,
+  "path": "/founder-preview/index.html?view=cards",
+  "scrollW": 430,
+  "clientW": 430,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 4,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 430,
+  "path": "/founder-preview/index.html?view=decisions",
+  "scrollW": 430,
+  "clientW": 430,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 430,
+  "path": "/founder-preview/index.html?view=care",
+  "scrollW": 430,
+  "clientW": 430,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 6,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 430,
+  "path": "/founder-preview/index.html?view=products",
+  "scrollW": 430,
+  "clientW": 430,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 7,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 430,
+  "path": "/founder-preview/index.html?view=featured",
+  "scrollW": 430,
+  "clientW": 430,
+  "targets": [],
+  "allCareCards": 2,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 430,
+  "path": "/founder-preview/product-detail.html?id=GRP-0001",
+  "scrollW": 430,
+  "clientW": 430,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "ntentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0001 CARE PATHWAY 5-Amino-1Mq 5-AMINO-1MQ 5MG/ML (5ML) FORM Compounded Vial / Liquid PRICE STATE Care pricing withheld PATHWAY Care pathway IMAGE STATUS Private, provisional, not pu"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 430,
+  "path": "/founder-preview/product-detail.html?id=GRP-0073",
+  "scrollW": 430,
+  "clientW": 430,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "ntentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0073 CARE PATHWAY HCG Pregnyl 10,000Iu HCG PREGNYL 10,000IU FORM Listed Unit PRICE STATE Care pricing withheld PATHWAY Care pathway IMAGE STATUS Private, provisional, not publicatio"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 390,
+  "path": "/founder-preview/index.html?view=cards",
+  "scrollW": 390,
+  "clientW": 390,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 4,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 390,
+  "path": "/founder-preview/index.html?view=decisions",
+  "scrollW": 390,
+  "clientW": 390,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 390,
+  "path": "/founder-preview/index.html?view=care",
+  "scrollW": 390,
+  "clientW": 390,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 6,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 390,
+  "path": "/founder-preview/index.html?view=products",
+  "scrollW": 390,
+  "clientW": 390,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 7,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 390,
+  "path": "/founder-preview/index.html?view=featured",
+  "scrollW": 390,
+  "clientW": 390,
+  "targets": [],
+  "allCareCards": 2,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 390,
+  "path": "/founder-preview/product-detail.html?id=GRP-0001",
+  "scrollW": 390,
+  "clientW": 390,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "ntentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0001 CARE PATHWAY 5-Amino-1Mq 5-AMINO-1MQ 5MG/ML (5ML) FORM Compounded Vial / Liquid PRICE STATE Care pricing withheld PATHWAY Care pathway IMAGE STATUS Private, provisional, not pu"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 390,
+  "path": "/founder-preview/product-detail.html?id=GRP-0073",
+  "scrollW": 390,
+  "clientW": 390,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "ntentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0073 CARE PATHWAY HCG Pregnyl 10,000Iu HCG PREGNYL 10,000IU FORM Listed Unit PRICE STATE Care pricing withheld PATHWAY Care pathway IMAGE STATUS Private, provisional, not publicatio"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 375,
+  "path": "/founder-preview/index.html?view=cards",
+  "scrollW": 375,
+  "clientW": 375,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 4,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 375,
+  "path": "/founder-preview/index.html?view=decisions",
+  "scrollW": 375,
+  "clientW": 375,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 375,
+  "path": "/founder-preview/index.html?view=care",
+  "scrollW": 375,
+  "clientW": 375,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 6,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 375,
+  "path": "/founder-preview/index.html?view=products",
+  "scrollW": 375,
+  "clientW": 375,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 7,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 375,
+  "path": "/founder-preview/index.html?view=featured",
+  "scrollW": 375,
+  "clientW": 375,
+  "targets": [],
+  "allCareCards": 2,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 375,
+  "path": "/founder-preview/product-detail.html?id=GRP-0001",
+  "scrollW": 375,
+  "clientW": 375,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "ntentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0001 CARE PATHWAY 5-Amino-1Mq 5-AMINO-1MQ 5MG/ML (5ML) FORM Compounded Vial / Liquid PRICE STATE Care pricing withheld PATHWAY Care pathway IMAGE STATUS Private, provisional, not pu"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 375,
+  "path": "/founder-preview/product-detail.html?id=GRP-0073",
+  "scrollW": 375,
+  "clientW": 375,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "ntentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0073 CARE PATHWAY HCG Pregnyl 10,000Iu HCG PREGNYL 10,000IU FORM Listed Unit PRICE STATE Care pricing withheld PATHWAY Care pathway IMAGE STATUS Private, provisional, not publicatio"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 360,
+  "path": "/founder-preview/index.html?view=cards",
+  "scrollW": 360,
+  "clientW": 360,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 4,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 360,
+  "path": "/founder-preview/index.html?view=decisions",
+  "scrollW": 360,
+  "clientW": 360,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 360,
+  "path": "/founder-preview/index.html?view=care",
+  "scrollW": 360,
+  "clientW": 360,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 6,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 360,
+  "path": "/founder-preview/index.html?view=products",
+  "scrollW": 360,
+  "clientW": 360,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 7,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 360,
+  "path": "/founder-preview/index.html?view=featured",
+  "scrollW": 360,
+  "clientW": 360,
+  "targets": [],
+  "allCareCards": 2,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 360,
+  "path": "/founder-preview/product-detail.html?id=GRP-0001",
+  "scrollW": 360,
+  "clientW": 360,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "ntentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0001 CARE PATHWAY 5-Amino-1Mq 5-AMINO-1MQ 5MG/ML (5ML) FORM Compounded Vial / Liquid PRICE STATE Care pricing withheld PATHWAY Care pathway IMAGE STATUS Private, provisional, not pu"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 360,
+  "path": "/founder-preview/product-detail.html?id=GRP-0073",
+  "scrollW": 360,
+  "clientW": 360,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "ntentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0073 CARE PATHWAY HCG Pregnyl 10,000Iu HCG PREGNYL 10,000IU FORM Listed Unit PRICE STATE Care pricing withheld PATHWAY Care pathway IMAGE STATUS Private, provisional, not publicatio"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 320,
+  "path": "/founder-preview/index.html?view=cards",
+  "scrollW": 320,
+  "clientW": 320,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "current",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": false,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   },
+   {
+    "id": "GRP-0073",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS HCG Pregnyl 10,000Iu Care pathway Specification HCG PREGNYL 10,000IU Format Listed Unit Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 4,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 320,
+  "path": "/founder-preview/index.html?view=decisions",
+  "scrollW": 320,
+  "clientW": 320,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 320,
+  "path": "/founder-preview/index.html?view=care",
+  "scrollW": 320,
+  "clientW": 320,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 6,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 320,
+  "path": "/founder-preview/index.html?view=products",
+  "scrollW": 320,
+  "clientW": 320,
+  "targets": [
+   {
+    "id": "GRP-0001",
+    "role": "proposed",
+    "surface": "assisted-order-care",
+    "availability": "PROVIDER_REVIEW_REQUIRED",
+    "stepper": 0,
+    "bundle": false,
+    "reqAvail": false,
+    "select": false,
+    "notice": true,
+    "actions": [
+     "Continue through Care -> /care"
+    ],
+    "actionStyle": {
+     "bg": "rgb(24, 61, 45)",
+     "h": 49,
+     "r": "999px",
+     "w": "750"
+    },
+    "img": true,
+    "textNoMedia": "503A CLINICAL FORMULATIONS 5-Amino-1Mq Care pathway Specification 5-AMINO-1MQ 5MG/ML (5ML) Format Compounded Vial / Liquid Price Ask the Care team about pricing This product requires provider review through Xenios Care and cannot be added to a research order request. Continue through Care"
+   }
+  ],
+  "allCareCards": 7,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 320,
+  "path": "/founder-preview/index.html?view=featured",
+  "scrollW": 320,
+  "clientW": 320,
+  "targets": [],
+  "allCareCards": 2,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": null,
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   },
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 320,
+  "path": "/founder-preview/product-detail.html?id=GRP-0001",
+  "scrollW": 320,
+  "clientW": 320,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "ntentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0001 CARE PATHWAY 5-Amino-1Mq 5-AMINO-1MQ 5MG/ML (5ML) FORM Compounded Vial / Liquid PRICE STATE Care pricing withheld PATHWAY Care pathway IMAGE STATUS Private, provisional, not pu"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ },
+ {
+  "width": 320,
+  "path": "/founder-preview/product-detail.html?id=GRP-0073",
+  "scrollW": 320,
+  "clientW": 320,
+  "targets": [],
+  "allCareCards": 0,
+  "careCardsWithResearchUi": 0,
+  "nonCareResearchCardsWithCareUi": 0,
+  "detail": {
+   "stepper": 0,
+   "bundle": false,
+   "reqAvail": false,
+   "notice": true,
+   "continueCare": [],
+   "primary": [
+    "Start Care",
+    "Continue through Care"
+   ],
+   "head": "ntentional square media placement. This is not a live public product route. Current Core public slugs remain unavailable, and member detail media remains 4:3 where present. PROPOSED SLOT · 1:1 CONTAIN · SAME PIXELS GRP-0073 CARE PATHWAY HCG Pregnyl 10,000Iu HCG PREGNYL 10,000IU FORM Listed Unit PRICE STATE Care pricing withheld PATHWAY Care pathway IMAGE STATUS Private, provisional, not publicatio"
+  },
+  "imgs": [
+   {
+    "broken": false,
+    "manip": false,
+    "fit": "contain"
+   }
+  ]
+ }
+]

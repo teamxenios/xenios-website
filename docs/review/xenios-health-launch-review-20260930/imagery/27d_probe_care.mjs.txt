@@ -1,0 +1,55 @@
+// Claude microscopic Care recheck probe for e9ebc7b. Care-specific extraction is a real function serialized with toString().
+import { writeFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
+const LIB = 'C:/xenios-wt/closeout-review/scripts/evidence/lib/';
+const { launchChromium } = await import(pathToFileURL(LIB + 'chrome.mjs').href);
+const { CdpConnection, PageSession, sleep } = await import(pathToFileURL(LIB + 'cdp.mjs').href);
+const { startFounderPreviewServer } = await import(pathToFileURL('C:/xenios-wt/imagery-review-e9ebc7b/scripts/product-imagery/serve-founder-preview.mjs').href);
+const OUT = process.argv[2];
+const server = await startFounderPreviewServer({ port: 0 });
+const paths = ['/founder-preview/index.html?view=cards', '/founder-preview/index.html?view=decisions', '/founder-preview/index.html?view=care',
+  '/founder-preview/index.html?view=products', '/founder-preview/index.html?view=featured',
+  '/founder-preview/product-detail.html?id=GRP-0001', '/founder-preview/product-detail.html?id=GRP-0073'];
+const widths = [1440, 1280, 1024, 834, 768, 430, 390, 375, 360, 320];
+function careProbe() {
+  const ids = ['GRP-0001', 'GRP-0073'];
+  const arts = [...document.querySelectorAll('article[data-canonical-id]')].filter(a => ids.includes(a.dataset.canonicalId));
+  const careArts = [...document.querySelectorAll('article.core-care-product-card')];
+  const describe = a => ({
+    id: a.dataset.canonicalId, role: a.dataset.cardRole || null, surface: a.dataset.cardSurface || null, availability: a.dataset.coreAvailability || null,
+    stepper: a.querySelectorAll('.core-quantity,.core-stepper,fieldset,input[type=number]').length,
+    bundle: /Research Bundle/.test(a.innerText), reqAvail: /Request availability/.test(a.innerText), select: /\bSelect\b/.test(a.innerText),
+    notice: /This product requires provider review through Xenios Care and cannot be added to a research order request\./.test(a.innerText.replace(/\s+/g, ' ')),
+    actions: [...a.querySelectorAll('a,button,.btn,.card-cta,.core-card-action')].map(x => (x.textContent || '').trim().slice(0, 40) + ' -> ' + (x.getAttribute('href') || '')),
+    actionStyle: (() => { const x = a.querySelector('.core-care-action'); if (!x) return null; const s = getComputedStyle(x); return { bg: s.backgroundColor, h: Math.round(x.getBoundingClientRect().height), r: s.borderRadius, w: s.fontWeight }; })(),
+    img: !!a.querySelector('img[data-safe-image]'),
+    textNoMedia: a.innerText.replace(/Proposed square media[^\n]*/gi, '').replace(/\s+/g, ' ').trim(),
+  });
+  const imgs = [...document.images].filter(i => /calibration-render/.test(i.getAttribute('src') || '')).map(i => { const s = getComputedStyle(i), p = getComputedStyle(i.parentElement);
+    return { broken: i.complete && i.naturalWidth === 0, manip: s.filter !== 'none' || p.filter !== 'none' || s.mixBlendMode !== 'normal' || s.opacity !== '1' || s.clipPath !== 'none', fit: s.objectFit }; });
+  const t = document.body.innerText;
+  return { scrollW: document.documentElement.scrollWidth, clientW: document.documentElement.clientWidth, targets: arts.map(describe),
+    allCareCards: careArts.length, careCardsWithResearchUi: careArts.filter(a => a.querySelector('.core-quantity,.core-stepper') || /Research Bundle|Request availability/.test(a.innerText)).length,
+    nonCareResearchCardsWithCareUi: [...document.querySelectorAll('article.core-product-card')].filter(a => /Continue through Care/.test(a.innerText)).length,
+    detail: location.pathname.includes('product-detail') ? { stepper: document.querySelectorAll('.core-quantity,.core-stepper').length, bundle: /Research Bundle/.test(t), reqAvail: /Request availability/.test(t),
+      notice: /requires provider review through Xenios Care/.test(t), continueCare: [...document.querySelectorAll('a')].filter(a => /Continue through Care/.test(a.textContent)).map(a => a.getAttribute('href')),
+      primary: [...document.querySelectorAll('.btn-primary,.core-card-action,.card-cta')].map(a => a.textContent.trim().slice(0, 40)), head: t.replace(/\s+/g, ' ').slice(300, 700) } : null,
+    imgs };
+}
+const results = [];
+for (const width of widths) {
+  const chrome = await launchChromium({ chromePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe' });
+  const conn = new CdpConnection(chrome.wsUrl); await conn.open();
+  const page = await PageSession.create(conn);
+  try {
+    await page.setViewport({ width, height: 900, deviceScaleFactor: 1, mobile: width < 768 });
+    for (const p of paths) {
+      try { await page.navigate(server.origin + p, { maxSettleMs: 8000 }); } catch { await sleep(1500); }
+      await sleep(400);
+      try { results.push({ width, path: p, ...(await page.evaluate(`(${careProbe.toString()})()`)) }); } catch (e) { results.push({ width, path: p, error: String(e).slice(0, 200) }); }
+    }
+  } finally { await page.close().catch(() => {}); await conn.close().catch(() => {}); await chrome.close(); }
+  console.log('WIDTH DONE', width, results.length);
+}
+writeFileSync(OUT, JSON.stringify(results, null, 1));
+await server.close(); process.exit(0);
