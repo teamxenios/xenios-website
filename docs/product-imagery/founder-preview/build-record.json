@@ -15,11 +15,11 @@
     "role": "dominant_public_ui_reference_only"
   },
   "uiFidelityReview": {
-    "commit": "893e32c93031705ebbe94531a0d9a8110967fb16",
-    "tree": "e5053ca2de75082e8161acbd1f2136e014c2a58c",
-    "reviewedSourceCommit": "797b064d9c07012b95133e588222b2b2293ff341",
-    "reviewedSourceTree": "e5108ca4e038e420b0effe680f7f815db05002a8",
-    "reviewedRecordsCommit": "8dcba8ff14ce553445bbb28ca430dabe667c73e0",
+    "commit": "22ed742052c95688926a5c11ef3faff379673d45",
+    "tree": "7f0336dd7feb8576d3b3134022dcda4db5909ae4",
+    "reviewedSourceCommit": "de515435965a641192d28a3246fd4b58eecf5f5b",
+    "reviewedSourceTree": "ea056ad57f4b84a5db89b480519d25c1a8dfc81d",
+    "reviewedRecordsCommit": "ab4f832e8bda7d1e64e4e97c2f22cbfe6a68f164",
     "verdictOnPriorPrototype": "FAIL_NARROW",
     "automaticSuccessorReviewRequested": false
   },

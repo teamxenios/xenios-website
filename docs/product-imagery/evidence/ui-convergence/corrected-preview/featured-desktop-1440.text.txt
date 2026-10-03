@@ -59,25 +59,17 @@ PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
 503A CLINICAL FORMULATIONS
 
 Aod-9604 + MOTS-C + Tesamorelin + Ipamorelin
-
+Care pathway
+Specification
 AOD-9604/MOTS-C/TESAMORELIN/IPAMORELIN 1.2MG-2MG-2MG-2MG/ML (5ML)
+Format
+Compounded Vial / Liquid
+Price
+Ask the Care team about pricing
 
-Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
+This product requires provider review through Xenios Care and cannot be added to a research order request.
 
-Amount withheld in private UI evidence
-
-How many units
--
-1
-+
-
-Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
-
-Availability confirmed by our team before payment
-
-Our team confirms availability with the supplier before any payment instructions are shown.
-
-Request availability
+Continue through Care
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
 
 SUPPLEMENTS
@@ -193,25 +185,17 @@ PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
 503A CLINICAL FORMULATIONS
 
 BPC-157 + TB-500 + KPV + GHK-Cu 3-3-3-10Mg + Ml (5Ml)
-
+Care pathway
+Specification
 BPC-157/TB500/KPV/GHK-CU 3-3-3-10MG/ML (5ML)
+Format
+Compounded Vial / Liquid
+Price
+Ask the Care team about pricing
 
-Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
+This product requires provider review through Xenios Care and cannot be added to a research order request.
 
-Amount withheld in private UI evidence
-
-How many units
--
-1
-+
-
-Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
-
-Availability confirmed by our team before payment
-
-Our team confirms availability with the supplier before any payment instructions are shown.
-
-Request availability
+Continue through Care
 Authority boundary
 
 These 423 private slots remain joined to the frozen catalog candidate at 4cba24af1d42. Core UI reference c0e25c73 is separate UI evidence. Neither source is image approval, publication authority, Product Control authority, price release, runtime integration, deployment authority, or production approval.

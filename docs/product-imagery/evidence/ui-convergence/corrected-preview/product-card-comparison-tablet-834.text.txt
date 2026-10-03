@@ -84,59 +84,43 @@ CARE
 
 5-Amino-1Mq · 5-AMINO-1MQ 5MG/ML (5ML)
 
-The left side mirrors current Core EarlyAccessProductCard anatomy without media. The right side adds one neutral 1:1 contain slot and changes nothing else. Both are static UI evidence.
+Core does not render Care products through this Research product-card surface. The left side reproduces the actual assisted-order Care presentation. The right side adds one neutral 1:1 contain slot and preserves the same provider-review pathway, copy, CTA authority, and commerce state.
 
 CURRENT CORE
-TEXT-ONLY EARLY ACCESS CARD ANATOMY
+ACTUAL ASSISTED-ORDER CARE PRESENTATION
 
 503A CLINICAL FORMULATIONS
 
 5-Amino-1Mq
-
+Care pathway
+Specification
 5-AMINO-1MQ 5MG/ML (5ML)
+Format
+Compounded Vial / Liquid
+Price
+Ask the Care team about pricing
 
-Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
+This product requires provider review through Xenios Care and cannot be added to a research order request.
 
-Amount withheld in private UI evidence
-
-How many units
--
-1
-+
-
-Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
-
-Availability confirmed by our team before payment
-
-Our team confirms availability with the supplier before any payment instructions are shown.
-
-Request availability
+Continue through Care
 PROPOSED XENIOS HEALTH
-UNAPPROVED · SAME CORE CARD PLUS MEDIA
+UNAPPROVED · SAME CARE PATHWAY PLUS MEDIA
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
 
 503A CLINICAL FORMULATIONS
 
 5-Amino-1Mq
-
+Care pathway
+Specification
 5-AMINO-1MQ 5MG/ML (5ML)
+Format
+Compounded Vial / Liquid
+Price
+Ask the Care team about pricing
 
-Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
+This product requires provider review through Xenios Care and cannot be added to a research order request.
 
-Amount withheld in private UI evidence
-
-How many units
--
-1
-+
-
-Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
-
-Availability confirmed by our team before payment
-
-Our team confirms availability with the supplier before any payment instructions are shown.
-
-Request availability
+Continue through Care
 
 HELD
 
@@ -253,59 +237,43 @@ PACKAGING UNVERIFIED
 
 HCG Pregnyl 10,000Iu · HCG PREGNYL 10,000IU
 
-The left side mirrors current Core EarlyAccessProductCard anatomy without media. The right side adds one neutral 1:1 contain slot and changes nothing else. Both are static UI evidence.
+Core does not render Care products through this Research product-card surface. The left side reproduces the actual assisted-order Care presentation. The right side adds one neutral 1:1 contain slot and preserves the same provider-review pathway, copy, CTA authority, and commerce state.
 
 CURRENT CORE
-TEXT-ONLY EARLY ACCESS CARD ANATOMY
+ACTUAL ASSISTED-ORDER CARE PRESENTATION
 
 503A CLINICAL FORMULATIONS
 
 HCG Pregnyl 10,000Iu
-
+Care pathway
+Specification
 HCG PREGNYL 10,000IU
+Format
+Listed Unit
+Price
+Ask the Care team about pricing
 
-Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
+This product requires provider review through Xenios Care and cannot be added to a research order request.
 
-Amount withheld in private UI evidence
-
-How many units
--
-1
-+
-
-Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
-
-Availability confirmed by our team before payment
-
-Our team confirms availability with the supplier before any payment instructions are shown.
-
-Request availability
+Continue through Care
 PROPOSED XENIOS HEALTH
-UNAPPROVED · SAME CORE CARD PLUS MEDIA
+UNAPPROVED · SAME CARE PATHWAY PLUS MEDIA
 PROPOSED SQUARE MEDIA · CONTAIN · UNCHANGED PIXELS
 
 503A CLINICAL FORMULATIONS
 
 HCG Pregnyl 10,000Iu
-
+Care pathway
+Specification
 HCG PREGNYL 10,000IU
+Format
+Listed Unit
+Price
+Ask the Care team about pricing
 
-Fulfilled through the provider pathway, subject to applicable state availability and pharmacy requirements. Not available for direct purchase.
+This product requires provider review through Xenios Care and cannot be added to a research order request.
 
-Amount withheld in private UI evidence
-
-How many units
--
-1
-+
-
-Featured checkout is currently limited to 50 units; assisted order requests support 1-50 units per exact variant. 3 units is the Research Bundle, 20% savings.
-
-Availability confirmed by our team before payment
-
-Our team confirms availability with the supplier before any payment instructions are shown.
-
-Request availability
+Continue through Care
 Xenios
 
 Private UI-convergence evidence. Synthetic data only. Nothing here is a live offer.
