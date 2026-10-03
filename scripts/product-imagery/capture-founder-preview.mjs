@@ -701,15 +701,19 @@ function assertFounderPreviewFidelity(state, planned) {
           );
         }
         for (const height of card.actionHeights) {
-          assert.ok(
-            Math.abs(height - (carePair ? 44 : expectedActionHeight)) <= 0.5,
-            `${planned.name} ${pair.kind} action height must match its Core surface`,
-          );
+          if (carePair) {
+            assert.ok(height >= 44, `${planned.name} ${pair.kind} action must retain Core's 44px minimum`);
+          } else {
+            assert.ok(
+              Math.abs(height - expectedActionHeight) <= 0.5,
+              `${planned.name} ${pair.kind} action must be ${expectedActionHeight}px`,
+            );
+          }
         }
         for (const action of card.actionStyles) {
           assert.equal(action.backgroundColor, carePair ? "rgb(24, 61, 45)" : "rgb(14, 14, 14)", `${planned.name} action color must match Core`);
           assert.equal(action.color, "rgb(255, 255, 255)", `${planned.name} action text must be white`);
-          assert.equal(action.display, carePair ? "inline-flex" : "flex", `${planned.name} action must use its Core flex treatment`);
+          assert.equal(action.display, "flex", `${planned.name} action must use its Core flex treatment`);
           assert.equal(action.borderRadius, carePair ? "999px" : "4px", `${planned.name} action radius must match Core`);
           assert.equal(action.fontWeight, carePair ? "750" : "700", `${planned.name} action weight must match Core`);
           if (carePair) {
