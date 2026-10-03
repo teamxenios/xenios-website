@@ -72,13 +72,16 @@ rows, including all 111 material mismatches.
 
 ### D. Public product imagery
 
-- Current Core: the public `EarlyAccessProductCard` anatomy is text-only and
-  preserves its mono category, strength/specification, typography, spacing,
-  quantity, availability, and exact action behavior. Held, quote-only, and
-  binding-pending witnesses render no action or quantity control.
+- Current Core: Research and restrictive examples use the text-only
+  `EarlyAccessProductCard` anatomy. Core does not render Care products through
+  this Research product-card surface. Care examples instead reproduce the
+  assisted-order `provider_request` treatment: `Care pathway`, `Ask the Care
+  team about pricing`, provider-review notice, and `Continue through Care`
+  linking to `/care`, with no Research quantity control or bundle copy.
 - Proposed: public catalog and product detail may show an approved image, with a
   truthful no-image fallback when approval is absent. In each comparison, only
-  the proposed media slot changes; all Core card content remains identical.
+  the proposed media slot changes; the relevant Core surface, pathway, copy,
+  CTA authority, and commerce behavior remain identical.
 - Decision needed: lift or scope the current public no-photography policy.
 
 Evidence:
@@ -87,10 +90,11 @@ Evidence:
 - `docs/product-imagery/evidence/ui-convergence/corrected-preview/product-card-comparison-mobile-390.png`
 
 The comparison includes Research, Care, held, quote-only, binding-pending, and
-packaging-unverified states. Packaging-unverified uses authoritative witness
-`GRP-0073` and the reviewer-directed neutral calibration-06 asset; `GRP-0424`
-remains correctly classified as binding-pending. No package form or third-party
-packaging is fabricated.
+packaging-unverified states. Care uses exact witness `GRP-0001` and the actual
+Core assisted-order pathway. Packaging-unverified uses authoritative Care
+witness `GRP-0073` and the reviewer-directed neutral calibration-06 asset;
+`GRP-0424` remains correctly classified as binding-pending. No package form or
+third-party packaging is fabricated.
 
 ### E. Canonical media shape
 

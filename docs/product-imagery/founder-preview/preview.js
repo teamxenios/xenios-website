@@ -27,6 +27,8 @@
   const representatives = Object.fromEntries(
     Object.entries(data.representativeCanonicalIds).map(([key, id]) => [key, rowsById.get(id)]),
   );
+  const CARE_CARD_NOTICE = "This product requires provider review through Xenios Care and cannot be added to a research order request.";
+  const CARE_COMPARISON_DISCLOSURE = "Core does not render Care products through this Research product-card surface";
 
   function statusBadge(row) {
     return `<span class="status-badge ${esc(row.pathway.key)}">${esc(row.pathway.label)}</span>`;
@@ -63,13 +65,16 @@
     }
     if (row.pathway.key === "care") {
       return {
-        availability: "AVAILABILITY_CONFIRMATION_REQUIRED",
-        availabilityLabel: "Availability confirmed by our team before payment",
-        availabilityDetail: "Our team confirms availability with the supplier before any payment instructions are shown.",
-        description: row.stateExplanation,
-        priceLabel: "Amount withheld in private UI evidence",
-        actionLabel: "Request availability",
-        quantityVisible: true,
+        availability: "PROVIDER_REVIEW_REQUIRED",
+        availabilityLabel: "Care pathway",
+        availabilityDetail: CARE_CARD_NOTICE,
+        description: CARE_CARD_NOTICE,
+        priceLabel: "Ask the Care team about pricing",
+        actionLabel: "Continue through Care",
+        actionHref: "/care",
+        quantityVisible: false,
+        surface: "assisted-order-care",
+        workflowMode: "provider_request",
       };
     }
     return {
@@ -106,18 +111,44 @@
     </div>`;
   }
 
+  function coreCareCardBody(row) {
+    const state = coreCardPresentation(row);
+    return `<div class="core-care-card-content" data-card-content-key="${esc(`${row.canonicalId}:${state.workflowMode}`)}">
+      <div class="core-care-card-header">
+        <div>
+          <p class="core-care-eyebrow">${esc(row.category)}</p>
+          <h3>${esc(row.name)}</h3>
+        </div>
+        <span class="core-care-mode">${esc(state.availabilityLabel)}</span>
+      </div>
+      <dl class="core-care-facts">
+        <div><dt>Specification</dt><dd class="core-care-specification">${esc(row.specification)}</dd></div>
+        <div><dt>Format</dt><dd>${esc(row.dosageForm)}</dd></div>
+        <div><dt>Price</dt><dd>${esc(state.priceLabel)}</dd></div>
+      </dl>
+      <p class="core-care-notice">${esc(state.availabilityDetail)}</p>
+      <a class="core-care-action core-card-action" href="${esc(state.actionHref)}">${esc(state.actionLabel)}</a>
+    </div>`;
+  }
+
+  function cardBody(row) {
+    return row.pathway.key === "care" ? coreCareCardBody(row) : coreCardBody(row);
+  }
+
   function currentPolicyCard(row, { compact = false } = {}) {
     const state = coreCardPresentation(row);
-    return `<article class="product-card current-policy-card core-product-card" data-card-role="current" data-canonical-id="${esc(row.canonicalId)}" data-image-class="${esc(row.imageClass)}" data-core-availability="${esc(state.availability)}" data-action-allowed="${state.actionLabel ? "true" : "false"}" data-policy="current-core-no-image">
-      ${coreCardBody(row)}
+    const care = row.pathway.key === "care";
+    return `<article class="product-card current-policy-card ${care ? "core-care-product-card" : "core-product-card"}" data-card-role="current" data-canonical-id="${esc(row.canonicalId)}" data-image-class="${esc(row.imageClass)}" data-core-availability="${esc(state.availability)}" data-card-surface="${esc(state.surface || "early-access-product-card")}" data-workflow-mode="${esc(state.workflowMode || "research")}" data-action-allowed="${state.actionLabel ? "true" : "false"}" data-policy="current-core-no-image">
+      ${cardBody(row)}
     </article>`;
   }
 
   function proposedProductCard(row, { compact = false, fallback = false } = {}) {
     const state = coreCardPresentation(row);
-    return `<article class="product-card core-product-card" data-card-role="proposed" data-canonical-id="${esc(row.canonicalId)}" data-image-class="${esc(row.imageClass)}" data-core-availability="${esc(state.availability)}" data-action-allowed="${state.actionLabel ? "true" : "false"}" data-asset-job="${esc(row.image.jobId)}" data-policy="proposed-square-image">
+    const care = row.pathway.key === "care";
+    return `<article class="product-card ${care ? "core-care-product-card" : "core-product-card"}" data-card-role="proposed" data-canonical-id="${esc(row.canonicalId)}" data-image-class="${esc(row.imageClass)}" data-core-availability="${esc(state.availability)}" data-card-surface="${esc(state.surface || "early-access-product-card")}" data-workflow-mode="${esc(state.workflowMode || "research")}" data-action-allowed="${state.actionLabel ? "true" : "false"}" data-asset-job="${esc(row.image.jobId)}" data-policy="proposed-square-image">
       ${mediaBlock(row, { fallback })}
-      ${coreCardBody(row)}
+      ${cardBody(row)}
     </article>`;
   }
 
@@ -264,7 +295,15 @@
       ["Binding pending", representatives.pending],
       ["Packaging unverified", representatives.packagingUnverified],
     ];
-    return `<div class="page-shell"><section class="page-hero"><div class="container-x"><p class="eyebrow">FOUNDER DECISION D · UNAPPROVED</p><h1>Actual text-only anatomy versus image-enabled proposal.</h1><p class="lead">Each pair holds canonical identity, synthetic Core component state, copy, quantity treatment, and action constant. Only the proposed media slot changes. No amount or live commerce behavior is asserted.</p></div></section>${ordered.map(([label, row]) => `<section class="comparison-section ${label === "Care" || label === "Quote only" ? "soft" : ""}" data-comparison-kind="${label === "Packaging unverified" ? "packaging-unverified" : esc(label.toLowerCase().replaceAll(" ", "-"))}" data-comparison-canonical-id="${esc(row.canonicalId)}"><div class="container-x"><div class="section-heading"><div><p class="eyebrow">${esc(label)}</p><h2>${esc(row.name)} · ${esc(row.specification)}</h2><p>The left side mirrors current Core EarlyAccessProductCard anatomy without media. The right side adds one neutral 1:1 contain slot and changes nothing else. Both are static UI evidence.</p></div></div><div class="comparison-pair"><article class="comparison-card" data-decision-role="current"><div class="comparison-label"><span>CURRENT CORE</span><span>TEXT-ONLY EARLY ACCESS CARD ANATOMY</span></div><div class="comparison-body">${currentPolicyCard(row)}</div></article><article class="comparison-card" data-decision-role="proposed"><div class="comparison-label proposed"><span>PROPOSED XENIOS HEALTH</span><span>UNAPPROVED · SAME CORE CARD PLUS MEDIA</span></div><div class="comparison-body">${proposedProductCard(row)}</div></article></div></div></section>`).join("")}</div>`;
+    return `<div class="page-shell"><section class="page-hero"><div class="container-x"><p class="eyebrow">FOUNDER DECISION D · UNAPPROVED</p><h1>Actual text-only anatomy versus image-enabled proposal.</h1><p class="lead">Each pair holds canonical identity, synthetic Core component state, copy, quantity treatment, and action constant. Only the proposed media slot changes. No amount or live commerce behavior is asserted.</p></div></section>${ordered.map(([label, row]) => {
+      const care = row.pathway.key === "care";
+      const comparisonCopy = care
+        ? `${CARE_COMPARISON_DISCLOSURE}. The left side reproduces the actual assisted-order Care presentation. The right side adds one neutral 1:1 contain slot and preserves the same provider-review pathway, copy, CTA authority, and commerce state.`
+        : "The left side mirrors current Core EarlyAccessProductCard anatomy without media. The right side adds one neutral 1:1 contain slot and changes nothing else. Both are static UI evidence.";
+      const currentLabel = care ? "ACTUAL ASSISTED-ORDER CARE PRESENTATION" : "TEXT-ONLY EARLY ACCESS CARD ANATOMY";
+      const proposedLabel = care ? "UNAPPROVED · SAME CARE PATHWAY PLUS MEDIA" : "UNAPPROVED · SAME CORE CARD PLUS MEDIA";
+      return `<section class="comparison-section ${label === "Care" || label === "Quote only" ? "soft" : ""}" data-comparison-kind="${label === "Packaging unverified" ? "packaging-unverified" : esc(label.toLowerCase().replaceAll(" ", "-"))}" data-comparison-canonical-id="${esc(row.canonicalId)}" data-comparison-pathway="${esc(row.pathway.key)}"><div class="container-x"><div class="section-heading"><div><p class="eyebrow">${esc(label)}</p><h2>${esc(row.name)} · ${esc(row.specification)}</h2><p class="comparison-disclosure">${esc(comparisonCopy)}</p></div></div><div class="comparison-pair"><article class="comparison-card" data-decision-role="current"><div class="comparison-label"><span>CURRENT CORE</span><span>${esc(currentLabel)}</span></div><div class="comparison-body">${currentPolicyCard(row)}</div></article><article class="comparison-card" data-decision-role="proposed"><div class="comparison-label proposed"><span>PROPOSED XENIOS HEALTH</span><span>${esc(proposedLabel)}</span></div><div class="comparison-body">${proposedProductCard(row)}</div></article></div></div></section>`;
+    }).join("")}</div>`;
   }
 
   function geometryComparison(row) {

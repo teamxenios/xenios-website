@@ -302,6 +302,27 @@ test("pins the real packaging-unverified witness to the neutral calibration asse
   assert.doesNotMatch(source, /fallback:\s*label === "Packaging unverified"/);
 });
 
+test("keeps both Decision D Care witnesses on Core's assisted-order pathway", () => {
+  const data = buildFounderPreviewData();
+  const rowsById = new Map(data.rows.map((row) => [row.canonicalId, row]));
+  const care = rowsById.get("GRP-0001");
+  const packaging = rowsById.get("GRP-0073");
+  assert.equal(data.representativeCanonicalIds.care, "GRP-0001");
+  assert.equal(data.representativeCanonicalIds.packagingUnverified, "GRP-0073");
+  assert.equal(care.pathway.key, "care");
+  assert.equal(packaging.pathway.key, "care");
+  assert.equal(packaging.imageClass, "packaging_unverified");
+  assert.equal(packaging.image.jobId, "calibration-06-unverified-identity");
+
+  const source = readFileSync(join(PREVIEW_ROOT, "preview.js"), "utf8");
+  assert.match(source, /surface: "assisted-order-care"/);
+  assert.match(source, /workflowMode: "provider_request"/);
+  assert.match(source, /actionHref: "\/care"/);
+  assert.match(source, /actionLabel: "Continue through Care"/);
+  assert.match(source, /quantityVisible: false/);
+  assert.match(source, /return row\.pathway\.key === "care" \? coreCareCardBody\(row\) : coreCardBody\(row\)/);
+});
+
 test("mirrors the Core mark, responsive header, card anatomy, and evidence labels", () => {
   const css = readFileSync(join(PREVIEW_ROOT, "preview.css"), "utf8");
   const source = readFileSync(join(PREVIEW_ROOT, "preview.js"), "utf8");
@@ -318,9 +339,12 @@ test("mirrors the Core mark, responsive header, card anatomy, and evidence label
   for (const marker of [
     "Research use only: not for human or veterinary use.",
     "Available to order",
-    "Availability confirmed by our team before payment",
     "Temporarily unavailable",
     "Request availability",
+    "Care pathway",
+    "Ask the Care team about pricing",
+    "Continue through Care",
+    "Core does not render Care products through this Research product-card surface",
     "No action is rendered for this restrictive state.",
     "CURRENT PUBLIC CORE CATALOG",
     "SIGNED-IN MEMBER CATALOG / DETAIL",
@@ -332,6 +356,15 @@ test("mirrors the Core mark, responsive header, card anatomy, and evidence label
   }
   assert.doesNotMatch(source, /Legacy green pill/);
   assert.doesNotMatch(source, /Core-converged|source-faithful shell/);
+  const carePresentation = source.match(
+    /if \(row\.pathway\.key === "care"\) \{([\s\S]*?)\n    \}\n    return \{/,
+  )?.[1];
+  assert.ok(carePresentation, "Care presentation branch must remain explicit");
+  assert.match(carePresentation, /workflowMode: "provider_request"/);
+  assert.match(carePresentation, /actionLabel: "Continue through Care"/);
+  assert.match(carePresentation, /quantityVisible: false/);
+  assert.doesNotMatch(carePresentation, /AVAILABILITY_CONFIRMATION_REQUIRED/);
+  assert.doesNotMatch(carePresentation, /Request availability/);
 });
 
 test("removes preview-only image filters, vignettes, and forced crops", () => {
@@ -531,8 +564,9 @@ test("records responsive browser proof for each reviewer-directed substitution c
     assert.equal(pairs.length, 6);
     assert.ok(pairs.every((pair) => pair.coreContentMatches));
     for (const pair of pairs) {
+      const carePair = ["care", "packaging-unverified"].includes(pair.kind);
       for (const card of [pair.current, pair.proposed]) {
-        assert.equal(card.anatomy.gap, "6px");
+        assert.equal(card.anatomy.gap, carePair ? "16px" : "6px");
         assert.deepEqual(
           [
             card.anatomy.paddingTop,
@@ -540,17 +574,25 @@ test("records responsive browser proof for each reviewer-directed substitution c
             card.anatomy.paddingBottom,
             card.anatomy.paddingLeft,
           ],
-          ["16px", "16px", "16px", "16px"],
+          carePair
+            ? ["20px", "20px", "20px", "20px"]
+            : ["16px", "16px", "16px", "16px"],
         );
-        assert.match(card.anatomy.categoryFontFamily, /JetBrains Mono/);
-        assert.match(card.anatomy.specificationFontFamily, /JetBrains Mono/);
-        assert.equal(card.anatomy.titleFontWeight, "500");
+        assert.equal(card.anatomy.titleFontWeight, carePair ? "700" : "500");
+        if (!carePair) {
+          assert.match(card.anatomy.categoryFontFamily, /JetBrains Mono/);
+          assert.match(card.anatomy.specificationFontFamily, /JetBrains Mono/);
+        }
         for (const action of card.actionStyles) {
-          assert.equal(action.backgroundColor, "rgb(14, 14, 14)");
+          assert.equal(action.backgroundColor, carePair ? "rgb(24, 61, 45)" : "rgb(14, 14, 14)");
           assert.equal(action.color, "rgb(255, 255, 255)");
-          assert.equal(action.borderRadius, "4px");
-          assert.equal(action.fontWeight, "700");
-          assert.ok(Math.abs(action.width - card.anatomy.contentWidth) <= 0.5);
+          assert.equal(action.borderRadius, carePair ? "999px" : "4px");
+          assert.equal(action.fontWeight, carePair ? "750" : "700");
+          if (carePair) {
+            assert.equal(action.alignSelf, "flex-start");
+          } else {
+            assert.ok(Math.abs(action.width - card.anatomy.contentWidth) <= 0.5);
+          }
         }
       }
     }
@@ -564,18 +606,38 @@ test("records responsive browser proof for each reviewer-directed substitution c
     }
     const packaging = pairs.find((candidate) => candidate.kind === "packaging-unverified");
     assert.equal(packaging.canonicalId, "GRP-0073");
+    assert.equal(packaging.pathway, "care");
     assert.equal(capture.fidelity.cards.packagingRow.imageClass, "packaging_unverified");
+    assert.equal(capture.fidelity.cards.packagingRow.pathway, "care");
     assert.equal(capture.fidelity.cards.packagingRow.assetJob, "calibration-06-unverified-identity");
     for (const key of ["care", "packaging-unverified"]) {
       const pair = pairs.find((candidate) => candidate.kind === key);
+      assert.match(pair.disclosure, /Core does not render Care products through this Research product-card surface/);
+      assert.equal(pair.pathway, "care");
       for (const card of [pair.current, pair.proposed]) {
-        assert.equal(card.availability, "AVAILABILITY_CONFIRMATION_REQUIRED");
+        assert.equal(card.availability, "PROVIDER_REVIEW_REQUIRED");
+        assert.equal(card.cardSurface, "assisted-order-care");
+        assert.equal(card.workflowMode, "provider_request");
         assert.equal(card.actionAllowed, "true");
-        assert.deepEqual(card.actionTexts, ["Request availability"]);
+        assert.deepEqual(card.actionTexts, ["Continue through Care"]);
+        assert.deepEqual(card.actionHrefs, ["/care"]);
         assert.equal(card.actionCount, 1);
-        assert.equal(card.quantityCount, 1);
+        assert.equal(card.quantityCount, 0);
+        assert.equal(card.researchBundleCopyCount, 0);
+        assert.equal(card.requestAvailabilityCopyCount, 0);
+        assert.equal(card.carePathwayLabelCount, 1);
+        assert.deepEqual(card.carePriceTexts, ["Ask the Care team about pricing"]);
+        assert.deepEqual(card.careNoticeTexts, [
+          "This product requires provider review through Xenios Care and cannot be added to a research order request.",
+        ]);
       }
     }
+    const care = pairs.find((candidate) => candidate.kind === "care");
+    assert.equal(care.canonicalId, "GRP-0001");
+    assert.equal(capture.fidelity.cards.careRow.canonicalId, "GRP-0001");
+    assert.equal(capture.fidelity.cards.careRow.pathway, "care");
+    assert.equal(care.current.contentText, care.proposed.contentText);
+    assert.equal(packaging.current.contentText, packaging.proposed.contentText);
   }
   for (const capture of evidence.captures.filter(
     (record) => ["product-detail-comparison", "founder-decisions"].includes(record.surface),

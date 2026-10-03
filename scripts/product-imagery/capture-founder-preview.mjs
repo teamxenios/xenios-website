@@ -311,10 +311,10 @@ async function inspectPreviewState(page) {
 
     const cardSummary = (card) => {
       if (!card) return null;
-      const body = card.querySelector(".core-card-content");
-      const category = card.querySelector(".core-card-category");
-      const specification = card.querySelector(".specification");
-      const title = card.querySelector(".core-card-content h3");
+      const body = card.querySelector("[data-card-content-key]");
+      const category = card.querySelector(".core-card-category, .core-care-eyebrow");
+      const specification = card.querySelector(".specification, .core-care-specification");
+      const title = card.querySelector("[data-card-content-key] h3");
       const actions = Array.from(card.querySelectorAll(".core-card-action"));
       const image = card.querySelector(".product-media img");
       const bodyStyle = body ? getComputedStyle(body) : null;
@@ -327,6 +327,8 @@ async function inspectPreviewState(page) {
         canonicalId: card.dataset.canonicalId ?? null,
         imageClass: card.dataset.imageClass ?? null,
         availability: card.dataset.coreAvailability ?? null,
+        cardSurface: card.dataset.cardSurface ?? null,
+        workflowMode: card.dataset.workflowMode ?? null,
         actionAllowed: card.dataset.actionAllowed ?? null,
         assetJob: card.dataset.assetJob ?? null,
         contentKey: body?.dataset.cardContentKey ?? null,
@@ -338,6 +340,7 @@ async function inspectPreviewState(page) {
         quantityCount: card.querySelectorAll(".core-quantity").length,
         actionCount: actions.length,
         actionTexts: actions.map(text),
+        actionHrefs: actions.map((action) => action.getAttribute("href")),
         actionHeights: actions.map((action) => Number(action.getBoundingClientRect().height.toFixed(2))),
         actionStyles: actions.map((action) => {
           const style = getComputedStyle(action);
@@ -348,6 +351,7 @@ async function inspectPreviewState(page) {
             display: style.display,
             borderRadius: style.borderRadius,
             fontWeight: style.fontWeight,
+            alignSelf: style.alignSelf,
             width: Number(bounds.width.toFixed(2)),
           };
         }),
@@ -356,6 +360,11 @@ async function inspectPreviewState(page) {
         imageSrc: image?.currentSrc ?? null,
         imageObjectFit: image ? getComputedStyle(image).objectFit : null,
         researchNotice: text(body).includes("Research use only: not for human or veterinary use."),
+        researchBundleCopyCount: (text(body).match(/Research Bundle/g) || []).length,
+        requestAvailabilityCopyCount: (text(body).match(/Request availability/g) || []).length,
+        carePathwayLabelCount: card.querySelectorAll(".core-care-mode").length,
+        careNoticeTexts: Array.from(card.querySelectorAll(".core-care-notice")).map(text),
+        carePriceTexts: Array.from(card.querySelectorAll(".core-care-facts div:last-child dd")).map(text),
         anatomy: bodyStyle ? {
           gap: bodyStyle.rowGap,
           paddingTop: bodyStyle.paddingTop,
@@ -386,6 +395,10 @@ async function inspectPreviewState(page) {
       return {
         kind: section.dataset.comparisonKind,
         canonicalId: section.dataset.comparisonCanonicalId,
+        pathway: section.dataset.comparisonPathway,
+        disclosure: text(section.querySelector(".comparison-disclosure")),
+        currentLabel: text(section.querySelector("[data-decision-role='current'] .comparison-label")),
+        proposedLabel: text(section.querySelector("[data-decision-role='proposed'] .comparison-label")),
         current,
         proposed,
         coreContentMatches: Boolean(
@@ -402,6 +415,9 @@ async function inspectPreviewState(page) {
       ?.packagingUnverified ?? null;
     const packagingRow = window.XENIOS_FOUNDER_PREVIEW_DATA?.rows
       ?.find((row) => row.canonicalId === packagingId) ?? null;
+    const careId = window.XENIOS_FOUNDER_PREVIEW_DATA?.representativeCanonicalIds?.care ?? null;
+    const careRow = window.XENIOS_FOUNDER_PREVIEW_DATA?.rows
+      ?.find((row) => row.canonicalId === careId) ?? null;
 
     const geometryRoot = document.querySelector(".geometry-three-grid");
     const geometryRoles = geometryRoot
@@ -531,8 +547,16 @@ async function inspectPreviewState(page) {
       cards: {
         pairs: cardPairs,
         restrictiveCards,
+        careRow: careRow ? {
+          canonicalId: careRow.canonicalId,
+          pathway: careRow.pathway.key,
+          imageClass: careRow.imageClass,
+          assetJob: careRow.image.jobId,
+          outputSha256: careRow.image.outputSha256,
+        } : null,
         packagingRow: packagingRow ? {
           canonicalId: packagingRow.canonicalId,
+          pathway: packagingRow.pathway.key,
           imageClass: packagingRow.imageClass,
           bindingState: packagingRow.bindingState.state,
           assetJob: packagingRow.image.jobId,
@@ -620,6 +644,7 @@ function assertFounderPreviewFidelity(state, planned) {
     );
     const expectedActionHeight = width >= 1024 ? 64 : width >= 768 ? 60 : width >= 390 ? 56 : 52;
     for (const pair of state.cards.pairs) {
+      const carePair = ["care", "packaging-unverified"].includes(pair.kind);
       assert.equal(pair.coreContentMatches, true, `${planned.name} ${pair.kind} must change only media`);
       assert.equal(pair.current.imageCount, 0, `${planned.name} current ${pair.kind} must be text-only`);
       assert.equal(pair.current.mediaCount, 0, `${planned.name} current ${pair.kind} must have no media slot`);
@@ -630,7 +655,7 @@ function assertFounderPreviewFidelity(state, planned) {
       assert.equal(pair.proposed.fallbackCount, 0, `${planned.name} ${pair.kind} must not borrow a fallback`);
       assert.equal(pair.proposed.imageObjectFit, "contain", `${planned.name} ${pair.kind} must preserve contain`);
       for (const card of [pair.current, pair.proposed]) {
-        assert.equal(card.anatomy.gap, "6px", `${planned.name} ${pair.kind} body gap must match Core`);
+        assert.equal(card.anatomy.gap, carePair ? "16px" : "6px", `${planned.name} ${pair.kind} body gap must match Core`);
         assert.deepEqual(
           [
             card.anatomy.paddingTop,
@@ -638,43 +663,63 @@ function assertFounderPreviewFidelity(state, planned) {
             card.anatomy.paddingBottom,
             card.anatomy.paddingLeft,
           ],
-          ["16px", "16px", "16px", "16px"],
+          carePair
+            ? ["20px", "20px", "20px", "20px"]
+            : ["16px", "16px", "16px", "16px"],
           `${planned.name} ${pair.kind} body padding must match Core`,
         );
-        assert.match(card.anatomy.categoryFontFamily, /JetBrains Mono/);
-        assert.equal(card.anatomy.categoryFontSize, "12px");
-        assert.equal(card.anatomy.categoryFontWeight, "600");
-        assert.equal(card.anatomy.categoryTextTransform, "uppercase");
-        assert.match(card.anatomy.specificationFontFamily, /JetBrains Mono/);
-        assert.equal(card.anatomy.specificationFontSize, "12px");
-        assert.equal(card.anatomy.specificationFontWeight, "600");
-        assert.equal(card.anatomy.specificationTextTransform, "uppercase");
-        assert.match(card.anatomy.titleFontFamily, /Inter Tight/);
-        assert.equal(card.anatomy.titleFontWeight, "500");
-        assert.ok(
-          Math.abs(
-            parseFloat(card.anatomy.titleLineHeight) /
-              parseFloat(card.anatomy.titleFontSize) -
-              1.375,
-          ) < 0.01,
-          `${planned.name} ${pair.kind} title leading must match Core`,
-        );
+        if (carePair) {
+          assert.equal(card.anatomy.categoryFontWeight, "700");
+          assert.equal(card.anatomy.categoryTextTransform, "uppercase");
+          assert.equal(card.anatomy.titleFontWeight, "700");
+          assert.ok(
+            Math.abs(
+              parseFloat(card.anatomy.titleLineHeight) /
+                parseFloat(card.anatomy.titleFontSize) -
+                1.25,
+            ) < 0.01,
+            `${planned.name} ${pair.kind} title leading must match assisted-order Core`,
+          );
+        } else {
+          assert.match(card.anatomy.categoryFontFamily, /JetBrains Mono/);
+          assert.equal(card.anatomy.categoryFontSize, "12px");
+          assert.equal(card.anatomy.categoryFontWeight, "600");
+          assert.equal(card.anatomy.categoryTextTransform, "uppercase");
+          assert.match(card.anatomy.specificationFontFamily, /JetBrains Mono/);
+          assert.equal(card.anatomy.specificationFontSize, "12px");
+          assert.equal(card.anatomy.specificationFontWeight, "600");
+          assert.equal(card.anatomy.specificationTextTransform, "uppercase");
+          assert.match(card.anatomy.titleFontFamily, /Inter Tight/);
+          assert.equal(card.anatomy.titleFontWeight, "500");
+          assert.ok(
+            Math.abs(
+              parseFloat(card.anatomy.titleLineHeight) /
+                parseFloat(card.anatomy.titleFontSize) -
+                1.375,
+            ) < 0.01,
+            `${planned.name} ${pair.kind} title leading must match Core`,
+          );
+        }
         for (const height of card.actionHeights) {
           assert.ok(
-            Math.abs(height - expectedActionHeight) <= 0.5,
-            `${planned.name} ${pair.kind} action must be ${expectedActionHeight}px`,
+            Math.abs(height - (carePair ? 44 : expectedActionHeight)) <= 0.5,
+            `${planned.name} ${pair.kind} action height must match its Core surface`,
           );
         }
         for (const action of card.actionStyles) {
-          assert.equal(action.backgroundColor, "rgb(14, 14, 14)", `${planned.name} action must be Core black`);
+          assert.equal(action.backgroundColor, carePair ? "rgb(24, 61, 45)" : "rgb(14, 14, 14)", `${planned.name} action color must match Core`);
           assert.equal(action.color, "rgb(255, 255, 255)", `${planned.name} action text must be white`);
-          assert.equal(action.display, "flex", `${planned.name} action must use the Core flex treatment`);
-          assert.equal(action.borderRadius, "4px", `${planned.name} action radius must match Core`);
-          assert.equal(action.fontWeight, "700", `${planned.name} action weight must match Core`);
-          assert.ok(
-            Math.abs(action.width - card.anatomy.contentWidth) <= 0.5,
-            `${planned.name} action must fill the card content width`,
-          );
+          assert.equal(action.display, carePair ? "inline-flex" : "flex", `${planned.name} action must use its Core flex treatment`);
+          assert.equal(action.borderRadius, carePair ? "999px" : "4px", `${planned.name} action radius must match Core`);
+          assert.equal(action.fontWeight, carePair ? "750" : "700", `${planned.name} action weight must match Core`);
+          if (carePair) {
+            assert.equal(action.alignSelf, "flex-start", `${planned.name} Care action must align like assisted-order Core`);
+          } else {
+            assert.ok(
+              Math.abs(action.width - card.anatomy.contentWidth) <= 0.5,
+              `${planned.name} action must fill the card content width`,
+            );
+          }
         }
       }
     }
@@ -700,16 +745,36 @@ function assertFounderPreviewFidelity(state, planned) {
       assert.equal(card.quantityCount, 1);
     }
     const care = state.cards.pairs.find((pair) => pair.kind === "care");
+    assert.equal(care.canonicalId, "GRP-0001", `${planned.name} must retain the exact Care witness`);
+    assert.equal(care.pathway, "care");
+    assert.match(care.disclosure, /Core does not render Care products through this Research product-card surface/);
+    assert.match(care.currentLabel, /ACTUAL ASSISTED-ORDER CARE PRESENTATION/);
+    assert.match(care.proposedLabel, /SAME CARE PATHWAY PLUS MEDIA/);
+    assert.equal(state.cards.careRow.canonicalId, "GRP-0001");
+    assert.equal(state.cards.careRow.pathway, "care");
     for (const card of [care.current, care.proposed]) {
-      assert.equal(card.availability, "AVAILABILITY_CONFIRMATION_REQUIRED");
+      assert.equal(card.availability, "PROVIDER_REVIEW_REQUIRED");
+      assert.equal(card.cardSurface, "assisted-order-care");
+      assert.equal(card.workflowMode, "provider_request");
       assert.equal(card.actionAllowed, "true");
-      assert.deepEqual(card.actionTexts, ["Request availability"]);
+      assert.deepEqual(card.actionTexts, ["Continue through Care"]);
+      assert.deepEqual(card.actionHrefs, ["/care"]);
       assert.equal(card.actionCount, 1);
-      assert.equal(card.quantityCount, 1);
+      assert.equal(card.quantityCount, 0);
+      assert.equal(card.researchBundleCopyCount, 0);
+      assert.equal(card.requestAvailabilityCopyCount, 0);
+      assert.equal(card.carePathwayLabelCount, 1);
+      assert.deepEqual(card.carePriceTexts, ["Ask the Care team about pricing"]);
+      assert.deepEqual(card.careNoticeTexts, [
+        "This product requires provider review through Xenios Care and cannot be added to a research order request.",
+      ]);
     }
     const packaging = state.cards.pairs.find((pair) => pair.kind === "packaging-unverified");
     assert.equal(packaging.canonicalId, "GRP-0073", `${planned.name} must use the real packaging witness`);
+    assert.equal(packaging.pathway, "care", `${planned.name} packaging witness must remain Care`);
+    assert.match(packaging.disclosure, /Core does not render Care products through this Research product-card surface/);
     assert.equal(state.cards.packagingRow.canonicalId, "GRP-0073");
+    assert.equal(state.cards.packagingRow.pathway, "care");
     assert.equal(state.cards.packagingRow.imageClass, "packaging_unverified");
     assert.equal(state.cards.packagingRow.bindingState, "retained_binding");
     assert.equal(state.cards.packagingRow.assetJob, "calibration-06-unverified-identity");
@@ -722,11 +787,21 @@ function assertFounderPreviewFidelity(state, planned) {
     assert.equal(packaging.proposed.assetJob, "calibration-06-unverified-identity");
     assert.equal(packaging.proposed.assetSha256, state.cards.packagingRow.outputSha256);
     for (const card of [packaging.current, packaging.proposed]) {
-      assert.equal(card.availability, "AVAILABILITY_CONFIRMATION_REQUIRED");
+      assert.equal(card.availability, "PROVIDER_REVIEW_REQUIRED");
+      assert.equal(card.cardSurface, "assisted-order-care");
+      assert.equal(card.workflowMode, "provider_request");
       assert.equal(card.actionAllowed, "true");
-      assert.deepEqual(card.actionTexts, ["Request availability"]);
+      assert.deepEqual(card.actionTexts, ["Continue through Care"]);
+      assert.deepEqual(card.actionHrefs, ["/care"]);
       assert.equal(card.actionCount, 1);
-      assert.equal(card.quantityCount, 1);
+      assert.equal(card.quantityCount, 0);
+      assert.equal(card.researchBundleCopyCount, 0);
+      assert.equal(card.requestAvailabilityCopyCount, 0);
+      assert.equal(card.carePathwayLabelCount, 1);
+      assert.deepEqual(card.carePriceTexts, ["Ask the Care team about pricing"]);
+      assert.deepEqual(card.careNoticeTexts, [
+        "This product requires provider review through Xenios Care and cannot be added to a research order request.",
+      ]);
     }
   }
 
