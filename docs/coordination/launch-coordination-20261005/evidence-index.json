@@ -538,5 +538,15 @@
     "path": "CLAUDE_DOC38_RECORD_CORRECTIONS.txt",
     "bytes": 2023,
     "sha256": "e0f7d58b2d8e230cb0f437214f76934183098c17549a5c2dd4e056f524c55591"
+  },
+  {
+    "path": "QUICK_ORDER_DOC38_PACKET_CORRECTIONS.txt",
+    "bytes": 3025,
+    "sha256": "b227b4e4738504fd51911dccf53d86b155f809e712359dc00aa6ed5f8b0a25f0"
+  },
+  {
+    "path": "QUICK_ORDER_DOC38_FOLLOWUP_COORDINATION.json",
+    "bytes": 9782,
+    "sha256": "a70443a9510aeb1251a2d09fc1bd1e0fd3985b8ed6c5a12b1cf08391b127d1ce"
   }
 ]
