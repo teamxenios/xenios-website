@@ -3543,7 +3543,7 @@
         "docs/health-launch/ABC_IC2_TIMELINE_20261005.md",
         "docs/health-launch/evidence/abc-ic2-timeline-20261005/"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-05T16:15:21.348Z",
       "heartbeatAt": "2026-10-05T16:22:56.464Z"
     }

@@ -6,7 +6,7 @@
       "id": "HEALTH-ABC-IC2-TIMELINE-20261005",
       "title": "Correct only IC-2 customer timeline neutral border",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "baseSha": "7d665730b6db11d64f4a9910af99fde420ded53b",
       "paths": [
@@ -17,7 +17,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Founder correction cd66f3c and independent Claude report d9998563/ABC-R1. User relayed exact microscopic IC2-only request through existing Finance chat, verified against original pasted request c8681bc0. Same Core session, no restart. Only customer timeline color and focused regression; keep protected hashes, admin, purple focus, CTAs, finance/MC01/imagery unchanged. No build/full suite/manifest recut/hosted change; push exact source and stop for narrow Claude review.",
-      "claimedAt": "2026-10-05T16:15:21.339Z"
+      "claimedAt": "2026-10-05T16:15:21.339Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "b0b01a3f47588085023c716bb55dad85c11837d1",
+        "file": ".xenios/handoffs/2026-10-05T16-24-12-632Z-HEALTH-ABC-IC2-TIMELINE-20261005-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-05T16:24:12.639Z"
+      }
     },
     {
       "id": "HEALTH-ABC-PREMIUM-SHELL-20261003",
