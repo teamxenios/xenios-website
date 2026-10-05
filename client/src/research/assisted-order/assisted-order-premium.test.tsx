@@ -69,7 +69,7 @@ describe("customer assisted-order premium presentation boundary", () => {
         estimatedTotalCents: null,
         currency: "USD",
         lines: [],
-        nextSteps: [],
+        nextSteps: ["Synthetic request received", "Synthetic availability review pending"],
       }));
     }
     const host = markup(<AssistedOrderConfirmationPage />);
@@ -79,6 +79,7 @@ describe("customer assisted-order premium presentation boundary", () => {
     expect(status?.getAttribute("href")).toBe(`/research/early-access/order-request/${reference}`);
     expect(status?.textContent).toBe(hasReceipt ? "Check Status" : "Check request status");
     expect(host.querySelector('[data-testid="order-confirmation-unavailable"]') !== null).toBe(!hasReceipt);
+    expect(host.querySelectorAll(`${customer} .xenios-order-timeline li`)).toHaveLength(hasReceipt ? 2 : 0);
   });
 
   it("includes the neutral status view so later quote and document controls inherit the customer boundary", () => {
@@ -109,6 +110,34 @@ describe("customer assisted-order premium presentation boundary", () => {
       background: "var(--accent) !important",
       color: "var(--accent-ink) !important",
     });
+  });
+
+  it("keeps the customer timeline neutral, not purple, without changing the admin timeline", () => {
+    const override = declarations(`${customer} .xenios-order-timeline li`);
+    expect(override).toEqual({ "border-left-color": "var(--rule)" });
+
+    // Resolve the actual root/customer tokens rather than relying on jsdom's
+    // incomplete computed-style resolution of CSS custom properties.
+    const tokens: Record<string, string> = {};
+    postcss.parse(readFileSync(resolve(root, "../../index.css"), "utf8")).walkRules((rule) => {
+      if (rule.selector === ":root") rule.walkDecls((declaration) => {
+        if (declaration.prop.startsWith("--")) tokens[declaration.prop] = declaration.value;
+      });
+    });
+    Object.assign(tokens, declarations(".xenios-order-page"), declarations(customer));
+    const resolveToken = (value: string): string => value.replace(/var\((--[\w-]+)\)/gu,
+      (_, token: string) => resolveToken(tokens[token] ?? `unresolved:${token}`));
+    const borderColor = resolveToken(override["border-left-color"]);
+    expect(borderColor).toBe("rgba(14, 14, 14, 0.10)");
+    expect(resolveToken("var(--pulse)")).toBe("#7C3AED");
+    expect(borderColor.toLowerCase()).not.toBe(resolveToken("var(--pulse)").toLowerCase());
+    expect(borderColor.toLowerCase()).not.toBe("rgb(124, 58, 237)");
+
+    expect(declarations(".xenios-order-timeline li")).toEqual({
+      "border-left": "3px solid var(--accent)", "padding-left": "15px", display: "grid", gap: "3px",
+    });
+    expect(declarations(".xenios-order-page")["--accent"]).toBe("#183d2d");
+    expect(declarations(customer)["--accent"]).toBe("var(--pulse)");
   });
 
   it("gives standalone and action-row primaries the same black, wrapping 44px geometry", () => {
