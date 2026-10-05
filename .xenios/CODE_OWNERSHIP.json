@@ -3279,9 +3279,9 @@
         ".xenios/messages/*codex-xenios-product-imagery-20260930*",
         ".xenios/handoffs/*XENIOS-PRODUCT-IMAGERY-20260930*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-03T21:25:56.291Z",
-      "heartbeatAt": "2026-10-05T13:15:44.760Z"
+      "heartbeatAt": "2026-10-05T13:35:26.902Z"
     }
   ],
   "rules": [

@@ -3,8 +3,8 @@
   "tool": "codex",
   "lane": "product-imagery-source",
   "branch": "codex/xenios-product-imagery-20260930",
-  "state": "active",
+  "state": "handoff_ready",
   "startedAt": "2026-09-30T19:49:48.411Z",
-  "heartbeatAt": "2026-10-05T13:15:44.760Z",
-  "note": "Bounded calibration rerenders finished: study04 measured pass,03/05 fail; building private audit evidence; no Batch1 or preview/runtime changes"
+  "heartbeatAt": "2026-10-05T13:35:26.902Z",
+  "note": "Pushed cf4c23a/tree b24b44e private calibration handoff: 54 tests PASS;04 numericPASS pending review;03/05 fail; no Batch1/preview/Core/public/production changes"
 }
