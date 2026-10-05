@@ -1,0 +1,147 @@
+These are planning suggestions from Website State Summary, preserved for coordinator use. They are not founder approval. Fill placeholders only from verified pushed handoffs, review current ownership, and preserve known missing gates as OPEN unless exact evidence closes them. Reviews remain read-only; while subscription qualification owns compute, run static reads and receipt verification only, with no Vitest, build, Docker or browser.
+
+NARROW AFFILIATE + PRODUCT-SUBSCRIPTION SOURCE READINESS REVIEW
+
+Do not reopen the already accepted partner Sign In return.
+
+Accepted partner-return runtime:
+94e89be7c959087edfde4ebddf2f50fa5e02cc36
+
+Partner-return tree:
+23b3284a5cfc667b5cdc0e35643f07e71c333268
+
+Independent source-level acceptance already exists.
+
+Review ONLY the new affiliate/referral/product-subscription readiness candidate.
+
+CANDIDATE
+
+Source:
+<SUB_SOURCE_SHA>
+
+Tree:
+<SUB_TREE>
+
+Tests/evidence:
+<SUB_TEST_SHA>
+
+Handoff:
+<SUB_HANDOFF_SHA>
+
+GOAL OF REVIEW
+
+Determine whether the source truthfully makes the existing affiliate/referral
+and PRODUCT-subscription journey ready up to the furthest currently authorized
+boundary.
+
+This is NOT a review for live purchasing readiness.
+
+VERIFY A — PRODUCT PAGE / SUBSCRIPTION UI
+
+- exact product identity comes from current canonical authority
+- no invented SKU
+- no invented price
+- no invented plan
+- no reintroduction of the historical paid Research membership
+- form exposes only supported quantity/frequency choices
+- subscription-eligible state comes from current authoritative product data
+- unavailable state is truthful
+- no client code can mark a subscription active
+- no client code can manufacture payment evidence
+
+VERIFY B — SUBSCRIPTION CREATE BOUNDARY
+
+Confirm the source still fails closed on:
+
+- product_commerce capability
+- subscriptionEligible
+- exact Product Control live activation
+- quantity bounds
+- supported frequency
+- current/canonical priceVersion
+- member ownership
+- required agreements
+- purchaseExpansionPersistenceAvailable
+- payment authority
+
+Do not treat an attractive working UI as proof those authorities exist.
+
+VERIFY C — KNOWN REAL PURCHASE BLOCKERS
+
+The current audit already found these missing or unresolved:
+
+1. durable create idempotency
+2. durable subscription referral lineage
+3. current-price comparison at the decisive write boundary
+4. canonical eligible-offer projection
+5. durable production activation/currentness boundary
+6. real payment/finality authority
+
+For EACH item return:
+
+- CLOSED by this candidate
+- PARTIAL
+- OPEN
+
+Require exact code/evidence for any CLOSED result.
+
+If the candidate only improves UI/source wiring, keep the blocker OPEN.
+
+VERIFY D — REFERRAL
+
+- referral capture is durable enough for the claimed source behavior
+- self-referral stays refused
+- unknown/disabled partner/code stays refused
+- referral does not change product eligibility or price unless an existing
+  governed rule explicitly says so
+- Care never creates Research commission
+- attribution does not equal earned commission
+- earned commission does not equal paid payout
+- login/referral does not activate payout capability
+
+VERIFY E — PAYMENT
+
+F1 remains OPEN unless this exact candidate independently proves otherwise.
+
+No:
+- real card charge
+- typed payment reference as authority
+- screenshot as authority
+- client success callback as paid authority
+- fake active subscription
+- enabled renewal payment without independent durable authority
+
+If payment is unavailable, the customer-facing source must stop truthfully at
+that boundary without claiming purchase completion.
+
+OWNER CHOICES
+
+Do NOT infer decisions for:
+
+- exact live subscription SKU(s)
+- exact current commercial price/version
+- which gym/partner becomes active
+- new commission terms
+- payment provider/finality
+- a separate paid membership offer
+
+These remain owner choices unless already governed by an existing authoritative
+record.
+
+RETURN
+
+- exact source/tree reviewed
+- AFFILIATE LOGIN readiness: READY / PARTIAL / NOT READY
+- REFERRAL readiness: READY / PARTIAL / NOT READY
+- PRODUCT SUBSCRIPTION SOURCE readiness: READY / PARTIAL / NOT READY
+- LIVE CUSTOMER PURCHASE readiness: READY / NOT READY
+- six blocker statuses individually
+- P0/P1/P2 findings
+- exact owner decisions still required
+- exact technical prerequisites still required
+- whether source can enter the release integrator while live payments remain disabled
+
+Do not edit code.
+Do not enable commerce.
+Do not enable payment.
+Do not activate a partner.

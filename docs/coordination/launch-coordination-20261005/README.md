@@ -30,7 +30,7 @@ The D/E task uses a local existing checkout because Cloud exposed no repository 
 
 Core's separate partner-return slice is pushed at source `94e89be7c959087edfde4ebddf2f50fa5e02cc36`, tree `23b3284a5cfc667b5cdc0e35643f07e71c333268`. Tests are `806c58a83bb3c0f1f75b9e003de14aa525069950`, evidence `9b8adebd81d48dbf2a17372afc06bd671f3eb9a9`, and final handoff `3f044f41b93d41c4ca40954eabd919dfb6ef0be4` on `codex/xenios-partner-signin-return-20261005`. It reports 205 focused tests passing in seven files with no failures/skips, including composed synthetic Auth/HTTP cases. Claude independently accepted the exact source through static review and receipt/hash verification; it did not rerun tests or browser checks. The full bounded verdict is in `CLAUDE_PARTNER_RETURN_ACCEPTANCE.txt`. This is not a live-account or complete-browser purchase proof.
 
-D/E holds the serialized focused-test/typecheck slot. Its first eight-file run passed 75 tests and typecheck passed; a wider affected run is in progress after adversarial fixes. Subscription readiness has requested the next slot. No full aggregate, controlled database race qualification, or concurrent heavy jobs have been authorized under the current active-worker load.
+D/E completed 238 focused tests across 15 files plus nonincremental typecheck and released compute before packaging. Subscription readiness now owns the serialized focused-test/typecheck slot, followed by a bounded loopback-only synthetic browser fixture using its actual component/adapter/service. No production environment or live payment is loaded; this does not prove a real affiliate purchase. No full aggregate, controlled database race qualification, or concurrent heavy jobs have been authorized under the current active-worker load.
 
 ## Host recovery
 
@@ -44,7 +44,7 @@ Desktop automation remains unavailable because the REPL server cannot write kern
 
 Fresh read-only Render service/deployment reads confirm production `xenios-website`, service `srv-d8s9vej7uimc7384dfcg`, serves `79414143d4355d5d3d14cd5fe6e5a536dc68d99d`, deployment `dep-daqft3vf3r2c73b7e88g`, with auto-deploy off. At `2026-10-05T17:08:30Z`, public `/api/health` returned successfully with `commerceEnabled: false`.
 
-This is service/health evidence only. It is not proof of an authenticated gym-owner journey, subscription purchase, payment, schema qualification, or customer delivery. No production mutation occurred in this coordinator work.
+This is service/health evidence only. It is not proof of an authenticated gym-owner journey, subscription purchase, payment, schema qualification, or customer delivery. No production mutation occurred in this coordinator work. A repeat observation around 17:31Z is preserved in `production-render-observation.json` and `production-health-observation.json`; `docker-postcheck.json` preserves the corresponding volume/container/free-space observation. All three are included in the evidence index.
 
 ## Pending decisions and release requirements
 

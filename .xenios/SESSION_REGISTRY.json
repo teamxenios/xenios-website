@@ -587,8 +587,8 @@
       "branch": "codex/xenios-launch-coordination-20261005",
       "state": "active",
       "startedAt": "2026-10-05T17:19:29.457Z",
-      "heartbeatAt": "2026-10-05T17:28:36.942Z",
-      "note": "Core IC2 accepted; partner source pushed and in independent review; D/E focused checks active; subscriptions queued; owner decisions pending; records-only coordinator."
+      "heartbeatAt": "2026-10-05T17:37:28.080Z",
+      "note": "Core IC2 and partner-return accepted; D/E238focused and typecheck pass, packaging; subscriptions own focused/browser slot; production unchanged, owner decisions pending."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

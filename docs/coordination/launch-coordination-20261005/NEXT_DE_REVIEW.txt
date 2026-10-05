@@ -1,0 +1,114 @@
+These are planning suggestions from Website State Summary, preserved for coordinator use. They are not founder approval. Fill placeholders only from verified pushed handoffs, review current ownership, and preserve known missing gates as OPEN unless exact evidence closes them. Reviews remain read-only; while subscription qualification owns compute, run static reads and receipt verification only, with no Vitest, build, Docker or browser.
+
+NARROW D/E SOURCE-LEVEL ACCEPTANCE REVIEW
+
+Do not reopen MC-01, Core A/B/C, partner return, Finance or imagery review.
+
+ACCEPTED BASE
+
+MC-01 source:
+ed9bb9b456bb78994f4fcfedac6ac2112142a5b6
+
+MC-01 tree:
+f5953b8e148196c4ea71839cdd40a4e06b5f9fd1
+
+Independent MC-01 acceptance:
+d9998563c9a709f2ef9ccd928d4e59fc259bb82d
+
+Binding founder scope:
+cd66f3c411e6164981295d81c2116e50343edc86
+
+D/E CANDIDATE
+
+Source:
+<D_E_SOURCE_SHA>
+
+Tree:
+<D_E_TREE>
+
+Tests/evidence:
+<D_E_TEST_OR_EVIDENCE_SHA>
+
+Handoff:
+<D_E_HANDOFF_SHA>
+
+Review ONLY the D/E delta from accepted MC-01.
+
+VERIFY
+
+1. Media remains presentation-only.
+   No media field may create or alter:
+   - product existence
+   - price
+   - purchasability
+   - cart eligibility
+   - quote eligibility
+   - pathway
+   - activation
+   - fulfillment
+   - payment/provider authority
+
+2. Exact media presentation contract:
+   - 1:1
+   - contain, never forced crop
+   - exact variant identity
+   - primary image only
+   - same media/content hash on card and detail where both surfaces render it
+   - malformed/expired/load-failed media => fallback
+   - product remains present
+
+3. IC-3:
+   exact fallback copy:
+   "An approved product image is not available."
+
+   - fallback has no role="img"
+   - "Illustrative image" is outside the image pixels
+   - no overlay/tint/filter/vignette/lookalike substitution
+
+4. Product Control remains runtime media-approval authority.
+   Imagery receipts are asset identity evidence only.
+
+5. Care / Research / held / quote-only / coming-soon semantics are unchanged.
+
+6. No image was added to payment, money or financial-summary authority surfaces.
+
+7. If source-only schema/migration work exists for:
+   - variant identity
+   - width
+   - height
+   - content hash
+
+   verify:
+   - candidate/source only
+   - NOT registered
+   - NOT added to managed migration ledger/DAG
+   - NOT applied
+   - no hosted DB mutation
+
+8. Verify D/E does NOT falsely imply that MC-01's SQL readiness decoupling is
+   already live in production.
+
+IMPORTANT RELEASE DISTINCTION
+
+D/E source may be accepted while production promotion remains blocked.
+
+MC-01 release still requires the separately reviewed runtime/database chain,
+including its unapplied predecessors, reviewed MC-01 candidate, canonical
+non-image product_content approval and separate launch transition.
+
+Do not convert D/E presentation acceptance into approval for that chain.
+
+RETURN ONLY
+
+- exact SHA/tree reviewed
+- SOURCE D/E: ACCEPT / REJECT
+- IC-3: PASS / FAIL
+- media-is-presentation-only: PASS / FAIL
+- source-only schema status
+- P0/P1/P2 findings
+- exact remaining release prerequisites
+- whether this D/E source is safe for the release integrator
+- explicit statement that no managed SQL or production promotion is approved
+
+Do not edit code.
+Do not launch another implementation lane.

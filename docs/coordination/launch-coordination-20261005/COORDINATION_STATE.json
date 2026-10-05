@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T17:30:06.7686214Z",
+  "updatedAt": "2026-10-05T17:37:27.9085762Z",
   "objective": "Automate verified Codex-Claude-ChatGPT handoffs and prepare the gym-owner affiliate and customer product-subscription launch without bypassing release authorities.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -33,7 +33,8 @@
     "acceptance": "d9998563c9a709f2ef9ccd928d4e59fc259bb82d",
     "cwd": "C:/Users/sboad/.codex/worktrees/2227/xenios-website",
     "base": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
-    "scope": "D/E fallback-first media; no Core clarity/auth paths, protected files, Finance or imagery generation"
+    "scope": "D/E fallback-first media; no Core clarity/auth paths, protected files, Finance or imagery generation",
+    "status": "238 focused tests in15files and nonincremental typecheck pass; compute released; source/handoff packaging"
   },
   "production": {
     "deployment": "dep-daqft3vf3r2c73b7e88g",
@@ -72,7 +73,7 @@
   ],
   "subscription": {
     "cwd": "C:/Users/sboad/.codex/worktrees/5b21/xenios-website",
-    "status": "source ready for serialized focused checks after D/E; offer projection and backend authorities incomplete",
+    "status": "focused source qualification running; bounded synthetic browser approved next within same serialized slot",
     "scope": "canonical product subscription component/adapter/service plus coordinated ProductPage mount; no invented live offer or payment",
     "base": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
     "effort": "ultra",
@@ -80,10 +81,10 @@
     "thread": "01a10d12-0764-7222-8b5a-5029508020ad"
   },
   "qualificationSlot": {
-    "owner": "01a10d08-cd8b-7431-80b7-a21677c11bb6",
-    "scope": "one-worker focused tests and typecheck",
+    "owner": "01a10d12-0764-7222-8b5a-5029508020ad",
+    "scope": "one-worker focused tests, nonincremental typecheck, then bounded loopback synthetic browser fixture",
     "fullSuite": "not authorized under current multi-worker load",
-    "next": "01a10d12-0764-7222-8b5a-5029508020ad"
+    "next": "independent reviews; future integration only after accepted handoffs"
   },
   "partnerReturn": {
     "source": "94e89be7c959087edfde4ebddf2f50fa5e02cc36",
