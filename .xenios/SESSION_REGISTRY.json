@@ -585,10 +585,10 @@
       "tool": "codex",
       "lane": "launch-coordination",
       "branch": "codex/xenios-launch-coordination-20261005",
-      "state": "handoff_ready",
+      "state": "active",
       "startedAt": "2026-10-05T17:19:29.457Z",
-      "heartbeatAt": "2026-10-05T20:25:01.382Z",
-      "note": "Samebuilder active authorized relocation/proposal-only slice; original6abreview running, overlapping5fb parked. OldA1held for regeneration, A2pending; exact scope/dispatch/handoff pushed. Heartbeat active/quiet."
+      "heartbeatAt": "2026-10-05T20:28:13.242Z",
+      "note": "Relocation22files reported in progress, planner acknowledgement retrieved. Worker outbound status permission rejected; no retry/alternate channel, localwork continues.6abreviewpending."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

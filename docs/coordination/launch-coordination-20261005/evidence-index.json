@@ -253,5 +253,10 @@
     "path": "QUICK_ORDER_RELOCATION_SCOPE_AUDIT.json",
     "bytes": 6736,
     "sha256": "4c6181d8f7501a5b3dc9351bd911d7cd35b91a22a76d5233ed724fe62061208b"
+  },
+  {
+    "path": "PLANNING_DELTA_20261005_2025.json",
+    "bytes": 1773,
+    "sha256": "78e557267bba0bea683af384384f6eb6dadac9ae09b55e293b9a1f9ebe7ffbf6"
   }
 ]
