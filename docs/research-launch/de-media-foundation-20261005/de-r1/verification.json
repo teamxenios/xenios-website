@@ -1,0 +1,64 @@
+{
+  "task": "DE-MEDIA-FOUNDATION-DE-R1-20261005",
+  "acceptedSource": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+  "sourceSha": "e6a8171b5b2d4ad78930c214997532e16601a48e",
+  "sourceTree": "72023b56e21b0f8b5c9643d110def78c0a6b6e7b",
+  "node": "20.19.0",
+  "vitest": "4.1.10",
+  "tests": {
+    "entry": "node_modules/vitest/vitest.mjs",
+    "args": [
+      "run",
+      "shared/research/product-media.test.ts",
+      "client/src/research/ui/ProductMedia.test.tsx",
+      "server/research/catalog/member-catalog-projection.test.ts",
+      "server/research/catalog/member-catalog-service.test.ts",
+      "client/src/research/adapters/memberCatalog.test.ts",
+      "--maxWorkers=1",
+      "--no-file-parallelism"
+    ],
+    "passed": 71,
+    "failed": 0,
+    "files": 5,
+    "exit": 0,
+    "durationSeconds": 7.52,
+    "log": "focused-tests.txt"
+  },
+  "typecheck": {
+    "entry": "node_modules/typescript/bin/tsc",
+    "args": [
+      "--noEmit",
+      "--incremental",
+      "false"
+    ],
+    "exit": 0,
+    "log": "typecheck.txt"
+  },
+  "boundary": {
+    "serverSigningLifetimeChanged": false,
+    "sqlChanged": false,
+    "browserQualification": "DEFERRED",
+    "exactServerTimeExpiryProven": false,
+    "hostedMutation": false,
+    "computeSlot": "RELEASED",
+    "independentRecheck": "PENDING"
+  },
+  "changedSourceFiles": [
+    {
+      "path": "client/src/research/ui/ProductMedia.test.tsx",
+      "gitBlob": "0e8b9261294357bc89ce818e7c70f8a80d4395fd"
+    },
+    {
+      "path": "client/src/research/ui/ProductMedia.tsx",
+      "gitBlob": "00f1e2e6771e49cf10bdbd5ab912e66f6abf68d1"
+    },
+    {
+      "path": "shared/research/product-media.test.ts",
+      "gitBlob": "b3e1562a7565350c1263962a624c1f9c27db948b"
+    },
+    {
+      "path": "shared/research/product-media.ts",
+      "gitBlob": "fee4b325a96af3098bc099e2d1ec57267fde7574"
+    }
+  ]
+}

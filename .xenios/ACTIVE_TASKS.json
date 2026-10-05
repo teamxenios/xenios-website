@@ -3423,6 +3423,35 @@
         "file": ".xenios/handoffs/2026-10-05T17-37-23-295Z-DE-MEDIA-FOUNDATION-20261005-codex-de-media-foundation-20261005.md",
         "at": "2026-10-05T17:37:23.311Z"
       }
+    },
+    {
+      "id": "DE-MEDIA-FOUNDATION-DE-R1-20261005",
+      "title": "Correct signed media client-clock skew after independent source acceptance",
+      "priority": "P2",
+      "state": "qa",
+      "owner": "codex-de-media-foundation-20261005",
+      "baseSha": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "paths": [
+        "shared/research/product-media.ts",
+        "shared/research/product-media.test.ts",
+        "client/src/research/ui/ProductMedia.tsx",
+        "client/src/research/ui/ProductMedia.test.tsx",
+        "docs/research-launch/de-media-foundation-20261005/de-r1/",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/sessions/codex-de-media-foundation-20261005.json",
+        ".xenios/handoffs/*DE-MEDIA-FOUNDATION-DE-R1-20261005*"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Coordinator conveyed independent Claude SOURCE ACCEPT for5152 and requested bounded DE-R1 clock-skew correction. Preserve server signing lifetime and fail-closed URL/identity/hash/size/expiry behavior. Narrow serial focused tests/typecheck authorized; no browser/DB/build/full aggregate, hosted writes or scope expansion. Accepted foundation source and original handoff remain preserved.",
+      "claimedAt": "2026-10-05T17:51:09.198Z",
+      "handoff": {
+        "session": "codex-de-media-foundation-20261005",
+        "sha": "e6a8171b5b2d4ad78930c214997532e16601a48e",
+        "file": ".xenios/handoffs/2026-10-05T17-55-21-642Z-DE-MEDIA-FOUNDATION-DE-R1-20261005-codex-de-media-foundation-20261005.md",
+        "at": "2026-10-05T17:55:21.660Z"
+      }
     }
   ]
 }
