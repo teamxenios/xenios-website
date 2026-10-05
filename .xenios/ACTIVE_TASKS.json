@@ -3322,7 +3322,7 @@
       "id": "MC01-RECONCILIATION-20261003",
       "title": "Reconcile presentation-only media authority onto current Core",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-mc01-reconciliation-20261003",
       "baseSha": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
       "paths": [
@@ -3359,7 +3359,57 @@
       ],
       "dependsOn": [],
       "scopeNote": "v2 specialist isolated successor; exact disjoint subagent assignments recorded in lane report. Source-only SQL, no registration/application; no hosted mutation, imagery publication, A/B/C shell or assisted-order presentation edits. Root controls registry. Historical records reconciled individually; no wholesale import.",
-      "claimedAt": "2026-10-03T21:32:39.009Z"
+      "claimedAt": "2026-10-03T21:32:39.009Z",
+      "handoff": {
+        "session": "codex-mc01-reconciliation-20261003",
+        "sha": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+        "file": ".xenios/handoffs/2026-10-05T13-39-59-546Z-MC01-RECONCILIATION-20261003-codex-mc01-reconciliation-20261003.md",
+        "at": "2026-10-05T13:39:59.561Z"
+      }
+    },
+    {
+      "id": "DE-MEDIA-FOUNDATION-20261005",
+      "title": "Fallback-first exact-variant square media foundation",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-de-media-foundation-20261005",
+      "baseSha": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "paths": [
+        "shared/research/product-media.ts",
+        "shared/research/product-media.test.ts",
+        "shared/research/member-catalog.ts",
+        "shared/research/product-admin.ts",
+        "server/research/catalog/member-catalog-projection.ts",
+        "server/research/catalog/member-catalog-projection.test.ts",
+        "server/research/catalog/member-catalog-service.ts",
+        "server/research/catalog/member-catalog-service.test.ts",
+        "server/research/products-diagnostics/product-admin-production.ts",
+        "server/research/products-diagnostics/product-admin-production.test.ts",
+        "client/src/research/adapters/memberCatalog.ts",
+        "client/src/research/adapters/memberCatalog.test.ts",
+        "client/src/research/ui/ProductMedia.tsx",
+        "client/src/research/ui/product-media.css",
+        "client/src/research/ui/ProductMedia.test.tsx",
+        "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+        "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+        "client/src/research/products-diagnostics/product-media-surfaces.test.tsx",
+        "client/src/research/products-diagnostics/catalog-product-experience.test.tsx",
+        "client/src/research/assisted-order/AssistedOrderPage.tsx",
+        "client/src/research/assisted-order/AssistedOrderPage.media.test.tsx",
+        "client/src/research/master-offerings/MasterOfferingCard.tsx",
+        "client/src/research/master-offerings/product-media-foundation.test.tsx",
+        "supabase/candidates/20261005_research_product_media_descriptor.sql",
+        "server/research/catalog/product-media-schema.test.ts",
+        "docs/research-launch/de-media-foundation-20261005/",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/sessions/codex-de-media-foundation-20261005.json",
+        ".xenios/handoffs/*DE-MEDIA-FOUNDATION-20261005*"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Accepted MC01 ed9bb9b per Claude d999856; founder cd66f3c source-only D/E. Root sole writer. Read-only component/DTO/a11y/performance/browser/adversarial agents. Reuse verified idle clean MC01 checkout; preserve old branch. Core clarity/auth/protected shell/manifest, Finance and imagery excluded. No managed registration/apply, hosted writes, deployment or publication. Heavy qualification deferred under host constraint.",
+      "claimedAt": "2026-10-05T17:12:43.632Z"
     }
   ]
 }

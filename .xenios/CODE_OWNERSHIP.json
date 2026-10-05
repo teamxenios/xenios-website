@@ -3547,9 +3547,50 @@
         ".xenios/sessions/codex-mc01-reconciliation-20261003.json",
         ".xenios/handoffs/*MC01-RECONCILIATION-20261003*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-03T21:32:39.012Z",
-      "heartbeatAt": "2026-10-05T13:11:38.271Z"
+      "heartbeatAt": "2026-10-05T13:26:26.631Z"
+    },
+    {
+      "id": "d81653c4-3fc1-4b08-99fa-8da12574365f",
+      "task": "DE-MEDIA-FOUNDATION-20261005",
+      "session": "codex-de-media-foundation-20261005",
+      "paths": [
+        "shared/research/product-media.ts",
+        "shared/research/product-media.test.ts",
+        "shared/research/member-catalog.ts",
+        "shared/research/product-admin.ts",
+        "server/research/catalog/member-catalog-projection.ts",
+        "server/research/catalog/member-catalog-projection.test.ts",
+        "server/research/catalog/member-catalog-service.ts",
+        "server/research/catalog/member-catalog-service.test.ts",
+        "server/research/products-diagnostics/product-admin-production.ts",
+        "server/research/products-diagnostics/product-admin-production.test.ts",
+        "client/src/research/adapters/memberCatalog.ts",
+        "client/src/research/adapters/memberCatalog.test.ts",
+        "client/src/research/ui/ProductMedia.tsx",
+        "client/src/research/ui/product-media.css",
+        "client/src/research/ui/ProductMedia.test.tsx",
+        "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+        "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+        "client/src/research/products-diagnostics/product-media-surfaces.test.tsx",
+        "client/src/research/products-diagnostics/catalog-product-experience.test.tsx",
+        "client/src/research/assisted-order/AssistedOrderPage.tsx",
+        "client/src/research/assisted-order/AssistedOrderPage.media.test.tsx",
+        "client/src/research/master-offerings/MasterOfferingCard.tsx",
+        "client/src/research/master-offerings/product-media-foundation.test.tsx",
+        "supabase/candidates/20261005_research_product_media_descriptor.sql",
+        "server/research/catalog/product-media-schema.test.ts",
+        "docs/research-launch/de-media-foundation-20261005/",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/sessions/codex-de-media-foundation-20261005.json",
+        ".xenios/handoffs/*DE-MEDIA-FOUNDATION-20261005*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-05T17:12:43.639Z",
+      "heartbeatAt": "2026-10-05T17:12:43.639Z"
     }
   ],
   "rules": [
