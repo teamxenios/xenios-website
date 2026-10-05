@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "classification": "LOADED_HOST_RACES_DEFERRED",
+  "samples": [
+    {
+      "at": "2026-10-05T13:41:07.6299525Z",
+      "cpuPercent": 17,
+      "availableMiB": 1066,
+      "pagesInputPerSecond": 1697,
+      "pagesOutputPerSecond": 0,
+      "testBuildProcesses": [
+        {
+          "ProcessId": 65988,
+          "ParentProcessId": 53104,
+          "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+        },
+        {
+          "ProcessId": 52952,
+          "ParentProcessId": 65988,
+          "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-05T13:41:13.5762918Z",
+      "cpuPercent": 17,
+      "availableMiB": 1000,
+      "pagesInputPerSecond": 586,
+      "pagesOutputPerSecond": 0,
+      "testBuildProcesses": [
+        {
+          "ProcessId": 65988,
+          "ParentProcessId": 53104,
+          "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+        },
+        {
+          "ProcessId": 7740,
+          "ParentProcessId": 65988,
+          "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-05T13:41:19.4967432Z",
+      "cpuPercent": 32,
+      "availableMiB": 1070,
+      "pagesInputPerSecond": 351,
+      "pagesOutputPerSecond": 0,
+      "testBuildProcesses": [
+        {
+          "ProcessId": 65988,
+          "ParentProcessId": 53104,
+          "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+        },
+        {
+          "ProcessId": 50020,
+          "ParentProcessId": 65988,
+          "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+        }
+      ]
+    }
+  ],
+  "continuousHostAttestation": false,
+  "note": "Three point samples do not prove an entire later run remained idle. Preserve in-run observations too."
+}

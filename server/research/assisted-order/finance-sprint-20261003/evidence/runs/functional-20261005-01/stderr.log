@@ -1,0 +1,18 @@
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected structured SQL JSON
+    at json (file:///C:/Users/sboad/.codex/worktrees/3221/xenios-website/supabase/verification/research_assisted_order_quote_provider_journal_harness.mjs:24:10)
+    at requestQuarantineHeld (file:///C:/Users/sboad/.codex/worktrees/3221/xenios-website/supabase/verification/research_assisted_order_provider_attribution_local.mjs:108:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async runAttributionFunctionalProof (file:///C:/Users/sboad/.codex/worktrees/3221/xenios-website/supabase/verification/research_assisted_order_provider_attribution_local.mjs:218:18)
+    at async file:///C:/Users/sboad/.codex/worktrees/3221/xenios-website/supabase/verification/research_assisted_order_provider_attribution_local.mjs:432:3 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 0,
+  expected: true,
+  operator: '=='
+}
+
+Node.js v20.19.0

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "job": "races-deferred",
+  "runName": "races-deferred-20261005-01",
+  "startedAt": "2026-10-05T13:57:22.123Z",
+  "finishedAt": "2026-10-05T13:57:22.350Z",
+  "durationSeconds": 0.22510690000000022,
+  "executable": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "nodeVersion": "v20.19.0",
+  "args": [
+    "supabase/verification/research_assisted_order_provider_attribution_races.mjs"
+  ],
+  "exitCode": 2,
+  "signal": null,
+  "evidenceRunnerSha256": "f211ee0328f2c28a10c078bdca49c6ba035ae719e9f132f8860640af4bdef42d",
+  "start": {
+    "head": "dfd8b9b09815357d6c92f9c00eadf1782325269a",
+    "tree": "d00442d29aa884125c62f8a92d58b971cf47cecd",
+    "dirty": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-finance-release-blockers-20261003.json\n M server/research/assisted-order/FINANCE_SPRINT_V2_20261003.md\n?? server/research/assisted-order/finance-sprint-20261003/evidence/",
+    "sourceManifestSha256": "d7f403f1c87bc461e607c413e5b6ba80656e605023fd1362585d89812cd357b9"
+  },
+  "end": {
+    "head": "dfd8b9b09815357d6c92f9c00eadf1782325269a",
+    "tree": "d00442d29aa884125c62f8a92d58b971cf47cecd",
+    "dirty": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-finance-release-blockers-20261003.json\n M server/research/assisted-order/FINANCE_SPRINT_V2_20261003.md\n?? server/research/assisted-order/finance-sprint-20261003/evidence/",
+    "sourceManifestSha256": "d7f403f1c87bc461e607c413e5b6ba80656e605023fd1362585d89812cd357b9"
+  },
+  "sourceUnchangedAtBoundaries": true,
+  "continuousFilesystemAttestation": false,
+  "hostQualification": "SHARED_HOST_UNQUALIFIED",
+  "stdoutSha256": "84ba1985f26a1bcc35f135f792fe79d11c9b773c50d0fafbeb2cd342bfdeeee7",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "productionMutated": false,
+  "managedDatabaseUsed": false
+}

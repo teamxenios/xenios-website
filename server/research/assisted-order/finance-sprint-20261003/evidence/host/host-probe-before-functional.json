@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "classification": "LOADED_HOST_RACES_DEFERRED",
+  "samples": [
+    {
+      "at": "2026-10-05T13:02:25.9932869Z",
+      "cpuPercent": 100,
+      "availableMiB": 543,
+      "pagesInputPerSecond": 39864,
+      "pagesOutputPerSecond": 0,
+      "testBuildProcesses": []
+    },
+    {
+      "at": "2026-10-05T13:02:32.2148198Z",
+      "cpuPercent": 96,
+      "availableMiB": 375,
+      "pagesInputPerSecond": 33026,
+      "pagesOutputPerSecond": 0,
+      "testBuildProcesses": []
+    },
+    {
+      "at": "2026-10-05T13:02:38.2973991Z",
+      "cpuPercent": 55,
+      "availableMiB": 212,
+      "pagesInputPerSecond": 42626,
+      "pagesOutputPerSecond": 0,
+      "testBuildProcesses": []
+    }
+  ],
+  "continuousHostAttestation": false,
+  "note": "Three point samples do not prove an entire later run remained idle. Preserve in-run observations too."
+}

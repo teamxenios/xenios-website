@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "job": "attribution",
+  "runName": "source-contract-20261005-01",
+  "startedAt": "2026-10-05T13:22:30.191Z",
+  "finishedAt": "2026-10-05T13:22:35.375Z",
+  "durationSeconds": 5.172467700000001,
+  "executable": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "nodeVersion": "v20.19.0",
+  "args": [
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "server/research/assisted-order/provider-attribution-sql.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism"
+  ],
+  "exitCode": 0,
+  "signal": null,
+  "evidenceRunnerSha256": "f211ee0328f2c28a10c078bdca49c6ba035ae719e9f132f8860640af4bdef42d",
+  "start": {
+    "head": "d2e12dcd5cd55e0fce84a41ff49635f85cafaf52",
+    "tree": "161d3d947e8f8b6f97efa12adad407ab8b8337c6",
+    "dirty": "",
+    "sourceManifestSha256": "58a6b2b7c860742ce4692d89c7039f8cf76c14f1c3512041070fec8dbd8e7681"
+  },
+  "end": {
+    "head": "d2e12dcd5cd55e0fce84a41ff49635f85cafaf52",
+    "tree": "161d3d947e8f8b6f97efa12adad407ab8b8337c6",
+    "dirty": "",
+    "sourceManifestSha256": "58a6b2b7c860742ce4692d89c7039f8cf76c14f1c3512041070fec8dbd8e7681"
+  },
+  "sourceUnchangedAtBoundaries": true,
+  "continuousFilesystemAttestation": false,
+  "hostQualification": "SHARED_HOST_UNQUALIFIED",
+  "stdoutSha256": "815f11e33443c7693a3de3ffe259ab23dd3d429214732f5df8dc4a9b74458467",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "productionMutated": false,
+  "managedDatabaseUsed": false
+}

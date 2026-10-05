@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "classification": "LOADED_HOST_RACES_DEFERRED",
+  "samples": [
+    {
+      "at": "2026-10-05T13:17:33.4911063Z",
+      "cpuPercent": 97,
+      "availableMiB": 413,
+      "pagesInputPerSecond": 59065,
+      "pagesOutputPerSecond": 109,
+      "testBuildProcesses": [
+        {
+          "ProcessId": 62528,
+          "ParentProcessId": 61880,
+          "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+        },
+        {
+          "ProcessId": 59012,
+          "ParentProcessId": 62528,
+          "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-05T13:17:39.8833041Z",
+      "cpuPercent": 100,
+      "availableMiB": 472,
+      "pagesInputPerSecond": 43098,
+      "pagesOutputPerSecond": 0,
+      "testBuildProcesses": [
+        {
+          "ProcessId": 62528,
+          "ParentProcessId": 61880,
+          "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+        },
+        {
+          "ProcessId": 59012,
+          "ParentProcessId": 62528,
+          "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+        }
+      ]
+    },
+    {
+      "at": "2026-10-05T13:17:45.8332530Z",
+      "cpuPercent": 5,
+      "availableMiB": 439,
+      "pagesInputPerSecond": 36879,
+      "pagesOutputPerSecond": 0,
+      "testBuildProcesses": [
+        {
+          "ProcessId": 62528,
+          "ParentProcessId": 61880,
+          "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+        },
+        {
+          "ProcessId": 59012,
+          "ParentProcessId": 62528,
+          "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+        }
+      ]
+    }
+  ],
+  "continuousHostAttestation": false,
+  "note": "Three point samples do not prove an entire later run remained idle. Preserve in-run observations too."
+}

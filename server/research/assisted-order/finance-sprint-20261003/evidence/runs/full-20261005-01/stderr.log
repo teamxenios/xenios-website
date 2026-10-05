@@ -1,0 +1,107 @@
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+Not implemented: navigation to another Document
+Not implemented: Window's scrollTo() method
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 15 ⎯⎯⎯⎯⎯⎯
+
+ FAIL  server/static.test.ts [ server/static.test.ts ]
+ FAIL  server/research/membership.test.ts [ server/research/membership.test.ts ]
+ FAIL  server/research/profile.test.ts [ server/research/profile.test.ts ]
+ FAIL  server/research/assisted-order/audit-store.test.ts [ server/research/assisted-order/audit-store.test.ts ]
+ FAIL  server/research/commerce/durable-checkout-executor.test.ts [ server/research/commerce/durable-checkout-executor.test.ts ]
+ FAIL  server/research/evidence/guides.test.ts [ server/research/evidence/guides.test.ts ]
+ FAIL  server/research/early-access/private-access-nonce-store.test.ts [ server/research/early-access/private-access-nonce-store.test.ts ]
+ FAIL  server/research/early-access/private-access-session-repository.test.ts [ server/research/early-access/private-access-session-repository.test.ts ]
+ FAIL  server/research/master-offerings/catalog-boundaries.test.ts [ server/research/master-offerings/catalog-boundaries.test.ts ]
+ FAIL  server/research/master-offerings/pathway-authority.test.ts [ server/research/master-offerings/pathway-authority.test.ts ]
+ FAIL  server/research/membership-activation/documents.test.ts [ server/research/membership-activation/documents.test.ts ]
+ FAIL  server/research/membership-activation/obligations.test.ts [ server/research/membership-activation/obligations.test.ts ]
+ FAIL  server/research/membership-activation/renewals.test.ts [ server/research/membership-activation/renewals.test.ts ]
+ FAIL  server/research/quality/public-read-guard.test.ts [ server/research/quality/public-read-guard.test.ts ]
+ FAIL  server/research/partners/portal.test.ts [ server/research/partners/portal.test.ts ]
+Error: ENOSPC: no space left on device, write
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/17]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  server/core-site-protection.test.ts > the protected file hash tripwire > matches every curated protected file at HEAD
+AssertionError: expected [ { path: 'server/static.ts', …(2) } ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "actual": "sha256:b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94",
++     "expected": "sha256:9cd3e1c363dd921fab780761baa888e9319f40ef177ca303072e3179b2c20004",
++     "path": "server/static.ts",
++   },
++ ]
+
+ ❯ server/core-site-protection.test.ts:321:31
+    319|   it("matches every curated protected file at HEAD", () => {
+    320|     const result = verifyHashes(manifest.fileHashes.files, cleanReader…
+    321|     expect(result.mismatches).toEqual([]);
+       |                               ^
+    322|     expect(result.missing).toEqual([]);
+    323|     expect(result.matched.length).toBe(Object.keys(manifest.fileHashes…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/17]⎯
+
+ FAIL  server/core-site-protection.test.ts > the protected file hash tripwire > verifies the seam baselines too, and they are all clean at HEAD
+AssertionError: expected [ { …(3) }, …(2) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "actual": "sha256:1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
++     "expected": "sha256:3b3b808b23cccdf8d2e2179fd30349b3ae299137a8a4a5f33525e0a304828d80",
++     "path": "client/src/App.tsx",
++   },
++   {
++     "actual": "sha256:ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521",
++     "expected": "sha256:1d6594d6389e2ac67d9af85213854e05387899dfe0102fa577e447565e68c315",
++     "path": "server/index.ts",
++   },
++   {
++     "actual": "sha256:5b9f683b183a095e258908e0e0086888c71b7666b0e384367b1bfde0c4124188",
++     "expected": "sha256:b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070",
++     "path": "server/research/index.ts",
++   },
++ ]
+
+ ❯ server/core-site-protection.test.ts:387:31
+    385|   it("verifies the seam baselines too, and they are all clean at HEAD"…
+    386|     const result = verifyHashes(manifest.seamBaselineHashes.files, cle…
+    387|     expect(result.mismatches).toEqual([]);
+       |                               ^
+    388|     expect(result.missing).toEqual([]);
+    389|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/17]⎯
+

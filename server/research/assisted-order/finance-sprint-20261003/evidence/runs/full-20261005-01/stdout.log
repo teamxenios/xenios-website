@@ -1,0 +1,27 @@
+
+ RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/3221/xenios-website
+
+ ❯ server/core-site-protection.test.ts (37 tests | 2 failed) 247ms
+     × matches every curated protected file at HEAD 52ms
+     × verifies the seam baselines too, and they are all clean at HEAD 10ms
+ ❯ server/research/master-offerings/pathway-authority.test.ts (0 test)
+ ❯ server/research/commerce/durable-checkout-executor.test.ts (0 test)
+ ❯ server/research/partners/portal.test.ts (0 test)
+ ❯ server/research/evidence/guides.test.ts (0 test)
+ ❯ server/static.test.ts (0 test)
+ ❯ server/research/assisted-order/audit-store.test.ts (0 test)
+ ❯ server/research/early-access/private-access-nonce-store.test.ts (0 test)
+ ❯ server/research/membership-activation/renewals.test.ts (0 test)
+ ❯ server/research/quality/public-read-guard.test.ts (0 test)
+ ❯ server/research/membership-activation/documents.test.ts (0 test)
+ ❯ server/research/early-access/private-access-session-repository.test.ts (0 test)
+ ❯ server/research/membership-activation/obligations.test.ts (0 test)
+ ❯ server/research/profile.test.ts (0 test)
+ ❯ server/research/master-offerings/catalog-boundaries.test.ts (0 test)
+ ❯ server/research/membership.test.ts (0 test)
+
+ Test Files  16 failed | 1007 passed | 6 skipped (1029)
+      Tests  2 failed | 19078 passed | 85 skipped (19165)
+   Start at  08:34:25
+   Duration  1439.32s (transform 56.25s, setup 0ms, import 328.62s, tests 374.23s, environment 389.66s)
+

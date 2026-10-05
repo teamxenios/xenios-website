@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "job": "functional",
+  "runName": "functional-20261005-01",
+  "startedAt": "2026-10-05T13:22:53.177Z",
+  "finishedAt": "2026-10-05T13:23:43.474Z",
+  "durationSeconds": 50.2943638,
+  "executable": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "nodeVersion": "v20.19.0",
+  "args": [
+    "supabase/verification/research_assisted_order_provider_attribution_local.mjs"
+  ],
+  "exitCode": 1,
+  "signal": null,
+  "evidenceRunnerSha256": "f211ee0328f2c28a10c078bdca49c6ba035ae719e9f132f8860640af4bdef42d",
+  "start": {
+    "head": "d2e12dcd5cd55e0fce84a41ff49635f85cafaf52",
+    "tree": "161d3d947e8f8b6f97efa12adad407ab8b8337c6",
+    "dirty": "",
+    "sourceManifestSha256": "58a6b2b7c860742ce4692d89c7039f8cf76c14f1c3512041070fec8dbd8e7681"
+  },
+  "end": {
+    "head": "d2e12dcd5cd55e0fce84a41ff49635f85cafaf52",
+    "tree": "161d3d947e8f8b6f97efa12adad407ab8b8337c6",
+    "dirty": "",
+    "sourceManifestSha256": "58a6b2b7c860742ce4692d89c7039f8cf76c14f1c3512041070fec8dbd8e7681"
+  },
+  "sourceUnchangedAtBoundaries": true,
+  "continuousFilesystemAttestation": false,
+  "hostQualification": "SHARED_HOST_UNQUALIFIED",
+  "stdoutSha256": "12e12e50b0ed9483f3c156df585c9de674d3889a8f289b0f7cc942d30edd9fd8",
+  "stderrSha256": "b921c70c19a6548beab92ef67ac980667382c1045dc8849750af7564f690601a",
+  "productionMutated": false,
+  "managedDatabaseUsed": false
+}
