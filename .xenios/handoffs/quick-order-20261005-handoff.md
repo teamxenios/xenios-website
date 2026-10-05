@@ -58,7 +58,11 @@ changes only. Static classification using unchanged accepted756 manifest/verifie
 14allowed+8reported tests, zero new QO location violations. This is not a full
 protection-gate pass. All22 source hashes, old/new inventory and proposed-byte
 checks are in the exact-source relocation evidence. No old-path re-export or
-runtime reference remains. Successor tests NOT RUN pending serialized reservation.
+runtime reference remains. Successor tests NOT RUN: reserved fc11f54 Node2 fresh
+precheck503MiB<512MiB refused launch despite unchanged22source/14baselines,
+26.98GiB disk and no competing heavy job. No test process, retry or subsequent
+Vitest/typecheck precheck was started; bounded reservation released. Exact refusal
+and sequence-disposition receipts are preserved. No source failure is claimed.
 Claude's reported independent189 at4abd remains separate/unborrowed; existing
 six-lens review findings must arrive before successor acceptance readiness.
 
@@ -87,7 +91,8 @@ clinical readiness unchanged. Core protected hashes, GATE-01, all six real
 subscription buying prerequisites, intended plan, MC-01 adoption/compatibility,
 D/E delivery and Finance/provider holds remain.
 
-NEXT EXACT ACTION: Obtain a fresh serialized focused-test reservation and consume
+NEXT EXACT ACTION: After resource conditions change, obtain a new serialized
+focused-test reservation (fc11f54 was released after refusal) and consume
 the original existing six-lens review findings through the coordinator. Outbound
 coordinator messaging was rejected by automatic approval review for unverified
 user authorization; the permission question remains pending, and no alternate

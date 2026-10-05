@@ -74,11 +74,23 @@ of successor hashes or a manifest recut. A2 remains a separate pending decision.
 
 ## Qualification and review status
 
+The coordinator subsequently reserved bounded qualification at
+`fc11f54b2851e964ae9080f8fccccbf06de2eeee`: exact Node2 at128MiB old-space/single
+test concurrency if fresh RAM>=512MiB, then Vitest6 at1024MiB if>=1536MiB, then
+one nonincremental capped typecheck only after both PASS and>=2048MiB. Each job
+also required20GiB disk, no competing heavy job and unchanged source/baselines.
+The initial worker precheck measured **503MiB**,26.98GiB, no matching heavy Node
+job; all22 source files and14 baselines matched. Exit3 refused launch. **No test
+process started.** The bounded sequence stopped and the reservation was released
+after this refusal; no retry, polling loop, Vitest or typecheck launch occurred.
+See `precheck-node2-f1e467f.json` and `qualification-slot-f1e467f-result.json`.
+This is a resource deferral, not a failed source test or gate waiver.
+
 No relocated-source tests have run. The source is committed/pushed; a fresh
-20:30:14Z resource receipt shows739MiB available RAM,26.98GiB disk and no matching
+earlier20:30:14Z resource receipt shows739MiB available RAM,26.98GiB disk and no matching
 heavy Node job. `resources-relocation-committed.json` records the intended serial
 explicit2-file Node command and6-file single-worker/cache-disabled Vitest command,
-1024MiB heap bound, awaiting a reservation. Typecheck/build/browser/DB remain
+1024MiB heap bound, before the later bounded reservation above. Build/browser/DB remain
 unreserved; typecheck fails the2GiB headroom threshold. Earlier
 3b184 and4abd10 receipts remain unchanged at their original sources. Claude's
 reported independent189 at4abd is not this builder's run, is not pooled and is
@@ -89,7 +101,8 @@ Automatic approval review rejected this lane's outgoing coordinator status
 message because explicit authorization for sending repository/lease details
 could not be verified. User permission was requested in this chat. Local source
 work continued; no alternative channel bypassed that rejection. Test reservation
-and packet delivery remain pending permission or independently supplied authority.
+and packet delivery remain pending permission. Qualification authority was
+independently supplied directly in this chat; it did not authorize messaging.
 
 An initial combined commit/push launch was separately rejected for an unverified
 remote. Read-only Git checks then verified the exact user-designated repository

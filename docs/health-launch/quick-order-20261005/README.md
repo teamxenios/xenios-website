@@ -11,7 +11,8 @@ Implementation now resides in `client/src/research/quick-order/` and
 path-only P1 correction, successor source/evidence and revised pending proposal.
 Pushed relocated source `f1e467f74b01ae2ab866bb791a3c11d657a5d69c`, tree
 `6bc4fd7a7483822d4af87a3c07ab7263c0fbc377`: static checks pass; successor tests
-await a serialized reservation. Real intake remains disabled/incomplete.
+remain NOT RUN. Reserved Node2 precheck503MiB<512MiB refused launch; the bounded
+slot was released without retries. Real intake remains disabled/incomplete.
 Historical pre-relocation module source: `4abd2c5cd4bd039309b32b97b117a67fc6a4d292`,
 tree `3fb70d98dc354e6a6049744b5bb15b741d5ba50b`. Its containment correction passed
 10 focused tests; original `3b0048d`184-test evidence is retained without pooling

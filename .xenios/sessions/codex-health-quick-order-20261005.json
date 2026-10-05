@@ -5,8 +5,8 @@
   "branch": "codex/xenios-health-quick-order-20261005",
   "state": "blocked_external",
   "startedAt": "2026-10-05T19:12:50.193Z",
-  "heartbeatAt": "2026-10-05T20:32:23.458Z",
-  "note": "Pushed path-only relocationf1e467f/tree6bc4fd7. Static14allowed+8reported tests/zero new QO path violations; no successor tests yet. Revised proposalc65d7e49 unapplied, old6481c2ad held. Await serialized focused slot, final existing review and source decisions. Cross-chat message approval pending; same builder reserved.",
+  "heartbeatAt": "2026-10-05T20:37:42.141Z",
+  "note": "Relocated sourcef1e467f/tree6bc4fd7 static checks pass. Reserved Node2 refused before launch at503MiB<512MiB; zero test processes/retries, subsequent Vitest/typecheck NOT RUN, slot released. Revisedc65d7e49 proposal unapplied/old6481c2ad held. Final review/source decisions and cross-chat permission pending; same builder reserved.",
   "sourceSha": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
   "handoff": ".xenios/handoffs/quick-order-20261005-handoff.md"
 }

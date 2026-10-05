@@ -1,0 +1,222 @@
+{
+  "sampledAtUtc": "2026-10-05T20:36:28.1555959Z",
+  "job": "node2",
+  "coordinatorReservation": "fc11f54b2851e964ae9080f8fccccbf06de2eeee",
+  "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+  "sourceTree": "6bc4fd7a7483822d4af87a3c07ab7263c0fbc377",
+  "head": "7b23247c5292d0e42e8af14d56526cd9712aaf77",
+  "requiredMiB": 512,
+  "availableMiB": 503.0,
+  "freeDiskGiB": 26.98,
+  "matchingHeavyJobs": [],
+  "baselineChecks": [
+    {
+      "path": "client/src/App.tsx",
+      "expected": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
+      "actual": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7"
+    },
+    {
+      "path": "server/index.ts",
+      "expected": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521",
+      "actual": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521"
+    },
+    {
+      "path": "client/src/lib/tracking.ts",
+      "expected": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+      "actual": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4"
+    },
+    {
+      "path": "client/src/lib/attribution.ts",
+      "expected": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
+      "actual": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8"
+    },
+    {
+      "path": "shared/care/paths.ts",
+      "expected": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417",
+      "actual": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417"
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.ts",
+      "expected": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a",
+      "actual": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a"
+    },
+    {
+      "path": "server/static.ts",
+      "expected": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94",
+      "actual": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94"
+    },
+    {
+      "path": "server/vite.ts",
+      "expected": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243",
+      "actual": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243"
+    },
+    {
+      "path": "server/research/assisted-order/ports.ts",
+      "expected": "cab0fe8e1cd398d4e59c18da09780d2ab6bed3115e17821be187df69b610a6ed",
+      "actual": "cab0fe8e1cd398d4e59c18da09780d2ab6bed3115e17821be187df69b610a6ed"
+    },
+    {
+      "path": "server/research/assisted-order/service.ts",
+      "expected": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960",
+      "actual": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960"
+    },
+    {
+      "path": "server/research/assisted-order/supabase-repository.ts",
+      "expected": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327",
+      "actual": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327"
+    },
+    {
+      "path": "server/research/assisted-order/http.ts",
+      "expected": "6053138b2db68def7bd437d19eb5d755a6c996342a2c5b2cc4440ae1529d6ee0",
+      "actual": "6053138b2db68def7bd437d19eb5d755a6c996342a2c5b2cc4440ae1529d6ee0"
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+      "expected": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e",
+      "actual": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e"
+    },
+    {
+      "path": "shared/research/assisted-order/contract.ts",
+      "expected": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9",
+      "actual": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9"
+    }
+  ],
+  "sourceChecks": [
+    {
+      "path": "client/src/research/quick-order/OperatorDeclarations.test.tsx",
+      "expected": "0b379d4cdfa041895b6ffe1de795f4986caef81cfe3269879cd8aa6e8acba505",
+      "actual": "0b379d4cdfa041895b6ffe1de795f4986caef81cfe3269879cd8aa6e8acba505",
+      "oldAbsent": true
+    },
+    {
+      "path": "client/src/research/quick-order/OperatorDeclarations.tsx",
+      "expected": "00bdf0d0d827960b851542a47d85f2db061d0a22b076ba78c95e54f64fc0c9da",
+      "actual": "00bdf0d0d827960b851542a47d85f2db061d0a22b076ba78c95e54f64fc0c9da",
+      "oldAbsent": true
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderPage.test.tsx",
+      "expected": "c06c8af1e5d03c78ec706c6443c21a9ce57088de63e5c0675c2f67d5f002681e",
+      "actual": "c06c8af1e5d03c78ec706c6443c21a9ce57088de63e5c0675c2f67d5f002681e",
+      "oldAbsent": true
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderPage.tsx",
+      "expected": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b",
+      "actual": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b",
+      "oldAbsent": true
+    },
+    {
+      "path": "client/src/research/quick-order/contracts.test.ts",
+      "expected": "41acfb403839870c8095a16216babc4ea0222b5e1b80ec15b4e8b31520078c14",
+      "actual": "41acfb403839870c8095a16216babc4ea0222b5e1b80ec15b4e8b31520078c14",
+      "oldAbsent": true
+    },
+    {
+      "path": "client/src/research/quick-order/contracts.ts",
+      "expected": "51c91843c6a9f2dbad9133c09986c7754ee2f467c3889d8877e40d7979526861",
+      "actual": "51c91843c6a9f2dbad9133c09986c7754ee2f467c3889d8877e40d7979526861",
+      "oldAbsent": true
+    },
+    {
+      "path": "client/src/research/quick-order/quick-order.css",
+      "expected": "1cc94da50f0a8235caee34743b74c5854a2a4cf2df7a63545e5fdcd8c3f02fd9",
+      "actual": "1cc94da50f0a8235caee34743b74c5854a2a4cf2df7a63545e5fdcd8c3f02fd9",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/catalog.test.ts",
+      "expected": "a84bf7b06cb03ebfd909105350b06d9acc163c5bb166c12dcb837fcd4dbda113",
+      "actual": "a84bf7b06cb03ebfd909105350b06d9acc163c5bb166c12dcb837fcd4dbda113",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/catalog.ts",
+      "expected": "43458fb0279f1298aca4582053bf98163910b85ccbb7169cec2d690879a20037",
+      "actual": "43458fb0279f1298aca4582053bf98163910b85ccbb7169cec2d690879a20037",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/containment.test.ts",
+      "expected": "6dbcbd18af43b6cfa683d371444f728fa7fea93b1494895b221ceeb3449a7c0e",
+      "actual": "6dbcbd18af43b6cfa683d371444f728fa7fea93b1494895b221ceeb3449a7c0e",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/containment.ts",
+      "expected": "a8e253d2f59b701b5ce96116eacf58269d012ad2002082ab98014e47b1aa526b",
+      "actual": "a8e253d2f59b701b5ce96116eacf58269d012ad2002082ab98014e47b1aa526b",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/core.d.mts",
+      "expected": "d3bca2af4ef290f37db356480cdf4b1f610a17e331910ecb7a2a4f7102f30998",
+      "actual": "d3bca2af4ef290f37db356480cdf4b1f610a17e331910ecb7a2a4f7102f30998",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/core.mjs",
+      "expected": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35",
+      "actual": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/handler.d.mts",
+      "expected": "b65211ed78cf0bef51079aac7b0c0c72ed996b037558395c61fc573509be4a27",
+      "actual": "b65211ed78cf0bef51079aac7b0c0c72ed996b037558395c61fc573509be4a27",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/handler.mjs",
+      "expected": "82aa742d8c499e4e5b50c757d62931990ad3a1c7741b68d745df4a53396ea187",
+      "actual": "82aa742d8c499e4e5b50c757d62931990ad3a1c7741b68d745df4a53396ea187",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/legal.ts",
+      "expected": "f8f36c9c9e2756426aea9bf97d67fb23e7111ef93617d45696a5127cb714967e",
+      "actual": "f8f36c9c9e2756426aea9bf97d67fb23e7111ef93617d45696a5127cb714967e",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/ports.ts",
+      "expected": "8da9b4327bac927a4f57685fcee6d40c968c3ccca3dcd546f74f8e6bb5da2e14",
+      "actual": "8da9b4327bac927a4f57685fcee6d40c968c3ccca3dcd546f74f8e6bb5da2e14",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "expected": "34df7a7eb621ad7dfb26e0f94de51402e72dc0a4c311d67a0c321ad90660759f",
+      "actual": "34df7a7eb621ad7dfb26e0f94de51402e72dc0a4c311d67a0c321ad90660759f",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/production.ts",
+      "expected": "d3cc0bffa4a0a3dce0963a422c5c58a3fb0a5142c455d2891f295204eb1a2b32",
+      "actual": "d3cc0bffa4a0a3dce0963a422c5c58a3fb0a5142c455d2891f295204eb1a2b32",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/tests/core.test.mjs",
+      "expected": "eacf6db8971f16c9c73537903735d7b6dc71686050d8beba9708461221156d49",
+      "actual": "eacf6db8971f16c9c73537903735d7b6dc71686050d8beba9708461221156d49",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/tests/fixtures.mjs",
+      "expected": "8fc92b273d37adbe2a7f6c973a116959f180beb366f61bf5d588f431bfe8da9c",
+      "actual": "8fc92b273d37adbe2a7f6c973a116959f180beb366f61bf5d588f431bfe8da9c",
+      "oldAbsent": true
+    },
+    {
+      "path": "server/research/health/quick-order/tests/handler.test.mjs",
+      "expected": "5dd56f8622b884cfc8ba2a73a008d6cf4ffdd004a2bf768546b6f75c348d70ce",
+      "actual": "5dd56f8622b884cfc8ba2a73a008d6cf4ffdd004a2bf768546b6f75c348d70ce",
+      "oldAbsent": true
+    }
+  ],
+  "unchanged": true,
+  "priorFocusedPass": true,
+  "beforeStartExpiry": true,
+  "allowed": false
+}
