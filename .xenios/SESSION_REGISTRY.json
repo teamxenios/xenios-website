@@ -585,10 +585,10 @@
       "tool": "Codex GPT-6 Astra Ultra (task configuration)",
       "lane": "health-quick-order",
       "branch": "codex/xenios-health-quick-order-20261005",
-      "state": "blocked_external",
+      "state": "active",
       "startedAt": "2026-10-05T19:12:50.193Z",
-      "heartbeatAt": "2026-10-05T19:41:39.882Z",
-      "note": "Pushed incomplete disabled Quick Order source3b0048d; exact-source184 focused tests pass. Await Samuel protected mount/privacy and canonical schema-source authoring decisions; typecheck deferred at820MiB RAM. Same builder reserved; no managed action.",
+      "heartbeatAt": "2026-10-05T19:44:48.750Z",
+      "note": "Closing coordinator finding: effective normalized path must terminate before global parsers; exact-source focused successor proof only.",
       "sourceSha": "3b0048de641415523caa44f91cb06002465e1773",
       "handoff": ".xenios/handoffs/quick-order-20261005-handoff.md"
     }

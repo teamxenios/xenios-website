@@ -3602,7 +3602,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-05T19:13:42.719Z",
-      "heartbeatAt": "2026-10-05T19:41:39.882Z",
+      "heartbeatAt": "2026-10-05T19:44:48.750Z",
       "note": "Reserved for the same builder while awaiting exact source authority; session blocked_external, not actively running a qualification process."
     }
   ],

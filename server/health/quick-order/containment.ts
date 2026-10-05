@@ -6,7 +6,11 @@ import type { RequestHandler } from "express";
  */
 export function createQuickOrderContainment(): RequestHandler {
   return (req, res, next) => {
-    const path = (req.originalUrl || req.url).split("?")[0];
+    // Mounted at the app root after the existing leading-slash normalizer.
+    // originalUrl retains aliases such as //api/...; routing and the later
+    // parsers use the rewritten url. req.path uses that effective URL with
+    // Express's own pathname semantics, including absolute-form targets.
+    const path = req.path;
     if (path !== "/api/health/quick-order" && !path.startsWith("/api/health/quick-order/")) {
       next();
       return;
