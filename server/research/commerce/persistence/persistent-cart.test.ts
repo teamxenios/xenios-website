@@ -4,7 +4,10 @@ import {
   hashCartIdempotencyKey,
   hashCartSecret,
 } from "./persistent-cart";
-import type { PersistentCartSelection } from "@shared/research/persistent-cart";
+import {
+  PERSISTENT_CART_QUANTITY_MAX,
+  type PersistentCartSelection,
+} from "@shared/research/persistent-cart";
 
 const member = "11111111-1111-4111-8111-111111111111";
 const product = "22222222-2222-4222-8222-222222222222";
@@ -31,19 +34,13 @@ const selection: PersistentCartSelection = {
     expiresAt: null,
     version: 3,
   },
-  media: {
-    id: "88888888-8888-4888-8888-888888888888",
-    kind: "primary_image",
-    altText: "Product",
-  },
   canonicalReadiness: {
     ready: true,
-    verifiedInputCount: 4,
+    verifiedInputCount: 3,
     inputVersions: [
       { id: "55555555-5555-4555-8555-555555555551", version: 2 },
       { id: "55555555-5555-4555-8555-555555555552", version: 2 },
       { id: "55555555-5555-4555-8555-555555555553", version: 2 },
-      { id: "55555555-5555-4555-8555-555555555554", version: 2 },
     ],
     domainVersions: [
       { domain: "products", version: 4 },
@@ -110,6 +107,187 @@ describe("persistent cart repository", () => {
     });
     expect(result).toEqual({ ok: false, code: "invalid_input" });
     expect(rpc).not.toHaveBeenCalled();
+  });
+
+  it("requires exactly three distinct valid commerce references and both canonical domains", async () => {
+    const rpc = vi.fn();
+    const repo = createPersistentCartRepository({ rpc });
+    const refs = selection.canonicalReadiness.inputVersions;
+    const invalidReadiness = [
+      ...[
+        refs.slice(0, 2),
+        [...refs, { id: "55555555-5555-4555-8555-555555555554", version: 2 }],
+        [refs[0], refs[0], refs[2]],
+        [{ ...refs[0], id: "invalid-reference" }, refs[1], refs[2]],
+        [{ ...refs[0], version: 0 }, refs[1], refs[2]],
+      ].map((inputVersions) => ({
+        ...selection.canonicalReadiness,
+        verifiedInputCount: inputVersions.length,
+        inputVersions,
+      })),
+      { ...selection.canonicalReadiness, verifiedInputCount: 4 },
+      ...[
+        [{ domain: "products", version: 4 }],
+        [{ domain: "products", version: 4 }, { domain: "unknown", version: 4 }],
+        [{ domain: "products", version: 4 }, { domain: "products", version: 4 }],
+        [{ domain: "products", version: 4 }, { domain: "product_content", version: 0 }],
+      ].map((domainVersions) => ({ ...selection.canonicalReadiness, domainVersions })),
+    ];
+    for (const canonicalReadiness of invalidReadiness) {
+      const staleSelection = { ...selection, canonicalReadiness };
+      await expect(repo.putAnonymousItem(secret, {
+        expectedCartVersion: null,
+        expectedItemVersion: null,
+        quantity: 1,
+        selection: staleSelection,
+        idempotencyKey: "readiness-put-123456",
+        expiresAt: cart.expiresAt,
+      })).resolves.toEqual({ ok: false, code: "invalid_input" });
+      await expect(repo.claimAnonymousCart(member, {
+        anonymousSecret: secret,
+        selections: [staleSelection],
+        expectedAnonymousCartVersion: 1,
+        expectedMemberCartVersion: null,
+        idempotencyKey: "readiness-claim-123456",
+        expiresAt: cart.expiresAt,
+      })).resolves.toEqual({ ok: false, code: "invalid_input" });
+    }
+    expect(rpc).not.toHaveBeenCalled();
+  });
+
+  it("makes RPC selections and replay inputs identical for absent, malformed and changed media", async () => {
+    const rpc = vi.fn(async (_name: string, _params: Record<string, unknown>) => ({
+      data: cart,
+      error: null,
+    }));
+    const repo = createPersistentCartRepository({ rpc });
+    const put = {
+      expectedCartVersion: null,
+      expectedItemVersion: null,
+      quantity: 1,
+      selection,
+      idempotencyKey: "same-put-command-123456",
+      expiresAt: cart.expiresAt,
+    };
+    const claim = {
+      anonymousSecret: secret,
+      selections: [selection],
+      expectedAnonymousCartVersion: 1,
+      expectedMemberCartVersion: null,
+      idempotencyKey: "same-claim-command-123456",
+      expiresAt: cart.expiresAt,
+    };
+    await expect(repo.putAnonymousItem(secret, put)).resolves.toMatchObject({ ok: true });
+    await expect(repo.putMemberItem(member, put)).resolves.toMatchObject({ ok: true });
+    await expect(repo.claimAnonymousCart(member, claim)).resolves.toMatchObject({ ok: true });
+    const baseline = rpc.mock.calls.slice(0, 3);
+
+    for (const media of [
+      undefined,
+      null,
+      false,
+      42,
+      "malformed-image",
+      [],
+      {},
+      { id: "not-a-uuid", kind: "gallery_image", altText: 42 },
+      { id: "88888888-8888-4888-8888-888888888888", kind: "primary_image", altText: "First image" },
+      { id: "99999999-9999-4999-8999-999999999999", kind: "primary_image", altText: "Replacement image", storageKey: "private/replacement" },
+    ]) {
+      const legacy = { ...selection, media } as unknown as PersistentCartSelection;
+      await expect(repo.putAnonymousItem(secret, { ...put, selection: legacy }))
+        .resolves.toMatchObject({ ok: true });
+      await expect(repo.putMemberItem(member, { ...put, selection: legacy }))
+        .resolves.toMatchObject({ ok: true });
+      await expect(repo.claimAnonymousCart(member, { ...claim, selections: [legacy] }))
+        .resolves.toMatchObject({ ok: true });
+      const calls = rpc.mock.calls.slice(-3);
+      expect(calls).toEqual(baseline);
+      expect(JSON.stringify(calls)).toBe(JSON.stringify(baseline));
+      expect(calls[0][1].p_selection).toEqual(selection);
+      expect(calls[1][1].p_selection).toEqual(selection);
+      expect(calls[2][1].p_selections).toEqual([selection]);
+      expect(legacy.media).toEqual(media);
+    }
+    expect(JSON.stringify(rpc.mock.calls)).not.toMatch(/"media"|storageKey|Replacement image/);
+
+    const changedPrice = { ...selection.price, amountCents: 2000, version: 4 };
+    await repo.putAnonymousItem(secret, {
+      ...put,
+      selection: { ...selection, price: changedPrice },
+    });
+    const changedParams = rpc.mock.calls.at(-1)![1];
+    expect(changedParams.p_selection).toEqual({ ...selection, price: changedPrice });
+    expect(changedParams).not.toEqual(baseline[0][1]);
+    expect(changedParams.p_idempotency_key_hash).toBe(baseline[0][1].p_idempotency_key_hash);
+  });
+
+  it("never lets valid or invalid images bypass non-media mutation protections", async () => {
+    const rpc = vi.fn();
+    const repo = createPersistentCartRepository({ rpc });
+    const base = {
+      expectedCartVersion: null,
+      expectedItemVersion: null,
+      quantity: 1,
+      selection,
+      idempotencyKey: "non-media-gates-123456",
+      expiresAt: cart.expiresAt,
+    };
+    const invalidSelections: PersistentCartSelection[] = [
+      { ...selection, price: { ...selection.price, amountCents: -1 } },
+      { ...selection, price: { ...selection.price, version: 0 } },
+      { ...selection, inventoryEligibility: { ...selection.inventoryEligibility, sourceVersion: "caller-version" } },
+      { ...selection, audienceEligibility: { ...selection.audienceEligibility, state: "unauthorized" as "authorized" } },
+      { ...selection, audienceEligibility: { ...selection.audienceEligibility, principalId: member } },
+    ];
+    for (const media of [null, {}, { id: "88888888-8888-4888-8888-888888888888", kind: "primary_image", altText: "Approved image" }]) {
+      for (const invalid of invalidSelections) {
+        const invalidWithMedia = { ...invalid, media } as unknown as PersistentCartSelection;
+        await expect(repo.putAnonymousItem(secret, { ...base, selection: invalidWithMedia }))
+          .resolves.toEqual({ ok: false, code: "invalid_input" });
+        await expect(repo.claimAnonymousCart(member, {
+          anonymousSecret: secret,
+          selections: [invalidWithMedia],
+          expectedAnonymousCartVersion: 1,
+          expectedMemberCartVersion: null,
+          idempotencyKey: "non-media-claim-123456",
+          expiresAt: cart.expiresAt,
+        })).resolves.toEqual({ ok: false, code: "invalid_input" });
+      }
+      for (const invalidMutation of [
+        { quantity: 0 },
+        { quantity: PERSISTENT_CART_QUANTITY_MAX + 1 },
+        { expectedCartVersion: 0 },
+        { expectedItemVersion: 0 },
+        { idempotencyKey: "short" },
+        { expiresAt: PAST_EXPIRY },
+      ]) {
+        await expect(repo.putAnonymousItem(secret, {
+          ...base,
+          ...invalidMutation,
+          selection: { ...selection, media } as unknown as PersistentCartSelection,
+        })).resolves.toEqual({ ok: false, code: "invalid_input" });
+      }
+    }
+    expect(rpc).not.toHaveBeenCalled();
+  });
+
+  it("propagates selection_stale without retrying a legacy media payload", async () => {
+    const rpc = vi.fn(async (_name: string, _params: Record<string, unknown>) => ({
+      data: null,
+      error: { message: "selection_stale" },
+    }));
+    const repo = createPersistentCartRepository({ rpc });
+    await expect(repo.putAnonymousItem(secret, {
+      expectedCartVersion: null,
+      expectedItemVersion: null,
+      quantity: 1,
+      selection,
+      idempotencyKey: "old-sql-refusal-123456",
+      expiresAt: cart.expiresAt,
+    })).resolves.toEqual({ ok: false, code: "selection_stale" });
+    expect(rpc).toHaveBeenCalledTimes(1);
+    expect(rpc.mock.calls[0][1].p_selection).toEqual(selection);
   });
 
   it("binds non-retail audiences to members and keeps anonymous carts retail-only", async () => {
@@ -202,7 +380,7 @@ describe("persistent cart repository", () => {
     });
   });
 
-  it("accepts Q50 and rejects Q51 before persistence", async () => {
+  it("accepts the canonical quantity maximum and rejects larger quantities before persistence", async () => {
     const rpc = vi.fn(async () => ({ data: cart, error: null }));
     const repo = createPersistentCartRepository({ rpc });
     const base = {
@@ -214,12 +392,12 @@ describe("persistent cart repository", () => {
     };
     await expect(repo.putMemberItem(member, {
       ...base,
-      quantity: 50,
+      quantity: PERSISTENT_CART_QUANTITY_MAX,
     })).resolves.toMatchObject({ ok: true });
     expect(rpc).toHaveBeenCalledTimes(1);
     await expect(repo.putMemberItem(member, {
       ...base,
-      quantity: 51,
+      quantity: PERSISTENT_CART_QUANTITY_MAX + 1,
     })).resolves.toEqual({ ok: false, code: "invalid_input" });
     expect(rpc).toHaveBeenCalledTimes(1);
   });

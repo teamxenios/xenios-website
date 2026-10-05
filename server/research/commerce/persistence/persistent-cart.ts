@@ -9,6 +9,7 @@ import type {
   RemovePersistentCartItemInput,
 } from "@shared/research/persistent-cart";
 import { PERSISTENT_CART_QUANTITY_MAX } from "@shared/research/persistent-cart";
+import { PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
 
 type RpcResponse = { data: unknown; error: { message?: string } | null };
 export type PersistentCartDatabase = {
@@ -19,6 +20,9 @@ const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SECRET = /^[\x21-\x7e]{32,512}$/;
 const IDEMPOTENCY = /^[A-Za-z0-9._:-]{16,200}$/;
+const COMMERCE_DOMAINS = Array.from(
+  new Set(PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map(({ domain }) => domain)),
+);
 
 function validSecret(value: string): boolean {
   return SECRET.test(value) && new Set(value).size >= 12;
@@ -128,7 +132,6 @@ function validMutation(
     validUuid(input.selection.productId) &&
     validUuid(input.selection.variantId) &&
     validUuid(input.selection.price.id) &&
-    validUuid(input.selection.media.id) &&
     Boolean(input.selection.sku.trim()) &&
     (owner === "anonymous"
       ? input.selection.audience === "retail" &&
@@ -154,14 +157,33 @@ function validMutation(
     input.selection.price.amountCents >= 0 &&
     Number.isSafeInteger(input.selection.price.version) &&
     input.selection.price.version >= 1 &&
-    input.selection.canonicalReadiness.inputVersions.length === 4 &&
-    new Set(input.selection.canonicalReadiness.inputVersions.map((value) => value.id)).size === 4 &&
-    input.selection.canonicalReadiness.domainVersions.length === 2 &&
-    new Set(input.selection.canonicalReadiness.domainVersions.map((value) => value.domain)).size === 2 &&
+    input.selection.canonicalReadiness.inputVersions.length ===
+      PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.length &&
+    new Set(input.selection.canonicalReadiness.inputVersions.map((value) => value.id)).size ===
+      PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.length &&
+    input.selection.canonicalReadiness.inputVersions.every((value) =>
+      validUuid(value.id) && Number.isSafeInteger(value.version) && value.version >= 1,
+    ) &&
+    input.selection.canonicalReadiness.domainVersions.length === COMMERCE_DOMAINS.length &&
+    new Set(input.selection.canonicalReadiness.domainVersions.map((value) => value.domain)).size ===
+      COMMERCE_DOMAINS.length &&
+    input.selection.canonicalReadiness.domainVersions.every((value) =>
+      COMMERCE_DOMAINS.some((domain) => domain === value.domain) &&
+      Number.isSafeInteger(value.version) && value.version >= 1,
+    ) &&
     input.selection.canonicalReadiness.verifiedInputCount ===
       input.selection.canonicalReadiness.inputVersions.length &&
     Number.isFinite(Date.parse(input.selection.evaluatedAt))
   );
+}
+
+function canonicalSelection(
+  selection: PutPersistentCartItemInput["selection"],
+): Omit<PutPersistentCartItemInput["selection"], "media"> {
+  // The SQL candidate uses the same canonical form before command hashing and
+  // snapshot persistence. Do not carry legacy presentation identity across RPC.
+  const { media: _legacyPresentation, ...canonical } = selection;
+  return canonical;
 }
 
 function validAnonymousSelection(selection: PutPersistentCartItemInput["selection"]): boolean {
@@ -224,7 +246,7 @@ export function createPersistentCartRepository(
       p_expected_cart_version: input.expectedCartVersion,
       p_expected_item_version: input.expectedItemVersion,
       p_quantity: input.quantity,
-      p_selection: input.selection,
+      p_selection: canonicalSelection(input.selection),
       p_idempotency_key_hash: hashCartIdempotencyKey(input.idempotencyKey),
       p_expires_at: input.expiresAt,
     });
@@ -289,7 +311,7 @@ export function createPersistentCartRepository(
       return call("research_persistent_cart_claim", {
         p_member_id: memberId.toLowerCase(),
         p_anonymous_hash: hashCartSecret(input.anonymousSecret),
-        p_selections: input.selections,
+        p_selections: input.selections.map(canonicalSelection),
         p_expected_anonymous_cart_version: input.expectedAnonymousCartVersion,
         p_member_cart_id: input.memberCartId ?? null,
         p_expected_member_cart_version: input.expectedMemberCartVersion,

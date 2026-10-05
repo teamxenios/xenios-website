@@ -42,9 +42,16 @@ const cardBase = {
   price,
   readiness: {
     ready: true,
-    verifiedInputCount: 1,
-    inputVersions: [{ id: "input-a", version: 1 }],
-    domainVersions: [{ domain: "products", version: 1 }],
+    verifiedInputCount: 3,
+    inputVersions: [
+      { id: "input-a", version: 1 },
+      { id: "input-b", version: 1 },
+      { id: "input-c", version: 1 },
+    ],
+    domainVersions: [
+      { domain: "product_content", version: 1 },
+      { domain: "products", version: 1 },
+    ],
   },
   selection: null,
   variantCount: 1,
@@ -62,16 +69,18 @@ const selection = {
     evaluatedAt: AT,
   },
   price,
-  media: {
-    id: "media-a",
-    kind: "primary_image",
-    altText: "Product A package",
-  },
   canonicalReadiness: {
     ready: true,
-    verifiedInputCount: 1,
-    inputVersions: [{ id: "input-a", version: 1 }],
-    domainVersions: [{ domain: "products", version: 1 }],
+    verifiedInputCount: 3,
+    inputVersions: [
+      { id: "input-a", version: 1 },
+      { id: "input-b", version: 1 },
+      { id: "input-c", version: 1 },
+    ],
+    domainVersions: [
+      { domain: "product_content", version: 1 },
+      { domain: "products", version: 1 },
+    ],
   },
   inventoryEligibility: {
     productId: "product-a",
@@ -149,7 +158,7 @@ describe("member catalog browser adapter", () => {
     });
   });
 
-  it("rejects private fields, unsafe media, duplicate identity, and raw timestamps", () => {
+  it("drops unsafe media while rejecting non-media private fields and invalid facts", () => {
     const base = {
       ok: true,
       catalog: {
@@ -171,22 +180,22 @@ describe("member catalog browser adapter", () => {
       { href: "https://tracking.example.com/object" },
       { href: "https://media.xeniostechnology.com/object?token=secret" },
       {
-        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/media-a/product-a.webp?token=header.payload.signature&download=1",
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media-production/product-a/media-a/product-a.webp?token=header.payload.signature&download=1",
         policy: "xenios_signed_storage_v1",
         expiresAt: "2026-07-26T22:05:00.000Z",
       },
       {
-        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/media-a/product-a.webp?token=header.payload.signature",
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media-production/product-a/media-a/product-a.webp?token=header.payload.signature",
         policy: "xenios_signed_storage_v1",
         expiresAt: "2026-07-26T21:59:59.000Z",
       },
       {
-        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/media-a/product-a.webp?token=header.payload.signature",
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media-production/product-a/media-a/product-a.webp?token=header.payload.signature",
         policy: "xenios_signed_storage_v1",
         expiresAt: "2026-07-26T22:05:00.001Z",
       },
       {
-        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/media-a/product-a.webp?token=header.payload.signature",
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media-production/product-a/media-a/product-a.webp?token=header.payload.signature",
         policy: "xenios_signed_storage_v1",
         expiresAt: "2099-01-01T00:00:00.000Z",
       },
@@ -204,13 +213,17 @@ describe("member catalog browser adapter", () => {
             ],
           },
         }),
-      ).toEqual({ ok: false, code: "invalid_projection" });
+      ).toMatchObject({
+        ok: true,
+        catalog: { items: [{ ...card, media: null }] },
+      });
     }
     for (const path of [
       "private-coa/product-a/media-a/product-a.webp",
-      "research-product-media/product-b/media-a/product-a.webp",
-      "research-product-media/product-a/media-b/product-a.webp",
-      "research-product-media/product-a/media-a/%2e%2e%2fproduct-a.webp",
+      "research-product-media/product-a/media-a/product-a.webp",
+      "research-product-media-production/product-b/media-a/product-a.webp",
+      "research-product-media-production/product-a/media-b/product-a.webp",
+      "research-product-media-production/product-a/media-a/%2e%2e%2fproduct-a.webp",
     ]) {
       expect(
         adaptMemberCatalog({
@@ -230,13 +243,16 @@ describe("member catalog browser adapter", () => {
             ],
           },
         }),
-      ).toEqual({ ok: false, code: "invalid_projection" });
+      ).toMatchObject({
+        ok: true,
+        catalog: { items: [{ ...card, media: null }] },
+      });
     }
     const signedCard = {
       ...card,
       media: {
         ...media,
-        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/media-a/product-a.webp?token=header.payload.signature",
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media-production/product-a/media-a/product-a.webp?token=header.payload.signature",
         policy: "xenios_signed_storage_v1",
         expiresAt: "2026-07-26T22:05:00.000Z",
       },
@@ -246,7 +262,7 @@ describe("member catalog browser adapter", () => {
         ...base,
         catalog: { ...base.catalog, items: [signedCard] },
       }),
-    ).toMatchObject({ ok: true });
+    ).toMatchObject({ ok: true, catalog: { items: [signedCard] } });
     expect(
       adaptMemberCatalog({
         ...base,
@@ -260,7 +276,10 @@ describe("member catalog browser adapter", () => {
           ],
         },
       }),
-    ).toEqual({ ok: false, code: "invalid_projection" });
+    ).toMatchObject({
+      ok: true,
+      catalog: { items: [{ ...card, media: null }] },
+    });
     expect(
       adaptMemberCatalog({
         ...base,
@@ -303,6 +322,101 @@ describe("member catalog browser adapter", () => {
       ok: true,
       product: detail,
     });
+  });
+
+  it("preserves products, prices and selections while isolating malformed media", () => {
+    for (const mediaValue of [
+      undefined,
+      null,
+      false,
+      "malformed",
+      [],
+      {},
+      { ...media, productId: "another-product" },
+      { ...media, altText: null },
+      { ...media, filename: "../private-file" },
+      { ...media, sourceVersion: null },
+      { ...media, policy: "unsigned" },
+      { ...media, href: "https://tracking.example.com/object" },
+      { ...media, storageKey: "private/object" },
+      { ...media, metadata: { provider: "private-provider" } },
+    ]) {
+      const catalog = {
+        audience: "member",
+        currency: "USD",
+        evaluatedAt: AT,
+        items: [{ ...card, media: mediaValue }],
+        categories: ["Research"],
+        lanes: ["research_material"],
+      };
+      expect(adaptMemberCatalog({ ok: true, catalog })).toEqual({
+        ok: true,
+        catalog: { ...catalog, items: [{ ...card, media: null }] },
+      });
+      expect(adaptMemberProductDetail({
+        ok: true,
+        product: { ...detail, media: mediaValue },
+      })).toEqual({ ok: true, product: { ...detail, media: null } });
+    }
+  });
+
+  it("strips legacy selection media and isolates related-card media without privacy bypasses", () => {
+    const legacySelection = {
+      ...selection,
+      media: { id: "stale-media", storageKey: "private/object" },
+    };
+    const related = {
+      ...card,
+      id: "product-b",
+      slug: "product-b",
+      displayState: "unavailable",
+      readiness: null,
+      selection: null,
+    };
+    const input = {
+      ...detail,
+      selection: legacySelection,
+      variants: [{ ...detail.variants[0], selection: legacySelection }],
+      relatedProducts: [{ ...related, media: { storageKey: "private/related" } }],
+    };
+    const result = adaptMemberProductDetail({ ok: true, product: input });
+    expect(result).toEqual({
+      ok: true,
+      product: { ...detail, relatedProducts: [{ ...related, media: null }] },
+    });
+    expect(JSON.stringify(result)).not.toMatch(/storageKey|private\/|stale-media/);
+
+    for (const override of [
+      { provider: "private-provider" },
+      { variants: [{ ...detail.variants[0], privateStorageKey: "private/variant" }] },
+      { relatedProducts: [{ ...related, privateStorageKey: "private/related" }] },
+      { selection: { ...legacySelection, privateStorageKey: "private/selection" } },
+      { metadata: { media: { privateStorageKey: "private/unrecognized-path" } } },
+    ]) {
+      expect(adaptMemberProductDetail({
+        ok: true,
+        product: { ...input, ...override },
+      })).toEqual({ ok: false, code: "invalid_projection" });
+    }
+  });
+
+  it("keeps commerce-readiness and price rejection independent of images", () => {
+    for (const mediaValue of [null, media, { storageKey: "private/object" }]) {
+      for (const readiness of [
+        { ...detail.readiness, verifiedInputCount: 1, inputVersions: [{ id: "input-a", version: 1 }] },
+        { ...detail.readiness, domainVersions: [{ domain: "products", version: 1 }] },
+        { ...detail.readiness, domainVersions: [{ domain: "products", version: 1 }, { domain: "unknown", version: 1 }] },
+      ]) {
+        expect(adaptMemberProductDetail({
+          ok: true,
+          product: { ...detail, media: mediaValue, readiness },
+        })).toEqual({ ok: false, code: "invalid_projection" });
+      }
+      expect(adaptMemberProductDetail({
+        ok: true,
+        product: { ...detail, media: mediaValue, price: { ...price, amountCents: 1 } },
+      })).toEqual({ ok: false, code: "invalid_projection" });
+    }
   });
 
   it("rejects cross-product variants, malformed readiness, and leaked inventory detail", () => {

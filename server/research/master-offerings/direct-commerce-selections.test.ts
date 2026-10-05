@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
+import { PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
 import type {
   CartProductSelectionRequest,
   CartProductSelectionSource,
@@ -80,8 +80,12 @@ function readiness(domain: string): DomainReadiness {
     realInputsRequired: false,
     publicEnabled: true,
     manifestApproved: true,
-    expectedInputCount: 2,
-    actualInputCount: 2,
+    expectedInputCount: PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.filter(
+      (binding) => binding.domain === domain,
+    ).length,
+    actualInputCount: PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.filter(
+      (binding) => binding.domain === domain,
+    ).length,
     blockingInputCount: 0,
     blockingKeys: [],
     version: 3,
@@ -89,7 +93,7 @@ function readiness(domain: string): DomainReadiness {
 }
 
 function requiredInputs(productId = "product-a"): RequiredInput[] {
-  return PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map((binding, index) => ({
+  return PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map((binding, index) => ({
     id: `input-${index}`,
     key: binding.key,
     domain: binding.domain,
@@ -275,6 +279,25 @@ describe("the direct-commerce flag", () => {
 });
 
 describe("the real selection authority fails closed on every seam", () => {
+  it("keeps activation authority independent of absent or malformed imagery", async () => {
+    for (const media of [undefined, null, [], [{ state: "rejected" }], { bad: true }]) {
+      const facts = { ...source(), media } as unknown as CartProductSelectionSource;
+      const active = createProductControlSelectionAuthority({
+        readSelectionSource: () => facts,
+      });
+      const result = await active.select(request);
+      expect(result.ok).toBe(true);
+      if (result.ok) expect(result.selection).not.toHaveProperty("media");
+      const inactive = createProductControlSelectionAuthority(
+        { readSelectionSource: () => facts },
+        liveActivationRepository([]),
+      );
+      expect(await inactive.select(request)).toEqual({
+        ok: false, code: "activation_authority_missing",
+      });
+    }
+  });
+
   it("keeps the protected one-argument composition fail-closed until a durable adapter is wired", async () => {
     const authority = createProductControlSelectionAuthorityWithActivation({
       readSelectionSource: () => source(),

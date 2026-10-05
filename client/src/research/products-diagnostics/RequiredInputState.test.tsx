@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { beforeAll, describe, expect, it } from "vitest";
 import type { RequiredInput } from "@shared/research/required-inputs";
 import {
+  WEBSITE3_REQUIRED_INPUT_PRESENTATIONS,
   Website3RequiredInputNotice,
   Website3RequiredInputValue,
 } from "./RequiredInputState";
@@ -293,6 +294,35 @@ describe("Website 3 required-input presentation", () => {
     expect(html).toContain("QUALIFIED REVIEW WORKFLOW REQUIRED");
   });
 
+  it("marks the image notice optional even when legacy canonical copy says required", () => {
+    const imageInput: RequiredInput = {
+      ...canonical("missing"),
+      key: "product_content.primary_image",
+      domain: "product_content",
+      recordType: "product",
+      label: "APPROVED PRODUCT IMAGE REQUIRED",
+      description: "Legacy image blocks release.",
+      whyRequired: "Legacy image blocks commerce.",
+      nextAction: "Satisfy the legacy image requirement.",
+      blockingLevel: "blocks_display",
+    };
+    const html = renderToStaticMarkup(
+      <Website3RequiredInputNotice
+        slot="approvedProductImage"
+        items={[imageInput]}
+        recordId="product-1"
+      />,
+    );
+    expect(html).toContain("PRODUCT IMAGE PRESENTATION");
+    expect(html).toContain("Optional presentation");
+    expect(html).not.toContain("APPROVED PRODUCT IMAGE REQUIRED");
+    expect(html).not.toContain("Legacy image blocks");
+    expect(html).not.toContain("legacy image requirement");
+    expect(
+      WEBSITE3_REQUIRED_INPUT_PRESENTATIONS.approvedProductImage.blockingLevel,
+    ).toBe("informational");
+  });
+
   it("places exact product-data inputs in the internal supplement surface", () => {
     const html = renderToStaticMarkup(
       <SupplementComingSoon
@@ -309,7 +339,8 @@ describe("Website 3 required-input presentation", () => {
     );
 
     expect(html).toContain("VERIFIED SUPPLEMENT PRODUCT DATA REQUIRED");
-    expect(html).toContain("APPROVED PRODUCT IMAGE REQUIRED");
+    expect(html).toContain("PRODUCT IMAGE PRESENTATION");
+    expect(html).not.toContain("APPROVED PRODUCT IMAGE REQUIRED");
     expect(html).toContain("STORAGE INFORMATION REQUIRED");
   });
 });

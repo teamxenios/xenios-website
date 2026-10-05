@@ -36,7 +36,7 @@ import {
   type ProductCatalogReader,
 } from "./product-control-reader";
 
-const MEDIA_BUCKET = "research-product-media";
+const MEDIA_BUCKET = "research-product-media-production";
 const CURRENCY = "USD";
 
 export type InventoryLotRow = {
@@ -106,13 +106,26 @@ export function memberAudience(
 
 function approvedPrimaryMedia(products: readonly AdminProductDetail[]) {
   return products.flatMap((product) =>
-    product.media.filter(
-      (media) =>
-        media.productId === product.id &&
-        media.kind === "primary_image" &&
-        media.state === "approved" &&
-        Boolean(media.approvedBy),
-    ),
+    Array.isArray(product.media)
+      ? product.media.filter(
+          (media) =>
+            media !== null &&
+            typeof media === "object" &&
+            media.productId === product.id &&
+            media.kind === "primary_image" &&
+            media.state === "approved" &&
+            typeof media.approvedBy === "string" &&
+            Boolean(media.approvedBy.trim()) &&
+            typeof media.id === "string" &&
+            Boolean(media.id.trim()) &&
+            typeof media.altText === "string" &&
+            Boolean(media.altText.trim()) &&
+            typeof media.filename === "string" &&
+            /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(media.filename) &&
+            typeof media.updatedAt === "string" &&
+            Boolean(media.updatedAt.trim()),
+        )
+      : [],
   );
 }
 
@@ -129,27 +142,42 @@ async function signedMediaPresentations(
       async (
         media: AdminProductMedia,
       ): Promise<MemberCatalogMediaPresentation | null> => {
-      const expectedStorageKey = `${media.productId}/${media.id}/${media.filename}`;
-      if (media.storageKey !== expectedStorageKey) return null;
-      const { data, error } = await db.storage
-        .from(MEDIA_BUCKET)
-        .createSignedUrl(media.storageKey, MEMBER_CATALOG_SIGNED_MEDIA_TTL_SECONDS);
-      if (error || !data?.signedUrl) return null;
-      return {
-        mediaId: media.id,
-        productId: media.productId,
-        href: data.signedUrl,
-        altText: media.altText,
-        filename: media.filename,
-        sourceVersion: fingerprint({
-          id: media.id,
-          updatedAt: media.updatedAt,
-          storageKey: media.storageKey,
-          state: media.state,
-        }),
-        policy: "xenios_signed_storage_v1" as const,
-        expiresAt,
-      };
+        // Isolate this presentation record only. Required-input and inventory
+        // failures retain their independent strict behavior in projectionInput.
+        try {
+          const expectedStorageKey = `${media.productId}/${media.id}/${media.filename}`;
+          if (media.storageKey !== expectedStorageKey) return null;
+          const { data, error } = await db.storage
+            .from(MEDIA_BUCKET)
+            .createSignedUrl(
+              media.storageKey,
+              MEMBER_CATALOG_SIGNED_MEDIA_TTL_SECONDS,
+            );
+          if (
+            error ||
+            typeof data?.signedUrl !== "string" ||
+            !data.signedUrl.trim()
+          ) {
+            return null;
+          }
+          return {
+            mediaId: media.id,
+            productId: media.productId,
+            href: data.signedUrl,
+            altText: media.altText,
+            filename: media.filename,
+            sourceVersion: fingerprint({
+              id: media.id,
+              updatedAt: media.updatedAt,
+              storageKey: media.storageKey,
+              state: media.state,
+            }),
+            policy: "xenios_signed_storage_v1" as const,
+            expiresAt,
+          };
+        } catch {
+          return null;
+        }
       },
     ),
   );

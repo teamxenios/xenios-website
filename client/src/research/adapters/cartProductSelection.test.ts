@@ -22,21 +22,18 @@ const valid = {
       expiresAt: null,
       version: 2,
     },
-    media: {
-      id: "media-a",
-      kind: "primary_image",
-      altText: "Product A",
-    },
     canonicalReadiness: {
       ready: true,
-      verifiedInputCount: 4,
+      verifiedInputCount: 3,
       inputVersions: [
         { id: "input-a", version: 1 },
         { id: "input-b", version: 1 },
         { id: "input-c", version: 1 },
-        { id: "input-d", version: 1 },
       ],
-      domainVersions: [{ domain: "products", version: 2 }],
+      domainVersions: [
+        { domain: "product_content", version: 2 },
+        { domain: "products", version: 2 },
+      ],
     },
     inventoryEligibility: {
       productId: "product-a",
@@ -84,6 +81,35 @@ describe("cart product selection client adapter", () => {
         },
       }),
     ).toEqual({ ok: false, code: "invalid_projection" });
+  });
+
+  it("strips legacy presentation metadata without changing commerce selection", () => {
+    for (const media of [undefined, null, 42, [], {},
+      { id: "media-a", kind: "primary_image", altText: "Product A" },
+      { id: "", kind: "gallery_image", altText: 42, storageKey: "private/path" },
+    ]) {
+      const result = adaptCartProductSelection({
+        ...valid,
+        selection: { ...valid.selection, media },
+      });
+      expect(result).toEqual(valid);
+      expect(result).not.toHaveProperty("selection.media");
+    }
+  });
+
+  it("requires the exact non-image input count and readiness domains", () => {
+    for (const canonicalReadiness of [
+      { ...valid.selection.canonicalReadiness, verifiedInputCount: 2,
+        inputVersions: valid.selection.canonicalReadiness.inputVersions.slice(0, 2) },
+      { ...valid.selection.canonicalReadiness,
+        domainVersions: [{ domain: "products", version: 2 }] },
+      { ...valid.selection.canonicalReadiness,
+        domainVersions: [{ domain: "products", version: 2 }, { domain: "inventory", version: 2 }] },
+    ]) {
+      expect(adaptCartProductSelection({
+        ...valid, selection: { ...valid.selection, canonicalReadiness },
+      })).toEqual({ ok: false, code: "invalid_projection" });
+    }
   });
 
   it("rejects cross-product inventory and preserves canonical failures", () => {

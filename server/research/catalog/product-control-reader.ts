@@ -103,9 +103,6 @@ function detailSnapshotToken(detail: AdminProductDetail): string {
   const prices = [...detail.prices].sort((left, right) =>
     left.id.localeCompare(right.id),
   );
-  const media = [...detail.media].sort((left, right) =>
-    left.id.localeCompare(right.id),
-  );
   return JSON.stringify({
     summary: {
       id: detail.id,
@@ -132,7 +129,9 @@ function detailSnapshotToken(detail: AdminProductDetail): string {
     content: detail.content,
     variants,
     prices,
-    media,
+    // Presentation media is independently validated by the catalog projection.
+    // Its absence, malformed shape, or concurrent replacement cannot delist a
+    // product whose canonical identity and commercial facts are stable.
   });
 }
 

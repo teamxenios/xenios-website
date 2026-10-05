@@ -5,6 +5,6 @@
   "branch": "codex/xenios-mc01-reconciliation-20261003",
   "state": "active",
   "startedAt": "2026-10-03T21:31:25.783Z",
-  "heartbeatAt": "2026-10-03T21:40:09.824Z",
-  "note": "Disjoint shared/cart, projection/reader, and source SQL writes in progress; dependency installation and tool latency ongoing; no heavy tests or hosted mutation."
+  "heartbeatAt": "2026-10-05T13:11:38.271Z",
+  "note": "Initial89tests and disposable PG17.11 proof PASS; closing media-table/count drift before broad affected tests. No hosted mutations."
 }

@@ -1,12 +1,18 @@
 import { beforeAll, describe, expect, it } from "vitest";
-import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
+import {
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS,
+  PRODUCT_PRESENTATION_INPUT_BINDINGS,
+} from "@shared/research/product-admin";
 import type {
   CartProductSelectionRequest,
   CartProductSelectionSource,
 } from "@shared/research/cart-product-selection";
 import type { ProductVariantActivationAuthorityEvidence } from "@shared/research/product-activation/contract";
 import type { DomainReadiness, RequiredInput } from "@shared/research/required-inputs";
-import { selectCartProduct as selectCartProductWithAuthority } from "./cart-product-selection";
+import {
+  browserSafeCartProductSelection,
+  selectCartProduct as selectCartProductWithAuthority,
+} from "./cart-product-selection";
 import {
   canonicalProductVariantActivationFingerprint,
   type ProductVariantActivationLedgerRecord,
@@ -99,7 +105,7 @@ function readiness(domain: string): DomainReadiness {
 }
 
 function requiredInputs(productId = "product-a"): RequiredInput[] {
-  return PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map((binding, index) => ({
+  return PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map((binding, index) => ({
     id: `input-${index}`,
     key: binding.key,
     domain: binding.domain,
@@ -363,8 +369,124 @@ describe("Website 3 cart product selection", () => {
         variantId: "variant-a",
         sku: "SKU-A",
         price: { id: "price-a", version: 2 },
-        media: { id: "media-a" },
       },
+    });
+  });
+
+  it("keeps missing, malformed, ambiguous, and rejected media outside selection authority", () => {
+    const baseline = selectCartProduct(request, source());
+    expect(baseline.ok).toBe(true);
+    const media = source().media[0];
+    const imageBinding = PRODUCT_PRESENTATION_INPUT_BINDINGS[0];
+    const imageInput: RequiredInput = {
+      ...requiredInputs()[0],
+      id: "legacy-image-input",
+      key: imageBinding.key,
+      domain: imageBinding.domain,
+      recordType: imageBinding.recordType,
+      currentState: "rejected",
+    };
+    const mediaCases = [
+      undefined,
+      null,
+      [],
+      [{}],
+      [null],
+      [{ ...media, state: "pending_upload" }],
+      [{ ...media, state: "rejected", approvedBy: null }],
+      [{ ...media, state: "archived" }],
+      [{ ...media, id: null, altText: null }],
+      [media, { ...media, id: "ambiguous-image" }],
+    ];
+    for (const images of mediaCases) {
+      const value = { ...source(), media: images } as CartProductSelectionSource;
+      expect(selectCartProduct(request, value)).toEqual(baseline);
+    }
+    for (const currentState of [
+      "missing", "entered", "under_review", "verified", "rejected",
+      "expired", "superseded", "not_applicable",
+    ] as const) {
+      const value = source();
+      value.media = [];
+      value.requiredInputs = [...requiredInputs(), { ...imageInput, currentState }];
+      expect(selectCartProduct(request, value)).toEqual(baseline);
+    }
+    const malformedImages = source();
+    malformedImages.requiredInputs = [
+      ...requiredInputs(),
+      imageInput,
+      {
+        ...imageInput,
+        id: "duplicate-image-input",
+        domain: "invalid-image-domain",
+        recordType: "invalid-image-record-type",
+        recordId: "product-a",
+        version: 0,
+        currentState: "missing",
+      },
+    ];
+    expect(selectCartProduct(request, malformedImages)).toEqual(baseline);
+    expect(baseline).not.toHaveProperty("selection.media");
+    if (baseline.ok) {
+      expect(baseline.selection.canonicalReadiness.inputVersions).toHaveLength(3);
+    }
+  });
+
+  it("strips legacy media and durable activation from the browser projection", () => {
+    const result = selectCartProduct(request, source());
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    const projected = browserSafeCartProductSelection({
+      ...result.selection,
+      media: { id: "legacy-image", kind: "primary_image", altText: "Legacy image" },
+    });
+    expect(projected).not.toHaveProperty("media");
+    expect(projected).not.toHaveProperty("activationAuthority");
+    expect(projected.price).toEqual(result.selection.price);
+    expect(projected.canonicalReadiness).toEqual(result.selection.canonicalReadiness);
+  });
+
+  it("cannot use image presence or absence to bypass real commerce authority", () => {
+    const cases: Array<{
+      mutate: (value: CartProductSelectionSource) => void;
+      code: string;
+    }> = [
+      {
+        mutate: (value) => { value.products = [{ ...value.products[0], commerceApproval: "blocked_pending_written_approval" }]; },
+        code: "product_commerce_unapproved",
+      },
+      {
+        mutate: (value) => { value.products = [{ ...value.products[0], availability: "out_of_stock" }]; },
+        code: "product_unavailable",
+      },
+      { mutate: (value) => { value.prices = []; }, code: "price_missing" },
+      {
+        mutate: (value) => { value.audienceEligibility = { ...value.audienceEligibility!, state: "unauthorized" }; },
+        code: "audience_unauthorized",
+      },
+      {
+        mutate: (value) => { value.inventoryEligibility = { ...value.inventoryEligibility!, state: "unavailable" }; },
+        code: "inventory_unavailable",
+      },
+      {
+        mutate: (value) => { value.requiredInputs = requiredInputs().filter((input) => input.key !== "product_content.storage_information"); },
+        code: "required_inputs_incomplete",
+      },
+      {
+        mutate: (value) => { value.readiness = value.readiness.map((item) => ({ ...item, manifestApproved: false })); },
+        code: "readiness_incomplete",
+      },
+    ];
+    for (const { mutate, code } of cases) {
+      for (const media of [source().media, []]) {
+        const value = { ...source(), media };
+        mutate(value);
+        expect(selectCartProduct(request, value)).toEqual({ ok: false, code });
+      }
+    }
+    expect(selectCartProduct(request, { ...source(), media: [] }, null)).toEqual({
+      ok: false,
+      code: "activation_authority_missing",
     });
   });
 
@@ -593,6 +715,19 @@ describe("Website 3 cart product selection", () => {
       ok: false,
       code: "required_inputs_incomplete",
     });
+
+    for (const extraInput of [
+      { ...requiredInputs()[0], id: "unknown-input", key: "products.unknown" },
+      { ...requiredInputs()[0], id: "wrong-domain-input", domain: "wrong-domain" },
+      { ...requiredInputs()[0], id: "duplicate-input" },
+    ]) {
+      const invalid = source();
+      invalid.requiredInputs = [...invalid.requiredInputs, extraInput];
+      expect(selectCartProduct(request, invalid)).toEqual({
+        ok: false,
+        code: "required_inputs_incomplete",
+      });
+    }
 
     const staleManifest = source();
     staleManifest.readiness[0] = {

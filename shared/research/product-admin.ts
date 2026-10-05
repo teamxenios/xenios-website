@@ -68,19 +68,38 @@ export const PRODUCT_MEDIA_STATES = [
   "rejected",
   "archived",
 ] as const;
-export const PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS = [
+/** Canonical product facts required for commerce, excluding presentation. */
+export const PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS = [
   { key: "products.sku", domain: "products", recordType: "product" },
   { key: "products.family", domain: "products", recordType: "product" },
-  {
-    key: "product_content.primary_image",
-    domain: "product_content",
-    recordType: "product",
-  },
   {
     key: "product_content.storage_information",
     domain: "product_content",
     recordType: "product",
   },
+] as const;
+
+/**
+ * Reserved presentation keys stay outside commerce even when their legacy
+ * metadata is malformed. They cannot satisfy any commerce-required binding.
+ */
+export const PRODUCT_PRESENTATION_INPUT_BINDINGS = [
+  {
+    key: "product_content.primary_image",
+    domain: "product_content",
+    recordType: "product",
+  },
+] as const;
+
+/**
+ * Compatibility inventory for admin/display callers. Release and commerce
+ * consumers use PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS instead.
+ */
+export const PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS = [
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS[0],
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS[1],
+  PRODUCT_PRESENTATION_INPUT_BINDINGS[0],
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS[2],
 ] as const;
 
 
