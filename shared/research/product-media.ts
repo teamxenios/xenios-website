@@ -1,6 +1,7 @@
 /** Presentation only. Product Control approval is checked by the server. */
 export const PRODUCT_MEDIA_DELIVERY_SIZE = 1024;
 export const PRODUCT_MEDIA_ALT_MAX_LENGTH = 500;
+export const PRODUCT_MEDIA_MAX_SIGNED_LIFETIME_MS = 300_000;
 export const PRODUCT_MEDIA_FALLBACK = "An approved product image is not available.";
 
 export type ProductMediaDescriptor = {
@@ -39,7 +40,11 @@ export function validProductMediaMetadata(value: {
 /** A bad/legacy descriptor removes only the image, never the surrounding item. */
 export function parseProductMedia(
   value: unknown,
-  expected: { productId: string; variantId?: string | null; now?: number },
+  expected: {
+    productId: string; variantId?: string | null; now?: number;
+    /** Only the browser renderer disables this: its clock cannot judge signing lifetime. */
+    enforceSigningLifetime?: boolean;
+  },
 ): ProductMediaDescriptor | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
   const media = value as Record<string, unknown>;
@@ -60,7 +65,9 @@ export function parseProductMedia(
       const expiry = typeof media.expiresAt === "string" ? Date.parse(media.expiresAt) : NaN;
       const now = expected.now ?? Date.now();
       if (!Number.isFinite(now) || !Number.isFinite(expiry) ||
-        new Date(expiry).toISOString() !== media.expiresAt || expiry <= now || expiry > now + 300_000) return null;
+        new Date(expiry).toISOString() !== media.expiresAt || expiry <= now ||
+        (expected.enforceSigningLifetime !== false &&
+          expiry > now + PRODUCT_MEDIA_MAX_SIGNED_LIFETIME_MS)) return null;
       const prefix = "/storage/v1/object/sign/research-product-media-production/";
       const objectPath = decodeURIComponent(url.pathname.slice(prefix.length));
       if (url.origin !== "https://yvzeduaxbwgcwllhywff.supabase.co" || !url.pathname.startsWith(prefix) ||

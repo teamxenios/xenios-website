@@ -70,6 +70,30 @@ describe("square product media presentation", () => {
     render(signed); expect(host.querySelector("img")).not.toBeNull();
     act(() => vi.advanceTimersByTime(1000)); fallback(); render(signed); fallback();
   });
+  it.each([
+    { skewMs: -15_000, lifetimeMs: 300_000 },
+    { skewMs: -86_400_000, lifetimeMs: 300_000 },
+    { skewMs: 15_000, lifetimeMs: 285_000 },
+  ])("accepts fresh media with clock skew $skewMs and expires without a rerender reset", ({ skewMs, lifetimeMs }) => {
+    vi.useFakeTimers();
+    vi.setSystemTime(Date.parse("2026-10-05T12:00:00.000Z") + skewMs);
+    const signed = { ...media, policy: "xenios_signed_storage_v1", expiresAt: "2026-10-05T12:05:00.000Z",
+      href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media-production/product-a/media-a/image.webp?token=a.b.c" };
+    render(signed); const original = host.querySelector("img"); expect(original).not.toBeNull();
+    act(() => vi.advanceTimersByTime(100_000)); render({ ...signed });
+    expect(host.querySelector("img")).toBe(original);
+    act(() => vi.advanceTimersByTime(lifetimeMs - 100_001));
+    expect(host.querySelector("img")).toBe(original);
+    act(() => vi.advanceTimersByTime(1)); fallback(); render(signed); fallback();
+  });
+  it("conservatively refuses an ahead clock at expiry and already expired descriptors", () => {
+    vi.useFakeTimers();
+    const signed = { ...media, policy: "xenios_signed_storage_v1", expiresAt: "2026-10-05T12:05:00.000Z",
+      href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media-production/product-a/media-a/image.webp?token=a.b.c" };
+    for (const now of ["2026-10-05T12:05:00.000Z", "2026-10-05T12:06:00.000Z"]) {
+      vi.setSystemTime(new Date(now)); render(signed); fallback();
+    }
+  });
   it("contains square images without decoration, cropping or breakpoint shrinkage", () => {
     const css = readFileSync("client/src/research/ui/product-media.css", "utf8");
     expect(css).toMatch(/aspect-ratio:\s*1 \/ 1/);

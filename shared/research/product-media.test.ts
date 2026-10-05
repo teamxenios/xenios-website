@@ -40,4 +40,16 @@ describe("presentation-only product media descriptor", () => {
     expect(parseProductMedia({ ...signed, href: signed.href.replace("media-a/image", "other/image") }, expected)).toBeNull();
     expect(parseProductMedia({ ...signed, href: signed.href + "&token=d.e.f" }, expected)).toBeNull();
   });
+  it("relaxes only the renderer clock's upper bound, retaining every other refusal", () => {
+    const signed = { ...media, policy: "xenios_signed_storage_v1", expiresAt: "2026-10-05T12:05:00.000Z",
+      href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media-production/product-a/media-a/image.webp?token=a.b.c" };
+    const browser = { ...expected, now: expected.now - 15_000, enforceSigningLifetime: false };
+    expect(parseProductMedia(signed, { ...browser, enforceSigningLifetime: true })).toBeNull();
+    expect(parseProductMedia(signed, browser)).not.toBeNull();
+    for (const change of [
+      { expiresAt: "2026-10-05T11:59:45.000Z" }, { expiresAt: "2026-10-05T12:05:00Z" },
+      { expiresAt: "invalid" }, { variantId: "other" }, { contentSha256: "bad" },
+      { height: 768 }, { href: signed.href.replace("media-a/image", "other/image") },
+    ]) expect(parseProductMedia({ ...signed, ...change }, browser)).toBeNull();
+  });
 });
