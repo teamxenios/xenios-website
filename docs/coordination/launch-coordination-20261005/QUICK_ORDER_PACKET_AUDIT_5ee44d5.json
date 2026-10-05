@@ -1,0 +1,85 @@
+{
+  "recordedAt": "2026-10-05T22:14:25.994Z",
+  "commit": "5ee44d53e55774fd8a29ea009dac16da2ed907ef",
+  "tree": "d7171c75e363e86ef0ddcae88cde4a0d750bc8eb",
+  "parent": "1b3bb16bf99d89af18a88c702434e929ebe83c02",
+  "previous": "1b3bb16bf99d89af18a88c702434e929ebe83c02",
+  "source": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+  "sourceTree": "46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e",
+  "remote": "5ee44d53e55774fd8a29ea009dac16da2ed907ef\trefs/heads/codex/xenios-health-quick-order-20261005",
+  "clean": true,
+  "changedPaths": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/handoffs/quick-order-20261005-handoff.md",
+    ".xenios/sessions/codex-health-quick-order-20261005.json",
+    "docs/health-launch/quick-order-20261005/APPROVAL_MATRIX.md"
+  ],
+  "invariantPaths": [
+    "client",
+    "server",
+    "shared",
+    "supabase",
+    "scripts",
+    "package.json",
+    "package-lock.json",
+    "vitest.config.ts",
+    "tsconfig.json",
+    "docs/phase2",
+    "docs/health-launch/quick-order-20261005/MOUNT_PROPOSAL.patch",
+    "docs/health-launch/quick-order-20261005/evidence",
+    "docs/health-launch/quick-order-20261005/history",
+    "docs/health-launch/quick-order-20261005/PERSISTENCE_PROPOSAL.md"
+  ],
+  "invariantDiff": "",
+  "sourceDiff": "",
+  "registries": [
+    {
+      "path": ".xenios/ACTIVE_TASKS.json",
+      "otherEntriesAndTopLevelFieldsUnchanged": true
+    },
+    {
+      "path": ".xenios/SESSION_REGISTRY.json",
+      "otherEntriesAndTopLevelFieldsUnchanged": true
+    },
+    {
+      "path": ".xenios/CODE_OWNERSHIP.json",
+      "otherEntriesAndTopLevelFieldsUnchanged": true
+    }
+  ],
+  "copied": [
+    {
+      "sourcePath": "docs/health-launch/quick-order-20261005/APPROVAL_MATRIX.md",
+      "local": "QUICK_ORDER_APPROVAL_MATRIX_5ee44d5.md",
+      "bytes": 12051,
+      "sha256": "b6c86dbd0a2d076ed9ef0596469f7830e6d1154d944d6f28eb60aec70ae29bc6",
+      "blob": "77ec9602a32393ce642129e6e7d5e20130e71f38"
+    },
+    {
+      "sourcePath": ".xenios/handoffs/quick-order-20261005-handoff.md",
+      "local": "QUICK_ORDER_HANDOFF_5ee44d5.md",
+      "bytes": 9858,
+      "sha256": "90d5272b7eff20eaef248dbd8c35eba1cbeac854ddea0d05c952cd36bcd89e43",
+      "blob": "141797e47bde6bcc415d46762d602dc8786e874c"
+    }
+  ],
+  "method": "Read-only immutable Git diff/hash/registry comparison. No app source execution or qualification.",
+  "scope": "Only QO-R02 GATE01 provenance and QO-R04 PWA predicate paragraphs plus necessary own continuity",
+  "qualification": "All authored successor red/green/syntax/typecheck/build/browser/database NOT RUN; no slot or host retry",
+  "sourceVerdict": "SOURCE ACCEPT WITH LIMITS from78cd7e6; QO-P2-03/04 PARTIAL closed at source",
+  "builder": {
+    "thread": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "turn": "01a10e1c-2a2a-7bc2-9f97-dfb93d305df1",
+    "cursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:32",
+    "status": "CLEAN/IDLE/PARKED",
+    "reportedFinal": "Pushed records-only checkpoint5ee44d5. Corrected GATE-01 provenance and PWA exclusions. Sourcefd023e8 unchanged, accepted with limits; targeted tests NOT RUN. Working tree clean; parked. Outbound denied operation not retried."
+  },
+  "reviewerRecordCorrection": "Still prepared for same Claude context; direct delivery/acknowledgment not confirmed. No source acceptance reopened.",
+  "independentPacketCheck": {
+    "agent": "/root/adpg12_audit",
+    "method": "Static immutable diff/history/source inspection and all four LF pin/current hash recomputations; no tests or source execution",
+    "QO_R_02": "CORRECTED: both App/server pin/current pairs and separate originating chains verified",
+    "QO_R_04": "CORRECTED: malformed/encoded/Research/recommendation/Care/Health/recovery/sensitive exclusions accurate; plain Quick Order eligibility and protected approval hold retained"
+  }
+}

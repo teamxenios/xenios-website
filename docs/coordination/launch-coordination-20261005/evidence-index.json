@@ -548,5 +548,20 @@
     "path": "QUICK_ORDER_DOC38_FOLLOWUP_COORDINATION.json",
     "bytes": 9782,
     "sha256": "a70443a9510aeb1251a2d09fc1bd1e0fd3985b8ed6c5a12b1cf08391b127d1ce"
+  },
+  {
+    "path": "QUICK_ORDER_APPROVAL_MATRIX_5ee44d5.md",
+    "bytes": 12051,
+    "sha256": "b6c86dbd0a2d076ed9ef0596469f7830e6d1154d944d6f28eb60aec70ae29bc6"
+  },
+  {
+    "path": "QUICK_ORDER_HANDOFF_5ee44d5.md",
+    "bytes": 9858,
+    "sha256": "90d5272b7eff20eaef248dbd8c35eba1cbeac854ddea0d05c952cd36bcd89e43"
+  },
+  {
+    "path": "QUICK_ORDER_PACKET_AUDIT_5ee44d5.json",
+    "bytes": 3881,
+    "sha256": "f3cdbab84580fda5ccff202f67eb162c458530a36348ec96ccdb68d95a93e73d"
   }
 ]
