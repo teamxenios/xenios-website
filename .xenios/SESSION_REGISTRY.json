@@ -585,10 +585,10 @@
       "tool": "codex",
       "lane": "launch-coordination",
       "branch": "codex/xenios-launch-coordination-20261005",
-      "state": "handoff_ready",
+      "state": "active",
       "startedAt": "2026-10-05T17:19:29.457Z",
-      "heartbeatAt": "2026-10-05T21:52:29.180Z",
-      "note": "Claude mainturnended21:30/processresident,childrenunknown. SamecontextdesktopCLI prompt deliveryunsupported,nodelivery; exactmessagepreparedforuserpaste.100indexedartifacts,plannerrelayack/replypending,no verdict/sourceacceptance/newtest orduplicate. A1/A2/resourceholds;heartbeatactivequiet."
+      "heartbeatAt": "2026-10-05T21:54:17.193Z",
+      "note": "Transportplanningreply a0599845/83797859 confirmed, no scope/source/verdict/execution change. No resend or repeated manual request; original review pending."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

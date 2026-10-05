@@ -35,6 +35,12 @@
     "thread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
     "records": "209d04aadcba9697e66f5af05618a79873e08689",
     "toolAcknowledged": true,
-    "reply": "Pending; latestread stillprevious45a7fa6c whilechat active. Do not resend."
+    "reply": {
+      "turn": "a0599845-a783-4160-8325-60c7b4b8fb35",
+      "message": "83797859-5ad3-4ccd-9c63-a6c0aa61eb9d",
+      "text": "Material delta only:\n\n- The blocker is now **review transport**, not source quality or builder execution.\n- Keep Quick Order frozen at `fd023e8…` / handoff `1b3bb16…`.\n- Do **not** restart Claude, spawn another reviewer, rerun tests, or resume builder work.\n- Paste the already-prepared `CLAUDE_SAME_CONTEXT_CONTINUATION.txt` **once** into the existing Multi-document project review chat. That is the correct recovery path for the original reviewer context.\n- Claude should then reconcile its existing draft doc 38 against the coordinator’s corrections, collect whatever existing lens/verifier/census results survived, and push the bounded verdict **without new execution**.\n- Until that verdict is pushed, QO-P2-03/04 remain unclosed.\n- Qualification remains separately blocked by the current resource floor, so even a favorable doc 38 verdict would be **source-level only**, not qualification or intake readiness.\n\nA1, A2, PWA, GATE-01, SQL, real intake, buying, and production remain unchanged.",
+      "status": "CONFIRMED; no new scope or independent source evidence; do not resend or repeat manual request",
+      "interpretation": "Planner recommends same recovery already prepared. Its phrase 'not source quality' is not proof of source acceptance; exact final review and missing qualification remain open."
+    }
   }
 }
