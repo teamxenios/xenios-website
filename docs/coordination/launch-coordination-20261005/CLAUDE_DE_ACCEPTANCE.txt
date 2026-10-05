@@ -1,0 +1,58 @@
+Static review is complete; no further repository reads are needed, and I did not re-execute any qualification (no Vitest, typecheck, build, Docker, browser or database).
+
+## D/E media foundation — source-level review
+
+**Reviewed:** source `5152adb4db6db3e197d4534146bcc2ae75fa8f96` (tree `0258be61bf4761ee9911cda1c0d042b6cd183aa3`); tests/evidence/handoff `c3ea1357…` (tree `7806cd80…`, records only). Linear from accepted MC-01 source `ed9bb9b` → `5fcef77` (records) → `5152adb` → `c3ea135`; branched from the MC-01 source, not its records commit (`0b86108`), which is fine.
+
+**Scope verified:** 17 allowed-zone runtime paths, 11 test files, one `supabase/candidates` file, 0 gate violations. Unchanged: Navbar/Footer/index.css, manifest, `assisted-order.css` (IC-2), `App.tsx`, `static.ts`, `server/index.ts`, `server/research/index.ts`, `MIGRATIONS.md`, `MIGRATION_DAG.json`, release-control map, package files, `supabase/migrations`, and every commerce/finance/assisted-order server path. All 28 `changedSourceFiles` blobs in `verification.json` equal the `5152adb` blobs, and the listed set equals the actual changed set.
+
+### Verdicts
+
+| Item | Result |
+| --- | --- |
+| **SOURCE D/E** | **ACCEPT** (source level, fallback-first foundation, with the limits below) |
+| **IC-3** | **PASS** — fallback is the exact constant `"An approved product image is not available."` rendered as a plain `<p>` inside the square (`ProductMedia.tsx:31`), no `role="img"`; "Illustrative image" is a `<figcaption>` sibling *after* `.xenios-product-media__square` (`:33`), never over the pixels; CSS has `aspect-ratio: 1/1`, `object-fit: contain`, no filter/gradient/blend/opacity/overlay/pseudo-element/`@media`; tests assert each of these. |
+| **media-is-presentation-only** | **PASS** — no commerce, readiness, pricing, pathway, activation, fulfillment or payment path is touched; `displayState(product, variants, bindings)` takes no media; `safeMedia` only outputs a descriptor or `null` (`member-catalog-projection.ts:267-345, 539-542`); `ProductMedia` has no commerce props/callbacks; surfaces tests prove non-media markup is identical across null/bad-hash/wrong-variant media in all five display states and on EA AVAILABLE/CONFIRMATION_REQUIRED/HELD cards. |
+| **Source-only schema** | `supabase/candidates/20261005_research_product_media_descriptor.sql` is unregistered (ledger, DAG and release-control untouched), unapplied, execution-unqualified (`qualification.sqlExecution: DEFERRED`, `migrationRegistered/Applied: false`, `hostedMutation: false`). Composite FK target `unique (product_id, id)` exists on `research_product_variants` (migration `20260726143000:78`). No backfill, grant, RLS, security-definer or data mutation. |
+
+### Contract checks
+
+- **1:1 / contain / primary-only / exact variant:** descriptor carries all S7 fields; `width`/`height` must equal 1024 (parser and CHECK), lowercase 64-hex hash, bounded alt ≤ 500 with no control/format chars; `kind === "primary_image"` only; projection binds the single primary to the **first visible variant** and nulls otherwise; detail nulls on variant switch and restores on return; `onLoad` natural-size mismatch and `onError` → fallback; expiry → fallback; product stays present in every case.
+- **Same hash on card and detail:** both render `data-media-id` / `data-content-sha256` from the same projected descriptor (projection test asserts `card.media` deep-equals `detail.media`). Metadata equality only; delivered-byte equality is explicitly deferred.
+- **Product Control authority:** media comes only from Product Control `approved` primary records plus server-signed presentations whose fields must equal the record; imagery receipts are not consulted anywhere. Admin reads use `select("*")` (`product-admin-production.ts:291, 388…`), so the five new columns being absent in production yields `null` → fallback, not a query error.
+- **Semantics unchanged:** Care/Research/held/quote-only/documentation-pending controls, labels, prices and routes are asserted unchanged (`AssistedOrderPage.test.tsx` new case; surfaces tests).
+- **No image on money surfaces:** source-level test asserts `EarlyAccessOrderSummary`, cart review/payment, member Cart/Checkout, assisted-order confirmation/status contain no `<img`/`ProductMedia`; the single `<ProductMedia` in `AssistedOrderPage.tsx` is inside `ProductCard`, before the page component.
+- **No false MC-01-live claim:** the handoff states runtime stays blocked behind the predecessor persistent-cart chain, MC-01 candidate adoption, canonical non-image `product_content` re-approval and a separate launch transition; the diff adds no copy implying otherwise. The previous misleading "supplier pending" media panel on member detail is removed.
+- **Origin/bucket constants** in the new shared parser (`yvzeduaxbwgcwllhywff.supabase.co`, `research-product-media-production`, `*.xeniostechnology.com`) pre-exist identically in the adapter, projection and service at `ed9bb9b`; this consolidates, it does not add a new authority.
+
+### Findings
+
+**P0:** none. **P1:** none.
+
+**P2 (must fix before images are relied upon on member surfaces; does not block source acceptance because nothing can render until the chain below completes):**
+- **DE-R1, client-clock skew falls back on all signed images.** `ProductMedia` re-parses with no `now` (`ProductMedia.tsx:42`), so `parseProductMedia` uses `Date.now()` and rejects any signed URL whose expiry exceeds `now + 300_000` (`product-media.ts:61-63`). A browser clock behind the server by more than the network latency fails every freshly signed 300-second URL → permanent fallback for that client. Fails closed, never a wrong image. Fix: pass the server `evaluatedAt`-derived `now` through to the component, or drop the client-side upper-bound check (the server already enforces the 300 s policy).
+
+**P3:**
+- The review-guard trigger covers only the five descriptor columns; `alt_text` (and filename/storage key) can still change on an approved row without a fresh review.
+- `MasterOfferingCard` passes no `variantId`; when its canonical reader is connected, exact-variant identity must be enforced there (it is today in the member projection).
+- The service signs a media record bound to a non-first variant that the projection then discards (wasted signing, no truth effect).
+- CSS uses hard-coded neutrals (`#f5f5f5`, `#dedede`, `#525252`) instead of Core tokens; S5-compliant (uncoloured) but not token-aligned.
+- Test provenance: `focused-tests.txt` is a raw Vitest log with no head/dirty-state receipt; binding to `5152adb` rests on the blob list plus the handoff's assertion.
+- Behavioural note: any legacy approved primary media (no descriptor metadata) that currently displays on member surfaces will render fallback after this change until descriptors are populated; report 29 recorded zero approved production images, which I have not re-verified.
+- Founder-visible consequence of S6: every customer catalog card (assisted-order, Early Access, master offering) now reserves a full square showing the fallback sentence until images exist. Chosen by S6, not a defect, but it should be seen in the deferred browser pass before release.
+
+### Exact remaining release prerequisites
+
+1. MC-01 runtime/DB chain, separately reviewed and approved: unapplied persistent-cart predecessor closure → reviewed MC-01 candidate → canonical non-image `product_content` re-approval → separate launch transition. **Not approved here.**
+2. D/E candidate: disposable PostgreSQL qualification (apply, CHECK/FK/trigger behaviour, rollback), then a separate registration/apply authorization from Samuel.
+3. Product Control ingestion/review writer that verifies real bytes, square dimensions, SHA-256, variant identity and illustrative truth (unfinished; existing upload/approval UI does not write these fields).
+4. Delivered-byte immutability and actual card/detail hash equality proof.
+5. Fix DE-R1; connect the five fallback-only components through their canonical readers.
+6. Browser qualification (320/390/768/1440, 200% zoom, forced colours, CLS/LCP, caption/fallback geometry) with synthetic fixtures only.
+7. Clean-checkout build and aggregate (both NOT RUN), plus the standing gates: GATE-01, A/B/C protected-hash approval and manifest re-cut, finance holds.
+
+### Integrator safety
+
+This D/E source is **safe for the release integrator at source level**: fallback-first, presentation-only, no authority change, no schema applied. The integrator must not register or apply the candidate and must carry the MC-01 chain precondition.
+
+**Explicit statement:** no managed SQL registration or apply, no hosted database mutation, no Product Control write, no publication and no production or staging promotion is approved by this review. Production remains **NOT READY**. Nothing was edited or committed; this conversation output is the record. Stopping here.

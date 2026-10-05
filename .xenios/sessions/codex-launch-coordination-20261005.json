@@ -3,8 +3,8 @@
   "tool": "codex",
   "lane": "launch-coordination",
   "branch": "codex/xenios-launch-coordination-20261005",
-  "state": "handoff_ready",
+  "state": "active",
   "startedAt": "2026-10-05T17:19:29.457Z",
-  "heartbeatAt": "2026-10-05T17:46:46.739Z",
-  "note": "Durable coordinator checkpoint; recurring handoff loop ACTIVE; D/E independent review and subscription qualification continue; production commerce disabled; owner choices pending."
+  "heartbeatAt": "2026-10-05T17:52:59.456Z",
+  "note": "D/E accepted with DE-R1 correction dispatched; Subscription exact pushed candidate in independent Claude review; no owner decisions or production changes."
 }

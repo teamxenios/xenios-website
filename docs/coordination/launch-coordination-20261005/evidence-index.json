@@ -83,5 +83,10 @@
     "path": "production-render-observation.json",
     "bytes": 847,
     "sha256": "e57c0f6a0e5e3d2d5622c52ffc158a58e30b5870b4bd6e99fcfcae5b579e0b29"
+  },
+  {
+    "path": "CLAUDE_DE_ACCEPTANCE.txt",
+    "bytes": 8925,
+    "sha256": "5ea90856c0a48d07717d7228641dc055b213b7582c891d52a30c9e9ea40a1a65"
   }
 ]
