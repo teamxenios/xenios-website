@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T20:57:44.156Z",
+  "updatedAt": "2026-10-05T21:00:01.459Z",
   "objective": "Automate verified Codex-Claude-ChatGPT launch coordination, preserve accepted source and implement the separately authorized Quick Order intake while production authorities remain held.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -268,7 +268,7 @@
     "scope": "Existing bounded acceptance chain and review checklist; no integrated-source verdict or founder approval"
   },
   "quickOrder": {
-    "status": "Relocation independently SOURCE ACCEPT WITH EXPLICIT LIMITS at doc37. Two concrete unprotected HTTP corrections prepared for same builder; intake NOT READY, protected/schema authority pending.",
+    "status": "Same builder RUNNING narrow unprotected QO-P2-03/04 correction and packet disclosure updates after accepted relocation; no qualification reservation, protected/schema authority or intake activation.",
     "sourceThread": "01a0e098-3b23-7233-9b07-877ace092650",
     "sourceTurn": "2c15c0f1-2e96-4291-b39f-a3e37cc84741",
     "userRequestSummary": "Direct user request to build package now in exactly one isolated worker while keeping integration and existing reviewer frozen.",
@@ -312,7 +312,7 @@
     },
     "dispatchArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_DISPATCH.txt",
     "dispatchCommit": "c169a77c7c511335c96757c9b8785fcefd99b241",
-    "waitCursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:20",
+    "waitCursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:21",
     "leasePaths": [
       "client/src/quick-order/**",
       "server/health/quick-order/**",
@@ -489,11 +489,11 @@
         "text": "The six-lens workflow has finished. I'll read the full output, check each verifier's verdict, then write and push the bounded Quick Order verdict as doc 36."
       },
       "latestRecordObservation": {
-        "at": "2026-10-05T20:45:47.546Z",
-        "head": "fffa33a6b3407b407b2b43d3c5a5c7054887f590",
-        "doc36Pushed": false,
-        "untrackedReceiptsPresent": true,
-        "interpretation": "Original reviewer is preparing records; preserve in-progress artifacts, not accepted verdicts."
+        "at": "2026-10-05T21:00:01.459Z",
+        "head": "324183e886af369a4ea27b9bf0f7b9c615b32139",
+        "doc36Pushed": true,
+        "doc37Pushed": true,
+        "finalAssistantTextCollected": true
       },
       "commit": "324183e886af369a4ea27b9bf0f7b9c615b32139",
       "path": "docs/review/xenios-health-launch-review-20260930/37_QUICK_ORDER_RELOCATION_DELTA_c807f19_2026-10-05.md",
@@ -595,7 +595,7 @@
         "coordinatorSlot": null,
         "coordinatorVitestMinimumMiB": 1536,
         "qualificationDisposition": "Reviewer runs are archived factual evidence, not coordinator-reserved qualification. Reported Vitest headroom is below1536MiB and no new reservation is recorded. Do not waive this mismatch, infer full process attestation, pool overlapping runs, or rerun solely to improve logs.",
-        "sourceIdentityCaution": "Headers assert detached clean c807f19 and Node20; file-level before/after execution attestation not inferred from header text. Source bytes equal f1 by independently verified Git objects."
+        "sourceIdentityCaution": "Node receipt has NO source/path/command/time/RAM/exit wrapper; attribution/exit0 are narrative. Vitest/gate headers assert identity; full argv and source-hash execution attestation are absent. Static runtime equality f1 to c807 independently verified."
       }
     },
     "historicalMountProposal": {
@@ -643,13 +643,18 @@
       }
     ],
     "httpCorrection": {
-      "status": "READY FOR DISPATCH",
+      "status": "RUNNING; same-builder acknowledgement verified",
       "request": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_CORRECTION_REQUEST.txt",
       "findings": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_FINDINGS_f1e467f.json",
       "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
       "reviewCommit": "324183e886af369a4ea27b9bf0f7b9c615b32139",
-      "scope": "Only leased unprotected HTTP classifier/handler/tests and own documentation. No qualification reservation, protected source, SQL or hosted actions."
-    }
+      "scope": "Only leased unprotected HTTP classifier/handler/tests and own documentation. No qualification reservation, protected source, SQL or hosted actions.",
+      "requestCommit": "25ca24b07ef8bab2a7dd97fd0ad576fc08a1bc48",
+      "dispatchArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_CORRECTION_DISPATCH.json",
+      "turn": "01a10ddc-87e4-7693-86cc-6e6d9df6438f",
+      "acknowledgement": "I’ll read the HTTP correction request and reviewer findings, verify the current source and lease, then fix the path-handling inconsistencies within the existing Quick Order module. I’ll add the targeted regressions but leave them unrun until a new qualification slot is reserved."
+    },
+    "nextSourceApprovalPreparation": "After HTTP correction and preserved verdicts, complete exact proposed regression-test diffs/hash baselines under own docs, PWA/GATE01 disclosure and authorized source qualification before repeating/replacing A1. A2 pending unchanged."
   },
   "latestUserContinuation": {
     "path": "C:/Users/sboad/.codex/attachments/b2b87a95-8dcf-461e-9b2a-0ec7bc1a4c49/Pasted text.txt",

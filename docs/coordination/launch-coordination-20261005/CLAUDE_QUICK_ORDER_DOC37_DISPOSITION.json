@@ -46,7 +46,7 @@
     "coordinatorSlot": null,
     "coordinatorVitestMinimumMiB": 1536,
     "qualificationDisposition": "Reviewer runs are archived factual evidence, not coordinator-reserved qualification. Reported Vitest headroom is below1536MiB and no new reservation is recorded. Do not waive this mismatch, infer full process attestation, pool overlapping runs, or rerun solely to improve logs.",
-    "sourceIdentityCaution": "Headers assert detached clean c807f19 and Node20; file-level before/after execution attestation not inferred from header text. Source bytes equal f1 by independently verified Git objects."
+    "sourceIdentityCaution": "Node receipt has NO source/path/command/time/RAM/exit wrapper; attribution/exit0 are narrative. Vitest/gate headers assert identity; full argv and source-hash execution attestation are absent. Static runtime equality f1 to c807 independently verified."
   },
   "artifacts": [
     {
@@ -84,5 +84,23 @@
       "bytes": 2208,
       "sha256": "c2844e5b3b26f5a6add588e2ba70b4ffd44a1f1052a88bc836e01cb6cb92b4f0"
     }
-  ]
+  ],
+  "independentReceiptAudit": {
+    "reviewer": "/root/refund_audit",
+    "method": "Read-only immutable Git-byte/hash comparison, source bindings and receipt inspection; no rerun/application",
+    "sourceHashes": 22,
+    "baselines": 14,
+    "sourceUnchangedToHandoff": true,
+    "node": "73 individual TAP passes, zero failures/skips; NO source/path/command/time/RAM/exit wrapper. Source4/exit0 association is doc37 narrative, not a raw wrapper.",
+    "vitest": "116 cases over six exact relocated paths, exit0; header asserts detached cleanc807/Node20 and1206MiBbefore/1326after. No22filebeforeafterhashes.",
+    "gate": "Zero new location violations, inherited4hardhash mismatches, FAILexit1; protected actual hashes matchc807 and756.",
+    "resourceQualification": "1206MiB is330below1536minimum; firstpass999/933/1421,disk26.96,concurrency and mostargv details are doc37 narrative only. No coordinator reservation. Preserve review evidence, never call it coordinator qualification.",
+    "patch": "Six prehashes equal4abd/756/c807; recorded afterhashes agree; exactlytwo importlines differfromheldpatch. Scratchpad-apply claim not independently reproduced by this audit.",
+    "hashes": {
+      "gate": "7c34cd47e25c42ab67154a501fb503b9034aa5dd2dca71791bbdb86c9d735c75",
+      "node": "e1b912b7a676897006281b6e2a094d14a24153046e32a175c6822fc30e10a40f",
+      "vitest": "83a3fee2e1efd3a3ab664d38337826e75258af79e624373d3c93bda073022373",
+      "patch": "c2844e5b3b26f5a6add588e2ba70b4ffd44a1f1052a88bc836e01cb6cb92b4f0"
+    }
+  }
 }

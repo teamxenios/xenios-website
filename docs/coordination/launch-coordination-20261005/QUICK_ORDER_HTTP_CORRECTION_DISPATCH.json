@@ -1,0 +1,17 @@
+{
+  "requestedAt": "2026-10-05T20:58:39Z",
+  "requestCommit": "25ca24b07ef8bab2a7dd97fd0ad576fc08a1bc48",
+  "requestPath": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_CORRECTION_REQUEST.txt",
+  "thread": "01a10d78-0981-7150-9292-c5cde2730d4d",
+  "host": "local",
+  "model": "gpt-6-astra",
+  "effort": "ultra",
+  "turn": "01a10ddc-87e4-7693-86cc-6e6d9df6438f",
+  "cursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:21",
+  "status": "RUNNING; same-builder acknowledgement verified",
+  "acknowledgement": "I’ll read the HTTP correction request and reviewer findings, verify the current source and lease, then fix the path-handling inconsistencies within the existing Quick Order module. I’ll add the targeted regressions but leave them unrun until a new qualification slot is reserved.",
+  "qualificationSlot": null,
+  "protectedOrSchemaPermission": false,
+  "noNewBuilder": true,
+  "noRetryDeniedOutboundMessage": true
+}
