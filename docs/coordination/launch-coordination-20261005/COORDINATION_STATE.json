@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T20:28:13.242Z",
+  "updatedAt": "2026-10-05T20:34:38.658Z",
   "objective": "Automate verified Codex-Claude-ChatGPT launch coordination, preserve accepted source and implement the separately authorized Quick Order intake while production authorities remain held.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -121,18 +121,21 @@
     ]
   },
   "qualificationSlot": {
-    "owner": null,
-    "scope": "Quick Order completed and released all focused processes; no heavy/DB reservation. New qualification needs fresh resources and exact ownership.",
+    "owner": "codex-health-quick-order-20261005",
+    "scope": "Exclusive serialized relocated-source focused Node two-file set, then Vitest six-file set, then one conditional capped nonincremental typecheck. No other jobs.",
     "next": "Current sole Quick Order worker continues unprotected source and prepares exact protected/schema approval packet.",
     "fullSuite": "DEFERRED/NOT RUN for original integration; no automatic reruns merely to improve summary reporter.",
     "lastCoordinatorResources": {
-      "observedAt": "2026-10-05T19:13:38.6907389Z",
-      "availableMiB": 1263,
-      "freeDiskGiB": 27.01,
-      "committedGB": 40.69,
-      "commitLimitGB": 60.73,
-      "heavyJobs": []
-    }
+      "at": "2026-10-05T20:33:12.8107309Z",
+      "availableMiB": 1917,
+      "freeDiskGiB": 26.98,
+      "matchingHeavyJobs": [],
+      "previousSlotOwner": null
+    },
+    "status": "RESERVED pending samebuilder fresh per-job checks",
+    "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+    "artifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_FOCUSED_SLOT_f1e467f.json",
+    "expiresIfNotStartedAt": "2026-10-05T20:50:00Z"
   },
   "partnerReturn": {
     "source": "94e89be7c959087edfde4ebddf2f50fa5e02cc36",
@@ -300,7 +303,7 @@
     },
     "dispatchArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_DISPATCH.txt",
     "dispatchCommit": "c169a77c7c511335c96757c9b8785fcefd99b241",
-    "waitCursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:18",
+    "waitCursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:19",
     "leasePaths": [
       "client/src/quick-order/**",
       "server/health/quick-order/**",
@@ -310,7 +313,7 @@
     ],
     "baselineArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_PACKAGE_BASELINE.json",
     "concreteRisksArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_CANONICAL_FINDINGS.md",
-    "latestProgress": "Producer reports ownlease extended/no conflicts and all22files moved; imports/proposal regeneration in progress, no new successor source/evidence yet.",
+    "latestProgress": "Producer pushedf1e467f/6bc4fd7 with regeneratedc65d7e49proposal; staticreceiptfiles initiallyuntracked, sourceclaimedunchanged. NewtestsNOTRUN awaiting reservedboundedsequence.",
     "protectedOrSqlApproval": false,
     "diagnostics": {
       "source": "dirty d8a0d3f (producer report; not final acceptance source)",
@@ -418,7 +421,7 @@
       "session": "5fb80ba6-3214-4186-aef0-0c556fd6627b",
       "cwd": "C:/xenios-wt/health-review",
       "branch": "claude/xenios-health-launch-review-20260930",
-      "status": "PARKED to eliminate overlap; coordinator soft-interrupted only5fb and its20:15:17Z acknowledgement confirms no QuickOrder review records/commits or source edits. Accepted integration verdicts preserved.",
+      "status": "STOPPED coordinator-owned parked process5fb viaClaudeCLI20:32Z; PID absent. Transcript/provisionalreads and pushed756verdicts preserved. Original6abreview continues, no duplicate resumed.",
       "source": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
       "tree": "3fb70d98dc354e6a6049744b5bb15b741d5ba50b",
       "evidence": "b353092ad9e49f28a65451d188c636079e1df091",
@@ -437,7 +440,9 @@
       "producerClean": true,
       "producerRemote": "b353092ad9e49f28a65451d188c636079e1df091",
       "noRuntimeDrift": true,
-      "holdArtifact": "docs/coordination/launch-coordination-20261005/CLAUDE_QUICK_ORDER_OVERLAP_HOLD_5fb80ba6.json"
+      "holdArtifact": "docs/coordination/launch-coordination-20261005/CLAUDE_QUICK_ORDER_OVERLAP_HOLD_5fb80ba6.json",
+      "processStopped": true,
+      "ptySessionClosed": true
     },
     "activeReview": {
       "session": "6abf1edf-2b16-476e-8305-23b9a0014e06",
@@ -459,7 +464,7 @@
       "finalVerdict": null
     },
     "relocation": {
-      "status": "RUNNING in SAME builder; execution acknowledgement verified",
+      "status": "Source pushed; coordinator narrow verification in progress, focused reservation granted subject fresh checks",
       "requestedMapping": {
         "client/src/quick-order/": "client/src/research/quick-order/",
         "server/health/quick-order/": "server/research/health/quick-order/"
@@ -490,7 +495,10 @@
       "manifestChanged": false,
       "protectedTargetEditsAuthorized": false,
       "turn": "01a10dba-1d6e-7a93-82e1-fe316cf6072b",
-      "workerAcknowledgement": "I’ll resume this same lane, read the relocation request and Samuel’s attachment, then extend my lease to the approved destinations. I’ll preserve behavior and historical evidence while moving the modules and regenerating the proposal; protected files will remain untouched."
+      "workerAcknowledgement": "I’ll resume this same lane, read the relocation request and Samuel’s attachment, then extend my lease to the approved destinations. I’ll preserve behavior and historical evidence while moving the modules and regenerating the proposal; protected files will remain untouched.",
+      "pushedSource": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+      "pushedTree": "6bc4fd7a7483822d4af87a3c07ab7263c0fbc377",
+      "proposalSha256lf": "c65d7e49a9f5ec87262d4e3b106ab5e16b1c3d1ecd46a01c8a7ca4699e6d92af"
     },
     "communicationGuard": {
       "status": "Producer reports automatic approval rejection of outbound status message to coordinator",

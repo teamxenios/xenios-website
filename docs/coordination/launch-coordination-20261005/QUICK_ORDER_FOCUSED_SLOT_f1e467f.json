@@ -1,0 +1,47 @@
+{
+  "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+  "tree": "6bc4fd7a7483822d4af87a3c07ab7263c0fbc377",
+  "owner": "codex-health-quick-order-20261005",
+  "thread": "01a10d78-0981-7150-9292-c5cde2730d4d",
+  "scope": "Exclusive serialized relocated-source focused Node two-file set, then Vitest six-file set, then one conditional capped nonincremental typecheck. No other jobs.",
+  "coordinatorPrecheck": {
+    "at": "2026-10-05T20:33:12.8107309Z",
+    "availableMiB": 1917,
+    "freeDiskGiB": 26.98,
+    "matchingHeavyJobs": [],
+    "previousSlotOwner": null
+  },
+  "ownedProcessRelease": {
+    "session": "5fb80ba6-3214-4186-aef0-0c556fd6627b",
+    "pid": 22804,
+    "beforeState": "idle/blocked, explicit parked acknowledgement; review records pushed at fffa33a, clean",
+    "action": "claude stop 5fb80ba6",
+    "confirmed": "stopped; PID absent at20:32:20Z",
+    "beforeAvailableMiB": 715,
+    "immediateAfterAvailableMiB": 642,
+    "interpretation": "Only coordinator-owned parked overlapping reviewer process stopped. Original6ab and unrelated processes untouched. Do not attribute later host memory gain solely to this stop.",
+    "transcriptAndPushedVerdictsPreserved": true
+  },
+  "perJobConditions": [
+    "Worker rechecks actual host, no competing heavy job and unchanged source/baselines immediately before each command.",
+    "Use existing pinned Node20.19.0 launcher and unique exact raw receipts; no overwritten evidence.",
+    "Node2 may run only with >=512MiB available RAM and >=20GiB disk, --max-old-space-size=128 and --test-concurrency=1; cap overrides are explicit in argv. Verified pinned Node reports176MiB total heap limit for128MiB old-space.",
+    "Vitest6 may run only with >=1536MiB available RAM and >=20GiB disk, one worker/no file parallelism/no cache and existing1024MiB heap cap. If insufficient, defer; no polling loop.",
+    "Typecheck only after focused sets pass, fresh>=2048MiB available RAM,>=20GiB disk,no other heavy job, pinned Node --max-old-space-size=1024 tsc --noEmit --incremental false; otherwise retain NOTRUN/resource-deferred.",
+    "Preserve every failed/aborted receipt. Do not increase heap, retry failing code, widen suite, update manifests or run build/browser/DB under this slot.",
+    "Stop after the bounded sequence or refusal and release the reservation in own chat/records. Do not retry rejected outbound status messaging."
+  ],
+  "nodeFiles": [
+    "server/research/health/quick-order/tests/core.test.mjs",
+    "server/research/health/quick-order/tests/handler.test.mjs"
+  ],
+  "vitestFiles": [
+    "client/src/research/quick-order/contracts.test.ts",
+    "client/src/research/quick-order/QuickOrderPage.test.tsx",
+    "client/src/research/quick-order/OperatorDeclarations.test.tsx",
+    "server/research/health/quick-order/catalog.test.ts",
+    "server/research/health/quick-order/production.test.ts",
+    "server/research/health/quick-order/containment.test.ts"
+  ],
+  "releaseHolds": "Unapplied six-target proposal, A2 source drafting, fullApp/durableDB/operator/currentness and original website holds remain. No source acceptance or live-intake approval."
+}
