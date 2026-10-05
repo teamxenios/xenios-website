@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-10-05T21:03:05.205Z",
+  "thread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
+  "checkpoint": "222817218ffb4a82ba364c67f44c0ec08f99731b",
+  "firstAttempt": {
+    "result": "error",
+    "text": "Steering requires an active compatible turn",
+    "delivered": false
+  },
+  "freshObservation": {
+    "status": "active",
+    "userTurn": "74cad3de-be10-49ff-b442-329415195061",
+    "userMessage": "74cad3de-be10-49ff-b442-329415195061",
+    "userText": "along with the most recent update lets try to get the full website built asap with codex gpt 6 astra ultra and fable 5.1 ultracode in a few hours. give me mega prompts etc to get them to keep coding and not stop adn goas fast asap",
+    "source": "read_thread purpose-built tool; actual user message, not model reply",
+    "interpretation": "Continue and accelerate existing authorized website objective. No specific response approving A1/A2, protected hashes, schema or hosted actions; do not infer one."
+  },
+  "secondAttempt": {
+    "result": "acknowledged",
+    "responseThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
+    "basis": "Adapted after fresh active-turn observation; same authorized destination, no permission-review rejection or alternate channel.",
+    "replyRetrieved": false
+  },
+  "factsSent": [
+    "Doc36/37 exact commits and accepted pure relocation with P1 location/disclosure closed",
+    "Same builder active on scoped HTTP correction, exact request/turn",
+    "No qualification slot or source/protected/schema/hosted permission change",
+    "Reviewer-run resource/provenance limitations; no transfer or pooling",
+    "Completed-review process RAM not attributable; no process stops"
+  ],
+  "next": "Retrieve resulting planning delta without resending this checkpoint; planning text never grants founder approval."
+}

@@ -1,0 +1,47 @@
+{
+  "recordedAt": "2026-10-05T21:03:05.205Z",
+  "auditor": "/root/f1_audit",
+  "scope": "Read-only check of four prior coordinator-owned completed review conversations and exact matching background/process metadata. No unrelated content inspected.",
+  "sessions": [
+    {
+      "session": "cc511440-aa23-4897-ac21-5d4f325ee396",
+      "finalEndTurn": "2026-10-05T17:10:36.489Z"
+    },
+    {
+      "session": "04b9c0f3-1e7d-47f6-aa02-7a410d86eb98",
+      "finalEndTurn": "2026-10-05T17:27:52.366Z"
+    },
+    {
+      "session": "d8d31048-294d-435d-9c5e-2613fa70ee05",
+      "finalEndTurn": "2026-10-05T17:46:07.940Z"
+    },
+    {
+      "session": "478774d3-e917-41b5-b978-cbb1070bea89",
+      "finalEndTurn": "2026-10-05T17:59:21.039Z"
+    }
+  ],
+  "conversationEvidence": "Final assistant text says Stopping here; no later user/assistant turns, matches archived verdicts after LF/trailing-whitespace normalization. These are completed conversations.",
+  "processEvidence": "CLI background/blocked entries expose no PIDs. No exact UUID/short-ID process match or matching launch-time process was found; scoped metadata did not establish PID mapping.",
+  "residentMiB": null,
+  "privateMiB": null,
+  "reclaimableMemory": "UNVERIFIED; not zero",
+  "decision": "Do not stop unverified processes; no cleanup performed.",
+  "reportedHostSamples": [
+    {
+      "at": "2026-10-05T20:54:40Z",
+      "availableMiB": 1219
+    },
+    {
+      "at": "2026-10-05T20:59:26Z",
+      "availableMiB": 712
+    }
+  ],
+  "sampleLimits": "Auditor-reported host totals; not independent retained raw reservation prechecks, not attributable savings, and not qualification authority.",
+  "processesStopped": [],
+  "preserved": [
+    "original6ab",
+    "unrelated sessions/processes",
+    "all dirty work",
+    "827 volumes"
+  ]
+}
