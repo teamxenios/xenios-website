@@ -38,7 +38,7 @@ The sole Quick Order reviewer is the original Claude context 6abf1edf-2b16-476e-
 
 Coordinator-owned overlapping context 5fb80ba6 was first parked with an explicit no-write acknowledgment, then its idle process was stopped at 20:32Z. Its transcript and accepted integration verdicts are preserved. PTY11405/PID22804 are no longer resident. Do not resume it while original 6ab owns Quick Order review. The earlier accidental background-resume copy d7b571f9 was stopped. CLI requested Fable5.1 max; the reviewer's last internally observed effort was xhigh, so actual max is unconfirmed.
 
-Samuel authorizes collecting Codex/Claude results, delivering verified facts to Website State Summary chat 6abd3937-e230-83ea-a1ef-eac3a08fa93c, retrieving planning deltas and dispatching authorized dependency-ready work. Model output is never founder approval or independent evidence. The last confirmed planning reply 2a7d29f0-8393-4256-813a-7a7a6948fb7d is preserved in PLANNING_DELTA_20261005_2025.json; do not resend that checkpoint.
+Samuel authorizes collecting Codex/Claude results, delivering verified facts to Website State Summary chat 6abd3937-e230-83ea-a1ef-eac3a08fa93c, retrieving planning deltas and dispatching authorized dependency-ready work. Model output is never founder approval or independent evidence. The latest confirmed planning reply, turn 53148541-d607-40ef-83ec-733b3044ee2f / message d927368d-c828-44f6-a456-cea7323b03f1, is preserved in PLANNING_DELTA_20261005_2043.json. It reports no material sequence change. The new relocated-source/refusal checkpoint was delivered; do not resend it.
 
 ## Frozen accepted integration
 

@@ -113,5 +113,15 @@
     "Static integrity is not successor test qualification or source acceptance.",
     "No previous 184, 10, or reported 189 count transfers to relocated source.",
     "Final original six-lens review remains pending; no protected/schema/hosted permission inferred."
-  ]
+  ],
+  "refusalSecondCheck": {
+    "reviewer": "/root/f1_audit",
+    "method": "Read-only remote/current Git and exact receipt rehash; no tests or writes",
+    "precheckSha256": "a95fb532310012b963b07eb20c7ae3c6192952c13c0c2b460fb8cbdd52918a62",
+    "slotResultSha256": "5a9e2d591ce49d4680222bd440064f401610f923c45166fdd326a49fbcc21dc9",
+    "sourceHashes": 22,
+    "baselines": 14,
+    "cleanHeadRemote": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+    "finding": "No mismatch; archived prelaunch refusal verified, not successor test pass."
+  }
 }
