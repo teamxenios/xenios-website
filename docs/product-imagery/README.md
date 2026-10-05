@@ -2,6 +2,12 @@
 
 ## Current execution-sprint v2 preparation
 
+The bounded correction result is in `EXECUTION_SPRINT_V2_IMAGERY_2026-10-05.md`
+and `evidence/calibration-corrections-v2/`: nine private attempts, one numeric
+framing pass (study 04 attempt 3), and two studies still needing correction.
+The passing candidate is pending independent exact-asset review, not approved.
+No corrected image is selected into the frozen founder preview.
+
 The current planning manifest is `manifests/batch-001-prepared.json`: 24 coverage
 identities, 0 authorized product renders. Candidate 25 is removed, candidate 24
 uses diluent-vial presentation, and the 22 vial identities propose blank-label

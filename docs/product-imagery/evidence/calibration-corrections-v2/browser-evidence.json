@@ -1,0 +1,377 @@
+{
+  "schemaVersion": 1,
+  "kind": "private_calibration_contact_sheet_browser_review",
+  "capturedAtUtc": "2026-10-05T13:23:30.242Z",
+  "browser": {
+    "name": "chromium",
+    "version": "149.0.7827.55",
+    "revision": "1228"
+  },
+  "pageSha256": "b309f830637b94c611846596d78652242882263975545ef19b53137831aad54e",
+  "cssSha256": "bb554d9a7bdb2650f5811ad3ff385ca7896b384c5ba9d34764c227c9efbf1b03",
+  "captures": [
+    {
+      "width": 1440,
+      "path": "docs/product-imagery/evidence/calibration-corrections-v2/review-1440.png",
+      "sha256": "47d5b9c9217710b75948456bee11e065d13299e7d1b0b6cfdd73074933e8c1b5",
+      "coverage": {
+        "fullPage": true,
+        "truncated": false,
+        "layoutStable": true,
+        "contentWidthCssPx": 1440,
+        "contentHeightCssPx": 3062,
+        "postContentWidthCssPx": 1440,
+        "postContentHeightCssPx": 3062,
+        "maxHeightCssPx": 12000,
+        "devicePixelRatio": 1,
+        "capturedWidthPx": 1440,
+        "capturedHeightPx": 3062
+      },
+      "state": {
+        "width": 1440,
+        "scrollWidth": 1440,
+        "clientWidth": 1440,
+        "studies": 3,
+        "images": [
+          {
+            "src": "/evidence/calibration-render-candidates/calibration-03-topical-sha256-dd8510c7ce07.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "dd8510c7ce07525fe9dc1195cb6dc0bf12964167a0a4ebd9923648151a6a4173"
+          },
+          {
+            "src": "/evidence/calibration-corrections-v2/study-03-attempt-03-b30331adf582.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "b30331adf582823a8e66f289cdc7014e87679a74d477b6724aa6ceb7bcde5a7c"
+          },
+          {
+            "src": "/evidence/calibration-render-candidates/calibration-04-care-state-sha256-76c10c66c93f.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "76c10c66c93fd3365bd40eefa450ffa01ddb13351dce6ae9aecacefb8abf9750"
+          },
+          {
+            "src": "/evidence/calibration-corrections-v2/study-04-attempt-03-543ff8e6dbca.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "543ff8e6dbcaad9497e7f512c320207b003855eb8de4bc91b844f4563fe4a8fc"
+          },
+          {
+            "src": "/evidence/calibration-render-candidates/calibration-05-restrictive-state-sha256-36bc99f4833d.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "36bc99f4833d83923cb837664f89e07258ad94fbd04a5ddb7b27ca77ccf655f2"
+          },
+          {
+            "src": "/evidence/calibration-corrections-v2/study-05-attempt-03-46cc336909f3.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "46cc336909f38be87c0ce47508cf82991c99098809f718a27c7684791d8636cd"
+          }
+        ]
+      },
+      "brokenImages": 0,
+      "overflow": false,
+      "sourcePixelsVerified": true,
+      "networkBoundaryViolations": []
+    },
+    {
+      "width": 768,
+      "path": "docs/product-imagery/evidence/calibration-corrections-v2/review-768.png",
+      "sha256": "c4052cd8bc180a1fef995a82cdbce7a99efc162f45a86dca7670f6eed341fd7e",
+      "coverage": {
+        "fullPage": true,
+        "truncated": false,
+        "layoutStable": true,
+        "contentWidthCssPx": 768,
+        "contentHeightCssPx": 2592,
+        "postContentWidthCssPx": 768,
+        "postContentHeightCssPx": 2592,
+        "maxHeightCssPx": 12000,
+        "devicePixelRatio": 1,
+        "capturedWidthPx": 768,
+        "capturedHeightPx": 2592
+      },
+      "state": {
+        "width": 768,
+        "scrollWidth": 768,
+        "clientWidth": 768,
+        "studies": 3,
+        "images": [
+          {
+            "src": "/evidence/calibration-render-candidates/calibration-03-topical-sha256-dd8510c7ce07.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "dd8510c7ce07525fe9dc1195cb6dc0bf12964167a0a4ebd9923648151a6a4173"
+          },
+          {
+            "src": "/evidence/calibration-corrections-v2/study-03-attempt-03-b30331adf582.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "b30331adf582823a8e66f289cdc7014e87679a74d477b6724aa6ceb7bcde5a7c"
+          },
+          {
+            "src": "/evidence/calibration-render-candidates/calibration-04-care-state-sha256-76c10c66c93f.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "76c10c66c93fd3365bd40eefa450ffa01ddb13351dce6ae9aecacefb8abf9750"
+          },
+          {
+            "src": "/evidence/calibration-corrections-v2/study-04-attempt-03-543ff8e6dbca.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "543ff8e6dbcaad9497e7f512c320207b003855eb8de4bc91b844f4563fe4a8fc"
+          },
+          {
+            "src": "/evidence/calibration-render-candidates/calibration-05-restrictive-state-sha256-36bc99f4833d.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "36bc99f4833d83923cb837664f89e07258ad94fbd04a5ddb7b27ca77ccf655f2"
+          },
+          {
+            "src": "/evidence/calibration-corrections-v2/study-05-attempt-03-46cc336909f3.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "46cc336909f38be87c0ce47508cf82991c99098809f718a27c7684791d8636cd"
+          }
+        ]
+      },
+      "brokenImages": 0,
+      "overflow": false,
+      "sourcePixelsVerified": true,
+      "networkBoundaryViolations": []
+    },
+    {
+      "width": 390,
+      "path": "docs/product-imagery/evidence/calibration-corrections-v2/review-390.png",
+      "sha256": "ea0c915b9e0727d8768b3e9136d1b97bf742beba6d36b36cb0d58e3019e4b8f2",
+      "coverage": {
+        "fullPage": true,
+        "truncated": false,
+        "layoutStable": true,
+        "contentWidthCssPx": 390,
+        "contentHeightCssPx": 4378,
+        "postContentWidthCssPx": 390,
+        "postContentHeightCssPx": 4378,
+        "maxHeightCssPx": 12000,
+        "devicePixelRatio": 1,
+        "capturedWidthPx": 390,
+        "capturedHeightPx": 4378
+      },
+      "state": {
+        "width": 390,
+        "scrollWidth": 390,
+        "clientWidth": 390,
+        "studies": 3,
+        "images": [
+          {
+            "src": "/evidence/calibration-render-candidates/calibration-03-topical-sha256-dd8510c7ce07.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "dd8510c7ce07525fe9dc1195cb6dc0bf12964167a0a4ebd9923648151a6a4173"
+          },
+          {
+            "src": "/evidence/calibration-corrections-v2/study-03-attempt-03-b30331adf582.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "b30331adf582823a8e66f289cdc7014e87679a74d477b6724aa6ceb7bcde5a7c"
+          },
+          {
+            "src": "/evidence/calibration-render-candidates/calibration-04-care-state-sha256-76c10c66c93f.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "76c10c66c93fd3365bd40eefa450ffa01ddb13351dce6ae9aecacefb8abf9750"
+          },
+          {
+            "src": "/evidence/calibration-corrections-v2/study-04-attempt-03-543ff8e6dbca.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "543ff8e6dbcaad9497e7f512c320207b003855eb8de4bc91b844f4563fe4a8fc"
+          },
+          {
+            "src": "/evidence/calibration-render-candidates/calibration-05-restrictive-state-sha256-36bc99f4833d.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "36bc99f4833d83923cb837664f89e07258ad94fbd04a5ddb7b27ca77ccf655f2"
+          },
+          {
+            "src": "/evidence/calibration-corrections-v2/study-05-attempt-03-46cc336909f3.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "46cc336909f38be87c0ce47508cf82991c99098809f718a27c7684791d8636cd"
+          }
+        ]
+      },
+      "brokenImages": 0,
+      "overflow": false,
+      "sourcePixelsVerified": true,
+      "networkBoundaryViolations": []
+    },
+    {
+      "width": 320,
+      "path": "docs/product-imagery/evidence/calibration-corrections-v2/review-320.png",
+      "sha256": "a3299404c5c925fe89a2a80f4ebc848d7a4f86d7d418d745a764a0f241def398",
+      "coverage": {
+        "fullPage": true,
+        "truncated": false,
+        "layoutStable": true,
+        "contentWidthCssPx": 320,
+        "contentHeightCssPx": 4109,
+        "postContentWidthCssPx": 320,
+        "postContentHeightCssPx": 4109,
+        "maxHeightCssPx": 12000,
+        "devicePixelRatio": 1,
+        "capturedWidthPx": 320,
+        "capturedHeightPx": 4109
+      },
+      "state": {
+        "width": 320,
+        "scrollWidth": 320,
+        "clientWidth": 320,
+        "studies": 3,
+        "images": [
+          {
+            "src": "/evidence/calibration-render-candidates/calibration-03-topical-sha256-dd8510c7ce07.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "dd8510c7ce07525fe9dc1195cb6dc0bf12964167a0a4ebd9923648151a6a4173"
+          },
+          {
+            "src": "/evidence/calibration-corrections-v2/study-03-attempt-03-b30331adf582.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "b30331adf582823a8e66f289cdc7014e87679a74d477b6724aa6ceb7bcde5a7c"
+          },
+          {
+            "src": "/evidence/calibration-render-candidates/calibration-04-care-state-sha256-76c10c66c93f.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "76c10c66c93fd3365bd40eefa450ffa01ddb13351dce6ae9aecacefb8abf9750"
+          },
+          {
+            "src": "/evidence/calibration-corrections-v2/study-04-attempt-03-543ff8e6dbca.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "543ff8e6dbcaad9497e7f512c320207b003855eb8de4bc91b844f4563fe4a8fc"
+          },
+          {
+            "src": "/evidence/calibration-render-candidates/calibration-05-restrictive-state-sha256-36bc99f4833d.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "36bc99f4833d83923cb837664f89e07258ad94fbd04a5ddb7b27ca77ccf655f2"
+          },
+          {
+            "src": "/evidence/calibration-corrections-v2/study-05-attempt-03-46cc336909f3.png",
+            "naturalWidth": 1254,
+            "naturalHeight": 1254,
+            "loaded": true,
+            "objectFit": "contain",
+            "filter": "none",
+            "blend": "normal",
+            "sha256": "46cc336909f38be87c0ce47508cf82991c99098809f718a27c7684791d8636cd"
+          }
+        ]
+      },
+      "brokenImages": 0,
+      "overflow": false,
+      "sourcePixelsVerified": true,
+      "networkBoundaryViolations": []
+    }
+  ],
+  "independentAcceptance": false,
+  "founderPreviewChanged": false,
+  "publicRuntimeEligibility": false
+}

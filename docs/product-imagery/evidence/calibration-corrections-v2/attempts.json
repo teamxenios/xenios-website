@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "kind": "private_calibration_correction_attempt_registry",
+  "authorizationCommit": "cd66f3c411e6164981295d81c2116e50343edc86",
+  "preparedSourceCommit": "eee7abe7c68f2aa382f8a49118f5239b671cdc2c",
+  "attemptLimitPerStudy": 3,
+  "attempts": [
+    {
+      "id": "study-03-attempt-01",
+      "studyId": "calibration-03-topical",
+      "attempt": 1,
+      "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-03-attempt-01-9c6e017ad8c6.png",
+      "sha256": "9c6e017ad8c6b572f02d7c252b311002a800c4c36f7536c2ad3b260df652b545",
+      "generatorOutputPath": "C:\\Users\\sboad\\.codex\\generated_images\\01a0f3d7-b28e-7402-acc0-aa4671241f7a\\exec-238cbcb1-3c03-477e-b3e5-19df0a95b116.png",
+      "toolRequestedAtUtc": "2026-10-05 13:05:02 UTC",
+      "tool": "image_gen",
+      "prompt": "Image 1: edit target; preserve its subject concept and materials.\nImage 2: calibration-01 vial, framing/palette/camera reference only; do not add its vial to output.\nImage 3: calibration-02 bottle, framing/palette/camera reference only; do not add its bottle to output.\nUse case: product-mockup\nAsset type: private internal Xenios product-card art-direction calibration\nPrimary request: Create one premium studio study of a generic unbranded topical dispenser form. This is a visual-system calibration, not an exact product depiction.\nScene/backdrop: seamless deep-taupe to near-black studio cyclorama; low matte warm-graphite plinth; no room context.\nSubject: one sealed soft-touch warm-graphite topical tube with a simple charcoal cap and one blank matte-ivory label plane. The tube is opaque; show no cream, gel, liquid, applicator, carton, or usage scene.\nStyle/medium: photorealistic premium controlled product photography.\nComposition/framing: square 1:1; fixed 20-degree elevated three-quarter view; 85 mm product-photography perspective; centered full object; subject about 68 percent of canvas height; generous even padding; no clipped edges.\nLighting/mood: broad warm key from upper left; restrained cool fill from right; soft controlled shadow down-right; subtle purple-to-teal reflection only along one cap edge.\nColor palette: near-black, deep taupe, warm graphite, restrained brushed metal, ivory highlight, subtle purple-to-teal accent.\nText: none. The label plane is completely blank.\nConstraints: no claim about contents, formulation, manufacturer, pharmacy, prescription status, certification, or exact package identity. No other objects or props.\nAvoid: skin, people, hands, leaves, plants, herbs, botanical or spa cues, wellness props, liquid splashes, clinic rooms, laboratory rooms, medical crosses, logos, brand names, legible text, certification marks, watermarks.\nCorrection request: Re-render this same private calibration subject with ONLY its framing/camera/scale corrected to the two reference studies. Preserve its subject concept, truthful blank/no-text treatment, materials, palette, lighting and restrained metallic accent. Make one square image, not a collage. The subject silhouette must extend from approximately 17% to 85% of canvas height (about 68% tall), horizontally centered, entirely inside the frame. Keep the softly visible floor/wall horizon at approximately 55% of canvas height; matching the references is more important than the original target's camera angle. Acceptance bands: subject height 61–75%, top margin 16.3–17.9%, horizon 52.1–57.5%. Give the complete subject generous unclipped margins. No reference vials/bottles, no other added objects, no labels or lettering. Do not merely add padding around the original; produce coherent corrected perspective and studio lighting. Image only.",
+      "referencedImages": [
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-03-topical-sha256-dd8510c7ce07.png",
+          "sha256": "dd8510c7ce07525fe9dc1195cb6dc0bf12964167a0a4ebd9923648151a6a4173"
+        },
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-01-vial-sha256-e04c2e5981ec.png",
+          "sha256": "e04c2e5981eccdd5753ebfbdd8927e6e04ae804d2e0537eb9eceb5c7e9d3f6fe"
+        },
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-02-bottle-sha256-e3681f630199.png",
+          "sha256": "e3681f630199c0b5743a589ab29b04ebaf246cece82658fb1b811b79ecaeef7f"
+        }
+      ],
+      "selectedCandidate": false
+    },
+    {
+      "id": "study-03-attempt-02",
+      "studyId": "calibration-03-topical",
+      "attempt": 2,
+      "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-03-attempt-02-136733f24bda.png",
+      "sha256": "136733f24bdae97be120b0c4a0e7eb767d7c4c880ddb320217918b288bcdfa31",
+      "generatorOutputPath": "C:\\Users\\sboad\\.codex\\generated_images\\01a0f3d7-b28e-7402-acc0-aa4671241f7a\\exec-e3db38e5-93c7-45f2-8230-78a475b190e7.png",
+      "toolRequestedAtUtc": "2026-10-05 13:09:46 UTC",
+      "tool": "image_gen",
+      "prompt": "Use case: precise-object-edit\nAsset type: private internal calibration, not a product render.\nImage 1 is the edit target. Change ONLY camera/framing/subject scale and the studio floor-wall transition described below. Preserve the same subject concept, blank/no-text identity, graphite materials, warm taupe-black palette, upper-left soft lighting, restrained metallic purple-teal accent, and lack of extra props. No text, logos, numbers, contents, medical or commerce claims. Keep square 1:1. Output one image only.\nMake the whole tube 10% smaller than it is in this image, retaining its proportions. Position it slightly lower. In a 1254-square output, the complete visible silhouette, including its crimp and cap, should start at y=215 and end near y=1060, horizontally centered x=627. There must be clearly more empty space above the tube than in the input. Move the strongest visible floor-wall lighting transition UP to y=685 across the background (54.6% of canvas height), rather than y=752. Smoothly rebuild coherent studio background; do not introduce a line, outline, border, frame, or pad.",
+      "referencedImages": [
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-03-attempt-01-9c6e017ad8c6.png",
+          "sha256": "9c6e017ad8c6b572f02d7c252b311002a800c4c36f7536c2ad3b260df652b545"
+        }
+      ],
+      "selectedCandidate": false
+    },
+    {
+      "id": "study-03-attempt-03",
+      "studyId": "calibration-03-topical",
+      "attempt": 3,
+      "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-03-attempt-03-b30331adf582.png",
+      "sha256": "b30331adf582823a8e66f289cdc7014e87679a74d477b6724aa6ceb7bcde5a7c",
+      "generatorOutputPath": "C:\\Users\\sboad\\.codex\\generated_images\\01a0f3d7-b28e-7402-acc0-aa4671241f7a\\exec-3da963aa-ff68-49f4-af5c-9a185232ff18.png",
+      "toolRequestedAtUtc": "2026-10-05 13:13:05 UTC",
+      "tool": "image_gen",
+      "prompt": "Use case: precise-object-edit\nImage 1 is the edit target. Final small framing adjustment only; do not redesign or replace the subject.\nEnlarge the tube by about 8% (very slightly), then move it upward by about 32 pixels in the 1254px-square frame. Current measured silhouette y=275..1064; desired y=214..1066. Raise the soft background horizon from y=728 to y=685. Keep tube width proportional, centered, and fully visible.\nKeep the subject's materials, geometry, blank ivory detail, warm graphite and deep taupe palette, restrained metal purple-teal edge, studio lighting and square canvas. No letters, labels, icons, marks, extra objects, contents or claims. Private illustrative calibration only. Output image only.",
+      "referencedImages": [
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-03-attempt-02-136733f24bda.png",
+          "sha256": "136733f24bdae97be120b0c4a0e7eb767d7c4c880ddb320217918b288bcdfa31"
+        }
+      ],
+      "selectedCandidate": false
+    },
+    {
+      "id": "study-04-attempt-01",
+      "studyId": "calibration-04-care-state",
+      "attempt": 1,
+      "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-04-attempt-01-c10b40b52989.png",
+      "sha256": "c10b40b529892955bdca54099b5397bd690cfc3de10a27068cf84440081339a7",
+      "generatorOutputPath": "C:\\Users\\sboad\\.codex\\generated_images\\01a0f3d7-b28e-7402-acc0-aa4671241f7a\\exec-ec1d2ef3-3362-4857-a7df-9537c7a5ce21.png",
+      "toolRequestedAtUtc": "2026-10-05 13:06:17 UTC",
+      "tool": "image_gen",
+      "prompt": "Image 1: edit target; preserve its subject concept and materials.\nImage 2: calibration-01 vial, framing/palette/camera reference only; do not add its vial to output.\nImage 3: calibration-02 bottle, framing/palette/camera reference only; do not add its bottle to output.\nUse case: stylized-concept\nAsset type: private internal Xenios product-card art-direction calibration\nPrimary request: Create one premium abstract Care-pathway visual that communicates guided progression without depicting a physical product, provider, patient, clinic, or treatment.\nScene/backdrop: seamless deep-taupe to near-black studio cyclorama; low matte warm-graphite plinth; no room context.\nSubject: two restrained offset graphite portal forms joined by one narrow brushed-metal bridge and one small matte-ivory plane, expressing a governed pathway. The geometry is abstract, architectural only at miniature sculpture scale, and not a real room or facility.\nStyle/medium: photorealistic premium studio photograph of a minimal abstract sculpture.\nComposition/framing: square 1:1; fixed 20-degree elevated three-quarter view; 85 mm product-photography perspective; centered full sculpture; subject about 68 percent of canvas height; generous even padding; no clipped edges.\nLighting/mood: broad warm key from upper left; restrained cool fill from right; soft controlled shadow down-right; subtle purple-to-teal reflection only along the bridge edge.\nColor palette: near-black, deep taupe, warm graphite, restrained brushed metal, ivory highlight, subtle purple-to-teal accent.\nText: none.\nConstraints: pathway-oriented only; no eligibility, provider, appointment, treatment, clinical-result, pharmacy, or availability claim. No other objects or props.\nAvoid: people, faces, hands, medical staff, beds, exam rooms, reception desks, clinic rooms, laboratory rooms, devices, syringes, pills, vials, medical crosses, leaves, plants, herbs, botanical or spa cues, wellness props, logos, brand names, legible text, certification marks, watermarks.\nCorrection request: Re-render this same private calibration subject with ONLY its framing/camera/scale corrected to the two reference studies. Preserve its subject concept, truthful blank/no-text treatment, materials, palette, lighting and restrained metallic accent. Make one square image, not a collage. The subject silhouette must extend from approximately 17% to 85% of canvas height (about 68% tall), horizontally centered, entirely inside the frame. Keep the softly visible floor/wall horizon at approximately 55% of canvas height; matching the references is more important than the original target's camera angle. Acceptance bands: subject height 61–75%, top margin 16.3–17.9%, horizon 52.1–57.5%. Give the complete subject generous unclipped margins. No reference vials/bottles, no other added objects, no labels or lettering. Do not merely add padding around the original; produce coherent corrected perspective and studio lighting. Image only.",
+      "referencedImages": [
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-04-care-state-sha256-76c10c66c93f.png",
+          "sha256": "76c10c66c93fd3365bd40eefa450ffa01ddb13351dce6ae9aecacefb8abf9750"
+        },
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-01-vial-sha256-e04c2e5981ec.png",
+          "sha256": "e04c2e5981eccdd5753ebfbdd8927e6e04ae804d2e0537eb9eceb5c7e9d3f6fe"
+        },
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-02-bottle-sha256-e3681f630199.png",
+          "sha256": "e3681f630199c0b5743a589ab29b04ebaf246cece82658fb1b811b79ecaeef7f"
+        }
+      ],
+      "selectedCandidate": false
+    },
+    {
+      "id": "study-04-attempt-02",
+      "studyId": "calibration-04-care-state",
+      "attempt": 2,
+      "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-04-attempt-02-115865ea0269.png",
+      "sha256": "115865ea026940638263d7f14c937e36aa7e6abb0e00f6b334277d91234d5d6e",
+      "generatorOutputPath": "C:\\Users\\sboad\\.codex\\generated_images\\01a0f3d7-b28e-7402-acc0-aa4671241f7a\\exec-6940a813-5b84-4524-bc16-bf1357d440c9.png",
+      "toolRequestedAtUtc": "2026-10-05 13:10:35 UTC",
+      "tool": "image_gen",
+      "prompt": "Use case: precise-object-edit\nAsset type: private internal calibration, not a product render.\nImage 1 is the edit target. Change ONLY camera/framing/subject scale and the studio floor-wall transition described below. Preserve the same subject concept, blank/no-text identity, graphite materials, warm taupe-black palette, upper-left soft lighting, restrained metallic purple-teal accent, and lack of extra props. No text, logos, numbers, contents, medical or commerce claims. Keep square 1:1. Output one image only.\nMake the whole two-portal sculpture 5% smaller than it is in this image, retaining its proportions. Position it slightly lower. In a 1254-square output, the complete visible sculpture should start at y=215 and end near y=1060, horizontally centered x=627. Move the floor-wall lighting transition DOWN to y=685 across the background (54.6% of canvas height), rather than y=571. Use a less elevated camera/less visible floor to achieve this perspective. Smoothly rebuild coherent studio background; do not introduce a line, outline, border, frame, or pad. Preserve both offset portals and their connecting bridge; add no other objects.",
+      "referencedImages": [
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-04-attempt-01-c10b40b52989.png",
+          "sha256": "c10b40b529892955bdca54099b5397bd690cfc3de10a27068cf84440081339a7"
+        }
+      ],
+      "selectedCandidate": false
+    },
+    {
+      "id": "study-04-attempt-03",
+      "studyId": "calibration-04-care-state",
+      "attempt": 3,
+      "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-04-attempt-03-543ff8e6dbca.png",
+      "sha256": "543ff8e6dbcaad9497e7f512c320207b003855eb8de4bc91b844f4563fe4a8fc",
+      "generatorOutputPath": "C:\\Users\\sboad\\.codex\\generated_images\\01a0f3d7-b28e-7402-acc0-aa4671241f7a\\exec-f864331d-1adb-4878-9d1c-211a4665e5ac.png",
+      "toolRequestedAtUtc": "2026-10-05 13:13:47 UTC",
+      "tool": "image_gen",
+      "prompt": "Use case: precise-object-edit\nImage 1 is the edit target. Final small framing adjustment only; do not redesign or replace the subject.\nEnlarge the entire two-portal sculpture by about 6.5% (very slightly), then move it upward by about 60 pixels in the 1254px-square frame. Current measured silhouette y=300..1098; desired y=214..1066. Raise the soft background horizon from y=751 to y=685. Keep sculpture width proportional, centered, and fully visible.\nKeep the subject's materials, geometry, blank ivory detail, warm graphite and deep taupe palette, restrained metal purple-teal edge, studio lighting and square canvas. No letters, labels, icons, marks, extra objects, contents or claims. Private illustrative calibration only. Output image only.",
+      "referencedImages": [
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-04-attempt-02-115865ea0269.png",
+          "sha256": "115865ea026940638263d7f14c937e36aa7e6abb0e00f6b334277d91234d5d6e"
+        }
+      ],
+      "selectedCandidate": true
+    },
+    {
+      "id": "study-05-attempt-01",
+      "studyId": "calibration-05-restrictive-state",
+      "attempt": 1,
+      "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-05-attempt-01-785291e4cf22.png",
+      "sha256": "785291e4cf225623276d7d76e544febfea2c44b069a041e0ecd07c7c96753c0c",
+      "generatorOutputPath": "C:\\Users\\sboad\\.codex\\generated_images\\01a0f3d7-b28e-7402-acc0-aa4671241f7a\\exec-290506f6-c62c-4abb-b9b5-0c4f462cfc86.png",
+      "toolRequestedAtUtc": "2026-10-05 13:06:56 UTC",
+      "tool": "image_gen",
+      "prompt": "Image 1: edit target; preserve its subject concept and materials.\nImage 2: calibration-01 vial, framing/palette/camera reference only; do not add its vial to output.\nImage 3: calibration-02 bottle, framing/palette/camera reference only; do not add its bottle to output.\nUse case: stylized-concept\nAsset type: private internal Xenios product-card art-direction calibration\nPrimary request: Create one premium abstract restrictive-state visual for a held or quote-only offering, without depicting a product or implying availability.\nScene/backdrop: seamless deep-taupe to near-black studio cyclorama; low matte warm-graphite plinth; no room context.\nSubject: one closed warm-graphite panel inside a restrained dark-metal frame, crossed by one horizontal brushed-metal control band with a small matte-ivory marker. It should communicate intentional pause and governed review, not danger or failure.\nStyle/medium: photorealistic premium studio photograph of a minimal abstract sculpture.\nComposition/framing: square 1:1; fixed 20-degree elevated three-quarter view; 85 mm product-photography perspective; centered full sculpture; subject about 68 percent of canvas height; generous even padding; no clipped edges.\nLighting/mood: broad warm key from upper left; restrained cool fill from right; soft controlled shadow down-right; subtle purple-to-teal reflection only along the control-band edge.\nColor palette: near-black, deep taupe, warm graphite, restrained brushed metal, ivory highlight, subtle purple-to-teal accent.\nText: none.\nConstraints: no product, package, partner, price, quote amount, checkout, availability, fulfillment, or clinical claim. No other objects or props.\nAvoid: padlock icons, warning triangles, stop signs, people, hands, medical objects, clinic rooms, laboratory rooms, leaves, plants, herbs, botanical or spa cues, wellness props, logos, brand names, legible text, certification marks, watermarks.\nCorrection request: Re-render this same private calibration subject with ONLY its framing/camera/scale corrected to the two reference studies. Preserve its subject concept, truthful blank/no-text treatment, materials, palette, lighting and restrained metallic accent. Make one square image, not a collage. The subject silhouette must extend from approximately 17% to 85% of canvas height (about 68% tall), horizontally centered, entirely inside the frame. Keep the softly visible floor/wall horizon at approximately 55% of canvas height; matching the references is more important than the original target's camera angle. Acceptance bands: subject height 61–75%, top margin 16.3–17.9%, horizon 52.1–57.5%. Give the complete subject generous unclipped margins. No reference vials/bottles, no other added objects, no labels or lettering. Do not merely add padding around the original; produce coherent corrected perspective and studio lighting. Image only.",
+      "referencedImages": [
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-05-restrictive-state-sha256-36bc99f4833d.png",
+          "sha256": "36bc99f4833d83923cb837664f89e07258ad94fbd04a5ddb7b27ca77ccf655f2"
+        },
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-01-vial-sha256-e04c2e5981ec.png",
+          "sha256": "e04c2e5981eccdd5753ebfbdd8927e6e04ae804d2e0537eb9eceb5c7e9d3f6fe"
+        },
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-02-bottle-sha256-e3681f630199.png",
+          "sha256": "e3681f630199c0b5743a589ab29b04ebaf246cece82658fb1b811b79ecaeef7f"
+        }
+      ],
+      "selectedCandidate": false
+    },
+    {
+      "id": "study-05-attempt-02",
+      "studyId": "calibration-05-restrictive-state",
+      "attempt": 2,
+      "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-05-attempt-02-1ccf4094c12b.png",
+      "sha256": "1ccf4094c12b71d30f212255d1699244480a1cf581d7455e48b91012a6073f34",
+      "generatorOutputPath": "C:\\Users\\sboad\\.codex\\generated_images\\01a0f3d7-b28e-7402-acc0-aa4671241f7a\\exec-6fd0be50-d3c0-4d93-9dcd-281fe4ab5a40.png",
+      "toolRequestedAtUtc": "2026-10-05 13:11:11 UTC",
+      "tool": "image_gen",
+      "prompt": "Use case: precise-object-edit\nAsset type: private internal calibration, not a product render.\nImage 1 is the edit target. Change ONLY camera/framing/subject scale and the studio floor-wall transition described below. Preserve the same subject concept, blank/no-text identity, graphite materials, warm taupe-black palette, upper-left soft lighting, restrained metallic purple-teal accent, and lack of extra props. No text, logos, numbers, contents, medical or commerce claims. Keep square 1:1. Output one image only.\nMake the entire closed-panel sculpture, including its base, 10% smaller than it is in this image, retaining its proportions. Position it slightly lower. In a 1254-square output, the complete visible sculpture should start at y=215 and end near y=1060, horizontally centered x=627. There must be clearly more empty space above the sculpture than in the input. Move the strongest visible floor-wall lighting transition UP to y=685 across the background (54.6% of canvas height), rather than y=753. Smoothly rebuild coherent studio background; do not introduce a line, outline, border, or extra pad. Preserve the existing metal frame and control band with its small blank ivory marker.",
+      "referencedImages": [
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-05-attempt-01-785291e4cf22.png",
+          "sha256": "785291e4cf225623276d7d76e544febfea2c44b069a041e0ecd07c7c96753c0c"
+        }
+      ],
+      "selectedCandidate": false
+    },
+    {
+      "id": "study-05-attempt-03",
+      "studyId": "calibration-05-restrictive-state",
+      "attempt": 3,
+      "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-05-attempt-03-46cc336909f3.png",
+      "sha256": "46cc336909f38be87c0ce47508cf82991c99098809f718a27c7684791d8636cd",
+      "generatorOutputPath": "C:\\Users\\sboad\\.codex\\generated_images\\01a0f3d7-b28e-7402-acc0-aa4671241f7a\\exec-4d2243c1-df1e-46d7-9672-572d00e6aa37.png",
+      "toolRequestedAtUtc": "2026-10-05 13:14:21 UTC",
+      "tool": "image_gen",
+      "prompt": "Use case: precise-object-edit\nImage 1 is the edit target. Final small framing adjustment only; do not redesign or replace the subject.\nEnlarge the entire panel sculpture, including its base, by about 19%, then move it upward by about 61 pixels in the 1254px-square frame. Current measured silhouette y=343..1059; desired y=214..1066. Raise the soft background horizon from y=763 to y=685. Keep sculpture width proportional, centered, and fully visible.\nKeep the subject's materials, geometry, blank ivory detail, warm graphite and deep taupe palette, restrained metal purple-teal edge, studio lighting and square canvas. No letters, labels, icons, marks, extra objects, contents or claims. Private illustrative calibration only. Output image only.",
+      "referencedImages": [
+        {
+          "repositoryPath": "docs/product-imagery/evidence/calibration-corrections-v2/study-05-attempt-02-1ccf4094c12b.png",
+          "sha256": "1ccf4094c12b71d30f212255d1699244480a1cf581d7455e48b91012a6073f34"
+        }
+      ],
+      "selectedCandidate": false
+    }
+  ]
+}

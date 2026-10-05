@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "authorizationCommit": "cd66f3c411e6164981295d81c2116e50343edc86",
+  "jobs": [
+    {
+      "studyId": "calibration-03-topical",
+      "attempt": 2,
+      "prompt": "Use case: precise-object-edit\nAsset type: private internal calibration, not a product render.\nImage 1 is the edit target. Change ONLY camera/framing/subject scale and the studio floor-wall transition described below. Preserve the same subject concept, blank/no-text identity, graphite materials, warm taupe-black palette, upper-left soft lighting, restrained metallic purple-teal accent, and lack of extra props. No text, logos, numbers, contents, medical or commerce claims. Keep square 1:1. Output one image only.\nMake the whole tube 10% smaller than it is in this image, retaining its proportions. Position it slightly lower. In a 1254-square output, the complete visible silhouette, including its crimp and cap, should start at y=215 and end near y=1060, horizontally centered x=627. There must be clearly more empty space above the tube than in the input. Move the strongest visible floor-wall lighting transition UP to y=685 across the background (54.6% of canvas height), rather than y=752. Smoothly rebuild coherent studio background; do not introduce a line, outline, border, frame, or pad."
+    },
+    {
+      "studyId": "calibration-04-care-state",
+      "attempt": 2,
+      "prompt": "Use case: precise-object-edit\nAsset type: private internal calibration, not a product render.\nImage 1 is the edit target. Change ONLY camera/framing/subject scale and the studio floor-wall transition described below. Preserve the same subject concept, blank/no-text identity, graphite materials, warm taupe-black palette, upper-left soft lighting, restrained metallic purple-teal accent, and lack of extra props. No text, logos, numbers, contents, medical or commerce claims. Keep square 1:1. Output one image only.\nMake the whole two-portal sculpture 5% smaller than it is in this image, retaining its proportions. Position it slightly lower. In a 1254-square output, the complete visible sculpture should start at y=215 and end near y=1060, horizontally centered x=627. Move the floor-wall lighting transition DOWN to y=685 across the background (54.6% of canvas height), rather than y=571. Use a less elevated camera/less visible floor to achieve this perspective. Smoothly rebuild coherent studio background; do not introduce a line, outline, border, frame, or pad. Preserve both offset portals and their connecting bridge; add no other objects."
+    },
+    {
+      "studyId": "calibration-05-restrictive-state",
+      "attempt": 2,
+      "prompt": "Use case: precise-object-edit\nAsset type: private internal calibration, not a product render.\nImage 1 is the edit target. Change ONLY camera/framing/subject scale and the studio floor-wall transition described below. Preserve the same subject concept, blank/no-text identity, graphite materials, warm taupe-black palette, upper-left soft lighting, restrained metallic purple-teal accent, and lack of extra props. No text, logos, numbers, contents, medical or commerce claims. Keep square 1:1. Output one image only.\nMake the entire closed-panel sculpture, including its base, 10% smaller than it is in this image, retaining its proportions. Position it slightly lower. In a 1254-square output, the complete visible sculpture should start at y=215 and end near y=1060, horizontally centered x=627. There must be clearly more empty space above the sculpture than in the input. Move the strongest visible floor-wall lighting transition UP to y=685 across the background (54.6% of canvas height), rather than y=753. Smoothly rebuild coherent studio background; do not introduce a line, outline, border, or extra pad. Preserve the existing metal frame and control band with its small blank ivory marker."
+    }
+  ]
+}

@@ -577,8 +577,8 @@
       "branch": "codex/xenios-product-imagery-20260930",
       "state": "active",
       "startedAt": "2026-09-30T19:49:48.411Z",
-      "heartbeatAt": "2026-10-05T12:57:08.430Z",
-      "note": "Resumed after host delay. Completing v2 preparation integrity fixes and rerunning original focused gates; no render, preview refresh, public/Core edit or hosted write."
+      "heartbeatAt": "2026-10-05T13:15:44.760Z",
+      "note": "Bounded calibration rerenders finished: study04 measured pass,03/05 fail; building private audit evidence; no Batch1 or preview/runtime changes"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
