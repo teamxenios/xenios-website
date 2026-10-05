@@ -150,7 +150,7 @@ function SubscriptionForm({ memberToken, commerceEnabled, product, blockedFormId
       </div>
       <fieldset disabled={!enabled || locked} className="grid gap-3">
         <legend className="font-700">Choose your schedule</legend>
-        <label htmlFor={`${id}-quantity`}>Quantity</label>
+        <label htmlFor={`${id}-quantity`}>Quantity (1 to {PERSISTENT_CART_QUANTITY_MAX})</label>
         <input id={`${id}-quantity`} className="input-field" type="number" inputMode="numeric"
           min={1} max={PERSISTENT_CART_QUANTITY_MAX} step={1} required value={quantity}
           onChange={event => { setQuantity(event.target.value); setReviewed(false); }} />

@@ -33,5 +33,14 @@ export async function proof() {
   const subscriptions = await service(false).listForMember("synthetic-browser-customer");
   return { syntheticOnly: true, calls, subscriptions, paymentCalls,
     events: await Promise.all(subscriptions.map(record => repository.listEvents(record.subscriptionId))),
-    referralAttribution: "not_implemented_in_subscription_record", commissionCalls: 0, payoutCalls: 0 };
+    referralAttribution: "not_implemented_in_subscription_record", commissionIntegration: "not_connected", payoutIntegration: "not_connected" };
 }
+
+export const detail = { ok: true, product: {
+  id: "synthetic-product", slug: "synthetic-product", displayName: "Synthetic Research", canonicalName: "Synthetic Research",
+  aliases: [], lane: "research_material", category: "Research", classification: "Research material", summary: "Synthetic review only.",
+  displayState: "unavailable", media: null, price: null, readiness: null, selection: null, variantCount: 0,
+  updatedAt: "2026-10-05T12:00:00.000Z", audience: "member", currency: "USD", evaluatedAt: "2026-10-05T12:00:00.000Z",
+  overview: null, specifications: null, researchInformation: null, storageInformation: null, shippingInformation: null,
+  returnInformation: null, disclaimers: null, reviewDate: null, variants: [], relatedProducts: [], researchOnlyBoundary: true,
+} };

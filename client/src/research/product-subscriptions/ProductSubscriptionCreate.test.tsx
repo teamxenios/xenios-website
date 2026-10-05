@@ -3,6 +3,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createSubscription } from "../adapters/commerce";
+import { PERSISTENT_CART_QUANTITY_MAX } from "@shared/research/persistent-cart";
 import { ProductSubscriptionCreate, type SubscriptionProductForReview } from "./ProductSubscriptionCreate";
 
 vi.mock("../adapters/commerce", () => ({ createSubscription: vi.fn() }));
@@ -37,20 +38,20 @@ describe("product subscription request form", () => {
   it.each([30, 60, 90])("reviews exact product, quantity and %i-day intent, and ends pending without payment", async (days) => {
     vi.mocked(createSubscription).mockResolvedValue({ kind: "ok", data: { subscription: {
       subscriptionId: "synthetic-saved", version: 1, sku: product.sku, displayName: product.displayName,
-      state: "pending", quantity: 100, frequencyDays: days as 30 | 60 | 90, nextChargeAt: null, nextShipmentAt: null,
+      state: "pending", quantity: PERSISTENT_CART_QUANTITY_MAX, frequencyDays: days as 30 | 60 | 90, nextChargeAt: null, nextShipmentAt: null,
     } } });
-    render(); change('[type="number"]', "100"); change("select", String(days)); review();
+    render(); change('[type="number"]', String(PERSISTENT_CART_QUANTITY_MAX)); change("select", String(days)); review();
     expect(text()).toContain("Synthetic exact variant");
-    expect(text()).toContain("Product subtotal per delivery: USD 1250.00");
+    expect(text()).toContain(`Product subtotal per delivery: USD ${(12.5 * PERSISTENT_CART_QUANTITY_MAX).toFixed(2)}`);
     await submit(); await submit();
     expect(createSubscription).toHaveBeenCalledTimes(1);
-    expect(createSubscription).toHaveBeenCalledWith(token, { sku: product.sku, quantity: 100, frequencyDays: days, priceVersion: product.priceVersion });
+    expect(createSubscription).toHaveBeenCalledWith(token, { sku: product.sku, quantity: PERSISTENT_CART_QUANTITY_MAX, frequencyDays: days, priceVersion: product.priceVersion });
     expect(text()).toContain("Subscription request saved. It is pending");
     expect(text()).toContain("Payment setup is not available here");
     expect(text()).toContain("This is not a completed purchase");
   });
 
-  it.each(["0", "101", "1.5", ""])('blocks invalid quantity "%s" without a POST', async (quantity) => {
+  it.each(["0", String(PERSISTENT_CART_QUANTITY_MAX + 1), "100", "1.5", ""])('blocks invalid quantity "%s" without a POST', async (quantity) => {
     render(); change('[type="number"]', quantity); review(); await submit();
     expect(createSubscription).not.toHaveBeenCalled();
   });

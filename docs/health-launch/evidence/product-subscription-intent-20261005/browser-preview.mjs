@@ -8,8 +8,16 @@ import { resolve, join } from "node:path";
 import { pathToFileURL } from "node:url";
 const here = resolve("docs/health-launch/evidence/product-subscription-intent-20261005");
 const out = await mkdtemp(join(tmpdir(), "xenios-subscription-proof-"));
-await build({ entryPoints: [join(here, "browser-fixture.tsx")], bundle: true, outfile: join(out, "client.js"),
-  platform: "browser", format: "iife", jsx: "automatic", define: { "process.env.NODE_ENV": '"development"' } });
+const browserBuild = await build({ entryPoints: [join(here, "browser-fixture.tsx")], bundle: true, outfile: join(out, "client.js"),
+  platform: "browser", format: "iife", jsx: "automatic", metafile: true, define: { "process.env.NODE_ENV": '"development"' },
+  plugins: [{ name: "synthetic-auth-only", setup(builder) {
+    builder.onResolve({ filter: /supabaseBrowser$/ }, () => ({ path: "synthetic-auth", namespace: "isolated" }));
+    builder.onLoad({ filter: /.*/, namespace: "isolated" }, () => ({ contents: `
+      const unavailable=()=>{throw new Error("Real Auth is not connected in this fixture")};
+      export const clearPersistedRecoverySession=unavailable, getSupabaseBrowser=unavailable,
+        isRecoveryAccessToken=unavailable, revokeRecoverySession=unavailable;` }));
+  } }] });
+if (Object.keys(browserBuild.metafile.inputs).some(file => file.includes("@supabase"))) throw new Error("Managed SDK must not enter the preview.");
 await build({ entryPoints: [join(here, "browser-service.ts")], bundle: true, outfile: join(out, "service.mjs"),
   platform: "node", format: "esm" });
 const domain = await import(pathToFileURL(join(out, "service.mjs")).href);
@@ -21,7 +29,13 @@ const server = createServer(async (req, res) => {
   try {
     if (req.method === "GET" && req.url === "/client.js") { res.writeHead(200, { "content-type": "text/javascript" }); res.end(await readFile(join(out, "client.js"))); return; }
     if (req.method === "GET" && req.url === "/proof") { send(200, await domain.proof()); return; }
-    if (req.method === "GET" && (req.url === "/" || req.url?.startsWith("/?mode="))) { res.writeHead(200, { "content-type": "text/html", "cache-control": "no-store" }); res.end(html); return; }
+    if (req.method === "GET" && req.url === "/api/research/member/products/synthetic-product") { send(200, domain.detail); return; }
+    if (req.method === "GET" && req.url === "/research/member/subscriptions") {
+      const snapshot = JSON.stringify((await domain.proof()).subscriptions, null, 2).replaceAll("&", "&amp;").replaceAll("<", "&lt;");
+      res.writeHead(200, { "content-type": "text/html", "cache-control": "no-store" });
+      res.end(`<h1>Synthetic read-only record inspection</h1><p>This is fixture evidence, not the real subscription management page.</p><pre>${snapshot}</pre>`); return;
+    }
+    if (req.method === "GET" && (req.url === "/" || req.url?.startsWith("/?mode=") || req.url === "/research/member/products/synthetic-product?mode=mounted")) { res.writeHead(200, { "content-type": "text/html", "cache-control": "no-store" }); res.end(html); return; }
     if (req.method !== "POST" || req.url !== "/api/research/subscriptions") { send(404, { ok: false }); return; }
     if (req.headers.authorization !== "Bearer synthetic-browser-customer") { send(401, { ok: false }); return; }
     const origin = `http://127.0.0.1:${server.address().port}`;
