@@ -180,7 +180,7 @@ export function subscriptionAction(
 
 /**
  * The wire shape of POST /api/research/subscriptions (subscription creation).
- * Mirrors the server's CreateSubscriptionWireInput exactly: the server refuses
+ * Uses only the customer intent fields of CreateSubscriptionWireInput: the server refuses
  * a body without a SKU, a quantity, a frequency, and the price version the
  * member was shown. There is no client-supplied price amount anywhere in it.
  */
@@ -190,15 +190,36 @@ export interface CreateSubscriptionRequest {
   frequencyDays: SubscriptionFrequencyDays;
   /** The price version presented to the member at creation time. */
   priceVersion: string;
-  paymentProviderReference?: string | null;
-  shippingAddressRef?: string | null;
 }
 
-export function createSubscription(
+export async function createSubscription(
   token: MemberToken,
   req: CreateSubscriptionRequest,
 ): Promise<ApiResult<{ subscription: SubscriptionDto }>> {
-  return apiPost(commercePaths.subscriptions, req, token);
+  if (!token) return { kind: "unauthorized" };
+  // Explicit projection: extra runtime fields cannot smuggle payment evidence,
+  // member identity, attribution, price amounts or activation into this call.
+  const input = { sku: req.sku, quantity: req.quantity,
+    frequencyDays: req.frequencyDays, priceVersion: req.priceVersion };
+  const result = await apiPost<{ ok?: boolean; subscription?: SubscriptionDto }>(commercePaths.subscriptions, input, token);
+  if (result.kind !== "ok") return result;
+  const saved = result.data?.subscription;
+  // Creation confirms a pending intent only. An unexpected/mismatched response
+  // is ambiguous, so the caller must inspect existing records before retrying.
+  if (result.data?.ok !== true || !saved || typeof saved.subscriptionId !== "string" || !saved.subscriptionId.trim()
+    || saved.version !== 1
+    || saved.sku !== input.sku || saved.quantity !== input.quantity
+    || saved.frequencyDays !== input.frequencyDays || saved.state !== "pending"
+    || saved.nextChargeAt !== null || saved.nextShipmentAt !== null
+    || typeof saved.displayName !== "string" || !saved.displayName.trim()) {
+    return { kind: "error", code: "subscription_result_unconfirmed",
+      message: "The subscription request could not be confirmed. Check your subscriptions before submitting again." };
+  }
+  return { kind: "ok", data: { subscription: {
+    subscriptionId: saved.subscriptionId, version: saved.version, sku: saved.sku,
+    displayName: saved.displayName, state: saved.state, quantity: saved.quantity,
+    frequencyDays: saved.frequencyDays, nextChargeAt: null, nextShipmentAt: null,
+  } } };
 }
 
 // ------------------------------- claims ------------------------------------
