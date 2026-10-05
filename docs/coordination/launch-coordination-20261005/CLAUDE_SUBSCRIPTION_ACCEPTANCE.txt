@@ -1,0 +1,61 @@
+Verdict below. It is read-only: no Vitest, typecheck, build, browser, Docker or database execution was run by me, no files were edited or committed, no lane was contacted, and nothing was enabled or activated.
+
+## Verdict: source-level ACCEPT at a truthful dark boundary. Not a buying path.
+
+Reviewed exactly: source `7806fb5939a69189e085739fad8cc832cfab201a`, tree `10d7d2534f155f5fccdeb7c3c15bfc450d379c5d`. Tests and evidence `03b72f8786905789066d5310039557bc2951b72a`, tree `47dc47c08f3dbf6cb555facecb2e8aff39946a06`. Handoff `1fe97f54b72e943c85c5dfbccbc355fe5f72c517`, tree `5f3a23ac3bde04b3f0d85acd0642bc268625eac0`. Base `b0e818f` and the IC-2 successor `c93bf5a` are ancestors. The partner return `94e89be`, D/E `5152adb`, MC-01 `ed9bb9b` and Finance `dfd8b9b` are not ancestors.
+
+| Surface | Readiness |
+|---|---|
+| AFFILIATE LOGIN | PARTIAL. The accepted return fix lives on 94e89be and is absent from this tree, so partner links here are still plain `/sign-in` with no return hint. No partner is active, so a successful login still ends at the dashboard denial. |
+| REFERRAL | PARTIAL. Capture, binding and attribution rules fail closed at source and use the Supabase-backed store. No subscription carries referral lineage, no partner is active, and the referral RPC deployment state is not verifiable from source. |
+| PRODUCT SUBSCRIPTION SOURCE | PARTIAL. Accepted as truthful source and UI at a dark boundary. The mounted page shows only an unavailable state, and the production create path refuses every request. |
+| LIVE CUSTOMER PURCHASE | NOT READY. |
+| Enter the release integrator with live payments disabled | YES, under the conditions at the end. |
+
+Runtime delta is three client files and nothing else: the commerce adapter, the new `ProductSubscriptionCreate` component and the `ProductPage` wrapper. Four test files are new. There is no server, shared or supabase runtime change, and the gate classifier reports zero seam touches and zero violations. The four protected hashes and the manifest are byte-identical to base.
+
+**The six blockers are all OPEN.** The candidate improves client wiring only.
+
+| Blocker | Status | Evidence at 7806fb5 |
+|---|---|---|
+| 1. Durable create idempotency | OPEN | `subscriptions.ts:353-411` generates a fresh id per call with no key. The client guard is component-lifetime only, as the component comment and handoff line 22 admit. |
+| 2. Durable subscription referral lineage | OPEN | No referral or partner field exists in the record or create path. The browser proof itself reports `not_implemented_in_subscription_record`. |
+| 3. Current-price comparison at the write boundary | OPEN | `subscriptions.ts:402` copies the client string verbatim. No catalog price is consulted. |
+| 4. Canonical eligible-offer projection | OPEN | `ProductPage.tsx` passes `product={null}` unconditionally. `shared/research/member-catalog.ts` has no subscription, offer or priceVersion field. |
+| 5. Durable production activation and currentness | OPEN | `production-deps.ts:947-948` makes the seam true only when `NODE_ENV` is `test` and a wiring flag is set. Default activation ledger and bindings at lines 361-364 are the unavailable stubs, so live-activation resolves false. |
+| 6. Real payment and finality authority | OPEN | `production-deps.ts:1399` resolves the renewal reference to null. `activate()` never consults payment or agreements. No production caller of activate or renewal exists. |
+
+## VERIFY A through E
+
+**A, product page and UI: PASS with two notes.** No SKU, price, plan or membership literal exists in the runtime diff. Frequencies come from the shared constant, 30, 60 or 90 days. Quantity is bounded 1 to 50 from the shared cart constant. The form renders only when a caller supplies an eligible, purchasable product with price and version, and the only caller supplies null. The adapter sends exactly four fields, refuses an absent token before any request, and treats any reply that is not `ok:true` plus a pending record with the same sku, quantity and frequency and null schedules as unconfirmed. The real route helper does emit `ok:true`, so the success check works against the live envelope. Notes: the unavailable copy says "not available for this product yet", which is forward-looking, and a "Product subscription" card now appears on every signed-in Research product detail.
+
+**B, create boundary.** Member identity comes from the verified member row attached by the active-member guard, never from the body.
+
+| Check | Status | Evidence |
+|---|---|---|
+| product_commerce capability | PARTIAL | The service is composed with `commerceEnabled: true` at `production-deps.ts:1392`, independent of the member-visible capability projection at line 1638. Closure in production comes only from the persistence seam below. |
+| subscriptionEligible | CLOSED | `subscriptions.ts:374` against the catalog map. |
+| Exact Product Control live activation | CLOSED fail-closed | Unavailable bindings make `currentLiveActivationForSku` return false, so create refuses with `product_not_purchasable` before any live authority exists. |
+| Quantity bounds | CLOSED | 1 to 50 at line 365. |
+| Supported frequency | CLOSED | Line 371. |
+| Current or canonical priceVersion | OPEN | Blocker 3. |
+| Member ownership | CLOSED | `withSubject` and `subjectOf` at `routes.ts:261-309`. Reads and actions filter by owner. |
+| Required agreements | OPEN | `XR-COM-002` is checked only inside renewal evaluation, not at create or activation. |
+| purchaseExpansionPersistenceAvailable | CLOSED fail-closed | Test-only in production, so every production create returns `capability_disabled`. |
+| Payment authority | OPEN | Not consulted at create or activation. Renewal fails closed on a null reference. |
+
+**C** is the table above. **D, referral:** capture writes a durable touch and seals only the winning touch id. Self-referral yields no cookie claim, no binding and a null partner from the attribution resolver. Unknown codes are denied at resolve. Revoked, expired and inactive-partner links are retained as ineligible with no claim and no binding. Nothing in the subscription path reads referral state, and the member probe comment states binding never changes entitlement. Care revenue is excluded by `care_revenue_excluded` in the ledger. Attribution returns only a partner id. Commission moves pending, held, approved, payable, paid as separate transitions, and `markPayable` refuses a non-payable partner. Partner activation is admin-only. **E, payment:** F1 remains OPEN. The provider resolves to Disabled unless commerce is explicitly enabled with valid config. No charge, screenshot, client callback or active state can originate from this source.
+
+## Findings, decisions and prerequisites
+
+- **P0:** none.
+- **P1 PS-R1, receipt pinning.** The corrected form run executed on a dirty working tree at `5d658a2` with six modified files, so its tree field names the committed tree, not the tested bytes. The only receipt pinned to the clean candidate tree is the typecheck. The component diff between the two commits is a label change only, so risk is low, but no Vitest receipt exists for `10d7d253`. The handoff discloses this on line 100.
+- **P1 PS-R2, server still accepts a typed payment reference.** The wire parser keeps `paymentProviderReference` and `shippingAddressRef` when present, create persists them, and activation carries the stored value forward. The shipped UI can no longer send them. This is pre-existing server behaviour, not introduced here, and it is not used as renewal authority.
+- **P1 PS-R3, single-switch closure.** Production create safety rests entirely on the test-only persistence flag because the subscription service ignores the capability projection.
+- **P2 PS-R4,** placeholder card and "yet" wording on live member product pages. **P2 PS-R5,** the real route returns refusals as HTTP 400 while the adapter test and browser fixture used 403; the client maps any `ok:false` envelope with a code to a denial regardless of status, so behaviour is correct but the real status was never exercised. **P2 PS-R6,** policy 100 versus effective 50, with the shared constant's comment recording the production cart band as still pending migration. **P2 PS-R7,** the subscription priceVersion is a free string while the cart price snapshot version is an integer.
+
+Owner decisions still required, none inferred: live subscription SKUs; current commercial price and version; which partner is activated; commission terms for subscription revenue; payment provider and finality; whether any separate paid membership offer exists; whether the placeholder card may appear before an offer exists; the 50 versus 100 quantity policy.
+
+Technical prerequisites before any live subscription: durable create idempotency; a canonical offer projection in the member catalog from Product Control; price comparison at create; production activation ledger and bindings plus a durable persistence seam that is not the test flag; agreement and membership checks at create and activation; an enabled provider with an independent renewal reference resolver and a composed renewal caller; subscription referral lineage and a commission schedule for it; PS-R2 and PS-R3 closed; referral RPC deployment verified.
+
+Conditions for integrator entry with live payments disabled: integrate 94e89be separately for affiliate login; re-run the 17-file focused Vitest set at the integrated SHA; keep the persistence seam test-only; no manifest change; GATE-01 stays open; production stays NOT READY. This verdict exists only in this conversation for the coordinator to preserve.

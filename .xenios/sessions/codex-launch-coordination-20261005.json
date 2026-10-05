@@ -3,8 +3,8 @@
   "tool": "codex",
   "lane": "launch-coordination",
   "branch": "codex/xenios-launch-coordination-20261005",
-  "state": "handoff_ready",
+  "state": "active",
   "startedAt": "2026-10-05T17:19:29.457Z",
-  "heartbeatAt": "2026-10-05T17:59:46.633Z",
-  "note": "DE-R1 and subscription exact successors under independent Claude review; both source workers parked and compute released; owner decisions pending; no production changes."
+  "heartbeatAt": "2026-10-05T18:03:16.149Z",
+  "note": "DE-R1 accepted; subscription review running; source integration ancestry preparation only; owner choices pending; no production action."
 }

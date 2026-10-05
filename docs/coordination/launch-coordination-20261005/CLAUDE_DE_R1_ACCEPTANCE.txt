@@ -1,0 +1,42 @@
+All items are in hand; no further repository reads are needed, and I did not re-execute any qualification (no Vitest, typecheck, build, Docker, browser or database).
+
+## DE-R1 correction — narrow source recheck
+
+**Reviewed:** correction source `e6a8171b5b2d4ad78930c214997532e16601a48e` (tree `72023b56e21b0f8b5c9643d110def78c0a6b6e7b`); records/head `db9516d7…` (tree `c0f1138e…`). Linear from the accepted foundation records: `c3ea135` → `e6a8171` → `db9516d`; branch head on origin is `db9516d`.
+
+**Delta scope:** exactly the four files (`shared/research/product-media.ts` +9/−2, `client/src/research/ui/ProductMedia.tsx` +9/−3, and their two tests). Nothing else in client/server/shared/supabase changed since `5152adb`. Server projection, service, browser adapter, SQL candidate, ledger/DAG, protected files, IC-2 stylesheet and package files are byte-unchanged.
+
+### Verdicts
+
+| Item | Result |
+| --- | --- |
+| **DE-R1** | **CLOSED.** The blanking defect (a browser clock behind the server rejecting fresh 300-second signed URLs) no longer occurs. |
+| **Correction at source level** | **ACCEPT.** |
+| **Replace foundation for the integrator?** | **Yes.** `e6a8171` may stand in for `5152adb` as the D/E source, with every existing release prerequisite unchanged. |
+
+### What the code does (verified statically)
+
+- `parseProductMedia` gains `enforceSigningLifetime?: boolean`; the upper-bound rejection `expiry > now + PRODUCT_MEDIA_MAX_SIGNED_LIFETIME_MS` now runs only when the option `!== false` (`product-media.ts:65-70`). Default is strict. Finite/canonical ISO expiry and `expiry <= now` remain unconditional, as do protocol/origin/bucket/object-path/token, product/variant identity, hash format, 1024×1024 and alt checks.
+- Only `ProductMedia` passes `enforceSigningLifetime: false` (`ProductMedia.tsx:48`). The server projection and the browser adapter still call the parser with `now = evaluatedAt` and no override, so the lifetime ceiling is still enforced at the trust boundary; the renderer only consumes descriptors that already passed it.
+- Mounted timer: `setTimeout(..., Math.min(delay, 300_000))` (`ProductMedia.tsx:18-19`), so a behind clock cannot keep one mounted descriptor alive longer than the maximum lifetime. Effect deps stay `[media?.expiresAt]` and the slot stays keyed by the full descriptor, so a same-descriptor rerender neither restarts the timer nor remounts; replacement and late-error isolation are unchanged.
+- Behaviour matrix: behind by 15 s or one day → renders, fails after 300 s elapsed; ahead by 15 s → renders, fails after 285 s; at or past expiry → fallback at parse. Tests assert exactly these cases plus the strict default and every retained refusal under the relaxed option.
+
+### Receipts (provenance verified, not re-run)
+
+`verification.json`: all 4 listed blobs equal `e6a8171`; focused command = 5 files (shared parser, ProductMedia, projection, service, adapter); `focused-tests.txt` shows 5 files / 71 tests passed, exit 0; `typecheck.txt` shows `tsc --noEmit --incremental false` exit 0, Node 20.19.0. Same limitation as the foundation: the raw log carries no head/dirty-state binding; the blob list plus the handoff's assertion ties it to the source.
+
+### Precise proof limits (pre-existing deferred requirement, not a regression)
+
+The timer is a browser-elapsed-time bound on a mounted descriptor. It does not prove exact server-relative expiry under arbitrary skew; a throttled background tab can let an already-decoded image stay displayed past server expiry, and a stale descriptor on remount is caught by `expiry <= now` or by the storage load failing (`onError` → fallback) rather than by server time. In every such case the pixels are still the approved bytes for that `mediaId`/hash, and storage remains the only access authority, so nothing here grants anything. The producer discloses this correctly and does not substitute a static `evaluatedAt` for timer time.
+
+### Findings
+
+**P0 / P1 / P2:** none.
+
+**P3:**
+- The renderer's lifetime relaxation is safe only because every caller today receives descriptors from the strict adapter/projection (the five fallback-only components pass none). Keep that invariant: any future direct producer of descriptors must route through the strict parse first. The in-code comment states the dependency; a test pinning "no `ProductMedia` call site receives unparsed server data" would make it durable.
+- Receipt provenance lacks a head/dirty-state capture (carried from the foundation).
+
+### Authority statement
+
+No owner choices, protected-hash approval, manifest re-cut, managed SQL registration or apply, hosted write, imagery publication or deployment is authorized by this recheck. It closes no browser, delivered-byte/hash, canonical reader/writer, Product Control ingestion or database qualification; those remain exactly as listed in the foundation handoff and my prior D/E verdict. Production remains **NOT READY**. Nothing was edited or committed; this conversation output is the record. Stopping here.

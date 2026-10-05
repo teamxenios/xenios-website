@@ -1,0 +1,492 @@
+XENIOS WEBSITE ACCEPTED-SOURCE INTEGRATOR + QUALIFIER
+
+MODEL
+Use GPT-6 Astra at Ultra / highest available reasoning.
+
+ROLE
+You are the single source integrator and release qualifier.
+
+You are NOT a feature-development lane.
+You are NOT authorized to make founder product decisions.
+You are NOT authorized to deploy, apply managed SQL, enable payment/provider
+capabilities, activate partners, publish imagery, or mutate hosted production.
+
+Read AGENTS.md and the current .xenios coordination corpus first.
+Recover current origin truth before writing.
+Reuse your existing clean isolated b22f checkout after confirming no active process needs it. Preserve all existing branches and handoffs. Create codex/accepted-source-integration-20261005 at the exact base below and claim the exact source/test/candidate paths being integrated plus your own records/evidence. Create another managed worktree only if this existing checkout cannot safely be reused.
+
+Do not overwrite current fleet registries wholesale.
+
+==================================================
+CANONICAL BASE
+==================================================
+
+Integration ancestry starts from:
+
+3eaa017fcbd28989c65ffc4bb439a554aa1f3f59
+
+Do NOT use branch tips or records/handoff commits as implementation inputs.
+
+Compose only the independently accepted runtime/test/source deltas listed below.
+
+Do not wholesale cherry-pick:
+- .xenios records
+- handoff commits
+- review records
+- evidence directories
+- lane session registries
+
+Preserve them as external review provenance only.
+
+==================================================
+ACCEPTED SOURCE INPUT A — CORE A/B/C + IC-2
+==================================================
+
+Initial runtime:
+70cd421a6ab79513744f531d921b3ece61044874
+
+Initial tests:
+1a409e2f7e1fcdeffc78d24428eeb626d7888e9c
+
+Accepted IC-2 runtime successor:
+c93bf5a2c1e2b50c5b40c65f0149033ad84658a0
+
+IC-2 tests:
+2a791beeb26b75266b9468aa4a32a4cd07fe871d
+
+Accepted final runtime tree:
+fd729bca811b8e91ec13a31d9d3985472087579a
+
+Integrate the exact runtime/test changes only.
+
+Required behavior:
+- Xenios Health public display brand
+- BRAND.publicName remains Xenios
+- metadata/title scope unchanged
+- customer CTA system
+- admin presentation unchanged
+- purple focus/selection
+- timeline neutral via IC-2
+
+PROTECTED FILE BYTES MUST REMAIN EXACTLY:
+
+Navbar.tsx
+6cdfbb0f05cc8d1fb28bfdc6b7a012ddb85e34d0c985bc88e71c09d8456a218a
+
+Footer.tsx
+420b45dc09aefa572a65ae68b5add6a2ce3d435e54e1fea7d9db9f29390df7cb
+
+index.css
+b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049
+
+IMPORTANT:
+Samuel has NOT yet supplied exact protected-hash approval in the current
+workflow.
+
+Therefore:
+- do not recut the protection manifest
+- do not modify these protected bytes
+- keep founder approval as an explicit release hold
+
+==================================================
+ACCEPTED SOURCE INPUT B — PARTNER SIGN-IN RETURN
+==================================================
+
+Runtime:
+94e89be7c959087edfde4ebddf2f50fa5e02cc36
+
+Tree:
+23b3284a5cfc667b5cdc0e35643f07e71c333268
+
+Tests:
+806c58a83bb3c0f1f75b9e003de14aa525069950
+
+Integrate only the exact runtime/test delta.
+
+Expected behavior:
+- the two partner body Sign In links preserve the canonical
+  /research/partners/dashboard return target
+- canonical Auth allowlist remains authority
+- no open redirect
+- no partner activation
+- shell Sign In behavior outside this bounded change remains unchanged
+
+Do not infer live partner-login E2E from this source acceptance.
+
+==================================================
+ACCEPTED SOURCE INPUT C — MC-01
+==================================================
+
+Accepted source:
+ed9bb9b456bb78994f4fcfedac6ac2112142a5b6
+
+Tree:
+f5953b8e148196c4ea71839cdd40a4e06b5f9fd1
+
+Integrate the accepted runtime/test source paths.
+
+You may retain the accepted source-only candidate/verifier as unregistered
+source artifacts:
+
+supabase/candidates/20261003_research_media_commerce_decoupling.sql
+
+Candidate SHA-256:
+365728cbc40a60ce3d5ffacbbbd09fd8d716c0413ddb1171565ed50563c9ffa4
+
+RULE:
+Do NOT register or apply this candidate.
+
+MC-01 behavior:
+- media is presentation-only in TypeScript/runtime authority
+- malformed/missing media does not delist product
+- cart identity does not depend on media
+- non-image commerce authorities remain fail-closed
+
+RELEASE COMPATIBILITY HOLD
+
+Do NOT claim the integrated MC-01 runtime can be promoted against the current
+production database.
+
+Release still requires the separately reviewed compatible chain:
+
+1. persistent-cart predecessor closure
+   - including its inventory-reservation dependency
+   - including its strength-write-gate dependency
+2. reviewed MC-01 candidate
+3. canonical non-image product_content manifest re-approval
+4. separate launch transition
+
+These remain release prerequisites.
+
+==================================================
+ACCEPTED SOURCE INPUT D — D/E MEDIA FOUNDATION
+==================================================
+
+Initial accepted foundation:
+5152adb4db6db3e197d4534146bcc2ae75fa8f96
+
+Final accepted DE-R1 successor:
+e6a8171b5b2d4ad78930c214997532e16601a48e
+
+Final tree:
+72023b56e21b0f8b5c9643d110def78c0a6b6e7b
+
+Integrate source/test deltas from the foundation plus DE-R1 successor.
+Do NOT import its handoff/records commits.
+
+Source-only descriptor candidate may remain present:
+
+supabase/candidates/20261005_research_product_media_descriptor.sql
+
+It must remain:
+- unregistered
+- unapplied
+- execution-unqualified
+
+Required D/E behavior:
+- 1:1
+- contain
+- exact variant identity
+- media remains presentation-only
+- fallback exactly:
+  "An approved product image is not available."
+- fallback has no role="img"
+- "Illustrative image" outside image pixels
+- malformed/expired/failed image => fallback
+- no media authority over commerce/pathway/price/payment
+
+DE-R1:
+preserve the accepted clock-skew correction exactly.
+
+Do not claim proof beyond accepted scope:
+- arbitrary clock skew unproved
+- exact server-time expiry under arbitrary skew unproved
+- stale remount unproved
+
+REAL IMAGE RELEASE HOLDS REMAIN:
+- metadata ingestion/review writer
+- five canonical reader connections
+- delivered-byte immutability
+- card/detail delivered-hash proof
+- full responsive/zoom/forced-colors/CLS qualification
+- descriptor SQL execution qualification
+
+Fallback-only source integration does NOT waive MC-01 database compatibility
+requirements.
+
+==================================================
+INPUT E — PRODUCT SUBSCRIPTION INTENT
+==================================================
+
+CLAUDE HAS SOURCE-ACCEPTED THIS EXACT CANDIDATE AT THE DISABLED PURCHASE BOUNDARY.
+
+Accepted source:
+7806fb5939a69189e085739fad8cc832cfab201a
+
+Candidate tree:
+10d7d2534f155f5fccdeb7c3c15bfc450d379c5d
+
+Integrate only the accepted runtime/test changes represented by this source lineage:
+
+Initial guarded source:
+38d3e467961e12256bd6c5726210b455c3719076
+
+Retry-guard successor:
+cad491237e681a643cfe54cc81063ae1662d9bcb
+
+Quantity-band correction:
+7806fb5939a69189e085739fad8cc832cfab201a
+
+Exclude docs/evidence/session records from the integration patch.
+
+Required behavior:
+- actual ProductPage has NO invented authoritative offer
+- actual page therefore remains truthfully unavailable for creation
+- no real SKU invented
+- no priceVersion invented
+- current effective quantity band remains 1–50
+- 51 and 100 are refused
+- frequencies are 30/60/90
+- pending intent is not a purchase
+- no client activation
+- no payment operation
+- no fabricated referral lineage
+
+LIVE PURCHASE BLOCKERS REMAIN OPEN:
+
+1. durable create idempotency
+2. canonical durable subscription referral lineage
+3. current-price comparison at decisive write boundary
+4. canonical eligible-offer projection
+5. durable production activation/currentness boundary
+6. independent real payment/finality authority
+
+Do not close any of these during integration.
+
+Do not expose the synthetic fixture offer as a real customer offer.
+
+==================================================
+EXCLUDE FINANCE FROM RUNTIME CRITICAL PATH
+==================================================
+
+DO NOT integrate Finance runtime or provider/payment work merely because its
+source candidate received partial acceptance.
+
+Specifically do not bring the Finance attribution candidate into the public UI
+release candidate unless an exact later dependency proves it is required.
+
+Finance remains:
+- F1 OPEN
+- refund/dispute OPEN
+- ADP-G1 PARTIAL
+- G2 OPEN
+- G3 OPEN
+- G4 OPEN
+- LENS adoption OPEN
+
+No payment/provider capability may be enabled.
+
+healthCommerceEnabled / equivalent production capability remains false unless
+a separately qualified and explicitly approved release changes it.
+
+==================================================
+GATE-01 / ACCESS HUB
+==================================================
+
+NO new founder disposition has been received.
+
+Do NOT choose Access Hub behavior.
+
+Do NOT repair the gate by silently changing the route.
+
+Carry GATE-01 forward as an explicit founder-decision/release blocker.
+
+==================================================
+INTEGRATION METHOD
+==================================================
+
+1. Start from exact base 3eaa017.
+2. Apply accepted runtime/test deltas only.
+3. Do not wholesale merge lane branches.
+4. Do not import lane .xenios histories.
+5. Resolve conflicts semantically against the independently accepted source
+   bytes, not by choosing "ours" or "theirs" blindly.
+6. Record every conflict and resolution.
+7. Verify final relevant files against accepted source snapshots.
+8. Confirm no accepted behavior is silently lost through composition.
+
+Pay special attention to overlap among:
+- memberCatalog adapters/projection
+- assisted-order presentation vs D/E ProductMedia insertion
+- ProductPage subscription wrapper
+- product-admin/shared media contracts
+
+==================================================
+QUALIFICATION — SERIALIZE HEAVY WORK
+==================================================
+
+RAM remains constrained even though disk has recovered.
+
+Do not run heavyweight jobs concurrently.
+
+Run in this order:
+
+A. source identity / conflict checks
+B. focused combined suites for all integrated paths
+C. TypeScript no-emit
+D. production build
+E. browser critical-path smoke
+F. protection gate
+G. full repository aggregate, only while host is quiet
+
+Do not rewrite historical failures.
+
+The prior ENOSPC aggregate remains a historical FAILED run.
+A new clean aggregate is new evidence, not a replacement.
+
+==================================================
+BROWSER CRITICAL PATH
+==================================================
+
+Use the actual integrated production client build.
+
+At minimum verify:
+
+PUBLIC
+- /
+- /care
+- /products
+- public Xenios Health shell
+
+PARTNER
+- affiliate/partner public entry
+- Sign In returnTo target
+- signed-out denial/redirect truth
+
+RESEARCH CUSTOMER
+- catalog
+- product detail
+- D/E fallback
+- malformed/broken media fallback
+
+SUBSCRIPTION
+if Input E is accepted:
+- actual ProductPage unavailable state
+- no create control without canonical offer
+- no false purchase/active state
+
+Widths:
+1440
+1024
+768
+430
+390
+320
+
+Also inspect:
+- horizontal overflow
+- keyboard focus
+- 200% zoom if reliable
+- forced colors if available
+- major CLS/layout jumps
+- fallback square reservation
+
+No synthetic result may be relabeled as live production E2E.
+
+==================================================
+PROTECTION / RELEASE GATES
+==================================================
+
+Protection is expected NOT GREEN until owner actions occur.
+
+Verify and report separately:
+
+1. Core protected successor bytes
+2. manifest still NOT recut
+3. Samuel exact hash approval still missing
+4. inherited GATE-01 status
+5. inherited static/seam findings, if still present
+6. no new protection regression from integration
+
+Do not weaken the gate.
+
+==================================================
+SQL / HOSTED BOUNDARY
+==================================================
+
+No managed SQL registration.
+No managed SQL application.
+No Supabase write.
+No Render deploy.
+No production configuration change.
+No live email.
+No real payment.
+No payout.
+No partner activation.
+No imagery publication.
+
+Read-only hosted observations are allowed.
+
+==================================================
+OUTPUT / HANDOFF
+==================================================
+
+Push one coherent integration source checkpoint.
+
+Return:
+
+1. integration branch
+2. exact integration source SHA/tree
+3. exact accepted source inputs included
+4. exact source/test commits intentionally excluded
+5. complete changed-path list
+6. conflict-resolution ledger
+7. focused test results
+8. TypeScript result
+9. build result
+10. browser matrix
+11. protection result
+12. full aggregate result if completed
+13. source-only SQL files present and proof they remain unregistered/unapplied
+14. production read-only identity
+15. blocker matrix
+
+Classify each blocker:
+
+- SOURCE BLOCKER
+- HOSTED-AUTHORITY BLOCKER
+- FOUNDER DECISION
+- RELEASE QUALIFICATION
+- NONBLOCKING FOLLOW-UP
+
+FINAL DISPOSITION MUST BE ONE OF:
+
+A. SOURCE INTEGRATION ACCEPTANCE READY FOR CLAUDE REVIEW
+B. SOURCE INTEGRATION BLOCKED
+
+Do NOT return PRODUCTION READY.
+
+Even if all source qualification passes, production promotion remains blocked
+until the applicable founder approvals, GATE-01 disposition, database
+compatibility chain and explicit production action approval exist.
+
+Then STOP for independent Claude review.
+
+
+COORDINATOR VERIFIED ADDENDUM — CURRENT AUTHORIZATION AND EVIDENCE
+
+Both prerequisites are now satisfied: Claude DE-R1 recheck 478774d3-e917-41b5-b978-cbb1070bea89 CLOSED/ACCEPT for e6a8171; Claude subscription review f66b6b88-ec5a-45b0-9b1c-9fa8bbb98aaa SOURCE ACCEPT for7806fb5 only while purchase remains disabled. The full verdicts are in docs/coordination/launch-coordination-20261005/CLAUDE_DE_R1_ACCEPTANCE.txt and CLAUDE_SUBSCRIPTION_ACCEPTANCE.txt on codex/xenios-launch-coordination-20261005. Read those exact documents, not a paraphrase. Do not merge that records branch, whose ancestry contains parked Finance work. Coordinator is chat01a103a8-5684-7272-89e5-3c42eefcd593. Samuel explicitly authorized this cross-chat coordination and next engineering. You may report to coordinator and coordinate narrow path facts with D/E and Subscription without asking Samuel to relay messages.
+
+You are the one integration lane in existing Core chat01a0e098-3b23-7233-9b07-877ace092650. Fresh snapshot shows you idle with clean b22f checkout at3f044f41b93d41c4ca40954eabd919dfb6ef0be4. Reverify. Register a new integration task/session and recover current corpus BEFORE switching to the common source base. Preserve the current Core/partner branch. Resolve only ownership transfers proven by exact pushed handoffs; do not blindly overwrite fleet records or infer another active lease expired. D/E and Subscription producers explicitly parked with handoff leases and released compute.
+
+Read-only ancestry audit found: Core/partner versus MC01/D-E common base3eaa017fcbd28989c65ffc4bb439a554aa1f3f59; Core/partner versus Subscription baseb0e818f0b3908b13c4181c5b6a59751c1505694b. The only independent runtime overlap is AssistedOrderPage.tsx: Core customer class at its page wrapper versus D/E media import/card fallback. Preserve both; never replace the whole file with the D/E snapshot. MC01->D/E's eight shared adapter/projection/service/admin/contract paths are intentionally ordered changes. Subscription's seven source/test paths do not intersect those patches, but it consumes their member catalog/detail behavior and needs composed verification. Applying e6a8171 alone omits D/E foundation5152adb; include both. MC01 mixed commit ed9bb9b contains25client/server/shared/supabase paths; D/E foundation28source/test/candidate paths; subscription lineage contains7source/test paths. Filter continuity/evidence carefully and record the exact resulting changes.
+
+Subscription review conditions: close PS-R1 receipt pinning through a fresh complete17-file focused run on the actual committed integrated candidate. Capture exact HEAD/tree, clean start status, command/timing/exit, raw output and source blob binding; do not claim previous split377+23 receipts were a clean400 aggregate. Add a focused real HTTP400 refusal case for PS-R5 if absent, preserving runtime behavior and committing the test before qualification. The reviewed UI already enforces1-50 and refuses51/100. Preserve that instead of reopening policy100. All six buying blockers remain OPEN. Carry pre-existing PS-R2 typed payment references and PS-R3 missing service capability projection as explicit server/activation release blockers; do not silently enable the seam or enlarge this integration into Finance work. PS-R4 placeholder/forward-looking copy and PS-R7 priceVersion shape remain visible review items; no invented offer or business decision. The review's 'no active partner' statement is not fresh production-account evidence, because the review used source reads only; do not repeat it as live fact.
+
+MC01 runtime cannot be promoted as TypeScript alone. Its source changes cart binding shape and product-content semantics; the pending predecessor chain, reviewed candidate, non-image Product Control reapproval and separate launch transition are required. The adoption candidate requires zero rows across all four cart-history tables; existing rows require preservation/adoption work. This integration authorizes no hosted inspection of raw customer/payment evidence, no registration/apply and no destructive data cleanup. A fallback-only visual strategy does not waive runtime/database compatibility.
+
+Resource precheck: at18:04Z free disk26.66GiB, total RAM15.71GiB and available memory subsequently655MiB, committed41.67GB of60.73GB. Reassess current disk/RAM/commit/active work before heavy jobs; do not assume disk recovery alone makes full aggregate safe. You own the single sequential qualification slot after fresh confirmation. Use pinned Node20.19.0, matching existing dependencies, low worker count, no concurrent heavy jobs. Do not kill unrelated apps/processes or delete volumes/evidence to make tests fit. Defer a heavy gate with evidence if actual host conditions are invalid; complete lighter composition/focused checks. Preserve historical failed aggregates.
+
+Browser smoke must exercise the actual integrated production client build locally with clearly synthetic APIs/identity where needed. Keep any fixture data explicit, use network boundaries that prevent hosted writes, and do not load production secrets or conduct real signup/login/grants/charges/messages. Public read-only observations are allowed. Do not relabel a synthetic journey as live Auth/RLS/payment/affiliate E2E. Capture source/build identity and responsive limits honestly. Do not claim native zoom/forced-colors/CLS qualification if unsupported.
+
+No new founder answer has arrived. Three pending choices remain intended subscription/product plan, exact protected hash approval and GATE-01. Do all authorized composition/qualification toward a reviewable source candidate while those holds persist. Send coordinator the exact source checkpoint early after coherent composition, then finish bounded verification, push exact evidence/handoff and stop for Claude review. Never label the result production-ready.

@@ -88,5 +88,15 @@
     "path": "CLAUDE_DE_ACCEPTANCE.txt",
     "bytes": 8925,
     "sha256": "5ea90856c0a48d07717d7228641dc055b213b7582c891d52a30c9e9ea40a1a65"
+  },
+  {
+    "path": "CLAUDE_DE_R1_ACCEPTANCE.txt",
+    "bytes": 5041,
+    "sha256": "5546145a8d014c672554668792ce437b62a69138401dae992b4cb97b5896d249"
+  },
+  {
+    "path": "CLAUDE_SUBSCRIPTION_ACCEPTANCE.txt",
+    "bytes": 9627,
+    "sha256": "100af517b6e539658d8b8b0b67ffb4f2dbd4be977ff45246181079b7a4d8e860"
   }
 ]

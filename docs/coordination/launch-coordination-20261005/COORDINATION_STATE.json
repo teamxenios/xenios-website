@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T17:58:32.849Z",
+  "updatedAt": "2026-10-05T18:11:41.826Z",
   "objective": "Automate verified Codex-Claude-ChatGPT handoffs and prepare the gym-owner affiliate and customer product-subscription launch without bypassing release authorities.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -34,7 +34,7 @@
     "cwd": "C:/Users/sboad/.codex/worktrees/2227/xenios-website",
     "base": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
     "scope": "D/E fallback-first media; no Core clarity/auth paths, protected files, Finance or imagery generation",
-    "status": "Accepted foundation plus pushed DE-R1 successor awaiting narrow Claude recheck; producer clean and parked",
+    "status": "Foundation and DE-R1 successor independently accepted at source level; producer parked",
     "source": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
     "tree": "0258be61bf4761ee9911cda1c0d042b6cd183aa3",
     "handoff": "c3ea1357f6a4d2a366417753bd08def4c5920fec",
@@ -48,9 +48,11 @@
       "tree": "72023b56e21b0f8b5c9643d110def78c0a6b6e7b",
       "handoff": "db9516d70461c7c7c36fd5ef06a086b03f64d415",
       "reviewSession": "478774d3-e917-41b5-b978-cbb1070bea89",
-      "reviewStatus": "running, static and receipt checks only",
-      "reportedChecks": "71 focused tests in5files plus nonincremental typecheck PASS; no exact server-time expiry/stale-remount proof"
-    }
+      "reviewStatus": "ACCEPT; DE-R1 CLOSED; no P0/P1/P2 in narrow correction; runtime/browser/bytes/schema prerequisites unchanged",
+      "reportedChecks": "71 focused tests in5files plus nonincremental typecheck PASS; no exact server-time expiry/stale-remount proof",
+      "reviewArtifact": "docs/coordination/launch-coordination-20261005/CLAUDE_DE_R1_ACCEPTANCE.txt"
+    },
+    "integrationSource": "e6a8171b5b2d4ad78930c214997532e16601a48e"
   },
   "production": {
     "deployment": "dep-daqft3vf3r2c73b7e88g",
@@ -89,7 +91,7 @@
   ],
   "subscription": {
     "cwd": "C:/Users/sboad/.codex/worktrees/5b21/xenios-website",
-    "status": "pushed, clean and parked; independent Claude source review running; real buying NOT READY",
+    "status": "SOURCE ACCEPT at disabled purchase boundary; producer parked; conditions require exact integrated17file run and all real buying blockers remain OPEN",
     "scope": "canonical product subscription component/adapter/service plus coordinated ProductPage mount; no invented live offer or payment",
     "base": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
     "effort": "ultra",
@@ -104,12 +106,23 @@
     "browserLimits": "No live Auth/full App/referral-payment journey or responsive fidelity; screenshot timeout and forced preview cleanup preserved; preview stopped and listener absent",
     "reviewSession": "f66b6b88-ec5a-45b0-9b1c-9fa8bbb98aaa",
     "reviewRequest": "docs/coordination/launch-coordination-20261005/SUBSCRIPTION_REVIEW_REQUEST.txt",
-    "quantityGap": "Founder policy100 versus effective canonical cap50 remains open; source preserves50"
+    "quantityGap": "Founder policy100 versus effective canonical cap50 remains open; source preserves50",
+    "reviewStatus": "ACCEPT conditional for source integration; affiliate/referral/subscription readiness PARTIAL; live purchase NOT READY",
+    "reviewArtifact": "docs/coordination/launch-coordination-20261005/CLAUDE_SUBSCRIPTION_ACCEPTANCE.txt",
+    "findings": [
+      "PS-R1 exact-SHA Vitest receipt must be produced by integrator",
+      "PS-R2 pre-existing server typed payment references OPEN",
+      "PS-R3 pre-existing missing capability projection OPEN",
+      "PS-R4 placeholder and forward-looking copy OPEN",
+      "PS-R5 actual400 refusal test pending",
+      "PS-R6 policy100 vs effective50 OPEN; UI enforces50",
+      "PS-R7 free-string subscription price version vs integer cart version OPEN"
+    ]
   },
   "qualificationSlot": {
     "owner": null,
     "scope": "Released explicitly by D/E after DE-R1; both source workers parked; two static Claude reviews running",
-    "next": "Integration only after accepted successors and fresh lease/host checks",
+    "next": "Subscription review still running; prepare one integration lane only after acceptance",
     "fullSuite": "No current full aggregate or DB race authorization; retain serialized compute"
   },
   "partnerReturn": {
@@ -122,5 +135,14 @@
     "reportedTests": "205 pass, 0 fail, 0 skip, 7 files; composed synthetic Auth/HTTP",
     "reviewSession": "04b9c0f3-1e7d-47f6-aa02-7a410d86eb98",
     "reviewStatus": "SOURCE-LEVEL ACCEPT; independent static review and receipt verification, no test/browser rerun"
+  },
+  "integration": {
+    "thread": "01a0e098-3b23-7233-9b07-877ace092650",
+    "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+    "branch": "codex/accepted-source-integration-20261005",
+    "base": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+    "status": "prepared, dispatch pending pushed coordinator records",
+    "request": "docs/coordination/launch-coordination-20261005/INTEGRATION_REQUEST.txt",
+    "scope": "accepted source/test/candidate composition and serial qualification only; no Finance runtime or hosted mutation"
   }
 }
