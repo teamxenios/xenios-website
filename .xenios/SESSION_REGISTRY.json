@@ -579,6 +579,16 @@
       "startedAt": "2026-10-03T21:32:21.489Z",
       "heartbeatAt": "2026-10-05T14:08:32.063Z",
       "note": "Pushed source-only G1 attribution proof; focused/disposable checks pass; full aggregate failed with inherited guard assertions and ENOSPC collection failures; controlled races and independent Claude acceptance pending; no production changes."
+    },
+    {
+      "id": "codex-launch-coordination-20261005",
+      "tool": "codex",
+      "lane": "launch-coordination",
+      "branch": "codex/xenios-launch-coordination-20261005",
+      "state": "active",
+      "startedAt": "2026-10-05T17:19:29.457Z",
+      "heartbeatAt": "2026-10-05T17:28:36.942Z",
+      "note": "Core IC2 accepted; partner source pushed and in independent review; D/E focused checks active; subscriptions queued; owner decisions pending; records-only coordinator."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

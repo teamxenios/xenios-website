@@ -1,0 +1,17 @@
+{
+  "observedAt": "2026-10-05T17:30:54.0884112Z",
+  "url": "https://xeniostechnology.com/api/health",
+  "method": "GET",
+  "result": {
+    "status": "Xenios API is running",
+    "uptimeSeconds": 974847,
+    "timestamp": "2026-10-05T17:30:54.157Z",
+    "config": {
+      "supabaseConfigured": true,
+      "adminConfigured": true,
+      "turnstileConfigured": false,
+      "commerceEnabled": false
+    },
+    "requestId": "b8c6b14c-1359-4a87-a69b-28425952249b"
+  }
+}

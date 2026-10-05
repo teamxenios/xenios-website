@@ -1,0 +1,26 @@
+{
+  "observedAt": "2026-10-05T17:31:19.811Z",
+  "source": "Read-only Render MCP list_services and list_deploys",
+  "service": {
+    "id": "srv-d8s9vej7uimc7384dfcg",
+    "name": "xenios-website",
+    "branch": "release/early-access-code-session-checkout",
+    "autoDeploy": "no",
+    "autoDeployTrigger": "off",
+    "healthCheckPath": "/api/health"
+  },
+  "latestDeployment": {
+    "commit": {
+      "createdAt": "2026-09-24T04:48:31Z",
+      "id": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+      "message": "feat(research): complete manual payment choices"
+    },
+    "createdAt": "2026-09-24T10:42:23.923813Z",
+    "finishedAt": "2026-09-24T10:43:29.274153Z",
+    "id": "dep-daqft3vf3r2c73b7e88g",
+    "startedAt": "2026-09-24T10:42:23.897881Z",
+    "status": "live",
+    "trigger": "api",
+    "updatedAt": "2026-09-24T10:44:03.084009Z"
+  }
+}

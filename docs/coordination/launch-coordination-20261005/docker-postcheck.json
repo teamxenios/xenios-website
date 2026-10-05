@@ -1,0 +1,8 @@
+{
+  "observedAt": "2026-10-05T17:30:53.5000778Z",
+  "operation": "read-only postcheck",
+  "volumeCount": 827,
+  "runningContainers": 0,
+  "systemDriveFreeBytes": 29285634048,
+  "noResourceNamesRecorded": true
+}

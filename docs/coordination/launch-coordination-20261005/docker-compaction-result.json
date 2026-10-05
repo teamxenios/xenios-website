@@ -1,0 +1,12 @@
+﻿{
+    "startedAt":  "2026-10-05T17:10:39.3821408Z",
+    "target":  "C:\\Users\\sboad\\AppData\\Local\\Docker\\wsl\\disk\\docker_data.vhdx",
+    "beforeFreeBytes":  908677120,
+    "beforeVhdBytes":  80546365440,
+    "volumeDeletionPerformed":  false,
+    "status":  "COMPACTED",
+    "dockerRestarted":  true,
+    "finishedAt":  "2026-10-05T17:14:08.6299936Z",
+    "afterFreeBytes":  29562880000,
+    "afterVhdBytes":  51888783360
+}

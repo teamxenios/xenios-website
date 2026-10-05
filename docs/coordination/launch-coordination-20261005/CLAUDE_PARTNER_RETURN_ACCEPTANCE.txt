@@ -1,0 +1,37 @@
+The last open point is resolved: `SignInPage` is only a lazy `Suspense` wrapper around `SignInAuthorityPage`, so the public `/sign-in` route mounts exactly the component the test composes. Nothing further is needed from the repository.
+
+## Partner sign-in return — narrow source review
+
+**Reviewed:** runtime `94e89be7c959087edfde4ebddf2f50fa5e02cc36` (tree `23b3284a5cfc667b5cdc0e35643f07e71c333268`), tests `806c58a8…` (tree `5fd6e230…`), evidence `9b8adebd…` (tree `b3b3cc95…`), handoff `3f044f41…` (tree `d4db757a…`) on `codex/xenios-partner-signin-return-20261005`, base `b0e818f`. Lineage is linear; the branch head on origin is `3f044f4`.
+
+**What I executed:** git reads only, plus a Node script using Core's own gate classifier and sha256-lf. No Vitest, build, browser or Docker (D/E holds the slot). All test results below are Core's receipts, verified for provenance, not re-executed by me.
+
+### Verdict: **SOURCE-LEVEL ACCEPT** for `94e89be` / `23b3284a`
+
+Prior IC-2 acceptance (`c93bf5a`) is unchanged and unaffected.
+
+| Check | Result |
+| --- | --- |
+| Runtime delta | Exactly `client/src/clarity/pages.tsx` lines 308 and 325: two `PartnersPage` hrefs `/sign-in` → `/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard`. No other client/server/shared/supabase file. Receipt before/after LF hashes `d7578fde…` → `e7aa7fa5…` match my own computation. |
+| Invariants `b0e818f`→`3f044f4` | Unchanged: Navbar, Footer, index.css, manifest, `assisted-order.css` (IC-2), `brand.ts`, `App.tsx`, `static.ts`, `server/index.ts`, `server/research/index.ts`, `auth-return-to.ts`, package files. |
+| Protection gate | `pages.tsx` = allowed zone (not HARD, not seam); test = test; records = infrastructure; **0 violations**. No protected hash changes, so no founder hash action arises from this slice. |
+| Open redirect / leakage | The hint is a fixed literal, consumed only through `safeResearchReturnTo` (`SignIn.tsx:41`): closed allowlist containing `/research/partners/dashboard`; rejects external origins, `//`, encoded path bytes, dot segments, fragments, nested `returnTo`, admin paths. No new auth path. |
+| Auth authority | `SignIn.tsx:109-118`: server-confirmed admin check runs first; recovery tokens rejected earlier; `memberDestination` honours the hint only for `status === "active"` (`member-routing.ts:28-41`); the latest server denial wins over the hint. No grants, self-activation, membership or payment gates touched. |
+| Destination mounting | `/sign-in` → `SignInPage` → `SignInAuthorityPage` → `ResearchProvider` + research `SignInAuthority`. `/research/partners/dashboard` is routed at `research/section.tsx:410` (`PartnerDashboard`). `App.tsx:246` redirects only the exact `/research/partners` (wouter exact match), so the dashboard path is not redirected. |
+| Fallback / denial | `Dashboard.tsx:139` renders the canonical denial for `partner_not_found` / `partner_not_active`; server denies 404 (`commerce/routes.ts:615, 636`); reads are owner-bound bearer GETs (`adapters/partner.ts:87-110`). An ordinary active customer lands on the denial, not partner access. |
+| New test (13 cases) | Composes real `PartnersPage`, `SignInAuthorityPage`, `ResearchProvider`, routing, `Dashboard` and adapter with synthetic Auth/HTTP. Asserts both links, forgot-password return continuity, bearer-bound GET, `partner_not_found` denial, missing session, recovery marker/token → `recovery_session`, server denials, four hostile `returnTo` values → `/research/account`, shell links unchanged, inquiry copy unchanged; `afterEach` proves GET-only allowlisted transport. 1+2+1+1+2+2+4 = 13. |
+| Receipts (`raw-checks-and-invariants.json`, sha256 `79990799…` ✓) | red-run1 at `b0e818f`: exit 1, 9 pass / 4 fail (also a missing `/api/config` fixture; retained as diagnostic). red-run2: exit 1, 9 pass / 4 fail, destination assertions reproduce. green-run1 at clean `3315efe` (tree `64c927f1…`; differs from `806c58a` by `.xenios` only, test file identical): exit 0, **205 pass / 0 fail / 0 skip, 7 files**. All three log hashes match the handoff. |
+| Records | Handoff claims no acceptance, no re-cut, no deployment, no commerce readiness; lease `HEALTH-PARTNER-SIGNIN-RETURN-20261005` owned by the Core session (qa/handoff); older `pages.tsx` leases are released/handoff; no live conflict. |
+
+### Non-blocking observations (P3)
+
+- On `/partners`, the header/footer "Sign In" still goes to plain `/sign-in` (→ `/research/account`), while the two body links return to the dashboard. Mixed destinations on one page; intentional under S2 (shell untouched, Navbar is HARD). Fine for this slice.
+- The new test exercises `partner_not_found`; `partner_not_active` takes the same branch but isn't asserted here (existing `Dashboard.test.tsx` was in the green run, unverified by me for that case).
+
+### Remaining meaningful qualification
+
+1. Independent execution of the 7-file focused set once the test slot frees (I ran nothing).
+2. Clarity tests outside Core's run (`pages.test.tsx`, `premium-shell.test.tsx`, `public-surfaces.test.tsx`, `AccountAuthorityPages.test.tsx`): by static read, none asserts the body sign-in href on `/partners` (they assert shell links, which are unchanged), so no regression is expected, but they are unexecuted. The clean-checkout aggregate remains outstanding for all Core slices (same class as ABC-R3).
+3. Not established and not claimable from this slice: full-App/real-browser journey, live Auth/RLS, an actual approved partner account, gym-owner approval, referral eligibility, subscription or any commerce readiness. `/research/partners/dashboard` also stays behind the existing server research gate, unchanged.
+
+No release readiness is implied. GATE-01, the pending A/B/C hash approval, finance holds and production NOT READY are all unchanged. Nothing was edited or committed; this conversation output is the record for the coordinator. Stopping here.

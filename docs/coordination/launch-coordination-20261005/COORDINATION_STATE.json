@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-05T17:30:06.7686214Z",
+  "objective": "Automate verified Codex-Claude-ChatGPT handoffs and prepare the gym-owner affiliate and customer product-subscription launch without bypassing release authorities.",
+  "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
+  "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
+  "automationId": "xenios-launch-coordination",
+  "core": {
+    "ic2Source": "c93bf5a2c1e2b50c5b40c65f0149033ad84658a0",
+    "ic2Tree": "fd729bca811b8e91ec13a31d9d3985472087579a",
+    "thread": "01a0e098-3b23-7233-9b07-877ace092650",
+    "records": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
+    "activeScope": "Partner return slice pushed and parked; IC2 and protected files frozen",
+    "effort": "ultra",
+    "model": "gpt-6-astra"
+  },
+  "claudeReview": {
+    "session": "cc511440-aa23-4897-ac21-5d4f325ee396",
+    "scope": "read-only narrow IC-2 independent recheck",
+    "source": "c93bf5a2c1e2b50c5b40c65f0149033ad84658a0",
+    "id": "cc511440",
+    "model": "claude-fable-5-1",
+    "state": "SOURCE-LEVEL ACCEPT; artifact CLAUDE_CORE_IC2_ACCEPTANCE.txt plus claude-ic2-proof; owner exact-hash approval pending",
+    "cwd": "C:/xenios-wt/health-review",
+    "effort": "max",
+    "forkedFrom": "6abf1edf-2b16-476e-8305-23b9a0014e06"
+  },
+  "media": {
+    "model": "gpt-6-astra",
+    "environment": "local fallback in existing isolated MC-01 checkout; Cloud unavailable",
+    "effort": "ultra",
+    "thread": "01a10d08-cd8b-7431-80b7-a21677c11bb6",
+    "acceptance": "d9998563c9a709f2ef9ccd928d4e59fc259bb82d",
+    "cwd": "C:/Users/sboad/.codex/worktrees/2227/xenios-website",
+    "base": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+    "scope": "D/E fallback-first media; no Core clarity/auth paths, protected files, Finance or imagery generation"
+  },
+  "production": {
+    "deployment": "dep-daqft3vf3r2c73b7e88g",
+    "status": "live",
+    "evidence": "fresh read-only Render service/deploy tools and public /api/health; not authenticated purchase evidence",
+    "commerceEnabled": false,
+    "sha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "autoDeploy": false,
+    "changedByCoordinator": false,
+    "observedAt": "2026-10-05T17:08:30Z"
+  },
+  "disk": {
+    "lastFreeGiB": 27.52,
+    "preservedDockerVolumes": 827,
+    "compactionReceipt": "docs/coordination/launch-coordination-20261005/docker-compaction-result.json",
+    "fullLocalSuiteMinimumFreeGiB": 20,
+    "compactionPid": 56048,
+    "state": "COMPACTED; Docker restarted; postcheck volume count verified; still serialize heavy tests"
+  },
+  "blockers": [
+    "Exact intended subscription/plan pending Samuel response; paid access memberships were removed Sept5",
+    "Production subscription durable enrollment/activation and renewal payment wiring incomplete",
+    "F1 payment source and other financial gates open",
+    "GATE-01 disposition not given",
+    "Exact protected hash approval not given",
+    "Production SQL chain and exact release require qualified packet and current explicit authority",
+    "Desktop REPL asset initialization fails; purpose-built chat tools and Claude CLI work"
+  ],
+  "constraints": [
+    "One writer per exact path lease",
+    "No invented approvals, payment facts, products, prices or test passes",
+    "No full suites/builds/Docker proofs under host constraints",
+    "No Docker volume/evidence/dirty-work deletion",
+    "No live account changes, charges, notifications, payouts, deployment or hosted SQL without required concrete authorization"
+  ],
+  "subscription": {
+    "cwd": "C:/Users/sboad/.codex/worktrees/5b21/xenios-website",
+    "status": "source ready for serialized focused checks after D/E; offer projection and backend authorities incomplete",
+    "scope": "canonical product subscription component/adapter/service plus coordinated ProductPage mount; no invented live offer or payment",
+    "base": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
+    "effort": "ultra",
+    "model": "gpt-6-astra",
+    "thread": "01a10d12-0764-7222-8b5a-5029508020ad"
+  },
+  "qualificationSlot": {
+    "owner": "01a10d08-cd8b-7431-80b7-a21677c11bb6",
+    "scope": "one-worker focused tests and typecheck",
+    "fullSuite": "not authorized under current multi-worker load",
+    "next": "01a10d12-0764-7222-8b5a-5029508020ad"
+  },
+  "partnerReturn": {
+    "source": "94e89be7c959087edfde4ebddf2f50fa5e02cc36",
+    "tree": "23b3284a5cfc667b5cdc0e35643f07e71c333268",
+    "tests": "806c58a83bb3c0f1f75b9e003de14aa525069950",
+    "evidence": "9b8adebd81d48dbf2a17372afc06bd671f3eb9a9",
+    "handoff": "3f044f41b93d41c4ca40954eabd919dfb6ef0be4",
+    "branch": "codex/xenios-partner-signin-return-20261005",
+    "reportedTests": "205 pass, 0 fail, 0 skip, 7 files; composed synthetic Auth/HTTP",
+    "reviewSession": "04b9c0f3-1e7d-47f6-aa02-7a410d86eb98",
+    "reviewStatus": "SOURCE-LEVEL ACCEPT; independent static review and receipt verification, no test/browser rerun"
+  }
+}

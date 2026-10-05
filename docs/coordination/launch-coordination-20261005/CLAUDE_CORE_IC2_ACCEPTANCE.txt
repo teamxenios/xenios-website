@@ -1,0 +1,42 @@
+All checks are complete; nothing further is needed from the repository or the host.
+
+## IC-2 successor delta review
+
+**Reviewed:** source `c93bf5a2c1e2b50c5b40c65f0149033ad84658a0` (tree `fd729bca811b8e91ec13a31d9d3985472087579a`), tests `2a791bee…` (tree `7519808d…`), records `b0e818f0…` (tree `e56e6406…`). Lineage is linear from reviewed source `70cd421` → `c93bf5a` → `2a791be` → `ddf6792` → `b0b01a3` → `b0e818f` (everything after `2a791be` is records only). Branch head on origin is `b0e818f`.
+
+### Verdict: **SOURCE-LEVEL ACCEPT** for Core A/B/C at `c93bf5a`
+
+This closes ABC-R1 (IC-2), the only P1 in doc 32. Core A/B/C is now accepted at source level.
+
+**What this is not:** it is not founder approval of the successor hashes, not a manifest re-cut, not GATE-01 disposition, not finance/SQL/payment-source authority, and not release readiness. Production remains **NOT READY**.
+
+### Evidence
+
+| Check | Result |
+| --- | --- |
+| Runtime delta since `70cd421` | Exactly one added declaration in `assisted-order.css:164`: `.xenios-order-page--customer .xenios-order-timeline li { border-left-color: var(--rule); }`. No other runtime file changed in the chain. |
+| Timeline colour (headless Chrome, raw stylesheets, 3 wrappers × admin/customer roots) | Customer timeline: `3px solid rgb(124,58,237)` at `70cd421` → `3px solid rgba(14,14,14,0.1)` at `c93bf5a`. Not purple; neutral. `--rule` is defined once in the client (`index.css:27`), so no wrapper can override it. Applies to both confirmation (`AssistedOrderConfirmationPage.tsx:82`) and status (`AssistedOrderStatusPage.tsx:154`), which both carry the customer root. |
+| Everything else unchanged `70cd421` → `c93bf5a` | 0 differences across CTAs (black `rgb(14,14,14)`, 4 px, 44 px), outlined secondaries, underlined tertiaries, purple `#7C3AED` focus (3 px/3 px) and selected step, skeleton, links, timeline text colours, in all wrappers. The only 3 diffs are the customer timeline border (one per wrapper). |
+| Admin styling vs base `3eaa017` | 0 differences (12 element types + focus); admin timeline stays `rgb(24,61,45)`. Admin TSX files byte-unchanged since base. |
+| Protected files | `Navbar.tsx`, `Footer.tsx`, `index.css` byte-identical to `70cd421` at both `c93bf5a` and `b0e818f`. Manifest unchanged (LF hash `c0fbcc69…`), `brand.ts`, `package.json`/lock unchanged. |
+| Regression test (`2a791be`) | Renders 2 synthetic timeline steps on confirmation (0 without receipt); asserts the exact customer override; resolves tokens via postcss to `rgba(14, 14, 14, 0.10)`, asserts ≠ `#7C3AED`/`rgb(124,58,237)`; pins shared timeline geometry, admin `--accent: #183d2d`, customer `--accent: var(--pulse)`. |
+| Core's receipts (`raw-checks-and-invariants.json`, sha256 `289e9be9…`) | Red run at `7d66573` + new test: exit 1, 9 pass / 1 fail (missing override), log `ed6267d0…`. Green run at clean `ddf6792` (test file identical to `2a791be`): exit 0, 15 pass / 0 fail, log `3fe7b2db…`. Before/after CSS LF hashes `a370791b…` → `4460411b…` match my own computation; `allOtherStylesIdentical: true`. Handoff makes no acceptance, green-protection or re-cut claim. |
+
+### Protected hash pairs (unchanged from doc 32; ready for Samuel's explicit approval)
+
+| File | Old (authorized baseline) | New (`70cd421` = `c93bf5a` = `b0e818f`) |
+| --- | --- | --- |
+| `client/src/components/Navbar.tsx` | `e37a5b94cb07674e8f4471ddc37b9a5e8a6f848d300408ba67ff3b706941eb1f` | `6cdfbb0f05cc8d1fb28bfdc6b7a012ddb85e34d0c985bc88e71c09d8456a218a` |
+| `client/src/components/Footer.tsx` | `25da700fcea32178d19fc21a3d6db4192d11b403418b7fa83100b4c88d9e2a3a` | `420b45dc09aefa572a65ae68b5add6a2ce3d435e54e1fea7d9db9f29390df7cb` |
+| `client/src/index.css` | `70d3302a8b4f5d22aa324c3728ae51963d12222ab880c29fcd3f8ea3e477d0e6` | `b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049` |
+
+Sequence from here: Samuel approves these three pairs explicitly → Core re-cuts the manifest in its own commit citing that approval (no other change) → Claude verifies the re-cut commit. GATE-01 (`static.ts` and the three seams) stays open until Samuel's Access Hub disposition; the protection gate cannot go green without it.
+
+### Limitations
+
+- I did not execute the focused vitest files on `c93bf5a` myself: no worktree could be checked out without disturbing an occupied one, and the host has ~1.2 GiB free. I verified Core's red/green receipts (clean-checkout identity, log hashes) and read the test logic instead.
+- No production build of `c93bf5a`. Browser evidence is component-level computed style from the raw stylesheets in headless Chrome, bridged to doc 32's ten-width production-build evidence for `70cd421` by a one-declaration delta verified byte-for-byte.
+- Not re-captured: native 200% zoom, keyboard traversal, forced-colors (non-blocking per doc 32). ABC-R3's clean-checkout aggregate remains outstanding (disk). P3s ABC-R4/R6/R7 remain deferred and unchanged.
+- P3 observation, non-blocking: the neutral rail is Core's hairline token at 10% ink, so it is faint. That is consistent with Core's own dividers and satisfies IC-2 ("neutral or restrained teal").
+
+Smoke artifacts are at `C:\Users\sboad\AppData\Local\Temp\claude-ic2-c93bf5a\` (`ic2-smoke-results.json`, exported stylesheets) if the coordinator wants to preserve them. No repository file was modified in this fork; nothing was committed. Stopping here.

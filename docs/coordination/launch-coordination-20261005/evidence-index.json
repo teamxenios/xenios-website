@@ -1,0 +1,87 @@
+[
+  {
+    "path": "claude-ic2-proof/ao-3eaa017.css",
+    "bytes": 13809,
+    "sha256": "507a2722991585637b0a8b17c0ddbaf271ec21e58e61b816a8ab43516ee2bb02"
+  },
+  {
+    "path": "claude-ic2-proof/ao-70cd421.css",
+    "bytes": 18626,
+    "sha256": "a370791bc0a6e2d218e275a4d00fb045eb52d285a5ba34143abcbfc5ad4117e4"
+  },
+  {
+    "path": "claude-ic2-proof/ao-c93bf5a.css",
+    "bytes": 18717,
+    "sha256": "4460411bc255b37ea8663f0cccb6e19271693c25b41926ea3aa09c37176efc2e"
+  },
+  {
+    "path": "claude-ic2-proof/ic2-3eaa017.html",
+    "bytes": 7092,
+    "sha256": "6db6581a7cecee10d384fef1591a4e9ca5ecb2cb5a739213a9591d1e0d0cbe5a"
+  },
+  {
+    "path": "claude-ic2-proof/ic2-70cd421.html",
+    "bytes": 7092,
+    "sha256": "a83edea60b4f179c3e6dba8b0e9a5a91cca149ecb79d2cfa899148136b448519"
+  },
+  {
+    "path": "claude-ic2-proof/ic2-c93bf5a.html",
+    "bytes": 7092,
+    "sha256": "84a98e553978e88f73508a75a1638896fa86770c887aea7ecb0040bdfba57ee6"
+  },
+  {
+    "path": "claude-ic2-proof/ic2-smoke-results.json",
+    "bytes": 98090,
+    "sha256": "c6e0551595c9ad0d4c5b4babe83a525242c5473666be6e8688e88091d234394f"
+  },
+  {
+    "path": "claude-ic2-proof/ic2-smoke.mjs",
+    "bytes": 7371,
+    "sha256": "c7197c5dc7c81ca539a36bfd5fdea9783abf70cae8493bf356033b9dd4132fff"
+  },
+  {
+    "path": "claude-ic2-proof/index-3eaa017.css",
+    "bytes": 56195,
+    "sha256": "70d3302a8b4f5d22aa324c3728ae51963d12222ab880c29fcd3f8ea3e477d0e6"
+  },
+  {
+    "path": "claude-ic2-proof/index-70cd421.css",
+    "bytes": 56748,
+    "sha256": "b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049"
+  },
+  {
+    "path": "claude-ic2-proof/index-c93bf5a.css",
+    "bytes": 56748,
+    "sha256": "b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049"
+  },
+  {
+    "path": "CLAUDE_CORE_IC2_ACCEPTANCE.txt",
+    "bytes": 5413,
+    "sha256": "5728fdc6273dec3cf54fafb00754c016b0c57df825575e2a186a6c8655bdcdba"
+  },
+  {
+    "path": "CLAUDE_PARTNER_RETURN_ACCEPTANCE.txt",
+    "bytes": 5929,
+    "sha256": "ccaa8ac311a69f702fd312fbab3071f70e511023d8b823712470acbeb9b104a2"
+  },
+  {
+    "path": "docker-compaction-result.json",
+    "bytes": 446,
+    "sha256": "c8f323d3d17accd9f7405e44b52ae4d49117a9a7e2800dbd01b963639ab761d3"
+  },
+  {
+    "path": "docker-postcheck.json",
+    "bytes": 218,
+    "sha256": "e9389e80b841203529708243e0d436d60b90883eda6430fa0e73abcd4d18f657"
+  },
+  {
+    "path": "production-health-observation.json",
+    "bytes": 481,
+    "sha256": "3a04124566ba0b8a722c556b98c300eec1bf92051bd020e0a2ebb8ff05fdcf1b"
+  },
+  {
+    "path": "production-render-observation.json",
+    "bytes": 847,
+    "sha256": "e57c0f6a0e5e3d2d5622c52ffc158a58e30b5870b4bd6e99fcfcae5b579e0b29"
+  }
+]
