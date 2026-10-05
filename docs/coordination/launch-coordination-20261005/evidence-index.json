@@ -211,8 +211,8 @@
   },
   {
     "path": "QUICK_ORDER_SOURCE_APPROVAL_REQUEST.json",
-    "bytes": 1532,
-    "sha256": "038679dbafe263e63b140c24a362abe270173deca0eafb5494179db4faf781ae"
+    "bytes": 2020,
+    "sha256": "19964f12a903623fbf7aa6690de1ba384fef02d5c47250cb8bc9e9436f67de34"
   },
   {
     "path": "QUICK_ORDER_READ_ONLY_REVIEW_REQUEST_4abd2c5.txt",
@@ -228,5 +228,20 @@
     "path": "QUICK_ORDER_READ_ONLY_REVIEW_DISPATCH.json",
     "bytes": 1608,
     "sha256": "49f36027a76f543fa6cabc699ac626b77f7b36bc5310c0f6af184256200ddc6f"
+  },
+  {
+    "path": "QUICK_ORDER_SEQUENCING_DELTA_20261005.json",
+    "bytes": 7659,
+    "sha256": "1e59ec75235722c018d7df3a097a0743d9a262035415076755539fabf124109a"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_PRELIMINARY_6abf1edf.json",
+    "bytes": 6370,
+    "sha256": "586b1aa9c4090c96a6fbab70912c94a0844b2cf03f881b6af75b7500948e3c8d"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_OVERLAP_HOLD_5fb80ba6.json",
+    "bytes": 2580,
+    "sha256": "96eb86a4e924cd2cc0617a878f2a120766d20351a409922111be63daa4de1b26"
   }
 ]
