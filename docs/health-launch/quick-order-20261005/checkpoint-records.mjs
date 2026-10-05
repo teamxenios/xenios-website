@@ -1,11 +1,11 @@
 // Update this lane's existing entries only; preserve every other fleet record.
 import fs from 'node:fs';
 const session='codex-health-quick-order-20261005',taskId='HEALTH-QUICK-ORDER-20261005';
-const at=new Date().toISOString(),source='3b0048de641415523caa44f91cb06002465e1773';
+const at=new Date().toISOString(),source='4abd2c5cd4bd039309b32b97b117a67fc6a4d292';
 const handoff='.xenios/handoffs/quick-order-20261005-handoff.md';
 const read=path=>JSON.parse(fs.readFileSync(path,'utf8'));
 const write=(path,value)=>fs.writeFileSync(path,JSON.stringify(value,null,2)+'\n');
-const note='Pushed incomplete disabled Quick Order source3b0048d; exact-source184 focused tests pass. Await Samuel protected mount/privacy and canonical schema-source authoring decisions; typecheck deferred at820MiB RAM. Same builder reserved; no managed action.';
+const note='Pushed containment successor4abd2c5; exact-source10 focused tests pass, original3b0048d184-test evidence retained separately. Coordinator path-normalization finding closed; mount patch/hash unchanged. Await protected/schema-source decisions; heavy qualification deferred. Same builder reserved; no managed action.';
 const ownPath=`.xenios/sessions/${session}.json`,own=read(ownPath);
 if(own.id!==session)throw Error('Wrong session');
 Object.assign(own,{state:'blocked_external',heartbeatAt:at,note,sourceSha:source,handoff});
@@ -15,7 +15,7 @@ if(!entry)throw Error('Session registration missing');
 Object.assign(entry,own);write('.xenios/SESSION_REGISTRY.json',registry);
 const board=read('.xenios/ACTIVE_TASKS.json'),task=board.tasks.find(row=>row.id===taskId);
 if(!task||task.owner!==session)throw Error('Task ownership missing');
-Object.assign(task,{state:'blocked_external',sourceSha:source,sourceTree:'8a080557f2cf7155ca83f17c30eeae767c9d86c1',baseAcceptance:{sha:'756a906877dbc174b7e228a259d2faa9c3af48ca',review:'04cbbee0d3d3ab32dfd6ae9002b82837423f6265',disposition:'SOURCE ACCEPT; not release-qualified'},handoff:{session,sha:source,file:handoff,at},blockedOn:['Exact protected mount/privacy source approval','Narrow canonical schema/module source-authoring permission','Governed Health legal/visibility/destination/currentness authority','Resource-qualified typecheck/build/browser/real DB proof'],scopeNote:'Sole isolated Quick Order owner, accepted756a906 base; new modules and exact proposals only. Source incomplete/intake disabled. Lease reserved for the same builder pending current source decisions; no protected targets/schema/managed actions authorized or applied. Other branch-local fleet records preserved.'});
+Object.assign(task,{state:'blocked_external',sourceSha:source,sourceTree:'3fb70d98dc354e6a6049744b5bb15b741d5ba50b',baseAcceptance:{sha:'756a906877dbc174b7e228a259d2faa9c3af48ca',review:'04cbbee0d3d3ab32dfd6ae9002b82837423f6265',disposition:'SOURCE ACCEPT; not release-qualified'},handoff:{session,sha:source,file:handoff,at},blockedOn:['Exact protected mount/privacy source approval','Narrow canonical schema/module source-authoring permission','Governed Health legal/visibility/destination/currentness authority','Resource-qualified typecheck/build/browser/real DB proof'],scopeNote:'Sole isolated Quick Order owner, accepted756a906 base; new modules and exact proposals only. Source incomplete/intake disabled. Lease reserved for the same builder pending current source decisions; no protected targets/schema/managed actions authorized or applied. Other branch-local fleet records preserved.'});
 write('.xenios/ACTIVE_TASKS.json',board);
 const ownership=read('.xenios/CODE_OWNERSHIP.json'),lease=ownership.leases.find(row=>row.session===session&&row.task===taskId&&row.state==='active');
 if(!lease)throw Error('Active lease missing');

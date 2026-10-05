@@ -3,10 +3,10 @@
   "tool": "Codex GPT-6 Astra Ultra (task configuration)",
   "lane": "health-quick-order",
   "branch": "codex/xenios-health-quick-order-20261005",
-  "state": "active",
+  "state": "blocked_external",
   "startedAt": "2026-10-05T19:12:50.193Z",
-  "heartbeatAt": "2026-10-05T19:44:48.750Z",
-  "note": "Closing coordinator finding: effective normalized path must terminate before global parsers; exact-source focused successor proof only.",
-  "sourceSha": "3b0048de641415523caa44f91cb06002465e1773",
+  "heartbeatAt": "2026-10-05T19:47:37.357Z",
+  "note": "Pushed containment successor4abd2c5; exact-source10 focused tests pass, original3b0048d184-test evidence retained separately. Coordinator path-normalization finding closed; mount patch/hash unchanged. Await protected/schema-source decisions; heavy qualification deferred. Same builder reserved; no managed action.",
+  "sourceSha": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
   "handoff": ".xenios/handoffs/quick-order-20261005-handoff.md"
 }

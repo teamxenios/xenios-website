@@ -6,9 +6,10 @@ at reviewer commit `04cbbee0d3d3ab32dfd6ae9002b82837423f6265`; count-typo correc
 `fffa33a6b3407b407b2b43d3c5a5c7054887f590` changes no disposition. This is not
 release qualification. Do not merge the coordinator branch.
 
-Pushed incomplete module source: `3b0048de641415523caa44f91cb06002465e1773`, tree
-`8a080557f2cf7155ca83f17c30eeae767c9d86c1`. Exact-source focused checks:184 pass,
-zero failures/skips. See [QUALIFICATION.md](QUALIFICATION.md) for provenance,
+Current pushed incomplete module source: `4abd2c5cd4bd039309b32b97b117a67fc6a4d292`,
+tree `3fb70d98dc354e6a6049744b5bb15b741d5ba50b`. Its containment correction passed
+10 focused tests; original `3b0048d`184-test evidence is retained without pooling
+counts or claiming a full successor rerun. See [QUALIFICATION.md](QUALIFICATION.md) for provenance,
 resource-deferred typecheck and missing full-App/durable proof;
 [APPROVAL_MATRIX.md](APPROVAL_MATRIX.md) for the two concrete source decisions.
 

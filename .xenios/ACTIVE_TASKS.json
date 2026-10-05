@@ -6,7 +6,7 @@
       "id": "HEALTH-QUICK-ORDER-20261005",
       "title": "Implement isolated Health Quick Order intake over canonical assisted requests",
       "priority": "P1",
-      "state": "claimed",
+      "state": "blocked_external",
       "owner": "codex-health-quick-order-20261005",
       "baseSha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
       "paths": [
@@ -20,8 +20,8 @@
       "dependsOn": [],
       "scopeNote": "Sole isolated Quick Order owner, accepted756a906 base; new modules and exact proposals only. Source incomplete/intake disabled. Lease reserved for the same builder pending current source decisions; no protected targets/schema/managed actions authorized or applied. Other branch-local fleet records preserved.",
       "claimedAt": "2026-10-05T19:13:42.715Z",
-      "sourceSha": "3b0048de641415523caa44f91cb06002465e1773",
-      "sourceTree": "8a080557f2cf7155ca83f17c30eeae767c9d86c1",
+      "sourceSha": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
+      "sourceTree": "3fb70d98dc354e6a6049744b5bb15b741d5ba50b",
       "baseAcceptance": {
         "sha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
         "review": "04cbbee0d3d3ab32dfd6ae9002b82837423f6265",
@@ -29,9 +29,9 @@
       },
       "handoff": {
         "session": "codex-health-quick-order-20261005",
-        "sha": "3b0048de641415523caa44f91cb06002465e1773",
+        "sha": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
         "file": ".xenios/handoffs/quick-order-20261005-handoff.md",
-        "at": "2026-10-05T19:41:39.882Z"
+        "at": "2026-10-05T19:47:37.357Z"
       },
       "blockedOn": [
         "Exact protected mount/privacy source approval",

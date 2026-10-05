@@ -13,8 +13,8 @@ Accepted base: `756a906877dbc174b7e228a259d2faa9c3af48ca`, tree
 `04cbbee0d3d3ab32dfd6ae9002b82837423f6265`, count-only correction
 `fffa33a6b3407b407b2b43d3c5a5c7054887f590`; not release acceptance.
 
-- FINAL PUSHED MODULE SOURCE: `3b0048de641415523caa44f91cb06002465e1773`
-- SOURCE TREE: `8a080557f2cf7155ca83f17c30eeae767c9d86c1`
+- FINAL PUSHED MODULE SOURCE: `4abd2c5cd4bd039309b32b97b117a67fc6a4d292`
+- SOURCE TREE: `3fb70d98dc354e6a6049744b5bb15b741d5ba50b`
 
 This handoff's later records/evidence commit adds no runtime source changes.
 Read `docs/health-launch/quick-order-20261005/QUALIFICATION.md`, `SOURCE_MAP.md`,
@@ -34,11 +34,20 @@ protected route/privacy composition, and actual integration qualification.
 Production ports are deliberately unactivatable: ready false, config disabled,
 commit throws. No fake or legacy-submit success workaround.
 
-Final focused source checks:73 Node core/HTTP tests +111 Vitest tests across6
-files =184 pass,0 fail,0 skip. Raw logs/receipts preserve exact source/tree and
+Original `3b0048d` focused source checks:73 Node core/HTTP tests +111 Vitest tests
+across6 files =184 pass,0 fail,0 skip. Raw logs/receipts preserve exact source/tree and
 before/after source hashes. Earlier39/71/68 dirty-source diagnostics are retained
 and not pooled into the final count. Supplied-package47-test/syntax baseline is
 reused prior-session evidence; its literal Windows npm wildcard failure remains.
+
+Successor `4abd2c5` closes coordinator's concrete normalized-path containment
+finding: use effective Express `req.path` after the host's leading-slash rewrite
+instead of raw `originalUrl`. Exactly two module/test files changed; other20
+source files are unchanged. Necessary successor focused run10/10PASS verifies
+duplicate-slash, absolute-form and literal-fragment pathname cases stop before
+the actual-shape2MiB JSON/rawBody verifier, plus unrelated normalized passthrough.
+Its exact source hashes/log are retained separately; no full184-test rerun or
+pooled194 count is claimed. The6-file mount proposal and its hash are unchanged.
 
 Typecheck NOT RUN: fresh19:39Z820MiB RAM/27.02GiB disk/no matching heavy Node job
 fails coordinator's2048MiB threshold. Build, aggregate, five-width/keyboard/zoom

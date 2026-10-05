@@ -1,5 +1,43 @@
 # Exact-source qualification: incomplete Quick Order source
 
+## Containment successor — coordinator finding closed
+
+Current pushed source **`4abd2c5cd4bd039309b32b97b117a67fc6a4d292`**, tree
+`3fb70d98dc354e6a6049744b5bb15b741d5ba50b`. Only `containment.ts` and its focused
+test changed among runtime/test modules; the remaining20 module/test/declaration
+files are unchanged from the original source below. No protected target changed.
+
+Coordinator found that the original boundary checked `originalUrl` after the
+host had normalized leading duplicate slashes in `req.url`. A target such as
+`//api/health/quick-order/requests` could therefore reach the later JSON parser
+and rawBody verifier despite eventual intake being disabled. The correction
+uses `req.path` at the required application-root mount, matching Express's own
+effective pathname after the existing normalization. Read-only cross-review
+found no other pre-boundary Quick Order path rewrite.
+
+Exact successor focused run: **10 pass / 0 fail / 0 skip**, one file, exit0,
+clean before/after source state and unchanged22-file source hashes. Evidence:
+`evidence/containment-source-4abd2c5.json` and its exact raw `.log` (SHA256
+`28dc7c1c6d3d7f1b13e47de5e8a48a2d208364c2816905e521028d20dbf596f0`).
+Composed loopback HTTP tests mirror the actual leading-slash normalizer and
+2MiB JSON rawBody verifier. Duplicate-slash aliases, API root/query, absolute-form
+targets and literal-fragment pathname parsing terminate503 before parser or
+verifier invocation with no `body`/`rawBody`. A normalized unrelated POST reaches
+the verifier, providing a positive control; malformed oversized exact input is
+also contained. This remains a miniature composition, not actual App mount proof.
+
+No unrelated test suite, typecheck or heavy job was rerun. Preserve the original
+184-test evidence below at its own exact source; do not describe184 or194 as a
+single full successor run. `evidence/packet-integrity-4abd2c5.json` verifies all14
+baseline hashes, six raw logs and unchanged mount patch/hash. Six protected
+before/after pairs and patch LF hash
+`6481c2ad2d4d2828e789cb2f2e24964705562cb782d70728b4152d78dc40a672`
+are unchanged, and `git apply --check` still passes. No new source authority is
+inferred from this fix. All incomplete-source, resource, durable, intake and
+release holds below remain.
+
+## Original source checkpoint (retained evidence)
+
 Pushed source `3b0048de641415523caa44f91cb06002465e1773`, tree
 `8a080557f2cf7155ca83f17c30eeae767c9d86c1`, branch
 `codex/xenios-health-quick-order-20261005`. Accepted predecessor

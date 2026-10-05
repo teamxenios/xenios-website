@@ -1,0 +1,19 @@
+
+ RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/389a/xenios-website
+
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > returns private disabled JSON for /api/health/quick-order 92ms
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > returns private disabled JSON for /api/health/quick-order/config 20ms
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > returns private disabled JSON for /api/health/quick-order/requests?source=test 6ms
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > terminates normalized //api/health/quick-order before parsing or rawBody retention 12ms
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > terminates normalized //api/health/quick-order/requests before parsing or rawBody retention 8ms
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > terminates normalized ////api/health/quick-order/requests?source=test before parsing or rawBody retention 8ms
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > uses Express pathname semantics for the raw target http://quick-order.invalid/api/health/quick-order/requests?source=test 12ms
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > uses Express pathname semantics for the raw target /api/health/quick-order#routing-suffix 7ms
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > does not parse an oversized malformed body or reach fallback 8ms
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > does not capture a neighboring route 262ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  14:46:04
+   Duration  1.01s (transform 66ms, setup 0ms, import 305ms, tests 437ms, environment 0ms)
+
