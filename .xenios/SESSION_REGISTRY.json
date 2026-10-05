@@ -585,10 +585,10 @@
       "tool": "codex",
       "lane": "launch-coordination",
       "branch": "codex/xenios-launch-coordination-20261005",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-10-05T17:19:29.457Z",
-      "heartbeatAt": "2026-10-05T20:41:14.686Z",
-      "note": "Verified relocated source f1e467f, regenerated proposal c65 and pushed resource refusal/handoff c807f19. No qualification job ran; slot released. Original 6ab prepares final verdict; 5fb stopped with evidence preserved."
+      "heartbeatAt": "2026-10-05T20:47:03.276Z",
+      "note": "Relocated source f1e467f/proposal c65 verified; c807f19 records the prelaunch 503 MiB refusal. No tests ran; slot released, same builder clean/parked. Original6ab final verdict pending; overlapping5fb stopped. RevisedA1/A2 unapproved; planner reply confirmed, heartbeat active/quiet."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
