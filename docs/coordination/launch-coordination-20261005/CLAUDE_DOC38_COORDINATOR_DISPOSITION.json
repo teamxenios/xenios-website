@@ -1,0 +1,137 @@
+{
+  "recordedAt": "2026-10-05T22:06:04.411Z",
+  "reviewCommit": "78cd7e6f598b74a88d810e545553b1da9ecb88a5",
+  "reviewTree": "a15cbc511eef8bc9d4e7851a7bf1e50629af4312",
+  "remote": "78cd7e6f598b74a88d810e545553b1da9ecb88a5\trefs/heads/claude/xenios-health-launch-review-20260930",
+  "cleanReviewCheckout": true,
+  "source": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+  "sourceTree": "46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e",
+  "handoff": "1b3bb16bf99d89af18a88c702434e929ebe83c02",
+  "handoffTree": "1af8dec1bbcd7378e3af4646ec6c36c70254276a",
+  "bindings": [
+    {
+      "original": "docs/review/xenios-health-launch-review-20260930/38_QUICK_ORDER_HTTP_SUCCESSOR_fd023e8_DELTA_2026-10-05.md",
+      "local": "CLAUDE_QUICK_ORDER_DOC38_fd023e8.md",
+      "bytes": 22778,
+      "sha256": "b08c23480e70718b33d803928ca7060104fc689a1e168d344c44a06e098294bb",
+      "blob": "269d2ac84c034a41a9364942da7d2a7cc60864f1"
+    },
+    {
+      "original": "docs/review/xenios-health-launch-review-20260930/hl12/37_claude-qo-run-receipt-c807f19.json",
+      "local": "CLAUDE_DOC37_RETROSPECTIVE_RECEIPT_78cd7e6.json",
+      "bytes": 3768,
+      "sha256": "fd219097d326bc1b178d44640af2dec93ff949602f5bccc8de8cdddccb9cb953",
+      "blob": "ba645c62445fe974b3177911d65b4a3c81e74b3e"
+    },
+    {
+      "original": "docs/review/xenios-health-launch-review-20260930/hl12/38_claude-qo-classifier-probe-fd023e8.mjs",
+      "local": "CLAUDE_DOC38_PROBE_78cd7e6.mjs",
+      "bytes": 4308,
+      "sha256": "53f65a9e49369f9032d2888f75284f8cdeb53eb49506c522c051bcb9572fc7f9",
+      "blob": "0f1c004296490d0afed743aacbb2e81e355354b1"
+    },
+    {
+      "original": "docs/review/xenios-health-launch-review-20260930/hl12/38_claude-qo-classifier-probe-fd023e8.out",
+      "local": "CLAUDE_DOC38_PROBE_78cd7e6.out",
+      "bytes": 9452,
+      "sha256": "107046f0ce5633ed8f9a1cc2b3975a4c440fa53b5c0000e2ff48436d78d22da5",
+      "blob": "1315fa0761e5d7d1fb6fe38b1e007e1de97b81e2"
+    },
+    {
+      "original": "docs/review/xenios-health-launch-review-20260930/hl12/38_qo_http_lens_findings.json",
+      "local": "CLAUDE_DOC38_LENS_FINDINGS_78cd7e6.json",
+      "bytes": 111562,
+      "sha256": "5651a63451799ef24584cf1f7807dc4aed205a85ecf3efd7201310abaecb92f4",
+      "blob": "332c33ccbbf12e5cb4ed8840b5cda6c58618fc01"
+    }
+  ],
+  "method": "Read-only Git-object and public-final-text collection plus narrow existing-coordinator receipt check. No application source execution or qualification.",
+  "verdict": "SOURCE ACCEPT WITH LIMITS for six-file HTTP delta",
+  "findings": {
+    "QO-P2-03": "PARTIAL; closed at source; targeted composed red/green missing",
+    "QO-P2-04": "PARTIAL; closed at source; targeted red/green missing",
+    "QO-R-01": "CLOSED by existing1b3bb16 checkpoint",
+    "QO-R-05": "CLOSED by existing1b3bb16 checkpoint"
+  },
+  "limits": [
+    "All authored successor regressions/syntax/typecheck/build/browser/database remain NOT RUN",
+    "No real intake, purchase or production release readiness",
+    "A1/A2/PWA/GATE01 and all source/hosted approval holds unchanged",
+    "F1 potential single-slash-scheme exception unproven deliverability; F3 optional parsing-cost polish; F4 raw-parser delivery question held for authorized qualification; no new source slice",
+    "External review text retained verbatim; coordinator does not adopt inaccurate counts, unsupported blanket invariance or expanded test scope"
+  ],
+  "recordIssues": [
+    {
+      "id": "R38-E1",
+      "status": "OPEN RECORD CORRECTION",
+      "anchors": [
+        "doc38:68",
+        "doc38:70"
+      ],
+      "fact": "Committed output contains61 singles,12pairs,23oddinputs; narrative and commit claim66 singles. No rerun requested."
+    },
+    {
+      "id": "R38-E2",
+      "status": "PROVENANCE LIMIT",
+      "anchors": [
+        "probe.out:1",
+        "probe.mjs:1"
+      ],
+      "fact": "Header asserts fullsource/hash/pinnedNode; actualargv/cwd/scratch binding/start/end/exit/signal/stderr/resource wrapper not retained. Archive has no adjacent executed paths.mjs. Do not manufacture a retrospective wrapper."
+    },
+    {
+      "id": "R38-E3",
+      "status": "OBSERVATIONAL / UNQUALIFIED",
+      "anchors": [
+        "probe.mjs:24",
+        "probe.mjs:35",
+        "doc38:72"
+      ],
+      "fact": "Logging without assertions/failure exits; host counter covers singles only. No reserved slot and13.91GiB below20GiB. Not qualified regression or composition proof."
+    },
+    {
+      "id": "R38-E4",
+      "status": "PARTLY CORRECTED; FILE COUNT OPEN",
+      "anchors": [
+        "doc38:82",
+        "doc38:106"
+      ],
+      "fact": "Red optional wording removed; mandatory red/green per exact builder plan preserved. Node two-file claim remains wrong: one filtered handler.test.mjs per snapshot."
+    },
+    {
+      "id": "R37-E1",
+      "status": "OPEN RECORD CORRECTION / PROVENANCE LIMIT",
+      "anchors": [
+        "retrospective37:5",
+        "retrospective37:11",
+        "retrospective37:26",
+        "retrospective37:31"
+      ],
+      "fact": "Retrospective receipt summary999/1206 conflicts firstVitest933 (999 belongs to Node); verboseVitest1206. RawfirstVitest unarchived; below1536 by603/330; not qualified by newsidecar."
+    },
+    {
+      "id": "R38-E5",
+      "status": "NARRATIVE QUALIFICATION",
+      "anchors": [
+        "doc38:82",
+        "doc38:93",
+        "final assistant"
+      ],
+      "fact": "Unqualified nothing previously contained is released wording must carry disclosed F1 exception: http:/api/... classifier unrelated versus legacy pathname ownership. Delivery through llhttp unproven; no proven leak or new authorized source slice."
+    }
+  ],
+  "reviewer": {
+    "session": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "model": "claude-fable-5-1",
+    "effort": "xhigh",
+    "ultracode": true,
+    "maxConfirmed": false
+  },
+  "transport": {
+    "workflowCompletedAt": "2026-10-05T21:54:31.852Z",
+    "publicFinalAt": "2026-10-05T21:58:56.486Z",
+    "completion": "Existing background workflow returned and original main context resumed automatically. No coordinator message delivered or duplicate session started.",
+    "oldManualContinuation": "Superseded for obtaining verdict; do not repeat the prior paste request.",
+    "recordCorrectionDelivery": "Prepared via pushed Git for SAME context; direct delivery and acknowledgement NOT confirmed. Technical transport remains unavailable; no unchanged retries."
+  }
+}

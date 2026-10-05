@@ -498,5 +498,45 @@
     "path": "CLAUDE_DESKTOP_CONTINUATION_ATTEMPT_20261005.json",
     "bytes": 3191,
     "sha256": "fe85caef2d450fd27545d8495f5f80cafe6ff0ef026cc5fc8a7d96274d877d74"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_DOC38_fd023e8.md",
+    "bytes": 22778,
+    "sha256": "b08c23480e70718b33d803928ca7060104fc689a1e168d344c44a06e098294bb"
+  },
+  {
+    "path": "CLAUDE_DOC37_RETROSPECTIVE_RECEIPT_78cd7e6.json",
+    "bytes": 3768,
+    "sha256": "fd219097d326bc1b178d44640af2dec93ff949602f5bccc8de8cdddccb9cb953"
+  },
+  {
+    "path": "CLAUDE_DOC38_PROBE_78cd7e6.mjs",
+    "bytes": 4308,
+    "sha256": "53f65a9e49369f9032d2888f75284f8cdeb53eb49506c522c051bcb9572fc7f9"
+  },
+  {
+    "path": "CLAUDE_DOC38_PROBE_78cd7e6.out",
+    "bytes": 9452,
+    "sha256": "107046f0ce5633ed8f9a1cc2b3975a4c440fa53b5c0000e2ff48436d78d22da5"
+  },
+  {
+    "path": "CLAUDE_DOC38_LENS_FINDINGS_78cd7e6.json",
+    "bytes": 111562,
+    "sha256": "5651a63451799ef24584cf1f7807dc4aed205a85ecf3efd7201310abaecb92f4"
+  },
+  {
+    "path": "CLAUDE_DOC38_FINAL_TEXT_20261005.json",
+    "bytes": 2863,
+    "sha256": "36cac1d66f2f617ce433edf93dba6e17114efd1098e1b003bfff85a7a2245d1f"
+  },
+  {
+    "path": "CLAUDE_DOC38_COORDINATOR_DISPOSITION.json",
+    "bytes": 6430,
+    "sha256": "5469e2e3c3c311c460985f979e8858465f2a02528ce38183cd8cdbb5653bf42e"
+  },
+  {
+    "path": "CLAUDE_DOC38_RECORD_CORRECTIONS.txt",
+    "bytes": 2023,
+    "sha256": "e0f7d58b2d8e230cb0f437214f76934183098c17549a5c2dd4e056f524c55591"
   }
 ]

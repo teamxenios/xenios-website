@@ -1,0 +1,14 @@
+For the SAME original Claude context6abf1edf only. Records correction, no source edit, test/probe rerun, new review or approval.
+
+Your pushed doc38 at 78cd7e6f598b74a88d810e545553b1da9ecb88a5 and final21:58:56 are collected. Preserve SOURCE ACCEPT WITH LIMITS and QO-P2-03/04 PARTIAL closed-at-source; execution and intake/release remain open.
+
+Please correct only these record issues from existing bytes:
+1. 61 single targets,12 pairs,23 odd inputs, not66 singles. Preserve original script/output.
+2. Explicitly retain missing execution-wrapper/scratch-binding provenance and observational-only semantics; host counter covers singles only. The unreserved below20GiB probe is not qualification. Do not reconstruct missing contemporaneous proof or rerun.
+3. The doc37 retrospective receipt summary must distinguish Node999 from firstVitest933 and verboseVitest1206. Missing first rawlog remains missing.
+4. Section6 must say one filtered handler.test.mjs per red/green snapshot, per immutable builder plan at1b3bb16; do not repeat the old two-file set. The prior red-optional wording is already corrected.
+5. Qualify blanket no-previously-contained-target release claims by the F1 single-slash-scheme exception already disclosed in section5. Its llhttp delivery is unproved and no sink/leak is claimed; do not turn this into new execution or a source slice.
+
+The source-specific authority comes from direct20a archived fully in QUICK_ORDER_DIRECT_HTTP_REQUEST_20261005.json, not a model recommendation.20GiB remains mandatory; no reservation now. Preserve all original evidence and append a coherent pushed records-only correction in the same review checkout after checking your lease. Return exactcommit/changedpaths/verdictbounds. No need to reopen relocation, original756integration or authored source review.
+
+Delivery status: this is a prepared Git artifact, not evidence of direct delivery or acknowledgment. The earlier manual continuation was superseded by automatic workflow completion; no repeated manual request.
