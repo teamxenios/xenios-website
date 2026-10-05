@@ -103,11 +103,34 @@ describe("product subscription request form", () => {
     expect(host.querySelector<HTMLInputElement>('[type="checkbox"]')!.checked).toBe(false);
   });
 
-  it("clears stale review and receipt when the exact variant or price changes", async () => {
+  it("clears stale review but preserves the retry guard when the exact variant or price changes", async () => {
     vi.mocked(createSubscription).mockResolvedValue({ kind: "unavailable" });
     render(); review(); await submit();
     render({ ...product, sku: "SYNTHETIC-RUO-02", variantLabel: "Another variant", priceVersion: "synthetic-price-v2" });
-    expect(text()).not.toContain("could not confirm");
+    expect(text()).toContain("A request was already submitted from this page");
     expect(host.querySelector<HTMLInputElement>('[type="checkbox"]')!.checked).toBe(false);
+    await submit(); expect(createSubscription).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(["token", "metadata"])("preserves an uncertain attempt across %s refresh", async (refresh) => {
+    vi.mocked(createSubscription).mockResolvedValue({ kind: "unavailable" });
+    render(); review(); await submit();
+    if (refresh === "token") token = "rotated-token-same-customer";
+    render(refresh === "metadata" ? { ...product, displayName: "Updated display name" } : product);
+    await submit();
+    expect(text()).toContain("A request was already submitted from this page");
+    expect(createSubscription).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not unlock an in-flight create on token rotation and same-SKU metadata refresh", async () => {
+    let finish!: (value: Awaited<ReturnType<typeof createSubscription>>) => void;
+    vi.mocked(createSubscription).mockReturnValue(new Promise(resolve => { finish = resolve; }));
+    render(); review(); await submit();
+    token = "rotated-token"; render({ ...product, priceVersion: "new-display-version" });
+    await submit();
+    await act(async () => finish({ kind: "unavailable" }));
+    await submit();
+    expect(createSubscription).toHaveBeenCalledTimes(1);
+    expect(text()).toContain("A request was already submitted from this page");
   });
 });

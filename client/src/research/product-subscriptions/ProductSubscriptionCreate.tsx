@@ -69,14 +69,32 @@ function canReview(product: SubscriptionProductForReview | null): product is Sub
 }
 
 export function ProductSubscriptionCreate(props: ProductSubscriptionCreateProps) {
-  // Remount on a principal or reviewed product/price change: a delayed result
-  // cannot become another account's receipt or another variant's confirmation.
+  // The retry guard survives token rotation and offer refresh. Only the review
+  // and private receipt remount; losing a response must never unlock a second
+  // create on this non-idempotent endpoint. Reload/cross-tab protection still
+  // requires a durable server-side create idempotency contract.
   const scope = JSON.stringify([props.memberToken, props.product]);
-  return <SubscriptionForm key={scope} {...props} />;
+  const attempt = useRef<string | null>(null);
+  const [blockedFormId, setBlockedFormId] = useState<string | null>(null);
+  function beginAttempt(formId: string) {
+    if (attempt.current !== null) return false;
+    attempt.current = formId;
+    setBlockedFormId(formId);
+    return true;
+  }
+  function refusedAttempt() {
+    attempt.current = null;
+    setBlockedFormId(null);
+  }
+  return <SubscriptionForm key={scope} {...props}
+    blockedFormId={blockedFormId}
+    beginAttempt={beginAttempt} refusedAttempt={refusedAttempt} />;
 }
 
-function SubscriptionForm({ memberToken, commerceEnabled, product }: ProductSubscriptionCreateProps) {
+function SubscriptionForm({ memberToken, commerceEnabled, product, blockedFormId, beginAttempt, refusedAttempt }:
+  ProductSubscriptionCreateProps & { blockedFormId: string | null; beginAttempt(formId: string): boolean; refusedAttempt(): void }) {
   const id = useId();
+  const blockedByEarlierAttempt = blockedFormId !== null && blockedFormId !== id;
   const [quantity, setQuantity] = useState("1");
   const [frequency, setFrequency] = useState<SubscriptionFrequencyDays>(30);
   const [reviewed, setReviewed] = useState(false);
@@ -88,19 +106,20 @@ function SubscriptionForm({ memberToken, commerceEnabled, product }: ProductSubs
   const units = Number(quantity);
   const validQuantity = quantity.trim().length > 0 && Number.isInteger(units)
     && units >= 1 && units <= PERSISTENT_CART_QUANTITY_MAX;
-  const locked = outcome.phase === "busy" || outcome.phase === "saved" || outcome.phase === "uncertain";
+  const locked = blockedByEarlierAttempt || outcome.phase === "busy" || outcome.phase === "saved" || outcome.phase === "uncertain";
   const enabled = Boolean(memberToken) && commerceEnabled && ready;
   const subtotal = ready && validQuantity && Number.isSafeInteger(product.priceCents * units)
     ? `${product.currency} ${(product.priceCents * units / 100).toFixed(2)}` : null;
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    if (!enabled || !ready || !validQuantity || !subtotal || !reviewed || locked || submitted.current) return;
+    if (!enabled || !ready || !validQuantity || !subtotal || !reviewed || locked || submitted.current || !beginAttempt(id)) return;
     submitted.current = true;
     setOutcome({ phase: "busy" });
     const result = await createSubscription(memberToken, {
       sku: product.sku, quantity: units, frequencyDays: frequency, priceVersion: product.priceVersion,
     });
+    if (result.kind === "denied" || result.kind === "unauthorized" || result.kind === "forbidden") refusedAttempt();
     if (!alive.current) return;
     if (result.kind === "ok") {
       setOutcome({ phase: "saved", subscriptionId: result.data.subscription.subscriptionId });
@@ -153,12 +172,13 @@ function SubscriptionForm({ memberToken, commerceEnabled, product }: ProductSubs
       </fieldset>
     </form>}
     {outcome.phase === "denied" && <p className="mt-4" role="alert">{outcome.message}</p>}
+    {blockedByEarlierAttempt && <p className="mt-4" role="alert">A request was already submitted from this page. Check your product subscriptions before submitting again. Changing product details or signing in again does not retry that request.</p>}
     {outcome.phase === "uncertain" && <p className="mt-4" role="alert">We could not confirm whether your request was saved. Check your product subscriptions before submitting again. This page cannot take payment or activate a subscription.</p>}
     {outcome.phase === "saved" && <div className="mt-4" role="status">
       <p>Subscription request saved. It is pending, with no payment or shipment scheduled.</p>
       <p>Request reference: {outcome.subscriptionId}</p>
       <p>Payment setup is not available here. This is not a completed purchase.</p>
     </div>}
-    {(outcome.phase === "saved" || outcome.phase === "uncertain") && <a className="btn btn-ghost mt-4" href={MEMBER_ROUTES.subscriptions}>View product subscriptions</a>}
+    {(blockedByEarlierAttempt || outcome.phase === "saved" || outcome.phase === "uncertain") && <a className="btn btn-ghost mt-4" href={MEMBER_ROUTES.subscriptions}>View product subscriptions</a>}
   </section>;
 }
