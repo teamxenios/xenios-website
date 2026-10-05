@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T20:22:30.512Z",
+  "updatedAt": "2026-10-05T20:23:53.625Z",
   "objective": "Automate verified Codex-Claude-ChatGPT launch coordination, preserve accepted source and implement the separately authorized Quick Order intake while production authorities remain held.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -256,7 +256,7 @@
     "scope": "Existing bounded acceptance chain and review checklist; no integrated-source verdict or founder approval"
   },
   "quickOrder": {
-    "status": "Samebuilder dispatched narrow authorized relocation and proposal regeneration after source/lease verification. Original6ab six-lens review continues;5fb parked. Oldmountpatch held, A2pending; source incomplete/intakeNOTREADY.",
+    "status": "RUNNING samebuilder relocation and regenerated-proposal slice under verified standing unprotected authority. Original6abreview running;5fb parked. OldA1patch held, A2pending; intakeNOTREADY.",
     "sourceThread": "01a0e098-3b23-7233-9b07-877ace092650",
     "sourceTurn": "2c15c0f1-2e96-4291-b39f-a3e37cc84741",
     "userRequestSummary": "Direct user request to build package now in exactly one isolated worker while keeping integration and existing reviewer frozen.",
@@ -546,6 +546,13 @@
       "reply": "CONFIRMED at planning turn1a186054-53c3-4d71-9ecc-0f72e1f88d01. Short acknowledgement says builder stays parked, same reviewer may perform useful read-only current-source review. Later long recommendation is proposed founder text only. Do not resend.",
       "replyTurn": "1a186054-53c3-4d71-9ecc-0f72e1f88d01",
       "replyMessage": "ce9b8f33-38a9-47c9-b43c-ad664f2a34b4"
+    },
+    "latestRelocationUpdate": {
+      "records": "ce3b9ae0919078aaab343d50c1f82f54d7f084c5",
+      "sendAcknowledged": true,
+      "destination": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
+      "reply": "Not yet retrieved; do not resend. Factual checkpoint only, no prompt pack or founder authority requested.",
+      "scope": "Verified14locationviolations/22files, standingauthority/nooverlap,samebuilderack,oldA1held/A2pending,6abreviewrunning/5fbparked,189reportedunverified."
     }
   }
 }

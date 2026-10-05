@@ -5,6 +5,6 @@
   "branch": "codex/xenios-launch-coordination-20261005",
   "state": "active",
   "startedAt": "2026-10-05T17:19:29.457Z",
-  "heartbeatAt": "2026-10-05T20:17:36.630Z",
-  "note": "Reconciling user QuickOrder relocation delta: oldmountpatch held, A2pending, original6abreview running, overlapping5fb parked. Verify scope/leases and use samebuilder."
+  "heartbeatAt": "2026-10-05T20:23:53.628Z",
+  "note": "Samebuilder acknowledged authorized relocation/proposal-only slice. Existing6abreview continues,5fb parked. OldA1held/A2pending, planner updated and heartbeat reconciled."
 }
