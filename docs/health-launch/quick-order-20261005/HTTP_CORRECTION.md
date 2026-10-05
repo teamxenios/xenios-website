@@ -3,8 +3,8 @@
 Coordinator request `25ca24b07ef8bab2a7dd97fd0ad576fc08a1bc48`, narrowed by Samuel's
 full `20a5d445-6335-4de9-a6db-0cc00c656149/Pasted text.txt`, authorizes only
 QO-P2-03/QO-P2-04 corrections in the current server module and this lane's
-packet/records. The exact source commit/tree will be recorded in the handoff
-after the coherent slice is pushed. No test reservation accompanies this request.
+packet/records. Pushed source **`fd023e8c03baa2326baf707c944bcd25dce7f453`**, tree
+**`46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e`**. No test reservation accompanies this request.
 The narrower request permits only the listed packet corrections; doc 36's A2
 conditions remain future holds, not a design revision or drafting grant.
 
@@ -74,6 +74,14 @@ coordinator evidence, not a new measurement by this builder. Disk is below the
 threshold is part of this work.
 
 ### Targeted red/green plan — commands not executed
+
+`evidence/http-regression-plan-fd023e8.json` records the exact baseline and
+successor source/tree, Git blob IDs, SHA-256 LF of both runtime snapshots and the
+identical successor test blobs, proposed config bytes/hash and command argument
+arrays. No scratch snapshot was materialized and no test command ran: exits and
+raw logs are null, not fabricated. `evidence/packet-integrity-http-fd023e8.json`
+is only a static hash/dry-patch audit: 24 source files, all 14 baselines unchanged,
+six historical logs exact, c65 unchanged and dry-applicable. It is not a test run.
 
 Baseline runtime is the reviewed `f1e467f74b01ae2ab866bb791a3c11d657a5d69c`
 (tree `6bc4fd7a7483822d4af87a3c07ab7263c0fbc377`), identical at `c807f19`.

@@ -585,11 +585,11 @@
       "tool": "Codex GPT-6 Astra Ultra (task configuration)",
       "lane": "health-quick-order",
       "branch": "codex/xenios-health-quick-order-20261005",
-      "state": "active",
+      "state": "blocked_external",
       "startedAt": "2026-10-05T19:12:50.193Z",
-      "heartbeatAt": "2026-10-05T21:12:36.973Z",
-      "note": "Bounded HTTP correction and regression definitions authored. Static read-only review only; no qualification slot, no tests. Same lease; obsolete prefixes removed after absence proof; preparing pushed source and exact handoff.",
-      "sourceSha": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+      "heartbeatAt": "2026-10-05T21:15:37.839Z",
+      "note": "Bounded HTTP ownership correction authored; targeted red/green definitions NOT RUN. No qualification slot; coordinator reports disk13.91GiB<20GiB. Doc37 accepts pure relocation only; changed source awaits narrow review. A1 c65 unapplied/old648 held; A2 future holds only. Same builder reserved; outbound permission pending.",
+      "sourceSha": "fd023e8c03baa2326baf707c944bcd25dce7f453",
       "handoff": ".xenios/handoffs/quick-order-20261005-handoff.md"
     }
   ],

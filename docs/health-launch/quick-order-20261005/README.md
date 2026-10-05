@@ -7,7 +7,10 @@ at reviewer commit `04cbbee0d3d3ab32dfd6ae9002b82837423f6265`; count-typo correc
 release qualification. Do not merge the coordinator branch.
 
 The current HTTP ownership correction and authored, unrun regressions are in
-[HTTP_CORRECTION.md](HTTP_CORRECTION.md); source identity is in the exact handoff.
+[HTTP_CORRECTION.md](HTTP_CORRECTION.md). Pushed source
+`fd023e8c03baa2326baf707c944bcd25dce7f453`, tree
+`46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e`; exact handoff and static receipts
+bind the 24-file module inventory. Targeted red/green execution is deferred.
 No current qualification slot exists. Implementation resides in `client/src/research/quick-order/` and
 `server/research/health/quick-order/`. See [RELOCATION.md](RELOCATION.md) for the
 path-only P1 correction, successor source/evidence and revised pending proposal.
