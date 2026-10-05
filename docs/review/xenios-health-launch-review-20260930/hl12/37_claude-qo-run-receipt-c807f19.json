@@ -8,7 +8,8 @@
  "runtimeIdenticalTo": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c (tree 6bc4fd7a7483822d4af87a3c07ab7263c0fbc377); client/server/shared/supabase/scripts/package files byte-identical",
  "worktree": "C:/xenios-wt/closeout-review, detached at c807f19, git status clean before and after every run",
  "toolchain": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe v20.19.0; vitest v4.1.10 from the repository node_modules",
- "hostRule": "no coordinator reservation held; the builder's reservation fc11f54 was already RELEASED_AFTER_PRECHECK_REFUSAL; no tsc, Vitest, Docker build or other heavy Node job was running at launch; the coordinator's 1536 MiB Vitest headroom rule was NOT met (999 and 1206 MiB free), which is why these are reviewer receipts and not producer qualification",
+ "hostRule": "no coordinator reservation held; the builder's reservation fc11f54 was already RELEASED_AFTER_PRECHECK_REFUSAL; no tsc, Vitest, Docker build or other heavy Node job was observed at launch (pattern-based process listing, not an attestation); the coordinator's 1536 MiB Vitest headroom rule was NOT met: the first Vitest run started at 933 MiB free (shortfall 603 MiB) and the verbose rerun at 1206 MiB (shortfall 330 MiB); the 999 MiB figure belongs to the Node two-file run's start, not to any Vitest run; this is why these are reviewer receipts and not producer qualification",
+ "revision": "2026-10-05 records-only correction (doc 39): the hostRule sentence previously cited 999 and 1206 MiB for the Vitest rule; 999 MiB is the Node run's start measurement and the first Vitest run's start was 933 MiB. This file is a retrospective receipt written from in-session tool output after the runs; it is not a contemporaneous execution wrapper, carries no tool-output identifiers, and the first Vitest run's raw output (summary reporter) was not archived because the verbose rerun superseded it. Nothing else changed.",
  "runs": [
   {
    "id": "node2",
