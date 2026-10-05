@@ -1,0 +1,256 @@
+{
+  "recordedAt": "2026-10-05T17:17:21.245Z",
+  "base": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
+  "source": "94e89be7c959087edfde4ebddf2f50fa5e02cc36",
+  "sourceTree": "23b3284a5cfc667b5cdc0e35643f07e71c333268",
+  "testSha": "806c58a83bb3c0f1f75b9e003de14aa525069950",
+  "sourceDelta": {
+    "path": "client/src/clarity/pages.tsx",
+    "replacementCount": 2,
+    "from": "/sign-in",
+    "to": "/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard",
+    "beforeSha256lf": "d7578fdee613e8eb9ed011c57b519d95b065d087408be221c1e6e908e928a822",
+    "afterSha256lf": "e7aa7fa5d1563eeae2575951050e692111cdadd4573e762fe277f640e3341821",
+    "allOtherBytesIdentical": true
+  },
+  "unchanged": [
+    {
+      "path": "client/src/components/Navbar.tsx",
+      "sha256lf": "6cdfbb0f05cc8d1fb28bfdc6b7a012ddb85e34d0c985bc88e71c09d8456a218a",
+      "identicalToFrozenBaseAndWorkingTree": true
+    },
+    {
+      "path": "client/src/components/Footer.tsx",
+      "sha256lf": "420b45dc09aefa572a65ae68b5add6a2ce3d435e54e1fea7d9db9f29390df7cb",
+      "identicalToFrozenBaseAndWorkingTree": true
+    },
+    {
+      "path": "client/src/index.css",
+      "sha256lf": "b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049",
+      "identicalToFrozenBaseAndWorkingTree": true
+    },
+    {
+      "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+      "sha256lf": "c0fbcc69686562fdd2ec1de6d6a487356118f1d18931f8de3ee9aefd7066eff8",
+      "identicalToFrozenBaseAndWorkingTree": true
+    },
+    {
+      "path": "client/src/research/assisted-order/assisted-order.css",
+      "sha256lf": "4460411bc255b37ea8663f0cccb6e19271693c25b41926ea3aa09c37176efc2e",
+      "identicalToFrozenBaseAndWorkingTree": true
+    },
+    {
+      "path": "client/src/App.tsx",
+      "sha256lf": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
+      "identicalToFrozenBaseAndWorkingTree": true
+    },
+    {
+      "path": "client/src/research/section.tsx",
+      "sha256lf": "3a798874b4714500585c7e4ec204bb141f7159f5735fdf3c05ab4c6847ebb866",
+      "identicalToFrozenBaseAndWorkingTree": true
+    },
+    {
+      "path": "client/src/research/pages/SignIn.tsx",
+      "sha256lf": "eaf109a362d162d08a4482624de4338a72ea1bd25e072691ef13f90d14ff4c2c",
+      "identicalToFrozenBaseAndWorkingTree": true
+    },
+    {
+      "path": "client/src/clarity/AccountAuthorityPages.tsx",
+      "sha256lf": "9ee808b1dbddebb779872d73467a61340546b53ea39efa821a0698389a662924",
+      "identicalToFrozenBaseAndWorkingTree": true
+    },
+    {
+      "path": "shared/research/auth-return-to.ts",
+      "sha256lf": "3341bee2f53d12f8be3969e820558c868a7118efcf31dbc0c1dbfebca0408d2c",
+      "identicalToFrozenBaseAndWorkingTree": true
+    },
+    {
+      "path": "client/src/research/core.tsx",
+      "sha256lf": "aa5572b6a7450cc7883fc9c37bd720aa78bf507409e293a62f11f32e686ddddc",
+      "identicalToFrozenBaseAndWorkingTree": true
+    },
+    {
+      "path": "client/src/research/pages/partners/Dashboard.tsx",
+      "sha256lf": "8b2588eb2fa25a9c3e4fea599390f64ae4dad766b8a149ba91305ac3b1101f10",
+      "identicalToFrozenBaseAndWorkingTree": true
+    }
+  ],
+  "runs": [
+    {
+      "job": "partner-signin-red-run1",
+      "result": {
+        "startedAt": "2026-10-05T17:12:54.120Z",
+        "head": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
+        "tree": "e56e6406354ee8cc9dd1c600563df58409afdc34",
+        "dirtyAtStart": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n?? client/src/clarity/partner-sign-in.test.tsx",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "client/src/clarity/partner-sign-in.test.tsx",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 56352,
+        "childPid": 66456,
+        "finishedAt": "2026-10-05T17:13:06.631Z",
+        "elapsedMs": 12511,
+        "exitCode": 1,
+        "signal": null,
+        "logSha256": "5fccf237e7eed82407123d7a957f49d0875309c2ba21f41d92dba830c0a06db4",
+        "finalHead": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
+        "dirtyAtEnd": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n?? client/src/clarity/partner-sign-in.test.tsx"
+      },
+      "log": "\n RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/b22f/xenios-website\n\n ❯ client/src/clarity/partner-sign-in.test.tsx (13 tests | 4 failed) 3307ms\n     × pins only the two partner-content links and preserves public inquiry guidance 198ms\n     × returns an approved account to its separately verified partner dashboard through link 0 245ms\n     × returns an approved account to its separately verified partner dashboard through link 1 232ms\n     × shows the canonical partner denial for an ordinary active customer without granting a partner 345ms\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  client/src/clarity/partner-sign-in.test.tsx > public partner sign-in destination without partner grants > pins only the two partner-content links and preserves public inquiry guidance\nAssertionError: expected [ '/sign-in', '/sign-in' ] to deeply equal [ …(2) ]\n\n- Expected\n+ Received\n\n  [\n-   \"/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard\",\n-   \"/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard\",\n+   \"/sign-in\",\n+   \"/sign-in\",\n  ]\n\n ❯ client/src/clarity/partner-sign-in.test.tsx:132:68\n    130|   it(\"pins only the two partner-content links and preserves public inq…\n    131|     await mount(\"/partners?returnTo=https%3A%2F%2Foutside.invalid&part…\n    132|     expect(signInLinks().map((link) => link.getAttribute(\"href\"))).toE…\n       |                                                                    ^\n    133|     expect(Array.from(host.querySelectorAll(\"header a, footer a\")).fil…\n    134|       .every((link) => link.getAttribute(\"href\") === \"/sign-in\")).toBe…\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯\n\n FAIL  client/src/clarity/partner-sign-in.test.tsx > public partner sign-in destination without partner grants > pins only the two partner-content links and preserves public inquiry guidance\nAssertionError: expected false to be true // Object.is equality\n\n- Expected\n+ Received\n\n- true\n+ false\n\n ❯ client/src/clarity/partner-sign-in.test.tsx:124:82\n    122|   expect(requests.every(({ init }) => !init.method || init.method === …\n    123|   expect(requests.every(({ path }) => [\"/api/research/me\", \"/api/resea…\n    124|     \"/api/research/catalog\", \"/api/research/partner/dashboard\"].includ…\n       |                                                                                  ^\n    125|   vi.unstubAllGlobals(); vi.restoreAllMocks();\n    126|   sessionStorage.clear(); localStorage.clear(); window.history.replace…\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯\n\n FAIL  client/src/clarity/partner-sign-in.test.tsx > public partner sign-in destination without partner grants > returns an approved account to its separately verified partner dashboard through link 0\n FAIL  client/src/clarity/partner-sign-in.test.tsx > public partner sign-in destination without partner grants > returns an approved account to its separately verified partner dashboard through link 1\nAssertionError: expected '/research/reset-password' to be '/research/reset-password?returnTo=%2F…' // Object.is equality\n\nExpected: \"/research/reset-password?returnTo=%2Fresearch%2Fpartners%2Fdashboard\"\nReceived: \"/research/reset-password\"\n\n ❯ client/src/clarity/partner-sign-in.test.tsx:144:8\n    142|     await followPartnerSignIn(index);\n    143|     expect(host.querySelector('a[data-testid=\"link-forgot-password\"]')…\n    144|       .toBe(\"/research/reset-password?returnTo=%2Fresearch%2Fpartners%…\n       |        ^\n    145|     await submit();\n    146|     expect(supa.auth.signInWithPassword).toHaveBeenCalledExactlyOnceWi…\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯\n\n FAIL  client/src/clarity/partner-sign-in.test.tsx > public partner sign-in destination without partner grants > shows the canonical partner denial for an ordinary active customer without granting a partner\nAssertionError: expected '/research/account' to be '/research/partners/dashboard' // Object.is equality\n\nExpected: \"/research/partners/dashboard\"\nReceived: \"/research/account\"\n\n ❯ client/src/clarity/partner-sign-in.test.tsx:159:38\n    157|     partnerExists = false;\n    158|     await followPartnerSignIn(); await submit();\n    159|     expect(window.location.pathname).toBe(destination);\n       |                                      ^\n    160|     expect(calls(\"/api/research/partner/dashboard\")).toHaveLength(1);\n    161|     expect(host.textContent).toContain(\"No partner account found.\");\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯\n\n\n Test Files  1 failed (1)\n      Tests  4 failed | 9 passed (13)\n   Start at  12:12:55\n   Duration  10.65s (transform 1.54s, setup 0ms, import 3.48s, tests 3.31s, environment 3.61s)\n\n",
+      "processSamples": [
+        {
+          "observedAt": "2026-10-05T17:12:59.821Z",
+          "processes": [
+            {
+              "ProcessId": 56352,
+              "ParentProcessId": 26196,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 66456,
+              "ParentProcessId": 56352,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 26128,
+              "ParentProcessId": 66456,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "job": "partner-signin-red-run2",
+      "result": {
+        "startedAt": "2026-10-05T17:13:53.569Z",
+        "head": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
+        "tree": "e56e6406354ee8cc9dd1c600563df58409afdc34",
+        "dirtyAtStart": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n?? client/src/clarity/partner-sign-in.test.tsx",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "client/src/clarity/partner-sign-in.test.tsx",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 56296,
+        "childPid": 53868,
+        "finishedAt": "2026-10-05T17:14:11.612Z",
+        "elapsedMs": 18043,
+        "exitCode": 1,
+        "signal": null,
+        "logSha256": "57fec3abe7667de3cd4f349d88812828e546195ceb03fac7fa2df07637e98550",
+        "finalHead": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
+        "dirtyAtEnd": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n?? client/src/clarity/partner-sign-in.test.tsx"
+      },
+      "log": "\n RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/b22f/xenios-website\n\n ❯ client/src/clarity/partner-sign-in.test.tsx (13 tests | 4 failed) 4033ms\n     × pins only the two partner-content links and preserves public inquiry guidance 362ms\n     × returns an approved account to its separately verified partner dashboard through link 0 355ms\n     × returns an approved account to its separately verified partner dashboard through link 1 277ms\n     × shows the canonical partner denial for an ordinary active customer without granting a partner 398ms\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  client/src/clarity/partner-sign-in.test.tsx > public partner sign-in destination without partner grants > pins only the two partner-content links and preserves public inquiry guidance\nAssertionError: expected [ '/sign-in', '/sign-in' ] to deeply equal [ …(2) ]\n\n- Expected\n+ Received\n\n  [\n-   \"/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard\",\n-   \"/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard\",\n+   \"/sign-in\",\n+   \"/sign-in\",\n  ]\n\n ❯ client/src/clarity/partner-sign-in.test.tsx:133:68\n    131|   it(\"pins only the two partner-content links and preserves public inq…\n    132|     await mount(\"/partners?returnTo=https%3A%2F%2Foutside.invalid&part…\n    133|     expect(signInLinks().map((link) => link.getAttribute(\"href\"))).toE…\n       |                                                                    ^\n    134|     const shellLinks = Array.from(host.querySelectorAll(\"header a, foo…\n    135|     expect(shellLinks.length).toBeGreaterThan(0);\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯\n\n FAIL  client/src/clarity/partner-sign-in.test.tsx > public partner sign-in destination without partner grants > returns an approved account to its separately verified partner dashboard through link 0\n FAIL  client/src/clarity/partner-sign-in.test.tsx > public partner sign-in destination without partner grants > returns an approved account to its separately verified partner dashboard through link 1\nAssertionError: expected '/research/reset-password' to be '/research/reset-password?returnTo=%2F…' // Object.is equality\n\nExpected: \"/research/reset-password?returnTo=%2Fresearch%2Fpartners%2Fdashboard\"\nReceived: \"/research/reset-password\"\n\n ❯ client/src/clarity/partner-sign-in.test.tsx:146:8\n    144|     await followPartnerSignIn(index);\n    145|     expect(host.querySelector('a[data-testid=\"link-forgot-password\"]')…\n    146|       .toBe(\"/research/reset-password?returnTo=%2Fresearch%2Fpartners%…\n       |        ^\n    147|     await submit();\n    148|     expect(supa.auth.signInWithPassword).toHaveBeenCalledExactlyOnceWi…\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯\n\n FAIL  client/src/clarity/partner-sign-in.test.tsx > public partner sign-in destination without partner grants > shows the canonical partner denial for an ordinary active customer without granting a partner\nAssertionError: expected '/research/account' to be '/research/partners/dashboard' // Object.is equality\n\nExpected: \"/research/partners/dashboard\"\nReceived: \"/research/account\"\n\n ❯ client/src/clarity/partner-sign-in.test.tsx:161:38\n    159|     partnerExists = false;\n    160|     await followPartnerSignIn(); await submit();\n    161|     expect(window.location.pathname).toBe(destination);\n       |                                      ^\n    162|     expect(calls(\"/api/research/partner/dashboard\")).toHaveLength(1);\n    163|     expect(host.textContent).toContain(\"No partner account found.\");\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯\n\n\n Test Files  1 failed (1)\n      Tests  4 failed | 9 passed (13)\n   Start at  12:13:57\n   Duration  13.68s (transform 2.52s, setup 0ms, import 4.57s, tests 4.03s, environment 3.88s)\n\n",
+      "processSamples": [
+        {
+          "observedAt": "2026-10-05T17:14:00.624Z",
+          "processes": [
+            {
+              "ProcessId": 56296,
+              "ParentProcessId": 13120,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 53868,
+              "ParentProcessId": 56296,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 23280,
+              "ParentProcessId": 53868,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "job": "partner-signin-green-run1",
+      "result": {
+        "startedAt": "2026-10-05T17:14:56.808Z",
+        "head": "3315efe1b5cbb8a286d31e41d38fd2786f4fe279",
+        "tree": "64c927f17b7cc1de285e4cbfe744c5cb2b4479bf",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "client/src/clarity/partner-sign-in.test.tsx",
+          "client/src/research/pages/sign-in.test.tsx",
+          "shared/research/auth-return-to.test.ts",
+          "client/src/research/pages/partners/Dashboard.test.tsx",
+          "server/research/partner-access-wall.test.ts",
+          "server/research/partners/own-reads.test.ts",
+          "client/src/research/core-member-denial.test.tsx",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 17760,
+        "childPid": 61824,
+        "finishedAt": "2026-10-05T17:15:35.153Z",
+        "elapsedMs": 38345,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "45c0362a22e59a6ee66af94ab290296322534e427467755a37f950affed8d034",
+        "finalHead": "3315efe1b5cbb8a286d31e41d38fd2786f4fe279",
+        "dirtyAtEnd": ""
+      },
+      "log": "\n RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/b22f/xenios-website\n\n\n Test Files  7 passed (7)\n      Tests  205 passed (205)\n   Start at  12:14:58\n   Duration  36.95s (transform 5.57s, setup 0ms, import 19.03s, tests 9.09s, environment 6.41s)\n\n",
+      "processSamples": [
+        {
+          "observedAt": "2026-10-05T17:15:02.741Z",
+          "processes": [
+            {
+              "ProcessId": 17760,
+              "ParentProcessId": 62960,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 61824,
+              "ParentProcessId": 17760,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 63696,
+              "ParentProcessId": 61824,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Synthetic Auth/HTTP transports and focused route harness, not a full App or live account journey.",
+    "The independent read-only test audit does not replace Claude acceptance.",
+    "No build, typecheck, full suite, browser, real email, managed database or hosted action.",
+    "Red run1 includes an additional missing /api/config fixture assertion; red run2 preserves the corrected-fixture destination reproduction separately.",
+    "Process samples are discrete, not continuous attestation of every worker.",
+    "Frozen IC2 branch and evidence are not changed or relabeled by this partner slice."
+  ]
+}

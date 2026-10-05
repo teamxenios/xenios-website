@@ -3,8 +3,24 @@
   "healthProviderNeutral20260930": {
     "task": "ASSISTED-ORDER-CONVERSION",
     "session": "codex-xenios-health-launch-implementation-20260930",
-    "branch": "codex/xenios-health-launch-implementation-20260930",
-    "status": "ABC_IC2_FOCUSED_PASS_PENDING_NARROW_REVIEW_RELEASE_HELD",
+    "branch": "codex/xenios-partner-signin-return-20261005",
+    "status": "PARTNER_SIGNIN_RETURN_FOCUSED_PASS_PENDING_REVIEW_RELEASE_HELD",
+    "currentPartnerSignInWork": {
+      "task": "HEALTH-PARTNER-SIGNIN-RETURN-20261005",
+      "baseRecordsSha": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
+      "runtimeSourceSha": "94e89be7c959087edfde4ebddf2f50fa5e02cc36",
+      "runtimeSourceTree": "23b3284a5cfc667b5cdc0e35643f07e71c333268",
+      "testOnlySha": "806c58a83bb3c0f1f75b9e003de14aa525069950",
+      "cleanTestedHead": "3315efe1b5cbb8a286d31e41d38fd2786f4fe279",
+      "scope": "Two public PartnersPage sign-in hrefs carry existing allowlisted partner dashboard returnTo. All other runtime bytes, protected hashes and frozen IC2 branch/evidence unchanged. No account, partner, membership, product or financial authority changes.",
+      "qualification": "205 PASS across 7 focused files, no failures/skips, exit 0; clean start/end, Node v20.19.0/npm 10.8.2, 38.345 seconds wrapper. Separate red1 and red2 each 9 PASS/4 FAIL; red1 also had corrected config fixture assertion. New 13-case composition uses actual UI/provider/adapter with synthetic Auth/HTTP, not full App or live account proof.",
+      "handoff": "docs/health-launch/PARTNER_SIGNIN_RETURN_20261005.md",
+      "rawArchiveSha256": "799907999efe82155ae1f38476ced3b633d2dda0a6c0df51cd3786463eaa1c0e",
+      "claudeAccepted": false,
+      "buildOrAggregateRun": false,
+      "hostedChangesAuthorized": false,
+      "productionMutated": false
+    },
     "currentABCIC2Work": {
       "task": "HEALTH-ABC-IC2-TIMELINE-20261005",
       "runtimeSourceSha": "c93bf5a2c1e2b50c5b40c65f0149033ad84658a0",
@@ -134,11 +150,11 @@
       "hostedChangesAuthorized": false,
       "independentReview": "EXACT_FROZEN_SUCCESSOR_READY_FOR_REVIEW_NOT_CLAUDE_ACCEPTED"
     },
-    "runtimeSourceSha": "c93bf5a2c1e2b50c5b40c65f0149033ad84658a0",
-    "runtimeSourceTree": "fd729bca811b8e91ec13a31d9d3985472087579a",
-    "testOnlySha": "2a791beeb26b75266b9468aa4a32a4cd07fe871d",
+    "runtimeSourceSha": "94e89be7c959087edfde4ebddf2f50fa5e02cc36",
+    "runtimeSourceTree": "23b3284a5cfc667b5cdc0e35643f07e71c333268",
+    "testOnlySha": "806c58a83bb3c0f1f75b9e003de14aa525069950",
     "releaseControlSha": "22f8d390c730460aa3e695f84213de6bd41ea1b2",
-    "successorScope": "Microscopic IC2-only neutral customer timeline border; protected hashes/admin/focus/CTA unchanged. Focused15PASS, pending existing Claude narrow recheck. Prior width gap closed on reviewed70cd421, no new browser qualification. All financial/protection/managed holds preserved; stop at pushed handoff.",
+    "successorScope": "Separate two-link partner sign-in return successor from frozen b0e818f. Focused 205 PASS, awaiting independent review; no build/full suite or live account qualification. All protected, IC2, account/partner/product/financial authorities unchanged; stop at pushed handoff.",
     "currentADP02Work": {
       "status": "FINAL_LOCAL_SQL_AND_PREFLIGHT_PASS_AGGREGATE_FAILED_SEAM_ASSERTION_NOT_CLAUDE_ACCEPTED",
       "task": "HEALTH-HL12-ADP02-PROVIDER-CREATE-RECOVERY-20261001",

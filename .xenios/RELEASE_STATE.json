@@ -2,6 +2,20 @@
   "schemaVersion": 1,
   "healthProviderNeutral20260930": {
     "status": "NOT_READY_FOR_PRODUCTION_PROMOTION",
+    "currentPartnerSignInWork": {
+      "runtimeSourceSha": "94e89be7c959087edfde4ebddf2f50fa5e02cc36",
+      "runtimeSourceTree": "23b3284a5cfc667b5cdc0e35643f07e71c333268",
+      "testOnlySha": "806c58a83bb3c0f1f75b9e003de14aa525069950",
+      "cleanTestedHead": "3315efe1b5cbb8a286d31e41d38fd2786f4fe279",
+      "qualification": "205 PASS/7 focused files, no failures/skips, exit 0, Node v20.19.0/npm 10.8.2. Only two public partner sign-in hrefs changed. Synthetic composed Auth/HTTP tests; prior failures preserved separately. No build/typecheck/full suite/live-account/browser qualification.",
+      "handoff": "docs/health-launch/PARTNER_SIGNIN_RETURN_20261005.md",
+      "frozenIC2BranchAndEvidenceUnchanged": true,
+      "manifestRecut": false,
+      "claudeAccepted": false,
+      "managedQualified": false,
+      "hostedChangesAuthorized": false,
+      "productionMutated": false
+    },
     "currentABCIC2Work": {
       "runtimeSourceSha": "c93bf5a2c1e2b50c5b40c65f0149033ad84658a0",
       "runtimeSourceTree": "fd729bca811b8e91ec13a31d9d3985472087579a",
@@ -120,9 +134,9 @@
       "managedQualified": false,
       "productionMutated": false
     },
-    "runtimeSourceSha": "c93bf5a2c1e2b50c5b40c65f0149033ad84658a0",
-    "runtimeSourceTree": "fd729bca811b8e91ec13a31d9d3985472087579a",
-    "testOnlySha": "2a791beeb26b75266b9468aa4a32a4cd07fe871d",
+    "runtimeSourceSha": "94e89be7c959087edfde4ebddf2f50fa5e02cc36",
+    "runtimeSourceTree": "23b3284a5cfc667b5cdc0e35643f07e71c333268",
+    "testOnlySha": "806c58a83bb3c0f1f75b9e003de14aa525069950",
     "releaseControlSha": "22f8d390c730460aa3e695f84213de6bd41ea1b2",
     "currentAggregateStatus": "NOT_RUN_FOR_ABC. Historical ADPG1_19443PASS3FAIL85SKIP_EXIT1_TWO_PROTECTION_ASSERTIONS_ONE_PGCRYPTO_TIMEOUT retained; diagnostics do not replace aggregate. Prior ADP03 aggregate remains separate.",
     "currentADP01Status": "PUSHED_e9f221c_SOURCE_9c1fe1e_TESTS_8295030_CONTROLS_FINAL_V2_SQL_RUN3_AND_PREFLIGHT_PASS_AGGREGATE18998P1F85S_EXIT1_NO_INDEPENDENT_OR_HOSTED_ACCEPTANCE",
