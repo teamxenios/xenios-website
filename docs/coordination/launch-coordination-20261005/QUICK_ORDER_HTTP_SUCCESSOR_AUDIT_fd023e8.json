@@ -54,5 +54,30 @@
       "handler.mjs:210 same parser-error classifier"
     ],
     "limits": "Actual raw transport, Express composition, typecheck and successor execution unverified. No tests or code execution."
+  },
+  "independentStaticIntegrityCheck": {
+    "agent": "/root/refund_audit",
+    "conclusion": "No integrity mismatch; no semantic acceptance or qualification.",
+    "handoffTree": "1af8dec1bbcd7378e3af4646ec6c36c70254276a",
+    "sourceStats": {
+      "files": 17,
+      "insertions": 663,
+      "deletions": 64
+    },
+    "combinedStats": {
+      "files": 20,
+      "insertions": 1323,
+      "deletions": 185
+    },
+    "invariants": "14protected/shared baselines; client/shared/SQL/manifest/verifier/PWA/package/persistence proposal; both patches/hash tables; other registry entries/top-level fields; six historical logs unchanged.",
+    "snapshotFileBindings": 14,
+    "configHashesVerified": 2,
+    "targetedDefinitions": "Seven added Node groups and36added containment cases (25owned/11unrelated); loops within Node groups mean a red failure can stop later matrix rows.",
+    "deferral": "Snapshots not materialized, executions NOT RUN, exits/logs null; no test launch or fresh reservation.",
+    "receiptSha256": {
+      "plan": "51991abde14d91fca68567dbedff5a8381694eefa6f820300c1a2fe5bd4cfb40",
+      "integrity": "3182e77820f98d7d2701b4601eb0cde4695e84d1681e16283f5424b34c212f06"
+    },
+    "limit": "Dry-patch exit0 inspected, not reproduced; proposed commands need resolved cwd/argv, fresh reservation/prechecks, snapshot materialization/hash attestation, raw receipts."
   }
 }

@@ -1,0 +1,10 @@
+{
+  "recordedAt": "2026-10-05T21:22:32.373Z",
+  "thread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
+  "records": "7d53f0c9fe710055605100515f1669f070cfd2ac",
+  "source": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+  "handoff": "1b3bb16bf99d89af18a88c702434e929ebe83c02",
+  "sendAcknowledged": true,
+  "reply": "Pending; do not resend",
+  "scope": "Exact HTTP source/clean handoff and static invariants; disk13.91GiB deferral/causeunknown; original reviewer busy and deliveryunconfirmed; no A1/A2/hosted authority; priorplannerpartial20000cap."
+}
