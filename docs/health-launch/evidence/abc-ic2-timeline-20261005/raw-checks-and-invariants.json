@@ -1,0 +1,166 @@
+{
+  "recordedAt": "2026-10-05T16:17:34.116Z",
+  "reviewedSource": "70cd421a6ab79513744f531d921b3ece61044874",
+  "source": "c93bf5a2c1e2b50c5b40c65f0149033ad84658a0",
+  "sourceTree": "fd729bca811b8e91ec13a31d9d3985472087579a",
+  "testSha": "2a791beeb26b75266b9468aa4a32a4cd07fe871d",
+  "sourceDelta": ".xenios-order-page--customer .xenios-order-timeline li { border-left-color: var(--rule); }",
+  "cssBeforeSha256lf": "a370791bc0a6e2d218e275a4d00fb045eb52d285a5ba34143abcbfc5ad4117e4",
+  "cssAfterSha256lf": "4460411bc255b37ea8663f0cccb6e19271693c25b41926ea3aa09c37176efc2e",
+  "allOtherStylesIdentical": true,
+  "unchanged": [
+    {
+      "path": "client/src/components/Navbar.tsx",
+      "sha256lf": "6cdfbb0f05cc8d1fb28bfdc6b7a012ddb85e34d0c985bc88e71c09d8456a218a",
+      "identicalToReviewedSourceAndWorkingTree": true
+    },
+    {
+      "path": "client/src/components/Footer.tsx",
+      "sha256lf": "420b45dc09aefa572a65ae68b5add6a2ce3d435e54e1fea7d9db9f29390df7cb",
+      "identicalToReviewedSourceAndWorkingTree": true
+    },
+    {
+      "path": "client/src/index.css",
+      "sha256lf": "b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049",
+      "identicalToReviewedSourceAndWorkingTree": true
+    },
+    {
+      "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+      "sha256lf": "c0fbcc69686562fdd2ec1de6d6a487356118f1d18931f8de3ee9aefd7066eff8",
+      "identicalToReviewedSourceAndWorkingTree": true
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderQueue.tsx",
+      "sha256lf": "97833b830a0053c11d65b79e28dbf57cc637b4b5e29a13c029d42884eb4243dc",
+      "identicalToReviewedSourceAndWorkingTree": true
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+      "sha256lf": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e",
+      "identicalToReviewedSourceAndWorkingTree": true
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderSession.tsx",
+      "sha256lf": "3d6a482f4c129aaa944d87bf6bbdd75332d2e25da7ac951b7b8fc078ea043b1a",
+      "identicalToReviewedSourceAndWorkingTree": true
+    }
+  ],
+  "runs": [
+    {
+      "job": "abc-ic2-red-run1",
+      "result": {
+        "startedAt": "2026-10-05T16:15:24.004Z",
+        "head": "7d665730b6db11d64f4a9910af99fde420ded53b",
+        "tree": "98a52ba556f54a9df8ceb8f0cc3097b11c022c4e",
+        "dirtyAtStart": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M client/src/research/assisted-order/assisted-order-premium.test.tsx",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "client/src/research/assisted-order/assisted-order-premium.test.tsx",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 63084,
+        "childPid": 58612,
+        "finishedAt": "2026-10-05T16:15:49.491Z",
+        "elapsedMs": 25487,
+        "exitCode": 1,
+        "signal": null,
+        "logSha256": "ed6267d0eac3fcf17f8aad0d7ce06650e5d15eefeb68d9ddc1be38b0045e9efe",
+        "finalHead": "7d665730b6db11d64f4a9910af99fde420ded53b",
+        "dirtyAtEnd": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M client/src/research/assisted-order/assisted-order-premium.test.tsx"
+      },
+      "log": "\n RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/b22f/xenios-website\n\n ❯ client/src/research/assisted-order/assisted-order-premium.test.tsx (10 tests | 1 failed) 285ms\n     × keeps the customer timeline neutral, not purple, without changing the admin timeline 18ms\n\n⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯\n\n FAIL  client/src/research/assisted-order/assisted-order-premium.test.tsx > customer assisted-order premium presentation boundary > keeps the customer timeline neutral, not purple, without changing the admin timeline\nAssertionError: expected {} to deeply equal { 'border-left-color': 'var(--rule)' }\n\n- Expected\n+ Received\n\n- {\n-   \"border-left-color\": \"var(--rule)\",\n- }\n+ {}\n\n ❯ client/src/research/assisted-order/assisted-order-premium.test.tsx:117:22\n    115|   it(\"keeps the customer timeline neutral, not purple, without changin…\n    116|     const override = declarations(`${customer} .xenios-order-timeline …\n    117|     expect(override).toEqual({ \"border-left-color\": \"var(--rule)\" });\n       |                      ^\n    118|\n    119|     // Resolve the actual root/customer tokens rather than relying on …\n\n⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯\n\n\n Test Files  1 failed (1)\n      Tests  1 failed | 9 passed (10)\n   Start at  11:15:27\n   Duration  22.19s (transform 1.03s, setup 0ms, import 2.68s, tests 285ms, environment 18.36s)\n\n",
+      "processSamples": [
+        {
+          "observedAt": "2026-10-05T16:15:29.634Z",
+          "processes": [
+            {
+              "ProcessId": 63084,
+              "ParentProcessId": 60480,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 58612,
+              "ParentProcessId": 63084,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 53572,
+              "ParentProcessId": 58612,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "job": "abc-ic2-green-run1",
+      "result": {
+        "startedAt": "2026-10-05T16:16:30.360Z",
+        "head": "ddf679240c86f651ac8d577a3e98163f9ce1a39e",
+        "tree": "980ab0f1e287a9ba85b5bc5337482b2e272dda85",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "client/src/research/assisted-order/assisted-order-premium.test.tsx",
+          "client/src/research/assisted-order/assisted-order-accessibility.test.ts",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 58568,
+        "childPid": 44944,
+        "finishedAt": "2026-10-05T16:16:36.198Z",
+        "elapsedMs": 5838,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "3fe7b2db7798991f6a48760f81bc87815938bc90513081f19319e0233cd1025e",
+        "finalHead": "ddf679240c86f651ac8d577a3e98163f9ce1a39e",
+        "dirtyAtEnd": ""
+      },
+      "log": "\n RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/b22f/xenios-website\n\n\n Test Files  2 passed (2)\n      Tests  15 passed (15)\n   Start at  11:16:31\n   Duration  4.47s (transform 634ms, setup 0ms, import 1.27s, tests 304ms, environment 2.13s)\n\n",
+      "processSamples": [
+        {
+          "observedAt": "2026-10-05T16:16:35.932Z",
+          "processes": [
+            {
+              "ProcessId": 58568,
+              "ParentProcessId": 57280,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 44944,
+              "ParentProcessId": 58568,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 12312,
+              "ParentProcessId": 44944,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Source-contract and exact byte invariance, not a new browser computed-style run.",
+    "Prior Claude report d9998563 browser evidence is for70cd421, not this successor.",
+    "No build, typecheck, aggregate or browser rerun requested for this microscopic CSS-only correction.",
+    "Process samples are discrete; missing descendants are not attested.",
+    "Old preview stopped before source change; old dist is not successor evidence."
+  ]
+}

@@ -1,6 +1,25 @@
 # Externally blocked work
 
+## 2026-10-05 IC-2 successor and browser evidence reconciliation
+
+Claude report32 at d9998563 independently closed the predecessor's ABC-R2
+ten-width gap:50/50 production-client loads, zero overflow; IC-1 admin
+computed styles unchanged. This supersedes the local-tooling gap below for
+source70cd421 only. Native200%, keyboard and forced-colors were not captured
+and remain supplementary QA, not viewport-as-zoom evidence.
+
+The sole Core P1 IC-2 is locally corrected at c93bf5a2/treefd729bca with one
+customer-only neutral timeline border and15focused passes. Protected hashes,
+admin/focus/CTA and manifest unchanged. Existing Claude narrow recheck remains;
+no build/full suite/browser rerun for this microscopic scope. Old preview59535
+is now stopped, not running. Exact evidence and stop-point handoff:
+docs/health-launch/ABC_IC2_TIMELINE_20261005.md.
+Manifest approval, GATE-01 and independent integrated release qualification
+remain required. No managed or production action is authorized or performed.
+
 ## 2026-10-05 A/B/C browser qualification (tooling, not proven source defect)
+
+Historical local-run snapshot; see the later reconciliation immediately above.
 
 Source70cd421/tree37ea984 and tests1a409 have passing focused checks and clean
 Node20.19 typecheck/build. Native helper path initialization failed; Chrome

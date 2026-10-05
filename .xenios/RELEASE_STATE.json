@@ -2,7 +2,23 @@
   "schemaVersion": 1,
   "healthProviderNeutral20260930": {
     "status": "NOT_READY_FOR_PRODUCTION_PROMOTION",
+    "currentABCIC2Work": {
+      "runtimeSourceSha": "c93bf5a2c1e2b50c5b40c65f0149033ad84658a0",
+      "runtimeSourceTree": "fd729bca811b8e91ec13a31d9d3985472087579a",
+      "testOnlySha": "2a791beeb26b75266b9468aa4a32a4cd07fe871d",
+      "cleanTestedHead": "ddf679240c86f651ac8d577a3e98163f9ce1a39e",
+      "status": "LOCAL_IC2_CORRECTED_PENDING_NARROW_REVIEW_RELEASE_HELD",
+      "qualification": "One customer-only CSS line, all other CSS/protected/admin bytes unchanged. Red9PASS1FAIL separate; clean green15PASS2files0SKIP exit0 Node20.19.0/npm10.8.2. No new build/typecheck/full-suite/browser execution; old preview stopped.",
+      "reviewedPredecessor": "d9998563 report32 closed ABC-R2 at70cd421 using50loads10widths; IC1 unchanged. IC2 successor requires independent recheck. ABC-R3 aggregate and deferredP3 remain; nativezoom not claimed.",
+      "handoff": "docs/health-launch/ABC_IC2_TIMELINE_20261005.md",
+      "manifestRecut": false,
+      "claudeAccepted": false,
+      "managedQualified": false,
+      "hostedChangesAuthorized": false,
+      "productionMutated": false
+    },
     "currentABCWork": {
+      "classification": "PREDECESSOR_LOCAL_RUN_SNAPSHOT_SUPERSEDED_BY_CURRENT_ABC_IC2_WORK",
       "runtimeSourceSha": "70cd421a6ab79513744f531d921b3ece61044874",
       "runtimeSourceTree": "37ea984993cc78ee61d0e9ca944fca0213e73ba8",
       "testOnlySha": "1a409e2f7e1fcdeffc78d24428eeb626d7888e9c",
@@ -104,9 +120,9 @@
       "managedQualified": false,
       "productionMutated": false
     },
-    "runtimeSourceSha": "70cd421a6ab79513744f531d921b3ece61044874",
-    "runtimeSourceTree": "37ea984993cc78ee61d0e9ca944fca0213e73ba8",
-    "testOnlySha": "1a409e2f7e1fcdeffc78d24428eeb626d7888e9c",
+    "runtimeSourceSha": "c93bf5a2c1e2b50c5b40c65f0149033ad84658a0",
+    "runtimeSourceTree": "fd729bca811b8e91ec13a31d9d3985472087579a",
+    "testOnlySha": "2a791beeb26b75266b9468aa4a32a4cd07fe871d",
     "releaseControlSha": "22f8d390c730460aa3e695f84213de6bd41ea1b2",
     "currentAggregateStatus": "NOT_RUN_FOR_ABC. Historical ADPG1_19443PASS3FAIL85SKIP_EXIT1_TWO_PROTECTION_ASSERTIONS_ONE_PGCRYPTO_TIMEOUT retained; diagnostics do not replace aggregate. Prior ADP03 aggregate remains separate.",
     "currentADP01Status": "PUSHED_e9f221c_SOURCE_9c1fe1e_TESTS_8295030_CONTROLS_FINAL_V2_SQL_RUN3_AND_PREFLIGHT_PASS_AGGREGATE18998P1F85S_EXIT1_NO_INDEPENDENT_OR_HOSTED_ACCEPTANCE",
