@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T19:03:41.186Z",
-  "objective": "Automate verified Codex-Claude-ChatGPT handoffs and prepare the gym-owner affiliate and customer product-subscription launch without bypassing release authorities.",
+  "updatedAt": "2026-10-05T19:28:22.756Z",
+  "objective": "Automate verified Codex-Claude-ChatGPT launch coordination, preserve accepted source and implement the separately authorized Quick Order intake while production authorities remain held.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
   "automationId": "xenios-launch-coordination",
@@ -10,7 +10,7 @@
     "ic2Tree": "fd729bca811b8e91ec13a31d9d3985472087579a",
     "thread": "01a0e098-3b23-7233-9b07-877ace092650",
     "records": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
-    "activeScope": "Accepted Core/partner branches frozen; same existing chat now owns single accepted-source integration lane",
+    "activeScope": "Frozen accepted integration; same Core chat supplies read-only intake and direct user-request relay. Single Quick Order child owns implementation.",
     "effort": "ultra",
     "model": "gpt-6-astra"
   },
@@ -67,7 +67,7 @@
     "autoDeployObservedAt": "2026-10-05T17:31:19.811Z"
   },
   "disk": {
-    "lastFreeGiB": 27.52,
+    "lastFreeGiB": 27.01,
     "preservedDockerVolumes": 827,
     "compactionReceipt": "docs/coordination/launch-coordination-20261005/docker-compaction-result.json",
     "fullLocalSuiteMinimumFreeGiB": 20,
@@ -92,7 +92,7 @@
   ],
   "subscription": {
     "cwd": "C:/Users/sboad/.codex/worktrees/5b21/xenios-website",
-    "status": "SOURCE ACCEPT at disabled purchase boundary; producer parked; conditions require exact integrated17file run and all real buying blockers remain OPEN",
+    "status": "SOURCE ACCEPT at disabled purchase boundary; producer parked. PS-R1 and adapter-levelPS-R5 closed by integrated review; six real buying gaps and other release holds remain OPEN.",
     "scope": "canonical product subscription component/adapter/service plus coordinated ProductPage mount; no invented live offer or payment",
     "base": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
     "effort": "ultra",
@@ -111,20 +111,28 @@
     "reviewStatus": "ACCEPT conditional for source integration; affiliate/referral/subscription readiness PARTIAL; live purchase NOT READY",
     "reviewArtifact": "docs/coordination/launch-coordination-20261005/CLAUDE_SUBSCRIPTION_ACCEPTANCE.txt",
     "findings": [
-      "PS-R1 clean integrated 17-file run reports 401 passes; pushed receipt verification and independent closure pending",
+      "PS-R1 CLOSED by Claude04cbbee: exact integrated17-file401pass0fail0skip run",
       "PS-R2 pre-existing server typed payment references OPEN",
       "PS-R3 pre-existing missing capability projection OPEN",
       "PS-R4 placeholder and forward-looking copy OPEN",
-      "PS-R5 actual HTTP 400/403 test included in clean integrated run; pushed receipt verification and independent closure pending",
+      "PS-R5 CLOSED at adapter level by Claude04cbbee: actual Response400/403 behind mocked fetch, not live HTTP/provider",
       "PS-R6 policy100 vs effective50 OPEN; UI enforces50",
       "PS-R7 free-string subscription price version vs integer cart version OPEN"
     ]
   },
   "qualificationSlot": {
-    "owner": null,
-    "scope": "Integrator released compute. No heavy tests/builds/browser/database jobs queued by coordinator.",
-    "next": "Read-only independent Claude source and receipt review",
-    "fullSuite": "Explicitly resource-deferred; requires fresh quiet-host qualification slot"
+    "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "scope": "Quick Order has coordinator reservation for short focused checks only; no heavy tests, build, browser or database job authorized without fresh host qualification.",
+    "next": "Current sole Quick Order worker continues unprotected source and prepares exact protected/schema approval packet.",
+    "fullSuite": "DEFERRED/NOT RUN for original integration; no automatic reruns merely to improve summary reporter.",
+    "lastCoordinatorResources": {
+      "observedAt": "2026-10-05T19:13:38.6907389Z",
+      "availableMiB": 1263,
+      "freeDiskGiB": 27.01,
+      "committedGB": 40.69,
+      "commitLimitGB": 60.73,
+      "heavyJobs": []
+    }
   },
   "partnerReturn": {
     "source": "94e89be7c959087edfde4ebddf2f50fa5e02cc36",
@@ -142,7 +150,7 @@
     "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
     "branch": "codex/accepted-source-integration-20261005",
     "base": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
-    "status": "Final source/evidence/handoff pushed and producer clean, stopped, compute released; independent Claude review ready to dispatch",
+    "status": "SOURCE ACCEPT at pushed Claude verdict04cbbee plus records correctionfffa33a; RELEASE QUALIFICATION INCOMPLETE. Frozen producer clean and parked.",
     "request": "docs/coordination/launch-coordination-20261005/INTEGRATION_REQUEST.txt",
     "scope": "accepted source/test/candidate composition and serial qualification only; no Finance runtime or hosted mutation",
     "requestCommit": "561596358cbe5ba6b8d5a5a93f85e7df611b2479",
@@ -187,10 +195,10 @@
         "exitCode": 0,
         "wrapperSeconds": 76.855
       },
-      "typecheck": "PASS, producer report pending pushed receipt verification",
-      "evidenceStatus": "44 indexed evidence files verified by coordinator subagent; focused clean-source start/result/log counts corroborated. Independent Claude verdict still pending.",
+      "typecheck": "PASS, exact pushed start/result/log receipts verified by coordinator and Claude",
+      "evidenceStatus": "All44 indexed files,8 completed jobs and49 focused test bindings independently verified by Claude; no runtime drift. Historical304MiB figure lacks raw supporting sample.",
       "fullAggregate": "DEFERRED_RESOURCE_PRESSURE: available RAM 805 MiB at 18:46:59Z and 1452 MiB at 18:47:27Z; no inference of pass/fail; prior historical failed aggregates retained",
-      "build": "PASS, producer report pending pushed receipt verification",
+      "build": "PASS, exact pushed start/result/log receipts verified by coordinator and Claude",
       "runtime": "Pinned Node 20.19.0 and npm 10.8.2",
       "noEmDash": {
         "sourceForbidden": 0,
@@ -203,7 +211,7 @@
       "protection": "FAIL: three accepted Core hash changes still await Samuel; other reported inherited static/seam/default-origin-main mismatches require evidence interpretation",
       "browser": "Bounded loopback synthetic reads against actual production client, writes refused. Reported overflow zero at actual 1440, 1024, 767, 430, 390, 320 CSS pixels; requested 768 measured 767. Partner return/signed-out denial and unavailable ProductPage passed bounded checks. Exact 768/native 200%/CLS not claimed. Forced-colors DOM plus public screenshot captured.",
       "browserCleanup": "Interrupted TTY stop exit 1, no graceful-stop event. Producer reports preview PIDs absent and all 349 snapshot assets independently rehashed.",
-      "countingNote": "401 subscription and 626 affected counts overlap and must not be added"
+      "countingNote": "17 and36 file sets intersect in4 and union49;401 and626 tests overlap and are not additive. Corrected reviewfffa33a matches exact arrays and bindings."
     },
     "reviewDraft": "docs/coordination/launch-coordination-20261005/INTEGRATION_REVIEW_REQUEST_DRAFT.txt",
     "evidence": "fc53751ff7a988d029d5dabbd9f24f1431b62d19",
@@ -214,7 +222,30 @@
     "handoffPath": "docs/health-launch/accepted-source-integration-20261005/HANDOFF.md",
     "pushedAndCleanVerified": true,
     "sourceDriftAfterQualification": false,
-    "reviewRequest": "docs/coordination/launch-coordination-20261005/INTEGRATION_REVIEW_REQUEST.txt"
+    "reviewRequest": "docs/coordination/launch-coordination-20261005/INTEGRATION_REVIEW_REQUEST.txt",
+    "review": {
+      "session": "5fb80ba6-3214-4186-aef0-0c556fd6627b",
+      "forkedFrom": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+      "model": "claude-fable-5-1",
+      "requestedCliEffort": "max",
+      "reviewerEffortDisclosure": "Reviewer last observed xhigh internally and could not verify a later change; do not call requested max observed effective effort.",
+      "cwd": "C:/xenios-wt/health-review",
+      "branch": "claude/xenios-health-launch-review-20260930",
+      "commit": "fffa33a6b3407b407b2b43d3c5a5c7054887f590",
+      "path": "docs/review/xenios-health-launch-review-20260930/35_INTEGRATION_756a906_ACCEPTANCE_2026-10-05.md",
+      "artifact": "docs/coordination/launch-coordination-20261005/CLAUDE_INTEGRATION_ACCEPTANCE.md",
+      "disposition": "SOURCE ACCEPT WITH EXPLICIT RELEASE HOLDS",
+      "releaseQualification": "INCOMPLETE",
+      "remoteVerified": true,
+      "method": "Read-only Git-object composition and receipt/hash verification; no part2 test/build/browser/DB reruns.",
+      "psR1": "CLOSED: exact17-file clean source401/0/0 receipt",
+      "psR5": "CLOSED at adapter level: actual Response400/403 through mocked fetch; no live HTTP server/provider proof",
+      "findings": "No P0/P1/P2; four informational P3 findings: summary-only logs, located historical Finance ENOSPC receipt, unsupported304MiB historical memory figure, carried MC01 admin-notice overstatement.",
+      "correction": "CLOSED at fffa33a: 4 shared files,49unique; effort disclosure exact; no advance acceptance of aggregate failures. Remote and one-file diff verified; decision and holds unchanged.",
+      "cliRecovery": "Background --resume on a done-but-resident agent unexpectedly started copy d7b571f9. Copy immediately stopped, original5fb attached and correction delivered. Do not background-resume a resident agent again; attach it for continuation.",
+      "originalCommit": "04cbbee0d3d3ab32dfd6ae9002b82837423f6265",
+      "status": "DONE, idle resident session; attach original5fb for future authorized continuation, do not background-resume a resident session."
+    }
   },
   "claudeAcceptanceChain": {
     "commit": "42d8b6d55370bada976577936275215f4227794f",
@@ -225,10 +256,10 @@
     "scope": "Existing bounded acceptance chain and review checklist; no integrated-source verdict or founder approval"
   },
   "quickOrder": {
-    "status": "New request discovered in planning chat; read-only package and existing-session discovery only; no implementation dispatch",
-    "sourceThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
+    "status": "ACTIVE: exactly one isolated builder, now based on independently source-accepted756a906; real intake remains disabled",
+    "sourceThread": "01a0e098-3b23-7233-9b07-877ace092650",
     "sourceTurn": "2c15c0f1-2e96-4291-b39f-a3e37cc84741",
-    "userRequestSummary": "User asks for a Quick Order build prompt for Codex/Claude while continuing the other launch goal, and says the package is already extracted.",
+    "userRequestSummary": "Direct user request to build package now in exactly one isolated worker while keeping integration and existing reviewer frozen.",
     "package": "C:/Users/sboad/Downloads/Xenios_Quick_Order_Handoff_2026-10-05/quick-order",
     "adjacentProposal": "C:/Users/sboad/Downloads/01_CODEX_COORDINATOR_AND_QUICK_ORDER_BUILD.md",
     "canonicalRequirements": [
@@ -237,18 +268,88 @@
       "No parallel catalog/order ledger or commission authority from customer declarations",
       "Operator continuity and qualified database evidence before real collection"
     ],
-    "packageClaims": "47 tests and browser success are unverified package claims",
-    "scopeBoundary": "Do not modify the in-progress accepted-source candidate or infer production, payment, protection, product-plan or Access Hub approval from this request. No Quick Order chat was identified in the available 50-chat inventory; this does not prove none exists.",
+    "packageClaims": "Verified package baseline: npm test FAILED exit1 on literal Windows Node20 glob; explicit2file node--test PASS47/47 and npm run check PASS. No app integration/browser/DB acceptance.",
+    "scopeBoundary": "One worker with up to3 disjoint specialists. No protected mount/schema waiver, no real customer data/charges/notification/activation/deployment. Protected route privacy classification and canonical persistence extension require concrete packet.",
     "intakeArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_INTAKE.md",
     "historicalSource": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
     "historicalTree": "e56e6406354ee8cc9dd1c600563df58409afdc34",
     "packageVersion": "v0.1.0",
-    "canonicalMappingStatus": "Historical document map only; current bindings and composition-root placement unverified",
+    "canonicalMappingStatus": "Worker revalidated current canonical customer viewer, assisted-order service/config/catalog/submit and master-catalog callbacks. Durable actor replay, structured declarations, decisive commit-time authority and atomic notification obligation remain gaps.",
     "plannerProposal": {
-      "status": "Planning chat returned a separate Quick Order implementation proposal; no implementation dispatch while accepted-source review remains pending",
+      "status": "Earlier long model reply truncated; separately supplied full01/02 briefs read and preserved. Direct later user request is implementation authority, not this model text.",
       "sourceTurn": "fc962b35-aabc-4072-85e4-e605e893fe4f",
       "retrievedTextTruncated": true,
       "note": "Tool limits truncated the long planning response. The separately read local coordinator proposal and complete package intake are preserved. Model text does not override current authority or authorize protected/hosted changes."
-    }
+    },
+    "thread": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "host": "local",
+    "cwd": "C:/Users/sboad/.codex/worktrees/389a/xenios-website",
+    "branch": "codex/xenios-health-quick-order-20261005",
+    "session": "codex-health-quick-order-20261005",
+    "task": "HEALTH-QUICK-ORDER-20261005",
+    "model": "gpt-6-astra",
+    "effort": "ultra",
+    "runtimeModelVerified": true,
+    "base": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+    "baseTree": "787432948d9464880df1dcfc5dff58eec7d889aa",
+    "directUserAuthority": {
+      "thread": "01a0e098-3b23-7233-9b07-877ace092650",
+      "turn": "01a10d72-094e-7ab3-b11f-3afaf03ee40c",
+      "message": "01a10d72-0c25-7dc0-9112-6c2a64c623be",
+      "scope": "Build now in one separate Quick Order child; preserve frozen integration and existing reviewer. This newer specific request permits this lane; no general feature-lane or hosted approval."
+    },
+    "dispatchArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_DISPATCH.txt",
+    "dispatchCommit": "c169a77c7c511335c96757c9b8785fcefd99b241",
+    "waitCursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:6",
+    "leasePaths": [
+      "client/src/quick-order/**",
+      "server/health/quick-order/**",
+      "shared/health/quick-order/**",
+      "docs/health-launch/quick-order-20261005/**",
+      "own continuity records"
+    ],
+    "baselineArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_PACKAGE_BASELINE.json",
+    "concreteRisksArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_CANONICAL_FINDINGS.md",
+    "latestProgress": "Existing assisted-order write cannot atomically store new declarations, recover receipts by actor+key or revalidate authority at commit. Worker preparing narrow extension proposal and hardening malformed-success/lost-response handling.",
+    "protectedOrSqlApproval": false
+  },
+  "latestUserContinuation": {
+    "path": "C:/Users/sboad/.codex/attachments/668681bf-75f2-46f4-84ac-ff4029eabacd/Pasted text.txt",
+    "status": "Read fully; fulfilled final evidence-review continuation in existing context; same Quick Order worker retained.",
+    "scope": "Final bounded verdict and existing handoff loop, no application edits or hosted approvals."
+  },
+  "automation": {
+    "id": "xenios-launch-coordination",
+    "status": "ACTIVE",
+    "intervalMinutes": 5,
+    "updatedPrompt": "Known Quick Order actual ID/worktree/base and review5fb included; next heartbeat must use repository record for newer accepted verdict.",
+    "quietWhenUnchanged": true
+  },
+  "historicalFinanceEnospc": {
+    "commit": "b13c29ea6caa4b9715c295d45232e065511a85db",
+    "path": "server/research/assisted-order/finance-sprint-20261003/evidence/runs/full-20261005-01/receipt.json",
+    "source": "dfd8b9b09815357d6c92f9c00eadf1782325269a",
+    "exitCode": 1,
+    "tests": {
+      "failed": 2,
+      "passed": 19078,
+      "skipped": 85
+    },
+    "files": {
+      "failed": 16,
+      "passed": 1007,
+      "skipped": 6
+    },
+    "classification": "Historical Finance shared-host failure with dirty continuity/evidence files, not current integration qualification. Receipt/stdout/stderr hashes verified; stderr contains ENOSPC.",
+    "artifact": "docs/coordination/launch-coordination-20261005/HISTORICAL_FINANCE_ENOSPC_RECEIPT.json"
+  },
+  "latestUserDecisionCheck": {
+    "thread": "01a0e098-3b23-7233-9b07-877ace092650",
+    "turns": [
+      "01a10d7d-f96d-7281-8070-34d370ecc2d0",
+      "01a10d7d-08f3-7220-bf82-8c0ca9ff0aab"
+    ],
+    "checkedAt": "2026-10-05T19:28:51.995Z",
+    "result": "Latest direct requests repeat same Quick Order build and existing final review continuation; no new protected hash, GATE01, SKU or hosted-action approval."
   }
 }

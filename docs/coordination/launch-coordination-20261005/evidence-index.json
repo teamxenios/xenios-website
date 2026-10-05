@@ -113,5 +113,45 @@
     "path": "CLAUDE_CONSOLIDATED_ACCEPTANCE_CHAIN.md",
     "bytes": 7573,
     "sha256": "356829c6fa63b52a2a7bd07dc8da61afdaec211194c86bac623550ce6f3c4ed8"
+  },
+  {
+    "path": "CLAUDE_INTEGRATION_ACCEPTANCE_04cbbee.md",
+    "bytes": 10090,
+    "sha256": "ee18bed4edb8328519ef7a01386e9c195d3a855590c09518fb708c23f71e9b26"
+  },
+  {
+    "path": "CLAUDE_INTEGRATION_ACCEPTANCE.md",
+    "bytes": 11403,
+    "sha256": "84dffa548db13b41e59578630147d9c8b4f9ca4dd2c4a4ad12a8b2ec242b9a18"
+  },
+  {
+    "path": "CLAUDE_INTEGRATION_COMPOSITION_e939d68.md",
+    "bytes": 4841,
+    "sha256": "5bc0fe797117aee9aee404550fd56785b0af6f49f7ab4eb76ce8d094702b2cca"
+  },
+  {
+    "path": "host-observation-1913.json",
+    "bytes": 178,
+    "sha256": "882471a231fbfdbd7bbd7e3198544f52087edb3797a25564a153d9d4e52fad29"
+  },
+  {
+    "path": "HISTORICAL_FINANCE_ENOSPC_RECEIPT.json",
+    "bytes": 1794,
+    "sha256": "bc5d395c511a0de9171f2bf243de71869e48b908eea85eb5ed3682d33d09eb36"
+  },
+  {
+    "path": "QUICK_ORDER_PACKAGE_BASELINE.json",
+    "bytes": 10768,
+    "sha256": "75da95a2e0b5cc9a1456489ccbc3a70c6171a24e75d6eb311ed3c684da66749a"
+  },
+  {
+    "path": "QUICK_ORDER_CANONICAL_FINDINGS.md",
+    "bytes": 3526,
+    "sha256": "3fc8e7276f0eb8c322534b2a418813ae373d4a77e15b175b5ba06744e592ca10"
+  },
+  {
+    "path": "INTEGRATION_EVIDENCE_AUDIT.md",
+    "bytes": 2212,
+    "sha256": "c60d65a9539ca120f889822159997cc0f5463243a14ec14d683bf10938604d75"
   }
 ]

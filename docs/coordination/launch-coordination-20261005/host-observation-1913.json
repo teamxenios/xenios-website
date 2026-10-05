@@ -1,0 +1,8 @@
+{
+  "observedAt": "2026-10-05T19:13:38.6907389Z",
+  "availableMiB": 1263.0,
+  "freeDiskGiB": 27.01,
+  "committedGB": 40.69,
+  "commitLimitGB": 60.73,
+  "heavyJobs": []
+}
