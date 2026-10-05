@@ -3,6 +3,25 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "HEALTH-QUICK-ORDER-20261005",
+      "title": "Implement isolated Health Quick Order intake over canonical assisted requests",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-health-quick-order-20261005",
+      "baseSha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "paths": [
+        "client/src/quick-order/**",
+        "server/health/quick-order/**",
+        "shared/health/quick-order/**",
+        "docs/health-launch/quick-order-20261005/**",
+        ".xenios/sessions/codex-health-quick-order-20261005.json",
+        ".xenios/handoffs/quick-order-20261005-handoff.md"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Sole Quick Order isolated owner, chat 01a10d78-0981-7150-9292-c5cde2730d4d; coordinator 01a103a8. Provisional integration base independently pending. New unprotected module, canonical bindings, evidence and minimal approval proposals. No protected mounts, manifest recut, schema edits, managed writes, notifications or activation under this initial lease. Later integrator records 38c7239 release its own lease; branch-local stale entries preserved, not global active authority.",
+      "claimedAt": "2026-10-05T19:13:42.715Z"
+    },
+    {
       "id": "ACCEPTED-SOURCE-INTEGRATION-20261005",
       "title": "Compose and qualify independently accepted source deltas with all release holds preserved",
       "priority": "P1",
