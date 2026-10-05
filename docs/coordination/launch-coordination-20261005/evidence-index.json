@@ -483,5 +483,10 @@
     "path": "CLAUDE_HTTP_REVIEW38_PROGRESS_20261005.json",
     "bytes": 2747,
     "sha256": "ef0e4ca5b53626d80e09404bffd087b7798d40049dc85c620efadc611c1b30db"
+  },
+  {
+    "path": "CLAUDE_REVIEW38_DRAFT_EVIDENCE_CHECK.json",
+    "bytes": 2529,
+    "sha256": "0be4d325ea8f821892b297cd80d5f6b84938cae72f296bebc26cd2130d48882b"
   }
 ]

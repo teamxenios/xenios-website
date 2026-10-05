@@ -1,0 +1,37 @@
+{
+  "recordedAt": "2026-10-05T21:35:24.347Z",
+  "observedAt": "2026-10-05T21:33:30Z",
+  "auditor": "/root/refund_audit",
+  "method": "Read-only exact draft/script/output inspection. All4 files untracked; no code/test execution, edit, reviewer contact or verdict acceptance.",
+  "status": "PROVISIONAL DRAFT CHECK; revalidate against final pushed bytes before requiring corrections",
+  "source": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+  "findings": [
+    {
+      "id": "R38-E1",
+      "description": "Doc38 reports66single targets; retained output has61single targets,12pairs,23odd inputs. Correct count; do not rerun just to produce66."
+    },
+    {
+      "id": "R38-E2",
+      "description": "Header names fullfd source, matching89c017ec classifier hash and pinned executable/version, but missing actualargv/cwd/scratch location/start/end/exit/signal/stderr/resource wrapper. Archived probe imports ./paths.mjs absent beside archive; executed scratch source binding not retained there."
+    },
+    {
+      "id": "R38-E3",
+      "description": "Probe prints observations, without assertion/failure-exit handling. Foreign-host counter applies only to single-target matrix, excludespairs/odd. No composition/red-green proof. Keep as disclosed unreserved source execution at13.91GiB, not qualified tests."
+    },
+    {
+      "id": "R38-E4",
+      "description": "Doc38draft calls red optional and proposes Node two-file set; direct20a and preserved builder plan require red/green with one filtered handler file per snapshot. Do not inherit draft scope change."
+    },
+    {
+      "id": "R37-E1",
+      "description": "New doc37receipt is openly retrospective from session output; supporting tool-output IDs absent and firstVitest rawoutput unarchived. Its summary says999/1206preRAM whereas firstVitest row933 (shortfall603), verbose1206(shortfall330). Useful attribution, not new contemporaneous wrapper or qualification."
+    }
+  ],
+  "observedHashes": {
+    "doc38": "dc9cc173212dd66fb549cb0a57f280f4ebc823ebd69664ba032ce8fb985a1f5d",
+    "retrospective37": "fd219097d326bc1b178d44640af2dec93ff949602f5bccc8de8cdddccb9cb953",
+    "probeScript": "53f65a9e49369f9032d2888f75284f8cdeb53eb49506c522c051bcb9572fc7f9",
+    "probeOutput": "107046f0ce5633ed8f9a1cc2b3975a4c440fa53b5c0000e2ff48436d78d22da5"
+  },
+  "next": "Let existing two-lens review finish, collect immutable finalverdict, recheck notes then route only surviving record corrections to originalreviewer. Do not wakebuilder for narrative/provenance-only issues."
+}
