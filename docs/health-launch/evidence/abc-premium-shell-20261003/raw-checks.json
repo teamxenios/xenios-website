@@ -1,0 +1,397 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-05T13:17:24.900Z",
+  "sourceSha": "70cd421a6ab79513744f531d921b3ece61044874",
+  "sourceTree": "37ea984993cc78ee61d0e9ca944fca0213e73ba8",
+  "testsSha": "1a409e2f7e1fcdeffc78d24428eeb626d7888e9c",
+  "limitations": [
+    "Discrete process samples only, not continuous provenance.",
+    "Build samples saw wrapper/adjacent npm only, not every tsx/Vite/esbuild descendant; process-local PATH is pinned.",
+    "First affected run began dirty and commits moved during the run.",
+    "Initial delegated invocation interrupted with no output, preserved separately in handoff.",
+    "No aggregate, managed or native-zoom qualification."
+  ],
+  "runs": [
+    {
+      "job": "abc-affected-run1",
+      "result": {
+        "startedAt": "2026-10-05T12:56:45.635Z",
+        "head": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+        "tree": "f38c4d59875cf9d6b0a833a0f0ba0cab9997090e",
+        "dirtyAtStart": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json\n M client/src/clarity/brand.ts\n M client/src/components/Footer.tsx\n M client/src/components/Navbar.tsx\n M client/src/index.css\n M client/src/research/account-portal/account-portal.css\n M client/src/research/assisted-order/AssistedOrderConfirmationPage.tsx\n M client/src/research/assisted-order/AssistedOrderPage.tsx\n M client/src/research/assisted-order/AssistedOrderStatusPage.tsx\n M client/src/research/assisted-order/assisted-order.css\n M client/src/research/catalog-priority/catalog-priority.css\n?? client/src/research/assisted-order/assisted-order-premium.test.tsx",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "client/src/research/assisted-order",
+          "client/src/components/PageShell.test.tsx",
+          "client/src/components/Navbar.account-entry.test.tsx",
+          "client/src/components/Navbar.audience-navigation.test.tsx",
+          "client/src/care/shell.test.ts",
+          "client/src/research/layout-touch-targets.test.tsx",
+          "client/src/research/account-portal",
+          "client/src/research/catalog-priority",
+          "client/src/clarity/StatusPage.test.tsx",
+          "client/src/clarity/public-surfaces.test.tsx",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 49784,
+        "childPid": 65732,
+        "finishedAt": "2026-10-05T12:59:50.038Z",
+        "elapsedMs": 184403,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "e3c0a35b3579406a12f535bec69274c6ff32d8b7cacf686183df8e858a82236b",
+        "finalHead": "1a409e2f7e1fcdeffc78d24428eeb626d7888e9c",
+        "dirtyAtEnd": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json"
+      },
+      "log": "\n RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/b22f/xenios-website\n\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\nNot implemented: Window's scrollTo() method\n\n Test Files  30 passed (30)\n      Tests  479 passed (479)\n   Start at  07:56:49\n   Duration  180.03s (transform 10.86s, setup 0ms, import 35.00s, tests 36.77s, environment 85.83s)\n\n",
+      "processSamples": [
+        {
+          "observedAt": "2026-10-05T12:56:54.569Z",
+          "processes": [
+            {
+              "ProcessId": 49784,
+              "ParentProcessId": 59096,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 65732,
+              "ParentProcessId": 49784,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 64252,
+              "ParentProcessId": 65732,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-05T12:57:48.329Z",
+          "processes": [
+            {
+              "ProcessId": 49784,
+              "ParentProcessId": 59096,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 65732,
+              "ParentProcessId": 49784,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 64252,
+              "ParentProcessId": 65732,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-05T12:58:47.960Z",
+          "processes": [
+            {
+              "ProcessId": 49784,
+              "ParentProcessId": 59096,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 65732,
+              "ParentProcessId": 49784,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 36880,
+              "ParentProcessId": 65732,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-05T12:59:47.941Z",
+          "processes": [
+            {
+              "ProcessId": 49784,
+              "ParentProcessId": 59096,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 65732,
+              "ParentProcessId": 49784,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 64628,
+              "ParentProcessId": 65732,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        }
+      ],
+      "noSamplesExplanation": null
+    },
+    {
+      "job": "abc-shell-run1",
+      "result": {
+        "startedAt": "2026-10-05T13:03:20.837Z",
+        "head": "1a409e2f7e1fcdeffc78d24428eeb626d7888e9c",
+        "tree": "590008ec1167c7015f003c02bc888f6bcbc2defe",
+        "dirtyAtStart": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "client/src/clarity/premium-shell.test.tsx",
+          "--maxWorkers=1",
+          "--no-file-parallelism"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 61984,
+        "childPid": 43932,
+        "finishedAt": "2026-10-05T13:03:36.388Z",
+        "elapsedMs": 15551,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "45dd14f8aa4e5019edb856e0cdbf91e2220d7867db4e3ea611412c3de9fdf083",
+        "finalHead": "1a409e2f7e1fcdeffc78d24428eeb626d7888e9c",
+        "dirtyAtEnd": "M .xenios/ACTIVE_TASKS.json\n M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-xenios-health-launch-implementation-20260930.json"
+      },
+      "log": "\n RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/b22f/xenios-website\n\n\n Test Files  1 passed (1)\n      Tests  12 passed (12)\n   Start at  08:03:23\n   Duration  12.35s (transform 2.32s, setup 0ms, import 4.89s, tests 1.61s, environment 5.12s)\n\n",
+      "processSamples": [
+        {
+          "observedAt": "2026-10-05T13:03:29.924Z",
+          "processes": [
+            {
+              "ProcessId": 61984,
+              "ParentProcessId": 55536,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 43932,
+              "ParentProcessId": 61984,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 63628,
+              "ParentProcessId": 43932,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        }
+      ],
+      "noSamplesExplanation": null
+    },
+    {
+      "job": "abc-typecheck-final",
+      "result": {
+        "startedAt": "2026-10-05T13:05:57.624Z",
+        "head": "83d1b9754583b43a03f4d477f47c5f5bad527015",
+        "tree": "ce3ee5d2b7455aa14500af9cd9d679c3e40a953f",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "node_modules/typescript/bin/tsc",
+          "--noEmit"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 39484,
+        "childPid": 56068,
+        "finishedAt": "2026-10-05T13:10:20.191Z",
+        "elapsedMs": 262567,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "finalHead": "83d1b9754583b43a03f4d477f47c5f5bad527015",
+        "dirtyAtEnd": ""
+      },
+      "log": "",
+      "processSamples": [
+        {
+          "observedAt": "2026-10-05T13:06:05.991Z",
+          "processes": [
+            {
+              "ProcessId": 39484,
+              "ParentProcessId": 61136,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 56068,
+              "ParentProcessId": 39484,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-05T13:07:09.756Z",
+          "processes": [
+            {
+              "ProcessId": 39484,
+              "ParentProcessId": 61136,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 56068,
+              "ParentProcessId": 39484,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-05T13:08:04.499Z",
+          "processes": [
+            {
+              "ProcessId": 39484,
+              "ParentProcessId": 61136,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 56068,
+              "ParentProcessId": 39484,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-05T13:09:03.502Z",
+          "processes": [
+            {
+              "ProcessId": 39484,
+              "ParentProcessId": 61136,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 56068,
+              "ParentProcessId": 39484,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-05T13:10:00.746Z",
+          "processes": [
+            {
+              "ProcessId": 39484,
+              "ParentProcessId": 61136,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 56068,
+              "ParentProcessId": 39484,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        }
+      ],
+      "noSamplesExplanation": null
+    },
+    {
+      "job": "abc-protection-final",
+      "result": {
+        "startedAt": "2026-10-05T13:08:28.872Z",
+        "head": "83d1b9754583b43a03f4d477f47c5f5bad527015",
+        "tree": "ce3ee5d2b7455aa14500af9cd9d679c3e40a953f",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "scripts/acceptance/verify-core-site-protection.mjs",
+          "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+          "HEAD"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 60556,
+        "childPid": 51380,
+        "finishedAt": "2026-10-05T13:08:31.919Z",
+        "elapsedMs": 3047,
+        "exitCode": 1,
+        "signal": null,
+        "logSha256": "61cc66a5e1eb7668160bcca217da97ae1dd6ecf3adaf7d43316c2d28df6358aa",
+        "finalHead": "83d1b9754583b43a03f4d477f47c5f5bad527015",
+        "dirtyAtEnd": ""
+      },
+      "log": "core-site protection gate\n  manifest baseline : 766f19fce3b67cd9b940ea66fe075281c2d8bdf8\n  comparing         : 3eaa017fcbd28989c65ffc4bb439a554aa1f3f59..HEAD\n  changed files     : 19\n  allowed (research/care) : 7\n  infrastructure          : 7\n  protected file hashes   : 34 verified\n\nTEST FILES TOUCHED (permitted: a test cannot change what a visitor sees.\nReview must still confirm each one was STRENGTHENED, not weakened. Lowering\nan existing safety or regression gate to make a build pass is forbidden):\n  - client/src/clarity/premium-shell.test.tsx\n  - client/src/research/assisted-order/assisted-order-premium.test.tsx\n\nSEAM FILES TOUCHED (permitted, but each needs an exclusive lease, the\nminimum diff, a focused regression test, and QA confirmation of no\nunrelated change before this branch is approved):\n  - client/src/components/Footer.tsx\n  - client/src/components/Navbar.tsx\n  - client/src/index.css\n\nSEAM CONTENT CHANGED since the baseline (reported, not a failure):\n  - client/src/App.tsx\n  - server/index.ts\n  - server/research/index.ts\n\nFAIL: protected file content changed (hash mismatch against the baseline).\n  - client/src/index.css\n      expected sha256:70d3302a8b4f5d22aa324c3728ae51963d12222ab880c29fcd3f8ea3e477d0e6\n      actual   sha256:b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049\n  - client/src/components/Navbar.tsx\n      expected sha256:e37a5b94cb07674e8f4471ddc37b9a5e8a6f848d300408ba67ff3b706941eb1f\n      actual   sha256:6cdfbb0f05cc8d1fb28bfdc6b7a012ddb85e34d0c985bc88e71c09d8456a218a\n  - client/src/components/Footer.tsx\n      expected sha256:25da700fcea32178d19fc21a3d6db4192d11b403418b7fa83100b4c88d9e2a3a\n      actual   sha256:420b45dc09aefa572a65ae68b5add6a2ce3d435e54e1fea7d9db9f29390df7cb\n  - server/static.ts\n      expected sha256:9cd3e1c363dd921fab780761baa888e9319f40ef177ca303072e3179b2c20004\n      actual   sha256:b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94\n\nRESULT: FAIL\n\nWhat to do: see docs/phase2/CORE_SITE_PROTECTION.md. Either move the change\ninto client/src/research, client/src/care, server/research, server/care, or\nshared/research, or request an exclusive seam lease if the change genuinely\nneeds one of the permitted seam files. Do not widen the manifest to pass.\n",
+      "processSamples": [],
+      "noSamplesExplanation": "Completed before first 4-second sample."
+    },
+    {
+      "job": "abc-build-final",
+      "result": {
+        "startedAt": "2026-10-05T13:11:19.582Z",
+        "head": "83d1b9754583b43a03f4d477f47c5f5bad527015",
+        "tree": "ce3ee5d2b7455aa14500af9cd9d679c3e40a953f",
+        "dirtyAtStart": "",
+        "node": "v20.19.0",
+        "npm": "10.8.2",
+        "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+        "command": [
+          "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+          "C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "build"
+        ],
+        "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+        "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+        "runnerPid": 1888,
+        "childPid": 65228,
+        "finishedAt": "2026-10-05T13:12:35.062Z",
+        "elapsedMs": 75480,
+        "exitCode": 0,
+        "signal": null,
+        "logSha256": "369da0bf446801545b13e937c94600334fd52968b755b4485e3c11d6d7fb21b4",
+        "finalHead": "83d1b9754583b43a03f4d477f47c5f5bad527015",
+        "dirtyAtEnd": ""
+      },
+      "log": "npm warn config production Use `--omit=dev` instead.\n\n> rest-express@1.0.0 build\n> tsx scripts/acceptance/verify-no-em-dash.mjs --source && node script/build.mjs && tsx scripts/acceptance/verify-no-em-dash.mjs --build\n\nruntime source: 1353 files scanned; 0 forbidden customer-facing em-dash forms\nbuilding client...\nvite v7.3.5 building client environment for production...\ntransforming...\n✓ 2310 modules transformed.\nrendering chunks...\n[plugin vite:reporter] \n(!) C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/AdminResearchHome.tsx is dynamically imported by C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/adminx-section.tsx but also statically imported by C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/adminx-section.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/ActivationBridge.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/ActivationChecklist.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/ActivationQueue.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/ActivationReadiness.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/ActivationReconciliation.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/ApplicationDetail.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/Applications.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/Audit.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/BlueprintReview.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/Capabilities.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/CareAccessRequests.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/CommerceQueues.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/EarlyAccessFulfillment.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/EarlyAccessPaymentReview.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/EarlyAccessReleases.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/EsignDocuments.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/FounderCommandCenter.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/Fulfillment.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/GuideAdminDetail.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/GuidesAdmin.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/InventoryLotsAdmin.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/LotCoasAdmin.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/MemberDetail.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/Members.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/OrderAdminDetail.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/OrdersAdmin.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/PartnerAdminDetail.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/PartnersAdmin.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/PlanDetail.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/Plans.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/PrivacyAdmin.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/ProductAdminDetail.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/ProductRequestAdminDetail.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/ProductRequestsAdmin.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/ProductsAdmin.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/QuestionAdminDetail.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/QuestionsAdmin.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/ReferralLifecycle.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/RequiredInputs.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/ResourceHubAdmin.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/SecurityAdmin.tsx, C:/Users/sboad/.codex/worktrees/b22f/xenios-website/client/src/research/pages/adminx/Website3Configuration.tsx, dynamic import will not move module into another chunk.\n\ncomputing gzip size...\n../dist/public/assets/jetbrains-mono-cyrillic-ext-600-normal-Dj6eZy5f.woff2    1.16 kB\n../dist/public/assets/jetbrains-mono-cyrillic-ext-500-normal-C9ShMxGR.woff2    1.17 kB\n../dist/public/assets/jetbrains-mono-cyrillic-ext-600-normal-DVvC-yKp.woff     1.73 kB\n../dist/public/assets/jetbrains-mono-cyrillic-ext-500-normal-CEVyPk4Y.woff     1.74 kB\n../dist/public/index.html                                                      3.99 kB │ gzip:   1.19 kB\n../dist/public/assets/jetbrains-mono-vietnamese-600-normal-Dtizs43-.woff2      4.00 kB\n../dist/public/assets/jetbrains-mono-vietnamese-500-normal-BvH7FW2L.woff2      4.04 kB\n../dist/public/assets/jetbrains-mono-greek-500-normal-JpySY46c.woff2           4.28 kB\n../dist/public/assets/jetbrains-mono-greek-600-normal-H7WoG9Et.woff2           4.31 kB\n../dist/public/assets/inter-tight-vietnamese-900-normal-BOhvDLRK.woff2         4.93 kB\n../dist/public/assets/inter-tight-vietnamese-500-normal-C7jl9LDK.woff2         5.03 kB\n../dist/public/assets/inter-tight-vietnamese-600-normal-FGgebaLI.woff2         5.06 kB\n../dist/public/assets/inter-tight-vietnamese-800-normal-OJoDhpMd.woff2         5.12 kB\n../dist/public/assets/inter-tight-vietnamese-700-normal-Cn_DV52A.woff2         5.15 kB\n../dist/public/assets/jetbrains-mono-cyrillic-500-normal-DmUKJPL_.woff2        5.36 kB\n../dist/public/assets/jetbrains-mono-cyrillic-600-normal-EVf6-Yzo.woff2        5.38 kB\n../dist/public/assets/inter-tight-greek-ext-900-normal-wxL47-fE.woff2          5.39 kB\n../dist/public/assets/inter-tight-greek-ext-500-normal-Be7hKmpC.woff2          5.45 kB\n../dist/public/assets/jetbrains-mono-vietnamese-500-normal-DNRqzVM1.woff       5.48 kB\n../dist/public/assets/jetbrains-mono-vietnamese-600-normal-OWROknRo.woff       5.48 kB\n../dist/public/assets/inter-tight-greek-ext-700-normal-D0RkHJEE.woff2          5.49 kB\n../dist/public/assets/inter-tight-greek-ext-600-normal-CiDI6ET5.woff2          5.51 kB\n../dist/public/assets/inter-tight-greek-ext-800-normal-DNWjXg9N.woff2          5.52 kB\n../dist/public/assets/jetbrains-mono-greek-600-normal-mc2nkWzM.woff            5.70 kB\n../dist/public/assets/jetbrains-mono-greek-500-normal-D7SFKleX.woff            5.72 kB\n../dist/public/assets/inter-tight-vietnamese-900-normal-BzyaF6D1.woff          6.62 kB\n../dist/public/assets/inter-tight-vietnamese-500-normal-CO4EMNTO.woff          6.69 kB\n../dist/public/assets/inter-tight-vietnamese-600-normal-BCXZ1BbA.woff          6.74 kB\n../dist/public/assets/inter-tight-vietnamese-800-normal-CbYrLkxo.woff          6.74 kB\n../dist/public/assets/inter-tight-vietnamese-700-normal-DwHBAXeT.woff          6.76 kB\n../dist/public/assets/inter-tight-cyrillic-900-normal-DQyl4dKK.woff2           6.89 kB\n../dist/public/assets/inter-tight-cyrillic-600-normal-BERwQ0yl.woff2           6.98 kB\n../dist/public/assets/inter-tight-cyrillic-700-normal-DtWWjp29.woff2           6.99 kB\n../dist/public/assets/inter-tight-cyrillic-800-normal-CC_RRmyd.woff2           7.00 kB\n../dist/public/assets/jetbrains-mono-cyrillic-600-normal-8K4wrrwR.woff         7.02 kB\n../dist/public/assets/jetbrains-mono-cyrillic-500-normal-DJqRU3vO.woff         7.02 kB\n../dist/public/assets/inter-tight-cyrillic-500-normal-5ykfyGeh.woff2           7.09 kB\n../dist/public/assets/inter-tight-greek-ext-500-normal-BEGGcu3x.woff           7.25 kB\n../dist/public/assets/inter-tight-greek-ext-600-normal-5gKW7MDU.woff           7.30 kB\n../dist/public/assets/inter-tight-greek-ext-700-normal-mW3dmpoD.woff           7.30 kB\n../dist/public/assets/inter-tight-greek-ext-900-normal-BkFPiXz8.woff           7.36 kB\n../dist/public/assets/inter-tight-greek-ext-800-normal-DfP-QoiQ.woff           7.40 kB\n../dist/public/assets/jetbrains-mono-latin-ext-600-normal-BfB_LPfz.woff2       7.51 kB\n../dist/public/assets/jetbrains-mono-latin-ext-500-normal-Cut-4mMH.woff2       7.53 kB\n../dist/public/assets/inter-tight-cyrillic-900-normal-BB7BsRn9.woff            8.76 kB\n../dist/public/assets/inter-tight-cyrillic-800-normal-ChWbk4mt.woff            8.90 kB\n../dist/public/assets/inter-tight-cyrillic-600-normal-BeTasGgk.woff            8.90 kB\n../dist/public/assets/inter-tight-cyrillic-500-normal-CRXauZSq.woff            8.92 kB\n../dist/public/assets/inter-tight-greek-700-normal-RgALSHS4.woff2              8.92 kB\n../dist/public/assets/inter-tight-greek-500-normal-kave9HZE.woff2              8.94 kB\n../dist/public/assets/inter-tight-cyrillic-700-normal-DDZiLR3d.woff            8.94 kB\n../dist/public/assets/inter-tight-greek-800-normal-X9eW6L67.woff2              8.95 kB\n../dist/public/assets/inter-tight-greek-600-normal-BIqmcc-q.woff2              8.99 kB\n../dist/public/assets/inter-tight-greek-900-normal-BlRasW-P.woff2              8.99 kB\n../dist/public/assets/jetbrains-mono-latin-ext-600-normal-DObL3zCW.woff       10.32 kB\n../dist/public/assets/jetbrains-mono-latin-ext-500-normal-ckzbgY84.woff       10.34 kB\n../dist/public/assets/inter-tight-cyrillic-ext-900-normal-D2HnBArf.woff2      10.46 kB\n../dist/public/assets/inter-tight-cyrillic-ext-600-normal-B4SKDMEv.woff2      10.49 kB\n../dist/public/assets/inter-tight-cyrillic-ext-700-normal-D_7NT8eF.woff2      10.51 kB\n../dist/public/assets/inter-tight-cyrillic-ext-500-normal-BZAF-_VI.woff2      10.52 kB\n../dist/public/assets/inter-tight-cyrillic-ext-800-normal-CzCOBUhR.woff2      10.62 kB\n../dist/public/assets/inter-tight-greek-500-normal-Ca-cFdRH.woff              11.14 kB\n../dist/public/assets/inter-tight-greek-600-normal-67HAlfW-.woff              11.17 kB\n../dist/public/assets/inter-tight-greek-900-normal-Whngmt0q.woff              11.18 kB\n../dist/public/assets/inter-tight-greek-700-normal-DU8XoIeX.woff              11.21 kB\n../dist/public/assets/inter-tight-greek-800-normal-CxHmUlv4.woff              11.22 kB\n../dist/public/assets/inter-tight-cyrillic-ext-900-normal-DFYsuKtp.woff       13.71 kB\n../dist/public/assets/inter-tight-cyrillic-ext-500-normal-Dy1ZB9JY.woff       13.76 kB\n../dist/public/assets/inter-tight-cyrillic-ext-600-normal-_3ga77Eo.woff       13.84 kB\n../dist/public/assets/inter-tight-cyrillic-ext-800-normal-WowoGRZX.woff       13.86 kB\n../dist/public/assets/inter-tight-cyrillic-ext-700-normal-BFcoPt71.woff       13.87 kB\n../dist/public/assets/jetbrains-mono-latin-500-normal-BWZEU5yA.woff2          21.83 kB\n../dist/public/assets/jetbrains-mono-latin-600-normal-C8RAYTDA.woff2          21.86 kB\n../dist/public/assets/inter-tight-latin-900-normal-CsycwHi3.woff2             22.20 kB\n../dist/public/assets/inter-tight-latin-500-normal-BFXNXuvF.woff2             22.62 kB\n../dist/public/assets/inter-tight-latin-600-normal-BgSTtRxb.woff2             22.66 kB\n../dist/public/assets/inter-tight-latin-800-normal-CRGCHRPv.woff2             22.70 kB\n../dist/public/assets/inter-tight-latin-700-normal-BZKd_v_8.woff2             22.75 kB\n../dist/public/assets/jetbrains-mono-latin-600-normal-BfsvjouI.woff           28.18 kB\n../dist/public/assets/jetbrains-mono-latin-500-normal-CJOVTJB7.woff           28.21 kB\n../dist/public/assets/inter-tight-latin-900-normal-D-ilywrK.woff              28.47 kB\n../dist/public/assets/inter-tight-latin-500-normal-pobXraBK.woff              28.94 kB\n../dist/public/assets/inter-tight-latin-800-normal-D2te1T7i.woff              29.04 kB\n../dist/public/assets/inter-tight-latin-600-normal-D7bG6gX1.woff              29.05 kB\n../dist/public/assets/inter-tight-latin-700-normal-DvYAVZQd.woff              29.06 kB\n../dist/public/assets/inter-tight-latin-ext-900-normal-CRvdXIc8.woff2         37.24 kB\n../dist/public/assets/inter-tight-latin-ext-500-normal-D3akd6m-.woff2         37.73 kB\n../dist/public/assets/inter-tight-latin-ext-600-normal-BgMgWFts.woff2         37.90 kB\n../dist/public/assets/inter-tight-latin-ext-700-normal-BpKPOkj3.woff2         37.91 kB\n../dist/public/assets/inter-tight-latin-ext-800-normal-DfKN99cy.woff2         38.00 kB\n../dist/public/assets/inter-tight-latin-ext-900-normal-CibZOeMa.woff          50.17 kB\n../dist/public/assets/inter-tight-latin-ext-500-normal-_hLDZz_3.woff          50.89 kB\n../dist/public/assets/inter-tight-latin-ext-800-normal-A39zhqaD.woff          51.13 kB\n../dist/public/assets/inter-tight-latin-ext-700-normal-CrlzIQ10.woff          51.14 kB\n../dist/public/assets/inter-tight-latin-ext-600-normal-BvYdOF2O.woff          51.19 kB\n../dist/public/assets/Links-C_ucpXV5.css                                       1.45 kB │ gzip:   0.55 kB\n../dist/public/assets/AccountOverview-BujQ6b0Z.css                             1.88 kB │ gzip:   0.66 kB\n../dist/public/assets/quality-BRyQwagB.css                                     3.37 kB │ gzip:   1.11 kB\n../dist/public/assets/components-Cfq3KlQw.css                                  3.44 kB │ gzip:   1.12 kB\n../dist/public/assets/Dashboard-93y3Q2q-.css                                   4.65 kB │ gzip:   1.56 kB\n../dist/public/assets/resource-B_HGKwtI.css                                    7.38 kB │ gzip:   1.96 kB\n../dist/public/assets/assisted-order-ud5oAZ37.css                             16.05 kB │ gzip:   3.26 kB\n../dist/public/assets/section-IWB43wf4.css                                    22.97 kB │ gzip:   5.37 kB\n../dist/public/assets/index-Ch4OUZq2.css                                     136.77 kB │ gzip:  24.06 kB\n../dist/public/assets/fixtures-BnWoyHzs.js                                     0.07 kB │ gzip:   0.08 kB\n../dist/public/assets/product-request-sources-B3jGpvE_.js                      0.17 kB │ gzip:   0.16 kB\n../dist/public/assets/distribution-BedJ_C07.js                                 0.21 kB │ gzip:   0.15 kB\n../dist/public/assets/commerce-Cl9956qa.js                                     0.25 kB │ gzip:   0.19 kB\n../dist/public/assets/activation-7P-n9_jD.js                                   0.27 kB │ gzip:   0.22 kB\n../dist/public/assets/api-CZrQjHTo.js                                          0.35 kB │ gzip:   0.27 kB\n../dist/public/assets/early-access-quantity-w_7J3H7P.js                        0.38 kB │ gzip:   0.26 kB\n../dist/public/assets/customerSteps-BhEPZ1gP.js                                0.44 kB │ gzip:   0.27 kB\n../dist/public/assets/contract-CMFmJ0NR.js                                     0.51 kB │ gzip:   0.30 kB\n../dist/public/assets/product-requests-rzkuSvMp.js                             0.56 kB │ gzip:   0.36 kB\n../dist/public/assets/billing-presentation-h6pyTvCh.js                         0.63 kB │ gzip:   0.28 kB\n../dist/public/assets/entry-intent-BFVE7Xjr.js                                 0.70 kB │ gzip:   0.43 kB\n../dist/public/assets/AccountInterests-DjNac4HG.js                             0.74 kB │ gzip:   0.45 kB\n../dist/public/assets/useCatalogQueryState-C4D7OtF1.js                         0.81 kB │ gzip:   0.40 kB\n../dist/public/assets/QualityNav-DZd0GMjK.js                                   0.93 kB │ gzip:   0.53 kB\n../dist/public/assets/EarlyAccessStepper-CcpxL49j.js                           1.00 kB │ gzip:   0.58 kB\n../dist/public/assets/esign-CauHzOj5.js                                        1.06 kB │ gzip:   0.56 kB\n../dist/public/assets/member-platform-CD2y5EVS.js                              1.09 kB │ gzip:   0.52 kB\n../dist/public/assets/principal-bound-DTx08zF-.js                              1.09 kB │ gzip:   0.60 kB\n../dist/public/assets/payment-status-copy-CNZSmwZi.js                          1.16 kB │ gzip:   0.43 kB\n../dist/public/assets/inventory-admin-poKKzNBW.js                              1.16 kB │ gzip:   0.51 kB\n../dist/public/assets/productRequests-CuM-EQOn.js                              1.28 kB │ gzip:   0.60 kB\n../dist/public/assets/LotLookupForm-C_YX5eOE.js                                1.30 kB │ gzip:   0.82 kB\n../dist/public/assets/AdminAssistedOrderSession-DaiK50kw.js                    1.35 kB │ gzip:   0.67 kB\n../dist/public/assets/commission-ledger-YIzxuBiz.js                            1.43 kB │ gzip:   0.76 kB\n../dist/public/assets/AccountAuthorityPages-okRWZDTm.js                        1.69 kB │ gzip:   0.82 kB\n../dist/public/assets/shared-Dx4xGC5O.js                                       1.71 kB │ gzip:   0.77 kB\n../dist/public/assets/AccountAccessChooser-HL34wSE8.js                         1.81 kB │ gzip:   0.86 kB\n../dist/public/assets/SupplierAccess-dhk7yQA6.js                               1.88 kB │ gzip:   0.84 kB\n../dist/public/assets/products-diagnostics-DIcwYKTW.js                         1.91 kB │ gzip:   0.70 kB\n../dist/public/assets/GuideAdminDetail-BG1XjFb-.js                             1.94 kB │ gzip:   0.97 kB\n../dist/public/assets/GuidesAdmin-_hGAz4rE.js                                  1.95 kB │ gzip:   1.02 kB\n../dist/public/assets/Goals-BiAjibhc.js                                        1.95 kB │ gzip:   0.96 kB\n../dist/public/assets/api-D4EzasHs.js                                          2.02 kB │ gzip:   1.08 kB\n../dist/public/assets/AffiliateAccessPage-DF4j5RAx.js                          2.08 kB │ gzip:   0.95 kB\n../dist/public/assets/contract-CDitim5d.js                                     2.09 kB │ gzip:   0.86 kB\n../dist/public/assets/api-CP0Dp9Sw.js                                          2.13 kB │ gzip:   0.92 kB\n../dist/public/assets/AccountSecurity-BBllzg-C.js                              2.15 kB │ gzip:   0.91 kB\n../dist/public/assets/OrderEntryIntentNotice-JIdoVJmi.js                       2.16 kB │ gzip:   1.06 kB\n../dist/public/assets/read-CtKKQx1J.js                                         2.18 kB │ gzip:   0.91 kB\n../dist/public/assets/Support-CyGrERI5.js                                      2.25 kB │ gzip:   1.06 kB\n../dist/public/assets/ResearchContact-BUJEUw1i.js                              2.41 kB │ gzip:   1.12 kB\n../dist/public/assets/PlanDetail-Cu5c3ivx.js                                   2.45 kB │ gzip:   1.07 kB\n../dist/public/assets/ActivationReadiness-DWhM4dXh.js                          2.55 kB │ gzip:   1.16 kB\n../dist/public/assets/AccountProfile-CxnXaQ0w.js                               2.57 kB │ gzip:   0.89 kB\n../dist/public/assets/productAdmin-DWd71hf1.js                                 2.59 kB │ gzip:   1.10 kB\n../dist/public/assets/QuestionsAdmin-CMZ8i7oV.js                               2.62 kB │ gzip:   1.34 kB\n../dist/public/assets/Landing-vLSsNZbJ.js                                      2.69 kB │ gzip:   1.10 kB\n../dist/public/assets/InterestsView-byeDE87d.js                                2.69 kB │ gzip:   1.08 kB\n../dist/public/assets/ActivationPage-BtkMf-Kz.js                               2.70 kB │ gzip:   1.16 kB\n../dist/public/assets/Plans--VYNvNOT.js                                        2.72 kB │ gzip:   1.29 kB\n../dist/public/assets/Applications-z9cBB3pi.js                                 2.83 kB │ gzip:   1.43 kB\n../dist/public/assets/ActivationChecklist-lSEjJv2I.js                          2.84 kB │ gzip:   1.30 kB\n../dist/public/assets/commerce-presentation-CPzGeJ7K.js                        2.92 kB │ gzip:   1.11 kB\n../dist/public/assets/AssistedOrderConfirmationPage-C8KyxdD9.js                2.98 kB │ gzip:   1.10 kB\n../dist/public/assets/LegalPage-CNYbUy-F.js                                    3.00 kB │ gzip:   1.35 kB\n../dist/public/assets/orderEntryIntent-B3zST9MN.js                             3.05 kB │ gzip:   1.37 kB\n../dist/public/assets/PartnerAdminDetail-BkKoi0YM.js                           3.10 kB │ gzip:   1.22 kB\n../dist/public/assets/guides-P5_4bhIK.js                                       3.17 kB │ gzip:   1.17 kB\n../dist/public/assets/content-Dd1WAhVQ.js                                      3.22 kB │ gzip:   1.46 kB\n../dist/public/assets/OrdersAdmin-D2vNnkCJ.js                                  3.22 kB │ gzip:   1.55 kB\n../dist/public/assets/Xenios90-C_DH73wt.js                                     3.22 kB │ gzip:   1.38 kB\n../dist/public/assets/HowItWorks-BNiC-VKR.js                                   3.30 kB │ gzip:   1.11 kB\n../dist/public/assets/commerce-C7rvqmhD.js                                     3.32 kB │ gzip:   1.35 kB\n../dist/public/assets/PoliciesIndex-BoOYNwVF.js                                3.36 kB │ gzip:   1.31 kB\n../dist/public/assets/Audit-B6u1JCGR.js                                        3.39 kB │ gzip:   1.29 kB\n../dist/public/assets/PrivacyAdmin-BrjZSc4P.js                                 3.40 kB │ gzip:   1.34 kB\n../dist/public/assets/Blueprint-CQ58rpCe.js                                    3.42 kB │ gzip:   1.37 kB\n../dist/public/assets/ActivationReconciliation-BfmwCGn9.js                     3.51 kB │ gzip:   1.64 kB\n../dist/public/assets/MemberDetail-B3MVdSTh.js                                 3.57 kB │ gzip:   1.48 kB\n../dist/public/assets/Capabilities-BehsOY8M.js                                 3.58 kB │ gzip:   1.55 kB\n../dist/public/assets/integration-packet-D0QokOBB.js                           3.62 kB │ gzip:   1.26 kB\n../dist/public/assets/Leads-CVWxWKw4.js                                        3.66 kB │ gzip:   1.75 kB\n../dist/public/assets/CareConsentPendingPage-C2XCZwEo.js                       3.94 kB │ gzip:   1.52 kB\n../dist/public/assets/CarePrescriptionsPage-BUXusCnE.js                        3.95 kB │ gzip:   1.50 kB\n../dist/public/assets/Profile-zzsVmj2U.js                                      3.96 kB │ gzip:   1.46 kB\n../dist/public/assets/AccountCare-CLev4x2W.js                                  3.96 kB │ gzip:   1.28 kB\n../dist/public/assets/Conversions-DCWqJGzF.js                                  4.05 kB │ gzip:   1.79 kB\n../dist/public/assets/Documents-DQVqaxMK.js                                    4.06 kB │ gzip:   1.64 kB\n../dist/public/assets/AccountDocuments-ROF_DErB.js                             4.31 kB │ gzip:   1.79 kB\n../dist/public/assets/QuestionAdminDetail-Dg55933x.js                          4.32 kB │ gzip:   1.85 kB\n../dist/public/assets/AdminAssistedOrderQueue-Dw7bMLU0.js                      4.40 kB │ gzip:   1.66 kB\n../dist/public/assets/OrganizationAccessPage-jGXxRf8M.js                       4.42 kB │ gzip:   1.51 kB\n../dist/public/assets/Support-CrzcptU9.js                                      4.43 kB │ gzip:   1.80 kB\n../dist/public/assets/Security-kZoJnOju.js                                     4.47 kB │ gzip:   1.71 kB\n../dist/public/assets/ResearchDocuments-BSNE8IG_.js                            4.66 kB │ gzip:   1.93 kB\n../dist/public/assets/Faq-CVkKfNO7.js                                          4.67 kB │ gzip:   2.07 kB\n../dist/public/assets/Orders-CWuzr4yw.js                                       4.76 kB │ gzip:   2.11 kB\n../dist/public/assets/pricing-contract-CGEtyafz.js                             4.81 kB │ gzip:   2.11 kB\n../dist/public/assets/AboutResearch-Df769NRs.js                                4.83 kB │ gzip:   1.76 kB\n../dist/public/assets/Commissions-Df1r2tQP.js                                  4.87 kB │ gzip:   1.97 kB\n../dist/public/assets/MemberAccessState-DdqOqTko.js                            5.16 kB │ gzip:   1.56 kB\n../dist/public/assets/Quality-XH1ZpCGz.js                                      5.31 kB │ gzip:   2.16 kB\n../dist/public/assets/request-read-WGM66O1z.js                                 5.42 kB │ gzip:   2.06 kB\n../dist/public/assets/ProductRequestsAdmin-DCJXq1zd.js                         5.54 kB │ gzip:   2.09 kB\n../dist/public/assets/EarlyAccessPaymentReview--OtDTSww.js                     5.61 kB │ gzip:   2.22 kB\n../dist/public/assets/Dashboard-gkGpXn80.js                                    5.63 kB │ gzip:   2.17 kB\n../dist/public/assets/Payouts-4WFzKMh0.js                                      5.64 kB │ gzip:   2.38 kB\n../dist/public/assets/Testing-DVtaar4B.js                                      5.68 kB │ gzip:   2.21 kB\n../dist/public/assets/DocumentCenter-B1_9Wmvl.js                               5.72 kB │ gzip:   2.14 kB\n../dist/public/assets/AccountSubscription-Bqv4ie9K.js                          5.80 kB │ gzip:   1.81 kB\n../dist/public/assets/Resources-C50zJQMs.js                                    5.96 kB │ gzip:   2.62 kB\n../dist/public/assets/Security-BInNthzj.js                                     6.12 kB │ gzip:   2.65 kB\n../dist/public/assets/Apply-wwCS-X3w.js                                        6.28 kB │ gzip:   2.46 kB\n../dist/public/assets/GoalDetail-CKVLUYZF.js                                   6.28 kB │ gzip:   2.09 kB\n../dist/public/assets/Training-mAgRFHov.js                                     6.62 kB │ gzip:   2.59 kB\n../dist/public/assets/EligibilityPendingPage-D993T7cB.js                       6.64 kB │ gzip:   2.52 kB\n../dist/public/assets/ReferralLifecycle-CzAUyUNH.js                            6.76 kB │ gzip:   2.49 kB\n../dist/public/assets/KrisPrice-VmZal4fx.js                                    6.88 kB │ gzip:   2.51 kB\n../dist/public/assets/shells-D0iLp84e.js                                       6.89 kB │ gzip:   2.23 kB\n../dist/public/assets/partner-Cp_pDBnz.js                                      6.95 kB │ gzip:   2.66 kB\n../dist/public/assets/Recipient-Cui2HVR3.js                                    7.00 kB │ gzip:   2.43 kB\n../dist/public/assets/BlueprintReview-DKCNdOmy.js                              7.02 kB │ gzip:   2.39 kB\n../dist/public/assets/member-wighZvSW.js                                       7.06 kB │ gzip:   2.44 kB\n../dist/public/assets/Organizations-CckX2N4D.js                                7.10 kB │ gzip:   2.67 kB\n../dist/public/assets/ProductRequests-C-CQZfx_.js                              7.25 kB │ gzip:   2.60 kB\n../dist/public/assets/AccountSupport-pPgvOmo3.js                               7.32 kB │ gzip:   2.56 kB\n../dist/public/assets/Guides-Bx1jPH9S.js                                       7.52 kB │ gzip:   2.62 kB\n../dist/public/assets/Onboarding-C1qbey_r.js                                   7.60 kB │ gzip:   2.77 kB\n../dist/public/assets/NewProductRequest-1YxN3uiN.js                            7.65 kB │ gzip:   2.81 kB\n../dist/public/assets/AdminAssistedOrderDetail-GUFkvN49.js                     7.66 kB │ gzip:   2.63 kB\n../dist/public/assets/core-CwN-Jkft.js                                         7.72 kB │ gzip:   3.03 kB\n../dist/public/assets/Cart-UQBlhuul.js                                         7.75 kB │ gzip:   2.56 kB\n../dist/public/assets/Xenios30-B7S6GI0p.js                                     7.75 kB │ gzip:   2.51 kB\n../dist/public/assets/AccessHub-CAKOAlYp.js                                    7.89 kB │ gzip:   2.86 kB\n../dist/public/assets/GuideReader-C1oXe423.js                                  7.93 kB │ gzip:   2.78 kB\n../dist/public/assets/PartnersAdmin-QXM87H68.js                                8.10 kB │ gzip:   2.88 kB\n../dist/public/assets/Campaigns-b6t_r_6n.js                                    8.25 kB │ gzip:   3.25 kB\n../dist/public/assets/CarePharmacyOrdersPage-B--SeslG.js                       8.29 kB │ gzip:   2.58 kB\n../dist/public/assets/ProductRequestAdminDetail-CmGF-pXR.js                    8.33 kB │ gzip:   2.84 kB\n../dist/public/assets/ReferralsUpgrade-Bek4TEHW.js                             8.58 kB │ gzip:   3.14 kB\n../dist/public/assets/AccountOrders-eBONYg8Q.js                                8.61 kB │ gzip:   2.46 kB\n../dist/public/assets/Events-zMJhN5C2.js                                       8.76 kB │ gzip:   3.39 kB\n../dist/public/assets/CareAppointmentsPage-D6ivD5J1.js                         8.84 kB │ gzip:   2.72 kB\n../dist/public/assets/ApplicationDetail-BP4bRW6f.js                            8.98 kB │ gzip:   3.25 kB\n../dist/public/assets/EsignDocuments-ajyeGWty.js                               8.99 kB │ gzip:   2.80 kB\n../dist/public/assets/Products-CjV-dPAy.js                                     9.14 kB │ gzip:   3.23 kB\n../dist/public/assets/Tracker-CiaaKY-J.js                                      9.15 kB │ gzip:   3.40 kB\n../dist/public/assets/CareAccessRequests-CLlubiy0.js                           9.15 kB │ gzip:   3.22 kB\n../dist/public/assets/KrisCatalogRoute-Dbqguuy_.js                             9.35 kB │ gzip:   3.01 kB\n../dist/public/assets/AccountOrderDetail-Ch4b3g5O.js                           9.47 kB │ gzip:   2.94 kB\n../dist/public/assets/Questions-DcgaV6n5.js                                    9.49 kB │ gzip:   3.37 kB\n../dist/public/assets/EarlyAccessReleases-tENmwOA1.js                          9.56 kB │ gzip:   3.15 kB\n../dist/public/assets/SecurityAdmin-DpexsceU.js                                9.62 kB │ gzip:   3.24 kB\n../dist/public/assets/InventoryLotsAdmin-B80P8SuV.js                           9.64 kB │ gzip:   2.92 kB\n../dist/public/assets/OrderAdminDetail-C0pykLBu.js                             9.75 kB │ gzip:   3.09 kB\n../dist/public/assets/PrivacyControls-D2teeacP.js                              9.78 kB │ gzip:   3.28 kB\n../dist/public/assets/Website3Configuration-DStmeb-q.js                        9.96 kB │ gzip:   2.98 kB\n../dist/public/assets/MembershipPage-CgWf9YgZ.js                              10.21 kB │ gzip:   3.17 kB\n../dist/public/assets/RequiredInputState-DUb7OZs0.js                          10.51 kB │ gzip:   3.19 kB\n../dist/public/assets/CommerceQueues-kbXKOqXV.js                              10.60 kB │ gzip:   3.82 kB\n../dist/public/assets/Compliance-CpDg7vKG.js                                  10.61 kB │ gzip:   4.18 kB\n../dist/public/assets/KrisProductRoute-BYQ5lhBs.js                            10.70 kB │ gzip:   3.36 kB\n../dist/public/assets/resource-CA7tQsYM.js                                    10.78 kB │ gzip:   4.08 kB\n../dist/public/assets/LotVerification-Jk01egaE.js                             10.86 kB │ gzip:   3.92 kB\n../dist/public/assets/EarlyAccessFulfillment-B7mJptGd.js                      11.57 kB │ gzip:   3.74 kB\n../dist/public/assets/SubscriptionsPage-CHIWRyQ8.js                           11.83 kB │ gzip:   3.67 kB\n../dist/public/assets/FullCatalogProductRoute-CLEd1SLs.js                     12.90 kB │ gzip:   4.11 kB\n../dist/public/assets/AssistedOrderStatusPage-BF6E9D9E.js                     13.38 kB │ gzip:   4.41 kB\n../dist/public/assets/LotCoasAdmin-C71pShCv.js                                14.54 kB │ gzip:   4.76 kB\n../dist/public/assets/Assessment-b4G0DE6l.js                                  14.85 kB │ gzip:   5.05 kB\n../dist/public/assets/goals-data-2hIkChtg.js                                  14.93 kB │ gzip:   5.32 kB\n../dist/public/assets/Links-DLEQ7MTG.js                                       15.16 kB │ gzip:   5.21 kB\n../dist/public/assets/memberCatalog-bSxDLaJA.js                               15.31 kB │ gzip:   4.33 kB\n../dist/public/assets/Fulfillment-ULS1zDG_.js                                 15.35 kB │ gzip:   4.85 kB\n../dist/public/assets/OrderDetail-D4NBFwc-.js                                 15.64 kB │ gzip:   5.14 kB\n../dist/public/assets/components-DKfewOao.js                                  17.37 kB │ gzip:   5.47 kB\n../dist/public/assets/FullCatalogRoute-eyIMX_4P.js                            17.86 kB │ gzip:   5.20 kB\n../dist/public/assets/AccountOverview-Bmuy9U-o.js                             18.95 kB │ gzip:   5.38 kB\n../dist/public/assets/Dashboard-CK30wbUs.js                                   19.17 kB │ gzip:   6.62 kB\n../dist/public/assets/RequiredInputs-Db-pjfPc.js                              19.42 kB │ gzip:   5.48 kB\n../dist/public/assets/ActivationBridge-AwsZyjrm.js                            20.77 kB │ gzip:   5.16 kB\n../dist/public/assets/ProductsAdmin-D022IXca.js                               21.01 kB │ gzip:   6.51 kB\n../dist/public/assets/ActivationQueue-PvYIdKyd.js                             21.51 kB │ gzip:   5.99 kB\n../dist/public/assets/OrderEntryHub-05adGtv5.js                               21.97 kB │ gzip:   6.65 kB\n../dist/public/assets/qr-export-BfQigOS1.js                                   23.62 kB │ gzip:   8.90 kB\n../dist/public/assets/SignIn-DsXt1vCl.js                                      24.02 kB │ gzip:   7.37 kB\n../dist/public/assets/ResourceHubAdmin-CJnUjH3P.js                            24.98 kB │ gzip:   7.72 kB\n../dist/public/assets/FounderCommandCenter-CYGgmRSB.js                        26.78 kB │ gzip:   7.49 kB\n../dist/public/assets/ProductAdminDetail-tojjENHk.js                          27.01 kB │ gzip:   7.50 kB\n../dist/public/assets/AssistedOrderPage-BNXGh-h-.js                           30.32 kB │ gzip:   8.33 kB\n../dist/public/assets/EarlyAccessCheckoutJourney-8MYZUHg4.js                  32.95 kB │ gzip:   9.36 kB\n../dist/public/assets/kit-CSS7KwoS.js                                         35.44 kB │ gzip:  10.60 kB\n../dist/public/assets/Website3Surfaces-CasBPDez.js                            37.75 kB │ gzip:  10.14 kB\n../dist/public/assets/Admin-B986RrSE.js                                       38.59 kB │ gzip:   9.20 kB\n../dist/public/assets/Checkout-edaCzzAq.js                                    40.18 kB │ gzip:  11.28 kB\n../dist/public/assets/Members-DXvOFO4A.js                                     41.33 kB │ gzip:  10.56 kB\n../dist/public/assets/adminx-section-Ce_zl4_m.js                              41.93 kB │ gzip:  11.47 kB\n../dist/public/assets/section-DJlPE0Tj.js                                     43.00 kB │ gzip:  12.14 kB\n../dist/public/assets/types-CiEqJl5P.js                                       54.98 kB │ gzip:  12.70 kB\n../dist/public/assets/section-DV6vc3fA.js                                     58.35 kB │ gzip:  14.78 kB\n../dist/public/assets/EarlyAccessRoute-C60LBk_G.js                           101.99 kB │ gzip:  26.90 kB\n../dist/public/assets/ProductPage-DkfT9Vs3.js                                155.73 kB │ gzip:  37.53 kB\n../dist/public/assets/index-DuQnxSrm.js                                      749.57 kB │ gzip: 214.48 kB\n✓ built in 27.63s\nbuilding server...\n\n(!) Some chunks are larger than 500 kB after minification. Consider:\n- Using dynamic import() to code-split the application\n- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks\n- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.\n\n  dist\\index.cjs  1.8mb\n\nDone in 3478ms\nproduction build: 226 files scanned; 0 forbidden customer-facing em-dash forms\n",
+      "processSamples": [
+        {
+          "observedAt": "2026-10-05T13:11:25.563Z",
+          "processes": [
+            {
+              "ProcessId": 1888,
+              "ParentProcessId": 60248,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 65228,
+              "ParentProcessId": 1888,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        },
+        {
+          "observedAt": "2026-10-05T13:12:24.317Z",
+          "processes": [
+            {
+              "ProcessId": 1888,
+              "ParentProcessId": 60248,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            },
+            {
+              "ProcessId": 65228,
+              "ParentProcessId": 1888,
+              "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+            }
+          ]
+        }
+      ],
+      "noSamplesExplanation": null
+    }
+  ]
+}

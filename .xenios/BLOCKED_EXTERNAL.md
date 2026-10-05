@@ -1,5 +1,17 @@
 # Externally blocked work
 
+## 2026-10-05 A/B/C browser qualification (tooling, not proven source defect)
+
+Source70cd421/tree37ea984 and tests1a409 have passing focused checks and clean
+Node20.19 typecheck/build. Native helper path initialization failed; Chrome
+connection timed out. IAB loaded the exact production client but requested1440px
+yielded4363CSS and a distorted rejected screenshot. Requested-width/native200%
+acceptance is not claimed. Visual matrix, skeleton transition, real keyboard/
+forced-colors and comparison remain pending on working controls. Preview59535
+is read-only/synthetic and left running. Protection remains FAIL; no baseline
+amendment or hosted change. Exact evidence and next review task:
+docs/health-launch/ABC_PREMIUM_SHELL_20261003.md.
+
 ## Health provider-neutral continuation, 2026-09-30
 
 2026-10-01 successor c0e25c73 adds bounded ADP-G1 source/account/mode exposure
