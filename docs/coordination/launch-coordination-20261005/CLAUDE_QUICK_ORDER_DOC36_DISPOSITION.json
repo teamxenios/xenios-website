@@ -1,0 +1,117 @@
+{
+  "recordedAt": "2026-10-05T20:51:47.211Z",
+  "reviewCommit": "2d7533f2d3d3a1c69ea686170524d7af4dd6b064",
+  "reviewTree": "6255c8568abaf4bc2cd28d945752f9572f7f4b88",
+  "remoteVerified": true,
+  "session": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "model": "claude-fable-5-1",
+  "observedEffort": "xhigh",
+  "reviewedSource": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
+  "reviewedTree": "3fb70d98dc354e6a6049744b5bb15b741d5ba50b",
+  "evidence": "b353092ad9e49f28a65451d188c636079e1df091",
+  "decision": {
+    "moduleBytes": "ACCEPT WITH EXPLICIT LIMITS: isolated, unmounted, disabled, fail-closed",
+    "asLocated": "NOT INTEGRABLE: 14 out-of-zone runtime files",
+    "oldA1": "REVISION REQUIRED; not approved as framed",
+    "A2": "Samuel decision only, conditions disclosed, no drafting permission",
+    "intake": "NOT READY",
+    "fourDecisiveProofs": "Real adapters, durable request/evidence/idempotency, operator readback, actual route proof: all NOT PROVEN"
+  },
+  "relocatedSource": {
+    "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+    "handoff": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+    "decision": "NOT REVIEWED by doc36; original reviewer is preparing narrow doc37"
+  },
+  "tests": {
+    "node": {
+      "passed": 73,
+      "failed": 0,
+      "skipped": 0
+    },
+    "vitest": {
+      "files": 6,
+      "passed": 116
+    },
+    "scope": "Reviewer-authored 189 receipt total at 4abd only; no transfer to f1 or pool with builder184/10",
+    "provenanceCaution": "Node TAP and Vitest summary artifacts verify displayed counts. Full execution identity/time/argv/source attestation requires bounded audit, not inferred solely from summary logs."
+  },
+  "sourceFindings": [
+    {
+      "id": "QO-P2-03",
+      "summary": "Literal containment path differs from handler URL normalization; aliases can pass body parser",
+      "status": "Narrow static recheck against relocated f1 in progress"
+    },
+    {
+      "id": "QO-P2-04",
+      "summary": "Root handler rejects malformed unrelated paths before deciding namespace ownership",
+      "status": "Narrow static recheck against relocated f1 in progress"
+    }
+  ],
+  "proposalFindings": {
+    "A1": [
+      "Four protected successors need explicit classification/disclosure; two HARD privacy pins, two existing restricted seams.",
+      "Missing proposed regression pins; PWA install predicate is an additional HARD-pinned future source dependency.",
+      "Typecheck and real composition proofs remain absent."
+    ],
+    "A2": [
+      "ADP fingerprint naming collision; propose objects outside captured prefix or separately co-design fence changes.",
+      "Canonical source discriminator/recovery consequence, line re-resolution, trusted attribution and declared-code mappings need explicit design.",
+      "Atomic compatible outbox template, identity/idempotency mapping, named standing authority and complete predecessor chain required.",
+      "Health legal/classification authorities remain unresolved; currentness authority outside existing A2 scope needs a separate proposal."
+    ],
+    "authority": "Reviewer recommendations/conditions only. No SQL/source/manifest/hosted approval inferred. User edit-from-baseline sequencing outranks review suggestions for later hash acceptance/re-cut."
+  },
+  "artifacts": [
+    {
+      "sourceCommit": "2d7533f2d3d3a1c69ea686170524d7af4dd6b064",
+      "sourcePath": "docs/review/xenios-health-launch-review-20260930/36_QUICK_ORDER_4abd2c5_BOUNDED_REVIEW_2026-10-05.md",
+      "path": "CLAUDE_QUICK_ORDER_DOC36_4abd2c5.md",
+      "bytes": 37084,
+      "sha256": "78c79287d6b07b9c0af423596ec659d4032e54d65f25e64d005154b3da3c9745"
+    },
+    {
+      "sourceCommit": "2d7533f2d3d3a1c69ea686170524d7af4dd6b064",
+      "sourcePath": "docs/review/xenios-health-launch-review-20260930/hl12/36_claude-qo-nodetest-4abd2c5.out",
+      "path": "CLAUDE_QUICK_ORDER_NODE_4abd2c5.out",
+      "bytes": 13891,
+      "sha256": "2405f1e006d3af9ee4957033f9d067eeb8d38e22dd041cfd671ea94a52dd9528"
+    },
+    {
+      "sourceCommit": "2d7533f2d3d3a1c69ea686170524d7af4dd6b064",
+      "sourcePath": "docs/review/xenios-health-launch-review-20260930/hl12/36_claude-qo-vitest-4abd2c5.out",
+      "path": "CLAUDE_QUICK_ORDER_VITEST_4abd2c5.out",
+      "bytes": 221,
+      "sha256": "45ef82927bc385b190e204a322a41df76e16fedcd62980dfcb1197b1fd5de19b"
+    },
+    {
+      "sourceCommit": "2d7533f2d3d3a1c69ea686170524d7af4dd6b064",
+      "sourcePath": "docs/review/xenios-health-launch-review-20260930/hl12/36_claude-gate-4abd2c5.out",
+      "path": "CLAUDE_QUICK_ORDER_GATE_4abd2c5.out",
+      "bytes": 61654,
+      "sha256": "fadf69356479a1ac930fa2e35ea7d91ae7be79e43110736ad248b64e0a6f5c25"
+    },
+    {
+      "sourceCommit": "2d7533f2d3d3a1c69ea686170524d7af4dd6b064",
+      "sourcePath": "docs/review/xenios-health-launch-review-20260930/hl12/36_qo_lens_findings.json",
+      "path": "CLAUDE_QUICK_ORDER_LENS_FINDINGS_4abd2c5.json",
+      "bytes": 207569,
+      "sha256": "7d9f2378368e1e7c86bf9dca1780e7eb594c6509ab901fc24639f9b0e5637dbb"
+    }
+  ],
+  "independentReceiptAudit": {
+    "reviewer": "/root/f1_audit",
+    "result": "No count/hash/lineage mismatch. Static gate classification independently rederived; actual execution-source provenance remains reviewer self-report.",
+    "node": "73 individual ok records,0fail/skip,263.8446ms; no argv/executable/date/sourcehashes/recordedexit",
+    "vitest": "116pass/6files summary; no file names/argv/executable/date/timezone/sourcehashes/exit",
+    "gate": "Header asserts detached clean4abd/Node20/UTC; twoFAIL sections exit1. No raw provenance commands or22filebeforeafterhashes.",
+    "boundedGate": {
+      "changed": 121,
+      "allowed": 37,
+      "infrastructure": 34,
+      "tests": 33,
+      "seams": 3,
+      "violations": 14
+    },
+    "defaultInheritedViolations": 26
+  }
+}

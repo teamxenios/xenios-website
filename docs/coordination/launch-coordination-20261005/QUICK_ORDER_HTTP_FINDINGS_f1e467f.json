@@ -1,0 +1,35 @@
+{
+  "verifiedAt": "2026-10-05T20:57:44.156Z",
+  "reviewer": "/root/adpg12_audit plus coordinator source reads",
+  "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+  "method": "Read-only static code inspection; no execution or test run",
+  "findings": [
+    {
+      "id": "QO-P2-03",
+      "status": "PERSISTS",
+      "anchors": [
+        "server/research/health/quick-order/containment.ts:13",
+        "server/research/health/quick-order/handler.mjs:67"
+      ],
+      "differentials": [
+        "/api/health/x/../quick-order/requests",
+        "/api/health/x/%2e%2e/quick-order/requests",
+        "/api/health/quick-order\\requests"
+      ],
+      "caseCaveat": "Uppercase /API path is unrelated to BOTH current predicates. It is an intended-routing containment gap, not a demonstrated current predicate differential or leak.",
+      "negativeCounterexample": "/api/health/quick-order/../other is conservatively contained but normalizes outside handler; preserve explicit conservative ownership."
+    },
+    {
+      "id": "QO-P2-04",
+      "status": "PERSISTS",
+      "anchors": [
+        "server/research/health/quick-order/handler.mjs:71",
+        "server/research/health/quick-order/handler.mjs:136",
+        "server/research/health/quick-order/handler.mjs:206"
+      ],
+      "summary": "Malformed //other and absolute-form paths throw before ownership; catch emits Quick Order400 instead of unrelated next()"
+    }
+  ],
+  "scope": "Only relocated Quick Order server modules/helper/declarations/tests and own docs/records; no protected files/SQL",
+  "testAuthoring": "Use raw httpRequest path to avoid fetch normalization; verify zero ports/body access for unrelated and zero parser/rawBody counters for contained aliases."
+}

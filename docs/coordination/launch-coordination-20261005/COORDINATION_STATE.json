@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T20:45:47.546Z",
+  "updatedAt": "2026-10-05T20:57:44.156Z",
   "objective": "Automate verified Codex-Claude-ChatGPT launch coordination, preserve accepted source and implement the separately authorized Quick Order intake while production authorities remain held.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -268,7 +268,7 @@
     "scope": "Existing bounded acceptance chain and review checklist; no integrated-source verdict or founder approval"
   },
   "quickOrder": {
-    "status": "Relocation/proposal regeneration complete and independently integrity-verified. Same builder clean and parked; qualification refused before launch for resources. Final original six-lens verdict and source decisions pending; intake NOT READY.",
+    "status": "Relocation independently SOURCE ACCEPT WITH EXPLICIT LIMITS at doc37. Two concrete unprotected HTTP corrections prepared for same builder; intake NOT READY, protected/schema authority pending.",
     "sourceThread": "01a0e098-3b23-7233-9b07-877ace092650",
     "sourceTurn": "2c15c0f1-2e96-4291-b39f-a3e37cc84741",
     "userRequestSummary": "Direct user request to build package now in exactly one isolated worker while keeping integration and existing reviewer frozen.",
@@ -369,7 +369,8 @@
       "status": "REGENERATED AFTER RELOCATION; exact source edit permission still unapproved; not successor-hash acceptance",
       "artifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_MOUNT_PROPOSAL_f1e467f.patch",
       "pairsArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_MOUNT_HASHES_f1e467f.json",
-      "fullAppProof": false
+      "fullAppProof": false,
+      "reviewStatus": "Doc37 identity verified and disclosure QO-P1-B closed; permission absent, regression/PWA/GATE01 sequencing holds remain."
     },
     "finding": {
       "id": "QO-C1",
@@ -471,18 +472,18 @@
       "processCwd": "C:/xenios-wt/general-platform",
       "reviewRecordsCwd": "C:/xenios-wt/health-review",
       "reviewBranch": "claude/xenios-health-launch-review-20260930",
-      "status": "Existing six-lens workflow finished gathering results at 20:37:42Z; original reviewer is reading verifier output and preparing pushed doc36. Final verdict not yet collected.",
+      "status": "DONE: doc36 predecessor and doc37 relocation delta pushed; original context retained for next exact corrected-source review",
       "preliminaryArtifact": "docs/coordination/launch-coordination-20261005/CLAUDE_QUICK_ORDER_PRELIMINARY_6abf1edf.json",
       "reportedTests": {
         "source": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
         "node": 73,
         "vitest": 116,
         "total": 189,
-        "status": "CLAUDE REPORTED; raw receipts/source binding not yet independently verified",
+        "status": "Doc36 artifact counts corroborated; run/source provenance bounded self-report. No pooling or transfer.",
         "notAdditiveWithPrior184Or10": true
       },
       "reportedFinding": "P1 new QuickOrder runtime locations outside allowed write zones. Verify actual inventory and current authority/leases before same-builder relocation. shared/health/quick-order empty atsource.",
-      "finalVerdict": null,
+      "finalVerdict": "Relocation ACCEPTED as pure move; module source ACCEPT WITH EXPLICIT LIMITS / integrable at source; real intake NOT READY",
       "latestAssistantText": {
         "at": "2026-10-05T20:37:42.013Z",
         "text": "The six-lens workflow has finished. I'll read the full output, check each verifier's verdict, then write and push the bounded Quick Order verdict as doc 36."
@@ -493,10 +494,25 @@
         "doc36Pushed": false,
         "untrackedReceiptsPresent": true,
         "interpretation": "Original reviewer is preparing records; preserve in-progress artifacts, not accepted verdicts."
-      }
+      },
+      "commit": "324183e886af369a4ea27b9bf0f7b9c615b32139",
+      "path": "docs/review/xenios-health-launch-review-20260930/37_QUICK_ORDER_RELOCATION_DELTA_c807f19_2026-10-05.md",
+      "artifact": "docs/coordination/launch-coordination-20261005/CLAUDE_QUICK_ORDER_DOC37_f1e467f.md",
+      "dispositionArtifact": "docs/coordination/launch-coordination-20261005/CLAUDE_QUICK_ORDER_DOC37_DISPOSITION.json",
+      "observedEffort": "xhigh",
+      "nextDelta": "Only forthcoming exact HTTP correction from same builder; no repeat broad review",
+      "predecessorVerdict": {
+        "moduleBytes": "ACCEPT WITH EXPLICIT LIMITS: isolated, unmounted, disabled, fail-closed",
+        "asLocated": "NOT INTEGRABLE: 14 out-of-zone runtime files",
+        "oldA1": "REVISION REQUIRED; not approved as framed",
+        "A2": "Samuel decision only, conditions disclosed, no drafting permission",
+        "intake": "NOT READY",
+        "fourDecisiveProofs": "Real adapters, durable request/evidence/idempotency, operator readback, actual route proof: all NOT PROVEN"
+      },
+      "finalAssistantArtifact": "docs/coordination/launch-coordination-20261005/CLAUDE_QUICK_ORDER_FINAL_TEXT_20261005.json"
     },
     "relocation": {
-      "status": "COMPLETE / static integrity verified; successor tests NOT RUN, final review pending",
+      "status": "SOURCE ACCEPT WITH EXPLICIT LIMITS; QO-P1-A closed by same reviewer pure-move delta",
       "requestedMapping": {
         "client/src/quick-order/": "client/src/research/quick-order/",
         "server/health/quick-order/": "server/research/health/quick-order/"
@@ -533,7 +549,8 @@
       "proposalSha256lf": "c65d7e49a9f5ec87262d4e3b106ab5e16b1c3d1ecd46a01c8a7ca4699e6d92af",
       "evidence": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
       "handoff": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
-      "auditArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_RELOCATION_AUDIT_f1e467f.json"
+      "auditArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_RELOCATION_AUDIT_f1e467f.json",
+      "reviewCommit": "324183e886af369a4ea27b9bf0f7b9c615b32139"
     },
     "communicationGuard": {
       "status": "Producer reports automatic approval rejection of outbound status message to coordinator",
@@ -557,7 +574,29 @@
       "build": "NOT RUN",
       "browser": "NOT RUN",
       "database": "NOT RUN",
-      "resourceRefusalArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_PRECHECK_REFUSAL_f1e467f.json"
+      "resourceRefusalArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_PRECHECK_REFUSAL_f1e467f.json",
+      "reviewerIndependent": {
+        "nodePassed": 73,
+        "vitestPassed": 116,
+        "vitestFiles": 6,
+        "gate": "Zero new location violations; inherited hard hashes FAIL",
+        "typecheck": "NOT RUN",
+        "beforeRamMiB": [
+          999,
+          933,
+          1206
+        ],
+        "afterRamMiB": [
+          1421,
+          1326
+        ],
+        "diskGiB": 26.96,
+        "claimedHeavyJobs": 0,
+        "coordinatorSlot": null,
+        "coordinatorVitestMinimumMiB": 1536,
+        "qualificationDisposition": "Reviewer runs are archived factual evidence, not coordinator-reserved qualification. Reported Vitest headroom is below1536MiB and no new reservation is recorded. Do not waive this mismatch, infer full process attestation, pool overlapping runs, or rerun solely to improve logs.",
+        "sourceIdentityCaution": "Headers assert detached clean c807f19 and Node20; file-level before/after execution attestation not inferred from header text. Source bytes equal f1 by independently verified Git objects."
+      }
     },
     "historicalMountProposal": {
       "patchSha256lf": "6481c2ad2d4d2828e789cb2f2e24964705562cb782d70728b4152d78dc40a672",
@@ -575,6 +614,41 @@
       "artifact": "docs/coordination/launch-coordination-20261005/PLANNING_DELTA_20261005_2043.json",
       "status": "Reply confirmed; no material change. Await original final review, no automatic resource retry or inferred source approval.",
       "checkpoint": "8a4cb5eab3bb25fe1dd7306eceac81ea96043b2c"
+    },
+    "reviewFindings": [
+      {
+        "id": "QO-P2-03",
+        "status": "PERSISTS",
+        "anchors": [
+          "server/research/health/quick-order/containment.ts:13",
+          "server/research/health/quick-order/handler.mjs:67"
+        ],
+        "differentials": [
+          "/api/health/x/../quick-order/requests",
+          "/api/health/x/%2e%2e/quick-order/requests",
+          "/api/health/quick-order\\requests"
+        ],
+        "caseCaveat": "Uppercase /API path is unrelated to BOTH current predicates. It is an intended-routing containment gap, not a demonstrated current predicate differential or leak.",
+        "negativeCounterexample": "/api/health/quick-order/../other is conservatively contained but normalizes outside handler; preserve explicit conservative ownership."
+      },
+      {
+        "id": "QO-P2-04",
+        "status": "PERSISTS",
+        "anchors": [
+          "server/research/health/quick-order/handler.mjs:71",
+          "server/research/health/quick-order/handler.mjs:136",
+          "server/research/health/quick-order/handler.mjs:206"
+        ],
+        "summary": "Malformed //other and absolute-form paths throw before ownership; catch emits Quick Order400 instead of unrelated next()"
+      }
+    ],
+    "httpCorrection": {
+      "status": "READY FOR DISPATCH",
+      "request": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_CORRECTION_REQUEST.txt",
+      "findings": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_FINDINGS_f1e467f.json",
+      "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+      "reviewCommit": "324183e886af369a4ea27b9bf0f7b9c615b32139",
+      "scope": "Only leased unprotected HTTP classifier/handler/tests and own documentation. No qualification reservation, protected source, SQL or hosted actions."
     }
   },
   "latestUserContinuation": {

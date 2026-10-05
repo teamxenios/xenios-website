@@ -1,0 +1,42 @@
+{
+ "reviewer": "claude-health-launch-review-20260930",
+ "method": "scratchpad copy of the six target blobs at c807f19 (identical to 4abd2c5 and 756a906 blobs), git init, git apply --check then git apply, sha256 over LF-normalized bytes; review and lane worktrees untouched",
+ "target": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+ "patchPath": "docs/health-launch/quick-order-20261005/MOUNT_PROPOSAL.patch",
+ "patchSha256lf": "c65d7e49a9f5ec87262d4e3b106ab5e16b1c3d1ecd46a01c8a7ca4699e6d92af",
+ "heldPatchSha256lf": "6481c2ad2d4d2828e789cb2f2e24964705562cb782d70728b4152d78dc40a672",
+ "deltaFromHeld": "exactly two lines: App.tsx lazy import @/quick-order/QuickOrderPage -> @/research/quick-order/QuickOrderPage; server/index.ts import ./health/quick-order/containment -> ./research/health/quick-order/containment",
+ "applyCheck": "OK",
+ "pairs": [
+  {
+   "path": "client/src/App.tsx",
+   "beforeSha256lf": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
+   "afterSha256lf": "1a0ba37c1c14b8be9ced93c052d6df8a3362bbb72edc74ba75583ce3d388d94f"
+  },
+  {
+   "path": "shared/care/paths.ts",
+   "beforeSha256lf": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417",
+   "afterSha256lf": "a15adc22ca9ea55acdf6c21e929fd529547014291ff1810033649c5cc4130fca"
+  },
+  {
+   "path": "client/src/lib/tracking.ts",
+   "beforeSha256lf": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+   "afterSha256lf": "8d62f7a1c4e292100c88c26b2d56d2df180408b364a009773ad2b0c0c2836a26"
+  },
+  {
+   "path": "client/src/lib/attribution.ts",
+   "beforeSha256lf": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
+   "afterSha256lf": "6b1ab4732059401d80cb1f2f38fc5c047e8f559a9ea51d086ac7616bd8540391"
+  },
+  {
+   "path": "server/research/seo/raw-http-document-policy.ts",
+   "beforeSha256lf": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a",
+   "afterSha256lf": "50b80817ae4b90b075179e84b22a93f9214ca21f8ba6ac34e6158812c3eaeb45"
+  },
+  {
+   "path": "server/index.ts",
+   "beforeSha256lf": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521",
+   "afterSha256lf": "cc1d8d4d53d7f112468914344d7b6a905e76908f31be4b46c84f86976f36e7bb"
+  }
+ ]
+}

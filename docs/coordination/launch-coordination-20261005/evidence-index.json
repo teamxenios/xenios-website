@@ -313,5 +313,80 @@
     "path": "PLANNING_DELTA_20261005_2043.json",
     "bytes": 1257,
     "sha256": "912286885cc4d9c71d28d040277c10b3bb294d6369be89c47ff8febbb6277cbd"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_DOC36_4abd2c5.md",
+    "bytes": 37084,
+    "sha256": "78c79287d6b07b9c0af423596ec659d4032e54d65f25e64d005154b3da3c9745"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_NODE_4abd2c5.out",
+    "bytes": 13891,
+    "sha256": "2405f1e006d3af9ee4957033f9d067eeb8d38e22dd041cfd671ea94a52dd9528"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_VITEST_4abd2c5.out",
+    "bytes": 221,
+    "sha256": "45ef82927bc385b190e204a322a41df76e16fedcd62980dfcb1197b1fd5de19b"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_GATE_4abd2c5.out",
+    "bytes": 61654,
+    "sha256": "fadf69356479a1ac930fa2e35ea7d91ae7be79e43110736ad248b64e0a6f5c25"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_LENS_FINDINGS_4abd2c5.json",
+    "bytes": 207569,
+    "sha256": "7d9f2378368e1e7c86bf9dca1780e7eb594c6509ab901fc24639f9b0e5637dbb"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_DOC36_DISPOSITION.json",
+    "bytes": 5834,
+    "sha256": "3cb1277aed9de983d5a7268f85ac25c3b04b3cec7026a16455d77d5510e37f5c"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_DOC37_f1e467f.md",
+    "bytes": 11642,
+    "sha256": "a6d5980e5ef7785b94149e1c7b4cfe974eff352d4b6eeb4d3d12a724666b510b"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_NODE_c807f19.out",
+    "bytes": 13882,
+    "sha256": "e1b912b7a676897006281b6e2a094d14a24153046e32a175c6822fc30e10a40f"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_VITEST_c807f19.out",
+    "bytes": 19416,
+    "sha256": "83a3fee2e1efd3a3ab664d38337826e75258af79e624373d3c93bda073022373"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_GATE_c807f19.out",
+    "bytes": 4484,
+    "sha256": "7c34cd47e25c42ab67154a501fb503b9034aa5dd2dca71791bbdb86c9d735c75"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_PATCH_c65d7e49.json",
+    "bytes": 2208,
+    "sha256": "c2844e5b3b26f5a6add588e2ba70b4ffd44a1f1052a88bc836e01cb6cb92b4f0"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_FINAL_TEXT_20261005.json",
+    "bytes": 3506,
+    "sha256": "3f38c79117c46c784a1d3a5c45c9ba12f1f58223323477df8fbb703b4ac70cb4"
+  },
+  {
+    "path": "CLAUDE_QUICK_ORDER_DOC37_DISPOSITION.json",
+    "bytes": 3852,
+    "sha256": "504957b629756ca1b5347c54b03743417826a7ebaccc290aacf8e8e24478d99c"
+  },
+  {
+    "path": "QUICK_ORDER_HTTP_FINDINGS_f1e467f.json",
+    "bytes": 1736,
+    "sha256": "7d30024e98407ae900736e01d1ba8760419ed78e6cb054d957321f2d401ddd31"
+  },
+  {
+    "path": "QUICK_ORDER_HTTP_CORRECTION_REQUEST.txt",
+    "bytes": 7522,
+    "sha256": "cff31d96041276f476e4dab01a01bd6973b23d6b8dfb96b51ebad541e5feedc6"
   }
 ]

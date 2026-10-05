@@ -1,0 +1,88 @@
+{
+  "recordedAt": "2026-10-05T20:57:44.156Z",
+  "reviewCommit": "324183e886af369a4ea27b9bf0f7b9c615b32139",
+  "reviewTree": "26962695bafe61b298efa7ce6984e320ae91232b",
+  "remoteVerified": true,
+  "cleanReviewCheckout": true,
+  "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+  "tree": "6bc4fd7a7483822d4af87a3c07ab7263c0fbc377",
+  "evidence": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+  "decision": "Relocation ACCEPTED as pure move; module source ACCEPT WITH EXPLICIT LIMITS / integrable at source; real intake NOT READY",
+  "closed": [
+    "QO-P1-A: source locations",
+    "QO-P1-B: A1 protection-class disclosure only"
+  ],
+  "open": [
+    "QO-P2-01 regression pins",
+    "QO-P2-02 PWA limitation",
+    "QO-P2-03 path classification",
+    "QO-P2-04 root handler next() asymmetry",
+    "QO-P2-05 to15 and all decisive runtime/database/browser proofs",
+    "GATE-01 sequencing, A1 source authority and A2 source drafting"
+  ],
+  "proposal": {
+    "sha256lf": "c65d7e49a9f5ec87262d4e3b106ab5e16b1c3d1ecd46a01c8a7ca4699e6d92af",
+    "identityVerified": true,
+    "applied": false,
+    "approved": false
+  },
+  "reviewerRuns": {
+    "nodePassed": 73,
+    "vitestPassed": 116,
+    "vitestFiles": 6,
+    "gate": "Zero new location violations; inherited hard hashes FAIL",
+    "typecheck": "NOT RUN",
+    "beforeRamMiB": [
+      999,
+      933,
+      1206
+    ],
+    "afterRamMiB": [
+      1421,
+      1326
+    ],
+    "diskGiB": 26.96,
+    "claimedHeavyJobs": 0,
+    "coordinatorSlot": null,
+    "coordinatorVitestMinimumMiB": 1536,
+    "qualificationDisposition": "Reviewer runs are archived factual evidence, not coordinator-reserved qualification. Reported Vitest headroom is below1536MiB and no new reservation is recorded. Do not waive this mismatch, infer full process attestation, pool overlapping runs, or rerun solely to improve logs.",
+    "sourceIdentityCaution": "Headers assert detached clean c807f19 and Node20; file-level before/after execution attestation not inferred from header text. Source bytes equal f1 by independently verified Git objects."
+  },
+  "artifacts": [
+    {
+      "sourceCommit": "324183e886af369a4ea27b9bf0f7b9c615b32139",
+      "sourcePath": "docs/review/xenios-health-launch-review-20260930/37_QUICK_ORDER_RELOCATION_DELTA_c807f19_2026-10-05.md",
+      "path": "CLAUDE_QUICK_ORDER_DOC37_f1e467f.md",
+      "bytes": 11642,
+      "sha256": "a6d5980e5ef7785b94149e1c7b4cfe974eff352d4b6eeb4d3d12a724666b510b"
+    },
+    {
+      "sourceCommit": "324183e886af369a4ea27b9bf0f7b9c615b32139",
+      "sourcePath": "docs/review/xenios-health-launch-review-20260930/hl12/37_claude-qo-nodetest-c807f19.out",
+      "path": "CLAUDE_QUICK_ORDER_NODE_c807f19.out",
+      "bytes": 13882,
+      "sha256": "e1b912b7a676897006281b6e2a094d14a24153046e32a175c6822fc30e10a40f"
+    },
+    {
+      "sourceCommit": "324183e886af369a4ea27b9bf0f7b9c615b32139",
+      "sourcePath": "docs/review/xenios-health-launch-review-20260930/hl12/37_claude-qo-vitest-c807f19.out",
+      "path": "CLAUDE_QUICK_ORDER_VITEST_c807f19.out",
+      "bytes": 19416,
+      "sha256": "83a3fee2e1efd3a3ab664d38337826e75258af79e624373d3c93bda073022373"
+    },
+    {
+      "sourceCommit": "324183e886af369a4ea27b9bf0f7b9c615b32139",
+      "sourcePath": "docs/review/xenios-health-launch-review-20260930/hl12/37_claude-gate-c807f19.out",
+      "path": "CLAUDE_QUICK_ORDER_GATE_c807f19.out",
+      "bytes": 4484,
+      "sha256": "7c34cd47e25c42ab67154a501fb503b9034aa5dd2dca71791bbdb86c9d735c75"
+    },
+    {
+      "sourceCommit": "324183e886af369a4ea27b9bf0f7b9c615b32139",
+      "sourcePath": "docs/review/xenios-health-launch-review-20260930/hl12/37_mount_patch_c65d7e49_verification.json",
+      "path": "CLAUDE_QUICK_ORDER_PATCH_c65d7e49.json",
+      "bytes": 2208,
+      "sha256": "c2844e5b3b26f5a6add588e2ba70b4ffd44a1f1052a88bc836e01cb6cb92b4f0"
+    }
+  ]
+}

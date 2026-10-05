@@ -1,0 +1,375 @@
+TAP version 13
+# Subtest: direct/no affiliation and optional fields normalize without invented evidence
+ok 1 - direct/no affiliation and optional fields normalize without invented evidence
+  ---
+  duration_ms: 2.8116
+  ...
+# Subtest: required omission is refused: schemaVersion
+ok 2 - required omission is refused: schemaVersion
+  ---
+  duration_ms: 0.4764
+  ...
+# Subtest: required omission is refused: idempotencyKey
+ok 3 - required omission is refused: idempotencyKey
+  ---
+  duration_ms: 0.1325
+  ...
+# Subtest: required omission is refused: contact
+ok 4 - required omission is refused: contact
+  ---
+  duration_ms: 0.1143
+  ...
+# Subtest: required omission is refused: contact.fullLegalName
+ok 5 - required omission is refused: contact.fullLegalName
+  ---
+  duration_ms: 0.1645
+  ...
+# Subtest: required omission is refused: contact.email
+ok 6 - required omission is refused: contact.email
+  ---
+  duration_ms: 0.1019
+  ...
+# Subtest: required omission is refused: contact.mobilePhone
+ok 7 - required omission is refused: contact.mobilePhone
+  ---
+  duration_ms: 0.1737
+  ...
+# Subtest: required omission is refused: contact.ageConfirmed
+ok 8 - required omission is refused: contact.ageConfirmed
+  ---
+  duration_ms: 0.1131
+  ...
+# Subtest: required omission is refused: contact.shippingAddress
+ok 9 - required omission is refused: contact.shippingAddress
+  ---
+  duration_ms: 0.2359
+  ...
+# Subtest: required omission is refused: contact.shippingAddress.line1
+ok 10 - required omission is refused: contact.shippingAddress.line1
+  ---
+  duration_ms: 0.2468
+  ...
+# Subtest: required omission is refused: contact.shippingAddress.city
+ok 11 - required omission is refused: contact.shippingAddress.city
+  ---
+  duration_ms: 0.1381
+  ...
+# Subtest: required omission is refused: contact.shippingAddress.region
+ok 12 - required omission is refused: contact.shippingAddress.region
+  ---
+  duration_ms: 0.108
+  ...
+# Subtest: required omission is refused: contact.shippingAddress.postalCode
+ok 13 - required omission is refused: contact.shippingAddress.postalCode
+  ---
+  duration_ms: 0.0956
+  ...
+# Subtest: required omission is refused: contact.shippingAddress.countryCode
+ok 14 - required omission is refused: contact.shippingAddress.countryCode
+  ---
+  duration_ms: 0.165
+  ...
+# Subtest: required omission is refused: contact.billingSameAsShipping
+ok 15 - required omission is refused: contact.billingSameAsShipping
+  ---
+  duration_ms: 0.1079
+  ...
+# Subtest: required omission is refused: referral
+ok 16 - required omission is refused: referral
+  ---
+  duration_ms: 0.198
+  ...
+# Subtest: required omission is refused: referral.kind
+ok 17 - required omission is refused: referral.kind
+  ---
+  duration_ms: 0.1249
+  ...
+# Subtest: required omission is refused: referral.confirmed
+ok 18 - required omission is refused: referral.confirmed
+  ---
+  duration_ms: 0.7808
+  ...
+# Subtest: required omission is refused: affiliation
+ok 19 - required omission is refused: affiliation
+  ---
+  duration_ms: 0.1728
+  ...
+# Subtest: required omission is refused: affiliation.kind
+ok 20 - required omission is refused: affiliation.kind
+  ---
+  duration_ms: 0.171
+  ...
+# Subtest: required omission is refused: lines
+ok 21 - required omission is refused: lines
+  ---
+  duration_ms: 0.1125
+  ...
+# Subtest: required omission is refused: agreements
+ok 22 - required omission is refused: agreements
+  ---
+  duration_ms: 0.1068
+  ...
+# Subtest: required omission is refused: requestAcknowledged
+ok 23 - required omission is refused: requestAcknowledged
+  ---
+  duration_ms: 0.1718
+  ...
+# Subtest: non-direct sources and non-none affiliations require names for every enum
+ok 24 - non-direct sources and non-none affiliations require names for every enum
+  ---
+  duration_ms: 0.9174
+  ...
+# Subtest: blank enum, whitespace names, illegal phone and false declarations refuse
+ok 25 - blank enum, whitespace names, illegal phone and false declarations refuse
+  ---
+  duration_ms: 0.5289
+  ...
+# Subtest: separate billing requires every address field and never silently replaces conflicting same-address evidence
+ok 26 - separate billing requires every address field and never silently replaces conflicting same-address evidence
+  ---
+  duration_ms: 0.9733
+  ...
+# Subtest: only states/DC, US country and ZIP formats are accepted
+ok 27 - only states/DC, US country and ZIP formats are accepted
+  ---
+  duration_ms: 0.4496
+  ...
+# Subtest: closed objects reject browser price, trusted attribution, grants and arbitrary authority
+ok 28 - closed objects reject browser price, trusted attribution, grants and arbitrary authority
+  ---
+  duration_ms: 0.9341
+  ...
+# Subtest: quantity, composite identity and duplicate agreement boundaries are enforced
+ok 29 - quantity, composite identity and duplicate agreement boundaries are enforced
+  ---
+  duration_ms: 0.8517
+  ...
+# Subtest: published agreement requirements are exact and required authority cannot duplicate kinds
+ok 30 - published agreement requirements are exact and required authority cannot duplicate kinds
+  ---
+  duration_ms: 0.5931
+  ...
+# Subtest: form acknowledgments match canonical source bytes and remain separate from legal publication
+ok 31 - form acknowledgments match canonical source bytes and remain separate from legal publication
+  ---
+  duration_ms: 3.0884
+  ...
+# Subtest: projection never defaults missing bounds, classification or request authority
+ok 32 - projection never defaults missing bounds, classification or request authority
+  ---
+  duration_ms: 0.4988
+  ...
+# Subtest: projection strips private fields and keeps actual lower quantity cap
+ok 33 - projection strips private fields and keeps actual lower quantity cap
+  ---
+  duration_ms: 0.1792
+  ...
+# Subtest: provider, pending classification, held and research rows cannot submit
+ok 34 - provider, pending classification, held and research rows cannot submit
+  ---
+  duration_ms: 0.4453
+  ...
+# Subtest: invalid price authority, currencies and actions fail closed
+ok 35 - invalid price authority, currencies and actions fail closed
+  ---
+  duration_ms: 0.3712
+  ...
+# Subtest: current identity, versions and exact quantity increment are enforced
+ok 36 - current identity, versions and exact quantity increment are enforced
+  ---
+  duration_ms: 0.4462
+  ...
+# Subtest: estimates retain pending prices and reject unsafe arithmetic
+ok 37 - estimates retain pending prices and reject unsafe arithmetic
+  ---
+  duration_ms: 0.2781
+  ...
+# Subtest: declared evidence is distinct and cannot authorize commissions
+ok 38 - declared evidence is distinct and cannot authorize commissions
+  ---
+  duration_ms: 0.303
+  ...
+# Subtest: normalized payload hashes remain stable under object key order and change with intent
+ok 39 - normalized payload hashes remain stable under object key order and change with intent
+  ---
+  duration_ms: 0.6406
+  ...
+# Subtest: receipt validation refuses identity, estimate and attribution fabrication
+ok 40 - receipt validation refuses identity, estimate and attribution fabrication
+  ---
+  duration_ms: 0.4708
+  ...
+# Subtest: config exposes canonical form facts separately and private safe headers
+ok 41 - config exposes canonical form facts separately and private safe headers
+  ---
+  duration_ms: 3.1794
+  ...
+# Subtest: strict HTTPS configuration excludes runtime demonstration and guessed origins
+ok 42 - strict HTTPS configuration excludes runtime demonstration and guessed origins
+  ---
+  duration_ms: 1.949
+  ...
+# Subtest: only confirmed adapter receipt yields submitted, never payment or clinical approval
+ok 43 - only confirmed adapter receipt yields submitted, never payment or clinical approval
+  ---
+  duration_ms: 6.7358
+  ...
+# Subtest: missing required evidence cannot reach commit
+ok 44 - missing required evidence cannot reach commit
+  ---
+  duration_ms: 1.2305
+  ...
+# Subtest: same-actor retry recovers before new-write legal/catalog failures
+ok 45 - same-actor retry recovers before new-write legal/catalog failures
+  ---
+  duration_ms: 3.879
+  ...
+# Subtest: config outage permits refreshed session CSRF and same-key receipt recovery without new-write authority
+ok 46 - config outage permits refreshed session CSRF and same-key receipt recovery without new-write authority
+  ---
+  duration_ms: 8.0567
+  ...
+# Subtest: config outage recovery still requires authentication, origin and shared rate checks first
+ok 47 - config outage recovery still requires authentication, origin and shared rate checks first
+  ---
+  duration_ms: 0.9984
+  ...
+# Subtest: readiness revocation disables new writes but permits actor-scoped existing receipt recovery
+ok 48 - readiness revocation disables new writes but permits actor-scoped existing receipt recovery
+  ---
+  duration_ms: 4.4611
+  ...
+# Subtest: same key changed payload conflicts before authority reads
+ok 49 - same key changed payload conflicts before authority reads
+  ---
+  duration_ms: 1.9876
+  ...
+# Subtest: different actor cannot recover another account receipt with its key
+ok 50 - different actor cannot recover another account receipt with its key
+  ---
+  duration_ms: 6.9128
+  ...
+# Subtest: parallel handler retries use same actor/key and fake atomic receipt, without claiming database concurrency
+ok 51 - parallel handler retries use same actor/key and fake atomic receipt, without claiming database concurrency
+  ---
+  duration_ms: 5.8888
+  ...
+# Subtest: response loss after fake commit recovers with original key and receipt
+ok 52 - response loss after fake commit recovers with original key and receipt
+  ---
+  duration_ms: 2.1902
+  ...
+# Subtest: unconfirmed, malformed or inconsistent persistence returns no success identity
+ok 53 - unconfirmed, malformed or inconsistent persistence returns no success identity
+  ---
+  duration_ms: 6.6019
+  ...
+# Subtest: persisted replay strips status token/private fields and ignores false paid fields
+ok 54 - persisted replay strips status token/private fields and ignores false paid fields
+  ---
+  duration_ms: 2.7024
+  ...
+# Subtest: unknown recovery record hash is not translated into a receipt
+ok 55 - unknown recovery record hash is not translated into a receipt
+  ---
+  duration_ms: 0.8378
+  ...
+# Subtest: auth, exact-origin and CSRF remain mandatory even during receipt recovery
+ok 56 - auth, exact-origin and CSRF remain mandatory even during receipt recovery
+  ---
+  duration_ms: 1.3694
+  ...
+# Subtest: shared limiter applies before catalog and recovery lookup
+ok 57 - shared limiter applies before catalog and recovery lookup
+  ---
+  duration_ms: 0.3772
+  ...
+# Subtest: runtime feature requires explicit enabled and adapter readiness
+ok 58 - runtime feature requires explicit enabled and adapter readiness
+  ---
+  duration_ms: 3.3334
+  ...
+# Subtest: malformed legal configuration cannot appear valid or permit new commit
+ok 59 - malformed legal configuration cannot appear valid or permit new commit
+  ---
+  duration_ms: 0.8256
+  ...
+# Subtest: stale legal and catalog/price versions fail before commit
+ok 60 - stale legal and catalog/price versions fail before commit
+  ---
+  duration_ms: 4.8008
+  ...
+# Subtest: provider, held, research, classification-pending and hidden authority never reach commit
+ok 61 - provider, held, research, classification-pending and hidden authority never reach commit
+  ---
+  duration_ms: 4.902
+  ...
+# Subtest: every request resolves exact variant and destination instead of browser price
+ok 62 - every request resolves exact variant and destination instead of browser price
+  ---
+  duration_ms: 1.7125
+  ...
+# Subtest: pending prices stay unknown in receipt estimates
+ok 63 - pending prices stay unknown in receipt estimates
+  ---
+  duration_ms: 0.673
+  ...
+# Subtest: variant page 2 keeps accurate total and does not silently return first page
+ok 64 - variant page 2 keeps accurate total and does not silently return first page
+  ---
+  duration_ms: 0.8075
+  ...
+# Subtest: incorrect page totals, truncated pages and duplicate variants fail closed
+ok 65 - incorrect page totals, truncated pages and duplicate variants fail closed
+  ---
+  duration_ms: 0.6924
+  ...
+# Subtest: bad page/search and control characters fail before catalog access
+ok 66 - bad page/search and control characters fail before catalog access
+  ---
+  duration_ms: 1.1352
+  ...
+# Subtest: raw and upstream-parsed JSON both enforce original 64KiB including whitespace
+ok 67 - raw and upstream-parsed JSON both enforce original 64KiB including whitespace
+  ---
+  duration_ms: 0.8447
+  ...
+# Subtest: upstream body without raw-size evidence refuses and parsed tampering cannot change input
+ok 68 - upstream body without raw-size evidence refuses and parsed tampering cannot change input
+  ---
+  duration_ms: 0.6988
+  ...
+# Subtest: invalid JSON, encoding, content type and raw length return safe JSON refusals
+ok 69 - invalid JSON, encoding, content type and raw length return safe JSON refusals
+  ---
+  duration_ms: 2.8919
+  ...
+# Subtest: exact API root and unknown descendants return JSON instead of SPA fallback
+ok 70 - exact API root and unknown descendants return JSON instead of SPA fallback
+  ---
+  duration_ms: 0.3779
+  ...
+# Subtest: Express originalUrl restores stripped prefix for config and request paths
+ok 71 - Express originalUrl restores stripped prefix for config and request paths
+  ---
+  duration_ms: 1.2928
+  ...
+# Subtest: unexpected exceptions and broken operational observer cannot leak input or defeat JSON response
+ok 72 - unexpected exceptions and broken operational observer cannot leak input or defeat JSON response
+  ---
+  duration_ms: 1.4312
+  ...
+# Subtest: upstream parser error middleware only handles exact namespace with safe bounded JSON
+ok 73 - upstream parser error middleware only handles exact namespace with safe bounded JSON
+  ---
+  duration_ms: 1.0122
+  ...
+1..73
+# tests 73
+# suites 0
+# pass 73
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 268.586
