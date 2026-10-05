@@ -1,0 +1,25 @@
+{
+  "decision": "DEFERRED_NOT_RUN",
+  "gate": "full repository aggregate",
+  "source": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+  "reason": "Low available physical memory; request expressly permits resource-based deferral. No processes killed or data deleted to manufacture capacity.",
+  "observations": [
+    {
+      "at": "2026-10-05T18:46:59.4468241Z",
+      "availableMiB": 805,
+      "totalMiB": 16087,
+      "committedBytes": 39521247232,
+      "commitLimit": 60732395520,
+      "diskFreeGiB": 27.31
+    },
+    {
+      "at": "2026-10-05T18:47:27.8628939Z",
+      "availableMiB": 1452,
+      "committedBytes": 39760773120,
+      "commitLimit": 60732395520,
+      "diskFreeGiB": 27.31
+    }
+  ],
+  "otherHeavyNodeJobsObserved": [],
+  "historicalRuns": "Preserved separately; no prior failure, timeout or skip is relabeled."
+}

@@ -5,6 +5,6 @@
   "branch": "codex/accepted-source-integration-20261005",
   "state": "active",
   "startedAt": "2026-10-05T18:18:45.097Z",
-  "heartbeatAt": "2026-10-05T18:18:45.097Z",
-  "note": "New integration session; accepted exact source only from common base3eaa017. Registration checkpoint preserves frozen Core and partner. Coordinator5615963; no hosted authority."
+  "heartbeatAt": "2026-10-05T18:48:37.073Z",
+  "note": "Accepted source 756a906 pushed. Serialized focused, typecheck, build, browser, protection, route and DAG evidence complete. Preparing scoped handoff; full aggregate resource deferred; no hosted writes."
 }

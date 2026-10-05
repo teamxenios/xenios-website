@@ -1,0 +1,250 @@
+{
+  "source": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+  "bindings": [
+    {
+      "path": "client/src/clarity/AccountAuthorityPages.test.tsx",
+      "gitBlob": "fb692ed391f3a2599e0b72888c650bf0b3eae646",
+      "sha256LF": "f5d7a7ac48b5443561283ce5532576efb0608209b10005a376ebf9bd778483e8"
+    },
+    {
+      "path": "client/src/clarity/pages.test.tsx",
+      "gitBlob": "41707ef3b4b1fa05bb275c232893e7ceade14240",
+      "sha256LF": "fb6024b58914ea9f983ea4f474769f32008df63f39ae0e78db5ac65c720ece14"
+    },
+    {
+      "path": "client/src/clarity/partner-sign-in.test.tsx",
+      "gitBlob": "4804a81ab7c20725432d61f9646867740fbc1fba",
+      "sha256LF": "de3d0435ca6d8d21fb6dc8744e93211e8953d95e57585329cc2651b49d4e0ed7"
+    },
+    {
+      "path": "client/src/clarity/premium-shell.test.tsx",
+      "gitBlob": "cb722da8de4f14604b23aed62b7e890f531a80cf",
+      "sha256LF": "b16d81fbb2168fdcc0fb5fd49ebd8f6d61f8cee1a7c5a4037238e1c9688488ea"
+    },
+    {
+      "path": "client/src/clarity/public-surfaces.test.tsx",
+      "gitBlob": "724f8174324ab9a2708c66a37d9205684ac57fb7",
+      "sha256LF": "368af0cc45e5e4ed11bf777ab8b2c1ec78791b558eccdd09ff4253f4c1aff4fa"
+    },
+    {
+      "path": "client/src/research/adapters/cartProductSelection.test.ts",
+      "gitBlob": "fb825162835896614e40463b052ad520aad341e5",
+      "sha256LF": "1ff7beb5f9cc3cf3eaaa0258af62a6c15a85d91c980e503df5922ae8e8a9b84a"
+    },
+    {
+      "path": "client/src/research/adapters/commerce.test.ts",
+      "gitBlob": "591e9ba57ea5abe0cc6168b400844115057bd6dd",
+      "sha256LF": "fa2d26b7c2eb4994877d85beb1902f7327c9e30de121d2784cad0202ef1e1d28"
+    },
+    {
+      "path": "client/src/research/adapters/memberCatalog.test.ts",
+      "gitBlob": "922f83348cf3a569870865a5dd19e53d8774d0e6",
+      "sha256LF": "a47f85dc5fea906a5ee38b56bc9c03fc8a3287514215484a5fea6d4d061a4ee1"
+    },
+    {
+      "path": "client/src/research/adapters/product-subscription-create.test.ts",
+      "gitBlob": "e19dd0a0003289f84a5eb2a4c805d031c2b63035",
+      "sha256LF": "819725ccef6769f3da2c2247f5440f79f5f37d6a1490b012f37c729353dd3d7f"
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+      "gitBlob": "9221e855ec74b5584d0560cdccaa602b0613ee95",
+      "sha256LF": "e5da57686afddb59d6b705c2f355fac86fca35e009c7c50840f5a810f75f2bd7"
+    },
+    {
+      "path": "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+      "gitBlob": "ec8fb1b95d4166494a2ecc927fef6cc4beb7f920",
+      "sha256LF": "1b8cd1eb69eccb3d7dfd4f59914614b3017ac85fbec7a82175459f2c2ee938c6"
+    },
+    {
+      "path": "client/src/research/assisted-order/assisted-order-accessibility.test.ts",
+      "gitBlob": "4d8396cf3771468ed32a8fd6d2dcc3648877087b",
+      "sha256LF": "03fee5a8987486e27db623cbe7812b99fd95472bcbc6d69dd349b7e969128add"
+    },
+    {
+      "path": "client/src/research/assisted-order/assisted-order-premium.test.tsx",
+      "gitBlob": "cdcb7d0cd0cf8581be788e215d9118b4f173db06",
+      "sha256LF": "e6735f1e06885628574d92febf9ee3a9f50503de28cca39a429b4023bd238f2a"
+    },
+    {
+      "path": "client/src/research/core-member-denial.test.tsx",
+      "gitBlob": "c39128d629f91ce385f87b7140dfbef40f4d00c9",
+      "sha256LF": "5cc3f7eafa95766f07e383f5d59aecd65e4ff8aed431828f4816976db80f61e3"
+    },
+    {
+      "path": "client/src/research/early-access/EarlyAccessProductCard.test.tsx",
+      "gitBlob": "1cc2f525e243fc26f0808b4f2e296b68cab5a6b5",
+      "sha256LF": "650edc54ee2b8ac869d4aef35af676de1ccec55e7c467253a9c1b7879d6bfcbb"
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+      "gitBlob": "f3bb317553f071ae1ebf566452c0c8cef85da16e",
+      "sha256LF": "d3d985b236f5db7a125c7bd043374fb564532e36c2ef675371111d065380db7b"
+    },
+    {
+      "path": "client/src/research/pages/member/product-subscribe.test.tsx",
+      "gitBlob": "f389110e89d5465f401ce919354864484efb7f8d",
+      "sha256LF": "c2411c79bf7fd38ab51a36932f9d0746623f1211b4a66802c84786226dd67c9e"
+    },
+    {
+      "path": "client/src/research/pages/member/subscriptions.test.tsx",
+      "gitBlob": "3cb53e9b4610dd98617126a53b11c07b7a2c983a",
+      "sha256LF": "5703b766bc151ffd9380e4688330b9708d7935d8837e3cd7d98236059fd73fe1"
+    },
+    {
+      "path": "client/src/research/pages/partners/Dashboard.test.tsx",
+      "gitBlob": "a66e8903a808acae42a2f2b1591f99c2f9214bdf",
+      "sha256LF": "10e8af8f499b39d22c22a00582d30d35bbd52b6366b3542edd8133778ad9aa77"
+    },
+    {
+      "path": "client/src/research/pages/partners/Links.test.tsx",
+      "gitBlob": "8f38ba570a8b560eab9b74f9642c8d6bd6bfac86",
+      "sha256LF": "5ed6aa722ebcce61f9b57fe7056e5ea7abf1fa7b9665191927e9b827c36af2b8"
+    },
+    {
+      "path": "client/src/research/pages/sign-in.test.tsx",
+      "gitBlob": "4873e49f1a4806d04df1c3ac19624cabf41a366c",
+      "sha256LF": "00a701c84a18d980e07c06e87f7ece09805fde7171e28ccfd05173600fe81a41"
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+      "gitBlob": "c6cff1e5ec61fbdfc1575cecd1be5b6229cf70de",
+      "sha256LF": "aeb6a2a6794ceddd56212298225b4454b2e5358f0b3235ad4a7cdce817003c32"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "gitBlob": "b82751db97c81d6b3194f814fe06dc3a8c92e8a9",
+      "sha256LF": "5eb397befdd34fc4521cd9bd1261454fbc98a947b07d9b95f15a466be8788458"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+      "gitBlob": "03c5e9c68d3ba534d77d492c1f4ad4e53aa9103d",
+      "sha256LF": "9bacce02fbe4e104b983794567dada23821f8121efd9f330d7e063fff02fc314"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/RequiredInputState.test.tsx",
+      "gitBlob": "30ff715ce8b44f9de3489a8ec777c893896198e3",
+      "sha256LF": "990170d92fbde736be2e12276ab36d00cbcc311acd210afacaeca8c3c0a144c7"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/product-media-surfaces.test.tsx",
+      "gitBlob": "4aeb5d32e28663002a2356164d833713c616b440",
+      "sha256LF": "c9d42273ee43cfb416cbfcdfa9c5b64f1edfc828579b1f6fc1240bd1a4f24b59"
+    },
+    {
+      "path": "client/src/research/ui/ProductMedia.test.tsx",
+      "gitBlob": "0e8b9261294357bc89ce818e7c70f8a80d4395fd",
+      "sha256LF": "04aaf25ab3e4885025195344d741b213fade65cce7d62f61bc70f072a79ca852"
+    },
+    {
+      "path": "server/research/assisted-order/production-catalog.test.ts",
+      "gitBlob": "a2de76f1cc891c1fb510ed1d2870a9f7d636b0b0",
+      "sha256LF": "13fed47f3b709eaa4b9d53262b149608663394a2a769ee24032e33ea645fd41d"
+    },
+    {
+      "path": "server/research/catalog/member-catalog-projection.test.ts",
+      "gitBlob": "05916432962c5da78bad1a1e23f6faa69b2c1d77",
+      "sha256LF": "1dcf73d86c0de5c410770e05d067d814b4b5ec1e4b57ddbad27bf0e03a0517af"
+    },
+    {
+      "path": "server/research/catalog/member-catalog-service.test.ts",
+      "gitBlob": "70969bd2ff6ac271ac3a0143c4976c00c7912f08",
+      "sha256LF": "b818dc4b4bf0b95456e46276749f87f9b198846ac0e30f9e8dd5b54851f3b4c3"
+    },
+    {
+      "path": "server/research/catalog/product-control-reader.test.ts",
+      "gitBlob": "3c5aafb637374ac964454f0eee754dfb82745ce2",
+      "sha256LF": "f11f10b102e38622eef938de6a62808bfccdc99ac62bea8d99085c680af7056a"
+    },
+    {
+      "path": "server/research/catalog/product-media-schema.test.ts",
+      "gitBlob": "089c8f5522358d6b03f118448eb1f3d951b0f188",
+      "sha256LF": "930ba5b2426d2c80d73b61208574d988b28c91e67739130618ada387de07b0bc"
+    },
+    {
+      "path": "server/research/commerce/cart-product-selection.test.ts",
+      "gitBlob": "c78781747a40f972294508d5b9b0b13bac95cc48",
+      "sha256LF": "598eeb6c4b46f09550bf746bd788b3707ef9f777c0533e2dc5cd42387957e34e"
+    },
+    {
+      "path": "server/research/commerce/persistence/persistent-cart.test.ts",
+      "gitBlob": "0a1e87a486954ced92676d19f113d964d35dd24d",
+      "sha256LF": "6a52aa3e790fdbfc7bb8ea95801f9445b8b8e0366ff03e382e6cb21b5b1c36ce"
+    },
+    {
+      "path": "server/research/commerce/subscription-intent-journey.test.ts",
+      "gitBlob": "d5dddf138b0930665c84852d06ca4fa1f058322e",
+      "sha256LF": "77a0a8b5ba7d622e3da24a4974b6028b372acdc926c1a95c14d0b6153d9cb9b9"
+    },
+    {
+      "path": "server/research/commerce/subscriptions.test.ts",
+      "gitBlob": "3681744339e7e97ef8437038dfc152d24ef3b0c5",
+      "sha256LF": "9db6e794ef5c93a5d941269bae8e2f07910d5c1cd70ec32745448b08b7738bac"
+    },
+    {
+      "path": "server/research/master-offerings/direct-commerce-selections.test.ts",
+      "gitBlob": "5a6ee2b38ef81412a81587e8f2166d72b27cae67",
+      "sha256LF": "61cce31b9084273c8272fa19f56146cb7c4aea814fcfb44dfe8f5bc54488128e"
+    },
+    {
+      "path": "server/research/master-offerings/early-access-catalog-coverage.test.ts",
+      "gitBlob": "e3ab12a1806ed4b03fb46a8f5b32dccb2d55d8aa",
+      "sha256LF": "19dd0e0aac9ef85112757e9d2ecfbcdfaf9cc2adfe06f546310b0a531e72c1e0"
+    },
+    {
+      "path": "server/research/master-offerings/pathway-authority.test.ts",
+      "gitBlob": "8fe8da34bca00accaf081928ee35f7d8de32c1f3",
+      "sha256LF": "134091799048498f1fd4fae3058386af6966d17c891624d323a4f23523a56ddf"
+    },
+    {
+      "path": "server/research/partner-access-wall.test.ts",
+      "gitBlob": "3e946e4fe15907d860944c3a233d353260bf05b5",
+      "sha256LF": "a85ec092d77372a8726417d6fba117bb790e30e483d749a781cdc70ddf8db3f6"
+    },
+    {
+      "path": "server/research/partners/commission-schedules/ledger.test.ts",
+      "gitBlob": "c691617dfbf9008e74e06012b19b40d5db3ff6fd",
+      "sha256LF": "83ba93b6fca70129b144e7575feeb020d5c841d2eb7f38507319a1d50f728659"
+    },
+    {
+      "path": "server/research/partners/own-reads.test.ts",
+      "gitBlob": "84557eb7525c1efddee53eae908d04103f7e4613",
+      "sha256LF": "f3138c442a0df9a53a0fe2d21b48d4e3e12e70a6fdbbb7736b33afe9b2b8ba1f"
+    },
+    {
+      "path": "server/research/partners/partners.test.ts",
+      "gitBlob": "381faa800b1511388223e59fac75a366cbce28c6",
+      "sha256LF": "da28040d7e4de95818a8060040a2ec468a374f5eaffa1516b53b7d337041e485"
+    },
+    {
+      "path": "server/research/partners/referral-v1-attribution.test.ts",
+      "gitBlob": "e4882b1768b339c8d313b0ed1f7310d314dc0f04",
+      "sha256LF": "e5e04e299c137a0b4d51261c946655c5efc7856608a9ca9c31349484db7a4606"
+    },
+    {
+      "path": "server/research/partners/referral-v1-production.test.ts",
+      "gitBlob": "eebb35f3db1c2f539d2b83ad0de9249bb60d76e4",
+      "sha256LF": "de34c8d3f4c52245bdafba0b748d2c5df43b5b824ef6fd092ed376d21a262118"
+    },
+    {
+      "path": "server/research/partners/referral-v1-routes.test.ts",
+      "gitBlob": "2d811b3b2b4df7ee539b6f2c790fcb5e8cb62e02",
+      "sha256LF": "7d4da3e3983ade957d1f4cbe41084791ec36034c2241b7512efb95d66393865d"
+    },
+    {
+      "path": "server/research/products-diagnostics/product-admin-production.test.ts",
+      "gitBlob": "73f6e6867dcb9d62c827c11cca54d41d200fa90e",
+      "sha256LF": "1a24db94e730c0ef891e8f0856557c218b75333cbc387702d93d392a0d299d83"
+    },
+    {
+      "path": "shared/research/auth-return-to.test.ts",
+      "gitBlob": "aa00210355550c3d492c209e6feb7ed0e9281324",
+      "sha256LF": "e10421e34f23498b3ba915fe9311ab98fcc1806d1a365bc4b0d7217182ba0903"
+    },
+    {
+      "path": "shared/research/product-media.test.ts",
+      "gitBlob": "b3e1562a7565350c1263962a624c1f9c27db948b",
+      "sha256LF": "7804733407b631bf2e724b3069b0c499566bc23cde6336d34b8b3d4fc3e57acb"
+    }
+  ]
+}

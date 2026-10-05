@@ -1,0 +1,25 @@
+{
+  "startedAt": "2026-10-05T18:46:37.134Z",
+  "head": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+  "tree": "787432948d9464880df1dcfc5dff58eec7d889aa",
+  "dirtyAtStart": "",
+  "node": "v20.19.0",
+  "npm": "10.8.2",
+  "execPath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+    "node_modules/tsx/dist/cli.mjs",
+    "scripts/acceptance/verify-route-uniqueness.ts"
+  ],
+  "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
+  "dataset": "C:\\Users\\sboad\\.codex\\worktrees\\b22f\\xenios-website\\server\\research\\master-offerings\\data\\member-safe-master-offerings.generated.json",
+  "runnerPid": 47352,
+  "childPid": 47012,
+  "finishedAt": "2026-10-05T18:46:40.369Z",
+  "elapsedMs": 3235,
+  "exitCode": 0,
+  "signal": null,
+  "logSha256": "43b6d5e351c1a7761b88afd43195f19883752331e3f2ddd628287f1f8dcbd0dc",
+  "finalHead": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+  "dirtyAtEnd": ""
+}

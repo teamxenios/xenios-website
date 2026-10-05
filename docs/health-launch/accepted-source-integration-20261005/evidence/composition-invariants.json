@@ -1,0 +1,579 @@
+{
+  "at": "2026-10-05T18:23:50.003Z",
+  "base": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+  "acceptedCommits": [
+    "70cd421a6ab79513744f531d921b3ece61044874",
+    "1a409e2f7e1fcdeffc78d24428eeb626d7888e9c",
+    "c93bf5a2c1e2b50c5b40c65f0149033ad84658a0",
+    "2a791beeb26b75266b9468aa4a32a4cd07fe871d",
+    "94e89be7c959087edfde4ebddf2f50fa5e02cc36",
+    "806c58a83bb3c0f1f75b9e003de14aa525069950",
+    "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+    "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+    "e6a8171b5b2d4ad78930c214997532e16601a48e",
+    "38d3e467961e12256bd6c5726210b455c3719076",
+    "cad491237e681a643cfe54cc81063ae1662d9bcb",
+    "7806fb5939a69189e085739fad8cc832cfab201a"
+  ],
+  "paths": [
+    {
+      "path": "client/src/clarity/brand.ts",
+      "acceptedCommit": "70cd421a6ab79513744f531d921b3ece61044874",
+      "acceptedBlob": "946e4fc06dbe058cca7dc9bc45a894fcfed2b366",
+      "actualSha256Lf": "7d4eea55c585e1705bf4c3bbc8dc5247d3088b0071682bc48be61916b35146e9",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/components/Footer.tsx",
+      "acceptedCommit": "70cd421a6ab79513744f531d921b3ece61044874",
+      "acceptedBlob": "341e24ed1f9984efe17a1ed854d3a9fe7ba1aba0",
+      "actualSha256Lf": "420b45dc09aefa572a65ae68b5add6a2ce3d435e54e1fea7d9db9f29390df7cb",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/components/Navbar.tsx",
+      "acceptedCommit": "70cd421a6ab79513744f531d921b3ece61044874",
+      "acceptedBlob": "8ceb5184f9095ffec930a9bd3983678b5e2b04bb",
+      "actualSha256Lf": "6cdfbb0f05cc8d1fb28bfdc6b7a012ddb85e34d0c985bc88e71c09d8456a218a",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/index.css",
+      "acceptedCommit": "70cd421a6ab79513744f531d921b3ece61044874",
+      "acceptedBlob": "3e21b412fd8cea68000311c16a91134335c7d283",
+      "actualSha256Lf": "b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/account-portal/account-portal.css",
+      "acceptedCommit": "70cd421a6ab79513744f531d921b3ece61044874",
+      "acceptedBlob": "f22f00fbc7f16d8919bd04a8ecc63854f9b3e529",
+      "actualSha256Lf": "e8de0061fa059c3de27d00ed4e70736682c4bc319811a1a60778b71f337534e4",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/assisted-order/AssistedOrderConfirmationPage.tsx",
+      "acceptedCommit": "70cd421a6ab79513744f531d921b3ece61044874",
+      "acceptedBlob": "8b9c3ea29214cfbc9f7aac59fede68bb59516747",
+      "actualSha256Lf": "480fbef85ce20f604fd52a14ab2fc03348c5203aaca36a9e7a3d2cf9e44aa72e",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/assisted-order/AssistedOrderPage.tsx",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "0de78e40b3b5eabeac3018d05d10f77ac5261a9b",
+      "actualSha256Lf": "b82bef37453187806482818426c216d4a87cb2710ad43c2e43f94a4ce10930c1",
+      "kind": "DE-final-plus-exact-Core-customer-wrapper",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
+      "acceptedCommit": "70cd421a6ab79513744f531d921b3ece61044874",
+      "acceptedBlob": "a85e8d8944a8e9a402c9d15f6b07aa8e8a2fb559",
+      "actualSha256Lf": "3e759fbbfe2df6de8354c56e8d52e35ddcfb745cb313529ff4787f47c901c688",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/assisted-order/assisted-order.css",
+      "acceptedCommit": "c93bf5a2c1e2b50c5b40c65f0149033ad84658a0",
+      "acceptedBlob": "742367eb9daacfb141a475ef01236d2e7830fb3e",
+      "actualSha256Lf": "4460411bc255b37ea8663f0cccb6e19271693c25b41926ea3aa09c37176efc2e",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/catalog-priority/catalog-priority.css",
+      "acceptedCommit": "70cd421a6ab79513744f531d921b3ece61044874",
+      "acceptedBlob": "4a503c942e4557f546caa4bd4b2b58f00a0dd016",
+      "actualSha256Lf": "ca2c471e69dfbec385b5aac96d260ac49b5648675cc1b0d6be9edccd529182d6",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/clarity/premium-shell.test.tsx",
+      "acceptedCommit": "1a409e2f7e1fcdeffc78d24428eeb626d7888e9c",
+      "acceptedBlob": "cb722da8de4f14604b23aed62b7e890f531a80cf",
+      "actualSha256Lf": "b16d81fbb2168fdcc0fb5fd49ebd8f6d61f8cee1a7c5a4037238e1c9688488ea",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/assisted-order/assisted-order-premium.test.tsx",
+      "acceptedCommit": "2a791beeb26b75266b9468aa4a32a4cd07fe871d",
+      "acceptedBlob": "cdcb7d0cd0cf8581be788e215d9118b4f173db06",
+      "actualSha256Lf": "e6735f1e06885628574d92febf9ee3a9f50503de28cca39a429b4023bd238f2a",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/clarity/pages.tsx",
+      "acceptedCommit": "94e89be7c959087edfde4ebddf2f50fa5e02cc36",
+      "acceptedBlob": "8dc53e8fc90169d2e7635648e3c5a6b742842931",
+      "actualSha256Lf": "e7aa7fa5d1563eeae2575951050e692111cdadd4573e762fe277f640e3341821",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/clarity/partner-sign-in.test.tsx",
+      "acceptedCommit": "806c58a83bb3c0f1f75b9e003de14aa525069950",
+      "acceptedBlob": "4804a81ab7c20725432d61f9646867740fbc1fba",
+      "actualSha256Lf": "de3d0435ca6d8d21fb6dc8744e93211e8953d95e57585329cc2651b49d4e0ed7",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/adapters/cartProductSelection.test.ts",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "fb825162835896614e40463b052ad520aad341e5",
+      "actualSha256Lf": "1ff7beb5f9cc3cf3eaaa0258af62a6c15a85d91c980e503df5922ae8e8a9b84a",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/adapters/cartProductSelection.ts",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "826c73b20fed96b38e03e3c06bddbb62cd1fb127",
+      "actualSha256Lf": "f630c987d4eaf6f61d31476d52ff67d5460524393598f7f9077d2140cd13d451",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/adapters/memberCatalog.test.ts",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "922f83348cf3a569870865a5dd19e53d8774d0e6",
+      "actualSha256Lf": "a47f85dc5fea906a5ee38b56bc9c03fc8a3287514215484a5fea6d4d061a4ee1",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/adapters/memberCatalog.ts",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "8a4b412fe9a368603face5625b034a2ba109a625",
+      "actualSha256Lf": "7445710ef0289c2c6a26deb7294f723e58126e90fb4004f697607cf40f5fc76f",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/pages/adminx/ProductAdminDetail.tsx",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "c18b69e93fc65bb82d2d4690948bd7108bdfac13",
+      "actualSha256Lf": "6ef6f5ac12ea211bcfcfa59b248f9fbc1238eb53f921593b82f15be629ccbc16",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/RequiredInputState.test.tsx",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "30ff715ce8b44f9de3489a8ec777c893896198e3",
+      "actualSha256Lf": "990170d92fbde736be2e12276ab36d00cbcc311acd210afacaeca8c3c0a144c7",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/RequiredInputState.tsx",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "aa4c1dd4cb7f319afcae26cea25042a10612bd58",
+      "actualSha256Lf": "627345dfaee97c1d5308fa130158c786540c60dde0d96f1637e2e2d9c9663bee",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/catalog/member-catalog-projection.test.ts",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "05916432962c5da78bad1a1e23f6faa69b2c1d77",
+      "actualSha256Lf": "1dcf73d86c0de5c410770e05d067d814b4b5ec1e4b57ddbad27bf0e03a0517af",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/catalog/member-catalog-projection.ts",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "ef98310b4560998a093190aab471c05e33c782fa",
+      "actualSha256Lf": "a7e44a5d23c30bd62be8c708b1415ed6bb7b78c9962bebdef082e439d0e6c8dc",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/catalog/member-catalog-service.test.ts",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "70969bd2ff6ac271ac3a0143c4976c00c7912f08",
+      "actualSha256Lf": "b818dc4b4bf0b95456e46276749f87f9b198846ac0e30f9e8dd5b54851f3b4c3",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/catalog/member-catalog-service.ts",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "dcaf99a159e0e9644e60e4b8ae76075ada8f4bce",
+      "actualSha256Lf": "26266ed95aab6afecdb9b01200867a58cd33cc382d930a737f51a25fd6222cd7",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/catalog/product-control-reader.test.ts",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "3c5aafb637374ac964454f0eee754dfb82745ce2",
+      "actualSha256Lf": "f11f10b102e38622eef938de6a62808bfccdc99ac62bea8d99085c680af7056a",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/catalog/product-control-reader.ts",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "89bee3ed1ddf96bcbac01d0e18926e1c492bb66c",
+      "actualSha256Lf": "f4146059194b82d3a06aedc0527525f6aff15a0649e52e035016589fd437fac3",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/commerce/cart-product-selection.test.ts",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "c78781747a40f972294508d5b9b0b13bac95cc48",
+      "actualSha256Lf": "598eeb6c4b46f09550bf746bd788b3707ef9f777c0533e2dc5cd42387957e34e",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/commerce/cart-product-selection.ts",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "4610902b52599c3a1483f99c48b90b9ccfe8e267",
+      "actualSha256Lf": "af5804dd01b6e0c108fff7b24e160b6ae5c2189d42169ae9d2087a015971bda0",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/commerce/persistence/persistent-cart.test.ts",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "0a1e87a486954ced92676d19f113d964d35dd24d",
+      "actualSha256Lf": "6a52aa3e790fdbfc7bb8ea95801f9445b8b8e0366ff03e382e6cb21b5b1c36ce",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/commerce/persistence/persistent-cart.ts",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "48f5d161ac8cb162c9deef589260fe1554465300",
+      "actualSha256Lf": "45f41c59a1369df997a7e08915284fdc6eeeb10495779e8830707d453c308793",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/master-offerings/direct-commerce-selections.test.ts",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "5a6ee2b38ef81412a81587e8f2166d72b27cae67",
+      "actualSha256Lf": "61cce31b9084273c8272fa19f56146cb7c4aea814fcfb44dfe8f5bc54488128e",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/products-diagnostics/product-admin-production.test.ts",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "73f6e6867dcb9d62c827c11cca54d41d200fa90e",
+      "actualSha256Lf": "1a24db94e730c0ef891e8f0856557c218b75333cbc387702d93d392a0d299d83",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/products-diagnostics/product-admin-production.ts",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "0c5130b56fd5a6a4c09bd8fce046a48e573cdc87",
+      "actualSha256Lf": "f4647cb225129d5ed61a2e0c2968850b1ba183ba25de9a64cc86d928d2544867",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "shared/research/cart-product-selection.ts",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "7faa44245a5832ee5a13ea43f947021e0ed35d6f",
+      "actualSha256Lf": "f2b04d521db59d854f30652c396bb8343dd414dbdd63679867e42f6f07c13cfc",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "shared/research/product-admin.ts",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "fcf43dedf0b2ecc95e10d16137ddb74502a3ff10",
+      "actualSha256Lf": "a7e51177996bc53d46639a41795bcfad3913a54d1428bced33b1ffb7dbb97eb0",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "supabase/candidates/20261003_research_media_commerce_decoupling.rollback.md",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "6d3d7e46163501ae56192d3d2e299580599aaf28",
+      "actualSha256Lf": "bd88e6f340caf05a676138a97106ed3b993efbe07c8d3e67f44a2c49bf047721",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "supabase/candidates/20261003_research_media_commerce_decoupling.sql",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "6c14ef70211cb533810b02a36b158ec4ad015bc9",
+      "actualSha256Lf": "365728cbc40a60ce3d5ffacbbbd09fd8d716c0413ddb1171565ed50563c9ffa4",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "supabase/verification/research_media_commerce_decoupling_local.mjs",
+      "acceptedCommit": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+      "acceptedBlob": "f369c85b5b9c25c6c5c3019704a7f65d388004a1",
+      "actualSha256Lf": "f180b0bab0a4f94fff44dd3439a6689099a44a0fdc39e35a29ad6287189acdd9",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "ec8fb1b95d4166494a2ecc927fef6cc4beb7f920",
+      "actualSha256Lf": "1b8cd1eb69eccb3d7dfd4f59914614b3017ac85fbec7a82175459f2c2ee938c6",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/early-access/EarlyAccessProductCard.test.tsx",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "1cc2f525e243fc26f0808b4f2e296b68cab5a6b5",
+      "actualSha256Lf": "650edc54ee2b8ac869d4aef35af676de1ccec55e7c467253a9c1b7879d6bfcbb",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/early-access/EarlyAccessProductCard.tsx",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "7925ce7aa03b2d41933835bbdd740e85e54018dc",
+      "actualSha256Lf": "0b73d00396cd3db34d3bbe8d1da5cd15a43813e6cc89c29e015410203f831362",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/early-access/cart/EarlyAccessCartCatalogue.tsx",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "9bc4ef7338caa5aa15b666a8b4018ebd422cb0a9",
+      "actualSha256Lf": "9b5adbd01b126af1d9a7ac0e63f9a60ccb9881830a74fc173a519eca15a0b876",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/master-offerings/MasterOfferingCard.tsx",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "a35976b891fe08d7c260db0b1c63ea194b383b9b",
+      "actualSha256Lf": "2a4edec7a345b4e99ef9f20c2deef173d49ed4cf2989f8919961a5f588c87197",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/master-offerings/MasterOfferingDetail.tsx",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "c0768419b924237c8834605a716c3cea8a6c24c2",
+      "actualSha256Lf": "81a3e1366eb60397842b693938c663b639366ce9e7d232900c067d9a72935e08",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "b82751db97c81d6b3194f814fe06dc3a8c92e8a9",
+      "actualSha256Lf": "5eb397befdd34fc4521cd9bd1261454fbc98a947b07d9b95f15a466be8788458",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "0c67a0d35ec1c16a54f4ddb0ec6b865996f7cf2d",
+      "actualSha256Lf": "9cdcf7fae57dd618ae419354dfc4579efe49bdae726f56724385f4c55cb64cfe",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "03c5e9c68d3ba534d77d492c1f4ad4e53aa9103d",
+      "actualSha256Lf": "9bacce02fbe4e104b983794567dada23821f8121efd9f330d7e063fff02fc314",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "73d2abe277e874f73fb9e99da0a7b94b4919bf62",
+      "actualSha256Lf": "6a863b0ff1e80a3396972cc391dc67b38df6ae7356b169148acea810acd05138",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/product-media-surfaces.test.tsx",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "4aeb5d32e28663002a2356164d833713c616b440",
+      "actualSha256Lf": "c9d42273ee43cfb416cbfcdfa9c5b64f1edfc828579b1f6fc1240bd1a4f24b59",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/ui/ProductMedia.test.tsx",
+      "acceptedCommit": "e6a8171b5b2d4ad78930c214997532e16601a48e",
+      "acceptedBlob": "0e8b9261294357bc89ce818e7c70f8a80d4395fd",
+      "actualSha256Lf": "04aaf25ab3e4885025195344d741b213fade65cce7d62f61bc70f072a79ca852",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/ui/ProductMedia.tsx",
+      "acceptedCommit": "e6a8171b5b2d4ad78930c214997532e16601a48e",
+      "acceptedBlob": "00f1e2e6771e49cf10bdbd5ab912e66f6abf68d1",
+      "actualSha256Lf": "9de3d82e183cb0fc72957da55ab8934700c94f0ea1429d2e9c0cc30d5f836fd3",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/ui/product-media.css",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "518120b5466c454cbd5450455996462df10de590",
+      "actualSha256Lf": "f0c8a153c68274cced157e88a202d8c0ffab8b96ae871dd5416b43e2bb963852",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/catalog/product-media-schema.test.ts",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "089c8f5522358d6b03f118448eb1f3d951b0f188",
+      "actualSha256Lf": "930ba5b2426d2c80d73b61208574d988b28c91e67739130618ada387de07b0bc",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "shared/research/member-catalog.ts",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "83694acd27f4e2d13d3f80e894dd317de4d3a134",
+      "actualSha256Lf": "53d3b860d797ce525db2dbfe3d0f1de79e03747722a24ee3a6e1910d9bb1a494",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "shared/research/product-media.test.ts",
+      "acceptedCommit": "e6a8171b5b2d4ad78930c214997532e16601a48e",
+      "acceptedBlob": "b3e1562a7565350c1263962a624c1f9c27db948b",
+      "actualSha256Lf": "7804733407b631bf2e724b3069b0c499566bc23cde6336d34b8b3d4fc3e57acb",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "shared/research/product-media.ts",
+      "acceptedCommit": "e6a8171b5b2d4ad78930c214997532e16601a48e",
+      "acceptedBlob": "fee4b325a96af3098bc099e2d1ec57267fde7574",
+      "actualSha256Lf": "f576dbb99339391bdc029195356953146c7b34575920693a120ab98a665cd77b",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "supabase/candidates/20261005_research_product_media_descriptor.sql",
+      "acceptedCommit": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+      "acceptedBlob": "0123be502e106edb652f2198d2d7c042ecfdae9f",
+      "actualSha256Lf": "552f91324eefce7b6b4c3c1876fe49650af0be295ae15ca363147581a4134f5f",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/adapters/commerce.ts",
+      "acceptedCommit": "38d3e467961e12256bd6c5726210b455c3719076",
+      "acceptedBlob": "e7ebdf52ac91664b06fac60f947746316ec9d4d1",
+      "actualSha256Lf": "d9b8dec2bfecd97c909fe9b25742b401b9a61b9892917e2b8f72eebc0e4603c6",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/adapters/product-subscription-create.test.ts",
+      "acceptedCommit": "38d3e467961e12256bd6c5726210b455c3719076",
+      "acceptedBlob": "27c216f5f41fa0ea7ecae0697ab3fa27de8c0997",
+      "actualSha256Lf": "819725ccef6769f3da2c2247f5440f79f5f37d6a1490b012f37c729353dd3d7f",
+      "kind": "accepted-test-plus-PS-R5-400-case",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+      "acceptedCommit": "38d3e467961e12256bd6c5726210b455c3719076",
+      "acceptedBlob": "f3bb317553f071ae1ebf566452c0c8cef85da16e",
+      "actualSha256Lf": "d3d985b236f5db7a125c7bd043374fb564532e36c2ef675371111d065380db7b",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.tsx",
+      "acceptedCommit": "38d3e467961e12256bd6c5726210b455c3719076",
+      "acceptedBlob": "4c9075adc3fb223b274fa0601bc711032fb12afe",
+      "actualSha256Lf": "0d603857358eb2e1600a706e28196b0c08effa8cfbfaf97950d515a9bb6add31",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+      "acceptedCommit": "7806fb5939a69189e085739fad8cc832cfab201a",
+      "acceptedBlob": "c6cff1e5ec61fbdfc1575cecd1be5b6229cf70de",
+      "actualSha256Lf": "aeb6a2a6794ceddd56212298225b4454b2e5358f0b3235ad4a7cdce817003c32",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "acceptedCommit": "7806fb5939a69189e085739fad8cc832cfab201a",
+      "acceptedBlob": "3d938f05ca7e43020de4fba5110fe04d75cd2681",
+      "actualSha256Lf": "a242b3d6f131354b2b88409d425aae872e40b9d1e8240ce42406365ba1f5079d",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    },
+    {
+      "path": "server/research/commerce/subscription-intent-journey.test.ts",
+      "acceptedCommit": "38d3e467961e12256bd6c5726210b455c3719076",
+      "acceptedBlob": "d5dddf138b0930665c84852d06ca4fa1f058322e",
+      "actualSha256Lf": "77a0a8b5ba7d622e3da24a4974b6028b372acdc926c1a95c14d0b6153d9cb9b9",
+      "kind": "exact-accepted-final-blob",
+      "pass": true
+    }
+  ],
+  "controls": [
+    {
+      "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+      "unchanged": true
+    },
+    {
+      "path": "docs/coordination/MIGRATION_DAG.json",
+      "unchanged": true
+    },
+    {
+      "path": "supabase/MIGRATIONS.md",
+      "unchanged": true
+    },
+    {
+      "path": "client/src/App.tsx",
+      "unchanged": true
+    },
+    {
+      "path": "server/static.ts",
+      "unchanged": true
+    },
+    {
+      "path": "server/index.ts",
+      "unchanged": true
+    },
+    {
+      "path": "server/research/index.ts",
+      "unchanged": true
+    },
+    {
+      "path": "package.json",
+      "unchanged": true
+    },
+    {
+      "path": "package-lock.json",
+      "unchanged": true
+    }
+  ],
+  "allPass": true
+}

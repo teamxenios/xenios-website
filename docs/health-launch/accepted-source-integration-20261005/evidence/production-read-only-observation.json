@@ -1,0 +1,42 @@
+{
+  "service": {
+    "observedAt": "2026-10-05T18:27:05.948Z",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"autoDeploy\":\"no\",\"autoDeployTrigger\":\"off\",\"branch\":\"release/early-access-code-session-checkout\",\"createdAt\":\"2026-06-22T02:36:43.408029Z\",\"dashboardUrl\":\"https://dashboard.render.com/web/srv-d8s9vej7uimc7384dfcg\",\"id\":\"srv-d8s9vej7uimc7384dfcg\",\"name\":\"xenios-website\",\"notifyOnFail\":\"default\",\"ownerId\":\"tea-d8nhh6a8qa3s73f4ocj0\",\"repo\":\"https://github.com/teamxenios/xenios-website\",\"rootDir\":\"\",\"serviceDetails\":{\"buildPlan\":\"starter\",\"cache\":{\"profile\":\"no-cache\"},\"env\":\"node\",\"envSpecificDetails\":{\"buildCommand\":\"npm run render-build\",\"startCommand\":\"npm run start\"},\"healthCheckPath\":\"/api/health\",\"ipAllowList\":[{\"cidrBlock\":\"0.0.0.0/0\",\"description\":\"everywhere\"}],\"maintenanceMode\":{\"enabled\":false,\"uri\":\"\"},\"numInstances\":1,\"openPorts\":[{\"port\":10000,\"protocol\":\"TCP\"}],\"plan\":\"starter\",\"previews\":{\"generation\":\"off\"},\"pullRequestPreviewsEnabled\":\"no\",\"region\":\"ohio\",\"renderSubdomainPolicy\":\"enabled\",\"runtime\":\"node\",\"sshAddress\":\"srv-d8s9vej7uimc7384dfcg@ssh.ohio.render.com\",\"url\":\"https://xenios-website.onrender.com\"},\"slug\":\"xenios-website\",\"suspended\":\"not_suspended\",\"suspenders\":[],\"type\":\"web_service\",\"updatedAt\":\"2026-09-24T10:43:29.27568Z\"}"
+        }
+      ]
+    }
+  },
+  "deploy": {
+    "observedAt": "2026-10-05T18:27:05.769Z",
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "[{\"commit\":{\"createdAt\":\"2026-09-24T04:48:31Z\",\"id\":\"79414143d4355d5d3d14cd5fe6e5a536dc68d99d\",\"message\":\"feat(research): complete manual payment choices\"},\"createdAt\":\"2026-09-24T10:42:23.923813Z\",\"finishedAt\":\"2026-09-24T10:43:29.274153Z\",\"id\":\"dep-daqft3vf3r2c73b7e88g\",\"startedAt\":\"2026-09-24T10:42:23.897881Z\",\"status\":\"live\",\"trigger\":\"api\",\"updatedAt\":\"2026-09-24T10:44:03.084009Z\"}]\n\n cursor: eCEqecuJdI50M3ZmM3IyYzczYjdlODhn"
+        }
+      ]
+    }
+  },
+  "health": {
+    "observedAt": "2026-10-05T18:28:44.4111194Z",
+    "status": 200,
+    "body": {
+      "status": "Xenios API is running",
+      "uptimeSeconds": 978318,
+      "timestamp": "2026-10-05T18:28:44.513Z",
+      "config": {
+        "supabaseConfigured": true,
+        "adminConfigured": true,
+        "turnstileConfigured": false,
+        "commerceEnabled": false
+      },
+      "requestId": "3613d75f-f37b-4724-aec6-d715f523327e"
+    }
+  },
+  "mutations": [],
+  "managedDatabaseSchemaQueried": false
+}

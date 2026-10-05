@@ -1,0 +1,216 @@
+{
+  "schema": "bounded_browser_observation_summary_v1",
+  "observedDate": "2026-10-05",
+  "source": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+  "tree": "787432948d9464880df1dcfc5dff58eec7d889aa",
+  "origin": "http://127.0.0.1:60953",
+  "productionClient": true,
+  "fullServer": false,
+  "auth": "unsigned local-only synthetic read fixture; no live Auth proof",
+  "commerceEnabled": false,
+  "publicRoutes": [
+    "/",
+    "/care",
+    "/products",
+    "/partners"
+  ],
+  "memberRoutes": [
+    "/research/member/products",
+    "/research/member/products/synthetic-missing",
+    "/research/member/products/synthetic-malformed",
+    "/research/member/products/synthetic-blocked"
+  ],
+  "matrix": [
+    {
+      "targetWidth": 1440,
+      "actualInnerWidth": 1440,
+      "innerHeight": 800,
+      "documentClientWidth": 1421,
+      "documentScrollWidth": 1421,
+      "horizontalPageOverflow": 0,
+      "publicRouteCount": 4,
+      "memberRouteCount": 4,
+      "publicHeadingReady": true,
+      "publicHealthHomeNamesPerRoute": 2,
+      "publicHorizontallyClippedVisibleControls": [],
+      "memberCreateForms": 0,
+      "memberMainButtons": [],
+      "catalogFallbackCount": 3,
+      "detailFallbackCount": 1,
+      "detailStatus": "A subscription offer is not available for this product yet."
+    },
+    {
+      "targetWidth": 1024,
+      "actualInnerWidth": 1024,
+      "innerHeight": 800,
+      "documentClientWidth": 1005,
+      "documentScrollWidth": 1005,
+      "horizontalPageOverflow": 0,
+      "publicRouteCount": 4,
+      "memberRouteCount": 4,
+      "publicHeadingReady": true,
+      "publicHealthHomeNamesPerRoute": 2,
+      "publicHorizontallyClippedVisibleControls": [],
+      "memberCreateForms": 0,
+      "memberMainButtons": [],
+      "catalogFallbackCount": 3,
+      "detailFallbackCount": 1,
+      "detailStatus": "A subscription offer is not available for this product yet."
+    },
+    {
+      "targetWidth": 768,
+      "actualInnerWidth": 767,
+      "innerHeight": 800,
+      "documentClientWidth": 748,
+      "documentScrollWidth": 748,
+      "horizontalPageOverflow": 0,
+      "publicRouteCount": 4,
+      "memberRouteCount": 4,
+      "publicHeadingReady": true,
+      "publicHealthHomeNamesPerRoute": 2,
+      "publicHorizontallyClippedVisibleControls": [],
+      "memberCreateForms": 0,
+      "memberMainButtons": [],
+      "catalogFallbackCount": 3,
+      "detailFallbackCount": 1,
+      "detailStatus": "A subscription offer is not available for this product yet."
+    },
+    {
+      "targetWidth": 430,
+      "actualInnerWidth": 430,
+      "innerHeight": 800,
+      "documentClientWidth": 411,
+      "documentScrollWidth": 411,
+      "horizontalPageOverflow": 0,
+      "publicRouteCount": 4,
+      "memberRouteCount": 4,
+      "publicHeadingReady": true,
+      "publicHealthHomeNamesPerRoute": 2,
+      "publicHorizontallyClippedVisibleControls": [],
+      "memberCreateForms": 0,
+      "memberMainButtons": [],
+      "catalogFallbackCount": 3,
+      "detailFallbackCount": 1,
+      "detailStatus": "A subscription offer is not available for this product yet."
+    },
+    {
+      "targetWidth": 390,
+      "actualInnerWidth": 390,
+      "innerHeight": 800,
+      "documentClientWidth": 371,
+      "documentScrollWidth": 371,
+      "horizontalPageOverflow": 0,
+      "publicRouteCount": 4,
+      "memberRouteCount": 4,
+      "publicHeadingReady": true,
+      "publicHealthHomeNamesPerRoute": 2,
+      "publicHorizontallyClippedVisibleControls": [],
+      "memberCreateForms": 0,
+      "memberMainButtons": [],
+      "catalogFallbackCount": 3,
+      "detailFallbackCount": 1,
+      "detailStatus": "A subscription offer is not available for this product yet."
+    },
+    {
+      "targetWidth": 320,
+      "actualInnerWidth": 320,
+      "innerHeight": 800,
+      "documentClientWidth": 301,
+      "documentScrollWidth": 301,
+      "horizontalPageOverflow": 0,
+      "publicRouteCount": 4,
+      "memberRouteCount": 4,
+      "publicHeadingReady": true,
+      "publicHealthHomeNamesPerRoute": 2,
+      "publicHorizontallyClippedVisibleControls": [],
+      "memberCreateForms": 0,
+      "memberMainButtons": [],
+      "catalogFallbackCount": 3,
+      "detailFallbackCount": 1,
+      "detailStatus": "A subscription offer is not available for this product yet."
+    }
+  ],
+  "partner": {
+    "bodyLinks": 2,
+    "returnTo": "/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard",
+    "clickedUrl": "http://127.0.0.1:60953/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard",
+    "signedOutDashboardPath": "/research/partners/dashboard",
+    "signedOutCopy": "Sign in to view your partner dashboard",
+    "denialSignInHref": "/research/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard",
+    "realSignInAttempted": false
+  },
+  "keyboard": {
+    "public": {
+      "sequence": "Skip to content focused; Tab",
+      "activeAria": "Xenios Health home",
+      "outline": "rgb(124, 58, 237) solid 2.5px",
+      "overflow": 0
+    },
+    "member": {
+      "sequence": "Variant combobox focused; Tab",
+      "activeText": "View product",
+      "href": "/research/member/products/synthetic-missing",
+      "outline": "rgb(16, 16, 16) auto 0.833333px",
+      "left": 191.86196899414062,
+      "right": 284.84373474121094,
+      "clientWidth": 301,
+      "overflow": 0
+    }
+  },
+  "forcedColors": {
+    "method": "CDP Emulation.setEmulatedMedia forced-colors:active",
+    "mediaQueryConfirmed": true,
+    "publicFocusOutline": "rgb(55, 0, 110) solid 2.5px",
+    "memberFocusOutline": "rgb(55, 0, 110) auto 0.833333px",
+    "memberLinkColor": "rgb(0, 0, 159)",
+    "overflow": 0,
+    "publicScreenshot": "public-shell-forced-colors-1440.png",
+    "nativeOSHighContrastQualified": false,
+    "reset": true
+  },
+  "fallback": {
+    "exactText": "An approved product image is not available.",
+    "roleImg": false,
+    "observedSquare320": {
+      "width": 219.1927032470703,
+      "height": 219.1927032470703,
+      "cssAspectRatio": "1 / 1"
+    },
+    "observedSquare430AfterScreenshot": {
+      "width": 332.34375,
+      "height": 332.34375,
+      "cssAspectRatio": "1 / 1"
+    },
+    "realApprovedImageUsed": false,
+    "blockedImageNote": "Valid-looking synthetic descriptor is blocked by CSP. Fallback visible; no browser error-event capture, so do not independently assert onError mechanism or delivered-byte/hash proof."
+  },
+  "limitations": [
+    "Responsive viewport overrides are not native page zoom. CDP observed page zoom 0.800000011920929, scale 1.",
+    "Native helper initialization failed twice (system path error3); true 200% not qualified.",
+    "Requested768 yielded767; integer615 yielded769, fractional614.4 rejected. Exact768 not qualified.",
+    "First exploratory Care samples were taken before lazy route mounted and are rejected; final48 observations wait for visible route content.",
+    "First screenshot used uncalibrated width; rejected as1440 evidence.",
+    "One scrolled member forced-colors screenshot was blank and rejected; public forced-colors screenshot is valid.",
+    "CDP Log.enable and Page.addScriptToEvaluateOnNewDocument unsupported; CLS numeric/event qualification remains unproved. Intermediate figure heights differed, so no claim of zero layout shifts.",
+    "No full pointer/keyboard/screen-reader audit, real Auth/RLS/payment/partner activation or delivered imagery qualification.",
+    "Screenshots include automation canvas gutters; PNG pixel width is not CSS viewport width.",
+    "Nested member navigation uses horizontal scrolling; zero document overflow is not a claim of zero nested scrolling."
+  ],
+  "browserOverridesRestored": true,
+  "preview": {
+    "stop": "TTY Ctrl-C returned exit1; graceful stop receipt absent",
+    "pidsAbsent": [
+      27164,
+      56588
+    ],
+    "snapshotRetained": true,
+    "postStopHashAt": "2026-10-05T18:47:45.059Z",
+    "checkedSnapshotFiles": 349,
+    "changedSnapshotFiles": 0
+  },
+  "screenshots": [
+    "public-shell-focus-1440.png",
+    "public-shell-forced-colors-1440.png",
+    "synthetic-detail-430-full.png"
+  ]
+}

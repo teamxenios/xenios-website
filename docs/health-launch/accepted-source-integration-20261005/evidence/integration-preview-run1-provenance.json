@@ -1,0 +1,212 @@
+[
+  {
+    "observedAt": "2026-10-05T18:32:49.412Z",
+    "processes": [
+      {
+        "ProcessId": 56588,
+        "ParentProcessId": 40992,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 27164,
+        "ParentProcessId": 56588,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-10-05T18:33:45.206Z",
+    "processes": [
+      {
+        "ProcessId": 56588,
+        "ParentProcessId": 40992,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 27164,
+        "ParentProcessId": 56588,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-10-05T18:34:45.267Z",
+    "processes": [
+      {
+        "ProcessId": 56588,
+        "ParentProcessId": 40992,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 27164,
+        "ParentProcessId": 56588,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-10-05T18:35:45.174Z",
+    "processes": [
+      {
+        "ProcessId": 56588,
+        "ParentProcessId": 40992,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 27164,
+        "ParentProcessId": 56588,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-10-05T18:36:45.346Z",
+    "processes": [
+      {
+        "ProcessId": 56588,
+        "ParentProcessId": 40992,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 27164,
+        "ParentProcessId": 56588,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-10-05T18:37:45.152Z",
+    "processes": [
+      {
+        "ProcessId": 56588,
+        "ParentProcessId": 40992,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 27164,
+        "ParentProcessId": 56588,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-10-05T18:38:45.329Z",
+    "processes": [
+      {
+        "ProcessId": 56588,
+        "ParentProcessId": 40992,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 27164,
+        "ParentProcessId": 56588,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-10-05T18:39:45.077Z",
+    "processes": [
+      {
+        "ProcessId": 56588,
+        "ParentProcessId": 40992,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 27164,
+        "ParentProcessId": 56588,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-10-05T18:40:45.106Z",
+    "processes": [
+      {
+        "ProcessId": 56588,
+        "ParentProcessId": 40992,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 27164,
+        "ParentProcessId": 56588,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-10-05T18:41:45.104Z",
+    "processes": [
+      {
+        "ProcessId": 56588,
+        "ParentProcessId": 40992,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 27164,
+        "ParentProcessId": 56588,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-10-05T18:42:45.308Z",
+    "processes": [
+      {
+        "ProcessId": 56588,
+        "ParentProcessId": 40992,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 27164,
+        "ParentProcessId": 56588,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-10-05T18:43:45.179Z",
+    "processes": [
+      {
+        "ProcessId": 56588,
+        "ParentProcessId": 40992,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 27164,
+        "ParentProcessId": 56588,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-10-05T18:44:45.149Z",
+    "processes": [
+      {
+        "ProcessId": 56588,
+        "ParentProcessId": 40992,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 27164,
+        "ParentProcessId": 56588,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  },
+  {
+    "observedAt": "2026-10-05T18:45:45.168Z",
+    "processes": [
+      {
+        "ProcessId": 56588,
+        "ParentProcessId": 40992,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      },
+      {
+        "ProcessId": 27164,
+        "ParentProcessId": 56588,
+        "ExecutablePath": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe"
+      }
+    ]
+  }
+]

@@ -1,0 +1,4 @@
+*.log -text
+*.json -text
+*.png -text
+*.mjs -text
