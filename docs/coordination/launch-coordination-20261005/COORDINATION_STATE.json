@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T18:14:17.535Z",
+  "updatedAt": "2026-10-05T18:26:05.564Z",
   "objective": "Automate verified Codex-Claude-ChatGPT handoffs and prepare the gym-owner affiliate and customer product-subscription launch without bypassing release authorities.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -57,13 +57,14 @@
   "production": {
     "deployment": "dep-daqft3vf3r2c73b7e88g",
     "status": "live",
-    "evidence": "fresh read-only Render service/deploy tools and public /api/health; not authenticated purchase evidence",
+    "evidence": "Fresh read-only deployment and public health receipt at production-observation-1827.json; no authenticated purchase proof",
     "commerceEnabled": false,
     "sha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
     "service": "srv-d8s9vej7uimc7384dfcg",
     "autoDeploy": false,
     "changedByCoordinator": false,
-    "observedAt": "2026-10-05T17:30:54.0884112Z"
+    "observedAt": "2026-10-05T18:27:33.0962090Z",
+    "autoDeployObservedAt": "2026-10-05T17:31:19.811Z"
   },
   "disk": {
     "lastFreeGiB": 27.52,
@@ -141,11 +142,21 @@
     "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
     "branch": "codex/accepted-source-integration-20261005",
     "base": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
-    "status": "ACTIVE: worker acknowledged; validating acceptance/ownership/resources and setting up the isolated branch; no integrated source yet",
+    "status": "SOURCE CHECKPOINT PUSHED; exact clean17-file subscription and combined affected tests running serially; qualification pending",
     "request": "docs/coordination/launch-coordination-20261005/INTEGRATION_REQUEST.txt",
     "scope": "accepted source/test/candidate composition and serial qualification only; no Finance runtime or hosted mutation",
     "requestCommit": "561596358cbe5ba6b8d5a5a93f85e7df611b2479",
     "dispatchedAt": "2026-10-05T18:12:35.373Z",
-    "waitCursor": "b092453b-afcc-41d7-ba2e-7bd4bfaef275:9"
+    "waitCursor": "b092453b-afcc-41d7-ba2e-7bd4bfaef275:9",
+    "source": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+    "tree": "787432948d9464880df1dcfc5dff58eec7d889aa",
+    "reportedSourceProof": "12 accepted source/test commits filtered to65paths, all final-byte invariants verified except intentional assisted-order composition preserving both deltas; PS-R5 Response400/403 tests",
+    "reportedResources": {
+      "availableMiB": 1856,
+      "committedGB": 38.6,
+      "commitLimitGB": 60.73,
+      "freeDiskGiB": 27.37,
+      "otherNodeTestBuildJobs": false
+    }
   }
 }

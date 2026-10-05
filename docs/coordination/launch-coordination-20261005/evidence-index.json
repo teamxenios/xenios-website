@@ -98,5 +98,10 @@
     "path": "CLAUDE_SUBSCRIPTION_ACCEPTANCE.txt",
     "bytes": 9627,
     "sha256": "100af517b6e539658d8b8b0b67ffb4f2dbd4be977ff45246181079b7a4d8e860"
+  },
+  {
+    "path": "production-observation-1827.json",
+    "bytes": 1035,
+    "sha256": "9eb2f742d10c76a4a0fae25223c620eeea8f5ae5832e8d1fe94c6c36958f2a35"
   }
 ]

@@ -1,0 +1,32 @@
+{
+  "observedAt": "2026-10-05T18:27:33.0962090Z",
+  "methods": [
+    "Render MCP list_deploys(serviceId, limit=1)",
+    "GET public /api/health"
+  ],
+  "deployment": {
+    "service": "srv-d8s9vej7uimc7384dfcg",
+    "id": "dep-daqft3vf3r2c73b7e88g",
+    "sourceSha": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "status": "live",
+    "finishedAt": "2026-09-24T10:43:29.274153Z"
+  },
+  "health": {
+    "observedAt": "2026-10-05T18:27:33.0962090Z",
+    "url": "https://xeniostechnology.com/api/health",
+    "method": "GET",
+    "result": {
+      "status": "Xenios API is running",
+      "uptimeSeconds": 978246,
+      "timestamp": "2026-10-05T18:27:33.166Z",
+      "config": {
+        "supabaseConfigured": true,
+        "adminConfigured": true,
+        "turnstileConfigured": false,
+        "commerceEnabled": false
+      },
+      "requestId": "39998156-0eb9-42cb-a013-b0804fdc64ec"
+    }
+  },
+  "scope": "Read-only service/health observation; not Auth/RLS/purchase proof; auto-deploy configuration not reread in this observation."
+}
