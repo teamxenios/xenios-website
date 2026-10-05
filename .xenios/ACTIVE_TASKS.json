@@ -6,7 +6,7 @@
       "id": "PRODUCT-SUBSCRIPTION-INTENT-20261005",
       "title": "Canonical product subscription request seam with truthful pending and unavailable boundaries",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-product-subscription-intent-20261005",
       "baseSha": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
       "paths": [
@@ -21,7 +21,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "User-authorized isolated source seam; canonical adapter/component and synthetic boundary tests. No ProductPage/catalog/media/DTO/schema/production-deps/Finance or protected edits. Root sole writer, read-only subagent reviews. Existing default-off persistence/currentness/payment gates preserved. Page mount requires coordinator path clearance. No managed calls or writes, deployment, real identities, grants, email, money or payout. Coordinator 01a103a8 granted ProductPage wrapper claim after D/E 01a10d08 confirmed unclaimed. No offer inferred: absent subscription projection remains unavailable. Delegated one-writer new subscription-intent-journey.test.ts to subscription_boundary_tests; root owns all other files.",
-      "claimedAt": "2026-10-05T17:20:03.267Z"
+      "claimedAt": "2026-10-05T17:20:03.267Z",
+      "handoff": {
+        "session": "codex-product-subscription-intent-20261005",
+        "sha": "03b72f8786905789066d5310039557bc2951b72a",
+        "file": ".xenios/handoffs/2026-10-05T17-48-40-419Z-PRODUCT-SUBSCRIPTION-INTENT-20261005-codex-product-subscription-intent-20261005.md",
+        "at": "2026-10-05T17:48:40.441Z"
+      }
     },
     {
       "id": "HEALTH-ABC-IC2-TIMELINE-20261005",

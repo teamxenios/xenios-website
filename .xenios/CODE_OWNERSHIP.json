@@ -3561,7 +3561,7 @@
         "client/src/research/pages/member/ProductPage.tsx",
         "client/src/research/pages/member/ProductPage.subscription.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-05T17:20:03.271Z",
       "heartbeatAt": "2026-10-05T17:47:16.159Z"
     }

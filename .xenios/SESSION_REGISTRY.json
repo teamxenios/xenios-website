@@ -575,10 +575,10 @@
       "tool": "codex",
       "lane": "product-subscription-source-readiness",
       "branch": "codex/product-subscription-intent-20261005",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-10-05T17:20:03.088Z",
       "heartbeatAt": "2026-10-05T17:47:16.159Z",
-      "note": "Qualification complete:377 unchanged+23 corrected UI passes, tsc PASS, bounded synthetic browser PASS. Full journey blocked; slot released; packaging exact handoff."
+      "note": "Parked for independent Claude review. Source7806fb5/evidence03b72f8 pushed;377+23 split focused PASS, tsc PASS, bounded synthetic browser. No hosted authority."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
