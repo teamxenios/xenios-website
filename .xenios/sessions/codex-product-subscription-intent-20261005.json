@@ -5,6 +5,6 @@
   "branch": "codex/product-subscription-intent-20261005",
   "state": "active",
   "startedAt": "2026-10-05T17:20:03.088Z",
-  "heartbeatAt": "2026-10-05T17:23:54.768Z",
-  "note": "Source implementation in progress. Exact ProductPage wrapper boundary cleared by coordinator and D/E. New service test delegated; no heavy tests yet."
+  "heartbeatAt": "2026-10-05T17:32:09.467Z",
+  "note": "Pushed cad4912 source; awaiting serialized focused slot after D/E. Handoff draft itemizes missing durable idempotency/current price/referral/payment seams."
 }
