@@ -3,6 +3,23 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "HEALTH-ABC-IC2-TIMELINE-20261005",
+      "title": "Correct only IC-2 customer timeline neutral border",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "baseSha": "7d665730b6db11d64f4a9910af99fde420ded53b",
+      "paths": [
+        "client/src/research/assisted-order/assisted-order.css",
+        "client/src/research/assisted-order/assisted-order-premium.test.tsx",
+        "docs/health-launch/ABC_IC2_TIMELINE_20261005.md",
+        "docs/health-launch/evidence/abc-ic2-timeline-20261005/"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Founder correction cd66f3c and independent Claude report d9998563/ABC-R1. User relayed exact microscopic IC2-only request through existing Finance chat, verified against original pasted request c8681bc0. Same Core session, no restart. Only customer timeline color and focused regression; keep protected hashes, admin, purple focus, CTAs, finance/MC01/imagery unchanged. No build/full suite/manifest recut/hosted change; push exact source and stop for narrow Claude review.",
+      "claimedAt": "2026-10-05T16:15:21.339Z"
+    },
+    {
       "id": "HEALTH-ABC-PREMIUM-SHELL-20261003",
       "title": "Bounded display-only Health brand, customer CTA and accent convergence",
       "priority": "P2",
