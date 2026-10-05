@@ -305,7 +305,7 @@ export function PartnersPage() {
       eyebrow="PARTNERS"
       heading="Become a Xenios partner"
       lead="For creators, coaches and professionals who want to recommend Xenios and earn commission on eligible orders."
-      actions={[{ label: "Submit Inquiry", href: "/partners#inquiry", kind: "primary" }, { label: "Sign In", href: "/sign-in" }]}
+      actions={[{ label: "Submit Inquiry", href: "/partners#inquiry", kind: "primary" }, { label: "Sign In", href: "/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard" }]}
     >
       <ContentSection title="Referral partners">
         <NumberedSteps steps={[
@@ -322,7 +322,7 @@ export function PartnersPage() {
         <InquiryForm kind="strategic" />
       </ContentSection>
       <ContentSection title="Already approved?">
-        <ActionRow actions={[{ label: "Activate Account", href: "/activate", kind: "primary" }, { label: "Sign In", href: "/sign-in" }]} />
+        <ActionRow actions={[{ label: "Activate Account", href: "/activate", kind: "primary" }, { label: "Sign In", href: "/sign-in?returnTo=%2Fresearch%2Fpartners%2Fdashboard" }]} />
       </ContentSection>
     </PublicPage>
   );
