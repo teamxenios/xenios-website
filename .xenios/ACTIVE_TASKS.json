@@ -3345,7 +3345,7 @@
       "id": "LAUNCH-COORDINATION-20261005",
       "title": "Verified multi-chat launch coordination and evidence continuity",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-launch-coordination-20261005",
       "paths": [
         "docs/coordination/launch-coordination-20261005/**",
@@ -3355,7 +3355,13 @@
       "dependsOn": [],
       "baseSha": "963122ce355568d118c00ed6e774b474e2f50101",
       "scopeNote": "Records-only coordinator branch; branch-local registration indexes; no Core-owned shared-state overwrite, source changes, protected re-cut, production mutation or invented owner decision.",
-      "claimedAt": "2026-10-05T17:20:24.961Z"
+      "claimedAt": "2026-10-05T17:20:24.961Z",
+      "handoff": {
+        "session": "codex-launch-coordination-20261005",
+        "sha": "2d6edca03644975a655be6e6e796b47d1bb9a97f",
+        "file": ".xenios/handoffs/2026-10-05T17-46-08-032Z-LAUNCH-COORDINATION-20261005-codex-launch-coordination-20261005.md",
+        "at": "2026-10-05T17:46:08.039Z"
+      }
     }
   ]
 }

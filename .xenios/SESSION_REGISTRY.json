@@ -585,10 +585,10 @@
       "tool": "codex",
       "lane": "launch-coordination",
       "branch": "codex/xenios-launch-coordination-20261005",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-10-05T17:19:29.457Z",
-      "heartbeatAt": "2026-10-05T17:37:28.080Z",
-      "note": "Core IC2 and partner-return accepted; D/E238focused and typecheck pass, packaging; subscriptions own focused/browser slot; production unchanged, owner decisions pending."
+      "heartbeatAt": "2026-10-05T17:46:46.739Z",
+      "note": "Durable coordinator checkpoint; recurring handoff loop ACTIVE; D/E independent review and subscription qualification continue; production commerce disabled; owner choices pending."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
