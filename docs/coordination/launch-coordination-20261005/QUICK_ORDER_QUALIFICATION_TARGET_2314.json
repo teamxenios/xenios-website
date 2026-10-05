@@ -1,0 +1,126 @@
+{
+  "at": "2026-10-05T23:16:55.432Z",
+  "source": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+  "tree": "46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e",
+  "records": "5ee44d53e55774fd8a29ea009dac16da2ed907ef",
+  "clean": true,
+  "invariantPaths": [
+    "client",
+    "server",
+    "shared",
+    "supabase",
+    "scripts",
+    "package.json",
+    "package-lock.json",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "tsconfig.json",
+    "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    "docs/health-launch/quick-order-20261005/MOUNT_PROPOSAL.patch"
+  ],
+  "invariantDiff": [],
+  "regressionPlan": {
+    "path": "docs/health-launch/quick-order-20261005/evidence/http-regression-plan-fd023e8.json",
+    "commit": "5ee44d53e55774fd8a29ea009dac16da2ed907ef",
+    "bytes": 11396,
+    "sha256": "51991abde14d91fca68567dbedff5a8381694eefa6f820300c1a2fe5bd4cfb40",
+    "snapshotsMaterialized": false
+  },
+  "verifiedSnapshotBindings": [
+    {
+      "snapshot": "red",
+      "path": "server/research/health/quick-order/core.mjs",
+      "commit": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+      "sha256lf": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35"
+    },
+    {
+      "snapshot": "red",
+      "path": "server/research/health/quick-order/handler.mjs",
+      "commit": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+      "sha256lf": "82aa742d8c499e4e5b50c757d62931990ad3a1c7741b68d745df4a53396ea187"
+    },
+    {
+      "snapshot": "red",
+      "path": "server/research/health/quick-order/containment.ts",
+      "commit": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+      "sha256lf": "a8e253d2f59b701b5ce96116eacf58269d012ad2002082ab98014e47b1aa526b"
+    },
+    {
+      "snapshot": "red",
+      "path": "server/research/health/quick-order/tests/fixtures.mjs",
+      "commit": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+      "sha256lf": "8fc92b273d37adbe2a7f6c973a116959f180beb366f61bf5d588f431bfe8da9c"
+    },
+    {
+      "snapshot": "red",
+      "path": "server/research/health/quick-order/tests/handler.test.mjs",
+      "commit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+      "sha256lf": "351217aead0ebfabdf42f909cf8dc41b5bee9fd86acf68ed690d83d5b0d67dc0"
+    },
+    {
+      "snapshot": "red",
+      "path": "server/research/health/quick-order/containment.test.ts",
+      "commit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+      "sha256lf": "e2fe7af309273dafd6e9f3f11dddf560ffabad81aa87fdcbf116a01e7eb3b613"
+    },
+    {
+      "snapshot": "green",
+      "path": "server/research/health/quick-order/core.mjs",
+      "commit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+      "sha256lf": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35"
+    },
+    {
+      "snapshot": "green",
+      "path": "server/research/health/quick-order/handler.mjs",
+      "commit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+      "sha256lf": "a1e92095c597c708fde3543fe8a6a49683fd587ed1863537fbc47fbe349f0379"
+    },
+    {
+      "snapshot": "green",
+      "path": "server/research/health/quick-order/containment.ts",
+      "commit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+      "sha256lf": "b7799c314f8515f4bf7af74a2b905e4efbe7db0a2dcaae0a4927fd11baf862c2"
+    },
+    {
+      "snapshot": "green",
+      "path": "server/research/health/quick-order/tests/fixtures.mjs",
+      "commit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+      "sha256lf": "8fc92b273d37adbe2a7f6c973a116959f180beb366f61bf5d588f431bfe8da9c"
+    },
+    {
+      "snapshot": "green",
+      "path": "server/research/health/quick-order/paths.mjs",
+      "commit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+      "sha256lf": "89c017ecbb5b7ad18b7d7ab5fe0ffdd651ff02a926e1dfd3bde623cd9e68fc88"
+    },
+    {
+      "snapshot": "green",
+      "path": "server/research/health/quick-order/paths.d.mts",
+      "commit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+      "sha256lf": "027f3b9c4bb41e331534b2a951028021190bb1ba5e5d3117f028690cd28f1e54"
+    },
+    {
+      "snapshot": "green",
+      "path": "server/research/health/quick-order/tests/handler.test.mjs",
+      "commit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+      "sha256lf": "351217aead0ebfabdf42f909cf8dc41b5bee9fd86acf68ed690d83d5b0d67dc0"
+    },
+    {
+      "snapshot": "green",
+      "path": "server/research/health/quick-order/containment.test.ts",
+      "commit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+      "sha256lf": "e2fe7af309273dafd6e9f3f11dddf560ffabad81aa87fdcbf116a01e7eb3b613"
+    }
+  ],
+  "remoteObservation": "78cd7e6f598b74a88d810e545553b1da9ecb88a5\trefs/heads/claude/xenios-health-launch-review-20260930\n5ee44d53e55774fd8a29ea009dac16da2ed907ef\trefs/heads/codex/xenios-health-quick-order-20261005",
+  "red": {
+    "status": "NOT RUN",
+    "exit": null,
+    "intendedFailureVerified": false
+  },
+  "green": {
+    "status": "NOT RUN",
+    "exit": null
+  },
+  "noAppRuntimeExecuted": true
+}

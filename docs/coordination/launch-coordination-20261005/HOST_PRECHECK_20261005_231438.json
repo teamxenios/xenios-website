@@ -1,0 +1,22 @@
+{
+  "observedAt": "2026-10-05T23:14:38.4602340Z",
+  "completedAt": "2026-10-05T23:14:39.9608452Z",
+  "source": "One authorized read-only Win32_OperatingSystem, Get-PSDrive C and matching Win32_Process observation",
+  "availableMiB": 934,
+  "freeDiskBytes": 28972109824,
+  "freeDiskGiB": 26.9824,
+  "matchingHeavyJobs": [],
+  "requiredFreeDiskGiB": 20,
+  "requiredNodeAvailableMiB": 512,
+  "requiredVitestAvailableMiB": 1536,
+  "limitations": "Pattern-based host observation; not a complete attestation of container or host activity. No tests started.",
+  "authority": "Samuel direct builder user turn 01a10e57-7181-70f2-a60f-922333177e3b, attachment 930a0be3; same request directly supplied to original Claude at 23:12:47.616Z",
+  "cleanupPerformed": false,
+  "toolChunk": "17bd58",
+  "decision": "NOT RUN / RESOURCE BLOCKED; no reservation granted. Node minimum individually met, but required containment Vitest RAM 1536 MiB is not met. Under the new one-shot request no partial test dispatch.",
+  "vitestShortfallMiB": 602,
+  "testsStarted": 0,
+  "reservationOwner": null,
+  "retries": 0,
+  "diskRecoveryCause": "UNATTRIBUTED; no disk audit or cleanup performed."
+}

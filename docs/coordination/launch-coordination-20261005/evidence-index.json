@@ -568,5 +568,20 @@
     "path": "QUICK_ORDER_PACKET_COMPLETION_RELAY.json",
     "bytes": 2909,
     "sha256": "f0870b34f590f9ff1cee0feaa7185d6f5557306d5cc018f79fd0e64b94df294c"
+  },
+  {
+    "path": "HOST_PRECHECK_20261005_231438.json",
+    "bytes": 1168,
+    "sha256": "dd08d841f50ada2e47b3ed776cb1c5ef926c1bca5c194bc06a03e1342734e207"
+  },
+  {
+    "path": "QUICK_ORDER_QUALIFICATION_TARGET_2314.json",
+    "bytes": 4865,
+    "sha256": "7589222408e01e1368e6cc4a87b3fa9ad541dc35a9d71b487c903d603217e1ee"
+  },
+  {
+    "path": "QUICK_ORDER_QUALIFICATION_REQUEST_20261005_2312.json",
+    "bytes": 9529,
+    "sha256": "7f7516f0a85ff0f92d36426e9f500b4a8f4a97eb685fd307d7134adee84ea357"
   }
 ]

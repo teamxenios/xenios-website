@@ -585,10 +585,10 @@
       "tool": "codex",
       "lane": "launch-coordination",
       "branch": "codex/xenios-launch-coordination-20261005",
-      "state": "handoff_ready",
+      "state": "active",
       "startedAt": "2026-10-05T17:19:29.457Z",
-      "heartbeatAt": "2026-10-05T22:19:06.218Z",
-      "note": "Samebuilder completed5ee44d5 records-only packet corrections, independentlyverified; clean/parked cursor32. fd023e8 sourceunchanged/sourceacceptedwithlimits78cd7e6; authoredtestsNOTRUN.114artifacts, otherownerspreserved. Packetrelay replyd12044a9/c73b2d05 CONFIRMED, no materialchange or resend. SameClaude recordcorrections prepared/deliveryunconfirmed; no duplicate/retry/approval expansion. Heartbeatquiet."
+      "heartbeatAt": "2026-10-05T23:16:55.547Z",
+      "note": "Direct2312 request verified; one precheck934MiB/26.9824GiB/no matched heavyjobs. No full-plan qualification slot; red/green NOTRUN. Same Claude correction directly received/acknowledged, pending pushed successor. Other owners/source preserved."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
