@@ -1,3 +1,4 @@
+import { ProductMedia } from "../ui/ProductMedia";
 import { useMemo, useState } from "react";
 import type {
   MasterOfferingAction,
@@ -276,6 +277,8 @@ export function MasterOfferingDetail({
         )}
       </header>
 
+      <div className="grid min-w-0 gap-6 md:grid-cols-2">
+      <ProductMedia productId={product.id} variantId={selected?.id ?? null} />
       {variants.length > 0 && selected && (
         <section aria-labelledby="mo-detail-variants" className="grid min-w-0 gap-4">
           <h2 id="mo-detail-variants" className="body-l font-700">
@@ -360,6 +363,7 @@ export function MasterOfferingDetail({
           </div>
         </section>
       )}
+      </div>
 
       <CatalogEvidenceNotice />
 

@@ -386,23 +386,12 @@ describe("early access product card", () => {
     expect(el.querySelector("a[href='/research/support']")).not.toBeNull();
   });
 
-  it("shows no product photography, and no longer reserves a square for it", () => {
-    // No image is safer than a wrong one: a vial photograph at the wrong
-    // strength misrepresents the product. That rule is unchanged and is the
-    // half of this test that matters.
+  it("reserves the approved neutral square without inventing photography", () => {
     const el = card();
-    expect(el.querySelectorAll("img")).toHaveLength(0);
-    expect(el.querySelectorAll("picture")).toHaveLength(0);
-    expect(el.querySelectorAll("svg")).toHaveLength(0);
-    // The empty aspect-square placeholder is gone. It displayed nothing and was
-    // the largest single contributor to card height, which is what pushed a
-    // 22-product catalogue past the fold. Asserting its ABSENCE keeps a
-    // decorative box from creeping back in.
-    expect(
-      el.querySelector("[data-testid='early-access-product-card-media']"),
-    ).toBeNull();
-  });
-});
+    expect(el.querySelectorAll("img, picture, svg")).toHaveLength(0);
+    expect(el.querySelector(".xenios-product-media__square")?.textContent).toBe("An approved product image is not available.");
+    expect(el.querySelector(".xenios-product-media [role]")).toBeNull();
+  });});
 
 describe("a founder-held row, which is how Cagrilintide arrives", () => {
   const held = {

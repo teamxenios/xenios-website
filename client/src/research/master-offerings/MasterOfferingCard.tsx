@@ -1,3 +1,4 @@
+import { ProductMedia } from "../ui/ProductMedia";
 import type {
   MasterOfferingCardView,
   MasterOfferingVariantSummary,
@@ -201,6 +202,7 @@ export function MasterOfferingCard({
         data-display-state={product.displayState}
         data-access-paths={accessPathsOfCard(product).join(" ")}
       >
+        <ProductMedia productId={product.id} />
         <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="mono-label text-ink-mute min-w-0 break-words">

@@ -170,6 +170,12 @@ export interface AdminProductPrice {
 export interface AdminProductMedia {
   id: string;
   productId: string;
+  // Legacy records remain readable; incomplete metadata cannot render.
+  variantId?: string | null;
+  width?: number | null;
+  height?: number | null;
+  contentSha256?: string | null;
+  illustrative?: boolean | null;
   kind: ProductMediaKind;
   state: ProductMediaState;
   storageKey: string | null;

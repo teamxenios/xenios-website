@@ -1,4 +1,5 @@
 import type { ProductLane } from "./catalog";
+import type { ProductMediaDescriptor } from "./product-media";
 import type {
   CartAudienceEligibility,
   CartInventoryEligibility,
@@ -24,16 +25,7 @@ export type MemberCatalogQuery = {
   sort?: MemberCatalogSort;
 };
 
-export type MemberCatalogMediaPresentation = {
-  mediaId: string;
-  productId: string;
-  href: string;
-  altText: string;
-  filename: string;
-  sourceVersion: string;
-  policy: "xenios_public_media_v1" | "xenios_signed_storage_v1";
-  expiresAt: string | null;
-};
+export type MemberCatalogMediaPresentation = ProductMediaDescriptor;
 
 export const MEMBER_CATALOG_LOT_COA_STATES = [
   "verified",

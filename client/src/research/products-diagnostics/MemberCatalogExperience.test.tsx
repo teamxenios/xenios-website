@@ -43,6 +43,7 @@ const catalog: MemberCatalog = {
       displayState: "available",
       media: {
         mediaId: "media-a",
+        variantId: "variant-a", width: 1024, height: 1024, contentSha256: "a".repeat(64), illustrative: false,
         productId: "product-a",
         href: "https://media.xeniostechnology.com/media-a",
         altText: "Alpha package",
@@ -116,8 +117,8 @@ describe("member catalog experience", () => {
     expect(html).toContain("Documentation pending");
     expect(html).toContain("Price not currently available");
     expect(html).toContain("Clinical and Research listings may share an active ingredient name");
-    expect(html).toContain('width="4"');
-    expect(html).toContain('height="3"');
+    expect(html).toContain('width="1024"');
+    expect(html).toContain('height="1024"');
     expect(html).toContain('decoding="async"');
     expect(html).not.toMatch(
       /Add to cart|Buy now|Renew\s+360|linear-gradient|radial-gradient|shadow-(?:sm|md|lg|xl)|rounded-2xl/,

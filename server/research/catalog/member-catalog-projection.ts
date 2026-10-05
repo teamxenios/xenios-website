@@ -1,3 +1,4 @@
+import { parseProductMedia, validProductMediaMetadata } from "@shared/research/product-media";
 import type {
   AdminProductDetail,
   AdminProductPrice,
@@ -266,6 +267,7 @@ function priceProjection(price: AdminProductPrice | null): MemberCatalogPrice | 
 function safeMedia(
   product: AdminProductDetail,
   source: MemberCatalogProjectionSource,
+  visibleVariants: readonly MemberCatalogVariant[],
 ) {
   if (!Array.isArray(product.media) || !Array.isArray(source.mediaPresentations)) {
     return null;
@@ -277,16 +279,16 @@ function safeMedia(
       typeof item === "object" &&
       item.productId === product.id &&
       item.kind === "primary_image" &&
-      item.state === "approved" &&
-      typeof item.approvedBy === "string" &&
-      Boolean(item.approvedBy.trim()) &&
-      typeof item.id === "string" &&
-      Boolean(item.id.trim()) &&
-      typeof item.altText === "string" &&
-      Boolean(item.altText.trim()),
+      item.state === "approved",
   );
   if (media === null) return null;
   if (
+    !validProductMediaMetadata(media) ||
+    // Preserve the existing default variant; media never chooses purchase identity.
+    // One v1 primary must represent the same default on card and fresh detail.
+    visibleVariants[0]?.id !== media.variantId ||
+    typeof media.approvedBy !== "string" || !media.approvedBy.trim() ||
+    typeof media.id !== "string" || !media.id.trim() ||
     typeof media.filename !== "string" ||
     !/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(media.filename) ||
     media.filename === "." ||
@@ -301,12 +303,13 @@ function safeMedia(
       item !== null &&
       typeof item === "object" &&
       item.productId === product.id &&
-      item.mediaId === media.id &&
-      typeof item.altText === "string" &&
-      item.altText.trim() === media.altText.trim() &&
-      item.filename === media.filename,
+      item.mediaId === media.id,
   );
   return presentation !== null &&
+    presentation.variantId === media.variantId &&
+    presentation.width === media.width && presentation.height === media.height &&
+    presentation.contentSha256 === media.contentSha256 && presentation.illustrative === media.illustrative &&
+    presentation.altText === media.altText && presentation.filename === media.filename &&
     typeof presentation.sourceVersion === "string" &&
     presentation.sourceVersion.trim() &&
     typeof presentation.href === "string" &&
@@ -321,9 +324,14 @@ function safeMedia(
       source.evaluatedAt,
       expectedObjectPath,
     )
-    ? {
+    ? parseProductMedia({
         mediaId: presentation.mediaId,
         productId: presentation.productId,
+        variantId: presentation.variantId,
+        width: presentation.width,
+        height: presentation.height,
+        contentSha256: presentation.contentSha256,
+        illustrative: presentation.illustrative,
         href: presentation.href,
         altText: presentation.altText,
         filename: presentation.filename,
@@ -333,7 +341,7 @@ function safeMedia(
           presentation.expiresAt === null
             ? null
             : canonicalIso(presentation.expiresAt),
-      }
+      }, { productId: product.id, now: Date.parse(source.evaluatedAt) })
     : null;
 }
 
@@ -516,7 +524,6 @@ function projectProduct(
   const nontransactional =
     product.lane === "future_clinical" ||
     product.lane === "non_product_program";
-  const media = safeMedia(product, input.source);
   const variants =
     nontransactional || !bindings["products.sku"]
       ? []
@@ -532,6 +539,7 @@ function projectProduct(
             allProductCommerceBindingsResolved(bindings),
           ),
         );
+  const media = safeMedia(product, input.source, variants);
   const state = displayState(product, variants, bindings);
   const lowestPrice = variants
     .flatMap((variant) => (variant.price ? [variant.price] : []))

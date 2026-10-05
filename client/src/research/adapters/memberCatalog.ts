@@ -1,3 +1,4 @@
+import { parseProductMedia } from "@shared/research/product-media";
 import {
   CART_PURCHASE_AUDIENCES,
   CART_PRODUCT_SELECTION_FAILURE_CODES,
@@ -234,16 +235,7 @@ function media(
   ) {
     return null;
   }
-  return {
-    mediaId: value.mediaId,
-    productId,
-    href: value.href,
-    altText: value.altText,
-    filename: value.filename,
-    sourceVersion: value.sourceVersion,
-    policy: value.policy as MemberCatalogMediaPresentation["policy"],
-    expiresAt: value.expiresAt as string | null,
-  };
+  return parseProductMedia(value, { productId, now: Date.parse(evaluatedAt) });
 }
 
 function priceIsCurrent(value: MemberCatalogPrice | null, evaluatedAt: string) {
@@ -374,7 +366,7 @@ function card(value: unknown, evaluatedAt: string): MemberCatalogCard | null {
     classification: value.classification,
     summary: value.summary,
     displayState: value.displayState as MemberCatalogCard["displayState"],
-    media: safeMedia,
+    media: value.lane === "future_clinical" || value.lane === "non_product_program" ? null : safeMedia,
     price: safePrice,
     readiness: safeReadiness,
     selection: safeSelection,
@@ -578,6 +570,7 @@ function detail(value: unknown): MemberProductDetail | null {
   }
   return {
     ...base,
+    media: base.media?.variantId === variants[0]?.id ? base.media : null,
     audience: value.audience as MemberProductDetail["audience"],
     currency: value.currency,
     evaluatedAt: detailEvaluatedAt,

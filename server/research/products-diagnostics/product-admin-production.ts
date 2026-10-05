@@ -164,6 +164,11 @@ function mediaRow(row: Record<string, unknown>): AdminProductMedia {
   return {
     id: rowText(row.id),
     productId: rowText(row.product_id),
+    variantId: rowNullableText(row.variant_id),
+    width: typeof row.width === "number" ? row.width : null,
+    height: typeof row.height === "number" ? row.height : null,
+    contentSha256: rowNullableText(row.content_sha256),
+    illustrative: typeof row.illustrative === "boolean" ? row.illustrative : null,
     kind: rowText(row.kind) as AdminProductMedia["kind"],
     state: rowText(row.state, "pending_upload") as AdminProductMedia["state"],
     storageKey: rowNullableText(row.storage_key),

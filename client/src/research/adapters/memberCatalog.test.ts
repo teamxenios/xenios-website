@@ -20,6 +20,7 @@ const price = {
 };
 const media = {
   mediaId: "media-a",
+  variantId: "variant-a", width: 1024, height: 1024, contentSha256: "a".repeat(64), illustrative: false,
   productId: "product-a",
   href: "https://media.xeniostechnology.com/media-a",
   altText: "Product A package",
@@ -572,7 +573,7 @@ describe("member catalog browser adapter", () => {
     };
     expect(
       adaptMemberProductDetail({ ok: true, product: pathway }),
-    ).toEqual({ ok: true, product: pathway });
+    ).toEqual({ ok: true, product: { ...pathway, media: null } });
     const pathwayCard = {
       id: pathway.id,
       slug: pathway.slug,

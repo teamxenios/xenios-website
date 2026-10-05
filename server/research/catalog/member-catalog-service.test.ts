@@ -111,7 +111,9 @@ function catalogProduct(id = "product-a"): AdminProductDetail {
       approvedBy: "reviewer", createdAt: AT, updatedAt: AT,
     }],
     media: [{
-      id: `${id}-media`, productId: id, kind: "primary_image", state: "approved",
+      id: `${id}-media`, productId: id,
+      variantId: `${id}-variant`, width: 1024, height: 1024, contentSha256: "a".repeat(64), illustrative: false,
+      kind: "primary_image", state: "approved",
       storageKey: `${id}/${id}-media/${id}.webp`, filename: `${id}.webp`,
       contentType: "image/webp", sizeBytes: 100, altText: `${id} package`,
       sortOrder: 0, approvedBy: "reviewer", createdAt: AT, updatedAt: AT,
@@ -311,7 +313,7 @@ describe("MemberCatalogService", () => {
     expect(setup.inventoryRead).toHaveBeenCalledTimes(1);
   });
 
-  it("isolates each image failure while another product keeps its valid presentation", async () => {
+  it("does not sign ambiguous media while another product keeps its valid presentation", async () => {
     const first = catalogProduct();
     first.media.push({
       ...first.media[0],
@@ -325,7 +327,8 @@ describe("MemberCatalogService", () => {
     });
     const service = new MemberCatalogService(mediaDependencies(signer, products).deps);
     const catalog = await service.list({ member: MEMBER });
-    expect(signer).toHaveBeenCalledTimes(3);
+    expect(signer).toHaveBeenCalledTimes(1);
+    expect(signer).toHaveBeenCalledWith(products[1].media[0].storageKey, 300);
     expect(catalog.items).toHaveLength(2);
     // Two approved primary records remain ambiguous, regardless of signing success.
     expect(catalog.items.find((item) => item.id === "product-a")).toMatchObject({

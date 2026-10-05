@@ -156,6 +156,7 @@ function product(
       {
         id: `${id}-media`,
         productId: id,
+        variantId: `${id}-variant`, width: 1024, height: 1024, contentSha256: "a".repeat(64), illustrative: false,
         kind: "primary_image",
         state: "approved",
         storageKey: `${id}/${id}-media/${id}.webp`,
@@ -196,6 +197,7 @@ function source(products: AdminProductDetail[]): MemberCatalogProjectionInput {
       item.media.map((media) => ({
         mediaId: media.id,
         productId: item.id,
+        variantId: media.variantId!, width: media.width!, height: media.height!, contentSha256: media.contentSha256!, illustrative: media.illustrative!,
         href: `https://media.xeniostechnology.com/${media.id}`,
         altText: media.altText,
         filename: media.filename,
@@ -225,6 +227,65 @@ function source(products: AdminProductDetail[]): MemberCatalogProjectionInput {
 }
 
 describe("member catalog projection", () => {
+  it("shares exact primary delivery identity across card and detail without changing commerce", () => {
+    const input = source([product()]);
+    const card = projectMemberCatalog(input).items[0];
+    const detail = projectMemberProductDetail(input, "product-a")!;
+    expect(card.media).toEqual(detail.media);
+    expect(card.media).toMatchObject({ mediaId: "product-a-media", variantId: "product-a-variant",
+      contentSha256: "a".repeat(64), width: 1024, height: 1024 });
+    const absent = { ...input, source: { ...input.source, mediaPresentations: [] } };
+    const noImage = projectMemberCatalog(absent).items[0];
+    expect({ ...noImage, media: null }).toEqual({ ...card, media: null });
+  });
+
+  it("does not change the default variant to rescue a second-variant image", () => {
+    const p = product();
+    p.variants.push({ ...p.variants[0], id: "variant-b", sku: "VARIANT-B", label: "Second variant", sortOrder: 2 });
+    const baseline = projectMemberProductDetail(source([p]), "product-a")!;
+    p.media[0] = { ...p.media[0], variantId: "variant-b" };
+    const input = source([p]);
+    const card = projectMemberCatalog(input).items[0];
+    const detail = projectMemberProductDetail(input, "product-a")!;
+    expect(card.media).toBeNull();
+    expect(detail.media).toBeNull();
+    expect(detail.variants[0].id).toBe("product-a-variant");
+    expect({ ...detail, media: null }).toEqual({ ...baseline, media: null });
+  });
+
+  it("does not rescue a malformed approved-primary or presentation duplicate", () => {
+    const p = product();
+    const mixed = { ...p, media: [...p.media, { ...p.media[0], id: "duplicate", width: null }] };
+    expect(projectMemberCatalog(source([mixed])).items[0].media).toBeNull();
+    const input = source([p]);
+    input.source.mediaPresentations = [...input.source.mediaPresentations,
+      { ...input.source.mediaPresentations[0], contentSha256: "bad" }];
+    expect(projectMemberCatalog(input).items[0].media).toBeNull();
+  });
+
+  it("withholds images for variants hidden from the member surface", () => {
+    const p = product();
+    for (const hidden of [
+      { ...p, variants: p.variants.map((variant) => ({ ...variant, memberEligible: false })) },
+      { ...p, lane: "future_clinical" as const },
+      { ...p, lane: "non_product_program" as const },
+    ]) {
+      const result = projectMemberCatalog(source([hidden]));
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0].media).toBeNull();
+    }
+  });
+
+  it("rejects width, height, hash and exact-variant mismatches without changing product truth", () => {
+    const baseline = projectMemberCatalog(source([product()])).items[0];
+    for (const change of [{ width: 512 }, { height: 768 }, { contentSha256: "bad" },
+      { variantId: "foreign-variant" }, { illustrative: null }, { altText: "x".repeat(501) }]) {
+      const p = product(); p.media[0] = { ...p.media[0], ...change };
+      const result = projectMemberCatalog(source([p])).items[0];
+      expect(result.media).toBeNull();
+      expect({ ...result, media: null }).toEqual({ ...baseline, media: null });
+    }
+  });
   it("projects only public Product Control facts through exact readiness and cart seams", () => {
     const result = projectMemberCatalog(source([product()]));
     expect(result).toMatchObject({

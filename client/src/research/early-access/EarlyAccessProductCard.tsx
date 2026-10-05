@@ -1,3 +1,4 @@
+import { ProductMedia } from "../ui/ProductMedia";
 import {
   EarlyAccessQuantitySelector,
   type EarlyAccessQuantity,
@@ -195,13 +196,7 @@ export function EarlyAccessProductCard({
       data-selected={selected ? "true" : "false"}
       className="card grid min-w-0 content-start gap-1.5 p-4"
     >
-      {/*
-        NO media block. The square placeholder that used to sit here was the
-        single largest contributor to card height, and it showed nothing: no
-        product photography is used at all, because a wrong image on a research
-        product is worse than none. Removing it is the compression; the policy
-        it encoded is unchanged.
-      */}
+      <ProductMedia productId={product.productId} variantId={product.variantId} />
       {category !== null ? (
         <p
           data-testid={`${testId}-category`}

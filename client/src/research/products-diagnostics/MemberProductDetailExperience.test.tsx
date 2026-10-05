@@ -25,6 +25,7 @@ const product: MemberProductDetail = {
   displayState: "available",
   media: {
     mediaId: "media-a",
+    variantId: "variant-a", width: 1024, height: 1024, contentSha256: "a".repeat(64), illustrative: false,
     productId: "product-a",
     href: "https://media.xeniostechnology.com/media-a",
     altText: "Alpha package",
@@ -158,8 +159,8 @@ describe("member product detail experience", () => {
     expect(html).not.toContain("<main");
     expect(html).toContain("Alpha Research");
     expect(html).toContain("https://media.xeniostechnology.com/media-a");
-    expect(html).toContain('width="4"');
-    expect(html).toContain('height="3"');
+    expect(html).toContain('width="1024"');
+    expect(html).toContain('height="1024"');
     expect(html).toContain('decoding="async"');
     expect(html).toContain("$149.00");
     expect(html).toContain("Exact-lot documentation verified");
@@ -185,6 +186,13 @@ describe("member product detail experience", () => {
     expect(host.textContent).toContain("$199.00");
     expect(host.textContent).toContain("Not currently available");
     expect(host.textContent).toContain("Exact-lot documentation required");
+    expect(host.querySelector(".xenios-product-media img")).toBeNull();
+    expect(host.querySelector(".xenios-product-media")?.textContent).toBe("An approved product image is not available.");
+    act(() => {
+      selector.value = "variant-a";
+      selector.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    expect(host.querySelector(".xenios-product-media")?.getAttribute("data-media-id")).toBe("media-a");
   });
 
   it("shows a truthful pending price when an approved current variant price is absent", () => {
