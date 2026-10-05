@@ -1,4 +1,4 @@
-# Quick Order bounded HTTP successor — 2026-10-05
+# Quick Order accepted HTTP source / records correction — 2026-10-05
 
 - SESSION: `codex-health-quick-order-20261005`
 - TASK: `HEALTH-QUICK-ORDER-20261005`
@@ -16,6 +16,24 @@ accepted base remains `756a906877dbc174b7e228a259d2faa9c3af48ca`, tree
 count correction `fffa33a...`, not release acceptance. Do not merge the
 coordinator's Finance ancestry or start another builder/reviewer/relocation.
 
+Latest records-only continuation: coordinator request
+`3678d015e63ac74a64dd057c387983b16b7ec313`, within Samuel's existing direct20a
+packet scope. Only APPROVAL_MATRIX's QO-R-02 GATE-01 provenance and QO-R-04 PWA
+predicate wording changed, plus this handoff and our existing continuity entries.
+App's inherited drift is Access Hub `0d22757`; server/index's is the HL-12
+financial/provider chain beginning `3562c03`. Both pinned/current LF hashes
+are now named accurately. PWA wording includes all existing exclusions while
+preserving plain intake-route eligibility and its separate protected scope.
+No A1/A2, GATE-01 disposition, manifest recut or source change is inferred.
+
+Static Git/hash verification for this continuation: 24 module files and all14
+baselines match fd023e8 evidence. Runtime/tests, protected/shared source,
+manifest/verifier, SQL/candidates, c65/old648 patches, six pairs, persistence
+proposal and historical logs remain unchanged. Only our own registry entries
+change; no other owner or top-level registry field changes. No tests, probes,
+syntax checks, application-source execution, resource retries, typecheck, build,
+browser, database or process cleanup occurred. Same lease retained; parked.
+
 ## Controlling scope
 
 Read coordinator request `25ca24b07ef8bab2a7dd97fd0ad576fc08a1bc48`, narrowed by
@@ -25,9 +43,12 @@ corrections are authorized. Neither A1 nor A2 is granted. Doc 36
 `2d7533f2d3d3a1c69ea686170524d7af4dd6b064` carries future conditions; doc 37
 `324183e886af369a4ea27b9bf0f7b9c615b32139` accepts the pure relocation at
 `f1e467f74b01ae2ab866bb791a3c11d657a5d69c` / records `c807f19`, closing QO-P1-A
-and QO-P1-B's classification disclosure. This semantic successor is not yet
-accepted. Request only the same Claude reviewer's QO-P2-03/04 closure, packet
-verification and adjacent containment/passthrough regression check.
+and QO-P1-B's classification disclosure. Doc 38 at
+`78cd7e6f598b74a88d810e545553b1da9ecb88a5` gives fd023e8 / 1b3bb16 **SOURCE
+ACCEPT WITH LIMITS**. QO-P2-03/04 remain **PARTIAL: closed at source**, while the
+authored targeted red/green regressions are NOT RUN. Their composition proof
+and the existing reviewer's receipt verification remain outstanding. Reviewer
+record-count/provenance corrections belong to that same Claude context.
 
 ## Completed source and packet
 
@@ -117,12 +138,15 @@ reservations were removed only after no tracked/remaining file proof. Historical
 inventories stay intact. The three branch-local shared registries are not whole
 file leases: only this session/task/lease's existing entries were updated;
 other owners and global registry timestamps remain unchanged. Session/task
-`blocked_external` awaits qualification, narrow review and existing decisions.
+`blocked_external` awaits qualified targeted execution/receipt verification and
+existing decisions. Source acceptance is recorded; no test gate is waived.
 
-NEXT: Coordinator obtains a fresh slot when host constraints permit, then sends
-only this exact successor and targeted evidence through its authorized channel
-to the existing Claude reviewer. No broad audit, new reviewer, duplicate
-relocation, A1 application or A2 work. Pending approval questions stay pending.
+NEXT: Park this same builder. Coordinator may obtain a fresh slot when host
+constraints permit; then the existing Claude reviewer verifies targeted receipts
+through the coordinator's authorized channel. No qualification/resource retry,
+optional F1/F3 source changes, broad audit, new reviewer, duplicate relocation,
+A1 application or A2 expansion is authorized by this records correction.
+Pending approval questions stay pending.
 This lane reports in its own chat. Automatic approval review previously rejected
 outbound coordinator messaging because trusted user authorization could not be
 verified; no retry or alternate channel is used.

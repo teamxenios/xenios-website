@@ -3601,8 +3601,8 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-05T19:13:42.719Z",
-      "heartbeatAt": "2026-10-05T21:15:37.839Z",
-      "note": "Reserved for same builder after bounded HTTP correction; targeted qualification/review and A1/A2 decisions pending. Obsolete prefixes removed after absence proof. No running qualification process."
+      "heartbeatAt": "2026-10-05T22:11:11.586Z",
+      "note": "Reserved for same parked builder. Records-only QO-R-02/R-04 packet corrections complete; sourcefd023e8 accepted with limits. Targeted execution/receipt verification and existing decisions pending. No qualification process."
     }
   ],
   "rules": [

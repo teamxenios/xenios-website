@@ -60,11 +60,26 @@ Actual gate tables (unchanged from accepted756):
 | `shared/care/paths.ts` | Allowed Care zone | No curated hard/seam pin; scope/lease still required |
 | `server/research/seo/raw-http-document-policy.ts` | Allowed Research zone | No curated hard/seam pin; scope/lease still required |
 
-GATE-01 sequencing must be decided before or alongside A1. Although A1 preserves
-the current `/health` redirect, it adds another delta to the already-off-baseline
-`App.tsx` and `server/index.ts` seams. A manifest re-cut after applying A1 could
-therefore no longer isolate the HL-17 bytes alone: it would include both the
-inherited Access Hub change and the Quick Order successor. A1 also adds two new
+GATE-01 sequencing must be decided before or alongside A1. The two seams have
+different inherited histories, verified against their pinned and current LF hashes:
+
+- `client/src/App.tsx`: pin
+  `3b3b808b23cccdf8d2e2179fd30349b3ae299137a8a4a5f33525e0a304828d80` → current
+  `1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7`.
+  This is the Access Hub / HL-17 change at `0d22757ab458862c4a9ded6eae7812cc17a06116`.
+- `server/index.ts`: pin
+  `1d6594d6389e2ac67d9af85213854e05387899dfe0102fa577e447565e68c315` → current
+  `ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521`.
+  It left its pin at `3562c03f3bd26b4a9ec165c0f17b1f96256abb23` (verified-payment
+  audit/notification recovery), then changed through `cb9b8d6`, `5809b72`,
+  `27463d7` and `2f0a975`, the HL-12 financial/provider wiring chain. This drift
+  did not originate in the Access Hub change.
+
+Although A1 preserves the current `/health` redirect, it adds another delta to
+both already-off-baseline seams. After applying A1, neither seam's manifest
+re-cut could isolate its inherited delta alone: App would also include Quick
+Order alongside HL-17, and server/index would include it alongside HL-12.
+The GATE-01 sequencing conclusion is unchanged. A1 also adds two new
 HARD mismatches, tracking and attribution, to the inherited Core/static holds.
 No GATE-01 disposition, inherited-hash acceptance or waiver follows from this
 packet. If that disposition changes a target's source bytes, regenerate its
@@ -80,11 +95,14 @@ historical `6481c2ad...` patch remains HELD, with its original evidence intact.
 
 The extra PWA dependency is currently HARD-pinned at
 `9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741`.
-`isPwaInstallLocationAllowed` only consults the exact Health gateway and its
-other sensitive roots; it does not consult the proposed `isHealthIntakePath`.
-Consequently A1 alone leaves the fixed install pill eligible on
-`/health/quick-order`, including over a later mobile intake. Its own exact
-old-to-new proposal, review and eventual protection-owner re-cut must preserve
+`isPwaInstallLocationAllowed` refuses paths rejected by `normalizeCarePath` and
+encoded structural characters (`%2e`, `%2f`, `%3f`, `%5c`, `%23`). It also excludes
+Research and recommendation namespaces, Care, the exact `/health` gateway,
+recovery/recovery-error hashes and its listed sensitive roots. It does not
+consult the proposed `isHealthIntakePath`. Plain `/health/quick-order` with no
+recovery/error hash matches none of these exclusions, so A1 alone leaves that
+route eligible for the fixed install pill, including over a later mobile intake.
+Its own exact old-to-new proposal, review and eventual protection-owner re-cut must preserve
 update notices, service-worker registration and cache behavior. Listing the
 current pin here creates no seventh A1 pair and authorizes no PWA edit.
 

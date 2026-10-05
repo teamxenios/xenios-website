@@ -17,7 +17,7 @@
         "server/research/health/quick-order/**"
       ],
       "dependsOn": [],
-      "scopeNote": "Same isolated Quick Order owner on accepted756a906. HTTP correction only within current server Research subtree and own packet/records. Old reservations removed after zero tracked/remaining file proof. Only own existing entries in task/session/ownership registries, not whole-file leases or global timestamps. No A1 application, A2 design revision/drafting, protected source/schema/manifest/hosted actions. All other fleet entries preserved. Source unqualified/intake disabled.",
+      "scopeNote": "Records-only APPROVAL_MATRIX GATE-01 provenance and complete existing PWA predicate wording, plus own continuity/handoff. Same task/lease; only own registry entries. Sourcefd023e8 preserved and accepted with limits at78cd7e6; QO-P2-03/04 remain PARTIAL pending executed targeted receipts. No optional F1/F3 changes, A2 expansion, qualification/resource retry or production action. Parked.",
       "claimedAt": "2026-10-05T19:13:42.715Z",
       "sourceSha": "fd023e8c03baa2326baf707c944bcd25dce7f453",
       "sourceTree": "46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e",
@@ -30,11 +30,11 @@
         "session": "codex-health-quick-order-20261005",
         "sha": "fd023e8c03baa2326baf707c944bcd25dce7f453",
         "file": ".xenios/handoffs/quick-order-20261005-handoff.md",
-        "at": "2026-10-05T21:15:37.839Z"
+        "at": "2026-10-05T22:11:11.586Z"
       },
       "blockedOn": [
         "Fresh targeted red/green qualification reservation; coordinator disk13.91GiB<20GiB prevents grant; priorfc11f54 released",
-        "Existing Claude narrow review of QO-P2-03/04 successor, packet and adjacent regressions",
+        "QO-P2-03/04 closed at source but PARTIAL: authored targeted red/green NOT RUN; existing Claude receipt verification after a qualified reservation",
         "A1 exact protected mount/privacy edit authority and GATE-01 sequencing; later successor acceptance/owner recut separate",
         "A2 pending with doc36 future constraints and separate currentness authority; no drafting in this slice",
         "Governed Health legal/classification/visibility/destination/standing/currentness authority",
