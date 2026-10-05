@@ -1,0 +1,38 @@
+Continue the SAME Quick Order builder/chat01a10d78-0981-7150-9292-c5cde2730d4d, checkout389a, branchcodex/xenios-health-quick-order-20261005, sessioncodex-health-quick-order-20261005/taskHEALTH-QUICK-ORDER-20261005, GPT-6 Astra Ultra. No new writer/reviewer, no frozenb22f edits.
+
+Samuel supplied sequencing delta C:/Users/sboad/.codex/attachments/b2b87a95-8dcf-461e-9b2a-0ec7bc1a4c49/Pasted text.txt. Read it completely. It expressly does NOT approve protected edits or persistence/schema drafting. A1 oldpatch6481c2ad2d4d2828e789cb2f2e24964705562cb782d70728b4152d78dc40a672 is HELD, REVISION REQUIRED AFTER SOURCE RELOCATION. Preserve its exact original bytes/hash/history; never apply or seek unchanged approval. A2 new-only persistence source drafting remains pending, independent of A1.
+
+AUTHORITY AND LEASES
+This narrow relocation is a repair within the already-authorized Quick Order implementation, based on the verified direct userturn01a10d72 and full01brief allowing unprotected adapters/components/tests, not merely because a directory is allowed. Coordinator read-only scope audit found no active destination overlap across current ownership snapshots389a,b22f,3221,2227,5b21,c502 and others; destinations absent. Frozen b22f latest integrator lease is handoff; the older inherited active copy in389a is not current fleet truth.
+Recheck current hashes/dirty state and ownership before writes. Refresh only your own existing task/session and lease17093695-69b5-4cc0-8b29-aedb82bf6409, extending it to client/src/research/quick-order/** and server/research/health/quick-order/** while retaining old paths for removal and all current docs/own-continuity paths. shared/health/quick-order/** currently contains ZERO files; do not invent files to move. New shared/research/quick-order may be recorded as an empty future module destination only if useful, not permission for unrelated shared edits. Do not add a duplicate overlapping active lease or modify other owners. Verify resolved absolute source/destination paths remain inside your exact checkout before any move. Stop only any genuinely conflicting portion and report exact owner/path; continue independent authorized work.
+
+EXACT START
+HEAD/handoffb353092ad9e49f28a65451d188c636079e1df091, clean and remote matching at coordinator check.
+Runtime4abd2c5cd4bd039309b32b97b117a67fc6a4d292/tree3fb70d98dc354e6a6049744b5bb15b741d5ba50b.
+Acceptedbase756a906877dbc174b7e228a259d2faa9c3af48ca remains frozen; verdict04cbbee/correctionfffa carry all release holds.
+
+VERIFIED NARROW CORRECTION
+Manifest and verifier are unchanged from756. Static predicate classification of4abd yields14 new runtime/declaration/fixture location violations and8 report-only test files. This is static verification, not a new gate execution or pass. Move the complete existing subtrees:
+-7 tracked client files: client/src/quick-order/** -> client/src/research/quick-order/**
+-15 tracked server files: server/health/quick-order/** -> server/research/health/quick-order/**
+-0 shared files: no move needed.
+No compatibility re-exports at old locations. No manifest widening/test weakening/package-config change. Preserve public/API routeintent/health/quick-order and/api/health/quick-order, disabled intake, real Health classification/visibility/legal/provider boundaries, quantities, declared-versus-trusted attribution, uncertain retry and QO-C1 req.path containment.
+Change only necessary import/test path/source-inventory references. Likely server corrections: ../../research/... -> ../../...; ../../../shared/... -> ../../../../shared/...; canonical-source read in tests/core.test.mjs needs one more../. Verify each real target rather than bulk replacing without resolution. Client alias/local imports should mostly remain valid.
+Update current run-check.mjs, verify-packet.mjs, proposal generator and source map. Preserve historical raw logs, source bindings, counts and old receipt paths unchanged as historical evidence; do not rewrite old receipts to look like successor qualification.
+
+REGENERATE PROPOSAL ONLY
+After paths settle, regenerate six-file MOUNT_PROPOSAL.patch within your owned docs. New imports should resolve @/research/quick-order/QuickOrderPage and ./research/health/quick-order/containment. Recompute entire SHA256LF and every before/proposed-after target hash. Dry-apply and proposed order/privacy checks; actual six targets stay unapplied.
+Classify actual gate tables explicitly:
+- tracking.ts and attribution.ts: HARD hash pins AND seams.
+- App.tsx/server/index.ts: restricted seams with reported baseline mismatches.
+- shared/care/paths.ts and server/research/seo/raw-http-document-policy.ts: allowed zones, still subject to exact scope/leases.
+The revised request is edit-from-exact-baseline authority only; no automatic successor hash approval/protection-manifest recut. Preserve exact/health redirect and AccessHub/GATE01. Keep separate isHealthIntakePath; do not broaden isHealthGatewayPath. If baselines drift, rebase affected proposal bytes and report rather than apply stale patch.
+
+EVIDENCE AND COMPUTE
+Commit successor source before final qualification. Produce complete old-to-new inventory, exactsource/tree, narrow semantic-delta explanation, no live runtime imports into old paths, and protection classification relative to accepted756. Target removal of NEW QuickOrder violations only; full protection gate may retain originalCore/hash/GATE01 failures. Historical3b184 and4abd10 tests remain separate. Original Claude6ab reports an independent189 at4abd (73+116); coordinator has not yet verified raw receipt/source binding. Do not count it as your run, merge counts, or borrow it for relocated source.
+No heavy qualification reservation is granted by this dispatch. After source commit, send a compact fresh host/active-job snapshot and requested focused command/heap bound to coordinator, then wait for its serialized slot if required by your current protocol. Source edits/static checks can proceed. Typecheck requires>=2GiB availableRAM,>=20GiBdisk and no competingheavyjob; preserve deferral otherwise. No fullsuite/build/browser/DB job, package install, cleanup or unrelated process interruption. Preserve827Docker volumes and all dirtywork/failedreceipts.
+
+REVIEW COORDINATION
+Original existing Claudecontext6abf1edf-2b16-476e-8305-23b9a0014e06 is finishing the six-lens review of immutable4abd and plans doc36 on existing health-review branch. It started before coordinator resumed5fb; coordinator has now parked overlapping5fb, with no QuickOrder records or commits. Do not launch another review or contact it independently. You may perform this independently verified location correction now; final6ab findings are required input before declaring the successor ready for independent acceptance. Coordinator will relay bounded findings. Do not invent additional semantic fixes in this relocation slice.
+
+Push coherent relocation source and proposed packet, preserve exact evidence lineage, report source/tree/proposal hashes, test status/deferrals, updated lease and remaining actual approvals. Real intake NOT READY; no SQL authoring/execution/registration, protected edits, manifest recut, hosted actions, payment/partner grants or deployment. No claim the entire website or QuickOrder is finished.
