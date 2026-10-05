@@ -585,10 +585,10 @@
       "tool": "codex",
       "lane": "launch-coordination",
       "branch": "codex/xenios-launch-coordination-20261005",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-10-05T17:19:29.457Z",
-      "heartbeatAt": "2026-10-05T20:57:44.156Z",
-      "note": "Collected final docs36/37 and final assistant text. Prepared same-builder QO-P2-03/04 correction; reviewer passes retained with resource/provenance limits. No qualification reservation."
+      "heartbeatAt": "2026-10-05T21:06:13.163Z",
+      "note": "Claude docs36/37 collected; relocation accepted with limits and P1s closed. Same builder RUNNING scoped HTTP correction from25ca24b, no qualification slot/protected/SQL authority. Reviewer runs preserved with resource/provenance limits. New actual acceleration request and planner relay recorded; response pending. Heartbeat active/quiet."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
