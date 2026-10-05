@@ -478,5 +478,10 @@
     "path": "CONTINUOUS_EXECUTION_ADDENDUM_CONTEXT_20261005.json",
     "bytes": 45731,
     "sha256": "9cdff13432b2820f4c01921ec7044447207fc04ca130cf9345ce38c77020d158"
+  },
+  {
+    "path": "CLAUDE_HTTP_REVIEW38_PROGRESS_20261005.json",
+    "bytes": 2747,
+    "sha256": "ef0e4ca5b53626d80e09404bffd087b7798d40049dc85c620efadc611c1b30db"
   }
 ]

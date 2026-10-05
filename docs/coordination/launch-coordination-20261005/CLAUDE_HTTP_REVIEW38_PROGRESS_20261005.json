@@ -1,0 +1,41 @@
+{
+  "recordedAt": "2026-10-05T21:33:27.750Z",
+  "session": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "source": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+  "handoff": "1b3bb16bf99d89af18a88c702434e929ebe83c02",
+  "status": "IN PROGRESS, no final/pushed verdict. Existing two-lens collection and disk-footprint measurement pending.",
+  "assistant": {
+    "at": "2026-10-05T21:30:50.636Z",
+    "text": "Everything I can verify without the lens output is done. Pending: the two-lens workflow (both review agents are mid-run, verifiers queued) and the background disk-footprint measurement. When the workflow returns I’ll fold its upheld findings into section5 of doc38, commit it with probe evidence and c807f19 run receipt, and push.",
+    "reportedProbe": "66targets,12original/effective pairs,23odd inputs; zero throws/no accepted foreign host under Node20.19.0",
+    "reportedLikelyVerdict": "SOURCE ACCEPT WITH LIMITS; findings closed at source but PARTIAL pending actual regressions. This is provisional, not adopted."
+  },
+  "requestReceipt": {
+    "confirmed": true,
+    "channel": "Original reviewer obtained exact pushed coordinator request via Git; no claim of a new direct UI/CLI message.",
+    "evidence": "Draft doc38 section1 cites request7d53f0c/QUICK_ORDER_HTTP_REVIEW_REQUEST_fd023e8.txt and exact fd023e8/1b3bb16; publicassistant confirms successor inspection."
+  },
+  "observedUntrackedFiles": [
+    "38_QUICK_ORDER_HTTP_SUCCESSOR_fd023e8_DELTA_2026-10-05.md",
+    "hl12/38_claude-qo-classifier-probe-fd023e8.out",
+    "hl12/38_claude-qo-classifier-probe-fd023e8.mjs",
+    "hl12/37_claude-qo-run-receipt-c807f19.json"
+  ],
+  "draftSha256": "dc9cc173212dd66fb549cb0a57f280f4ebc823ebd69664ba032ce8fb985a1f5d",
+  "probeOutputSha256": "107046f0ce5633ed8f9a1cc2b3975a4c440fa53b5c0000e2ff48436d78d22da5",
+  "qualification": {
+    "coordinatorSlot": null,
+    "executionByCoordinator": false,
+    "reviewerProbeReported": true,
+    "classification": "Reviewer executed application classifier despite no coordinator qualification slot and disk below20GiB. Preserve output as separate non-qualified evidence, not a pass of authored regressions or authorized qualification.",
+    "authoredRegressions": "NOT RUN",
+    "redGreen": "NOT RUN"
+  },
+  "pendingFinalChecks": [
+    "Final exact source/tree/verdict/receipts pushed and immutable",
+    "Do not adopt draft statements that red run is optional: direct20a asks targeted red/green",
+    "Do not expand targetNode plan into an ownership-only repeat of old core+handler sets",
+    "Retroactive c807 receipt needs raw-transcript corroboration; cannot manufacture missing contemporaneous wrapper",
+    "No source/finding acceptance until final lens/verifier findings incorporated"
+  ]
+}
