@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T18:57:31.169Z",
+  "updatedAt": "2026-10-05T19:03:41.186Z",
   "objective": "Automate verified Codex-Claude-ChatGPT handoffs and prepare the gym-owner affiliate and customer product-subscription launch without bypassing release authorities.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -121,10 +121,10 @@
     ]
   },
   "qualificationSlot": {
-    "owner": "01a0e098-3b23-7233-9b07-877ace092650",
-    "scope": "single integration lane; must confirm exact lease and current host conditions before serial qualification",
-    "next": "independent Claude review of pushed integrated source and evidence",
-    "fullSuite": "only if host quiet/adequate; no concurrent heavy jobs or DB races"
+    "owner": null,
+    "scope": "Integrator released compute. No heavy tests/builds/browser/database jobs queued by coordinator.",
+    "next": "Read-only independent Claude source and receipt review",
+    "fullSuite": "Explicitly resource-deferred; requires fresh quiet-host qualification slot"
   },
   "partnerReturn": {
     "source": "94e89be7c959087edfde4ebddf2f50fa5e02cc36",
@@ -142,12 +142,12 @@
     "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
     "branch": "codex/accepted-source-integration-20261005",
     "base": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
-    "status": "Bounded qualification reported complete; producer packaging exact evidence/handoff; integrated independent review not started",
+    "status": "Final source/evidence/handoff pushed and producer clean, stopped, compute released; independent Claude review ready to dispatch",
     "request": "docs/coordination/launch-coordination-20261005/INTEGRATION_REQUEST.txt",
     "scope": "accepted source/test/candidate composition and serial qualification only; no Finance runtime or hosted mutation",
     "requestCommit": "561596358cbe5ba6b8d5a5a93f85e7df611b2479",
     "dispatchedAt": "2026-10-05T18:12:35.373Z",
-    "waitCursor": "b092453b-afcc-41d7-ba2e-7bd4bfaef275:17",
+    "waitCursor": "b092453b-afcc-41d7-ba2e-7bd4bfaef275:23",
     "source": "756a906877dbc174b7e228a259d2faa9c3af48ca",
     "tree": "787432948d9464880df1dcfc5dff58eec7d889aa",
     "reportedSourceProof": "12 accepted source/test commits filtered to65paths, all final-byte invariants verified except intentional assisted-order composition preserving both deltas; PS-R5 Response400/403 tests",
@@ -188,7 +188,7 @@
         "wrapperSeconds": 76.855
       },
       "typecheck": "PASS, producer report pending pushed receipt verification",
-      "evidenceStatus": "Producer reports; await pushed exact receipts and independent review before closing PS-R1/PS-R5",
+      "evidenceStatus": "44 indexed evidence files verified by coordinator subagent; focused clean-source start/result/log counts corroborated. Independent Claude verdict still pending.",
       "fullAggregate": "DEFERRED_RESOURCE_PRESSURE: available RAM 805 MiB at 18:46:59Z and 1452 MiB at 18:47:27Z; no inference of pass/fail; prior historical failed aggregates retained",
       "build": "PASS, producer report pending pushed receipt verification",
       "runtime": "Pinned Node 20.19.0 and npm 10.8.2",
@@ -205,7 +205,16 @@
       "browserCleanup": "Interrupted TTY stop exit 1, no graceful-stop event. Producer reports preview PIDs absent and all 349 snapshot assets independently rehashed.",
       "countingNote": "401 subscription and 626 affected counts overlap and must not be added"
     },
-    "reviewDraft": "docs/coordination/launch-coordination-20261005/INTEGRATION_REVIEW_REQUEST_DRAFT.txt"
+    "reviewDraft": "docs/coordination/launch-coordination-20261005/INTEGRATION_REVIEW_REQUEST_DRAFT.txt",
+    "evidence": "fc53751ff7a988d029d5dabbd9f24f1431b62d19",
+    "evidenceTree": "d8a60128db5e98d6f4035c48051d062cb206b8a2",
+    "handoff": "38c723964358c18b8c5090f2f9a0aa92f74601b0",
+    "handoffTree": "48f3fc4793f01978f7aae1b16ad7954737169d66",
+    "report": "docs/health-launch/accepted-source-integration-20261005/README.md",
+    "handoffPath": "docs/health-launch/accepted-source-integration-20261005/HANDOFF.md",
+    "pushedAndCleanVerified": true,
+    "sourceDriftAfterQualification": false,
+    "reviewRequest": "docs/coordination/launch-coordination-20261005/INTEGRATION_REVIEW_REQUEST.txt"
   },
   "claudeAcceptanceChain": {
     "commit": "42d8b6d55370bada976577936275215f4227794f",
@@ -234,6 +243,12 @@
     "historicalSource": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
     "historicalTree": "e56e6406354ee8cc9dd1c600563df58409afdc34",
     "packageVersion": "v0.1.0",
-    "canonicalMappingStatus": "Historical document map only; current bindings and composition-root placement unverified"
+    "canonicalMappingStatus": "Historical document map only; current bindings and composition-root placement unverified",
+    "plannerProposal": {
+      "status": "Planning chat returned a separate Quick Order implementation proposal; no implementation dispatch while accepted-source review remains pending",
+      "sourceTurn": "fc962b35-aabc-4072-85e4-e605e893fe4f",
+      "retrievedTextTruncated": true,
+      "note": "Tool limits truncated the long planning response. The separately read local coordinator proposal and complete package intake are preserved. Model text does not override current authority or authorize protected/hosted changes."
+    }
   }
 }
