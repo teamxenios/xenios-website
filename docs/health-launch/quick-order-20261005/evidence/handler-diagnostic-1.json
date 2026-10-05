@@ -1,0 +1,31 @@
+{
+  "label": "handler-diagnostic-1",
+  "start": "2026-10-05T19:29:06.016Z",
+  "finished": "2026-10-05T19:29:06.414Z",
+  "node": "v20.19.0",
+  "executable": "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node.exe",
+  "args": [
+    "--test",
+    "server/health/quick-order/tests/core.test.mjs",
+    "server/health/quick-order/tests/handler.test.mjs"
+  ],
+  "cwd": "C:\\Users\\sboad\\.codex\\worktrees\\389a\\xenios-website",
+  "childPid": 36200,
+  "exit": {
+    "code": 0,
+    "signal": null
+  },
+  "before": {
+    "head": "d8a0d3fdb33931fb391925470205ff76fa38fc97",
+    "tree": "9c9c30130407a380e8eeb230d5e33cb1431a1a60",
+    "dirty": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-health-quick-order-20261005.json\n?? client/src/quick-order/\n?? docs/health-launch/quick-order-20261005/MOUNT_PROPOSAL.patch\n?? docs/health-launch/quick-order-20261005/PERSISTENCE_PROPOSAL.md\n?? docs/health-launch/quick-order-20261005/evidence/adapters-diagnostic-1.json\n?? docs/health-launch/quick-order-20261005/evidence/mount-proposal-hashes.json\n?? docs/health-launch/quick-order-20261005/evidence/proposal-baselines.json\n?? docs/health-launch/quick-order-20261005/prepare-mount-proposal.mjs\n?? docs/health-launch/quick-order-20261005/run-check.mjs\n?? server/health/"
+  },
+  "after": {
+    "head": "d8a0d3fdb33931fb391925470205ff76fa38fc97",
+    "tree": "9c9c30130407a380e8eeb230d5e33cb1431a1a60",
+    "dirty": "M .xenios/CODE_OWNERSHIP.json\n M .xenios/SESSION_REGISTRY.json\n M .xenios/sessions/codex-health-quick-order-20261005.json\n?? client/src/quick-order/\n?? docs/health-launch/quick-order-20261005/MOUNT_PROPOSAL.patch\n?? docs/health-launch/quick-order-20261005/PERSISTENCE_PROPOSAL.md\n?? docs/health-launch/quick-order-20261005/evidence/adapters-diagnostic-1.json\n?? docs/health-launch/quick-order-20261005/evidence/mount-proposal-hashes.json\n?? docs/health-launch/quick-order-20261005/evidence/proposal-baselines.json\n?? docs/health-launch/quick-order-20261005/prepare-mount-proposal.mjs\n?? docs/health-launch/quick-order-20261005/run-check.mjs\n?? server/health/"
+  },
+  "logSha256": "6d6ffc9440317956b620d11b873dd1b3a5fb41101b94847a09185b160e9ad72f",
+  "logBytes": 13395,
+  "provenance": "Pinned launcher executable; no continuous process or filesystem attestation."
+}

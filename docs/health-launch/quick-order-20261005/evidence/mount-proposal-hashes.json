@@ -1,0 +1,41 @@
+{
+  "scope": "Disabled route and privacy containment only. No real adapters or collection enabled.",
+  "pairs": [
+    {
+      "path": "client/src/App.tsx",
+      "beforeSha256lf": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
+      "proposedAfterSha256lf": "44ac3e13f32081bba3e2ae4fb4c649550a463f4a2e141e9a6ed7228212ecfef0",
+      "applied": false
+    },
+    {
+      "path": "shared/care/paths.ts",
+      "beforeSha256lf": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417",
+      "proposedAfterSha256lf": "a15adc22ca9ea55acdf6c21e929fd529547014291ff1810033649c5cc4130fca",
+      "applied": false
+    },
+    {
+      "path": "client/src/lib/tracking.ts",
+      "beforeSha256lf": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+      "proposedAfterSha256lf": "8d62f7a1c4e292100c88c26b2d56d2df180408b364a009773ad2b0c0c2836a26",
+      "applied": false
+    },
+    {
+      "path": "client/src/lib/attribution.ts",
+      "beforeSha256lf": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
+      "proposedAfterSha256lf": "6b1ab4732059401d80cb1f2f38fc5c047e8f559a9ea51d086ac7616bd8540391",
+      "applied": false
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.ts",
+      "beforeSha256lf": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a",
+      "proposedAfterSha256lf": "50b80817ae4b90b075179e84b22a93f9214ca21f8ba6ac34e6158812c3eaeb45",
+      "applied": false
+    },
+    {
+      "path": "server/index.ts",
+      "beforeSha256lf": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521",
+      "proposedAfterSha256lf": "7f3c19cbd36c982155a1b2222bf3acc00eaed994422b93623599e41f25edcd1d",
+      "applied": false
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+[
+  {
+    "path": "client/src/App.tsx",
+    "sha256lf": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7"
+  },
+  {
+    "path": "server/index.ts",
+    "sha256lf": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521"
+  },
+  {
+    "path": "client/src/lib/tracking.ts",
+    "sha256lf": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4"
+  },
+  {
+    "path": "client/src/lib/attribution.ts",
+    "sha256lf": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8"
+  },
+  {
+    "path": "shared/care/paths.ts",
+    "sha256lf": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417"
+  },
+  {
+    "path": "server/research/seo/raw-http-document-policy.ts",
+    "sha256lf": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a"
+  },
+  {
+    "path": "server/static.ts",
+    "sha256lf": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94"
+  },
+  {
+    "path": "server/vite.ts",
+    "sha256lf": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243"
+  },
+  {
+    "path": "server/research/assisted-order/ports.ts",
+    "sha256lf": "cab0fe8e1cd398d4e59c18da09780d2ab6bed3115e17821be187df69b610a6ed"
+  },
+  {
+    "path": "server/research/assisted-order/service.ts",
+    "sha256lf": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960"
+  },
+  {
+    "path": "server/research/assisted-order/supabase-repository.ts",
+    "sha256lf": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327"
+  },
+  {
+    "path": "server/research/assisted-order/http.ts",
+    "sha256lf": "6053138b2db68def7bd437d19eb5d755a6c996342a2c5b2cc4440ae1529d6ee0"
+  },
+  {
+    "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+    "sha256lf": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e"
+  },
+  {
+    "path": "shared/research/assisted-order/contract.ts",
+    "sha256lf": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9"
+  }
+]

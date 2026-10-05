@@ -1,0 +1,48 @@
+
+ RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/389a/xenios-website
+
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > pages the actual canonical callbacks completely, then counts only Health-authorized variants 104ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > never exposes private row fields or copies a price for Care 2ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > does not allow a Health request for {"workflowMode":"provider_request"} 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > does not allow a Health request for {"workflowMode":"availability_review"} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > does not allow a Health request for {"workflowMode":"request_activation"} 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > does not allow a Health request for {"researchUseOnly":true} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > does not allow a Health request for {"family":"clinical_formulations_503a"} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > does not allow a Health request for {"family":"shipping_and_fulfillment"} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > preserves actual lower quantity bands and pending prices 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"family":"unknown"} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"workflowMode":"unknown"} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"maximumQuantity":null} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"maximumQuantity":0} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"minimumQuantity":0} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"quantityIncrement":0} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"unitPriceCents":0} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"unitPriceCents":-1} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"currency":"EUR"} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > supplements a constant source path with hashes of current price, quantity and pathway facts 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > requires destination authority and passes the exact actor, item and shipping state 3ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > refuses absent Health visibility even for an empty canonical catalog 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > keeps hidden identities out of both counts and exact resolution 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > refuses unauthenticated viewers before reading any catalog rows 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed duplicate rather than claiming complete pagination 2ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed identity_collision rather than claiming complete pagination 2ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed wrong_page rather than claiming complete pagination 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed wrong_size rather than claiming complete pagination 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed truncated rather than claiming complete pagination 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed total_drift rather than claiming complete pagination 2ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed content_drift rather than claiming complete pagination 5ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed visibility_drift rather than claiming complete pagination 6ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > stops at the configured bound without issuing another scan page 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects multi-variant offering topology instead of silently treating offerings as variants 2ms
+ ✓ server/health/quick-order/production.test.ts > Quick Order concrete canonical bindings > cannot activate through a readiness flag or existing bridge legal set 6ms
+ ✓ server/health/quick-order/production.test.ts > Quick Order concrete canonical bindings > uses canonical actor identity and scopes CSRF to the verified session 1ms
+ ✓ server/health/quick-order/production.test.ts > Quick Order concrete canonical bindings > refuses missing credentials, guest identity, capability or signing secret 1ms
+ ✓ server/health/quick-order/production.test.ts > Quick Order concrete canonical bindings > passes the canonical viewer to catalog and actor-scoped receipt recovery 2ms
+ ✓ server/health/quick-order/production.test.ts > Quick Order concrete canonical bindings > requires separate Health legal applicability and reuses canonical acknowledgment bytes 2ms
+
+ Test Files  2 passed (2)
+      Tests  39 passed (39)
+   Start at  14:24:54
+   Duration  1.38s (transform 256ms, setup 0ms, import 570ms, tests 155ms, environment 0ms)
+

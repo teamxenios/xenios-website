@@ -1,0 +1,25 @@
+{
+  "sampledAtUtc": "2026-10-05T19:32:50.3523964Z",
+  "freeMiB": 1642.0,
+  "freeDiskGiB": 26.99,
+  "matchingHeavyNodeJobs": [],
+  "ownActiveLeases": [
+    {
+      "id": "17093695-69b5-4cc0-8b29-aedb82bf6409",
+      "task": "HEALTH-QUICK-ORDER-20261005",
+      "session": "codex-health-quick-order-20261005",
+      "paths": [
+        "client/src/quick-order/**",
+        "server/health/quick-order/**",
+        "shared/health/quick-order/**",
+        "docs/health-launch/quick-order-20261005/**",
+        ".xenios/sessions/codex-health-quick-order-20261005.json",
+        ".xenios/handoffs/quick-order-20261005-handoff.md"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-05T19:13:42.719Z",
+      "heartbeatAt": "2026-10-05T19:29:01.305Z"
+    }
+  ],
+  "typecheckThreshold": "Coordinator requires at least2048MiB RAM/20GiB disk and no competing heavy job; single1024MiB heap nonincremental run only."
+}

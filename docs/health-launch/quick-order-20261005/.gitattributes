@@ -1,0 +1,3 @@
+# Preserve exact captured evidence and the reviewed patch bytes across Windows.
+evidence/*.log -text
+MOUNT_PROPOSAL.patch -text
