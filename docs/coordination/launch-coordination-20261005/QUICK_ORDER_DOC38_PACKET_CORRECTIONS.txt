@@ -1,0 +1,16 @@
+Same existing Quick Order builder only. This is a records-only completion of two packet corrections already enumerated in Samuel's direct20a request, whose full text/provenance is preserved in QUICK_ORDER_DIRECT_HTTP_REQUEST_20261005.json and pushed b7301fc. No new source slice or approval is inferred from Claude.
+
+Verify current Git, exact source fd023e8c03baa2326baf707c944bcd25dce7f453/tree46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e and latest handoff1b3bb16bf99d89af18a88c702434e929ebe83c02, then claim only your existing records paths. Preserve any newer work and every other owner.
+
+Read exact Claude doc38 at78cd7e6f598b74a88d810e545553b1da9ecb88a5, sections5 QO-R-02 and QO-R-04. Coordinator independently checked these two statements against immutable source/history and found both corrections true and inside direct20a's existing packet scope.
+
+Edit only the existing docs/health-launch/quick-order-20261005/APPROVAL_MATRIX.md paragraphs plus necessary own continuity/handoff:
+
+1. GATE-01 provenance: App.tsx inherited drift is the Access Hub0d22757 change. server/index.ts left its pin at3562c03 through the HL-12 financial/provider chain, not the Access Hub change. Name verified pinned/current hashes and originating chain accurately. Preserve the exact GATE-01 sequencing conclusion and pending founder decision. Do not recut a manifest or edit either seam.
+2. PWA wording: describe the real existing predicate accurately, including its Research/recommendation/Care/recovery-hash/encoded-structural exclusions. Preserve the conclusion that /health/quick-order is still eligible for install promotion under current source and PwaLifecycle.tsx requires separately scoped protected work. No PWA source edit and no silent seventh file in the mount patch.
+
+Everything else stays held. QO-R-06 is historical relocation text, not a current failure. QO-R-03 has no demonstrated source defect. QO-R-07 does not expand direct20a's narrowed A2 packet scope. Do not add optional F1/F3 code changes, broaden A2, rewrite the packet, rerun accepted tests, or initiate any qualification/resource retry. Runtime/tests, protected/shared bytes, manifest/verifier, SQL/candidates, mount c65d7e49 and old648, persistence proposal and historical logs must remain unchanged.
+
+No tests, syntax/typecheck/build/browser/database or application-source execution are authorized by this records correction. No production action or new approval question. Verify the final diff is records-only and own entries only, preserve exact fd023e8 source identity, commit/push coherent records and an exact-SHA handoff, then park. Report normally in your own chat; do not retry the separately rejected outbound coordinator-message operation.
+
+Carry verdict accurately: SOURCE ACCEPT WITH LIMITS at78cd7e6; QO-P2-03/04 PARTIAL, closed at source but authored targeted red/green NOT RUN. No qualified reservation, no intake/purchase/release readiness. Reviewer record-count/provenance corrections belong to the SAME Claude context and are not your task.
