@@ -6,10 +6,10 @@
       "tool": "OpenAI Codex desktop",
       "lane": "accepted-source-integration",
       "branch": "codex/accepted-source-integration-20261005",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-10-05T18:18:45.097Z",
       "heartbeatAt": "2026-10-05T18:48:37.073Z",
-      "note": "Accepted source 756a906 pushed. Serialized focused, typecheck, build, browser, protection, route and DAG evidence complete. Preparing scoped handoff; full aggregate resource deferred; no hosted writes."
+      "note": "Source 756a906 and evidence fc53751 pushed. Handoff ready for independent Claude review. Full aggregate resource deferred; browser and protection limits recorded; no hosted writes. Integration stopped."
     },
     {
       "id": "claude-opus5-main",
