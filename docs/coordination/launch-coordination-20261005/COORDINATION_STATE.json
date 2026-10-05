@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T17:37:27.9085762Z",
+  "updatedAt": "2026-10-05T17:40:24.9607928Z",
   "objective": "Automate verified Codex-Claude-ChatGPT handoffs and prepare the gym-owner affiliate and customer product-subscription launch without bypassing release authorities.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -34,7 +34,12 @@
     "cwd": "C:/Users/sboad/.codex/worktrees/2227/xenios-website",
     "base": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
     "scope": "D/E fallback-first media; no Core clarity/auth paths, protected files, Finance or imagery generation",
-    "status": "238 focused tests in15files and nonincremental typecheck pass; compute released; source/handoff packaging"
+    "status": "pushed and parked; Claude independent review underway; 238 focused tests/typecheck pass; browser, delivery integrity, metadata writer and DB qualification open",
+    "source": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+    "tree": "0258be61bf4761ee9911cda1c0d042b6cd183aa3",
+    "handoff": "c3ea1357f6a4d2a366417753bd08def4c5920fec",
+    "branch": "codex/xenios-de-media-foundation-20261005",
+    "reviewSession": "d8d31048-294d-435d-9c5e-2613fa70ee05"
   },
   "production": {
     "deployment": "dep-daqft3vf3r2c73b7e88g",

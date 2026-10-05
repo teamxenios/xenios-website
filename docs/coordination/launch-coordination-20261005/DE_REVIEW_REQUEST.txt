@@ -1,0 +1,117 @@
+NARROW D/E SOURCE-LEVEL ACCEPTANCE REVIEW
+
+Do not reopen MC-01, Core A/B/C, partner return, Finance or imagery review.
+
+ACCEPTED BASE
+
+MC-01 source:
+ed9bb9b456bb78994f4fcfedac6ac2112142a5b6
+
+MC-01 tree:
+f5953b8e148196c4ea71839cdd40a4e06b5f9fd1
+
+Independent MC-01 acceptance:
+d9998563c9a709f2ef9ccd928d4e59fc259bb82d
+
+Binding founder scope:
+cd66f3c411e6164981295d81c2116e50343edc86
+
+D/E CANDIDATE
+
+Source:
+5152adb4db6db3e197d4534146bcc2ae75fa8f96
+
+Tree:
+0258be61bf4761ee9911cda1c0d042b6cd183aa3
+
+Tests/evidence:
+c3ea1357f6a4d2a366417753bd08def4c5920fec
+
+Handoff:
+c3ea1357f6a4d2a366417753bd08def4c5920fec
+
+Review ONLY the D/E delta from accepted MC-01.
+
+VERIFY
+
+1. Media remains presentation-only.
+   No media field may create or alter:
+   - product existence
+   - price
+   - purchasability
+   - cart eligibility
+   - quote eligibility
+   - pathway
+   - activation
+   - fulfillment
+   - payment/provider authority
+
+2. Exact media presentation contract:
+   - 1:1
+   - contain, never forced crop
+   - exact variant identity
+   - primary image only
+   - same media/content hash on card and detail where both surfaces render it
+   - malformed/expired/load-failed media => fallback
+   - product remains present
+
+3. IC-3:
+   exact fallback copy:
+   "An approved product image is not available."
+
+   - fallback has no role="img"
+   - "Illustrative image" is outside the image pixels
+   - no overlay/tint/filter/vignette/lookalike substitution
+
+4. Product Control remains runtime media-approval authority.
+   Imagery receipts are asset identity evidence only.
+
+5. Care / Research / held / quote-only / coming-soon semantics are unchanged.
+
+6. No image was added to payment, money or financial-summary authority surfaces.
+
+7. If source-only schema/migration work exists for:
+   - variant identity
+   - width
+   - height
+   - content hash
+
+   verify:
+   - candidate/source only
+   - NOT registered
+   - NOT added to managed migration ledger/DAG
+   - NOT applied
+   - no hosted DB mutation
+
+8. Verify D/E does NOT falsely imply that MC-01's SQL readiness decoupling is
+   already live in production.
+
+IMPORTANT RELEASE DISTINCTION
+
+D/E source may be accepted while production promotion remains blocked.
+
+MC-01 release still requires the separately reviewed runtime/database chain,
+including its unapplied predecessors, reviewed MC-01 candidate, canonical
+non-image product_content approval and separate launch transition.
+
+Do not convert D/E presentation acceptance into approval for that chain.
+
+RETURN ONLY
+
+- exact SHA/tree reviewed
+- SOURCE D/E: ACCEPT / REJECT
+- IC-3: PASS / FAIL
+- media-is-presentation-only: PASS / FAIL
+- source-only schema status
+- P0/P1/P2 findings
+- exact remaining release prerequisites
+- whether this D/E source is safe for the release integrator
+- explicit statement that no managed SQL or production promotion is approved
+
+Do not edit code.
+Do not launch another implementation lane.
+
+
+Coordinator execution instructions within Samuel's authorized workflow: continue the same read-only reviewer context. Branch codex/xenios-de-media-foundation-20261005 is pushed. Read its docs/research-launch/de-media-foundation-20261005/HANDOFF.md and exact source/receipts through Git; leave the review checkout untouched and do not edit files or commit. Subscription owns serialized heavy compute now: NO Vitest, typecheck, build, Docker, browser, database execution or dependency installation. Perform independent static semantic review and receipt/hash verification and disclose that you did not re-execute qualification. If a meaningful execution check is required, state the smallest queued check, do not run concurrently.
+
+Producer explicitly reports 238 focused tests in 15 files and typecheck pass, all 28 source blobs identical to checked source, five catalog components fallback-only pending canonical reader connections, and source-only SQL with no execution qualification. Browser, actual delivered byte/hash immutability, and Product Control metadata ingestion/review writer remain deferred or unfinished. Do not treat these as done. Assess whether the intended narrow foundation can be accepted with these exact limits, or return bounded blocking findings. No founder decisions or production authority are granted by this prompt. Return full exact verdict in the conversation; coordinator will preserve it.

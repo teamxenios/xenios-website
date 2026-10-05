@@ -2,6 +2,8 @@
 
 This is a records-only coordinator branch. It does not compose a release, change application source, approve protected hashes, enable commerce, or mutate production. Newer Git, live observations, worker handoffs, and Samuel's decisions supersede this checkpoint.
 
+The branch starts from the parked Finance handoff `963122ce355568d118c00ed6e774b474e2f50101` to preserve that checkout. Do not merge this whole branch as a release base or import its ancestors merely to collect these records. An integrator must select accepted source deliberately and transfer only the required records.
+
 ## Authorized workflow
 
 Samuel requested automated collection of Codex and Claude results, delivery to the existing ChatGPT **Website State Summary** chat, retrieval of proposed next prompts, and dispatch of verified, dependency-ready work. He authorized needed Codex/Claude sessions and computer use. Suggestions returned by another model are planning input, never founder decisions or independent evidence.
@@ -21,16 +23,19 @@ The active heartbeat is `xenios-launch-coordination`, attached to coordinator ch
 | Lane | Chat/session | Scope |
 | --- | --- | --- |
 | Core | `01a0e098-3b23-7233-9b07-877ace092650` | Partner sign-in return correction pushed and parked; IC-2 branch and protected files frozen |
-| D/E | `01a10d08-cd8b-7431-80b7-a21677c11bb6` | GPT-6 Astra Ultra; existing isolated `2227` checkout; media presentation and its exact leased contracts/components |
+| D/E | `01a10d08-cd8b-7431-80b7-a21677c11bb6` | GPT-6 Astra Ultra; existing isolated `2227` checkout; pushed and parked for Claude review |
 | Subscription readiness | `01a10d12-0764-7222-8b5a-5029508020ad` | GPT-6 Astra Ultra; isolated `5b21`; canonical subscription component, existing commerce adapter/service, and coordinated ProductPage mount |
 | Claude IC-2 review | `cc511440` | Completed, source-level acceptance only |
 | Claude partner review | `04b9c0f3-1e7d-47f6-aa02-7a410d86eb98` | Completed; source-level acceptance of the partner-return source |
+| Claude D/E review | `d8d31048-294d-435d-9c5e-2613fa70ee05` | Narrow static review and receipt verification underway; no concurrent heavy tools |
 
 The D/E task uses a local existing checkout because Cloud exposed no repository environment. It is not a Cloud execution. The new subscription task uses a separate managed worktree. D/E and subscriptions must coordinate shared member catalog/media contracts and ProductPage ownership; Core owns the separate public partner links and clarity/auth tests. Do not silently edit another lease.
 
 Core's separate partner-return slice is pushed at source `94e89be7c959087edfde4ebddf2f50fa5e02cc36`, tree `23b3284a5cfc667b5cdc0e35643f07e71c333268`. Tests are `806c58a83bb3c0f1f75b9e003de14aa525069950`, evidence `9b8adebd81d48dbf2a17372afc06bd671f3eb9a9`, and final handoff `3f044f41b93d41c4ca40954eabd919dfb6ef0be4` on `codex/xenios-partner-signin-return-20261005`. It reports 205 focused tests passing in seven files with no failures/skips, including composed synthetic Auth/HTTP cases. Claude independently accepted the exact source through static review and receipt/hash verification; it did not rerun tests or browser checks. The full bounded verdict is in `CLAUDE_PARTNER_RETURN_ACCEPTANCE.txt`. This is not a live-account or complete-browser purchase proof.
 
 D/E completed 238 focused tests across 15 files plus nonincremental typecheck and released compute before packaging. Subscription readiness now owns the serialized focused-test/typecheck slot, followed by a bounded loopback-only synthetic browser fixture using its actual component/adapter/service. No production environment or live payment is loaded; this does not prove a real affiliate purchase. No full aggregate, controlled database race qualification, or concurrent heavy jobs have been authorized under the current active-worker load.
+
+D/E source is `5152adb4db6db3e197d4534146bcc2ae75fa8f96`, tree `0258be61bf4761ee9911cda1c0d042b6cd183aa3`, with pushed records/handoff `c3ea1357f6a4d2a366417753bd08def4c5920fec` on `codex/xenios-de-media-foundation-20261005`. Its exact review request is preserved in `DE_REVIEW_REQUEST.txt`. Five catalog components remain fallback-only pending canonical reader connections; browser, delivered-byte/hash integrity, metadata ingestion/review writer and disposable database qualification are not complete. SQL remains candidate-only, unregistered and unapplied. These limits are part of the independent review, not accepted release exceptions.
 
 ## Host recovery
 
