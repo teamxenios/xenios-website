@@ -6,7 +6,7 @@
       "id": "HEALTH-PARTNER-SIGNIN-RETURN-20261005",
       "title": "Preserve canonical partner dashboard destination through public sign-in",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "baseSha": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
       "paths": [
@@ -17,7 +17,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Samuel's direct 2026-10-05 coordination/affiliate launch instruction independently read in coordinator chat 01a103a8-5684-7272-89e5-3c42eefcd593. Delegated to existing Core: two public PartnersPage sign-in return links only, minimal composed tests, no authority changes. Separate branch preserves IC2 source c93bf5a and records b0e818f frozen. No protected edits, membership revival, real grants, product changes, full suite, build, Docker or hosted action. Push exact handoff and stop. D/E is instructed by coordinator to leave pages.tsx alone.",
-      "claimedAt": "2026-10-05T17:10:19.560Z"
+      "claimedAt": "2026-10-05T17:10:19.560Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "9b8adebd81d48dbf2a17372afc06bd671f3eb9a9",
+        "file": ".xenios/handoffs/2026-10-05T17-20-40-192Z-HEALTH-PARTNER-SIGNIN-RETURN-20261005-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-05T17:20:40.234Z"
+      }
     },
     {
       "id": "HEALTH-ABC-IC2-TIMELINE-20261005",
