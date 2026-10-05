@@ -3602,7 +3602,7 @@
         ".xenios/sessions/codex-launch-coordination-20261005.json",
         ".xenios/handoffs/*LAUNCH-COORDINATION-20261005*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-05T18:52:43.391Z",
       "heartbeatAt": "2026-10-05T19:23:24.782Z"
     }
