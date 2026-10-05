@@ -3,6 +3,27 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "PRODUCT-SUBSCRIPTION-INTENT-20261005",
+      "title": "Canonical product subscription request seam with truthful pending and unavailable boundaries",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-product-subscription-intent-20261005",
+      "baseSha": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
+      "paths": [
+        "client/src/research/product-subscriptions/**",
+        "client/src/research/adapters/commerce.ts",
+        "client/src/research/adapters/product-subscription-create.test.ts",
+        "server/research/commerce/subscription-intent-journey.test.ts",
+        "docs/health-launch/PRODUCT_SUBSCRIPTION_INTENT_20261005.md",
+        "docs/health-launch/evidence/product-subscription-intent-20261005/**",
+        "client/src/research/pages/member/ProductPage.tsx",
+        "client/src/research/pages/member/ProductPage.subscription.test.tsx"
+      ],
+      "dependsOn": [],
+      "scopeNote": "User-authorized isolated source seam; canonical adapter/component and synthetic boundary tests. No ProductPage/catalog/media/DTO/schema/production-deps/Finance or protected edits. Root sole writer, read-only subagent reviews. Existing default-off persistence/currentness/payment gates preserved. Page mount requires coordinator path clearance. No managed calls or writes, deployment, real identities, grants, email, money or payout. Coordinator 01a103a8 granted ProductPage wrapper claim after D/E 01a10d08 confirmed unclaimed. No offer inferred: absent subscription projection remains unavailable. Delegated one-writer new subscription-intent-journey.test.ts to subscription_boundary_tests; root owns all other files.",
+      "claimedAt": "2026-10-05T17:20:03.267Z"
+    },
+    {
       "id": "HEALTH-ABC-IC2-TIMELINE-20261005",
       "title": "Correct only IC-2 customer timeline neutral border",
       "priority": "P1",

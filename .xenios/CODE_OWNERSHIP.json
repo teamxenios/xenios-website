@@ -3546,6 +3546,24 @@
       "state": "handoff",
       "claimedAt": "2026-10-05T16:15:21.348Z",
       "heartbeatAt": "2026-10-05T16:22:56.464Z"
+    },
+    {
+      "id": "d9ff89ea-06a4-4d35-b62b-5db6bac37920",
+      "task": "PRODUCT-SUBSCRIPTION-INTENT-20261005",
+      "session": "codex-product-subscription-intent-20261005",
+      "paths": [
+        "client/src/research/product-subscriptions/**",
+        "client/src/research/adapters/commerce.ts",
+        "client/src/research/adapters/product-subscription-create.test.ts",
+        "server/research/commerce/subscription-intent-journey.test.ts",
+        "docs/health-launch/PRODUCT_SUBSCRIPTION_INTENT_20261005.md",
+        "docs/health-launch/evidence/product-subscription-intent-20261005/**",
+        "client/src/research/pages/member/ProductPage.tsx",
+        "client/src/research/pages/member/ProductPage.subscription.test.tsx"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-05T17:20:03.271Z",
+      "heartbeatAt": "2026-10-05T17:23:54.768Z"
     }
   ],
   "rules": [
