@@ -3,8 +3,8 @@
   "tool": "codex",
   "lane": "launch-coordination",
   "branch": "codex/xenios-launch-coordination-20261005",
-  "state": "active",
+  "state": "handoff_ready",
   "startedAt": "2026-10-05T17:19:29.457Z",
-  "heartbeatAt": "2026-10-05T20:23:53.628Z",
-  "note": "Samebuilder acknowledged authorized relocation/proposal-only slice. Existing6abreview continues,5fb parked. OldA1held/A2pending, planner updated and heartbeat reconciled."
+  "heartbeatAt": "2026-10-05T20:25:01.382Z",
+  "note": "Samebuilder active authorized relocation/proposal-only slice; original6abreview running, overlapping5fb parked. OldA1held for regeneration, A2pending; exact scope/dispatch/handoff pushed. Heartbeat active/quiet."
 }
