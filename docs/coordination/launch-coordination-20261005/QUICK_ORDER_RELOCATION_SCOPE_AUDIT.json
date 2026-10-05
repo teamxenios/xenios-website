@@ -1,0 +1,170 @@
+{
+  "at": "2026-10-05T20:22:30.512Z",
+  "source": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
+  "base": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+  "verification": "Read-only Git-object inventory and static gate predicate audit; no gate/test execution",
+  "newViolations": 14,
+  "reportedTests": 8,
+  "files": [
+    {
+      "oldPath": "client/src/quick-order/OperatorDeclarations.test.tsx",
+      "newPath": "client/src/research/quick-order/OperatorDeclarations.test.tsx",
+      "sourceBlob": "47a4a53ea03c09c91d64b81444ad11a83e89458d"
+    },
+    {
+      "oldPath": "client/src/quick-order/OperatorDeclarations.tsx",
+      "newPath": "client/src/research/quick-order/OperatorDeclarations.tsx",
+      "sourceBlob": "a2a7936d74849a38c94d7f35995880836f78ed4b"
+    },
+    {
+      "oldPath": "client/src/quick-order/QuickOrderPage.test.tsx",
+      "newPath": "client/src/research/quick-order/QuickOrderPage.test.tsx",
+      "sourceBlob": "834ea47972aca51b224d1c9e27552d8791c2a638"
+    },
+    {
+      "oldPath": "client/src/quick-order/QuickOrderPage.tsx",
+      "newPath": "client/src/research/quick-order/QuickOrderPage.tsx",
+      "sourceBlob": "2a604a7936c729d6d3daec9838b360cde9c8fcfe"
+    },
+    {
+      "oldPath": "client/src/quick-order/contracts.test.ts",
+      "newPath": "client/src/research/quick-order/contracts.test.ts",
+      "sourceBlob": "4cebb50b4dd5e0371d15b53f4c54e2fdf59e7de0"
+    },
+    {
+      "oldPath": "client/src/quick-order/contracts.ts",
+      "newPath": "client/src/research/quick-order/contracts.ts",
+      "sourceBlob": "03104bda26647f7f3a5295cae7be60c64e19799d"
+    },
+    {
+      "oldPath": "client/src/quick-order/quick-order.css",
+      "newPath": "client/src/research/quick-order/quick-order.css",
+      "sourceBlob": "39401a001b4f65c7704d8a763c009f8b216a6adb"
+    },
+    {
+      "oldPath": "server/health/quick-order/catalog.test.ts",
+      "newPath": "server/research/health/quick-order/catalog.test.ts",
+      "sourceBlob": "ba95d80f1e011c20de10ed6def4ef0076cec73cf"
+    },
+    {
+      "oldPath": "server/health/quick-order/catalog.ts",
+      "newPath": "server/research/health/quick-order/catalog.ts",
+      "sourceBlob": "f9db7ac719ad643d7ecc50655d4f5847578382ff"
+    },
+    {
+      "oldPath": "server/health/quick-order/containment.test.ts",
+      "newPath": "server/research/health/quick-order/containment.test.ts",
+      "sourceBlob": "6ff7a13f714b9798b31a21d43a5e17252daec0e8"
+    },
+    {
+      "oldPath": "server/health/quick-order/containment.ts",
+      "newPath": "server/research/health/quick-order/containment.ts",
+      "sourceBlob": "df8a734ae923b4665d50b1e45b2dc520f7e3d7da"
+    },
+    {
+      "oldPath": "server/health/quick-order/core.d.mts",
+      "newPath": "server/research/health/quick-order/core.d.mts",
+      "sourceBlob": "ce893fb5ec3ed7a00608e8596765ef497412c3c8"
+    },
+    {
+      "oldPath": "server/health/quick-order/core.mjs",
+      "newPath": "server/research/health/quick-order/core.mjs",
+      "sourceBlob": "c0f3cbe232147094cc32bf72734b1121be8b87a2"
+    },
+    {
+      "oldPath": "server/health/quick-order/handler.d.mts",
+      "newPath": "server/research/health/quick-order/handler.d.mts",
+      "sourceBlob": "c64ff3f720395a379abf00c7d104f6046078c83d"
+    },
+    {
+      "oldPath": "server/health/quick-order/handler.mjs",
+      "newPath": "server/research/health/quick-order/handler.mjs",
+      "sourceBlob": "e2e418285da1d397177b3c230aaf4ad9c98551f4"
+    },
+    {
+      "oldPath": "server/health/quick-order/legal.ts",
+      "newPath": "server/research/health/quick-order/legal.ts",
+      "sourceBlob": "16376f90ee446741547f12f4aa8edcb9022d86fa"
+    },
+    {
+      "oldPath": "server/health/quick-order/ports.ts",
+      "newPath": "server/research/health/quick-order/ports.ts",
+      "sourceBlob": "346ec88ab12e42b7b8cb007267659e7f99ef8fb0"
+    },
+    {
+      "oldPath": "server/health/quick-order/production.test.ts",
+      "newPath": "server/research/health/quick-order/production.test.ts",
+      "sourceBlob": "0eee510a55e4b43736eaf737ea73b50fecf16829"
+    },
+    {
+      "oldPath": "server/health/quick-order/production.ts",
+      "newPath": "server/research/health/quick-order/production.ts",
+      "sourceBlob": "fdce3d15801d8168cd627197278e8e7bd1f16045"
+    },
+    {
+      "oldPath": "server/health/quick-order/tests/core.test.mjs",
+      "newPath": "server/research/health/quick-order/tests/core.test.mjs",
+      "sourceBlob": "5b0f8a90e14a2bd87ac0791860cd227836fcce74"
+    },
+    {
+      "oldPath": "server/health/quick-order/tests/fixtures.mjs",
+      "newPath": "server/research/health/quick-order/tests/fixtures.mjs",
+      "sourceBlob": "a67bb5ce5509010b99220cfcbc75e0af6e271d65"
+    },
+    {
+      "oldPath": "server/health/quick-order/tests/handler.test.mjs",
+      "newPath": "server/research/health/quick-order/tests/handler.test.mjs",
+      "sourceBlob": "f352e45cf3eec76295f8fc60877a0267b5c70234"
+    }
+  ],
+  "sharedFiles": 0,
+  "destinationTrackedCollisions": 0,
+  "activeDestinationLeaseConflicts": 0,
+  "leaseSnapshots": [
+    "389a",
+    "b22f",
+    "3221",
+    "2227",
+    "5b21",
+    "c502"
+  ],
+  "authority": {
+    "conclusion": "Standing authorized QuickOrder implementation covers routine same-module relocation after same-owner lease extension. Allowed-zone classification alone is not authority.",
+    "basis": [
+      "Verified direct user turn01a10d72-094e-7ab3-b11f-3afaf03ee40c",
+      "QUICK_ORDER_DISPATCH.txt continuation of unprotected implementation",
+      "Full01brief line130 permits unprotected adapters/components/tests"
+    ],
+    "currentOwner": "codex-health-quick-order-20261005",
+    "lease": "17093695-69b5-4cc0-8b29-aedb82bf6409",
+    "action": "Samebuilder rechecks drift/conflicts and extends only own existing task/lease to new destinations; retain old paths through removal. Frozenb22f latest lease handoff outranks389a inherited active copy."
+  },
+  "mountTargets": [
+    {
+      "path": "client/src/App.tsx",
+      "class": "restricted seam; informational baseline"
+    },
+    {
+      "path": "client/src/lib/tracking.ts",
+      "class": "HARD hash pin and seam"
+    },
+    {
+      "path": "client/src/lib/attribution.ts",
+      "class": "HARD hash pin and seam"
+    },
+    {
+      "path": "server/index.ts",
+      "class": "restricted seam; informational baseline"
+    },
+    {
+      "path": "shared/care/paths.ts",
+      "class": "allowed prefix; no hash pin"
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.ts",
+      "class": "allowed prefix; no hash pin"
+    }
+  ],
+  "allSixTargetsEqualAcceptedBase": true,
+  "holds": "No actual protected edit, schema drafting, manifest weakening or hosted permission. A1 oldpatch held; A2pending. New source needs own qualification."
+}

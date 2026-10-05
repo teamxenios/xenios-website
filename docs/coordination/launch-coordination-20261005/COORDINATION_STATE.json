@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T20:17:36.630Z",
+  "updatedAt": "2026-10-05T20:22:30.512Z",
   "objective": "Automate verified Codex-Claude-ChatGPT launch coordination, preserve accepted source and implement the separately authorized Quick Order intake while production authorities remain held.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -256,7 +256,7 @@
     "scope": "Existing bounded acceptance chain and review checklist; no integrated-source verdict or founder approval"
   },
   "quickOrder": {
-    "status": "Existing originalClaude6ab six-lens review running; duplicate5fb continuation parked. Oldmountpatch held for relocation/regeneration. Samebuilder only; scope and newleases under coordinator verification. A2 stillpending; source incomplete/intakeNOTREADY.",
+    "status": "Samebuilder dispatched narrow authorized relocation and proposal regeneration after source/lease verification. Original6ab six-lens review continues;5fb parked. Oldmountpatch held, A2pending; source incomplete/intakeNOTREADY.",
     "sourceThread": "01a0e098-3b23-7233-9b07-877ace092650",
     "sourceTurn": "2c15c0f1-2e96-4291-b39f-a3e37cc84741",
     "userRequestSummary": "Direct user request to build package now in exactly one isolated worker while keeping integration and existing reviewer frozen.",
@@ -300,7 +300,7 @@
     },
     "dispatchArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_DISPATCH.txt",
     "dispatchCommit": "c169a77c7c511335c96757c9b8785fcefd99b241",
-    "waitCursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:16",
+    "waitCursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:17",
     "leasePaths": [
       "client/src/quick-order/**",
       "server/health/quick-order/**",
@@ -459,7 +459,7 @@
       "finalVerdict": null
     },
     "relocation": {
-      "status": "NARROW SCOPE AND LEASE VERIFICATION",
+      "status": "RUNNING in SAME builder; execution acknowledgement verified",
       "requestedMapping": {
         "client/src/quick-order/": "client/src/research/quick-order/",
         "server/health/quick-order/": "server/research/health/quick-order/"
@@ -467,7 +467,30 @@
       "emptyOldSharedPath": "shared/health/quick-order/",
       "authorityBasis": "Original direct QuickOrder implementation request plus permitted unprotected implementation; current sequencing delta explicitly not blanket source approval. Verify task/lease before edit.",
       "protectedTargetsRemainUnapplied": true,
-      "qualificationSlot": null
+      "qualificationSlot": null,
+      "authorityAssessment": {
+        "conclusion": "Standing authorized QuickOrder implementation covers routine same-module relocation after same-owner lease extension. Allowed-zone classification alone is not authority.",
+        "basis": [
+          "Verified direct user turn01a10d72-094e-7ab3-b11f-3afaf03ee40c",
+          "QUICK_ORDER_DISPATCH.txt continuation of unprotected implementation",
+          "Full01brief line130 permits unprotected adapters/components/tests"
+        ],
+        "currentOwner": "codex-health-quick-order-20261005",
+        "lease": "17093695-69b5-4cc0-8b29-aedb82bf6409",
+        "action": "Samebuilder rechecks drift/conflicts and extends only own existing task/lease to new destinations; retain old paths through removal. Frozenb22f latest lease handoff outranks389a inherited active copy."
+      },
+      "scopeAudit": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_RELOCATION_SCOPE_AUDIT.json",
+      "dispatchRequest": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_RELOCATION_DISPATCH.txt",
+      "dispatchCommit": "8aa3f8398815f81200eb43ecb942e141dc4441da",
+      "dispatchedAt": "2026-10-05T20:22:30.512Z",
+      "sourceFileCount": 22,
+      "clientFiles": 7,
+      "serverFiles": 15,
+      "sharedFiles": 0,
+      "manifestChanged": false,
+      "protectedTargetEditsAuthorized": false,
+      "turn": "01a10dba-1d6e-7a93-82e1-fe316cf6072b",
+      "workerAcknowledgement": "I’ll resume this same lane, read the relocation request and Samuel’s attachment, then extend my lease to the approved destinations. I’ll preserve behavior and historical evidence while moving the modules and regenerating the proposal; protected files will remain untouched."
     }
   },
   "latestUserContinuation": {
@@ -479,7 +502,7 @@
     "id": "xenios-launch-coordination",
     "status": "ACTIVE",
     "intervalMinutes": 5,
-    "updatedPrompt": "Pending two actual source decisions plus active same-context read-only Quick Order review; original integration remains accepted. No duplicate workers or repeated approval questions.",
+    "updatedPrompt": "Reconciled to original6abreview running/5fb parked, oldA1 held/A2pending, samebuilder relocation scope and fresh serialized qualification requirements.",
     "quietWhenUnchanged": true
   },
   "historicalFinanceEnospc": {
