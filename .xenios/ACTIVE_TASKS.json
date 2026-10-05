@@ -3317,7 +3317,7 @@
       "id": "FINANCE-RELEASE-BLOCKERS-V2-20261003",
       "title": "Provider-neutral finance release-blocker successor, v2 sprint",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-finance-release-blockers-20261003",
       "paths": [
         "server/research/assisted-order/FINANCE_SPRINT_V2_20261003.md",
@@ -3333,7 +3333,13 @@
       "dependsOn": [],
       "baseSha": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
       "scopeNote": "New exact finance candidate paths only; branch-local register/claim indexes; no stale-record wholesale import, client, MC01, shared lead controls, protected seam or hosted writes. All independent Claude acceptance pending.",
-      "claimedAt": "2026-10-03T21:32:21.872Z"
+      "claimedAt": "2026-10-03T21:32:21.872Z",
+      "handoff": {
+        "session": "codex-finance-release-blockers-20261003",
+        "sha": "b13c29ea6caa4b9715c295d45232e065511a85db",
+        "file": ".xenios/handoffs/2026-10-05T14-07-09-710Z-FINANCE-RELEASE-BLOCKERS-V2-20261003-codex-finance-release-blockers-20261003.md",
+        "at": "2026-10-05T14:07:09.716Z"
+      }
     }
   ]
 }

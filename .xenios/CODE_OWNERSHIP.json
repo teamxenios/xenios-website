@@ -3524,7 +3524,7 @@
         ".xenios/sessions/codex-finance-release-blockers-20261003.json",
         ".xenios/handoffs/*FINANCE-RELEASE-BLOCKERS-V2-20261003*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-03T21:32:21.875Z",
       "heartbeatAt": "2026-10-05T13:47:32.456Z"
     }
