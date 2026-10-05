@@ -1,0 +1,216 @@
+{
+  "label": "containment-source-4abd2c5",
+  "start": "2026-10-05T19:46:03.470Z",
+  "finished": "2026-10-05T19:46:05.329Z",
+  "node": "v20.19.0",
+  "executable": "C:\\Users\\sboad\\.codex\\toolchains\\node-v20.19.0-win-x64\\node.exe",
+  "args": [
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "server/health/quick-order/containment.test.ts",
+    "--maxWorkers=1",
+    "--no-file-parallelism",
+    "--cache=false",
+    "--reporter=verbose"
+  ],
+  "cwd": "C:\\Users\\sboad\\.codex\\worktrees\\389a\\xenios-website",
+  "childPid": 62764,
+  "exit": {
+    "code": 0,
+    "signal": null
+  },
+  "before": {
+    "head": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
+    "tree": "3fb70d98dc354e6a6049744b5bb15b741d5ba50b",
+    "dirty": "",
+    "sources": [
+      {
+        "path": "client/src/quick-order/OperatorDeclarations.test.tsx",
+        "sha256lf": "0b379d4cdfa041895b6ffe1de795f4986caef81cfe3269879cd8aa6e8acba505"
+      },
+      {
+        "path": "client/src/quick-order/OperatorDeclarations.tsx",
+        "sha256lf": "00bdf0d0d827960b851542a47d85f2db061d0a22b076ba78c95e54f64fc0c9da"
+      },
+      {
+        "path": "client/src/quick-order/QuickOrderPage.test.tsx",
+        "sha256lf": "c06c8af1e5d03c78ec706c6443c21a9ce57088de63e5c0675c2f67d5f002681e"
+      },
+      {
+        "path": "client/src/quick-order/QuickOrderPage.tsx",
+        "sha256lf": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b"
+      },
+      {
+        "path": "client/src/quick-order/contracts.test.ts",
+        "sha256lf": "41acfb403839870c8095a16216babc4ea0222b5e1b80ec15b4e8b31520078c14"
+      },
+      {
+        "path": "client/src/quick-order/contracts.ts",
+        "sha256lf": "51c91843c6a9f2dbad9133c09986c7754ee2f467c3889d8877e40d7979526861"
+      },
+      {
+        "path": "client/src/quick-order/quick-order.css",
+        "sha256lf": "1cc94da50f0a8235caee34743b74c5854a2a4cf2df7a63545e5fdcd8c3f02fd9"
+      },
+      {
+        "path": "server/health/quick-order/catalog.test.ts",
+        "sha256lf": "3add4edf5d596449e51e6678c38ac17cc7d94adc3e6ba1ffbfc3780b29e173f7"
+      },
+      {
+        "path": "server/health/quick-order/catalog.ts",
+        "sha256lf": "1144627bfe5c6ecea1b3a66e0249cc9d0028ceb8afe9e05156a2440536c8ead0"
+      },
+      {
+        "path": "server/health/quick-order/containment.test.ts",
+        "sha256lf": "6dbcbd18af43b6cfa683d371444f728fa7fea93b1494895b221ceeb3449a7c0e"
+      },
+      {
+        "path": "server/health/quick-order/containment.ts",
+        "sha256lf": "a8e253d2f59b701b5ce96116eacf58269d012ad2002082ab98014e47b1aa526b"
+      },
+      {
+        "path": "server/health/quick-order/core.d.mts",
+        "sha256lf": "d3bca2af4ef290f37db356480cdf4b1f610a17e331910ecb7a2a4f7102f30998"
+      },
+      {
+        "path": "server/health/quick-order/core.mjs",
+        "sha256lf": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35"
+      },
+      {
+        "path": "server/health/quick-order/handler.d.mts",
+        "sha256lf": "b65211ed78cf0bef51079aac7b0c0c72ed996b037558395c61fc573509be4a27"
+      },
+      {
+        "path": "server/health/quick-order/handler.mjs",
+        "sha256lf": "82aa742d8c499e4e5b50c757d62931990ad3a1c7741b68d745df4a53396ea187"
+      },
+      {
+        "path": "server/health/quick-order/legal.ts",
+        "sha256lf": "5ef68fe9f1138bb8f112d049ba0a260a3eed647a14c09592176d2803b955916e"
+      },
+      {
+        "path": "server/health/quick-order/ports.ts",
+        "sha256lf": "e343a6b853fb5369e4eaf35ce3224142481eebdcb69a10301e45997544dd2226"
+      },
+      {
+        "path": "server/health/quick-order/production.test.ts",
+        "sha256lf": "262051cfa69f19d72f02b798d0d60f6dc525b390c30dbaf02910a9d697b24658"
+      },
+      {
+        "path": "server/health/quick-order/production.ts",
+        "sha256lf": "8077598012387c4e2e748ffc2fb581deb78aa7466d33855d0281a692da284e8a"
+      },
+      {
+        "path": "server/health/quick-order/tests/core.test.mjs",
+        "sha256lf": "f35ae3d63608c0726af655776d45825f4db34010ac0fb4d8a54635d3200ab0a0"
+      },
+      {
+        "path": "server/health/quick-order/tests/fixtures.mjs",
+        "sha256lf": "8fc92b273d37adbe2a7f6c973a116959f180beb366f61bf5d588f431bfe8da9c"
+      },
+      {
+        "path": "server/health/quick-order/tests/handler.test.mjs",
+        "sha256lf": "5dd56f8622b884cfc8ba2a73a008d6cf4ffdd004a2bf768546b6f75c348d70ce"
+      }
+    ]
+  },
+  "after": {
+    "head": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
+    "tree": "3fb70d98dc354e6a6049744b5bb15b741d5ba50b",
+    "dirty": "",
+    "sources": [
+      {
+        "path": "client/src/quick-order/OperatorDeclarations.test.tsx",
+        "sha256lf": "0b379d4cdfa041895b6ffe1de795f4986caef81cfe3269879cd8aa6e8acba505"
+      },
+      {
+        "path": "client/src/quick-order/OperatorDeclarations.tsx",
+        "sha256lf": "00bdf0d0d827960b851542a47d85f2db061d0a22b076ba78c95e54f64fc0c9da"
+      },
+      {
+        "path": "client/src/quick-order/QuickOrderPage.test.tsx",
+        "sha256lf": "c06c8af1e5d03c78ec706c6443c21a9ce57088de63e5c0675c2f67d5f002681e"
+      },
+      {
+        "path": "client/src/quick-order/QuickOrderPage.tsx",
+        "sha256lf": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b"
+      },
+      {
+        "path": "client/src/quick-order/contracts.test.ts",
+        "sha256lf": "41acfb403839870c8095a16216babc4ea0222b5e1b80ec15b4e8b31520078c14"
+      },
+      {
+        "path": "client/src/quick-order/contracts.ts",
+        "sha256lf": "51c91843c6a9f2dbad9133c09986c7754ee2f467c3889d8877e40d7979526861"
+      },
+      {
+        "path": "client/src/quick-order/quick-order.css",
+        "sha256lf": "1cc94da50f0a8235caee34743b74c5854a2a4cf2df7a63545e5fdcd8c3f02fd9"
+      },
+      {
+        "path": "server/health/quick-order/catalog.test.ts",
+        "sha256lf": "3add4edf5d596449e51e6678c38ac17cc7d94adc3e6ba1ffbfc3780b29e173f7"
+      },
+      {
+        "path": "server/health/quick-order/catalog.ts",
+        "sha256lf": "1144627bfe5c6ecea1b3a66e0249cc9d0028ceb8afe9e05156a2440536c8ead0"
+      },
+      {
+        "path": "server/health/quick-order/containment.test.ts",
+        "sha256lf": "6dbcbd18af43b6cfa683d371444f728fa7fea93b1494895b221ceeb3449a7c0e"
+      },
+      {
+        "path": "server/health/quick-order/containment.ts",
+        "sha256lf": "a8e253d2f59b701b5ce96116eacf58269d012ad2002082ab98014e47b1aa526b"
+      },
+      {
+        "path": "server/health/quick-order/core.d.mts",
+        "sha256lf": "d3bca2af4ef290f37db356480cdf4b1f610a17e331910ecb7a2a4f7102f30998"
+      },
+      {
+        "path": "server/health/quick-order/core.mjs",
+        "sha256lf": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35"
+      },
+      {
+        "path": "server/health/quick-order/handler.d.mts",
+        "sha256lf": "b65211ed78cf0bef51079aac7b0c0c72ed996b037558395c61fc573509be4a27"
+      },
+      {
+        "path": "server/health/quick-order/handler.mjs",
+        "sha256lf": "82aa742d8c499e4e5b50c757d62931990ad3a1c7741b68d745df4a53396ea187"
+      },
+      {
+        "path": "server/health/quick-order/legal.ts",
+        "sha256lf": "5ef68fe9f1138bb8f112d049ba0a260a3eed647a14c09592176d2803b955916e"
+      },
+      {
+        "path": "server/health/quick-order/ports.ts",
+        "sha256lf": "e343a6b853fb5369e4eaf35ce3224142481eebdcb69a10301e45997544dd2226"
+      },
+      {
+        "path": "server/health/quick-order/production.test.ts",
+        "sha256lf": "262051cfa69f19d72f02b798d0d60f6dc525b390c30dbaf02910a9d697b24658"
+      },
+      {
+        "path": "server/health/quick-order/production.ts",
+        "sha256lf": "8077598012387c4e2e748ffc2fb581deb78aa7466d33855d0281a692da284e8a"
+      },
+      {
+        "path": "server/health/quick-order/tests/core.test.mjs",
+        "sha256lf": "f35ae3d63608c0726af655776d45825f4db34010ac0fb4d8a54635d3200ab0a0"
+      },
+      {
+        "path": "server/health/quick-order/tests/fixtures.mjs",
+        "sha256lf": "8fc92b273d37adbe2a7f6c973a116959f180beb366f61bf5d588f431bfe8da9c"
+      },
+      {
+        "path": "server/health/quick-order/tests/handler.test.mjs",
+        "sha256lf": "5dd56f8622b884cfc8ba2a73a008d6cf4ffdd004a2bf768546b6f75c348d70ce"
+      }
+    ]
+  },
+  "sourcesUnchanged": true,
+  "logSha256": "28dc7c1c6d3d7f1b13e47de5e8a48a2d208364c2816905e521028d20dbf596f0",
+  "logBytes": 1996,
+  "provenance": "Pinned launcher executable and before/after tracked Quick Order source hashes; no continuous process or filesystem attestation."
+}

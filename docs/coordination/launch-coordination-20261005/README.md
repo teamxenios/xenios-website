@@ -23,7 +23,7 @@ Typecheck, build, zero forbidden em-dash forms, route uniqueness and migration D
 
 Browser proof is partial: actual production client over loopback synthetic read fixtures, writes refused, zero overflow at measured1440/1024/767/430/390/320 on eight routes. Exact768, native zoom, CLS, native forced-colors, live Auth, partner activation, payment and delivered-image-byte proof remain unverified. Preview stopped by TTY interruption exit1 with no graceful-stop event; PIDs were absent and349assets rehashed unchanged.
 
-## One active Quick Order worker
+## One parked Quick Order worker awaiting source decisions
 
 Samuel directly requested implementation in Core chat user turn01a10d72-094e-7ab3-b11f-3afaf03ee40c. This newer specific request authorizes one isolated Quick Order lane while preserving the frozen integration and current reviewer.
 
@@ -36,11 +36,15 @@ Samuel directly requested implementation in Core chat user turn01a10d72-094e-7ab
 | Model | GPT-6 Astra Ultra, actual turn configuration verified |
 | Base | Independently source-accepted756a906 / tree78743294 |
 
-The worker owns client/src/quick-order, server/health/quick-order, shared/health/quick-order, its own docs and continuity paths, with at most three disjoint specialists. No duplicate builder or fresh integration lane. Known-ID wait_threads works even if list_threads omits the child.
+The same worker owns client/src/quick-order, server/health/quick-order, shared/health/quick-order, its own docs and continuity paths, with at most three disjoint specialists. No duplicate builder or fresh integration lane. Known-ID wait_threads works even if list_threads omits the child.
 
 The full supplied briefs, dispatch and intake are preserved. Historical package baseb0e818f is not the new integration base. Raw package baseline records the failing Windows npm test glob, explicit47/47passing tests and passing syntax checks; no application/browser/database acceptance is implied.
 
-Current work hardens canonical receipt handling, same-key retry after a lost response, session changes, approved styling and authorized catalog/legal bindings. The canonical persistence extension must supply actor/key replay, structured referral/affiliation evidence, commit-time authority and notification obligation. The worker is preparing an exact protected-mount/privacy and schema/operator packet. **Real intake remains disabled.** See QUICK_ORDER_CANONICAL_FINDINGS.md.
+Latest source4abd2c5cd4bd039309b32b97b117a67fc6a4d292/tree3fb70d98dc354e6a6049744b5bb15b741d5ba50b and evidence/handoffb353092ad9e49f28a65451d188c636079e1df091 are pushed. The original3b0048d passed184focusedtests. Coordinator found a normalized-leading-slash containment bypass; the same builder fixed it and passed10real-loopback regressions at4abd. These counts remain separate, not194 or a fullsuccessor184claim. Raw receipts/source hashes and14unchangedbaselines independently verify. Typecheck is resource-deferred; build/browser/DB remain NOTRUN.
+
+The exact disabled6filemountpatch remains SHA256LF6481c2ad2d4d2828e789cb2f2e24964705562cb782d70728b4152d78dc40a672, with all6before/afterpairs verified and targets unapplied. Two actual Samuel decisions are pending: this exact disabled mount/privacy source patch, and new canonical candidate/verification/module drafting in PERSISTENCE_PROPOSAL. Existing sharedreader changes need later concrete diffs. The supplied brief128/130/140 requires missing protected/schema source permission. Do not repeat the questions or infer an answer from model text. See QUICK_ORDER_SOURCE_APPROVAL_REQUEST.json.
+
+The durable actor/key replay, structured declarations, commit-time authority, atomic notification obligation, real operator readback and applicable Health policy sources remain incomplete. Real intake remains disabled. No SQL authored or executed; no hosted schema census or mutation. The same worker is parked with its lease reserved; no duplicate builder. See QUICK_ORDER_MOUNT_AUDIT_3b0048d.md and the preserved original/current qualification artifacts.
 
 ## Existing review and planning loop
 
@@ -74,4 +78,4 @@ Deploys, hosted SQL, consequential flags/prices, real charges, grants, payouts a
 
 Read COORDINATION_STATE.json, recover Git/leases and current user decisions. Reclaim only the coordinator records lease before edits. Follow the one Quick Order worker by known ID, collect exact source/tree/test/evidence/handoff, then continue the same Claude reviewer for its narrow accepted-base delta. Do not reopen frozen accepted lanes without conflicting diffs. Keep coherent records and exact pushed handoffs; preserve all failures and qualifications honestly.
 
-Latest coordination note: the builder reports39catalog/adapter and71core/handler diagnostic passes on dirtyd8a0d3f; these are not final committed-source receipts. UI checks are next. One capped nonincremental typecheck is reserved only after fresh >=2GiB RAM, >=20GiB disk and no competing heavy job; otherwise defer and push the reviewable source/proposal. The planning-message delivery and complete response are now confirmed at turne12c1ff7-ab6c-418d-b5c9-d21fe9393ac4. Its useful exact mount/privacy/operator evidence delta was sent to the existing worker. SQL-authoring approval precedes unapproved candidate/DB proof; model planning does not expand authority. See PLANNING_DELTA_20261005_1933.json.
+Latest coordination note: planning replye12c1ff7 was confirmed and routed with staged authority. A new verified Quick Order4abd/b353 update was sent; no new planning prompt pack or approval inference requested. Wait for actual Samuel answers to the two source questions. Both original release holds and resource requirements remain.

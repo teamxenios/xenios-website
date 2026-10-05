@@ -1,0 +1,109 @@
+diff --git a/client/src/App.tsx b/client/src/App.tsx
+--- a/client/src/App.tsx
++++ b/client/src/App.tsx
+@@ -69,6 +69,7 @@ const Admin = lazy(() => import("@/pages/Admin"));
+ // Research operations (Samuel admin presentation) — its own lazy chunk at
+ // /admin/research*. Presentation only; all authority is server-side.
+ const AdminResearchSection = lazy(() => import("@/research/adminx-section"));
++const QuickOrderPage = lazy(() => import("@/quick-order/QuickOrderPage"));
+ const CareSection = lazy(() => import("@/care/section"));
+ const CareEligibility = lazy(() => import("@/care/EligibilityPendingPage"));
+ const CareConsent = lazy(() => import("@/care/CareConsentPendingPage"));
+@@ -239,6 +240,7 @@ function Router() {
+       {/* Research operations family (Samuel admin presentation, own chunk). */}
+       <Route path="/admin/research" component={AdminResearchRoutes} />
+       <Route path="/admin/research/*" component={AdminResearchRoutes} />
++      <Route path="/health/quick-order"><Suspense fallback={<div aria-busy="true" />}><QuickOrderPage sessionKey={null} /></Suspense></Route>
+       <Route path="/health"><Redirect to="/" /></Route>
+       <Route path="/r/:code">{({ code }) => <Suspense fallback={<div className="container-x" aria-busy="true" style={{ paddingTop: 96 }} />}><RecommendationRecipient code={code} /></Suspense>}</Route>
+       {/* Public clarity entrypoints redirect legacy marketing URLs before the
+diff --git a/shared/care/paths.ts b/shared/care/paths.ts
+--- a/shared/care/paths.ts
++++ b/shared/care/paths.ts
+@@ -47,6 +47,11 @@ export function isCarePath(value: string): boolean {
+   return normalized === "/care" || normalized?.startsWith("/care/") === true;
+ }
+ 
++/** Exact sensitive intake namespace, distinct from the public gateway. */
++export function isHealthIntakePath(value: string): boolean {
++  return normalizeCarePath(value) === "/health/quick-order";
++}
++
+ /** The exact public umbrella gateway for the Care and Research pathways. */
+ export function isHealthGatewayPath(value: string): boolean {
+   return normalizeCarePath(value) === "/health";
+diff --git a/client/src/lib/tracking.ts b/client/src/lib/tracking.ts
+--- a/client/src/lib/tracking.ts
++++ b/client/src/lib/tracking.ts
+@@ -1,5 +1,5 @@
+ import { getConfig } from "./config";
+-import { isCarePath, isHealthGatewayPath } from "@shared/care/paths";
++import { isCarePath, isHealthGatewayPath, isHealthIntakePath } from "@shared/care/paths";
+ import { isRecoveryHash } from "@shared/research/recovery";
+ import { isResearchPath } from "@shared/research/paths";
+ import { isRecommendationPath } from "@shared/research/referral-v1";
+@@ -40,6 +40,7 @@ export function trackingBlockedHere(pathname: string, hash: string): boolean {
+     || isRecommendationPath(pathname)
+     || isCarePath(pathname)
+     || isHealthGatewayPath(pathname)
++    || isHealthIntakePath(pathname)
+     || isRecoveryHash(hash);
+ }
+ 
+@@ -50,7 +51,7 @@ function documentPrivacyZone(pathname: string, hash: string): DocumentPrivacyZon
+   if (isRecommendationPath(pathname)) return "recommendation";
+   if (isResearchPath(pathname)) return "research";
+   if (isCarePath(pathname)) return "care";
+-  if (isHealthGatewayPath(pathname)) return "health";
++  if (isHealthGatewayPath(pathname) || isHealthIntakePath(pathname)) return "health";
+   return "public";
+ }
+ 
+diff --git a/client/src/lib/attribution.ts b/client/src/lib/attribution.ts
+--- a/client/src/lib/attribution.ts
++++ b/client/src/lib/attribution.ts
+@@ -1,4 +1,4 @@
+-import { isCarePath, isHealthGatewayPath } from "@shared/care/paths";
++import { isCarePath, isHealthGatewayPath, isHealthIntakePath } from "@shared/care/paths";
+ import {
+   MARKETING_ATTRIBUTION_UTM_FIELDS,
+   sanitizeMarketingAttributionPath,
+@@ -46,6 +46,7 @@ function isSensitiveAttributionLocation(pathname: string, hash: string): boolean
+     normalized.startsWith("/admin/") ||
+     isCarePath(pathname) ||
+     isHealthGatewayPath(pathname) ||
++    isHealthIntakePath(pathname) ||
+     isRecoveryHash(hash)
+   );
+ }
+diff --git a/server/research/seo/raw-http-document-policy.ts b/server/research/seo/raw-http-document-policy.ts
+--- a/server/research/seo/raw-http-document-policy.ts
++++ b/server/research/seo/raw-http-document-policy.ts
+@@ -774,6 +774,7 @@ export function createRawHttpDocumentPolicyResolver(
+     addPrivate(route);
+   }
+ 
++  addPrivate("/health/quick-order");
+   for (const path of KNOWN_NOINDEX_EXACT_PATHS) addPrivate(path);
+   for (const pattern of KNOWN_NOINDEX_PATTERNS) addPrivatePattern(pattern);
+ 
+diff --git a/server/index.ts b/server/index.ts
+--- a/server/index.ts
++++ b/server/index.ts
+@@ -3,6 +3,7 @@ import express, { type Request, type RequestHandler, Response, NextFunction } fr
+ import helmet from "helmet";
+ import { createProxyMiddleware } from "http-proxy-middleware";
+ import { registerRoutes } from "./routes";
++import { createQuickOrderContainment } from "./health/quick-order/containment";
+ import {
+   registerLegacyResearchOrderContainment,
+   researchPageGate,
+@@ -273,6 +274,8 @@ app.use(
+ // The held legacy order endpoint must terminate before any application body
+ // parser or rawBody verifier can retain customer-supplied bytes.
+ registerLegacyResearchOrderContainment(app);
++// Disabled Quick Order terminates before parsing or retaining customer bodies.
++app.use(createQuickOrderContainment());
+ 
+ // Private Early Access stays unavailable, but its exact raw payment-options
+ // boundary terminates before JSON/urlencoded parsing and rawBody capture. The

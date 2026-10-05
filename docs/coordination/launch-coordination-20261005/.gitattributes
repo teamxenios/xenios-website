@@ -1,1 +1,4 @@
 * -text whitespace=cr-at-eol
+# Exact archived diff and raw process output retain their original whitespace.
+QUICK_ORDER_MOUNT_PROPOSAL_3b0048d.patch -whitespace
+QUICK_ORDER_CONTAINMENT_LOG_4abd2c5.txt -whitespace
