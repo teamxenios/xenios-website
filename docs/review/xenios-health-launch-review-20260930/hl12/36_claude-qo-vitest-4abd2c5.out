@@ -1,0 +1,9 @@
+
+ RUN  v4.1.10 C:/xenios-wt/closeout-review
+
+
+ Test Files  6 passed (6)
+      Tests  116 passed (116)
+   Start at  15:01:39
+   Duration  26.17s (transform 979ms, setup 0ms, import 5.00s, tests 7.05s, environment 12.57s)
+
