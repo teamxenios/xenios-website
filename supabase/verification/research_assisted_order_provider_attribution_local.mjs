@@ -105,7 +105,8 @@ export async function requestQuarantineHeld(db, n) {
   // Fixture-owner read: this private predicate is not a service-role RPC. The
   // public uncertainty DTO also holds every existing attempt, even after its
   // unrelated source quarantine clears, so it cannot prove quarantine recovery.
-  const held = json(await db.psql(`select ${prefix}provider_request_quarantine_held(${q(request(n))})::text;`));
+  const { held } = json(await db.psql(`select jsonb_build_object('held',
+    ${prefix}provider_request_quarantine_held(${q(request(n))}))::text;`));
   assert.equal(typeof held, 'boolean');
   return held;
 }
