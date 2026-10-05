@@ -4,10 +4,14 @@
 acceptance**. **Release qualification is NOT complete.** This is not production readiness, real-purchasing readiness,
 or founder/hosted-action approval.
 
-Reviewer: this session, `claude-fable-5-1`. The coordinator asked for maximum effort; the configured effort last
-observed from inside this session was `xhigh` (doc 34), and the session cannot confirm a later change, so no higher
+Reviewer: this session, `claude-fable-5-1`. Per the coordinator the CLI was launched with `--effort max`; the
+configured effort independently observed from inside this session was `xhigh` (doc 34), and no higher actual runtime
 setting is claimed. Read-only: Git objects from `C:/xenios-wt/health-review`; the integration branch was not checked
 out or edited, and no tests, builds, databases or browsers were launched for this part.
+
+Revision note: first pushed at `04cbbee`. This revision corrects the focused-set overlap count in the PS-R1/PS-R5
+section, restates the effort disclosure, and removes any reading of the later-slot aggregate note as advance acceptance
+of failures. Decision, bounds, holds and all other figures are unchanged. No test, build, browser or database rerun.
 
 ## Identity (verified)
 
@@ -46,7 +50,15 @@ out or edited, and no tests, builds, databases or browsers were launched for thi
   logs are summary-only (247 and 1,084 bytes), so the per-case lines are not in the log and the case-level pass is
   established by exit 0 / 0 failures plus the committed test bytes.
 - The 36-file affected run (626/0/0, exit 0, clean `756a906`) includes all **25** test files changed since base. The
-  17 and 36 sets overlap (7 shared files); the counts are not additive.
+  17 and 36 sets share exactly **4** files and cover **49** distinct files; the counts (401 and 626) are not additive.
+  Evidence note (correction of 2026-10-05, recomputed from the `command` arrays in
+  `integration-subscription17-run1-start.json` and `integration-affected-run1-start.json` at `38c7239`): the shared
+  files are `client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx`,
+  `client/src/research/adapters/product-subscription-create.test.ts`,
+  `client/src/research/pages/member/ProductPage.subscription.test.tsx` and
+  `server/research/commerce/subscription-intent-journey.test.ts`. The 49-file union equals, path for path, the 49
+  entries of `focused-source-bindings.json` (0 extra, 0 missing). The first push of this record (`04cbbee`) said
+  "7 shared files"; that count was wrong and nothing else in the record depended on it.
 
 ## Findings
 
@@ -82,8 +94,9 @@ out or edited, and no tests, builds, databases or browsers were launched for thi
 
 ## Minimum re-execution for a later serialized slot (not required for source acceptance)
 
-1. Full aggregate at exactly `756a906` on a quiet host (about 2 GiB free RAM, 20 GiB disk); only the inherited
-   protection assertions may fail.
+1. Full aggregate at exactly `756a906` on a quiet host (about 2 GiB free RAM, 20 GiB disk). The inherited protection
+   assertions are expected to fail for the known reasons, but no failure is accepted in advance: every failure in that
+   run must be examined and attributed before the run counts for anything.
 2. Re-run the two focused sets with `--reporter=verbose` to archive per-case PS-R5 evidence.
 3. Browser qualification at exact 768 and native zoom when a native helper is available.
 
