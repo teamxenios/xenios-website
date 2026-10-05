@@ -161,6 +161,7 @@
   --order-control-height: 44px;
 }
 .xenios-order-page--customer .xenios-order-eyebrow { color: var(--muted); }
+.xenios-order-page--customer .xenios-order-timeline li { border-left-color: var(--rule); }
 .xenios-order-page--customer .xenios-order-steps button { min-height: var(--order-control-height); border-radius: 4px; }
 .xenios-order-page--customer .xenios-order-steps button.is-active { border-color: var(--pulse); }
 .xenios-order-page--customer .xenios-order-steps button.is-active span { background: var(--pulse); }
