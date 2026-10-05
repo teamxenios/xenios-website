@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T17:52:59.316Z",
+  "updatedAt": "2026-10-05T17:58:32.849Z",
   "objective": "Automate verified Codex-Claude-ChatGPT handoffs and prepare the gym-owner affiliate and customer product-subscription launch without bypassing release authorities.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -34,7 +34,7 @@
     "cwd": "C:/Users/sboad/.codex/worktrees/2227/xenios-website",
     "base": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
     "scope": "D/E fallback-first media; no Core clarity/auth paths, protected files, Finance or imagery generation",
-    "status": "SOURCE-LEVEL ACCEPT as fallback-first foundation; bounded DE-R1 client-clock correction dispatched to existing owner before reliance on images",
+    "status": "Accepted foundation plus pushed DE-R1 successor awaiting narrow Claude recheck; producer clean and parked",
     "source": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
     "tree": "0258be61bf4761ee9911cda1c0d042b6cd183aa3",
     "handoff": "c3ea1357f6a4d2a366417753bd08def4c5920fec",
@@ -42,7 +42,15 @@
     "reviewSession": "d8d31048-294d-435d-9c5e-2613fa70ee05",
     "reviewStatus": "ACCEPT; IC3 PASS; presentation-only PASS; no P0/P1; one DE-R1 P2 and remaining release prerequisites open",
     "reviewArtifact": "docs/coordination/launch-coordination-20261005/CLAUDE_DE_ACCEPTANCE.txt",
-    "followup": "DE-R1: avoid redundant browser-clock upper-bound rejection without weakening trusted 300-second signing policy or expiry over elapsed time"
+    "followup": "DE-R1: avoid redundant browser-clock upper-bound rejection without weakening trusted 300-second signing policy or expiry over elapsed time",
+    "correction": {
+      "source": "e6a8171b5b2d4ad78930c214997532e16601a48e",
+      "tree": "72023b56e21b0f8b5c9643d110def78c0a6b6e7b",
+      "handoff": "db9516d70461c7c7c36fd5ef06a086b03f64d415",
+      "reviewSession": "478774d3-e917-41b5-b978-cbb1070bea89",
+      "reviewStatus": "running, static and receipt checks only",
+      "reportedChecks": "71 focused tests in5files plus nonincremental typecheck PASS; no exact server-time expiry/stale-remount proof"
+    }
   },
   "production": {
     "deployment": "dep-daqft3vf3r2c73b7e88g",
@@ -99,10 +107,10 @@
     "quantityGap": "Founder policy100 versus effective canonical cap50 remains open; source preserves50"
   },
   "qualificationSlot": {
-    "owner": "01a10d08-cd8b-7431-80b7-a21677c11bb6",
-    "scope": "Narrow DE-R1 focused regression/typecheck only after explicit Subscription release; no DB/build/full aggregate",
-    "fullSuite": "not authorized under current multi-worker load",
-    "next": "Narrow independent recheck and accepted-source integration, subject to fresh slot and lease review"
+    "owner": null,
+    "scope": "Released explicitly by D/E after DE-R1; both source workers parked; two static Claude reviews running",
+    "next": "Integration only after accepted successors and fresh lease/host checks",
+    "fullSuite": "No current full aggregate or DB race authorization; retain serialized compute"
   },
   "partnerReturn": {
     "source": "94e89be7c959087edfde4ebddf2f50fa5e02cc36",

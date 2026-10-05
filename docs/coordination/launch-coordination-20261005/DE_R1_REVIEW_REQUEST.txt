@@ -1,0 +1,19 @@
+NARROW DE-R1 SOURCE RECHECK ONLY
+
+Continue the existing independent D/E acceptance context. Accepted foundation source: 5152adb4db6db3e197d4534146bcc2ae75fa8f96, tree 0258be61bf4761ee9911cda1c0d042b6cd183aa3; records c3ea1357f6a4d2a366417753bd08def4c5920fec.
+
+Pushed correction source: e6a8171b5b2d4ad78930c214997532e16601a48e.
+Correction tree: 72023b56e21b0f8b5c9643d110def78c0a6b6e7b.
+Evidence/handoff/head: db9516d70461c7c7c36fd5ef06a086b03f64d415.
+Branch: codex/xenios-de-media-foundation-20261005.
+Handoff: docs/research-launch/de-media-foundation-20261005/de-r1/HANDOFF.md.
+
+Read only the four source/test-file delta, exact receipts and invariant evidence. Do not reopen accepted Core, partner return, initial D/E foundation, MC01 or Finance. Do not edit files or commit. Perform static semantics and exact receipt/blob/hash verification; do not run tests, typecheck, build, browser, Docker, DB or installs. Return full verdict in the conversation for coordinator preservation. Subscription review is separate and read-only; do not duplicate it.
+
+Review the fix for your DE-R1 finding: browser-clock upper-bound validation rejected fresh server-signed images whenever browser time was behind server time. Producer now adds an explicit default-strict enforceSigningLifetime parser option; only ProductMedia disables the redundant upper comparison. Canonical/finite expiry and local expiry<=now rejection remain unconditional, as do URL/identity/variant/hash/dimension checks. Server projection, adapter and signing policy remain strict and unchanged.
+
+Verify mounted timeout min(local remaining,300seconds), same-descriptor rerender does not restart it, replacement/late-error handling stays safe, behind-clock descriptors render and ahead/at/past-expiry descriptors retain the stated behavior. The producer reports 71 focused tests in five files and nonincremental typecheck passed, and all four source blobs equal the checked source. Independently verify provenance; do not claim you reran them.
+
+Important limit: a browser-relative timer does not prove exact server-time expiry under arbitrary clock skew or stale remounts. The producer explicitly discloses this and does not introduce static evaluatedAt as timer time. Determine whether the precise DE-R1 blanking defect is safely closed with that bound. Return any remaining actionable P0/P1/P2 findings with exact locations, and distinguish an existing deferred requirement from a newly introduced regression. Do not manufacture a stronger expiry claim.
+
+Return exact source/tree; DE-R1 CLOSED/PARTIAL/OPEN; correction ACCEPT/REJECT at source level; precise proof limits; and whether this successor can replace the foundation for an integrator while all existing release prerequisites remain open. No owner choices, protected hash approval, managed SQL registration/apply, hosted write, imagery publication or deployment is authorized. No actual imagery/delivery, canonical reader/writer or database qualification is closed by this correction.
