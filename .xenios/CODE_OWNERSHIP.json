@@ -3529,7 +3529,7 @@
         "docs/health-launch/ABC_PREMIUM_SHELL_20261003.md",
         "docs/health-launch/evidence/abc-premium-shell-20261003/"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-03T21:33:59.922Z",
       "heartbeatAt": "2026-10-05T13:17:25.522Z"
     }

@@ -6,7 +6,7 @@
       "id": "HEALTH-ABC-PREMIUM-SHELL-20261003",
       "title": "Bounded display-only Health brand, customer CTA and accent convergence",
       "priority": "P2",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-health-launch-implementation-20260930",
       "baseSha": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
       "paths": [
@@ -27,7 +27,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "Direct pasted v2 sprint launch lifts prior Core freeze only for Session01 A/B/C. Exact sha256-lf baseline authorization bfec2d8 verified for Navbar/Footer/index.css. Display-only healthDisplayName; preserve publicName/metadata, pathway labels and operational chrome. Customer-only marker isolates assisted styling from admin. Root owns protected files/brand and records; scoped delegation only. No server/shared authority, SQL, imagery or MC01 files, manifest recut, hosted action or successor hash approval. Stop at one exact pushed candidate for independent Claude review; previous failed suites and GATE01 remain separate.",
-      "claimedAt": "2026-10-03T21:33:59.876Z"
+      "claimedAt": "2026-10-03T21:33:59.876Z",
+      "handoff": {
+        "session": "codex-xenios-health-launch-implementation-20260930",
+        "sha": "3186799ad0bf16fe0d79fa5ad5dfc7543b4ca997",
+        "file": ".xenios/handoffs/2026-10-05T13-24-35-970Z-HEALTH-ABC-PREMIUM-SHELL-20261003-codex-xenios-health-launch-implementation-20260930.md",
+        "at": "2026-10-05T13:24:36.008Z"
+      }
     },
     {
       "id": "HEALTH-PARTNERSHIP-SUBMITTED-RECEIPT-20261001",
