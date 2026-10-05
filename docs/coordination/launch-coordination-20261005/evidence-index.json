@@ -473,5 +473,10 @@
     "path": "PLANNING_HTTP_SUCCESSOR_RELAY_20261005.json",
     "bytes": 2156,
     "sha256": "952b2d62a94802f18520b3e8ff41fb2e5d6bdc488dd23a7a881469f6953e2dd0"
+  },
+  {
+    "path": "CONTINUOUS_EXECUTION_ADDENDUM_CONTEXT_20261005.json",
+    "bytes": 45731,
+    "sha256": "9cdff13432b2820f4c01921ec7044447207fc04ca130cf9345ce38c77020d158"
   }
 ]

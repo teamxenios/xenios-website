@@ -71,3 +71,19 @@ Read repository continuity, exact handoffs, current Git/leases and direct user d
 The active five-minute heartbeat xenios-launch-coordination targets coordinator chat01a103a8-5684-7272-89e5-3c42eefcd593. Stay quiet while unchanged; notify meaningful progress, final review, failure or required user action. Disable only after the authorized launch/Quick Order work and verification finish; do not archive the chat.
 
 Latest source decisions remain pending. Samuel attached an execution addendum to the original Claude context at21:14; its text explicitly grants no A1/A2/PWA/GATE01/hosted approval. Read-only process metadata now confirms Fable5.1, xhigh effort and ultracode:true; max remains unconfirmed.
+
+## Attached execution addendum and current journey status
+
+All seven manifest-listed files, including all three prompts, were read and their exact byte/hash entries verified. CONTINUOUS_EXECUTION_ADDENDUM_CONTEXT_20261005.json preserves their text and provenance. The user attached them as context without a separate new action request. Compatible guidance supports the already-authorized coordination loop; it supplies no new A1/A2/PWA/GATE-01/schema/hosted authority or four-hour schedule. Existing tasks remain canonical; this table is their status view, not another task board.
+
+| Journey | Current integration evidence | Next dependency |
+| --- | --- | --- |
+| Public shell and navigation | Real source composition; browser evidence partial and synthetic | Exact protected hashes/GATE-01 and remaining qualification; no source reopen absent finding |
+| Catalog, variants and media | Canonical presentation/fallback source; actual reader/writer/delivery/database requirements open | Compatible predecessors/history adoption, candidate/product_content reapproval/transition, delivery and DB qualification |
+| Account and partner return | Canonical identity integration with synthetic proof; real Auth journey not proven | Preserve accepted bytes; actual qualification under valid slot |
+| Quick Order details/referral/review/receipt | UI/ports isolated, unmounted and disabled; unavailable production ports; no durable receipt or real intake | Collect narrow exact-source verdict; targeted red/green only after qualified slot; repairs only for actual findings |
+| Authorized operator readback | No proof of actual authorized readback against committed Quick Order request/evidence | A2 conditions and separately scoped existing-reader diffs; no new implementation permission |
+| Product subscriptions | Synthetic/disabled offer path; six durable buying authorities absent or unproved | Actual product/offer decision, PS-R2/3 and six buying gap evidence; no guessed price/activation |
+| Finance/provider and release | Operational authorities disabled; hosted compatibility/payment/provider actions held | Exact independent financial/compatibility evidence and later action-specific approvals |
+
+Overall: **SOURCE PARTIAL; original integration ACCEPTED WITH HOLDS; HTTP successor review PENDING; LIVE INTAKE / LIVE PURCHASE / RELEASE NOT READY.** The next action is the same reviewer’s exact HTTP delta verdict, followed by only concrete authorized corrections or qualification under a fresh eligible slot. No duplicate dispatch or automatic test retry follows from the addendum.
