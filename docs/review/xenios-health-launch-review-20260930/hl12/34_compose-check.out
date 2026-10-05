@@ -1,0 +1,20 @@
+union files (runtime/tests/sql): 65; exact single-lane matches: 55
+MULTI-LANE files:
+  client/src/research/assisted-order/AssistedOrderPage.tsx | 0467e98:core-tests+partner-tests+sub-tests 0de78e4:de | integ abf418b => NONE(new bytes)
+  client/src/research/adapters/memberCatalog.test.ts | a4095bb:mc01 922f833:de | integ 922f833 => de
+  client/src/research/adapters/memberCatalog.ts | a24e883:mc01 8a4b412:de | integ 8a4b412 => de
+  server/research/catalog/member-catalog-projection.test.ts | a7293bb:mc01 0591643:de | integ 0591643 => de
+  server/research/catalog/member-catalog-projection.ts | 602ebad:mc01 ef98310:de | integ ef98310 => de
+  server/research/catalog/member-catalog-service.test.ts | 6bd15e9:mc01 70969bd:de | integ 70969bd => de
+  server/research/catalog/member-catalog-service.ts | 5ad4411:mc01 dcaf99a:de | integ dcaf99a => de
+  server/research/products-diagnostics/product-admin-production.ts | a495635:mc01 0c5130b:de | integ 0c5130b => de
+  shared/research/product-admin.ts | 0aa1c69:mc01 fcf43de:de | integ fcf43de => de
+DROPPED (integ == base): []
+MISMATCH (integ differs from the only lane blob): [
+  {
+    p: 'client/src/research/adapters/product-subscription-create.test.ts',
+    lanes: [ 'sub-tests' ]
+  }
+]
+EXTRA (changed vs base, not in any lane): []
+records/docs changed in integ vs base: .xenios/ACTIVE_TASKS.json, .xenios/CODE_OWNERSHIP.json, .xenios/SESSION_REGISTRY.json, .xenios/sessions/codex-accepted-source-integration-20261005.json

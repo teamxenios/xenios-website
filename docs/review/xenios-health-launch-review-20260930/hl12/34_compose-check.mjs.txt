@@ -1,0 +1,18 @@
+import { execSync } from 'node:child_process';
+const sh = c => execSync(c, { cwd: 'C:/xenios-wt/closeout-review', maxBuffer: 1e8 }).toString();
+const BASE = '3eaa017', INT = '756a906';
+const lanes = { 'core-tests': '2a791be', 'partner-tests': '806c58a', 'mc01': 'ed9bb9b', 'de': 'e6a8171', 'sub-tests': '03b72f8' };
+const skip = p => p.startsWith('.xenios/') || p.startsWith('docs/');
+const blobs = (ref) => Object.fromEntries(sh(`git ls-tree -r ${ref}`).trim().split('\n').map(l => { const [meta, p] = l.split('\t'); return [p, meta.split(' ')[2]]; }));
+const base = blobs(BASE), integ = blobs(INT), lane = Object.fromEntries(Object.entries(lanes).map(([k, r]) => [k, blobs(r)]));
+const union = new Map(); // path -> Map(blob -> [lanes])
+for (const [k, b] of Object.entries(lane)) for (const p of new Set([...Object.keys(b), ...Object.keys(base)])) { if (skip(p)) continue; const nb = b[p] ?? 'DELETED'; if (nb !== (base[p] ?? 'DELETED')) { if (!union.has(p)) union.set(p, new Map()); const m = union.get(p); if (!m.has(nb)) m.set(nb, []); m.get(nb).push(k); } }
+const res = { exact: 0, multi: [], dropped: [], mismatch: [], extra: [] };
+for (const [p, m] of union) { const ib = integ[p] ?? 'DELETED'; const bb = base[p] ?? 'DELETED';
+  if (m.size === 1) { const [eb] = m.keys(); if (ib === eb) res.exact++; else if (ib === bb) res.dropped.push(p); else res.mismatch.push({ p, lanes: [...m.values()].flat() }); }
+  else { res.multi.push({ p, variants: [...m.entries()].map(([b, ls]) => `${b.slice(0, 7)}:${ls.join('+')}`), integ: ib.slice(0, 7), matches: [...m.keys()].includes(ib) ? [...m.entries()].filter(([b]) => b === ib).map(([, ls]) => ls.join('+')).join('|') : (ib === bb ? 'BASE(dropped)' : 'NONE(new bytes)') }); } }
+for (const p of new Set([...Object.keys(integ), ...Object.keys(base)])) { if (skip(p) || union.has(p)) continue; if ((integ[p] ?? 'DELETED') !== (base[p] ?? 'DELETED')) res.extra.push(p); }
+console.log(`union files (runtime/tests/sql): ${union.size}; exact single-lane matches: ${res.exact}`);
+console.log('MULTI-LANE files:'); res.multi.forEach(x => console.log(' ', x.p, '|', x.variants.join(' '), '| integ', x.integ, '=>', x.matches));
+console.log('DROPPED (integ == base):', res.dropped); console.log('MISMATCH (integ differs from the only lane blob):', res.mismatch); console.log('EXTRA (changed vs base, not in any lane):', res.extra);
+console.log('records/docs changed in integ vs base:', Object.keys(integ).filter(p => skip(p) && integ[p] !== base[p]).concat(Object.keys(base).filter(p => skip(p) && !integ[p])).join(', '));
