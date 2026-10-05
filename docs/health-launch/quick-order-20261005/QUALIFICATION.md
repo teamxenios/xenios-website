@@ -1,12 +1,37 @@
 # Exact-source qualification: incomplete Quick Order source
 
-The source-location correction and regenerated proposal are described in
+The current path-classifier correction is described in `HTTP_CORRECTION.md`.
+All its regression definitions are **NOT RUN**; there is no current qualification
+reservation. Its source/tree and static integrity evidence are recorded in the
+exact handoff. No earlier receipt proves this semantic successor.
+
+The historical source-location correction and regenerated proposal are described in
 `RELOCATION.md`. Historical evidence below retains its original source bindings;
 no earlier test result is transferred to the relocated successor. Current
 source, new qualification and permission status are recorded there and in the
 latest exact handoff. Original patch6481c2ad is HELD and preserved in `history/`.
 
-## Containment successor — coordinator finding closed
+## Runner coverage boundaries
+
+- Explicit pinned Node `--test` enumeration executes `tests/core.test.mjs` and
+  `tests/handler.test.mjs`, including the shared classifier through its HTTP
+  callers. These `.mjs` tests are outside Vitest's configured include patterns.
+- Vitest includes server/shared `.test.ts` and client `.test.ts`/`.test.tsx`.
+  The six Quick Order files cover components/contracts/catalog/production and
+  containment. Type stripping during Vitest is not TypeScript compilation.
+- `npm run check` / `tsc --noEmit --incremental false` checks included TypeScript
+  against declarations. The config does not enable `allowJs` or `checkJs`, so
+  this does not type-check `.mjs` implementation bodies. It excludes `.test.ts`;
+  `.test.tsx` is not covered by that exclusion. A matching `.d.mts` establishes
+  an interface, not proof that the JavaScript conforms to it.
+- No aggregate, TypeScript run or earlier module suite can replace explicit Node
+  tests, real application composition, browser or durable database evidence.
+
+The 706 MiB figure formerly in README lacked a preserved receipt. It is withdrawn
+as evidence, not replaced by a reconstructed historical measurement. All raw
+receipts below remain byte-for-byte historical artifacts.
+
+## Historical containment successor — QO-C1 correction
 
 Pre-relocation source **`4abd2c5cd4bd039309b32b97b117a67fc6a4d292`**, tree
 `3fb70d98dc354e6a6049744b5bb15b741d5ba50b`. Only `containment.ts` and its focused
@@ -17,9 +42,10 @@ Coordinator found that the original boundary checked `originalUrl` after the
 host had normalized leading duplicate slashes in `req.url`. A target such as
 `//api/health/quick-order/requests` could therefore reach the later JSON parser
 and rawBody verifier despite eventual intake being disabled. The correction
-uses `req.path` at the required application-root mount, matching Express's own
+used `req.path` at the required application-root mount, matching Express's own
 effective pathname after the existing normalization. Read-only cross-review
-found no other pre-boundary Quick Order path rewrite.
+found no other pre-boundary Quick Order path rewrite. Later doc 36 identified
+the separate WHATWG dot/backslash mismatch; see the current unrun correction.
 
 Exact successor focused run: **10 pass / 0 fail / 0 skip**, one file, exit0,
 clean before/after source state and unchanged22-file source hashes. Evidence:
@@ -114,7 +140,8 @@ launched for the focused checks exited. The coordinator owns the shared slot.
 
 ## Disposition
 
-Quick Order source review: **BLOCKED / incomplete**. Managed nonproduction:
+Doc 37 accepted pure relocation with explicit limits. The current HTTP semantic
+successor is **unqualified / pending independent review**. Managed nonproduction:
 **NOT RUN**. Real customer intake: **NOT READY**. Live payment, subscription and
 clinical readiness: **unchanged and not established**. The canonical transaction,
 governed authority sources and real operator continuation are still necessary;

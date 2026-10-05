@@ -1,8 +1,8 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { InputError, ESTIMATE_EXCLUSIONS, validateSubmission, validateAgreements, publicCatalogItem, validateCurrentLine, estimate, attributionSnapshot } from './core.mjs';
+import { classifyQuickOrderTarget, QUICK_ORDER_PREFIX } from './paths.mjs';
 
 export const QUICK_ORDER_MAX_BYTES = 65536;
-const DEFAULT_PREFIX = '/api/health/quick-order';
 const FORM_HASHES = Object.freeze({
   'assisted_order_form_v1:accuracy': 'aeb2ba5a069dd3f4',
   'assisted_order_form_v1:contact_consent': '6da1cc70338029ed',
@@ -60,18 +60,10 @@ function send(res, status, body) {
   res.setHeader('Referrer-Policy', 'no-referrer');
   res.end(JSON.stringify(body));
 }
-function prefixValue(value = DEFAULT_PREFIX) {
+function prefixValue(value = QUICK_ORDER_PREFIX) {
   if (typeof value !== 'string' || !/^\/[a-zA-Z0-9/_-]+$/u.test(value) || value.endsWith('/') || value.includes('//')) throw new Error('A non-empty absolute API prefix is required.');
   return value;
 }
-function requestUrl(req, origin) {
-  // Express owns originalUrl. It preserves the exact application path when a
-  // router strips its mount prefix. Tests cover both forms and the prefix root.
-  const raw = typeof req.originalUrl === 'string' ? req.originalUrl : req.url;
-  if (typeof raw !== 'string' || !raw.startsWith('/') || raw.startsWith('//')) throw new InputError('request', 'Invalid request path.', 400, 'invalid_request');
-  return new URL(raw, origin);
-}
-const ownsPath = (pathname, prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`);
 function lengthHeader(req) {
   const raw = req.headers['content-length'];
   if (raw === undefined) return null;
@@ -132,8 +124,10 @@ export function createQuickOrderHandler(ports, options = {}) {
   };
   return async function handle(req, res, next) {
     try {
-      const url = requestUrl(req, origin.origin);
-      if (!ownsPath(url.pathname, prefix)) return next ? next() : send(res, 404, { code: 'not_found' });
+      const target = classifyQuickOrderTarget(req, prefix);
+      if (target.kind === 'unrelated') return next ? next() : send(res, 404, { code: 'not_found' });
+      if (target.kind === 'owned-malformed') throw new InputError('request', 'Invalid request path.', 400, 'invalid_request');
+      const url = target.url;
       const path = url.pathname.slice(prefix.length);
       if (req.headers['sec-fetch-site'] === 'cross-site' || (req.headers.origin !== undefined && req.headers.origin !== origin.origin) || (req.method === 'POST' && req.headers.origin !== origin.origin)) throw new InputError('request', 'Use the same-site form.', 403, 'origin_rejected');
       const session = await ports.session(req);
@@ -213,9 +207,9 @@ export function createQuickOrderHandler(ports, options = {}) {
 export function createQuickOrderErrorHandler({ prefix: configuredPrefix } = {}) {
   const prefix = prefixValue(configuredPrefix);
   return function handleParserError(error, req, res, next) {
-    let matches = false;
-    try { matches = ownsPath(requestUrl(req, 'https://quick-order.invalid').pathname, prefix); } catch { /* General host handler owns unrelated malformed paths. */ }
-    if (!matches) return next(error);
+    const target = classifyQuickOrderTarget(req, prefix);
+    if (target.kind === 'unrelated') return next(error);
+    if (target.kind === 'owned-malformed') return send(res, 400, { code: 'invalid_request', field: 'request', message: 'Invalid request path.' });
     if (error?.type === 'entity.too.large' || error?.status === 413) return send(res, 413, { code: 'payload_too_large', message: 'Request is too large.' });
     if (['entity.parse.failed', 'request.aborted', 'request.size.invalid'].includes(error?.type) || error?.status === 400) return send(res, 400, { code: 'invalid_json', message: 'Invalid JSON.' });
     return unavailable(res);

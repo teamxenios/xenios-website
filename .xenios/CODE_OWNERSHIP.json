@@ -3593,9 +3593,6 @@
       "task": "HEALTH-QUICK-ORDER-20261005",
       "session": "codex-health-quick-order-20261005",
       "paths": [
-        "client/src/quick-order/**",
-        "server/health/quick-order/**",
-        "shared/health/quick-order/**",
         "docs/health-launch/quick-order-20261005/**",
         ".xenios/sessions/codex-health-quick-order-20261005.json",
         ".xenios/handoffs/quick-order-20261005-handoff.md",
@@ -3604,8 +3601,8 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-05T19:13:42.719Z",
-      "heartbeatAt": "2026-10-05T20:37:42.141Z",
-      "note": "Reserved for the same builder while awaiting exact source authority; session blocked_external, not actively running a qualification process."
+      "heartbeatAt": "2026-10-05T21:12:36.973Z",
+      "note": "Resumed same owner under coordinator HTTP correction request25ca24b. Only module path classifier/tests and own packet/records. No qualification slot; no test/typecheck/build/browser/DB execution. Old module prefixes empty and tracked files absent; obsolete reservations removed."
     }
   ],
   "rules": [

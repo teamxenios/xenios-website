@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import { classifyQuickOrderTarget } from "./paths.mjs";
 
 /** Default-off raw boundary proposed before global parsers. It has no auth,
  * persistence, logging or notification dependency and does not retain a body.
@@ -6,12 +7,9 @@ import type { RequestHandler } from "express";
  */
 export function createQuickOrderContainment(): RequestHandler {
   return (req, res, next) => {
-    // Mounted at the app root after the existing leading-slash normalizer.
-    // originalUrl retains aliases such as //api/...; routing and the later
-    // parsers use the rewritten url. req.path uses that effective URL with
-    // Express's own pathname semantics, including absolute-form targets.
-    const path = req.path;
-    if (path !== "/api/health/quick-order" && !path.startsWith("/api/health/quick-order/")) {
+    // App-root mount before parsers. Retain both the incoming target and the
+    // host's effective target across its existing leading-slash normalization.
+    if (classifyQuickOrderTarget(req).kind === "unrelated") {
       next();
       return;
     }

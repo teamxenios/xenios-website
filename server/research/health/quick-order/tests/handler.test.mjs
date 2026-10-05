@@ -300,3 +300,200 @@ test('upstream parser error middleware only handles exact namespace with safe bo
   handler(error, { url: '/other', headers: {} }, {}, value => { forwarded = value; });
   assert.equal(forwarded, error);
 });
+
+// Direct request doubles deliberately omit all application adapters and streams.
+// Fixture call lists do not observe session/rate/body access, so they cannot
+// establish the ownership-before-input boundary covered by these regressions.
+function ownershipBoundaryProbe(target) {
+  const accesses = [], forwarded = [];
+  const forbidden = name => { accesses.push(name); throw new Error('Unexpected request-time access'); };
+  const ports = { productionReady: true };
+  for (const name of ['session', 'config', 'listCatalog', 'resolveItem', 'takeRateLimit', 'getExisting', 'commit', 'onOperationalError']) {
+    ports[name] = () => forbidden(`port:${name}`);
+  }
+  const req = { ...target, method: 'POST', headers: { origin: 'https://untrusted.example.test' } };
+  for (const name of ['body', 'rawBody', 'on', 'once', 'pipe', 'read', 'resume', 'pause', 'setEncoding']) {
+    Object.defineProperty(req, name, { get: () => forbidden(`request:${name}`) });
+  }
+  Object.defineProperty(req, Symbol.asyncIterator, { get: () => forbidden('request:asyncIterator') });
+  const result = { status: null, body: null, headers: {} };
+  const res = {
+    statusCode: 200,
+    setHeader(name, value) { result.headers[name.toLowerCase()] = value; },
+    end(body) { result.status = this.statusCode; result.body = JSON.parse(body); },
+  };
+  const next = error => { forwarded.push(error); };
+  return { ports, req, res, result, accesses, forwarded, next };
+}
+
+const MALFORMED_OWNED_TARGETS = [
+  ['literal dot segment', { url: `${PREFIX}/./config` }],
+  ['raw owned path traverses outside the prefix', { url: `${PREFIX}/../elsewhere` }],
+  ['unowned raw path normalizes into the prefix', { url: '/api/health/elsewhere/../quick-order/config' }],
+  ['encoded dot escapes the prefix', { url: `${PREFIX}/%2e%2e/elsewhere` }],
+  ['encoded dot normalizes into the prefix', { url: '/api/health/elsewhere/%2E%2E/quick-order/config' }],
+  ['mixed encoded dot', { url: `${PREFIX}/.%2e/elsewhere` }],
+  ['encoded prefix character', { url: '/api/health/%71uick-order/config' }],
+  ['backslash separator after prefix', { url: `${PREFIX}\\config` }],
+  ['backslash separators within prefix', { url: '/api\\health\\quick-order\\config' }],
+  ['leading backslash path', { url: '\\api\\health\\quick-order\\config' }],
+  ['case alias', { url: `${PREFIX.toUpperCase()}/config` }],
+  ['mixed case alias', { url: '/API/Health/quick-order/config' }],
+  ['leading duplicate slash is a path, not authority', { url: `/${PREFIX}/config` }],
+  ['duplicate slash inside prefix', { url: '/api//health/quick-order/config' }],
+  ['duplicate slash after prefix', { url: `${PREFIX}//config` }],
+  ['encoded slash within prefix', { url: '/api%2fhealth%2fquick-order/config' }],
+  ['encoded slash after prefix', { url: `${PREFIX}%2Fconfig` }],
+  ['encoded backslash within prefix', { url: '/api%5chealth%5cquick-order/config' }],
+  ['owned path with malformed percent encoding', { url: `${PREFIX}/%GG` }],
+  ['fragment after path', { url: `${PREFIX}/config#private-fragment` }],
+  ['fragment after query', { url: `${PREFIX}/config?view=1#private-fragment` }],
+  ['same-origin absolute target within namespace', { url: `${ORIGIN}${PREFIX}/config` }],
+  ['different-origin absolute target within namespace', { url: `https://elsewhere.example.test${PREFIX}/config` }],
+  ['absolute target with excess scheme separators', { url: `http:////elsewhere.example.test${PREFIX}/config` }],
+  ['absolute target with mixed scheme separators', { url: `https:/\\/elsewhere.example.test${PREFIX}/config` }],
+  ['absolute target traverses out after excess scheme separators', { url: `http:////elsewhere.example.test${PREFIX}/../other` }],
+  ['absolute target traverses out after one scheme separator', { url: `http:/elsewhere.example.test${PREFIX}/../other` }],
+  ['absolute target traverses out with no scheme separators', { url: `http:elsewhere.example.test${PREFIX}/../other` }],
+];
+
+const UNRELATED_TARGETS = [
+  ['neighboring longer name', { url: `${PREFIX}s/config` }],
+  ['neighboring hyphen name', { url: `${PREFIX}-other/config` }],
+  ['encoded neighboring name', { url: `${PREFIX}%73/config` }],
+  ['casefolded neighboring name', { url: `${PREFIX.toUpperCase()}-OTHER/config` }],
+  ['owned text appears only in query', { url: `/elsewhere?return=${PREFIX}/config` }],
+  ['owned text appears only in fragment', { url: `/elsewhere#${PREFIX}/config` }],
+  ['unrelated malformed percent encoding', { url: '/elsewhere/%GG' }],
+  ['unrelated backslash', { url: '/elsewhere\\other' }],
+  ['unrelated non-origin form', { url: 'elsewhere/other' }],
+  ['unrelated malformed absolute URL', { url: 'https://[invalid-host/elsewhere' }],
+  ['unrelated absolute same-origin URL', { url: `${ORIGIN}/elsewhere` }],
+  ['unrelated absolute different-origin URL', { url: 'https://elsewhere.example.test/other' }],
+  ['leading duplicate slash never assigns an authority', { url: `//elsewhere.example.test${PREFIX}/config` }],
+  ['absent target', {}],
+  ['non-string target', { url: 42 }],
+  ['both original and effective targets unrelated', { originalUrl: '/elsewhere/%GG', url: 'https://elsewhere.example.test/other' }],
+];
+
+const CONFLICTING_TARGETS = [
+  ['unrelated original cannot hide owned effective target', { originalUrl: '/elsewhere', url: `${PREFIX}/config` }],
+  ['owned original cannot rewrite to unrelated effective target', { originalUrl: `${PREFIX}/config`, url: '/elsewhere' }],
+  ['different full owned endpoints', { originalUrl: `${PREFIX}/config`, url: `${PREFIX}/requests` }],
+  ['different mount-stripped endpoints', { originalUrl: `${PREFIX}/config`, url: '/requests' }],
+  ['different mount-stripped queries', { originalUrl: `${PREFIX}/config?view=1`, url: '/config?view=2' }],
+  ['malformed original remains owned after normalization elsewhere', { originalUrl: `${PREFIX}/../elsewhere`, url: '/elsewhere' }],
+  ['owned malformed original cannot be replaced by valid effective target', { originalUrl: `${PREFIX.toUpperCase()}/config`, url: `${PREFIX}/config` }],
+  ['owned malformed effective cannot be hidden by valid original', { originalUrl: `${PREFIX}/config`, url: `${PREFIX}/./config` }],
+  ['absolute unrelated original cannot hide owned effective target', { originalUrl: `${ORIGIN}/elsewhere`, url: `${PREFIX}/config` }],
+  ['absolute unrelated effective cannot replace owned original', { originalUrl: `${PREFIX}/config`, url: `${ORIGIN}/elsewhere` }],
+];
+
+test('unrelated malformed, absolute and neighboring targets pass through before all ports and input access', async () => {
+  for (const [label, target] of UNRELATED_TARGETS) {
+    const probe = ownershipBoundaryProbe(target);
+    const handler = createQuickOrderHandler(probe.ports, { origin: ORIGIN, enabled: true });
+    await handler(probe.req, probe.res, probe.next);
+    assert.deepEqual(probe.accesses, [], label);
+    assert.deepEqual(probe.forwarded, [undefined], label);
+    assert.equal(probe.result.status, null, label);
+    assert.equal(probe.result.body, null, label);
+    assert.deepEqual(probe.result.headers, {}, label);
+  }
+});
+
+test('owned path aliases refuse with invalid_request before ports, origin checks or body/stream access', async () => {
+  for (const [label, target] of MALFORMED_OWNED_TARGETS) {
+    const probe = ownershipBoundaryProbe(target);
+    const handler = createQuickOrderHandler(probe.ports, { origin: ORIGIN, enabled: true });
+    await handler(probe.req, probe.res, probe.next);
+    assert.deepEqual(probe.accesses, [], label);
+    assert.deepEqual(probe.forwarded, [], label);
+    assert.equal(probe.result.status, 400, label);
+    assert.equal(probe.result.body?.code, 'invalid_request', label);
+    assert.equal(probe.result.headers['content-type'], 'application/json; charset=utf-8', label);
+    assert.equal(probe.result.headers['cache-control'], 'no-store, private', label);
+    assert.equal(JSON.stringify(probe.result.body).includes('private-fragment'), false, label);
+  }
+});
+
+test('conflicting original and effective targets cannot hide or reroute an owned request', async () => {
+  for (const [label, target] of CONFLICTING_TARGETS) {
+    const probe = ownershipBoundaryProbe(target);
+    const handler = createQuickOrderHandler(probe.ports, { origin: ORIGIN, enabled: true });
+    await handler(probe.req, probe.res, probe.next);
+    assert.deepEqual(probe.accesses, [], label);
+    assert.deepEqual(probe.forwarded, [], label);
+    assert.equal(probe.result.status, 400, label);
+    assert.equal(probe.result.body?.code, 'invalid_request', label);
+  }
+});
+
+test('canonical exact roots and query-bearing paths retain valid ownership including Express stripped paths', async () => {
+  const f = fixture();
+  for (const [label, url, originalUrl, status] of [
+    ['exact root', PREFIX, undefined, 404],
+    ['exact root with query', `${PREFIX}?view=1`, undefined, 404],
+    ['trailing slash root', `${PREFIX}/?view=1`, undefined, 404],
+    ['configuration query containing escaped path characters', `${PREFIX}/config?return=%2fother%5cpath%23fragment`, undefined, 200],
+    ['matching full original and effective paths', `${PREFIX}/config?view=1`, `${PREFIX}/config?view=1`, 200],
+    ['mount-stripped configuration and preserved query', '/config?view=1', `${PREFIX}/config?view=1`, 200],
+    ['mount-stripped exact root', '/', PREFIX, 404],
+  ]) {
+    const response = await f.invoke(url, originalUrl === undefined ? {} : { originalUrl });
+    assert.equal(response.status, status, label);
+    assert.equal(response.next, false, label);
+    assert.equal(response.headers['content-type'], 'application/json; charset=utf-8', label);
+  }
+});
+
+test('parser error ownership forwards unrelated errors unchanged without reading request inputs', () => {
+  const handler = createQuickOrderErrorHandler();
+  for (const [label, target] of UNRELATED_TARGETS) {
+    const probe = ownershipBoundaryProbe(target);
+    const originalError = { type: 'entity.too.large', status: 413, body: 'private-original-parser-body' };
+    handler(originalError, probe.req, probe.res, probe.next);
+    assert.deepEqual(probe.accesses, [], label);
+    assert.equal(probe.forwarded.length, 1, label);
+    assert.equal(probe.forwarded[0], originalError, label);
+    assert.equal(probe.result.status, null, label);
+    assert.deepEqual(probe.result.headers, {}, label);
+  }
+});
+
+test('parser errors on owned aliases and conflicting targets always become fixed invalid_request responses', () => {
+  const handler = createQuickOrderErrorHandler();
+  for (const [label, target] of [...MALFORMED_OWNED_TARGETS, ...CONFLICTING_TARGETS]) {
+    const probe = ownershipBoundaryProbe(target);
+    const originalError = { type: 'entity.too.large', status: 413, body: 'private-original-parser-body' };
+    handler(originalError, probe.req, probe.res, probe.next);
+    assert.deepEqual(probe.accesses, [], label);
+    assert.deepEqual(probe.forwarded, [], label);
+    assert.equal(probe.result.status, 400, label);
+    assert.equal(probe.result.body?.code, 'invalid_request', label);
+    assert.equal(JSON.stringify(probe.result.body).includes('private-original-parser-body'), false, label);
+  }
+});
+
+test('canonical parser error paths preserve payload-too-large, invalid-json and unavailable classifications', () => {
+  const handler = createQuickOrderErrorHandler();
+  for (const [label, target] of [
+    ['exact root query', { url: `${PREFIX}?view=1` }],
+    ['canonical request query', { url: `${PREFIX}/requests?trace=%2f` }],
+    ['Express stripped request', { originalUrl: `${PREFIX}/requests?trace=1`, url: '/requests?trace=1' }],
+  ]) {
+    for (const [error, status, code] of [
+      [{ type: 'entity.too.large', body: 'private-original-parser-body' }, 413, 'payload_too_large'],
+      [{ type: 'entity.parse.failed', body: 'private-original-parser-body' }, 400, 'invalid_json'],
+      [new Error('private-original-parser-body'), 503, 'temporarily_unavailable'],
+    ]) {
+      const probe = ownershipBoundaryProbe(target);
+      handler(error, probe.req, probe.res, probe.next);
+      assert.deepEqual(probe.accesses, [], label);
+      assert.deepEqual(probe.forwarded, [], label);
+      assert.equal(probe.result.status, status, label);
+      assert.equal(probe.result.body?.code, code, label);
+      assert.equal(JSON.stringify(probe.result.body).includes('private-original-parser-body'), false, label);
+    }
+  }
+});

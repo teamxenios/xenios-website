@@ -1,5 +1,10 @@
 # Quick Order location correction and revised proposal
 
+Historical relocation record. Doc 37 at `324183e886af369a4ea27b9bf0f7b9c615b32139`
+accepted this pure move with explicit limits and verified c65 without approving
+it. The subsequent semantic HTTP correction is in `HTTP_CORRECTION.md`; its new
+regressions have not run. No current slot exists.
+
 Pushed relocated source: **`f1e467f74b01ae2ab866bb791a3c11d657a5d69c`**, tree
 **`6bc4fd7a7483822d4af87a3c07ab7263c0fbc377`**. Committed before successor test
 qualification. Exact-source static receipts are `relocation-static-source-f1e467f.json`
@@ -15,8 +20,10 @@ This is the same builder/session/task and lease
 for this routine relocation. Samuel's full sequencing attachment was read; it
 does not authorize protected source edits or schema drafting.
 
-The existing lease was extended to the two destinations while retaining old
-paths for removal. Fresh checks against389a/b22f/3221/2227/5b21/c502 ownership
+At relocation, the lease was extended to the destinations while retaining old
+paths for removal. The subsequent HTTP packet correction drops only those old
+reservations after proving no tracked or remaining files. Historical inventories
+remain unchanged. Fresh checks against389a/b22f/3221/2227/5b21/c502 ownership
 records found no active destination collision; every other owner was preserved.
 `evidence/relocation-before.json` records the exact lease, inventory, source and
 ownership snapshot hashes. Every absolute source/destination was verified inside
@@ -86,7 +93,7 @@ after this refusal; no retry, polling loop, Vitest or typecheck launch occurred.
 See `precheck-node2-f1e467f.json` and `qualification-slot-f1e467f-result.json`.
 This is a resource deferral, not a failed source test or gate waiver.
 
-No relocated-source tests have run. The source is committed/pushed; a fresh
+No builder relocated-source tests ran. The source was committed/pushed; a fresh
 earlier20:30:14Z resource receipt shows739MiB available RAM,26.98GiB disk and no matching
 heavy Node job. `resources-relocation-committed.json` records the intended serial
 explicit2-file Node command and6-file single-worker/cache-disabled Vitest command,
@@ -94,8 +101,9 @@ explicit2-file Node command and6-file single-worker/cache-disabled Vitest comman
 unreserved; typecheck fails the2GiB headroom threshold. Earlier
 3b184 and4abd10 receipts remain unchanged at their original sources. Claude's
 reported independent189 at4abd is not this builder's run, is not pooled and is
-not relocated-source proof; exact reviewer receipts/verdict must arrive through
-the existing coordinator before successor acceptance readiness.
+not relocated-source proof. Doc 37 subsequently supplied independent relocated
+73 Node +116 Vitest evidence at c807f19. This is predecessor reviewer evidence,
+not qualification of the new HTTP correction; see `HTTP_CORRECTION.md`.
 
 Automatic approval review rejected this lane's outgoing coordinator status
 message because explicit authorization for sending repository/lease details
@@ -111,5 +119,6 @@ standing trusted AGENTS requirement to commit/push coherent slices. The local
 commit and subsequent explicit branch push were approved and succeeded. That
 remote-verification issue is resolved; cross-chat messaging is still pending.
 
-Source review BLOCKED/incomplete; real intake NOT READY; no SQL/protected-target/
+Relocation accepted with limits; HTTP semantic successor review pending.
+Real intake NOT READY; no SQL/protected-target/
 manifest/hosted edits, payment/provider/partner actions or deployment.

@@ -2,6 +2,7 @@
 
 | New leased source | Implemented behavior | Remaining qualification |
 | --- | --- | --- |
+| `server/research/health/quick-order/paths.mjs` + `paths.d.mts` | One nonthrowing unrelated/owned-valid/owned-malformed target classifier for containment, handler and parser errors; conservative alias refusal with canonical mounted-path support | New raw HTTP and no-port/body regression definitions are authored, NOT RUN; no current qualification slot. |
 | `client/src/research/quick-order/QuickOrderPage.tsx`, `contracts.ts`, `quick-order.css` | Native PublicShell page, exact field/enumeration contract, per-variant limits, review, strict receipt parsing, safe field errors, memory-only session lifecycle and immutable uncertain-attempt retries | No protected route mount; no full-App browser captures or live auth. Props require qualified canonical auth transport and session boundary. |
 | `client/src/research/quick-order/OperatorDeclarations.tsx` | Text-safe declared/trusted evidence fragment with next action, no network/authority side effects or admin styles | No actual canonical reader or admin mount. Component fixture tests are not operator readback proof. |
 | `server/research/health/quick-order/core.mjs` | Closed-shape normalized input, canonical quantity/version checks, strict public projection, estimated known subtotal and declaration evidence | Pure preflight; not an atomic database guard. |

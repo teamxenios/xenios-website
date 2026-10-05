@@ -40,6 +40,66 @@ describe("Quick Order default-off raw boundary", () => {
     if (!address || typeof address === "string") throw Error("No local test port");
     return { url: `http://127.0.0.1:${address.port}`, parserReached, verifierReached, observations };
   }
+  async function rawPost(url: string, path: string) {
+    const local = new URL(url);
+    // Never let fetch normalize the target before it reaches this boundary.
+    // Absolute-form targets still go to the same loopback socket destination.
+    return new Promise<{ status: number | undefined; body: string; headers: import("node:http").IncomingHttpHeaders }>((resolve, reject) => {
+      const request = httpRequest({ hostname: local.hostname, port: local.port, path, method: "POST",
+        headers: { "Content-Type": "application/json" } }, incoming => {
+        let body = ""; incoming.setEncoding("utf8");
+        incoming.on("data", chunk => { body += chunk; });
+        incoming.on("end", () => resolve({ status: incoming.statusCode, body, headers: incoming.headers }));
+        incoming.on("error", reject);
+      });
+      request.on("error", reject); request.end('{"synthetic":"raw-target"}');
+    });
+  }
+  it.each([
+    "/api/health/quick-order", "/api/health/quick-order?source=test",
+    "/API/HEALTH/QUICK-ORDER/requests", "/Api/Health/Quick-Order/requests",
+    "/api/health/x/../quick-order/requests", "/api/health/x/%2e%2e/quick-order/requests",
+    "/api/health/./quick-order/requests", "/api/health/%2E/quick-order/requests",
+    "/api/health/quick-order\\requests", "/api\\health\\quick-order\\requests",
+    "//api/health/quick-order/requests", "////api/health/quick-order/requests?source=test",
+    "/api//health/quick-order/requests", "/api/health/quick-order//requests",
+    "/api/health/quick-order%2Frequests", "/api%2Fhealth%2Fquick-order/requests",
+    "/api/health/quick-order%5crequests",
+    "/api/health/quick-order/../other", "/api/health/quick-order/%2e%2e/other",
+    "http://quick-order.invalid/api/health/quick-order/requests",
+    "http:////quick-order.invalid/api/health/quick-order/requests",
+    "http:////quick-order.invalid/api/health/quick-order/../other",
+    "https://quick-order.invalid/api/health/x/../quick-order/requests",
+    "http://quick-order.invalid/api/health/quick-order/../other",
+    "/api/health/quick-order#routing-suffix",
+  ])("refuses owned raw target %s before any parser or rawBody verifier", async path => {
+    const { url, parserReached, verifierReached, observations } = await host();
+    const response = await rawPost(url, path);
+    expect(response.status).toBe(503);
+    expect(response.headers["cache-control"]).toBe("no-store, private");
+    expect(response.headers["referrer-policy"]).toBe("no-referrer");
+    expect(response.headers["x-content-type-options"]).toBe("nosniff");
+    expect(JSON.parse(response.body)).toEqual({ code: "feature_disabled", message: "Quick Order is not available for customer requests yet." });
+    expect(parserReached).not.toHaveBeenCalled();
+    expect(verifierReached).not.toHaveBeenCalled();
+    expect(observations).toEqual([{ originalUrl: path, effectiveUrl: path.replace(/^\/{2,}/, "/"), parsed: false, retained: false }]);
+  });
+  it.each([
+    "//other", "/api/health/quick-order-other", "/API/HEALTH/QUICK-ORDER-other",
+    "/api/health/x/../other", "/api/health/x/%2e%2e/other", "/api/health/other\\requests",
+    "/api/health/other%2Frequests", "/api/health/other/%ZZ",
+    "http://quick-order.invalid/other",
+    "/other?next=/api/health/quick-order/requests",
+    "//external.invalid/api/health/quick-order/requests",
+  ])("leaves unrelated raw target %s to the host parser", async path => {
+    const { url, parserReached, verifierReached, observations } = await host();
+    const response = await rawPost(url, path);
+    expect(response.status).toBe(200);
+    expect(response.body).toBe("unrelated fallback");
+    expect(parserReached).toHaveBeenCalledOnce();
+    expect(verifierReached).toHaveBeenCalledOnce();
+    expect(observations).toEqual([{ originalUrl: path, effectiveUrl: path.replace(/^\/{2,}/, "/"), parsed: true, retained: true }]);
+  });
   it.each(["/api/health/quick-order", "/api/health/quick-order/config", "/api/health/quick-order/requests?source=test"])("returns private disabled JSON for %s", async path => {
     const { url, parserReached } = await host();
     const response = await fetch(url + path);

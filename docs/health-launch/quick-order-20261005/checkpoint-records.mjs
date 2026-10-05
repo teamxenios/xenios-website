@@ -1,11 +1,13 @@
-// Update this lane's existing entries only; preserve every other fleet record.
+// Update this lane's existing entries only; no whole-registry authority.
 import fs from 'node:fs';
 const session='codex-health-quick-order-20261005',taskId='HEALTH-QUICK-ORDER-20261005';
-const at=new Date().toISOString(),source='f1e467f74b01ae2ab866bb791a3c11d657a5d69c';
+const [source,sourceTree]=process.argv.slice(2);
+if(![source,sourceTree].every(value=>/^[a-f0-9]{40}$/.test(value||'')))throw Error('Exact pushed source and tree required');
+const at=new Date().toISOString();
 const handoff='.xenios/handoffs/quick-order-20261005-handoff.md';
 const read=path=>JSON.parse(fs.readFileSync(path,'utf8'));
 const write=(path,value)=>fs.writeFileSync(path,JSON.stringify(value,null,2)+'\n');
-const note='Relocated sourcef1e467f/tree6bc4fd7 static checks pass. Reserved Node2 refused before launch at503MiB<512MiB; zero test processes/retries, subsequent Vitest/typecheck NOT RUN, slot released. Revisedc65d7e49 proposal unapplied/old6481c2ad held. Final review/source decisions and cross-chat permission pending; same builder reserved.';
+const note='Bounded HTTP ownership correction authored; targeted red/green definitions NOT RUN. No qualification slot; coordinator reports disk13.91GiB<20GiB. Doc37 accepts pure relocation only; changed source awaits narrow review. A1 c65 unapplied/old648 held; A2 future holds only. Same builder reserved; outbound permission pending.';
 const ownPath=`.xenios/sessions/${session}.json`,own=read(ownPath);
 if(own.id!==session)throw Error('Wrong session');
 Object.assign(own,{state:'blocked_external',heartbeatAt:at,note,sourceSha:source,handoff});
@@ -15,10 +17,10 @@ if(!entry)throw Error('Session registration missing');
 Object.assign(entry,own);write('.xenios/SESSION_REGISTRY.json',registry);
 const board=read('.xenios/ACTIVE_TASKS.json'),task=board.tasks.find(row=>row.id===taskId);
 if(!task||task.owner!==session)throw Error('Task ownership missing');
-Object.assign(task,{state:'blocked_external',sourceSha:source,sourceTree:'6bc4fd7a7483822d4af87a3c07ab7263c0fbc377',baseAcceptance:{sha:'756a906877dbc174b7e228a259d2faa9c3af48ca',review:'04cbbee0d3d3ab32dfd6ae9002b82837423f6265',disposition:'SOURCE ACCEPT; not release-qualified'},handoff:{session,sha:source,file:handoff,at},blockedOn:['Fresh resource-qualified slot after fc11f54 Node2 precheck refusal503MiB<512MiB; prior slot released without process launch','Final existing Claude six-lens findings before acceptance readiness','Revised exact protected mount/privacy source approval; old patch held','Narrow canonical schema/module source-authoring permission','Governed Health legal/visibility/destination/currentness authority','Resource-qualified typecheck/build/browser/real DB proof','Outbound coordinator message permission pending auto-review rejection'],scopeNote:'Sole isolated Quick Order owner, accepted756a906 base. Existing22modules relocated into Research zones; necessary imports only. Old paths retained for removal; new path leases extended without duplicate lease. Revised proposal only; no protected targets/schema/manifest/managed actions authorized or applied. Source incomplete/intake disabled. Same builder reserved; other fleet entries preserved.'});
+Object.assign(task,{state:'blocked_external',sourceSha:source,sourceTree,baseAcceptance:{sha:'756a906877dbc174b7e228a259d2faa9c3af48ca',review:'04cbbee0d3d3ab32dfd6ae9002b82837423f6265',disposition:'SOURCE ACCEPT; not release-qualified'},handoff:{session,sha:source,file:handoff,at},blockedOn:['Fresh targeted red/green qualification reservation; coordinator disk13.91GiB<20GiB prevents grant; priorfc11f54 released','Existing Claude narrow review of QO-P2-03/04 successor, packet and adjacent regressions','A1 exact protected mount/privacy edit authority and GATE-01 sequencing; later successor acceptance/owner recut separate','A2 pending with doc36 future constraints and separate currentness authority; no drafting in this slice','Governed Health legal/classification/visibility/destination/standing/currentness authority','Resource-qualified typecheck/build/browser/real DB proof','Outbound coordinator message permission pending auto-review rejection'],scopeNote:'Same isolated Quick Order owner on accepted756a906. HTTP correction only within current server Research subtree and own packet/records. Old reservations removed after zero tracked/remaining file proof. Only own existing entries in task/session/ownership registries, not whole-file leases or global timestamps. No A1 application, A2 design revision/drafting, protected source/schema/manifest/hosted actions. All other fleet entries preserved. Source unqualified/intake disabled.'});
 write('.xenios/ACTIVE_TASKS.json',board);
 const ownership=read('.xenios/CODE_OWNERSHIP.json'),lease=ownership.leases.find(row=>row.session===session&&row.task===taskId&&row.state==='active');
 if(!lease)throw Error('Active lease missing');
-Object.assign(lease,{heartbeatAt:at,note:'Reserved for the same builder while awaiting exact source authority; session blocked_external, not actively running a qualification process.'});
+Object.assign(lease,{heartbeatAt:at,note:'Reserved for same builder after bounded HTTP correction; targeted qualification/review and A1/A2 decisions pending. Obsolete prefixes removed after absence proof. No running qualification process.'});
 write('.xenios/CODE_OWNERSHIP.json',ownership);
 console.log(JSON.stringify({session,task:taskId,state:'blocked_external',source,lease:lease.id,handoff,at}));

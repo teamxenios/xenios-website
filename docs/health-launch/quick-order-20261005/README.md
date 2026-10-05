@@ -6,12 +6,14 @@ at reviewer commit `04cbbee0d3d3ab32dfd6ae9002b82837423f6265`; count-typo correc
 `fffa33a6b3407b407b2b43d3c5a5c7054887f590` changes no disposition. This is not
 release qualification. Do not merge the coordinator branch.
 
-Implementation now resides in `client/src/research/quick-order/` and
+The current HTTP ownership correction and authored, unrun regressions are in
+[HTTP_CORRECTION.md](HTTP_CORRECTION.md); source identity is in the exact handoff.
+No current qualification slot exists. Implementation resides in `client/src/research/quick-order/` and
 `server/research/health/quick-order/`. See [RELOCATION.md](RELOCATION.md) for the
 path-only P1 correction, successor source/evidence and revised pending proposal.
-Pushed relocated source `f1e467f74b01ae2ab866bb791a3c11d657a5d69c`, tree
+Historical pure-relocation source `f1e467f74b01ae2ab866bb791a3c11d657a5d69c`, tree
 `6bc4fd7a7483822d4af87a3c07ab7263c0fbc377`: static checks pass; successor tests
-remain NOT RUN. Reserved Node2 precheck503MiB<512MiB refused launch; the bounded
+remained NOT RUN by this builder. Reserved Node2 precheck503MiB<512MiB refused launch; the bounded
 slot was released without retries. Real intake remains disabled/incomplete.
 Historical pre-relocation module source: `4abd2c5cd4bd039309b32b97b117a67fc6a4d292`,
 tree `3fb70d98dc354e6a6049744b5bb15b741d5ba50b`. Its containment correction passed
@@ -26,7 +28,7 @@ resource-deferred typecheck and missing full-App/durable proof;
 - Session/task: `codex-health-quick-order-20261005` / `HEALTH-QUICK-ORDER-20261005`
 - Assigned model/effort: GPT-6 Astra Ultra (task configuration, not changed by a prompt).
 - Coordinator: `01a103a8-5684-7272-89e5-3c42eefcd593`
-- Exact lease: original module paths retained for removal plus `client/src/research/quick-order/**` and `server/research/health/quick-order/**`, this evidence directory, own session and exact handoff. Zero shared module files. Other fleet entries remain intact. Integrator release was verified in records `38c723964358c18b8c5090f2f9a0aa92f74601b0`.
+- Exact lease: `client/src/research/quick-order/**` and `server/research/health/quick-order/**`, this evidence directory, own session and exact handoff. Old prefixes were removed after verifying zero tracked or remaining files. Only our existing task/session/lease entries in the three branch-local registries may be updated; no whole-registry lease. Other fleet entries and global timestamps remain intact. Integrator release was verified in records `38c723964358c18b8c5090f2f9a0aa92f74601b0`.
 
 ## Current port and service map
 
@@ -44,9 +46,10 @@ resource-deferred typecheck and missing full-App/durable proof;
 Observed local application listener: PID18936, pinned Node20 executable running
 `scripts/preview-research.mjs`, ports5001/62976/62977. Its workdir/served SHA was not
 established and it was not started, stopped or used by this lane. No matching
-test/build job was seen. First memory sample706MiB, subsequent coordinator sample
-1263MiB; disk about27GiB. Full aggregate/build/DB/browser qualification is not
-cleared by the lightweight slot reservation.
+test/build job was seen. The earlier 706 MiB claim has no preserved raw receipt
+and is withdrawn as qualification evidence; no historical measurement is
+reconstructed. Use the exact dated resource receipts in `QUALIFICATION.md` and
+`RELOCATION.md`. Those historical samples grant no current qualification slot.
 
 Read-only hosted observation2026-10-05: Render service `srv-d8s9vej7uimc7384dfcg`,
 deploy `dep-daqft3vf3r2c73b7e88g`, source `79414143d4355d5d3d14cd5fe6e5a536dc68d99d`,
@@ -76,5 +79,6 @@ Pending exact Core hash approvals, GATE-01, intended subscription/product plan,
 all six subscription buying prerequisites, MC01 compatibility/adoption chain,
 D/E real delivery limits and Finance/provider holds remain unchanged.
 
-Source review: BLOCKED / implementation in progress. Managed nonproduction:
+Doc 37 accepted the pure relocation with explicit limits; the current HTTP
+semantic correction awaits its own review and qualification. Managed nonproduction:
 NOT RUN. Real intake: NOT READY. Payment/subscription/clinical readiness: unchanged.
