@@ -1,0 +1,16 @@
+Source preservation audit
+
+Source: 756a906877dbc174b7e228a259d2faa9c3af48ca
+Tree: 787432948d9464880df1dcfc5dff58eec7d889aa
+Reviewer: coordinator subagent /root/f1_audit
+Method: read-only immutable Git-object comparison; no tests or runtime checks.
+
+No concrete mismatch found. The 12 accepted input commits produce exactly 65 selected paths; integrated source has no missing or extra paths. 63 blobs exactly match their final accepted inputs.
+
+The two differences are precisely the intended changes:
+- AssistedOrderPage.tsx retains Core's customer class plus D/E's media import/card insertion. Comparing against either predecessor shows only the other slice's intended hunks.
+- product-subscription-create.test.ts parameterizes the existing refusal test over HTTP 400 and 403. Subscription runtime remains byte-identical.
+
+MC01's rollback note, both SQL candidates and the MC01 verifier match accepted blobs. No added Finance source, protected-manifest, migration registry/DAG, registered SQL, package or lockfile changes. Accepted Navbar/Footer/index.css bytes are preserved. Outside those 65 paths, the base-to-integrated difference contains only the four scoped integration ownership/session records.
+
+This establishes source preservation only. Integrated independent acceptance and release readiness remain separate.
