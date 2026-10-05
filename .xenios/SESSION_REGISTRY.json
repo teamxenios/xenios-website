@@ -585,10 +585,10 @@
       "tool": "codex",
       "lane": "launch-coordination",
       "branch": "codex/xenios-launch-coordination-20261005",
-      "state": "handoff_ready",
+      "state": "active",
       "startedAt": "2026-10-05T17:19:29.457Z",
-      "heartbeatAt": "2026-10-05T19:32:39.804Z",
-      "note": "Pushed integrated source acceptance and corrected verdict, sole active Quick Order worker and bounded qualification reservation. Active automation continues; records lease handed off."
+      "heartbeatAt": "2026-10-05T19:35:40.277Z",
+      "note": "Confirmed planning-loop reply and routed staged approval evidence delta to existing Quick Order worker; no duplicate lane or hosted action."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
