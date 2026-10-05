@@ -30,11 +30,13 @@
         "supabase/verification/research_media_commerce_decoupling_local.mjs",
         "docs/product-imagery/media-commerce-decoupling/**"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-01T04:51:36.789Z",
       "heartbeatAt": "2026-10-01T05:13:11.863Z",
       "externalLeaseCommit": "2c635af56eddc3e6fa691776faceef6bd9805b0d",
-      "scopeNote": "Mirror/reservation of the external active lease plus exact path expansions explicitly coordinated in the existing image chat. Heartbeat is the latest independently read external value, not refreshed by core. Branch-local continuity paths deliberately excluded; no external source is merged."
+      "scopeNote": "Mirror/reservation of the external active lease plus exact path expansions explicitly coordinated in the existing image chat. Heartbeat is the latest independently read external value, not refreshed by core. Branch-local continuity paths deliberately excluded; no external source is merged.",
+      "reconciledAt": "2026-10-03T21:32:38.718Z",
+      "reconciliation": "Historical b38db0ae exact-source f453d7e handoff verified; preserved old worktree clean. Current-Core successor is a separate task."
     },
     {
       "id": "84d610f3-9fc3-4472-bfe3-87bb038d2123",
@@ -3508,6 +3510,46 @@
       "state": "handoff",
       "claimedAt": "2026-10-01T16:07:30.171Z",
       "heartbeatAt": "2026-10-01T18:24:01.294Z"
+    },
+    {
+      "id": "baa1a20f-42d7-4211-969f-6a1d6c2269d7",
+      "task": "MC01-RECONCILIATION-20261003",
+      "session": "codex-mc01-reconciliation-20261003",
+      "paths": [
+        "shared/research/product-admin.ts",
+        "shared/research/cart-product-selection.ts",
+        "server/research/commerce/cart-product-selection.ts",
+        "server/research/commerce/cart-product-selection.test.ts",
+        "server/research/products-diagnostics/product-admin-production.ts",
+        "server/research/products-diagnostics/product-admin-production.test.ts",
+        "client/src/research/products-diagnostics/RequiredInputState.tsx",
+        "client/src/research/products-diagnostics/RequiredInputState.test.tsx",
+        "client/src/research/pages/adminx/ProductAdminDetail.tsx",
+        "server/research/catalog/member-catalog-projection.ts",
+        "server/research/catalog/member-catalog-projection.test.ts",
+        "server/research/catalog/member-catalog-service.ts",
+        "server/research/catalog/member-catalog-service.test.ts",
+        "server/research/catalog/product-control-reader.ts",
+        "server/research/catalog/product-control-reader.test.ts",
+        "client/src/research/adapters/memberCatalog.ts",
+        "client/src/research/adapters/memberCatalog.test.ts",
+        "client/src/research/adapters/cartProductSelection.ts",
+        "client/src/research/adapters/cartProductSelection.test.ts",
+        "server/research/commerce/persistence/persistent-cart.ts",
+        "server/research/commerce/persistence/persistent-cart.test.ts",
+        "server/research/master-offerings/direct-commerce-selections.test.ts",
+        "supabase/candidates/20261003*_research_media_commerce_decoupling*",
+        "supabase/verification/research_media_commerce_decoupling_local.mjs",
+        "docs/research-launch/mc01-reconciliation-20261003/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/sessions/codex-mc01-reconciliation-20261003.json",
+        ".xenios/handoffs/*MC01-RECONCILIATION-20261003*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-03T21:32:39.012Z",
+      "heartbeatAt": "2026-10-03T21:40:09.824Z"
     }
   ],
   "rules": [

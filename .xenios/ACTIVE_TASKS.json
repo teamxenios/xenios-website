@@ -343,7 +343,7 @@
       "id": "XENIOS-IMAGE-COMMERCE-DECOUPLING-20261001",
       "title": "Reserved external lane: remove only media readiness from commerce authority",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-xenios-media-commerce-decoupling-20261001",
       "paths": [
         "shared/research/product-admin.ts",
@@ -374,7 +374,12 @@
       "claimedAt": "2026-10-01T04:51:36.782Z",
       "externalBranch": "codex/xenios-media-commerce-decoupling-20261001",
       "externalLeaseCommit": "2c635af56eddc3e6fa691776faceef6bd9805b0d",
-      "scopeNote": "Core reservation mirrors verified active source/test/SQL paths from the isolated media worktree; its branch-local continuity files are not reserved in this worktree. Preserve ALL non-image price, stock, quality, genuine hold, Care, quote, payment and fulfillment gates. No integration, published assets, existing migration edits, managed writes or source acceptance implied. Do not claim the broad CATALOG-ACTION-UNIFICATION lease over these paths until coordinated."
+      "scopeNote": "Core reservation mirrors verified active source/test/SQL paths from the isolated media worktree; its branch-local continuity files are not reserved in this worktree. Preserve ALL non-image price, stock, quality, genuine hold, Care, quote, payment and fulfillment gates. No integration, published assets, existing migration edits, managed writes or source acceptance implied. Do not claim the broad CATALOG-ACTION-UNIFICATION lease over these paths until coordinated.",
+      "handoff": {
+        "session": "codex-xenios-media-commerce-decoupling-20261001",
+        "sha": "f453d7e25ac3bdee4e42365d2b0b6a513b9e6da5",
+        "historicalHandoffSha": "b38db0ae2ee0c679ec2eeb31b324f6204669dfb7"
+      }
     },
     {
       "id": "HEALTH-HL12-ACCOUNT-HISTORY-TRUTH-20261001",
@@ -3312,6 +3317,49 @@
         "file": ".xenios/handoffs/2026-10-01T05-29-11-224Z-ASSISTED-ORDER-HL12-RELEASE-TEST-20260930-codex-xenios-health-launch-implementation-20260930.md",
         "at": "2026-10-01T05:29:11.230Z"
       }
+    },
+    {
+      "id": "MC01-RECONCILIATION-20261003",
+      "title": "Reconcile presentation-only media authority onto current Core",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-mc01-reconciliation-20261003",
+      "baseSha": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+      "paths": [
+        "shared/research/product-admin.ts",
+        "shared/research/cart-product-selection.ts",
+        "server/research/commerce/cart-product-selection.ts",
+        "server/research/commerce/cart-product-selection.test.ts",
+        "server/research/products-diagnostics/product-admin-production.ts",
+        "server/research/products-diagnostics/product-admin-production.test.ts",
+        "client/src/research/products-diagnostics/RequiredInputState.tsx",
+        "client/src/research/products-diagnostics/RequiredInputState.test.tsx",
+        "client/src/research/pages/adminx/ProductAdminDetail.tsx",
+        "server/research/catalog/member-catalog-projection.ts",
+        "server/research/catalog/member-catalog-projection.test.ts",
+        "server/research/catalog/member-catalog-service.ts",
+        "server/research/catalog/member-catalog-service.test.ts",
+        "server/research/catalog/product-control-reader.ts",
+        "server/research/catalog/product-control-reader.test.ts",
+        "client/src/research/adapters/memberCatalog.ts",
+        "client/src/research/adapters/memberCatalog.test.ts",
+        "client/src/research/adapters/cartProductSelection.ts",
+        "client/src/research/adapters/cartProductSelection.test.ts",
+        "server/research/commerce/persistence/persistent-cart.ts",
+        "server/research/commerce/persistence/persistent-cart.test.ts",
+        "server/research/master-offerings/direct-commerce-selections.test.ts",
+        "supabase/candidates/20261003*_research_media_commerce_decoupling*",
+        "supabase/verification/research_media_commerce_decoupling_local.mjs",
+        "docs/research-launch/mc01-reconciliation-20261003/**",
+        ".xenios/ACTIVE_TASKS.json",
+        ".xenios/CODE_OWNERSHIP.json",
+        ".xenios/SESSION_REGISTRY.json",
+        ".xenios/sessions/codex-mc01-reconciliation-20261003.json",
+        ".xenios/handoffs/*MC01-RECONCILIATION-20261003*"
+      ],
+      "dependsOn": [],
+      "scopeNote": "v2 specialist isolated successor; exact disjoint subagent assignments recorded in lane report. Source-only SQL, no registration/application; no hosted mutation, imagery publication, A/B/C shell or assisted-order presentation edits. Root controls registry. Historical records reconciled individually; no wholesale import.",
+      "claimedAt": "2026-10-03T21:32:39.009Z"
     }
   ]
 }
