@@ -3288,7 +3288,7 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-01T06:26:41.299Z",
-      "heartbeatAt": "2026-10-01T18:24:01.294Z"
+      "heartbeatAt": "2026-10-05T12:56:24.171Z"
     },
     {
       "id": "50a8e190-b0e1-479e-8b7b-7be25b0ad42f",
@@ -3508,6 +3508,30 @@
       "state": "handoff",
       "claimedAt": "2026-10-01T16:07:30.171Z",
       "heartbeatAt": "2026-10-01T18:24:01.294Z"
+    },
+    {
+      "id": "d2f1ad23-158d-4696-b934-0bcabf763dc2",
+      "task": "HEALTH-ABC-PREMIUM-SHELL-20261003",
+      "session": "codex-xenios-health-launch-implementation-20260930",
+      "paths": [
+        "client/src/clarity/brand.ts",
+        "client/src/components/Navbar.tsx",
+        "client/src/components/Footer.tsx",
+        "client/src/index.css",
+        "client/src/clarity/premium-shell.test.tsx",
+        "client/src/research/assisted-order/AssistedOrderPage.tsx",
+        "client/src/research/assisted-order/AssistedOrderConfirmationPage.tsx",
+        "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
+        "client/src/research/assisted-order/assisted-order.css",
+        "client/src/research/assisted-order/assisted-order-premium.test.tsx",
+        "client/src/research/account-portal/account-portal.css",
+        "client/src/research/catalog-priority/catalog-priority.css",
+        "docs/health-launch/ABC_PREMIUM_SHELL_20261003.md",
+        "docs/health-launch/evidence/abc-premium-shell-20261003/"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-03T21:33:59.922Z",
+      "heartbeatAt": "2026-10-05T12:56:24.171Z"
     }
   ],
   "rules": [

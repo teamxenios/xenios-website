@@ -3,6 +3,33 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "HEALTH-ABC-PREMIUM-SHELL-20261003",
+      "title": "Bounded display-only Health brand, customer CTA and accent convergence",
+      "priority": "P2",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "baseSha": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+      "paths": [
+        "client/src/clarity/brand.ts",
+        "client/src/components/Navbar.tsx",
+        "client/src/components/Footer.tsx",
+        "client/src/index.css",
+        "client/src/clarity/premium-shell.test.tsx",
+        "client/src/research/assisted-order/AssistedOrderPage.tsx",
+        "client/src/research/assisted-order/AssistedOrderConfirmationPage.tsx",
+        "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
+        "client/src/research/assisted-order/assisted-order.css",
+        "client/src/research/assisted-order/assisted-order-premium.test.tsx",
+        "client/src/research/account-portal/account-portal.css",
+        "client/src/research/catalog-priority/catalog-priority.css",
+        "docs/health-launch/ABC_PREMIUM_SHELL_20261003.md",
+        "docs/health-launch/evidence/abc-premium-shell-20261003/"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Direct pasted v2 sprint launch lifts prior Core freeze only for Session01 A/B/C. Exact sha256-lf baseline authorization bfec2d8 verified for Navbar/Footer/index.css. Display-only healthDisplayName; preserve publicName/metadata, pathway labels and operational chrome. Customer-only marker isolates assisted styling from admin. Root owns protected files/brand and records; scoped delegation only. No server/shared authority, SQL, imagery or MC01 files, manifest recut, hosted action or successor hash approval. Stop at one exact pushed candidate for independent Claude review; previous failed suites and GATE01 remain separate.",
+      "claimedAt": "2026-10-03T21:33:59.876Z"
+    },
+    {
       "id": "HEALTH-PARTNERSHIP-SUBMITTED-RECEIPT-20261001",
       "title": "Bind partner and supplier inquiry receipts to the submitted snapshot",
       "qualificationNote": "Legacy-component correction only. Actual App/static composition redirects all four legacy entrypoints to clarity forms, so this does not close a mounted public-journey issue. Component tests pass; no real POST/email attempted; no independent acceptance.",

@@ -4,7 +4,19 @@
     "task": "ASSISTED-ORDER-CONVERSION",
     "session": "codex-xenios-health-launch-implementation-20260930",
     "branch": "codex/xenios-health-launch-implementation-20260930",
-    "status": "ADPG1_PARTIAL_LOCAL_PASS_AGGREGATE_FAILED_RELEASE_HELD",
+    "status": "ABC_PRESENTATION_IMPLEMENTED_QUALIFICATION_IN_PROGRESS_RELEASE_HELD",
+    "currentABCWork": {
+      "task": "HEALTH-ABC-PREMIUM-SHELL-20261003",
+      "runtimeSourceSha": "70cd421a6ab79513744f531d921b3ece61044874",
+      "runtimeSourceTree": "37ea984993cc78ee61d0e9ca944fca0213e73ba8",
+      "testOnlySha": "1a409e2f7e1fcdeffc78d24428eeb626d7888e9c",
+      "status": "IMPLEMENTED_QUALIFICATION_IN_PROGRESS_BROWSER_BLOCKED",
+      "scope": "Session01 A/B/C only: display-only public Health branding, customer black rectangular CTA and restrained accent/focus. No admin/server/finance/media/manifest changes.",
+      "handoff": "docs/health-launch/ABC_PREMIUM_SHELL_20261003.md",
+      "claudeAccepted": false,
+      "hostedChangesAuthorized": false,
+      "productionMutated": false
+    },
     "currentADPG1Work": {
       "task": "HEALTH-HL12-ADPG1-QUARANTINE-ISOLATION-20261001",
       "runtimeSourceSha": "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
