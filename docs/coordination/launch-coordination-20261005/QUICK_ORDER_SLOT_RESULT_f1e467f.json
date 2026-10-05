@@ -1,0 +1,24 @@
+{
+  "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+  "tree": "6bc4fd7a7483822d4af87a3c07ab7263c0fbc377",
+  "coordinatorReservation": "fc11f54b2851e964ae9080f8fccccbf06de2eeee",
+  "precheckReceipt": "precheck-node2-f1e467f.json",
+  "node2": {
+    "status": "NOT_RUN_RESOURCE_DEFERRED",
+    "processStarted": false,
+    "availableMiB": 503,
+    "minimumMiB": 512,
+    "freeDiskGiB": 26.98,
+    "competingHeavyJobs": 0,
+    "runtimeSourcesUnchanged": true,
+    "all14BaselinesUnchanged": true,
+    "precheckExit": 3
+  },
+  "vitest6": { "status": "NOT_RUN", "reason": "Bounded sequence stopped at first precheck refusal; no fresh precheck or launch attempted." },
+  "typecheck": { "status": "NOT_RUN", "reason": "Required focused PASS prerequisites absent; sequence stopped before any test process." },
+  "retries": 0,
+  "reservationDisposition": "RELEASED_AFTER_PRECHECK_REFUSAL",
+  "sourceFailure": false,
+  "limitsWaived": false,
+  "outboundCoordinatorMessageSent": false
+}

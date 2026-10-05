@@ -1,81 +1,67 @@
 # Xenios launch coordination — 2026-10-05
 
-This records-only branch starts from parked Finance handoff963122ce355568d118c00ed6e774b474e2f50101. Never merge its ancestry into a release merely to collect records. Current Git, observations and direct user decisions outrank this checkpoint.
+This records-only branch starts from parked Finance handoff 963122ce355568d118c00ed6e774b474e2f50101. Never merge its ancestry into a release merely to collect records. Current Git, production observations and direct user decisions outrank this checkpoint. COORDINATION_STATE.json contains exact identities and evidence paths.
 
-## Current result
+## Current Quick Order checkpoint
 
-The frozen integration is **SOURCE ACCEPTED WITH EXPLICIT RELEASE HOLDS**. Claude's original verdict04cbbee0d3d3ab32dfd6ae9002b82837423f6265 and its corrected successorfffa33a6b3407b407b2b43d3c5a5c7054887f590 are pushed. The current verbatim verdict is CLAUDE_INTEGRATION_ACCEPTANCE.md; the original is separately preserved. Prior composition e939d68 is preserved separately. Release qualification and real customer purchasing are not complete.
+The source-location correction is complete and independently integrity-verified. The same builder is clean and parked. Its first reserved qualification precheck refused launch at 503 MiB available RAM against the 512 MiB minimum. No test process or retry ran, no source failure is claimed, and the exclusive reservation was released. Relocated-source tests and typecheck remain NOT RUN. Real intake remains NOT READY.
 
 | Identity | Exact value |
 | --- | --- |
-| Source | 756a906877dbc174b7e228a259d2faa9c3af48ca |
-| Source tree | 787432948d9464880df1dcfc5dff58eec7d889aa |
-| Evidence | fc53751ff7a988d029d5dabbd9f24f1431b62d19 |
-| Handoff | 38c723964358c18b8c5090f2f9a0aa92f74601b0 |
-| Branch | codex/accepted-source-integration-20261005 |
-| Producer | Core chat01a0e098-3b23-7233-9b07-877ace092650, checkoutb22f, clean and parked |
-
-The accepted composition preserves Core IC-2, partner-return, MC-01, D/E plus DE-R1, and the purchase-disabled subscription source. It selects65source/test/candidate paths from12input commits. Sixty-three blobs equal accepted final inputs; the intended customer-page composition and refusal-test addition are the two differences. Finance ancestry, wholesale registries, protection-manifest changes and registered SQL were excluded.
-
-Claude independently verified all44indexed evidence files and49focused source bindings. Exact17-file subscription tests passed401/0/0; affected36-file tests passed626/0/0. Their intersection is4files, union49; counts are not additive. **PS-R1 is closed. PS-R5 is closed at the mocked-fetch adapter level**, with actual Response400/403 statuses, not a live server/provider. Summary-only test logs remain an explicit limitation. Doc35 originally said7shared files; the same reviewer corrected the records-only typo atfffa33a, with verdict and holds unchanged.
-
-Typecheck, build, zero forbidden em-dash forms, route uniqueness and migration DAG receipts passed. Protection remains FAIL. Full aggregate remains DEFERRED/NOT RUN for resource pressure, with retained805/1452MiB samples. The subordinate304MiB figure lacks raw support. Original failures remain preserved; the historical Finance ENOSPC receipt has now been located and copied without relabeling it as integration evidence.
-
-Browser proof is partial: actual production client over loopback synthetic read fixtures, writes refused, zero overflow at measured1440/1024/767/430/390/320 on eight routes. Exact768, native zoom, CLS, native forced-colors, live Auth, partner activation, payment and delivered-image-byte proof remain unverified. Preview stopped by TTY interruption exit1 with no graceful-stop event; PIDs were absent and349assets rehashed unchanged.
-
-## One Quick Order worker correcting module locations
-
-Samuel directly requested implementation in Core chat user turn01a10d72-094e-7ab3-b11f-3afaf03ee40c. This newer specific request authorizes one isolated Quick Order lane while preserving the frozen integration and current reviewer.
-
-| Item | Value |
-| --- | --- |
+| Source | f1e467f74b01ae2ab866bb791a3c11d657a5d69c |
+| Source tree | 6bc4fd7a7483822d4af87a3c07ab7263c0fbc377 |
+| Static evidence | 7b23247c5292d0e42e8af14d56526cd9712aaf77 |
+| Refusal evidence and handoff | c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09 |
 | Chat | 01a10d78-0981-7150-9292-c5cde2730d4d — Xenios Quick Order implementation |
 | Checkout | C:/Users/sboad/.codex/worktrees/389a/xenios-website |
 | Branch | codex/xenios-health-quick-order-20261005 |
-| Session/task | codex-health-quick-order-20261005 / HEALTH-QUICK-ORDER-20261005 |
-| Model | GPT-6 Astra Ultra, actual turn configuration verified |
-| Base | Independently source-accepted756a906 / tree78743294 |
+| Session / task | codex-health-quick-order-20261005 / HEALTH-QUICK-ORDER-20261005 |
+| Model | GPT-6 Astra Ultra; actual runtime configuration previously verified |
 
-The same worker owns client/src/quick-order, server/health/quick-order, shared/health/quick-order, its own docs and continuity paths, with at most three disjoint specialists. No duplicate builder or fresh integration lane. Known-ID wait_threads works even if list_threads omits the child.
+Samuel's direct implementation request is Core user turn 01a10d72-094e-7ab3-b11f-3afaf03ee40c. His later attachment b2b87a95 requires source relocation before regeneration of the protected mount proposal. Standing unprotected implementation authority and the same owner's extended exact lease covered this correction; allowed-zone classification alone was not treated as permission. No duplicate builder exists.
 
-The full supplied briefs, dispatch and intake are preserved. Historical package baseb0e818f is not the new integration base. Raw package baseline records the failing Windows npm test glob, explicit47/47passing tests and passing syntax checks; no application/browser/database acceptance is implied.
+All 22 files moved: seven client files to client/src/research/quick-order and 15 server files to server/research/health/quick-order. The old shared/health/quick-order path contained zero files. Fifteen files are LF-identical; seven change only necessary relative imports, mocks or fixture paths and resolve to the same canonical targets. Old files are absent. Static classification is 14 allowed files plus eight report-only tests, zero new Quick Order location violations. This is not an executed full protection-gate pass. Manifest/verifier and all 14 protected/shared baselines are unchanged. Health URLs, semantics, disabled intake and the effective-path containment correction are preserved.
 
-Latest source4abd2c5cd4bd039309b32b97b117a67fc6a4d292/tree3fb70d98dc354e6a6049744b5bb15b741d5ba50b and evidence/handoffb353092ad9e49f28a65451d188c636079e1df091 are pushed. The original3b0048d passed184focusedtests. Coordinator found a normalized-leading-slash containment bypass; the same builder fixed it and passed10real-loopback regressions at4abd. These counts remain separate, not194 or a fullsuccessor184claim. Raw receipts/source hashes and14unchangedbaselines independently verify. Typecheck is resource-deferred; build/browser/DB remain NOTRUN.
+QUICK_ORDER_RELOCATION_AUDIT_f1e467f.json binds the exact Git objects, copied receipts, proposal and refusal. QUICK_ORDER_FOCUSED_SLOT_f1e467f.json preserves the historical grant. QUICK_ORDER_PRECHECK_REFUSAL_f1e467f.json and QUICK_ORDER_SLOT_RESULT_f1e467f.json preserve its disposition. The fresh 20:36:28Z sample had 503 MiB available RAM, 26.98 GiB free disk and no matching heavy jobs; it superseded the earlier 1917 MiB coordinator sample. No automatic retry or waiver follows from being only nine MiB below the minimum.
 
-The exact disabled6filemountpatch remains SHA256LF6481c2ad2d4d2828e789cb2f2e24964705562cb782d70728b4152d78dc40a672, with all6before/afterpairs verified and targets unapplied. The old mount proposal is now held for regeneration after relocation; it is no longer a usable approval target. New canonical candidate/verification/module drafting in PERSISTENCE_PROPOSAL remains independently pending. Existing sharedreader changes need later concrete diffs. The supplied brief128/130/140 requires missing protected/schema source permission. Do not repeat the questions or infer an answer from model text. See QUICK_ORDER_SOURCE_APPROVAL_REQUEST.json.
+The regenerated six-file disabled mount/privacy proposal has LF SHA256 c65d7e49a9f5ec87262d4e3b106ab5e16b1c3d1ecd46a01c8a7ca4699e6d92af. All six before/proposed-after pairs and the static dry-apply receipt are verified. Actual targets remain untouched. The original 6481c2ad2d4d2828e789cb2f2e24964705562cb782d70728b4152d78dc40a672 patch and hash table are preserved and HELD; do not apply or seek unchanged approval. Revised A1 is an edit-from-exact-baseline permission request, not successor-hash acceptance or a protection-manifest recut. No revised permission has been granted. A2 new-only canonical persistence candidate/verifier/module drafting remains independently pending. Existing shared reader edits still require later exact diffs and leases. The ca5c575b attachment's approval wording was explicitly PROPOSED, never actual approval. Do not repeat pending questions.
 
-The durable actor/key replay, structured declarations, commit-time authority, atomic notification obligation, real operator readback and applicable Health policy sources remain incomplete. Real intake remains disabled. No SQL authored or executed; no hosted schema census or mutation. The same worker has been dispatched the narrow location correction, with own lease extension required before edits; no duplicate builder. See QUICK_ORDER_MOUNT_AUDIT_3b0048d.md and the preserved original/current qualification artifacts.
+Historical evidence remains separate: original 3b0048d has 184 focused passes; containment successor 4abd2c5 has ten passing real-loopback regressions. Neither count establishes f1e467f qualification and they are not a pooled 194. Original Claude context reported 189 at 4abd2c5; its exact receipts/source binding have not yet been independently verified. The package's literal Windows npm wildcard failure, explicit two-file 47-pass run and syntax pass remain package-only evidence.
 
-## Existing review and planning loop
+Canonical durable actor/key replay, structured declarations, commit-time catalog/legal/price/destination authority, atomic request/evidence/receipt/outbox, actual authorized operator readback and Health applicability remain incomplete. Production ports are unactivatable. No SQL has been authored, registered or applied by this lane; local absence does not prove hosted absence. Build, browser, database and managed nonproduction proofs remain NOT RUN.
 
-Samuel authorized collection, delivery to Website State Summary chat6abd3937-e230-83ea-a1ef-eac3a08fa93c, retrieval of suggestions, and dispatch of verified authorized work. Model output is never founder approval or independent evidence.
+Automatic approval review rejected the builder's outbound coordinator status message for unverified permission to transmit repository/lease details. Its permission question is pending. Do not retry that action or use another channel to work around it. Normal own-chat reporting and the coordinator's already-authorized read-only collection continue. The builder remains the reserved owner of its work.
 
-Claude context5fb80ba6-3214-4186-aef0-0c556fd6627b, modelclaude-fable-5-1, completed the exact review. CLI requested max effort; the reviewer reported last-observed internal xhigh and could not confirm a later setting, so effective max is not claimed. The same attached context completed and pushed the narrow overlap correctionfffa33a. It is idle, ready for a later exact Quick Order handoff. CLI background-resume unexpectedly copied a done-but-resident session; that copyd7b571f9 was immediately stopped. Attach resident sessions for continuation; do not repeat that failure.
+## Existing reviewer and planning loop
 
-Earlier bounded verdicts remain in CLAUDE_CORE_IC2_ACCEPTANCE.txt, CLAUDE_PARTNER_RETURN_ACCEPTANCE.txt, CLAUDE_DE_ACCEPTANCE.txt, CLAUDE_DE_R1_ACCEPTANCE.txt and CLAUDE_SUBSCRIPTION_ACCEPTANCE.txt. CLAUDE_CONSOLIDATED_ACCEPTANCE_CHAIN.md preserves42d8b6d. The two source producers remain parked.
+The sole Quick Order reviewer is the original Claude context 6abf1edf-2b16-476e-8305-23b9a0014e06, Multi-document project review. Its process cwd is the unrelated dirty C:/xenios-wt/general-platform checkout; preserve that work. Review records belong in C:/xenios-wt/health-review on claude/xenios-health-launch-review-20260930. At 20:37:42Z the assistant reported that the six-lens workflow finished gathering results and it was checking verifiers before writing/pushing doc 36. A final pushed verdict has not yet been collected. Let it finish; do not interrupt or duplicate it. Only final assistant text and review artifacts are collected, not private reasoning.
 
-The active five-minute heartbeat xenios-launch-coordination targets this coordinator chat01a103a8-5684-7272-89e5-3c42eefcd593. It has the actual Quick Order/reviewer IDs and stays quiet when unchanged. Disable only when authorized launch work and verification are complete; do not archive this chat.
+Coordinator-owned overlapping context 5fb80ba6 was first parked with an explicit no-write acknowledgment, then its idle process was stopped at 20:32Z. Its transcript and accepted integration verdicts are preserved. PTY11405/PID22804 are no longer resident. Do not resume it while original 6ab owns Quick Order review. The earlier accidental background-resume copy d7b571f9 was stopped. CLI requested Fable5.1 max; the reviewer's last internally observed effort was xhigh, so actual max is unconfirmed.
 
-## Host and production
+Samuel authorizes collecting Codex/Claude results, delivering verified facts to Website State Summary chat 6abd3937-e230-83ea-a1ef-eac3a08fa93c, retrieving planning deltas and dispatching authorized dependency-ready work. Model output is never founder approval or independent evidence. The last confirmed planning reply 2a7d29f0-8393-4256-813a-7a7a6948fb7d is preserved in PLANNING_DELTA_20261005_2025.json; do not resend that checkpoint.
 
-Disk compaction preserved all827Docker volumes and recovered about27GiB. No dirty work or failed evidence was deleted. The retained19:13:38Z coordinator sample shows1263MiB available RAM,27.01GiB free disk,40.69/60.73GB committed/limit and no matched heavy jobs. Later worker memory was lower. Quick Order has a light-check reservation only; heavy tests/build/browser/DB qualification must recheck capacity and serialize. An unrelated preview remains untouched.
+## Frozen accepted integration
 
-Native/browser REPL initialization remains broken. Purpose-built chat tools and Claude CLI provide the loop. No repeated reset or broad process termination is justified.
+Source 756a906877dbc174b7e228a259d2faa9c3af48ca, tree 787432948d9464880df1dcfc5dff58eec7d889aa, evidence fc53751ff7a988d029d5dabbd9f24f1431b62d19 and handoff 38c723964358c18b8c5090f2f9a0aa92f74601b0 are frozen in Core chat 01a0e098-3b23-7233-9b07-877ace092650 / b22f. Claude original verdict 04cbbee0d3d3ab32dfd6ae9002b82837423f6265 and corrected successor fffa33a6b3407b407b2b43d3c5a5c7054887f590 give SOURCE ACCEPT WITH EXPLICIT RELEASE HOLDS. Do not reopen accepted lanes absent conflicting source or concrete findings.
 
-The last coordinator production observation18:27:33Z identifies live79414143d4355d5d3d14cd5fe6e5a536dc68d99d, deploymentdep-daqft3vf3r2c73b7e88g, commerce disabled. Auto-deploy was directly observed off17:31Z and reported again by the producer18:28Z. These are timestamped historical observations, not fresh purchase or schema evidence. Refresh before any consequential action. No production mutation occurred.
+The accepted composition selects 65 paths from 12 input commits, preserving Core IC-2/partner, MC-01, D/E plus DE-R1 and purchase-disabled subscription source, excluding Finance ancestry, wholesale lane registries and manifest changes. Exact subscription 17-file tests passed 401/0/0; affected 36-file tests passed 626/0/0. They overlap in four files, union 49; counts are not additive. Forty-four indexed evidence hashes were verified. PS-R1 is closed; PS-R5 is closed only at mocked-fetch adapter Response400/403 scope, not live HTTP/provider.
 
-## Open decisions and holds
+Typecheck, build, route uniqueness and migration DAG passed. Protection remains FAIL; full aggregate remains resource-DEFERRED. Retained 805/1452 MiB samples support deferral; the historical 304 MiB figure lacks raw evidence. Browser proof is partial: synthetic loopback actual client, measured widths 1440/1024/767/430/390/320, no real writes. Exact768, native zoom, CLS, live Auth/payment and delivered-image bytes remain unproved. Preview ended by interrupted TTY exit1, with PIDs absent and 349 assets rehashed. Preserve failures and bounded claims; no rerun merely to improve summary logs.
 
-No answer is recorded for the intended subscription/product plan, exact three protected hash pairs or GATE-01 Access Hub disposition. Do not repeat unchanged questions or invent SKU, price, partner activation or approval. Paid access membership fees were removed September5.
+D/E chat01a10d08-cd8b-7431-80b7-a21677c11bb6 /2227 and subscription chat01a10d12-0764-7222-8b5a-5029508020ad /5b21 are parked. Earlier bounded acceptances and exact artifacts remain in COORDINATION_STATE.json. Finance is partial source only and excluded.
 
-All six subscription-buying gaps stay open: durable create idempotency, referral lineage, decisive current-price validation, eligible-offer projection, durable activation/currentness and payment finality. PS-R2 typed server payment references and PS-R3 missing capability projection remain release blockers. Other copy/quantity/version findings carry.
+## Host, production and open decisions
 
-MC-01 requires compatible persistent-cart predecessors, reviewed candidate, non-image Product Control reapproval and separate launch transition, preserving/adopting cart history. D/E still lacks delivered-byte integrity, reader/writer and database/runtime proof. Finance remains a partial source candidate; F1, refunds/disputes, ADP-G2–G4 and LENS adoption remain held.
+No qualification slot is currently owned. Any new focused reservation needs changed host conditions and fresh per-job checks; capped nonincremental typecheck requires at least 2048 MiB available RAM, 20 GiB free disk, prior focused passes and no competing heavy job. Do not continuously retry resource refusals. No full suite or DB races below 20 GiB or under invalid/concurrent host load. Preserve all 827 Docker volumes, dirty work, failed receipts and unrelated preview/processes. Native/browser REPL initialization remains broken; do not repeat unchanged failures.
 
-Deploys, hosted SQL, consequential flags/prices, real charges, grants, payouts and notifications need the current exact-action authority and a concrete qualified packet with prechecks, rollback and smoke. Finish authorized reviewable work before seeking final approval.
+The last coordinator production observation, 18:27:33Z, identifies live 79414143d4355d5d3d14cd5fe6e5a536dc68d99d with commerce disabled. Auto-deploy was directly observed off at 17:31Z. These are historical observations, not current purchase or schema proof; refresh before relying on them. No production mutation occurred.
+
+No actual answer is recorded for the intended subscription/product plan, exact Core Navbar/Footer/index.css hash pairs or GATE-01. Do not invent SKU, price, membership restoration or partner activation; paid access membership fees were removed September5. All six real subscription buying gaps and PS-R2/PS-R3 server blockers remain open. MC-01 needs compatible predecessors, candidate, cart-history preservation/adoption, non-image Product Control reapproval and launch transition. D/E delivery/readers/writer/database and Finance authorities remain held.
+
+Deploys, hosted SQL, consequential flags/prices, real collection/charges/payouts/notifications/account grants require current exact-action authority and a qualified packet with prechecks, rollback and smoke. Prepare authorized reviewable work before final approval.
 
 ## Resume
 
-Read COORDINATION_STATE.json, recover Git/leases and current user decisions. Reclaim only the coordinator records lease before edits. Follow the one Quick Order worker by known ID, collect exact source/tree/test/evidence/handoff, then continue the same Claude reviewer for its narrow accepted-base delta. Do not reopen frozen accepted lanes without conflicting diffs. Keep coherent records and exact pushed handoffs; preserve all failures and qualifications honestly.
+Read repository continuity, exact handoffs, current Git/leases and direct user decisions. Reclaim only the coordinator's records lease before edits. Collect the original reviewer's pushed doc36; reconcile concrete findings with relocated source and use the same builder for authorized corrections. No duplicate worker/reviewer or automatic resource retry. Keep coherent records and exact pushed handoffs.
 
-Latest coordination note: user sequencing delta b2b87a95 holds oldmountpatch6481c2ad for relocation/regeneration; A2 remains pending. Static primary-source checks confirm14new location violations plus8report-onlytests. Existing implementation authority covers the same-module relocation after exact ownlease extension; no active destination collision found. Samebuilder dispatch8aa3f8398815f81200eb43ecb942e141dc4441da moves7client+15serverfiles, no sharedfiles, preserves Health semantics and regenerates only the unapplied proposal. It grants no qualification slot, protected edit or SQL drafting.\n\nOriginal Claudecontext6abf1edf was already running the six-lens QuickOrder review and will finish it; its189testpass claim remains reported pending exact receipt verification. Coordinator parked only the overlapping5fb continuation, which acknowledged no QuickOrder verdict writes/commits and preserved accepted integration. The active review is6ab, not5fb. See CLAUDE_QUICK_ORDER_PRELIMINARY_6abf1edf.json and the overlap-hold record. Latest planner reply1a186054 was confirmed; do not resend. No actual protected/schema approval is inferred from planner recommendations.\n
+The active five-minute heartbeat xenios-launch-coordination targets coordinator chat01a103a8-5684-7272-89e5-3c42eefcd593. Stay quiet while unchanged; notify meaningful progress, final review, failure or required user action. Disable only after the authorized launch/Quick Order work and verification finish; do not archive the chat.

@@ -34,5 +34,11 @@
     }
   ],
   "noInferredApproval": true,
-  "latestSequencingSource": "C:/Users/sboad/.codex/attachments/b2b87a95-8dcf-461e-9b2a-0ec7bc1a4c49/Pasted text.txt"
+  "latestSequencingSource": "C:/Users/sboad/.codex/attachments/b2b87a95-8dcf-461e-9b2a-0ec7bc1a4c49/Pasted text.txt",
+  "regeneratedProposal": {
+    "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+    "patchSha256lf": "c65d7e49a9f5ec87262d4e3b106ab5e16b1c3d1ecd46a01c8a7ca4699e6d92af",
+    "status": "Prepared and integrity verified; not approved; old pending question does not authorize revised bytes",
+    "pairsArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_MOUNT_HASHES_f1e467f.json"
+  }
 }

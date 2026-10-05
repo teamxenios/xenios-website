@@ -1,0 +1,117 @@
+{
+  "verifiedAt": "2026-10-05T20:41:14.686Z",
+  "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+  "tree": "6bc4fd7a7483822d4af87a3c07ab7263c0fbc377",
+  "evidence": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+  "evidenceTree": "57a8620b800d5da7a76d887f7bb9302d0415962f",
+  "staticEvidence": "7b23247c5292d0e42e8af14d56526cd9712aaf77",
+  "producerClean": true,
+  "remoteVerified": true,
+  "noRuntimeDrift": true,
+  "method": "Read-only Git-object comparison, in-memory proposed-file reconstruction by /root/f1_audit, and exact receipt/hash verification. No test rerun.",
+  "relocation": {
+    "files": 22,
+    "client": 7,
+    "server": 15,
+    "shared": 0,
+    "lfIdentical": 15,
+    "relativeImportMockFixtureOnly": 7,
+    "canonicalTargetsPreserved": true,
+    "oldFilesAbsent": true,
+    "classification": {
+      "allowed": 14,
+      "reportedTests": 8,
+      "newViolations": 0
+    },
+    "fullProtectionGatePass": false,
+    "manifestUnchanged": true
+  },
+  "proposal": {
+    "sha256lf": "c65d7e49a9f5ec87262d4e3b106ab5e16b1c3d1ecd46a01c8a7ca4699e6d92af",
+    "pairs": 6,
+    "beforeAndAfterVerified": true,
+    "applied": false,
+    "permission": false,
+    "old648PatchPreserved": true
+  },
+  "baselines": {
+    "count": 14,
+    "unchanged": true
+  },
+  "qualification": {
+    "reservation": "fc11f54b2851e964ae9080f8fccccbf06de2eeee",
+    "precheckAt": "2026-10-05T20:36:28.1555959Z",
+    "availableMiB": 503,
+    "minimumMiB": 512,
+    "freeDiskGiB": 26.98,
+    "matchingHeavyJobs": [],
+    "status": "NOT RUN / resource deferred",
+    "noProcessStarted": true,
+    "noRetries": true,
+    "slotReleased": true,
+    "sourceFailure": false
+  },
+  "artifacts": [
+    {
+      "sourcePath": "docs/health-launch/quick-order-20261005/evidence/precheck-node2-f1e467f.json",
+      "sourceCommit": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+      "path": "QUICK_ORDER_PRECHECK_REFUSAL_f1e467f.json",
+      "bytes": 9863,
+      "sha256": "a95fb532310012b963b07eb20c7ae3c6192952c13c0c2b460fb8cbdd52918a62"
+    },
+    {
+      "sourcePath": "docs/health-launch/quick-order-20261005/evidence/qualification-slot-f1e467f-result.json",
+      "sourceCommit": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+      "path": "QUICK_ORDER_SLOT_RESULT_f1e467f.json",
+      "bytes": 980,
+      "sha256": "5a9e2d591ce49d4680222bd440064f401610f923c45166fdd326a49fbcc21dc9"
+    },
+    {
+      "sourcePath": "docs/health-launch/quick-order-20261005/evidence/relocation-static-source-f1e467f.json",
+      "sourceCommit": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+      "path": "QUICK_ORDER_RELOCATION_STATIC_f1e467f.json",
+      "bytes": 20519,
+      "sha256": "b57eec1d018ca9a33cb0017176d18290870f17af068285b745f059169146baba"
+    },
+    {
+      "sourcePath": "docs/health-launch/quick-order-20261005/evidence/packet-integrity-relocated-f1e467f.json",
+      "sourceCommit": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+      "path": "QUICK_ORDER_PACKET_INTEGRITY_f1e467f.json",
+      "bytes": 10495,
+      "sha256": "84c091c77156b8340c98b26ef9224e7d3832f566ea226464d87ae3380d4f8cbc"
+    },
+    {
+      "sourcePath": "docs/health-launch/quick-order-20261005/evidence/relocation-inventory.json",
+      "sourceCommit": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+      "path": "QUICK_ORDER_RELOCATION_INVENTORY_f1e467f.json",
+      "bytes": 13429,
+      "sha256": "a5942644be1eb1348940cf39705264d8013d65f967ac31410d1e8fa6ff813523"
+    },
+    {
+      "sourcePath": "docs/health-launch/quick-order-20261005/MOUNT_PROPOSAL.patch",
+      "sourceCommit": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+      "path": "QUICK_ORDER_MOUNT_PROPOSAL_f1e467f.patch",
+      "bytes": 5538,
+      "sha256": "c65d7e49a9f5ec87262d4e3b106ab5e16b1c3d1ecd46a01c8a7ca4699e6d92af"
+    },
+    {
+      "sourcePath": "docs/health-launch/quick-order-20261005/evidence/mount-proposal-hashes.json",
+      "sourceCommit": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+      "path": "QUICK_ORDER_MOUNT_HASHES_f1e467f.json",
+      "bytes": 1744,
+      "sha256": "c9028b34a49bd0a5bbd4f7f1090c1f347b67da589c2394c2dc76d47ce025870d"
+    },
+    {
+      "sourcePath": "docs/health-launch/quick-order-20261005/RELOCATION.md",
+      "sourceCommit": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+      "path": "QUICK_ORDER_RELOCATION_f1e467f.md",
+      "bytes": 7294,
+      "sha256": "a30ff90945594e2e5e4bf171a22d1b5184d2b7133876cac3b3c1d3d34058629e"
+    }
+  ],
+  "limits": [
+    "Static integrity is not successor test qualification or source acceptance.",
+    "No previous 184, 10, or reported 189 count transfers to relocated source.",
+    "Final original six-lens review remains pending; no protected/schema/hosted permission inferred."
+  ]
+}

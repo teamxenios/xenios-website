@@ -211,8 +211,8 @@
   },
   {
     "path": "QUICK_ORDER_SOURCE_APPROVAL_REQUEST.json",
-    "bytes": 2020,
-    "sha256": "19964f12a903623fbf7aa6690de1ba384fef02d5c47250cb8bc9e9436f67de34"
+    "bytes": 2425,
+    "sha256": "fc6e0669c562862a646186f0d44ddfbd88a7da9cc82dcb315214293c1b05fdfe"
   },
   {
     "path": "QUICK_ORDER_READ_ONLY_REVIEW_REQUEST_4abd2c5.txt",
@@ -263,5 +263,50 @@
     "path": "QUICK_ORDER_FOCUSED_SLOT_f1e467f.json",
     "bytes": 3133,
     "sha256": "bbc3a1c3e28e181eff2aff53e892dfdc91d7f9f8176013d45247c68ca3296a83"
+  },
+  {
+    "path": "QUICK_ORDER_PRECHECK_REFUSAL_f1e467f.json",
+    "bytes": 9863,
+    "sha256": "a95fb532310012b963b07eb20c7ae3c6192952c13c0c2b460fb8cbdd52918a62"
+  },
+  {
+    "path": "QUICK_ORDER_SLOT_RESULT_f1e467f.json",
+    "bytes": 980,
+    "sha256": "5a9e2d591ce49d4680222bd440064f401610f923c45166fdd326a49fbcc21dc9"
+  },
+  {
+    "path": "QUICK_ORDER_RELOCATION_STATIC_f1e467f.json",
+    "bytes": 20519,
+    "sha256": "b57eec1d018ca9a33cb0017176d18290870f17af068285b745f059169146baba"
+  },
+  {
+    "path": "QUICK_ORDER_PACKET_INTEGRITY_f1e467f.json",
+    "bytes": 10495,
+    "sha256": "84c091c77156b8340c98b26ef9224e7d3832f566ea226464d87ae3380d4f8cbc"
+  },
+  {
+    "path": "QUICK_ORDER_RELOCATION_INVENTORY_f1e467f.json",
+    "bytes": 13429,
+    "sha256": "a5942644be1eb1348940cf39705264d8013d65f967ac31410d1e8fa6ff813523"
+  },
+  {
+    "path": "QUICK_ORDER_MOUNT_PROPOSAL_f1e467f.patch",
+    "bytes": 5538,
+    "sha256": "c65d7e49a9f5ec87262d4e3b106ab5e16b1c3d1ecd46a01c8a7ca4699e6d92af"
+  },
+  {
+    "path": "QUICK_ORDER_MOUNT_HASHES_f1e467f.json",
+    "bytes": 1744,
+    "sha256": "c9028b34a49bd0a5bbd4f7f1090c1f347b67da589c2394c2dc76d47ce025870d"
+  },
+  {
+    "path": "QUICK_ORDER_RELOCATION_f1e467f.md",
+    "bytes": 7294,
+    "sha256": "a30ff90945594e2e5e4bf171a22d1b5184d2b7133876cac3b3c1d3d34058629e"
+  },
+  {
+    "path": "QUICK_ORDER_RELOCATION_AUDIT_f1e467f.json",
+    "bytes": 4680,
+    "sha256": "6e5a2d9de0f8c3bbe0904ddaf66805e704684ae2fc2087d7257a60101e9a949a"
   }
 ]

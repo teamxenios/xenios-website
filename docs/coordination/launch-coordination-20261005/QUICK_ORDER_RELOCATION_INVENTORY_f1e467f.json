@@ -1,0 +1,304 @@
+{
+  "at": "2026-10-05T20:24:54.269Z",
+  "fromSource": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
+  "inventory": [
+    {
+      "oldPath": "client/src/quick-order/OperatorDeclarations.test.tsx",
+      "newPath": "client/src/research/quick-order/OperatorDeclarations.test.tsx",
+      "beforeSha256lf": "0b379d4cdfa041895b6ffe1de795f4986caef81cfe3269879cd8aa6e8acba505",
+      "afterSha256lf": "0b379d4cdfa041895b6ffe1de795f4986caef81cfe3269879cd8aa6e8acba505",
+      "byteIdenticalLf": true,
+      "replacements": []
+    },
+    {
+      "oldPath": "client/src/quick-order/OperatorDeclarations.tsx",
+      "newPath": "client/src/research/quick-order/OperatorDeclarations.tsx",
+      "beforeSha256lf": "00bdf0d0d827960b851542a47d85f2db061d0a22b076ba78c95e54f64fc0c9da",
+      "afterSha256lf": "00bdf0d0d827960b851542a47d85f2db061d0a22b076ba78c95e54f64fc0c9da",
+      "byteIdenticalLf": true,
+      "replacements": []
+    },
+    {
+      "oldPath": "client/src/quick-order/QuickOrderPage.test.tsx",
+      "newPath": "client/src/research/quick-order/QuickOrderPage.test.tsx",
+      "beforeSha256lf": "c06c8af1e5d03c78ec706c6443c21a9ce57088de63e5c0675c2f67d5f002681e",
+      "afterSha256lf": "c06c8af1e5d03c78ec706c6443c21a9ce57088de63e5c0675c2f67d5f002681e",
+      "byteIdenticalLf": true,
+      "replacements": []
+    },
+    {
+      "oldPath": "client/src/quick-order/QuickOrderPage.tsx",
+      "newPath": "client/src/research/quick-order/QuickOrderPage.tsx",
+      "beforeSha256lf": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b",
+      "afterSha256lf": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b",
+      "byteIdenticalLf": true,
+      "replacements": []
+    },
+    {
+      "oldPath": "client/src/quick-order/contracts.test.ts",
+      "newPath": "client/src/research/quick-order/contracts.test.ts",
+      "beforeSha256lf": "41acfb403839870c8095a16216babc4ea0222b5e1b80ec15b4e8b31520078c14",
+      "afterSha256lf": "41acfb403839870c8095a16216babc4ea0222b5e1b80ec15b4e8b31520078c14",
+      "byteIdenticalLf": true,
+      "replacements": []
+    },
+    {
+      "oldPath": "client/src/quick-order/contracts.ts",
+      "newPath": "client/src/research/quick-order/contracts.ts",
+      "beforeSha256lf": "51c91843c6a9f2dbad9133c09986c7754ee2f467c3889d8877e40d7979526861",
+      "afterSha256lf": "51c91843c6a9f2dbad9133c09986c7754ee2f467c3889d8877e40d7979526861",
+      "byteIdenticalLf": true,
+      "replacements": []
+    },
+    {
+      "oldPath": "client/src/quick-order/quick-order.css",
+      "newPath": "client/src/research/quick-order/quick-order.css",
+      "beforeSha256lf": "1cc94da50f0a8235caee34743b74c5854a2a4cf2df7a63545e5fdcd8c3f02fd9",
+      "afterSha256lf": "1cc94da50f0a8235caee34743b74c5854a2a4cf2df7a63545e5fdcd8c3f02fd9",
+      "byteIdenticalLf": true,
+      "replacements": []
+    },
+    {
+      "oldPath": "server/health/quick-order/catalog.test.ts",
+      "newPath": "server/research/health/quick-order/catalog.test.ts",
+      "beforeSha256lf": "3add4edf5d596449e51e6678c38ac17cc7d94adc3e6ba1ffbfc3780b29e173f7",
+      "afterSha256lf": "a84bf7b06cb03ebfd909105350b06d9acc163c5bb166c12dcb837fcd4dbda113",
+      "byteIdenticalLf": false,
+      "replacements": [
+        {
+          "from": "../../../shared/research/assisted-order/contract",
+          "to": "../../../../shared/research/assisted-order/contract",
+          "resolvedTarget": "shared/research/assisted-order/contract"
+        },
+        {
+          "from": "../../../shared/research/master-offerings/pricing-contract",
+          "to": "../../../../shared/research/master-offerings/pricing-contract",
+          "resolvedTarget": "shared/research/master-offerings/pricing-contract"
+        },
+        {
+          "from": "../../research/assisted-order/ports",
+          "to": "../../assisted-order/ports",
+          "resolvedTarget": "server/research/assisted-order/ports"
+        },
+        {
+          "from": "../../research/assisted-order/production-catalog",
+          "to": "../../assisted-order/production-catalog",
+          "resolvedTarget": "server/research/assisted-order/production-catalog"
+        },
+        {
+          "from": "../../research/master-offerings/model",
+          "to": "../../master-offerings/model",
+          "resolvedTarget": "server/research/master-offerings/model"
+        }
+      ]
+    },
+    {
+      "oldPath": "server/health/quick-order/catalog.ts",
+      "newPath": "server/research/health/quick-order/catalog.ts",
+      "beforeSha256lf": "1144627bfe5c6ecea1b3a66e0249cc9d0028ceb8afe9e05156a2440536c8ead0",
+      "afterSha256lf": "43458fb0279f1298aca4582053bf98163910b85ccbb7169cec2d690879a20037",
+      "byteIdenticalLf": false,
+      "replacements": [
+        {
+          "from": "../../../shared/research/assisted-order/contract",
+          "to": "../../../../shared/research/assisted-order/contract",
+          "resolvedTarget": "shared/research/assisted-order/contract"
+        },
+        {
+          "from": "../../../shared/research/master-offerings/contract",
+          "to": "../../../../shared/research/master-offerings/contract",
+          "resolvedTarget": "shared/research/master-offerings/contract"
+        },
+        {
+          "from": "../../../shared/research/master-offerings/pathway-authority",
+          "to": "../../../../shared/research/master-offerings/pathway-authority",
+          "resolvedTarget": "shared/research/master-offerings/pathway-authority"
+        },
+        {
+          "from": "../../research/assisted-order/ports",
+          "to": "../../assisted-order/ports",
+          "resolvedTarget": "server/research/assisted-order/ports"
+        },
+        {
+          "from": "../../research/assisted-order/production-catalog",
+          "to": "../../assisted-order/production-catalog",
+          "resolvedTarget": "server/research/assisted-order/production-catalog"
+        }
+      ]
+    },
+    {
+      "oldPath": "server/health/quick-order/containment.test.ts",
+      "newPath": "server/research/health/quick-order/containment.test.ts",
+      "beforeSha256lf": "6dbcbd18af43b6cfa683d371444f728fa7fea93b1494895b221ceeb3449a7c0e",
+      "afterSha256lf": "6dbcbd18af43b6cfa683d371444f728fa7fea93b1494895b221ceeb3449a7c0e",
+      "byteIdenticalLf": true,
+      "replacements": []
+    },
+    {
+      "oldPath": "server/health/quick-order/containment.ts",
+      "newPath": "server/research/health/quick-order/containment.ts",
+      "beforeSha256lf": "a8e253d2f59b701b5ce96116eacf58269d012ad2002082ab98014e47b1aa526b",
+      "afterSha256lf": "a8e253d2f59b701b5ce96116eacf58269d012ad2002082ab98014e47b1aa526b",
+      "byteIdenticalLf": true,
+      "replacements": []
+    },
+    {
+      "oldPath": "server/health/quick-order/core.d.mts",
+      "newPath": "server/research/health/quick-order/core.d.mts",
+      "beforeSha256lf": "d3bca2af4ef290f37db356480cdf4b1f610a17e331910ecb7a2a4f7102f30998",
+      "afterSha256lf": "d3bca2af4ef290f37db356480cdf4b1f610a17e331910ecb7a2a4f7102f30998",
+      "byteIdenticalLf": true,
+      "replacements": []
+    },
+    {
+      "oldPath": "server/health/quick-order/core.mjs",
+      "newPath": "server/research/health/quick-order/core.mjs",
+      "beforeSha256lf": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35",
+      "afterSha256lf": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35",
+      "byteIdenticalLf": true,
+      "replacements": []
+    },
+    {
+      "oldPath": "server/health/quick-order/handler.d.mts",
+      "newPath": "server/research/health/quick-order/handler.d.mts",
+      "beforeSha256lf": "b65211ed78cf0bef51079aac7b0c0c72ed996b037558395c61fc573509be4a27",
+      "afterSha256lf": "b65211ed78cf0bef51079aac7b0c0c72ed996b037558395c61fc573509be4a27",
+      "byteIdenticalLf": true,
+      "replacements": []
+    },
+    {
+      "oldPath": "server/health/quick-order/handler.mjs",
+      "newPath": "server/research/health/quick-order/handler.mjs",
+      "beforeSha256lf": "82aa742d8c499e4e5b50c757d62931990ad3a1c7741b68d745df4a53396ea187",
+      "afterSha256lf": "82aa742d8c499e4e5b50c757d62931990ad3a1c7741b68d745df4a53396ea187",
+      "byteIdenticalLf": true,
+      "replacements": []
+    },
+    {
+      "oldPath": "server/health/quick-order/legal.ts",
+      "newPath": "server/research/health/quick-order/legal.ts",
+      "beforeSha256lf": "5ef68fe9f1138bb8f112d049ba0a260a3eed647a14c09592176d2803b955916e",
+      "afterSha256lf": "f8f36c9c9e2756426aea9bf97d67fb23e7111ef93617d45696a5127cb714967e",
+      "byteIdenticalLf": false,
+      "replacements": [
+        {
+          "from": "../../../shared/research/assisted-order/form",
+          "to": "../../../../shared/research/assisted-order/form",
+          "resolvedTarget": "shared/research/assisted-order/form"
+        },
+        {
+          "from": "../../research/policies-data",
+          "to": "../../policies-data",
+          "resolvedTarget": "server/research/policies-data"
+        },
+        {
+          "from": "../../../shared/research/assisted-order/contract",
+          "to": "../../../../shared/research/assisted-order/contract",
+          "resolvedTarget": "shared/research/assisted-order/contract"
+        }
+      ]
+    },
+    {
+      "oldPath": "server/health/quick-order/ports.ts",
+      "newPath": "server/research/health/quick-order/ports.ts",
+      "beforeSha256lf": "e343a6b853fb5369e4eaf35ce3224142481eebdcb69a10301e45997544dd2226",
+      "afterSha256lf": "8da9b4327bac927a4f57685fcee6d40c968c3ccca3dcd546f74f8e6bb5da2e14",
+      "byteIdenticalLf": false,
+      "replacements": [
+        {
+          "from": "../../research/assisted-order/ports",
+          "to": "../../assisted-order/ports",
+          "resolvedTarget": "server/research/assisted-order/ports"
+        }
+      ]
+    },
+    {
+      "oldPath": "server/health/quick-order/production.test.ts",
+      "newPath": "server/research/health/quick-order/production.test.ts",
+      "beforeSha256lf": "262051cfa69f19d72f02b798d0d60f6dc525b390c30dbaf02910a9d697b24658",
+      "afterSha256lf": "34df7a7eb621ad7dfb26e0f94de51402e72dc0a4c311d67a0c321ad90660759f",
+      "byteIdenticalLf": false,
+      "replacements": [
+        {
+          "from": "../../research/assisted-order/ports",
+          "to": "../../assisted-order/ports",
+          "resolvedTarget": "server/research/assisted-order/ports"
+        },
+        {
+          "from": "../../../shared/research/assisted-order/form",
+          "to": "../../../../shared/research/assisted-order/form",
+          "resolvedTarget": "shared/research/assisted-order/form"
+        },
+        {
+          "from": "../../research/policies-data",
+          "to": "../../policies-data",
+          "resolvedTarget": "server/research/policies-data"
+        },
+        {
+          "from": "../../research/rate-limit",
+          "to": "../../rate-limit",
+          "resolvedTarget": "server/research/rate-limit"
+        }
+      ]
+    },
+    {
+      "oldPath": "server/health/quick-order/production.ts",
+      "newPath": "server/research/health/quick-order/production.ts",
+      "beforeSha256lf": "8077598012387c4e2e748ffc2fb581deb78aa7466d33855d0281a692da284e8a",
+      "afterSha256lf": "d3cc0bffa4a0a3dce0963a422c5c58a3fb0a5142c455d2891f295204eb1a2b32",
+      "byteIdenticalLf": false,
+      "replacements": [
+        {
+          "from": "../../research/assisted-order/service",
+          "to": "../../assisted-order/service",
+          "resolvedTarget": "server/research/assisted-order/service"
+        },
+        {
+          "from": "../../research/assisted-order/ports",
+          "to": "../../assisted-order/ports",
+          "resolvedTarget": "server/research/assisted-order/ports"
+        },
+        {
+          "from": "../../research/assisted-order/express",
+          "to": "../../assisted-order/express",
+          "resolvedTarget": "server/research/assisted-order/express"
+        },
+        {
+          "from": "../../research/rate-limit",
+          "to": "../../rate-limit",
+          "resolvedTarget": "server/research/rate-limit"
+        }
+      ]
+    },
+    {
+      "oldPath": "server/health/quick-order/tests/core.test.mjs",
+      "newPath": "server/research/health/quick-order/tests/core.test.mjs",
+      "beforeSha256lf": "f35ae3d63608c0726af655776d45825f4db34010ac0fb4d8a54635d3200ab0a0",
+      "afterSha256lf": "eacf6db8971f16c9c73537903735d7b6dc71686050d8beba9708461221156d49",
+      "byteIdenticalLf": false,
+      "replacements": [
+        {
+          "from": "../../../../shared/research/assisted-order/form.ts",
+          "to": "../../../../../shared/research/assisted-order/form.ts",
+          "resolvedTarget": "shared/research/assisted-order/form.ts"
+        }
+      ]
+    },
+    {
+      "oldPath": "server/health/quick-order/tests/fixtures.mjs",
+      "newPath": "server/research/health/quick-order/tests/fixtures.mjs",
+      "beforeSha256lf": "8fc92b273d37adbe2a7f6c973a116959f180beb366f61bf5d588f431bfe8da9c",
+      "afterSha256lf": "8fc92b273d37adbe2a7f6c973a116959f180beb366f61bf5d588f431bfe8da9c",
+      "byteIdenticalLf": true,
+      "replacements": []
+    },
+    {
+      "oldPath": "server/health/quick-order/tests/handler.test.mjs",
+      "newPath": "server/research/health/quick-order/tests/handler.test.mjs",
+      "beforeSha256lf": "5dd56f8622b884cfc8ba2a73a008d6cf4ffdd004a2bf768546b6f75c348d70ce",
+      "afterSha256lf": "5dd56f8622b884cfc8ba2a73a008d6cf4ffdd004a2bf768546b6f75c348d70ce",
+      "byteIdenticalLf": true,
+      "replacements": []
+    }
+  ]
+}
