@@ -1,0 +1,120 @@
+
+ RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/389a/xenios-website
+
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > defaults disabled and collects nothing without the session/readiness boundary 62ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > renders current legal links and operational facts without duplicate shell 197ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > focuses a field-linked error summary without sending omissions 157ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > maps server validation errors to safe field errors and summary focus 829ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > offers the existing Care route without selecting or pricing provider rows 141ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > supports explicit direct/none, optional suite/code and receipt only after validated write 2320ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > invalidates review after a field or quantity changes 1826ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > requires conditional referral, affiliation and full separate billing 852ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > never treats malformed HTTP success as receipt: {} 447ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > never treats malformed HTTP success as receipt: {"requestId":"454b01cd-4ce9-4a45-a5a3-454cef294c48","publicReference":"","status":"submitted","paymentStatus":"not_collected","commissionState":"not_authorized","attributionState":"direct_no_referrer","replayed":false,"estimate":{"knownSubtotalCents":2500,"estimateComplete":true,"currency":"USD","excludes":"Synthetic estimate, not a payment quote."}} 387ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > never treats malformed HTTP success as receipt: {"requestId":"454b01cd-4ce9-4a45-a5a3-454cef294c48","publicReference":"XRR-20261005-ABCDEF1234","status":"submitted","paymentStatus":"paid","commissionState":"not_authorized","attributionState":"direct_no_referrer","replayed":false,"estimate":{"knownSubtotalCents":2500,"estimateComplete":true,"currency":"USD","excludes":"Synthetic estimate, not a payment quote."}} 83ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > recovers an unknown outcome with exactly the same key and payload 176ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > refreshes session-bound CSRF after 403 while preserving the same actor attempt 338ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > recovers an earlier unknown request when current legal/intake configuration is disabled 290ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > preserves same-account recovery across a new transport and config disabled 105ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > preserves same-account recovery across a new transport and config outage 105ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > preserves only same-session receipt recovery when intakeEnabled becomes false 230ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > stops a new POST if intake disables while its CSRF refresh is pending 337ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > does not POST a fresh request after intake disables during review 261ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > double click cannot create two pending writes 97ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > discards late receipts and all contact values across an account boundary 147ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > aborts on unmount and remount does not retain personal data or duplicate handlers 641ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > suppresses a stale catalog response after a newer search 70ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > supports variant page 2 with exact server totals 31ms
+ ✓ client/src/quick-order/QuickOrderPage.test.tsx > isolated Quick Order component > has no browser storage of personal data 79ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > pages the actual canonical callbacks completely, then counts only Health-authorized variants 104ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > never exposes private row fields or copies a price for Care 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > does not allow a Health request for {"workflowMode":"provider_request"} 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > does not allow a Health request for {"workflowMode":"availability_review"} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > does not allow a Health request for {"workflowMode":"request_activation"} 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > does not allow a Health request for {"researchUseOnly":true} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > does not allow a Health request for {"family":"clinical_formulations_503a"} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > does not allow a Health request for {"family":"shipping_and_fulfillment"} 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > preserves actual lower quantity bands and pending prices 2ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"family":"unknown"} 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"workflowMode":"unknown"} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"maximumQuantity":null} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"maximumQuantity":0} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"minimumQuantity":0} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"quantityIncrement":0} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"unitPriceCents":0} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"unitPriceCents":-1} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > fails closed on malformed or unstated authority {"currency":"EUR"} 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > supplements a constant source path with hashes of current price, quantity and pathway facts 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > requires destination authority and passes the exact actor, item and shipping state 2ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > refuses absent Health visibility even for an empty canonical catalog 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > keeps hidden identities out of both counts and exact resolution 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > refuses unauthenticated viewers before reading any catalog rows 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed duplicate rather than claiming complete pagination 3ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed identity_collision rather than claiming complete pagination 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed wrong_page rather than claiming complete pagination 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed wrong_size rather than claiming complete pagination 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed truncated rather than claiming complete pagination 0ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed total_drift rather than claiming complete pagination 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed content_drift rather than claiming complete pagination 5ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects observed visibility_drift rather than claiming complete pagination 4ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > stops at the configured bound without issuing another scan page 1ms
+ ✓ server/health/quick-order/catalog.test.ts > Quick Order canonical catalog > rejects multi-variant offering topology instead of silently treating offerings as variants 1ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > maps only known server field aliases and never reflects arbitrary messages 3ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > accepts explicit direct/no-affiliation and optional empty fields 1ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires fullLegalName 1ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires email 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires mobilePhone 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires shipping line1 1ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires shipping city 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires shipping region 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires shipping postalCode 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires detail for person 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires detail for collective 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires detail for organization 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires detail for social 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires detail for search 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires detail for other 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires affiliation detail for collective 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires affiliation detail for gym 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires affiliation detail for team 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires affiliation detail for clinic 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires affiliation detail for other 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires each declaration, billing choice and agreement 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > requires all separate billing fields 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > refuses malformed email name@example 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > refuses malformed email a b@example.test 1ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > refuses malformed email <script> 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > refuses malformed US phone 123 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > refuses malformed US phone 1115550123 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > refuses malformed US phone 2021550123 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > refuses malformed US phone 2025550123 ext 2 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > preserves canonical cap and whole quantities: 0 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > preserves canonical cap and whole quantities: 51 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > preserves canonical cap and whole quantities: 100 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > preserves canonical cap and whole quantities: 1.5 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > preserves canonical cap and whole quantities: NaN 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > enforces increment/minimum and excludes held and Research rows 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > rejects false receipt envelopes, identity, money and demo references 1ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > projects receipt fields without private extras 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > validates legal URLs and distinct form acknowledgements 1ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > checks exact variant pagination and rejects inflated or partial totals 0ms
+ ✓ client/src/quick-order/contracts.test.ts > Quick Order browser contracts > fails closed on unknown workflows, missing caps and provider price leaks 0ms
+ ✓ server/health/quick-order/production.test.ts > Quick Order concrete canonical bindings > cannot activate through a readiness flag or existing bridge legal set 8ms
+ ✓ server/health/quick-order/production.test.ts > Quick Order concrete canonical bindings > uses canonical actor identity and scopes CSRF to the verified session 2ms
+ ✓ server/health/quick-order/production.test.ts > Quick Order concrete canonical bindings > refuses missing credentials, guest identity, capability or signing secret 1ms
+ ✓ server/health/quick-order/production.test.ts > Quick Order concrete canonical bindings > passes the canonical viewer to catalog and actor-scoped receipt recovery 2ms
+ ✓ server/health/quick-order/production.test.ts > Quick Order concrete canonical bindings > requires separate Health legal applicability and reuses canonical acknowledgment bytes 2ms
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > returns private disabled JSON for /api/health/quick-order 80ms
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > returns private disabled JSON for /api/health/quick-order/config 10ms
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > returns private disabled JSON for /api/health/quick-order/requests?source=test 6ms
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > does not parse an oversized malformed body or reach fallback 12ms
+ ✓ server/health/quick-order/containment.test.ts > Quick Order default-off raw boundary > does not capture a neighboring route 8ms
+ ✓ client/src/quick-order/OperatorDeclarations.test.tsx > operator declaration fragment > keeps declared and trusted sources distinct and safely renders user text 40ms
+ ✓ client/src/quick-order/OperatorDeclarations.test.tsx > operator declaration fragment > does not invent evidence when the authorized reader has none 2ms
+
+ Test Files  6 passed (6)
+      Tests  111 passed (111)
+   Start at  14:38:18
+   Duration  16.83s (transform 542ms, setup 0ms, import 1.60s, tests 10.54s, environment 3.09s)
+

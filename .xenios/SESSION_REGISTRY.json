@@ -585,10 +585,12 @@
       "tool": "Codex GPT-6 Astra Ultra (task configuration)",
       "lane": "health-quick-order",
       "branch": "codex/xenios-health-quick-order-20261005",
-      "state": "active",
+      "state": "blocked_external",
       "startedAt": "2026-10-05T19:12:50.193Z",
-      "heartbeatAt": "2026-10-05T19:29:01.305Z",
-      "note": "Isolated Quick Order source implemented; serialized focused diagnostic qualification; transaction and protected mount remain disabled pending narrow source approval."
+      "heartbeatAt": "2026-10-05T19:41:39.882Z",
+      "note": "Pushed incomplete disabled Quick Order source3b0048d; exact-source184 focused tests pass. Await Samuel protected mount/privacy and canonical schema-source authoring decisions; typecheck deferred at820MiB RAM. Same builder reserved; no managed action.",
+      "sourceSha": "3b0048de641415523caa44f91cb06002465e1773",
+      "handoff": ".xenios/handoffs/quick-order-20261005-handoff.md"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
