@@ -488,5 +488,15 @@
     "path": "CLAUDE_REVIEW38_DRAFT_EVIDENCE_CHECK.json",
     "bytes": 2529,
     "sha256": "0be4d325ea8f821892b297cd80d5f6b84938cae72f296bebc26cd2130d48882b"
+  },
+  {
+    "path": "CLAUDE_SAME_CONTEXT_CONTINUATION.txt",
+    "bytes": 1511,
+    "sha256": "c6878dd25019f1af74533ce3326ea7081abec1f5e589ef1a92d50a6fe56dd075"
+  },
+  {
+    "path": "CLAUDE_DESKTOP_CONTINUATION_ATTEMPT_20261005.json",
+    "bytes": 1543,
+    "sha256": "609d3ab61394ba62870f22a791cd8d7e0232251d16774da537b02b7236cf8453"
   }
 ]

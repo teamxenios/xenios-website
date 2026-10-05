@@ -87,3 +87,7 @@ All seven manifest-listed files, including all three prompts, were read and thei
 | Finance/provider and release | Operational authorities disabled; hosted compatibility/payment/provider actions held | Exact independent financial/compatibility evidence and later action-specific approvals |
 
 Overall: **SOURCE PARTIAL; original integration ACCEPTED WITH HOLDS; HTTP successor review PENDING; LIVE INTAKE / LIVE PURCHASE / RELEASE NOT READY.** The next action is the same reviewer’s exact HTTP delta verdict, followed by only concrete authorized corrections or qualification under a fresh eligible slot. No duplicate dispatch or automatic test retry follows from the addendum.
+
+## Existing reviewer continuation transport
+
+Read-only liveness shows the original reviewer’s main turn ended at21:30:51Z, with its process still resident and child-result status unknown. The documented desktop-resume CLI cannot accept prompts: both redirected and adapted PTY invocations exited1 without delivering a continuation. No duplicate reviewer or UI bypass was launched. CLAUDE_SAME_CONTEXT_CONTINUATION.txt holds the exact message for the existing Multi-document project review chat; it asks only to collect existing results, correct surviving evidence descriptions and push the bounded verdict. Draft acceptance remains unadopted. This is a technical transport limitation, separate from the builder’s earlier outbound-message approval rejection.

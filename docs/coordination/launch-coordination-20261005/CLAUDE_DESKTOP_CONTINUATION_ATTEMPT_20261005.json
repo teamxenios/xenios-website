@@ -1,0 +1,34 @@
+{
+  "recordedAt": "2026-10-05T21:50:55.855Z",
+  "target": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+  "targetTitle": "Multi-document project review",
+  "liveness": {
+    "pid": 43856,
+    "responding": true,
+    "transcriptLastWrite": "2026-10-05T21:30:51.6132077Z",
+    "lastRecord": {
+      "type": "system",
+      "subtype": "stop_hook_summary",
+      "at": "2026-10-05T21:30:51.6Z"
+    },
+    "meaning": "Main turn ended; process resident. Outstanding reviewer child-work status is unknown, not declared stopped."
+  },
+  "attempts": [
+    {
+      "commandMode": "claude --desktop --resume EXISTING_ID PROMPT, redirected output",
+      "exit": 1,
+      "error": "--desktop opens the Claude Desktop app and cannot run non-interactively / redirected output."
+    },
+    {
+      "commandMode": "Same documented command with PTY interactive terminal",
+      "exit": 1,
+      "error": "--desktop does not take a prompt yet. Run claude --desktop, then type it in the app."
+    }
+  ],
+  "delivered": false,
+  "newReviewerStarted": false,
+  "modelChanged": false,
+  "classification": "Technical CLI transport limitation, not an automatic approval rejection. No bypass or repeated unchanged retry.",
+  "next": "Exact continuation prepared for existing Claude desktop chat. Native/browser REPL remains broken and was not retried. User can paste the prepared text; background result collection remains read-only and exact verdict unaccepted.",
+  "preparedMessage": "docs/coordination/launch-coordination-20261005/CLAUDE_SAME_CONTEXT_CONTINUATION.txt"
+}
