@@ -1,6 +1,6 @@
 import {
-  PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS,
-  type AdminProductMedia,
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS,
+  PRODUCT_PRESENTATION_INPUT_BINDINGS,
 } from "@shared/research/product-admin";
 import type {
   CartAudienceEligibility,
@@ -42,12 +42,16 @@ export type AuthoritativeCartProductSelectionResult =
 export function browserSafeCartProductSelection(
   selection: AuthoritativeCartProductSelection,
 ): CartProductSelection {
-  const { activationAuthority: _serverOnly, ...browserSafe } = selection;
+  const {
+    activationAuthority: _serverOnly,
+    media: _legacyPresentation,
+    ...browserSafe
+  } = selection;
   return browserSafe;
 }
 
 const REQUIRED_DOMAINS = Array.from(
-  new Set(PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map(({ domain }) => domain)),
+  new Set(PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map(({ domain }) => domain)),
 ).sort();
 
 function blocked(
@@ -86,26 +90,6 @@ function mapPriceFailure(
   }
 }
 
-function approvedPrimaryMedia(
-  media: readonly AdminProductMedia[],
-  productId: string,
-): AuthoritativeCartProductSelectionResult | { media: AdminProductMedia } {
-  const primary = media.filter(
-    (item) => item.productId === productId && item.kind === "primary_image",
-  );
-  if (primary.length === 0) return blocked("media_missing");
-  const approved = primary.filter(
-    (item) =>
-      item.state === "approved" &&
-      Boolean(item.approvedBy) &&
-      Boolean(item.id.trim()) &&
-      Boolean(item.altText.trim()),
-  );
-  if (approved.length === 0) return blocked("media_unapproved");
-  if (approved.length !== 1) return blocked("media_ambiguous");
-  return { media: approved[0] };
-}
-
 function exactRequiredInputs(
   values: readonly RequiredInput[],
   productId: string,
@@ -114,12 +98,31 @@ function exactRequiredInputs(
   | { inputs: RequiredInput[] } {
   const active = values.filter(
     (input) =>
-      input.recordId === productId && input.currentState !== "superseded",
+      !PRODUCT_PRESENTATION_INPUT_BINDINGS.some(
+        (binding) => input.key === binding.key,
+      ) &&
+      input.recordId === productId &&
+      input.currentState !== "superseded",
   );
+
+  const knownBindings = PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS;
+  if (
+    active.some(
+      (input) =>
+        !knownBindings.some(
+          (binding) =>
+            input.key === binding.key &&
+            input.domain === binding.domain &&
+            input.recordType === binding.recordType,
+        ),
+    )
+  ) {
+    return blocked("required_inputs_incomplete");
+  }
 
   const inputs: RequiredInput[] = [];
   const ids = new Set<string>();
-  for (const binding of PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS) {
+  for (const binding of PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS) {
     const matches = active.filter(
       (input) =>
         input.key === binding.key &&
@@ -141,9 +144,6 @@ function exactRequiredInputs(
     inputs.push(matches[0]);
   }
 
-  if (active.length !== PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.length) {
-    return blocked("required_inputs_incomplete");
-  }
   return { inputs };
 }
 
@@ -276,8 +276,6 @@ export function selectCartProduct(
     evaluatedAt: request.evaluatedAt,
   });
   if (!priceResult.ok) return blocked(mapPriceFailure(priceResult.code));
-  const mediaResult = approvedPrimaryMedia(source.media, product.id);
-  if ("ok" in mediaResult) return mediaResult;
   const inputResult = exactRequiredInputs(source.requiredInputs, product.id);
   if ("ok" in inputResult) return inputResult;
   const readinessResult = exactDomainReadiness(source.readiness);
@@ -321,11 +319,6 @@ export function selectCartProduct(
           ? null
           : new Date(priceResult.expiresAt).toISOString(),
       version: priceResult.price.version,
-    },
-    media: {
-      id: mediaResult.media.id,
-      kind: "primary_image",
-      altText: mediaResult.media.altText,
     },
     canonicalReadiness: {
       ready: true,

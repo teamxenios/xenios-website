@@ -1,5 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
+import {
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS,
+  PRODUCT_MEDIA_KINDS,
+  PRODUCT_MEDIA_STATES,
+  PRODUCT_PRESENTATION_INPUT_BINDINGS,
+} from "@shared/research/product-admin";
 import { readInChunks } from "../catalog/chunked-ids";
 import { getSupabaseAdmin } from "../../supabase";
 import type {
@@ -159,6 +164,11 @@ function mediaRow(row: Record<string, unknown>): AdminProductMedia {
   return {
     id: rowText(row.id),
     productId: rowText(row.product_id),
+    variantId: rowNullableText(row.variant_id),
+    width: typeof row.width === "number" ? row.width : null,
+    height: typeof row.height === "number" ? row.height : null,
+    contentSha256: rowNullableText(row.content_sha256),
+    illustrative: typeof row.illustrative === "boolean" ? row.illustrative : null,
     kind: rowText(row.kind) as AdminProductMedia["kind"],
     state: rowText(row.state, "pending_upload") as AdminProductMedia["state"],
     storageKey: rowNullableText(row.storage_key),
@@ -216,6 +226,57 @@ async function many(
   return Array.isArray(data) ? (data as Record<string, unknown>[]) : [];
 }
 
+/** Presentation reads may degrade independently; media commands remain strict. */
+async function presentationMedia(
+  read: () => PromiseLike<{ data: unknown; error: unknown }>,
+): Promise<AdminProductMedia[]> {
+  try {
+    const { data, error } = await read();
+    if (error || !Array.isArray(data)) return [];
+    return data.flatMap((value: unknown) => {
+      if (value === null || typeof value !== "object" || Array.isArray(value)) {
+        return [];
+      }
+      const row = value as Record<string, unknown>;
+      if (
+        !rowText(row.id).trim() ||
+        !rowText(row.product_id).trim() ||
+        !(PRODUCT_MEDIA_KINDS as readonly unknown[]).includes(row.kind) ||
+        !(PRODUCT_MEDIA_STATES as readonly unknown[]).includes(row.state) ||
+        typeof row.filename !== "string" ||
+        typeof row.content_type !== "string" ||
+        typeof row.alt_text !== "string" ||
+        (row.storage_key !== null && typeof row.storage_key !== "string") ||
+        (row.approved_by !== null && typeof row.approved_by !== "string") ||
+        typeof row.size_bytes !== "number" ||
+        !Number.isFinite(row.size_bytes) ||
+        typeof row.sort_order !== "number" ||
+        !Number.isFinite(row.sort_order) ||
+        typeof row.created_at !== "string" ||
+        typeof row.updated_at !== "string"
+      ) {
+        return [];
+      }
+      return [mediaRow(row)];
+    });
+  } catch {
+    return [];
+  }
+}
+
+function missingCommerceInput(row: Record<string, unknown>): boolean {
+  if (PRODUCT_PRESENTATION_INPUT_BINDINGS.some(({ key }) => row.key === key)) {
+    return false;
+  }
+  const state = rowText(row.current_state);
+  return (
+    state !== "verified" &&
+    state !== "not_applicable" &&
+    state !== "superseded" &&
+    rowText(row.blocking_level) !== "informational"
+  );
+}
+
 export class SupabaseProductAdminRepository
   implements ProductAdminRepository
 {
@@ -261,7 +322,7 @@ export class SupabaseProductAdminRepository
       many(
         this.db
           .from(REQUIRED_INPUT_TABLE)
-          .select("record_id,current_state,blocking_level")
+          .select("key,record_id,current_state,blocking_level")
           .in("record_id", ids),
         "list product required inputs",
       ),
@@ -269,15 +330,8 @@ export class SupabaseProductAdminRepository
     const variants = variantRows.map(variantRow);
     const missingByProduct = new Map<string, number>();
     for (const row of inputRows) {
-      const state = rowText(row.current_state);
-      if (
-        state === "verified" ||
-        state === "not_applicable" ||
-        state === "superseded" ||
-        rowText(row.blocking_level) === "informational"
-      ) {
-        continue;
-      }
+      if (!missingCommerceInput(row)) continue;
+
       const id = rowText(row.record_id);
       missingByProduct.set(id, (missingByProduct.get(id) ?? 0) + 1);
     }
@@ -446,13 +500,12 @@ export class SupabaseProductAdminRepository
           ),
         ),
         readInChunks(ids, (chunk) =>
-          many(
+          presentationMedia(() =>
             this.db
               .from(MEDIA_TABLE)
               .select("*")
               .in("product_id", chunk)
               .order("sort_order", { ascending: true }),
-            "list media for details",
           ),
         ),
         readInChunks(ids, (chunk) =>
@@ -468,7 +521,7 @@ export class SupabaseProductAdminRepository
           many(
             this.db
               .from(REQUIRED_INPUT_TABLE)
-              .select("record_id,current_state,blocking_level")
+              .select("key,record_id,current_state,blocking_level")
               .in("record_id", chunk),
             "list required inputs for details",
           ),
@@ -489,20 +542,13 @@ export class SupabaseProductAdminRepository
       return grouped;
     };
     const pricesByProduct = groupBy(priceRows.map(priceRow), (price) => price.productId);
-    const mediaByProduct = groupBy(mediaRows.map(mediaRow), (media) => media.productId);
+    const mediaByProduct = groupBy(mediaRows, (media) => media.productId);
     const contentByProduct = groupBy(contentRowsRaw, (row) => rowText(row.product_id));
     // The same missing-input filter `get()` applies, per product.
     const missingByProduct = new Map<string, number>();
     for (const row of inputRows) {
-      const state = rowText(row.current_state);
-      if (
-        state === "verified" ||
-        state === "not_applicable" ||
-        state === "superseded" ||
-        rowText(row.blocking_level) === "informational"
-      ) {
-        continue;
-      }
+      if (!missingCommerceInput(row)) continue;
+
       const id = rowText(row.record_id);
       missingByProduct.set(id, (missingByProduct.get(id) ?? 0) + 1);
     }
@@ -547,13 +593,12 @@ export class SupabaseProductAdminRepository
             .order("created_at", { ascending: false }),
           "read prices",
         ),
-        many(
+        presentationMedia(() =>
           this.db
             .from(MEDIA_TABLE)
             .select("*")
             .eq("product_id", productId)
             .order("sort_order", { ascending: true }),
-          "read media",
         ),
         many(
           this.db
@@ -573,21 +618,13 @@ export class SupabaseProductAdminRepository
         many(
           this.db
             .from(REQUIRED_INPUT_TABLE)
-            .select("current_state,blocking_level")
+            .select("key,current_state,blocking_level")
             .eq("record_id", productId),
           "read product required inputs",
         ),
       ]);
     const variants = variantsRaw.map(variantRow);
-    const missingInputCount = inputRaw.filter((row) => {
-      const state = rowText(row.current_state);
-      return (
-        state !== "verified" &&
-        state !== "not_applicable" &&
-        state !== "superseded" &&
-        rowText(row.blocking_level) !== "informational"
-      );
-    }).length;
+    const missingInputCount = inputRaw.filter(missingCommerceInput).length;
     return {
       ...productSummary(
         productResult.data as Record<string, unknown>,
@@ -597,7 +634,7 @@ export class SupabaseProductAdminRepository
       content: contentRows(contentRaw),
       variants,
       prices: pricesRaw.map(priceRow),
-      media: mediaRaw.map(mediaRow),
+      media: mediaRaw,
       history: historyRaw.map((row) => ({
         at: rowText(row.occurred_at),
         action: rowText(row.action),
@@ -946,14 +983,20 @@ export function productReleaseGateFromRequiredInputs(
       const rows = (Array.isArray(data) ? data : []).filter(
         (row: any) => row.current_state !== "superseded",
       );
-      const expected = PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS;
+      const expected = PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS;
       const expectedKeys = new Set<string>(
         expected.map((binding) => binding.key),
+      );
+      const authorityRows = rows.filter(
+        (row: any) =>
+          !PRODUCT_PRESENTATION_INPUT_BINDINGS.some(
+            (binding) => row.key === binding.key,
+          ),
       );
       const blockingKeys: string[] = [];
 
       for (const binding of expected) {
-        const matches = rows.filter(
+        const matches = authorityRows.filter(
           (row: any) =>
             row.key === binding.key &&
             row.domain === binding.domain &&
@@ -974,8 +1017,8 @@ export function productReleaseGateFromRequiredInputs(
       }
 
       if (
-        rows.length !== expected.length ||
-        rows.some((row: any) => !expectedKeys.has(String(row.key)))
+        authorityRows.length !== expected.length ||
+        authorityRows.some((row: any) => !expectedKeys.has(String(row.key)))
       ) {
         blockingKeys.push("product.required_inputs.record_set");
       }

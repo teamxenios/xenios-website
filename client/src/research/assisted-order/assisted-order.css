@@ -39,7 +39,10 @@
 .xenios-order-actions button, .xenios-order-pagination button { min-height: 44px; border: 1px solid var(--line); background: white; color: var(--ink); border-radius: 999px; padding: 11px 18px; font: inherit; font-weight: 700; }
 .xenios-order-return-link { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; padding: 11px 12px; }
 .xenios-order-retry { min-height: 44px; border: 1px solid var(--line); background: white; color: var(--ink); border-radius: 999px; padding: 11px 18px; font: inherit; font-weight: 700; }
-.xenios-order-button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; border: 0 !important; background: var(--accent) !important; color: var(--accent-ink) !important; border-radius: 999px; padding: 12px 20px; font: inherit; font-weight: 750; cursor: pointer; text-decoration: none; }
+.xenios-order-button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; border-radius: 999px; padding: 12px 20px; font: inherit; font-weight: 750; cursor: pointer; text-decoration: none; }
+/* Keep the existing operational controls unchanged. Customer presentation has
+   its own boundary below, including the embedded storefront request form. */
+.xenios-order-page:not(.xenios-order-page--customer) .xenios-order-button { border: 0 !important; background: var(--accent) !important; color: var(--accent-ink) !important; }
 .xenios-order-button:disabled { opacity: .55; cursor: not-allowed; }
 .xenios-order-error { border: 1px solid rgba(156, 45, 45, .28); background: #fff3f2; color: #832c27; border-radius: 14px; padding: 14px 16px; margin-bottom: 18px; }
 .xenios-order-catalog-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 22px; align-items: start; }
@@ -145,4 +148,97 @@
   .xenios-order-admin-action { position: static; }
   .xenios-order-admin-row { grid-template-columns: 1fr 1fr; }
   .xenios-order-admin-row--head { display: none; }
+}
+
+/* Customer-only A/B/C presentation. These selectors deliberately do not match
+   the admin queue, detail or session roots that share the legacy stylesheet. */
+.xenios-order-page--customer {
+  --ink: #0E0E0E;
+  --muted: var(--ink-mute);
+  --line: var(--rule);
+  --soft: var(--paper-2);
+  --accent: var(--pulse);
+  --order-control-height: 44px;
+}
+.xenios-order-page--customer .xenios-order-eyebrow { color: var(--muted); }
+.xenios-order-page--customer .xenios-order-timeline li { border-left-color: var(--rule); }
+.xenios-order-page--customer .xenios-order-steps button { min-height: var(--order-control-height); border-radius: 4px; }
+.xenios-order-page--customer .xenios-order-steps button.is-active { border-color: var(--pulse); }
+.xenios-order-page--customer .xenios-order-steps button.is-active span { background: var(--pulse); }
+.xenios-order-page--customer .xenios-order-actions button,
+.xenios-order-page--customer .xenios-order-pagination button,
+.xenios-order-page--customer .xenios-order-retry,
+.xenios-order-page--customer .xenios-order-filter-actions button,
+.xenios-order-page--customer .xenios-order-empty button,
+.xenios-order-page--customer .xenios-order-error--catalog button {
+  min-height: var(--order-control-height);
+  max-width: 100%;
+  border: 1px solid var(--ink);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 11px 18px;
+  line-height: 20px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.xenios-order-page--customer .xenios-order-actions button:not(.xenios-order-button):not(:disabled):hover,
+.xenios-order-page--customer .xenios-order-pagination button:not(:disabled):hover,
+.xenios-order-page--customer .xenios-order-retry:not(:disabled):hover,
+.xenios-order-page--customer .xenios-order-filter-actions button:not(:disabled):hover,
+.xenios-order-page--customer .xenios-order-empty button:not(:disabled):hover,
+.xenios-order-page--customer .xenios-order-error--catalog button:not(:disabled):hover { background: var(--soft); }
+.xenios-order-page--customer .xenios-order-button,
+.xenios-order-page--customer .xenios-order-actions .xenios-order-button {
+  min-height: var(--order-control-height);
+  max-width: 100%;
+  border: 1px solid #0E0E0E;
+  border-radius: 4px;
+  background: #0E0E0E;
+  color: #fff;
+  padding: 11px 20px;
+  line-height: 20px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+.xenios-order-page--customer .xenios-order-button:not(:disabled):hover { background: #1a1a17; border-color: #1a1a17; }
+.xenios-order-page--customer .xenios-order-actions button:disabled,
+.xenios-order-page--customer .xenios-order-pagination button:disabled,
+.xenios-order-page--customer .xenios-order-retry:disabled,
+.xenios-order-page--customer .xenios-order-filter-actions button:disabled { opacity: .55; cursor: not-allowed; }
+.xenios-order-page--customer .xenios-order-quantity button:not(.xenios-order-link) { border-color: var(--ink); border-radius: 4px; }
+.xenios-order-page--customer .xenios-order-quantity button:not(.xenios-order-link):not(:disabled):hover { background: var(--soft); }
+.xenios-order-page--customer .xenios-order-link,
+.xenios-order-page--customer .xenios-order-return-link,
+.xenios-order-page--customer .xenios-order-panel > p > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--order-control-height);
+  max-width: 100%;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.xenios-order-page--customer .xenios-order-link:hover,
+.xenios-order-page--customer .xenios-order-return-link:hover,
+.xenios-order-page--customer .xenios-order-panel > p > a:hover { color: var(--pulse); }
+.xenios-order-page--customer input:focus,
+.xenios-order-page--customer select:focus,
+.xenios-order-page--customer textarea:focus,
+.xenios-order-page--customer button:focus-visible,
+.xenios-order-page--customer a:focus-visible,
+.xenios-order-page--customer .xenios-order-details > summary:focus-visible { outline: 3px solid var(--pulse); outline-offset: 3px; }
+.xenios-order-page--customer .xenios-order-skeleton--button { height: var(--order-control-height); border-radius: 4px; }
+@media (forced-colors: active) {
+  .xenios-order-page--customer input:focus,
+  .xenios-order-page--customer select:focus,
+  .xenios-order-page--customer textarea:focus,
+  .xenios-order-page--customer button:focus-visible,
+  .xenios-order-page--customer a:focus-visible,
+  .xenios-order-page--customer .xenios-order-details > summary:focus-visible { outline-color: Highlight; }
+  .xenios-order-page--customer .xenios-order-steps button.is-active { border-color: Highlight; }
 }

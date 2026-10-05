@@ -5,6 +5,11 @@ import {
   type CartProductSelectionFailureCode,
   type CartProductSelectionResult,
 } from "@shared/research/cart-product-selection";
+import { PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
+
+const REQUIRED_DOMAINS = Array.from(
+  new Set(PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map(({ domain }) => domain)),
+);
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -52,7 +57,6 @@ function validVersionRefs(
 function validSelection(value: unknown): value is CartProductSelection {
   if (!isObject(value)) return false;
   const price = value.price;
-  const media = value.media;
   const readiness = value.canonicalReadiness;
   const audienceEligibility = value.audienceEligibility;
   const inventory = value.inventoryEligibility;
@@ -64,7 +68,6 @@ function validSelection(value: unknown): value is CartProductSelection {
     !(CART_PURCHASE_AUDIENCES as readonly string[]).includes(value.audience) ||
     !isIso(value.evaluatedAt) ||
     !isObject(price) ||
-    !isObject(media) ||
     !isObject(readiness) ||
     !isObject(audienceEligibility) ||
     !isObject(inventory)
@@ -81,13 +84,6 @@ function validSelection(value: unknown): value is CartProductSelection {
     !(price.expiresAt === null || isIso(price.expiresAt)) ||
     !Number.isInteger(price.version) ||
     Number(price.version) <= 0
-  ) {
-    return false;
-  }
-  if (
-    !isText(media.id) ||
-    media.kind !== "primary_image" ||
-    !isText(media.altText)
   ) {
     return false;
   }
@@ -113,13 +109,20 @@ function validSelection(value: unknown): value is CartProductSelection {
   if (
     readiness.ready !== true ||
     !Number.isInteger(readiness.verifiedInputCount) ||
-    Number(readiness.verifiedInputCount) <= 0 ||
+    Number(readiness.verifiedInputCount) !== PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.length ||
     Number(readiness.verifiedInputCount) !==
       (Array.isArray(readiness.inputVersions)
         ? readiness.inputVersions.length
         : -1) ||
     !validVersionRefs(readiness.inputVersions, "id") ||
-    !validVersionRefs(readiness.domainVersions, "domain")
+    !validVersionRefs(readiness.domainVersions, "domain") ||
+    !Array.isArray(readiness.domainVersions) ||
+    readiness.domainVersions.length !== REQUIRED_DOMAINS.length ||
+    !REQUIRED_DOMAINS.every((domain) =>
+      (readiness.domainVersions as Array<Record<string, unknown>>).some(
+        (item) => item.domain === domain,
+      ),
+    )
   ) {
     return false;
   }
@@ -158,11 +161,6 @@ function browserSafeSelection(
       effectiveAt: selection.price.effectiveAt,
       expiresAt: selection.price.expiresAt,
       version: selection.price.version,
-    },
-    media: {
-      id: selection.media.id,
-      kind: "primary_image",
-      altText: selection.media.altText,
     },
     canonicalReadiness: {
       ready: true,

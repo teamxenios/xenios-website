@@ -1,3 +1,4 @@
+import { ProductMedia } from "../ui/ProductMedia";
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import type {
@@ -177,6 +178,7 @@ function ProductCard(props: {
   const quantityHelpId = `order-quantity-help-${item.variantId}`;
   return (
     <article className="xenios-order-card" data-testid={`order-card-${item.variantId}`}>
+      <ProductMedia productId={item.productId} variantId={item.variantId} />
       <div className="xenios-order-card__header">
         <div>
           <p className="xenios-order-eyebrow">{item.family}</p>
@@ -824,7 +826,7 @@ export function AssistedOrderPage({
   };
 
   return (
-    <div className={`xenios-order-page${embedded ? " xenios-order-page--embedded" : ""}`}>
+    <div className={`xenios-order-page xenios-order-page--customer${embedded ? " xenios-order-page--embedded" : ""}`}>
       <header className="xenios-order-hero">
         <p className="xenios-order-eyebrow">Research ordering</p>
         {embedded ? <h3>Request an order</h3> : <h1>Request an order</h1>}

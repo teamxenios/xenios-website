@@ -1,10 +1,13 @@
+import { parseProductMedia, validProductMediaMetadata } from "@shared/research/product-media";
 import type {
   AdminProductDetail,
-  AdminProductMedia,
   AdminProductPrice,
   AdminProductVariant,
 } from "@shared/research/product-admin";
-import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
+import {
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS,
+  PRODUCT_PRESENTATION_INPUT_BINDINGS,
+} from "@shared/research/product-admin";
 import type {
   MemberCatalog,
   MemberCatalogCard,
@@ -88,7 +91,7 @@ function safePublicMediaHref(
     const evaluatedMicros = parseProductControlTimestampMicros(evaluatedAt);
     const keys = Array.from(url.searchParams.keys());
     const prefix =
-      "/storage/v1/object/sign/research-product-media/";
+      "/storage/v1/object/sign/research-product-media-production/";
     if (!url.pathname.startsWith(prefix)) return false;
     let decodedObjectPath: string;
     try {
@@ -129,35 +132,38 @@ function exactlyOne<T>(
   return matches.length === 1 ? matches[0] : null;
 }
 
-type ProductDisplayBindingKey =
-  (typeof PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS)[number]["key"];
+type ProductCommerceBindingKey =
+  (typeof PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS)[number]["key"];
 
-type ProductDisplayBindings = Record<ProductDisplayBindingKey, boolean>;
+type ProductCommerceBindings = Record<ProductCommerceBindingKey, boolean>;
 
-function resolvedProductDisplayBindings(
+function resolvedProductCommerceBindings(
   productId: string,
   items: readonly RequiredInput[],
   evaluatedAt: string,
-): ProductDisplayBindings {
+): ProductCommerceBindings {
   const unresolved = () =>
     Object.fromEntries(
-      PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map(({ key }) => [key, false]),
-    ) as ProductDisplayBindings;
-  const activeDisplayItems = items.filter(
+      PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map(({ key }) => [key, false]),
+    ) as ProductCommerceBindings;
+  const activeCommerceItems = items.filter(
     (item) =>
       item.recordId === productId &&
       item.currentState !== "superseded" &&
-      item.blockingLevel === "blocks_display",
+      item.blockingLevel === "blocks_display" &&
+      // Legacy presentation rows, even malformed ones, cannot satisfy or
+      // invalidate a commerce binding. Unknown non-media rows still fail closed.
+      !PRODUCT_PRESENTATION_INPUT_BINDINGS.some(({ key }) => key === item.key),
   );
   if (
-    activeDisplayItems.length !==
-    PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.length
+    activeCommerceItems.length !==
+    PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.length
   ) {
     return unresolved();
   }
   const evaluatedMicros = parseProductControlTimestampMicros(evaluatedAt);
-  const entries = PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map((binding) => {
-    const active = activeDisplayItems.filter(
+  const entries = PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map((binding) => {
+    const active = activeCommerceItems.filter(
       (item) =>
         item.key === binding.key &&
         item.domain === binding.domain &&
@@ -192,13 +198,13 @@ function resolvedProductDisplayBindings(
   }
   return Object.fromEntries(
     entries.map(({ key, verified }) => [key, verified]),
-  ) as ProductDisplayBindings;
+  ) as ProductCommerceBindings;
 }
 
-function allProductDisplayBindingsResolved(
-  bindings: ProductDisplayBindings,
+function allProductCommerceBindingsResolved(
+  bindings: ProductCommerceBindings,
 ): boolean {
-  return PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.every(
+  return PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.every(
     ({ key }) => bindings[key],
   );
 }
@@ -261,18 +267,29 @@ function priceProjection(price: AdminProductPrice | null): MemberCatalogPrice | 
 function safeMedia(
   product: AdminProductDetail,
   source: MemberCatalogProjectionSource,
+  visibleVariants: readonly MemberCatalogVariant[],
 ) {
+  if (!Array.isArray(product.media) || !Array.isArray(source.mediaPresentations)) {
+    return null;
+  }
   const media = exactlyOne(
     product.media,
     (item) =>
+      item !== null &&
+      typeof item === "object" &&
       item.productId === product.id &&
       item.kind === "primary_image" &&
-      item.state === "approved" &&
-      Boolean(item.approvedBy) &&
-      Boolean(item.altText.trim()),
+      item.state === "approved",
   );
   if (media === null) return null;
   if (
+    !validProductMediaMetadata(media) ||
+    // Preserve the existing default variant; media never chooses purchase identity.
+    // One v1 primary must represent the same default on card and fresh detail.
+    visibleVariants[0]?.id !== media.variantId ||
+    typeof media.approvedBy !== "string" || !media.approvedBy.trim() ||
+    typeof media.id !== "string" || !media.id.trim() ||
+    typeof media.filename !== "string" ||
     !/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(media.filename) ||
     media.filename === "." ||
     media.filename === ".."
@@ -283,13 +300,21 @@ function safeMedia(
   const presentation = exactlyOne(
     source.mediaPresentations,
     (item) =>
+      item !== null &&
+      typeof item === "object" &&
       item.productId === product.id &&
-      item.mediaId === media.id &&
-      item.altText.trim() === media.altText.trim() &&
-      item.filename === media.filename,
+      item.mediaId === media.id,
   );
   return presentation !== null &&
+    presentation.variantId === media.variantId &&
+    presentation.width === media.width && presentation.height === media.height &&
+    presentation.contentSha256 === media.contentSha256 && presentation.illustrative === media.illustrative &&
+    presentation.altText === media.altText && presentation.filename === media.filename &&
+    typeof presentation.sourceVersion === "string" &&
     presentation.sourceVersion.trim() &&
+    typeof presentation.href === "string" &&
+    (presentation.expiresAt === null ||
+      typeof presentation.expiresAt === "string") &&
     (presentation.policy !== "xenios_signed_storage_v1" ||
       media.storageKey === expectedObjectPath) &&
     safePublicMediaHref(
@@ -299,9 +324,14 @@ function safeMedia(
       source.evaluatedAt,
       expectedObjectPath,
     )
-    ? {
+    ? parseProductMedia({
         mediaId: presentation.mediaId,
         productId: presentation.productId,
+        variantId: presentation.variantId,
+        width: presentation.width,
+        height: presentation.height,
+        contentSha256: presentation.contentSha256,
+        illustrative: presentation.illustrative,
         href: presentation.href,
         altText: presentation.altText,
         filename: presentation.filename,
@@ -311,7 +341,7 @@ function safeMedia(
           presentation.expiresAt === null
             ? null
             : canonicalIso(presentation.expiresAt),
-      }
+      }, { productId: product.id, now: Date.parse(source.evaluatedAt) })
     : null;
 }
 
@@ -342,8 +372,7 @@ function variantProjection(
   variant: AdminProductVariant,
   input: MemberCatalogProjectionInput,
   resolver: CurrentPriceResolver,
-  safePresentationAvailable: boolean,
-  displayBindingsReady: boolean,
+  commerceBindingsReady: boolean,
 ): MemberCatalogVariant {
   const price = currentPrice(resolver, product, variant, input.source);
   const inventory = exactlyOne(
@@ -356,37 +385,34 @@ function variantProjection(
     variant.id,
     input.source,
   );
-  const selectionResult = !displayBindingsReady
+  const selectionResult = !commerceBindingsReady
     ? { ok: false as const, code: "required_inputs_incomplete" as const }
-    : !safePresentationAvailable
-      ? { ok: false as const, code: "media_unapproved" as const }
-      : lotCoa === null ||
-          !["verified", "not_applicable"].includes(lotCoa.state)
-        ? { ok: false as const, code: "inventory_unavailable" as const }
-        : selectCartProduct(
-        {
-          productId: product.id,
-          variantId: variant.id,
-          audience: input.source.audienceEligibility!.audience,
-          currency: input.source.currency,
-          evaluatedAt: input.source.evaluatedAt,
-        },
-        {
-          products: [product],
-          variants: product.variants,
-          prices: product.prices,
-          media: product.media,
-          requiredInputs: input.requiredInputs,
-          readiness: input.readiness,
-          audienceEligibility: input.source.audienceEligibility,
-          inventoryEligibility: inventory,
-        },
-        // This synchronous projection has no durable activation-ledger reader.
-        // It may display catalog facts but must never manufacture a purchase
-        // selection from them. The request-time commerce authority supplies a
-        // resolved value in its own async composition.
-        null,
-          );
+    : lotCoa === null ||
+        !["verified", "not_applicable"].includes(lotCoa.state)
+      ? { ok: false as const, code: "inventory_unavailable" as const }
+      : selectCartProduct(
+          {
+            productId: product.id,
+            variantId: variant.id,
+            audience: input.source.audienceEligibility!.audience,
+            currency: input.source.currency,
+            evaluatedAt: input.source.evaluatedAt,
+          },
+          {
+            products: [product],
+            variants: product.variants,
+            prices: product.prices,
+            requiredInputs: input.requiredInputs,
+            readiness: input.readiness,
+            audienceEligibility: input.source.audienceEligibility,
+            inventoryEligibility: inventory,
+          },
+          // This synchronous projection has no durable activation-ledger reader.
+          // It may display catalog facts but must never manufacture a purchase
+          // selection from them. The request-time commerce authority supplies a
+          // resolved value in its own async composition.
+          null,
+        );
 
   return {
     id: variant.id,
@@ -439,7 +465,7 @@ function readinessFrom(
 function displayState(
   product: AdminProductDetail,
   variants: readonly MemberCatalogVariant[],
-  bindings: ProductDisplayBindings,
+  bindings: ProductCommerceBindings,
 ): MemberCatalogDisplayState {
   if (
     product.lane === "future_clinical" ||
@@ -447,7 +473,7 @@ function displayState(
   ) {
     return "catalog_only";
   }
-  if (!allProductDisplayBindingsResolved(bindings)) {
+  if (!allProductCommerceBindingsResolved(bindings)) {
     return "documentation_pending";
   }
   if (variants.some((variant) => variant.selection !== null)) return "available";
@@ -456,10 +482,7 @@ function displayState(
   );
   if (
     failures.includes("required_inputs_incomplete") ||
-    failures.includes("readiness_incomplete") ||
-    failures.includes("media_missing") ||
-    failures.includes("media_unapproved") ||
-    failures.includes("media_ambiguous")
+    failures.includes("readiness_incomplete")
   ) {
     return "documentation_pending";
   }
@@ -492,7 +515,7 @@ function projectProduct(
   input: MemberCatalogProjectionInput,
   resolver: CurrentPriceResolver,
 ): MemberProductDetail | null {
-  const bindings = resolvedProductDisplayBindings(
+  const bindings = resolvedProductCommerceBindings(
     product.id,
     input.requiredInputs,
     input.source.evaluatedAt,
@@ -501,9 +524,6 @@ function projectProduct(
   const nontransactional =
     product.lane === "future_clinical" ||
     product.lane === "non_product_program";
-  const media = bindings["product_content.primary_image"]
-    ? safeMedia(product, input.source)
-    : null;
   const variants =
     nontransactional || !bindings["products.sku"]
       ? []
@@ -516,10 +536,10 @@ function projectProduct(
             variant,
             input,
             resolver,
-            media !== null,
-            allProductDisplayBindingsResolved(bindings),
+            allProductCommerceBindingsResolved(bindings),
           ),
         );
+  const media = safeMedia(product, input.source, variants);
   const state = displayState(product, variants, bindings);
   const lowestPrice = variants
     .flatMap((variant) => (variant.price ? [variant.price] : []))

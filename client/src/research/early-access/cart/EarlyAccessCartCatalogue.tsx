@@ -1,3 +1,4 @@
+import { ProductMedia } from "../../ui/ProductMedia";
 import { useEffect, useMemo, useState } from "react";
 import {
   EarlyAccessAssistedOrderQuantityAction,
@@ -179,6 +180,7 @@ export function EarlyAccessCartCatalogue({
             const category = earlyAccessCategoryLabel(product.category);
             return (
               <article key={key} className="card grid min-w-0 content-start gap-2 p-4">
+                <ProductMedia productId={product.productId} variantId={product.variantId} />
                 {category !== null ? (
                   <p
                     className="mono-label min-w-0 break-words text-ink-mute"

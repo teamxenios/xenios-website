@@ -1,3 +1,4 @@
+import { parseProductMedia } from "@shared/research/product-media";
 import {
   CART_PURCHASE_AUDIENCES,
   CART_PRODUCT_SELECTION_FAILURE_CODES,
@@ -22,6 +23,7 @@ import {
   type MemberProductDetail,
   type MemberProductDetailResult,
 } from "@shared/research/member-catalog";
+import { PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
 import { PRODUCT_LANES } from "@shared/research/catalog";
 import { adaptCartProductSelection } from "./cartProductSelection";
 
@@ -32,6 +34,9 @@ const DISPLAY_STATES = new Set([
   "pricing_pending",
   "catalog_only",
 ]);
+const COMMERCE_READINESS_DOMAINS = Array.from(
+  new Set(PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map(({ domain }) => domain)),
+).sort();
 const FORBIDDEN_KEYS = new Set([
   "storageKey",
   "privateStorageKey",
@@ -109,7 +114,7 @@ function safeMediaHref(
     }
     const keys = Array.from(url.searchParams.keys());
     const prefix =
-      "/storage/v1/object/sign/research-product-media/";
+      "/storage/v1/object/sign/research-product-media-production/";
     if (!url.pathname.startsWith(prefix)) return false;
     let decodedObjectPath: string;
     try {
@@ -144,6 +149,39 @@ function hasForbiddenKey(value: unknown): boolean {
   );
 }
 
+function withoutSelectionMedia(value: unknown): unknown {
+  if (!isObject(value)) return value;
+  const { media: _legacyMedia, ...selection } = value;
+  return selection;
+}
+
+// Ignore only declared presentation subtrees for the non-media privacy check.
+// They are separately validated below or discarded by the selection adapter.
+// Private data anywhere else continues to invalidate the complete projection.
+function withoutCardMedia(value: unknown): unknown {
+  if (!isObject(value)) return value;
+  const { media: _media, ...card } = value;
+  return { ...card, selection: withoutSelectionMedia(card.selection) };
+}
+
+function withoutDetailMedia(value: unknown): unknown {
+  const card = withoutCardMedia(value);
+  if (!isObject(card)) return card;
+  return {
+    ...card,
+    variants: Array.isArray(card.variants)
+      ? card.variants.map((variant) =>
+          isObject(variant)
+            ? { ...variant, selection: withoutSelectionMedia(variant.selection) }
+            : variant,
+        )
+      : card.variants,
+    relatedProducts: Array.isArray(card.relatedProducts)
+      ? card.relatedProducts.map(withoutCardMedia)
+      : card.relatedProducts,
+  };
+}
+
 function price(value: unknown): MemberCatalogPrice | null | undefined {
   if (value === null) return null;
   if (
@@ -174,10 +212,11 @@ function media(
   value: unknown,
   productId: string,
   evaluatedAt: string,
-): MemberCatalogMediaPresentation | null | undefined {
+): MemberCatalogMediaPresentation | null {
   if (value === null) return null;
   if (
     !isObject(value) ||
+    hasForbiddenKey(value) ||
     !text(value.mediaId) ||
     value.productId !== productId ||
     !text(value.filename) ||
@@ -194,18 +233,9 @@ function media(
     !text(value.altText) ||
     !text(value.sourceVersion)
   ) {
-    return undefined;
+    return null;
   }
-  return {
-    mediaId: value.mediaId,
-    productId,
-    href: value.href,
-    altText: value.altText,
-    filename: value.filename,
-    sourceVersion: value.sourceVersion,
-    policy: value.policy as MemberCatalogMediaPresentation["policy"],
-    expiresAt: value.expiresAt as string | null,
-  };
+  return parseProductMedia(value, { productId, now: Date.parse(evaluatedAt) });
 }
 
 function priceIsCurrent(value: MemberCatalogPrice | null, evaluatedAt: string) {
@@ -257,6 +287,11 @@ function readiness(value: unknown): MemberCatalogReadiness | null | undefined {
   if (
     inputs === null ||
     domains === null ||
+    inputs.length !== PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.length ||
+    domains.length !== COMMERCE_READINESS_DOMAINS.length ||
+    !COMMERCE_READINESS_DOMAINS.every((domain) =>
+      domains.some((item) => item.domain === domain),
+    ) ||
     !Number.isInteger(value.verifiedInputCount) ||
     Number(value.verifiedInputCount) !== inputs.length
   ) {
@@ -303,11 +338,9 @@ function card(value: unknown, evaluatedAt: string): MemberCatalogCard | null {
   }
   if (
     safePrice === undefined ||
-    safeMedia === undefined ||
     safeReadiness === undefined ||
     (value.displayState === "available" &&
       (safePrice === null ||
-        safeMedia === null ||
         safeReadiness === null ||
         safeSelection === null)) ||
     (value.displayState !== "available" && safeSelection !== null) ||
@@ -318,8 +351,6 @@ function card(value: unknown, evaluatedAt: string): MemberCatalogCard | null {
         safeSelection.price.currency !== safePrice?.currency ||
         safeSelection.price.effectiveAt !== safePrice?.effectiveAt ||
         safeSelection.price.expiresAt !== safePrice?.expiresAt ||
-        safeSelection.media.id !== safeMedia?.mediaId ||
-        safeSelection.media.altText !== safeMedia?.altText ||
         JSON.stringify(safeSelection.canonicalReadiness) !==
           JSON.stringify(safeReadiness)))
   ) {
@@ -335,7 +366,7 @@ function card(value: unknown, evaluatedAt: string): MemberCatalogCard | null {
     classification: value.classification,
     summary: value.summary,
     displayState: value.displayState as MemberCatalogCard["displayState"],
-    media: safeMedia,
+    media: value.lane === "future_clinical" || value.lane === "non_product_program" ? null : safeMedia,
     price: safePrice,
     readiness: safeReadiness,
     selection: safeSelection,
@@ -486,8 +517,6 @@ function detail(value: unknown): MemberProductDetail | null {
               item.selection.price.currency !== item.price?.currency ||
               item.selection.price.effectiveAt !== item.price?.effectiveAt ||
               item.selection.price.expiresAt !== item.price?.expiresAt ||
-              item.selection.media.id !== base.media?.mediaId ||
-              item.selection.media.altText !== base.media?.altText ||
               JSON.stringify(item.selection.canonicalReadiness) !==
                 JSON.stringify(safeReadiness))))
     ) ||
@@ -541,6 +570,7 @@ function detail(value: unknown): MemberProductDetail | null {
   }
   return {
     ...base,
+    media: base.media?.variantId === variants[0]?.id ? base.media : null,
     audience: value.audience as MemberProductDetail["audience"],
     currency: value.currency,
     evaluatedAt: detailEvaluatedAt,
@@ -561,7 +591,6 @@ function detail(value: unknown): MemberProductDetail | null {
 
 export function adaptMemberCatalog(value: unknown): MemberCatalogResult {
   if (
-    hasForbiddenKey(value) ||
     !isObject(value) ||
     value.ok !== true ||
     !isObject(value.catalog)
@@ -570,6 +599,15 @@ export function adaptMemberCatalog(value: unknown): MemberCatalogResult {
   }
   const catalog = value.catalog;
   if (
+    hasForbiddenKey({
+      ...value,
+      catalog: {
+        ...catalog,
+        items: Array.isArray(catalog.items)
+          ? catalog.items.map(withoutCardMedia)
+          : catalog.items,
+      },
+    }) ||
     !(CART_PURCHASE_AUDIENCES as readonly unknown[]).includes(
       catalog.audience,
     ) ||
@@ -650,11 +688,13 @@ export function adaptMemberProductDetail(
     return { ok: false, code: "not_found" };
   }
   if (
-    hasForbiddenKey(value) ||
     !isObject(value) ||
     value.ok !== true ||
     !("product" in value)
   ) {
+    return { ok: false, code: "invalid_projection" };
+  }
+  if (hasForbiddenKey({ ...value, product: withoutDetailMedia(value.product) })) {
     return { ok: false, code: "invalid_projection" };
   }
   const product = detail(value.product);

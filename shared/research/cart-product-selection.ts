@@ -59,7 +59,9 @@ export type CartProductSelectionSource = {
   products: readonly AdminProductSummary[];
   variants: readonly AdminProductVariant[];
   prices: readonly AdminProductPrice[];
-  media: readonly AdminProductMedia[];
+  /** Presentation-only compatibility input. Selection authority ignores it. */
+  /** Legacy presentation input; commerce selection does not inspect it. */
+  media?: readonly AdminProductMedia[];
   requiredInputs: readonly RequiredInput[];
   readiness: readonly DomainReadiness[];
   audienceEligibility: CartAudienceEligibility | null;
@@ -122,7 +124,8 @@ export type CartProductSelection = {
     expiresAt: string | null;
     version: number;
   };
-  media: {
+  /** @deprecated Legacy presentation metadata; new selections omit this field. */
+  media?: {
     id: string;
     kind: "primary_image";
     altText: string;

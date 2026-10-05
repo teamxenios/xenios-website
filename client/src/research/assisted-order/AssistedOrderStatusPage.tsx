@@ -112,7 +112,7 @@ function VerifiedRequestStatus({ reference, memberToken, memberChecking }: {
   const actionRequired = financialCopy ? null : status?.actionRequired;
 
   return (
-    <div className="xenios-order-page min-w-0" style={{ overflowWrap: "anywhere" }}>
+    <div className="xenios-order-page xenios-order-page--customer min-w-0" style={{ overflowWrap: "anywhere" }}>
       <header className="xenios-order-hero">
         <p className="xenios-order-eyebrow">Order request</p>
         <h1 data-testid="order-status-heading" style={{ overflowWrap: "anywhere" }}>{status ? status.publicReference : "Request status"}</h1>

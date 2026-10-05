@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS } from "@shared/research/product-admin";
+import {
+  PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS,
+  PRODUCT_PRESENTATION_INPUT_BINDINGS,
+} from "@shared/research/product-admin";
 import type { AdminProductDetail } from "@shared/research/product-admin";
 import type {
   MemberCatalogProjectionSource,
@@ -15,7 +18,7 @@ import {
 const AT = "2026-07-26T22:00:00+00:00";
 
 function requiredInputs(productId: string): RequiredInput[] {
-  return PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS.map((binding, index) => ({
+  return PRODUCT_COMMERCE_REQUIRED_INPUT_BINDINGS.map((binding, index) => ({
     id: `${productId}-input-${index}`,
     key: binding.key,
     domain: binding.domain,
@@ -45,6 +48,14 @@ function requiredInputs(productId: string): RequiredInput[] {
     version: index + 1,
     auditHistory: [],
   }));
+}
+
+function legacyImageInput(productId: string): RequiredInput {
+  return {
+    ...requiredInputs(productId)[0],
+    ...PRODUCT_PRESENTATION_INPUT_BINDINGS[0],
+    id: `${productId}-legacy-image`,
+  };
 }
 
 function readiness(domain: string): DomainReadiness {
@@ -145,6 +156,7 @@ function product(
       {
         id: `${id}-media`,
         productId: id,
+        variantId: `${id}-variant`, width: 1024, height: 1024, contentSha256: "a".repeat(64), illustrative: false,
         kind: "primary_image",
         state: "approved",
         storageKey: `${id}/${id}-media/${id}.webp`,
@@ -185,6 +197,7 @@ function source(products: AdminProductDetail[]): MemberCatalogProjectionInput {
       item.media.map((media) => ({
         mediaId: media.id,
         productId: item.id,
+        variantId: media.variantId!, width: media.width!, height: media.height!, contentSha256: media.contentSha256!, illustrative: media.illustrative!,
         href: `https://media.xeniostechnology.com/${media.id}`,
         altText: media.altText,
         filename: media.filename,
@@ -214,6 +227,65 @@ function source(products: AdminProductDetail[]): MemberCatalogProjectionInput {
 }
 
 describe("member catalog projection", () => {
+  it("shares exact primary delivery identity across card and detail without changing commerce", () => {
+    const input = source([product()]);
+    const card = projectMemberCatalog(input).items[0];
+    const detail = projectMemberProductDetail(input, "product-a")!;
+    expect(card.media).toEqual(detail.media);
+    expect(card.media).toMatchObject({ mediaId: "product-a-media", variantId: "product-a-variant",
+      contentSha256: "a".repeat(64), width: 1024, height: 1024 });
+    const absent = { ...input, source: { ...input.source, mediaPresentations: [] } };
+    const noImage = projectMemberCatalog(absent).items[0];
+    expect({ ...noImage, media: null }).toEqual({ ...card, media: null });
+  });
+
+  it("does not change the default variant to rescue a second-variant image", () => {
+    const p = product();
+    p.variants.push({ ...p.variants[0], id: "variant-b", sku: "VARIANT-B", label: "Second variant", sortOrder: 2 });
+    const baseline = projectMemberProductDetail(source([p]), "product-a")!;
+    p.media[0] = { ...p.media[0], variantId: "variant-b" };
+    const input = source([p]);
+    const card = projectMemberCatalog(input).items[0];
+    const detail = projectMemberProductDetail(input, "product-a")!;
+    expect(card.media).toBeNull();
+    expect(detail.media).toBeNull();
+    expect(detail.variants[0].id).toBe("product-a-variant");
+    expect({ ...detail, media: null }).toEqual({ ...baseline, media: null });
+  });
+
+  it("does not rescue a malformed approved-primary or presentation duplicate", () => {
+    const p = product();
+    const mixed = { ...p, media: [...p.media, { ...p.media[0], id: "duplicate", width: null }] };
+    expect(projectMemberCatalog(source([mixed])).items[0].media).toBeNull();
+    const input = source([p]);
+    input.source.mediaPresentations = [...input.source.mediaPresentations,
+      { ...input.source.mediaPresentations[0], contentSha256: "bad" }];
+    expect(projectMemberCatalog(input).items[0].media).toBeNull();
+  });
+
+  it("withholds images for variants hidden from the member surface", () => {
+    const p = product();
+    for (const hidden of [
+      { ...p, variants: p.variants.map((variant) => ({ ...variant, memberEligible: false })) },
+      { ...p, lane: "future_clinical" as const },
+      { ...p, lane: "non_product_program" as const },
+    ]) {
+      const result = projectMemberCatalog(source([hidden]));
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0].media).toBeNull();
+    }
+  });
+
+  it("rejects width, height, hash and exact-variant mismatches without changing product truth", () => {
+    const baseline = projectMemberCatalog(source([product()])).items[0];
+    for (const change of [{ width: 512 }, { height: 768 }, { contentSha256: "bad" },
+      { variantId: "foreign-variant" }, { illustrative: null }, { altText: "x".repeat(501) }]) {
+      const p = product(); p.media[0] = { ...p.media[0], ...change };
+      const result = projectMemberCatalog(source([p])).items[0];
+      expect(result.media).toBeNull();
+      expect({ ...result, media: null }).toEqual({ ...baseline, media: null });
+    }
+  });
   it("projects only public Product Control facts through exact readiness and cart seams", () => {
     const result = projectMemberCatalog(source([product()]));
     expect(result).toMatchObject({
@@ -292,7 +364,9 @@ describe("member catalog projection", () => {
 
   it("renders canonical failures truthfully without exposing technical required-input keys", () => {
     const input = source([product()]);
-    input.requiredInputs = input.requiredInputs.slice(1);
+    input.requiredInputs = input.requiredInputs.filter(
+      ({ key }) => key !== "products.family",
+    );
     const result = projectMemberCatalog(input);
     expect(result.items).toEqual([]);
     expect(JSON.stringify(result)).not.toContain("PRODUCT-A-SKU");
@@ -300,7 +374,7 @@ describe("member catalog projection", () => {
     expect(JSON.stringify(result)).not.toContain("product_content.primary_image");
   });
 
-  it("suppresses each required-input-backed field before member projection", () => {
+  it("suppresses each commerce-required field before member projection", () => {
     const unresolvedStates = [
       "missing",
       "rejected",
@@ -328,23 +402,6 @@ describe("member catalog projection", () => {
         expect(skuDetail?.variants).toEqual([]);
       }
       expect(JSON.stringify(skuDetail)).not.toContain("PRODUCT-A-SKU");
-
-      const image = source([product()]);
-      image.requiredInputs = image.requiredInputs.map((item) =>
-        item.key === "product_content.primary_image"
-          ? { ...item, currentState: state }
-          : item,
-      );
-      if (state === "superseded") {
-        expect(projectMemberProductDetail(image, "product-a")).toBeNull();
-      } else {
-        expect(
-          projectMemberProductDetail(image, "product-a")?.media,
-        ).toBeNull();
-      }
-      expect(JSON.stringify(projectMemberCatalog(image))).not.toContain(
-        "product-a-media",
-      );
 
       const storage = source([product()]);
       storage.requiredInputs = storage.requiredInputs.map((item) =>
@@ -466,7 +523,98 @@ describe("member catalog projection", () => {
     });
   });
 
-  it("rejects unsafe or mismatched media presentations", () => {
+  it("keeps catalog facts and real holds invariant across unusable media", () => {
+    const base = source([product()]);
+    const baseline = projectMemberProductDetail(base, "product-a")!;
+    const expected = { ...baseline, media: null };
+    const baseMedia = base.products[0].media[0];
+    const cases: MemberCatalogProjectionInput[] = [];
+    for (const media of [
+      undefined,
+      null,
+      3,
+      {},
+      [],
+      [null],
+      [undefined],
+      [{}],
+      [{ ...baseMedia, id: null }],
+      [{ ...baseMedia, altText: null }],
+      [{ ...baseMedia, filename: 42 }],
+      [{ ...baseMedia, approvedBy: {} }],
+      [{ ...baseMedia, state: "rejected" }],
+      [{ ...baseMedia, state: "pending_upload" }],
+      [baseMedia, { ...baseMedia, id: "ambiguous-media" }],
+    ]) {
+      const input = source([product()]);
+      input.products[0].media = media as unknown as AdminProductDetail["media"];
+      cases.push(input);
+    }
+    const basePresentation = base.source.mediaPresentations[0];
+    for (const presentations of [
+      undefined,
+      null,
+      {},
+      [],
+      [null],
+      [{}],
+      [{ ...basePresentation, altText: null }],
+      [{ ...basePresentation, sourceVersion: null }],
+      [{ ...basePresentation, href: {} }],
+      [{ ...basePresentation, href: "https://tracking.example.com/object" }],
+      [basePresentation, basePresentation],
+    ]) {
+      const input = source([product()]);
+      input.source.mediaPresentations = presentations as unknown as
+        MemberCatalogProjectionSource["mediaPresentations"];
+      cases.push(input);
+    }
+    for (const input of cases) {
+      expect(projectMemberProductDetail(input, "product-a")).toEqual(expected);
+      const catalog = projectMemberCatalog(input);
+      expect(catalog.items).toHaveLength(1);
+      expect(catalog.items[0]).toMatchObject({
+        id: "product-a",
+        media: null,
+        price: baseline.price,
+        displayState: baseline.displayState,
+      });
+      expect(catalog.items[0].displayState).not.toBe("documentation_pending");
+    }
+  });
+
+  it("ignores absent, malformed, duplicate and unresolved legacy image inputs", () => {
+    const baseline = projectMemberProductDetail(source([product()]), "product-a");
+    for (const currentState of [
+      "verified", "missing", "rejected", "expired", "superseded",
+    ] as const) {
+      const input = source([product()]);
+      input.requiredInputs = [
+        ...input.requiredInputs,
+        { ...legacyImageInput("product-a"), currentState },
+      ];
+      expect(projectMemberProductDetail(input, "product-a")).toEqual(baseline);
+    }
+    const input = source([product()]);
+    input.requiredInputs = [
+      ...input.requiredInputs,
+      legacyImageInput("product-a"),
+      {
+        ...legacyImageInput("product-a"),
+        id: "duplicate-legacy-image",
+        domain: "malformed-domain",
+        recordType: "malformed-record-type",
+        version: 0,
+      },
+    ];
+    expect(projectMemberProductDetail(input, "product-a")).toEqual(baseline);
+    input.requiredInputs = input.requiredInputs.filter(
+      ({ key }) => key !== "products.family",
+    );
+    expect(projectMemberProductDetail(input, "product-a")).toBeNull();
+  });
+
+  it("rejects unsafe or mismatched media presentations without changing product state", () => {
     const input = source([product()]);
     input.source.mediaPresentations = [
       {
@@ -477,7 +625,7 @@ describe("member catalog projection", () => {
     expect(projectMemberCatalog(input).items[0]).toMatchObject({
       media: null,
       selection: null,
-      displayState: "documentation_pending",
+      displayState: "unavailable",
     });
 
     for (const href of [
@@ -497,7 +645,7 @@ describe("member catalog projection", () => {
     staleSigned.source.mediaPresentations = [
       {
         ...staleSigned.source.mediaPresentations[0],
-        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/product-a-media/product-a.webp?token=header.payload.signature",
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media-production/product-a/product-a-media/product-a.webp?token=header.payload.signature",
         policy: "xenios_signed_storage_v1",
         expiresAt: "2026-07-26T21:59:59+00:00",
       },
@@ -508,7 +656,7 @@ describe("member catalog projection", () => {
     unknownSignedQuery.source.mediaPresentations = [
       {
         ...unknownSignedQuery.source.mediaPresentations[0],
-        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/product-a-media/product-a.webp?token=header.payload.signature&download=1",
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media-production/product-a/product-a-media/product-a.webp?token=header.payload.signature&download=1",
         policy: "xenios_signed_storage_v1",
         expiresAt: "2026-07-26T22:05:00+00:00",
       },
@@ -523,7 +671,7 @@ describe("member catalog projection", () => {
       overlongSigned.source.mediaPresentations = [
         {
           ...overlongSigned.source.mediaPresentations[0],
-          href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/product-a-media/product-a.webp?token=header.payload.signature",
+          href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media-production/product-a/product-a-media/product-a.webp?token=header.payload.signature",
           policy: "xenios_signed_storage_v1",
           expiresAt,
         },
@@ -533,9 +681,10 @@ describe("member catalog projection", () => {
 
     for (const path of [
       "private-coa/product-a/product-a-media/product-a.webp",
-      "research-product-media/product-b/product-a-media/product-a.webp",
-      "research-product-media/product-a/other-media/product-a.webp",
-      "research-product-media/product-a/product-a-media/%2e%2e%2fproduct-a.webp",
+      "research-product-media/product-a/product-a-media/product-a.webp",
+      "research-product-media-production/product-b/product-a-media/product-a.webp",
+      "research-product-media-production/product-a/other-media/product-a.webp",
+      "research-product-media-production/product-a/product-a-media/%2e%2e%2fproduct-a.webp",
     ]) {
       const wrongObject = source([product()]);
       wrongObject.source.mediaPresentations = [
@@ -553,7 +702,7 @@ describe("member catalog projection", () => {
     validSigned.source.mediaPresentations = [
       {
         ...validSigned.source.mediaPresentations[0],
-        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media/product-a/product-a-media/product-a.webp?token=header.payload.signature",
+        href: "https://yvzeduaxbwgcwllhywff.supabase.co/storage/v1/object/sign/research-product-media-production/product-a/product-a-media/product-a.webp?token=header.payload.signature",
         policy: "xenios_signed_storage_v1",
         expiresAt: "2026-07-26T22:05:00+00:00",
       },

@@ -12,8 +12,8 @@
   min-height: 44px;
   padding: 8px 12px;
 }
-.catalog-priority-filters button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.catalog-priority-filters .catalog-priority-filter-active { background: var(--ink); border-color: var(--ink); color: #fff; }
+.catalog-priority-filters button:focus-visible { outline: 3px solid var(--pulse); outline-offset: 2px; }
+.catalog-priority-filters .catalog-priority-filter-active { background: var(--pulse); border-color: var(--pulse); color: #fff; }
 .catalog-priority-grid { display: grid; gap: 14px; grid-template-columns: repeat(3, minmax(0, 1fr)); list-style: none; margin: 20px 0 0; padding: 0; }
 .catalog-priority-card { align-content: start; display: grid; gap: 13px; }
 .catalog-priority-card > * { min-width: 0; }

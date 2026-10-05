@@ -106,9 +106,9 @@ export default function Navbar() {
     <>
       <header ref={headerRef} className="clarity-nav" data-testid="nav-main">
         <div className="container-x clarity-nav-inner">
-          <Link href="/" aria-label={`${BRAND.publicName} home`} className="clarity-brand-link">
+          <Link href="/" aria-label={`${BRAND.healthDisplayName} home`} className="clarity-brand-link">
             <span className="wordmark-mark" aria-hidden="true" />
-            <span className="clarity-brand-name">{BRAND.publicName}</span>
+            <span className="clarity-brand-name">{BRAND.healthDisplayName}</span>
           </Link>
           <nav className="clarity-desktop-nav" aria-label="Primary">
             {PRIMARY.map((item) => <PrimaryNavItem key={item.href} item={item} current={location} openMenu={audienceMenu} setOpenMenu={(value) => { setOpen(false); setAudienceMenu(value); }} />)}
@@ -135,7 +135,7 @@ export default function Navbar() {
         <div id={OVERLAY_ID} className="clarity-nav-overlay" role="dialog" aria-modal="true" aria-label="Site navigation" onMouseDown={(event) => { if (event.target === event.currentTarget) setOpen(false); }}>
           <div ref={panelRef} className="clarity-nav-panel">
             <div className="clarity-nav-panel-head">
-              <span className="clarity-brand-name">{BRAND.publicName}</span>
+              <span className="clarity-brand-name">{BRAND.healthDisplayName}</span>
               <button ref={closeRef} type="button" onClick={() => setOpen(false)} className="clarity-menu-button" aria-label="Close menu">Close</button>
             </div>
             <p className="mono-cap text-pulse mt-8">CHOOSE A PATH</p>

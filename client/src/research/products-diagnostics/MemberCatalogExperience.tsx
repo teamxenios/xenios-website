@@ -7,6 +7,7 @@ import type {
   MemberCatalogSort,
 } from "@shared/research/member-catalog";
 import { ResearchMemberShell } from "../ui/shells";
+import { ProductMedia } from "../ui/ProductMedia";
 import {
   ResearchEmptyState,
   ResearchRouteBoundary,
@@ -113,22 +114,7 @@ function CatalogCard({ product }: { product: MemberCatalogCard }) {
       data-testid={`member-catalog-card-${product.id}`}
       style={{ minWidth: 0, overflowWrap: "anywhere" }}
     >
-      {product.media && (
-        <img
-          src={product.media.href}
-          alt={product.media.altText}
-          width={4}
-          height={3}
-          loading="lazy"
-          decoding="async"
-          className="w-full"
-          style={{
-            aspectRatio: "4 / 3",
-            objectFit: "contain",
-            borderBottom: "1px solid var(--rule)",
-          }}
-        />
-      )}
+      <ProductMedia media={product.media} productId={product.id} />
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div style={{ minWidth: 0 }}>
           <p className="mono-label text-ink-mute">{laneLabel(product.lane)}</p>

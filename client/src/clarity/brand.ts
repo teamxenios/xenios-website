@@ -1,5 +1,6 @@
 export const BRAND = {
   publicName: "Xenios",
+  healthDisplayName: "Xenios Health",
   legalName: "Xenios Technologies, Inc.",
   siteUrl: "https://xeniostechnology.com",
   supportEmail: "team@xeniostechnology.com",

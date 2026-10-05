@@ -267,25 +267,6 @@ describe("live Product Control member readers", () => {
         ],
       }),
       detail({
-        media: [
-          {
-            id: "media-a",
-            productId: "product-a",
-            kind: "primary_image",
-            state: "approved",
-            storageKey: "product-a/media-a/product-a.webp",
-            filename: "product-a.webp",
-            contentType: "image/webp",
-            sizeBytes: 100,
-            altText: "Changed media",
-            sortOrder: 0,
-            approvedBy: "reviewer",
-            createdAt: AT,
-            updatedAt: AT,
-          },
-        ],
-      }),
-      detail({
         content: {
           ...detail().content,
           overview: "Changed content",
@@ -298,6 +279,77 @@ describe("live Product Control member readers", () => {
           .fn()
           .mockResolvedValueOnce(detail())
           .mockResolvedValueOnce(changed),
+      };
+      await expect(
+        new LiveProductControlReader(repository).readCatalog(),
+      ).resolves.toEqual([]);
+    }
+  });
+
+  it("retains stable products when only media changes or is malformed", async () => {
+    for (const media of [
+      undefined,
+      null,
+      {},
+      [],
+      [null],
+      [{ id: null }, { id: "media-b" }],
+      [{
+        id: "media-a",
+        productId: "product-a",
+        kind: "primary_image",
+        state: "approved",
+        storageKey: "product-a/media-a/product-a.webp",
+        filename: "product-a.webp",
+        contentType: "image/webp",
+        sizeBytes: 100,
+        altText: "Changed media",
+        sortOrder: 0,
+        approvedBy: "reviewer",
+        createdAt: AT,
+        updatedAt: AT,
+      }],
+    ]) {
+      const changed = detail({ media: media as AdminProductDetail["media"] });
+      const perProductRepository = () => ({
+        list: vi.fn(async () => [summary()]),
+        get: vi.fn().mockResolvedValueOnce(detail()).mockResolvedValueOnce(changed),
+      });
+      await expect(
+        new LiveProductControlReader(perProductRepository()).readCatalog(),
+      ).resolves.toEqual([changed]);
+      await expect(
+        new LiveProductControlReader(perProductRepository()).readDetail("product-a"),
+      ).resolves.toEqual(changed);
+      const bulkRepository = {
+        list: vi.fn(async () => []),
+        get: vi.fn(async () => null),
+        listDetails: vi.fn()
+          .mockResolvedValueOnce([detail()])
+          .mockResolvedValueOnce([changed]),
+      };
+      await expect(
+        new LiveProductControlReader(bulkRepository).readCatalog(),
+      ).resolves.toEqual([changed]);
+      expect(bulkRepository.get).not.toHaveBeenCalled();
+    }
+  });
+
+  it("keeps parent authority and child commerce drift closed on the bulk path", async () => {
+    for (const changed of [
+      detail({ updatedAt: "2026-07-26T22:00:00.000001+00:00" }),
+      detail({ commerceApproval: "blocked_pending_written_approval" }),
+      detail({ visibility: "hidden" }),
+      detail({ content: { ...detail().content, storageInformation: "Changed storage" } }),
+      detail({ prices: [{ id: "changed-price" }] as AdminProductDetail["prices"] }),
+      detail({ variants: [{ id: "changed-variant" }] as AdminProductDetail["variants"] }),
+    ]) {
+      const repository = {
+        list: vi.fn(async () => []),
+        get: vi.fn(async () => null),
+        listDetails: vi.fn()
+          .mockResolvedValueOnce([detail()])
+          .mockResolvedValueOnce([changed]),
       };
       await expect(
         new LiveProductControlReader(repository).readCatalog(),

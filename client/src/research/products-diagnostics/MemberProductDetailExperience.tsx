@@ -7,6 +7,7 @@ import type {
 } from "@shared/research/member-catalog";
 import { getProductEducationProfile } from "../content/productEducation";
 import { ResearchMemberShell } from "../ui/shells";
+import { ProductMedia } from "../ui/ProductMedia";
 import {
   ResearchEmptyState,
   ResearchPendingPanel,
@@ -164,22 +165,8 @@ export function MemberProductDetailExperience({
           <>
             <section className="card grid gap-6 md:grid-cols-2">
               <div style={{ minWidth: 0 }}>
-                {product.media ? (
-                  <img
-                    src={product.media.href}
-                    alt={product.media.altText}
-                    width={4}
-                    height={3}
-                    decoding="async"
-                    className="w-full"
-                    style={{ aspectRatio: "4 / 3", objectFit: "contain" }}
-                  />
-                ) : (
-                  <ResearchPendingPanel
-                    kind="supplier_pending"
-                    body="An approved product image is not available."
-                  />
-                )}
+                <ProductMedia media={product.media} productId={product.id}
+                  variantId={selected?.id ?? null} loading="eager" />
               </div>
               <div className="grid content-start gap-4" style={{ minWidth: 0 }}>
                 <p className="mono-label text-ink-mute">{product.classification}</p>

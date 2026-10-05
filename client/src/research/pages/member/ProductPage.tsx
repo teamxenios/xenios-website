@@ -8,6 +8,7 @@ import {
   MemberProductDetailExperience,
 } from "../../products-diagnostics/MemberProductDetailExperience";
 import type { MemberCatalogSurfaceState } from "../../products-diagnostics/MemberCatalogExperience";
+import { ProductSubscriptionCreate } from "../../product-subscriptions/ProductSubscriptionCreate";
 
 export default function ProductPage() {
   const { slug = "" } = useParams<{ slug: string }>();
@@ -63,11 +64,21 @@ export default function ProductPage() {
   }, [load]);
 
   return (
+    <>
     <MemberProductDetailExperience
       product={product}
       state={state}
       errorMessage={errorMessage}
       onRetry={() => void load()}
     />
+    {state === "ok" && product?.researchOnlyBoundary && (
+      <div className="research-app container-x pb-8">
+        {/* MemberProductDetail has no subscription offer/current price-version
+            projection. A cart selection or visible price cannot supply it.
+            Keep the mount unavailable until canonical offer authority exists. */}
+        <ProductSubscriptionCreate memberToken={memberToken} product={null} commerceEnabled={false} />
+      </div>
+    )}
+    </>
   );
 }

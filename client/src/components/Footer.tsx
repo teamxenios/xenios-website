@@ -17,7 +17,7 @@ export default function Footer() {
       <div className="container-x">
         <div className="clarity-footer-top">
           <div className="clarity-footer-brand">
-            <Link href="/" className="clarity-brand-link" aria-label={`${BRAND.publicName} home`}><span className="wordmark-mark" aria-hidden="true" /><span className="clarity-brand-name">{BRAND.publicName}</span></Link>
+            <Link href="/" className="clarity-brand-link" aria-label={`${BRAND.healthDisplayName} home`}><span className="wordmark-mark" aria-hidden="true" /><span className="clarity-brand-name">{BRAND.healthDisplayName}</span></Link>
             <p className="body-m text-ink-2">Care, research products and tools for the professionals who support people's health.</p>
             <a href={`mailto:${BRAND.supportEmail}`} className="clarity-footer-link">{BRAND.supportEmail}</a>
           </div>

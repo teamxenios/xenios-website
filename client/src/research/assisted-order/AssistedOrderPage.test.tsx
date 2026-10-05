@@ -267,6 +267,25 @@ afterEach(() => {
 });
 
 describe("AssistedOrderPage", () => {
+  it("reserves neutral media on every catalog workflow while preserving restrictive actions", async () => {
+    const items = [directRuoItem, careItem,
+      { ...directRuoItem, variantId: "quote", workflowMode: "request_pricing" as const, actionLabel: "Request pricing", unitPriceCents: null },
+      { ...directRuoItem, variantId: "held", workflowMode: "availability_review" as const, actionLabel: "Unavailable" }];
+    api.loadAssistedOrderCatalog.mockResolvedValue(catalogPage(items));
+    render(); await settle();
+    for (const item of items) {
+      const card = byTestId(`order-card-${item.variantId}`)!;
+      expect(card.querySelector(".xenios-product-media__square")?.textContent).toBe("An approved product image is not available.");
+      expect(card.querySelector("img, [role=img]")).toBeNull();
+    }
+    const care = byTestId(`order-card-${careItem.variantId}`)!;
+    expect(care.querySelector('a[href="/care"]')?.textContent).toBe(careItem.actionLabel);
+    expect(care.querySelector("button, input")).toBeNull();
+    expect(byTestId("order-card-held")?.querySelector("button, input")).toBeNull();
+    expect(byTestId(`order-card-${directRuoItem.variantId}`)?.textContent).toContain("$25.00");
+    expect(byTestId("order-card-quote")?.textContent).not.toContain("$0.00");
+    expect(api.submitAssistedOrder).not.toHaveBeenCalled();
+  });
   it("offers native product details before adding a catalog variant", async () => {
     render();
     await settle();
