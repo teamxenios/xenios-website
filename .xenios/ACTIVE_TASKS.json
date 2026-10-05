@@ -6,7 +6,7 @@
       "id": "HEALTH-QUICK-ORDER-20261005",
       "title": "Implement isolated Health Quick Order intake over canonical assisted requests",
       "priority": "P1",
-      "state": "blocked_external",
+      "state": "claimed",
       "owner": "codex-health-quick-order-20261005",
       "baseSha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
       "paths": [
@@ -15,10 +15,12 @@
         "shared/health/quick-order/**",
         "docs/health-launch/quick-order-20261005/**",
         ".xenios/sessions/codex-health-quick-order-20261005.json",
-        ".xenios/handoffs/quick-order-20261005-handoff.md"
+        ".xenios/handoffs/quick-order-20261005-handoff.md",
+        "client/src/research/quick-order/**",
+        "server/research/health/quick-order/**"
       ],
       "dependsOn": [],
-      "scopeNote": "Sole isolated Quick Order owner, accepted756a906 base; new modules and exact proposals only. Source incomplete/intake disabled. Lease reserved for the same builder pending current source decisions; no protected targets/schema/managed actions authorized or applied. Other branch-local fleet records preserved.",
+      "scopeNote": "Same builder relocation repair under original implementation authority and coordinator dispatch8aa3f83: move existing22 files into Research zones, necessary path updates, regenerate proposal only. Old paths retained for removal. No protected/schema/manifest or hosted edits.",
       "claimedAt": "2026-10-05T19:13:42.715Z",
       "sourceSha": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
       "sourceTree": "3fb70d98dc354e6a6049744b5bb15b741d5ba50b",

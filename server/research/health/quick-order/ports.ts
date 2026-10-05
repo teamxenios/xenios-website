@@ -1,5 +1,5 @@
 import type { IncomingMessage } from "node:http";
-import type { AssistedOrderViewer } from "../../research/assisted-order/ports";
+import type { AssistedOrderViewer } from "../../assisted-order/ports";
 import type { QuickOrderCatalogItem } from "./catalog";
 
 /** Package v0.1 contract, narrowed to canonical request authority. No browser identity. */

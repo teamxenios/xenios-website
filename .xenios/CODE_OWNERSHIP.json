@@ -3598,12 +3598,14 @@
         "shared/health/quick-order/**",
         "docs/health-launch/quick-order-20261005/**",
         ".xenios/sessions/codex-health-quick-order-20261005.json",
-        ".xenios/handoffs/quick-order-20261005-handoff.md"
+        ".xenios/handoffs/quick-order-20261005-handoff.md",
+        "client/src/research/quick-order/**",
+        "server/research/health/quick-order/**"
       ],
       "state": "active",
       "claimedAt": "2026-10-05T19:13:42.719Z",
-      "heartbeatAt": "2026-10-05T19:47:37.357Z",
-      "note": "Reserved for the same builder while awaiting exact source authority; session blocked_external, not actively running a qualification process."
+      "heartbeatAt": "2026-10-05T20:23:08.996Z",
+      "note": "Active same-builder relocation only; destination collisions checked."
     }
   ],
   "rules": [

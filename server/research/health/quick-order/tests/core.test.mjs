@@ -92,7 +92,7 @@ test('published agreement requirements are exact and required authority cannot d
 });
 
 test('form acknowledgments match canonical source bytes and remain separate from legal publication', () => {
-  const source = readFileSync(new URL('../../../../shared/research/assisted-order/form.ts', import.meta.url), 'utf8');
+  const source = readFileSync(new URL('../../../../../shared/research/assisted-order/form.ts', import.meta.url), 'utf8');
   for (const agreement of AGREEMENTS.filter(item => item.type === 'form_acknowledgment')) {
     assert.ok(source.includes(`copy: "${agreement.label}"`));
     assert.ok(source.includes(`copyHash: "${agreement.version}"`));

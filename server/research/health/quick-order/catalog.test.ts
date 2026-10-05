@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import type { AssistedOrderCatalogItem, AssistedOrderCatalogQuery } from "../../../shared/research/assisted-order/contract";
-import type { MasterOfferingPriceView } from "../../../shared/research/master-offerings/pricing-contract";
-import type { AssistedOrderViewer } from "../../research/assisted-order/ports";
-import { createAssistedOrderMasterCatalogCallbacks, type AssistedOrderMasterCatalogService } from "../../research/assisted-order/production-catalog";
-import type { NormalizedMasterOffering } from "../../research/master-offerings/model";
+import type { AssistedOrderCatalogItem, AssistedOrderCatalogQuery } from "../../../../shared/research/assisted-order/contract";
+import type { MasterOfferingPriceView } from "../../../../shared/research/master-offerings/pricing-contract";
+import type { AssistedOrderViewer } from "../../assisted-order/ports";
+import { createAssistedOrderMasterCatalogCallbacks, type AssistedOrderMasterCatalogService } from "../../assisted-order/production-catalog";
+import type { NormalizedMasterOffering } from "../../master-offerings/model";
 import { createQuickOrderCanonicalCatalog, projectQuickOrderCanonicalCatalogItem, QuickOrderCatalogUnavailable, type QuickOrderCanonicalCatalogDependencies } from "./catalog";
 
 const viewer: AssistedOrderViewer = {

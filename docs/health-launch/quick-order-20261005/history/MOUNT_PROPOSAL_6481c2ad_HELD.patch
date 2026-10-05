@@ -5,7 +5,7 @@ diff --git a/client/src/App.tsx b/client/src/App.tsx
  // Research operations (Samuel admin presentation) — its own lazy chunk at
  // /admin/research*. Presentation only; all authority is server-side.
  const AdminResearchSection = lazy(() => import("@/research/adminx-section"));
-+const QuickOrderPage = lazy(() => import("@/research/quick-order/QuickOrderPage"));
++const QuickOrderPage = lazy(() => import("@/quick-order/QuickOrderPage"));
  const CareSection = lazy(() => import("@/care/section"));
  const CareEligibility = lazy(() => import("@/care/EligibilityPendingPage"));
  const CareConsent = lazy(() => import("@/care/CareConsentPendingPage"));
@@ -94,7 +94,7 @@ diff --git a/server/index.ts b/server/index.ts
  import helmet from "helmet";
  import { createProxyMiddleware } from "http-proxy-middleware";
  import { registerRoutes } from "./routes";
-+import { createQuickOrderContainment } from "./research/health/quick-order/containment";
++import { createQuickOrderContainment } from "./health/quick-order/containment";
  import {
    registerLegacyResearchOrderContainment,
    researchPageGate,

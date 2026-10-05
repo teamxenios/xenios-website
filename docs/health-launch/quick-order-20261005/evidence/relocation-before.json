@@ -1,0 +1,167 @@
+{
+  "at": "2026-10-05T20:23:08.996Z",
+  "head": "b353092ad9e49f28a65451d188c636079e1df091",
+  "source": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
+  "authorityDispatch": "8aa3f8398815f81200eb43ecb942e141dc4441da",
+  "leaseId": "17093695-69b5-4cc0-8b29-aedb82bf6409",
+  "paths": [
+    "client/src/quick-order/**",
+    "server/health/quick-order/**",
+    "shared/health/quick-order/**",
+    "docs/health-launch/quick-order-20261005/**",
+    ".xenios/sessions/codex-health-quick-order-20261005.json",
+    ".xenios/handoffs/quick-order-20261005-handoff.md",
+    "client/src/research/quick-order/**",
+    "server/research/health/quick-order/**"
+  ],
+  "ownershipObservations": [
+    {
+      "worktree": "389a",
+      "available": true,
+      "sha256lf": "3752ae00364c89622d72fd2230d9a98cb63293034de5eebc7c7c77fe4366bf8b",
+      "conflicts": []
+    },
+    {
+      "worktree": "b22f",
+      "available": true,
+      "sha256lf": "2565b3cd1f188c08d804d6f924c70c77f38e9875bb3f92e89e26e07cc3f61095",
+      "conflicts": []
+    },
+    {
+      "worktree": "3221",
+      "available": true,
+      "sha256lf": "08d87385a04f495f4a7f77a635a1f53fb2f70f0864297f8452c8657b50ab371f",
+      "conflicts": []
+    },
+    {
+      "worktree": "2227",
+      "available": true,
+      "sha256lf": "b9cbeb40fd0cf1b278286b09548bcb0166eccbf8819bab02f4b4279183186b1f",
+      "conflicts": []
+    },
+    {
+      "worktree": "5b21",
+      "available": true,
+      "sha256lf": "6c76a36e4bfbff5ba741b83272c2d783611c9f1b5afb8ab8ebd6b27e672dc45a",
+      "conflicts": []
+    },
+    {
+      "worktree": "c502",
+      "available": true,
+      "sha256lf": "47ad2e33abdd4b12fd035cf5526a078d7c740c088abac8c0d8e9f81ffb3c8ad0",
+      "conflicts": []
+    }
+  ],
+  "inventory": [
+    {
+      "oldPath": "client/src/quick-order/OperatorDeclarations.test.tsx",
+      "newPath": "client/src/research/quick-order/OperatorDeclarations.test.tsx",
+      "beforeSha256lf": "0b379d4cdfa041895b6ffe1de795f4986caef81cfe3269879cd8aa6e8acba505"
+    },
+    {
+      "oldPath": "client/src/quick-order/OperatorDeclarations.tsx",
+      "newPath": "client/src/research/quick-order/OperatorDeclarations.tsx",
+      "beforeSha256lf": "00bdf0d0d827960b851542a47d85f2db061d0a22b076ba78c95e54f64fc0c9da"
+    },
+    {
+      "oldPath": "client/src/quick-order/QuickOrderPage.test.tsx",
+      "newPath": "client/src/research/quick-order/QuickOrderPage.test.tsx",
+      "beforeSha256lf": "c06c8af1e5d03c78ec706c6443c21a9ce57088de63e5c0675c2f67d5f002681e"
+    },
+    {
+      "oldPath": "client/src/quick-order/QuickOrderPage.tsx",
+      "newPath": "client/src/research/quick-order/QuickOrderPage.tsx",
+      "beforeSha256lf": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b"
+    },
+    {
+      "oldPath": "client/src/quick-order/contracts.test.ts",
+      "newPath": "client/src/research/quick-order/contracts.test.ts",
+      "beforeSha256lf": "41acfb403839870c8095a16216babc4ea0222b5e1b80ec15b4e8b31520078c14"
+    },
+    {
+      "oldPath": "client/src/quick-order/contracts.ts",
+      "newPath": "client/src/research/quick-order/contracts.ts",
+      "beforeSha256lf": "51c91843c6a9f2dbad9133c09986c7754ee2f467c3889d8877e40d7979526861"
+    },
+    {
+      "oldPath": "client/src/quick-order/quick-order.css",
+      "newPath": "client/src/research/quick-order/quick-order.css",
+      "beforeSha256lf": "1cc94da50f0a8235caee34743b74c5854a2a4cf2df7a63545e5fdcd8c3f02fd9"
+    },
+    {
+      "oldPath": "server/health/quick-order/catalog.test.ts",
+      "newPath": "server/research/health/quick-order/catalog.test.ts",
+      "beforeSha256lf": "3add4edf5d596449e51e6678c38ac17cc7d94adc3e6ba1ffbfc3780b29e173f7"
+    },
+    {
+      "oldPath": "server/health/quick-order/catalog.ts",
+      "newPath": "server/research/health/quick-order/catalog.ts",
+      "beforeSha256lf": "1144627bfe5c6ecea1b3a66e0249cc9d0028ceb8afe9e05156a2440536c8ead0"
+    },
+    {
+      "oldPath": "server/health/quick-order/containment.test.ts",
+      "newPath": "server/research/health/quick-order/containment.test.ts",
+      "beforeSha256lf": "6dbcbd18af43b6cfa683d371444f728fa7fea93b1494895b221ceeb3449a7c0e"
+    },
+    {
+      "oldPath": "server/health/quick-order/containment.ts",
+      "newPath": "server/research/health/quick-order/containment.ts",
+      "beforeSha256lf": "a8e253d2f59b701b5ce96116eacf58269d012ad2002082ab98014e47b1aa526b"
+    },
+    {
+      "oldPath": "server/health/quick-order/core.d.mts",
+      "newPath": "server/research/health/quick-order/core.d.mts",
+      "beforeSha256lf": "d3bca2af4ef290f37db356480cdf4b1f610a17e331910ecb7a2a4f7102f30998"
+    },
+    {
+      "oldPath": "server/health/quick-order/core.mjs",
+      "newPath": "server/research/health/quick-order/core.mjs",
+      "beforeSha256lf": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35"
+    },
+    {
+      "oldPath": "server/health/quick-order/handler.d.mts",
+      "newPath": "server/research/health/quick-order/handler.d.mts",
+      "beforeSha256lf": "b65211ed78cf0bef51079aac7b0c0c72ed996b037558395c61fc573509be4a27"
+    },
+    {
+      "oldPath": "server/health/quick-order/handler.mjs",
+      "newPath": "server/research/health/quick-order/handler.mjs",
+      "beforeSha256lf": "82aa742d8c499e4e5b50c757d62931990ad3a1c7741b68d745df4a53396ea187"
+    },
+    {
+      "oldPath": "server/health/quick-order/legal.ts",
+      "newPath": "server/research/health/quick-order/legal.ts",
+      "beforeSha256lf": "5ef68fe9f1138bb8f112d049ba0a260a3eed647a14c09592176d2803b955916e"
+    },
+    {
+      "oldPath": "server/health/quick-order/ports.ts",
+      "newPath": "server/research/health/quick-order/ports.ts",
+      "beforeSha256lf": "e343a6b853fb5369e4eaf35ce3224142481eebdcb69a10301e45997544dd2226"
+    },
+    {
+      "oldPath": "server/health/quick-order/production.test.ts",
+      "newPath": "server/research/health/quick-order/production.test.ts",
+      "beforeSha256lf": "262051cfa69f19d72f02b798d0d60f6dc525b390c30dbaf02910a9d697b24658"
+    },
+    {
+      "oldPath": "server/health/quick-order/production.ts",
+      "newPath": "server/research/health/quick-order/production.ts",
+      "beforeSha256lf": "8077598012387c4e2e748ffc2fb581deb78aa7466d33855d0281a692da284e8a"
+    },
+    {
+      "oldPath": "server/health/quick-order/tests/core.test.mjs",
+      "newPath": "server/research/health/quick-order/tests/core.test.mjs",
+      "beforeSha256lf": "f35ae3d63608c0726af655776d45825f4db34010ac0fb4d8a54635d3200ab0a0"
+    },
+    {
+      "oldPath": "server/health/quick-order/tests/fixtures.mjs",
+      "newPath": "server/research/health/quick-order/tests/fixtures.mjs",
+      "beforeSha256lf": "8fc92b273d37adbe2a7f6c973a116959f180beb366f61bf5d588f431bfe8da9c"
+    },
+    {
+      "oldPath": "server/health/quick-order/tests/handler.test.mjs",
+      "newPath": "server/research/health/quick-order/tests/handler.test.mjs",
+      "beforeSha256lf": "5dd56f8622b884cfc8ba2a73a008d6cf4ffdd004a2bf768546b6f75c348d70ce"
+    }
+  ]
+}

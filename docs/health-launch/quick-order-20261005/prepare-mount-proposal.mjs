@@ -7,7 +7,7 @@ const root=process.cwd();
 const dir=path.join(root,'docs/health-launch/quick-order-20261005');
 const proposals=[
  ['client/src/App.tsx',[
-  ['const CareSection = lazy(() => import("@/care/section"));','const QuickOrderPage = lazy(() => import("@/quick-order/QuickOrderPage"));\nconst CareSection = lazy(() => import("@/care/section"));'],
+  ['const CareSection = lazy(() => import("@/care/section"));','const QuickOrderPage = lazy(() => import("@/research/quick-order/QuickOrderPage"));\nconst CareSection = lazy(() => import("@/care/section"));'],
   ['      <Route path="/health"><Redirect to="/" /></Route>','      <Route path="/health/quick-order"><Suspense fallback={<div aria-busy="true" />}><QuickOrderPage sessionKey={null} /></Suspense></Route>\n      <Route path="/health"><Redirect to="/" /></Route>']
  ]],
  ['shared/care/paths.ts',[
@@ -26,7 +26,7 @@ const proposals=[
   ['  for (const path of KNOWN_NOINDEX_EXACT_PATHS) addPrivate(path);','  addPrivate("/health/quick-order");\n  for (const path of KNOWN_NOINDEX_EXACT_PATHS) addPrivate(path);']
  ]],
  ['server/index.ts',[
-  ['import { registerRoutes } from "./routes";','import { registerRoutes } from "./routes";\nimport { createQuickOrderContainment } from "./health/quick-order/containment";'],
+  ['import { registerRoutes } from "./routes";','import { registerRoutes } from "./routes";\nimport { createQuickOrderContainment } from "./research/health/quick-order/containment";'],
   ['registerLegacyResearchOrderContainment(app);','registerLegacyResearchOrderContainment(app);\n// Disabled Quick Order terminates before parsing or retaining customer bodies.\napp.use(createQuickOrderContainment());']
  ]],
 ];

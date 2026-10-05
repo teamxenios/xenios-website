@@ -1,8 +1,14 @@
 # Exact-source qualification: incomplete Quick Order source
 
+The source-location correction and regenerated proposal are described in
+`RELOCATION.md`. Historical evidence below retains its original source bindings;
+no earlier test result is transferred to the relocated successor. Current
+source, new qualification and permission status are recorded there and in the
+latest exact handoff. Original patch6481c2ad is HELD and preserved in `history/`.
+
 ## Containment successor — coordinator finding closed
 
-Current pushed source **`4abd2c5cd4bd039309b32b97b117a67fc6a4d292`**, tree
+Pre-relocation source **`4abd2c5cd4bd039309b32b97b117a67fc6a4d292`**, tree
 `3fb70d98dc354e6a6049744b5bb15b741d5ba50b`. Only `containment.ts` and its focused
 test changed among runtime/test modules; the remaining20 module/test/declaration
 files are unchanged from the original source below. No protected target changed.

@@ -3,10 +3,10 @@
   "tool": "Codex GPT-6 Astra Ultra (task configuration)",
   "lane": "health-quick-order",
   "branch": "codex/xenios-health-quick-order-20261005",
-  "state": "blocked_external",
+  "state": "active",
   "startedAt": "2026-10-05T19:12:50.193Z",
-  "heartbeatAt": "2026-10-05T19:47:37.357Z",
-  "note": "Pushed containment successor4abd2c5; exact-source10 focused tests pass, original3b0048d184-test evidence retained separately. Coordinator path-normalization finding closed; mount patch/hash unchanged. Await protected/schema-source decisions; heavy qualification deferred. Same builder reserved; no managed action.",
+  "heartbeatAt": "2026-10-05T20:23:08.996Z",
+  "note": "Same builder relocation repair under original implementation authority and coordinator dispatch8aa3f83: move existing22 files into Research zones, necessary path updates, regenerate proposal only. Old paths retained for removal. No protected/schema/manifest or hosted edits.",
   "sourceSha": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
   "handoff": ".xenios/handoffs/quick-order-20261005-handoff.md"
 }

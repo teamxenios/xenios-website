@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 import type { Request } from "express";
-import type { AssistedOrderViewer } from "../../research/assisted-order/ports";
+import type { AssistedOrderViewer } from "../../assisted-order/ports";
 import { createQuickOrderProductionPorts, type QuickOrderProductionWiring } from "./production";
 import { quickOrderAgreements } from "./legal";
-import { assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from "../../../shared/research/assisted-order/form";
-import { publishedResearchUsePolicyAgreement } from "../../research/policies-data";
+import { assistedOrderFormPair, requiredAssistedOrderFormAcknowledgments } from "../../../../shared/research/assisted-order/form";
+import { publishedResearchUsePolicyAgreement } from "../../policies-data";
 
-vi.mock("../../research/rate-limit", () => ({ rateLimitHit: vi.fn(async () => true), requestIp: () => "127.0.0.1" }));
+vi.mock("../../rate-limit", () => ({ rateLimitHit: vi.fn(async () => true), requestIp: () => "127.0.0.1" }));
 const viewer: AssistedOrderViewer = {
   actorType: "member", memberId: "member-synthetic", authUserId: "00000000-0000-4000-8000-000000000001",
   earlyAccessSessionHash: null, normalizedEmail: "synthetic@example.test",

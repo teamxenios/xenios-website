@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
-import type { AssistedOrderCatalogItem } from "../../../shared/research/assisted-order/contract";
-import { isMasterOfferingFamily } from "../../../shared/research/master-offerings/contract";
-import { NON_MERCHANDISE_FAMILIES, PROVIDER_PATHWAY_FAMILIES } from "../../../shared/research/master-offerings/pathway-authority";
-import type { AssistedOrderViewer } from "../../research/assisted-order/ports";
-import type { createAssistedOrderMasterCatalogCallbacks } from "../../research/assisted-order/production-catalog";
+import type { AssistedOrderCatalogItem } from "../../../../shared/research/assisted-order/contract";
+import { isMasterOfferingFamily } from "../../../../shared/research/master-offerings/contract";
+import { NON_MERCHANDISE_FAMILIES, PROVIDER_PATHWAY_FAMILIES } from "../../../../shared/research/master-offerings/pathway-authority";
+import type { AssistedOrderViewer } from "../../assisted-order/ports";
+import type { createAssistedOrderMasterCatalogCallbacks } from "../../assisted-order/production-catalog";
 
 const SOURCE_PAGE_SIZE = 100;
 const DEFAULT_MAX_SCAN_PAGES = 500;

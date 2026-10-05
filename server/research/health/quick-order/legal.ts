@@ -1,9 +1,9 @@
 import {
   assistedOrderFormPair,
   requiredAssistedOrderFormAcknowledgments,
-} from "../../../shared/research/assisted-order/form";
-import { policies, publishedResearchUsePolicyAgreement } from "../../research/policies-data";
-import type { AssistedOrderConfigView } from "../../../shared/research/assisted-order/contract";
+} from "../../../../shared/research/assisted-order/form";
+import { policies, publishedResearchUsePolicyAgreement } from "../../policies-data";
+import type { AssistedOrderConfigView } from "../../../../shared/research/assisted-order/contract";
 import type { Agreement } from "./ports";
 
 /** Reads published canonical bytes; never promotes a draft or invents a legal pair.

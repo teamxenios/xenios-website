@@ -6,7 +6,10 @@ at reviewer commit `04cbbee0d3d3ab32dfd6ae9002b82837423f6265`; count-typo correc
 `fffa33a6b3407b407b2b43d3c5a5c7054887f590` changes no disposition. This is not
 release qualification. Do not merge the coordinator branch.
 
-Current pushed incomplete module source: `4abd2c5cd4bd039309b32b97b117a67fc6a4d292`,
+Implementation now resides in `client/src/research/quick-order/` and
+`server/research/health/quick-order/`. See [RELOCATION.md](RELOCATION.md) for the
+path-only P1 correction, successor source/evidence and revised pending proposal.
+Historical pre-relocation module source: `4abd2c5cd4bd039309b32b97b117a67fc6a4d292`,
 tree `3fb70d98dc354e6a6049744b5bb15b741d5ba50b`. Its containment correction passed
 10 focused tests; original `3b0048d`184-test evidence is retained without pooling
 counts or claiming a full successor rerun. See [QUALIFICATION.md](QUALIFICATION.md) for provenance,
@@ -19,7 +22,7 @@ resource-deferred typecheck and missing full-App/durable proof;
 - Session/task: `codex-health-quick-order-20261005` / `HEALTH-QUICK-ORDER-20261005`
 - Assigned model/effort: GPT-6 Astra Ultra (task configuration, not changed by a prompt).
 - Coordinator: `01a103a8-5684-7272-89e5-3c42eefcd593`
-- Initial exact lease: new client/server/shared Quick Order directories, this evidence directory, own session and exact handoff. Other fleet entries remain intact. Integrator release was verified in records `38c723964358c18b8c5090f2f9a0aa92f74601b0`.
+- Exact lease: original module paths retained for removal plus `client/src/research/quick-order/**` and `server/research/health/quick-order/**`, this evidence directory, own session and exact handoff. Zero shared module files. Other fleet entries remain intact. Integrator release was verified in records `38c723964358c18b8c5090f2f9a0aa92f74601b0`.
 
 ## Current port and service map
 

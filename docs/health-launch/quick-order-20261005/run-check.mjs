@@ -8,7 +8,7 @@ const directory=path.resolve('docs/health-launch/quick-order-20261005/evidence')
 const output=path.join(directory,`${label}.log`),receipt=path.join(directory,`${label}.json`);
 if(fs.existsSync(output)||fs.existsSync(receipt))throw Error('Evidence must not be overwritten');
 const git=(...argv)=>spawnSync('git',argv,{encoding:'utf8'}).stdout.trim();
-const sourceFiles=()=>git('ls-files','--','client/src/quick-order','server/health/quick-order').split('\n').filter(Boolean).sort();
+const sourceFiles=()=>git('ls-files','--','client/src/research/quick-order','server/research/health/quick-order').split('\n').filter(Boolean).sort();
 const sources=()=>sourceFiles().map(file=>({path:file,sha256lf:crypto.createHash('sha256').update(fs.readFileSync(file,'utf8').replaceAll('\r\n','\n')).digest('hex')}));
 const state=()=>({head:git('rev-parse','HEAD'),tree:git('rev-parse','HEAD^{tree}'),dirty:git('status','--porcelain','--untracked-files=normal'),sources:sources()});
 const before=state(),start=new Date().toISOString();

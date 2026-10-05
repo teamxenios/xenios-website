@@ -1,10 +1,10 @@
 import { createHash, createHmac } from "node:crypto";
 import type { IncomingMessage } from "node:http";
 import type { Request } from "express";
-import type { AssistedOrderService } from "../../research/assisted-order/service";
-import type { AssistedOrderViewer } from "../../research/assisted-order/ports";
-import type { createAssistedOrderViewerResolvers } from "../../research/assisted-order/express";
-import { rateLimitHit, requestIp } from "../../research/rate-limit";
+import type { AssistedOrderService } from "../../assisted-order/service";
+import type { AssistedOrderViewer } from "../../assisted-order/ports";
+import type { createAssistedOrderViewerResolvers } from "../../assisted-order/express";
+import { rateLimitHit, requestIp } from "../../rate-limit";
 import { quickOrderAgreements } from "./legal";
 import type { createQuickOrderCanonicalCatalog } from "./catalog";
 import type { QuickOrderAssistedOrderExtension, QuickOrderPorts, QuickOrderSession } from "./ports";
