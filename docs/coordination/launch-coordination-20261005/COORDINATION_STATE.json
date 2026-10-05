@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T18:33:40.927Z",
+  "updatedAt": "2026-10-05T18:57:31.169Z",
   "objective": "Automate verified Codex-Claude-ChatGPT handoffs and prepare the gym-owner affiliate and customer product-subscription launch without bypassing release authorities.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -142,22 +142,24 @@
     "cwd": "C:/Users/sboad/.codex/worktrees/b22f/xenios-website",
     "branch": "codex/accepted-source-integration-20261005",
     "base": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
-    "status": "Exact source checkpoint pushed; producer reports clean subscription 401/17 and affected 626/36 passes; typecheck in progress; final evidence/handoff and independent integrated acceptance pending",
+    "status": "Bounded qualification reported complete; producer packaging exact evidence/handoff; integrated independent review not started",
     "request": "docs/coordination/launch-coordination-20261005/INTEGRATION_REQUEST.txt",
     "scope": "accepted source/test/candidate composition and serial qualification only; no Finance runtime or hosted mutation",
     "requestCommit": "561596358cbe5ba6b8d5a5a93f85e7df611b2479",
     "dispatchedAt": "2026-10-05T18:12:35.373Z",
-    "waitCursor": "b092453b-afcc-41d7-ba2e-7bd4bfaef275:12",
+    "waitCursor": "b092453b-afcc-41d7-ba2e-7bd4bfaef275:17",
     "source": "756a906877dbc174b7e228a259d2faa9c3af48ca",
     "tree": "787432948d9464880df1dcfc5dff58eec7d889aa",
     "reportedSourceProof": "12 accepted source/test commits filtered to65paths, all final-byte invariants verified except intentional assisted-order composition preserving both deltas; PS-R5 Response400/403 tests",
     "reportedResources": {
-      "availableMiB": 304,
-      "committedGB": 40.26,
+      "availableMiB": 1452,
+      "previousAvailableMiB": 805,
+      "committedGB": 39.76,
       "commitLimitGB": 60.73,
-      "freeDiskGiB": 27.37,
+      "freeDiskGiB": 27.31,
       "otherNodeTestBuildJobs": false,
-      "note": "RAM/commit values from latest producer update; disk value from preceding source checkpoint. Qualification remains serial."
+      "observedAt": "2026-10-05T18:47:27Z",
+      "note": "Producer precheck; full aggregate explicitly deferred."
     },
     "staticAudit": {
       "artifact": "docs/coordination/launch-coordination-20261005/INTEGRATION_SOURCE_PRESERVATION_AUDIT.txt",
@@ -185,9 +187,53 @@
         "exitCode": 0,
         "wrapperSeconds": 76.855
       },
-      "typecheck": "In progress at checkpoint",
+      "typecheck": "PASS, producer report pending pushed receipt verification",
       "evidenceStatus": "Producer reports; await pushed exact receipts and independent review before closing PS-R1/PS-R5",
-      "fullAggregate": "Not qualified; resource conditions must be reassessed"
-    }
+      "fullAggregate": "DEFERRED_RESOURCE_PRESSURE: available RAM 805 MiB at 18:46:59Z and 1452 MiB at 18:47:27Z; no inference of pass/fail; prior historical failed aggregates retained",
+      "build": "PASS, producer report pending pushed receipt verification",
+      "runtime": "Pinned Node 20.19.0 and npm 10.8.2",
+      "noEmDash": {
+        "sourceForbidden": 0,
+        "buildForbidden": 0,
+        "sourceFiles": 1357,
+        "buildFiles": 228
+      },
+      "routeUniqueness": "PASS, producer counts 462/453",
+      "migrationDag": "PASS, producer count 53",
+      "protection": "FAIL: three accepted Core hash changes still await Samuel; other reported inherited static/seam/default-origin-main mismatches require evidence interpretation",
+      "browser": "Bounded loopback synthetic reads against actual production client, writes refused. Reported overflow zero at actual 1440, 1024, 767, 430, 390, 320 CSS pixels; requested 768 measured 767. Partner return/signed-out denial and unavailable ProductPage passed bounded checks. Exact 768/native 200%/CLS not claimed. Forced-colors DOM plus public screenshot captured.",
+      "browserCleanup": "Interrupted TTY stop exit 1, no graceful-stop event. Producer reports preview PIDs absent and all 349 snapshot assets independently rehashed.",
+      "countingNote": "401 subscription and 626 affected counts overlap and must not be added"
+    },
+    "reviewDraft": "docs/coordination/launch-coordination-20261005/INTEGRATION_REVIEW_REQUEST_DRAFT.txt"
+  },
+  "claudeAcceptanceChain": {
+    "commit": "42d8b6d55370bada976577936275215f4227794f",
+    "branch": "claude/xenios-health-launch-review-20260930",
+    "path": "docs/review/xenios-health-launch-review-20260930/33_ACCEPTANCE_CHAIN_FOR_INTEGRATION_2026-10-05.md",
+    "artifact": "docs/coordination/launch-coordination-20261005/CLAUDE_CONSOLIDATED_ACCEPTANCE_CHAIN.md",
+    "verifiedPushed": true,
+    "scope": "Existing bounded acceptance chain and review checklist; no integrated-source verdict or founder approval"
+  },
+  "quickOrder": {
+    "status": "New request discovered in planning chat; read-only package and existing-session discovery only; no implementation dispatch",
+    "sourceThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
+    "sourceTurn": "2c15c0f1-2e96-4291-b39f-a3e37cc84741",
+    "userRequestSummary": "User asks for a Quick Order build prompt for Codex/Claude while continuing the other launch goal, and says the package is already extracted.",
+    "package": "C:/Users/sboad/Downloads/Xenios_Quick_Order_Handoff_2026-10-05/quick-order",
+    "adjacentProposal": "C:/Users/sboad/Downloads/01_CODEX_COORDINATOR_AND_QUICK_ORDER_BUILD.md",
+    "canonicalRequirements": [
+      "Trusted session/catalog/pricing/legal agreements and current gates",
+      "Canonical assisted-order persistence with atomic referral/affiliation declarations and idempotency",
+      "No parallel catalog/order ledger or commission authority from customer declarations",
+      "Operator continuity and qualified database evidence before real collection"
+    ],
+    "packageClaims": "47 tests and browser success are unverified package claims",
+    "scopeBoundary": "Do not modify the in-progress accepted-source candidate or infer production, payment, protection, product-plan or Access Hub approval from this request. No Quick Order chat was identified in the available 50-chat inventory; this does not prove none exists.",
+    "intakeArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_INTAKE.md",
+    "historicalSource": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
+    "historicalTree": "e56e6406354ee8cc9dd1c600563df58409afdc34",
+    "packageVersion": "v0.1.0",
+    "canonicalMappingStatus": "Historical document map only; current bindings and composition-root placement unverified"
   }
 }

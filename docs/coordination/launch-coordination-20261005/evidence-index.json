@@ -108,5 +108,10 @@
     "path": "INTEGRATION_SOURCE_PRESERVATION_AUDIT.txt",
     "bytes": 1321,
     "sha256": "9d8823339c2fa66a9996a77b31a88a749ac0c2e009e3fce9bd8accf7e930898f"
+  },
+  {
+    "path": "CLAUDE_CONSOLIDATED_ACCEPTANCE_CHAIN.md",
+    "bytes": 7573,
+    "sha256": "356829c6fa63b52a2a7bd07dc8da61afdaec211194c86bac623550ce6f3c4ed8"
   }
 ]

@@ -1,0 +1,37 @@
+DRAFT: do not dispatch with unresolved placeholders. Coordinator preparation, not approval.
+
+Use the existing Xenios Claude acceptance context, Claude Fable 5.1 with maximum effort. This is an independent, read-only review of the accepted-source composition and its exact evidence. No application edits, hosted actions, account changes or new feature lane. Read the mandatory repository continuity first and preserve prior bounded verdicts. The coordinator will persist your verdict verbatim.
+
+Identity to verify before review:
+- Final pushed integration source: <FINAL_SOURCE_SHA>
+- Source tree: <FINAL_SOURCE_TREE>
+- Pushed qualification/evidence commit: <EVIDENCE_SHA>
+- Pushed handoff commit: <HANDOFF_SHA>
+- Handoff/report and receipt index paths: <EXACT_PATHS>
+- Branch: codex/accepted-source-integration-20261005
+- Exact common source base: 3eaa017fcbd28989c65ffc4bb439a554aa1f3f59
+- Current checkpoint, not a substitute for final identity: source 756a906877dbc174b7e228a259d2faa9c3af48ca, tree 787432948d9464880df1dcfc5dff58eec7d889aa.
+
+Accepted input chain:
+- Your pushed consolidated acceptance/checklist record is 42d8b6d55370bada976577936275215f4227794f, docs/review/xenios-health-launch-review-20260930/33_ACCEPTANCE_CHAIN_FOR_INTEGRATION_2026-10-05.md. It is not an integrated-source verdict.
+- Coordinator verdict artifacts are under docs/coordination/launch-coordination-20261005 on codex/xenios-launch-coordination-20261005. Read them by exact Git object, not by importing that branch. It contains parked Finance ancestry and must not become the release base.
+- Preserve Core IC-2 c93bf5a and partner-return 94e89be source acceptances and their test successors; MC01 ed9bb9b source acceptance with operational prerequisites; D/E foundation 5152adb plus accepted DE-R1 e6a8171; subscription 7806fb5 conditional acceptance at a disabled purchase boundary.
+
+Review the narrow integrated delta and receipt provenance:
+1. Check exact source/tree, pushed reachability and ancestry. Compare the final runtime/test/candidate paths to the accepted source and test union. The current checkpoint selects 65 paths from 12 accepted input commits. Its coordinator static audit found 63 matching final blobs and exactly two intended differences: AssistedOrderPage combines the Core customer class with D/E media insertion; product-subscription-create.test parameterizes HTTP 400 and 403 refusal. Verify independently. Scoped integration ownership/session records and the separate evidence package are expected records, not runtime additions. Reject other dropped hunks or unrelated source additions.
+2. Preserve accepted Core Navbar/Footer/index.css bytes. The protection manifest, protected static/composition seams, registered SQL, migration ledger/DAG, package and lockfile must remain unchanged from the intended base. Distinguish each inherited protection failure from a new regression using exact comparisons; do not treat an old failure as automatically acceptable for release. Founder hash approval and GATE-01 remain unresolved.
+3. Verify preservation of the bounded Core/partner, MC01, D/E and subscription invariants against their accepted verdicts. Do not reopen settled verdicts without conflicting integrated changes. Preserve IC-2 neutral customer timeline, admin isolation, D/E accessible fallback and strict trusted signing policy with only the accepted renderer exception/timer, canonical Auth return allowlist, and the ProductPage unavailable/no-create boundary.
+4. Verify every raw receipt and indexed hash against the final pushed source/tree and command/environment. The producer reports a fresh clean 17-file subscription run of 401 passed, 0 failed, 0 skipped and a 36-file affected run of 626 passed, 0 failed, 0 skipped. These overlap; do not add them. PS-R1 closes only if the exact complete required set was run at the committed integrated source. PS-R5 closes only if the actual HTTP 400 refusal behavior is exercised with the expected assertions. Earlier split 377+23 and failed 396/3 receipts remain historical and must not be relabeled.
+5. Verify typecheck, production build, no-em-dash source/build, route uniqueness and migration-DAG receipts. Review the explicit protection FAIL report. Full aggregate is producer-DEFERRED for resource pressure (805 then 1452 MiB available RAM, about 27.31 GiB disk); no aggregate pass or source failure may be inferred. Prior failed full runs stay preserved.
+6. Verify browser evidence as bounded synthetic loopback execution of the actual production client with writes refused. Actual widths are reported as 1440, 1024, 767, 430, 390, 320; requested 768 measured 767. Exact 768, native 200% and CLS are unproved. Evaluate forced-colors and keyboard claims only to the demonstrated extent. Preserve screenshot/harness failures, interrupted TTY exit 1, missing graceful-stop event, process/listener cleanup proof and the 349-asset snapshot hash check. This is not live Auth, actual partner activation, purchase, payment, or production data proof.
+
+Carried release holds:
+- All six subscription real-buying gaps remain open: durable creation idempotency, referral lineage, decisive current-price validation, canonical eligible-offer projection, durable production activation/currentness, independent payment finality. PS-R2 typed server payment references and PS-R3 missing service capability projection remain server release holds. Preserve the test-only persistence seam and effective quantity cap 50. Owner SKU/plan and policy decisions are not inferred.
+- MC01 needs its compatible persistent-cart predecessor chain, reviewed candidate, non-image Product Control reapproval and separate launch transition, with preservation/adoption where cart history exists. TypeScript success or visual fallbacks do not waive database compatibility.
+- D/E actual delivered-byte/hash integrity, canonical readers, metadata ingestion/review writer and database/runtime qualification remain open unless exact evidence closes the specific item. SQL candidates remain unregistered and unapplied.
+- Finance remains excluded and its operational authorities disabled. No provider, payment, commission, payout or notification authority is enabled by this review.
+- Exact Core protected-hash approval, GATE-01 and the intended product plan remain owner decisions. No new user decision is supplied by this prompt. Quick Order package discovery is separate and outside this candidate.
+
+Execution limits: use static source and receipt verification. Do not launch tests, builds, databases or browser jobs merely to repeat the producer's checks; the shared host has resource pressure. If a material gap requires re-execution, identify the exact minimum check for a later serialized slot. Do not start a new feature or claim a deferred check passed.
+
+Return exact source/tree/evidence/handoff identity, a bounded SOURCE ACCEPT / SOURCE REJECT decision, PASS/FAIL/PARTIAL/DEFERRED by reviewed area, PS-R1 and PS-R5 closure decisions with exact receipt references, actionable P0-P2 findings, and remaining release holds. State separately whether the evidence is sufficient for source integration acceptance and whether release qualification is complete. Never equate source acceptance with production readiness, real purchasing readiness, or founder/hosted-action approval.
