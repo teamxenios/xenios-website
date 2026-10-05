@@ -1,0 +1,97 @@
+{
+  "syntheticOnly": true,
+  "calls": [
+    {
+      "mode": "pending",
+      "input": {
+        "sku": "SYNTHETIC-RUO-01",
+        "quantity": 2,
+        "frequencyDays": 60,
+        "priceVersion": "synthetic-price-v1"
+      },
+      "result": {
+        "ok": true,
+        "subscription": {
+          "subscriptionId": "0d51e8b5-5576-49ed-8887-a8e9a05a41ba",
+          "version": 1,
+          "sku": "SYNTHETIC-RUO-01",
+          "displayName": "Synthetic research product",
+          "state": "pending",
+          "frequencyDays": 60,
+          "quantity": 2,
+          "nextChargeAt": null,
+          "nextShipmentAt": null
+        }
+      }
+    },
+    {
+      "mode": "blocked",
+      "input": {
+        "sku": "SYNTHETIC-RUO-01",
+        "quantity": 3,
+        "frequencyDays": 90,
+        "priceVersion": "synthetic-price-v1"
+      },
+      "result": {
+        "ok": false,
+        "code": "capability_disabled",
+        "message": "Durable currentness-bound subscription persistence is not available."
+      }
+    },
+    {
+      "mode": "lost",
+      "input": {
+        "sku": "SYNTHETIC-RUO-01",
+        "quantity": 1,
+        "frequencyDays": 30,
+        "priceVersion": "synthetic-price-v1"
+      },
+      "result": {
+        "ok": true,
+        "subscription": {
+          "subscriptionId": "1c08ec01-aeef-4c92-a1b5-281fff328953",
+          "version": 1,
+          "sku": "SYNTHETIC-RUO-01",
+          "displayName": "Synthetic research product",
+          "state": "pending",
+          "frequencyDays": 30,
+          "quantity": 1,
+          "nextChargeAt": null,
+          "nextShipmentAt": null
+        }
+      }
+    }
+  ],
+  "subscriptions": [
+    {
+      "subscriptionId": "0d51e8b5-5576-49ed-8887-a8e9a05a41ba",
+      "version": 1,
+      "sku": "SYNTHETIC-RUO-01",
+      "displayName": "Synthetic research product",
+      "state": "pending",
+      "frequencyDays": 60,
+      "quantity": 2,
+      "nextChargeAt": null,
+      "nextShipmentAt": null
+    },
+    {
+      "subscriptionId": "1c08ec01-aeef-4c92-a1b5-281fff328953",
+      "version": 1,
+      "sku": "SYNTHETIC-RUO-01",
+      "displayName": "Synthetic research product",
+      "state": "pending",
+      "frequencyDays": 30,
+      "quantity": 1,
+      "nextChargeAt": null,
+      "nextShipmentAt": null
+    }
+  ],
+  "paymentCalls": 0,
+  "events": [
+    [],
+    []
+  ],
+  "referralAttribution": "not_implemented_in_subscription_record",
+  "commissionIntegration": "not_connected",
+  "payoutIntegration": "not_connected"
+}

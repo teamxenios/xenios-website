@@ -5,6 +5,6 @@
   "branch": "codex/product-subscription-intent-20261005",
   "state": "active",
   "startedAt": "2026-10-05T17:20:03.088Z",
-  "heartbeatAt": "2026-10-05T17:32:09.467Z",
-  "note": "Pushed cad4912 source; awaiting serialized focused slot after D/E. Handoff draft itemizes missing durable idempotency/current price/referral/payment seams."
+  "heartbeatAt": "2026-10-05T17:47:16.159Z",
+  "note": "Qualification complete:377 unchanged+23 corrected UI passes, tsc PASS, bounded synthetic browser PASS. Full journey blocked; slot released; packaging exact handoff."
 }

@@ -1,0 +1,25 @@
+- heading "Synthetic subscription boundary" [level=1]
+- paragraph: This isolated local fixture uses the actual request form, adapter and canonical subscription service with in-memory synthetic data. It is not a real offer or a complete referral journey.
+- paragraph: "Scenario: blocked. No real account, database, payment, email or payout service is connected."
+- region "Product subscription":
+  - heading "Product subscription" [level=2]
+  - paragraph: Request recurring deliveries of this exact product. This is separate from account access.
+  - paragraph: Synthetic research product
+  - paragraph: Synthetic exact variant
+  - paragraph: "SKU: SYNTHETIC-RUO-01"
+  - paragraph: "Unit price: USD 12.50"
+  - group "Choose your schedule":
+    - generic: Choose your schedule
+    - generic: Quantity (1 to 50)
+    - spinbutton "Quantity (1 to 50)": "3"
+    - generic: Delivery frequency
+    - combobox "Delivery frequency":
+      - option "Every 30 days"
+      - option "Every 60 days"
+      - option "Every 90 days" [selected]
+    - paragraph: "Product subtotal per delivery: USD 37.50. Shipping and any taxes are not included."
+    - paragraph: The displayed price must be confirmed before purchase. This request does not authorize a charge or schedule a shipment. Payment and activation require a separate supported step.
+    - checkbox "I reviewed this product, variant, quantity, frequency, and displayed price." [checked]
+    - text: I reviewed this product, variant, quantity, frequency, and displayed price.
+    - button "Request product subscription"
+  - alert: Product subscription requests are not available yet. Your selections remain here; no subscription was created by this attempt.

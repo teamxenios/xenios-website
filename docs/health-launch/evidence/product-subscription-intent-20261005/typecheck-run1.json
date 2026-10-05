@@ -1,0 +1,21 @@
+{
+  "node": "v20.19.0",
+  "executable": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit",
+    "--incremental",
+    "false"
+  ],
+  "source": "7806fb5939a69189e085739fad8cc832cfab201a",
+  "tree": "10d7d2534f155f5fccdeb7c3c15bfc450d379c5d",
+  "startStatus": "",
+  "startedAt": "2026-10-05T17:39:55.781Z",
+  "finishedAt": "2026-10-05T17:41:41.054Z",
+  "elapsedMs": 105273,
+  "exitCode": 0,
+  "signal": null,
+  "endSource": "7806fb5939a69189e085739fad8cc832cfab201a",
+  "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

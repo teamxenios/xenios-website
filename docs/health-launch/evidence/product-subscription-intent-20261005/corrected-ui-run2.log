@@ -1,0 +1,9 @@
+
+ RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/5b21/xenios-website
+
+
+ Test Files  1 passed (1)
+      Tests  23 passed (23)
+   Start at  12:39:38
+   Duration  2.49s (transform 216ms, setup 0ms, import 465ms, tests 319ms, environment 1.48s)
+

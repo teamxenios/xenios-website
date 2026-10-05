@@ -1,0 +1,46 @@
+{
+  "source": "7806fb5939a69189e085739fad8cc832cfab201a",
+  "tree": "10d7d2534f155f5fccdeb7c3c15bfc450d379c5d",
+  "invariants": [
+    {
+      "path": "client/src/components/Navbar.tsx",
+      "sha256Lf": "6cdfbb0f05cc8d1fb28bfdc6b7a012ddb85e34d0c985bc88e71c09d8456a218a",
+      "matchesBase": true
+    },
+    {
+      "path": "client/src/components/Footer.tsx",
+      "sha256Lf": "420b45dc09aefa572a65ae68b5add6a2ce3d435e54e1fea7d9db9f29390df7cb",
+      "matchesBase": true
+    },
+    {
+      "path": "client/src/index.css",
+      "sha256Lf": "b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049",
+      "matchesBase": true
+    },
+    {
+      "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+      "sha256Lf": "c0fbcc69686562fdd2ec1de6d6a487356118f1d18931f8de3ee9aefd7066eff8",
+      "matchesBase": true
+    }
+  ],
+  "changedPaths": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/sessions/codex-product-subscription-intent-20261005.json",
+    "client/src/research/adapters/commerce.ts",
+    "client/src/research/adapters/product-subscription-create.test.ts",
+    "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+    "client/src/research/pages/member/ProductPage.tsx",
+    "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+    "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+    "docs/health-launch/PRODUCT_SUBSCRIPTION_INTENT_20261005.md",
+    "docs/health-launch/evidence/product-subscription-intent-20261005/browser-fixture.tsx",
+    "docs/health-launch/evidence/product-subscription-intent-20261005/browser-preview.mjs",
+    "docs/health-launch/evidence/product-subscription-intent-20261005/browser-service.ts",
+    "docs/health-launch/evidence/product-subscription-intent-20261005/corrected-ui-run2.json",
+    "docs/health-launch/evidence/product-subscription-intent-20261005/focused-run1.json",
+    "docs/health-launch/evidence/product-subscription-intent-20261005/run-check.mjs",
+    "server/research/commerce/subscription-intent-journey.test.ts"
+  ]
+}

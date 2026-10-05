@@ -1,0 +1,103 @@
+- heading "Synthetic subscription boundary" [level=1]
+- paragraph: This isolated local fixture uses the actual request form, adapter and canonical subscription service with in-memory synthetic data. It is not a real offer or a complete referral journey.
+- paragraph: "Scenario: mounted. No real account, database, payment, email or payout service is connected."
+- navigation "Member areas":
+  - link "Home":
+    - /url: /research/member
+  - link "Assessment":
+    - /url: /research/member/assessment
+  - link "Goals":
+    - /url: /research/member/goals
+  - link "Products":
+    - /url: /research/member/products
+  - link "Product requests":
+    - /url: /research/member/product-requests
+  - link "Guides":
+    - /url: /research/member/guides
+  - link "Documents":
+    - /url: /research/member/documents
+  - link "Document center":
+    - /url: /research/member/documents-center
+  - link "Cart":
+    - /url: /research/member/cart
+  - link "Orders":
+    - /url: /research/member/orders
+  - link "Subscriptions":
+    - /url: /research/member/subscriptions
+  - link "Questions":
+    - /url: /research/member/questions
+  - link "Referrals":
+    - /url: /research/member/referrals
+  - link "Recommend Xenios":
+    - /url: /research/partners/links
+  - link "Account access":
+    - /url: /research/member/membership
+  - link "Profile":
+    - /url: /research/member/profile
+  - link "Security":
+    - /url: /research/member/security
+  - link "Privacy":
+    - /url: /research/member/privacy
+- banner:
+  - paragraph: Research
+  - heading "Synthetic Research" [level=1]
+  - link "Request an alternative":
+    - /url: /research/member/product-requests/new?source=products&product=Synthetic+Research
+  - paragraph: Synthetic review only.
+- status:
+  - paragraph: Supplier confirmation pending
+  - text: Awaiting documentation
+  - paragraph: An approved product image is not available.
+- paragraph: Research material
+- text: Unavailable
+- status:
+  - paragraph: Supplier confirmation pending
+  - text: Awaiting documentation
+  - paragraph: An exact approved Product Control variant and SKU are required.
+- paragraph: Ordering appears only after current product, price, documentation, and availability checks pass.
+- paragraph: 🔒 This is Research catalog information. It is not prescribing, dosing guidance, treatment, or a statement of clinical suitability.
+- heading "Overview" [level=2]
+- paragraph: Synthetic review only.
+- heading "What it is" [level=2]
+- paragraph: Synthetic Research is an exact catalog identity. Its pathway and product-specific source records govern how it may be described or accessed.
+- heading "Why people are interested" [level=2]
+- paragraph: People commonly discuss Synthetic Research in connection with product-specific research, formulation, or access questions. That attention does not establish that the product is safe, effective, or appropriate for a particular person.
+- heading "How researchers think it may work" [level=2]
+- paragraph: No reviewed mechanism summary has been published for this exact formulation. A name, ingredient, or proposed mechanism is not proof of a clinical outcome.
+- heading "What researchers have observed" [level=2]
+- paragraph: No reviewed outcome summary has been published for this exact Research formulation. Preclinical findings, mechanisms, and market interest do not establish a human treatment benefit.
+- heading "Where the evidence comes from" [level=2]
+- paragraph: The exact canonical product and variant record supplies identity and pathway context. No additional scientific claim is inferred when the approved education guide does not describe the exact formulation.
+- heading "What human evidence exists" [level=2]
+- paragraph: No reviewed human-evidence summary has been published for this exact formulation. Any clinical interpretation requires the exact source record and licensed review.
+- heading "Evidence strength" [level=2]
+- paragraph: Product-specific / formulation-specific
+- heading "What remains unknown" [level=2]
+- list:
+  - listitem: Long-term human safety may be unknown.
+  - listitem: The exact product, route, dose, formulation, and combination may not match published research.
+  - listitem: A Research listing does not establish Care formulary availability.
+- heading "What this does not prove" [level=2]
+- list:
+  - listitem: A mechanism is not proof of a clinical outcome.
+  - listitem: Anecdotal reports are not controlled evidence.
+  - listitem: A Certificate of Analysis does not establish clinical suitability.
+- heading "Potential clinical relevance under licensed care" [level=2]
+- paragraph: Research interest does not create clinical relevance for an individual. Any clinical question belongs to a separate licensed-care pathway and source-authoritative formulary review.
+- heading "Current regulatory and clinical status" [level=2]
+- paragraph: This listing does not establish an approved drug, indication, treatment, or clinical use. Research material and provider medication are not interchangeable.
+- heading "Research and Care availability" [level=2]
+- list:
+  - listitem: Available through Xenios Research only when the exact approved catalog, documentation, pricing, and availability records permit. It remains nonclinical.
+  - listitem: A Research listing does not establish Care formulary availability, clinical suitability, or a prescription pathway.
+- heading "Related products" [level=2]
+- paragraph: No related products are published.
+- heading "Sources and last reviewed" [level=2]
+- list:
+  - listitem: Exact canonical catalog and selected variant record
+  - listitem: Customer-safe product-specific limitation when no exact guide entry is available
+  - listitem: "Last reviewed: August 31, 2026"
+- region "Product subscription":
+  - heading "Product subscription" [level=2]
+  - paragraph: Request recurring deliveries of this exact product. This is separate from account access.
+  - status: A subscription offer is not available for this product yet.

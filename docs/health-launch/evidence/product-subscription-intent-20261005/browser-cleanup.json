@@ -1,0 +1,6 @@
+{
+  "method": "Stop-Process against verified browser-preview.mjs loopback listener",
+  "processId": 62120,
+  "listenerAbsent": true,
+  "completedAt": "2026-10-05T17:45:24.9426653Z"
+}

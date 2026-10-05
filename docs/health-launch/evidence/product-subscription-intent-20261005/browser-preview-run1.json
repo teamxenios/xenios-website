@@ -1,0 +1,18 @@
+{
+  "node": "v20.19.0",
+  "executable": "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+  "command": [
+    "C:\\Users\\sboad\\.codex\\tmp\\node-v20.19.0-win-x64\\node.exe",
+    "docs/health-launch/evidence/product-subscription-intent-20261005/browser-preview.mjs"
+  ],
+  "source": "7806fb5939a69189e085739fad8cc832cfab201a",
+  "tree": "10d7d2534f155f5fccdeb7c3c15bfc450d379c5d",
+  "startStatus": "?? docs/health-launch/evidence/product-subscription-intent-20261005/invariants.json\n?? docs/health-launch/evidence/product-subscription-intent-20261005/typecheck-run1.json",
+  "startedAt": "2026-10-05T17:41:58.954Z",
+  "finishedAt": "2026-10-05T17:45:24.358Z",
+  "elapsedMs": 205405,
+  "exitCode": 4294967295,
+  "signal": null,
+  "endSource": "7806fb5939a69189e085739fad8cc832cfab201a",
+  "logSha256": "99787067e145b7e4f2aa5d1ce784f1e3c05c81a912e2ec0f4064c382321c2d44"
+}

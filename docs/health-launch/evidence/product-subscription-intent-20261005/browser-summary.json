@@ -1,0 +1,24 @@
+{
+  "source": "7806fb5939a69189e085739fad8cc832cfab201a",
+  "tree": "10d7d2534f155f5fccdeb7c3c15bfc450d379c5d",
+  "syntheticOnly": true,
+  "browser": "Chrome through cua_repl",
+  "origin": "http://127.0.0.1:60673",
+  "observations": [
+    "pending quantity2 frequency60",
+    "persistence denial quantity3 frequency90 retained",
+    "503 after save locks retry; record inspection shows pending",
+    "actual ProductPage unavailable zero create buttons",
+    "no-offer component no form"
+  ],
+  "domainAssertionsPassed": true,
+  "fullPageScreenshot": {
+    "status": "timeout",
+    "milliseconds": 5000
+  },
+  "viewportScreenshots": "captured; dimensions/zoom/fidelity not qualified",
+  "auth": "synthetic context; managed SDK throwing stub",
+  "style": "fixture-only",
+  "fullAffiliatePurchaseJourney": false,
+  "previewCleanup": "browser-cleanup.json"
+}

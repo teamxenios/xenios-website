@@ -1,0 +1,7 @@
+- heading "Synthetic subscription boundary" [level=1]
+- paragraph: This isolated local fixture uses the actual request form, adapter and canonical subscription service with in-memory synthetic data. It is not a real offer or a complete referral journey.
+- paragraph: "Scenario: no-offer. No real account, database, payment, email or payout service is connected."
+- region "Product subscription":
+  - heading "Product subscription" [level=2]
+  - paragraph: Request recurring deliveries of this exact product. This is separate from account access.
+  - status: A subscription offer is not available for this product yet.

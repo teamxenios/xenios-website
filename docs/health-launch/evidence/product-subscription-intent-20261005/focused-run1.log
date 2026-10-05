@@ -1,0 +1,34 @@
+
+ RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/5b21/xenios-website
+
+ ❯ client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx (22 tests | 3 failed) 469ms
+     × reviews exact product, quantity and 30-day intent, and ends pending without payment 135ms
+     × reviews exact product, quantity and 60-day intent, and ends pending without payment 32ms
+     × reviews exact product, quantity and 90-day intent, and ends pending without payment 29ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx > product subscription request form > reviews exact product, quantity and 30-day intent, and ends pending without payment
+ FAIL  client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx > product subscription request form > reviews exact product, quantity and 60-day intent, and ends pending without payment
+ FAIL  client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx > product subscription request form > reviews exact product, quantity and 90-day intent, and ends pending without payment
+AssertionError: expected 'Product subscriptionRequest recurring…' to contain 'Product subtotal per delivery: USD 12…'
+
+Expected: "Product subtotal per delivery: USD 1250.00"
+Received: "Product subscriptionRequest recurring deliveries of this exact product. This is separate from account access.Synthetic research productSynthetic exact variantSKU: SYNTHETIC-RUO-01Unit price: USD 12.50Choose your scheduleQuantityDelivery frequencyEvery 30 daysEvery 60 daysEvery 90 daysChoose a valid quantity to review the product subtotal.The displayed price must be confirmed before purchase. This request does not authorize a charge or schedule a shipment. Payment and activation require a separate supported step.I reviewed this product, variant, quantity, frequency, and displayed price.Request product subscription"
+
+ ❯ client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx:44:20
+     42|     render(); change('[type="number"]', "100"); change("select", Strin…
+     43|     expect(text()).toContain("Synthetic exact variant");
+     44|     expect(text()).toContain("Product subtotal per delivery: USD 1250.…
+       |                    ^
+     45|     await submit(); await submit();
+     46|     expect(createSubscription).toHaveBeenCalledTimes(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+
+ Test Files  1 failed | 16 passed (17)
+      Tests  3 failed | 396 passed (399)
+   Start at  12:36:46
+   Duration  50.00s (transform 5.31s, setup 0ms, import 18.55s, tests 4.87s, environment 21.62s)
+

@@ -1,6 +1,6 @@
 # Product subscription intent source seam, 2026-10-05
 
-Status: source implementation prepared for focused qualification and independent review. **Not a live or end-to-end buying path.** The mounted product page truthfully reports that an offer is unavailable; no real SKU, price version, payment method or partner activation was inferred.
+Status: focused component/service checks, typecheck and bounded synthetic browser checks passed as qualified below; ready for independent Claude review. **Not a live or end-to-end buying path.** The mounted product page truthfully reports that an offer is unavailable; no real SKU, price version, payment method or partner activation was inferred.
 
 ## Identity and boundaries
 
@@ -8,9 +8,9 @@ Status: source implementation prepared for focused qualification and independent
 - Branch: `codex/product-subscription-intent-20261005`.
 - Worktree: `C:/Users/sboad/.codex/worktrees/5b21/xenios-website`.
 - Verified base: `b0e818f0b3908b13c4181c5b6a59751c1505694b`, tree `e56e6406354ee8cc9dd1c600563df58409afdc34`; `origin/codex/xenios-health-launch-implementation-20260930` matched at startup. Core runtime source is `c93bf5a2c1e2b50c5b40c65f0149033ad84658a0`.
-- Source candidate and qualification: recorded in the final evidence section below.
+- Final pushed source: `7806fb5939a69189e085739fad8cc832cfab201a`, tree `10d7d2534f155f5fccdeb7c3c15bfc450d379c5d`. Subsequent commits contain evidence/continuity only.
 - Coordinator `01a103a8-5684-7272-89e5-3c42eefcd593` authorized this isolated source lane and then the exact `ProductPage.tsx` wrapper. D/E `01a10d08-cd8b-7431-80b7-a21677c11bb6` explicitly confirmed that wrapper unclaimed. Its member catalog/media/shared contracts and `MemberProductDetailExperience.tsx` remain untouched.
-- Core's separate public `/partners` sign-in returnTo correction is not duplicated or merged here. Finance remains parked. No protection manifest, authority, SQL, server production source, or capability flag was changed.
+- Core's separate public `/partners` sign-in returnTo correction is not duplicated or merged here. Its source is `94e89be7c959087edfde4ebddf2f50fa5e02cc36`, tree `23b3284a5cfc667b5cdc0e35643f07e71c333268`; remote handoff tip `3f044f41b93d41c4ca40954eabd919dfb6ef0be4` was verified with `git ls-remote`. Report: `docs/health-launch/PARTNER_SIGNIN_RETURN_20261005.md` on `codex/xenios-partner-signin-return-20261005`. Core reports 205 focused synthetic tests, not browser/live login proof; independent review remains separate. Finance remains parked. No protection manifest, authority, SQL, server production source, or capability flag was changed.
 - Production was not re-observed by this source lane. The base corpus's dated `79414143d4355d5d3d14cd5fe6e5a536dc68d99d` observation is historical evidence, not a current readiness claim.
 
 ## Implemented slice
@@ -78,6 +78,7 @@ Other changes are this report, its evidence directory, the new session/task/leas
 3. **Canonical referral intent lineage:** coordinate the referral owner to resolve the authenticated account binding and snapshot its revision in the same durable create command. Extend the canonical subscription persistence path; never accept browser partner/referral ownership. Prove self/referral denials, idempotent capture, immutable winning attribution and no money effect before adding any order/renewal commission bridge.
 4. **Enrollment/activation finality:** Finance owner must qualify current agreements and independent payment authority before `activate()` can schedule anything. The service's current actor/currentness checks are not sufficient payment proof. Do not send typed references, invoke activation from the client, or enable renewal. F1 remains open.
 5. **Actual page wiring and composed synthetic browser journey:** after the accepted offer/create contract, feed the exact selected variant to this component and keep its attempt guard mounted through product refetches. Integrate Core's accepted partner returnTo handoff and accepted D/E media separately through the coordinator. Then prove referral/login/selection/pending/payment refusal on composed source, followed by independent Claude review.
+6. **Quantity policy reconciliation:** `PERSISTENT_CART_QUANTITY_MAX` currently imports the effective 50-unit cap from `shared/research/early-access-quantity.ts`; the separate policy constant is 100. This source uses 50, matching `MAX_SUBSCRIPTION_QUANTITY`, and visibly states that limit. The historical migration comment is not fresh production evidence. The quantity/persistence owner must qualify the actual durable chain and align the effective band before offering 100; this lane changed no shared limit or schema.
 
 ## Owner/external decisions
 
@@ -91,6 +92,30 @@ Other changes are this report, its evidence directory, the new session/task/leas
 
 ## Qualification evidence
 
-Pending serialized focused test/typecheck slot at initial report creation. No full suite, build, database race suite or browser run is implied. Final results and exact source/tree will be appended here before handoff.
+All runs used `C:/Users/sboad/.codex/tmp/node-v20.19.0-win-x64/node.exe` (v20.19.0). Existing dependencies were reused through a junction to worktree `65aa`; both lockfiles have SHA-256 `d3083edc542cd123d839611dfd0b214fcd03ee5c04fa89323da73bbe37c332c8`. No installation. The coordinator handed off one serialized slot after D/E; it was released after preview cleanup.
+
+| Run | Exact provenance | Result |
+| --- | --- | --- |
+| `focused-run1` | `5d658a24f9a37b82d9674d806ce343da48787247`, tree `37d7a76a833d3df0a8e0026619b88bd5e5a145c2`; only new evidence wrapper untracked at start. 17 named files, one worker, no file parallelism. | **396 PASS / 3 FAIL / 0 SKIP**, exit 1, 52.570 s wrapper / 50.00 s Vitest. Three new success fixtures incorrectly requested 100 against the current effective cap of 50. The component correctly refused; other 16 files passed (377 tests). Initial failed receipt is preserved. |
+| `corrected-ui-run2` | Same committed head, corrected form tests and visible quantity-band label in working tree; subsequently committed unchanged in `7806fb5`. | **23 PASS / 0 FAIL / 0 SKIP**, one file, exit 0, 2.49 s Vitest. Shared limit used for successful maximum; 51 and 100 are explicitly refused. |
+| `typecheck-run1` | Clean source `7806fb5939a69189e085739fad8cc832cfab201a`, tree `10d7d2534f155f5fccdeb7c3c15bfc450d379c5d`; `tsc --noEmit --incremental false`. | **PASS**, exit 0, 105.273 s. Nonincremental mode avoids writing the shared dependency cache. |
+| `browser-preview-run1` | Same `7806fb5` source/tree. Only evidence files untracked. Tiny esbuild fixture bundle, not a production application build. Chrome via supported browser controls against loopback port 60673. | Pending, persistence denial, lost reply, actual unavailable ProductPage and no-offer observations passed. Process subsequently stopped deliberately by verified PID; wrapper exit `4294967295` records forced cleanup, not a test-pass exit. |
+
+The successful test coverage is **377 unchanged-suite passes plus 23 corrected-form passes**, across 17 unique files. This is split-run evidence, not a fabricated single 400-pass aggregate. No full suite, database race suite, managed qualification or production build was run. `git diff --check` and corpus validation passed. `invariants.json` records identical Navbar/Footer/index.css/protection-manifest hashes against the frozen base; this does not repair inherited protection or GATE-01 findings.
+
+Full commands, source/tree/start status, timing, exit codes and raw-log hashes are in the run JSON files under `docs/health-launch/evidence/product-subscription-intent-20261005/`; the matching raw `.log` files are retained. Initial focused log SHA-256: `526e9f01702070e088a27acd2214c5220f9cae4b971d790cc5ef07d6759abb5f`.
+
+### Synthetic browser limits and observations
+
+- Real `ProductSubscriptionCreate` → real canonical adapter → local HTTP → real `createSubscriptionService` with an in-memory repository. Only the fixture enables its persistence seam for pending/lost cases; the blocked scenario leaves it false. App boot, production composition and `.env` are never loaded. Auth supplies a conspicuously synthetic context; Supabase browser imports are replaced with throwing fixture stubs and the bundle rejects managed SDK input.
+- Pending: exact synthetic SKU, quantity 2, frequency 60; displayed pending receipt, null charge/shipment dates, no payment capability. Controls disabled after save.
+- Blocked: quantity 3, frequency 90; canonical `capability_disabled` refusal displayed without internal storage text. Selection retained; no additional record created.
+- Lost reply: fixture saved one pending record then returned HTTP 503. UI showed outcome unknown and disabled resubmission. The inspection link showed the pending record through the canonical list reader. That inspection surface is explicitly a fixture, not the real subscription manager.
+- Actual `ProductPage` mounted with a synthetic canonical member-detail response and no authoritative subscription offer. It rendered the unavailable panel with **zero create buttons**. The generic no-offer component likewise rendered no form.
+- `browser-domain-proof.json`: exactly three browser POSTs (pending/blocked/lost), two pending records, all schedules null, empty event arrays, zero instrumented payment probes. Commission/payout integrations are absent (`not_connected`), not measured downstream ledger activity. No subscription referral attribution exists.
+- `browser-*.txt` are captured DOM observations; PNGs show the pending, blocked, lost and mounted boundary states. A first full-page screenshot attempt timed out at 5 seconds; normal viewport captures succeeded. No width, native zoom, overflow, visual-fidelity or full App/auth/session qualification is claimed. Fixture CSS is deliberately separate from production styling.
+- Browser tab closed. Verified pinned Node PID `62120` was the `browser-preview.mjs` listener on `127.0.0.1:60673`; it was stopped and the listener's absence verified. The temporary compiled fixture directory remains local and unused. No hosted connection or other process was stopped.
+
+The complete gym-owner → referral → authenticated customer → attributed paid subscription journey remains **unproven and blocked** by the missing canonical offer/create/attribution/payment seams above. These component/domain proofs are not relabeled as that journey.
 
 No live payment, payout or provider capability was enabled. No deployment, managed SQL apply, production/staging mutation, real account, partner grant/activation, charge, email, shipment or payout was performed.
