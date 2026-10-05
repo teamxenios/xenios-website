@@ -824,7 +824,7 @@ export function AssistedOrderPage({
   };
 
   return (
-    <div className={`xenios-order-page${embedded ? " xenios-order-page--embedded" : ""}`}>
+    <div className={`xenios-order-page xenios-order-page--customer${embedded ? " xenios-order-page--embedded" : ""}`}>
       <header className="xenios-order-hero">
         <p className="xenios-order-eyebrow">Research ordering</p>
         {embedded ? <h3>Request an order</h3> : <h1>Request an order</h1>}

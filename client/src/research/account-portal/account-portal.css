@@ -110,13 +110,13 @@
 }
 
 .account-portal-nav-link:focus-visible {
-  outline: 2px solid var(--account-black);
+  outline: 3px solid var(--pulse);
   outline-offset: 2px;
 }
 
 .account-portal-nav-active {
-  background: var(--account-black);
-  border-color: var(--account-black);
+  background: var(--pulse);
+  border-color: var(--pulse);
   color: #fff;
 }
 
@@ -248,8 +248,9 @@
 }
 
 .account-list-card a:focus-visible,
-.account-inline-link:focus-visible {
-  outline: 2px solid var(--account-black);
+.account-inline-link:focus-visible,
+.account-portal .btn:focus-visible {
+  outline: 3px solid var(--pulse);
   outline-offset: 3px;
 }
 

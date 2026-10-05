@@ -12,7 +12,9 @@
 /* ============================================================
    xenios v6 — Design tokens & primitives
    Brand: black + white base, purple/teal/lilac secondary,
-   purple→blue→teal gradient accents, heavy geometric sans
+   Health shell: solid purple focus; restrained purple-to-teal
+   decorative divider only. No gradient headlines or media tint.
+   Historical unused primitives below remain outside this slice.
 ============================================================ */
 
 :root {
@@ -29,6 +31,7 @@
   --teal:  #14B8C7;       /* teal — secondary accent */
   --lilac: #B89AFA;       /* light purple — tertiary */
   --error: #B83A1F;
+  --health-accent-rule: linear-gradient(90deg, var(--pulse), var(--teal));
 
   /* Neutral ramp (deck-influenced grays) */
   --gray-900: #1F1F1F;
@@ -1296,6 +1299,7 @@ a.wordmark { text-decoration: none !important; }
 .clarity-nav-link.is-active,
 .clarity-header-link:hover { color: var(--pulse); }
 .clarity-nav-link:focus-visible,
+.clarity-public-shell .btn:focus-visible,
 .clarity-header-link:focus-visible,
 .clarity-menu-button:focus-visible,
 .clarity-brand-link:focus-visible,
@@ -1446,6 +1450,14 @@ a.wordmark { text-decoration: none !important; }
 .clarity-footer { border-top: 1px solid var(--rule); background: var(--paper); padding: 68px 0 28px; }
 .clarity-footer-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 38px; }
 .clarity-footer-brand p { max-width: 34ch; margin: 20px 0 8px; }
+.clarity-footer-brand::before {
+  content: "";
+  display: block;
+  width: min(240px, 100%);
+  height: 4px;
+  margin-bottom: 24px;
+  background: var(--health-accent-rule);
+}
 .clarity-footer-links { display: grid; margin-top: 10px; }
 .clarity-footer-link { min-height: 44px; display: inline-flex; align-items: center; color: var(--ink-2); font-size: 15px; font-weight: 650; text-decoration: none; }
 .clarity-footer-link:hover { color: var(--pulse); }
@@ -1486,6 +1498,8 @@ a.wordmark { text-decoration: none !important; }
   .clarity-footer-brand { grid-column: auto; }
 }
 @media (forced-colors: active) {
+  .clarity-footer-brand::before { background: CanvasText; }
+  .clarity-public-shell .btn:focus-visible { outline-color: Highlight; }
   .clarity-card,
   .clarity-form,
   .clarity-confirmation,

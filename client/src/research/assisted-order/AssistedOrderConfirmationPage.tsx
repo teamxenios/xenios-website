@@ -33,7 +33,7 @@ export function AssistedOrderConfirmationPage() {
 
   if (receipt === null) {
     return (
-      <section className="xenios-order-page" data-testid="order-confirmation-unavailable">
+      <section className="xenios-order-page xenios-order-page--customer" data-testid="order-confirmation-unavailable">
         <section className="xenios-order-panel">
           <p className="xenios-order-eyebrow">Order request</p>
           <h1>Confirmation unavailable</h1>
@@ -60,7 +60,7 @@ export function AssistedOrderConfirmationPage() {
   return (
     // MinimalChrome supplies the page's main landmark; nesting a second main
     // inside it is invalid (P2-4), so this page renders a section.
-    <section className="xenios-order-page">
+    <section className="xenios-order-page xenios-order-page--customer">
       <EarlyAccessStepper
         steps={EARLY_ACCESS_CUSTOMER_STEP_LABELS}
         activeIndex={3}
