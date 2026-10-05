@@ -1,0 +1,13 @@
+{
+  "sampledAtUtc": "2026-10-05T20:30:14.6631240Z",
+  "freeMiB": 739.0,
+  "freeDiskGiB": 26.98,
+  "matchingHeavyNodeJobs": [],
+  "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+  "sourceTree": "6bc4fd7a7483822d4af87a3c07ab7263c0fbc377",
+  "focusedReservation": "Pending; no successor test run has begun",
+  "proposedNodeCommand": "node --test server/research/health/quick-order/tests/core.test.mjs server/research/health/quick-order/tests/handler.test.mjs",
+  "proposedVitestCommand": "node node_modules/vitest/vitest.mjs run client/src/research/quick-order/contracts.test.ts client/src/research/quick-order/QuickOrderPage.test.tsx client/src/research/quick-order/OperatorDeclarations.test.tsx server/research/health/quick-order/catalog.test.ts server/research/health/quick-order/production.test.ts server/research/health/quick-order/containment.test.ts --maxWorkers=1 --no-file-parallelism --cache=false --reporter=verbose",
+  "heapCapMiB": 1024,
+  "heavyJobsReserved": false
+}

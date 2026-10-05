@@ -1,0 +1,262 @@
+{
+  "at": "2026-10-05T20:30:15.684Z",
+  "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+  "sourceTree": "6bc4fd7a7483822d4af87a3c07ab7263c0fbc377",
+  "ok": true,
+  "sourceDiffExit": 0,
+  "patchCheckExit": 0,
+  "patchCheckOutput": "",
+  "patchSha256lf": "c65d7e49a9f5ec87262d4e3b106ab5e16b1c3d1ecd46a01c8a7ca4699e6d92af",
+  "baselines": [
+    {
+      "path": "client/src/App.tsx",
+      "sha256lf": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
+      "observedSha256lf": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
+      "unchanged": true
+    },
+    {
+      "path": "server/index.ts",
+      "sha256lf": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521",
+      "observedSha256lf": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521",
+      "unchanged": true
+    },
+    {
+      "path": "client/src/lib/tracking.ts",
+      "sha256lf": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+      "observedSha256lf": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+      "unchanged": true
+    },
+    {
+      "path": "client/src/lib/attribution.ts",
+      "sha256lf": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
+      "observedSha256lf": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
+      "unchanged": true
+    },
+    {
+      "path": "shared/care/paths.ts",
+      "sha256lf": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417",
+      "observedSha256lf": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417",
+      "unchanged": true
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.ts",
+      "sha256lf": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a",
+      "observedSha256lf": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a",
+      "unchanged": true
+    },
+    {
+      "path": "server/static.ts",
+      "sha256lf": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94",
+      "observedSha256lf": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94",
+      "unchanged": true
+    },
+    {
+      "path": "server/vite.ts",
+      "sha256lf": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243",
+      "observedSha256lf": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243",
+      "unchanged": true
+    },
+    {
+      "path": "server/research/assisted-order/ports.ts",
+      "sha256lf": "cab0fe8e1cd398d4e59c18da09780d2ab6bed3115e17821be187df69b610a6ed",
+      "observedSha256lf": "cab0fe8e1cd398d4e59c18da09780d2ab6bed3115e17821be187df69b610a6ed",
+      "unchanged": true
+    },
+    {
+      "path": "server/research/assisted-order/service.ts",
+      "sha256lf": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960",
+      "observedSha256lf": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960",
+      "unchanged": true
+    },
+    {
+      "path": "server/research/assisted-order/supabase-repository.ts",
+      "sha256lf": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327",
+      "observedSha256lf": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327",
+      "unchanged": true
+    },
+    {
+      "path": "server/research/assisted-order/http.ts",
+      "sha256lf": "6053138b2db68def7bd437d19eb5d755a6c996342a2c5b2cc4440ae1529d6ee0",
+      "observedSha256lf": "6053138b2db68def7bd437d19eb5d755a6c996342a2c5b2cc4440ae1529d6ee0",
+      "unchanged": true
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+      "sha256lf": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e",
+      "observedSha256lf": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e",
+      "unchanged": true
+    },
+    {
+      "path": "shared/research/assisted-order/contract.ts",
+      "sha256lf": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9",
+      "observedSha256lf": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9",
+      "unchanged": true
+    }
+  ],
+  "logs": [
+    {
+      "label": "adapters-diagnostic-1",
+      "expectedSha256": "7966ef2f06c0112639ca737129900ec286ecc07acb6a9fa28348aea7c59f15f4",
+      "observedSha256": "7966ef2f06c0112639ca737129900ec286ecc07acb6a9fa28348aea7c59f15f4",
+      "exact": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "sourceHead": "d8a0d3fdb33931fb391925470205ff76fa38fc97",
+      "sourcesUnchanged": null
+    },
+    {
+      "label": "handler-diagnostic-1",
+      "expectedSha256": "6d6ffc9440317956b620d11b873dd1b3a5fb41101b94847a09185b160e9ad72f",
+      "observedSha256": "6d6ffc9440317956b620d11b873dd1b3a5fb41101b94847a09185b160e9ad72f",
+      "exact": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "sourceHead": "d8a0d3fdb33931fb391925470205ff76fa38fc97",
+      "sourcesUnchanged": null
+    },
+    {
+      "label": "ui-diagnostic-1",
+      "expectedSha256": "86d765587a52c390a1e4d57e8e1c005283cb266120e6d34fe133f356c3215048",
+      "observedSha256": "86d765587a52c390a1e4d57e8e1c005283cb266120e6d34fe133f356c3215048",
+      "exact": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "sourceHead": "d8a0d3fdb33931fb391925470205ff76fa38fc97",
+      "sourcesUnchanged": null
+    },
+    {
+      "label": "core-http-source-3b0048d",
+      "expectedSha256": "48fb99a81928952633ddeb4102593c6c3a2dc35f662adb129a9444c7aa9b8881",
+      "observedSha256": "48fb99a81928952633ddeb4102593c6c3a2dc35f662adb129a9444c7aa9b8881",
+      "exact": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "sourceHead": "3b0048de641415523caa44f91cb06002465e1773",
+      "sourcesUnchanged": true
+    },
+    {
+      "label": "components-adapters-source-3b0048d",
+      "expectedSha256": "5da3cf3a993b454ebf7c3a396471b09acfed650440876fb99a8fed2c33eefeeb",
+      "observedSha256": "5da3cf3a993b454ebf7c3a396471b09acfed650440876fb99a8fed2c33eefeeb",
+      "exact": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "sourceHead": "3b0048de641415523caa44f91cb06002465e1773",
+      "sourcesUnchanged": true
+    },
+    {
+      "label": "containment-source-4abd2c5",
+      "expectedSha256": "28dc7c1c6d3d7f1b13e47de5e8a48a2d208364c2816905e521028d20dbf596f0",
+      "observedSha256": "28dc7c1c6d3d7f1b13e47de5e8a48a2d208364c2816905e521028d20dbf596f0",
+      "exact": true,
+      "exit": {
+        "code": 0,
+        "signal": null
+      },
+      "sourceHead": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
+      "sourcesUnchanged": true
+    }
+  ],
+  "sources": [
+    {
+      "path": "client/src/research/quick-order/OperatorDeclarations.test.tsx",
+      "sha256lf": "0b379d4cdfa041895b6ffe1de795f4986caef81cfe3269879cd8aa6e8acba505"
+    },
+    {
+      "path": "client/src/research/quick-order/OperatorDeclarations.tsx",
+      "sha256lf": "00bdf0d0d827960b851542a47d85f2db061d0a22b076ba78c95e54f64fc0c9da"
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderPage.test.tsx",
+      "sha256lf": "c06c8af1e5d03c78ec706c6443c21a9ce57088de63e5c0675c2f67d5f002681e"
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderPage.tsx",
+      "sha256lf": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b"
+    },
+    {
+      "path": "client/src/research/quick-order/contracts.test.ts",
+      "sha256lf": "41acfb403839870c8095a16216babc4ea0222b5e1b80ec15b4e8b31520078c14"
+    },
+    {
+      "path": "client/src/research/quick-order/contracts.ts",
+      "sha256lf": "51c91843c6a9f2dbad9133c09986c7754ee2f467c3889d8877e40d7979526861"
+    },
+    {
+      "path": "client/src/research/quick-order/quick-order.css",
+      "sha256lf": "1cc94da50f0a8235caee34743b74c5854a2a4cf2df7a63545e5fdcd8c3f02fd9"
+    },
+    {
+      "path": "server/research/health/quick-order/catalog.test.ts",
+      "sha256lf": "a84bf7b06cb03ebfd909105350b06d9acc163c5bb166c12dcb837fcd4dbda113"
+    },
+    {
+      "path": "server/research/health/quick-order/catalog.ts",
+      "sha256lf": "43458fb0279f1298aca4582053bf98163910b85ccbb7169cec2d690879a20037"
+    },
+    {
+      "path": "server/research/health/quick-order/containment.test.ts",
+      "sha256lf": "6dbcbd18af43b6cfa683d371444f728fa7fea93b1494895b221ceeb3449a7c0e"
+    },
+    {
+      "path": "server/research/health/quick-order/containment.ts",
+      "sha256lf": "a8e253d2f59b701b5ce96116eacf58269d012ad2002082ab98014e47b1aa526b"
+    },
+    {
+      "path": "server/research/health/quick-order/core.d.mts",
+      "sha256lf": "d3bca2af4ef290f37db356480cdf4b1f610a17e331910ecb7a2a4f7102f30998"
+    },
+    {
+      "path": "server/research/health/quick-order/core.mjs",
+      "sha256lf": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35"
+    },
+    {
+      "path": "server/research/health/quick-order/handler.d.mts",
+      "sha256lf": "b65211ed78cf0bef51079aac7b0c0c72ed996b037558395c61fc573509be4a27"
+    },
+    {
+      "path": "server/research/health/quick-order/handler.mjs",
+      "sha256lf": "82aa742d8c499e4e5b50c757d62931990ad3a1c7741b68d745df4a53396ea187"
+    },
+    {
+      "path": "server/research/health/quick-order/legal.ts",
+      "sha256lf": "f8f36c9c9e2756426aea9bf97d67fb23e7111ef93617d45696a5127cb714967e"
+    },
+    {
+      "path": "server/research/health/quick-order/ports.ts",
+      "sha256lf": "8da9b4327bac927a4f57685fcee6d40c968c3ccca3dcd546f74f8e6bb5da2e14"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "sha256lf": "34df7a7eb621ad7dfb26e0f94de51402e72dc0a4c311d67a0c321ad90660759f"
+    },
+    {
+      "path": "server/research/health/quick-order/production.ts",
+      "sha256lf": "d3cc0bffa4a0a3dce0963a422c5c58a3fb0a5142c455d2891f295204eb1a2b32"
+    },
+    {
+      "path": "server/research/health/quick-order/tests/core.test.mjs",
+      "sha256lf": "eacf6db8971f16c9c73537903735d7b6dc71686050d8beba9708461221156d49"
+    },
+    {
+      "path": "server/research/health/quick-order/tests/fixtures.mjs",
+      "sha256lf": "8fc92b273d37adbe2a7f6c973a116959f180beb366f61bf5d588f431bfe8da9c"
+    },
+    {
+      "path": "server/research/health/quick-order/tests/handler.test.mjs",
+      "sha256lf": "5dd56f8622b884cfc8ba2a73a008d6cf4ffdd004a2bf768546b6f75c348d70ce"
+    }
+  ],
+  "narrowPrivacyScan": [],
+  "privacyScope": "Static check of new runtime modules for listed storage/logging/HTML sinks only; not a complete application privacy or browser proof."
+}

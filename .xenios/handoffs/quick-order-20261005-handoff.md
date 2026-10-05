@@ -13,12 +13,12 @@ Accepted base: `756a906877dbc174b7e228a259d2faa9c3af48ca`, tree
 `04cbbee0d3d3ab32dfd6ae9002b82837423f6265`, count-only correction
 `fffa33a6b3407b407b2b43d3c5a5c7054887f590`; not release acceptance.
 
-- FINAL PUSHED MODULE SOURCE: `4abd2c5cd4bd039309b32b97b117a67fc6a4d292`
-- SOURCE TREE: `3fb70d98dc354e6a6049744b5bb15b741d5ba50b`
+- FINAL PUSHED MODULE SOURCE: `f1e467f74b01ae2ab866bb791a3c11d657a5d69c`
+- SOURCE TREE: `6bc4fd7a7483822d4af87a3c07ab7263c0fbc377`
 
 This handoff's later records/evidence commit adds no runtime source changes.
 Read `docs/health-launch/quick-order-20261005/QUALIFICATION.md`, `SOURCE_MAP.md`,
-`APPROVAL_MATRIX.md`, `PERSISTENCE_PROPOSAL.md`, and their evidence. These are
+`RELOCATION.md`, `APPROVAL_MATRIX.md`, `PERSISTENCE_PROPOSAL.md`, and their evidence. These are
 authoritative for this lane; do not import the coordinator's Finance ancestry.
 
 Completed: disabled PublicShell React page, strict required-field/server/client
@@ -47,9 +47,22 @@ source files are unchanged. Necessary successor focused run10/10PASS verifies
 duplicate-slash, absolute-form and literal-fragment pathname cases stop before
 the actual-shape2MiB JSON/rawBody verifier, plus unrelated normalized passthrough.
 Its exact source hashes/log are retained separately; no full184-test rerun or
-pooled194 count is claimed. The6-file mount proposal and its hash are unchanged.
+pooled194 count is claimed. Those historical receipts remain unchanged.
 
-Typecheck NOT RUN: fresh19:39Z820MiB RAM/27.02GiB disk/no matching heavy Node job
+Relocated source `f1e467f` repairs the new P1 location violation without changing
+behavior:7client files move to `client/src/research/quick-order/`,15server files
+to `server/research/health/quick-order/`,0shared files. All paths were verified
+inside389a before moves; no destination collisions across current ownership
+snapshots. Fifteen files are LF-identical; seven have resolved relative-reference
+changes only. Static classification using unchanged accepted756 manifest/verifier:
+14allowed+8reported tests, zero new QO location violations. This is not a full
+protection-gate pass. All22 source hashes, old/new inventory and proposed-byte
+checks are in the exact-source relocation evidence. No old-path re-export or
+runtime reference remains. Successor tests NOT RUN pending serialized reservation.
+Claude's reported independent189 at4abd remains separate/unborrowed; existing
+six-lens review findings must arrive before successor acceptance readiness.
+
+Typecheck NOT RUN: fresh20:30Z739MiB RAM/26.98GiB disk/no matching heavy Node job
 fails coordinator's2048MiB threshold. Build, aggregate, five-width/keyboard/zoom
 browser batch, real canonical DB/concurrency/restart/rollback/operator proof and
 managed nonproduction NOT RUN. No release gate is waived. No background process
@@ -57,10 +70,16 @@ launched by this lane remains; unrelated PID18936 preview was untouched.
 
 All14 protected/shared baseline hashes remain unchanged. Exact disabled mount
 proposal still passes `git apply --check`; no target applied. Patch SHA256LF
-`6481c2ad2d4d2828e789cb2f2e24964705562cb782d70728b4152d78dc40a672` and six exact
+`c65d7e49a9f5ec87262d4e3b106ab5e16b1c3d1ecd46a01c8a7ca4699e6d92af` and six exact
 before/after pairs are in the packet. Existing permission does not cover these
 files. D/E schema permission is not Quick Order permission. No SQL authored,
 registered or applied; local state does not prove hosted schema absence.
+Old6481c2ad patch is preserved byte-for-byte in history and HELD / REVISION
+REQUIRED AFTER SOURCE RELOCATION. Do not apply or seek unchanged approval.
+Tracking/attribution are hard-pinned seams; App/server are restricted reported
+seams; the other two are allowed-zone files still requiring scope/leases. A1 is
+edit-from-exact-baseline permission only, not successor-hash approval or manifest
+recut. A2 source drafting is independent and still pending.
 
 Disposition: Quick Order source review **BLOCKED / incomplete**; managed
 nonproduction **NOT RUN**; real intake **NOT READY**; payment/subscription/
@@ -68,16 +87,22 @@ clinical readiness unchanged. Core protected hashes, GATE-01, all six real
 subscription buying prerequisites, intended plan, MC-01 adoption/compatibility,
 D/E delivery and Finance/provider holds remain.
 
-NEXT EXACT ACTION: Coordinator routes Samuel the exact disabled mount/privacy
-patch and narrow new-schema/module authoring proposal. Apply neither until
-actual approval. After approval, this same builder records it, checks current
+NEXT EXACT ACTION: Obtain a fresh serialized focused-test reservation and consume
+the original existing six-lens review findings through the coordinator. Outbound
+coordinator messaging was rejected by automatic approval review for unverified
+user authorization; the permission question remains pending, and no alternate
+channel was used. Report normal progress/results in this chat. The coordinator
+can inspect this pushed packet. Revised A1/A2 remain unapproved. After actual
+approval, this same builder records it, checks current
 target hashes/ownership, claims only the approved extension paths, and continues
 the canonical transaction/currentness/reader design. Existing shared-file edits
 require concrete successor diffs; no broad authority is inferred. Preserve this
 source and reuse this worktree; do not start a competing builder or reviewer.
 
-OWNERSHIP: only `client/src/quick-order/**`, `server/health/quick-order/**`,
-`shared/health/quick-order/**`, this lane's docs, own session file and this exact
+OWNERSHIP: existing lease17093695 extended to `client/src/research/quick-order/**`
+and `server/research/health/quick-order/**`, retaining `client/src/quick-order/**`,
+`server/health/quick-order/**`, `shared/health/quick-order/**` for removal/history.
+Also this lane's docs, own session file and this exact
 handoff. Session/task are `blocked_external` awaiting source authority; its
 existing lease remains reserved for the same builder. Other branch-local fleet
 entries are preserved; current coordinator/remote Git truth outranks them.
