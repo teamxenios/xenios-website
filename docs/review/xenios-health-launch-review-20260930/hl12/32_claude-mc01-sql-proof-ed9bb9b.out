@@ -1,0 +1,50 @@
+SOURCE PASS Core 3eaa017fcbd28989c65ffc4bb439a554aa1f3f59; 10 exact prerequisite files; six function bodies; complete persistent-cart DAG closure.
+SQL_STATE source-only, unregistered; no managed application or managed-state requalification.
+CANDIDATE_SHA256 365728cbc40a60ce3d5ffacbbbd09fd8d716c0413ddb1171565ed50563c9ffa4
+Runtime v20.19.0; PostgreSQL 17.11
+PASS exact predecessor schema and synthetic non-image authorities loaded.
+BEFORE PASS approved media required; missing media/input reproduced as ineligible.
+BEFORE PASS malformed legacy image domain requires explicit pause and invalidates both affected approvals without enabling either domain.
+BEFORE PASS public readiness, nonzero history, function drift, ACL drift, and non-bypass apply all refuse atomically.
+AFTER PASS candidate applied once; unregistered replay refused without duplicate audit.
+AFTER PASS null manifest expected-version refuses without control or audit mutation.
+AFTER PASS migration invalidated governance; canonical manifest approval and separate release restored readiness.
+AFTER PASS missing, null, wrong-type, short, duplicate, unknown, and malformed selection contracts all return false.
+PASS rejected product_media row cannot affect eligibility
+PASS absent product_media row cannot affect eligibility
+AFTER PASS zero product binding, image state, active-count, and every permitted blocker level cannot affect readiness or eligibility.
+AFTER PASS malformed primary-image domain, record type, field, version, and product binding cannot change either domain or cart authority.
+AFTER PASS eight required-input and eight media RPC lifecycle states preserve parent product, non-image inputs, full domain approvals/versions, and cart eligibility.
+PASS storage-information required input remains fail-closed
+PASS an image-like unknown key is not the reserved primary-image exemption
+AFTER PASS exact storage fact remains required; every active unknown non-image blocker class fails closed.
+AFTER PASS primary-image input cannot substitute for the three exact non-image inputs.
+PASS product publication/approval gate remains fail-closed
+PASS variant approval/active gate remains fail-closed
+PASS price approval/effective authority remains fail-closed
+PASS domain launch-control version/status gate remains fail-closed
+PASS inventory availability gate remains fail-closed
+PASS COA/document authority remains fail-closed
+PASS lot quality-test authority remains fail-closed
+AFTER PASS product, variant, price, audience/member, domain, inventory, COA and quality gates preserved.
+PASS null put owner kind refused before mutation.
+PASS null put quantity refused before mutation.
+PASS null put selection refused before mutation.
+PASS null put idempotency refused before mutation.
+PASS null put expiry refused before mutation.
+PASS empty selection price expiry refused before mutation.
+AFTER PASS put command hash/replay/snapshot/hash canonicalize legacy media away.
+PASS null claim selections refused before mutation.
+PASS empty claim selections refused before mutation.
+PASS null anonymous version refused before mutation.
+PASS null claim member refused before mutation.
+AFTER PASS claim null/empty inputs and null optimistic-concurrency scalars refuse without mutation.
+AFTER PASS claim command hash/replay/snapshot/hash canonicalize legacy media away.
+AFTER PASS helper privacy, service-only bounded RPCs, forced RLS and direct-DML denial preserved.
+CANDIDATE_SHA256 365728cbc40a60ce3d5ffacbbbd09fd8d716c0413ddb1171565ed50563c9ffa4
+LOCAL_PROOF_PASS media is presentation-only; all named non-image commerce gates remain authoritative.
+CLEANUP removed only this proof's disposable container and tmpfs database.
+
+real	0m56.971s
+user	0m0.000s
+sys	0m0.015s

@@ -1,0 +1,92 @@
+
+ RUN  v4.1.10 C:/xenios-wt/closeout-review
+
+ ❯ server/core-site-protection.test.ts (37 tests | 2 failed) 212ms
+     × matches every curated protected file at HEAD 66ms
+     × verifies the seam baselines too, and they are all clean at HEAD 18ms
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  server/core-site-protection.test.ts > the protected file hash tripwire > matches every curated protected file at HEAD
+AssertionError: expected [ { …(3) }, { …(3) }, { …(3) }, …(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "actual": "sha256:b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049",
++     "expected": "sha256:70d3302a8b4f5d22aa324c3728ae51963d12222ab880c29fcd3f8ea3e477d0e6",
++     "path": "client/src/index.css",
++   },
++   {
++     "actual": "sha256:6cdfbb0f05cc8d1fb28bfdc6b7a012ddb85e34d0c985bc88e71c09d8456a218a",
++     "expected": "sha256:e37a5b94cb07674e8f4471ddc37b9a5e8a6f848d300408ba67ff3b706941eb1f",
++     "path": "client/src/components/Navbar.tsx",
++   },
++   {
++     "actual": "sha256:420b45dc09aefa572a65ae68b5add6a2ce3d435e54e1fea7d9db9f29390df7cb",
++     "expected": "sha256:25da700fcea32178d19fc21a3d6db4192d11b403418b7fa83100b4c88d9e2a3a",
++     "path": "client/src/components/Footer.tsx",
++   },
++   {
++     "actual": "sha256:b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94",
++     "expected": "sha256:9cd3e1c363dd921fab780761baa888e9319f40ef177ca303072e3179b2c20004",
++     "path": "server/static.ts",
++   },
++ ]
+
+ ❯ server/core-site-protection.test.ts:321:31
+    319|   it("matches every curated protected file at HEAD", () => {
+    320|     const result = verifyHashes(manifest.fileHashes.files, cleanReader…
+    321|     expect(result.mismatches).toEqual([]);
+       |                               ^
+    322|     expect(result.missing).toEqual([]);
+    323|     expect(result.matched.length).toBe(Object.keys(manifest.fileHashes…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  server/core-site-protection.test.ts > the protected file hash tripwire > verifies the seam baselines too, and they are all clean at HEAD
+AssertionError: expected [ { …(3) }, …(2) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     "actual": "sha256:1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
++     "expected": "sha256:3b3b808b23cccdf8d2e2179fd30349b3ae299137a8a4a5f33525e0a304828d80",
++     "path": "client/src/App.tsx",
++   },
++   {
++     "actual": "sha256:ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521",
++     "expected": "sha256:1d6594d6389e2ac67d9af85213854e05387899dfe0102fa577e447565e68c315",
++     "path": "server/index.ts",
++   },
++   {
++     "actual": "sha256:5b9f683b183a095e258908e0e0086888c71b7666b0e384367b1bfde0c4124188",
++     "expected": "sha256:b8db03cf7b51b2bd225e4f96c9cf3762f97188a7babcaf89591815c226263070",
++     "path": "server/research/index.ts",
++   },
++ ]
+
+ ❯ server/core-site-protection.test.ts:387:31
+    385|   it("verifies the seam baselines too, and they are all clean at HEAD"…
+    386|     const result = verifyHashes(manifest.seamBaselineHashes.files, cle…
+    387|     expect(result.mismatches).toEqual([]);
+       |                               ^
+    388|     expect(result.missing).toEqual([]);
+    389|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  2 failed | 54 passed (56)
+   Start at  10:53:09
+   Duration  10.94s (transform 849ms, setup 0ms, import 2.16s, tests 5.73s, environment 2.08s)
+

@@ -1,0 +1,707 @@
+{
+ "schemaVersion": "claude_acceptance_lenses_v1",
+ "finance": {
+  "source": "dfd8b9b09815357d6c92f9c00eadf1782325269a",
+  "evidence": "b13c29ea6caa4b9715c295d45232e065511a85db",
+  "handoff": "963122ce355568d118c00ed6e774b474e2f50101"
+ },
+ "mc01": {
+  "source": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+  "handoff": "0b86108"
+ },
+ "core": {
+  "source": "70cd421a6ab79513744f531d921b3ece61044874",
+  "tests": "1a409e2",
+  "handoff": "7d66573"
+ },
+ "workflowRun": "wf_6ad98102-4ea",
+ "lenses": [
+  {
+   "lens": "fin-sql",
+   "review": {
+    "verdict": "FINANCE lane dfd8b9b (tree d00442d2): the candidate is ACCEPTABLE AS A SOURCE-ONLY STEP but is NOT ACCEPTED for anyone to rely on. ADP-G1 stays PARTIAL. No P0 or P1 found.\n\nWhat it does: the SQL derives a narrow, immutable risk-attribution receipt. It starts from the original quarantined/unknown_attempt journal row and follows the exact same-source payment binding, the bound create result, the claim and the attempt. Session identity is optional but must match exactly, and the binding must be strictly earlier at millisecond resolution. Attribution removes only that row's source-wide effect, and the derived request stays held permanently. It writes no money, history, journal, outbox or settlement rows. The seal chain, ACLs, search_path and install idempotency are sound.\n\nAuthority: the file is unregistered and unapplied (supabase/candidates only). MIGRATIONS.md, migrations, the DAG and protected files are unchanged. This is within LANE_OWNERSHIP (\"finance SQL candidates/verifiers\"). No production mutation is claimed or evidenced.\n\nNot accepted, because:\n- claim 4 does not survive a realistic event ordering;\n- R1 is only narrowed, and R4 is untouched;\n- the controlled race/lock-order proof that report 26 required is DEFERRED;\n- the full aggregate test run FAILED.",
+    "findings": [
+     {
+      "id": "FIN-ATTR-01",
+      "severity": "P2",
+      "file": "supabase/candidates/20261003_research_assisted_order_provider_attribution.sql",
+      "claim": "A same-payment event that does carry lineage, if it arrives after the metadata-free event but before the operator attributes it, becomes a permanent, unattributable source-wide freeze. Claim 4 only holds when nothing else arrives in that window.",
+      "evidence": "The classifier at journal migration 20261001085559 lines 402-405 turns any event whose providerPaymentId matches an unbound journal row into conflict/payment_identity_conflict, with established_request_id null. The candidate changes that predicate only for rows that already have a receipt (candidate:337-347, via event_risk_target at :307-313). Attribution accepts only classification='quarantined' and reason='unknown_attempt' (candidate:187). So a conflict row that lands before attribution can never be attributed. Through source_quarantine_held (:314-320) and request_quarantine_held (:325-328) it keeps the source frozen permanently. The audit names this trap (finance-sprint-20261003/audit.md:56-59), but only the post-attribution order is fixed and tested (local.mjs:269-281). Neither the functional proof nor races.mjs:126-135 covers a sibling carrying lineage that arrives before attribution. Realistic case: a dispute event without metadata followed within minutes by a refund event with metadata, while attribution is a manual, separately granted step.",
+      "fix": "Choose one: (a) in the same receipt, also cover payment_identity_conflict rows that were classified conflict only because of the now-attributed null-target row (prove the conflict was caused solely by that row, with equal source, payment, session and lineage to the derived attempt); or (b) record such siblings as derived from the attributed row. Then add a disposable-database proof for the order 'unknown event, then lineage sibling, then attribute'. Until then, describe claim 4 as covering only that ordering."
+     },
+     {
+      "id": "FIN-ATTR-02",
+      "severity": "P2",
+      "file": "supabase/candidates/20261003_research_assisted_order_provider_attribution.sql",
+      "claim": "ADP-G1-R1 is narrowed, not closed. Several kinds of unbound row about a known object stay permanent source-wide freezes, and the attributed target becomes a permanent single-order freeze with no lifecycle.",
+      "evidence": "Only reason='unknown_attempt' with an allowlisted kind can be attributed (candidate:187-189); kind 'unknown' is refused. These rows still have established_request_id null and cannot be attributed: missing_event_identity, binding_mismatch, unsupported_financial_effect with kind 'unknown' (set before any target, journal migration 393-396), event_identity_conflict and payment_identity_conflict (classifier 390-392, 402-405), source_revoked, and truly foreign or early events. The ingress maps a malformed optional claim to kind 'unknown' (provider-journal.ts:185). request_quarantine_held returns true for any attributed request with no expiry or release (candidate:323-324). So a settled or shipped target can never deliver, close or cancel (see R2), and no resolution path exists. The handoff lists early/unbound objects as open but does not list these other reasons.",
+      "fix": "Record R1 as OPEN (narrowed to one class). List the remaining unbound reasons in the lane report and the blocker matrix. Keep the separate, positively evidenced resolution and the target lifecycle (R2, G2) as the next slices."
+     },
+     {
+      "id": "FIN-ATTR-03",
+      "severity": "P2",
+      "file": "supabase/verification/research_assisted_order_provider_attribution_races.mjs",
+      "claim": "Missing evidence: none of the required lock-order or race qualification has run, and the full aggregate test run failed. This is not a pass.",
+      "evidence": "races.mjs:164-166 exits 2 (DEFERRED), and the receipt runs/races-deferred-20261005-01/receipt.json at 963122c shows exitCode 2 with no database started. Report 26's next-slice requirement ('both lock orders', interruption) is therefore unmet. Only rollback/abort is proven (local.mjs:348-358). The full run full-20261005-01 at dfd8b9b exited 1: 16 files failed, 2 tests failed, and 15 suites failed collection with ENOSPC. Its coverage is missing, not passing.",
+      "fix": "On a quiet or isolated host with enough disk, run races.mjs with a fresh QUIET_PRECHECK_ONLY receipt and keep the in-run host evidence. Re-run the full aggregate. Add a race for 'lineage sibling append vs attribution' and for 'attribution vs new reservation on the same source'."
+     },
+     {
+      "id": "FIN-ATTR-04",
+      "severity": "P2",
+      "file": "server/research/assisted-order/payment/provider-journal.ts",
+      "claim": "ADP-G1-R4 (cross-scope events re-homed under the receiving source) is untouched and still OPEN, although report 26 made fixing it a prerequisite to attribution. The candidate's safety against cross-scope attribution depends implicitly on TypeScript ingress behaviour, not on SQL.",
+      "evidence": "provider-journal.ts:173-177 and :189 at dfd8b9b are unchanged: a scope mismatch strips all claims, including providerPaymentId, and appends the event under the receiving source. The event envelope has no provider/account/mode field (journal migration 335-337). So the SQL cannot check the event's true scope. Attribution is refused for these rows only because providerPaymentId is null (candidate:151, :188). If R4 is fixed by keeping the declared scope and the payment id (report 26, option 2), the receiving source's binding lookup could then match without any scope check. Report 26 step 0 asked for R4 to be fixed before the attribution receipt.",
+      "fix": "Fix R4 first. Either refuse scope-mismatched events at ingress, or persist the declared scope. In SQL, refuse attribution for any row whose declared scope differs from the journal source. Pin this dependency in a test."
+     },
+     {
+      "id": "FIN-ATTR-05",
+      "severity": "P3",
+      "file": "supabase/candidates/20261003_research_assisted_order_provider_attribution.sql",
+      "claim": "A receipt is issued even when a different-payload row with the same event identity already exists, so the attributed event is itself contested.",
+      "evidence": "The context (candidate:175-200) never checks for journal rows with the same event_identity and a different event_fingerprint. races.mjs:126-135 asserts one receipt in conflict-first order. The outcome is conservative, because the conflict row keeps the source held.",
+      "fix": "Refuse attribution with ATTRIBUTION_HELD when such a row exists, or record it in the witness snapshot."
+     },
+     {
+      "id": "FIN-ATTR-06",
+      "severity": "P3",
+      "file": "supabase/candidates/20261003_research_assisted_order_provider_attribution.sql",
+      "claim": "Replay is not stable: an exact replay can fail instead of returning the immutable receipt.",
+      "evidence": "commit (:285-296) re-runs the full context before checking for an existing receipt. A later session binding added after attribution makes it raise ASSISTED_ORDER_PROVIDER_ATTRIBUTION_HELD at :213-215. Revocation makes it raise GRANT_REQUIRED (stated as intended at :283-284). The receipt and the target hold persist, so safety is unaffected.",
+      "fix": "Document that a receipt is read by journal_id, or add a read-only receipt lookup for idempotent clients."
+     },
+     {
+      "id": "FIN-ATTR-07",
+      "severity": "P3",
+      "file": "supabase/candidates/20261003_research_assisted_order_provider_attribution.sql",
+      "claim": "Attribution configuration revocation is one-way and cannot be re-provisioned.",
+      "evidence": "The policies table has primary key source_id (:37) and grants have primary key (source_id, auth_user_id) (:51). Rows cannot be deleted (:364), and only a first revocation is allowed (:80-83). Once a source's policy is revoked, attribution on that source can never be re-enabled without a schema change. This matches the predecessor configuration tables.",
+      "fix": "Record this in the provisioning plan, or key policies by (source_id, policy_revision)."
+     },
+     {
+      "id": "FIN-ATTR-08",
+      "severity": "P3",
+      "file": "server/research/assisted-order/finance-sprint-20261003/evidence/runs/source-contract-20261005-01/receipt.json",
+      "claim": "Provenance: the 11/11 source-contract run executed at d2e12dc, not at the tested SHA dfd8b9b.",
+      "evidence": "The receipt head/tree is d2e12dc/161d3d94. git diff d2e12dc dfd8b9b changes only the verifier mjs (3 lines), which the test does not read. The handoff states this ('unchanged SQL/test bytes').",
+      "fix": "Re-run the source-contract test at the final tested SHA when the races are re-run."
+     }
+    ],
+    "confirmed": [
+     "Identity: dfd8b9b has tree d00442d29aa884125c62f8a92d58b971cf47cecd. The candidate file's SHA-256 is 507376b8...b53d, as claimed. M94's file SHA-256 is 91a20f68...f477, unchanged. The diff from 3eaa017 touches no supabase/migrations file, no MIGRATIONS.md, no DAG/acceptance script and no protected file. The candidate is unregistered and unapplied.",
+     "Seal chain, recomputed by Claude from file text: M93's installer digest is 1edd550f..., which equals M94's predecessor_definition. M94's installer digest is 5302be31..., which equals the candidate's predecessor_definition (candidate:16). The candidate's own installer digest is a1466a8b...f7a7. The fingerprint SQL is byte-identical to M94's.",
+     "Claim 1: the target comes only from immutable rows. These are the journal row, which must be classification quarantined, reason unknown_attempt, state held, with null established IDs (candidate:186-187), plus the payment binding, bound create result, claim and attempt. The witness_precedes check (:107-112) requires recorded_at = bound_at and recorded_at strictly earlier than received_at. Both timestamps are taken under the exclusive provider fence (journal guard 436/449; result guard 346/351). The optional session must match exactly, with its own strictly earlier result (:211-232). Contradictory claimed lineage, or any claimedCanonicalOrderId, is refused (:203-210).",
+     "Claim 2: attribution_commit takes no request, attempt, amount or note parameter (:277-279). The target is joined in SQL (:147-153). The direct-insert guard refuses any caller-supplied target or witness (:250-255). Every table is revoked from public, anon, authenticated and service_role (:356).",
+     "Claim 3: there is no INSERT, UPDATE or DELETE on observations, verifications, settlements, events or outbox. The receipt state is always 'held' (:70, :274). The authority DTO reports settlementEnabled:false and refundEnabled:false (:379). The committed functional proof asserts that the snapshot and provider-core rows are unchanged across attribution.",
+     "Claim 4, for the isolated case only: source_quarantine_held and request_quarantine_held exclude rows that have a receipt (:314-329). The proof shows settled B's eligibility recovering and pending C settling (functional-20261005-02 at dfd8b9b, exit 0, 11 groups, 69 refusals).",
+     "Claim 5: request_quarantine_held is true whenever any receipt names the request (:324), with no time, grant or revocation predicate. Settlement, eligibility, financial_guard and settlement_row_allowed all route through it (M94 238/280/301/332).",
+     "Claim 6: a changed payload for the same identity is classified event_identity_conflict with a null target, is never attributable (:187), and keeps the source held (local.mjs:283-292).",
+     "Claim 8: there is no UPDATE or DELETE of any predecessor row. The journal row is proven byte-identical. The classifier rewrite affects only future classification and is guarded by an exactly-once predicate match (:337-347). Function OIDs and ACLs are preserved by CREATE OR REPLACE.",
+     "Claim 9: the policy and grant tables are created empty, with forced RLS and all privileges revoked, including from service_role. Attribution requires all of: an active source with a valid scope, a policy with the exact semantics and revision, and an active actor grant. All three are rechecked FOR SHARE after the request-then-fence locks (:163-174). Only a first revocation is allowed, and delete and truncate are blocked.",
+     "Hygiene: every new SECURITY DEFINER function sets search_path=''. The ACL loop revokes all provider functions and grants only the 13 allowlisted RPCs to service_role (:431-441). Integrity checks the ADP05A seal, function and table ACL drift, and READ COMMITTED (:401-430). The lock order is request then fence, and no second request is locked after the fence.",
+     "Idempotency: on reapply, the 0-or-3 table count is checked, the full seal and live fingerprint are compared read-only, then integrity runs. Fresh install requires the exact ADP04Q seal. Double apply and populated reapply are proven, and an ACL-drift reapply is refused with 55000.",
+     "Records are truthful: the handoff declares ADP-G1 PARTIAL; G2, G3, G4, F1 and refund OPEN; races DEFERRED; the full aggregate FAILED with ENOSPC; the first functional run FAILED (its evidence kept); no production mutation; independent acceptance pending."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "FIN-ATTR-01",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed at dfd8b9b. A metadata-free event A is classified quarantined/unknown_attempt (journal 20261001085559:395, M92 wrapper execution:481 returns prior). A lineage sibling B for attempt X with the same providerPaymentId, appended before attribution, then reaches the payment-identity predicate. At that point event_risk_target(A) is null (candidate:307-313), so the rewritten predicate (candidate:340) still returns conflict/payment_identity_conflict with a null target (journal:402-405). Attribution accepts only quarantined/unknown_attempt rows (candidate:187), so B can never be attributed and keeps source_quarantine_held true (candidate:314-320). Both writers lock X's request first, so the outcome depends purely on event order. Coverage: post-attribution ordering only (local.mjs:269-281); races.mjs:126-135 covers changed-payload conflicts, not lineage siblings. Escalation: once B exists, every later lineage event on that payment also matches B and becomes a null-target conflict. Severity: fail-closed with no money misstated, so P2 is correct."
+     },
+     {
+      "id": "FIN-ATTR-02",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed as carried ADP-G1-R1 (P2-latent, report 26:70-90), narrowed but not closed. Refusals: candidate:187-189 refuses every reason except unknown_attempt and refuses kind 'unknown'. Still null-target and unattributable: source_revoked/missing_event_identity/unsupported_financial_effect (journal:393-396), binding_mismatch (journal:397-401, which includes any partially absent claimed field), event/payment identity conflicts (journal:390-392, 402-405), and the M92 wrapper's conflict at execution:486-491, which the lens did not cite. provider-journal.ts:185 maps a malformed optional claim to kind 'unknown'. request_quarantine_held:324 has no release path, so the target can never progress through the M94 financial_guard:336-344. Records: the lane report's 'broader quarantine resolution remain open' (FINANCE_SPRINT_V2 at 963122c:20) does not enumerate these reasons, so the records-precision point is fair."
+     },
+     {
+      "id": "FIN-ATTR-03",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Races: confirmed DEFERRED. races.mjs:164-166 exits 2 before any database starts, and the receipt races-deferred-20261005-01 at 963122c shows exitCode 2 at head dfd8b9b. Report 26:255-256 required interruption and 'both lock orders'; only rollback/abort is proven (local.mjs:348-358). Planned coverage also has gaps: attribution vs settlement is exercised in one order only (races.mjs:109-125), and there is no attribution-vs-reservation or lineage-sibling race. Full run: full-20261005-01 exited 1 with 16 failed files, 2 failed tests and 15 ENOSPC collection failures. The 2 failures are the inherited protected-hash assertions (report 26:15-16; doc 29:598), not finance-lane edits. Even so, missing coverage is not a pass."
+     },
+     {
+      "id": "FIN-ATTR-04",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed. provider-journal.ts:173-177 and :189 are unchanged from 3eaa017 (no diff under payment/). Report 26:245-248 made fixing R4 step 0, before the attribution receipt (step 1). One overstatement: these rows are refused for two reasons, not only the null providerPaymentId. With claims={} the kind also defaults to 'unknown' (provider-journal.ts:185), which candidate:189 refuses. The core point holds: the event envelope has no scope field (journal:335-337), so SQL cannot verify the event's true scope. The lane records omit R4 entirely, along with the skipped prerequisite: no mention in FINANCE_SPRINT_V2, audit.md or the 963122c handoff. That is a records gap on top of the still-open P2-latent R4."
+     },
+     {
+      "id": "FIN-ATTR-05",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. The context (candidate:175-200) never checks for same event_identity rows with a different fingerprint. races.mjs:126-135 asserts one receipt in the conflict-first order. Conservative: the conflict row stays unattributed, so the source stays held (local.mjs:283-292). P3 is correct."
+     },
+     {
+      "id": "FIN-ATTR-06",
+      "upheld": false,
+      "severity": "none",
+      "note": "Overstated, and the cited mechanism cannot happen. A session binding cannot be added after attribution. Bindings are inserted only by the AFTER INSERT result_bind trigger, in the same statement as a bound result (execution:417-424, 524-526). Once the null-target journal row A with payment P exists, any later object result for that attempt is classified response_conflict (execution:365-366) or provider_identity_conflict (execution:370-374), so it is never bound. The only real failing replay is after revocation, which is intended, documented at candidate:283-284 and tested (local.mjs:366-368). This is a design note, not a defect."
+     },
+     {
+      "id": "FIN-ATTR-07",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. Policies use primary key source_id (:37) and grants use (source_id, auth_user_id) (:51). Delete is blocked (:364) and only a first revocation is allowed (:80-83). Once a policy is revoked, attribution can never be re-enabled on that source. Related: source revocation also forecloses attribution of pre-revocation unknown rows (candidate:139, :163-166). Both are fail-closed and match the predecessor config pattern (execution:42-61, 115-118)."
+     },
+     {
+      "id": "FIN-ATTR-08",
+      "upheld": false,
+      "severity": "none",
+      "note": "Technically accurate but mooted by existing evidence. The standalone source-contract run used d2e12dc, and git diff d2e12dc..dfd8b9b changes only 3 lines of local.mjs, which the test does not read (test:10-13). Separately, focused-20261005-01 ran at head dfd8b9b, tree d00442d2, over server/research/assisted-order. It passed 38/38 files, and that directory holds exactly 38 test files at dfd8b9b, including provider-attribution-sql.test.ts. So those 11 tests already executed at the tested SHA."
+     }
+    ],
+    "missed": [
+     "P2 (P2-latent; R1 class; refines FIN-ATTR-01): claim 4 also fails for any payment whose create result bound a session ID once later provider events omit the session or carry a different one. That is the usual case for charge- or PaymentIntent-level refund and dispute events. (a) Attribution of such a metadata-free event is refused: candidate supabase/candidates/20261003_research_assisted_order_provider_attribution.sql:211-215 requires sb.provider_identity to equal the event's providerSessionId, and the proof asserts this refusal at supabase/verification/research_assisted_order_provider_attribution_local.mjs:311. (b) After a successful attribution, a lineage-carrying event for the same attempt X without the session never reaches the candidate's rewritten predicate. The unchanged M92 wrapper (supabase/migrations/20261001102904_research_assisted_order_quote_provider_execution.sql:486-491) returns conflict/payment_identity_conflict with a null target, which candidate:187 can never attribute. Through candidate:314-320 that permanently re-freezes the source. Every fixture event carries the exact session (supabase/verification/research_assisted_order_quote_provider_settlement_harness.mjs:40-42; execution harness:82), so neither the functional proof nor the races cover it. Fix: decide the session-absence policy explicitly in both the attribution context and the classifier wrapper, or record this as a named R1 remainder, and add a disposable-database proof with a session-bound payment followed by a session-less event before and after attribution."
+    ]
+   }
+  },
+  {
+   "lens": "fin-concurrency-records",
+   "review": {
+    "verdict": "FINANCE lane at dfd8b9b (source), b13c29e (evidence) and 963122c (handoff): no P0 or P1 findings. Accepted only as a source-only, unregistered candidate. G1 attribution cannot be relied on yet because two P2 findings are open.\n\n(10) The source-only placement is confirmed. The SQL is only at supabase/candidates/20261003_research_assisted_order_provider_attribution.sql. From 3eaa017 to 963122c there are no changes to supabase/migrations, MIGRATIONS.md, MIGRATION_DAG.json, release-control-plane.test.ts, INTEGRATION_LEDGER.md or any other file outside the lane. Every repo reference to the candidate is in lane records or runners. b13c29e differs from dfd8b9b only in evidence files, three .xenios heartbeat files and FINANCE_SPRINT_V2_20261003.md. 963122c touches only .xenios records.\n\n(7) Static lock analysis: the attribution command takes the target request FOR UPDATE, then the fence FOR UPDATE, then source, policy and grant FOR SHARE. Every predecessor path uses the same request-before-fence order: event append, reservation, create context, create result, identity binding, settlement and eligibility. No path takes a request after the fence. I found no deadlock on the canonical paths. A grant, policy or source revoked mid-command is refused, because the locked FOR SHARE recheck re-evaluates the row after the revoker commits. Duplicate commits serialize on the request lock, and journal_id is unique. The classifier reads attributions while holding the fence.\n\nThe real gap is order dependence. A fully specified event for the same payment that arrives before the attribution is classified as a permanent conflict, and the candidate can never attribute it. The source then stays quarantined, so the unrelated-order relief never happens. This ordering is untested and the records do not mention it.\n\nNone of the concurrency claims has executed evidence. The race driver was deferred with exit 2. Even when it runs, it does not check which lock the peer waits on, and it lacks the key interleavings.\n\nRecords: the blocker matrix is truthful. F1, refund/dispute and G2–G4 are OPEN; G1 and LENS-01 are PARTIAL. ENOSPC and the full-suite failure are reported honestly. Race qualification is reported as DEFERRED. No acceptance or production readiness is claimed. Every number and hash in the records was re-verified against the committed evidence.",
+    "findings": [
+     {
+      "id": "FIN-1",
+      "severity": "P2",
+      "file": "supabase/candidates/20261003_research_assisted_order_provider_attribution.sql",
+      "claim": "G1 relief depends on event order. A fully specified event E2 for the same bound payment that arrives before E1 is attributed becomes a permanent, unattributable payment_identity_conflict. The source then stays quarantined forever, so attribution can no longer restore unrelated same-source orders. This is the audit's own 'second trap' in its realistic ordering. It is untested and undocumented.",
+      "evidence": "At dfd8b9b, candidate:186-187 attributes only rows that are classification='quarantined' AND reason='unknown_attempt'. candidate:331-347 changes the payment-identity predicate only for rows that already have an attribution receipt (event_risk_target). In the predecessor classifier (journal migration 3eaa017:402-405, with 406-418 returning requestId null for conflicts), E1, unbound and not yet attributed, makes E2 'conflict'/'payment_identity_conflict' with established_request_id null. The M92 wrapper (execution migration 476-495) returns that result unchanged. source_quarantine_held (candidate:314-320) then holds the source permanently. The functional proof tests a later valid event only after attribution (research_assisted_order_provider_attribution_local.mjs:269-281). The race driver's conflict race uses a changed-payload replay of E1, not a fully specified E2 (research_assisted_order_provider_attribution_races.mjs:126-135). The records describe the relief without this ordering caveat: FINANCE_SPRINT_V2_20261003.md:20 and 58-59 at b13c29e, and the handoff:38-39 at 963122c. audit.md:56-61 names the trap but not the pre-receipt case. The outcome is fail-closed, so no money is misstated.",
+      "fix": "Add a governed receipt path, or extend the context, for a payment_identity_conflict row in two cases: all of its claimed lineage equals the exact binding, and every conflicting same-payment row is attributed to the same request. Keep the target hold. Add functional and lock-race tests for E2 arriving before attribution, in both orders. State the ordering limitation in the blocker matrix until it is fixed."
+     },
+     {
+      "id": "FIN-2",
+      "severity": "P2",
+      "file": "supabase/verification/research_assisted_order_provider_attribution_races.mjs",
+      "claim": "Every concurrency and TOCTOU claim is still unexecuted, and the race driver as written cannot prove which lock serializes the peer. Four claims are affected: request-before-fence serialization, the grant/policy/source recheck under lock, the single receipt under concurrent duplicate commits, and attribution versus settlement or event serialization.",
+      "evidence": "races-deferred-20261005-01/receipt.json shows exitCode 2. Its stdout.log reads 'ATTRIBUTION_RACE DEFERRED ... No database started'. The functional proof explicitly runs no races (local.mjs:4 and 206). The source-contract test only compares string positions of the lock statements (provider-attribution-sql.test.ts:62-75), and its header disclaims race qualification (lines 1-2). In races.mjs:57-61 the wait check accepts any 'Lock' wait whose pg_blocking_pids include the holder. The `phase` value ('same-request', 'provider-fence', 'authority-*') is only a log label and is never checked against pg_locks. Several interleavings have no race case at all: attribution versus a fully specified event that locks the same request first; attribution versus settlement of the target; attribution versus eligibility, reservation, create_claim, create_result and identity binding on the target or the source; and settlement-first ordering against attribution. My static analysis found consistent lock ordering, so none of this is a known defect. The records honestly mark the race work DEFERRED (FINANCE_SPRINT:91-92, handoff:57 and 65-66).",
+      "fix": "Run the race driver with a fresh quiet-host receipt on an idle or isolated machine, and keep in-run host evidence. Assert the phase from pg_locks for each peer: locktype, relation and mode for the request row, the fence row and the config rows. Add the missing interleavings listed above, including both orders of attribution versus a fully specified same-payment event."
+     },
+     {
+      "id": "FIN-3",
+      "severity": "P3",
+      "file": "supabase/candidates/20261003_research_assisted_order_provider_attribution.sql",
+      "claim": "Three accepted inputs are never exercised. (a) Attribution of refunded, dispute_*, failed, cancelled, pending and authorized events. (b) Attribution to a target that is already settled, which permanently re-holds it. (c) The positive path for an object with no session binding.",
+      "evidence": "At dfd8b9b, candidate:189 allows nine event kinds. The fixtures always produce a 'captured' event and a result carrying providerSessionId (local.mjs:69-79, execution harness:76-82), so the code paths at candidate:211-232 for a missing session binding are only exercised for refusals. The functional proof attributes unsettled request A only (local.mjs:212-267).",
+      "fix": "Add functional cases for at least one refund event and one dispute event. Add a target that was settled before the metadata-free event arrived, asserting its eligibility is permanently held and its history unchanged. Add an object bound only by payment ID."
+     },
+     {
+      "id": "FIN-4",
+      "severity": "P3",
+      "file": "supabase/candidates/20261003_research_assisted_order_provider_attribution.sql",
+      "claim": "The 'strictly prior' chronology witness depends on wall-clock clock_timestamp() staying monotonic across backends. The stamps are taken under the exclusive fence, so the order normally holds. A backward clock step could make an object recorded after the event look earlier than it.",
+      "evidence": "candidate:107-112 and 198 compare x.recorded_at = b.bound_at < e.received_at. recorded_at is stamped at execution migration:351 while the request and fence locks are held (344-346). received_at is stamped at journal migration:449 under the fence lock (436). Equal milliseconds are correctly refused.",
+      "fix": "Document the dependence on host clock discipline (NTP slewing, not stepping). Optionally add a monotonic sequence written under the fence, such as a fence-guarded bigint sequence on journal and result rows, and compare that instead of timestamps."
+     },
+     {
+      "id": "FIN-5",
+      "severity": "P3",
+      "file": "supabase/candidates/20261003_research_assisted_order_provider_attribution.sql",
+      "claim": "An admin transaction can deadlock with attribution if it revokes a source, policy or grant and then, in the same transaction, calls anything that locks a request or the fence. Attribution would hold the request and fence while waiting on the config row. PostgreSQL's deadlock detector would abort one side. Predecessors share this pattern; it is not new.",
+      "evidence": "candidate:157-174 takes the request and fence, then source, policy and grant FOR SHARE. The revocation UPDATE takes a row lock with no fence (config_guard candidate:75-102). The same pattern exists in the M94 settlement guard (migration 20261001160730:197-215).",
+      "fix": "Specify in the provisioning procedure that revocation must be a single-statement transaction. Optionally set a short lock_timeout in the attribution RPC caller."
+     },
+     {
+      "id": "FIN-6",
+      "severity": "P3",
+      "file": "supabase/candidates/20261003_research_assisted_order_provider_attribution.sql",
+      "claim": "After attribution, the public uncertainty DTO reports reason 'provider_unbound_event_held' for the attributed target, even though that event is now attributed rather than unbound. The hold is correct; the reason label is misleading.",
+      "evidence": "candidate:321-324 makes request_quarantine_held true whenever an attribution exists for the request. M94 uncertainty (20261001160730:70-71) maps that predicate to 'provider_unbound_event_held'.",
+      "fix": "Distinguish an attributed-target hold reason, for example 'provider_attributed_event_held', in a future successor, or document the label's meaning for operators."
+     },
+     {
+      "id": "FIN-7",
+      "severity": "P3",
+      "file": ".xenios/SESSION_REGISTRY.json",
+      "claim": "At b13c29e the session note says 'serial aggregate still progressing', but the same commit adds the completed, FAILED full-run receipt and logs. The record is internally inconsistent at that SHA.",
+      "evidence": "b13c29e:.xenios/SESSION_REGISTRY.json:581 and b13c29e:.xenios/sessions/codex-finance-release-blockers-20261003.json:9 carry the stale note. evidence/runs/full-20261005-01/receipt.json in the same commit shows exitCode 1 and finishedAt 13:58:25Z. 963122c corrects the note to 'full aggregate failed ... ENOSPC'.",
+      "fix": "No action needed at the tip; 963122c already corrects it. Future evidence commits should update continuity notes in the same commit as the receipts."
+     },
+     {
+      "id": "FIN-8",
+      "severity": "P3",
+      "file": "server/research/assisted-order/FINANCE_SPRINT_V2_20261003.md",
+      "claim": "The blocker matrix does not carry the prior review's ADP-G1-R4 (cross-scope events re-homed at ingress) or R2/R3. The candidate does not regress R4, but R4 is not tracked here.",
+      "evidence": "26_REVIEW_c0e25c7_ADPG1_SUCCESSOR.md lists ADP-G1-R2, R3 and R4 at lines 92-99 and 155-179. At dfd8b9b, provider-journal.ts:173-176 still strips all claims for a scope mismatch. The resulting event has providerPaymentId null, and candidate:188 then refuses attribution with HELD, so R4 is not worsened. The matrix at b13c29e:16-24 and handoff 963122c:84-92 does not mention R2, R3 or R4.",
+      "fix": "Add R2, R3 and R4 to the G1 remaining-boundary text, or cross-reference them, so the integrator reconciles them."
+     }
+    ],
+    "confirmed": [
+     "The SQL is only at supabase/candidates/20261003_research_assisted_order_provider_attribution.sql (dfd8b9b, LF SHA-256 507376b8...9b53d, tree d00442d2...). From 3eaa017 to 963122c, supabase/migrations is untouched.",
+     "The candidate is absent from supabase/MIGRATIONS.md, docs/coordination/MIGRATION_DAG.json, server/release-control-plane.test.ts (whose M94 path map at :106 is unchanged), docs/INTEGRATION_LEDGER.md and every other ledger at dfd8b9b and 963122c. Its only references are lane records and runners: .xenios ACTIVE_TASKS and CODE_OWNERSHIP, startup.json, run-check.mjs, the handoff and the sprint report.",
+     "Between 3eaa017 and 963122c, nothing changed outside server/research/assisted-order lane paths, supabase/candidates, supabase/verification and .xenios.",
+     "d2e12dc to dfd8b9b changes only research_assisted_order_provider_attribution_local.mjs:108-109 (the JSON-object wrapping fix). The SQL and the source-contract test are byte-identical.",
+     "Compared with dfd8b9b, b13c29e changes only evidence/** (26 files), three .xenios heartbeat and session files, and FINANCE_SPRINT_V2_20261003.md. It has no source, test or SQL changes.",
+     "Compared with b13c29e, 963122c changes only .xenios ACTIVE_TASKS, CODE_OWNERSHIP, SESSION_REGISTRY, the session file and the new handoff.",
+     "Tree identities match: b13c29e is 07773360..., and dfd8b9b is d00442d2.... M94 canonical SHA-256 is 91a20f68..., and the installer digest 5302be31... is pinned in the candidate (line 16).",
+     "All 25 entries in evidence/index.json match their committed blob bytes and sizes. Every receipt's stdoutSha256 and stderrSha256 matches its committed log.",
+     "Run results match the records. source-contract (at d2e12dc): 11/11 passed. functional-01: exit 1 before candidate application (JSON parser assertion). functional-02: exit 0 with 11 groups, 69 refusals, 1 reproduction, 377.263 s, PG 17.11, no network, container removed and absence verified. focused: 1,293 tests in 38 files passed. full: exit 1 with 19,078 pass, 2 fail, 85 skip; 16 failed files, 15 of them collection failures behind a single ENOSPC error. races-deferred: exit 2 with no database started.",
+     "The 2 full-run failures are the inherited core-site-protection hash and seam assertions (server/static.ts, App.tsx, server/index.ts, server/research/index.ts). The base record HL12_ADPG1_QUARANTINE_ISOLATION_20261001.md:84-86 shows the same failures, and none of those files or the manifest changed in this lane.",
+     "Lock order in the candidate: optional unlocked target derivation (147-156), then request FOR UPDATE (157), fence FOR UPDATE (159), then source, policy and grant FOR SHARE (163-174). This matches the request-before-fence order in journal_guard (journal migration 433-438), attempt_reserve and attempt_guard (M94 86-98), create_context (M94 133-149), result and identity guards (execution 344-346, 395-396), settlement (settlement migration 247-249; M94 197-199) and eligibility (M94 275-277). No path takes another request after the fence, and I found no deadlock on the canonical paths.",
+     "TOCTOU: a revocation committed or in flight before the locked FOR SHARE recheck is excluded when PostgreSQL re-checks the updated row, so the command is refused. A revocation after the lock is blocked until commit. A duplicate concurrent commit serializes on the derived request, and journal_id is UNIQUE. The classifier's attribution lookup runs under the fence, so event ordering is consistent.",
+     "Cross-scope events (ADP-G1-R4) cannot be attributed: ingress strips their claims, providerPaymentId becomes null, and candidate:188 refuses with HELD. The candidate does not worsen R4.",
+     "The blocker matrix is truthful. F1 OPEN (server/index.ts unchanged). Refund/dispute OPEN. ADP-G1 PARTIAL (early and unbound objects remain). ADP-G2, G3 and G4 OPEN. LENS-01 PARTIAL detection with adoption OPEN.",
+     "The records report the full aggregate as FAILED with ENOSPC. They state that missing collection is not coverage and that the failing write path was not captured, and they keep the inherited 19,443/3/85 aggregate separate. Race qualification is DEFERRED. No independent acceptance, managed apply, production mutation or readiness is claimed."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "FIN-1",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Re-derived at dfd8b9b. A metadata-free E1 is appended with no request lock; journal 433-436 still takes the fence, and the classifier makes E1 quarantined/unknown_attempt (journal 395). A fully specified E2 then locks request A and the fence. pre_execution classify passes the claims checks at 397-401. Without a receipt, risk_target(E1) is null, so the candidate's replacement predicate (candidate:340) is true and E2 becomes conflict/payment_identity_conflict with requestId null (journal 405, 407, 418). The M92 wrapper returns prior unchanged (execution 493). E2 can never be attributed (candidate:186-187), so source_quarantine_held (candidate:316-319) and request_quarantine_held (325-328) hold permanently, even after E1 is later attributed. Concurrency gives the same result: if E2 wins the request-A lock, attribution still commits a receipt (the context never looks at other journal rows), but no relief follows. Coverage gap confirmed: every fixture captures a fully specified event before E1 (local.mjs:76, 212-213), which is the E2-before-E1 order and works. The E1, E2, then attribution order is never exercised (local.mjs:269-281 runs only after the receipt; races.mjs:126-135 uses a changed-payload E1). The records say 'later' without the pre-receipt caveat: FINANCE_SPRINT:20 and 58-59, handoff:38-39, audit:56-61. Providers usually send several events per payment within seconds, before any human attribution, so this is the realistic order. Reachability is narrowed further, by design, by the exact-session rule (candidate:213): a session-bound object cannot be attributed from an event without a session. That rule matches review 26:249-256. Fail-closed, no money misstated, so P2 is correct."
+     },
+     {
+      "id": "FIN-2",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed. races-deferred receipt: exitCode 2. Its stdout reads 'ATTRIBUTION_RACE DEFERRED ... No database started' (stdout SHA-256 84ba1985... matches). local.mjs:4 and 205-206 run no races. The source test only orders string offsets (provider-attribution-sql.test.ts:62-75) and disclaims race proof (1-2). races.mjs:57-61 checks only waitType=='Lock' and that blockingPids includes the holder. `phase` is a label only (61). Partial overstatement: most phases are fixed by construction. Different-request peers can share only the fence, because source FOR SHARE locks are compatible. The revoke holder holds only the config row. Same-request peers block first on the request row. So 'cannot prove which lock' is a proof-quality gap rather than a likely false pass. The core of the finding holds. No concurrency claim has executed evidence. Interleavings that are missing: a fully specified same-payment event against attribution in both orders, settlement first, and attribution against reserve, eligibility, create_claim, result, binding and uncertainty. Review 26:255-256 required 'both lock orders' for this slice. My static analysis agrees there is no known defect: every path inventoried in journal, execution, settlement and M94 takes the request before the fence, and none locks attempt, journal or result rows. The records honestly say DEFERRED (FINANCE_SPRINT:91-92, handoff:65-68)."
+     },
+     {
+      "id": "FIN-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. candidate:189 allows 9 kinds. Fixture results always carry providerSessionId (execution harness result(): providerSessionId `synthetic-session-${n}`), and capture() is always 'captured'. One correction: the no-session-binding branch (candidate:230-232) and the positive path with no session binding are not exercised at all, not even as refusals. The early-event case refuses earlier, at 154-156. (b) is slightly imprecise: an already-settled A is re-held by E1 itself under M94, and attribution only keeps that hold. Another gap of the same class: relief through a NEW reservation (M94 attempt_guard:91, using the new source_quarantine_held) is never driven. Only the direct predicate read (races.mjs:153) and settlement of a pre-existing C (local.mjs:265) are exercised."
+     },
+     {
+      "id": "FIN-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. candidate:107-111 and 198/227 compare clock_timestamp stamps. recorded_at is set at execution:351 under the request and fence locks (344-346); received_at at journal:449 under the fence (436). Exclusive fence serialization makes wall-clock order hold, except after a backward clock step. Equal milliseconds are refused permanently, as the code comment at candidate:7 and 104-105 already states."
+     },
+     {
+      "id": "FIN-5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. Attribution holds the request and the exclusive fence, then waits on source, policy and grant FOR SHARE (candidate:157-174). A multi-statement admin transaction that revokes and then touches a request or the fence forms a cycle, which PostgreSQL's deadlock detector aborts. The settlement guard has the same pattern (M94:197-215), and so does journal_guard (journal:436-438). Related, also inherited: an idle uncommitted revocation makes attribution hold the global fence until timeout, stalling all provider operations. Not new."
+     },
+     {
+      "id": "FIN-6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. candidate:324 makes request_quarantine_held true whenever a receipt exists. M94 uncertainty:70-71 maps that to 'provider_unbound_event_held', so an attributed target shows the unbound label. The hold itself is correct."
+     },
+     {
+      "id": "FIN-7",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. b13c29e:.xenios/SESSION_REGISTRY.json:581 and the session file note 'serial aggregate still progressing', with heartbeat 13:47:32Z. The same commit carries full-20261005-01/receipt.json: exitCode 1, finishedAt 13:58:25.125Z. 963122c corrects the note."
+     },
+     {
+      "id": "FIN-8",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. The G1 rows (FINANCE_SPRINT:20, handoff:88) omit R2, R3 and R4. Stronger than the lens states: review 26:243-248 made 'Fix ADP-G1-R4 first' an explicit prerequisite of this same attribution slice. The lane built the slice without fixing R4 and without recording that deviation. At dfd8b9b, provider-journal.ts:173-177 still strips claims, and its comment still says this 'becomes a global uncertainty hold', which is false since M94. The candidate does not worsen R4: providerPaymentId becomes null, and candidate:188 refuses. R4 stays a carried P2-latent in review 26:226, so the omission is a records gap at P3. The integrator must carry R4 as an open G1 prerequisite."
+     }
+    ],
+    "missed": []
+   }
+  },
+  {
+   "lens": "mc01-authority",
+   "review": {
+    "verdict": "MC-01 source ed9bb9b (tree f5953b8e) on base 3eaa017: ACCEPT AT SOURCE LEVEL, WITH CONDITIONS. It is NOT promotable on its own. No P0 or P1 found. There are two P2 conditions and several P3 notes.\n\nWhat the source achieves:\n- Imagery is removed from every TypeScript commerce authority: cart selection, projection gating, release-gate binding set, snapshot identity, blocker counts, persistent-cart RPC payloads and client adapters.\n- Malformed, absent or expired media degrades to null without delisting the product.\n- Legacy media is stripped before the SQL command hash and snapshot.\n- Every non-image authority is preserved: product, variant, audience, activation, price, the 3 commerce inputs, domain readiness, inventory, lot COA and quality.\n- The SQL candidate is source-only and unregistered: absent from MIGRATION_DAG.json (53 nodes) and from MIGRATIONS.md.\n- No protected, manifest, assisted-order or A/B/C path is touched. ADP-G1-R1..R4, F1, REFUND-ABSENT and GATE-01 are unaffected and remain open.\n- .xenios continuity was not imported wholesale. No newer Core work regressed: 3eaa017..ed9bb9b touches only the 35 leased files.\n\nThe two P2 conditions:\n- **MC01-R1 (decoupling not yet effective).** The decoupling only takes effect once the unapplied SQL candidate is installed and the product_content manifest is re-approved. Until then the deployable predecessor research_domain_readiness still counts the image input, so the image still gates commerce and release. Meanwhile the new admin copy says it does not.\n- **MC01-R2 (false hold on member detail).** The change newly lets an available product have no image. Member product detail then shows a 'Supplier confirmation pending / Awaiting documentation' warning panel next to 'Available'.\n\nNot verified by Claude (instructions forbid running them):\n- tests, tsc, build and the disposable SQL proof;\n- the worker's hosted read-only Render and Supabase observations, and the claim that nothing hosted was mutated;\n- managed function bodies.\n\nProduction stays NOT READY. No managed apply, registration or deploy is approved.",
+    "findings": [
+     {
+      "id": "MC01-R1",
+      "severity": "P2",
+      "file": "server/research/commerce/cart-product-selection.ts",
+      "claim": "The decoupling is not self-sufficient at runtime. Until the unapplied candidate is installed, the primary image is still a commerce and release input through SQL domain readiness. The new admin copy says the opposite, and only handoff prose stops runtime-only promotion.",
+      "evidence": "cart-product-selection.ts:150-179 (exactDomainReadiness) requires product_content to have actualInputCount==expectedInputCount, blockingInputCount 0 and no blockingKeys. It reads them from the managed research_domain_readiness (server/research/required-inputs.ts:369,385).\n\nThe deployable predecessor body at supabase/research-required-input-readiness.sql:494-509 counts every key in the domain, including product_content.primary_image (blocks_display today). An unverified image input therefore still produces readiness_incomplete in the cart and documentation_pending in the projection (member-catalog-projection.ts:475-479).\n\nThe release gate (product-admin-production.ts:1022-1046) still emits product.required_inputs.manifest:product_content.\n\nThe worker's own proof log records 'BEFORE PASS approved media required; missing media/input reproduced as ineligible' (sql-local-run1.log at 0b86108). RECONCILIATION.md:176-177 and HANDOFF.md:136-137 admit it.\n\nAt the same time, ProductAdminDetail.tsx:1060 says 'Image state does not determine product release or commerce eligibility', and RequiredInputState.tsx:57 says media 'never controls catalog, commerce, or fulfillment eligibility'. Both statements are false against the current SQL contract. Nothing in code ties the runtime to the candidate.",
+      "fix": "Record a hard release precondition in the release control plane / integrator checklist. The ed9bb9b runtime may be promoted only together with (a) Samuel-approved registration and apply of a reviewed successor of supabase/candidates/20261003_research_media_commerce_decoupling.sql and (b) a canonical non-image product_content manifest re-approval plus a separate launch transition.\n\nOptionally add a runtime compatibility probe: confirm research_domain_readiness('product_content') excludes the image key. Until it passes, keep or condition the admin copy so admins are not told that image state is irrelevant while it still is."
+     },
+     {
+      "id": "MC01-R2",
+      "severity": "P2",
+      "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "claim": "MC-01 newly makes an available, purchasable product with no approved image reachable. The member product detail renders that no-image case as a 'Supplier confirmation pending / Awaiting documentation' warning panel next to the 'Available' badge. That is a false restrictive state driven by imagery.",
+      "evidence": "MemberProductDetailExperience.tsx:177-181 renders <ResearchPendingPanel kind=\"supplier_pending\" body=\"An approved product image is not available.\"/> when media is null.\n\nclient/src/research/ui/kit.tsx:69 maps supplier_pending to eyebrow 'Supplier confirmation pending', a warning-tone badge 'Awaiting documentation', and role=\"status\" aria-live (kit.tsx:89). The same page shows 'Available' (line 189).\n\nAt base 3eaa017 this combination could not happen. The server gated selection on safePresentationAvailable (removed in member-catalog-projection.ts:380-407). The client required safeMedia!==null for available (3eaa017 memberCatalog.ts:308-312; removed at ed9bb9b memberCatalog.ts:347-366).\n\nProduction has zero approved images (doc 29 §4), so every available member product would show this panel. It contradicts:\n- S6 'Restrictive states remain independent of imagery';\n- S5 'Do not color missing-image fallbacks';\n- the intent of IC-3 (correct copy, but wrapped in a warning status panel).\n\nThe file is outside the MC-01 lease, and the handoff and RECONCILIATION do not mention it.",
+      "fix": "Before any runtime promotion of MC-01, replace the no-image branch with a neutral fallback:\n- exact copy 'An approved product image is not available.';\n- no role=\"img\", no status or warning badge, no accent colour;\n- a 1:1 neutral slot per S6/S7.\n\nCoordinate with the D/E Slice 2 ProductMedia component (doc 29 §5-§6 sequences MC-01 before or with Slice 2). Add a test asserting that an available product with media:null renders no restrictive or supplier state."
+     },
+     {
+      "id": "MC01-R3",
+      "severity": "P3",
+      "file": "server/research/products-diagnostics/product-admin-production.ts",
+      "claim": "Admin Product Control reads now silently turn media read errors and malformed rows into an empty media list. The admin UI and post-mutation responses can then show 'no image' after a successful media command, with no error shown.",
+      "evidence": "presentationMedia (product-admin-production.ts:225-260) returns [] on any error, a non-array result or a strict type mismatch. It is used by the shared admin repository's get() (591-597, media at 632) and listDetails() (498-504).\n\nrpcProduct (642-658) returns this.get(id) after every media RPC. Those results are also cached by the idempotency store (product-admin.ts:916-991).\n\nProductAdminDetail.tsx:1058-1061 then shows 'PRODUCT IMAGE NOT YET AVAILABLE'. Media commands themselves stay strict, and the unique approved-primary index (migration 20260726143000:217-219) prevents a second approved primary, so this is presentation only.",
+      "fix": "Keep degraded reads on the member catalog reader path, but make the admin get() surface a media-degraded flag, or read strictly. Alternatively, have the admin UI show 'media could not be loaded' rather than 'not yet available'."
+     },
+     {
+      "id": "MC01-R4",
+      "severity": "P3",
+      "file": "client/src/research/adapters/memberCatalog.ts",
+      "claim": "The client privacy tripwire has been narrowed. Forbidden keys (e.g. storageKey) inside card.media, selection.media or relatedProducts media no longer invalidate the projection. They are silently nulled or discarded, so a server leak in those subtrees would reach the browser undetected.",
+      "evidence": "memberCatalog.ts:151-182 (withoutSelectionMedia/withoutCardMedia/withoutDetailMedia) removes media subtrees before hasForbiddenKey at 609-617 and 704. media() at 210-236 now returns null on a forbidden key instead of rejecting.\n\nThe server never legitimately emits selection.media (browserSafeCartProductSelection strips it at cart-product-selection.ts:42-51). Its presence is therefore a server defect that the old whole-projection check would have caught.",
+      "fix": "Keep rejecting, or at least report through telemetry, any forbidden key or any selection.media in the payload. Only null out media whose presentation fields are malformed."
+     },
+     {
+      "id": "MC01-R5",
+      "severity": "P3",
+      "file": "docs/research-launch/mc01-reconciliation-20261003/evidence/affected-run1.json",
+      "claim": "Evidence receipts hash raw working-tree bytes with mixed line endings. 14 of 24 recorded sourceHashes cannot be reproduced from the committed blobs, so binding the test, tsc and build evidence to ed9bb9b rests on indirect proof. The SQL verifier image is a floating tag.",
+      "evidence": "run-check.mjs:47 hashes readFileSync bytes. Against ed9bb9b blobs, 10/24 files match. The other 14 match neither LF nor full CRLF, for example member-catalog-projection.ts, persistent-cart.ts, memberCatalog.ts and shared/research/cart-product-selection.ts. Two of them (ProductAdminDetail.tsx, product-control-reader.ts) reproduce exactly as CRLF context with LF-added lines, which confirms the mixed-EOL cause.\n\nIndirect binding:\n- typescript-run1, build-run1 and product-control-ui-final (at 0b86108) record HEAD=ed9bb9b with a clean source status;\n- their raw hashes equal affected-run1's for all 24 files.\n\nThe candidate (365728cb…) and verifier (f180b0ba…) do match the committed blobs.\n\nresearch_media_commerce_decoupling_local.mjs:16-22 defaults to the floating postgres:17-alpine tag rather than a digest-pinned or supabase image (17.11 was observed). HANDOFF.md:79-82 claims 'source hashes match the pushed source' without stating the normalization.",
+      "fix": "Record canonical LF (git blob or hash-object) hashes next to the raw hashes in receipts. Pin the disposable Postgres image by digest. State the normalization used by final-boundary-verification.json."
+     },
+     {
+      "id": "MC01-R6",
+      "severity": "P3",
+      "file": "shared/research/product-admin.ts",
+      "claim": "Dead compatibility vocabulary still presents the image as a required binding, which invites someone to adopt it again for commerce. A duplicated doc comment remains in the shared contract.",
+      "evidence": "PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS (product-admin.ts:98-103) still includes product_content.primary_image. git grep finds no consumer outside its definition.\n\nshared/research/cart-product-selection.ts:62-63 has two consecutive JSDoc lines for media. The media_missing, media_unapproved and media_ambiguous failure codes remain in the shared union (95-97) and are never produced.",
+      "fix": "Remove the display-bindings export, or mark it @deprecated with an explicit 'must not be used for release/commerce' note plus a lint/test guard. Drop the duplicate comment. Mark the legacy media failure codes @deprecated."
+     },
+     {
+      "id": "MC01-R7",
+      "severity": "P3",
+      "file": "supabase/candidates/20261003_research_media_commerce_decoupling.sql",
+      "claim": "The operational cost of a later apply has to be scheduled. Install requires pausing product_content, which halts all member cart eligibility. It then invalidates the manifest until canonical non-image re-approval plus a separate launch transition. Any persistent-cart history at all blocks install, and there is no adoption path. Existing registered verifiers still encode the 4-input/media contract.",
+      "evidence": "Candidate:\n- precheck pause requirement at 240-259;\n- zero rows across the 4 cart tables at 88-99;\n- manifest invalidation without re-enable at 994-1048;\n- postcheck expectedInputCount 0 / publicEnabled false at 1309-1325.\n\nThe predecessor persistent cart is PENDING with appliedToProduction=false (docs/coordination/MIGRATION_DAG.json) and the repository has no runtime callers, so no stored carts exist today.\n\nscripts/verify-research-persistent-cart.mjs:209-276 and 452-461 still assert verifiedInputCount 4 and selection.media. These facts are disclosed in the rollback note and HANDOFF.md:121-125.",
+      "fix": "In the managed-apply plan:\n- schedule the product_content pause, apply, canonical re-approval and launch transition as one approved window;\n- forbid applying or enabling the persistent-cart predecessor ahead of this candidate unless a reviewed history-adoption design exists;\n- update the registered persistent-cart and readiness verifiers in the same successor registration."
+     }
+    ],
+    "confirmed": [
+     "Cart selection has no media gate. approvedPrimaryMedia was removed. selectCartProduct (cart-product-selection.ts:181-344) never reads source.media. The reserved image key is filtered by key alone, so malformed domain or record metadata is tolerated (99-106). Unknown non-image active rows refuse (108-121). Exactly three commerce bindings are required: SKU, family, storage (125-145; shared/research/product-admin.ts:72-80). browserSafeCartProductSelection strips media and activationAuthority (42-51).",
+     "Projection: safeMedia is computed independently and no longer gates selection or bindings (member-catalog-projection.ts:519, 380-407). displayState has no media codes (457-490). safeMedia guards non-array containers and non-string fields (266-338). The only delisting condition is the non-image products.family binding (515). Expired, unsigned or foreign signed URLs fail safePublicMediaHref and leave the product with media:null.",
+     "Product-control-reader snapshot identity excludes media (product-control-reader.ts:99-136). missingInputCount excludes the reserved image key in list, bulk and single reads (product-admin-production.ts:262-274, 326-330, 543-547, 622). Media churn therefore cannot drop a stable product.",
+     "Signing is isolated per image with try/catch, including synchronous storage-client throws and malformed results (member-catalog-service.ts:107-185). The bucket constant is aligned to research-product-media-production across signer, server and client URL validators, the upload default (product-admin-production.ts:45) and storage migration 20260726143000:930-931.",
+     "Client adapters: malformed media returns null without invalidating the card or detail (memberCatalog.ts:210-236). Available no longer requires media (347-366). The cart adapter requires exactly 3 input refs and both commerce domains (cartProductSelection.ts:109-126), consistent with the server.",
+     "Persistent-cart compatibility:\n- TS strips media before put and claim RPCs (persistent-cart.ts:180-187, 249, 314) and validates 3 UUID input refs and 2 commerce domains (160-175).\n- The SQL candidate strips media before the command hash, the snapshot and the selection hash (candidate:746, 761, 805, 860, 866).\n- Zero-history precondition (88-99).\n- The predecessor is PENDING/unapplied, and the repository has no runtime callers.\n- Version skew fails closed in both directions (3-input TS against 4-input SQL, and the reverse).",
+     "Non-image authorities are preserved.\n- In TS: publication, active, visibility, commerceApproval, availability, audience identity, variant approval/member eligibility/SKU, durable activation evidence, price resolution, the 3 inputs, domain manifest/launch/version, and inventory identity/freshness. The projection also keeps the lot-COA gate (382-384).\n- In SQL selection_current: product, variant and price approval with effective window (candidate:615-635); inventory fingerprint and allocatable lot covering COA and quality (636-665); the 3 inputs plus unknown-row refusal (683-718); domain launch-control version and status (719-731).",
+     "Activation, quote, fulfillment and Early Access have no media dependency. server/research/product-activation and shared contracts contain no media references. Early Access imageState is presentation only (early-access-catalog.ts:279-296). No assisted-order file changed.",
+     "The SQL candidate stays source-only:\n- it lives under supabase/candidates, absent from MIGRATION_DAG.json and MIGRATIONS.md, and no registered migration changed;\n- the six replaced functions are pinned by normalized MD5 with owner, definer, search_path, ACL, RLS and exact-ACL prechecks and postchecks;\n- versus the predecessor, the only changes are the image-key exclusion and null-safe hardening (set_readiness_manifest input validation; is-distinct-from concurrency checks);\n- governance invalidation requires paused domains and never enables one.",
+     "Protected and gate state is unchanged: static.ts, App.tsx, server/index.ts, server/research/index.ts and CORE_SITE_PROTECTION_MANIFEST.json are untouched. Navbar.tsx, Footer.tsx and index.css are untouched. The ADP-G1-R1..R4 paths (assisted-order provider) are untouched.",
+     ".xenios: no historical continuity files were imported. Changes are limited to: the historical MC-01 task set to qa and its lease to handoff (citing f453d7e/b38db0a), plus the new MC01-RECONCILIATION task, lease and session. No other active lease overlaps the 13 leased runtime paths. The handoff commit 0b86108 is records-only.",
+     "No regression of newer Core work. 3eaa017..ed9bb9b touches only the 35 leased files. Within them the only non-media edits are disclosed: the Q50 to PERSISTENT_CART_QUANTITY_MAX test correction and the SQL null-safety hardening. Retained, rewritten and rejected changes versus f453d7e match RECONCILIATION.md:78-88. One example of a rewrite: the historical knownBinding approach was replaced with a key-only presentation exemption plus commerce-only binding validation.",
+     "Evidence hashes for the SQL candidate (365728cb…) and verifier (f180b0ba…) match the committed blobs. The post-commit receipts (HEAD=ed9bb9b, clean source status) carry raw hashes identical to the affected-run1 working tree."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "MC01-R1",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed at ed9bb9b.\n- cart-product-selection.ts:150-179 still requires product_content actualInputCount==expected, blockingInputCount 0 and empty blockingKeys.\n- Those values come from managed research_domain_readiness (required-inputs.ts:369,385).\n- The predecessor body (research-required-input-readiness.sql:494-509) counts every key in the domain, image included.\n- The release gate still emits manifest:product_content (product-admin-production.ts:1021-1048).\n- The admin copy contradicts this: ProductAdminDetail.tsx:1060 and RequiredInputState.tsx:57/60 call the image optional/informational.\n- sql-local-run1.log at 0b86108 shows 'BEFORE PASS approved media required'. RECONCILIATION.md:176-177 admits the same.\n\nOverstated sub-claim. The member projection never reaches readiness_incomplete or documentation_pending through this path. It always calls selectCartProduct with activation=null (member-catalog-projection.ts:385-407), and the activation check (cart-product-selection.ts:248-251) runs before the input and readiness checks. So the live effect is on the master-offerings direct-commerce selection (server/index.ts:760-807 uses readinessAll) and on the release gate, not on the member projection.\n\nAmplifier. Readiness is domain-wide: there is no record_id filter at readiness.sql:507-509. One product's unverified image therefore blocks product_content for every product. Meanwhile ed9bb9b hides that row from admins: missingCommerceInput (product-admin-production.ts:262-273), the missingInputsOnly filter (341) and the 'Optional presentation' notice. Admins cannot find the blocker.\n\nThe fix is incomplete. Precondition (a) must also include applying the PENDING persistent-cart predecessor and its closure (see missed)."
+     },
+     {
+      "id": "MC01-R2",
+      "upheld": false,
+      "severity": "P3",
+      "note": "Refuted at P2. The central claim, that MC-01 newly makes an Available product with no image reachable, does not hold at runtime.\n- The member projection always passes activation=null (member-catalog-projection.ts:402-406). selectCartProduct returns activation_authority_missing (cart-product-selection.ts:248-250) before any price, input or readiness check. No variant selection is ever non-null, so displayState 'available' (projection.ts:471) cannot be reached at either base or ed9bb9b.\n- MemberCatalogService (member-catalog-service.ts:516-565) composes no activation reader.\n- The supplier_pending fallback is byte-identical at base 3eaa017 (MemberProductDetailExperience.tsx is not in the diff). Base already showed it on every member detail, since production has zero approved images.\n- The variant-level 'Available' text (line 238) is inventory-driven, and that pre-dates MC-01 too.\n\nWhat remains is P3: a latent loss of the client invariant (memberCatalog.ts:347-366 no longer requires media for available). It surfaces only once an activation-aware projection exists. The fallback panel itself is a D/E Slice 2 item (IC-3/S5/S6), not an MC-01 defect."
+     },
+     {
+      "id": "MC01-R3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed.\n- presentationMedia (product-admin-production.ts:224-260) returns [] on any error, non-array or row-shape mismatch.\n- It is used by get() (591-597, media at 632) and listDetails (498-504).\n- rpcProduct returns this.get(id) (642-658), and the media commands' idempotency.run (product-admin.ts:915-1000) caches that value, so a replay serves the degraded media list.\n- The UI then shows 'PRODUCT IMAGE NOT YET AVAILABLE' (ProductAdminDetail.tsx:1058-1061).\n\nPresentation-only. The unique approved-primary index (20260726143000:217-219) keeps writes strict."
+     },
+     {
+      "id": "MC01-R4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed.\n- withoutSelectionMedia/withoutCardMedia/withoutDetailMedia (memberCatalog.ts:151-182) strip the media subtrees before hasForbiddenKey (609-617, 704).\n- media() now returns null on a forbidden key (213-236).\n- FORBIDDEN_KEYS (39-49) includes storageKey.\n- The server never emits selection.media (browserSafeCartProductSelection, cart-product-selection.ts:42-51). Its presence is therefore a server defect that is now silently tolerated.\n\nDetection-only regression. The payload has already reached the browser either way."
+     },
+     {
+      "id": "MC01-R5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Independently reproduced.\n- Of the 24 sourceHashes in affected-run1.json 'after', 10 match the ed9bb9b LF blobs, 0 match full CRLF and 14 match neither.\n- ProductAdminDetail.tsx and product-control-reader.ts reproduce exactly as base-context-lines CRLF plus added-lines LF.\n- typescript-run1, build-run1 and product-control-ui-final (at 0b86108) record head ed9bb9b / tree f5953b8e. Their 24 common raw hashes are identical to affected-run1. They add one extra entry, rollback.md.\n- The candidate and verifier match their LF blobs.\n- run-check.mjs:47 hashes raw readFileSync bytes.\n\nThe binding to ed9bb9b is indirect but sound, and the normalization is undisclosed."
+     },
+     {
+      "id": "MC01-R6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed.\n- PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS (shared/research/product-admin.ts:98-103) still lists product_content.primary_image. git grep finds no runtime consumer.\n- There are duplicate JSDoc lines at shared/research/cart-product-selection.ts:62-63.\n- media_missing, media_unapproved and media_ambiguous (95-97) are never produced.\n\nRECONCILIATION.md:90-92 discloses these as compatibility vocabulary."
+     },
+     {
+      "id": "MC01-R7",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Facts confirmed.\n- Pause precheck: candidate 238-259.\n- Zero-row lock: 85-99.\n- Invalidation without re-enable: 994-1053.\n- Postcheck expectedInputCount 0 / publicEnabled false: 1307-1325.\n- research_persistent_cart is appliedToProduction=false in MIGRATION_DAG.json (53 nodes).\n- verify-research-persistent-cart.mjs:209-276 and 452-461 assert 4 inputs plus selection.media.\n\nThe fix wording is inverted. 'Forbid applying the persistent-cart predecessor ahead of this candidate' is impossible: the candidate refuses unless the four cart tables (45-56) and the exact predecessor function bodies and ACLs (109-182) already exist. The correct guard is to apply the predecessor and the candidate in one approved window, with the cart dark and zero rows.\n\nAlso unnoted:\n- The candidate data-migrates every image row to blocking_level='informational' with a version bump (969-976). Its audit snapshot records only the post-update blockingLevel (978-992), so the pre-apply level cannot be recovered. rollback.md concedes this only generally.\n- The CONFIRMED claim that the only changes from the predecessor are image exclusion plus null-safety understates the diff. selection_current also drops the blocking_level='blocks_display' filter on the unknown-row refusal (candidate 703-712 vs 20260727200000 ~335-345). It also newly requires audienceEligibility.sourceVersion, evaluatedAt equality and a principalId key for every audience (candidate 66-69, 93-95). These are fail-closed tightenings aligned with TS, not regressions."
+     }
+    ],
+    "missed": [
+     "P2: The decoupling precondition in the verdict and MC01-R1 is incomplete. The verdict says decoupling 'only takes effect once the unapplied SQL candidate is installed and the product_content manifest is re-approved', and R1's fix (a) asks only for registration and apply of the candidate. That is not enough.\n- The candidate's own precheck refuses unless the PENDING persistent-cart schema already exists: the four cart tables (supabase/candidates/20261003_research_media_commerce_decoupling.sql:45-56) and the exact predecessor bodies, owners and ACLs of research_persistent_cart_selection_current, put_item and claim (109-182).\n- That predecessor is research_persistent_cart, appliedToProduction=false in docs/coordination/MIGRATION_DAG.json, depending on research_inventory_reservation_commands and research_variant_strength_write_gate.\n- The readiness and manifest decoupling that the live direct-commerce path and the release gate actually need (candidate:268-467) is bundled in the same transaction.\n- So effective decoupling first requires applying a separate unapproved migration plus its closure, a migration that itself encodes the 4-input media gate (20260727200000:262,314-347). Then the candidate replaces it immediately.\n- The worker discloses this (rollback.md 'install the reviewed persistent-cart predecessor through its current dependency order where absent'; RECONCILIATION.md:147-154). The lens's conditions omit it, and R7's fix contradicts it.\n- The release precondition must name the full chain: predecessor closure, then candidate successor, then canonical non-image manifest approval, then a separate launch transition. Alternatively, split the readiness decoupling into its own candidate that does not depend on the persistent cart."
+    ]
+   }
+  },
+  {
+   "lens": "mc01-sql",
+   "review": {
+    "verdict": "MC-01 source ed9bb9b (handoff 0b86108): ACCEPT as source-only, qualified. No P0 or P1. This accepts the source only. It does not authorize apply, registration or runtime promotion.\n\nWhat I checked:\n- The candidate SQL is source-only and unregistered.\n- The six redefined functions were reconciled against the latest effective bodies at 3eaa017. These are supabase/migrations/20260727200000_research_persistent_cart.sql:157-649 and supabase/research-required-input-readiness.sql:208-613. The MD5 pins I recomputed match the base, and all ten prerequisite SHA-256 pins match.\n- The diffs contain only three kinds of change, all intended: (a) removal of the media/primary-image predicates and the media lock/join; (b) a `- 'media'` canonicalization before command/snapshot hashing; (c) new null/type/optimistic-concurrency guards. Nothing is dropped. The single semantic broadening is documented and matches the TS side: unknown active non-image inputs now fail closed at every blocking level, not only blocks_display.\n- ACL, search_path, SECURITY DEFINER and owner hygiene are sound. Prechecks and postchecks require exact ACLs, and all ACLs are restated. Managed production uses postgres with BYPASSRLS, which the precheck requires.\n- The candidate is atomic. A second apply is deliberately refused rather than being idempotent, and this is documented. The cart census is taken under an ACCESS EXCLUSIVE lock inside the apply.\n- Data mutation is limited to: reclassifying the image input row and writing its audit row, and invalidating the affected manifests and writing their audit rows.\n- The bucket mismatch is fixed. Signer and URL validators now use `research-product-media-production`, matching the upload default and the storage migration.\n- The verifier reproduces the media coupling against the predecessor, then shows image independence after apply for the anonymous selection, put and claim SQL paths.\n- The handoff and RECONCILIATION are broadly truthful. Protection FAILs are inherited: the server/static.ts blob is identical at the base and the source. The 0b86108 commit is records-only, and the receipts are consistent with a clean ed9bb9b checkout.\n\nLimits:\n- I ran nothing. The disposable PostgreSQL proof and the test, typecheck and build results are evidence from the lane, not reruns of mine.\n- The hosted Render and Supabase observations are transcriptions I could not verify.\n\nOne P2 predates this lane and lies outside it: research_required_inputs.key is globally unique, so the per-product commerce bindings can only ever be satisfied by one product. It should go to Core/Product Control before cart or persistent-cart capability is relied on.\n\nSeveral P3 record and evidence corrections are listed in the findings.",
+    "findings": [
+     {
+      "id": "MC01-R1",
+      "severity": "P2",
+      "file": "supabase/research-required-input-readiness.sql",
+      "claim": "This defect predates MC-01; MC-01 carries it forward unchanged. Required-input keys are globally unique, yet cart and persistent-cart eligibility require the three exact keys bound to each product. So at most one product can ever satisfy the commerce-binding predicate. The single-product verifier fixture cannot detect this.",
+      "evidence": "research-required-input-readiness.sql:11 declares `key text not null unique`, and no source drops it; the only ALTERs on research_required_inputs are RLS at :697 and :702. Candidate selection_current (supabase/candidates/20261003_research_media_commerce_decoupling.sql:675-702) requires rows keyed exactly 'products.sku', 'products.family' and 'product_content.storage_information' with record_id equal to the selection's productId. TS does the same in server/research/commerce/cart-product-selection.ts:99-145, which requires input.recordId === productId for each binding. research_define_required_input stores the key verbatim. The verifier seeds one product only (research_media_commerce_decoupling_local.mjs:139-216). The predecessor had the same shape with four keys (20260727200000_research_persistent_cart.sql:303-345).",
+      "fix": "Do not treat this as an MC-01 blocker. Route it to the Core/Product Control owner: either make the required-input identity (key, record_type, record_id), or adopt per-record key namespacing in SQL and TS together. Add a multi-product fixture to the cart verifiers before member purchasability or the persistent cart is relied on."
+     },
+     {
+      "id": "MC01-R2",
+      "severity": "P3",
+      "file": "docs/research-launch/mc01-reconciliation-20261003/RECONCILIATION.md",
+      "claim": "The records wrongly say the rewritten quantity test uses a canonical 100-unit maximum. PERSISTENT_CART_QUANTITY_MAX is 50 at the reviewed SHA, so the test change does not alter behaviour (50/51 became MAX/MAX+1). The original 50-unit test was not stale.",
+      "evidence": "RECONCILIATION.md:86 at ed9bb9b (:92 at 0b86108) reads 'The stale 50-unit test uses the existing canonical 100-unit maximum.' But shared/research/persistent-cart.ts:4 sets PERSISTENT_CART_QUANTITY_MAX = EARLY_ACCESS_MAX_QUANTITY, and shared/research/early-access-quantity.ts:72-74 sets EARLY_ACCESS_CART_DURABLE_MAX_QUANTITY = 50 and EARLY_ACCESS_MAX_QUANTITY to that value. It is unchanged at 3eaa017, c0e25c73 and ed9bb9b. The test diff is at persistent-cart.test.ts, the hunk 'accepts the canonical quantity maximum'.",
+      "fix": "Correct the RECONCILIATION/HANDOFF row: the test is now bound to the existing 50-unit persistent-cart maximum, and its behaviour is unchanged."
+     },
+     {
+      "id": "MC01-R3",
+      "severity": "P3",
+      "file": "supabase/verification/research_media_commerce_decoupling_local.mjs",
+      "claim": "After the candidate is applied, the verifier never asserts that a valid member-owner selection or put returns true. The member negative checks may therefore be passing for some other reason than the gate they claim to test, so the claim that audience/member gates are preserved is only partly evidenced.",
+      "evidence": "media_test_member_selection (verifier:617-618) is used only in negative checks: the suspended member returns 'f' (:975-982), and a member selection under an anonymous owner returns 'f' (:983-987). Every positive check uses the anonymous owner: currentSql at :321-323 and :625, puts at :1022-1027 and :1075-1080, and claim through anonymous selections at :888-889. By inspection, the candidate's member logic (cand.sql:548-556 and 585-592) matches the predecessor apart from stricter null handling.",
+      "fix": "Add a positive control asserting that research_persistent_cart_selection_current('member', member, member_selection) = 't', plus a successful member put, before the suspended-member and owner-mismatch negatives."
+     },
+     {
+      "id": "MC01-R4",
+      "severity": "P3",
+      "file": "supabase/candidates/20261003_research_media_commerce_decoupling.sql",
+      "claim": "The candidate rewrites the governance row for the image required input: blocking_level is set to 'informational', version is incremented, and an audit row is inserted. Neither the handoff, RECONCILIATION nor the rollback note mentions this mutation; they describe only the manifest invalidation.",
+      "evidence": "cand.sql:969-992 runs `update public.research_required_inputs set blocking_level='informational', version=version+1 ... where key='product_content.primary_image'` and inserts into research_required_input_audit. A grep for 'informational', 'reclassif' and 'blocking' in RECONCILIATION.md, HANDOFF.md and the .rollback.md at 0b86108 returns nothing. The rollback note (rollback.md:29-31) only says required-input metadata is not captured.",
+      "fix": "List the image-input reclassification (prior blocking_level, version bump, audit actor) among the declared data mutations in RECONCILIATION/HANDOFF and in the rollback/roll-forward note."
+     },
+     {
+      "id": "MC01-R5",
+      "severity": "P3",
+      "file": "supabase/candidates/20261003_research_media_commerce_decoupling.sql",
+      "claim": "Unknown-input fail-closed now covers every blocking level, including 'informational'. This intentionally matches the TS rule, but readiness treats informational inputs as never blocking. The presentation exemption is a single hard-coded key, so any future presentation or informational input bound to a product makes that product cart-ineligible. That re-couples imagery to commerce for D/E square-media facts unless SQL and TS are extended together.",
+      "evidence": "cand.sql:703-712 removed the predecessor's `and i.blocking_level='blocks_display'` filter (20260727200000_research_persistent_cart.sql:334-345) and exempts only `key <> 'product_content.primary_image'`. The same literal appears at cand.sql:309, 348, 413 and 706, and in TS PRODUCT_PRESENTATION_INPUT_BINDINGS (shared/research/product-admin.ts:85-91). Readiness excludes informational inputs from blockers (cand.sql:334-337). The verifier deliberately fails 'product_content.primary_image.extra' (verifier:917-921). Founder scope S7 (doc 31) plans per-image facts such as mediaId, width, height and contentSha256.",
+      "fix": "Record the rule as an explicit D/E sequencing constraint: new presentation inputs must not be bound to the product record, or must be added to the SQL exemption and the TS list in one reviewed change. Consider using one shared exemption registry instead of five literals."
+     },
+     {
+      "id": "MC01-R6",
+      "severity": "P3",
+      "file": "supabase/candidates/20261003_research_media_commerce_decoupling.sql",
+      "claim": "put_item strips media in its DECLARE block, before the object-type guard runs. A scalar p_selection therefore raises 22023 'cannot delete from scalar' instead of the intended 'unauthorized'. It still refuses before any mutation; only the error-code mapping differs.",
+      "evidence": "cand.sql:746 declares `v_selection jsonb := p_selection - 'media';`, and the guard `jsonb_typeof(p_selection) is distinct from 'object'` raises 'unauthorized' only at :748-757. Claim does this in the safe order, validating at :845-859 before stripping at :860-862. The verifier tests only a null selection (:1001-1002), for which null - 'media' is null.",
+      "fix": "Initialize v_selection after the guard, e.g. `v_selection := p_selection - 'media';` placed after the validation block."
+     },
+     {
+      "id": "MC01-R7",
+      "severity": "P3",
+      "file": "server/research/commerce/persistence/persistent-cart.ts",
+      "claim": "There is a TS/SQL contract gap. The candidate SQL now requires the audienceEligibility.principalId key on every selection, but TS validMutation does not require it for member-owner retail selections. Such a selection passes TS validation and then returns selection_stale from SQL.",
+      "evidence": "cand.sql:541-542 checks `not (p_selection->'audienceEligibility' ? 'principalId')`, which the predecessor did not require for retail. persistent-cart.ts:136-143 checks principalId only for anonymous owners (=== null) and for member-audience selections. The PersistentCartSelection type requires principalId (shared/research/persistent-cart.ts:49-53), and no runtime producer exists yet.",
+      "fix": "In validMutation, require 'principalId' in audienceEligibility (string or null) for every owner, or document that SQL refuses a selection without it."
+     },
+     {
+      "id": "MC01-R8",
+      "severity": "P3",
+      "file": "docs/research-launch/mc01-reconciliation-20261003/evidence/final-boundary-verification.json",
+      "claim": "Raw source hashes for 14 of 24 files in the receipts cannot be reproduced from the Git blobs, in either LF or CRLF form, because the working tree appears to have mixed line endings. The boundary verifier records counts only, with no comparison method. A separate verifier log line overclaims 'without duplicate audit' after the refused replay.",
+      "evidence": "run-check.mjs hashes raw readFileSync bytes. Recomputing from blobs fails for 14 files, including shared/research/cart-product-selection.ts (receipt 76f3be89 against blob LF f2b04d52 / CRLF e675c629). The failing hashes are identical across affected-run1 (after) and typescript-run1 (before), and typescript-run1 shows HEAD ed9bb9b with only one untracked evidence file dirty, which supports the provenance claim. final-boundary-verification.json lists only 'sourceFilesVerified' counts. The verifier refuses the replay at :535 but never counts audit rows afterwards (:538-584), so 'without duplicate audit' is inferred from atomicity, not measured.",
+      "fix": "Record the normalization the boundary check used, and LF-canonical hashes alongside raw hashes. Either measure the audit count around the refused replay or reword that log line."
+     }
+    ],
+    "confirmed": [
+     "Source-only placement: the candidate sits under supabase/candidates and is absent from supabase/migrations, supabase/MIGRATIONS.md, docs/coordination/MIGRATION_DAG.json and the server/release-control-plane.test.ts path maps. git diff 3eaa017..ed9bb9b shows no change to DAG, ledger or migrations, and the verifier asserts this at verifier:66-69.",
+     "Candidate canonical-LF SHA-256 is 365728cb...ffa4 and verifier SHA-256 is f180b0ba...acdd9, as the handoff claims. All ten prerequisite pins (verifier:26-37) match 3eaa017 and ed9bb9b byte-for-byte after LF normalization.",
+     "All six predecessor MD5 pins (cand.sql:109-123, verifier:71-78) match the latest effective bodies at 3eaa017. No later SQL redefines these functions. The predecessor files are identical at historical f453d7e, as the header claims.",
+     "Function diffs against the predecessors are limited to media/image deltas plus additive guards. selection_current drops the research_product_media lock, join and predicates and moves from 4 inputs to 3, and gains strict type validation. put_item and claim strip top-level media before hashing and snapshot, and gain null guards. The readiness, manifest-hash and manifest-setter functions exclude only key 'product_content.primary_image'; the setter adds input validation and IS DISTINCT FROM concurrency. No hardening was dropped. Volatility, SECURITY DEFINER and search_path=pg_catalog are preserved.",
+     "ACL hygiene: the precheck (cand.sql:145-236) and postcheck (:1137-1246) require exact function ACLs (owner, plus service_role except for the private selection helper) and exact table ACLs (owner, plus service_role SELECT), with forced RLS. Grants are restated at :1058-1079. Predecessor ACLs match (20260727200000_research_persistent_cart.sql:684-707, research-required-input-readiness.sql:714-745). All relation references are schema-qualified.",
+     "Safety: the script is transactional, with a BYPASSRLS/superuser executor check, a zero-row census taken under ACCESS EXCLUSIVE inside the apply, a required pause of public_enabled image-bearing domains, and invalidation plus audit that never enables a domain. Replay refuses on predecessor drift, which is documented as not an apply-twice pass.",
+     "research_transition_launch_status, which is not redefined, consumes the redefined readiness and hash functions, so launch gating stays consistent with the new manifest semantics.",
+     "Bucket mismatch fixed: member-catalog-service.ts:39, member-catalog-projection.ts:93 and client memberCatalog.ts:116 now use research-product-media-production, matching product-admin-production.ts:45 and the migration 20260726143000:930-931. A non-default env override falls back to no image, as documented.",
+     "The verifier reproduces the coupling against the predecessor (verifier:387-406). After apply it shows: media payload variants are ignored; rejected or deleted product_media rows have no effect; every image-input state, blocking level, unbinding and malformed domain/record_type leaves readiness and anonymous eligibility unchanged; 8 image-input and 8 media RPC lifecycle transitions preserve the authority baseline; and put/claim replay, snapshot and hash are identical with media stripped. Non-image gates fail closed. Docker is network-less, uses tmpfs, and removes only its own container.",
+     "TS runtime emits no media, and no runtime caller reads selection.media or PRODUCT_DISPLAY_REQUIRED_INPUT_BINDINGS. persistent-cart.ts strips media before both RPCs. The old TS already blocked unknown active inputs at any level, so the new SQL rule aligns with it.",
+     "Protection FAILs are inherited, not caused by this lane: the blobs of server/static.ts, client/src/App.tsx, server/index.ts, server/research/index.ts and CORE_SITE_PROTECTION_MANIFEST.json are identical at 3eaa017 and ed9bb9b. The lane changed no protected files, and its changed files are in research zones, tests, docs, .xenios or supabase.",
+     "0b86108 is records-only relative to ed9bb9b. The only non-record change is the collector's `--import tsx` launcher fix in run-check.mjs. The docs HANDOFF.md and the .xenios handoff are byte-identical.",
+     "Records are honest about their limits: sql-local-run1 reports sourceUnchangedAtBoundaries=false; the failed no-em-dash-final receipt is retained; protection results are labelled FAIL; there is no claim of a managed apply, registration, deploy or Claude acceptance; and the documents say that runtime must not be promoted against the legacy four-input SQL contract.",
+     "Direct commerce stays gated off by RESEARCH_MASTER_OFFERINGS_DIRECT_COMMERCE (server/index.ts:812-822), and audienceEligibility is null in the composed facts. Removing the image gate therefore does not by itself make anything purchasable in production."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "MC01-R1",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed at ed9bb9b. research-required-input-readiness.sql:11 declares `key text not null unique`. No SQL at 3eaa017 or ed9bb9b alters that constraint; the only ALTERs are RLS at :697-705. research_define_required_input (:294-322) stores the key verbatim. The candidate requires exact keys with record_id = productId (cand.sql:675-702), and so does TS (cart-product-selection.ts:99-145). The verifier seeds a single product (ver.mjs:139-216). The older persistent-cart verifier only manages two products by giving each its own database (scripts/verify-research-persistent-cart.mjs:953-1230), which is consistent with the defect. The impact is wider than cart. The same record_id binding gates member-catalog commerce bindings (member-catalog-projection.ts resolvedProductCommerceBindings) and productReleaseGateFromRequiredInputs (product-admin-production.ts:993-1019). So at most one product can ever be displayReady or available. It predates MC-01 and is carried forward unchanged; correctly routed as P2 outside this lane."
+     },
+     {
+      "id": "MC01-R2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. RECONCILIATION.md:86 at ed9bb9b and :92 at 0b86108 both say the canonical maximum is 100 units. persistent-cart.ts:4 sets PERSISTENT_CART_QUANTITY_MAX = EARLY_ACCESS_MAX_QUANTITY, and early-access-quantity.ts:72/74 make that 50 at 3eaa017, c0e25c73 and ed9bb9b. The test hunt 'accepts the canonical quantity maximum' only swaps 50/51 for MAX/MAX+1, so behaviour is unchanged. HANDOFF.md does not repeat the claim."
+     },
+     {
+      "id": "MC01-R3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. media_test_member_selection (ver.mjs:617-618) appears only in the negatives at :975-982 and :983-987. Every positive check uses the anonymous owner (:321-323, :625, :924, :1022-1027, :1075-1088). By inspection the member predicates (cand.sql:548-556, 585-592) match the predecessor apart from null-safe operators, but the gate is not proven at runtime."
+     },
+     {
+      "id": "MC01-R4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. cand.sql:969-992 reclassifies the image row to informational, bumps its version and writes an audit row. A grep of RECONCILIATION.md, HANDOFF.md and rollback.md at 0b86108 for informational, reclassif or blocking finds nothing. Related undeclared governance change in the same lane: member-catalog image display no longer depends on the independently verified image required input. Base member-catalog-projection.ts:504-506 gated safeMedia on bindings['product_content.primary_image']; ed9bb9b:519 calls safeMedia unconditionally. The required-input transition enforces an independent verifier (rri.sql:378-383, 419-422). research_admin_update_product_media (20260726143000:772-830) has no self-approval guard. A single Product Control actor can therefore now make an image member-visible, and the bucket fix makes it actually render. This matches founder S6 (Product Control is the runtime authority), so P3 disclosure only. The records should state it."
+     },
+     {
+      "id": "MC01-R5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. The predecessor's blocks_display filter (20260727200000:334-344) is removed at cand.sql:703-712. The exemption is the single literal at cand.sql:309, 348, 413 and 706 and in product-admin.ts:86-91. Readiness excludes informational inputs (cand.sql:334-341). The verifier deliberately fails '.primary_image.extra' (ver.mjs:917-921). This matches the old TS rule (3eaa017 cart-product-selection.ts:144: active.length must equal the bindings at any level). It is a valid D/E sequencing constraint, not a defect today."
+     },
+     {
+      "id": "MC01-R6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. cand.sql:746 evaluates `p_selection - 'media'` in DECLARE, before the object guard at :748-757. A JSON scalar, including the JSON value 'null'::jsonb, raises 22023 'cannot delete from scalar'. An array does not raise and reaches 'unauthorized'. It still fails before any mutation. TS validMutation and canonicalSelection make it unreachable from TS, and rpcFailure maps it to dependency_unavailable (persistent-cart.ts:97-110). The verifier only tests SQL NULL (ver.mjs:1001-1002)."
+     },
+     {
+      "id": "MC01-R7",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. cand.sql:541-542 require the principalId key for every owner. persistent-cart.ts:136-143 checks it only for anonymous owners (=== null) and member-audience selections. The type requires it (shared persistent-cart.ts:49-53). The same contract-gap class covers other keys SQL now hard-requires but TS does not check, e.g. price.expiresAt presence (cand.sql:525). All fail closed as selection_stale."
+     },
+     {
+      "id": "MC01-R8",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Reproduced independently. Of the 24 affected-run1 sourceHashes, 14 match neither the raw, LF-normalized nor full-CRLF ed9bb9b blob; 10 match raw. Example: shared/research/cart-product-selection.ts 76f3be89. typescript-run1 reports HEAD ed9bb9b with only one untracked evidence file dirty, and carries the same hash. That means a clean checkout of the committed source had those bytes, which points to EOL-only differences and supports provenance. final-boundary-verification.json sourceChecks list counts only. ver.mjs:535-536 prints 'without duplicate audit', but no audit count is taken around the refused replay; it is inferred from atomicity. The sql-local-run1 log hash ed672198 matches."
+     }
+    ],
+    "missed": [
+     "P2, predates MC-01 and is carried forward unchanged in the redefined claim function, so it belongs with MC01-R1 for the persistent-cart/Core owner. Claim merges an anonymous line into an existing member line with ON CONFLICT quantity = existing + excluded (cand.sql:941-942). It refuses only above 1000 (cand.sql:920-930; table CHECK at 20260727200000_research_persistent_cart.sql:37). The TS read path rejects any item above PERSISTENT_CART_QUANTITY_MAX = 50: parseCart at server/research/commerce/persistence/persistent-cart.ts:75-77, consumed by call() at :203-213, with the rejection asserted in persistent-cart.test.ts:258-259. Put is capped at 50 by TS validMutation (:120-122), but claim is not capped on the sum. Failure scenario: a member line of 30 plus an anonymous line of 30 commits a quantity-60 row and reconciles the anonymous cart in SQL. TS then returns dependency_unavailable. Replaying the idempotency key returns the same stored redacted_result and fails again. getMemberCart fails permanently. Put and remove need versions and item ids that the member can no longer read, so the member cart is bricked. The MC-01 verifier never claims into an existing member line (ver.mjs:1081-1104 uses a fresh member). Fix the SQL claim limit to the TS durable maximum, or make the merge refuse quantity_limit above PERSISTENT_CART_QUANTITY_MAX, before persistent cart is relied on.",
+     "P3, an evidence overstatement in the lens summary, not a finding against the source. The lens states 'Managed production uses postgres with BYPASSRLS, which the precheck requires' as fact, but it did not and could not verify it. The precheck accepts superuser OR bypassrls (cand.sql:37-44, 62-66). The disposable proof runs every apply as the container superuser postgres (ver.mjs:97-98, 358-367, 534). It never exercises the managed-style path where a non-superuser BYPASSRLS owner runs CREATE OR REPLACE, LOCK ... ACCESS EXCLUSIVE, the governance UPDATEs and the ACL restatement. That must come from the later managed preflight. The records already concede this (rollback.md:39-44)."
+    ]
+   }
+  },
+  {
+   "lens": "core-abc",
+   "review": {
+    "verdict": "NOT ACCEPTED at 70cd421 (tree 37ea9849, confirmed) with tests at 1a409e2. Most of the lane conforms. Scope, protected-file authority, brand extent, CTA geometry, focus treatment and IC-1 selector scoping all match docs 28, 30 and 31. Two release-blocking problems remain. (1) IC-2 is broken in the source itself. The customer root remaps --accent to purple (assisted-order.css:160), and the shared timeline rule (assisted-order.css:134, which was line 131 at 3eaa017) uses var(--accent). Every timeline entry on the customer status page and the confirmation page therefore gets a 3px #7C3AED left border, which makes the timeline uniformly purple. (2) There is no browser qualification at all. The handoff and browser-observations.json say so themselves: the ten-width matrix, 200% zoom, keyboard, forced colors and skeleton checks were not done, and there is no proof that admin computed styles are unchanged. Missing evidence is not a pass. The claimed successor hashes must not be approved, and the manifest must not be re-cut, until the fixed bytes are reviewed. The IC-2 fix belongs only in assisted-order.css, which is in the allowed zone, so it should not need to change the three protected files or their claimed successor hashes. The protection gate stays FAIL as expected: 3 authorized mismatches, plus the inherited GATE-01 server/static.ts mismatch and seam warnings. ADP-G1-R1 to R4 are untouched (no server changes) and remain open. Production stays NOT READY.",
+    "findings": [
+     {
+      "id": "ABC-R1",
+      "severity": "P1",
+      "file": "client/src/research/assisted-order/assisted-order.css",
+      "claim": "IC-2 is violated. The customer assisted-order timeline becomes uniformly purple instead of neutral or restrained teal.",
+      "evidence": "At 70cd421, assisted-order.css:160 sets `--accent: var(--pulse)` on `.xenios-order-page--customer`, and index.css:31 defines --pulse as #7C3AED. assisted-order.css:134 keeps `.xenios-order-timeline li { border-left: 3px solid var(--accent); }`. Nothing in the customer block (lines 153-243) overrides the timeline. Both customer pages render the timeline inside the customer root: AssistedOrderStatusPage.tsx:115 (root) and :154 (`<ol className=\"xenios-order-timeline\">`), and AssistedOrderConfirmationPage.tsx:63 (root) and :82 (`<ul className=\"xenios-order-timeline\">`). Every li therefore computes border-left-color rgb(124,58,237). This is exactly the outcome doc 31 IC-2 forbids ('not #7C3AED'). The admin timeline (AdminAssistedOrderDetail.tsx:172, under the bare root at :126) keeps green #183d2d, so that part is fine.",
+      "fix": "In assisted-order.css only, add an explicit customer timeline rule, for example `.xenios-order-page--customer .xenios-order-timeline li { border-left-color: var(--rule); }` for neutral, or a restrained teal. Alternatively, stop remapping --accent at line 160 and keep only the explicit var(--pulse) uses. Add a test asserting the customer timeline border is not var(--pulse) or var(--accent). Then provide browser computed-style proof on the status and confirmation pages that the timeline border-left-color is not rgb(124,58,237)."
+     },
+     {
+      "id": "ABC-R2",
+      "severity": "P1",
+      "file": "docs/health-launch/evidence/abc-premium-shell-20261003/browser-observations.json",
+      "claim": "Browser qualification is missing, so none of the binding visual criteria have browser evidence. That includes IC-1's required computed-style comparison for admin surfaces.",
+      "evidence": "browser-observations.json at 7d66573 records tenWidthMatrix \"INCOMPLETE\", true200PercentZoom \"NOT_VERIFIED\", keyboardBrowserQualification \"NOT_COMPLETED\", forcedColorsBrowserQualification \"NOT_COMPLETED\", skeletonLoadedStability \"NOT_COMPLETED\" and approvedPreviewVisualComparison \"NOT_COMPLETED_SOURCE_COMPARISON_ONLY\". Its viewport was uncontrolled (requested 1440, observed 4363 CSS px at DPR 0.33). Doc 31 IC-1 says it is verified by computed styles of admin controls being byte-for-byte unchanged against the baseline in browser evidence, and no admin computed-style capture exists. The fit of the longer 'Xenios Health' lockup between 520 and 1279 px, the 44px controls and wrapping are proven only in source. The handoff (ABC_PREMIUM_SHELL_20261003.md, 'Browser evidence and preview limits') states these remain unverified.",
+      "fix": "On the corrected successor's exact production client, capture: the ten widths (1440 to 320) and native 200% zoom; real keyboard focus and forced colors; Sign In and Start Care fit with the Health lockup; button wrapping and skeleton-to-loaded stability; admin Queue, Detail and Session computed styles diffed against a 3eaa017 build (background, border, color, radius, padding and outline of .xenios-order-button and the timeline); and the customer timeline color. Bind every capture to the exact SHA and build receipt."
+     },
+     {
+      "id": "ABC-R3",
+      "severity": "P2",
+      "file": "docs/health-launch/evidence/abc-premium-shell-20261003/raw-checks.json",
+      "claim": "The focused regression run (479 passed) cannot be tied to the exact source and test commits.",
+      "evidence": "In raw-checks.json, the abc-affected-run1 entry shows head 3eaa017 with the source files listed as modified in dirtyAtStart (line 21), and the record's limitations note 'commits moved during the run'. Only the shell run (12 tests, at 1a409e2 with only records dirty) and the typecheck and build runs (clean 83d1b97) are exact. The affected suites cover assisted-order, PageShell, Navbar account entry, Care shell, account portal and catalog priority.",
+      "fix": "Rerun the same focused suite (dropping the nonexistent Navbar.audience-navigation filter) from a clean checkout of the corrected successor's test SHA, and record head, tree and dirtyAtStart/dirtyAtEnd."
+     },
+     {
+      "id": "ABC-R4",
+      "severity": "P3",
+      "file": "client/src/index.css",
+      "claim": "The new `.clarity-public-shell .btn:focus-visible` selector joins a grouped rule that also sets border-radius: 4px. That overrides `.btn-ghost { border-radius: 0 }` whenever a ghost button has focus.",
+      "evidence": "index.css:1301-1312 at 70cd421 sets outline 3px solid var(--pulse), outline-offset 3px and border-radius 4px for the group that now includes `.clarity-public-shell .btn:focus-visible` (line 1302), at specificity (0,3,0). `.btn-ghost` at index.css:323-332 sets border-radius 0 and a bottom-border underline (line 330). Ghost buttons inside the public shell, such as About.tsx and the Care pending pages, will round the ends of their underline only while focused.",
+      "fix": "Move `.clarity-public-shell .btn:focus-visible` into its own rule containing only outline and outline-offset, or confirm the change is acceptable in browser review."
+     },
+     {
+      "id": "ABC-R5",
+      "severity": "P3",
+      "file": "client/src/research/assisted-order/assisted-order-premium.test.tsx",
+      "claim": "The tests rely on browser evidence that does not exist, and never render the status-page timeline, quote panel or upload controls.",
+      "evidence": "assisted-order-premium.test.tsx:39-41 says 'browser evidence proves the CSS cascade, control geometry, zoom, and keyboard/forced-color rendering separately', but no such evidence exists (see ABC-R2). The test at :84-89 renders AssistedOrderStatusPage statically in its loading state only, so the timeline (StatusPage:154), CustomerQuotePanel and SecureDocumentUpload are never rendered. Nothing tests timeline color, which is why ABC-R1 went undetected. The IC-1 check at :91-112 is source-only, which is acceptable as a guard.",
+      "fix": "Correct the comment. Add a declaration or computed check for the customer timeline (see ABC-R1). Optionally render the status view with a stubbed status so the quote and upload controls are confirmed to sit inside the customer root."
+     },
+     {
+      "id": "ABC-R6",
+      "severity": "P3",
+      "file": "client/src/research/assisted-order/assisted-order.css",
+      "claim": "The customer `--line: var(--rule)` remap slightly lowers the contrast of input and secondary borders.",
+      "evidence": "assisted-order.css:158 maps --line to --rule, which is rgba(14,14,14,0.10) per index.css:27. The old value was rgba(23,33,27,.14) (assisted-order.css:4). The input borders at :33 use var(--line), and both values are well under the WCAG 1.4.11 3:1 non-text contrast for input boundaries. Outlined secondary buttons are unaffected because they use var(--ink).",
+      "fix": "Consider a darker customer input-border token, such as var(--gray-500), or confirm the existing contrast is accepted at browser review."
+     },
+     {
+      "id": "ABC-R7",
+      "severity": "P3",
+      "file": "client/src/research/catalog-priority/catalog-priority.css",
+      "claim": "The new purple selected states have no forced-colors counterpart, unlike the assisted-order steps.",
+      "evidence": "catalog-priority.css:16 and account-portal.css:117-121 now use a purple background for selected states, and neither file has an @media (forced-colors: active) block. In forced colors the background is dropped, so selection is not visible. The black version before this change behaved the same way, and aria-pressed (CurrentDemandCollection.tsx:83) and aria-current are present, so this is not a regression. The assisted-order steps did get a Highlight border (assisted-order.css:242).",
+      "fix": "Optionally add forced-colors rules giving the selected filter and nav link a Highlight or CanvasText border or outline, for parity."
+     }
+    ],
+    "confirmed": [
+     "The commit chain is as stated: 70cd421 has parent 3eaa017 and tree 37ea984993cc78ee61d0e9ca944fca0213e73ba8; 1a409e2 has parent 70cd421; 3eaa017..70cd421 touches exactly 10 files; 70cd421..1a409e2 only adds client/src/clarity/premium-shell.test.tsx and client/src/research/assisted-order/assisted-order-premium.test.tsx, and no existing test is modified or weakened.",
+     "Among protected files, only the three authorized ones changed. Checked against the manifest at 3eaa017: client/src/components/Navbar.tsx, client/src/components/Footer.tsx and client/src/index.css are the only changed paths in fileHashes (manifest lines 677, 681, 682) or permittedSeamFiles (513, 531, 549). account-portal.css, catalog-priority.css, the three assisted-order TSX files, assisted-order.css and clarity/brand.ts fall in allowedWriteZones (client/src/research/, client/src/clarity/) and exemptSubtrees, and none of them is in fileHashes or seamBaselineHashes. 1a409e2..7d66573 touches only .xenios/ and docs/, which are infrastructure zones.",
+     "The protection manifest is untouched: there is no diff to docs/phase2/ in 3eaa017..7d66573, and scripts/acceptance is unchanged.",
+     "The handoff claims these new sha256-lf values (not computed by me): Navbar.tsx 6cdfbb0f05cc8d1fb28bfdc6b7a012ddb85e34d0c985bc88e71c09d8456a218a; Footer.tsx 420b45dc09aefa572a65ae68b5add6a2ce3d435e54e1fea7d9db9f29390df7cb; index.css b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049. They match the archived abc-protection-final log in raw-checks.json:329, which reports 34 hashes verified, 3 authorized mismatches and the inherited server/static.ts mismatch. The handoff does not claim them as founder-approved.",
+     "BRAND.publicName is still \"Xenios\" (brand.ts:2). healthDisplayName \"Xenios Health\" is added (brand.ts:3), and its only consumers are Navbar.tsx:109 (aria-label), :111 and :138, and Footer.tsx:20 (aria-label and visible name). pageTitle() still uses publicName, and copyright, supportEmail and legalName are unchanged.",
+     "No title, SEO, PWA, OG or Wordmark change: index.html, SeoHead.tsx, PageShell.tsx, Home.tsx, PwaLifecycle.tsx, offline.html, site.webmanifest, the OG raster, Wordmark.tsx and raw-http-document-policy.ts are not in the diff.",
+     "In the TSX diffs, the Navbar and Footer changes are brand-reference substitutions only. The three assisted-order TSX files only add the className token xenios-order-page--customer (AssistedOrderPage.tsx:827, AssistedOrderConfirmationPage.tsx:36 and :63, AssistedOrderStatusPage.tsx:115). Labels, hrefs, data-testids, action policy, availability, price and payment are unchanged.",
+     "IC-1 selector scoping is correct in source. assisted-order.css:45 keeps border 0, background var(--accent) and color var(--accent-ink), all !important, on `.xenios-order-page:not(.xenios-order-page--customer) .xenios-order-button`. All three admin roots are bare `.xenios-order-page`: AdminAssistedOrderDetail.tsx:29 and :126, AdminAssistedOrderQueue.tsx:55 and AdminAssistedOrderSession.tsx:41. The admin files are unchanged, every customer rule is prefixed with .xenios-order-page--customer, and no .xenios-order-button appears outside a .xenios-order-page root in non-test source. No other !important CSS interacts. The required browser computed-style proof is still missing (ABC-R2).",
+     "Focus treatment is solid #7C3AED throughout. Every new focus rule is `3px solid var(--pulse)` (index.css:1301-1312, account-portal.css:112-115 and :250-255, catalog-priority.css:15, assisted-order.css:228-233), with no gradient or border-image ring. Teal appears only as the end stop of the single decorative gradient --health-accent-rule (index.css:34), whose only consumer is .clarity-footer-brand::before (index.css:1453-1460: 4px tall, at most 240px wide). The old --pill-* and grad tokens are kept, and RotatingHero's gradient-pill is not mounted anywhere.",
+     "Selected states use solid purple with white text, about 5.7:1 contrast: account-portal.css:117-121 and catalog-priority.css:16, plus the customer steps at assisted-order.css:165-166.",
+     "The 44px minimums hold. Customer primary, secondary and tertiary controls use min-height var(--order-control-height) = 44px (assisted-order.css:161, 173-184, 191-204, 212-224); quantity buttons stay 44x44 (line 76); the skeleton button matches at 44px (line 234). Primary is black #0E0E0E with a 4px radius, secondary is outlined, tertiary is underlined, and disabled and hover states are explicit.",
+     "There is no global .btn compaction: the .btn rules at index.css:281-307 (52/56/60/64 px) and .btn-ghost at :323-337 are untouched, and the shared button rules are not modified.",
+     "The forced-colors rules make sense: .clarity-footer-brand::before uses background CanvasText (index.css:1501); public .btn focus uses outline-color Highlight (:1502); customer assisted-order focus uses outline-color Highlight and the active step uses a Highlight border (assisted-order.css:235-243).",
+     "The Care and Research pathway names are kept. Navbar and Footer link labels are unchanged, and the test asserts XENIOS CARE on Care pages and the Research member chrome 'xenios research'. No /health link is added.",
+     "The records are honest. RELEASE_STATE and PROJECT_STATE record claudeAccepted false, manifestRecut false and hostedChangesAuthorized false, with browser status INCOMPLETE and protection FAIL. The handoff marks browser qualification BLOCKED/INCOMPLETE and claims neither premium acceptance nor release.",
+     "There are no server, shared or migration changes, so ADP-G1-R1 to R4 from doc 26 are unaffected and stay open."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "ABC-R1",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Confirmed at 70cd421. assisted-order.css:160 sets `--accent: var(--pulse)` on .xenios-order-page--customer. Line 134 keeps `.xenios-order-timeline li { border-left: 3px solid var(--accent) }`, which is line 131 at 3eaa017 because three lines were added above it. Nothing in the customer block (153-243) overrides it. Both timelines sit inside the customer root: StatusPage.tsx:115 (root) with :154 (ol), and ConfirmationPage.tsx:63 (root) with :82 (ul). A repo-wide grep shows var(--accent) is used only in assisted-order.css (lines 24, 25, 45, 70, 134). The customer rules at 165-166 and 233 override lines 24/25/70, so line 134 is the only place the purple remap leaks through. One citation error: --pulse is defined at index.css:30, not :31 (:31 is --teal). The finding stands. Its alternative fix is wrong and should be struck: 'stop remapping --accent at line 160' would make the customer timeline the legacy dark green #183d2d. That is neither neutral nor teal, and it reintroduces the green language that decision B removes from the Health experience. Only an explicit neutral (for example var(--rule) or var(--gray-300)) or a restrained var(--teal) customer timeline rule satisfies IC-2."
+     },
+     {
+      "id": "ABC-R2",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Confirmed at 7d66573. browser-observations.json:21-27 records 200% zoom NOT_VERIFIED, the ten-width matrix INCOMPLETE, keyboard, forced-colors and skeleton checks NOT_COMPLETED, and the preview comparison as source-only. The viewport was uncontrolled (:15-19, 1440 requested, 4363 CSS px observed at DPR 0.33), and the screenshot was rejected (:17). The only DOM figures (:20) are for customer primaries under that uncontrolled scale. No admin computed-style capture exists, so doc 31 IC-1's verification ('computed styles of admin controls byte-for-byte unchanged ... in browser evidence') and IC-2's verification ('timeline border colour ... in computed styles') are both unmet. The handoff at ABC_PREMIUM_SHELL_20261003.md:79 and :85 admits this. My static cascade review found no admin change in source: the admin roots at Detail:29/:126, Queue:55 and Session:41 are bare .xenios-order-page, and the !important triple moved to (0,3,0) with identical values. That is still not the browser evidence the founder record requires. Missing evidence is not a pass."
+     },
+     {
+      "id": "ABC-R3",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed. In raw-checks.json:18-21, abc-affected-run1 started at 12:56:45Z on head 3eaa017 with all ten source files modified and assisted-order-premium.test.tsx untracked. It finished at 12:59:50Z on finalHead 1a409e2 (:51). Per git log, 70cd421 was committed at 12:58:19Z and 1a409e2 at 12:59:02Z, both during the run, so the tested working-tree bytes cannot be bound to tree 37ea984. The limitation is recorded at :10. The shell run (:143-145, head 1a409e2, records-only dirty) and the typecheck, build and protection runs (clean 83d1b97) are exact. P2 is appropriate. The rerun is needed regardless after the R1 fix. The fix should also widen the run's scope (see missed)."
+     },
+     {
+      "id": "ABC-R4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. index.css:1301-1313 groups `.clarity-public-shell .btn:focus-visible` (specificity 0,3,0) with `border-radius: 4px` (:1312). This beats `.btn-ghost { border-radius: 0 }` at :330, so a focused ghost button rounds the ends of its bottom-border underline. Ghost buttons do render inside PublicShell, for example About.tsx:100-101 (btn-ghost btn-on-dark) and the Care pending pages. The purple ring on the dark About section measures about 3.4:1 against #0E0E0E, which passes the 3:1 minimum. Cosmetic only."
+     },
+     {
+      "id": "ABC-R5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. assisted-order-premium.test.tsx:39-41 says 'browser evidence proves the CSS cascade, control geometry, zoom, and keyboard/forced-color rendering separately', and no such evidence exists. The status test at :84-89 renders only the pre-fetch loading state, so StatusPage:154 (timeline), CustomerQuotePanel and SecureDocumentUpload are never rendered. No assertion covers timeline color, so R1 passed the suite unnoticed. The IC-1 source guard at :91-112 is a reasonable static check."
+     },
+     {
+      "id": "ABC-R6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. The customer `--line: var(--rule)` (assisted-order.css:158, with --rule = rgba(14,14,14,0.10) at index.css:27) replaces rgba(23,33,27,.14) from :4. On white the input-border contrast drops from about 1.33:1 to about 1.24:1 (input rule at :33). Both values were already below 3:1, so this is a slight regression of an existing gap, not a new failure."
+     },
+     {
+      "id": "ABC-R7",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. catalog-priority.css:16 and account-portal.css:117-121 now use a purple background for selected states, and neither file has a forced-colors block (grep returns none). In forced colors the selection loses its visual cue. The previous black fill behaved the same way, and aria-pressed (CurrentDemandCollection.tsx:83) and aria-current remain, so this is not a regression. It is a parity gap next to assisted-order.css:242."
+     }
+    ],
+    "missed": [
+     "P2 (verification scope gap, extends ABC-R3): Rerunning 'the same focused suite', as ABC-R3 proposes, would still miss test files that read the edited files directly, and no aggregate was run for this slice (RELEASE_STATE.json currentAggregateStatus 'NOT_RUN_FOR_ABC'). The vitest filter in raw-checks.json:25-41 never selected these: client/src/pages/public-accessibility-regressions.test.ts:18 (reads index.css), client/src/research/mobile-pointer-targets.test.ts:7 (index.css), client/src/research/pages/helper-a11y-targets.test.tsx:14 (index.css), client/src/research/early-access/EarlyAccessRoute.storefront.test.tsx (renders the embedded AssistedOrderPage, whose root class changed at AssistedOrderPage.tsx:827), and server/core-site-protection.test.ts. Static inspection suggests no new failures: their regexes target .btn-on-dark.btn-ghost, .ra-* and .rg-* rules, which this slice did not touch. The exception is server/core-site-protection.test.ts:319-324 ('matches every curated protected file at HEAD'), which will now report 3 more mismatches (Navbar, Footer, index.css) on top of the inherited static.ts mismatch, as expected until a re-cut. The corrected successor should run these files explicitly, or an aggregate, from a clean checkout before the hash pairs go to Samuel."
+    ]
+   }
+  }
+ ]
+}
