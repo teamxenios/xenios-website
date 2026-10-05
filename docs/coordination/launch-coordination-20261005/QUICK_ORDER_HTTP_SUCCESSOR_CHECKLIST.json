@@ -1,0 +1,38 @@
+{
+  "sourceRequest": "C:/Users/sboad/.codex/attachments/20a5d445-6335-4de9-a6db-0cc00c656149/Pasted text.txt",
+  "controllingReview": "324183e886af369a4ea27b9bf0f7b9c615b32139",
+  "expectedScope": "Only existing leased Quick Order HTTP modules/helpers/declarations/tests and listed own-packet/lease corrections",
+  "sourceChecks": [
+    "Shared namespace classification across containment/handler/parser-error handling, preserves QO-C1 and mount-stripped url/originalUrl",
+    "Case/dot/backslash/encoded-dot/leading-double-slash/interior-empty policies and conservative owned-invalid refusal are explicit",
+    "Disabled owned aliases stop before parser/rawBody verifier; unrelated positive controls pass through",
+    "//other and absolute-form non-QO call next without port/body access; //api QO refuses; attacker host never trusted",
+    "No isHealthGatewayPath widening, protected mount/PWA application, manifest/verifier changes, SQL/registry/hosted changes"
+  ],
+  "packetChecks": [
+    "PWA install-promotion limitation and separate protected scope disclosed",
+    "Missing route/privacy regression pins listed as accompanying test work, no unauthorized shared edits",
+    "GATE-01 sequencing consequence for App/server recorded",
+    "Unsupported706MiB removed or actual raw receipt attached",
+    "Only own obsolete lease prefixes removed, historical inventories/other owners preserved",
+    "c65 six-file proposal unchanged/unapproved/unapplied; no silent expansion"
+  ],
+  "evidenceChecks": [
+    "Exact source/tree/changed paths and records/handoff pushed",
+    "New affected red/green regression source/test snapshot/command/exit/raw logs recorded if a fresh qualified slot permits",
+    "Otherwise explicit NOT RUN/resource-deferred; no inference from predecessor73+116",
+    "All protected/mount/schema/base invariants independently verified before narrow same-context review"
+  ],
+  "reviewScope": [
+    "QO-P2-03 closure",
+    "QO-P2-04 closure",
+    "Packet-disclosure verification",
+    "Adjacent containment/passthrough regressions"
+  ],
+  "notRequested": [
+    "Broad audit",
+    "Relocation re-review",
+    "A1/A2 approval repetition",
+    "New feature lane"
+  ]
+}

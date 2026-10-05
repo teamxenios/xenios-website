@@ -3696,6 +3696,19 @@
       "state": "handoff",
       "claimedAt": "2026-10-05T20:49:08.502Z",
       "heartbeatAt": "2026-10-05T20:49:08.502Z"
+    },
+    {
+      "id": "8564c117-f081-453c-9d56-92f14ba4ff0a",
+      "task": "LAUNCH-COORDINATION-20261005",
+      "session": "codex-launch-coordination-20261005",
+      "paths": [
+        "docs/coordination/launch-coordination-20261005/**",
+        ".xenios/sessions/codex-launch-coordination-20261005.json",
+        ".xenios/handoffs/*LAUNCH-COORDINATION-20261005*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-05T21:07:57.721Z",
+      "heartbeatAt": "2026-10-05T21:07:57.721Z"
     }
   ],
   "rules": [

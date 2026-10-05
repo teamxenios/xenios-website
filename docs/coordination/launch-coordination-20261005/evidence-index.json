@@ -403,5 +403,20 @@
     "path": "COMPLETED_REVIEW_RESOURCE_ASSESSMENT.json",
     "bytes": 1803,
     "sha256": "0a9d22866e678331e7c39c9addb618f2c1f07d13c5e5249c84bb0f507562426e"
+  },
+  {
+    "path": "QUICK_ORDER_DIRECT_HTTP_REQUEST_20261005.json",
+    "bytes": 8317,
+    "sha256": "778ed7d2071cd923eede5d45ae310bba78f5714382ed400836e5f2aebd0819c3"
+  },
+  {
+    "path": "HOST_PRECHECK_20261005_210757.json",
+    "bytes": 691,
+    "sha256": "c7d8e4606ee4764b66ac3b2190f1f1029858f136fa9c39a99dcabcdb719cdc28"
+  },
+  {
+    "path": "QUICK_ORDER_HTTP_SUCCESSOR_CHECKLIST.json",
+    "bytes": 2188,
+    "sha256": "53d40eb5bd2b223b60f827f13a8500a9d12ed8d6ea25c71828e3f8f9a469a4ef"
   }
 ]

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T21:03:05.205Z",
+  "updatedAt": "2026-10-05T21:10:51.767Z",
   "objective": "Automate verified Codex-Claude-ChatGPT launch coordination, preserve accepted source and implement the separately authorized Quick Order intake while production authorities remain held.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -67,12 +67,14 @@
     "autoDeployObservedAt": "2026-10-05T17:31:19.811Z"
   },
   "disk": {
-    "lastFreeGiB": 27.01,
+    "lastFreeGiB": 13.91,
     "preservedDockerVolumes": 827,
     "compactionReceipt": "docs/coordination/launch-coordination-20261005/docker-compaction-result.json",
     "fullLocalSuiteMinimumFreeGiB": 20,
     "compactionPid": 56048,
-    "state": "COMPACTED; Docker restarted; postcheck volume count verified; still serialize heavy tests"
+    "state": "Previously compacted with827volumes preserved; current free space13.91GiB is below20GiB floor, cause under read-only investigation. No cleanup.",
+    "observedAt": "2026-10-05T21:07:57.0785262Z",
+    "latestPrecheckArtifact": "docs/coordination/launch-coordination-20261005/HOST_PRECHECK_20261005_210757.json"
   },
   "blockers": [
     "Exact intended subscription/plan pending Samuel response; paid access memberships were removed Sept5",
@@ -123,16 +125,15 @@
   "qualificationSlot": {
     "owner": null,
     "scope": "Exclusive serialized relocated-source focused Node two-file set, then Vitest six-file set, then one conditional capped nonincremental typecheck. No other jobs.",
-    "next": "No automatic retry. Reassess only after host conditions change and issue a new serialized reservation.",
+    "next": "Preserve exact corrected source and explicitly defer. Read-only disk assessment; no automatic retry/cleanup. New affected red/green only after materially changed qualified host conditions.",
     "fullSuite": "DEFERRED/NOT RUN for original integration; no automatic reruns merely to improve summary reporter.",
     "lastCoordinatorResources": {
-      "at": "2026-10-05T20:33:12.8107309Z",
-      "availableMiB": 1917,
-      "freeDiskGiB": 26.98,
-      "matchingHeavyJobs": [],
-      "previousSlotOwner": null
+      "at": "2026-10-05T21:07:57.0785262Z",
+      "availableMiB": 1331,
+      "freeDiskGiB": 13.91,
+      "matchingHeavyJobs": []
     },
-    "status": "RELEASED after first fresh precheck refused launch; no job ran",
+    "status": "NO RESERVATION: latest disk13.91GiB below20GiB floor",
     "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
     "artifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_FOCUSED_SLOT_f1e467f.json",
     "expiresIfNotStartedAt": "2026-10-05T20:50:00Z",
@@ -312,7 +313,7 @@
     },
     "dispatchArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_DISPATCH.txt",
     "dispatchCommit": "c169a77c7c511335c96757c9b8785fcefd99b241",
-    "waitCursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:21",
+    "waitCursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:22",
     "leasePaths": [
       "client/src/quick-order/**",
       "server/health/quick-order/**",
@@ -652,7 +653,11 @@
       "requestCommit": "25ca24b07ef8bab2a7dd97fd0ad576fc08a1bc48",
       "dispatchArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_CORRECTION_DISPATCH.json",
       "turn": "01a10ddc-87e4-7693-86cc-6e6d9df6438f",
-      "acknowledgement": "I’ll read the HTTP correction request and reviewer findings, verify the current source and lease, then fix the path-handling inconsistencies within the existing Quick Order module. I’ll add the targeted regressions but leave them unrun until a new qualification slot is reserved."
+      "acknowledgement": "I’ll read the HTTP correction request and reviewer findings, verify the current source and lease, then fix the path-handling inconsistencies within the existing Quick Order module. I’ll add the targeted regressions but leave them unrun until a new qualification slot is reserved.",
+      "latestProgress": "Cursor22: shared classifier implemented across containment/request/parser-error ownership; raw HTTP regressions and exact packet disclosures in progress; no tests run.",
+      "latestUserDeltaArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_DIRECT_HTTP_REQUEST_20261005.json",
+      "acceptanceChecklist": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_SUCCESSOR_CHECKLIST.json",
+      "qualification": "Targeted new red/green only after fresh qualified reservation; no ownership-only repeat of accepted189"
     },
     "nextSourceApprovalPreparation": "After HTTP correction and preserved verdicts, complete exact proposed regression-test diffs/hash baselines under own docs, PWA/GATE01 disclosure and authorized source qualification before repeating/replacing A1. A2 pending unchanged.",
     "latestUserSteering": {
@@ -672,6 +677,18 @@
       "artifact": "docs/coordination/launch-coordination-20261005/COMPLETED_REVIEW_RESOURCE_ASSESSMENT.json",
       "result": "Do not stop unverified processes; no cleanup performed.",
       "slotGranted": false
+    },
+    "latestDirectRequest": {
+      "artifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_DIRECT_HTTP_REQUEST_20261005.json",
+      "sha256": "115073e251992e0bdb0fb31923667458ff513145070684431dc046151db0df75",
+      "status": "Fully read; same-worker steering acknowledged by send tool. No new permission inferred.",
+      "scope": [
+        "Same builder and same Claude reviewer, no duplicate session/broad audit/prompt pack/relocation",
+        "Only QO-P2-03/04 code changes plus specifically listed packet corrections",
+        "Targeted red/green checks of NEW affected behavior under a fresh serialized slot; do not rerun73+116 solely for receipt ownership",
+        "If host cannot qualify, preserve exact source and explicitly defer; no relaxed thresholds",
+        "No A1 application or enlarged seven-file scope; no A2 drafting, SQL execution/registration, live intake or deployment"
+      ]
     }
   },
   "latestUserContinuation": {

@@ -1,0 +1,12 @@
+{
+  "observedAt": "2026-10-05T21:07:57.0785262Z",
+  "source": "Coordinator exec_command Win32_OperatingSystem.FreePhysicalMemory /1024, Get-PSDrive C.Free /1GB, matching process-name/command-pattern read-only inspection",
+  "availableMiB": 1331,
+  "freeDiskGiB": 13.91,
+  "matchingHeavyJobs": [],
+  "limitations": "Pattern-based Windows process observation, not a complete attestation of all host/container activity. No qualification launched.",
+  "requiredFreeDiskGiB": 20,
+  "decision": "NO qualification reservation: disk below20GiB; Vitest also below1536MiB RAM. Preserve source work, inspect disk cause read-only.",
+  "previousReportedFreeDiskGiB": 26.98,
+  "cleanupPerformed": false
+}
