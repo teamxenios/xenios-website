@@ -1,8 +1,9 @@
 # MC-01 current-Core reconciliation
 
-Status: implementation and local qualification in progress; no independent
-acceptance or release claim. The same session resumed on 2026-10-05 after a
-host pause; its branch, dirty source and ownership checkpoint were preserved.
+Status: implementation and scoped local qualification complete; awaiting
+independent Claude acceptance. No acceptance or release claim. The same
+session resumed on 2026-10-05 after a host pause; its branch, dirty source and
+ownership checkpoint were preserved. All workers have stopped writing.
 
 ## Scope and exact base
 
@@ -11,6 +12,9 @@ host pause; its branch, dirty source and ownership checkpoint were preserved.
 - Worktree: `C:/Users/sboad/.codex/worktrees/2227/xenios-website`.
 - Verified Core coordination base: `3eaa017fcbd28989c65ffc4bb439a554aa1f3f59`.
 - Core runtime source: `c0e25c73a0d789829ea213e2ee040c68e06f0a75`.
+- Pushed successor source: `ed9bb9b456bb78994f4fcfedac6ac2112142a5b6`.
+- Successor source tree: `f5953b8e148196c4ea71839cdd40a4e06b5f9fd1`.
+- Ownership checkpoint: `63a80f2b56dc4082616ce8059bb6c2803eabba62`.
 - Historical MC-01 source: `f453d7e25ac3bdee4e42365d2b0b6a513b9e6da5`.
 - Historical handoff: `b38db0ae2ee0c679ec2eeb31b324f6204669dfb7`.
 - Execution instructions: local `Xenios_Execution_Sprint_2026-10-03_v2`, session 02.
@@ -53,6 +57,8 @@ A read-only Supabase migration-history query found the newest managed version
 `20260921172323` (`research_assisted_order_member_history_20260921`). A separate
 history query found zero names matching `media_commerce_decoupling`. This is a
 bounded history observation, not full managed function-body qualification.
+Both observations were refreshed unchanged on 2026-10-05; selected nonsecret
+fields and the exact history query are in `evidence/hosted-read-only-final.json`.
 No hosted state was written. No deploy, managed SQL application/registration,
 payment, email or image publication occurred.
 
@@ -99,7 +105,42 @@ couplings above. Their fixes include bulk and fallback reader regressions and
 strict non-media read/mutation refusal controls. The reviews are internal
 engineering evidence, not independent Claude acceptance.
 
-## Evidence obtained so far
+## Qualification evidence
+
+The pushed source is `ed9bb9b456bb78994f4fcfedac6ac2112142a5b6`. The affected
+run occurred immediately before that commit with an unchanged dirty source;
+all its captured final source hashes match the committed working files. UI,
+TypeScript, build, punctuation, DAG and protection checks used that pushed source. Later
+changes are records plus the collector's TypeScript-loader correction, not
+runtime, test or SQL changes. Receipts preserve actual HEAD and dirty state.
+
+| Check | Result | Receipt/log label |
+| --- | --- | --- |
+| Affected integration tests | PASS: 4,177 tests; 17 skipped; 209 passing files and two skipped | `affected-run1` |
+| Additional Product Control UI | PASS: 59 tests in one file | `product-control-ui-final` |
+| TypeScript | PASS: `tsc --noEmit`, 210.505 seconds | `typescript-run1` |
+| Production build | PASS: 57.429 seconds; existing mixed-import/chunk-size warnings retained | `build-run1` |
+| No customer-facing em dash | PASS: 1,353 source files and 226 built files | `build-run1`, `no-em-dash-correct-launch` |
+| Migration DAG | PASS: 53 nodes and canonical checksums | `migration-dag-final` |
+| SQL verifier syntax | PASS | `sql-syntax-final` |
+| SQL exact source/DAG proof | PASS | `sql-source-final` |
+| Disposable PostgreSQL proof | PASS: PostgreSQL 17.11, synthetic state only | `sql-local-run1` |
+| Protection against agreed Core base | FAIL: inherited `server/static.ts` hash mismatch; no MC-01 out-of-zone paths | `protection-current-core-final` |
+| Default protection against `origin/main` | FAIL: inherited out-of-zone branch history and same static-file hash mismatch | `protection-default-final` |
+| Diff whitespace | Source and edited records PASS; full staged records flag verbatim raw-log whitespace | `evidence/diff-check-final.json` |
+
+The separate `no-em-dash-final` attempt failed before scanning because its
+launcher omitted the TypeScript loader. Its failure receipt is retained; the
+collector was corrected to use `--import tsx`, and the separately named retry
+passed. The production build had already passed both punctuation scans.
+
+The protection baseline and assertions were not changed. Git blobs for
+`server/static.ts`, `client/src/App.tsx`, `server/index.ts`,
+`server/research/index.ts` and the protection manifest match the agreed Core
+base exactly. The default comparison used local `origin/main`
+`6077a6bbb276acf9669c1419c735a9327f8740b1`, confirmed equal to remote main.
+Core remains responsible for the inherited protection finding. Registered
+migrations, DAG and ledger were not edited by this lane.
 
 - Broad affected run: 4,177 passed, 17 skipped, 209 passing files and two skipped
   files (211 total), exit 0, 276.927 seconds wrapper / 270.82 seconds Vitest.
@@ -129,12 +170,24 @@ engineering evidence, not independent Claude acceptance.
   claim. The proof has no timing-sensitive finance races. Its no-network,
   no-port container and tmpfs database were removed by the verifier.
 - Separate verifier syntax and exact source/DAG checks passed. Raw receipts
-  preserve their separate invocations and collector hashes.
+  preserve their separate invocations and collector hashes. These checks
+  preceded the last runtime/test edits; their unchanged SQL candidate and
+  verifier still match the pushed source. `evidence/final-boundary-verification.json`
+  verifies all receipt/log hashes and compares each proof to its proper scope.
 
 The collector records launcher/version, arguments, timestamps, exit codes,
 source hashes at invocation boundaries, log hashes and dirty state. It does not
 continuously attest the filesystem or every child process. Core confirmed its
 heavy work completed before this lane's broad affected/typecheck/build window.
+Every raw log, including empty successful syntax/typecheck output and failed
+attempts, is explicitly retained despite the repository's log ignore rule.
+The evidence directory pins log bytes with `-text` to preserve their hashes
+across Windows/Linux checkouts. Initial and final collector hashes differ
+because the incremental capture and launcher were corrected during this task.
+The complete staged diff check flags original CRLF output, a Vite reporter's
+trailing space and blank log endings. Those raw bytes are retained, not trimmed.
+The source-commit diff and final edited-record diff excluding only `evidence/*.log`
+pass whitespace checks. No source assertion or protection baseline was relaxed.
 
 ## Bucket and later managed migration requirements
 
@@ -176,7 +229,7 @@ chain and exact predecessor fingerprints. No managed application is implied.
 The predecessor still counts media as readiness; runtime-only deployment
 would not establish complete decoupling against that old SQL contract.
 
-Historical passing tests are context only. This successor requires its own
-focused and integration results, exact source SHA/tree and source candidate
-hash. Existing Core protection failures remain separate and will not be
-hidden by baseline or assertion changes.
+Historical passing tests are context only. The successor's own results, exact
+source SHA/tree and candidate hash are recorded above. Existing Core protection
+failures remain open and visible. This lane is ready for independent exact-SHA
+Claude review; it is not ready for autonomous deployment or managed SQL apply.

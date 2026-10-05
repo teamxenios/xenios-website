@@ -1,0 +1,40 @@
+{
+  "recordedAt": "2026-10-05T13:42:04.556Z",
+  "runs": [
+    {
+      "label": "source",
+      "args": [
+        "diff",
+        "--check",
+        "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+        "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6"
+      ],
+      "code": 0,
+      "output": ""
+    },
+    {
+      "label": "all-staged-records",
+      "args": [
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "code": 2,
+      "output": "docs/research-launch/mc01-reconciliation-20261003/evidence/affected-run1.log:9: new blank line at EOF.\ndocs/research-launch/mc01-reconciliation-20261003/evidence/build-run1.log:12: trailing whitespace.\n+[plugin vite:reporter] \ndocs/research-launch/mc01-reconciliation-20261003/evidence/initial-focused.log:1: trailing whitespace.\n+\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/initial-focused.log:2: trailing whitespace.\n+ RUN  v4.1.10 C:/Users/sboad/.codex/worktrees/2227/xenios-website\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/initial-focused.log:3: trailing whitespace.\n+\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/initial-focused.log:4: trailing whitespace.\n+\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/initial-focused.log:5: trailing whitespace.\n+ Test Files  8 passed (8)\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/initial-focused.log:6: trailing whitespace.\n+      Tests  89 passed (89)\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/initial-focused.log:7: trailing whitespace.\n+   Start at  08:01:50\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/initial-focused.log:8: trailing whitespace.\n+   Duration  15.34s (transform 3.15s, setup 0ms, import 9.12s, tests 702ms, environment 2ms)\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/initial-focused.log:9: trailing whitespace.\n+\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/initial-focused.log:9: new blank line at EOF.\ndocs/research-launch/mc01-reconciliation-20261003/evidence/no-em-dash-final.log:1: trailing whitespace.\n+node:internal/modules/esm/get_format:189\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/no-em-dash-final.log:2: trailing whitespace.\n+  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/no-em-dash-final.log:3: trailing whitespace.\n+        ^\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/no-em-dash-final.log:4: trailing whitespace.\n+\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/no-em-dash-final.log:5: trailing whitespace.\n+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension \".ts\" for C:\\Users\\sboad\\.codex\\worktrees\\2227\\xenios-website\\shared\\research\\reconciliation-presentation.ts\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/no-em-dash-final.log:6: trailing whitespace.\n+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/no-em-dash-final.log:7: trailing whitespace.\n+    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/no-em-dash-final.log:8: trailing whitespace.\n+    at defaultLoad (node:internal/modules/esm/load:145:22)\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/no-em-dash-final.log:9: trailing whitespace.\n+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45) {\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/no-em-dash-final.log:10: trailing whitespace.\n+  code: 'ERR_UNKNOWN_FILE_EXTENSION'\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/no-em-dash-final.log:11: trailing whitespace.\n+}\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/no-em-dash-final.log:12: trailing whitespace.\n+\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/no-em-dash-final.log:13: trailing whitespace.\n+Node.js v20.19.0\r\ndocs/research-launch/mc01-reconciliation-20261003/evidence/product-control-ui-final.log:9: new blank line at EOF.\n"
+    },
+    {
+      "label": "staged-records-excluding-only-raw-logs",
+      "args": [
+        "diff",
+        "--cached",
+        "--check",
+        "--",
+        ".",
+        ":(exclude)docs/research-launch/mc01-reconciliation-20261003/evidence/*.log"
+      ],
+      "code": 0,
+      "output": ""
+    }
+  ],
+  "interpretation": "Source and edited records pass. Original stdout/stderr bytes deliberately retained; no whitespace/protection settings relaxed."
+}

@@ -1,0 +1,27 @@
+{
+  "recordedAt": "2026-10-05T13:28:59Z",
+  "mode": "read-only identity and migration-history observations",
+  "render": {
+    "tools": ["render_list_deploys", "render_get_service"],
+    "serviceId": "srv-d8s9vej7uimc7384dfcg",
+    "deploymentId": "dep-daqft3vf3r2c73b7e88g",
+    "deploymentStatus": "live",
+    "commit": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "autoDeploy": "no",
+    "autoDeployTrigger": "off",
+    "branch": "release/early-access-code-session-checkout"
+  },
+  "supabase": {
+    "tool": "supabase_execute_sql",
+    "projectId": "yvzeduaxbwgcwllhywff",
+    "query": "SELECT (SELECT version FROM supabase_migrations.schema_migrations ORDER BY version DESC LIMIT 1) AS newest_version, (SELECT name FROM supabase_migrations.schema_migrations ORDER BY version DESC LIMIT 1) AS newest_name, (SELECT count(*) FROM supabase_migrations.schema_migrations WHERE name ILIKE '%media_commerce_decoupling%') AS mc01_migration_names;",
+    "newestVersion": "20260921172323",
+    "newestName": "research_assisted_order_member_history_20260921",
+    "mediaCommerceDecouplingMigrationNameCount": 0
+  },
+  "limits": [
+    "Selected nonsecret fields transcribed from connector responses; not raw response attestation.",
+    "No managed function-body, bucket-object, health, or release qualification.",
+    "No hosted mutation, deploy, migration registration or application."
+  ]
+}

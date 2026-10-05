@@ -3322,7 +3322,7 @@
       "id": "MC01-RECONCILIATION-20261003",
       "title": "Reconcile presentation-only media authority onto current Core",
       "priority": "P0",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-mc01-reconciliation-20261003",
       "baseSha": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
       "paths": [
@@ -3359,7 +3359,13 @@
       ],
       "dependsOn": [],
       "scopeNote": "v2 specialist isolated successor; exact disjoint subagent assignments recorded in lane report. Source-only SQL, no registration/application; no hosted mutation, imagery publication, A/B/C shell or assisted-order presentation edits. Root controls registry. Historical records reconciled individually; no wholesale import.",
-      "claimedAt": "2026-10-03T21:32:39.009Z"
+      "claimedAt": "2026-10-03T21:32:39.009Z",
+      "handoff": {
+        "session": "codex-mc01-reconciliation-20261003",
+        "sha": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+        "file": ".xenios/handoffs/2026-10-05T13-39-59-546Z-MC01-RECONCILIATION-20261003-codex-mc01-reconciliation-20261003.md",
+        "at": "2026-10-05T13:39:59.561Z"
+      }
     }
   ]
 }

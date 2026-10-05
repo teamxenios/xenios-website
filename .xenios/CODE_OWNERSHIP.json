@@ -3547,9 +3547,9 @@
         ".xenios/sessions/codex-mc01-reconciliation-20261003.json",
         ".xenios/handoffs/*MC01-RECONCILIATION-20261003*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-03T21:32:39.012Z",
-      "heartbeatAt": "2026-10-05T13:11:38.271Z"
+      "heartbeatAt": "2026-10-05T13:26:26.631Z"
     }
   ],
   "rules": [

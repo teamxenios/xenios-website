@@ -1,0 +1,3 @@
+SOURCE PASS Core 3eaa017fcbd28989c65ffc4bb439a554aa1f3f59; 10 exact prerequisite files; six function bodies; complete persistent-cart DAG closure.
+SQL_STATE source-only, unregistered; no managed application or managed-state requalification.
+CANDIDATE_SHA256 365728cbc40a60ce3d5ffacbbbd09fd8d716c0413ddb1171565ed50563c9ffa4

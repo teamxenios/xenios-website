@@ -32,7 +32,7 @@ const jobs = {
   "sql-local": [verifier],
   protection: ["scripts/acceptance/verify-core-site-protection.mjs"],
   "protection-base": ["scripts/acceptance/verify-core-site-protection.mjs", base, "HEAD"],
-  "no-em-dash": ["scripts/acceptance/verify-no-em-dash.mjs", "--source"],
+  "no-em-dash": ["--import", "tsx", "scripts/acceptance/verify-no-em-dash.mjs", "--source"],
   dag: ["--import", "tsx", "scripts/acceptance/verify-migration-dag.ts"],
 };
 if (!(job in jobs)) throw Error("Unknown local verification job");

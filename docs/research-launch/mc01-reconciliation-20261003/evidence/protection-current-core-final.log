@@ -1,0 +1,38 @@
+core-site protection gate
+  manifest baseline : 766f19fce3b67cd9b940ea66fe075281c2d8bdf8
+  comparing         : 3eaa017fcbd28989c65ffc4bb439a554aa1f3f59..HEAD
+  changed files     : 35
+  allowed (research/care) : 15
+  infrastructure          : 10
+  protected file hashes   : 37 verified
+
+TEST FILES TOUCHED (permitted: a test cannot change what a visitor sees.
+Review must still confirm each one was STRENGTHENED, not weakened. Lowering
+an existing safety or regression gate to make a build pass is forbidden):
+  - client/src/research/adapters/cartProductSelection.test.ts
+  - client/src/research/adapters/memberCatalog.test.ts
+  - client/src/research/products-diagnostics/RequiredInputState.test.tsx
+  - server/research/catalog/member-catalog-projection.test.ts
+  - server/research/catalog/member-catalog-service.test.ts
+  - server/research/catalog/product-control-reader.test.ts
+  - server/research/commerce/cart-product-selection.test.ts
+  - server/research/commerce/persistence/persistent-cart.test.ts
+  - server/research/master-offerings/direct-commerce-selections.test.ts
+  - server/research/products-diagnostics/product-admin-production.test.ts
+
+SEAM CONTENT CHANGED since the baseline (reported, not a failure):
+  - client/src/App.tsx
+  - server/index.ts
+  - server/research/index.ts
+
+FAIL: protected file content changed (hash mismatch against the baseline).
+  - server/static.ts
+      expected sha256:9cd3e1c363dd921fab780761baa888e9319f40ef177ca303072e3179b2c20004
+      actual   sha256:b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94
+
+RESULT: FAIL
+
+What to do: see docs/phase2/CORE_SITE_PROTECTION.md. Either move the change
+into client/src/research, client/src/care, server/research, server/care, or
+shared/research, or request an exclusive seam lease if the change genuinely
+needs one of the permitted seam files. Do not widen the manifest to pass.

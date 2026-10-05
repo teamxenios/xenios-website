@@ -1,0 +1,2 @@
+# Preserve exact output bytes so receipt log hashes survive every checkout.
+*.log -text

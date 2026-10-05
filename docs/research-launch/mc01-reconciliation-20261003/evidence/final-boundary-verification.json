@@ -1,0 +1,155 @@
+{
+  "recordedAt": "2026-10-05T13:39:20.679Z",
+  "base": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+  "source": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+  "sourceTree": "f5953b8e148196c4ea71839cdd40a4e06b5f9fd1",
+  "originMain": "6077a6bbb276acf9669c1419c735a9327f8740b1",
+  "logChecks": [
+    {
+      "receipt": "affected-run1.json",
+      "exitCode": 0,
+      "logSha256": "8c686df0a8696c90ffc50385a6ce0bcc47546bd66ebfbf8073b96894c129b30d"
+    },
+    {
+      "receipt": "build-run1.json",
+      "exitCode": 0,
+      "logSha256": "643c5c503b8dca7dfd7eb84dc653026e8bd200c2e84f5f1aefdf13c6ccb7696a"
+    },
+    {
+      "receipt": "migration-dag-final.json",
+      "exitCode": 0,
+      "logSha256": "089ea5843089894eb827b49adadf7692c1f793abbf5d9d22c3d52dcc8b2faee8"
+    },
+    {
+      "receipt": "no-em-dash-correct-launch.json",
+      "exitCode": 0,
+      "logSha256": "4fbd2b74144162c45bd5e290faf932602d0f83d2d360755f3be7ea793aeb3802"
+    },
+    {
+      "receipt": "no-em-dash-final.json",
+      "exitCode": 1,
+      "logSha256": "18165dfaceb67fd10e1748b1cca23044bf98c6bd569636bd09610388b44233df"
+    },
+    {
+      "receipt": "product-control-ui-final.json",
+      "exitCode": 0,
+      "logSha256": "a0af2d197b6f3a3b1c136f1ac4baf3445f525113f8e24659f86cdb7e2cbbe1b9"
+    },
+    {
+      "receipt": "protection-current-core-final.json",
+      "exitCode": 1,
+      "logSha256": "b3913c2f6a4f46a7a1a5ded1a5eb44e404c467e6ad45c03f33b5145bf7ba5a32"
+    },
+    {
+      "receipt": "protection-default-final.json",
+      "exitCode": 1,
+      "logSha256": "86e826540af987883abf8d93d229ff82ce4e7c729c18e6e458e7c4ea0c28f990"
+    },
+    {
+      "receipt": "sql-local-run1.json",
+      "exitCode": 0,
+      "logSha256": "ed672198661d5f8c55efdb64856cc54d3422ce651f1e92e4d98031713dbc97c5"
+    },
+    {
+      "receipt": "sql-source-final.json",
+      "exitCode": 0,
+      "logSha256": "028f4c21c479110de80b71cda4f95f607ce15b9417fb8733abc05466a318e005"
+    },
+    {
+      "receipt": "sql-syntax-final.json",
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "receipt": "typescript-run1.json",
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "sourceChecks": [
+    {
+      "label": "affected-run1",
+      "sourceFilesVerified": 24
+    },
+    {
+      "label": "product-control-ui-final",
+      "sourceFilesVerified": 25
+    },
+    {
+      "label": "typescript-run1",
+      "sourceFilesVerified": 25
+    },
+    {
+      "label": "build-run1",
+      "sourceFilesVerified": 25
+    },
+    {
+      "label": "migration-dag-final",
+      "sourceFilesVerified": 25
+    },
+    {
+      "label": "protection-current-core-final",
+      "sourceFilesVerified": 25
+    },
+    {
+      "label": "protection-default-final",
+      "sourceFilesVerified": 25
+    },
+    {
+      "label": "no-em-dash-correct-launch",
+      "sourceFilesVerified": 25
+    }
+  ],
+  "committedSourceFilesVerified": 25,
+  "protectedChecks": [
+    {
+      "path": "server/static.ts",
+      "baseBlob": "7fade5dc250b6a466bab34838b0d7c885bc2c1fd",
+      "sourceBlob": "7fade5dc250b6a466bab34838b0d7c885bc2c1fd"
+    },
+    {
+      "path": "client/src/App.tsx",
+      "baseBlob": "a82ff3553716873ae0f59f9ffb9c5ba4a082d660",
+      "sourceBlob": "a82ff3553716873ae0f59f9ffb9c5ba4a082d660"
+    },
+    {
+      "path": "server/index.ts",
+      "baseBlob": "83efc9471ab3c12b82815ba3ec58229354b59445",
+      "sourceBlob": "83efc9471ab3c12b82815ba3ec58229354b59445"
+    },
+    {
+      "path": "server/research/index.ts",
+      "baseBlob": "6220347de6b123ca7e62e2f759b17dec6476093e",
+      "sourceBlob": "6220347de6b123ca7e62e2f759b17dec6476093e"
+    },
+    {
+      "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+      "baseBlob": "241fc344445a12dbf7861232248393a742105526",
+      "sourceBlob": "241fc344445a12dbf7861232248393a742105526"
+    }
+  ],
+  "registeredMigrationDagLedgerChanges": [],
+  "canonicalHashes": {
+    "supabase/candidates/20261003_research_media_commerce_decoupling.sql": "365728cbc40a60ce3d5ffacbbbd09fd8d716c0413ddb1171565ed50563c9ffa4",
+    "supabase/verification/research_media_commerce_decoupling_local.mjs": "f180b0bab0a4f94fff44dd3439a6689099a44a0fdc39e35a29ad6287189acdd9"
+  },
+  "sqlChecks": [
+    {
+      "label": "sql-local-run1",
+      "scope": "Candidate and verifier, not unrelated runtime/test files",
+      "overallSourceStable": false
+    },
+    {
+      "label": "sql-source-final",
+      "scope": "Candidate and verifier, not unrelated runtime/test files",
+      "overallSourceStable": true
+    },
+    {
+      "label": "sql-syntax-final",
+      "scope": "Candidate and verifier, not unrelated runtime/test files",
+      "overallSourceStable": true
+    }
+  ],
+  "auditCorrection": "The first inventory attempt overbroadly compared all later runtime files with sql-syntax-final; product-admin-production.test.ts differed as expected because reader regressions landed after that SQL check. SQL receipts are checked against their candidate/verifier scope; final runtime receipts are checked across all changed source files.",
+  "limits": "Point-in-time byte checks; not independent acceptance, continuous process attestation, or managed qualification."
+}
