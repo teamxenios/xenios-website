@@ -1,0 +1,171 @@
+{
+  "sourceSha": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+  "sourceTree": "0258be61bf4761ee9911cda1c0d042b6cd183aa3",
+  "acceptedBaseSha": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
+  "node": "20.19.0",
+  "vitest": "4.1.10",
+  "tests": {
+    "entry": "node_modules/vitest/vitest.mjs",
+    "args": [
+      "run",
+      "shared/research/product-media.test.ts",
+      "client/src/research/ui/ProductMedia.test.tsx",
+      "server/research/catalog/member-catalog-projection.test.ts",
+      "server/research/catalog/member-catalog-service.test.ts",
+      "client/src/research/adapters/memberCatalog.test.ts",
+      "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+      "client/src/research/products-diagnostics/product-media-surfaces.test.tsx",
+      "server/research/catalog/product-media-schema.test.ts",
+      "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+      "client/src/research/early-access/EarlyAccessProductCard.test.tsx",
+      "client/src/research/early-access/cart/EarlyAccessCartCatalogue.quantity-routing.test.tsx",
+      "client/src/research/master-offerings/master-offering-detail.test.tsx",
+      "client/src/research/master-offerings/full-catalog.test.tsx",
+      "server/research/products-diagnostics/product-admin-production.test.ts",
+      "--maxWorkers=1",
+      "--no-file-parallelism"
+    ],
+    "passed": 238,
+    "failed": 0,
+    "files": 15,
+    "exit": 0,
+    "durationSeconds": 41.1,
+    "log": "focused-tests.txt"
+  },
+  "typecheck": {
+    "entry": "node_modules/typescript/bin/tsc",
+    "args": [
+      "--noEmit",
+      "--incremental",
+      "false"
+    ],
+    "exit": 0,
+    "log": "typecheck.txt"
+  },
+  "qualification": {
+    "browser": "DEFERRED",
+    "sqlExecution": "DEFERRED",
+    "deliveryBytesAndImmutability": "DEFERRED",
+    "build": "NOT RUN",
+    "fullSuite": "NOT RUN",
+    "hostedMutation": false,
+    "migrationRegistered": false,
+    "migrationApplied": false,
+    "computeSlot": "RELEASED"
+  },
+  "changedSourceFiles": [
+    {
+      "path": "client/src/research/adapters/memberCatalog.test.ts",
+      "gitBlob": "922f83348cf3a569870865a5dd19e53d8774d0e6"
+    },
+    {
+      "path": "client/src/research/adapters/memberCatalog.ts",
+      "gitBlob": "8a4b412fe9a368603face5625b034a2ba109a625"
+    },
+    {
+      "path": "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+      "gitBlob": "ec8fb1b95d4166494a2ecc927fef6cc4beb7f920"
+    },
+    {
+      "path": "client/src/research/assisted-order/AssistedOrderPage.tsx",
+      "gitBlob": "0de78e40b3b5eabeac3018d05d10f77ac5261a9b"
+    },
+    {
+      "path": "client/src/research/early-access/EarlyAccessProductCard.test.tsx",
+      "gitBlob": "1cc2f525e243fc26f0808b4f2e296b68cab5a6b5"
+    },
+    {
+      "path": "client/src/research/early-access/EarlyAccessProductCard.tsx",
+      "gitBlob": "7925ce7aa03b2d41933835bbdd740e85e54018dc"
+    },
+    {
+      "path": "client/src/research/early-access/cart/EarlyAccessCartCatalogue.tsx",
+      "gitBlob": "9bc4ef7338caa5aa15b666a8b4018ebd422cb0a9"
+    },
+    {
+      "path": "client/src/research/master-offerings/MasterOfferingCard.tsx",
+      "gitBlob": "a35976b891fe08d7c260db0b1c63ea194b383b9b"
+    },
+    {
+      "path": "client/src/research/master-offerings/MasterOfferingDetail.tsx",
+      "gitBlob": "c0768419b924237c8834605a716c3cea8a6c24c2"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "gitBlob": "b82751db97c81d6b3194f814fe06dc3a8c92e8a9"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "gitBlob": "0c67a0d35ec1c16a54f4ddb0ec6b865996f7cf2d"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+      "gitBlob": "03c5e9c68d3ba534d77d492c1f4ad4e53aa9103d"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "gitBlob": "73d2abe277e874f73fb9e99da0a7b94b4919bf62"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/product-media-surfaces.test.tsx",
+      "gitBlob": "4aeb5d32e28663002a2356164d833713c616b440"
+    },
+    {
+      "path": "client/src/research/ui/ProductMedia.test.tsx",
+      "gitBlob": "28a910ae7b1cd6dbb00b8d1addb198f9130426c6"
+    },
+    {
+      "path": "client/src/research/ui/ProductMedia.tsx",
+      "gitBlob": "4843d26704b8d6ff47d6241b298ff3da033dd437"
+    },
+    {
+      "path": "client/src/research/ui/product-media.css",
+      "gitBlob": "518120b5466c454cbd5450455996462df10de590"
+    },
+    {
+      "path": "server/research/catalog/member-catalog-projection.test.ts",
+      "gitBlob": "05916432962c5da78bad1a1e23f6faa69b2c1d77"
+    },
+    {
+      "path": "server/research/catalog/member-catalog-projection.ts",
+      "gitBlob": "ef98310b4560998a093190aab471c05e33c782fa"
+    },
+    {
+      "path": "server/research/catalog/member-catalog-service.test.ts",
+      "gitBlob": "70969bd2ff6ac271ac3a0143c4976c00c7912f08"
+    },
+    {
+      "path": "server/research/catalog/member-catalog-service.ts",
+      "gitBlob": "dcaf99a159e0e9644e60e4b8ae76075ada8f4bce"
+    },
+    {
+      "path": "server/research/catalog/product-media-schema.test.ts",
+      "gitBlob": "089c8f5522358d6b03f118448eb1f3d951b0f188"
+    },
+    {
+      "path": "server/research/products-diagnostics/product-admin-production.ts",
+      "gitBlob": "0c5130b56fd5a6a4c09bd8fce046a48e573cdc87"
+    },
+    {
+      "path": "shared/research/member-catalog.ts",
+      "gitBlob": "83694acd27f4e2d13d3f80e894dd317de4d3a134"
+    },
+    {
+      "path": "shared/research/product-admin.ts",
+      "gitBlob": "fcf43dedf0b2ecc95e10d16137ddb74502a3ff10"
+    },
+    {
+      "path": "shared/research/product-media.test.ts",
+      "gitBlob": "d8cc610d545447cd7ba12c536a7841128d514cd6"
+    },
+    {
+      "path": "shared/research/product-media.ts",
+      "gitBlob": "4f9aae3a61a270802293b84ff340699ce7dbe411"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_product_media_descriptor.sql",
+      "gitBlob": "0123be502e106edb652f2198d2d7c042ecfdae9f"
+    }
+  ]
+}

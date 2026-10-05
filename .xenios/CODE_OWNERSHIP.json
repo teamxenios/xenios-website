@@ -3586,11 +3586,18 @@
         ".xenios/CODE_OWNERSHIP.json",
         ".xenios/SESSION_REGISTRY.json",
         ".xenios/sessions/codex-de-media-foundation-20261005.json",
-        ".xenios/handoffs/*DE-MEDIA-FOUNDATION-20261005*"
+        ".xenios/handoffs/*DE-MEDIA-FOUNDATION-20261005*",
+        "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+        "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+        "client/src/research/early-access/EarlyAccessProductCard.tsx",
+        "client/src/research/early-access/cart/EarlyAccessCartCatalogue.tsx",
+        "client/src/research/master-offerings/MasterOfferingDetail.tsx",
+        "client/src/research/early-access/EarlyAccessProductCard.test.tsx",
+        "client/src/research/assisted-order/AssistedOrderPage.test.tsx"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-05T17:12:43.639Z",
-      "heartbeatAt": "2026-10-05T17:12:43.639Z"
+      "heartbeatAt": "2026-10-05T17:33:20.928Z"
     }
   ],
   "rules": [

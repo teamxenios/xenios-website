@@ -3371,7 +3371,7 @@
       "id": "DE-MEDIA-FOUNDATION-20261005",
       "title": "Fallback-first exact-variant square media foundation",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-de-media-foundation-20261005",
       "baseSha": "ed9bb9b456bb78994f4fcfedac6ac2112142a5b6",
       "paths": [
@@ -3405,11 +3405,24 @@
         ".xenios/CODE_OWNERSHIP.json",
         ".xenios/SESSION_REGISTRY.json",
         ".xenios/sessions/codex-de-media-foundation-20261005.json",
-        ".xenios/handoffs/*DE-MEDIA-FOUNDATION-20261005*"
+        ".xenios/handoffs/*DE-MEDIA-FOUNDATION-20261005*",
+        "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+        "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+        "client/src/research/early-access/EarlyAccessProductCard.tsx",
+        "client/src/research/early-access/cart/EarlyAccessCartCatalogue.tsx",
+        "client/src/research/master-offerings/MasterOfferingDetail.tsx",
+        "client/src/research/early-access/EarlyAccessProductCard.test.tsx",
+        "client/src/research/assisted-order/AssistedOrderPage.test.tsx"
       ],
       "dependsOn": [],
       "scopeNote": "Accepted MC01 ed9bb9b per Claude d999856; founder cd66f3c source-only D/E. Root sole writer. Read-only component/DTO/a11y/performance/browser/adversarial agents. Reuse verified idle clean MC01 checkout; preserve old branch. Core clarity/auth/protected shell/manifest, Finance and imagery excluded. No managed registration/apply, hosted writes, deployment or publication. Heavy qualification deferred under host constraint.",
-      "claimedAt": "2026-10-05T17:12:43.632Z"
+      "claimedAt": "2026-10-05T17:12:43.632Z",
+      "handoff": {
+        "session": "codex-de-media-foundation-20261005",
+        "sha": "5152adb4db6db3e197d4534146bcc2ae75fa8f96",
+        "file": ".xenios/handoffs/2026-10-05T17-37-23-295Z-DE-MEDIA-FOUNDATION-20261005-codex-de-media-foundation-20261005.md",
+        "at": "2026-10-05T17:37:23.311Z"
+      }
     }
   ]
 }
