@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-05T21:10:51.767Z",
+  "updatedAt": "2026-10-05T21:21:15.055Z",
   "objective": "Automate verified Codex-Claude-ChatGPT launch coordination, preserve accepted source and implement the separately authorized Quick Order intake while production authorities remain held.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -72,9 +72,10 @@
     "compactionReceipt": "docs/coordination/launch-coordination-20261005/docker-compaction-result.json",
     "fullLocalSuiteMinimumFreeGiB": 20,
     "compactionPid": 56048,
-    "state": "Previously compacted with827volumes preserved; current free space13.91GiB is below20GiB floor, cause under read-only investigation. No cleanup.",
+    "state": "Current13.9126GiB below20GiB confirmed independently; cause unattributed, no VHDX length growth, pagefile growth unproved. No cleanup.",
     "observedAt": "2026-10-05T21:07:57.0785262Z",
-    "latestPrecheckArtifact": "docs/coordination/launch-coordination-20261005/HOST_PRECHECK_20261005_210757.json"
+    "latestPrecheckArtifact": "docs/coordination/launch-coordination-20261005/HOST_PRECHECK_20261005_210757.json",
+    "assessmentArtifact": "docs/coordination/launch-coordination-20261005/DISK_ASSESSMENT_20261005_2109.json"
   },
   "blockers": [
     "Exact intended subscription/plan pending Samuel response; paid access memberships were removed Sept5",
@@ -124,8 +125,8 @@
   },
   "qualificationSlot": {
     "owner": null,
-    "scope": "Exclusive serialized relocated-source focused Node two-file set, then Vitest six-file set, then one conditional capped nonincremental typecheck. No other jobs.",
-    "next": "Preserve exact corrected source and explicitly defer. Read-only disk assessment; no automatic retry/cleanup. New affected red/green only after materially changed qualified host conditions.",
+    "scope": "Only new affected targeted red/green after fresh qualified serialized reservation; no accepted189 ownership rerun.",
+    "next": "Preserve exact source and deferred execution; no automatic resource retries/cleanup. Collect same-context narrow static review without converting it to dynamic proof.",
     "fullSuite": "DEFERRED/NOT RUN for original integration; no automatic reruns merely to improve summary reporter.",
     "lastCoordinatorResources": {
       "at": "2026-10-05T21:07:57.0785262Z",
@@ -134,7 +135,7 @@
       "matchingHeavyJobs": []
     },
     "status": "NO RESERVATION: latest disk13.91GiB below20GiB floor",
-    "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+    "source": "fd023e8c03baa2326baf707c944bcd25dce7f453",
     "artifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_FOCUSED_SLOT_f1e467f.json",
     "expiresIfNotStartedAt": "2026-10-05T20:50:00Z",
     "releasedAt": "2026-10-05T20:37:34Z",
@@ -269,7 +270,7 @@
     "scope": "Existing bounded acceptance chain and review checklist; no integrated-source verdict or founder approval"
   },
   "quickOrder": {
-    "status": "Same builder RUNNING narrow unprotected QO-P2-03/04 correction and packet disclosure updates after accepted relocation; no qualification reservation, protected/schema authority or intake activation.",
+    "status": "HTTP successor pushed, clean and parked; narrow same-context review and targeted execution pending",
     "sourceThread": "01a0e098-3b23-7233-9b07-877ace092650",
     "sourceTurn": "2c15c0f1-2e96-4291-b39f-a3e37cc84741",
     "userRequestSummary": "Direct user request to build package now in exactly one isolated worker while keeping integration and existing reviewer frozen.",
@@ -313,7 +314,7 @@
     },
     "dispatchArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_DISPATCH.txt",
     "dispatchCommit": "c169a77c7c511335c96757c9b8785fcefd99b241",
-    "waitCursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:22",
+    "waitCursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:29",
     "leasePaths": [
       "client/src/quick-order/**",
       "server/health/quick-order/**",
@@ -341,11 +342,11 @@
       "After qualified exclusive authorized DB slot, perform exact candidate functional/concurrency proof.",
       "Managed registration/application and real intake require separate exact-action qualified packet and current authority."
     ],
-    "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
-    "tree": "6bc4fd7a7483822d4af87a3c07ab7263c0fbc377",
-    "evidence": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+    "source": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+    "tree": "46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e",
+    "evidence": "1b3bb16bf99d89af18a88c702434e929ebe83c02",
     "evidenceTree": "57a8620b800d5da7a76d887f7bb9302d0415962f",
-    "handoff": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+    "handoff": "1b3bb16bf99d89af18a88c702434e929ebe83c02",
     "handoffPath": ".xenios/handoffs/quick-order-20261005-handoff.md",
     "reportedFinalChecks": {
       "nodePassed": 73,
@@ -473,7 +474,7 @@
       "processCwd": "C:/xenios-wt/general-platform",
       "reviewRecordsCwd": "C:/xenios-wt/health-review",
       "reviewBranch": "claude/xenios-health-launch-review-20260930",
-      "status": "DONE: doc36 predecessor and doc37 relocation delta pushed; original context retained for next exact corrected-source review",
+      "status": "Original context busy processing actual user continuous-execution addendum at21:14; exact HTTP review delivery not yet confirmed",
       "preliminaryArtifact": "docs/coordination/launch-coordination-20261005/CLAUDE_QUICK_ORDER_PRELIMINARY_6abf1edf.json",
       "reportedTests": {
         "source": "4abd2c5cd4bd039309b32b97b117a67fc6a4d292",
@@ -501,7 +502,7 @@
       "artifact": "docs/coordination/launch-coordination-20261005/CLAUDE_QUICK_ORDER_DOC37_f1e467f.md",
       "dispositionArtifact": "docs/coordination/launch-coordination-20261005/CLAUDE_QUICK_ORDER_DOC37_DISPOSITION.json",
       "observedEffort": "xhigh",
-      "nextDelta": "Only forthcoming exact HTTP correction from same builder; no repeat broad review",
+      "nextDelta": "Exact fd023e8 HTTP successor; same original context, no duplicate",
       "predecessorVerdict": {
         "moduleBytes": "ACCEPT WITH EXPLICIT LIMITS: isolated, unmounted, disabled, fail-closed",
         "asLocated": "NOT INTEGRABLE: 14 out-of-zone runtime files",
@@ -510,7 +511,8 @@
         "intake": "NOT READY",
         "fourDecisiveProofs": "Real adapters, durable request/evidence/idempotency, operator readback, actual route proof: all NOT PROVEN"
       },
-      "finalAssistantArtifact": "docs/coordination/launch-coordination-20261005/CLAUDE_QUICK_ORDER_FINAL_TEXT_20261005.json"
+      "finalAssistantArtifact": "docs/coordination/launch-coordination-20261005/CLAUDE_QUICK_ORDER_FINAL_TEXT_20261005.json",
+      "observedUltracodeSetting": true
     },
     "relocation": {
       "status": "SOURCE ACCEPT WITH EXPLICIT LIMITS; QO-P1-A closed by same reviewer pure-move delta",
@@ -610,11 +612,10 @@
     },
     "latestPlanning": {
       "thread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
-      "turn": "53148541-d607-40ef-83ec-733b3044ee2f",
-      "message": "d927368d-c828-44f6-a456-cea7323b03f1",
-      "artifact": "docs/coordination/launch-coordination-20261005/PLANNING_DELTA_20261005_2043.json",
-      "status": "Reply confirmed; no material change. Await original final review, no automatic resource retry or inferred source approval.",
-      "checkpoint": "8a4cb5eab3bb25fe1dd7306eceac81ea96043b2c"
+      "turn": "bec55c13-9cf3-4dd1-a1f7-8fa02f02e0be",
+      "message": "d81e8b75-e1d7-4617-915c-7bd2c2f63c17",
+      "artifact": "docs/coordination/launch-coordination-20261005/PLANNING_REPLY_20261005_2100_PARTIAL.json",
+      "status": "PARTIAL retrieval;20000char cap, tail unexamined, planning only. No expanded dispatch."
     },
     "reviewFindings": [
       {
@@ -644,20 +645,27 @@
       }
     ],
     "httpCorrection": {
-      "status": "RUNNING; same-builder acknowledgement verified",
+      "status": "SOURCE PUSHED; builder clean/idle; review and execution pending",
       "request": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_CORRECTION_REQUEST.txt",
       "findings": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_FINDINGS_f1e467f.json",
-      "source": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+      "source": "fd023e8c03baa2326baf707c944bcd25dce7f453",
       "reviewCommit": "324183e886af369a4ea27b9bf0f7b9c615b32139",
       "scope": "Only leased unprotected HTTP classifier/handler/tests and own documentation. No qualification reservation, protected source, SQL or hosted actions.",
       "requestCommit": "25ca24b07ef8bab2a7dd97fd0ad576fc08a1bc48",
       "dispatchArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_CORRECTION_DISPATCH.json",
       "turn": "01a10ddc-87e4-7693-86cc-6e6d9df6438f",
       "acknowledgement": "I’ll read the HTTP correction request and reviewer findings, verify the current source and lease, then fix the path-handling inconsistencies within the existing Quick Order module. I’ll add the targeted regressions but leave them unrun until a new qualification slot is reserved.",
-      "latestProgress": "Cursor22: shared classifier implemented across containment/request/parser-error ownership; raw HTTP regressions and exact packet disclosures in progress; no tests run.",
+      "latestProgress": "Completed cursor29; six scoped HTTP source/test files and listed packet corrections committed; no new execution.",
       "latestUserDeltaArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_DIRECT_HTTP_REQUEST_20261005.json",
       "acceptanceChecklist": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_SUCCESSOR_CHECKLIST.json",
-      "qualification": "Targeted new red/green only after fresh qualified reservation; no ownership-only repeat of accepted189"
+      "qualification": "Targeted new red/green only after fresh qualified reservation; no ownership-only repeat of accepted189",
+      "tree": "46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e",
+      "evidence": "1b3bb16bf99d89af18a88c702434e929ebe83c02",
+      "handoff": "1b3bb16bf99d89af18a88c702434e929ebe83c02",
+      "auditArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_SUCCESSOR_AUDIT_fd023e8.json",
+      "reviewRequest": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_REVIEW_REQUEST_fd023e8.txt",
+      "reviewDelivery": "Repository packet prepared; direct delivery not yet confirmed; existing original reviewer busy on actual user addendum.",
+      "staticCodeReview": "No concrete introduced defect found by bounded read-only coordinator check; no source acceptance or execution-dependent finding closure."
     },
     "nextSourceApprovalPreparation": "After HTTP correction and preserved verdicts, complete exact proposed regression-test diffs/hash baselines under own docs, PWA/GATE01 disclosure and authorized source qualification before repeating/replacing A1. A2 pending unchanged.",
     "latestUserSteering": {
@@ -670,7 +678,7 @@
     },
     "latestPlanningRelay": {
       "artifact": "docs/coordination/launch-coordination-20261005/PLANNING_RELAY_20261005_2100.json",
-      "status": "Second adaptive send acknowledged after fresh active user turn; response pending. Do not resend.",
+      "status": "Reply retrieved partially at20000char cap; no resend. New direct20a narrow request controls; broader generated prompt pack not adopted.",
       "checkpoint": "222817218ffb4a82ba364c67f44c0ec08f99731b"
     },
     "resourceRecoveryAssessment": {
@@ -700,7 +708,7 @@
     "id": "xenios-launch-coordination",
     "status": "ACTIVE",
     "intervalMinutes": 5,
-    "updatedPrompt": "Reconciled to original6abreview running/5fb parked, oldA1 held/A2pending, samebuilder relocation scope and fresh serialized qualification requirements.",
+    "updatedPrompt": "Exact fd023e8 /1b3bb16, new disk qualification failure, bounded same-context reviewer handoff and direct20a limits.",
     "quietWhenUnchanged": true
   },
   "historicalFinanceEnospc": {
@@ -722,9 +730,8 @@
     "artifact": "docs/coordination/launch-coordination-20261005/HISTORICAL_FINANCE_ENOSPC_RECEIPT.json"
   },
   "latestUserDecisionCheck": {
-    "checkedAt": "2026-10-05T20:17:36.630Z",
-    "result": "A1 old exact patch explicitly held for relocation/regeneration. A2 source-drafting recommendation remains recommendation only. No old Corehash/GATE01/productplan/hosted authority.",
-    "attachment": "C:/Users/sboad/.codex/attachments/b2b87a95-8dcf-461e-9b2a-0ec7bc1a4c49/Pasted text.txt"
+    "checkedAt": "2026-10-05T21:20:25.095Z",
+    "result": "Newest direct20a request explicitly withholds A1/A2. Actual Claude user addendum attach21:14 explicitly adds no founder approvals. No pending decisions answered."
   },
   "planningLoop": {
     "lastUpdateRecords": "c7a12a5d40162f66e843c6ce785edeaf0efa71f3",

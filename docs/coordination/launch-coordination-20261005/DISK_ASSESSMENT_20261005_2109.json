@@ -1,0 +1,34 @@
+{
+  "recordedAt": "2026-10-05T21:20:25.095Z",
+  "method": "Read-only independent coordinator agent /root/f1_audit. No filesystem edits, scans, cleanup, Docker mutations or process stops.",
+  "observations": [
+    {
+      "at": "2026-10-05T21:09:09.555Z",
+      "driveInfoFreeBytes": 14938714112,
+      "psDriveFreeBytes": 14938714112
+    },
+    {
+      "at": "2026-10-05T21:10:01.768Z",
+      "logicalDiskFreeBytes": 14938488832,
+      "freeGiB": 13.9126,
+      "dockerVhdxPath": "C:/Users/sboad/AppData/Local/Docker/wsl/disk/docker_data.vhdx",
+      "dockerVhdxLength": 51888783360,
+      "dockerVhdxLastWrite": "2026-10-05T20:59:55.378Z",
+      "pagefileAllocatedMB": 41831,
+      "pagefileCurrentUsageMB": 7985,
+      "pagefilePeakUsageMB": 16531,
+      "pagefileLength": 43863896064,
+      "committedBytes": 39842639872,
+      "commitLimitBytes": 60732395520
+    }
+  ],
+  "comparison": {
+    "priorReportedFreeGiB": 26.96,
+    "dropApproxGiB": 13.0474,
+    "dockerVhdxLengthEqualsPostCompaction": true,
+    "priorPagefileAllocation": null
+  },
+  "conclusion": "Disk drop confirmed, cause unattributed. No Docker VHDX length growth; no evidence establishes pagefile growth. No cleanup target or reclaimable amount inferred.",
+  "qualification": "20GiB floor unmet; no reservation/retry/waiver",
+  "volumesPreserved": 827
+}

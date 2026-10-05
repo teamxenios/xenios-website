@@ -418,5 +418,55 @@
     "path": "QUICK_ORDER_HTTP_SUCCESSOR_CHECKLIST.json",
     "bytes": 2188,
     "sha256": "53d40eb5bd2b223b60f827f13a8500a9d12ed8d6ea25c71828e3f8f9a469a4ef"
+  },
+  {
+    "path": "QUICK_ORDER_HTTP_INTEGRITY_fd023e8.json",
+    "bytes": 10817,
+    "sha256": "3182e77820f98d7d2701b4601eb0cde4695e84d1681e16283f5424b34c212f06"
+  },
+  {
+    "path": "QUICK_ORDER_HTTP_REGRESSION_PLAN_fd023e8.json",
+    "bytes": 11396,
+    "sha256": "51991abde14d91fca68567dbedff5a8381694eefa6f820300c1a2fe5bd4cfb40"
+  },
+  {
+    "path": "QUICK_ORDER_HTTP_CORRECTION_fd023e8.md",
+    "bytes": 10542,
+    "sha256": "293f3b23038faf86aeac01a911256571c76da1ddfea548c3e835114dd2e370e4"
+  },
+  {
+    "path": "QUICK_ORDER_APPROVAL_MATRIX_fd023e8.md",
+    "bytes": 10915,
+    "sha256": "b3e34aa44843b74ed9d2a110d64ec0d08f012b22121721dc41cf0b35b1981cce"
+  },
+  {
+    "path": "QUICK_ORDER_HTTP_HANDOFF_1b3bb16.md",
+    "bytes": 8212,
+    "sha256": "2f9336a505930e5dae75c82d8c04bbd69080f6a80d8f0f03f4f988d58e970c12"
+  },
+  {
+    "path": "QUICK_ORDER_HTTP_SUCCESSOR_AUDIT_fd023e8.json",
+    "bytes": 3285,
+    "sha256": "a8d3040ff4e932491b20f845b0981fd7bebee5477f9ebdf4651bab59bfadcd91"
+  },
+  {
+    "path": "DISK_ASSESSMENT_20261005_2109.json",
+    "bytes": 1326,
+    "sha256": "47f453f9c64460cee841e86d9a92f2b7bcb179c0692e694928f04730c8e98135"
+  },
+  {
+    "path": "PLANNING_REPLY_20261005_2100_PARTIAL.json",
+    "bytes": 21573,
+    "sha256": "6a3434905c5dc7dc810bbc92944d457516954b2501e405a3092279e16fa148f0"
+  },
+  {
+    "path": "CLAUDE_EXISTING_CONTEXT_UPDATE_20261005_2114.json",
+    "bytes": 1261,
+    "sha256": "1b94951870c44c7da8bb972df5a23fb9069621140c149dc6a7f53baec2d9680e"
+  },
+  {
+    "path": "QUICK_ORDER_HTTP_REVIEW_REQUEST_fd023e8.txt",
+    "bytes": 2438,
+    "sha256": "f14710fe0b6a467d3dc6090d0a8d748a65efd4782c724bf9c651106068493331"
   }
 ]

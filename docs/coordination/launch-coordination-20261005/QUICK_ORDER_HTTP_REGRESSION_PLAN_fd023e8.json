@@ -1,0 +1,246 @@
+{
+  "at": "2026-10-05T21:14:57.502Z",
+  "kind": "static snapshot/deferral record; no runtime executed",
+  "source": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+  "sourceTree": "46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e",
+  "baseline": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+  "snapshots": [
+    {
+      "kind": "red",
+      "runtimeSource": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+      "runtimeTree": "6bc4fd7a7483822d4af87a3c07ab7263c0fbc377",
+      "testSource": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+      "testTree": "46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e",
+      "materialized": false,
+      "files": [
+        {
+          "relativePath": "core.mjs",
+          "sourcePath": "server/research/health/quick-order/core.mjs",
+          "sourceCommit": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+          "blob": "c0f3cbe232147094cc32bf72734b1121be8b87a2",
+          "sha256lf": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35"
+        },
+        {
+          "relativePath": "handler.mjs",
+          "sourcePath": "server/research/health/quick-order/handler.mjs",
+          "sourceCommit": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+          "blob": "e2e418285da1d397177b3c230aaf4ad9c98551f4",
+          "sha256lf": "82aa742d8c499e4e5b50c757d62931990ad3a1c7741b68d745df4a53396ea187"
+        },
+        {
+          "relativePath": "containment.ts",
+          "sourcePath": "server/research/health/quick-order/containment.ts",
+          "sourceCommit": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+          "blob": "df8a734ae923b4665d50b1e45b2dc520f7e3d7da",
+          "sha256lf": "a8e253d2f59b701b5ce96116eacf58269d012ad2002082ab98014e47b1aa526b"
+        },
+        {
+          "relativePath": "tests/fixtures.mjs",
+          "sourcePath": "server/research/health/quick-order/tests/fixtures.mjs",
+          "sourceCommit": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c",
+          "blob": "a67bb5ce5509010b99220cfcbc75e0af6e271d65",
+          "sha256lf": "8fc92b273d37adbe2a7f6c973a116959f180beb366f61bf5d588f431bfe8da9c"
+        },
+        {
+          "relativePath": "tests/handler.test.mjs",
+          "sourcePath": "server/research/health/quick-order/tests/handler.test.mjs",
+          "sourceCommit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+          "blob": "4ffb196fb12921d7491be152fdf2bca05526e669",
+          "sha256lf": "351217aead0ebfabdf42f909cf8dc41b5bee9fd86acf68ed690d83d5b0d67dc0"
+        },
+        {
+          "relativePath": "containment.test.ts",
+          "sourcePath": "server/research/health/quick-order/containment.test.ts",
+          "sourceCommit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+          "blob": "3684be85d0f0944e63c3f868f4c131a043723632",
+          "sha256lf": "e2fe7af309273dafd6e9f3f11dddf560ffabad81aa87fdcbf116a01e7eb3b613"
+        }
+      ],
+      "scratchPathProposed": "docs/health-launch/quick-order-20261005/evidence/http-red-fd023e8",
+      "configProposed": {
+        "path": "docs/health-launch/quick-order-20261005/evidence/http-red-fd023e8/vitest.config.mjs",
+        "bytesUtf8": "export default {\"test\":{\"environment\":\"node\",\"include\":[\"docs/health-launch/quick-order-20261005/evidence/http-red-fd023e8/containment.test.ts\"]}};\n",
+        "sha256lf": "cb7c6bd91e2f3814b83be1e58fd3654fb9c52f6c999b9ecc9db366eefbd74282"
+      },
+      "commandsProposed": [
+        {
+          "executable": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+          "args": [
+            "--max-old-space-size=128",
+            "--test",
+            "--test-concurrency=1",
+            "--test-name-pattern=^(unrelated malformed, absolute|owned path aliases|conflicting original|canonical exact roots|parser error ownership forwards|parser errors on owned aliases|canonical parser error paths)",
+            "docs/health-launch/quick-order-20261005/evidence/http-red-fd023e8/tests/handler.test.mjs"
+          ]
+        },
+        {
+          "executable": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+          "args": [
+            "--max-old-space-size=1024",
+            "node_modules/vitest/vitest.mjs",
+            "run",
+            "--config",
+            "docs/health-launch/quick-order-20261005/evidence/http-red-fd023e8/vitest.config.mjs",
+            "--maxWorkers=1",
+            "--no-file-parallelism",
+            "--cache=false",
+            "--reporter=verbose",
+            "-t",
+            "refuses owned raw target|leaves unrelated raw target"
+          ]
+        }
+      ],
+      "execution": {
+        "status": "NOT RUN",
+        "exit": null,
+        "rawLog": null,
+        "reason": "No fresh bounded qualification slot; coordinator reports C:13.91GiB below20GiB at21:07:57Z. Never infer approval from a host sample."
+      }
+    },
+    {
+      "kind": "green",
+      "runtimeSource": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+      "runtimeTree": "46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e",
+      "testSource": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+      "testTree": "46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e",
+      "materialized": false,
+      "files": [
+        {
+          "relativePath": "core.mjs",
+          "sourcePath": "server/research/health/quick-order/core.mjs",
+          "sourceCommit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+          "blob": "c0f3cbe232147094cc32bf72734b1121be8b87a2",
+          "sha256lf": "7e43b08c8d2d28cbfd713ad586a2859da2ee5790d277edf76ae9275439469a35"
+        },
+        {
+          "relativePath": "handler.mjs",
+          "sourcePath": "server/research/health/quick-order/handler.mjs",
+          "sourceCommit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+          "blob": "c2970928760f74fe446a18319f84de53a80cc0c6",
+          "sha256lf": "a1e92095c597c708fde3543fe8a6a49683fd587ed1863537fbc47fbe349f0379"
+        },
+        {
+          "relativePath": "containment.ts",
+          "sourcePath": "server/research/health/quick-order/containment.ts",
+          "sourceCommit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+          "blob": "455584ce9139cea8927b3839d977411b7a32b105",
+          "sha256lf": "b7799c314f8515f4bf7af74a2b905e4efbe7db0a2dcaae0a4927fd11baf862c2"
+        },
+        {
+          "relativePath": "tests/fixtures.mjs",
+          "sourcePath": "server/research/health/quick-order/tests/fixtures.mjs",
+          "sourceCommit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+          "blob": "a67bb5ce5509010b99220cfcbc75e0af6e271d65",
+          "sha256lf": "8fc92b273d37adbe2a7f6c973a116959f180beb366f61bf5d588f431bfe8da9c"
+        },
+        {
+          "relativePath": "paths.mjs",
+          "sourcePath": "server/research/health/quick-order/paths.mjs",
+          "sourceCommit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+          "blob": "cd90620b5c2d1910ae72b6a974c7382cdc510677",
+          "sha256lf": "89c017ecbb5b7ad18b7d7ab5fe0ffdd651ff02a926e1dfd3bde623cd9e68fc88"
+        },
+        {
+          "relativePath": "paths.d.mts",
+          "sourcePath": "server/research/health/quick-order/paths.d.mts",
+          "sourceCommit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+          "blob": "b2fe58a997f38b516b2d7d228159181b2038518a",
+          "sha256lf": "027f3b9c4bb41e331534b2a951028021190bb1ba5e5d3117f028690cd28f1e54"
+        },
+        {
+          "relativePath": "tests/handler.test.mjs",
+          "sourcePath": "server/research/health/quick-order/tests/handler.test.mjs",
+          "sourceCommit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+          "blob": "4ffb196fb12921d7491be152fdf2bca05526e669",
+          "sha256lf": "351217aead0ebfabdf42f909cf8dc41b5bee9fd86acf68ed690d83d5b0d67dc0"
+        },
+        {
+          "relativePath": "containment.test.ts",
+          "sourcePath": "server/research/health/quick-order/containment.test.ts",
+          "sourceCommit": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+          "blob": "3684be85d0f0944e63c3f868f4c131a043723632",
+          "sha256lf": "e2fe7af309273dafd6e9f3f11dddf560ffabad81aa87fdcbf116a01e7eb3b613"
+        }
+      ],
+      "scratchPathProposed": "docs/health-launch/quick-order-20261005/evidence/http-green-fd023e8",
+      "configProposed": {
+        "path": "docs/health-launch/quick-order-20261005/evidence/http-green-fd023e8/vitest.config.mjs",
+        "bytesUtf8": "export default {\"test\":{\"environment\":\"node\",\"include\":[\"docs/health-launch/quick-order-20261005/evidence/http-green-fd023e8/containment.test.ts\"]}};\n",
+        "sha256lf": "8f2d9527f10ce8fe3768a9f1ab0f72f15f6a61e8f6db24b91974f17d6e77be5b"
+      },
+      "commandsProposed": [
+        {
+          "executable": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+          "args": [
+            "--max-old-space-size=128",
+            "--test",
+            "--test-concurrency=1",
+            "--test-name-pattern=^(unrelated malformed, absolute|owned path aliases|conflicting original|canonical exact roots|parser error ownership forwards|parser errors on owned aliases|canonical parser error paths)",
+            "docs/health-launch/quick-order-20261005/evidence/http-green-fd023e8/tests/handler.test.mjs"
+          ]
+        },
+        {
+          "executable": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+          "args": [
+            "--max-old-space-size=1024",
+            "node_modules/vitest/vitest.mjs",
+            "run",
+            "--config",
+            "docs/health-launch/quick-order-20261005/evidence/http-green-fd023e8/vitest.config.mjs",
+            "--maxWorkers=1",
+            "--no-file-parallelism",
+            "--cache=false",
+            "--reporter=verbose",
+            "-t",
+            "refuses owned raw target|leaves unrelated raw target"
+          ]
+        }
+      ],
+      "execution": {
+        "status": "NOT RUN",
+        "exit": null,
+        "rawLog": null,
+        "reason": "No fresh bounded qualification slot; coordinator reports C:13.91GiB below20GiB at21:07:57Z. Never infer approval from a host sample."
+      }
+    }
+  ],
+  "preservedRegistryRows": [
+    {
+      "path": ".xenios/SESSION_REGISTRY.json",
+      "otherEntriesAndTopLevelFieldsUnchanged": true
+    },
+    {
+      "path": ".xenios/ACTIVE_TASKS.json",
+      "otherEntriesAndTopLevelFieldsUnchanged": true
+    },
+    {
+      "path": ".xenios/CODE_OWNERSHIP.json",
+      "otherEntriesAndTopLevelFieldsUnchanged": true
+    }
+  ],
+  "invariantPaths": [
+    "client",
+    "shared",
+    "supabase",
+    "scripts",
+    "package.json",
+    "package-lock.json",
+    "MIGRATIONS.md",
+    "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+    "docs/health-launch/quick-order-20261005/MOUNT_PROPOSAL.patch",
+    "docs/health-launch/quick-order-20261005/evidence/mount-proposal-hashes.json",
+    "docs/health-launch/quick-order-20261005/history",
+    "docs/health-launch/quick-order-20261005/PERSISTENCE_PROPOSAL.md"
+  ],
+  "invariantDiff": "",
+  "serverDelta": [
+    "server/research/health/quick-order/containment.test.ts",
+    "server/research/health/quick-order/containment.ts",
+    "server/research/health/quick-order/handler.mjs",
+    "server/research/health/quick-order/paths.d.mts",
+    "server/research/health/quick-order/paths.mjs",
+    "server/research/health/quick-order/tests/handler.test.mjs"
+  ],
+  "sourceReview": "PENDING narrow existing Claude review; no claim of closure",
+  "qualification": "DEFERRED; no red or green commands executed"
+}

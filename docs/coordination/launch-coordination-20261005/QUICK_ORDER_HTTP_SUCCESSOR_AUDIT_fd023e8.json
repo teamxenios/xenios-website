@@ -1,0 +1,58 @@
+{
+  "recordedAt": "2026-10-05T21:20:25.095Z",
+  "source": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+  "tree": "46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e",
+  "handoff": "1b3bb16bf99d89af18a88c702434e929ebe83c02",
+  "base": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+  "sourcePaths": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/sessions/codex-health-quick-order-20261005.json",
+    "docs/health-launch/quick-order-20261005/APPROVAL_MATRIX.md",
+    "docs/health-launch/quick-order-20261005/HTTP_CORRECTION.md",
+    "docs/health-launch/quick-order-20261005/QUALIFICATION.md",
+    "docs/health-launch/quick-order-20261005/README.md",
+    "docs/health-launch/quick-order-20261005/RELOCATION.md",
+    "docs/health-launch/quick-order-20261005/SOURCE_MAP.md",
+    "docs/health-launch/quick-order-20261005/checkpoint-records.mjs",
+    "server/research/health/quick-order/containment.test.ts",
+    "server/research/health/quick-order/containment.ts",
+    "server/research/health/quick-order/handler.mjs",
+    "server/research/health/quick-order/paths.d.mts",
+    "server/research/health/quick-order/paths.mjs",
+    "server/research/health/quick-order/tests/handler.test.mjs"
+  ],
+  "recordsPaths": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/handoffs/quick-order-20261005-handoff.md",
+    ".xenios/sessions/codex-health-quick-order-20261005.json",
+    "docs/health-launch/quick-order-20261005/HTTP_CORRECTION.md",
+    "docs/health-launch/quick-order-20261005/README.md",
+    "docs/health-launch/quick-order-20261005/evidence/http-regression-plan-fd023e8.json",
+    "docs/health-launch/quick-order-20261005/evidence/packet-integrity-http-fd023e8.json"
+  ],
+  "sourceHashesVerified": 24,
+  "baselineHashesVerified": 14,
+  "redGreenSnapshotBlobAndLfHashesVerified": true,
+  "runtimeDriftAfterSource": false,
+  "remoteVerification": "Builder branch ls-remote observed exact handoff; working tree clean; compact wait cursor29 confirms completed.",
+  "sourceReview": "PENDING bounded same-context Claude review; coordinator static verification is not independent source acceptance.",
+  "execution": "NOT RUN: no slot and disk13.91GiB below20GiB. No source/test pass inferred.",
+  "patch": "c65 preserved, unapproved and unapplied; no A1/A2 authority.",
+  "independentStaticCodeCheck": {
+    "agent": "/root/adpg12_audit",
+    "conclusion": "No concrete introduced bug found in the two requested HTTP findings; not executable pass or closure.",
+    "anchors": [
+      "paths.mjs:23 literal/decoded/normalized conservative ownership; lexical path preserves dot-out containment",
+      "paths.mjs:37 canonical origin-form dispatch only; fixed sentinel URL origin, absolute host not authority",
+      "paths.mjs:52 original/effective views; mount suffix/query compatibility at66",
+      "containment.ts:12 both owned classifications refuse before parser",
+      "handler.mjs:127 unrelated malformed/absolute next; owned malformed400 before ports/body",
+      "handler.mjs:210 same parser-error classifier"
+    ],
+    "limits": "Actual raw transport, Express composition, typecheck and successor execution unverified. No tests or code execution."
+  }
+}
