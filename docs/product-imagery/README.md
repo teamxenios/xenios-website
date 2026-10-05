@@ -1,5 +1,26 @@
 # Xenios product imagery v3 lane
 
+## Current execution-sprint v2 preparation
+
+The current planning manifest is `manifests/batch-001-prepared.json`: 24 coverage
+identities, 0 authorized product renders. Candidate 25 is removed, candidate 24
+uses diluent-vial presentation, and the 22 vial identities propose blank-label
+class reuse. See `LABEL_POLICY_2026-10-03.md`,
+`manifests/imagery-preparation-gates.json` and
+`evidence/framing-preparation-2026-10-03.json` for the scale-aware gate and exact
+review provenance. Run `node scripts/product-imagery/prepare-execution-sprint.mjs`
+to rebuild only these preparation artifacts, not the frozen private preview.
+
+A-E design approval and final preview fidelity PASS are now recorded on the
+reviewer branch. They are not image or runtime approval. The original six-study
+manifest and private preview remain frozen historical evidence pending accepted
+Core A/B/C; their older embedded status fields are not the current preparation
+ledger. `cd66f3c` separately authorizes private calibration corrections 03/04/05
+only. No Batch 1 rendering, publication or Core wiring is authorized. The
+following lane overview preserves the earlier checkpoint.
+
+## Original lane checkpoint
+
 This directory holds the corrected, non-production imagery source lane. The reviewed catalog evidence contains 426 workbook rows reconciled to 424 canonical variants and 423 customer-exposed targets after excluding the shipping fee. This imagery branch still carries the older 420/419 catalog snapshot, while the observed core HL-11 candidate materializes 424/423 at source commit `4cba24af1d42ad59fe44856859cc1721846e6df5` (tree `6395273fc4370b7df713a2b72b019785f547d1fb`) with qualification records at `c73da35cc223a2253ce8074948ed9ff063012748`. That candidate is not deployed or independently accepted, and it does not confer image approval.
 
 The exact founder v3 specification is checked in under `specs/` with SHA-256 `e37a13d7b99ac1f2416e00e29a92df3e7677ce7c92bce9dbf019de83d08b8b5c`. Renderer requests and fixture provenance are separate artifacts. The only mass-render packet is the 25-class Batch 0 packet; the six-study calibration uses a separate frozen private prompt manifest, and there is no named 423- or 419-row exact-product prompt queue.

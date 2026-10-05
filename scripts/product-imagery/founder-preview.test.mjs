@@ -156,14 +156,14 @@ test("preserves special pathways and honest non-transaction states", () => {
   );
 });
 
-test("prepares exactly 22 Featured owners plus three deterministic diversity jobs", () => {
+test("prepares 22 Featured coverage identities plus two safe diversity candidates", () => {
   const data = buildFounderPreviewData();
-  assert.equal(data.batch1.length, 25);
-  assert.equal(new Set(data.batch1.map((job) => job.manifestKey)).size, 25);
+  assert.equal(data.batch1.length, 24);
+  assert.equal(new Set(data.batch1.map((job) => job.manifestKey)).size, 24);
   assert.ok(data.batch1.slice(0, 22).every((job) => /Featured/.test(job.priorityReason)));
   assert.deepEqual(
     data.batch1.slice(22).map((job) => job.canonicalId),
-    ["GRP-0243", "GRP-0362", "GRP-0366"],
+    ["GRP-0243", "GRP-0362"],
   );
   assert.ok(data.batch1.every((job) => job.renderAuthorization === false));
   assert.ok(data.batch1.every((job) => job.publicationAuthorization === false));

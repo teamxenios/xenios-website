@@ -4,6 +4,10 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  buildBatchOneCandidates,
+  buildBatchOneManifest,
+} from "./batch-one-preparation.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(HERE, "../..");
@@ -224,41 +228,6 @@ function chooseFeatured(rows) {
   return selected.slice(0, 8).map((row) => row.canonicalId);
 }
 
-function batchOneCandidates(rows, crosswalk) {
-  const rowsByManifestKey = new Map(rows.map((row) => [row.manifestKey, row]));
-  const selected = crosswalk.entries
-    .filter((entry) => entry.aliases.legacyFeaturedAliases.length > 0)
-    .map((entry) => rowsByManifestKey.get(entry.manifestKey))
-    .filter(Boolean);
-  assert.equal(selected.length, 22, "Batch 1 expects the 22 canonical legacy Featured identities");
-  for (const groupId of ["GRP-0243", "GRP-0362", "GRP-0366"]) {
-    const row = rows.find((candidate) => candidate.canonicalId === groupId);
-    assert.ok(row, `Batch 1 diversity fill missing ${groupId}`);
-    if (!selected.includes(row)) selected.push(row);
-  }
-  assert.equal(selected.length, 25);
-  return selected.map((row, index) => ({
-    sequence: index + 1,
-    jobId: `batch1-${String(index + 1).padStart(2, "0")}-${row.canonicalId.toLowerCase()}`,
-    canonicalId: row.canonicalId,
-    manifestKey: row.manifestKey,
-    offeringId: row.offeringId,
-    offeringVariantId: row.offeringVariantId,
-    productName: row.name,
-    authorizedSpecification: row.specification,
-    imageClass: row.imageClass,
-    pathway: row.pathway.key,
-    priorityReason:
-      index < 22
-        ? "canonical owner of a current legacy Featured identity"
-        : "first-page catalog and image-class diversity candidate",
-    status: "prepared_not_authorized_to_render",
-    promptStatus: "deferred_pending_global_style_and_asset_policy_review",
-    renderAuthorization: false,
-    publicationAuthorization: false,
-  }));
-}
-
 export function buildFounderPreviewData() {
   assert.equal(git("rev-parse", `${CORE_SOURCE_SHA}^{tree}`), CORE_SOURCE_TREE);
   const coverage = readJson("docs/product-imagery/manifests/product-image-coverage.json");
@@ -381,7 +350,7 @@ export function buildFounderPreviewData() {
   );
 
   const featuredCanonicalIds = chooseFeatured(rows);
-  const batch1 = batchOneCandidates(rows, crosswalk);
+  const batch1 = buildBatchOneCandidates(rows, crosswalk);
   const counts = {
     reviewedSourceRows: 426,
     canonicalVariants: 424,
@@ -521,24 +490,7 @@ export function writeFounderPreviewArtifacts(data = buildFounderPreviewData()) {
     join(PREVIEW_ROOT, "catalog-data.js"),
     `window.XENIOS_FOUNDER_PREVIEW_DATA = ${JSON.stringify(data)};\n`,
   );
-  const batch1 = {
-    schemaVersion: 1,
-    kind: "batch_001_exact_identity_jobs_prepared_not_authorized",
-    generatedAt: FROZEN_RENDER_PLAN_GENERATED_AT,
-    runtimeAuthority: false,
-    renderAuthorization: false,
-    publicationAuthorization: false,
-    sourceCoreCommit: CORE_SOURCE_SHA,
-    imageryReviewTargetCommit: IMAGERY_REVIEW_TARGET_SHA,
-    imageryReviewCommit: PROTOTYPE_REVIEW_SHA,
-    calibrationSetRequired: true,
-    calibrationSetRendered: true,
-    calibrationSetApproved: false,
-    gate:
-      "Do not mass-render Batch 1 until Claude accepts the six-image global art-direction calibration, then independent HL-11 catalog acceptance, media-commerce integration acceptance, and exact repository ownership gates all clear.",
-    count: data.batch1.length,
-    jobs: data.batch1,
-  };
+  const batch1 = buildBatchOneManifest(data.batch1);
   writeFileSync(
     join(MANIFEST_ROOT, "batch-001-prepared.json"),
     `${JSON.stringify(batch1, null, 2)}\n`,

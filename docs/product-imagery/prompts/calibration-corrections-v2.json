@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "kind": "authorized_private_calibration_correction_prompts_v2",
+  "authorizationCommit": "cd66f3c411e6164981295d81c2116e50343edc86",
+  "sourceCalibrationCommit": "aa4f31f9b650e68a7c7c2c749f00417d20607665",
+  "sourceFramingMethodReviewCommit": "96e06765dbec9063a7311f128d0ab8accf8588b5",
+  "batch1Authorized": false,
+  "publicationAuthorized": false,
+  "coreWiringAuthorized": false,
+  "productionUseAuthorized": false,
+  "previewUpdateAuthorized": false,
+  "jobs": [
+    {
+      "sequence": 3,
+      "id": "calibration-03-topical",
+      "archetype": "topical_form_study",
+      "prompt": "Use case: product-mockup\nAsset type: private internal Xenios product-card art-direction calibration\nPrimary request: Create one premium studio study of a generic unbranded topical dispenser form. This is a visual-system calibration, not an exact product depiction.\nScene/backdrop: seamless deep-taupe to near-black studio cyclorama; low matte warm-graphite plinth; no room context.\nSubject: one sealed soft-touch warm-graphite topical tube with a simple charcoal cap and one blank matte-ivory label plane. The tube is opaque; show no cream, gel, liquid, applicator, carton, or usage scene.\nStyle/medium: photorealistic premium controlled product photography.\nComposition/framing: square 1:1; fixed 20-degree elevated three-quarter view; 85 mm product-photography perspective; centered full object; subject about 68 percent of canvas height; generous even padding; no clipped edges.\nLighting/mood: broad warm key from upper left; restrained cool fill from right; soft controlled shadow down-right; subtle purple-to-teal reflection only along one cap edge.\nColor palette: near-black, deep taupe, warm graphite, restrained brushed metal, ivory highlight, subtle purple-to-teal accent.\nText: none. The label plane is completely blank.\nConstraints: no claim about contents, formulation, manufacturer, pharmacy, prescription status, certification, or exact package identity. No other objects or props.\nAvoid: skin, people, hands, leaves, plants, herbs, botanical or spa cues, wellness props, liquid splashes, clinic rooms, laboratory rooms, medical crosses, logos, brand names, legible text, certification marks, watermarks.\nCorrection request: Re-render this same private calibration subject with ONLY its framing/camera/scale corrected to the two reference studies. Preserve its subject concept, truthful blank/no-text treatment, materials, palette, lighting and restrained metallic accent. Make one square image, not a collage. The subject silhouette must extend from approximately 17% to 85% of canvas height (about 68% tall), horizontally centered, entirely inside the frame. Keep the softly visible floor/wall horizon at approximately 55% of canvas height; matching the references is more important than the original target's camera angle. Acceptance bands: subject height 61–75%, top margin 16.3–17.9%, horizon 52.1–57.5%. Give the complete subject generous unclipped margins. No reference vials/bottles, no other added objects, no labels or lettering. Do not merely add padding around the original; produce coherent corrected perspective and studio lighting. Image only.",
+      "attemptId": "calibration-03-topical-correction-v2-attempt-01",
+      "referenceImageRoles": [
+        "Image 1: edit target; preserve its subject concept and materials.",
+        "Image 2: calibration-01 vial, framing/palette/camera reference only; do not add its vial to output.",
+        "Image 3: calibration-02 bottle, framing/palette/camera reference only; do not add its bottle to output."
+      ]
+    },
+    {
+      "sequence": 4,
+      "id": "calibration-04-care-state",
+      "archetype": "care_pathway_state_study",
+      "prompt": "Use case: stylized-concept\nAsset type: private internal Xenios product-card art-direction calibration\nPrimary request: Create one premium abstract Care-pathway visual that communicates guided progression without depicting a physical product, provider, patient, clinic, or treatment.\nScene/backdrop: seamless deep-taupe to near-black studio cyclorama; low matte warm-graphite plinth; no room context.\nSubject: two restrained offset graphite portal forms joined by one narrow brushed-metal bridge and one small matte-ivory plane, expressing a governed pathway. The geometry is abstract, architectural only at miniature sculpture scale, and not a real room or facility.\nStyle/medium: photorealistic premium studio photograph of a minimal abstract sculpture.\nComposition/framing: square 1:1; fixed 20-degree elevated three-quarter view; 85 mm product-photography perspective; centered full sculpture; subject about 68 percent of canvas height; generous even padding; no clipped edges.\nLighting/mood: broad warm key from upper left; restrained cool fill from right; soft controlled shadow down-right; subtle purple-to-teal reflection only along the bridge edge.\nColor palette: near-black, deep taupe, warm graphite, restrained brushed metal, ivory highlight, subtle purple-to-teal accent.\nText: none.\nConstraints: pathway-oriented only; no eligibility, provider, appointment, treatment, clinical-result, pharmacy, or availability claim. No other objects or props.\nAvoid: people, faces, hands, medical staff, beds, exam rooms, reception desks, clinic rooms, laboratory rooms, devices, syringes, pills, vials, medical crosses, leaves, plants, herbs, botanical or spa cues, wellness props, logos, brand names, legible text, certification marks, watermarks.\nCorrection request: Re-render this same private calibration subject with ONLY its framing/camera/scale corrected to the two reference studies. Preserve its subject concept, truthful blank/no-text treatment, materials, palette, lighting and restrained metallic accent. Make one square image, not a collage. The subject silhouette must extend from approximately 17% to 85% of canvas height (about 68% tall), horizontally centered, entirely inside the frame. Keep the softly visible floor/wall horizon at approximately 55% of canvas height; matching the references is more important than the original target's camera angle. Acceptance bands: subject height 61–75%, top margin 16.3–17.9%, horizon 52.1–57.5%. Give the complete subject generous unclipped margins. No reference vials/bottles, no other added objects, no labels or lettering. Do not merely add padding around the original; produce coherent corrected perspective and studio lighting. Image only.",
+      "attemptId": "calibration-04-care-state-correction-v2-attempt-01",
+      "referenceImageRoles": [
+        "Image 1: edit target; preserve its subject concept and materials.",
+        "Image 2: calibration-01 vial, framing/palette/camera reference only; do not add its vial to output.",
+        "Image 3: calibration-02 bottle, framing/palette/camera reference only; do not add its bottle to output."
+      ]
+    },
+    {
+      "sequence": 5,
+      "id": "calibration-05-restrictive-state",
+      "archetype": "held_or_quote_only_state_study",
+      "prompt": "Use case: stylized-concept\nAsset type: private internal Xenios product-card art-direction calibration\nPrimary request: Create one premium abstract restrictive-state visual for a held or quote-only offering, without depicting a product or implying availability.\nScene/backdrop: seamless deep-taupe to near-black studio cyclorama; low matte warm-graphite plinth; no room context.\nSubject: one closed warm-graphite panel inside a restrained dark-metal frame, crossed by one horizontal brushed-metal control band with a small matte-ivory marker. It should communicate intentional pause and governed review, not danger or failure.\nStyle/medium: photorealistic premium studio photograph of a minimal abstract sculpture.\nComposition/framing: square 1:1; fixed 20-degree elevated three-quarter view; 85 mm product-photography perspective; centered full sculpture; subject about 68 percent of canvas height; generous even padding; no clipped edges.\nLighting/mood: broad warm key from upper left; restrained cool fill from right; soft controlled shadow down-right; subtle purple-to-teal reflection only along the control-band edge.\nColor palette: near-black, deep taupe, warm graphite, restrained brushed metal, ivory highlight, subtle purple-to-teal accent.\nText: none.\nConstraints: no product, package, partner, price, quote amount, checkout, availability, fulfillment, or clinical claim. No other objects or props.\nAvoid: padlock icons, warning triangles, stop signs, people, hands, medical objects, clinic rooms, laboratory rooms, leaves, plants, herbs, botanical or spa cues, wellness props, logos, brand names, legible text, certification marks, watermarks.\nCorrection request: Re-render this same private calibration subject with ONLY its framing/camera/scale corrected to the two reference studies. Preserve its subject concept, truthful blank/no-text treatment, materials, palette, lighting and restrained metallic accent. Make one square image, not a collage. The subject silhouette must extend from approximately 17% to 85% of canvas height (about 68% tall), horizontally centered, entirely inside the frame. Keep the softly visible floor/wall horizon at approximately 55% of canvas height; matching the references is more important than the original target's camera angle. Acceptance bands: subject height 61–75%, top margin 16.3–17.9%, horizon 52.1–57.5%. Give the complete subject generous unclipped margins. No reference vials/bottles, no other added objects, no labels or lettering. Do not merely add padding around the original; produce coherent corrected perspective and studio lighting. Image only.",
+      "attemptId": "calibration-05-restrictive-state-correction-v2-attempt-01",
+      "referenceImageRoles": [
+        "Image 1: edit target; preserve its subject concept and materials.",
+        "Image 2: calibration-01 vial, framing/palette/camera reference only; do not add its vial to output.",
+        "Image 3: calibration-02 bottle, framing/palette/camera reference only; do not add its bottle to output."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "kind": "execution_sprint_v2_imagery_preparation_only",
+  "frozenPreview": {
+    "handoff": "b3a60d2906c5e44eacd7f2150ec2c3c95dacc380",
+    "source": "e9ebc7b7df44a8921dd4b64100590da51310ba9a",
+    "sourceTree": "e9a7a5c5697bc9cdf85a69dd5b6fdb0f483f8fca",
+    "pathsVerifiedUnchanged": 20,
+    "updateGate": "Accepted exact Core A/B/C successor required before private preview refresh."
+  },
+  "observedDesignApproval": {
+    "commit": "a4e647eb69959eb91fc05dde8f211342d692b04c",
+    "fidelityVerdictCommit": "316ca72c95262675dffef6aa4d858ae9c533605e",
+    "decisions": [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E"
+    ],
+    "canonicalDecisionFilesModified": false,
+    "constitutesAssetOrRuntimeApproval": false
+  },
+  "observedCoreCoordination": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+  "observedCoreRuntime": "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
+  "candidateCount": 24,
+  "labelPolicy": {
+    "mode": "blank_class_label",
+    "text": null,
+    "illustrative": true,
+    "exactPackagingClaim": false,
+    "exactPackageTextStatus": "unavailable_by_default",
+    "independentlyVerifiedAuthoritativeSupplierPackageTextRequired": true,
+    "authoritativeSupplierPackageTextReference": null,
+    "authoritativeSupplierPackageTextSha256": null,
+    "inferFromCatalogNameOrSpecification": false
+  },
+  "framingEvidencePath": "docs/product-imagery/evidence/framing-preparation-2026-10-03.json",
+  "calibrationCorrectionScope": [
+    "calibration-03-topical",
+    "calibration-04-care-state",
+    "calibration-05-restrictive-state"
+  ],
+  "calibrationRerenderAuthorization": true,
+  "calibrationRerenderAuthorizationCommit": "cd66f3c411e6164981295d81c2116e50343edc86",
+  "authorizationScope": "Private correction studies 03, 04 and 05 only; no Batch 1, publication, Core wiring or production use.",
+  "batch1RenderAuthorization": false,
+  "publicationAuthorization": false,
+  "runtimeIntegrationAuthorization": false,
+  "productControlApproval": false,
+  "managedSqlAuthorization": false,
+  "deploymentAuthorization": false,
+  "coreHl11Acceptance": false,
+  "mediaCommerceAcceptance": false,
+  "coreAbcAcceptance": false,
+  "status": "PREPARATION_COMPLETE_THREE_PRIVATE_CALIBRATION_CORRECTIONS_AUTHORIZED",
+  "batch1Readiness": "NOT_READY",
+  "nextGate": "Render only private calibration 03/04/05 under cd66f3c, then require framing and independent exact-asset review. No Batch 1 product rendering inferred."
+}

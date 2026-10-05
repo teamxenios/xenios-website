@@ -1,0 +1,1154 @@
+{
+  "schemaVersion": 1,
+  "kind": "read_only_frozen_calibration_framing_observation",
+  "sourceCalibrationCommit": "aa4f31f9b650e68a7c7c2c749f00417d20607665",
+  "sourceCalibrationTree": "354ddc3aff94de3307dfd09df03dde87066799ea",
+  "measurementScript": "scripts/product-imagery/measure-framing.py",
+  "measurementScriptSha256": "9c09750387f1d73dc63a124696b77b003d2174449f6826aa37716a77fe6e6fd4",
+  "prospectiveReceiptVerifier": "scripts/product-imagery/framing-receipt.mjs",
+  "prospectiveReceiptVerifierSha256": "71f3c95b50e04a5954b807302cf56ffc22a4877fa574a2ced36a02eaa1b1cf5f",
+  "policy": {
+    "aspectRatio": "1:1",
+    "mediaFit": "contain",
+    "subjectHeightRatio": {
+      "minimum": 0.61,
+      "target": 0.68,
+      "maximum": 0.75
+    },
+    "horizonRatio": {
+      "minimum": 0.521,
+      "maximum": 0.575
+    },
+    "topMarginRatio": {
+      "minimum": 0.163,
+      "maximum": 0.179
+    },
+    "centered": true,
+    "edgeContactAllowed": false,
+    "canvasRelativeScalingRequired": true,
+    "rasterEditingAuthorization": false
+  },
+  "studies": [
+    {
+      "id": "calibration-01-vial",
+      "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-01-vial-sha256-e04c2e5981ec.png",
+      "contentSha256": "e04c2e5981eccdd5753ebfbdd8927e6e04ae804d2e0537eb9eceb5c7e9d3f6fe",
+      "historicalClaudeDecision": "acceptable",
+      "historicalReviewCommit": "96e06765dbec9063a7311f128d0ab8accf8588b5",
+      "rerenderRequestedByReview": false,
+      "rerenderAuthorized": false,
+      "rerenderAuthorizationCommit": "cd66f3c411e6164981295d81c2116e50343edc86",
+      "measurement": {
+        "authority": {
+          "commerceAuthority": false,
+          "independentAcceptance": false,
+          "measurementOnly": true,
+          "publicationAuthorization": false,
+          "renderAuthorization": false
+        },
+        "dimensions": {
+          "height": 1254,
+          "sidePx": 1254,
+          "square": true,
+          "width": 1254
+        },
+        "gate": {
+          "authorityBoundary": "A passing measurement grants no render, publication, commerce, or independent-acceptance authority",
+          "criteria": {
+            "edgeContactAllowed": false,
+            "horizon": {
+              "gateProbe": "left_background_column",
+              "inclusivePixelBounds": [
+                653,
+                721
+              ],
+              "maximumNormalized": 0.575,
+              "minimumNormalized": 0.521
+            },
+            "horizontalCenter": {
+              "maximumOffsetNormalized": 0.05,
+              "provisionalEngineeringToleranceNotFounderAuthorized": true
+            },
+            "pixelQuantization": "round_half_up_then_compare_inclusive",
+            "squareRequired": true,
+            "subjectHeight": {
+              "inclusivePixelBounds": [
+                765,
+                941
+              ],
+              "maximumNormalized": 0.75,
+              "minimumNormalized": 0.61,
+              "targetNormalized": 0.68
+            },
+            "topMargin": {
+              "inclusivePixelBounds": [
+                204,
+                224
+              ],
+              "maximumNormalized": 0.179,
+              "minimumNormalized": 0.163
+            }
+          },
+          "failureCodes": [],
+          "passed": true,
+          "result": "pass"
+        },
+        "input": {
+          "contentSha256": "e04c2e5981eccdd5753ebfbdd8927e6e04ae804d2e0537eb9eceb5c7e9d3f6fe",
+          "format": "PNG"
+        },
+        "kind": "image_framing_measurement",
+        "measurements": {
+          "bbox": {
+            "normalized": {
+              "x0": 0.3245614,
+              "x1Exclusive": 0.65948963,
+              "y0": 0.16267943,
+              "y1Exclusive": 0.81259968
+            },
+            "pixels": {
+              "x0": 407,
+              "x1Exclusive": 827,
+              "y0": 204,
+              "y1Exclusive": 1019
+            }
+          },
+          "center": {
+            "horizontalOffsetFromFrameCenter": 0.00797448,
+            "normalizedX": 0.49202552,
+            "normalizedY": 0.48763955,
+            "provisionalEngineeringToleranceNotFounderAuthorized": true,
+            "provisionalHorizontalTolerance": 0.05,
+            "verticalOffsetFromFrameCenter": 0.01236045
+          },
+          "edgeClearance": {
+            "contact": false,
+            "minimumNormalized": 0.16267943,
+            "minimumPixels": 204,
+            "normalized": {
+              "bottom": 0.18740032,
+              "left": 0.3245614,
+              "right": 0.34051037,
+              "top": 0.16267943
+            },
+            "pixels": {
+              "bottom": 235,
+              "left": 407,
+              "right": 427,
+              "top": 204
+            }
+          },
+          "horizon": {
+            "gateProbe": "left",
+            "left": {
+              "normalized": 0.52073365,
+              "pixels": 653,
+              "strength8Bit": 21
+            },
+            "normalized": 0.52073365,
+            "pixels": 653,
+            "rightDiagnostic": {
+              "normalized": 0.51594896,
+              "pixels": 647,
+              "strength8Bit": 4
+            },
+            "strength8Bit": 21
+          },
+          "subjectHeight": {
+            "normalized": 0.64992026,
+            "pixels": 815,
+            "targetNormalized": 0.68
+          },
+          "subjectWidth": {
+            "normalized": 0.33492823,
+            "pixels": 420
+          },
+          "topMargin": {
+            "normalized": 0.16267943,
+            "pixels": 204
+          }
+        },
+        "parameters": {
+          "contrastThreshold8Bit": 18,
+          "contrastThresholdNormalized": 0.0705882353,
+          "ratios": {
+            "blurRadiusPx": 0.023923445,
+            "horizonGradientHalfWindowPx": 0.0159489633,
+            "horizonInsetPx": 0.0318979266,
+            "horizonScanBottomExclusionPx": 0.0797448166,
+            "horizonScanTopPx": 0.1594896332,
+            "morphologyKernelPx": 0.0039872408
+          },
+          "referencePx": {
+            "blurRadiusPx": 30,
+            "horizonGradientHalfWindowPx": 20,
+            "horizonInsetPx": 40,
+            "horizonScanBottomExclusionPx": 100,
+            "horizonScanTopPx": 200,
+            "morphologyKernelPx": 5
+          },
+          "referenceSidePx": 1254,
+          "scaledPx": {
+            "blurRadiusPx": 30,
+            "horizonGradientHalfWindowPx": 20,
+            "horizonInsetPx": 40,
+            "horizonScanBottomExclusionPx": 100,
+            "horizonScanTopPx": 200,
+            "morphologyKernelPx": 5
+          },
+          "scalingRule": "Every spatial blur, kernel, inset, gradient window, and scan bound is derived from sidePx; only the dimensionless 8-bit contrast threshold remains fixed"
+        },
+        "schemaVersion": "xenios_imagery_framing_v1",
+        "sourceMethod": {
+          "method": "Pillow grayscale minus scaled Gaussian blur, fixed 8-bit contrast threshold, scaled Min/Max morphology, foreground bounding box, and scaled left-background vertical-gradient horizon probe",
+          "referenceSidePx": 1254,
+          "reviewCommit": "96e06765dbec9063a7311f128d0ab8accf8588b5",
+          "reviewPath": "docs/review/xenios-health-launch-review-20260930/imagery/27_measure_framing.py",
+          "reviewedCalibrationSource": "aa4f31f9b650e68a7c7c2c749f00417d20607665"
+        },
+        "tool": {
+          "pillowVersion": "12.2.0",
+          "pythonVersion": "3.11.15"
+        }
+      },
+      "reviewInterpretation": "Prospective measurement is separate from historical visual review and never grants exact-asset or publication approval."
+    },
+    {
+      "id": "calibration-02-bottle",
+      "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-02-bottle-sha256-e3681f630199.png",
+      "contentSha256": "e3681f630199c0b5743a589ab29b04ebaf246cece82658fb1b811b79ecaeef7f",
+      "historicalClaudeDecision": "acceptable",
+      "historicalReviewCommit": "96e06765dbec9063a7311f128d0ab8accf8588b5",
+      "rerenderRequestedByReview": false,
+      "rerenderAuthorized": false,
+      "rerenderAuthorizationCommit": "cd66f3c411e6164981295d81c2116e50343edc86",
+      "measurement": {
+        "authority": {
+          "commerceAuthority": false,
+          "independentAcceptance": false,
+          "measurementOnly": true,
+          "publicationAuthorization": false,
+          "renderAuthorization": false
+        },
+        "dimensions": {
+          "height": 1254,
+          "sidePx": 1254,
+          "square": true,
+          "width": 1254
+        },
+        "gate": {
+          "authorityBoundary": "A passing measurement grants no render, publication, commerce, or independent-acceptance authority",
+          "criteria": {
+            "edgeContactAllowed": false,
+            "horizon": {
+              "gateProbe": "left_background_column",
+              "inclusivePixelBounds": [
+                653,
+                721
+              ],
+              "maximumNormalized": 0.575,
+              "minimumNormalized": 0.521
+            },
+            "horizontalCenter": {
+              "maximumOffsetNormalized": 0.05,
+              "provisionalEngineeringToleranceNotFounderAuthorized": true
+            },
+            "pixelQuantization": "round_half_up_then_compare_inclusive",
+            "squareRequired": true,
+            "subjectHeight": {
+              "inclusivePixelBounds": [
+                765,
+                941
+              ],
+              "maximumNormalized": 0.75,
+              "minimumNormalized": 0.61,
+              "targetNormalized": 0.68
+            },
+            "topMargin": {
+              "inclusivePixelBounds": [
+                204,
+                224
+              ],
+              "maximumNormalized": 0.179,
+              "minimumNormalized": 0.163
+            }
+          },
+          "failureCodes": [],
+          "passed": true,
+          "result": "pass"
+        },
+        "input": {
+          "contentSha256": "e3681f630199c0b5743a589ab29b04ebaf246cece82658fb1b811b79ecaeef7f",
+          "format": "PNG"
+        },
+        "kind": "image_framing_measurement",
+        "measurements": {
+          "bbox": {
+            "normalized": {
+              "x0": 0.27751196,
+              "x1Exclusive": 0.71371611,
+              "y0": 0.17862839,
+              "y1Exclusive": 0.85885167
+            },
+            "pixels": {
+              "x0": 348,
+              "x1Exclusive": 895,
+              "y0": 224,
+              "y1Exclusive": 1077
+            }
+          },
+          "center": {
+            "horizontalOffsetFromFrameCenter": 0.00438596,
+            "normalizedX": 0.49561404,
+            "normalizedY": 0.51874003,
+            "provisionalEngineeringToleranceNotFounderAuthorized": true,
+            "provisionalHorizontalTolerance": 0.05,
+            "verticalOffsetFromFrameCenter": 0.01874003
+          },
+          "edgeClearance": {
+            "contact": false,
+            "minimumNormalized": 0.14114833,
+            "minimumPixels": 177,
+            "normalized": {
+              "bottom": 0.14114833,
+              "left": 0.27751196,
+              "right": 0.28628389,
+              "top": 0.17862839
+            },
+            "pixels": {
+              "bottom": 177,
+              "left": 348,
+              "right": 359,
+              "top": 224
+            }
+          },
+          "horizon": {
+            "gateProbe": "left",
+            "left": {
+              "normalized": 0.57496013,
+              "pixels": 721,
+              "strength8Bit": 18
+            },
+            "normalized": 0.57496013,
+            "pixels": 721,
+            "rightDiagnostic": {
+              "normalized": 0.56937799,
+              "pixels": 714,
+              "strength8Bit": 6
+            },
+            "strength8Bit": 18
+          },
+          "subjectHeight": {
+            "normalized": 0.68022329,
+            "pixels": 853,
+            "targetNormalized": 0.68
+          },
+          "subjectWidth": {
+            "normalized": 0.43620415,
+            "pixels": 547
+          },
+          "topMargin": {
+            "normalized": 0.17862839,
+            "pixels": 224
+          }
+        },
+        "parameters": {
+          "contrastThreshold8Bit": 18,
+          "contrastThresholdNormalized": 0.0705882353,
+          "ratios": {
+            "blurRadiusPx": 0.023923445,
+            "horizonGradientHalfWindowPx": 0.0159489633,
+            "horizonInsetPx": 0.0318979266,
+            "horizonScanBottomExclusionPx": 0.0797448166,
+            "horizonScanTopPx": 0.1594896332,
+            "morphologyKernelPx": 0.0039872408
+          },
+          "referencePx": {
+            "blurRadiusPx": 30,
+            "horizonGradientHalfWindowPx": 20,
+            "horizonInsetPx": 40,
+            "horizonScanBottomExclusionPx": 100,
+            "horizonScanTopPx": 200,
+            "morphologyKernelPx": 5
+          },
+          "referenceSidePx": 1254,
+          "scaledPx": {
+            "blurRadiusPx": 30,
+            "horizonGradientHalfWindowPx": 20,
+            "horizonInsetPx": 40,
+            "horizonScanBottomExclusionPx": 100,
+            "horizonScanTopPx": 200,
+            "morphologyKernelPx": 5
+          },
+          "scalingRule": "Every spatial blur, kernel, inset, gradient window, and scan bound is derived from sidePx; only the dimensionless 8-bit contrast threshold remains fixed"
+        },
+        "schemaVersion": "xenios_imagery_framing_v1",
+        "sourceMethod": {
+          "method": "Pillow grayscale minus scaled Gaussian blur, fixed 8-bit contrast threshold, scaled Min/Max morphology, foreground bounding box, and scaled left-background vertical-gradient horizon probe",
+          "referenceSidePx": 1254,
+          "reviewCommit": "96e06765dbec9063a7311f128d0ab8accf8588b5",
+          "reviewPath": "docs/review/xenios-health-launch-review-20260930/imagery/27_measure_framing.py",
+          "reviewedCalibrationSource": "aa4f31f9b650e68a7c7c2c749f00417d20607665"
+        },
+        "tool": {
+          "pillowVersion": "12.2.0",
+          "pythonVersion": "3.11.15"
+        }
+      },
+      "reviewInterpretation": "Prospective measurement is separate from historical visual review and never grants exact-asset or publication approval."
+    },
+    {
+      "id": "calibration-03-topical",
+      "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-03-topical-sha256-dd8510c7ce07.png",
+      "contentSha256": "dd8510c7ce07525fe9dc1195cb6dc0bf12964167a0a4ebd9923648151a6a4173",
+      "historicalClaudeDecision": "needs_change",
+      "historicalReviewCommit": "96e06765dbec9063a7311f128d0ab8accf8588b5",
+      "rerenderRequestedByReview": true,
+      "rerenderAuthorized": true,
+      "rerenderAuthorizationCommit": "cd66f3c411e6164981295d81c2116e50343edc86",
+      "measurement": {
+        "authority": {
+          "commerceAuthority": false,
+          "independentAcceptance": false,
+          "measurementOnly": true,
+          "publicationAuthorization": false,
+          "renderAuthorization": false
+        },
+        "dimensions": {
+          "height": 1254,
+          "sidePx": 1254,
+          "square": true,
+          "width": 1254
+        },
+        "gate": {
+          "authorityBoundary": "A passing measurement grants no render, publication, commerce, or independent-acceptance authority",
+          "criteria": {
+            "edgeContactAllowed": false,
+            "horizon": {
+              "gateProbe": "left_background_column",
+              "inclusivePixelBounds": [
+                653,
+                721
+              ],
+              "maximumNormalized": 0.575,
+              "minimumNormalized": 0.521
+            },
+            "horizontalCenter": {
+              "maximumOffsetNormalized": 0.05,
+              "provisionalEngineeringToleranceNotFounderAuthorized": true
+            },
+            "pixelQuantization": "round_half_up_then_compare_inclusive",
+            "squareRequired": true,
+            "subjectHeight": {
+              "inclusivePixelBounds": [
+                765,
+                941
+              ],
+              "maximumNormalized": 0.75,
+              "minimumNormalized": 0.61,
+              "targetNormalized": 0.68
+            },
+            "topMargin": {
+              "inclusivePixelBounds": [
+                204,
+                224
+              ],
+              "maximumNormalized": 0.179,
+              "minimumNormalized": 0.163
+            }
+          },
+          "failureCodes": [
+            "SUBJECT_HEIGHT_ABOVE_MAX",
+            "TOP_MARGIN_BELOW_MIN",
+            "HORIZON_ABOVE_MAX"
+          ],
+          "passed": false,
+          "result": "fail"
+        },
+        "input": {
+          "contentSha256": "dd8510c7ce07525fe9dc1195cb6dc0bf12964167a0a4ebd9923648151a6a4173",
+          "format": "PNG"
+        },
+        "kind": "image_framing_measurement",
+        "measurements": {
+          "bbox": {
+            "normalized": {
+              "x0": 0.31738437,
+              "x1Exclusive": 0.66108453,
+              "y0": 0.09888357,
+              "y1Exclusive": 0.87480064
+            },
+            "pixels": {
+              "x0": 398,
+              "x1Exclusive": 829,
+              "y0": 124,
+              "y1Exclusive": 1097
+            }
+          },
+          "center": {
+            "horizontalOffsetFromFrameCenter": 0.01076555,
+            "normalizedX": 0.48923445,
+            "normalizedY": 0.48684211,
+            "provisionalEngineeringToleranceNotFounderAuthorized": true,
+            "provisionalHorizontalTolerance": 0.05,
+            "verticalOffsetFromFrameCenter": 0.01315789
+          },
+          "edgeClearance": {
+            "contact": false,
+            "minimumNormalized": 0.09888357,
+            "minimumPixels": 124,
+            "normalized": {
+              "bottom": 0.12519936,
+              "left": 0.31738437,
+              "right": 0.33891547,
+              "top": 0.09888357
+            },
+            "pixels": {
+              "bottom": 157,
+              "left": 398,
+              "right": 425,
+              "top": 124
+            }
+          },
+          "horizon": {
+            "gateProbe": "left",
+            "left": {
+              "normalized": 0.64354067,
+              "pixels": 807,
+              "strength8Bit": 28
+            },
+            "normalized": 0.64354067,
+            "pixels": 807,
+            "rightDiagnostic": {
+              "normalized": 0.88995215,
+              "pixels": 1116,
+              "strength8Bit": 4
+            },
+            "strength8Bit": 28
+          },
+          "subjectHeight": {
+            "normalized": 0.77591707,
+            "pixels": 973,
+            "targetNormalized": 0.68
+          },
+          "subjectWidth": {
+            "normalized": 0.34370016,
+            "pixels": 431
+          },
+          "topMargin": {
+            "normalized": 0.09888357,
+            "pixels": 124
+          }
+        },
+        "parameters": {
+          "contrastThreshold8Bit": 18,
+          "contrastThresholdNormalized": 0.0705882353,
+          "ratios": {
+            "blurRadiusPx": 0.023923445,
+            "horizonGradientHalfWindowPx": 0.0159489633,
+            "horizonInsetPx": 0.0318979266,
+            "horizonScanBottomExclusionPx": 0.0797448166,
+            "horizonScanTopPx": 0.1594896332,
+            "morphologyKernelPx": 0.0039872408
+          },
+          "referencePx": {
+            "blurRadiusPx": 30,
+            "horizonGradientHalfWindowPx": 20,
+            "horizonInsetPx": 40,
+            "horizonScanBottomExclusionPx": 100,
+            "horizonScanTopPx": 200,
+            "morphologyKernelPx": 5
+          },
+          "referenceSidePx": 1254,
+          "scaledPx": {
+            "blurRadiusPx": 30,
+            "horizonGradientHalfWindowPx": 20,
+            "horizonInsetPx": 40,
+            "horizonScanBottomExclusionPx": 100,
+            "horizonScanTopPx": 200,
+            "morphologyKernelPx": 5
+          },
+          "scalingRule": "Every spatial blur, kernel, inset, gradient window, and scan bound is derived from sidePx; only the dimensionless 8-bit contrast threshold remains fixed"
+        },
+        "schemaVersion": "xenios_imagery_framing_v1",
+        "sourceMethod": {
+          "method": "Pillow grayscale minus scaled Gaussian blur, fixed 8-bit contrast threshold, scaled Min/Max morphology, foreground bounding box, and scaled left-background vertical-gradient horizon probe",
+          "referenceSidePx": 1254,
+          "reviewCommit": "96e06765dbec9063a7311f128d0ab8accf8588b5",
+          "reviewPath": "docs/review/xenios-health-launch-review-20260930/imagery/27_measure_framing.py",
+          "reviewedCalibrationSource": "aa4f31f9b650e68a7c7c2c749f00417d20607665"
+        },
+        "tool": {
+          "pillowVersion": "12.2.0",
+          "pythonVersion": "3.11.15"
+        }
+      },
+      "reviewInterpretation": "Prospective measurement is separate from historical visual review and never grants exact-asset or publication approval."
+    },
+    {
+      "id": "calibration-04-care-state",
+      "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-04-care-state-sha256-76c10c66c93f.png",
+      "contentSha256": "76c10c66c93fd3365bd40eefa450ffa01ddb13351dce6ae9aecacefb8abf9750",
+      "historicalClaudeDecision": "needs_change",
+      "historicalReviewCommit": "96e06765dbec9063a7311f128d0ab8accf8588b5",
+      "rerenderRequestedByReview": true,
+      "rerenderAuthorized": true,
+      "rerenderAuthorizationCommit": "cd66f3c411e6164981295d81c2116e50343edc86",
+      "measurement": {
+        "authority": {
+          "commerceAuthority": false,
+          "independentAcceptance": false,
+          "measurementOnly": true,
+          "publicationAuthorization": false,
+          "renderAuthorization": false
+        },
+        "dimensions": {
+          "height": 1254,
+          "sidePx": 1254,
+          "square": true,
+          "width": 1254
+        },
+        "gate": {
+          "authorityBoundary": "A passing measurement grants no render, publication, commerce, or independent-acceptance authority",
+          "criteria": {
+            "edgeContactAllowed": false,
+            "horizon": {
+              "gateProbe": "left_background_column",
+              "inclusivePixelBounds": [
+                653,
+                721
+              ],
+              "maximumNormalized": 0.575,
+              "minimumNormalized": 0.521
+            },
+            "horizontalCenter": {
+              "maximumOffsetNormalized": 0.05,
+              "provisionalEngineeringToleranceNotFounderAuthorized": true
+            },
+            "pixelQuantization": "round_half_up_then_compare_inclusive",
+            "squareRequired": true,
+            "subjectHeight": {
+              "inclusivePixelBounds": [
+                765,
+                941
+              ],
+              "maximumNormalized": 0.75,
+              "minimumNormalized": 0.61,
+              "targetNormalized": 0.68
+            },
+            "topMargin": {
+              "inclusivePixelBounds": [
+                204,
+                224
+              ],
+              "maximumNormalized": 0.179,
+              "minimumNormalized": 0.163
+            }
+          },
+          "failureCodes": [
+            "TOP_MARGIN_BELOW_MIN",
+            "HORIZON_BELOW_MIN"
+          ],
+          "passed": false,
+          "result": "fail"
+        },
+        "input": {
+          "contentSha256": "76c10c66c93fd3365bd40eefa450ffa01ddb13351dce6ae9aecacefb8abf9750",
+          "format": "PNG"
+        },
+        "kind": "image_framing_measurement",
+        "measurements": {
+          "bbox": {
+            "normalized": {
+              "x0": 0.08213716,
+              "x1Exclusive": 0.87559809,
+              "y0": 0.09011164,
+              "y1Exclusive": 0.761563
+            },
+            "pixels": {
+              "x0": 103,
+              "x1Exclusive": 1098,
+              "y0": 113,
+              "y1Exclusive": 955
+            }
+          },
+          "center": {
+            "horizontalOffsetFromFrameCenter": 0.02113238,
+            "normalizedX": 0.47886762,
+            "normalizedY": 0.42583732,
+            "provisionalEngineeringToleranceNotFounderAuthorized": true,
+            "provisionalHorizontalTolerance": 0.05,
+            "verticalOffsetFromFrameCenter": 0.07416268
+          },
+          "edgeClearance": {
+            "contact": false,
+            "minimumNormalized": 0.08213716,
+            "minimumPixels": 103,
+            "normalized": {
+              "bottom": 0.238437,
+              "left": 0.08213716,
+              "right": 0.12440191,
+              "top": 0.09011164
+            },
+            "pixels": {
+              "bottom": 299,
+              "left": 103,
+              "right": 156,
+              "top": 113
+            }
+          },
+          "horizon": {
+            "gateProbe": "left",
+            "left": {
+              "normalized": 0.38277512,
+              "pixels": 480,
+              "strength8Bit": 19
+            },
+            "normalized": 0.38277512,
+            "pixels": 480,
+            "rightDiagnostic": {
+              "normalized": 0.78708134,
+              "pixels": 987,
+              "strength8Bit": 10
+            },
+            "strength8Bit": 19
+          },
+          "subjectHeight": {
+            "normalized": 0.67145136,
+            "pixels": 842,
+            "targetNormalized": 0.68
+          },
+          "subjectWidth": {
+            "normalized": 0.79346093,
+            "pixels": 995
+          },
+          "topMargin": {
+            "normalized": 0.09011164,
+            "pixels": 113
+          }
+        },
+        "parameters": {
+          "contrastThreshold8Bit": 18,
+          "contrastThresholdNormalized": 0.0705882353,
+          "ratios": {
+            "blurRadiusPx": 0.023923445,
+            "horizonGradientHalfWindowPx": 0.0159489633,
+            "horizonInsetPx": 0.0318979266,
+            "horizonScanBottomExclusionPx": 0.0797448166,
+            "horizonScanTopPx": 0.1594896332,
+            "morphologyKernelPx": 0.0039872408
+          },
+          "referencePx": {
+            "blurRadiusPx": 30,
+            "horizonGradientHalfWindowPx": 20,
+            "horizonInsetPx": 40,
+            "horizonScanBottomExclusionPx": 100,
+            "horizonScanTopPx": 200,
+            "morphologyKernelPx": 5
+          },
+          "referenceSidePx": 1254,
+          "scaledPx": {
+            "blurRadiusPx": 30,
+            "horizonGradientHalfWindowPx": 20,
+            "horizonInsetPx": 40,
+            "horizonScanBottomExclusionPx": 100,
+            "horizonScanTopPx": 200,
+            "morphologyKernelPx": 5
+          },
+          "scalingRule": "Every spatial blur, kernel, inset, gradient window, and scan bound is derived from sidePx; only the dimensionless 8-bit contrast threshold remains fixed"
+        },
+        "schemaVersion": "xenios_imagery_framing_v1",
+        "sourceMethod": {
+          "method": "Pillow grayscale minus scaled Gaussian blur, fixed 8-bit contrast threshold, scaled Min/Max morphology, foreground bounding box, and scaled left-background vertical-gradient horizon probe",
+          "referenceSidePx": 1254,
+          "reviewCommit": "96e06765dbec9063a7311f128d0ab8accf8588b5",
+          "reviewPath": "docs/review/xenios-health-launch-review-20260930/imagery/27_measure_framing.py",
+          "reviewedCalibrationSource": "aa4f31f9b650e68a7c7c2c749f00417d20607665"
+        },
+        "tool": {
+          "pillowVersion": "12.2.0",
+          "pythonVersion": "3.11.15"
+        }
+      },
+      "reviewInterpretation": "Prospective measurement is separate from historical visual review and never grants exact-asset or publication approval."
+    },
+    {
+      "id": "calibration-05-restrictive-state",
+      "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-05-restrictive-state-sha256-36bc99f4833d.png",
+      "contentSha256": "36bc99f4833d83923cb837664f89e07258ad94fbd04a5ddb7b27ca77ccf655f2",
+      "historicalClaudeDecision": "needs_change",
+      "historicalReviewCommit": "96e06765dbec9063a7311f128d0ab8accf8588b5",
+      "rerenderRequestedByReview": true,
+      "rerenderAuthorized": true,
+      "rerenderAuthorizationCommit": "cd66f3c411e6164981295d81c2116e50343edc86",
+      "measurement": {
+        "authority": {
+          "commerceAuthority": false,
+          "independentAcceptance": false,
+          "measurementOnly": true,
+          "publicationAuthorization": false,
+          "renderAuthorization": false
+        },
+        "dimensions": {
+          "height": 1254,
+          "sidePx": 1254,
+          "square": true,
+          "width": 1254
+        },
+        "gate": {
+          "authorityBoundary": "A passing measurement grants no render, publication, commerce, or independent-acceptance authority",
+          "criteria": {
+            "edgeContactAllowed": false,
+            "horizon": {
+              "gateProbe": "left_background_column",
+              "inclusivePixelBounds": [
+                653,
+                721
+              ],
+              "maximumNormalized": 0.575,
+              "minimumNormalized": 0.521
+            },
+            "horizontalCenter": {
+              "maximumOffsetNormalized": 0.05,
+              "provisionalEngineeringToleranceNotFounderAuthorized": true
+            },
+            "pixelQuantization": "round_half_up_then_compare_inclusive",
+            "squareRequired": true,
+            "subjectHeight": {
+              "inclusivePixelBounds": [
+                765,
+                941
+              ],
+              "maximumNormalized": 0.75,
+              "minimumNormalized": 0.61,
+              "targetNormalized": 0.68
+            },
+            "topMargin": {
+              "inclusivePixelBounds": [
+                204,
+                224
+              ],
+              "maximumNormalized": 0.179,
+              "minimumNormalized": 0.163
+            }
+          },
+          "failureCodes": [
+            "SUBJECT_HEIGHT_ABOVE_MAX",
+            "TOP_MARGIN_BELOW_MIN",
+            "HORIZON_ABOVE_MAX"
+          ],
+          "passed": false,
+          "result": "fail"
+        },
+        "input": {
+          "contentSha256": "36bc99f4833d83923cb837664f89e07258ad94fbd04a5ddb7b27ca77ccf655f2",
+          "format": "PNG"
+        },
+        "kind": "image_framing_measurement",
+        "measurements": {
+          "bbox": {
+            "normalized": {
+              "x0": 0.14752791,
+              "x1Exclusive": 0.82854864,
+              "y0": 0.08452951,
+              "y1Exclusive": 0.92982456
+            },
+            "pixels": {
+              "x0": 185,
+              "x1Exclusive": 1039,
+              "y0": 106,
+              "y1Exclusive": 1166
+            }
+          },
+          "center": {
+            "horizontalOffsetFromFrameCenter": 0.01196172,
+            "normalizedX": 0.48803828,
+            "normalizedY": 0.50717703,
+            "provisionalEngineeringToleranceNotFounderAuthorized": true,
+            "provisionalHorizontalTolerance": 0.05,
+            "verticalOffsetFromFrameCenter": 0.00717703
+          },
+          "edgeClearance": {
+            "contact": false,
+            "minimumNormalized": 0.07017544,
+            "minimumPixels": 88,
+            "normalized": {
+              "bottom": 0.07017544,
+              "left": 0.14752791,
+              "right": 0.17145136,
+              "top": 0.08452951
+            },
+            "pixels": {
+              "bottom": 88,
+              "left": 185,
+              "right": 215,
+              "top": 106
+            }
+          },
+          "horizon": {
+            "gateProbe": "left",
+            "left": {
+              "normalized": 0.57735247,
+              "pixels": 724,
+              "strength8Bit": 16
+            },
+            "normalized": 0.57735247,
+            "pixels": 724,
+            "rightDiagnostic": {
+              "normalized": 0.58851675,
+              "pixels": 738,
+              "strength8Bit": 6
+            },
+            "strength8Bit": 16
+          },
+          "subjectHeight": {
+            "normalized": 0.84529506,
+            "pixels": 1060,
+            "targetNormalized": 0.68
+          },
+          "subjectWidth": {
+            "normalized": 0.68102073,
+            "pixels": 854
+          },
+          "topMargin": {
+            "normalized": 0.08452951,
+            "pixels": 106
+          }
+        },
+        "parameters": {
+          "contrastThreshold8Bit": 18,
+          "contrastThresholdNormalized": 0.0705882353,
+          "ratios": {
+            "blurRadiusPx": 0.023923445,
+            "horizonGradientHalfWindowPx": 0.0159489633,
+            "horizonInsetPx": 0.0318979266,
+            "horizonScanBottomExclusionPx": 0.0797448166,
+            "horizonScanTopPx": 0.1594896332,
+            "morphologyKernelPx": 0.0039872408
+          },
+          "referencePx": {
+            "blurRadiusPx": 30,
+            "horizonGradientHalfWindowPx": 20,
+            "horizonInsetPx": 40,
+            "horizonScanBottomExclusionPx": 100,
+            "horizonScanTopPx": 200,
+            "morphologyKernelPx": 5
+          },
+          "referenceSidePx": 1254,
+          "scaledPx": {
+            "blurRadiusPx": 30,
+            "horizonGradientHalfWindowPx": 20,
+            "horizonInsetPx": 40,
+            "horizonScanBottomExclusionPx": 100,
+            "horizonScanTopPx": 200,
+            "morphologyKernelPx": 5
+          },
+          "scalingRule": "Every spatial blur, kernel, inset, gradient window, and scan bound is derived from sidePx; only the dimensionless 8-bit contrast threshold remains fixed"
+        },
+        "schemaVersion": "xenios_imagery_framing_v1",
+        "sourceMethod": {
+          "method": "Pillow grayscale minus scaled Gaussian blur, fixed 8-bit contrast threshold, scaled Min/Max morphology, foreground bounding box, and scaled left-background vertical-gradient horizon probe",
+          "referenceSidePx": 1254,
+          "reviewCommit": "96e06765dbec9063a7311f128d0ab8accf8588b5",
+          "reviewPath": "docs/review/xenios-health-launch-review-20260930/imagery/27_measure_framing.py",
+          "reviewedCalibrationSource": "aa4f31f9b650e68a7c7c2c749f00417d20607665"
+        },
+        "tool": {
+          "pillowVersion": "12.2.0",
+          "pythonVersion": "3.11.15"
+        }
+      },
+      "reviewInterpretation": "Prospective measurement is separate from historical visual review and never grants exact-asset or publication approval."
+    },
+    {
+      "id": "calibration-06-unverified-identity",
+      "repositoryPath": "docs/product-imagery/evidence/calibration-render-candidates/calibration-06-unverified-identity-sha256-77069db7b832.png",
+      "contentSha256": "77069db7b8324baf4780b37c585926a92b432e2fef24cbcdf019d38782cd7d8b",
+      "historicalClaudeDecision": "acceptable",
+      "historicalReviewCommit": "96e06765dbec9063a7311f128d0ab8accf8588b5",
+      "rerenderRequestedByReview": false,
+      "rerenderAuthorized": false,
+      "rerenderAuthorizationCommit": "cd66f3c411e6164981295d81c2116e50343edc86",
+      "measurement": {
+        "authority": {
+          "commerceAuthority": false,
+          "independentAcceptance": false,
+          "measurementOnly": true,
+          "publicationAuthorization": false,
+          "renderAuthorization": false
+        },
+        "dimensions": {
+          "height": 1254,
+          "sidePx": 1254,
+          "square": true,
+          "width": 1254
+        },
+        "gate": {
+          "authorityBoundary": "A passing measurement grants no render, publication, commerce, or independent-acceptance authority",
+          "criteria": {
+            "edgeContactAllowed": false,
+            "horizon": {
+              "gateProbe": "left_background_column",
+              "inclusivePixelBounds": [
+                653,
+                721
+              ],
+              "maximumNormalized": 0.575,
+              "minimumNormalized": 0.521
+            },
+            "horizontalCenter": {
+              "maximumOffsetNormalized": 0.05,
+              "provisionalEngineeringToleranceNotFounderAuthorized": true
+            },
+            "pixelQuantization": "round_half_up_then_compare_inclusive",
+            "squareRequired": true,
+            "subjectHeight": {
+              "inclusivePixelBounds": [
+                765,
+                941
+              ],
+              "maximumNormalized": 0.75,
+              "minimumNormalized": 0.61,
+              "targetNormalized": 0.68
+            },
+            "topMargin": {
+              "inclusivePixelBounds": [
+                204,
+                224
+              ],
+              "maximumNormalized": 0.179,
+              "minimumNormalized": 0.163
+            }
+          },
+          "failureCodes": [
+            "TOP_MARGIN_BELOW_MIN",
+            "HORIZON_ABOVE_MAX"
+          ],
+          "passed": false,
+          "result": "fail"
+        },
+        "input": {
+          "contentSha256": "77069db7b8324baf4780b37c585926a92b432e2fef24cbcdf019d38782cd7d8b",
+          "format": "PNG"
+        },
+        "kind": "image_framing_measurement",
+        "measurements": {
+          "bbox": {
+            "normalized": {
+              "x0": 0.19776715,
+              "x1Exclusive": 0.82137161,
+              "y0": 0.09728868,
+              "y1Exclusive": 0.84210526
+            },
+            "pixels": {
+              "x0": 248,
+              "x1Exclusive": 1030,
+              "y0": 122,
+              "y1Exclusive": 1056
+            }
+          },
+          "center": {
+            "horizontalOffsetFromFrameCenter": 0.00956938,
+            "normalizedX": 0.50956938,
+            "normalizedY": 0.46969697,
+            "provisionalEngineeringToleranceNotFounderAuthorized": true,
+            "provisionalHorizontalTolerance": 0.05,
+            "verticalOffsetFromFrameCenter": 0.03030303
+          },
+          "edgeClearance": {
+            "contact": false,
+            "minimumNormalized": 0.09728868,
+            "minimumPixels": 122,
+            "normalized": {
+              "bottom": 0.15789474,
+              "left": 0.19776715,
+              "right": 0.17862839,
+              "top": 0.09728868
+            },
+            "pixels": {
+              "bottom": 198,
+              "left": 248,
+              "right": 224,
+              "top": 122
+            }
+          },
+          "horizon": {
+            "gateProbe": "left",
+            "left": {
+              "normalized": 0.68500797,
+              "pixels": 859,
+              "strength8Bit": 14
+            },
+            "normalized": 0.68500797,
+            "pixels": 859,
+            "rightDiagnostic": {
+              "normalized": 0.784689,
+              "pixels": 984,
+              "strength8Bit": 8
+            },
+            "strength8Bit": 14
+          },
+          "subjectHeight": {
+            "normalized": 0.74481659,
+            "pixels": 934,
+            "targetNormalized": 0.68
+          },
+          "subjectWidth": {
+            "normalized": 0.62360447,
+            "pixels": 782
+          },
+          "topMargin": {
+            "normalized": 0.09728868,
+            "pixels": 122
+          }
+        },
+        "parameters": {
+          "contrastThreshold8Bit": 18,
+          "contrastThresholdNormalized": 0.0705882353,
+          "ratios": {
+            "blurRadiusPx": 0.023923445,
+            "horizonGradientHalfWindowPx": 0.0159489633,
+            "horizonInsetPx": 0.0318979266,
+            "horizonScanBottomExclusionPx": 0.0797448166,
+            "horizonScanTopPx": 0.1594896332,
+            "morphologyKernelPx": 0.0039872408
+          },
+          "referencePx": {
+            "blurRadiusPx": 30,
+            "horizonGradientHalfWindowPx": 20,
+            "horizonInsetPx": 40,
+            "horizonScanBottomExclusionPx": 100,
+            "horizonScanTopPx": 200,
+            "morphologyKernelPx": 5
+          },
+          "referenceSidePx": 1254,
+          "scaledPx": {
+            "blurRadiusPx": 30,
+            "horizonGradientHalfWindowPx": 20,
+            "horizonInsetPx": 40,
+            "horizonScanBottomExclusionPx": 100,
+            "horizonScanTopPx": 200,
+            "morphologyKernelPx": 5
+          },
+          "scalingRule": "Every spatial blur, kernel, inset, gradient window, and scan bound is derived from sidePx; only the dimensionless 8-bit contrast threshold remains fixed"
+        },
+        "schemaVersion": "xenios_imagery_framing_v1",
+        "sourceMethod": {
+          "method": "Pillow grayscale minus scaled Gaussian blur, fixed 8-bit contrast threshold, scaled Min/Max morphology, foreground bounding box, and scaled left-background vertical-gradient horizon probe",
+          "referenceSidePx": 1254,
+          "reviewCommit": "96e06765dbec9063a7311f128d0ab8accf8588b5",
+          "reviewPath": "docs/review/xenios-health-launch-review-20260930/imagery/27_measure_framing.py",
+          "reviewedCalibrationSource": "aa4f31f9b650e68a7c7c2c749f00417d20607665"
+        },
+        "tool": {
+          "pillowVersion": "12.2.0",
+          "pythonVersion": "3.11.15"
+        }
+      },
+      "reviewInterpretation": "Historical visual ACCEPTABLE is preserved; prospective numeric framing fails. No new rerender scope or approval inferred."
+    }
+  ],
+  "renderPerformed": false,
+  "imagesChanged": false,
+  "publicApproval": false
+}
