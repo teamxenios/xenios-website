@@ -3,6 +3,23 @@
   "updatedAt": "2026-09-21T16:38:05.000Z",
   "tasks": [
     {
+      "id": "HEALTH-PARTNER-SIGNIN-RETURN-20261005",
+      "title": "Preserve canonical partner dashboard destination through public sign-in",
+      "priority": "P1",
+      "state": "claimed",
+      "owner": "codex-xenios-health-launch-implementation-20260930",
+      "baseSha": "b0e818f0b3908b13c4181c5b6a59751c1505694b",
+      "paths": [
+        "client/src/clarity/pages.tsx",
+        "client/src/clarity/partner-sign-in.test.tsx",
+        "docs/health-launch/PARTNER_SIGNIN_RETURN_20261005.md",
+        "docs/health-launch/evidence/partner-signin-return-20261005/"
+      ],
+      "dependsOn": [],
+      "scopeNote": "Samuel's direct 2026-10-05 coordination/affiliate launch instruction independently read in coordinator chat 01a103a8-5684-7272-89e5-3c42eefcd593. Delegated to existing Core: two public PartnersPage sign-in return links only, minimal composed tests, no authority changes. Separate branch preserves IC2 source c93bf5a and records b0e818f frozen. No protected edits, membership revival, real grants, product changes, full suite, build, Docker or hosted action. Push exact handoff and stop. D/E is instructed by coordinator to leave pages.tsx alone.",
+      "claimedAt": "2026-10-05T17:10:19.560Z"
+    },
+    {
       "id": "HEALTH-ABC-IC2-TIMELINE-20261005",
       "title": "Correct only IC-2 customer timeline neutral border",
       "priority": "P1",

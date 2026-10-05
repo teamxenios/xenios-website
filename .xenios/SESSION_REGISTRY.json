@@ -564,11 +564,11 @@
       "id": "codex-xenios-health-launch-implementation-20260930",
       "tool": "OpenAI Codex desktop",
       "lane": "health-launch-implementation",
-      "branch": "codex/xenios-health-launch-implementation-20260930",
-      "state": "handoff_ready",
+      "branch": "codex/xenios-partner-signin-return-20261005",
+      "state": "active",
       "startedAt": "2026-09-30T16:32:52.264Z",
-      "heartbeatAt": "2026-10-05T16:22:56.464Z",
-      "note": "IC-2 source c93bf5a2, tree fd729bca, test 2a791bee and evidence b0b01a3 pushed. Clean focused 15 PASS on Node 20.19.0. Protected/admin/focus/CTA unchanged. Ready for existing Claude narrow recheck; stopped. No build, aggregate, manifest recut or hosted action."
+      "heartbeatAt": "2026-10-05T17:10:19.811Z",
+      "note": "Separate partner sign-in return slice from frozen b0e818f; two PartnersPage links and composed tests only. Same Core session. No protected/authority edits; focused single-worker tests, no build/full suite/Docker/hosted action."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"
