@@ -1,0 +1,110 @@
+# reviewer micro-probe of the pure classifier server/research/health/quick-order/paths.mjs at fd023e8c03baa2326baf707c944bcd25dce7f453
+# paths.mjs sha256-lf 89c017ecbb5b7ad18b7d7ab5fe0ffdd651ff02a926e1dfd3bde623cd9e68fc88 (blob materialized with git show into a scratch directory; no worktree touched)
+# runtime: C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe v20.19.0; pure-function evaluation only, no server, no test runner, no repository test executed; NOT a qualification run
+# probe script: 38_claude-qo-classifier-probe-fd023e8.mjs (host() mirrors the leading-slash collapse at server/index.ts:231-236)
+
+target                                                                   kind (root mount: originalUrl=raw, url=host-normalized) pathname+search
+"/api/health/quick-order"                                                owned-valid          /api/health/quick-order
+"/api/health/quick-order/"                                               owned-valid          /api/health/quick-order/
+"/api/health/quick-order?view=1"                                         owned-valid          /api/health/quick-order?view=1
+"/api/health/quick-order/config?view=1"                                  owned-valid          /api/health/quick-order/config?view=1
+"/api/health/quick-order/requests"                                       owned-valid          /api/health/quick-order/requests
+"/api/health/quick-order/config?return=%2fother%5cpath%23fragment"       owned-valid          /api/health/quick-order/config?return=%2fother%5cpath%23fragment
+"/API/HEALTH/QUICK-ORDER/requests"                                       owned-malformed      
+"/Api/Health/Quick-Order/config"                                         owned-malformed      
+"/api/health/x/../quick-order/requests"                                  owned-malformed      
+"/api/health/x/%2e%2e/quick-order/requests"                              owned-malformed      
+"/api/health/x/%252e%252e/quick-order/requests"                          owned-malformed      
+"/api/health/./quick-order/requests"                                     owned-malformed      
+"/api/health/%2E/quick-order/requests"                                   owned-malformed      
+"/api/health/quick-order\\requests"                                      owned-malformed      
+"/api\\health\\quick-order\\requests"                                    owned-malformed      
+"\\api\\health\\quick-order\\config"                                     owned-malformed      
+"/api/health/quick-order%5crequests"                                     owned-malformed      
+"//api/health/quick-order/requests"                                      owned-malformed      
+"////api/health/quick-order/requests?x=1"                                owned-malformed      
+"/api//health/quick-order/requests"                                      owned-malformed      
+"/api/health/quick-order//requests"                                      owned-malformed      
+"/api/health/quick-order%2Frequests"                                     owned-malformed      
+"/api%2Fhealth%2Fquick-order/requests"                                   owned-malformed      
+"/api/health/%71uick-order/config"                                       owned-malformed      
+"/api/health/quick-order/../other"                                       owned-malformed      
+"/api/health/quick-order/%2e%2e/other"                                   owned-malformed      
+"/api/health/quick-order/%GG"                                            owned-malformed      
+"/api/health/quick-order/config#frag"                                    owned-malformed      
+"/api/health/quick-order/config?view=1#frag"                             owned-malformed      
+"http://quick-order.invalid/api/health/quick-order/requests"             owned-malformed      
+"http:////quick-order.invalid/api/health/quick-order/requests"           owned-malformed      
+"http:////quick-order.invalid/api/health/quick-order/../other"           owned-malformed      
+"https://quick-order.invalid/api/health/x/../quick-order/requests"       owned-malformed      
+"http://quick-order.invalid/api/health/quick-order/../other"             owned-malformed      
+"https:/\\/elsewhere.example.test/api/health/quick-order/config"         owned-malformed      
+"http:/elsewhere.example.test/api/health/quick-order/../other"           owned-malformed      
+"http:elsewhere.example.test/api/health/quick-order/../other"            owned-malformed      
+"//other"                                                                unrelated            
+"//external.invalid/api/health/quick-order/requests"                     unrelated            
+"/api/health/quick-order-other"                                          unrelated            
+"/API/HEALTH/QUICK-ORDER-other"                                          unrelated            
+"/api/health/quick-orders"                                               unrelated            
+"/api/healthx/quick-order"                                               unrelated            
+"/api/health"                                                            unrelated            
+"/api/health/"                                                           unrelated            
+"/api/health/x/../other"                                                 unrelated            
+"/api/health/x/%2e%2e/other"                                             unrelated            
+"/api/health/other\\requests"                                            unrelated            
+"/api/health/other%2Frequests"                                           unrelated            
+"/api/health/other/%ZZ"                                                  unrelated            
+"http://quick-order.invalid/other"                                       unrelated            
+"/other?next=/api/health/quick-order/requests"                           unrelated            
+"/elsewhere#/api/health/quick-order/config"                              unrelated            
+"https://[invalid-host/elsewhere"                                        unrelated            
+"elsewhere/other"                                                        unrelated            
+"http://evil.test/api/health/quick-order/requests"                       owned-malformed      
+"/api/health/quick-order."                                               unrelated            
+"/api/health/quick-order%20"                                             unrelated            
+"/api/health/quick%E2%80%90order/requests"                               unrelated            
+"/api/health/quick-order%2e/requests"                                    unrelated            
+"/api/health/quick-order/%2e/config"                                     owned-malformed      
+
+--- original/effective pairs (mount-stripped and conflicting) ---
+["/api/health/quick-order/config?view=1","/config?view=1"]               owned-valid          /api/health/quick-order/config?view=1
+["/api/health/quick-order","/"]                                          owned-valid          /api/health/quick-order
+["/api/health/quick-order/config?view=1","/config?view=2"]               owned-malformed      
+["/api/health/quick-order/config","/requests"]                           owned-malformed      
+["/elsewhere","/api/health/quick-order/config"]                          owned-malformed      
+["/api/health/quick-order/config","/elsewhere"]                          owned-malformed      
+["/api/health/quick-order/../elsewhere","/elsewhere"]                    owned-malformed      
+["/API/HEALTH/QUICK-ORDER/config","/api/health/quick-order/config"]      owned-malformed      
+["/api/health/quick-order/config","/api/health/quick-order/./config"]    owned-malformed      
+[null,null]                                                              unrelated            
+[null,42]                                                                unrelated            
+["/api/health/quick-order/config?view=1","/api/health/quick-order/config?view=1"] owned-valid          /api/health/quick-order/config?view=1
+
+--- authority check: any owned-valid url with a non-sentinel host? ---
+non-sentinel hosts on owned-valid: 0
+
+--- throw check over odd inputs ---
+null                                     unrelated
+undefined                                unrelated
+42                                       unrelated
+{}                                       unrelated
+[]                                       unrelated
+""                                       unrelated
+" "                                      unrelated
+"\u0000"                                 unrelated
+"%"                                      unrelated
+"%2"                                     unrelated
+"http:"                                  unrelated
+"http://"                                unrelated
+"//"                                     unrelated
+"///"                                    unrelated
+"\\"                                     unrelated
+"?"                                      unrelated
+"#"                                      unrelated
+"/api/health/quick-order?%"              owned-valid
+"/api/health/quick-order/%"              owned-malformed
+"HTTP://X/api/health/quick-order"        owned-malformed
+"ftp://x/api/health/quick-order/a"       owned-malformed
+"javascript:/api/health/quick-order"     owned-malformed
+"HTTP://x/api/health/quick-order/config" owned-malformed
+throws: 0
