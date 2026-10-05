@@ -1,0 +1,64 @@
+{
+  "at": "2026-10-05T23:19:41.967Z",
+  "commit": "830859f5d6be4e205f151b7855878a466ec7f913",
+  "tree": "fc1a31d4c6c1a4a5ca8a8259570ef8d44b6c72ee",
+  "parent": "78cd7e6f598b74a88d810e545553b1da9ecb88a5",
+  "pushed": true,
+  "clean": true,
+  "changedPaths": [
+    "docs/review/xenios-health-launch-review-20260930/38_QUICK_ORDER_HTTP_SUCCESSOR_fd023e8_DELTA_2026-10-05.md",
+    "docs/review/xenios-health-launch-review-20260930/39_RECORDS_CORRECTION_DOC38_AND_5ee44d5_2026-10-05.md",
+    "docs/review/xenios-health-launch-review-20260930/hl12/37_claude-qo-run-receipt-c807f19.json"
+  ],
+  "bindings": [
+    {
+      "path": "docs/review/xenios-health-launch-review-20260930/38_QUICK_ORDER_HTTP_SUCCESSOR_fd023e8_DELTA_2026-10-05.md",
+      "copy": "CLAUDE_DOC38_CORRECTED_830859f.md",
+      "commit": "830859f5d6be4e205f151b7855878a466ec7f913",
+      "bytes": 25667,
+      "sha256": "c2af9fb255e0c5dbd77843bf2002c8dcebcd61a957b83a2f983a3c92181d7260"
+    },
+    {
+      "path": "docs/review/xenios-health-launch-review-20260930/39_RECORDS_CORRECTION_DOC38_AND_5ee44d5_2026-10-05.md",
+      "copy": "CLAUDE_DOC39_RECORD_CORRECTION_830859f.md",
+      "commit": "830859f5d6be4e205f151b7855878a466ec7f913",
+      "bytes": 7661,
+      "sha256": "e5237718cbb5764fcba74cf801ff4192edf210378f0d62f995895ab5bb3f33b8"
+    },
+    {
+      "path": "docs/review/xenios-health-launch-review-20260930/hl12/37_claude-qo-run-receipt-c807f19.json",
+      "copy": "CLAUDE_DOC37_CORRECTED_RECEIPT_830859f.json",
+      "commit": "830859f5d6be4e205f151b7855878a466ec7f913",
+      "bytes": 4537,
+      "sha256": "9cf8a32320c64b95f156908959d5b435e88a30f230c251fe0cffe293dd02fc61"
+    }
+  ],
+  "preservedProbe": [
+    {
+      "path": "docs/review/xenios-health-launch-review-20260930/hl12/38_claude-qo-classifier-probe-fd023e8.mjs",
+      "sha256": "53f65a9e49369f9032d2888f75284f8cdeb53eb49506c522c051bcb9572fc7f9",
+      "unchanged": true
+    },
+    {
+      "path": "docs/review/xenios-health-launch-review-20260930/hl12/38_claude-qo-classifier-probe-fd023e8.out",
+      "sha256": "107046f0ce5633ed8f9a1cc2b3975a4c440fa53b5c0000e2ff48436d78d22da5",
+      "unchanged": true
+    }
+  ],
+  "retrospectiveRunRowsUnchanged": true,
+  "fiveRequestedCorrections": "VERIFIED COMPLETE: retained count61; wrapper/scratch and observational limits;933Vitest versus999Node attribution; mandatory one-filtered-file red/green; F1-qualified containment statement",
+  "sourceVerdict": "SOURCE ACCEPT WITH LIMITS for fd023e8 unchanged",
+  "qualification": "QO-P2-03/04 PARTIAL; authored red/green NOT RUN / RESOURCE BLOCKED",
+  "packet": "Same reviewer confirms QO-R-02 and QO-R-04 CLOSED at5ee44d5",
+  "recordPrecisionCaveat": {
+    "claim": "New doc38 identity row and final text say all evidence at5ee44d5 is identical tofd023e8",
+    "verifiedFact": "Runtime/tests/patch/history matchfd023e8. Evidence is unchanged from1b3bb16 to5ee44d5; compared withfd023e8 there are two added evidence JSONs.",
+    "addedPaths": [
+      "docs/health-launch/quick-order-20261005/evidence/http-regression-plan-fd023e8.json",
+      "docs/health-launch/quick-order-20261005/evidence/packet-integrity-http-fd023e8.json"
+    ],
+    "effect": "Reference-base precision only; exact source and test plan already bound. Do not adopt the overbroad comparison or reopen source/re-run tests."
+  },
+  "historicalFollowupCaveat": "Doc38 section6 contains older disk-cause/packet-suggestion text. Current actual2312 no repeated disk audit or new builder work controls. Reviewer Chrome working-set observation is not a cleanup authority or guaranteed reclaimable amount.",
+  "executionByCoordinator": "No application runtime, test, probe, build or DB executed; Git/hash/JSON inspection only"
+}

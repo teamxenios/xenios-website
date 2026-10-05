@@ -1,0 +1,54 @@
+{
+ "kind": "reviewer-run-receipt",
+ "reviewer": "claude-health-launch-review-20260930 (claude-fable-5-1, effort xhigh as observed)",
+ "evidenceClass": "independently executed by the reviewer; not the producer's qualification; not a coordinator-reserved slot",
+ "written": "2026-10-05 after the runs, from the in-session tool output; no value here was reconstructed from memory",
+ "runtimeSource": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
+ "runtimeTree": "57a8620b800d5da7a76d887f7bb9302d0415962f",
+ "runtimeIdenticalTo": "f1e467f74b01ae2ab866bb791a3c11d657a5d69c (tree 6bc4fd7a7483822d4af87a3c07ab7263c0fbc377); client/server/shared/supabase/scripts/package files byte-identical",
+ "worktree": "C:/xenios-wt/closeout-review, detached at c807f19, git status clean before and after every run",
+ "toolchain": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe v20.19.0; vitest v4.1.10 from the repository node_modules",
+ "hostRule": "no coordinator reservation held; the builder's reservation fc11f54 was already RELEASED_AFTER_PRECHECK_REFUSAL; no tsc, Vitest, Docker build or other heavy Node job was observed at launch (pattern-based process listing, not an attestation); the coordinator's 1536 MiB Vitest headroom rule was NOT met: the first Vitest run started at 933 MiB free (shortfall 603 MiB) and the verbose rerun at 1206 MiB (shortfall 330 MiB); the 999 MiB figure belongs to the Node two-file run's start, not to any Vitest run; this is why these are reviewer receipts and not producer qualification",
+ "revision": "2026-10-05 records-only correction (doc 39): the hostRule sentence previously cited 999 and 1206 MiB for the Vitest rule; 999 MiB is the Node run's start measurement and the first Vitest run's start was 933 MiB. This file is a retrospective receipt written from in-session tool output after the runs; it is not a contemporaneous execution wrapper, carries no tool-output identifiers, and the first Vitest run's raw output (summary reporter) was not archived because the verbose rerun superseded it. Nothing else changed.",
+ "runs": [
+  {
+   "id": "node2",
+   "command": "node --test server/research/health/quick-order/tests/core.test.mjs server/research/health/quick-order/tests/handler.test.mjs",
+   "startedUtc": "2026-10-05T20:48:23Z",
+   "freeMiBBefore": 999,
+   "freeMiBAfter": 933,
+   "exit": 0,
+   "tapSummary": {"tests": 73, "pass": 73, "fail": 0, "skipped": 0},
+   "log": "37_claude-qo-nodetest-c807f19.out"
+  },
+  {
+   "id": "vitest6-first",
+   "command": "NODE_OPTIONS=--max-old-space-size=1024 node node_modules/vitest/vitest.mjs run client/src/research/quick-order/contracts.test.ts client/src/research/quick-order/QuickOrderPage.test.tsx client/src/research/quick-order/OperatorDeclarations.test.tsx server/research/health/quick-order/catalog.test.ts server/research/health/quick-order/production.test.ts server/research/health/quick-order/containment.test.ts --maxWorkers=1 --no-file-parallelism --cache=false",
+   "freeMiBBefore": 933,
+   "freeMiBAfter": 1421,
+   "finishedUtc": "2026-10-05T20:48:39Z",
+   "exit": 0,
+   "summary": {"files": 6, "tests": 116, "passed": 116, "durationSeconds": 13.24},
+   "log": "summary-only output superseded by the verbose rerun below; not archived separately"
+  },
+  {
+   "id": "vitest6-verbose",
+   "command": "same as vitest6-first plus --reporter=verbose",
+   "startedUtc": "2026-10-05T20:50:03Z",
+   "freeMiBBefore": 1206,
+   "freeMiBAfter": 1326,
+   "exit": 0,
+   "summary": {"files": 6, "tests": 116, "passed": 116, "durationSeconds": 13.62},
+   "perFile": {"client/src/research/quick-order/OperatorDeclarations.test.tsx": 2, "client/src/research/quick-order/QuickOrderPage.test.tsx": 25, "client/src/research/quick-order/contracts.test.ts": 40, "server/research/health/quick-order/catalog.test.ts": 34, "server/research/health/quick-order/containment.test.ts": 10, "server/research/health/quick-order/production.test.ts": 5},
+   "log": "37_claude-qo-vitest-c807f19.out"
+  },
+  {
+   "id": "protection-gate",
+   "command": "node scripts/acceptance/verify-core-site-protection.mjs 3eaa017fcbd28989c65ffc4bb439a554aa1f3f59 HEAD",
+   "exit": 1,
+   "result": "FAIL only on the inherited hash set (Navbar, Footer, index.css pending approval; static.ts GATE-01); zero out-of-zone paths; 139 changed = 51 allowed + 52 infrastructure + 3 reported seams + tests",
+   "log": "37_claude-gate-c807f19.out"
+  }
+ ],
+ "notProvenByTheseRuns": ["typecheck", "build", "full-App route behaviour", "browser", "database", "any property of a later successor"]
+}
