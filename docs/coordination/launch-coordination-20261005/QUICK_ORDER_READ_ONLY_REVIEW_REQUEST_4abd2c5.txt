@@ -1,0 +1,41 @@
+Continue the EXISTING independent Claude acceptance context 5fb80ba6-3214-4186-aef0-0c556fd6627b in C:/xenios-wt/health-review. Do not create a replacement reviewer or implementation worker. This is the authorized read-only Quick Order source/evidence review described in 02_CLAUDE_EXISTING_REVIEWER.md, not a new integration review or source-edit approval.
+
+Exact targets, all pushed:
+Quick Order source: 4abd2c5cd4bd039309b32b97b117a67fc6a4d292
+Source tree: 3fb70d98dc354e6a6049744b5bb15b741d5ba50b
+Evidence/handoff: b353092ad9e49f28a65451d188c636079e1df091
+Evidence tree: cbcb0214ed6be603ff31e4cb03f9ceb45f928b55
+Branch: codex/xenios-health-quick-order-20261005
+Producer checkout (read only): C:/Users/sboad/.codex/worktrees/389a/xenios-website
+Producer chat: 01a10d78-0981-7150-9292-c5cde2730d4d
+Accepted base: 756a906877dbc174b7e228a259d2faa9c3af48ca / tree 787432948d9464880df1dcfc5dff58eec7d889aa
+Prior original module source: 3b0048de641415523caa44f91cb06002465e1773
+Prior evidence: 03a104497004f950bc68e040667350f0e5f75c8f
+
+First acknowledge these exact identities. Verify source tree, remote reachability, producer drift and receipts using Git object reads. Keep your existing review branch and exact review-records lease; refresh only your own records lease if needed. Do not check out or write in the producer's checkout. Read current continuity and the full existing reviewer brief at C:/Users/sboad/Downloads/02_CLAUDE_EXISTING_REVIEWER.md. Package is C:/Users/sboad/Downloads/Xenios_Quick_Order_Handoff_2026-10-05/quick-order. Current authority and exact Git evidence outrank package claims.
+
+Inspect at b353092:
+.xenios/handoffs/quick-order-20261005-handoff.md
+docs/health-launch/quick-order-20261005/QUALIFICATION.md
+docs/health-launch/quick-order-20261005/SOURCE_MAP.md
+docs/health-launch/quick-order-20261005/APPROVAL_MATRIX.md
+docs/health-launch/quick-order-20261005/PERSISTENCE_PROPOSAL.md
+docs/health-launch/quick-order-20261005/MOUNT_PROPOSAL.patch
+docs/health-launch/quick-order-20261005/evidence/**
+
+Review only the Quick Order delta over the accepted base. Original integration verdict 04cbbee and correction fffa33a remain accepted with their existing release holds. Do not reopen Core, MC01, D/E, subscription or Finance absent a concrete conflicting delta. Do not pool the original 73 Node + 111 Vitest = 184 passes at 3b0048d with the 10 successor containment passes at 4abd. There is no 194-test aggregate and no complete 184-test rerun at the successor. Typecheck is resource-deferred; build/browser/DB and full aggregate are NOT RUN for Quick Order.
+
+QO-C1 context: upstream server middleware normalizes duplicate leading slashes in req.url while originalUrl remains unchanged. The original containment guard read originalUrl and could permit held requests to reach the global raw-body verifier. Source4abd changes the guard to req.path and adds real-loopback composed regressions, including normalizer/parser/verifier and unrelated-route positive control. Coordinator verified 22 before/after source hashes, all six raw logs, 14 unchanged baselines, and ten successor passes. Independently assess the actual bounded correction; a helper composition does not prove an applied full application mount.
+
+Review implemented unprotected modules for success-envelope validation, retry ambiguity and actor teardown, canonical adapter reuse, quantity/pathway mapping, catalog pagination/classification, legal/version binding, declared-versus-trusted attribution, privacy/body limits, and truthful disabled production ports. Find concrete bugs in current code separately from explicitly missing capabilities. Inspect the exact proposed mount/privacy bytes and persistence design ONLY AS PROPOSALS. Explain whether they address their stated scope and any smallest design correction; do not author or apply either proposal.
+
+Two SOURCE decisions are pending actual Samuel answers. The latest attached planning document explicitly calls its first-person authorization text proposed, not an actual approval. No reply grants these permissions:
+1. Exact disabled six-file mount/privacy patch SHA256LF 6481c2ad2d4d2828e789cb2f2e24964705562cb782d70728b4152d78dc40a672 and the six pairs in mount-proposal-hashes.json.
+2. Only NEW persistence candidate/verifier/module drafting listed in PERSISTENCE_PROPOSAL. Existing shared reader/service/notification/admin dependencies require later exact diffs and leases.
+Those pending implementation decisions do not prevent this read-only review. Do not treat a reviewer/planner recommendation as founder authority. Builder remains parked; no protected files or new SQL may be authored by this reviewer.
+
+Known missing capabilities stay explicit: durable actor/key replay and intent binding; canonical structured referral/affiliation evidence; atomic request/evidence/receipt/outbox obligation; decisive currentness across actual catalog/legal/pricing/revision writers; real authorized operator readback; Health-specific legal applicability, visibility and destination authority. Production ports remain disabled and commit throws. The source is incomplete and real intake is NOT READY. Local absence of authored/applied SQL does not establish hosted schema absence. No hosted SQL/read of customer rows is needed for this review.
+
+Compute scope: static reads, Git/hash/receipt verification only. No tests, typecheck, build, browser, database, package installation, cleanup, or new compute reservation. No new Claude session or resident copy. No application edits, schema authoring/execution, protection recut, production/hosted mutation, real communications, customer collection or account/payment/partner grants. No secrets or raw customer/payment data in review records. Requested CLI effort max is not evidence of effective max; preserve prior observed xhigh disclosure.
+
+Return one bounded verdict for the IMPLEMENTED UNPROTECTED SOURCE: ACCEPT, ACCEPT WITH EXPLICIT LIMITS, or REJECT. Separately mark full source completion, real adapter availability, durable persistence, operator visibility, route/privacy composition, and live intake as PASS/FAIL/NOT PROVEN with exact reasons. List concrete P0/P1/P2/P3 findings with precise source paths, smallest repairs, and whether each repair lies within already authorized module paths or depends on a pending source decision. Report proposal concerns separately, not as applied runtime defects. Preserve all inherited release holds. Give one smallest dependency-ready next action, not a new prompt pack. Commit and push only your existing review records, provide exact verdict SHA/path, then park. Coordinator will verify and route authorized concrete findings to the same builder.
