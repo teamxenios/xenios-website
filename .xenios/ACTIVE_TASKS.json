@@ -3312,6 +3312,28 @@
         "file": ".xenios/handoffs/2026-10-01T05-29-11-224Z-ASSISTED-ORDER-HL12-RELEASE-TEST-20260930-codex-xenios-health-launch-implementation-20260930.md",
         "at": "2026-10-01T05:29:11.230Z"
       }
+    },
+    {
+      "id": "FINANCE-RELEASE-BLOCKERS-V2-20261003",
+      "title": "Provider-neutral finance release-blocker successor, v2 sprint",
+      "priority": "P0",
+      "state": "claimed",
+      "owner": "codex-finance-release-blockers-20261003",
+      "paths": [
+        "server/research/assisted-order/FINANCE_SPRINT_V2_20261003.md",
+        "server/research/assisted-order/finance-sprint-20261003/**",
+        "supabase/candidates/20261003_research_assisted_order_provider_attribution.sql",
+        "supabase/verification/research_assisted_order_provider_attribution_local.mjs",
+        "supabase/verification/research_assisted_order_provider_attribution_races.mjs",
+        "server/research/assisted-order/provider-attribution-sql.test.ts",
+        ".local/finance-sprint-20261003/**",
+        ".xenios/sessions/codex-finance-release-blockers-20261003.json",
+        ".xenios/handoffs/*FINANCE-RELEASE-BLOCKERS-V2-20261003*"
+      ],
+      "dependsOn": [],
+      "baseSha": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+      "scopeNote": "New exact finance candidate paths only; branch-local register/claim indexes; no stale-record wholesale import, client, MC01, shared lead controls, protected seam or hosted writes. All independent Claude acceptance pending.",
+      "claimedAt": "2026-10-03T21:32:21.872Z"
     }
   ]
 }

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "session": "codex-finance-release-blockers-20261003",
+  "role": "isolated_finance_specialist",
+  "sprintPack": "Xenios_Execution_Sprint_2026-10-03_v2",
+  "baseSha": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+  "inheritedRuntimeSha": "c0e25c73a0d789829ea213e2ee040c68e06f0a75",
+  "branch": "codex/xenios-finance-release-blockers-20261003",
+  "startupClean": true,
+  "originFetched": true,
+  "continuityValidation": "PASS",
+  "delegatedWriters": {
+    "adpg12_audit": ["supabase/candidates/20261003_research_assisted_order_provider_attribution.sql"],
+    "f1_audit": ["supabase/verification/research_assisted_order_provider_attribution_local.mjs"],
+    "root": ["server/research/assisted-order/provider-attribution-sql.test.ts", "supabase/verification/research_assisted_order_provider_attribution_races.mjs", "server/research/assisted-order/finance-sprint-20261003/**", "server/research/assisted-order/FINANCE_SPRINT_V2_20261003.md"],
+    "refund_audit": []
+  },
+  "productionReadOnlyObservation": {
+    "date": "2026-10-03",
+    "renderServiceId": "srv-d8s9vej7uimc7384dfcg",
+    "renderDeployId": "dep-daqft3vf3r2c73b7e88g",
+    "renderStatus": "live",
+    "renderCommit": "79414143d4355d5d3d14cd5fe6e5a536dc68d99d",
+    "supabaseProject": "yvzeduaxbwgcwllhywff",
+    "postgresVersion": "17.6",
+    "migrationCount": 44,
+    "latestMigrationVersion": "20260921172323",
+    "absentPublicRelations": [
+      "research_assisted_order_provider_attempts",
+      "research_assisted_order_payment_verifications",
+      "research_assisted_order_provider_event_journal",
+      "research_assisted_order_provider_identity_bindings"
+    ],
+    "scope": "Deployment metadata and catalog/migration metadata only; no customer records read. This is not hosted qualification of the candidate."
+  },
+  "coordination": {
+    "coreAndImageryMessagesDelivered": false,
+    "reason": "Automatic approval review rejected cross-chat messages for missing recognized destination-specific authorization. Explicit permission is pending; no workaround used."
+  },
+  "hostQualification": "UNQUALIFIED_SHARED_LOCAL_HOST",
+  "independentClaudeAcceptance": false,
+  "productionMutated": false,
+  "managedMigrationApplied": false
+}

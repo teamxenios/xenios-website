@@ -3508,6 +3508,25 @@
       "state": "handoff",
       "claimedAt": "2026-10-01T16:07:30.171Z",
       "heartbeatAt": "2026-10-01T18:24:01.294Z"
+    },
+    {
+      "id": "95ae5e9e-fbf9-4ff6-861f-93ca3faef6f8",
+      "task": "FINANCE-RELEASE-BLOCKERS-V2-20261003",
+      "session": "codex-finance-release-blockers-20261003",
+      "paths": [
+        "server/research/assisted-order/FINANCE_SPRINT_V2_20261003.md",
+        "server/research/assisted-order/finance-sprint-20261003/**",
+        "supabase/candidates/20261003_research_assisted_order_provider_attribution.sql",
+        "supabase/verification/research_assisted_order_provider_attribution_local.mjs",
+        "supabase/verification/research_assisted_order_provider_attribution_races.mjs",
+        "server/research/assisted-order/provider-attribution-sql.test.ts",
+        ".local/finance-sprint-20261003/**",
+        ".xenios/sessions/codex-finance-release-blockers-20261003.json",
+        ".xenios/handoffs/*FINANCE-RELEASE-BLOCKERS-V2-20261003*"
+      ],
+      "state": "active",
+      "claimedAt": "2026-10-03T21:32:21.875Z",
+      "heartbeatAt": "2026-10-05T12:56:08.276Z"
     }
   ],
   "rules": [
