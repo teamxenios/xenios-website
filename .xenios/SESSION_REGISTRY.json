@@ -569,6 +569,16 @@
       "startedAt": "2026-09-30T16:32:52.264Z",
       "heartbeatAt": "2026-10-05T17:19:46.331Z",
       "note": "Partner return source 94e89be7/tree 23b3284a, tests 806c58a and evidence 9b8adebd pushed. Clean 205 focused PASS on Node 20.19.0. Ready for separate independent review; stopped. Frozen IC2 branch/evidence and all protected/authority bytes unchanged. No build/full suite or hosted action."
+    },
+    {
+      "id": "codex-accepted-source-integration-20261005",
+      "tool": "OpenAI Codex desktop",
+      "lane": "accepted-source-integration",
+      "branch": "codex/accepted-source-integration-20261005",
+      "state": "active",
+      "startedAt": "2026-10-05T18:18:45.097Z",
+      "heartbeatAt": "2026-10-05T18:18:45.097Z",
+      "note": "New integration session; accepted exact source only from common base3eaa017. Registration checkpoint preserves frozen Core and partner. Coordinator5615963; no hosted authority."
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

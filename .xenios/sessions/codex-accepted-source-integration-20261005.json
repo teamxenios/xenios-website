@@ -1,0 +1,10 @@
+{
+  "id": "codex-accepted-source-integration-20261005",
+  "tool": "OpenAI Codex desktop",
+  "lane": "accepted-source-integration",
+  "branch": "codex/accepted-source-integration-20261005",
+  "state": "active",
+  "startedAt": "2026-10-05T18:18:45.097Z",
+  "heartbeatAt": "2026-10-05T18:18:45.097Z",
+  "note": "New integration session; accepted exact source only from common base3eaa017. Registration checkpoint preserves frozen Core and partner. Coordinator5615963; no hosted authority."
+}
