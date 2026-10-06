@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "status": "SQL_DRAFT_SOURCE_PUSHED_ORIGINAL_REVIEW_PENDING",
   "receivedAt": "2026-10-06T17:43:37Z",
-  "checkpointAt": "2026-10-06T20:21:20.778Z",
+  "checkpointAt": "2026-10-06T20:22:48.677Z",
   "expiresAt": "2026-10-06T21:43:37Z",
   "authority": {
     "thread": "01a103a8-5684-7272-89e5-3c42eefcd593",
@@ -653,10 +653,11 @@
     "note": "Additional exact test path; no execution. Do not repeat question or infer answer from elapsed time."
   },
   "continuationHandoff": {
-    "file": ".xenios/handoffs/2026-10-06T19-46-31-538Z-LAUNCH-COORDINATION-20261005-codex-launch-coordination-20261005.md",
-    "sha": "a0c3881396019efc94a9ec4e151631fda0d6a1ac",
-    "at": "2026-10-06T19:46:31.538Z",
-    "status": "ACTIVE_WHILE_BUILDER_DRAFTS"
+    "session": "codex-launch-coordination-20261005",
+    "sha": "2cba18957031bcb1438668559b37c1548767c50c",
+    "file": ".xenios/handoffs/2026-10-06T20-22-48-677Z-LAUNCH-COORDINATION-20261005-codex-launch-coordination-20261005.md",
+    "at": "2026-10-06T20:22:48.677Z",
+    "status": "HANDOFF_READY_SOURCE_REVIEW_PENDING"
   },
   "documentHeaderQuestion": {
     "issued": true,
