@@ -88,6 +88,48 @@ providers; a coordinator execution reservation; Windows validation of junctions,
 today's run. A schema-valid provider result remains text: not an accepted task, an owner decision, qualification or
 release authority.
 
+## 7a. Formal review instruction, received after this record was first pushed (`60e89b3`)
+
+The coordinator's formal instruction for this review reached the session after the review above was complete. It
+asks for the same bounded read-only review and verdict format, with one boundary stricter than the request that
+preceded it: **do not execute the package, tests, demo or subprocess experiments.** The two Windows suite runs and the
+guard probe in section 3 were performed before that instruction existed, under the earlier boundary, which forbade
+provider invocation, live transport, prechecks, key provisioning, configuration change, state migration and website
+or parked-test activity but not the package's own harness. They are retained as clearly labelled reviewer executions
+and nothing is re-run. The verdict below stands on the static evidence alone; the executions only strengthened it and
+surfaced W-1, W-2 and T-65.
+
+**Receipt verification (independently recomputed, read-only):** all 8 run artifacts named in
+`evidence/TEST_RECEIPT.json` (stdout and stderr of tests-final, syntax-final, demo-final, cli-help) match their
+recorded sha256 and byte lengths; all 17 after-bindings match the files on disk and equal the before-bindings
+(`sourceUnchanged:true` holds); `evidence/tests-final.stdout` contains 129 `ok` lines and 0 `not ok`;
+the pre-final receipt differs from the final receipt in exactly one file, `tests/providers.test.mjs`, and its retained
+output shows 128 pass, 1 fail at test 122 (the abort fixture), matching `PRE_FINAL_FAILURE_NOTE.md`;
+`evidence/v01-reproduction.json` records all four v0.1 behaviours reproduced against a baseline whose 27 manifest
+entries matched. No discrepancy was found between the producer's receipts and the retained bytes. The Linux 129-pass
+run is the producer's execution, not mine, and is not native-Windows or provider qualification.
+
+**Bounded verdict in the requested form.**
+- Package identity: zip sha256 `9a82deb5…eaab`; `MANIFEST.json` sha256 `7e49115f…0ad2`; 75/75 entries; v0.1 baseline
+  27/27; repair diff reproduces v0.2 from v0.1.
+- Finding 1 authorization consumption: **FIXED** (`lib/core.mjs:141-147`, `:172-192`, `:193-214`; restart and
+  rollback covered by `tests/core.test.mjs:43-45`); residual P3 F1-02, F1-03, F1-04.
+- Finding 2 filesystem containment: **FIXED** (`lib/paths.mjs:21-53`, `:66-74`, `:110-120`; `bridge.mjs:67-71`;
+  `providers.mjs:28-31`, `:91-93`); residual P2 F1F2-01 (CLI path untested), P2 W-1 and W-2 on this host.
+- Finding 3 provider completion and result identity: **FIXED** (`lib/providers.mjs:52-85`, `:45-49`;
+  `lib/core.mjs:120-129`, `:205-206`, `:242`); residual P3 F-003, F-009.
+- Finding 4 termination evidence and uncertainty: **FIXED** (`lib/providers.mjs:95-199`; `lib/core.mjs:238-262`);
+  residual P2 F-001 narrowed to the externally killed child on Windows, P3 F-002, F-005 to F-008.
+- New material defects within the repair scope: none at P0 or P1. Two P2 host findings (W-1, W-2) are fail-closed
+  usability gates discovered only by executing on Windows.
+- Smallest required corrections: W-1, W-2, F1F2-01, T-65 as listed in section 5.
+- Remaining prerequisites for a separately authorized synthetic live pilot: coordinator issuer behind the signature,
+  installed-CLI compatibility evidence for both providers, a coordinator execution reservation, Windows validation of
+  junction, nlink and rename semantics beyond today's run, acceptance of the disclosed filesystem-race and
+  uncatchable-termination limits.
+- Overall: **ACCEPT WITH LIMITS** for the standalone repair candidate. This approves no live pilot, website change,
+  Quick Order test, customer intake, payment, database action or deployment.
+
 ## 7. Smallest next step
 
 Fix W-1 and W-2 (both small, both fail-closed today), widen the T-65 fixture, add the CLI-level permit and dispatch
