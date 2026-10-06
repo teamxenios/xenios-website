@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-06T18:23:19.062Z",
+  "sourceAuthority": "60d593ae2fc0623edc869e373bfe52e830968df9 S4/doc36section7",
+  "lease": "17093695-69b5-4cc0-8b29-aedb82bf6409",
+  "paths": [
+    "shared/research/assisted-order/quick-order.ts",
+    "server/research/assisted-order/quick-order-repository.ts",
+    "server/research/assisted-order/quick-order-repository.test.ts"
+  ],
+  "absentBefore": true,
+  "currentActiveConflicts": [],
+  "registries": [
+    "389a",
+    "3221"
+  ],
+  "executionAuthorized": false
+}

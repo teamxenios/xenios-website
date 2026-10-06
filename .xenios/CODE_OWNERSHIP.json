@@ -3610,12 +3610,15 @@
         "client/src/lib/tracking.test.ts",
         "client/src/lib/attribution.test.ts",
         "client/src/App.routes.test.ts",
-        "server/research/seo/raw-http-document-policy.test.ts"
+        "server/research/seo/raw-http-document-policy.test.ts",
+        "shared/research/assisted-order/quick-order.ts",
+        "server/research/assisted-order/quick-order-repository.ts",
+        "server/research/assisted-order/quick-order-repository.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-10-05T19:13:42.719Z",
-      "heartbeatAt": "2026-10-06T18:12:22.066Z",
-      "note": "Reserved for same parked builder: S2/S3 exact13path successor ac36e60 pushed; review and qualification pending. G1 consumed/refused,zero test processes,no retry. No other owner or global registry field changed."
+      "heartbeatAt": "2026-10-06T18:37:57.699Z",
+      "note": "Three new S4 pure projection/decoder/test files pushed at10208fe; no existing runtime changed. Tests NOT RUN, independent acceptance pending. Supplemental exact shared integration separately approved atdc3329; not applied in this checkpoint. G1 consumed/refused, no active slot or new resource observation."
     }
   ],
   "rules": [

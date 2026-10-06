@@ -6,7 +6,7 @@
       "id": "HEALTH-QUICK-ORDER-20261005",
       "title": "Implement isolated Health Quick Order intake over canonical assisted requests",
       "priority": "P1",
-      "state": "blocked_external",
+      "state": "active",
       "owner": "codex-health-quick-order-20261005",
       "baseSha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
       "paths": [
@@ -27,13 +27,16 @@
         "client/src/lib/tracking.test.ts",
         "client/src/lib/attribution.test.ts",
         "client/src/App.routes.test.ts",
-        "server/research/seo/raw-http-document-policy.test.ts"
+        "server/research/seo/raw-http-document-policy.test.ts",
+        "shared/research/assisted-order/quick-order.ts",
+        "server/research/assisted-order/quick-order-repository.ts",
+        "server/research/assisted-order/quick-order-repository.test.ts"
       ],
       "dependsOn": [],
-      "scopeNote": "Same builder completed S2/S3 under Samuel17:43:37Z kickoff/coordinator60d593a;13 exactsourcepaths. Source implementation only, new independent review/final hash acceptance/qualification pending. G1 consumed/refused, no automatic recheck. Coordinator owns supplemental currentness/shared-service/full-composition-test scope. No acceptance, manifestrecut, SQL or managed actions inferred.",
+      "scopeNote": "Three new S4 pure projection/decoder/test files pushed at10208fe; no existing runtime changed. Tests NOT RUN, independent acceptance pending. Supplemental exact shared integration separately approved atdc3329; not applied in this checkpoint. G1 consumed/refused, no active slot or new resource observation.",
       "claimedAt": "2026-10-05T19:13:42.715Z",
-      "sourceSha": "ac36e60fe5e91b1217722e7f2a2711fd62a64559",
-      "sourceTree": "c83e78153d8cafcd2580e2ed83e1cd9d6f8b79a0",
+      "sourceSha": "10208fea644f069f58ddeaa8993db4df5eb4469d",
+      "sourceTree": "6e0a8003baa8743d243f06bf18c025f649a95152",
       "baseAcceptance": {
         "sha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
         "review": "04cbbee0d3d3ab32dfd6ae9002b82837423f6265",
@@ -41,19 +44,19 @@
       },
       "handoff": {
         "session": "codex-health-quick-order-20261005",
-        "sha": "ac36e60fe5e91b1217722e7f2a2711fd62a64559",
+        "sha": "10208fea644f069f58ddeaa8993db4df5eb4469d",
         "file": ".xenios/handoffs/quick-order-20261005-handoff.md",
-        "at": "2026-10-06T18:12:22.066Z"
+        "at": "2026-10-06T18:37:57.699Z"
       },
       "blockedOn": [
         "HTTP red/green NOT RUN: G1 refused1205MiB<1536 at2026-10-06T17:54:58Z; separate coordinator reservation and materially changed conditions required",
         "S2/S3 source successor independent review, final protected hash acceptance and owner recut; GATE-01 stays open",
         "S2/S3 focused tests, real App/static/Vite composition, typecheck/build/browser qualification pending valid distinct groups",
-        "Canonical persistence/currentness and shared reader/writer/outbox implementation outside this assigned slice; supplemental scope required",
+        "Canonical persistence/currentness and shared integration pending; supplemental source approved atdc3329, SQL requires original naming/fence review; execution held",
         "Governed Health legal/classification/visibility/destination/standing authorities; live intake, payments and production remain held"
       ],
-      "heartbeatAt": "2026-10-06T18:12:22.066Z",
-      "note": "S2/S3 implemented/pushed ac36e60: exact6file c65 disabled mount/privacy and narrow PWA plus6testfiles. Static hashes/diff checked; successor review and all execution pending. G1 refused2026-10-06T17:54:58Z RAM1205<1536,disk26.0734,noheavy; consumed/released,zero tests,no retry. fd module preserved. Same builder parked, exactlease retained; no persistence/SQL/live intake/payment/deploy or manifestrecut.",
+      "heartbeatAt": "2026-10-06T18:37:57.699Z",
+      "note": "Three new S4 pure projection/decoder/test files pushed at10208fe; no existing runtime changed. Tests NOT RUN, independent acceptance pending. Supplemental exact shared integration separately approved atdc3329; not applied in this checkpoint. G1 consumed/refused, no active slot or new resource observation.",
       "qualification": {
         "reservation": "QO-FIRST-20261006-G1",
         "status": "REFUSED_RELEASED",

@@ -1,5 +1,12 @@
 # Quick Order isolated implementation
 
+Current pure S4 checkpoint: [S4_DECODER_CONTRACT_20261006.md](S4_DECODER_CONTRACT_20261006.md),
+source `10208fea644f069f58ddeaa8993db4df5eb4469d`, tree
+`6e0a8003baa8743d243f06bf18c025f649a95152`. Three new projection/decoder/test
+files only; no existing runtime changed. Tests NOT RUN; independent review pending.
+The separately approved shared integration is the next slice, not part of this
+checkpoint. No RPC, durable storage, notification or operation is proved.
+
 Current source-stage checkpoint: [S2_S3_SOURCE_20261006.md](S2_S3_SOURCE_20261006.md).
 Source `ac36e60fe5e91b1217722e7f2a2711fd62a64559` applies the exact disabled mount,
 privacy and PWA correction plus six test files. Source review and execution remain

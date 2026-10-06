@@ -1,3 +1,51 @@
+# Quick Order pure S4 decoder handoff — 2026-10-06
+
+- SAME SESSION: codex-health-quick-order-20261005; TASK: HEALTH-QUICK-ORDER-20261005
+- CHAT: 01a10d78-0981-7150-9292-c5cde2730d4d; BRANCH: codex/xenios-health-quick-order-20261005
+- PUSHED SOURCE: **10208fea644f069f58ddeaa8993db4df5eb4469d**
+- SOURCE TREE: **6e0a8003baa8743d243f06bf18c025f649a95152**
+- LEASE: 17093695-69b5-4cc0-8b29-aedb82bf6409, retained by same builder
+- STATUS: pure source implemented; tests NOT RUN; independent acceptance PENDING
+
+This checkpoint adds only shared/research/assisted-order/quick-order.ts,
+server/research/assisted-order/quick-order-repository.ts and its adjacent test.
+The prior ac36e60 mount/PWA and all existing runtime bytes remain unchanged.
+The exact new file hashes and Git blobs are in
+ docs/health-launch/quick-order-20261005/evidence/s4-decoder-source-10208fe.json.
+The complete proposed envelope contract is S4_DECODER_CONTRACT_20261006.md.
+
+The decoder checks a closed independently marked envelope, immutable declarations,
+canonical line/estimate consistency, reference-only notification obligation and
+observation event identity. Missing evidence cannot become legacy. Stale observation
+carries no notification fields. It returns opaque canonical detail for the existing
+admin decoder; it neither replaces read_all nor proves durable/authentic evidence.
+No RPC constant/client, storage, SQL, currentness, activation or transport is added.
+Synthetic tests were authored and statically inspected only. No syntax/typecheck,
+build, browser, database or application/test execution occurred.
+
+G1 remains consumed/refused/released at 2026-10-06T17:54:58.1429186Z:
+1205 MiB below 1536 MiB; zero test processes. No new memory observation or slot.
+That sample and historical 934 MiB are not current host availability. The original
+S5 expiry is 21:43:37Z. Another group requires material host change and a distinct
+coordinator reservation; no cleanup, shutdown or automatic retry is authorized.
+
+Next source slice: Samuel's direct bounded source approval is recorded at
+coordinator dc3329bb2cfb3b93d8d054c8bbc77a291df0e671, exact scope1d4f2c3,
+patch SHA256 b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f.
+Revalidate hashes and ownership before applying the exact six-file shared patch
+and two named new tests. Minimal compatible amendments to these new modules may
+be recorded separately. SQL remains conditional on the original reviewer’s
+naming/fence review; composition tests are sequenced separately. No new execution,
+manifest changes, final protected acceptance or managed action is granted.
+
+Other owners' rows and global registry fields are preserved. Source and records
+are separate commits. Supplemental shared integration is not part of10208fe.
+No coordinator Finance ancestry is merged. The supplied standalone handoff bridge
+is being assessed read-only; no harness execution/installation/provider settings,
+resource checks or messages are authorized by its embedded adoption instructions.
+
+## Previous S2/S3 checkpoint — historical record, superseded only as described above
+
 # Quick Order disabled mount/PWA handoff — 2026-10-06
 
 - SESSION: `codex-health-quick-order-20261005`
