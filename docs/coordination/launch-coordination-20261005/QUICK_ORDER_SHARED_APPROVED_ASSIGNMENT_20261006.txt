@@ -1,0 +1,30 @@
+Samuel has now directly approved the completed supplemental source scope at coordinator1d4f2c3. Exact question/answer is committed and pushed at dc3329bb2cfb3b93d8d054c8bbc77a291df0e671 in QUICK_ORDER_FIRST_SPRINT_20261006.json: “Approve this bounded source-only scope.” The five-minute heartbeat was separately stopped at his request (d9b5a7ac67c7c20196d50f5f8aae813b0b93e8ef); foreground source work continues, no second S5 window.
+
+Finish and separately commit/push your CURRENT THREE-PATH pure projection/decoder/test slice and its exact records first. Preserve ac36e60 S2/S3 and this new pure slice as separate reviewable checkpoints. Then continue the next dependency-ready approved source slice in this SAME builder, without a second writer.
+
+Read the approved packet exactly at:
+C:/Users/sboad/.codex/worktrees/3221/xenios-website/docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md
+and QUICK_ORDER_SUPPLEMENTAL_BASELINES_20261006.json
+and QUICK_ORDER_SHARED_EDITS_PROPOSED_20261006.patch.
+The patch SHA256 is b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f, six targets (five runtime+one UI test), never applied by coordinator. Its earlier PROPOSED status predates Samuel's direct approval; dc3329 is controlling authority.
+
+NEXT BOUNDED SLICE: claim exact conflict-free lease extension for:
+shared/research/assisted-order/contract.ts
+server/research/assisted-order/supabase-repository.ts
+server/research/assisted-order/service.ts
+client/src/research/assisted-order/AdminAssistedOrderDetail.tsx
+server/research/assisted-order/communications.ts
+client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx
+new server/research/assisted-order/quick-order-admin-readback.test.ts
+new server/research/assisted-order/quick-order-notifications.test.ts
+Existing own A2 three paths may receive the minimum compatible amendments, separately identified in the successor. No other shared/runtime file is assigned by this message.
+
+Revalidate exact before hashes and current ownership; preserve every other owner and top-level registry field. Apply the approved six-file patch only after verifying your new projection/decoder contract satisfies its imports and data shape. If a substantive incompatible change is required beyond this concrete patch intent, return the exact amendment before applying it; ordinary type/schema implementation in the already-authorized new modules is allowed. Preserve canonical status/finance authorities. Keep current read_all HTTP/service guard, dispatcher loop and all legacy renderers. No RPC-error fallback that misclassifies QO as legacy. New reader cutover requires the future reader RPC to be installed and qualified before deployment; currently no such installation is asserted.
+
+Author only the two named new actual repository/service/admin-route and renderer/dispatcher synthetic test files per the packet, plus its existing UI delta. Cover explicit legacy/null, absent wrapper, request/evidence/outbox binding, missing/malformed data, denial before RPC, immutable intake through mutation, stale observation/refresh without resubmission, strict reference-only template, and transport-failure/replay boundaries. Synthetic tests do not establish durable SQL/restart proof.
+
+Do NOT execute tests, resource prechecks, typecheck, build, browser, database or transports. G1 is consumed1of6, zero tests; no new reservation or materially changed host condition is established. Original finite qualification expiry remains21:43:37Z, not reset by source approval or new attachment.
+
+Keep SQL drafting, new currentness implementation in this slice, complete commit RPC, live adapter activation, final protected acceptance, manifest, managed actions and real messages out. SQL drafting still needs the same original Claude's naming/fence compatibility review; no new reviewer or alternate transport. Do not start the four newly approved composition-test paths in the same commit; coordinator will sequence those separately after a clean handoff.
+
+Return source/tree and records SHAs, exact paths/diff, remaining compatibility concerns, static checks versus NOT RUN execution and actual customer/operator/payment capability. No generic outbound status message: report in your own chat for coordinator collection.

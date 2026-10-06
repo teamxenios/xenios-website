@@ -966,7 +966,14 @@
           "server/research/assisted-order/quick-order-repository.test.ts"
         ],
         "status": "BUILDING_SOURCE_ONLY",
-        "acknowledged": true
+        "acknowledged": true,
+        "nextAfterPureFreeze": {
+          "status": "DISPATCH_SENT_CONDITIONAL_ON_PURE_FREEZE",
+          "sourceApprovalCommit": "dc3329bb2cfb3b93d8d054c8bbc77a291df0e671",
+          "scope": "Approved six-file shared patch plus two named new reader/notification tests; currentness/SQL and composition tests not assigned in this slice",
+          "promptRecord": "QUICK_ORDER_SHARED_APPROVED_ASSIGNMENT_20261006.txt",
+          "owner": "01a10d78-0981-7150-9292-c5cde2730d4d"
+        }
       },
       "supplementalScope": {
         "status": "USER_APPROVED_SOURCE_ONLY_SQL_COMPATIBILITY_REVIEW_PENDING",
@@ -1022,6 +1029,12 @@
           "at": "2026-10-06T18:10:02.478Z",
           "message": "8d0ec7d7-823a-458d-a427-6881af89c62e",
           "classification": "Old background disk-footprint task notification and public acknowledgement only; not actual user input, new review, coordinator resource observation or cleanup authority. Reviewer still idle; adoption statement stale relative to60d coordinator record."
+        },
+        "pendingHandoff": {
+          "path": "QUICK_ORDER_NEXT_REVIEW_HANDOFF_20261006.md",
+          "status": "PREPARED_NOT_DELIVERED",
+          "scope": "Frozen ac36e60 delta plus proposed naming/fence/currentness review; exclude mutable pure decoder slice",
+          "transport": "No callable Claude messaging capability found. No known-failed CLI/native/UI/bridge retry and no replacement reviewer."
         }
       },
       "exclusions": [
