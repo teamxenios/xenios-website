@@ -1,3 +1,29 @@
+## Shared source checkpoint — 2026-10-06
+
+Same builder pushed source9118a82633e9f10637764c896ce2a6e53ad1e3eb,
+tree5142b61564921cbe892099c8ef55896935508fa9, with records/handoff
+4669493ba48c2afbdfb844813cfc066442ddd78d. Coordinator verified all nine
+before/after path bindings, the unchanged accepted QO module trees and source-free
+records commit. See QUICK_ORDER_SHARED_COORDINATOR_CHECKPOINT.json. This applies
+the approved shared patch plus the exact two-file current-affiliate UI correction
+and three-line proposed RPC constant; tests are authored, NOT RUN. Real readback,
+durable saving, reader installation/qualification, payment and deployment are not
+established. The additional provider-journal fixture patch8396609 remains unapplied
+pending Samuel's one-path decision at coordinator95858ba; do not repeat it.
+
+The same builder has been sent the separately sequenced four new composition-test
+paths already approved in the supplemental packet. No runtime/test execution is
+authorized by that assignment. Original Claude directly received the frozen S4
+checkpoint from Samuel and publicly confirmed its review, alongside ac36e60 and
+the supplemental naming/fence/currentness design. All three verdicts remain
+pending; no duplicate delivery or reviewer is needed. Shared9118a82 is a later
+frozen delta for that same reviewer after its current scopes finish.
+
+The first-hour facts and confirmed planning reply are archived in
+QUICK_ORDER_FIRST_HOUR_CHECKPOINT_20261006.json and
+QUICK_ORDER_FIRST_HOUR_PLANNING_RELAY.json. Five groups remain, no active slot or
+material host change is established, expiry21:43:37Z. Automation stays PAUSED.
+
 ## Pure S4 checkpoint — 2026-10-06 18:40Z
 
 Source10208fea644f069f58ddeaa8993db4df5eb4469d, tree

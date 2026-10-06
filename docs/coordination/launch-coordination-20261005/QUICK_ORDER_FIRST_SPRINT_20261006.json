@@ -83,7 +83,7 @@
     "status": "PURE_SOURCE_PUSHED_NEXT_SHARED_ASSIGNED",
     "acknowledged": true,
     "nextAfterPureFreeze": {
-      "status": "BUILDING_APPROVED_SHARED_SOURCE",
+      "status": "SHARED_SOURCE_PUSHED_REVIEW_PENDING",
       "sourceApprovalCommit": "dc3329bb2cfb3b93d8d054c8bbc77a291df0e671",
       "scope": "Approved six-file shared patch plus two named new reader/notification tests; currentness/SQL and composition tests not assigned in this slice",
       "promptRecord": "QUICK_ORDER_SHARED_APPROVED_ASSIGNMENT_20261006.txt",
@@ -253,8 +253,22 @@
       "source": "10208fea644f069f58ddeaa8993db4df5eb4469d",
       "sourceTree": "6e0a8003baa8743d243f06bf18c025f649a95152",
       "records": "e7e3d446ff36a549f023dbc64f6fbb275e614125",
-      "status": "FROZEN_DELTA_READY_DELIVERY_PENDING",
-      "handoff": "QUICK_ORDER_S4_REVIEW_HANDOFF_20261006.md"
+      "status": "REVIEW_UNDERWAY_AFTER_DIRECT_USER_INPUT",
+      "handoff": "QUICK_ORDER_S4_REVIEW_HANDOFF_20261006.md",
+      "directUser": {
+        "at": "2026-10-06T18:43:39.809Z",
+        "message": "0aeb63f6-a7f4-4285-9d70-d77fb96358eb"
+      },
+      "publicAcknowledgement": {
+        "at": "2026-10-06T18:46:53.125Z",
+        "message": "b891dfed-9144-4a76-8c8e-dbb9994357e3",
+        "scope": "Original reviewer reports mount/supplemental/S4 verification in progress. No verdict collected."
+      }
+    },
+    "pendingShared": {
+      "source": "9118a82633e9f10637764c896ce2a6e53ad1e3eb",
+      "records": "4669493ba48c2afbdfb844813cfc066442ddd78d",
+      "status": "FROZEN_READY_NOT_YET_ASSIGNED_TO_BUSY_ORIGINAL_REVIEWER"
     }
   },
   "exclusions": [
@@ -317,7 +331,7 @@
     {
       "id": "06",
       "owner": "proposed same builder",
-      "status": "APPROVED_SHARED_SOURCE_ASSIGNED",
+      "status": "SHARED_SOURCE_IMPLEMENTED_REVIEW_PENDING",
       "next": "Same builder may claim/apply exact shared patch and named tests after decoder source checkpoint; maintain disabled composition"
     },
     {
@@ -341,7 +355,7 @@
     {
       "id": "10",
       "owner": "original acceptance owner; no extra UX agent",
-      "status": "AWAITING_REAL_COMPOSITION",
+      "status": "COMPOSITION_TEST_SOURCE_ASSIGNED_NOT_RUN",
       "next": "Review actual full App/mobile/keyboard after corresponding implementation and qualified runner"
     },
     {
@@ -436,5 +450,120 @@
       "Final protected hashes/GATE01/manifest"
     ],
     "automation": "PAUSED by Samuel; original qualification window unchanged"
+  },
+  "sharedCheckpoint": {
+    "at": "2026-10-06T18:53:15.779Z",
+    "source": "9118a82633e9f10637764c896ce2a6e53ad1e3eb",
+    "sourceTree": "5142b61564921cbe892099c8ef55896935508fa9",
+    "records": "4669493ba48c2afbdfb844813cfc066442ddd78d",
+    "recordsTree": "4e254ecf01610cadb73f7449de621b1ebd91dfc0",
+    "base": "e7e3d446ff36a549f023dbc64f6fbb275e614125",
+    "remoteObserved": "4669493ba48c2afbdfb844813cfc066442ddd78d",
+    "kind": "Coordinator read-only Git/hash/scope inspection, not execution or independent source acceptance",
+    "verified": [
+      {
+        "path": "shared/research/assisted-order/contract.ts",
+        "blob": "6d865f3d71ed1ea8bf8957a092e7faa3cc10fd2c",
+        "sha256lf": "1a9eed498adf0144b84d0e52afe9b9e0c250847749289ad295561aec7581ef34",
+        "beforeSha256lf": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9",
+        "verified": true
+      },
+      {
+        "path": "server/research/assisted-order/supabase-repository.ts",
+        "blob": "8da0f773db6ef4f6dbca145b67232731b8fcf693",
+        "sha256lf": "274493e5b0618222b919adf6ab4d7613b04f58247ed79c5a7d29ab9076772e53",
+        "beforeSha256lf": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327",
+        "verified": true
+      },
+      {
+        "path": "server/research/assisted-order/service.ts",
+        "blob": "4d8d2f1d2f196a37f0c42c2e18373849f7ecd11a",
+        "sha256lf": "57ea0b0202f0648aa9324ca6f1f24c5dedb1a761d1d4d85a80fda21e8ebacc67",
+        "beforeSha256lf": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960",
+        "verified": true
+      },
+      {
+        "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+        "blob": "f495b99bdad726d1644162f859cedc1a87738320",
+        "sha256lf": "b47b37debe3abe010e1b8cb1dc43563d9977f6b7b4f0e23f24276a0c61470bcc",
+        "beforeSha256lf": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e",
+        "verified": true
+      },
+      {
+        "path": "server/research/assisted-order/communications.ts",
+        "blob": "91693893337154db7a23bcf9177ba85aeb2f7a3c",
+        "sha256lf": "1c68368095d1c92163155f90cd15de21050abfd1f5856d9408540388c6a18c64",
+        "beforeSha256lf": "91ea8d26fdb82d2607e7a7819cb6cc3168d1763d8e8b8418d57786d907387057",
+        "verified": true
+      },
+      {
+        "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+        "blob": "951e363078830b74057fc9132cc0a9102cff3359",
+        "sha256lf": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e",
+        "beforeSha256lf": "e5da57686afddb59d6b705c2f355fac86fca35e009c7c50840f5a810f75f2bd7",
+        "verified": true
+      },
+      {
+        "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+        "blob": "017e50f092e30cfc5dd4bfd7fc3d30942f2f077c",
+        "sha256lf": "5686fe46c89e53d1288ffce5761021a93476e495a40fea9eba368901e154b88b",
+        "beforeSha256lf": "ABSENT",
+        "verified": true
+      },
+      {
+        "path": "server/research/assisted-order/quick-order-notifications.test.ts",
+        "blob": "8228898d9f281a7bcafa76a3f8fb0d1d83e9e0e2",
+        "sha256lf": "60f4f5447788c0ab3c86f578b77787f82d729499fbbf74b368af809ebad19ff3",
+        "beforeSha256lf": "ABSENT",
+        "verified": true
+      },
+      {
+        "path": "server/research/assisted-order/quick-order-repository.ts",
+        "blob": "fb6272f4ca01d72ef0e83414386903fd31039fb0",
+        "sha256lf": "034b92f07a20c6990d7b2cbd9760cd51119cad46b9dec6a217cab4a869d6c7fb",
+        "beforeSha256lf": "5a628e296a907dfe11e099a797c55a4c737f2bc803e43e67e692bc0e0494e657",
+        "verified": true
+      }
+    ],
+    "changedSourcePaths": 9,
+    "acceptedQOModuleTreesUnchanged": true,
+    "recordsSourceUnchanged": true,
+    "originalPatch": "b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f",
+    "uiCorrection": "6f5d90136f23c65c668cddaf4d6ba7a29d7a3c3b5104747c9f01421600e3ff6d",
+    "pureAmendment": "Three lines export proposed wrapper RPC constant; decoder behavior unchanged",
+    "copies": [
+      {
+        "path": "QUICK_ORDER_SHARED_PRODUCER_SOURCE_9118a82.json",
+        "sha256": "c08b5f9e7bf648efb4f889de1025d4e44634ee7017edce33d2014c19ad60255f"
+      },
+      {
+        "path": "QUICK_ORDER_SHARED_PRODUCER_HANDOFF_4669493.md",
+        "sha256": "f3a05dd0df5602c155586256161f3301514ec873bb3cfb88d1c7d4cf7a4d491f"
+      },
+      {
+        "path": "QUICK_ORDER_SHARED_PRODUCER_REPORT_4669493.md",
+        "sha256": "c46d39c99c2eaa4c9f61ed71c795c8b14273badfa8b81e0f6ce892468464854b"
+      }
+    ],
+    "tests": "AUTHORED_NOT_RUN",
+    "review": "PENDING_SAME_ORIGINAL_REVIEWER",
+    "runtime": "Future service-only reader RPC unavailable; no durable QO save or real readback/payment/live action",
+    "fixtureCorrection": "Exact additional provider-journal-http.test.ts patch8396609 pending actual user answer"
+  },
+  "compositionAssignment": {
+    "status": "SENT_AWAITING_ACK",
+    "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "promptRecord": "QUICK_ORDER_COMPOSITION_ASSIGNMENT_20261006.txt",
+    "prerequisite": "4669493ba48c2afbdfb844813cfc066442ddd78d",
+    "scope": "Exactly four new composition tests already approved at1d4f2c3/dc3329; no runtime edits or execution"
+  },
+  "providerFixtureQuestion": {
+    "issued": true,
+    "tool": "request_user_input_async",
+    "scopeCommit": "95858ba6045786ac0e0100218ceecde8707ac28e",
+    "patchSha256": "8396609b413bc93990adea937861427ec07787f6ea126e19f926b42398d01498",
+    "path": "server/research/assisted-order/provider-journal-http.test.ts",
+    "status": "PENDING_ACTUAL_USER_ANSWER",
+    "note": "Additional exact test path; no execution. Do not repeat question or infer answer from elapsed time."
   }
 }

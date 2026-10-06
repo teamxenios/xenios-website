@@ -1,0 +1,19 @@
+Continue in the SAME builder after your current shared readback/notification source and records are coherently committed and pushed. This is the separately sequenced composition-test source slice already included in Samuel's approved supplemental packet at1d4f2c3 and actual answer atdc3329; it is not a new qualification group or runtime scope.
+
+Read the approved packet's “Additional composition test scope” section and exact sidecar baselines. Recheck current Git and conflicts, preserve the frozen pure10208fe and shared successor, and extend only your own existing lease for these four NEW paths:
+client/src/research/quick-order/QuickOrderApp.composition.test.tsx
+server/research/health/quick-order/static-document.test.ts
+server/research/health/quick-order/vite-document.test.ts
+server/research/health/quick-order/root-composition.test.ts
+
+Implement exactly the described test source:
+- Render actual default App plus actual QuickOrderPage/PublicShell at the owned route. Declare synthetic auth/network boundaries. Keep actual privacy/PWA predicates and actual PwaLifecycle sibling composition; assert unavailable/no-collection behavior, one shell and appropriate root/Research/Care controls.
+- Actual serveStatic with a synthetic built shell; direct GET/HEAD owned-route document policy and privacy headers; public and Access Hub controls.
+- Actual setupVite document fallback with a controlled Vite transport boundary, explicitly label mocked transform as composition-unit scope, not real Vite/browser proof.
+- Actual server/index.ts boot under an explicitly allowlisted synthetic environment and loopback dependencies. Cover owned raw API refusal before parsers/fallback, malformed/oversized bodies and unrelated route controls. Bounded child output/exit recording and cleanup only of test-owned processes/files. Reconstructed Express alone is insufficient. Use the existing production-boot test only as a read-only pattern; do not alter it or its environment fixture.
+
+Do NOT RUN any test, demo, child process, Vite/server/browser, build, typecheck, syntax check or resource precheck while authoring. Tests describe future execution only. G1 remains consumed/refused1of6; five remain, no active slot, material host change unestablished; expiry21:43:37Z. Source authoring does not establish any rendered, HTTP, native, persistence or release qualification.
+
+Runtime files server/static.ts, server/vite.ts, App/PWA/privacy, actual boot and configuration stay frozen. If an unavoidable seam or runtime correction is required, return a concrete exact amendment before editing rather than reconstructing the target or weakening assertions. No new dependencies/configuration path, SQL/currentness/complete commit RPC, live reader cutover, notification sends/payment/deploy/protected acceptance/manifest. The original reviewer is already reviewing ac36e60/design/pure10208fe and no replacement is requested.
+
+The extra provider-journal-http.test.ts fixture remains separately pending Samuel's actual answer unless the coordinator records it. Its hold does not block these already approved four paths. Return a separate pushed source/tree/records checkpoint, exact file bindings, explicit synthetic boundaries and NOT RUN status.

@@ -1,0 +1,94 @@
+{
+  "at": "2026-10-06T18:49:56.954Z",
+  "sourceSha": "9118a82633e9f10637764c896ce2a6e53ad1e3eb",
+  "sourceTree": "5142b61564921cbe892099c8ef55896935508fa9",
+  "pushed": true,
+  "base": "e7e3d446ff36a549f023dbc64f6fbb275e614125",
+  "source": [
+    {
+      "path": "shared/research/assisted-order/contract.ts",
+      "blob": "6d865f3d71ed1ea8bf8957a092e7faa3cc10fd2c",
+      "sha256lf": "1a9eed498adf0144b84d0e52afe9b9e0c250847749289ad295561aec7581ef34",
+      "beforeSha256lf": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9"
+    },
+    {
+      "path": "server/research/assisted-order/supabase-repository.ts",
+      "blob": "8da0f773db6ef4f6dbca145b67232731b8fcf693",
+      "sha256lf": "274493e5b0618222b919adf6ab4d7613b04f58247ed79c5a7d29ab9076772e53",
+      "beforeSha256lf": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327"
+    },
+    {
+      "path": "server/research/assisted-order/service.ts",
+      "blob": "4d8d2f1d2f196a37f0c42c2e18373849f7ecd11a",
+      "sha256lf": "57ea0b0202f0648aa9324ca6f1f24c5dedb1a761d1d4d85a80fda21e8ebacc67",
+      "beforeSha256lf": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960"
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+      "blob": "f495b99bdad726d1644162f859cedc1a87738320",
+      "sha256lf": "b47b37debe3abe010e1b8cb1dc43563d9977f6b7b4f0e23f24276a0c61470bcc",
+      "beforeSha256lf": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e"
+    },
+    {
+      "path": "server/research/assisted-order/communications.ts",
+      "blob": "91693893337154db7a23bcf9177ba85aeb2f7a3c",
+      "sha256lf": "1c68368095d1c92163155f90cd15de21050abfd1f5856d9408540388c6a18c64",
+      "beforeSha256lf": "91ea8d26fdb82d2607e7a7819cb6cc3168d1763d8e8b8418d57786d907387057"
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+      "blob": "951e363078830b74057fc9132cc0a9102cff3359",
+      "sha256lf": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e",
+      "beforeSha256lf": "e5da57686afddb59d6b705c2f355fac86fca35e009c7c50840f5a810f75f2bd7"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+      "blob": "017e50f092e30cfc5dd4bfd7fc3d30942f2f077c",
+      "sha256lf": "5686fe46c89e53d1288ffce5761021a93476e495a40fea9eba368901e154b88b",
+      "beforeSha256lf": "ABSENT"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-notifications.test.ts",
+      "blob": "8228898d9f281a7bcafa76a3f8fb0d1d83e9e0e2",
+      "sha256lf": "60f4f5447788c0ab3c86f578b77787f82d729499fbbf74b368af809ebad19ff3",
+      "beforeSha256lf": "ABSENT"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.ts",
+      "blob": "fb6272f4ca01d72ef0e83414386903fd31039fb0",
+      "sha256lf": "034b92f07a20c6990d7b2cbd9760cd51119cad46b9dec6a217cab4a869d6c7fb",
+      "beforeSha256lf": "5a628e296a907dfe11e099a797c55a4c737f2bc803e43e67e692bc0e0494e657"
+    }
+  ],
+  "retainedAcceptedModule": [
+    {
+      "path": "client/src/research/quick-order",
+      "acceptedTree": "6a1885cabcc881c070023932ca3196b0941ad36c",
+      "currentTree": "6a1885cabcc881c070023932ca3196b0941ad36c"
+    },
+    {
+      "path": "server/research/health/quick-order",
+      "acceptedTree": "f2de2cf4b7f736f78ce9689f43947d51dee3baa4",
+      "currentTree": "f2de2cf4b7f736f78ce9689f43947d51dee3baa4"
+    }
+  ],
+  "originalPatchSha256": "b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f",
+  "appliedUiAmendmentSha256": "6f5d90136f23c65c668cddaf4d6ba7a29d7a3c3b5104747c9f01421600e3ff6d",
+  "pureModuleAmendment": "Three lines export proposed wrapper RPC constant; decoder behavior unchanged",
+  "staticChecks": [
+    "six original before hashes and original patch matched",
+    "zero active conflicts in389a and3221 before lease extension",
+    "original patch apply and reverse check passed before UI amendment",
+    "UI before/after pairs matched",
+    "git diff --cached --check exit0 before source commit",
+    "exact nine-path source delta",
+    "accepted QO module directory trees unchanged"
+  ],
+  "execution": "NOT RUN",
+  "independentAcceptance": "PENDING",
+  "pendingAmendment": "PROVIDER_JOURNAL_FIXTURE_AMENDMENT_PROPOSED_20261006.patch",
+  "deployment": "HELD; future reader RPC must be installed and qualified before cutover",
+  "customerCapability": "Unavailable; no successful durable request",
+  "operatorCapability": "Source candidate only; actual readback not qualified",
+  "paymentCapability": "No new payment authority or operation"
+}
