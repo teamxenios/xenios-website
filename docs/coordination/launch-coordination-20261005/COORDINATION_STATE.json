@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-06T19:36:49.775Z",
+  "updatedAt": "2026-10-06T19:42:51.563Z",
   "objective": "Automate verified Codex-Claude-ChatGPT launch coordination, preserve accepted source and implement the separately authorized Quick Order intake while production authorities remain held.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -1611,7 +1611,7 @@
         "supersededBy": "Final reviewca1c114 creates section5A/B drafting dependency-ready work; prior parked checkpoint remains historical"
       },
       "draftingAssignment": {
-        "status": "ACKNOWLEDGED_ACTIVE",
+        "status": "CONTRACT_PUSHED_CANDIDATE_DRAFTING_ACTIVE",
         "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
         "baseline": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
         "authority": "dc3329bb2cfb3b93d8d054c8bbc77a291df0e671",
@@ -1627,6 +1627,15 @@
           "confirmation": "wait_threads active turn plus read_thread public acknowledgement; do not duplicate",
           "message": "msg_0f39ac48c4ef0110016ac54ccb567087d1bdc3bf4c7968fd7b",
           "text": "I’ll read the original reviewer’s exact verdict and record the contract amendment first. After that checkpoint is pushed, I’ll draft the approved SQL candidates and verifier source. The guard triggers, commit body, runtime changes, and all execution remain held."
+        },
+        "contractCheckpoint": {
+          "records": "b75325afb11e46ded157b85090933fc00f31af19",
+          "tree": "1b51cd6149385383388eb7266c255c7048afa33c",
+          "sourceChanges": false,
+          "referenceBindingsVerified": 55,
+          "checkpoint": "QUICK_ORDER_DRAFT_CONTRACT_COORDINATOR_CHECKPOINT.json",
+          "wrapperPrerequisite": "SATISFIED_RECORDED_PUSHED_CONTRACT",
+          "independentSuccessorAcceptance": false
         }
       }
     }

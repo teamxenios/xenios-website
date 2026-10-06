@@ -1,0 +1,390 @@
+{
+  "at": "2026-10-06T19:36:08.594Z",
+  "base": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
+  "sourceBaseline": "5fd2e4c74d31562281493013489bb41949979b88",
+  "review": "ca1c114a083793918b18d017b32509864ee4bcf6",
+  "approval": "dc3329bb2cfb3b93d8d054c8bbc77a291df0e671",
+  "scope": "1d4f2c3b3ff2fc0e1bc25495d3076d2bd9a76e99",
+  "newPaths": [
+    "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+    "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+    "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+    "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+    "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+    "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+    "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+    "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+    "supabase/verification/research_health_quick_order_local.mjs",
+    "supabase/verification/research_health_quick_order_currentness_local.mjs"
+  ],
+  "testPaths": [
+    "server/research/assisted-order/quick-order-admin-readback.test.ts",
+    "server/research/assisted-order/quick-order-notifications.test.ts"
+  ],
+  "allNewTargetsAbsent": true,
+  "activeConflicts": [],
+  "inventory": [
+    {
+      "path": "shared/research/assisted-order/contract.ts",
+      "sha256lf": "1a9eed498adf0144b84d0e52afe9b9e0c250847749289ad295561aec7581ef34",
+      "originalPacketSha256lf": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9"
+    },
+    {
+      "path": "server/research/assisted-order/supabase-repository.ts",
+      "sha256lf": "274493e5b0618222b919adf6ab4d7613b04f58247ed79c5a7d29ab9076772e53",
+      "originalPacketSha256lf": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327"
+    },
+    {
+      "path": "server/research/assisted-order/service.ts",
+      "sha256lf": "57ea0b0202f0648aa9324ca6f1f24c5dedb1a761d1d4d85a80fda21e8ebacc67",
+      "originalPacketSha256lf": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960"
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+      "sha256lf": "b47b37debe3abe010e1b8cb1dc43563d9977f6b7b4f0e23f24276a0c61470bcc",
+      "originalPacketSha256lf": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e"
+    },
+    {
+      "path": "server/research/assisted-order/communications.ts",
+      "sha256lf": "1c68368095d1c92163155f90cd15de21050abfd1f5856d9408540388c6a18c64",
+      "originalPacketSha256lf": "91ea8d26fdb82d2607e7a7819cb6cc3168d1763d8e8b8418d57786d907387057"
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+      "sha256lf": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e",
+      "originalPacketSha256lf": "e5da57686afddb59d6b705c2f355fac86fca35e009c7c50840f5a810f75f2bd7"
+    },
+    {
+      "path": "server/research/health/quick-order/ports.ts",
+      "sha256lf": "8da9b4327bac927a4f57685fcee6d40c968c3ccca3dcd546f74f8e6bb5da2e14",
+      "originalPacketSha256lf": "8da9b4327bac927a4f57685fcee6d40c968c3ccca3dcd546f74f8e6bb5da2e14"
+    },
+    {
+      "path": "server/research/health/quick-order/production.ts",
+      "sha256lf": "d3cc0bffa4a0a3dce0963a422c5c58a3fb0a5142c455d2891f295204eb1a2b32",
+      "originalPacketSha256lf": "d3cc0bffa4a0a3dce0963a422c5c58a3fb0a5142c455d2891f295204eb1a2b32"
+    },
+    {
+      "path": "server/research/health/quick-order/catalog.ts",
+      "sha256lf": "43458fb0279f1298aca4582053bf98163910b85ccbb7169cec2d690879a20037",
+      "originalPacketSha256lf": "43458fb0279f1298aca4582053bf98163910b85ccbb7169cec2d690879a20037"
+    },
+    {
+      "path": "server/research/health/quick-order/legal.ts",
+      "sha256lf": "f8f36c9c9e2756426aea9bf97d67fb23e7111ef93617d45696a5127cb714967e",
+      "originalPacketSha256lf": "f8f36c9c9e2756426aea9bf97d67fb23e7111ef93617d45696a5127cb714967e"
+    },
+    {
+      "path": "supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
+      "sha256lf": "3e59df2650dedb1d13dbe604c57ae35c0de9e28409c06cd41332b8ae9020d8d7",
+      "originalPacketSha256lf": "3e59df2650dedb1d13dbe604c57ae35c0de9e28409c06cd41332b8ae9020d8d7"
+    },
+    {
+      "path": "supabase/migrations/20260820190000_research_assisted_order_declared_affiliate_code.sql",
+      "sha256lf": "f9ab3892560bf5002417b3302919367d400971253ac8455a16e310b041403fda",
+      "originalPacketSha256lf": "f9ab3892560bf5002417b3302919367d400971253ac8455a16e310b041403fda"
+    },
+    {
+      "path": "supabase/migrations/20260930193033_research_assisted_order_quote_paid_hold.sql",
+      "sha256lf": "2a4ece6bb76e2e912285ae212331987708b44442a81ed66c91140fcb20376845",
+      "originalPacketSha256lf": "2a4ece6bb76e2e912285ae212331987708b44442a81ed66c91140fcb20376845"
+    },
+    {
+      "path": "supabase/migrations/20260930202413_research_assisted_order_quote_payment_authority.sql",
+      "sha256lf": "f59dc7d285a7c5714ec1a81ec2e0dfb469ef4434da355f15a85ca1e366c5a894",
+      "originalPacketSha256lf": "f59dc7d285a7c5714ec1a81ec2e0dfb469ef4434da355f15a85ca1e366c5a894"
+    },
+    {
+      "path": "supabase/migrations/20260930234614_research_assisted_order_quote_provider_hold.sql",
+      "sha256lf": "6596f26125c6279717168276fe96132056c9aa3ef150606583fbaf9045c208fe",
+      "originalPacketSha256lf": "6596f26125c6279717168276fe96132056c9aa3ef150606583fbaf9045c208fe"
+    },
+    {
+      "path": "supabase/migrations/20261001040351_research_assisted_order_quote_effects.sql",
+      "sha256lf": "8121e537df0f3028b73be5c03b66912b8a04498c8d646aa7f5d1edba4071f743",
+      "originalPacketSha256lf": "8121e537df0f3028b73be5c03b66912b8a04498c8d646aa7f5d1edba4071f743"
+    },
+    {
+      "path": "supabase/migrations/20261001062651_research_assisted_order_quote_no_funds_disposition.sql",
+      "sha256lf": "512799646a0779dcaa88ea036a9920ff2f54c33b48ff831825e9870dcd0b8881",
+      "originalPacketSha256lf": "512799646a0779dcaa88ea036a9920ff2f54c33b48ff831825e9870dcd0b8881"
+    },
+    {
+      "path": "supabase/migrations/20261001085559_research_assisted_order_quote_provider_journal.sql",
+      "sha256lf": "15de2acb72835b520b1e902641e334643c18b7ea0ad9bcb8f6be4dca77668875",
+      "originalPacketSha256lf": "15de2acb72835b520b1e902641e334643c18b7ea0ad9bcb8f6be4dca77668875"
+    },
+    {
+      "path": "supabase/migrations/20261001102904_research_assisted_order_quote_provider_execution.sql",
+      "sha256lf": "5386c62508e5f3ae9a3584c936ece35e04fe13c1fef42f1627e3784327de7035",
+      "originalPacketSha256lf": "5386c62508e5f3ae9a3584c936ece35e04fe13c1fef42f1627e3784327de7035"
+    },
+    {
+      "path": "supabase/migrations/20261001115512_research_assisted_order_quote_provider_settlement.sql",
+      "sha256lf": "1470740bf17a0fbb9a2eeaffe9173712861a17da15d52b5492ca1f28e2c91e6f",
+      "originalPacketSha256lf": "1470740bf17a0fbb9a2eeaffe9173712861a17da15d52b5492ca1f28e2c91e6f"
+    },
+    {
+      "path": "supabase/migrations/20261001160730_research_assisted_order_provider_quarantine_isolation.sql",
+      "sha256lf": "91a20f681038a5e845137feb6556c4041b1645f6b2c8f9122bc7c9e85280f477",
+      "originalPacketSha256lf": "91a20f681038a5e845137feb6556c4041b1645f6b2c8f9122bc7c9e85280f477"
+    },
+    {
+      "path": "client/src/main.tsx",
+      "sha256lf": "8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162",
+      "originalPacketSha256lf": "8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162"
+    },
+    {
+      "path": "client/src/clarity/PublicShell.tsx",
+      "sha256lf": "3ba0d3fd5aff043be7729dfd03c6d048e44241472318c15293f217ea59e0b0dc",
+      "originalPacketSha256lf": "3ba0d3fd5aff043be7729dfd03c6d048e44241472318c15293f217ea59e0b0dc"
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderPage.tsx",
+      "sha256lf": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b",
+      "originalPacketSha256lf": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b"
+    },
+    {
+      "path": "server/static.ts",
+      "sha256lf": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94",
+      "originalPacketSha256lf": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94"
+    },
+    {
+      "path": "server/vite.ts",
+      "sha256lf": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243",
+      "originalPacketSha256lf": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243"
+    },
+    {
+      "path": "server/research/assisted-order/production-boot.test.ts",
+      "sha256lf": "f3494beb131edf7d8b739acc50f9445548bf3614fae0f60ba1bba5ddbab89893",
+      "originalPacketSha256lf": "f3494beb131edf7d8b739acc50f9445548bf3614fae0f60ba1bba5ddbab89893"
+    },
+    {
+      "path": "server/research/assisted-order/production-env-shape.fixture.json",
+      "sha256lf": "be34e4d26cebbce8bc3bc73a4625786402a13b48bea14bd3ec00e9035cd4a92d",
+      "originalPacketSha256lf": "be34e4d26cebbce8bc3bc73a4625786402a13b48bea14bd3ec00e9035cd4a92d"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256lf": "24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0",
+      "originalPacketSha256lf": "24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"
+    },
+    {
+      "path": "server/research/products-diagnostics/product-admin-production.ts",
+      "sha256lf": "f4647cb225129d5ed61a2e0c2968850b1ba183ba25de9a64cc86d928d2544867",
+      "originalPacketSha256lf": "f4647cb225129d5ed61a2e0c2968850b1ba183ba25de9a64cc86d928d2544867"
+    },
+    {
+      "path": "server/research/catalog/member-catalog-service.ts",
+      "sha256lf": "26266ed95aab6afecdb9b01200867a58cd33cc382d930a737f51a25fd6222cd7",
+      "originalPacketSha256lf": "26266ed95aab6afecdb9b01200867a58cd33cc382d930a737f51a25fd6222cd7"
+    },
+    {
+      "path": "server/research/member-auth.ts",
+      "sha256lf": "ff1b57df93e162c99293f38e8f78f8888c6ca6d909c14c0e3b92d7112ad3f915",
+      "originalPacketSha256lf": "ff1b57df93e162c99293f38e8f78f8888c6ca6d909c14c0e3b92d7112ad3f915"
+    },
+    {
+      "path": "server/research/master-offerings/member-pricing-viewer.ts",
+      "sha256lf": "8105b937ede49625bdd28bb14c1817ccef8baaf7ac09b5f76cd72f38a5628312",
+      "originalPacketSha256lf": "8105b937ede49625bdd28bb14c1817ccef8baaf7ac09b5f76cd72f38a5628312"
+    },
+    {
+      "path": "server/research/master-offerings/composition.ts",
+      "sha256lf": "e931efee2ed38a005b42e3eaf699f85fc4a659f2397b228051cbd6ca5764e80e",
+      "originalPacketSha256lf": "e931efee2ed38a005b42e3eaf699f85fc4a659f2397b228051cbd6ca5764e80e"
+    },
+    {
+      "path": "server/research/master-offerings/reviewed-holds.ts",
+      "sha256lf": "6b53a51cb4a37e8564e588270b27b1dbaafe6dbe111d72f53ea9ae0ab06615ae",
+      "originalPacketSha256lf": "6b53a51cb4a37e8564e588270b27b1dbaafe6dbe111d72f53ea9ae0ab06615ae"
+    },
+    {
+      "path": "server/research/master-offerings/reconciliation-authority.ts",
+      "sha256lf": "dfb8a7756a2c7ab344d06c02490a45dab2d324c47d32445f48a863bcc197c429",
+      "originalPacketSha256lf": "dfb8a7756a2c7ab344d06c02490a45dab2d324c47d32445f48a863bcc197c429"
+    },
+    {
+      "path": "server/research/partners/referral-v1-attribution.ts",
+      "sha256lf": "aaa0cf8398c8c5a71cdf3b33840b949b9b5b91016547c3b197901ed0204d7881",
+      "originalPacketSha256lf": "aaa0cf8398c8c5a71cdf3b33840b949b9b5b91016547c3b197901ed0204d7881"
+    },
+    {
+      "path": "supabase/research-required-input-readiness.sql",
+      "sha256lf": "ffbd07e9c42703299cc9babe0f7c680bc6a22e88e7fae5c4c0fd66c7a93e6b8f",
+      "originalPacketSha256lf": "ffbd07e9c42703299cc9babe0f7c680bc6a22e88e7fae5c4c0fd66c7a93e6b8f"
+    },
+    {
+      "path": "supabase/migrations/20260727120000_research_inventory_lot_coa_admin.sql",
+      "sha256lf": "65a98ccdb43c4adb541d0e21c1cc54b7bfb618755dc37f679414e3dba7a48524",
+      "originalPacketSha256lf": "65a98ccdb43c4adb541d0e21c1cc54b7bfb618755dc37f679414e3dba7a48524"
+    },
+    {
+      "path": "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql",
+      "sha256lf": "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005",
+      "originalPacketSha256lf": "4e30807c7f58abc2d819abf509914364b55cba029586b3492329bacb7eef6005"
+    },
+    {
+      "path": "supabase/migrations/20260804120000_research_early_access_identity_persistence.sql",
+      "sha256lf": "3ac2f40f9627d8952db3a181a2ae0174565bda1fe469e3bfc5661a02108c5e28",
+      "originalPacketSha256lf": "3ac2f40f9627d8952db3a181a2ae0174565bda1fe469e3bfc5661a02108c5e28"
+    },
+    {
+      "path": "supabase/migrations/20260804122000_research_early_access_supplier_operations.sql",
+      "sha256lf": "fa12c45348c25826f63a5ad0a001a34ecfb847ef6e97a9470ff9fc96b1fd134c",
+      "originalPacketSha256lf": "fa12c45348c25826f63a5ad0a001a34ecfb847ef6e97a9470ff9fc96b1fd134c"
+    },
+    {
+      "path": "supabase/migrations/20260809130000_research_early_access_hardening.sql",
+      "sha256lf": "c68ccc679bd04dc2ff6aeb460100ee3e9ec470a58a094274821c5b3f1697a7c1",
+      "originalPacketSha256lf": "c68ccc679bd04dc2ff6aeb460100ee3e9ec470a58a094274821c5b3f1697a7c1"
+    },
+    {
+      "path": "supabase/research-private-early-access-sessions.sql",
+      "sha256lf": "7365f2a6ae224d8a45e2d32ab437d07ea1e83470314e2f0ba7227f3d3e3eea38",
+      "originalPacketSha256lf": "7365f2a6ae224d8a45e2d32ab437d07ea1e83470314e2f0ba7227f3d3e3eea38"
+    },
+    {
+      "path": "supabase/candidates/20260904_research_partner_referral_v1.sql",
+      "sha256lf": "69d6f8558550ffb63caed08bdb5cac6d51c96cf80d9c54a9598685d08f82aefb",
+      "originalPacketSha256lf": "69d6f8558550ffb63caed08bdb5cac6d51c96cf80d9c54a9598685d08f82aefb"
+    },
+    {
+      "path": "supabase/candidates/20260914_research_referral_v1_touch_attribution.sql",
+      "sha256lf": "297d052369c8df25808be805753693c85ec7e0c2ec2624430e5ca2ce33f1db18",
+      "originalPacketSha256lf": "297d052369c8df25808be805753693c85ec7e0c2ec2624430e5ca2ce33f1db18"
+    },
+    {
+      "path": "supabase/migrations/20260930230541_research_assisted_order_quote_evidence_corrections.sql",
+      "sha256lf": "434885ea1f61f424f88ac827e8f57775be3ec9dc93c0896ecabd681cf69a0f66",
+      "originalPacketSha256lf": null
+    },
+    {
+      "path": "supabase/migrations/20261001024018_research_assisted_order_quote_history_immutability.sql",
+      "sha256lf": "0956316142dd52724729b1653f0d3732b2c45e17074e64ad7f8888582407243f",
+      "originalPacketSha256lf": null
+    },
+    {
+      "path": "supabase/research-notification-outbox.sql",
+      "sha256lf": "70cee0109dce7401431de9449a1312076ad61b7081ed31b9b8a9659bc6cca7ac",
+      "originalPacketSha256lf": null
+    },
+    {
+      "path": "supabase/migrations/20260927203000_research_status_recovery.sql",
+      "sha256lf": "98cce457db8d82c72a399223117dcf4d98488dc153f3d1883e65a07e95220292",
+      "originalPacketSha256lf": null
+    },
+    {
+      "path": "shared/research/assisted-order/quick-order.ts",
+      "sha256lf": "3d2fbc4b79a37f253d81291eee691dcba4d7c941b9ae95555ced49c703a095f2",
+      "originalPacketSha256lf": null
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.ts",
+      "sha256lf": "034b92f07a20c6990d7b2cbd9760cd51119cad46b9dec6a217cab4a869d6c7fb",
+      "originalPacketSha256lf": null
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.test.ts",
+      "sha256lf": "78aceede0a53a03cc7da4588be2cb4882b8a94b2767f00dbdb8b78b41d9c053a",
+      "originalPacketSha256lf": null
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+      "sha256lf": "5686fe46c89e53d1288ffce5761021a93476e495a40fea9eba368901e154b88b",
+      "originalPacketSha256lf": null
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-notifications.test.ts",
+      "sha256lf": "60f4f5447788c0ab3c86f578b77787f82d729499fbbf74b368af809ebad19ff3",
+      "originalPacketSha256lf": null
+    }
+  ],
+  "execution": "NOT RUN",
+  "canonicalTriggers": [
+    {
+      "relation": "research_assisted_order_requests",
+      "name": "research_assisted_order_paid_hold",
+      "enabled": "O"
+    },
+    {
+      "relation": "research_assisted_order_requests",
+      "name": "hl12_observed_cancel",
+      "enabled": "O"
+    },
+    {
+      "relation": "research_assisted_order_requests",
+      "name": "hl12_history_progression",
+      "enabled": "O"
+    },
+    {
+      "relation": "research_assisted_order_requests",
+      "name": "aa_hl12_disposition_terminal",
+      "enabled": "O"
+    },
+    {
+      "relation": "research_assisted_order_requests",
+      "name": "aaa_adp01_uncertainty",
+      "enabled": "A"
+    },
+    {
+      "relation": "research_assisted_order_requests",
+      "name": "adp03_request_identity",
+      "enabled": "A"
+    },
+    {
+      "relation": "research_assisted_order_events",
+      "name": "research_assisted_order_events_append_only",
+      "enabled": "A"
+    },
+    {
+      "relation": "research_assisted_order_events",
+      "name": "research_assisted_order_paid_event_evidence",
+      "enabled": "A"
+    },
+    {
+      "relation": "research_assisted_order_events",
+      "name": "hl12_disposition_cancel_event",
+      "enabled": "O"
+    },
+    {
+      "relation": "research_assisted_order_events",
+      "name": "adp03_paid_event",
+      "enabled": "A"
+    },
+    {
+      "relation": "research_notification_outbox",
+      "name": "hl12_payment_effects_outbox_guard",
+      "enabled": "A"
+    },
+    {
+      "relation": "research_notification_outbox",
+      "name": "hl12_payment_effects_outbox_truncate",
+      "enabled": "A"
+    },
+    {
+      "relation": "research_notification_outbox",
+      "name": "hl12_disposition_effects_outbox",
+      "enabled": "O"
+    },
+    {
+      "relation": "research_notification_outbox",
+      "name": "hl12_disposition_effects_truncate",
+      "enabled": "O"
+    }
+  ],
+  "registryIntegrity": [
+    {
+      "path": ".xenios/ACTIVE_TASKS.json",
+      "foreignRowsAndGlobalFieldsPreserved": true
+    },
+    {
+      "path": ".xenios/SESSION_REGISTRY.json",
+      "foreignRowsAndGlobalFieldsPreserved": true
+    },
+    {
+      "path": ".xenios/CODE_OWNERSHIP.json",
+      "foreignRowsAndGlobalFieldsPreserved": true
+    }
+  ]
+}
