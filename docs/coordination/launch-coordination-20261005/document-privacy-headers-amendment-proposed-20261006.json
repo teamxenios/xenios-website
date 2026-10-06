@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-06T18:59:50.896Z",
+  "status": "PROPOSED_NOT_APPLIED",
+  "base": "4669493ba48c2afbdfb844813cfc066442ddd78d",
+  "target": "server/static.ts",
+  "beforeSha256lf": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94",
+  "afterSha256lf": "9a3cf7068562184ef84f3b0a54fff5763e0d563e89c237bcba6d95dab0cbd940",
+  "patchPath": "docs/health-launch/quick-order-20261005/DOCUMENT_PRIVACY_HEADERS_AMENDMENT_PROPOSED_20261006.patch",
+  "patchSha256": "8392d24308c3dc106c00317f4cd9550d94e956d008051c617c0126d610330fa9",
+  "reason": "Real sendRawHttpDocument sets no-store/no-cache/no-referrer only for /status. Required Quick Order document headers absent in frozen source; both serveStatic and setupVite use it.",
+  "scope": "Reuse existing isHealthIntakePath; preserve /status headers; no Vite runtime edit; no other document policy changed",
+  "execution": "NOT RUN; source-predicted regression only",
+  "authority": "Runtime frozen. Requires exact amendment disposition before target edit."
+}
