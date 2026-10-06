@@ -1,3 +1,13 @@
+## Current source sprint — 2026-10-06 17:43:37Z
+
+Samuel's user-designated pasted request (turn 01a11250, attachment a276ed40) includes the explicit kickoff adopting S1–S5. Exact request and all 24 verified package files are preserved in quick-order-first-plan-20261006/. See QUICK_ORDER_FIRST_SPRINT_20261006.json. The four-hour window ends 21:43:37Z; factual checkpoint due 18:43:37Z; maximum six qualification groups. This supersedes earlier source-only holds only within its exact scope.
+
+Six A1 before-hashes and the PWA runtime baseline match builder 5ee44d5. Existing builder owns the next disabled mount/privacy/PWA slice after exact lease extension. G1 is reserved conditionally for its one new precheck and existing mandatory HTTP red/green plan. No production, database execution, live intake, payment, final hash acceptance or manifest recut is approved. Currentness implementation and existing shared services still need one supplemental exact scope; naming/fence compatibility review precedes colliding A2 SQL.
+
+The same original Claude remains acceptance owner. The separate Handoff Bridge v0.2 verdict is complete and is off this sprint's critical path. Do not restart it or reuse its retained execution as website qualification.
+
+Earlier dated records below remain historical; the new sprint record controls the above changed source permissions.
+
 # Xenios launch coordination — 2026-10-05
 
 This records-only branch starts from parked Finance handoff 963122ce355568d118c00ed6e774b474e2f50101. Never merge its ancestry into a release merely to collect records. Current Git, production observations and direct user decisions outrank this checkpoint. COORDINATION_STATE.json contains exact identities and evidence paths.

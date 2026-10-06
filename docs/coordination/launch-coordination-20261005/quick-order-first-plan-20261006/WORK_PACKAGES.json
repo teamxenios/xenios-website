@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "kind": "planning_only",
+  "roles": [
+    {
+      "id": "01",
+      "tier": "Supreme",
+      "name": "COORDINATOR",
+      "requested_model": "Codex GPT-6 Astra / Ultra or highest available",
+      "owner_preference": "Existing launch coordinator 01a103a8-5684-7272-89e5-3c42eefcd593",
+      "goal": "Control the Quick Order-first critical path and allocate the other work packages.",
+      "prompt": "prompts/01_SUPREME_COORDINATOR.md",
+      "state": "DEFINED_NOT_DISPATCHED",
+      "authority": "Verify live user permission and exact file ownership before action",
+      "phase_a_role": true
+    },
+    {
+      "id": "02",
+      "tier": "Supreme",
+      "name": "QUICK_ORDER_OWNER",
+      "requested_model": "Codex GPT-6 Astra / Ultra or highest available",
+      "owner_preference": "Reuse Quick Order builder 01a10d78-0981-7150-9292-c5cde2730d4d, checkout 389a",
+      "goal": "Complete the customer Quick Order experience and real application composition.",
+      "prompt": "prompts/02_SUPREME_QUICK_ORDER_OWNER.md",
+      "state": "DEFINED_NOT_DISPATCHED",
+      "authority": "Verify live user permission and exact file ownership before action",
+      "phase_a_role": true
+    },
+    {
+      "id": "03",
+      "tier": "Supreme",
+      "name": "CLAUDE_ACCEPTANCE",
+      "requested_model": "Claude Fable 5.1 / Ultracode or highest actually available",
+      "owner_preference": "Reuse original Claude 6abf1edf Multi-document project review",
+      "goal": "Independently accept exact deltas and the final real customer journey.",
+      "prompt": "prompts/03_SUPREME_CLAUDE_ACCEPTANCE.md",
+      "state": "DEFINED_NOT_DISPATCHED",
+      "authority": "Verify live user permission and exact file ownership before action",
+      "phase_a_role": true
+    },
+    {
+      "id": "04",
+      "tier": "Mega",
+      "name": "CANONICAL_PERSISTENCE",
+      "requested_model": "Codex GPT-6 Astra / Ultra or highest available",
+      "owner_preference": "Backend specialist assigned by coordinator; reuse a suitable parked owner",
+      "goal": "Implement one durable canonical request transaction after source scope is granted.",
+      "prompt": "prompts/04_MEGA_CANONICAL_PERSISTENCE.md",
+      "state": "DEFINED_NOT_DISPATCHED",
+      "authority": "Verify live user permission and exact file ownership before action",
+      "phase_a_role": true
+    },
+    {
+      "id": "05",
+      "tier": "Mega",
+      "name": "IDENTITY_HEALTH_POLICY",
+      "requested_model": "Codex GPT-6 Astra / Ultra or highest available",
+      "owner_preference": "Small source/policy specialist; read-only contract work before new scope",
+      "goal": "Bind existing authoritative identity, Health classification and current policies.",
+      "prompt": "prompts/05_MEGA_IDENTITY_HEALTH_POLICY.md",
+      "state": "DEFINED_NOT_DISPATCHED",
+      "authority": "Verify live user permission and exact file ownership before action",
+      "phase_a_role": true
+    },
+    {
+      "id": "06",
+      "tier": "Mega",
+      "name": "OPERATOR_NOTIFICATIONS",
+      "requested_model": "Codex GPT-6 Astra / Ultra or highest available",
+      "owner_preference": "Reuse appropriate Core/operator owner with exact service-file split",
+      "goal": "Make each saved Quick Order visible, recoverable and actionable for operations.",
+      "prompt": "prompts/06_MEGA_OPERATOR_NOTIFICATIONS.md",
+      "state": "DEFINED_NOT_DISPATCHED",
+      "authority": "Verify live user permission and exact file ownership before action",
+      "phase_a_role": true
+    },
+    {
+      "id": "07",
+      "tier": "Gold",
+      "name": "PAYMENT_READINESS",
+      "requested_model": "Codex GPT-6 Astra / Ultra or highest available",
+      "owner_preference": "Reuse Finance owner; isolate from accepted release ancestry",
+      "goal": "Close the real purchasing path only after a concrete approved payment rail exists.",
+      "prompt": "prompts/07_GOLD_PAYMENT_READINESS.md",
+      "state": "DEFINED_NOT_DISPATCHED",
+      "authority": "Verify live user permission and exact file ownership before action",
+      "phase_a_role": false
+    },
+    {
+      "id": "08",
+      "tier": "Gold",
+      "name": "CATALOG_MEDIA",
+      "requested_model": "Codex GPT-6 Astra / Ultra or highest available",
+      "owner_preference": "Reuse D/E and imagery owners as separate subtasks, not competing writers",
+      "goal": "Connect truthful canonical product display; defer optional rendering from first intake.",
+      "prompt": "prompts/08_GOLD_CATALOG_MEDIA.md",
+      "state": "DEFINED_NOT_DISPATCHED",
+      "authority": "Verify live user permission and exact file ownership before action",
+      "phase_a_role": false
+    },
+    {
+      "id": "09",
+      "tier": "Gold",
+      "name": "PARTNER_SUBSCRIPTIONS",
+      "requested_model": "Codex GPT-6 Astra / Ultra or highest available",
+      "owner_preference": "Reuse existing affiliate/subscription owner",
+      "goal": "Finish real partner referral and recurring-product flows without inventing offers.",
+      "prompt": "prompts/09_GOLD_PARTNER_SUBSCRIPTIONS.md",
+      "state": "DEFINED_NOT_DISPATCHED",
+      "authority": "Verify live user permission and exact file ownership before action",
+      "phase_a_role": false
+    },
+    {
+      "id": "10",
+      "tier": "Bronze",
+      "name": "PREMIUM_UX_QA",
+      "requested_model": "Claude Fable 5.1 / Ultracode or highest actually available",
+      "owner_preference": "Small read-only UX specialist feeding the single acceptance owner",
+      "goal": "Review the actual site and Quick Order for premium usability, not a new design.",
+      "prompt": "prompts/10_BRONZE_PREMIUM_UX_QA.md",
+      "state": "DEFINED_NOT_DISPATCHED",
+      "authority": "Verify live user permission and exact file ownership before action",
+      "phase_a_role": true
+    },
+    {
+      "id": "11",
+      "tier": "Bronze",
+      "name": "QUALIFICATION",
+      "requested_model": "Codex GPT-6 Astra / Ultra or highest available",
+      "owner_preference": "Execution owner assigned by coordinator; same builder may run its existing plan",
+      "goal": "Prove the frozen real candidate under sufficient compute and preserve exact evidence.",
+      "prompt": "prompts/11_BRONZE_QUALIFICATION.md",
+      "state": "DEFINED_NOT_DISPATCHED",
+      "authority": "Verify live user permission and exact file ownership before action",
+      "phase_a_role": true
+    },
+    {
+      "id": "12",
+      "tier": "Bronze",
+      "name": "INTEGRATION_RELEASE",
+      "requested_model": "Codex GPT-6 Astra / Ultra or highest available",
+      "owner_preference": "Reuse existing Core/integrator 01a0e098-3b23-7233-9b07-877ace092650",
+      "goal": "Assemble accepted code, qualify the actual environment and execute the approved release.",
+      "prompt": "prompts/12_BRONZE_INTEGRATION_RELEASE.md",
+      "state": "DEFINED_NOT_DISPATCHED",
+      "authority": "Verify live user permission and exact file ownership before action",
+      "phase_a_role": true
+    }
+  ],
+  "note": "Not executable queue; no authorization or worker launch. Review/integration are recurring checkpoints, not a one-time acyclic work graph."
+}

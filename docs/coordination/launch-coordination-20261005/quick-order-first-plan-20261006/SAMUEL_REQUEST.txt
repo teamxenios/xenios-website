@@ -1,0 +1,216 @@
+**Let’s make Quick Order the first customer-facing release, then complete the buying path and the rest of the website. I’ve created 12 full work-package prompts, grouped into Supreme, Mega, Gold and Bronze.**
+
+Xenios_Quick_Order_First_12_Package_Plan_2026-10-06.zip[**Download the complete Quick Order-first, 12-package execution plan**](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06.zip)
+
+READ_FIRST_LAUNCH.md[Start here](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/READ_FIRST_LAUNCH.md) · EXECUTION_BRIEF.md[Full execution brief](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/EXECUTION_BRIEF.md) · RELEASE_MILESTONES.md[Release requirements](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/RELEASE_MILESTONES.md)
+
+**These are 12 assignments, not 12 new windows to open simultaneously.** Reuse your existing coordinator, Quick Order builder and Claude reviewer. The coordinator can activate additional specialists when their work is independent and the machine or verified cloud environment can support them.
+
+## First, set the right Quick Order milestone
+
+The current repository still has an **unmounted, disabled Quick Order implementation**. The interface, validation and HTTP safety work exist, but durable submission and actual operator readback are not implemented. The route/privacy patch is prepared, not applied. This is more than a final test or a switch to turn on. 
+
+The existing persistence proposal also identifies a real backend gap: the current submission function cannot atomically preserve the new referral/affiliation information and enforce the required currentness rules. Adding another write afterward would risk partial requests. 
+
+Therefore, I recommend three distinct milestones:
+
+| Milestone | What the customer can actually do | Required outcome |
+|---|---|---|
+| **A. Quick Order intake** | Select eligible products, enter their details, submit a request and receive a reference. | The request is durably saved once, recoverable after a lost response, and visible to an authorized operator. |
+| **B. Quick Order purchasing** | Accept an eligible quote and pay through the approved payment method. | Payment is independently verified against the correct request, amount and currency before fulfillment can advance. |
+| **C. Full-site completion** | Use the complete catalog, account, partner, subscription, status and support journeys. | The included features are integrated, independently reviewed, qualified and verified in production. |
+
+**A one-hour checkpoint is useful. A promise that customers can buy in one hour is not supported by the current implementation.** If taking payment must be part of the first live release, that release must meet milestone B as well. We should not quietly launch request intake and call it checkout.
+
+The first-hour target should be **demonstrable source progress, executed tests where permitted, and a precise remaining path to live intake**. The production milestone follows when the actual customer journey works.
+
+## The 12 assignments
+
+“Supreme,” “Mega,” “Gold” and “Bronze” are organizational labels, not different models or quality standards. All Codex assignments request **GPT-6 Astra Ultra/highest available**. Claude assignments request **Fable 5.1 Ultracode/highest actually available**, with the observed setting reported honestly.
+
+### Supreme: control and the first customer journey
+
+| # | Assignment | Responsibility | Prompt |
+|---|---|---|---|
+| **01** | **Codex coordinator** | Own the critical path, exact assignments, dependencies, resource scheduling and consolidated decisions. | 01_SUPREME_COORDINATOR.md[Coordinator](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/prompts/01_SUPREME_COORDINATOR.md) |
+| **02** | **Quick Order owner** | Finish the existing customer interface, HTTP behavior, session integration and authorized application mount. | 02_SUPREME_QUICK_ORDER_OWNER.md[Quick Order](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/prompts/02_SUPREME_QUICK_ORDER_OWNER.md) |
+| **03** | **Claude acceptance reviewer** | Review exact changes, batch concrete findings and judge the complete customer journey. | 03_SUPREME_CLAUDE_ACCEPTANCE.md[Independent review](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/prompts/03_SUPREME_CLAUDE_ACCEPTANCE.md) |
+
+### Mega: make the request operational
+
+| # | Assignment | Responsibility | Prompt |
+|---|---|---|---|
+| **04** | **Canonical persistence** | Build the authorized durable transaction, duplicate prevention, safe replay and atomic notification obligation. | 04_MEGA_CANONICAL_PERSISTENCE.md[Persistence](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/prompts/04_MEGA_CANONICAL_PERSISTENCE.md) |
+| **05** | **Identity and Health policy** | Bind the actual session, account standing, appropriate Health terms, product eligibility and destination rules. | 05_MEGA_IDENTITY_HEALTH_POLICY.md[Identity and policy](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/prompts/05_MEGA_IDENTITY_HEALTH_POLICY.md) |
+| **06** | **Operator and notifications** | Make saved requests readable in the existing admin workflow, with reliable notification and recovery behavior. | 06_MEGA_OPERATOR_NOTIFICATIONS.md[Operations](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/prompts/06_MEGA_OPERATOR_NOTIFICATIONS.md) |
+
+### Gold: complete commerce and the product experience
+
+| # | Assignment | Responsibility | Prompt |
+|---|---|---|---|
+| **07** | **Payment readiness** | Connect the approved payment rail, verify money, preserve payment history and handle failure/refund/dispute states. | 07_GOLD_PAYMENT_READINESS.md[Payments](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/prompts/07_GOLD_PAYMENT_READINESS.md) |
+| **08** | **Catalog and media** | Preserve canonical identity and availability, connect approved media and keep image state separate from buying eligibility. | 08_GOLD_CATALOG_MEDIA.md[Catalog and imagery](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/prompts/08_GOLD_CATALOG_MEDIA.md) |
+| **09** | **Partners and subscriptions** | Complete real partner/referral behavior and the selected recurring-product flow without inventing offers or commissions. | 09_GOLD_PARTNER_SUBSCRIPTIONS.md[Partners and subscriptions](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/prompts/09_GOLD_PARTNER_SUBSCRIPTIONS.md) |
+
+### Bronze: customer quality and release
+
+| # | Assignment | Responsibility | Prompt |
+|---|---|---|---|
+| **10** | **Claude premium UX review** | Check actual mobile/desktop pages, readability, keyboard access, error recovery and truthful customer copy. | 10_BRONZE_PREMIUM_UX_QA.md[Premium UX](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/prompts/10_BRONZE_PREMIUM_UX_QA.md) |
+| **11** | **Qualification** | Execute the exact tests, build, browser and authorized database proofs, preserving failures and missing evidence. | 11_BRONZE_QUALIFICATION.md[Qualification](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/prompts/11_BRONZE_QUALIFICATION.md) |
+| **12** | **Integration and release** | Assemble accepted code, resolve release dependencies, deploy the approved candidate and verify the served result. | 12_BRONZE_INTEGRATION_RELEASE.md[Integration and production](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/prompts/12_BRONZE_INTEGRATION_RELEASE.md) |
+
+**Bronze does not mean “leave it until the end.”** UX, qualification and release planning participate in Quick Order’s first milestone.
+
+## How to run the sessions
+
+My proposed starting configuration is **one coordinator, the existing Quick Order owner, the original acceptance reviewer, and only the necessary independent specialists**. Initially, cap local source writing at two concurrent owners and heavy local execution at one job.
+
+That approach matters because worktrees separate file changes but still run on the computer or remote environment containing the project. They do not provide additional physical RAM. Anthropic also notes that agent teams add overhead and work best on independent tasks; same-file or heavily dependent work often benefits from fewer sessions. [OpenAI Developers](https://developers.openai.com/codex/app/worktrees)
+
+Your larger subscriptions help with model usage, but **they are not unlimited execution or additional laptop memory**. Check the actual allowance and runner before scaling up, and do not silently switch to paid overages. [OpenAI Help Center](https://help.openai.com/en/articles/11369540-using-codex-with-your-chatgpt-plan)
+
+The coordinator should reuse parked owners where suitable. A new session requires a concrete task, a non-overlapping file assignment and available resources. **No new harness version is required to start this work.**
+
+## Unlock the held source work deliberately
+
+Repeated “keep coding” messages have not answered the specific source permissions recorded in the repository. The current packet still separates the disabled mount, PWA correction, new persistence drafting and the additional durable-currentness design. 
+
+I included a **new source-only authorization draft** so you can address that explicitly instead of going through another round of vague permission requests:
+
+:chatgpt-content-reference{index="23"}[**Read the source-only authorization draft**](sandbox:/mnt/data/Xenios_Quick_Order_First_12_Package_Plan_2026-10-06/SOURCE_AUTHORIZATION_DRAFT.md)
+
+It covers the exact proposed disabled mount baselines, the narrowly scoped PWA correction, new-only persistence drafting under the existing review conditions, currentness **design**, and a finite qualification window. The six mount baselines are copied from the repository’s actual proposal, not guessed. 
+
+It **does not** approve final successor hashes, manifest changes, database execution, live collection, payments or deployment. Existing shared-service changes and implementation of the new currentness authority still require their concrete supplemental scope. That prevents an incomplete backend from being disguised as a finished transaction.
+
+### Send this to the existing Codex coordinator
+
+**Read the authorization draft before sending this message, because the message explicitly adopts that source scope.** Attach the extracted plan folder or ZIP, not merely a sandbox link.
+
+```text
+START THE QUICK ORDER-FIRST WEBSITE COMPLETION SPRINT
+
+Use the attached:
+Xenios_Quick_Order_First_12_Package_Plan_2026-10-06
+
+I am adopting SOURCE_AUTHORIZATION_DRAFT.md from this attached package as my
+explicit new, bounded source-only instruction. Read it in full before acting.
+Record this actual user message as its source.
+
+This does not approve deployment, real intake, payment, database execution,
+final protected hashes or a manifest recut.
+
+Use:
+- READ_FIRST_LAUNCH.md
+- EXECUTION_BRIEF.md
+- RELEASE_MILESTONES.md
+- FIRST_HOUR_PLAN.md
+- prompts/01_SUPREME_COORDINATOR.md
+
+PRIMARY GOAL
+
+Complete Quick Order first:
+eligible catalog -> customer/referral/affiliation details -> review ->
+one canonical durable request -> recoverable receipt -> operator readback.
+
+Prepare the separately qualified purchasing path next.
+Do not label request intake as buying.
+
+TEAM
+
+Reuse the existing coordinator, Quick Order builder and original Claude
+acceptance reviewer.
+
+Activate the other work packages only when their source authority, exact
+ownership, dependencies and resources are satisfied.
+
+Do not open twelve competing local writers.
+Do not restart completed reviews.
+Do not spend this sprint developing the handoff harness.
+
+EXECUTION
+
+Begin the already-authorized work immediately.
+
+Revalidate the exact A1/PWA baselines before the newly permitted source edits.
+Preserve current inherited seam behavior without treating it as release-approved.
+
+Draft only the permitted new persistence scope.
+Return ONE concrete supplemental source packet for the missing currentness
+authority and shared reader/service/notification edits.
+
+Use the finite qualification window in the adopted draft.
+The old consumed one-shot permission is not reused.
+
+Keep one heavy local job at a time. Do not lower thresholds, perform unapproved
+cleanup, or claim a cloud task is running without its actual acknowledgment.
+
+At 60 minutes, give me:
+- exact source and evidence checkpoints;
+- what the actual candidate can do;
+- what is durably persisted versus simulated;
+- what the operator can read;
+- whether payment is absent, test-only or verified;
+- the remaining blockers, owners and next executable actions.
+
+Continue the next dependency-ready task after each handoff.
+Do not stop the whole website because one specific action awaits a decision.
+
+PRODUCTION
+
+Prepare the exact candidate and managed-action release packet as the work
+becomes qualified. Once that precise release is approved, execute it through
+the verified service and prove the served runtime.
+
+Do not deploy an unqualified candidate, enable payments to meet the clock,
+or describe a localhost preview as a customer-ready live link.
+```
+
+### Send this to the original Claude reviewer
+
+```text
+Use the attached twelve-package plan as the new website execution brief.
+
+Follow:
+prompts/03_SUPREME_CLAUDE_ACCEPTANCE.md
+
+Remain the single independent acceptance owner.
+Do not become an implementation writer or restart completed source audits.
+
+Preserve existing accepted source and its limitations. Review new exact
+successors as bounded deltas, and verify the actual customer journey as the
+real adapters become available.
+
+The coordinator has a source-stage instruction from me. Read its actual
+recorded scope; do not infer additional authority from this plan.
+
+Use the premium UX specialist only for a genuinely separate review task.
+Its findings feed your acceptance record rather than creating a competing one.
+
+Prioritize:
+1. existing mandatory HTTP regression receipts;
+2. the newly permitted mount/privacy/PWA changes;
+3. canonical persistence/currentness design and implementation;
+4. actual request-to-operator integration;
+5. the final exact release candidate.
+
+Return related material findings together and specify the smallest repair.
+Do not rerun tests solely to own the receipt.
+Any reviewer execution shares the coordinator's resource reservation.
+
+Source acceptance, live intake, live purchasing and production approval remain
+different outcomes.
+```
+
+## What should be different after this sprint
+
+The meaningful result is not twelve active chats or another large set of reports. It is an observable chain:
+
+**A customer submits a valid request → the system stores it once → the customer can recover the same reference → your operator can read and act on it.**
+
+After that, the payment work must prove:
+
+**An eligible quote → an approved payment method → independently verified money → the correct fulfillment state.**
+
+I have created the plan, full prompts and proposed source-stage authorization. **I have not launched sessions, run website tests, changed source or deployed anything.** The pack is ready to give to your existing team now; the first priority is completing the real Quick Order backend and application connection, not extending the harness.

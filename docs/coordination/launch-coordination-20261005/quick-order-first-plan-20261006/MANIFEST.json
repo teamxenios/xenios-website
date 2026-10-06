@@ -1,0 +1,127 @@
+{
+  "version": 1,
+  "package": "Xenios_Quick_Order_First_12_Package_Plan_2026-10-06",
+  "generated_date": "2026-10-06",
+  "files": [
+    {
+      "path": "EXECUTION_BRIEF.md",
+      "bytes": 4067,
+      "sha256": "8cef5db41853c03778543d1f0d4b651800af036d2774ec7691e053f913421e96"
+    },
+    {
+      "path": "FIRST_HOUR_PLAN.md",
+      "bytes": 2094,
+      "sha256": "08c322ae2b3f1f84efce9689ef942a6799b4426b8ec021c0b8cf57d5837fcda9"
+    },
+    {
+      "path": "MINIMUM_DECISIONS.md",
+      "bytes": 2079,
+      "sha256": "2855a2c3b9419d3172bcbd4ecb295f202d2436868c0d793115c1a5b37d4689cb"
+    },
+    {
+      "path": "MOUNT_BASELINES.json",
+      "bytes": 1755,
+      "sha256": "8575abaa2cba7e086a715c559332746763929e4e0bab69ab335b1bfd82c2f9c9"
+    },
+    {
+      "path": "PACKAGE_CHECK.md",
+      "bytes": 426,
+      "sha256": "3ade805c53f22d0561886241e02c04a29c66ac11abe07bf9c0a40f32d23f30b0"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2391,
+      "sha256": "d338a75081588f9096568f842e82d0d86c06856630d1b8c7d3860768afaa014f"
+    },
+    {
+      "path": "READ_FIRST_LAUNCH.md",
+      "bytes": 2957,
+      "sha256": "a45996744525e0c6a7ba464834413dcc784ab44419c52dbbf9de5cf597a00bf7"
+    },
+    {
+      "path": "RELEASE_MILESTONES.md",
+      "bytes": 3593,
+      "sha256": "28ae64eb7030b3c383ea35ce5b2c5c20305db5b96663ebd37ed6f9a7684ace10"
+    },
+    {
+      "path": "SOURCES_AND_VERIFICATION.md",
+      "bytes": 3362,
+      "sha256": "608e53818d5be7f4fb1e7e15a58651465e1f7adaf5dd8ab85f667b4a5cd44f3c"
+    },
+    {
+      "path": "SOURCE_AUTHORIZATION_DRAFT.md",
+      "bytes": 6363,
+      "sha256": "adcb5a98b1ed61c8f9016199d1f79b1b819fa71a5e2083ce19ed6d29bc1ffdaf"
+    },
+    {
+      "path": "STATE_ANCHORS.json",
+      "bytes": 1231,
+      "sha256": "7c283ff1ef7eec2a2b2547166b57265f88dda420d8dcb1f8176f81bdf60677be"
+    },
+    {
+      "path": "WORK_PACKAGES.json",
+      "bytes": 7142,
+      "sha256": "a1f3f561fd9b5f50b7f84563fdbe8eef4678d49fc4e51f5b310ac4cc35ecae56"
+    },
+    {
+      "path": "prompts/01_SUPREME_COORDINATOR.md",
+      "bytes": 7622,
+      "sha256": "3229c5671c13be9b8afb733cd8f76e077a1161475c44bd9d3c641e44699349a8"
+    },
+    {
+      "path": "prompts/02_SUPREME_QUICK_ORDER_OWNER.md",
+      "bytes": 6966,
+      "sha256": "1e88347f4c137ffa382396a216781a0b1450c557d346cf4ae8d3e1729a6544ee"
+    },
+    {
+      "path": "prompts/03_SUPREME_CLAUDE_ACCEPTANCE.md",
+      "bytes": 6769,
+      "sha256": "9999cc967ff25e9da22951625819a30c0ba405690271d86a911d1cb801d2e8d2"
+    },
+    {
+      "path": "prompts/04_MEGA_CANONICAL_PERSISTENCE.md",
+      "bytes": 6982,
+      "sha256": "d080c225d01489922dbb7b2432fcaba1c775333ef8f57c84918c7cfaba0f230d"
+    },
+    {
+      "path": "prompts/05_MEGA_IDENTITY_HEALTH_POLICY.md",
+      "bytes": 6460,
+      "sha256": "b5a09757aea119ba69154dd4eb95b695c62e7661ecff8081c3aa89c511f36bce"
+    },
+    {
+      "path": "prompts/06_MEGA_OPERATOR_NOTIFICATIONS.md",
+      "bytes": 6329,
+      "sha256": "bf37e97531a55393ba13a58a26f2d6e3ff94a8e1625fe89efc9c16d529b4e3cc"
+    },
+    {
+      "path": "prompts/07_GOLD_PAYMENT_READINESS.md",
+      "bytes": 6492,
+      "sha256": "a9a0d408cabfefc428e777c9293959dec23c7f82d36e972b5da0f22762bce65f"
+    },
+    {
+      "path": "prompts/08_GOLD_CATALOG_MEDIA.md",
+      "bytes": 6081,
+      "sha256": "8224e252a33e4d2684c77c5e3fa308bce71b38d164db1ea74beb13c8b3601694"
+    },
+    {
+      "path": "prompts/09_GOLD_PARTNER_SUBSCRIPTIONS.md",
+      "bytes": 6046,
+      "sha256": "f3684c47e013132ed3f2f3e8e3f24c8429f7f830384fc97b3af48aef225dda4d"
+    },
+    {
+      "path": "prompts/10_BRONZE_PREMIUM_UX_QA.md",
+      "bytes": 6127,
+      "sha256": "3bf115a9ae28a765884fc5791d63cd1e743d5ddefd83ee5d2ba2bd29dccc444d"
+    },
+    {
+      "path": "prompts/11_BRONZE_QUALIFICATION.md",
+      "bytes": 6627,
+      "sha256": "046ad89e90f6e071b40e37fc343f7c30ab9157ee9a8fe77d4ce1be73478d4b30"
+    },
+    {
+      "path": "prompts/12_BRONZE_INTEGRATION_RELEASE.md",
+      "bytes": 7464,
+      "sha256": "e297897cd045c31886d4ce2a009514c51e1ad444a67d96bc3aac51b7b7612d4e"
+    }
+  ]
+}

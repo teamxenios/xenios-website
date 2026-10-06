@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "status": "ACTIVE_SOURCE_ONLY",
+  "receivedAt": "2026-10-06T17:43:37Z",
+  "checkpointAt": "2026-10-06T18:43:37Z",
+  "expiresAt": "2026-10-06T21:43:37Z",
+  "authority": {
+    "thread": "01a103a8-5684-7272-89e5-3c42eefcd593",
+    "turn": "01a11250-5782-7d03-b0d7-35162c175819",
+    "message": "01a11250-62ad-7e83-93bd-2648b243593e",
+    "attachment": "a276ed40-8ebe-41f3-8eec-90e78b6116b5",
+    "requestSha256": "04daca509da4a1305449d023bfbb3f927320a556ea2ee77b59c7f000cb874644",
+    "basis": "User identifies pasted text as the request. Its coordinator kickoff explicitly adopts SOURCE_AUTHORIZATION_DRAFT.md; package attachment alone is not authority.",
+    "draftSha256": "adcb5a98b1ed61c8f9016199d1f79b1b819fa71a5e2083ce19ed6d29bc1ffdaf",
+    "scope": [
+      "S1 ordinary QO source",
+      "S2 exact disabled A1 mount/privacy baseline edits and five named tests",
+      "S3 narrow PWA runtime/test correction",
+      "S4 new-only A2 drafting subject to doc36 section7 and independently reviewed naming/fence before colliding SQL; currentness DESIGN ONLY",
+      "S5 four-hour maximum six qualification groups with exclusive per-group reservation/precheck"
+    ]
+  },
+  "package": {
+    "archive": "quick-order-first-plan-20261006",
+    "manifestCount": 24,
+    "verifiedCount": 24,
+    "failures": []
+  },
+  "baselines": {
+    "builderHead": "5ee44d53e55774fd8a29ea009dac16da2ed907ef",
+    "mountBeforeHashesMatched": 6,
+    "pwaRuntimeSha256lf": "9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741",
+    "pwaTestSha256lf": "3303d4bdaafa468d6de80ed94b181499e1a21b11a349fe1a2d8e50528d65fef6",
+    "checkedAt": "2026-10-06T17:46:01Z"
+  },
+  "qualification": {
+    "maximumGroups": 6,
+    "consumedGroups": 0,
+    "groups": [],
+    "reservation": {
+      "id": "QO-FIRST-20261006-G1",
+      "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
+      "scope": "Existing exact mandatory f1 runtime with fd tests red, fd green: one filtered handler file plus two-case containment file per snapshot; four serial processes, no ownership rerun",
+      "status": "RESERVED_CONDITIONAL_PRECHECK_ONLY",
+      "startBy": "2026-10-06T18:00:00Z",
+      "minAvailableMiB": 1536,
+      "minDiskGiB": 20,
+      "maxHeavyConcurrency": 1,
+      "freshPrechecksAllowed": 1,
+      "onFailure": "Consume one group, zero test processes; release slot. No immediate retry or other group probe without materially changed host conditions."
+    }
+  },
+  "sourceAssignment": {
+    "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "scope": "A1 six runtime paths and five S2 tests; PwaLifecycle.tsx and its focused test. Same builder must add exact paths to own lease after conflict verification. No coordinator source edits."
+  },
+  "supplementalScope": "Prepare one concrete currentness/shared writer-reader-outbox/full-composition-test scope; not implementation authority",
+  "reviewer": {
+    "session": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+    "scope": "Same independent acceptance owner; new exact deltas only",
+    "transport": "No duplicate/replacement reviewer or known-failed transport retry; inspect public receipt before any send"
+  },
+  "exclusions": [
+    "No successor-hash acceptance or manifest recut",
+    "GATE-01 and inherited seam release holds stay open",
+    "No currentness implementation or complete commit RPC until supplemental approval",
+    "No historical migrations/SQL execution or registration",
+    "No live intake, payments, grants, real notification or deployment",
+    "No cleanup, unrelated process stops, cloud or paid overages"
+  ],
+  "production": {
+    "refreshed": false,
+    "mutated": false,
+    "reason": "No consequential production reliance during source-only kickoff"
+  }
+}
