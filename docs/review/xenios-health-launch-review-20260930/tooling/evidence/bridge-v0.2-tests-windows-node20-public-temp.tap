@@ -1,0 +1,671 @@
+TAP version 13
+# Subtest: stable hashes preserve array order but not object ordering
+ok 1 - stable hashes preserve array order but not object ordering
+  ---
+  duration_ms: 3.4359
+  ...
+# Subtest: prepare is idempotent and launches nothing
+ok 2 - prepare is idempotent and launches nothing
+  ---
+  duration_ms: 1013.55
+  ...
+# Subtest: conflicting same job ID refuses
+ok 3 - conflicting same job ID refuses
+  ---
+  duration_ms: 775.3134
+  ...
+# Subtest: deployment is not a supported job kind
+ok 4 - deployment is not a supported job kind
+  ---
+  duration_ms: 7.9847
+  ...
+# Subtest: exact commit required
+ok 5 - exact commit required
+  ---
+  duration_ms: 0.3165
+  ...
+# Subtest: file hash tampering rejected
+ok 6 - file hash tampering rejected
+  ---
+  duration_ms: 0.4444
+  ...
+# Subtest: duplicate packet paths rejected
+ok 7 - duplicate packet paths rejected
+  ---
+  duration_ms: 0.5626
+  ...
+# Subtest: packet traversal rejected
+ok 8 - packet traversal rejected
+  ---
+  duration_ms: 0.4074
+  ...
+# Subtest: credential source path filters remain
+ok 9 - credential source path filters remain
+  ---
+  duration_ms: 0.4826
+  ...
+# Subtest: event tampering detected
+ok 10 - event tampering detected
+  ---
+  duration_ms: 940.8117
+  ...
+# Subtest: retained store lock is not stolen
+ok 11 - retained store lock is not stolen
+  ---
+  duration_ms: 1208.3391
+  ...
+# Subtest: legacy v0.1 state is refused, not migrated into authority
+ok 12 - legacy v0.1 state is refused, not migrated into authority
+  ---
+  duration_ms: 59.5038
+  ...
+# Subtest: R1 free-text evidence can no longer grant a permit
+ok 13 - R1 free-text evidence can no longer grant a permit
+  ---
+  duration_ms: 713.3018
+  ...
+# Subtest: R1 missing provisioned coordinator key refuses
+ok 14 - R1 missing provisioned coordinator key refuses
+  ---
+  duration_ms: 647.9541
+  ...
+# Subtest: R1 coordinator trust is pinned once
+ok 15 - R1 coordinator trust is pinned once
+  ---
+  duration_ms: 1085.4149
+  ...
+# Subtest: R1 forged signature refuses
+ok 16 - R1 forged signature refuses
+  ---
+  duration_ms: 1018.2052
+  ...
+# Subtest: R1 changed signed bytes refuse
+ok 17 - R1 changed signed bytes refuse
+  ---
+  duration_ms: 1078.0923
+  ...
+# Subtest: R1 signed authorization must allow exact transmission scope
+ok 18 - R1 signed authorization must allow exact transmission scope
+  ---
+  duration_ms: 1237.4977
+  ...
+# Subtest: R1 offline-only jobs cannot be authorized
+ok 19 - R1 offline-only jobs cannot be authorized
+  ---
+  duration_ms: 1416.5831
+  ...
+# Subtest: R1 expired authorization refused
+ok 20 - R1 expired authorization refused
+  ---
+  duration_ms: 1486.1515
+  ...
+# Subtest: R1 future authorization refused
+ok 21 - R1 future authorization refused
+  ---
+  duration_ms: 1430.0758
+  ...
+# Subtest: R1 interval above 24 hours refused
+ok 22 - R1 interval above 24 hours refused
+  ---
+  duration_ms: 1442.3628
+  ...
+# Subtest: R1 same signed authorization returns the existing unconsumed permit
+ok 23 - R1 same signed authorization returns the existing unconsumed permit
+  ---
+  duration_ms: 2417.1209
+  ...
+# Subtest: R1 same evidence cannot reserve a second authorization ID
+ok 24 - R1 same evidence cannot reserve a second authorization ID
+  ---
+  duration_ms: 2241.1002
+  ...
+# Subtest: R1 decision ID cannot rebind to different signed evidence
+ok 25 - R1 decision ID cannot rebind to different signed evidence
+  ---
+  duration_ms: 2598.2287
+  ...
+# Subtest: R1 refused resource consumes decision before probe, launches no process
+ok 26 - R1 refused resource consumes decision before probe, launches no process
+  ---
+  duration_ms: 3565.4718
+  ...
+# Subtest: R1 refusal cannot be renewed by a fresh permit UUID
+ok 27 - R1 refusal cannot be renewed by a fresh permit UUID
+  ---
+  duration_ms: 3469.7612
+  ...
+# Subtest: R1 consumed evidence cannot reissue under new authorization and decision IDs
+ok 28 - R1 consumed evidence cannot reissue under new authorization and decision IDs
+  ---
+  duration_ms: 3291.858
+  ...
+# Subtest: R1 cross-job use of the exact signed scope rejected
+ok 29 - R1 cross-job use of the exact signed scope rejected
+  ---
+  duration_ms: 1932.2021
+  ...
+# Subtest: R1 cross-job reissued evidence remains consumed
+ok 30 - R1 cross-job reissued evidence remains consumed
+  ---
+  duration_ms: 4389.9732
+  ...
+# Subtest: R1 consumption survives reloading state and event history
+ok 31 - R1 consumption survives reloading state and event history
+  ---
+  duration_ms: 3831.1269
+  ...
+# Subtest: R1 a consumed tombstone prevents reuse after stale transport.json rollback
+ok 32 - R1 a consumed tombstone prevents reuse after stale transport.json rollback
+  ---
+  duration_ms: 3685.7964
+  ...
+# Subtest: R1 partial durable tombstone set is fail-closed
+ok 33 - R1 partial durable tombstone set is fail-closed
+  ---
+  duration_ms: 2181.0664
+  ...
+# Subtest: R1 fresh store cannot reuse old-audience authorization
+ok 34 - R1 fresh store cannot reuse old-audience authorization
+  ---
+  duration_ms: 2439.6411
+  ...
+# Subtest: R1 new actual signed decision/evidence is distinct after refusal
+ok 35 - R1 new actual signed decision/evidence is distinct after refusal
+  ---
+  duration_ms: 3756.8738
+  ...
+# Subtest: R1 changed recipe/config refuses before measurement
+ok 36 - R1 changed recipe/config refuses before measurement
+  ---
+  duration_ms: 1922.6909
+  ...
+# Subtest: R1 expiration is checked again at consumption
+ok 37 - R1 expiration is checked again at consumption
+  ---
+  duration_ms: 1995.6293
+  ...
+# Subtest: live transport default off does not consume or probe
+ok 38 - live transport default off does not consume or probe
+  ---
+  duration_ms: 1934.4958
+  ...
+# Subtest: resource threshold lowering refused
+ok 39 - resource threshold lowering refused
+  ---
+  duration_ms: 1747.7162
+  ...
+# Subtest: resource probe error consumes authority and records no process
+ok 40 - resource probe error consumes authority and records no process
+  ---
+  duration_ms: 3538.022
+  ...
+# Subtest: invalid resource sample leaves slot held
+ok 41 - invalid resource sample leaves slot held
+  ---
+  duration_ms: 2650.2045
+  ...
+# Subtest: consumed permit cannot retry after resource improvement
+ok 42 - consumed permit cannot retry after resource improvement
+  ---
+  duration_ms: 3330.0658
+  ...
+# Subtest: one slot serializes all jobs
+ok 43 - one slot serializes all jobs
+  ---
+  duration_ms: 3923.9025
+  ...
+# Subtest: runner exception leaves UNKNOWN and retains the slot
+ok 44 - runner exception leaves UNKNOWN and retains the slot
+  ---
+  duration_ms: 3901.4704
+  ...
+# Subtest: R4 signal cannot release the slot
+ok 45 - R4 signal cannot release the slot
+  ---
+  duration_ms: 3738.9643
+  ...
+# Subtest: R4 timeout cannot release the slot
+ok 46 - R4 timeout cannot release the slot
+  ---
+  duration_ms: 4154.0218
+  ...
+# Subtest: R4 output overflow cannot release the slot
+ok 47 - R4 output overflow cannot release the slot
+  ---
+  duration_ms: 4611.7519
+  ...
+# Subtest: R4 missing close cannot release the slot
+ok 48 - R4 missing close cannot release the slot
+  ---
+  duration_ms: 3839.8541
+  ...
+# Subtest: R4 receipt failure cannot release the slot
+ok 49 - R4 receipt failure cannot release the slot
+  ---
+  duration_ms: 3876.9776
+  ...
+# Subtest: R4 missing completion cannot release the slot
+ok 50 - R4 missing completion cannot release the slot
+  ---
+  duration_ms: 3792.9234
+  ...
+# Subtest: R4 definitive provider failure keeps evidence but releases local slot
+ok 51 - R4 definitive provider failure keeps evidence but releases local slot
+  ---
+  duration_ms: 3923.054
+  ...
+# Subtest: R4 unsigned/missing attempt context from runner is UNKNOWN
+ok 52 - R4 unsigned/missing attempt context from runner is UNKNOWN
+  ---
+  duration_ms: 3625.9485
+  ...
+# Subtest: R3 same source but wrong attempt output is rejected
+ok 53 - R3 same source but wrong attempt output is rejected
+  ---
+  duration_ms: 3847.364
+  ...
+# Subtest: R3 wrong source despite correct attempt is rejected
+ok 54 - R3 wrong source despite correct attempt is rejected
+  ---
+  duration_ms: 4219.1856
+  ...
+# Subtest: provider cannot add owner approval fields
+ok 55 - provider cannot add owner approval fields
+  ---
+  duration_ms: 3.2393
+  ...
+# Subtest: provider cannot return release-ready disposition
+ok 56 - provider cannot return release-ready disposition
+  ---
+  duration_ms: 0.5238
+  ...
+# Subtest: recorded proposal is not website qualification or deployment
+ok 57 - recorded proposal is not website qualification or deployment
+  ---
+  duration_ms: 4714.9144
+  ...
+# Subtest: proposal followup keeps immutable source and holds; does not dispatch
+ok 58 - proposal followup keeps immutable source and holds; does not dispatch
+  ---
+  duration_ms: 5346.8156
+  ...
+# Subtest: review acceptance is text only, not task authority
+ok 59 - review acceptance is text only, not task authority
+  ---
+  duration_ms: 4117.9701
+  ...
+# Subtest: prompt delimits untrusted data and binds attempt
+ok 60 - prompt delimits untrusted data and binds attempt
+  ---
+  duration_ms: 1.0593
+  ...
+# Subtest: explicit uncertain-slot reconciliation never refunds authorization
+ok 61 - explicit uncertain-slot reconciliation never refunds authorization
+  ---
+  duration_ms: 5651.6348
+  ...
+# Subtest: Git snapshots read exact committed blobs and do not alter .xenios
+ok 62 - Git snapshots read exact committed blobs and do not alter .xenios
+  ---
+  duration_ms: 1014.8484
+  ...
+# Subtest: stored input mutation cannot reuse prior permission
+ok 63 - stored input mutation cannot reuse prior permission
+  ---
+  duration_ms: 3149.1991
+  ...
+# Subtest: R1 same decision evidence hash cannot renew via a changed reference string
+ok 64 - R1 same decision evidence hash cannot renew via a changed reference string
+  ---
+  duration_ms: 3998.7396
+  ...
+# Subtest: R1 expiry during preflight consumes decision but starts no process
+not ok 65 - R1 expiry during preflight consumes decision but starts no process
+  ---
+  duration_ms: 2321.7776
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:75:1'
+  failureType: 'testCodeFailure'
+  error: 'Authorization is expired or not yet valid.'
+  code: 'AUTHORIZATION_EXPIRED_OR_EARLY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    validateAuthorization (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:166:20)
+    file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:201:13
+    Store.mutate (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:58:36)
+    consume (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:194:16)
+    dispatch (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:222:25)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:75:202)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+  ...
+# Subtest: R2 external file output succeeds exclusively
+ok 66 - R2 external file output succeeds exclusively
+  ---
+  duration_ms: 93.9301
+  ...
+# Subtest: R2 store and exports cannot live beneath .git
+ok 67 - R2 store and exports cannot live beneath .git
+  ---
+  duration_ms: 15.1673
+  ...
+# Subtest: R2 store and exports cannot live beneath .xenios
+ok 68 - R2 store and exports cannot live beneath .xenios
+  ---
+  duration_ms: 14.5355
+  ...
+# Subtest: R2 Git worktree marker FILE protects nested output
+ok 69 - R2 Git worktree marker FILE protects nested output
+  ---
+  duration_ms: 15.5581
+  ...
+# Subtest: R2 literal metadata destination cannot be created
+ok 70 - R2 literal metadata destination cannot be created
+  ---
+  duration_ms: 8.0552
+  ...
+# Subtest: R2 symlink/junction ancestry cannot redirect outputs into repository
+ok 71 - R2 symlink/junction ancestry cannot redirect outputs into repository
+  ---
+  duration_ms: 10.8652
+  ...
+# Subtest: R2 even an external alias is refused instead of trusted
+ok 72 - R2 even an external alias is refused instead of trusted
+  ---
+  duration_ms: 7.7117
+  ...
+# Subtest: R2 existing-file symlink is not overwritten or followed
+ok 73 - R2 existing-file symlink is not overwritten or followed # SKIP File symlink privilege not assumed
+  ---
+  duration_ms: 0.4661
+  ...
+# Subtest: R2 hardlinked output is refused for replacement/readback
+ok 74 - R2 hardlinked output is refused for replacement/readback
+  ---
+  duration_ms: 15.7616
+  ...
+# Subtest: R2 state revalidates parents after construction
+ok 75 - R2 state revalidates parents after construction
+  ---
+  duration_ms: 344.035
+  ...
+# Subtest: R2 lexical prefix lookalike is outside attempts root
+ok 76 - R2 lexical prefix lookalike is outside attempts root
+  ---
+  duration_ms: 17.4892
+  ...
+# Subtest: R2 existing empty attempt directory is rejected
+ok 77 - R2 existing empty attempt directory is rejected
+  ---
+  duration_ms: 14.8027
+  ...
+# Subtest: R2 existing attempt with stale result is rejected intact
+ok 78 - R2 existing attempt with stale result is rejected intact
+  ---
+  duration_ms: 42.6159
+  ...
+# Subtest: R2 fresh attempt created once under its exact external root
+ok 79 - R2 fresh attempt created once under its exact external root
+  ---
+  duration_ms: 123.2471
+  ...
+# Subtest: R2 demo rejects an output inside a repository before writing
+ok 80 - R2 demo rejects an output inside a repository before writing
+  ---
+  duration_ms: 116.784
+  ...
+# Subtest: R2 demo refuses an existing output directory without overwriting
+ok 81 - R2 demo refuses an existing output directory without overwriting
+  ---
+  duration_ms: 127.0763
+  ...
+# Subtest: R2 CLI report blocks repository output
+ok 82 - R2 CLI report blocks repository output
+  ---
+  duration_ms: 908.345
+  ...
+# Subtest: R2 CLI export-prompt blocks repository output
+ok 83 - R2 CLI export-prompt blocks repository output
+  ---
+  duration_ms: 884.6724
+  ...
+# Subtest: R2 CLI recipe output cannot go into repository
+ok 84 - R2 CLI recipe output cannot go into repository
+  ---
+  duration_ms: 1134.1201
+  ...
+# Subtest: R2 CLI snapshot output cannot go into the source repository
+ok 85 - R2 CLI snapshot output cannot go into the source repository
+  ---
+  duration_ms: 827.6275
+  ...
+# Subtest: R2 malformed output path and network roots refused
+ok 86 - R2 malformed output path and network roots refused
+  ---
+  duration_ms: 0.578
+  ...
+# Subtest: R2 attempt-root aliases rejected at recipe preparation
+ok 87 - R2 attempt-root aliases rejected at recipe preparation
+  ---
+  duration_ms: 13.3686
+  ...
+# Subtest: R2 bare Git repository output is refused
+ok 88 - R2 bare Git repository output is refused
+  ---
+  duration_ms: 12.8133
+  ...
+# Subtest: R3 Codex requires a successful complete event stream
+ok 89 - R3 Codex requires a successful complete event stream
+  ---
+  duration_ms: 6.0548
+  ...
+# Subtest: R3 Claude requires its successful terminal result envelope
+ok 90 - R3 Claude requires its successful terminal result envelope
+  ---
+  duration_ms: 0.5472
+  ...
+# Subtest: R3 Codex failed event beats a valid last-message file
+ok 91 - R3 Codex failed event beats a valid last-message file
+  ---
+  duration_ms: 1.2531
+  ...
+# Subtest: R3 Codex error after completed turn also beats file
+ok 92 - R3 Codex error after completed turn also beats file
+  ---
+  duration_ms: 0.6596
+  ...
+# Subtest: R3 last-message alone is never completion evidence
+ok 93 - R3 last-message alone is never completion evidence
+  ---
+  duration_ms: 0.5526
+  ...
+# Subtest: R3 missing turn.completed rejected even with final message
+ok 94 - R3 missing turn.completed rejected even with final message
+  ---
+  duration_ms: 0.5767
+  ...
+# Subtest: R3 duplicate successful turns rejected
+ok 95 - R3 duplicate successful turns rejected
+  ---
+  duration_ms: 0.4566
+  ...
+# Subtest: R3 duplicate thread identity rejected
+ok 96 - R3 duplicate thread identity rejected
+  ---
+  duration_ms: 0.3821
+  ...
+# Subtest: R3 message after terminal completion rejected
+ok 97 - R3 message after terminal completion rejected
+  ---
+  duration_ms: 0.902
+  ...
+# Subtest: R3 malformed JSONL fails closed
+ok 98 - R3 malformed JSONL fails closed
+  ---
+  duration_ms: 0.6229
+  ...
+# Subtest: R3 final file and event must agree
+ok 99 - R3 final file and event must agree
+  ---
+  duration_ms: 0.8017
+  ...
+# Subtest: R3 same source but stale request_id rejected
+ok 100 - R3 same source but stale request_id rejected
+  ---
+  duration_ms: 0.432
+  ...
+# Subtest: R3 same source but stale attempt_id rejected
+ok 101 - R3 same source but stale attempt_id rejected
+  ---
+  duration_ms: 0.3048
+  ...
+# Subtest: R3 same source but stale request_digest rejected
+ok 102 - R3 same source but stale request_digest rejected
+  ---
+  duration_ms: 0.3639
+  ...
+# Subtest: R3 Claude is_error beats structured result
+ok 103 - R3 Claude is_error beats structured result
+  ---
+  duration_ms: 0.3351
+  ...
+# Subtest: R3 Claude max-turns failure is not success
+ok 104 - R3 Claude max-turns failure is not success
+  ---
+  duration_ms: 0.3933
+  ...
+# Subtest: R3 Claude bare structured_output without envelope refused
+ok 105 - R3 Claude bare structured_output without envelope refused
+  ---
+  duration_ms: 0.5103
+  ...
+# Subtest: R3 Claude missing explicit success/error status refused
+ok 106 - R3 Claude missing explicit success/error status refused
+  ---
+  duration_ms: 1.2767
+  ...
+# Subtest: R3 Claude blank session id refused
+ok 107 - R3 Claude blank session id refused
+  ---
+  duration_ms: 0.641
+  ...
+# Subtest: fixed recipes exclude desktop resume and bypass flags
+ok 108 - fixed recipes exclude desktop resume and bypass flags
+  ---
+  duration_ms: 172.1894
+  ...
+# Subtest: Claude recipe disables built-in tools and MCP
+ok 109 - Claude recipe disables built-in tools and MCP
+  ---
+  duration_ms: 155.7465
+  ...
+# Subtest: shell-wrapper recipes rejected
+ok 110 - shell-wrapper recipes rejected
+  ---
+  duration_ms: 37.118
+  ...
+# Subtest: result schema requires request and attempt bindings
+ok 111 - result schema requires request and attempt bindings
+  ---
+  duration_ms: 0.4851
+  ...
+# Subtest: R4 actual fake subprocess success retains bound logs and receipt
+ok 112 - R4 actual fake subprocess success retains bound logs and receipt
+  ---
+  duration_ms: 1378.7544
+  ...
+# Subtest: R3 pre-existing directory with stale result is refused before process
+ok 113 - R3 pre-existing directory with stale result is refused before process
+  ---
+  duration_ms: 100.1121
+  ...
+# Subtest: R3 result created during failed Codex run cannot be accepted
+ok 114 - R3 result created during failed Codex run cannot be accepted
+  ---
+  duration_ms: 1234.3616
+  ...
+# Subtest: R3 missing result file rejects successful Codex event output
+ok 115 - R3 missing result file rejects successful Codex event output
+  ---
+  duration_ms: 1568.1143
+  ...
+# Subtest: R3 completed Codex stream/file agree for this fresh attempt
+ok 116 - R3 completed Codex stream/file agree for this fresh attempt
+  ---
+  duration_ms: 1738.5877
+  ...
+# Subtest: R3 wrong-attempt final result is rejected and receipt preserved
+ok 117 - R3 wrong-attempt final result is rejected and receipt preserved
+  ---
+  duration_ms: 1308.2437
+  ...
+# Subtest: R4 normal nonzero exit preserves stderr and raw numeric code
+ok 118 - R4 normal nonzero exit preserves stderr and raw numeric code
+  ---
+  duration_ms: 1831.7622
+  ...
+# Subtest: R4 signal termination preserves null code and named signal
+ok 119 - R4 signal termination preserves null code and named signal # SKIP Native Windows signal semantics must be qualified separately
+  ---
+  duration_ms: 0.4613
+  ...
+# Subtest: R4 timeout preserves partial output and remains UNKNOWN
+ok 120 - R4 timeout preserves partial output and remains UNKNOWN
+  ---
+  duration_ms: 2598.371
+  ...
+# Subtest: R4 output-limit retains bounded raw prefixes and counts overflow
+ok 121 - R4 output-limit retains bounded raw prefixes and counts overflow
+  ---
+  duration_ms: 1865.0186
+  ...
+# Subtest: R4 abort preserves logs without a success result
+ok 122 - R4 abort preserves logs without a success result
+  ---
+  duration_ms: 1983.356
+  ...
+# Subtest: R4 spawn exception writes empty streams and NOT_STARTED receipt
+ok 123 - R4 spawn exception writes empty streams and NOT_STARTED receipt
+  ---
+  duration_ms: 1491.4604
+  ...
+# Subtest: R4 executable pin mismatch records NOT_STARTED before any spawn
+ok 124 - R4 executable pin mismatch records NOT_STARTED before any spawn
+  ---
+  duration_ms: 1321.9126
+  ...
+# Subtest: R4 missing provider completion is UNKNOWN even on exit zero
+ok 125 - R4 missing provider completion is UNKNOWN even on exit zero
+  ---
+  duration_ms: 1731.8959
+  ...
+# Subtest: R4 explicit Claude failure preserved as definitive provider failure
+ok 126 - R4 explicit Claude failure preserved as definitive provider failure
+  ---
+  duration_ms: 1821.463
+  ...
+# Subtest: R4 stream error saves receipt and root-only stop request
+ok 127 - R4 stream error saves receipt and root-only stop request
+  ---
+  duration_ms: 1941.9244
+  ...
+# Subtest: R4 close never observed stays UNKNOWN with rootMayRemain
+ok 128 - R4 close never observed stays UNKNOWN with rootMayRemain
+  ---
+  duration_ms: 1943.8451
+  ...
+# Subtest: R4 real runner timeout keeps controller slot held across reload
+ok 129 - R4 real runner timeout keeps controller slot held across reload
+  ---
+  duration_ms: 7304.455
+  ...
+1..129
+# tests 129
+# suites 0
+# pass 126
+# fail 1
+# cancelled 0
+# skipped 2
+# todo 0
+# duration_ms 189331.542

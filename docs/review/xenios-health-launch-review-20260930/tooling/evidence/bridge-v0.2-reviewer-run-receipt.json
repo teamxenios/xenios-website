@@ -1,0 +1,53 @@
+{
+ "kind": "reviewer-run-receipt",
+ "subject": "Xenios Handoff Bridge v0.2 (standalone tooling prototype; NOT the website)",
+ "reviewer": "claude-health-launch-review-20260930 (claude-fable-5-1, effort xhigh as observed)",
+ "evidenceClass": "independently executed by the reviewer on the user's Windows host; producer's receipt was Linux Node 22 only",
+ "written": "2026-10-06, from in-session tool output after the runs; wall-clock start times were not captured by the harness invocation and are not reconstructed",
+ "package": {
+  "zip": "C:/Users/sboad/Downloads/Xenios_Handoff_Bridge_v0_2.zip",
+  "zipSha256": "9a82deb5da08441493e36e20e0d9c8b680de8fbfac0f4f7d9d605957c069aeab",
+  "extracted": "C:/Users/sboad/Downloads/Xenios_Handoff_Bridge_v0_2/Xenios_Handoff_Bridge_v0_2",
+  "manifestSha256": "7e49115f299a0efa512e38ab93917301a5bdee7549fcaaaf3ecf50711eed0ad2",
+  "manifestEntries": 75,
+  "manifestMatches": 75,
+  "filesOnDiskNotListed": [],
+  "v01ManifestEntries": 27,
+  "v01ManifestMatches": 27,
+  "repairDiff": "evidence/REPAIR_DIFF.patch applies cleanly (git apply --check) to a scratch copy of v0.1 and, compared ignoring CR/LF, reproduces every v0.2 source, test, tool, doc and example file byte for byte"
+ },
+ "host": {
+  "platform": "Windows 11 Pro 10.0.22631",
+  "node": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe v20.19.0",
+  "scratchCopy": "C:/Users/sboad/AppData/Local/Temp/claude/.../scratchpad/bridge-v02-run (full copy of the extracted package; the Downloads copy was not written)",
+  "freeMiBBeforeRun1": 653,
+  "freeMiBAfterRun1": 644,
+  "freeMiBBeforeRun2": 661,
+  "freeMiBAfterRun2": 1582,
+  "note": "No coordinator reservation applies: this is a standalone package, not website qualification. No provider CLI was invoked; the suite spawns only fake children."
+ },
+ "syntaxCheck": {"command": "node --check on bridge.mjs demo.mjs lib/core.mjs lib/paths.mjs lib/primitives.mjs lib/providers.mjs lib/git.mjs", "result": "all ok"},
+ "runs": [
+  {
+   "id": "run1-default-temp",
+   "command": "node --test --test-concurrency=1 tests/core.test.mjs tests/paths.test.mjs tests/providers.test.mjs",
+   "env": "default; os.tmpdir() = C:/Users/sboad/AppData/Local/Temp",
+   "exit": 1,
+   "summary": {"tests": 129, "pass": 39, "fail": 88, "skipped": 2, "durationMs": 3409},
+   "cause": "every failure is OUTPUT_INSIDE_REPOSITORY thrown by lib/paths.mjs noRepoAncestors while constructing the Store, because C:/Users/sboad/.xenios exists (a profile-level directory holding two credential files, unrelated to the repository corpus) and the guard treats any ancestor containing a directory named .xenios as a repository tree",
+   "log": "bridge-v0.2-tests-windows-node20-profile-temp.tap",
+   "logSha256": "ad5243e140e5a67e35b18f499adc336e25e37b68a9180a023f7c7c07c88c254e"
+  },
+  {
+   "id": "run2-public-temp",
+   "command": "same command with TEMP and TMP set to C:/Users/Public/xenios-bridge-v02-tmp (created for the run, removed afterwards; no ancestor carries .git or .xenios)",
+   "exit": 1,
+   "summary": {"tests": 129, "pass": 126, "fail": 1, "skipped": 2, "durationMs": 189331},
+   "failing": "test 65 'R1 expiry during preflight consumes decision but starts no process': the fixture grants a 250 ms authorization and sleeps 300 ms in the probe; on this host consume() itself exceeded 250 ms (lock, read, tombstone writes with fsync, atomic state write), so validateAuthorization threw AUTHORIZATION_EXPIRED_OR_EARLY inside consume before any tombstone was written. The refusal is the correct safety behaviour; the fixture's timing window is too tight for a Windows filesystem under load. Not a safety defect.",
+   "skipped": ["test 73 'R2 existing-file symlink is not overwritten or followed' (file symlink privilege not assumed)", "test 119 'R4 signal termination preserves null code and named signal' (native Windows signal semantics must be qualified separately)"],
+   "log": "bridge-v0.2-tests-windows-node20-public-temp.tap",
+   "logSha256": "11292ebb880b07fa407954fbc9544e7e141389419c92ab0e98570fbeb2b679e6"
+  }
+ ],
+ "notProvenByTheseRuns": ["real Codex or Claude CLI compatibility", "coordinator issuer behaviour", "Windows junction and reparse-point handling (symlink test skipped, no junction test exists)", "signal semantics on Windows (skipped)", "power-loss durability", "any website property"]
+}

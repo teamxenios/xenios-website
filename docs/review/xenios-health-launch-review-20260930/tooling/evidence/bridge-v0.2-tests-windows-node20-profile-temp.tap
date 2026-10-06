@@ -1,0 +1,2081 @@
+TAP version 13
+# Subtest: stable hashes preserve array order but not object ordering
+ok 1 - stable hashes preserve array order but not object ordering
+  ---
+  duration_ms: 2.7108
+  ...
+# Subtest: prepare is idempotent and launches nothing
+not ok 2 - prepare is idempotent and launches nothing
+  ---
+  duration_ms: 8.2783
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:13:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:13:64)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: conflicting same job ID refuses
+not ok 3 - conflicting same job ID refuses
+  ---
+  duration_ms: 2.9294
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:14:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:14:53)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: deployment is not a supported job kind
+not ok 4 - deployment is not a supported job kind
+  ---
+  duration_ms: 6.3204
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:15:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BridgeError: Controller outputs must be outside Git and .xenios trees.
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:15:57)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: exact commit required
+ok 5 - exact commit required
+  ---
+  duration_ms: 0.4288
+  ...
+# Subtest: file hash tampering rejected
+ok 6 - file hash tampering rejected
+  ---
+  duration_ms: 1.0877
+  ...
+# Subtest: duplicate packet paths rejected
+ok 7 - duplicate packet paths rejected
+  ---
+  duration_ms: 0.5824
+  ...
+# Subtest: packet traversal rejected
+ok 8 - packet traversal rejected
+  ---
+  duration_ms: 0.2241
+  ...
+# Subtest: credential source path filters remain
+ok 9 - credential source path filters remain
+  ---
+  duration_ms: 0.4371
+  ...
+# Subtest: event tampering detected
+not ok 10 - event tampering detected
+  ---
+  duration_ms: 2.6504
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:21:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:21:46)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: retained store lock is not stolen
+not ok 11 - retained store lock is not stolen
+  ---
+  duration_ms: 2.3635
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:22:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:22:55)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: legacy v0.1 state is refused, not migrated into authority
+not ok 12 - legacy v0.1 state is refused, not migrated into authority
+  ---
+  duration_ms: 12.0062
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:23:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BridgeError: Controller outputs must be outside Git and .xenios trees.
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:23:202)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: R1 free-text evidence can no longer grant a permit
+not ok 13 - R1 free-text evidence can no longer grant a permit
+  ---
+  duration_ms: 2.759
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:25:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:25:72)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 missing provisioned coordinator key refuses
+not ok 14 - R1 missing provisioned coordinator key refuses
+  ---
+  duration_ms: 2.3992
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:26:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:26:68)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R1 coordinator trust is pinned once
+not ok 15 - R1 coordinator trust is pinned once
+  ---
+  duration_ms: 3.2505
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:27:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:27:57)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 forged signature refuses
+not ok 16 - R1 forged signature refuses
+  ---
+  duration_ms: 3.0261
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:28:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:28:49)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 changed signed bytes refuse
+not ok 17 - R1 changed signed bytes refuse
+  ---
+  duration_ms: 2.4342
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:29:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:29:52)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 signed authorization must allow exact transmission scope
+not ok 18 - R1 signed authorization must allow exact transmission scope
+  ---
+  duration_ms: 2.6188
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:30:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:30:81)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 offline-only jobs cannot be authorized
+not ok 19 - R1 offline-only jobs cannot be authorized
+  ---
+  duration_ms: 2.175
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:31:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:31:63)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 expired authorization refused
+not ok 20 - R1 expired authorization refused
+  ---
+  duration_ms: 2.1365
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:32:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:32:54)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 future authorization refused
+not ok 21 - R1 future authorization refused
+  ---
+  duration_ms: 2.1194
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:33:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:33:53)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 interval above 24 hours refused
+not ok 22 - R1 interval above 24 hours refused
+  ---
+  duration_ms: 4.5909
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:34:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:34:56)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 same signed authorization returns the existing unconsumed permit
+not ok 23 - R1 same signed authorization returns the existing unconsumed permit
+  ---
+  duration_ms: 2.8924
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:35:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:35:89)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 same evidence cannot reserve a second authorization ID
+not ok 24 - R1 same evidence cannot reserve a second authorization ID
+  ---
+  duration_ms: 2.5472
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:36:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:36:79)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 decision ID cannot rebind to different signed evidence
+not ok 25 - R1 decision ID cannot rebind to different signed evidence
+  ---
+  duration_ms: 2.5826
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:37:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:37:79)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 refused resource consumes decision before probe, launches no process
+not ok 26 - R1 refused resource consumes decision before probe, launches no process
+  ---
+  duration_ms: 3.3895
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:38:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:38:99)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 refusal cannot be renewed by a fresh permit UUID
+not ok 27 - R1 refusal cannot be renewed by a fresh permit UUID
+  ---
+  duration_ms: 3.3284
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:39:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:39:79)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 consumed evidence cannot reissue under new authorization and decision IDs
+not ok 28 - R1 consumed evidence cannot reissue under new authorization and decision IDs
+  ---
+  duration_ms: 2.5809
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:40:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:40:104)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 cross-job use of the exact signed scope rejected
+not ok 29 - R1 cross-job use of the exact signed scope rejected
+  ---
+  duration_ms: 2.8478
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:41:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:41:73)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 cross-job reissued evidence remains consumed
+not ok 30 - R1 cross-job reissued evidence remains consumed
+  ---
+  duration_ms: 2.6215
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:42:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:42:75)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 consumption survives reloading state and event history
+not ok 31 - R1 consumption survives reloading state and event history
+  ---
+  duration_ms: 2.1441
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:43:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:43:85)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 a consumed tombstone prevents reuse after stale transport.json rollback
+not ok 32 - R1 a consumed tombstone prevents reuse after stale transport.json rollback
+  ---
+  duration_ms: 2.2503
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:44:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:44:102)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 partial durable tombstone set is fail-closed
+not ok 33 - R1 partial durable tombstone set is fail-closed
+  ---
+  duration_ms: 3.159
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:45:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:45:69)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 fresh store cannot reuse old-audience authorization
+not ok 34 - R1 fresh store cannot reuse old-audience authorization
+  ---
+  duration_ms: 2.2996
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:46:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:46:76)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 new actual signed decision/evidence is distinct after refusal
+not ok 35 - R1 new actual signed decision/evidence is distinct after refusal
+  ---
+  duration_ms: 2.7199
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:47:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:47:92)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 changed recipe/config refuses before measurement
+not ok 36 - R1 changed recipe/config refuses before measurement
+  ---
+  duration_ms: 2.7284
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:48:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:48:79)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 expiration is checked again at consumption
+not ok 37 - R1 expiration is checked again at consumption
+  ---
+  duration_ms: 2.4761
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:49:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:49:67)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: live transport default off does not consume or probe
+not ok 38 - live transport default off does not consume or probe
+  ---
+  duration_ms: 2.128
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:51:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:51:80)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: resource threshold lowering refused
+not ok 39 - resource threshold lowering refused
+  ---
+  duration_ms: 2.498
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:52:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:52:63)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: resource probe error consumes authority and records no process
+not ok 40 - resource probe error consumes authority and records no process
+  ---
+  duration_ms: 3.9204
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:53:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:53:90)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: invalid resource sample leaves slot held
+not ok 41 - invalid resource sample leaves slot held
+  ---
+  duration_ms: 3.9326
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:54:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:54:68)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: consumed permit cannot retry after resource improvement
+not ok 42 - consumed permit cannot retry after resource improvement
+  ---
+  duration_ms: 2.2161
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:55:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:55:83)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: one slot serializes all jobs
+not ok 43 - one slot serializes all jobs
+  ---
+  duration_ms: 2.1627
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:56:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:56:56)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: runner exception leaves UNKNOWN and retains the slot
+not ok 44 - runner exception leaves UNKNOWN and retains the slot
+  ---
+  duration_ms: 2.7034
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:57:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:57:80)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R4 signal cannot release the slot
+not ok 45 - R4 signal cannot release the slot
+  ---
+  duration_ms: 4.8191
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:60:3'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:60:64)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R4 timeout cannot release the slot
+not ok 46 - R4 timeout cannot release the slot
+  ---
+  duration_ms: 2.185
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:60:3'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:60:64)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R4 output overflow cannot release the slot
+not ok 47 - R4 output overflow cannot release the slot
+  ---
+  duration_ms: 2.004
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:60:3'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:60:64)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R4 missing close cannot release the slot
+not ok 48 - R4 missing close cannot release the slot
+  ---
+  duration_ms: 1.9794
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:60:3'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:60:64)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R4 receipt failure cannot release the slot
+not ok 49 - R4 receipt failure cannot release the slot
+  ---
+  duration_ms: 1.9148
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:60:3'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:60:64)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R4 missing completion cannot release the slot
+not ok 50 - R4 missing completion cannot release the slot
+  ---
+  duration_ms: 1.9264
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:60:3'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:60:64)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R4 definitive provider failure keeps evidence but releases local slot
+not ok 51 - R4 definitive provider failure keeps evidence but releases local slot
+  ---
+  duration_ms: 1.9745
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:61:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:61:97)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R4 unsigned/missing attempt context from runner is UNKNOWN
+not ok 52 - R4 unsigned/missing attempt context from runner is UNKNOWN
+  ---
+  duration_ms: 5.7672
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:62:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:62:86)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R3 same source but wrong attempt output is rejected
+not ok 53 - R3 same source but wrong attempt output is rejected
+  ---
+  duration_ms: 3.1311
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:63:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:63:79)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R3 wrong source despite correct attempt is rejected
+not ok 54 - R3 wrong source despite correct attempt is rejected
+  ---
+  duration_ms: 2.2999
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:64:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:64:79)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: provider cannot add owner approval fields
+ok 55 - provider cannot add owner approval fields
+  ---
+  duration_ms: 0.4545
+  ...
+# Subtest: provider cannot return release-ready disposition
+ok 56 - provider cannot return release-ready disposition
+  ---
+  duration_ms: 0.1835
+  ...
+# Subtest: recorded proposal is not website qualification or deployment
+not ok 57 - recorded proposal is not website qualification or deployment
+  ---
+  duration_ms: 2.1285
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:67:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:67:88)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: proposal followup keeps immutable source and holds; does not dispatch
+not ok 58 - proposal followup keeps immutable source and holds; does not dispatch
+  ---
+  duration_ms: 1.9715
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:68:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:68:97)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: review acceptance is text only, not task authority
+not ok 59 - review acceptance is text only, not task authority
+  ---
+  duration_ms: 3.7486
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:69:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:69:104)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: prompt delimits untrusted data and binds attempt
+ok 60 - prompt delimits untrusted data and binds attempt
+  ---
+  duration_ms: 1.1149
+  ...
+# Subtest: explicit uncertain-slot reconciliation never refunds authorization
+not ok 61 - explicit uncertain-slot reconciliation never refunds authorization
+  ---
+  duration_ms: 2.8088
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:71:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:71:94)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: Git snapshots read exact committed blobs and do not alter .xenios
+ok 62 - Git snapshots read exact committed blobs and do not alter .xenios
+  ---
+  duration_ms: 773.5846
+  ...
+# Subtest: stored input mutation cannot reuse prior permission
+not ok 63 - stored input mutation cannot reuse prior permission
+  ---
+  duration_ms: 2.3422
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:73:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:73:73)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 same decision evidence hash cannot renew via a changed reference string
+not ok 64 - R1 same decision evidence hash cannot renew via a changed reference string
+  ---
+  duration_ms: 3.7686
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:74:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:74:102)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R1 expiry during preflight consumes decision but starts no process
+not ok 65 - R1 expiry during preflight consumes decision but starts no process
+  ---
+  duration_ms: 3.6065
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\core.test.mjs:75:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/core.test.mjs:75:94)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R2 external file output succeeds exclusively
+not ok 66 - R2 external file output succeeds exclusively
+  ---
+  duration_ms: 10.0539
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\paths.test.mjs:17:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    openNewOutput (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:76:16)
+    writeNew (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:92:15)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/paths.test.mjs:17:99)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    node:internal/test_runner/harness:255:12
+  ...
+# Subtest: R2 store and exports cannot live beneath .git
+ok 67 - R2 store and exports cannot live beneath .git
+  ---
+  duration_ms: 7.0121
+  ...
+# Subtest: R2 store and exports cannot live beneath .xenios
+ok 68 - R2 store and exports cannot live beneath .xenios
+  ---
+  duration_ms: 6.8397
+  ...
+# Subtest: R2 Git worktree marker FILE protects nested output
+ok 69 - R2 Git worktree marker FILE protects nested output
+  ---
+  duration_ms: 15.0029
+  ...
+# Subtest: R2 literal metadata destination cannot be created
+ok 70 - R2 literal metadata destination cannot be created
+  ---
+  duration_ms: 4.0947
+  ...
+# Subtest: R2 symlink/junction ancestry cannot redirect outputs into repository
+not ok 71 - R2 symlink/junction ancestry cannot redirect outputs into repository
+  ---
+  duration_ms: 6.9512
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\paths.test.mjs:21:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BridgeError: Controller outputs must be outside Git and .xenios trees.
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/paths.test.mjs:21:170)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: R2 even an external alias is refused instead of trusted
+not ok 72 - R2 even an external alias is refused instead of trusted
+  ---
+  duration_ms: 5.8786
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\paths.test.mjs:22:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BridgeError: Controller outputs must be outside Git and .xenios trees.
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/paths.test.mjs:22:202)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: R2 existing-file symlink is not overwritten or followed
+ok 73 - R2 existing-file symlink is not overwritten or followed # SKIP File symlink privilege not assumed
+  ---
+  duration_ms: 0.2853
+  ...
+# Subtest: R2 hardlinked output is refused for replacement/readback
+not ok 74 - R2 hardlinked output is refused for replacement/readback
+  ---
+  duration_ms: 5.236
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\paths.test.mjs:24:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BridgeError: Controller outputs must be outside Git and .xenios trees.
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/paths.test.mjs:24:212)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: R2 state revalidates parents after construction
+not ok 75 - R2 state revalidates parents after construction
+  ---
+  duration_ms: 3.1515
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\paths.test.mjs:25:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/paths.test.mjs:25:82)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R2 lexical prefix lookalike is outside attempts root
+not ok 76 - R2 lexical prefix lookalike is outside attempts root
+  ---
+  duration_ms: 2.6032
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\paths.test.mjs:26:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BridgeError: Controller outputs must be outside Git and .xenios trees.
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/paths.test.mjs:26:91)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: R2 existing empty attempt directory is rejected
+not ok 77 - R2 existing empty attempt directory is rejected
+  ---
+  duration_ms: 6.4192
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\paths.test.mjs:27:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BridgeError: Controller outputs must be outside Git and .xenios trees.
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/paths.test.mjs:27:85)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: R2 existing attempt with stale result is rejected intact
+not ok 78 - R2 existing attempt with stale result is rejected intact
+  ---
+  duration_ms: 4.3503
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\paths.test.mjs:28:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BridgeError: Controller outputs must be outside Git and .xenios trees.
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/paths.test.mjs:28:158)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: R2 fresh attempt created once under its exact external root
+not ok 79 - R2 fresh attempt created once under its exact external root
+  ---
+  duration_ms: 4.6899
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\paths.test.mjs:29:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    freshExternalDir (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:67:16)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/paths.test.mjs:29:140)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R2 demo rejects an output inside a repository before writing
+ok 80 - R2 demo rejects an output inside a repository before writing
+  ---
+  duration_ms: 137.3126
+  ...
+# Subtest: R2 demo refuses an existing output directory without overwriting
+ok 81 - R2 demo refuses an existing output directory without overwriting
+  ---
+  duration_ms: 131.0954
+  ...
+# Subtest: R2 CLI report blocks repository output
+not ok 82 - R2 CLI report blocks repository output
+  ---
+  duration_ms: 5.7434
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\paths.test.mjs:32:49'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/paths.test.mjs:32:112)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R2 CLI export-prompt blocks repository output
+not ok 83 - R2 CLI export-prompt blocks repository output
+  ---
+  duration_ms: 3.028
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\paths.test.mjs:32:49'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/paths.test.mjs:32:112)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R2 CLI recipe output cannot go into repository
+not ok 84 - R2 CLI recipe output cannot go into repository
+  ---
+  duration_ms: 2.9988
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\paths.test.mjs:33:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/paths.test.mjs:33:68)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+# Subtest: R2 CLI snapshot output cannot go into the source repository
+ok 85 - R2 CLI snapshot output cannot go into the source repository
+  ---
+  duration_ms: 881.8147
+  ...
+# Subtest: R2 malformed output path and network roots refused
+ok 86 - R2 malformed output path and network roots refused
+  ---
+  duration_ms: 0.2769
+  ...
+# Subtest: R2 attempt-root aliases rejected at recipe preparation
+not ok 87 - R2 attempt-root aliases rejected at recipe preparation
+  ---
+  duration_ms: 3.6011
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\paths.test.mjs:36:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BridgeError: Controller outputs must be outside Git and .xenios trees.
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/paths.test.mjs:36:199)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: R2 bare Git repository output is refused
+ok 88 - R2 bare Git repository output is refused
+  ---
+  duration_ms: 10.6351
+  ...
+# Subtest: R3 Codex requires a successful complete event stream
+ok 89 - R3 Codex requires a successful complete event stream
+  ---
+  duration_ms: 7.5113
+  ...
+# Subtest: R3 Claude requires its successful terminal result envelope
+ok 90 - R3 Claude requires its successful terminal result envelope
+  ---
+  duration_ms: 0.5775
+  ...
+# Subtest: R3 Codex failed event beats a valid last-message file
+ok 91 - R3 Codex failed event beats a valid last-message file
+  ---
+  duration_ms: 1.2142
+  ...
+# Subtest: R3 Codex error after completed turn also beats file
+ok 92 - R3 Codex error after completed turn also beats file
+  ---
+  duration_ms: 0.6449
+  ...
+# Subtest: R3 last-message alone is never completion evidence
+ok 93 - R3 last-message alone is never completion evidence
+  ---
+  duration_ms: 3.7342
+  ...
+# Subtest: R3 missing turn.completed rejected even with final message
+ok 94 - R3 missing turn.completed rejected even with final message
+  ---
+  duration_ms: 0.516
+  ...
+# Subtest: R3 duplicate successful turns rejected
+ok 95 - R3 duplicate successful turns rejected
+  ---
+  duration_ms: 0.4091
+  ...
+# Subtest: R3 duplicate thread identity rejected
+ok 96 - R3 duplicate thread identity rejected
+  ---
+  duration_ms: 0.3206
+  ...
+# Subtest: R3 message after terminal completion rejected
+ok 97 - R3 message after terminal completion rejected
+  ---
+  duration_ms: 0.4717
+  ...
+# Subtest: R3 malformed JSONL fails closed
+ok 98 - R3 malformed JSONL fails closed
+  ---
+  duration_ms: 0.4556
+  ...
+# Subtest: R3 final file and event must agree
+ok 99 - R3 final file and event must agree
+  ---
+  duration_ms: 0.5188
+  ...
+# Subtest: R3 same source but stale request_id rejected
+ok 100 - R3 same source but stale request_id rejected
+  ---
+  duration_ms: 0.3842
+  ...
+# Subtest: R3 same source but stale attempt_id rejected
+ok 101 - R3 same source but stale attempt_id rejected
+  ---
+  duration_ms: 0.2279
+  ...
+# Subtest: R3 same source but stale request_digest rejected
+ok 102 - R3 same source but stale request_digest rejected
+  ---
+  duration_ms: 0.2994
+  ...
+# Subtest: R3 Claude is_error beats structured result
+ok 103 - R3 Claude is_error beats structured result
+  ---
+  duration_ms: 0.3003
+  ...
+# Subtest: R3 Claude max-turns failure is not success
+ok 104 - R3 Claude max-turns failure is not success
+  ---
+  duration_ms: 0.3271
+  ...
+# Subtest: R3 Claude bare structured_output without envelope refused
+ok 105 - R3 Claude bare structured_output without envelope refused
+  ---
+  duration_ms: 0.2257
+  ...
+# Subtest: R3 Claude missing explicit success/error status refused
+ok 106 - R3 Claude missing explicit success/error status refused
+  ---
+  duration_ms: 0.4927
+  ...
+# Subtest: R3 Claude blank session id refused
+ok 107 - R3 Claude blank session id refused
+  ---
+  duration_ms: 0.3227
+  ...
+# Subtest: fixed recipes exclude desktop resume and bypass flags
+not ok 108 - fixed recipes exclude desktop resume and bypass flags
+  ---
+  duration_ms: 16.7175
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:39:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    makeRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:29:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:39:187)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: Claude recipe disables built-in tools and MCP
+not ok 109 - Claude recipe disables built-in tools and MCP
+  ---
+  duration_ms: 7.7391
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:40:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    makeRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:29:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:40:79)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: shell-wrapper recipes rejected
+not ok 110 - shell-wrapper recipes rejected
+  ---
+  duration_ms: 6.5735
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:41:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BridgeError: Controller outputs must be outside Git and .xenios trees.
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:41:69)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: result schema requires request and attempt bindings
+ok 111 - result schema requires request and attempt bindings
+  ---
+  duration_ms: 0.3736
+  ...
+# Subtest: R4 actual fake subprocess success retains bound logs and receipt
+not ok 112 - R4 actual fake subprocess success retains bound logs and receipt
+  ---
+  duration_ms: 12.7958
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:44:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:44:146)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R3 pre-existing directory with stale result is refused before process
+not ok 113 - R3 pre-existing directory with stale result is refused before process
+  ---
+  duration_ms: 28.5544
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:45:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    BridgeError: Controller outputs must be outside Git and .xenios trees.
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    async TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:45:305)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: R3 result created during failed Codex run cannot be accepted
+not ok 114 - R3 result created during failed Codex run cannot be accepted
+  ---
+  duration_ms: 19.8807
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:46:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:46:434)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R3 missing result file rejects successful Codex event output
+not ok 115 - R3 missing result file rejects successful Codex event output
+  ---
+  duration_ms: 19.6879
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:47:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:47:93)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R3 completed Codex stream/file agree for this fresh attempt
+not ok 116 - R3 completed Codex stream/file agree for this fresh attempt
+  ---
+  duration_ms: 17.7853
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:48:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:48:339)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R3 wrong-attempt final result is rejected and receipt preserved
+not ok 117 - R3 wrong-attempt final result is rejected and receipt preserved
+  ---
+  duration_ms: 31.4739
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:49:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:49:96)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R4 normal nonzero exit preserves stderr and raw numeric code
+not ok 118 - R4 normal nonzero exit preserves stderr and raw numeric code
+  ---
+  duration_ms: 24.3417
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:50:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:50:249)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R4 signal termination preserves null code and named signal
+ok 119 - R4 signal termination preserves null code and named signal # SKIP Native Windows signal semantics must be qualified separately
+  ---
+  duration_ms: 0.5209
+  ...
+# Subtest: R4 timeout preserves partial output and remains UNKNOWN
+not ok 120 - R4 timeout preserves partial output and remains UNKNOWN
+  ---
+  duration_ms: 22.116
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:52:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:52:213)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R4 output-limit retains bounded raw prefixes and counts overflow
+not ok 121 - R4 output-limit retains bounded raw prefixes and counts overflow
+  ---
+  duration_ms: 17.3243
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:53:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:53:233)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R4 abort preserves logs without a success result
+not ok 122 - R4 abort preserves logs without a success result
+  ---
+  duration_ms: 30.2189
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:54:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:54:416)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R4 spawn exception writes empty streams and NOT_STARTED receipt
+not ok 123 - R4 spawn exception writes empty streams and NOT_STARTED receipt
+  ---
+  duration_ms: 30.6975
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:55:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:55:128)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R4 executable pin mismatch records NOT_STARTED before any spawn
+not ok 124 - R4 executable pin mismatch records NOT_STARTED before any spawn
+  ---
+  duration_ms: 27.5383
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:56:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:56:190)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R4 missing provider completion is UNKNOWN even on exit zero
+not ok 125 - R4 missing provider completion is UNKNOWN even on exit zero
+  ---
+  duration_ms: 21.4549
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:57:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:57:143)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R4 explicit Claude failure preserved as definitive provider failure
+not ok 126 - R4 explicit Claude failure preserved as definitive provider failure
+  ---
+  duration_ms: 17.2721
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:58:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:58:233)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R4 stream error saves receipt and root-only stop request
+not ok 127 - R4 stream error saves receipt and root-only stop request
+  ---
+  duration_ms: 26.025
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:59:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:59:356)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R4 close never observed stays UNKNOWN with rootMayRemain
+not ok 128 - R4 close never observed stays UNKNOWN with rootMayRemain
+  ---
+  duration_ms: 6.9195
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:60:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    runRecipe (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/providers.mjs:91:14)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:60:291)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+  ...
+# Subtest: R4 real runner timeout keeps controller slot held across reload
+not ok 129 - R4 real runner timeout keeps controller slot held across reload
+  ---
+  duration_ms: 5.101
+  location: 'C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\bridge-v02-run\\tests\\providers.test.mjs:61:1'
+  failureType: 'testCodeFailure'
+  error: 'Controller outputs must be outside Git and .xenios trees.'
+  code: 'OUTPUT_INSIDE_REPOSITORY'
+  name: 'BridgeError'
+  stack: |-
+    requireThat (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/primitives.mjs:5:65)
+    noRepoAncestors (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:15:47)
+    assertExternalPath (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/paths.mjs:41:7)
+    new Store (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/lib/core.mjs:21:33)
+    setup (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/helpers.mjs:17:45)
+    TestContext.<anonymous> (file:///C:/Users/sboad/AppData/Local/Temp/claude/C--xenios-wt-general-platform/6abf1edf-2b16-476e-8305-23b9a0014e06/scratchpad/bridge-v02-run/tests/providers.test.mjs:61:91)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+  ...
+1..129
+# tests 129
+# suites 0
+# pass 39
+# fail 88
+# cancelled 0
+# skipped 2
+# todo 0
+# duration_ms 3409.32

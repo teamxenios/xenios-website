@@ -1,0 +1,12 @@
+# reviewer probe of lib/paths.mjs assertExternalPath at Xenios Handoff Bridge v0.2 (zip sha256 9a82deb5...eaab)
+# host: Windows 11, C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe v20.19.0; pure-function calls (lstat/realpath reads only), run from a scratch copy of the package
+# note: C:/Users/sboad/.xenios exists on this host (profile-level directory holding two credential files; not the repository corpus)
+REFUSE ".\x" BAD_OUTPUT_PATH Ambiguous Windows path component.
+REFUSE "..\x" BAD_OUTPUT_PATH Ambiguous Windows path component.
+REFUSE "x\y" OUTPUT_INSIDE_REPOSITORY Controller outputs must be outside Git and .xenios trees.
+REFUSE "./x" BAD_OUTPUT_PATH Ambiguous Windows path component.
+OK     "C:\Users\Public\bridge-probe\state" -> C:\Users\Public\bridge-probe\state
+REFUSE "C:\Users\sboad\bridge-probe\state" OUTPUT_INSIDE_REPOSITORY Controller outputs must be outside Git and .xenios trees.
+REFUSE "C:\Users\sboad\Downloads\Xenios_Handoff_Bridge_v0_2\demo-output-x" OUTPUT_INSIDE_REPOSITORY Controller outputs must be outside Git and .xenios trees.
+REFUSE "C:\xenios-wt\general-platform\anything" OUTPUT_INSIDE_REPOSITORY Controller outputs must be outside Git and .xenios trees.
+# reading: relative paths are refused on win32 because the trailing-dot rule matches the '.' and '..' components before resolution (fail-closed); every path under the user profile is refused because of the profile-level .xenios directory (fail-closed); the website worktree is refused (intended); a path under C:\Users\Public is accepted.
