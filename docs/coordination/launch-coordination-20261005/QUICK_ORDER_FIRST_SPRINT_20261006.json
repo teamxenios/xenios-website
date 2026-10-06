@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "status": "SQL_DRAFT_SOURCE_PUSHED_ORIGINAL_REVIEW_PENDING",
   "receivedAt": "2026-10-06T17:43:37Z",
-  "checkpointAt": "2026-10-06T20:17:53.379Z",
+  "checkpointAt": "2026-10-06T20:21:20.778Z",
   "expiresAt": "2026-10-06T21:43:37Z",
   "authority": {
     "thread": "01a103a8-5684-7272-89e5-3c42eefcd593",
@@ -457,9 +457,9 @@
     }
   ],
   "planningRelay": {
-    "record": "QUICK_ORDER_COMPATIBILITY_PLANNING_RELAY_20261006.json",
-    "turn": "606ae2f1-6728-4341-a3d4-49bce4e205cc",
-    "replyMessage": "228b300c-b860-40b1-9944-5c699de74a92",
+    "record": "QUICK_ORDER_SQL_DRAFT_PLANNING_RELAY_20261006.json",
+    "turn": "e5a293fd-3e97-4c90-8cf8-75f55ec235f6",
+    "replyMessage": "fdc5c5e9-3d5a-49e7-8462-f2f22cc3c33a",
     "status": "CONFIRMED_NO_NEW_AUTHORITY",
     "pendingReply": false
   },
@@ -730,23 +730,24 @@
     }
   },
   "foregroundCheckpoint": {
-    "at": "2026-10-06T19:25:04.679Z",
-    "builder": "CLEAN_IDLE_HANDOFF_READY",
-    "source": "5fd2e4c74d31562281493013489bb41949979b88",
-    "handoff": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
-    "remainingWork": "Same original reviewer final; two actual user answers. No new source assignment ready.",
+    "at": "2026-10-06T20:21:20.778Z",
+    "builder": "CLEAN_IDLE_PARKED",
+    "source": "7d027e4dff130214cb71954e2de548be5747cd0c",
+    "handoff": "18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb",
+    "remainingWork": "Same original reviewer packet delivery/disposition and two previously issued actual-user scope answers. No further implementation dependency-ready.",
     "qualification": {
       "groupsConsumed": 1,
       "groupsRemaining": 5,
       "reservation": null,
       "materialHostChangeEstablished": false,
-      "remainingWindowSeconds": 8312,
+      "newObservation": false,
+      "remainingWindowSeconds": 4936,
       "expiresAt": "2026-10-06T21:43:37Z"
     },
     "automation": "PAUSED_NO_RESTART",
-    "sourceApproval": "Supplemental1d4f2c3 already approved atdc3329; not pending. SQL drafting still conditional. Two later one-file amendments remain pending.",
-    "execution": "No tests, resources or live actions performed at this checkpoint",
-    "supersededBy": "Final reviewca1c114 cleared bounded5A/B drafting; completed at7d027e4/18bfbcd. Next exact original review pending; historical parked checkpoint retained."
+    "sourceApproval": "Supplemental1d4f2c3 already approved atdc3329. Two later one-file amendments remain pending.",
+    "review": "Draft7d027e4 and section5C design plus composition5fd2e4c pending original review; delivery unconfirmed",
+    "execution": "All SQL, verifiers, tests, syntax/type/build and resource checks NOT RUN"
   },
   "draftingAssignment": {
     "status": "COMPLETED_SOURCE_ONLY_REVIEW_PENDING",
@@ -809,5 +810,24 @@
       "turn": "01a112b3-9b9e-71b1-b4c4-2f3d6139c791",
       "cursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:158"
     }
+  },
+  "historicalForegroundCheckpoint": {
+    "at": "2026-10-06T19:25:04.679Z",
+    "builder": "CLEAN_IDLE_HANDOFF_READY",
+    "source": "5fd2e4c74d31562281493013489bb41949979b88",
+    "handoff": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
+    "remainingWork": "Same original reviewer final; two actual user answers. No new source assignment ready.",
+    "qualification": {
+      "groupsConsumed": 1,
+      "groupsRemaining": 5,
+      "reservation": null,
+      "materialHostChangeEstablished": false,
+      "remainingWindowSeconds": 8312,
+      "expiresAt": "2026-10-06T21:43:37Z"
+    },
+    "automation": "PAUSED_NO_RESTART",
+    "sourceApproval": "Supplemental1d4f2c3 already approved atdc3329; not pending. SQL drafting still conditional. Two later one-file amendments remain pending.",
+    "execution": "No tests, resources or live actions performed at this checkpoint",
+    "supersededBy": "Final reviewca1c114 cleared bounded5A/B drafting; completed at7d027e4/18bfbcd. Next exact original review pending; historical parked checkpoint retained."
   }
 }
