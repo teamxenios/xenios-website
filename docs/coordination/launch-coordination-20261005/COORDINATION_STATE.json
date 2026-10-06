@@ -969,7 +969,7 @@
         "acknowledged": true
       },
       "supplementalScope": {
-        "status": "READY_FOR_SOURCE_DECISION_NOT_APPROVED",
+        "status": "USER_APPROVED_SOURCE_ONLY_SQL_COMPATIBILITY_REVIEW_PENDING",
         "scope": "QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md",
         "scopeSha256": "4e422cf96a003d0d4add184926546bb80d25e44a90a760489bd6f8284d7b10f0",
         "bindings": "QUICK_ORDER_SUPPLEMENTAL_BASELINES_20261006.json",
@@ -984,7 +984,25 @@
         },
         "referenceCount": 46,
         "conditionalSqlReview": "Same original Claude naming/fence and lock protocol review before corresponding SQL drafting",
-        "excludes": "All database execution, live intake, payment, notification sends, deployment, manifest/final protected acceptance"
+        "excludes": "All database execution, live intake, payment, notification sends, deployment, manifest/final protected acceptance",
+        "presentedCommit": "1d4f2c3b3ff2fc0e1bc25495d3076d2bd9a76e99",
+        "question": {
+          "issued": true,
+          "tool": "request_user_input_async",
+          "toolAccepted": true,
+          "userAnswer": "Approve this bounded source-only scope",
+          "note": "One bounded source approval requested in current turn. Do not repeat or infer approval from elapsed time/planner response."
+        },
+        "approval": {
+          "source": "Direct user reply in this coordinator chat",
+          "questionItemId": "[\"request_user_input_async\",\"call_8pASDhFJ9FD8J54nricitLhU\",0]",
+          "exactQuestion": "Approve the completed supplemental source packet at coordinator commit 1d4f2c3? It covers the proposed currentness/atomic-save SQL drafts and modules, five shared runtime edits, and named tests. SQL drafting remains conditional on the original reviewer’s compatibility review. It grants no database execution, live intake, payment, notification sends, deployment, manifest changes or final protected-hash acceptance.",
+          "exactAnswer": "Approve this bounded source-only scope",
+          "recordedAt": "2026-10-06T18:29:11.344Z",
+          "scopeCommit": "1d4f2c3b3ff2fc0e1bc25495d3076d2bd9a76e99",
+          "patchSha256": "b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f",
+          "limits": "Source-only; exact scope/hashes at1d4f2c3. SQL remains conditional on same original reviewer compatibility review. No database execution/live intake/payment/notification sends/deployment/manifest/final protected acceptance."
+        }
       },
       "reviewer": {
         "session": "6abf1edf-2b16-476e-8305-23b9a0014e06",
@@ -999,6 +1017,11 @@
           "at": "2026-10-06T17:48:17.039Z",
           "message": "1840d909-cac8-4e71-ba28-7cfef65f32f0",
           "note": "Plan adopted as reviewer brief; its no-authority observation preceded coordinator authority commit60d593a. No successor review yet."
+        },
+        "lastPublicActivity": {
+          "at": "2026-10-06T18:10:02.478Z",
+          "message": "8d0ec7d7-823a-458d-a427-6881af89c62e",
+          "classification": "Old background disk-footprint task notification and public acknowledgement only; not actual user input, new review, coordinator resource observation or cleanup authority. Reviewer still idle; adoption statement stale relative to60d coordinator record."
         }
       },
       "exclusions": [
@@ -1050,7 +1073,7 @@
           "id": "04",
           "owner": "same builder for pure extension slice; SQL writer not separately activated",
           "status": "PARTIAL_SOURCE_BUILDING",
-          "next": "Pure projection/decoder; colliding SQL requires compatibility review; currentness/commit needs supplemental approval"
+          "next": "Finish pure decoder; currentness/module source approved, SQL still waits original reviewer compatibility verdict"
         },
         {
           "id": "05",
@@ -1061,8 +1084,8 @@
         {
           "id": "06",
           "owner": "proposed same builder",
-          "status": "PROPOSED_SHARED_DIFF",
-          "next": "Five runtime paths and named tests after supplemental approval; no live notifications"
+          "status": "APPROVED_SOURCE_WAITING_DECODER_FREEZE",
+          "next": "Same builder may claim/apply exact shared patch and named tests after decoder source checkpoint; maintain disabled composition"
         },
         {
           "id": "07",
@@ -1101,7 +1124,14 @@
           "status": "NOT_DEPENDENCY_READY",
           "next": "Qualified complete intake and independent review, exact protected successors/GATE01 and managed action approval; coordinator Finance branch excluded"
         }
-      ]
+      ],
+      "planningRelay": {
+        "record": "QUICK_ORDER_FIRST_PLANNING_RELAY_20261006.json",
+        "turn": "ee21dc5a-f0f5-4110-9a4b-25c16f93f6d8",
+        "replyMessage": "2a3f1c6d-0d46-44c0-a1a9-ef457a8aa028",
+        "status": "CONFIRMED_NO_NEW_AUTHORITY",
+        "pendingReply": false
+      }
     }
   },
   "latestUserContinuation": {

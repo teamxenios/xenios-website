@@ -1,3 +1,13 @@
+## Supplemental source decision — 2026-10-06
+
+Samuel directly answered “Approve this bounded source-only scope” to the exact
+question naming coordinator1d4f2c3. The scope and patch at that commit are now
+authorized for source work; the packet's earlier proposed status records its
+pre-approval state. Full direct question/answer provenance is in the sprint JSON.
+SQL drafting remains conditional on the original Claude reviewer's compatibility
+review. Database execution, live actions, final hashes and manifest remain held.
+No new resource sample or qualification group follows from source approval.
+
 ## Quick Order source checkpoint — 2026-10-06 18:20Z
 
 Builder source `ac36e60fe5e91b1217722e7f2a2711fd62a64559`, tree
