@@ -69,6 +69,7 @@ const Admin = lazy(() => import("@/pages/Admin"));
 // Research operations (Samuel admin presentation) — its own lazy chunk at
 // /admin/research*. Presentation only; all authority is server-side.
 const AdminResearchSection = lazy(() => import("@/research/adminx-section"));
+const QuickOrderPage = lazy(() => import("@/research/quick-order/QuickOrderPage"));
 const CareSection = lazy(() => import("@/care/section"));
 const CareEligibility = lazy(() => import("@/care/EligibilityPendingPage"));
 const CareConsent = lazy(() => import("@/care/CareConsentPendingPage"));
@@ -239,6 +240,7 @@ function Router() {
       {/* Research operations family (Samuel admin presentation, own chunk). */}
       <Route path="/admin/research" component={AdminResearchRoutes} />
       <Route path="/admin/research/*" component={AdminResearchRoutes} />
+      <Route path="/health/quick-order"><Suspense fallback={<div aria-busy="true" />}><QuickOrderPage sessionKey={null} /></Suspense></Route>
       <Route path="/health"><Redirect to="/" /></Route>
       <Route path="/r/:code">{({ code }) => <Suspense fallback={<div className="container-x" aria-busy="true" style={{ paddingTop: 96 }} />}><RecommendationRecipient code={code} /></Suspense>}</Route>
       {/* Public clarity entrypoints redirect legacy marketing URLs before the

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isCarePath, isHealthGatewayPath, normalizeCarePath } from "./paths";
+import { isCarePath, isHealthGatewayPath, isHealthIntakePath, normalizeCarePath } from "./paths";
 
 describe("Care path normalization", () => {
   it.each([
@@ -50,5 +50,36 @@ describe("Care path normalization", () => {
     "https://example.com/health",
   ])("does not broaden the Health gateway boundary: %s", (value) => {
     expect(isHealthGatewayPath(value)).toBe(false);
+  });
+});
+
+describe("the separate Quick Order intake boundary", () => {
+  it.each([
+    "/health/quick-order",
+    "/HEALTH/QUICK-ORDER/",
+    "/%68ealth/quick-%6frder",
+    "/health/quick-order?ref=SYNTHETIC#review",
+  ])("recognizes the exact normalized intake without widening the gateway: %s", (path) => {
+    expect(isHealthIntakePath(path)).toBe(true);
+    expect(isHealthGatewayPath(path)).toBe(false);
+    expect(isCarePath(path)).toBe(false);
+  });
+
+  it.each([
+    "/health", "/HEALTH/", "/care", "/products",
+    "/health/quick-order/status", "/health/quick-orders", "/health/quick-ordering",
+    "/health//quick-order", "//health/quick-order", "/health/quick-order//",
+    "/health%2Fquick-order", "/health%252Fquick-order",
+    "/health/./quick-order", "/health/%2e/quick-order", "/health/quick-order/../",
+    "/health\\quick-order", "/health/%5cquick-order",
+    "/health/quick-order%", "/health/quick-order%zz",
+    "https://example.test/health/quick-order", "health/quick-order",
+  ])("does not grant intake identity to a neighbor or ambiguous path: %s", (path) => {
+    expect(isHealthIntakePath(path)).toBe(false);
+  });
+
+  it("preserves the exact Health gateway as its own identity", () => {
+    expect(isHealthGatewayPath("/health")).toBe(true);
+    expect(isHealthIntakePath("/health")).toBe(false);
   });
 });

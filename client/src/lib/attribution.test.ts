@@ -21,6 +21,40 @@ beforeEach(() => {
 
 describe("marketing attribution privacy boundary", () => {
   it.each([
+    "/health/quick-order",
+    "/HEALTH/QUICK-ORDER/",
+    "/%68ealth/quick-%6frder",
+  ])("clears valid prior marketing storage on intake entry before any read: %s", (path) => {
+    // Current-schema data and a valid public landing prevent legacy cleanup
+    // or an unknown landing from hiding an initAttribution regression.
+    sessionStorage.setItem("xen_attribution_schema", "2");
+    sessionStorage.setItem("xen_landing_page", "/about");
+    sessionStorage.setItem("xen_referrer", "");
+    sessionStorage.setItem("xen_utm", JSON.stringify({ utm_source: "partner", utm_medium: "referral" }));
+    navigate(`${path}?ref=SYNTHETIC-QO&utm_source=partner#review`);
+
+    initAttribution();
+
+    for (const key of ["xen_attribution_schema", "xen_landing_page", "xen_referrer", "xen_utm"]) {
+      expect(sessionStorage.getItem(key), key).toBeNull();
+    }
+    expect(new URLSearchParams(window.location.search).get("ref")).toBe("SYNTHETIC-QO");
+    expect(getAttribution()).toEqual({
+      source_page: "", landing_page: "", referrer_url: "",
+      utm_source: null, utm_medium: null, utm_campaign: null, utm_content: null, utm_term: null,
+    });
+    expect(sessionStorage.length).toBe(0);
+
+    navigate("/early-interest");
+    initAttribution();
+    expect(getAttribution()).toMatchObject({
+      source_page: "/early-interest", landing_page: "/early-interest",
+      utm_source: null, utm_medium: null,
+    });
+    expect(JSON.stringify(getAttribution())).not.toMatch(/SYNTHETIC-QO|quick-order|partner|\/about/);
+  });
+
+  it.each([
     "/r/r1_synthetic?utm_source=private",
     "/R/r1_synthetic?ref=private",
     "/%72/r1_synthetic",

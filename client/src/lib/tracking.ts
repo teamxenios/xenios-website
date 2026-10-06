@@ -1,5 +1,5 @@
 import { getConfig } from "./config";
-import { isCarePath, isHealthGatewayPath } from "@shared/care/paths";
+import { isCarePath, isHealthGatewayPath, isHealthIntakePath } from "@shared/care/paths";
 import { isRecoveryHash } from "@shared/research/recovery";
 import { isResearchPath } from "@shared/research/paths";
 import { isRecommendationPath } from "@shared/research/referral-v1";
@@ -40,6 +40,7 @@ export function trackingBlockedHere(pathname: string, hash: string): boolean {
     || isRecommendationPath(pathname)
     || isCarePath(pathname)
     || isHealthGatewayPath(pathname)
+    || isHealthIntakePath(pathname)
     || isRecoveryHash(hash);
 }
 
@@ -50,7 +51,7 @@ function documentPrivacyZone(pathname: string, hash: string): DocumentPrivacyZon
   if (isRecommendationPath(pathname)) return "recommendation";
   if (isResearchPath(pathname)) return "research";
   if (isCarePath(pathname)) return "care";
-  if (isHealthGatewayPath(pathname)) return "health";
+  if (isHealthGatewayPath(pathname) || isHealthIntakePath(pathname)) return "health";
   return "public";
 }
 

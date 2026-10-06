@@ -4,6 +4,24 @@ import { describe, expect, it } from "vitest";
 
 const appSource = readFileSync(resolve(__dirname, "App.tsx"), "utf8");
 
+// Source-contract coverage only. Rendered App, cold navigation and refresh
+// need the separately scoped composition/browser qualification.
+describe("the disabled Quick Order route contract", () => {
+  it("mounts one exact Research module route with no session before the preserved Health redirect", () => {
+    const imports = [...appSource.matchAll(/lazy\(\(\) => import\("@\/research\/quick-order\/QuickOrderPage"\)\)/g)];
+    expect(imports).toHaveLength(1);
+    const routes = [...appSource.matchAll(/<Route path="\/health\/quick-order">([^]*?)<\/Route>/g)];
+    expect(routes).toHaveLength(1);
+    expect(routes[0][1]).toContain('<QuickOrderPage sessionKey={null} />');
+    expect(routes[0][1]).toContain('<Suspense');
+    expect(routes[0][1]).not.toMatch(/intakeEnabled|transport=/);
+    expect(appSource).not.toContain('path="/health/*"');
+    const gateway = '<Route path="/health"><Redirect to="/" /></Route>';
+    expect(appSource).toContain(gateway);
+    expect(routes[0].index).toBeLessThan(appSource.indexOf(gateway));
+  });
+});
+
 describe("the owner-approved clarity route map", () => {
   it.each([
     ["/", "Home"],

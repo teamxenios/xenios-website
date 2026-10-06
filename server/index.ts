@@ -3,6 +3,7 @@ import express, { type Request, type RequestHandler, Response, NextFunction } fr
 import helmet from "helmet";
 import { createProxyMiddleware } from "http-proxy-middleware";
 import { registerRoutes } from "./routes";
+import { createQuickOrderContainment } from "./research/health/quick-order/containment";
 import {
   registerLegacyResearchOrderContainment,
   researchPageGate,
@@ -273,6 +274,8 @@ app.use(
 // The held legacy order endpoint must terminate before any application body
 // parser or rawBody verifier can retain customer-supplied bytes.
 registerLegacyResearchOrderContainment(app);
+// Disabled Quick Order terminates before parsing or retaining customer bodies.
+app.use(createQuickOrderContainment());
 
 // Private Early Access stays unavailable, but its exact raw payment-options
 // boundary terminates before JSON/urlencoded parsing and rawBody capture. The
