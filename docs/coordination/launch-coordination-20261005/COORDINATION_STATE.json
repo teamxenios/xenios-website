@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-06T19:31:29.909Z",
+  "updatedAt": "2026-10-06T19:36:49.775Z",
   "objective": "Automate verified Codex-Claude-ChatGPT launch coordination, preserve accepted source and implement the separately authorized Quick Order intake while production authorities remain held.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -754,10 +754,10 @@
     },
     "latestPlanning": {
       "thread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
-      "turn": "3e2c3d99-fe70-4604-afb3-2223d27738c9",
-      "message": "c0b1c1a0-31b2-4246-b77d-ef014e1ba558",
-      "artifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SOURCE_MILESTONE_PLANNING_RELAY_20261006.json",
-      "status": "CONFIRMED_NO_NEW_DEPENDENCY_READY_WORK"
+      "turn": "606ae2f1-6728-4341-a3d4-49bce4e205cc",
+      "message": "228b300c-b860-40b1-9944-5c699de74a92",
+      "artifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_COMPATIBILITY_PLANNING_RELAY_20261006.json",
+      "status": "CONFIRMED_NO_NEW_AUTHORITY"
     },
     "reviewFindings": [
       {
@@ -832,9 +832,9 @@
       "interpretation": "Continue and accelerate existing authorized website objective. No specific response approving A1/A2, protected hashes, schema or hosted actions; do not infer one."
     },
     "latestPlanningRelay": {
-      "checkpoint": "d8140ed8a4d63f13f62bb0c8f005bc1010270945",
-      "artifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SOURCE_MILESTONE_PLANNING_RELAY_20261006.json",
-      "status": "CONFIRMED; existing owners parked or reviewing; no new authority or work. Do not resend or repoll unchanged reply."
+      "checkpoint": "f1fc0fa8a52d34ea26314368470d859d45371c86",
+      "artifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_COMPATIBILITY_PLANNING_RELAY_20261006.json",
+      "status": "CONFIRMED conditional5A/contract-first5B source work, no new authority or repeated question"
     },
     "resourceRecoveryAssessment": {
       "artifact": "docs/coordination/launch-coordination-20261005/COMPLETED_REVIEW_RESOURCE_ASSESSMENT.json",
@@ -885,7 +885,7 @@
     },
     "sourceSprint20261006": {
       "schemaVersion": 1,
-      "status": "REVIEW_CLEARED_BOUNDED_DRAFTING_READY",
+      "status": "REVIEW_CLEARED_BOUNDED_DRAFTING_ACTIVE",
       "receivedAt": "2026-10-06T17:43:37Z",
       "checkpointAt": "2026-10-06T18:43:37Z",
       "expiresAt": "2026-10-06T21:43:37Z",
@@ -903,7 +903,16 @@
           "S3 narrow PWA runtime/test correction",
           "S4 new-only A2 drafting subject to doc36 section7 and independently reviewed naming/fence before colliding SQL; currentness DESIGN ONLY",
           "S5 four-hour maximum six qualification groups with exclusive per-group reservation/precheck"
-        ]
+        ],
+        "messageBodyPrecision": {
+          "source": "Visible user attachment envelope in this coordinator chat",
+          "message": "01a11250-62ad-7e83-93bd-2648b243593e",
+          "attachment": "a276ed40-8ebe-41f3-8eec-90e78b6116b5",
+          "identifyingEnvelopeText": "Pasted text contains the user's request.",
+          "additionalFreeformKickoffText": false,
+          "myRequestBody": "Empty after the My request label; the supplied pasted attachment is the request content.",
+          "interpretation": "The adoption sentence is in the designated attachment. Do not attribute it to separately typed freeform words by Samuel. Existing adopted scope is unchanged."
+        }
       },
       "package": {
         "archive": "quick-order-first-plan-20261006",
@@ -916,7 +925,8 @@
         "mountBeforeHashesMatched": 6,
         "pwaRuntimeSha256lf": "9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741",
         "pwaTestSha256lf": "3303d4bdaafa468d6de80ed94b181499e1a21b11a349fe1a2d8e50528d65fef6",
-        "checkedAt": "2026-10-06T17:46:01Z"
+        "checkedAt": "2026-10-06T17:46:01Z",
+        "evidencePrecision": "The17:46:01 coordinator check is a historical reported check without a separate retained receipt; use the retained producerdc11928 before-hash revalidation and later exact coordinator/reviewer Git bindings as auditable evidence."
       },
       "qualification": {
         "maximumGroups": 6,
@@ -937,7 +947,18 @@
             "precheckScriptSha256": "01004c15eac89ce3dc8515775d738477c152175280cfc965aeccd06bec4d94ae",
             "producerCommit": "dc119280d881e8fd6066a6be9829e6b2a2fa4005",
             "evidenceLevel": "Coordinator inspected retained producer receipt and script; producer reports zero test execution. No coordinator resource resample.",
-            "next": "Source work continues; no new qualification probe without materially changed host conditions and a separate remaining-group reservation."
+            "next": "Source work continues; no new qualification probe without materially changed host conditions and a separate remaining-group reservation.",
+            "producerReceiptBinding": {
+              "commit": "dc119280d881e8fd6066a6be9829e6b2a2fa4005",
+              "path": "docs/health-launch/quick-order-20261005/evidence/g1-precheck-20261006.json",
+              "sha256": "95b5ddf4f9603c07c0a4d1d2031fe242664e17d1063ec575471ee948db2be61d",
+              "bytes": 4209,
+              "encoding": "UTF-8 LF committed producer blob",
+              "coordinatorCopySha256": "f692c8970c2a11d0e65f60305d3bf89ba8b1bafb51ba62f9193b3ce2e08abcfc",
+              "coordinatorCopyBytes": 4309,
+              "coordinatorCopyEncoding": "UTF-8 CRLF retained copy",
+              "equalAfterLfNormalization": true
+            }
           }
         ],
         "reservation": {
@@ -1299,10 +1320,10 @@
         }
       ],
       "planningRelay": {
-        "record": "QUICK_ORDER_SOURCE_MILESTONE_PLANNING_RELAY_20261006.json",
-        "turn": "3e2c3d99-fe70-4604-afb3-2223d27738c9",
-        "replyMessage": "c0b1c1a0-31b2-4246-b77d-ef014e1ba558",
-        "status": "CONFIRMED_NO_NEW_DEPENDENCY_READY_WORK",
+        "record": "QUICK_ORDER_COMPATIBILITY_PLANNING_RELAY_20261006.json",
+        "turn": "606ae2f1-6728-4341-a3d4-49bce4e205cc",
+        "replyMessage": "228b300c-b860-40b1-9944-5c699de74a92",
+        "status": "CONFIRMED_NO_NEW_AUTHORITY",
         "pendingReply": false
       },
       "automation": {
@@ -1590,14 +1611,23 @@
         "supersededBy": "Final reviewca1c114 creates section5A/B drafting dependency-ready work; prior parked checkpoint remains historical"
       },
       "draftingAssignment": {
-        "status": "PREPARED_FOR_SAME_BUILDER",
+        "status": "ACKNOWLEDGED_ACTIVE",
         "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
         "baseline": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
         "authority": "dc3329bb2cfb3b93d8d054c8bbc77a291df0e671",
         "review": "ca1c114a083793918b18d017b32509864ee4bcf6",
         "record": "QUICK_ORDER_REVIEW_CLEARED_DRAFTING_ASSIGNMENT_20261006.txt",
         "scope": "Contract/predecessor record first, then exactly10new A2/currentness candidate/check/rollback/verifier paths and bounded named readback/notification test fixture refinements. No existing runtime edits or execution.",
-        "held": "Writer guards/triggers, commit body, extra runtime modules; pending fixture/static amendments; manifest/final hashes, qualification and all live actions"
+        "held": "Writer guards/triggers, commit body, extra runtime modules; pending fixture/static amendments; manifest/final hashes, qualification and all live actions",
+        "turn": "01a112b3-9b9e-71b1-b4c4-2f3d6139c791",
+        "cursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:90",
+        "delivery": {
+          "tool": "send_message_to_thread",
+          "result": "timeout",
+          "confirmation": "wait_threads active turn plus read_thread public acknowledgement; do not duplicate",
+          "message": "msg_0f39ac48c4ef0110016ac54ccb567087d1bdc3bf4c7968fd7b",
+          "text": "I’ll read the original reviewer’s exact verdict and record the contract amendment first. After that checkpoint is pushed, I’ll draft the approved SQL candidates and verifier source. The guard triggers, commit body, runtime changes, and all execution remain held."
+        }
       }
     }
   },
