@@ -159,6 +159,27 @@ export function renderAssistedOrderOutboxEmail(
   templateKey: string,
   payload: Record<string, unknown>,
 ): { subject: string; text: string } | null {
+  if (templateKey === "research.assisted_order.quick_order.submitted.admin.v1") {
+    if (typeof payload !== "object" || payload === null || Array.isArray(payload) ||
+        Object.keys(payload).length !== 3 ||
+        Object.keys(payload).some((key) => !["schemaVersion", "requestId", "publicReference"].includes(key)) ||
+        payload.schemaVersion !== "quick-order-v1" ||
+        typeof payload.requestId !== "string" ||
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(payload.requestId) ||
+        typeof payload.publicReference !== "string" ||
+        !/^XRR-[0-9]{8}-[A-F0-9]{10}$/.test(payload.publicReference)) {
+      throw new Error("Quick Order notification payload unavailable.");
+    }
+    return {
+      subject: `Quick Order request ${payload.publicReference}`,
+      text: [
+        "A Quick Order request is ready for review.",
+        `Reference: ${payload.publicReference}`,
+        `Review: ${SITE_ORIGIN}/admin/research/assisted-orders/${payload.requestId}`,
+        "Sign in with authorized operator access.",
+      ].join("\n"),
+    };
+  }
   const reference = text(payload.publicReference);
 
   if (templateKey === "research.assisted_order.submitted.customer") {

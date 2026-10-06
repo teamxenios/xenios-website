@@ -932,6 +932,15 @@ export class AssistedOrderService {
       }
     });
 
+    if (current.quickOrder) {
+      return Object.freeze({
+        ...updated,
+        quickOrder: Object.freeze({
+          intake: current.quickOrder.intake,
+          observation: Object.freeze({ state: "stale" as const }),
+        }),
+      });
+    }
     return updated;
   }
 

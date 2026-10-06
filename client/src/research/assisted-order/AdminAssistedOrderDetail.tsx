@@ -12,6 +12,7 @@ import {
 } from "./api";
 import { AdminAssistedOrderSession, type AssistedOrderAdminScope } from "./AdminAssistedOrderSession";
 import { money } from "./wizard-state";
+import { OperatorDeclarations } from "../quick-order/OperatorDeclarations";
 import "./assisted-order.css";
 
 function requestIdFromPath(path: string): string | null {
@@ -73,7 +74,7 @@ function AdminAssistedOrderDetail({ token, isCurrent, deny, requestId }: Assiste
 
   const update = async (event: FormEvent) => {
     event.preventDefault();
-    if (!current() || !detail || updating.current) return;
+    if (!current() || !detail || updating.current || detail.quickOrder?.observation.state === "stale") return;
     updating.current = true;
     ++readEpoch.current;
     setBusy(true);
@@ -103,6 +104,25 @@ function AdminAssistedOrderDetail({ token, isCurrent, deny, requestId }: Assiste
       setCustomerMessage("");
       setInternalNote("");
       setEvidenceId("");
+      if (result.quickOrder) {
+        const epoch = ++readEpoch.current;
+        try {
+          const refreshed = await loadAssistedOrderAdminDetail(token, requestId);
+          if (!current() || readEpoch.current !== epoch) return;
+          if (refreshed.requestId !== requestId || !refreshed.quickOrder ||
+              refreshed.quickOrder.observation.state !== "observed") {
+            throw new Error("Request readback unavailable.");
+          }
+          setDetail(refreshed);
+        } catch (reason) {
+          if (!current() || readEpoch.current !== epoch) return;
+          if (reason instanceof AssistedOrderApiError && [401, 403].includes(reason.status)) {
+            deny();
+            return;
+          }
+          setError("Status saved. Reload this page to refresh notification state before making another update.");
+        }
+      }
     } catch (reason) {
       failed(reason, "The status could not be updated.");
     } finally {
@@ -131,17 +151,36 @@ function AdminAssistedOrderDetail({ token, isCurrent, deny, requestId }: Assiste
           <section className="xenios-order-panel">
             <div className="xenios-order-card__header"><div><p className="xenios-order-eyebrow">Current status</p><h2>{detail.status.replaceAll("_", " ")}</h2></div><strong>{money(detail.estimatedTotalCents)}</strong></div>
             <div className="xenios-order-review-contact"><div><strong>{detail.fullLegalName}</strong><span>{detail.email}</span><span>{detail.mobilePhone}</span><span>{detail.organizationName}</span></div><div><strong>Ship to</strong><span>{detail.shippingAddress.line1}</span><span>{detail.shippingAddress.city}, {detail.shippingAddress.region} {detail.shippingAddress.postalCode}</span><span>{detail.shippingAddress.countryCode}</span></div></div>
-            <div className="xenios-order-review-lines">{detail.lines.map((line) => <article key={line.lineId}><div><strong>{line.productName}</strong><span>{line.specification}</span><span>{line.workflowMode.replaceAll("_", " ")}</span></div><div><span>Qty {line.quantity}</span><strong>{money(line.lineEstimateCents)}</strong></div></article>)}</div>
+            <div className="xenios-order-review-lines">{detail.lines.map((line) => <article key={line.lineId}><div><strong>{line.productName}</strong><span>{line.specification}</span>{detail.quickOrder ? <span>Variant: {line.variantId}</span> : null}<span>{line.workflowMode.replaceAll("_", " ")}</span></div><div><span>Qty {line.quantity}</span><strong>{money(line.lineEstimateCents)}</strong></div></article>)}</div>
             {detail.generalNotes ? <div><h3>Customer notes</h3><p>{detail.generalNotes}</p></div> : null}
+            {detail.quickOrder ? <section aria-label="Quick Order intake">
+              <p>The declaration review state below was recorded at submission. Later code matching is shown under Current affiliate status.</p>
+              <OperatorDeclarations declaration={{
+                ...detail.quickOrder.intake,
+                trustedAttribution: detail.affiliateAttributionRef
+                  ? { state: "verified", reference: detail.affiliateAttributionRef }
+                  : { state: "absent" },
+                nextAction: "Review the request. Payment and clinical approval are separate.",
+              }} />
+              <p>Known-price subtotal: {money(detail.quickOrder.intake.estimate.knownSubtotalCents)}{detail.quickOrder.intake.estimate.estimateComplete ? "" : " · Some prices are pending."}</p>
+              <section aria-label="Quick Order notification">
+                <h3>Operator notification</h3>
+                {detail.quickOrder.observation.state === "observed" ? <>
+                  <p>Recorded state: {detail.quickOrder.observation.notification.status.replaceAll("_", " ")}; attempts: {detail.quickOrder.observation.notification.attemptCount}.</p>
+                  <p>Observed at <time dateTime={detail.quickOrder.observation.observedAt}>{detail.quickOrder.observation.observedAt}</time>.</p>
+                </> : <p role="status">Notification state needs refresh.</p>}
+                <p>Sent means accepted by the notification service. It does not confirm delivery or operator review.</p>
+              </section>
+            </section> : null}
             {/* Affiliate. The typed code and the verified attribution are shown
                 as SEPARATE lines, and the typed one always carries its match
                 state, so an operator never reads a claim as a proven
                 relationship. */}
             <div data-testid="admin-affiliate">
-              <h3>Affiliate</h3>
+              <h3>{detail.quickOrder ? "Current affiliate status" : "Affiliate"}</h3>
               <dl className="xenios-order-facts">
                 <div>
-                  <dt>Affiliate code</dt>
+                  <dt>{detail.quickOrder ? "Recorded affiliate code" : "Affiliate code"}</dt>
                   <dd data-testid="admin-affiliate-code">
                     {detail.declaredAffiliateCode ?? "None provided"}
                   </dd>
@@ -178,7 +217,7 @@ function AdminAssistedOrderDetail({ token, isCurrent, deny, requestId }: Assiste
             <label>Customer message<textarea rows={3} value={customerMessage} onChange={(event) => setCustomerMessage(event.target.value)} /></label>
             <label>Internal note<textarea rows={3} value={internalNote} onChange={(event) => setInternalNote(event.target.value)} /></label>
             {(["agreements_complete", "supplier_processing", "shipped", "cancelled"] as AssistedOrderStatus[]).includes(nextStatus) ? <label>Required canonical evidence or reason<input value={evidenceId} onChange={(event) => setEvidenceId(event.target.value)} required /></label> : null}
-            <button className="xenios-order-button" type="submit" disabled={busy}>{busy ? "Updating…" : "Update status"}</button>
+            <button className="xenios-order-button" type="submit" disabled={busy || detail.quickOrder?.observation.state === "stale"}>{busy ? "Updating…" : "Update status"}</button>
           </form>
         </div>
       ) : null}

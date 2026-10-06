@@ -3,6 +3,9 @@ import type { QuickOrderAdminObservation, QuickOrderAdminProjection, QuickOrderA
 import { AFFILIATIONS, SOURCE_KINDS, text as normalizedDeclarationText } from "../health/quick-order/core.mjs";
 
 /** Proposed wire identities, not installed RPCs, approved templates or adapters. */
+// Source-only reader cutover dependency. Deployment requires the future wrapper
+// to be installed and independently qualified; a missing RPC must never fall back.
+export const QUICK_ORDER_ADMIN_DETAIL_RPC = "research_health_quick_order_admin_detail" as const;
 export const QUICK_ORDER_ADMIN_ENVELOPE_VERSION = "quick-order-admin-envelope-v1" as const;
 export const PROPOSED_QUICK_ORDER_ADMIN_TEMPLATE = "research.assisted_order.quick_order.submitted.admin.v1" as const;
 const SCHEMA = "quick-order-v1";
