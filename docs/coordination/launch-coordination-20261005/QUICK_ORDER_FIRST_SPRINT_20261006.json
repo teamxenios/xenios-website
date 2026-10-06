@@ -551,11 +551,13 @@
     "fixtureCorrection": "Exact additional provider-journal-http.test.ts patch8396609 pending actual user answer"
   },
   "compositionAssignment": {
-    "status": "SENT_AWAITING_ACK",
+    "status": "ACKNOWLEDGED_BUILDING",
     "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
     "promptRecord": "QUICK_ORDER_COMPOSITION_ASSIGNMENT_20261006.txt",
     "prerequisite": "4669493ba48c2afbdfb844813cfc066442ddd78d",
-    "scope": "Exactly four new composition tests already approved at1d4f2c3/dc3329; no runtime edits or execution"
+    "scope": "Exactly four new composition tests already approved at1d4f2c3/dc3329; no runtime edits or execution",
+    "turn": "01a1128f-3b31-7be2-ae1a-db1104978324",
+    "cursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:72"
   },
   "providerFixtureQuestion": {
     "issued": true,
@@ -565,5 +567,10 @@
     "path": "server/research/assisted-order/provider-journal-http.test.ts",
     "status": "PENDING_ACTUAL_USER_ANSWER",
     "note": "Additional exact test path; no execution. Do not repeat question or infer answer from elapsed time."
+  },
+  "continuationHandoff": {
+    "file": ".xenios/handoffs/2026-10-06T18-56-04-938Z-LAUNCH-COORDINATION-20261005-codex-launch-coordination-20261005.md",
+    "sha": "fdf84cc3abde12a7460eacdbe39eee4b2b88774a",
+    "at": "2026-10-06T18:56:04.938Z"
   }
 }
