@@ -152,6 +152,30 @@ readback test needs a fixture in the real 20-key wire shape (E-F1).
 No P0. Three P1 amendments (S-F1, S-F3, E-F1) gate the held items; one P1 (S-F2) was refuted and is recorded as such.
 Qualification of anything drafted under A or B needs its own reservation and host; this review executed nothing.
 
+## 5a. Corrections recorded after doc 45 (2026-10-06, records only)
+
+Three statements in this record were wrong or imprecise when written and were carried forward by the builder's
+contract at `b75325a`. They are corrected here; the original text above is left in place so the propagation can be
+traced.
+
+1. **QO-P2-15 trigger enumeration (section 4).** The list headed "Full trigger set on the fenced relations at
+   `fd023e8`" named 14 non-internal triggers. The migration bytes at `fd023e8`, `ac36e60` and `7d027e4` install
+   **19**: in addition to the 14, `20261001115512…:474-484` creates `adp03_evidence_truncate` (ENABLE ALWAYS) and
+   `adp03_evidence_immutable` (ENABLE ALWAYS) on **both** `research_assisted_order_requests` and
+   `research_assisted_order_events`, and `20261001062651…:373-378` creates `hl12_disposition_no_truncate` (ordinary)
+   on `research_assisted_order_events`. The correct census is requests 8, events 7, outbox 4. The builder adopted the
+   14-row list as "the exact non-internal trigger inventory" in the contract and in all ten draft files, where an
+   exact full-outer-join or sorted-array comparison would refuse on the five extra rows (doc 45 A1-F1, P1). The
+   error originated here, in a lens census I recorded without re-deriving the two loop-installed sets.
+2. **"Immutable revisions" (section 4, currentness row, and section 5B).** The currentness authority's revisions are
+   immutable only through the callable surface; no foreign key, trigger or epoch-monotonicity guard protects head
+   references or revision rows from owner DML, and doc 42 §5A permitted exactly that trigger-free slice. Any reader
+   of the authority needs those protections first (doc 45 A2-F1, doc 46 section 3).
+3. **S-M1 row (section 3): "the server calls no such RPC".** `server/research/early-access/private-access-session-
+   repository.ts:38-43` names all four private early-access RPCs, including `research_private_early_access_session_active`,
+   at `ac36e60` already. The shape guard remains a reapply-time guard rather than a runtime seal, so the severity and
+   fix stand; whether the live composition instantiates that repository is NOT PROVEN either way.
+
 ## 6. What remains outside this review
 
 Samuel's reserved decisions (Health legal content, product and destination eligibility, band, price, provider,
