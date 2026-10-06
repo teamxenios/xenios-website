@@ -1,0 +1,100 @@
+# claude gate run at ac36e60 (worktree closeout-review detached clean); node v20.19.0; 2026-10-06T18:30:33Z
+## bounded: 3eaa017fcbd28989c65ffc4bb439a554aa1f3f59..HEAD
+core-site protection gate
+  manifest baseline : 766f19fce3b67cd9b940ea66fe075281c2d8bdf8
+  comparing         : 3eaa017fcbd28989c65ffc4bb439a554aa1f3f59..HEAD
+  changed files     : 160
+  allowed (research/care) : 55
+  infrastructure          : 58
+  protected file hashes   : 31 verified
+
+TEST FILES TOUCHED (permitted: a test cannot change what a visitor sees.
+Review must still confirm each one was STRENGTHENED, not weakened. Lowering
+an existing safety or regression gate to make a build pass is forbidden):
+  - client/src/App.routes.test.ts
+  - client/src/clarity/partner-sign-in.test.tsx
+  - client/src/clarity/premium-shell.test.tsx
+  - client/src/lib/attribution.test.ts
+  - client/src/lib/tracking.test.ts
+  - client/src/pwa/PwaLifecycle.test.tsx
+  - client/src/research/adapters/cartProductSelection.test.ts
+  - client/src/research/adapters/memberCatalog.test.ts
+  - client/src/research/adapters/product-subscription-create.test.ts
+  - client/src/research/assisted-order/AssistedOrderPage.test.tsx
+  - client/src/research/assisted-order/assisted-order-premium.test.tsx
+  - client/src/research/early-access/EarlyAccessProductCard.test.tsx
+  - client/src/research/pages/member/ProductPage.subscription.test.tsx
+  - client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx
+  - client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx
+  - client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx
+  - client/src/research/products-diagnostics/RequiredInputState.test.tsx
+  - client/src/research/products-diagnostics/product-media-surfaces.test.tsx
+  - client/src/research/quick-order/OperatorDeclarations.test.tsx
+  - client/src/research/quick-order/QuickOrderPage.test.tsx
+  - client/src/research/quick-order/contracts.test.ts
+  - client/src/research/ui/ProductMedia.test.tsx
+  - server/research/catalog/member-catalog-projection.test.ts
+  - server/research/catalog/member-catalog-service.test.ts
+  - server/research/catalog/product-control-reader.test.ts
+  - server/research/catalog/product-media-schema.test.ts
+  - server/research/commerce/cart-product-selection.test.ts
+  - server/research/commerce/persistence/persistent-cart.test.ts
+  - server/research/commerce/subscription-intent-journey.test.ts
+  - server/research/health/quick-order/catalog.test.ts
+  - server/research/health/quick-order/containment.test.ts
+  - server/research/health/quick-order/production.test.ts
+  - server/research/health/quick-order/tests/core.test.mjs
+  - server/research/health/quick-order/tests/handler.test.mjs
+  - server/research/master-offerings/direct-commerce-selections.test.ts
+  - server/research/products-diagnostics/product-admin-production.test.ts
+  - server/research/seo/raw-http-document-policy.test.ts
+  - shared/care/paths.test.ts
+  - shared/research/product-media.test.ts
+
+SEAM FILES TOUCHED (permitted, but each needs an exclusive lease, the
+minimum diff, a focused regression test, and QA confirmation of no
+unrelated change before this branch is approved):
+  - client/src/App.tsx
+  - client/src/components/Footer.tsx
+  - client/src/components/Navbar.tsx
+  - client/src/index.css
+  - client/src/lib/attribution.ts
+  - client/src/lib/tracking.ts
+  - client/src/pwa/PwaLifecycle.tsx
+  - server/index.ts
+
+SEAM CONTENT CHANGED since the baseline (reported, not a failure):
+  - client/src/App.tsx
+  - server/index.ts
+  - server/research/index.ts
+
+FAIL: protected file content changed (hash mismatch against the baseline).
+  - client/src/index.css
+      expected sha256:70d3302a8b4f5d22aa324c3728ae51963d12222ab880c29fcd3f8ea3e477d0e6
+      actual   sha256:b475a8ee637984965df7497e6bcc9d92113c52c0dd2e21019d5d2806e47fa049
+  - client/src/pwa/PwaLifecycle.tsx
+      expected sha256:9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741
+      actual   sha256:9b1a354def9f430e450ce1261a3d8fbd269c833423cbff179f68643db22a1d19
+  - client/src/components/Navbar.tsx
+      expected sha256:e37a5b94cb07674e8f4471ddc37b9a5e8a6f848d300408ba67ff3b706941eb1f
+      actual   sha256:6cdfbb0f05cc8d1fb28bfdc6b7a012ddb85e34d0c985bc88e71c09d8456a218a
+  - client/src/components/Footer.tsx
+      expected sha256:25da700fcea32178d19fc21a3d6db4192d11b403418b7fa83100b4c88d9e2a3a
+      actual   sha256:420b45dc09aefa572a65ae68b5add6a2ce3d435e54e1fea7d9db9f29390df7cb
+  - client/src/lib/tracking.ts
+      expected sha256:258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4
+      actual   sha256:8d62f7a1c4e292100c88c26b2d56d2df180408b364a009773ad2b0c0c2836a26
+  - client/src/lib/attribution.ts
+      expected sha256:2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8
+      actual   sha256:6b1ab4732059401d80cb1f2f38fc5c047e8f559a9ea51d086ac7616bd8540391
+  - server/static.ts
+      expected sha256:9cd3e1c363dd921fab780761baa888e9319f40ef177ca303072e3179b2c20004
+      actual   sha256:b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94
+
+RESULT: FAIL
+
+What to do: see docs/phase2/CORE_SITE_PROTECTION.md. Either move the change
+into client/src/research, client/src/care, server/research, server/care, or
+shared/research, or request an exclusive seam lease if the change genuinely
+needs one of the permitted seam files. Do not widen the manifest to pass.
+exit=1

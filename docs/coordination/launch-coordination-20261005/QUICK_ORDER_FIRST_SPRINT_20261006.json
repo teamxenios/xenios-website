@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "SOURCE_CHECKPOINT_REVIEW_AND_DECISIONS_PENDING",
+  "status": "REVIEW_CLEARED_BOUNDED_DRAFTING_READY",
   "receivedAt": "2026-10-06T17:43:37Z",
   "checkpointAt": "2026-10-06T18:43:37Z",
   "expiresAt": "2026-10-06T21:43:37Z",
@@ -159,7 +159,7 @@
         }
       ],
       "tests": "AUTHORED_NOT_RUN",
-      "review": "SAME_ORIGINAL_REVIEWER_PENDING",
+      "review": "SOURCE_ACCEPT_WITH_LIMITS_AT_ca1c114_DOC43",
       "host": "No new observation; material change NOT ESTABLISHED",
       "groups": {
         "consumed": 1,
@@ -172,7 +172,7 @@
     "currentOwnerState": "CLEAN_IDLE_HANDOFF_READY_AT1595b8d"
   },
   "supplementalScope": {
-    "status": "USER_APPROVED_SOURCE_ONLY_SQL_COMPATIBILITY_REVIEW_PENDING",
+    "status": "USER_APPROVED_SOURCE_ONLY_COMPATIBILITY_PARTIALLY_CLEARED",
     "scope": "QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md",
     "scopeSha256": "4e422cf96a003d0d4add184926546bb80d25e44a90a760489bd6f8284d7b10f0",
     "bindings": "QUICK_ORDER_SUPPLEMENTAL_BASELINES_20261006.json",
@@ -186,7 +186,7 @@
       "checkedAt": "2026-10-06T18:22:51.911Z"
     },
     "referenceCount": 46,
-    "conditionalSqlReview": "Same original Claude naming/fence and lock protocol review before corresponding SQL drafting",
+    "conditionalSqlReview": "ca1c114 doc42 section5A cleared; wrapper5B after recorded contract; writer guards/commit5C held until amendment reviewed",
     "excludes": "All database execution, live intake, payment, notification sends, deployment, manifest/final protected acceptance",
     "presentedCommit": "1d4f2c3b3ff2fc0e1bc25495d3076d2bd9a76e99",
     "question": {
@@ -295,6 +295,20 @@
       "source": "5fd2e4c74d31562281493013489bb41949979b88",
       "records": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
       "status": "FROZEN_READY_NO_FINAL_REVIEW"
+    },
+    "finalReviews": {
+      "commit": "ca1c114a083793918b18d017b32509864ee4bcf6",
+      "parent": "f4636885ff2078563846a5277d699da9bd81dacd",
+      "remoteConfirmed": true,
+      "publicFinal": {
+        "at": "2026-10-06T19:27:30.160Z",
+        "message": "f00df81d-71ae-43e0-bc7f-cbdfb0a2bef0"
+      },
+      "disposition": "CLAUDE_REVIEWS_41_44_COORDINATOR_DISPOSITION.json",
+      "mount": "SOURCE ACCEPT WITH LIMITS",
+      "pure": "SOURCE ACCEPT WITH LIMITS; P1 wire contract",
+      "shared": "SOURCE ACCEPT WITH LIMITS; P1 wire contract",
+      "supplemental": "COMPATIBLE FOR DRAFTING WITH NAMED CONDITIONS; section5A ready,5B after recorded contract,5C held"
     }
   },
   "exclusions": [
@@ -319,7 +333,8 @@
     "coordinatorHashInspection": "13/13 exact before/after pairs; six mount runtime successors equal approved proposal",
     "independentReview": "PENDING",
     "execution": "NOT RUN",
-    "artifact": "QUICK_ORDER_S2_S3_COORDINATOR_CHECKPOINT.json"
+    "artifact": "QUICK_ORDER_S2_S3_COORDINATOR_CHECKPOINT.json",
+    "review": "SOURCE_ACCEPT_WITH_LIMITS_AT_ca1c114_DOC41"
   },
   "packageBoard": [
     {
@@ -572,7 +587,7 @@
       }
     ],
     "tests": "AUTHORED_NOT_RUN",
-    "review": "PENDING_SAME_ORIGINAL_REVIEWER",
+    "review": "SOURCE_ACCEPT_WITH_LIMITS_AT_ca1c114_DOC44",
     "runtime": "Future service-only reader RPC unavailable; no durable QO save or real readback/payment/live action",
     "fixtureCorrection": "Exact additional provider-journal-http.test.ts patch8396609 pending actual user answer"
   },
@@ -686,6 +701,17 @@
     },
     "automation": "PAUSED_NO_RESTART",
     "sourceApproval": "Supplemental1d4f2c3 already approved atdc3329; not pending. SQL drafting still conditional. Two later one-file amendments remain pending.",
-    "execution": "No tests, resources or live actions performed at this checkpoint"
+    "execution": "No tests, resources or live actions performed at this checkpoint",
+    "supersededBy": "Final reviewca1c114 creates section5A/B drafting dependency-ready work; prior parked checkpoint remains historical"
+  },
+  "draftingAssignment": {
+    "status": "PREPARED_FOR_SAME_BUILDER",
+    "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "baseline": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
+    "authority": "dc3329bb2cfb3b93d8d054c8bbc77a291df0e671",
+    "review": "ca1c114a083793918b18d017b32509864ee4bcf6",
+    "record": "QUICK_ORDER_REVIEW_CLEARED_DRAFTING_ASSIGNMENT_20261006.txt",
+    "scope": "Contract/predecessor record first, then exactly10new A2/currentness candidate/check/rollback/verifier paths and bounded named readback/notification test fixture refinements. No existing runtime edits or execution.",
+    "held": "Writer guards/triggers, commit body, extra runtime modules; pending fixture/static amendments; manifest/final hashes, qualification and all live actions"
   }
 }

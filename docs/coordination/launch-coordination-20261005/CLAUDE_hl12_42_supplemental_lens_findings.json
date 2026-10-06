@@ -1,0 +1,666 @@
+{
+ "schemaVersion": "claude_acceptance_lenses_v1",
+ "subject": "supplemental source scope packet 1d4f2c3b3ff2fc0e1bc25495d3076d2bd9a76e99",
+ "workflowRun": "wf_86e27e08-b17",
+ "taskId": "wcxc5l3mw",
+ "agentCount": 4,
+ "subagentTokens": 1074644,
+ "toolCalls": 187,
+ "lenses": [
+  {
+   "lens": "sql-fence-currentness",
+   "review": {
+    "verdict": "YES WITH NAMED CONDITIONS. No P0: nothing in the packet at 1d4f2c3b3ff2fc0e1bc25495d3076d2bd9a76e99 would break the ADP-G1 seal (20261001160730:18-31 selects only 'research_assisted_order_%' functions/relations and 'research_notification_outbox'; every proposed object is 'research_health_quick_order_*', the companion FK is keyed by conrelid on the companion, RI triggers are tgisinternal and excluded at :30), none of the 23 guarded relations is fenced, no SQL is executed or registered, productionReady stays false (production.ts:41, scope:274-275). SQL drafting may proceed NOW for: research_health_quick_order_intakes, _replay(text,text), _admin_detail(uuid) as a service-only wrapper over the unchanged research_assisted_order_admin_get (bridge:773-782), authority_head, authority_revisions, publish_revision, revoke_revision, read_current_authority, the pre/postcheck/rollback and the disposable verifier. HOLD drafting of the writer-guard trigger/function set (guard_source_write on the 23 relations) and of the commit RPC body (research_health_quick_order_commit) until three P1 amendments are recorded in the packet: (1) the lock protocol as written admits intake<->writer and writer<->writer deadlock because the referral preflight holds FOR SHARE on partners/links to transaction end while waiting for the head lock and existing multi-statement writers would hold the head exclusive lock from their first guarded statement; (2) the intake's own reuse of the durable-binding helper writes a guarded relation (research_affiliate_customer_bindings) and would self-upgrade S->X and advance its own epoch; (3) the standing authority is still unnamed (QO-P2-14). Fix P2 items (missing-head guard semantics, unconditional admin-reader cutover in the shared patch, two unbound trigger-installing migrations plus outbox/status-recovery sources, NOT NULL recipient/event_type source) before the candidate's verifier/qualification. Nothing here is an approval; hosted install state is NOT PROVEN (no database was queried).",
+    "conditions": [
+     {
+      "id": "QO-P2-05",
+      "status": "SATISFIED",
+      "evidence": "Design is fail-closed and refuses the Research pair for Health: scope:270-271 ('legal.ts resolves only approved published Health bytes and explicitly refuses the Research-use pair for Health'), :148-149 (no applicable legal pair provisioned by source approval), :141 (unknown Health authority cannot produce an active row), :396-397. Current legal.ts:21-25 at ac36e60 still emits only publishedResearchUsePolicyAgreement() (policies-data.ts:155-161; research-use text at policies-data.ts:27-28). The actual Health document/registry adapter and its route remain an undesigned, held decision (scope:244-246 names 'applicable approved Health legal bytes' only as a file-authority class)."
+     },
+     {
+      "id": "QO-P2-06",
+      "status": "PARTIAL",
+      "evidence": "Positive classification port is required: scope:269 ('catalog.ts requires positive Health classification and the exact governed revision'); catalog.ts:93-98 at ac36e60 is still the pure negative filter and :122-124 labels qo-v1 'NOT a transactional version guard'. Not explicit in the packet: the fail-closed test that an unlisted family is not requestable, and per-line persistence of the classification decision plus sourceVersion in the companion/lines (doc36 :104 repair); scope:139-140 puts 'normalized decision inputs, source/applicability references' only in authority_revisions."
+     },
+     {
+      "id": "QO-P2-09",
+      "status": "SATISFIED",
+      "evidence": "Names: scope:45-52 and :136-146 (intakes, replay, commit, admin_detail, authority_head, authority_revisions, publish_revision, revoke_revision, guard_source_write, read_current_authority; all helpers/sequences/indexes/policies/triggers under research_health_quick_order_). Fence predicates: 20261001160730:18-19 functions proname like 'research_assisted_order_%'; :20-21 relations (relowner, relacl) like 'research_assisted_order_%' or ='research_notification_outbox'; :22-24 columns incl. attacl; :25-26 constraints joined on k.conrelid; :27-28 indexes by indrelid; :29-30 triggers 'not t.tgisinternal'; :31 policies by tablename; integrity :361-373 raises 55000; ADP01 20261001085559:23 same function predicate; provider-journal.ts:211-219 -> provider_journal_unavailable. 'research_health_quick_order_' differs from 'research_assisted_order_' at character 10, so no LIKE match; companion FK conrelid = companion; RI triggers internal. 23 guarded relations (scope:221-227) all outside both predicates and all have create-table sites in supabase/ at ac36e60. Event marker (scope:68-74) changes no schema; BEFORE INSERT event guards ignore unknown keys for a 'submitted' event: 20260930202413:573-585 (status='paid' only), 20261001062651:450-470 (rejects only evidence ? 'financialDispositionId' without matching disposition), 20261001115512 settlement_event_guard (returns new unless status='paid'); bridge:274-275 CHECK only jsonb_typeof(evidence)='object'. Caveat: the candidate must issue no GRANT on any fenced relation (relacl at :20) and the packet promises none (:57-58). Hosted state NOT PROVEN; verifier must call the provider authority/integrity RPC (scope:85-87, :262-263)."
+     },
+     {
+      "id": "QO-P2-10",
+      "status": "SATISFIED",
+      "evidence": "Decision stated: scope:62-66 keeps source='early_access_manual_order_bridge' (bridge:130-131 CHECK), names the status-recovery consequence and asks for assessment, and :66 mints no status-access token (legacy submit mints one at bridge:683-694). Recovery readers filter on the literal at supabase/candidates/20260927203000_research_status_recovery.sql:110,148,242,300 and bind 'member:'||actor_member_id / 'early_access:'||early_access_session_hash at :154-155,:245-246,:303-304 (note: this file is a candidate, not a migration, at fd023e8). Assessment: a Quick Order row becomes matchable by research_status_recovery_match on public_reference + normalized_email and recoverable under the canonical owner binding, identical to a legacy row; no broader grant than legacy. Independent marker + companion is sufficient to separate legacy from corrupted Quick Order rows because the bridge submitted event carries only requestFingerprint/lineCount (bridge:661-664) and can never carry intakeKind; admin reader fails closed on marked rows with missing companion (scope:302-305). Precision: the packet does not record the recovery consequence as accepted, and the baselines JSON binds no hash for the status-recovery candidate."
+     },
+     {
+      "id": "QO-P2-11",
+      "status": "SATISFIED",
+      "evidence": "scope:104-107 re-resolves complete canonical lines in the transaction (product name, action label, workflow, quantity band, price identity/version/effectivity, authoritative fingerprint) and states 'A QO digest or a second application scan is not the database currentness guard'; :108-112 keeps the raw 1-64 code in the companion, writes only the M75-validated representation/state to the canonical column (M75 20260820190000:67-70 CHECK ^[A-Z0-9][A-Z0-9._-]{1,39}$), and carries trusted attribution from the existing canonical authority separately; :114-117 maps zero known subtotal to the nullable total (bridge:128-129 requests_total_chk) and nulls unit prices for price-on-request lines (bridge:237-238 lines_price_pending_chk); :267-269 extends ports.ts with full canonical line and trusted-attribution inputs (ports.ts:36-42,:59-62 unchanged at ac36e60, hash verified). Band 100 vs 50 is not decided by the packet (only 'quantity band' at :105; :396-397 forbids widening by plumbing) but is also not named as an open founder decision; line_estimate_cents computed in SQL (bridge:221-226 lines_estimate_chk) is implied, not stated."
+     },
+     {
+      "id": "QO-P2-12",
+      "status": "SATISFIED",
+      "evidence": "scope:308-319: template research.assisted_order.quick_order.submitted.admin.v1, event_key assisted-order:<canonicalRequestId>:quick-order-submitted:admin, status pending, null financial FKs, closed payload {schemaVersion,requestId,publicReference}, link from validated UUID + fixed origin; inserted inside the commit (:113-114). Outbox: event_key unique (supabase/research-notification-outbox.sql:10), status CHECK includes 'pending' (:18-20). HL12 guards bind only 'assisted-order:%:payment-verification:%' / status_changed.customer+paid (20261001040351:107-133) and 'assisted-order:%:financial-disposition:%' / cancelled (20261001062651:513-529), so the proposed row passes as ordinary. Renderer change is in the patch (communications.ts hunk @@ -158,8 +158,29 @@; SITE_ORIGIN exists at communications.ts:12; publicReference regex equals bridge:119 CHECK) and communications.ts is bound at baselines:31-33. Gap: outbox requires NOT NULL event_type and recipient (:13-15); the packet names neither the event_type literal nor the recipient source."
+     },
+     {
+      "id": "QO-P2-13",
+      "status": "SATISFIED",
+      "evidence": "scope:91-95 maps member -> companion actor member:<authUserId> with the canonical row keeping the member-row id, and early access -> early_access:<customerRef> with the bound session hash in canonical evidence (production.ts:48-57 at ac36e60; production-deps.ts:104-118); :96-99 idempotency hash = 'quick-order-v1' NUL actorId NUL key, email never an identity (legacy service.ts:375-377 hashes email NUL key, so namespaces are disjoint); :100-103 lock actor/key then exact replay, changed input conflicts; :66 no status token minted. Not explicit: how a canonical 23505 (idempotency_key_hash or public_reference unique, bridge:97-98) surfacing after the companion lock is reported as a conflict."
+     },
+     {
+      "id": "QO-P2-14",
+      "status": "PARTIAL",
+      "evidence": "scope:95 ('Refuse viewers without the required bound customer and durable standing'), :267-268 (ports.ts carries standing), :272 (production.ts binds canonical standing/revocation) establish the refusal of member viewers lacking customerRef/session hash (production.ts:48-54 currently admits them). The acceptance authority is not named: the packet never cites the agreementGate RPC or table that production-deps.ts:104-118 calls (wiring.agreementGate.accepted(customerRef) plus live earlyAccessSessionHash and non-empty customerRef) nor the required-pair source, and does not say which durable record proves acceptance of the HEALTH pair given :270-271 refuses the Research pair (research_early_access_agreement_acceptances, listed as a guarded relation at :225, stores Research acceptances). The commit's standing guard cannot be drafted against an unnamed object."
+     },
+     {
+      "id": "QO-P2-15",
+      "status": "PARTIAL",
+      "evidence": "QUICK_ORDER_SUPPLEMENTAL_BASELINES_20261006.json binds bridge (:67), M75 (:73), 20260930193033 (:79), 20260930202413 (:85), 20260930234614 (:91), 20261001040351 (:97), 20261001062651 (:103), 20261001085559 (:109), 20261001102904 (:115), 20261001115512 (:121), 20261001160730 (:127); all 46 sha256-lf entries re-verified by me at 5ee44d5 and ac36e60. Full trigger set on fenced requests/events/outbox at fd023e8: requests -> research_assisted_order_paid_hold (193033:39-40), hl12_observed_cancel (20260930230541:389), hl12_history_progression (20261001024018:49), aa_hl12_disposition_terminal (062651:387), aaa_adp01_uncertainty (085559:553), adp03_request_identity (115512:487); events -> events_append_only (bridge:352-354), paid_event_evidence (202413:591-592), hl12_disposition_cancel_event (062651:470, takes FOR UPDATE on the request row at :452), adp03_paid_event (115512:494); outbox -> hl12_payment_effects_outbox_guard/_truncate (040351:179-185), hl12_disposition_effects_outbox/_truncate (062651:562-566). 20260930230541 and 20261001024018 install triggers on the fenced requests relation but are NOT bound; supabase/research-notification-outbox.sql and the status-recovery candidate are not bound. scope:82-87 requires enumerating/preserving guards and comparing all measured definitions and :86-87/:262-263 require the provider authority/integrity RPC before/after install, reapply and rollback, but does not literally assert the exact enabled trigger set."
+     },
+     {
+      "id": "CURRENTNESS-AUTHORITY",
+      "status": "PARTIAL",
+      "evidence": "It is its own designed object, not an application digest: scope:133-149 (authority_head with monotonic writer_epoch, active revision, held|active, missing = held; immutable schema-versioned authority_revisions; owner-scoped publish/revoke; service role cannot self-approve), :106-107 and catalog.ts:122-124 keep qo-v1 as staleness detection only; PERSISTENCE_PROPOSAL_3b0048d.md:54-58,:97-101 had left it unresolved and S4 (SOURCE_AUTHORIZATION_DRAFT.md:69-73 at 60d593a) authorised design only. Lock protocol :168-208 is defective as written: referral helpers hold FOR SHARE on partners/links (20260904:541, :555-558) to transaction end while the intake waits for the head shared lock; research_referral_v1_execute is multi-statement across guarded tables (insert partner_links ~:717, FOR UPDATE/update links ~:722-725, insert attribution_touches ~:746, FOR SHARE of partners/members ~:674/:711, insert transfer events ~:817) so an AFTER-statement guard would hold the head exclusive lock before later row locks: a head/source-row inversion the packet claims step 4 prevents (:182-185). The intake's reuse of the durable-binding helper (:205) writes research_affiliate_customer_bindings, a guarded relation (:227). Writer-guard behaviour when the head row is absent/held is unspecified. File/config authorities (:189-193, :244-251) are governed only by the publication protocol, which is a design claim, not enforceable in SQL; packet discloses this (:196-197, :207-208)."
+     }
+    ],
+    "findings": [
+     {
+      "id": "F1",
+      "severity": "P1",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md@1d4f2c3:168-208",
+      "claim": "The proposed lock protocol admits deadlock between an intake and existing multi-statement writers, and between two existing writers, because statement-level AFTER guards take the head exclusive lock mid-transaction while the intake holds source-row share locks from the referral preflight.",
+      "evidence": "scope:172-174 orders intake as epoch read -> preflight that locks source rows -> head shared lock; Postgres row locks persist to transaction end, so the intake waits on the head while holding FOR SHARE on partners/links (supabase/candidates/20260904_research_partner_referral_v1.sql@ac36e60:541, :555-558). scope:179-181 has writers take the head exclusive lock in statement guards; research_referral_v1_execute (same file ~:717 insert partner_links, ~:722-725 FOR UPDATE+update links, ~:746 insert attribution_touches, ~:674/:711 FOR SHARE of partners,members, ~:817 insert transfer events) is multi-statement across guarded relations, so after its first guarded statement it holds head X and may then wait on a row the intake share-locks -> cycle. Two such writers can likewise cycle (head X vs each other's row locks), a regression for writers that never conflicted before. scope:208 concedes 'not a demonstrated deadlock-freedom'.",
+      "fix": "Amend the packet before drafting the guard SQL: the intake must hold no source-row lock while requesting or holding the head lock. Either (a) run the canonical locking preflight in a separately committed transaction, bind its result to the observed epoch, and refuse after taking the head shared lock if the epoch moved (the guards already advance the epoch on every write to those relations, so the epoch is the serialization token), or (b) take the head shared lock before any preflight and make writer guards BEFORE ... FOR EACH STATEMENT so both sides acquire head then rows; in both cases record that writer-vs-writer serialization through the head is intended and bounded. State the chosen order as an explicit invariant the verifier's 'every listed writer competing before/after the head boundary' case (:256-257) must exercise."
+     },
+     {
+      "id": "F2",
+      "severity": "P1",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md@1d4f2c3:205,227",
+      "claim": "The intake's permitted reuse of the canonical durable-binding helper writes research_affiliate_customer_bindings, which is on the 23-relation guard allowlist, so the intake would fire its own writer guard: an S->X lock upgrade on the head inside the intake transaction and an epoch advance that invalidates its own epoch check.",
+      "evidence": "scope:205 'The nonlocking canonical durable-binding helper may be reused under review'; scope:227 lists research_affiliate_customer_bindings under 'durable binding/transfer' writers to guard; research_referral_v1_execute transfer path writes bindings/transfer events (20260904@ac36e60 ~:799-817); scope:172-174 requires the epoch to match after the head shared lock; scope:179-180 has every guarded write take the head exclusive lock and advance the epoch. Two concurrent intakes each holding head S and each attempting the upgrade deadlock.",
+      "fix": "Either exclude the intake's own canonical binding write from the guard (a transaction-scoped marker set only by research_health_quick_order_commit and checked by guard_source_write, with a test that an unmarked direct write still guards) or perform the durable binding outside the guarded set; state which, and add the self-write case to the qualification list at :255-265."
+     },
+     {
+      "id": "F3",
+      "severity": "P1",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md@1d4f2c3:91-95,267-272",
+      "claim": "QO-P2-14 remains unmet: the packet requires 'durable standing' but never names the acceptance RPC/table, the required-pair source, or the durable record that proves acceptance of the Health pair, so the commit RPC's standing guard cannot be drafted.",
+      "evidence": "scope:95, :267-268, :272 use 'standing' generically. Legacy production binds standing to wiring.agreementGate.accepted(customerRef) with live earlyAccessSessionHash and non-empty customerRef (server/research/assisted-order/production-deps.ts@ac36e60:104-118; service.ts:357-367). scope:270-271 refuses the Research pair for Health, while the only acceptance store the packet mentions is research_early_access_agreement_acceptances (:225), the Research acceptance table. production.ts@ac36e60:48-54 still admits any member with the submit capability and no customerRef.",
+      "fix": "Add one paragraph naming the standing authority the commit will consult (the agreementGate RPC/table behind production-deps.ts:104-118 and the required-pair source), state whether Health standing is the same durable acceptance keyed by the approved Health kind/version or a new object (and if new, name it under the research_health_quick_order_ prefix), and restate that member viewers without a bound customerRef and session hash are refused."
+     },
+     {
+      "id": "F4",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md@1d4f2c3:136-137,179-181,210-217",
+      "claim": "Writer-guard behaviour when the authority head is absent or held is unspecified, and the design serializes every INSERT/UPDATE/DELETE on 23 production relations (including research_members and research_attribution_touches) through one row's exclusive lock.",
+      "evidence": "scope:137 defines 'Missing means held' for intake only; :179-181 makes every guarded write take the head's exclusive lock and advance its epoch; :221-227 includes research_members ('Canonical Auth-user lookup/active standing'), research_attribution_touches (guest touch attribution) and all product/price/inventory writers. If the guard requires the head row, installing guards before publication, or any revocation, blocks all DML on 23 tables; if it does not, the packet must say so.",
+      "fix": "Specify: guard is a no-op (no lock, no error) when no head row exists; a 'held' head never blocks writers, only intake; the epoch advance is a single cheap row update; and require the verifier to record lock-wait/contention evidence for the highest-frequency guarded writers before any installation decision."
+     },
+     {
+      "id": "F5",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SHARED_EDITS_PROPOSED_20261006.patch@1d4f2c3 (sha256 b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f), hunk server/research/assisted-order/supabase-repository.ts @@ -415,15 +416,20 @@",
+      "claim": "The shared patch replaces the canonical admin reader RPC call unconditionally with the not-yet-existing Quick Order wrapper RPC, so applying it to any deployable branch before the wrapper is installed makes every existing admin detail read fail (fail() throws), a production-affecting cutover with no wiring gate.",
+      "evidence": "Patch lines 54-67 change getAdmin from this.client.rpc('research_assisted_order_admin_get', ...) (supabase-repository.ts@ac36e60:418-426) to this.client.rpc(QUICK_ORDER_ADMIN_DETAIL_RPC, ...) and fail on error; scope:296 'Missing RPC is unavailable, never legacy fallback'; scope:306 'The reader candidate must be installed/qualified before its reader cutover' acknowledges the ordering but the patch encodes no gate. 13/13 hunk context lines match ac36e60 blobs (verified), so the patch is otherwise applicable.",
+      "fix": "Before the patch is applied anywhere: route getAdmin through an explicit wiring switch (default: legacy research_assisted_order_admin_get; Quick Order wrapper only when the installed-and-qualified reader is declared by configuration), or split the repository hunk into a separate cutover slice sequenced after the reader candidate's qualification; add a test that the default wiring still calls the legacy RPC. State whether supabase-repository.ts/service.ts/contract.ts/communications.ts/AdminAssistedOrderDetail.tsx are protected-manifest paths (NOT PROVEN here)."
+     },
+     {
+      "id": "F6",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_BASELINES_20261006.json@1d4f2c3:66-131; scope:82-87",
+      "claim": "The predecessor-anchor set omits two migrations that install user triggers on the fenced research_assisted_order_requests relation and omits the outbox table source and the status-recovery candidate; the postcheck plan does not assert the exact enabled trigger set.",
+      "evidence": "20260930230541_research_assisted_order_quote_evidence_corrections.sql@fd023e8:389 creates hl12_observed_cancel BEFORE UPDATE OF status on requests; 20261001024018_research_assisted_order_quote_history_immutability.sql@fd023e8:49 creates hl12_history_progression BEFORE UPDATE OF status on requests; neither path appears in the baselines JSON. supabase/research-notification-outbox.sql (table definition, :8-32) and supabase/candidates/20260927203000_research_status_recovery.sql (:110,:148,:242,:300) are cited by the design but unbound. G1 :29-30 fingerprints all non-internal triggers on fenced relations, so the postcheck must compare the full set. scope:82-87 says 'enumerate and preserve these guards' without naming an exact tgname/tgenabled assertion.",
+      "fix": "Add sha256-lf entries for the two migrations, the outbox SQL and the status-recovery candidate; add to the pre/postcheck plan an explicit assertion that the enumerated triggers on research_assisted_order_requests, _events and research_notification_outbox (names listed in condition QO-P2-15) remain present and enabled ('O' or 'A') after install, reapply and rollback, plus the provider authority/integrity RPC call already promised at :86-87."
+     },
+     {
+      "id": "F7",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md@1d4f2c3:308-319",
+      "claim": "The notification contract omits the sources of two NOT NULL outbox columns (recipient, event_type), so the commit RPC's outbox insert cannot be drafted without inventing them, and recipient must not be browser-supplied.",
+      "evidence": "supabase/research-notification-outbox.sql@fd023e8:13-15 declare event_type text not null, channel default 'email', recipient text not null; scope:308-319 specify template, event_key, status, payload and link derivation only; :314-315 defer 'Recipient/routing' to the communications owner before activation but drafting needs a placeholder source.",
+      "fix": "Name the event_type literal and the recipient source (for example a server-configured operator address passed as a validated RPC argument, or research_admin_notification_preferences at outbox.sql:66-68), state that the RPC rejects any recipient not matching that source, and keep final routing approval with the communications owner."
+     },
+     {
+      "id": "F8",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md@1d4f2c3:105",
+      "claim": "The 100-versus-50 quantity band question is neither decided nor named as an open founder decision; the packet says only that the band is re-resolved.",
+      "evidence": "Only 'quantity band' at scope:105; doc36@2d7533f:162-165 records that real callbacks emit maximumQuantity=100 while every Quick Order fixture uses 50 and that Samuel must confirm. bridge:213-218 lines_quantity_chk enforces whatever band is written.",
+      "fix": "Add one sentence: the band is taken from the governed revision/canonical authority inside the lock, never from fixtures, and the 100 vs 50 Health value remains Samuel's separate decision."
+     },
+     {
+      "id": "F9",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_PERSISTENCE_PROPOSAL_3b0048d.md@1d4f2c3:13-17; scope:53",
+      "claim": "The retained A2 intake candidate and verifier file names still carry the research_assisted_order_ prefix while all database objects use research_health_quick_order_, inviting a drafter to name objects after the file.",
+      "evidence": "PERSISTENCE_PROPOSAL_3b0048d.md:13-17 name supabase/candidates/20261005_research_assisted_order_quick_order_intake*.sql and supabase/verification/research_assisted_order_quick_order_local.mjs; scope:53 'The existing proposed A2 filenames remain unchanged'; the new currentness files (scope:153-157) use the new prefix. File names do not enter the pg_catalog fingerprint (G1 :18-31).",
+      "fix": "Rename the intake candidate/precheck/postcheck/rollback/verifier files to the research_health_quick_order_ prefix in the same packet delta."
+     },
+     {
+      "id": "F10",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md@1d4f2c3:100-103",
+      "claim": "The handling of a canonical unique violation (23505 on idempotency_key_hash or public_reference) that surfaces after the companion actor/key lock is not stated.",
+      "evidence": "bridge:97-98 unique columns; scope:100-103 describe companion lock and replay but not the canonical-conflict branch doc36 QO-P2-13 asked for.",
+      "fix": "Add: after the companion lock, any canonical 23505 is returned as a conflict (no retry, no receipt), and the verifier includes that case."
+     },
+     {
+      "id": "F11",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SHARED_EDITS_PROPOSED_20261006.patch@1d4f2c3, hunk client/src/research/assisted-order/AdminAssistedOrderDetail.tsx @@ -129,15 +149,33 @@ (patch lines 183-195)",
+      "claim": "For Quick Order rows the patch hides the legacy Affiliate block, so the operator sees the raw declared code but not the canonical M75-sanitized declared code and state the canonical row stores.",
+      "evidence": "Patch line 183 wraps data-testid='admin-affiliate' in {!detail.quickOrder ? ... : null}; OperatorDeclarations (client/src/research/quick-order/OperatorDeclarations.tsx@ac36e60:5-12) renders declaredCode from the companion only; doc36 QO-P2-11 repair asked for 'the operator projection showing both'.",
+      "fix": "Keep the canonical declared code/state line visible for Quick Order rows (or render it inside the Quick Order section) and extend the UI test to assert both values appear."
+     },
+     {
+      "id": "F12",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md@1d4f2c3:62-66",
+      "claim": "The status-recovery consequence is disclosed but not recorded as accepted, and the status-recovery source is a candidate (not a migration) that the baselines do not bind.",
+      "evidence": "scope:63-65; supabase/candidates/20260927203000_research_status_recovery.sql@fd023e8:110,:148,:242,:300 filter on the literal and :154-155,:245-246,:303-304 bind the canonical owner; not present under supabase/migrations/ at fd023e8.",
+      "fix": "Record in the packet that Quick Order rows are intentionally recoverable through the canonical public-reference plus e-mail flow under the canonical owner binding (same as legacy rows), note the file is a candidate whose hosted state is unproven, and bind its sha256-lf."
+     },
+     {
+      "id": "F13",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md@1d4f2c3:114-117,269",
+      "claim": "Two drafter facts from doc36 are implied but not written: line_estimate_cents must be computed in SQL from unit price times quantity, and the per-line Health classification decision with its sourceVersion must be persisted.",
+      "evidence": "bridge:221-226 lines_estimate_chk requires line_estimate_cents = unit_price_cents*quantity or both null; scope:114-117 mentions only the request total mapping; doc36@2d7533f:104 (QO-P2-06 repair) and :160-161.",
+      "fix": "Add both sentences to the frozen intake contract; carry classification decision and sourceVersion per line in the companion (or lines) and surface them in the admin projection."
+     }
+    ],
+    "confirmed": [
+     "Subject identity: 1d4f2c3b3ff2fc0e1bc25495d3076d2bd9a76e99 on codex/xenios-launch-coordination-20261005, 'docs(quick-order): bind mount checkpoint and supplemental source proposal', 2026-10-06 13:22:56 -0500; QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md is 397 lines; baselines JSON has 46 entries (base 5ee44d5, mountSuccessor ac36e60).",
+     "Patch QUICK_ORDER_SHARED_EDITS_PROPOSED_20261006.patch: 18,546 bytes, no CRLF, sha256 raw = sha256 LF = b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f, matching baselines JSON :312 and dc3329b's patchSha256; 13 hunks across 5 runtime files + 1 UI test; all context/removed lines match the ac36e60 blobs (0 mismatches, node check).",
+     "All 46 baseline sha256-lf values re-computed and equal at both 5ee44d5 and ac36e60; git diff --stat fd023e8..ac36e60 touches no server/research/assisted-order or supabase/migrations path.",
+     "Approval records: 60d593ae2fc0623edc869e373bfe52e830968df9 (Samuel Boadu, 2026-10-06 12:48:24 -0500) adds quick-order-first-plan-20261006/ incl. SOURCE_AUTHORIZATION_DRAFT.md S-4 (:58-80: design-only for currentness; no implementation of the revision authority or complete commit RPC until the expanded scope is approved); dc3329bb2cfb3b93d8d054c8bbc77a291df0e671 (2026-10-06 13:29:11 -0500) records exactAnswer 'Approve this bounded source-only scope' with scopeCommit 1d4f2c3, patchSha256 b7427650..., limits 'SQL remains conditional on same original reviewer compatibility review. No database execution/live intake/payment/notification sends/deployment/manifest/final protected acceptance'.",
+     "Doc 36 controlling text located at 2d7533f2d3d3a1c69ea686170524d7af4dd6b064: docs/review/xenios-health-launch-review-20260930/36_QUICK_ORDER_4abd2c5_BOUNDED_REVIEW_2026-10-05.md (239 lines), sections 5-7 at :86-166, QO-P2-05..15 at :103-113, A2 conditions :144-158, band/estimate facts :160-165.",
+     "G1 fence predicate (20261001160730@fd023e8:18-31): functions by proname LIKE 'research_assisted_order_%' with proacl; relations/columns/constraints(conrelid)/indexes(indrelid)/policies by relname LIKE 'research_assisted_order_%' OR = 'research_notification_outbox'; triggers exclude tgisinternal; integrity :361-373 raises 55000 on seal mismatch; ADP01 20261001085559:23 same function predicate; provider-journal.ts@ac36e60:211-219 assertAuthority -> AssistedOrderConflictError('provider_journal_unavailable').",
+     "No proposed object name (scope:45-52, :136-146) matches either predicate; none of the 23 allowlisted relations (scope:221-227) matches; all 23 have create-table sites in supabase/ at ac36e60; no 'research_health_quick_order' text exists anywhere at ac36e60; supabase/candidates at ac36e60 holds no quick-order candidate.",
+     "No other installed seal fingerprints triggers on the 23 relations: the referral V1 candidate's self-check (20260904@ac36e60:993-996) counts only its own 14 named triggers by tgname; 20261003 media decoupling checks persistent-cart relations only (:60-80,:185-195,:1195-1205).",
+     "Event guards do not reject unknown evidence keys on a 'submitted' event: 20260930202413:573-585 (paid only), 20261001062651:450-470 (financialDispositionId presence only; takes FOR UPDATE on the request row at :452), 20261001115512 settlement_event_guard (paid only); bridge:274-275 evidence CHECK is jsonb_typeof='object'; bridge:661-664 legacy submitted evidence = {requestFingerprint, lineCount}.",
+     "Outbox: event_key unique (research-notification-outbox.sql@fd023e8:10), status CHECK incl. 'pending' (:18-20), NOT NULL event_type/recipient/template_key (:13-16); HL12 guards bind only payment-verification (20261001040351:107-133) and financial-disposition (20261001062651:513-529) keys/templates.",
+     "Canonical facts: bridge:119 public_reference CHECK ^XRR-[0-9]{8}-[A-F0-9]{10}$ (equals the patch's renderer regex); :128-131 requests_total_chk and source_chk; :186-239 lines NOT NULL product_name/customer_action_label/minimum_quantity/quantity_increment/authoritative_fingerprint, lines_estimate_chk, lines_price_pending_chk; legacy submit :590 on conflict do nothing, :669-672 FOR UPDATE on the existing request only (no source-row locks), :683-694 mints an access token; admin_get :773-782 is a stable wrapper over admin_json. M75 20260820190000:67-70 declared_code_shape CHECK.",
+     "Status-recovery source is supabase/candidates/20260927203000_research_status_recovery.sql (not under supabase/migrations/) at fd023e8; literal filters at :110,:148,:242,:300; owner bindings at :154-155,:245-246,:303-304.",
+     "Runtime at ac36e60: service.ts:357-367 submissionStanding gate, :375-377 hash(email NUL key), :812-824 adminDetail requires read_all, :826-841 updateStatus pre-reads 'current' via adminDetail (patch's 'current.quickOrder' binding exists); production-deps.ts:104-118 agreementGate standing; supabase-repository.ts:418-426 getAdmin calls research_assisted_order_admin_get; communications.ts:12 SITE_ORIGIN; production.ts:41 productionReady:false, :48-57 actorId mapping, :93-98 commit throws; ports.ts:36-42,:59-62 CommitArguments/extension unchanged; catalog.ts:93-98 negative filter, :122-124 qo-v1 'NOT a transactional version guard'; legal.ts:21-25 only the published research-use pair; OperatorDeclarations.tsx:5-17 props compatible with the patch's spread.",
+     "Referral helpers lock rows: research_referral_v1_partner_availability FOR SHARE on research_partners (20260904@ac36e60:541); research_referral_v1_availability FOR SHARE of partner then link (:555-558); research_referral_v1_execute is multi-statement across partner_links, attribution_touches, members/partners and transfer events (~:674-817).",
+     "Packet's own holds confirmed: no DDL executed or registered (scope:80,:166,:253-265), productionReady false and composition disabled (:274-275), no qualification group consumed (:383-387), activation/manifest/payment/intake/deployment separate (:389-397)."
+    ],
+    "notProven": [
+     "Hosted/managed database state: whether the ADP chain, the referral V1 and affiliate-binding candidates, or any of the 23 relations and their writer families are installed; the Supabase MCP rejected its header this session and no query was run (forbidden anyway).",
+     "Deadlock-freedom or liveness of any corrected lock protocol; only the read-only inference that the protocol as written admits cycles is established.",
+     "That 'git apply --check' exits 0 (packet claim at baselines:315); I did not run git apply. I verified that all 13 hunks' context and removed lines equal the ac36e60 blob lines, which establishes applicability of content but not git's whitespace/EOL handling.",
+     "That the patch compiles: it imports ./quick-order and ./quick-order-repository, which do not exist at ac36e60 (packet discloses the dependency at scope:285-289); TypeScript was not run.",
+     "Dispatcher behaviour for the new template (unknown-template -> failed_permanent path at outbox.ts cited by doc36 :110) was not re-read by me; the packet's claim that the dispatcher uses event_key as provider idempotency (scope:316) is unverified here.",
+     "Whether the five shared runtime files and the UI test are protected-manifest (CORE_SITE_PROTECTION_MANIFEST) paths; the manifest was not read.",
+     "Which durable record would prove Health-pair acceptance; no such object exists in the sources read, and the packet does not name one (F3).",
+     "The exact RPC/table name behind wiring.agreementGate (production-deps.ts:104-118); its wiring source was not traced.",
+     "That the status-recovery candidate is installed on the hosted database (it is a candidate at fd023e8); its consequence analysis assumes it is.",
+     "The 18:43:37Z checkpoint facts (host resources, remaining qualification groups) are outside this read-only review and are not assessed."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "F1",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Upheld with the mechanism corrected. REFUTED part: research_referral_v1_execute is not a demonstrated deadlock partner. Its mutating ops are serialized by pg_advisory_xact_lock(9042026,1) (supabase/candidates/20260904_research_partner_referral_v1.sql@ac36e60:669) and each op has exactly ONE guarded DML that comes AFTER all of its row locks: issue :711 FOR SHARE partners/members -> :717 insert links; revoke :711, :722 FOR UPDATE link -> :725 update; capture :738 (-> :554-557 FOR SHARE partner, link) -> :746 insert touches; bind :857, :875 -> :879 insert bindings; transferBinding :797, :799, :810 -> :817 insert transfer events. research_partner_referral_events and research_idempotency_keys are not in the 23-relation allowlist. So execute's order is rows->head, the same as the intake's (scope:172-174), and no cycle forms. Approved-customer access (supabase/candidates/20260905_research_approved_customer_access.sql@ac36e60:163,:170 FOR UPDATE before :182 update members) and privacy cleanup (20260904:228 advisory lock, :232 table lock, :233/:235 FOR UPDATE before :321-:331 deletes) also pre-lock, and product admin RPCs pre-lock FOR UPDATE (20260726143000_research_product_control_center.sql@ac36e60:359,:494,:575,:687). STILL VALID: the packet never fixes the guard timing. scope:179-181 says only 'statement-level guards'. With BEFORE STATEMENT guards every plain single-statement UPDATE/DELETE of members/partners/links that has no prior FOR UPDATE takes head X before its row lock, inverting the order against an intake that holds FOR SHARE on its own member row via bindingAt (20260904:840; the packet's :199-204 names only partner/link rows) or on partner/link rows (:541,:554-557) -> cycle. With AFTER STATEMENT no cycle was found among the examined writers; writer-writer cycles need multi-statement writers that share rows and were not demonstrated. P1 stands because the packet makes lock-protocol review a precondition of SQL drafting (:10-11) and the invariant is unwritten; the fix is: AFTER ... FOR EACH STATEMENT, the explicit invariant 'no writer performs a guarded DML before locking rows an intake may share', and member rows added to the intake's preflight-lock list. scope:208 concedes no deadlock-freedom claim."
+     },
+     {
+      "id": "F2",
+      "upheld": false,
+      "severity": "P1",
+      "note": "Refuted. The premise that 'the nonlocking canonical durable-binding helper' (scope:205) writes research_affiliate_customer_bindings is not supported by the source. The write path 'bind' is locking (advisory lock 20260904@ac36e60:669, FOR SHARE members :857, FOR SHARE partners/links via :875, insert bindings :879) and 'bindingAt' is locking (FOR SHARE members :840); the only nonlocking binding helpers are read projections research_referral_v1_effective_binding_json (:583-598), research_referral_v1_binding_json (:576-581) and research_referral_v1_binding_at_json (:602). The server resolver reads only (server/research/partners/referral-v1-attribution.ts@ac36e60:55-61 bindingAt, :77-86 attributionForTouch). The packet's single-transaction insert list (scope:113-114) names request, lines, event, companion, receipt and outbox, none of which is in the 23-relation allowlist (:221-227). No self-upgrade S->X or self-epoch-advance follows from the packet as written. Residual P3 only: name the helper exactly and state that the intake performs no INSERT/UPDATE/DELETE on any allowlisted relation."
+     },
+     {
+      "id": "F3",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Confirmed. scope:95, :267-268, :272 use 'standing' generically; production-deps.ts@ac36e60:104-118 gates legacy submit on wiring.agreementGate.accepted(customerRef) plus live session hash and non-empty customerRef; service.ts:357-367 refuses otherwise; production.ts:45-58 still admits any member with the capability and no customerRef. Addition the lens left NOT PROVEN but which is derivable read-only: server/index.ts@ac36e60:936 wires agreementGate from earlyAccessPersistence.options.agreements, whose RPC is research_early_access_agreements_accepted (server/research/early-access/persistence/commerce-ports.ts@ac36e60:31), defined at supabase/migrations/20260804120000_research_early_access_identity_persistence.sql@ac36e60:450-484 over research_early_access_agreement_acceptances keyed by customer_ref/agreement_kind/agreement_version (:140-154; kind and version are free text up to 64, so a Health pair could be recorded there), with required pairs from wiring.requiredAgreements (production-deps.ts:95-101). The packet names none of these, so the commit's standing guard remains undraftable."
+     },
+     {
+      "id": "F4",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed. scope:137 'Missing means held' is defined for intake only; :178 'Missing head refuses' is in the intake step; :179-181 give writers no absent/held semantics; :221-227 put research_members, research_attribution_touches, session and inventory writers under one head row. Weight is added by M1 and M2 below (a reapply guard that forbids any user trigger on one allowlisted relation, and unbounded epoch churn)."
+     },
+     {
+      "id": "F5",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed. Patch lines 54-67 replace this.client.rpc('research_assisted_order_admin_get') (supabase-repository.ts@ac36e60:418-426) with rpc(QUICK_ORDER_ADMIN_DETAIL_RPC) and fail() on error, with no wiring switch; scope:296 'Missing RPC is unavailable, never legacy fallback' and :306 acknowledge the ordering but encode no gate. I re-verified the patch: 18,546 bytes, 0 CR bytes, sha256 raw = sha256 LF = b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f (baselines:312, dc3329b patchSha256), 13 hunks, 112 context/removed lines all equal to the ac36e60 blobs (0 mismatches). It imports ./quick-order-repository and ./quick-order, which do not exist at ac36e60 (git grep for the identifier returns nothing), so applying it alone cannot compile; the packet discloses this at scope:285-289."
+     },
+     {
+      "id": "F6",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed with one correction. Unbound trigger-installing migrations verified: 20260930230541@fd023e8:389 hl12_observed_cancel and 20261001024018@fd023e8:49 hl12_history_progression, both BEFORE UPDATE OF status on research_assisted_order_requests and both inside the G1 trigger fingerprint (20261001160730:29-30). Full enumerated set on fenced relations at fd023e8: requests: research_assisted_order_paid_hold (193033:39-41, BEFORE INSERT OR UPDATE OF status, so it DOES fire on the intake insert and returns NEW for status<>'paid' at :15-22), hl12_observed_cancel, hl12_history_progression, aa_hl12_disposition_terminal (062651:387), aaa_adp01_uncertainty (085559:553), adp03_request_identity (115512:487); events: events_append_only (bridge:352-354), paid_event_evidence (202413:590-593), hl12_disposition_cancel_event (062651:470), adp03_paid_event (115512:494); outbox: hl12_payment_effects_outbox_guard/_truncate (040351:179-185), hl12_disposition_effects_outbox/_truncate (062651:562-566). CORRECTION: the status-recovery source is NOT only a candidate; supabase/migrations/20260927203000_research_status_recovery.sql exists at fd023e8 (added at fef7b313, byte-identical to the candidate, sha256 98cce457db8d82c72a399223117dcf4d98488dc153f3d1883e65a07e95220292; literal filters at :110,:148,:242,:300; owner binding :154-155,:245-246,:303-304). Bind that migration path, not the candidate."
+     },
+     {
+      "id": "F7",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed. supabase/research-notification-outbox.sql@fd023e8:13 event_type text not null, :15 recipient text not null, :16 template_key not null; scope:308-319 name neither event_type nor a recipient source and :314-315 defer routing. Dispatcher facts the lens left NOT PROVEN are now verified: server/research/outbox.ts@ac36e60:466-475 renders through renderAssistedOrderOutboxEmail, passes idempotencyKey: String(job.event_key) (:472), and returns 'unknown template' for unrecognized keys (:475), which communications.ts:2 says walks to failed_permanent; so scope:316 is true and the new renderer must land in the same change as the enqueue."
+     },
+     {
+      "id": "F8",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. Only 'quantity band' at scope:105; doc36@2d7533f:162-165 records maximumQuantity=100 from real callbacks versus 50 in fixtures and that Samuel must confirm; bridge:212-218 lines_quantity_chk enforces whatever is written."
+     },
+     {
+      "id": "F9",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. QUICK_ORDER_PERSISTENCE_PROPOSAL_3b0048d.md@1d4f2c3:13-17 names supabase/candidates/20261005_research_assisted_order_quick_order_intake*.sql and supabase/verification/research_assisted_order_quick_order_local.mjs; scope:53 keeps them; the currentness files at scope:153-157 use the new prefix. File names never enter the pg_catalog fingerprint (G1 :18-31), so this is precision only."
+     },
+     {
+      "id": "F10",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. bridge@fd023e8:97-98 public_reference and idempotency_key_hash are UNIQUE; scope:100-103 describe companion lock and exact replay but not the canonical 23505 branch doc36:111 asked for."
+     },
+     {
+      "id": "F11",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. Patch line 183 wraps data-testid='admin-affiliate' in {!detail.quickOrder ? ... : null} (closing at 195); OperatorDeclarations.tsx@ac36e60:5-12 renders declaredCode from the companion projection only; the canonical M75 declared code/state line is therefore hidden for Quick Order rows, contrary to doc36:109 'operator projection showing both'."
+     },
+     {
+      "id": "F12",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld in substance (acceptance of the recovery consequence is not recorded; no sha256-lf is bound), but its premise is FALSE: the status-recovery source is a registered migration at fd023e8, supabase/migrations/20260927203000_research_status_recovery.sql (added at fef7b313 'feat(p17): add secure status recovery', identical to the candidate). The lens's confirmed item 12 ('not under supabase/migrations/ at fd023e8') and notProven item 9 ('it is a candidate at fd023e8') are wrong on this point; hosted install state remains NOT PROVEN. The correction strengthens, not weakens, the consequence: Quick Order rows carrying source='early_access_manual_order_bridge' are matchable by the migration's readers at :110,:148,:242,:300 under the canonical owner binding at :154-155,:245-246,:303-304."
+     },
+     {
+      "id": "F13",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. bridge@fd023e8:221-226 lines_estimate_chk requires line_estimate_cents = unit_price_cents*quantity or both null; scope:114-117 state only the request-total mapping and null unit prices; doc36:104 and :160-161 ask for SQL-computed line estimates and per-line classification plus sourceVersion."
+     }
+    ],
+    "conditionOpinion": [
+     {
+      "id": "QO-P2-05",
+      "status": "PARTIAL",
+      "note": "Fail-closed refusal of the Research pair for Health is stated (scope:270-271) and the current legal.ts@ac36e60:16-25 can only emit publishedResearchUsePolicyAgreement() (:17) when it matches an approved pair (:21,:24). But doc36@2d7533f:103 asks for a real Health document/registry adapter on a Health-reachable route plus a refusal test, 'Record as an A2 dependency'. The packet's exact new-file list (:151-160) and test list (:321-333) name neither; 'applicable approved Health legal bytes' appears only as a file-authority class (:244-246) and :148-149 says no pair is provisioned. Design-stage safe, dependency not recorded."
+     },
+     {
+      "id": "QO-P2-06",
+      "status": "PARTIAL",
+      "note": "Agree with the lens: scope:269 requires positive Health classification and the exact governed revision; catalog.ts@ac36e60:93-98 remains a negative filter and :122-124 labels qo-v1 non-transactional. Not stated: the fail-closed unlisted-family test and per-line persistence of the classification decision and sourceVersion (doc36:104); scope:139-140 places decision inputs only in authority_revisions."
+     },
+     {
+      "id": "QO-P2-09",
+      "status": "SATISFIED",
+      "note": "Re-derived from bytes. Live seal predicate 20261001160730@fd023e8:18-31: functions by proname LIKE 'research_assisted_order_%' with proacl; relations (relowner, relacl)/columns/constraints joined on conrelid/indexes by indrelid/policies for relname LIKE 'research_assisted_order_%' or = 'research_notification_outbox'; triggers 'not t.tgisinternal' on those relations only. :416 replaces research_assisted_order_provider_schema_fingerprint() with exactly this SQL, :419-420 seals it into the fence comment, :361-373 raises 55000 on mismatch, provider-journal.ts@ac36e60:211-219 turns the authority RPC failure into provider_journal_unavailable. 'research_health_quick_order_' diverges from the pattern at character 10 ('h' vs 'a'), so no LIKE match; the companion FK has conrelid = companion; RI triggers are internal; no object, index, policy or grant is proposed on the outbox or any fenced relation (scope:57-58). Older predicates are also clean for the proposed names: ADP02 (20261001102904:34-35 adds tgname LIKE '%adp0%'/'%hl12%' on any table; no proposed name contains either) and ADP03 (20261001115512:17-29, same shape as G1). Event-evidence marker passes every BEFORE INSERT event guard: 202413:577 (paid only), 062651:456 (financialDispositionId presence only; :453 FOR UPDATE on the intake's own request row), 115512:383 (paid only); bridge:274-275 CHECK jsonb object. Hosted install state NOT PROVEN."
+     },
+     {
+      "id": "QO-P2-10",
+      "status": "SATISFIED",
+      "note": "Decision stated (scope:62-66), CHECK at bridge@fd023e8:130-131, consequence disclosed, no status token minted (:66). Correction: the recovery readers are a registered migration at fd023e8 (supabase/migrations/20260927203000_research_status_recovery.sql:110,:148,:242,:300; owner binding :154-155,:245-246,:303-304), not merely a candidate; the consequence is therefore a firmer source fact. Acceptance of the consequence is still not recorded and the file is unbound (F12, F6)."
+     },
+     {
+      "id": "QO-P2-11",
+      "status": "SATISFIED",
+      "note": "scope:104-107 re-resolves complete canonical lines inside the transaction; :108-112 keep the raw 1-64 code in the companion and write only the M75-valid representation (20260820190000@fd023e8:67-70) to the canonical column; :114-117 map zero subtotal to null (bridge:128-129) and null unit prices for request_pricing (bridge:237-238); :267-269 extend ports.ts (CommitArguments at ports.ts@ac36e60:36-42 and extension :59-62 unchanged, baseline hash verified). Remaining gaps are P3 (F8, F10, F13)."
+     },
+     {
+      "id": "QO-P2-12",
+      "status": "SATISFIED",
+      "note": "Doc36:110's literal list is met at scope:308-319 and :113-114: event_key assisted-order:<id>:quick-order-submitted:admin, new template under the assisted-order renderer namespace, status pending, null financial FKs, closed payload, inserted in the commit, renderer in the patch (communications.ts hunk; SITE_ORIGIN at communications.ts@ac36e60:12; publicReference regex equals bridge:119), communications.ts bound at baselines:31-33. HL12 guards pass the row: 040351:107-115 constrains only template status_changed.customer, :116-125 bind only verification FK / payment-verification keys / paid status; 062651:513-523 bind only disposition FK / financial-disposition keys / reserved cancellation copy (reserved_copy :110-114 is false for an absent customerMessage). Drafting gap F7 (NOT NULL event_type and recipient, outbox.sql:13,:15) remains P2."
+     },
+     {
+      "id": "QO-P2-13",
+      "status": "SATISFIED",
+      "note": "scope:91-95 mapping matches production.ts@ac36e60:48-57 and production-deps.ts:104-118; :96-99 namespaced hash is disjoint from legacy service.ts:375-377 hash(email NUL key); :100-103 lock-then-replay; :66 no token (legacy mints one at bridge:680-691). The canonical 23505 branch is unstated (F10, P3)."
+     },
+     {
+      "id": "QO-P2-14",
+      "status": "PARTIAL",
+      "note": "Two of doc36:112's four demands are met (refusal of viewers without bound customer and standing, scope:95; standing port and production binding, :267-268,:272). The acceptance RPC/table and the required-pair source are not named, although they are derivable: research_early_access_agreements_accepted (commerce-ports.ts@ac36e60:31; 20260804120000:450-484) over research_early_access_agreement_acceptances (:140-154) with pairs from wiring.requiredAgreements (production-deps.ts:95-101). Whether Health standing is the same durable acceptance keyed by an approved Health kind/version or a new object is undecided; production.ts:45-58 still admits members without customerRef. F3 P1 stands."
+     },
+     {
+      "id": "QO-P2-15",
+      "status": "PARTIAL",
+      "note": "Baselines bind bridge, M75 and nine later migrations (baselines:67-131; all 46 sha256-lf entries re-computed equal at 5ee44d5 and ac36e60; fd023e8..ac36e60 changes 26 paths, none under server/research/assisted-order, shared/research/assisted-order or supabase/migrations). Missing: 20260930230541 (:389) and 20261001024018 (:49), both installing fingerprinted user triggers on requests; supabase/research-notification-outbox.sql; and the status-recovery MIGRATION 20260927203000. scope:82-87 promises enumeration and the provider RPC before/after but no exact tgname/tgenabled assertion (F6)."
+     },
+     {
+      "id": "CURRENTNESS-AUTHORITY",
+      "status": "PARTIAL",
+      "note": "It is its own designed object (scope:133-149: head with monotonic writer_epoch and held|active, immutable revisions, owner-scoped publish/revoke, service role cannot self-approve) and qo-v1 stays staleness detection only (catalog.ts:122-124), satisfying the 'not an application digest' requirement that PERSISTENCE_PROPOSAL_3b0048d.md:54-58,:97-101 and S-4 (SOURCE_AUTHORIZATION_DRAFT.md@60d593a:69-73) left open. Still unresolved before guard/commit SQL: guard timing and the written lock invariant (F1, corrected), missing-head writer semantics (F4), an allowlisted relation whose own source forbids any user trigger on it (M1), and unbounded epoch churn from high-frequency writers (M2). File/config authorities (:189-193,:244-251) are governed only by a publication protocol the packet itself calls a proposal (:196-197,:207-208)."
+     }
+    ],
+    "missed": [
+     "M1 (P2) Second trigger census on an allowlisted relation, overstating the lens's confirmed item 8: supabase/research-private-early-access-sessions.sql@ac36e60 is a begin/commit migration-style file (:12) headed 'UNMOUNTED / UNAPPLIED' (:3) whose $shape_guard$ block (:119-224) raises 'research_private_early_access_sessions: unexpected table trigger detected.' when ANY non-internal trigger exists on research_private_early_access_sessions or research_private_early_access_nonces (:201-209); its verify script repeats the check (supabase/verification/research-private-early-access-sessions.verify.sql:52). The packet puts research_private_early_access_sessions in the 23-relation guard set (scope:226) and binds this file read-only (baselines:287-291) without noting that installing research_health_quick_order_guard_source_write there makes the sessions source unreapplyable and its verification fail. It is not a runtime seal: none of its functions (:399-596) census triggers and the server calls no private-early-access authority RPC (git grep at ac36e60 returns nothing), so it is P2 (fix before verifier/qualification), not P0/P1. Fix: drop sessions from the trigger allowlist (revocation can be re-read under the head lock via research_private_early_access_session_active :539) or record the reapply consequence and an owner-approved amendment of that file.",
+     "M2 (P2) Epoch churn and liveness are unaddressed: every INSERT/UPDATE/DELETE on any of the 23 relations takes head X and advances writer_epoch (scope:179-181), and an intake refuses whenever the epoch moved between its step-2 read and its head shared lock (scope:172-175). The set includes per-sign-in session inserts (research-private-early-access-sessions.sql@ac36e60:511 in exchange_nonce), per-landing referral touch inserts (20260904@ac36e60:746), inventory reservation/release/expiry writers (20260727160000_research_inventory_reservation_commands.sql@ac36e60:375,:773,:924,:1000,:1226,:1378) and member activations (20260905:182). No bound on intake refusal rate or on writer serialization behind in-flight intakes is stated; the qualification list (:255-260) tests an epoch change but not liveness under realistic write rates. Fix: scope the epoch to decision-relevant, publication-controlled writes or to per-family heads, record expected write rates for the highest-frequency guarded writers, and add a liveness case before the verifier.",
+     "M3 (P3) The intake's member-path attribution preflight locks a research_members row (bindingAt -> 20260904@ac36e60:840 FOR SHARE), a guarded relation; scope:199-204 names only partner/link rows as locked by the preflight. The lock invariant and the verifier's 'writer competing before/after the head boundary' case (:256-257) must include member rows.",
+     "Lens confirmed item 12 and notProven item 9 are false as to location: supabase/migrations/20260927203000_research_status_recovery.sql exists at fd023e8 (added at fef7b313, identical bytes to the candidate, sha256 98cce457db8d82c72a399223117dcf4d98488dc153f3d1883e65a07e95220292). Lens notProven item 5 is now resolved read-only: outbox.ts@ac36e60:466-475 renders through renderAssistedOrderOutboxEmail with idempotencyKey String(job.event_key) and returns 'unknown template' otherwise. Lens notProven item 8 is resolvable: agreementGate is research_early_access_agreements_accepted (commerce-ports.ts@ac36e60:31; server/index.ts:936).",
+     "Adversarial checks that came back CLEAN (no new P0-P2): G1 LIKE predicate versus the new prefix (mismatch at character 10); ADP02 102904:34-35 tgname patterns '%adp0%'/'%hl12%' absent from every proposed name; ADP03 115512:17-29 equals G1's relation set; companion FK conrelid = companion and RI triggers internal; no object, index, policy or grant on research_notification_outbox or any fenced relation; HL12 outbox guards 040351:107-133 and 062651:513-523 pass the proposed row; event guards 202413:577, 062651:456, 115512:383 pass a 'submitted' event with the marker; paid_hold 193033:15-22 returns NEW for the intake insert; referral V1 authority self-check counts only its own exact tgnames (20260904:58,:993-1023), privacy cleanup is fenced by the same advisory lock (:228) and a bindings table lock (:232) and pre-locks member/partner rows (:233,:235) before any delete; all 23 allowlisted relations have create-table sites at ac36e60 (bindings only in candidate 20260819 and transfer events only in candidate 20260904, so hosted existence NOT PROVEN); all 46 baseline sha256-lf values equal at 5ee44d5 and ac36e60; patch sha256 b7427650... with 13 hunks and 112 context lines matching ac36e60 (0 mismatches); fd023e8..ac36e60 touches no assisted-order or migrations path; no 'research_health_quick_order' text exists at ac36e60; subject metadata (1d4f2c3 13:22:56 -0500, 397-line scope, 46 entries; 60d593a 12:48:24 with S-4 at SOURCE_AUTHORIZATION_DRAFT.md:58-79; dc3329b 13:29:11 exactAnswer 'Approve this bounded source-only scope', scopeCommit 1d4f2c3, patchSha256 b7427650...; doc 36 at 2d7533f is 239 lines with conditions at :103-113). Nothing here is an approval; no database was queried and hosted state is NOT PROVEN."
+    ]
+   }
+  },
+  {
+   "lens": "shared-edits-reader-tests",
+   "review": {
+    "verdict": "SAFE TO IMPLEMENT FOR REVIEW, WITH FOUR SMALL CORRECTIONS; THE READER CUTOVER AND EVERYTHING THAT NEEDS THE WRAPPER RPC WAIT FOR THE SQL COMPATIBILITY VERDICT. Scope: packet at 1d4f2c3b3ff2fc0e1bc25495d3076d2bd9a76e99 (scope .md 397 lines, baselines .json, patch sha256 b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f, verified raw==LF, no CR bytes) against the ac36e60 blobs; adoption 60d593a and approval dc3329b read as data. No P0: the patch and the named design create no object under research_assisted_order_%, add nothing to research_notification_outbox or any fenced relation, execute/register no SQL, and leave server/research/health/quick-order/production.ts untouched (productionReady:false at :41, commit() throws at :93-98, config enabled:false at :70 at ac36e60). The six-file patch is exactly five runtime files plus one UI test; all 13 hunks' old-side context is byte-identical to the ac36e60 blobs and all six before-hashes equal the ac36e60 sha256-lf values. Guards are unchanged: service.ts:816 read_all, :831 manage, http.ts:358-370 auth:\"admin\"; express.ts and the attribution wiring at http.ts:271-284 are not in the patch; no public route, no status token, no send (renderer only; dispatcher loop untouched). The renderer adds exactly one template key with a closed three-key payload and an email body carrying only the reference, a fixed-origin admin link built from a validated UUID and two fixed sentences. The UI test is additions-only, jsdom with mocked api/session, and claims no rendered or hosted proof. The four composition-test paths sit inside allowedWriteZones (client/src/research/, server/research/), are discovered by the existing vitest include, and the packet forbids static.ts/vite.ts runtime edits under the test label, matching S-2. No shared hunk adds a transaction or lock to the legacy submit path; the canonical admin reader is `language sql stable` with no FOR UPDATE, and updateStatus's pre-read stays outside the set_status transaction. Nothing in the packet or patch claims operational intake or that any test ran. Corrections before application: (1) P1 F-01: the pushed S4 decoder (builder 10208fe) closes `detail` over 23 keys including source, declaredAffiliateCode, declaredAffiliateCodeState, but the canonical research_assisted_order_admin_json emits 20 keys without them and no later migration adds them, so the wrapper RPC's `detail` contract must be fixed before the reader SQL is drafted or every legacy admin read fails closed after cutover; (2) P2 F-02: the patch imports QUICK_ORDER_ADMIN_DETAIL_RPC from ./quick-order-repository, which 10208fe does not export, so b7427650 does not compile over the pushed S4 slice and needs the concrete amendment the scope itself requires (name research_health_quick_order_admin_detail, outside the fence prefix); (3) P2 F-03: the getAdmin cutover also carries updateStatus, createDocumentUpload and completeDocumentUpload, not only the admin GET, so the cutover disclosure and the readback test scope must cover all four call sites and the patch must not travel toward any release candidate before the wrapper RPC is installed and qualified; (4) P2 F-04: provider-journal-http.test.ts fakes the admin RPC by the old name and throws on any other, so it must be updated in the same slice. Items that wait for the SQL compatibility verdict: the wrapper RPC name/grants/envelope (submittedEvent marker, receipt, obligation, observation sources, detail reshape), the commit RPC and its outbox insert, the ports.ts/production.ts standing and currentness wiring, and the trigger-level predecessor enumeration in the precheck/postcheck drafts. Items that can proceed now, unexecuted, on the builder branch: the contract field, the service overlay, the UI delta, the renderer branch, the UI test additions and the two named synthetic server test files, each written against the amended constant. Nothing here is an approval; the founder's decision and the installed hosted state are outside this record.",
+    "conditions": [
+     {
+      "id": "QO-P2-09 ADP fence",
+      "status": "SATISFIED",
+      "evidence": "Design: scope .md:45-60@1d4f2c3 names research_health_quick_order_intakes/replay/commit/admin_detail and states every helper, sequence, index, policy and trigger uses the research_health_quick_order_ prefix with no change to fenced tables, user triggers, indexes, constraints, policies or grants; the 23 writer-guard relations at :221-227 (research_products… research_attribution_touches) match neither research_assisted_order_% nor research_notification_outbox. Fence predicate confirmed at 20261001160730_…quarantine_isolation.sql:19 (functions proname like 'research_assisted_order_%'), :21,:24,:26,:28 (relations/columns/constraints/indexes like 'research_assisted_order_%' or ='research_notification_outbox'), :29-30 (triggers, not t.tgisinternal), :31 (policies); raise 55000 at :361-373; provider-journal.ts:211-219 freeze. ADP01 20261001085559:23 proname like 'research_assisted_order_%'. The patch touches no SQL. Residual: the patch's RPC constant must be bound to the health prefix (see F-02); hosted seal/install state NOT PROVEN (no query run)."
+     },
+     {
+      "id": "QO-P2-10 canonical source literal",
+      "status": "SATISFIED",
+      "evidence": "scope .md:62-66@1d4f2c3 keeps source='early_access_manual_order_bridge', names the recovery-flow consequence and requires the source reviewer to assess it; :68-74 adds an independent submitted-event evidence marker (intakeKind/intakeSchemaVersion/normalized hash) while keeping the companion as identifier. Verified anchors: bridge 20260815150000:130-131 source_chk; 20260927203000:110,148,242,300 recovery filters; the pushed decoder binds detail.source to the literal (10208fe quick-order-repository.ts:133); the UI labels the enrichment 'Quick Order intake' (patch:160). The consequence (recovery minting a status delivery for QO rows) remains for the SQL review to assess, as the packet says."
+     },
+     {
+      "id": "QO-P2-11 commit input",
+      "status": "PARTIAL",
+      "evidence": "Design satisfied: scope .md:104-107 (complete canonical lines incl. product name, action label, workflow, quantity band, price identity/version/effectivity, authoritative fingerprint; QO digest is not the guard), :108-112 (full 1-64 declared code only in the companion, M75 representation in the canonical column, trusted attribution via canonical authority carried separately), :267-269 (ports.ts carries standing/currentness/full canonical line/trusted-attribution inputs). M75 CHECK confirmed at 20260820190000:67-70. The pushed decoder's LINE_KEYS (10208fe:72) equal research_assisted_order_line_json keys (bridge:398-419, 20 keys). Not yet done: ports.ts/production.ts wiring is proposed to the builder, not in the patch; the UI hides the canonical M75 code/state block for QO rows (patch:183-195, asserted null at test:300) instead of showing both (doc 36 fix text) — see F-06."
+     },
+     {
+      "id": "QO-P2-12 outbox",
+      "status": "SATISFIED",
+      "evidence": "scope .md:308-319@1d4f2c3 specifies template research.assisted_order.quick_order.submitted.admin.v1, event key assisted-order:<canonicalRequestId>:quick-order-submitted:admin, status pending, null financial FKs, closed payload {schemaVersion:'quick-order-v1', requestId, publicReference}, fixed trusted origin, no supplied URL; patch communications.ts hunk:219-239 adds exactly that one branch with a 3-key closed check, UUID and XRR regexes, body = four fixed lines; legacy renderers at communications.ts:164,190,233,252@ac36e60 preserved. research-notification-outbox.sql:10 event_key unique, :18-19 status CHECK includes 'pending'. HL12 guards bind only verification/disposition FKs, 'assisted-order:%:payment-verification:%' / 'assisted-order:%:financial-disposition:%' keys, the status_changed.customer template and reserved customerMessage copy (20261001040351:107-133; 20261001062651:513-529) — none matched by the new row. Dispatcher chain reaches the assisted-order renderer with exact-match predecessors (outbox.ts:430-475@ac36e60; early-access switch :262, buyer :51, partner :15-27, inquiry :42,:56). communications.ts baseline listed (baselines .json:30-35). Refinement vs doc 36 (requestId instead of adminPath) is disclosed at scope:319. Recipient/routing deferred to the communications owner (:314-315)."
+     },
+     {
+      "id": "QO-P2-13 identity",
+      "status": "SATISFIED",
+      "evidence": "scope .md:91-99@1d4f2c3: member companion actor member:<authUserId> vs canonical member-row ID; Early Access early_access:<customerRef> for recovery with the bound session hash as canonical evidence; viewers without bound customer/standing refused; idempotency hash = quick-order-v1 NUL actorId NUL key; never email as identity. :65-66 the replay reader mints no status-access token and does not bypass authentication; :100-103 lock actor/key, exact replay first, changed input conflicts, no duplicate request/event/notification. Anchors confirmed: service.ts:375-377@ac36e60 hash(email\\0key); production.ts:53,:56 actorId prefixes. Minor gap: the explicit 'canonical 23505 is a conflict' mapping from doc 36 is not spelled out (NOT PROVEN that the commit draft will treat it so)."
+     },
+     {
+      "id": "QO-P2-14 standing",
+      "status": "PARTIAL",
+      "evidence": "scope .md:94-95 'Refuse viewers without the required bound customer and durable standing'; :267-268 ports.ts carries standing inputs; :272 production.ts binds canonical standing/revocation. The acceptance authority itself is not named: production-deps.ts:104-118@ac36e60 (agreementGate.accepted(customerRef) requiring a live session hash and non-empty customerRef) and the required-pairs source are not cited, and research_early_access_agreement_acceptances appears only as a guarded writer relation (:225). Verified: service.ts:357-367 legacy gate; production.ts:45-58 admits any member with the capability. See F-05."
+     },
+     {
+      "id": "QO-P2-15 predecessor anchors",
+      "status": "PARTIAL",
+      "evidence": "baselines .json:78-131@1d4f2c3 binds 20260930193033, 20260930202413, 20260930234614, 20261001040351, 20261001062651, 20261001085559, 20261001102904, 20261001115512, 20261001160730 with sha256-lf values (all 'unchangedAtMountSuccessor': true); scope .md:82-87 requires pre/postchecks to enumerate and preserve these guards and refuse unknown drift. The trigger names themselves are not enumerated anywhere in the packet; that enumeration belongs to the precheck/postcheck drafts, which are gated on the compatibility review and do not yet exist."
+     },
+     {
+      "id": "QO-P2-05 legal",
+      "status": "SATISFIED",
+      "evidence": "scope .md:148-149 (no applicable legal pair provisioned by source approval), :270-271 (legal.ts resolves only approved published Health bytes and explicitly refuses the Research-use pair for Health), :396-397 (do not widen Health terms by plumbing). legal.ts unchanged at ac36e60 (baselines .json:61-65, f8f36c9c…). The patch does not touch legal.ts or any terms. No Health pair is approved; intake stays held."
+     },
+     {
+      "id": "QO-P2-06 positive Health classification",
+      "status": "SATISFIED",
+      "evidence": "scope .md:269-270 catalog.ts requires positive Health classification and the exact governed revision; :141 unknown Health authority cannot produce an active revision. catalog.ts unchanged at ac36e60 (baselines .json:55-59). Implementation is design-level only; nothing in the patch."
+     },
+     {
+      "id": "Estimate CHECKs / band / A2 currentness object",
+      "status": "PARTIAL",
+      "evidence": "Estimate mapping: scope .md:115-117 (zero known subtotal → canonical nullable total; price-on-request lines null unit price; completeness kept in the companion); the pushed decoder enforces the same (10208fe quick-order-repository.ts:91-100: request_pricing ⇒ unitPriceCents null, estimatedTotalCents = subtotal or null). Currentness authority is its own designed object, not an application digest: scope .md:106-107, :133-150 (head + immutable revisions, owner-scoped publish/revoke, held by default). Band 100 vs 50: not resolved in the packet (only 'quantity band' at :105); remains Samuel's decision and is correctly listed as held."
+     }
+    ],
+    "findings": [
+     {
+      "id": "F-01",
+      "severity": "P1",
+      "file": "server/research/assisted-order/quick-order-repository.ts (builder 10208fe) vs supabase/migrations/20260815150000_research_assisted_order_bridge.sql",
+      "claim": "The pushed S4 decoder that the shared patch routes every admin read through requires a `detail` object closed over 23 keys including `source`, `declaredAffiliateCode` and `declaredAffiliateCodeState`, but the canonical admin JSON emits 20 keys and none of those three, so the wrapper RPC's output contract is undefined and, if drafted as a plain wrap, every legacy admin read would fail closed after cutover.",
+      "evidence": "10208fe:server/research/assisted-order/quick-order-repository.ts:71 DETAIL_KEYS (23 names incl. source, declaredAffiliateCode, declaredAffiliateCodeState); :131 `closed(envelope.detail, DETAIL_KEYS)` runs before the legacy-null branch at :136-138; :133 `bound(detail.source, ASSISTED_ORDER_SOURCE)`. Canonical builder ac36e60:supabase/migrations/20260815150000_research_assisted_order_bridge.sql:489-510 emits exactly requestId, publicReference, status, actorMemberId, fullLegalName, email, mobilePhone, organizationName, shippingAddress, billingAddress, lines, estimatedTotalCents, currency, generalNotes, agreements, affiliateAttributionRef, timeline, documents, createdAt, updatedAt; `git grep` over supabase/migrations at ac36e60 finds no later redefinition of research_assisted_order_admin_json and no 'declaredAffiliateCode' JSON key (M75 20260820190000 only adds columns :53 and parses submit input :162-163; 20260930191323:94 returns the same builder). Patch supabase-repository.ts hunk :54-67 makes this decoder the only path (`Missing RPC is unavailable, never legacy fallback`, scope .md:296).",
+      "fix": "Before drafting research_health_quick_order_admin_detail(uuid): fix the `detail` contract in the scope record. Either the wrapper emits research_assisted_order_admin_json(p) || jsonb_build_object('source', r.source, 'declaredAffiliateCode', r.declared_affiliate_code, 'declaredAffiliateCodeState', r.declared_affiliate_code_state) for every row, or the decoder's DETAIL_KEYS drops those three keys and lets decodeAdminDetail default them (supabase-repository.ts:197,:211-220). Record the choice as a patch/S4 amendment and add a legacy-row fixture using the real 20-key shape to quick-order-admin-readback.test.ts."
+     },
+     {
+      "id": "F-02",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SHARED_EDITS_PROPOSED_20261006.patch",
+      "claim": "The patch imports QUICK_ORDER_ADMIN_DETAIL_RPC from ./quick-order-repository, but the pushed S4 module exports no such symbol, so b7427650 cannot compile over the builder's own S4 slice and needs the concrete amendment the scope requires.",
+      "evidence": "patch:37 `import { QUICK_ORDER_ADMIN_DETAIL_RPC, decodeQuickOrderAdminEnvelope } from \"./quick-order-repository\"` and :55,:59 use it as the RPC name. 10208fe:server/research/assisted-order/quick-order-repository.ts exports only QUICK_ORDER_ADMIN_ENVELOPE_VERSION (:6), PROPOSED_QUICK_ORDER_ADMIN_TEMPLATE (:7), QuickOrderAdminEnvelopeError (:10) and decodeQuickOrderAdminEnvelope (:125); the module did not exist at ac36e60 or 1d4f2c3 (ls-tree). scope .md:286-289 says the contract will be bound at a separate checkpoint and any incompatible change must come back as a concrete patch amendment; the S4 assignment (QUICK_ORDER_PURE_PROJECTION_ASSIGNMENT_20261006.txt:15@1d4f2c3) left the RPC constant optional.",
+      "fix": "Amend the patch (or add to the S4 module) `export const QUICK_ORDER_ADMIN_DETAIL_RPC = \"research_health_quick_order_admin_detail\" as const;` matching scope .md:50 and outside the research_assisted_order_ fingerprint prefix; re-pin the patch sha256 and the two S4 blob hashes in the sidecar; the reviewer's S4 delta review should bind the exact export names decodeQuickOrderAdminEnvelope(value, expectedRequestId) and QuickOrderAdminProjection{intake, observation} (10208fe shared quick-order.ts:46-49), which already match the patch's usage."
+     },
+     {
+      "id": "F-03",
+      "severity": "P2",
+      "file": "server/research/assisted-order/service.ts (ac36e60) and QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md:296-306",
+      "claim": "The getAdmin cutover is described as an admin-reader change, but repository.getAdmin also backs updateStatus, createDocumentUpload and completeDocumentUpload, so applying the patch to any runtime before the wrapper RPC is installed disables legacy status updates and the customer document-upload flow as well as the admin GET.",
+      "evidence": "ac36e60:server/research/assisted-order/service.ts:817 adminDetail → getAdmin; :841 updateStatus → this.adminDetail; :960 createDocumentUpload → repository.getAdmin (after read_own authorization :944-959); :1075 completeDocumentUpload → repository.getAdmin. Patch supabase-repository.ts hunk :54-67 replaces the only Supabase implementation; `fail(response, QUICK_ORDER_ADMIN_DETAIL_RPC)` on PGRST202 throws for every row. scope .md:296 'Missing RPC is unavailable, never legacy fallback', :301-306 names only adminDetail and the admin GET route; the coordinator assignment at 2280524 QUICK_ORDER_SHARED_APPROVED_ASSIGNMENT_20261006.txt:22 already states cutover needs an installed, qualified RPC.",
+      "fix": "In the scope record and the builder's handoff, list all four call sites as cutover-dependent; keep the applied patch on the builder branch only and bind any merge toward a release candidate to the wrapper RPC's qualified installation; extend quick-order-admin-readback.test.ts to cover the two document paths and updateStatus with (a) a legacy-shaped envelope and (b) an absent wrapper (expect fail-closed, never legacy misclassification)."
+     },
+     {
+      "id": "F-04",
+      "severity": "P2",
+      "file": "server/research/assisted-order/provider-journal-http.test.ts",
+      "claim": "An existing real-service/real-repository test fakes the admin reader by the old RPC name and throws on any other name, so the patch as written would turn it red without the packet naming it in the test scope.",
+      "evidence": "ac36e60:server/research/assisted-order/provider-journal-http.test.ts:213-226: `if (name === \"research_assisted_order_admin_get\") return { data: {...} }` with a 20-key legacy detail, and `throw new Error(\"Unexpected status RPC\")` for unknown names; the service under test is the real SupabaseAssistedOrderRepository (:228). The patch replaces the name (patch:55) and the response shape (envelope decode at :61). scope .md:321-333 lists only the two new server tests and the UI test; `git grep research_assisted_order_admin_get` over test files at ac36e60 returns only this file.",
+      "fix": "Add provider-journal-http.test.ts to the shared-slice test scope: the fake must answer the amended RPC name with a valid envelope (schemaVersion quick-order-admin-envelope-v1, requestId, detail in the agreed shape, submittedEvent null, enrichment null) so the legacy-null branch is exercised; memory-repository.ts needs no change (returns no quickOrder, which the contract comment at patch:22 treats as a legacy producer)."
+     },
+     {
+      "id": "F-05",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md:94-95,267-272",
+      "claim": "The packet requires 'durable standing' and refusal of unbound viewers but does not name the standing authority or the required-pairs source, which doc 36 QO-P2-14 made a condition before drafting the commit.",
+      "evidence": "scope .md:94-95, :267-268, :272 use 'durable standing' / 'canonical standing/revocation' without naming production-deps.ts:104-118@ac36e60 (agreementGate.accepted(customerRef) gated on a live earlyAccessSessionHash and non-empty customerRef) or the required-agreement source (:95-101); production.ts:45-58@ac36e60 still admits any member with assisted_orders:submit; the legacy gate is service.ts:357-367.",
+      "fix": "Before the commit RPC draft: name the acceptance authority (the existing agreementGate RPC behind production-deps.ts:104-118) and the required-pairs source in the ports.ts/production.ts wiring delta, state that member viewers without a bound customerRef are refused, and add a standing port to the Quick Order production wiring test scope. This does not affect the five shared files."
+     },
+     {
+      "id": "F-06",
+      "severity": "P3",
+      "file": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx (patch hunks at 150-195)",
+      "claim": "For Quick Order rows the patch hides the canonical affiliate block (M75 code and match state) and shows only the companion's full declared code, whereas doc 36 QO-P2-11 and scope .md:109-112 expect the operator projection to show both.",
+      "evidence": "patch:183 `{!detail.quickOrder ? <div data-testid=\"admin-affiliate\">` and :195 `</div> : null}`; test:300 asserts the block is absent; OperatorDeclarations renders declaration.declaredCode (10208fe/ac36e60 OperatorDeclarations.tsx:22) and trustedAttribution (:28-31) but not the canonical declaredAffiliateCodeState. Mitigating: at ac36e60 the canonical admin JSON does not emit those keys (bridge:489-510), so the legacy block shows 'None provided' today regardless.",
+      "fix": "Keep the canonical block for QO rows (or add 'Canonical code / state' rows to the QO section) once F-01 fixes the wrapper to emit declaredAffiliateCode/State; change test:300 to assert both values render."
+     },
+     {
+      "id": "F-07",
+      "severity": "P3",
+      "file": "server/research/assisted-order/communications.ts (patch hunk 212-240) and server/research/outbox.ts",
+      "claim": "The new branch throws on a malformed payload instead of returning null; the dispatcher catches it and treats it as retryable, so a malformed row walks six attempts to failed_permanent, the same path as an unknown template, but this departs from the file's documented null contract and sets no nonRetryable.",
+      "evidence": "patch:228 `throw new Error(\"Quick Order notification payload unavailable.\")`; ac36e60:server/research/outbox.ts:483-485 outer catch → {ok:false}; :661 failed_permanent only on nonRetryable or attempt >= MAX_ATTEMPTS (6, :55-56); :475 unknown template is likewise retryable; communications.ts:1-3 header and communications.test.ts:258 describe null for unrenderable keys. Also the UUID regex at patch:225 has no `i` flag unlike production.ts:13 (harmless: Postgres emits lowercase).",
+      "fix": "Return null for a malformed payload (keeps the file's contract and needs no outbox.ts change), or document the throw; add the malformed-payload case to quick-order-notifications.test.ts asserting the row is never sent and the error summary contains no payload data."
+     },
+     {
+      "id": "F-08",
+      "severity": "P3",
+      "file": "server/research/assisted-order/service.ts (patch hunk 74-97)",
+      "claim": "After a status update the service returns `updated` without a quickOrder key when the pre-read enrichment was null, so a genuine legacy row reads as explicit null from getAdmin but undefined from updateStatus.",
+      "evidence": "patch:82-91 `if (current.quickOrder) {…} return updated;` where repository.updateStatus decodes the set_status JSON through decodeAdminDetail (ac36e60:supabase-repository.ts:482-496) and never sets quickOrder; patch:22 contract comment 'Undefined is a legacy producer; the enriched reader must return null or evidence'; scope .md:295 'always emits explicit null for genuine legacy rows'.",
+      "fix": "Return `{...updated, quickOrder: current.quickOrder ? {intake, observation:{state:'stale'}} : current.quickOrder}` so null stays null and undefined (memory repository) stays undefined."
+     },
+     {
+      "id": "F-09",
+      "severity": "P3",
+      "file": "server/research/assisted-order/supabase-repository.ts (patch hunk 54-67) with 10208fe quick-order-repository.ts:24-27,126",
+      "claim": "The decoder refuses an upper-case expected request id before any RPC call, while the service only trims/limits the path parameter, so a mixed-case admin URL that Postgres's uuid cast accepted today becomes a 500 after the patch.",
+      "evidence": "10208fe:server/research/assisted-order/quick-order-repository.ts:25 `/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/u` and :126 `uuid(expectedRequestId)` first; ac36e60:service.ts:817-819 normalizeRequiredText(\"requestId\", requestId, 80); http.ts:202 maps unknown errors to 500; bridge admin_get takes uuid (:773).",
+      "fix": "Lower-case the request id in getAdmin before calling the RPC and decoder (or make the decoder's expected-id regex case-insensitive and compare lower-cased); add a mixed-case case to quick-order-admin-readback.test.ts."
+     },
+     {
+      "id": "F-10",
+      "severity": "P3",
+      "file": "server/research/assisted-order/quick-order-repository.ts (10208fe) import of ../health/quick-order/core.mjs",
+      "claim": "After the patch the canonical Supabase repository transitively imports the Health quick-order module directory; this is not a cycle today but inverts the dependency direction the mount/relocation reviews assumed.",
+      "evidence": "10208fe:server/research/assisted-order/quick-order-repository.ts:3 imports SOURCE_KINDS, AFFILIATIONS, text from \"../health/quick-order/core.mjs\"; ac36e60:server/research/health/quick-order/core.mjs has zero import statements (grep count 0), so no cycle; patch:37 makes supabase-repository.ts import quick-order-repository.ts.",
+      "fix": "Record the direction in the S4 handoff; if the reviewer prefers, move the two vocabularies into shared/research/assisted-order/quick-order.ts (already exporting the same union types at :6-7) and have core.mjs stay independent."
+     },
+     {
+      "id": "F-11",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md:349-368 (composition tests)",
+      "claim": "Two of the four named composition tests depend on boundaries the packet only names in prose: root-composition.test.ts boots the protected server/index.ts as a child with a synthetic allowlisted environment, and vite-document.test.ts calls the real setupVite whose logger error path calls process.exit(1); their executability without live services is a design claim, not shown.",
+      "evidence": "scope .md:359-360; ac36e60:server/vite.ts:19-31 createViteServer with customLogger.error → process.exit(1) and import of ../vite.config (protected, manifest:212); server/index.ts and server/static.ts/vite.ts are protected globs (CORE_SITE_PROTECTION_MANIFEST.json:200-203@ac36e60) and the packet forbids editing them (:362-365); vitest include covers the paths (vitest.config.ts:29@ac36e60); outbox worker stays off when storage is unconfigured (outbox.ts:697-699).",
+      "fix": "Before authoring, state in each test header the exact mocked boundary (vi.mock('vite') for vite-document; the env allowlist and loopback ports for root-composition), label them composition-unit, and keep them out of the spent G1 window; no runtime seam change unless returned first as a delta."
+     }
+    ],
+    "confirmed": [
+     "Patch identity: QUICK_ORDER_SHARED_EDITS_PROPOSED_20261006.patch at 1d4f2c3 is 18,546 bytes, contains no CR bytes, sha256 (raw == LF-normalized) = b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f, equal to baselines .json:312, dc3329b approval.patchSha256 and the 2280524 assignment.",
+     "Inventory (patch line anchors): shared/research/assisted-order/contract.ts hunks @5 (+import type QuickOrderAdminProjection) and @392 (+optional `quickOrder?: QuickOrderAdminProjection | null` on AssistedOrderAdminDetail); server/research/assisted-order/supabase-repository.ts @16 (+import) and @415 (getAdmin → QUICK_ORDER_ADMIN_DETAIL_RPC, decodeQuickOrderAdminEnvelope, spread quickOrder); server/research/assisted-order/service.ts @932 (updateStatus returns stale observation overlay when pre-read had quickOrder); client/src/research/assisted-order/AdminAssistedOrderDetail.tsx @11,@73,@102,@129,@164,@178 (import OperatorDeclarations; stale guard; post-update readback with epoch/deny/'Status saved. Reload…'; QO section with declarations, known-price subtotal, notification observation; legacy affiliate block hidden for QO rows; submit disabled when stale); server/research/assisted-order/communications.ts @158 (one new template branch); client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx @568 (+100 lines, three tests, additions-only). Exactly five runtime files plus one UI test; no supabase/, no migration, no manifest, no vitest.config.ts/tsconfig, no production.ts, no http.ts, no express.ts, no outbox.ts.",
+     "Baselines: sha256-lf of the ac36e60 blobs equals the sidecar for all six patched files (49469c1f…, 8675b18a…, 42559dce…, 2aca1551…, 91ea8d26…, e5da5768…) and for production.ts d3cc0bff…, ports.ts 8da9b432…, server/static.ts b7a76417…, server/vite.ts af15971b…, vitest.config.ts 24bdf9b6…; all 13 hunks' old-side lines (context plus '-') are byte-identical to the ac36e60 blobs at the stated old-start/old-count ranges (node comparison over `git show` output), consistent with the sidecar's `git apply --check exit0` claim (baselines .json:315), which was not rerun.",
+     "No activation: ac36e60:server/research/health/quick-order/production.ts:41 productionReady:false, :70 enabled:false, :93-98 commit() throws 'Quick Order canonical transaction is not qualified', :90 getExisting throws without the extension; the patch does not touch this file, so commit still throws after the patch.",
+     "Guards unchanged by the patch: service.ts:816 requireCapability read_all in adminDetail; :831 manage in updateStatus; :944/:1043 read_own on document paths; http.ts:358-370 GET /api/admin/research/assisted-orders/:requestId auth:'admin'; attribution resolver wiring http.ts:271-284 and express.ts viewer resolver (253 lines) are not in the patch; the UI's trustedAttribution is derived from detail.affiliateAttributionRef (patch:163-165), the server-derived canonical column.",
+     "Renderer: exactly one new template key research.assisted_order.quick_order.submitted.admin.v1 (patch:219); payload closed to schemaVersion/requestId/publicReference with exact key count 3 (patch:220-227); subject `Quick Order request <publicReference>`; body = 'A Quick Order request is ready for review.', 'Reference: …', 'Review: https://xeniostechnology.com/admin/research/assisted-orders/<uuid>' (SITE_ORIGIN fixed at communications.ts:12), 'Sign in with authorized operator access.' — no customer PII, declared code, lines, addresses or payment material; legacy renderers (:164,:190,:233,:252) untouched; the dispatcher loop (outbox.ts:582-690) and renderer chain (:430-475) are untouched; the matching S4 constant PROPOSED_QUICK_ORDER_ADMIN_TEMPLATE (10208fe:7) and bound event key (10208fe:154) agree with the packet.",
+     "UI test: file is jsdom with mocked ../pages/adminx/auth and ./api (test:19-24@ac36e60); additions use existing helpers detailA(:34), deferred(:95), flush(:102), renderDetail(:106), button(:126), submitTwice(:155), expectNoCustomerA(:164); the three tests assert HTML/Unicode rendered as text (no <img>), full 64-char code rendered, 'Variant: synthetic-variant', pending-price copy, 'Recorded state: pending', h2 'submitted', legacy affiliate block absent, exactly one updateAssistedOrderStatus call across double submit, failed refresh shows the saved/reload message without the private error text and disables the button, and sign-out discards the pending refresh; fixture vocab (source 'organization', affiliation 'gym', reviewState 'captured_unmatched', commissionState 'not_authorized') matches contracts.ts:4-12 and 10208fe quick-order.ts:6-8,25-26. No rendered-browser or hosted claim.",
+     "Composition tests: the four named new paths (client/src/research/quick-order/QuickOrderApp.composition.test.tsx, server/research/health/quick-order/{static-document,vite-document,root-composition}.test.ts) are inside allowedWriteZones prefixes client/src/research/ and server/research/ (CORE_SITE_PROTECTION_MANIFEST.json:258-273@ac36e60); matched by vitest include 'server/**/*.test.ts' and 'client/src/**/*.test.{ts,tsx}' (vitest.config.ts:29) so no runner change is needed; server/static.ts, server/vite.ts, server/index.ts, client/src/main.tsx, client/src/App.tsx are protected globs (:192-203) and the packet states they are unchanged with any seam delta returned first (scope .md:362-365), consistent with S-2 'No existing static/Vite runtime edits under a test-only label' (SOURCE_AUTHORIZATION_DRAFT.md:45@60d593a); main.tsx mounts PwaLifecycle as App's sibling (main.tsx:17-19) as scope:357 says; serveStatic and sendRawHttpDocument are exported (static.ts:69,:121).",
+     "Lock-order: the patch adds no RPC, transaction or lock to the legacy submit path (service.ts:348-… unchanged); research_assisted_order_admin_get is `language sql stable` (bridge:773-781) with no FOR UPDATE, as is admin_json (:482-488); updateStatus's pre-read (:841) runs before and outside the set_status RPC, which does its own rechecks (comment :842-843); the only lock-bearing readers the packet names are the Referral V1 availability helpers, which the packet orders before the head lock (scope .md:199-208).",
+     "No operational or test-ran claims: scope .md:13-14 ('would not make a request save successfully today'), :39-41, :285 ('not applied, compiled or executed'), :383 ('No test in this section has been authored or executed'); baselines .json:315; dc3329b approval limits ('No database execution/live intake/payment/notification sends/deployment/manifest/final protected acceptance'); 2280524 assignment:22,:26 (no execution, cutover needs installed/qualified RPC).",
+     "Approval chain as recorded (data, not authority): 60d593a adopts S1–S5 (SOURCE_AUTHORIZATION_DRAFT.md S-2 :21-45, S-4 :58-79 incl. 'Existing shared reader/service/contract/admin/notification writer edits still need the supplemental exact diff/lease package'); dc3329b records exactQuestion naming commit 1d4f2c3 and exactAnswer 'Approve this bounded source-only scope' at 2026-10-06T18:29:11.344Z with SQL conditional on the original reviewer's compatibility review; 2280524 sequences the shared slice after the S4 slice and forbids applying until the contract satisfies the imports.",
+     "Leases at 1d4f2c3 (.xenios/CODE_OWNERSHIP.json): no 'active' lease covers any of the six shared paths — ASSISTED-ORDER-MOUNT (:80-97) is 'handoff', ADMIN-ORDER-EMAIL-COMPLETENESS on communications.ts (:286-297) and STEP1 hotfix (:329-350) are 'released'; the three active leases are media-commerce decoupling (:33), HEALTH-PROVIDER-NEUTRAL-CONTINUITY on .xenios state files (:3278-3291) and LAUNCH-COORDINATION docs (:3830-3841). Rules :3844-3847 'one active owner per path prefix'.",
+     "S4 successor state (outside the 1d4f2c3 subject, read for compatibility only): origin/codex/xenios-health-quick-order-20261005 head e7e3d44; 10208fe adds exactly shared/research/assisted-order/quick-order.ts (49 lines), server/research/assisted-order/quick-order-repository.ts (162) and its test (661); `git diff --name-only ac36e60 e7e3d44` outside .xenios/docs is exactly those three; QuickOrderAdminProjection{intake, observation} and decodeQuickOrderAdminEnvelope(value, expectedRequestId) → {detail, quickOrder}|null match the patch's usage; LINE_KEYS (10208fe:72) equal research_assisted_order_line_json keys (bridge:398-419); the decoder never falls back to legacy on malformed input (throws QuickOrderAdminEnvelopeError, which http.ts:202 would map to 500)."
+    ],
+    "notProven": [
+     "Compilation/type-check of the patch over 10208fe or ac36e60: not run; the TypeScript behaviour relied on (spread-in extra properties not excess-checked when passing `declaration={{...intake, trustedAttribution, nextAction}}` to OperatorDeclarationView) is asserted from language semantics, not from tsc output. F-02 shows it would in any case fail on the missing export.",
+     "Hosted schema and ADP fence state: no query was run (the Supabase MCP connection failed); whether research_assisted_order_admin_get, admin_json, the fence seal and the later guards are installed as the migrations read is not established.",
+     "Whether the eventual wrapper RPC will emit `detail` in the shape the pushed decoder closes over (F-01); no SQL exists for it.",
+     "Executability of the four composition tests without live services (env allowlist for server/index.ts, the mocked Vite boundary, jsdom rendering of the real App with PwaLifecycle); none is authored.",
+     "That every historical canonical public_reference matches ^XRR-[0-9]{8}-[A-F0-9]{10}$ (the decoder refuses otherwise at 10208fe:134-135); only the ids.publicReference format and test fixtures were seen.",
+     "Runtime behaviour of the three added UI tests (deferred-promise timing under act/flush) and of the two named server test files, which do not yet exist.",
+     "That research_assisted_order_disposition_reserved_copy(null) returns false for the new row (inferred from the guard's shape at 20261001062651:515,:518; function body not read).",
+     "The builder's own lease on the three S4 paths or the six shared paths: a grep for the builder session name in .xenios/CODE_OWNERSHIP.json at e7e3d44 returned nothing, and the coordinator-branch registry at 1d4f2c3 has no quick-order lease; the scope's 'no matching lease at ~18:20Z' (scope .md:341-343) is a branch-local statement.",
+     "Whether the commit draft will map a canonical 23505 to a conflict and how it treats the recovery-flow consequence of reusing the source literal; both are deferred by the packet to the SQL compatibility review.",
+     "Band policy 100 versus 50 for Health intake; legal pair; Health classification source; recipient/routing for the operator notification; all remain founder/owner decisions and are correctly listed as held."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "F-01",
+      "upheld": true,
+      "severity": "P1",
+      "note": "RE-DERIVED AND CONFIRMED. 10208fe:server/research/assisted-order/quick-order-repository.ts:71 DETAIL_KEYS = 23 names incl. source, declaredAffiliateCode, declaredAffiliateCodeState; :131 `closed(envelope.detail, DETAIL_KEYS)` executes before the legacy-null branch at :136-138, and closed() refuses on key-count mismatch (:19-22). The builder pins this deliberately: 10208fe test :157 lists the same 23 keys and :262 'keeps legacy detail closed'. Canonical ac36e60:supabase/migrations/20260815150000_research_assisted_order_bridge.sql:489-510 emits exactly 20 keys (requestId..updatedAt) with none of the three; `git grep` over supabase/ at ac36e60 finds no later CREATE OR REPLACE of research_assisted_order_admin_json (20260930191323:94 only returns it; M75 20260820190000:162-163 only parses input). Refutation attempts failed: the TS type AssistedOrderAdminDetail carries the three fields only because decodeAdminDetail hard-codes source (supabase-repository.ts:197) and defaults the declared fields (:211-220); the S4 handoff's claim of 'complete current canonical AssistedOrderAdminDetail wire shape' (e7e3d44 S4_DECODER_CONTRACT_20261006.md:55) is therefore about the type, not the SQL. Severity P1 is right: a plain wrapper makes every read through getAdmin fail closed (all four call sites, see F-03) and the wrapper SQL cannot be drafted until the contract is chosen."
+     },
+     {
+      "id": "F-02",
+      "upheld": true,
+      "severity": "P2",
+      "note": "CONFIRMED. 10208fe module exports only QUICK_ORDER_ADMIN_ENVELOPE_VERSION (:6), PROPOSED_QUICK_ORDER_ADMIN_TEMPLATE (:7), QuickOrderAdminEnvelopeError (:10), decodeQuickOrderAdminEnvelope (:125); patch:37 imports QUICK_ORDER_ADMIN_DETAIL_RPC and uses it at :55,:59. The omission is deliberate per e7e3d44 S4_DECODER_CONTRACT:133-134 ('No RPC constant or callable adapter is exported') and 1d4f2c3 QUICK_ORDER_PURE_PROJECTION_ASSIGNMENT:15. Additionally the patched contract.ts:9 imports './quick-order', absent at ac36e60 (ls-tree MISS), so b7427650 is compilable only atop the S4 slice. 2280524 QUICK_ORDER_SHARED_APPROVED_ASSIGNMENT:20,:22 already permits the minimum compatible amendment, so P2 (re-pin the approved sha, bind the name outside the research_assisted_order_ prefix per scope .md:50) is the correct level."
+     },
+     {
+      "id": "F-03",
+      "upheld": true,
+      "severity": "P2",
+      "note": "CONFIRMED. ac36e60 service.ts:817 adminDetail->repository.getAdmin; :841 updateStatus->this.adminDetail; :960 createDocumentUpload->repository.getAdmin (after read_own :944 and status ownership :945-959); :1075 completeDocumentUpload->repository.getAdmin. Patch:54-67 replaces the only Supabase implementation; on PGRST202 fail() falls through to the generic `throw new Error(...)` (supabase-repository.ts:300) which http.ts:202 maps to 500. scope .md:296 'Missing RPC is unavailable, never legacy fallback', :301-306 names only adminDetail and the admin GET. The customer document flow is therefore also cutover-dependent and undisclosed."
+     },
+     {
+      "id": "F-04",
+      "upheld": true,
+      "severity": "P2",
+      "note": "CONFIRMED AND SCOPE VERIFIED. ac36e60 provider-journal-http.test.ts:213-214 answers only name === 'research_assisted_order_admin_get' with a 20-key legacy object; :222 throws 'Unexpected status RPC' for any other name; :224 constructs the real SupabaseAssistedOrderRepository. `git grep research_assisted_order_admin_get` over *.test.* at ac36e60 returns only this file. Other getAdmin-driving tests are unaffected: http-e2e.test.ts:143,:300 use InMemoryAssistedOrderRepository and its Supabase instance at :362 drives only getFinancialState (:366-370); service.test.ts:988-1075 error-mapping uses a failing client ({data:null,error}) where fail() runs before the decoder. scope .md:321-333 does not list this file."
+     },
+     {
+      "id": "F-05",
+      "upheld": true,
+      "severity": "P2",
+      "note": "CONFIRMED. scope .md:94-95, :267-268, :272 say 'durable standing'/'canonical standing/revocation' without naming the authority; ac36e60 production-deps.ts:104-118 is agreementGate.accepted(customerRef) gated on a live earlyAccessSessionHash and non-empty customerRef; service.ts:362-367 legacy gate; server/research/health/quick-order/production.ts:45-58 admits any member with assisted_orders:submit and no customerRef. Doc 36 QO-P2-14 (2d7533f ...36_QUICK_ORDER...md:112) required naming the acceptance RPC/table and required-pair source before drafting. research_early_access_agreement_acceptances appears only as a guarded writer relation (scope .md:225)."
+     },
+     {
+      "id": "F-06",
+      "upheld": true,
+      "severity": "P3",
+      "note": "CONFIRMED. patch:183 `{!detail.quickOrder ? <div data-testid=\"admin-affiliate\">` ... :195 `: null}`; test:300 asserts the block absent; doc 36 QO-P2-11 (2d7533f:109) 'operator projection showing both'; scope .md:109-112. Mitigation is accurate: admin_json emits no declared fields (bridge:489-510), so at ac36e60 the legacy block renders 'None provided' (AdminAssistedOrderDetail.tsx:146,:158 via decodeAdminDetail default :211-220)."
+     },
+     {
+      "id": "F-07",
+      "upheld": true,
+      "severity": "P3",
+      "note": "CONFIRMED. patch:228 throws; ac36e60 outbox.ts:261 `try {` precedes the renderer chain (:466-472), the catch at :483-485 returns {ok:false} without nonRetryable; :661 failed_permanent only when nonRetryable or attempt >= MAX_ATTEMPTS, MAX_ATTEMPTS = BACKOFF_SECONDS.length = 6 (:55-56); communications.ts:1-3 header and communications.test.ts:256-259 document the null contract. UUID regex at patch:225 lacks the `i` flag present at health production.ts:13; harmless for Postgres-emitted lowercase."
+     },
+     {
+      "id": "F-08",
+      "upheld": true,
+      "severity": "P3",
+      "note": "CONFIRMED. patch:82-91 returns `updated` unchanged when current.quickOrder is falsy; ac36e60 supabase-repository.ts:482-496 updateStatus decodes set_status output through decodeAdminDetail with no quickOrder key; patch:22 contract comment and scope .md:295 'always emits explicit null for genuine legacy rows'."
+     },
+     {
+      "id": "F-09",
+      "upheld": true,
+      "severity": "P3",
+      "note": "CONFIRMED WITH ONE ANCHOR CORRECTION. 10208fe:25 lowercase-only UUID regex, :126 `uuid(expectedRequestId)`; shared/research/assisted-order/contract.ts:453-467 normalizeRequiredText only trims; http.ts:202 maps QuickOrderAdminEnvelopeError to 500; Postgres uuid input is case-insensitive so today's RPC accepts mixed case. Correction: the lens says the decoder refuses 'before any RPC call' — in the patch the RPC call (:55-60) precedes the decode (:61), so the refusal happens after one wasted RPC round-trip, not before it. Outcome (500 instead of a detail) is unchanged."
+     },
+     {
+      "id": "F-10",
+      "upheld": true,
+      "severity": "P3",
+      "note": "CONFIRMED. 10208fe:3 imports SOURCE_KINDS, AFFILIATIONS, text from '../health/quick-order/core.mjs'; ac36e60 core.mjs has zero import statements (only exports at :2-6, class :8, functions :25+), so no cycle; patch:37 makes supabase-repository.ts depend on quick-order-repository.ts and transitively on the Health module directory."
+     },
+     {
+      "id": "F-11",
+      "upheld": true,
+      "severity": "P3",
+      "note": "CONFIRMED. ac36e60 server/vite.ts:19-31 createViteServer with customLogger.error -> process.exit(1); docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json globs :192-193 (App.tsx, main.tsx), :200,:202-203 (server/index.ts, static.ts, vite.ts) protected; allowedWriteZones prefixes :260 client/src/research/, :263 server/research/; vitest.config.ts:29 include covers the four paths; static.ts exports sendRawHttpDocument :69 and serveStatic :121; main.tsx:17-21 mounts PwaLifecycle as App's sibling; scope .md:357-365; S-2 at 60d593a SOURCE_AUTHORIZATION_DRAFT.md:44-45."
+     },
+     {
+      "id": "CONFIRMED-patch-identity-and-hunks",
+      "upheld": true,
+      "severity": "P3",
+      "note": "RE-VERIFIED TRUE. QUICK_ORDER_SHARED_EDITS_PROPOSED_20261006.patch at 1d4f2c3: 18,546 bytes, 350 lines, 0 CR bytes, sha256 raw == LF-normalized == b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f; equals baselines .json:312, dc3329b approval.patchSha256 and 2280524 assignment:9. Node comparison: 6 files, 13 hunks, all old-side (context + '-') lines byte-identical to the ac36e60 blobs at the stated ranges. sha256-lf of the six ac36e60 blobs equals the sidecar (49469c1f.., 8675b18a.., 42559dce.., 2aca1551.., 91ea8d26.., e5da5768..), as do production.ts d3cc0bff.., ports.ts 8da9b432.., catalog.ts 43458fb0.., legal.ts f8f36c9c.., vitest.config.ts 24bdf9b6.."
+     },
+     {
+      "id": "CONFIRMED-leases",
+      "upheld": true,
+      "severity": "P3",
+      "note": "RE-VERIFIED TRUE. .xenios/CODE_OWNERSHIP.json at 1d4f2c3: 158 leases, state tally active:3, released:39, handoff:113, transferred:2, stale:1. The three active leases are XENIOS-IMAGE-COMMERCE-DECOUPLING (:5), HEALTH-PROVIDER-NEUTRAL-CONTINUITY on .xenios state files (:3279) and LAUNCH-COORDINATION docs (:3831). Every lease whose paths cover any of the six shared files is handoff or released: ASSISTED-ORDER-MOUNT :81 handoff, ADMIN-ORDER-EMAIL-COMPLETENESS :287 released, STEP1 hotfix :330 released, the ASSISTED-ORDER-CONVERSION leases :2824-3156 handoff, HEALTH-ADMIN-ASSISTED-SESSION-ISOLATION :3449 handoff. Rules :3844-3847. Lens line offsets (:80-97, :286-297, :329-350) are off by one but the claim holds."
+     },
+     {
+      "id": "CONFIRMED-no-activation-and-guards",
+      "upheld": true,
+      "severity": "P3",
+      "note": "RE-VERIFIED TRUE. ac36e60 server/research/health/quick-order/production.ts:41 productionReady:false, :70 enabled:false, :90 getExisting throws without extension, :93-98 commit() throws; file untouched by the patch. service.ts:816 read_all, :831 manage, :944/:1043 read_own; http.ts:360-361 admin GET auth:'admin'; attribution wiring http.ts:272-284 and express.ts (253 lines) not in the patch. S4 successor: `git diff --name-only ac36e60 e7e3d44` outside .xenios/docs is exactly the three S4 source paths."
+     }
+    ],
+    "conditionOpinion": [
+     {
+      "id": "QO-P2-09 ADP fence",
+      "status": "SATISFIED",
+      "note": "Design-level satisfied; SQL semantics re-read. scope .md:45-60@1d4f2c3 names research_health_quick_order_intakes/replay/commit/admin_detail and the research_health_quick_order_ prefix for every helper/sequence/index/policy/trigger. G1 ac36e60:supabase/migrations/20261001160730_...quarantine_isolation.sql fingerprint: functions :17-18 `p.proname like 'research_assisted_order_%'`; relations :19-20 hash only relname, relkind, relrowsecurity, relforcerowsecurity, relowner, relacl (no relhastriggers); columns :21-23 by relname; constraints :24-25 `pg_constraint k join pg_class c on c.oid=k.conrelid` (owning relation only); indexes :26-27 by indrelid; triggers :28-30 `where not t.tgisinternal`; policies :31. Consequence: a companion FK to research_assisted_order_requests has conrelid = companion and its RI triggers are tgisinternal on both tables, so the seal is unchanged; the packet's inference at :59-60 is correct at source. LIKE's `_` wildcard does not extend 'research_assisted_order_%' to the health prefix. Integrity raise 55000 at :361-373; provider-journal.ts:211-219 freeze; ADP01 20261001085559:22-23 proname like. DML into research_notification_outbox is not fingerprinted. The patch touches no SQL. Residual: hosted seal/install state NOT PROVEN (no query run; Supabase MCP rejected its header); the wrapper RPC name must be bound in code outside the prefix (F-02)."
+     },
+     {
+      "id": "QO-P2-10 canonical source literal",
+      "status": "SATISFIED",
+      "note": "scope .md:62-66 keeps source='early_access_manual_order_bridge', names the recovery-flow consequence and requires the source reviewer to assess it; :68-74 adds the independent submitted-event marker. Anchors: bridge:130-131 source_chk; 20260927203000_research_status_recovery.sql:110,148,242,300 recovery filters; 10208fe:133 `bound(detail.source, ASSISTED_ORDER_SOURCE)`; patch:160 labels the section 'Quick Order intake'. Event guards accept the marker (see QO-P2-15). Recovery consequence correctly deferred to the SQL compatibility review."
+     },
+     {
+      "id": "QO-P2-11 commit input",
+      "status": "PARTIAL",
+      "note": "Design satisfied: scope .md:104-107 complete canonical lines incl. product name, action label, workflow, quantity band, price identity/version/effectivity, authoritative fingerprint; :108-112 full 1-64 code only in the companion, M75 representation in the canonical column, trusted attribution via canonical authority carried separately; :267-269 ports.ts carries the inputs. Verified: 10208fe:72 LINE_KEYS equal bridge research_assisted_order_line_json keys :398-419 (20/20); M75 CHECK 20260820190000:67-70 ^[A-Z0-9][A-Z0-9._-]{1,39}$ vs decoder companion code ^[A-Z0-9_-]{1,64}$ (10208fe:65) with the S4 contract stating the 2-40 vocabulary is not substituted (e7e3d44 S4_DECODER_CONTRACT:103-104). Not done: ports.ts/production.ts wiring is proposed, not in the patch; the UI hides the canonical M75 block for QO rows (patch:183,:195; test:300) whereas doc 36 (2d7533f:109) asks the projection to show both (F-06)."
+     },
+     {
+      "id": "QO-P2-12 outbox",
+      "status": "SATISFIED",
+      "note": "Doc 36's letter is met; one adjacent gap is recorded under missed. scope .md:308-319 specifies template research.assisted_order.quick_order.submitted.admin.v1, key assisted-order:<canonicalRequestId>:quick-order-submitted:admin, status pending, null financial FKs, closed 3-key payload, fixed origin, requestId instead of adminPath (disclosed :319); communications.ts baseline listed (baselines .json:30-35); patch:219-239 adds exactly one branch. Schema: research-notification-outbox.sql:10 event_key unique; status CHECK incl. 'held','pending' (20261001040351:52-54). HL12 guards re-read: 20261001040351 bound predicate :116-125 (verification FK, 'assisted-order:%:payment-verification:%', or status_changed.customer with status paid), envelope check :105-115 only for status_changed.customer, pass-through :131; 20261001062651 :514-521 (disposition FK, 'assisted-order:%:financial-disposition:%', reserved copy, or a cancelled envelope for a request with a disposition); research_assisted_order_disposition_reserved_copy(:110-113) compares lower(btrim(p_value)) to a fixed sentence, so a null customerMessage yields null and the `or` chain is coalesced false (:514,:518 with coalesce at :525); hl12_outbox_financial_binding_exclusive :477-479 only forbids both FKs non-null. The new row matches none, so it inserts. Dispatcher outbox.ts:466-472 passes event_key as provider idempotencyKey as the packet claims (:316)."
+     },
+     {
+      "id": "QO-P2-13 identity",
+      "status": "SATISFIED",
+      "note": "scope .md:91-99 actor mapping member:<authUserId> / early_access:<customerRef>, canonical member-row ID and bound session hash kept canonical, idempotency hash quick-order-v1 NUL actorId NUL key, never email as identity; :65-66 no status-access token; :100-103 lock actor/key then exact replay. Anchors: service.ts:375-377 hash(email\\0key); health production.ts:53,:56; bridge:98 idempotency_key_hash globally unique and :671-675 raising 23505; the legacy fail() maps 23505 to AssistedOrderConflictError (supabase-repository.ts:235-242) but the QO commit path's 23505 handling is NOT PROVEN because the packet does not spell out doc 36's 'treat a canonical 23505 as a conflict' (2d7533f:111)."
+     },
+     {
+      "id": "QO-P2-14 standing",
+      "status": "PARTIAL",
+      "note": "The acceptance authority is not named (F-05). scope .md:94-95, :267-268, :272 versus production-deps.ts:104-118 (agreementGate.accepted(customerRef) with live earlyAccessSessionHash and non-empty customerRef), service.ts:362-367, health production.ts:45-58 admitting any member with the capability. Doc 36 (2d7533f:112) made naming the RPC/table and required-pair source a before-drafting condition."
+     },
+     {
+      "id": "QO-P2-15 predecessor anchors",
+      "status": "PARTIAL",
+      "note": "Narrower than the lens stated. The file-level half of doc 36's fix (2d7533f:113) is done: baselines .json:78-131 binds 20260930193033, 20260930202413, 20260930234614, 20261001040351, 20261001062651, 20261001085559, 20261001102904, 20261001115512, 20261001160730 with sha256-lf and unchangedAtMountSuccessor:true; scope .md:82-87 requires pre/postchecks to enumerate and preserve the guards. Not done: the trigger-level postcheck assertion exists only as a requirement (no precheck/postcheck drafted; gated on the compatibility review). My own enumeration of triggers firing on the rows the commit inserts, all read clean for a 'submitted' row with the proposed evidence marker: requests INSERT research_assisted_order_paid_hold (20260930193033:39-41; returns new unless status='paid' :15-21); events INSERT research_assisted_order_paid_event_evidence (20260930202413:591-593; acts only when status='paid'), hl12_disposition_cancel_event (20261001062651:470; takes FOR UPDATE on the request row for every event insert :453, passes when no disposition and evidence lacks financialDispositionId :455-457), adp03_paid_event (20261001115512:494; returns at :383 unless status='paid'); outbox INSERT hl12_payment_effects_outbox_guard (20261001040351:179-181) and hl12_disposition_effects_outbox (20261001062651:562-563). aa_hl12_disposition_terminal INSERT guards target payment/evidence tables and quotes (20261001062651:379-382), requests only before update of status (:387). Events evidence CHECK is jsonb object only (bridge:274-275). This answers the packet's own open item at scope .md:74 at source; installed state NOT PROVEN."
+     },
+     {
+      "id": "QO-P2-05 legal",
+      "status": "SATISFIED",
+      "note": "scope .md:148-149 (no legal pair provisioned by source approval), :270-271 (legal.ts resolves only approved published Health bytes and refuses the Research-use pair), :396-397 (do not widen Health terms by plumbing). legal.ts unchanged at ac36e60 (sha256-lf f8f36c9c.. recomputed = baselines .json:62). Patch does not touch legal.ts; no Health pair approved; intake held (production.ts:70)."
+     },
+     {
+      "id": "QO-P2-06 positive Health classification",
+      "status": "SATISFIED",
+      "note": "scope .md:269-270 catalog.ts requires positive Health classification and the exact governed revision; :141 unknown Health authority cannot produce an active revision. catalog.ts unchanged at ac36e60 (43458fb0.. recomputed = baselines .json:56). Design-level only; nothing in the patch."
+     },
+     {
+      "id": "Estimate CHECKs / band / A2 currentness object",
+      "status": "PARTIAL",
+      "note": "Estimate mapping specified (scope .md:115-117) and enforced by the pushed decoder (10208fe:91-100: request_pricing => null unit price; estimatedTotalCents = subtotal or null; :74 lines 1..100; :85 quantity <= ASSISTED_ORDER_MAX_QUANTITY). Currentness authority is its own designed object pair with head/revisions, owner-scoped publish/revoke and held-by-default (scope .md:133-150), not an application digest (:106-107). Band 100 vs 50 remains unresolved ('quantity band' at :105) and is correctly listed as a held founder decision."
+     }
+    ],
+    "missed": [
+     "P2 (must fix before the commit RPC candidate / verifier): the obligation insert has no designed recipient source. research_notification_outbox.recipient is `text not null` (ac36e60:supabase/research-notification-outbox.sql:15). The packet's outbox contract (scope .md:308-319@1d4f2c3) fixes event key, template, status, null FKs and a closed 3-key payload, but never names a recipient and explicitly defers 'Recipient/routing and final copy' to the communications owner (:314-315), while requiring the obligation to be written 'in one transaction' by the commit RPC (:113-114). The legacy admin obligation takes its recipient from application config (service.ts:660-661 this.deps.adminNotificationEmail; production-deps.ts:40-41,:217-218 RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL; production.ts:93-94 refuses boot without it), which SQL cannot read. Fix: before the commit RPC draft, state the recipient source (an RPC parameter bound server-side to the configured admin address, or a DB-side routing setting), the refusal/hold when it is absent, and add the case to quick-order-notifications.test.ts; also disclose that the renderer branch must be deployed before any obligation row can be dispatched (outbox.ts:475 'unknown template' otherwise).",
+     "P3: UI lockout if the wrapper ever emits a wire-level stale observation. The decoder accepts `{state:'stale'}` from the RPC (10208fe:104; e7e3d44 S4_DECODER_CONTRACT:71,:143-144), and the patch disables the status form whenever observation.state === 'stale' (patch:116 guard, :205 disabled) and requires 'observed' after a post-update refresh (:132-134), with the only recovery text being 'Reload this page' (:143). A GET that returns stale would therefore block every status transition for that request through the UI with no reload remedy. Fix: state in the wrapper contract that the RPC never emits stale (stale is the service overlay after updateStatus only, scope .md:297), or make initial-load stale a warning rather than a lock; add the case to the UI test.",
+     "P3 anchor correction to the lens: F-09 says the decoder refuses an upper-case id 'before any RPC call'; in the patch the RPC is invoked first (patch:55-60) and the decoder runs on its result (:61), so one RPC round-trip precedes the refusal. Lens line offsets for the G1 predicate (:19,:21,:24,:26,:28,:29-30,:31) are within 1-2 lines of the actual layout (functions :17-18, relations :19-20, columns :21-23, constraints :24-25, indexes :26-27, triggers :28-30, policies :31); the ADP01 predicate is at 20261001085559:22-23 not :23; http.ts attribution wiring is :272-284. None changes a conclusion.",
+     "No P0 found. Adversarial checks that came back clean, with anchors: (a) fence semantics versus the companion FK and RI triggers (constraints by conrelid :24-25; `not t.tgisinternal` :28-30; relation hash without relhastriggers :19-20 at 20261001160730); (b) LIKE underscore wildcard cannot pull research_health_quick_order_* into 'research_assisted_order_%'; (c) HL12 outbox guards pass the new key/template/null-FK row including reserved_copy(null) (20261001040351:116-131; 20261001062651:514-525, :110-113); (d) every event-insert guard accepts a 'submitted' event carrying the intakeKind marker (20260930202413:591-593; 20261001062651:453-457; 20261001115512:383; bridge:274-275); (e) the only existing test that fakes the old admin RPC by name is provider-journal-http.test.ts:214; http-e2e.test.ts:143,:300 and service.test.ts:165 use InMemoryAssistedOrderRepository, and the Supabase instances at http-e2e:362 (getFinancialState only) and service.test.ts:1030 (failing client, fail() precedes decode) are unaffected; (f) the lens' lease claim is true (three active leases at :5, :3279, :3831; none on the six paths); (g) the contract.ts <-> quick-order.ts import pair is type-only on both sides (patch:9; 10208fe quick-order.ts:1), erased at runtime, no cycle; (h) the UI harness mounts without StrictMode by default (test:106-109; StrictMode only in the dedicated test at :551-556) and the existing assertion of one load after mount (:213) makes the new test's count of two (patch:316) consistent; (i) OperatorDeclarations renders text nodes only (:20-26), so the `<img ...>` fixture cannot become an element and `money(0)` renders '$0.00' (wizard-state.ts:343-349); (j) patch identity, six hashes and 13/13 hunks match ac36e60; (k) no file in the patch is SQL, migration, manifest, vitest.config.ts, production.ts, http.ts, express.ts or outbox.ts, and the health production port stays unavailable (production.ts:41,:70,:93-98). Hosted install state, type-check of the patch, and execution of any named test remain NOT PROVEN by construction of this read-only record."
+    ]
+   }
+  }
+ ]
+}

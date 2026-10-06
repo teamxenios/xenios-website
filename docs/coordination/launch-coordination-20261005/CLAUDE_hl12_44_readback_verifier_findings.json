@@ -1,0 +1,205 @@
+{
+ "schemaVersion": "claude_acceptance_verifier_v1",
+ "subject": "9118a82633e9f10637764c896ce2a6e53ad1e3eb / 4669493 shared readback and notification source",
+ "agentId": "a9d64a34c63f7d75c",
+ "subagentTokens": 258373,
+ "toolUses": 44,
+ "verifier": {
+  "subject": {
+   "candidate": "9118a82633e9f10637764c896ce2a6e53ad1e3eb (tree 5142b615…)",
+   "records": "4669493ba48c2afbdfb844813cfc066442ddd78d",
+   "method": "git object reads only (show/diff/grep/ls-tree/rev-parse at exact SHAs), node sha256 over git blobs, pure regex experiments; nothing executed, no worktree touched"
+  },
+  "upheld": [
+   "Scope of the runtime commit: `git diff --name-status e7e3d446 9118a82` = exactly 9 paths (6 approved + quick-order-admin-readback.test.ts + quick-order-notifications.test.ts + quick-order-repository.ts). No production.ts, mount.ts, index.ts, SQL, manifest or .xenios file is touched.",
+   "Records commit 4669493 is records-only: 16 files, all under `.xenios/` or `docs/health-launch/quick-order-20261005/`; zero runtime diff from 9118a82.",
+   "Lease evidence `docs/health-launch/quick-order-20261005/evidence/shared-integration-lease-20261006.json@4669493` lists exactly the 8 paths (6 approved + 2 new tests); the 9th path (quick-order-repository.ts) is under the earlier S4 lease (`evidence/s4-decoder-lease-20261006.json@4669493` paths[1]) and was already in the task's path list; the `.xenios/ACTIVE_TASKS.json` and `.xenios/CODE_OWNERSHIP.json` diffs 9118a82..4669493 add exactly those 8.",
+   "quick-order-repository.ts delta is exactly 3 lines (comment x2 + `export const QUICK_ORDER_ADMIN_DETAIL_RPC`) at lines 6-8@9118a82; decoder body unchanged.",
+   "Amendment bytes: `docs/coordination/launch-coordination-20261005/CURRENT_AFFILIATE_READBACK_AMENDMENT_PROPOSED_20261006.patch@95858ba` sha256 = 6f5d90136f23c65c668cddaf4d6ba7a29d7a3c3b5104747c9f01421600e3ff6d (raw and LF identical, 4946 bytes); builder copy at 4669493 is the same blob 9b2f2731…; approved patch blob 026eb3fa… is identical at 1d4f2c3 and 95858ba with sha256 b7427650…; fixture patch sha256 8396609b… matches, blob 254924f3… identical at both commits.",
+   "Amendment (a): affiliate block is unconditional for QO rows with `<h3>{detail.quickOrder ? \"Current affiliate status\" : \"Affiliate\"}</h3>` and `<dt>{detail.quickOrder ? \"Recorded affiliate code\" : \"Affiliate code\"}</dt>` — client/src/research/assisted-order/AdminAssistedOrderDetail.tsx:179-183@9118a82 (approved patch at 1d4f2c3 had `{!detail.quickOrder ? <div data-testid=\"admin-affiliate\">…</div> : null}`).",
+   "Amendment (b): the sentence is one added `<p>` at AdminAssistedOrderDetail.tsx:157@9118a82.",
+   "Amendment (c): `.toBeNull()` → `.not.toBeNull()` and the `it.each([matched_manual, invalid_ignored])` case — client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx:620-640@9118a82.",
+   "Amendment (d): the three amendment hunks touch only JSX text/conditionals and test assertions; `trustedAttribution`/`nextAction` mapping (AdminAssistedOrderDetail.tsx:160-163) is unchanged context; no API/mutation lines are in any amendment hunk; the accepted module tree `client/src/research/quick-order` is 6a1885cabcc881c070023932ca3196b0941ad36c at both e7e3d446 and 9118a82 (OperatorDeclarations not edited).",
+   "No customer PII is newly rendered by the amendment; it restores fields (`declaredAffiliateCode`, state, `affiliateAttributionRef`) that the pre-patch page already rendered for every row.",
+   "Readback test composes the real `SupabaseAssistedOrderRepository` (server/research/assisted-order/quick-order-admin-readback.test.ts:112), real `AssistedOrderService` (:135), real `createAssistedOrderRouteTable` (:137) and real `assistedOrderExpressHandler` (:141); only `rpc` (:111) and `resolve` (:136) are synthetic. Production uses the same constructors: server/index.ts:1078,1112@9118a82 and server/research/assisted-order/production-deps.ts:135@9118a82.",
+   "read_all-before-RPC case (:208-217) is real: service.ts:816 `requireCapability(viewer, \"assisted_orders:read_all\")` precedes :817 `repository.getAdmin`.",
+   "Legacy-null case (:219-230) exercises decoder quick-order-repository.ts:139-141 (`enrichment === null` requires `submittedEvent === null`, returns `quickOrder: null`).",
+   "Absent→404 case (:232-238): decoder :130 returns null for `value === null`; service.ts:820-822 throws NotFound; http.ts:189-194 maps to `{error:\"not_found\"}`.",
+   "Missing-RPC case IS present (:263-278, `it.each([\"missing RPC\",\"transport rejection\"])`): new name returns PGRST202 or throws; any other name returns a tempting valid legacy detail; asserts 500 + `expectOnlyRead` (exactly one rpc call to the new name) — a fallback to `research_assisted_order_admin_get` would fail on call count or status.",
+   "Path-ID binding case (:280-286): decoder :133 `bound(uuid(envelope.requestId), expectedRequestId)` → 500.",
+   "Intake-preserved case (:306-346): service.ts:935-943 replaces `quickOrder` with `current.quickOrder.intake` + `{state:\"stale\"}`; the asserted rpc sequence [DETAIL, DETAIL, set_status] matches service.ts:841 (`adminDetail`) → :817 and :874 (`updateStatus`).",
+   "Notifications test renders through the real `renderAssistedOrderOutboxEmail` (quick-order-notifications.test.ts:2; not in any vi.mock) and dispatches through the real `server/research/outbox.ts` (`import(\"../outbox\")` :136, :141-143) with synthetic `../../supabase` (:30-92) and `../../services/email` (:94-96). The renderer chain reaches it at outbox.ts:466@9118a82; both pre-dispatch gates return true for this job without touching storage (payment-effects.ts:163-166; disposition-effects.ts:151-153@9118a82).",
+   "Template body: `SITE_ORIGIN` is a literal `\"https://xeniostechnology.com\"` (communications.ts:12@9118a82), not env-derived; payload is closed to exactly {schemaVersion, requestId, publicReference} (:165-171) so no lines/addresses/declared code/contact can reach the body (:173-181). Customer/v2 variants fall through every exact-equality branch (:162, :185, :211, :254, :273) to `return null` (:288). Legacy renderers are byte-unchanged (diff is a pure insertion :162-181).",
+   "Idempotency = stable event key: outbox.ts:472 `idempotencyKey: String(job.event_key)`; stale window 15 min strict `<` (outbox.ts:497, :505); reclaim runs before the due select in the same tick (:617 then :619-624); claim guard `.eq(\"status\", job.status).select().single()` + `if (!claimed) continue` (:629-636); backoff attempt 1 = 60 s + ≤20 % jitter (:55, :488-491) matching the 60000-72000 ms assertion (test :313-314).",
+   "Notification fixtures: recipients/senders are `*.example.invalid`; legacy fixtures use `customer@example.invalid`; no real customer data or real recipient address.",
+   "QUICK_ORDER_ADMIN_DETAIL_RPC is used at server/research/assisted-order/supabase-repository.ts:20 (import), :420 (rpc call), :424 (fail label)@9118a82. `if (response.error) fail(…)` (:423-424); `fail()` has no non-throwing path — unmatched codes hit `throw new Error(\\`${operation} failed: …\\`)` (:300); decoder refusals throw `QuickOrderAdminEnvelopeError` (quick-order-repository.ts:13-16) and http.ts:202-205 maps any non-NotFound/non-Conflict error to a generic 500. No fallback exists.",
+   "No double read: `git grep research_assisted_order_admin_get 9118a82` hits only provider-journal-http.test.ts:214, SQL migrations/candidates/rollback notes, scripts/verify-m71-assisted-order-bridge.sh:111 and supabase/verification/…settlement_http.ts:54 — no runtime TypeScript caller remains.",
+   "Builder prediction CONFIRMED: the 4 cases at provider-journal-http.test.ts:204-240@9118a82 fail at :233 (`expect(response.status).toBe(409)` receives 500) — PATCH /status → service.updateStatus → `this.adminDetail` (service.ts:841) → `repository.getAdmin` (:817) → `rpc(\"research_health_quick_order_admin_detail\")` → stub :225 `throw new Error(\"Unexpected status RPC\")` → http.ts:202. This is before the no-effect/financial assertions at :236-239.",
+   "Fixture patch 8396609 is test-only (one hunk in provider-journal-http.test.ts, `@@ -211,11 +211,18 @@`), its `index 4968404` equals the 9118a82 blob 49684049…, its before sha256lf 8a8842d3… equals the computed LF hash, and lines 233-239 are outside the hunk (all 409/no-effect/financial assertions preserved).",
+   "Fixture patch satisfies the decoder's legacy rule: 5 closed envelope keys (quick-order-repository.ts:131), version (:132), `REQUEST = id(1)` is a lowercase v4 UUID (test :16-17) passing the uuid regex (:28), detail carries exactly the 23 DETAIL_KEYS (:74) including the added `source`, `currency`, `declaredAffiliateCode`, `declaredAffiliateCodeState`; `source === ASSISTED_ORDER_SOURCE` (:136); `XRR-20261001-ABCDEF0011` is idempotent under core `text()` (server/research/health/quick-order/core.mjs:25-30) and matches (:138); `enrichment === null && submittedEvent === null` returns at :139-141 before any timestamp check; `decodeAdminDetail` then accepts `[]`/`{}` as before.",
+   "Nothing activates intake or mounts anything: no producer of `research.assisted_order.quick_order.submitted.admin.v1`, `quick-order-admin-envelope-v1` or a `companion` object exists in non-test runtime at 9118a82 (grep hits only quick-order-repository.ts:9-10,146-159 and the renderer branch communications.ts:162); accepted QO module trees unchanged (server/research/health/quick-order f2de2cf4…, client/src/research/quick-order 6a1885ca… at e7e3d446 and 9118a82).",
+   "S4-F1 stands: the wrapper passes `response.data` raw to the decoder (supabase-repository.ts:420-426); the decoder binds `timestamp(detail.createdAt)` to `intake.confirmedAt` (quick-order-repository.ts:151) under the ms-ISO-Z regex (:42); the canonical admin JSON emits a raw timestamptz (`'createdAt', request_row.created_at`, supabase/migrations/20260815150000_research_assisted_order_bridge.sql:508; column `timestamptz` :116). The readback test sidesteps with hand-built `CREATED_AT = \"2026-10-06T12:00:00.000Z\"` (:27,:63). Only the enriched branch is affected (legacy returns at :141 before :151).",
+   "S4-F2 stands: no code maps core's attribution-v1 snapshot (core.mjs:165 — `declaredAffiliateCode`, `affiliation:{kind,detail}`, `receivedAt`, no `requestAcknowledged`/`estimate`) to the companion intake key set (quick-order-repository.ts:62); the readback test hand-builds `enrichment.companion` (:73-83)."
+  ],
+  "refuted": [
+   "\"Unauthenticated refused before viewer/RPC\" is NOT proven by product code: the 401 in quick-order-admin-readback.test.ts:200-206 is produced by the fixture's own `admission` middleware (:143-149). Production admission is `requireSupabaseAdmin` at server/index.ts:1133-1134@9118a82, which the test never composes. The case would pass against a product with no admission at all.",
+   "The implicit assumption that the reader cutover is an admin-readback-only change: `repository.getAdmin` is also called from the customer document flows `createDocumentUpload` (service.ts:969, guarded by read_own :953) and `completeDocumentUpload` (service.ts:1084) and from the admin download-url path. After cutover these depend on the wrapper RPC and run the full envelope decoder; neither new test nor the records name them."
+  ],
+  "findings": [
+   {
+    "id": "S4-F3",
+    "severity": "P2",
+    "file": "server/research/assisted-order/quick-order-repository.ts:74,:134 @9118a82 vs supabase/migrations/20260815150000_research_assisted_order_bridge.sql:489-510 @9118a82",
+    "claim": "The decoder's closed 23-key DETAIL_KEYS binding does not match the canonical admin JSON producer, which emits 20 keys (no `source`, `declaredAffiliateCode`, `declaredAffiliateCodeState`). `closed()` (:24) refuses on key-count mismatch at :134, BEFORE the legacy early return at :139-141, so a wrapper that embeds today's `research_assisted_order_admin_json` output unchanged as `detail` makes the new reader refuse every request (legacy and enriched alike) with 500.",
+    "evidence": "`research_assisted_order_admin_json` is defined once (migration 20260815150000:482) and never redefined in supabase/migrations (grep); its jsonb_build_object (:489-510) lists requestId, publicReference, status, actorMemberId, fullLegalName, email, mobilePhone, organizationName, shippingAddress, billingAddress, lines, estimatedTotalCents, currency, generalNotes, agreements, affiliateAttributionRef, timeline, documents, createdAt, updatedAt. `decodeAdminDetail` tolerates the absence (supabase-repository.ts:198 hardcodes source, :212-221 nullable) but the envelope decoder does not. Both new fixtures hand-build 23-key details (readback test :54-64; fixture patch 8396609).",
+    "fix": "Before qualification, bind the future wrapper SQL spec to emit exactly DETAIL_KEYS (add `source`, `declaredAffiliateCode`, `declaredAffiliateCodeState`) with ms-Z `createdAt`, and add a readback case built from the canonical 20-key producer shape so the mismatch is visible; alternatively relax the legacy branch to a superset check — a decoder change needing its own approval."
+   },
+   {
+    "id": "S4-F1-carry",
+    "severity": "P2",
+    "file": "server/research/assisted-order/supabase-repository.ts:420-426; quick-order-repository.ts:42,:151 @9118a82",
+    "claim": "The shared patch does not normalise `createdAt`; the enriched branch requires millisecond ISO Z and equality with `intake.confirmedAt`, while the canonical producer renders a raw timestamptz (e.g. `2026-10-06T12:00:00.123456+00:00`, which fails the regex per pure-regex check).",
+    "evidence": "migration 20260815150000:508, :116; decoder :42-45, :151; readback test uses hand-built `CREATED_AT` (:27, :63).",
+    "fix": "Wrapper SQL must render `createdAt` with `to_char(date_trunc('milliseconds', created_at) at time zone 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"')` (pattern already used at migrations 20261001040351:243, 20261001062651:190) and the readback suite needs one case using the producer's actual rendering."
+   },
+   {
+    "id": "S4-F2-carry",
+    "severity": "P2",
+    "file": "server/research/health/quick-order/core.mjs:165; quick-order-repository.ts:62 @9118a82",
+    "claim": "No mapping from attribution-v1 to companion intake exists; field renames (declaredAffiliateCode→declaredCode, affiliation.kind/detail→affiliationKind/affiliationDetail, receivedAt→confirmedAt) plus `requestAcknowledged` and `estimate` are unspecified.",
+    "evidence": "grep for `companion` in non-test runtime at 9118a82 hits only the decoder; readback test hand-builds :73-83.",
+    "fix": "Write and approve the producer mapping (SQL or service) before the wrapper RPC is installed; add a decoder round-trip test from a real attribution-v1 snapshot."
+   },
+   {
+    "id": "T-IMPACT-1",
+    "severity": "P2",
+    "file": "server/research/assisted-order/provider-journal-http.test.ts:204-240 @9118a82",
+    "claim": "Four existing provider-hold regression cases break with the new reader and no authorised fixture path exists (8396609 is PROPOSED, outside the eight leased paths).",
+    "evidence": "stub :214 handles only the old name; :225 throws for the new name; failure lands at :233 before :236-239. Fixture patch is correct per the decoder's legacy rule (see upheld) but unapplied.",
+    "fix": "Founder decision on the one-path scope amendment; apply 8396609 exactly (before hash 8a8842d3… verified) or accept 4 red cases as a known gate."
+   },
+   {
+    "id": "T-WEAK-1",
+    "severity": "P2",
+    "file": "server/research/assisted-order/quick-order-admin-readback.test.ts:143-149,:200-206 @9118a82",
+    "claim": "The 'rejects unauthenticated admission before resolving a viewer or calling the RPC' case tests the fixture's own middleware, not product admission; it passes against a product with no admission.",
+    "evidence": "Synthetic `admission` handler :143-149; production guard `requireSupabaseAdmin` (server/index.ts:1133-1134) is not composed; header :20-22 concedes admission is synthetic.",
+    "fix": "Either compose `requireSupabaseAdmin` with a stubbed verifier or rename the case to state it only proves door ordering in the fixture; do not count it as admission evidence in the acceptance record."
+   },
+   {
+    "id": "SCOPE-1",
+    "severity": "P2",
+    "file": "server/research/assisted-order/service.ts:969,:1084 @9118a82",
+    "claim": "Reader cutover also governs customer document upload/complete and the admin download-url path, all of which call `repository.getAdmin`; a missing wrapper RPC after deploy breaks customer document flows, not only admin readback, and every such call now runs the envelope decoder.",
+    "evidence": "service.ts:953 (read_own) → :969; :1052 → :1084; grep `getAdmin\\b` non-test.",
+    "fix": "Record this blast radius in the deployment gate and add at least one document-flow case to the readback suite (or an explicit note in SHARED_INTEGRATION_SOURCE_20261006.md)."
+   },
+   {
+    "id": "UI-1",
+    "severity": "P3",
+    "file": "client/src/research/quick-order/OperatorDeclarations.tsx:14,:22,:26; client/src/research/assisted-order/AdminAssistedOrderDetail.tsx:157,:183-185,:191-197 @9118a82",
+    "claim": "Two different code values can appear under two labels: 'Declared referral code' (immutable intake, 1..64 `[A-Z0-9_-]`, decoder :68) and 'Recorded affiliate code' (canonical, `^[A-Z0-9][A-Z0-9._-]{1,39}$` per migration 20260820190000:69). They legitimately differ for 1-char, >40-char or '.'-bearing codes. The amendment sentence explains review-state divergence only, not code-text divergence. 'Attribution review: Captured, awaiting attribution review' is literally stale when canonical state is matched_manual; only the preceding sentence scopes it, and it is truthful only as a submission-time statement.",
+    "evidence": "The new it.each (test :624-640) asserts both strings coexist; :639 asserts on the fixture object, not the DOM (tautology).",
+    "fix": "Extend the sentence to cover codes ('…and the recorded code may differ after canonical normalisation') or have the amendment wrap OperatorDeclarations in a heading 'As submitted'; replace test :639 with a DOM assertion."
+   },
+   {
+    "id": "PROT-1",
+    "severity": "P3",
+    "file": ".xenios/handoffs/2026-10-01T03-01-15-914Z-HEALTH-EXACT-PROTECTED-HASH-AMENDMENT-20261001-…md:24-25 @9118a82",
+    "claim": "service.ts and supabase-repository.ts are named in the protected-hash amendment; their edits are inside the dc3329b approval, but the exact protected disposition is still pending (ACTIVE_TASKS blockedOn[1]@4669493).",
+    "evidence": "new sha256lf recorded in shared-integration-source-9118a82.json (57ea0b02…, 274493e5…).",
+    "fix": "Recut the protected-hash register against 9118a82 under the dc3329b authority before qualification."
+   },
+   {
+    "id": "T-INFO-1",
+    "severity": "P3",
+    "file": "server/research/assisted-order/quick-order-admin-readback.test.ts:316,:333 @9118a82",
+    "claim": "The FORGED_REPLACEMENT assertion is discharged by `decodeAdminDetail`'s key whitelist (supabase-repository.ts:194-226), not by the service override; the override itself is still proven by :331 (missing override → `quickOrder` undefined).",
+    "evidence": "decodeAdminDetail constructs a fresh object with fixed keys.",
+    "fix": "None required; note in the record that :333 is a decoder property."
+   },
+   {
+    "id": "N-INFO-1",
+    "severity": "P3",
+    "file": "server/research/outbox.ts:483-485,:674-686 @9118a82",
+    "claim": "A renderer refusal is retryable, so a permanently malformed QO payload consumes 6 attempts (~7 h) before failed_permanent; the notifications test documents `retried: 1` (:299).",
+    "evidence": "BACKOFF_SECONDS :55, MAX_ATTEMPTS :56.",
+    "fix": "Out of this lens (approved patch body); flag for the patch-behaviour reviewer."
+   },
+   {
+    "id": "V-INFO-1",
+    "severity": "P3",
+    "file": "supabase/verification/research_assisted_order_quote_provider_settlement_http.ts:54; scripts/verify-m71-assisted-order-bridge.sh:111 @9118a82",
+    "claim": "Verification artefacts still enumerate only `research_assisted_order_admin_get`; the wrapper name is absent from every existence check.",
+    "evidence": "git grep at 9118a82.",
+    "fix": "Add the wrapper to the post-install checks when the SQL is approved."
+   }
+  ],
+  "existingTestImpact": [
+   {
+    "file": "server/research/assisted-order/provider-journal-http.test.ts",
+    "cases": "4 × 'refuses $from to $to for $detail through real service/repository without effects' (:204-240)",
+    "predictedOutcome": "FAIL at :233 (500 instead of 409), before :236-239",
+    "basis": "stub :214 only answers the old name; :225 throws on the new name; path service.ts:841→:817→supabase-repository.ts:420; http.ts:202"
+   },
+   {
+    "file": "server/research/assisted-order/provider-journal-http.test.ts",
+    "cases": "5 × 'does not disguise other database errors as a provider hold' (:189-202) and all ADP-01 reservation cases (:71-186)",
+    "predictedOutcome": "UNAFFECTED",
+    "basis": "call `repository.updateStatus` directly or the provider-attempts door with `{ updateStatus }` stub service (:52); no getAdmin"
+   },
+   {
+    "file": "server/research/assisted-order/http-e2e.test.ts",
+    "cases": "all",
+    "predictedOutcome": "UNAFFECTED",
+    "basis": "harness is `InMemoryAssistedOrderRepository` (:143, :300); the `SupabaseAssistedOrderRepository` at :362 is used only for `getFinancialState` (:365-369)"
+   },
+   {
+    "file": "server/research/assisted-order/service.test.ts",
+    "cases": "all, including 'SupabaseAssistedOrderRepository error mapping' (:988-1165)",
+    "predictedOutcome": "UNAFFECTED",
+    "basis": "harness is in-memory (:165); the Supabase block exercises submit/updateStatus/document RPC error mapping, never getAdmin"
+   },
+   {
+    "file": "server/research/partners/assisted-order-attribution.test.ts",
+    "cases": "all",
+    "predictedOutcome": "UNAFFECTED",
+    "basis": "InMemoryAssistedOrderRepository (:92)"
+   },
+   {
+    "file": "server/research/assisted-order/{financial-projection,member-history-status,supabase-repository,declared-code-compatibility}.test.ts",
+    "cases": "all",
+    "predictedOutcome": "UNAFFECTED",
+    "basis": "getStatus/updateStatus/getFinancialState or `decodeAdminDetail` directly; `decodeAdminDetail` is byte-unchanged"
+   },
+   {
+    "file": "server/research/assisted-order/production-boot.test.ts, production-wiring.test.ts",
+    "cases": "door probes / composition",
+    "predictedOutcome": "UNAFFECTED",
+    "basis": "admin probes stop at requireSupabaseAdmin (401/403, :267-270); production-wiring `fakeRpc` returns `data:null` for non-audit names (:190-206) which the new reader maps to null exactly as the old one did"
+   },
+   {
+    "file": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx (pre-existing cases :1-570)",
+    "cases": "all",
+    "predictedOutcome": "UNAFFECTED",
+    "basis": "`detailA` has no `quickOrder`; non-QO branch of AdminAssistedOrderDetail.tsx renders the same 'Affiliate'/'Affiliate code' labels"
+   },
+   {
+    "file": "server/research/assisted-order/communications.test.ts",
+    "cases": "all",
+    "predictedOutcome": "UNAFFECTED",
+    "basis": "new branch is an exact-key insertion at communications.ts:162-181; legacy branches unchanged"
+   }
+  ],
+  "notProven": [
+   "Any execution outcome: no test, tsc or build was run; all 'predictedOutcome' entries are static reasoning.",
+   "Type-completeness of the readback test's `AssistedOrderDependencies` literal (quick-order-admin-readback.test.ts:118-134) and `capabilities: new Set([...])` against the ports type.",
+   "The live database's `research_assisted_order_admin_json` body (only committed migrations were read; no candidate/production SQL outside supabase/migrations was consulted for redefinition).",
+   "Import-time side effects of outbox.ts's unmocked imports (outbox.ts:1-3, 8-22, 24, 26-40 — membership-emails, member-platform-emails, membership-activation/emails, commerce/receipt-repair, status-recovery/*, partners/inquiries/buyer-commerce renderers, payment/disposition effects).",
+   "Microtask interleaving of the double-tick case (quick-order-notifications.test.ts:357-365): both plausible orderings yield sent=1 by reading outbox.ts:619-636, but this was not executed.",
+   "Whether a machine-checked protected-hash register (beyond the 2026-10-01 handoff markdown) exists and what it currently records for service.ts / supabase-repository.ts.",
+   "What `supabase/verification/research_assisted_order_quote_provider_settlement_http.ts` does with its RPC-arity table at runtime.",
+   "Whether `normalizeDeclaredAffiliateCode` (server/research/partners/declared-affiliate-code, referenced service.ts:30,:381) can yield a value differing from the 1..64 intake code in practice beyond the regex difference cited in UI-1."
+  ]
+ }
+}

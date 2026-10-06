@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-10-06T19:29:15.240Z",
+  "reviewCommit": "ca1c114a083793918b18d017b32509864ee4bcf6",
+  "parent": "f4636885ff2078563846a5277d699da9bd81dacd",
+  "remoteConfirmed": "ca1c114a083793918b18d017b32509864ee4bcf6",
+  "remoteObservedAt": "2026-10-06T19:28:00Z",
+  "status": "COLLECTED_PUSHED_FINAL",
+  "artifacts": [
+    {
+      "source": "docs/review/xenios-health-launch-review-20260930/41_QUICK_ORDER_MOUNT_ac36e60_DELTA_2026-10-06.md",
+      "copy": "CLAUDE_41_QUICK_ORDER_MOUNT_ac36e60_DELTA_2026-10-06.md",
+      "sha256": "f3dc66701fdacaa7f480a1a8739b2fe554558d5194f3bff4ac5103743022c939",
+      "bytes": 18031,
+      "workingCopyMatches": true
+    },
+    {
+      "source": "docs/review/xenios-health-launch-review-20260930/42_QUICK_ORDER_SUPPLEMENTAL_SCOPE_COMPATIBILITY_2026-10-06.md",
+      "copy": "CLAUDE_42_QUICK_ORDER_SUPPLEMENTAL_SCOPE_COMPATIBILITY_2026-10-06.md",
+      "sha256": "52cac0c633cfc377cd909a7705fbc905c11e9376f1d2bd666e71bdba7558fb48",
+      "bytes": 30805,
+      "workingCopyMatches": true
+    },
+    {
+      "source": "docs/review/xenios-health-launch-review-20260930/43_QUICK_ORDER_S4_DECODER_10208fe_DELTA_2026-10-06.md",
+      "copy": "CLAUDE_43_QUICK_ORDER_S4_DECODER_10208fe_DELTA_2026-10-06.md",
+      "sha256": "bbc20a62038b0b0d36d0c288565d9ceb6d089c440fffc0da1b9e977271c15044",
+      "bytes": 11793,
+      "workingCopyMatches": true
+    },
+    {
+      "source": "docs/review/xenios-health-launch-review-20260930/44_QUICK_ORDER_SHARED_READBACK_9118a82_DELTA_2026-10-06.md",
+      "copy": "CLAUDE_44_QUICK_ORDER_SHARED_READBACK_9118a82_DELTA_2026-10-06.md",
+      "sha256": "4e316d01cd24e2b24252413141c204db398598663f5281edf9761dc16d992757",
+      "bytes": 16517,
+      "workingCopyMatches": true
+    },
+    {
+      "source": "docs/review/xenios-health-launch-review-20260930/hl12/41_claude-gate-ac36e60.out",
+      "copy": "CLAUDE_hl12_41_claude-gate-ac36e60.out",
+      "sha256": "19904b082ff054f653d291dfa031761c0320c784d0b240f2e079f2d95925a19b",
+      "bytes": 5411,
+      "workingCopyMatches": true
+    },
+    {
+      "source": "docs/review/xenios-health-launch-review-20260930/hl12/41_mount_lens_findings.json",
+      "copy": "CLAUDE_hl12_41_mount_lens_findings.json",
+      "sha256": "94b6c250c9c640346fe1ccfd3a41d338cd69ffb9e3b9445b3509b36885a0e370",
+      "bytes": 102397,
+      "workingCopyMatches": true
+    },
+    {
+      "source": "docs/review/xenios-health-launch-review-20260930/hl12/42_supplemental_lens_findings.json",
+      "copy": "CLAUDE_hl12_42_supplemental_lens_findings.json",
+      "sha256": "5e5ba5f342f0ae1d4fc69bbecc9358d45ffc9bc2bac9336ee66dcf968818ae26",
+      "bytes": 125434,
+      "workingCopyMatches": true
+    },
+    {
+      "source": "docs/review/xenios-health-launch-review-20260930/hl12/44_readback_verifier_findings.json",
+      "copy": "CLAUDE_hl12_44_readback_verifier_findings.json",
+      "sha256": "fa785a30c6348786cc1a79346ddf9dfc51cc611a6746a164014cb11d7870a479",
+      "bytes": 24946,
+      "workingCopyMatches": true
+    }
+  ],
+  "publicFinal": "CLAUDE_REVIEWS_41_44_PUBLIC_FINAL.json",
+  "scope": "Eight new review/evidence paths only; exact Git-object copies, SHA256. Source acceptance is reviewer opinion, not execution or action authority.",
+  "verdicts": {
+    "mount": "SOURCE_ACCEPT_WITH_LIMITS",
+    "pureS4": "SOURCE_ACCEPT_WITH_LIMITS_P1_WIRE_CONTRACT",
+    "shared": "SOURCE_ACCEPT_WITH_LIMITS_P1_WIRE_CONTRACT",
+    "supplemental": "COMPATIBLE_FOR_DRAFTING_WITH_NAMED_CONDITIONS"
+  },
+  "disposition": {
+    "draftReady": "Doc42 section5A; section5B wrapper after recorded23-key detail/timestamp/intake mapping contract. User source approval dc3329 supplies authority; review supplies compatibility gate only.",
+    "held": "Doc42 section5C writer guards and commit body until design amendments return to same reviewer. No currentness concurrency guarantee from incomplete drafts.",
+    "recordPrecision": "Doc44 RB-F8 recommendation to recut under dc3329 is NOT authorized: actual approval expressly excludes manifest/final protected-hash acceptance. Preserve those holds. Doc41 qualification suggestions are not a reservation or resource authority.",
+    "pendingUserQuestions": [
+      "provider fixture8396609",
+      "document headers8392d243"
+    ],
+    "tests": "NOT_RUN",
+    "production": "NO_MUTATION",
+    "automation": "PAUSED"
+  }
+}
