@@ -1,3 +1,92 @@
+# Quick Order composition test source handoff — 2026-10-06
+
+- SAME SESSION: codex-health-quick-order-20261005
+- TASK: HEALTH-QUICK-ORDER-20261005
+- CHAT: 01a10d78-0981-7150-9292-c5cde2730d4d
+- BRANCH: codex/xenios-health-quick-order-20261005
+- WORKTREE: C:/Users/sboad/.codex/worktrees/389a/xenios-website
+- PUSHED SOURCE: **5fd2e4c74d31562281493013489bb41949979b88**
+- SOURCE TREE: **99ca9ae54298a30c860cfea924d08797a1dc4c9e**
+- BASE RECORDS: 4669493ba48c2afbdfb844813cfc066442ddd78d
+- LEASE: 17093695-69b5-4cc0-8b29-aedb82bf6409; active/reserved to same builder
+- SESSION: handoff_ready; TASK: blocked_external
+- TESTS / TYPECHECK / BUILD / CHILD / BROWSER / RESOURCE CHECK: **NOT RUN**
+- INDEPENDENT ACCEPTANCE: PENDING; original Claude owner unchanged
+
+## Exact source delta and authority
+
+Samuel's actual source-only approval dc3329bb2cfb3b93d8d054c8bbc77a291df0e671
+controls supplemental scope 1d4f2c3. The coordinator separately sequenced these
+four new files after the shared-source records 4669493. This did not authorize
+runtime edits or an execution group. Same builder/task/lease, no new reviewer.
+
+- client/src/research/quick-order/QuickOrderApp.composition.test.tsx
+- server/research/health/quick-order/static-document.test.ts
+- server/research/health/quick-order/vite-document.test.ts
+- server/research/health/quick-order/root-composition.test.ts
+
+Exact blobs/hashes: docs/health-launch/quick-order-20261005/evidence/composition-source-5fd2e4c.json.
+Scope/boundaries: docs/health-launch/quick-order-20261005/COMPOSITION_TEST_SOURCE_20261006.md.
+The fifteen frozen reference hashes match. All 24 pre-existing accepted module
+files retain their exact blobs; the directory trees change by four new tests.
+Other task/session/lease rows and registry global fields are preserved.
+Source Git whitespace check passed. No syntax/runtime qualification is implied.
+
+The UI test composes actual App/QuickOrderPage/PublicShell and sibling PwaLifecycle,
+with credential-free fetch, jsdom and synthetic native event/navigation boundaries.
+Static uses the actual middleware over a synthetic build. Vite uses actual fallback
+with a mocked server/transform transport: composition unit only. Root boots actual
+server/index.ts via direct Node/tsx with fresh allowlisted environment, no inherited
+provider credentials, storage unavailable and a loopback Kairos fixture. The actual
+root listener remains 0.0.0.0. Output/probes/startup/exit/cleanup are bounded; unexpected
+exit is asserted. This lifecycle is authored, not executed or independently qualified.
+No real Auth, provider delivery, SQL, browser, mobile/layout or production build proof.
+
+## Two separate unapplied amendments
+
+New runtime finding: static.ts sets private document headers only for /status;
+Quick Order requires no-store/private, no-cache and no-referrer. Real static and
+Vite document tests retain required assertions. Failure is predicted from source,
+NOT observed. Exact DOCUMENT_PRIVACY_HEADERS_AMENDMENT_PROPOSED_20261006.patch:
+
+- PATCH SHA256: 8392d24308c3dc106c00317f4cd9550d94e956d008051c617c0126d610330fa9
+- TARGET: server/static.ts
+- BEFORE SHA256-LF: b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94
+- AFTER SHA256-LF: 9a3cf7068562184ef84f3b0a54fff5763e0d563e89c237bcba6d95dab0cbd940
+
+It imports the existing isHealthIntakePath predicate and extends only the header
+condition while preserving /status values. No Vite runtime delta needed. Apply-check
+passed; target unchanged. Runtime frozen pending exact amendment disposition.
+
+Prior PROVIDER_JOURNAL_FIXTURE_AMENDMENT_PROPOSED_20261006.patch, SHA256
+8396609b413bc93990adea937861427ec07787f6ea126e19f926b42398d01498,
+is also NOT APPLIED. Extra provider-journal-http.test.ts path still awaits Samuel's
+recorded answer. Do not collapse these two amendments into one approval.
+
+## Resource and operational holds
+
+G1 remains consumed/refused/released: 2026-10-06T17:54:58.1429186Z,1205MiB<1536,
+zero tests. No new material host change, resource observation, retry or slot.
+Original S5 expires 2026-10-06T21:43:37Z; attachments/source work do not reset it.
+Historical 934MiB is not current memory. No cleanup or application shutdown.
+Mandatory HTTP red/green on the original specified source pair remains NOT RUN;
+these new composition candidates cannot replace/pool that evidence.
+
+Customer intake remains unavailable. The future admin-reader RPC must be installed
+and qualified before cutover; current reader source is not deployment permission.
+SQL naming/fence review, durable currentness/atomic commit persistence, actual
+operator readback, applicable Health authorities, notifications, payments, protected
+acceptance/manifest/GATE-01 and production release retain separate holds.
+No database, managed action, bridge invocation, production mutation or outbound
+thread message occurred. The old bridge attachment remains off this critical path.
+
+Next exact task: coordinator disposition of the bound static header amendment and
+separate provider fixture path; original independent source review; execution only
+under a fresh valid reservation after materially changed host conditions. Preserve
+this same builder and lease. No new runtime source is authorized by this handoff.
+
+## Prior shared-source checkpoint — historical context
+
 # Quick Order shared-source handoff — 2026-10-06
 
 - SAME SESSION: codex-health-quick-order-20261005; TASK: HEALTH-QUICK-ORDER-20261005
@@ -11,7 +100,7 @@
 
 ## Authority and exact delta
 
-Samuel's actual source approval at coordinator dc3329 controls scope1d4f2c3.
+Samuel's actual source approval at coordinator dc3329 controls scope 1d4f2c3.
 The assigned slice is archived at coordinator2280524 in
 QUICK_ORDER_SHARED_APPROVED_ASSIGNMENT_20261006.txt. It follows the separately
 pushed pure decoder10208fe/recordse7e3d44 and mount/PWAac36e60/recordsc54f53f.
@@ -75,7 +164,7 @@ acceptance, manifest recut and GATE-01 remain open.
 
 G1 remains consumed/refused/released at2026-10-06T17:54:58.1429186Z,1205MiB<1536;
 zero tests. No new reservation/material host change or resource observation.
-The original S5 expiry remains21:43:37Z. Historical934MiB is not current memory.
+The original S5 expiry remains21:43:37Z. Historical 934MiB is not current memory.
 Mandatory HTTP red/green remains pending. No cleanup/shutdown/retry is inferred.
 
 Next: coordinator disposition of the exact extra test fixture path, then the
@@ -118,7 +207,7 @@ S5 expiry is 21:43:37Z. Another group requires material host change and a distin
 coordinator reservation; no cleanup, shutdown or automatic retry is authorized.
 
 Next source slice: Samuel's direct bounded source approval is recorded at
-coordinator dc3329bb2cfb3b93d8d054c8bbc77a291df0e671, exact scope1d4f2c3,
+coordinator dc3329bb2cfb3b93d8d054c8bbc77a291df0e671, exact scope 1d4f2c3,
 patch SHA256 b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f.
 Revalidate hashes and ownership before applying the exact six-file shared patch
 and two named new tests. Minimal compatible amendments to these new modules may

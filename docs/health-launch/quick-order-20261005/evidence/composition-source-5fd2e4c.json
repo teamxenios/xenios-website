@@ -1,0 +1,219 @@
+{
+  "at": "2026-10-06T19:08:44.973Z",
+  "sourceSha": "5fd2e4c74d31562281493013489bb41949979b88",
+  "sourceTree": "99ca9ae54298a30c860cfea924d08797a1dc4c9e",
+  "pushed": true,
+  "base": "4669493ba48c2afbdfb844813cfc066442ddd78d",
+  "authority": "Samuel source-only approval dc3329; scope 1d4f2c3; coordinator sequencing after 4669493",
+  "source": [
+    {
+      "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+      "blob": "85503d76eab946eb8ae001116f00cb85f814f72e",
+      "sha256lf": "a03b4c85ed90bd8a97e0ab4872097c37beb80efaa58e8690a8f7866299e0b45e",
+      "before": "ABSENT"
+    },
+    {
+      "path": "server/research/health/quick-order/static-document.test.ts",
+      "blob": "10aed9de6505d64199e0035c9fc748f1961c6935",
+      "sha256lf": "ff73aee804097d8db0b13b6b64ae3c51bbe11529b00688a360718f0b888fcbb1",
+      "before": "ABSENT"
+    },
+    {
+      "path": "server/research/health/quick-order/vite-document.test.ts",
+      "blob": "a626f2830ad110866f1dfa712a9ce15faa9f09fd",
+      "sha256lf": "70ef99c701e6e935a005458277050719cef67c10ce955cdbf3324f2c4ce6c371",
+      "before": "ABSENT"
+    },
+    {
+      "path": "server/research/health/quick-order/root-composition.test.ts",
+      "blob": "7c3fc866ecf723411fd96d9d7ccab5b93ad85243",
+      "sha256lf": "a849af0aa29711525c4125d0ee47378443b17368025917ad2f6a41c77274469b",
+      "before": "ABSENT"
+    }
+  ],
+  "frozenReferences": [
+    {
+      "path": "client/src/main.tsx",
+      "sha256lf": "8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162"
+    },
+    {
+      "path": "client/src/clarity/PublicShell.tsx",
+      "sha256lf": "3ba0d3fd5aff043be7729dfd03c6d048e44241472318c15293f217ea59e0b0dc"
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderPage.tsx",
+      "sha256lf": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b"
+    },
+    {
+      "path": "server/static.ts",
+      "sha256lf": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94"
+    },
+    {
+      "path": "server/vite.ts",
+      "sha256lf": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243"
+    },
+    {
+      "path": "server/research/assisted-order/production-boot.test.ts",
+      "sha256lf": "f3494beb131edf7d8b739acc50f9445548bf3614fae0f60ba1bba5ddbab89893"
+    },
+    {
+      "path": "server/research/assisted-order/production-env-shape.fixture.json",
+      "sha256lf": "be34e4d26cebbce8bc3bc73a4625786402a13b48bea14bd3ec00e9035cd4a92d"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256lf": "24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"
+    },
+    {
+      "path": "server/index.ts",
+      "sha256lf": "cc1d8d4d53d7f112468914344d7b6a905e76908f31be4b46c84f86976f36e7bb",
+      "reference": "frozen current source4669493"
+    },
+    {
+      "path": "client/src/App.tsx",
+      "sha256lf": "1a0ba37c1c14b8be9ced93c052d6df8a3362bbb72edc74ba75583ce3d388d94f",
+      "reference": "frozen current source4669493"
+    },
+    {
+      "path": "client/src/pwa/PwaLifecycle.tsx",
+      "sha256lf": "9b1a354def9f430e450ce1261a3d8fbd269c833423cbff179f68643db22a1d19",
+      "reference": "frozen current source4669493"
+    },
+    {
+      "path": "shared/care/paths.ts",
+      "sha256lf": "a15adc22ca9ea55acdf6c21e929fd529547014291ff1810033649c5cc4130fca",
+      "reference": "frozen current source4669493"
+    },
+    {
+      "path": "client/src/lib/tracking.ts",
+      "sha256lf": "8d62f7a1c4e292100c88c26b2d56d2df180408b364a009773ad2b0c0c2836a26",
+      "reference": "frozen current source4669493"
+    },
+    {
+      "path": "client/src/lib/attribution.ts",
+      "sha256lf": "6b1ab4732059401d80cb1f2f38fc5c047e8f559a9ea51d086ac7616bd8540391",
+      "reference": "frozen current source4669493"
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.ts",
+      "sha256lf": "50b80817ae4b90b075179e84b22a93f9214ca21f8ba6ac34e6158812c3eaeb45",
+      "reference": "frozen current source4669493"
+    }
+  ],
+  "preservedPreexistingModule": [
+    {
+      "path": "client/src/research/quick-order/OperatorDeclarations.test.tsx",
+      "blob": "47a4a53ea03c09c91d64b81444ad11a83e89458d"
+    },
+    {
+      "path": "client/src/research/quick-order/OperatorDeclarations.tsx",
+      "blob": "a2a7936d74849a38c94d7f35995880836f78ed4b"
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderPage.test.tsx",
+      "blob": "834ea47972aca51b224d1c9e27552d8791c2a638"
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderPage.tsx",
+      "blob": "2a604a7936c729d6d3daec9838b360cde9c8fcfe"
+    },
+    {
+      "path": "client/src/research/quick-order/contracts.test.ts",
+      "blob": "4cebb50b4dd5e0371d15b53f4c54e2fdf59e7de0"
+    },
+    {
+      "path": "client/src/research/quick-order/contracts.ts",
+      "blob": "03104bda26647f7f3a5295cae7be60c64e19799d"
+    },
+    {
+      "path": "client/src/research/quick-order/quick-order.css",
+      "blob": "39401a001b4f65c7704d8a763c009f8b216a6adb"
+    },
+    {
+      "path": "server/research/health/quick-order/catalog.test.ts",
+      "blob": "f81f41dc94538bf2ec052a8fa0d8211c1a24621f"
+    },
+    {
+      "path": "server/research/health/quick-order/catalog.ts",
+      "blob": "eae50d0e0c6519d95e4d4740a6be6545a4b3bf5a"
+    },
+    {
+      "path": "server/research/health/quick-order/containment.test.ts",
+      "blob": "3684be85d0f0944e63c3f868f4c131a043723632"
+    },
+    {
+      "path": "server/research/health/quick-order/containment.ts",
+      "blob": "455584ce9139cea8927b3839d977411b7a32b105"
+    },
+    {
+      "path": "server/research/health/quick-order/core.d.mts",
+      "blob": "ce893fb5ec3ed7a00608e8596765ef497412c3c8"
+    },
+    {
+      "path": "server/research/health/quick-order/core.mjs",
+      "blob": "c0f3cbe232147094cc32bf72734b1121be8b87a2"
+    },
+    {
+      "path": "server/research/health/quick-order/handler.d.mts",
+      "blob": "c64ff3f720395a379abf00c7d104f6046078c83d"
+    },
+    {
+      "path": "server/research/health/quick-order/handler.mjs",
+      "blob": "c2970928760f74fe446a18319f84de53a80cc0c6"
+    },
+    {
+      "path": "server/research/health/quick-order/legal.ts",
+      "blob": "41d8db389c61579b9c57ec6422abab7543c16579"
+    },
+    {
+      "path": "server/research/health/quick-order/paths.d.mts",
+      "blob": "b2fe58a997f38b516b2d7d228159181b2038518a"
+    },
+    {
+      "path": "server/research/health/quick-order/paths.mjs",
+      "blob": "cd90620b5c2d1910ae72b6a974c7382cdc510677"
+    },
+    {
+      "path": "server/research/health/quick-order/ports.ts",
+      "blob": "0f5b5fc9028906d6c1da678a96a79a0f7f5fd73f"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "blob": "548d8b3fad4fb19680037ec32be0222fb2a18c4e"
+    },
+    {
+      "path": "server/research/health/quick-order/production.ts",
+      "blob": "09b68c077d1dd37ce71d299709dd776c70169094"
+    },
+    {
+      "path": "server/research/health/quick-order/tests/core.test.mjs",
+      "blob": "4b75a38b7922d2c1db77305876ad71ce46e5a928"
+    },
+    {
+      "path": "server/research/health/quick-order/tests/fixtures.mjs",
+      "blob": "a67bb5ce5509010b99220cfcbc75e0af6e271d65"
+    },
+    {
+      "path": "server/research/health/quick-order/tests/handler.test.mjs",
+      "blob": "4ffb196fb12921d7491be152fdf2bca05526e669"
+    }
+  ],
+  "directoryIdentity": "Changed by the four new test files; all 24 pre-existing files preserved",
+  "staticChecks": [
+    "Exact four source paths",
+    "15 frozen references unchanged",
+    "24 pre-existing module blobs preserved",
+    "Source git diff --cached --check exit 0",
+    "Proposed privacy amendment git apply --check exit 0; not applied"
+  ],
+  "execution": "NOT RUN",
+  "independentAcceptance": "PENDING original Claude owner",
+  "runtimeAmendment": {
+    "status": "PROPOSED_NOT_APPLIED",
+    "target": "server/static.ts",
+    "patchSha256": "8392d24308c3dc106c00317f4cd9550d94e956d008051c617c0126d610330fa9"
+  },
+  "rootFixture": "Actual server/index.ts; explicit allowlist; synthetic static shell and loopback Kairos; storage unconfigured; actual bind 0.0.0.0; bounded owned child/output/cleanup; NOT RUN",
+  "resourceStatus": "G1 consumed/refused/released; no fresh check, slot or materially changed host condition",
+  "mandatoryHttpRedGreen": "NOT RUN; separate from these composition candidates"
+}

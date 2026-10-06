@@ -3621,12 +3621,16 @@
         "server/research/assisted-order/communications.ts",
         "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
         "server/research/assisted-order/quick-order-admin-readback.test.ts",
-        "server/research/assisted-order/quick-order-notifications.test.ts"
+        "server/research/assisted-order/quick-order-notifications.test.ts",
+        "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+        "server/research/health/quick-order/static-document.test.ts",
+        "server/research/health/quick-order/vite-document.test.ts",
+        "server/research/health/quick-order/root-composition.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-10-05T19:13:42.719Z",
-      "heartbeatAt": "2026-10-06T18:49:56.954Z",
-      "note": "Shared admin/notification source9118a82 pushed; exact original patch plus separately bound UI readback correction and new tests. No tests executed. Additional provider-journal test fixture path awaits scope amendment; SQL/original review, deployment and execution held. Same builder/lease preserved."
+      "heartbeatAt": "2026-10-06T19:08:44.973Z",
+      "note": "Composition test source5fd2e4c pushed: actual App/PWA, static, Vite unit boundary, real root child candidates. Tests NOT RUN; runtime frozen; exact static privacy-header amendment8392d243 proposed, not applied. Same builder/lease retained; G1 consumed/refused; no new slot."
     }
   ],
   "rules": [

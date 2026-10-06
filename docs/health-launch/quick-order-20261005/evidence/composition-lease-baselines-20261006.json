@@ -1,0 +1,87 @@
+{
+  "at": "2026-10-06T18:53:19.182Z",
+  "authority": "dc3329 source-only approval; coordinator separately sequenced after4669493 shared records",
+  "base": "4669493ba48c2afbdfb844813cfc066442ddd78d",
+  "paths": [
+    "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+    "server/research/health/quick-order/static-document.test.ts",
+    "server/research/health/quick-order/vite-document.test.ts",
+    "server/research/health/quick-order/root-composition.test.ts"
+  ],
+  "allTargetsAbsent": true,
+  "activeConflicts": [],
+  "registries": [
+    "389a",
+    "3221"
+  ],
+  "baselines": [
+    {
+      "path": "client/src/main.tsx",
+      "sha256lf": "8ee3abbbcaf3fc0b922a067fff9c963401c449eaf17e19d2360d9c2617ec3162"
+    },
+    {
+      "path": "client/src/clarity/PublicShell.tsx",
+      "sha256lf": "3ba0d3fd5aff043be7729dfd03c6d048e44241472318c15293f217ea59e0b0dc"
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderPage.tsx",
+      "sha256lf": "4fb3034fc6bbe41b9b8445e167cd9eb8e9e0b1ce83670683fc4438bcea6db76b"
+    },
+    {
+      "path": "server/static.ts",
+      "sha256lf": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94"
+    },
+    {
+      "path": "server/vite.ts",
+      "sha256lf": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243"
+    },
+    {
+      "path": "server/research/assisted-order/production-boot.test.ts",
+      "sha256lf": "f3494beb131edf7d8b739acc50f9445548bf3614fae0f60ba1bba5ddbab89893"
+    },
+    {
+      "path": "server/research/assisted-order/production-env-shape.fixture.json",
+      "sha256lf": "be34e4d26cebbce8bc3bc73a4625786402a13b48bea14bd3ec00e9035cd4a92d"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256lf": "24bdf9b67ddd363895a55879c07c779c5a367c399ea2fef1d17300f32382a5d0"
+    },
+    {
+      "path": "server/index.ts",
+      "sha256lf": "cc1d8d4d53d7f112468914344d7b6a905e76908f31be4b46c84f86976f36e7bb",
+      "reference": "frozen current source4669493"
+    },
+    {
+      "path": "client/src/App.tsx",
+      "sha256lf": "1a0ba37c1c14b8be9ced93c052d6df8a3362bbb72edc74ba75583ce3d388d94f",
+      "reference": "frozen current source4669493"
+    },
+    {
+      "path": "client/src/pwa/PwaLifecycle.tsx",
+      "sha256lf": "9b1a354def9f430e450ce1261a3d8fbd269c833423cbff179f68643db22a1d19",
+      "reference": "frozen current source4669493"
+    },
+    {
+      "path": "shared/care/paths.ts",
+      "sha256lf": "a15adc22ca9ea55acdf6c21e929fd529547014291ff1810033649c5cc4130fca",
+      "reference": "frozen current source4669493"
+    },
+    {
+      "path": "client/src/lib/tracking.ts",
+      "sha256lf": "8d62f7a1c4e292100c88c26b2d56d2df180408b364a009773ad2b0c0c2836a26",
+      "reference": "frozen current source4669493"
+    },
+    {
+      "path": "client/src/lib/attribution.ts",
+      "sha256lf": "6b1ab4732059401d80cb1f2f38fc5c047e8f559a9ea51d086ac7616bd8540391",
+      "reference": "frozen current source4669493"
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.ts",
+      "sha256lf": "50b80817ae4b90b075179e84b22a93f9214ca21f8ba6ac34e6158812c3eaeb45",
+      "reference": "frozen current source4669493"
+    }
+  ],
+  "executionAuthorized": false
+}

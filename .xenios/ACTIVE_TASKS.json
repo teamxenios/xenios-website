@@ -38,13 +38,17 @@
         "server/research/assisted-order/communications.ts",
         "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
         "server/research/assisted-order/quick-order-admin-readback.test.ts",
-        "server/research/assisted-order/quick-order-notifications.test.ts"
+        "server/research/assisted-order/quick-order-notifications.test.ts",
+        "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+        "server/research/health/quick-order/static-document.test.ts",
+        "server/research/health/quick-order/vite-document.test.ts",
+        "server/research/health/quick-order/root-composition.test.ts"
       ],
       "dependsOn": [],
-      "scopeNote": "Shared admin/notification source9118a82 pushed; exact original patch plus separately bound UI readback correction and new tests. No tests executed. Additional provider-journal test fixture path awaits scope amendment; SQL/original review, deployment and execution held. Same builder/lease preserved.",
+      "scopeNote": "Composition test source5fd2e4c pushed: actual App/PWA, static, Vite unit boundary, real root child candidates. Tests NOT RUN; runtime frozen; exact static privacy-header amendment8392d243 proposed, not applied. Same builder/lease retained; G1 consumed/refused; no new slot.",
       "claimedAt": "2026-10-05T19:13:42.715Z",
-      "sourceSha": "9118a82633e9f10637764c896ce2a6e53ad1e3eb",
-      "sourceTree": "5142b61564921cbe892099c8ef55896935508fa9",
+      "sourceSha": "5fd2e4c74d31562281493013489bb41949979b88",
+      "sourceTree": "99ca9ae54298a30c860cfea924d08797a1dc4c9e",
       "baseAcceptance": {
         "sha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
         "review": "04cbbee0d3d3ab32dfd6ae9002b82837423f6265",
@@ -52,19 +56,20 @@
       },
       "handoff": {
         "session": "codex-health-quick-order-20261005",
-        "sha": "9118a82633e9f10637764c896ce2a6e53ad1e3eb",
+        "sha": "5fd2e4c74d31562281493013489bb41949979b88",
         "file": ".xenios/handoffs/quick-order-20261005-handoff.md",
-        "at": "2026-10-06T18:49:56.954Z"
+        "at": "2026-10-06T19:08:44.973Z"
       },
       "blockedOn": [
-        "HTTP red/green NOT RUN: G1 consumed/refused; material host change and distinct reservation required",
-        "Current shared-source candidate independent review/qualification and exact protected disposition pending",
-        "Additional provider-journal fixture path amendment prepared but not applied; coordinator scope decision pending",
-        "Future admin-reader RPC installation/qualification required before reader cutover; SQL drafting still awaits original naming/fence review",
-        "Durable currentness/commit persistence, Health legal/classification/destination/standing, payments and managed actions remain held"
+        "All new composition candidates NOT RUN; exact independent source review/qualification pending",
+        "Runtime frozen; static.ts document privacy-header amendment8392d243 proposed and unapplied",
+        "Provider-journal fixture extra path amendment8396609b remains pending Samuel recorded answer",
+        "HTTP red/green NOT RUN; G1 consumed/refused/released; material host change and distinct reservation required",
+        "Future admin-reader RPC installation/qualification before cutover; SQL naming/fence review prerequisite remains",
+        "Protected acceptance, durable currentness/atomic commit, Health authorities, notifications/payment and release remain held"
       ],
-      "heartbeatAt": "2026-10-06T18:49:56.954Z",
-      "note": "Shared admin/notification source9118a82 pushed; exact original patch plus separately bound UI readback correction and new tests. No tests executed. Additional provider-journal test fixture path awaits scope amendment; SQL/original review, deployment and execution held. Same builder/lease preserved.",
+      "heartbeatAt": "2026-10-06T19:08:44.973Z",
+      "note": "Composition test source5fd2e4c pushed: actual App/PWA, static, Vite unit boundary, real root child candidates. Tests NOT RUN; runtime frozen; exact static privacy-header amendment8392d243 proposed, not applied. Same builder/lease retained; G1 consumed/refused; no new slot.",
       "qualification": {
         "reservation": "QO-FIRST-20261006-G1",
         "status": "REFUSED_RELEASED",

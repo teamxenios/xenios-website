@@ -1,5 +1,13 @@
 # Quick Order isolated implementation
 
+Current composition-test source: [COMPOSITION_TEST_SOURCE_20261006.md](COMPOSITION_TEST_SOURCE_20261006.md),
+source `5fd2e4c74d31562281493013489bb41949979b88`, tree
+`99ca9ae54298a30c860cfea924d08797a1dc4c9e`. Four new test candidates; runtime
+unchanged. Tests NOT RUN. The required static/Vite privacy headers are absent
+in frozen source; exact patch `8392d243` is proposed and unapplied. This source
+finding is not an observed red. All 15 frozen references and 24 pre-existing
+module files match. Original HTTP red/green and operational holds remain.
+
 Current shared-source checkpoint: [SHARED_INTEGRATION_SOURCE_20261006.md](SHARED_INTEGRATION_SOURCE_20261006.md),
 source `9118a82633e9f10637764c896ce2a6e53ad1e3eb`, tree
 `5142b61564921cbe892099c8ef55896935508fa9`. Approved shared patch plus exact UI

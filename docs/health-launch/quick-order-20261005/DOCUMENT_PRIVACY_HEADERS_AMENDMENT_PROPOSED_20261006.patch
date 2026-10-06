@@ -1,0 +1,25 @@
+diff --git a/server/static.ts b/server/static.ts
+index 7fade5d..6caae7b 100644
+--- a/server/static.ts
++++ b/server/static.ts
+@@ -1,7 +1,7 @@
+ import express, { type Express, type Request, type Response } from "express";
+ import fs from "fs";
+ import path from "path";
+-import { isCarePath } from "@shared/care/paths";
++import { isCarePath, isHealthIntakePath } from "@shared/care/paths";
+ import { isResearchPath } from "@shared/research/paths";
+ import {
+   buildRawHttpDocumentResponse,
+@@ -99,8 +99,9 @@ export function sendRawHttpDocument(
+     indexable: !isResearchPath(originalPathname) || process.env.RESEARCH_INDEXABLE === "true",
+   });
+   res.status(document.status).set(document.headers);
+-  if (originalPathname === "/status") {
+-    res.setHeader("Cache-Control", "no-store");
++  const privateHealthIntake = isHealthIntakePath(originalPathname);
++  if (originalPathname === "/status" || privateHealthIntake) {
++    res.setHeader("Cache-Control", privateHealthIntake ? "no-store, private" : "no-store");
+     res.setHeader("Pragma", "no-cache");
+     res.setHeader("Referrer-Policy", "no-referrer");
+   }
