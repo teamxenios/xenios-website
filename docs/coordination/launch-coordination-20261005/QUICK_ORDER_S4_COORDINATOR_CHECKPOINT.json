@@ -1,0 +1,69 @@
+{
+  "at": "2026-10-06T18:41:40.416Z",
+  "kind": "Read-only Git, exact path set and hash verification; no implementation/test execution or independent acceptance",
+  "source": "10208fea644f069f58ddeaa8993db4df5eb4469d",
+  "sourceTree": "6e0a8003baa8743d243f06bf18c025f649a95152",
+  "records": "e7e3d446ff36a549f023dbc64f6fbb275e614125",
+  "recordsTree": "0a7974f0946e9f47bfa7076457697d32b438201f",
+  "prior": "c54f53f5aa0501cbddbb2a1148c49f9578e0ca93",
+  "remoteObserved": "e7e3d446ff36a549f023dbc64f6fbb275e614125",
+  "remoteObservedAt": "2026-10-06T18:40:40Z",
+  "changes": [
+    "A\tserver/research/assisted-order/quick-order-repository.test.ts",
+    "A\tserver/research/assisted-order/quick-order-repository.ts",
+    "A\tshared/research/assisted-order/quick-order.ts"
+  ],
+  "verified": [
+    {
+      "path": "shared/research/assisted-order/quick-order.ts",
+      "before": "ABSENT",
+      "blob": "550bdcdb9e1aa681e87872d5f26ebb1e8cc5b615",
+      "sha256": "3d2fbc4b79a37f253d81291eee691dcba4d7c941b9ae95555ced49c703a095f2",
+      "sha256Verified": true,
+      "blobVerified": true
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.ts",
+      "before": "ABSENT",
+      "blob": "e9910657b032bc4f42b84374d01ad7dfc720fcc5",
+      "sha256": "5a628e296a907dfe11e099a797c55a4c737f2bc803e43e67e692bc0e0494e657",
+      "sha256Verified": true,
+      "blobVerified": true
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.test.ts",
+      "before": "ABSENT",
+      "blob": "c9e52f8ae39bbbecf7e4f66bbd3368df3bfae631",
+      "sha256": "78aceede0a53a03cc7da4588be2cb4882b8a94b2767f00dbdb8b78b41d9c053a",
+      "sha256Verified": true,
+      "blobVerified": true
+    }
+  ],
+  "threePathScopePure": true,
+  "existingSourceUnchanged": true,
+  "recordsApplicationSourceUnchanged": true,
+  "copies": [
+    {
+      "path": "QUICK_ORDER_S4_PRODUCER_SOURCE_10208fe.json",
+      "sha256": "aa7f73d5be14868fb31ff2fdbad6890ee6c9b983c0c53cc874163183411aa669"
+    },
+    {
+      "path": "QUICK_ORDER_S4_PRODUCER_HANDOFF_e7e3d44.md",
+      "sha256": "e758d042fa19e2c1b2133da2e1b4b526784a795ce6ac01a474b8535fdcb3c4cf"
+    },
+    {
+      "path": "QUICK_ORDER_S4_PRODUCER_CONTRACT_e7e3d44.md",
+      "sha256": "de41f14cf9282081e2a4a4d56ad6f3f38cd7f236c964b016786b1b9a00c88757"
+    }
+  ],
+  "tests": "AUTHORED_NOT_RUN",
+  "review": "SAME_ORIGINAL_REVIEWER_PENDING",
+  "host": "No new observation; material change NOT ESTABLISHED",
+  "groups": {
+    "consumed": 1,
+    "remaining": 5,
+    "activeReservation": false,
+    "expiresAt": "2026-10-06T21:43:37Z"
+  },
+  "capability": "Pure unused decoder only. No durable QO save/operator readback/payment/live activation."
+}

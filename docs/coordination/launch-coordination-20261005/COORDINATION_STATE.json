@@ -965,14 +965,89 @@
           "server/research/assisted-order/quick-order-repository.ts",
           "server/research/assisted-order/quick-order-repository.test.ts"
         ],
-        "status": "BUILDING_SOURCE_ONLY",
+        "status": "PURE_SOURCE_PUSHED_NEXT_SHARED_ASSIGNED",
         "acknowledged": true,
         "nextAfterPureFreeze": {
-          "status": "DISPATCH_SENT_CONDITIONAL_ON_PURE_FREEZE",
+          "status": "BUILDING_APPROVED_SHARED_SOURCE",
           "sourceApprovalCommit": "dc3329bb2cfb3b93d8d054c8bbc77a291df0e671",
           "scope": "Approved six-file shared patch plus two named new reader/notification tests; currentness/SQL and composition tests not assigned in this slice",
           "promptRecord": "QUICK_ORDER_SHARED_APPROVED_ASSIGNMENT_20261006.txt",
-          "owner": "01a10d78-0981-7150-9292-c5cde2730d4d"
+          "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
+          "prerequisiteSatisfied": true,
+          "acknowledged": true,
+          "acknowledgement": {
+            "message": "msg_0f39ac48c4ef0110016ac540db8e1c87d1ade3609690b8a22a",
+            "cursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:56"
+          }
+        },
+        "pureCheckpoint": {
+          "at": "2026-10-06T18:41:40.416Z",
+          "kind": "Read-only Git, exact path set and hash verification; no implementation/test execution or independent acceptance",
+          "source": "10208fea644f069f58ddeaa8993db4df5eb4469d",
+          "sourceTree": "6e0a8003baa8743d243f06bf18c025f649a95152",
+          "records": "e7e3d446ff36a549f023dbc64f6fbb275e614125",
+          "recordsTree": "0a7974f0946e9f47bfa7076457697d32b438201f",
+          "prior": "c54f53f5aa0501cbddbb2a1148c49f9578e0ca93",
+          "remoteObserved": "e7e3d446ff36a549f023dbc64f6fbb275e614125",
+          "remoteObservedAt": "2026-10-06T18:40:40Z",
+          "changes": [
+            "A\tserver/research/assisted-order/quick-order-repository.test.ts",
+            "A\tserver/research/assisted-order/quick-order-repository.ts",
+            "A\tshared/research/assisted-order/quick-order.ts"
+          ],
+          "verified": [
+            {
+              "path": "shared/research/assisted-order/quick-order.ts",
+              "before": "ABSENT",
+              "blob": "550bdcdb9e1aa681e87872d5f26ebb1e8cc5b615",
+              "sha256": "3d2fbc4b79a37f253d81291eee691dcba4d7c941b9ae95555ced49c703a095f2",
+              "sha256Verified": true,
+              "blobVerified": true
+            },
+            {
+              "path": "server/research/assisted-order/quick-order-repository.ts",
+              "before": "ABSENT",
+              "blob": "e9910657b032bc4f42b84374d01ad7dfc720fcc5",
+              "sha256": "5a628e296a907dfe11e099a797c55a4c737f2bc803e43e67e692bc0e0494e657",
+              "sha256Verified": true,
+              "blobVerified": true
+            },
+            {
+              "path": "server/research/assisted-order/quick-order-repository.test.ts",
+              "before": "ABSENT",
+              "blob": "c9e52f8ae39bbbecf7e4f66bbd3368df3bfae631",
+              "sha256": "78aceede0a53a03cc7da4588be2cb4882b8a94b2767f00dbdb8b78b41d9c053a",
+              "sha256Verified": true,
+              "blobVerified": true
+            }
+          ],
+          "threePathScopePure": true,
+          "existingSourceUnchanged": true,
+          "recordsApplicationSourceUnchanged": true,
+          "copies": [
+            {
+              "path": "QUICK_ORDER_S4_PRODUCER_SOURCE_10208fe.json",
+              "sha256": "aa7f73d5be14868fb31ff2fdbad6890ee6c9b983c0c53cc874163183411aa669"
+            },
+            {
+              "path": "QUICK_ORDER_S4_PRODUCER_HANDOFF_e7e3d44.md",
+              "sha256": "e758d042fa19e2c1b2133da2e1b4b526784a795ce6ac01a474b8535fdcb3c4cf"
+            },
+            {
+              "path": "QUICK_ORDER_S4_PRODUCER_CONTRACT_e7e3d44.md",
+              "sha256": "de41f14cf9282081e2a4a4d56ad6f3f38cd7f236c964b016786b1b9a00c88757"
+            }
+          ],
+          "tests": "AUTHORED_NOT_RUN",
+          "review": "SAME_ORIGINAL_REVIEWER_PENDING",
+          "host": "No new observation; material change NOT ESTABLISHED",
+          "groups": {
+            "consumed": 1,
+            "remaining": 5,
+            "activeReservation": false,
+            "expiresAt": "2026-10-06T21:43:37Z"
+          },
+          "capability": "Pure unused decoder only. No durable QO save/operator readback/payment/live activation."
         }
       },
       "supplementalScope": {
@@ -1026,15 +1101,40 @@
           "note": "Plan adopted as reviewer brief; its no-authority observation preceded coordinator authority commit60d593a. No successor review yet."
         },
         "lastPublicActivity": {
-          "at": "2026-10-06T18:10:02.478Z",
-          "message": "8d0ec7d7-823a-458d-a427-6881af89c62e",
-          "classification": "Old background disk-footprint task notification and public acknowledgement only; not actual user input, new review, coordinator resource observation or cleanup authority. Reviewer still idle; adoption statement stale relative to60d coordinator record."
+          "observedAt": "2026-10-06T18:43:08.004Z",
+          "session": "6abf1edf-2b16-476e-8305-23b9a0014e06",
+          "directUser": {
+            "at": "2026-10-06T18:29:02.644Z",
+            "message": "5d6931b1-7a6e-4e64-8a77-f16e863d7815",
+            "classification": "Samuel directly pasted planning plus supplemental approval recommendation. Actual source approval remains the separate coordinator async answer recorded atdc3329."
+          },
+          "publicProgress": {
+            "at": "2026-10-06T18:39:10.305Z",
+            "message": "fd4fd612-5ddc-47ef-94f9-1253a8a3954b",
+            "reportedScopes": [
+              "Mount successor ac36e60; pending source verdict, no tests",
+              "Supplemental1d4f2c3; recognizes actualdc3329 source approval; SQL drafting conditional on review"
+            ],
+            "provisionalConcern": "Global writer epoch churn from high-traffic tables may refuse in-flight intakes; compatibility and lock review still in progress.",
+            "summary": "Both review records are drafted with the independently verified facts; the remaining sections wait on the two lens workflows (mount delta and supplemental-scope compatibility), which are still running. When each returns I will fold in the upheld findings, finalise the verdicts, and push docs41 and42 together with the gate receipt."
+          },
+          "disposition": "Original reviewer is actively handling the mount and supplemental compatibility scopes after direct user input. No duplicate delivery needed for those scopes. No final verdict or new implementation/execution authority inferred. New pure S4 frozen delta review remains pending.",
+          "latestPushedReview": "f4636885ff2078563846a5277d699da9bd81dacd"
         },
         "pendingHandoff": {
           "path": "QUICK_ORDER_NEXT_REVIEW_HANDOFF_20261006.md",
-          "status": "PREPARED_NOT_DELIVERED",
+          "status": "REVIEW_UNDERWAY_VIA_DIRECT_USER_INPUT_NO_DUPLICATE_DELIVERY",
           "scope": "Frozen ac36e60 delta plus proposed naming/fence/currentness review; exclude mutable pure decoder slice",
-          "transport": "No callable Claude messaging capability found. No known-failed CLI/native/UI/bridge retry and no replacement reviewer."
+          "transport": "No callable Claude messaging capability found. No known-failed CLI/native/UI/bridge retry and no replacement reviewer.",
+          "preparedFileDelivery": "Not independently confirmed; requested substantive scopes already active in same reviewer",
+          "deliveryQuestion": "Superseded for mount/design review by direct observed public review activity; do not repeat"
+        },
+        "pendingS4": {
+          "source": "10208fea644f069f58ddeaa8993db4df5eb4469d",
+          "sourceTree": "6e0a8003baa8743d243f06bf18c025f649a95152",
+          "records": "e7e3d446ff36a549f023dbc64f6fbb275e614125",
+          "status": "FROZEN_DELTA_READY_DELIVERY_PENDING",
+          "handoff": "QUICK_ORDER_S4_REVIEW_HANDOFF_20261006.md"
         }
       },
       "exclusions": [
@@ -1085,7 +1185,7 @@
         {
           "id": "04",
           "owner": "same builder for pure extension slice; SQL writer not separately activated",
-          "status": "PARTIAL_SOURCE_BUILDING",
+          "status": "PURE_SOURCE_IMPLEMENTED_REVIEW_PENDING",
           "next": "Finish pure decoder; currentness/module source approved, SQL still waits original reviewer compatibility verdict"
         },
         {
@@ -1097,7 +1197,7 @@
         {
           "id": "06",
           "owner": "proposed same builder",
-          "status": "APPROVED_SOURCE_WAITING_DECODER_FREEZE",
+          "status": "APPROVED_SHARED_SOURCE_ASSIGNED",
           "next": "Same builder may claim/apply exact shared patch and named tests after decoder source checkpoint; maintain disabled composition"
         },
         {
@@ -1157,6 +1257,65 @@
         "id": "dd022804-0cb9-4c62-8b15-2354c8f69727",
         "sha256": "e32a3815ac5e2a3779ee69440c13e5b755321dd876b0e4a5a5781327b198bf29",
         "disposition": "Reiterates kickoff already acted on. Latest direct request is stopping the five-minute automation, not resetting S5 or undoing separate supplemental approval. Preserve original17:43:37 receipt/21:43:37 expiry and1of6 consumed."
+      },
+      "firstHourCheckpoint": {
+        "path": "QUICK_ORDER_FIRST_HOUR_CHECKPOINT_20261006.json",
+        "scheduledAt": "2026-10-06T18:43:37Z",
+        "reportedAt": "2026-10-06T18:43:53Z",
+        "recordedAt": "2026-10-06T18:44:30.122Z",
+        "source": {
+          "mount": "ac36e60fe5e91b1217722e7f2a2711fd62a64559",
+          "mountTree": "c83e78153d8cafcd2580e2ed83e1cd9d6f8b79a0",
+          "mountEvidence": "c54f53f5aa0501cbddbb2a1148c49f9578e0ca93",
+          "s4": "10208fea644f069f58ddeaa8993db4df5eb4469d",
+          "s4Tree": "6e0a8003baa8743d243f06bf18c025f649a95152",
+          "s4Handoff": "e7e3d446ff36a549f023dbc64f6fbb275e614125"
+        },
+        "threePathScopePure": true,
+        "evidence": "Coordinator exact Git scope and13mount plus3pure source hashes verified. Producer authored tests, zero execution. No independent successor acceptance yet.",
+        "actualCandidate": "Disabled mounted page/API; no enabled customer submission and no fresh preview/deployment. Source-only candidate.",
+        "durability": "No durable Quick Order transaction implemented or proven. New pure decoder/test fixtures validate synthetic envelope shape only.",
+        "operator": "Existing canonical operator authority preserved. New Quick Order projection is pure source; operational QO enriched readback absent. Shared integration currently being authored.",
+        "payment": "ABSENT for Quick Order; no test or live payment claimed.",
+        "host": {
+          "materialChangeEstablished": false,
+          "newObservation": false,
+          "lastRetainedSample": "2026-10-06T17:54:58.1429186Z",
+          "historicalAvailableMiB": 1205,
+          "note": "Historical refusal is not current available RAM. No repeat probe."
+        },
+        "qualification": {
+          "consumed": 1,
+          "remaining": 5,
+          "reservation": null,
+          "expiresAt": "2026-10-06T21:43:37Z",
+          "remainingAtScheduledCheckpointMinutes": 180,
+          "remainingAtReportedCheckpointSeconds": 10784,
+          "condition": "Material host change plus fresh exact remaining-group reservation before any new precheck/group."
+        },
+        "next": [
+          {
+            "owner": "Existing builder01a10d78",
+            "action": "Finish approved shared six-file patch plus two named tests, freeze exact successor; no execution."
+          },
+          {
+            "owner": "Original Claude6ab",
+            "action": "Complete active mount/naming/fence/currentness compatibility verdict, then exact pure S4 delta; no new reviewer."
+          },
+          {
+            "owner": "Coordinator",
+            "action": "Collect source/evidence and review; sequence approved source only. SQL drafting remains conditional on compatibility verdict."
+          }
+        ],
+        "held": [
+          "Qualification without changed host and reservation",
+          "SQL drafting before compatibility review; all SQL registration/execution",
+          "Actual legal/product/destination/standing/quantity decisions",
+          "Durable real intake and actual operator evidence",
+          "Payment/notification sends/deployment",
+          "Final protected hashes/GATE01/manifest"
+        ],
+        "automation": "PAUSED by Samuel; original qualification window unchanged"
       }
     }
   },

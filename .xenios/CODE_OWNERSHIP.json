@@ -3838,7 +3838,8 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-06T17:46:20.086Z",
-      "heartbeatAt": "2026-10-06T18:19:16.741Z"
+      "heartbeatAt": "2026-10-06T18:40:39.895Z",
+      "note": "S4 pure source10208fe and handoffe7e3d44 collected. Supplemental source approved atdc3329; shared slice sequenced next. G1 refused1of6; no active slot. Automation paused by Samuel."
     }
   ],
   "rules": [

@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-06T18:37:57.699Z",
+  "sourceSha": "10208fea644f069f58ddeaa8993db4df5eb4469d",
+  "sourceTree": "6e0a8003baa8743d243f06bf18c025f649a95152",
+  "pushed": true,
+  "previousRecords": "c54f53f5aa0501cbddbb2a1148c49f9578e0ca93",
+  "source": [
+    {
+      "path": "shared/research/assisted-order/quick-order.ts",
+      "before": "ABSENT",
+      "blob": "550bdcdb9e1aa681e87872d5f26ebb1e8cc5b615",
+      "sha256": "3d2fbc4b79a37f253d81291eee691dcba4d7c941b9ae95555ced49c703a095f2"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.ts",
+      "before": "ABSENT",
+      "blob": "e9910657b032bc4f42b84374d01ad7dfc720fcc5",
+      "sha256": "5a628e296a907dfe11e099a797c55a4c737f2bc803e43e67e692bc0e0494e657"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.test.ts",
+      "before": "ABSENT",
+      "blob": "c9e52f8ae39bbbecf7e4f66bbd3368df3bfae631",
+      "sha256": "78aceede0a53a03cc7da4588be2cb4882b8a94b2767f00dbdb8b78b41d9c053a"
+    }
+  ],
+  "changedPaths": [
+    "server/research/assisted-order/quick-order-repository.test.ts",
+    "server/research/assisted-order/quick-order-repository.ts",
+    "shared/research/assisted-order/quick-order.ts"
+  ],
+  "existingRuntimeUnchanged": true,
+  "qualification": "NOT RUN",
+  "independentAcceptance": "PENDING",
+  "staticVerification": "git diff --cached --check exit0 before commit; exact three added paths only",
+  "resourceObservation": "NONE; G1 remains consumed/refused; no reservation",
+  "scope": "Pure proposed admin evidence consistency only; no storage/RPC/currentness/authority proof"
+}

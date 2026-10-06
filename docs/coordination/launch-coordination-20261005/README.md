@@ -1,3 +1,22 @@
+## Pure S4 checkpoint — 2026-10-06 18:40Z
+
+Source10208fea644f069f58ddeaa8993db4df5eb4469d, tree
+6e0a8003baa8743d243f06bf18c025f649a95152, is pushed with records/handoff
+e7e3d446ff36a549f023dbc64f6fbb275e614125. Coordinator independently checked
+the exact three added projection/decoder/test paths, all three SHA256/blob
+bindings, and unchanged existing source. See QUICK_ORDER_S4_COORDINATOR_CHECKPOINT.json.
+The decoder is unused pure source; authored synthetic tests remain NOT RUN.
+Same original reviewer delta acceptance is pending; its prepared S4 handoff is
+QUICK_ORDER_S4_REVIEW_HANDOFF_20261006.md, without confirmed delivery yet.
+
+The same builder has acknowledged the approved six-file shared patch and two
+named integration tests as the next slice. This follows Samuel's actual approval
+atdc3329, not the older planning reply's now-superseded approval-pending statement.
+The builder confirmed that the resurfaced v0.1 bridge attachment was the already
+completed request. Bridge work remains off this sprint's critical path.
+No new host observation or material resource change is established; G1 remains
+consumed/refused, five groups remain, no active slot, original expiry21:43:37Z.
+
 ## Automation stopped by Samuel — 2026-10-06
 
 The five-minute xenios-launch-coordination heartbeat is PAUSED at Samuel's

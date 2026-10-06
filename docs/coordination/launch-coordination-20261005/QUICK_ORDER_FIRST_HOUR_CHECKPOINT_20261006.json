@@ -1,0 +1,58 @@
+{
+  "scheduledAt": "2026-10-06T18:43:37Z",
+  "reportedAt": "2026-10-06T18:43:53Z",
+  "recordedAt": "2026-10-06T18:44:30.122Z",
+  "source": {
+    "mount": "ac36e60fe5e91b1217722e7f2a2711fd62a64559",
+    "mountTree": "c83e78153d8cafcd2580e2ed83e1cd9d6f8b79a0",
+    "mountEvidence": "c54f53f5aa0501cbddbb2a1148c49f9578e0ca93",
+    "s4": "10208fea644f069f58ddeaa8993db4df5eb4469d",
+    "s4Tree": "6e0a8003baa8743d243f06bf18c025f649a95152",
+    "s4Handoff": "e7e3d446ff36a549f023dbc64f6fbb275e614125"
+  },
+  "threePathScopePure": true,
+  "evidence": "Coordinator exact Git scope and13mount plus3pure source hashes verified. Producer authored tests, zero execution. No independent successor acceptance yet.",
+  "actualCandidate": "Disabled mounted page/API; no enabled customer submission and no fresh preview/deployment. Source-only candidate.",
+  "durability": "No durable Quick Order transaction implemented or proven. New pure decoder/test fixtures validate synthetic envelope shape only.",
+  "operator": "Existing canonical operator authority preserved. New Quick Order projection is pure source; operational QO enriched readback absent. Shared integration currently being authored.",
+  "payment": "ABSENT for Quick Order; no test or live payment claimed.",
+  "host": {
+    "materialChangeEstablished": false,
+    "newObservation": false,
+    "lastRetainedSample": "2026-10-06T17:54:58.1429186Z",
+    "historicalAvailableMiB": 1205,
+    "note": "Historical refusal is not current available RAM. No repeat probe."
+  },
+  "qualification": {
+    "consumed": 1,
+    "remaining": 5,
+    "reservation": null,
+    "expiresAt": "2026-10-06T21:43:37Z",
+    "remainingAtScheduledCheckpointMinutes": 180,
+    "remainingAtReportedCheckpointSeconds": 10784,
+    "condition": "Material host change plus fresh exact remaining-group reservation before any new precheck/group."
+  },
+  "next": [
+    {
+      "owner": "Existing builder01a10d78",
+      "action": "Finish approved shared six-file patch plus two named tests, freeze exact successor; no execution."
+    },
+    {
+      "owner": "Original Claude6ab",
+      "action": "Complete active mount/naming/fence/currentness compatibility verdict, then exact pure S4 delta; no new reviewer."
+    },
+    {
+      "owner": "Coordinator",
+      "action": "Collect source/evidence and review; sequence approved source only. SQL drafting remains conditional on compatibility verdict."
+    }
+  ],
+  "held": [
+    "Qualification without changed host and reservation",
+    "SQL drafting before compatibility review; all SQL registration/execution",
+    "Actual legal/product/destination/standing/quantity decisions",
+    "Durable real intake and actual operator evidence",
+    "Payment/notification sends/deployment",
+    "Final protected hashes/GATE01/manifest"
+  ],
+  "automation": "PAUSED by Samuel; original qualification window unchanged"
+}
