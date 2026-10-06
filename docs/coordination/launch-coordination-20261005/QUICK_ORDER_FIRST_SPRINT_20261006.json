@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "ACTIVE_SOURCE_ONLY",
+  "status": "SOURCE_CHECKPOINT_REVIEW_AND_DECISIONS_PENDING",
   "receivedAt": "2026-10-06T17:43:37Z",
   "checkpointAt": "2026-10-06T18:43:37Z",
   "expiresAt": "2026-10-06T21:43:37Z",
@@ -80,7 +80,7 @@
       "server/research/assisted-order/quick-order-repository.ts",
       "server/research/assisted-order/quick-order-repository.test.ts"
     ],
-    "status": "PURE_SOURCE_PUSHED_NEXT_SHARED_ASSIGNED",
+    "status": "PURE_SHARED_AND_COMPOSITION_SOURCE_PUSHED_BUILDER_IDLE",
     "acknowledged": true,
     "nextAfterPureFreeze": {
       "status": "SHARED_SOURCE_PUSHED_REVIEW_PENDING",
@@ -240,7 +240,14 @@
         "summary": "Both review records are drafted with the independently verified facts; the remaining sections wait on the two lens workflows (mount delta and supplemental-scope compatibility), which are still running. When each returns I will fold in the upheld findings, finalise the verdicts, and push docs41 and42 together with the gate receipt."
       },
       "disposition": "Original reviewer is actively handling the mount and supplemental compatibility scopes after direct user input. No duplicate delivery needed for those scopes. No final verdict or new implementation/execution authority inferred. New pure S4 frozen delta review remains pending.",
-      "latestPushedReview": "f4636885ff2078563846a5277d699da9bd81dacd"
+      "latestPushedReview": "f4636885ff2078563846a5277d699da9bd81dacd",
+      "latestCheckpoint": {
+        "observedAt": "2026-10-06T19:25:04.679Z",
+        "at": "2026-10-06T19:16:56.750Z",
+        "message": "05880e80-df10-485f-9dfd-5fc360a1b693",
+        "text": "The mount workflow has returned too. Flattening it and archiving the lens JSON alongside the supplemental one.",
+        "disposition": "Public progress only. Docs41–44 still untracked in reviewer worktree at observation; pushed review remains f4636885, no final gate clearance."
+      }
     },
     "pendingHandoff": {
       "path": "QUICK_ORDER_NEXT_REVIEW_HANDOFF_20261006.md",
@@ -392,10 +399,10 @@
     }
   ],
   "planningRelay": {
-    "record": "QUICK_ORDER_FIRST_HOUR_PLANNING_RELAY.json",
-    "turn": "e71956f0-124e-4110-8132-ac71aa84cb0e",
-    "replyMessage": "d87bb65c-d65e-4abe-b291-06c08a792824",
-    "status": "CONFIRMED_NO_NEW_AUTHORITY",
+    "record": "QUICK_ORDER_SOURCE_MILESTONE_PLANNING_RELAY_20261006.json",
+    "turn": "3e2c3d99-fe70-4604-afb3-2223d27738c9",
+    "replyMessage": "c0b1c1a0-31b2-4246-b77d-ef014e1ba558",
+    "status": "CONFIRMED_NO_NEW_DEPENDENCY_READY_WORK",
     "pendingReply": false
   },
   "automation": {
@@ -662,5 +669,23 @@
       "materialHostChangeEstablished": false,
       "expiresAt": "2026-10-06T21:43:37Z"
     }
+  },
+  "foregroundCheckpoint": {
+    "at": "2026-10-06T19:25:04.679Z",
+    "builder": "CLEAN_IDLE_HANDOFF_READY",
+    "source": "5fd2e4c74d31562281493013489bb41949979b88",
+    "handoff": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
+    "remainingWork": "Same original reviewer final; two actual user answers. No new source assignment ready.",
+    "qualification": {
+      "groupsConsumed": 1,
+      "groupsRemaining": 5,
+      "reservation": null,
+      "materialHostChangeEstablished": false,
+      "remainingWindowSeconds": 8312,
+      "expiresAt": "2026-10-06T21:43:37Z"
+    },
+    "automation": "PAUSED_NO_RESTART",
+    "sourceApproval": "Supplemental1d4f2c3 already approved atdc3329; not pending. SQL drafting still conditional. Two later one-file amendments remain pending.",
+    "execution": "No tests, resources or live actions performed at this checkpoint"
   }
 }
