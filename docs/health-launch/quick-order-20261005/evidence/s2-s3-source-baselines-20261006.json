@@ -1,0 +1,79 @@
+{
+  "at": "2026-10-06T17:56:56.045Z",
+  "head": "5ee44d53e55774fd8a29ea009dac16da2ed907ef",
+  "authorityCommit": "60d593ae2fc0623edc869e373bfe52e830968df9",
+  "patchSha256lf": "c65d7e49a9f5ec87262d4e3b106ab5e16b1c3d1ecd46a01c8a7ca4699e6d92af",
+  "baselines": [
+    {
+      "path": "client/src/App.tsx",
+      "expected": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
+      "actual": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
+      "proposedAfter": "1a0ba37c1c14b8be9ced93c052d6df8a3362bbb72edc74ba75583ce3d388d94f"
+    },
+    {
+      "path": "shared/care/paths.ts",
+      "expected": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417",
+      "actual": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417",
+      "proposedAfter": "a15adc22ca9ea55acdf6c21e929fd529547014291ff1810033649c5cc4130fca"
+    },
+    {
+      "path": "client/src/lib/tracking.ts",
+      "expected": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+      "actual": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+      "proposedAfter": "8d62f7a1c4e292100c88c26b2d56d2df180408b364a009773ad2b0c0c2836a26"
+    },
+    {
+      "path": "client/src/lib/attribution.ts",
+      "expected": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
+      "actual": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
+      "proposedAfter": "6b1ab4732059401d80cb1f2f38fc5c047e8f559a9ea51d086ac7616bd8540391"
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.ts",
+      "expected": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a",
+      "actual": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a",
+      "proposedAfter": "50b80817ae4b90b075179e84b22a93f9214ca21f8ba6ac34e6158812c3eaeb45"
+    },
+    {
+      "path": "server/index.ts",
+      "expected": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521",
+      "actual": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521",
+      "proposedAfter": "cc1d8d4d53d7f112468914344d7b6a905e76908f31be4b46c84f86976f36e7bb"
+    },
+    {
+      "path": "client/src/pwa/PwaLifecycle.tsx",
+      "expected": "9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741",
+      "actual": "9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741"
+    },
+    {
+      "path": "client/src/pwa/PwaLifecycle.test.tsx",
+      "expected": "3303d4bdaafa468d6de80ed94b181499e1a21b11a349fe1a2d8e50528d65fef6",
+      "actual": "3303d4bdaafa468d6de80ed94b181499e1a21b11a349fe1a2d8e50528d65fef6"
+    }
+  ],
+  "tests": [
+    {
+      "path": "shared/care/paths.test.ts",
+      "sha256lf": "8f00af75cb71e390ffb47e96d157f09dbbe65138233781e9e43501ed7560fd3b"
+    },
+    {
+      "path": "client/src/lib/tracking.test.ts",
+      "sha256lf": "88591bb2476abbee19615ba02b697092db96ff1534643c510383ca33d3242b24"
+    },
+    {
+      "path": "client/src/lib/attribution.test.ts",
+      "sha256lf": "fe7831b0c5f210ac9414044b832230ca8647efb09b354d6de388bc9083f550b4"
+    },
+    {
+      "path": "client/src/App.routes.test.ts",
+      "sha256lf": "e9cf735fa1fbb5f519f73df136ca3479d297e93f8a4476794ba433d9778dc3bb"
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.test.ts",
+      "sha256lf": "5299f7c9c0c19d37dca0e79d092cc8b18ac43b8b049c3a7fe4c6ed7bde1a410e"
+    }
+  ],
+  "manifestSha256lf": "c0fbcc69686562fdd2ec1de6d6a487356118f1d18931f8de3ee9aefd7066eff8",
+  "allMatch": true,
+  "sourceExecution": false
+}
