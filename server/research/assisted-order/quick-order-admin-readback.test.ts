@@ -30,13 +30,26 @@ const UPDATED_AT = "2026-10-06T12:10:00.000Z";
 const EVENT_KEY = `assisted-order:${REQUEST_ID}:quick-order-submitted:admin`;
 const DETAIL_ROUTE = "/api/admin/research/assisted-orders/:requestId";
 const DETAIL_URL = `/api/admin/research/assisted-orders/${REQUEST_ID}`;
+const UPLOAD_ROUTE = "/api/research/early-access/assisted-orders/:requestId/documents/upload-url";
+const UPLOAD_URL = `/api/research/early-access/assisted-orders/${REQUEST_ID}/documents/upload-url`;
 const ADMIN_BEARER = "Bearer synthetic-admin-admission";
 const UNAVAILABLE = {
   error: "assisted_order_unavailable",
   message: "The assisted order service is temporarily unavailable.",
 };
 
-function envelope(): Row {
+// Literal keys emitted by research_assisted_order_admin_json in the unchanged
+// 20260815150000 migration. This fixture models its JSON; it does not execute SQL.
+const CANONICAL_DETAIL_KEYS = [
+  "requestId", "publicReference", "status", "actorMemberId", "fullLegalName", "email",
+  "mobilePhone", "organizationName", "shippingAddress", "billingAddress", "lines",
+  "estimatedTotalCents", "currency", "generalNotes", "agreements", "affiliateAttributionRef",
+  "timeline", "documents", "createdAt", "updatedAt",
+];
+type CanonicalDetail = Omit<AssistedOrderAdminDetail,
+  "source" | "declaredAffiliateCode" | "declaredAffiliateCodeState" | "quickOrder">;
+
+function canonicalDetail20(): CanonicalDetail {
   const line: AssistedOrderLineSnapshot = {
     lineId: "b0000000-0000-4000-8000-000000000001", productId: "synthetic-product",
     variantId: "synthetic-variant", productName: "Synthetic retained product",
@@ -51,24 +64,72 @@ function envelope(): Row {
     line1: "1 Synthetic Test Way", line2: "", city: "Test City",
     region: "IL", postalCode: "60000", countryCode: "US",
   };
-  const detail: AssistedOrderAdminDetail = {
-    requestId: REQUEST_ID, publicReference: REFERENCE, status: "submitted", source: ASSISTED_ORDER_SOURCE,
+  return {
+    requestId: REQUEST_ID, publicReference: REFERENCE, status: "submitted",
     actorMemberId: null, fullLegalName: "Synthetic Test Customer", email: "synthetic-customer@example.invalid",
     mobilePhone: "+12025550100", organizationName: null,
     shippingAddress: { ...address }, billingAddress: { ...address }, lines: [line],
     estimatedTotalCents: 2_500, currency: "USD", generalNotes: null,
     agreements: [{ kind: "synthetic-terms", version: "synthetic-v1", acceptedAt: CREATED_AT }],
-    affiliateAttributionRef: null, declaredAffiliateCode: null, declaredAffiliateCodeState: "not_provided",
+    affiliateAttributionRef: null,
     timeline: [{ status: "submitted", occurredAt: CREATED_AT, customerMessage: null }],
     documents: [], createdAt: CREATED_AT, updatedAt: CREATED_AT,
   };
+}
+
+function canonicalRequestRow(): Row {
+  return { source: ASSISTED_ORDER_SOURCE, declared_affiliate_code: null, declared_affiliate_code_state: null };
+}
+
+// TEST-ONLY model of REVIEW_CLEARED_WRAPPER_CONTRACT_20261006.md, not an
+// implementation or qualification of the future database wrapper. Check the
+// fractional remainder before Date parsing, which otherwise hides microseconds.
+function syntheticIdentityTimestamp(value: unknown): string {
+  if (typeof value !== "string") throw new Error("Synthetic identity timestamp refused");
+  const match = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.(\d{1,6}))?(Z|[+-]\d{2}:\d{2})$/.exec(value);
+  if (!match || /[1-9]/.test((match[2] ?? "").slice(3))) {
+    throw new Error("Synthetic identity timestamp refused");
+  }
+  const milliseconds = (match[2] ?? "").padEnd(3, "0").slice(0, 3);
+  return new Date(`${match[1]}.${milliseconds}${match[3]}`).toISOString();
+}
+
+function syntheticWrapperDetail(canonical: CanonicalDetail, row: Row, quickOrder: boolean): Row {
+  const keys = Object.keys(canonical).sort();
+  if (JSON.stringify(keys) !== JSON.stringify([...CANONICAL_DETAIL_KEYS].sort()) || row.source !== ASSISTED_ORDER_SOURCE) {
+    throw new Error("Synthetic canonical detail refused");
+  }
+  return {
+    ...structuredClone(canonical), source: row.source,
+    declaredAffiliateCode: row.declared_affiliate_code,
+    declaredAffiliateCodeState: row.declared_affiliate_code_state ?? "not_provided",
+    createdAt: quickOrder ? syntheticIdentityTimestamp(canonical.createdAt) : canonical.createdAt,
+  };
+}
+
+function legacyEnvelope(canonical = canonicalDetail20(), row = canonicalRequestRow()): Row {
+  return {
+    schemaVersion: QUICK_ORDER_ADMIN_ENVELOPE_VERSION, requestId: REQUEST_ID,
+    detail: syntheticWrapperDetail(canonical, row, false), submittedEvent: null, enrichment: null,
+  };
+}
+
+function envelope(canonical = canonicalDetail20(), row = canonicalRequestRow(), identity = {
+  submittedAt: CREATED_AT, snapshotAt: CREATED_AT,
+}): Row {
+  const detail = syntheticWrapperDetail(canonical, row, true);
+  const confirmedAt = syntheticIdentityTimestamp(identity.snapshotAt);
+  const occurredAt = syntheticIdentityTimestamp(identity.submittedAt);
+  if (detail.createdAt !== confirmedAt || occurredAt !== confirmedAt) {
+    throw new Error("Synthetic identity binding refused");
+  }
   const estimate = { knownSubtotalCents: 2_500, estimateComplete: true, currency: "USD" };
   const payloadHash = "a".repeat(64);
   return {
     schemaVersion: QUICK_ORDER_ADMIN_ENVELOPE_VERSION, requestId: REQUEST_ID, detail,
     submittedEvent: {
       schemaVersion: "quick-order-v1", requestId: REQUEST_ID, eventType: "submitted",
-      occurredAt: CREATED_AT, payloadHash,
+      occurredAt, payloadHash,
     },
     enrichment: {
       schemaVersion: "quick-order-v1",
@@ -77,7 +138,7 @@ function envelope(): Row {
         intake: {
           schemaVersion: "quick-order-v1", source: "person", sourceDetail: "Synthetic referrer",
           declaredCode: null, affiliationKind: "none", affiliationDetail: "", confirmedByCustomer: true,
-          confirmedAt: CREATED_AT, requestAcknowledged: true, reviewState: "captured_unmatched",
+          confirmedAt, requestAcknowledged: true, reviewState: "captured_unmatched",
           commissionState: "not_authorized", estimate: { ...estimate },
         },
       },
@@ -114,6 +175,11 @@ function compose(reply: SupabaseRpcClient["rpc"], viewer = ADMIN_VIEWER) {
   const unusedSync = vi.fn((): never => { throw new Error("Unexpected synthetic dependency"); });
   const enqueue = vi.fn(async () => undefined);
   const audit = vi.fn(async () => undefined);
+  const createUpload = vi.fn(async () => ({
+    documentId: "synthetic-signer-placeholder", objectPath: "synthetic-signer-placeholder",
+    uploadUrl: "https://storage.example.invalid/synthetic-upload", expiresAt: UPDATED_AT,
+    requiredHeaders: { "Content-Type": "application/pdf" },
+  }));
   let eventSequence = 0;
   const deps: AssistedOrderDependencies = {
     repository,
@@ -121,7 +187,7 @@ function compose(reply: SupabaseRpcClient["rpc"], viewer = ADMIN_VIEWER) {
     legal: { requiredAgreements: unused },
     submissionStanding: { accepted: unused },
     outbox: { enqueue }, audit: { record: audit },
-    documents: { createUpload: unused, createDownload: unused },
+    documents: { createUpload, createDownload: unused },
     googleMirror: null,
     clock: { now: () => new Date(UPDATED_AT) },
     ids: {
@@ -135,9 +201,9 @@ function compose(reply: SupabaseRpcClient["rpc"], viewer = ADMIN_VIEWER) {
   const service = new AssistedOrderService(deps);
   const resolve = vi.fn(async (_request: ExpressAssistedOrderRequest) => viewer);
   const routes = createAssistedOrderRouteTable<ExpressAssistedOrderRequest>(service, { resolve });
-  const door = (method: "GET" | "PATCH", path: string): RequestHandler => {
+  const door = (method: "GET" | "PATCH" | "POST", path: string, auth = "admin"): RequestHandler => {
     const descriptor = routes.find(candidate => candidate.method === method && candidate.path === path);
-    if (!descriptor || descriptor.auth !== "admin") throw new Error("Expected canonical admin descriptor");
+    if (!descriptor || descriptor.auth !== auth) throw new Error("Expected canonical route descriptor");
     return assistedOrderExpressHandler(descriptor);
   };
   const admission: RequestHandler = (req, res, next) => {
@@ -151,7 +217,8 @@ function compose(reply: SupabaseRpcClient["rpc"], viewer = ADMIN_VIEWER) {
   app.use(express.json());
   app.get(DETAIL_ROUTE, admission, door("GET", DETAIL_ROUTE));
   app.patch(`${DETAIL_ROUTE}/status`, admission, door("PATCH", `${DETAIL_ROUTE}/status`));
-  return { app, service, repository, rpc, resolve, enqueue, audit, unused, unusedSync };
+  app.post(UPLOAD_ROUTE, admission, door("POST", UPLOAD_ROUTE, "early_access_or_member"));
+  return { app, service, repository, rpc, resolve, enqueue, audit, createUpload, unused, unusedSync };
 }
 
 function reader(value: unknown, viewer = ADMIN_VIEWER) {
@@ -167,11 +234,103 @@ function expectOnlyRead(h: ReturnType<typeof compose>, requestId = REQUEST_ID): 
   expect(h.rpc.mock.calls).toEqual([[QUICK_ORDER_ADMIN_DETAIL_RPC, { p_request_id: requestId }]]);
   expect(h.enqueue).not.toHaveBeenCalled();
   expect(h.audit).not.toHaveBeenCalled();
+  expect(h.createUpload).not.toHaveBeenCalled();
   expect(h.unused).not.toHaveBeenCalled();
   expect(h.unusedSync).not.toHaveBeenCalled();
 }
 
 describe("Quick Order canonical admin readback composition", () => {
+  it.each(["legacy", "quick-order"] as const)("requires the selected 23-key wrapper instead of raw canonical 20-key passthrough for %s", async kind => {
+    const canonical = canonicalDetail20();
+    const original = JSON.stringify(canonical);
+    expect(Object.keys(canonical).sort()).toEqual([...CANONICAL_DETAIL_KEYS].sort());
+    expect(Object.keys(canonical)).toHaveLength(20);
+    const row = { ...canonicalRequestRow(), declared_affiliate_code: "CANONICAL.CODE", declared_affiliate_code_state: "matched_manual" };
+    const selected = kind === "legacy" ? legacyEnvelope(canonical, row) : envelope(canonical, row);
+    const passthrough = reader({ ...selected, detail: canonical });
+    const refused = await read(passthrough);
+    expect(refused.status).toBe(500);
+    expect(refused.body).toEqual(UNAVAILABLE);
+    expectOnlyRead(passthrough);
+
+    expect(Object.keys(rowAt(selected, "detail")).sort()).toEqual([
+      ...CANONICAL_DETAIL_KEYS, "source", "declaredAffiliateCode", "declaredAffiliateCodeState",
+    ].sort());
+    const h = reader(selected);
+    const response = await read(h);
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchObject({
+      source: ASSISTED_ORDER_SOURCE, declaredAffiliateCode: "CANONICAL.CODE",
+      declaredAffiliateCodeState: "matched_manual", affiliateAttributionRef: null,
+    });
+    if (kind === "legacy") expect(response.body.quickOrder).toBeNull();
+    else expect(response.body.quickOrder.intake).toMatchObject({ declaredCode: null, reviewState: "captured_unmatched" });
+    expect(JSON.stringify(canonical)).toBe(original);
+    expectOnlyRead(h);
+  });
+
+  it.each(["missing", "unexpected"] as const)("the synthetic wrapper model refuses %s canonical keys before appending fields", kind => {
+    const canonical = canonicalDetail20();
+    if (kind === "missing") delete (canonical as unknown as Row).organizationName;
+    else (canonical as unknown as Row).newCanonicalField = "unexpected";
+    expect(() => legacyEnvelope(canonical)).toThrow("Synthetic canonical detail refused");
+  });
+
+  it("the synthetic wrapper model requires stored canonical source instead of fabricating it", () => {
+    expect(() => legacyEnvelope(canonicalDetail20(), { ...canonicalRequestRow(), source: "quick-order" }))
+      .toThrow("Synthetic canonical detail refused");
+  });
+
+  it.each([
+    { raw: "2026-10-06T12:00:00+00:00", iso: "2026-10-06T12:00:00.000Z" },
+    { raw: "2026-10-06T12:00:00.1+00:00", iso: "2026-10-06T12:00:00.100Z" },
+    { raw: "2026-10-06T12:00:00.123+00:00", iso: "2026-10-06T12:00:00.123Z" },
+    { raw: "2026-10-06T12:00:00.123000+00:00", iso: "2026-10-06T12:00:00.123Z" },
+    { raw: "2026-10-06T07:00:00.123000-05:00", iso: "2026-10-06T12:00:00.123Z" },
+  ])("accepts the synthetic QO wrapper's lossless identity rendering for $raw", async ({ raw, iso }) => {
+    const canonical = { ...canonicalDetail20(), createdAt: raw, updatedAt: raw };
+    const original = JSON.stringify(canonical);
+    const value = envelope(canonical, canonicalRequestRow(), { submittedAt: raw, snapshotAt: iso });
+    // The actual reader does not normalize raw timestamps on the wrapper's behalf.
+    const passthrough = reader({ ...value, detail: { ...rowAt(value, "detail"), createdAt: raw } });
+    expect((await read(passthrough)).body).toEqual(UNAVAILABLE);
+    expectOnlyRead(passthrough);
+    const h = reader(value);
+    const response = await read(h);
+    expect(response.status).toBe(200);
+    expect(response.body.createdAt).toBe(iso);
+    expect(response.body.quickOrder.intake.confirmedAt).toBe(iso);
+    expect(response.body.updatedAt).toBe(raw);
+    expect(response.body.timeline).toEqual(canonical.timeline);
+    expect(JSON.stringify(canonical)).toBe(original);
+    expectOnlyRead(h);
+  });
+
+  it.each(["createdAt", "submittedAt", "snapshotAt"] as const)("the synthetic wrapper model refuses submillisecond %s before parsing can hide it", field => {
+    const canonical = { ...canonicalDetail20() };
+    const identity = { submittedAt: CREATED_AT, snapshotAt: CREATED_AT };
+    const submillisecond = "2026-10-06T12:00:00.000001+00:00";
+    if (field === "createdAt") canonical.createdAt = submillisecond;
+    else identity[field] = submillisecond;
+    expect(() => envelope(canonical, canonicalRequestRow(), identity)).toThrow("Synthetic identity timestamp refused");
+  });
+
+  it("the synthetic wrapper model refuses unequal identity instants instead of manufacturing agreement", () => {
+    expect(() => envelope(canonicalDetail20(), canonicalRequestRow(), {
+      submittedAt: "2026-10-06T12:00:00.001+00:00", snapshotAt: CREATED_AT,
+    })).toThrow("Synthetic identity binding refused");
+  });
+
+  it("preserves legacy timestamp JSON including submillisecond precision without QO normalization", async () => {
+    const raw = "2026-10-06T12:00:00.123456+00:00";
+    const canonical = { ...canonicalDetail20(), createdAt: raw, updatedAt: raw };
+    const h = reader(legacyEnvelope(canonical));
+    const response = await read(h);
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchObject({ createdAt: raw, updatedAt: raw, quickOrder: null, declaredAffiliateCode: null, declaredAffiliateCodeState: "not_provided" });
+    expectOnlyRead(h);
+  });
+
   it("returns canonical detail plus narrow Quick Order evidence through the real admin HTTP route", async () => {
     const value = envelope();
     const before = JSON.stringify(value);
@@ -197,7 +356,7 @@ describe("Quick Order canonical admin readback composition", () => {
     expectOnlyRead(h);
   });
 
-  it("rejects unauthenticated admission before resolving a viewer or calling the RPC", async () => {
+  it("rejects at the synthetic fixture admission before resolving a viewer or calling the RPC", async () => {
     const h = reader(envelope());
     const response = await request(h.app).get(DETAIL_URL);
     expect(response.status).toBe(401);
@@ -217,9 +376,7 @@ describe("Quick Order canonical admin readback composition", () => {
   });
 
   it("preserves explicit legacy null enrichment through the same reader", async () => {
-    const value = envelope();
-    value.submittedEvent = null;
-    value.enrichment = null;
+    const value = legacyEnvelope();
     // The new Quick Order line restrictions must not redefine legacy detail.
     rowAt(value, "detail.lines.0").researchUseOnly = true;
     const h = reader(value);
@@ -341,6 +498,66 @@ describe("Quick Order canonical admin readback composition", () => {
     });
     expect(h.enqueue).toHaveBeenCalledTimes(1);
     expect(h.audit).toHaveBeenCalledTimes(1);
+    expect(h.unused).not.toHaveBeenCalled();
+    expect(h.unusedSync).not.toHaveBeenCalled();
+  });
+});
+
+describe("customer upload-url reader cutover with synthetic ownership and signing ports", () => {
+  const member: AssistedOrderViewer = {
+    actorType: "member", memberId: "d0000000-0000-4000-8000-000000000001", earlyAccessSessionHash: null,
+    normalizedEmail: "synthetic-customer@example.invalid", actorLabel: "synthetic-customer@example.invalid",
+    capabilities: new Set(["assisted_orders:read_own"]),
+  };
+  const upload = {
+    publicReference: REFERENCE, documentType: "government_id", side: "front",
+    fileName: "synthetic-identity.pdf", mimeType: "application/pdf", sizeBytes: 128,
+  };
+
+  it.each(["available", "missing-wrapper", "not-owner"] as const)("uses canonical ownership then the selected wrapper for %s", async mode => {
+    const canonical = { ...canonicalDetail20(), status: "identity_requested" as const };
+    const selected = legacyEnvelope(canonical);
+    const statusView = {
+      requestId: REQUEST_ID, publicReference: REFERENCE, status: "identity_requested",
+      createdAt: canonical.createdAt, updatedAt: canonical.updatedAt,
+      estimatedTotalCents: canonical.estimatedTotalCents, currency: canonical.currency,
+      lines: canonical.lines, timeline: canonical.timeline, documents: canonical.documents,
+      actionRequired: "Upload the requested identity document.", trackingReference: null,
+    };
+    const h = compose(async name => {
+      if (name === "research_assisted_order_customer_status") return { data: mode === "not-owner" ? null : statusView, error: null };
+      if (name === QUICK_ORDER_ADMIN_DETAIL_RPC) return mode === "missing-wrapper"
+        ? { data: null, error: { code: "PGRST202", message: "synthetic-private-missing-wrapper" } }
+        : { data: selected, error: null };
+      if (name === "research_assisted_order_document_create") return { data: null, error: null };
+      if (name === "research_assisted_order_admin_get") return { data: canonical, error: null };
+      throw new Error("Unexpected synthetic document RPC");
+    }, member);
+    const response = await request(h.app).post(UPLOAD_URL).set("authorization", ADMIN_BEARER).send(upload);
+    expect(h.rpc.mock.calls[0]).toEqual(["research_assisted_order_customer_status", {
+      p_public_reference: REFERENCE, p_member_id: member.memberId,
+      p_early_access_session_hash: null, p_status_token_hash: null,
+    }]);
+    const expectedReads = ["research_assisted_order_customer_status"];
+    if (mode !== "not-owner") expectedReads.push(QUICK_ORDER_ADMIN_DETAIL_RPC);
+    if (mode === "available") {
+      expect(response.status).toBe(201);
+      expect(response.body).toMatchObject({ uploadUrl: "https://storage.example.invalid/synthetic-upload" });
+      expectedReads.push("research_assisted_order_document_create");
+      expect(h.rpc.mock.calls[2][1]).toMatchObject({ p_document: { requestId: REQUEST_ID, documentType: "government_id", status: "upload_pending" } });
+      expect(h.audit).toHaveBeenCalledWith(expect.objectContaining({ eventType: "assisted_order.document_upload_authorized", requestId: REQUEST_ID, actorType: "member" }));
+      expect(h.createUpload).toHaveBeenCalledTimes(1);
+    } else {
+      expect(response.status).toBe(mode === "not-owner" ? 404 : 500);
+      expect(response.body).toEqual(mode === "not-owner"
+        ? { error: "not_found", message: "The request was not found." } : UNAVAILABLE);
+      expect(response.text).not.toContain("synthetic-private-missing-wrapper");
+      expect(response.body).not.toHaveProperty("uploadUrl");
+      expect(h.audit).not.toHaveBeenCalled();
+      expect(h.createUpload).not.toHaveBeenCalled();
+    }
+    expect(h.rpc.mock.calls.map(([name]) => name)).toEqual(expectedReads);
+    expect(h.enqueue).not.toHaveBeenCalled();
     expect(h.unused).not.toHaveBeenCalled();
     expect(h.unusedSync).not.toHaveBeenCalled();
   });

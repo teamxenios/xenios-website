@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ASSISTED_ORDER_SOURCE } from "../../../shared/research/assisted-order/contract";
 import { renderAssistedOrderOutboxEmail } from "./communications";
+import { PROPOSED_QUICK_ORDER_ADMIN_TEMPLATE } from "./quick-order-repository";
 
 /**
  * Synthetic contract tests of the actual renderer and existing outbox worker.
@@ -7,7 +9,8 @@ import { renderAssistedOrderOutboxEmail } from "./communications";
  * dependencies are replaced. No database, provider, timer, or hosted service
  * is exercised. Reloading the worker below simulates lost process memory;
  * it does not establish SQL durability, transactional enqueue, or exactly-once
- * delivery by a real provider.
+ * delivery by a real provider. The job below models the reviewed obligation
+ * contract; no runtime Quick Order producer or installed wrapper is exercised.
  */
 type Row = Record<string, any>;
 
@@ -109,7 +112,7 @@ vi.mock("../agreement-package-reconciliation", () => ({
   runAgreementPackageReconciler: async () => undefined,
 }));
 
-const TEMPLATE = "research.assisted_order.quick_order.submitted.admin.v1";
+const TEMPLATE = PROPOSED_QUICK_ORDER_ADMIN_TEMPLATE;
 const REQUEST_ID = "11111111-1111-4111-8111-111111111111";
 const REFERENCE = "XRR-20261006-A1B2C3D4E5";
 const EVENT_KEY = `assisted-order:${REQUEST_ID}:quick-order-submitted:admin`;
@@ -160,6 +163,23 @@ afterEach(() => {
 });
 
 describe("Quick Order reference-only notification renderer", () => {
+  it("binds the synthetic obligation to the proposed template and closed reference-only payload", () => {
+    expect(TEMPLATE).toBe("research.assisted_order.quick_order.submitted.admin.v1");
+    expect(job()).toEqual({
+      eventKey: "assisted-order:11111111-1111-4111-8111-111111111111:quick-order-submitted:admin",
+      eventType: "assisted_order.submitted",
+      templateKey: "research.assisted_order.quick_order.submitted.admin.v1",
+      recipient: "synthetic-operator@example.invalid",
+      payload: { schemaVersion: "quick-order-v1", requestId: REQUEST_ID, publicReference: REFERENCE },
+    });
+    expect(Object.keys(payload()).sort()).toEqual(["publicReference", "requestId", "schemaVersion"]);
+    // Canonical request source remains unchanged, but is not a notification
+    // payload field or permission to choose the legacy, broader admin renderer.
+    expect(ASSISTED_ORDER_SOURCE).toBe("early_access_manual_order_bridge");
+    expect(() => renderAssistedOrderOutboxEmail(TEMPLATE, { ...payload(), source: ASSISTED_ORDER_SOURCE }))
+      .toThrow(REFUSAL);
+  });
+
   it("renders only the reference and a fixed trusted internal link, independent of SITE_URL", () => {
     const mail = renderAssistedOrderOutboxEmail(TEMPLATE, payload());
     expect(mail).toEqual({
@@ -271,6 +291,13 @@ describe("Quick Order through the existing outbox dispatcher (synthetic storage/
     const outbox = await worker();
     expect(await outbox.enqueueNotificationOnce(job())).toBe("inserted");
     expect(await outbox.enqueueNotificationOnce(job())).toBe("already_queued");
+    expect(fixture.outbox).toHaveLength(1);
+    expect(fixture.outbox[0]).toMatchObject({
+      event_key: EVENT_KEY, event_type: "assisted_order.submitted", template_key: TEMPLATE,
+      recipient: RECIPIENT, application_id: null, payload: payload(), status: "pending",
+    });
+    expect(Object.keys(fixture.outbox[0].payload).sort()).toEqual(["publicReference", "requestId", "schemaVersion"]);
+    expect(fixture.outbox[0].payload).not.toHaveProperty("source");
     expect(await outbox.runOutboxTick(NOW)).toEqual({ sent: 1, retried: 0, failed: 0 });
     expect(transport.send).toHaveBeenCalledTimes(1);
     expect(transport.send).toHaveBeenCalledWith({
@@ -279,7 +306,8 @@ describe("Quick Order through the existing outbox dispatcher (synthetic storage/
     }, { idempotencyKey: EVENT_KEY });
     expect(fixture.outbox).toHaveLength(1);
     expect(fixture.outbox[0]).toMatchObject({
-      event_key: EVENT_KEY, payload: payload(), application_id: null,
+      event_key: EVENT_KEY, event_type: "assisted_order.submitted", template_key: TEMPLATE,
+      recipient: RECIPIENT, payload: payload(), application_id: null,
       status: "sent", attempt_count: 1, provider_message_id: "synthetic-provider-message",
     });
     expect(fixture.attempts).toMatchObject([{ outbox_id: fixture.outbox[0].id, attempt: 1, outcome: "sent" }]);
@@ -288,6 +316,7 @@ describe("Quick Order through the existing outbox dispatcher (synthetic storage/
   });
 
   it.each([
+    { label: "canonical source outside the closed payload", extra: { source: ASSISTED_ORDER_SOURCE } },
     { label: "private declaration", extra: { sourceDetail: PRIVATE_VALUE } },
     { label: "external URL", extra: { adminPath: `https://untrusted.example.invalid/${PRIVATE_VALUE}` } },
     { label: "malformed reference", extra: { publicReference: PRIVATE_VALUE } },
