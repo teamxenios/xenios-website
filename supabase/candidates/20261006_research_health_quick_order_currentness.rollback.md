@@ -95,6 +95,11 @@ begin
   perform public.research_assisted_order_provider_settlement_integrity();
   predecessor := public.research_assisted_order_provider_schema_fingerprint();
   perform public.research_health_quick_order_currentness_integrity();
+  -- Serialize against publish/revoke before testing retained history. A row
+  -- committed while this lock waited must be visible to the following check;
+  -- do not let DROP become the first lock after an earlier empty observation.
+  lock table public.research_health_quick_order_authority_head,
+    public.research_health_quick_order_authority_revisions in access exclusive mode;
   if obj_description('public.research_health_quick_order_authority_head'::regclass,'pg_class')
     is distinct from 'RHQOC_HELD_V1:'||expected_definition||':'||
       public.research_health_quick_order_currentness_schema_fingerprint() then
