@@ -3597,12 +3597,25 @@
         ".xenios/sessions/codex-health-quick-order-20261005.json",
         ".xenios/handoffs/quick-order-20261005-handoff.md",
         "client/src/research/quick-order/**",
-        "server/research/health/quick-order/**"
+        "server/research/health/quick-order/**",
+        "client/src/App.tsx",
+        "shared/care/paths.ts",
+        "client/src/lib/tracking.ts",
+        "client/src/lib/attribution.ts",
+        "server/research/seo/raw-http-document-policy.ts",
+        "server/index.ts",
+        "client/src/pwa/PwaLifecycle.tsx",
+        "client/src/pwa/PwaLifecycle.test.tsx",
+        "shared/care/paths.test.ts",
+        "client/src/lib/tracking.test.ts",
+        "client/src/lib/attribution.test.ts",
+        "client/src/App.routes.test.ts",
+        "server/research/seo/raw-http-document-policy.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-10-05T19:13:42.719Z",
-      "heartbeatAt": "2026-10-05T22:11:11.586Z",
-      "note": "Reserved for same parked builder. Records-only QO-R-02/R-04 packet corrections complete; sourcefd023e8 accepted with limits. Targeted execution/receipt verification and existing decisions pending. No qualification process."
+      "heartbeatAt": "2026-10-06T18:12:22.066Z",
+      "note": "Reserved for same parked builder: S2/S3 exact13path successor ac36e60 pushed; review and qualification pending. G1 consumed/refused,zero test processes,no retry. No other owner or global registry field changed."
     }
   ],
   "rules": [

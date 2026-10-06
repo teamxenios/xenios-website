@@ -1,5 +1,31 @@
 # Quick Order: exact source decisions
 
+## Current source-stage disposition — 2026-10-06
+
+Samuel's17:43:37Z kickoff explicitly adopted S1-S5, recorded at coordinator
+`60d593ae2fc0623edc869e373bfe52e830968df9`. Current builder source is
+`ac36e60fe5e91b1217722e7f2a2711fd62a64559`, tree
+`c83e78153d8cafcd2580e2ed83e1cd9d6f8b79a0`.
+See [S2_S3_SOURCE_20261006.md](S2_S3_SOURCE_20261006.md) and its exact hash receipt.
+
+| Decision | Current status |
+| --- | --- |
+| S2/A1 exact disabled mount/privacy source | Edit-from-baseline authority granted; all six baselines verified; exact c65 patch applied with all six proposed hashes matched. Five named regression files authored. No execution/acceptance claim. |
+| S3 PWA source | Narrow runtime/test correction authorized from verified identities and implemented. Install promotion now consults the intake predicate. Update/registration/cache behavior untouched. Tests NOT RUN. |
+| S4/A2 | New-only drafting is authorized subject to doc36§7 and prior independent naming/fence review. Currentness DESIGN ONLY is authorized; implementation of the new authority/complete commit RPC and existing shared service edits still need supplemental exact scope. No A2 work was assigned to or performed by this builder slice. |
+| S5 qualification | G1 consumed/refused at17:54:58Z:1205MiB<1536, disk26.0734GiB, no matching heavy job, source/lease pass. Zero tests. Separate reservation/material host change required before another group. Window expires21:43:37Z. |
+| Successor hashes / GATE-01 / manifest | Independent successor review, final hash acceptance, inherited-seam release disposition and authorized recut remain open. Manifest unchanged. Source-stage permission preserves inherited seams without accepting them for release. |
+| Health authorities / real adapters | Still missing or unqualified; fail closed. No durable intake, operator readback or payment is proved. |
+| Managed/production actions | No SQL execution or registration, live intake, notifications, payments, grants or deployment. |
+
+The complete earlier decision analysis below is the **historical5ee44d5 snapshot**.
+Its statements that A1/PWA edits and all A2 drafting are pending, or that c65 is
+unapplied, describe that predecessor only. Its exact predecessor hashes, gate
+provenance and unexecuted composition requirements remain useful. The new grant
+changes source-stage permission; it does not grant final-state acceptance.
+
+## Historical decision analysis at5ee44d5
+
 **Current A1 is the relocated proposal**. Historical patch `6481c2ad...` is
 **HELD / REVISION REQUIRED AFTER SOURCE RELOCATION**, preserved byte-for-byte in
 `history/MOUNT_PROPOSAL_6481c2ad_HELD.patch` with its original hash pairs. Do not

@@ -1,4 +1,4 @@
-# Quick Order accepted HTTP source / records correction — 2026-10-05
+# Quick Order disabled mount/PWA handoff — 2026-10-06
 
 - SESSION: `codex-health-quick-order-20261005`
 - TASK: `HEALTH-QUICK-ORDER-20261005`
@@ -7,151 +7,116 @@
 - BRANCH: `codex/xenios-health-quick-order-20261005`
 - WORKTREE: `C:/Users/sboad/.codex/worktrees/389a/xenios-website`
 - COORDINATOR: `01a103a8-5684-7272-89e5-3c42eefcd593`
-- FINAL PUSHED MODULE SOURCE: **`fd023e8c03baa2326baf707c944bcd25dce7f453`**
-- SOURCE TREE: **`46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e`**
+- PUSHED RUNTIME + TEST SOURCE: **`ac36e60fe5e91b1217722e7f2a2711fd62a64559`**
+- SOURCE TREE: **`c83e78153d8cafcd2580e2ed83e1cd9d6f8b79a0`**
+- PUSHED G1 EVIDENCE: `dc119280d881e8fd6066a6be9829e6b2a2fa4005`
+- LEASE: `17093695-69b5-4cc0-8b29-aedb82bf6409`, retained for this same builder
+- STATUS: source IMPLEMENTED; successor acceptance/qualification PENDING; intake DISABLED
 
-This handoff and its later records commit change no runtime/test source. The
-accepted base remains `756a906877dbc174b7e228a259d2faa9c3af48ca`, tree
-`787432948d9464880df1dcfc5dff58eec7d889aa`; SOURCE ACCEPT in `04cbbee0...`,
-count correction `fffa33a...`, not release acceptance. Do not merge the
-coordinator's Finance ancestry or start another builder/reviewer/relocation.
+## Controlling instruction
 
-Latest records-only continuation: coordinator request
-`3678d015e63ac74a64dd057c387983b16b7ec313`, within Samuel's existing direct20a
-packet scope. Only APPROVAL_MATRIX's QO-R-02 GATE-01 provenance and QO-R-04 PWA
-predicate wording changed, plus this handoff and our existing continuity entries.
-App's inherited drift is Access Hub `0d22757`; server/index's is the HL-12
-financial/provider chain beginning `3562c03`. Both pinned/current LF hashes
-are now named accurately. PWA wording includes all existing exclusions while
-preserving plain intake-route eligibility and its separate protected scope.
-No A1/A2, GATE-01 disposition, manifest recut or source change is inferred.
+Samuel's coordinator kickoff, received `2026-10-06T17:43:37Z`, explicitly adopts
+SOURCE_AUTHORIZATION_DRAFT.md. Actual message is
+`01a11250-62ad-7e83-93bd-2648b243593e`, turn
+`01a11250-5782-7d03-b0d7-35162c175819`; full pasted request attachment
+`a276ed40-8ebe-41f3-8eec-90e78b6116b5/Pasted text.txt` was read. The request,
+draft and sprint reservation are recorded at coordinator
+`60d593ae2fc0623edc869e373bfe52e830968df9`. The document alone did not grant work.
+This owner was assigned S2/S3 and G1 only. Do not merge coordinator Finance ancestry.
+Do not develop the handoff harness, reopen accepted audits or start another builder.
 
-Static Git/hash verification for this continuation: 24 module files and all14
-baselines match fd023e8 evidence. Runtime/tests, protected/shared source,
-manifest/verifier, SQL/candidates, c65/old648 patches, six pairs, persistence
-proposal and historical logs remain unchanged. Only our own registry entries
-change; no other owner or top-level registry field changes. No tests, probes,
-syntax checks, application-source execution, resource retries, typecheck, build,
-browser, database or process cleanup occurred. Same lease retained; parked.
+## Completed source
 
-## Controlling scope
+Exact c65 mount patch applied from all six verified authorized baselines. All six
+successor LF hashes match proposed pairs. Seven runtime files and six test files
+changed in ac36e60; source/hash inventory is in
+`docs/health-launch/quick-order-20261005/evidence/s2-s3-source-ac36e60.json`.
 
-Read coordinator request `25ca24b07ef8bab2a7dd97fd0ad576fc08a1bc48`, narrowed by
-Samuel's full attachment `20a5d445-6335-4de9-a6db-0cc00c656149/Pasted text.txt`.
-The latter was read in full. Only QO-P2-03/04 and the listed packet/own-lease
-corrections are authorized. Neither A1 nor A2 is granted. Doc 36
-`2d7533f2d3d3a1c69ea686170524d7af4dd6b064` carries future conditions; doc 37
-`324183e886af369a4ea27b9bf0f7b9c615b32139` accepts the pure relocation at
-`f1e467f74b01ae2ab866bb791a3c11d657a5d69c` / records `c807f19`, closing QO-P1-A
-and QO-P1-B's classification disclosure. Doc 38 at
-`78cd7e6f598b74a88d810e545553b1da9ecb88a5` gives fd023e8 / 1b3bb16 **SOURCE
-ACCEPT WITH LIMITS**. QO-P2-03/04 remain **PARTIAL: closed at source**, while the
-authored targeted red/green regressions are NOT RUN. Their composition proof
-and the existing reviewer's receipt verification remain outstanding. Reviewer
-record-count/provenance corrections belong to that same Claude context.
+App lazily mounts the existing QuickOrderPage only at `/health/quick-order` with
+`sessionKey={null}`, so the existing unavailable state is selected. The `/health`
+redirect, Access Hub behavior and other routes are preserved. API containment
+uses unchanged fd code before parsers. A separate intake helper extends tracking,
+attribution and raw private/noindex classification without broadening the gateway.
+PWA adds only the intake predicate to install suppression. Update notices,
+registration and caches remain unchanged.
 
-## Completed source and packet
+Authored regressions cover path normalization/neighbors, tracker initialization
+and events, async config race, document transitions, valid prior attribution
+clearing before reads, referral isolation, source route contract, raw document
+SEO, PWA navigation/click races and retained public/update behavior. They are
+NOT RUN. App source checks are not rendered-App evidence. Raw policy tests are
+not static/Vite/private-cache-header/cold-navigation/refresh evidence. Real root
+mount/body-parser composition needs its separately named supplemental test scope.
 
-Runtime/test delta from c807f19 is exactly six files under
-`server/research/health/quick-order/`: `paths.mjs`, `paths.d.mts`, `handler.mjs`,
-`containment.ts`, `containment.test.ts`, and `tests/handler.test.mjs`.
-One nonthrowing classifier owns original/effective target derivation and returns
-unrelated, owned-valid or owned-malformed. Conservative case, literal/encoded
-dot, backslash, duplicate/encoded separator and absolute-form aliases are
-refused, never activated. Leading `//` is always a path, never remote authority.
-Raw owned paths remain owned after traversal out of the namespace. Absolute
-scheme-separator variants retain both lexical and normalized ownership views.
+The accepted24-file module at `fd023e8c03baa2326baf707c944bcd25dce7f453`, tree
+`46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e`, is byte-identical in this candidate.
+Doc38 at78cd7e6 accepted that source with limits. QO-P2-03/04 remain PARTIAL:
+source correction accepted, mandatory HTTP execution pending. Historical73/116
+and184/10 receipts stay bound to their own sources and are never pooled.
 
-Disabled containment emits fixed private 503 before parsers. The handler and
-parser-error middleware emit scoped invalid_request for malformed owned paths;
-unrelated malformed/absolute targets call next before port/body access. Valid
-canonical targets preserve mount stripping, query, origin/session/CSRF/body
-limits, config/replay and parser-error mappings. Uppercase alone was unrelated
-to both predecessor predicates, not an existing differential/leak. Production
-ports remain unavailable and intake remains unmounted/disabled.
+## Fresh one-shot G1 outcome
 
-New raw httpRequest regression definitions assert parser/rawBody counters and
-unrelated positive controls. Direct handler probes cover zero ports/body/stream
-access and original/effective conflicts. Existing origin/body-limit/CSRF/replay
-regressions remain unchanged. No attacker target host is used as trusted origin
-or session authority.
+Reservation `QO-FIRST-20261006-G1` was consumed at
+`2026-10-06T17:54:58.1429186Z`, before its18:00Z start deadline:
+RAM **1205MiB <1536MiB**, disk26.0734GiB >=20GiB, no matching heavy job,
+24-file source/14-baseline/lease checks passed. Result **REFUSED_RELEASED**.
+**ZERO TEST PROCESSES.** Receipt/script are pushed atdc11928. No partial Node,
+resource retry, cleanup, unrelated process stop or threshold relaxation occurred.
+Old934MiB and the consumed October5 permission are historical only.
 
-APPROVAL_MATRIX now discloses the extra HARD PwaLifecycle dependency, separate
-protected scope, missing route/privacy/PWA/static direct-navigation regression
-pins, and GATE-01 sequencing: applying A1 adds another App/server seam delta,
-so a later recut cannot isolate HL-17 alone. Source-edit authority, successor
-hash approval and protection-owner recut remain separate. PERSISTENCE_PROPOSAL
-is unchanged; doc36 A2 conditions are future holds, not design revision/drafting.
-The unsupported 706 MiB claim is withdrawn without fabricating a receipt.
-Runner coverage and own-entry-only registry authority are explicit.
+The four-hour S5 window expires `2026-10-06T21:43:37Z`; max six groups. This owner
+consumed G1, no second reservation. Another attempt requires materially changed
+host conditions plus a distinct coordinator reservation/precheck. Do not sample
+resources again merely because this handoff is read. At expiry park unrun jobs.
 
-## Evidence and execution deferral
+Mandatory HTTP plan remains frozen in `evidence/http-regression-plan-fd023e8.json`:
+red f1 runtime + identical fd tests, green fd runtime/tests; one filtered handler
+file plus two containment parameterized blocks (36 rows), four serial processes.
+Node oldspace128/concurrency1; Vitest oldspace1024/oneworker/no file parallelism/
+cachefalse. Red must expose intended defects, not setup failure. Snapshots remain
+unmaterialized. Do not rerun accepted73/116 or add typecheck/build/browser to G1.
 
-`docs/health-launch/quick-order-20261005/HTTP_CORRECTION.md` gives the exact policy,
-coverage limits and targeted red/green plan. Its evidence directory contains:
+## Ownership and evidence
 
-- `packet-integrity-http-fd023e8.json`: static hash audit, ok true; 24 module
-  files, all14 baseline hashes unchanged, six historical logs exact, c65 patch
-  unchanged and `git apply --check` exit0. No runtime/test execution.
-- `http-regression-plan-fd023e8.json`: baseline f1/source fd exact trees,
-  runtime and identical successor-test Git blob IDs/SHA256LF, proposed scratch
-  configs/commands; both red and green NOT RUN, exit/log null. Snapshot copies
-  have not been materialized. Only six server paths changed; client/shared/SQL/
-  scripts/package/manifest and A1/A2 proposal invariants match predecessor.
-  Other registry entries and top-level fields match c807f19.
+Same lease extended exactly13 S2/S3 paths after current389a/3221 active-registry
+conflict checks and exact hashes. Historical stale copies were preserved and
+reported, not rewritten or claimed released. Actual b22f is non-active handoff
+at38c7239. Only this task/session/lease's existing entries changed; other owners
+and top-level registry fields are preserved. Session/task blocked_external;
+lease remains active/reserved for this same owner, with no executing helper/job.
 
-No Node test, Vitest, syntax check, typecheck, build, aggregate, browser or DB
-qualification ran for fd023e8. Prior fc11f54 was released after the builder's
-503 MiB refusal without a test process. Latest coordinator message reports
-21:07:57Z RAM1331 MiB, disk13.91 GiB, no matching heavy Node job: disk is below
-20 GiB, so no new slot can be granted. This is attributed coordinator evidence,
-not a builder measurement. No resource relaxation, retries or cleanup.
+Static verification: six c65 pairs matched; exactly13 authorized application
+paths changed; fd module and protection manifest unchanged; git diff --check
+passed. No source execution, syntax checks, Node/Vitest tests, typecheck, build,
+browser or DB runs. Builder helper diff inspection is not independent acceptance.
 
-After a fresh bounded reservation, use the exact isolated red/green snapshots
-and targeted name filters in the plan. Preserve working source and shared/
-protected files. Record fresh per-job prechecks, resolved commands, raw logs,
-exit and snapshot hashes. Do not repeat accepted73+116 merely to change receipt
-ownership. The f1-era full-suite precheck/relocation scripts are historical and
-must not be reused as qualification of this 24-file semantic successor.
+Details: `docs/health-launch/quick-order-20261005/S2_S3_SOURCE_20261006.md`.
+Historical5ee approval analysis remains explicitly labeled in APPROVAL_MATRIX;
+its new current section records granted source-stage permissions and remaining
+final-state holds. Original c65/old648 patches, six original pairs, frozen plan,
+prior raw logs and persistence proposal remain preserved.
 
-Historical receipts remain byte-for-byte, at their own source: builder3b0048d
-73+111=184; 4abd2c5 containment10; reviewer c807f19 Node73/Vitest116 separately.
-Reviewer passes do not qualify fd023e8 or prove typecheck/build/browser/DB. Its
-recorded Vitest1206 MiB was below coordinator1536 MiB and is not a newly reserved
-builder receipt. Do not pool counts. Real adapters, durable persistence,
-operator readback and actual application route remain NOT PROVEN.
+## Actual capability and next action
 
-## Invariants, ownership and next action
+Candidate source mounts an unavailable page. No durable Quick Order submission,
+recoverable committed reference or real operator readback is implemented/proved.
+No fake success or request storage was added. Payment is absent. Not deployed.
 
-Patch `c65d7e49a9f5ec87262d4e3b106ab5e16b1c3d1ecd46a01c8a7ca4699e6d92af` and
-all six pairs unchanged, unapplied and unapproved. Old patch
-`6481c2ad2d4d2828e789cb2f2e24964705562cb782d70728b4152d78dc40a672` held and
-preserved. No protected mount/PWA/privacy source, manifest/verifier, SQL candidate,
-migration registry, production or hosted state changed. No customer data, real email,
-payment, provider/partner action or deployed customer link. All Core/GATE-01,
-MC-01, D/E, subscription and Finance/provider release holds remain.
+Coordinator collects this exact source/evidence checkpoint and routes the bounded
+new delta to the same Claude acceptance owner. It owns supplemental currentness,
+shared reader/writer/outbox and full composition test scope. Do not implement a
+new currentness authority, complete commit RPC, existing shared service edits or
+colliding SQL under this handoff. S4 drafting/design scope has its own conditions
+and owner assignment. Missing legal/destination/standing authorities fail closed.
 
-Exact lease `17093695-69b5-4cc0-8b29-aedb82bf6409` remains reserved for the SAME
-builder over current Research QO prefixes, own docs, own session and handoff.
-Old client/src/quick-order, server/health/quick-order and shared/health/quick-order
-reservations were removed only after no tracked/remaining file proof. Historical
-inventories stay intact. The three branch-local shared registries are not whole
-file leases: only this session/task/lease's existing entries were updated;
-other owners and global registry timestamps remain unchanged. Session/task
-`blocked_external` awaits qualified targeted execution/receipt verification and
-existing decisions. Source acceptance is recorded; no test gate is waived.
+Tracking/attribution/PWA successor HARD hashes, added App/server seam deltas,
+GATE-01 disposition, final owner acceptance and protection-owner recut remain
+separate. No manifest/verifier change, SQL registration/execution, hosted write,
+real intake/notification/payment, grant or deploy. Core/MC-01/D/E/subscription/
+Finance/provider holds remain. Source-edit authority is not release acceptance.
 
-NEXT: Park this same builder. Coordinator may obtain a fresh slot when host
-constraints permit; then the existing Claude reviewer verifies targeted receipts
-through the coordinator's authorized channel. No qualification/resource retry,
-optional F1/F3 source changes, broad audit, new reviewer, duplicate relocation,
-A1 application or A2 expansion is authorized by this records correction.
-Pending approval questions stay pending.
-This lane reports in its own chat. Automatic approval review previously rejected
-outbound coordinator messaging because trusted user authorization could not be
-verified; no retry or alternate channel is used.
-
-First commands: `git status --short --branch`; read this packet and newest
-coordinator decisions; resume the same session using pinned Node20 with
-`scripts/agentic/xenios-os.mjs resume --session codex-health-quick-order-20261005`.
-Do not reset, clean, merge unrelated ancestry or mutate hosted systems.
+Report in this own chat; coordinator collects. No outbound reply is required.
+Next commands: `git status --short --branch`; read this handoff and newest exact
+coordinator assignment; resume this same session, never register a duplicate.
+Run only newly reserved jobs after their fresh authorized precheck. Otherwise
+remain parked for the exact independent review or next bounded source assignment.

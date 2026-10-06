@@ -1,5 +1,11 @@
 # Quick Order isolated implementation
 
+Current source-stage checkpoint: [S2_S3_SOURCE_20261006.md](S2_S3_SOURCE_20261006.md).
+Source `ac36e60fe5e91b1217722e7f2a2711fd62a64559` applies the exact disabled mount,
+privacy and PWA correction plus six test files. Source review and execution remain
+pending. G1 was consumed/refused at17:54:58Z on October6:1205MiB<1536; zero tests.
+No current slot, durable request, operator readback, payment or deployment.
+
 Work in progress. Source base `756a906877dbc174b7e228a259d2faa9c3af48ca`, tree
 `787432948d9464880df1dcfc5dff58eec7d889aa`, received independent **SOURCE ACCEPT**
 at reviewer commit `04cbbee0d3d3ab32dfd6ae9002b82837423f6265`; count-typo correction
@@ -31,7 +37,7 @@ resource-deferred typecheck and missing full-App/durable proof;
 - Session/task: `codex-health-quick-order-20261005` / `HEALTH-QUICK-ORDER-20261005`
 - Assigned model/effort: GPT-6 Astra Ultra (task configuration, not changed by a prompt).
 - Coordinator: `01a103a8-5684-7272-89e5-3c42eefcd593`
-- Exact lease: `client/src/research/quick-order/**` and `server/research/health/quick-order/**`, this evidence directory, own session and exact handoff. Old prefixes were removed after verifying zero tracked or remaining files. Only our existing task/session/lease entries in the three branch-local registries may be updated; no whole-registry lease. Other fleet entries and global timestamps remain intact. Integrator release was verified in records `38c723964358c18b8c5090f2f9a0aa92f74601b0`.
+- Exact lease: `client/src/research/quick-order/**` and `server/research/health/quick-order/**`, this evidence directory, own session and exact handoff, now extended by the13 exact S2/S3 paths in `evidence/s2-s3-lease-extension-20261006.json`. Old prefixes were removed after verifying zero tracked or remaining files. Only our existing task/session/lease entries in the three branch-local registries may be updated; no whole-registry lease. Other fleet entries and global timestamps remain intact. Integrator non-active handoff was verified in records `38c723964358c18b8c5090f2f9a0aa92f74601b0`; its literal state is `handoff`, not `released`.
 
 ## Current port and service map
 
@@ -71,17 +77,18 @@ Portable explicit test enumeration is required for the successor.
 
 ## Holds
 
-No protected mounts, privacy dependencies, schema candidates, manifests or
-operator roots have been edited. Real intake remains disabled. The current
-`/health/quick-order` path is not yet mounted and is classified public by the
-existing marketing boundary; changing a helper indirectly would still require
-the protected behavior approval. The package's historical b0e818f and guessed
-routes.ts are not authority.
+The protected mount/privacy/PWA source is now edited under the explicit S2/S3
+grant. The exact intake route is mounted disabled and classified sensitive by
+the marketing and PWA boundaries. These are source facts, not tested or deployed
+capabilities. Schema candidates, operator roots, manifest and verifier remain
+unchanged by this slice. The package's historical b0e818f and guessed routes.ts
+are not authority.
 
 Pending exact Core hash approvals, GATE-01, intended subscription/product plan,
 all six subscription buying prerequisites, MC01 compatibility/adoption chain,
 D/E real delivery limits and Finance/provider holds remain unchanged.
 
-Doc 37 accepted the pure relocation with explicit limits; the current HTTP
-semantic correction awaits its own review and qualification. Managed nonproduction:
-NOT RUN. Real intake: NOT READY. Payment/subscription/clinical readiness: unchanged.
+Doc37 accepted pure relocation; doc38 accepted fd HTTP source with limits,
+leaving its targeted execution pending. The ac36e60 mount/PWA successor awaits
+independent review and qualification. Managed nonproduction: NOT RUN. Real
+intake: NOT READY. Payment/subscription/clinical readiness: unchanged.

@@ -14,13 +14,26 @@
         ".xenios/sessions/codex-health-quick-order-20261005.json",
         ".xenios/handoffs/quick-order-20261005-handoff.md",
         "client/src/research/quick-order/**",
-        "server/research/health/quick-order/**"
+        "server/research/health/quick-order/**",
+        "client/src/App.tsx",
+        "shared/care/paths.ts",
+        "client/src/lib/tracking.ts",
+        "client/src/lib/attribution.ts",
+        "server/research/seo/raw-http-document-policy.ts",
+        "server/index.ts",
+        "client/src/pwa/PwaLifecycle.tsx",
+        "client/src/pwa/PwaLifecycle.test.tsx",
+        "shared/care/paths.test.ts",
+        "client/src/lib/tracking.test.ts",
+        "client/src/lib/attribution.test.ts",
+        "client/src/App.routes.test.ts",
+        "server/research/seo/raw-http-document-policy.test.ts"
       ],
       "dependsOn": [],
-      "scopeNote": "Records-only APPROVAL_MATRIX GATE-01 provenance and complete existing PWA predicate wording, plus own continuity/handoff. Same task/lease; only own registry entries. Sourcefd023e8 preserved and accepted with limits at78cd7e6; QO-P2-03/04 remain PARTIAL pending executed targeted receipts. No optional F1/F3 changes, A2 expansion, qualification/resource retry or production action. Parked.",
+      "scopeNote": "Same builder completed S2/S3 under Samuel17:43:37Z kickoff/coordinator60d593a;13 exactsourcepaths. Source implementation only, new independent review/final hash acceptance/qualification pending. G1 consumed/refused, no automatic recheck. Coordinator owns supplemental currentness/shared-service/full-composition-test scope. No acceptance, manifestrecut, SQL or managed actions inferred.",
       "claimedAt": "2026-10-05T19:13:42.715Z",
-      "sourceSha": "fd023e8c03baa2326baf707c944bcd25dce7f453",
-      "sourceTree": "46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e",
+      "sourceSha": "ac36e60fe5e91b1217722e7f2a2711fd62a64559",
+      "sourceTree": "c83e78153d8cafcd2580e2ed83e1cd9d6f8b79a0",
       "baseAcceptance": {
         "sha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
         "review": "04cbbee0d3d3ab32dfd6ae9002b82837423f6265",
@@ -28,19 +41,33 @@
       },
       "handoff": {
         "session": "codex-health-quick-order-20261005",
-        "sha": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+        "sha": "ac36e60fe5e91b1217722e7f2a2711fd62a64559",
         "file": ".xenios/handoffs/quick-order-20261005-handoff.md",
-        "at": "2026-10-05T22:11:11.586Z"
+        "at": "2026-10-06T18:12:22.066Z"
       },
       "blockedOn": [
-        "Fresh targeted red/green qualification reservation; coordinator disk13.91GiB<20GiB prevents grant; priorfc11f54 released",
-        "QO-P2-03/04 closed at source but PARTIAL: authored targeted red/green NOT RUN; existing Claude receipt verification after a qualified reservation",
-        "A1 exact protected mount/privacy edit authority and GATE-01 sequencing; later successor acceptance/owner recut separate",
-        "A2 pending with doc36 future constraints and separate currentness authority; no drafting in this slice",
-        "Governed Health legal/classification/visibility/destination/standing/currentness authority",
-        "Resource-qualified typecheck/build/browser/real DB proof",
-        "Outbound coordinator message permission pending auto-review rejection"
-      ]
+        "HTTP red/green NOT RUN: G1 refused1205MiB<1536 at2026-10-06T17:54:58Z; separate coordinator reservation and materially changed conditions required",
+        "S2/S3 source successor independent review, final protected hash acceptance and owner recut; GATE-01 stays open",
+        "S2/S3 focused tests, real App/static/Vite composition, typecheck/build/browser qualification pending valid distinct groups",
+        "Canonical persistence/currentness and shared reader/writer/outbox implementation outside this assigned slice; supplemental scope required",
+        "Governed Health legal/classification/visibility/destination/standing authorities; live intake, payments and production remain held"
+      ],
+      "heartbeatAt": "2026-10-06T18:12:22.066Z",
+      "note": "S2/S3 implemented/pushed ac36e60: exact6file c65 disabled mount/privacy and narrow PWA plus6testfiles. Static hashes/diff checked; successor review and all execution pending. G1 refused2026-10-06T17:54:58Z RAM1205<1536,disk26.0734,noheavy; consumed/released,zero tests,no retry. fd module preserved. Same builder parked, exactlease retained; no persistence/SQL/live intake/payment/deploy or manifestrecut.",
+      "qualification": {
+        "reservation": "QO-FIRST-20261006-G1",
+        "status": "REFUSED_RELEASED",
+        "sampledAt": "2026-10-06T17:54:58.1429186Z",
+        "availableMiB": 1205,
+        "requiredMiB": 1536,
+        "freeDiskGiB": 26.0734,
+        "testProcessesStarted": 0,
+        "consumedGroups": 1,
+        "maximumGroups": 6,
+        "evidenceCommit": "dc119280d881e8fd6066a6be9829e6b2a2fa4005",
+        "retryAuthorized": false,
+        "expiresAt": "2026-10-06T21:43:37Z"
+      }
     },
     {
       "id": "ACCEPTED-SOURCE-INTEGRATION-20261005",

@@ -1,0 +1,54 @@
+{
+  "at": "2026-10-06T18:02:31.616Z",
+  "authorityCommit": "60d593ae2fc0623edc869e373bfe52e830968df9",
+  "lease": "17093695-69b5-4cc0-8b29-aedb82bf6409",
+  "session": "codex-health-quick-order-20261005",
+  "paths": [
+    "client/src/App.tsx",
+    "shared/care/paths.ts",
+    "client/src/lib/tracking.ts",
+    "client/src/lib/attribution.ts",
+    "server/research/seo/raw-http-document-policy.ts",
+    "server/index.ts",
+    "client/src/pwa/PwaLifecycle.tsx",
+    "client/src/pwa/PwaLifecycle.test.tsx",
+    "shared/care/paths.test.ts",
+    "client/src/lib/tracking.test.ts",
+    "client/src/lib/attribution.test.ts",
+    "client/src/App.routes.test.ts",
+    "server/research/seo/raw-http-document-policy.test.ts"
+  ],
+  "currentRegistries": [
+    "389a",
+    "3221"
+  ],
+  "activeConflicts": [],
+  "reviewedHistoricalWorktreeRegistryPairs": 169,
+  "integrator": {
+    "lease": "d0897045-efd3-425b-a8b4-02385e855153",
+    "actualState": "handoff",
+    "evidenceCommit": "38c723964358c18b8c5090f2f9a0aa92f74601b0",
+    "pathOverlap": false
+  },
+  "historicalUnreconciledCopies": [
+    {
+      "worktree": "8833",
+      "session": "codex-production-completion-20260921",
+      "leasePrefix": "80bbb6aa",
+      "lastHeartbeat": "2026-09-22",
+      "path": "server/index.ts"
+    },
+    {
+      "worktree": "projects/xenios-unified-account-v1-20260902",
+      "leasePrefix": "5279612b",
+      "lastHeartbeat": "2026-09-02",
+      "paths": [
+        "client/src/App.tsx",
+        "client/src/App.routes.test.ts",
+        "server/index.ts"
+      ]
+    }
+  ],
+  "historicalDisposition": "Preserved without mutation or claim of release. These old branch-local rows are absent from both current task authorities; current explicit13path assignment and both current active registries control this same-builder source stage.",
+  "otherOwnerEntriesChanged": false
+}

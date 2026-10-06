@@ -1,0 +1,262 @@
+{
+  "at": "2026-10-06T18:08:56.432Z",
+  "kind": "Static Git/hash verification only; no application/test execution",
+  "source": "ac36e60fe5e91b1217722e7f2a2711fd62a64559",
+  "sourceTree": "c83e78153d8cafcd2580e2ed83e1cd9d6f8b79a0",
+  "predecessor": "dc119280d881e8fd6066a6be9829e6b2a2fa4005",
+  "authorization": {
+    "coordinatorCommit": "60d593ae2fc0623edc869e373bfe52e830968df9",
+    "userReceivedAt": "2026-10-06T17:43:37Z",
+    "userMessage": "01a11250-62ad-7e83-93bd-2648b243593e",
+    "scope": "S2 exact six mount runtimes and five tests; S3 PWA runtime/test"
+  },
+  "pairs": [
+    {
+      "path": "client/src/App.tsx",
+      "kind": "runtime",
+      "beforeSha256lf": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
+      "afterSha256lf": "1a0ba37c1c14b8be9ced93c052d6df8a3362bbb72edc74ba75583ce3d388d94f",
+      "blob": "92b80e6169a7ec005e3084c2e27e2f3a31a698bd",
+      "proposedAfterSha256lf": "1a0ba37c1c14b8be9ced93c052d6df8a3362bbb72edc74ba75583ce3d388d94f",
+      "matchesC65": true
+    },
+    {
+      "path": "shared/care/paths.ts",
+      "kind": "runtime",
+      "beforeSha256lf": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417",
+      "afterSha256lf": "a15adc22ca9ea55acdf6c21e929fd529547014291ff1810033649c5cc4130fca",
+      "blob": "e3e324419a34f6795918111362317511a8d3727e",
+      "proposedAfterSha256lf": "a15adc22ca9ea55acdf6c21e929fd529547014291ff1810033649c5cc4130fca",
+      "matchesC65": true
+    },
+    {
+      "path": "client/src/lib/tracking.ts",
+      "kind": "runtime",
+      "beforeSha256lf": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+      "afterSha256lf": "8d62f7a1c4e292100c88c26b2d56d2df180408b364a009773ad2b0c0c2836a26",
+      "blob": "e0b8137b717ee43c92569c9d6612a0b143737e39",
+      "proposedAfterSha256lf": "8d62f7a1c4e292100c88c26b2d56d2df180408b364a009773ad2b0c0c2836a26",
+      "matchesC65": true
+    },
+    {
+      "path": "client/src/lib/attribution.ts",
+      "kind": "runtime",
+      "beforeSha256lf": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
+      "afterSha256lf": "6b1ab4732059401d80cb1f2f38fc5c047e8f559a9ea51d086ac7616bd8540391",
+      "blob": "f3929cd40d728634038e35db8059ddcceed7cbf9",
+      "proposedAfterSha256lf": "6b1ab4732059401d80cb1f2f38fc5c047e8f559a9ea51d086ac7616bd8540391",
+      "matchesC65": true
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.ts",
+      "kind": "runtime",
+      "beforeSha256lf": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a",
+      "afterSha256lf": "50b80817ae4b90b075179e84b22a93f9214ca21f8ba6ac34e6158812c3eaeb45",
+      "blob": "84f9a8e8ab087cd1935fd1a82ebf973d984e67a8",
+      "proposedAfterSha256lf": "50b80817ae4b90b075179e84b22a93f9214ca21f8ba6ac34e6158812c3eaeb45",
+      "matchesC65": true
+    },
+    {
+      "path": "server/index.ts",
+      "kind": "runtime",
+      "beforeSha256lf": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521",
+      "afterSha256lf": "cc1d8d4d53d7f112468914344d7b6a905e76908f31be4b46c84f86976f36e7bb",
+      "blob": "d27a3da9221fe9ce0c7b992021500859ce7e6e34",
+      "proposedAfterSha256lf": "cc1d8d4d53d7f112468914344d7b6a905e76908f31be4b46c84f86976f36e7bb",
+      "matchesC65": true
+    },
+    {
+      "path": "client/src/pwa/PwaLifecycle.tsx",
+      "kind": "runtime",
+      "beforeSha256lf": "9594f39848cde2320df07a4441ea9addd3534c3690fcca9468b9bbbe815b1741",
+      "afterSha256lf": "9b1a354def9f430e450ce1261a3d8fbd269c833423cbff179f68643db22a1d19",
+      "blob": "8e6f22575454887cb680954ef7f561a9c4c23fb5"
+    },
+    {
+      "path": "client/src/pwa/PwaLifecycle.test.tsx",
+      "kind": "test",
+      "beforeSha256lf": "3303d4bdaafa468d6de80ed94b181499e1a21b11a349fe1a2d8e50528d65fef6",
+      "afterSha256lf": "53ff9f548e58fa1fdf0bca244b3796c83dad5583c4fca34aa934c759122cecd2",
+      "blob": "ac3a8241acd39a9a38b5848b2108df31e333f6e8"
+    },
+    {
+      "path": "shared/care/paths.test.ts",
+      "kind": "test",
+      "beforeSha256lf": "8f00af75cb71e390ffb47e96d157f09dbbe65138233781e9e43501ed7560fd3b",
+      "afterSha256lf": "46f89fcd1d781ca69a614ac9bf74fd2958d5ac435453fd996e668f892ccdc902",
+      "blob": "804e8378ab55954adf1d5325d173541ffc3ec08d"
+    },
+    {
+      "path": "client/src/lib/tracking.test.ts",
+      "kind": "test",
+      "beforeSha256lf": "88591bb2476abbee19615ba02b697092db96ff1534643c510383ca33d3242b24",
+      "afterSha256lf": "e7db8fdd8b2fbf7d02fa3ee152afd4a5ced461afa95ef7767eead46f21ea8fc2",
+      "blob": "ae87aa418b9ec764a3fd251b26fb54854214a57e"
+    },
+    {
+      "path": "client/src/lib/attribution.test.ts",
+      "kind": "test",
+      "beforeSha256lf": "fe7831b0c5f210ac9414044b832230ca8647efb09b354d6de388bc9083f550b4",
+      "afterSha256lf": "f3f376bc79ddfdc86b528de1a38954215ab91d4cc82c3e4e2dc4aee6f42a99ed",
+      "blob": "337e38037ddbd0cb0900226f4d47703dcb1894bf"
+    },
+    {
+      "path": "client/src/App.routes.test.ts",
+      "kind": "test",
+      "beforeSha256lf": "e9cf735fa1fbb5f519f73df136ca3479d297e93f8a4476794ba433d9778dc3bb",
+      "afterSha256lf": "88ae3918de75d88bf8f3e442e8431920f82086e1bbdcf4ee26611256e3b5f077",
+      "blob": "4f890537b639ec18e6500226e72b023de73a145a"
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.test.ts",
+      "kind": "test",
+      "beforeSha256lf": "5299f7c9c0c19d37dca0e79d092cc8b18ac43b8b049c3a7fe4c6ed7bde1a410e",
+      "afterSha256lf": "cdd1c617acc8429c3d3cfe6c2a012fad9b6125a525a68e73ccc12c3190335807",
+      "blob": "3df5e7e120e13a123ce6588e72afe1e66c963cf9"
+    }
+  ],
+  "acceptedHttpSource": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+  "acceptedHttpModuleUnchanged": true,
+  "manifestUnchanged": true,
+  "manifestSha256lf": "c0fbcc69686562fdd2ec1de6d6a487356118f1d18931f8de3ee9aefd7066eff8",
+  "mountPatchSha256lf": "c65d7e49a9f5ec87262d4e3b106ab5e16b1c3d1ecd46a01c8a7ca4699e6d92af",
+  "historicalPatchSha256lf": "6481c2ad2d4d2828e789cb2f2e24964705562cb782d70728b4152d78dc40a672",
+  "g1": {
+    "schemaVersion": 1,
+    "reservation": "QO-FIRST-20261006-G1",
+    "authorityCommit": "60d593ae2fc0623edc869e373bfe52e830968df9",
+    "sampledAtUtc": "2026-10-06T17:54:58.1429186Z",
+    "groupConsumed": 1,
+    "maximumGroups": 6,
+    "startBy": "2026-10-06T18:00:00Z",
+    "expiresAt": "2026-10-06T21:43:37Z",
+    "requiredMiB": 1536,
+    "availableMiB": 1205,
+    "requiredDiskGiB": 20,
+    "freeDiskGiB": 26.0734,
+    "matchingHeavyJobs": [],
+    "beforeStartExpiry": true,
+    "head": "5ee44d53e55774fd8a29ea009dac16da2ed907ef",
+    "source": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+    "sourceTree": "46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e",
+    "planSha256lf": "51991abde14d91fca68567dbedff5a8381694eefa6f820300c1a2fe5bd4cfb40",
+    "moduleFileCount": 24,
+    "runtimeDiff": [],
+    "baselineChecks": [
+      {
+        "path": "client/src/App.tsx",
+        "expected": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
+        "actual": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7"
+      },
+      {
+        "path": "server/index.ts",
+        "expected": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521",
+        "actual": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521"
+      },
+      {
+        "path": "client/src/lib/tracking.ts",
+        "expected": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+        "actual": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4"
+      },
+      {
+        "path": "client/src/lib/attribution.ts",
+        "expected": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
+        "actual": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8"
+      },
+      {
+        "path": "shared/care/paths.ts",
+        "expected": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417",
+        "actual": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417"
+      },
+      {
+        "path": "server/research/seo/raw-http-document-policy.ts",
+        "expected": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a",
+        "actual": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a"
+      },
+      {
+        "path": "server/static.ts",
+        "expected": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94",
+        "actual": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94"
+      },
+      {
+        "path": "server/vite.ts",
+        "expected": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243",
+        "actual": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243"
+      },
+      {
+        "path": "server/research/assisted-order/ports.ts",
+        "expected": "cab0fe8e1cd398d4e59c18da09780d2ab6bed3115e17821be187df69b610a6ed",
+        "actual": "cab0fe8e1cd398d4e59c18da09780d2ab6bed3115e17821be187df69b610a6ed"
+      },
+      {
+        "path": "server/research/assisted-order/service.ts",
+        "expected": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960",
+        "actual": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960"
+      },
+      {
+        "path": "server/research/assisted-order/supabase-repository.ts",
+        "expected": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327",
+        "actual": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327"
+      },
+      {
+        "path": "server/research/assisted-order/http.ts",
+        "expected": "6053138b2db68def7bd437d19eb5d755a6c996342a2c5b2cc4440ae1529d6ee0",
+        "actual": "6053138b2db68def7bd437d19eb5d755a6c996342a2c5b2cc4440ae1529d6ee0"
+      },
+      {
+        "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+        "expected": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e",
+        "actual": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e"
+      },
+      {
+        "path": "shared/research/assisted-order/contract.ts",
+        "expected": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9",
+        "actual": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9"
+      }
+    ],
+    "unchanged": true,
+    "leaseValid": true,
+    "allowed": false,
+    "testProcessesStarted": 0,
+    "reservationStatus": "REFUSED_RELEASED",
+    "retryAuthorized": false
+  },
+  "qualifications": {
+    "httpRedGreen": "NOT RUN",
+    "s2s3Focused": "NOT RUN",
+    "typecheck": "NOT RUN",
+    "build": "NOT RUN",
+    "browser": "NOT RUN",
+    "database": "NOT RUN",
+    "independentSuccessorAcceptance": "PENDING",
+    "productionMutation": false
+  },
+  "focusedCommandProposedOnly": {
+    "executable": "C:/Users/sboad/.codex/toolchains/node-v20.19.0-win-x64/node.exe",
+    "args": [
+      "--max-old-space-size=1024",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "client/src/pwa/PwaLifecycle.test.tsx",
+      "shared/care/paths.test.ts",
+      "client/src/lib/tracking.test.ts",
+      "client/src/lib/attribution.test.ts",
+      "client/src/App.routes.test.ts",
+      "server/research/seo/raw-http-document-policy.test.ts",
+      "--maxWorkers=1",
+      "--no-file-parallelism",
+      "--cache=false",
+      "--reporter=verbose"
+    ],
+    "reservation": null,
+    "execution": "NOT RUN",
+    "requirement": "Distinct coordinator reservation/precheck in remaining window, materially changed host conditions after G1 refusal. This proposal is not a reservation."
+  },
+  "coverageLimits": [
+    "App.routes is a source contract, not a rendered App/shell proof",
+    "Raw HTTP policy test exercises response builder, not actual static/Vite serving, cache headers, cold navigation or refresh",
+    "Root parser/rawBody ordering needs real application composition proof",
+    "PWA component tests use jsdom, not native browser install behavior",
+    "No durable request, operator readback, canonical currentness, real authentication or notification/payment proof"
+  ]
+}
