@@ -1,3 +1,9 @@
+## Quick Order first G1 result — 2026-10-06 17:54Z
+
+G1 was refused before execution: 1,205 MiB available versus the 1,536 MiB full-group floor; disk 26.0734 GiB and no pattern-matched heavy job. One of six groups consumed; slot released; zero tests reported. Retained producer receipt/script are `QUICK_ORDER_FIRST_G1_PRECHECK.json` and `.ps1`; coordinator verified their content and hashes without resampling the host. Mount/PWA source work continues. No immediate retry or qualification from a heartbeat; another attempt requires materially changed host conditions and an explicit remaining-group reservation before 21:43:37Z.
+
+Original reviewer directly received the same brief and pushed f4636885 at 17:47Z. Its no-recorded-authority observation predates coordinator commit60d593a, which records Samuel's actual 17:43:37Z kickoff. No duplicate kickoff is needed.
+
 ## Current source sprint — 2026-10-06 17:43:37Z
 
 Samuel's user-designated pasted request (turn 01a11250, attachment a276ed40) includes the explicit kickoff adopting S1–S5. Exact request and all 24 verified package files are preserved in quick-order-first-plan-20261006/. See QUICK_ORDER_FIRST_SPRINT_20261006.json. The four-hour window ends 21:43:37Z; factual checkpoint due 18:43:37Z; maximum six qualification groups. This supersedes earlier source-only holds only within its exact scope.

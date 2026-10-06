@@ -35,19 +35,39 @@
   },
   "qualification": {
     "maximumGroups": 6,
-    "consumedGroups": 0,
-    "groups": [],
+    "consumedGroups": 1,
+    "groups": [
+      {
+        "id": "QO-FIRST-20261006-G1",
+        "status": "NOT_RUN_RESOURCE_BLOCKED",
+        "sampledAt": "2026-10-06T17:54:58.1429186Z",
+        "availableMiB": 1205,
+        "requiredMiB": 1536,
+        "freeDiskGiB": 26.0734,
+        "matchingHeavyJobs": [],
+        "processesStarted": 0,
+        "receipt": "QUICK_ORDER_FIRST_G1_PRECHECK.json",
+        "receiptSha256": "f692c8970c2a11d0e65f60305d3bf89ba8b1bafb51ba62f9193b3ce2e08abcfc",
+        "precheckScript": "QUICK_ORDER_FIRST_G1_PRECHECK.ps1",
+        "precheckScriptSha256": "01004c15eac89ce3dc8515775d738477c152175280cfc965aeccd06bec4d94ae",
+        "producerCommit": null,
+        "evidenceLevel": "Coordinator inspected retained producer receipt and script; producer reports zero test execution. No coordinator resource resample.",
+        "next": "Source work continues; no new qualification probe without materially changed host conditions and a separate remaining-group reservation."
+      }
+    ],
     "reservation": {
       "id": "QO-FIRST-20261006-G1",
       "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
       "scope": "Existing exact mandatory f1 runtime with fd tests red, fd green: one filtered handler file plus two-case containment file per snapshot; four serial processes, no ownership rerun",
-      "status": "RESERVED_CONDITIONAL_PRECHECK_ONLY",
+      "status": "REFUSED_RELEASED",
       "startBy": "2026-10-06T18:00:00Z",
       "minAvailableMiB": 1536,
       "minDiskGiB": 20,
       "maxHeavyConcurrency": 1,
       "freshPrechecksAllowed": 1,
-      "onFailure": "Consume one group, zero test processes; release slot. No immediate retry or other group probe without materially changed host conditions."
+      "onFailure": "Consume one group, zero test processes; release slot. No immediate retry or other group probe without materially changed host conditions.",
+      "consumedAt": "2026-10-06T17:54:58.1429186Z",
+      "active": false
     }
   },
   "sourceAssignment": {
@@ -58,7 +78,17 @@
   "reviewer": {
     "session": "6abf1edf-2b16-476e-8305-23b9a0014e06",
     "scope": "Same independent acceptance owner; new exact deltas only",
-    "transport": "No duplicate/replacement reviewer or known-failed transport retry; inspect public receipt before any send"
+    "transport": "No duplicate/replacement reviewer or known-failed transport retry; inspect public receipt before any send",
+    "briefCommit": "f4636885ff2078563846a5277d699da9bd81dacd",
+    "briefDirectUser": {
+      "at": "2026-10-06T17:44:57.042Z",
+      "message": "a68a41a5-9e43-4081-8c20-192e117b0c79"
+    },
+    "briefFinal": {
+      "at": "2026-10-06T17:48:17.039Z",
+      "message": "1840d909-cac8-4e71-ba28-7cfef65f32f0",
+      "note": "Plan adopted as reviewer brief; its no-authority observation preceded coordinator authority commit60d593a. No successor review yet."
+    }
   },
   "exclusions": [
     "No successor-hash acceptance or manifest recut",

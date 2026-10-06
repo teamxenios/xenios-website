@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-10-06T17:47:38.4308245Z",
+  "updatedAt": "2026-10-06T17:56:52.281Z",
   "objective": "Automate verified Codex-Claude-ChatGPT launch coordination, preserve accepted source and implement the separately authorized Quick Order intake while production authorities remain held.",
   "coordinatorThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
   "planningThread": "6abd3937-e230-83ea-a1ef-eac3a08fa93c",
@@ -126,7 +126,7 @@
   "qualificationSlot": {
     "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
     "scope": "Only new affected targeted red/green after fresh qualified serialized reservation; no accepted189 ownership rerun.",
-    "next": "Builder consumes G1 at fresh precheck; no partial dispatch if resources fail; then continue authorized A1/PWA source.",
+    "next": "Source work continues; no new qualification probe without materially changed host conditions and a separate remaining-group reservation.",
     "fullSuite": "DEFERRED/NOT RUN for original integration; no automatic reruns merely to improve summary reporter.",
     "lastCoordinatorResources": {
       "at": "2026-10-05T23:14:38.4602340Z",
@@ -134,7 +134,7 @@
       "freeDiskGiB": 26.9824,
       "matchingHeavyJobs": []
     },
-    "status": "G1 conditional reservation: one fresh appropriate precheck authorized under new S5 window, then exact red/green only if all thresholds pass.",
+    "status": "G1 REFUSED_RELEASED; 1 of 6 groups consumed; zero tests; no active reservation.",
     "source": "fd023e8c03baa2326baf707c944bcd25dce7f453",
     "artifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_FOCUSED_SLOT_f1e467f.json",
     "expiresIfNotStartedAt": "2026-10-05T20:50:00Z",
@@ -142,24 +142,31 @@
     "releaseEvidence": "c807f1913ce95ebcf4113cd4f1ef5bdfb2f45d09",
     "releaseArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SLOT_RESULT_f1e467f.json",
     "latestProducerResources": {
-      "at": "2026-10-05T20:36:28.1555959Z",
-      "availableMiB": 503,
-      "freeDiskGiB": 26.98,
+      "at": "2026-10-06T17:54:58.1429186Z",
+      "availableMiB": 1205,
+      "freeDiskGiB": 26.0734,
       "matchingHeavyJobs": []
     },
-    "latestPrecheckArtifact": "docs/coordination/launch-coordination-20261005/HOST_PRECHECK_20261005_231438.json",
+    "latestPrecheckArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_FIRST_G1_PRECHECK.json",
     "latestRequestArtifact": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_QUALIFICATION_REQUEST_20261005_2312.json",
     "currentReservation": {
       "id": "QO-FIRST-20261006-G1",
       "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
       "scope": "Existing exact mandatory f1 runtime with fd tests red, fd green: one filtered handler file plus two-case containment file per snapshot; four serial processes, no ownership rerun",
-      "status": "RESERVED_CONDITIONAL_PRECHECK_ONLY",
+      "status": "REFUSED_RELEASED",
       "startBy": "2026-10-06T18:00:00Z",
       "minAvailableMiB": 1536,
       "minDiskGiB": 20,
       "maxHeavyConcurrency": 1,
       "freshPrechecksAllowed": 1,
-      "onFailure": "Consume one group, zero test processes; release slot. No immediate retry or other group probe without materially changed host conditions."
+      "onFailure": "Consume one group, zero test processes; release slot. No immediate retry or other group probe without materially changed host conditions.",
+      "consumedAt": "2026-10-06T17:54:58.1429186Z",
+      "active": false
+    },
+    "budget": {
+      "maximumGroups": 6,
+      "consumedGroups": 1,
+      "expiresAt": "2026-10-06T21:43:37Z"
     }
   },
   "partnerReturn": {

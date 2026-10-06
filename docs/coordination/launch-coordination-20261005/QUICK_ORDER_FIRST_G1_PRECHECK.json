@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "reservation": "QO-FIRST-20261006-G1",
+  "authorityCommit": "60d593ae2fc0623edc869e373bfe52e830968df9",
+  "sampledAtUtc": "2026-10-06T17:54:58.1429186Z",
+  "groupConsumed": 1,
+  "maximumGroups": 6,
+  "startBy": "2026-10-06T18:00:00Z",
+  "expiresAt": "2026-10-06T21:43:37Z",
+  "requiredMiB": 1536,
+  "availableMiB": 1205.0,
+  "requiredDiskGiB": 20,
+  "freeDiskGiB": 26.0734,
+  "matchingHeavyJobs": [],
+  "beforeStartExpiry": true,
+  "head": "5ee44d53e55774fd8a29ea009dac16da2ed907ef",
+  "source": "fd023e8c03baa2326baf707c944bcd25dce7f453",
+  "sourceTree": "46de8f772bb04c20eb09d9b8d3fbfacc44d9dd4e",
+  "planSha256lf": "51991abde14d91fca68567dbedff5a8381694eefa6f820300c1a2fe5bd4cfb40",
+  "moduleFileCount": 24,
+  "runtimeDiff": [],
+  "baselineChecks": [
+    {
+      "path": "client/src/App.tsx",
+      "expected": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7",
+      "actual": "1bc59371e5028234ed5b31e1b3db77f0c2ff6a011999210d2b29d46be18a57a7"
+    },
+    {
+      "path": "server/index.ts",
+      "expected": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521",
+      "actual": "ba5800e604482af4f1ca56b08c43abd3d1207473a6e213ab99c22113471a4521"
+    },
+    {
+      "path": "client/src/lib/tracking.ts",
+      "expected": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4",
+      "actual": "258eda2246cb6be9b7925e1895679b0dbbc7eeb1ccf38f147989496014518ad4"
+    },
+    {
+      "path": "client/src/lib/attribution.ts",
+      "expected": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8",
+      "actual": "2c406d8ae4f93cc480e4811dd1d2c3930651a5d4ea7b6ad10f27dd02e45e29a8"
+    },
+    {
+      "path": "shared/care/paths.ts",
+      "expected": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417",
+      "actual": "da51b6c87cb7eb3ee4d70b1400d5a3ebc1f431579bd312519f71725c0fe78417"
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.ts",
+      "expected": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a",
+      "actual": "90082298f6f35c780ea07f58686daadaf79a0773fd007c5693f1c27c4cfab96a"
+    },
+    {
+      "path": "server/static.ts",
+      "expected": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94",
+      "actual": "b7a7641752b74a557664c9119130431fa3e68c0b2a31acce5ddab0c8283d9f94"
+    },
+    {
+      "path": "server/vite.ts",
+      "expected": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243",
+      "actual": "af15971b6b66c42a6503bafa8f4d428bc295968c8c365cffc5cc238f6a678243"
+    },
+    {
+      "path": "server/research/assisted-order/ports.ts",
+      "expected": "cab0fe8e1cd398d4e59c18da09780d2ab6bed3115e17821be187df69b610a6ed",
+      "actual": "cab0fe8e1cd398d4e59c18da09780d2ab6bed3115e17821be187df69b610a6ed"
+    },
+    {
+      "path": "server/research/assisted-order/service.ts",
+      "expected": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960",
+      "actual": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960"
+    },
+    {
+      "path": "server/research/assisted-order/supabase-repository.ts",
+      "expected": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327",
+      "actual": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327"
+    },
+    {
+      "path": "server/research/assisted-order/http.ts",
+      "expected": "6053138b2db68def7bd437d19eb5d755a6c996342a2c5b2cc4440ae1529d6ee0",
+      "actual": "6053138b2db68def7bd437d19eb5d755a6c996342a2c5b2cc4440ae1529d6ee0"
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+      "expected": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e",
+      "actual": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e"
+    },
+    {
+      "path": "shared/research/assisted-order/contract.ts",
+      "expected": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9",
+      "actual": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9"
+    }
+  ],
+  "unchanged": true,
+  "leaseValid": true,
+  "allowed": false,
+  "testProcessesStarted": 0,
+  "reservationStatus": "REFUSED_RELEASED",
+  "retryAuthorized": false
+}
