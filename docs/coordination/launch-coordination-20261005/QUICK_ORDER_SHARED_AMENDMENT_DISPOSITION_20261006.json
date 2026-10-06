@@ -1,0 +1,49 @@
+{
+  "at": "2026-10-06T18:47:23.629Z",
+  "sourceAuthority": "Actual user bounded source approval atdc3329 for1d4f2c3",
+  "evidence": [
+    {
+      "patch": "CURRENT_AFFILIATE_READBACK_AMENDMENT_PROPOSED_20261006.patch",
+      "patchSha256": "6f5d90136f23c65c668cddaf4d6ba7a29d7a3c3b5104747c9f01421600e3ff6d",
+      "targets": [
+        {
+          "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+          "beforeSha256lf": "7b2228f2f304af93dd3e6db49a9d498f37fd5112ca3d4beba20328ac6266bf6c",
+          "proposedAfterSha256lf": "b47b37debe3abe010e1b8cb1dc43563d9977f6b7b4f0e23f24276a0c61470bcc",
+          "targetUnchanged": true
+        },
+        {
+          "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+          "beforeSha256lf": "d73ccc5a673d8c088c2fb08a1e74231bb09894c1bbcf6bf4cbf9d8b4d58fcff5",
+          "proposedAfterSha256lf": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e",
+          "targetUnchanged": true
+        }
+      ]
+    },
+    {
+      "patch": "PROVIDER_JOURNAL_FIXTURE_AMENDMENT_PROPOSED_20261006.patch",
+      "patchSha256": "8396609b413bc93990adea937861427ec07787f6ea126e19f926b42398d01498",
+      "targets": [
+        {
+          "status": "PROPOSED_NOT_APPLIED_NO_ADDITIONAL_PATH_AUTHORITY",
+          "path": "server/research/assisted-order/provider-journal-http.test.ts",
+          "beforeSha256lf": "8a8842d3751dd4da85da41c012939aa0de161ae7a6704e1a7106f387fd148c37",
+          "proposedAfterSha256lf": "751cbd92a4eed7697cdb97eee9515f0e68746c02c54859ec4709e25f02dfd2aa",
+          "patchSha256": "8396609b413bc93990adea937861427ec07787f6ea126e19f926b42398d01498",
+          "reason": "Approved reader cutover bypasses the old RPC stub in four existing provider-hold regression cases; adapt only the synthetic legacy envelope, retaining all financial-hold assertions.",
+          "execution": "NOT RUN; source inspection predicts fixture incompatibility, no observed test failure"
+        }
+      ]
+    }
+  ],
+  "ui": {
+    "disposition": "Within already-approved AdminAssistedOrderDetail and named UI test paths and stated intent to preserve current canonical affiliate authority. Coordinator inspected the concrete returned correction; builder may apply exact6f5d901 patch after source binding recheck. Not independent acceptance or execution proof."
+  },
+  "providerFixture": {
+    "disposition": "Separate existing test path outside named source packet. Concrete test-only fixture amendment prepared for actual user scope decision; do not apply before answer.",
+    "path": "server/research/assisted-order/provider-journal-http.test.ts",
+    "behavior": "Only new reader wrapper stub and explicit legacy shape. Preserve all existing financial409/no-effect assertions.",
+    "tests": "NOT RUN",
+    "exclusions": "No provider/runtime/financial policy/SQL/live actions or new execution authority."
+  }
+}

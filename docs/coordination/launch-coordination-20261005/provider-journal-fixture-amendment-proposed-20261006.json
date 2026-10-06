@@ -1,0 +1,9 @@
+{
+  "status": "PROPOSED_NOT_APPLIED_NO_ADDITIONAL_PATH_AUTHORITY",
+  "path": "server/research/assisted-order/provider-journal-http.test.ts",
+  "beforeSha256lf": "8a8842d3751dd4da85da41c012939aa0de161ae7a6704e1a7106f387fd148c37",
+  "proposedAfterSha256lf": "751cbd92a4eed7697cdb97eee9515f0e68746c02c54859ec4709e25f02dfd2aa",
+  "patchSha256": "8396609b413bc93990adea937861427ec07787f6ea126e19f926b42398d01498",
+  "reason": "Approved reader cutover bypasses the old RPC stub in four existing provider-hold regression cases; adapt only the synthetic legacy envelope, retaining all financial-hold assertions.",
+  "execution": "NOT RUN; source inspection predicts fixture incompatibility, no observed test failure"
+}

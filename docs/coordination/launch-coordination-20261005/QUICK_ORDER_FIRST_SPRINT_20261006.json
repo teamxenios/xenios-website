@@ -93,6 +93,11 @@
       "acknowledgement": {
         "message": "msg_0f39ac48c4ef0110016ac540db8e1c87d1ade3609690b8a22a",
         "cursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:56"
+      },
+      "amendments": {
+        "record": "QUICK_ORDER_SHARED_AMENDMENT_DISPOSITION_20261006.json",
+        "ui": "Exact correction inspected; inside approved2UIpaths and canonical-state-preservation intent; same builder may apply6f5d901",
+        "providerFixture": "New exact test path prepared; actual user decision pending8396609"
       }
     },
     "pureCheckpoint": {
@@ -354,9 +359,9 @@
     }
   ],
   "planningRelay": {
-    "record": "QUICK_ORDER_FIRST_PLANNING_RELAY_20261006.json",
-    "turn": "ee21dc5a-f0f5-4110-9a4b-25c16f93f6d8",
-    "replyMessage": "2a3f1c6d-0d46-44c0-a1a9-ef457a8aa028",
+    "record": "QUICK_ORDER_FIRST_HOUR_PLANNING_RELAY.json",
+    "turn": "e71956f0-124e-4110-8132-ac71aa84cb0e",
+    "replyMessage": "d87bb65c-d65e-4abe-b291-06c08a792824",
     "status": "CONFIRMED_NO_NEW_AUTHORITY",
     "pendingReply": false
   },
