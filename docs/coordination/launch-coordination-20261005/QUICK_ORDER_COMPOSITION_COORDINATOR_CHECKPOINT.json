@@ -1,0 +1,58 @@
+{
+  "at": "2026-10-06T19:15:24.800Z",
+  "source": "5fd2e4c74d31562281493013489bb41949979b88",
+  "sourceTree": "99ca9ae54298a30c860cfea924d08797a1dc4c9e",
+  "records": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
+  "recordsTree": "5955110ae5215813c1b9eebdba9c6c7bd1b93f09",
+  "base": "4669493ba48c2afbdfb844813cfc066442ddd78d",
+  "remoteVerified": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
+  "changedPaths": [
+    "A\tclient/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+    "A\tserver/research/health/quick-order/root-composition.test.ts",
+    "A\tserver/research/health/quick-order/static-document.test.ts",
+    "A\tserver/research/health/quick-order/vite-document.test.ts"
+  ],
+  "sourceBindingsVerified": 4,
+  "frozenReferencesVerified": 15,
+  "acceptedFdModuleBlobsPreserved": 24,
+  "wholeModuleDirectoryIdentity": false,
+  "reason": "Four new test files change directory trees; all 24 original fd file blobs remain unchanged.",
+  "existingRuntimeUnchanged": true,
+  "recordsSourceUnchanged": true,
+  "copies": [
+    {
+      "path": "QUICK_ORDER_COMPOSITION_PRODUCER_SOURCE_5fd2e4c.json",
+      "sha256": "b50d79b338b7a1eab6312f985c1b516ddb47a76a0abd7b966b5e94aa3444e97b"
+    },
+    {
+      "path": "QUICK_ORDER_COMPOSITION_PRODUCER_HANDOFF_1595b8d.md",
+      "sha256": "b337f3b7adc40c233d40670f07473762119a940a72724621cd5c9c3625582fcd"
+    },
+    {
+      "path": "QUICK_ORDER_COMPOSITION_PRODUCER_REPORT_1595b8d.md",
+      "sha256": "176fcaad96c667987532c9269d2faccea1743f17c072a7910a8ef866acbcd8df"
+    }
+  ],
+  "evidenceLevel": "Coordinator Git scope/blob and file hash verification only; no test/code execution or independent acceptance",
+  "execution": "NOT RUN",
+  "review": "PENDING_SAME_ORIGINAL_REVIEWER",
+  "limitations": [
+    "App uses jsdom and synthetic public/Care responses; not real browser/Auth/PWA proof",
+    "Static uses synthetic built shell; Vite transport/transform mocked",
+    "Actual root boot test authored but not run; existing listener binds0.0.0.0, probes/dependencies loopback; no network-sandbox claim",
+    "Privacy-header assertions predict failure until pending8392d243 patch; no observed red",
+    "Existing provider-hold fixture needs pending8396609 patch; no observed failure"
+  ],
+  "builder": {
+    "status": "CLEAN_IDLE_HANDOFF_READY",
+    "turn": "01a1128f-3b31-7be2-ae1a-db1104978324",
+    "cursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:89"
+  },
+  "qualification": {
+    "consumed": 1,
+    "remaining": 5,
+    "reservation": null,
+    "materialHostChangeEstablished": false,
+    "expiresAt": "2026-10-06T21:43:37Z"
+  }
+}

@@ -1,3 +1,37 @@
+## Composition checkpoint and current dependencies — 2026-10-06
+
+Same builder is clean and idle at records/handoff
+1595b8df868a0bd3779ae84fb3da3226c9a75902. The four new test files are pushed at
+5fd2e4c74d31562281493013489bb41949979b88, tree
+99ca9ae54298a30c860cfea924d08797a1dc4c9e. Coordinator independently verified
+all four source bindings, all fifteen frozen references and all twenty-four
+pre-existing accepted QO file blobs. Existing runtime is unchanged; whole module
+directory trees changed because tests were added. Exact evidence is in
+QUICK_ORDER_COMPOSITION_COORDINATOR_CHECKPOINT.json and its producer copies.
+
+Tests are AUTHORED / NOT RUN. They retain their explicit jsdom, synthetic shell,
+mocked Vite transport and loopback dependency boundaries. The actual root server
+still binds 0.0.0.0; no loopback-listener or network-sandbox qualification is claimed.
+Source inspection predicts missing document privacy headers and the old provider
+fixture mismatch; neither is an observed test failure. Both exact corrections
+remain unapplied, pending Samuel's answers to the already-issued scope questions:
+
+- Provider fixture: one additional test path, packet95858ba, patch8396609.
+- Shared document headers: server/static.ts only, packet6e661f9, patch8392d243.
+  No server/vite.ts edit is needed; both document modes use the same helper.
+
+Original Claude publicly confirmed reviews through shared9118a82 at19:05:14Z,
+with docs41–44 drafted but final checks/push still pending. No duplicate delivery
+is needed for those scopes. Its two interim S4 integration items and epoch-churn
+design concern do not constitute a final verdict. Currentness/commit source is
+approved but not dependency-ready pending that compatibility disposition; SQL
+drafting stays conditional. No final composition-source review is collected.
+
+The two source-scope questions are pending; do not repeat them or infer answers.
+No fresh host observation or slot exists, G1 is spent, five groups remain until
+21:43:37Z. The five-minute automation stays paused. Durable intake, actual operator
+readback, payment and deployment remain unavailable or unproved.
+
 ## Shared source checkpoint — 2026-10-06
 
 Same builder pushed source9118a82633e9f10637764c896ce2a6e53ad1e3eb,

@@ -168,7 +168,8 @@
         "expiresAt": "2026-10-06T21:43:37Z"
       },
       "capability": "Pure unused decoder only. No durable QO save/operator readback/payment/live activation."
-    }
+    },
+    "currentOwnerState": "CLEAN_IDLE_HANDOFF_READY_AT1595b8d"
   },
   "supplementalScope": {
     "status": "USER_APPROVED_SOURCE_ONLY_SQL_COMPATIBILITY_REVIEW_PENDING",
@@ -263,19 +264,36 @@
         "at": "2026-10-06T18:46:53.125Z",
         "message": "b891dfed-9144-4a76-8c8e-dbb9994357e3",
         "scope": "Original reviewer reports mount/supplemental/S4 verification in progress. No verdict collected."
+      },
+      "latestPublicProgress": {
+        "at": "2026-10-06T19:00:21.891Z",
+        "message": "3fd88901-104f-4c4a-ab79-2301292a790e",
+        "text": "The S4 verifier has returned: it upheld every element of my reading and added two P2 integration items (the canonical `createdAt` wire form would not pass the decoder's strict timestamp check, and the mapping from the stored attribution snapshot to the companion intake shape is unwritten) plus polish. I'll write the decoder record now and check the two workflows.",
+        "disposition": "Interim main-reviewer public text only; final pushed verdict pending. Preceding task notification is not Samuel authority or final acceptance. Do not implement around pending design review."
       }
     },
     "pendingShared": {
       "source": "9118a82633e9f10637764c896ce2a6e53ad1e3eb",
       "records": "4669493ba48c2afbdfb844813cfc066442ddd78d",
-      "status": "FROZEN_READY_NOT_YET_ASSIGNED_TO_BUSY_ORIGINAL_REVIEWER",
-      "path": "QUICK_ORDER_SHARED_REVIEW_HANDOFF_20261006.md"
+      "status": "REVIEW_UNDERWAY_PUBLICLY_CONFIRMED",
+      "path": "QUICK_ORDER_SHARED_REVIEW_HANDOFF_20261006.md",
+      "publicProgress": {
+        "at": "2026-10-06T19:05:14.010Z",
+        "message": "d70ce627-4a26-4706-85e4-53f8c2220cdc",
+        "summary": "Original reviewer reports drafts41–44, waits on mount, supplemental compatibility and shared9118a82 checks. It independently reiterates reader-cutover release hold and the four old-reader fixture cases. No final pushed verdict yet."
+      },
+      "deliveryNote": "No duplicate delivery needed; actual public activity confirms same original reviewer has the frozen shared source. Prepared packet delivery itself is not asserted."
+    },
+    "pendingComposition": {
+      "source": "5fd2e4c74d31562281493013489bb41949979b88",
+      "records": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
+      "status": "FROZEN_READY_NO_FINAL_REVIEW"
     }
   },
   "exclusions": [
     "No successor-hash acceptance or manifest recut",
     "GATE-01 and inherited seam release holds stay open",
-    "No currentness implementation or complete commit RPC until supplemental approval",
+    "Currentness and complete commit source are approved but not dependency-ready until the original compatibility verdict resolves the design; SQL drafting remains conditional on that review",
     "No historical migrations/SQL execution or registration",
     "No live intake, payments, grants, real notification or deployment",
     "No cleanup, unrelated process stops, cloud or paid overages"
@@ -321,7 +339,7 @@
       "id": "04",
       "owner": "same builder for pure extension slice; SQL writer not separately activated",
       "status": "PURE_SOURCE_IMPLEMENTED_REVIEW_PENDING",
-      "next": "Finish pure decoder; currentness/module source approved, SQL still waits original reviewer compatibility verdict"
+      "next": "Currentness/commit source authority exists, but implementation waits on the original naming/fence/currentness compatibility verdict; preserve pure10208fe separately."
     },
     {
       "id": "05",
@@ -356,8 +374,8 @@
     {
       "id": "10",
       "owner": "original acceptance owner; no extra UX agent",
-      "status": "COMPOSITION_TEST_SOURCE_ASSIGNED_NOT_RUN",
-      "next": "Review actual full App/mobile/keyboard after corresponding implementation and qualified runner"
+      "status": "COMPOSITION_TEST_SOURCE_AUTHORED_REVIEW_AND_EXECUTION_PENDING",
+      "next": "Same original review and qualified future execution; preserve synthetic boundaries, missing headers and root listener limitation."
     },
     {
       "id": "11",
@@ -552,13 +570,13 @@
     "fixtureCorrection": "Exact additional provider-journal-http.test.ts patch8396609 pending actual user answer"
   },
   "compositionAssignment": {
-    "status": "ACKNOWLEDGED_BUILDING",
+    "status": "PUSHED_TEST_SOURCE_NOT_RUN",
     "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
     "promptRecord": "QUICK_ORDER_COMPOSITION_ASSIGNMENT_20261006.txt",
     "prerequisite": "4669493ba48c2afbdfb844813cfc066442ddd78d",
     "scope": "Exactly four new composition tests already approved at1d4f2c3/dc3329; no runtime edits or execution",
     "turn": "01a1128f-3b31-7be2-ae1a-db1104978324",
-    "cursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:72"
+    "cursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:89"
   },
   "providerFixtureQuestion": {
     "issued": true,
@@ -573,5 +591,76 @@
     "file": ".xenios/handoffs/2026-10-06T18-56-04-938Z-LAUNCH-COORDINATION-20261005-codex-launch-coordination-20261005.md",
     "sha": "fdf84cc3abde12a7460eacdbe39eee4b2b88774a",
     "at": "2026-10-06T18:56:04.938Z"
+  },
+  "documentHeaderQuestion": {
+    "issued": true,
+    "tool": "request_user_input_async",
+    "scopeCommit": "6e661f91c4a310a7ab6a986e32b36daaa3f6aed4",
+    "patchSha256": "8392d24308c3dc106c00317f4cd9550d94e956d008051c617c0126d610330fa9",
+    "path": "server/static.ts",
+    "status": "PENDING_ACTUAL_USER_ANSWER",
+    "reason": "Composition source inspection found missing headers in the common static/Vite document responder; runtime explicitly frozen in approved test-only scope.",
+    "sourceFindingOnly": true,
+    "testsExecuted": false,
+    "scopeRecord": "QUICK_ORDER_DOCUMENT_HEADER_SCOPE_20261006.md",
+    "note": "Exact source-only question issued; no duplicate question or inferred answer. server/vite.ts does not need an edit."
+  },
+  "compositionCheckpoint": {
+    "at": "2026-10-06T19:15:24.800Z",
+    "source": "5fd2e4c74d31562281493013489bb41949979b88",
+    "sourceTree": "99ca9ae54298a30c860cfea924d08797a1dc4c9e",
+    "records": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
+    "recordsTree": "5955110ae5215813c1b9eebdba9c6c7bd1b93f09",
+    "base": "4669493ba48c2afbdfb844813cfc066442ddd78d",
+    "remoteVerified": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
+    "changedPaths": [
+      "A\tclient/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+      "A\tserver/research/health/quick-order/root-composition.test.ts",
+      "A\tserver/research/health/quick-order/static-document.test.ts",
+      "A\tserver/research/health/quick-order/vite-document.test.ts"
+    ],
+    "sourceBindingsVerified": 4,
+    "frozenReferencesVerified": 15,
+    "acceptedFdModuleBlobsPreserved": 24,
+    "wholeModuleDirectoryIdentity": false,
+    "reason": "Four new test files change directory trees; all 24 original fd file blobs remain unchanged.",
+    "existingRuntimeUnchanged": true,
+    "recordsSourceUnchanged": true,
+    "copies": [
+      {
+        "path": "QUICK_ORDER_COMPOSITION_PRODUCER_SOURCE_5fd2e4c.json",
+        "sha256": "b50d79b338b7a1eab6312f985c1b516ddb47a76a0abd7b966b5e94aa3444e97b"
+      },
+      {
+        "path": "QUICK_ORDER_COMPOSITION_PRODUCER_HANDOFF_1595b8d.md",
+        "sha256": "b337f3b7adc40c233d40670f07473762119a940a72724621cd5c9c3625582fcd"
+      },
+      {
+        "path": "QUICK_ORDER_COMPOSITION_PRODUCER_REPORT_1595b8d.md",
+        "sha256": "176fcaad96c667987532c9269d2faccea1743f17c072a7910a8ef866acbcd8df"
+      }
+    ],
+    "evidenceLevel": "Coordinator Git scope/blob and file hash verification only; no test/code execution or independent acceptance",
+    "execution": "NOT RUN",
+    "review": "PENDING_SAME_ORIGINAL_REVIEWER",
+    "limitations": [
+      "App uses jsdom and synthetic public/Care responses; not real browser/Auth/PWA proof",
+      "Static uses synthetic built shell; Vite transport/transform mocked",
+      "Actual root boot test authored but not run; existing listener binds0.0.0.0, probes/dependencies loopback; no network-sandbox claim",
+      "Privacy-header assertions predict failure until pending8392d243 patch; no observed red",
+      "Existing provider-hold fixture needs pending8396609 patch; no observed failure"
+    ],
+    "builder": {
+      "status": "CLEAN_IDLE_HANDOFF_READY",
+      "turn": "01a1128f-3b31-7be2-ae1a-db1104978324",
+      "cursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:89"
+    },
+    "qualification": {
+      "consumed": 1,
+      "remaining": 5,
+      "reservation": null,
+      "materialHostChangeEstablished": false,
+      "expiresAt": "2026-10-06T21:43:37Z"
+    }
   }
 }
