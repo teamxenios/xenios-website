@@ -1,3 +1,5 @@
+Current contract amendment: [REVIEW_CLEARED_WRAPPER_CONTRACT_20261006.md](REVIEW_CLEARED_WRAPPER_CONTRACT_20261006.md). Original review ca1c114 clears only the named SQL drafting dependency. The historical descriptions below remain provenance; current wrapper mapping, cutover dependencies, predecessor bindings and renamed candidate paths are defined by that amendment. Tests and SQL remain NOT RUN.
+
 # Narrow canonical persistence proposal (source permission pending)
 
 The current `research_assisted_order_submit` atomically writes request, lines,

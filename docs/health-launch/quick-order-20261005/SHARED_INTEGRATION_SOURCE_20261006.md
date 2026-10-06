@@ -1,3 +1,5 @@
+Current contract amendment: [REVIEW_CLEARED_WRAPPER_CONTRACT_20261006.md](REVIEW_CLEARED_WRAPPER_CONTRACT_20261006.md). Original review ca1c114 clears only the named SQL drafting dependency. The historical descriptions below remain provenance; current wrapper mapping, cutover dependencies, predecessor bindings and renamed candidate paths are defined by that amendment. Tests and SQL remain NOT RUN.
+
 # Quick Order shared integration — source-only checkpoint
 
 Pushed source: `9118a82633e9f10637764c896ce2a6e53ad1e3eb`.

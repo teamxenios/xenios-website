@@ -1,3 +1,5 @@
+Current contract amendment: [REVIEW_CLEARED_WRAPPER_CONTRACT_20261006.md](REVIEW_CLEARED_WRAPPER_CONTRACT_20261006.md). Original review ca1c114 clears only the named SQL drafting dependency. The historical descriptions below remain provenance; current wrapper mapping, cutover dependencies, predecessor bindings and renamed candidate paths are defined by that amendment. Tests and SQL remain NOT RUN.
+
 # S4 pure admin evidence decoder — proposed contract
 
 Pushed source: `10208fea644f069f58ddeaa8993db4df5eb4469d`.

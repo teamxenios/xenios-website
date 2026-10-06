@@ -3625,12 +3625,22 @@
         "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
         "server/research/health/quick-order/static-document.test.ts",
         "server/research/health/quick-order/vite-document.test.ts",
-        "server/research/health/quick-order/root-composition.test.ts"
+        "server/research/health/quick-order/root-composition.test.ts",
+        "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+        "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+        "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+        "supabase/verification/research_health_quick_order_local.mjs",
+        "supabase/verification/research_health_quick_order_currentness_local.mjs"
       ],
       "state": "active",
       "claimedAt": "2026-10-05T19:13:42.719Z",
-      "heartbeatAt": "2026-10-06T19:08:44.973Z",
-      "note": "Composition test source5fd2e4c pushed: actual App/PWA, static, Vite unit boundary, real root child candidates. Tests NOT RUN; runtime frozen; exact static privacy-header amendment8392d243 proposed, not applied. Same builder/lease retained; G1 consumed/refused; no new slot."
+      "heartbeatAt": "2026-10-06T19:36:08.594Z",
+      "note": "Same builder recording reviewed wrapper contract before SQL candidate drafting under dc3329 and original review ca1c114. Only 10 new candidates/verifiers and two named existing test sources assigned; runtime frozen; no execution."
     }
   ],
   "rules": [
