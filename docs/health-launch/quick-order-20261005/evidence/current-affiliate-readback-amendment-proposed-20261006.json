@@ -1,0 +1,20 @@
+{
+  "status": "PROPOSED_NOT_APPLIED_SHARED_PATCH_AMENDMENT",
+  "targets": [
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+      "beforeSha256lf": "7b2228f2f304af93dd3e6db49a9d498f37fd5112ca3d4beba20328ac6266bf6c",
+      "proposedAfterSha256lf": "b47b37debe3abe010e1b8cb1dc43563d9977f6b7b4f0e23f24276a0c61470bcc",
+      "targetUnchanged": true
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+      "beforeSha256lf": "d73ccc5a673d8c088c2fb08a1e74231bb09894c1bbcf6bf4cbf9d8b4d58fcff5",
+      "proposedAfterSha256lf": "22a14c36f382c706d1225bf1bd3474c953fb72e8cadbf2225c0e50afb459b04e",
+      "targetUnchanged": true
+    }
+  ],
+  "patchSha256": "6f5d90136f23c65c668cddaf4d6ba7a29d7a3c3b5104747c9f01421600e3ff6d",
+  "reason": "Approved UI patch hides later canonical match state for Quick Order and labels immutable initial review as current attribution review. Preserve current readback and label submission context without editing the accepted OperatorDeclarations module.",
+  "execution": "NOT RUN; static source finding only"
+}

@@ -1,0 +1,61 @@
+{
+  "at": "2026-10-06T18:40:40.960Z",
+  "authority": "dc3329bb2cfb3b93d8d054c8bbc77a291df0e671",
+  "approvedPacket": "1d4f2c3b3ff2fc0e1bc25495d3076d2bd9a76e99",
+  "patchSha256": "b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f",
+  "paths": [
+    "shared/research/assisted-order/contract.ts",
+    "server/research/assisted-order/supabase-repository.ts",
+    "server/research/assisted-order/service.ts",
+    "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+    "server/research/assisted-order/communications.ts",
+    "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+    "server/research/assisted-order/quick-order-admin-readback.test.ts",
+    "server/research/assisted-order/quick-order-notifications.test.ts"
+  ],
+  "baselines": [
+    {
+      "path": "shared/research/assisted-order/contract.ts",
+      "sha256lf": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9",
+      "atMountSuccessorSha256lf": "49469c1f42a609395c10bb18fd0923046b1edc78753c24637c8a89732076edc9",
+      "unchangedAtMountSuccessor": true
+    },
+    {
+      "path": "server/research/assisted-order/supabase-repository.ts",
+      "sha256lf": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327",
+      "atMountSuccessorSha256lf": "8675b18a71b1f64a66a0e898feae9cccdb38472b56f7392f20f5254ca49c9327",
+      "unchangedAtMountSuccessor": true
+    },
+    {
+      "path": "server/research/assisted-order/service.ts",
+      "sha256lf": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960",
+      "atMountSuccessorSha256lf": "42559dcec341efd14914daeef5793e37b685cde85991e9fe9c87d704d5a27960",
+      "unchangedAtMountSuccessor": true
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+      "sha256lf": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e",
+      "atMountSuccessorSha256lf": "2aca1551af79b46534c9c7dadf921d26d39ad8fc6eab5d2897c47432fd6cae4e",
+      "unchangedAtMountSuccessor": true
+    },
+    {
+      "path": "server/research/assisted-order/communications.ts",
+      "sha256lf": "91ea8d26fdb82d2607e7a7819cb6cc3168d1763d8e8b8418d57786d907387057",
+      "atMountSuccessorSha256lf": "91ea8d26fdb82d2607e7a7819cb6cc3168d1763d8e8b8418d57786d907387057",
+      "unchangedAtMountSuccessor": true
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+      "sha256lf": "e5da57686afddb59d6b705c2f355fac86fca35e009c7c50840f5a810f75f2bd7",
+      "atMountSuccessorSha256lf": "e5da57686afddb59d6b705c2f355fac86fca35e009c7c50840f5a810f75f2bd7",
+      "unchangedAtMountSuccessor": true
+    }
+  ],
+  "activeConflicts": [],
+  "registries": [
+    "389a",
+    "3221"
+  ],
+  "newPathsAbsent": true,
+  "executionAuthorized": false
+}

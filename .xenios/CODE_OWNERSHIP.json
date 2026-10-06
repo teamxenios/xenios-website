@@ -3613,12 +3613,20 @@
         "server/research/seo/raw-http-document-policy.test.ts",
         "shared/research/assisted-order/quick-order.ts",
         "server/research/assisted-order/quick-order-repository.ts",
-        "server/research/assisted-order/quick-order-repository.test.ts"
+        "server/research/assisted-order/quick-order-repository.test.ts",
+        "shared/research/assisted-order/contract.ts",
+        "server/research/assisted-order/supabase-repository.ts",
+        "server/research/assisted-order/service.ts",
+        "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+        "server/research/assisted-order/communications.ts",
+        "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+        "server/research/assisted-order/quick-order-admin-readback.test.ts",
+        "server/research/assisted-order/quick-order-notifications.test.ts"
       ],
       "state": "active",
       "claimedAt": "2026-10-05T19:13:42.719Z",
-      "heartbeatAt": "2026-10-06T18:37:57.699Z",
-      "note": "Three new S4 pure projection/decoder/test files pushed at10208fe; no existing runtime changed. Tests NOT RUN, independent acceptance pending. Supplemental exact shared integration separately approved atdc3329; not applied in this checkpoint. G1 consumed/refused, no active slot or new resource observation."
+      "heartbeatAt": "2026-10-06T18:49:56.954Z",
+      "note": "Shared admin/notification source9118a82 pushed; exact original patch plus separately bound UI readback correction and new tests. No tests executed. Additional provider-journal test fixture path awaits scope amendment; SQL/original review, deployment and execution held. Same builder/lease preserved."
     }
   ],
   "rules": [

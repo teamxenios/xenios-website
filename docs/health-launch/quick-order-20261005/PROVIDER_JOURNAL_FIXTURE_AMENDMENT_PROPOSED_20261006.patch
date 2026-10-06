@@ -1,0 +1,28 @@
+diff --git a/server/research/assisted-order/provider-journal-http.test.ts b/server/research/assisted-order/provider-journal-http.test.ts
+index 4968404..d053609 100644
+--- a/server/research/assisted-order/provider-journal-http.test.ts
++++ b/server/research/assisted-order/provider-journal-http.test.ts
+@@ -211,11 +211,18 @@ describe("ADP-01 generic status SQL hold stays a controlled conflict", () => {
+       message: "This financial action is unavailable. No change has been made." },
+   ]))("refuses $from to $to for $detail through real service/repository without effects", async ({ from, to, evidence, detail, error, message }) => {
+     const rpc = vi.fn<SupabaseRpcClient["rpc"]>(async (name) => {
+-      if (name === "research_assisted_order_admin_get") return { data: {
+-        requestId: REQUEST, publicReference: "XRR-20261001-ABCDEF0011", status: from,
+-        actorMemberId: null, fullLegalName: "Synthetic customer", email: "synthetic@example.test", mobilePhone: "+15555550100",
+-        organizationName: null, shippingAddress: {}, billingAddress: {}, lines: [], estimatedTotalCents: null,
+-        generalNotes: null, agreements: [], affiliateAttributionRef: null, timeline: [], documents: [], createdAt: WHEN, updatedAt: WHEN,
++      if (name === "research_health_quick_order_admin_detail") return { data: {
++        schemaVersion: "quick-order-admin-envelope-v1", requestId: REQUEST,
++        submittedEvent: null, enrichment: null,
++        detail: {
++          requestId: REQUEST, publicReference: "XRR-20261001-ABCDEF0011", status: from,
++          source: "early_access_manual_order_bridge", currency: "USD",
++          actorMemberId: null, fullLegalName: "Synthetic customer", email: "synthetic@example.test", mobilePhone: "+15555550100",
++          organizationName: null, shippingAddress: {}, billingAddress: {}, lines: [], estimatedTotalCents: null,
++          generalNotes: null, agreements: [], affiliateAttributionRef: null,
++          declaredAffiliateCode: null, declaredAffiliateCodeState: "not_provided",
++          timeline: [], documents: [], createdAt: WHEN, updatedAt: WHEN,
++        },
+       }, error: null };
+       if (name === "research_assisted_order_financial_state") return {
+         data: { hasObservation: from === "paid", paymentVerified: from === "paid" }, error: null,

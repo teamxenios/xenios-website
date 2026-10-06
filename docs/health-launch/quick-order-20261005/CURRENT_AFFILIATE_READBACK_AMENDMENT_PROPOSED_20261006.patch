@@ -1,0 +1,69 @@
+diff --git a/client/src/research/assisted-order/AdminAssistedOrderDetail.tsx b/client/src/research/assisted-order/AdminAssistedOrderDetail.tsx
+index 7d0bc07..f495b99 100644
+--- a/client/src/research/assisted-order/AdminAssistedOrderDetail.tsx
++++ b/client/src/research/assisted-order/AdminAssistedOrderDetail.tsx
+@@ -154,6 +154,7 @@ function AdminAssistedOrderDetail({ token, isCurrent, deny, requestId }: Assiste
+             <div className="xenios-order-review-lines">{detail.lines.map((line) => <article key={line.lineId}><div><strong>{line.productName}</strong><span>{line.specification}</span>{detail.quickOrder ? <span>Variant: {line.variantId}</span> : null}<span>{line.workflowMode.replaceAll("_", " ")}</span></div><div><span>Qty {line.quantity}</span><strong>{money(line.lineEstimateCents)}</strong></div></article>)}</div>
+             {detail.generalNotes ? <div><h3>Customer notes</h3><p>{detail.generalNotes}</p></div> : null}
+             {detail.quickOrder ? <section aria-label="Quick Order intake">
++              <p>The declaration review state below was recorded at submission. Later code matching is shown under Current affiliate status.</p>
+               <OperatorDeclarations declaration={{
+                 ...detail.quickOrder.intake,
+                 trustedAttribution: detail.affiliateAttributionRef
+@@ -175,11 +176,11 @@ function AdminAssistedOrderDetail({ token, isCurrent, deny, requestId }: Assiste
+                 as SEPARATE lines, and the typed one always carries its match
+                 state, so an operator never reads a claim as a proven
+                 relationship. */}
+-            {!detail.quickOrder ? <div data-testid="admin-affiliate">
+-              <h3>Affiliate</h3>
++            <div data-testid="admin-affiliate">
++              <h3>{detail.quickOrder ? "Current affiliate status" : "Affiliate"}</h3>
+               <dl className="xenios-order-facts">
+                 <div>
+-                  <dt>Affiliate code</dt>
++                  <dt>{detail.quickOrder ? "Recorded affiliate code" : "Affiliate code"}</dt>
+                   <dd data-testid="admin-affiliate-code">
+                     {detail.declaredAffiliateCode ?? "None provided"}
+                   </dd>
+@@ -203,7 +204,7 @@ function AdminAssistedOrderDetail({ token, isCurrent, deny, requestId }: Assiste
+                   </dd>
+                 </div>
+               </dl>
+-            </div> : null}
++            </div>
+             <h3>Documents</h3>
+             {detail.documents.length === 0 ? <p>No documents received.</p> : <ul>{detail.documents.map((document) => <li key={document.documentId}>{document.fileName} · {document.status.replaceAll("_", " ")} <button type="button" onClick={() => download(document.documentId)}>Open securely</button></li>)}</ul>}
+             <h3>Timeline</h3>
+diff --git a/client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx b/client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx
+index f94ac6b..951e363 100644
+--- a/client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx
++++ b/client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx
+@@ -617,7 +617,27 @@ describe("Quick Order readback on the existing admin detail", () => {
+     expect(host.textContent).toContain("Recorded state: pending");
+     expect(host.querySelector("img")).toBeNull();
+     expect(host.querySelector("h2")?.textContent).toBe("submitted");
+-    expect(host.querySelector('[data-testid="admin-affiliate"]')).toBeNull();
++    expect(host.querySelector('[data-testid="admin-affiliate"]')).not.toBeNull();
++    expect(api.updateAssistedOrderStatus).not.toHaveBeenCalled();
++  });
++
++  it.each([
++    { state: "matched_manual" as const, label: "Matched" },
++    { state: "invalid_ignored" as const, label: "Ignored (not a usable code)" },
++  ])("shows current $state separately from the immutable submission review", async ({ state, label }) => {
++    const initial = quickOrderDetail();
++    const view: AssistedOrderAdminDetail = {
++      ...initial, declaredAffiliateCode: "SYNTHETIC", declaredAffiliateCodeState: state,
++      quickOrder: { ...initial.quickOrder!, intake: { ...initial.quickOrder!.intake, declaredCode: "SYNTHETIC" } },
++    };
++    api.loadAssistedOrderAdminDetail.mockResolvedValue(view);
++    await renderDetail();
++    expect(host.textContent).toContain("The declaration review state below was recorded at submission.");
++    expect(host.textContent).toContain("Current affiliate status");
++    expect(host.textContent).toContain("Captured, awaiting attribution review");
++    expect(host.querySelector('[data-testid="admin-affiliate-state"]')?.textContent).toBe(label);
++    expect(host.querySelector('[data-testid="admin-affiliate-code"]')?.textContent).toBe("SYNTHETIC");
++    expect(view.quickOrder!.intake.reviewState).toBe("captured_unmatched");
+     expect(api.updateAssistedOrderStatus).not.toHaveBeenCalled();
+   });
+ 

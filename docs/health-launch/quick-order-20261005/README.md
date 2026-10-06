@@ -1,5 +1,13 @@
 # Quick Order isolated implementation
 
+Current shared-source checkpoint: [SHARED_INTEGRATION_SOURCE_20261006.md](SHARED_INTEGRATION_SOURCE_20261006.md),
+source `9118a82633e9f10637764c896ce2a6e53ad1e3eb`, tree
+`5142b61564921cbe892099c8ef55896935508fa9`. Approved shared patch plus exact UI
+readback correction, proposed RPC-name constant and synthetic test source. Tests
+NOT RUN; independent review pending. A separate provider-journal fixture amendment
+is prepared but unapplied. Do not deploy the reader before its future RPC is
+installed and qualified. Customer intake, actual readback and payments stay held.
+
 Current pure S4 checkpoint: [S4_DECODER_CONTRACT_20261006.md](S4_DECODER_CONTRACT_20261006.md),
 source `10208fea644f069f58ddeaa8993db4df5eb4469d`, tree
 `6e0a8003baa8743d243f06bf18c025f649a95152`. Three new projection/decoder/test

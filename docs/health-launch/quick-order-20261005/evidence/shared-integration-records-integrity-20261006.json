@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-06T18:49:56.954Z",
+  "base": "9118a82633e9f10637764c896ce2a6e53ad1e3eb",
+  "integrity": [
+    {
+      "path": ".xenios/ACTIVE_TASKS.json",
+      "otherRowsAndGlobalFieldsPreserved": true
+    },
+    {
+      "path": ".xenios/SESSION_REGISTRY.json",
+      "otherRowsAndGlobalFieldsPreserved": true
+    },
+    {
+      "path": ".xenios/CODE_OWNERSHIP.json",
+      "otherRowsAndGlobalFieldsPreserved": true
+    }
+  ]
+}

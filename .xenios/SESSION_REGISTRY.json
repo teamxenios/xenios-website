@@ -585,13 +585,13 @@
       "tool": "Codex GPT-6 Astra Ultra (task configuration)",
       "lane": "health-quick-order",
       "branch": "codex/xenios-health-quick-order-20261005",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-10-05T19:12:50.193Z",
-      "heartbeatAt": "2026-10-06T18:37:57.699Z",
-      "note": "Three new S4 pure projection/decoder/test files pushed at10208fe; no existing runtime changed. Tests NOT RUN, independent acceptance pending. Supplemental exact shared integration separately approved atdc3329; not applied in this checkpoint. G1 consumed/refused, no active slot or new resource observation.",
-      "sourceSha": "10208fea644f069f58ddeaa8993db4df5eb4469d",
+      "heartbeatAt": "2026-10-06T18:49:56.954Z",
+      "note": "Shared admin/notification source9118a82 pushed; exact original patch plus separately bound UI readback correction and new tests. No tests executed. Additional provider-journal test fixture path awaits scope amendment; SQL/original review, deployment and execution held. Same builder/lease preserved.",
+      "sourceSha": "9118a82633e9f10637764c896ce2a6e53ad1e3eb",
       "handoff": ".xenios/handoffs/quick-order-20261005-handoff.md",
-      "sourceTree": "6e0a8003baa8743d243f06bf18c025f649a95152"
+      "sourceTree": "5142b61564921cbe892099c8ef55896935508fa9"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

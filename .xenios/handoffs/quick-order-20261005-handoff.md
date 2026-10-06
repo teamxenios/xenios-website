@@ -1,3 +1,91 @@
+# Quick Order shared-source handoff — 2026-10-06
+
+- SAME SESSION: codex-health-quick-order-20261005; TASK: HEALTH-QUICK-ORDER-20261005
+- CHAT: 01a10d78-0981-7150-9292-c5cde2730d4d; BRANCH: codex/xenios-health-quick-order-20261005
+- WORKTREE: C:/Users/sboad/.codex/worktrees/389a/xenios-website
+- PUSHED SOURCE: **9118a82633e9f10637764c896ce2a6e53ad1e3eb**
+- SOURCE TREE: **5142b61564921cbe892099c8ef55896935508fa9**
+- LEASE: 17093695-69b5-4cc0-8b29-aedb82bf6409, active/reserved to same builder
+- SESSION: handoff_ready; TASK: blocked_external; no executing helper/test job
+- STATUS: source candidate implemented; tests NOT RUN; independent review PENDING
+
+## Authority and exact delta
+
+Samuel's actual source approval at coordinator dc3329 controls scope1d4f2c3.
+The assigned slice is archived at coordinator2280524 in
+QUICK_ORDER_SHARED_APPROVED_ASSIGNMENT_20261006.txt. It follows the separately
+pushed pure decoder10208fe/recordse7e3d44 and mount/PWAac36e60/recordsc54f53f.
+
+Nine source paths changed: shared assisted-order contract, existing Supabase
+repository, service, communications, AdminAssistedOrderDetail and its named
+AdminAssistedOrderSession test; new quick-order-admin-readback.test.ts and
+quick-order-notifications.test.ts; three lines adding the proposed RPC constant
+in the existing new quick-order-repository.ts. Exact paths/blobs/before-after
+hashes are in docs/health-launch/quick-order-20261005/evidence/shared-integration-source-9118a82.json.
+All six original baselines matched and current389a/3221 active ownership was
+conflict-free before extending the same lease by eight exact paths.
+
+Original patch b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f
+was applied exactly. The UI additionally applies amendment
+6f5d90136f23c65c668cddaf4d6ba7a29d7a3c3b5104747c9f01421600e3ff6d,
+which the coordinator directed within the same two approved paths after reviewing
+its concrete before/after bindings. It restores current canonical affiliate state
+beside explicitly labelled submission-time declarations. Do not claim all original
+patch bytes remain unchanged: four targets are original, two carry this amendment.
+Accepted fd QO module directory trees are identical. No dispatcher, HTTP guard,
+OperatorDeclarations, historical migration or other shared runtime was edited.
+
+## Behavior and evidence limits
+
+Admin reads use the proposed wrapper, strict request-bound enrichment decoder and
+existing canonical detail decoder behind existing read_all. Missing RPC/evidence
+fails unavailable, never legacy fallback. Status mutation preserves immutable
+intake and marks notification stale. UI refresh does not resubmit saved mutations.
+Existing status/finance authority remains. The renderer accepts a closed reference
+payload and fixed-origin operator link; existing dispatcher and legacy renderers
+remain unchanged. New tests use real composition with synthetic infrastructure;
+they are authored, not executed, and cannot establish durable SQL/provider proof.
+
+Static checks: exact baselines/patch/ownership and UI after hashes; git diff check;
+exact nine-source-path delta; accepted QO trees unchanged; other registry rows and
+global fields preserved. No tests, syntax check, typecheck, build, browser, resource
+precheck, database call or transport was run. Production was neither refreshed
+nor mutated for this source-only slice. No bridge/CLI transport was activated.
+
+## Concrete remaining amendment
+
+PROVIDER_JOURNAL_FIXTURE_AMENDMENT_PROPOSED_20261006.patch in the owned docs folder
+is NOT APPLIED. Its target provider-journal-http.test.ts remains unchanged and
+outside this source lease. Four existing cases stub only the old admin RPC and a
+partial legacy object; source inspection predicts an early unexpected-RPC failure
+before the existing finance409 assertions. Patch8396609b413bc93990adea937861427ec07787f6ea126e19f926b42398d01498
+only updates that synthetic legacy envelope and preserves finance assertions.
+Coordinator has the additional path decision pending. Recheck exact bindings and
+record its authority before extending the lease/applying it. Do not fabricate a
+passing result or edit another path to mask the fixture mismatch.
+
+## Operational holds and next task
+
+Do not deploy reader cutover until the future service-only RPC is installed and
+qualified. No SQL drafted here; original Claude naming/fence review remains a
+prerequisite. Durable currentness, atomic commit persistence, actual operator
+readback, Health legal/classification/destination/standing, payments and managed
+actions remain incomplete/held. Customer intake is unavailable. Final protected
+acceptance, manifest recut and GATE-01 remain open.
+
+G1 remains consumed/refused/released at2026-10-06T17:54:58.1429186Z,1205MiB<1536;
+zero tests. No new reservation/material host change or resource observation.
+The original S5 expiry remains21:43:37Z. Historical934MiB is not current memory.
+Mandatory HTTP red/green remains pending. No cleanup/shutdown/retry is inferred.
+
+Next: coordinator disposition of the exact extra test fixture path, then the
+separately sequenced composition-test slice; no new execution under this handoff.
+Keep the original builder and reviewer. No outbound thread message was sent.
+The resurfaced994a8d83 bridge attachment is the old reviewedv0.1 request, not a
+new sprint dependency; do not reopen that review on another continuity replay.
+
+## Previous pure S4 checkpoint — historical, superseded only as described above
+
 # Quick Order pure S4 decoder handoff — 2026-10-06
 
 - SAME SESSION: codex-health-quick-order-20261005; TASK: HEALTH-QUICK-ORDER-20261005

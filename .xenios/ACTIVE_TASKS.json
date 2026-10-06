@@ -6,7 +6,7 @@
       "id": "HEALTH-QUICK-ORDER-20261005",
       "title": "Implement isolated Health Quick Order intake over canonical assisted requests",
       "priority": "P1",
-      "state": "active",
+      "state": "blocked_external",
       "owner": "codex-health-quick-order-20261005",
       "baseSha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
       "paths": [
@@ -30,13 +30,21 @@
         "server/research/seo/raw-http-document-policy.test.ts",
         "shared/research/assisted-order/quick-order.ts",
         "server/research/assisted-order/quick-order-repository.ts",
-        "server/research/assisted-order/quick-order-repository.test.ts"
+        "server/research/assisted-order/quick-order-repository.test.ts",
+        "shared/research/assisted-order/contract.ts",
+        "server/research/assisted-order/supabase-repository.ts",
+        "server/research/assisted-order/service.ts",
+        "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+        "server/research/assisted-order/communications.ts",
+        "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+        "server/research/assisted-order/quick-order-admin-readback.test.ts",
+        "server/research/assisted-order/quick-order-notifications.test.ts"
       ],
       "dependsOn": [],
-      "scopeNote": "Three new S4 pure projection/decoder/test files pushed at10208fe; no existing runtime changed. Tests NOT RUN, independent acceptance pending. Supplemental exact shared integration separately approved atdc3329; not applied in this checkpoint. G1 consumed/refused, no active slot or new resource observation.",
+      "scopeNote": "Shared admin/notification source9118a82 pushed; exact original patch plus separately bound UI readback correction and new tests. No tests executed. Additional provider-journal test fixture path awaits scope amendment; SQL/original review, deployment and execution held. Same builder/lease preserved.",
       "claimedAt": "2026-10-05T19:13:42.715Z",
-      "sourceSha": "10208fea644f069f58ddeaa8993db4df5eb4469d",
-      "sourceTree": "6e0a8003baa8743d243f06bf18c025f649a95152",
+      "sourceSha": "9118a82633e9f10637764c896ce2a6e53ad1e3eb",
+      "sourceTree": "5142b61564921cbe892099c8ef55896935508fa9",
       "baseAcceptance": {
         "sha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
         "review": "04cbbee0d3d3ab32dfd6ae9002b82837423f6265",
@@ -44,19 +52,19 @@
       },
       "handoff": {
         "session": "codex-health-quick-order-20261005",
-        "sha": "10208fea644f069f58ddeaa8993db4df5eb4469d",
+        "sha": "9118a82633e9f10637764c896ce2a6e53ad1e3eb",
         "file": ".xenios/handoffs/quick-order-20261005-handoff.md",
-        "at": "2026-10-06T18:37:57.699Z"
+        "at": "2026-10-06T18:49:56.954Z"
       },
       "blockedOn": [
-        "HTTP red/green NOT RUN: G1 refused1205MiB<1536 at2026-10-06T17:54:58Z; separate coordinator reservation and materially changed conditions required",
-        "S2/S3 source successor independent review, final protected hash acceptance and owner recut; GATE-01 stays open",
-        "S2/S3 focused tests, real App/static/Vite composition, typecheck/build/browser qualification pending valid distinct groups",
-        "Canonical persistence/currentness and shared integration pending; supplemental source approved atdc3329, SQL requires original naming/fence review; execution held",
-        "Governed Health legal/classification/visibility/destination/standing authorities; live intake, payments and production remain held"
+        "HTTP red/green NOT RUN: G1 consumed/refused; material host change and distinct reservation required",
+        "Current shared-source candidate independent review/qualification and exact protected disposition pending",
+        "Additional provider-journal fixture path amendment prepared but not applied; coordinator scope decision pending",
+        "Future admin-reader RPC installation/qualification required before reader cutover; SQL drafting still awaits original naming/fence review",
+        "Durable currentness/commit persistence, Health legal/classification/destination/standing, payments and managed actions remain held"
       ],
-      "heartbeatAt": "2026-10-06T18:37:57.699Z",
-      "note": "Three new S4 pure projection/decoder/test files pushed at10208fe; no existing runtime changed. Tests NOT RUN, independent acceptance pending. Supplemental exact shared integration separately approved atdc3329; not applied in this checkpoint. G1 consumed/refused, no active slot or new resource observation.",
+      "heartbeatAt": "2026-10-06T18:49:56.954Z",
+      "note": "Shared admin/notification source9118a82 pushed; exact original patch plus separately bound UI readback correction and new tests. No tests executed. Additional provider-journal test fixture path awaits scope amendment; SQL/original review, deployment and execution held. Same builder/lease preserved.",
       "qualification": {
         "reservation": "QO-FIRST-20261006-G1",
         "status": "REFUSED_RELEASED",
