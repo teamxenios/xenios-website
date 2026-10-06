@@ -1,3 +1,11 @@
+## Automation stopped by Samuel — 2026-10-06
+
+The five-minute xenios-launch-coordination heartbeat is PAUSED at Samuel's
+explicit request. Tool result and saved status both confirm it. Do not restart
+it because older prompts said to keep it active. Foreground source work under
+the approved sprint continues. The latest pasted kickoff is not a second S5
+window; retain1of6groups consumed and21:43:37Z expiry.
+
 ## Supplemental source decision — 2026-10-06
 
 Samuel directly answered “Approve this bounded source-only scope” to the exact

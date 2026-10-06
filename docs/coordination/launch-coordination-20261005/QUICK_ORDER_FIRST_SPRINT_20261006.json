@@ -246,5 +246,18 @@
     "replyMessage": "2a3f1c6d-0d46-44c0-a1a9-ef457a8aa028",
     "status": "CONFIRMED_NO_NEW_AUTHORITY",
     "pendingReply": false
+  },
+  "automation": {
+    "id": "xenios-launch-coordination",
+    "status": "PAUSED",
+    "reason": "Samuel explicitly requested: stop the 5 minute launch cooridanrtor too",
+    "confirmedBy": "automation_update returned PAUSED and automation.toml status re-read",
+    "recordedAt": "2026-10-06T18:30:35.732Z",
+    "scope": "Periodic heartbeat stopped; foreground authorized source work continues. Do not re-enable without an actual user instruction."
+  },
+  "latestAttachment": {
+    "id": "dd022804-0cb9-4c62-8b15-2354c8f69727",
+    "sha256": "e32a3815ac5e2a3779ee69440c13e5b755321dd876b0e4a5a5781327b198bf29",
+    "disposition": "Reiterates kickoff already acted on. Latest direct request is stopping the five-minute automation, not resetting S5 or undoing separate supplemental approval. Preserve original17:43:37 receipt/21:43:37 expiry and1of6 consumed."
   }
 }
