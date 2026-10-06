@@ -585,13 +585,13 @@
       "tool": "Codex GPT-6 Astra Ultra (task configuration)",
       "lane": "health-quick-order",
       "branch": "codex/xenios-health-quick-order-20261005",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-10-05T19:12:50.193Z",
-      "heartbeatAt": "2026-10-06T19:36:08.594Z",
-      "note": "Same builder recording reviewed wrapper contract before SQL candidate drafting under dc3329 and original review ca1c114. Only 10 new candidates/verifiers and two named existing test sources assigned; runtime frozen; no execution.",
-      "sourceSha": "5fd2e4c74d31562281493013489bb41949979b88",
+      "heartbeatAt": "2026-10-06T20:11:53.415Z",
+      "note": "SQL candidate source7d027e4 pushed with intake readers/currentness held metadata, two e279 test refinements and exact source receipts; all execution NOT RUN. Same original review pending for new bytes and proposed guard/commit design. Same builder parked; G1 spent; runtime/decoder/UI/protected/predecessor/manifest frozen.",
+      "sourceSha": "7d027e4dff130214cb71954e2de548be5747cd0c",
       "handoff": ".xenios/handoffs/quick-order-20261005-handoff.md",
-      "sourceTree": "99ca9ae54298a30c860cfea924d08797a1dc4c9e"
+      "sourceTree": "3819c5f4efed71bd12d5e759593e71c580d96cc3"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

@@ -1,3 +1,129 @@
+# Quick Order SQL candidate source handoff — 2026-10-06
+
+- SAME SESSION: codex-health-quick-order-20261005
+- TASK: HEALTH-QUICK-ORDER-20261005
+- CHAT: 01a10d78-0981-7150-9292-c5cde2730d4d
+- BRANCH: codex/xenios-health-quick-order-20261005
+- WORKTREE: C:/Users/sboad/.codex/worktrees/389a/xenios-website
+- PUSHED SOURCE: **7d027e4dff130214cb71954e2de548be5747cd0c**
+- SOURCE TREE: **3819c5f4efed71bd12d5e759593e71c580d96cc3**
+- BASE RECORDS: 1595b8df868a0bd3779ae84fb3da3226c9a75902; source baseline 5fd2e4c74d31562281493013489bb41949979b88
+- CONTRACT FIRST: b75325afb11e46ded157b85090933fc00f31af19
+- TEST REFINEMENT: e279cc6dce1a7af6386f79022d19de0d3447ee85
+- CURRENTNESS CHECKPOINT: 00e12fbfd4ecb68ee705d9b2f68b7dea6cb7920c; final source also includes the rollback lock correction
+- LEASE: 17093695-69b5-4cc0-8b29-aedb82bf6409; active/reserved to SAME builder
+- SESSION: handoff_ready; TASK: blocked_external; all source writers idle
+- SQL / VERIFIER / TESTS / SYNTAX / TYPECHECK / BUILD / RESOURCE CHECK: **NOT RUN**
+- NEW SQL SOURCE ACCEPTANCE: PENDING, same original reviewer
+
+## Authority and exact completed slice
+
+Samuel's actual source-only approval dc3329bb2cfb3b93d8d054c8bbc77a291df0e671, packet
+1d4f2c3b3ff2fc0e1bc25495d3076d2bd9a76e99, remains the scope authority. The same original reviewer's
+ca1c114a083793918b18d017b32509864ee4bcf6 clears the predecessor compatibility dependency and
+requires the contract before section5B wrapper drafting. It does not accept these
+new SQL bytes or permit execution. Coordinator assignment is recorded in
+QUICK_ORDER_REVIEW_CLEARED_DRAFTING_ASSIGNMENT_20261006.txt under the coordinator's
+launch-coordination-20261005 records. Same owner/session; no new reviewer or bridge.
+
+The exact ten new paths in the binding inventory are drafted: intake candidate,
+precheck, postcheck, rollback and disposable verifier; currentness candidate,
+precheck, postcheck, rollback and disposable verifier. No migration registration.
+The two named test files were strengthened at e279cc6; no existing runtime,
+closed decoder, UI, protected file, predecessor SQL or manifest changed here.
+
+Intake adds an inaccessible companion, two internal pure validators and two
+service-only read RPCs: replay(text,text), admin_detail(uuid). The wrapper starts
+from canonical20, appends the three actual stored fields for every request,
+refuses partial/unknown/missing evidence, and renders Quick Order identity times
+without loss; genuine legacy keeps canonical timestamps and null enrichment.
+It retains per-line positive classification references internally, but the
+frozen decoder has no classification display field. No display authority is
+invented. The companion FK generates internal PostgreSQL RI triggers; no guard
+or immutability trigger is authored. Privileged owner bypass is outside the
+callable-surface guarantee.
+
+Currentness adds two tables and six owner-only functions. Publish/revoke keep
+metadata held; read-current is always unavailable, including manual active-head
+state. There is no active Health seed, service-role publication, new role or
+credential. No research_health_quick_order_commit body, writer guard function,
+trigger set or new runtime publication/currentness module was authored.
+
+Both future verifiers bind an external source receipt and actual historical
+sources, preserve provider integrity and all 14 exact trigger states, distinguish
+absent/exact/drifted objects, and restrict rollback/cleanup. Currentness rollback
+locks head/revision tables before checking retained history. Intake rollback
+locks the companion and refuses retained/orphaned facts. No blind cleanup or
+CASCADE is provided. Synthetic fixtures are explicitly not actual admission or
+atomic commit proof. Even completed bounded subsets exit 2/HELD while omitted
+commit/currentness/concurrency/liveness coverage remains unimplemented.
+
+## Exact inventory and source receipts
+
+Full before/after blob and SHA256-LF inventory, all 21 source-checkpoint changed
+paths, 55 reference bindings, exact 14 triggers, and scope/ownership metadata:
+docs/health-launch/quick-order-20261005/evidence/sql-candidate-source-7d027e4.json.
+All 10 new targets were absent at base. All 53 frozen references remain exact;
+only the two permitted test sources changed. Other owners' registry rows and
+global fields are preserved. No active path conflict was found in this checkout
+or coordinator3221. Git whitespace checks passed; no syntax check is implied.
+
+Each external source receipt pins 66 files at the final source commit, including
+its own verifier/rollback bytes, the 55 historical reference paths with current
+successor hashes, contract bindings and five added bootstrap/predecessor paths.
+These are source-file identity records, **not SQL or test execution receipts**.
+
+- Intake: evidence/sql-intake-source-receipt-7d027e4.json
+  raw CRLF SHA256 b449ce33a83eead46422364d7dfed342ee9428dc883cb7110958be748749053a
+- Currentness: evidence/sql-currentness-source-receipt-7d027e4.json
+  raw CRLF SHA256 a18927bf5e7583261be5e5b89fc6dc51fb4749714cd3a9e3aa21d14fc0a252d2
+
+The inventory also records their LF digests. Future invocation pins the actual
+raw receipt bytes; line-ending conversion changes that raw digest. Neither
+receipt includes its own hash, and neither grants execution authority.
+
+## Held design returned for original-reviewer disposition
+
+docs/health-launch/quick-order-20261005/HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md
+is PROPOSED / NOT ACCEPTED / NOT IMPLEMENTED. It records AFTER-statement timing,
+all source/member/session prelocks and the multi-write invariant, absent/held
+head semantics, removal of session triggers, dependency-scoped epoch intent,
+unmeasured liveness, canonical durable standing/Health pair authority, exact
+non-writing current/historical binding helpers and server-configured recipient.
+The writer audit, dependency projection and observed-load budgets remain open.
+This proposal is not authorization to author the guard/commit bodies.
+
+Status and limitations: docs/health-launch/quick-order-20261005/SQL_CANDIDATE_DRAFT_STATUS_20261006.md.
+The original doc41 expected protection failures remain expected, not recut or
+accepted. Doc44 RB-F8 is not manifest or protected-hash authority. G1 producer LF
+versus coordinator CRLF provenance is retained in the pushed contract.
+
+## Unchanged holds and next exact work
+
+Both pending patches remain UNAPPLIED: provider-journal fixture8396609b and
+static document privacy8392d243. No repeated question or outbound thread message.
+G1 remains spent/refused/released at2026-10-06T17:54:58.1429186Z,1205MiB<1536,
+zero tests. There was no new host observation, material-condition change, cleanup,
+shutdown, reservation or execution group. Five groups remain unused; original
+S5 expiry2026-10-06T21:43:37Z is unchanged. Automation remains PAUSED.
+
+HTTP handler/containment red/green remains pending on its exact original plan.
+No current SQL, reader, fixture, source receipt or historical test count replaces
+that evidence. Even a later passing HTTP run would resolve only that evidence.
+Quick Order remains unavailable: productionReady false and commit throws.
+Protected acceptance/GATE-01, canonical durable currentness/atomic persistence,
+actual operator readback and applicable Health authorities retain separate
+work and approvals. No release reader cutover before wrapper installation and
+qualification under separate action authority. No DB connection, cloud write,
+real intake, notification, payment or deployment occurred.
+
+Next exact task: the existing coordinator collects this pushed source and records;
+the SAME original reviewer dispositions the new SQL candidate bytes and the
+held section5C design. No new source or execution is inferred from this handoff.
+Preserve the same builder/lease parked for its next authorized slice.
+
+## Historical checkpoints below
+
 # Quick Order composition test source handoff — 2026-10-06
 
 - SAME SESSION: codex-health-quick-order-20261005

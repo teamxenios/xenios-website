@@ -1,5 +1,14 @@
 # Quick Order isolated implementation
 
+Current SQL candidate source: [SQL_CANDIDATE_DRAFT_STATUS_20261006.md](SQL_CANDIDATE_DRAFT_STATUS_20261006.md),
+source 7d027e4dff130214cb71954e2de548be5747cd0c, tree 3819c5f4efed71bd12d5e759593e71c580d96cc3. Ten new draft files plus two permitted test refinements;
+SQL, verifiers and tests NOT RUN. Wrapper/replay readers and held publication
+metadata are drafted; guard/commit bodies remain unimplemented. Quick Order
+remains unavailable. Exact inventory and external source receipts are bound in
+[the handoff](../../../.xenios/handoffs/quick-order-20261005-handoff.md).
+The [held design amendment](HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md)
+awaits the original reviewer's disposition. Earlier checkpoints below are historical.
+
 Current composition-test source: [COMPOSITION_TEST_SOURCE_20261006.md](COMPOSITION_TEST_SOURCE_20261006.md),
 source `5fd2e4c74d31562281493013489bb41949979b88`, tree
 `99ca9ae54298a30c860cfea924d08797a1dc4c9e`. Four new test candidates; runtime

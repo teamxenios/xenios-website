@@ -6,7 +6,7 @@
       "id": "HEALTH-QUICK-ORDER-20261005",
       "title": "Implement isolated Health Quick Order intake over canonical assisted requests",
       "priority": "P1",
-      "state": "active",
+      "state": "blocked_external",
       "owner": "codex-health-quick-order-20261005",
       "baseSha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
       "paths": [
@@ -55,10 +55,10 @@
         "supabase/verification/research_health_quick_order_currentness_local.mjs"
       ],
       "dependsOn": [],
-      "scopeNote": "Composition test source5fd2e4c pushed: actual App/PWA, static, Vite unit boundary, real root child candidates. Tests NOT RUN; runtime frozen; exact static privacy-header amendment8392d243 proposed, not applied. Same builder/lease retained; G1 consumed/refused; no new slot.",
+      "scopeNote": "SQL candidate source7d027e4 pushed with intake readers/currentness held metadata, two e279 test refinements and exact source receipts; all execution NOT RUN. Same original review pending for new bytes and proposed guard/commit design. Same builder parked; G1 spent; runtime/decoder/UI/protected/predecessor/manifest frozen.",
       "claimedAt": "2026-10-05T19:13:42.715Z",
-      "sourceSha": "5fd2e4c74d31562281493013489bb41949979b88",
-      "sourceTree": "99ca9ae54298a30c860cfea924d08797a1dc4c9e",
+      "sourceSha": "7d027e4dff130214cb71954e2de548be5747cd0c",
+      "sourceTree": "3819c5f4efed71bd12d5e759593e71c580d96cc3",
       "baseAcceptance": {
         "sha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
         "review": "04cbbee0d3d3ab32dfd6ae9002b82837423f6265",
@@ -66,20 +66,20 @@
       },
       "handoff": {
         "session": "codex-health-quick-order-20261005",
-        "sha": "5fd2e4c74d31562281493013489bb41949979b88",
+        "sha": "7d027e4dff130214cb71954e2de548be5747cd0c",
         "file": ".xenios/handoffs/quick-order-20261005-handoff.md",
-        "at": "2026-10-06T19:08:44.973Z"
+        "at": "2026-10-06T20:11:53.415Z"
       },
       "blockedOn": [
-        "All new composition candidates NOT RUN; exact independent source review/qualification pending",
-        "Runtime frozen; static.ts document privacy-header amendment8392d243 proposed and unapplied",
-        "Provider-journal fixture extra path amendment8396609b remains pending Samuel recorded answer",
-        "HTTP red/green NOT RUN; G1 consumed/refused/released; material host change and distinct reservation required",
-        "Future admin-reader RPC installation/qualification before cutover; SQL naming/fence review prerequisite remains",
-        "Protected acceptance, durable currentness/atomic commit, Health authorities, notifications/payment and release remain held"
+        "New SQL candidate/source-only verifier and refined tests require original reviewer disposition; all NOT RUN",
+        "Guard/commit bodies HELD pending proposed section5C design, writer audit, scoped dependency map and measured liveness",
+        "HTTP red/green still NOT RUN; G1 spent/refused; material host change and distinct reservation required, original S5 expiry unchanged",
+        "Provider fixture8396609b and static privacy8392d243 patches remain unapplied awaiting actual Samuel answers",
+        "Wrapper installation/qualification before reader cutover; classification display requires separate projection disposition",
+        "Protected acceptance/manifest/GATE-01, durable atomic persistence, Health authorities, operational readback, notification/payment and release remain held"
       ],
-      "heartbeatAt": "2026-10-06T19:36:08.594Z",
-      "note": "Same builder recording reviewed wrapper contract before SQL candidate drafting under dc3329 and original review ca1c114. Only 10 new candidates/verifiers and two named existing test sources assigned; runtime frozen; no execution.",
+      "heartbeatAt": "2026-10-06T20:11:53.415Z",
+      "note": "SQL candidate source7d027e4 pushed with intake readers/currentness held metadata, two e279 test refinements and exact source receipts; all execution NOT RUN. Same original review pending for new bytes and proposed guard/commit design. Same builder parked; G1 spent; runtime/decoder/UI/protected/predecessor/manifest frozen.",
       "qualification": {
         "reservation": "QO-FIRST-20261006-G1",
         "status": "REFUSED_RELEASED",

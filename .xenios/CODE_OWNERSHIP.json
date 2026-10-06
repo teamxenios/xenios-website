@@ -3639,8 +3639,8 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-05T19:13:42.719Z",
-      "heartbeatAt": "2026-10-06T19:36:08.594Z",
-      "note": "Same builder recording reviewed wrapper contract before SQL candidate drafting under dc3329 and original review ca1c114. Only 10 new candidates/verifiers and two named existing test sources assigned; runtime frozen; no execution."
+      "heartbeatAt": "2026-10-06T20:11:53.415Z",
+      "note": "SQL candidate source7d027e4 pushed with intake readers/currentness held metadata, two e279 test refinements and exact source receipts; all execution NOT RUN. Same original review pending for new bytes and proposed guard/commit design. Same builder parked; G1 spent; runtime/decoder/UI/protected/predecessor/manifest frozen."
     }
   ],
   "rules": [
