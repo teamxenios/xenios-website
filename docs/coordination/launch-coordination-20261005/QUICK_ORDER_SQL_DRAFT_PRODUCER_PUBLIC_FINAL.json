@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-10-06T20:17:53.379Z",
+  "thread": "01a10d78-0981-7150-9292-c5cde2730d4d",
+  "host": "local",
+  "turn": "01a112b3-9b9e-71b1-b4c4-2f3d6139c791",
+  "message": "msg_0f39ac48c4ef0110016ac55684a70c87d187eec824a8250093",
+  "cursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:158",
+  "completedAt": "2026-10-06T20:13:56.000Z",
+  "status": "completed",
+  "threadStatus": "idle",
+  "text": "Pushed the source-only drafts and exact handoff: Source: 7d027e4 Records: 18bfbcd Ten new draft files; 53 frozen references unchanged. Worktree clean. SQL, verifiers, tests and resource checks were not run. HTTP red/green evidence remains pending. Guard/commit bodies remain held, Quick Order remains unavailable, and the existing builder is parked.",
+  "evidenceKind": "Public builder final, not independent acceptance"
+}
