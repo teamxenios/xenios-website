@@ -1,0 +1,350 @@
+diff --git a/shared/research/assisted-order/contract.ts b/shared/research/assisted-order/contract.ts
+--- a/shared/research/assisted-order/contract.ts
++++ b/shared/research/assisted-order/contract.ts
+@@ -5,7 +5,9 @@
+  * raw identity-document, or payment-proof fields.
+  */
+ 
+-export const ASSISTED_ORDER_SOURCE = "early_access_manual_order_bridge" as const;
++import type { QuickOrderAdminProjection } from "./quick-order";
++
++export const ASSISTED_ORDER_SOURCE = "early_access_manual_order_bridge" as const;
+ export const ASSISTED_ORDER_CURRENCY = "USD" as const;
+ export const ASSISTED_ORDER_MAX_LINES = 200;
+ export const ASSISTED_ORDER_MAX_NOTE_LENGTH = 2_000;
+@@ -392,8 +394,10 @@
+     | "not_provided"
+     | "captured_unmatched"
+     | "matched_manual"
+-    | "invalid_ignored";
+-  timeline: readonly AssistedOrderStatusEventView[];
++    | "invalid_ignored";
++  /** Undefined is a legacy producer; the enriched reader must return null or evidence. */
++  quickOrder?: QuickOrderAdminProjection | null;
++  timeline: readonly AssistedOrderStatusEventView[];
+   documents: readonly AssistedOrderDocumentView[];
+   createdAt: string;
+   updatedAt: string;
+diff --git a/server/research/assisted-order/supabase-repository.ts b/server/research/assisted-order/supabase-repository.ts
+--- a/server/research/assisted-order/supabase-repository.ts
++++ b/server/research/assisted-order/supabase-repository.ts
+@@ -16,7 +16,8 @@
+   AssistedOrderStatusAuthorization,
+   AssistedOrderStoredSubmission,
+ } from "./ports";
+-import { AssistedOrderConflictError } from "./service";
++import { AssistedOrderConflictError } from "./service";
++import { QUICK_ORDER_ADMIN_DETAIL_RPC, decodeQuickOrderAdminEnvelope } from "./quick-order-repository";
+ 
+ export type SupabaseRpcResponse = Readonly<{
+   data: unknown;
+@@ -415,15 +416,20 @@
+     return view;
+   }
+ 
+-  public async getAdmin(requestId: string): Promise<AssistedOrderAdminDetail | null> {
+-    const response = await this.client.rpc("research_assisted_order_admin_get", {
+-      p_request_id: requestId,
+-    });
+-    if (response.error) {
+-      fail(response, "research_assisted_order_admin_get");
+-    }
+-    return response.data === null ? null : decodeAdminDetail(response.data);
+-  }
++  public async getAdmin(requestId: string): Promise<AssistedOrderAdminDetail | null> {
++    const response = await this.client.rpc(QUICK_ORDER_ADMIN_DETAIL_RPC, {
++      p_request_id: requestId,
++    });
++    if (response.error) {
++      fail(response, QUICK_ORDER_ADMIN_DETAIL_RPC);
++    }
++    const envelope = decodeQuickOrderAdminEnvelope(response.data, requestId);
++    if (envelope === null) return null;
++    return Object.freeze({
++      ...decodeAdminDetail(envelope.detail),
++      quickOrder: envelope.quickOrder,
++    });
++  }
+ 
+   public async listAdmin(query: {
+     status?: AssistedOrderStatus;
+diff --git a/server/research/assisted-order/service.ts b/server/research/assisted-order/service.ts
+--- a/server/research/assisted-order/service.ts
++++ b/server/research/assisted-order/service.ts
+@@ -932,10 +932,19 @@
+       }
+     });
+ 
+-    return updated;
+-  }
+-
+-  public async createDocumentUpload(
++    if (current.quickOrder) {
++      return Object.freeze({
++        ...updated,
++        quickOrder: Object.freeze({
++          intake: current.quickOrder.intake,
++          observation: Object.freeze({ state: "stale" as const }),
++        }),
++      });
++    }
++    return updated;
++  }
++
++  public async createDocumentUpload(
+     viewer: AssistedOrderViewer,
+     requestId: string,
+     input: AssistedOrderUploadRequest,
+diff --git a/client/src/research/assisted-order/AdminAssistedOrderDetail.tsx b/client/src/research/assisted-order/AdminAssistedOrderDetail.tsx
+--- a/client/src/research/assisted-order/AdminAssistedOrderDetail.tsx
++++ b/client/src/research/assisted-order/AdminAssistedOrderDetail.tsx
+@@ -11,7 +11,8 @@
+   AssistedOrderApiError,
+ } from "./api";
+ import { AdminAssistedOrderSession, type AssistedOrderAdminScope } from "./AdminAssistedOrderSession";
+-import { money } from "./wizard-state";
++import { money } from "./wizard-state";
++import { OperatorDeclarations } from "../quick-order/OperatorDeclarations";
+ import "./assisted-order.css";
+ 
+ function requestIdFromPath(path: string): string | null {
+@@ -73,7 +74,7 @@
+ 
+   const update = async (event: FormEvent) => {
+     event.preventDefault();
+-    if (!current() || !detail || updating.current) return;
++    if (!current() || !detail || updating.current || detail.quickOrder?.observation.state === "stale") return;
+     updating.current = true;
+     ++readEpoch.current;
+     setBusy(true);
+@@ -102,8 +103,27 @@
+       setDetail(result);
+       setCustomerMessage("");
+       setInternalNote("");
+-      setEvidenceId("");
+-    } catch (reason) {
++      setEvidenceId("");
++      if (result.quickOrder) {
++        const epoch = ++readEpoch.current;
++        try {
++          const refreshed = await loadAssistedOrderAdminDetail(token, requestId);
++          if (!current() || readEpoch.current !== epoch) return;
++          if (refreshed.requestId !== requestId || !refreshed.quickOrder ||
++              refreshed.quickOrder.observation.state !== "observed") {
++            throw new Error("Request readback unavailable.");
++          }
++          setDetail(refreshed);
++        } catch (reason) {
++          if (!current() || readEpoch.current !== epoch) return;
++          if (reason instanceof AssistedOrderApiError && [401, 403].includes(reason.status)) {
++            deny();
++            return;
++          }
++          setError("Status saved. Reload this page to refresh notification state before making another update.");
++        }
++      }
++    } catch (reason) {
+       failed(reason, "The status could not be updated.");
+     } finally {
+       updating.current = false;
+@@ -129,15 +149,33 @@
+       {detail ? (
+         <div className="xenios-order-admin-detail">
+           <section className="xenios-order-panel">
+             <div className="xenios-order-card__header"><div><p className="xenios-order-eyebrow">Current status</p><h2>{detail.status.replaceAll("_", " ")}</h2></div><strong>{money(detail.estimatedTotalCents)}</strong></div>
+             <div className="xenios-order-review-contact"><div><strong>{detail.fullLegalName}</strong><span>{detail.email}</span><span>{detail.mobilePhone}</span><span>{detail.organizationName}</span></div><div><strong>Ship to</strong><span>{detail.shippingAddress.line1}</span><span>{detail.shippingAddress.city}, {detail.shippingAddress.region} {detail.shippingAddress.postalCode}</span><span>{detail.shippingAddress.countryCode}</span></div></div>
+-            <div className="xenios-order-review-lines">{detail.lines.map((line) => <article key={line.lineId}><div><strong>{line.productName}</strong><span>{line.specification}</span><span>{line.workflowMode.replaceAll("_", " ")}</span></div><div><span>Qty {line.quantity}</span><strong>{money(line.lineEstimateCents)}</strong></div></article>)}</div>
++            <div className="xenios-order-review-lines">{detail.lines.map((line) => <article key={line.lineId}><div><strong>{line.productName}</strong><span>{line.specification}</span>{detail.quickOrder ? <span>Variant: {line.variantId}</span> : null}<span>{line.workflowMode.replaceAll("_", " ")}</span></div><div><span>Qty {line.quantity}</span><strong>{money(line.lineEstimateCents)}</strong></div></article>)}</div>
+             {detail.generalNotes ? <div><h3>Customer notes</h3><p>{detail.generalNotes}</p></div> : null}
+-            {/* Affiliate. The typed code and the verified attribution are shown
++            {detail.quickOrder ? <section aria-label="Quick Order intake">
++              <OperatorDeclarations declaration={{
++                ...detail.quickOrder.intake,
++                trustedAttribution: detail.affiliateAttributionRef
++                  ? { state: "verified", reference: detail.affiliateAttributionRef }
++                  : { state: "absent" },
++                nextAction: "Review the request. Payment and clinical approval are separate.",
++              }} />
++              <p>Known-price subtotal: {money(detail.quickOrder.intake.estimate.knownSubtotalCents)}{detail.quickOrder.intake.estimate.estimateComplete ? "" : " · Some prices are pending."}</p>
++              <section aria-label="Quick Order notification">
++                <h3>Operator notification</h3>
++                {detail.quickOrder.observation.state === "observed" ? <>
++                  <p>Recorded state: {detail.quickOrder.observation.notification.status.replaceAll("_", " ")}; attempts: {detail.quickOrder.observation.notification.attemptCount}.</p>
++                  <p>Observed at <time dateTime={detail.quickOrder.observation.observedAt}>{detail.quickOrder.observation.observedAt}</time>.</p>
++                </> : <p role="status">Notification state needs refresh.</p>}
++                <p>Sent means accepted by the notification service. It does not confirm delivery or operator review.</p>
++              </section>
++            </section> : null}
++            {/* Affiliate. The typed code and the verified attribution are shown
+                 as SEPARATE lines, and the typed one always carries its match
+                 state, so an operator never reads a claim as a proven
+                 relationship. */}
+-            <div data-testid="admin-affiliate">
++            {!detail.quickOrder ? <div data-testid="admin-affiliate">
+               <h3>Affiliate</h3>
+               <dl className="xenios-order-facts">
+                 <div>
+@@ -164,9 +202,9 @@
+                     {detail.affiliateAttributionRef ?? "None"}
+                   </dd>
+                 </div>
+-              </dl>
+-            </div>
+-            <h3>Documents</h3>
++              </dl>
++            </div> : null}
++            <h3>Documents</h3>
+             {detail.documents.length === 0 ? <p>No documents received.</p> : <ul>{detail.documents.map((document) => <li key={document.documentId}>{document.fileName} · {document.status.replaceAll("_", " ")} <button type="button" onClick={() => download(document.documentId)}>Open securely</button></li>)}</ul>}
+             <h3>Timeline</h3>
+             <ol className="xenios-order-timeline">{detail.timeline.map((event, index) => <li key={`${event.occurredAt}-${index}`}><strong>{event.status.replaceAll("_", " ")}</strong><time dateTime={event.occurredAt}>{new Date(event.occurredAt).toLocaleString()}</time>{event.customerMessage ? <p>{event.customerMessage}</p> : null}</li>)}</ol>
+@@ -178,7 +216,7 @@
+             <label>Customer message<textarea rows={3} value={customerMessage} onChange={(event) => setCustomerMessage(event.target.value)} /></label>
+             <label>Internal note<textarea rows={3} value={internalNote} onChange={(event) => setInternalNote(event.target.value)} /></label>
+             {(["agreements_complete", "supplier_processing", "shipped", "cancelled"] as AssistedOrderStatus[]).includes(nextStatus) ? <label>Required canonical evidence or reason<input value={evidenceId} onChange={(event) => setEvidenceId(event.target.value)} required /></label> : null}
+-            <button className="xenios-order-button" type="submit" disabled={busy}>{busy ? "Updating…" : "Update status"}</button>
++            <button className="xenios-order-button" type="submit" disabled={busy || detail.quickOrder?.observation.state === "stale"}>{busy ? "Updating…" : "Update status"}</button>
+           </form>
+         </div>
+       ) : null}
+diff --git a/server/research/assisted-order/communications.ts b/server/research/assisted-order/communications.ts
+--- a/server/research/assisted-order/communications.ts
++++ b/server/research/assisted-order/communications.ts
+@@ -158,8 +158,29 @@
+ export function renderAssistedOrderOutboxEmail(
+   templateKey: string,
+   payload: Record<string, unknown>,
+-): { subject: string; text: string } | null {
+-  const reference = text(payload.publicReference);
++): { subject: string; text: string } | null {
++  if (templateKey === "research.assisted_order.quick_order.submitted.admin.v1") {
++    if (typeof payload !== "object" || payload === null || Array.isArray(payload) ||
++        Object.keys(payload).length !== 3 ||
++        Object.keys(payload).some((key) => !["schemaVersion", "requestId", "publicReference"].includes(key)) ||
++        payload.schemaVersion !== "quick-order-v1" ||
++        typeof payload.requestId !== "string" ||
++        !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(payload.requestId) ||
++        typeof payload.publicReference !== "string" ||
++        !/^XRR-[0-9]{8}-[A-F0-9]{10}$/.test(payload.publicReference)) {
++      throw new Error("Quick Order notification payload unavailable.");
++    }
++    return {
++      subject: `Quick Order request ${payload.publicReference}`,
++      text: [
++        "A Quick Order request is ready for review.",
++        `Reference: ${payload.publicReference}`,
++        `Review: ${SITE_ORIGIN}/admin/research/assisted-orders/${payload.requestId}`,
++        "Sign in with authorized operator access.",
++      ].join("\n"),
++    };
++  }
++  const reference = text(payload.publicReference);
+ 
+   if (templateKey === "research.assisted_order.submitted.customer") {
+     const lineCount = count(payload.lineCount);
+diff --git a/client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx b/client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx
+--- a/client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx
++++ b/client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx
+@@ -568,3 +568,103 @@
+     expect(host.querySelector(`a[href="/admin/research/assisted-orders/${requestId}"]`)).not.toBeNull();
+   });
+ });
++
++describe("Quick Order readback on the existing admin detail", () => {
++  const quickOrderDetail = (): AssistedOrderAdminDetail => ({
++    ...detailA,
++    lines: [{
++      lineId: "33333333-3333-4333-8333-333333333333",
++      productId: "synthetic-product", variantId: "synthetic-variant",
++      productName: "Synthetic pending-price item", specification: "Synthetic variant",
++      format: null, packBasis: null, quantity: 2,
++      minimumQuantity: 1, maximumQuantity: 100, quantityIncrement: 1,
++      workflowMode: "request_pricing", customerActionLabel: "Price on request",
++      unitPriceCents: null, lineEstimateCents: null, currency: "USD",
++      catalogVersion: "synthetic-catalog-v1", priceVersion: null,
++      accessNotice: null, researchUseOnly: false,
++    }],
++    quickOrder: {
++      intake: {
++        schemaVersion: "quick-order-v1",
++        source: "organization",
++        sourceDetail: "<img src=x onerror=synthetic()> Δ gym",
++        declaredCode: "X".repeat(64),
++        affiliationKind: "gym", affiliationDetail: "Synthetic affiliation",
++        confirmedByCustomer: true, confirmedAt: "2026-10-06T12:00:00.000Z",
++        requestAcknowledged: true, reviewState: "captured_unmatched",
++        commissionState: "not_authorized",
++        estimate: { knownSubtotalCents: 0, estimateComplete: false, currency: "USD" },
++      },
++      observation: {
++        state: "observed", observedAt: "2026-10-06T12:00:01.000Z",
++        notification: {
++          status: "pending", attemptCount: 0,
++          nextAttemptAt: "2026-10-06T12:00:00.000Z", completedAt: null,
++        },
++      },
++    },
++  });
++
++  it("renders complete declarations as text and preserves the canonical submitted status", async () => {
++    const view = quickOrderDetail();
++    api.loadAssistedOrderAdminDetail.mockResolvedValue({ ...view, status: "submitted" });
++    await renderDetail();
++    expect(host.textContent).toContain(view.quickOrder!.intake.sourceDetail);
++    expect(host.textContent).toContain("X".repeat(64));
++    expect(host.textContent).toContain("Synthetic affiliation");
++    expect(host.textContent).toContain("Variant: synthetic-variant");
++    expect(host.textContent).toContain("Some prices are pending.");
++    expect(host.textContent).toContain("Recorded state: pending");
++    expect(host.querySelector("img")).toBeNull();
++    expect(host.querySelector("h2")?.textContent).toBe("submitted");
++    expect(host.querySelector('[data-testid="admin-affiliate"]')).toBeNull();
++    expect(api.updateAssistedOrderStatus).not.toHaveBeenCalled();
++  });
++
++  it("retains intake after an update and reports a failed refresh without resubmission", async () => {
++    const view = quickOrderDetail();
++    const refresh = deferred<AssistedOrderAdminDetail>();
++    api.loadAssistedOrderAdminDetail.mockResolvedValueOnce(view).mockReturnValueOnce(refresh.promise);
++    api.updateAssistedOrderStatus.mockResolvedValue({
++      ...view, status: "reviewing",
++      quickOrder: { intake: view.quickOrder!.intake, observation: { state: "stale" } },
++    });
++    await renderDetail();
++    submitTwice();
++    await flush();
++    expect(api.updateAssistedOrderStatus).toHaveBeenCalledTimes(1);
++    expect(api.loadAssistedOrderAdminDetail).toHaveBeenCalledTimes(2);
++    expect(host.textContent).toContain("Notification state needs refresh.");
++    refresh.reject(new Error("synthetic-private-readback-failure"));
++    await flush();
++    expect(host.textContent).toContain(view.quickOrder!.intake.sourceDetail);
++    expect(host.textContent).toContain("Status saved. Reload this page");
++    expect(host.textContent).not.toContain("synthetic-private-readback-failure");
++    expect(button("Update status")?.disabled).toBe(true);
++    submitTwice();
++    await flush();
++    expect(api.updateAssistedOrderStatus).toHaveBeenCalledTimes(1);
++  });
++
++  it("discards a post-update notification refresh after sign-out", async () => {
++    const view = quickOrderDetail();
++    const refresh = deferred<AssistedOrderAdminDetail>();
++    api.loadAssistedOrderAdminDetail.mockResolvedValueOnce(view).mockReturnValueOnce(refresh.promise);
++    api.updateAssistedOrderStatus.mockResolvedValue({
++      ...view, status: "reviewing",
++      quickOrder: { intake: view.quickOrder!.intake, observation: { state: "stale" } },
++    });
++    await renderDetail();
++    submitTwice();
++    await flush();
++    session.state = "signed_out";
++    session.token = null;
++    await renderDetail();
++    refresh.resolve(view);
++    await flush();
++    expectNoCustomerA();
++    expect(host.textContent).not.toContain(view.quickOrder!.intake.sourceDetail);
++    expect(host.textContent).not.toContain("X".repeat(64));
++    expect(api.updateAssistedOrderStatus).toHaveBeenCalledTimes(1);
++  });
++});

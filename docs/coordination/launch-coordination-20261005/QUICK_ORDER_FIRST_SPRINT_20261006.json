@@ -50,7 +50,7 @@
         "receiptSha256": "f692c8970c2a11d0e65f60305d3bf89ba8b1bafb51ba62f9193b3ce2e08abcfc",
         "precheckScript": "QUICK_ORDER_FIRST_G1_PRECHECK.ps1",
         "precheckScriptSha256": "01004c15eac89ce3dc8515775d738477c152175280cfc965aeccd06bec4d94ae",
-        "producerCommit": null,
+        "producerCommit": "dc119280d881e8fd6066a6be9829e6b2a2fa4005",
         "evidenceLevel": "Coordinator inspected retained producer receipt and script; producer reports zero test execution. No coordinator resource resample.",
         "next": "Source work continues; no new qualification probe without materially changed host conditions and a separate remaining-group reservation."
       }
@@ -72,9 +72,35 @@
   },
   "sourceAssignment": {
     "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
-    "scope": "A1 six runtime paths and five S2 tests; PwaLifecycle.tsx and its focused test. Same builder must add exact paths to own lease after conflict verification. No coordinator source edits."
+    "scope": "Three new pure S4 projection/decoder/test paths only, after lease conflict check; no shared source, SQL, currentness, RPC calls or execution",
+    "turn": "01a11270-96ba-7b22-a2dc-ec47e0fd3073",
+    "dispatch": "Send tool timed out; wait_threads independently confirmed active turn and exact acknowledgement. Do not duplicate.",
+    "paths": [
+      "shared/research/assisted-order/quick-order.ts",
+      "server/research/assisted-order/quick-order-repository.ts",
+      "server/research/assisted-order/quick-order-repository.test.ts"
+    ],
+    "status": "BUILDING_SOURCE_ONLY",
+    "acknowledged": true
   },
-  "supplementalScope": "Prepare one concrete currentness/shared writer-reader-outbox/full-composition-test scope; not implementation authority",
+  "supplementalScope": {
+    "status": "READY_FOR_SOURCE_DECISION_NOT_APPROVED",
+    "scope": "QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md",
+    "scopeSha256": "4e422cf96a003d0d4add184926546bb80d25e44a90a760489bd6f8284d7b10f0",
+    "bindings": "QUICK_ORDER_SUPPLEMENTAL_BASELINES_20261006.json",
+    "bindingsSha256": "62dc4359c9cfb87eba620db77252ff5f59051aec3777370e62892200226340fb",
+    "proposedPatch": {
+      "path": "QUICK_ORDER_SHARED_EDITS_PROPOSED_20261006.patch",
+      "sha256": "b7427650d987954e12d88df1a118a646d3498aaab19a902e3ad562150ca0f15f",
+      "runtimePaths": 5,
+      "testPaths": 1,
+      "validation": "git apply --check exit0 against builder c54f53f; targets equal frozen ac36e60; not applied, compiled or tested",
+      "checkedAt": "2026-10-06T18:22:51.911Z"
+    },
+    "referenceCount": 46,
+    "conditionalSqlReview": "Same original Claude naming/fence and lock protocol review before corresponding SQL drafting",
+    "excludes": "All database execution, live intake, payment, notification sends, deployment, manifest/final protected acceptance"
+  },
   "reviewer": {
     "session": "6abf1edf-2b16-476e-8305-23b9a0014e06",
     "scope": "Same independent acceptance owner; new exact deltas only",
@@ -102,5 +128,93 @@
     "refreshed": false,
     "mutated": false,
     "reason": "No consequential production reliance during source-only kickoff"
-  }
+  },
+  "mountPwaCheckpoint": {
+    "source": "ac36e60fe5e91b1217722e7f2a2711fd62a64559",
+    "sourceTree": "c83e78153d8cafcd2580e2ed83e1cd9d6f8b79a0",
+    "records": "c54f53f5aa0501cbddbb2a1148c49f9578e0ca93",
+    "recordsTree": "78dfabf691752e06f65eebc2c3f1a53d646290f9",
+    "changedSourcePaths": 13,
+    "coordinatorHashInspection": "13/13 exact before/after pairs; six mount runtime successors equal approved proposal",
+    "independentReview": "PENDING",
+    "execution": "NOT RUN",
+    "artifact": "QUICK_ORDER_S2_S3_COORDINATOR_CHECKPOINT.json"
+  },
+  "packageBoard": [
+    {
+      "id": "01",
+      "owner": "existing coordinator",
+      "status": "ACTIVE",
+      "next": "Complete one bound supplemental source decision packet and 60-minute factual checkpoint"
+    },
+    {
+      "id": "02",
+      "owner": "existing Quick Order builder",
+      "status": "SOURCE_IMPLEMENTED_REVIEW_PENDING",
+      "evidence": "ac36e60 source/c54f53f records",
+      "next": "Keep mount/PWA frozen; same owner drafts new pure projection/decoder slice"
+    },
+    {
+      "id": "03",
+      "owner": "original Claude6ab",
+      "status": "AWAITING_NEW_DELTA",
+      "evidence": "f4636885 plan intake; successor verdict absent",
+      "next": "Bounded ac36e60 delta and proposed naming/currentness review; no ownership rerun"
+    },
+    {
+      "id": "04",
+      "owner": "same builder for pure extension slice; SQL writer not separately activated",
+      "status": "PARTIAL_SOURCE_BUILDING",
+      "next": "Pure projection/decoder; colliding SQL requires compatibility review; currentness/commit needs supplemental approval"
+    },
+    {
+      "id": "05",
+      "owner": "coordinator source mapping; canonical policy owners",
+      "status": "DESIGN_READY_INPUTS_HELD",
+      "next": "23-table writer-guard proposal plus immutable artifact publication; actual Health terms/classification/destination/standing/quantity decisions remain missing"
+    },
+    {
+      "id": "06",
+      "owner": "proposed same builder",
+      "status": "PROPOSED_SHARED_DIFF",
+      "next": "Five runtime paths and named tests after supplemental approval; no live notifications"
+    },
+    {
+      "id": "07",
+      "owner": "parked Finance/payment owners",
+      "status": "HELD",
+      "next": "Existing money authority and approved payment method require separate source/qualification scope; absent for QO"
+    },
+    {
+      "id": "08",
+      "owner": "parked catalog/media owners",
+      "status": "ACCEPTED_SOURCE_CARRIES_WITH_HOLDS",
+      "next": "Preserve IC2/MC01/D-E/DE-R1; no new media writer awakened; delivery and canonical ingestion proofs remain open"
+    },
+    {
+      "id": "09",
+      "owner": "parked partner/subscription owners",
+      "status": "ACCEPTED_SOURCE_CARRIES_WITH_HOLDS",
+      "next": "Preserve source; six buying gaps/PSR2/3 and actual policy dependencies remain open"
+    },
+    {
+      "id": "10",
+      "owner": "original acceptance owner; no extra UX agent",
+      "status": "AWAITING_REAL_COMPOSITION",
+      "next": "Review actual full App/mobile/keyboard after corresponding implementation and qualified runner"
+    },
+    {
+      "id": "11",
+      "owner": "coordinator reservation plus existing builder",
+      "status": "RESOURCE_BLOCKED_NO_ACTIVE_SLOT",
+      "evidence": "G1 refused1of6; zero tests",
+      "next": "Another remaining group only after material host change and fresh exact reservation, before expiry"
+    },
+    {
+      "id": "12",
+      "owner": "existing Core/integration owner parked",
+      "status": "NOT_DEPENDENCY_READY",
+      "next": "Qualified complete intake and independent review, exact protected successors/GATE01 and managed action approval; coordinator Finance branch excluded"
+    }
+  ]
 }

@@ -1,3 +1,22 @@
+## Quick Order source checkpoint — 2026-10-06 18:20Z
+
+Builder source `ac36e60fe5e91b1217722e7f2a2711fd62a64559`, tree
+`c83e78153d8cafcd2580e2ed83e1cd9d6f8b79a0`, is pushed with records
+`c54f53f5aa0501cbddbb2a1148c49f9578e0ca93`. Coordinator rehashed all13
+before/after source pairs; six mount runtime hashes match the c65 proposal.
+The other runtime edit is the narrow PWA predicate, with six authored test files.
+The accepted HTTP module and SQL are unchanged. Exact producer copies and
+coordinator observations are in `QUICK_ORDER_S2_S3_COORDINATOR_CHECKPOINT.json`.
+Independent successor review and all execution qualification are pending.
+
+The candidate source mounts an unavailable page and disabled pre-parser API
+containment. No request is durably saved, QO operator enrichment is absent and
+QO payment is absent. Nothing was deployed. The currentness/shared-source
+decision packet is `QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md` and its bound
+sidecar/proposed patch; it is not approval. The same builder is continuing only
+the separately assigned three new pure A2 projection/decoder/test paths under
+existing S4. This does not activate the adapter or authorize SQL/currentness.
+
 ## Quick Order first G1 result — 2026-10-06 17:54Z
 
 G1 was refused before execution: 1,205 MiB available versus the 1,536 MiB full-group floor; disk 26.0734 GiB and no pattern-matched heavy job. One of six groups consumed; slot released; zero tests reported. Retained producer receipt/script are `QUICK_ORDER_FIRST_G1_PRECHECK.json` and `.ps1`; coordinator verified their content and hashes without resampling the host. Mount/PWA source work continues. No immediate retry or qualification from a heartbeat; another attempt requires materially changed host conditions and an explicit remaining-group reservation before 21:43:37Z.
@@ -8,7 +27,7 @@ Original reviewer directly received the same brief and pushed f4636885 at 17:47Z
 
 Samuel's user-designated pasted request (turn 01a11250, attachment a276ed40) includes the explicit kickoff adopting S1–S5. Exact request and all 24 verified package files are preserved in quick-order-first-plan-20261006/. See QUICK_ORDER_FIRST_SPRINT_20261006.json. The four-hour window ends 21:43:37Z; factual checkpoint due 18:43:37Z; maximum six qualification groups. This supersedes earlier source-only holds only within its exact scope.
 
-Six A1 before-hashes and the PWA runtime baseline match builder 5ee44d5. Existing builder owns the next disabled mount/privacy/PWA slice after exact lease extension. G1 is reserved conditionally for its one new precheck and existing mandatory HTTP red/green plan. No production, database execution, live intake, payment, final hash acceptance or manifest recut is approved. Currentness implementation and existing shared services still need one supplemental exact scope; naming/fence compatibility review precedes colliding A2 SQL.
+Six A1 before-hashes and the PWA runtime baseline match builder 5ee44d5. Existing builder owns the next disabled mount/privacy/PWA slice after exact lease extension. G1 was consumed and refused at 17:54:58Z; the mandatory HTTP red/green plan remains unrun. No production, database execution, live intake, payment, final hash acceptance or manifest recut is approved. Currentness implementation and existing shared services still need one supplemental exact scope; naming/fence compatibility review precedes colliding A2 SQL.
 
 The same original Claude remains acceptance owner. The separate Handoff Bridge v0.2 verdict is complete and is off this sprint's critical path. Do not restart it or reuse its retained execution as website qualification.
 

@@ -1,0 +1,21 @@
+Continue in this same builder after your pushed c54f53f records handoff. This is a new bounded assignment within Samuel's already-adopted S4 new-only extension-module authority at coordinator60d593ae2fc0623edc869e373bfe52e830968df9; it does not reuse G1 or implement the still-held currentness authority.
+
+Read the actual adopted S4 and doc36 section7, preserve ac36e60 as the exact S2/S3 review checkpoint. Inspect other leases, then extend only your own active lease for these THREE new paths if absent and conflict-free:
+shared/research/assisted-order/quick-order.ts
+server/research/assisted-order/quick-order-repository.ts
+server/research/assisted-order/quick-order-repository.test.ts
+Plus your existing records and own registry/session rows. Preserve other owners/global registry fields.
+
+Deliver a small pure projection/decoder source slice. No SQL files, database objects, client calls, existing shared/runtime edits, commit RPC, currentness implementation, activation, prechecks or execution. The new repository module is limited to decoding retained/synthetic values; do not create a production adapter or call any RPC. It must have no runtime import cycle back into canonical service/repository.
+
+Proposed shared QuickOrderAdminProjection has immutable intake:
+schemaVersion quick-order-v1; existing normalized source/sourceDetail/declaredCode and affiliationKind/detail vocabularies/bounds; confirmedByCustomer true; confirmedAt; requestAcknowledged true; initial reviewState direct_no_referrer or captured_unmatched; commissionState not_authorized; estimate knownSubtotalCents/estimateComplete/currency USD.
+Observation is {state:'stale'} or {state:'observed',observedAt,notification:{status,attemptCount,nextAttemptAt,completedAt}} from the existing outbox vocabulary. No payment/finance-derived field.
+
+Define and document one closed service-only proposed reader envelope; exact request-ID binding and independent submitted-event intake marker are required. The future decoder decodeQuickOrderAdminEnvelope(value, expectedRequestId) returns null only for absent request, otherwise {detail: unknown, quickOrder: projection|null}. It requires explicit enrichment/marker semantics: malformed/missing companion, receipt, outbox or request mismatch fails closed; genuine legacy null must be distinguishable from missing Quick Order evidence. Keep schema identity and evidence cross-checks explicit. Reuse canonical line/declaration vocabularies; do not invent SQL truth or claim that decoding proves storage. No status-access token/raw payment data. Stable proposed notification event key assisted-order:<canonicalRequestId>:quick-order-submitted:admin; template research.assisted_order.quick_order.submitted.admin.v1; closed payload schemaVersion/requestId/publicReference. Prospective RPC naming remains independently unreviewed; any exported constant is only a proposed name, not a callable/installed authority.
+
+Author narrowly meaningful adjacent synthetic decoder regressions for explicit legacy, missing/unknown fields, mismatched identities, malformed estimates and declarations, missing receipt/obligation and observed-versus-stale handling. Do NOT execute them. G1 remains consumed/refused; no further resource sample or job reservation exists.
+
+Coordinator supplemental packet is currently being finalized at C:/Users/sboad/.codex/worktrees/3221/xenios-website/docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md. It is design context, not approval for existing files/currentness/SQL. The shared-file proposal will consume your exact helper contract only after its separate approval. If a new requirement needs any other source path, report that exact dependency rather than expanding.
+
+Commit/push the new-only coherent source slice and records separately; give exact source/tree, changed paths, input/output contract, unexecuted test scope and remaining holds. Keep the unavailable production port and mounted disabled UI unchanged. No duplicate reviewer or generic outbound status message; report in this chat for coordinator read-only collection.
