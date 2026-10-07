@@ -1,0 +1,1162 @@
+{
+ "schemaVersion": "claude_acceptance_lenses_v1",
+ "subject": "3e82154 repair successor (records 1631323) against 7d027e4 and docs 45-47",
+ "workflowRun": "wf_f489c99b-f42",
+ "taskId": "wzbc3sdvn",
+ "agentCount": 6,
+ "subagentTokens": 1424042,
+ "toolCalls": 205,
+ "lenses": [
+  {
+   "lens": "sql-repair",
+   "review": {
+    "verdict": "LENS R1 (SQL draft repair at 3e82154, ten files): ACCEPT WITH LIMITS as authored source; everything NOT RUN. Identities verified from Git objects: 3e82154724ede74b7c5f361f280739eedd60db25 (tree 04958ec1567b74bccd84e423e179e6269faf6bee, parent 18bfbcd) and records 1631323d7cf60f145141e0f82586e64ef7c7d637 (parent 3e82154); the supabase/ delta is byte-identical whether diffed from 7d027e4 or 18bfbcd. All six anchors hold: (1) every expected list in the ten files and bindings.canonicalTriggers mechanically equals the canonical nineteen (8/7/4) with the full-outer-join and sorted-jsonb-array predicates untouched; (2) marker discovery, strict select and rollback retention are scoped to status='submitted' with the closed two-key set, malformed submitted candidates refuse before legacy fallback, and no canonical writer can emit a 'submitted' event carrying either key; (3) the three \\else branches now hold a complete DO raising 55000 (authored, not executed); (4) recomputed definition hashes are 9c0e5ff7c229ef6ece01120bfc4c6ededcbe84fb2cbbb974e545648c5446841a (intake) and unchanged cc19d43dc3d1db0336fae05274ee3e90d0e417f8ea6d01714913341ef774ae6e (currentness, census outside the hashed blocks), and all 66+66 receipt pins, all 55 binding pins and the bindings blob equal the Git bytes; (5) the injected-key regression's nine positional arguments match the effective set_status signature and no canonical trigger body refuses the staged transitions on the synthetic row; (6) no hunk touches ACL, grant, seal, refusal or lock logic. Prior P1/P2 (A1-F1, V-A1-1, A1-F2) and A3-F1 are REPAIRED_AT_SOURCE; the remaining P3s are records-corrected or deferred-disclosed per the residual matrix, none regressed. New findings are P3 only. Hosted database state and every execution result remain NOT PROVEN; the qualification window expired 2026-10-06T21:43:37Z. This lens does not dispose of the composition tests or the 5C design amendment and grants no protected-hash, manifest, deployment, intake, payment or notification authority.",
+    "checklist": [
+     {
+      "item": "1. Nineteen-row inventory in every expected list of the ten files and in bindings.canonicalTriggers",
+      "status": "PASS",
+      "evidence": "Mechanical tuple extraction over git show 3e82154:<file>: intake.sql blocks :363-381 and :478-496; intake.precheck.sql :54-72 and :138-156; intake.postcheck.sql :54-72 and :138-156; intake.rollback.md :98-116 and :199-217; currentness.sql :19-37; currentness.precheck.sql :14-32; currentness.postcheck.sql :14-32; research_health_quick_order_local.mjs TRIGGERS :44-62; currentness_local.mjs TRIGGERS :42-60 -- each exactly 19 rows, no duplicates, sorted set equal to the canonical nineteen (requests 8 / events 7 / outbox 4 with the stated O/A states). bindings.canonicalTriggers (review-599-repair-bindings-20261007.json@3e82154) also equal; triggerInventory {total 19, requests 8, events 7, outbox 4, sourceDerived true, hostedObserved false}. currentness.rollback.md carries prose only (:60-61, :74 say nineteen) and defers to the precheck."
+     },
+     {
+      "item": "1b. Comparison predicates not weakened",
+      "status": "PASS",
+      "evidence": "Intake family: `select 1 from expected e full join actual a using(relation_name,trigger_name) where e.enabled is distinct from a.enabled` with actual = pg_trigger join pg_class, not tgisinternal, three relations -- intake.sql:382-390 and :497-505, precheck :73-81/:157-165, postcheck :73-81/:157-165, rollback.md :117-125/:218-226 @3e82154; git diff -U0 7d027e4 3e82154 shows only VALUES-row insertions in those blocks. Currentness: `(select jsonb_agg(v order by v::text) ...) is distinct from (select jsonb_agg(jsonb_build_array(relname,tgname,tgenabled::text) order by ...::text) ...)` at currentness.sql:268-274, precheck :81-87, postcheck :81-87 @3e82154, untouched by the diff. Extra, missing or mis-stated rows all raise 55000."
+     },
+     {
+      "item": "1c. Intake verifier boundary() query, TRIGGERS independence, bindings.review and canonicalTriggers comparison",
+      "status": "PASS",
+      "evidence": "research_health_quick_order_local.mjs@3e82154: TRIGGERS is a literal 19-row array (:43-63, comment 'Never derive this assertion from the candidate being checked'); boundary() (:254-262) runs `select c.relname||'|'||t.tgname||'|'||t.tgenabled from pg_catalog.pg_trigger t join pg_catalog.pg_class c ... where not t.tgisinternal and c.relnamespace='public'::regnamespace and c.relname in ('research_assisted_order_requests','research_assisted_order_events','research_notification_outbox')` and deepEquals the sorted lines to TRIGGERS; :162 asserts bindings.review === '59940dcce778d18dcae605172a46f676b9933fcf'; :163 deepEquals bindings.canonicalTriggers to TRIGGERS. Currentness verifier :221 compares canonicalTriggers too (it does not assert bindings.review; see finding R1-F3)."
+     },
+     {
+      "item": "2a. Wrapper pre-check raises 55000 for any submitted event carrying either key with a malformed shape",
+      "status": "PASS",
+      "evidence": "intake.sql@3e82154 :160-168 (inside $qo_ddl$): `if exists(select 1 from research_assisted_order_events where request_id=p_request_id and status='submitted' and (evidence ? 'intakeKind' or evidence ? 'payloadHash') and (intake_closed(evidence,array['intakeKind','payloadHash']) is not true or evidence->>'intakeKind' is distinct from 'quick-order-v1' or jsonb_typeof(evidence->'payloadHash') is distinct from 'string' or evidence->>'payloadHash' !~ '^[a-f0-9]{64}$')) then raise exception 'Quick Order submitted marker unavailable' using errcode='55000'`. Runs before the have_request/legacy branch at :176-181. intake_closed (:14-20) returns false for non-objects and NULL (=> 'is not true') for {}."
+     },
+     {
+      "item": "2b. marked counts only closed submitted markers; strict select uses the same predicate; later checks bind intakeKind value and payloadHash to the companion",
+      "status": "PASS",
+      "evidence": "intake.sql@3e82154 :169-171 `select count(*) into marked ... where request_id=p_request_id and status='submitted' and intake_closed(evidence,array['intakeKind','payloadHash']) is true`; :202-204 `select * into strict e ... status='submitted' and intake_closed(...) is true`; :197 refuses marked<>1; :209-216 still requires e.status='submitted', closed set, intakeKind='quick-order-v1', payloadHash string equal to c.payload_hash, r.request_fingerprint = c.payload_hash, receipt publicReference = r.public_reference."
+     },
+     {
+      "item": "2c. Proof (a): legacy request whose later status event carries {payloadHash:'x'} or a closed marker is still read as legacy",
+      "status": "PASS",
+      "evidence": "Such events have status<>'submitted', so :160-168 and :169-171 ignore them; with no companion/obligation :193-195 returns submittedEvent null, enrichment null. Later events cannot be 'submitted': set_status effective definition 20260930191323_research_assisted_order_quote_payment_guard.sql@3e82154 :29-46 v_allowed never contains 'submitted' and :48-53 raises 23514 otherwise; it inserts the event with p_new_status (:85-92). server/research/assisted-order/service.ts@3e82154 :85-109 allowedTransitions never targets 'submitted'; :866 enforces it. Source reasoning, not executed."
+     },
+     {
+      "item": "2d. Proofs (b)-(e): genuine closed marker enriches; partial/extra-key submitted marker refuses before fallback; wrong intakeKind or payloadHash mismatch refuses; two closed submitted markers refuse",
+      "status": "PASS",
+      "evidence": "(b) closed {intakeKind:'quick-order-v1',payloadHash:<64hex>} passes :160-168, marked=1, :197-216 pass with matching companion, result built :260-283. (c) {payloadHash} alone or extra key => intake_closed is not true => :167 raises before :176. (d) intakeKind 'unknown-v2' => :164 raises; payloadHash differing from companion but 64-hex => passes precheck, marked=1, :213 `e.evidence->>'payloadHash' is distinct from c.payload_hash` raises; non-hex/non-string => :165-166 raise. (e) two closed submitted markers => marked=2: with companion :197 marked<>1 raises; without companion :193 fails and :197 `not have_companion` raises. All at intake.sql@3e82154."
+     },
+     {
+      "item": "2e. Any remaining canonical writer able to produce a 'submitted' event with arbitrary evidence",
+      "status": "PASS",
+      "evidence": "Event insert sites at 3e82154 (git grep): bridge submit 20260815150000:648-665 and affiliate variant 20260820190000:290-310 write status 'submitted' with evidence `jsonb_build_object('requestFingerprint',...,'lineCount',...)` -- fixed keys, neither intakeKind nor payloadHash; set_status (20260930191323:85-92, superseding bridge :951) writes p_new_status which is never 'submitted'; 20260927203000 status recovery inserts no events; server repository only calls rpc research_assisted_order_submit / set_status (supabase-repository.ts:332, :488). No grant on research_assisted_order_events to service_role exists in migrations (only the block_mutation function revoke at bridge :1091). Residual: table owner / direct DML bypass, already disclosed in candidate :2-3,:12-13 and rollback.md :11-12."
+     },
+     {
+      "item": "2f. Rollback retained-evidence query: refuses closed and malformed submitted markers, ignores non-submitted evidence, outbox predicate unchanged, cannot drop evidence",
+      "status": "PASS",
+      "evidence": "intake.rollback.md@3e82154 :171-183: access exclusive lock on the companion, then refuses if any companion row exists, or any event with status='submitted' and closed set (:175-176), or any event with status='submitted' carrying either key but not closed (:177-179), or any outbox row with the Quick Order template/event_key pattern (:180-182, unchanged from 7d027e4). Drops (:186-190) are RESTRICT and touch only the five owned objects; events and outbox are only read. A non-submitted event carrying {payloadHash} or the closed pair no longer matches either predicate, so an empty install rolls back; prose :36-37 states this."
+     },
+     {
+      "item": "3. Missing-hash refusal: DO block raising 55000 in the three \\else branches, complete statement, non-colliding tag, psql semantics",
+      "status": "PASS",
+      "evidence": "intake.precheck.sql :6-12, intake.postcheck.sql :6-12, intake.rollback.md :49-55 @3e82154: `\\set ON_ERROR_STOP on` precedes; `\\if :{?qo_intake_definition_sha256}` / `\\else` / `\\echo 'STOP...'` / `do $missing_source_binding$ begin raise exception 'Externally source-bound qo_intake_definition_sha256 is required' using errcode='55000'; end $missing_source_binding$;` / `\\endif`. The DO is terminated by ';' and the tag $missing_source_binding$ appears nowhere else ($qo_fingerprint$, $qo_precheck$, $qo_postcheck$, $qo_rollback$ are the other tags). Under psql, a false branch sends nothing to the server; when the variable is undefined the DO is sent, errors, and ON_ERROR_STOP ends the script with exit 3. AUTHORED, NOT EXECUTED; psql exit behaviour is stated from documentation, not observed."
+     },
+     {
+      "item": "4a. Definition hashes recomputed over the dollar-quoted blocks",
+      "status": "PASS",
+      "evidence": "node sha256 over LF-normalized (block($qo_ddl$)+block($qo_fingerprint$)) of git show 3e82154:intake.sql = 9c0e5ff7c229ef6ece01120bfc4c6ededcbe84fb2cbbb974e545648c5446841a (7d027e4: 6e4677a486fbda5530adc15017a9f4d2e3037df8a591beea692757898ef41183; ddl length 20079 -> 20981). ($currentness_install$+$currentness_fingerprint$) of currentness.sql = cc19d43dc3d1db0336fae05274ee3e90d0e417f8ea6d01714913341ef774ae6e at both 7d027e4 and 3e82154 (install 12302 chars, fingerprint 3073, identical); the expected_triggers constant (:18-38) lies outside both blocks (:41-79, :80-261), so the unchanged hash is correct, not stale. Zero CR bytes in all four blobs. Extraction mirrors verifier uniqueBlock/section (exactly two tag occurrences each)."
+     },
+     {
+      "item": "4b. Rollback definition-hash description and the records' definitionHashes agree",
+      "status": "PASS",
+      "evidence": "intake.rollback.md@3e82154 :20-23: 'SHA-256 over the candidate's literal qo_ddl and qo_fingerprint contents concatenated, with CRLF normalized to LF' = candidate :393 `encode(digest(convert_to(replace(install_sql||fingerprint_sql,E'\\r\\n',E'\\n'),'UTF8'),'sha256'),'hex')` = verifier :172 sha(uniqueBlock($qo_ddl$)+uniqueBlock($qo_fingerprint$)) over lf() text. Records: review-599-source-3e82154.json@1631323 definitionHashes before/after 6e4677a4.../9c0e5ff7... (intake) and cc19d43d.../cc19d43d... (currentness) with definitionNote on the outer census; handoff@1631323 :53-58 states the same two values. All equal my recomputation."
+     },
+     {
+      "item": "4c. Source receipts and successor bindings bind the actual bytes",
+      "status": "PASS",
+      "evidence": "Recomputed sha256 over LF-normalized git show 3e82154:<path> for every entry: sql-intake-source-receipt-3e82154.json 66/66 equal, sql-currentness-source-receipt-3e82154.json 66/66 equal (union 71, shared 61, each receipt's five own files disjoint). Both receipts have keys exactly {schemaVersion, sourceCommit, files} with sourceCommit 3e82154; their raw blob sha256 at 1631323 (f2f343b3..., 51238583...) equal the handoff and records-integrity statements and the scratch copies. review-599-repair-bindings-20261007.json@3e82154: 55 distinct inventory paths, sha256lf equal to git show 18bfbcd:<path> 55/55 and to 3e82154 55/55 (references frozen as claimed); its own blob hashes to b68106ad... = the pin in both receipts. Every path each verifier loads (OWN/BINDINGS/BOOTSTRAP/OUTBOX/18 MIGRATIONS; OWN_SOURCE/BINDINGS/20 BASELINE_SQL) is present in its receipt."
+     },
+     {
+      "item": "5a. Regression call shape vs research_assisted_order_set_status signature; fixture; transitions; evidence rule",
+      "status": "PASS",
+      "evidence": "Verifier :351-353 passes (uuid(10), expectedStatus, newStatus, 'synthetic-operator', 'admin', null, null, <jsonb>, time::timestamptz) = (p_request_id uuid, p_expected_status text, p_new_status text, p_actor_id text, p_actor_type text, p_customer_message text, p_internal_note text, p_evidence jsonb, p_occurred_at timestamptz) at 20260930191323:8-18@3e82154 (last definition; granted to service_role :146-148; verifier runs under `set role service_role` :208, bypassrls :308). fixture(10) inserted at :335 with status 'submitted' (:231), no companion/marker/outbox. 'submitted'->'reviewing' (:30) and 'reviewing'->'waiting_on_customer' (:31) permitted; v_evidence_field null for both (:55-62) so {payloadHash:'operator-note'} and the closed pair are accepted; actor_type 'admin' satisfies events_actor_chk (bridge :273-274); evidence objects satisfy evidence_chk."
+     },
+     {
+      "item": "5b. No canonical trigger blocks the staged status updates or event inserts on the synthetic row",
+      "status": "PASS",
+      "evidence": "Requests update-of-status triggers at 3e82154: paid_hold guard only for paid transitions (20260930193033:15-36); observed_cancel only new.status='cancelled' (20260930230541:377-387; 20261001062651 redefinition likewise); history_progression only when old status in paid family or a 'paid' event exists (20261001024018:32-45); aa_hl12_disposition_terminal only when a financial disposition exists (20261001062651:327-350); aaa_adp01_uncertainty asserts provider clear only for paid-family/cancelled targets or paid-family origins (20261001085559:501-509); adp03_request_identity only when a settlement exists and only for non status/updated_at columns (20261001115512:424-432); adp03_evidence_immutable on requests is before delete only (:479). Events insert triggers: append_only is update/delete (bridge :352-355); paid_event_evidence and adp03_paid_event return new unless status='paid' (20260930202413:573-585; 20261001115512:379-383); hl12_disposition_cancel_event without a disposition refuses only evidence ? 'financialDispositionId' (20261001062651:449-457); adp03_evidence_immutable on events is update/delete. research_assisted_order_admin_json (bridge :482) exists for the return value."
+     },
+     {
+      "item": "5c. After injection the wrapper must return null enrichment; rollback -> precheck -> reinstall staged; nothing contradicts the SQL",
+      "status": "PASS",
+      "evidence": "Verifier :354-356 asserts detail.status===newStatus and submittedEvent/enrichment null after each injection; per intake.sql :160-171 both injected events have status<>'submitted' so they are invisible to the precheck and marked, and :193-195 returns the legacy envelope. :358-359 run rollback, precheck, boundary(before), candidate, postcheck, boundary(before); at that point the companion table is empty and no 'submitted' event carries either key, so rollback.md :172-183 permits the drop and precheck sees absence (:86-87 notice). :360-363 re-read legacy with status 'waiting_on_customer'. The second injection reuses payloadHash='a'*64 (= request_fingerprint) as a well-formed closed marker on a non-submitted event, the strongest negative case. Source reasoning only; NOT RUN."
+     },
+     {
+      "item": "5d. HELD lists and exit codes unchanged; currentness checked label says nineteen; BINDINGS path moved in both verifiers",
+      "status": "PASS",
+      "evidence": "git diff -U0 7d027e4 3e82154: intake verifier hunks only at :17 (BINDINGS -> review-599-repair-bindings-20261007.json), :41-63 (TRIGGERS), :162-163, :256-261, :317 (pass label), :345-363 (regression); held (:64-73), exitCode=2 on completion (:403), interrupted?2:1 on failure (:405), cleanup exitCode 2 (:411) untouched. Currentness verifier hunks only at :14 (BINDINGS), :48-49/:54-56 (rows), :367 ('canonical fence and nineteen trigger states (requests 8/events 7/outbox 4)'); HELD (:62-64), exitCode 2 (:370), 130/143/1 (:375), cleanup 1 (:402) untouched."
+     },
+     {
+      "item": "6. Every hunk in the ten files enumerated and classified; no ACL, grant, seal, refusal or lock weakening",
+      "status": "PASS",
+      "evidence": "numstat 7d027e4..3e82154: intake.sql +26/-3 (marker precheck :157-168; marked :170-171; strict select :203-204; five rows x2 :369-377, :484-492); precheck and postcheck +13/-1 each (DO :9-11; five rows x2); rollback.md +36/-6 (prose :25-29 nineteen, :36-37 non-submitted keys, :39-45 FK lock disclosure; DO :52-54; five rows x2; retained-evidence predicate :173-179); currentness.sql, precheck, postcheck +5/0 each (five rows); currentness.rollback.md +13/-9 (BINDINGS path :29,:56; nineteen wording :60-61,:74; precheck/verifier prose correction :134-141, SQL fence untouched); intake verifier +52/-3 and currentness verifier +7/-2 as listed above. No hunk touches revoke/grant statements (:309-314), aclexplode/has_function_privilege matrices, the QO_INTAKE_READERS_V1 / RHQOC_HELD_V1 seals, the 55000 refusals, lock_timeout or the lock table statement. The supabase/ diff is byte-identical from 7d027e4 and from 18bfbcd."
+     },
+     {
+      "item": "Historical evidence preserved across 18bfbcd..1631323",
+      "status": "PASS",
+      "evidence": "git diff --diff-filter=MD 18bfbcd 1631323 -- docs/health-launch/quick-order-20261005/evidence/ returns nothing; no file deleted anywhere in the range. Blob ids identical at 18bfbcd and 1631323 for sql-intake-source-receipt-7d027e4.json (c7a1d235), sql-currentness-source-receipt-7d027e4.json (b7ab5ee4), review-cleared-draft-bindings-20261006.json (a261eb10), sql-candidate-source-7d027e4.json (9bb455c8) and HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md (b925248a). Modified files are the live contract, status, README, registries, handoff, the three composition tests and the ten repair files only."
+     },
+     {
+      "item": "Any executed behaviour of candidates, prechecks, postchecks, rollbacks, verifiers or the regression",
+      "status": "NOT_PROVEN",
+      "evidence": "No SQL, psql, Docker, Node verifier, Vitest, build or database connection was run by this lens or, per the records (SQL_CANDIDATE_DRAFT_STATUS@1631323, residual matrix, records-integrity JSON 'execution: NOT RUN'), by the producer. psql exit 3 on the DO branch, trigger inventory evaluation, seal round trips, lock behaviour and the regression outcome are source predictions."
+     },
+     {
+      "item": "Hosted database state (trigger census, owner, roles, ACLs, legacy rows)",
+      "status": "NOT_PROVEN",
+      "evidence": "The nineteen-row census is derived from migration bytes (bindings triggerInventory.sourceDerived true, hostedObserved false); nothing here observes the hosted catalog, whether any hosted legacy row has a 'submitted' event carrying either key, or the hosted owner/role posture."
+     }
+    ],
+    "findings": [
+     {
+      "id": "R1-F1",
+      "severity": "P3",
+      "file": "supabase/verification/research_health_quick_order_local.mjs",
+      "claim": "The new wrapper refusal branches for an extra-key submitted marker, a non-string or non-hex payloadHash on a submitted marker, and two closed submitted markers (marked<>1) have no authored verifier case; the rollback refusal caused solely by a malformed submitted candidate is never isolated.",
+      "evidence": "fixture() (:214-250@3e82154) offers only markerValue (null => {payloadHash}; string => closed pair) and the malformed matrix (:382-391) covers partial (23) and wrong-value (24) submitted markers; the extra-key, typeof and regex arms of intake.sql:163-166 and the marked<>1 arm of :197 are unexercised; the only rollback refusal (:399) occurs with companions, outbox rows and markers all present, so which rollback.md:172-183 predicate fired is indeterminate (also V-A3-1, SQLSTATE-only).",
+      "fix": "Add fixture options markerExtra (third key), markerBadHash (number or non-hex string) and markerDuplicate (second closed submitted event), append rows to the malformed matrix expecting 55000, and in refused() for these cases match the message token 'submitted marker unavailable' / 'evidence unavailable'. Authored source only; no run."
+     },
+     {
+      "id": "R1-F2",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/review-599-local-records-integrity-20261007.json",
+      "claim": "Records at 1631323 still describe the repair as local-only and push-rejected, while 1631323 is now the remote tip of codex/xenios-health-quick-order-20261005 (reviewer-verified); the push status in the retained records is stale.",
+      "evidence": "review-599-local-records-integrity-20261007.json@1631323 :7 pushStatus 'LOCAL_ONLY_APPROVAL_REQUIRED'; SQL_CANDIDATE_DRAFT_STATUS_20261006.md@1631323 :5-6 'is committed locally. Push was rejected by automatic approval review'. Content claims (hashes, counts) are correct; only the currency of the push statement is superseded.",
+      "fix": "Do not rewrite 1631323. In the next records-only commit, add a one-line successor note to the handoff and the status record stating that 1631323 became the remote tip and when; leave the JSON as the historical checkpoint it is."
+     },
+     {
+      "id": "R1-F3",
+      "severity": "P3",
+      "file": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "claim": "The currentness verifier compares bindings.canonicalTriggers and inventory length but, unlike the intake verifier, does not assert bindings.review === 59940dc..., so the two verifiers bind the successor record asymmetrically.",
+      "evidence": "currentness verifier :218-222@3e82154 asserts inventory.length 55, distinct paths 55, canonicalTriggers equal TRIGGERS and base is 40-hex; intake verifier :162 additionally asserts bindings.review. The bindings bytes are still pinned through the receipt (pins.get(BINDINGS) = b68106ad...), so the review id is bound indirectly.",
+      "fix": "Add `assert.equal(bindings.review, '59940dcce778d18dcae605172a46f676b9933fcf');` after :218 for symmetry and re-pin the verifier in the currentness receipt. Optional."
+     }
+    ],
+    "priorFindingStatus": [
+     {
+      "id": "A1-F1",
+      "status": "REPAIRED_AT_SOURCE",
+      "evidence": "All eleven expected lists (intake.sql :363-381,:478-496; intake pre/postcheck :54-72,:138-156; rollback.md :98-116,:199-217; currentness.sql :19-37; currentness pre/postcheck :14-32; both verifiers' TRIGGERS; bindings.canonicalTriggers) now hold exactly the canonical nineteen; comparison predicates unchanged; the contract (REVIEW_CLEARED_WRAPPER_CONTRACT :1-7 and table) and status record say nineteen (8/7/4). Residual matrix row A1-F1: source-derived only; a migrated disposable database must still establish the census."
+     },
+     {
+      "id": "V-A1-1",
+      "status": "REPAIRED_AT_SOURCE",
+      "evidence": "intake.sql@3e82154 :160-171 scope discovery to status='submitted' with the closed two-key set and refuse malformed submitted candidates before legacy fallback; :202-204 strict select mirrors it; rollback.md :173-179 mirrors it; verifier :345-363 adds the injected-key regression through research_assisted_order_set_status. Contract :120-128 records the rule. Regression NOT RUN; no service/status writer or decoder changed."
+     },
+     {
+      "id": "A1-F2",
+      "status": "REPAIRED_AT_SOURCE",
+      "evidence": "intake.precheck.sql :9-11, intake.postcheck.sql :9-11, intake.rollback.md :52-54 @3e82154 replace `\\quit 2` with a DO block raising SQLSTATE 55000 under ON_ERROR_STOP; tag unique; statement complete. psql exit behaviour authored, not observed (residual matrix: do not claim an observed exit 3)."
+     },
+     {
+      "id": "A3-F1",
+      "status": "REPAIRED_AT_SOURCE",
+      "evidence": "research_health_quick_order_local.mjs@3e82154 :43-63 literal TRIGGERS constant, :256-261 independent pg_trigger query in boundary() over the three relations with not tgisinternal, :163 comparison to bindings.canonicalTriggers, :317 pass label now says 'independently checked 19 trigger states'. Unexecuted."
+     },
+     {
+      "id": "A1-F3",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "intake_valid still declared immutable (intake.sql :25@3e82154) while calling to_char/date_trunc/::timestamptz (:30,:44-45); [[:cntrl:]] remains at :53,:99,:128. Residual matrix row 'A1-F3 / A2-F2: Deferred ... Future reviewed STABLE label/control-code-point alignment; ASCII fixtures do not establish cross-host determinism'."
+     },
+     {
+      "id": "A1-F4",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "No server file changed in the ten-file delta; 55000/22023 still map to the generic 500. Residual matrix row A1-F4: 'Deferred frozen runtime ... A distinct stable refusal detail/mapping needs runtime scope'."
+     },
+     {
+      "id": "A1-F5",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "intake.sql :59-61@3e82154 still admits declaredAffiliateCode '\"\"' and :262 maps it to null; the control class is unchanged. Residual matrix row A1-F5 records the admission and the widening with 'no harmlessness claim for every future input'. No source change."
+     },
+     {
+      "id": "A1-F6",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "intake.precheck.sql and postcheck @3e82154 :13-16 set search_path and statement_timeout only (no lock_timeout) and :44-49 omit the role-existence and to_regprocedure gates of candidate :346-354. Residual matrix row A1-F6: 'Deferred ... Missing predecessors can fail closed with 42883/42704 rather than 55000'."
+     },
+     {
+      "id": "V-A1-2",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "intake.rollback.md@3e82154 :39-45 discloses ShareRowExclusiveLock on canonical requests at install and AccessExclusiveLock when the FK's RI triggers are removed, bounded by lock_timeout 5s; contract diff adds the same paragraph. Residual matrix: locks and rollback concurrency untested."
+     },
+     {
+      "id": "A2-F1",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "Contract diff (REVIEW_CLEARED_WRAPPER_CONTRACT @3e82154 'owner-scoped publish provides callable-surface revision immutability only (owner DML can still change/delete revisions or reduce epochs)'); residual matrix row 'A2-F1 / B-8: Records corrected ... Optional head-reference pre/post assertions deferred; no triggers added'. currentness pre/postcheck unchanged apart from the five rows."
+     },
+     {
+      "id": "A2-F3",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "currentness.rollback.md@3e82154 :134-141 now says the precheck 'permits absence but does not require the absent state' and that the verifier 'requires zero pg_proc and pg_class rows matching its predicates; it does not enumerate all eight named objects or separately assert absence of pg_type leftovers'. No GUC-gated absent-state assertion added (matrix row A2-F3 / V-A2-3)."
+     },
+     {
+      "id": "A2-F4",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "Both verifiers still resolve postgres:17-alpine by local tag with --pull=never and pin only server 17.11 (intake :280-286,:300; currentness :240-248,:261 @3e82154); no digest pin. Residual matrix row 'A2-F4 / A3-F2: Deferred ... no source-pinned image digest'."
+     },
+     {
+      "id": "A2-F5",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "New receipts are LF (zero CR bytes) and their raw sha256 (f2f343b3..., 51238583...) equal sha256lf, recorded as such in review-599-source-3e82154.json 'receipts' and the records-integrity JSON 'receiptHashes' (lineEndings LF); historical receipts byte-identical (blob ids unchanged 18bfbcd..1631323). Verifiers still hash raw receipt bytes (intake :136-137; currentness :186-188), as the matrix states."
+     },
+     {
+      "id": "A2-F6",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "currentness.sql install gate unchanged (:263-267@3e82154: owner check only, no BYPASSRLS/isolation/role gates); residual matrix row A2-F6 records the asymmetry and that READ COMMITTED is transitive through provider integrity and invoker functions use enabled-not-forced RLS. The single source comment suggested in doc 45 was not added."
+     },
+     {
+      "id": "A2-F7",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "Currentness verifier manual-active-head case still inside a rolled-back transaction (:330-332@3e82154) and no committed-active-head postcheck case; residual matrix row 'A2-F7 / V-A2-1: Records corrected: ... proves only constant unavailable response; no committed active-head postcheck refusal; rollback/publish case is serial ... Disposable owner is container superuser'."
+     },
+     {
+      "id": "A2-F8",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "currentness verifier :85-89@3e82154 still registers process.once handlers; cleanup :376-404 unchanged. Residual matrix row A2-F8: 'Deferred: a second SIGINT/SIGTERM during once-handler cleanup can terminate before container removal'."
+     },
+     {
+      "id": "V-A2-1",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "Shares the A2-F7 matrix row: rolled-back manual-active-head case, serial rollback/publish, container-superuser owner all recorded as limits; verifier source unchanged in those sections (diff hunks only at :14, :48-56, :367)."
+     },
+     {
+      "id": "V-A2-2",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "No correction was required (doc 45 'Smallest correction: None'); residual matrix row V-A2-2 records the eight currentness objects (two tables, six functions) as within held pre/postcheck infrastructure intent and that this clears no guard, commit, standing, recipient or session helper. currentness.sql install text unchanged (hash cc19d43d... identical)."
+     },
+     {
+      "id": "V-A2-3",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "currentness.rollback.md@3e82154 :136-138 now states the verifier checks pg_proc/pg_class predicate counts and does not assert pg_type leftovers; verifier :292-296 unchanged. Matrix row A2-F3 / V-A2-3."
+     },
+     {
+      "id": "A3-F2",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "Intake verifier source line :278-279@3e82154 still prints sourceCommit, receiptSha256, definitionHash, syntheticOnly and held only, omitting image and container ids; matrix row A2-F4 / A3-F2 'Intake output omits image/container Ids ... Future source receipt/image pin and explicit identity reporting need disposition'."
+     },
+     {
+      "id": "A3-F5",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "pass() still writes 'INTAKE_READER_SUBSET PASS <label>' without the held list (:191@3e82154); COMPLETE line :401-402 and exitCode 2 govern. Matrix row A3-F5: 'Deferred: per-check PASS tokens lack the HELD list'."
+     },
+     {
+      "id": "A3-F6",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "Intake verifier :308-309@3e82154 still grants service_role outbox/attempts table privileges before the fence migrations (:310); matrix row A3-F6 records that the two disposable seals bind different outbox ACLs and neither establishes the hosted ACL."
+     },
+     {
+      "id": "V-A3-1",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "Exit paths unchanged (:403 exitCode 2 on completion, :405 interrupted?2:1 then throw :416 => process exits 1); refused() :200-207 still matches SQLSTATE only; no staged partial-install case. Matrix row V-A3-1: 'failures throw and normally exit 1 ... describe disposition as nonzero ... Message-specific refusal coverage deferred'."
+     }
+    ],
+    "confirmed": [
+     "Identities: 3e82154724ede74b7c5f361f280739eedd60db25 is a commit with tree 04958ec1567b74bccd84e423e179e6269faf6bee and parent 18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb ('fix(quick-order): repair reviewed SQL drafts and separate header proposal', 2026-10-06 22:39:50 -0500); 1631323d7cf60f145141e0f82586e64ef7c7d637 has parent 3e82154 ('docs(quick-order): bind local review repair receipts and push blocker', 22:45:36 -0500) and touches only .xenios records, README, status, and four new evidence files (records-integrity, review-599-source-3e82154, the two receipts). The supabase/ delta hashes identically from 7d027e4 and from 18bfbcd.",
+     "Every expected trigger list in the ten files and bindings.canonicalTriggers equals the canonical nineteen (requests: research_assisted_order_paid_hold O, hl12_observed_cancel O, hl12_history_progression O, aa_hl12_disposition_terminal O, aaa_adp01_uncertainty A, adp03_request_identity A, adp03_evidence_truncate A, adp03_evidence_immutable A; events: research_assisted_order_events_append_only A, research_assisted_order_paid_event_evidence A, hl12_disposition_cancel_event O, adp03_paid_event A, adp03_evidence_truncate A, adp03_evidence_immutable A, hl12_disposition_no_truncate O; outbox: hl12_payment_effects_outbox_guard A, hl12_payment_effects_outbox_truncate A, hl12_disposition_effects_outbox O, hl12_disposition_effects_truncate O). Migration bytes corroborate the five added rows: 20261001115512 :473-484 creates adp03_evidence_truncate/immutable ENABLE ALWAYS on requests and events (requests immutable is before delete only); 20261001062651 :374-378 creates hl12_disposition_no_truncate (ordinary) on events; the ALWAYS promotion block at 20261001115512 :496-523 names observation_corrections, not events, for no-truncate.",
+     "Marker discovery repair verified in source: wrapper precheck intake.sql:160-168, marked :169-171, strict select :202-204, value/companion binding :209-216, rollback.md retained-evidence predicates :172-183; canonical 'submitted' writers (bridge submit 20260815150000:648-665; affiliate variant 20260820190000:290-310) emit fixed evidence keys requestFingerprint and lineCount; set_status (20260930191323:29-53) and service.ts allowedTransitions (:85-109) never target 'submitted'; no migration grants service_role direct DML on research_assisted_order_events.",
+     "Missing-hash branches: identical DO blocks in intake precheck :9-11, postcheck :9-11 and rollback.md :52-54, complete statements with a unique dollar tag, preceded by `\\set ON_ERROR_STOP on`; authored, not executed.",
+     "Hash recomputation (node, LF-normalized, block extraction mirroring the verifiers): intake qo_ddl+qo_fingerprint 9c0e5ff7c229ef6ece01120bfc4c6ededcbe84fb2cbbb974e545648c5446841a at 3e82154 (6e4677a486fbda5530adc15017a9f4d2e3037df8a591beea692757898ef41183 at 7d027e4); currentness install+fingerprint cc19d43dc3d1db0336fae05274ee3e90d0e417f8ea6d01714913341ef774ae6e at both commits, with expected_triggers outside both blocks. These equal the handoff (:53-58) and review-599-source-3e82154.json definitionHashes.",
+     "Receipts and bindings: 66/66 intake and 66/66 currentness receipt pins equal sha256lf of git show 3e82154:<path>; union 71 paths, 61 shared; every path each verifier loads is pinned; receipt raw blob sha256 at 1631323 = f2f343b31a5a484c1b28b02fb0560b3d5027eee101f298f91a4574ee497fe1ca and 5123858331a46c1cb4ab7674b17449e6a7f8021fd7d5e35c8f217a343a6cc668 as the handoff states; bindings inventory 55/55 equal at 18bfbcd and at 3e82154; bindings blob sha256lf b68106ad413c8e8ac38b7595c21aa31639da513e4bd0c16b88a9ff33ecb0bbd1 equals its receipt pin; bindings.review 59940dcce778d18dcae605172a46f676b9933fcf, base 18bfbcd, sourceBaseline 7d027e4, originalCompatibilityReview ca1c114a retained.",
+     "Regression (verifier :345-363) matches the effective set_status signature positionally and by type, uses fixture 10 (status 'submitted', no companion/marker/outbox, inserted :335), permitted transitions, statuses without an evidence-required field, actor_type 'admin' within the events CHECK, and stages rollback -> precheck -> boundary -> candidate -> postcheck -> boundary before re-reading the legacy envelope; none of the fourteen trigger bodies on requests/events that fire on these operations refuses the synthetic row.",
+     "Hunk census: intake.sql 7 hunks (3 logic, 4 inventory); intake precheck/postcheck 5 each (1 DO, 4 inventory); intake rollback.md 8 (3 prose, 1 DO, 1 retained-evidence predicate, 4 inventory wait: 2 prose blocks + lock prose counted within :25-45); currentness.sql/precheck/postcheck 2 each (inventory); currentness rollback.md 5 (prose/path only, SQL fence untouched); intake verifier 6; currentness verifier 4. No hunk touches ACL, grant, seal, refusal, lock_timeout or lock-table logic; HELD lists and exit codes unchanged in both verifiers.",
+     "Historical evidence preserved: no modification or deletion under docs/health-launch/quick-order-20261005/evidence/ between 18bfbcd and 1631323; the 7d027e4 receipts, review-cleared bindings, sql-candidate-source-7d027e4.json and HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md keep their blob ids."
+    ],
+    "discrepancies": [
+     "Records currency: review-599-local-records-integrity-20261007.json@1631323 (pushStatus 'LOCAL_ONLY_APPROVAL_REQUIRED') and SQL_CANDIDATE_DRAFT_STATUS_20261006.md@1631323 :5-6 ('committed locally. Push was rejected') predate the push; 1631323 is now the remote tip. Content hashes in those records are correct; only the push statement is superseded (R1-F2).",
+     "Verifier asymmetry: the intake verifier asserts bindings.review === 59940dc... (:162) while the currentness verifier does not (:218-222); both compare canonicalTriggers and both bind the bindings bytes through the receipt pin (R1-F3).",
+     "Doc 45 cited intake.sql marker predicate lines :158-159 and inventory :349-363/:459-473 at 7d027e4; at 3e82154 those live at :160-171 and :363-381/:478-496 because of the inserted precheck. Line drift only; no content discrepancy.",
+     "Residual matrix row A1-F1 says 'All original 14 rows were correct; five were omitted' -- consistent with the bytes (the fourteen 7d027e4 rows are unchanged; exactly five rows added per block)."
+    ],
+    "notProven": [
+     "Any execution: install, exact reapply, drift refusal, seal round trip, rollback, precheck/postcheck evaluation, trigger-inventory comparison against a migrated database, the injected-key regression, psql exit 3 on the DO branch, Docker isolation and cleanup, verifier exit codes.",
+     "Hosted database state: the actual non-internal trigger census on the three relations, fence owner and role attributes, pgcrypto placement, default privileges, migration history, and whether any hosted legacy request has a 'submitted' event carrying intakeKind or payloadHash (the only way a genuine legacy row could now refuse).",
+     "Behaviour of research_assisted_order_admin_json and research_assisted_order_admin_get on the synthetic fixture after status changes (the regression asserts detail.status; the canonical functions were not executed).",
+     "Lock behaviour of the companion FK (ShareRowExclusiveLock / AccessExclusiveLock on canonical requests) and the rollback under concurrent canonical writers.",
+     "Validator determinism across libc/locale (A1-F3) and under non-default DateStyle/TimeZone; catalog fingerprint determinism across PostgreSQL versions.",
+     "Composition-test source and the section 5C design amendment: outside this lens; no disposition offered here.",
+     "All HELD items: atomic commit, standing admission, source-write guards, currentness activation, competing writers, liveness, real notification. No protected-hash acceptance, manifest recut, migration registration, deployment, live intake, payment or notification authority is granted or implied by this review."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "R1-F1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed from bytes: fixture() at research_health_quick_order_local.mjs:214-250@3e82154 offers only markerValue (null => {payloadHash}; string => closed pair, :239-241); malformed matrix :382-391 covers partial (23) and wrong-value (24) submitted markers only. The extra-key, jsonb_typeof and regex arms of intake.sql:163-166 and the marked<>1 arm of :197 have no authored case; the only rollback refusal (:399) runs with companions, outbox rows and markers all present. Severity P3 stands (unexecuted verifier coverage; wrapper logic itself fail-closed). Add to the same finding: the legacy fixture (10, marker:false) and malformed 21 insert NO 'submitted' event at all, so the genuine bridge shape ('submitted' + {requestFingerprint,lineCount}, bridge 20260815150000:648-667) never passes through the new precheck in any authored case."
+     },
+     {
+      "id": "R1-F2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed: review-599-local-records-integrity-20261007.json@1631323 :7 pushStatus LOCAL_ONLY_APPROVAL_REQUIRED; SQL_CANDIDATE_DRAFT_STATUS_20261006.md@1631323 :5-6 'committed locally. Push was rejected'; also README.md@1631323 :4, handoff@1631323 :10 and :99-107, and review-599-source-3e82154.json sourceStatusAtPreparation/pendingPush. A read-only `git ls-remote origin` listed 1631323d7cf60f145141e0f82586e64ef7c7d637 at refs/heads/codex/xenios-health-quick-order-20261005, consistent with the reviewer's verification. Content hashes in those records are correct (all 10 'records' sha256lf recomputed equal at 1631323; receipts raw=lf f2f343b3…/51238583…). Historically accurate at commit time; P3 currency only; fix is a successor note, never a rewrite."
+     },
+     {
+      "id": "R1-F3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed: research_health_quick_order_currentness_local.mjs@3e82154 :218-222 asserts inventory length 55, distinct 55, canonicalTriggers deepEqual TRIGGERS and base 40-hex, but not bindings.review; the intake verifier asserts it at :162. The bindings bytes are pinned in both receipts (b68106ad413c8e8ac38b7595c21aa31639da513e4bd0c16b88a9ff33ecb0bbd1, recomputed), so the review id is bound indirectly. Optional symmetry; P3."
+     },
+     {
+      "id": "R1-CHK-1 inventory",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived mechanically (regex tuple extraction over git show 3e82154:<file>): intake.sql 2x19 (:363-381,:478-496), precheck/postcheck 2x19 each (:54-72,:138-156), rollback.md 2x19 (:98-116,:199-217), currentness.sql :19-37, currentness pre/post :14-32, both verifiers' TRIGGERS, bindings.canonicalTriggers: each exactly 19 distinct rows equal to the canonical set (8/7/4), currentness.rollback.md prose only. Census re-derived from migration bytes: bridge:349-356 append_only; 20260930193033:38-40 paid_hold O; 20260930202413:590-593 paid_event_evidence; 20260930230541:388-390 observed_cancel O; 20261001024018:48-50 history_progression O; 20261001040351:178-185 outbox guard/truncate; 20261001062651:373-378 no_truncate O on events, :386-388 terminal O, :469-470 cancel_event O, :561-565 disposition_effects O/O; 20261001085559:553-555 adp01 A; 20261001115512:474-484 evidence_truncate/immutable A on requests+events, :487-488 request_identity A, :494-495 adp03_paid_event A, :501-523 ALWAYS promotions (append_only, paid_event_evidence, both payment_effects outbox) naming observation_corrections not events for no_truncate. Dynamic loops at 20261001102904:557-564, 20261001115512:565 and 20261001160730:381 are provider_%-scoped ACL checks; research-notification-outbox.sql and bootstrap create no trigger. Predicates untouched: intake full outer join 'enabled is distinct from' (intake.sql:388-390,:503-505; precheck :79-81); currentness sorted jsonb 'is distinct from' (currentness.sql:268-274; precheck :81-87). Severity field not applicable; PASS upheld."
+     },
+     {
+      "id": "R1-CHK-2 marker discovery and rollback",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: intake.sql@3e82154 :160-168 precheck (status='submitted', either key, not closed OR intakeKind<>'quick-order-v1' OR typeof<>'string' OR !~'^[a-f0-9]{64}$' => 55000) precedes :176 legacy branch; :169-171 marked = closed submitted only; :202-204 strict select same predicate; :209-216 binds value and companion. intake_closed :14-20 returns false for non-objects and NULL for {}. Proofs (a)-(e) hold by source: set_status 20260930191323:29-53 v_allowed never contains 'submitted' and :85-92 inserts p_new_status; service.ts:85-109 allowedTransitions never targets submitted, enforced :866; bridge submit :648-667 and affiliate 20260820190000:290-309 write fixed keys requestFingerprint/lineCount; status recovery 20260927203000 inserts no events; bridge :366-386 force-RLS and revoke all events DML from anon/authenticated/service_role (':365 service_role gets NO direct DML'); all other set_status callers (20260930202413:682, 20260930230541:478, 20260930234614:228, 20261001062651:314, 20261001115512:270) pass through the transition table. Rollback.md :172-183: union of the two submitted predicates equals the old predicate restricted to status='submitted'; outbox predicate unchanged; drops :186-190 RESTRICT; retained block only inside the installed branch (:130). Not weakened beyond the intended status scoping; NOT RUN."
+     },
+     {
+      "id": "R1-CHK-3 missing-hash DO",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: precheck :5-12, postcheck :5-12, rollback.md :48-55 @3e82154: `\\set ON_ERROR_STOP on` then `\\if :{?qo_intake_definition_sha256}` / `\\else` / `\\echo` / `do $missing_source_binding$ begin raise exception ... using errcode='55000'; end $missing_source_binding$;` / `\\endif`. git grep: the tag occurs exactly twice in each of the three files and nowhere else. Complete statement terminated by ';'. Under psql semantics an inactive branch sends nothing; when undefined the DO is sent, errors, and ON_ERROR_STOP ends non-interactive processing with exit 3; an empty-but-defined variable still fails closed at precheck :44 / rollback :88 (regex gate). AUTHORED, NOT EXECUTED; exit code stated from documentation."
+     },
+     {
+      "id": "R1-CHK-4 hashes and receipts",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Recomputed with node over LF-normalized git show bytes (zero CR bytes in all four candidate blobs): intake $qo_ddl$+$qo_fingerprint$ = 9c0e5ff7c229ef6ece01120bfc4c6ededcbe84fb2cbbb974e545648c5446841a at 3e82154 (6e4677a4… at 7d027e4; ddl 20079->20981 chars, fp 3708); currentness $currentness_install$+$currentness_fingerprint$ = cc19d43dc3d1db0336fae05274ee3e90d0e417f8ea6d01714913341ef774ae6e at both commits (12302+3073 chars); expected_triggers sits at offset 644, before the first $currentness_install$ tag (5465) and inside neither block. Pre/post/rollback $qo_fingerprint$ blocks equal the candidate's at both commits; rollback has exactly one ```sql fence. Receipts @1631323: 66/66 and 66/66 pins equal sha256lf(git show 3e82154:<path>), 71-path union, 61 shared, keys {files,schemaVersion,sourceCommit}, raw=lf sha f2f343b3…/51238583…, 0 CR. Bindings @3e82154: 55/55 equal at 18bfbcd and at 3e82154, blob sha b68106ad… equals both receipt pins, identical at 1631323; every path each verifier loads is pinned. review-599-source-3e82154.json: 53 historicalEvidence blob ids before=after and equal Git; 13 implementation and 23 checkpoint before/after blobs equal Git; 55 references unchanged; definitionHashes and fullSourceSha256lf equal; heldDesignBinding sha 88df0e82… and delta sha f86b8c78… recomputed equal."
+     },
+     {
+      "id": "R1-CHK-5 regression and verifier framing",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: verifier :351-353 passes (uuid(10), expected, new, 'synthetic-operator','admin', null, null, jsonb, time::timestamptz) matching 20260930191323:8-18 (uuid,text,text,text,text,text,text,jsonb,timestamptz), granted to service_role :146-148; fixture(10) :335 inserted with status 'submitted' (:231), no companion/marker/outbox; transitions submitted->reviewing (:30) and reviewing->waiting_on_customer (:31) permitted; v_evidence_field null for both (:55-62); actor 'admin' within bridge :272-273 CHECK; evidence objects satisfy :274-275. Trigger bodies read: paid_hold 20260930193033:15-36, observed_cancel 20261001062651:349-364, history_progression 20261001024018:31-45, terminal :327-348, adp01 20261001085559:505-509, request_identity 20261001115512:424-432, cancel_event :449-468, paid_event_evidence 20260930202413:574-588, adp03_paid_event 20261001115512:379-383; none refuses the synthetic row. :354-356 asserts null enrichment; :358-359 stages rollback, precheck, boundary, candidate, postcheck, boundary with companion empty and no submitted marker. HELD lists (:64-73; currentness :62-64), exit codes (:403,:405,:411; currentness :370,:375,:402) untouched by the diff; currentness label :367 says nineteen; BINDINGS :17 and :14 moved. NOT RUN."
+     },
+     {
+      "id": "R1-CHK-6 hunk census and history",
+      "upheld": true,
+      "severity": "P3",
+      "note": "numstat 7d027e4..3e82154 (supabase/ only): intake.sql +26/-3, pre/postcheck +13/-1 each, intake rollback.md +36/-6, currentness .sql/pre/post +5/0 each, currentness rollback.md +13/-9, intake verifier +52/-3, currentness verifier +7/-2 = 175/25; identical bytes from 18bfbcd (sha 5fb8b164…). No hunk touches revoke/grant (intake.sql:309-314), aclexplode/has_function_privilege matrices, QO_INTAKE_READERS_V1/RHQOC_HELD_V1 seals, lock_timeout or the lock table statement. Lens's '8 hunks' for rollback.md counts logical changes (the -U3 diff has 4); immaterial. Historical evidence: git diff --diff-filter=MDR 18bfbcd 1631323 -- evidence/ empty; 53 files at 18bfbcd, 55 at 3e82154, 59 at 1631323; blob ids c7a1d235, b7ab5ee4, a261eb10, 9bb455c8 and HELD_WRITER b925248a identical. Scratch copies rec_* all equal 1631323 bytes; the scratch runtime diff is byte-equal to `git diff 7d027e4 3e82154 -- supabase/ server/research/health/quick-order/` (13 paths, sha c78f2ba8…), not supabase/ alone."
+     }
+    ],
+    "priorFindingOpinion": [
+     {
+      "id": "A1-F1",
+      "status": "REPAIRED_AT_SOURCE",
+      "note": "All eleven expected lists hold exactly the canonical nineteen (mechanical extraction; intake.sql:363-381,:478-496; pre/post :54-72,:138-156; rollback.md :98-116,:199-217; currentness.sql :19-37; currentness pre/post :14-32; both TRIGGERS constants; bindings.canonicalTriggers @3e82154); comparison predicates unchanged; census re-derived from migration bytes (20261001115512:474-484,:487-495,:501-523; 20261001062651:373-378,:386-388,:469-470,:561-565; 20261001085559:553-555; 20261001040351:178-185; 20260930193033:38-40; 20260930202413:590-593; 20260930230541:388-390; 20261001024018:48-50; bridge :349-356). Doc 45's last clause (prove against a migrated disposable database) remains NOT RUN; hosted NOT PROVEN; receipts/bindings/definition hashes re-pinned and recomputed equal."
+     },
+     {
+      "id": "V-A1-1",
+      "status": "REPAIRED_AT_SOURCE",
+      "note": "All three doc 45 corrections present: discovery scoped to status='submitted' with the closed two-key set (intake.sql:160-171,:202-204 @3e82154), mirrored in rollback.md:172-183, and a non-submitted injected-key verifier case (:345-363) through research_assisted_order_set_status. set_status 20260930191323:29-53 and service.ts:85-109/:866 never yield 'submitted'; bridge :366-386 revokes events DML from service_role. Regression NOT RUN; the legacy fixture carries no bridge-shaped submitted event (see missed)."
+     },
+     {
+      "id": "A1-F2",
+      "status": "REPAIRED_AT_SOURCE",
+      "note": "`\\quit 2` replaced by a complete DO raising 55000 after `\\set ON_ERROR_STOP on` in precheck :5-12, postcheck :5-12 and rollback.md :48-55 @3e82154; tag $missing_source_binding$ occurs exactly twice per file; authored only, psql exit 3 not observed (matrix row says the same)."
+     },
+     {
+      "id": "A3-F1",
+      "status": "REPAIRED_AT_SOURCE",
+      "note": "research_health_quick_order_local.mjs@3e82154 :41-63 literal 19-row TRIGGERS ('Never derive this assertion from the candidate being checked'), :254-262 independent pg_trigger query (not tgisinternal, public, three relations) deepEqual in boundary(), :163 bindings.canonicalTriggers comparison, :317 pass label corrected. Unexecuted."
+     },
+     {
+      "id": "A1-F3",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "intake.sql@3e82154 :25 still IMMUTABLE while :30,:44-45 call date_trunc/to_char/::timestamptz; [[:cntrl:]] at :53,:99,:128 unchanged; residual matrix row 'A1-F3 / A2-F2: Deferred'."
+     },
+     {
+      "id": "A1-F4",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "No server path in the 7d027e4..3e82154 or 18bfbcd..3e82154 delta other than the three composition tests; 55000/22023 mapping unchanged; matrix row A1-F4 'Deferred frozen runtime'."
+     },
+     {
+      "id": "A1-F5",
+      "status": "RECORDS_CORRECTED",
+      "note": "intake.sql:59-64 still admits declaredAffiliateCode '\"\"' and :262 nullif maps it; no source change; matrix row records the admission and widening with no harmlessness claim (doc 45 allowed 'or note the widening')."
+     },
+     {
+      "id": "A1-F6",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "precheck/postcheck @3e82154 :13-16 set search_path and statement_timeout only (no lock_timeout); :44-49 omit the role-existence and to_regprocedure gates of candidate :346-354; matrix row A1-F6 'Deferred ... 42883/42704 rather than 55000'."
+     },
+     {
+      "id": "V-A1-2",
+      "status": "RECORDS_CORRECTED",
+      "note": "rollback.md@3e82154 :39-45 discloses ShareRowExclusiveLock at install and AccessExclusiveLock on canonical requests when RI triggers are dropped, bounded by lock_timeout 5s; contract diff adds the same paragraph. Doc 45's correction was disclosure; lock behaviour untested."
+     },
+     {
+      "id": "A2-F1",
+      "status": "RECORDS_CORRECTED",
+      "note": "Contract diff now says 'callable-surface revision immutability only (owner DML can still change/delete revisions or reduce epochs)'; the doc 45 head-reference pre/postcheck assertion was NOT added (currentness pre/post diffs are five rows only) and the matrix row 'A2-F1 / B-8' defers it. Partial against doc 45's two-part correction; records part done."
+     },
+     {
+      "id": "A2-F3",
+      "status": "RECORDS_CORRECTED",
+      "note": "currentness.rollback.md@3e82154 :134-141 now states the precheck 'permits absence but does not require the absent state' and that the verifier checks pg_proc/pg_class predicate counts without pg_type; no GUC-gated gate added (matrix row A2-F3 / V-A2-3)."
+     },
+     {
+      "id": "A2-F4",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "Both verifiers still resolve postgres:17-alpine by local tag with --pull=never and pin only server 17.11 (intake :280-286,:300; currentness :240 ff. @3e82154); no digest; matrix row 'A2-F4 / A3-F2: Deferred'."
+     },
+     {
+      "id": "A2-F5",
+      "status": "RECORDS_CORRECTED",
+      "note": "New receipts at 1631323 are LF (0 CR) with raw sha equal to sha256lf (f2f343b3…, 51238583…, recomputed); records-integrity :66-85 and review-599-source receipts record lineEndings LF; old receipts byte-identical (blobs c7a1d235, b7ab5ee4). Verifiers still hash raw receipt bytes (intake :136-137; currentness :186-188), as the matrix states."
+     },
+     {
+      "id": "A2-F6",
+      "status": "RECORDS_CORRECTED",
+      "note": "currentness.sql@3e82154 :263-267 install gate unchanged (owner check only); doc 45's 'one source comment' was not added; matrix row A2-F6 records the asymmetry, transitive READ COMMITTED and enabled-not-forced RLS. Disclosure in records only."
+     },
+     {
+      "id": "A2-F7",
+      "status": "RECORDS_CORRECTED",
+      "note": "currentness verifier :330-332 manual-active-head case still inside a rolled-back transaction; no committed-active-head postcheck case; matrix row 'A2-F7 / V-A2-1' records limits and container-superuser owner."
+     },
+     {
+      "id": "A2-F8",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "currentness verifier :85-89 @3e82154 still uses process.once handlers; cleanup :376-404 unchanged; matrix row A2-F8."
+     },
+     {
+      "id": "V-A2-1",
+      "status": "RECORDS_CORRECTED",
+      "note": "Shares the A2-F7 row: serial rollback/publish, rolled-back active-head case, SET ROLE denials not non-superuser owner proof; verifier sections unchanged (hunks only at :14, :48-56, :367)."
+     },
+     {
+      "id": "V-A2-2",
+      "status": "RECORDS_CORRECTED",
+      "note": "Doc 45 'Smallest correction: None'; matrix row records the eight currentness objects as within held pre/postcheck infrastructure intent and clears no guard/commit/standing helper; $currentness_install$ hash unchanged cc19d43d…."
+     },
+     {
+      "id": "V-A2-3",
+      "status": "RECORDS_CORRECTED",
+      "note": "currentness.rollback.md@3e82154 :136-138 corrects the 'all eight named objects' claim to predicate counts without pg_type; verifier :292-296 unchanged."
+     },
+     {
+      "id": "A3-F2",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "Intake verifier :278-279 @3e82154 still prints sourceCommit, receiptSha256, definitionHash, syntheticOnly, held only; image/container ids omitted; matrix row 'A2-F4 / A3-F2'."
+     },
+     {
+      "id": "A3-F5",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "pass() :191 still writes 'INTAKE_READER_SUBSET PASS <label>' without the held list; COMPLETE line :401-402 and exitCode 2 govern; matrix row A3-F5."
+     },
+     {
+      "id": "A3-F6",
+      "status": "RECORDS_CORRECTED",
+      "note": "Intake verifier :308-309 still grants service_role outbox/attempts privileges before the fence migrations (:310); matrix row A3-F6 records the differing disposable ACL baselines and that neither establishes hosted ACL."
+     },
+     {
+      "id": "V-A3-1",
+      "status": "RECORDS_CORRECTED",
+      "note": "Exit paths unchanged (:403 exitCode 2 on completion; :405 interrupted?2:1; :416 throw => exit 1); refused() :200-207 SQLSTATE-only; no staged partial-install case; matrix row V-A3-1 'describe disposition as nonzero', message-token coverage deferred."
+     }
+    ],
+    "missed": [
+     "P3 (fold into R1-F1 or new R1-F4): the only legacy fixtures (10 at :335 with marker:false; 21 in the malformed matrix) insert no 'submitted' event at all (fixture :239-241 inserts an event only when marker is true), so no authored case shows the genuine bridge shape — a 'submitted' event with evidence {requestFingerprint,lineCount} (bridge 20260815150000:648-667) — passing the new precheck at intake.sql:160-168 and the marked count at :169-171. Source reasoning says it passes (neither key present), but the regression as written exercises the status filter only against non-submitted rows. Smallest correction: add a fixture option (e.g. legacyEvent) that inserts a bridge-shaped 'submitted' event for fixture 10 and for malformed 21, in supabase/verification/research_health_quick_order_local.mjs; authored only, no run; re-pin the verifier in both receipts.",
+     "Records-currency paths beyond R1-F2's two files: README.md@1631323 :4 ('automatic approval review rejected its push'), .xenios/handoffs/quick-order-20261005-handoff.md@1631323 :10 and :99-107, and evidence/review-599-source-3e82154.json sourceStatusAtPreparation/pendingPush all describe a local-only state now superseded by the remote tip. Same P3, same correction (one successor note in the next records-only commit; no rewrite).",
+     "Anchor precision in the lens's 2e evidence: the operative bytes for 'no service_role DML on research_assisted_order_events' are the force-RLS and revoke loop at bridge 20260815150000:366-386 (comment :365 'service_role gets NO direct DML anywhere in this file'), not the function revoke at :1091. This strengthens, not refutes, the claim. Likewise events_actor_chk is at bridge :272-273 and evidence_chk at :274-275 (lens wrote :273-274).",
+     "The scratch copy runtime-7d027e4..3e82154.diff (43177 bytes) is byte-equal to `git diff 7d027e4 3e82154 -- supabase/ server/research/health/quick-order/` (13 paths, sha256 c78f2ba8…), i.e. it includes the three composition tests; the lens's 'supabase/ delta' statement (sha 5fb8b164…, 36811 bytes) is correct for supabase/ alone. Labeling only; no record discrepancy.",
+     "Out of this lens but observed while hunting: the six header expects removed from the three composition tests (delta lines :36-39, :74-77) reappear as six added expects under three 'Proposed ... pending Samuel's 8392d243 disposition' describes; no .skip/.only/.todo/xit introduced in the delta. Not a disposition of lens C.",
+     "No psql \\if/\\else path that exits 0 was found: an inactive branch sends nothing; an undefined variable sends the DO, which errors under ON_ERROR_STOP (exit 3); an empty-but-defined variable fails closed at precheck :44 / rollback :88; an unknown meta-command on a pre-10 client also stops under ON_ERROR_STOP. Stated from psql documentation, not executed.",
+     "Nothing in the ten files or bindings misstates a trigger state; no predicate was weakened beyond the intended status scoping; no historical evidence file was modified or deleted; no 5C claim or prerequisite was asserted by this lens (outside its scope)."
+    ],
+    "verdictOpinion": "Lens R1's verdict stands: SQL draft repair at 3e82154724ede74b7c5f361f280739eedd60db25 (tree 04958ec1567b74bccd84e423e179e6269faf6bee, parent 18bfbcd; records 1631323 parent 3e82154) is ACCEPT WITH LIMITS as authored source only, with every behaviour NOT RUN and hosted state NOT PROVEN. I re-derived all six anchors from Git objects and my own recomputation: identities and the byte-identical supabase/ delta from 7d027e4 and 18bfbcd (sha 5fb8b164…); eleven 19-row inventories mechanically equal to the canonical set, which I re-derived from the migration bytes including every dynamic ENABLE ALWAYS loop (no twentieth trigger from any loop; 20261001102904:557 and the quarantine loop are provider_%-scoped ACL checks); unchanged full-outer-join and sorted-jsonb predicates; marker discovery, strict select, value binding and rollback retention scoped to submitted closed markers with malformed-submitted refusal before legacy fallback, and no canonical writer able to emit a 'submitted' event with either key (set_status transition table, service allowedTransitions, fixed-key bridge/affiliate submits, explicit events DML revoke at bridge :366-386); complete DO blocks with a unique dollar tag in all three \\\\else branches; definition hashes 9c0e5ff7c229ef6ece01120bfc4c6ededcbe84fb2cbbb974e545648c5446841a and unchanged cc19d43dc3d1db0336fae05274ee3e90d0e417f8ea6d01714913341ef774ae6e with the currentness census outside its hashed blocks; 66/66 + 66/66 receipt pins, 55/55 bindings at both commits, the b68106ad… bindings pin, the records-integrity, source-inventory (53 historical blobs before=after, 13 implementation and 23 checkpoint blobs, 55 references) and held-5C binding hashes all equal; regression call shape, fixture, transitions, evidence rule and trigger bodies consistent; HELD lists, exit codes, ACL/grant/seal/refusal/lock logic untouched; historical evidence preserved byte-for-byte. The three lens findings (R1-F1, R1-F2, R1-F3) are upheld at P3 with no severity change; I add one P3 coverage gap (no bridge-shaped 'submitted' event in any legacy fixture) and widen R1-F2's affected paths. Prior P1/P2 (A1-F1, V-A1-1, A1-F2) and A3-F1 are REPAIRED_AT_SOURCE; the remaining rows match the residual matrix and the bytes; none regressed; A2-F1 and A2-F6 are records-corrected only, with their doc 45 source parts (head-reference assertion, source comment) explicitly deferred. Standing rules respected: missing evidence is NOT PROVEN (no SQL, psql, Docker, Node verifier, test, build or database connection was run by me or, per the records, by the producer; the only remote touch was a read-only ls-remote ref listing corroborating the reviewer's tip verification); nothing here is PRODUCTION READY, qualification, protected-hash acceptance, manifest recut, deployment, intake, payment or notification authority, and nothing is Samuel's approval; the qualification window expired 2026-10-06T21:43:37Z. Composition-test and section 5C dispositions remain outside this lens."
+   }
+  },
+  {
+   "lens": "composition-and-records",
+   "review": {
+    "verdict": "LENS R2 (composition-test separation + records/receipts): C-F1 is REPAIRED AT SOURCE exactly as doc 47 prescribed; every hash in the new records recomputes equal to the Git objects; all historical evidence is byte-identical from 18bfbcd through 1631323; the three registry files change only the builder's own rows. Composition-test source disposition from this lens: ACCEPT WITH LIMITS (source only, NOT RUN; 17 it() instances still predicted red, all inside the proposed describes pending 8392d243; zero sixth-pin it() predicted red from that patch; runner compatibility C-F6 still NOT PROVEN). Records disposition: truthful at write; the only material defect is staleness, every push-status field says LOCAL ONLY although 1631323 is now the tip of origin/codex/xenios-health-quick-order-20261005 (local tracking ref; reviewer-verified remote). No record claims any test, SQL or verifier ran. Four P3 findings, no P0-P2. Nothing here is execution evidence, hosted-state proof, protected-hash acceptance or new authority; the qualification window remains EXPIRED (2026-10-06T21:43:37Z).",
+    "checklist": [
+     {
+      "item": "1a Separation: privacy-header trio lives in a separately named, unskipped describe in each of the three files; sixth-pin cases free-standing and unchanged",
+      "status": "PASS",
+      "evidence": "Inspected source @3e82154: static-document.test.ts:166 describe(\"Proposed Quick Order static document-header hardening pending Samuel's 8392d243 disposition\") with it.each(PRIVACY_CASES) :170-176 asserting cache-control 'no-store, private', pragma 'no-cache', referrer-policy 'no-referrer'; vite-document.test.ts:173-184 same; root-composition.test.ts:352-363 one it(). Sixth-pin cases unchanged: static :74-93 (GET/HEAD 200, x-robots-tag noindex,nofollow,noarchive, link undefined, expectPrivateHtml no reflected query) and :132-138 (/health -> 301); vite :80-103, :139-145; root :340-349. git diff 5fd2e4c..3e82154 on the three files shows only the removal of the trio block from inside the first describe and its re-addition in the new describe (assertion text identical). grep it.skip|it.todo|xit(|describe.skip|test.skip = 0 in all three at 3e82154."
+     },
+     {
+      "item": "1b expect( counts retained (60/60/42) and root split adds exactly one it",
+      "status": "PASS",
+      "evidence": "Recounted from blobs: static 10aed9de@5fd2e4c expect=60 -> 65487717@3e82154 expect=60; vite a626f283 -> 49e8296f expect 60 -> 60; root 7c3fc866 -> 8e5876e7 expect 42 -> 42, top-level it( lines 3 -> 4, describe blocks 1 -> 2 in each file. Blobs identical at 7d027e4 and 18bfbcd (no intervening change). Producer claim 60/60/42 and 162 total is exact."
+     },
+     {
+      "item": "1c Root new describe can use rawProbe and the booted child; hooks top-level; new describe runs after the first; comment says only Cache-Control and Pragma predicted absent",
+      "status": "PASS",
+      "evidence": "Inspected source root-composition.test.ts@3e82154: rawProbe is a module-level function :151-180; beforeAll :196-219 and afterAll :221-267 are file-level (outside both describes), so they wrap the whole file; first describe :280-350, proposed describe :352-363 follows in file order (Vitest executes same-file describes sequentially in declaration order; untested behaviour, source reasoning only). New comment :355-358: 'Only Cache-Control and Pragma are predicted absent here: root Helmet already supplies no-referrer.' server/index.ts:268-272@3e82154 mounts helmet({contentSecurityPolicy:false}) only, leaving the default referrerPolicy middleware active; server/index.ts, static.ts (7fade5d) and vite.ts (989c1bb) blobs are identical 5fd2e4c..3e82154."
+     },
+     {
+      "item": "1d Three files inside allowed write zones; no other file changed with them; QuickOrderApp.composition.test.tsx unchanged",
+      "status": "PASS",
+      "evidence": "Lease row HEALTH-QUICK-ORDER-20261005 / codex-health-quick-order-20261005 at 1631323 (ACTIVE_TASKS.json and CODE_OWNERSHIP.json) lists server/research/health/quick-order/** plus the three explicit test paths and the ten SQL/verifier paths. git diff --name-status 18bfbcd 3e82154 = 23 paths: the 13 implementation paths, 4 registry/session files, 6 docs/evidence records; nothing else. client/src/research/quick-order/QuickOrderApp.composition.test.tsx blob 85503d76eab946eb8ae001116f00cb85f814f72e at 5fd2e4c, 7d027e4, 18bfbcd, 3e82154 and 1631323."
+     },
+     {
+      "item": "2 Predicted reds from unapplied 8392d243: static 8, vite 8, root 1; no sixth-pin it() predicted red",
+      "status": "PASS",
+      "evidence": "Source prediction only (NOT RUN). PRIVACY_CASES = 4 OWNED_TARGETS x {GET,HEAD} = 8 cases (static :25-33, vite :21-29); root proposed describe has one it (:353). server/static.ts:102-106@3e82154 sets the trio only when originalPathname === '/status'; the pending patch (DOCUMENT_PRIVACY_HEADERS_AMENDMENT_PROPOSED_20261006.patch, sha256 recomputed 8392d24308c3dc106c00317f4cd9550d94e956d008051c617c0126d610330fa9 raw and LF) would extend that branch with isHealthIntakePath. At root only cache-control/pragma predicted absent (helmet default no-referrer). No trio assertion remains in any sixth-pin it(), so none is predicted red from 8392d243; other predictions unchanged from doc 47 (C-F6 runner uncertainty remains NOT PROVEN)."
+     },
+     {
+      "item": "3a review-599-source-3e82154.json implementation[] 13 before/after values and blob ids",
+      "status": "PASS",
+      "evidence": "Recomputed with node (sha256 of CRLF->LF-normalized bytes, LF byte count, newline count, git rev-parse blob): 13/13 implementation entries and 23/23 sourceCheckpointPaths entries match before@18bfbcd and after@3e82154 on gitBlob, sha256lf, utf8LfBytes and lines (new-file entries have before:null and are absent at 18bfbcd). Implementation blobs unchanged 3e82154..1631323. sourceTree 04958ec1567b74bccd84e423e179e6269faf6bee = git rev-parse 3e82154^{tree}; base 18bfbcd; review 59940dcc."
+     },
+     {
+      "item": "3b Two 66-entry receipts pin repaired bytes at 3e82154; own hash not inside; union 71",
+      "status": "PASS",
+      "evidence": "Recomputed all entries, not a 10-sample: sql-intake-source-receipt-3e82154.json 66/66 sha256lf equal to blobs at 3e82154; sql-currentness-source-receipt-3e82154.json 66/66. Each has keys schemaVersion, sourceCommit (3e82154724ede74b7c5f361f280739eedd60db25), files only; neither contains its own path, its own raw/LF hash, or any receipt path. Each contains the successor binding review-599-repair-bindings-20261007.json at b68106ad… = blob@3e82154, the 55 references, 5 own candidate/verifier paths, 4 predecessor migrations and the disposable bootstrap; union of paths = 71 (record says 71); 61 shared entries hash-equal across both. Own files at 1631323: intake sha256raw = sha256lf = f2f343b3…, 11922 bytes, no CR; currentness 51238583…, 11959 bytes, no CR, matching source.receipts[] and the integrity JSON."
+     },
+     {
+      "item": "3c review-599-repair-bindings-20261007.json: 55-entry inventory = historical paths, hashes = blobs at 18bfbcd frozen through repair, review 59940dc, canonicalTriggers 19 exact",
+      "status": "PASS",
+      "evidence": "Recomputed: inventory paths (55) == review-599-source references (55) == historical review-cleared-draft-bindings-20261006.json inventory (55). 55/55 sha256lf == blob@18bfbcd == blob@3e82154 == blob@1631323; predecessorBindingSha256lf == historical sha256lf and originalPacketSha256lf == historical for 55/55. Only two paths have repair pin != historical pin (quick-order-admin-readback.test.ts, quick-order-notifications.test.ts), which is the e279 refinement already pushed at 7d027e4; both are pinned at 18bfbcd and now frozen, as the contract :160-165 states. review=59940dcce778d18dcae605172a46f676b9933fcf, base=18bfbcd, activeConflicts=[], execution NOT RUN. canonicalTriggers (19) in bindings and in the source JSON equal the reviewer's canonical set exactly (relation|name|enabled; 8/7/4). Historical 14 are all inside the 19; omitted five = requests adp03_evidence_truncate A, adp03_evidence_immutable A; events adp03_evidence_truncate A, adp03_evidence_immutable A, hl12_disposition_no_truncate O."
+     },
+     {
+      "item": "3d Historical evidence preserved byte-identical 18bfbcd..1631323",
+      "status": "PASS",
+      "evidence": "git rev-parse blob ids identical at 18bfbcd, 3e82154 and 1631323: review-cleared-draft-bindings-20261006.json a261eb10, sql-intake-source-receipt-7d027e4.json c7a1d235 (sha256lf 07ee084a…), sql-currentness-source-receipt-7d027e4.json b7ab5ee4 (3fd581b4…), sql-candidate-source-7d027e4.json 9bb455c8, HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md b925248a (sha256lf 2cff1b08… = doc 46 B-6 value). review-599-source historicalEvidence[]: 53/53 entries byte-identical at all three commits with recorded gitBlobBefore/After and sha256lf."
+     },
+     {
+      "item": "3e held-5c binding hash and byte count; local-records-integrity hashes",
+      "status": "PASS",
+      "evidence": "HELD_5C_REVIEW_599_DELTA_20261007.md @3e82154 (= @1631323): sha256lf f86b8c78c01c0b598fac19466697cb1451cc73cb8fe05103e738e396d4b4452a, 16014 LF bytes, 204 lines, no CR = held-5c-review-599-delta-binding-20261007.json file{} and source.heldDesignBinding.delta; binding JSON own sha256lf 88df0e82… = source.heldDesignBinding.sha256lf; predecessor sha256lf 2cff1b08… matches blob@18bfbcd. review-599-local-records-integrity-20261007.json: all 10 records[] sha256lf equal blobs at 1631323 (none at 3e82154, as expected for records written for the records commit); receiptHashes raw=lf, LF, 11922/11959 bytes confirmed; its own hash is not inside itself."
+     },
+     {
+      "item": "3f Definition hashes quoted in handoff :53-58",
+      "status": "PASS",
+      "evidence": "Recomputed with the verifiers' own rule (research_health_quick_order_local.mjs:116-119,:172 uniqueBlock '$qo_ddl$'+'$qo_fingerprint$'; currentness_local.mjs:71-75,:232 section '$currentness_install$'+'$currentness_fingerprint$', LF-normalized candidate): intake 6e4677a4…@18bfbcd -> 9c0e5ff7c229ef6ece01120bfc4c6ededcbe84fb2cbbb974e545648c5446841a@3e82154; currentness cc19d43dc3d1db0336fae05274ee3e90d0e417f8ea6d01714913341ef774ae6e at both. Matches definitionHashes[] and the handoff statement that the currentness definition is unchanged while its full-source hash changes."
+     },
+     {
+      "item": "4a Handoff and status truthfulness: push status and execution claims",
+      "status": "PARTIAL",
+      "evidence": "Handoff@1631323 :10-12 'PUSH STATUS: LOCAL ONLY', 'No pushed-successor claim until the existing origin branch is verified', :99-107 push rejected twice; README :4, status :5, ACTIVE_TASKS/SESSION_REGISTRY/sessions sourcePushStatus LOCAL_ONLY_APPROVAL_REQUIRED, integrity JSON pushStatus, source JSON sourceStatusAtPreparation/pendingPush. Local tracking ref refs/remotes/origin/codex/xenios-health-quick-order-20261005 = 1631323d7cf60f145141e0f82586e64ef7c7d637 (no network used; reviewer verified remote). Stale-at-write, not false: the records cannot describe a push that happened after they were written. Execution sweep (passed|green|succeeded|exit 0|observed red/green|test run|was/were run) over the handoff head, README, status, matrix, 5C delta and contract: only negations and historical lines (README :85 refers to the earlier fd023e8 containment correction, pre-existing). All six evidence JSONs carry execution NOT RUN or no execution field (receipts). PARTIAL only for the staleness (finding R2-F1)."
+     },
+     {
+      "item": "4b Status record claims vs bytes (nineteen in ten files; independent census; submitted-only discovery; three branches; synthetic regression; 17 cases moved; 162 expect sites; window expired)",
+      "status": "PASS",
+      "evidence": "Nineteen: 9 of 10 files name all 17 distinct trigger names (19 rows) at 3e82154 (14 at 7d027e4); currentness rollback.md binds them by count and fingerprint (:60 'exact nineteen O/A trigger states (requests 8, events 7, …', :74, :97/:126 provider fingerprint, :134 re-run precheck) rather than by name (precision note R2-F3). Independent census: research_health_quick_order_local.mjs:41-62 literal TRIGGERS, :163 compared to bindings.canonicalTriggers, :256-261 pg_trigger query (not tgisinternal, three relations). Submitted-only: intake.sql:158-171 status='submitted' + closed intakeKind/payloadHash set, separate malformed-submitted refusal :163-167 (55000); rollback.md:173-179 same boundary. Three branches: precheck :6-12, postcheck :6-12, rollback :49-55 replace '\\quit 2' (count 1 each at 7d027e4, 0 at 3e82154) with a DO block raising 55000 under \\set ON_ERROR_STOP on. Regression: local.mjs:345-363 set_status injections then legacy readback, rollback/precheck/candidate/postcheck. 17 cases, 162 expects: verified in 1b. Window EXPIRED 2026-10-06T21:43:37Z repeated in all records."
+     },
+     {
+      "item": "4c Residual matrix rows C-F1..C-F6 and doc 47 verifier additions vs bytes",
+      "status": "PASS",
+      "evidence": "REVIEW_599_RESIDUAL_MATRIX_20261007.md@3e82154 (blob daa7963b, same at 1631323): :36 C-F1 source repaired, 17 cases, 162 expects, pins not called green; :37 C-F2 records/test comment corrected (root Helmet no-referrer); :38 C-F3 deferred (vitest.config.ts blob 242428c unchanged 5fd2e4c..3e82154, so no pool/worker limits added); :39 C-F4 deferred (root unusedPort :71-89 still probes 127.0.0.1; child binds 0.0.0.0 per header :16-17); :40 C-F5 deferred; :41 C-F6 deferred; :42 doc 47 verifier additions (supertest app.listen(0) unspecified address, EPIPE/ECONNRESET on >2MiB Connection:close probe, boot egress source-read only); :43 installed-package observations (helmet 8.2 / tsx 4.22.4 / @vitest/runner 4.1.10 acknowledged as reviewer node_modules observations). All rows consistent with the bytes; no row claims a run."
+     },
+     {
+      "item": "5 Registries: ACTIVE_TASKS, CODE_OWNERSHIP, SESSION_REGISTRY diffs 18bfbcd..1631323 touch only the builder's rows; lease covers the 13 implementation paths",
+      "status": "PASS",
+      "evidence": "git diff 18bfbcd 1631323 on the three files: only the HEALTH-QUICK-ORDER-20261005 task row (scopeNote, sourceSha/Tree, handoff, blockedOn, heartbeat, qualification window fields, sourcePushStatus, lastPushedBaseline), the codex-health-quick-order-20261005 ownership row (heartbeatAt, note) and the codex-health-quick-order-20261005 session row; no other id/session key appears in any +/- line; SESSION_REGISTRY global updatedAt unchanged. The lease path list at 1631323 contains the ten SQL/verifier paths and the three test paths explicitly plus server/research/health/quick-order/**. .xenios/sessions/codex-health-quick-order-20261005.json is the builder's own file (6+/4-)."
+     },
+     {
+      "item": "Scratchpad copies match Git objects",
+      "status": "PASS",
+      "evidence": "All ten rec_* files in scratchpad/repair-3e82154 are byte-identical (raw sha256) to the blobs at 1631323; runtime-7d027e4..3e82154.diff (43177 bytes) is byte-identical to git diff 7d027e4 3e82154 restricted to the 13 implementation paths."
+     },
+     {
+      "item": "Executed behaviour of any test, SQL, verifier or psql exit code",
+      "status": "NOT_PROVEN",
+      "evidence": "Nothing executed by this lens or (per every record) by the producer; window EXPIRED. All 'predicted red/green', helmet default behaviour, Vitest describe ordering, psql ON_ERROR_STOP exit on the DO block, and hosted trigger census are source predictions or library-default knowledge, not observations."
+     }
+    ],
+    "findings": [
+     {
+      "id": "R2-F1",
+      "severity": "P3",
+      "file": ".xenios/handoffs/quick-order-20261005-handoff.md",
+      "claim": "Every push-status statement in the 1631323 records is stale: the handoff (:10-12, :99-107), README (:4), SQL_CANDIDATE_DRAFT_STATUS (:5), the task/ownership/session rows (sourcePushStatus LOCAL_ONLY_APPROVAL_REQUIRED, handoff.pushStatus), review-599-local-records-integrity-20261007.json (pushStatus) and review-599-source-3e82154.json (sourceStatusAtPreparation, pendingPush) all say the repair is local only, yet 1631323 is the tip of origin/codex/xenios-health-quick-order-20261005.",
+      "evidence": "Local tracking ref refs/remotes/origin/codex/xenios-health-quick-order-20261005 = 1631323d7cf60f145141e0f82586e64ef7c7d637 (read without network; reviewer verified the remote). Records were written 2026-10-07T03:42-03:45Z before the push; wording is accurate as of write time and explicitly conditions the successor claim on remote verification (handoff :12, :106-107). Stale-at-write, not a false claim.",
+      "fix": "Records-only successor commit (no implementation change): add a dated 'PUSHED' line naming 3e82154 (source) and 1631323 (records) as verified remote SHAs at the top of .xenios/handoffs/quick-order-20261005-handoff.md and docs/health-launch/quick-order-20261005/README.md; set sourcePushStatus/handoff.pushStatus to PUSHED and lastPushedBaseline to 1631323d7cf60f145141e0f82586e64ef7c7d637 in .xenios/ACTIVE_TASKS.json, .xenios/SESSION_REGISTRY.json, .xenios/sessions/codex-health-quick-order-20261005.json; append a successor integrity JSON rather than editing review-599-local-records-integrity-20261007.json or review-599-source-3e82154.json. Leave the historical 'rejected twice' narrative in place."
+     },
+     {
+      "id": "R2-F2",
+      "severity": "P3",
+      "file": "server/research/health/quick-order/root-composition.test.ts",
+      "claim": "The root proposed-hardening it() (:353-362) asserts the three headers without first asserting the response status, whereas the static and Vite proposed its assert status 200 before the trio (:172, :179). After a future 8392d243 application, a root green in that block alone would not show the intake document was served at 200 (the free-standing sixth-pin it :340-349 does, on the same target).",
+      "evidence": "Inspected source @3e82154 root :354 rawProbe('/health/quick-order?ref=SYNTHETIC_ROOT_REFERRAL') then :359-361 three header expects only; static :171-175 and vite :178-182 include expect(response.status).toBe(200). Test-only precision; no privacy defect; prediction unaffected (the first predicted-red expect remains cache-control).",
+      "fix": "Optional, only if the builder re-pins: insert expect(document.status).toBe(200); at root-composition.test.ts:359 (expect count becomes 43; review-599-source implementation[] and any downstream pin must be recut). Otherwise record the asymmetry in COMPOSITION_TEST_SOURCE_20261006.md / the residual matrix."
+     },
+     {
+      "id": "R2-F3",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/SQL_CANDIDATE_DRAFT_STATUS_20261006.md",
+      "claim": "Status :9-10 ('The ten SQL/verifier files now carry nineteen canonical triggers') and handoff :26-28 slightly overstate: nine of the ten files enumerate the nineteen relation/name/state rows; supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md binds the census by count ('exact nineteen O/A trigger states (requests 8, events 7, …' :60, :74) and by the predecessor provider fingerprint (:97, :126) plus a required re-run of the precheck (:134), not by name.",
+      "evidence": "grep of the 17 distinct canonical trigger names across the ten files at 3e82154: 17/17 present in nine files, 0/17 in currentness rollback.md (also 0/17 at 7d027e4). The rollback's fence check is 'Canonical fence changed during rollback' 55000 against research_assisted_order_provider_schema_fingerprint(). Not a drift-detection weakening: the precheck/postcheck/candidate in the same family enumerate all nineteen.",
+      "fix": "Wording only: in SQL_CANDIDATE_DRAFT_STATUS_20261006.md :9-10 and the handoff :26-28 say 'nine files enumerate the nineteen names; the currentness rollback binds them by count and predecessor fingerprint and requires the precheck re-run'. No SQL change."
+     },
+     {
+      "id": "R2-F4",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/.gitattributes",
+      "claim": "Already disclosed residual, restated with a smallest correction: the two LF-written receipts have no line-ending attribute, so a Windows autocrlf checkout can rewrite their raw bytes and the verifiers' raw --receipt-sha256 comparison (research_health_quick_order_local.mjs:123, currentness_local.mjs:172) would then differ from the committed LF digest f2f343b3… / 51238583….",
+      "evidence": ".gitattributes@1631323 covers only evidence/*.log -text, MOUNT_PROPOSAL.patch -text, history/*.patch -text; no root .gitattributes. Handoff :69-72 and matrix row A2-F5 (:24) disclose exactly this. Receipt blobs contain no CR (verified), so the committed digests are the LF ones.",
+      "fix": "Future, outside this review's authority: add 'evidence/sql-*-source-receipt-*.json text eol=lf' to docs/health-launch/quick-order-20261005/.gitattributes, or have both verifiers hash the LF-normalized receipt bytes; until then operators must pass the committed LF digest from Git, not a checkout hash."
+     }
+    ],
+    "priorFindingStatus": [
+     {
+      "id": "C-F1",
+      "status": "REPAIRED_AT_SOURCE",
+      "evidence": "Trio isolated into separately named describes labelled as proposed hardening pending Samuel's 8392d243 disposition: static-document.test.ts:166-177, vite-document.test.ts:173-184, root-composition.test.ts:352-363 @3e82154; sixth-pin cases free-standing and byte-unchanged (static :74-93/:132-138, vite :80-103/:139-145, root :340-349); no skip; expect counts 60/60/42 retained; root split adds one it. Exactly the delta doc 47 :107 prescribed. Scope phrase 'the specified privacy headers' still undefined pending the disposition (not the builder's to resolve)."
+     },
+     {
+      "id": "C-F2",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "Root comment now reads 'Only Cache-Control and Pragma are predicted absent here: root Helmet already supplies no-referrer' (root :355-358); matrix :37, handoff :38-39, README :16-17, status :16-17 repeat it. server/index.ts:268-272 helmet({contentSecurityPolicy:false}) unchanged since 5fd2e4c. Source prediction, not an observed red."
+     },
+     {
+      "id": "C-F3",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "Matrix :38 defers the 1024MiB child + Vitest worker + jsdom footprint to a future reservation naming single-file or one-worker/no-file-parallel invocation; vitest.config.ts blob 242428c unchanged 5fd2e4c..3e82154; window EXPIRED, zero groups."
+     },
+     {
+      "id": "C-F4",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "Matrix :39 records the 127.0.0.1 probe / 0.0.0.0 bind race as a harness failure requiring new authorization for any retry; root unusedPort :71-89 and header :16-17 unchanged."
+     },
+     {
+      "id": "C-F5",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "Matrix :40: abnormal parent death can orphan the child; normal cleanup bounded in source (afterAll :221-267 unchanged); no shutdown/sweep now."
+     },
+     {
+      "id": "C-F6",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "Matrix :41 preserves runner uncertainty (import.meta.dirname, plugin factories, vi.spyOn ESM namespace, 5s defaults, tsx loader resolution) and the Vite-first/root-last staging for a future reservation; nothing executed."
+     },
+     {
+      "id": "DOC47-VERIFIER-SUPERTEST-LISTENER",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "Matrix :42 records that supertest app.listen(0) binds an unspecified address per request and that root 0.0.0.0 is not a network sandbox; the static/Vite file headers themselves were not amended (doc 47 asked only for disclosure/plan classification)."
+     },
+     {
+      "id": "DOC47-VERIFIER-EPIPE-PROBE",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "Matrix :42: >2MiB Connection:close probe may see EPIPE/ECONNRESET; classified as a harness artefact requiring classification with no authorized retry; root :302-318 unchanged."
+     },
+     {
+      "id": "DOC47-INSTALLED-PACKAGE-OBSERVATIONS",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "Matrix :43 acknowledges helmet 8.2 / tsx 4.22.4 / @vitest/runner 4.1.10 and afterAll-after-failed-beforeAll as reviewer node_modules observations, not Git pins or builder evidence; no reinstall or experiment."
+     }
+    ],
+    "confirmed": [
+     "Identities: 3e82154724ede74b7c5f361f280739eedd60db25 tree 04958ec1567b74bccd84e423e179e6269faf6bee parent 18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb; 1631323d7cf60f145141e0f82586e64ef7c7d637 parent 3e82154; 7d027e4 tree 3819c5f4efed71bd12d5e759593e71c580d96cc3; local tracking ref origin/codex/xenios-health-quick-order-20261005 = 1631323 (no network).",
+     "Composition-test separation is a pure move: diff 5fd2e4c..3e82154 removes the trio block from inside the first describe and re-adds identical assertions in a new 'Proposed … pending Samuel's 8392d243 disposition' describe in all three files; no it.skip/it.todo/xit; sixth-pin cases untouched; QuickOrderApp.composition.test.tsx blob 85503d76 unchanged through 1631323.",
+     "expect( counts 60/60/42 before and after (162 total); root it count 3 -> 4; 17 parameterised privacy cases (8+8+1) now all inside proposed describes; zero sixth-pin it() predicted red from 8392d243 (source prediction).",
+     "review-599-source-3e82154.json: 13/13 implementation and 23/23 checkpoint entries match recomputed before/after blob ids, sha256lf, LF byte counts and line counts; 55/55 references unchanged at 18bfbcd, 3e82154, 1631323; 53/53 historical evidence byte-identical; canonicalTriggers 19 exact.",
+     "Both 66-entry receipts recompute 66/66 at 3e82154, contain neither their own path nor hash nor any receipt path, include the successor binding at b68106ad…, union 71, 61 shared entries hash-equal; own files LF (no CR) with raw = LF digest f2f343b3… (11922 B) and 51238583… (11959 B).",
+     "review-599-repair-bindings-20261007.json: 55 inventory paths == historical bindings paths; 55/55 sha256lf == blob@18bfbcd == blob@3e82154; predecessorBindingSha256lf == historical for 55/55; review 59940dcc…; canonicalTriggers == reviewer's 19; the five omitted from the historical 14 are the two adp03_evidence_* pairs on requests and events plus events hl12_disposition_no_truncate O.",
+     "HELD_5C_REVIEW_599_DELTA_20261007.md sha256lf f86b8c78c01c0b598fac19466697cb1451cc73cb8fe05103e738e396d4b4452a, 16014 LF bytes, 204 lines; predecessor HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md blob b925248a / sha256lf 2cff1b08… byte-identical 18bfbcd..1631323 and still named as historical.",
+     "Definition hashes recompute equal with the verifiers' own extraction rule: intake 6e4677a4… -> 9c0e5ff7…; currentness cc19d43d… unchanged at both commits.",
+     "Registry diffs 18bfbcd..1631323 touch only the builder's task, ownership and session rows; lease covers all 13 implementation paths; local-records-integrity hashes match the 1631323 blobs.",
+     "No record at 3e82154 or 1631323 claims a test, SQL, verifier, build or resource check ran; all evidence JSONs carry execution NOT RUN; window EXPIRED 2026-10-06T21:43:37Z consistently recorded.",
+     "Scratchpad copies (ten rec_* files and runtime-7d027e4..3e82154.diff) are byte-identical to the Git objects."
+    ],
+    "discrepancies": [
+     "Push-status fields in handoff, README, status, three registry rows, the session file, the integrity JSON and the source JSON say LOCAL ONLY / rejected twice, but 1631323 is the branch tip at origin: stale-at-write, not false (R2-F1).",
+     "Status :9-10 and handoff :26-28 say ten files carry the nineteen triggers; the currentness rollback.md binds them by count and predecessor fingerprint only, nine files enumerate the names (R2-F3; not a drift-detection weakening).",
+     "Root proposed-hardening it() lacks the status-200 assertion present in the static and Vite proposed its (R2-F2; test precision only).",
+     "Doc 47's note that the static/Vite headers do not state the supertest ephemeral listener is answered in the residual matrix only; the test headers remain silent (acceptable as records-level disclosure)."
+    ],
+    "notProven": [
+     "Any executed result: the 17 predicted reds, the sixth-pin greens, helmet's default Referrer-Policy at runtime, Vitest describe ordering/hook scoping, psql exit code for the new DO-block branches, and the hosted 19-trigger census are source predictions or library-default knowledge; nothing ran (window EXPIRED).",
+     "Remote repository state beyond the local tracking ref (this lens used no network; the reviewer's remote verification is relied on).",
+     "Runner compatibility of the Vite and root files (C-F6) and the combined resource footprint (C-F3) remain NOT PROVEN until a new, separately authorized reservation.",
+     "Whether Samuel's disposition of 8392d243 will define or strike 'the specified privacy headers'; the proposed describes remain unapproved runtime requirements.",
+     "Line-ending behaviour of a real checkout for the receipts (R2-F4): the committed blobs are LF; a converted working copy would change the raw digest the verifiers compare."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "R2-F1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived. .xenios/handoffs/quick-order-20261005-handoff.md:10-12,:99-107@1631323 say LOCAL ONLY / rejected twice / no pushed-successor claim; README.md:4@1631323, SQL_CANDIDATE_DRAFT_STATUS_20261006.md:5@1631323, ACTIVE_TASKS/SESSION_REGISTRY/sessions rows sourcePushStatus=LOCAL_ONLY_APPROVAL_REQUIRED and lastPushedBaseline=18bfbcd, review-599-local-records-integrity-20261007.json pushStatus, review-599-source-3e82154.json sourceStatusAtPreparation/pendingPush. refs/remotes/origin/codex/xenios-health-quick-order-20261005 = 1631323 (local tracking ref; no network). Commit times 3e82154 03:39:50Z, 1631323 03:45:36Z; record 'at' fields 03:32-03:45Z, all before any push. Stale-at-write, not false; P3 and the records-only successor correction are right. Nothing here proves remote state beyond the tracking ref."
+     },
+     {
+      "id": "R2-F2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived from root-composition.test.ts@3e82154: proposed it :353-362 probes :354 then asserts only the three headers :359-361; static-document.test.ts:172 and vite-document.test.ts:179 assert status 200 first. Sixth-pin it :340-349 asserts 200 on the same target, so no coverage hole, only receipt precision. P3 appropriate; any fix changes the expect count (42->43) and forces a re-pin of review-599-source implementation[]."
+     },
+     {
+      "id": "R2-F3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: grep of the 17 distinct canonical trigger names across the ten files @3e82154 gives 17/17 in nine files and 0/17 in supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md (also 0 of a 4-name sample @7d027e4). That file binds the census by count at :60 and :74 ('exact nineteen ... requests 8, events 7'), by research_assisted_order_provider_schema_fingerprint() at :97/:126 and by a required precheck re-run at :70/:134. SQL_CANDIDATE_DRAFT_STATUS_20261006.md:9-10 and handoff :26-28 therefore overstate 'ten files carry nineteen'. Not a drift-detection weakening (unchanged posture; the currentness precheck/postcheck/candidate enumerate all nineteen). P3 wording only."
+     },
+     {
+      "id": "R2-F4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: docs/health-launch/quick-order-20261005/.gitattributes@1631323 has only evidence/*.log, MOUNT_PROPOSAL.patch and history/*.patch -text; no root .gitattributes exists at 1631323. research_health_quick_order_local.mjs:137 and research_health_quick_order_currentness_local.mjs:188 compare sha(receiptBytes) raw while every consumed source is lf()-normalised (:154-157, :210-214). Both new receipts are LF with no CR (11922 / 11959 bytes; raw = lf = f2f343b3... / 51238583...). Already disclosed at handoff :69-72 and matrix row A2-F5 (:24); P3 restatement with a concrete correction is fair, and the correction is outside this review's authority."
+     },
+     {
+      "id": "CHK-1a-separation",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Checklist re-derivation (severity nominal). git diff 5fd2e4c 3e82154 on the three files: static removes :95-104 and adds describe :166-177; vite removes :105-114 and adds :173-184; root adds describe :352-363 and removes only two comment lines from inside the sixth-pin it. Assertion text identical; grep it.skip|it.todo|xit(|describe.skip|test.skip|.only = 0 in all three. Precision correction to the lens: the root sixth-pin it (:340-349@3e82154) is assertion-unchanged, not byte-unchanged (two comment lines left it). Hooks are file-level in all three (static beforeAll :39/afterAll :51; vite beforeEach :40/afterEach :54 so each proposed case gets a fresh server; root beforeAll :196/afterAll :221), so app/server!/rawProbe are live in the second describes."
+     },
+     {
+      "id": "CHK-1b-expect-counts",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Recounted from blobs: static 10aed9de@5fd2e4c=60 -> 65487717@3e82154=60; vite a626f283=60 -> 49e8296f=60; root 7c3fc866=42 -> 8e5876e7=42; describe 1->2 in each; root plain it( 3->4. Blobs identical at 5fd2e4c/7d027e4/18bfbcd. 162 total matches handoff :37, status :15 and matrix :36."
+     },
+     {
+      "id": "CHK-1c-root-comment-helmet",
+      "upheld": true,
+      "severity": "P3",
+      "note": "root-composition.test.ts:355-358@3e82154 reads 'Only Cache-Control and Pragma are predicted absent here: root Helmet already supplies no-referrer.' server/index.ts:268-272@3e82154 is helmet({contentSecurityPolicy:false}) only; server/index.ts d27a3da9, server/static.ts 7fade5dc, server/vite.ts 989c1bb5 and vitest.config.ts 242428c0 are blob-identical from 5fd2e4c through 1631323. Describe ordering and helmet's default Referrer-Policy remain library-default reasoning, NOT RUN."
+     },
+     {
+      "id": "CHK-1d-write-zones",
+      "upheld": true,
+      "severity": "P3",
+      "note": "git diff --name-status 18bfbcd 3e82154 = 23 paths (13 implementation, 4 registry/session, 6 docs/evidence). ACTIVE_TASKS.json:43-55@1631323 and CODE_OWNERSHIP.json:3600,:3626-3638@1631323 list server/research/health/quick-order/** plus all thirteen implementation paths. QuickOrderApp.composition.test.tsx blob 85503d76 at 5fd2e4c, 7d027e4, 18bfbcd, 3e82154 and 1631323."
+     },
+     {
+      "id": "CHK-2-predicted-reds",
+      "upheld": true,
+      "severity": "P3",
+      "note": "PRIVACY_CASES = 4 OWNED_TARGETS x GET/HEAD = 8 (static :25-33, vite :21-29); root proposed it is one (:353): 17, all inside proposed describes. DOCUMENT_PRIVACY_HEADERS_AMENDMENT_PROPOSED_20261006.patch@1631323 recomputes raw=LF=8392d243..., 1118 bytes; it extends static.ts :102 with isHealthIntakePath and sets 'no-store, private' for intake, and server/vite.ts:8,:55 imports sendRawHttpDocument from ./static, so the single patch governs all 17 (source prediction). No trio expect remains in any sixth-pin it. NOT RUN."
+     },
+     {
+      "id": "CHK-3-hashes",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Recomputed with node against Git objects, zero mismatches: review-599-source-3e82154.json implementation 13/13 and sourceCheckpointPaths 23/23 (gitBlob, sha256lf, utf8LfBytes, lines, before@18bfbcd/after@3e82154, null entries absent at 18bfbcd), references 55/55 unchanged through 1631323, historicalEvidence 53/53, canonicalTriggers 19 == reviewer set in source and bindings JSON; repair-bindings inventory 55/55 == blob@18bfbcd == @3e82154 == @1631323, paths == historical bindings == references, predecessorBindingSha256lf == historical sha256lf 55/55, only admin-readback/notifications tests differ from historical pins, historical 14 all inside 19 with the five omissions as stated; receipts 66/66 and 66/66 @3e82154, keys schemaVersion/sourceCommit/files only, no self path/hash, binding b68106ad... present, union 71, 61 shared equal; integrity records 10/10 @1631323; held-5c delta f86b8c78... 16014 B 204 lines, binding 88df0e82..., predecessor 2cff1b08... = blob b925248a (doc 46 :3,:126); definition hashes 6e4677a4->9c0e5ff7 and cc19d43d unchanged by the verifiers' own block rule; scratchpad 10/10 and runtime diff byte-identical."
+     },
+     {
+      "id": "CHK-4a-truthfulness",
+      "upheld": true,
+      "severity": "P3",
+      "note": "PARTIAL is right (R2-F1 staleness). Execution sweep over handoff head, README, status, matrix, 5C delta and contract @1631323 finds no claimed run; README :81 'static checks pass' and :85 'passed 10 focused tests' are pre-existing historical lines (README@18bfbcd :56,:60). All evidence JSONs carry execution NOT RUN or are receipts. Added nuance: 3e82154's own registry rows still named sourceSha 7d027e4 (ACTIVE_TASKS@3e82154 never mentions 3e82154, heartbeat 03:39:17Z); only 1631323 rebinds them, which is the normal two-commit pattern and is self-consistent with review-599-source sourceCheckpointPaths after-blobs."
+     },
+     {
+      "id": "CHK-4b-4c-status-and-matrix",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Status claims checked at the bytes: nineteen in nine of ten files (R2-F3 caveat); independent census local.mjs:41-62 TRIGGERS, :163 vs bindings.canonicalTriggers, :256-261 pg_trigger (not tgisinternal, three relations); submitted-only discovery intake.sql:157-171 with the separate malformed-submitted 55000 refusal :160-168 and rollback.md:172-179; three branches precheck :5-12, postcheck :5-12, rollback.md :48-55 with \\set ON_ERROR_STOP on, \\if :{?var} / \\else / DO raising 55000 / \\endif, \\quit count 1->0 in each; regression local.mjs:345-363; 17 cases and 162 expects; window EXPIRED repeated. Matrix rows :36-43 match the bytes and claim no run; both verifiers load the successor binding (local.mjs:17, currentness_local.mjs:14)."
+     },
+     {
+      "id": "CHK-5-registries",
+      "upheld": true,
+      "severity": "P3",
+      "note": "git diff 18bfbcd 1631323 on ACTIVE_TASKS.json, CODE_OWNERSHIP.json, SESSION_REGISTRY.json and sessions/codex-health-quick-order-20261005.json touches only the HEALTH-QUICK-ORDER-20261005 task row, the codex-health-quick-order-20261005 ownership row and session row; SESSION_REGISTRY updatedAt unchanged (2026-09-21); no foreign id in any +/- line; lease lists carry all thirteen implementation paths."
+     }
+    ],
+    "priorFindingOpinion": [
+     {
+      "id": "C-F1",
+      "status": "REPAIRED_AT_SOURCE",
+      "note": "Doc 47 :107 asked for the trio to be isolated per file into a separately named block labelled as proposed hardening pending 8392d243 with the sixth-pin cases free-standing. At 3e82154 that is exactly the delta: static-document.test.ts:166-177, vite-document.test.ts:173-184, root-composition.test.ts:352-363; sixth-pin cases static :74-93/:132-138, vite :80-103/:139-145, root :340-349 keep every assertion; no skip; 60/60/42 expects retained; root split adds one it. Source only, NOT RUN; the scope phrase 'the specified privacy headers' is still undefined pending Samuel's disposition, which the builder cannot resolve."
+     },
+     {
+      "id": "C-F2",
+      "status": "RECORDS_CORRECTED",
+      "note": "Root comment now states only Cache-Control and Pragma are predicted absent (root-composition.test.ts:355-358@3e82154); matrix :37, handoff :38-39, README :16-17 and status :16-17 repeat it; server/index.ts:268-272 helmet unchanged since 5fd2e4c. Comment-only source edit plus records; helmet's default remains library knowledge, not an observed red."
+     },
+     {
+      "id": "C-F3",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "REVIEW_599_RESIDUAL_MATRIX_20261007.md:38 defers the 1024MiB child + worker + jsdom footprint to a future reservation naming single-file or one-worker/no-file-parallel invocation; vitest.config.ts blob 242428c0 unchanged; window EXPIRED, zero groups. No plan exists yet, so NOT PROVEN beyond disclosure."
+     },
+     {
+      "id": "C-F4",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "Matrix :39 records the 127.0.0.1 probe / 0.0.0.0 bind race as a harness failure and refuses even one retry without new authorization (narrower than doc 47's 'one documented retry'); root unusedPort :71-89 and header :16-17 unchanged."
+     },
+     {
+      "id": "C-F5",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "Matrix :40: abnormal parent death can orphan the child; normal cleanup bounded in afterAll :221-267 (unchanged); no shutdown or sweep authority claimed."
+     },
+     {
+      "id": "C-F6",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "Matrix :41 preserves the runner uncertainty (import.meta.dirname, plugin factories, vi.spyOn ESM namespace, 5s defaults, tsx loader) and Vite-first/root-last staging; nothing executed; executability of the Vite and root files remains NOT PROVEN."
+     },
+     {
+      "id": "DOC47-VERIFIER-SUPERTEST-LISTENER",
+      "status": "RECORDS_CORRECTED",
+      "note": "Matrix :42 states supertest app.listen(0) binds an unspecified address per request and that root 0.0.0.0 is not a network sandbox; static/Vite file headers were not amended, which doc 47 :114-115 did not require."
+     },
+     {
+      "id": "DOC47-VERIFIER-EPIPE-PROBE",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "Matrix :42 classifies EPIPE/ECONNRESET on the >2MiB Connection:close probe as a harness artefact requiring classification with no authorized retry; root :302-318 unchanged; nothing run."
+     },
+     {
+      "id": "DOC47-INSTALLED-PACKAGE-OBSERVATIONS",
+      "status": "RECORDS_CORRECTED",
+      "note": "Matrix :43 acknowledges helmet 8.2 / tsx 4.22.4 / @vitest/runner 4.1.10 and afterAll-after-failed-beforeAll as reviewer node_modules observations, not Git pins or builder evidence; no reinstall or experiment."
+     }
+    ],
+    "missed": [
+     "P3 records staleness the lens did not raise: docs/health-launch/quick-order-20261005/COMPOSITION_TEST_SOURCE_20261006.md (blob 04289854, unchanged 5fd2e4c..1631323) :37-41 still says the static/Vite documents 'lack the required privacy headers' and 'The new tests keep the required assertions', and README.md:37-40@1631323 still labels it 'Current composition-test source' at 5fd2e4c (only the generic banner at README :22-26 demotes everything below it). No successor composition-source inventory was cut; the three files' repaired identity exists only in review-599-source-3e82154.json implementation[] and matrix :36. Smallest correction, records only: prepend a dated 'superseded at 3e82154: trio now proposed, see REVIEW_599_RESIDUAL_MATRIX_20261007.md row C-F1 and review-599-source-3e82154.json' line to COMPOSITION_TEST_SOURCE_20261006.md and change README :37 'Current' to 'Historical'.",
+     "Lens wording correction, not a repair defect: the root sixth-pin it() (:340-349@3e82154) is assertion-unchanged, not 'byte-unchanged'; git diff 5fd2e4c 3e82154 removes two comment lines that sat inside it (5fd2e4c :349-350) along with the trio. Static and Vite sixth-pin cases are byte-unchanged.",
+     "Informational: the reviewed REVIEW_CLEARED_WRAPPER_CONTRACT_20261006.md was amended in place at 3e82154 (six hunks, including rewording of the original marker-refusal sentence and replacing 'can record an immutable revision' with 'callable-surface revision immutability only'); the pre-edit bytes are blob 8af510d9 at b75325a = 7d027e4 = 18bfbcd, which the new preamble names as 'the original b75325a contract'. No history/ copy exists and the 7d027e4 receipts bind only review-cleared-draft-bindings-20261006.json, so no receipt breaks. Optional precision: cite blob 8af510d9 in the preamble.",
+     "Informational: 3e82154's own registry rows (ACTIVE_TASKS.json, SESSION_REGISTRY.json, sessions/codex-health-quick-order-20261005.json) still carry sourceSha 7d027e4 with heartbeat 2026-10-07T03:39:17Z; only 1631323 rebinds them to 3e82154 (a commit cannot carry its own SHA). review-599-source sourceCheckpointPaths 'after' blobs are therefore the 7d027e4-naming versions; internally consistent, but the two commits must be read as a pair.",
+     "Outside R2's lens, noted while hunting 5C anchors: HELD_5C_REVIEW_599_DELTA_20261007.md:40-42 anchors resolve to the claimed statements (20260727160000 :773/:848/:891/:924 and :1226/:1301/:1345/:1378; 20260904 :209/:232/:233/:235/:321/:329/:331/:339/:1086-1094) except that :878 and :1332 ('lot loop') are blank lines and :229 ('Advisory (9042026,1)') is a comment line, each adjacent to the referenced statement. The reviewer-verified B-1 anchors are exact; no correction needed beyond optional off-by-one tidying.",
+     "Confirmed absent after hunting: no inventory row with a wrong relation/name/state in any of the nine enumerating files or the two bindings JSONs; no weakened predicate in the composition files (pure move); no skipped or removed assertion; no historical evidence file rewritten (no D/R in git diff -M 18bfbcd 1631323; all 53 historical entries plus the four JSONs and the held amendment blob-identical); no record claims a test, SQL, verifier, build or resource check ran; no record calls anything PRODUCTION READY or treats review as authority."
+    ],
+    "verdictOpinion": "The lens's verdict stands after independent re-derivation from the Git objects: every hash, blob id, count and line anchor it cited recomputes equal (zero mismatches across the 13 implementation paths, 23 checkpoint paths, 55 references, 53 historical evidence files, both 66-entry receipts, the 55-entry repair binding, the held-5C binding, the integrity JSON, both definition hashes, the 8392d243/8396609b patch bytes and the scratchpad copies), and its four P3 findings are upheld at P3 with no P0-P2 found. Composition-test source disposition from this verifier: ACCEPT WITH LIMITS for the source bytes only (3e82154 tree 04958ec1): C-F1 is repaired exactly as doc 47 prescribed, the sixth-pin cases keep every assertion, 60/60/42 expects are retained, and all 17 trio cases now sit in named 'proposed ... pending 8392d243' describes; limits are that all 17 remain predicted red until Samuel dispositions 8392d243, the root proposed it() lacks a status assertion (R2-F2), runner compatibility (C-F6) and the resource plan (C-F3) remain NOT PROVEN, and COMPOSITION_TEST_SOURCE_20261006.md / README :37 still describe the 5fd2e4c 'required' wording (missed P3). Records disposition: truthful at write and internally consistent; the only material defect is push-status staleness (R2-F1) plus the 'ten files carry nineteen' overstatement (R2-F3); historical evidence is preserved byte-identical from 18bfbcd through 1631323. On the 5C amendment this lens contributes only binding facts: the delta f86b8c78... and predecessor 2cff1b08... are now bound in evidence/held-5c-review-599-delta-binding-20261007.json and review-599-source-3e82154.json (addressing doc 46 B-6's unbound-hash point as records), and nothing here satisfies any drafting prerequisite; the delta itself states no body becomes eligible. Standing rules applied: all execution results are NOT RUN; hosted database state, remote state beyond the local tracking ref, helmet/Vitest/psql runtime behaviour and the hosted 19-trigger census are NOT PROVEN; source acceptance is not qualification; review is not authority; nothing in these records or in this verification is Samuel's approval, protected-hash acceptance, a manifest recut, deployment, live intake, payment or notification authority; the qualification window remains EXPIRED (2026-10-06T21:43:37Z) and nothing is PRODUCTION READY."
+   }
+  },
+  {
+   "lens": "held-5c-delta",
+   "review": {
+    "verdict": "LENS R3 (§5C design amendment only; SQL-draft and composition-test dispositions belong to the other lenses and are not issued here). §5C DISPOSITION: HELD REMAINS. The delta HELD_5C_REVIEW_599_DELTA_20261007.md at 3e82154 (blob 84bf0b24, sha256-LF f86b8c78c01c0b598fac19466697cb1451cc73cb8fe05103e738e396d4b4452a recomputed, 16,014 bytes, 204 lines, 0 CR) is an honest, correctly anchored records-level successor to doc 46: it grants nothing (:3, :7-8, :13-15; binding JSON bodyEligibility NONE, execution NOT RUN), preserves the predecessor byte-identical (blob b925248a at 18bfbcd and 3e82154, sha256 2cff1b08…, 10,719 bytes, 166 lines), names the two adverse writer families with exact verified anchors, reproduces the S-F4 measurement condition, states a disposition for all 23 scope relations (same names as 1d4f2c3 :221-227), records the absence of any Health pair configuration path with unchanged anchors, specifies the session-lock mechanics, and records the helper calling posture. DOCUMENTATION prerequisites from doc 46 §6 are satisfied at the records level (B-6 hash binding; naming of adverse writers with a per-writer resolution rule; session mechanics specified; per-relation disposition table; helper calling context). NO SUBSTANTIVE DRAFTING PREREQUISITE IS SATISFIED: owner amendments for research_release/expire_inventory_reservations and research_referral_v1_privacy_begin do not exist; the strengthened invariant (:31-36) is unaccepted and the writer audit covers three writers of the many families in 1d4f2c3 :221-227; no owner-approved Health configuration path exists (a six-path proposal is not a path; pair content is Samuel's); the session revocation ordering is UNACCEPTED/UNMEASURED with no numeric bound; 22 relations remain HELD with no in/out decision or authored predicate and head cardinality unresolved; S-F4 admissibility and measurement are outstanding. Remaining doc 46 blockers: B-1 (P1), B-2 (P1), B-3 (P2), B-4 (P2) open; B-5, B-7, B-8 deferred and disclosed; B-6 closed at records level; S-F4 condition text matched, ruling pending. No body is eligible under dc3329b. Findings on the delta are P3 only (two line-anchor imprecisions, one ambiguous provenance anchor, one stale README sentence at 1631323, predecessor hash not carried into the source receipt, tri-state relation table short of doc 46's in/out demand, implicit disposable-host wording). Review is not authority; nothing here grants protected-hash acceptance, manifest recut, deployment, intake, payment or notification authority. All execution NOT RUN; hosted database state NOT PROVEN.",
+    "checklist": [
+     {
+      "item": "Object identity and lineage of repair source and records commits",
+      "status": "PASS",
+      "evidence": "git cat-file -t 3e82154724ede74b7c5f361f280739eedd60db25 = commit; ^{tree} = 04958ec1567b74bccd84e423e179e6269faf6bee; parent 18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb (subject: fix(quick-order): repair reviewed SQL drafts and separate header proposal). 1631323d7cf60f145141e0f82586e64ef7c7d637 parent 3e82154 (subject: docs(quick-order): bind local review repair receipts and push blocker). Remote-tip identity of codex/xenios-health-quick-order-20261005 is packet-stated as reviewer-verified; not re-verified by this lens (no remote contact)."
+     },
+     {
+      "item": "Delta hash recomputed and bound consistently across records",
+      "status": "PASS",
+      "evidence": "git show 3e82154:docs/health-launch/quick-order-20261005/HELD_5C_REVIEW_599_DELTA_20261007.md | sha256sum = f86b8c78c01c0b598fac19466697cb1451cc73cb8fe05103e738e396d4b4452a (raw == tr -d CR; 0 CR bytes; 16,014 bytes; 204 lines; blob 84bf0b24ad128610bf5b32bc277857a8cd6e0e9f). Same digest in evidence/held-5c-review-599-delta-binding-20261007.json (sha256lf, utf8LfBytes 16014, lines 204)@3e82154; handoff quick-order-20261005-handoff.md:75-76@1631323; review-599-source-3e82154.json:75-82 (gitBlob 84bf0b24… after, before null) and :1347-1353 heldDesignBinding@1631323. Binding JSON itself: blob e8619dbd at 3e82154 and 1631323; sha256-LF 88df0e820b7b8e3b4ebc44ce0b922c5fcb21eca499343da3bf78ff312025888c recomputed, equals heldDesignBinding.sha256lf."
+     },
+     {
+      "item": "Predecessor amendment preserved byte-identical and its hash bound",
+      "status": "PASS",
+      "evidence": "git ls-tree 18bfbcd and 3e82154 -- HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md both = blob b925248aaf919cdecad683f233127e894e10da39; sha256 2cff1b08a39d3d024fdd547980e6ff5069915d16516b3a8febc991d736c44ed2, 10,719 bytes, 166 lines, matching doc 46 :3-4. Bound in binding JSON predecessor{sourceCommit 18bfbcd…, sha256lf 2cff1b08…, preserved true}@3e82154 and named in handoff :78@1631323. Not present in review-599-source-3e82154.json or review-599-repair-bindings-20261007.json (grep HELD_WRITER|2cff1b08 empty) — see finding R3-F5."
+     },
+     {
+      "item": "(1) Delta grants nothing and states review is not authority",
+      "status": "PASS",
+      "evidence": "Delta :3 'RECORDS ONLY — PROPOSED / UNACCEPTED / UNIMPLEMENTED'; :7-8 'Samuel's authority remains dc3329bb… for packet 1d4f2c3…; review is not additional authority' (both commits exist: dc3329b 2026-10-06T13:29:11-05:00 'record direct supplemental source approval'; 1d4f2c3 13:22:56 'bind mount checkpoint and supplemental source proposal'); :13-14 no guard/trigger/commit/standing/recipient/session helper, Health configuration or runtime module becomes eligible; :15 no execution/host measurement/hosted-state claim; reiterated :44-46, :64, :69, :73, :124, :157, :169, :180, :203-204. Binding JSON: disposition PROPOSED_UNACCEPTED_UNIMPLEMENTED, execution NOT RUN, bodyEligibility NONE. Handoff :42@1631323 'No held body becomes eligible'."
+     },
+     {
+      "item": "B-1 facts and anchors: inventory release/expire and privacy_begin",
+      "status": "PASS",
+      "evidence": "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql@3e82154 (blob 97b30488 identical at 7d027e4): :773 create or replace function public.research_release_inventory_reservations( with p_member_id uuid, p_actor_id uuid, p_reservation_ids text[], p_at timestamptz, p_idempotency_key text, p_reason text (:774-779) — signature matches delta :40; :848 'for update' on reservations; :878 'for v_alloc in' lot loop; :891 'for update;' lot lock; :893 pg_advisory_xact_lock inside loop; :924 'update public.research_inventory_lots'. Expire: :1226 signature, :1301 for update, :1332 loop, :1345 lot lock, :1378 update. supabase/candidates/20260904_research_partner_referral_v1.sql@3e82154 (blob 6624109a identical at 7d027e4): :209 privacy_begin head, :339 end; advisory lock at :228 (delta says :229 — comment line; P3); :232 lock table research_affiliate_customer_bindings in share row exclusive mode; :233 member for update; :235 partner for update; :238-241 link ids without row locks; :272-279 touch ids; deletes :321 transfers, :323 referral events, :325/:327 bindings (V1/legacy), :329 touches, :331 links, :333 idempotency; privacy_finalize is :341 (not the deleter)."
+     },
+     {
+      "item": "B-1 strengthened invariant, owner-amendment table, no relation dropped, two-sided cases",
+      "status": "PARTIAL",
+      "evidence": "Delta :31-34 restates invariant as complete ordered lock set before first guarded write and no additional row lock after it, including helper/FK/trigger locks — matches doc 46 B-1 smallest correction (:121 'no writer acquires any row lock after its first guarded write'). :36 'not yet satisfied or accepted'. Table :38-42 names three writers with adverse result and 'Required future owner amendment; no edit now'; :44-46 'Do not drop lots, bindings, transfers, partners, links or touches merely to make the proposed trigger set installable' (doc 46 offered drop-or-amend; delta chose amend per writer). :48-51 cases: writer-before/intake-after, intake-before/writer-after, overlapping-lot writer-vs-writer with no intake, privacy_begin-vs-intake — matches doc 46 :121. RECORDS-LEVEL satisfied; DRAFTING-LEVEL unsatisfied: owner amendments do not exist (:40-42), invariant unaccepted (:36), no case authored (:51), audit covers 3 writers of the families in 1d4f2c3 :221-227 (:35 admits complete audit required)."
+     },
+     {
+      "item": "S-F4 measurement scope text and admissibility ruling",
+      "status": "PASS",
+      "evidence": "Delta :58-60 'writer-versus-writer while held with no intake, including multi-lot release and privacy cleanup under its table lock, and writer-versus-intake at observed normal and peak loads'; :60-62 UNKNOWN / NOT MEASURED, synthetic labelled; :62-64 original reviewer and operational owner must rule on admissibility of a separately authorized disposable guard draft before any draft or experiment; 'this proposal grants neither'. Matches doc 46 :92 condition (writer-vs-writer with no intake present incl. privacy cleanup under table lock and multi-lot release; writers vs in-flight intakes; observed normal and peak rates; admissibility ruling before drafting clearance). :25-26 accepts the absent/held distinction only subject to that condition. Host authorization wording implicit (P3 R3-F7). Ruling and measurement remain outstanding."
+     },
+     {
+      "item": "Lazy head creation acknowledged with options, none selected",
+      "status": "PASS",
+      "evidence": "Delta :66-69 names lazy first head creation and three options (install-seeded head; guarded first-publication transition; fully bound fact identities), 'None is selected as implemented or approved here'. Source: supabase/candidates/20261006_research_health_quick_order_currentness.sql@3e82154 :206 publish_revision; :214 insert into research_health_quick_order_authority_head(singleton) values(true) on conflict(singleton) do nothing — lazy creation confirmed; writer_epoch advanced only at :226-228 (publish) and :243-245 (revoke), so delta :77 'held publication metadata only' holds. The 'guarded first-publication transition' option is new relative to doc 46 :92 (seed at install or bind identities) and needs its own reviewed condition only if selected."
+     },
+     {
+      "item": "B-4 23-relation table equals the 1d4f2c3 allowlist; sessions/nonces OUT; touches corrected; no predicate authored",
+      "status": "PASS",
+      "evidence": "docs/coordination/launch-coordination-20261005/QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md:221-227@1d4f2c3 lists exactly 23 relations; delta :81-103 lists the same 23 names in the same order, none missing or added; nonces absent from both and delta :105 says so. :96 sessions OUT citing the shape guard — verified supabase/research-private-early-access-sessions.sql:201-209@3e82154 raises on any non-internal trigger on sessions or nonces. :103 touches 'not append-only (privacy_begin deletes)' — verified 20260904…:329. :72 HELD defined as no authored predicate or enumerable trigger membership; :84-85 media/content 'predicate unauthored'; :103 touches 'predicate unresolved'; every HELD row names a missing decision. grep of the delta finds no predicate text. :76-77 one global head vs per-family heads unresolved."
+     },
+     {
+      "item": "B-4 resolved by 'HELD conditional candidate'?",
+      "status": "FAIL",
+      "evidence": "Doc 46 B-4 (:124) requires per relation 'out of the guard set or guarded under a named predicate, and author the predicate … before any trigger set is enumerated'. Delta :84-85, :103 keep media/content/touches as 'HELD conditional candidate … predicate unauthored'; 22 relations are HELD with no in/out decision; :71-77 says the table 'does not silently approve inclusion or exclusion'. The per-relation disposition table (doc 46 §6 'states per relation the epoch disposition') exists at the records level, but B-4 remains OPEN at the drafting level: no predicate, no in/out decision, head cardinality unresolved. Disclosed honestly; not a misstatement."
+     },
+     {
+      "item": "B-2 anchors verified and unchanged; proposed scope labelled not approved; files untouched",
+      "status": "PASS",
+      "evidence": "server/research/early-access/persistence/production-deps.ts@3e82154 :212-222 requiredAgreementMatchesPublishedPolicy requires length 1 and kind/version equal to publishedResearchUsePolicyAgreement; :336-348 refuses when productionCommerceEnabled and not matching; :499-505 options.requiredAgreements = required. server/research/health/quick-order/legal.ts:16-24 — :21 requires membership in approvedHealthPairs and :24 refuses any pair not equal to the published Research pair. production.ts:23 approvedHealthAgreementPairs; git grep shows only production.test.ts:23,:32 producers (test-only). identity-persistence migration :450 create or replace function public.research_early_access_agreements_accepted(. git diff --stat 7d027e4 3e82154 over production-deps.ts, legal.ts, production.ts, production.test.ts, ports.ts, health-agreement-config.ts(.test.ts) is empty; ls-tree at 3e82154 shows ports.ts, legal.ts, production.ts, production.test.ts present and health-agreement-config.ts(.test.ts) absent. Delta :118-126 labels the six-path scope 'not approved', 'separate owner decision before editing', 'Do not repurpose early-access requiredAgreements'."
+     },
+     {
+      "item": "B-2 prerequisite satisfied?",
+      "status": "FAIL",
+      "evidence": "Doc 46 B-2 (:122) asks for 'the distinct, owner-approved configuration path for the Health pair and the code path that publishes it to the commit'. Delta :111 correctly records none exists at baseline and :117-126 offers a proposal that it labels not approved; :128 'Samuel must choose the actual Health kind/version/content and applicability'. A configuration path proposal is not a configuration path; the standing guard still cannot be drafted. Records-level disclosure is accurate and matches doc 46's 'fails closed; a drafting blocker'; the acceptance-row rule (:131-134: exact (customer_ref, kind, version) rows for both viewer kinds, no parallel store) matches doc 46's third ask."
+     },
+     {
+      "item": "B-3 anchors: double hash, owner provenance, sessions SQL posture, NOT FOUND, recheck, ordering",
+      "status": "PASS",
+      "evidence": "server/research/assisted-order/express.ts@3e82154 :142-145 member viewer earlyAccessSessionHash = sha256(sessionId); :163-165 early-access viewer same. server/research/early-access/private-access-routes.ts:855-871 createEarlyAccessSessionIdReader returns hashPrivateAccessSessionToken(read.sessionHandle) (:870), so sessionId is already the stored session_hash; private-access-session-repository.ts:179-181 hashPrivateAccessSessionToken = sha256. Owner chain: production-deps.ts:105 RESEARCH_EARLY_ACCESS_OWNER_ID (shape-validated :113) → :513-517 new SupabasePrivateAccessSessionRepository({ownerId}) → repository :420 this.sessionOwnerId = options.ownerId → register.ts:756 ownerId: repository.sessionOwnerId. Sessions SQL :264-267 enable+force RLS, :269-281 zero-policy guard, :283-297 revokes; guard attributes :680-683 prosecdef, proconfig search_path=pg_catalog, proowner = table owner, rolsuper or rolbypassrls (delta cites :671 = join line inside the guard; P3); session_active(text,uuid,text) :539-568 exists-select, clock_timestamp :551, no DML; revoke :588-593 single UPDATE; :3 header UNMOUNTED / UNAPPLIED. All files unchanged 7d027e4..3e82154. Delta :157-159 NOT FOUND refusal; :166 UNACCEPTED / UNMEASURED; :169 'none is invented here'."
+     },
+     {
+      "item": "B-3 design-specification prerequisite satisfied?",
+      "status": "PARTIAL",
+      "evidence": "Doc 46 B-3 smallest correction (:123): raw session_hash and owner_id as server-only arguments (delta :138-140 plus access role); definer owned by sessions owner with same search_path posture (:150-152); refuse on NOT FOUND (:157-159); hosted table existence as precheck fact (:156-157); revoke-before/after cases with measured hold time (:168 listed as prerequisites, not provided). Postgres claims :153-154 ('ownership alone cannot bypass forced RLS'; 'FOR SHARE requires UPDATE privilege') are correct by reasoning, untested here. Records-level mechanics specified; acceptance of the revocation ordering, the numeric hold bound, the two-sided proof and hosted existence remain with the reviewer and owner. Remote Auth non-atomicity disclosed (:170)."
+     },
+     {
+      "item": "B-5 helper posture and dispatcher lock claims",
+      "status": "PASS",
+      "evidence": "20260904_research_partner_referral_v1.sql@3e82154: :583 effective_binding_json(p_key text) and :602 binding_at_json(p_key text,p_occurred_at timestamptz), both security definer; :1086-1094 revoke all on … effective_binding_json(text), binding_at_json(text,timestamptz) … from public,anon,authenticated,service_role; :1095 grants only execute(text,jsonb) and authority() to service_role. Dispatcher: :831 bindingAt, :840 'perform 1 from public.research_members where auth_user_id=a for share' (delta :183 member840 correct); :856-871 getBinding locks member for share (:857) and, when a binding exists, calls binding_availability (:869) → :640-647 → partner_availability :537-547 which locks partner for share (:541) — delta :183-184 correct. Touch candidate supabase/candidates/20260914_research_referral_v1_touch_attribution.sql:106 calls research_referral_v1_availability → :549-561 locks partner for share (:554-555) then link for share (:557) — delta :184-185 'partner then link' correct. Doc 46 B-5 ask (record definer calling context or route via execute) met at records level; :181-182 call matrix outstanding."
+     },
+     {
+      "item": "B-7 / B-8 deferred, preconditions listed, no body authored",
+      "status": "PASS",
+      "evidence": "B-7: server/research/assisted-order/service.ts:657 and :672 eventType 'assisted_order.submitted'; assisted-order/production-deps.ts:41 RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL; server/research/assisted-order/quick-order-notifications.test.ts@3e82154 (unchanged since 7d027e4) uses one fixed RECIPIENT (:119) and malformed cases only for request ID (:241) and public reference (:250, :322-323) — no missing/blank/malformed recipient case, so delta :195-197 is accurate; no validator added. B-8: currentness candidate :144-152 head table with writer_epoch :146 and three revision references :150-152 under comment :148 'No FK/internal trigger'; delta :199-203 lists FKs, UPDATE/DELETE/TRUNCATE refusal guards and epoch monotonicity as future preconditions. git diff 18bfbcd 3e82154 -- supabase/ added lines contain no 'create function', 'create trigger', 'references' or 'foreign key'; currentness.sql hunk is five inventory rows only. Residual matrix :16 and :35 record the same deferrals."
+     },
+     {
+      "item": "(2) New claims introduced by the delta that need a condition",
+      "status": "PASS",
+      "evidence": "Recorded, none asserted as implemented: (a) strengthened invariant :31-34 (needs reviewer acceptance plus owner amendments; delta :36 says so); (b) 'complete audit of all multi-statement and direct-DML paths' :35 (audit condition); (c) three head-transition options :66-69 including the new 'guarded first-publication transition' (condition only on selection); (d) tri-state 'HELD conditional candidate' :84-85, :103 (must collapse to in/out with predicate; :71-76); (e) six-path B-2 scope proposal :118-124 (Samuel's scope decision); (f) owner/access-role exact equality and 'no default or inferred owner' :148 (consistent with session_active :560-562 and :555; provenance must be the shape-validated environment.ownerId production-deps.ts:113, not register.ts:751 default); (g) 'fresh database time' recheck :163 (not new: doc 46 :38; consistent with clock_timestamp :551); (h) binding_at_json under 'a reviewed occurrence-time contract' :175-177 (call matrix :181-182)."
+     },
+     {
+      "item": "(3) Records-level documentation updated and historical evidence preserved",
+      "status": "PARTIAL",
+      "evidence": "Delta-binding JSON, handoff :75-78, README :11, SQL_CANDIDATE_DRAFT_STATUS :19 and :114-116 ('still unaccepted'), residual matrix :8 and :34, source receipt :75-82 and :1347-1353 all name the delta with the same hash; predecessor preserved byte-identical and bound in the binding JSON. Defect: README.md:34@1631323 still reads 'The held design amendment … awaits the original reviewer's disposition' although doc 46 at 59940dc dispositioned it HELD and :11 links the delta (P3 R3-F4). Predecessor hash absent from review-599-source-3e82154.json and review-599-repair-bindings-20261007.json (P3 R3-F5)."
+     },
+     {
+      "item": "Execution, hosted state and qualification window",
+      "status": "NOT_APPLICABLE",
+      "evidence": "No SQL, verifier, test, build, resource check or hosted action was run by this lens; only git object reads and sha256 recomputation. Qualification window expired 2026-10-06T21:43:37Z; every behavioural claim in the delta is design text. Hosted database state (sessions table existence/ownership, installed triggers, grants) is NOT PROVEN by anything inspected, and the delta says so (:156-157)."
+     }
+    ],
+    "findings": [
+     {
+      "id": "R3-F1",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/HELD_5C_REVIEW_599_DELTA_20261007.md",
+      "claim": "Line 42 anchors the privacy_begin advisory lock at :229; the statement is at :228.",
+      "evidence": "supabase/candidates/20260904_research_partner_referral_v1.sql@3e82154 :228 'perform pg_catalog.pg_advisory_xact_lock(9042026,1);' ; :229 is the comment '-- Legacy binding DML does not take the V1 advisory lock.' Delta :42 'Advisory (9042026,1)229'. All other privacy_begin anchors in :42 (:209-339, :232, :233, :235, :321-331) are exact.",
+      "fix": "In the next records delta (do not edit the bound file; if edited, re-bind the hash), replace '229' with '228' at delta :42."
+     },
+     {
+      "id": "R3-F2",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/HELD_5C_REVIEW_599_DELTA_20261007.md",
+      "claim": "Line 155 cites the sessions function-shape guard at :671, which is the pg_namespace join line; the definer-attribute checks are at :680-683.",
+      "evidence": "supabase/research-private-early-access-sessions.sql@3e82154 :669 'select pg_catalog.count(*)::integer into v_count', :671 'join pg_catalog.pg_namespace n …', :680 'and p.prosecdef', :681 \"and p.proconfig = array['search_path=pg_catalog']::text[]\", :682 'and p.proowner = v_table_owner', :683 'and (r.rolsuper or r.rolbypassrls);', :684-686 raise on v_count <> 4. Delta :155 'its function-shape guard671 checks these definer attributes'. Inside the guard block, so not misleading, but not the attribute lines.",
+      "fix": "Cite ':669-686' (or ':680-683' for the attribute predicate) in the successor record."
+     },
+     {
+      "id": "R3-F3",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/HELD_5C_REVIEW_599_DELTA_20261007.md",
+      "claim": "Line 146 anchors owner provenance at production-deps.ts:105, the raw env read; the value the adapter actually receives is the shape-validated ownerId at :113, gated at :513.",
+      "evidence": "server/research/early-access/persistence/production-deps.ts@3e82154 :105 'const owner = (env.RESEARCH_EARLY_ACCESS_OWNER_ID ?? \"\").trim();', :113 'ownerId: OWNER_ID_SHAPE.test(owner) ? owner : null', :513 'if (environment.ownerId !== null) {', :514-516 repository constructed with ownerId. register.ts:750-756 comment documents a PRIVATE_ACCESS_DEFAULT_OWNER_ID fallback that the delta's 'no default or inferred owner' (:148) must exclude; the exact commit-argument provenance should therefore be named as environment.ownerId (:113), not the raw env string.",
+      "fix": "Cite ':105-113' and ':513-517' and state that the commit argument is the shape-validated environment.ownerId, never the register.ts default."
+     },
+     {
+      "id": "R3-F4",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/README.md",
+      "claim": "README :34 at 1631323 still says the predecessor amendment awaits the original reviewer's disposition, which doc 46 at 59940dc already gave (HELD REMAINS); the pending item is the delta.",
+      "evidence": "git show 1631323:docs/health-launch/quick-order-20261005/README.md :34-35 'The [held design amendment](HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md) awaits the original reviewer's disposition.' while :11 links '[held 5C delta](HELD_5C_REVIEW_599_DELTA_20261007.md)'. SQL_CANDIDATE_DRAFT_STATUS_20261006.md:114-116@1631323 states it correctly ('historical … disposition is HELD in doc46 at 59940dc; the current single response is HELD_5C_REVIEW_599_DELTA_20261007.md, still unaccepted').",
+      "fix": "One-sentence README edit at :34: the predecessor is historical (doc 46 at 59940dc: HELD REMAINS); the successor delta awaits the exact-successor review. No hash re-binding needed unless README is receipted."
+     },
+     {
+      "id": "R3-F5",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/review-599-source-3e82154.json",
+      "claim": "The predecessor amendment's hash (2cff1b08…) is bound only as a nested field of the delta-binding JSON and in handoff prose; the per-file source receipt and the repair-bindings file carry no entry for it, although doc 46 B-6 asked for binding alongside the SQL source receipts.",
+      "evidence": "grep -i 'HELD_WRITER|2cff1b08' over review-599-source-3e82154.json@1631323 and review-599-repair-bindings-20261007.json@3e82154 returns nothing; held-5c-review-599-delta-binding-20261007.json@3e82154 predecessor{path, sourceCommit 18bfbcd…, sha256lf 2cff1b08…, preserved true}; handoff :78 'Historical amendment2cff1b08 remains unchanged'. The binding JSON is itself receipted (heldDesignBinding sha256lf 88df0e82… recomputed equal), so the chain is intact; the gap is only that the predecessor lacks a first-class receipt row.",
+      "fix": "Add a receipt entry for HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md (gitBlob b925248aaf919cdecad683f233127e894e10da39, sha256lf 2cff1b08…, 10719 bytes, 166 lines, before == after) in the next source receipt."
+     },
+     {
+      "id": "R3-F6",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/HELD_5C_REVIEW_599_DELTA_20261007.md",
+      "claim": "The 23-relation table answers doc 46 B-4 with a tri-state (HELD / HELD conditional candidate / OUT) and no in/out decision for 22 relations, so B-4 remains open; 'HELD conditional candidate' for media, content and touches restates the predecessor's conditional status without the predicate doc 46 required.",
+      "evidence": "Delta :72 'HELD means retained as a candidate dependency, with no authored predicate or enumerable trigger membership'; :84-85 'HELD conditional candidate; … predicate unauthored'; :103 touches 'predicate unresolved'; :71-76 the table 'does not silently approve inclusion or exclusion'. Doc 46 :124 'State per relation whether it is out of the guard set or guarded under a named predicate, and author the predicate … before any trigger set is enumerated'. Honest disclosure, not a misstatement; the drafting prerequisite is untouched.",
+      "fix": "Next delta: add a decision column per relation (IN with authored predicate and changed-column set, or OUT with the alternative protection named) and resolve one-head versus per-family heads (:76-77) before any trigger set is enumerated."
+     },
+     {
+      "id": "R3-F7",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/HELD_5C_REVIEW_599_DELTA_20261007.md",
+      "claim": "The S-F4 measurement paragraph makes the disposable-host authorization implicit ('separately authorized disposable guard draft') where doc 46's condition names 'a separately authorised disposable host' explicitly.",
+      "evidence": "Delta :62-64 'rule on admissibility of a separately authorized disposable guard draft for measurement before any such draft or experiment'; doc 46 :92 '… at observed normal and peak rates on a separately authorised disposable host, and it needs a drafted guard, so admissibility of a disposable-host draft measurement must be ruled on before any drafting clearance'. Scope lines :58-60 otherwise match the condition verbatim in substance.",
+      "fix": "Add 'on a separately authorised disposable host' to delta :62-64 in the successor record so host authorization is a named prerequisite, not an inference."
+     }
+    ],
+    "priorFindingStatus": [
+     {
+      "id": "B-1",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "Delta :28-51 names research_release_inventory_reservations(uuid,uuid,text[],timestamptz,text,text) 20260727160000:773/848/878/891/924, research_expire_inventory_reservations :1226/1301/1332/1345/1378 and research_referral_v1_privacy_begin 20260904:209-339 (:228 advisory, :232 table lock, :233/:235 member/partner, :321-331 deletes) — all verified at 3e82154 on blobs identical to 7d027e4; restates the invariant per doc 46 :121; chooses owner amendments per writer and refuses to drop relations (:44-46); lists the two-sided and overlapping-lot and privacy_begin cases (:48-51). Drafting prerequisite NOT satisfied: amendments do not exist, invariant unaccepted (:36), audit incomplete (:35), no case authored (:51). P1 remains open at drafting level."
+     },
+     {
+      "id": "B-2",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "Delta :109-134 records no owner-approved Health pair path at baseline with verified, unchanged anchors (production-deps.ts:212-222, :336-348, :499-505; legal.ts:16-24; production.ts:23 test-only producers; identity-persistence :450); labels the six-path scope 'not approved' pending Samuel; none of the six paths changed 7d027e4..3e82154; health-agreement-config.ts(.test.ts) absent. The prerequisite (an owner-approved configuration path) cannot be satisfied by a proposal; pair content is Samuel's. P1 remains open."
+     },
+     {
+      "id": "B-3",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "Delta :136-170 specifies raw stored session_hash (not the double hash: express.ts:140-145,:163; private-access-routes.ts:855-871; repository :179-181), owner provenance chain (:105→:514-516→:420→register.ts:756), owner-owned SECURITY DEFINER with search_path=pg_catalog, rolsuper OR rolbypassrls (:683), forced RLS/revokes (:264-297), NOT FOUND refusal, session_active(text,uuid,text) recheck (:539-568), hosted existence as precheck; ordering marked UNACCEPTED / UNMEASURED with no invented ceiling. Mechanics specified at records level; acceptance of ordering, numeric hold bound, two-sided proof and hosted existence remain open. Two P3 anchor imprecisions (R3-F2, R3-F3)."
+     },
+     {
+      "id": "B-4",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "Delta :71-107 gives a per-relation disposition for exactly the 23 names at 1d4f2c3 :221-227, sessions OUT (shape guard :201-209), nonces OUT (:105), touches corrected to 'not append-only' (:329); but 22 relations remain HELD, no predicate is authored, no in/out decision is taken, head cardinality unresolved (:76-77). Doc 46's demand for an authored predicate and in/out decision per relation is untouched; the trigger set still cannot be enumerated. P2 remains open (R3-F6)."
+     },
+     {
+      "id": "B-5",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "Delta :172-189 records the definer calling context (owner-owned definer calls select-only effective_binding_json(text)/binding_at_json(text,timestamptz) after canonical authorization and member prelock; EXECUTE revoked from service_role at 20260904:1086-1094 — verified, also revoked from public/anon/authenticated, :1095 grants only execute/authority to service_role); dispatcher facts verified (:840 member for share; getBinding :857 member + :869 binding_availability → :541 partner for share; touch candidate :106 → availability :554-557 partner then link). Call matrix (:181-182) remains outstanding."
+     },
+     {
+      "id": "B-6",
+      "status": "RECORDS_CORRECTED",
+      "evidence": "Predecessor sha256 2cff1b08…, 10,719 bytes, 166 lines bound in held-5c-review-599-delta-binding-20261007.json@3e82154 (predecessor.sha256lf, preserved true) and handoff :78@1631323; delta's own LF hash f86b8c78… bound in the same JSON (no self-hash), handoff :75-76, source receipt :75-82 and :1347-1353; binding JSON sha256-LF 88df0e82… recomputed equal to heldDesignBinding. Residual gap: no first-class receipt row for the predecessor in review-599-source-3e82154.json (R3-F5, P3)."
+     },
+     {
+      "id": "B-7",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "Delta :193-197 retains assisted_order.submitted (service.ts:657,:672), RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL (assisted-order/production-deps.ts:41), states missing/blank/malformed recipient coverage is absent from the frozen test and due when the commit argument is designed; quick-order-notifications.test.ts@3e82154 unchanged since 7d027e4 with a single fixed RECIPIENT (:119) and no recipient-shape case — claim verified; no validator added. Residual matrix :35 records the same."
+     },
+     {
+      "id": "B-8",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "Delta :199-203 qualifies revision immutability as callable-surface only and lists head-reference FKs, UPDATE/DELETE/TRUNCATE refusal guards and epoch monotonicity as future preconditions, 'not authored or eligible under this repair'. Source: currentness candidate :144-152 head with three references :150-152 and comment :148 'No FK/internal trigger'; git diff 18bfbcd 3e82154 -- supabase/ adds no create function/trigger/references/foreign key (currentness hunk = five inventory rows). Residual matrix :16 matches."
+     },
+     {
+      "id": "S-F4",
+      "status": "DEFERRED_DISCLOSED",
+      "evidence": "Delta :25-26 accepts the absent/held distinction only subject to the measurement condition; :55-64 reproduces the condition's scope (writer-vs-writer while held with no intake incl. multi-lot release and privacy cleanup under its table lock; writer-vs-intake at observed normal and peak loads; UNKNOWN / NOT MEASURED; synthetic labelled; admissibility ruling by original reviewer and operational owner before any disposable guard draft; grants neither). Matches doc 46 :92 except the disposable-host wording is implicit (R3-F7, P3). Ruling, draft admissibility and measurement remain outstanding; lazy-head P3 acknowledged at :66-69 with no option selected."
+     }
+    ],
+    "confirmed": [
+     "3e82154724ede74b7c5f361f280739eedd60db25 is a commit with tree 04958ec1567b74bccd84e423e179e6269faf6bee and parent 18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb; 1631323d7cf60f145141e0f82586e64ef7c7d637 has parent 3e82154 and changes only .xenios records, the handoff, README, status doc and four new evidence JSONs.",
+     "Delta HELD_5C_REVIEW_599_DELTA_20261007.md@3e82154: blob 84bf0b24ad128610bf5b32bc277857a8cd6e0e9f; sha256 (raw == LF, zero CR) f86b8c78c01c0b598fac19466697cb1451cc73cb8fe05103e738e396d4b4452a; 16,014 bytes; 204 lines; identical digest in the binding JSON, handoff :75-76, source receipt :75-82 and :1347-1353.",
+     "Predecessor HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md is blob b925248aaf919cdecad683f233127e894e10da39 at both 18bfbcd and 3e82154; sha256 2cff1b08a39d3d024fdd547980e6ff5069915d16516b3a8febc991d736c44ed2, 10,719 bytes, 166 lines, equal to doc 46 :3-4; bound as predecessor in the delta-binding JSON (preserved true).",
+     "held-5c-review-599-delta-binding-20261007.json: blob e8619dbd at 3e82154 and 1631323; sha256-LF 88df0e820b7b8e3b4ebc44ce0b922c5fcb21eca499343da3bf78ff312025888c recomputed, equal to review-599-source-3e82154.json heldDesignBinding.sha256lf; disposition PROPOSED_UNACCEPTED_UNIMPLEMENTED, execution NOT RUN, bodyEligibility NONE, review 59940dc, approval dc3329b, scope 1d4f2c3, base 18bfbcd.",
+     "Inventory anchors exact at 20260727160000…sql@3e82154 (blob 97b30488 identical to 7d027e4): release :773 signature (uuid,uuid,text[],timestamptz,text,text), :848 reservation for update, :878 lot loop, :891 lot for update, :924 lots UPDATE; expire :1226/:1301/:1332/:1345/:1378 same pattern; advisory lock inside the loop at :893.",
+     "privacy_begin anchors at 20260904…sql@3e82154 (blob 6624109a identical to 7d027e4): :209-339 function; :228 advisory (9042026,1); :232 lock table research_affiliate_customer_bindings share row exclusive; :233 member for update; :235 partner for update; :238-241 link ids and :272-279 touch ids collected without row locks; deletes :321 transfers, :323 referral events, :325/:327 V1/legacy bindings, :329 touches, :331 links, :333 idempotency keys; privacy_finalize at :341 does not delete.",
+     "The delta's 23-relation table (:81-103) lists exactly the 23 names at QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md:221-227@1d4f2c3 in the same order; nonces appear in neither; sessions OUT is backed by the shape guard research-private-early-access-sessions.sql:201-209; no predicate text exists anywhere in the delta.",
+     "B-2 anchors at 3e82154 match the delta and doc 46 and are byte-unchanged since 7d027e4: production-deps.ts:212-222, :336-348, :499-505; legal.ts:16-24 (:21 approved-pair membership, :24 Research-pair equality); production.ts:23 with only production.test.ts:23,:32 producers; identity-persistence :450. ports.ts, legal.ts, production.ts, production.test.ts exist; health-agreement-config.ts and its test do not.",
+     "B-3 anchors at 3e82154, unchanged since 7d027e4: express.ts:142-145 and :163-165 sha256(sessionId); private-access-routes.ts:855-871 sessionId = hashPrivateAccessSessionToken(sessionHandle); repository :179-181; owner chain production-deps.ts:105/:113 → :513-517 → repository :420 → register.ts:756; sessions SQL :3 UNMOUNTED/UNAPPLIED, :264-297 forced RLS/zero policies/revokes, :539-568 session_active exists-select with clock_timestamp :551, :588-593 revoke UPDATE, :600 revoke from public, guard attributes :680-683 incl. rolsuper or rolbypassrls.",
+     "B-5 anchors: effective_binding_json :583 and binding_at_json :602 security definer; :1086-1094 revoke from public, anon, authenticated, service_role; :1095 grant only execute/authority to service_role; bindingAt member for share :840; getBinding member for share :857 and partner for share via :869→:646→:541; touch candidate 20260914…:106 → availability :554-557 partner then link.",
+     "B-7/B-8: service.ts:657,:672 eventType assisted_order.submitted; assisted-order/production-deps.ts:41 RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL; quick-order-notifications.test.ts unchanged since 7d027e4 with no missing/blank/malformed recipient case; currentness candidate :144-152 head with three unreferenced revision ids (:148 comment), lazy head insert :214, writer_epoch advanced only at :226-228/:243-245; the repair's supabase/ hunks add no create function/trigger/references/foreign key.",
+     "Wrapper-contract claim (delta :23 '20-to-23-key') matches REVIEW_CLEARED_WRAPPER_CONTRACT_20261006.md:25-27@3e82154 '20 keys in, 23 keys out'. Authority commits exist: dc3329b (2026-10-06T13:29:11-05:00) and 1d4f2c3 (13:22:56)."
+    ],
+    "discrepancies": [
+     "Delta :42 cites the privacy_begin advisory lock at 20260904…:229; the statement is at :228 (:229 is a comment).",
+     "Delta :155 cites the sessions function-shape guard at :671 (a join line); the definer-attribute predicate is at :680-683 within the guard :669-686.",
+     "Delta :146 cites owner provenance at production-deps.ts:105 (raw env read); the shape-validated value the adapter receives is :113 and the construction is gated at :513; register.ts:751 documents a default-owner fallback the delta's 'no default' rule must exclude.",
+     "README.md:34@1631323 says the predecessor amendment 'awaits the original reviewer's disposition' although doc 46 at 59940dc dispositioned it and README :11 already links the successor delta; SQL_CANDIDATE_DRAFT_STATUS :114-116 states it correctly.",
+     "The predecessor's hash 2cff1b08… has no first-class row in review-599-source-3e82154.json or review-599-repair-bindings-20261007.json; it is carried only inside the delta-binding JSON and handoff prose (chain intact via the receipted binding JSON).",
+     "Delta :62-64 names a 'separately authorized disposable guard draft' but not the 'separately authorised disposable host' doc 46 :92 requires in words.",
+     "The 23-relation table uses a tri-state (HELD / HELD conditional candidate / OUT) where doc 46 B-4 asked for an in/out decision with an authored predicate; the delta discloses this rather than deciding it."
+    ],
+    "notProven": [
+     "Remote-tip identity of codex/xenios-health-quick-order-20261005 at 1631323 (packet states reviewer-verified; this lens performed no remote contact).",
+     "Any hosted database state: existence, ownership, grants, RLS and trigger census of research_private_early_access_sessions, the referral V1 candidate, the touch candidate, the inventory functions or any of the 23 relations (sessions header :3 says UNMOUNTED / UNAPPLIED; the delta :156-157 says none is established).",
+     "Deadlock, liveness, wait, timeout and rollback behaviour of inventory release/expire overlap, privacy_begin versus intake, and writer-versus-writer while held — design reasoning only; no case authored or executed (delta :51, :60-64).",
+     "The Postgres semantic statements at delta :153-154 (owner cannot bypass FORCE ROW LEVEL SECURITY without BYPASSRLS/superuser; SELECT … FOR SHARE needs UPDATE privilege) — correct by reasoning, not exercised here.",
+     "Whether the future commit definer's owner holds EXECUTE on research_referral_v1_effective_binding_json/binding_at_json on the hosted database (delta :178 asks for verification).",
+     "Completeness of the writer audit: the delta audits three writers; the product-admin, required-input readiness, identity-persistence, legal/shipping-region and partner lifecycle writer families at 1d4f2c3 :221-227 remain unaudited (delta :35 acknowledges).",
+     "Any numeric session hold bound, statement/lock timeout, or revoke-before/revoke-after result (delta :166-169: none approved, none invented).",
+     "Production write rates, latency/refusal budgets and all S-F4 measurements (delta :60-61 UNKNOWN / NOT MEASURED).",
+     "All test, verifier, SQL, build and resource-check results for 3e82154 and 1631323: NOT RUN (qualification window expired 2026-10-06T21:43:37Z)."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "R3-F1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: supabase/candidates/20260904_research_partner_referral_v1.sql:228@3e82154 is 'perform pg_catalog.pg_advisory_xact_lock(9042026,1);' and :229 is the comment '-- Legacy binding DML does not take the V1 advisory lock.' Delta :42 cites 229. Blob 6624109a identical at 7d027e4 and 3e82154. All other :42 anchors (:209-339, :232 lock table share row exclusive, :233 member for update, :235 partner for update, :321-331 deletes, :341 privacy_finalize) exact. Severity P3 correct; correction is a one-character record fix in the successor delta with re-binding."
+     },
+     {
+      "id": "R3-F2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: supabase/research-private-early-access-sessions.sql@3e82154 :669 'select pg_catalog.count(*)::integer into v_count', :671 'join pg_catalog.pg_namespace n on n.oid = p.pronamespace', :680 'and p.prosecdef', :681 proconfig = array['search_path=pg_catalog'], :682 'and p.proowner = v_table_owner', :683 'and (r.rolsuper or r.rolbypassrls);', :684-686 raise when v_count <> 4. Delta :155 'function-shape guard671' points inside the guard but not at the attribute predicate. P3 upheld; cite :669-686 or :680-683."
+     },
+     {
+      "id": "R3-F3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld and strengthened. production-deps.ts@3e82154 :105 raw env read, :113 'ownerId: OWNER_ID_SHAPE.test(owner) ? owner : null', :513 'if (environment.ownerId !== null)', :514-517 repository constructed with ownerId; repository (server/research/early-access/private-access-session-repository.ts) :420 'this.sessionOwnerId = options.ownerId'; register.ts:756 'ownerId: (repository as PrivateAccessSessionRepository).sessionOwnerId'. The lens cited only the historical comment at register.ts:749-755; a LIVE default exists: private-access-routes.ts:223 'export const PRIVATE_ACCESS_DEFAULT_OWNER_ID = \"00000000-0000-4000-8000-000000000001\"' and :615 'const ownerId = deps.ownerId ?? PRIVATE_ACCESS_DEFAULT_OWNER_ID;'. The delta's 'no default or inferred owner' (:148) must name :615 as the path the commit argument never takes. Still P3 (records precision; no runtime claim)."
+     },
+     {
+      "id": "R3-F4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: git show 1631323:docs/health-launch/quick-order-20261005/README.md :34-35 'The [held design amendment](HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md) awaits the original reviewer's disposition.' while :11 links the delta and :24-26 declare the lower sections historical ('Their old current/awaiting/unused wording is not present authority'). SQL_CANDIDATE_DRAFT_STATUS_20261006.md:114-116@1631323 states it correctly. Because README :24-26 already disclaims the stale wording generically, this is P3 and borderline; the one-sentence fix stands."
+     },
+     {
+      "id": "R3-F5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: git grep over docs/health-launch/quick-order-20261005 at 1631323 for '2cff1b08|HELD_WRITER_COMMIT' hits only the delta :4, README :34, status :114 and held-5c-review-599-delta-binding-20261007.json:16-18 (predecessor{path, sourceCommit 18bfbcd, sha256lf 2cff1b08…, preserved true}); review-599-source-3e82154.json (71-entry receipt union, :1345) and review-599-repair-bindings-20261007.json (474 lines) carry no row for the predecessor. Chain intact because the binding JSON is itself receipted (:125-132 sha256lf 88df0e82… = recomputed). P3 upheld; add a before==after receipt row (blob b925248a, 10,719 B, 166 lines)."
+     },
+     {
+      "id": "R3-F6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: delta :71-77 defines HELD as 'no authored predicate or enumerable trigger membership'; rows :81-103 = 23 names (mechanical count 23) matching 1d4f2c3 QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md:221-227 in order; one OUT (:96 sessions), three 'HELD conditional candidate' (:84 media, :85 content, :103 touches), nineteen HELD. Doc 46 :124 asked for an in/out decision with an authored predicate per relation. Honest disclosure, drafting prerequisite untouched; P3 on the delta, with B-4 itself remaining the P2 blocker. Severity correct."
+     },
+     {
+      "id": "R3-F7",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: delta :62-64 'rule on admissibility of a separately authorized disposable guard draft for measurement before any such draft or experiment'; doc 46 :92 'at observed normal and peak rates on a separately authorised disposable host … admissibility of a disposable-host draft measurement must be ruled on before any drafting clearance'. Scope lines :58-60 match the condition's substance (writer-vs-writer while held with no intake, multi-lot release, privacy cleanup under its table lock, writer-vs-intake at observed normal and peak loads). Host authorization implicit; P3 wording fix upheld."
+     }
+    ],
+    "priorFindingOpinion": [
+     {
+      "id": "B-1",
+      "status": "RECORDS_CORRECTED",
+      "note": "Verified at 3e82154 (blob 97b30488 identical to 7d027e4): release :773-779 signature (uuid,uuid,text[],timestamptz,text,text), :848 reservation 'for update', loop header :879 (delta says 878 = blank line), :886 'order by a.lot_uuid', :891 lot 'for update', :895 advisory, :924 lots UPDATE inside the loop (end loop :945); expire :1226, :1301, loop :1333 (delta says 1332 = blank), :1345, :1378, end loop :1399. privacy_begin :209-339: :228 advisory, :232 table lock, :233/:235 member/partner FOR UPDATE, :238-241 and :272-279 ids without row locks, deletes :321-333, :341 privacy_finalize. Delta restates the invariant per doc 46 :121 (:31-34), chooses owner amendments per writer and refuses to drop relations (:40-46), lists the two-sided/overlapping-lot/privacy_begin cases as future (:48-51). Records level met; drafting level open: no amendment exists, invariant unaccepted (:36), audit of the other 1d4f2c3 :221-227 families incomplete (:35), no case authored. P1 remains open at drafting."
+     },
+     {
+      "id": "B-2",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "Anchors verified byte-unchanged 7d027e4..3e82154 (empty diff --stat): production-deps.ts:212-222 requiredAgreementMatchesPublishedPolicy (length 1, kind/version equal to published Research pair), :336-348 refusingPersistenceBuild, :499-505 options.requiredAgreements; legal.ts:21 approved-pair membership and :24 Research-pair equality; production.ts:23 type field with the only producers at production.test.ts:23,:32 (production.ts:69 is a consumer: wiring.approvedHealthAgreementPairs); identity-persistence :450. health-agreement-config.ts and its test absent at 3e82154; ports.ts/legal.ts/production.ts/production.test.ts present and unchanged. Delta :118-126 labels the six-path scope 'not approved'; :128 pair content is Samuel's. A proposal is not an owner-approved configuration path; P1 remains open. Correctly disclosed."
+     },
+     {
+      "id": "B-3",
+      "status": "RECORDS_CORRECTED",
+      "note": "Mechanics verified: express.ts:142-145 and :163-165 sha256(sessionId); private-access-routes.ts:870 returns hashPrivateAccessSessionToken(read.sessionHandle); repository :179-181 sha256; owner chain :105/:113 -> :513-517 -> repository :420 -> register.ts:756; sessions SQL :3 UNMOUNTED/UNAPPLIED, :264-267 enable+force RLS, :269-281 zero-policy guard, :283-297 revokes, :539-568 session_active exists-select with clock_timestamp :551, :588-593 single UPDATE revoke, :600 revoke from public, :680-683 definer attributes. Delta :157-159 NOT FOUND refusal, :166 UNACCEPTED/UNMEASURED, :169 no invented ceiling. Partial at records level: doc 46 §6 lists 'hold-time bound' among the mechanics to specify and the delta provides none (:167-169), so the lens's verdict phrase 'session mechanics specified' should read 'specified except the hold bound'. Two P3 anchor imprecisions (R3-F2, R3-F3 incl. routes :615 default). Postgres claims at :153-154 are correct by reasoning, untested."
+     },
+     {
+      "id": "B-4",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "Delta :81-103 = exactly the 23 names at 1d4f2c3 :221-227 (5+2+3+1+4+3+5) in order; sessions OUT backed by shape guard :201-209; nonces absent from both and :105 says so; touches 'not append-only' backed by 20260904 :329 (predecessor :67-68 had claimed append-only); media/content/touches 'HELD conditional candidate … predicate unauthored'; :76-77 head cardinality unresolved; currentness candidate writer_epoch advanced only at :227-228 (publish) and :244-245 (revoke) so :77 holds; lazy head insert at :214 so :66-69 holds. No predicate text anywhere in the delta. Doc 46's in/out-with-authored-predicate demand untouched; trigger set still cannot be enumerated. P2 remains open."
+     },
+     {
+      "id": "B-5",
+      "status": "RECORDS_CORRECTED",
+      "note": "Verified 20260904@3e82154: :583 effective_binding_json(text) and :602 binding_at_json(text,timestamptz) security definer select-only; :1086-1094 revoke all … from public,anon,authenticated,service_role; :1095 grants only execute(text,jsonb) and authority() to service_role; bindingAt :831 with member 'for share' :840; getBinding :856-871 member 'for share' :857 and, only when a binding row exists (:864-871), binding_availability :869 -> :646 partner_availability -> :541 partner 'for share' (no binding: :872 returns with no partner lock); touch candidate 20260914 :106 -> availability :554-555 partner 'for share of p0' then :557 link 'for share'. Delta :183-185 correct, with the conditional partner lock being a precision point for the outstanding call matrix (:181-182). Doc 46 B-5 ask met at records level."
+     },
+     {
+      "id": "B-6",
+      "status": "RECORDS_CORRECTED",
+      "note": "Predecessor blob b925248a identical at 18bfbcd and 3e82154; sha256 raw==LF 2cff1b08…, 10,719 B, 166 lines, 0 CR; bound in held-5c-review-599-delta-binding-20261007.json :15-20 (preserved true) and handoff :78. Delta hash f86b8c78… recomputed (raw==LF, 16,014 B, 204 lines) and identical in the binding JSON :11-13, handoff :75-76, review-599-source-3e82154.json :75-82 and :1349-1353; binding JSON blob e8619dbd at 3e82154 and 1631323 with sha256-LF 88df0e82… = :129 and :1348. Residual gap: no first-class receipt row for the predecessor (R3-F5, P3). Evidence/history folders show only additions 18bfbcd..1631323 (53 -> 55 -> 59 files); no historical file rewritten."
+     },
+     {
+      "id": "B-7",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "service.ts:657 and :672 eventType 'assisted_order.submitted' (templateKey :662); assisted-order/production-deps.ts:40-41 ASSISTED_ORDER_ADMIN_EMAIL_ENV_VAR = 'RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL'; quick-order-notifications.test.ts blob 34d31e96 identical 7d027e4/3e82154 with one fixed RECIPIENT :119 and malformed cases only for request ID :241 and public reference :250, :322-323. Delta :193-197 accurate; no validator or send added; residual matrix :35 matches. Deferred and disclosed."
+     },
+     {
+      "id": "B-8",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "Currentness candidate @3e82154 :144-154 head table, :146 writer_epoch check(>=0) only, :148-149 'No FK/internal trigger is installed … owner DML is not trusted', :150-152 three unreferenced revision ids; publish_revision :206 security invoker with lazy head insert :214. git diff 18bfbcd 3e82154 -- currentness.sql = five inventory rows only; across supabase/ the added lines contain no SQL 'create function/trigger/references' (the only 'foreign key' hits are two prose lines in the intake rollback.md about the companion FK, so the lens's literal 'no references/foreign key' is true in substance, not letter). Delta :199-203 lists FKs, UPDATE/DELETE/TRUNCATE refusal guards and epoch monotonicity as future preconditions; residual matrix :16 agrees. Deferred and disclosed."
+     },
+     {
+      "id": "S-F4",
+      "status": "DEFERRED_DISCLOSED",
+      "note": "Delta :25-26 accepts the absent/held distinction only subject to the measurement condition; :55-64 reproduces doc 46 :92's scope (writer-vs-writer while held with no intake incl. multi-lot release and privacy cleanup under its table lock; writer-vs-intake at observed normal and peak loads; UNKNOWN/NOT MEASURED; synthetic labelled; original reviewer and operational owner rule on admissibility first; grants neither). Disposable-host wording implicit (R3-F7). Lazy-head P3 acknowledged at :66-69 with three options and none selected; 'guarded first-publication transition' is new relative to doc 46 :92's two options and needs its own condition only if selected. Ruling, admissibility and measurement outstanding."
+     }
+    ],
+    "missed": [
+     "M-1 (P3, delta :40 and :41; lens mis-verified as PASS): the inventory loop headers are at supabase/migrations/20260727160000_research_inventory_reservation_commands.sql:879 and :1333 at 3e82154 (cat -A shows :878 and :1332 are empty lines; 'for v_alloc in' follows). The delta's 'lot loop878' and 'loop1332' are off by one, exactly like R3-F1. The lens also placed the advisory lock at :893; it is :895. Smallest correction: in the successor record cite :879/:1333 (and :895 if the advisory lock is cited); re-bind the delta hash if the bound file is edited.",
+     "M-2 (P3, delta :146-148; extends R3-F3): a live default owner fallback exists at server/research/early-access/private-access-routes.ts:615 'const ownerId = deps.ownerId ?? PRIVATE_ACCESS_DEFAULT_OWNER_ID;' with the constant at :223; register.ts:756 supplies repository.sessionOwnerId so the production route bypasses it, but the delta's provenance chain should name :615 as the path the future commit argument must never take, rather than leaving 'no default or inferred owner' unanchored. The lens cited only the historical comment at register.ts:751.",
+     "M-3 (lens verdict overstatement, no new severity): the lens lists 'session mechanics specified' among satisfied documentation prerequisites. Doc 46 §6 (:147-149) names 'hold-time bound' as part of the session-lock mechanics to specify; the delta (:167-169) deliberately specifies none ('no numeric ceiling has been approved and none is invented here'). B-3 is therefore specified at records level except the bound; the bound is deferred with the owner, which the lens's checklist (PARTIAL) states correctly but its verdict sentence does not.",
+     "M-4 (P3, records now stale by the push itself; not a defect of the delta): at 1631323 the README :4-5 ('committed locally; automatic approval review rejected its push'), SQL_CANDIDATE_DRAFT_STATUS :5-6, handoff :10-12 ('PUSH STATUS: LOCAL ONLY'), session JSON :13 'LOCAL_ONLY_APPROVAL_REQUIRED', ACTIVE_TASKS scopeNote, review-599-source-3e82154.json :7 and :1365 and review-599-local-records-integrity-20261007.json :7 all describe the pre-push state. The packet states 1631323 is now the remote tip, so these statements are superseded; handoff :106-107 already instructs 'After a successful push, verify the remote exact SHA and refresh push status'. Smallest correction: one records commit refreshing push status with the verified remote SHA; no hash of the delta changes.",
+     "M-5 (P3 precision, delta :183-184): 'dispatcher getBinding also calls binding/partner availability and locks the partner' holds only on the binding-exists branch (20260904 :864-871 -> :869 binding_availability -> :646 -> :541 partner for share); with no binding, :872 returns before any partner lock. The outstanding call matrix (:181-182) should carry this branch, because the deadlock analysis depends on which locks each viewer path actually takes.",
+     "M-6 (documentation condition, no severity on facts): delta :150-153 adopts doc 46's own smallest correction (commit as SECURITY DEFINER owned by the sessions-table owner, who must be rolsuper OR rolbypassrls per :683). The consequence that such a definer runs with RLS bypassed on every relation the commit touches is not stated. Residual matrix :25 (A2-F6) shows the intake drafts already gate on an explicit BYPASSRLS/superuser owner, so this is a disclosure gap rather than a new privilege; the successor record should state the consequence and its compensating controls (fully qualified references, pg_catalog search_path, no dynamic SQL).",
+     "M-7 (trivial, delta :142): 'assisted-order/express.ts:140–145' brackets the member viewer's earlyAccessSessionHash expression at :142-145 (:140-141 are memberId/authUserId). Within range; no correction strictly needed.",
+     "M-8 (lens wording): checklist item 1 reads 'parent 18bfbcda… (subject: fix(quick-order): repair reviewed SQL drafts…)'; that subject belongs to 3e82154. 18bfbcd's subject is 'docs(quick-order): bind SQL draft source and held design handoff'. No effect on identity verification (both re-derived here)."
+    ],
+    "verdictOpinion": "The lens verdict is sound and consistent with the standing rules: it issues no SQL-draft or composition-test disposition (correctly, those belong to the other lenses), it treats the delta as a records-level successor only, it says review is not authority, it states that no substantive drafting prerequisite is satisfied and no body is eligible under dc3329b, and it marks everything executed as NOT RUN and hosted state as NOT PROVEN. I re-derived every identity, hash and anchor from Git objects: 3e82154 (tree 04958ec, parent 18bfbcd) and 1631323 (parent 3e82154) are as stated; the delta's sha256 (raw equals LF, 0 CR) is f86b8c78…, 16,014 bytes, 204 lines, bound identically in the binding JSON, handoff, and source receipt; the predecessor is blob b925248a at both commits (2cff1b08…, 10,719 bytes, 166 lines); the binding JSON's own LF hash 88df0e82… equals the receipted value; evidence/ and history/ show only additions from 18bfbcd to 1631323, so no historical evidence was rewritten. All seven lens findings are upheld at P3; none should be raised. Corrections to the lens: (a) it mis-verified two delta anchors — the inventory loop headers are at :879 and :1333, not :878/:1332, so the delta carries two more off-by-one citations (M-1); (b) R3-F3 is stronger than stated because a live default owner fallback exists at private-access-routes.ts:615 (M-2); (c) the verdict's 'session mechanics specified' overstates B-3, since doc 46 §6's hold-time bound is explicitly not specified (M-3); (d) its 'no references/foreign key' grep statement is true only in substance (two prose lines in a rollback.md). §5C disposition on the delta itself: HELD REMAINS. Documentation prerequisites satisfied at the records level: adverse writers named with a per-writer resolution rule, per-relation disposition table (tri-state, not the in/out decision doc 46 demanded), session mechanics except the hold bound, helper calling posture, B-6 hash binding (with the predecessor lacking a first-class receipt row). Substantive drafting prerequisites remain unsatisfied: no owner amendment for research_release/expire_inventory_reservations or research_referral_v1_privacy_begin, the strengthened invariant unaccepted and the writer audit covering three writers only, no owner-approved Health pair configuration path (a six-path proposal is not a path; pair content is Samuel's), the session revocation ordering UNACCEPTED/UNMEASURED with no numeric bound, 22 relations HELD with no predicate and head cardinality unresolved, S-F4 admissibility unruled and unmeasured. Remaining doc 46 blockers: B-1 (P1), B-2 (P1), B-3 (P2), B-4 (P2) open; B-5, B-7, B-8 deferred and disclosed; B-6 closed at records level; S-F4 condition reproduced, ruling pending. No body is eligible. Nothing here is Samuel's approval; no protected-hash acceptance, manifest recut, deployment, intake, payment or notification authority follows; the qualification window remains expired and every execution result is NOT RUN; hosted database state is NOT PROVEN."
+   }
+  }
+ ]
+}
