@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "quick-order-review-599-local-records-integrity-v1",
+  "at": "2026-10-07T03:45:05.187Z",
+  "sourceCommit": "3e82154724ede74b7c5f361f280739eedd60db25",
+  "sourceTree": "04958ec1567b74bccd84e423e179e6269faf6bee",
+  "lastPushedBaseline": "18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb",
+  "pushStatus": "LOCAL_ONLY_APPROVAL_REQUIRED",
+  "sourceImplementationUnchanged": true,
+  "all55ReferencesUnchanged": true,
+  "registryIntegrity": [
+    {
+      "path": ".xenios/ACTIVE_TASKS.json",
+      "foreignRowsAndGlobalsUnchanged": true
+    },
+    {
+      "path": ".xenios/SESSION_REGISTRY.json",
+      "foreignRowsAndGlobalsUnchanged": true
+    },
+    {
+      "path": ".xenios/CODE_OWNERSHIP.json",
+      "foreignRowsAndGlobalsUnchanged": true
+    }
+  ],
+  "records": [
+    {
+      "path": ".xenios/ACTIVE_TASKS.json",
+      "sha256lf": "bf4a6faa66fb1609fdf09de245ccf9fcfc7ff95de18142a1fc47de7e3c21d61e"
+    },
+    {
+      "path": ".xenios/CODE_OWNERSHIP.json",
+      "sha256lf": "8bc55eb081081d1fc1583a02e50b5f53ea6f65318390ead8485bc147dd0f2852"
+    },
+    {
+      "path": ".xenios/SESSION_REGISTRY.json",
+      "sha256lf": "50371787d7c4af156c9ec68d952a98310acb8b92ed459812033d4fa9775d183d"
+    },
+    {
+      "path": ".xenios/handoffs/quick-order-20261005-handoff.md",
+      "sha256lf": "14e5666645428c73b6fd7d2aca197a5e4e289765876c0bf44313b65a52436c0b"
+    },
+    {
+      "path": ".xenios/sessions/codex-health-quick-order-20261005.json",
+      "sha256lf": "e8870b0e1dd2d2595e1090eaa997ddbfcc03515bcf8239621fb033ea2428cbf3"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/README.md",
+      "sha256lf": "bf0e0838f35dd94a08a9a7b394fffb2fceb88a894dc11692db5e082d39263f03"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/SQL_CANDIDATE_DRAFT_STATUS_20261006.md",
+      "sha256lf": "3a333a4e150863842ffa3ba7f4c539ad23d01c09c418dea7e9f2b62786ff6395"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/review-599-source-3e82154.json",
+      "sha256lf": "d0878ba466c4076cd9718e631c1fcc8bf3a181e677252943ab175f4d2ddbec30"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-3e82154.json",
+      "sha256lf": "f2f343b31a5a484c1b28b02fb0560b3d5027eee101f298f91a4574ee497fe1ca"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-3e82154.json",
+      "sha256lf": "5123858331a46c1cb4ab7674b17449e6a7f8021fd7d5e35c8f217a343a6cc668"
+    }
+  ],
+  "receiptHashes": [
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-3e82154.json",
+      "entries": 66,
+      "sha256Raw": "f2f343b31a5a484c1b28b02fb0560b3d5027eee101f298f91a4574ee497fe1ca",
+      "sha256lf": "f2f343b31a5a484c1b28b02fb0560b3d5027eee101f298f91a4574ee497fe1ca",
+      "lineEndings": "LF",
+      "bytes": 11922,
+      "note": "Written LF; expected committed LF raw digest. Raw checkout digest changes after line-ending conversion; not an execution receipt."
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-3e82154.json",
+      "entries": 66,
+      "sha256Raw": "5123858331a46c1cb4ab7674b17449e6a7f8021fd7d5e35c8f217a343a6cc668",
+      "sha256lf": "5123858331a46c1cb4ab7674b17449e6a7f8021fd7d5e35c8f217a343a6cc668",
+      "lineEndings": "LF",
+      "bytes": 11959,
+      "note": "Written LF; expected committed LF raw digest. Raw checkout digest changes after line-ending conversion; not an execution receipt."
+    }
+  ],
+  "qualification": {
+    "windowStatus": "EXPIRED",
+    "expiresAt": "2026-10-06T21:43:37Z",
+    "consumedGroups": 1,
+    "expiredUnusedGroups": 5,
+    "availableGroups": 0
+  },
+  "execution": "NOT RUN",
+  "approvalHandling": "Coordinator has collected both automatic approval rejections and will present the final local source/records checkpoint; no builder retry, alternate transport, outbound message or duplicate approval question."
+}

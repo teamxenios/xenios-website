@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "quick-order-held-design-delta-binding-v1",
+  "at": "2026-10-07T03:38:45.192Z",
+  "review": "59940dcce778d18dcae605172a46f676b9933fcf",
+  "approval": "dc3329bb2cfb3b93d8d054c8bbc77a291df0e671",
+  "scope": "1d4f2c3b3ff2fc0e1bc25495d3076d2bd9a76e99",
+  "base": "18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb",
+  "disposition": "PROPOSED_UNACCEPTED_UNIMPLEMENTED",
+  "file": {
+    "path": "docs/health-launch/quick-order-20261005/HELD_5C_REVIEW_599_DELTA_20261007.md",
+    "sha256lf": "f86b8c78c01c0b598fac19466697cb1451cc73cb8fe05103e738e396d4b4452a",
+    "utf8LfBytes": 16014,
+    "lines": 204
+  },
+  "predecessor": {
+    "path": "docs/health-launch/quick-order-20261005/HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md",
+    "sourceCommit": "18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb",
+    "sha256lf": "2cff1b08a39d3d024fdd547980e6ff5069915d16516b3a8febc991d736c44ed2",
+    "preserved": true
+  },
+  "execution": "NOT RUN",
+  "bodyEligibility": "NONE"
+}
