@@ -1,3 +1,125 @@
+# Quick Order review599 repair handoff — 2026-10-07
+
+- SAME builder: codex-health-quick-order-20261005; task HEALTH-QUICK-ORDER-20261005.
+- Chat: 01a10d78-0981-7150-9292-c5cde2730d4d; original reviewer unchanged.
+- Branch: codex/xenios-health-quick-order-20261005.
+- Worktree: C:/Users/sboad/.codex/worktrees/389a/xenios-website.
+- Lease: 17093695-69b5-4cc0-8b29-aedb82bf6409; same owner, parked/reserved.
+- REPAIR SOURCE: **3e82154724ede74b7c5f361f280739eedd60db25**.
+- SOURCE TREE: **04958ec1567b74bccd84e423e179e6269faf6bee**.
+- PUSH STATUS: **LOCAL ONLY — automatic approval review rejected the push twice.**
+- Last pushed baseline: **18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb**.
+- No pushed-successor claim until the existing origin branch is verified.
+- Original review: **59940dcce778d18dcae605172a46f676b9933fcf**, docs42 correction/45/46/47.
+- Authority unchanged: Samuel dc3329bb2cfb3b93d8d054c8bbc77a291df0e671,
+  scope1d4f2c3b3ff2fc0e1bc25495d3076d2bd9a76e99. Review is not added authority.
+- All SQL/verifier/tests/syntax/typecheck/build/resource checks: **NOT RUN**.
+- Successor acceptance: PENDING the SAME original reviewer, after pushed delivery.
+
+## Completed source repair and exact identity
+
+Exactly13 implementation paths changed: ten already-owned SQL/verifier files,
+plus static-document.test.ts, vite-document.test.ts and root-composition.test.ts.
+No runtime, App composition, decoder/UI, readback/notification test, accepted fd
+module, historical migration, protected manifest or protected-hash change.
+
+1. Corrected19 canonical non-internal triggers: requests8, events7, outbox4,
+   from migration source. Intake verifier adds its own literal inventory and
+   pg_trigger boundary assertion. No hosted census exists.
+2. Counts/selects only submitted closed-key Quick Order markers. A separate
+   malformed submitted candidate refusal prevents legacy fallthrough. Rollback
+   retains valid/malformed submitted markers and ignores unrelated non-submitted
+   evidence. Named synthetic regression uses canonical set_status for partial
+   and closed-key injection, legacy readback, empty rollback and reinstall.
+3. All three missing external-hash psql branches now raise55000 under ON_ERROR_STOP.
+   This is authored failure behavior, not an observed process exit.
+4. All17 privacy-hardening cases are in named proposed blocks pending8392d243;
+   the sixth pin remains independent. All162 expect sites retained (60/60/42);
+   root split adds one case. Root Helmet already supplies no-referrer by source;
+   only cache headers predicted absent there. Six required pins authored, zero run.
+5. One records-only5C delta names the inventory/privacy writer conflicts, absent
+   Health configuration, proposed raw session hash/owner/definer mechanics and
+   unresolved per-relation epoch scope. No held body becomes eligible. One residual
+   matrix accounts for docs45/47 P3 findings and frozen coverage gaps.
+
+Exact before/after Git blobs and SHA256-LF, all23 source-checkpoint paths,
+13 implementation paths,55 frozen references,53 retained historical evidence
+files and registry preservation are in:
+[review-599-source-3e82154.json](../../docs/health-launch/quick-order-20261005/evidence/review-599-source-3e82154.json).
+The successor binding is review-599-repair-bindings-20261007.json. Original
+review-cleared bindings and original receipts remain byte-exact historical records;
+their14-trigger census is superseded. Source identity is not behavior evidence.
+
+Intake definition SHA256-LF:
+9c0e5ff7c229ef6ece01120bfc4c6ededcbe84fb2cbbb974e545648c5446841a.
+Currentness definition SHA256-LF:
+cc19d43dc3d1db0336fae05274ee3e90d0e417f8ea6d01714913341ef774ae6e.
+The latter is unchanged: census edits sit outside its hashed definition blocks;
+the full currentness source hash changes and is rebound. No target-derived seal.
+
+Separate external source receipts each bind66 files at the repair source
+(71-file union), including its own five candidate/verifier paths,55 references,
+the successor binding and all consumed bootstrap/predecessor sources:
+
+- evidence/sql-intake-source-receipt-3e82154.json
+  LF/raw SHA256 f2f343b31a5a484c1b28b02fb0560b3d5027eee101f298f91a4574ee497fe1ca
+- evidence/sql-currentness-source-receipt-3e82154.json
+  LF/raw SHA256 5123858331a46c1cb4ab7674b17449e6a7f8021fd7d5e35c8f217a343a6cc668
+
+These receipts are written LF, with exact LF/raw hashes in the inventory.
+They contain only schemaVersion, sourceCommit and files; no circular self-hash.
+The verifier still requires the actual raw receipt digest; a CRLF checkout changes
+it. Old CRLF producer hashes are not retained raw captures; Git blobs are LF.
+No source receipt is a test result, execution permission or pushed-state assertion.
+
+The single5C delta is HELD_5C_REVIEW_599_DELTA_20261007.md, LF SHA256:
+f86b8c78c01c0b598fac19466697cb1451cc73cb8fe05103e738e396d4b4452a.
+Its separate binding is evidence/held-5c-review-599-delta-binding-20261007.json.
+Historical amendment2cff1b08 remains unchanged. Residuals are in
+REVIEW_599_RESIDUAL_MATRIX_20261007.md; no outstanding P3 was silently treated as
+closed by unavailable tests. Guard/commit/standing/recipient/session/configuration
+implementation stays held. Callable-only currentness immutability is not owner-DML
+protection. Head FKs, revision mutation guards and epoch monotonicity remain B-8
+future prerequisites. No active Health authority is seeded.
+
+## Qualification, operational holds and next action
+
+Window **EXPIRED 2026-10-06T21:43:37Z**: G1 consumed/refused/released; five unused
+groups expired; zero available. Historical1205MiB/503MiB/934MiB observations are
+not current capacity. No material-host-change claim, reservation, retry, resource
+sample, application shutdown, cleanup, server/browser/subprocess experiment,
+SQL/Docker/psql, test, syntax/type check or build occurred. Only scoped source edits,
+read-only Git/hash/count metadata and local commits. Automation remains PAUSED.
+
+Provider fixture8396609b413bc93990adea937861427ec07787f6ea126e19f926b42398d01498
+and static headers8392d24308c3dc106c00317f4cd9550d94e956d008051c617c0126d610330fa9
+remain UNAPPLIED. No repeat approval question for either, no outbound thread
+message, new reviewer, bridge transport or new owner.
+
+Immediate delivery blocker: automatic approval review rejected pushing this repair
+to https://github.com/teamxenios/xenios-website.git because destination trust and
+explicit authorization for this payload's egress were not established. Local
+origin and PROJECT_STATE repository match; no workaround or remote write occurred.
+Explicit approval of this repair plus its evidence/handoff to the existing branch
+is required before retrying. The existing coordinator is collecting that decision;
+this builder must not retry, reroute transport or ask a duplicate approval question. Until then this is a local handoff, not the requested
+pushed packet. After a successful push, verify the remote exact SHA and refresh
+push status; the SAME original reviewer can then disposition this successor.
+
+HTTP handler/containment red/green remains pending on its original exact plan.
+Even successful future red/green would resolve only HTTP evidence. Protected
+mount/manifest acceptance, canonical durable atomic persistence, authorized
+operator readback and applicable Health authorities remain separate work/approvals.
+Production source still has productionReady:false and throws on commit; no hosted
+state, live intake, payment, notification, deployment or release is qualified.
+
+## Historical handoff follows unchanged
+
+Earlier current/unused wording and14-trigger claims below are historical and
+superseded by this section; failed receipts remain retained.
+
+---
+
 # Quick Order SQL candidate source handoff — 2026-10-06
 
 - SAME SESSION: codex-health-quick-order-20261005

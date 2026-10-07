@@ -2,8 +2,8 @@
 
 Current bounded repair responds to original review **59940dcce778d18dcae605172a46f676b9933fcf**
 from clean pushed baseline **18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb**. Source
-acceptance is pending; all behavior remains **NOT RUN**. Final pushed source/tree
-and successor receipts are identified in the exact handoff. Authority is unchanged:
+acceptance is pending; all behavior remains **NOT RUN**. Repair source **3e82154724ede74b7c5f361f280739eedd60db25**, tree **04958ec1567b74bccd84e423e179e6269faf6bee**, is committed locally. Push was rejected by automatic approval review;
+successor source receipts and current push status are in the exact handoff. Authority is unchanged:
 Samuel dc3329b for scope1d4f2c3; the review grants no extra authority.
 
 The ten SQL/verifier files now carry nineteen canonical triggers (requests8,

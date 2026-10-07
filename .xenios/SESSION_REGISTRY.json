@@ -585,13 +585,15 @@
       "tool": "Codex GPT-6 Astra Ultra (task configuration)",
       "lane": "health-quick-order",
       "branch": "codex/xenios-health-quick-order-20261005",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-10-05T19:12:50.193Z",
-      "heartbeatAt": "2026-10-07T03:39:17.194Z",
-      "note": "Active bounded source-only repair of original review59940dc, same owner/lease at baseline18bfbcd. Exactly ten SQL/verifier paths plus three composition tests. All execution NOT RUN; qualification window EXPIRED, G1 consumed and five unused groups expired. No resource check, runtime or held-body work.",
-      "sourceSha": "7d027e4dff130214cb71954e2de548be5747cd0c",
+      "heartbeatAt": "2026-10-07T03:43:56.975Z",
+      "note": "Review599 repair source3e82154 committed locally with13 exact implementation paths; push rejected by automatic approval review pending explicit destination/payload authorization. Same builder parked; all behavior NOT RUN. Qualification EXPIRED, zero groups. Original reviewer acceptance pending; runtime and held bodies frozen.",
+      "sourceSha": "3e82154724ede74b7c5f361f280739eedd60db25",
       "handoff": ".xenios/handoffs/quick-order-20261005-handoff.md",
-      "sourceTree": "3819c5f4efed71bd12d5e759593e71c580d96cc3"
+      "sourceTree": "04958ec1567b74bccd84e423e179e6269faf6bee",
+      "sourcePushStatus": "LOCAL_ONLY_APPROVAL_REQUIRED",
+      "lastPushedBaseline": "18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb"
     }
   ],
   "updatedAt": "2026-09-21T16:38:05.000Z"

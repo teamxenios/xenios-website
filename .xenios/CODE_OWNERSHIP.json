@@ -3639,8 +3639,8 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-05T19:13:42.719Z",
-      "heartbeatAt": "2026-10-07T03:39:17.194Z",
-      "note": "Active bounded source-only repair of original review59940dc, same owner/lease at baseline18bfbcd. Exactly ten SQL/verifier paths plus three composition tests. All execution NOT RUN; qualification window EXPIRED, G1 consumed and five unused groups expired. No resource check, runtime or held-body work."
+      "heartbeatAt": "2026-10-07T03:43:56.975Z",
+      "note": "Review599 repair source3e82154 committed locally with13 exact implementation paths; push rejected by automatic approval review pending explicit destination/payload authorization. Same builder parked; all behavior NOT RUN. Qualification EXPIRED, zero groups. Original reviewer acceptance pending; runtime and held bodies frozen."
     }
   ],
   "rules": [

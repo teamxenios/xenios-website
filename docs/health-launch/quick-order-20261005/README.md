@@ -1,5 +1,30 @@
 # Quick Order isolated implementation
 
+Current review599 source repair: **3e82154724ede74b7c5f361f280739eedd60db25**, tree **04958ec1567b74bccd84e423e179e6269faf6bee**.
+The repair is committed locally; automatic approval review rejected its push.
+Original reviewer acceptance is pending. Exactly ten SQL/verifier files and
+three server composition tests changed; all55 frozen references and53 historical
+evidence files are preserved. All behavior remains NOT RUN.
+
+[Current handoff](../../../.xenios/handoffs/quick-order-20261005-handoff.md) ·
+[source inventory](evidence/review-599-source-3e82154.json) ·
+[held 5C delta](HELD_5C_REVIEW_599_DELTA_20261007.md) ·
+[residual matrix](REVIEW_599_RESIDUAL_MATRIX_20261007.md).
+
+The source census is19 (8/7/4); submitted-only closed marker discovery retains
+malformed-submitted refusal, missing external hashes now fail, and proposed
+header assertions are separated from required pins. Root Helmet supplies
+no-referrer; only its cache headers are predicted absent. No red/green observed.
+Qualification EXPIRED at2026-10-06T21:43:37Z: G1 consumed, five unused groups
+expired, zero available. No current slot or resource observation. Guard/commit
+bodies stay held; Quick Order remains unavailable.
+
+## Historical checkpoints below
+
+These sections and their receipts retain the earlier source and qualification
+history. Their old current/awaiting/unused wording is not present authority;
+review599 and the current repair records above control.
+
 Current SQL candidate source: [SQL_CANDIDATE_DRAFT_STATUS_20261006.md](SQL_CANDIDATE_DRAFT_STATUS_20261006.md),
 source 7d027e4dff130214cb71954e2de548be5747cd0c, tree 3819c5f4efed71bd12d5e759593e71c580d96cc3. Ten new draft files plus two permitted test refinements;
 SQL, verifiers and tests NOT RUN. Wrapper/replay readers and held publication
