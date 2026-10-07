@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "SQL_DRAFT_SOURCE_PUSHED_ORIGINAL_REVIEW_PENDING",
+  "status": "BOUNDED_SOURCE_REPAIRS_ACTIVE_QUALIFICATION_WINDOW_EXPIRED",
   "receivedAt": "2026-10-06T17:43:37Z",
   "checkpointAt": "2026-10-06T20:22:48.677Z",
   "expiresAt": "2026-10-06T21:43:37Z",
@@ -89,7 +89,12 @@
       "onFailure": "Consume one group, zero test processes; release slot. No immediate retry or other group probe without materially changed host conditions.",
       "consumedAt": "2026-10-06T17:54:58.1429186Z",
       "active": false
-    }
+    },
+    "status": "WINDOW_EXPIRED",
+    "unusedExpiredGroups": 5,
+    "availableGroups": 0,
+    "expiredAt": "2026-10-06T21:43:37Z",
+    "expiryRecordedAt": "2026-10-07T03:26:39.088Z"
   },
   "sourceAssignment": {
     "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
@@ -315,7 +320,7 @@
     "pendingComposition": {
       "source": "5fd2e4c74d31562281493013489bb41949979b88",
       "records": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
-      "status": "INCLUDED_IN_NEXT_PACKET_DELIVERY_UNCONFIRMED"
+      "status": "SOURCE_ACCEPT_WITH_LIMITS_AT_59940dc_DOC47"
     },
     "finalReviews": {
       "commit": "ca1c114a083793918b18d017b32509864ee4bcf6",
@@ -336,7 +341,7 @@
       "records": "18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb",
       "path": "QUICK_ORDER_SQL_DRAFT_REVIEW_HANDOFF_20261006.md",
       "sha256": "05259a5845c19b37d03e21cd50cf16db31a02e90b9c28b230800a52b13127589",
-      "status": "READY_DELIVERY_NOT_CONFIRMED",
+      "status": "COMPLETED_AT_59940dc_DELIVERY_CONFIRMED",
       "sections": [
         "Draft candidate/test source",
         "Held section5C design amendment",
@@ -731,24 +736,25 @@
     }
   },
   "foregroundCheckpoint": {
-    "at": "2026-10-06T20:21:20.778Z",
-    "builder": "CLEAN_IDLE_PARKED",
+    "at": "2026-10-07T03:26:39.088Z",
+    "builder": "BOUNDED_SOURCE_REPAIRS_ACTIVE",
     "source": "7d027e4dff130214cb71954e2de548be5747cd0c",
     "handoff": "18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb",
-    "remainingWork": "Same original reviewer packet delivery/disposition and two previously issued actual-user scope answers. No further implementation dependency-ready.",
+    "review": "59940dcce778d18dcae605172a46f676b9933fcf",
     "qualification": {
-      "groupsConsumed": 1,
-      "groupsRemaining": 5,
-      "reservation": null,
-      "materialHostChangeEstablished": false,
-      "newObservation": false,
-      "remainingWindowSeconds": 4936,
-      "expiresAt": "2026-10-06T21:43:37Z"
+      "expiredAt": "2026-10-06T21:43:37Z",
+      "observedExpiredAt": "2026-10-07T03:26:39.088Z",
+      "maximumGroups": 6,
+      "consumed": 1,
+      "unusedExpired": 5,
+      "available": 0,
+      "activeReservation": null,
+      "newResourceObservation": false,
+      "execution": "NOT RUN"
     },
     "automation": "PAUSED_NO_RESTART",
-    "sourceApproval": "Supplemental1d4f2c3 already approved atdc3329. Two later one-file amendments remain pending.",
-    "review": "Draft7d027e4 and section5C design plus composition5fd2e4c pending original review; delivery unconfirmed",
-    "execution": "All SQL, verifiers, tests, syntax/type/build and resource checks NOT RUN"
+    "remainingWork": "Same builder bounded SQL/verifier/test-source repairs and records-only held5C design delta. No held body eligible.",
+    "twoExistingQuestions": "PENDING_UNAPPLIED_NO_REPEAT"
   },
   "draftingAssignment": {
     "status": "COMPLETED_SOURCE_ONLY_REVIEW_PENDING",
@@ -801,7 +807,7 @@
     "acceptedFdFilesUnchanged": 24,
     "compositionFilesUnchanged": 4,
     "otherRegistryOwnersAndTopLevelPreserved": true,
-    "sourceAcceptance": "PENDING_SAME_ORIGINAL_REVIEWER",
+    "sourceAcceptance": "REVISION_REQUIRED_AT_59940dc_DOC45",
     "execution": "NOT_RUN",
     "checkpoint": "QUICK_ORDER_SQL_DRAFT_COORDINATOR_CHECKPOINT.json",
     "heldDesign": "QUICK_ORDER_HELD_DESIGN_PRODUCER_18bfbcd.md",
@@ -813,22 +819,152 @@
     }
   },
   "historicalForegroundCheckpoint": {
-    "at": "2026-10-06T19:25:04.679Z",
-    "builder": "CLEAN_IDLE_HANDOFF_READY",
-    "source": "5fd2e4c74d31562281493013489bb41949979b88",
-    "handoff": "1595b8df868a0bd3779ae84fb3da3226c9a75902",
-    "remainingWork": "Same original reviewer final; two actual user answers. No new source assignment ready.",
+    "at": "2026-10-06T20:21:20.778Z",
+    "builder": "CLEAN_IDLE_PARKED",
+    "source": "7d027e4dff130214cb71954e2de548be5747cd0c",
+    "handoff": "18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb",
+    "remainingWork": "Same original reviewer packet delivery/disposition and two previously issued actual-user scope answers. No further implementation dependency-ready.",
     "qualification": {
       "groupsConsumed": 1,
       "groupsRemaining": 5,
       "reservation": null,
       "materialHostChangeEstablished": false,
-      "remainingWindowSeconds": 8312,
+      "newObservation": false,
+      "remainingWindowSeconds": 4936,
       "expiresAt": "2026-10-06T21:43:37Z"
     },
     "automation": "PAUSED_NO_RESTART",
-    "sourceApproval": "Supplemental1d4f2c3 already approved atdc3329; not pending. SQL drafting still conditional. Two later one-file amendments remain pending.",
-    "execution": "No tests, resources or live actions performed at this checkpoint",
-    "supersededBy": "Final reviewca1c114 cleared bounded5A/B drafting; completed at7d027e4/18bfbcd. Next exact original review pending; historical parked checkpoint retained."
+    "sourceApproval": "Supplemental1d4f2c3 already approved atdc3329. Two later one-file amendments remain pending.",
+    "review": "Draft7d027e4 and section5C design plus composition5fd2e4c pending original review; delivery unconfirmed",
+    "execution": "All SQL, verifiers, tests, syntax/type/build and resource checks NOT RUN"
+  },
+  "review599": {
+    "schemaVersion": 1,
+    "at": "2026-10-07T03:26:39.088Z",
+    "reviewCommit": "59940dcce778d18dcae605172a46f676b9933fcf",
+    "reviewTree": "97996e8633778c41f9fa5a9ee5bafba463017da8",
+    "parent": "ca1c114a083793918b18d017b32509864ee4bcf6",
+    "remoteConfirmed": "59940dcce778d18dcae605172a46f676b9933fcf",
+    "clean": true,
+    "artifacts": [
+      {
+        "source": "docs/review/xenios-health-launch-review-20260930/42_QUICK_ORDER_SUPPLEMENTAL_SCOPE_COMPATIBILITY_2026-10-06.md",
+        "copy": "CLAUDE_599_42_QUICK_ORDER_SUPPLEMENTAL_SCOPE_COMPATIBILITY_2026-10-06.md",
+        "bytes": 32998,
+        "sha256": "c52a06973b8f52bf10c2363db93b5cb28d91af1ce4c31b38ef1c4c27b965975d",
+        "workingCopyMatches": true
+      },
+      {
+        "source": "docs/review/xenios-health-launch-review-20260930/45_QUICK_ORDER_SQL_DRAFT_CANDIDATES_7d027e4_2026-10-06.md",
+        "copy": "CLAUDE_599_45_QUICK_ORDER_SQL_DRAFT_CANDIDATES_7d027e4_2026-10-06.md",
+        "bytes": 33530,
+        "sha256": "ed545b6bbe5642651810363d648693eb14f233c4b5e8f8ef46405e7670b3e1e5",
+        "workingCopyMatches": true
+      },
+      {
+        "source": "docs/review/xenios-health-launch-review-20260930/46_QUICK_ORDER_HELD_5C_DESIGN_AMENDMENT_18bfbcd_2026-10-06.md",
+        "copy": "CLAUDE_599_46_QUICK_ORDER_HELD_5C_DESIGN_AMENDMENT_18bfbcd_2026-10-06.md",
+        "bytes": 24044,
+        "sha256": "34739b4291fa9b3dce730d5fdaa462c1647a53f99fb75aa63aacfce7780271d4",
+        "workingCopyMatches": true
+      },
+      {
+        "source": "docs/review/xenios-health-launch-review-20260930/47_QUICK_ORDER_COMPOSITION_TESTS_5fd2e4c_2026-10-06.md",
+        "copy": "CLAUDE_599_47_QUICK_ORDER_COMPOSITION_TESTS_5fd2e4c_2026-10-06.md",
+        "bytes": 15221,
+        "sha256": "a2eeb837712f9e650f0e0f50db0fae11b53c113c6e3ec42f8ca991fa814ea05d",
+        "workingCopyMatches": true
+      },
+      {
+        "source": "docs/review/xenios-health-launch-review-20260930/hl12/45_sql_draft_lens_findings.json",
+        "copy": "CLAUDE_599_45_sql_draft_lens_findings.json",
+        "bytes": 258124,
+        "sha256": "0999701f6884c45eca50332db03a4132ffd0b28263fc09480dd9ddb516953ca2",
+        "workingCopyMatches": true
+      }
+    ],
+    "publicFinal": "CLAUDE_REVIEWS_45_47_PUBLIC_FINAL.json",
+    "userAttachment": {
+      "source": "C:/Users/sboad/.codex/attachments/b977915a-432d-4344-bb59-2469652b7f7a/Pasted text.txt",
+      "copy": "CLAUDE_REVIEWS_45_47_USER_PASTE.txt",
+      "sha256": "cd592aee6689114e4e3946f81a29413952e3bc09cb29f5acafafec7cb2f72c78",
+      "bytes": 5142,
+      "authority": "User-designated pasted request; supplies completed original-reviewer findings, not a new source or execution grant"
+    },
+    "verdicts": {
+      "sqlDrafts": "SOURCE REVISION REQUIRED: A1-F1 P1, V-A1-1 P2, A1-F2 P2",
+      "readbackNotificationTests": "SOURCE ACCEPT WITH LIMITS; NOT RUN",
+      "held5C": "HELD REMAINS; no body eligible for drafting",
+      "composition": "SOURCE ACCEPT WITH LIMITS;6 pin classes AUTHORED,0 EXECUTED; C-F1 proposed-hardening split needed"
+    },
+    "sourceIdentity": {
+      "sql": "7d027e4dff130214cb71954e2de548be5747cd0c",
+      "tree": "3819c5f4efed71bd12d5e759593e71c580d96cc3",
+      "records": "18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb",
+      "composition": "5fd2e4c74d31562281493013489bb41949979b88"
+    },
+    "corrections": {
+      "triggerInventory": {
+        "priorClaim": 14,
+        "correctSourceCount": 19,
+        "byRelation": {
+          "requests": 8,
+          "events": 7,
+          "outbox": 4
+        },
+        "origin": "Reviewer doc42 -> builder b75325a contract -> draft7d027e4 -> coordinator historical checkpoints. Historical records retained; current claim corrected here.",
+        "coordinatorEvidence": "Independently read migration20261001115512 lines474-484 (four ALWAYS rows) and20261001062651 lines373-378 (ordinary events row) at7d027e4. No database census.",
+        "hostedInventory": "NOT PROVEN"
+      },
+      "amendmentHash": "Reviewer statement concerns absence of builder hash binding. Coordinator already bound exact amendment2cff1b08a39d3d024fdd547980e6ff5069915d16516b3a8febc991d736c44ed2 in its e88a7a9 packet; do not conflate the two.",
+      "receiptLineEndings": "Committed LF identities independently retained. Producer CRLF working-copy hashes remain separately labelled; no execution inferred.",
+      "rootHeaderPrediction": "Helmet supplies no-referrer by source reading; only Cache-Control and Pragma predicted absent in root. No observed test failures."
+    },
+    "delivery": {
+      "status": "CONFIRMED_BY_COMPLETED_EXACT_PACKET_REVIEW",
+      "packet": "QUICK_ORDER_SQL_DRAFT_REVIEW_HANDOFF_20261006.md",
+      "publicFinalAt": "2026-10-06T21:38:40.650Z",
+      "publicFinalMessage": "b9bd79f3-e591-4351-a427-9713a2ebedbd",
+      "doNotResend": true
+    },
+    "reviewProcess": {
+      "producerReports": "Original reviewer used ten read-only review agents and personally verified findings.",
+      "coordinatorAction": "No new reviewer/agent created or requested; archive is producer public finding evidence, not additional agent authority."
+    },
+    "assignment": {
+      "path": "QUICK_ORDER_REVIEW_599_REPAIR_ASSIGNMENT_20261007.txt",
+      "sha256": "62e152ae4d073b3423cab0361a9cb12e89a9cf9025412e9d84ae83ac75d85fb2",
+      "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
+      "status": "SENT_ACKNOWLEDGED",
+      "turn": "01a11464-9c61-7523-b392-44133fa48926",
+      "cursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:159",
+      "ack": "I’ll read the repair assignment and exact review documents, make the bounded source-only corrections, then push a successor handoff. The expired qualification window remains closed.",
+      "implementationPaths": 13,
+      "held": "All other source; section5C bodies; providerfixture/static patches pending"
+    },
+    "qualification": {
+      "expiredAt": "2026-10-06T21:43:37Z",
+      "observedExpiredAt": "2026-10-07T03:26:39.088Z",
+      "maximumGroups": 6,
+      "consumed": 1,
+      "unusedExpired": 5,
+      "available": 0,
+      "activeReservation": null,
+      "newResourceObservation": false,
+      "execution": "NOT RUN"
+    },
+    "automation": "PAUSED_NO_RESTART",
+    "next": "Collect same-builder exact successor; same original reviewer delta only. No rerun or production activity."
+  },
+  "repairAssignment599": {
+    "path": "QUICK_ORDER_REVIEW_599_REPAIR_ASSIGNMENT_20261007.txt",
+    "sha256": "62e152ae4d073b3423cab0361a9cb12e89a9cf9025412e9d84ae83ac75d85fb2",
+    "owner": "01a10d78-0981-7150-9292-c5cde2730d4d",
+    "status": "SENT_ACKNOWLEDGED",
+    "turn": "01a11464-9c61-7523-b392-44133fa48926",
+    "cursor": "3f77174a-96ed-47c0-8037-bc36c8b44d2c:159",
+    "ack": "I’ll read the repair assignment and exact review documents, make the bounded source-only corrections, then push a successor handoff. The expired qualification window remains closed.",
+    "implementationPaths": 13,
+    "held": "All other source; section5C bodies; providerfixture/static patches pending"
   }
 }
