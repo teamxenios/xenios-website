@@ -3639,8 +3639,8 @@
       ],
       "state": "active",
       "claimedAt": "2026-10-05T19:13:42.719Z",
-      "heartbeatAt": "2026-10-06T20:11:53.415Z",
-      "note": "SQL candidate source7d027e4 pushed with intake readers/currentness held metadata, two e279 test refinements and exact source receipts; all execution NOT RUN. Same original review pending for new bytes and proposed guard/commit design. Same builder parked; G1 spent; runtime/decoder/UI/protected/predecessor/manifest frozen."
+      "heartbeatAt": "2026-10-07T03:39:17.194Z",
+      "note": "Active bounded source-only repair of original review59940dc, same owner/lease at baseline18bfbcd. Exactly ten SQL/verifier paths plus three composition tests. All execution NOT RUN; qualification window EXPIRED, G1 consumed and five unused groups expired. No resource check, runtime or held-body work."
     }
   ],
   "rules": [

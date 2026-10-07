@@ -92,16 +92,6 @@ describe("Quick Order through real serveStatic with a synthetic build", () => {
     expect(head.text).toBeUndefined();
   });
 
-  // Required assertions intentionally retained. Frozen static.ts only supplies
-  // these headers for /status; failure is source-predicted, not an executed result.
-  it.each(PRIVACY_CASES)("requires private cache/referrer headers for $method $target", async ({ method, target }) => {
-    const response = await (method === "GET" ? request(app).get(target) : request(app).head(target));
-    expect(response.status).toBe(200);
-    expect(response.headers["cache-control"]).toBe("no-store, private");
-    expect(response.headers.pragma).toBe("no-cache");
-    expect(response.headers["referrer-policy"]).toBe("no-referrer");
-  });
-
   it("applies document policy again on a direct refresh while built assets remain ordinary files", async () => {
     const first = await request(app).get("/health/quick-order");
     const refreshed = await request(app).get("/health/quick-order?ref=SYNTHETIC_REFERRAL");
@@ -170,5 +160,18 @@ describe("Quick Order through real serveStatic with a synthetic build", () => {
     expect(response.headers.location).toBeUndefined();
     expect(response.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
     expect(response.headers.link).toBeUndefined();
+  });
+});
+
+describe("Proposed Quick Order static document-header hardening pending Samuel's 8392d243 disposition", () => {
+  // Separate from the sixth pin above. Frozen static.ts supplies this trio for
+  // /status only; these unskipped expectations remain source-predicted failures,
+  // not executed results or an approved runtime header requirement.
+  it.each(PRIVACY_CASES)("requires private cache/referrer headers for $method $target", async ({ method, target }) => {
+    const response = await (method === "GET" ? request(app).get(target) : request(app).head(target));
+    expect(response.status).toBe(200);
+    expect(response.headers["cache-control"]).toBe("no-store, private");
+    expect(response.headers.pragma).toBe("no-cache");
+    expect(response.headers["referrer-policy"]).toBe("no-referrer");
   });
 });

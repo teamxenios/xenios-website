@@ -6,7 +6,7 @@
       "id": "HEALTH-QUICK-ORDER-20261005",
       "title": "Implement isolated Health Quick Order intake over canonical assisted requests",
       "priority": "P1",
-      "state": "blocked_external",
+      "state": "claimed",
       "owner": "codex-health-quick-order-20261005",
       "baseSha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
       "paths": [
@@ -55,7 +55,7 @@
         "supabase/verification/research_health_quick_order_currentness_local.mjs"
       ],
       "dependsOn": [],
-      "scopeNote": "SQL candidate source7d027e4 pushed with intake readers/currentness held metadata, two e279 test refinements and exact source receipts; all execution NOT RUN. Same original review pending for new bytes and proposed guard/commit design. Same builder parked; G1 spent; runtime/decoder/UI/protected/predecessor/manifest frozen.",
+      "scopeNote": "Active bounded source-only repair of original review59940dc, same owner/lease at baseline18bfbcd. Exactly ten SQL/verifier paths plus three composition tests. All execution NOT RUN; qualification window EXPIRED, G1 consumed and five unused groups expired. No resource check, runtime or held-body work.",
       "claimedAt": "2026-10-05T19:13:42.715Z",
       "sourceSha": "7d027e4dff130214cb71954e2de548be5747cd0c",
       "sourceTree": "3819c5f4efed71bd12d5e759593e71c580d96cc3",
@@ -78,8 +78,8 @@
         "Wrapper installation/qualification before reader cutover; classification display requires separate projection disposition",
         "Protected acceptance/manifest/GATE-01, durable atomic persistence, Health authorities, operational readback, notification/payment and release remain held"
       ],
-      "heartbeatAt": "2026-10-06T20:11:53.415Z",
-      "note": "SQL candidate source7d027e4 pushed with intake readers/currentness held metadata, two e279 test refinements and exact source receipts; all execution NOT RUN. Same original review pending for new bytes and proposed guard/commit design. Same builder parked; G1 spent; runtime/decoder/UI/protected/predecessor/manifest frozen.",
+      "heartbeatAt": "2026-10-07T03:39:17.194Z",
+      "note": "Active bounded source-only repair of original review59940dc, same owner/lease at baseline18bfbcd. Exactly ten SQL/verifier paths plus three composition tests. All execution NOT RUN; qualification window EXPIRED, G1 consumed and five unused groups expired. No resource check, runtime or held-body work.",
       "qualification": {
         "reservation": "QO-FIRST-20261006-G1",
         "status": "REFUSED_RELEASED",
@@ -92,7 +92,12 @@
         "maximumGroups": 6,
         "evidenceCommit": "dc119280d881e8fd6066a6be9829e6b2a2fa4005",
         "retryAuthorized": false,
-        "expiresAt": "2026-10-06T21:43:37Z"
+        "expiresAt": "2026-10-06T21:43:37Z",
+        "windowStatus": "EXPIRED",
+        "expiredUnusedGroups": 5,
+        "availableGroups": 0,
+        "currentReservation": null,
+        "currentResourceObservation": null
       }
     },
     {

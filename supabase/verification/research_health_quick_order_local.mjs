@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const CANDIDATE = 'supabase/candidates/20261005_research_health_quick_order_intake';
 const SELF = 'supabase/verification/research_health_quick_order_local.mjs';
-const BINDINGS = 'docs/health-launch/quick-order-20261005/evidence/review-cleared-draft-bindings-20261006.json';
+const BINDINGS = 'docs/health-launch/quick-order-20261005/evidence/review-599-repair-bindings-20261007.json';
 const OWN = [CANDIDATE+'.sql', CANDIDATE+'.precheck.sql', CANDIDATE+'.postcheck.sql', CANDIDATE+'.rollback.md', SELF];
 const BOOTSTRAP = 'supabase/verification/research-assisted-order-bridge-disposable-bootstrap.sql';
 const OUTBOX = 'supabase/research-notification-outbox.sql';
@@ -38,6 +38,29 @@ const MIGRATIONS = [
   '20261001115512_research_assisted_order_quote_provider_settlement.sql',
   '20261001160730_research_assisted_order_provider_quarantine_isolation.sql',
 ].map(name => 'supabase/migrations/'+name);
+// Independent expected census from canonical migration source: requests 8,
+// events 7, outbox 4. Never derive this assertion from the candidate being checked.
+const TRIGGERS = [
+  ['research_assisted_order_requests','research_assisted_order_paid_hold','O'],
+  ['research_assisted_order_requests','hl12_observed_cancel','O'],
+  ['research_assisted_order_requests','hl12_history_progression','O'],
+  ['research_assisted_order_requests','aa_hl12_disposition_terminal','O'],
+  ['research_assisted_order_requests','aaa_adp01_uncertainty','A'],
+  ['research_assisted_order_requests','adp03_request_identity','A'],
+  ['research_assisted_order_requests','adp03_evidence_truncate','A'],
+  ['research_assisted_order_requests','adp03_evidence_immutable','A'],
+  ['research_assisted_order_events','research_assisted_order_events_append_only','A'],
+  ['research_assisted_order_events','research_assisted_order_paid_event_evidence','A'],
+  ['research_assisted_order_events','hl12_disposition_cancel_event','O'],
+  ['research_assisted_order_events','adp03_paid_event','A'],
+  ['research_assisted_order_events','adp03_evidence_truncate','A'],
+  ['research_assisted_order_events','adp03_evidence_immutable','A'],
+  ['research_assisted_order_events','hl12_disposition_no_truncate','O'],
+  ['research_notification_outbox','hl12_payment_effects_outbox_guard','A'],
+  ['research_notification_outbox','hl12_payment_effects_outbox_truncate','A'],
+  ['research_notification_outbox','hl12_disposition_effects_outbox','O'],
+  ['research_notification_outbox','hl12_disposition_effects_truncate','O'],
+].map(row => row.join('|')).sort();
 const held = [
   'atomic canonical request/line/event/companion/receipt/outbox commit',
   'authenticated actor/key derivation and standing/legal/Health admission',
@@ -136,7 +159,8 @@ async function load(file) {
 }
 for(const file of [...OWN,BINDINGS,BOOTSTRAP,OUTBOX,...MIGRATIONS])await load(file);
 const bindings=JSON.parse(await load(BINDINGS));
-assert.equal(bindings.review,'ca1c114a083793918b18d017b32509864ee4bcf6');
+assert.equal(bindings.review,'59940dcce778d18dcae605172a46f676b9933fcf');
+assert.deepEqual(bindings.canonicalTriggers.map(t => [t.relation,t.name,t.enabled].join('|')).sort(),TRIGGERS);
 assert.match(bindings.base,/^[a-f0-9]{40}$/); assert.equal(bindings.inventory.length,55);
 for(const item of bindings.inventory) {
   safeRelative(item.path);
@@ -229,6 +253,12 @@ const integrity='select public.research_assisted_order_provider_settlement_integ
 const fingerprint='select public.research_assisted_order_provider_schema_fingerprint();';
 async function boundary(expected) {
   await psql(integrity);assert.equal((await psql(fingerprint)).trim(),expected);
+  const triggers=(await psql(`select c.relname||'|'||t.tgname||'|'||t.tgenabled
+    from pg_catalog.pg_trigger t join pg_catalog.pg_class c on c.oid=t.tgrelid
+    where not t.tgisinternal and c.relnamespace='public'::regnamespace and c.relname in
+      ('research_assisted_order_requests','research_assisted_order_events','research_notification_outbox')
+    order by c.relname,t.tgname;`)).split(/\r?\n/).filter(Boolean).sort();
+  assert.deepEqual(triggers,TRIGGERS,'Independent canonical 19-trigger inventory differs');
 }
 async function cleanup() {
   if(!launchAttempted)return;
@@ -284,7 +314,7 @@ try {
   const before=(await psql(fingerprint)).trim();
   await boundary(before);await psql(precheck);await psql(candidate);await psql(postcheck);await boundary(before);
   await psql(candidate);await psql(postcheck);await boundary(before);
-  pass('exact absent install and identical reapply preserve provider integrity/fingerprint and all 14 trigger states');
+  pass('exact absent install and identical reapply preserve provider integrity/fingerprint and independently checked 19 trigger states');
   await psql(rollback);await psql(precheck);await boundary(before);
   await psql(rollback);await boundary(before);await psql(candidate);await psql(postcheck);
   pass('empty exact rollback and absent rollback preserve canonical state; installation can be reapplied');
@@ -312,6 +342,25 @@ try {
   assert.deepEqual(Object.fromEntries(Object.entries(legacy.detail).filter(([key])=>!['source','declaredAffiliateCode','declaredAffiliateCodeState'].includes(key))),canonical);
   assert.equal((await psql(service(detail(999)))).trim(),'');
   pass('actual canonical20 becomes exact23 for legacy, retains canonical timestamps and absent request stays null');
+  // Synthetic non-submitted injected-key regression through the actual canonical
+  // writer. Neither a partial nor a closed-key status note identifies an intake.
+  for(const [expectedStatus,newStatus,evidence] of [
+    ['submitted','reviewing',{payloadHash:'operator-note'}],
+    ['reviewing','waiting_on_customer',{intakeKind:'quick-order-v1',payloadHash}],
+  ]) {
+    await psql(service(`select public.research_assisted_order_set_status(
+      ${quote(uuid(10))},${quote(expectedStatus)},${quote(newStatus)},'synthetic-operator','admin',
+      null,null,${j(evidence)},${quote(time)}::timestamptz);`));
+    const injected=await json(service(detail(10)));
+    assert.equal(injected.detail.status,newStatus);
+    assert.equal(injected.submittedEvent,null);assert.equal(injected.enrichment,null);
+  }
+  await psql(rollback);await psql(precheck);await boundary(before);
+  await psql(candidate);await psql(postcheck);await boundary(before);
+  const retainedLegacy=await json(service(detail(10)));
+  assert.equal(retainedLegacy.detail.status,'waiting_on_customer');
+  assert.equal(retainedLegacy.submittedEvent,null);assert.equal(retainedLegacy.enrichment,null);
+  pass('synthetic non-submitted injected-key regression: canonical status notes preserve legacy readback and empty rollback/reinstall');
   await psql('begin;'+fixture(1)+fixture(2,{price:null})+'commit;');
   const enriched=await json(service(detail(1))),pending=await json(service(detail(2)));
   assert.equal(enriched.detail.createdAt,time);assert.equal(enriched.submittedEvent.occurredAt,time);

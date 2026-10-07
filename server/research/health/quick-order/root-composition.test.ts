@@ -346,8 +346,16 @@ describe("Quick Order through the actual production composition root", () => {
     expect(document.body).toContain("<!-- synthetic-root-build -->");
     expect(document.body).not.toMatch(/application\/ld\+json|rel="canonical"|property="og:|name="twitter:/);
     expect(document.body).not.toContain("SYNTHETIC_ROOT_REFERRAL");
-    // Required behavior; frozen static.ts omits these. Source-predicted failure
-    // is retained for the separately proposed amendment, not called a test run.
+  });
+});
+
+describe("Proposed Quick Order root document-header hardening pending Samuel's 8392d243 disposition", () => {
+  it("requires the proposed private cache headers alongside the existing Helmet referrer policy", async () => {
+    const document = await rawProbe("/health/quick-order?ref=SYNTHETIC_ROOT_REFERRAL");
+    // Separate from the sixth pin above. Only Cache-Control and Pragma are
+    // predicted absent here: root Helmet already supplies no-referrer. These
+    // unskipped expectations remain source predictions, not executed results
+    // or an approved runtime header requirement.
     expect(document.headers["cache-control"]).toBe("no-store, private");
     expect(document.headers.pragma).toBe("no-cache");
     expect(document.headers["referrer-policy"]).toBe("no-referrer");

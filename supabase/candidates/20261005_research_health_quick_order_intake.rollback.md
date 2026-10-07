@@ -22,22 +22,36 @@ copied from the target database. `qo_intake_definition_sha256` is SHA-256 over
 the candidate's literal `qo_ddl` and `qo_fingerprint` contents concatenated,
 with CRLF normalized to LF. The external receipt also pins this rollback file.
 
-The transaction below verifies exact own source/schema/ACL/RLS and the original
-14 named predecessor trigger states, calls the real provider integrity routine,
-refuses every nonempty companion and any remaining Quick Order event/outbox
-evidence, removes only exact owned objects with RESTRICT, then rechecks absence
+The transaction below verifies exact own source/schema/ACL/RLS and all
+19 named predecessor trigger states (requests 8, events 7, outbox 4), calls the
+real provider integrity routine, refuses every nonempty companion and any
+remaining submitted Quick Order marker (including malformed candidates) or
+outbox evidence, removes only exact owned objects with RESTRICT, then rechecks absence
 and unchanged canonical fingerprint/integrity. A partial install, unknown
 dependency, privilege drift, changed definition or retained fact aborts the
 transaction. Do not disable constraints, delete evidence or add CASCADE to make
 rollback succeed. If facts exist, hold this rollback and prepare a separately
 approved retention/recovery disposition.
 
+Evidence keys on non-submitted canonical status events do not identify an intake
+and cannot by themselves prevent this empty-install rollback.
+
+The companion foreign key also locks the canonical
+`public.research_assisted_order_requests` relation: installation requires
+`ShareRowExclusiveLock`; dropping the companion removes the foreign key's
+internal RI triggers under `AccessExclusiveLock` on that canonical relation.
+Both transactions set `lock_timeout='5s'`; a lock timeout aborts the whole
+transaction. These locks can temporarily contend with canonical writers even
+though no canonical request data or authored canonical guard is changed.
+
 ```sql
 \set ON_ERROR_STOP on
 \if :{?qo_intake_definition_sha256}
 \else
   \echo 'STOP: externally source-bound qo_intake_definition_sha256 is required'
-  \quit 2
+  do $missing_source_binding$
+  begin raise exception 'Externally source-bound qo_intake_definition_sha256 is required' using errcode='55000'; end
+  $missing_source_binding$;
 \endif
 begin;
 set local search_path='';
@@ -87,10 +101,15 @@ begin
       ('research_assisted_order_requests','aa_hl12_disposition_terminal','O'),
       ('research_assisted_order_requests','aaa_adp01_uncertainty','A'),
       ('research_assisted_order_requests','adp03_request_identity','A'),
+      ('research_assisted_order_requests','adp03_evidence_truncate','A'),
+      ('research_assisted_order_requests','adp03_evidence_immutable','A'),
       ('research_assisted_order_events','research_assisted_order_events_append_only','A'),
       ('research_assisted_order_events','research_assisted_order_paid_event_evidence','A'),
       ('research_assisted_order_events','hl12_disposition_cancel_event','O'),
       ('research_assisted_order_events','adp03_paid_event','A'),
+      ('research_assisted_order_events','adp03_evidence_truncate','A'),
+      ('research_assisted_order_events','adp03_evidence_immutable','A'),
+      ('research_assisted_order_events','hl12_disposition_no_truncate','O'),
       ('research_notification_outbox','hl12_payment_effects_outbox_guard','A'),
       ('research_notification_outbox','hl12_payment_effects_outbox_truncate','A'),
       ('research_notification_outbox','hl12_disposition_effects_outbox','O'),
@@ -151,7 +170,13 @@ begin
     -- Lock this owned table before absence checks; no retained fact is discarded.
     lock table public.research_health_quick_order_intakes in access exclusive mode;
     if exists(select 1 from public.research_health_quick_order_intakes)
-      or exists(select 1 from public.research_assisted_order_events where evidence ? 'intakeKind' or evidence ? 'payloadHash')
+      -- Retain both closed submitted markers and malformed submitted candidates;
+      -- non-submitted operator evidence is not Quick Order marker authority.
+      or exists(select 1 from public.research_assisted_order_events where status='submitted'
+        and public.research_health_quick_order_intake_closed(evidence,array['intakeKind','payloadHash']) is true)
+      or exists(select 1 from public.research_assisted_order_events where status='submitted'
+        and (evidence ? 'intakeKind' or evidence ? 'payloadHash')
+        and public.research_health_quick_order_intake_closed(evidence,array['intakeKind','payloadHash']) is not true)
       or exists(select 1 from public.research_notification_outbox
         where template_key='research.assisted_order.quick_order.submitted.admin.v1'
           or event_key like 'assisted-order:%:quick-order-submitted:admin')
@@ -177,10 +202,15 @@ begin
       ('research_assisted_order_requests','aa_hl12_disposition_terminal','O'),
       ('research_assisted_order_requests','aaa_adp01_uncertainty','A'),
       ('research_assisted_order_requests','adp03_request_identity','A'),
+      ('research_assisted_order_requests','adp03_evidence_truncate','A'),
+      ('research_assisted_order_requests','adp03_evidence_immutable','A'),
       ('research_assisted_order_events','research_assisted_order_events_append_only','A'),
       ('research_assisted_order_events','research_assisted_order_paid_event_evidence','A'),
       ('research_assisted_order_events','hl12_disposition_cancel_event','O'),
       ('research_assisted_order_events','adp03_paid_event','A'),
+      ('research_assisted_order_events','adp03_evidence_truncate','A'),
+      ('research_assisted_order_events','adp03_evidence_immutable','A'),
+      ('research_assisted_order_events','hl12_disposition_no_truncate','O'),
       ('research_notification_outbox','hl12_payment_effects_outbox_guard','A'),
       ('research_notification_outbox','hl12_payment_effects_outbox_truncate','A'),
       ('research_notification_outbox','hl12_disposition_effects_outbox','O'),

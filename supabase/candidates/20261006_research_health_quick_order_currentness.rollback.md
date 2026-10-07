@@ -26,7 +26,7 @@ recorded `base`; amended tests use their final source hashes in the receipt.
 The exact required path set is the deduplicated union of:
 
 - All 55 `inventory[].path` entries in
-  `docs/health-launch/quick-order-20261005/evidence/review-cleared-draft-bindings-20261006.json`,
+  `docs/health-launch/quick-order-20261005/evidence/review-599-repair-bindings-20261007.json`,
   plus that JSON file itself.
 - These five currentness candidate/precheck/postcheck/rollback/verifier files.
 - Every literal entry of the verifier's `BASELINE_SQL` array. Besides paths
@@ -53,11 +53,12 @@ always reports unavailable, including with a manually active head. The reserved
 writer epoch is not proof of coordinated writers in this slice.
 
 Before a future rollback, bind all source files in
-`docs/health-launch/quick-order-20261005/evidence/review-cleared-draft-bindings-20261006.json`
+`docs/health-launch/quick-order-20261005/evidence/review-599-repair-bindings-20261007.json`
 and separately bind these five new currentness files. The four added historical
 sources are the evidence-corrections and history-immutability migrations, the
 notification-outbox source and the registered status-recovery migration. Their
-bindings and the exact fourteen O/A trigger states must remain unchanged.
+bindings and the exact nineteen O/A trigger states (requests 8, events 7,
+outbox 4) must remain unchanged.
 
 The pre/postchecks require session setting
 `research_health_quick_order.currentness_definition`: SHA256 of the UTF-8
@@ -70,7 +71,7 @@ Run the exact precheck before the rollback block below, with that setting bound.
 It independently compares definitions, ownership, table/column ACLs, RLS,
 constraints, indexes, rules, triggers and policies against the installed seal.
 It calls the actual `research_assisted_order_provider_settlement_integrity()`
-and requires the exact fourteen canonical triggers and their O/A states.
+and requires the exact nineteen canonical triggers and their O/A states.
 
 If any revision or head history exists, this destructive rollback **refuses**.
 Use the owner-only revoke function to keep an existing published revision held;
@@ -130,11 +131,14 @@ commit;
 -- CURRENTNESS_EMPTY_ROLLBACK_END
 ```
 
-Run the exact precheck again to require the absent state and unchanged canonical
-trigger/fence inventory. The verifier additionally asserts all eight named table
-and function objects are absent and compares the complete canonical schema
-fingerprint across install, reapply and rollback. No `CASCADE`, schema reset,
-fingerprint resealing, canonical grant repair or guard replacement is permitted.
+Run the exact precheck again to check the unchanged canonical trigger/fence
+inventory. It permits absence but does not require the absent state. The verifier
+separately requires zero `pg_proc` and `pg_class` rows matching its function and
+relation predicates; it does not enumerate all eight named objects or separately
+assert absence of `pg_type` leftovers. It also compares the complete canonical
+schema fingerprint across install, reapply and rollback. No `CASCADE`, schema
+reset, fingerprint resealing, canonical grant repair or guard replacement is
+permitted.
 
 Atomic commit, source-writer currentness, competing writers, revocation ordering,
 expiry while waiting, and liveness are **HELD / NOT IMPLEMENTED**. A successful

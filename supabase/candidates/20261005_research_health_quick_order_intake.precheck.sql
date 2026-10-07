@@ -6,7 +6,9 @@
 \if :{?qo_intake_definition_sha256}
 \else
   \echo 'STOP: externally source-bound qo_intake_definition_sha256 is required'
-  \quit 2
+  do $missing_source_binding$
+  begin raise exception 'Externally source-bound qo_intake_definition_sha256 is required' using errcode='55000'; end
+  $missing_source_binding$;
 \endif
 begin transaction read only;
 set local search_path='';
@@ -55,10 +57,15 @@ begin
       ('research_assisted_order_requests','aa_hl12_disposition_terminal','O'),
       ('research_assisted_order_requests','aaa_adp01_uncertainty','A'),
       ('research_assisted_order_requests','adp03_request_identity','A'),
+      ('research_assisted_order_requests','adp03_evidence_truncate','A'),
+      ('research_assisted_order_requests','adp03_evidence_immutable','A'),
       ('research_assisted_order_events','research_assisted_order_events_append_only','A'),
       ('research_assisted_order_events','research_assisted_order_paid_event_evidence','A'),
       ('research_assisted_order_events','hl12_disposition_cancel_event','O'),
       ('research_assisted_order_events','adp03_paid_event','A'),
+      ('research_assisted_order_events','adp03_evidence_truncate','A'),
+      ('research_assisted_order_events','adp03_evidence_immutable','A'),
+      ('research_assisted_order_events','hl12_disposition_no_truncate','O'),
       ('research_notification_outbox','hl12_payment_effects_outbox_guard','A'),
       ('research_notification_outbox','hl12_payment_effects_outbox_truncate','A'),
       ('research_notification_outbox','hl12_disposition_effects_outbox','O'),
@@ -134,10 +141,15 @@ begin
       ('research_assisted_order_requests','aa_hl12_disposition_terminal','O'),
       ('research_assisted_order_requests','aaa_adp01_uncertainty','A'),
       ('research_assisted_order_requests','adp03_request_identity','A'),
+      ('research_assisted_order_requests','adp03_evidence_truncate','A'),
+      ('research_assisted_order_requests','adp03_evidence_immutable','A'),
       ('research_assisted_order_events','research_assisted_order_events_append_only','A'),
       ('research_assisted_order_events','research_assisted_order_paid_event_evidence','A'),
       ('research_assisted_order_events','hl12_disposition_cancel_event','O'),
       ('research_assisted_order_events','adp03_paid_event','A'),
+      ('research_assisted_order_events','adp03_evidence_truncate','A'),
+      ('research_assisted_order_events','adp03_evidence_immutable','A'),
+      ('research_assisted_order_events','hl12_disposition_no_truncate','O'),
       ('research_notification_outbox','hl12_payment_effects_outbox_guard','A'),
       ('research_notification_outbox','hl12_payment_effects_outbox_truncate','A'),
       ('research_notification_outbox','hl12_disposition_effects_outbox','O'),

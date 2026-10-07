@@ -1,6 +1,14 @@
 # Reviewed wrapper contract and predecessor amendment
 
-Source-only contract recorded before any wrapper SQL is authored. Baseline is
+Current correction for original review `59940dcce778d18dcae605172a46f676b9933fcf`,
+docs42 §5a and 45, at repair baseline `18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb`.
+The earlier fourteen-trigger census was incomplete: the source-derived set is
+**nineteen (requests 8, events 7, outbox 4)**. This successor corrects the current
+contract; the original `b75325a` contract and receipts remain historical evidence.
+No hosted census or execution result is claimed. All 55 reference files are frozen
+in `evidence/review-599-repair-bindings-20261007.json`.
+
+The original source-only contract was recorded before wrapper SQL. Its baseline was
 source `5fd2e4c74d31562281493013489bb41949979b88`, records
 `1595b8df868a0bd3779ae84fb3da3226c9a75902`. Authority remains Samuel's bounded
 approval `dc3329bb2cfb3b93d8d054c8bbc77a291df0e671` for packet
@@ -109,7 +117,14 @@ Genuine legacy means the submitted-event marker is absent **and** companion
 enrichment is absent, with explicit `submittedEvent: null` and `enrichment: null`.
 Inspect the submitted event independently of the companion. A Quick Order marker,
 companion, receipt or outbox obligation missing its peer is corruption and refuses.
-Unknown/partial intake markers also refuse. An absent request alone returns null.
+Discovery counts/selects only `status = 'submitted'` events with the exact closed
+`intakeKind`/`payloadHash` key set. A separate refusal recognizes a submitted
+event carrying either marker key with a malformed/partial/extra-key shape, so it
+cannot fall through as legacy. Closed markers still require their exact values
+and consistent peers. Non-submitted status evidence containing either key is
+ordinary canonical evidence and cannot mark a legacy request or block rollback.
+Rollback retains/refuses both valid submitted markers and malformed submitted
+marker candidates. An absent request alone returns null.
 The wrapper's observation is always `observed`; never emit wire `stale`.
 `stale` is only the existing post-update service overlay awaiting a fresh read,
 unrelated to outbox processing-claim reclamation.
@@ -136,12 +151,18 @@ doc42 S-F12; it grants no real intake, new recovery token or bypass.
 
 ## Predecessors and exact protection consequences
 
-`evidence/review-cleared-draft-bindings-20261006.json` binds all 46 original
+Historical `evidence/review-cleared-draft-bindings-20261006.json` binds all 46 original
 references to current successor bytes plus the four omitted predecessors and
 current S4/new-test sources (55 unique paths). Six original shared-patch targets
 now have their actual `9118a82` successor hashes, including the UI amendment;
 the S4 decoder includes its added RPC constant. The preapproval patch alone is
 not the current source identity. All historical SQL remains unchanged.
+
+The current repair uses `evidence/review-599-repair-bindings-20261007.json`:
+the same 55 reference paths are pinned at `18bfbcd` and frozen during this repair,
+including both previously strengthened readback/notification test files. The ten
+SQL/verifier paths and three server composition tests are the only implementation
+paths eligible to change. Historical binding bytes are preserved.
 
 Added predecessor bindings:
 
@@ -163,10 +184,15 @@ means ENABLE ALWAYS. This is source-derived, not a hosted catalog observation.
 | same | `aa_hl12_disposition_terminal` | O |
 | same | `aaa_adp01_uncertainty` | A |
 | same | `adp03_request_identity` | A |
+| same | `adp03_evidence_truncate` | A |
+| same | `adp03_evidence_immutable` | A |
 | `research_assisted_order_events` | `research_assisted_order_events_append_only` | A |
 | same | `research_assisted_order_paid_event_evidence` | A |
 | same | `hl12_disposition_cancel_event` | O |
 | same | `adp03_paid_event` | A |
+| same | `adp03_evidence_truncate` | A |
+| same | `adp03_evidence_immutable` | A |
+| same | `hl12_disposition_no_truncate` | O |
 | `research_notification_outbox` | `hl12_payment_effects_outbox_guard` | A |
 | same | `hl12_payment_effects_outbox_truncate` | A |
 | same | `hl12_disposition_effects_outbox` | O |
@@ -174,13 +200,22 @@ means ENABLE ALWAYS. This is source-derived, not a hosted catalog observation.
 
 `20261001085559` enables the request uncertainty guard ALWAYS; `20261001115512`
 enables request identity, paid-event, append-only, paid-event-evidence and the two
-payment-effects outbox guards ALWAYS. `20261001160730` fingerprints `tgenabled`
+payment-effects outbox guards ALWAYS. Its lines474–484 create both evidence
+triggers ALWAYS on requests and events. `20261001062651` lines373–378 creates
+the events no-truncate trigger ordinary; the later inherited ALWAYS promotion
+names `observation_corrections`, not events. `20261001160730` fingerprints `tgenabled`
 without overriding these states. Do not expand the review's shorthand into
 nonexistent trigger names or replace these A states with O.
 
 Also retain exact definitions/ACL/schema checks and the actual provider integrity
 RPC before and after install, exact reapply and rollback. FK internal triggers
 are excluded by the existing fence; compatibility is still unexecuted.
+The companion FK nevertheless takes `ShareRowExclusiveLock` on canonical
+requests during installation; dropping it during rollback takes
+`AccessExclusiveLock` on canonical requests while removing internal RI triggers.
+The candidate/rollback five-second lock timeout bounds the wait and aborts the
+whole transaction on failure. Exclusion from the fingerprint is not absence of
+locking effects. No lock behavior has been executed here.
 
 Doc41 precision: the protection gate is expected to fail with three new HARD
 mismatches (tracking, attribution, PWA), inherited static/GATE-01, the three Core
@@ -205,7 +240,8 @@ superseded. Currentness uses `20261006_research_health_quick_order_currentness`
 and its named verifier. Only the exact ten paths in the new lease are assigned.
 No migration file or manifest registration is added.
 
-In this guardless slice, owner-scoped publish can record an immutable revision
+In this guardless slice, owner-scoped publish provides callable-surface revision
+immutability only (owner DML can still change/delete revisions or reduce epochs)
 but retains `held`; it cannot activate an authority. Revoke also holds. Read-current
 must remain unavailable while writer guards/commit qualification are absent,
 including if somebody manually sets an active head. No active authority seed,
@@ -218,7 +254,12 @@ never pass a whole-suite result by omitting them.
 
 Both pending exact patches remain unapplied: provider-journal fixture `8396609b`
 and static document headers `8392d243`. Existing shared runtime, decoder and UI
-stay frozen. Only the two named new integration-test files may be strengthened.
+stay frozen. The two integration-test files are now frozen; only the ten
+SQL/verifier files and three named server composition tests may change in the
+review599 repair. See `HELD_5C_REVIEW_599_DELTA_20261007.md` and
+`REVIEW_599_RESIDUAL_MATRIX_20261007.md` for the unresolved design and P3 findings.
+The qualification window expired at 2026-10-06T21:43:37Z: G1 consumed/refused,
+five unused groups expired, zero available. No fresh resource observation exists.
 
 The Supabase skill was read. Current official [database function security](https://supabase.com/docs/guides/database/functions)
 and [RLS/grants documentation](https://supabase.com/docs/guides/database/postgres/row-level-security)

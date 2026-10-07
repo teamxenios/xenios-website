@@ -11,7 +11,7 @@ import { spawn } from 'node:child_process';
 
 const PREFIX = 'public.research_health_quick_order_';
 const CANDIDATE = 'supabase/candidates/20261006_research_health_quick_order_currentness';
-const BINDINGS = 'docs/health-launch/quick-order-20261005/evidence/review-cleared-draft-bindings-20261006.json';
+const BINDINGS = 'docs/health-launch/quick-order-20261005/evidence/review-599-repair-bindings-20261007.json';
 const OWN_SOURCE = [CANDIDATE + '.sql', CANDIDATE + '.precheck.sql', CANDIDATE + '.postcheck.sql',
   CANDIDATE + '.rollback.md', 'supabase/verification/research_health_quick_order_currentness_local.mjs'];
 // Actual historical sources, in dependency order. No replacement fence, mock
@@ -45,10 +45,15 @@ const TRIGGERS = [
   ['research_assisted_order_requests','aa_hl12_disposition_terminal','O'],
   ['research_assisted_order_requests','aaa_adp01_uncertainty','A'],
   ['research_assisted_order_requests','adp03_request_identity','A'],
+  ['research_assisted_order_requests','adp03_evidence_truncate','A'],
+  ['research_assisted_order_requests','adp03_evidence_immutable','A'],
   ['research_assisted_order_events','research_assisted_order_events_append_only','A'],
   ['research_assisted_order_events','research_assisted_order_paid_event_evidence','A'],
   ['research_assisted_order_events','hl12_disposition_cancel_event','O'],
   ['research_assisted_order_events','adp03_paid_event','A'],
+  ['research_assisted_order_events','adp03_evidence_truncate','A'],
+  ['research_assisted_order_events','adp03_evidence_immutable','A'],
+  ['research_assisted_order_events','hl12_disposition_no_truncate','O'],
   ['research_notification_outbox','hl12_payment_effects_outbox_guard','A'],
   ['research_notification_outbox','hl12_payment_effects_outbox_truncate','A'],
   ['research_notification_outbox','hl12_disposition_effects_outbox','O'],
@@ -359,7 +364,7 @@ try {
   assert.equal(await canonical(), before);
   for (const [file, original] of loadedSources) assert.equal(lf(await readFile(file, 'utf8')), original, 'Source changed during verification');
   console.log(JSON.stringify({ kind: 'bounded_checks_complete', disposition: 'HELD_NOT_IMPLEMENTED',
-    checked: ['exact absent/install/reapply/empty rollback','canonical fence and fourteen trigger states',
+    checked: ['exact absent/install/reapply/empty rollback','canonical fence and nineteen trigger states (requests 8/events 7/outbox 4)',
       'closed held metadata publication','role denial','retained revision evidence','schema/ACL drift refusal'],
     omitted: HELD, sourceCommit, receiptHash, commands: evidence }));
   process.exitCode = 2;

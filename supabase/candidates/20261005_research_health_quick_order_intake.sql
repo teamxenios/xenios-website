@@ -154,9 +154,21 @@ begin
   have_request:=found;
   select * into c from public.research_health_quick_order_intakes where request_id=p_request_id;
   have_companion:=found;
-  -- Marker discovery does not depend on the companion, event status or marker value.
+  -- Only submitted events can identify an intake. Later canonical status events
+  -- may carry arbitrary operator evidence, including these keys. Malformed
+  -- submitted candidates still refuse before the genuine-legacy fallback.
+  if exists(select 1 from public.research_assisted_order_events
+    where request_id=p_request_id and status='submitted'
+      and (evidence ? 'intakeKind' or evidence ? 'payloadHash')
+      and (public.research_health_quick_order_intake_closed(evidence,array['intakeKind','payloadHash']) is not true
+        or evidence->>'intakeKind' is distinct from 'quick-order-v1'
+        or jsonb_typeof(evidence->'payloadHash') is distinct from 'string'
+        or evidence->>'payloadHash' !~ '^[a-f0-9]{64}$')) then
+    raise exception 'Quick Order submitted marker unavailable' using errcode='55000';
+  end if;
   select count(*) into marked from public.research_assisted_order_events
-    where request_id=p_request_id and (evidence ? 'intakeKind' or evidence ? 'payloadHash');
+    where request_id=p_request_id and status='submitted'
+      and public.research_health_quick_order_intake_closed(evidence,array['intakeKind','payloadHash']) is true;
   select count(*) into obligations from public.research_notification_outbox n
     where n.event_key=v_event_key or
       (n.template_key='research.assisted_order.quick_order.submitted.admin.v1'
@@ -188,7 +200,8 @@ begin
     or c.request_acknowledged is distinct from true
   then raise exception 'Quick Order evidence unavailable' using errcode='55000'; end if;
   select * into strict e from public.research_assisted_order_events
-    where request_id=p_request_id and (evidence ? 'intakeKind' or evidence ? 'payloadHash');
+    where request_id=p_request_id and status='submitted'
+      and public.research_health_quick_order_intake_closed(evidence,array['intakeKind','payloadHash']) is true;
   select * into strict o from public.research_notification_outbox n
     where n.event_key=v_event_key or
       (n.template_key='research.assisted_order.quick_order.submitted.admin.v1'
@@ -353,10 +366,15 @@ begin
       ('research_assisted_order_requests','aa_hl12_disposition_terminal','O'),
       ('research_assisted_order_requests','aaa_adp01_uncertainty','A'),
       ('research_assisted_order_requests','adp03_request_identity','A'),
+      ('research_assisted_order_requests','adp03_evidence_truncate','A'),
+      ('research_assisted_order_requests','adp03_evidence_immutable','A'),
       ('research_assisted_order_events','research_assisted_order_events_append_only','A'),
       ('research_assisted_order_events','research_assisted_order_paid_event_evidence','A'),
       ('research_assisted_order_events','hl12_disposition_cancel_event','O'),
       ('research_assisted_order_events','adp03_paid_event','A'),
+      ('research_assisted_order_events','adp03_evidence_truncate','A'),
+      ('research_assisted_order_events','adp03_evidence_immutable','A'),
+      ('research_assisted_order_events','hl12_disposition_no_truncate','O'),
       ('research_notification_outbox','hl12_payment_effects_outbox_guard','A'),
       ('research_notification_outbox','hl12_payment_effects_outbox_truncate','A'),
       ('research_notification_outbox','hl12_disposition_effects_outbox','O'),
@@ -463,10 +481,15 @@ begin
       ('research_assisted_order_requests','aa_hl12_disposition_terminal','O'),
       ('research_assisted_order_requests','aaa_adp01_uncertainty','A'),
       ('research_assisted_order_requests','adp03_request_identity','A'),
+      ('research_assisted_order_requests','adp03_evidence_truncate','A'),
+      ('research_assisted_order_requests','adp03_evidence_immutable','A'),
       ('research_assisted_order_events','research_assisted_order_events_append_only','A'),
       ('research_assisted_order_events','research_assisted_order_paid_event_evidence','A'),
       ('research_assisted_order_events','hl12_disposition_cancel_event','O'),
       ('research_assisted_order_events','adp03_paid_event','A'),
+      ('research_assisted_order_events','adp03_evidence_truncate','A'),
+      ('research_assisted_order_events','adp03_evidence_immutable','A'),
+      ('research_assisted_order_events','hl12_disposition_no_truncate','O'),
       ('research_notification_outbox','hl12_payment_effects_outbox_guard','A'),
       ('research_notification_outbox','hl12_payment_effects_outbox_truncate','A'),
       ('research_notification_outbox','hl12_disposition_effects_outbox','O'),

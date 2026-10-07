@@ -102,16 +102,6 @@ describe("Quick Order setupVite document composition unit with controlled transp
     expect(boundary.ssrFixStacktrace).not.toHaveBeenCalled();
   });
 
-  // The common frozen sendRawHttpDocument currently omits these for Quick Order.
-  // Keep the required assertions; source prediction is not an observed test run.
-  it.each(PRIVACY_CASES)("requires private cache/referrer headers for $method $target", async ({ method, target }) => {
-    const response = await (method === "GET" ? request(server!).get(target) : request(server!).head(target));
-    expect(response.status).toBe(200);
-    expect(response.headers["cache-control"]).toBe("no-store, private");
-    expect(response.headers.pragma).toBe("no-cache");
-    expect(response.headers["referrer-policy"]).toBe("no-referrer");
-  });
-
   it("runs the real fallback again for a direct refresh without carrying referral query values into HTML", async () => {
     const first = await request(server!).get("/health/quick-order");
     const refreshed = await request(server!).get("/health/quick-order?ref=SYNTHETIC_REFERRAL");
@@ -177,5 +167,18 @@ describe("Quick Order setupVite document composition unit with controlled transp
     expect(response.headers.location).toBeUndefined();
     expect(response.headers["x-robots-tag"]).toBe("noindex,nofollow,noarchive");
     expect(response.headers.link).toBeUndefined();
+  });
+});
+
+describe("Proposed Quick Order Vite document-header hardening pending Samuel's 8392d243 disposition", () => {
+  // Separate from the sixth pin above. The common frozen sendRawHttpDocument
+  // omits this trio for Quick Order; these unskipped expectations remain source-
+  // predicted failures, not executed results or an approved runtime requirement.
+  it.each(PRIVACY_CASES)("requires private cache/referrer headers for $method $target", async ({ method, target }) => {
+    const response = await (method === "GET" ? request(server!).get(target) : request(server!).head(target));
+    expect(response.status).toBe(200);
+    expect(response.headers["cache-control"]).toBe("no-store, private");
+    expect(response.headers.pragma).toBe("no-cache");
+    expect(response.headers["referrer-policy"]).toBe("no-referrer");
   });
 });
