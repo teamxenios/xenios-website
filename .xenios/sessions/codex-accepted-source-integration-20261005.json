@@ -3,8 +3,8 @@
   "tool": "OpenAI Codex desktop",
   "lane": "accepted-source-integration",
   "branch": "codex/accepted-source-integration-20261005",
-  "state": "handoff_ready",
+  "state": "active",
   "startedAt": "2026-10-05T18:18:45.097Z",
-  "heartbeatAt": "2026-10-05T18:48:37.073Z",
-  "note": "Source 756a906 and evidence fc53751 pushed. Handoff ready for independent Claude review. Full aggregate resource deferred; browser and protection limits recorded; no hosted writes. Integration stopped."
+  "heartbeatAt": "2026-10-08T16:57:27Z",
+  "note": "RUNNING Workstream B under verified human/coordinator94485a6 authority. Same owner/task, four catalog/detail files only. C transfer recorded. No execution or push. Actual model/effort not exposed in current tool context; requested gpt-6-astra/ultra, no switch attempted."
 }
