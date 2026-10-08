@@ -59,3 +59,9 @@ instruction above supersedes that for routine reviews.
 | Doc 53 verifier and records correction `2d2d958f5c45259d5d1134665f3eb5b8caf9c172`, records `0d417a9` | COMPLETE: doc 58, SOURCE ACCEPT WITH LIMITS; CF-1 and CF-2 closed in source; definition unchanged; census proposal needs C-6 and C-8 to C-10 before disposition |
 | Doc 55 supervisor correction `defe0733ab419859c1ff42b031c2e9a0e8236891`, records `8d101ed` | COMPLETE: doc 59, SOURCE REVISION REQUIRED on CC-01 (CR-03 converted to a hold; with G0 forced into every window, no mode can run); CC-02 at P2 (four groups cannot fit their time check) |
 | Doc 56 catalog correction `8f080a08af06aa16e7aaf80add1a1b25e0cfae41`, records `37f2d96` | COMPLETE: doc 60, SOURCE ACCEPT WITH LIMITS; doc 56 D-1 resolved by restoring the accepted title; copy claims held for Samuel |
+
+## Queue state update (2026-10-08, after doc 59)
+
+| Item | State |
+| --- | --- |
+| Census contract precision amendment, coordinator `8655288` (board task `DOC58-CENSUS-CONTRACT-PRECISION-20261008` r1) | COMPLETE: doc 61, CONTRACT PRECISION ACCEPT WITH LIMITS; CF-11 stays open until a populated census is dispositioned |
