@@ -6,7 +6,7 @@
       "id": "ACCEPTED-SOURCE-INTEGRATION-20261005",
       "title": "Accepted customer assembly r1; exact four-path C transfer onto accepted catalog",
       "priority": "P1",
-      "state": "active",
+      "state": "qa",
       "owner": "codex-accepted-source-integration-20261005",
       "baseSha": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
       "paths": [
@@ -32,7 +32,12 @@
         "explicitTransfer": "ce5e58f7917f815576e19be97e30ccdb95a06312",
         "receivedAt": "2026-10-08T20:28:01Z",
         "authority": "Actual human message 01a11bda-03c1-7103-bba7-757c7a9aa8d6 in coordinator chat; FULL_COMPLETION attachment 96001a74, sections 6/7 step 5; exact scope 94485a6 plus additive 1b165b15. Transfer section-citation mismatch corrected in assembly record, original bytes preserved.",
-        "status": "RECIPIENT_CLAIMED_LOCAL_ASSEMBLY; NOT_RUN; NOT_PUSHED"
+        "completedAt": "2026-10-08T20:33:05Z",
+        "source": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055",
+        "tree": "e90de4206f9698f00bc1ee8a9905978db8c960ce",
+        "sourceParent": "9c2dd1cb1d4943aa3c924e77931bad4d02050c6c",
+        "status": "EXACT_BLOBS_ASSEMBLED_LOCAL_ONLY; NOT_RUN; COMPOSED_REVIEW_PENDING",
+        "packet": "docs/health-launch/accepted-source-integration-20261005/CUSTOMER_ACCEPTED_ASSEMBLY_20261008.md"
       },
       "correctionAssignment": {
         "id": "DOC56-CATALOG-CORRECTION-20261008",
@@ -61,12 +66,12 @@
       "claimedAt": "2026-10-05T18:20:33.600Z",
       "handoff": {
         "session": "codex-accepted-source-integration-20261005",
-        "sha": "8f080a08af06aa16e7aaf80add1a1b25e0cfae41",
-        "tree": "7ff4d6a5059466e716d9b81f66a696cf69bc53d3",
-        "file": ".xenios/handoffs/2026-10-08T19-20-00Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md",
-        "at": "2026-10-08T19:20:00Z",
+        "sha": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055",
+        "tree": "e90de4206f9698f00bc1ee8a9905978db8c960ce",
+        "file": ".xenios/handoffs/2026-10-08T20-33-05Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md",
+        "at": "2026-10-08T20:33:05Z",
         "publication": "LOCAL_ONLY_NOT_PUSHED",
-        "execution": "NOT_RUN; source review queued through existing coordinator; no acceptance claimed"
+        "execution": "NOT_RUN; ordinary final for coordinator collection; composed checkpoint acceptance and review delivery not claimed"
       },
       "historicalAcceptedScope": {
         "source": "756a906877dbc174b7e228a259d2faa9c3af48ca",

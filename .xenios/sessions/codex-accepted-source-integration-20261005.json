@@ -3,8 +3,8 @@
   "tool": "OpenAI Codex desktop",
   "lane": "accepted-source-integration",
   "branch": "codex/accepted-source-integration-20261005",
-  "state": "active",
+  "state": "handoff_ready",
   "startedAt": "2026-10-05T18:18:45.097Z",
-  "heartbeatAt": "2026-10-08T20:28:01Z",
-  "note": "Same integrator received explicit four-path C return ce5e58f after records 937c913. CUSTOMER-ACCEPTED-ASSEMBLY-20261008 r1 copies accepted 736bb2a blobs onto catalog 8f080a0 only. Original Doc57/60 accepted with limits; all execution and push held. No foreign records import, source glue, reviewer interruption or schedule change."
+  "heartbeatAt": "2026-10-08T20:33:05Z",
+  "note": "Exact accepted customer assembly source cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055, tree e90de4206f9698f00bc1ee8a9905978db8c960ce. Four C blobs match 736bb2a; four B blobs match 8f080a0; all other source and historical/foreign records preserved. Local only, not run, composed review pending. No outbound dispatch; coordinator collects ordinary final. All holds retained."
 }

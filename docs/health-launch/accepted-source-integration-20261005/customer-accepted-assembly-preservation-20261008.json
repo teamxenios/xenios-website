@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "kind": "METADATA_PRESERVATION_NOT_QUALIFICATION",
+  "baseline": "37f2d9648916b50fae2fd99b3c5ee46174893fae",
+  "source": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055",
+  "sourceParent": "9c2dd1cb1d4943aa3c924e77931bad4d02050c6c",
+  "sourceChangedPaths": [
+    "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+    "client/src/research/pages/member/ProductPage.tsx",
+    "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+    "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx"
+  ],
+  "claimChangedPaths": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/sessions/codex-accepted-source-integration-20261005.json"
+  ],
+  "allOtherBaselineTrackedFiles": {
+    "afterSha256": "ccde33d9771856e894f4fe64db5ca8e4b151b96bad9e99e286f2e3424a8fee8d",
+    "count": 5984,
+    "beforeSha256": "ccde33d9771856e894f4fe64db5ca8e4b151b96bad9e99e286f2e3424a8fee8d",
+    "equal": true,
+    "bytes": 707428,
+    "definition": "All baseline git ls-tree -r rows excluding exactly four C replacements and four own continuity JSON paths; full ordered row strings, UTF8 without BOM, LF with final LF. Includes historical docs/evidence/handoffs, foreign continuity and all other source."
+  },
+  "historicalDocsChangedPaths": [],
+  "registries": [
+    {
+      "path": ".xenios/ACTIVE_TASKS.json",
+      "excludedOwnId": "ACCEPTED-SOURCE-INTEGRATION-20261005",
+      "foreignRowsEqual": true,
+      "topFieldsEqual": true
+    },
+    {
+      "path": ".xenios/CODE_OWNERSHIP.json",
+      "excludedOwnId": "d0897045-efd3-425b-a8b4-02385e855153",
+      "foreignRowsEqual": true,
+      "topFieldsEqual": true
+    },
+    {
+      "path": ".xenios/SESSION_REGISTRY.json",
+      "excludedOwnId": "codex-accepted-source-integration-20261005",
+      "foreignRowsEqual": true,
+      "topFieldsEqual": true
+    }
+  ],
+  "observedAt": "2026-10-08T20:33:05Z",
+  "recordsPaths": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/sessions/codex-accepted-source-integration-20261005.json",
+    ".xenios/handoffs/2026-10-08T20-33-05Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md",
+    "docs/health-launch/accepted-source-integration-20261005/CUSTOMER_ACCEPTED_ASSEMBLY_20261008.md",
+    "docs/health-launch/accepted-source-integration-20261005/customer-accepted-assembly-bindings-20261008.json",
+    "docs/health-launch/accepted-source-integration-20261005/customer-accepted-assembly-preservation-20261008.json"
+  ],
+  "recordFinalization": "Own rows only; all other baseline paths must remain unchanged after records freeze. Records tip is reported in final handoff, not self-embedded.",
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY_NOT_PUSHED"
+}

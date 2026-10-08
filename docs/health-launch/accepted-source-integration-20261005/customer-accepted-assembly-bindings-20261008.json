@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "kind": "EXACT_ACCEPTED_CUSTOMER_BLOB_ASSEMBLY",
+  "status": "LOCAL_ONLY_NOT_RUN_NOT_ACCEPTED",
+  "assignment": "CUSTOMER-ACCEPTED-ASSEMBLY-20261008 r1",
+  "assignmentCommit": "8655288a1059a9fbd0ae985161db440481b9f9fa",
+  "baselineRecords": "37f2d9648916b50fae2fd99b3c5ee46174893fae",
+  "recipientClaim": "9c2dd1cb1d4943aa3c924e77931bad4d02050c6c",
+  "source": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055",
+  "tree": "e90de4206f9698f00bc1ee8a9905978db8c960ce",
+  "parent": "9c2dd1cb1d4943aa3c924e77931bad4d02050c6c",
+  "files": [
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "acceptedRef": "736bb2a84fa5b704eabdd8b069bc3ef89b084979",
+      "expectedGitBlob": "b4046a7fa1ec200ff4c432c0b9a17801e3d90d99",
+      "gitBlob": "b4046a7fa1ec200ff4c432c0b9a17801e3d90d99",
+      "rawGitSha256": "e20b1c55aecf8fa02675ecd7823cb54044bd4ba1d28da2d332341b885a63f6f0",
+      "matches": true
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+      "acceptedRef": "736bb2a84fa5b704eabdd8b069bc3ef89b084979",
+      "expectedGitBlob": "d094babf3592395f9a3e26f299cf24789a837dbd",
+      "gitBlob": "d094babf3592395f9a3e26f299cf24789a837dbd",
+      "rawGitSha256": "e81747bf0136bd01069521f8fd7a8e2954ee9155cb381fa74b57882622201410",
+      "matches": true
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.tsx",
+      "acceptedRef": "736bb2a84fa5b704eabdd8b069bc3ef89b084979",
+      "expectedGitBlob": "d50b467159739148ae2ecbe90689c6d8df6f6d92",
+      "gitBlob": "d50b467159739148ae2ecbe90689c6d8df6f6d92",
+      "rawGitSha256": "77fd81564c4efb969972f9a6f0433c5be9054463837464be2c99eac56d08177c",
+      "matches": true
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+      "acceptedRef": "736bb2a84fa5b704eabdd8b069bc3ef89b084979",
+      "expectedGitBlob": "ce94ff421800fa3b84437038d8c7e390ceeb0401",
+      "gitBlob": "ce94ff421800fa3b84437038d8c7e390ceeb0401",
+      "rawGitSha256": "bd90e658ca78662403df3232bce754fc74a07c9300021a073cc7fe05da831c66",
+      "matches": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "acceptedRef": "8f080a08af06aa16e7aaf80add1a1b25e0cfae41",
+      "expectedGitBlob": "c54db8933eb9654f55b98f163c68e5ae1d51cc3a",
+      "gitBlob": "c54db8933eb9654f55b98f163c68e5ae1d51cc3a",
+      "rawGitSha256": "318d972ba38d7aaca460f5af07cf9bab98358856a55919e3b59fdebddd0d29df",
+      "matches": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "acceptedRef": "8f080a08af06aa16e7aaf80add1a1b25e0cfae41",
+      "expectedGitBlob": "5a9e65bed522d2687b28b5c624ea01379d1048f9",
+      "gitBlob": "5a9e65bed522d2687b28b5c624ea01379d1048f9",
+      "rawGitSha256": "2de8f721636c1132100e0575fed69ed8bae9e56f280e17c282dd61095acb0f9c",
+      "matches": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "acceptedRef": "8f080a08af06aa16e7aaf80add1a1b25e0cfae41",
+      "expectedGitBlob": "f1db3fa817be2e89a9bb9273301204333f274fae",
+      "gitBlob": "f1db3fa817be2e89a9bb9273301204333f274fae",
+      "rawGitSha256": "1083046402cb666676f21f5039e33b0a172daea06806c50af85bb28c1f1c4f36",
+      "matches": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+      "acceptedRef": "8f080a08af06aa16e7aaf80add1a1b25e0cfae41",
+      "expectedGitBlob": "78f23534fddf90a66cf2589ca323a69105e260ed",
+      "gitBlob": "78f23534fddf90a66cf2589ca323a69105e260ed",
+      "rawGitSha256": "f2a0255798b2bee752bf10ef53986e7b9971e15e57767d576452377b4ee0d3be",
+      "matches": true
+    },
+    {
+      "path": "client/src/research/adapters/product-subscription-create.test.ts",
+      "acceptedRef": "37f2d9648916b50fae2fd99b3c5ee46174893fae",
+      "expectedGitBlob": "e19dd0a0003289f84a5eb2a4c805d031c2b63035",
+      "gitBlob": "e19dd0a0003289f84a5eb2a4c805d031c2b63035",
+      "rawGitSha256": "819725ccef6769f3da2c2247f5440f79f5f37d6a1490b012f37c729353dd3d7f",
+      "matches": true
+    },
+    {
+      "path": "client/src/research/pages/member/product-subscribe.test.tsx",
+      "acceptedRef": "37f2d9648916b50fae2fd99b3c5ee46174893fae",
+      "expectedGitBlob": "f389110e89d5465f401ce919354864484efb7f8d",
+      "gitBlob": "f389110e89d5465f401ce919354864484efb7f8d",
+      "rawGitSha256": "c2411c79bf7fd38ab51a36932f9d0746623f1211b4a66802c84786226dd67c9e",
+      "matches": true
+    },
+    {
+      "path": "docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json",
+      "acceptedRef": "37f2d9648916b50fae2fd99b3c5ee46174893fae",
+      "expectedGitBlob": "241fc344445a12dbf7861232248393a742105526",
+      "gitBlob": "241fc344445a12dbf7861232248393a742105526",
+      "rawGitSha256": "c0fbcc69686562fdd2ec1de6d6a487356118f1d18931f8de3ee9aefd7066eff8",
+      "matches": true
+    }
+  ],
+  "otherSourceInventory": {
+    "bytes": 347963,
+    "sha256": "d6a1e886f7f928c649e391b00dd472a5583640ad7e7d73796300c2ea2c738200",
+    "expectedSha256": "d6a1e886f7f928c649e391b00dd472a5583640ad7e7d73796300c2ea2c738200",
+    "matches": true,
+    "count": 3278
+  },
+  "reviewedInputs": [
+    {
+      "source": "736bb2a84fa5b704eabdd8b069bc3ef89b084979",
+      "tree": "920691093dc817a7dcf631b26f50fd41a3f20aa3",
+      "review": "23600f771340029471c48b144572a75f4598155a",
+      "doc": 57,
+      "disposition": "SOURCE_ACCEPT_WITH_LIMITS",
+      "execution": "NOT_RUN"
+    },
+    {
+      "source": "8f080a08af06aa16e7aaf80add1a1b25e0cfae41",
+      "tree": "7ff4d6a5059466e716d9b81f66a696cf69bc53d3",
+      "review": "dc34f6a1eaae9ac9bdcdd88ec3a896e476ab5b48",
+      "doc": 60,
+      "disposition": "SOURCE_ACCEPT_WITH_LIMITS",
+      "execution": "NOT_RUN"
+    }
+  ],
+  "transfer": {
+    "records": "937c91378e5f0d11f54795880188f7265a2faf5c",
+    "commit": "ce5e58f7917f815576e19be97e30ccdb95a06312",
+    "tree": "a64a8bba323a9810a1bb04f03bc2a52468069705",
+    "fromSession": "codex-product-subscription-intent-20261005",
+    "toSession": "codex-accepted-source-integration-20261005",
+    "recipientLease": "d0897045-efd3-425b-a8b4-02385e855153",
+    "paths": [
+      "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+      "client/src/research/pages/member/ProductPage.tsx",
+      "client/src/research/pages/member/ProductPage.subscription.test.tsx"
+    ]
+  },
+  "changedSourcePaths": [
+    "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+    "client/src/research/pages/member/ProductPage.tsx",
+    "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+    "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx"
+  ],
+  "method": "Exact four-path Git diff applied with apply_patch, then committed blob IDs and raw git cat-file stdout SHA-256 compared to accepted pins. No source rewriting, imports or execution. Working-file hashes are not an acceptance basis.",
+  "otherInventoryDefinition": "ordered git ls-tree -r rows excluding exactly four C paths and docs/** and .xenios/**; UTF-8 no BOM, LF including final LF",
+  "qualification": "No previous test/build/browser result transfers to this assembly."
+}

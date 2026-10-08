@@ -16,10 +16,10 @@
         ".xenios/sessions/codex-accepted-source-integration-20261005.json",
         ".xenios/handoffs/*ACCEPTED-SOURCE-INTEGRATION-20261005*"
       ],
-      "state": "active",
+      "state": "handoff",
       "claimedAt": "2026-10-05T18:20:33.611Z",
-      "heartbeatAt": "2026-10-08T20:28:01Z",
-      "activeScope": "CUSTOMER-ACCEPTED-ASSEMBLY-20261008 r1; receive exactly four C paths from explicit return ce5e58f for immutable 736bb2a assembly only. Preserve B at 8f080a0; all other source and historical records frozen. No execution or push.",
+      "heartbeatAt": "2026-10-08T20:33:05Z",
+      "activeScope": "CUSTOMER-ACCEPTED-ASSEMBLY-20261008 r1 completed as exact four-C-blob assembly onto preserved B. Local source cad2c4d; composed review pending. No new edit, execution or push authority. Historical records and foreign ownership preserved.",
       "workstreamCReturnReceived": {
         "at": "2026-10-08T20:28:01Z",
         "transfer": "ce5e58f7917f815576e19be97e30ccdb95a06312",
@@ -29,7 +29,7 @@
         "fromLease": "d9ff89ea-06a4-4d35-b62b-5db6bac37920",
         "disposition": "Recipient claim for four immutable C paths only. Earlier workstreamCTransfer retained as historical outbound record. Legacy Website 2 reservation unchanged; no foreign product-subscribe test claimed."
       },
-      "handoffSource": "8f080a08af06aa16e7aaf80add1a1b25e0cfae41; LOCAL_ONLY_NOT_EXECUTED_NOT_PUSHED_NOT_ACCEPTED",
+      "handoffSource": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055; LOCAL_ONLY_NOT_EXECUTED_NOT_PUSHED_COMPOSED_REVIEW_PENDING",
       "historicalScopeRef": "38c723964358c18b8c5090f2f9a0aa92f74601b0:.xenios/CODE_OWNERSHIP.json#d0897045-efd3-425b-a8b4-02385e855153",
       "workstreamCTransfer": {
         "at": "2026-10-08T16:57:27Z",
