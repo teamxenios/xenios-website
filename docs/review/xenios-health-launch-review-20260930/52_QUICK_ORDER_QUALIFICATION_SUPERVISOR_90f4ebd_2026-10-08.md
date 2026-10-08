@@ -62,11 +62,12 @@ records) with adversarial verifiers. The subject was never executed or imported.
 - Untracked and ignored drift is not refused (porcelain status recorded but not compared), generated fixtures are not
   re-hashed per command, and `node_modules` is pinned by six files only.
 - No Job memory limit is set, so the doc 49 G0 bound and the group floors are admission floors only, not caps.
+  Section 6.2 separates the two G0 memory figures.
 - Nothing makes a run exclusive: G2 to G5 can start concurrently under one run id. Add a run-level lock file.
 - G0 has no node-tap fixture, so the TAP parser is first exercised inside G1's single attempt.
 - Authority is a format check on self-written JSON; receipts do not bind the window digest or approval text; the
   preparation export skips the self-hash and several window checks. Add a `--prepare` mode with the full checks and
-  bind those digests.
+  bind those digests. Section 6.1 says where consent must actually be checked.
 - A stream-drain timeout is overwritten to `cleanupProven: true` by the helper's `finally` block. Make the unresolved
   state sticky.
 - `Add-Type` without `-IgnoreWarnings`, over interop structs that are the classic CS0649 pattern, risks failing every
@@ -82,8 +83,8 @@ records) with adversarial verifiers. The subject was never executed or imported.
 rather than truncates (disclosed); receipt digests incomplete and writes not atomic; handle inheritance; no
 die-on-unhandled-exception flag; documentation imprecision; LF-dependent self-hash under `core.autocrlf=true`; G0
 timing and the full-repository inventories (6,069 files, about 212 MB, hashed before and after each group) are
-unbudgeted; G0 departs from doc 49's 512 MiB and three-process bounds (disclosed, needs explicit approval text); the
-140-minute aggregate is not enforced; the G7 group wall (25 minutes) is below its command ceilings (40); the database
+unbudgeted; G0 departs from doc 49's three-process bound, and its memory figures need the definitions in section
+6.2 (disclosed, needs explicit approval text); the 140-minute aggregate is not enforced; the G7 group wall (25 minutes) is below its command ceilings (40); the database
 completion markers are unnamed; a named RED failure is accepted regardless of cause; the protection gate is accepted on
 any `RESULT: FAIL` without binding the expected violating paths; G5 boots the production root on `0.0.0.0` without a
 disclosure; evidence under `%LOCALAPPDATA%\Temp` can be purged by host cleanup; the CLI's synchronous refusal path and
@@ -93,7 +94,7 @@ symlink invocation edge cases.
 
 | Group | State |
 | --- | --- |
-| G0 | closest; needs SV-6 (or the Vitest baseline not re-admitted), the environment-case fix, the helper preconditions recorded, a defined bootstrap step, and explicit approval of the higher caps and `Add-Type` |
+| G0 | closest; needs SV-6 (or the Vitest baseline not re-admitted), the environment-case fix, the helper preconditions recorded, a defined bootstrap step, and explicit approval of the higher caps and `Add-Type`, with the memory figures defined as in section 6.2 |
 | G1 | blocked by SV-6, G0 acceptance and the bootstrap step; its name sets are exact and the RED import graph is closed |
 | G2, G5 | single-command and otherwise consistent; gated on G0 and G1; SV-3 applies |
 | G3 | blocked by SV-1 and SV-2 |
@@ -110,4 +111,96 @@ symlink invocation edge cases.
   The expired window stays expired. No execution, reservation or resource probe is authorised.
 - **Smallest next action for the same builder:** one successor on these two files only, fixing SV-1 to SV-6 and the
   P2 list, with the manifest re-hashed and the source record refreshed; the builder holds the lease, and the work is
-  inside the qualification-preparation assignment doc 49 section 5 named. Then return the exact successor here.
+  inside the qualification-preparation assignment doc 49 section 5 named. Section 6 adds the approval-binding and
+  memory-measurement items to that correction. Then return the exact successor here.
+
+## 6. Clarifications requested by Samuel (2026-10-08)
+
+Samuel asked for two answers before this review can support an executable qualification plan. Both are read from the
+same subject: `qualification-supervisor.mjs` (S) and `evidence/qualification-manifest-20261008.json` (M) at
+`90f4ebd`, plus the recovery proposal at coordinator `f1821b6`. Method: read by this reviewer, no lens. Nothing was
+executed. The disposition in section 5 is unchanged.
+
+### 6.1 Where actual approval is checked
+
+**The subject does not check consent and cannot. Consent must be checked by the coordinator and the reviewer, and no
+current record assigns that duty.**
+
+What the supervisor checks before any child starts (S:466-481, S:436-448):
+- the window record's manifest digest, source commit and tree equal the manifest's;
+- `directSamuelApproval` is the JSON value `true`, and `approvalText` is a non-empty string;
+- the requested group is listed, the recorded approval time has passed, and the window has not expired and lasts at
+  most four hours from that time;
+- the prediction-policy and compiler/snapshot flags are `true`, and the pre-window observation meets the highest floor
+  among the listed groups;
+- the reservation and admission records carry the same run id, group, manifest digest and lease.
+
+What it does not check:
+- **Who wrote the window record.** Any local process that can write a JSON file, including the builder's own session,
+  can produce a record that passes. The refusal message says "a file is not itself approval", but the check is a
+  format check.
+- **What the approval text says.** It is never compared with the manifest digest, the source, the groups, the caps or
+  the expiry. The group receipt records only `approvedAt`, `expiresAt` and `groups` (S:681), not the text, its hash or
+  the window record's hash.
+- **Who accepted G0.** G1 and later accept five booleans placed in the same window record (S:605-610). They are not
+  bound to the G0 group receipt's digest or to an accepting review record. The dependency check reads the G0 receipt's
+  `dependencyAccepted` (S:596-603), but that is the supervisor's own verdict, not the reviewer's acceptance.
+- **The preparation entry point** (S:348-356) checks less again: no approval text, no start time, no four-hour bound.
+
+The manifest names no verifier. `executionAuthorization` is null (M:6), and the required approvals appear only as a
+three-item list with no verifier or approval source (M:131-135). The coordinator's operational path (step 7 of
+`QUICK_ORDER_OPERATIONAL_PATH_20261008.md` at coordinator `36db963`) requires a freshly approved window but does not
+say who checks the window record against Samuel's own words.
+
+Smallest closure, weakening nothing:
+1. **Coordinator duty, to be recorded in the coordination records.** Capture Samuel's approval verbatim from his own
+   direct message, record its origin (session and time), and write the window record from it. The earlier mount
+   approval record at `dc3329b` is the model: it bound the question id, the exact answer, a timestamp, the scope commit
+   and the patch hash. The approval text must
+   name the supervisor hash, the manifest SHA-256, the source commit and tree, the groups, the process caps, the memory
+   figures as defined in 6.2, the `Add-Type` and snapshot actions, and the window's start and end.
+2. **Reviewer duty.** Before any run, this reviewer (or its successor) compares the committed window record with the
+   approval text and with this disposition, and publishes the result. No run starts on an unreviewed window record.
+3. **Source corrections for the same owner, inside the correction section 5 already requires.** Require the approval
+   text to contain the manifest SHA-256, the source commit, each group id and the expiry verbatim. Hash the window
+   record and the approval text into every attempt and group receipt. Require `g0Acceptance` to name the G0 group
+   receipt's digest and the accepting review commit. Apply the same window checks to the preparation entry point.
+
+The source corrections catch mistakes and make the record auditable. They do not prove consent; only steps 1 and 2 do.
+
+### 6.2 G0 memory: two measurements, not a contradiction
+
+| Figure | Source | What it measures | What enforces it |
+| --- | --- | --- | --- |
+| 1,536 MiB | G0 `ramFloorMiB` (M:628); admission floors (M:161) | memory available on the host, observed once by the coordinator before the group starts | refusal at admission (S:443) and in the pre-window check (S:475); nothing during the run |
+| 512 MiB | doc 49 Q-4: "a non-heavy G0 (at most one minute, 512 MiB, three processes)" | not named by doc 49 | nothing at `90f4ebd` |
+
+Doc 49 is this reviewer's record, and its 512 MiB did not say what it measures. Listed beside a one-minute wall and a
+three-process ceiling, it reads as a ceiling on what G0 itself may use. The recovery proposal that doc 49 reviewed
+uses MiB figures only as available-RAM floors and gives 512 MiB as the floor for Node HTTP work (`f1821b6`,
+`RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:32-34`), so it can also be read as a floor.
+
+- **Floor reading.** The manifest raised G0's floor from 512 to 1,536 MiB because G0 now includes the one-file Vitest
+  baseline that doc 49 asked it to measure, and 1,536 MiB is the proposal's Vitest floor (M:596). That is stricter,
+  not lower.
+- **Ceiling reading.** Nothing caps or measures what G0 uses. The Job Object sets only kill-on-close and the active
+  process limit (S:256), with no job or process memory limit. The receipt records the peak process count but no
+  memory figure (S:286). The only memory setting is V8's 128 MiB old-space limit per Node child, which bounds the
+  JavaScript heap, not the process. The manifest discloses this (M:82, M:93).
+
+Under either reading the two figures are compatible: a host with at least 1,536 MiB available can run a G0 held to
+512 MiB. Doc 52's P3 line said G0 "departs from doc 49's 512 MiB and three-process bounds"; that was imprecise for
+memory and is corrected here. The process departure is real (4 for the owned tree and 8 for the Vitest baseline,
+M:603). The memory change is to a floor, not a departure from a ceiling.
+
+The actual gap is that G0's own memory use is neither capped nor measured, so the ceiling reading cannot be shown to
+hold. Smallest correction, lowering neither safeguard:
+- keep 1,536 MiB as G0's admission floor;
+- record the subject job's peak committed memory in every receipt; the helper's limit structure already declares the
+  peak fields (S:218), and the helper already queries the job (untested);
+- enforce 512 MiB as a job memory limit on the subject job for every G0 command. Doc 49 placed the Vitest baseline
+  inside the same bound, so 512 MiB applies to it unless Samuel's approval text sets a different figure for that one
+  command. This review proposes no higher figure.
+
+Job memory is committed memory, which is a different measure again from the available memory the floor checks. The
+approval text should name each figure with its measure.

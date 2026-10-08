@@ -34,3 +34,10 @@ on its own between turns.
 
 The board's `quickOrder.activeReview.status` still says this reviewer requires Samuel's direct delivery; Samuel's
 instruction above supersedes that for routine reviews.
+
+## Queue state update (2026-10-08, later)
+
+| Item | State |
+| --- | --- |
+| Qualification supervisor `90f4ebd` | COMPLETE: doc 52 at `56f357e`, SOURCE REVISION REQUIRED. Section 6 added at Samuel's request answers where approval is actually checked and defines the two G0 memory figures; the disposition is unchanged |
+| Decision-input successor `e90d464a2e2f81f6b30a02bfef2fd3ccbe35d9e7` (tree `bdb31ef3…`, records `5a49ef0`) | READY on the builder's records and identified by this reviewer. A review was started, then PAUSED at Samuel's direct instruction to stay on doc 52 and start no other review. No finding has been recorded. It resumes only when Samuel says so |
