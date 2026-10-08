@@ -1,0 +1,2671 @@
+{
+  "schemaVersion": 1,
+  "task": "SOURCE-INTEGRATION-INVENTORY-20261008",
+  "revision": 1,
+  "recordedAt": "2026-10-08T18:37:41Z",
+  "method": "Immutable local Git object and record inspection only. No source execution, imports, tests, syntax/type/build, resource probes, SQL, verifier, browser/server, database query, installation or hosted observation.",
+  "authority": {
+    "coordinatorCommit": "1b165b15bfd6b575c25d66be7c9c15cce8ee94fa",
+    "humanThread": "01a10d12-0764-7222-8b5a-5029508020ad",
+    "humanMessage": "01a11cc4-c1a0-74a0-bec9-fd3cd033f86d",
+    "attachmentSha256": "0b94731b7a7f19af9af70ec4e25105bb5eecc52575286b55ce07fd1751b248a9",
+    "verification": "Actual user message read independently; attachment bytes hashed; assignment and board read."
+  },
+  "owner": {
+    "session": "codex-accepted-source-integration-20261005",
+    "task": "ACCEPTED-SOURCE-INTEGRATION-20261005",
+    "lease": "d0897045-efd3-425b-a8b4-02385e855153",
+    "branch": "codex/accepted-source-integration-20261005",
+    "baselineRecords": "9737db71014d1073ec5ffe9a78b2a1c491220813",
+    "frozenSource": "e0a7d4787071140a25a984edc4c0a49f0d7c22ab",
+    "frozenTree": "340248360ac85f50f10ed5890624401616f792fd",
+    "modelEffort": "Not exposed; unchanged; no requested setting represented as actual."
+  },
+  "comparisonDefinitions": {
+    "direct": "First parent to named source commit; includes all path classes, not only runtime.",
+    "commonBase": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+    "cumulative": "Net changed paths from that explicit common base to each named source, including inherited paths/records. Not the direct patch and not an executed merge-conflict test.",
+    "pathIndices": "Zero-based indices into pathDictionary; all overlap sets are exact. Git blob IDs bind committed bytes; no working-line-ending SHA256 inference."
+  },
+  "pathDictionary": [
+    {
+      "path": ".xenios/ACTIVE_TASKS.json",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/BLOCKED_EXTERNAL.md",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/CODE_OWNERSHIP.json",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/PROJECT_STATE.json",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/RELEASE_STATE.json",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/SESSION_REGISTRY.json",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/handoffs/2026-10-05T13-24-35-970Z-HEALTH-ABC-PREMIUM-SHELL-20261003-codex-xenios-health-launch-implementation-20260930.md",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/handoffs/2026-10-05T16-24-12-632Z-HEALTH-ABC-IC2-TIMELINE-20261005-codex-xenios-health-launch-implementation-20260930.md",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/handoffs/2026-10-05T17-48-40-419Z-PRODUCT-SUBSCRIPTION-INTENT-20261005-codex-product-subscription-intent-20261005.md",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/handoffs/2026-10-05T19-00-54-458Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/handoffs/2026-10-08-PRODUCT-SUBSCRIPTION-PS-R4-WORDING-codex-product-subscription-intent-20261005.md",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/handoffs/2026-10-08-WORKSTREAM-C-PRODUCT-SUBSCRIPTION-codex-product-subscription-intent-20261005.md",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/handoffs/2026-10-08T17-08-00Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/handoffs/quick-order-20261005-handoff.md",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/sessions/codex-accepted-source-integration-20261005.json",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/sessions/codex-health-quick-order-20261005.json",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/sessions/codex-product-subscription-intent-20261005.json",
+      "classification": "continuity_record"
+    },
+    {
+      "path": ".xenios/sessions/codex-xenios-health-launch-implementation-20260930.json",
+      "classification": "continuity_record"
+    },
+    {
+      "path": "client/src/App.routes.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/App.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/clarity/brand.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/clarity/pages.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/clarity/partner-sign-in.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/clarity/premium-shell.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/components/Footer.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/components/Navbar.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/index.css",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/lib/attribution.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/lib/attribution.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/lib/tracking.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/lib/tracking.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/pwa/PwaLifecycle.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/pwa/PwaLifecycle.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/account-portal/account-portal.css",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/adapters/cartProductSelection.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/adapters/cartProductSelection.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/adapters/commerce.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/adapters/memberCatalog.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/adapters/memberCatalog.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/adapters/product-subscription-create.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderDetail.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/assisted-order/AdminAssistedOrderSession.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/assisted-order/AssistedOrderConfirmationPage.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/assisted-order/AssistedOrderPage.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/assisted-order/AssistedOrderPage.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/assisted-order/AssistedOrderStatusPage.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/assisted-order/assisted-order-premium.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/assisted-order/assisted-order.css",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/catalog-priority/catalog-priority.css",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/early-access/EarlyAccessProductCard.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/early-access/EarlyAccessProductCard.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/early-access/cart/EarlyAccessCartCatalogue.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/master-offerings/MasterOfferingCard.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/master-offerings/MasterOfferingDetail.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/pages/adminx/ProductAdminDetail.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/RequiredInputState.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/RequiredInputState.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/product-media-surfaces.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/quick-order/OperatorDeclarations.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/quick-order/OperatorDeclarations.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderApp.composition.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderPage.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/quick-order/QuickOrderPage.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/quick-order/contracts.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/quick-order/contracts.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/quick-order/quick-order.css",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/ui/ProductMedia.test.tsx",
+      "classification": "test_source"
+    },
+    {
+      "path": "client/src/research/ui/ProductMedia.tsx",
+      "classification": "application_source"
+    },
+    {
+      "path": "client/src/research/ui/product-media.css",
+      "classification": "application_source"
+    },
+    {
+      "path": "docs/health-launch/ABC_IC2_TIMELINE_20261005.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/ABC_PREMIUM_SHELL_20261003.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/PRODUCT_SUBSCRIPTION_INTENT_20261005.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/CLOSEOUT_CHECKS.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/HANDOFF.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/PATHS.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/README.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence-index.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/.gitattributes",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/aggregate-deferral.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/browser-observations.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/build-preview-receipt.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/composition-invariants.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/fixtures.mjs",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/focused-source-bindings.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-affected-run1-provenance.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-affected-run1-result.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-affected-run1-start.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-affected-run1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-build-run1-provenance.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-build-run1-result.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-build-run1-start.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-build-run1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-dag-run1-provenance.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-dag-run1-result.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-dag-run1-start.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-dag-run1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-preview-run1-provenance.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-preview-run1-start.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-preview-run1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-protection-default-run1-result.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-protection-default-run1-start.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-protection-default-run1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-protection-run1-result.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-protection-run1-start.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-protection-run1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-routes-run1-result.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-routes-run1-start.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-routes-run1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-subscription17-run1-provenance.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-subscription17-run1-result.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-subscription17-run1-start.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-subscription17-run1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-typecheck-run1-provenance.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-typecheck-run1-result.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-typecheck-run1-start.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/integration-typecheck-run1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/preview.mjs",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/production-read-only-observation.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/public-shell-focus-1440.png",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/public-shell-forced-colors-1440.png",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/run-check.mjs",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/accepted-source-integration-20261005/evidence/synthetic-detail-430-full.png",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/catalog-detail-presentation-20261008/README.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/catalog-detail-presentation-20261008/source-bindings.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/abc-ic2-timeline-20261005/raw-checks-and-invariants.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/abc-premium-shell-20261003/abc-build-receipt.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/abc-premium-shell-20261003/abc-preview.mjs",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/abc-premium-shell-20261003/browser-observations.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/abc-premium-shell-20261003/raw-checks.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/abc-premium-shell-20261003/run-check.mjs",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-blocked.png",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-blocked.txt",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-cleanup.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-console.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-domain-proof.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-fixture.tsx",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-lost.png",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-lost.txt",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-mounted-product.png",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-mounted-product.txt",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-no-offer.txt",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-pending.png",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-pending.txt",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-preview-run1.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-preview-run1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-preview.mjs",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-record-inspection.txt",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-service.ts",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-summary.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/corrected-ui-run2.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/corrected-ui-run2.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/focused-run1.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/focused-run1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/invariants.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/raw-outputs.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/run-check.mjs",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/typecheck-run1.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/typecheck-run1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/evidence/product-subscription-intent-20261005/workstream-c-20261008-source.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/.gitattributes",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/APPROVAL_MATRIX.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/COMPOSITION_TEST_SOURCE_20261006.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/CURRENT_AFFILIATE_READBACK_AMENDMENT_PROPOSED_20261006.patch",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/DOC49_CURRENTNESS_REVIEW_PACKET_20261008.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/DOC51_DECISION_INPUT_REVIEW_PACKET_20261008.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/DOC52_SUPERVISOR_CORRECTION_PACKET_20261008.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/DOC53_VERIFIER_RECORDS_PACKET_20261008.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/DOCUMENT_PRIVACY_HEADERS_AMENDMENT_PROPOSED_20261006.patch",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/HELD_5C_REVIEW_599_DELTA_20261007.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/HELD_WRITER_COMMIT_DESIGN_AMENDMENT_20261006.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/HTTP_CORRECTION.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/MOUNT_PROPOSAL.patch",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/PERSISTENCE_PROPOSAL.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/PROVIDER_JOURNAL_FIXTURE_AMENDMENT_PROPOSED_20261006.patch",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/QUALIFICATION.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/README.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/RELOCATION.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/REVIEW_599_RESIDUAL_MATRIX_20261007.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/REVIEW_CLEARED_WRAPPER_CONTRACT_20261006.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/S2_S3_SOURCE_20261006.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/S4_DECODER_CONTRACT_20261006.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/SHARED_INTEGRATION_SOURCE_20261006.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/SOURCE_MAP.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/SQL_CANDIDATE_DRAFT_STATUS_20261006.md",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/checkpoint-records.mjs",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/adapters-diagnostic-1.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/adapters-diagnostic-1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/components-adapters-source-3b0048d.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/components-adapters-source-3b0048d.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/composition-lease-baselines-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/composition-records-integrity-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/composition-source-5fd2e4c.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/containment-source-4abd2c5.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/containment-source-4abd2c5.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/core-http-source-3b0048d.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/core-http-source-3b0048d.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/current-affiliate-readback-amendment-applied-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/current-affiliate-readback-amendment-proposed-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc48-acceptance-closeout-20261007.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc49-currentness-bindings-20261008.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc49-currentness-records-20261008.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc49-currentness-source-f581b6b.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc49-qualification-source-90f4ebd.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc49-two-task-records-20261008.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc51-decision-input-bindings-20261008.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc51-decision-input-records-20261008.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc51-decision-input-source-e90d464.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc52-supervisor-bindings-20261008.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc52-supervisor-closure-20261008.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc52-supervisor-records-20261008.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc52-supervisor-source-1e808ba.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc53-verifier-bindings-20261008.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc53-verifier-closure-20261008.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc53-verifier-records-20261008.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/doc53-verifier-source-2d2d958.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/document-privacy-headers-amendment-proposed-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/g1-precheck-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/handler-diagnostic-1.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/handler-diagnostic-1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/held-5c-review-599-delta-binding-20261007.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/http-regression-plan-fd023e8.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/mount-proposal-hashes.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/package-baseline.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/package-files.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/packet-integrity-4abd2c5.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/packet-integrity-http-fd023e8.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/packet-integrity-relocated-f1e467f.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/packet-integrity.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/precheck-node2-f1e467f.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/proposal-baselines.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/provider-journal-fixture-amendment-proposed-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "classification": "qualification_manifest"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/qualification-slot-f1e467f-result.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/relocation-before.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/relocation-inventory.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/relocation-static-source-f1e467f.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/relocation-static.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/resources-20261005T1932.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/resources-post-focused.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/resources-relocation-committed.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/review-599-local-records-integrity-20261007.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/review-599-repair-bindings-20261007.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/review-599-source-3e82154.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/review-cleared-draft-bindings-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/s2-s3-lease-extension-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/s2-s3-records-integrity-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/s2-s3-source-ac36e60.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/s2-s3-source-baselines-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/s4-decoder-lease-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/s4-decoder-records-integrity-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/s4-decoder-source-10208fe.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/shared-integration-lease-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/shared-integration-records-integrity-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/shared-integration-source-9118a82.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/shared-integration-static-draft-20261006.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-candidate-source-7d027e4.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-2d2d958.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-3e82154.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-7d027e4.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-e90d464.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-currentness-source-receipt-f581b6b.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-3e82154.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-7d027e4.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/ui-diagnostic-1.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/evidence/ui-diagnostic-1.log",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/g1-precheck-20261006.ps1",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/history/MOUNT_PROPOSAL_6481c2ad_HELD.patch",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/history/mount-proposal-hashes-6481c2ad.json",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/prepare-mount-proposal.mjs",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/prepare-relocation.mjs",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "classification": "qualification_source"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/qualified-job-precheck.ps1",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/relocate-imports.mjs",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/run-check.mjs",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/verify-packet.mjs",
+      "classification": "record"
+    },
+    {
+      "path": "docs/health-launch/quick-order-20261005/verify-relocation.mjs",
+      "classification": "record"
+    },
+    {
+      "path": "server/index.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/assisted-order/communications.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-admin-readback.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-notifications.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/assisted-order/quick-order-repository.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/assisted-order/service.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/assisted-order/supabase-repository.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/catalog/member-catalog-projection.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/catalog/member-catalog-projection.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/catalog/member-catalog-service.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/catalog/member-catalog-service.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/catalog/product-control-reader.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/catalog/product-control-reader.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/catalog/product-media-schema.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/commerce/cart-product-selection.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/commerce/cart-product-selection.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/commerce/persistence/persistent-cart.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/commerce/persistence/persistent-cart.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/commerce/subscription-intent-journey.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/health/quick-order/catalog.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/health/quick-order/catalog.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/health/quick-order/containment.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/health/quick-order/containment.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/health/quick-order/core.d.mts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/health/quick-order/core.mjs",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/health/quick-order/handler.d.mts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/health/quick-order/handler.mjs",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/health/quick-order/legal.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/health/quick-order/paths.d.mts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/health/quick-order/paths.mjs",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/health/quick-order/ports.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/health/quick-order/production.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/health/quick-order/production.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/health/quick-order/root-composition.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/health/quick-order/static-document.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/health/quick-order/tests/core.test.mjs",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/health/quick-order/tests/fixtures.mjs",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/health/quick-order/tests/handler.test.mjs",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/health/quick-order/vite-document.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/master-offerings/direct-commerce-selections.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/products-diagnostics/product-admin-production.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/products-diagnostics/product-admin-production.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "server/research/seo/raw-http-document-policy.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "shared/care/paths.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "shared/care/paths.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "shared/research/assisted-order/contract.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "shared/research/assisted-order/quick-order.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "shared/research/cart-product-selection.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "shared/research/member-catalog.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "shared/research/product-admin.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "shared/research/product-media.test.ts",
+      "classification": "test_source"
+    },
+    {
+      "path": "shared/research/product-media.ts",
+      "classification": "application_source"
+    },
+    {
+      "path": "supabase/candidates/20261003_research_media_commerce_decoupling.rollback.md",
+      "classification": "database_rollback_record"
+    },
+    {
+      "path": "supabase/candidates/20261003_research_media_commerce_decoupling.sql",
+      "classification": "database_candidate_source"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.postcheck.sql",
+      "classification": "database_candidate_source"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.precheck.sql",
+      "classification": "database_candidate_source"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.rollback.md",
+      "classification": "database_rollback_record"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_health_quick_order_intake.sql",
+      "classification": "database_candidate_source"
+    },
+    {
+      "path": "supabase/candidates/20261005_research_product_media_descriptor.sql",
+      "classification": "database_candidate_source"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.postcheck.sql",
+      "classification": "database_candidate_source"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+      "classification": "database_candidate_source"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+      "classification": "database_rollback_record"
+    },
+    {
+      "path": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "classification": "database_candidate_source"
+    },
+    {
+      "path": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "classification": "database_verifier_source"
+    },
+    {
+      "path": "supabase/verification/research_health_quick_order_local.mjs",
+      "classification": "database_verifier_source"
+    },
+    {
+      "path": "supabase/verification/research_media_commerce_decoupling_local.mjs",
+      "classification": "database_verifier_source"
+    }
+  ],
+  "identities": [
+    {
+      "name": "accepted",
+      "sha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "tree": "787432948d9464880df1dcfc5dff58eec7d889aa",
+      "parents": [
+        "66fda5c760ad7d8d95a38f24d7face857e29a920"
+      ],
+      "subject": "feat: compose accepted Health shell media and disabled subscription source",
+      "acceptedMergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "directPathIndices": [20, 21, 22, 23, 24, 25, 26, 33, 34, 35, 36, 37, 38, 39, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 74, 75, 76, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 324, 325, 326, 333, 334, 335, 336, 337, 338, 339, 344, 351]
+    },
+    {
+      "name": "acceptedRecords",
+      "sha": "38c723964358c18b8c5090f2f9a0aa92f74601b0",
+      "tree": "48f3fc4793f01978f7aae1b16ad7954737169d66",
+      "parents": [
+        "fc53751ff7a988d029d5dabbd9f24f1431b62d19"
+      ],
+      "subject": "docs: hand accepted integration to independent review",
+      "acceptedMergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "directPathIndices": [0, 2, 5, 9, 14, 81]
+    },
+    {
+      "name": "catalog",
+      "sha": "e0a7d4787071140a25a984edc4c0a49f0d7c22ab",
+      "tree": "340248360ac85f50f10ed5890624401616f792fd",
+      "parents": [
+        "20a23057f99529241ef1f593175670e13ab86f67"
+      ],
+      "subject": "fix: reconcile catalog filters and exact product detail presentation",
+      "acceptedMergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "directPathIndices": [59, 60, 61, 62]
+    },
+    {
+      "name": "catalogRecords",
+      "sha": "9737db71014d1073ec5ffe9a78b2a1c491220813",
+      "tree": "01f1cff351658f2bef645fedaa8a93f779af62a2",
+      "parents": [
+        "e0a7d4787071140a25a984edc4c0a49f0d7c22ab"
+      ],
+      "subject": "records: hand off local catalog detail presentation source",
+      "acceptedMergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "directPathIndices": [0, 2, 5, 12, 14, 130, 131]
+    },
+    {
+      "name": "wording",
+      "sha": "e6d7dd10045289594d91a6a086ba592348d7edb8",
+      "tree": "7cb1521f5466dce0c226eda1126c49ed958000cd",
+      "parents": [
+        "1fe97f54b72e943c85c5dfbccbc355fe5f72c517"
+      ],
+      "subject": "fix: remove implied subscription availability timing",
+      "acceptedMergeBase": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+      "directPathIndices": [55, 58]
+    },
+    {
+      "name": "c",
+      "sha": "736bb2a84fa5b704eabdd8b069bc3ef89b084979",
+      "tree": "920691093dc817a7dcf631b26f50fd41a3f20aa3",
+      "parents": [
+        "95283ce83fdedf4dbeb84f131aed16008e6f3c5f"
+      ],
+      "subject": "fix: keep subscription review states truthful and scope-safe",
+      "acceptedMergeBase": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+      "directPathIndices": [55, 56, 57, 58]
+    },
+    {
+      "name": "cRecords",
+      "sha": "e5ca41d5e6a6f41ee2b3a24703830d9e9037da90",
+      "tree": "15eefed3da0b19db59e3c87f025e084155481d2f",
+      "parents": [
+        "736bb2a84fa5b704eabdd8b069bc3ef89b084979"
+      ],
+      "subject": "docs: hand off bounded Workstream C source and authored tests",
+      "acceptedMergeBase": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
+      "directPathIndices": [0, 2, 5, 11, 166]
+    },
+    {
+      "name": "qoRepair",
+      "sha": "3e82154724ede74b7c5f361f280739eedd60db25",
+      "tree": "04958ec1567b74bccd84e423e179e6269faf6bee",
+      "parents": [
+        "18bfbcda7b1def56e10ac1b9ffe424bc1034f3cb"
+      ],
+      "subject": "fix(quick-order): repair reviewed SQL drafts and separate header proposal",
+      "acceptedMergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "directPathIndices": [0, 2, 5, 15, 176, 185, 186, 191, 227, 249, 318, 319, 323, 340, 341, 342, 343, 345, 346, 347, 348, 349, 350]
+    },
+    {
+      "name": "qoHead",
+      "sha": "f581b6bd42b5c32cb7791677159522ddf6274aaa",
+      "tree": "9efb20d52e253027b2d3b803a5e11d5ff8ca7541",
+      "parents": [
+        "7f8edd7535c6c80c963d213e1ea92a705c5c814a"
+      ],
+      "subject": "fix(quick-order): protect held currentness authority integrity",
+      "acceptedMergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "directPathIndices": [207, 345, 346, 347, 348, 349]
+    },
+    {
+      "name": "qoHeadRecords",
+      "sha": "30085a641a2101d6578d26fb42a7468a16c8351e",
+      "tree": "b559e6add1c97479c615b5f73eb269ffa6a60aa5",
+      "parents": [
+        "f581b6bd42b5c32cb7791677159522ddf6274aaa"
+      ],
+      "subject": "docs(quick-order): bind doc49 integrity successor and pending review",
+      "acceptedMergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "directPathIndices": [0, 2, 5, 13, 15, 171, 208, 209, 268]
+    },
+    {
+      "name": "currentness",
+      "sha": "e90d464a2e2f81f6b30a02bfef2fd3ccbe35d9e7",
+      "tree": "bdb31ef330f59ddce89d53238107a3341e04dc86",
+      "parents": [
+        "11a79001d7a8a6552181f946dda2a8b5177b82cc"
+      ],
+      "subject": "feat(quick-order): bind canonical decision inputs to held revisions",
+      "acceptedMergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "directPathIndices": [212, 345, 346, 347, 348, 349]
+    },
+    {
+      "name": "currentnessRecords",
+      "sha": "5a49ef043c43663c7a19c9b1c1b9988439062240",
+      "tree": "2b20b80e265b1c65900cf50bd6909f98b5ba8069",
+      "parents": [
+        "e90d464a2e2f81f6b30a02bfef2fd3ccbe35d9e7"
+      ],
+      "subject": "docs(quick-order): hand off decision-input source for exact review",
+      "acceptedMergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "directPathIndices": [0, 2, 5, 13, 15, 172, 183, 191, 213, 214, 267]
+    },
+    {
+      "name": "verifier",
+      "sha": "2d2d958f5c45259d5d1134665f3eb5b8caf9c172",
+      "tree": "b7826387a6868bd86501804ba152e861b5e442c4",
+      "parents": [
+        "8e462da35b4319dc6d0c53b0d7b431d0b2c6f562"
+      ],
+      "subject": "fix(quick-order): discriminate Doc53 verifier boundary fixtures",
+      "acceptedMergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "directPathIndices": [219, 347, 348, 349]
+    },
+    {
+      "name": "verifierRecords",
+      "sha": "0d417a918a45ee9e4015f41abba8976e9660c3dd",
+      "tree": "8a2512a6df166356ac10b091859ec18a73cc9290",
+      "parents": [
+        "2d2d958f5c45259d5d1134665f3eb5b8caf9c172"
+      ],
+      "subject": "docs(quick-order): record Doc53 acceptance and bounded follow-up",
+      "acceptedMergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "directPathIndices": [0, 2, 5, 13, 15, 174, 183, 220, 221, 222, 264]
+    },
+    {
+      "name": "supervisor",
+      "sha": "1e808bab28fac90437de93628a15a7fb0322d53e",
+      "tree": "0fd769d844228c7b9a9352935b25c214cb572493",
+      "parents": [
+        "5a49ef043c43663c7a19c9b1c1b9988439062240"
+      ],
+      "subject": "fix(quick-order): bind qualification evidence and execution authority",
+      "acceptedMergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "directPathIndices": [239, 278]
+    },
+    {
+      "name": "supervisorRecords",
+      "sha": "8e462da35b4319dc6d0c53b0d7b431d0b2c6f562",
+      "tree": "b861832fb0e5a08dba8a36ddf36fad6ae3ec6b45",
+      "parents": [
+        "1e808bab28fac90437de93628a15a7fb0322d53e"
+      ],
+      "subject": "docs(quick-order): freeze Doc52 correction and residual holds",
+      "acceptedMergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+      "directPathIndices": [0, 2, 5, 13, 15, 173, 183, 215, 216, 217, 218]
+    },
+    {
+      "name": "wordingRecords",
+      "sha": "95283ce83fdedf4dbeb84f131aed16008e6f3c5f",
+      "tree": "7437babf9bff119d389ab7513d4401003d61e13a",
+      "parents": [
+        "e6d7dd10045289594d91a6a086ba592348d7edb8"
+      ],
+      "subject": "docs: hand off local PS-R4 wording correction"
+    },
+    {
+      "name": "qoRepairRecords",
+      "sha": "1631323d7cf60f145141e0f82586e64ef7c7d637",
+      "tree": "796f15c908739b05e597d24bf6e9a6b2e2c541c5",
+      "parents": [
+        "3e82154724ede74b7c5f361f280739eedd60db25"
+      ],
+      "subject": "docs(quick-order): bind local review repair receipts and push blocker"
+    },
+    {
+      "name": "qoAcceptanceRecords",
+      "sha": "7f8edd7535c6c80c963d213e1ea92a705c5c814a",
+      "tree": "27799925b462c73196c98b9365284a8281bbf455",
+      "parents": [
+        "1631323d7cf60f145141e0f82586e64ef7c7d637"
+      ],
+      "subject": "docs(quick-order): record doc48 acceptance and close repair records"
+    },
+    {
+      "name": "headAcceptanceRecords",
+      "sha": "11a79001d7a8a6552181f946dda2a8b5177b82cc",
+      "tree": "64ad613726b1055afb5b8e99d45aaab7c344d753",
+      "parents": [
+        "6d0fe8655b799bb7e2fd64e508d6f148e4c2f552"
+      ],
+      "subject": "docs(quick-order): record doc50 acceptance and doc51 design limits"
+    }
+  ],
+  "sourcePathSets": {
+    "catalog": {
+      "cumulativePathIndices": [0, 2, 5, 9, 14, 20, 21, 22, 23, 24, 25, 26, 33, 34, 35, 36, 37, 38, 39, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 74, 75, 76, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 324, 325, 326, 333, 334, 335, 336, 337, 338, 339, 344, 351],
+      "directArtifacts": [
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "b82751db97c81d6b3194f814fe06dc3a8c92e8a9",
+          "newBlob": "5a9e65bed522d2687b28b5c624ea01379d1048f9",
+          "status": "M",
+          "pathIndex": 59
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "0c67a0d35ec1c16a54f4ddb0ec6b865996f7cf2d",
+          "newBlob": "c54db8933eb9654f55b98f163c68e5ae1d51cc3a",
+          "status": "M",
+          "pathIndex": 60
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "03c5e9c68d3ba534d77d492c1f4ad4e53aa9103d",
+          "newBlob": "d0546fa3031ed3040d75e6fdc2a4b8c297d6b390",
+          "status": "M",
+          "pathIndex": 61
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "73d2abe277e874f73fb9e99da0a7b94b4919bf62",
+          "newBlob": "dbaa8e16e1d866eb9620da6572d318e33355e653",
+          "status": "M",
+          "pathIndex": 62
+        }
+      ]
+    },
+    "wording": {
+      "cumulativePathIndices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 16, 17, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 77, 78, 79, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 303],
+      "directArtifacts": [
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "f3bb317553f071ae1ebf566452c0c8cef85da16e",
+          "newBlob": "29c60d8db1e421f759f4761b5dd6c58361de5a67",
+          "status": "M",
+          "pathIndex": 55
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "3d938f05ca7e43020de4fba5110fe04d75cd2681",
+          "newBlob": "7834fd4ed9064a9ea418afbf0c19141d3501c3da",
+          "status": "M",
+          "pathIndex": 58
+        }
+      ]
+    },
+    "c": {
+      "cumulativePathIndices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 16, 17, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 77, 78, 79, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 303],
+      "directArtifacts": [
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "29c60d8db1e421f759f4761b5dd6c58361de5a67",
+          "newBlob": "ce94ff421800fa3b84437038d8c7e390ceeb0401",
+          "status": "M",
+          "pathIndex": 55
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "4c9075adc3fb223b274fa0601bc711032fb12afe",
+          "newBlob": "d50b467159739148ae2ecbe90689c6d8df6f6d92",
+          "status": "M",
+          "pathIndex": 56
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "c6cff1e5ec61fbdfc1575cecd1be5b6229cf70de",
+          "newBlob": "d094babf3592395f9a3e26f299cf24789a837dbd",
+          "status": "M",
+          "pathIndex": 57
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "7834fd4ed9064a9ea418afbf0c19141d3501c3da",
+          "newBlob": "b4046a7fa1ec200ff4c432c0b9a17801e3d90d99",
+          "status": "M",
+          "pathIndex": 58
+        }
+      ]
+    },
+    "qoRepair": {
+      "cumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 240, 241, 242, 243, 244, 245, 246, 247, 249, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 266, 270, 271, 272, 273, 274, 275, 276, 277, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351],
+      "directArtifacts": [
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "49ede4164a167d33e21e690eeea999446c2c1157",
+          "newBlob": "03ceeb28714ff961618d8367f77e6cb311cf4a2b",
+          "status": "M",
+          "pathIndex": 0
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "c42e4c649aa14c668403bca0e4b5cb71d6a13c94",
+          "newBlob": "577d9681e9d63d3e5143854b4cf1d390e9db3b1e",
+          "status": "M",
+          "pathIndex": 2
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "f8dd59718899701e9755b37b40058ed5d905d91d",
+          "newBlob": "a14cc6a9d3c12558f9df857768cffeef2d19d290",
+          "status": "M",
+          "pathIndex": 5
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "687d3856510bf28ab44764b84e8abd8b0db50809",
+          "newBlob": "fc761887c8bb797a9030e84041ff43daaa5bdd43",
+          "status": "M",
+          "pathIndex": 15
+        },
+        {
+          "oldMode": "000000",
+          "newMode": "100644",
+          "oldBlob": "0000000000000000000000000000000000000000",
+          "newBlob": "84bf0b24ad128610bf5b32bc277857a8cd6e0e9f",
+          "status": "A",
+          "pathIndex": 176
+        },
+        {
+          "oldMode": "000000",
+          "newMode": "100644",
+          "oldBlob": "0000000000000000000000000000000000000000",
+          "newBlob": "daa7963b5d6f819ca369957adfceb54b96ac912e",
+          "status": "A",
+          "pathIndex": 185
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "8af510d9d13174315fc91098ccaa4e76fc04d090",
+          "newBlob": "a3208dd83c17ca97f0caf0415bdf5182cd4da324",
+          "status": "M",
+          "pathIndex": 186
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "28f6070ac6c1350fea10adb84c51e130f49c87b6",
+          "newBlob": "afc47b2071b1ac86588bb0e76db202466902ca0a",
+          "status": "M",
+          "pathIndex": 191
+        },
+        {
+          "oldMode": "000000",
+          "newMode": "100644",
+          "oldBlob": "0000000000000000000000000000000000000000",
+          "newBlob": "e8619dbd98a8dc31f2d7dbd1a4cc2394302d46a2",
+          "status": "A",
+          "pathIndex": 227
+        },
+        {
+          "oldMode": "000000",
+          "newMode": "100644",
+          "oldBlob": "0000000000000000000000000000000000000000",
+          "newBlob": "58fc6cf9cdbc5ae0cafa05e3bd80f9202f1ed6e8",
+          "status": "A",
+          "pathIndex": 249
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "7c3fc866ecf723411fd96d9d7ccab5b93ad85243",
+          "newBlob": "8e5876e7adadbb2960a774c904fe21124f970e49",
+          "status": "M",
+          "pathIndex": 318
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "10aed9de6505d64199e0035c9fc748f1961c6935",
+          "newBlob": "654877176e4d19aa1637545ceb5bd968b5ea55c7",
+          "status": "M",
+          "pathIndex": 319
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "a626f2830ad110866f1dfa712a9ce15faa9f09fd",
+          "newBlob": "49e8296f3604d4f56af86262e66cd9da799b8834",
+          "status": "M",
+          "pathIndex": 323
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "8003e465bc13c4284aee3d63901bb46738ae78a3",
+          "newBlob": "e4a829ba51ab91b5bc65e5ca7f94c555c1d233f0",
+          "status": "M",
+          "pathIndex": 340
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "1694c5ee95d1c34ae2a10aa20134b23af6c301c4",
+          "newBlob": "afddff3f68a494b4f69aefb3f15310fc086f18b8",
+          "status": "M",
+          "pathIndex": 341
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "0866432d103def53e4e3f1a2c5e30fa44907644d",
+          "newBlob": "18f506c2866f7b5a676061d84c4382ce36e34b0d",
+          "status": "M",
+          "pathIndex": 342
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "149f707d2f7a0ac7d3d82a8f9cedc16594bdb64e",
+          "newBlob": "867dc0a3b54991db290db2c75cd63b3886302e26",
+          "status": "M",
+          "pathIndex": 343
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "63b1b6dd4df6b71727dd3426dafc47464ef72b01",
+          "newBlob": "6f9ea68981e3c1aca269e2d9c076dab91dc9dafd",
+          "status": "M",
+          "pathIndex": 345
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "8b01c3a1d0f4a237369e0992dab7261548cd0138",
+          "newBlob": "9fd11baf3273c158307040b683ba78dd4d76de3a",
+          "status": "M",
+          "pathIndex": 346
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "02d1d0fa63a51f548cd4a2fe0c81578595bb8d97",
+          "newBlob": "90efb4757cfa43e298e74bed88d5ffff1ab4a74c",
+          "status": "M",
+          "pathIndex": 347
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "fd589c32e2dd798924c6ccb3f568eb2e85fd0290",
+          "newBlob": "fab74a8f5575211a0f7debb1348d9d8ac9289aa3",
+          "status": "M",
+          "pathIndex": 348
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "7c44c926eaf1d712d7b351f3ef997034758f08c2",
+          "newBlob": "30f554a6fe9e9a22487a7ece01853a91c0531246",
+          "status": "M",
+          "pathIndex": 349
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "cb18e422dce27334123aa430e8cad7def3323467",
+          "newBlob": "5d37ae71955063fac6f5debfed9b84c3a9fd9195",
+          "status": "M",
+          "pathIndex": 350
+        }
+      ]
+    },
+    "qoHead": {
+      "cumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 269, 270, 271, 272, 273, 274, 275, 276, 277, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351],
+      "directArtifacts": [
+        {
+          "oldMode": "000000",
+          "newMode": "100644",
+          "oldBlob": "0000000000000000000000000000000000000000",
+          "newBlob": "f76c47f70ccff2a144bf0d6ee281c38aa0bb3e3e",
+          "status": "A",
+          "pathIndex": 207
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "6f9ea68981e3c1aca269e2d9c076dab91dc9dafd",
+          "newBlob": "cf47a8812fee5322dc788c691390f6495c1284c5",
+          "status": "M",
+          "pathIndex": 345
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "9fd11baf3273c158307040b683ba78dd4d76de3a",
+          "newBlob": "8d0efc76569e853d00d61c71b2e28de03502fa8e",
+          "status": "M",
+          "pathIndex": 346
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "90efb4757cfa43e298e74bed88d5ffff1ab4a74c",
+          "newBlob": "f4c3ed3431322fcc1e1417ce8a704e339ccbca5f",
+          "status": "M",
+          "pathIndex": 347
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "fab74a8f5575211a0f7debb1348d9d8ac9289aa3",
+          "newBlob": "675acb3a50e6b1f3e69875d7ea7bc75b9751e117",
+          "status": "M",
+          "pathIndex": 348
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "30f554a6fe9e9a22487a7ece01853a91c0531246",
+          "newBlob": "32ad9f4f7f46a4f7fbfffffeba3a3338c13ef766",
+          "status": "M",
+          "pathIndex": 349
+        }
+      ]
+    },
+    "currentness": {
+      "cumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 171, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351],
+      "directArtifacts": [
+        {
+          "oldMode": "000000",
+          "newMode": "100644",
+          "oldBlob": "0000000000000000000000000000000000000000",
+          "newBlob": "cfab86c70b1f70d4c56451d180466c4a46e830d0",
+          "status": "A",
+          "pathIndex": 212
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "cf47a8812fee5322dc788c691390f6495c1284c5",
+          "newBlob": "02453231f4a974b4c8f76f47e47927489c3fc5d9",
+          "status": "M",
+          "pathIndex": 345
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "8d0efc76569e853d00d61c71b2e28de03502fa8e",
+          "newBlob": "ff6cc8916b7968cf1e142971a043bf38b4b41f87",
+          "status": "M",
+          "pathIndex": 346
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "f4c3ed3431322fcc1e1417ce8a704e339ccbca5f",
+          "newBlob": "504a7ddf80ed78028eca9f089223bd22e15f4cf5",
+          "status": "M",
+          "pathIndex": 347
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "675acb3a50e6b1f3e69875d7ea7bc75b9751e117",
+          "newBlob": "21846f43c28932d08e77dd6443c98a473f91099d",
+          "status": "M",
+          "pathIndex": 348
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "32ad9f4f7f46a4f7fbfffffeba3a3338c13ef766",
+          "newBlob": "5e2db83196ccf4f70fd79b89c0d591dedbfd16d8",
+          "status": "M",
+          "pathIndex": 349
+        }
+      ]
+    },
+    "verifier": {
+      "cumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 171, 172, 173, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351],
+      "directArtifacts": [
+        {
+          "oldMode": "000000",
+          "newMode": "100644",
+          "oldBlob": "0000000000000000000000000000000000000000",
+          "newBlob": "5ca48bb6372b4ecd649386679bedc9a3e3d8e693",
+          "status": "A",
+          "pathIndex": 219
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "504a7ddf80ed78028eca9f089223bd22e15f4cf5",
+          "newBlob": "641bee7724db27836b3993b1d0a03677ab90fb53",
+          "status": "M",
+          "pathIndex": 347
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "21846f43c28932d08e77dd6443c98a473f91099d",
+          "newBlob": "15d63f91a6e46007d6fa151eb405149b79fa4b5f",
+          "status": "M",
+          "pathIndex": 348
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "5e2db83196ccf4f70fd79b89c0d591dedbfd16d8",
+          "newBlob": "a7b33dd5c577fed6060dfd728ba6bc8944978280",
+          "status": "M",
+          "pathIndex": 349
+        }
+      ]
+    },
+    "supervisor": {
+      "cumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 171, 172, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351],
+      "directArtifacts": [
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "72514d68c16d4495e5860c92fcac00bb18190cd5",
+          "newBlob": "7ab5a0afd22e1047ae437075c3efdab0c9fec46c",
+          "status": "M",
+          "pathIndex": 239
+        },
+        {
+          "oldMode": "100644",
+          "newMode": "100644",
+          "oldBlob": "9f295ec94af2609ddc4ab34963646e35faf6c7f5",
+          "newBlob": "9f0ff1f01f2a91383d19a071772ce59ea02155a7",
+          "status": "M",
+          "pathIndex": 278
+        }
+      ]
+    }
+  },
+  "acceptedCommonBasePathIndices": [0, 2, 5, 14, 20, 21, 22, 23, 24, 25, 26, 33, 34, 35, 36, 37, 38, 39, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 74, 75, 76, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 324, 325, 326, 333, 334, 335, 336, 337, 338, 339, 344, 351],
+  "ancestry": [
+    {
+      "from": "accepted",
+      "to": "catalog",
+      "ancestorExit": 0,
+      "isAncestor": true,
+      "mergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca"
+    },
+    {
+      "from": "accepted",
+      "to": "c",
+      "ancestorExit": 1,
+      "isAncestor": false,
+      "mergeBase": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59"
+    },
+    {
+      "from": "wording",
+      "to": "c",
+      "ancestorExit": 0,
+      "isAncestor": true,
+      "mergeBase": "e6d7dd10045289594d91a6a086ba592348d7edb8"
+    },
+    {
+      "from": "catalog",
+      "to": "c",
+      "ancestorExit": 1,
+      "isAncestor": false,
+      "mergeBase": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59"
+    },
+    {
+      "from": "catalog",
+      "to": "qoRepair",
+      "ancestorExit": 1,
+      "isAncestor": false,
+      "mergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca"
+    },
+    {
+      "from": "accepted",
+      "to": "qoRepair",
+      "ancestorExit": 0,
+      "isAncestor": true,
+      "mergeBase": "756a906877dbc174b7e228a259d2faa9c3af48ca"
+    },
+    {
+      "from": "qoRepair",
+      "to": "qoHead",
+      "ancestorExit": 0,
+      "isAncestor": true,
+      "mergeBase": "3e82154724ede74b7c5f361f280739eedd60db25"
+    },
+    {
+      "from": "qoHead",
+      "to": "currentness",
+      "ancestorExit": 0,
+      "isAncestor": true,
+      "mergeBase": "f581b6bd42b5c32cb7791677159522ddf6274aaa"
+    },
+    {
+      "from": "currentness",
+      "to": "supervisor",
+      "ancestorExit": 0,
+      "isAncestor": true,
+      "mergeBase": "e90d464a2e2f81f6b30a02bfef2fd3ccbe35d9e7"
+    },
+    {
+      "from": "supervisor",
+      "to": "verifier",
+      "ancestorExit": 0,
+      "isAncestor": true,
+      "mergeBase": "1e808bab28fac90437de93628a15a7fb0322d53e"
+    }
+  ],
+  "overlaps": [
+    {
+      "left": "catalog",
+      "right": "wording",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 303]
+    },
+    {
+      "left": "catalog",
+      "right": "c",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 303]
+    },
+    {
+      "left": "catalog",
+      "right": "qoRepair",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 14, 20, 21, 22, 23, 24, 25, 26, 33, 34, 35, 36, 37, 38, 39, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 74, 75, 76, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 324, 325, 326, 333, 334, 335, 336, 337, 338, 339, 344, 351]
+    },
+    {
+      "left": "catalog",
+      "right": "qoHead",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 14, 20, 21, 22, 23, 24, 25, 26, 33, 34, 35, 36, 37, 38, 39, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 74, 75, 76, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 324, 325, 326, 333, 334, 335, 336, 337, 338, 339, 344, 351]
+    },
+    {
+      "left": "catalog",
+      "right": "currentness",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 14, 20, 21, 22, 23, 24, 25, 26, 33, 34, 35, 36, 37, 38, 39, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 74, 75, 76, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 324, 325, 326, 333, 334, 335, 336, 337, 338, 339, 344, 351]
+    },
+    {
+      "left": "catalog",
+      "right": "verifier",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 14, 20, 21, 22, 23, 24, 25, 26, 33, 34, 35, 36, 37, 38, 39, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 74, 75, 76, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 324, 325, 326, 333, 334, 335, 336, 337, 338, 339, 344, 351]
+    },
+    {
+      "left": "catalog",
+      "right": "supervisor",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 14, 20, 21, 22, 23, 24, 25, 26, 33, 34, 35, 36, 37, 38, 39, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 74, 75, 76, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 324, 325, 326, 333, 334, 335, 336, 337, 338, 339, 344, 351]
+    },
+    {
+      "left": "wording",
+      "right": "c",
+      "directPathIndices": [55, 58],
+      "commonBaseCumulativePathIndices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 16, 17, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 77, 78, 79, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 303]
+    },
+    {
+      "left": "wording",
+      "right": "qoRepair",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 303]
+    },
+    {
+      "left": "wording",
+      "right": "qoHead",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 303]
+    },
+    {
+      "left": "wording",
+      "right": "currentness",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 303]
+    },
+    {
+      "left": "wording",
+      "right": "verifier",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 303]
+    },
+    {
+      "left": "wording",
+      "right": "supervisor",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 303]
+    },
+    {
+      "left": "c",
+      "right": "qoRepair",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 303]
+    },
+    {
+      "left": "c",
+      "right": "qoHead",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 303]
+    },
+    {
+      "left": "c",
+      "right": "currentness",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 303]
+    },
+    {
+      "left": "c",
+      "right": "verifier",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 303]
+    },
+    {
+      "left": "c",
+      "right": "supervisor",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 20, 23, 24, 25, 26, 33, 36, 39, 42, 44, 45, 46, 47, 48, 55, 56, 57, 58, 303]
+    },
+    {
+      "left": "qoRepair",
+      "right": "qoHead",
+      "directPathIndices": [345, 346, 347, 348, 349],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 240, 241, 242, 243, 244, 245, 246, 247, 249, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 266, 270, 271, 272, 273, 274, 275, 276, 277, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351]
+    },
+    {
+      "left": "qoRepair",
+      "right": "currentness",
+      "directPathIndices": [345, 346, 347, 348, 349],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 240, 241, 242, 243, 244, 245, 246, 247, 249, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 266, 270, 271, 272, 273, 274, 275, 276, 277, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351]
+    },
+    {
+      "left": "qoRepair",
+      "right": "verifier",
+      "directPathIndices": [347, 348, 349],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 240, 241, 242, 243, 244, 245, 246, 247, 249, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 266, 270, 271, 272, 273, 274, 275, 276, 277, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351]
+    },
+    {
+      "left": "qoRepair",
+      "right": "supervisor",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 240, 241, 242, 243, 244, 245, 246, 247, 249, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 266, 270, 271, 272, 273, 274, 275, 276, 277, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351]
+    },
+    {
+      "left": "qoHead",
+      "right": "currentness",
+      "directPathIndices": [345, 346, 347, 348, 349],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 269, 270, 271, 272, 273, 274, 275, 276, 277, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351]
+    },
+    {
+      "left": "qoHead",
+      "right": "verifier",
+      "directPathIndices": [347, 348, 349],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 269, 270, 271, 272, 273, 274, 275, 276, 277, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351]
+    },
+    {
+      "left": "qoHead",
+      "right": "supervisor",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 269, 270, 271, 272, 273, 274, 275, 276, 277, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351]
+    },
+    {
+      "left": "currentness",
+      "right": "verifier",
+      "directPathIndices": [347, 348, 349],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 171, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351]
+    },
+    {
+      "left": "currentness",
+      "right": "supervisor",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 171, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351]
+    },
+    {
+      "left": "verifier",
+      "right": "supervisor",
+      "directPathIndices": [],
+      "commonBaseCumulativePathIndices": [0, 2, 5, 13, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 167, 168, 169, 170, 171, 172, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351]
+    }
+  ],
+  "cBaseBlobComparison": [
+    {
+      "path": "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+      "acceptedBlob": "f3bb317553f071ae1ebf566452c0c8cef85da16e",
+      "subscriptionBaseBlob": "f3bb317553f071ae1ebf566452c0c8cef85da16e",
+      "wordingBlob": "29c60d8db1e421f759f4761b5dd6c58361de5a67",
+      "cBlob": "ce94ff421800fa3b84437038d8c7e390ceeb0401"
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.tsx",
+      "acceptedBlob": "4c9075adc3fb223b274fa0601bc711032fb12afe",
+      "subscriptionBaseBlob": "4c9075adc3fb223b274fa0601bc711032fb12afe",
+      "wordingBlob": "4c9075adc3fb223b274fa0601bc711032fb12afe",
+      "cBlob": "d50b467159739148ae2ecbe90689c6d8df6f6d92"
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+      "acceptedBlob": "c6cff1e5ec61fbdfc1575cecd1be5b6229cf70de",
+      "subscriptionBaseBlob": "c6cff1e5ec61fbdfc1575cecd1be5b6229cf70de",
+      "wordingBlob": "c6cff1e5ec61fbdfc1575cecd1be5b6229cf70de",
+      "cBlob": "d094babf3592395f9a3e26f299cf24789a837dbd"
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "acceptedBlob": "3d938f05ca7e43020de4fba5110fe04d75cd2681",
+      "subscriptionBaseBlob": "3d938f05ca7e43020de4fba5110fe04d75cd2681",
+      "wordingBlob": "7834fd4ed9064a9ea418afbf0c19141d3501c3da",
+      "cBlob": "b4046a7fa1ec200ff4c432c0b9a17801e3d90d99"
+    }
+  ],
+  "reviewSnapshot": {
+    "commit": "9e6b601a8551ad9fe12e06d953e4e4fd1d6bd41f",
+    "doc48": {
+      "commit": "7dde166bad54e7c5d6b673434d04cd591c93e3e9",
+      "source": "3e82154724ede74b7c5f361f280739eedd60db25",
+      "disposition": "SQL draft repair and composition test source ACCEPT WITH LIMITS; 5C held"
+    },
+    "doc50": {
+      "commit": "a2be7e2bac24bc0e7d5ba2275b7c33f4d80b4dde",
+      "source": "f581b6bd42b5c32cb7791677159522ddf6274aaa",
+      "disposition": "SOURCE ACCEPT WITH LIMITS; held metadata"
+    },
+    "doc53": {
+      "commit": "58c6f586b5242421ebbd63118fa6823d9ef8642c",
+      "source": "e90d464a2e2f81f6b30a02bfef2fd3ccbe35d9e7",
+      "disposition": "SOURCE ACCEPT WITH LIMITS; CF1/2 verifier correction needed before reliance; CF11 census preimage OPEN"
+    },
+    "doc54": {
+      "commit": "63fdb0a438ad123dfa9e0b66898f3a00c83ea680",
+      "source": "e6d7dd10045289594d91a6a086ba592348d7edb8",
+      "disposition": "SOURCE ACCEPT WITH LIMITS; wording only, partial PS-R4"
+    },
+    "doc55": {
+      "commit": "d97f855874c486da9ed020934b06b0f1b5757aa0",
+      "source": "1e808bab28fac90437de93628a15a7fb0322d53e",
+      "disposition": "SOURCE REVISION REQUIRED; CR01-03 P1, CR04-07 P2; all execution groups held; CR08-31 precision/hold findings remain as recorded"
+    },
+    "catalog": "Doc56 acknowledged at snapshot commit; no acceptance verdict observed",
+    "c": "Additional behavior unaccepted; accepted wording is not acceptance of C",
+    "verifier": "Bounded successor pending exact original-review disposition; authored CF1/2 fixes NOT RUN"
+  },
+  "qoApplicationCumulativeFromAccepted": [
+    {
+      "status": "M",
+      "pathIndex": 18
+    },
+    {
+      "status": "M",
+      "pathIndex": 19
+    },
+    {
+      "status": "M",
+      "pathIndex": 27
+    },
+    {
+      "status": "M",
+      "pathIndex": 28
+    },
+    {
+      "status": "M",
+      "pathIndex": 29
+    },
+    {
+      "status": "M",
+      "pathIndex": 30
+    },
+    {
+      "status": "M",
+      "pathIndex": 31
+    },
+    {
+      "status": "M",
+      "pathIndex": 32
+    },
+    {
+      "status": "M",
+      "pathIndex": 40
+    },
+    {
+      "status": "M",
+      "pathIndex": 41
+    },
+    {
+      "status": "A",
+      "pathIndex": 66
+    },
+    {
+      "status": "A",
+      "pathIndex": 67
+    },
+    {
+      "status": "A",
+      "pathIndex": 68
+    },
+    {
+      "status": "A",
+      "pathIndex": 69
+    },
+    {
+      "status": "A",
+      "pathIndex": 70
+    },
+    {
+      "status": "A",
+      "pathIndex": 71
+    },
+    {
+      "status": "A",
+      "pathIndex": 72
+    },
+    {
+      "status": "A",
+      "pathIndex": 73
+    },
+    {
+      "status": "M",
+      "pathIndex": 284
+    },
+    {
+      "status": "M",
+      "pathIndex": 285
+    },
+    {
+      "status": "A",
+      "pathIndex": 286
+    },
+    {
+      "status": "A",
+      "pathIndex": 287
+    },
+    {
+      "status": "A",
+      "pathIndex": 288
+    },
+    {
+      "status": "A",
+      "pathIndex": 289
+    },
+    {
+      "status": "M",
+      "pathIndex": 290
+    },
+    {
+      "status": "M",
+      "pathIndex": 291
+    },
+    {
+      "status": "A",
+      "pathIndex": 304
+    },
+    {
+      "status": "A",
+      "pathIndex": 305
+    },
+    {
+      "status": "A",
+      "pathIndex": 306
+    },
+    {
+      "status": "A",
+      "pathIndex": 307
+    },
+    {
+      "status": "A",
+      "pathIndex": 308
+    },
+    {
+      "status": "A",
+      "pathIndex": 309
+    },
+    {
+      "status": "A",
+      "pathIndex": 310
+    },
+    {
+      "status": "A",
+      "pathIndex": 311
+    },
+    {
+      "status": "A",
+      "pathIndex": 312
+    },
+    {
+      "status": "A",
+      "pathIndex": 313
+    },
+    {
+      "status": "A",
+      "pathIndex": 314
+    },
+    {
+      "status": "A",
+      "pathIndex": 315
+    },
+    {
+      "status": "A",
+      "pathIndex": 316
+    },
+    {
+      "status": "A",
+      "pathIndex": 317
+    },
+    {
+      "status": "A",
+      "pathIndex": 318
+    },
+    {
+      "status": "A",
+      "pathIndex": 319
+    },
+    {
+      "status": "A",
+      "pathIndex": 320
+    },
+    {
+      "status": "A",
+      "pathIndex": 321
+    },
+    {
+      "status": "A",
+      "pathIndex": 322
+    },
+    {
+      "status": "A",
+      "pathIndex": 323
+    },
+    {
+      "status": "M",
+      "pathIndex": 327
+    },
+    {
+      "status": "M",
+      "pathIndex": 328
+    },
+    {
+      "status": "M",
+      "pathIndex": 329
+    },
+    {
+      "status": "M",
+      "pathIndex": 330
+    },
+    {
+      "status": "M",
+      "pathIndex": 331
+    },
+    {
+      "status": "A",
+      "pathIndex": 332
+    },
+    {
+      "status": "A",
+      "pathIndex": 340
+    },
+    {
+      "status": "A",
+      "pathIndex": 341
+    },
+    {
+      "status": "A",
+      "pathIndex": 342
+    },
+    {
+      "status": "A",
+      "pathIndex": 343
+    },
+    {
+      "status": "A",
+      "pathIndex": 345
+    },
+    {
+      "status": "A",
+      "pathIndex": 346
+    },
+    {
+      "status": "A",
+      "pathIndex": 347
+    },
+    {
+      "status": "A",
+      "pathIndex": 348
+    },
+    {
+      "status": "A",
+      "pathIndex": 349
+    },
+    {
+      "status": "A",
+      "pathIndex": 350
+    }
+  ],
+  "constraints": [
+    "Preserve accepted integration756a906; B is a direct four-file successor, not new acceptance.",
+    "C is not descended from accepted integration: apply accepted wording e6d7dd1 then C four-path delta only after authorization/acceptance; or select final C blobs with both deltas explicitly bound. Its four pre-wording blobs equal the accepted integration, so do not replay older lane ancestry.",
+    "QO repair is a repair over earlier authored application/composition foundations, not the entire feature. Do not copy its mixed continuity records or wholesale lane tree into release.",
+    "Intake family and intake verifier remain the3e82154 bytes. Currentness pre/postcheck remain e90d464 bytes; SQL header/rollback/verifier successor is2d2d958 pending review.",
+    "Verifier is descended from rejected supervisor1e808ba. A whole-branch merge would carry it. Separate application/candidate, verifier, supervisor, manifest and records acceptance.",
+    "Supervisor currently pins f581, not e90 or2d; never silently retarget. Doc55 requires coherent same-owner correction and independent disposition before a fresh execution proposal.",
+    "No integration or execution was performed. Protected-hash, release, policy, installation and external transfer authority remain separate.",
+    "Latest accepted referral profile excludes the referral family and privacy_begin replacement. Do not resurrect that older dependency.",
+    "Current hosted installation/deployment UNKNOWN; historical NOT INSTALLED and source comments are not current live evidence."
+  ],
+  "hostedState": "UNKNOWN_NOT_OBSERVED",
+  "outputs": "Two inventory records plus own handoff/registry/session rows only; source frozen; C transfer preserved; local commit only."
+}

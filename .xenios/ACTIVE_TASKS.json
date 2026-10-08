@@ -4,22 +4,29 @@
   "tasks": [
     {
       "id": "ACCEPTED-SOURCE-INTEGRATION-20261005",
-      "title": "Bounded catalog/detail presentation successor (Workstream B); accepted integration preserved",
+      "title": "Source-integration inventory r1; frozen catalog/detail source preserved",
       "priority": "P1",
       "state": "qa",
       "owner": "codex-accepted-source-integration-20261005",
       "baseSha": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
       "paths": [
-        "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
-        "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
-        "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
-        "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
-        "docs/health-launch/catalog-detail-presentation-20261008/**",
+        "docs/health-launch/catalog-detail-presentation-20261008/SOURCE_INTEGRATION_INVENTORY_20261008.md",
+        "docs/health-launch/catalog-detail-presentation-20261008/source-integration-inventory-20261008.json",
         ".xenios/sessions/codex-accepted-source-integration-20261005.json",
         ".xenios/handoffs/*ACCEPTED-SOURCE-INTEGRATION-20261005*"
       ],
       "dependsOn": [],
-      "scopeNote": "Verified human directive20261008 section4, coordinator94485a6. Same owner/task; four catalog/detail source/test paths and own records only. No tests/imports/syntax/type/build/resource/browser/server/SQL/qualification execution, push, hosted/backend/contracts/global/protected edits. Accepted source remains predecessor. Exact C transfer recorded.",
+      "scopeNote": "SOURCE-INTEGRATION-INVENTORY-20261008:r1 under independently verified human message01a11cc4-c1a0-74a0-bec9-fd3cd033f86d, coordinator1b165b15bfd6b575c25d66be7c9c15cce8ee94fa. Same owner/task/lease, two named inventory records and own continuity only. Catalog e0a7d47 and C transfer frozen. No source edits, execution, merge, push, installation, hosted changes or schedule changes.",
+      "inventoryAssignment": {
+        "id": "SOURCE-INTEGRATION-INVENTORY-20261008",
+        "revision": 1,
+        "baselineRecords": "9737db71014d1073ec5ffe9a78b2a1c491220813",
+        "sourceTarget": "e0a7d4787071140a25a984edc4c0a49f0d7c22ab",
+        "claimedAt": "2026-10-08T18:32:29Z",
+        "completedAt": "2026-10-08T18:41:22Z",
+        "status": "LOCAL_RECORDS_COMPLETE; no source change or execution",
+        "handoff": ".xenios/handoffs/2026-10-08T18-41-22Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md"
+      },
       "claimedAt": "2026-10-05T18:20:33.600Z",
       "handoff": {
         "session": "codex-accepted-source-integration-20261005",
