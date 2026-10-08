@@ -74,6 +74,6 @@ Samuel's message reached this session, so the board's three queued items are ack
 | --- | --- | --- |
 | `CUSTOMER-ACCEPTED-ASSEMBLY-DELTA-20261008` r1 (B) | source `cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055` (tree `e90de420…`), records `f175f3c` | COMPLETE: doc 62, SOURCE ACCEPT WITH LIMITS; composed candidate is byte-exact to the two accepted inputs; composed tests NOT RUN |
 | `DOC58-VERIFIER-CORRECTION-DELTA-20261008` r1 (C) | source `7a62e64de1d0120e64aee9a9b04816e5e4c9a1a4` (tree `1d950242…`), records `276226f` | COMPLETE: doc 63, SOURCE ACCEPT WITH LIMITS; doc 58 C-1 and C-2 closed in source; definition unchanged |
-| `DOC59-SUPERVISOR-CORRECTION-DELTA-20261008` r1 (A) | source `f98c41617f7216353b316510cca6c615f3c79a87` (tree `e64f3989…`), records `6c3a883` | ACKNOWLEDGED and IN REVIEW; disposition will be doc 64 |
+| `DOC59-SUPERVISOR-CORRECTION-DELTA-20261008` r1 (A) | source `f98c41617f7216353b316510cca6c615f3c79a87` (tree `e64f3989…`), records `6c3a883` | COMPLETE: doc 64, SOURCE REVISION REQUIRED on F-01 (a zero-launch admission miss strands G0 and the window); CC-02, CC-03 and CC-04 closed; G0 process count still held |
 
 The three touch disjoint files and are reviewed in parallel. Nothing was executed.
