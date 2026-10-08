@@ -1,0 +1,813 @@
+{
+ "schemaVersion": "claude_acceptance_lenses_v1",
+ "subject": "90f4ebd1dcccc5a2ba7c85b4cb9310285120fec8 qualification supervisor and manifest (records 6d0fe86) against doc 49 section 4",
+ "workflowRun": "wf_4b2754a0-375",
+ "taskId": "wuq0uih0f",
+ "agentCount": 4,
+ "subagentTokens": 1127068,
+ "toolCalls": 265,
+ "lenses": [
+  {
+   "lens": "supervisor-script",
+   "review": {
+    "verdict": "NOT ACCEPTABLE for an execution decision as authored (lens P1, supervisor only). No P0: the module does nothing on import, refuses without explicit group, window, reservation and admission records, has no deletion, lock or network code, and bounds children with a kernel Job Object (create suspended, assign before resume, kill on close, no breakaway). Ambiguous cleanup leaves the slot HELD. Two P1 defects remain. (1) The Vitest parser cannot see skipped or todo cases, and G2 to G5 have no case inventory, so a hidden hook failure could still be accepted as GREEN or EXACT_PREDECLARED_RED_ONLY. (2) Git is not pinned. It is found by name, with the working directory set to the snapshot the subjects can write to, and runs outside the Job Object while producing the source-identity evidence. There are 8 P2 and 10 P3 findings. Everything here is inspected source or untested behaviour. Nothing was run. The window expired on 2026-10-06. This review authorises nothing.",
+    "checklist": [
+     {
+      "item": "1a Activation and import safety",
+      "status": "PASS",
+      "evidence": "Inspected source at 90f4ebd. Lines :712-718 run runGroup only when argv[1] resolves to this file; the top level only defines constants and the WINDOWS_HELPER string. Lines :59-69 refuse unless --group, --window, --reservation and --admission are given, and unknown or duplicate options are refused. Line :454 refuses anything but win32. The file name matches no default Vitest or node --test pattern. With no arguments, parseOptions throws before any write."
+     },
+     {
+      "item": "1b Authorisation and reservation binding",
+      "status": "PARTIAL",
+      "evidence": "Lines :466-481 require window.directSamuelApproval===true, a non-empty approvalText, the manifest digest and source commit and tree, the group listed, an unexpired window of at most 4 hours, and an EXCLUSIVE_ACTIVE reservation bound to the lease. All of these are fields in self-written JSON files; the code itself says 'a file is not itself approval'. The preparation export materializeOwnedSnapshot (:348-366) has no CLI route, so it can only be reached by importing the module. It skips the self-hash and several window checks (QS-10)."
+     },
+     {
+      "item": "2 Input binding (manifest, sources, Node, Git SHA and tree, CRLF)",
+      "status": "PARTIAL",
+      "evidence": "The manifest's raw sha256 is bound to the window, reservation, admission and ownership records (:456-488). Self-hash at :459: recomputed blob bytes d85b5a04 equal manifest.supervisor.sha256. Node path and sha are checked at :461-462 and PowerShell at :546-548. HEAD and tree equality, plus a blob-hash recomputation of every tracked file, at :299-315. Gaps: git itself is not pinned (QS-02); untracked files, fixtures and node_modules are not rechecked (QS-06); the hashes depend on LF bytes, which are fragile under autocrlf=true (QS-19)."
+     },
+     {
+      "item": "3 Process control (spawn, environment, cwd, deadlines, tree kill, ceilings, ambiguity)",
+      "status": "PARTIAL",
+      "evidence": "shell:false with argv arrays (:42, :550-551). CreateProcess uses an absolute application name and MSVCRT quoting (:260, :295-298, :538); there is no shell in the chain. The environment is an allowlist without proxies (:50-58, :528-531), and NODE_OPTIONS comes from each manifest command (Q-9). cwd is the snapshot (:538). Termination is per Job (:245, :281-283) with no PID kill, and active-process limits apply (:256, :196). Ambiguity leaves the slot HELD (:654, :685). Gaps: duplicate Path/PATH keys (QS-04), execution policy (QS-05), no memory cap (QS-07), handle inheritance (QS-15)."
+     },
+     {
+      "item": "4 Output handling (separate streams, cap, disk, digests)",
+      "status": "PARTIAL",
+      "evidence": "stdout and stderr stream to separate CreateNew files (:246). The first 4 MiB is kept along with the observed byte counts (:246, :579-580), and receipts carry the sha256 of each retained stream. On overflow the run aborts rather than truncating (:246); the manifest records this deviation from the Q-11 truncation recommendation (QS-13). The process-event file and helper outputs are not hashed (QS-14)."
+     },
+     {
+      "item": "5 Admission (observation, refusal path, group consumption, ordering)",
+      "status": "PARTIAL",
+      "evidence": "The supervisor never samples resources itself. It validates recorded observations: floors, 20 GiB of disk, the heavy-job predicate id, freshness within 30 s (:436-451), and a maximum-floor pre-window observation (:475-477). A group-level refusal writes a refusal attempt with groupConsumed:false (:510-517). A refusal before a later heavy command comes after the group marker (:623, :635-637) and so consumes the group (QS-03). Nothing gives one run exclusive use (QS-08). Ascending-floor order is manifest text only."
+     },
+     {
+      "item": "6 Evidence (unique folder, no overwrite, receipt contents, atomicity, no network)",
+      "status": "PARTIAL",
+      "evidence": "Unique run root per runId (:369-373, :482). Each command folder is created with mkdir recursive:false (:524), and writes use 'wx' (:38). Receipts carry argv, cwd, env keys, NODE_OPTIONS, source, the manifest sha, the helper sha, timestamps, deadline, exit, abort, PID tree counts and stream digests (:574-582, :286). The supervisor has no network API. Writes are not atomic, a few file digests are missing, and neither the window digest nor approvalText is recorded (QS-14, QS-10)."
+     },
+     {
+      "item": "7 Cleanup scope (owned only, no dist outside snapshot, traversal guards)",
+      "status": "PASS",
+      "evidence": "The supervisor has no rm, unlink or rmdir. Cleanup is TerminateJobObject on the owned job only (:283), and the manifest snapshot.cleanup preserves roots. build.mjs:6@f581b6b runs rm(\"dist\") relative to cwd, which is the owned snapshot. Paths created are guarded by ensureOwned and within (:33-37, :370, :377, :392, :399-408, :491-494, :523). No Docker volumes, ports or pagefile are touched; G8, G9 and the database category are deferred."
+     },
+     {
+      "item": "8 G0 self-test defined and bounded per doc 49 Q-4",
+      "status": "PARTIAL",
+      "evidence": "Manifest G0 covers exit 0 and 1 with exact stream separation, deadline kill, stdout and stderr caps, a refusal path, a real child tree with a peak of at least 2 and cleanup proven, and a one-file Vitest baseline, all within a 60 s wall. It departs from Q-4: the floor is 1536 MiB, with no 512 MiB cap enforced, and ceilings are 3, 4 and 8 processes. The manifest discloses both as proposals. The refusal case is weak (QS-11), there is no node-tap case (QS-09), bootstrap interruption is not dispatched, and the timing is unproven (QS-20). NOT RUN."
+     },
+     {
+      "item": "9 Predicted-red handling (exact names, never relabelled, unexpected stops)",
+      "status": "PARTIAL",
+      "evidence": "compareCaseSets (:93-114) requires the failed set to equal the predeclared names exactly, and the selected and expected-pass sets where those are bound. runnerVerdict stays FAILED, with disposition EXACT_PREDECLARED_RED_ONLY (:111-113). The protection gate keeps FAILED (:152-154). An unexpected disposition stops later commands (:655-658). Names are compared without the file (QS-12)."
+     },
+     {
+      "item": "9b Skipped/todo detection for G2-G5",
+      "status": "FAIL",
+      "evidence": "The Vitest regex (:125) has no ↓ or □, which are the skip and todo symbols Vitest 4.1.10 prints (utils.BS4fH3nR.js:18-19). G2-G5 contracts carry no selectedNames, no expectedPasses and no count, so a hidden case cannot be detected (QS-01)."
+     },
+     {
+      "item": "10 Unauthorised execution, host danger, secret leak, pass without evidence",
+      "status": "PARTIAL",
+      "evidence": "No accidental activation, no shell, no secret-named variables (:531), no proxies, no deletion. Risks: unpinned git runs outside the job with a cwd the subjects can write to (QS-02); a false green is possible through invisible skips (QS-01); memory is uncapped (QS-07). No P0 found."
+     }
+    ],
+    "findings": [
+     {
+      "id": "QS-01",
+      "severity": "P1",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The vitest-verbose parser cannot see skipped or todo cases, and G2-G5 bind no case inventory. A run with hidden cases can therefore be accepted as GREEN or EXACT_PREDECLARED_RED_ONLY.",
+      "evidence": "Inspected :125@90f4ebd: the symbol class is [✓✔√×✖⨯-], and :127 maps only '-' to skipped. Pinned Vitest 4.1.10 (package.json sha caa41f04 equals the manifest pin) prints skipped as ↓ and todo as □ (dist/chunks/utils.BS4fH3nR.js:18-19; VerboseReporter.onTestCaseResult). So those rows never appear and the check at :103 never fires. G2-G5 bind only targetFiles and expectedFailures; :106 and :163 accept when the failed set equals the predicted set and exit is 1. Nested describe hooks exist at f581b6b (static-document 4, vite-document 2, root-composition 2, notifications 2). A failing hook can mark that suite's cases skipped, so they disappear while the file stays observed. manifest.focusedGreen.rule claims skips are detected.",
+      "fix": "At :125-127 map ↓ to skipped and □ and · to todo. Parse Vitest's final 'Tests' summary line and require the parsed totals to equal it, with skipped and todo at 0 or equal to a predeclared list. Bind an exact case count or a full expected-pass name list for each G2-G5 command in the manifest."
+     },
+     {
+      "id": "QS-02",
+      "severity": "P1",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "Git is not pinned. It is spawned by name with cwd set to the snapshot the subjects write to, runs outside the Job Object and every ceiling, and its output is the HEAD, tree and ls-tree identity evidence.",
+      "evidence": "Inspected :42: spawnSync('git', …, {cwd}) with no absolute path or hash. sourceState(run.cwd) runs at :631 and again at :662, after the subjects have run in that cwd. Preparation uses it at :379-381 and :403. Node (:461-462) and PowerShell (:546-548) are pinned by path and sha; manifest.toolchain has no git entry. Untested behaviour: libuv's Windows search_path looks in cwd before PATH, trying .com and then .exe. A git.com or git.exe written to the snapshot root would therefore run unconfined, and could forge the before/after identity. Untracked files are not refused (QS-06).",
+      "fix": "Add manifest.toolchain.git with an absolute executable path and its sha256. Verify it in loadRun and in preparation, spawn it by absolute path, and run it from a cwd outside the snapshot with -C <snapshot> --no-optional-locks."
+     },
+     {
+      "id": "QS-03",
+      "severity": "P2",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "Each later heavy command needs an admission observation no more than 30 s old, with no request or wait. A miss after the group marker consumes the group, which contradicts Q-3 and the manifest.",
+      "evidence": ":623 writes `${group}.attempt.json` before the loop. :635-637 re-read the admission file for every later heavy command and every G7 command, and :441-442 require an observedAt within 30 s of now. A miss throws into :660, the group is consumed, and :619 forbids a retry. The supervisor neither signals nor waits. Affected: G0 (vitest-baseline is the 8th command), G1 (3 commands), G4 (2) and G7 (6). manifest.admission.observations says there is no sampling loop, and bounds.attemptVsGroup says a refusal leaves the group unused. That holds only for the loadRun path (:510-517).",
+      "fix": "Before each later heavy command, write <group>-<command>.admission-request.json and wait, up to a bound set in the manifest, for an observation dated after that request. On a miss or a shortfall, write a refusal receipt with groupConsumed:false and stop. Alternatively, admit each group once and drop the per-command re-observation."
+     },
+     {
+      "id": "QS-04",
+      "severity": "P2",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The child environment can contain both 'Path' and 'PATH'. Windows PowerShell 5.1 ConvertFrom-Json is likely to reject that, which would abort every command before any job exists.",
+      "evidence": ":54-55 keep each key's original case; Windows normally uses 'Path'. :529 reads osEnvironment().PATH, which is undefined when the key is 'Path', and adds a second key 'PATH' holding only the node directory plus ';'. spec.environment (:537-545) is written to launch-spec.json and parsed at :170 by the pinned Windows PowerShell. Untested and host-dependent: PS 5.1 refuses keys that differ only by case. The helper would then exit non-zero and native would be null. The receipt would show cleanupProven false, the group would be consumed and the reservation HELD with nothing started.",
+      "fix": "Normalise environment keys case-insensitively: uppercase map, refuse duplicates, and look PATH up case-insensitively in osEnvironment and executeOwned. Add a G0 assertion on the child's PATH."
+     },
+     {
+      "id": "QS-05",
+      "severity": "P2",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The helper runs through -File with no execution-policy handling, and the host policy is NOT PROVEN.",
+      "evidence": ":550 spawns powershell.exe with -NoLogo -NoProfile -NonInteractive -WindowStyle Hidden -File <ps1> -SpecPath. Windows PowerShell applies execution policy to -File scripts; the Windows client default is Restricted. If the script is refused, every command ends ABORTED with cleanupProven false (HELD), and G0 is consumed. manifest.toolchain.windowsHelper does not record the policy.",
+      "fix": "Choose one: record the effective policy as a pre-window fact; pass a hash-checked body through -EncodedCommand; or declare a process-scoped -ExecutionPolicy Bypass in the manifest and the approval text. Never change the machine or user policy."
+     },
+     {
+      "id": "QS-06",
+      "severity": "P2",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "Untracked and ignored drift is not refused. Fixtures created during preparation are not re-verified when commands run. node_modules is pinned by only 6 files.",
+      "evidence": ":316 records `dirty` (git status porcelain) but never checks it, and the before/after states (:631, :662) are not compared. The generated G0 fixtures (:390-397) and the HTTP RED/GREEN files (:398-412) are hashed only during preparation. checkDependencyPins (:427-435) covers 6 files: vitest.mjs, vitest/package.json, the tsx loader and package.json, tsc, and typescript/package.json. An untracked .env, an extra Vitest config, or an edited fixture between groups would go undetected.",
+      "fix": "Require the porcelain output to equal an untracked-path allowlist in the manifest, and compare before with after. Re-hash the generated and historical files before each command. Record a node_modules inventory digest during preparation and recheck it for each group."
+     },
+     {
+      "id": "QS-07",
+      "severity": "P2",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "No Job memory limit is set, so doc 49 Q-4's 512 MiB G0 bound and the group floors are not enforced.",
+      "evidence": ":256 sets only flags 0x2000|0x8 (kill on close, active processes), and :195 sets 0x2008. jobMemory and processMemory are never set. The manifest's windowsHelper.memory says native and total job memory are NOT capped. G0's ramFloorMiB 1536 is an admission floor, not a cap. V8 old-space flags do not bound native memory, esbuild or tsc.",
+      "fix": "Set JOB_OBJECT_LIMIT_JOB_MEMORY (0x200) to a per-command ceiling bound in the manifest. Map job message 10 to the abort 'job-memory-cap' and add a G0 case for it."
+     },
+     {
+      "id": "QS-08",
+      "severity": "P2",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "Nothing makes a run exclusive, so two heavy groups can run at the same time under one runId.",
+      "evidence": "The source has no lock. The marker is per group (:618-624), and the attempt counts are read and then written (:497-500, :620-622). G2, G3, G4 and G5 each require only G0 and G1, so two supervisor processes could run them concurrently. The only exclusivity is the self-attested reservation.state and noCompetingHeavyJob.",
+      "fix": "Before writing the group marker, create receipts/active-group.lock with flag 'wx', holding the group, pid and start time. Refuse to start if it exists, and remove it only when the group receipt has cleanupProven true; otherwise leave it in place (HELD)."
+     },
+     {
+      "id": "QS-09",
+      "severity": "P2",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The node-tap parser is first exercised inside G1's single attempt; G0 has no TAP fixture.",
+      "evidence": "G0's commands use only the self-test, admission-refusal and vitest-verbose kinds. The node-tap regex (:121) accepts any indentation, so nested subtests or a per-file wrapper row would be parsed. A wrapper row 'ok N - <path>' would trip the refusal at :100-101 and consume G1 (:619). The shape of Node 20.19 TAP output is NOT PROVEN. Doc 49 Q-4 warned that an unproven counter would consume the one mandatory HTTP attempt.",
+      "fix": "Add a G0 node-tap fixture with one pass, one fail, one test filtered out by name pattern and one nested subtest, each with exact expected rows. Have parseCases match only top-level TAP lines."
+     },
+     {
+      "id": "QS-10",
+      "severity": "P2",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "Authority is a format check on self-written JSON. The preparation path checks less than loadRun, and receipts do not bind the approval record.",
+      "evidence": ":466-474 accept directSamuelApproval===true and a non-empty approvalText. Group receipts (:680-681) keep only approvedAt, expiresAt and groups: no window digest and no approvalText. materializeOwnedSnapshot (:348-366) can only be reached by import. It does not check its own sha against manifest.supervisor.sha256 (that happens only at :459). It skips approvedAt <= now, approvalText, the 4-hour bound, preWindowObservation and the reservation state.",
+      "fix": "Add a --prepare CLI mode that applies the full window checks and the self-hash. Record the sha256 of the window, reservation and admission files, plus approvalText, in every receipt. Require the window digest to appear in a Samuel-authored record."
+     },
+     {
+      "id": "QS-11",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The refusal self-test passes on any exception, and it does not exercise the refusal-receipt path.",
+      "evidence": ":641-648 set refused=true on any throw from assertAdmission. By the 6th G0 command the group observation is likely more than 30 s old, so the refusal is probably for staleness, not the floor. loadRun's refusal writer (:510-517, groupConsumed:false) is never exercised.",
+      "fix": "Assert the message is 'REFUSED: RAM or disk admission floor not met' using a fresh copy of the observation, and exercise the refusal-receipt writer inside the run root."
+     },
+     {
+      "id": "QS-12",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "Expected failures and passes are compared by name only, not by file and name.",
+      "evidence": ":96 uses file::name for identity, but :104-109 compare bare names. With commands over several files (G2 has 6, G3 has 5), a name shared across files can attribute a failure to the wrong file. manifest.focusedGreen.predictedFailures already carry the file.",
+      "fix": "Compare `${file}::${name}` for vitest-verbose, using lists in the manifest that include the file."
+     },
+     {
+      "id": "QS-13",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The stream cap aborts a healthy but verbose run, which consumes the group.",
+      "evidence": ":246 calls Stop(job,'stream-cap') once more than 4 MiB has been observed. Doc 49 Q-11 recommended truncation, and manifest bounds.streamPolicy records 'Abort on cap'. The G3 verbose run over 5 files has unknown output size.",
+      "fix": "Decide this explicitly in the approval. Alternatively, truncate with byte counts and parse cases from a separate --reporter=json --outputFile."
+     },
+     {
+      "id": "QS-14",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "Receipt digests are incomplete, writes are not atomic, and the preparation-complete check is existence only.",
+      "evidence": ":574-582 leave out the sha256 of job-process-events.jsonl, launch-spec.json, the executed .ps1 bytes (only the in-memory string is hashed) and the helper raw outputs. :38 writes with 'wx' and no temp-file rename, so a crash leaves truncated JSON. :489 checks only that preparation-complete.json exists; it does not check its fields or that preparation-aborted.json is absent.",
+      "fix": "Hash each of these files into the receipt, write to a temp file and then link or rename, and validate the fields of preparation-complete."
+     },
+     {
+      "id": "QS-15",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The subject inherits every inheritable handle the helper holds, and the supervisor waits on 'close'.",
+      "evidence": ":260 calls CreateProcess with bInheritHandles=true, so the subject also gets the helper's own stdout and stderr pipes to Node and could write into the receipt stream. :563-566 wait on 'close', which needs every holder to exit. Kill-on-close normally ends them.",
+      "fix": "Use PROC_THREAD_ATTRIBUTE_HANDLE_LIST with only the two child pipe ends, and resolve on 'exit' with a bounded wait for the streams to drain."
+     },
+     {
+      "id": "QS-16",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The Job does not set die-on-unhandled-exception.",
+      "evidence": ":256 sets flags 0x2000|0x8 only. A crashing child may wait on Windows Error Reporting until the deadline.",
+      "fix": "Add 0x400 (JOB_OBJECT_LIMIT_DIE_ON_UNHANDLED_EXCEPTION) and set SetErrorMode in the helper."
+     },
+     {
+      "id": "QS-17",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "In G7 a verdict-only command runs before the build, so its failure blocks artifact production, against the Q-1 split.",
+      "evidence": "The manifest G7 order runs no-em-dash-source first and build second. Supervisor :657 stops on any unexpected disposition, so a verdict-only failure prevents build and no-em-dash-build.",
+      "fix": "Order build and no-em-dash-build first, followed by the verdict commands."
+     },
+     {
+      "id": "QS-18",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The documentation and authoring are imprecise in several places.",
+      "evidence": "The header at :6 says --manifest is required, but :66 does not require it (it defaults at :22). selfTestDefinitions (:694-710) is unused and differs from the manifest's G0 (stream-cap versus stdout-cap; expectOwnedChildren versus minimumPeakJobChildren). preWindowObservation has no observedAt (:475-477). g0Acceptance is not bound to the G0.group.json digest (:606-611).",
+      "fix": "Require --manifest, derive the G0 definitions from the manifest or drop the export, add observedAt, and add g0Acceptance.g0GroupSha256."
+     },
+     {
+      "id": "QS-19",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/.gitattributes",
+      "claim": "The raw self-hash and manifest hash depend on LF bytes in a checkout where core.autocrlf is true.",
+      "evidence": ":459 and :456-458 hash raw working-tree bytes. The builder has core.autocrlf=true. The .gitattributes at 90f4ebd covers only evidence/*.log and the patches; git check-attr reports text unspecified for both files. Working-tree bytes equal the blobs today, but a fresh checkout would write CRLF and every refusal check would fire (fail-closed).",
+      "fix": "Add 'qualification-supervisor.mjs -text' and 'evidence/*.json -text'."
+     },
+     {
+      "id": "QS-20",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/qualification-supervisor.mjs",
+      "claim": "The G0 timing and process bounds are not proven against compiler cold start or the full-repository inventories.",
+      "evidence": ":562 gives trivial commands a 5 s outer limit covering PowerShell start, Reflection.Emit, compilation by Add-Type and the subject. With maxOwnedProcesses 3 the bootstrap limit is 2 (:541, :196), which must cover PowerShell plus csc and any other process the job counts. The two sourceState passes, over 6,069 files and 211,933,351 bytes, fall inside the 60 s. manifest.g0.unmetAcceptance lists the cold-start process cap as NOT_RUN.",
+      "fix": "Move the source inventory out of the group wall into an attested preparation step. Separate compilation from the command wall, or approve higher G0 bounds explicitly."
+     }
+    ],
+    "confirmed": [
+     "Verified retained evidence. Subject 90f4ebd has tree d6f8dd85 and parent 30085a6. Its diff from 30085a6 adds exactly the supervisor (718 lines) and the manifest (1826 lines). Successor 6d0fe86 adds only records and the handoff. The builder checkout HEAD is 6d0fe86.",
+     "Verified by recomputation. Supervisor blob bytes have sha256 d85b5a04b496…23bb, equal to manifest.supervisor.sha256 and the record. Manifest blob bytes have sha256 dc166dc6…df1, equal to the record. The scratchpad copies and the builder working tree are byte-identical to the blobs.",
+     "Inspected (:712-718, :59-69). The module does nothing on import, and the CLI refuses unless --group, --window, --reservation and --admission are all given.",
+     "Inspected (:461-462, :546-548). The Node launcher and PowerShell are pinned by path and sha256; children use manifest.toolchain.executable and ignore the executable field on each command.",
+     "Inspected (:299-315). Snapshot HEAD and tree must equal f581b6b/9efb20d, and the blob of every tracked file is recomputed from working-tree bytes. All 6,069 tracked entries at f581b6b are regular files.",
+     "Inspected (:42, :550-551, :260, :295-298, :538). No shell anywhere: argv arrays, an absolute lpApplicationName and correct MSVCRT quoting.",
+     "Inspected (:50-58, :528-531). The environment is an allowlist with no proxy or credential variables; TEMP and TMP point into the run root; NODE_OPTIONS comes from each manifest command (Q-9).",
+     "Inspected (:256, :260-266, :245, :281-283, :187-201). The subject is created suspended and assigned to its job before resume. Both jobs kill on close and limit active processes, and neither allows breakaway. Termination is by Job, never by PID search. The helper assigns itself to the bootstrap job before compilation.",
+     "Inspected (:581, :654, :663-685). If cleanup cannot be proven, the reservation is recorded as HELD_UNRESOLVED_CLEANUP, and so is an exception thrown while a command is in flight.",
+     "Inspected (:246, :579-580). stdout and stderr go to separate CreateNew files; the first 4 MiB is kept with observed byte counts, and receipts carry stream digests.",
+     "Inspected (:510-517). A refusal at group admission writes a unique refusal attempt with groupConsumed:false and no child started. A further check needs a recorded material change bound to the digest of that refusal (:501-509).",
+     "Inspected (:111-113, :152-154). Predicted failures keep runnerVerdict FAILED, and the protection FAIL keeps FAILED under a separate non-blocking disposition.",
+     "Inspected. The supervisor contains no deletion, lock or network code. build.mjs:6@f581b6b deletes dist relative to the snapshot cwd. The G1 Vitest configs and the G0 config set no root, so the file paths Vitest prints match targetFiles.",
+     "Inspected (manifest). Q-1 is addressed: core-site-protection expects exit 1 and 'RESULT: FAIL'; verify-release-manifest is removed; artifactProduction is separated. Q-10 is addressed: the plan path and sha 51991abd… are cited. reviewedAsSourceOnly names the commerce supervisor."
+    ],
+    "discrepancies": [
+     "Producer-reported versus inspected source. The handoff claims 'no skipped assertions or fabricated green', and manifest.focusedGreen.rule says 'unskipped case identities must match ... any unexpected skip stops dependencies'. The parser cannot see Vitest 4.1.10's ↓ and □ rows, and G2-G5 bind no inventory (QS-01).",
+     "manifest.bounds.attemptVsGroup says a refused admission 'leaves group unused'. That holds only for the loadRun path; a refusal before a later heavy command comes after the group marker and consumes the group (QS-03).",
+     "manifest.admission.observations says there is 'no capacity sampling loop', yet the code requires a fresh observation, at most 30 s old, before every later heavy command, with no handshake (QS-03).",
+     "Doc 49 Q-4 sets G0 at 512 MiB or less and at most 3 processes. The manifest proposes a 1536 MiB floor with no cap and 3, 4 or 8 processes, and the code enforces no memory limit. This is disclosed as needing fresh approval (QS-07, QS-20).",
+     "Doc 49 Q-11 recommends truncation for healthy runs; the code aborts on the cap, and the manifest records that deviation (QS-13).",
+     "The header at :6 lists --manifest as required, but the parser treats it as optional. The exported selfTestDefinitions differs from the manifest's G0 and is unused (QS-18).",
+     "'Every consumed source' is hash-bound only for tracked files: node_modules is pinned by 6 files, and the generated and HTTP fixtures are checked only during preparation (QS-06)."
+    ],
+    "notProven": [
+     "All supervisor behaviour is NOT RUN: no G0, no compilation, no snapshot, no child process.",
+     "The host's Windows PowerShell execution policy, and whether the helper starts through -File at all.",
+     "Whether PS 5.1 ConvertFrom-Json refuses the Path/PATH duplicate, and the case of the key in the future launcher's environment.",
+     "That libuv under Node 20.19 searches cwd before PATH for 'git'. This is believed, from libuv's documented search_path, and was not observed.",
+     "Whether conhost, csc or cvtres count against the job active-process limits of 1 to 2 that the trivial G0 cases use, and how long the Add-Type cold start takes against the 5 s outer wall.",
+     "The shape of Node 20.19 TAP output under --test with --test-name-pattern: whether there is a file wrapper row and whether nested or filtered rows appear.",
+     "Real Vitest 4.1.10 verbose lines under NO_COLOR. Source inspection supports the pass and fail regex but not skip or todo.",
+     "Host capacity, node_modules size and copy time, and the absence of competing heavy jobs. All admission inputs are self-reported records.",
+     "Whether the predicted reds or the selected names are correct (owned by other lenses)."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "QS-01",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Upheld at P1, with the mechanism corrected. Inspected: :125@90f4ebd uses the class [✓✔√×✖⨯-], which cannot match Vitest 4.1.10's skip and todo symbols (vitest/dist/chunks/utils.BS4fH3nR.js:7,:14,:19-20; the lens cited :18-19, off by one). VerboseReporter prints those rows (index.UpGiHP7g.js:3997-4007). The 'nested describe hooks' the lens cited are file-level (static-document.test.ts:39-58, root-composition.test.ts:196,:221@f581b6b). A file-level beforeAll failure hides every row, and targetFiles then refuses. The live path is an afterAll failure: root-composition :221-262 asserts cleanupErrors, unexpectedExit and spawnError inside afterAll. The suite fails, case rows stay visible, exit is 1 and the failed set equals the predicted list, so :106/:163 accept EXACT_PREDECLARED_RED_ONLY. Also drop '-' from the class; no Vitest state uses it."
+     },
+     {
+      "id": "QS-02",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld, downgraded to P2. The anchors are accurate: :42@90f4ebd spawns 'git' by name with cwd set to the snapshot, outside both Jobs (:316,:631,:662,:379-381,:403), and the manifest toolchain has no git pin. Strengthened: :45 disables only system and global config, so the subject-writable snapshot/.git/config is still read. A core.fsmonitor entry there would make 'git status' (:316) run a command unconfined, and ls-tree (:303) honours refs/replace. Downgraded because every subject at f581b6b only reads Git (verify-core-site-protection.mjs:180, verify-migration-dag.ts:57-74, verify-route-uniqueness.ts:465) and none writes the snapshot root or .git, so exploiting this needs an adversarial or defective subject. The cwd-first libuv search remains NOT PROVEN. Fix: the lens's fix plus -c core.fsmonitor=false and GIT_NO_REPLACE_OBJECTS=1."
+     },
+     {
+      "id": "QS-03",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld at P2. The marker (:623@90f4ebd) is written before the per-command re-read (:635-637). The freshness check is 30 s against now (:441-442). A miss reaches :660, and :619 forbids a retry. The affected commands match the manifest: G0 vitest-baseline (8th, heavy), G1 x3, G4 x2, G7 x6. This contradicts the manifest's bounds.resourceRefusalConsumesGroup:false and attemptVsGroup. Extra: sourceState(before) at :631 also runs after the marker, so a Git or inventory refusal consumes the group with no child started. The re-read admission is not re-bound to reservation.id; :438 checks only that reservationId is truthy and the lease matches."
+     },
+     {
+      "id": "QS-04",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld at P2. Lines :52-55@90f4ebd keep each key's original case. :529 reads osEnvironment().PATH, which is undefined when the key is 'Path', and adds a second key 'PATH'. Both keys are written into launch-spec.json (:545) and parsed at :170 by Windows PowerShell 5.1, which is believed to refuse keys that differ only by case (untested; host key case NOT PROVEN). The failure is fail-closed: the helper exits before any Job exists, native is null, cleanupProven is false, G0 is consumed and the reservation is HELD."
+     },
+     {
+      "id": "QS-05",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld at P2. :550@90f4ebd runs the helper through -File with no execution-policy handling. The host policy is NOT PROVEN; the Windows client default is Restricted. An AppLocker or WDAC constrained-language mode would also block Add-Type. Either case is fail-closed but consumes G0 and leaves the reservation HELD."
+     },
+     {
+      "id": "QS-06",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld at P2. :316@90f4ebd records the porcelain status but never compares it. The generated and historical files are hashed only during preparation (:390-412). checkDependencyPins (:427-435, called per command at :640) covers only the 6 files in manifest.toolchain.dependencyPins. Untracked drift between groups is therefore undetected."
+     },
+     {
+      "id": "QS-07",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld at P2. :256@90f4ebd sets flags 0x2000|0x8 and :195 sets 0x2008; there is no JOB_OBJECT_LIMIT_JOB_MEMORY. manifest.toolchain.memoryBounds discloses that native and job memory are uncapped. Doc 49 Q-4's 512 MiB G0 bound is not enforced."
+     },
+     {
+      "id": "QS-08",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld at P2, with a narrower scope. Two processes cannot start the same group, because writeNew with 'wx' at :623@90f4ebd is an atomic create. Nothing stops G2-G5 (each requires only G0 and G1) from running concurrently, and attempt counting at :497-500 and :620-622 is read-then-write. That conflicts with the one-heavy-job host rule."
+     },
+     {
+      "id": "QS-09",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld at P2. G0 has no node-tap case (manifest G0 kinds). The regex at :121@90f4ebd also matches indented rows, so a file wrapper or nested row would trip :100-101 and consume G1. Extra: the G1 node-tap argv omits --test-reporter=tap and relies on Node 20's non-TTY default reporter (NOT PROVEN)."
+     },
+     {
+      "id": "QS-10",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld at P2. :466-474@90f4ebd are format checks on self-written JSON, and the receipt keeps only a subset of the approval (:681). materializeOwnedSnapshot (:348-366) skips the self-hash, approvedAt, approvalText, the 4-hour bound and the reservation state. manifest.preparation.entrypoint confirms the route is import-only, so the preparation invocation argv is not bound."
+     },
+     {
+      "id": "QS-11",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. :643@90f4ebd calls assertAdmission on the group observation without a commandId, and any throw sets refused=true (:644). By the 6th G0 command the 30 s freshness check (:441) probably fires first, so the floor check is never shown to be the cause of the refusal."
+     },
+     {
+      "id": "QS-12",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. :96@90f4ebd uses file::name for duplicate detection, but :104-109 compare bare names. The G3 command spans 5 files."
+     },
+     {
+      "id": "QS-13",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. :246@90f4ebd calls Stop on the cap, and the manifest's bounds.streamPolicy records 'Abort on cap', a disclosed deviation from Q-11's truncation recommendation."
+     },
+     {
+      "id": "QS-14",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. :574-582@90f4ebd omit the digests of the events, the spec, the .ps1 file and the helper raw outputs. :38 writes are not atomic, and :489 checks preparation-complete only for existence. Extra: because preparation-complete is written by a non-atomic writeNew (:414), a disk-full partial file would still pass :489."
+     },
+     {
+      "id": "QS-15",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. :260@90f4ebd calls CreateProcess with bInheritHandles=true, so the helper's inheritable stdout and stderr pipes to Node propagate into the subject tree. :563-566 resolve on 'close'. Kill-on-close normally bounds this."
+     },
+     {
+      "id": "QS-16",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. :256@90f4ebd does not set 0x400 (die on unhandled exception). The deadline still bounds a hung crash."
+     },
+     {
+      "id": "QS-17",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. The manifest's G7 order runs no-em-dash-source first and build second. :657@90f4ebd stops on any unexpected disposition, so a verdict-only failure blocks artifact production, against Q-1's split."
+     },
+     {
+      "id": "QS-18",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. The header at :6@90f4ebd calls --manifest required, but :66 and :455 treat it as optional. selfTestDefinitions (:694-710) is unused and differs from the manifest's G0. preWindowObservation has no observedAt (:475-477). g0Acceptance has no G0 receipt digest (:606-611), although G0.group.json is still required through requires (:598-603)."
+     },
+     {
+      "id": "QS-19",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. The builder's core.autocrlf is true. The quick-order .gitattributes at 90f4ebd covers only evidence/*.log and the patches, and there is no root .gitattributes. Recomputed blob bytes are LF (d85b5a04 and dc166dc6, no CR). A CRLF checkout would make every refusal fire, so this is fail-closed."
+     },
+     {
+      "id": "QS-20",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld, raised to P2. :541@90f4ebd sets maxJobChildren to max-2 and :196 sets the bootstrap limit to maxJobChildren+1. Every max-3 G0 case therefore has a bootstrap active limit of 2, which must hold the helper plus Add-Type's compiler tree. csc.exe commonly spawns cvtres.exe, so compilation would hit the limit and fail every trivial case (untested). Add the 5 s outer wall (:562), which includes the Add-Type cold start, and two 6,069-file inventories inside the 60 s wall. The single-attempt G0 is likely infeasible as bound."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "1a Activation and import safety",
+      "status": "PASS",
+      "note": "Inspected source only. :712-718@90f4ebd runs only when argv[1] matches, and the top level only defines constants. :59-69 refuse anything but the five options. P3 edge cases (missed item): parseOptions throws synchronously outside the .catch, and invoking the script through a junction makes it a silent no-op that exits 0."
+     },
+     {
+      "item": "1b Authorisation and reservation binding",
+      "status": "PARTIAL",
+      "note": "I agree with the lens. :466-481 are format checks on self-written JSON. The preparation export (:348-366) is reachable only by import and checks less. Receipts do not bind the window digest or approvalText (QS-10). Nothing here is Samuel's approval."
+     },
+     {
+      "item": "2 Input binding",
+      "status": "PARTIAL",
+      "note": "Verified: manifest sha dc166dc6 and self-hash d85b5a04 are recomputed from the blobs, Node and PowerShell are pinned (:461-462, :546-548), and HEAD/tree plus the 6,069 tracked blobs are rechecked (:299-315). Gaps: git is unpinned and reads subject-writable snapshot config (QS-02, P2); untracked files and fixtures are not rechecked (QS-06); the hashes are CRLF-fragile (QS-19)."
+     },
+     {
+      "item": "3 Process control",
+      "status": "PARTIAL",
+      "note": "There is no shell, the application name is absolute, the environment is an allowlist, the child is created suspended and assigned before resume, both Jobs kill on close, and there are no PID kills. Additional defects: the drain-timeout cleanup=false at :277 is overwritten to true by the finally block at :283 (missed item, P2); Add-Type warnings-as-errors risk (P2, untested); a bootstrap limit of 2 versus the csc/cvtres chain (QS-20); duplicate Path/PATH keys (QS-04); execution policy (QS-05); no memory cap (QS-07)."
+     },
+     {
+      "item": "4 Output handling",
+      "status": "PARTIAL",
+      "note": "I agree. Streams go to separate CreateNew files, the first 4 MiB is retained with observed counts, and receipts carry stream digests (:246, :579-580). The run aborts on the cap instead of truncating (QS-13), and the events, spec and helper outputs are not hashed (QS-14). Helper capture is bounded at 64 KiB (:553-555)."
+     },
+     {
+      "item": "5 Admission",
+      "status": "PARTIAL",
+      "note": "I agree. The supervisor never samples resources. A refusal in loadRun does not consume the group (:510-517), but per-command re-observations and the before-inventory both run after the marker and consume it (QS-03). Ascending-floor order exists only as manifest text."
+     },
+     {
+      "item": "6 Evidence",
+      "status": "PARTIAL",
+      "note": "I agree, with additions. Run roots are unique, folders are created non-recursively and files with 'wx'. Writes are not atomic and digests are missing (QS-14). The evidence sits under %LOCALAPPDATA%\\Temp, which host cleanup can purge, and dependency acceptance trusts mutable, unhashed group receipts (missed item). No network APIs (grep)."
+     },
+     {
+      "item": "7 Cleanup scope",
+      "status": "PASS",
+      "note": "Inspected source only, scope alone. There is no rm, unlink or rmdir (grep at 90f4ebd), and termination is by Job only (:245, :283). Subject deletions observed: build.mjs:6@f581b6b runs rm('dist') relative to the owned snapshot cwd; static-document.test.ts:51-58 removes a guarded temp directory. The cleanup proof itself is flawed (drain-timeout masking, item 3)."
+     },
+     {
+      "item": "8 G0 self-test defined and bounded per Q-4",
+      "status": "PARTIAL",
+      "note": "I agree, and it is weaker than the lens said. The bounds depart from Q-4 (disclosed), and the bootstrap limit of 2 is likely infeasible (QS-20, raised to P2). G0 exercises no node-tap case and no object-interpolated it.each title, so the parser and name contracts that sink G1, G3 and G4 are never tested. Bootstrap interruption is not dispatched. NOT RUN."
+     },
+     {
+      "item": "9 Predicted-red handling",
+      "status": "FAIL",
+      "note": "The mechanism is sound: exact set equality, FAILED is retained, and unexpected dispositions stop (:93-114, :152-154, :655-658). The bound data is wrong. 20 of 21 predeclared names (G3 4, G4 16) cannot equal Vitest 4.1.10 runtime titles, which quote and truncate $-interpolated values (missed P1). In addition, suite-level afterAll failures are accepted for commands with predicted reds (QS-01)."
+     },
+     {
+      "item": "9b Skipped/todo detection for G2-G5",
+      "status": "FAIL",
+      "note": "I agree with FAIL, but the mechanism needs correcting. The ↓ and □ rows are invisible (utils.BS4fH3nR.js:19-20), and G2-G5 bind no inventory. On the current source the hooks are file-level, so the concrete hidden failure is the afterAll path at root-composition.test.ts:221-262 and static-document.test.ts:51-58 (QS-01)."
+     },
+     {
+      "item": "10 Unauthorised execution, host danger, secret leak, pass without evidence",
+      "status": "PARTIAL",
+      "note": "No P0: nothing runs at import, there is no shell, no secret-named variables (:531), no proxies, no deletion and no PID kill. The risks found are an unconfined git with subject-writable config (P2), false acceptance through hidden suite failures (P1), a falsely reported cleanupProven after a drain timeout (P2), no memory cap (P2) and an undisclosed 0.0.0.0 listener in G5 (P3). Everything is inspected source or untested behaviour."
+     }
+    ],
+    "missed": [
+     "[P1] 20 of 21 predeclared failure names cannot match the runtime titles. static-document.test.ts:170 and vite-document.test.ts:177@f581b6b use it.each over objects with the title '... $method $target'; provider-journal-http.test.ts:204-212 uses '$from to $to for $detail'. In pinned @vitest/runner 4.1.10, formatTitle (dist/chunk-artifact.js:2188-2197) renders each $key through objDisplay (@vitest/utils dist/display.js:752-756, truncate 40), and inspectString (:321-325) single-quotes the value and truncates it to 38 characters. The runtime titles therefore read, for example, \"requires private cache/referrer headers for 'GET' '/health/quick-order'\" and \"refuses 'reviewing' to 'cancelled' for 'ASSISTED_ORDER_PROVIDER_UNCERTAINTY_H…' through ...\". The manifest names are unquoted and untruncated, so :106@90f4ebd refuses G3 and both G4 red commands, and G6 and G7 become unreachable. G1 (%s and plain names) and G5 (a plain it) are unaffected. NOT RUN.",
+     "[P2] A drain timeout is reported as proven cleanup. In XeniosOwnedJob.Run, :277@90f4ebd sets cleanup=false when the stdout and stderr pumps do not finish within 10 s. The finally block at :283 (assigned && !cleanup) then calls TerminateJobObject and sets cleanup=true as soon as the job reports zero active processes, which it already does. A drain timeout after active-zero means a process outside the Job still holds a pipe end, yet the helper returns cleanupProven true (:286). For the deadline and stream-cap cases Stop is a no-op once stopping=1, so abortReason keeps its expected value and the G0 classifyResult (:133-143) accepts. stdoutObservedBytes being null is never checked. Fix: make the unresolved state sticky, so the finally block cannot clear it, and require non-null observed byte counts.",
+     "[P2] Add-Type compilation risk (untested). :290@90f4ebd calls Add-Type without -IgnoreWarnings, and Windows PowerShell 5.1 Add-Type is believed to treat compiler warnings as errors. The embedded C# declares private nested interop structs (STARTUP, PI, BASIC_LIMIT, IO_COUNTERS, EXTENDED_LIMIT and ACCOUNT, :213-219) whose fields are written only by marshalling or out parameters, which is the classic CS0649 pattern. If both hold, every command fails before any Job exists and G0 is consumed. Fix: add #pragma warning disable 0649 to the source, or bind -IgnoreWarnings in the manifest, and prove compilation in a step that consumes no group.",
+     "[P3] CLI edge cases. At :714@90f4ebd, parseOptions throws synchronously outside the .catch, so a refusal surfaces as an uncaught exception rather than the REFUSED stderr path. :712 compares import.meta.url, which Node resolves through realpath for the main entry, with pathToFileURL(path.resolve(argv[1])), which is not realpath. Invoking the script through a junction or symlink therefore does nothing and exits 0 with no group receipt; a coordinator that reads only the exit code would see success.",
+     "[P3] Job notifications are not guaranteed to reach the completion port (documented in the JOBOBJECT_ASSOCIATE_COMPLETION_PORT remarks). :270@90f4ebd requires processStarts to equal TotalProcesses within about 1 s, and :134 refuses when processTraceComplete is false. One lost NEW_PROCESS message therefore refuses, and consumes, a healthy group. Fail-closed.",
+     "[P3] Evidence placement and integrity. Receipts and the snapshot live under %LOCALAPPDATA%\\Temp (manifest.snapshot.parent C:/Users/sboad/AppData/Local/Temp/xenios-qo-qualification), which Storage Sense and Disk Cleanup can purge. assertDependencies (:596-604@90f4ebd) trusts mutable, unhashed <group>.group.json files in the run root, which is also the parent of the subjects' TEMP (:528). Move the evidence outside Temp and bind dependency receipt digests in the next window record.",
+     "[P3] G5 runs the real production root, which listens on 0.0.0.0 (server/index.ts:1518-1521@f581b6b; disclosed in root-composition.test.ts:17 and in its receipt at :253). Manifest G5 has no listener or outbound risk statement; 0.0.0.0 is mentioned only for the deferred G8. The supervisor provides no network isolation, and a first bind may raise a Windows Firewall prompt for the pinned node.exe. Disclose this in the approval, as Q-6 required for G8.",
+     "[P3] G7 core-site-protection is accepted on any exit 1 that prints 'RESULT: FAIL' (manifest G7 contract; :149-154@90f4ebd). The predicted violation set is not bound, so a new protection violation cannot be told apart from the predeclared one. Bind the expected violating paths."
+    ],
+    "verdictOpinion": "The lens verdict holds: NOT ACCEPTABLE for an execution decision, and no P0. Inspected source confirms that nothing runs at import, there is no shell, deletion, network call or PID kill, and termination is scoped to the Job. Corrections to the lens:\n\n- **QS-01** stays at P1, but its anchor is wrong. Those hooks are file-level, not nested. The live false-acceptance path is a file-level afterAll failure, for example root-composition.test.ts:221-262, in a command with predicted reds.\n- **QS-02** is downgraded to P2, because every f581b6b subject only reads Git. It is also strengthened: Git still reads the subject-writable snapshot .git/config, so a core.fsmonitor entry there would run a command outside the Job.\n- **QS-20** is raised to P2: a bootstrap limit of 2 against Add-Type's compiler tree.\n\nNew findings:\n\n- **P1:** 20 of the 21 predeclared failure names cannot match the titles pinned Vitest 4.1.10 prints. It quotes and truncates $-interpolated values. So G3 and G4 refuse deterministically, and G6 and G7 can never be reached under this manifest.\n- **P2:** a stream-drain timeout is overwritten to cleanupProven true.\n- **P2:** an untested risk that Add-Type treats compiler warnings as errors.\n\nAll findings are inspected source or untested behaviour derived from the pinned dependency source. Nothing was run. The qualification window expired at 2026-10-06T21:43:37Z. Source acceptance is not execution authority, and nothing here is Samuel's approval."
+   }
+  },
+  {
+   "lens": "manifest-and-records",
+   "review": {
+    "verdict": "LENS P2 (manifest + records), read-only, nothing executed. Records PASS: every sha256-lf in both record files recomputes equal from git show bytes; 90f4ebd adds only the two files; 6d0fe86 is records-only; all 49 manifest pins (30 targetPins, 14 HTTP snapshot files, 2 patches, plan, 2 DB receipts) match blobs and hashes at their stated SHAs; lease covers the paths. Content: NOT SUFFICIENT for an execution decision as a whole. Three P1s. (1) 20 of the 21 predeclared G3/G4 failure names are raw template text. Installed Vitest 4.1.10 renders $-interpolated titles quoted and truncated at 40 characters, and the supervisor compares names exactly, so G3 and G4 can never be accepted. G6 and G7 are then unreachable. (2) G7 runs verify-no-em-dash.mjs with plain node 20.19, but the script imports a .ts module, so the first G7 command fails by construction and the build never runs. (3) G7 builds with NODE_ENV=test, which makes Vite 7.3.5 produce a non-production client. G1 name sets are exact and consistent with my reading of the RED and GREEN source. Decidable now: G0 (it needs explicit approval of the higher caps and the Add-Type step). Next after G0 acceptance: G1, G2 and G5, once a bootstrap-interruption acceptance step is defined (P2). Blocked: G3, G4, G6 and G7. Deferred: G8 and G9. Not ready: the database category. Everything is NOT RUN, the window is expired, and nothing here authorises execution or counts as Samuel's approval.",
+    "checklist": [
+     {
+      "item": "Records: sha256-lf recomputation (doc49-qualification-source-90f4ebd.json, doc49-two-task-records-20261008.json)",
+      "status": "PASS",
+      "evidence": "Verified retained evidence, recomputed by me from git show bytes. supervisor 9f295ec gives d85b5a04 and manifest 72514d6 gives dc166dc6, both @90f4ebd. At 6d0fe86: ACTIVE_TASKS 41fd3a03, CODE_OWNERSHIP 2dccdc32, SESSION_REGISTRY 5134f11b, session json 0185bd6f, handoff c16581d0, doc49-qualification-source acf20420. All equal. Trees: 90f4ebd=d6f8dd8, 6d0fe86=c4bb3ff, f581b6b=9efb20d. The scratch copies are byte-identical to the blobs. The two-task record itself is 122b4122 (it is not self-bound)."
+     },
+     {
+      "item": "Records: 90f4ebd adds only the two files; no runtime, test, SQL or protected path changed",
+      "status": "PASS",
+      "evidence": "Inspected Git. git diff --name-status 30085a6 90f4ebd shows exactly A evidence/qualification-manifest-20261008.json and A qualification-supervisor.mjs. 90f4ebd..6d0fe86 modifies 5 .xenios records and the handoff, and adds 2 evidence JSONs. git diff 30085a6 6d0fe86 outside docs/health-launch/quick-order-20261005 and .xenios is empty. Evidence count goes 64 to 67 with no deletions, matching previousEvidencePreserved 64."
+     },
+     {
+      "item": "Records: head-integrity paths byte-identical at 90f4ebd and 6d0fe86; intake family equal to 3e82154",
+      "status": "PASS",
+      "evidence": "Inspected Git. f581b6b..6d0fe86 touches no supabase/ path, so the five currentness files are unchanged since f581b6b. 3e82154..6d0fe86 limited to supabase, server, client, shared, scripts and configs shows only the five currentness files (M), so the intake verifier and its SQL equal 3e82154. The intake receipt blob d3c64e1 is identical at 1631323, 30085a6 and 6d0fe86."
+     },
+     {
+      "item": "Records: lease coverage 17093695-69b5-4cc0-8b29-aedb82bf6409",
+      "status": "PASS",
+      "evidence": "Inspected source. .xenios/CODE_OWNERSHIP.json@30085a6, @90f4ebd and @6d0fe86, leases[134]: state active, session codex-health-quick-order-20261005, paths include docs/health-launch/quick-order-20261005/**. The 30085a6..6d0fe86 diff changes only this lease's heartbeat and note and adds qualificationSupervisor. ACTIVE_TASKS and SESSION_REGISTRY hunks touch only the HEALTH-QUICK-ORDER entries."
+     },
+     {
+      "item": "Manifest hash-binds targeted sources and tests; hashes equal blobs at bound SHA",
+      "status": "PASS",
+      "evidence": "Verified by recomputation. All 30 targetPins @f581b6b (manifest:1637-1818), the 14 RED/GREEN snapshot files @f1e467f and @fd023e8 (:353-494), both patches (raw 8392d243 blob 8a25a36; raw 8396609b blob 254924f), the plan 51991abd (blob 020b2c5) and the DB receipts f2f343b3 and b9074117 @30085a6 all match on blob and sha256. The generated G0 fixtures and both G1 vitest configs recompute equal. Dependency pins match on-disk bytes at the b22f real path, and node.exe sha256 6e3a3978 matches (both read at review time). Gap (P3): @vitest/runner, @vitest/utils and vite are not pinned, although title rendering and build mode depend on them."
+     },
+     {
+      "item": "Q-1 G7: release-manifest removed; protection gate bound with expected FAIL non-blocking; artefact production separated",
+      "status": "FAIL",
+      "evidence": "Inspected source. verify-release-manifest.ts appears in no argv (only the text at manifest:609@90f4ebd). The protection gate argv is 766f19f (= baselineSha) and f581b6b, with allowedCodes [1], RESULT: FAIL, nonBlocking (:1534-1556). PASS on those points. FAIL because: em-dash commands :1422-1442 and :1465-1485 use plain node, but verify-no-em-dash.mjs:8@f581b6b imports a .ts file (package.json:15 runs it via tsx), and Node 20.19 has no TS stripping. no-em-dash-source runs first, and supervisor:656-658@90f4ebd stops later commands, so build never runs. Build env NODE_ENV=test (:1450)."
+     },
+     {
+      "item": "Q-2 predeclared failing set exists verbatim and counts 8/8/1/4 = 21",
+      "status": "FAIL",
+      "evidence": "Inspected source @f581b6b (equal to 3e82154). The it.each templates exist: static-document.test.ts:170 and vite-document.test.ts:177 use $method $target over PRIVACY_CASES (:31 and :27, 4 targets x GET/HEAD = 8 each); root-composition.test.ts:353 is a plain it (1); provider-journal-http.test.ts:212 uses $from $to $detail over 4 rows. Counts PASS. Names FAIL: Vitest 4.1.10 formatTitle (@vitest/runner chunk-artifact.js:2189-2198) renders $values via objDisplay and inspectString (@vitest/utils display.js:752-756, :321-325). That gives single quotes and truncation at 40 because vitest.config.ts sets no chaiConfig. The manifest names at :171-319, :1207-1211, :1280-1325 are unquoted, so 20 of 21 cannot match. No skip or todo markers in the bound files."
+     },
+     {
+      "item": "Q-2 focused-green definition",
+      "status": "PARTIAL",
+      "evidence": "Inspected source. focusedGreen.rule (manifest:169) says non-predicted cases must pass and the failing set must equal the predeclared names; supervisor compareCaseSets:93-114 enforces exact equality and keeps the FAILED verdict. G2-G5 bind no selectedNames or expectedPasses inventory, only targetFiles. parseCases:125 has no symbol for Vitest skipped (down-arrow) or todo, so the rule's 'unskipped case identities must match' claim is not bound by data for G2-G5. Status is PROPOSED_REDEFINITION_REQUIRES_DIRECT_FUTURE_APPROVAL; both patches are pending by blob."
+     },
+     {
+      "item": "Q-3 capacity gate, refusal accounting, ascending floor, 4096 groups, Docker memory",
+      "status": "PARTIAL",
+      "evidence": "Inspected source. admission.observations (:160) requires one maximum-floor observation before the window. bounds :144-155: a refusal consumes an attempt (cap 9) but resourceRefusalConsumesGroup is false. Order (:162): G0, G1, G2, G3, G4, then G5 before G6 by dependency, then G7. 4096 floors: G5 :1334, G7 :1415, G8/G9 :1573/:1587, DB :1597. Docker Desktop memory is not accounted; it is listed in database.missingFacts (:1620), so NOT PROVEN. The supervisor (assertAdmission:436-451) checks per-group and per-command floors; the pre-window maximum-floor check is not visible there."
+     },
+     {
+      "item": "Q-4 G0 definition and bounds; commerce supervisor named",
+      "status": "PARTIAL",
+      "evidence": "Inspected source. G0 (:624-806) covers exit 0, exit 1, deadline-kill, stdout and stderr caps with separation, refusal-path, a real-child-tree (4 processes) and a one-file Vitest baseline (8 processes, heavy). Group wall is 60 s and the command sum is 46 s. The floor is 1536 MiB, not 512, and processes go beyond 3. This is disclosed as needing fresh approval (:596, :603). The bootstrap-interruption case is not dispatched (:606; supervisor:704), yet G1 needs g0Acceptance.bootstrapAccepted (supervisor:604-611). The commerce supervisor is named as inspected and unsuitable (:1635). The file exists @f581b6b with fork, silent:true at :33-34."
+     },
+     {
+      "item": "Q-5 snapshot directory, cwd, node_modules reach, pre-G7 dist open-file check",
+      "status": "PASS",
+      "evidence": "Inspected source. snapshot (:96-107): parent xenios-qo-qualification, <runId>/snapshot, cwd is the snapshot root for every command, a shared local clone with a detached LF checkout (supervisor:379-381, core.autocrlf=false), and a private dereferenced node_modules copy with no junction and no install. dist is <snapshot>/dist: build.mjs:6@f581b6b does rm('dist') relative to cwd and vite outDir is relative to the config dir. Pre-G7 check: admission.preG7 (:163) and supervisor:449-450 require ownedDistNoOpenHandles. This is an attestation; the method is unnamed (P3)."
+     },
+     {
+      "item": "Q-6 G8 owned cacheDir and 0.0.0.0 disclosure, or deferral",
+      "status": "PASS",
+      "evidence": "Inspected source. G8 is deferred as BLOCKED_MISSING_HARNESS_AND_EXACT_PROBES (:1563-1573). It requires an owned cacheDir or disabled discovery and disclosure of both 0.0.0.0 listeners. snapshot.viteCache (:105) forbids shared node_modules/.vite writes. server/index.ts:1504-1521@f581b6b confirms setupVite outside production and host 0.0.0.0."
+     },
+     {
+      "item": "Q-7 G1 RED/GREEN names exist and RED predictions plausible",
+      "status": "PASS",
+      "evidence": "Inspected source: tests @fd023e8, runtime @f1e467f, untested behaviour. handler.test.mjs has 40 top-level tests; the pattern selects exactly :392, :405, :420, :432, :450, :464 and :478. RED handler.mjs:67-74 and :135-138 fail :392 ('elsewhere/other' gives 400, not next()), :405 (403 origin, not 400), :420 (uses originalUrl, gives next()) and :464 (413, not 400), and pass :432, :450 and :478. Containment 25+11 names equal :59-74 and :88-93 exactly (%s, no quoting). RED containment.ts:13-17 (req.path prefix) fails exactly the 15 listed and passes 21. GREEN paths.mjs spot checks pass. Node 20.19 marks filtered tests '# SKIP' (embedded runner), which the parser accepts."
+     },
+     {
+      "item": "Q-8 database category checkout, raw-hash pre-check, receipt pairing, Docker facts",
+      "status": "PARTIAL",
+      "evidence": "Inspected source. sourceCheckout is 'at or after 30085a6' (after 1631323), with currentness paths equal to f581b6b and intake paths equal to 3e82154 (:1599). The receipt pairing is correct: intake 3e82154 f2f343b3 (sourceCommit 3e82154) and currentness f581b6b b9074117 (sourceCommit f581b6b), both verified. An LF raw-byte check before admission is stated (:1617). Docker context, image id, server version and memory are NOT PROVEN (missingFacts :1619-1624). Status is SEPARATE_CATEGORY_NOT_AUTHORIZED_NOT_READY."
+     },
+     {
+      "item": "Q-9 NODE_OPTIONS worker heap bound",
+      "status": "PASS",
+      "evidence": "Inspected source. Every child command sets environment.NODE_OPTIONS (128 for G0 and the node --test handler runs; 1024 for Vitest, tsc, build and scripts) alongside the parent flag. The supervisor environment (:528) merges command.environment. toolchain.memoryBounds (:82) discloses that native, esbuild and browser memory is uncapped. A 128 MiB Vitest main and worker for the G0 baseline is untested."
+     },
+     {
+      "item": "Q-10 builder plan path and sha",
+      "status": "PASS",
+      "evidence": "Verified by recomputation. httpRegression.planPath is evidence/http-regression-plan-fd023e8.json with planSha256 51991abde14d91fc... (:340-341), equal to blob 020b2c5 @f581b6b. It is also pinned in targetPins (:1686-1690)."
+     },
+     {
+      "item": "Q-11 aggregate, overflow, completion markers, Chromium route, heavy predicate, unique evidence, patch blobs",
+      "status": "PARTIAL",
+      "evidence": "Inspected source. Aggregate: 96 min of group walls plus 15 min preparation = 111 (:151); the 140-minute maximumApplicationExecutionMs is not referenced by the supervisor. Overflow still aborts on cap (:150), which is disclosed. DB completion markers are not named (:1623); the verifiers emit INTAKE_READER_SUBSET_COMPLETE (local.mjs:401@6d0fe86) and bounded_checks_complete plus cleanup removed:true (currentness_local.mjs:495, :531). G9 is deferred with both browser routes listed (:1581). The heavy predicate is QO-HEAVY-CENSUS-V1 (:158-159). Scratch paths sit inside the unique snapshot. Patches are bound by gitBlob and verified."
+     }
+    ],
+    "findings": [
+     {
+      "id": "P2-Q2-NAMES",
+      "severity": "P1",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "20 of the 21 predeclared failure names (all 4 G3 provider-journal names and all 16 G4 static and Vite names) are raw template text. The pinned Vitest 4.1.10 will render them quoted and truncated. The exact-set comparison then refuses G3 and G4 even when exactly the predicted cases fail, so G6 and G7 can never start.",
+      "evidence": "Inspected dependency source (untested behaviour). @vitest/runner/dist/chunk-artifact.js:2189-2198 sends $key through objDisplay(value,{truncate: chaiConfig?.truncateThreshold}). @vitest/utils display.js:752-756 defaults truncate to 40, and :321-325 returns the string wrapped in single quotes, cut to 38 characters with an ellipsis. vitest.config.ts@f581b6b sets no chaiConfig. Templates: static-document.test.ts:170, vite-document.test.ts:177, provider-journal-http.test.ts:212@f581b6b. Expected observed form, for example: \"... > requires private cache/referrer headers for 'GET' '/health/quick-order?ref=SYNTHETIC_REF…'\" and \"... > refuses 'reviewing' to 'cancelled' for 'ASSISTED_ORDER_PROVIDER_UNCERTAINTY_H…' through real service/repository without effects\". supervisor compareCaseSets:104-106@90f4ebd compares exactly. Root (:353, plain it) is unaffected.",
+      "fix": "In qualification-manifest-20261008.json, replace the names at :175-310 (focusedGreen.predictedFailures), G3 :1208-1211 and G4 :1281-1288 and :1318-1325 with the rendered forms: quote each interpolated value, cut values longer than 38 characters to 37 characters plus U+2026, and keep the describe prefix. Add @vitest/runner/dist/chunk-artifact.js and @vitest/utils/dist/display.js to toolchain.dependencyPins. Re-hash the manifest and update the source record."
+     },
+     {
+      "id": "P2-G7-TSX",
+      "severity": "P1",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "Both G7 em-dash commands run verify-no-em-dash.mjs with plain node 20.19.0, but the script imports a .ts module at runtime. Both fail at import. Because no-em-dash-source runs first and an unexpected verdict stops the group, the build and built em-dash commands never run, so G7 cannot produce artefacts.",
+      "evidence": "Inspected source. scripts/acceptance/verify-no-em-dash.mjs:8@f581b6b imports formatReconciliationPresentationLabel from ../../shared/research/reconciliation-presentation.ts (blob e993fd1). package.json:15@f581b6b runs it via tsx. The pinned node.exe (sha256 6e3a3978) contains no 'experimental-strip-types' string but does contain ERR_UNKNOWN_FILE_EXTENSION. Manifest argv :1424-1428 and :1467-1471 have no --import tsx, unlike route-uniqueness :1489-1493. Supervisor runGroup:656-658@90f4ebd: 'unexpected runner verdict stops later commands'.",
+      "fix": "Change both em-dash argv to [\"--max-old-space-size=1024\",\"--import\",\"tsx\",\"scripts/acceptance/verify-no-em-dash.mjs\",\"--source\"|\"--build\"] at manifest :1424-1428 and :1467-1471, and re-hash."
+     },
+     {
+      "id": "P2-G7-NODEENV",
+      "severity": "P1",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "The G7 build runs with NODE_ENV=test, so Vite 7.3.5 builds a non-production client: isProduction is false, process.env.NODE_ENV is defined as \"test\", and React's development bundle is selected. The G7 artefact inventory and the built em-dash verdict would describe something other than the production build, which is false evidence for G7 and any later G9.",
+      "evidence": "Inspected dependency source (untested). vite/dist/node/chunks/config.js (7.3.5): :35489-35491 keeps a NODE_ENV that is already set, :35614 sets isProduction only for 'production', and :26507-26514 defines process.env.NODE_ENV from it. react/index.js:3 selects the production build only for 'production'. Manifest build env :1450-1453 sets NODE_ENV test; supervisor :528 passes it through. build.mjs:8-9@f581b6b calls viteBuild() with no mode or define; the repository build (package.json:15) leaves NODE_ENV unset.",
+      "fix": "At manifest :1450-1453 (build) and :1473-1476 (no-em-dash-build), omit NODE_ENV or set NODE_ENV=production, keeping NODE_OPTIONS. Record the Vite version in dependencyPins and re-hash."
+     },
+     {
+      "id": "P2-G7-ORDER",
+      "severity": "P2",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "G7 declares no-em-dash-source as verdict-only but runs it first, and the supervisor stops all later commands on an unexpected verdict. A source em-dash failure would therefore block artefact production, contrary to the doc 49 Q-1 split.",
+      "evidence": "Inspected source. g7.verdictOnly (:614-619) includes no-em-dash-source, and the command order :1421-1557 puts it before build. Supervisor:656-658@90f4ebd stops later commands. The G7 artefact acceptance (:667-679) depends only on the build and no-em-dash-build receipts.",
+      "fix": "Reorder G7 commands to build, no-em-dash-build, then no-em-dash-source, route-uniqueness, migration-dag, core-site-protection. Or have the supervisor record a verdict-only failure without stopping when the command id is in g7.verdictOnly. Re-hash."
+     },
+     {
+      "id": "P2-G0-BOOTSTRAP",
+      "severity": "P2",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "G1 and every later group require g0Acceptance.bootstrapAccepted, but G0 defines no executable bootstrap-interruption case. The authored G0 alone cannot unlock G1.",
+      "evidence": "Inspected source. g0.bootstrapInterruption (:606) says it is 'Not automatically dispatched by G0'. G0 commands :631-805 contain no bootstrap case. supervisor selfTestDefinitions:704-705 has acceptance 'PENDING'. assertDependencies:604-611@90f4ebd requires bootstrapAccepted===true for any group other than G0.",
+      "fix": "Add a bounded G0 command with argv, ceiling and an expected receipt for the helper/compiler interruption case, or name the separate acceptance procedure and its receipt in g0.acceptanceBeforeG1. Re-hash."
+     },
+     {
+      "id": "P3-INVENTORY",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "The focused-green rule claims case inventory and unskipped identities must match, but G2-G5 bind no selectedNames or expectedPasses, and the parser cannot see skipped or todo rows. A silently missing or skipped case would pass undetected.",
+      "evidence": "Inspected source. focusedGreen.rule :169; G2-G5 results at :1149-1160, :1198-1213, :1247-1327 and :1361-1369 carry only targetFiles and expectedFailures. supervisor parseCases:125 accepts only check, cross and hyphen symbols, while Vitest uses a down-arrow for skipped and a box for todo (vitest utils chunk :7, :14). The bound test files contain no skip or todo today.",
+      "fix": "Bind per-file expected case counts or name inventories for G2-G5, and extend the parser to recognise the skipped and todo symbols. Or narrow the rule text to what is enforced."
+     },
+     {
+      "id": "P3-PINS-AGG",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "Several precision gaps. Dependency pins omit vite, esbuild, @vitest/runner and @vitest/utils. git is spawned from PATH unbound. The 140-minute aggregate is not enforced. The G7 group wall (25 min) is below its command ceilings (40 min). Abort-on-cap is retained. The DB completion markers are not named. RED failures are accepted by name, regardless of cause.",
+      "evidence": "Inspected source. dependencyPins :43-80. The protection gate (:179-181), route-uniqueness (:447-465) and migration-dag (:57-74) call execFileSync('git') @f581b6b. 'maximumApplicationExecutionMs' never appears in the supervisor. G7 group wall 1500000 ms vs command sum 2400000 ms. streamPolicy :150. database.missingFacts :1623 does not name INTAKE_READER_SUBSET_COMPLETE (local.mjs:401) or bounded_checks_complete plus removed:true (currentness_local.mjs:495, :531). httpRegression.rule :591 excludes parser and setup reds, but compareCaseSets cannot tell causes apart.",
+      "fix": "Pin the listed packages and the git executable. Either enforce or remove the aggregate field. Reconcile the G7 group and command ceilings. Name the DB completion markers. State that a named RED failure is accepted only with assertion-class output, or record the limitation."
+     },
+     {
+      "id": "P3-G0-CAPS",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/evidence/qualification-manifest-20261008.json",
+      "claim": "G0 goes beyond the doc 49 Q-4 bounds (512 MiB and 3 processes): a 1536 MiB floor, 4 processes for the real tree, 8 for the Vitest baseline, and a heavy Vitest baseline at a 128 MiB heap. This is disclosed but needs an explicit decision, and the 128 MiB Vitest heap is untested.",
+      "evidence": "Inspected source. g0.trivialCeiling :596 and necessaryProposalCorrection :603; commands :761 and :789; vitest-baseline argv and NODE_OPTIONS 128 at :774 and :786. Q-4's own requirement to measure a Vitest baseline cannot fit 3 processes.",
+      "fix": "Put the higher G0 caps and the Add-Type helper explicitly in the approval request. Consider 1024 MiB for the baseline so the Vitest child tree matches G1-G5."
+     }
+    ],
+    "confirmed": [
+     "Subject 90f4ebd (tree d6f8dd8, parent 30085a6) adds exactly the supervisor and the manifest; 6d0fe86 (tree c4bb3ff) is records-only. Local branch codex/xenios-health-quick-order-20261005 is at 6d0fe86; the remote-tracking ref is 1631323.",
+     "Both record files recompute exactly from git show bytes, and the scratch copies are byte-identical to the blobs.",
+     "The manifest's controllingReview d9809c1 contains doc 49 byte-identical to the file read (sha256 9a4fefe7...).",
+     "All 30 targetPins @f581b6b, the 14 G1 snapshot files @f1e467f and @fd023e8, both patch blobs and raw hashes, the HTTP plan 51991abd and both DB receipts (f2f343b3 @3e82154 source, b9074117 @f581b6b source) match on blob id and sha256.",
+     "At review time, the on-disk dependency pins (vitest, tsx, typescript) and node.exe (6e3a3978, 71046288 bytes) match the manifest.",
+     "The test files are identical from 3e82154 to 6d0fe86: static 6548771, vite 49e8296, root 8e5876e and provider-journal 4968404.",
+     "Predicted-failure counts are 8 static, 8 Vite, 1 root and 4 provider = 21. The group lists equal focusedGreen.predictedFailures. No skip, todo or only markers in any bound G2-G5 file.",
+     "G1: handler pattern selects exactly :392, :405, :420, :432, :450, :464 and :478 of 40. Containment selectedNames equal the 25 rows at :59-74 plus the 11 at :88-93 (fd023e8). RED expected-fail 4 and 15 and expected-pass 3 and 21 agree with my reading of f1e467f handler.mjs and containment.ts. G1 argv equals httpRegression.commandsProposed.",
+     "Q-1: verify-release-manifest.ts is in no argv. Protection gate argv is 766f19f (= CORE_SITE_PROTECTION_MANIFEST baselineSha) and f581b6b, with exit 1 and RESULT: FAIL predeclared as non-blocking.",
+     "Q-5, Q-6, Q-9, Q-10 satisfied as written: snapshot and cwd are defined, no junction, a pre-G7 open-handle attestation, G8 deferred with cacheDir and 0.0.0.0 conditions, NODE_OPTIONS on every child, and the builder plan cited by path and digest.",
+     "The commerce supervisor is named as inspected and unsuitable; it exists @f581b6b (fork, silent:true at :33-34).",
+     "Lease 17093695 is active and covers docs/health-launch/quick-order-20261005/**, and the records touch only the HEALTH-QUICK-ORDER entries.",
+     "Groups on current source. G0 is decidable now, subject to explicit approval of the higher caps and Add-Type. G1, G2 and G5 come after G0 acceptance, once the bootstrap-interruption step is defined. G3 and G4 are blocked (P1 names). G6 is blocked (depends on G3 and G4). G7 is blocked (P1 tsx, P1 NODE_ENV, P2 order, plus G6). G8 and G9 are deferred. The database category is not ready (Docker, image, markers)."
+    ],
+    "discrepancies": [
+     "The brief says the composition tests are identical at 5fd2e4c, 3e82154 and f581b6b. They are not identical at 5fd2e4c: static-document.test.ts (10aed9d), vite-document.test.ts (a626f28) and root-composition.test.ts (7c3fc86) differ from 3e82154 and f581b6b (diffstat 36+/22-). The manifest binds f581b6b, which equals 3e82154, so this does not affect the manifest.",
+     "The handoff (6d0fe86, line 13) says 'Exact G1 red/green sets and 21 source-predicted failures are hash-bound'. The names are bound, but 20 of the 21 are not in the form Vitest 4.1.10 will report.",
+     "The handoff and the record say 'G7 corrected ... with artifact production separate from failed verdicts'. In the manifest, a verdict-only command runs before the build and stops it on failure, and both em-dash commands cannot import under plain node.",
+     "bounds.aggregate says 111 min within 140, but the supervisor never reads maximumApplicationExecutionMs. The only enforced bounds are group wall, window expiry and the 4-hour approval span."
+    ],
+    "notProven": [
+     "Every behaviour is NOT RUN. These are not proven by anyone: the predicted reds themselves, any GREEN pass, tsc exit 0, build success, the protection gate actually emitting RESULT: FAIL with exit 1, and the em-dash, route and migration verdicts.",
+     "The Vitest title rendering is a prediction from installed dependency source (@vitest/runner and @vitest/utils 4.1.10 at the b22f real path). It is not an observed run, and those files are not pinned by the manifest.",
+     "The Vite NODE_ENV=test effect is a prediction from vite 7.3.5 source; the actual dist content is unobserved.",
+     "Node llhttp delivery of the absolute-form and fragment raw targets (http:////..., #routing-suffix) is unproven, and it affects GREEN containment expectations equally.",
+     "Node 20.19 TAP output shape under --test plus --test-name-pattern is inferred from embedded runner source (filtered tests reported as SKIP; the FileTest line is suppressed), not observed.",
+     "Host capacity, the maximum-floor observation, the heavy-job census, Docker context, server version, image id and memory, the Chromium route, the Add-Type helper and Job Object behaviour, private node_modules copy size and time, and G0 acceptance are all NOT PROVEN.",
+     "How the coordinator would establish ownedDistNoOpenHandles is unspecified."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "P2-Q2-NAMES",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Upheld. Inspected dependency source, untested. In @vitest/runner 4.1.10, chunk-artifact.js:2189-2198 sends each $key through objDisplay. In @vitest/utils display.js, :752-756 defaults truncate to 40 and :321-325 quotes the string and truncates it to 37 characters plus an ellipsis. vitest.config.ts@f581b6b sets no chaiConfig. The templates exist at static-document.test.ts:170, vite-document.test.ts:177 and provider-journal-http.test.ts:212@f581b6b. Manifest :175-310, :1208-1211 and G4 are unquoted, and compareCaseSets:104-106@90f4ebd compares exactly. Root :353 is a plain it and is unaffected. The proposed fix is necessary but not sufficient for G3 (see missed: duplicate identities)."
+     },
+     {
+      "id": "P2-G7-TSX",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Upheld. verify-no-em-dash.mjs:8@f581b6b imports ../../shared/research/reconciliation-presentation.ts, and package.json:15 runs it via tsx. The pinned node.exe contains no experimental-strip-types string but does contain ERR_UNKNOWN_FILE_EXTENSION (both grepped). Manifest :1424-1428 and :1467-1471 have no --import tsx, unlike :1489-1493. The source command runs first, and supervisor:656-658@90f4ebd stops later commands, so build never runs. The fix (--import tsx) is correct."
+     },
+     {
+      "id": "P2-G7-NODEENV",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Upheld. In vite 7.3.5 config.js, resolveConfig keeps a NODE_ENV that is already set (isNodeEnvSet, about :35489-35491), isProduction is true only for 'production' (:35614), and definePlugin writes process.env.NODE_ENV from it (:26507-26514). react/index.js:3 selects the production bundle only for 'production'. vite.config.ts@f581b6b has no define or mode, and build.mjs:9 calls viteBuild() bare. Manifest :1450-1453 sets NODE_ENV=test. The G7 artefact inventory would hash a non-production client, which is false evidence for G7 and G9."
+     },
+     {
+      "id": "P2-G7-ORDER",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld. g7.verdictOnly (:614-619) lists no-em-dash-source, but it is the first command (:1421-1442). supervisor:656-658 stops all later commands on an unexpected verdict, so a source verdict can block artefact production, contrary to doc 49 Q-1. G7 also falls under the per-command admission defect (missed item 1), which affects every G7 command, including the first."
+     },
+     {
+      "id": "P2-G0-BOOTSTRAP",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld. In selfTestDefinitions, :704-705@90f4ebd marks bootstrap-interruption acceptance 'PENDING' and does not dispatch it, and manifest :606 agrees. assertDependencies :605-611 requires g0Acceptance.bootstrapAccepted===true for every group except G0. The G0 commands at :631-805 contain no bootstrap case."
+     },
+     {
+      "id": "P3-INVENTORY",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. parseCases:125 recognises only check, cross and hyphen symbols, while Vitest uses ↓ for skipped and □ for todo (utils.BS4fH3nR.js:7, :14). G2-G5 results bind only targetFiles and expectedFailures (for example :1149-1160 and :1198-1212). No skip, todo or only markers are present in the 15 bound files @f581b6b, which I grepped. The rule text at :169 claims more than the code enforces."
+     },
+     {
+      "id": "P3-PINS-AGG",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. The dependency pins (:43-80) cover only vitest, tsx and typescript; installed versions are vite 7.3.5, esbuild 0.25.12 and @vitest/runner and @vitest/utils 4.1.10. maximumApplicationExecutionMs (:143) is never read by the supervisor. G7 group wall 1500000 is below its command sum of 2400000. The gate's git calls use PATH (verify-core-site-protection.mjs:180). DB completion markers are confirmed at local.mjs:401 and currentness_local.mjs:495 and :531@6d0fe86, and are unnamed at manifest :1623. A predicted red is accepted by name regardless of cause."
+     },
+     {
+      "id": "P3-G0-CAPS",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. The departures from the 512 MiB and 3-process bounds are disclosed (:596, :603): the G0 floor is 1536 MiB, real-child-tree uses 4 processes (:761) and vitest-baseline uses 8 processes with a 128 MiB heap (:774, :786, :789). The 128 MiB Vitest heap is untested. This needs explicit approval text; it is not a defect in itself."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "Records: sha256-lf recomputation",
+      "status": "PASS",
+      "note": "Verified retained evidence, recomputed by me from git show. At 90f4ebd: supervisor d85b5a04 (blob 9f295ec) and manifest dc166dc6 (blob 72514d6). At 6d0fe86: ACTIVE_TASKS 41fd3a03, CODE_OWNERSHIP 2dccdc32, SESSION_REGISTRY 5134f11b, session 0185bd6f, handoff c16581d0, source record acf20420. All equal; the two-task record itself is 122b4122 and is not self-bound. Trees d6f8dd8, c4bb3ff and 9efb20d match."
+     },
+     {
+      "item": "90f4ebd adds only the two files; no runtime, test, SQL or protected path changed",
+      "status": "PASS",
+      "note": "Inspected Git. The 30085a6..90f4ebd diff is exactly A manifest and A supervisor. 90f4ebd..6d0fe86 modifies 5 .xenios files and adds 2 evidence JSONs. The diffs 30085a6..6d0fe86 and f581b6b..30085a6 outside docs/health-launch/quick-order-20261005 and .xenios are both empty."
+     },
+     {
+      "item": "Head-integrity paths byte-identical at 90f4ebd and 6d0fe86",
+      "status": "PASS",
+      "note": "Inspected Git. 3e82154..6d0fe86 over supabase, server, client, shared, scripts and configs changes only the 5 currentness files, so the intake family equals 3e82154 and currentness equals f581b6b. 1631323 is an ancestor of 30085a6 (merge-base check)."
+     },
+     {
+      "item": "Lease coverage 17093695",
+      "status": "PASS",
+      "note": "Inspected source. CODE_OWNERSHIP.json@6d0fe86 shows the lease active with docs/health-launch/quick-order-20261005/** among its paths. Both new paths fall under it."
+     },
+     {
+      "item": "Manifest hash-binds targets; hashes equal blobs at bound SHA",
+      "status": "PASS",
+      "note": "Verified by recomputation. 44 pins (30 targetPins @f581b6b and 14 G1 snapshot files @f1e467f/@fd023e8) have 0 mismatches on blob and sha256-lf. Patches 8a25a36 and 254924f (raw 8392d243 and 8396609b), plan 020b2c5 (51991abd), and the DB receipts @30085a6 (f2f343b3, sourceCommit 3e82154; b9074117, sourceCommit f581b6b) all match. Vite, esbuild and @vitest/runner/utils are unpinned (P3)."
+     },
+     {
+      "item": "Q-1 G7 commands",
+      "status": "FAIL",
+      "note": "Inspected source. verify-release-manifest.ts is in no argv. The protection gate argv 766f19f and f581b6b, allowedCodes [1], RESULT: FAIL and nonBlocking (:1534-1556) are correct. It fails because the em-dash commands lack tsx (:1424, :1467 vs script :8), the build runs with NODE_ENV=test (:1450), a verdict-only command runs first and stops the build (supervisor:656-658), and every G7 command needs a fresh per-command admission that can consume the group (missed item 1)."
+     },
+     {
+      "item": "Q-2 predeclared failing set exists verbatim and counts 8/8/1/4",
+      "status": "FAIL",
+      "note": "Inspected source. The counts are right: 8 static (it.each at :170), 8 Vite (:177), root :353 and 4 provider (:212) @f581b6b. 20 of the 21 names are not in the rendered Vitest form (quoted, truncated). Independently, quick-order-repository.test.ts in G3 renders duplicate titles: missing-required labels truncated (99 cases give 95 names) and a repeated $path at :319-331. supervisor:96 then refuses G3 whatever the names. The G4 test files are unaffected by duplicates."
+     },
+     {
+      "item": "Q-2 focused-green definition",
+      "status": "PARTIAL",
+      "note": "Inspected source. The rule (:169) and exact-set equality (compareCaseSets:93-114) exist, and the FAILED verdict is retained. G2-G5 bind no case inventory, and ↓ and □ rows are not parsed. The identity rule assumes unique titles, which bound files violate (G3). The definition is PROPOSED and requires direct future approval."
+     },
+     {
+      "item": "Q-3 capacity gate, refusal accounting, ascending floor, 4096 groups, Docker memory",
+      "status": "FAIL",
+      "note": "Inspected source. Correcting the lens: the pre-window maximum-floor check is enforced at loadRun:475-477@90f4ebd. The group-start refusal is non-consuming (:510-516). However, every later heavy command (G0 vitest-baseline, G1x3, G4x2, all of G7) re-runs assertAdmission (:635-638), which requires a beforeCommands observation no older than 30 s (:440-442), with no handshake. That refusal is caught at :660 after the single-attempt marker (:618-624, never rerun :619), so a resource refusal consumes the group. This contradicts manifest:155 and doc 49 Q-3. Docker memory is NOT PROVEN."
+     },
+     {
+      "item": "Q-4 G0 definition and bounds; commerce supervisor named",
+      "status": "PARTIAL",
+      "note": "Inspected source. The G0 cases, the 60 s wall and the 46 s command sum are as the lens states, and the higher caps are disclosed. The commerce supervisor is named (:1635) and verified (fork, silent:true at :33-34@f581b6b). Bootstrap interruption is not dispatched. The refusal-path self-test (:641-648) accepts any throw, including a stale observation, and never exercises loadRun's refusal receipt. vitest-baseline is subject to the per-command admission defect."
+     },
+     {
+      "item": "Q-5 snapshot, cwd, node_modules reach, pre-G7 dist check",
+      "status": "PASS",
+      "note": "Inspected source. These are defined at manifest :96-107 and supervisor:369-418: a private dereferenced copy with no junction (:433), and the cwd is the snapshot. G1 scratch lives under the snapshot, so resolution reaches snapshot/node_modules. tsconfig and vitest includes exclude docs/. The pre-G7 attestation is required (:449-450), but it rides on the defective per-command admission and its method is unnamed."
+     },
+     {
+      "item": "Q-6 G8 owned cacheDir and 0.0.0.0 disclosure",
+      "status": "PASS",
+      "note": "Inspected source. G8 is deferred with both conditions (:1563-1573, :105). Outside Q-6: the G5 root-composition test boots the real server, which listens on 0.0.0.0 (server/index.ts:1518-1521; test :206-208@f581b6b). That listener is undisclosed (P3, missed)."
+     },
+     {
+      "item": "Q-7 G1 RED/GREEN names and RED plausibility",
+      "status": "PASS",
+      "note": "Inspected source; untested behaviour. 40 top-level tests, and the pattern selects exactly :392, :405, :420, :432, :450, :464 and :478. RED handler.mjs@f1e467f fails :392 (non-origin form gives 400), :405 (403 origin), :420 (uses originalUrl, so next()) and :464 (413), and passes :432, :450 and :478. RED containment.ts:13-14 (req.path prefix) gives exactly 15 failures and 21 passes, matching manifest :542-580. %s titles are unquoted. RED imports resolve, and FileTest reporting is suppressed (embedded runner)."
+     },
+     {
+      "item": "Q-8 database category",
+      "status": "PARTIAL",
+      "note": "Inspected source. Checkout is at or after 30085a6 (a descendant of 1631323), and the receipt pairing is verified. Docker context, image id, server version, memory and completion markers are NOT PROVEN (:1619-1623). Status is NOT_AUTHORIZED_NOT_READY."
+     },
+     {
+      "item": "Q-9 NODE_OPTIONS worker heap bound",
+      "status": "PASS",
+      "note": "Inspected source. Every command sets NODE_OPTIONS, and supervisor:528 merges it. The root-composition child deliberately strips NODE_OPTIONS but passes --max-old-space-size=1024 in its argv (:206). Native memory is disclosed as uncapped."
+     },
+     {
+      "item": "Q-10 builder plan path and sha",
+      "status": "PASS",
+      "note": "Verified by recomputation. The plan blob 020b2c5@f581b6b has sha256 51991abd..., matching manifest :340-341 and targetPins."
+     },
+     {
+      "item": "Q-11 aggregate, overflow, markers, Chromium route, heavy predicate, unique evidence, patch blobs",
+      "status": "PARTIAL",
+      "note": "Inspected source. The aggregate is not enforced, abort-on-cap is disclosed (doc 49 allows 'record'), the DB markers are unnamed, G9 is deferred with both routes, the predicate QO-HEAVY-CENSUS-V1 exists, scratch is inside the unique snapshot, and the patches are bound by blob (verified). The 'immediately before every later heavy command' observation (:160, :164) is unimplementable without a sampling loop or handshake."
+     }
+    ],
+    "missed": [
+     "[P1] A per-command resource refusal consumes the group, and its freshness rule has no handshake. runGroup:635-638@90f4ebd re-reads the admission file for every heavy command after the first, and for all of G7. assertAdmission:440-442 needs a beforeCommands[commandId] observation no older than 30 s at an instant the coordinator cannot know. Nothing pauses or signals between commands, and the manifest forbids a sampling loop (:160, :164). The refusal throws inside the try (:660) after the single-attempt marker (:618-624; :619 forbids a rerun), so the group is consumed. This contradicts bounds.resourceRefusalConsumesGroup:false (:155) and doc 49 Q-3. Affected: G0 vitest-baseline (7 receipts precede it), G1 (3 commands), G4 (2), G7 (6). Fix: on a per-command refusal, write a non-consuming refusal receipt and exit before the marker is final, or add an explicit wait-for-observation handshake with its own ceiling.",
+     "[P1] G3 is refused even with correct names: duplicate rendered titles. supervisor compareCaseSets:96@90f4ebd refuses any repeated file::name. In server/research/assisted-order/quick-order-repository.test.ts@f581b6b, 'refuses missing required $label' (:171-173, :209) renders 99 cases as 95 names, because Vitest truncates labels to 37 characters (affiliationKind/affiliationDetail, confirmedByCustomer/confirmedAt, and the three intake.estimate.* labels collide). 'refuses mismatched binding $path' (:319-331) repeats enrichment.obligation.eventKey and enrichment.observation.eventKey. I computed this by string logic over git show bytes; untested. Fix: key rows by file plus location or index (for example a JSON reporter), or compare multisets with bound per-name counts.",
+     "[P2, plausible, host-dependent] The Windows env key case breaks the helper. osEnvironment:50-58 keeps the original key case ('Path' on most Windows launches), but executeOwned:529 reads osEnvironment().PATH case-sensitively. That yields PATH=<node dir>; (no system path) alongside the full 'Path'. JSON.stringify then writes both keys to launch-spec.json, and Windows PowerShell ConvertFrom-Json (:170) refuses case-variant duplicate keys, with $ErrorActionPreference Stop. The helper then emits no receipt, so every command aborts and G0 is consumed. Node's own spawn keeps the lexicographically first, 'PATH' (node dir only), so git-calling children (the protection gate :180, route-uniqueness, migration-dag) may not find git. Fix: normalise allowlisted keys to upper case and drop case variants before merging.",
+     "[P2, host-dependent, undisclosed] The helper launch preconditions are not recorded. powershell.exe is spawned with -File (supervisor:550) without -ExecutionPolicy Bypass; the Windows 11 client default (Restricted) blocks script files. The process arithmetic (maxJobChildren = maxOwnedProcesses-2 at :541; bootstrap limit maxJobChildren+1 at :196) does not say whether conhost.exe instances count toward the active-process limits. Those consoles come from CREATE_NO_WINDOW children (:260) and from the Add-Type csc.exe. Counting them would breach the 3-process G0 cases and the 4-process node --test commands. Add-Type cold compilation runs inside each 5 s G0 command ceiling. All are untested; any failure consumes the single G0 attempt. Record these facts, or add the flag and headroom, before approval.",
+     "[P3] The G5 0.0.0.0 listener is undisclosed. root-composition.test.ts:206-208@f581b6b boots server/index.ts with NODE_ENV=production, and it listens with host 0.0.0.0 (server/index.ts:1518-1521). The manifest mentions 0.0.0.0 only for G8 (:105, :1569). Disclose the interface exposure, and the possible firewall prompt for the new node.exe path, for G5.",
+     "[P3] The G0 refusal-path self-test proves less than it claims. supervisor:641-648 counts any assertAdmission throw as success. It runs after 5 commands, so run.admission.observedAt is likely more than 30 s old, and the refusal can come from staleness, not the 0 MiB floor. It also never exercises loadRun's refusal receipt or its non-consumption (:510-516). Assert the refusal reason and exercise the receipt path.",
+     "[P3] Untimed work inside group walls. sourceState (:299-318) reads and double-hashes all 6069 tracked files (211.9 MB @f581b6b) before and after each group (:631, :662), within the deadline (:625). G0 has a 60 s wall with 46 s of command ceilings, plus 7 PowerShell Add-Type compilations. Measure or budget it.",
+     "[Discrepancy] Lens Q-3 says the pre-window maximum-floor check is not visible in the supervisor. It is enforced at loadRun:475-477@90f4ebd (window.preWindowObservation). The lens's 'Decidable now: G0' and 'next G1' are too generous given the per-command admission defect (G0 vitest-baseline, G1 later commands)."
+    ],
+    "verdictOpinion": "Adversarial verification, read-only. Nothing was executed. Every behaviour remains NOT RUN, the qualification window expired 2026-10-06T21:43:37Z, nothing here authorises execution or reservation, and nothing is Samuel's approval.\n\n**Upheld:**\n- The lens's records and pin work holds: I recomputed every record hash, 44 pins, both patches, the plan and both DB receipts with no mismatch. 90f4ebd is source-only with two files, and 6d0fe86 is records-only.\n- All three lens P1s hold at the stated severity: raw-template G3 and G4 names, plain-node em-dash commands, and NODE_ENV=test in the build. The two P2s and three P3s also hold.\n\n**What the lens missed:**\n- **Second P1, the admission mechanism.** Every later heavy command must re-admit with a 30-second-fresh observation, and nothing in the supervisor signals when a command is about to start. Any refusal is thrown after the single-attempt marker is written, so it consumes the group. That contradicts manifest:155 and doc 49 Q-3. It hits G0 (vitest-baseline), G1, G4 and G7.\n- **Third P1, duplicate titles in G3.** quick-order-repository.test.ts renders duplicate titles (Vitest truncation plus a repeated $path), and the supervisor refuses repeated identities. G3 is therefore refused even after the names are corrected.\n- **P2, plausible:** a case-sensitive PATH lookup next to Windows 'Path' would make PowerShell's ConvertFrom-Json fail on duplicate keys, aborting every helper.\n- **P2, undisclosed host preconditions:** the execution policy, conhost process accounting and Add-Type compile time inside the 5-second G0 ceilings.\n\n**Checklist correction:** Q-3 should be FAIL, not PARTIAL. Also, the pre-window floor check does exist, at loadRun:475-477.\n\n**Readiness on current source:** no group is ready for an execution decision.\n- **G0** is closest. It needs the per-command admission fix (or vitest-baseline must stop being a re-admitted heavy command), the env-case fix, the helper preconditions recorded, a defined bootstrap-interruption step, and explicit approval of the higher caps and Add-Type.\n- **G1:** blocked by per-command admission, G0 acceptance and the bootstrap step.\n- **G2 and G5:** single-command and otherwise consistent, but gated on G0 and G1.\n- **G3:** blocked by the names and the duplicate identities.\n- **G4:** blocked by the names and per-command admission.\n- **G6:** blocked behind G3 and G4.\n- **G7:** blocked by tsx, NODE_ENV, command order and per-command admission.\n- **G8 and G9:** deferred.\n- **Database category:** not ready (Docker facts and markers missing).\n\nMissing evidence remains NOT PROVEN, and accepting the source would not authorise execution."
+   }
+  }
+ ]
+}
