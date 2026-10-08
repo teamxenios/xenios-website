@@ -1,0 +1,1927 @@
+{
+ "schemaVersion": 1,
+ "review": "53_QUICK_ORDER_DECISION_INPUTS_e90d464_2026-10-08.md",
+ "subject": "e90d464a2e2f81f6b30a02bfef2fd3ccbe35d9e7",
+ "tree": "bdb31ef330f59ddce89d53238107a3341e04dc86",
+ "records": "5a49ef043c43663c7a19c9b1c1b9988439062240",
+ "scopeRecord": "7b1e606e4e7acfdc0e26fe8f26dcceb9ce1df2c7",
+ "workflowRun": "wf_66e22c7b-a70",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Lens, adversarial-verifier and completeness-critic outputs, verbatim. Reviewer dispositions are in doc 53.",
+ "lenses": [
+  {
+   "lens": "sql-canonical-validator",
+   "review": {
+    "verdict": "LENS D1, the decision-input validator at e90d464 (.sql:144-338): no P0, P1 or P2 findings. I read the source and hand-simulated every case; nothing was run. The validator implements coordinator item 18 (closed schema, types, bounds, nullability, byte-sorted distinct sets, canonical bytes) and item 21 (acyclic construction) as written in coord_scope.md@7b1e606. It rebuilds the canonical bytes from the parsed values in the displayed key order, using to_json(text) for strings and the regex-checked numeric text for integers, then requires raw_bytes = reconstruction. Duplicate keys, alternate escapes, number spellings, whitespace, BOM, CRLF and key reordering therefore all refuse at .sql:335, and jsonb::text is never serialized or hashed. No Health kind, version, legal artifact or applicability value is hardcoded. The audience, region and workflow value sets equal the record, and the audience and region sets also match the application enumerations at 3e82154. There are six P3 precision items: IMMUTABLE resting on built-ins PostgreSQL declares STABLE; the inherited '\\.' literals depend on standard_conforming_strings; WHEN OTHERS hides defects as ordinary refusals; the oversized-input verifier case does not discriminate; the 50,000-rule ceiling cannot be reached under 8 MiB; and type names resolve through pg_temp. All behaviour is NOT RUN, the qualification window has expired, and nothing here is Samuel's approval.",
+    "checklist": [
+     {
+      "item": "Item 18 closed schema: every key required, unknown keys refused at every object level",
+      "status": "PASS",
+      "evidence": "Inspected source: exact ?& plus minus-array checks at the top level .sql:164-170, artifacts object :180-182, ArtifactRef :185-186, HealthAgreement :208-210, OfferRule :245-249, quantity :262-263, price :270-271 and destination :275-277 @e90d464. Reconstruction (:328-334) also emits only the listed keys."
+     },
+     {
+      "item": "Item 18 canonical key order and byte-equality reconstruction (not jsonb::text)",
+      "status": "PASS",
+      "evidence": "Literal key order: top level :328-334, artifacts :194-195 in artifact_keys order :150, agreements :236-238, offers :315-322; each matches coord_scope.md:48-71. Raw bytes come from convert_to(p_text) at :160, the digest is taken over those raw bytes at :202, and acceptance is raw_bytes=convert_to(canonical) at :335. Strings are rendered with to_json(text)::text; jsonb::text is never used."
+     },
+     {
+      "item": "Item 18 escapes: quote and backslash only; alternate escapes refused",
+      "status": "PASS",
+      "evidence": "Only printable ASCII reaches to_json: Text64 :214, Identifier200 :252, refs :229/:308, envelope-validated paths and hashes, fixed enums. PostgreSQL escape_json escapes only quote and backslash in that range, so canonical output matches coord_scope.md:91. An escaped A or \\/ parses to A or /, is re-emitted literally, and the bytes differ, so :335 refuses."
+     },
+     {
+      "item": "Item 18 integers: unsigned decimal, no leading zero, exponent or fraction",
+      "status": "PASS",
+      "evidence": ":266 requires jsonb type number and ->> text matching ^[1-9][0-9]{0,5}$; :267 caps at 100000; :269 requires min<=max. 1.0 keeps scale 1 and fails the regex. 1e2 normalises to 100, passes the regex, and is refused by byte equality at :335. 01 is a JSON lexer error caught by :336. Negatives, 0 and -0 (output 0) fail the regex."
+     },
+     {
+      "item": "Item 18 octet ceiling enforced before parsing",
+      "status": "PASS",
+      "evidence": "Source: :160-161 compute convert_to and refuse octet_length>8388608 or =0 before p_text::jsonb at :163. Behaviour NOT RUN. The verifier case local.mjs:638 (repeat(' ',8388609)) would also be false without the ceiling, so it does not discriminate (finding D1-4)."
+     },
+     {
+      "item": "Item 18 Text64 and Identifier200 (ASCII-only v1, no trim or normalization, unbound: prefix)",
+      "status": "PASS",
+      "evidence": "Text64 :211-216: ^[ -~]{1,64}$ under collate C (range by code point, no locale classes), leading or trailing space refused, octet=char. Identifier200 :250-255: ^[!-~]{1,200}$ and a bytea compare of left(s,8) against 'unbound:' on all three identity fields. No case folding, matching coord_scope.md:78-79."
+     },
+     {
+      "item": "Item 18 Ref/ArtifactPath/UUID/hash predicates and every source/applicability array (nested and envelope)",
+      "status": "PASS",
+      "evidence": "Nested refs :222-235 and :300-314 use the existing Ref regex, 1-32 entries, strictly increasing bytea (unsigned memcmp, shorter prefix first) and ? membership in the envelope sourceRefs/applicabilityRefs. The envelope arrays are now byte-sorted and distinct in valid_publication :126-135, added in diff 11a7900..e90d464. UUID and hash predicates are inherited through envelope equality at :176-179 and :190-193."
+     },
+     {
+      "item": "Item 18 workflowModes, price.audiences and destination.regions sets",
+      "status": "PASS",
+      "evidence": ":279-297: bounds 1-2, 1-5 and 1-51; fixed values compared under collate C; strictly increasing bytea. These are the record's values (coord_scope.md:82-84). Verified read-only: the 51 regions equal US_REGIONS at server/research/health/quick-order/core.mjs:4@3e82154 (no extras, none missing); the five audiences equal CUSTOMER_PRICE_AUDIENCES at shared/research/pricing.ts:20-29@3e82154. No admin, no wildcard."
+     },
+     {
+      "item": "Item 18 healthAgreements: 1-30, sorted (kind,version), duplicate kind refused at any version",
+      "status": "PASS",
+      "evidence": ":205 checks the count; :217-220 compare bytea[] tuples with >= (byte-lexicographic per component) and refuse when previous_kind equals the current kind. Any duplicate kind is adjacent after sorting, so a second version of the same kind is refused."
+     },
+     {
+      "item": "Item 18 offerRules: 1-50,000, sorted (productId,variantId,offeringVariantId), duplicate offering ID or product/variant pair refused",
+      "status": "PASS",
+      "evidence": ":242 checks the count; :256-260 enforce strict tuple order and refuse a repeated adjacent pair; :326-327 refuse a repeated offeringVariantId across products by comparing count(distinct bytea) with the length. Record precision note in finding D1-5."
+     },
+     {
+      "item": "Item 18 cross-field rules: configurationVersion, envelope equality, effectivity, unpriced iff request_pricing",
+      "status": "PASS",
+      "evidence": ":197-199 configurationVersion equals the configuration artifact sha256. :176-179 make revisionId, sourceCommit, effectiveFrom and effectiveUntil equal the envelope in JSON type and bytes. UTC milliseconds and end-after-start are inherited from valid_publication :98-107. :298 enforces (unpriced='request_pricing') IS NOT DISTINCT FROM (workflowModes ? 'request_pricing'), covering both directions."
+     },
+     {
+      "item": "Item 16 as consumed by the validator: six unique kinds, five reference bindings, raw decision digest",
+      "status": "PASS",
+      "evidence": "valid_publication :109 requires exactly 6 artifacts, :120 requires all six kinds present (so each appears once), :121-122 require distinct paths. The validator then binds the five decision refs to their envelope kinds (:188-193) and sha256(raw_bytes) to the sole normalized_decision_inputs sha256 (:200-202)."
+     },
+     {
+      "item": "Item 19 audience meaning: private_early_access never inferred, no admin audience",
+      "status": "PASS",
+      "evidence": "The validator has no session, actor or relation input (:144-338). private_early_access is only one of the record's admissible literal set values (:289), and admin is not admissible. The verifier refusal 'unknown-audience-admin' is at local.mjs:597. No pricing grant or audience is derived."
+     },
+     {
+      "item": "Item 20 and reserved policy: plural agreements, destination as shape only, no hardcoded legal values",
+      "status": "PASS",
+      "evidence": "Agreements are a 1-30 array of free Text64 kind and version with opaque refs (:204-239). No agreement kind, version, legal artifact or applicability literal appears anywhere in :144-338. Destination is a fixed 'US' plus a region set, with no serviceability semantics. Quantity ceilings are the record's format bounds (coord_scope.md:87)."
+     },
+     {
+      "item": "Item 21 acyclic construction",
+      "status": "PASS",
+      "evidence": "The decision carries sourceCommit S and five artifact refs; artifact_keys :150 excludes normalized_decision_inputs, and bundleSha256 is not a permitted key (:164-170). The envelope binds sha256(decision) at :200-202. Order: inputs at S, then decision, then digest, then envelope. The decision needs nothing computed after itself, so there is no cycle. SQL does not claim Git existence or the configuration artifact's exclusions (coord_scope.md:101)."
+     },
+     {
+      "item": "IMMUTABLE honesty",
+      "status": "PARTIAL",
+      "evidence": "No table reads, now()/clock, current_setting, locale character classes or collation-dependent ordering: all ordering is bytea, and text equality is collate C or under the deterministic default. However, convert_to, to_json and array_to_string, and transitively timestamptz_in and to_char in valid_publication :101-106, are declared STABLE (PostgreSQL catalog knowledge, NOT RUN). For the admitted inputs they are deterministic in practice. Findings D1-1 and D1-2."
+     },
+     {
+      "item": "SECURITY INVOKER, empty search_path, qualified references",
+      "status": "PARTIAL",
+      "evidence": ":145 declares security invoker and set search_path=''. Function and operator names resolve to pg_catalog, since pg_temp is never searched for them. Built-ins and type names are not pg_catalog-qualified, and type names (jsonb, text, bytea, integer) would search pg_temp first. The only external call is the qualified extensions.digest at :202. The function is owner-only and invoker, so there is no escalation (finding D1-6)."
+     },
+     {
+      "item": "Exception handling",
+      "status": "PARTIAL",
+      "evidence": ":336 and inherited :137 have WHEN OTHERS THEN false. This is fail-closed and never accepts. It excludes QUERY_CANCELED, so statement_timeout still surfaces. A validator defect on valid input would be indistinguishable from an ordinary refusal; only the positive verifier cases at local.mjs:650-677 would expose one (finding D1-3)."
+     },
+     {
+      "item": "Fingerprint and ACL membership of the validator; definition hash",
+      "status": "PASS",
+      "evidence": "The name matches owned_functions LIKE research_health_quick_order_currentness_% (:54), so pg_get_functiondef seals its body, volatility, security and config. Revoked from public, anon, authenticated and service_role at :555-558. Verified evidence: I recomputed the definition sha256 over git show e90d464 (install block then fingerprint block, CRLF to LF) as 3ca2bab80e7b7e829c965e9dcc6e8f9ac2e96720ee24701615c0c1c90b249b74, equal to the checkpoint claim."
+     },
+     {
+      "item": "Runtime behaviour of the validator on a real PostgreSQL",
+      "status": "NOT_PROVEN",
+      "evidence": "Everything is NOT RUN: no SQL, psql, verifier or database. The simulations below are hand traces of source at e90d464, not observations. The qualification window expired 2026-10-06T21:43:37Z."
+     }
+    ],
+    "simulations": [
+     {
+      "input": "(a) Envelope E: {schemaVersion:'quick-order-authority-v1', revisionId:'0b8a4c1e-1d2f-4a3b-8c4d-5e6f7a8b9c0d', sourceCommit:A40, bundleSha256:H7, artifacts:[catalog qo/catalog.json H1, bindings qo/bindings.json H2, reconciliation qo/reconciliation.json H3, health_legal qo/health-legal.json H4, configuration qo/configuration.json H5, normalized_decision_inputs qo/decision.json sha256(D)], sourceRefs:['src-1'], applicabilityRefs:['app-1'], effectiveFrom:'2026-10-08T00:00:00.000Z', effectiveUntil:null}. D (1,666 bytes, sha256 f26827e84782b5f80ec96b4e097a9abf42177aed31d52eb29eaed7bb74f4ac1b): {\"schemaVersion\":\"quick-order-decision-inputs-v1\",\"revisionId\":\"0b8a4c1e-...\",\"sourceCommit\":\"A40\",\"effectiveFrom\":\"2026-10-08T00:00:00.000Z\",\"effectiveUntil\":null,\"artifacts\":{\"catalog\":{\"path\":\"qo/catalog.json\",\"sha256\":\"H1\"},...,\"configuration\":{\"path\":\"qo/configuration.json\",\"sha256\":\"H5\"}},\"configurationVersion\":\"H5\",\"healthAgreements\":[{\"kind\":\"kind-a\",\"version\":\"v1\",\"sourceApprovalRefs\":[\"src-1\"],\"applicabilityRefs\":[\"app-1\"]}],\"offerRules\":[{\"offeringVariantId\":\"ov-1\",\"productId\":\"p-1\",\"variantId\":\"v-1\",\"workflowModes\":[\"direct_order_request\"],\"quantity\":{\"minimum\":1,\"maximum\":10,\"increment\":1},\"price\":{\"currency\":\"USD\",\"audiences\":[\"member\"],\"unpriced\":\"refuse\"},\"destination\":{\"countryCode\":\"US\",\"regions\":[\"CA\"],\"sourceApprovalRefs\":[\"src-1\"],\"applicabilityRefs\":[\"app-1\"]},\"sourceApprovalRefs\":[\"src-1\"],\"applicabilityRefs\":[\"app-1\"]}],\"canonicalReaderProfile\":\"quick-order-canonical-readers-v1\",\"relationProjectionVersion\":\"quick-order-relations-v1\",\"readerCensusSha256\":\"H6\"} (A40='a'x40; Hn=digit n x64)",
+      "expected": "Accept: the document is closed, typed, in bounds and canonical, and every reference is in the envelope.",
+      "sqlResult": "TRUE. All checks at :159-327 pass. The reconstruction equals D byte for byte (JS JSON.stringify(JSON.parse(D))===D is the analogous check; true).",
+      "decidingLine": ".sql:335@e90d464 (raw_bytes=convert_to(canonical))"
+     },
+     {
+      "input": "(b) D with a space after the first colon: {\"schemaVersion\": \"quick-order-...\"; envelope digest recomputed over these bytes",
+      "expected": "Refuse (insignificant whitespace)",
+      "sqlResult": "FALSE. jsonb parses it and all value checks pass, but the reconstruction has no space, so the bytes differ. With an unrecomputed digest it would already fail at :202.",
+      "decidingLine": ".sql:335@e90d464"
+     },
+     {
+      "input": "(c) Same content with keys reordered, e.g. quantity {\"maximum\":10,\"minimum\":1,\"increment\":1} or reversed top-level keys; digest recomputed",
+      "expected": "Refuse (displayed key order required)",
+      "sqlResult": "FALSE. jsonb discards input order; the reconstruction emits the fixed literal order, so the bytes differ.",
+      "decidingLine": ".sql:335@e90d464"
+     },
+     {
+      "input": "(d) Duplicate key: {\"schemaVersion\":\"quick-order-decision-inputs-v1\",\"schemaVersion\":\"quick-order-decision-inputs-v1\",...} or \"minimum\":1,\"minimum\":1; digest recomputed",
+      "expected": "Refuse (duplicate object keys)",
+      "sqlResult": "FALSE. jsonb keeps the last value; the reconstruction emits the key once, so raw is longer than the reconstruction.",
+      "decidingLine": ".sql:335@e90d464"
+     },
+     {
+      "input": "(e) productId \"p-1\" (escaped p) or an artifact path \"qo\\/catalog.json\"; digest recomputed",
+      "expected": "Refuse (alternate escapes)",
+      "sqlResult": "FALSE. Parsed values are 'p-1' and 'qo/catalog.json', which pass regex and envelope equality (:192). to_json re-emits them literally, so the raw 6-byte escape or \\/ differs.",
+      "decidingLine": ".sql:335@e90d464"
+     },
+     {
+      "input": "(f) quantity.minimum spelled 01, 1e2, 1.0, -1 and -0 (each with digest recomputed)",
+      "expected": "Refuse all (unsigned decimal, no leading zero, exponent or fraction)",
+      "sqlResult": "FALSE for each. 01 is a JSON lexer error, caught as false (:336). 1e2 becomes ->> '100', passes :266, and fails bytes at :335. 1.0 gives '1.0' and fails the regex at :266. -1 fails :266. -0 has numeric output '0' and fails ^[1-9] at :266.",
+      "decidingLine": ".sql:266 / :335 / :336@e90d464"
+     },
+     {
+      "input": "(g) healthAgreements[0].kind = ' kind-a', 'kind-a ', 'kind\\ta' (escaped tab), 'kind-é', 'A' x 65",
+      "expected": "Refuse all (Text64)",
+      "sqlResult": "FALSE for each. Leading and trailing spaces fail left/right(s,1)=' '. The tab (0x09) and é (U+00E9) fall outside [ -~], and both would otherwise survive byte equality, so the regex is the deciding check. 65 characters exceed {1,64}.",
+      "decidingLine": ".sql:214@e90d464"
+     },
+     {
+      "input": "(h) destination.regions [\"CA\",\"AL\"] (unsorted) and [\"CA\",\"CA\"] (duplicate); also sourceApprovalRefs [\"src-2\",\"src-1\"]",
+      "expected": "Refuse (sorted distinct sets)",
+      "sqlResult": "FALSE. previous_value >= current bytea holds for 'CA'>='AL' and 'CA'>='CA'. Refs refuse the same way at :310.",
+      "decidingLine": ".sql:293 (refs :231/:310)@e90d464"
+     },
+     {
+      "input": "(i1) workflowModes [\"direct_order_request\"] with unpriced \"request_pricing\"; (i2) workflowModes [\"direct_order_request\",\"request_pricing\"] with unpriced \"refuse\"",
+      "expected": "Refuse both (iff rule)",
+      "sqlResult": "FALSE for both: true IS DISTINCT FROM false, and false IS DISTINCT FROM true.",
+      "decidingLine": ".sql:298@e90d464"
+     },
+     {
+      "input": "(j) quantity {minimum:11,maximum:10,increment:1}; {1,10,0}; {1,100001,1}",
+      "expected": "Refuse all",
+      "sqlResult": "FALSE. min>max fails :269. Increment 0 fails ^[1-9] at :266. 100001 matches the regex but s::integer>100000 at :267.",
+      "decidingLine": ".sql:269 / :266 / :267@e90d464"
+     },
+     {
+      "input": "(k) p_text of 8,388,609 UTF-8 bytes (otherwise any content); boundary 8,388,608",
+      "expected": "Refuse before parsing; the boundary value is admitted to parsing",
+      "sqlResult": "FALSE at :161 before p_text::jsonb at :163. 8,388,608 proceeds to parsing. Not behaviourally discriminated by verifier local.mjs:638.",
+      "decidingLine": ".sql:161@e90d464"
+     },
+     {
+      "input": "(l) offeringVariantId (or productId/variantId) = 'unbound:x'; control cases 'Unbound:x' and 'x-unbound:y'",
+      "expected": "Refuse the exact leading lowercase prefix; no case folding or substring ban",
+      "sqlResult": "FALSE for 'unbound:x', because the bytea of left(s,8) equals 'unbound:'. 'Unbound:x' and 'x-unbound:y' pass this check, consistent with coord_scope.md:79 and the positive case at local.mjs:654.",
+      "decidingLine": ".sql:254@e90d464"
+     },
+     {
+      "input": "(m) healthAgreements [{kind:'k',version:'v1'},{kind:'k',version:'v2'}]; [] ; 31 distinct sorted kinds",
+      "expected": "Refuse all",
+      "sqlResult": "FALSE. The tuples (k,v1)<(k,v2) are ordered, but previous_kind equals 'k' at :219. 0 and 31 fail 'not between 1 and 30' at :205.",
+      "decidingLine": ".sql:219 / :205@e90d464"
+     },
+     {
+      "input": "(n) offerRules [(p2,v1,a),(p1,v1,b)] (sorted by offering ID, not by product); [(p1,v1,a),(p1,v1,b)]; [(p1,v1,x),(p2,v1,x)]; []",
+      "expected": "Refuse all",
+      "sqlResult": "FALSE. Wrong order: previous_tuple>=current at :258. Repeated pair: previous_pair=current[1:2] at :259. Repeated offering ID across products: count distinct < length at :326. Empty: :242.",
+      "decidingLine": ".sql:258 / :259 / :326 / :242@e90d464"
+     },
+     {
+      "input": "(o) JSON null for healthAgreements, kind, readerCensusSha256, price.currency, destination.countryCode; extra key at top level ('extra':true) and inside quantity, price, destination, agreement, ArtifactRef",
+      "expected": "Refuse all",
+      "sqlResult": "FALSE. jsonb_typeof 'null' fails the type checks (:204, :213, :174). A null currency or countryCode gives SQL NULL, which IS DISTINCT FROM 'USD' or 'US' (:272, :278). Each extra key leaves minus-array <> '{}' (:168-170, :263, :271, :277, :210, :186).",
+      "decidingLine": ".sql:168-170 and per-object key checks@e90d464"
+     },
+     {
+      "input": "(p) D prefixed with EF BB BF; D + \\n; D with CRLF between tokens; digests recomputed",
+      "expected": "Refuse all",
+      "sqlResult": "FALSE. The BOM is not JSON whitespace: lexer error, caught as false at :336 (and :335 would refuse anyway). Trailing LF and CRLF parse as whitespace but are absent from the reconstruction.",
+      "decidingLine": ".sql:336 (BOM) / :335 (LF, CRLF)@e90d464"
+     },
+     {
+      "input": "(q) configurationVersion = H8 while configuration sha256 = H5; revisionId, sourceCommit, effectiveFrom or effectiveUntil differing from E; E.effectiveUntil <= E.effectiveFrom",
+      "expected": "Refuse all",
+      "sqlResult": "FALSE. Configuration mismatch fails :197-199. Field mismatches fail on JSON type or bytes at :177-178. An end at or before the start makes valid_publication false (:106), so :162 refuses.",
+      "decidingLine": ".sql:197-199 / :177-178 / :106 via :162@e90d464"
+     },
+     {
+      "input": "(r) D with healthAgreements[0].version = a\"b\\c, raw bytes \"version\":\"a\\\"b\\\\c\" (and an Identifier200 containing \\\" or \\\\), digest over those bytes",
+      "expected": "Accept (only quote and backslash are escaped)",
+      "sqlResult": "TRUE. The parsed value a\"b\\c is printable ASCII and passes :214. to_json emits \"a\\\"b\\\\c\", byte-equal to the raw text. Covered by the verifier positive at local.mjs:651.",
+      "decidingLine": ".sql:335@e90d464"
+     }
+    ],
+    "findings": [
+     {
+      "id": "D1-1",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "The validator is declared IMMUTABLE (:145) but calls built-ins PostgreSQL declares STABLE: convert_to (24 uses), to_json(text) and array_to_string, and through valid_publication (:162) also timestamptz_in and to_char (:101-106). Determinism holds only by argument, not by callee volatility.",
+      "evidence": "Inspected source :145, :160, :194, :232, :296, :328-334 and :101-106@e90d464. The volatility facts are PostgreSQL catalog knowledge, not observed (NOT RUN). For admitted inputs the results are argument-determined: same-encoding convert_to returns the input, admitted strings are ASCII, the regex forces a 'Z' zone, ISO dates parse the same under every DateStyle, and the to_char pattern has no TM fields. Item 17 requires IMMUTABLE.",
+      "fix": "Record the determinism argument in rollback.md and the review packet. No code change is needed. If changed later, replace to_json(x)::text with an explicit escaper built with replace() and E'\\\\' literals, which changes the definition hash and requires a re-pin."
+     },
+     {
+      "id": "D1-2",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "The inherited valid_publication, which the validator calls at :162, contains '\\.' regex literals (:99, :104, :116). PL/pgSQL parses these under the session's standard_conforming_strings, so with it off the path guard becomes (^|/).{1,2}(/|$) and wrongly refuses valid paths with 1-2 character segments (for example qo/catalog.json).",
+      "evidence": "Inspected source :99, :104 and :116@e90d464; this subject edited those lines (adding collate \"C\"), see diff 11a7900..e90d464. The decision validator body :144-338 contains no backslash literal (grep). The effect is fail-closed only: effectiveFrom stays protected by the cast and to_char equality. Hosted GUC values are NOT PROVEN. Supabase's default is on.",
+      "fix": "Write [.] instead of \\. in the three regexes (independent of the setting), or assert standard_conforming_strings=on in precheck, postcheck and integrity. Either changes the definition hash and requires a re-pin."
+     },
+     {
+      "id": "D1-3",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "EXCEPTION WHEN OTHERS THEN false (:336, and :137 in valid_publication) turns every internal error into an ordinary refusal, which hides validator defects or a missing extensions.digest.",
+      "evidence": "Inspected source :336 and :137@e90d464. The handler is fail-closed and never accepts, and it lets query_canceled through. It is also how parse failures return false, as item 17 requires. A defect that raises on valid input would surface only as 22023 'Invalid Quick Order publication'. The positive cases at local.mjs:650-677 are the only detector, and they are NOT RUN.",
+      "fix": "Optional: catch only parse-class SQLSTATEs (22P02, 22P05, 22003, 22007, 22008) and let others raise. Otherwise record that qualification relies on the positive verifier cases."
+     },
+     {
+      "id": "D1-4",
+      "severity": "P3",
+      "file": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "claim": "The oversized-input case, repeat(' ',8388609) at local.mjs:638, does not test the ceiling: whitespace-only text also fails JSON parsing and returns false, so the assertion labelled 'refuses before parsing' would pass without :161. There is also no positive document near the ceiling.",
+      "evidence": "Inspected local.mjs:638-639@e90d464 and .sql:161-163@e90d464. The ceiling exists in source but has no discriminating behavioural test. Acceptance time for a valid document near 8 MiB is NOT PROVEN.",
+      "fix": "Build an otherwise valid canonical document padded through identifier lengths: refuse it at 8,388,609 bytes and accept it at 8,388,608 bytes. The accept case also measures runtime near the ceiling."
+     },
+     {
+      "id": "D1-5",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "The 1-50,000 offerRules ceiling (:242; coord_scope.md:86) cannot be reached under the 8,388,608-byte ceiling. The smallest distinct canonical rule is about 400 bytes, so at most about 21,000 rules fit.",
+      "evidence": "Inspected source :161 and :242@e90d464. I built a minimal rule (5-character unique IDs, single refs, one region): 401 bytes including the comma, giving floor(8388608/401) = 20,919. The SQL implements both record bounds faithfully; this is a precision point about the record, not a SQL defect.",
+      "fix": "State in the record that the octet ceiling dominates, so 50,000 is not read as admitted capacity. No SQL change."
+     },
+     {
+      "id": "D1-6",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "With search_path='' the built-in function and operator references are unqualified but resolve to pg_catalog. The type names (jsonb, text, bytea, integer, the text[] and bytea[] declarations, and '::jsonb' casts) are also unqualified, and type lookup searches pg_temp first.",
+      "evidence": "Inspected source :145-154 and :163@e90d464. PostgreSQL never searches pg_temp for functions or operators, but does for relations and types (catalog knowledge, NOT RUN). The function is SECURITY INVOKER and owner-only (:555-558), so a shadowing pg_temp type affects only the owner's own session. This is not an escalation, and the empty search_path matches item 17.",
+      "fix": "Optional: qualify the types (pg_catalog.jsonb and so on) at the next definition change, or record the invoker-only rationale."
+     }
+    ],
+    "confirmed": [
+     "The scratchpad copies of the candidate .sql and the verifier .mjs are byte-equal to git show e90d464 (sha256 054a2916... and 64b9e50c...). e90d464 has tree bdb31ef330f59ddce89d53238107a3341e04dc86 and parent 11a79001d7a8a6552181f946dda2a8b5177b82cc.",
+     "Recomputed definition sha256 (literal currentness_install block then currentness_fingerprint block, CRLF to LF, over git show e90d464 bytes): 3ca2bab80e7b7e829c965e9dcc6e8f9ac2e96720ee24701615c0c1c90b249b74. This equals the coordinator checkpoint claim at 6a989d9; the file has no CRLF.",
+     "Validator signature research_health_quick_order_currentness_valid_decision_inputs(text,jsonb), returning boolean, plpgsql, immutable, security invoker, search_path='' (.sql:144-145@e90d464); it falls inside the currentness fingerprint pattern (.sql:54).",
+     "decision_inputs_text is text NOT NULL with CHECK (... valid_decision_inputs(decision_inputs_text,publication) IS TRUE) (.sql:343, :349-350@e90d464).",
+     "publish_revision(jsonb,text) validates both inputs before insertion (.sql:502-504). The old (jsonb) signature is gone, and the revoke list names the new signatures (.sql:555-561).",
+     "Canonical reconstruction follows the displayed key order of coord_scope.md:48-71 at every level, and acceptance requires raw byte equality (.sql:335). The digest is taken over the raw text, never jsonb::text (.sql:202).",
+     "All set and tuple ordering uses bytea or bytea[] comparison (unsigned memcmp, shorter prefix first), which does not depend on collation (.sql:217-219, :231, :256-259, :293, :310; valid_publication :132).",
+     "The region set (51) equals US_REGIONS at server/research/health/quick-order/core.mjs:4@3e82154. The audience set (5) equals CUSTOMER_PRICE_AUDIENCES at shared/research/pricing.ts:20-29@3e82154. The two workflow values are a subset of MODES at core.mjs:5@3e82154. None of these values goes beyond the record.",
+     "No Health agreement kind, version, legal artifact or applicability literal appears in .sql:144-338@e90d464.",
+     "Item 21: the decision excludes bundleSha256 and its own artifact reference (artifact_keys .sql:150; closed keys :164-170). The envelope binds sha256(decision) at :200-202, so there is no circular dependency.",
+     "The HI-7 header correction is present at .sql:3@e90d464 ('dc3329b / scope 1d4f2c3').",
+     "The verifier authors refusal cases for (b)-(q) (local.mjs:517-639) and positive cases including quote and backslash, exact limits, all audiences, all regions, 30 agreements and 32 refs (local.mjs:649-677). All NOT RUN."
+    ],
+    "discrepancies": [
+     "The verifier message at local.mjs:639 claims 'Oversized UTF-8 byte input refuses before parsing', but its input (repeat(' ',8388609)) would also refuse through the parse failure, so the assertion cannot prove ordering or the ceiling (finding D1-4).",
+     "coord_scope.md:86 and .sql:242 admit up to 50,000 offerRules, but the 8,388,608-byte ceiling (coord_scope.md:91; .sql:161) caps a canonical document at about 20,900 distinct rules (finding D1-5).",
+     "The packet and checkpoint describe the validator as a 'pure immutable' function. It is pure in effect, but it calls built-ins PostgreSQL declares STABLE, so the IMMUTABLE label rests on a determinism argument that is not recorded (finding D1-1)."
+    ],
+    "notProven": [
+     "Any runtime behaviour of the validator, CHECK or publish_revision: NOT RUN (no SQL, psql, verifier or database). All simulations are hand traces.",
+     "PostgreSQL catalog volatility of convert_to, to_json, array_to_string, timestamptz_in and to_char (STABLE) and of pgcrypto digest (IMMUTABLE) is stated from knowledge, not observed on a server.",
+     "Hosted server_encoding, standard_conforming_strings, the presence of pgcrypto in schema 'extensions', and the PostgreSQL version and escape_json behaviour on the target.",
+     "Acceptance latency and memory for a valid document near 8 MiB and about 20,000 offer rules, under the runtime statement_timeout.",
+     "Whether a pg_temp type can actually shadow jsonb/text/bytea in the owner's session on the hosted version (D1-6); this is relevant only as self-inflicted.",
+     "Item 21's external facts (Git existence of the artifacts at S and P, configuration-artifact exclusions, actual artifact bytes): explicitly outside SQL's reach per coord_scope.md:101."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "D1-1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. The validator is declared IMMUTABLE at .sql:145@e90d464 and calls convert_to 24 times (recounted), to_json 18 times, and array_to_string. Through valid_publication (:162) it also reaches timestamptz_in and to_char (:101-106). PostgreSQL catalog knowledge, NOT RUN: all of these are STABLE. For admitted inputs I re-derived that the results do not depend on TimeZone (the Z suffix wins), DateStyle (ISO YYYY-MM-DD reads the same in every mode), lc_* (no TM fields; regexes use collate C) or bytea_output (no bytea-to-text cast). The only setting the result depends on is standard_conforming_strings, and that comes from how literals are parsed, not from any callee's volatility (D1-2). P3 is correct because item 17 names IMMUTABLE and the label is honest in effect."
+     },
+     {
+      "id": "D1-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, with a precision. The '\\.' literals were inherited unchanged from f581b6b (lines 97, 102 and 114 at f581b6b). This subject only added collate \"C\" (.sql:99, 104 and 116@e90d464), and the validator body :144-338 contains no backslash (grep). With standard_conforming_strings off, publish_revision fails even earlier: integrity() at :472 and schema_fingerprint() contain escape '\\', which cannot parse, so publication raises. Only a direct owner INSERT reaches the CHECK, where the path guard then over-refuses valid short-segment paths. Every effect is fail-closed."
+     },
+     {
+      "id": "D1-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. The WHEN OTHERS handlers at .sql:336 and :137@e90d464 are fail-closed. Per PostgreSQL semantics they exclude QUERY_CANCELED and ASSERT_FAILURE. They are also how item 17's 'malformed returns false' is met. The concern is that a defect would be hidden, and only the positive cases at local.mjs:650-677 (NOT RUN) would expose one."
+     },
+     {
+      "id": "D1-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. The input at local.mjs:638 is repeat(' ',8388609). Whitespace-only text is a JSON parse error, so the assertion at :639 ('refuses before parsing') would pass even without the ceiling at .sql:161. The ceiling exists in sealed source but has no discriminating behavioural test. Kept at P3, by analogy with doc 50's HI-4 (a shadowed branch exercised indirectly)."
+     },
+     {
+      "id": "D1-5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, with the number corrected. Using 3/2/1-character IDs, single 1-character refs, one region, direct_order_request and refuse, a minimal canonical rule is 380 bytes plus a comma (computed with node over JSON.stringify), which gives about 22,000 rules under 8,388,608 bytes, not 20,919. Either way 50,000 is unreachable. The frozen proposal 462cf79:131 already called 1-50,000 'Proposed parser bounds, not measured capacity; total canonical document <=8MiB'. The scope record at coord_scope.md:86 dropped that qualifier."
+     },
+     {
+      "id": "D1-6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. With search_path='' the temp namespace is searched first for type names but never for functions or operators (PostgreSQL namespace rules, NOT RUN). The DECLARE types and the ::jsonb cast at .sql:147-154 and :163@e90d464 are unqualified. Only an owner session that creates its own pg_temp type is affected, because execution is owner-only (:558, integrity :469-479). Self-inflicted, so not an escalation."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "Item 18 closed schema, unknown keys refused at every level",
+      "status": "PASS",
+      "note": "Inspected source: the ?& and minus-array checks at .sql:164-170, 180-182, 185-186, 208-210, 245-249, 262-263, 270-271 and 275-277@e90d464. The reconstruction at :315-334 emits only the listed keys."
+     },
+     {
+      "item": "Item 18 key order and byte-equality reconstruction, never jsonb::text",
+      "status": "PASS",
+      "note": "The literal order at :194-195, :236-238, :315-322 and :328-334 equals coord_scope.md:48-71. The digest at :202 and the acceptance at :335 both use the raw convert_to(p_text) bytes. I traced the lens's document (a) through the reconstruction: identical to JSON.stringify, 1,666 bytes, sha256 f26827e8 (recomputed)."
+     },
+     {
+      "item": "Item 18 escapes",
+      "status": "PASS",
+      "note": "to_json(text) escapes only quote and backslash within printable ASCII (escape_json semantics), and only Text64 and Identifier200 can contain those two characters. An alternate escape, including one inside a key, re-emits differently and is refused at :335."
+     },
+     {
+      "item": "Item 18 integers",
+      "status": "PASS",
+      "note": ":266 requires a number matching ^[1-9][0-9]{0,5}$; :267 and :269 apply the bounds. The regex is what decides for forms that survive byte equality ('1.0', '-1' and '0' all re-emit identically). Exponent forms re-emit as plain digits and fail at :335 when the bounds pass."
+     },
+     {
+      "item": "Item 18 octet ceiling before parsing",
+      "status": "PASS",
+      "note": "Inspected source :160-163. Behaviour NOT PROVEN, and the verifier case is non-discriminating (D1-4)."
+     },
+     {
+      "item": "Item 18 Text64 and Identifier200",
+      "status": "PASS",
+      "note": "Inspected source :211-216 and :250-255 (collate C ranges, bytea comparison against 'unbound:'). These match coord_scope.md:78-79."
+     },
+     {
+      "item": "Item 18 Ref/path/UUID/hash and every source/applicability array",
+      "status": "PASS",
+      "note": "Nested refs :222-235 and :300-314 and envelope refs :126-135 are 1-32 entries, strictly increasing bytea, with envelope membership via ?. The envelope tightening is in diff 11a7900..e90d464."
+     },
+     {
+      "item": "Item 18 workflowModes, audiences and regions",
+      "status": "PASS",
+      "note": ".sql:279-297. Verified read-only: the 51 regions equal US_REGIONS at core.mjs:4@3e82154, and the 5 audiences equal CUSTOMER_PRICE_AUDIENCES at shared/research/pricing.ts:20-29@3e82154. No admin and no wildcard."
+     },
+     {
+      "item": "Item 18 healthAgreements",
+      "status": "PASS",
+      "note": ":205 enforces the count, :217-220 strict (kind,version) order and duplicate-kind refusal. Record-level misalignment with the current reader is in missed M2."
+     },
+     {
+      "item": "Item 18 offerRules",
+      "status": "PASS",
+      "note": ":242 enforces the count, :256-260 tuple order and pair refusal, :326-327 offering-ID distinctness. The 50,000 ceiling is unreachable (D1-5)."
+     },
+     {
+      "item": "Item 18 cross-field rules",
+      "status": "PASS",
+      "note": ":176-179 envelope equality, :197-199 configurationVersion, :298 the unpriced iff request_pricing rule (null-safe), and effectivity via :98-107."
+     },
+     {
+      "item": "Item 16 artifact uniqueness and digest binding",
+      "status": "PASS",
+      "note": ":109 requires exactly 6, :120 all kinds, :121-122 distinct paths; :188-193 bind the five refs; :200-202 compare the raw digest."
+     },
+     {
+      "item": "Item 19 audience meaning",
+      "status": "PASS",
+      "note": "No session or actor input exists. private_early_access is only one admissible literal (:289); admin is not admissible (local.mjs:597)."
+     },
+     {
+      "item": "Item 20 plural agreements and destination as shape only",
+      "status": "PASS",
+      "note": "No agreement kind, version, legal artifact or applicability literal appears in :144-338. The 1-30 bound and the complete-set rule are noted in M2 (record-level, fail-closed)."
+     },
+     {
+      "item": "Item 21 acyclic construction",
+      "status": "PASS",
+      "note": "artifact_keys :150 excludes the decision's own reference, the closed keys :164-170 exclude bundleSha256, and the envelope binds the digest at :200-202. There is no cycle; Git facts are outside SQL (coord_scope.md:101)."
+     },
+     {
+      "item": "IMMUTABLE honesty",
+      "status": "PARTIAL",
+      "note": "No table, clock or current_setting reads, and ordering is bytea. The STABLE built-ins (D1-1) and literal parsing that depends on standard_conforming_strings (D1-2) are deterministic for admitted inputs."
+     },
+     {
+      "item": "SECURITY INVOKER and empty search_path",
+      "status": "PARTIAL",
+      "note": ":145 matches item 17, and postcheck pins proconfig search_path=\"\" (postcheck diff). Type names are unqualified (D1-6)."
+     },
+     {
+      "item": "Exception handling",
+      "status": "PARTIAL",
+      "note": "WHEN OTHERS at :336 and :137 is fail-closed but would hide a defect (D1-3)."
+     },
+     {
+      "item": "Fingerprint, ACL and hash claims",
+      "status": "PASS",
+      "note": "Recomputed from git show bytes: definition 3ca2bab8 (install then fingerprint, LF; no CRLF in file); packet 6ac2cc59 at 7,321 bytes; receipt raw bbffa669 with 66 of 66 sha256lf entries recomputed from e90d464 blobs; bindings 44b4f4a7 with 55 inventory entries and 19 triggers. Fingerprint blocks are byte-identical across the candidate, precheck and postcheck (sha256 9f9d1463)."
+     },
+     {
+      "item": "Runtime behaviour",
+      "status": "NOT_PROVEN",
+      "note": "Everything is NOT RUN, and the qualification window expired 2026-10-06T21:43:37Z. These are hand traces only, and nothing here is Samuel's approval."
+     }
+    ],
+    "simulationOpinion": [
+     {
+      "input": "(a) minimal valid document D (lens construction)",
+      "agree": true,
+      "note": "Rebuilt with node: 1,666 bytes, sha256 f26827e84782b5f80ec96b4e097a9abf42177aed31d52eb29eaed7bb74f4ac1b, matching the lens. Tracing artifact_parts, health_parts and offer_parts reproduces D, so the result is TRUE at .sql:335."
+     },
+     {
+      "input": "(b) space after a colon",
+      "agree": true,
+      "note": "Refused at :335, or at :202 if the digest is not recomputed."
+     },
+     {
+      "input": "(c) keys reordered",
+      "agree": true,
+      "note": "jsonb discards input order and the fixed literal order differs, so it is refused at :335."
+     },
+     {
+      "input": "(d) duplicate key",
+      "agree": true,
+      "note": "Refused at :335. The argument is sound: if raw equalled canonical(parse(raw)), raw would itself be a canonical text, which has no duplicate keys."
+     },
+     {
+      "input": "(e) p escape and \\/",
+      "agree": true,
+      "note": "Refused at :335."
+     },
+     {
+      "input": "(f) 01, 1e2, 1.0, -1, -0",
+      "agree": true,
+      "note": "The outcome is correct. Precision: in document (a) maximum is 10, so minimum 1e2 (which becomes 100) is refused at :269, not :335. Byte equality decides only when the bounds pass, for example 1e0 at local.mjs:629."
+     },
+     {
+      "input": "(g) Text64 cases",
+      "agree": true,
+      "note": "Refused at :214. Tab and é are decided by the regex, because to_json would re-emit both identically."
+     },
+     {
+      "input": "(h) unsorted or duplicate sets",
+      "agree": true,
+      "note": "Refused at :293 for regions and :231/:310 for refs."
+     },
+     {
+      "input": "(i) unpriced/workflow iff",
+      "agree": true,
+      "note": "Refused at :298, which is null-safe in both directions."
+     },
+     {
+      "input": "(j) quantity bounds",
+      "agree": true,
+      "note": "Refused at :269, :266 or :267 as stated."
+     },
+     {
+      "input": "(k) 8,388,609 bytes",
+      "agree": true,
+      "note": "Refused at :161 in source. The verifier case is non-discriminating (D1-4)."
+     },
+     {
+      "input": "(l) unbound: prefix",
+      "agree": true,
+      "note": "Refused at :254; the controls pass, consistent with local.mjs:654."
+     },
+     {
+      "input": "(m) agreement duplicates and counts",
+      "agree": true,
+      "note": "Refused at :219 and :205."
+     },
+     {
+      "input": "(n) offer ordering and duplicates",
+      "agree": true,
+      "note": "Refused at :258, :259, :326 and :242."
+     },
+     {
+      "input": "(o) nulls and extra keys",
+      "agree": true,
+      "note": "Refused by the type checks, IS DISTINCT FROM and the minus-array checks."
+     },
+     {
+      "input": "(p) BOM, LF, CRLF",
+      "agree": true,
+      "note": "The BOM is a lexer error, caught at :336; LF and CRLF are refused at :335."
+     },
+     {
+      "input": "(q) configurationVersion, envelope and effectivity",
+      "agree": true,
+      "note": "Refused at :197-199 and :177-178, and through :106 via :162."
+     },
+     {
+      "input": "(r) escaped quote and backslash",
+      "agree": true,
+      "note": "TRUE: to_json output is byte-equal to the raw text (positive case at local.mjs:651)."
+     },
+     {
+      "input": "[own S1] currency spelled USD, digest recomputed",
+      "agree": true,
+      "note": "Item 18: refuse (alternate escape). SQL: :272 passes on the parsed value 'USD', :319 emits a literal \"USD\", so the bytes differ and it is refused at :335."
+     },
+     {
+      "input": "[own S2] D(a) with maximum spelled 1E+1 or 0.1e2",
+      "agree": true,
+      "note": "Both parse to numeric 10, and ->> gives '10', so :266, :267 and :269 pass. The raw spelling differs from '10', so it is refused at :335."
+     },
+     {
+      "input": "[own S3] envelope and nested sourceRefs [\"Z-ref\",\"a-ref\"] versus [\"a-ref\",\"Z-ref\"]; [\"a-b\",\"a.b\",\"a_b\"]",
+      "agree": true,
+      "note": "Item 18 sorts by unsigned bytes. SQL compares bytea at :132 and :231: Z (0x5A) < a (0x61) is accepted, the en_US/ICU-style order is refused, and 0x2D < 0x2E < 0x5F is accepted. Collation-independent."
+     },
+     {
+      "input": "[own S4] offerRules [(\"p\",\"z\",\"o1\"),(\"p1\",\"a\",\"o2\")]",
+      "agree": true,
+      "note": "Item 18: shorter prefix first. bytea[] comparison has 'p' < 'p1', so it is accepted at :258 with distinct pairs and IDs."
+     },
+     {
+      "input": "[own S5] envelope and decision effectiveUntil '2026-10-09T00:00:00.000Z' (finite, after the start)",
+      "agree": true,
+      "note": "Equal type and bytes at :177-178; :330 emits the string. TRUE."
+     },
+     {
+      "input": "[own S6] D(a) under TimeZone=Pacific/Chatham, DateStyle='SQL, DMY', any lc_*; then standard_conforming_strings=off",
+      "agree": true,
+      "note": "TRUE in the first group: the Z suffix wins, ISO dates parse the same in every mode, and the regexes use collate C. With standard_conforming_strings off, the :116 guard becomes (^|/).{1,2}(/|$), which matches 'qo/', so a valid document is wrongly refused (D1-2, fail-closed)."
+     },
+     {
+      "input": "[own S7] Text64 version a<b>&'c, and one containing DEL (0x7F)",
+      "agree": true,
+      "note": "JSON.stringify and PG escape_json both emit <, >, & and ' raw, so the first is TRUE. DEL is emitted raw by both, so the regex at :214 is what refuses it."
+     },
+     {
+      "input": "[own S8] {\"schemaVersion\":123,\"schemaVersion\":\"quick-order-decision-inputs-v1\",...}",
+      "agree": true,
+      "note": "jsonb keeps the last value, so every check passes, but the reconstruction lacks the first pair, so it is refused at :335."
+     },
+     {
+      "input": "[own S9] 28 distinct Health agreements",
+      "agree": true,
+      "note": "SQL returns TRUE, as item 18 permits 1-30. The current reader adds 3 form acknowledgments and refuses a complete set over 30 (core.mjs:111@3e82154), so the decision would be unusable but fail closed (missed M2)."
+     },
+     {
+      "input": "[own S10] republish an existing revision: same publication, different decision text",
+      "agree": true,
+      "note": "Item 17 lists a byte difference as a conflict. SQL refuses at :202 because the digest no longer matches, so it raises 22023 at :504 and never reaches the :515 conflict branch. Fail-closed (missed M1)."
+     }
+    ],
+    "missed": [
+     {
+      "id": "M1",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "The decision-text-only conflict disjunct in publish_revision cannot be reached, and no verifier case discriminates it. When the publication is identical and the text differs, the result is a 22023 refusal, not the 23505 conflict that item 17 describes.",
+      "evidence": "Inspected source :502-504@e90d464 (validation runs before the lookup); :200-202 (sha256 of the raw text must equal the publication's sole digest); :514-516 (conflict if the publication OR the text bytes differ). With an identical publication, any different text fails :202 first. Verifier local.mjs:691-693 rebinds the envelope digest, so its 23505 is decided by 'existing is distinct from p_publication'. Removing the text disjunct would leave every case passing. Fail-closed.",
+      "fix": "Record in rollback.md and the packet that the text disjunct is defence in depth, made unreachable by the digest binding, and that a same-publication different-text replay refuses with 22023. Optionally add that verifier case. No SQL change is needed."
+     },
+     {
+      "id": "M2",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "The record's healthAgreements bounds (1-30, Text64 up to 64) do not line up with the current reader. Decisions with 28-30 Health entries are shape-valid but can never be satisfied, and published agreement identifiers of 65-128 characters cannot be represented.",
+      "evidence": "Inspected source .sql:205 and :214@e90d464 against coord_scope.md:85 and :97. At 3e82154: form.ts:31-46 and :60-66 define 3 required acknowledgments when includesResearchUseOnly is false; legal.ts:27-29 appends them; core.mjs:111 refuses a required set over 30. policies-data.ts:147 admits agreement identifiers up to 128 characters, and core.mjs:101 admits 100. Fail-closed and record-level; the SQL faithfully implements the record.",
+      "fix": "Record in item 20 and the packet that 30 is a format ceiling, and that the usable Health maximum at the reviewed source is 30 minus the required acknowledgments (27 at 3e82154), checked by the held reader or commit. Record the 64-versus-128 length gap as a future schema-version item. Do not hardcode 27 in SQL."
+     },
+     {
+      "id": "M3",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/DOC51_DECISION_INPUT_COORDINATOR_CHECKPOINT_20261008.json",
+      "claim": "The coordinator checkpoint at 6a989d9 names only 'optional HI1/2/7 precision/header edits'. The subject also changes sealed function bodies for HI-3 and HI-4.",
+      "evidence": "Checkpoint 'scope' field at 6a989d9. Inspected source: the monotonic_epoch comment at .sql:387-388@e90d464 (HI-3) and the publish_revision comment at :507-508 (HI-4). Both sit inside install_sql, so they change pg_get_functiondef and the definition hash. The builder packet discloses HI-1/2/3/4/7 (rec_packet.md:70-73@5a49ef0). Comments only, with no behaviour change, and the recomputed definition 3ca2bab8 covers them.",
+      "fix": "Correct the checkpoint wording to HI-1, HI-2, HI-3, HI-4 and HI-7, noting that HI-3 and HI-4 are in-body comments within the sealed definition. Records only."
+     }
+    ],
+    "verdictOpinion": "I agree with lens D1. At e90d464 the decision-input validator (.sql:144-338) has no P0, P1 or P2 finding. I re-derived it from the Git objects; nothing was run.\n\n**Canonical bytes.** Acceptance requires raw bytes to equal a reconstruction built from parsed values in the record's key order. That makes non-canonical acceptance impossible:\n- Duplicate keys, alternate escapes, whitespace, BOM, CRLF and exponent spellings all refuse at :335.\n- The integer regex at :266 refuses the forms that would survive byte equality ('1.0', '-1', '0').\n\nI found no valid canonical document that is refused under standard_conforming_strings on. With that setting off, valid short-segment paths are refused; this is inherited from f581b6b and fails closed.\n\n**Other checks.** Ordering is collation-independent. No legal or policy value is hardcoded. The region and audience sets match 3e82154. Item 21 has no cycle.\n\n**Lens findings.** All six P3s are upheld:\n- D1-2: the '\\.' literals are inherited from f581b6b, not introduced here.\n- D1-5: the realistic limit is about 22,000 rules, not 20,919, and the frozen proposal already called 50,000 a parser bound.\n- Simulation (f): for 1e2 in document (a), the deciding line is :269, not :335.\n\n**Added P3s.**\n- M1: the text-only conflict branch cannot be reached, and no test discriminates it.\n- M2: the agreement bounds do not line up with the current reader's 3 acknowledgments and 128-character identifiers.\n- M3: the checkpoint understates the HI edits, which also include HI-3 and HI-4.\n\n**Hashes.** These recompute from git show bytes:\n- definition 3ca2bab8\n- packet 6ac2cc59 (7,321 bytes)\n- receipt bbffa669, with 66 of 66 per-file hashes recomputed\n- bindings 44b4f4a7, with 55 inventory entries and 19 triggers\n\nI did not check the 67 historical blobs.\n\nAll behaviour is NOT RUN, the qualification window has expired, source acceptance is not qualification, and nothing here is Samuel's approval."
+   }
+  },
+  {
+   "lens": "sql-persistence-publication-invariants",
+   "review": {
+    "verdict": "LENS D2 (persistence, publication, preserved invariants; four SQL/rollback files at e90d464): no P0, P1 or P2. Three P3 findings, all about records or comment wording. Items 16, 17 and 21 are satisfied in inspected source. Every head-integrity block accepted in doc 50 is byte-identical to f581b6b. The fingerprint SQL and the nineteen-row trigger list are byte-identical in all three scripts. Nothing held was introduced, and no GRANT appears anywhere in the four files. I recomputed the definition hash myself: 3ca2bab8… equals the coordinator claim. The receipt (66/66), bindings (55/55 plus 3 f581 predecessor blobs), packet hash, and the 67 unchanged historical evidence blobs also recompute equal. One behaviour nuance: when the publication is the same but the decision bytes differ, the call refuses with 22023 at validation, never with 23505. The byte-difference conflict branch can only be reached through a SHA-256 collision. All behaviour is NOT RUN, and nothing here installs, qualifies or approves anything.",
+    "checklist": [
+     {
+      "item": "Identity: scratchpad copies equal git objects at e90d464; 11a7900 currentness files equal f581b6b; changed paths",
+      "status": "PASS",
+      "evidence": "Verified retained evidence. The sha256 values of git show e90d464 equal the scratchpad copies: .sql 054a2916…, precheck 09429fd5…, postcheck 367f6873…, rollback 59dcd809…, mjs 64b9e50c…. git diff 11a7900 e90d464 -- supabase also equals the scratchpad diff (5dc46a6a…). git diff --stat f581b6b 11a7900 over the five currentness paths is empty. 11a7900..e90d464 touches exactly 6 paths: the five allowed paths plus evidence/doc51-decision-input-bindings-20261008.json. f581b6b..e90d464 under supabase/server/client/shared touches only the five paths. Tree bdb31ef3…, parent 11a7900. The files are LF with zero CR bytes and are pure ASCII. Line counts: .sql 614, precheck 143, postcheck 144, rollback 188."
+     },
+     {
+      "item": "Q1 Item 16: exactly six artifacts, one per kind; missing/repeated/unknown kinds and repeated paths refuse; keys and path/hash predicates preserved",
+      "status": "PASS",
+      "evidence": "Inspected source. .sql:109@e90d464 has jsonb_array_length(artifacts)<>6, so the old 'between 6 and 32' is gone. :111-117 keeps the exact {kind,path,sha256} key set and the six-kind enum, and keeps the f581 path regex, dot-segment regex and sha256 regex (only collate \"C\" added). :120 kinds @> all six; with exactly six elements this means one of each, by pigeonhole. :121-122 counts distinct paths by convert_to(path,'UTF8'). Repeated or missing kinds fail :120, unknown kinds fail :113-114, repeated paths fail :122. Artifact order is not constrained, so the existing semantics are retained."
+     },
+     {
+      "item": "Q1 Item 16: five decision references equal envelope kind/path/hash; raw decision digest equals sole normalized_decision_inputs digest (bytes/encoding)",
+      "status": "PASS",
+      "evidence": "Inspected source. .sql:150-151 maps camelCase keys to kinds (healthLegal→health_legal). :180-182 requires exactly those five keys, so a normalizedDecisionInputs self-reference refuses. :183-196 selects the single envelope row of that kind (unique per :162 and :120) and compares path and sha256 as convert_to(...,'UTF8') bytes. :160 sets raw_bytes := convert_to(p_text,'UTF8'). :200-202 compares encode(extensions.digest(raw_bytes,'sha256'),'hex') collate \"C\" with the normalized_decision_inputs sha256. Because :335 requires raw bytes to equal an all-ASCII canonical reconstruction, the hashed bytes are ASCII whatever the server encoding."
+     },
+     {
+      "item": "Q1: does narrowing to exactly six break anything still referenced?",
+      "status": "PASS",
+      "evidence": "Inspected source. No other consumer exists: git grep 'quick-order-authority-v1' at e90d464 matches only the candidate and the verifier. git grep of normalized_decision_inputs in server/client/shared/scripts finds nothing. Precheck and postcheck never build publications. The verifier envelope (mjs:458-466) has exactly six artifacts, and its refusal fixtures use 5 and 7 (mjs:509-510). Supervisor 90f4ebd is unchanged and pinned to f581, so it does not consume e90d464. Nothing breaks."
+     },
+     {
+      "item": "Q2 Item 17: decision_inputs_text text NOT NULL; CHECK requires validator IS TRUE; validator properties",
+      "status": "PASS",
+      "evidence": "Inspected source. .sql:343 'decision_inputs_text text not null'. :349-350 constraint research_health_quick_order_decision_inputs_shape check (valid_decision_inputs(decision_inputs_text,publication) is true). :144-145 validator(text,jsonb) returns boolean, plpgsql, immutable, security invoker, set search_path=''. :159-161 rejects null, empty and >8388608 bytes before parsing. :336 returns false on any exception. There is no relation, file or catalog lookup: only parameter-derived jsonb functions, extensions.digest and valid_publication."
+     },
+     {
+      "item": "Q2: publish_revision(jsonb) replaced by (jsonb,text); no remaining/bypass overload anywhere",
+      "status": "PASS",
+      "evidence": "Inspected source. git grep 'publish_revision(' at e90d464 over supabase/candidates finds the only create at .sql:497 (jsonb,text), revoke at .sql:560, drop at rollback.md:153 (jsonb,text), and absence assertions at precheck:112 and postcheck:112 (to_regprocedure('...(jsonb)') is not null raises 55000). Any overload named publish_revision falls in the fingerprint by exact proname (.sql:52-53), so integrity() refuses on seal drift. The CHECK (:349-350) stops any differently named writer from inserting an invalid row."
+     },
+     {
+      "item": "Q2: both validated before insert; conflict rule; identical replay; SQLSTATEs",
+      "status": "PASS",
+      "evidence": "Inspected source. .sql:501 integrity first. :502-504 rejects a publication or decision that is not TRUE with 22023 'Invalid Quick Order publication', before the head lock (:506) and the insert (:518-519). :511-516 raises 23505 'Quick Order publication conflict' if the existing jsonb is distinct from p_publication, or if the convert_to bytes of the stored and supplied text differ. On identical replay there is no insert, and the head update at :523-525 (held, active null, epoch+1) is byte-identical to f581b6b. Same publication with different bytes refuses 22023 at :503, so the byte branch is unreachable (see F-D2-2). Same bytes with a different publication refuses 23505 at :514."
+     },
+     {
+      "item": "Q2: ACL revokes and owner-only ACL loop; no new GRANT",
+      "status": "PASS",
+      "evidence": "Inspected source. .sql:555-562 revokes all from public, anon, authenticated and service_role, including valid_decision_inputs(text,jsonb) at :558 and publish_revision(jsonb,text) at :560. The integrity() loop at :469-480 selects functions by exact name for publish_revision, revoke_revision and read_current_authority, and by the currentness_% prefix otherwise, so both new objects get the proacl owner-only and has_function_privilege checks. The column ACL loop at :485-486 covers the new column. A case-insensitive git grep for 'grant ' and 'security definer' in the four files at e90d464 finds no grant and no definer."
+     },
+     {
+      "item": "Q3 Item 21: no circular hash requirement in publish or CHECK",
+      "status": "PASS",
+      "evidence": "Inspected source. The decision key set at .sql:164-170 contains no bundleSha256, no normalized_decision_inputs reference or digest, and no delivery commit. Only the five input refs are bound (:180-182). The CHECK and publish need only digest(text) = the envelope nd sha256 (:202). bundleSha256 is checked for format only (:97). The decision is built first, its digest is placed in the envelope, and nothing hashes itself. The SQL cannot check the external requirement that the configuration artifact excludes revision, bundle and decision digests; rollback.md:75-80 records it as external."
+     },
+     {
+      "item": "Q4: fingerprint namespace covers validator and new signature; deterministic install vs reapply/postcheck",
+      "status": "PASS",
+      "evidence": "Inspected source. The owned_functions predicate at .sql:50-55 includes proname like currentness_% (the validator) and exact names (publish_revision with any signature). The fingerprint block is byte-identical across .sql, precheck and postcheck, and between f581b6b and e90d464 (sha256 9f9d146381b8c495…). It orders by regprocedure text, relname, attnum, conname, index name and tgname. It emits names, role names and deparsed definitions, never OIDs, and filters out tgisinternal. The new column and CHECK enter through 'columns' and 'constraints'. Install computes the value after the revoke at :599-601, the same state that postcheck reads. Stability is NOT RUN."
+     },
+     {
+      "item": "Q4: definition hash recomputation vs coordinator claim 3ca2bab8…",
+      "status": "PASS",
+      "evidence": "Verified retained evidence (hash I recomputed). With node over git show e90d464:.sql, I took the literal $currentness_install$ contents (35,478 chars, with leading and trailing newlines) followed by the $currentness_fingerprint$ contents (3,102 chars), replaced CRLF with LF (there were 0 CR), and hashed with sha256 as UTF-8. The result is 3ca2bab80e7b7e829c965e9dcc6e8f9ac2e96720ee24701615c0c1c90b249b74. This equals the coordinator claim, rec_packet.md:80 and bindings.currentnessDefinition. bindings.predecessorCurrentness.definition is cab02e54…, matching doc 50."
+     },
+     {
+      "item": "Q4: existing incompatible installation refuses; no migration path",
+      "status": "PASS",
+      "evidence": "Inspected source. The driver at .sql:579-596 is byte-identical to f581b6b. If any object in the namespace exists, it requires the head, revisions and integrity objects (otherwise 'Partial', 55000). It then requires seal = 'RHQOC_HELD_V1:'||new definition||':'||live fingerprint. An f581 seal carries cab02e54…, so the run refuses with 55000 'Quick Order currentness definition or schema drift' before any DDL. Precheck and postcheck behave the same at :104-107. There is no ALTER or conversion code. The verifier authors this fixture at mjs:440-457 (NOT RUN)."
+     },
+     {
+      "item": "Q5: postcheck/precheck assert new column, function, signature and CHECK; precheck refuses incompatible objects",
+      "status": "PASS",
+      "evidence": "Inspected source. precheck:111-125 and postcheck:111-125 are identical. They require publish(jsonb,text) present and (jsonb) absent; decision_inputs_text as text, attnotnull and not dropped; the CHECK by name with contype 'c' and convalidated; and the validator with provolatile 'i', not prosecdef, boolean return and proconfig {search_path=\"\"}. Otherwise they raise 55000 'Quick Order decision-input schema unavailable'. This block runs after the seal and integrity checks. The CHECK expression text is bound only through the seal and fingerprint (HI-5 owner-trust carry-forward), not checked inline. Apart from these 17 lines, precheck and postcheck are unchanged from f581b6b."
+     },
+     {
+      "item": "Q5: pristine rollback refuses retained revisions and drops new function and signature",
+      "status": "PASS",
+      "evidence": "Inspected source. rollback.md:142-149@e90d464 refuses any revision row, a head count other than 1, or a non-pristine head (55000) after the access-exclusive lock at :136-137. :153 drops publish_revision(jsonb,text). :161 drops valid_decision_inputs(text,jsonb), after the revisions table at :158 so the CHECK dependency is already gone, and before valid_publication at :162. There is no CASCADE. :6 says 'nine owner-only functions', which matches 8 install functions plus schema_fingerprint."
+     },
+     {
+      "item": "Q5: nineteen-row non-internal trigger inventory byte-identical to f581b6b",
+      "status": "PASS",
+      "evidence": "Verified retained evidence (I recomputed the hashes). The expected_triggers literal is byte-identical in .sql, precheck and postcheck at both f581b6b and e90d464 (sha256 0ebdf78bb9eee9dc…, 19 rows: requests 8, events 7, outbox 4). It equals bindings.canonicalTriggers at e90d464 and the doc49 bindings. The verifier constant's 19 rows have identical content; only their line numbers moved by +1."
+     },
+     {
+      "item": "Q6: doc 50 accepted head-integrity properties intact",
+      "status": "PASS",
+      "evidence": "Inspected source. I extracted blocks and compared them as exact strings between f581b6b and e90d464; all are byte-identical. They are: the head table with three RESTRICT FKs (.sql:352-374), refuse_mutation (:378-383), the three ALWAYS triggers plus the install seed insert (:395-412), integrity() with the FK, trigger-type, reference and ACL checks (:414-495), the head update in publish (:523-528), revoke_revision (:530-547), read_current_authority returning constant 'unavailable' (:549-554), and the install/reapply driver (:563-613). monotonic_epoch gained only a comment (:387-388). The tgisinternal filter sits inside the unchanged fingerprint. No lazy head insert exists."
+     },
+     {
+      "item": "Q7: nothing held introduced",
+      "status": "PASS",
+      "evidence": "Inspected source. A case-insensitive git grep at e90d464 over the four files for guard_source_write, research_health_quick_order_commit, 'security definer' and 'grant ' finds nothing. The only triggers are the three pre-existing BEFORE triggers (:395-403), with no AFTER-statement guard. Every function is security invoker. Both head writers set state='held' (:523, :542), and the install check at :606-608 requires held. The reader is constant. No path under server/, client/, shared/, routes or migrations changed in f581b6b..e90d464, and no TS publisher exists."
+     },
+     {
+      "item": "Q8: HI-1/HI-2/HI-7 edits are faithful precision/header corrections with no behaviour change",
+      "status": "PASS",
+      "evidence": "Inspected source. HI-1: rollback.md:13-14 says a revisions-only TRUNCATE hits the FK refusal (0A000) before the guard (55000). This matches doc 50 HI-1 and is prose only. HI-2: rollback.md:14-15 says a joint TRUNCATE cannot identify the revisions guard, so the event is shown structurally. This is doc 50's records option, and the error detail is unchanged. HI-7: .sql:3 now reads 'dc3329b / scope 1d4f2c3', outside the hashed blocks (file hash only). The subject also carries HI-3 (.sql:387-388 comment, rollback.md:15-17) and HI-4 (.sql:507-508 comment). Both are comments inside the hashed install text: no behaviour change, but they do change pg_get_functiondef and the definition hash. The coordinator checkpoint omits them (F-D2-1)."
+     },
+     {
+      "item": "Q9: other changes beyond items 16-18/21 and HI edits",
+      "status": "PASS",
+      "evidence": "Inspected source. valid_publication changed in four ways. (a) collate \"C\" was added to its regex and enum tests (:94-117); this is precision and neutral under deterministic collations. (b) The envelope sourceRefs/applicabilityRefs must now be strictly increasing by UTF-8 bytes (:129-133), replacing count-distinct. This narrows behaviour, but coord_scope.md:81 requires it ('including envelope arrays'). (c) Paths are now distinct by bytes (:122). (d) Iteration follows ordinality. publish now gates with 'is not true' instead of 'not'. New header lines .sql:4-6 have imprecise wording (F-D2-3). In rollback.md the bindings path moved to the doc51 bindings, and new prose covers predecessorCurrentness, raw receipt admission and the S/P construction. No other hunks."
+     },
+     {
+      "item": "Supporting evidence claims: receipt 66/66, bindings 55/55, packet hash, 67 historical blobs",
+      "status": "PASS",
+      "evidence": "Verified retained evidence (I recomputed the hashes). The receipt at 5a49ef0 has raw and LF sha256 bbffa669… (no CR). It lists 66 unique paths, all 66 sha256lf equal to git show e90d464, including the five currentness files and the bindings. The bindings at e90d464 have raw and LF sha256 44b4f4a7…; their 55 inventory entries equal both base 18bfbcd and e90d464, and the inventory equals doc49's. The 3 predecessorCurrentness blobs equal f581b6b. The packet at 5a49ef0 is 7,321 bytes, sha256 6ac2cc59…. The evidence directory holds 67 files at 11a7900, and 11a7900..5a49ef0 only adds 4."
+     }
+    ],
+    "simulations": [
+     {
+      "input": "publication.artifacts = the six valid kinds plus a duplicate of the catalog entry (7 entries)",
+      "expected": "refuse",
+      "sqlResult": "valid_publication returns false. publish_revision raises 22023 'Invalid Quick Order publication'.",
+      "decidingLine": ".sql:109@e90d464 jsonb_array_length(p->'artifacts')<>6"
+     },
+     {
+      "input": "six entries: catalog twice, bindings missing, other four kinds present, distinct paths",
+      "expected": "refuse (repeated and missing kind)",
+      "sqlResult": "The loop accepts each entry, but kinds @> the six-kind array is false, so the validator returns false and publish raises 22023.",
+      "decidingLine": ".sql:120@e90d464"
+     },
+     {
+      "input": "six distinct kinds where the bindings path equals the catalog path",
+      "expected": "refuse (repeated path)",
+      "sqlResult": "count(*)=6 is not equal to count(distinct convert_to(path))=5, so the validator returns false and publish raises 22023.",
+      "decidingLine": ".sql:121-122@e90d464"
+     },
+     {
+      "input": "First publish of a valid (P,T); the head is the pristine seed with epoch 0",
+      "expected": "insert the revision; head held with epoch 1",
+      "sqlResult": "integrity passes, both validators return true, the head is locked, no existing row is found, and (rev,P,T) is inserted with both CHECKs passing. The head is updated to held, active null, last_published=rev, epoch 1. Returns {state:held, revisionId, writerEpoch:'1'}.",
+      "decidingLine": ".sql:501-526@e90d464"
+     },
+     {
+      "input": "Identical replay of (P,T) after the first publish",
+      "expected": "no new row; the revision is unchanged; existing head/epoch behaviour",
+      "sqlResult": "The existing row is found, the jsonb is equal and the bytes are equal, so there is no insert. The head is updated to held with epoch+1 (now 2), identical to f581b6b.",
+      "decidingLine": ".sql:513-516, 523-525@e90d464"
+     },
+     {
+      "input": "Replay with the same publication P but T||'\\n' (different decision bytes)",
+      "expected": "refuse; spec says conflict on a byte difference",
+      "sqlResult": "The validator returns false: the digest of the new bytes is not P's normalized_decision_inputs sha256, and the reconstruction differs. publish raises 22023 'Invalid Quick Order publication' before the conflict check, so it never raises 23505. The byte disjunct at :515 is reachable only through a SHA-256 collision.",
+      "decidingLine": ".sql:202 and 502-504@e90d464; verifier mjs:694 expects 22023"
+     },
+     {
+      "input": "Replay with the same text T but P' where bundleSha256 is changed to 'f'x64 (same revisionId)",
+      "expected": "conflict",
+      "sqlResult": "Both validators return true, because T embeds neither bundleSha256 nor its own digest. The existing row is found, and the existing jsonb is distinct from P', so publish raises 23505 'Quick Order publication conflict'. Nothing changes.",
+      "decidingLine": ".sql:514-516@e90d464"
+     },
+     {
+      "input": "Direct owner INSERT into revisions(revision_id,publication) without decision text; then with decision_inputs_text='{}'",
+      "expected": "refuse both",
+      "sqlResult": "The first raises 23502 (not-null violation) on decision_inputs_text. The second fails the CHECK because the validator returns false for '{}' (missing keys), raising 23514 on research_health_quick_order_decision_inputs_shape.",
+      "decidingLine": ".sql:343, 349-350@e90d464"
+     },
+     {
+      "input": "Pristine f581b6b installation present (seal RHQOC_HELD_V1:cab02e54…:fp); run the e90d464 candidate with the new definition",
+      "expected": "refuse with no conversion",
+      "sqlResult": "installed>0, and the head, revisions and integrity objects are present. The seal is not equal to 'RHQOC_HELD_V1:3ca2bab8…:'||fp, so the run raises 55000 'Quick Order currentness definition or schema drift' and the transaction rolls back. The precheck refuses identically.",
+      "decidingLine": ".sql:579-596@e90d464; precheck:104-107"
+     },
+     {
+      "input": "Pristine-rollback block run while one published revision is retained",
+      "expected": "refuse",
+      "sqlResult": "The tables are locked access exclusive, then exists(revisions) is true, so the block raises 55000 'Retained currentness evidence prevents destructive rollback' and no drop runs.",
+      "decidingLine": "rollback.md:136-149@e90d464"
+     },
+     {
+      "input": "Definition hash: literal $currentness_install$ contents then $currentness_fingerprint$ contents from git show e90d464:.sql, CRLF to LF, sha256 over UTF-8",
+      "expected": "3ca2bab80e7b7e829c965e9dcc6e8f9ac2e96720ee24701615c0c1c90b249b74 (coordinator claim)",
+      "sqlResult": "Recomputed with node: 3ca2bab80e7b7e829c965e9dcc6e8f9ac2e96720ee24701615c0c1c90b249b74, equal to the claim.",
+      "decidingLine": ".sql:84-563 (install) and :44-83 (fingerprint), matching the formula at :577-578@e90d464"
+     }
+    ],
+    "findings": [
+     {
+      "id": "F-D2-1",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/DOC51_DECISION_INPUT_COORDINATOR_CHECKPOINT_20261008.json (coordinator 6a989d9)",
+      "claim": "The coordinator checkpoint under-reports the HI edits. Its scope says 'optional HI1/2/7 precision/header edits', but the subject also carries HI-3 and HI-4 comment edits, two of which sit inside the hashed install text.",
+      "evidence": "The HI-3 comment is at .sql:387-388@e90d464, inside the $monotonic_epoch$ body in $currentness_install$, plus rollback.md:15-17. The HI-4 comment is at .sql:507-508@e90d464, inside the $publish_revision$ body. Both change pg_get_functiondef output (fingerprint) and the definition hash, but no behaviour. The builder packet rec_packet.md:70-73@5a49ef0 discloses HI-1/2/3/4/7. All five edits are faithful to doc 50 rows HI-1, HI-2, HI-3, HI-4 and HI-7.",
+      "fix": "Change the checkpoint 'scope' string to 'HI-1/2/3/4/7 comment/records edits (HI-3, HI-4 comments inside hashed install text; no behaviour change)'. No source change."
+     },
+     {
+      "id": "F-D2-2",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "The byte-difference conflict disjunct in publish_revision is unreachable defence in depth. Same publication with different decision bytes refuses 22023 at validation, not 23505 conflict. The authored 'changed-content conflict' case reaches 23505 only because the publication also changes.",
+      "evidence": ".sql:514-516@e90d464 raises 23505 if the jsonb differs or the convert_to text bytes differ. But :502-504 validates first, and :202 requires sha256(raw text) to equal P's normalized_decision_inputs digest, so identical P forces identical bytes unless SHA-256 collides. In the verifier, mjs:693 uses bindDecision, which rewrites P's digest, so 23505 comes from the jsonb difference; mjs:694 (same P, T+'\\n') expects 22023. Refusal still holds and item 17 is met as a refusal.",
+      "fix": "Add one records sentence in rollback.md near :67-73 (or a verifier comment at mjs:693-694): same-publication/different-text refuses 22023 at validation because the envelope commits to the raw digest; the :515 byte comparison is defence in depth. No SQL change (keep the disjunct)."
+     },
+     {
+      "id": "F-D2-3",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "The new header comment misstates the fingerprint and detection namespace, and repeats the HI-7 missing-space typo class.",
+      "evidence": ".sql:5-6@e90d464 says 'Prefixes include currentness_, authority_, publish_revision, revoke_revision and read_current_authority'. For functions, only currentness_% is a prefix (:50-55, :582-585). publish_revision, revoke_revision and read_current_authority are exact pronames covering all overloads, so e.g. ..._publish_revision_v2 is outside the namespace. authority_% is a relation/type prefix only (:48-49, :80-81, :580-581, :587). :4 also reads 'coordinator7b1e606' with no space. The comment is outside the hashed blocks, so no behaviour changes.",
+      "fix": "Reword .sql:4-6 to: 'Relation/type prefixes authority_ and currentness_; function prefix currentness_; exact function names publish_revision, revoke_revision, read_current_authority (all overloads). Doc51 9a9023e2 / coordinator 7b1e606.' File hash only: re-pin the receipt; the definition hash is unchanged."
+     }
+    ],
+    "confirmed": [
+     "Item 16 inspected at .sql:109-122@e90d464: exactly six artifacts, one per kind, with byte-distinct paths, the same entry keys, and the f581 path/hash predicates (only collate \"C\" added).",
+     "The five decision artifact references are byte-equal to their envelope kind/path/sha256, and configurationVersion equals the configuration sha256 (.sql:180-199@e90d464).",
+     "The decision digest is sha256 over convert_to(p_text,'UTF8'), and the canonical text is entirely ASCII (.sql:160, 202, 335@e90d464).",
+     "decision_inputs_text is text NOT NULL, and its CHECK requires the validator IS TRUE (.sql:343, 349-350@e90d464).",
+     "The validator is IMMUTABLE, SECURITY INVOKER, search_path '', returns boolean, does no lookups, and returns false on exception (.sql:144-145, 336@e90d464). By hand reasoning, the STABLE built-ins it calls are deterministic for the admitted ASCII inputs: to_json on text, and in the pre-existing valid_publication a timestamptz cast of a Z-suffixed literal.",
+     "Only publish_revision(jsonb,text) is created, and the old (jsonb) signature remains only as absence assertions (precheck/postcheck :112). It is revoked from public, anon, authenticated and service_role, and is covered by the integrity() ACL loop by exact proname (.sql:469-480, 555-562@e90d464).",
+     "Validation precedes the lock and insert. Conflict raises 23505 'Quick Order publication conflict'; invalid input raises 22023 'Invalid Quick Order publication'. Identical replay keeps the revision row and the f581 held/epoch+1 head update.",
+     "Item 21: no self-hash. The decision excludes bundleSha256 and its own artifact reference; the CHECK compares only the digest.",
+     "Definition hash recomputed: 3ca2bab80e7b7e829c965e9dcc6e8f9ac2e96720ee24701615c0c1c90b249b74, equal to the claim. The predecessor definition in the bindings is cab02e54…, equal to doc 50.",
+     "The fingerprint SQL is byte-identical across the three scripts and between f581b6b and e90d464. It contains no OIDs and keeps the tgisinternal filter. The new validator and signature fall inside its namespace.",
+     "An incompatible f581 installation refuses through the seal/definition mismatch, with no conversion code (.sql:579-596; precheck/postcheck :104-107).",
+     "Postcheck asserts the new column, CHECK, validator properties and the (jsonb,text) present / (jsonb) absent pair. Precheck refuses partial or incompatible objects.",
+     "The pristine rollback refuses retained revisions or a non-pristine head, drops (jsonb,text) and valid_decision_inputs after the revisions table, and uses no CASCADE.",
+     "The nineteen-row trigger inventory (8/7/4) is byte-identical in all three SQL files and in the bindings; the verifier constant has the same content.",
+     "The doc 50 head-integrity blocks are byte-identical to f581b6b: seeded HELD head with no lazy insert, ALWAYS immutability/removal/epoch triggers with equality allowed, three RESTRICT FKs checked in integrity(), constant unavailable reader, and the install/reapply driver.",
+     "Nothing held was introduced: no guard, commit, definer, adapter, server/route wiring, activation or GRANT.",
+     "The HI-1, HI-2 and HI-7 edits are faithful and change no behaviour. The HI-3 and HI-4 comment edits are also present.",
+     "Receipt 66/66 (bbffa669…), bindings 55/55 at base and at e90d464 (44b4f4a7…), 3 predecessor blobs, packet 7,321 bytes (6ac2cc59…), and 67 historical evidence files unchanged (11a7900..5a49ef0 only adds 4)."
+    ],
+    "discrepancies": [
+     "The coordinator checkpoint (6a989d9) scope says 'optional HI1/2/7 precision/header edits'. The subject and the builder packet (rec_packet.md:70-73@5a49ef0) also contain HI-3 (.sql:387-388, rollback.md:15-17) and HI-4 (.sql:507-508) comment edits inside the hashed install text.",
+     "Spec item 17 wording ('conflicts on ... byte difference in decision text') does not match actual behaviour. Same publication with different bytes refuses 22023 at validation, and the 23505 byte branch is unreachable without a SHA-256 collision. The verifier's changed-content 23505 case (mjs:693) also changes the publication digest.",
+     "Header comment .sql:5-6 calls authority_ and the three exact function names 'prefixes', which the fingerprint/detection predicates do not implement for functions."
+    ],
+    "notProven": [
+     "All runtime behaviour is NOT RUN. I did not confirm that PostgreSQL 17 accepts the new plpgsql, that the CHECK deparses to the asserted text, or that proconfig is stored as {search_path=\"\"}.",
+     "Fingerprint and seal equality across install, reapply, postcheck and reinstall is untested behaviour.",
+     "The 0A000-before-55000 ordering in the HI-1 text matches PostgreSQL source structure as I understand it, but was not observed here.",
+     "Every verifier case is NOT RUN: drift refusals, incompatible-predecessor refusal followed by the old pristine rollback, and the positive and negative decision fixtures.",
+     "The postcheck checks the decision CHECK only by name, type and validation state. Its expression and the validator body are bound only through the seal and fingerprint under the owner-trust model, which is the doc 50 HI-5 optional carry-forward and remains deferred.",
+     "Hosted state, common owner role OID, extensions.digest availability and grants on Supabase are NOT PROVEN.",
+     "Supervisor 90f4ebd and its manifest are frozen with f581 pins (doc 52 REVISION REQUIRED), so no qualification path for e90d464 exists yet. This is outside the lens; I checked only that the subject leaves them unchanged.",
+     "External construction facts (S/P separation, configuration excluding digests, actual artifact bytes and approvals, an accepted reader census) cannot be checked in SQL and are unproven."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "F-D2-1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived. The coordinator checkpoint at 6a989d9 has scope 'optional HI1/2/7 precision/header edits'. The subject also carries the HI-3 comment inside $monotonic_epoch$ (.sql:387-388@e90d464, plus rollback.md:15-17) and the HI-4 comment inside $publish_revision$ (.sql:507-508). Both are inside $currentness_install$, so they change the definition hash and pg_get_functiondef. Neither changes behaviour. The builder packet (rec_packet.md:70-73@5a49ef0) discloses HI-1/2/3/4/7, so only the coordinator record under-reports. All five edits are faithful to doc 50 rows HI-1..HI-4 and HI-7. This is a records-only P3."
+     },
+     {
+      "id": "F-D2-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived. The validator requires sha256(convert_to(text)) to equal the envelope's normalized_decision_inputs sha256 (.sql:200-202@e90d464). publish validates before the lock and the lookup (:502-504). So with the same publication and different bytes, the call refuses 22023, and the byte disjunct at :515 is reachable only through a SHA-256 collision. The verifier matches: its 23505 case changes the digest through bindDecision (mjs:692-693), and same-P/T+newline expects 22023 (mjs:694). The refusal property in item 17 / doc 51 item 17 holds; only the SQLSTATE wording differs. Keep the disjunct and add a records sentence."
+     },
+     {
+      "id": "F-D2-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld but narrowed. The concrete defect is the missing space in 'coordinator7b1e606' (.sql:4@e90d464), the same typo class doc 50 HI-7 fixed one line above. The 'Prefixes include currentness_, authority_, publish_revision, revoke_revision and read_current_authority' sentence (.sql:5-6) echoes doc 51 item 15's own 'excluded helper prefixes (... publish, revoke, read-current ...)'. It never claims to describe the fingerprint predicate, so 'misstates the fingerprint namespace' over-reads it; at most it is imprecise against .sql:50-55. Both lines are outside the hashed blocks: the file hash and receipt need re-pinning, the definition hash does not."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "Identity: scratchpad copies equal git objects; 11a7900 currentness files equal f581b6b; changed paths",
+      "status": "PASS",
+      "note": "Verified retained evidence. sha256 of git show e90d464 equals the scratchpad copies: .sql 054a2916, precheck 09429fd5, postcheck 367f6873, rollback 59dcd809. git diff --stat f581b6b 11a7900 -- supabase/ is empty. f581b6b..e90d464 outside docs/.xenios touches only the five allowed paths. 11a7900..5a49ef0 touches 17 paths: 5 implementation, 1 binding, 11 records. Parents and trees: e90d464^=11a7900, tree bdb31ef3; 5a49ef0^=e90d464, tree 2b20b80e. The .sql has 0 CR bytes and no non-ASCII. Dollar tags are balanced (11 tags, 2 each)."
+     },
+     {
+      "item": "Q1 Item 16 exactly six artifacts, one per kind; missing/repeated/unknown kinds and repeated paths refuse; keys and predicates preserved",
+      "status": "PASS",
+      "note": "Inspected source. .sql:109@e90d464 '<>6' replaces f581 :107 'not between 6 and 32'. :111-117 keep the {kind,path,sha256} closed keys, six-kind enum, path, dot-segment and sha256 regexes, with only collate \"C\" added; PG regex ranges are code-point based, so behaviour is neutral. :120 kinds @> six with length 6 gives one of each. :121-122 byte-distinct paths."
+     },
+     {
+      "item": "Q1 five decision references equal envelope; raw digest equals sole normalized_decision_inputs digest",
+      "status": "PASS",
+      "note": "Inspected source. .sql:180-182 closed five-key artifacts object, so a self-reference refuses. :188-193 path/sha256 byte equality against the unique envelope row of the mapped kind. :160 raw_bytes=convert_to(p_text,'UTF8'). :202 encode(digest(raw_bytes,'sha256'),'hex') vs nd sha256. :335 forces raw=canonical, and canonical is built only from regex-limited printable ASCII, so the hashed bytes are encoding-independent."
+     },
+     {
+      "item": "Q1 narrowing to exactly six breaks nothing still referenced",
+      "status": "PASS",
+      "note": "Inspected source. git grep at e90d464 finds publish_revision, normalized_decision_inputs, quick-order-authority-v1 and decision_inputs_text only in the five currentness files; nothing in server/client/shared/scripts/migrations or docs. The verifier envelope (mjs:469-476) has six artifacts and byte-sorted envelope refs. Supervisor 90f4ebd and its manifest are byte-unchanged to 5a49ef0 and still pin f581 (35 f581b6b mentions)."
+     },
+     {
+      "item": "Q2 decision_inputs_text NOT NULL; CHECK IS TRUE; validator properties",
+      "status": "PASS",
+      "note": "Inspected source. .sql:343 text not null. :349-350 CHECK (...valid_decision_inputs(decision_inputs_text,publication) is true). :144-145 boolean, plpgsql, immutable, security invoker, search_path ''. :159-161 null, empty and >8388608 refuse before parsing. :336 'when others' gives false. It reads no relations; it calls only valid_publication and extensions.digest. Runtime NOT RUN."
+     },
+     {
+      "item": "Q2 publish_revision(jsonb) replaced by (jsonb,text); no bypass overload",
+      "status": "PASS",
+      "note": "Inspected source. Whole-tree git grep at e90d464 finds the create only at .sql:497 (jsonb,text), the revoke at :560 and the drop at rollback.md:153. The (jsonb) form appears only as absence assertions (precheck/postcheck:112) and verifier drift/42883 fixtures. Any same-named overload enters the fingerprint by exact proname (.sql:52-53), so seal drift refuses."
+     },
+     {
+      "item": "Q2 validation before insert; conflict rule; identical replay; SQLSTATEs",
+      "status": "PARTIAL",
+      "note": "Inspected source. .sql:501 integrity, then :502-504 both validators 'is not true' raise 22023 before the lock (:506) and the insert (:518-519). :511-516 raise 23505 on a jsonb structural difference or a byte difference. Identical replay inserts nothing, and the f581 head update (held, epoch+1) at :523-525 is unchanged. PARTIAL only because 'conflict on byte difference' is met as a 22023 validation refusal, not 23505 (F-D2-2). Refusal is preserved."
+     },
+     {
+      "item": "Q2 ACL revokes; owner-only ACL loop; no new GRANT",
+      "status": "PASS",
+      "note": "Inspected source. .sql:555-562 revokes from public, anon, authenticated and service_role, including valid_decision_inputs(text,jsonb) and publish_revision(jsonb,text). The integrity() loop at :469-480 catches the validator by the currentness_ prefix and publish by exact name. The attacl loop at :485-486 covers the new column. No 'grant' or 'security definer' in the four files. The verifier's grant statements (mjs:772-774) are negative drift fixtures expecting 55000."
+     },
+     {
+      "item": "Q3 Item 21 no circular hash",
+      "status": "PASS",
+      "note": "Inspected source. The decision key set (.sql:164-170) excludes bundleSha256, a delivery commit and its own reference. The CHECK and publish compare only digest(text) with the envelope nd sha256 (:202). bundleSha256 is checked for format only (:97). The configuration-excludes-digests requirement is external, recorded at rollback.md:75-80, and NOT PROVEN by SQL."
+     },
+     {
+      "item": "Q4 fingerprint namespace covers validator and signature; install vs reapply determinism",
+      "status": "PARTIAL",
+      "note": "Namespace PASS in inspected source (.sql:50-55). The fingerprint block is byte-identical at f581b6b and e90d464 in all three scripts. It emits names and deparsed text, not OIDs, and filters tgisinternal. Every computation runs under search_path '' (driver :12, pre/post :9, schema_fingerprint proconfig), so qualification of deparsed names is consistent. Ordering uses default-collation text for regprocedure, which is stable within one database; a collation-provider or major-version change would fail closed. Install/reapply/postcheck equality is untested behaviour (NOT RUN)."
+     },
+     {
+      "item": "Q4 definition hash recomputation",
+      "status": "PASS",
+      "note": "Verified retained evidence (recomputed). Node over git show e90d464:.sql: install block 35,478 chars plus fingerprint 3,102 chars, CRLF to LF (0 CR), sha256 = 3ca2bab80e7b7e829c965e9dcc6e8f9ac2e96720ee24701615c0c1c90b249b74. This equals the coordinator claim, rec_packet.md:80 and bindings.currentnessDefinition. The same method over f581b6b gives cab02e549fe1..., equal to bindings.predecessorCurrentness.definition."
+     },
+     {
+      "item": "Q4 existing incompatible installation refuses; no migration",
+      "status": "PASS",
+      "note": "Inspected source. The driver at .sql:579-596 is unchanged from f581. When objects are present, it requires the head, revisions and integrity objects, then a seal equal to RHQOC_HELD_V1:<new def>:<live fp>. An f581 seal carries cab02e54, so the run refuses 55000 before any DDL; precheck/postcheck do the same at :104-107. No ALTER or conversion code. Runtime NOT RUN (verifier fixture mjs:436-457)."
+     },
+     {
+      "item": "Q5 pre/postcheck assert new column, function, signature, CHECK; precheck refuses incompatible",
+      "status": "PASS",
+      "note": "Inspected source. precheck and postcheck :109-125 are identical: (jsonb,text) present and (jsonb) absent; column text, attnotnull, not dropped; CHECK by name with contype c and convalidated; validator immutable, invoker, boolean, proconfig {search_path=\"\"}. Each differs from f581 only by these 17 lines. The stored proconfig literal form is by reasoning, NOT RUN. The CHECK expression is bound only via seal/fingerprint (HI-5 deferred)."
+     },
+     {
+      "item": "Q5 pristine rollback refuses retained revisions; drops new function and signature",
+      "status": "PASS",
+      "note": "Inspected source. rollback.md:136-149 locks access exclusive, checks the seal, then refuses any revision or non-pristine head with 55000. :153 drops publish(jsonb,text). :157-158 drop the tables (and with them the CHECK dependency) before :161 drops valid_decision_inputs and :162 drops valid_publication. No CASCADE (the only mention is prose at :181). :6 'nine owner-only functions' = 8 install functions + schema_fingerprint."
+     },
+     {
+      "item": "Q5 nineteen-row trigger inventory byte-identical",
+      "status": "PASS",
+      "note": "Verified retained evidence. The expected_triggers literal hashes identically in .sql, precheck and postcheck at f581b6b and e90d464. Parsed, it has 19 rows (requests 8, events 7, outbox 4) and equals bindings.canonicalTriggers at e90d464."
+     },
+     {
+      "item": "Q6 doc 50 head-integrity properties intact",
+      "status": "PASS",
+      "note": "Inspected source. The 11a7900..e90d464 diff hunks touch only: header, valid_publication, the new validator, the revisions column+CHECK, the monotonic_epoch comment, publish_revision and the revoke list. Untouched: the head table with three RESTRICT FKs (:352-370), refuse_mutation, the ALWAYS triggers and seeded HELD insert (:395-412), integrity() (:414-495), revoke_revision, the constant unavailable reader (:549-554) and the driver, so they are byte-identical to f581."
+     },
+     {
+      "item": "Q7 nothing held introduced",
+      "status": "PASS",
+      "note": "Inspected source. No guard_source_write, commit, security definer, AFTER-statement trigger or grant in the four files. Both head writers set state 'held' (:523, :542). Install requires held (:606-608). The reader is constant. No server/client/shared/route/migration path changed f581b6b..e90d464. The validator is the doc 51 section-4 eligible item, not a held body."
+     },
+     {
+      "item": "Q8 HI-1/HI-2/HI-7 faithful, no behaviour change",
+      "status": "PASS",
+      "note": "Inspected source plus doc 50:80-86. HI-1 rollback.md:13-14: 0A000 before 55000 matches ExecuteTruncate ordering (heap_truncate_check_FKs before BEFORE TRUNCATE triggers) and verifier mjs truncate case; prose only. HI-2 :14-15 uses doc 50's records option. HI-7 .sql:3 fixed, but the new :4 'coordinator7b1e606' repeats the typo class (F-D2-3). HI-3/HI-4 comments are also present (F-D2-1)."
+     },
+     {
+      "item": "Q9 other changes beyond items 16-18/21 and HI edits",
+      "status": "PASS",
+      "note": "Inspected source. valid_publication changed in five ways: collate \"C\" (neutral); ordinality iteration (neutral); byte-distinct paths (equivalent under deterministic collation); 'is not true' gate in publish (stronger than f581 'not', which would pass on NULL); and envelope sourceRefs/applicabilityRefs now strictly byte-increasing (:129-133), replacing f581 :130 set-distinctness. The last is a narrowing required by coord_scope.md:81 ('including envelope arrays') but not stated in rollback.md or the packet (missed M-1, P3). No weakening found."
+     },
+     {
+      "item": "Supporting evidence: receipt, bindings, packet, 67 blobs, scope hash",
+      "status": "PASS",
+      "note": "Verified retained evidence (recomputed from git objects). Receipt 5a49ef0: sha256 bbffa669..., keys {schemaVersion,sourceCommit,files}, 66 unique paths, 66/66 sha256lf equal to git show e90d464. Bindings: 44b4f4a7..., 55/55 inventory equal at e90d464 and base 18bfbcd and equal to doc49 inventory, 3/3 predecessor blobs equal at f581b6b, doc49 binding 40fdc3a4 unchanged. Packet 6ac2cc59... Scope 655109ea... Evidence dir 67 then 71, adds only. Disk-side checkpoint claims are NOT PROVEN (working tree off-limits)."
+     }
+    ],
+    "simulationOpinion": [
+     {
+      "input": "artifacts = six valid kinds plus a duplicate catalog entry (7)",
+      "agree": true,
+      "note": ".sql:109@e90d464 length<>6 returns false, so publish raises 22023 at :502-504. Verifier mjs:507."
+     },
+     {
+      "input": "six entries: catalog twice, bindings missing, distinct paths",
+      "agree": true,
+      "note": "Every entry passes :111-117. kinds @> six is false at :120, so the result is false and publish raises 22023."
+     },
+     {
+      "input": "six distinct kinds, bindings path equals catalog path",
+      "agree": true,
+      "note": ":121-122: 6 <> 5 distinct convert_to(path), so false, 22023."
+     },
+     {
+      "input": "first publish of valid (P,T) on pristine seed",
+      "agree": true,
+      "note": "Hand-simulated: integrity, both validators true, lock, not found, insert passes both CHECKs, head held/epoch 1, returns writerEpoch '1'. NOT RUN."
+     },
+     {
+      "input": "identical replay of (P,T)",
+      "agree": true,
+      "note": ":513-516: jsonb equal and bytes equal, so no insert. :523-525 epoch+1, held, the f581 behaviour. Structural jsonb equality also treats a key-reordered P as identical."
+     },
+     {
+      "input": "same P, T||'\\n'",
+      "agree": true,
+      "note": "Refuses twice over: the digest mismatch at :202 and the reconstruction mismatch at :335. Both give 22023 before the conflict branch. Verifier mjs:694 expects 22023."
+     },
+     {
+      "input": "same T, P' with bundleSha256 changed",
+      "agree": true,
+      "note": "T embeds no bundle digest, so both validators are true. Existing jsonb is distinct, so 23505 at :514-516 and no state change (mjs:690)."
+     },
+     {
+      "input": "owner INSERT without decision text; then with '{}'",
+      "agree": true,
+      "note": "NOT NULL is enforced before CHECKs, so 23502. With '{}', the validator is false (keys missing) and the insert fails 23514. CHECKs evaluate in name order, so an invalid publication would trip revision_shape first; with a valid publication the failing constraint is decision_inputs_shape."
+     },
+     {
+      "input": "pristine f581 installation, then run e90d464 candidate",
+      "agree": true,
+      "note": "The seal definition (cab02e54) differs from 3ca2bab8, so 55000 'Quick Order currentness definition or schema drift' at .sql:595-596 / precheck:106-107 before any DDL."
+     },
+     {
+      "input": "pristine rollback with a retained revision",
+      "agree": true,
+      "note": "rollback.md:136-149: lock, seal check, then exists(revisions) raises 55000 'Retained currentness evidence prevents destructive rollback'."
+     },
+     {
+      "input": "definition hash recomputation",
+      "agree": true,
+      "note": "Independently recomputed: 3ca2bab80e7b7e829c965e9dcc6e8f9ac2e96720ee24701615c0c1c90b249b74."
+     },
+     {
+      "input": "OWN-1 verifier valid fixture (mjs:469-482: refs sorted, kinds 'Synthetic Health A'/'B', regions CA,DC,NY, quantity 1/10/1, effectiveUntil null)",
+      "agree": true,
+      "note": "Hand-simulated SQL: every closed-key, type, regex, subset and order check passes. Reconstruction emits the same key order as JSON.stringify's insertion order, with 'null' via the coalesce at :330 and integers from jsonb text '1','10'. raw equals canonical, so the result is true. No valid canonical document refused here."
+     },
+     {
+      "input": "OWN-2 JSON number edges: \"minimum\":1e0 / 1.0 / 100001 / \"1\" / 01",
+      "agree": true,
+      "note": "For 1e0, jsonb ->> gives '1', which passes the :266 regex, but :335 compares canonical '1' with raw '1e0' and returns false. 1.0 gives '1.0', which fails the regex. 100001 fails at :267. \"1\" fails the typeof check. 01 fails the JSON parse, caught, false. No non-canonical number is accepted."
+     },
+     {
+      "input": "OWN-3 string escapes: kind a\"b\\c canonical vs A / \\/ alternate escapes",
+      "agree": true,
+      "note": "to_json escapes only quote, backslash and controls; controls are excluded by the [ -~]/[!-~] regexes. a\"b\\c round-trips byte-equal, and JS JSON.stringify gives the same bytes, so there is no JS/SQL disagreement for admitted ASCII. A and \\/ decode then reconstruct differently, so false."
+     },
+     {
+      "input": "OWN-4 empty arrays and null: healthAgreements [] / null; refs []; effectiveUntil null in both",
+      "agree": true,
+      "note": ":205 rejects 0, :204 rejects JSON null, :225/:304 reject an empty ref array. effectiveUntil null: typeof equal and NULL bytes not distinct (:177-178), canonical 'null', so it is accepted correctly."
+     },
+     {
+      "input": "OWN-5 collation: healthAgreements kinds ['Zeta','alpha'] vs ['alpha','Zeta']",
+      "agree": true,
+      "note": "The bytea[] comparison at :217-219 is collation-independent: 'Z'(0x5A) < 'a'(0x61), so the first is accepted and the second refused under any DB collation. Unlike en_US ordering, this matches the scope's unsigned-byte rule and JS default sort."
+     },
+     {
+      "input": "OWN-6 duplicate object key {\"schemaVersion\":\"x\",\"schemaVersion\":\"quick-order-decision-inputs-v1\",...}",
+      "agree": true,
+      "note": "jsonb keeps the last value, so the key and value checks pass, but the reconstruction lacks the duplicate and is shorter than raw. :335 returns false."
+     },
+     {
+      "input": "OWN-7 envelope sourceRefs ['synthetic-shape-source','synthetic-reviewed-source'] (accepted by f581 set-distinct rule)",
+      "agree": true,
+      "note": "The new :132 previous_ref>=current check returns false, so 22023. This is an intentional narrowing of an accepted f581 predicate (f581 .sql:130 accepted it). Disclosure gap: missed M-1."
+     },
+     {
+      "input": "OWN-8 IMMUTABLE honesty: validator over the same (T,P) under different TimeZone/DateStyle/lc settings",
+      "agree": true,
+      "note": "It calls STABLE convert_to, to_json and array_to_string, and valid_publication's Z-suffixed timestamptz cast and to_char of digits. For admitted ASCII in a UTF8 DB all are deterministic, so the IMMUTABLE label is factually stable, as with the accepted f581 valid_publication. The postcheck pins provolatile 'i'. NOT RUN."
+     },
+     {
+      "input": "OWN-9 byte ceiling: 8388608 vs 8388609 ASCII bytes",
+      "agree": true,
+      "note": ":161 is '>8388608', so exactly 8 MiB passes to parsing and 8388609 returns false before the cast (verifier mjs uses 8388609)."
+     }
+    ],
+    "missed": [
+     {
+      "id": "M-1",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+      "claim": "The subject narrows the admission predicate of valid_publication, which f581b6b had and doc 50 accepted. Envelope sourceRefs/applicabilityRefs must now be strictly increasing by UTF-8 bytes, replacing set-distinctness. Neither rollback.md nor the builder packet states that an accepted-object predicate changed.",
+      "evidence": "f581b6b .sql:130 accepted any distinct order. e90d464 .sql:129-133 refuses non-increasing refs. coord_scope.md:81 requires it ('including envelope arrays'), and the verifier authors reversed-ref refusals (mjs:511, :513). rollback.md:67-73 describes only decision-text rules. rec_packet.md:39 says only 'sorted distinct sets'. There is no behaviour defect and no installed data; the gap is reviewer disclosure only.",
+      "fix": "Add one sentence to rollback.md after :73 (and the next records delta): 'valid_publication (accepted at f581b6b) now also requires envelope sourceRefs and applicabilityRefs in strictly increasing unsigned-byte order; exactly six artifacts replace 6-32.' Re-pin the file hash and receipt; the definition hash is unchanged."
+     }
+    ],
+    "verdictOpinion": "I agree with lens D2's verdict. I found no P0, P1 or P2 in the four SQL/rollback files at e90d464. I recomputed every hash claim from Git objects and all of them match: definition 3ca2bab8 and predecessor cab02e54; receipt bbffa669 (66/66); bindings 44b4f4a7 (55/55 at e90d464 and at base, plus 3 f581 blobs); packet 6ac2cc59; scope 655109ea; nineteen triggers 8/7/4; 67 evidence blobs only added to. Supervisor 90f4ebd and its manifest are byte-unchanged and still pin f581.\n\nAll three lens P3s stand. F-D2-3 is narrowed to the header typo plus imprecise wording. I add one P3, M-1: the narrowing of the accepted valid_publication refs is not disclosed.\n\nMy own simulations found no valid canonical document wrongly refused, no non-canonical document accepted, no collation dependence and no JS/SQL serialiser disagreement for admitted ASCII.\n\nNot proven: everything at runtime (PG17 compile, stored proconfig form, fingerprint equality across install/reapply/postcheck, max-size latency in publish, which has no timeout), the disk-side checkpoint claims, and hosted state.\n\nSource acceptance is not qualification, and none of this is Samuel's approval."
+   }
+  },
+  {
+   "lens": "verifier-records-scope-fidelity",
+   "review": {
+    "verdict": "LENS D3: no P0, P1 or P2 found. Five P3 findings. Every identity was recomputed from Git objects: definition 3ca2bab8, receipt bbffa669 (66/66 entries match at e90d464, receipt is not in its own list), bindings 44b4f4a7 (55/55 match at e90d464 and at base 18bfbcd), 67 evidence blobs unchanged, packet 6ac2cc59 (7,321 bytes), scope record 655109ea. The diffs are confined: the five paths plus the bindings file, then records only. Supervisor and manifest blobs are identical at 90f4ebd, e90d464 and 5a49ef0. Nothing changed under server/, client/, shared/, scripts/ or docs/phase2/ between f581b6b and 5a49ef0. Scope items 1-24 are FAITHFUL or STRENGTHENED against doc 51, with no CHANGED-MEANING and no narrowed reserved decision. JS and SQL canonical bytes agree for every admitted ASCII input. Records are truthful about NOT RUN. The coordinator checkpoint names only HI-1, HI-2 and HI-7, but the subject also carries HI-3 and HI-4. Everything is NOT RUN, the qualification window expired 2026-10-06, and nothing here is execution approval.",
+    "checklist": [
+     {
+      "item": "1a Doc 51 contract-before-source: items 16-21 (all 24) recorded at 7b1e606 before e90d464",
+      "status": "PASS",
+      "evidence": "doc51 §4 (51_...md:141-144) makes column/validator/signature eligible once 16-21 recorded; :13-14 requires all 24 in a records delta. coord_scope.md@7b1e606 (sha256 655109ea, recomputed from git show) records items 1-24 (:11-111). Commit dates: 7b1e606 2026-10-08T10:18:10-05:00 < e90d464 10:43:58 < 5a49ef0 10:53:08. Causal proof stronger than clocks: e90d464 bindings coordinatorAssignment.addendumSha256=655109ea (computable only from scope bytes). 7b1e606 is ancestor of 6a989d9; scope/assignment unchanged through 6a989d9."
+     },
+     {
+      "item": "1b Builder assignment names exactly this scope",
+      "status": "PASS",
+      "evidence": "coord_assignment.md@7b1e606 (sha256 171d9cae, equals scratch copy) :5 cites the addendum; :9-15 lists the five implementation items; :17-23 lists exactly the five currentness paths that git diff 11a7900 e90d464 shows modified, plus the new bindings JSON permitted at :25 as a source-binding record. Approval anchor 1d4f2c3 QUICK_ORDER_SUPPLEMENTAL_SCOPE_20261006.md:136-141 names 'normalized decision inputs' (line 140)."
+     },
+     {
+      "item": "1c Scope items 1-24 vs doc 51 §3 items 1-24",
+      "status": "PASS",
+      "evidence": "FAITHFUL: 1,2 (chose lock option),5 (chose doc51's OUT option),6 (predicate left to Samuel per doc51's own 'reserved quantity policy'),7,8,10,11,12,13,14,16 (chose exactly-one-per-kind),19,20,23,24. STRENGTHENED: 3 (all 23 frozen relations plus checkouts and nonces labelled IN/OUT),4 (adds scope membership; exact-unit version answered only as a 'proposed engineering profile'),15 (adds strict-increase from doc50 HI-3),17 (NOT NULL, IS TRUE, IMMUTABLE/INVOKER, no overload, replay),18 (ASCII refinement disclosed :74),21,22 (disclosed new). Item 9: FAITHFUL but partial (see D3-4). No CHANGED-MEANING. No misattribution: :3 and :74 disclaim doc51 acceptance of the refinements. Anchors at f581b6b:118-120 and 3e82154 intake:341-345,355-358 verified."
+     },
+     {
+      "item": "1d Items 3/5 referral family OUT; privacy_begin removed; no Quick Order referral consumer at e90d464",
+      "status": "PASS",
+      "evidence": "Doc51 item 5 offers OUT as an option and §4 :145-146 anticipates removing privacy_begin. git grep at e90d464: Quick Order attribution is self-declared only (core.mjs:164-165 reviewState direct_no_referrer|captured_unmatched, commissionState not_authorized; handler.mjs:44,49; ports.ts:28,34). No import of referral-v1-attribution or partner/touch stores and no affiliate_attribution_ref or verifiedAttributionRef reads in server/research/health/quick-order or the assisted-order Quick Order paths. The only partners import is normalizeDeclaredAffiliateCode (assisted-order/service.ts:30), documented as 'THIS IS NOT ATTRIBUTION'. server/index.ts:278 mounts containment only. quick-order-repository.ts:74 affiliateAttributionRef is an admin readback key, not a decision reader. Reserved commission/attribution policy is untouched (scope :19)."
+     },
+     {
+      "item": "1e Item 4 no-head-for-unchanged-decisions rule",
+      "status": "PASS",
+      "evidence": "coord_scope.md:17 restates doc51 item 4 (51:54-59) and adds 'and scope membership', so a membership change still invalidates. Withdraws the head-inversion rationale and re-derives against lot share locks, FEFO vs UUID order and writer/writer inversion. Doc51's exact-unit source-version question is answered only as a 'Proposed engineering profile' (fresh locked predicate compare). Quantity policy and replacement permission stay reserved. STRENGTHENED; decides no reserved policy."
+     },
+     {
+      "item": "1f Item 18 ASCII-only v1 refinement: reasonable, no silent reserved decision",
+      "status": "PASS",
+      "evidence": "Frozen 462cf79 already made Identifier200 printable ASCII; the refinement narrows only Text64 (agreement kind/version) from NFC Unicode to ASCII U+0020-007E. Canonical agreement grammar is ASCII: policies-data.ts:147@e90d464 AGREEMENT_IDENTIFIER ^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$. Current pairs (early_access_terms/v1; assisted_order_form_v1:<id>/<16 hex>, form.ts:16,75-76) are at most 40 ASCII chars. Offering IDs match mov_[a-f0-9]{20} (reconciliation-authority.ts:40). No grammar-valid identity is excluded by ASCII. The inherited 64-char cap is below the 128-char grammar (D3-5)."
+     },
+     {
+      "item": "1g Item 22 recipient regex: strict subset; lookaheads; trailing newline",
+      "status": "PASS",
+      "evidence": "Companion CHECK intake.sql:126-129@e90d464: length 3..320, =btrim, !~[[:cntrl:][:space:]], ~'^[^@]+@[^@]+[.][^@]+$'. Any regex match is ASCII printable with no space or control, has exactly one @ (neither class admits @), a non-empty local part, and a domain with at least 2 LDH labels (so contains a dot with text either side), length at most 254. So it is a strict subset. Lookaheads are supported in PG ARE and JS; counts 254 and 61 are within PG DUPMAX 255. In PG's default non-newline-sensitive mode $ matches only at end of string and no body class admits \\n, so 'a@b.co\\n' fails; JS without the m flag also fails. PCRE/Python $ would match before a final newline, which the record's full-length/ASCII requirement covers. Design record only; cross-runtime equivalence NOT RUN."
+     },
+     {
+      "item": "1h Item 9 census digest bytes",
+      "status": "PARTIAL",
+      "evidence": "coord_scope.md:27 defines the owner (coordinator), comparator (reviewed SHA256 bytes; never jsonb::text or browser predicates), and encoding rules (UTF-8, no BOM or newline, fixed key order, byte-sorted sets, byte-equal re-encoding). It does not enumerate the closed schema's keys, order or types, so the digest preimage is not yet defined. Explicitly deferred ('do not fill a real digest until frozen'). Validator checks only ^[0-9a-f]{64}$ (SQL:175@e90d464). Non-blocking for this slice (D3-4)."
+     },
+     {
+      "item": "1i Item 19 audience meaning",
+      "status": "PASS",
+      "evidence": "coord_scope.md:95 matches doc51 51:118-120. Verified anchors at e90d464: member-pricing-viewer.ts:38-71 (admin email gives audience 'admin', but the pricingGrant has no audience, so pricingIdentity defaults to 'member'); early-access-retail-pricing.ts:50 EARLY_ACCESS_RETAIL_PRICE_AUDIENCE='member', :74-82 grant audience member. SQL:289 enum has five customer audiences and no admin; verifier mjs:597 refuses 'admin'."
+     },
+     {
+      "item": "2a Verifier covers item 18 refusal classes",
+      "status": "PASS",
+      "evidence": "182 authored negative decision fixtures (hand count), each asserted 'f' plus publish 22023 (mjs:632-635). Non-canonical bytes: mjs:620-631 (BOM, whitespace, trailing newline/space, pretty-print). Key order: root only (:623). Duplicate keys: :624-625. Escapes: :626-627. Numbers: :617-618, :628-630. Text64: :559-566 plus positives :651-652. Identifier200 ×3 fields: :573-579 (unbound:, spaces, non-ASCII, empty, 201, control, surrogate) plus :653-654. Ref arrays: :580-592. Workflow, audience, region sets: :593-610. Pairing: :603-605, :655. Quantity: :611-619, :656. Duplicate agreement kind at another version: :557. Offer duplicates and order: :570-572. Octet ceiling: :638 (non-discriminating, D3-3)."
+     },
+     {
+      "item": "2b Verifier covers item 16",
+      "status": "PASS",
+      "evidence": "Envelope refusals mjs:506-510: 5 artifacts; 7 artifacts; repeated kind 'catalog' with 6 artifacts; repeated path; unknown kind. Refs unsorted, duplicate, 33 entries (:511-515). Decision references: path and hash mismatch for each of 5 keys (:528-533). Wrong decision digest: :641-643 (validator 'f' and publish 22023). Positive envelope reorder: :673-674. SQL:109 (=6), :120-122 (kinds @> 6, byte-distinct paths), :183-202."
+     },
+     {
+      "item": "2c Verifier covers item 17",
+      "status": "PASS",
+      "evidence": "assertDecisionPersistence mjs:250-267 checks publish(jsonb,text) present, (jsonb) absent, validator immutable/invoker/boolean/empty search_path, NOT NULL text column, constraint def containing 'IS TRUE'. Run after install, reapply, reinstall and drift. Direct INSERT without text gives 23502 (:646); '{}' gives 23514 naming the constraint (:647-648). Legacy call gives 42883 (:644). Identical replay keeps row bytes (:685-686). Changed publication and changed text give 23505 (:690-693). Drift: overload, volatile, drop not null, drop constraint, grant (:772-781) all 55000. A text-only conflict (SQL:515) is unreachable for valid inputs because the publication binds sha256(text)."
+     },
+     {
+      "item": "2d Item 21 acyclic construction",
+      "status": "PASS",
+      "evidence": "SQL cannot check Git (SQL:141-143; rollback.md:76-82 states this). Verifier refuses decision self-reference, bundleSha256 and deliveryCommit keys (mjs:552-554). Configuration excludes digests by record (scope :101). Not executable: S/P Git existence is explicitly out of SQL scope."
+     },
+     {
+      "item": "2e JS canonical bytes vs item 18 and SQL",
+      "status": "PASS",
+      "evidence": "The JS builder is JSON.stringify over insertion-ordered fixtures (mjs:92-118). Key order matches SQL reconstruction (SQL:194-195, 236-238, 315-322, 328-334) and scope :48-71; spread overrides keep the original key position. Escaping: for 0x20-0x7E, JSON.stringify and PG to_json both escape only \" and \\\\ (positive :651 exercises both). Integers: both print plain decimal; 1e0 and 1.0 are refused by regex :266 or by reconstruction :335. Sets: fixtures are hand-sorted and regions use JS .sort(); UTF-16 code-unit order equals UTF-8 byte order for ASCII, and SQL compares bytea (:218, :231, :258, :293). No disagreement for any admitted input."
+     },
+     {
+      "item": "2f Expected SQLSTATEs and messages match SQL bytes",
+      "status": "PASS",
+      "evidence": "22023 'Invalid Quick Order publication' (SQL:504); 23505 'Quick Order publication conflict' (:516); 55000 'Quick Order authority head unavailable' (:427 via integrity first); 55000 'Quick Order currentness definition or schema drift' (:596; precheck :106-107); 42883 'does not exist'; 23502 decision_inputs_text (NOT NULL is checked before CHECK); 23514 constraint name (:349-350); 0A000 FK truncate (PG precondition, doc50 HI-1); 55000 history refusal (:381); 42501 role denial."
+     },
+     {
+      "item": "2g f581b6b head-integrity cases retained",
+      "status": "PASS",
+      "evidence": "git diff 11a7900 e90d464 on the verifier removes no case. Publish calls move to (jsonb,text); envelope refs grow to 2 entries; invalid-publication and conflict refusals now also assert messages. The joint TRUNCATE statement list is unchanged (mjs:704-714). Added: revisions-only TRUNCATE 0A000 (:701, HI-1). Comment changes: HI-2 (:696-699), HI-4 (:483-485). Epoch, FK, forced-active and role cases unchanged."
+     },
+     {
+      "item": "2h HELD list, exit codes, argv, receipt confinement unchanged",
+      "status": "PASS",
+      "evidence": "There are no removed or changed lines in mjs:76-78 (HELD), :277-310 (argv order, 7 args, Node v20.19.0, env bans, evidence-dir realpath, raw receipt sha, receipt shape) or :807-812 (exit 2, 130/143/1). Only the BINDINGS and REVIEW constants changed (:14-16)."
+     },
+     {
+      "item": "2i Verifier binds new bindings file and review dispatch id",
+      "status": "PARTIAL",
+      "evidence": "Binds BINDINGS=doc51-decision-input-bindings-20261008.json (mjs:14) through receipt pin plus git-show equality (:311-326); checks bindings.review=9a9023e (:327), 55 inventory entries at base (:328-338), predecessorCurrentness f581 blobs and definition (:343-356), currentnessDefinition (:358-359). No dispatch id (producer DOC51-DECISION-INPUTS…r1 or review DOC51-DECISION-INPUT-REVIEW…r1) is bound. The predecessor bound none either, and the review dispatch postdates the source. Not a defect."
+     },
+     {
+      "item": "3a Source record and records JSON hash pairs recompute",
+      "status": "PASS",
+      "evidence": "Five changedSource sha256lf values equal recomputed raw=LF hashes at e90d464 (054a2916, 09429fd5, 367f6873, 59dcd809, 64b9e50c). beforeBlob ids equal the f581b6b and 11a7900 ls-tree blobs, and beforeSha256lf values recompute. historicalSourceInputs (f581 sql/precheck/rollback) recompute; f581 definition cab02e54 recomputes. unchangedReferences (55) all match at e90d464. unchangedSupervisor.tree d6f8dd85 = 90f4ebd^{tree}. Records JSON receipt and binding values recompute; recordsPaths equal the 11 paths in diff e90d464..5a49ef0."
+     },
+     {
+      "item": "3b Receipt recompute",
+      "status": "PASS",
+      "evidence": "sql-currentness-source-receipt-e90d464.json@5a49ef0: raw sha256 = LF sha256 = bbffa669… (11,962 bytes, LF). Keys schemaVersion, sourceCommit=e90d464, files. 66 entries, byte-sorted, unique; 66 ok, 0 bad at e90d464. It does not list itself. Set = 55 inventory + bindings JSON + 5 own files + 5 BASELINE_SQL-only paths (bootstrap, 191323, 205725, 040349, 044200), exactly the verifier load union."
+     },
+     {
+      "item": "3c Bindings file and 55 reference bindings",
+      "status": "PASS",
+      "evidence": "doc51-decision-input-bindings-20261008.json@e90d464 raw = LF = 44b4f4a7… (29,169 bytes). 55 inventory entries all equal LF hashes at e90d464 and at base 18bfbcd (verifier :334 expectation holds). The inventory array is byte-identical to doc49-currentness-bindings (40fdc3a4@11a7900). Canonical triggers 19 = 8/7/4, identical to the SQL, precheck and postcheck blocks at f581b6b."
+     },
+     {
+      "item": "3d 67 historical evidence blobs unchanged",
+      "status": "PASS",
+      "evidence": "ls-tree -r of docs/health-launch/quick-order-20261005/evidence: 67 entries at 11a7900, all present with identical blob ids at 5a49ef0. The only additions are the 4 new doc51 or receipt JSON files (68 at e90d464, 71 at 5a49ef0)."
+     },
+     {
+      "item": "3e Packet and scope record hashes",
+      "status": "PASS",
+      "evidence": "Packet@5a49ef0 sha256 6ac2cc59… raw = LF, 7,321 bytes; the coordinator copy DOC51_BUILDER_REVIEW_PACKET_e90d464_20261008.md@6a989d9 has the same hash. Scope record@7b1e606 655109ea…, 21,226 bytes, equals coord_scope.md."
+     },
+     {
+      "item": "3f Diff confinement",
+      "status": "PASS",
+      "evidence": "diff 11a7900 e90d464: A bindings JSON plus M of the 5 currentness paths only. diff e90d464 5a49ef0: 5 .xenios files, packet, README, SQL_CANDIDATE_DRAFT_STATUS and 3 evidence JSONs (records only). Supervisor 9f295ec and manifest 72514d6 identical at 90f4ebd, 11a7900, e90d464 and 5a49ef0. diff f581b6b 5a49ef0 under server, client, shared, scripts and docs/phase2 is empty. git diff --check is clean for both ranges."
+     },
+     {
+      "item": "3g Definition sha256",
+      "status": "PASS",
+      "evidence": "SHA256 of LF(text between the $currentness_install$ tags + text between the $currentness_fingerprint$ tags) at e90d464 = 3ca2bab8…, matching SQL:577-578, the verifier :358 and bindings.currentnessDefinition. Same method at f581b6b gives cab02e54…."
+     },
+     {
+      "item": "3h Registry preservation",
+      "status": "PASS",
+      "evidence": "Between 11a7900 and 5a49ef0, foreign rows are JSON-equal: ACTIVE_TASKS tasks 91/91, SESSION_REGISTRY sessions 57/57, CODE_OWNERSHIP leases 134/134. Top-level non-array fields and key order are unchanged. This matches the records JSON registryPreservation and the coordinator's otherOwnerRowsAndTopLevelEqual."
+     },
+     {
+      "item": "4a No record claims execution; local-only stated",
+      "status": "PASS",
+      "evidence": "Packet :6, :68, :92-94, :117 say NOT RUN and LOCAL ONLY. Source JSON: execution NOT_RUN, sourcePushStatus LOCAL_ONLY_NEW_PAYLOAD_APPROVAL_REQUIRED. Records JSON: pushAttempted false, executionReservation null. Bindings: execution 'NOT RUN'. README and handoff diff: 'None were run.' The coordinator checkpoint also says NOT_RUN and LOCAL_ONLY."
+     },
+     {
+      "item": "4b Coordinator checkpoint claims recompute",
+      "status": "PARTIAL",
+      "evidence": "Recomputed and equal: definition, receipt raw and 66/66, bindings 44b4f4a7 and 55/55, predecessor references unchanged 55, f581 inputs 3, triggers 8/7/4, 67 blobs, packet hash and 7,321 bytes, records tree 2b20b80e, 5/1/11 path counts, other-owner rows, whitespace. Discrepancy: scope names 'optional HI1/2/7' but the subject also has HI-3 and HI-4 (D3-1). Working-tree items (diskRawEqual 58, diskCrLfOnly 9) are NOT PROVEN."
+     },
+     {
+      "item": "4c Packet counts and claims match bytes",
+      "status": "PARTIAL",
+      "evidence": "66, 55, three f581 blobs, the definition and binding hashes, and the HI disclosure (:70-75) are all accurate. The packet:22-23,33 claim that only five paths changed relative to f581b6b and no supervisor path changed is imprecise: diff f581b6b e90d464 also adds qualification-supervisor.mjs from 90f4ebd (D3-2)."
+     },
+     {
+      "item": "Builder working-tree byte claims",
+      "status": "NOT_PROVEN",
+      "evidence": "Records JSON sourceWorkingBytes, workingRawMatches 58 and crlfOnlyPaths 9, and the coordinator's disk* fields, describe the builder working tree, which this lens must not read. They are producer-reported only."
+     }
+    ],
+    "simulations": [
+     {
+      "input": "Base synthetic fixture: decisionFixture(envelope) via JSON.stringify, with the publication normalized_decision_inputs sha256 set to sha256(text) (mjs:469-482)",
+      "expected": "validator true",
+      "sqlResult": "true. Size within limit (:161); publication valid (:162; refs sorted, 6 unique kinds); keys closed; revision, source and effectivity equal; 5 refs equal; configurationVersion equals the configuration sha; digest equal (:202); agreements (A,v1)<(B,v1); one offer; sets sorted; request_pricing paired; reconstruction equals raw (:335).",
+      "decidingLine": "SQL:335@e90d464 return raw_bytes=convert_to(canonical,'UTF8')"
+     },
+     {
+      "input": "raw-trailing-newline: decisionText+'\\n' with its own digest bound (mjs:621)",
+      "expected": "false",
+      "sqlResult": "false. Parse succeeds (JSON whitespace) and the digest matches the bound text, but the reconstructed canonical has no newline, so the raw bytes differ.",
+      "decidingLine": "SQL:335@e90d464"
+     },
+     {
+      "input": "raw-integer-exponent-spelling: '\"minimum\":1e0' (mjs:629)",
+      "expected": "false",
+      "sqlResult": "false. jsonb numeric 1e0 reads back via ->> as '1', which passes the regex at :266; the reconstruction emits 1, so the raw bytes ('1e0') differ. The 1.0 variant fails the :266 regex directly.",
+      "decidingLine": "SQL:266 then SQL:335@e90d464"
+     },
+     {
+      "input": "raw-duplicate-object-key: '{\"schemaVersion\":\"…v1\",\"schemaVersion\":…' (mjs:624)",
+      "expected": "false",
+      "sqlResult": "false. jsonb keeps the last duplicate, the reconstruction emits the key once, and the bytes differ.",
+      "decidingLine": "SQL:335@e90d464"
+     },
+     {
+      "input": "duplicate-agreement-kind-different-version: agreements (Synthetic Health A,synthetic-v1),(Synthetic Health A,synthetic-v2) (mjs:557)",
+      "expected": "false (duplicate kind refuses even at another version)",
+      "sqlResult": "false. The bytea[] tuples are increasing, so the sort check passes, but previous_kind equals the current kind.",
+      "decidingLine": "SQL:218-219@e90d464"
+     },
+     {
+      "input": "direct-only-unpriced-contradiction: workflowModes ['direct_order_request'], unpriced 'request_pricing' (mjs:604)",
+      "expected": "false",
+      "sqlResult": "false. (unpriced='request_pricing')=true is distinct from (workflowModes ? 'request_pricing')=false.",
+      "decidingLine": "SQL:298@e90d464"
+     },
+     {
+      "input": "Positive text64-quotes-backslash: version 'synthetic \"quoted\" \\\\ version' (mjs:651)",
+      "expected": "true; JS and SQL escape identically",
+      "sqlResult": "true. Text64 regex [ -~]{1,64} admits \" and \\\\; JSON.stringify and to_json both emit \\\\\" and \\\\\\\\ with nothing else escaped, so the bytes are equal.",
+      "decidingLine": "SQL:214 and SQL:236-238, SQL:335@e90d464"
+     },
+     {
+      "input": "Identifier 'Unbound:synthetic' and 'synthetic-unbound:variant' (mjs:654)",
+      "expected": "true (exact case-sensitive leading prefix only)",
+      "sqlResult": "true. left(s,8)='Unbound:' is not equal to 'unbound:' in bytes, and the regex [!-~]{1,200} passes.",
+      "decidingLine": "SQL:252-254@e90d464"
+     },
+     {
+      "input": "Envelope artifacts with i==1 kind:'catalog' (6 artifacts; bindings missing, catalog repeated) (mjs:508)",
+      "expected": "publish 22023",
+      "sqlResult": "valid_publication returns false: length is 6 but kinds @> six-kind array fails.",
+      "decidingLine": "SQL:120@e90d464, raise at SQL:504"
+     },
+     {
+      "input": "Owner INSERT into revisions(revision_id,publication) with decision_inputs_text omitted (mjs:646)",
+      "expected": "23502 naming decision_inputs_text",
+      "sqlResult": "23502 not-null violation. ExecConstraints checks NOT NULL before CHECK, so the decision CHECK is not reached.",
+      "decidingLine": "SQL:343@e90d464 (decision_inputs_text text not null)"
+     },
+     {
+      "input": "Identical replay: publish_revision(publication, decisionText) a second time (mjs:685)",
+      "expected": "same immutable row; held; epoch increments as before",
+      "sqlResult": "Row found; jsonb equal and bytes equal, so no raise. The head update sets held and epoch+1. The revision row bytes are unchanged.",
+      "decidingLine": "SQL:511-525@e90d464"
+     },
+     {
+      "input": "Oversize: valid_decision_inputs(repeat(' ',8388609), publication) (mjs:638)",
+      "expected": "false from the pre-parse ceiling",
+      "sqlResult": "false at :161. Non-discriminating: without the ceiling, :163 would raise (invalid JSON, caught at :336) and :202 would mismatch, also giving false.",
+      "decidingLine": "SQL:161@e90d464"
+     },
+     {
+      "input": "Item 22 regex (coord_scope.md:106) on 'a@b.co\\n' under PG ~ with default flags, and on 'Ab.c+d@x-y.example'",
+      "expected": "newline refused; second admitted and passes the companion CHECK",
+      "sqlResult": "Hand simulation. First: the body classes exclude \\n and $ is end-of-string only, so no match (the companion CHECK also refuses via [[:space:]]). Second: dot-atom and LDH labels match; length 18 is within 3..320, btrim equal, no cntrl or space, and it matches ^[^@]+@[^@]+[.][^@]+$. NOT RUN.",
+      "decidingLine": "intake.sql:126-129@e90d464 (companion CHECK)"
+     }
+    ],
+    "findings": [
+     {
+      "id": "D3-1",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/DOC51_DECISION_INPUT_COORDINATOR_CHECKPOINT_20261008.json (coordinator 6a989d9)",
+      "claim": "The checkpoint scope says the subject carries 'optional HI1/2/7 precision/header edits'. The subject also carries HI-3 and HI-4, two of them inside the hashed install block. Neither the assignment's 'Implement only' list nor the scope boundary enumerates any HI edit.",
+      "evidence": "At e90d464 and absent at f581b6b: SQL:387-388 HI-3 comment in monotonic_epoch, inside $currentness_install$ (:84-563); SQL:507-508 HI-4 comment in publish_revision; mjs:483-485 'HI4 carry-forward'; rollback.md:13-17 HI-1 and HI-3 prose; mjs:696-701 HI-2 comment plus the new 0A000 case; SQL:3 HI-7. Builder packet rec_packet.md:70-75 discloses HI-1/2/3/4/7. coord_assignment.md:9-15 'Implement only' items 1-5; coord_scope.md:115. Doc 50 HI-3/HI-4 recommended records or comment fixes.",
+      "fix": "In the next coordinator records delta, change the checkpoint 'scope' to 'HI-1/HI-2/HI-3/HI-4/HI-7 (HI-3/HI-4 comment-only inside the hashed install block; HI-1 adds one verifier 0A000 case)'. The original reviewer then dispositions these edits as in-slice. No source change."
+     },
+     {
+      "id": "D3-2",
+      "severity": "P3",
+      "file": "docs/health-launch/quick-order-20261005/DOC51_DECISION_INPUT_REVIEW_PACKET_20261008.md (builder 5a49ef0)",
+      "claim": "The packet says only the five implementation paths changed 'from the accepted currentness predecessor f581b6b' and that no qualification-supervisor path changed. Relative to f581b6b, the supervisor was added. The claim is true only relative to parent 11a7900.",
+      "evidence": "rec_packet.md:22-23,33. git diff --name-status f581b6b e90d464 shows 'A docs/health-launch/quick-order-20261005/qualification-supervisor.mjs' (from 90f4ebd, REVISION REQUIRED in doc 52) plus the manifest and records. git diff 11a7900 e90d464 shows only the 5 paths plus the bindings JSON. Supervisor blobs are unchanged from 90f4ebd.",
+      "fix": "In the next builder records delta, reword to 'changed from parent 11a7900 (records-only over f581b6b except the separately reviewed 90f4ebd supervisor/manifest, unchanged here)'."
+     },
+     {
+      "id": "D3-3",
+      "severity": "P3",
+      "file": "supabase/verification/research_health_quick_order_currentness_local.mjs (e90d464)",
+      "claim": "The octet-ceiling case does not isolate the pre-parse ceiling, and no fixture reorders a nested object's keys.",
+      "evidence": "mjs:638-639 calls repeat(' ',8388609) against the base publication. SQL:161 refuses, but SQL:163 would also fail (parse error caught at :336) and SQL:202 would also fail (digest mismatch), so 'f' proves no specific branch. mjs:623 reorders only root keys; the nested reconstruction at SQL:194-195, 236-238 and 315-322 has no reorder fixture. Reconstruction equality would catch both by inspection, so this is a coverage gap, not a behaviour defect.",
+      "fix": "Add (a) an otherwise-valid canonical text above 8,388,608 bytes (for example up to 50,000 sorted rules with 200-byte Identifier200 values) bound via bindDecision, expecting 'f' and 22023; (b) a raw fixture swapping one nested key pair, for example '\"path\":…,\"sha256\":…' to '\"sha256\":…,\"path\":…'. Re-pin the bindings and receipt."
+     },
+     {
+      "id": "D3-4",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/DOC51_CARRY_FORWARD_AND_DECISION_INPUT_SCOPE_20261008.md (coordinator 7b1e606):27",
+      "claim": "Item 9 asserts a 'closed JSON schema, fixed key order' for the census but does not enumerate its keys, order or types, so the readerCensusSha256 preimage is not yet defined. Doc 51 item 9 asked for the canonical bytes.",
+      "evidence": "coord_scope.md:27 defines the owner, comparator and encoding rules only. Doc 51 51:77 'Define the canonical bytes, comparator and owner'. The validator checks only ^[0-9a-f]{64}$ (SQL:175@e90d464), and :27 forbids filling a real digest. Not among items 16-21, so not blocking.",
+      "fix": "Before any real digest is populated, the coordinator records the census artifact's exact key list, order and types (with the relation/column/reader set encodings) in its reviewed record."
+     },
+     {
+      "id": "D3-5",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/DOC51_CARRY_FORWARD_AND_DECISION_INPUT_SCOPE_20261008.md (coordinator 7b1e606):74,78",
+      "claim": "Text64's 64-character cap for agreement kind/version is narrower than the existing canonical agreement identifier grammar (up to 128) and the Quick Order reader (up to 100). The disclosure covers only non-ASCII identifiers.",
+      "evidence": "policies-data.ts:147@e90d464 AGREEMENT_IDENTIFIER ^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$; core.mjs:70 text(…,100). The cap is inherited from the frozen 462cf79 Text64 (not new), and current pairs (early_access_terms/v1; assisted_order_form_v1:<id>/<16 hex>) are at most 40 ASCII characters. ASCII-only itself excludes no grammar-valid identity. coord_scope.md:74 'A future non-ASCII identifier needs a reviewed schema-version change.'",
+      "fix": "Add one sentence in the next records delta: a canonical agreement identifier of 65-128 characters also requires a reviewed schemaVersion change; v1 decides no legal identity or cardinality."
+     }
+    ],
+    "confirmed": [
+     "e90d464 identities: tree bdb31ef3, parent 11a7900; 7b1e606 (10:18:10) precedes e90d464 (10:43:58); bindings embed addendumSha256 655109ea, a content dependency on the scope record",
+     "Definition sha256 3ca2bab8 recomputed (LF of install block + fingerprint block); f581b6b definition cab02e54 recomputed",
+     "Receipt sql-currentness-source-receipt-e90d464.json@5a49ef0: raw = LF = bbffa669, 66 entries, 66 ok, 0 bad at e90d464, byte-sorted, does not list itself; set = verifier load union",
+     "Bindings doc51-decision-input-bindings-20261008.json@e90d464: 44b4f4a7 raw = LF; 55/55 match at e90d464 and at base 18bfbcd; inventory byte-identical to the doc49 bindings inventory; predecessorCurrentness 3 f581 blobs recompute",
+     "67 evidence blobs at 11a7900 are identical at 5a49ef0; 4 new evidence files only",
+     "Packet 6ac2cc59, 7,321 bytes; the coordinator copy at 6a989d9 is identical; scope record 655109ea; assignment 171d9cae",
+     "diff 11a7900..e90d464 = 5 currentness paths + bindings JSON; e90d464..5a49ef0 = 11 records paths; f581b6b..5a49ef0 changes nothing under server/, client/, shared/, scripts/ or docs/phase2/; git diff --check clean",
+     "Supervisor qualification-supervisor.mjs 9f295ec and manifest 72514d6 byte-identical at 90f4ebd, 11a7900, e90d464 and 5a49ef0; 90f4ebd tree d6f8dd85 matches the source record",
+     "Canonical trigger inventory 19 (8/7/4) byte-identical in candidate, precheck and postcheck vs f581b6b",
+     "SQL validator (SQL:144-338) implements item 18 exactly: closed keys, ASCII Text64/Identifier200, unbound: refusal, bytea tuple sorting, set bounds, request_pricing iff pairing, configurationVersion binding, raw digest, octet ceiling, and reconstruction equality; returns false (not NULL) on every refusal path",
+     "valid_publication now requires exactly 6 artifacts, all six kinds, byte-distinct paths, and sorted envelope refs (SQL:109-135), satisfying item 16",
+     "publish_revision(jsonb,text) only; old overload absent; conflict on jsonb or byte difference; identical replay keeps the row (SQL:497-528); pre/postcheck verify column, CHECK, validator properties and overload absence (precheck/postcheck +17 lines); rollback drops the new function after the table (rollback.md:153-163)",
+     "No Quick Order Referral V1 consumer at e90d464; attribution is self-declared only (core.mjs:164-165)",
+     "Registry foreign rows 91/57/134 unchanged 11a7900 to 5a49ef0",
+     "No JS/SQL canonical-byte disagreement for admitted ASCII inputs; expected SQLSTATEs and messages match the SQL bytes",
+     "Verifier HELD list, argv, exit codes and receipt confinement unchanged; no f581b6b case removed"
+    ],
+    "discrepancies": [
+     "Coordinator checkpoint 6a989d9 'scope' lists HI1/2/7 only; the subject and the builder packet carry HI-1/2/3/4/7 (D3-1)",
+     "Packet:22-23,33 f581b6b-relative 'only five paths' and 'no supervisor path changed' are inaccurate; they hold only vs parent 11a7900 (D3-2)",
+     "5a49ef0 records describe supervisor 90f4ebd as IN_PROGRESS_NO_VERDICT / acceptance PENDING. Doc 52 REVISION REQUIRED was recorded later (coordinator 944e63e, 11:06 vs 5a49ef0 10:53). Stale over time, not false when written; the next records delta should update it",
+     "Bindings inventory carries legacy predecessorBindingSha256lf values for quick-order-admin-readback.test.ts (5686fe46) and quick-order-notifications.test.ts (60f4f544) that differ from their sha256lf (10b11bb8, 9db77c5c). They are inherited verbatim from the doc49 bindings and refer to an older generation. The sha256lf values match at base and at e90d464. This is a field-naming lag, not an identity defect"
+    ],
+    "notProven": [
+     "Builder working-tree claims (sourceWorkingBytes SIX_OF_SIX, workingRawMatches 58, crlfOnlyPaths 9, coordinator diskRawEqual 58 and diskCrLfOnly 9, gitLfAndDiskRawMatch) are producer-reported; the working tree was not read by rule",
+     "Identities of 9a9023e (corrected doc 51), 7d93dbea, ca1c114 and a2be7e2 in the review repository were not read via Git; only the doc 51 and doc 50 file contents were read",
+     "Remote checkpoint 1631323, 'no push attempted', and the 'actual426d internal-coordination delegation' are producer-reported",
+     "All SQL and verifier behaviour is NOT RUN: PG jsonb parsing, ARE regex/lookahead and constraint-order semantics were hand-simulated from documented semantics only; the item-22 regex's cross-runtime equivalence is NOT RUN",
+     "Hosted ownership, role, grant and RLS facts are NOT PROVEN (out of this lens; the scope record marks them NOT PROVEN)",
+     "Whether the future TS publisher sorts by UTF-8 bytes is untested behaviour (not in this slice; ASCII-only makes code-unit and byte order coincide)"
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "D3-1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived. Coordinator 6a989d9 checkpoint 'scope' says 'optional HI1/2/7 precision/header edits'. e90d464 also carries HI-3 (SQL:387-388, a comment inside the hashed $currentness_install$ block, so it moves the definition hash) and HI-4 (SQL:507-508 publish_revision comment, plus mjs:483-485 'HI4 carry-forward'). Builder packet rec_packet.md:70-75@5a49ef0 discloses HI-1/2/3/4/7. Doc 50:82-83 recommended records or comment fixes for HI-3 and HI-4. All are comment-only or verifier-only, in the five paths, and disclosed by the builder. The coordinator's under-count is a records discrepancy only. P3 is correct; the fix is the lens's."
+     },
+     {
+      "id": "D3-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived. rec_packet.md:22-23 says 'Only these five implementation paths changed from the accepted currentness predecessor f581b6b'. git diff --name-status f581b6b e90d464 also shows A qualification-supervisor.mjs and A qualification-manifest (from 90f4ebd) plus records. The claim holds only against parent 11a7900, where the diff is the 5 paths plus the bindings JSON. :31-33 is accurate if read as the source commit's own delta, and :104 discloses 90f4ebd as frozen. So this is imprecise wording, not a false identity claim. P3 stands."
+     },
+     {
+      "id": "D3-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived. mjs:638 repeat(' ',8388609): without the SQL:161 ceiling, SQL:163 p_text::jsonb raises on all-whitespace input (caught at :336) and :202 mismatches anyway, so the result 'f' isolates nothing. mjs:623 reorders root keys only; no nested-key reorder fixture exists, though by inspection SQL:335 equality would refuse one. The same non-isolation pattern also affects the envelope fixtures; see missed M-1. P3 is correct."
+     },
+     {
+      "id": "D3-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived. coord_scope.md:27@7b1e606 names the owner (coordinator), the comparator (reviewed digest, never browser predicates or jsonb::text) and the encoding rules. It does not enumerate the closed schema's keys, order or types. Doc 51:77 asks for 'the canonical bytes, comparator and owner'. Item 9 is outside 16-21. The validator only checks ^[0-9a-f]{64}$ (SQL:175@e90d464), and :27 forbids a real digest. So this does not block this slice, but the preimage is not yet defined. P3."
+     },
+     {
+      "id": "D3-5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, with anchor corrections. The agreement reader caps kind and version at 100 characters at core.mjs:101@e90d464 (text(agreement.kind,...,100)), not :70, which is the contact line. The form pair is shared/research/assisted-order/form.ts:16,75-76; its longest kind is 'assisted_order_form_v1:research_use_only' at 40 characters, and the version is a 16-hex copyHash. AGREEMENT_IDENTIFIER (policies-data.ts:147) allows up to 128 ASCII characters. The 64 cap is inherited from frozen 462cf79:128, which doc 51 accepted as design. Core.mjs:96-104,114 already requires distinct kinds, so 'duplicate kind refuses' decides no new legal cardinality. This is a one-sentence clarification only."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "1a Doc 51 contract-before-source: items 16-21 (all 24) recorded at 7b1e606 before e90d464",
+      "status": "PASS",
+      "note": "Commit times: 7b1e606 10:18:10 < 11a7900 10:31:38 < e90d464 10:43:58. coord_scope.md sha256 is 655109ea (recomputed from git show). bindings.coordinatorAssignment.addendumSha256 at e90d464 is 655109ea. Scope and assignment are unchanged from 7b1e606 to 6a989d9. 7b1e606 is not a Git ancestor of e90d464 (separate branches); the content-hash dependency is the causal link."
+     },
+     {
+      "item": "1b Builder assignment names exactly this scope",
+      "status": "PASS",
+      "note": "coord_assignment.md sha256 is 171d9cae, equal to git show 7b1e606. :9-15 lists items 1-5, :17-23 names the five paths, and :25 permits the binding and receipt records."
+     },
+     {
+      "item": "1c Scope items 1-24 vs doc 51 section 3",
+      "status": "PASS",
+      "note": "Verified against doc51:42-135 and 462cf79:96-148. Item 3's IN/OUT labels total 23 (12 IN, 4 OUT with locks, 7 OUT without a reader) and match the frozen census. Item 20's no-duplicate-kind rule matches the existing reader at core.mjs:96-104,114, so no reserved cardinality is decided. Item 18's ASCII narrowing is disclosed at :74. Item 9 is partial (D3-4). I found no CHANGED-MEANING."
+     },
+     {
+      "item": "1d Referral family OUT; no QO referral consumer at e90d464",
+      "status": "PASS",
+      "note": "core.mjs:164-165 attributionSnapshot is self-declared only (direct_no_referrer|captured_unmatched, not_authorized). server/index.ts:278 mounts containment only. git grep found no referral-v1, resolveAttribution, verifiedAttributionRef or attribution_touches use in Quick Order files. Doc51:145-146 permits removing privacy_begin."
+     },
+     {
+      "item": "1e Item 4 no-head rule",
+      "status": "PASS",
+      "note": "coord_scope.md:17 is faithful to doc51:54-59, with scope membership added. The exact-unit version question is answered only as a proposed profile. Quantity policy stays reserved."
+     },
+     {
+      "item": "1f Item 18 ASCII-only refinement",
+      "status": "PASS",
+      "note": "Only Text64 narrows (Identifier200 was already ASCII at 462cf79:129). The canonical agreement grammar is ASCII (policies-data.ts:147). Current pairs are at most 40 characters. The lens's anchors 'core.mjs:70' and 'form.ts' should read core.mjs:101 and shared/research/assisted-order/form.ts."
+     },
+     {
+      "item": "1g Item 22 recipient regex",
+      "status": "PASS",
+      "note": "Strict subset of intake.sql:126-129@e90d464, verified by hand. Lookaheads and {0,61}/{3,254} bounds are valid in PG ARE (DUPMAX 255) and in JS. $ is end-of-string in PG's default mode and in JS without m, and no body class admits \\n. Hand-simulated only; NOT RUN."
+     },
+     {
+      "item": "1h Item 9 census digest bytes",
+      "status": "PARTIAL",
+      "note": "Agree (D3-4): the preimage keys and types are not enumerated."
+     },
+     {
+      "item": "1i Item 19 audience meaning",
+      "status": "PASS",
+      "note": "member-pricing-viewer.ts:38-71 and early-access-retail-pricing.ts:50,74-82 verified. SQL:289 has no admin value; mjs:597 refuses admin."
+     },
+     {
+      "item": "2a Verifier covers item 18 refusal classes",
+      "status": "PARTIAL",
+      "note": "All 182 negative fixtures were recounted and each refuses by hand simulation. However, the octet-ceiling class is not isolated (mjs:638) and there is no nested key-order fixture (D3-3), so that class is not demonstrated."
+     },
+     {
+      "item": "2b Verifier covers item 16",
+      "status": "PARTIAL",
+      "note": "mjs:508-510 and :514-515 reuse decisionText bound to the original envelope, so each also refuses through SQL:188-192/200-202 or the :230 ref membership check. The repeated-path rule (SQL:121-122) and the 32-ref bound (SQL:128) are never the sole refusal (missed M-1). mjs:507 and :511-513 do isolate their rules."
+     },
+     {
+      "item": "2c Verifier covers item 17",
+      "status": "PASS",
+      "note": "mjs:250-267 is called at :407, :415, :464 and :787. :644 expects 42883; :646 expects 23502 (NOT NULL is checked before CHECK); :647-648 expects 23514; :685-686 identical replay; :690-693 conflicts; :777-781 drift. A text-only conflict is unreachable while the publication binds sha256(text)."
+     },
+     {
+      "item": "2d Item 21 acyclic construction",
+      "status": "PASS",
+      "note": "mjs:552-554 refuses self-reference, bundle and delivery keys through the closed keys at SQL:164-170. Git existence is out of SQL scope (rollback.md:75-80)."
+     },
+     {
+      "item": "2e JS canonical bytes vs item 18 and SQL",
+      "status": "PASS",
+      "note": "Fixture insertion order equals SQL:194-195, 236-238, 315-322 and 328-334. The spread overrides keep key positions. Only \" and \\\\ are escaped on both sides for U+0020-007E. Sets are sorted by bytea on both sides, which equals code-unit order for ASCII. No disagreement for admitted input."
+     },
+     {
+      "item": "2f SQLSTATEs and messages match SQL bytes",
+      "status": "PASS",
+      "note": "22023 at SQL:504, 23505 at :516, 55000 at :427/:381/:390/:596, 42883, 23502, 23514 (constraint name at :349), 0A000 FK precondition, 42501 role. Verified."
+     },
+     {
+      "item": "2g f581b6b cases retained",
+      "status": "PASS",
+      "note": "The verifier's removed lines are only the BINDINGS/REVIEW constants, the inline rollback extraction now moved to rollbackBlock(), the old publication fixture, publish_revision(jsonb)-to-(jsonb,text) swaps, and one comment. The old invalid list (7) and drift list are retained."
+     },
+     {
+      "item": "2h HELD, exit codes, argv, receipt confinement unchanged",
+      "status": "PASS",
+      "note": "No removed lines in those regions."
+     },
+     {
+      "item": "2i Binds bindings file and review id",
+      "status": "PARTIAL",
+      "note": "Binds BINDINGS (mjs:14), REVIEW 9a9023e (:327), the 55-entry inventory, predecessor blobs and the definition. No dispatch id is bound, and the predecessor bound none either. Not a defect."
+     },
+     {
+      "item": "3a Source/records JSON pairs recompute",
+      "status": "PASS",
+      "note": "changedSource five sha256lf and beforeBlob values recompute. unchangedReferences 55/55 at e90d464. 90f4ebd^{tree} is d6f8dd85. The f581 inputs recompute (3)."
+     },
+     {
+      "item": "3b Receipt recompute",
+      "status": "PASS",
+      "note": "Raw = LF = bbffa669, 11,962 bytes. 66 entries, byte-sorted, unique; 66 ok, 0 bad at e90d464. It does not list itself. 55 inventory entries + 11 others."
+     },
+     {
+      "item": "3c Bindings file and 55 bindings",
+      "status": "PASS",
+      "note": "44b4f4a7 raw = LF, 29,169 bytes. 55/55 match at e90d464 and at base 18bfbcd. The inventory is identical to doc49 bindings 40fdc3a4."
+     },
+     {
+      "item": "3d 67 evidence blobs unchanged",
+      "status": "PASS",
+      "note": "ls-tree counts are 67/68/71. The 11a7900 vs 5a49ef0 diff shows additions only (4 files)."
+     },
+     {
+      "item": "3e Packet and scope hashes",
+      "status": "PASS",
+      "note": "Packet 6ac2cc59, 7,321 bytes, at 5a49ef0, in the coordinator copy at 6a989d9, and in the scratch copy. Scope record 655109ea."
+     },
+     {
+      "item": "3f Diff confinement",
+      "status": "PASS",
+      "note": "Verified: 5 paths + bindings; then 11 records paths. No change under server/client/shared/scripts/docs/phase2 between f581b6b and 5a49ef0. Supervisor 9f295ec and manifest 72514d6 are identical at all four SHAs. diff --check is clean."
+     },
+     {
+      "item": "3g Definition sha256",
+      "status": "PASS",
+      "note": "Node recompute gives 3ca2bab8 at e90d464 and cab02e54 at f581b6b. The fingerprint block is byte-identical in the candidate, precheck and postcheck, and unchanged vs f581."
+     },
+     {
+      "item": "3h Registry preservation",
+      "status": "PASS",
+      "note": "Only the own rows changed (1 of 92, 1 of 58, 1 of 135); top-level fields and order are equal."
+     },
+     {
+      "item": "4a No execution claimed",
+      "status": "PASS",
+      "note": "Packet, source/records JSON, bindings, README and handoff all state NOT RUN and LOCAL ONLY."
+     },
+     {
+      "item": "4b Coordinator checkpoint recomputes",
+      "status": "PARTIAL",
+      "note": "All Git-side values recompute. The scope under-states the HI edits (D3-1). The disk* values are NOT PROVEN."
+     },
+     {
+      "item": "4c Packet counts and claims",
+      "status": "PARTIAL",
+      "note": "Counts are accurate. The f581b6b-relative wording is imprecise (D3-2)."
+     },
+     {
+      "item": "Builder working-tree byte claims",
+      "status": "NOT_PROVEN",
+      "note": "Working tree not read by rule. Producer-reported only."
+     }
+    ],
+    "simulationOpinion": [
+     {
+      "input": "Base decisionFixture via JSON.stringify, bound digest",
+      "agree": true,
+      "note": "Valid publication; closed keys; refs equal; configurationVersion equals '7'*64; agreements A<B; one offer; sets sorted; request_pricing pairing holds; SQL:335 equal. Returns true."
+     },
+     {
+      "input": "raw-trailing-newline",
+      "agree": true,
+      "note": "The text parses and its digest matches the bound sha, but the reconstruction has no newline. SQL:335 returns false."
+     },
+     {
+      "input": "raw-integer-exponent-spelling 1e0",
+      "agree": true,
+      "note": "numeric_in('1e0') reads back as '1', which passes :266; the bytes differ at :335. 1.0 keeps dscale 1 and fails :266."
+     },
+     {
+      "input": "raw-duplicate-object-key",
+      "agree": true,
+      "note": "jsonb keeps the last key; the reconstruction emits it once, so the bytes are shorter. False."
+     },
+     {
+      "input": "duplicate-agreement-kind-different-version",
+      "agree": true,
+      "note": "The bytea[] tuples are increasing, but previous_kind equals the current kind at :218-219. False."
+     },
+     {
+      "input": "direct-only-unpriced-contradiction",
+      "agree": true,
+      "note": "true IS DISTINCT FROM false at :298. False."
+     },
+     {
+      "input": "positive text64 quotes/backslash",
+      "agree": true,
+      "note": "to_json and JSON.stringify both emit \\\" and \\\\\\\\ only. Equal. True."
+     },
+     {
+      "input": "Unbound:synthetic / synthetic-unbound:variant",
+      "agree": true,
+      "note": "left(s,8) is compared as bytes, so case and position matter. True."
+     },
+     {
+      "input": "Envelope i==1 kind catalog",
+      "agree": true,
+      "note": "Refused at SQL:120 then :504. Note: it would refuse anyway at :192 because bindings is missing, so this case is non-isolating."
+     },
+     {
+      "input": "INSERT without decision_inputs_text",
+      "agree": true,
+      "note": "23502, raised before CHECK evaluation."
+     },
+     {
+      "input": "Identical replay",
+      "agree": true,
+      "note": "Row bytes are unchanged; head held; epoch+1."
+     },
+     {
+      "input": "repeat(' ',8388609)",
+      "agree": true,
+      "note": "False at :161. Non-discriminating (D3-3)."
+     },
+     {
+      "input": "Item 22 regex 'a@b.co\\n' and 'Ab.c+d@x-y.example'",
+      "agree": true,
+      "note": "The newline case fails in PG ARE and JS. The second is admitted and passes the companion CHECK. NOT RUN."
+     },
+     {
+      "input": "OWN: Text64 \"v'1\" and Identifier200 'a\\\\b/c<d>&' with digest bound",
+      "agree": true,
+      "note": "PG escape_json escapes only \", \\\\ and <0x20; JSON.stringify does the same for printable ASCII, and neither escapes / < > & '. The reconstruction equals JS bytes. True. No JS/SQL disagreement."
+     },
+     {
+      "input": "OWN: quantity raw '\"minimum\":0.1e1' with its own digest bound",
+      "agree": true,
+      "note": "numeric '0.1e1' has dscale max(0,1-1)=0, so it reads back as '1' and passes :266, but :335 compares raw '0.1e1' with '1'. False. A non-canonical number spelling cannot be accepted."
+     },
+     {
+      "input": "OWN: publication with bindings.path=catalog.path, decision built by decisionFixture(altered) and bound",
+      "agree": true,
+      "note": "SQL:121-122 refuses (count 6 vs 5 distinct), so validator 'f' and publish 22023, which is correct behaviour. The verifier has no such case, and its :509 refuses earlier at :192 instead. Basis for M-1."
+     },
+     {
+      "input": "OWN: 33 envelope sourceRefs, all decision refs drawn from them",
+      "agree": true,
+      "note": "SQL:128 refuses. The verifier's :514 instead fails at the :230 membership check ('synthetic-reviewed-source' is not in the list), so the bound is never isolated (M-1)."
+     },
+     {
+      "input": "OWN: same inputs under DateStyle='SQL,DMY', TimeZone='Pacific/Chatham', non-C lc_collate",
+      "agree": true,
+      "note": "Immutability honest in effect. STABLE-marked callees (to_json, array_to_string, convert_to, text::timestamptz, to_char) give identical results: explicit Z, ISO Y-M-D, no TM patterns, bytea ordering, explicit collate \"C\". pgcrypto digest is IMMUTABLE. The pattern is inherited from accepted f581 valid_publication."
+     },
+     {
+      "input": "OWN: empty healthAgreements / offerRules / regions; text 'null'; decision effectiveUntil null vs publication string",
+      "agree": true,
+      "note": "False at :205, :242, :283 and :164 respectively; the type mismatch fails at :177. Both null gives equal; coalesce(to_json(NULL)) yields 'null' at :330."
+     },
+     {
+      "input": "OWN: productIds 'B…' and 'b…' ordered as a localeCompare publisher would (b before B)",
+      "agree": true,
+      "note": "SQL bytea order is 'B'(0x42) < 'b'(0x62), so the locale-ordered document refuses at :258. This fails closed. JS default .sort() agrees with SQL. Any future publisher must sort by bytes."
+     },
+     {
+      "input": "OWN: install then reapply fingerprint",
+      "agree": true,
+      "note": "No catalog change between :601 and the reapply :593. COMMENT is excluded. pg_get_constraintdef, regprocedure and the ACL text are computed under search_path='' everywhere. Equal, as asserted by mjs:417/466."
+     }
+    ],
+    "missed": [
+     {
+      "id": "M-1",
+      "severity": "P3",
+      "file": "supabase/verification/research_health_quick_order_currentness_local.mjs (e90d464)",
+      "claim": "The envelope fixtures that appear to test item 16's repeated-path rule and the 32-entry envelope-ref bound reuse decision text bound to the original envelope. Each refuses first through a decision-level comparison, so SQL:121-122 (byte-distinct paths) and SQL:128 (1..32 refs) are never the sole refusal. Deleting either line would leave the verifier green.",
+      "evidence": "mjs:500-516 publishes every invalid envelope with the original decisionText. :509 (bindings path = catalog path) fails SQL:192 because the decision's bindings path is 'synthetic/bindings.json'. :514/:515 (33 refs) fail :230/:309 because 'synthetic-reviewed-source'/'synthetic-shape-applicability' are absent. :506, :508 and :510 fail at :188-202 via the NULL lookup. Hand simulation: an altered envelope with a repeated path and decisionFixture(altered) bound passes every check except SQL:121-122. :507 and :511-513 are discriminating. Doc51 item 16 and scope:41 require repeated paths to refuse.",
+      "fix": "In the verifier only, add discriminating cases: for a repeated path and for 33 envelope refs, build the decision with decisionFixture(alteredEnvelope), widening nested refs for the 33-ref case, then bindDecision. Assert currentness_valid_publication 'f', validator 'f' and publish 22023. Re-pin bindings and receipt."
+     }
+    ],
+    "verdictOpinion": "The lens holds up. I found no P0, P1 or P2. D3-1 through D3-5 are upheld at P3. D3-5 needs anchor corrections: core.mjs:101, not :70, and shared/research/assisted-order/form.ts:16,75-76. I recomputed every hash from Git objects and all of them match: definition 3ca2bab8; receipt bbffa669 with 66 of 66 entries matching; bindings 44b4f4a7 with 55 of 55 matching at e90d464 and at base; 67 evidence blobs unchanged; packet 6ac2cc59, 7,321 bytes; scope record 655109ea; assignment 171d9cae; records tree 2b20b80e; supervisor and manifest blobs unchanged; diff confinement as claimed. By hand simulation, the SQL validator matches scope item 18 exactly. The JS and SQL canonical bytes agree for every admitted input. The IMMUTABLE label is honest in effect. Install and re-apply fingerprints are equal. I found no new grant, no surviving publish_revision(jsonb), no held body, no weakened f581b6b protection, and no scope item that changes doc 51's meaning or decides reserved policy: no duplicate agreement kinds already matches core.mjs:114. Missed: M-1, P3. The fixtures for repeated paths and the 32-ref bound do not isolate SQL:121-122 or :128. I therefore downgrade checklist 2a and 2b to PARTIAL. All behaviour is NOT RUN, the qualification window expired on 2026-10-06, accepting the source is not qualification, and nothing here is Samuel's approval."
+   }
+  }
+ ],
+ "critic": {
+  "coverage": [
+   {
+    "item": "Doc 51 contract-before-source prerequisite (items 16-21 recorded before source; source scope)",
+    "status": "COVERED",
+    "evidence": "Lens D3 1a-1c and its verifier. Own check: doc 51 sec. 4 (51:141-144) makes the column, validator and signature eligible only once items 16-21 are recorded. coord_scope.md@7b1e606 (sha256 655109ea, recomputed from git show) records items 1-24 (:11-111). Its boundary (:115-125) limits work to the five paths. Commit times: 7b1e606 10:18:10, then e90d464 10:43:58. The e90d464 bindings embed addendumSha256 655109ea. My git diff 11a7900 e90d464 shows exactly the five paths plus doc51-decision-input-bindings-20261008.json. Item 9 is PARTIAL (D3-4), but it is outside 16-21 and does not block."
+   },
+   {
+    "item": "Closed schema and key sets",
+    "status": "COVERED",
+    "evidence": "Lens D1 checklist item 18 and verifier (PASS). Inspected source: ?& and minus-array checks at .sql:164-170, 180-182, 185-186, 208-210, 245-249, 262-263, 270-271 and 275-277@e90d464. Reconstruction at :315-334 emits only the listed keys. Hand simulation (o) and the verifier's own S8 refuse extra and duplicate keys at :335. NOT RUN."
+   },
+   {
+    "item": "Types, bounds, nullability and set ordering",
+    "status": "COVERED",
+    "evidence": "D1 simulations (f), (g), (h), (j), (m), (n), (o) and verifier S3/S4/S5; D3 OWN collation case. Ordering is bytea or bytea[] at .sql:132, 217-219, 231, 256-259, 293 and 310@e90d464, so it is collation-independent. Own check: a minimal canonical rule is 375+id bytes, so at most about 22,001 rules fit under 8,388,608 bytes. That confirms D1-5 as corrected by its verifier. NOT RUN."
+   },
+   {
+    "item": "Canonical byte representation and digest binding",
+    "status": "COVERED",
+    "evidence": "D1 checklist; D2 Q1; D3 2e (JS and SQL bytes agree for admitted ASCII). Inspected source: raw_bytes=convert_to(p_text) at .sql:160, digest over raw bytes at :202, acceptance raw=reconstruction at :335@e90d464, and jsonb::text is never hashed. The verifier's discrimination gaps (ceiling at mjs:638; root-only reorder at mjs:623, own check) are recorded as CF-1. NOT RUN."
+   },
+   {
+    "item": "Artifact uniqueness and publication construction without circular hashes",
+    "status": "COVERED",
+    "evidence": "D2 Q1/Q3 and D1 item 16/21 with verifiers. Inspected source: .sql:109 requires exactly 6 artifacts; :120 requires all kinds; :121-122 requires byte-distinct paths; :150 and :180-182 give five refs with no self-reference; :164-170 exclude bundleSha256; :188-202 bind the refs and raw digest@e90d464. External S/P facts are recorded at rollback.md:75-80 and are NOT PROVEN by SQL. The verifier isolation gap for :121-122 and :128 is CF-2 (own check of mjs:500-516)."
+   },
+   {
+    "item": "Agreement-set representation without choosing Samuel's legal policy",
+    "status": "COVERED",
+    "evidence": "D1 item 20, D3 1c/1f and D3-5, D1-verify M2. .sql:204-239@e90d464 is a free Text64 1-30 array with no kind, version or legal literal. Own check: coord_scope.md:97@7b1e606 already says that once form acknowledgments are added, the complete required set must still satisfy 1-30 with no truncation. So M2's cardinality half is already recorded. Only the 64-character length gap remains (CF-9)."
+   },
+   {
+    "item": "Audience, quantity and destination representation without inventing values",
+    "status": "COVERED",
+    "evidence": "D1 item 18 sets and item 19 (verifier upheld). The 51 regions equal core.mjs:4@3e82154; the 5 audiences equal pricing.ts:20-29@3e82154; there is no admin (mjs:597). Quantity 1..100000 and the fixed 'US'/'USD' are record format values (coord_scope.md:62-63, 87). Own check: git diff 3e82154 e90d464 over core.mjs, form.ts and pricing.ts is empty, so those anchors hold at the subject. Destination is shape only."
+   },
+   {
+    "item": "Revision storage, validator and publication-signature changes",
+    "status": "COVERED",
+    "evidence": "D2 Q2 with verifier; D3 2c. Own read@e90d464: .sql:343 decision_inputs_text text not null; :349-350 CHECK (...valid_decision_inputs(...) is true); :144-145 immutable, security invoker, search_path=''; :497 publish_revision(jsonb,text) only; :502-504 validates both inputs before the lock and insert; :555-562 revoke list. The (jsonb) form appears only as absence assertions (pre/postcheck:112)."
+   },
+   {
+    "item": "Conflict refusal",
+    "status": "COVERED",
+    "evidence": "The D2 lens said PASS and its verifier said PARTIAL; D1-verify M1 agrees with the verifier. Own check@e90d464: validation (:502-504) runs before the lookup, and :200-202 binds sha256(raw text) to the publication digest. So same publication plus different text refuses 22023 at :504 and never reaches the :515 byte disjunct. A changed publication gives 23505 at :514. Verifier mjs:690-694 matches this. Every case refuses. coord_scope.md:43 and rec_packet.md:40-41 overstate the SQLSTATE path (CF-3)."
+   },
+   {
+    "item": "Updated fingerprint, definition hashes, pre/postchecks and rollback",
+    "status": "COVERED",
+    "evidence": "D2 Q4/Q5 and D3 3g. Own recompute from git show e90d464: definition 3ca2bab80e7b7e829c965e9dcc6e8f9ac2e96720ee24701615c0c1c90b249b74, equal to the claim. The fingerprint block is byte-identical to f581b6b in all three scripts (D2/D3). Pre/postcheck :109-125 add the new assertions. rollback.md:136-163 refuses retained revisions and drops (jsonb,text) and the validator after the tables, with no CASCADE. Runtime equality of install, reapply and postcheck fingerprints is NOT PROVEN (NOT RUN), which is the only basis of the verifier's PARTIAL."
+   },
+   {
+    "item": "Corresponding verifier cases and receipt bindings",
+    "status": "COVERED",
+    "evidence": "D3 2a-2i, D1-4/D3-3, D3-verify M-1. Own recompute: receipt 5a49ef0 raw sha256 bbffa669, 66 entries, 66/66 sha256lf equal at e90d464, not self-listed. Bindings 44b4f4a7 with 55/55 (D2/D3). Own read confirms these discrimination gaps: mjs:638 ceiling (whitespace also fails parse); mjs:623 root-only reorder; mjs:509 and :514-515 envelope fixtures reuse the original decisionText, so :121-122 and :128 are never the sole refusal. Same publication with different text cannot reach :515. All P3 (CF-1, CF-2, CF-3). NOT RUN."
+   },
+   {
+    "item": "Preserved head-integrity properties (seeded HELD head, immutable revisions, monotonic epoch, FK integrity, pristine rollback, 19-trigger inventory, read-current unavailable)",
+    "status": "COVERED",
+    "evidence": "D2 Q6 (blocks byte-identical to f581b6b), D2 Q5 and D3 3c (19 triggers, 8/7/4, identical in all three scripts and the bindings). Own read@e90d464: :384-392 epoch guard unchanged except the HI-3 comment; :549-554 read_current_authority returns constant 'unavailable'; :606-608 install requires held with active null; rollback.md:136-149 refuses retained revisions. NOT RUN."
+   },
+   {
+    "item": "No held writer guard, full submission commit, real adapter, protected wiring, active publication or live capability introduced",
+    "status": "COVERED",
+    "evidence": "D2 Q7 and D3 3f with verifiers: no guard_source_write, commit, security definer or grant in the four files; nothing changed under server/, client/, shared/ or scripts/ from f581b6b to 5a49ef0. Own read: publish and revoke set state='held' and active_revision_id=null (.sql:523, 542); the reader is constant (:553); the header at :6 says no guards, commit RPC or activation."
+   },
+   {
+    "item": "Identity, diff confinement and supervisor 90f4ebd unchanged",
+    "status": "COVERED",
+    "evidence": "D2 and D3 identity checks. Own: e90d464 tree bdb31ef3, parent 11a7900; diff 11a7900..e90d464 is the five paths plus the bindings JSON, with no supervisor or manifest path. D3 3f: supervisor 9f295ec and manifest 72514d6 blobs are identical at 90f4ebd, 11a7900, e90d464 and 5a49ef0."
+   },
+   {
+    "item": "Coordinator checkpoint (6a989d9) claims",
+    "status": "COVERED",
+    "evidence": "Definition, receipt, bindings, packet (6ac2cc59, 7,321 bytes, own recompute), 67 historical blobs and 8/7/4 triggers all recompute (D2, D3 and own). Discrepancy: the checkpoint at 6a989d9:26 says 'optional HI1/2/7', but HI-3 (.sql:387-388) and HI-4 (.sql:507-508) sit inside install_sql (:84-563) and move the definition hash (CF-4). The disk-side and working-tree fields are NOT PROVEN by rule."
+   },
+   {
+    "item": "Runtime/behavioural evidence for all of the above",
+    "status": "MISSING",
+    "evidence": "By rule nothing was run: no SQL, psql, verifier or database. All simulations are hand traces. The qualification window expired 2026-10-06T21:43:37Z, and supervisor 90f4ebd (doc 52 REVISION REQUIRED) still pins f581, so there is no qualification path for e90d464. Everything behavioural is NOT PROVEN."
+   }
+  ],
+  "ownChecks": [
+   {
+    "question": "Do the envelope fixtures in the verifier isolate the repeated-path rule (.sql:121-122) and the 32-ref bound (.sql:128)? (D3 verifier M-1)",
+    "answer": "No, confirmed. mjs:500-516@e90d464 publishes every invalid envelope with the original decisionText and asserts only publish 22023. mjs:509 (bindings path equals catalog path) would still refuse at the decision ref comparison (.sql:188-192) if :121-122 were deleted. mjs:514-515 (33 refs) would still refuse at nested-ref membership (:230/:309) if :128 were deleted. No direct valid_publication call tests them; mjs:760 is a privilege list. Upheld P3 (CF-2)."
+   },
+   {
+    "question": "Is the decision-text-only conflict branch reachable, and is the item 17 conflict requirement met? (D2 lens PASS vs verifier PARTIAL)",
+    "answer": "The branch is unreachable without a SHA-256 collision. .sql:502-504 validates before the lookup, and :200-202 requires sha256(raw text) to equal the publication's normalized_decision_inputs digest. So same publication plus different text raises 22023 at :504. Verifier mjs:694 expects exactly that, and its 23505 case at mjs:692-693 changes the publication via bindDecision. Every case refuses, so the refusal requirement is met. The record (coord_scope.md:43) and the packet ('different valid text/publication conflicts', rec_packet.md:40-41) overstate the 23505 path. P3 records (CF-3)."
+   },
+   {
+    "question": "Is D1-verifier M2 (1-30 agreement bound vs the reader's 3 acknowledgments) a new gap?",
+    "answer": "Only partly. coord_scope.md:97@7b1e606 already says that once canonical form acknowledgments are added, the complete required set must still satisfy 1-30 with no truncation. The cardinality interaction is therefore recorded, and SQL faithfully keeps 30 as a format ceiling. The remaining gap is the 64-character Text64 cap against the 100-character reader (core.mjs:101@e90d464) and the 128-character grammar (policies-data.ts:147). That merges with D3-5 as CF-9."
+   },
+   {
+    "question": "How many offerRules fit under the 8 MiB ceiling? (D1-5 lens 20,919 vs verifier about 22,000)",
+    "answer": "About 22,000. I computed it with node over JSON.stringify of a minimal valid rule: direct_order_request with refuse, quantity 1/1/1, one member audience, region AK, single 1-character refs. The base is 375 bytes plus id lengths plus a comma. Greedy shortest-unique ids give about 22,001 rules within 8,388,608 bytes. Either way 50,000 is unreachable, so D1-5 is upheld at P3 with the verifier's number."
+   },
+   {
+    "question": "Are the '\\.' literals (D1-2) introduced by this subject?",
+    "answer": "No. They are at f581b6b .sql:97, 102 and 114. e90d464 only adds collate \"C\" (:99, 104, 116). escape '\\' literals also appear at :48-54, 80-81, 472, 482 and 580-588 in both commits, so with standard_conforming_strings off the script fails closed overall. This is inherited, optional and P3 (CF-6)."
+   },
+   {
+    "question": "Does the coordinator checkpoint under-report the doc 50 HI edits?",
+    "answer": "Yes. The 'scope' field at 6a989d9:26 says 'optional HI1/2/7 precision/header edits'. e90d464 also has HI-3 (.sql:387-388) and HI-4 (.sql:507-508), both inside $currentness_install$ (:84-563), so both move the definition hash; neither changes behaviour. The builder packet discloses HI-1/2/3/4/7 (rec_packet.md:70-73). P3 records (CF-4)."
+   },
+   {
+    "question": "Is the narrowing of the accepted envelope-ref predicate disclosed?",
+    "answer": "No, confirmed. f581b6b accepted any distinct order. e90d464 .sql:129-133 requires strictly increasing bytea, as coord_scope.md:81 ('including envelope arrays') requires. rollback.md:67-73 and rec_packet.md:35-42 describe six unique kinds and 'sorted distinct sets', but never state that an accepted f581 predicate changed. P3 disclosure (CF-5)."
+   },
+   {
+    "question": "Do the definition hash and receipt recompute from Git objects?",
+    "answer": "Yes. The definition, computed from the install block plus the fingerprint block with LF, over git show e90d464, is 3ca2bab80e7b7e829c965e9dcc6e8f9ac2e96720ee24701615c0c1c90b249b74. The receipt at 5a49ef0 has raw sha256 bbffa669c4c62bfa8434eb0767dd3e57129166cc3a5139793eb7f6a995305cf2, with 66 entries, 66/66 sha256lf equal at e90d464, and it does not list itself. The packet at 5a49ef0 is 6ac2cc59, equal to the scratch copy. Scope record 655109ea."
+   },
+   {
+    "question": "Does any nested-key reorder fixture exist? (D3-3b)",
+    "answer": "No. mjs:620-631 has root-key reorder (:623), pretty whitespace, duplicate root and nested keys, escapes and number spellings, but no swapped nested pair. .sql:335 would refuse one by inspection. P3 coverage gap (CF-1)."
+   },
+   {
+    "question": "Simulation (f): for 1e2 in document (a), which line decides?",
+    "answer": "Line :269 (min<=max), because document (a) has maximum 10. Byte equality at :335 decides only when the bounds pass (for example 1e0 at mjs:629). The verifier's precision is correct, and the outcome is unchanged."
+   },
+   {
+    "question": "Is the header issue (F-D2-3) inside the hashed definition?",
+    "answer": "No. .sql:4-6 come before install_sql (:84). The fix changes only the file hash and receipt, not the definition. Confirmed: :4 reads 'coordinator7b1e606' with no space. :5-6 calls exact function names 'prefixes' (echoing doc 51 item 15); the predicate at :50-55 is a prefix match only for currentness_. P3 cosmetic (CF-8)."
+   }
+  ],
+  "upheld": [
+   {
+    "id": "CF-1",
+    "severity": "P3",
+    "file": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+    "claim": "Two decision-validator rules have no discriminating verifier case. The octet-ceiling case at mjs:638 uses whitespace only, which would also fail at parse and digest, so it would pass without .sql:161. Key-order reconstruction is tested only at the root (mjs:623). Merges D1-4 and D3-3.",
+    "fix": "Add an otherwise-valid canonical document bound with bindDecision: 8,388,609 bytes is refused, and 8,388,608 bytes is accepted (or at least reaches parse), which also measures latency. Add a raw fixture that swaps one nested key pair (for example sha256 before path). This changes the verifier only: re-pin the bindings and receipt; the definition hash is unchanged."
+   },
+   {
+    "id": "CF-2",
+    "severity": "P3",
+    "file": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+    "claim": "The envelope fixtures for repeated paths (mjs:509) and 33 refs (mjs:514-515) reuse decisionText bound to the original envelope, so they refuse first at the decision ref or membership checks (.sql:188-192, 230, 309). Deleting .sql:121-122 or the 1..32 bound at :128 would leave the verifier green. Source D3-verify M-1, confirmed by me.",
+    "fix": "Build each altered envelope's decision with decisionFixture(altered), widening nested refs for the 33-ref case, then bindDecision. Assert currentness_valid_publication = 'f', validator = 'f' and publish 22023. Re-pin the bindings and receipt."
+   },
+   {
+    "id": "CF-3",
+    "severity": "P3",
+    "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+    "claim": "The decision-text byte-difference disjunct at .sql:515 cannot be reached. The digest binding (:200-202), checked before the lookup (:502-504), makes same publication plus different text a 22023 refusal, not 23505. Item 17 (coord_scope.md:43) and the packet ('different valid text/publication conflicts', rec_packet.md:40-41) overstate this. The refusal property holds. Merges D1-verify M1 and F-D2-2.",
+    "fix": "Keep the disjunct as defence in depth. Add one records sentence to rollback.md near :67-73 and in the next packet saying that same-publication/different-text refuses 22023 at validation. Optionally add a comment at mjs:693-694. No SQL change."
+   },
+   {
+    "id": "CF-4",
+    "severity": "P3",
+    "file": "docs/coordination/launch-coordination-20261005/DOC51_DECISION_INPUT_COORDINATOR_CHECKPOINT_20261008.json (coordinator 6a989d9)",
+    "claim": "The checkpoint scope (:26) names only 'optional HI1/2/7' edits. The subject also carries HI-3 (.sql:387-388) and HI-4 (.sql:507-508) as comments inside the hashed install block, which change the definition hash. The builder packet discloses all five (rec_packet.md:70-73). Merges F-D2-1, D3-1 and D1-verify M3.",
+    "fix": "In the next coordinator records delta, change scope to 'HI-1/2/3/4/7 (HI-3/HI-4 comment-only inside the hashed install text; HI-1 adds one verifier 0A000 case)'. No source change."
+   },
+   {
+    "id": "CF-5",
+    "severity": "P3",
+    "file": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+    "claim": "The subject narrows valid_publication, which was accepted at f581b6b. Envelope sourceRefs and applicabilityRefs must now be strictly increasing by bytes (.sql:129-133), replacing set-distinctness. This is required by coord_scope.md:81, but neither rollback.md:67-73 nor rec_packet.md:35-42 says an accepted predicate changed. Source D2-verify M-1.",
+    "fix": "Add one sentence to rollback.md after :73 and to the next packet: valid_publication now requires exactly six artifacts and byte-increasing envelope refs. File hash and receipt re-pin only."
+   },
+   {
+    "id": "CF-6",
+    "severity": "P3",
+    "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+    "claim": "IMMUTABLE determinism rests on an argument, not on callee volatility. The validator and valid_publication call built-ins that PostgreSQL marks STABLE (convert_to, to_json, array_to_string, timestamptz_in, to_char). The inherited '\\.' and escape '\\' literals (present at f581b6b :97, 102, 114) depend on standard_conforming_strings, failing closed. Merges D1-1 and D1-2.",
+    "fix": "Record the determinism argument (Z suffix, ISO dates, no TM fields, collate C/bytea ordering, standard_conforming_strings=on assumed) in rollback.md and the packet. Optionally use [.] or assert standard_conforming_strings in pre/postcheck at the next definition change, which would re-pin the definition."
+   },
+   {
+    "id": "CF-7",
+    "severity": "P3",
+    "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+    "claim": "The WHEN OTHERS THEN false handlers (.sql:336, :137) are fail-closed but turn validator defects into ordinary refusals. Type names are unqualified under search_path='' (pg_temp is searched first for types). The function is owner-only and invoker, so the effect is self-inflicted at worst. Merges D1-3 and D1-6.",
+    "fix": "Optional: narrow the handler to parse-class SQLSTATEs and qualify types with pg_catalog at the next definition change. Otherwise record that qualification relies on the positive cases at mjs:649-677 and on the owner-only invoker rationale."
+   },
+   {
+    "id": "CF-8",
+    "severity": "P3",
+    "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+    "claim": "Header comment imprecision outside the hashed blocks. .sql:4 reads 'coordinator7b1e606', with no space (the HI-7 typo class). .sql:5-6 call the exact function names publish_revision, revoke_revision and read_current_authority 'prefixes', while the predicate at :50-55 is a prefix only for currentness_. This is F-D2-3 as narrowed by its verifier.",
+    "fix": "Reword .sql:4-6 at the next source delta. File hash and receipt re-pin only; the definition hash is unchanged."
+   },
+   {
+    "id": "CF-9",
+    "severity": "P3",
+    "file": "docs/coordination/launch-coordination-20261005/DOC51_CARRY_FORWARD_AND_DECISION_INPUT_SCOPE_20261008.md (coordinator 7b1e606):74,78",
+    "claim": "Text64 caps agreement kind and version at 64 characters (.sql:214). The existing grammar allows 128 (policies-data.ts:147) and the reader allows 100 (core.mjs:101@e90d464). The ASCII disclosure at :74 does not mention this length gap. The 1-30 cardinality interaction with acknowledgments is already recorded at :97. Merges D3-5 with the length part of D1-verify M2.",
+    "fix": "Add one records sentence: an agreement identifier of 65-128 characters needs a reviewed schemaVersion change, and v1 decides no legal identity or cardinality. No SQL change."
+   },
+   {
+    "id": "CF-10",
+    "severity": "P3",
+    "file": "docs/coordination/launch-coordination-20261005/DOC51_CARRY_FORWARD_AND_DECISION_INPUT_SCOPE_20261008.md (coordinator 7b1e606):86",
+    "claim": "The record admits up to 50,000 offerRules, but the 8,388,608-byte ceiling allows only about 22,000 distinct minimal canonical rules (own node computation). The frozen proposal's qualifier 'parser bounds, not measured capacity' was dropped. Source D1-5.",
+    "fix": "Restore the qualifier in the next records delta: the octet ceiling dominates, and 50,000 is not admitted capacity. No SQL change."
+   },
+   {
+    "id": "CF-11",
+    "severity": "P3",
+    "file": "docs/coordination/launch-coordination-20261005/DOC51_CARRY_FORWARD_AND_DECISION_INPUT_SCOPE_20261008.md (coordinator 7b1e606):27",
+    "claim": "Item 9 does not enumerate the census artifact's closed keys, order or types, so the readerCensusSha256 preimage is undefined. The validator checks only ^[0-9a-f]{64}$ (.sql:175). This is outside items 16-21, so it does not block this slice. Source D3-4.",
+    "fix": "Before any real digest is populated, record the census schema (keys, order, types, set encodings) in a reviewed coordinator record."
+   },
+   {
+    "id": "CF-12",
+    "severity": "P3",
+    "file": "docs/health-launch/quick-order-20261005/DOC51_DECISION_INPUT_REVIEW_PACKET_20261008.md (builder 5a49ef0)",
+    "claim": "Packet :22-23 and :33 say only the five paths changed from f581b6b and that no supervisor path changed. Relative to f581b6b, qualification-supervisor.mjs and the manifest were added (from 90f4ebd); the claim holds only against parent 11a7900. The packet also describes 90f4ebd's status from before doc 52 recorded REVISION REQUIRED. Merges D3-2 and the D3 stale-status discrepancy.",
+    "fix": "In the next builder records delta, word the delta relative to 11a7900 and update the supervisor status to doc 52 REVISION REQUIRED."
+   }
+  ],
+  "disposition": "SOURCE ACCEPT WITH LIMITS (reviewer opinion only, not Samuel's approval).\n\n**Reason.** The three lenses and their adversarial verifiers found no P0, P1 or P2. Where lens and verifier disagreed, I checked against the Git objects myself, and none of those points rises above P3:\n- Conflict reachability: refusal always holds; only the SQLSTATE path is overstated.\n- Fingerprint: the verifier's PARTIAL is only that runtime was not run.\n- Fixture isolation: confirmed as verifier coverage gaps.\n- D1-5 count: about 22,000 rules, as the verifier corrected.\n- M2: its cardinality half is already recorded at coord_scope.md:97.\n\n**What the source does.**\n- e90d464 implements items 16-18 and 21 in the five allowed files, after the coordinator recorded all 24 items at 7b1e606 (content-bound by addendum hash 655109ea).\n- Canonical bytes are enforced by raw-byte reconstruction equality, and the digest is bound to the raw text.\n- Envelope artifacts are exactly six, one per kind.\n- No legal, audience, region or quantity policy is chosen. The value sets match the reviewed application enumerations.\n\n**What is preserved.**\n- Every doc 50 head-integrity block is byte-identical to f581b6b.\n- The nineteen-trigger inventory is unchanged.\n- read_current_authority is constant 'unavailable', and every writer leaves the head held.\n- No guard, commit, definer, grant, wiring or activation was introduced.\n- Supervisor 90f4ebd is untouched.\n\n**Hashes.** These recompute from Git objects: definition 3ca2bab8, receipt bbffa669 with 66 of 66 entries, bindings 44b4f4a7 with 55 of 55, packet 6ac2cc59.\n\n**Limits.**\n1. Everything is NOT RUN, and the qualification window expired 2026-10-06T21:43:37Z.\n2. There is no qualification path for e90d464 while supervisor 90f4ebd stays REVISION REQUIRED and pinned to f581.\n3. Before any qualification run, the verifier needs discriminating cases for the octet ceiling, nested key order, repeated envelope paths and the 32-ref bound (CF-1, CF-2). These re-pin bindings and receipt only.\n4. Records corrections are needed: CF-3 (22023 vs 23505 wording), CF-4 (checkpoint HI-3/HI-4), CF-5 (accepted predicate narrowed), CF-9, CF-10, CF-12, plus the CF-6 determinism argument.\n5. The census preimage must be defined before any real digest (CF-11).\n6. All Health legal, audience, region, quantity and operating policy remains reserved to Samuel. Synthetic fixtures are not operational authority."
+ }
+}

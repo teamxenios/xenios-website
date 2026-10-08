@@ -41,3 +41,11 @@ instruction above supersedes that for routine reviews.
 | --- | --- |
 | Qualification supervisor `90f4ebd` | COMPLETE: doc 52 at `56f357e`, SOURCE REVISION REQUIRED. Section 6 added at Samuel's request answers where approval is actually checked and defines the two G0 memory figures; the disposition is unchanged |
 | Decision-input successor `e90d464a2e2f81f6b30a02bfef2fd3ccbe35d9e7` (tree `bdb31ef3…`, records `5a49ef0`) | READY on the builder's records and identified by this reviewer. A review was started, then paused at Samuel's instruction to stay on doc 52. **RESUMED** in this same session at Samuel's direct instruction (2026-10-08), which replaces the earlier one. The paused run had no completed lens, so the review restarted its lenses on the same exact target; no cached result was reused. In review now; the disposition will be doc 53 |
+
+## Queue state update (2026-10-08, after the resumed review)
+
+| Item | State |
+| --- | --- |
+| Decision-input successor `e90d464a2e2f81f6b30a02bfef2fd3ccbe35d9e7`, records `5a49ef0` | COMPLETE: doc 53, SOURCE ACCEPT WITH LIMITS; contract prerequisite satisfied; twelve P3 items, no P0 to P2 |
+| PS-R4 wording `e6d7dd10045289594d91a6a086ba592348d7edb8`, records `95283ce` | COMPLETE: doc 54 at `63fdb0a`, SOURCE ACCEPT WITH LIMITS as a partial PS-R4 correction |
+| Supervisor successor fixing doc 52 | not yet frozen; review it when the builder commits it and the board names it |
