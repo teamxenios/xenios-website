@@ -2,7 +2,7 @@
 import React, { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { renderToStaticMarkup } from "react-dom/server";
-import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import type { MemberProductDetail } from "@shared/research/member-catalog";
 import {
   MEMBER_CATALOG_FUTURE_CLINICAL_CATEGORY,
@@ -149,6 +149,26 @@ afterEach(() => {
   host = null;
 });
 
+function mountDetail(props: Partial<React.ComponentProps<typeof MemberProductDetailExperience>> = {}) {
+  host = document.createElement("div");
+  document.body.append(host);
+  root = createRoot(host);
+  act(() => root!.render(<MemberProductDetailExperience product={product} {...props} />));
+  return host;
+}
+
+function selectVariant(view: HTMLElement, value: string) {
+  const select = view.querySelector<HTMLSelectElement>("#member-product-variant")!;
+  act(() => {
+    select.value = value;
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+}
+
+function fact(view: HTMLElement, label: string) {
+  return Array.from(view.querySelectorAll("dt")).find((term) => term.textContent === label)?.nextElementSibling?.textContent;
+}
+
 describe("member product detail experience", () => {
   it("renders one shell heading, safe media, variant/price, lot-COA, and Research boundary", () => {
     const html = renderToStaticMarkup(
@@ -238,7 +258,9 @@ describe("member product detail experience", () => {
     expect(pending).not.toContain("Approved storage information is required.");
     expect(empty).toContain("Product not found.");
     expect(error).toContain("Product request failed.");
-    expect(unavailable).toContain("This product is not available.");
+    expect(unavailable).toContain("Product information is unavailable.");
+    expect(unavailable).toContain("This does not confirm the product&#x27;s availability.");
+    expect(unavailable).not.toContain("This product is not available.");
 
     for (const state of [
       "loading",
@@ -258,6 +280,11 @@ describe("member product detail experience", () => {
       expect(html).not.toContain("Reviewed summary.");
       expect(html).not.toContain("Request an alternative");
       expect(html).not.toContain(">Research<");
+      expect(html).not.toContain("SKU-A");
+      expect(html).not.toContain("$149.00");
+      expect(html).not.toContain("https://media.xeniostechnology.com/media-a");
+      expect(html).not.toContain("Why people are interested");
+      expect(html).not.toContain("/research/member/products/product-b");
     }
   });
 
@@ -300,7 +327,7 @@ describe("member product detail experience", () => {
     expect(html).not.toMatch(/Start treatment|Choose dose|Book clinician|Add to cart/);
   });
 
-  it("uses reflow-safe structures at desktop/720/375/320 and 200% zoom", () => {
+  it("includes local wrapping and responsive grid hooks without claiming browser or zoom qualification", () => {
     const html = renderToStaticMarkup(
       <MemberProductDetailExperience product={product} />,
     );
@@ -308,5 +335,117 @@ describe("member product detail experience", () => {
     expect(html).toContain("sm:grid-cols-2");
     expect(html).not.toMatch(/min-width:\s*[4-9]\d\dpx|width:\s*[4-9]\d\dpx/);
     expect(html).not.toContain("overflow-x:scroll");
+    expect(html).toContain("overflow-wrap:anywhere");
+    expect(html).toContain("input-field min-w-0 max-w-full");
+  });
+
+  it("shows supplied exact-variant facts without inferring missing strength, form or size", () => {
+    const view = mountDetail();
+    expect(fact(view, "Strength")).toBe("10 mg");
+    expect(fact(view, "Form")).toBe("Vial");
+    expect(fact(view, "Size")).toBe("Not provided");
+    expect(fact(view, "Presentation")).toBe("Single unit");
+    expect(view.textContent).toContain("Catalog status");
+    expect(fact(view, "Variant availability")).toBe("Available");
+    expect(view.querySelector('[role="status"]')?.textContent).toBe("Selected variant: Standard");
+    selectVariant(view, "variant-b");
+    expect(fact(view, "Strength")).toBe("20 mg");
+    expect(fact(view, "SKU")).toBe("SKU-B");
+    expect(fact(view, "Variant availability")).toBe("Not currently available");
+    expect(view.textContent).toContain("Catalog and variant availability are not purchase approval.");
+    act(() => root!.render(<MemberProductDetailExperience product={{ ...product, variants: [{
+      ...product.variants[0], strength: null, format: null, size: null, presentation: null,
+    }] }} />));
+    for (const label of ["Strength", "Form", "Size", "Presentation"]) expect(fact(view, label)).toBe("Not provided");
+  });
+
+  it("keeps a valid selection across refresh but does not resurrect a removed variant", () => {
+    const view = mountDetail();
+    selectVariant(view, "variant-b");
+    const repriced = { ...product.variants[1], price: { ...product.variants[1].price!, amountCents: 21900 } };
+    act(() => root!.render(<MemberProductDetailExperience product={{ ...product, variants: [repriced, product.variants[0]] }} />));
+    expect(fact(view, "SKU")).toBe("SKU-B");
+    expect(fact(view, "Member price")).toBe("$219.00");
+    act(() => root!.render(<MemberProductDetailExperience product={{ ...product, variants: [product.variants[0]] }} />));
+    expect(fact(view, "SKU")).toBe("SKU-A");
+    act(() => root!.render(<MemberProductDetailExperience product={product} />));
+    expect(fact(view, "SKU")).toBe("SKU-A");
+    expect((view.querySelector("#member-product-variant") as HTMLSelectElement).value).toBe("variant-a");
+    selectVariant(view, "variant-b");
+    act(() => root!.render(<MemberProductDetailExperience product={{ ...product, variants: [], variantCount: 0 }} />));
+    expect(view.querySelector("#member-product-variant")).toBeNull();
+    expect(view.textContent).toContain("Approved variant information is not available for this listing.");
+    act(() => root!.render(<MemberProductDetailExperience product={product} />));
+    expect(fact(view, "SKU")).toBe("SKU-A");
+  });
+
+  it("scopes selection to the current product and clears it after an empty successful response", () => {
+    const view = mountDetail({ product: null, state: "loading" });
+    act(() => root!.render(<MemberProductDetailExperience product={product} />));
+    selectVariant(view, "variant-b");
+    const nextProduct = { ...product, id: "other-product", slug: "other-product", displayName: "Other product", media: null,
+      variants: product.variants.map((variant) => ({ ...variant, productId: "other-product" })) };
+    act(() => root!.render(<MemberProductDetailExperience product={nextProduct} />));
+    expect(view.querySelector("h1")?.textContent).toBe("Other product");
+    expect(fact(view, "SKU")).toBe("SKU-A");
+    act(() => root!.render(<MemberProductDetailExperience product={product} />));
+    expect(fact(view, "SKU")).toBe("SKU-A");
+    selectVariant(view, "variant-b");
+    act(() => root!.render(<MemberProductDetailExperience product={null} />));
+    expect(view.textContent).toContain("Product not found.");
+    act(() => root!.render(<MemberProductDetailExperience product={product} />));
+    expect(fact(view, "SKU")).toBe("SKU-A");
+  });
+
+  it("preserves a valid selection during transient read states and calls only the supplied retry", () => {
+    const retry = vi.fn();
+    const view = mountDetail();
+    selectVariant(view, "variant-b");
+    act(() => root!.render(<MemberProductDetailExperience product={null} state="loading" />));
+    expect(view.querySelector('[data-testid="ra-loading"]')).not.toBeNull();
+    expect(view.textContent).not.toContain("SKU-B");
+    act(() => root!.render(<MemberProductDetailExperience product={product} />));
+    expect(fact(view, "SKU")).toBe("SKU-B");
+    act(() => root!.render(<MemberProductDetailExperience product={null} state="error" onRetry={retry} errorMessage="Product request failed." />));
+    expect(view.querySelector('[role="alert"]')?.textContent).toContain("Product request failed.");
+    const button = Array.from(view.querySelectorAll("button")).find((item) => item.textContent === "Try again")!;
+    act(() => button.click());
+    expect(retry).toHaveBeenCalledTimes(1);
+    act(() => root!.render(<MemberProductDetailExperience product={product} />));
+    expect(fact(view, "SKU")).toBe("SKU-B");
+    for (const state of ["loading", "unavailable", "unauthorized"] as const) {
+      act(() => root!.render(<MemberProductDetailExperience product={product} state={state} onRetry={retry} />));
+      expect(Array.from(view.querySelectorAll("button")).some((item) => item.textContent === "Try again")).toBe(false);
+    }
+    act(() => root!.render(<MemberProductDetailExperience product={product} state="error" />));
+    expect(Array.from(view.querySelectorAll("button")).some((item) => item.textContent === "Try again")).toBe(false);
+    expect(retry).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps long selected labels, canonical related links and missing media separate from availability", () => {
+    const label = "ExactCanonicalVariant".repeat(20);
+    const sku = "CanonicalSKU".repeat(20);
+    const view = mountDetail({ product: { ...product, displayName: "LongProduct".repeat(25), media: null,
+      variants: [{ ...product.variants[0], label, sku }] } });
+    expect(view.querySelector("h1")?.textContent).toBe("LongProduct".repeat(25));
+    expect(view.querySelector('[role="status"]')?.textContent).toBe(`Selected variant: ${label}`);
+    expect(fact(view, "SKU")).toBe(sku);
+    expect(fact(view, "Variant availability")).toBe("Available");
+    expect(fact(view, "Member price")).toBe("$149.00");
+    expect(view.textContent).toContain("An approved product image is not available.");
+    const related = view.querySelector('a[aria-label="View product: Beta Research"]');
+    expect(related?.getAttribute("href")).toBe("/research/member/products/product-b");
+    expect(view.querySelector("#member-product-variant")?.className).toContain("max-w-full");
+    expect(view.textContent).not.toMatch(/Buy now|Add to cart/);
+  });
+
+  it.each(["future_clinical", "non_product_program"] as const)("does not promise eventual ordering for %s", (lane) => {
+    const html = renderToStaticMarkup(<MemberProductDetailExperience product={{
+      ...product, lane, variants: [], price: null, media: null, displayState: "catalog_only", variantCount: 0,
+    }} />);
+    expect(html).not.toContain("Ordering appears only after");
+    expect(html).not.toContain("Request an alternative");
+    expect(html).not.toMatch(/Buy now|Add to cart|Start treatment|Choose dose/);
+    expect(html).toContain(lane === "future_clinical" ? "not an offer of treatment or medication" : "does not offer enrollment or purchasing");
   });
 });

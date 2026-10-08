@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import { productRequestHref } from "@shared/research/product-request-sources";
 import type {
@@ -96,16 +96,26 @@ export function MemberProductDetailExperience({
   errorMessage?: string;
   onRetry?: () => void;
 }) {
-  const [selectedVariantId, setSelectedVariantId] = useState(
-    product?.variants[0]?.id ?? "",
-  );
+  const [selection, setSelection] = useState({
+    productId: product?.id ?? null,
+    variantId: product?.variants[0]?.id ?? null,
+  });
   const selected = useMemo(
     () =>
-      product?.variants.find((variant) => variant.id === selectedVariantId) ??
+      (selection.productId === product?.id
+        ? product?.variants.find((variant) => variant.id === selection.variantId)
+        : null) ??
       product?.variants[0] ??
       null,
-    [product, selectedVariantId],
+    [product, selection],
   );
+  useEffect(() => {
+    if (state !== "ok") return;
+    const productId = product?.id ?? null;
+    const variantId = selected?.id ?? null;
+    setSelection((current) => current.productId === productId && current.variantId === variantId
+      ? current : { productId, variantId });
+  }, [state, product?.id, selected?.id]);
   const education = useMemo(
     () =>
       product
@@ -123,6 +133,7 @@ export function MemberProductDetailExperience({
   const showProductIdentity = state === "ok" && product !== null;
 
   return (
+    <div className="min-w-0" style={{ overflowWrap: "anywhere" }}>
     <ResearchMemberShell
       eyebrow={showProductIdentity ? product.category : "Product catalog"}
       title={showProductIdentity ? product.displayName : "Product information"}
@@ -148,8 +159,8 @@ export function MemberProductDetailExperience({
         state={state}
         errorMessage={errorMessage}
         onRetry={onRetry}
-        unavailableTitle="This product is not available."
-        unavailableBody="Only an exact published and public Product Control record can appear here."
+        unavailableTitle="Product information is unavailable."
+        unavailableBody="Approved product information could not be loaded. This does not confirm the product's availability."
       >
         {product === null ? (
           <ResearchEmptyState
@@ -163,36 +174,39 @@ export function MemberProductDetailExperience({
           />
         ) : (
           <>
-            <section className="card grid gap-6 md:grid-cols-2">
+            <section className="card grid min-w-0 gap-6 md:grid-cols-2">
               <div style={{ minWidth: 0 }}>
                 <ProductMedia media={product.media} productId={product.id}
                   variantId={selected?.id ?? null} loading="eager" />
               </div>
               <div className="grid content-start gap-4" style={{ minWidth: 0 }}>
                 <p className="mono-label text-ink-mute">{product.classification}</p>
-                <ResearchStatusBadge
-                  label={
-                    product.displayState === "available"
-                      ? "Available"
-                      : product.displayState === "catalog_only"
-                        ? "Catalog information"
-                        : product.displayState === "documentation_pending"
-                          ? "Documentation pending"
-                          : product.displayState === "pricing_pending"
-                            ? "Pricing pending"
-                            : "Unavailable"
-                  }
-                  tone={product.displayState === "available" ? "success" : "pending"}
-                />
+                <div>
+                  <p className="form-label mb-2">Catalog status</p>
+                  <ResearchStatusBadge
+                    label={
+                      product.displayState === "available"
+                        ? "Available"
+                        : product.displayState === "catalog_only"
+                          ? "Catalog information"
+                          : product.displayState === "documentation_pending"
+                            ? "Documentation pending"
+                            : product.displayState === "pricing_pending"
+                              ? "Pricing pending"
+                              : "Unavailable"
+                    }
+                    tone={product.displayState === "available" ? "success" : "pending"}
+                  />
+                </div>
 
                 {product.variants.length ? (
-                  <label className="grid gap-2" htmlFor="member-product-variant">
+                  <label className="grid min-w-0 gap-2" htmlFor="member-product-variant">
                     <span className="form-label">Variant</span>
                     <select
                       id="member-product-variant"
-                      className="input-field"
+                      className="input-field min-w-0 max-w-full"
                       value={selected?.id ?? ""}
-                      onChange={(event) => setSelectedVariantId(event.target.value)}
+                      onChange={(event) => setSelection({ productId: product.id, variantId: event.target.value })}
                     >
                       {product.variants.map((variant) => (
                         <option key={variant.id} value={variant.id}>
@@ -205,7 +219,7 @@ export function MemberProductDetailExperience({
                   <div className="grid gap-3">
                     <ResearchPendingPanel
                       kind="supplier_pending"
-                      body="An exact approved Product Control variant and SKU are required."
+                      body="Approved variant information is not available for this listing."
                     />
                     {product.lane === "future_clinical" && (
                       <p className="body-s text-ink-2">Pricing shown after clinical review</p>
@@ -213,14 +227,30 @@ export function MemberProductDetailExperience({
                   </div>
                 )}
 
+                {selected && (
+                  <p className="body-s text-ink-2" role="status" aria-live="polite" aria-atomic="true">
+                    Selected variant: {selected.label}
+                  </p>
+                )}
                 {selected && selectedPrice && (
                   <dl className="grid gap-3 body-s sm:grid-cols-2">
+                    {([
+                      ["Strength", selected.strength],
+                      ["Form", selected.format],
+                      ["Size", selected.size],
+                      ["Presentation", selected.presentation],
+                    ] as const).map(([label, value]) => (
+                      <div key={label} className="min-w-0">
+                        <dt className="mono-label text-ink-mute">{label}</dt>
+                        <dd className="mt-1">{value?.trim() ? value : "Not provided"}</dd>
+                      </div>
+                    ))}
                     <div>
                       <dt className="mono-label text-ink-mute">{selectedPrice.label}</dt>
                       <dd className="mt-1 tabular">{selectedPrice.value}</dd>
                     </div>
                     <div>
-                      <dt className="mono-label text-ink-mute">Availability</dt>
+                      <dt className="mono-label text-ink-mute">Variant availability</dt>
                       <dd className="mt-1">
                         {selected.availability === "available"
                           ? "Available"
@@ -240,8 +270,11 @@ export function MemberProductDetailExperience({
                   </dl>
                 )}
                 <p className="body-s text-ink-mute">
-                  Ordering appears only after current product, price,
-                  documentation, and availability checks pass.
+                  {product.lane === "future_clinical"
+                    ? "This is clinical pathway information, not an offer of treatment or medication. Provider and pharmacy availability require separate confirmation."
+                    : product.lane === "non_product_program"
+                      ? "This program listing is informational. It does not offer enrollment or purchasing."
+                      : "Catalog and variant availability are not purchase approval. Ordering requires current product, price, documentation, and availability checks."}
                 </p>
               </div>
             </section>
@@ -304,14 +337,15 @@ export function MemberProductDetailExperience({
                     {product.relatedProducts.map((related) => (
                       <li
                         key={related.id}
-                        className="flex flex-wrap items-center justify-between gap-3"
+                        className="flex min-w-0 flex-wrap items-center justify-between gap-3"
                       >
-                        <span className="body-s font-700">
+                        <span className="body-s font-700 min-w-0">
                           {related.displayName}
                         </span>
                         <Link
                           href={`/research/member/products/${related.slug}`}
                           className="btn btn-ghost"
+                          aria-label={`View product: ${related.displayName}`}
                         >
                           View product
                         </Link>
@@ -336,5 +370,6 @@ export function MemberProductDetailExperience({
         )}
       </ResearchRouteBoundary>
     </ResearchMemberShell>
+    </div>
   );
 }

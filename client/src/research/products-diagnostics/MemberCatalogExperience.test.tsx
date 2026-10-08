@@ -93,12 +93,33 @@ afterEach(() => {
   host = null;
 });
 
-function mount() {
+function mount(props: Partial<React.ComponentProps<typeof MemberCatalogExperience>> = {}) {
   host = document.createElement("div");
   document.body.append(host);
   root = createRoot(host);
-  act(() => root!.render(<MemberCatalogExperience catalog={catalog} />));
+  act(() => root!.render(<MemberCatalogExperience catalog={catalog} {...props} />));
   return host;
+}
+
+function changeSelect(view: HTMLElement, id: string, value: string) {
+  const select = view.querySelector<HTMLSelectElement>(`#${id}`)!;
+  act(() => {
+    select.value = value;
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+}
+
+function searchFor(view: HTMLElement, value: string) {
+  const search = view.querySelector<HTMLInputElement>("#member-catalog-search")!;
+  act(() => {
+    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(search, value);
+    search.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
+
+function cardIds(view: HTMLElement) {
+  return Array.from(view.querySelectorAll('li[data-testid^="member-catalog-card-"]'))
+    .map((card) => card.getAttribute("data-testid"));
 }
 
 describe("member catalog experience", () => {
@@ -223,7 +244,7 @@ describe("member catalog experience", () => {
     }
   });
 
-  it("uses reflow-safe responsive structures for 720/375/320 and 200% zoom", () => {
+  it("includes responsive and wrapping hooks without claiming browser or zoom qualification", () => {
     const html = renderToStaticMarkup(
       <MemberCatalogExperience catalog={catalog} />,
     );
@@ -232,5 +253,128 @@ describe("member catalog experience", () => {
     expect(html).not.toMatch(/min-width:\s*[4-9]\d\dpx|width:\s*[4-9]\d\dpx/);
     expect(html).not.toContain("overflow-x:scroll");
     expect(html).toContain('aria-live="polite"');
+  });
+
+  it("uses the permitted items for facets, displayed cards and counts", () => {
+    const view = mount({ catalog: { ...catalog, categories: ["Stale category"], lanes: [] } });
+    const categories = view.querySelector<HTMLSelectElement>("#member-catalog-category")!;
+    expect(Array.from(categories.options).map((option) => option.value)).toEqual(["all", "Diagnostics", "Research"]);
+    expect(view.textContent).not.toContain("Stale category");
+    expect(view.querySelector("#member-catalog-lane")?.textContent).toContain("Research");
+    expect(view.textContent).toContain("2 of 2 products");
+    searchFor(view, "a-1");
+    expect(cardIds(view)).toEqual(["member-catalog-card-product-a"]);
+    expect(view.textContent).toContain("1 of 2 products");
+    expect(view.querySelector('[role="status"]')?.getAttribute("aria-atomic")).toBe("true");
+  });
+
+  it("distinguishes no matches from no published products and resets all controls", () => {
+    const view = mount();
+    changeSelect(view, "member-catalog-sort", "name_descending");
+    expect(view.textContent).toContain("Clear filters");
+    changeSelect(view, "member-catalog-lane", "research_material");
+    changeSelect(view, "member-catalog-category", "Diagnostics");
+    searchFor(view, "not a catalog entry");
+    expect(view.textContent).toContain("No products match those filters.");
+    expect(view.textContent).not.toContain("No products are published yet.");
+    expect(view.textContent).toContain("0 of 2 products");
+    const clear = Array.from(view.querySelectorAll("button")).find((button) => button.textContent === "Clear filters")!;
+    act(() => clear.click());
+    expect((view.querySelector("#member-catalog-search") as HTMLInputElement).value).toBe("");
+    expect((view.querySelector("#member-catalog-lane") as HTMLSelectElement).value).toBe("all");
+    expect((view.querySelector("#member-catalog-category") as HTMLSelectElement).value).toBe("all");
+    expect((view.querySelector("#member-catalog-sort") as HTMLSelectElement).value).toBe("name_ascending");
+    expect(cardIds(view)).toEqual(["member-catalog-card-product-a", "member-catalog-card-product-b"]);
+  });
+
+  it("reconciles removed facets only after successful refresh without resurrecting them", () => {
+    const clinical: MemberCatalog = { ...catalog, items: [
+      { ...catalog.items[0], lane: "future_clinical", price: null, displayState: "catalog_only" },
+      catalog.items[1],
+    ] };
+    const view = mount({ catalog: clinical });
+    searchFor(view, "a");
+    changeSelect(view, "member-catalog-lane", "future_clinical");
+    changeSelect(view, "member-catalog-category", "Diagnostics");
+    changeSelect(view, "member-catalog-sort", "name_descending");
+    act(() => root!.render(<MemberCatalogExperience catalog={{ ...catalog, items: [] }} state="loading" />));
+    act(() => root!.render(<MemberCatalogExperience catalog={clinical} />));
+    expect((view.querySelector("#member-catalog-lane") as HTMLSelectElement).value).toBe("future_clinical");
+    expect((view.querySelector("#member-catalog-category") as HTMLSelectElement).value).toBe("Diagnostics");
+    act(() => root!.render(<MemberCatalogExperience catalog={{ ...catalog, items: [catalog.items[1]] }} />));
+    expect((view.querySelector("#member-catalog-lane") as HTMLSelectElement).value).toBe("all");
+    expect((view.querySelector("#member-catalog-category") as HTMLSelectElement).value).toBe("all");
+    expect((view.querySelector("#member-catalog-search") as HTMLInputElement).value).toBe("a");
+    expect((view.querySelector("#member-catalog-sort") as HTMLSelectElement).value).toBe("name_descending");
+    act(() => root!.render(<MemberCatalogExperience catalog={clinical} />));
+    expect(view.textContent).toContain("2 of 2 products");
+  });
+
+  it("preserves useful query and filter state through a failed read and its retry", () => {
+    const retry = vi.fn();
+    const view = mount();
+    searchFor(view, "A-1");
+    changeSelect(view, "member-catalog-category", "Research");
+    act(() => root!.render(<MemberCatalogExperience catalog={{ ...catalog, items: [] }} state="error" onRetry={retry} />));
+    const button = Array.from(view.querySelectorAll("button")).find((item) => item.textContent === "Try again")!;
+    act(() => button.click());
+    expect(retry).toHaveBeenCalledTimes(1);
+    act(() => root!.render(<MemberCatalogExperience catalog={catalog} />));
+    expect((view.querySelector("#member-catalog-search") as HTMLInputElement).value).toBe("A-1");
+    expect((view.querySelector("#member-catalog-category") as HTMLSelectElement).value).toBe("Research");
+    expect(cardIds(view)).toEqual(["member-catalog-card-product-a"]);
+  });
+
+  it.each(["name_ascending", "name_descending", "recently_updated"])("breaks equal sort values by canonical identity for %s", (sort) => {
+    const items = ["zeta", "alpha"].map((slug) => ({ ...catalog.items[0], id: slug, slug, displayName: "Same name", updatedAt: AT }));
+    const view = mount({ catalog: { ...catalog, items } });
+    changeSelect(view, "member-catalog-sort", sort);
+    expect(cardIds(view)).toEqual(["member-catalog-card-alpha", "member-catalog-card-zeta"]);
+    act(() => root!.render(<MemberCatalogExperience catalog={{ ...catalog, items: [...items].reverse() }} />));
+    expect(cardIds(view)).toEqual(["member-catalog-card-alpha", "member-catalog-card-zeta"]);
+    expect(items.map((item) => item.id)).toEqual(["zeta", "alpha"]);
+  });
+
+  it("keeps exact links, long canonical labels and availability independent of missing media", () => {
+    const name = "LongCanonicalProduct".repeat(25);
+    const category = "LongCanonicalCategory".repeat(20);
+    const view = mount({ catalog: { ...catalog, items: [{ ...catalog.items[1], displayName: name, category, media: null }] } });
+    const card = view.querySelector('li[data-testid="member-catalog-card-product-a"]')!;
+    expect(card.textContent).toContain(name);
+    expect(card.textContent).toContain(category);
+    const categorySelect = view.querySelector<HTMLSelectElement>("#member-catalog-category")!;
+    expect(categorySelect.options[1].textContent).toBe(category);
+    expect(categorySelect.className).toContain("min-w-0 max-w-full");
+    expect(categorySelect.labels?.[0]?.className).toContain("min-w-0");
+    expect(card.textContent).toContain("Available");
+    expect(card.textContent).toContain("$149.00");
+    expect(card.textContent).toContain("An approved product image is not available.");
+    expect((card as HTMLElement).style.overflowWrap).toBe("anywhere");
+    const links = Array.from(card.querySelectorAll("a"));
+    expect(links.every((link) => link.getAttribute("href") === "/research/member/products/product-a")).toBe(true);
+    expect(links[1].getAttribute("aria-label")).toBe(`View product: ${name}`);
+    expect(links[1].hasAttribute("aria-disabled")).toBe(false);
+  });
+
+  it.each(["loading", "error", "unavailable", "unauthorized"] as const)("does not expose stale product cards or counts during %s", (state) => {
+    const html = renderToStaticMarkup(<MemberCatalogExperience catalog={catalog} state={state} />);
+    expect(html).not.toContain("Alpha Research");
+    expect(html).not.toContain("$149.00");
+    expect(html).not.toContain("2 of 2 products");
+    expect(html).not.toContain("No products are published yet.");
+  });
+
+  it("keeps pricing, documentation and clinical review descriptions distinct", () => {
+    const html = renderToStaticMarkup(<MemberCatalogExperience catalog={{ ...catalog, items: [
+      catalog.items[0],
+      { ...catalog.items[1], displayState: "pricing_pending", price: null },
+      { ...catalog.items[0], id: "clinical", slug: "clinical", lane: "future_clinical", displayState: "catalog_only", price: null },
+    ] }} />);
+    expect(html).toContain("Documentation pending");
+    expect(html).toContain("Pricing pending");
+    expect(html).toContain("Clinical / provider review");
+    expect(html).toContain("Pricing shown after clinical review");
+    expect(html).toContain("does not confirm provider or pharmacy availability");
+    expect(html).not.toMatch(/Buy now|Add to cart|Start treatment/);
   });
 });

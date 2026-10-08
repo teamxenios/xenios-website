@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "wouter";
 import { productRequestHref } from "@shared/research/product-request-sources";
 import type {
@@ -94,7 +94,7 @@ function pricePresentation(product: MemberCatalogCard): { label: string; value: 
 
 function catalogSummary(product: MemberCatalogCard): string {
   if (product.lane === "future_clinical") {
-    return "This clinical listing is available only through independent licensed review and current pharmacy fulfillment. A listing does not guarantee suitability or a prescription.";
+    return "Clinical information requires independent licensed review. This listing does not confirm provider or pharmacy availability, clinical suitability, or a prescription.";
   }
   if (product.displayState === "documentation_pending" || product.displayState === "pricing_pending") {
     return "This listing remains under documentation, pricing, classification, or availability review. No transaction or pathway availability is implied.";
@@ -145,6 +145,7 @@ function CatalogCard({ product }: { product: MemberCatalogCard }) {
         <Link
           href={`/research/member/products/${product.slug}`}
           className="btn btn-secondary"
+          aria-label={`View product: ${product.displayName}`}
         >
           View product
         </Link>
@@ -169,12 +170,29 @@ export function MemberCatalogExperience({
   const [category, setCategory] = useState("all");
   const [sort, setSort] = useState<MemberCatalogSort>("name_ascending");
 
+  // Facets, counts and cards all describe the supplied permitted collection.
+  const facets = useMemo(() => ({
+    lanes: [...new Set(catalog.items.map((product) => product.lane))]
+      .sort((left, right) => left.localeCompare(right, "en")),
+    categories: [...new Set(catalog.items.map((product) => product.category))]
+      .sort((left, right) => left.localeCompare(right, "en")),
+  }), [catalog.items]);
+  const currentLane = facets.lanes.some((value) => value === lane) ? lane : "all";
+  const currentCategory = facets.categories.includes(category) ? category : "all";
+
+  useEffect(() => {
+    // A transient loading/error collection must not erase a useful selection.
+    if (state !== "ok") return;
+    if (lane !== currentLane) setLane(currentLane);
+    if (category !== currentCategory) setCategory(currentCategory);
+  }, [state, lane, category, currentLane, currentCategory]);
+
   const visible = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     return catalog.items
       .filter((product) => {
-        if (lane !== "all" && product.lane !== lane) return false;
-        if (category !== "all" && product.category !== category) return false;
+        if (currentLane !== "all" && product.lane !== currentLane) return false;
+        if (currentCategory !== "all" && product.category !== currentCategory) return false;
         return (
           !normalized ||
           [
@@ -189,15 +207,18 @@ export function MemberCatalogExperience({
         );
       })
       .sort((left, right) => {
+        const nameOrder = left.displayName.localeCompare(right.displayName, "en");
+        const identityOrder = left.slug.localeCompare(right.slug, "en") ||
+          left.id.localeCompare(right.id, "en");
         if (sort === "name_descending") {
-          return right.displayName.localeCompare(left.displayName);
+          return -nameOrder || identityOrder;
         }
         if (sort === "recently_updated") {
-          return right.updatedAt.localeCompare(left.updatedAt);
+          return right.updatedAt.localeCompare(left.updatedAt, "en") || nameOrder || identityOrder;
         }
-        return left.displayName.localeCompare(right.displayName);
+        return nameOrder || identityOrder;
       });
-  }, [catalog.items, category, lane, query, sort]);
+  }, [catalog.items, currentCategory, currentLane, query, sort]);
 
   const clearFilters = () => {
     setQuery("");
@@ -225,57 +246,57 @@ export function MemberCatalogExperience({
         unavailableBody="The catalog remains closed until its approved records can be loaded."
       >
         <section
-          className="card grid gap-4 md:grid-cols-2"
+          className="card grid min-w-0 gap-4 md:grid-cols-2"
           aria-label="Catalog controls"
         >
-          <label className="grid gap-2" htmlFor="member-catalog-search">
+          <label className="grid min-w-0 gap-2" htmlFor="member-catalog-search">
             <span className="form-label">Search products</span>
             <input
               id="member-catalog-search"
-              className="input-field"
+              className="input-field min-w-0 max-w-full"
               type="search"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search name, category, or alias"
             />
           </label>
-          <label className="grid gap-2" htmlFor="member-catalog-lane">
+          <label className="grid min-w-0 gap-2" htmlFor="member-catalog-lane">
             <span className="form-label">Product family</span>
             <select
               id="member-catalog-lane"
-              className="input-field"
-              value={lane}
+              className="input-field min-w-0 max-w-full"
+              value={currentLane}
               onChange={(event) => setLane(event.target.value)}
             >
               <option value="all">All product families</option>
-              {catalog.lanes.map((item) => (
+              {facets.lanes.map((item) => (
                 <option key={item} value={item}>
                   {laneLabel(item)}
                 </option>
               ))}
             </select>
           </label>
-          <label className="grid gap-2" htmlFor="member-catalog-category">
+          <label className="grid min-w-0 gap-2" htmlFor="member-catalog-category">
             <span className="form-label">Category</span>
             <select
               id="member-catalog-category"
-              className="input-field"
-              value={category}
+              className="input-field min-w-0 max-w-full"
+              value={currentCategory}
               onChange={(event) => setCategory(event.target.value)}
             >
               <option value="all">All categories</option>
-              {catalog.categories.map((item) => (
+              {facets.categories.map((item) => (
                 <option key={item} value={item}>
                   {item}
                 </option>
               ))}
             </select>
           </label>
-          <label className="grid gap-2" htmlFor="member-catalog-sort">
+          <label className="grid min-w-0 gap-2" htmlFor="member-catalog-sort">
             <span className="form-label">Sort</span>
             <select
               id="member-catalog-sort"
-              className="input-field"
+              className="input-field min-w-0 max-w-full"
               value={sort}
               onChange={(event) => setSort(event.target.value as MemberCatalogSort)}
             >
@@ -292,11 +313,11 @@ export function MemberCatalogExperience({
               <h2 id="member-catalog-results" className="body-l font-700">
                 Catalog
               </h2>
-              <p className="body-s text-ink-2 mt-1" role="status" aria-live="polite">
-                {visible.length} {visible.length === 1 ? "product" : "products"}
+              <p className="body-s text-ink-2 mt-1" role="status" aria-live="polite" aria-atomic="true">
+                {visible.length} of {catalog.items.length} {catalog.items.length === 1 ? "product" : "products"}
               </p>
             </div>
-            {(query || lane !== "all" || category !== "all") && (
+            {(query || currentLane !== "all" || currentCategory !== "all" || sort !== "name_ascending") && (
               <button
                 type="button"
                 className="btn btn-ghost"
