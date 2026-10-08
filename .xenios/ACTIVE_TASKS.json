@@ -4,7 +4,7 @@
   "tasks": [
     {
       "id": "ACCEPTED-SOURCE-INTEGRATION-20261005",
-      "title": "Accepted customer assembly r1; exact four-path C transfer onto accepted catalog",
+      "title": "Doc62 records-only correction r1; accepted customer source frozen",
       "priority": "P1",
       "state": "qa",
       "owner": "codex-accepted-source-integration-20261005",
@@ -17,11 +17,26 @@
         "docs/health-launch/accepted-source-integration-20261005/CUSTOMER_ACCEPTED_ASSEMBLY_20261008.md",
         "docs/health-launch/accepted-source-integration-20261005/customer-accepted-assembly-bindings-20261008.json",
         "docs/health-launch/accepted-source-integration-20261005/customer-accepted-assembly-preservation-20261008.json",
+        "docs/health-launch/accepted-source-integration-20261005/DOC62_RECORDS_CORRECTION_20261008.md",
+        "docs/health-launch/accepted-source-integration-20261005/doc62-records-bindings-20261008.json",
+        "docs/health-launch/accepted-source-integration-20261005/doc62-product-page-reservation-proposal-20261008.patch",
+        "docs/health-launch/accepted-source-integration-20261005/doc62-records-preservation-20261008.json",
         ".xenios/sessions/codex-accepted-source-integration-20261005.json",
         ".xenios/handoffs/*ACCEPTED-SOURCE-INTEGRATION-20261005*"
       ],
       "dependsOn": [],
-      "scopeNote": "CUSTOMER-ACCEPTED-ASSEMBLY-20261008 r1 at coordinator 8655288a1059a9fbd0ae985161db440481b9f9fa. Same integrator accepts explicit return ce5e58f of exactly four immutable C blobs from 736bb2a. Preserve B at 8f080a0 and all other source/history/foreign records. Local-only exact assembly; no glue, execution, push, protected or hosted change.",
+      "scopeNote": "DOC62-INTEGRATION-RECORDS-CORRECTION-20261008 r1 at coordinator 33ca4197f0b7b9de61822f9a65e3b15b8d8a1820. Own new records and own continuity rows only. Existing four C paths are frozen custody reservations, not active source-write scope. Eight accepted source files frozen in own registry; all historical evidence and foreign records preserved. No shared registry amendment, source edit, execution, push or hosted action.",
+      "doc62RecordsAssignment": {
+        "id": "DOC62-INTEGRATION-RECORDS-CORRECTION-20261008",
+        "revision": 1,
+        "baseline": "f175f3c1bdfed6dc2d0f71733cc5dff63298b160",
+        "claimedAt": "2026-10-08T23:25:56Z",
+        "completedAt": "2026-10-08T23:34:13Z",
+        "status": "LOCAL_RECORDS_COMPLETE; original source SOURCE_ACCEPT_WITH_LIMITS; NOT_RUN; records correction not independently accepted",
+        "packet": "docs/health-launch/accepted-source-integration-20261005/DOC62_RECORDS_CORRECTION_20261008.md",
+        "handoff": ".xenios/handoffs/2026-10-08T23-34-13Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md"
+      },
+      "frozenSourceCustodyRef": ".xenios/CODE_OWNERSHIP.json#d0897045-efd3-425b-a8b4-02385e855153/immutableAcceptedSource",
       "assemblyAssignment": {
         "id": "CUSTOMER-ACCEPTED-ASSEMBLY-20261008",
         "revision": 1,
@@ -36,7 +51,7 @@
         "source": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055",
         "tree": "e90de4206f9698f00bc1ee8a9905978db8c960ce",
         "sourceParent": "9c2dd1cb1d4943aa3c924e77931bad4d02050c6c",
-        "status": "EXACT_BLOBS_ASSEMBLED_LOCAL_ONLY; NOT_RUN; COMPOSED_REVIEW_PENDING",
+        "status": "SOURCE_ACCEPT_WITH_LIMITS at Doc62 e27fa1bdbe0ee699f9cab2ea8feee59e3a5f488a; NOT_RUN; LOCAL_ONLY",
         "packet": "docs/health-launch/accepted-source-integration-20261005/CUSTOMER_ACCEPTED_ASSEMBLY_20261008.md"
       },
       "correctionAssignment": {
@@ -68,10 +83,10 @@
         "session": "codex-accepted-source-integration-20261005",
         "sha": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055",
         "tree": "e90de4206f9698f00bc1ee8a9905978db8c960ce",
-        "file": ".xenios/handoffs/2026-10-08T20-33-05Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md",
-        "at": "2026-10-08T20:33:05Z",
-        "publication": "LOCAL_ONLY_NOT_PUSHED",
-        "execution": "NOT_RUN; ordinary final for coordinator collection; composed checkpoint acceptance and review delivery not claimed"
+      "file": ".xenios/handoffs/2026-10-08T23-34-13Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md",
+      "at": "2026-10-08T23:34:13Z",
+      "publication": "LOCAL_ONLY_NOT_PUSHED",
+      "execution": "NOT_RUN; source accepted with limits by Doc62 e27fa1bd; this records correction not independently accepted; ordinary final for coordinator collection"
       },
       "historicalAcceptedScope": {
         "source": "756a906877dbc174b7e228a259d2faa9c3af48ca",

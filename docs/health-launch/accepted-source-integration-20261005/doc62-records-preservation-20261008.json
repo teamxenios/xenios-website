@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "kind": "DOC62_RECORDS_ONLY_PRESERVATION_METADATA_NOT_EXECUTION",
+  "assignment": "DOC62-INTEGRATION-RECORDS-CORRECTION-20261008 r1",
+  "source": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055",
+  "sourceTree": "e90de4206f9698f00bc1ee8a9905978db8c960ce",
+  "capturedAt": "2026-10-08T23:36:05Z",
+  "baseline": "f175f3c1bdfed6dc2d0f71733cc5dff63298b160",
+  "checkedIndexTreeBeforeNewPreservationRecord": "0e2a485140b8f1d72aabb072a2dde751c4b55f5b",
+  "baselineTrackedRows": 5996,
+  "retainedBaseline": {
+    "exclusions": [
+      ".xenios/ACTIVE_TASKS.json",
+      ".xenios/CODE_OWNERSHIP.json",
+      ".xenios/SESSION_REGISTRY.json",
+      ".xenios/sessions/codex-accepted-source-integration-20261005.json"
+    ],
+    "rows": 5992,
+    "bytes": 708549,
+    "sha256": "c6a94f2135a767f1a2a9b1993f3e4e777ad05d3db1e3bf16a45112797b9b7632",
+    "mismatches": [],
+    "derivation": "All baseline full git -c core.quotePath=true ls-tree -r rows in Git order, excluding exactly four own continuity JSON paths; UTF-8 no BOM, LF plus final LF. Includes records and quoted docs paths deliberately. Candidate comparison uses the exact same baseline path universe, not a docs-prefix filter."
+  },
+  "foreignRegistryChecks": [
+    {
+      "path": ".xenios/ACTIVE_TASKS.json",
+      "ownRow": "ACCEPTED-SOURCE-INTEGRATION-20261005",
+      "foreignRowCount": 90,
+      "foreignRowsEqual": true,
+      "topLevelFieldsEqual": true,
+      "foreignCanonicalJsonSha256": "750da6836b7d315b7411902a3d9a8f8b34dcf1b7c5fe42ce1d147d8316a7081a",
+      "topCanonicalJsonSha256": "39d6f72901ccffae8dcc4942176eb3257c98473fc94c4b200f76eb5bf63f4005"
+    },
+    {
+      "path": ".xenios/CODE_OWNERSHIP.json",
+      "ownRow": "d0897045-efd3-425b-a8b4-02385e855153",
+      "foreignRowCount": 133,
+      "foreignRowsEqual": true,
+      "topLevelFieldsEqual": true,
+      "foreignCanonicalJsonSha256": "dfcea8d3fded51c30cede0048ffcef17f7edfeef0037f56951497fca650dbaf1",
+      "topCanonicalJsonSha256": "511a755f9be0ef7b4a8fb3e320e6ac6dcc67bbae07b1336263062ec2fde509ca"
+    },
+    {
+      "path": ".xenios/SESSION_REGISTRY.json",
+      "ownRow": "codex-accepted-source-integration-20261005",
+      "foreignRowCount": 56,
+      "foreignRowsEqual": true,
+      "topLevelFieldsEqual": true,
+      "foreignCanonicalJsonSha256": "7a708938bb0f8c706140b0a274df3fab451f0d8067228619b95eb9fd636fdaab",
+      "topCanonicalJsonSha256": "39d6f72901ccffae8dcc4942176eb3257c98473fc94c4b200f76eb5bf63f4005"
+    }
+  ],
+  "ownHistoricalTransferFields": [
+    {
+      "field": "workstreamCTransfer",
+      "equal": true,
+      "canonicalJsonSha256": "d0b485f0cb17692898d0b94dd5897c6866c864cdf896d90ab687374c5e1a2304"
+    },
+    {
+      "field": "workstreamCReturnReceived",
+      "equal": true,
+      "canonicalJsonSha256": "4fff8d2f9f9916decea391491a60dfc88c9e90bd0e9ac0c60d6cd5998ac91e30"
+    }
+  ],
+  "frozenFiles": [
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "sourceBlob": "c54db8933eb9654f55b98f163c68e5ae1d51cc3a",
+      "indexBlob": "c54db8933eb9654f55b98f163c68e5ae1d51cc3a",
+      "equal": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "sourceBlob": "5a9e65bed522d2687b28b5c624ea01379d1048f9",
+      "indexBlob": "5a9e65bed522d2687b28b5c624ea01379d1048f9",
+      "equal": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "sourceBlob": "f1db3fa817be2e89a9bb9273301204333f274fae",
+      "indexBlob": "f1db3fa817be2e89a9bb9273301204333f274fae",
+      "equal": true
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+      "sourceBlob": "78f23534fddf90a66cf2589ca323a69105e260ed",
+      "indexBlob": "78f23534fddf90a66cf2589ca323a69105e260ed",
+      "equal": true
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "sourceBlob": "b4046a7fa1ec200ff4c432c0b9a17801e3d90d99",
+      "indexBlob": "b4046a7fa1ec200ff4c432c0b9a17801e3d90d99",
+      "equal": true
+    },
+    {
+      "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+      "sourceBlob": "d094babf3592395f9a3e26f299cf24789a837dbd",
+      "indexBlob": "d094babf3592395f9a3e26f299cf24789a837dbd",
+      "equal": true
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.tsx",
+      "sourceBlob": "d50b467159739148ae2ecbe90689c6d8df6f6d92",
+      "indexBlob": "d50b467159739148ae2ecbe90689c6d8df6f6d92",
+      "equal": true
+    },
+    {
+      "path": "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+      "sourceBlob": "ce94ff421800fa3b84437038d8c7e390ceeb0401",
+      "indexBlob": "ce94ff421800fa3b84437038d8c7e390ceeb0401",
+      "equal": true
+    }
+  ],
+  "sharedReservation": {
+    "path": "docs/coordination/FILE_OWNERSHIP.json",
+    "baselineBlob": "899840292dca5491651ba18677c8b789e6ec3fdf",
+    "indexBlob": "899840292dca5491651ba18677c8b789e6ec3fdf",
+    "normalizedWorkingBlob": "899840292dca5491651ba18677c8b789e6ec3fdf",
+    "unchanged": true,
+    "proposalApplied": false
+  },
+  "modifiedExistingPaths": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/sessions/codex-accepted-source-integration-20261005.json"
+  ],
+  "unstagedTrackedPaths": [],
+  "metadataOnly": true,
+  "qualification": "NOT_RUN",
+  "scope": "The pre-proof index contained four own continuity modifications and four new records. This new proof file is the ninth final path. Existing-baseline comparison is unaffected by new-file additions. Exact final staged/committed inventory is checked again after adding this file; the containing commit identity is returned externally, not self-embedded.",
+  "expectedFinalChangedPaths": [
+    ".xenios/ACTIVE_TASKS.json",
+    ".xenios/CODE_OWNERSHIP.json",
+    ".xenios/SESSION_REGISTRY.json",
+    ".xenios/sessions/codex-accepted-source-integration-20261005.json",
+    "docs/health-launch/accepted-source-integration-20261005/DOC62_RECORDS_CORRECTION_20261008.md",
+    "docs/health-launch/accepted-source-integration-20261005/doc62-records-bindings-20261008.json",
+    "docs/health-launch/accepted-source-integration-20261005/doc62-product-page-reservation-proposal-20261008.patch",
+    "docs/health-launch/accepted-source-integration-20261005/doc62-records-preservation-20261008.json",
+    ".xenios/handoffs/2026-10-08T23-34-13Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md"
+  ],
+  "comparisonMethod": "Baseline and candidate full Git ls-tree rows compared by exact emitted path key, preserving mode/type/blob identity over every retained baseline path. All original baseline records, source, tests, manifests, package and SQL files are in this preservation universe. Foreign JSON rows and top-level fields compared through PowerShell ConvertFrom-Json and compressed ConvertTo-Json -Depth 100, preserving property/array order; those SHA256 values are canonicalized record comparisons, not raw Git-byte file hashes.",
+  "metadataAttempts": [
+    {
+      "attempt": 1,
+      "status": "EXIT_1_METADATA_GUARD_ERROR",
+      "explanation": "The first read-only comparator used an incorrectly grouped PowerShell -join comparison and raised 'unexpected modified paths'. No source, foreign-record or artifact change resulted. No application test or release gate ran."
+    },
+    {
+      "attempt": 2,
+      "status": "EXIT_0",
+      "explanation": "Explicitly computed sorted path-key strings before comparison. Exactly four allowed existing modifications; 5992 retained baseline rows equal; foreign and top-level JSON fields equal; eight frozen source blobs and shared reservation unchanged."
+    }
+  ],
+  "historicalReceiptPolicy": "No original receipt rewritten. d6a1e886 historical comparator remains quotePath-dependent and includes one quoted documentation row as detailed in the bindings/addendum. The current 5992-row preservation inventory intentionally includes source AND records and has a different baseline and exclusions; it is neither a new test result nor a replacement historical digest.",
+  "publication": "LOCAL_ONLY_NOT_PUSHED",
+  "nonActions": [
+    "source/test edits",
+    "imports/module loads",
+    "syntax/compiler/typecheck/tests/build/gates",
+    "resource probes",
+    "SQL/verifier/database",
+    "browser/server",
+    "installation",
+    "push/merge",
+    "protected manifest amendment",
+    "shared ownership amendment",
+    "hosted configuration or live actions",
+    "real email/payment/procurement/clinical action",
+    "outbound relay or reviewer interruption"
+  ],
+  "holds": "All eight D62 dispositions and every Doc35/56/57/60 hold remain as classified in DOC62_RECORDS_CORRECTION_20261008.md. D62-3 proposal is unapplied; no shared-registry ownership authority inferred."
+}
+

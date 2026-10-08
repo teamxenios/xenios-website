@@ -1,0 +1,27 @@
+diff --git a/docs/coordination/FILE_OWNERSHIP.json b/docs/coordination/FILE_OWNERSHIP.json
+--- a/docs/coordination/FILE_OWNERSHIP.json
++++ b/docs/coordination/FILE_OWNERSHIP.json
+@@ -393,13 +393,22 @@
+       "id": "OWNER-W2-PR85-INTEGRATION",
+       "owner": "Website 2",
+       "lane": "release-manager",
+       "mode": "write",
+       "state": "reserved",
++      "partiallySupersededReservations": [
++        {
++          "path": "client/src/research/pages/member/ProductPage.tsx",
++          "recipientSession": "codex-accepted-source-integration-20261005",
++          "recipientLease": "d0897045-efd3-425b-a8b4-02385e855153",
++          "frozenSource": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055",
++          "authority": "FULL_COMPLETION attachment 96001a74 sections 6/7 step 5; exact scope 94485a6; transfers 20a23057 and ce5e58f",
++          "limitation": "Only this ProductPage reservation is superseded for frozen accepted-source custody. No source write or wider ownership transfer is authorized."
++        }
++      ],
+       "patterns": [
+         "client/src/research/adapters/memberCatalogApi.test.ts",
+         "client/src/research/adapters/memberCatalogApi.ts",
+-        "client/src/research/pages/member/ProductPage.tsx",
+         "client/src/research/pages/member/Products.integration.test.ts",
+         "client/src/research/pages/member/Products.tsx",
+         "client/src/research/pages/member/product-subscribe.test.tsx",
+         "docs/coordination/WEBSITE_2_MEMBER_CATALOG_INTEGRATION_HANDOFF.md",

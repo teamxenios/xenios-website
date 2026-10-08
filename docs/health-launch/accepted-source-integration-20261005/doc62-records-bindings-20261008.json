@@ -1,0 +1,476 @@
+{
+  "schemaVersion": 1,
+  "kind": "DOC62_RECORDS_CORRECTION_METADATA_ONLY",
+  "assignment": "DOC62-INTEGRATION-RECORDS-CORRECTION-20261008 r1",
+  "assignmentCommit": "33ca4197f0b7b9de61822f9a65e3b15b8d8a1820",
+  "baselineRecords": "f175f3c1bdfed6dc2d0f71733cc5dff63298b160",
+  "source": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055",
+  "tree": "e90de4206f9698f00bc1ee8a9905978db8c960ce",
+  "review": "e27fa1bdbe0ee699f9cab2ea8feee59e3a5f488a",
+  "sourceDisposition": "SOURCE_ACCEPT_WITH_LIMITS",
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY_NOT_PUSHED",
+  "frozenCustody": {
+    "registry": ".xenios/CODE_OWNERSHIP.json",
+    "lease": "d0897045-efd3-425b-a8b4-02385e855153",
+    "property": "immutableAcceptedSource",
+    "purpose": "freeze only, not source write authority; four existing C custody reservations unchanged",
+    "files": [
+      {
+        "path": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+        "gitBlob": "c54db8933eb9654f55b98f163c68e5ae1d51cc3a",
+        "frozenGitBlob": "c54db8933eb9654f55b98f163c68e5ae1d51cc3a",
+        "rawGitSha256": "318d972ba38d7aaca460f5af07cf9bab98358856a55919e3b59fdebddd0d29df",
+        "blobEqual": true
+      },
+      {
+        "path": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+        "gitBlob": "5a9e65bed522d2687b28b5c624ea01379d1048f9",
+        "frozenGitBlob": "5a9e65bed522d2687b28b5c624ea01379d1048f9",
+        "rawGitSha256": "2de8f721636c1132100e0575fed69ed8bae9e56f280e17c282dd61095acb0f9c",
+        "blobEqual": true
+      },
+      {
+        "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+        "gitBlob": "f1db3fa817be2e89a9bb9273301204333f274fae",
+        "frozenGitBlob": "f1db3fa817be2e89a9bb9273301204333f274fae",
+        "rawGitSha256": "1083046402cb666676f21f5039e33b0a172daea06806c50af85bb28c1f1c4f36",
+        "blobEqual": true
+      },
+      {
+        "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+        "gitBlob": "78f23534fddf90a66cf2589ca323a69105e260ed",
+        "frozenGitBlob": "78f23534fddf90a66cf2589ca323a69105e260ed",
+        "rawGitSha256": "f2a0255798b2bee752bf10ef53986e7b9971e15e57767d576452377b4ee0d3be",
+        "blobEqual": true
+      },
+      {
+        "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+        "gitBlob": "b4046a7fa1ec200ff4c432c0b9a17801e3d90d99",
+        "frozenGitBlob": "b4046a7fa1ec200ff4c432c0b9a17801e3d90d99",
+        "rawGitSha256": "e20b1c55aecf8fa02675ecd7823cb54044bd4ba1d28da2d332341b885a63f6f0",
+        "blobEqual": true
+      },
+      {
+        "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+        "gitBlob": "d094babf3592395f9a3e26f299cf24789a837dbd",
+        "frozenGitBlob": "d094babf3592395f9a3e26f299cf24789a837dbd",
+        "rawGitSha256": "e81747bf0136bd01069521f8fd7a8e2954ee9155cb381fa74b57882622201410",
+        "blobEqual": true
+      },
+      {
+        "path": "client/src/research/pages/member/ProductPage.tsx",
+        "gitBlob": "d50b467159739148ae2ecbe90689c6d8df6f6d92",
+        "frozenGitBlob": "d50b467159739148ae2ecbe90689c6d8df6f6d92",
+        "rawGitSha256": "77fd81564c4efb969972f9a6f0433c5be9054463837464be2c99eac56d08177c",
+        "blobEqual": true
+      },
+      {
+        "path": "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+        "gitBlob": "ce94ff421800fa3b84437038d8c7e390ceeb0401",
+        "frozenGitBlob": "ce94ff421800fa3b84437038d8c7e390ceeb0401",
+        "rawGitSha256": "bd90e658ca78662403df3232bce754fc74a07c9300021a073cc7fe05da831c66",
+        "blobEqual": true
+      }
+    ]
+  },
+  "authorityCorrection": {
+    "attachment": "96001a74-ef4d-4c2c-8747-d6ed8e02a818",
+    "rawSha256": "effa648e80ef813c94f1bd757b06177045ae4665aa41f789f433a5b50ab2a703",
+    "document": "FULL_COMPLETION_DIRECTIVE_20261008.txt",
+    "sections": "6 and 7 step 5",
+    "humanMessage": "01a11bda-03c1-7103-bba7-757c7a9aa8d6",
+    "humanThread": "01a103a8-5684-7272-89e5-3c42eefcd593",
+    "exactScope": "94485a6a0efc8f347ea8e652ffd4744228ae3595",
+    "additive": "1b165b15bfd6b575c25d66be7c9c15cce8ee94fa",
+    "transfer": "ce5e58f7917f815576e19be97e30ccdb95a06312",
+    "caveat": "Original transfer mistakenly pairs additive directive with full-completion sections. Original bytes preserved; no source or shared-registry grant inferred."
+  },
+  "legacyComparator": {
+    "status": "HISTORICAL_QUOTEPATH_DEPENDENT_COMPARATOR_NOT_PURE_SOURCE_INVENTORY",
+    "baseline": "37f2d9648916b50fae2fd99b3c5ee46174893fae",
+    "derivation": "git -c core.quotePath=true ls-tree -r baseline; preserve emitted mode/type/blob/TAB/quoted-path rows in Git order; split at TAB; exclude paths matching ^(docs|\\.xenios)/ and exact four C paths; retain the quoted docs row that bypasses the prefix filter; join with LF including final LF; UTF-8 no BOM; SHA-256",
+    "exactExclusionPaths": [
+      "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+      "client/src/research/pages/member/ProductPage.tsx",
+      "client/src/research/pages/member/ProductPage.subscription.test.tsx"
+    ],
+    "observations": [
+      {
+        "coreQuotePath": "true",
+        "rows": 3278,
+        "bytes": 347963,
+        "sha256": "d6a1e886f7f928c649e391b00dd472a5583640ad7e7d73796300c2ea2c738200",
+        "quotedDocsRows": [
+          "100644 blob 9733c54802e14596504cb6fe13c9ef8f21eab9dc\t\"docs/legal/xenios-research/v1.0.0/approval_records/Xenios Research \\342\\200\\224 Final Legal Approval and Release Letter .docx\""
+        ]
+      },
+      {
+        "coreQuotePath": "false",
+        "rows": 3277,
+        "bytes": 347782,
+        "sha256": "1204f550a8ba06f8a8aa4d750ef0f09658da311acbbb50f3986e0435c9f9d18e",
+        "quotedDocsRows": []
+      }
+    ],
+    "quotedDocsPathDecoded": "docs/legal/xenios-research/v1.0.0/approval_records/Xenios Research — Final Legal Approval and Release Letter .docx",
+    "quotedDocsBlob": "9733c54802e14596504cb6fe13c9ef8f21eab9dc",
+    "falseVariantPurpose": "Sensitivity disclosure only; not replacement of historical comparator, a new release gate or rewritten historical receipt.",
+    "snapshotRule": "Any new snapshot-S packet citing the 3278-row d6a1e886 digest must copy this derivation and quotePath/docs-row caveat."
+  },
+  "dependencyGraph": {
+    "historicalSource": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+    "acceptedSource": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055",
+    "count": 39,
+    "equalCount": 36,
+    "changedCount": 3,
+    "modules": [
+      {
+        "path": "client/src/lib/config.ts",
+        "historicalBlob": "2f834ffee7c0b21fac02ca4212a4c40b115620ee",
+        "historicalRawSha256": "206ddb750b807ef2d5ee76e8c9642b572f81cc957e9dba79d9b8952599844065",
+        "acceptedBlob": "2f834ffee7c0b21fac02ca4212a4c40b115620ee",
+        "acceptedRawSha256": "206ddb750b807ef2d5ee76e8c9642b572f81cc957e9dba79d9b8952599844065",
+        "equal": true
+      },
+      {
+        "path": "client/src/lib/supabaseBrowser.ts",
+        "historicalBlob": "6c649e2eb330f9cd68af0c92b2865121650b2df6",
+        "historicalRawSha256": "0895cf19e5ffcdab0f34b1cd3763389cf9b3888ee6d7b94f7511d7e22edcc86d",
+        "acceptedBlob": "6c649e2eb330f9cd68af0c92b2865121650b2df6",
+        "acceptedRawSha256": "0895cf19e5ffcdab0f34b1cd3763389cf9b3888ee6d7b94f7511d7e22edcc86d",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/account-portal/routes.ts",
+        "historicalBlob": "3f7db08ffaa6a4139a8062b472fcf074c2d2a09d",
+        "historicalRawSha256": "bd8de9129a59fd04f81d6569a0283f59fd830be1b885d76f2ec85e370756b1ee",
+        "acceptedBlob": "3f7db08ffaa6a4139a8062b472fcf074c2d2a09d",
+        "acceptedRawSha256": "bd8de9129a59fd04f81d6569a0283f59fd830be1b885d76f2ec85e370756b1ee",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/adapters/cartProductSelection.ts",
+        "historicalBlob": "826c73b20fed96b38e03e3c06bddbb62cd1fb127",
+        "historicalRawSha256": "f630c987d4eaf6f61d31476d52ff67d5460524393598f7f9077d2140cd13d451",
+        "acceptedBlob": "826c73b20fed96b38e03e3c06bddbb62cd1fb127",
+        "acceptedRawSha256": "f630c987d4eaf6f61d31476d52ff67d5460524393598f7f9077d2140cd13d451",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/adapters/commerce.ts",
+        "historicalBlob": "e7ebdf52ac91664b06fac60f947746316ec9d4d1",
+        "historicalRawSha256": "d9b8dec2bfecd97c909fe9b25742b401b9a61b9892917e2b8f72eebc0e4603c6",
+        "acceptedBlob": "e7ebdf52ac91664b06fac60f947746316ec9d4d1",
+        "acceptedRawSha256": "d9b8dec2bfecd97c909fe9b25742b401b9a61b9892917e2b8f72eebc0e4603c6",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/adapters/memberCatalog.ts",
+        "historicalBlob": "8a4b412fe9a368603face5625b034a2ba109a625",
+        "historicalRawSha256": "7445710ef0289c2c6a26deb7294f723e58126e90fb4004f697607cf40f5fc76f",
+        "acceptedBlob": "8a4b412fe9a368603face5625b034a2ba109a625",
+        "acceptedRawSha256": "7445710ef0289c2c6a26deb7294f723e58126e90fb4004f697607cf40f5fc76f",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/adapters/memberCatalogApi.ts",
+        "historicalBlob": "a07cbc87d204e5a27d8b95022708209df71f2528",
+        "historicalRawSha256": "9c98a6d66dc315224830abf165938961b8352614d101715c69ffbec4c67aa196",
+        "acceptedBlob": "a07cbc87d204e5a27d8b95022708209df71f2528",
+        "acceptedRawSha256": "9c98a6d66dc315224830abf165938961b8352614d101715c69ffbec4c67aa196",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/cart-session.ts",
+        "historicalBlob": "1f5013dc6ea983bb14eefb2a305b72c0b65813e5",
+        "historicalRawSha256": "61dfaf847f4f135060cac1e3bb18856f6ac9881f71eeb318ba91b222cfee148e",
+        "acceptedBlob": "1f5013dc6ea983bb14eefb2a305b72c0b65813e5",
+        "acceptedRawSha256": "61dfaf847f4f135060cac1e3bb18856f6ac9881f71eeb318ba91b222cfee148e",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/content/productEducation.generated.ts",
+        "historicalBlob": "578ee221da99f340c60610d5616c053e2f642b2c",
+        "historicalRawSha256": "17d140d7562bc7b12864bd3a38c29aa37feb9c8e5d09cbc9ae00fa002bf82bae",
+        "acceptedBlob": "578ee221da99f340c60610d5616c053e2f642b2c",
+        "acceptedRawSha256": "17d140d7562bc7b12864bd3a38c29aa37feb9c8e5d09cbc9ae00fa002bf82bae",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/content/productEducation.ts",
+        "historicalBlob": "ed2dd12256ffabfdc28abc33cbcbae08677dc63d",
+        "historicalRawSha256": "fd2c0aae1c0dab207784205bd24f5a3cad45c2733f20ac45ee0c7b865a0f163d",
+        "acceptedBlob": "ed2dd12256ffabfdc28abc33cbcbae08677dc63d",
+        "acceptedRawSha256": "fd2c0aae1c0dab207784205bd24f5a3cad45c2733f20ac45ee0c7b865a0f163d",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/core.tsx",
+        "historicalBlob": "482257aec506273be3f882ac2bf530576b61cd59",
+        "historicalRawSha256": "aa5572b6a7450cc7883fc9c37bd720aa78bf507409e293a62f11f32e686ddddc",
+        "acceptedBlob": "482257aec506273be3f882ac2bf530576b61cd59",
+        "acceptedRawSha256": "aa5572b6a7450cc7883fc9c37bd720aa78bf507409e293a62f11f32e686ddddc",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/lib/api.ts",
+        "historicalBlob": "bcf1d6d6af8d7fb6be9ef13c9502ac42be5adfdf",
+        "historicalRawSha256": "eb087157013f2e99906ec8be268cee157d7b43dea86ec998d9f101aa5a069d96",
+        "acceptedBlob": "bcf1d6d6af8d7fb6be9ef13c9502ac42be5adfdf",
+        "acceptedRawSha256": "eb087157013f2e99906ec8be268cee157d7b43dea86ec998d9f101aa5a069d96",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/lib/capabilities.ts",
+        "historicalBlob": "8b8f109304c6d06044021d5772910838ad5afc04",
+        "historicalRawSha256": "54f7f0874cf8f114eb611fce15431c6c3cdc72f57d7dd89b6b152faffa4a482f",
+        "acceptedBlob": "8b8f109304c6d06044021d5772910838ad5afc04",
+        "acceptedRawSha256": "54f7f0874cf8f114eb611fce15431c6c3cdc72f57d7dd89b6b152faffa4a482f",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/lib/denials.ts",
+        "historicalBlob": "d713bec930ef56bf7e96eb51bb37bf848aa7483d",
+        "historicalRawSha256": "a4eee8ebd5161138a7ff03d9ce47f1b15c710d334363ddb5aac2f136e30a7626",
+        "acceptedBlob": "d713bec930ef56bf7e96eb51bb37bf848aa7483d",
+        "acceptedRawSha256": "a4eee8ebd5161138a7ff03d9ce47f1b15c710d334363ddb5aac2f136e30a7626",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/lib/routes.ts",
+        "historicalBlob": "ec90547983b6be84b6db70c3c9f4bb28928465d9",
+        "historicalRawSha256": "31dea6030b2ef8a86d7ff485374f1987ba1bb5084abc51d48c1b83e8942bf705",
+        "acceptedBlob": "ec90547983b6be84b6db70c3c9f4bb28928465d9",
+        "acceptedRawSha256": "31dea6030b2ef8a86d7ff485374f1987ba1bb5084abc51d48c1b83e8942bf705",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/pages/member/ProductPage.tsx",
+        "historicalBlob": "4c9075adc3fb223b274fa0601bc711032fb12afe",
+        "historicalRawSha256": "0d603857358eb2e1600a706e28196b0c08effa8cfbfaf97950d515a9bb6add31",
+        "acceptedBlob": "d50b467159739148ae2ecbe90689c6d8df6f6d92",
+        "acceptedRawSha256": "77fd81564c4efb969972f9a6f0433c5be9054463837464be2c99eac56d08177c",
+        "equal": false
+      },
+      {
+        "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+        "historicalBlob": "3d938f05ca7e43020de4fba5110fe04d75cd2681",
+        "historicalRawSha256": "a242b3d6f131354b2b88409d425aae872e40b9d1e8240ce42406365ba1f5079d",
+        "acceptedBlob": "b4046a7fa1ec200ff4c432c0b9a17801e3d90d99",
+        "acceptedRawSha256": "e20b1c55aecf8fa02675ecd7823cb54044bd4ba1d28da2d332341b885a63f6f0",
+        "equal": false
+      },
+      {
+        "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+        "historicalBlob": "73d2abe277e874f73fb9e99da0a7b94b4919bf62",
+        "historicalRawSha256": "6a863b0ff1e80a3396972cc391dc67b38df6ae7356b169148acea810acd05138",
+        "acceptedBlob": "f1db3fa817be2e89a9bb9273301204333f274fae",
+        "acceptedRawSha256": "1083046402cb666676f21f5039e33b0a172daea06806c50af85bb28c1f1c4f36",
+        "equal": false
+      },
+      {
+        "path": "client/src/research/quality/routes.ts",
+        "historicalBlob": "4243da6f44cc7f482c6dc8ab1bd4feaa1f798c11",
+        "historicalRawSha256": "8d86158f52ba90bb5c1f4b3a0c72a193dbffa0bae6825accbeebc01ee5657e5b",
+        "acceptedBlob": "4243da6f44cc7f482c6dc8ab1bd4feaa1f798c11",
+        "acceptedRawSha256": "8d86158f52ba90bb5c1f4b3a0c72a193dbffa0bae6825accbeebc01ee5657e5b",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/ui/kit.tsx",
+        "historicalBlob": "f8455be8d92fe72d074f21abb6a62f2d886fb4e0",
+        "historicalRawSha256": "f43a5631b6f264e9fe0d6f1ba2fd58249ff14b41f945e28709631bf8c09f9fd0",
+        "acceptedBlob": "f8455be8d92fe72d074f21abb6a62f2d886fb4e0",
+        "acceptedRawSha256": "f43a5631b6f264e9fe0d6f1ba2fd58249ff14b41f945e28709631bf8c09f9fd0",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/ui/ProductMedia.tsx",
+        "historicalBlob": "00f1e2e6771e49cf10bdbd5ab912e66f6abf68d1",
+        "historicalRawSha256": "9de3d82e183cb0fc72957da55ab8934700c94f0ea1429d2e9c0cc30d5f836fd3",
+        "acceptedBlob": "00f1e2e6771e49cf10bdbd5ab912e66f6abf68d1",
+        "acceptedRawSha256": "9de3d82e183cb0fc72957da55ab8934700c94f0ea1429d2e9c0cc30d5f836fd3",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/ui/product-media.css",
+        "historicalBlob": "518120b5466c454cbd5450455996462df10de590",
+        "historicalRawSha256": "f0c8a153c68274cced157e88a202d8c0ffab8b96ae871dd5416b43e2bb963852",
+        "acceptedBlob": "518120b5466c454cbd5450455996462df10de590",
+        "acceptedRawSha256": "f0c8a153c68274cced157e88a202d8c0ffab8b96ae871dd5416b43e2bb963852",
+        "equal": true
+      },
+      {
+        "path": "client/src/research/ui/shells.tsx",
+        "historicalBlob": "0a510d5a003497fdfab50a915a1652becb173ebe",
+        "historicalRawSha256": "fe98e1d6229af88c9af3c5467bf47f60161bcec4020d1792aac1b6e6f37bcdb7",
+        "acceptedBlob": "0a510d5a003497fdfab50a915a1652becb173ebe",
+        "acceptedRawSha256": "fe98e1d6229af88c9af3c5467bf47f60161bcec4020d1792aac1b6e6f37bcdb7",
+        "equal": true
+      },
+      {
+        "path": "shared/research/assisted-order/member-history.ts",
+        "historicalBlob": "002d9c570588ec72aae152b0e746f909f5f677a5",
+        "historicalRawSha256": "d6f3036a8fb98daabc551f4fc85391baae456324a8ec8242ccd560367e1814f4",
+        "acceptedBlob": "002d9c570588ec72aae152b0e746f909f5f677a5",
+        "acceptedRawSha256": "d6f3036a8fb98daabc551f4fc85391baae456324a8ec8242ccd560367e1814f4",
+        "equal": true
+      },
+      {
+        "path": "shared/research/cart-product-selection.ts",
+        "historicalBlob": "7faa44245a5832ee5a13ea43f947021e0ed35d6f",
+        "historicalRawSha256": "f2b04d521db59d854f30652c396bb8343dd414dbdd63679867e42f6f07c13cfc",
+        "acceptedBlob": "7faa44245a5832ee5a13ea43f947021e0ed35d6f",
+        "acceptedRawSha256": "f2b04d521db59d854f30652c396bb8343dd414dbdd63679867e42f6f07c13cfc",
+        "equal": true
+      },
+      {
+        "path": "shared/research/catalog.ts",
+        "historicalBlob": "9efee7e0668c58de2dedf3ec9c0642061096025f",
+        "historicalRawSha256": "2335db782984824cde855f802c06e9b556a97e504159ab7ff23ed52f53d29db0",
+        "acceptedBlob": "9efee7e0668c58de2dedf3ec9c0642061096025f",
+        "acceptedRawSha256": "2335db782984824cde855f802c06e9b556a97e504159ab7ff23ed52f53d29db0",
+        "equal": true
+      },
+      {
+        "path": "shared/research/checkout-credit-policy.ts",
+        "historicalBlob": "c3f2b90007def1982ae039297d67f50fb50e222d",
+        "historicalRawSha256": "ef86ebad359136921bec59cb96c3d0a4703634b73f3cb95e33c652b89a742b59",
+        "acceptedBlob": "c3f2b90007def1982ae039297d67f50fb50e222d",
+        "acceptedRawSha256": "ef86ebad359136921bec59cb96c3d0a4703634b73f3cb95e33c652b89a742b59",
+        "equal": true
+      },
+      {
+        "path": "shared/research/commerce.ts",
+        "historicalBlob": "cd82a753e3aa4ccfdaad7cc4d3430a484c345f14",
+        "historicalRawSha256": "3cf1fcbc755f2b47fcf52e4a3e34cf9b24ea656ecb3053c2ac080efe9fe5330d",
+        "acceptedBlob": "cd82a753e3aa4ccfdaad7cc4d3430a484c345f14",
+        "acceptedRawSha256": "3cf1fcbc755f2b47fcf52e4a3e34cf9b24ea656ecb3053c2ac080efe9fe5330d",
+        "equal": true
+      },
+      {
+        "path": "shared/research/customer-account/contract.ts",
+        "historicalBlob": "45de6ab4a23ea8a23b90d128f1a9b12818ee8e3e",
+        "historicalRawSha256": "f1f95d1b2f0a33ee79c67226c20472e91423ef0d59e427bff236394e580df875",
+        "acceptedBlob": "45de6ab4a23ea8a23b90d128f1a9b12818ee8e3e",
+        "acceptedRawSha256": "f1f95d1b2f0a33ee79c67226c20472e91423ef0d59e427bff236394e580df875",
+        "equal": true
+      },
+      {
+        "path": "shared/research/early-access-quantity.ts",
+        "historicalBlob": "45845cfeb7caf0691e1ae28e941c9eca411d36ef",
+        "historicalRawSha256": "873ace18b4b0a55ec137ae02ff0210e9980ea30dbc79e6d6d0bbc9e2fb55e7ea",
+        "acceptedBlob": "45845cfeb7caf0691e1ae28e941c9eca411d36ef",
+        "acceptedRawSha256": "873ace18b4b0a55ec137ae02ff0210e9980ea30dbc79e6d6d0bbc9e2fb55e7ea",
+        "equal": true
+      },
+      {
+        "path": "shared/research/member-catalog.ts",
+        "historicalBlob": "83694acd27f4e2d13d3f80e894dd317de4d3a134",
+        "historicalRawSha256": "53d3b860d797ce525db2dbfe3d0f1de79e03747722a24ee3a6e1910d9bb1a494",
+        "acceptedBlob": "83694acd27f4e2d13d3f80e894dd317de4d3a134",
+        "acceptedRawSha256": "53d3b860d797ce525db2dbfe3d0f1de79e03747722a24ee3a6e1910d9bb1a494",
+        "equal": true
+      },
+      {
+        "path": "shared/research/paths.ts",
+        "historicalBlob": "e3a297fe30187184e240b6e6e8634580a4ade109",
+        "historicalRawSha256": "bcccfe7590a7a9645092cc9fc81dc46c5ea1d2e835f38694d3437dfd5260dd09",
+        "acceptedBlob": "e3a297fe30187184e240b6e6e8634580a4ade109",
+        "acceptedRawSha256": "bcccfe7590a7a9645092cc9fc81dc46c5ea1d2e835f38694d3437dfd5260dd09",
+        "equal": true
+      },
+      {
+        "path": "shared/research/persistent-cart.ts",
+        "historicalBlob": "5c197b3937e73e5b9fdc17438b93a8aaf5740314",
+        "historicalRawSha256": "0810843fd603b73978d5cb67328a8bcceb901d9d7e51c557fa9770429120367c",
+        "acceptedBlob": "5c197b3937e73e5b9fdc17438b93a8aaf5740314",
+        "acceptedRawSha256": "0810843fd603b73978d5cb67328a8bcceb901d9d7e51c557fa9770429120367c",
+        "equal": true
+      },
+      {
+        "path": "shared/research/price-quantity-tiers.ts",
+        "historicalBlob": "c06c102f4562fc2e8449fffc9b8cfc63366b9dc8",
+        "historicalRawSha256": "1cfb7ca8656acb35fcdae7e244acb7eb32977ff42e7610e54a2d963649a3efe3",
+        "acceptedBlob": "c06c102f4562fc2e8449fffc9b8cfc63366b9dc8",
+        "acceptedRawSha256": "1cfb7ca8656acb35fcdae7e244acb7eb32977ff42e7610e54a2d963649a3efe3",
+        "equal": true
+      },
+      {
+        "path": "shared/research/product-admin.ts",
+        "historicalBlob": "fcf43dedf0b2ecc95e10d16137ddb74502a3ff10",
+        "historicalRawSha256": "a7e51177996bc53d46639a41795bcfad3913a54d1428bced33b1ffb7dbb97eb0",
+        "acceptedBlob": "fcf43dedf0b2ecc95e10d16137ddb74502a3ff10",
+        "acceptedRawSha256": "a7e51177996bc53d46639a41795bcfad3913a54d1428bced33b1ffb7dbb97eb0",
+        "equal": true
+      },
+      {
+        "path": "shared/research/product-media.ts",
+        "historicalBlob": "fee4b325a96af3098bc099e2d1ec57267fde7574",
+        "historicalRawSha256": "f576dbb99339391bdc029195356953146c7b34575920693a120ab98a665cd77b",
+        "acceptedBlob": "fee4b325a96af3098bc099e2d1ec57267fde7574",
+        "acceptedRawSha256": "f576dbb99339391bdc029195356953146c7b34575920693a120ab98a665cd77b",
+        "equal": true
+      },
+      {
+        "path": "shared/research/product-request-sources.ts",
+        "historicalBlob": "a404ada861081d15670a8eca9bd22c8092aaa1d3",
+        "historicalRawSha256": "a245a491d19e9e1c97ecbe31c976bcd19287c33b52dd88c3b896cd04a5dd1483",
+        "acceptedBlob": "a404ada861081d15670a8eca9bd22c8092aaa1d3",
+        "acceptedRawSha256": "a245a491d19e9e1c97ecbe31c976bcd19287c33b52dd88c3b896cd04a5dd1483",
+        "equal": true
+      },
+      {
+        "path": "shared/research/quality/public-lot.ts",
+        "historicalBlob": "427c420f076ae1f4257cb939d6286d92dcf10e21",
+        "historicalRawSha256": "10ad733fb6eddbef4949ce6ce9a75aefb802e4640739140733ddaed557ef0875",
+        "acceptedBlob": "427c420f076ae1f4257cb939d6286d92dcf10e21",
+        "acceptedRawSha256": "10ad733fb6eddbef4949ce6ce9a75aefb802e4640739140733ddaed557ef0875",
+        "equal": true
+      },
+      {
+        "path": "shared/research/recovery.ts",
+        "historicalBlob": "662193c3c2eeb721eadf7c71da861cfe71f518ea",
+        "historicalRawSha256": "7e1aced599501fa487f7b8a86452d716c4a6627f5d0bcd6115220dc2c628aa5c",
+        "acceptedBlob": "662193c3c2eeb721eadf7c71da861cfe71f518ea",
+        "acceptedRawSha256": "7e1aced599501fa487f7b8a86452d716c4a6627f5d0bcd6115220dc2c628aa5c",
+        "equal": true
+      }
+    ],
+    "entry": "client/src/research/pages/member/ProductPage.tsx",
+    "method": "Static Git-text walk of local and @shared/@ imports/exports, side-effect imports and literal dynamic imports; skip whole import type and named clauses consisting entirely of type specifiers; ignore external packages; recurse TS/TSX, CSS leaf. No modules loaded. Full path set extracted by existing read-only helper; every listed Git blob/raw SHA-256 independently read by integrator.",
+    "evidence": "Doc62 plus hl12/62_customer_assembly_lens_findings.json at e27fa1bdbe0ee699f9cab2ea8feee59e3a5f488a support 39-module equality; original archive has no explicit path array; this record supplies it.",
+    "authoringSource": "736bb2a84fa5b704eabdd8b069bc3ef89b084979",
+    "authoringGraphCount": 34,
+    "enterGraphRelativeToC": [
+      "client/src/research/ui/ProductMedia.tsx",
+      "client/src/research/ui/product-media.css",
+      "shared/research/product-media.ts",
+      "shared/research/product-admin.ts",
+      "shared/research/price-quantity-tiers.ts"
+    ],
+    "precision": "Only three media files are absent from the C tree. product-admin and price-quantity-tiers exist there but are outside its runtime graph; price-quantity-tiers has the same blob.",
+    "typeOnlyCatalogEdge": {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "excludedFromRuntimeGraph": true,
+      "sourceStillFrozen": true
+    }
+  },
+  "reservationProposal": {
+    "row": "OWNER-W2-PR85-INTEGRATION",
+    "applied": false,
+    "rawGitSha256": "4fd7c6d77663b01f4fe14a1a9d793c676a5827dbebb4092a017a586499b0a2fa",
+    "path": "docs/coordination/FILE_OWNERSHIP.json",
+    "gitBlob": "899840292dca5491651ba18677c8b789e6ec3fdf",
+    "state": "reserved",
+    "owner": "Website 2",
+    "proposalPath": "docs/health-launch/accepted-source-integration-20261005/doc62-product-page-reservation-proposal-20261008.patch",
+    "status": "DRAFT_UNAPPLIED_REQUIRES_ACTUAL_SHARED_REGISTRY_OWNER_SCOPE",
+    "onlySupersededPath": "client/src/research/pages/member/ProductPage.tsx",
+    "retainedForeignReservation": "client/src/research/pages/member/product-subscribe.test.tsx",
+    "restrictions": "Never supersede entire Website 2 row. Keep state reserved and every other pattern. Reconcile current target blob and actual registry-owner scope before any application."
+  },
+  "remaining": "All Doc35/56/57/60/62 limits; D62-2 comment waits actual authorized source touch; D62-8 pointer belongs to subscription owner; no review interruption or outbound relay."
+}

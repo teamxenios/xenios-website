@@ -13,13 +13,58 @@
         "docs/health-launch/accepted-source-integration-20261005/CUSTOMER_ACCEPTED_ASSEMBLY_20261008.md",
         "docs/health-launch/accepted-source-integration-20261005/customer-accepted-assembly-bindings-20261008.json",
         "docs/health-launch/accepted-source-integration-20261005/customer-accepted-assembly-preservation-20261008.json",
+        "docs/health-launch/accepted-source-integration-20261005/DOC62_RECORDS_CORRECTION_20261008.md",
+        "docs/health-launch/accepted-source-integration-20261005/doc62-records-bindings-20261008.json",
+        "docs/health-launch/accepted-source-integration-20261005/doc62-product-page-reservation-proposal-20261008.patch",
+        "docs/health-launch/accepted-source-integration-20261005/doc62-records-preservation-20261008.json",
         ".xenios/sessions/codex-accepted-source-integration-20261005.json",
         ".xenios/handoffs/*ACCEPTED-SOURCE-INTEGRATION-20261005*"
       ],
       "state": "handoff",
       "claimedAt": "2026-10-05T18:20:33.611Z",
-      "heartbeatAt": "2026-10-08T20:33:05Z",
-      "activeScope": "CUSTOMER-ACCEPTED-ASSEMBLY-20261008 r1 completed as exact four-C-blob assembly onto preserved B. Local source cad2c4d; composed review pending. No new edit, execution or push authority. Historical records and foreign ownership preserved.",
+      "heartbeatAt": "2026-10-08T23:34:13Z",
+      "activeScope": "DOC62-INTEGRATION-RECORDS-CORRECTION-20261008 r1 locally complete; own new records only. Eight accepted files immutable; existing four C custody reservations unchanged, no new B write claim. Shared registry proposal UNAPPLIED. No source, old evidence, foreign rows, execution or push authority.",
+      "immutableAcceptedSource": {
+        "source": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055",
+        "tree": "e90de4206f9698f00bc1ee8a9905978db8c960ce",
+        "review": "e27fa1bdbe0ee699f9cab2ea8feee59e3a5f488a",
+        "disposition": "SOURCE_ACCEPT_WITH_LIMITS; NOT_RUN",
+        "custody": "IMMUTABLE_FREEZE_ONLY; no new source write claim or permission; existing four-C custody reservations preserved; foreign leases unchanged",
+        "files": [
+          {
+            "path": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+            "gitBlob": "c54db8933eb9654f55b98f163c68e5ae1d51cc3a"
+          },
+          {
+            "path": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+            "gitBlob": "5a9e65bed522d2687b28b5c624ea01379d1048f9"
+          },
+          {
+            "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+            "gitBlob": "f1db3fa817be2e89a9bb9273301204333f274fae"
+          },
+          {
+            "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+            "gitBlob": "78f23534fddf90a66cf2589ca323a69105e260ed"
+          },
+          {
+            "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+            "gitBlob": "b4046a7fa1ec200ff4c432c0b9a17801e3d90d99"
+          },
+          {
+            "path": "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+            "gitBlob": "d094babf3592395f9a3e26f299cf24789a837dbd"
+          },
+          {
+            "path": "client/src/research/pages/member/ProductPage.tsx",
+            "gitBlob": "d50b467159739148ae2ecbe90689c6d8df6f6d92"
+          },
+          {
+            "path": "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+            "gitBlob": "ce94ff421800fa3b84437038d8c7e390ceeb0401"
+          }
+        ]
+      },
       "workstreamCReturnReceived": {
         "at": "2026-10-08T20:28:01Z",
         "transfer": "ce5e58f7917f815576e19be97e30ccdb95a06312",
@@ -29,7 +74,7 @@
         "fromLease": "d9ff89ea-06a4-4d35-b62b-5db6bac37920",
         "disposition": "Recipient claim for four immutable C paths only. Earlier workstreamCTransfer retained as historical outbound record. Legacy Website 2 reservation unchanged; no foreign product-subscribe test claimed."
       },
-      "handoffSource": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055; LOCAL_ONLY_NOT_EXECUTED_NOT_PUSHED_COMPOSED_REVIEW_PENDING",
+      "handoffSource": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055; SOURCE_ACCEPT_WITH_LIMITS at Doc62 e27fa1bd; LOCAL_ONLY_NOT_EXECUTED_NOT_PUSHED; Doc62 records correction awaits independent disposition",
       "historicalScopeRef": "38c723964358c18b8c5090f2f9a0aa92f74601b0:.xenios/CODE_OWNERSHIP.json#d0897045-efd3-425b-a8b4-02385e855153",
       "workstreamCTransfer": {
         "at": "2026-10-08T16:57:27Z",
