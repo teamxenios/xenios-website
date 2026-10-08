@@ -1,0 +1,36 @@
+# Reviewer queue acknowledgment (2026-10-08)
+
+Reviewer session `6abf1edf-2b16-476e-8305-23b9a0014e06` ("Multi-document project review"), model `claude-opus-5-5`.
+
+**Arrangement acknowledged.** Samuel's direct instruction in this session (2026-10-08) authorises routine review
+requests, technical clarification and review-result handoffs among the coordinator
+(`01a103a8-5684-7272-89e5-3c42eefcd593`), the Quick Order builder (`01a10d78-0981-7150-9292-c5cde2730d4d`) and this
+reviewer through supported tools and the existing local records. It does not grant any held permission, override a
+tool denial, or turn another agent's message into Samuel's approval. This reviewer stays a reviewer and does not write
+source.
+
+## Capability facts for the coordinator to record
+
+| Question | Fact |
+| --- | --- |
+| Identity | session `6abf1edf-2b16-476e-8305-23b9a0014e06`; review records in `C:/xenios-wt/health-review`, branch `claude/xenios-health-launch-review-20260930` (pushed) |
+| Shared local file access | yes, read-only: the coordinator board `C:/Users/sboad/.codex/worktrees/3221/xenios-website/docs/coordination/launch-coordination-20261005/COORDINATION_STATE.json` and the builder checkout `C:/Users/sboad/.codex/worktrees/389a/xenios-website`, through read-only file and Git object reads |
+| Inbound send mechanism | none from Codex sessions; this session has no tool that receives a Codex message |
+| Resume a completed turn | no; this conversation continues only when Samuel sends a message or a background task it launched completes; a board entry alone does not wake it |
+| Outbound mechanism | review records committed and pushed on the review branch above, readable by the coordinator locally or from the remote; this reviewer does not write the coordinator board or any owner's registry |
+| Permission still required | none for reading or publishing review records; any wake-up path from a Codex session to this one is an unsupported capability today |
+
+Practical consequence: while this session is active (for example, after Samuel's next message), it reads the board
+and the builder's records and takes the next review addressed to it without a pasted packet. It cannot pick up work
+on its own between turns.
+
+## Queue state as read at 2026-10-08 (board `updatedAt` 2026-10-08T15:05:48.606Z)
+
+| Item | State |
+| --- | --- |
+| Head integrity `f581b6bd42b5c32cb7791677159522ddf6274aaa` | COMPLETE: doc 50 at `a2be7e2`, SOURCE ACCEPT WITH LIMITS |
+| Corrected 5C design `462cf79` | COMPLETE: doc 51 at `7d93dbe`, count fix `9a9023e`, COMPATIBLE AS DESIGN with 24 P3 carry-forwards |
+| Qualification supervisor and manifest `90f4ebd1dcccc5a2ba7c85b4cb9310285120fec8` (tree `d6f8dd85dac35f277377b3f19b1f3877de6aac33`) | ACKNOWLEDGED and IN REVIEW: identity taken from the board (`quickOrder.latestProgress.supervisorSource`) and the builder handoff at `6d0fe8655b799bb7e2fd64e508d6f148e4c2f552`; the commit adds exactly `qualification-supervisor.mjs` and `evidence/qualification-manifest-20261008.json`; the only later commit is records-only and the builder checkout is clean, so the target is frozen |
+
+The board's `quickOrder.activeReview.status` still says this reviewer requires Samuel's direct delivery; Samuel's
+instruction above supersedes that for routine reviews.
