@@ -48,4 +48,5 @@ instruction above supersedes that for routine reviews.
 | --- | --- |
 | Decision-input successor `e90d464a2e2f81f6b30a02bfef2fd3ccbe35d9e7`, records `5a49ef0` | COMPLETE: doc 53, SOURCE ACCEPT WITH LIMITS; contract prerequisite satisfied; twelve P3 items, no P0 to P2 |
 | PS-R4 wording `e6d7dd10045289594d91a6a086ba592348d7edb8`, records `95283ce` | COMPLETE: doc 54 at `63fdb0a`, SOURCE ACCEPT WITH LIMITS as a partial PS-R4 correction |
-| Supervisor successor fixing doc 52 | not yet frozen; review it when the builder commits it and the board names it |
+| Supervisor successor `1e808bab28fac90437de93628a15a7fb0322d53e` (tree `0fd769d8…`), records `8e462da` | ACKNOWLEDGED and IN REVIEW (board task `DOC52-SUPERVISOR-REPAIR-DELTA-20261008` r1). Delta confined to the supervisor and its manifest; the builder checkout is clean at `8e462da`. Disposition will be doc 55 |
+| Catalog detail presentation `e0a7d47`, records `9737db7` | QUEUED after the supervisor successor, per the board |
