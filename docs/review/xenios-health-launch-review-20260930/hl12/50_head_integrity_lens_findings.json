@@ -1,0 +1,575 @@
+{
+ "schemaVersion": "claude_acceptance_lenses_v1",
+ "subject": "f581b6bd42b5c32cb7791677159522ddf6274aaa head-integrity successor (records 30085a6) against doc 49 section 5",
+ "workflowRun": "wf_47ff9cd5-55c",
+ "taskId": "ww1bkxqps",
+ "agentCount": 4,
+ "subagentTokens": 780185,
+ "toolCalls": 128,
+ "lenses": [
+  {
+   "lens": "sql-candidate-and-scripts",
+   "review": {
+    "verdict": "LENS H1 (candidate, precheck, postcheck, rollback at f581b6b): SOURCE PASS WITH LIMITS. Every doc 49 section 5 item in these four files is present in inspected source: the install transaction seeds the HELD head, there is no lazy creation and an absent head is refused with 55000, there are three RESTRICT foreign keys, ALWAYS refusal triggers, a monotonic epoch, an unchanged constant reader, a fingerprint that excludes internal triggers, pre/postcheck head assertions, a pristine-seed rollback and the unchanged nineteen-row list. Retained hashes recompute equal: definition cab02e54..., the four file sha256lf values, receipt raw b9074117... I found no P0, P1 or P2. There are six P3 precision notes. All behaviour is NOT RUN, the qualification window expired 2026-10-06T21:43:37Z, hosted database state is NOT PROVEN, and none of this is Samuel's approval or installation authority.",
+    "checklist": [
+     {
+      "item": "0. Identity and byte provenance",
+      "status": "PASS",
+      "evidence": "Verified retained evidence: the scratch copies are byte-equal to git show f581b6b (sha256 .sql 5b0b2cd9, precheck f5572b43, postcheck c9f3b563, rollback 75dfe2d2), and these equal doc49-currentness-source-f581b6b.json:27,33,39,45@30085a6, bindings :473-492@f581b6b and the receipt :139-151@30085a6. Before-hashes at 3e82154 (dc1c1dee, a3cbf36f, 0c2d28d5, 7037c699) equal the recorded beforeSha256lf. git diff 3e82154..7f8edd7 -- supabase/ is empty, so the parent's implementation equals the accepted source. f581b6b tree 9efb20d5, parent 7f8edd7. The receipt's raw sha256 b9074117 equals the source json :20."
+     },
+     {
+      "item": "1. Seed: install inserts exactly one pristine HELD head",
+      "status": "PASS",
+      "evidence": "Inspected source: .sql:203-204@f581b6b inserts head(singleton) values(true). The defaults at .sql:147-158 give writer_epoch 0 and state 'held'; the three refs and last_revoke_reason have no default, so they are null. The insert sits inside install_sql (.sql:82-349), so it is covered by the definition hash. It runs via execute at :384, before schema_fingerprint is created (:385) and before the seal comment (:388-389). The fingerprint is catalog-only and does not cover row data. Reapply (the installed>0 branch, :375-382) verifies the seal and does not re-insert. integrity() (:217-219) requires count=1 and singleton, and the new check at :392-394 requires held with active null. Reapply correctly does not require epoch 0."
+     },
+     {
+      "item": "2. No lazy creation; absent-head refusal",
+      "status": "PASS",
+      "evidence": "Inspected source: the 3e82154 .sql:214 'insert ... on conflict(singleton) do nothing' was removed. publish refuses an absent head at .sql:297-299 and revoke at :324-326, both 55000 'Quick Order authority head unavailable'. Revoke previously folded this case into 22023 (3e82154:241); it now keeps 22023 only for a missing revision (:327-328). integrity() is called first and raises the same 55000 at :217-219. The only head INSERT in the file is :204. integrity(), read_current_authority (:336-341) and the pre/postchecks never insert. Behaviour is untested."
+     },
+     {
+      "item": "3. Three ON DELETE RESTRICT FKs with valid ordering",
+      "status": "PASS",
+      "evidence": "Inspected source: .sql:150-155 adds research_health_quick_order_head_{active,published,revoked}_revision_fk REFERENCES revisions(revision_id) ON DELETE RESTRICT. ON UPDATE is the default NO ACTION. They are not deferrable. integrity() asserts the exact shape at :220-237 (3 FKs, conkey/confkey, confdeltype 'r', confupdtype 'a', validated, not deferrable). The CHECKs head_state and head_revoke at :159-163 are unchanged. In publish, the revision INSERT (:305) precedes the head UPDATE (:310), so the immediate RI check sees it. Revoke checks the revision exists (:327) and the FK backs that check."
+     },
+     {
+      "item": "4. Immutability triggers, security and ACL",
+      "status": "PASS",
+      "evidence": "Inspected source: .sql:187-189 is revisions BEFORE UPDATE OR DELETE OR TRUNCATE FOR EACH STATEMENT (tgtype 58). This is statement-level rather than row-level, which is stricter: it fires on zero-row statements. :190-192 is head BEFORE DELETE OR TRUNCATE, statement-level (42). :196-201 sets ENABLE ALWAYS. Both functions (:172-186) are SECURITY INVOKER with search_path ''. They are revoked from public, anon, authenticated and service_role at :342-348. Names fall under the prefix and currentness_%. integrity checks the triggers at :238-252. Publish never updates a revision: an identical republish only SELECTs (:300-303), and a conflict raises 23505 before any write. The head UPDATE passes the epoch guard (+1). Plain TRUNCATE of revisions: see F1."
+     },
+     {
+      "item": "5. Monotonic epoch",
+      "status": "PASS",
+      "evidence": "Inspected source: .sql:178-186 and :193-195 add a BEFORE UPDATE FOR EACH ROW trigger (tgtype 19). It refuses new.writer_epoch is null or new<old with 55000 and returns NEW. A reset to 0 from above 0 is a decrease and is refused. An equal epoch is allowed. The explicit null test runs before the NOT NULL constraint, and old cannot be null. singleton cannot change: CHECK(singleton) plus PK not null. No state-transition checks were added (not required). Same-epoch rewrites of other head fields remain possible by ordinary owner DML: see F3. The seed INSERT does not fire this trigger."
+     },
+     {
+      "item": "6. read_current_authority unchanged constant",
+      "status": "PASS",
+      "evidence": "Verified mechanically: the function block 'create function public.research_health_quick_order_read_current_authority ... $read_current_authority$;' is byte-equal between 3e82154 and f581b6b (.sql:336-341@f581b6b). It returns {state:'unavailable', code:'quick_order_currentness_not_implemented'}. The pre/postcheck still assert the constant (:115-116)."
+     },
+     {
+      "item": "7. Fingerprint",
+      "status": "PASS",
+      "evidence": "Inspected source: the triggers clause adds 'where not t.tgisinternal' (.sql:69-71; precheck/postcheck :61-63). The constraints clause (.sql:64-66) still records the FKs by name with pg_get_constraintdef(k.oid,true). owned_functions (:48-53) matches currentness_%, which covers refuse_mutation and monotonic_epoch with functiondef, owner and acl. The integrity ACL loop (:261-272) uses the same predicate. The types clause is byte-equal to 3e82154. The canonical provider fingerprint only covers research_assisted_order_% and the outbox (migration 20261001160730:16-34), so the new objects cannot drift the fence."
+     },
+     {
+      "item": "8. Definition hash and fingerprint-block equality",
+      "status": "PASS",
+      "evidence": "Verified retained evidence: node over git show f581b6b bytes (no CR present) computes sha256(install block + fingerprint block) = cab02e549fe17ce9836e67ce41c1e77e12e86fbe5e1ef825d87d2614ff9e0ac9. That equals doc49-currentness-source-f581b6b.json:13@30085a6 and bindings currentnessDefinition :470@f581b6b. The verifier extraction (.mjs:281) uses the same rule. The 3e82154 definition was cc19d43d..., so it changed as expected. The fingerprint block sha 9f9d1463... is identical in candidate, precheck and postcheck. rollback.md has no block: it compares the seal with the installed schema_fingerprint() plus the GUC (:108-111)."
+     },
+     {
+      "item": "9. Pre/postcheck assertions and nineteen-row list",
+      "status": "PASS",
+      "evidence": "Inspected source: precheck/postcheck :108 call the sealed integrity() (head count=1 and singleton, the FK shape, and every non-null ref resolving, .sql:217-260) only after checking the seal (:104-107). :111-117 add an explicit 'not exists(singleton and held and active null)' plus the held/constant checks. The precheck permits absence (no else). The postcheck's else raises 'installation absent' (postcheck :118-119); that is the only pre/post difference besides the header. Verified mechanically: the expected_triggers array in all three SQL files at both SHAs equals the canonical nineteen exactly, in order and with O/A states. Reference resolution is delegated to integrity(): see F5."
+     },
+     {
+      "item": "10. Rollback",
+      "status": "PASS",
+      "evidence": "Inspected source: rollback.md:112-119 refuses if any revision exists, if head count is not 1, or if the head is not pristine (epoch 0, held, three refs and reason null). Audit fields are excluded by documented design (:80). The ACCESS EXCLUSIVE lock (:106-107) and seal recheck (:108-111) precede the check, as at 3e82154:102. The drop order head then revisions (:127-128) removes the FKs first. The trigger functions are dropped after their tables (:129-130). valid_publication is dropped after revisions, whose CHECK depends on it. All 8 functions plus 2 tables are dropped (10 objects, prose :148). There is no CASCADE. The fence recheck is at :133-140. The prose is updated at :6-11 and :77-86. The binding path is re-pinned (:30, :57; 55 inventory entries verified)."
+     },
+     {
+      "item": "11. Hunks beyond spec and weakening or grant check",
+      "status": "PASS",
+      "evidence": "Hunks: .sql header comment (not hashed); fingerprint filter; FK columns; trigger functions, triggers, ENABLE ALWAYS and seed; integrity head/FK/trigger/reference checks (strengthening); publish/revoke absent-head 55000; revoke list adding the 2 functions; outer DO held check :392-394 (extra, strengthening). Pre/post: filter, comment, presence clause. Rollback: prose, two binding re-pins, predicate, two drops, 'ten objects'. grep finds no GRANT, CASCADE, SECURITY DEFINER or DISABLE TRIGGER in the four files. The ACL loops, seal regex, lock and fence checks are byte-unchanged; read_current, valid_publication, types and the ACL loop were compared mechanically."
+     },
+     {
+      "item": "12. SQL correctness hazards",
+      "status": "PASS",
+      "evidence": "From reading only, untested. TRUNCATE triggers are FOR EACH STATEMENT. The row trigger returns NEW, and the statement triggers only raise. RESTRICT is unreachable under ordinary DML because the BEFORE DELETE guard fires first. The RI check on head uses SELECT FOR KEY SHARE, not an UPDATE, so the revisions guard does not fire. The seed fires only the AFTER INSERT RI check, with all refs null. TRUNCATE head is not blocked by the FK (head is the referencing table), so the guard gives 55000. Plain TRUNCATE of revisions is blocked by PostgreSQL's FK check with 0A000 before BEFORE TRUNCATE triggers run (F1). DROP TABLE fires no triggers. The multi-statement EXECUTE install relies on the same oneshot pattern as the predecessor. The oid-vs-regclass/regprocedure comparisons resolve via implicit casts."
+     }
+    ],
+    "findings": [
+     {
+      "id": "H1-F1",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.rollback.md",
+      "claim": "A plain TRUNCATE of the revisions table never reaches the 55000 revisions guard. PostgreSQL refuses it earlier with 0A000 ('cannot truncate a table referenced in a foreign key constraint'). The 55000 guard is reached only by 'truncate revisions, head' or by CASCADE. The prose at rollback.md:9-11 does not say which SQLSTATE applies.",
+      "evidence": "Inspected .sql:187-189@f581b6b (statement-level BEFORE TRUNCATE) and :150-155 (head references revisions). In PostgreSQL's ExecuteTruncateGuts, heap_truncate_check_FKs (DROP_RESTRICT) runs before ExecBSTruncateTriggers, regardless of row count. The verifier comment at .mjs:411-418 already accounts for this and tests 'truncate REVISIONS,HEAD'. Both paths refuse. Untested.",
+      "fix": "Add one sentence after rollback.md:11: 'A plain TRUNCATE of the revisions table is refused by its foreign keys (0A000); the 55000 guard covers TRUNCATE that includes the head or uses CASCADE.' No SQL or hash change."
+     },
+     {
+      "id": "H1-F2",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "The shared refuse_mutation function raises the same message and SQLSTATE for the revisions guard and the head guard. A refusal of 'truncate revisions, head' therefore cannot be attributed to the revisions guard by its error alone.",
+      "evidence": "Inspected .sql:172-177@f581b6b (one function, one message) used at :189 and :192. The verifier expects that message for both tables (.mjs:415-422). Attribution currently rests on PostgreSQL firing BEFORE STATEMENT triggers in relation-list order.",
+      "fix": "Optional. Add detail to the raise at .sql:175, for example: raise exception '...' using errcode='55000', detail=tg_table_name||':'||tg_op. This changes the definition hash and the seal, so re-pin the bindings and receipt. Otherwise, record the ordering reliance in the packet."
+     },
+     {
+      "id": "H1-F3",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "The epoch guard refuses only a decrease. At the same epoch, ordinary owner DML can still rewrite the head's state/active (to an existing revision), last_published/last_revoked (to existing revisions), the revoke reason and the audit fields. This is within spec, which does not require state transitions.",
+      "evidence": "Inspected .sql:178-186@f581b6b. The verifier proves a manual active head is allowed (.mjs:449-451). Mitigations: read_current_authority is constant (:336-341); reapply and postcheck refuse a non-held head (:392-394, postcheck :111-117); rollback refuses any revision or non-pristine head (rollback.md:112-119); the audit-field exclusion is documented (rollback.md:80).",
+      "fix": "No change in this slice. Record in the packet that the future commit/currentness protocol must require a strict epoch increase on any authority-changing head write."
+     },
+     {
+      "id": "H1-F4",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "The new absent-head checks inside publish_revision and revoke_revision are shadowed by integrity(), which is called first and raises the same 55000 message. The verifier's absent-head cases therefore exercise integrity's check, not the in-function checks.",
+      "evidence": "Inspected .sql:293 and :321 (integrity first), :217-219 (count<>1 raises 'Quick Order authority head unavailable' 55000), and :297-299 and :324-326 (the same message). The verifier fixture is at .mjs:212-214 and :376-380.",
+      "fix": "None required; this is harmless defence in depth. Optionally note in the packet that the in-function checks are unreachable while integrity() precedes them."
+     },
+     {
+      "id": "H1-F5",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.precheck.sql",
+      "claim": "The pre/postcheck assertion that every non-null head reference resolves is delegated to the installed integrity() function rather than written inline in the check files.",
+      "evidence": "Inspected precheck.sql:108 and postcheck.sql:108@f581b6b, which call integrity(), which does the work at .sql:253-260. integrity's body is bound by the fingerprint (pg_get_functiondef), and the precheck compares it with the seal (:104-107) under the caller-bound definition GUC. This is sound under the declared owner-trust model (rollback.md:10-11).",
+      "fix": "Optional. After precheck/postcheck :116, add an inline exists() left join of the three head references against the revisions table that raises 55000. This changes only the check-file hashes, not the definition."
+     },
+     {
+      "id": "H1-F6",
+      "severity": "P3",
+      "file": "supabase/candidates/20261006_research_health_quick_order_currentness.sql",
+      "claim": "Cosmetic typo in a header comment: 'scope1d4f2c3' is missing a space.",
+      "evidence": "Inspected .sql:3@f581b6b. The line is outside the $currentness_install$ and $currentness_fingerprint$ blocks, so the definition hash is unaffected.",
+      "fix": "Change it to 'scope 1d4f2c3' when the file next changes. File hash only."
+     }
+    ],
+    "confirmed": [
+     "Byte provenance (verified hashes): the scratch copies of the four files equal git show f581b6b. Their sha256lf values (5b0b2cd9, f5572b43, c9f3b563, 75dfe2d2) equal the builder's source json, bindings and receipt.",
+     "Verified hash: definition sha256(install+fingerprint, LF) = cab02e549fe17ce9836e67ce41c1e77e12e86fbe5e1ef825d87d2614ff9e0ac9, which equals doc49-currentness-source-f581b6b.json:13@30085a6 and bindings :470@f581b6b. The predecessor definition was cc19d43d.",
+     "Verified hash: the fingerprint block sha 9f9d1463 is identical in candidate, precheck and postcheck at f581b6b.",
+     "Verified hash: the receipt sql-currentness-source-receipt-f581b6b.json raw sha256 b9074117 equals the recorded sha256Raw.",
+     "Verified: the before-hashes of the four files at 3e82154 equal the recorded beforeSha256lf values.",
+     "Verified: 3e82154..7f8edd7 has no supabase/ diff, so the parent's implementation equals the accepted source.",
+     "Verified mechanically: the nineteen-row canonical trigger list is identical in candidate, precheck and postcheck at both 3e82154 and f581b6b, and equals the canonical list.",
+     "Verified mechanically: the read_current_authority, valid_publication, fingerprint types clause and integrity ACL loop blocks are byte-equal across 3e82154 and f581b6b.",
+     "Inspected source: the seed insert is inside install_sql (.sql:204) and runs before the seal is written. Reapply verifies the seed and does not re-insert it.",
+     "Inspected source: the lazy head insert is removed. publish and revoke refuse an absent head with 55000. No other head-insert path exists.",
+     "Inspected source: the three FKs are named under the prefix, ON DELETE RESTRICT, ON UPDATE NO ACTION, and not deferrable. integrity() asserts their exact shape.",
+     "Inspected source: the revisions UPDATE/DELETE/TRUNCATE and head DELETE/TRUNCATE statement guards (tgtype 58 and 42) and the row epoch trigger (19) are all ENABLE ALWAYS, SECURITY INVOKER with search_path '', and revoked from public, anon, authenticated and service_role.",
+     "Inspected source: the fingerprint excludes internal triggers. The new trigger functions are inside the owned_functions predicate and the integrity ACL loop. The canonical provider fingerprint does not cover research_health_quick_order_* objects.",
+     "Inspected source: rollback allows only a pristine seed. The lock precedes the check. The drop order is head, then revisions, then the trigger functions, then valid_publication. There is no CASCADE, and the prose is updated (8 functions, 10 objects, re-pinned 55-entry bindings).",
+     "Inspected source: there is no new GRANT, no SECURITY DEFINER and no weakened ACL, seal, lock or fence logic in the four files."
+    ],
+    "discrepancies": [
+     "The lens brief expected the revisions UPDATE/DELETE refusal to be row-level. The implementation uses one statement-level trigger for UPDATE, DELETE and TRUNCATE (tgtype 58, .sql:187-189). This satisfies doc 49 section 5 and is stricter, since it fires on zero-row statements. It is not a defect.",
+     "Doc 49 section 5 expects the refusal from BEFORE TRUNCATE on revisions to be 55000. A plain TRUNCATE of revisions alone gets 0A000 from PostgreSQL's FK check first (F1). The refusal still holds; only the SQLSTATE on that path differs. Not tested.",
+     "Doc 49 section 5 lists the new currentness source receipt as part of the successor deliverable. The receipt is in records commit 30085a6, not in f581b6b. rollback.md:22-24 says a receipt is produced after its source commit, so this placement is by design. Records lens, not H1."
+    ],
+    "notProven": [
+     "All behaviour is NOT RUN. No SQL, verifier, container or database execution took place, and the qualification window expired 2026-10-06T21:43:37Z.",
+     "Hosted or managed Supabase database state is NOT PROVEN, including whether any prior currentness install exists that a reapply would refuse on the definition change.",
+     "PostgreSQL TRUNCATE ordering (FK check before BEFORE STATEMENT triggers) and BEFORE STATEMENT trigger firing order across a multi-relation TRUNCATE are stated from knowledge of the PostgreSQL source. Untested.",
+     "Runtime operator resolution of the oid-vs-regclass/regprocedure comparisons, and multi-statement EXECUTE of install_sql with CREATE TRIGGER, ALTER TABLE and INSERT, are untested.",
+     "The full 66-file receipt recomputation, the verifier's new cases and exit codes, and the 55-entry bindings inventory content are outside lens H1. I only checked the four candidate-file entries and the receipt's raw hash.",
+     "Producer-reported, not verified: the claim in the packet and source json that the root and helper inspected the source manually.",
+     "Nothing here is Samuel's approval, push authorization, installation authority or a qualification decision."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "H1-F1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. In inspected source, head references revisions (.sql:150-155@f581b6b) and the revisions guard is BEFORE ... TRUNCATE FOR EACH STATEMENT (.sql:187-189). In PostgreSQL, ExecuteTruncateGuts runs heap_truncate_check_FKs (DROP_RESTRICT) before ExecBSTruncateTriggers, so a plain 'truncate revisions' fails with 0A000 before reaching the 55000 guard. The refusal holds; only the SQLSTATE differs from doc 49 section 5. The verifier comment at .mjs:411-414 and the case at :418 account for this. One correction to the fix: it says 'no SQL or hash change', but a prose edit changes rollback.md sha256lf, which is pinned at bindings :491-494@f581b6b and receipt :146@30085a6. That needs a new successor commit, bindings and receipt; only the definition hash stays the same. Runtime is untested."
+     },
+     {
+      "id": "H1-F2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. One function with one message (.sql:172-177@f581b6b) serves both guards (:189, :192). The verifier's 'truncate REVISIONS,HEAD' case (.mjs:418, :422) cannot tell which guard fired. The TRUNCATE event on revisions is still asserted structurally: integrity() requires tgtype 58 (.sql:242), and assertHeadProtection requires 58 (.mjs:196-200 region). So the gap is attribution only. The fix is correctly described as changing the definition and seal."
+     },
+     {
+      "id": "H1-F3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3, with an anchor correction. The epoch guard refuses only a decrease (.sql:181), so ordinary owner DML can rewrite state, references or reason at the same epoch, within spec. The lens's anchor .mjs:449-451 is wrong: those lines are the FK-isolation comments. The manual-active-head fixture is .mjs:459-461@f581b6b. Mitigations confirmed: the constant reader (.sql:336-341), the held checks (.sql:392-394; pre/post :111-117) and the pristine rollback predicate (rollback.md:112-119)."
+     },
+     {
+      "id": "H1-F4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. integrity() is called first (.sql:293, :321) and raises the same 55000 message (:217-219) before the in-function checks (:297-299, :324-326). The verifier expects that message (.mjs:379), so these cases exercise integrity's check. Precision: 'unreachable' overstates it. Under READ COMMITTED, the in-function check is reachable if a concurrent committed transaction removes the head between integrity's snapshot and FOR UPDATE, which requires disabling the ALWAYS guard. It is harmless defence in depth."
+     },
+     {
+      "id": "H1-F5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3. precheck/postcheck :108@f581b6b call integrity(), whose reference-resolution check is at .sql:253-260. Its body is bound through pg_get_functiondef in the fingerprint, which is compared with the seal at :104-107. The optional inline check would change the check-file sha256lf. That requires re-pinning bindings currentnessFiles (:479-489) and the receipt, though not the definition."
+     },
+     {
+      "id": "H1-F6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld at P3 and extended. .sql:3@f581b6b reads 'within dc3329 / scope1d4f2c3'. 'scope1d4f2c3' is missing a space, and 'dc3329' is a 6-hex abbreviation, whereas doc 49 uses dc3329b and the source json :9@30085a6 records dc3329bb2cfb.... The line is outside both hashed blocks, so the definition is unaffected. Any edit changes the .sql sha256lf pinned at bindings :473-476 and the receipt :150, so it needs a re-pin."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "0. Identity and byte provenance",
+      "status": "PASS",
+      "note": "Hashes I recomputed (node over git show, no CR in any blob): at f581b6b, .sql 5b0b2cd9, precheck f5572b43, postcheck c9f3b563, rollback 75dfe2d2, mjs 9b676300. At 3e82154: dc1c1dee, a3cbf36f, 0c2d28d5, 7037c699, 0fc2f785. These equal source json :24-54@30085a6 and bindings :471-501@f581b6b. f581b6b has tree 9efb20d5 and parent 7f8edd7, and git diff 3e82154 7f8edd7 -- supabase/ is empty. f581b6b changes exactly 6 paths: the 5 currentness files plus the new doc49-currentness-bindings-20261008.json. Everything is LOCAL and unpushed, as reported."
+     },
+     {
+      "item": "1. Seed: pristine HELD head inside install_sql",
+      "status": "PASS",
+      "note": "Inspected source: .sql:204@f581b6b inserts head(singleton) values(true). The defaults at :147-149 give epoch 0 and state held; the refs and reason (:150-156) have no default. The insert is inside install_sql (:82-349), so the definition hash covers it, and it executes at :384 before the seal comment (:388-389). Reapply (:375-382) only verifies and never inserts. Behaviour is NOT RUN."
+     },
+     {
+      "item": "2. No lazy creation; absent-head refusal",
+      "status": "PASS",
+      "note": "Inspected source: the insert at 3e82154:214 is removed. Publish refuses 55000 at .sql:297-299 and revoke at :324-326; 22023 is kept for a missing revision (:327-328). The 3e82154:241 combined test is split. The only head INSERT is :204. integrity, read_current and the checks never insert. Shadowing is covered in F4."
+     },
+     {
+      "item": "3. Three RESTRICT FKs and ordering",
+      "status": "PASS",
+      "note": "Inspected source: .sql:150-155 defines the three named FKs with ON DELETE RESTRICT, default ON UPDATE NO ACTION, not deferrable. integrity() asserts confdeltype 'r', confupdtype 'a', validated, not deferred and the exact conkey/confkey (:220-237). The CHECKs at :159-163 are unchanged. Publish inserts the revision (:305) before the head update (:310), and revoke checks that the revision exists (:327)."
+     },
+     {
+      "item": "4. Immutability triggers and security",
+      "status": "PASS",
+      "note": "Inspected source: :187-192 are statement-level guards. tgtype is 58 (2+8+16+32) and 42 (2+8+32), which I recomputed. They are ENABLE ALWAYS (:196-201). The functions are SECURITY INVOKER with search_path '' (:172-186), revoked from public/anon/authenticated/service_role (:342-348), and inside the integrity ACL loop (:261-272). Publish never UPDATEs a revision (:300-307). The RI check uses FOR KEY SHARE, which fires no UPDATE trigger. Plain TRUNCATE gives 0A000 (F1)."
+     },
+     {
+      "item": "5. Monotonic epoch",
+      "status": "PASS",
+      "note": "Inspected source: :178-186 and :193-195 are BEFORE UPDATE FOR EACH ROW (tgtype 19). It refuses null or new<old with 55000 and returns NEW. It fires before CHECK/NOT NULL, so -1 gets 55000, matching .mjs:426-428. An equal epoch is allowed. Delete/reinsert resets are blocked by the head guard. No state-transition rule was added."
+     },
+     {
+      "item": "6. read_current_authority constant",
+      "status": "PASS",
+      "note": "Inspected diff: no hunk touches .sql:336-341@f581b6b except the revoke list. It returns the constant unavailable object, which pre/postcheck :115-116 assert."
+     },
+     {
+      "item": "7. Fingerprint",
+      "status": "PASS",
+      "note": "Inspected source: 'where not t.tgisinternal' is at .sql:69-71 and pre/post :61-63. The constraints clause (:64-66) records the FK defs by name. owned_functions (:48-53) covers both trigger functions via currentness_%. The types clause is unchanged. The canonical provider fingerprint (20261001160730:16-33) covers only research_assisted_order_% and the outbox. Limit: internal RI trigger enablement is now outside both the seal and integrity (see missed)."
+     },
+     {
+      "item": "8. Definition hash and fingerprint-block equality",
+      "status": "PASS",
+      "note": "I recomputed sha256(install+fingerprint, LF) = cab02e549fe17ce9836e67ce41c1e77e12e86fbe5e1ef825d87d2614ff9e0ac9. It equals source json :13@30085a6 and bindings :470@f581b6b; each marker occurs exactly twice. The predecessor was cc19d43d.... The fingerprint block sha 9f9d1463... is identical in the candidate, precheck and postcheck. The seal value itself is a database value and is NOT PROVEN."
+     },
+     {
+      "item": "9. Pre/postcheck and nineteen-row list",
+      "status": "PASS",
+      "note": "Inspected source: pre/post :108 call the sealed integrity() (count, FK shape, references), and :111-117 assert singleton held with active null. The precheck permits absence; the postcheck refuses it (:118-119), which is the only difference besides the header. I compared the expected_triggers arrays mechanically: in the .sql, precheck and postcheck at both SHAs they equal the canonical nineteen, in order, with O/A. The bindings canonicalTriggers also match."
+     },
+     {
+      "item": "10. Rollback",
+      "status": "PASS",
+      "note": "Inspected source: rollback.md:112-119 is the pristine predicate. The lock (:106-107) and seal recheck (:108-111) come before it. Drops run head (:127), then revisions (:128), then the trigger functions (:129-130), then valid_publication (:131); head first removes the FKs and their internal triggers, so no CASCADE is needed. 8 functions + 2 tables = 10 (:148). The fence recheck is at :133-140. Rollback behaviour is NOT RUN."
+     },
+     {
+      "item": "11. Hunks beyond spec; weakening or grant",
+      "status": "PASS",
+      "note": "I re-derived the hunk list from git diff 3e82154 f581b6b and it matches the lens. Precision on the grep claim: 'grant' and 'cascade' do match, but only in prose (rollback.md:4, 8, 150-151) and as the grantee identifier (.sql:266, 276, 278). There is no GRANT, CASCADE, SECURITY DEFINER or DISABLE TRIGGER statement in the four files. The ACL, seal, lock and fence logic is unchanged apart from the strengthening additions."
+     },
+     {
+      "item": "12. SQL correctness hazards by reading",
+      "status": "PASS",
+      "note": "These are reading-level conclusions only; runtime is NOT PROVEN. TRUNCATE triggers are statement-level. The row trigger returns NEW, and the statement functions always raise, so they never reach the end without RETURN. Trigger execution needs no EXECUTE privilege at fire time. The multi-statement EXECUTE relies on oneshot per-statement analysis, as the predecessor did. DROP fires no triggers. The verifier's ALTER ... DISABLE TRIGGER fixtures have no pending AFTER events on the altered table, because the RI checks fire at statement end."
+     }
+    ],
+    "missed": [
+     "P3 (seal-scope limit, by design): with tgisinternal excluded (.sql:69-71@f581b6b), neither the seal nor integrity() (.sql:238-252 counts only non-internal triggers) observes the enablement of the FK's internal RI triggers. A superuser-only ALTER TABLE ... DISABLE TRIGGER \"RI_ConstraintTrigger_...\" would not be detected. This is compensated by integrity's explicit reference check (.sql:253-260) and the ALWAYS revisions guard. An optional OID-independent check would be: pg_trigger rows whose tgconstraint is one of the three FK oids all have tgenabled='O'.",
+     "Anchor correction for H1-F3: the manual-active-head fixture is at .mjs:459-461@f581b6b, not :449-451 (those are FK-isolation comments).",
+     "Fix-cost understatement in H1-F1, F5 and F6: any byte change to rollback.md, the pre/postcheck or the .sql header changes a sha256lf pinned in doc49-currentness-bindings-20261008.json currentnessFiles (:471-501@f581b6b) and in the 66-entry receipt (30085a6). It therefore needs a new source commit, bindings and receipt, even though the definition cab02e54 is unchanged.",
+     "H1-F6 extension: .sql:3 also abbreviates the approval as 'dc3329' (6 hex) where doc 49 says dc3329b; hash-neutral for the definition.",
+     "Precision: the outer-DO held check (.sql:392-394) is outside both hashed blocks. Like the rest of the outer DO, it is bound only by the file sha256lf, not by the definition or the seal. This is not a defect.",
+     "Verified by me, previously listed by the lens as not proven: all 66 receipt entries recompute equal against f581b6b blobs (LF). The receipt path set equals the rollback.md:27-40 union (55 inventory + bindings + 5 own files + the BASELINE_SQL entries; 66 unique). Receipt raw and LF sha are b9074117 and bindings 40fdc3a4.",
+     "Verified: the new bindings' 55-entry inventory and canonicalTriggers are JSON-equal to review-599-repair-bindings-20261007.json. That historical file is byte-unchanged from 3e82154 to f581b6b (sha256lf b68106ad, pinned at bindings :466-469). No historical file is rewritten.",
+     "Verified: every SQLSTATE and message the verifier expects is raised by the SQL. The 55000 cases come from .sql:175, :182, :218-219 and rollback.md:119; 23503 comes from the three FKs; 23505 from .sql:303; 22023 from .sql:295, :323 and :328. The fixtures disable only candidate-owned user triggers inside transactions that fail and roll back, then re-assert tgtype, enablement and seal (.mjs:454-456). They do not modify candidate bytes."
+    ],
+    "verdictOpinion": "I uphold the lens verdict: H1 SOURCE PASS WITH LIMITS. I recomputed every hash it relies on from Git objects: the four candidate files and the verifier at both SHAs, definition cab02e54, the shared fingerprint block 9f9d1463, the receipt b9074117 with all 66 entries and its path union, the bindings 40fdc3a4 and the predecessor bindings b68106ad. I also re-derived every doc 49 section 5 item from the source at f581b6b. I found no P0, P1 or P2. All six P3 findings stand. Corrections: H1-F3's verifier anchor is wrong. The F1, F5 and F6 fixes require re-pinning the bindings and receipt, so they are not hash-free. F4's 'unreachable' is overstated. I add one P3 seal-scope limit: internal RI trigger enablement is no longer observed, by the coordinator's design, and integrity()'s reference check compensates. f581b6b touches only the five currentness files and the new bindings. These are source and retained-hash findings only. Every behaviour is NOT RUN, the qualification window expired at 2026-10-06T21:43:37Z, and hosted database state, including any prior install with the cc19d43d definition that a reapply would refuse, is NOT PROVEN. Source acceptance is not qualification, push or installation authority, and nothing here is Samuel's approval."
+   }
+  },
+  {
+   "lens": "verifier-receipts-records",
+   "review": {
+    "verdict": "LENS H2: PASS WITH LIMITS, source and records only. I found no P0, P1 or P2. There are three P3s, all about test discrimination or records hygiene. Every new verifier case maps to a doc 49 section 5 item, and every expected SQLSTATE and message matches the candidate bytes at f581b6b. To stage an absent head, the verifier disables the candidate's own removal trigger as the owner inside a transaction. It re-enables ALWAYS before the callable runs, and the error rolls the fixture back. The candidate bytes are not weakened. I recomputed every hash: receipt 66/66 at f581b6b and at 30085a6, bindings inventory 55/55 at base 18bfbcd, definition cab02e54 equal, coordinator checkpoint 126/126 entries, and 60/60 historical evidence blobs byte-identical. Intake, runtime and lease rows are frozen, and only the builder's rows changed. Everything is NOT RUN. Hosted database state and the database-dependent seal value are NOT PROVEN. The work is LOCAL ONLY (origin tip 1631323, local ahead 3). This is not Samuel's approval or installation authority.",
+    "checklist": [
+     {
+      "item": "1a Seeded HELD head present after install, reapply and reinstall",
+      "status": "PASS",
+      "evidence": "Inspected source. The verifier calls assertPristineHead at research_health_quick_order_currentness_local.mjs:330, :337 and :363@f581b6b (defined at :182-188: one row; epoch 0; held; three references and reason null; updated_by postgres; zero revisions). The candidate seeds the row at .sql:204@f581b6b with defaults from :147-158. Reapply (.mjs:335-341) asserts currentRows and schema seal are unchanged. The reapply branch at .sql:365-382 never re-inserts the head. NOT RUN."
+     },
+     {
+      "item": "1b publish and revoke refuse an absent head; staging mechanism is honest",
+      "status": "PASS",
+      "evidence": "Inspected source. absentHeadFixture (.mjs:212-215) runs: begin; DISABLE the candidate-owned removal trigger; delete head; ENABLE ALWAYS again; then the call. :377-383 expects 55000 with the message 'Quick Order authority head unavailable', then asserts that rows, triggers, FKs and the canonical fence are restored. The error, or disconnect with an open transaction, rolls the fixture back, and refused() fails if no error occurs. Canonical and internal RI triggers are never touched. The candidate already states that owner bypass is out of scope (.sql:5-6, rollback.md:10-11). Limit (F1): integrity() at .sql:217-219 raises the same message before the in-function checks at .sql:297-299 and :324-326, so the test does not tell which layer refused. The lazy insert is gone (diff at .sql:294)."
+     },
+     {
+      "item": "1c Immutability refusals: revisions UPDATE, DELETE, TRUNCATE; head DELETE, TRUNCATE",
+      "status": "PASS",
+      "evidence": "Inspected source. .mjs:415-425 expects 55000 with 'Quick Order authority history mutation refused' (.sql:175) for revisions UPDATE, revisions DELETE, 'truncate revisions,head', head DELETE and head TRUNCATE. Triggers at .sql:187-201 are statement-level BEFORE and ENABLE ALWAYS. tgtype 58, 42 and 19 with 'A' are asserted at .mjs:193-197 and in integrity() at .sql:241-252. PostgreSQL's truncate FK check runs before BEFORE TRUNCATE triggers. truncate head alone passes that check, because head is only a referencing table, and its trigger fires. Revisions must be listed together with head, and its trigger fires first. Limit (F2): both triggers share one function and message."
+     },
+     {
+      "item": "1d Epoch decrease or reset refused; same value and increase accepted",
+      "status": "PASS",
+      "evidence": "Inspected source. .mjs:426-433 expects 55000 'Quick Order writer epoch decrease refused' (.sql:182) for 0, for -1 (the BEFORE row trigger fires ahead of CHECK writer_epoch>=0) and for an in-transaction increase followed by a decrease. .mjs:434-438 accepts the same value and an increase, each rolled back. currentEpoch is read live and is 2, because the identical republish at .mjs:404 increments the epoch (.sql:310-312)."
+     },
+     {
+      "item": "1e Three ON DELETE RESTRICT FKs, structural and behavioural",
+      "status": "PASS",
+      "evidence": "Inspected source. .mjs:198-206 asserts name, column, revision_id, confdeltype r, confupdtype a, validated, not deferrable, cardinality 1, matching .sql:150-155. .mjs:444-458 sends a dangling update and expects 23503 with the constraint name. It then sets that one reference, disables only REVISION_TRIGGER and deletes the revision, again expecting 23503 with the constraint name. referenceAssignments (:439-443) sets the other references to null and satisfies CHECKs .sql:159-163 (state/active pairing; reason regex for 'synthetic-fk-check'), so each FK is isolated and no 23514 can pre-empt the result."
+     },
+     {
+      "item": "1f Pristine empty rollback allowed; non-pristine and retained history refused",
+      "status": "PASS",
+      "evidence": "Inspected source. .mjs:344-350 inserts 'update head set writer_epoch=1' before the documented DO block. The JS replacement contains no special $ pattern, and notEqual is asserted. It expects 55000 'Retained currentness evidence prevents destructive rollback' (rollback.md:112-119). :352-360 runs the exact rollback on a pristine seed and asserts zero proc and class rows. :465 refuses after publish and revoke. With no revisions, the FKs and CHECKs make epoch the only reachable non-pristine field, so the single drift case is complete. Drop order is head then revisions (rollback.md:127-128)."
+     },
+     {
+      "item": "1g read_current_authority stays the constant unavailable object",
+      "status": "PASS",
+      "evidence": "Inspected source: .sql:336-341 is unchanged. The verifier asserts UNAVAILABLE after install (.mjs:332), with an absent head (:384-385), with a forced active head (:459-461) and after revoke (:463)."
+     },
+     {
+      "item": "1h refused() distinguishes SQLSTATE from timeout, overflow and signal",
+      "status": "PASS",
+      "evidence": "Inspected source. .mjs:153-162 asserts failure exists, timedOut false, overflow false, signal null, a regex match on 'ERROR:\\s+<state>:' under VERBOSITY verbose (:150), and the specific message when one is given. Every new case passes a message except the pre-existing 22023 and 42501 sets."
+     },
+     {
+      "item": "2 Unchanged guarantees: HELD, exit codes, argv, receipt schema and confinement, TRIGGERS, docker flags, cleanup",
+      "status": "PASS",
+      "evidence": "Inspected source. The 3e82154..f581b6b diff of the .mjs touches only the constants at :14-27, the refused() message, the new helpers, the new cases and the 'checked' strings. TRIGGERS (:54-74, 19 rows, 8/7/4), HELD (:75-77), argv (:218-225), Node pin (:226), env refusal (:227-229), receipt confinement and keys (:230-250), docker run with --pull=never, --network none, --tmpfs and no -p (:296-298), port and network asserts (:309-310) and label-verified cleanup (:508-536) are all unchanged. Exit code is 2 on completion (:502), 1, 130 or 143 on failure (:507) and 1 on cleanup failure (:534). No path reaches 0."
+     },
+     {
+      "item": "2b BINDINGS path and its pin",
+      "status": "PASS",
+      "evidence": "Inspected source and recomputed. The BINDINGS constant at .mjs:14@f581b6b is now docs/health-launch/quick-order-20261005/evidence/doc49-currentness-bindings-20261008.json. The receipt pins it at 40fdc3a4…dd2f, recomputed from git show at f581b6b and at 30085a6. The predecessor review-599-repair-bindings-20261007.json is retained unchanged (b68106ad…bbd1 at 7f8edd7, f581b6b and 30085a6). The new bindings file is referenced from bindings.predecessorBindings. :267 requires review d9809c10, and :282 requires currentnessDefinition."
+     },
+     {
+      "item": "3a Source receipt recomputation",
+      "status": "PASS",
+      "evidence": "Verified retained evidence. Every path in sql-currentness-source-receipt-f581b6b.json@30085a6 recomputes sha256-lf against git show f581b6b: 66 ok, 0 bad. Against 30085a6 also 66 ok, 0 bad. Keys are exactly schemaVersion, sourceCommit and files. sourceCommit is f581b6bd42b5c32cb7791677159522ddf6274aaa. The receipt does not include itself. Paths are sorted. The path set equals the documented union in rollback.md:27-40: 55 inventory paths, the bindings JSON, 5 own files and 5 extra BASELINE_SQL files, 66 in total with nothing extra or missing. Raw and LF hashes are both b9074117…cd7d, and the file contains no CR."
+     },
+     {
+      "item": "3b Bindings JSON inventory and definition",
+      "status": "PASS",
+      "evidence": "Verified retained evidence. The inventory has 55 unique entries, each recomputed at base 18bfbcda: 55/55. The current bytes at f581b6b equal base: 55/55. Receipt pins equal the inventory hashes: 55/55. The inventory deep-equals the predecessor bindings' inventory. The two entries whose predecessorBindingSha256lf differs (quick-order-admin-readback.test.ts, quick-order-notifications.test.ts) are carried verbatim from the predecessor. canonicalTriggers has 19 entries equal to TRIGGERS. currentnessDefinition was recomputed from git show f581b6b candidate sections as cab02e549fe17ce9836e67ce41c1e77e12e86fbe5e1ef825d87d2614ff9e0ac9: equal."
+     },
+     {
+      "item": "3c doc49-currentness-source-f581b6b.json and doc49-currentness-records-20261008.json hash pairs",
+      "status": "PASS",
+      "evidence": "Verified retained evidence. In the source checkpoint, changedSource is 5/5: after-hash at f581b6b; beforeBlob equals the blob at both 7f8edd7 and 3e82154; beforeSha256lf recomputed. unchangedReferences is 55/55 at f581b6b and matches the inventory order. Definition, bindings hash, receipt raw/LF hash and count (66), sourceTree 9efb20d5 and sourceBase (parent 7f8edd7) all match. bindings.currentnessFiles is 5/5. In the records file, recordFiles is 8/8 at 30085a6, the source tree matches, and changedSourcePaths equals git diff --name-only 7f8edd7 f581b6b."
+     },
+     {
+      "item": "3d Coordinator checkpoint claims (read as data)",
+      "status": "PASS",
+      "evidence": "Verified by recomputation. coord_checkpoint.json has 126 bindings: 66 receipt, 55 retainedBindings and 5 changedSource, all 126 recomputed OK at f581b6b. There are 66 unique paths. sourcePaths equals the 7f8edd7..f581b6b diff. receiptSha256Lf is b9074117 and bindingsSha256Lf is 40fdc3a4, both confirmed. The 19 triggers and the 60 historical evidence files are confirmed below."
+     },
+     {
+      "item": "3e Historical evidence not rewritten",
+      "status": "PASS",
+      "evidence": "Verified retained evidence. git ls-tree of docs/health-launch/quick-order-20261005/evidence at 7f8edd7 lists 60 blobs, and all 60 have identical blob ids at 30085a6. f581b6b adds one file (the doc49 bindings). 30085a6 adds three: doc49 records, doc49 source and the f581b6b receipt."
+     },
+     {
+      "item": "4 Intake family and runtime frozen; no guard, commit or decision-inputs object",
+      "status": "PASS",
+      "evidence": "Inspected source. git diff --name-status, restricted to supabase, server, client and shared, shows only the five currentness paths for 3e82154..f581b6b, for 7f8edd7..30085a6 and for 3e82154..30085a6 excluding docs and .xenios. 3e82154..7f8edd7 touches none of these trees. The intake candidate files and research_health_quick_order_local.mjs are unchanged. git grep at f581b6b finds guard_source_write and commit only as pre-existing absence refusals in the intake files (.sql:356, pre/postcheck:131). normalized_decision_inputs appears only as a pre-existing artifact kind (.sql:112,118; present at 3e82154). No column was added. Triggers exist only on the two owned tables (.sql:187-201)."
+     },
+     {
+      "item": "5 Records truthfulness",
+      "status": "PASS",
+      "evidence": "Inspected source. The packet (DOC49_CURRENTNESS_REVIEW_PACKET_20261008.md:3-9@30085a6) says PREPARED/NOT SENT, NOT PUSHED and no syntax/type/test/SQL/verifier run, and cites the external 66-file receipt, which matches. The records file says subjectExecution NOT_RUN and pushAttempted false. The source checkpoint says execution NOT_RUN, LOCAL_ONLY and remoteCheckpoint 1631323. refs/remotes/origin/codex/xenios-health-quick-order-20261005 is 1631323, and the local HEAD 30085a6 is 3 commits ahead. The handoff delta says 'No fixture has run'. The coordinator-directive and user-authorization statements are producer-reported only."
+     },
+     {
+      "item": "6 Lease and registries",
+      "status": "PASS",
+      "evidence": "Inspected source. CODE_OWNERSHIP.json@30085a6 lease 17093695-69b5-4cc0-8b29-aedb82bf6409 (session codex-health-quick-order-20261005, active) lists the five currentness paths literally. Its docs/health-launch/quick-order-20261005/** glob covers the bindings and evidence files. Its paths array is identical to 7f8edd7. Between 7f8edd7 and 30085a6, the three registries keep the same top-level keys and row counts (135 leases, 92 tasks, 58 sessions). Only lease row 134, task HEALTH-QUICK-ORDER-20261005 and session codex-health-quick-order-20261005 changed, in metadata fields only. No other active lease names or globs these paths."
+     },
+     {
+      "item": "Behavioural execution of any verifier case, SQL or seal",
+      "status": "NOT_PROVEN",
+      "evidence": "Untested behaviour. Nothing was run. The qualification window expired 2026-10-06T21:43:37Z. The seal's database fingerprint, the reinstall seal-equality claim, PostgreSQL truncate and trigger ordering, and psql output shapes are reasoned from source only."
+     },
+     {
+      "item": "Hosted database state and ownership",
+      "status": "NOT_PROVEN",
+      "evidence": "No database connection was made. Hosted state is NOT PROVEN."
+     }
+    ],
+    "findings": [
+     {
+      "id": "H2-F1",
+      "severity": "P3",
+      "file": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "claim": "The absent-head publish and revoke cases (:377-383) cannot tell whether the new in-function refusals at .sql:297-299 and :324-326 fired. integrity() at .sql:217-219 runs first with the identical 55000 message, so those branches are never reached in the fixture.",
+      "evidence": "Inspected source at f581b6b. publish_revision and revoke_revision call integrity() first (.sql:293, :321), and integrity() raises 'Quick Order authority head unavailable' when the head count is not 1. The in-function 'if not found' raises the same text. Behaviour is still correct (an absent head is refused, and the lazy insert is removed), but the case cannot detect a regression in the in-function guard.",
+      "fix": "Smallest fix: add a note in the next records delta or a verifier comment near .mjs:377 saying the absent-head refusal is asserted at the integrity layer (.sql:217-219) and that .sql:297-299 and :324-326 are defence in depth this fixture does not exercise. No candidate byte change is needed."
+     },
+     {
+      "id": "H2-F2",
+      "severity": "P3",
+      "file": "supabase/verification/research_health_quick_order_currentness_local.mjs",
+      "claim": "The revisions TRUNCATE case runs as 'truncate revisions,head' (:418), and both guards call the same refuse_mutation function with the same message. The behavioural case would still pass if the revisions trigger lacked TRUNCATE.",
+      "evidence": "Inspected source. .sql:172-177 defines one function used by both triggers (.sql:187-192). PostgreSQL requires the referencing head in the same TRUNCATE, so the head guard would refuse with the same text either way. The discriminating assertion is structural: tgtype 58 at .mjs:193-197 and integrity() at .sql:241-252.",
+      "fix": "Smallest fix: a verifier comment at .mjs:411-414 naming tgtype=58 as the discriminating check for revisions TRUNCATE. Optional stronger fix in a later successor: include TG_TABLE_NAME in the .sql:175 message and assert the revisions name at .mjs:418. That changes the definition hash and requires re-binding."
+     },
+     {
+      "item": "",
+      "id": "H2-F3",
+      "severity": "P3",
+      "file": ".xenios/ACTIVE_TASKS.json",
+      "claim": "The builder checkout has uncommitted edits after 30085a6 in ACTIVE_TASKS.json, CODE_OWNERSHIP.json, SESSION_REGISTRY.json and sessions/codex-health-quick-order-20261005.json. The record hashes in doc49-currentness-records-20261008.json describe only the committed bytes.",
+      "evidence": "Read with git --no-optional-locks diff. heartbeatAt changed to 2026-10-08T14:26:46.384Z, and doc49Assignment.status changed from TASK1_FROZEN_TASK2_SOURCE_PREPARING to TASK1_FROZEN_TASK2_SOURCE_AUTHORED_CORRECTIONS_PENDING (7 lines in 4 files). No source or evidence path is dirty.",
+      "fix": "Commit or supersede these heartbeat and status edits in the builder's next records delta. Reviewers should bind 30085a6 bytes only."
+     }
+    ],
+    "confirmed": [
+     "Builder HEAD is 30085a641a2101d6578d26fb42a7468a16c8351e. Its parent chain is f581b6b and then 7f8edd7. The f581b6b tree is 9efb20d52e253027b2d3b803a5e11d5ff8ca7541. The local branch is 3 commits ahead of origin/codex/xenios-health-quick-order-20261005, which is 1631323.",
+     "7f8edd7..f581b6b changes exactly the five currentness paths plus evidence/doc49-currentness-bindings-20261008.json. f581b6b..30085a6 changes only .xenios records, the packet and three new evidence files.",
+     "The verifier is 538 lines at f581b6b. It is pinned by the receipt at sha256-lf 9b676300…1084, with before-hash 0fc2f785 at 3e82154.",
+     "Candidate expectations match the bytes: 55000 'Quick Order authority history mutation refused' (.sql:175), 'Quick Order writer epoch decrease refused' (.sql:182), 'Quick Order authority head unavailable' (.sql:219, :299, :326), 'Retained currentness evidence prevents destructive rollback' (rollback.md:119), 23503 with FK names (.sql:150-155), 23505 on publication conflict (.sql:303), and tgtype 19/42/58 as ALWAYS.",
+     "The currentness fingerprint excludes internal triggers in the candidate (.sql:69-71), the precheck and the postcheck, as doc 49 section 5 requires. The verifier asserts seal equality across reapply (:340) and reinstall (:366-367).",
+     "Receipt: 66/66 recomputed equal at f581b6b and 30085a6. sourceCommit is f581b6b. It does not contain itself, and its path set is exactly the documented 66-path union.",
+     "Bindings: 55/55 inventory hashes equal at base 18bfbcda and at f581b6b. The inventory is identical to the predecessor. currentnessDefinition cab02e54… was recomputed. 19 canonical triggers.",
+     "Coordinator checkpoint 462cf79 copy: the 66 receipt, 55 retained and 5 changed entries were all recomputed; 19 triggers and 60 preserved historical evidence files confirmed.",
+     "All 60 historical evidence blobs present at 7f8edd7 are byte-identical at 30085a6.",
+     "Only builder rows changed in the three registries. Lease 17093695-69b5-4cc0-8b29-aedb82bf6409 paths are unchanged and still cover the five files and the bindings."
+    ],
+    "discrepancies": [
+     "The spec named the binding successor as a re-pinned review-599-repair-bindings-20261007.json. The builder created a new file, doc49-currentness-bindings-20261008.json, and kept the predecessor byte-identical, linked through bindings.predecessorBindings (b68106ad). The verifier and receipt pin the new file. I treat this as compliant successor naming, not a defect.",
+     "The source checkpoint's holds array has the typo 'on23 relations'. It is cosmetic only.",
+     "Reviewer conduct disclosure: one 'git status -sb' was run in the builder checkout without --no-optional-locks. Git may have opportunistically refreshed the index stat cache. No ref, object, working-tree file or index content was changed. All later reads used --no-optional-locks or git show."
+    ],
+    "notProven": [
+     "Any verifier case, SQL install, rollback, precheck or postcheck behaviour: NOT RUN.",
+     "The actual seal value and the claim that the fingerprint is equal across reinstall with different internal RI trigger OIDs. Reasoned from the fingerprint SQL only.",
+     "PostgreSQL 17.11 ordering details (TRUNCATE FK check before BEFORE TRUNCATE triggers; BEFORE row trigger before CHECK) and the psql -q -A -t output shapes the assertions depend on. Reasoned, not observed.",
+     "Hosted database state, ownership and the definer precondition (5C-2).",
+     "Coordinator-directive and user-authorization statements in the handoff and records. These are producer-reported only.",
+     "No verifier case runs the precheck or postcheck against an absent head or a corrupt reference. Doc 49 does not list such a case, so this is a coverage observation, not a finding."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "H2-F1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived from the source. publish_revision calls integrity() first (.sql:293@f581b6b), and so does revoke_revision (.sql:321). integrity() raises 55000 'Quick Order authority head unavailable' when the head count is not 1 (.sql:217-219). The in-function 'if not found' branches (.sql:297-299, :324-326) raise the same text, so they can never be reached in absentHeadFixture (.mjs:212-215, :377-383). Refusal of an absent head is still asserted end to end, and the lazy insert is removed (diff 3e82154..f581b6b deletes the 'on conflict(singleton) do nothing' insert). This is a limit on test discrimination, not a spec gap. P3 is correct. The fix is a comment or records note only."
+     },
+     {
+      "id": "H2-F2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived from the source. One function, refuse_mutation (.sql:172-177), backs both statement triggers (.sql:187-192) with one message. 'truncate revisions,head' (.mjs:418) would still be refused by the head guard if the revisions trigger lacked TRUNCATE. In ExecuteTruncateGuts the FK check runs first, then the BEFORE TRUNCATE triggers fire in list order. That is reasoned from source, not observed. The discriminating checks are structural: tgtype 58 in assertHeadProtection (.mjs:193-197) and in integrity() (.sql:241-252). P3 is correct. A stronger fix (TG_TABLE_NAME in the message) would change the definition hash cab02e54 and need re-binding."
+     },
+     {
+      "id": "H2-F3",
+      "upheld": false,
+      "severity": "P3",
+      "note": "Superseded and cannot be re-derived. At verification time the builder HEAD is 6d0fe8655b799bb7e2fd64e508d6f148e4c2f552 (90f4ebd, then 6d0fe86, both after 30085a6). 'git --no-optional-locks status --porcelain' is empty, and the task doc49Assignment.status at 6d0fe86 is BOTH_SOURCE_CHECKPOINTS_FROZEN_PENDING_REVIEW_AND_SEPARATE_EXECUTION. The transient dirty heartbeat edits were committed or superseded. In either case, binding committed bytes is correct practice, and the 30085a6 record hashes describe 30085a6 exactly (recordFiles 8/8 recomputed), so this is not a defect in the subject. The advice to bind f581b6b and 30085a6 explicitly still stands and now matters more, because HEAD has moved."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "1a Seeded HELD head after install, reapply and reinstall",
+      "status": "PASS",
+      "note": "Inspected source only. Seed insert at .sql:204@f581b6b with defaults at :147-158. The reapply branch (.sql:365-382) never inserts, and :391-394 re-asserts integrity and held. assertPristineHead (.mjs:182-188) is called at :330, :337 and :363. currentRows and fingerprint equality are checked at :339-340 and :366-367. Behaviour is NOT RUN."
+     },
+     {
+      "item": "1b Absent head refused by publish and revoke; fixture honest",
+      "status": "PASS",
+      "note": "Inspected source. absentHeadFixture (.mjs:212-215) disables only the candidate-owned head_removal_guard, then restores ALWAYS before the call. The error plus ON_ERROR_STOP disconnect rolls the transaction back. The candidate states owner bypass is out of scope (.sql:5-6; rollback.md:10-11). The read case at :384 rolls back explicitly. After each case, assertHeadProtection and canonical run (:381-382). Unlike the FK fixture at :456, there is no fingerprint re-check here, which is acceptable. Limit F1 applies. NOT RUN."
+     },
+     {
+      "item": "1c Immutability refusals (revisions U/D/T, head D/T) expect 55000 with the message",
+      "status": "PASS",
+      "note": "Inspected source. .mjs:415-425 expects 'Quick Order authority history mutation refused' (.sql:175). tgtype values check out: 2+8+16+32=58, 2+8+32=42 and 1+2+16=19. The truncate ordering claims are reasoned from PostgreSQL source, not observed. Permission checks run before the statement triggers, so the role-denial 42501 cases (.mjs:468-480) are unaffected. Limit F2 applies. NOT RUN."
+     },
+     {
+      "item": "1d Epoch monotonicity",
+      "status": "PASS",
+      "note": "Inspected source. The .sql:181-183 trigger is BEFORE ROW, so it fires ahead of CHECK writer_epoch>=0 and -1 yields the trigger message. currentEpoch is 2 after the identical republish (.mjs:404; .sql:310-312). The allowed cases (.mjs:434-438) depend on psql -q suppressing the UPDATE tag, which the pre-existing count assertions also rely on. NOT RUN."
+     },
+     {
+      "item": "1e Three ON DELETE RESTRICT FKs",
+      "status": "PASS",
+      "note": "Inspected source. .sql:150-155 declares them. integrity() checks confdeltype 'r', confupdtype 'a', validated and not deferrable (.sql:220-237). The verifier checks them structurally (.mjs:198-206) and behaviourally (.mjs:444-458). referenceAssignments satisfies both CHECKs, so only one FK can fire and the 23503 message names it. NOT RUN."
+     },
+     {
+      "item": "1f Pristine rollback allowed; drift and history refused; drop order",
+      "status": "PASS",
+      "note": "Inspected source. Predicate at rollback.md:112-119. Drop order is head (:127) then revisions (:128), then the trigger and check functions; dependency order is valid. .mjs:344-347 has no special $ pattern in the replacement. With no revisions, the FKs and CHECKs leave epoch as the only reachable non-pristine field. The pristine rollback at :352-360 and the post-history refusal at :465 are present. NOT RUN."
+     },
+     {
+      "item": "1g read_current_authority constant",
+      "status": "PASS",
+      "note": "Unchanged at .sql:336-341, per the diff. Asserted at .mjs:332, :384-385, :459-461 and :463."
+     },
+     {
+      "item": "1h refused() distinguishes SQLSTATE from timeout, overflow and signal; expectations match the SQL",
+      "status": "PASS",
+      "note": "Inspected source. .mjs:153-162. Every expected state and message exists in the candidate bytes: 55000 at .sql:175, :182, :219/:299/:326; rollback.md:119; 23503 FK names; 23505 at .sql:303; 22023; 42501. No expectation contradicts the SQL."
+     },
+     {
+      "item": "2 HELD list, exit codes, argv, receipt schema, TRIGGERS, docker flags, cleanup",
+      "status": "PASS",
+      "note": "The 3e82154..f581b6b diff of the .mjs touches only constants, refused(), new helpers, new cases, the bindings and definition asserts at :267 and :282, and the 'checked' strings. Exit codes are 2 (:502), 1/130/143 (:507) and 1 on cleanup failure (:534). No path reaches 0. TRIGGERS has 19 entries, equal to bindings.canonicalTriggers (recomputed). The docker flags at :296-298 are unchanged."
+     },
+     {
+      "item": "2b BINDINGS path and pin",
+      "status": "PASS",
+      "note": "Verified. .mjs:14 now points to doc49-currentness-bindings-20261008.json, which the receipt pins at 40fdc3a4…dd2f (recomputed; raw equals LF). The new file references the predecessor review-599-repair-bindings-20261007.json via predecessorBindings, at b68106ad, recomputed at 7f8edd7, f581b6b and 30085a6. The lens wording is inverted, but its substance is correct."
+     },
+     {
+      "item": "3a Source receipt",
+      "status": "PASS",
+      "note": "Verified retained evidence. sql-currentness-source-receipt-f581b6b.json@30085a6 has raw hash = LF hash = b9074117…cd7d and no CR. Keys and sourceCommit f581b6b are correct. 66/66 recompute equal at f581b6b, at 30085a6 and at 6d0fe86. Paths are sorted and unique, with no self-entry. The path set equals 55 inventory + bindings + 5 own + 5 extra BASELINE_SQL = 66."
+     },
+     {
+      "item": "3b Bindings inventory and definition",
+      "status": "PASS",
+      "note": "Verified. 55/55 at base 18bfbcda and 55/55 at f581b6b. The receipt pins equal the inventory, and the entries are identical to the predecessor's. Both predecessorBindingSha256lf differences (admin-readback and notifications tests) are inherited. I recomputed the currentnessDefinition from git show f581b6b sections as cab02e549fe17ce9836e67ce41c1e77e12e86fbe5e1ef825d87d2614ff9e0ac9, which is equal."
+     },
+     {
+      "item": "3c Source checkpoint and records JSON pairs",
+      "status": "PASS",
+      "note": "Verified. changedSource is 5/5: after-hashes match, beforeBlob equals the 3e82154 and 7f8edd7 blobs, and beforeSha256lf recomputes. unchangedReferences is 55/55 in inventory order. sourceTree is 9efb20d5 and the parent is 7f8edd7. recordFiles is 8/8 at 30085a6, and changedSourcePaths equals diff 7f8edd7..f581b6b."
+     },
+     {
+      "item": "3d Coordinator checkpoint (data)",
+      "status": "PASS",
+      "note": "Recomputed 126/126: 66 receipt, 55 retained, 5 changed. 66 unique paths. The receipt and bindings hashes match. The 19 triggers and 60 historical files are confirmed."
+     },
+     {
+      "item": "3e Historical evidence not rewritten",
+      "status": "PASS",
+      "note": "All 60 evidence blobs at 7f8edd7 are identical at f581b6b and at 30085a6. f581b6b adds 1 file and 30085a6 adds 3. No M/D/R change under docs/health-launch/quick-order-20261005 in 30085a6..6d0fe86."
+     },
+     {
+      "item": "4 Intake and runtime frozen; no guard, commit or decision-inputs object",
+      "status": "PASS",
+      "note": "Inspected. The diffs 3e82154..f581b6b, 7f8edd7..30085a6 and 3e82154..30085a6 under supabase, server, client, shared and scripts show only the five paths. The intake receipt 3e82154 still recomputes 66/66 at f581b6b. The guard and commit names appear only as pre-existing absence refusals, and normalized_decision_inputs only as the pre-existing artifact kind. The provider fence fingerprint scope (research_assisted_order_% plus outbox; 20261001160730…:19-30) excludes the new triggers."
+     },
+     {
+      "item": "5 Records truthfulness",
+      "status": "PASS",
+      "note": "The packet (:3-9@30085a6), the records file (NOT_RUN, pushAttempted false), the source checkpoint (NOT_RUN, LOCAL_ONLY, remoteCheckpoint 1631323) and the handoff ('No fixture has run') are consistent with the bytes. The 'on23' typo is cosmetic. Stale README and status doc wording is in missed[]. The remote state comes from the local tracking ref only; no fetch was made."
+     },
+     {
+      "item": "6 Lease and registries",
+      "status": "PASS",
+      "note": "Lease 17093695 (active) lists the five paths and covers docs/health-launch/quick-order-20261005/**, and its paths are unchanged between 7f8edd7 and 30085a6. Only builder rows changed: lease 134, task HEALTH-QUICK-ORDER-20261005 and session 57. These include state fields (blocked_external to in_progress, handoff_ready to active), not only metadata. The other glob, ccbb6bd4 supabase/verification/**, is state handoff, not active."
+     },
+     {
+      "item": "Behaviour of any SQL, verifier case, seal value or reinstall seal equality",
+      "status": "NOT_PROVEN",
+      "note": "Nothing was run. The qualification window expired 2026-10-06T21:43:37Z. PostgreSQL truncate and trigger ordering and psql output shapes are reasoned, not observed."
+     },
+     {
+      "item": "Hosted database state, ownership and definer precondition",
+      "status": "NOT_PROVEN",
+      "note": "No connection was made. 5C-2 remains open."
+     }
+    ],
+    "missed": [
+     "Currentness drift (P3/info). The builder HEAD is now 6d0fe8655b799bb7e2fd64e508d6f148e4c2f552: 90f4ebd adds the Task-2 qualification-supervisor.mjs and manifest, and 6d0fe86 is a handoff. That is 5 commits ahead of the local tracking ref 1631323, with a clean worktree. The lens's 'HEAD 30085a6, ahead 3' is stale. The five subject paths, the bindings, the receipt and the 30085a6 records are byte-unchanged at 6d0fe86 (receipt 66/66 recomputed). Reviewers must bind f581b6b and 30085a6 by SHA. 90f4ebd is a separate, unreviewed subject.",
+     "Stale records (P3). README.md:3-11@30085a6 still headlines 3e82154/doc48 as current, and SQL_CANDIDATE_DRAFT_STATUS_20261006.md:87-89 says 'No guard or immutability triggers are authored… Currentness has no foreign keys'. Both are untrue for f581b6b, and neither changed through 6d0fe86. Only the handoff is current. Smallest fix: add one dated doc49 pointer line in the README's current section in the next records delta. No source change is needed.",
+     "Q-8 carry-forward (P3, fails closed). docs/health-launch/quick-order-20261005/.gitattributes marks only evidence/*.log and patches -text. The system gitconfig sets core.autocrlf=true, so a fresh checkout makes the f581b6b receipt CRLF and the raw-hash check at .mjs:236 fails. The on-disk builder copies are LF today. Smallest fix: a pre-admission raw-hash check in the qualification manifest. It must not touch the five paths.",
+     "Cross-family pairing (info). The intake receipt 3e82154 still recomputes 66/66 at f581b6b, while the old currentness receipt 3e82154 is now 61/66 and superseded. Qualification must pair intake@3e82154 with currentness@f581b6b. The Task-2 manifest binds both (qualification-manifest-20261008.json:1603-1611@6d0fe86), but that is producer-side and not reviewed here.",
+     "Precision (info). The lens's 'new bindings file referenced from bindings.predecessorBindings' is inverted: the new file references the predecessor (b68106ad). Its 'metadata fields only' also omits the task and session state changes in the builder rows. Neither changes a status."
+    ],
+    "verdictOpinion": "I uphold the lens's PASS WITH LIMITS, at source and records level only. I re-derived everything from the Git objects and found no P0, P1 or P2. Every spec item in doc 49 section 5 is in the f581b6b bytes: install-time seed, lazy insert removed, refusal of an absent head, three RESTRICT FKs, ALWAYS statement guards, the row epoch guard, the constant reader, pre/postcheck through integrity(), the pristine-only rollback with head dropped before revisions, and internal triggers excluded in all three fingerprints. The two staging fixtures disable only candidate triggers and roll back, so they do not weaken the candidate. Every hash recomputes: receipt 66/66 at f581b6b, 30085a6 and 6d0fe86; bindings 55/55 at base; definition cab02e54; checkpoint 126/126; 60/60 historical files. F1 and F2 stand at P3. F3 is superseded because HEAD is now 6d0fe86 with a clean tree. Everything else is NOT RUN, hosted state is NOT PROVEN, and none of this is Samuel's approval."
+   }
+  }
+ ]
+}
