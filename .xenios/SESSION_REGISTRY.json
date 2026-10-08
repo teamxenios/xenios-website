@@ -6,10 +6,10 @@
       "tool": "OpenAI Codex desktop",
       "lane": "accepted-source-integration",
       "branch": "codex/accepted-source-integration-20261005",
-      "state": "active",
+      "state": "handoff_ready",
       "startedAt": "2026-10-05T18:18:45.097Z",
-      "heartbeatAt": "2026-10-08T19:14:34Z",
-      "note": "Same-owner DOC56-CATALOG-CORRECTION-20261008:r1 at acbba2c. Four B source/test paths reclaimed after active-lease inspection. D-1 title correction and D-2/D-9 records only; completed inventory and C transfer preserved. No execution, push or schedule changes; no acceptance claimed."
+      "heartbeatAt": "2026-10-08T19:20:00Z",
+      "note": "Doc56 correction authored locally at8f080a08af06aa16e7aaf80add1a1b25e0cfae41/tree7ff4d6a5059466e716d9b81f66a696cf69bc53d3. D-1 title restored; D-2 claims narrowed with copy held; D-9 records completed. All findings and Doc35 holds carried. C transfer and inventory preserved. NOT_RUN, NOT_PUSHED, NOT_ACCEPTED. Existing coordinator handoff only; no Claude interruption or schedule change."
     },
     {
       "id": "claude-opus5-main",

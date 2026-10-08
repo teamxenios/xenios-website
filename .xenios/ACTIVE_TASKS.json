@@ -6,7 +6,7 @@
       "id": "ACCEPTED-SOURCE-INTEGRATION-20261005",
       "title": "Doc56 bounded catalog/detail correction r1; same owner and four paths",
       "priority": "P1",
-      "state": "active",
+      "state": "qa",
       "owner": "codex-accepted-source-integration-20261005",
       "baseSha": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
       "paths": [
@@ -27,7 +27,12 @@
         "sourceTarget": "e0a7d4787071140a25a984edc4c0a49f0d7c22ab",
         "review": "cb41382df985cc03a2833523a14e829ddd47eb47",
         "claimedAt": "2026-10-08T19:14:34Z",
-        "status": "AUTHORING; NOT_RUN; LOCAL_ONLY"
+        "completedAt": "2026-10-08T19:20:00Z",
+        "source": "8f080a08af06aa16e7aaf80add1a1b25e0cfae41",
+        "tree": "7ff4d6a5059466e716d9b81f66a696cf69bc53d3",
+        "sourceParent": "9c597b2dbe66d7c9666f986fabbc535941c415bc",
+        "status": "LOCAL_AUTHORING_COMPLETE; NOT_RUN; NOT_ACCEPTED; source review requested through existing coordinator",
+        "packet": "docs/health-launch/catalog-detail-presentation-20261008/DOC56_CORRECTION_PACKET_20261008.md"
       },
       "inventoryAssignment": {
         "id": "SOURCE-INTEGRATION-INVENTORY-20261008",
@@ -42,10 +47,10 @@
       "claimedAt": "2026-10-05T18:20:33.600Z",
       "handoff": {
         "session": "codex-accepted-source-integration-20261005",
-        "sha": "e0a7d4787071140a25a984edc4c0a49f0d7c22ab",
-        "tree": "340248360ac85f50f10ed5890624401616f792fd",
-        "file": ".xenios/handoffs/2026-10-08T17-08-00Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md",
-        "at": "2026-10-08T17:08:00Z",
+        "sha": "8f080a08af06aa16e7aaf80add1a1b25e0cfae41",
+        "tree": "7ff4d6a5059466e716d9b81f66a696cf69bc53d3",
+        "file": ".xenios/handoffs/2026-10-08T19-20-00Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md",
+        "at": "2026-10-08T19:20:00Z",
         "publication": "LOCAL_ONLY_NOT_PUSHED",
         "execution": "NOT_RUN; source review queued through existing coordinator; no acceptance claimed"
       },

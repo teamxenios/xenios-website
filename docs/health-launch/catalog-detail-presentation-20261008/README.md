@@ -2,6 +2,18 @@
 
 Status: SOURCE AND TESTS AUTHORED; NOT EXECUTED; NOT PUSHED; NOT ACCEPTED.
 
+## Doc56 correction supersedes the original copy claims
+
+Current source: `8f080a08af06aa16e7aaf80add1a1b25e0cfae41`, tree
+`7ff4d6a5059466e716d9b81f66a696cf69bc53d3`. The complete current handoff is
+[DOC56_CORRECTION_PACKET_20261008.md](DOC56_CORRECTION_PACKET_20261008.md),
+with all ten reviewer findings, literal copy changes, exact affected sets and full Doc35 holds.
+The identities below describe the original `e0a7d47` packet, not acceptance or execution of this correction.
+Original Claude Doc56 at `cb41382df985cc03a2833523a14e829ddd47eb47` required source revision.
+The restored title addresses its cross-route assertion mismatch in authored source only.
+Clinical pricing, supplier-pending and program-card price copy remain held. D-5 denial/not-found
+semantics remain unresolved. No source acceptance, release readiness or browser qualification is claimed.
+
 ## Exact identities and authority
 
 - Branch: `codex/accepted-source-integration-20261005`.
@@ -34,9 +46,9 @@ All paths below share `client/src/research/products-diagnostics/`.
 
 | File | Customer-visible change |
 | --- | --- |
-| MemberCatalogExperience.tsx | Facets, counts and cards use the same supplied collection. Invalid refreshed facets reset only on successful reads. Query and sort survive transient reads. Sort ties use canonical slug/ID. Clear filters includes sort-only state. Long control containers can shrink; product links have distinct accessible names. Clinical copy no longer presumes provider/pharmacy availability. |
+| MemberCatalogExperience.tsx | Facets, counts and cards use the same supplied collection. Invalid refreshed facets reset only on successful reads. Query and sort survive transient reads. Sort ties use canonical slug/ID. Clear filters includes sort-only state. Shrink/wrapping utilities are authored, not browser-qualified. Link names include displayName but are not globally distinct for program records. The clinical summary changed; remaining clinical pricing and supplier/program copy is held under Doc56. |
 | MemberCatalogExperience.test.tsx | Authored regression cases for source-derived facets/counts, alias search, reset, refresh and retry preservation, sort ties, long labels, canonical links, missing media, non-ok stale-data suppression and distinct pathway states. |
-| MemberProductDetailExperience.tsx | Selection belongs to the current product; removed variants do not silently reappear as the selected variant. Supplied strength, form, size and presentation are visible; absent facts say Not provided. Full selected labels wrap outside the native select. Catalog status and variant availability are separate. Unavailable information no longer asserts unavailable merchandise. Program/clinical copy does not promise eventual purchasing. |
+| MemberProductDetailExperience.tsx | Selection belongs to the current product; removed variants do not silently reappear as the selected variant. Supplied strength, form, size and presentation are rendered; absent facts say Not provided. Selected labels have wrapping markup outside the native select, not measured layout proof. Catalog status and variant availability have separate labels but their pairing remains held. The route title is restored in the Doc56 successor; denial/not-found body semantics remain unresolved. Branch-specific informational text does not remove the inherited clinical pricing, supplier-pending or program-card price copy. |
 | MemberProductDetailExperience.test.tsx | Authored exact-fact/missing-fact, selected-product, refresh/reprice/reorder, empty-variant, loading/error recovery, retry-only, long-label, media-independent and nontransactional-boundary cases. Existing state tests also suppress stale SKU, price, media, education and related links. |
 
 No server, shared contract, price authority, availability policy, media authority, global style,
@@ -48,7 +60,7 @@ returned exactly the four paths above.
 
 - Existing catalog tests cover shell/heading, labeled search and controls, loading/empty/error/unavailable/unauthorized states, delegated retry and one-main composition.
 - Existing detail tests cover exact variant price/media, absent current price, access/read states, Research education and nontransactional GLP entries.
-- Markup-only layout test names now explicitly avoid claiming browser or zoom qualification.
+- New layout test names describe markup only. Two inherited test names still say keyboard; neither those names nor static markup establish browser, focus, zoom or assistive-technology qualification (D-8).
 - `pages/member/ProductPage.tsx` already compares the adapted product slug to the route slug and rejects mismatches; request-generation handling already rejects stale reads. It was inspected, not edited. This handoff does not claim an executed route test.
 - `products-diagnostics/product-media-surfaces.test.tsx` already checks non-media markup invariance across media alternatives. It was inspected, not edited or executed.
 - `ui/kit.tsx` retains the real error alert and supplied read-retry callback. No new mutation action or retry was introduced.
@@ -72,7 +84,9 @@ Recipient records its own claim. This owner made no C source edits and does not 
 
 Source reading, Git diff/identity inspection and local source commits were performed.
 A narrowly scoped existing read-only helper inspected the patch, not an independent acceptance review.
-Its copy mismatch and missing selection-sequence coverage observations were addressed in source.
+Its original copy suggestion and selection-sequence observations informed `e0a7d47`.
+Doc56 subsequently found the copy suggestion broke foreign route expectations; the title is restored
+in the current correction. The helper was not independent acceptance or executed proof.
 No compiler, module import, syntax checker, test runner or application was executed.
 
 | Activity | This successor |
@@ -106,8 +120,8 @@ Full aggregate deferral, failed protection gates, protected-hash approval/manife
 GATE-01, MC-01/D/E database and media qualification, subscription buying gaps,
 Finance/provider and managed-release holds remain open. No hold was waived here.
 
-The original Claude session remains the sole acceptance reviewer. Coordinator should place this
-exact local source after the current decision-input and repaired-supervisor reviews without
+The original Claude session remains the sole acceptance reviewer. The current Doc56 successor goes
+through the existing coordinator after the current C/Doc57 and verifier/records work, without
 interrupting them. Review is a source review only until fresh execution authority exists.
 Any execution proposal must explicitly include this successor and its two changed tests;
 do not silently reuse the old source/manifest or execution window.

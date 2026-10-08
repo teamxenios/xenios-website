@@ -1,0 +1,64 @@
+{
+  "kind": "SOURCE_IDENTITY_NOT_EXECUTION_OR_ACCEPTANCE",
+  "source": "8f080a08af06aa16e7aaf80add1a1b25e0cfae41",
+  "tree": "7ff4d6a5059466e716d9b81f66a696cf69bc53d3",
+  "parent": "9c597b2dbe66d7c9666f986fabbc535941c415bc",
+  "parentKind": "records-only same-owner four-path lease reclaim",
+  "baselineRecords": "0dbfaf57fe51d70d9b9a7de8cc7136a7604b3d7f",
+  "reviewedBSource": "e0a7d4787071140a25a984edc4c0a49f0d7c22ab",
+  "review": "cb41382df985cc03a2833523a14e829ddd47eb47",
+  "execution": "NOT_RUN",
+  "publication": "LOCAL_ONLY_NOT_PUSHED",
+  "hashMethod": "gitRawSha256 hashes git cat-file blob stdout bytes; workingFileSha256 hashes actual local bytes. LF/CRLF differences are not conflated.",
+  "files": [
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "classification": "presentation_source_unchanged_from_e0a7d47",
+      "gitBlob": "c54db8933eb9654f55b98f163c68e5ae1d51cc3a",
+      "gitRawSha256": "318d972ba38d7aaca460f5af07cf9bab98358856a55919e3b59fdebddd0d29df",
+      "workingFileSha256": "50e4030330542b868e804ff7ce0e7ff958527eb82098f6fda4c0e02f218c5ee9"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "classification": "test_unchanged_from_e0a7d47_not_run",
+      "gitBlob": "5a9e65bed522d2687b28b5c624ea01379d1048f9",
+      "gitRawSha256": "2de8f721636c1132100e0575fed69ed8bae9e56f280e17c282dd61095acb0f9c",
+      "workingFileSha256": "e1994fdfc2075d200d52a5b7c47c5d6cc5a8f3980289bf4ffa5039a279b37228"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "classification": "presentation_source_one_title_restored",
+      "gitBlob": "f1db3fa817be2e89a9bb9273301204333f274fae",
+      "gitRawSha256": "1083046402cb666676f21f5039e33b0a172daea06806c50af85bb28c1f1c4f36",
+      "workingFileSha256": "132d98f156b0140cce04bfc20ff6fb9495237111b2953a34db118043c47371d5"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+      "classification": "test_matching_title_expectations_not_run",
+      "gitBlob": "78f23534fddf90a66cf2589ca323a69105e260ed",
+      "gitRawSha256": "f2a0255798b2bee752bf10ef53986e7b9971e15e57767d576452377b4ee0d3be",
+      "workingFileSha256": "b62843ba597878c2d4d5de67adf146214ee031904b61dd0f490b9a98e4aab4a7"
+    }
+  ],
+  "foreignAffectedPathReadOnly": {
+    "path": "client/src/research/pages/member/product-subscribe.test.tsx",
+    "gitBlob": "f389110e89d5465f401ce919354864484efb7f8d",
+    "gitRawSha256": "c2411c79bf7fd38ab51a36932f9d0746623f1211b4a66802c84786226dd67c9e",
+    "workingFileSha256": "dd81854cc7bb21fa96d070d243b139570c7d3e460f606656c8fc24150d234cc8",
+    "assertionLines": [117, 183],
+    "edited": false,
+    "executed": false
+  },
+  "preservedInventory": [
+    {
+      "path": "docs/health-launch/catalog-detail-presentation-20261008/SOURCE_INTEGRATION_INVENTORY_20261008.md",
+      "gitBlob": "bba38901e62150d86daca08a9cdc35dc53e1ba41",
+      "workingFileSha256": "b6ff1f8c93019572c6f88a540ce4afdd92ecee208c487f7db6f0957662d54e79"
+    },
+    {
+      "path": "docs/health-launch/catalog-detail-presentation-20261008/source-integration-inventory-20261008.json",
+      "gitBlob": "4477282b4520dfcdd12ad7c4ce5c8069133390ad",
+      "workingFileSha256": "719fddee856f8d915b838b514ba6067fd49761717bd2a1ebdb5e21e906c41f38"
+    }
+  ]
+}
