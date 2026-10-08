@@ -1,0 +1,1274 @@
+{
+ "schemaVersion": 1,
+ "review": "57_WORKSTREAM_C_SUBSCRIPTION_736bb2a_2026-10-08.md",
+ "subject": "736bb2a84fa5b704eabdd8b069bc3ef89b084979",
+ "tree": "920691093dc817a7dcf631b26f50fd41a3f20aa3",
+ "records": "e5ca41d5e6a6f41ee2b3a24703830d9e9037da90",
+ "predecessor": "e6d7dd10045289594d91a6a086ba592348d7edb8",
+ "workflowRun": "wf_e6ec37d2-b4a",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Lens, adversarial-verifier and completeness-critic outputs, verbatim. Reviewer dispositions are in doc 57.",
+ "lenses": [
+  {
+   "lens": "subscription-form",
+   "review": {
+    "verdict": "LENS W1 (ProductSubscriptionCreate.tsx at 736bb2a84fa5b704eabdd8b069bc3ef89b084979): SOURCE-LEVEL ACCEPTABLE WITH LIMITS. There are no P0 or P1 findings. I hand-simulated all nine required properties and they hold at component level. There is one P2: the claim that the guard survives token rotation is true only inside the component. In the real routed page, RequireMember unmounts the owner on every Supabase token refresh. This is pre-existing and stays latent while the only mount passes product=null. There are four P3s, all latent or pre-existing. Recomputed hashes match the reconciliation and handoff for both lens files. Tests, tsc, build and browser are all NOT RUN. This is not approval of execution, push, release, offers, prices, payment or activation.",
+    "checklist": [
+     {
+      "item": "Identity: subject changes exactly 4 files vs parent 95283ce; e6d7dd1->95283ce is records-only; lens hashes",
+      "status": "PASS",
+      "evidence": "Verified retained evidence (recomputed). git diff --stat 95283ce 736bb2a = 4 paths; e6d7dd1..95283ce = 4 records paths only; e6d7dd1 is ancestor. ProductSubscriptionCreate.tsx blob b4046a7, sha256 raw=lf e20b1c55...f6f0 (before 32c64891...00db at e6d7dd1/95283ce); test blob d094bab, e81747bf...1410 (before aeb6a2a6...3c32). Tree 920691093dc8. e5ca41d^=736bb2a, records tree 15eefed3, lens blobs identical at e5ca41d. All equal reconciliation.json and the handoff table."
+     },
+     {
+      "item": "(1) No-offer, commerce-disabled card leads with the offer-absent sentence; no invitation/form/price/schedule/create; offer needs token AND capability; distinct missing-account/closed states; missing offer takes precedence",
+      "status": "PASS",
+      "evidence": "Inspected source ProductSubscriptionCreate.tsx@736bb2a. Hand-simulated with ProductPage's actual props (product=null, commerceEnabled=false): ready=false, enabled=false. That renders the h2, then line 155 status 'A subscription offer is not available for this product.'. The intro at :154 and the form at :158 both require enabled. No link: :196 needs a blocked, saved or uncertain state. enabled requires token, capability and ready (:115). Status order at :155-157 is !ready, then !memberToken, then !commerceEnabled. Tests :72-102 cover this (NOT RUN). PSR4-1 is now pinned with the period (:75, :82, :119; page test :57)."
+     },
+     {
+      "item": "(2) Duplicate guard: two submits in one act yield one call; saved locks; no auto-retry",
+      "status": "PASS",
+      "evidence": "Inspected source :119-123 and :80-87. The first submit sets the owner ref attempt.current=id through beginAttempt, plus submitted.current=true, before the await. A second dispatch, with either a stale or a fresh closure, returns at submitted.current (a ref) and also fails beginAttempt. Saved state is locked by outcome at :114 and the fieldset is disabled at :165. submitted.current and attempt are never reset on ok. Nothing loops, uses timers or re-calls createSubscription. Test :148-161 (NOT RUN)."
+     },
+     {
+      "item": "(3) Uncertain/lost (error, unavailable, thrown) keeps lock and shows unknown-save wording, never 'nothing was created'",
+      "status": "PASS",
+      "evidence": "Inspected source. The thrown case is caught at :129-132: uncertain is set only while alive, it returns, and the guard and submitted ref stay set. The else branch at :145-148 covers error and unavailable, including the adapter's subscription_result_unconfirmed (adapters/commerce.ts:206-216). The alert at :190 reads 'We could not confirm whether your request was saved...'; adapter message text is never rendered. The api.ts:146-147 network catch returns kind error. The global Express handler (server/index.ts:1472-1485) returns {message} with no ok:false, so the adapter classifies it as error, which shows as uncertain. Tests :128-146 (NOT RUN)."
+     },
+     {
+      "item": "(4) Definitive refusal preserves selections, hides internal messages, permits deliberate retry; stale refusal ignored and cannot release guard",
+      "status": "PASS",
+      "evidence": "Inspected source :136-144. refusedAttempt(id) is reached only after the alive check. It also requires attempt.current===id (:88-91). submitted.current is reset and quantity, frequency and reviewed state are untouched. The message comes from denialMessage(code) or fixed text, never result.message. A stale refusal after a key change or hide finds alive=false at :136 and returns, so the guard stays. At e6d7dd1:122 refusedAttempt ran BEFORE the alive check, and commerceEnabled was not in the key, so a capability flip could unlock. Both are fixed. Service denials all precede repository.save (server/research/commerce/subscriptions.ts:358-409). Tests :114-126, :206-221 (NOT RUN)."
+     },
+     {
+      "item": "(5) visible prop: inner view unmounts, owner state survives; hidden form cannot show receipt or clear guard",
+      "status": "PASS",
+      "evidence": "Inspected source :93. The early return comes after every owner hook (:79-81), so hook order holds. Returning null deletes the keyed SubscriptionForm fiber, and its layout cleanup sets alive=false (:109). Any late result is dropped at :131/:136. On re-show the new mount gets a fresh client useId (React 19.2.7 per package-lock: monotonically increasing counter), so blockedFormId !== id. The view is locked and shows the :189 alert plus the subscriptions link. Only explicit false hides. ProductPage.tsx:83/:89 computes hidden and visible consistently (researchOnlyBoundary is boolean, shared/research/member-catalog.ts:156). Tests :206-234 (NOT RUN)."
+     },
+     {
+      "item": "(6) Stale responses across product/token change and unmount: layout-cleanup vs microtask ordering (React 19)",
+      "status": "PASS",
+      "evidence": "Hand simulation. Deps are [], so a re-render never runs cleanup. A key change (scope :79 includes token, product JSON and commerceEnabled) or an unmount deletes the fiber. In React 19, deletion layout destroys run synchronously in the commit's mutation phase. Any promise continuation after that commit sees alive=false and drops ok, refusal or throw. With the old useEffect, a default-lane commit defers the passive cleanup to a scheduler task, and a fetch microtask in that gap could have released the guard. The layout effect closes that gap. A result arriving before the commit applies to the still-displayed old form; the next key change clears it and keeps the lock. StrictMode re-runs setup, restoring alive=true. One latent hide case is in the P3 W1-F2."
+     },
+     {
+      "item": "(7) Price/frequency/quantity only from supported input; shared constants; USD/EUR formatting",
+      "status": "PASS",
+      "evidence": "Inspected source. Imports are at :2-3. PERSISTENT_CART_QUANTITY_MAX = EARLY_ACCESS_MAX_QUANTITY = EARLY_ACCESS_CART_DURABLE_MAX_QUANTITY = 50 (shared/research/persistent-cart.ts:4, early-access-quantity.ts:72,74). SUBSCRIPTION_FREQUENCIES=[30,60,90] (shared/research/commerce.ts:260). No shared/ change e6d7dd1..736bb2a. Quantity must be an integer from 1 to MAX (:112-113). The frequency onChange only accepts listed values (:173). Price comes only from canReview-validated product.priceCents and priceVersion (:63-70). Formatting is 'USD 12.50' / 'EUR 24.68' (:117, :163; test :104-112). Non-2-decimal currencies are the P3 W1-F3."
+     },
+     {
+      "item": "(8) Saved pending receipt distinct from paid/activated/shipped; private reference cleared on sign-out without clearing guard",
+      "status": "PASS",
+      "evidence": "Inspected source :191-195: 'Subscription request saved. It is pending, with no payment or shipment scheduled.' plus 'This is not a completed purchase.'. The :178 copy denies charge and shipment. At component level, token->null changes the key, which remounts with an idle outcome, so the reference is gone. The owner's blockedFormId survives and the new form is blocked (:102, :189). Test :258-269 (NOT RUN). In the real route, sign-out redirects through RequireMember (pages/MemberArea.tsx:25-32), which unmounts everything. The receipt is still cleared but the guard is also lost (see W1-F1)."
+     },
+     {
+      "item": "(9) No global cache, storage, cookie or new identity store",
+      "status": "PASS",
+      "evidence": "Inspected source. A scan of ProductSubscriptionCreate.tsx@736bb2a for localStorage, sessionStorage, indexedDB, document.cookie, window., BroadcastChannel and timers found none. State is limited to useRef/useState in the owner (:80-81) and the form (:103-108), plus the existing createSubscription adapter. No new module-level variables."
+     },
+     {
+      "item": "Hook rules, effect loops, keys",
+      "status": "PASS",
+      "evidence": "Inspected source. Owner hooks are unconditional before the :93 return. Form hooks are all top-level (:101-109). The single layout effect has [] deps and sets no state, so there is no loop. Child key = JSON.stringify scope (stable for equal values; prevents spurious remounts on refetch). Option key={days}. The subject adds no other effects."
+     },
+     {
+      "item": "Accessibility of status/alert regions",
+      "status": "PASS",
+      "evidence": "Inspected source. The section is labelled by h2 via the useId-derived id (:152-153). Offer, account and capability states and the invalid-quantity hint use role=status (:155-157, :177). Denied, blocked and uncertain each use role=alert (:188-190) and are mutually exclusive per instance: blocked requires blockedFormId!==id, while denied/uncertain belong to the owning form. The saved receipt uses role=status (:191). Labels have htmlFor. Minor pre-existing note: status paragraphs mount together with their content, so some screen readers may not announce them."
+     },
+     {
+      "item": "New strings: no em dash, no 'not ... yet' timing promise",
+      "status": "PASS",
+      "evidence": "Inspected source. A non-ASCII scan of ProductSubscriptionCreate.tsx, its test and ProductPage.tsx at 736bb2a found no matches, so there are no em or en dashes. The word 'yet' is absent. The new UI string is ':154 Review a request for recurring deliveries of this exact product. This is separate from account access.', shown only when enabled. It never shows on the production mount."
+     },
+     {
+      "item": "Handoff/comment claim: guard survives token rotation and route/token updates in the real page",
+      "status": "FAIL",
+      "evidence": "Inspected source contradicts the claim for the routed host; it holds only at component level. The handoff says the owner stays mounted 'across detail loading, retries and route/token updates', and the comment at :74 says 'survives token rotation'. However, core.tsx:278-308 shows establishMemberSession clearing the member and setting memberSessionStatus 'checking' for any new access token. That function is called for TOKEN_REFRESHED and SIGNED_IN (core.tsx:413-433). RequireMember then renders a placeholder instead of its children (pages/MemberArea.tsx:18-24), and it wraps ProductPage via L/Member (section.tsx:211-217, :382). This is pre-existing and latent: there is no form while product=null. See W1-F1."
+     },
+     {
+      "item": "Section 5 directive conformity (four paths, no backend expansion)",
+      "status": "PASS",
+      "evidence": "Inspected source plus coordinator 94485a6:PARALLEL_IMPLEMENTATION_DIRECTIVE_20261008.txt:271-330. The subject touches only the four named paths. There is no adapter, server, shared, pricing, offer, payment, activation or Auth change. The production mount stays product={null} commerceEnabled={false} (ProductPage.tsx:88). All six authored-test bullets map to tests :72-269. The ownership transfer record (20a2305) was not inspected in this lens and is producer-reported."
+     },
+     {
+      "item": "Test execution and type-check",
+      "status": "NOT_PROVEN",
+      "evidence": "NOT RUN by rule. The handoff and evidence JSON at e5ca41d also record tests, syntax/type and build as NOT RUN. The try/catch definite assignment of result (:124-133) and the aliased narrowing of product inside submit follow the pattern at e6d7dd1, which had a typecheck receipt per the subscription acceptance, but tsc has not been run on 736bb2a."
+     }
+    ],
+    "findings": [
+     {
+      "id": "W1-F1",
+      "severity": "P2",
+      "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "claim": "The guard is said to survive token rotation (and the handoff says 'route/token updates'). In the real routed page, every Supabase TOKEN_REFRESHED or SIGNED_IN with a new token unmounts the whole owner, so an uncertain or saved lock is lost and a second create becomes possible after reverification.",
+      "evidence": "Inspected source. ProductSubscriptionCreate.tsx:74-79@736bb2a keeps the guard in the owner, and tests :184-204 rotate the token through props only. The real host differs: core.tsx:278-308@736bb2a (establishMemberSession clears member/token and sets 'checking' for any new token) is invoked from onAuthStateChange TOKEN_REFRESHED/SIGNED_IN (core.tsx:413-433). RequireMember returns a placeholder while checking (pages/MemberArea.tsx:18-24) and wraps ProductPage (section.tsx:211-217, :382). This is pre-existing at e6d7dd1 and not a regression. It is latent because ProductPage passes product=null (no form, no create), and the server refuses every create (capability_disabled). It would become a P1 lost lock for any offer-bearing mount.",
+      "fix": "Narrow the handoff and the component comment to 'survives prop-level token rotation while the owner stays mounted; the routed page remounts on token refresh and sign-in.' Carry this as an explicit limit next to backend ticket 1. Before any offer is supplied, either rely on durable server create idempotency or hoist the attempt owner above RequireMember. Add a routed test that drives a TOKEN_REFRESHED-style reverification."
+     },
+     {
+      "id": "W1-F2",
+      "severity": "P3",
+      "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "claim": "Layout-effect liveness treats a state-preserving hide (Suspense re-fallback or React 19.2 Activity) as dead. A response arriving while hidden is dropped, and on reveal the form keeps outcome 'busy' indefinitely: the button reads 'Submitting request...', with no uncertain alert and no subscriptions link.",
+      "evidence": "Hand simulation of :109, :131 and :136@736bb2a under React 19.2.7. Hiding an already-revealed Suspense or Activity subtree runs layout destroys (alive=false) but keeps state. Re-show runs setup (alive=true), and outcome stays {phase:'busy'} because the continuation returned early. The lock holds (busy is in locked at :114), so there is no duplicate, but the UI shows an untruthful in-progress state. This is latent: products-diagnostics and ProductPage contain no lazy() or use() under the route's Suspense (section.tsx:211-217). The old useEffect version did not have this edge but had the stale-refusal window.",
+      "fix": "In the layout-effect setup, after alive.current=true, add: if (submitted.current) setOutcome(o => o.phase === 'busy' ? { phase: 'uncertain' } : o). Optionally add a test that wraps the form in an Activity/Suspense hide while a create is in flight."
+     },
+     {
+      "id": "W1-F3",
+      "severity": "P3",
+      "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "claim": "The adapter maps the real commerce_disabled refusal (HTTP 503) to 'unavailable', so the UI shows the uncertain lock instead of the definitive-refusal message. The commerce_disabled branch of denialMessage cannot be reached through the real adapter.",
+      "evidence": "Inspected source. server/research/commerce/routes.ts:979-981@736bb2a sends status 503 for commerce_disabled. lib/api.ts:110-124 returns {kind:'unavailable'} for 503 when no knownNotFoundDenials are passed, and adapters/commerce.ts:206 passes none. The component's else branch (:145-148) then shows uncertain and keeps the lock. This fails closed and is pre-existing (PS-R5 family). Test :114-126 exercises capability_disabled only through a mocked {kind:'denied'}.",
+      "fix": "No change is required in this slice. Record it as a PS-R5 note for the adapter or route owner. If definitive refusal UX is wanted, the route could return 400/403 for commerce_disabled, or the adapter could opt into a known-denial list for this endpoint."
+     },
+     {
+      "id": "W1-F4",
+      "severity": "P3",
+      "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "claim": "Prices are formatted with a fixed two-decimal minor unit for any /^[A-Z]{3}$/ currency, so JPY or KWD would be mis-scaled. Separately, a few positive-path assertions are missing.",
+      "evidence": "Inspected source :70, :117 and :163@736bb2a use (cents/100).toFixed(2), which is correct for USD and EUR (test :104-112). This is pre-existing and unchanged by the subject. Coverage gaps: no test asserts that the :154 intro appears when enabled, and no test exercises guard release for kind 'unauthorized' or 'forbidden'; only 'denied' is covered (:114-126). Selections are reset after the unauthorized message 'Your selections remain here' once re-sign-in changes the key. That is pre-existing and was also true at e6d7dd1.",
+      "fix": "Optionally restrict canReview to supported currencies or use Intl.NumberFormat minor units. Add one positive intro assertion and one unauthorized-refusal retry test when the owner next touches the tests."
+     }
+    ],
+    "confirmed": [
+     "Subject 736bb2a84fa5b704eabdd8b069bc3ef89b084979, tree 920691093dc817a7dcf631b26f50fd41a3f20aa3, parent 95283ce (records-only over e6d7dd1). It changes exactly the four named paths. Records e5ca41d (tree 15eefed3) add only records and evidence.",
+     "Recomputed sha256 (raw = LF): ProductSubscriptionCreate.tsx 32c64891...00db -> e20b1c55...f6f0 (blob b4046a7); ProductSubscriptionCreate.test.tsx aeb6a2a6...3c32 -> e81747bf...1410 (blob d094bab). Both equal the reconciliation and handoff.",
+     "The production mount (ProductPage.tsx:88@736bb2a) is the only consumer and passes product={null}, commerceEnabled={false}. It renders only the h2 plus 'A subscription offer is not available for this product.', with no form, price, schedule, intro or create action.",
+     "A stale refusal can no longer release the guard: refusedAttempt moved after the alive check (:136-140) and is formId-scoped (:88-89). At e6d7dd1:122 it ran before the alive check.",
+     "commerceEnabled is now part of the remount key (:79), which closes the e6d7dd1 path where a capability flip kept the same form alive so a late refusal could unlock it.",
+     "A rejected createSubscription promise now yields an uncertain, locked state (:124-133) instead of an unhandled rejection with a stuck 'busy' state.",
+     "The useLayoutEffect liveness (:109) closes the default-lane passive-cleanup window between a key-change commit and a promise continuation.",
+     "Shared values at this base: PERSISTENT_CART_QUANTITY_MAX=50 and SUBSCRIPTION_FREQUENCIES=[30,60,90]. Neither changed since e6d7dd1.",
+     "Accepted wording is preserved verbatim at :45, :155 and :157. PSR4-1 is pinned with the closing period in both test files.",
+     "Pre-existing and unchanged: there is no server create idempotency (subscriptions.ts:390-410 generates a new id per call), and every service denial precedes repository.save."
+    ],
+    "discrepancies": [
+     "The handoff says the owner stays mounted 'across detail loading, retries and route/token updates', and the comment at ProductSubscriptionCreate.tsx:74 says 'survives token rotation'. At ProductPage level this holds for detail loading and retries. However, RequireMember (pages/MemberArea.tsx:18-24) unmounts the page on every token reverification (core.tsx:278-308, 413-433), so in the real route token updates are a full owner unmount (W1-F1).",
+     "The handoff says inner form invalidation runs 'before later promise microtasks'. That is true for committed unmounts and key changes, but a state-preserving Suspense/Activity hide also flips liveness and can leave the form stuck as 'busy' (W1-F2, latent).",
+     "The reconciliation records ProductPage.tsx workingRawSha256 b9532627... while gitRawSha256 is 77fd8156... (the working copy has mixed line endings). The LF-normalized hashes agree. This is outside the W1 lens and is disclosed in the handoff."
+    ],
+    "notProven": [
+     "No tests (Vitest), type-check, build, browser or server were run. Every test-file claim (:43-269) is authored and unobserved.",
+     "TypeScript acceptance of the try/catch definite assignment of result and of the product narrowing inside submit at 736bb2a has not been checked by tsc.",
+     "React runtime ordering (synchronous layout destroy on deletion, fresh useId per remount, StrictMode re-setup) is reasoned from React 19.2.7 semantics, not observed.",
+     "I did not inspect the ownership-transfer record 20a2305 or coordinator records bdefebb named in the handoff; they are producer-reported for this lens.",
+     "The interaction with catalog successor e0a7d47 (doc 56) is outside W1. The subject does not touch MemberProductDetailExperience, and product-subscribe.test.tsx@736bb2a asserts no ProductSubscriptionCreate wording, but the merged behaviour is NOT RUN.",
+     "Live journey: there is no eligible offer projection, so no create is reachable on the real page. Guard behaviour is shown only through synthetic component inputs."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "W1-F1",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed from inspected source. establishMemberSession (core.tsx:279-308@736bb2a) clears memberToken and sets 'checking' for any new access token unless it equals memberTokenRef (:283). It runs on SIGNED_IN, TOKEN_REFRESHED and USER_UPDATED (:425-436). RequireMember then renders a placeholder (pages/MemberArea.tsx:18-24) around L > Suspense > ProductPage (section.tsx:211-217, :382), which unmounts the owner. The handoff does disclose that a full owner unmount loses the guard, but it also claims the owner stays mounted across 'route/token updates'. Route (slug) updates hold, because wouter keeps the same element. Token updates do not. So directive criterion 'Product/token changes cannot bypass an uncertain-attempt lock' is met only at component level, and the tests (:184-204, page test :116/:132 with memberChecking pinned false) never model the checking phase. This is pre-existing and latent (product=null), so P2 for an overstated closure claim is fair."
+     },
+     {
+      "id": "W1-F2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "The mechanism is confirmed. The layout effect at :109 is the only liveness signal. Under React 19, a Suspense re-suspend or Activity hide disconnects layout effects but keeps state. A continuation that lands while hidden returns at :131 or :136, so on reveal the outcome stays {phase:'busy'}. That means 'Submitting request...' shows (:184) with no :190 alert and no :196 link. The lock holds, so there is no duplicate. It is latent: no lazy(), use(), Activity or transition exists under ProductPage or products-diagnostics, and the only lazy is ProductPage itself (section.tsx:167), which resolves before the form exists. The suggested fix is acceptable. A later live response still overrides 'uncertain'."
+     },
+     {
+      "id": "W1-F3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed: routes.ts:979-981@736bb2a sends 503 for commerce_disabled, api.ts:110-124 returns 'unavailable' for 503, and the component shows the uncertain lock. The evidence wording is imprecise: knownNotFoundDenials applies only to 404 (api.ts:114), so 503 is always 'unavailable' whatever the caller passes. The proposed fix ('the adapter could opt into a known-denial list') would therefore NOT work for 503. The fix must be at the route (400/403 for commerce_disabled) or a coded-503 branch in api.ts. In create, product_not_found precedes commerce_disabled (subscriptions.ts:358-364). This fails closed and is pre-existing (PS-R5 family)."
+     },
+     {
+      "id": "W1-F4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. :70 accepts any /^[A-Z]{3}$/ currency, and :117/:163 use (cents/100).toFixed(2), which mis-scales zero- and three-decimal currencies. This is pre-existing and latent: the only mount passes null. Coverage gaps confirmed: there is no positive assertion of the :154 intro, and guard release is tested only for kind 'denied' (:114-126, :206-221), never for 'unauthorized' or 'forbidden'. The note on selections resetting after re-sign-in is accurate at component level, since the token is in the key (:79)."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "Identity, hashes, records-only parent",
+      "status": "PASS",
+      "note": "Verified retained evidence (recomputed). Tree 920691093dc8. The parent 95283ce is a records-only change over e6d7dd1 (ancestor). The subject diff contains exactly 4 paths. Recomputed sha256 (raw = LF for all four, at both e6d7dd1 and 736bb2a) matches the handoff table and reconciliation.json: 32c64891->e20b1c55, aeb6a2a6->e81747bf, 0d603857->77fd8156, 5e238986->bd90e658. e5ca41d^=736bb2a with records tree 15eefed3, and the e5ca41d ls-tree blobs b4046a7/d094bab/d50b467/ce94ff4 are unchanged. The evidence JSON at e5ca41d records tests, type and build as NOT RUN."
+     },
+     {
+      "item": "(1) No-offer/commerce-disabled card, gating, precedence",
+      "status": "PASS",
+      "note": "Inspected ProductSubscriptionCreate.tsx@736bb2a. The intro (:154) and form (:158) require enabled = token && capability && ready (:115). The :155 offer-absent status precedes sign-in (:156) and closed (:157). With ProductPage's props (null, false), only the h2 plus the :155 sentence render. Tests :72-102 (NOT RUN)."
+     },
+     {
+      "item": "(2) Duplicate guard incl. my sim: double submit across a rerender",
+      "status": "PASS",
+      "note": "Hand simulation. Submit 1: the owner ref is set by beginAttempt (:84), then submitted.current=true (:122). If a rerender commits before submit 2, outcome is busy and locked is true (:114), so it returns. If no rerender has happened yet, the stale closure returns at submitted.current. If a token or product key change mounts F2 in between, F2 is blocked (:102) and beginAttempt fails on the ref (:83). One call in every ordering."
+     },
+     {
+      "item": "(3) Uncertain/lost keeps lock, unknown-save wording",
+      "status": "PASS",
+      "note": "At component level: catch at :129-132, else-branch at :145-148, alert at :190, and the adapter's unconfirmed result (adapters/commerce.ts:209-216). One correction to the lens: the global handler (server/index.ts:1472-1485) forwards a thrown err.status. Its 404/501/503 map to unavailable (still uncertain), but 401/403 map to a refusal. See missed M2."
+     },
+     {
+      "item": "(4) Definitive refusal; stale refusal ignored",
+      "status": "PASS",
+      "note": ":136 alive check precedes refusedAttempt(id) (:140), which is formId-scoped (:88-89). At e6d7dd1:122 the release ran before the alive check. Selections are untouched and result.message is never rendered. The breadth of what counts as a definitive refusal is noted under M2 (latent)."
+     },
+     {
+      "item": "(5) visible prop",
+      "status": "PASS",
+      "note": "The :93 return follows the owner hooks :80-81. A hide deletes the form fiber (layout cleanup at :109). A remount gets a fresh client useId (React 19.2.7 per package-lock), so it is blocked. ProductPage.tsx:83/:89 is consistent (researchOnlyBoundary boolean, member-catalog.ts:156)."
+     },
+     {
+      "item": "(6) My sim: response after token change and after unmount",
+      "status": "PASS",
+      "note": "Default-lane renders are not time-sliced, so render and commit run atomically with respect to microtasks. Deleting the keyed form runs the layout destroy in the mutation phase. A later ok, refusal or throw sees alive=false and is dropped, and the owner guard is kept. On full unmount, every result is dropped with no setState. This holds at component level; in the routed host the owner itself is gone (W1-F1)."
+     },
+     {
+      "item": "My sim: refusal arriving after a later success",
+      "status": "PASS",
+      "note": "Within one owner this cannot happen: a second attempt needs a live refusal of the first (:83, :88-91). It is possible only across owners: a routed token refresh remounts (W1-F1), attempt 2 succeeds, and attempt 1's late result is dropped (alive=false). The dropped result may itself have been a saved record, which is exactly the duplicate risk W1-F1 and backend ticket 1 describe."
+     },
+     {
+      "item": "My sim: navigation A->B->A with attempt in flight",
+      "status": "PASS",
+      "note": "ProductPage persists across a slug change (same wouter Route element; section.tsx:382). A->B sets displayedState to loading, so visible=false, the form is deleted and the ref is kept. B and A' both mount blocked (:189 plus the :196 link). A's late result is dropped, so the receipt is never shown. This fails closed. Latent: real product=null."
+     },
+     {
+      "item": "My sim: sign-out during in-flight attempt",
+      "status": "PASS",
+      "note": "Real host: signOutMember -> clearMemberState (core.tsx:263-273, :382-393), then RequireMember Redirect (MemberArea.tsx:25-33). The page unmounts and the late result is dropped. At component level, token=null shows the blocked alert and link to the signed-out viewer, and a different account stays blocked (test :258-269). See M1."
+     },
+     {
+      "item": "My sim: unchecked test file product-subscribe.test.tsx renders ProductPage",
+      "status": "NOT_PROVEN",
+      "note": "Hand simulation at 736bb2a. In :80-120, the 503 maps to unavailable, the wrapper is hidden and the owner returns null. In :122-159, the old generation is discarded. In :161-185, the slug mismatch maps to unavailable. All three predict pass on the owner lineage. NOT RUN. The integration line 756a906/20a2305/e0a7d47 carries ProductSubscriptionCreate.tsx a242b3d6 (pre-PSR4) and is not an ancestor of 736bb2a. A port plus e0a7d47's changed title breaks :117/:183 per doc 56. Merged behaviour is NOT RUN."
+     },
+     {
+      "item": "(7) Price/frequency/quantity and shared constants",
+      "status": "PASS",
+      "note": "PERSISTENT_CART_QUANTITY_MAX = EARLY_ACCESS_MAX_QUANTITY = 50 (persistent-cart.ts:4; early-access-quantity.ts). SUBSCRIPTION_FREQUENCIES=[30,60,90] (commerce.ts:260). The server MAX_SUBSCRIPTION_QUANTITY is the same constant (subscriptions.ts:61). No shared, server, adapter or lib diff e6d7dd1..736bb2a."
+     },
+     {
+      "item": "(8) Pending receipt wording; private reference cleared on sign-out",
+      "status": "PASS",
+      "note": "Wording at :191-195 and :178. A key change on token=null clears the receipt. The guard carryover across principals is reported as M1 (component level only)."
+     },
+     {
+      "item": "(9) No global cache/storage/cookie/identity store",
+      "status": "PASS",
+      "note": "Inspected the full file: only useRef/useState plus the existing adapter. No timers, storage or module state."
+     },
+     {
+      "item": "Hook rules, effect loops, keys, a11y, strings",
+      "status": "PASS",
+      "note": "Hooks are unconditional, and the single [] layout effect sets no state. Keys are scope and days. role=status/alert as stated. A non-ASCII count of 0 in all four files. 'yet' is absent."
+     },
+     {
+      "item": "Handoff claim: owner survives route/token updates in the real page",
+      "status": "FAIL",
+      "note": "Route updates hold. Token updates unmount the page via RequireMember (W1-F1)."
+     },
+     {
+      "item": "Section 5 directive conformity",
+      "status": "PARTIAL",
+      "note": "There are four paths and no backend expansion (directive 94485a6:271-328). The transfer is now verified, not producer-reported: 20a2305 ACTIVE_TASKS workstreamCTransfer lists exactly the four paths to codex-product-subscription-intent-20261005 / lease d9ff89ea. The criterion 'Product/token changes cannot bypass an uncertain-attempt lock' holds only at component level (W1-F1)."
+     },
+     {
+      "item": "Tests, tsc, build, browser",
+      "status": "NOT_PROVEN",
+      "note": "NOT RUN by rule. The try/catch definite assignment of result and the aliased 'ready' narrowing inside submit have not been checked by tsc at 736bb2a. The retained October 5 browser-*.txt evidence still shows the old intro and 'yet' wording, so it does not describe this source."
+     }
+    ],
+    "missed": [
+     {
+      "id": "W1-M1",
+      "severity": "P3",
+      "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "claim": "The owner guard does not depend on the principal. After sign-out, or after a different account signs in while the owner stays mounted, the previous account's attempt is announced to the new viewer ('A request was already submitted from this page...' plus a subscriptions link), and the new account is blocked from submitting.",
+      "evidence": "Inspected source @736bb2a. The key includes the token (:79), but attempt and blockedFormId live in the owner (:80-81) and are never scoped to a principal. blockedByEarlierAttempt (:102) does not depend on memberToken or enabled, so with memberToken=null (:156) the :189 alert and :196 link still render. Authored test :258-269 pins this: after token=null the form is gone but the guard holds, and 'synthetic-new-account' sees a disabled fieldset. The lens counted this as a PASS. It cannot be reached in the real route, because sign-out goes through RequireMember Redirect (pages/MemberArea.tsx:25-33) and a token change through 'checking' (W1-F1), both of which unmount the owner. Component level only.",
+      "fix": "Record that the guard is principal-agnostic by design. Alternatively, suppress the :189 notice and :196 link while memberToken is null and document that a principal switch inherits the block. Carry this with backend ticket 1, where durable idempotency keyed by member removes the need for any client carryover."
+     },
+     {
+      "id": "W1-M2",
+      "severity": "P3",
+      "file": "client/src/research/lib/api.ts",
+      "claim": "The client treats any 401, any 403, and any ok:false+code body (at any status) as a definitive refusal, which releases the guard. The global error handler forwards a thrown error's 401/403 status from inside the create handler. A repository or activation exception carrying such a status after dispatch would therefore unlock a retry even though the write outcome is unknown.",
+      "evidence": "Inspected source @736bb2a. ProductSubscriptionCreate.tsx:139-141 releases on denied, unauthorized or forbidden. api.ts:100-109 maps every 401 to unauthorized and every 403 to forbidden or denied. api.ts:139-141 maps ok:false plus a code to denied regardless of status. routes.ts:692-707 and withSubject (:300-308) await create without a catch. server/index.ts:1472-1485 uses safeHttpErrorStatus (request-logging.ts:49-67, which passes any 400-599). create awaits isCurrentLiveActivation (subscriptions.ts:386) and repository.save (:409). The lens's (3) claim that the global handler always yields 'error' holds only outside 401/403. Latent: the persistence seam is disabled (production-deps.ts:1403) and capability_disabled (:380-385) precedes save.",
+      "fix": "Raise an existing-owner backend ticket. The create route should catch post-validation exceptions and answer 500 with a non-refusal body, or the global handler should not forward 401/403 from thrown errors on mutation routes. Optionally, the component could treat only coded denials from the service set as definitive."
+     }
+    ],
+    "verdictOpinion": "I agree with the lens: SOURCE-LEVEL ACCEPTABLE WITH LIMITS for ProductSubscriptionCreate.tsx at 736bb2a84fa5b704eabdd8b069bc3ef89b084979. There are no P0 or P1 findings. I re-derived the identity and all four LF hashes independently, and they match the handoff and reconciliation. I verified the ownership transfer at 20a2305; it is no longer producer-reported. I upheld all four lens findings and their severities: W1-F1 at P2, because the handoff's claim of owner survival across token updates is false in the routed host and directive criterion 'token changes cannot bypass the lock' holds only at component level; W1-F2, W1-F3 and W1-F4 at P3. W1-F3's proposed adapter fix is wrong: knownNotFoundDenials covers only 404, so a 503 stays 'unavailable'. My hand simulations (double submit across a rerender, a response after a token change or unmount, a refusal after a later success, A->B->A, sign-out in flight) all fail closed at component level. I add two latent P3s: W1-M1 (the guard notice carries across principals at component level) and W1-M2 (the definitive-refusal classification is broad enough to include thrown 401/403). product-subscribe.test.tsx is predicted to pass on the owner lineage. The integration line still carries the pre-PSR4 component a242b3d6, so a port is required, and the merged behaviour with e0a7d47 is NOT RUN. All tests, tsc, build and browser runs are NOT RUN. The qualification window expired at 2026-10-06T21:43:37Z. Source acceptance is not qualification, and nothing here is Samuel's approval of execution, push, release, offers, prices, payment or activation."
+   }
+  },
+  {
+   "lens": "product-page-and-integration",
+   "review": {
+    "verdict": "LENS W2 (ProductPage at 736bb2a84fa5b704eabdd8b069bc3ef89b084979): source acceptable with limits. No P0 and no P1. Everything is NOT RUN; no test, typecheck or browser result exists for 736bb2a. I recomputed every hash and identity claim and they match. On inspection and hand-simulation: (1) the previous product and error are hidden on the same render that changes the slug or token; (2) generation cancellation and the slug-mismatch rejection are retained; (4) the production mount still passes product={null} and commerceEnabled={false}; (5) no network, adapter, auth, server or shared change. (6) Both test files that render ProductPage still pass by hand-simulation, including the accepted product-subscribe.test.tsx, so no accepted test is broken. (7) e0a7d47 changes no file this subject changes, so there is no textual conflict. The one semantic item to reconcile is doc 56 D-1 (the unavailable title), which comes from e0a7d47, not from this subject. P2-1: the claim that the attempt owner survives token changes holds only in the unit test setup. In the production route tree, a token refresh unmounts ProductPage. P3s cover test coverage, lock UX and records.",
+    "checklist": [
+     {
+      "item": "(1) Prior scope's product/error hidden on the render where slug or token changes (A loaded, then slug A->B)",
+      "status": "PASS",
+      "evidence": "Inspected source ProductPage.tsx:16,17,25,71-73,77-82@736bb2a. Hand-simulation: A has resolved (loadedScope=scopeA, product=A, state ok). The wouter Route reuses the same ProductPage instance (h_route renders the same component type) and the render with slug B computes scope=scopeB, current=false. So displayedProduct=null, displayedState='loading' and errorMessage=undefined (line 80) in that same render. ResearchRouteBoundary renders only the loading state (kit.tsx:684@736bb2a), so no commit shows A. An A response that arrives between the commit and the passive effect sets product A while loadedScope is still scopeA, and the mask keeps it hidden. load() then sets loadedScope, product and state together in one batch (lines 25-28). The authored commit-capture test covers an account change only (ProductPage.subscription.test.tsx:110-124@736bb2a). A slug change after A resolved is untested behaviour. NOT RUN."
+     },
+     {
+      "item": "(2) Generation-based read cancellation retained; out-of-order A/B; account change mid-flight; slug mismatch rejected",
+      "status": "PASS",
+      "evidence": "Inspected source ProductPage.tsx:24,29-30,34-40,62-67@736bb2a. The diff 95283ce..736bb2a leaves the generation lines unchanged and adds only setLoadedScope (line 25) and the scope dependency (line 60). scope derives from memberToken and slug, so load identity changes no more often than before and there is no extra fetch or effect loop. Hand-simulation: A in flight (gen1), navigate to B, cleanup sets gen2, load B is gen3. A then resolves with 1!==3 and is dropped. A token change takes the same path. The case-normalized slug check sets 'unavailable'. Authored tests: ProductPage.subscription.test.tsx:86-91,93-108,126-138,140-148 and product-subscribe.test.tsx:122-159,161-185@736bb2a. NOT RUN."
+     },
+     {
+      "item": "(3) Outer attempt owner stays mounted across detail loading, retries and route/token updates; inner view unmounts through visible",
+      "status": "PARTIAL",
+      "evidence": "Inspected source ProductPage.tsx:83-90@736bb2a renders the wrapper and ProductSubscriptionCreate unconditionally at a fixed position. ProductSubscriptionCreate.tsx:79-93@736bb2a calls its hooks before `if (props.visible === false) return null`. The owner therefore persists inside ProductPage across loading, retry and route changes, and the inner form unmounts whenever displayedState is not ok. Limit: in the production tree a token refresh unmounts ProductPage itself. core.tsx:308,426-435@736bb2a sets 'checking', MemberArea.tsx:18-24 replaces its children and section.tsx:211-218,382 wraps ProductPage. The authored tests replace ResearchContext directly and cannot see this. Unreachable now because product={null}."
+     },
+     {
+      "item": "(3b) Can an attempt lock from product A block B, or show A's receipt on B?",
+      "status": "PASS",
+      "evidence": "Inspected source plus hand-simulation; untested at page level because product={null}. A's receipt cannot appear on B: outcome is per-SubscriptionForm state (PSC.tsx:106@736bb2a), and the form unmounts in the first render with B (visible=false via ProductPage.tsx:73,89). Layout cleanup clears alive (PSC.tsx:109), so a late A 'ok' or refusal is dropped (PSC.tsx:136) and cannot release the guard (PSC.tsx:88-92,140). A's lock does block B: B's remounted form gets a new useId, so blockedByEarlierAttempt=true (PSC.tsx:101-102,114,189) shows 'already submitted from this page'. This is fail-closed and matches directive §5 'Product/token changes cannot bypass an uncertain-attempt lock'. The component test is PSC.test.tsx:223-246@736bb2a. See P3-2 for the UX limits."
+     },
+     {
+      "item": "(4) Production mount still product={null} commerceEnabled={false}; no live subscription UI possible",
+      "status": "PASS",
+      "evidence": "Inspected source ProductPage.tsx:88@736bb2a. With product null, canReview fails and enabled=false (PSC.tsx:63-71,110,115@736bb2a). No intro paragraph, form, price, schedule or submit is rendered (PSC.tsx:154,158). Only the heading and 'A subscription offer is not available for this product.' appear (line 155), and submit() returns early (line 121). The card shows only when displayedState is ok and researchOnlyBoundary === true (ProductPage.tsx:89). researchOnlyBoundary is a boolean (shared/research/member-catalog.ts:156@736bb2a)."
+     },
+     {
+      "item": "(5) No new network call, adapter, auth, server or shared change",
+      "status": "PASS",
+      "evidence": "Inspected source: `git diff --stat 95283ce 736bb2a` lists exactly the 4 lane files, and the diff over client/src/research/adapters, server, shared and core.tsx is 0 lines. ProductPage.tsx import lines 1-11 are unchanged. The only change to ProductSubscriptionCreate imports is useEffect replaced by useLayoutEffect. getMemberProductDetail is still the only read (memberCatalogApi.ts:15-20@736bb2a) and createSubscription the only mutation. Records commit e5ca41d adds only .xenios records, the handoff and the source.json."
+     },
+     {
+      "item": "(6a) Every test file at 736bb2a that renders ProductPage was found",
+      "status": "PASS",
+      "evidence": "Inspected source: `git grep ProductPage` over *.test.* at 736bb2a returns only ProductPage.subscription.test.tsx and product-subscribe.test.tsx. mobile-reflow.test.tsx renders StorefrontProductPage, a different component. Route-level tests (layout-referral, catalog-routes, protected-composition) do not render the member product route. docs/.../browser-fixture.tsx renders ProductPage, but it is a retained-evidence fixture outside tsconfig include (client, e2e, shared, server) and it passes no prop that the subject breaks."
+     },
+     {
+      "item": "(6b) product-subscribe.test.tsx (doc 35 accepted 17-file set, Website 2) still passes against 736bb2a",
+      "status": "PASS",
+      "evidence": "Hand-simulated, NOT RUN; the blob f389110 is unchanged. Case 1: 503 maps to 'unavailable' (api.ts:110-124@736bb2a). After the act, current=true and 'This product is not available.' renders (MPDE.tsx:150@736bb2a, line 117). The subscription div is hidden and the owner returns null, so no ra-purchase-panel or ra-subscribe-now; the fetch URL, GET and headers are unchanged. Case 2 (lines 122-159): B renders 'Beta Research' and late A (gen1) is dropped. The visible card adds only 'Product subscription' and 'A subscription offer is not available for this product.', not 'Alpha'. Case 3 (lines 161-185): slug mismatch gives 'unavailable' text and 'Substituted Product' never renders. Undisclosed break: none."
+     },
+     {
+      "item": "(6c) ProductPage.subscription.test.tsx (subject-authored) passes by hand-simulation",
+      "status": "PASS",
+      "evidence": "Hand-simulated, NOT RUN. Its vi.mock of adapters/commerce exports only createSubscription. Within ProductPage's import graph only PSC.tsx imports that module (git grep @736bb2a), so no missing export is accessed. CommitCapture (lines 37-46) fires only on root renders. At the account switch, its single capture shows the masked loading shell, so the test would discriminate the pre-fix 4c9075a. Its strings ('recurring deliveries', 'Unit price', 'Choose your schedule', 'A subscription offer') are absent from MPDE and ui at both 736bb2a and e0a7d47 except where intended."
+     },
+     {
+      "item": "(7a) Textual conflict with catalog successor e0a7d47 (b22f)",
+      "status": "PASS",
+      "evidence": "Inspected source: e0a7d47 changes only MemberCatalogExperience(.test).tsx and MemberProductDetailExperience(.test).tsx relative to 756a906. ProductPage.tsx at 756a906 and e0a7d47 is blob 4c9075a, the exact preimage of the 736bb2a diff. The other three lane files on the integration line are the 1fe97f5 bytes, untouched by e0a7d47. Composing exact bytes of e6d7dd1+736bb2a onto e0a7d47 therefore needs no hand-merge. By reasoning only (no merge executed), a whole-branch merge from merge-base 3eaa017 would conflict: add/add on PSC.tsx, PSC.test.tsx and ProductPage.subscription.test.tsx, and an overlapping render-block hunk in ProductPage.tsx (base 207d264)."
+     },
+     {
+      "item": "(7b) Semantic conflict with e0a7d47 (unavailable title, loading/unavailable states, retry)",
+      "status": "PARTIAL",
+      "evidence": "Inspected source plus hand-simulation, NOT RUN. Compatible: e0a7d47 MPDE.tsx:99-118 scopes the variant selection by product id, and its effect returns early when state is not ok (line 113). ProductPage's masked null/loading feeds this correctly. The h1 still comes from the shell title (line 139), and retry wiring is unchanged. Open: e0a7d47 MPDE.tsx:162-163 changes the title to 'Product information is unavailable.', so product-subscribe.test.tsx:117,183 fail once the two are combined. That is doc 56 D-1, caused by e0a7d47 and not by 736bb2a. The subject's own page tests do not assert that title. The subject's tests ran against neither 73d2abe nor dbaa8e1 MPDE."
+     },
+     {
+      "item": "Identity and hash claims (handoff and reconciliation.json)",
+      "status": "PASS",
+      "evidence": "Verified by recomputation: 736bb2a has tree 9206910 and parent 95283ce. e6d7dd1..95283ce changes only .xenios records, and e6d7dd1 is an ancestor of 736bb2a. e5ca41d has parent 736bb2a and tree 15eefed. sha256-lf of `git show` bytes for the 4 files at 95283ce and 736bb2a matches every before and after value claimed, with zero CR bytes in all blobs. ProductPage blob is d50b467. The handoff copy's sha256 (35669f5d...) equals the committed handoff blob at e5ca41d."
+     },
+     {
+      "item": "Execution evidence for 736bb2a (Vitest, typecheck, browser)",
+      "status": "NOT_PROVEN",
+      "evidence": "The handoff states that tests, type checks, builds and browsers were NOT RUN, and no receipt for 736bb2a exists. All pass statements above are hand-simulation of inspected source. The qualification window expired 2026-10-06T21:43:37Z."
+     }
+    ],
+    "findings": [
+     {
+      "id": "W2-P2-1",
+      "severity": "P2",
+      "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "claim": "The claims that the owner stays mounted across token updates, that the 'retry guard survives token rotation', and that 'token changes cannot bypass an uncertain-attempt lock' hold only in the unit test setup. In the production route tree a token refresh unmounts ProductPage, its owner and its in-memory guard.",
+      "evidence": "PSC.tsx:74@736bb2a comment and handoff closure map (§5 criterion). core.tsx:426-435@736bb2a sends TOKEN_REFRESHED to establishMemberSession. For a new token that function clears memberToken and sets 'checking' (core.tsx:296-308). RequireMember then renders a placeholder instead of its children (MemberArea.tsx:18-24), and ProductPage sits inside it (section.tsx:211-218,382). The page tests swap ResearchContext directly (ProductPage.subscription.test.tsx:41-46), so they cannot see this. Not reachable today because product={null} and commerce is disabled (ProductPage.tsx:88).",
+      "fix": "Bound the claim in the records: the guard survives only while ProductPage stays mounted, and a Supabase token refresh is an owner-unmount event. Add this to existing-owner ticket 1 (durable create idempotency) and to the prerequisites before any enablement. No source change is required for the disabled mount."
+     },
+     {
+      "id": "W2-P3-1",
+      "severity": "P3",
+      "file": "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+      "claim": "Commit-level masking is tested only for an account change. A slug change after product A has resolved, and the error-message masking, are covered only by hand-simulation.",
+      "evidence": "The commit-capture test (lines 110-124@736bb2a) changes memberToken only. The route test (lines 93-108) keeps the old response pending, so a resolved A is never masked under route B. errorMessage gating (ProductPage.tsx:80@736bb2a) has no test. The mechanism is the same scope key (ProductPage.tsx:16,71-73), and hand-simulation shows A is never committed under B.",
+      "fix": "Add a commit-capture case: resolve A, push route B with a pending response, and assert that no commit contains A. Add the same for an error state followed by a scope change."
+     },
+     {
+      "id": "W2-P3-2",
+      "severity": "P3",
+      "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "claim": "A guard from product A survives in-page navigation to product B. That is fail-closed and leaks no receipt, but it blocks B even after a confirmed save of A, shows 'already submitted from this page' on B, discards A's saved receipt on any detail reload or retry, and is cleared entirely by a full reload.",
+      "evidence": "Owner ref and state at PSC.tsx:80-92@736bb2a. The inner form remounts with a new useId (lines 101-102), so locked and the message apply (lines 114,189). The receipt lives only in the inner state (lines 106,191-195) and is dropped when visible goes false (ProductPage.tsx:89). The component test PSC.test.tsx:223-246 confirms the design. Unreachable while product={null}.",
+      "fix": "No change for the disabled slice. When an offer projection is introduced, record an owner decision on per-page versus per-variant locking and on product-neutral blocked-message wording. Durable server idempotency (ticket 1) remains the real control."
+     },
+     {
+      "id": "W2-P3-3",
+      "severity": "P3",
+      "file": "docs/health-launch/evidence/product-subscription-intent-20261005/workstream-c-20261008-source.json",
+      "claim": "The records do not name the affected accepted test set. ProductPage.tsx is rendered by product-subscribe.test.tsx, which is in the doc 35 17-file set and owned by Website 2, yet neither the handoff nor source.json lists it for future qualification.",
+      "evidence": "`git grep 'product-subscribe|affected|17-file|focused'` over the e5ca41d records returns nothing. The 17-file set (focused-run1.json@736bb2a) includes client/src/research/pages/member/product-subscribe.test.tsx. By hand-simulation it still passes at 736bb2a.",
+      "fix": "Record that qualification of the successor must run the full 17-file and 36-file sets at the exact integrated tree, not only the four lane files."
+     },
+     {
+      "id": "W2-P3-4",
+      "severity": "P3",
+      "file": "client/src/research/pages/member/ProductPage.tsx",
+      "claim": "Integration with e0a7d47 needs coordinated reconciliation. There is no textual conflict, but product-subscribe.test.tsx:117,183 will break once e0a7d47's MPDE title change is combined with it (doc 56 D-1). Resolving that now involves three owners: the catalog lane (MPDE), Workstream C (ProductPage, after the path transfer) and Website 2 (product-subscribe.test.tsx).",
+      "evidence": "e0a7d47 MPDE.tsx:162@b22f changes the title. product-subscribe.test.tsx (blob f389110, identical on both branches) asserts the old title at lines 117 and 183. The integration line carries the 1fe97f5 lane bytes (PSC 3d938f05, page test f3bb317), so e6d7dd1 and 736bb2a must be composed together. The subject's tests were authored against MPDE 9e4ab80 and were never run against 73d2abe or dbaa8e1.",
+      "fix": "The integrator should compose exact bytes of the four 736bb2a lane files onto the integration line, not merge whole branches. The e0a7d47 revision should either keep the route title or update product-subscribe.test.tsx under recorded Website 2 authority. Then run the 17-file set, the 36-file set and the MPDE tests on the combined tree."
+     }
+    ],
+    "confirmed": [
+     "Subject identity is verified: 736bb2a84fa5b704eabdd8b069bc3ef89b084979 has tree 920691093dc817a7dcf631b26f50fd41a3f20aa3 and parent 95283ce. 95283ce differs from e6d7dd1 only in .xenios records. Records commit e5ca41d has parent 736bb2a and tree 15eefed3da0b19db59e3c87f025e084155481d2f.",
+     "The subject changes exactly four files. The sha256-lf before and after values for all four, recomputed from `git show` bytes, match the handoff and reconciliation.json. ProductPage at 736bb2a is blob d50b467 with sha256 77fd8156..., and no blob contains CR bytes.",
+     "The handoff copy in the scratchpad is byte-identical to the committed handoff at e5ca41d (sha256 35669f5d...).",
+     "Directive §5 at coordinator 94485a6 lists the same four transferable paths and requires 'Product/token changes cannot bypass an uncertain-attempt lock' and 'Old product responses cannot overwrite the newer view'. The subject meets both at component and page-unit level.",
+     "ProductPage.tsx:71-73,80@736bb2a hides the previous scope's product, state and error on the same render that changes the slug or token.",
+     "Generation cancellation is unchanged (ProductPage.tsx:24,29-30,62-67@736bb2a), and the case-normalized slug-mismatch rejection is retained (lines 34-40).",
+     "The production mount still passes product={null} commerceEnabled={false} (ProductPage.tsx:88@736bb2a). The form, price, schedule and submit are unreachable.",
+     "No adapter, auth, server, shared or core change: the diff 95283ce..736bb2a over those paths is 0 lines.",
+     "Exactly two test files render ProductPage, and both pass by hand-simulation at 736bb2a. One is product-subscribe.test.tsx (blob f389110, unchanged, in doc 35's 17-file set); the other is ProductPage.subscription.test.tsx.",
+     "e0a7d47 touches files disjoint from the subject. ProductPage.tsx on e0a7d47 and 756a906 is the subject's exact preimage 4c9075a.",
+     "e0a7d47's product-id-scoped variant selection (MPDE.tsx:99-118@e0a7d47) works correctly with ProductPage's masked null/loading props."
+    ],
+    "discrepancies": [
+     "The handoff says the attempt owner stays mounted 'across ... route/token updates', and PSC.tsx:74 says the retry guard 'survives token rotation'. Both hold only inside ProductPage. In production, a TOKEN_REFRESHED event sets memberSessionStatus to 'checking' (core.tsx:308@736bb2a), and RequireMember (MemberArea.tsx:18-24) then unmounts ProductPage together with the guard (W2-P2-1).",
+     "The handoff's criteria map says page tests cover 'route/account out-of-order reads'. True, but the commit-level masking assertion covers only the account case, not a slug change after A has resolved (W2-P3-1).",
+     "The records do not list product-subscribe.test.tsx, an accepted test that renders the changed ProductPage, as part of the qualification set (W2-P3-3)."
+    ],
+    "notProven": [
+     "No execution of any kind for 736bb2a: Vitest, typecheck, build and browser are all NOT RUN, and no receipt exists. Every pass statement is hand-simulation of inspected source.",
+     "That both ProductPage test files actually pass on the integrated tree, with MPDE 73d2abe at 756a906 or dbaa8e1 at e0a7d47. They are compatible by hand-simulation only.",
+     "Retained browser evidence for the changed ProductPage. The October 5 browser-fixture evidence belongs to earlier source and still shows the old copy.",
+     "A page-level test that the owner keeps its guard across detail loading. This cannot be observed while product={null}; only the component-level test PSC.test.tsx:223-246 exists, and it was not run.",
+     "That the wouter version installed at the lockfile reuses the ProductPage instance across a slug change. I inferred this from wouter 3.10.0 source in the coordinator's node_modules (Route renders the same component type), not from the subject's lockfile.",
+     "That a whole-branch git merge would conflict as described. This is reasoning only; no merge or merge-tree was executed."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "W2-P2-1",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld at P2. Re-verified at 736bb2a. TOKEN_REFRESHED goes to establishMemberSession (core.tsx:425-435). A new token skips the short-circuit at line 283, sets memberToken to null and status to 'checking' (296-308), and memberChecking derives from that (188). RequireMember then renders a placeholder (MemberArea.tsx:18-24) around L/ProductPage (section.tsx:207-218,382), which unmounts the owner and its guard. The problem is wider than the lens stated: sign-out and navigation away from the :slug route also unmount it (M-1). Not P1: create is unreachable because product={null} and commerceEnabled={false} (ProductPage.tsx:88; PSC.tsx:115,121,158), and durable idempotency is already a prerequisite. Not P3: PSC.tsx:74 and the handoff claim a safety property that the production tree does not keep."
+     },
+     {
+      "id": "W2-P3-1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. The commit-capture test (ProductPage.subscription.test.tsx:110-124@736bb2a) covers only the account-switch path, and the production tree never reaches that path with ProductPage mounted: every memberToken change goes through establishMemberSession or clearMemberState, which unmount the page first. The path production does reach is a slug change: wouter 3.10.0's Switch cloneElement reuses the Route, L and ProductPage fibers (section.tsx:382), for example through MPDE related-product links. That path has no commit-level test. My hand-simulation of A resolved followed by B pending finds no commit that shows A (ProductPage.tsx:71-73,80; kit.tsx:684). NOT RUN."
+     },
+     {
+      "id": "W2-P3-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. The anchors are correct: owner ref and state at PSC.tsx:80-92, new useId on remount at 101-102, locked state and message at 114 and 189, receipt in inner state at 106 and 191-195, and visible=false at ProductPage.tsx:89. One addition: the lock is also inconsistent within the session. It blocks B when B is reached through an in-page slug change, but it is dropped when the member goes through the catalog route or follows the 'View product subscriptions' link (PSC.tsx:196, a plain <a>, so a full navigation), because ProductPage unmounts. Unreachable while product={null}."
+     },
+     {
+      "id": "W2-P3-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. git grep -i over the e5ca41d handoff and workstream-c-20261008-source.json for product-subscribe, affected, 17-file, 36-file, focused, MemberProductDetail and e0a7d47 matches only unrelated text ('Catalog/detail' in reviewQueue, and line 68 'Own lease returns to handoff'). focused-run1.json@736bb2a lists product-subscribe.test.tsx in the 17-file command. Doc 35 confirms the 17/36 sets. product-subscribe.test.tsx is blob f389110, unchanged."
+     },
+     {
+      "id": "W2-P3-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, but the fix as written is incomplete. Correct: dbaa8e1 (e0a7d47 MPDE.tsx:162) changes the title, and product-subscribe.test.tsx:117,183 (f389110) would fail on the combined tree. Missing: e0a7d47's own MPDE.test.tsx:261-263 asserts the new title AND that 'This product is not available.' is absent, so keeping the route title also requires revising that test. MPDE also accepts no title prop (MPDE.tsx:88-97@e0a7d47), so the ProductPage owner cannot resolve D-1 from ProductPage.tsx (see M-3). The four lane files must land atomically: d50b467 passes visible=, which 3d938f0 and 7834fd4 do not declare."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "(1) Prior scope masked on the render where slug or token changes (A loaded, then A->B)",
+      "status": "PASS",
+      "note": "Inspected ProductPage.tsx:16-17,25,71-73,77-82@736bb2a and kit.tsx:684. If A resolves after the B render commits but before B's passive effect, the generation check at line 30 still passes (gen1), so A is set while loadedScope is still scopeA and stays masked. load(B) then batches loadedScope, state, product and error together (25-28). The MPDE shell also hides identity (MPDE.tsx:122,127@736bb2a). Untested at commit level for the slug path (W2-P3-1). NOT RUN."
+     },
+     {
+      "item": "(2) Generation cancellation retained; out-of-order A/B; account change; slug mismatch",
+      "status": "PASS",
+      "note": "Inspected ProductPage.tsx:23-30,34-40,60-67@736bb2a. The diff 95283ce..736bb2a adds only setLoadedScope and the scope dependency. Hand-simulation: A gen1, then cleanup gen2, then B gen3; A's result fails 1!==3. A token change follows the same path. A slug mismatch sets 'unavailable'. Authored tests: page test 86-148 and product-subscribe 122-185. NOT RUN."
+     },
+     {
+      "item": "(3) Outer owner stays mounted across loading, retries and route/token updates",
+      "status": "PARTIAL",
+      "note": "Holds within a ProductPage instance: the owner sits at a fixed position (ProductPage.tsx:83-90), and its hooks run before the 'visible === false' return (PSC.tsx:79-93). In the production tree, token refresh and sign-out (core.tsx:296-308,263-273; MemberArea.tsx:18-33) and navigation to any non-:slug route (section.tsx:381-382; L's C changes type) unmount ProductPage and the guard with it. See W2-P2-1 and M-1."
+     },
+     {
+      "item": "(3b) Can A's lock block B, or A's receipt appear on B?",
+      "status": "PASS",
+      "note": "Receipt: no. The form unmounts in the first render under B (visible=false), its layout cleanup sets alive=false synchronously at commit (PSC.tsx:109), and late results are dropped (131,136). Lock: yes, A's lock blocks B (blockedFormId, lines 81,102,114,189). This is fail-closed and matches directive §5 line 314. Component test PSC.test.tsx:223-246. Unreachable at page level."
+     },
+     {
+      "item": "(4) Production mount keeps product={null} and commerceEnabled={false}",
+      "status": "PASS",
+      "note": "ProductPage.tsx:88@736bb2a. canReview(null) is false (PSC.tsx:63-64), so enabled is false (115): no intro (154), no form (158), and submit returns early (121). Only the h2 and 'A subscription offer is not available for this product.' render (155), and only when displayedState is ok and researchOnlyBoundary is true (89)."
+     },
+     {
+      "item": "(5) No new network, adapter, auth, server or shared change",
+      "status": "PASS",
+      "note": "git diff --stat 95283ce 736bb2a lists exactly the four lane files. The diff over adapters, server, shared and core.tsx is empty. e6d7dd1..95283ce touches only .xenios and the handoff. createSubscription remains the only mutation import (PSC.tsx:4)."
+     },
+     {
+      "item": "(6a) Every test that renders ProductPage or PSC found",
+      "status": "PASS",
+      "note": "git grep at 736bb2a and e0a7d47 finds only ProductPage.subscription.test.tsx, product-subscribe.test.tsx and PSC.test.tsx. catalog-routes.test.tsx reads section.tsx as text. layout-referral.test.tsx renders RequireMember and the layout, not ProductPage. MPDE.test renders MPDE alone. No e2e references. browser-fixture.tsx sits under docs/, outside tsconfig include. Note that tsconfig excludes only **/*.test.ts, so the .test.tsx files are typechecked (NOT RUN)."
+     },
+     {
+      "item": "(6b) product-subscribe.test.tsx (doc 35 set) at 736bb2a",
+      "status": "PASS",
+      "note": "Hand-simulated, NOT RUN. Case 1: a 503 with no body becomes unavailable (lib/api.ts:110-124; releaseUnusedBody returns early when there is no body), giving 'This product is not available.' (MPDE.tsx:150@9e4ab80), with the owner returning null. Case 2: B renders and late A (gen1) is dropped; the visible card adds no 'Alpha'. Case 3: mismatch gives unavailable. The fetch URL, method, cache and Authorization are unchanged."
+     },
+     {
+      "item": "(6c) ProductPage.subscription.test.tsx passes by hand-simulation",
+      "status": "PASS",
+      "note": "vi.mock exports only createSubscription. The only importers of adapters/commerce in the client are pages outside ProductPage's import graph, plus PSC (git grep). CommitCapture's layout effect fires once on the account-switch root render and captures masked text, which discriminates 4c9075a. The test strings do not occur in 9e4ab80 or dbaa8e1 MPDE. NOT RUN."
+     },
+     {
+      "item": "(7a) Textual conflict with e0a7d47",
+      "status": "PASS",
+      "note": "20a2305..e0a7d47 changes only MemberCatalogExperience(.test) and MPDE(.test). ProductPage is 4c9075a at 756a906 and e0a7d47, which is the subject's preimage. The integration line holds 1fe97f5 lane bytes (PSC 3d938f0, page test f3bb317), so e6d7dd1 and 736bb2a must be composed together. The whole-branch merge (base 3eaa017: PSC files absent, ProductPage 207d264) was reasoned about only; merge-tree was not run because it writes objects."
+     },
+     {
+      "item": "(7b) Semantic conflict with e0a7d47",
+      "status": "PARTIAL",
+      "note": "Compatible: dbaa8e1's selection effect returns early unless state is ok (e0a7d47 MPDE.tsx:112-113), and the masked null/loading feeds it correctly. The ProductMedia slot (00f1e2e) does no fetch, so the page tests' fetch sequencing holds. Open: D-1. Both product-subscribe.test.tsx:117,183 and e0a7d47 MPDE.test.tsx:261-263 pin the title and contradict each other, and MPDE takes no title prop (M-3)."
+     },
+     {
+      "item": "Identity and hashes",
+      "status": "PASS",
+      "note": "Recomputed: tree 9206910, parent 95283ce, and e6d7dd1 is an ancestor. e5ca41d has parent 736bb2a and tree 15eefed. The sha256-lf before and after values of all eight blobs match the handoff and reconciliation, with 0 CR bytes. The scratchpad handoff sha256 35669f5d... equals the e5ca41d blob."
+     },
+     {
+      "item": "Execution evidence for 736bb2a",
+      "status": "NOT_PROVEN",
+      "note": "No Vitest, typecheck, build or browser receipt exists. Window expired 2026-10-06T21:43:37Z. Every PASS above comes from inspection and hand-simulation."
+     },
+     {
+      "item": "HS-1 (mine): double submit across a rerender",
+      "status": "PASS",
+      "note": "Same form: the second event hits submitted.current (PSC.tsx:121-122). A rerender between the two events with a new key gives a new form and new useId: blockedByEarlierAttempt is true and beginAttempt returns false because attempt.current is non-null (83). Authored tests PSC.test.tsx:148-173. Unreachable on the page (no form). NOT RUN."
+     },
+     {
+      "item": "HS-2 (mine): response after token change and after unmount",
+      "status": "PASS",
+      "note": "Reads: effect cleanup increments the generation (ProductPage.tsx:64-66) before the new load (24), so the old result fails line 30; on unmount the same happens. Create: key change or unmount runs layout cleanup alive=false at commit, before later microtasks (PSC.tsx:109). The result is dropped (136) and the catch is gated (131). The lock remains."
+     },
+     {
+      "item": "HS-3 (mine): refusal arriving after a later success",
+      "status": "PASS",
+      "note": "This cannot happen within one owner. attempt.current is released only by refusedAttempt(id) from a live form after its own reply (PSC.tsx:88-92,136,140), so creates never overlap. Across owners (production unmount), O1's late refusal or success is dropped and O2 can create independently. The UI stays consistent, but a duplicate write remains possible: the W2-P2-1 and ticket-1 limit."
+     },
+     {
+      "item": "HS-4 (mine): A->B->A with an attempt in flight",
+      "status": "PASS",
+      "note": "Hypothetical enabled offer. The ProductPage instance is reused, and each hop masks to loading, so the form unmounts. B and A' get new ids and are blocked. A's late ok or refusal is dropped and its receipt is lost; the lock holds until the page unmounts. Reads gen1/3/5: only the last applies. If both hops batch before the effects run, scope equals loadedScope, the form never unmounts, and A's result shows correctly on A."
+     },
+     {
+      "item": "HS-5 (mine): sign-out during an in-flight attempt",
+      "status": "PARTIAL",
+      "note": "Production: SIGNED_OUT or signOutMember leads to clearMemberState (core.tsx:263-273,382-393,421-424), so member is null and RequireMember returns Redirect (MemberArea.tsx:25-33). ProductPage and the owner unmount, results are dropped, and the guard is lost. After signing in again, a fresh owner permits a new create. The harness case PSC.test.tsx:258-269 keeps the owner mounted with token=null, which is not the production behaviour."
+     },
+     {
+      "item": "HS-6 (mine): wouter reuse and hidden-div styling",
+      "status": "PASS",
+      "note": "package-lock.json@736bb2a pins wouter 3.10.0. Installed 5b21 wouter src/index.js:243-262,331-352: Switch uses cloneElement on the matched Route, and Route calls children(params). The same types are reused across a slug change, and C changes on other routes. index.css:1-10 omits preflight, but .container-x (243-250) and .research-app (1025-1041) set no display and pb-8 is padding only, so the UA [hidden] rule hides the empty div."
+     }
+    ],
+    "missed": [
+     {
+      "id": "M-1",
+      "severity": "P3",
+      "file": ".xenios/handoffs/2026-10-08-WORKSTREAM-C-PRODUCT-SUBSCRIPTION-codex-product-subscription-intent-20261005.md",
+      "claim": "The records omit two more production owner-unmount paths beyond the token refresh in W2-P2-1: sign-out and any in-app navigation away from the :slug route. The handoff states 'Private saved reference is cleared on sign-out without clearing the attempt guard', which is false in the production tree.",
+      "evidence": "Sign-out leads to clearMemberState (core.tsx:263-273,382-393,421-424@736bb2a), member is null, and RequireMember returns Redirect (MemberArea.tsx:25-33), so ProductPage and the owner unmount. Route change: section.tsx:381-382 renders L with a different component C, so ProductPage unmounts, including after the 'View product subscriptions' <a> (PSC.tsx:196) that the blocked message recommends. PSC.test.tsx:258-269 models sign-out with the owner still mounted. Handoff line on sign-out at e5ca41d. Unreachable while product={null}.",
+      "fix": "Records only, for this disabled slice. State that the guard lives only while one ProductPage instance stays mounted, and that sign-out, token refresh and navigation off the :slug route all discard it. Bind this to prerequisite ticket 1 (durable create idempotency). Do not cite PSC.test.tsx:184-204 or 258-269 as production-tree evidence."
+     },
+     {
+      "id": "M-2",
+      "severity": "P3",
+      "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "claim": "The client guard does not distinguish accounts. Inside a mounted owner, a different account is blocked by a previous account's attempt and told 'A request was already submitted from this page', which discloses earlier activity by another account and blocks an unrelated customer. The authored test asserts this as intended.",
+      "evidence": "blockedFormId and attempt are owner state with no principal binding (PSC.tsx:80-92@736bb2a). Message at line 189. PSC.test.tsx:258-269 signs out, then renders token 'synthetic-new-account' and expects a disabled fieldset and no create. It is unreachable in production only because sign-out unmounts ProductPage (MemberArea.tsx:25-33), not by design of the component. Directive §5 line 314 requires token changes not to bypass the lock, but does not require that across principals.",
+      "fix": "Before any enablement, record an owner decision: either bind the client lock to the verified member identity (ResearchContext member) so it cannot block another principal, or drop the cross-principal assertion and rely on durable server idempotency. No change is needed for the disabled mount."
+     },
+     {
+      "id": "M-3",
+      "severity": "P3",
+      "file": "client/src/research/pages/member/ProductPage.tsx",
+      "claim": "Doc 56 D-1 cannot be resolved inside the transferred Workstream C path set. MPDE hardcodes unavailableTitle and accepts no title prop, so the 'leave it to the ProductPage owner' route requires a catalog-lane MPDE API change. Separately, e0a7d47's own MPDE test pins the new title and the old title's absence. An integrator therefore faces three owners and two mutually exclusive test assertions.",
+      "evidence": "The MPDE props are product, state, errorMessage and onRetry only (MPDE.tsx:88-97@e0a7d47 and 87-97@736bb2a). The title is hardcoded at e0a7d47 MPDE.tsx:162. e0a7d47 MPDE.test.tsx:261-263 expects 'Product information is unavailable.' and not 'This product is not available.'. product-subscribe.test.tsx:117,183 (f389110, Website 2) expects the old text through ProductPage. Doc 56 line 65 suggests 'leave the change to the ProductPage owner', which is now Workstream C.",
+      "fix": "The coordinator should assign D-1 to one owner, either the catalog lane (revise MPDE and its test lines 261-263, or add an owner-approved title prop) or Website 2 (update product-subscribe.test.tsx:117,183 under recorded authority). Then compose all four 736bb2a lane files atomically, together with e6d7dd1, and run the 17-file and 36-file sets and the MPDE tests on the exact integrated tree."
+     }
+    ],
+    "verdictOpinion": "I uphold the lens's verdict: the source is acceptable with limits, with no P0 and no P1. Everything is NOT RUN, nothing here is qualification, and nothing is Samuel's approval of any action.\n\nI re-derived every anchor from Git objects at 736bb2a, 95283ce, e6d7dd1, e5ca41d, e0a7d47 and 756a906, and every hash matches.\n\nWhat holds by hand-simulation:\n- On the render where the slug or token changes, the page hides the previous product and error, even when A's reply lands between the commit and the effect.\n- Generation cancellation and the slug-mismatch rejection are unchanged.\n- The production mount still passes product={null} and commerceEnabled={false}.\n- No adapter, auth, server or shared code changed.\n- Only three test files render ProductPage or ProductSubscriptionCreate. The accepted product-subscribe.test.tsx (f389110) still passes against 736bb2a, so no accepted test breaks.\n\nI uphold all five lens findings at their stated severities: W2-P2-1 at P2, and W2-P3-1 through W2-P3-4 at P3. I add three P3s:\n- **M-1:** sign-out and navigation away from the product route also unmount the attempt owner. The handoff's sign-out sentence is false in the production tree.\n- **M-2:** the client lock does not distinguish accounts, so one account can be blocked by, and told about, another account's earlier attempt.\n- **M-3:** D-1 cannot be resolved inside the transferred four-file set. MemberProductDetailExperience has no title prop, and e0a7d47's own test (lines 261-263) contradicts product-subscribe.test.tsx:117,183. This makes the lens's W2-P3-4 fix incomplete.\n\nWhat the integrator must reconcile: compose the four 736bb2a lane files atomically on top of e6d7dd1, have the coordinator assign D-1 to one owner, then qualify the 17-file and 36-file sets and the MemberProductDetailExperience tests on the exact integrated tree. Nothing here is a source failure. Execution and production-tree guard persistence remain NOT PROVEN."
+   }
+  },
+  {
+   "lens": "tests-scope-records",
+   "review": {
+    "verdict": "LENS W3: CONSISTENT WITH LIMITS. No P0, P1 or P2 findings; six P3. All four claims hold against Git objects. (1) 95283ce..736bb2a changes exactly the four files and 736bb2a..e5ca41d changes records only. (2) The integration owner released the four paths at 20a23057, and this owner's lease d9ff89ea reclaimed them. (3) All 8 before/after sha256-lf values recompute and match the handoff and the source JSON. (4) The three backend tickets accurately describe subscriptions.ts create at 736bb2a. Doc 54 PSR4-1 is folded in and extended to all three messages. Hand-simulation shows the new tests that fail at e6d7dd1 (would catch a regression to the old behaviour) are: the no-offer, closed, signed-out and absent-offer component tests; the rejected-promise test; the four late-refusal cases; the hidden-view and sign-out tests; and page tests P1 and P7. The remaining new or changed tests pass on both commits and only preserve existing behaviour. Some claimed behaviours have no test that fails without them: the layout-effect invalidation, keeping the page-level owner mounted, and commit-level masking on a route change. Tests, typecheck, build and browser: NOT RUN. Nothing here is approval of execution, push, release, offers, prices, payment or activation. The qualification window expired 2026-10-06T21:43:37Z.",
+    "checklist": [
+     {
+      "item": "(a) Test diffs e6d7dd1..736bb2a enumerated",
+      "status": "PASS",
+      "evidence": "Inspected source: git diff e6d7dd1 736bb2a of ProductSubscriptionCreate.test.tsx (+157/-? lines; new tests at L80,88,96,104,138,148,206,223,236,248,258; changed L43,72,114,128,163) and ProductPage.subscription.test.tsx (new L77,86,93,110,126,140; changed L53,64,70; new mount/CommitCapture helpers L34-50)."
+     },
+     {
+      "item": "(a) Discriminating tests (would FAIL at e6d7dd1)",
+      "status": "PASS",
+      "evidence": "Hand-simulated, NOT RUN. Component@736bb2a: L72-78 (the old unconditional intro at e6d7dd1 L140 matches the 'recurring deliveries' check); L80-86 and L88-94 (the old form renders whenever the product is ready, e6d7dd1 L144); L96-102 (the old version checks sign-in first, L141); L138-146 (at e6d7dd1 the rejection is unhandled and the form stays busy); L206-221 x4 (old refusedAttempt() at L122 runs before the alive check, so it unlocks; the capability case keeps the same key because the old scope omits commerceEnabled); L223-234 (no visible prop); L258-269 (form present while signed out). Page@736bb2a: L53-63 (intro present); L110-124 (CommitCapture sees the stale product, because e6d7dd1 ProductPage L68-73 renders the old product until the effect runs)."
+     },
+     {
+      "item": "(a) Non-discriminating (pass on both) tests",
+      "status": "PASS",
+      "evidence": "Preservation pins only: component L43-58 (exact receipt text exists at e6d7dd1 L178,180; fieldset already disabled), L104-112 (bands come from the same shared constants), L114-126 (the old version also unlocks a live refusal), L128-136, L148-161 (the submitted ref already blocks a second sync submit), L163-173 (payload typing only), L236-246, L248-256. Page L64-75, L77-84, L86-91, L93-108 (generation logic predates e6d7dd1, L21-27), L126-138, L140-148. The handoff labels the sync-submit case 'Preserved', which is accurate."
+     },
+     {
+      "item": "(a) Doc 54 PSR4-1 exact-period expectation folded in",
+      "status": "PASS",
+      "evidence": "ProductPage.subscription.test.tsx:57@736bb2a and ProductSubscriptionCreate.test.tsx:75,98@736bb2a assert 'A subscription offer is not available for this product.' with the period. :82 pins 'Product subscription requests are not open.' :119 pins the full capability_disabled denial. The 1fe97f5..e6d7dd1 diff shows the old strings ended ' yet.', so the period prevents a substring match on a regression."
+     },
+     {
+      "item": "(a) Substring assertions matching old text",
+      "status": "PASS",
+      "evidence": "No remaining assertion matches the pre-PS-R4 'yet' strings. The old weak 'Request recurring deliveries' negatives became broader 'recurring deliveries' negatives (page L67,L72). The first-h2-only check became an all-h2 check (L66,L81). Remaining substrings ('could not confirm whether your request was saved', 'A request was already submitted from this page') match unchanged copy."
+     },
+     {
+      "item": "(a) Tests asserting implementation details",
+      "status": "PASS",
+      "evidence": "No ref or internal-state assertions. Fieldset.disabled reflects state a user can see. CommitCapture (page L37-40) records host.textContent in a layout effect that runs only on its own parent's commit. That deliberately targets the one stale commit, which is a visible flash, so it is acceptable. The hidden-view tests use the new public visible prop (ProductSubscriptionCreate.tsx:31,93@736bb2a)."
+     },
+     {
+      "item": "(a) Synthetic results vs adapter acceptance",
+      "status": "PASS",
+      "evidence": "The adapter is mocked. Every synthetic ok result (pending() at component L31-34 and the L44-47 literal) matches the submitted sku, quantity and frequency, with version 1, state pending, null schedules and a non-empty displayName. This mirrors the acceptance test at commerce.ts:206-213@736bb2a. Denied codes capability_disabled and quantity_invalid are real server codes. Synthetic offers are component inputs only; the page passes product={null} (ProductPage.tsx:88)."
+     },
+     {
+      "item": "(a) Imports and API plausibility",
+      "status": "PASS",
+      "evidence": "useLayoutEffect comes from react (React ^19.2.0). The mock paths ../adapters/commerce and ../../adapters/commerce both resolve to the module imported at ProductSubscriptionCreate.tsx:4. SUBSCRIPTION_FREQUENCIES exists at shared/research/commerce.ts:260 ([30,60,90]). PERSISTENT_CART_QUANTITY_MAX resolves to 50 (early-access-quantity.ts:72). No ProductPage dependency imports adapters/commerce, so the partial mock is safe. vitest ^4.1.10, jsdom ^29.1.1, wouter ^3.3.5. NOT RUN."
+     },
+     {
+      "item": "(a) Handoff closure-map criteria with no test",
+      "status": "PARTIAL",
+      "evidence": "Claims with no test that fails without them: (1) the layout-effect alive invalidation (ProductSubscriptionCreate.tsx:109@736bb2a), since act flushes both effect kinds; (2) the page keeping the owner mounted across loading, retry, route and token changes (ProductPage.tsx:83-89); (3) commit-level masking on a slug change, and errorMessage masking (ProductPage.tsx:71-80): only a token change is captured (L110-124); (4) 'private state only in memory', where a grep found no storage APIs but there is no test."
+     },
+     {
+      "item": "(a) Tests executed",
+      "status": "NOT_PROVEN",
+      "evidence": "NOT RUN by builder (handoff, JSON 'tests':'NOT RUN') or by this lens. No receipt exists for tree 920691093dc8."
+     },
+     {
+      "item": "(b) Section 5 of directive at 94485a6 read and mapped",
+      "status": "PASS",
+      "evidence": "PARALLEL_IMPLEMENTATION_DIRECTIVE_20261008.txt:270-328@94485a6. Present-tense copy: PSC.tsx:45,155,157. No offer lead: :154 (enabled-gated). Disabled mount: ProductPage.tsx:88-89. Price and frequency only from input: :158. Duplicate guard: :82-87,:121. Uncertain lock: :129-133,:145-149. No 'nothing saved' claim: :190. Pending kept distinct: :191-195. Memory only: no storage APIs. Canonical values: :2-3,:167-174. Stale protection: :79,:109,:136; ProductPage.tsx:16-25,69-73. Required authored tests are present (page L53; component L72-102, L114-146, L206-234; L54-56; L236 and page L93)."
+     },
+     {
+      "item": "(b) 95283ce..736bb2a is exactly the four files",
+      "status": "PASS",
+      "evidence": "git diff --name-status 95283ce 736bb2a: M ProductPage.subscription.test.tsx, M ProductPage.tsx, M ProductSubscriptionCreate.test.tsx, M ProductSubscriptionCreate.tsx. Parent of 736bb2a is 95283ce83fde. Tree 920691093dc817a7dcf631b26f50fd41a3f20aa3 verified."
+     },
+     {
+      "item": "(b) 736bb2a..e5ca41d is records-only",
+      "status": "PASS",
+      "evidence": "M .xenios/ACTIVE_TASKS.json, CODE_OWNERSHIP.json, SESSION_REGISTRY.json; A .xenios/handoffs/2026-10-08-WORKSTREAM-C-...md; A docs/health-launch/evidence/product-subscription-intent-20261005/workstream-c-20261008-source.json. Records tree 15eefed3da0b verified. All four source blobs are identical at e5ca41d."
+     },
+     {
+      "item": "(b) Four paths released by integration owner at 20a23057",
+      "status": "PASS",
+      "evidence": "git show 20a23057 (parent 38c72396, branch codex/accepted-source-integration-20261005). CODE_OWNERSHIP and ACTIVE_TASKS remove the four paths from the integration owner's active row, keeping only the 4 catalog/detail files. Both add workstreamCTransfer {authority 94485a6..., toSession codex-product-subscription-intent-20261005, toLease d9ff89ea-06a4-4d35-b62b-5db6bac37920, disposition 'Released/excluded ... recipient records its own claim'}. Coordinator bdefebbd (parent 94485a6) records the same transfer."
+     },
+     {
+      "item": "(b) Reclaimed by this owner's lease",
+      "status": "PASS",
+      "evidence": "e5ca41d CODE_OWNERSHIP lease d9ff89ea covers exactly the four paths, state handoff, reclaimedAt 2026-10-08T17:06:20.192Z, after the transfer at 16:57:27Z and before source commit time 17:12:22Z. The ACTIVE_TASKS row narrows to the four paths plus own docs, evidence and handoff globs, with historicalScope retained. The reclaim time is producer-reported; Git first records it at e5ca41d."
+     },
+     {
+      "item": "(b) No server/shared/adapter/auth/pricing/offer/payment/activation/SQL/protected change",
+      "status": "PASS",
+      "evidence": "git diff 95283ce e5ca41d over server, shared, supabase, client/src/research/adapters, lib and core produces 0 lines. A protected-list search found no manifest naming the four paths. The adapter createSubscription is unchanged (commerce.ts:195-223@736bb2a)."
+     },
+     {
+      "item": "(b) PS-R1/PS-R5 not reopened; placeholder card not declared closed",
+      "status": "PASS",
+      "evidence": "No receipts are claimed and the adapter status mapping is untouched. The handoff says 'PS-R1 and bounded PS-R5 are not reopened' and that the broader placeholder-card disposition 'is not declared closed'. Source still renders the 'Product subscription' card with the unavailable status on Research detail pages (ProductPage.tsx:83-89; PSC.tsx:153-155@736bb2a). CLAUDE_SUBSCRIPTION_ACCEPTANCE.txt:55,57 still holds the owner decision."
+     },
+     {
+      "item": "(c) Handoff hash table recomputed (sha256-lf)",
+      "status": "PASS",
+      "evidence": "Recomputed from git show and confirmed with node, 8/8 match. Before (95283ce, equal to e6d7dd1): PSC.tsx 32c64891…, PSC.test aeb6a2a6…, ProductPage.tsx 0d603857…, PP.sub.test 5e238986…. After (736bb2a, equal to e5ca41d): e20b1c55…, e81747bf…, 77fd8156…, bd90e658…. The blobs contain no CR, so raw equals LF. The working ProductPage.tsx has 61 CRs, raw b9532627…, LF 77fd8156…, as the reconciliation states."
+     },
+     {
+      "item": "(c) Source JSON and reconciliation claims",
+      "status": "PASS",
+      "evidence": "workstream-c-20261008-source.json@e5ca41d: hashes and gitBlobs b4046a7, d094bab, d50b467, ce94ff4 match rev-parse. The reconciliation's tree, recordsTree, parent and relationship are verified. The scratch reconciliation equals coordinator HEAD acbba2c WORKSTREAM_C_RECONCILIATION_20261008.json (sha256-lf e392ca66…). The scratch handoff equals the committed handoff (35669f5d…). 'clean': true is not verified (no git status run)."
+     },
+     {
+      "item": "(c) Foreign registry rows and top-level fields preserved",
+      "status": "PASS",
+      "evidence": "Hashed all non-owned rows plus top-level fields at 95283ce, 736bb2a and e5ca41d. ACTIVE_TASKS: n=93, f57674dd at all three. CODE_OWNERSHIP: n=136, a8111df2 at all three. SESSION_REGISTRY: n=57, 812b45e2 at all three. Only rows PRODUCT-SUBSCRIPTION-INTENT-20261005, d9ff89ea and codex-product-subscription-intent-20261005 changed."
+     },
+     {
+      "item": "(c) No execution claimed",
+      "status": "PASS",
+      "evidence": "The handoff 'Qualification and continuation' section and JSON fields tests, syntaxTypeBuild, browser and sql all say NOT RUN, and push says NOT PERFORMED. The only tracked hook is .githooks/post-commit, which auto-syncs to GitHub, so the reported hook disablement is consistent with no push. Local origin/codex/product-subscription-intent-20261005 is at 1fe97f5; no remote-tracking ref contains 736bb2a."
+     },
+     {
+      "item": "(c) Backend ticket 1 (idempotency) accurate",
+      "status": "PASS",
+      "evidence": "subscriptions.ts@736bb2a: create at :353, subscriptionId: newId() at :391, repository.save(record) at :409, with no create key or result lookup. The client guard is component-lifetime only (PSC.tsx:74-79). Unstated context: production refuses at :380-384 because purchaseExpansionPersistenceAvailable is test-only (production-deps.ts:947-948,1403), so the duplicate risk is latent."
+     },
+     {
+      "item": "(c) Backend tickets 2 (offer/price) and 3 (payment/activation) accurate",
+      "status": "PASS",
+      "evidence": "subscriptions.ts:402@736bb2a copies input.priceVersion without comparing it to the current price. routes.ts:376-387 checks only that it is non-empty. ProductPage.tsx:88 passes product={null}. Ticket 3: routes.ts:389-394 still accepts paymentProviderReference and shippingAddressRef (PS-R2, unchanged). The client adapter projects four fields (commerce.ts:201-203). No activation call exists in the four files."
+     }
+    ],
+    "findings": [
+     {
+      "id": "W3-1",
+      "severity": "P3",
+      "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+      "claim": "No test fails without the switch of alive-invalidation from useEffect to useLayoutEffect (line 109@736bb2a). The handoff claims invalidation happens 'before later promise microtasks', but nothing pins that.",
+      "evidence": "Every stale-response test resolves the mutation in a separate act after the re-render or unmount: L163-173, L206-221, L236-246, L248-256@736bb2a. act flushes passive and layout cleanups alike, so reverting line 109 to useEffect would still pass the whole suite (hand-simulated). Untested behaviour.",
+      "fix": "Record it as untested in the handoff. Optionally, add a test that settles the mutation inside the same act as the unmounting render, before passive effects flush."
+     },
+     {
+      "id": "W3-2",
+      "severity": "P3",
+      "file": "client/src/research/pages/member/ProductPage.tsx",
+      "claim": "No page test checks that the attempt owner stays mounted across detail loading, retries and route or token changes (lines 83-89@736bb2a).",
+      "evidence": "Page tests L53-148@736bb2a assert text, form absence and zero create calls only. Reinstating e6d7dd1's conditional mount ({state==='ok' && ...}, e6d7dd1 L74-81) together with the masking would still pass all page tests. The behaviour can't be reached today because the page passes product={null} and commerceEnabled={false}. The guard is covered only by component-level visible-prop tests (component L206-234).",
+      "fix": "Mark the page-level retention as untested. Alternatively, add a page test that mocks ProductSubscriptionCreate and asserts one mount across a loading→ok→retry and token change."
+     },
+     {
+      "id": "W3-3",
+      "severity": "P3",
+      "file": "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+      "claim": "Commit-level masking is tested for an account change only. Masking on a route (slug) change and masking of errorMessage are untested, though the handoff claims masking 'on route/token changes'.",
+      "evidence": "L110-124@736bb2a uses CommitCapture on a token change only. The route test L93-108 asserts only the state after act, and it also passes at e6d7dd1, where the generation check (e6d7dd1 ProductPage L21-27) already discards the late response. The errorMessage masking at ProductPage.tsx:80 has no assertion.",
+      "fix": "Reuse CommitCapture in the popstate route-change test, and add one stale-error case."
+     },
+     {
+      "id": "W3-4",
+      "severity": "P3",
+      "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+      "claim": "The negative check on the pending wording is narrow: it would miss 'charged', 'paid' or 'subscription is now active'. Section 5 asks that pending wording 'does not claim charge'.",
+      "evidence": "L56@736bb2a: /subscription (?:is active|activated)|payment (?:received|complete)|shipment (?:created|confirmed)/i. The positive full-sentence pins at L54-55 limit the risk, but added text such as 'Your card was charged' would pass.",
+      "fix": "Add a targeted negative such as /\\bcharged\\b|\\bpaid\\b|subscription is (?:now )?active/i. Avoid a bare 'activ', because the disabled form keeps 'Payment and activation require a separate supported step.' (PSC.tsx:178)."
+     },
+     {
+      "id": "W3-5",
+      "severity": "P3",
+      "file": "client/src/research/pages/member/product-subscribe.test.tsx",
+      "claim": "The handoff and evidence omit an affected test of the ProductPage.tsx change: product-subscribe.test.tsx, part of doc 35's accepted 17-file set, which renders ProductPage. It also falls outside both the B and C leases.",
+      "evidence": "The file is unchanged (blob f389110e at both 756a906 and 736bb2a). Hand-simulation says it still passes at 736bb2a, because MemberProductDetailExperience is unchanged and 'This product is not available.' still renders at L117 and L183. Composed with e0a7d47 it fails (doc 56 D-1). Neither d9ff89ea nor the narrowed integration lease covers it.",
+      "fix": "List product-subscribe.test.tsx and the 17-file set as affected tests in the Workstream C handoff. The coordinator should assign an owner for the doc 56 D-1 correction."
+     },
+     {
+      "id": "W3-6",
+      "severity": "P3",
+      "file": "server/research/commerce/subscriptions.ts",
+      "claim": "Backend ticket 1 is accurate but leaves out that production create currently refuses before save, so the duplicate-write risk is latent behind the test-only persistence gate. The ticket also gives no line citations.",
+      "evidence": "subscriptions.ts:380-384@736bb2a returns capability_disabled before newId() (:391) and save (:409) when purchaseExpansionPersistenceAvailable is false. production-deps.ts:947-948 and :1403 make it true only when NODE_ENV is test and a wiring flag is set.",
+      "fix": "Add the gate context and the :353/:391/:402/:409 citations to the ticket text. No source change."
+     }
+    ],
+    "confirmed": [
+     "Subject 736bb2a84fa5b704eabdd8b069bc3ef89b084979: tree 920691093dc8…, parent 95283ce83fde (tree 7437babf…). 95283ce is records-only over e6d7dd1 (tree 7cb1521f…).",
+     "git diff --name-status 95283ce 736bb2a is exactly the four named client files.",
+     "736bb2a..e5ca41d is records-only (three .xenios registries, the handoff, the evidence JSON). Records tree 15eefed3….",
+     "All 8 sha256-lf values in the handoff table and the source JSON recompute and match. Blobs are LF. The working ProductPage.tsx has CRLF and its raw hash b9532627… matches the reconciliation.",
+     "The scratch handoff equals the committed handoff at e5ca41d (35669f5d…). The scratch reconciliation equals coordinator acbba2c WORKSTREAM_C_RECONCILIATION_20261008.json (e392ca66…).",
+     "20a23057 (integration branch) removes the four paths from the integration owner's active task and lease and records workstreamCTransfer to lease d9ff89ea under 94485a6. Coordinator bdefebbd records the same.",
+     "At e5ca41d, lease d9ff89ea covers exactly the four paths, state handoff, reclaimedAt 17:06:20.192Z.",
+     "Foreign registry rows and top-level fields are byte-equivalent across 95283ce, 736bb2a and e5ca41d (93, 136 and 57 rows).",
+     "No server, shared, supabase, adapter, lib or core diff between 95283ce and e5ca41d.",
+     "The production mount still passes product={null} and commerceEnabled={false} (ProductPage.tsx:88-89@736bb2a).",
+     "Doc 54 PSR4-1 is folded in with exact-period expectations, and all three unavailable messages are now pinned (component L75, L82, L98, L119; page L57).",
+     "Directive section 5 (lines 270-328@94485a6): every requested source item and authored-test item maps to inspected source or tests.",
+     "Backend tickets 1-3 accurately describe subscriptions.ts create (:353-411@736bb2a) and routes.ts:376-394.",
+     "Doc 54 is committed at health-review 63fdb0a, and its content matches the working copy.",
+     "product-subscribe.test.tsx is unchanged by the subject and, by hand-simulation, still passes against 736bb2a alone.",
+     "No execution, push, offer, price, payment or activation is claimed in the handoff or the JSON."
+    ],
+    "discrepancies": [
+     "The handoff closure map says the stale-response guard uses 'layout-effect cleanup, before later promise microtasks' and that masking applies 'on route/token changes'. Neither the layout-effect ordering nor route-change masking has a test that fails without it; only token-change masking is captured at commit level (W3-1, W3-3).",
+     "The handoff says the outer owner 'stays mounted across detail loading, retries and route/token updates'. Source confirms it, but no page test pins it (W3-2).",
+     "The handoff and evidence do not name product-subscribe.test.tsx as affected by the ProductPage.tsx change (W3-5)."
+    ],
+    "notProven": [
+     "Any test, typecheck, build or browser result for tree 920691093dc8: NOT RUN.",
+     "Reconciliation 'clean': true for the owner worktree. git status was not run; only the four working files were hashed.",
+     "That the lease reclaim at 17:06:20.192Z preceded editing. The timestamp is producer-reported, and Git first records the claim at e5ca41d after the source commit.",
+     "That nothing was pushed to the remote. Only the local remote-tracking ref was read (still 1fe97f5); the remote was not contacted.",
+     "That local commit hooks were disabled for the commits. Producer-reported.",
+     "The human provenance of the 94485a6 directive and of message 01a11c6c… cited at 20a23057. Recorded by the coordinator, not verified here.",
+     "The actual model and effort of the builder session. Not exposed, and the records do not attest them."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "W3-1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived. Each stale-response test settles the mutation in a separate act after the rerender or unmount (component L163-173, L206-221, L236-246, L248-256@736bb2a). act drains both kinds of cleanup before it returns, so changing ProductSubscriptionCreate.tsx:109@736bb2a back to useEffect would pass the whole suite (hand-simulated, NOT RUN). The suggested fix is wrong. Inside one act, root.render is queued on the act queue and processed only after the callback's microtasks. The submit continuation would therefore run while the form is still mounted, which tests the live path. The act drain also flushes passive effects right after the commit. A test that tells the two apart needs a commit outside act, with the promise settling before the scheduler's passive flush. Record this as untested."
+     },
+     {
+      "id": "W3-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. Page tests L53-148@736bb2a check only text, form absence and zero create calls. Restoring e6d7dd1's conditional mount (ProductPage.tsx:74-81@e6d7dd1) on top of the new masking would pass all nine page tests (hand-simulated). The gap is wider than the lens says. In the composed app the owner does not stay mounted across token updates at all, because RequireMember unmounts the page (see missed M1). Retention across loading and retry is still untested."
+     },
+     {
+      "id": "W3-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. Only the token change is captured at commit level (L110-124@736bb2a, which fails at e6d7dd1 because ProductPage.tsx:68-73@e6d7dd1 renders the old product). The route test L93-108 cannot test masking at all: the old product never resolves before navigation, so nothing old can flash, and it passes on both commits. The errorMessage masking (ProductPage.tsx:80) has no assertion. A fix has to resolve A first, then navigate to B under CommitCapture."
+     },
+     {
+      "id": "W3-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. The negative check at L56@736bb2a has no term for charging. Section 5 (directive:315@94485a6) asks that pending wording not claim a charge, activation or shipment. The exact-sentence positive pins at L54-55 cover the current copy but would not catch added text. The lens's caveat about a bare 'activ' is correct, because PSC.tsx:178 contains 'activation'."
+     },
+     {
+      "id": "W3-5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. product-subscribe.test.tsx is blob f389110e at both 756a906 and 736bb2a, and it is in the 17-file focused set (03b72f8 focused-run1.json). It imports ProductPage. Hand-simulated against 736bb2a, it still passes: 'This product is not available.' is at MemberProductDetailExperience.tsx:150@736bb2a, and the masking does not change its 503, route or slug paths. Composed with e0a7d47 (title 'Product information is unavailable.', MemberProductDetailExperience.tsx:162@e0a7d47), it fails as doc 56 D-1 says. It is outside both the narrowed B lease and lease d9ff89ea, and it is also 'reserved' in a second registry (missed M2)."
+     },
+     {
+      "id": "W3-6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed as context only. Production create returns capability_disabled at subscriptions.ts:380-384@736bb2a, before newId (:391) and save (:409). The gate is true only under NODE_ENV=test plus a wiring flag (production-deps.ts:947-948, 1403@736bb2a). Ticket text is otherwise accurate. Ticket 1 also leaves out the most common way the owner unmounts, a token refresh (M1)."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "(a) Test diff enumeration e6d7dd1..736bb2a",
+      "status": "PASS",
+      "note": "Re-derived from git diff. Component: new tests at L80, 88, 96, 104, 138, 148, 206 (x4), 223, 236, 248 and 258; changed at L43, 72, 114, 128 and 163; clearAllMocks became resetAllMocks. Page: new at L77, 86, 93, 110, 126 and 140; changed at L53, 64 and 70; adapter mock and CommitCapture added at L10 and L37-46. Blobs: d094bab and ce94ff4."
+     },
+     {
+      "item": "(a) Discriminating set (would fail at e6d7dd1)",
+      "status": "PASS",
+      "note": "Hand-simulated, NOT RUN. All of these would catch a regression: L72 (unconditional intro, e6d7dd1 L140), L80 and L88 (form whenever ready, L144), L96 (sign-in checked first, L141), L138 (unhandled rejection leaves the form stuck busy), L206 x4 (refusedAttempt at L122 runs before the alive check; in the capability case the e6d7dd1 key omits commerceEnabled so the same instance stays alive), L223 (no visible prop, so the text is not empty), L258 (form shown while signed out), and page tests L53 (intro) and L110 (first commit shows the old product)."
+     },
+     {
+      "item": "(a) Non-discriminating set (pass on both)",
+      "status": "PASS",
+      "note": "Confirmed. These pass on both commits: L43, 104, 114, 128, 148 (the submitted ref already blocks it), 163, 236, 248, the unchanged L60, 65, 175, 184 and 194, and page L64, 70, 77, 86, 93, 126 and 140."
+     },
+     {
+      "item": "(a) PSR4-1 folded in",
+      "status": "PASS",
+      "note": "Exact-period strings at component L75, L82, L98 and L119 and page L57@736bb2a. These do not match the old '... yet.' wording. The doc 54 committed at health-review 63fdb0a matches the working copy (sha256-lf ccd01a16…)."
+     },
+     {
+      "item": "(a) Imports and API plausibility",
+      "status": "PASS",
+      "note": "PERSISTENT_CART_QUANTITY_MAX is 50 (early-access-quantity.ts:72). SUBSCRIPTION_FREQUENCIES is [30,60,90] (shared/research/commerce.ts:260). Synthetic results match the adapter's acceptance check (commerce.ts:209-214). No ProductPage dependency imports adapters/commerce: the importer list is Cart, Checkout, Orders and similar pages only. NOT RUN."
+     },
+     {
+      "item": "(a) Closure-map criteria without a failing test",
+      "status": "PARTIAL",
+      "note": "Upheld (W3-1, W3-2, W3-3). One addition: the token-rotation tests (component L184-204, page L110-138) swap the token directly under a bare Provider, a transition core.tsx never produces (M1)."
+     },
+     {
+      "item": "(b) Section 5 mapping",
+      "status": "PARTIAL",
+      "note": "Section 5 is directive lines 270-328@94485a6. The source items map as the lens says, in isolation. In the composed app, line 314 ('Product/token changes cannot bypass an uncertain-attempt lock') and the token half of lines 306-307 do not hold: a token refresh unmounts the owner through RequireMember (M1). The disabled mount is preserved (ProductPage.tsx:88-89)."
+     },
+     {
+      "item": "(b) Scope: exactly four files; records-only successor",
+      "status": "PASS",
+      "note": "git diff --name-status 95283ce 736bb2a shows M on exactly the four paths. 736bb2a..e5ca41d touches three registries plus the handoff and the evidence JSON. Trees 920691093dc8 and 15eefed3 and parent 95283ce83fde are verified. 95283ce is records-only over e6d7dd1."
+     },
+     {
+      "item": "(b) Release at 20a23057 and reclaim by d9ff89ea",
+      "status": "PASS",
+      "note": "20a23057 (parent 38c72396) narrows the integration task and lease to the four catalog files, and records workstreamCTransfer to lease d9ff89ea under 94485a6 at 16:57:27Z. Coordinator bdefebbd (17:08:35Z) records the same. At e5ca41d, d9ff89ea covers the four paths with reclaimedAt 17:06:20.192Z. At 736bb2a itself the lease still listed only two paths, so the reclaim is producer-reported until e5ca41d. A second registry still reserves ProductPage.tsx (M2)."
+     },
+     {
+      "item": "(b) No server/shared/adapter/auth/pricing/payment/SQL/protected change",
+      "status": "PASS",
+      "note": "The name-status lists contain only the four client files plus records. No protected manifest names them."
+     },
+     {
+      "item": "(b) PS-R1/PS-R5 not reopened; placeholder card not closed",
+      "status": "PASS",
+      "note": "Handoff line 62 says this, and source still renders the card with the unavailable status."
+     },
+     {
+      "item": "(c) sha256-lf recomputation (8 values)",
+      "status": "PASS",
+      "note": "Recomputed from git show: before (identical at e6d7dd1 and 95283ce) 32c64891, aeb6a2a6, 0d603857, 5e238986; after (identical at 736bb2a and e5ca41d) e20b1c55, e81747bf, 77fd8156, bd90e658. The blobs have no CR. Working ProductPage.tsx has 61 CRs, raw b9532627 and LF 77fd8156, matching the reconciliation."
+     },
+     {
+      "item": "(c) Records equality and foreign rows",
+      "status": "PASS",
+      "note": "The scratch handoff equals the committed one (sha256-lf 35669f5d), and the scratch reconciliation equals coordinator HEAD acbba2c (e392ca66). Foreign rows are invariant across 95283ce, 736bb2a and e5ca41d (tasks 93, leases 136, sessions 57; only own rows differ). The task's canonical handoff pointer is stale (M4)."
+     },
+     {
+      "item": "(c) No execution or push claimed",
+      "status": "PASS",
+      "note": "The JSON reports tests, syntax/type/build, browser and SQL as NOT RUN and push as NOT PERFORMED. origin/codex/product-subscription-intent-20261005 is at 1fe97f5, and branch -r --contains 736bb2a is empty. The remote itself was not contacted, and hook disablement is producer-reported."
+     },
+     {
+      "item": "(c) Backend tickets accurate",
+      "status": "PASS",
+      "note": "subscriptions.ts:353-411@736bb2a: newId at :391, priceVersion copied at :402, save at :409. routes.ts:376-396 still keeps paymentProviderReference and shippingAddressRef. Ticket 1 omits the token-refresh unmount (M1)."
+     },
+     {
+      "item": "Hand-sim: double submit across a rerender",
+      "status": "PASS",
+      "note": "736bb2a. Same key: submitted.current (L108, L121-122) blocks the second submit. New key (token, product or capability): the new form sees blockedFormId equal to the old id, which differs from its own, so locked (L102, L114). If the rerender commits before setBlockedFormId, beginAttempt still refuses because attempt.current is not null (L83). NOT RUN."
+     },
+     {
+      "item": "Hand-sim: response after token change and after unmount",
+      "status": "PASS",
+      "note": "The key change or root unmount runs the layout cleanup, so alive is false (L109). Both the ok path and the catch path return before setOutcome and refusedAttempt (L131, L136), and the guard stays at the old id. This matches tests L163 and L248, which pass on both commits."
+     },
+     {
+      "item": "Hand-sim: refusal after a later success",
+      "status": "PASS",
+      "note": "Within one owner, no later success can exist while an attempt is pending, because the guard holds. Across owners (page remount), a refusal reaching the dead first-owner form is dropped at L136. refusedAttempt (L88-89) can only clear the guard for the id it set. No cross-owner effect."
+     },
+     {
+      "item": "Hand-sim: route A->B->A with attempt in flight",
+      "status": "PASS",
+      "note": "Same Route element (section.tsx:382), so ProductPage stays mounted. The view goes visible=false during loading (ProductPage.tsx:89), the old form dies, and the late response is ignored. B and A both show 'A request was already submitted from this page' until the page unmounts. This is conservative over-blocking across products and is not reachable today (product null)."
+     },
+     {
+      "item": "Hand-sim: sign-out during in-flight attempt",
+      "status": "PARTIAL",
+      "note": "Isolated (test L258): the guard persists to a new principal, which then sees 'already submitted'. Composed: clearMemberState makes RequireMember redirect (MemberArea.tsx:25-33), the page unmounts and the response is dropped. Signing in again gives a fresh owner with no guard, so a resubmit, and a duplicate under ticket 1, is possible. Same root cause as M1."
+     },
+     {
+      "item": "Hand-sim: unchecked file rendering ProductPage/ProductSubscriptionCreate",
+      "status": "PARTIAL",
+      "note": "product-subscribe.test.tsx passes at 736bb2a and fails with e0a7d47 (W3-5). docs/health-launch/evidence/product-subscription-intent-20261005/browser-fixture.tsx:3,5,13-20 renders both components. Its committed snapshots predate PS-R4 (M3). section.tsx:167,382 is the composed mount (M1)."
+     },
+     {
+      "item": "Tests/typecheck/build/browser executed",
+      "status": "NOT_PROVEN",
+      "note": "NOT RUN by the builder, the lens or this verifier. No receipt exists for tree 920691093dc8, and the qualification window expired 2026-10-06T21:43:37Z."
+     }
+    ],
+    "missed": [
+     {
+      "id": "M1",
+      "severity": "P2",
+      "file": "client/src/research/pages/MemberArea.tsx",
+      "claim": "In the composed app, every token refresh unmounts ProductPage and its subscription attempt owner. The token-rotation guard claims and the section 5 line 314 criterion therefore hold only in isolated tests.",
+      "evidence": "On a TOKEN_REFRESHED event, core.tsx:426-435@736bb2a calls establishMemberSession with the new JWT. That JWT differs from the stored one, so there is no early return (:282). The function then sets member and memberToken to null (:297-298) and the status to 'checking' (:308). RequireMember renders a placeholder div while checking (MemberArea.tsx:18-23) instead of <>{children}</> (:44). That unmounts the page mounted at section.tsx:382 via L (:211-217). The owner's ref and blockedFormId are lost, so an in-flight or uncertain attempt can be resubmitted after re-verification. PSC.tsx:74 says the guard 'survives token rotation', and handoff line 24 says the owner stays mounted across token updates. The tests swap the token under a bare Provider (component L184-204, page L41-46). Not reachable today (product null).",
+      "fix": "Correct the handoff closure map, ticket 1 and the comment at PSC.tsx:74: membership re-verification or token refresh is a full owner unmount. Durable server idempotency remains the fix. Optionally add a composed test through RequireMember."
+     },
+     {
+      "id": "M2",
+      "severity": "P3",
+      "file": "docs/coordination/FILE_OWNERSHIP.json",
+      "claim": "A second ownership registry still reserves ProductPage.tsx and product-subscribe.test.tsx for another lane, and neither the transfer nor the reclaim records reconcile it.",
+      "evidence": "FILE_OWNERSHIP.json:393-412@736bb2a (also at 20a23057) has entry OWNER-W2-PR85-INTEGRATION, owner 'Website 2', mode write, state 'reserved', with patterns including client/src/research/pages/member/ProductPage.tsx and product-subscribe.test.tsx. The 20a23057 transfer, coordinator bdefebbd and lease d9ff89ea at e5ca41d cover only the .xenios registries. The reservation is probably stale: the registry was generated 2026-08-03 and has 15 'reserved' entries. Earlier coordinator clearance of ProductPage is producer-reported in the historicalScope note.",
+      "fix": "The coordinator should mark OWNER-W2-PR85-INTEGRATION superseded or released, or record why it is stale, before integration. No source change."
+     },
+     {
+      "id": "M3",
+      "severity": "P3",
+      "file": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-fixture.tsx",
+      "claim": "An evidence harness renders both changed components and is not listed as affected. Its committed snapshots show UI that this subject removed.",
+      "evidence": "browser-fixture.tsx:3,5,13-20@736bb2a mounts ProductSubscriptionCreate (pending, blocked, lost and no-offer modes) and ProductPage (mounted mode). browser-preview.mjs serves it. The committed snapshots browser-no-offer.txt:6-7 and browser-mounted-product.txt:102-103 still show 'Request recurring deliveries…' and the '…for this product yet.' copy. The subject removes the intro (PSC.tsx:154) and the 'yet'. Handoff line 66 says prior evidence belongs to its own sources, but nothing in the directory marks these files superseded for 736bb2a.",
+      "fix": "In the Workstream C records, list the harness as affected and note that the browser-*.txt and png snapshots describe 7806fb5, not 736bb2a."
+     },
+     {
+      "id": "M4",
+      "severity": "P3",
+      "file": ".xenios/ACTIVE_TASKS.json",
+      "claim": "The task's canonical handoff pointer still names the October 5 handoff. The new exact-SHA handoff is referenced only under a nested workstreamC object.",
+      "evidence": "At e5ca41d, ACTIVE_TASKS row PRODUCT-SUBSCRIPTION-INTENT-20261005 has state 'qa' and handoff {sha 03b72f8786905789066d5310039557bc2951b72a, file .xenios/handoffs/2026-10-05T17-48-40-419Z-…md}. The 2026-10-08 Workstream C handoff appears only at workstreamC.handoff. Continuity tooling that reads handoff.sha or handoff.file would point a takeover session at a pre-PS-R4, pre-Workstream-C handoff.",
+      "fix": "In the next records-only commit, set handoff.sha to e5ca41d (or 736bb2a) and handoff.file to the Workstream C handoff."
+     }
+    ],
+    "verdictOpinion": "The lens holds up, with one material gap and one wrong recommended fix.\n\nI re-derived every claim from Git objects:\n- **Identities and scope:** 736bb2a (tree 920691093dc8, parent 95283ce) changes exactly the four files, and e5ca41d changes records only.\n- **Hashes:** all 8 sha256-lf values match the handoff and the source JSON.\n- **Records:** the scratch handoff and reconciliation equal their committed copies. Foreign registry rows are invariant across 95283ce, 736bb2a and e5ca41d.\n- **Ownership:** the 20a23057 release and the d9ff89ea reclaim are as described.\n- **Doc 54 PSR4-1:** folded in.\n- **Backend tickets:** accurate for subscriptions.ts at :391, :402 and :409.\n- **Test classification:** the lens's split between discriminating and pass-on-both tests is correct. Discriminating: component L72, L80, L88, L96, L138, L206 (x4), L223 and L258, plus page L53 and L110.\n\nAll six P3 findings are upheld. The fix suggested for W3-1 would not tell useEffect from useLayoutEffect apart: inside one act the render is queued until after the callback's microtasks.\n\nMissed:\n- **M1 (P2):** in the composed app, a routine token refresh resets the member state and status to checking (core.tsx:297-308). RequireMember then unmounts the page (MemberArea.tsx:18-23). That defeats the guard which the component comment (PSC.tsx:74) and the handoff say survives token rotation. Section 5 line 314 therefore holds only in isolated tests. It is unreachable while product is null; the fix is a records correction plus server idempotency.\n- **M2 (P3):** a stale reservation in FILE_OWNERSHIP.json still names ProductPage.tsx and product-subscribe.test.tsx.\n- **M3 (P3):** the browser evidence harness renders both changed components and is not listed as affected; its committed snapshots predate PS-R4.\n- **M4 (P3):** the task's canonical handoff pointer is stale.\n\nNet for lens W3: CONSISTENT WITH LIMITS, and the reviewer should add M1 as a P2 limit. Tests, typecheck, build and browser: NOT RUN; nothing here is PASS-by-execution. The qualification window expired 2026-10-06T21:43:37Z. Nothing here is Samuel's approval of execution, push, release, offers, prices, payment or activation."
+   }
+  }
+ ],
+ "critic": {
+  "coverage": [
+   {
+    "item": "Identity, four-path scope, records-only neighbours, hashes",
+    "status": "COVERED",
+    "evidence": "Verified retained evidence. I recomputed all of this. 736bb2a has tree 920691093dc8 and parent 95283ce. git diff --name-status 95283ce 736bb2a shows M on exactly the four lane paths. e6d7dd1..95283ce and 736bb2a..e5ca41d (tree 15eefed3) touch only the three .xenios registries, the handoff and the source JSON. The sha256-lf values of git show bytes match 8 of 8: 32c64891->e20b1c55, aeb6a2a6->e81747bf, 0d603857->77fd8156, 5e238986->bd90e658. All blobs contain 0 CR bytes. The scratch handoff and the committed handoff at e5ca41d both hash to 35669f5d. The reconciliation's workingRawSha256 b9532627 for ProductPage is disclosed as the CRLF working copy."
+   },
+   {
+    "item": "S5 source: present-tense unavailable copy; no recurring-offer lead without offer and capability",
+    "status": "COVERED",
+    "evidence": "Inspected source ProductSubscriptionCreate.tsx:154-157@736bb2a. The intro needs enabled (token, capability and canReview, :115). The status order is offer-absent, then sign-in, then closed. I counted 0 non-ASCII bytes and 0 'yet' in all four files. Authored tests PSC.test.tsx:72-102 and ProductPage.subscription.test.tsx:53-63 discriminate against e6d7dd1, where the intro was unconditional and sign-in was checked first (95283ce diff). NOT RUN."
+   },
+   {
+    "item": "S5 source: intentionally disabled production mount preserved",
+    "status": "COVERED",
+    "evidence": "Inspected source ProductPage.tsx:88-89@736bb2a still passes product={null} and commerceEnabled={false}. canReview(null) is false (PSC.tsx:63-64), so enabled is false (:115). There is no intro (:154), no form (:158), and submit returns early (:121). Only the h2 and 'A subscription offer is not available for this product.' render, and only when displayedState is ok and researchOnlyBoundary is true. Page test :53-63 adds invented offer-like fields and asserts no form, zero creates and GET-only reads (NOT RUN)."
+   },
+   {
+    "item": "S5 source: price/frequency only from supported input; canonical quantity/frequency values",
+    "status": "COVERED",
+    "evidence": "Inspected source PSC.tsx:2-3, :63-71, :112-113, :167-174@736bb2a. Quantity comes from PERSISTENT_CART_QUANTITY_MAX and frequency from SUBSCRIPTION_FREQUENCIES. Price and version come only from canReview-validated input. The diff 95283ce..e5ca41d over shared, server, adapters, lib and core is empty. Tests :43-70 and :104-112 (NOT RUN). The fixed two-decimal formatting for any 3-letter currency is pre-existing (P3)."
+   },
+   {
+    "item": "S5 source: stable duplicate-attempt protection",
+    "status": "COVERED",
+    "evidence": "Inspected source PSC.tsx:82-87, :114, :121-122@736bb2a. The owner ref (attempt) plus the form ref (submitted) block a second dispatch whether the closure is stale or fresh. A form remounted under a new key is blocked by blockedFormId (:102), and beginAttempt refuses a non-null attempt (:83). Nothing retries automatically. Test :148-161 passes on both e6d7dd1 and 736bb2a, so it is preservation and is labelled 'Preserved' in the handoff. NOT RUN."
+   },
+   {
+    "item": "S5 source: lock after uncertain or lost response; never claims nothing was saved",
+    "status": "COVERED",
+    "evidence": "Inspected source PSC.tsx:129-133 (rejection), :145-149 (error/unavailable) and :190 (unknown-save wording)@736bb2a. The adapter's unconfirmed result maps to error (commerce.ts:209-216). Limit (latent P3): api.ts:100-109 and :139-141 treat any 401, any 403, and any ok:false+code body as a refusal. The global handler forwards a thrown 401/403 (index.ts:1472-1486; request-logging.ts:49-67; Express 5.2.1 forwards rejections). routes.ts:984 relays an unknown shape as 500+forbidden. Either case releases the guard."
+   },
+   {
+    "item": "S5 author test: definitive refusal versus uncertain outcome",
+    "status": "COVERED",
+    "evidence": "Inspected source PSC.tsx:136-144@736bb2a. The refusal goes through refusedAttempt(id) only after the alive check, and only for the current id (:88-91). Selections are kept and result.message is never rendered. Tests: refusal :114-126 (preservation), uncertain :128-146, and stale refusal :206-221 x4. The x4 cases discriminate because at e6d7dd1 refusedAttempt ran before the alive check and the key omitted commerceEnabled. Gap: there is no unauthorized or forbidden retry test (P3). All services deny before repository.save (subscriptions.ts:358-388 vs :409). NOT RUN."
+   },
+   {
+    "item": "S5: saved pending kept distinct; pending wording claims no charge, activation or shipment",
+    "status": "PARTIAL",
+    "evidence": "Inspected source PSC.tsx:178 and :191-195@736bb2a. The wording is truthful and the tests pin it exactly (:54-55). Gap: the negative check at :56 has no term for charge or paid, although directive 94485a6 S5 names charge (P3). The closure-map claim 'Private saved reference is cleared on sign-out without clearing the attempt guard' holds only at component level (test :258-269). In the routed app, sign-out goes through clearMemberState and the RequireMember Redirect (core.tsx:263-273, 421-424; MemberArea.tsx:25-33), which unmounts the owner and drops the guard (P2)."
+   },
+   {
+    "item": "S5: private state in existing component memory only",
+    "status": "COVERED",
+    "evidence": "Inspected the full PSC.tsx and ProductPage.tsx@736bb2a. There is only useRef/useState plus the existing createSubscription and getMemberProductDetail adapters. No storage, cookie, timer, BroadcastChannel, module state or identity store is added. There is no test, which is acceptable for an absence property."
+   },
+   {
+    "item": "S5: stale-response protection across product changes, token changes and unmount",
+    "status": "COVERED",
+    "evidence": "Inspected source plus hand simulation. Reads: ProductPage.tsx:24,29-30,62-67 uses a generation guard, and :71-73,80 masks the prior scope on the same render. Creates: PSC.tsx:79 keys on token, product and capability; :109 runs a layout cleanup at commit; :131 and :136 drop late results. Old responses never overwrite the newer view. Tests: page :93-108, :126-148; component :163-173, :236-256 (NOT RUN). Test gaps (P3): no test would fail on a reversion to useEffect at :109, and commit-level masking is captured only for an account switch."
+   },
+   {
+    "item": "S5 author test: product/token changes cannot bypass an uncertain-attempt lock",
+    "status": "PARTIAL",
+    "evidence": "At component level this holds (PSC.test.tsx:175-234, with tokens swapped as props). In the routed app it does not hold for tokens. TOKEN_REFRESHED, SIGNED_IN and USER_UPDATED call establishMemberSession (core.tsx:425-436@736bb2a). For a new token it nulls member and token and sets 'checking' (:283, :295-308). RequireMember then renders a placeholder (MemberArea.tsx:18-24) around L/Suspense/ProductPage (section.tsx:207-217, :382). That unmounts the owner, so after re-verification a fresh owner permits a second create. Latent: product=null, and the server refuses at subscriptions.ts:380-384."
+   },
+   {
+    "item": "S5: no backend expansion; precise existing-owner tickets",
+    "status": "PARTIAL",
+    "evidence": "No adapter, Auth, server, shared, SQL or pricing change (empty diff). The three tickets are accurate: newId at subscriptions.ts:391 and save at :409 with no durable key; priceVersion copied at :402 and only checked for non-empty at routes.ts:382; payment and shipping references still accepted at routes.ts:389-394. The tickets omit four things: line anchors; the gate context (production refuses at :380-384, production-deps.ts:1403); that token refresh, sign-out and route change are owner-unmount events; and the latent refusal-classification breadth (thrown 401/403, relay 500+forbidden)."
+   },
+   {
+    "item": "S5 parallel option: recorded transfer and removal from the original writer",
+    "status": "PARTIAL",
+    "evidence": "Verified Git objects. At 20a23057 (16:57:27Z) the integration owner's task and lease narrow, and workstreamCTransfer moves the four paths to lease d9ff89ea under 94485a6. Coordinator bdefebbd records the same. At e5ca41d, d9ff89ea covers the four paths with reclaimedAt 17:06:20.192Z. Limits: at 736bb2a the in-tree lease still listed 2 paths in state handoff, so the reclaim before the 17:12:22Z source commit is producer-reported. FILE_OWNERSHIP.json:393-412@736bb2a still reserves ProductPage.tsx and product-subscribe.test.tsx for Website 2, unreconciled (registry generated 2026-08-03)."
+   },
+   {
+    "item": "S5 deliverable: no claim that subscription purchasing became operational",
+    "status": "COVERED",
+    "evidence": "The handoff status line says 'Subscription purchasing is not operational'. The source JSON at e5ca41d records execution NOT_RUN and push LOCAL_ONLY. No new price, offer, payment or activation string exists. The only new UI string is PSC.tsx:154, gated by enabled and unreachable on the production mount."
+   },
+   {
+    "item": "Closure row: present-tense copy / no unsupported offer lead",
+    "status": "COVERED",
+    "evidence": "PSC.tsx:154-157@736bb2a. Exact-period pins are at PSC.test.tsx:75, :82, :98, :119 and page :57. Doc 54 PSR4-1 is folded in; the old strings ended in ' yet.' so a substring regression is caught."
+   },
+   {
+    "item": "Closure row: intentionally disabled actual mount (non-Research, unavailable, unauthorized cases)",
+    "status": "COVERED",
+    "evidence": "ProductPage.tsx:83-89@736bb2a. Page tests :53-84 assert no form and no create for the canonical, non-Research, 503 and 401 paths. Only :53-63 discriminates against e6d7dd1 (the intro); the others preserve behaviour. NOT RUN."
+   },
+   {
+    "item": "Closure row: price/frequency from supported input; canonical quantities",
+    "status": "COVERED",
+    "evidence": "PSC.tsx:63-71, :112-113, :163, :167-174@736bb2a. Tests :43-70 (boundary 50, invalid 0/51/100/1.5/empty, fresh review) and :104-112 (USD/EUR, shared options). Most are preservation. NOT RUN."
+   },
+   {
+    "item": "Closure row: duplicate-attempt protection, two submits in one act",
+    "status": "COVERED",
+    "evidence": "PSC.test.tsx:148-161@736bb2a. The handoff correctly calls this preserved: the submitted ref already blocked it at e6d7dd1. The saved state locks via :114. No auto-retry."
+   },
+   {
+    "item": "Closure row: uncertain/lost lock including thrown promise, hidden-view, capability, product, stale-refusal cases",
+    "status": "COVERED",
+    "evidence": "Source :129-149 and tests :128-146, :206-234@736bb2a. The thrown-promise case (:138) and the hidden/capability/product/token late-refusal cases (:206-234) discriminate against e6d7dd1. At component level these cannot unlock. The routed-token caveat is listed under the S5 lock row."
+   },
+   {
+    "item": "Closure row: definitive refusal handling for denied/unauthorized/forbidden",
+    "status": "PARTIAL",
+    "evidence": "Source :139-144@736bb2a handles all three kinds, but only kind 'denied' is tested (:114-126, :206-221). The claim 'live canonical ... unauthorized/forbidden results retain the existing refusal handling' is inspected source, not tested. Which statuses count as definitive is broader than the service's denial set (api.ts:100-109; routes.ts:984). Latent."
+   },
+   {
+    "item": "Closure row: saved pending distinct; private reference cleared on sign-out without clearing guard",
+    "status": "PARTIAL",
+    "evidence": "Wording holds (:191-195). The sign-out sentence holds only when the owner stays mounted (test :258-269). In production, sign-out redirects through RequireMember (MemberArea.tsx:25-33), which unmounts the owner. The receipt is cleared, but the guard is cleared too. The same test also shows a signed-out viewer, and later a different account, the previous account's notice and block (:102, :189, :196), which is principal-agnostic by design."
+   },
+   {
+    "item": "Closure row: stale responses use layout-effect cleanup before later microtasks; page tests cover route/account reads; commit capture for account",
+    "status": "PARTIAL",
+    "evidence": "Source PSC.tsx:109 and ProductPage.tsx:71-73@736bb2a are correct by hand simulation. The account-switch commit capture (page :110-124) discriminates. The route test (:93-108) passes at e6d7dd1 too and never resolves A before navigating, so slug-change masking and errorMessage masking (:80) are untested. No test pins layout ordering over passive ordering. A same-act settle cannot discriminate: async act runs the callback's microtasks before flushing the render, and sync act flushes passive effects before microtasks."
+   },
+   {
+    "item": "Closure row: private state only in component memory",
+    "status": "COVERED",
+    "evidence": "Inspected source (see the S5 row). No storage, cookie, global cache or event system."
+   },
+   {
+    "item": "Closure row: no backend expansion",
+    "status": "COVERED",
+    "evidence": "Diff 95283ce..e5ca41d over server, shared, supabase, adapters, lib and core is 0 lines. createSubscription is unchanged (commerce.ts:195-223@736bb2a)."
+   },
+   {
+    "item": "Handoff paragraph: outer owner stays mounted across detail loading, retries and route/token updates",
+    "status": "PARTIAL",
+    "evidence": "Holds within one ProductPage instance for loading, retry and slug change: the owner sits at a fixed position (ProductPage.tsx:83-90), its hooks run before the :93 return, and wouter reuses the Route element (section.tsx:382). It is false for token updates, sign-out and navigation off the :slug route, all of which unmount ProductPage (core.tsx:295-308; MemberArea.tsx:18-33; section.tsx:381-384). There is also no page-level test of owner retention: restoring the e6d7dd1 conditional mount would pass all nine page tests."
+   },
+   {
+    "item": "Every test or harness rendering ProductPage or ProductSubscriptionCreate remains consistent (doc 35 set)",
+    "status": "PARTIAL",
+    "evidence": "git grep @736bb2a finds PSC.test.tsx, ProductPage.subscription.test.tsx, product-subscribe.test.tsx (f389110, unchanged) and docs/.../browser-fixture.tsx. By hand simulation, product-subscribe passes at 736bb2a ('This product is not available.' at MPDE 9e4ab80:150; lines :117, :183). The 17-file set (38c7239 integration-subscription17-run1-start.json) holds three of these files; two now have new blobs, so doc 35's results do not cover them. The browser-fixture snapshots (browser-no-offer.txt:6-7) show the removed intro and 'yet'. NOT RUN."
+   },
+   {
+    "item": "Test discrimination",
+    "status": "PARTIAL",
+    "evidence": "Hand simulation against e6d7dd1 shows these would fail there, as intended: component :72, :80, :88, :96, :138, :206 x4, :223, :258; page :53, :110. Passing on both (preservation): component :43, :60, :65, :104, :114, :128, :148, :163, :175, :184, :194, :236, :248; page :64-108, :126-148. Behaviours with no test that fails without them: layout-effect liveness (:109), page-level owner retention, slug-change and error masking, unauthorized/forbidden release, and a positive intro assertion."
+   },
+   {
+    "item": "Records accuracy (handoff, source JSON, reconciliation, registries)",
+    "status": "PARTIAL",
+    "evidence": "Hashes, blobs, trees and parent all match, and foreign registry rows are invariant (per W3, re-verified by its verifier). Gaps: ACTIVE_TASKS handoff.sha at e5ca41d still points to 03b72f8 (Oct 5), and the new handoff appears only under workstreamC.handoff. The records do not name product-subscribe.test.tsx or the 17/36-file sets. docs/health-launch/PRODUCT_SUBSCRIPTION_INTENT_20261005.md:22@736bb2a, in this task's own paths, still says the guard 'survives token rotation' and describes page-loading unmount as unsolved. reconciliation 'clean': true is producer-reported."
+   },
+   {
+    "item": "Integration with catalog/detail successor e0a7d47 (doc 56)",
+    "status": "PARTIAL",
+    "evidence": "No textual conflict. On 756a906 and e0a7d47 the four lane files are byte-identical to 1fe97f5 (PSC 3d938f0, PSC.test c6cff1e, ProductPage 4c9075a, page test f3bb317), so the 736bb2a blobs replace them cleanly and must land together with e6d7dd1's change. Semantic: e0a7d47 MPDE.tsx:162 changes the unavailable title, which breaks product-subscribe.test.tsx:117,183 (doc 56 D-1). e0a7d47 MPDE.test.tsx:261-263 pins the new title and the absence of the old one. MPDE has no title prop (:88-98). The subject's page tests were authored against MPDE 9e4ab80 and are compatible with dbaa8e1 by hand simulation only."
+   },
+   {
+    "item": "Execution evidence (Vitest, typecheck, build, browser) for tree 920691093dc8",
+    "status": "MISSING",
+    "evidence": "NOT PROVEN. The builder, all three lenses and I ran nothing, and no receipt exists. The source JSON records tests, syntaxTypeBuild and browser as NOT RUN. The qualification window expired 2026-10-06T21:43:37Z. The October 5 browser snapshots describe earlier source. TypeScript acceptance of the try/catch definite assignment (PSC.tsx:124-133) is unchecked."
+   }
+  ],
+  "ownChecks": [
+   {
+    "question": "Lens W1-F3 proposes that the adapter opt into a known-denial list so commerce_disabled becomes a definitive refusal; the verifier says that cannot work. Who is right?",
+    "answer": "The verifier is right. api.ts:110-125@736bb2a reads knownNotFoundDenials only when res.status === 404. A 503 always goes through releaseUnusedBody and returns 'unavailable'. relay() sends commerce_disabled as 503 (routes.ts:979-981). The fix therefore has to be at the route (a 4xx status for commerce_disabled) or a coded-503 branch in api.ts. It fails closed today, and it is PS-R5 family, which is not reopened."
+   },
+   {
+    "question": "Lens W1 claims the global error handler always produces kind 'error', so an uncertain outcome. The verifier (W1-M2) says a thrown 401/403 becomes a refusal. Which holds?",
+    "answer": "The verifier holds. safeHttpErrorStatus passes any integer status from 400 to 599 (request-logging.ts:49-67). The handler replies res.status(status).json({message}) (server/index.ts:1472-1486). Express 5.2.1 (package-lock) forwards async rejections from withSubject (routes.ts:300-308, :692-707). api.ts:100-108 maps 401 to unauthorized and 403 to forbidden, and PSC.tsx:139-141 releases the guard. I add a second path: relay's unknown-shape fallback sends deny(res,500,'forbidden') (routes.ts:984), which api.ts:139-141 classifies as denied. Both are latent: every service denial precedes save (subscriptions.ts:358-388 vs :409) and persistence is gated off. P3."
+   },
+   {
+    "question": "W3-1 suggests settling the mutation inside the same act as the unmount to pin the layout-effect ordering. Would that test discriminate?",
+    "answer": "No. The verifier is correct. In async act, the callback's microtasks (the create continuation) run before the queued render is flushed, so the form is still alive. In sync act, React flushes the act queue, including passive effects, before returning, so layout and passive cleanups both precede the microtask. Discriminating needs a default-lane commit outside act, with the promise settling before the scheduler's passive flush. Record it as untested."
+   },
+   {
+    "question": "Is the token-refresh unmount a P1 because the directive's author-test bullet fails in the routed app, or a P2?",
+    "answer": "P2. Three verifiers independently landed at P2 (W1-F1, W2-P2-1, M1), and I re-verified core.tsx:279-308 and :425-436, MemberArea.tsx:18-33 and section.tsx:207-217, :382 @736bb2a. The behaviour is pre-existing at e6d7dd1 (the PSC.tsx:74 comment is unchanged context in the diff). It cannot be reached: product={null} and commerceEnabled={false} (ProductPage.tsx:88), and the server refuses before save. The handoff does disclose that a full owner unmount loses the guard. What is wrong is the claim that the owner stays mounted across token updates and sign-out, and the authored tests only model the component in isolation. The correction is to the records, plus durable server idempotency before any enablement."
+   },
+   {
+    "question": "W2-P3-4 versus M-3: can doc 56 D-1 be resolved without an MDPE API change?",
+    "answer": "Partly, so both are right in part. Doc 56's first route, 'keep the route-level title in this slice', lies entirely within the catalog lane's own four paths. It reverts e0a7d47 MPDE.tsx:162 and must also revise e0a7d47 MPDE.test.tsx:261-263, which pin the new title and the absence of the old one. The 'leave it to the ProductPage owner' variant does need an MPDE title prop, because MPDE has none (MPDE.tsx:88-98@e0a7d47). Workstream C cannot resolve D-1 inside its four paths. The coordinator should assign D-1 to one owner."
+   },
+   {
+    "question": "Does any accepted doc 35 test break at 736bb2a alone?",
+    "answer": "No, by hand simulation; nothing was run. product-subscribe.test.tsx is f389110 and unchanged. Case 1: a 503 becomes unavailable, the title is 'This product is not available.' (MPDE 9e4ab80:150), and the owner returns null. Case 2: B renders and the late gen1 A is dropped; the visible card adds no 'Alpha'. Case 3: a slug mismatch becomes unavailable. PSC.test.tsx and ProductPage.subscription.test.tsx are in the same 17-file set but now have new blobs, so doc 35's accepted results do not cover them and they need fresh qualification."
+   },
+   {
+    "question": "Is the integration composition clean?",
+    "answer": "Yes, textually. On 756a906 and e0a7d47 the four lane blobs equal 1fe97f5's (3d938f0, c6cff1e, 4c9075a, f3bb317), and 736bb2a descends from 1fe97f5 through e6d7dd1 and 95283ce. Replacing the four files with the 736bb2a blobs needs no hand merge. They must land together, because d50b467 passes visible=, which 3d938f0 does not declare. Neither 73d2abe nor dbaa8e1 MPDE imports adapters/commerce, so the page test's partial vi.mock stays safe after integration."
+   },
+   {
+    "question": "Was the lease transfer recorded before the edit?",
+    "answer": "Only in part. At 20a23057 (16:57:27Z), workstreamCTransfer names the four paths and lease d9ff89ea under 94485a6. However, CODE_OWNERSHIP at 95283ce and at 736bb2a still lists d9ff89ea with 2 paths in state 'handoff'. The four-path claim with reclaimedAt 17:06:20.192Z appears in Git first at e5ca41d, after the source commit at 17:12:22Z. The ordering is therefore producer-reported. Separately, FILE_OWNERSHIP.json:393-412 still reserves ProductPage.tsx for Website 2. That reservation is stale (generated 2026-08-03) but unreconciled."
+   },
+   {
+    "question": "Are there stale durable claims beyond the handoff?",
+    "answer": "Yes. docs/health-launch/PRODUCT_SUBSCRIPTION_INTENT_20261005.md:22@736bb2a, in this task's own path set but not updated, still says 'The guard survives token rotation' and lists 'a future page loading/refetch unmount' as unsolved, which the subject partly changed. browser-no-offer.txt:6-7 still shows the removed intro and '...for this product yet.'. ACTIVE_TASKS handoff.sha still points to 03b72f8."
+   },
+   {
+    "question": "Any invented offer, price, payment or activation claim, or new non-ASCII copy?",
+    "answer": "None. The only new UI string is PSC.tsx:154, gated by enabled and never shown on the production mount. Receipt and disclaimer copy (:178, :191-195) is unchanged. I counted 0 non-ASCII bytes and 0 'yet' across the four files @736bb2a."
+   }
+  ],
+  "upheld": [
+   {
+    "id": "WC-P2-1",
+    "severity": "P2",
+    "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+    "claim": "The guard is described as persisting through 'route/token updates', 'survives token rotation', and sign-out clearing the receipt without clearing the guard. In the routed app this holds only for slug changes, loading and retry. TOKEN_REFRESHED, SIGNED_IN and USER_UPDATED (core.tsx:425-436, :295-308), sign-out (core.tsx:263-273, :421-424) and navigation off the :slug route all unmount ProductPage through RequireMember (MemberArea.tsx:18-33) and L (section.tsx:207-217, :382), and the in-memory guard goes with it. The directive S5 bullet 'token changes cannot bypass an uncertain-attempt lock' is therefore met only at component level. Pre-existing and latent while product={null}. Merges W1-F1, W2-P2-1, W3 M1 and W2 M-1.",
+    "fix": "Records only, before release qualification. Correct the handoff closure map, the sign-out sentence, the PSC.tsx:74 comment wording, and PRODUCT_SUBSCRIPTION_INTENT_20261005.md:22. State that token refresh, sign-in, sign-out and leaving the :slug route are owner-unmount events. Bind this to backend ticket 1. Before any offer is enabled: durable server create idempotency, or an owner hoisted above RequireMember, plus a routed reverification test."
+   },
+   {
+    "id": "WC-P3-1",
+    "severity": "P3",
+    "file": "client/src/research/lib/api.ts",
+    "claim": "The definitive-refusal classification is broader than the service's denial set. A thrown 401/403 is forwarded by the global handler (server/index.ts:1472-1486; request-logging.ts:49-67; Express 5.2.1), and relay's unknown-shape fallback sends 500+forbidden (routes.ts:984). Both map to unauthorized, forbidden or denied (api.ts:100-109, :139-141) and release the guard (PSC.tsx:139-141) although the write outcome is unknown. Latent. This is not covered by the three tickets. Merges W1-M2.",
+    "fix": "Raise an existing-owner ticket. The create route should catch post-validation exceptions and return a non-refusal 500, and the global handler should not forward 401/403 on mutation routes. Optionally, treat only coded service denials as definitive."
+   },
+   {
+    "id": "WC-P3-2",
+    "severity": "P3",
+    "file": "server/research/commerce/routes.ts",
+    "claim": "commerce_disabled is relayed as 503 (routes.ts:979-981), which api.ts:110-125 always maps to 'unavailable'. The UI therefore shows the uncertain lock instead of the definitive-refusal message, and that denialMessage branch cannot be reached through the real adapter. Fails closed. PS-R5 family. Merges W1-F3, corrected.",
+    "fix": "Carry it as a PS-R5 note. The lens's adapter known-denial fix does not work, because knownNotFoundDenials applies to 404 only. Change the route status or add a coded-503 branch in api.ts, under the owner's authority."
+   },
+   {
+    "id": "WC-P3-3",
+    "severity": "P3",
+    "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+    "claim": "Layout-effect liveness treats a state-preserving Suspense or Activity hide as dead. A response that lands while hidden is dropped, and on reveal the form stays 'busy' ('Submitting request...') with no uncertain alert or link. The lock holds. Latent: there is no lazy, use or Activity under the mounted ProductPage. Merges W1-F2.",
+    "fix": "In the layout-effect setup, convert a lingering busy state to uncertain when submitted.current is set. Optionally add a test."
+   },
+   {
+    "id": "WC-P3-4",
+    "severity": "P3",
+    "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+    "claim": "The owner guard does not depend on principal or product. While the owner stays mounted, a signed-out viewer or another account sees 'A request was already submitted from this page' plus a link and is blocked (PSC.tsx:80-102, :189, :196; test :258-269). Product B is blocked after A, even after a confirmed save, and A's saved receipt is lost on a detail reload. Fails closed. Unreachable while product={null}. Merges W1-M1, W2 M-2 and W2-P3-2.",
+    "fix": "Before enablement, record an owner decision: bind the lock to the verified member or variant, or rely on durable server idempotency. Use product-neutral blocked wording."
+   },
+   {
+    "id": "WC-P3-5",
+    "severity": "P3",
+    "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.test.tsx",
+    "claim": "Test gaps. No test would fail if :109 reverted to useEffect. Page-level owner retention is unpinned: restoring e6d7dd1's conditional mount passes all page tests. Commit-level masking is captured only for an account switch, never for a slug change after A resolves or for errorMessage. There is no unauthorized or forbidden retry test and no positive intro assertion. The pending negative regex (:56) lacks charge or paid. Merges W1-F4 (tests), W2-P3-1, W3-1 through W3-4.",
+    "fix": "Record these as untested limits. When the owner next edits the tests, add: a slug-change CommitCapture case after A resolves, plus a stale-error case; a page-level single-mount assertion across loading, retry and token change; an unauthorized refusal retry; a charge/paid negative; and, for layout ordering, a default-lane commit outside act."
+   },
+   {
+    "id": "WC-P3-6",
+    "severity": "P3",
+    "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+    "claim": "Prices use a fixed two-decimal minor unit for any 3-letter currency (PSC.tsx:70, :117, :163), which mis-scales JPY or KWD. Pre-existing and latent. Merges W1-F4 (formatting).",
+    "fix": "Restrict canReview to supported currencies or use Intl minor units when an offer projection is introduced."
+   },
+   {
+    "id": "WC-P3-7",
+    "severity": "P3",
+    "file": "docs/health-launch/evidence/product-subscription-intent-20261005/workstream-c-20261008-source.json",
+    "claim": "The records do not name the accepted tests affected by the ProductPage change: product-subscribe.test.tsx, plus the doc 35 17-file and 36-file sets. Two of the 17 (PSC.test, page test) now have new blobs, so the accepted results no longer cover them. Merges W2-P3-3 and W3-5.",
+    "fix": "List the affected tests and require qualification at the exact integrated tree: the four lane tests, the 17-file and 36-file sets, and the MPDE tests."
+   },
+   {
+    "id": "WC-P3-8",
+    "severity": "P3",
+    "file": "client/src/research/pages/member/ProductPage.tsx",
+    "claim": "Integration with e0a7d47 needs coordination. Composition has no textual conflict, but doc 56 D-1 (e0a7d47 MPDE.tsx:162) breaks product-subscribe.test.tsx:117,183, and e0a7d47 MPDE.test.tsx:261-263 pins the opposite. MPDE has no title prop, so Workstream C cannot resolve it. Merges W2-P3-4 and M-3.",
+    "fix": "The coordinator assigns D-1 to one owner: either the catalog lane reverts the title and its test lines 261-263, or Website 2 updates :117 and :183 under recorded authority. Then compose the four 736bb2a blobs together onto the integration line."
+   },
+   {
+    "id": "WC-P3-9",
+    "severity": "P3",
+    "file": "server/research/commerce/subscriptions.ts",
+    "claim": "Backend ticket 1 is accurate but has no anchors. It omits that production refuses before save (subscriptions.ts:380-384; production-deps.ts:947-948, :1403) and that a routed token refresh is an owner unmount. Merges W3-6.",
+    "fix": "Add anchors :353, :391, :402, :409, the gate context, and the unmount events to the ticket text."
+   },
+   {
+    "id": "WC-P3-10",
+    "severity": "P3",
+    "file": ".xenios/ACTIVE_TASKS.json",
+    "claim": "Registry hygiene. The task's canonical handoff pointer is still 03b72f8 (Oct 5). At 736bb2a the in-tree lease d9ff89ea listed 2 paths in state 'handoff', so the reclaim before the edit is producer-reported until e5ca41d. FILE_OWNERSHIP.json:393-412 still reserves ProductPage.tsx and product-subscribe.test.tsx for Website 2. Merges W3 M2 and M4, plus my lease check.",
+    "fix": "In a records-only commit, point handoff.sha and handoff.file at the Workstream C handoff, and have the coordinator mark OWNER-W2-PR85-INTEGRATION superseded."
+   },
+   {
+    "id": "WC-P3-11",
+    "severity": "P3",
+    "file": "docs/health-launch/evidence/product-subscription-intent-20261005/browser-fixture.tsx",
+    "claim": "Stale evidence and docs. browser-fixture.tsx renders both changed components, but its committed snapshots (browser-no-offer.txt:6-7, browser-mounted-product.txt) show the removed intro and 'yet'. PRODUCT_SUBSCRIPTION_INTENT_20261005.md:22 is not updated. Merges W3 M3, plus my doc check.",
+    "fix": "Mark these snapshots as describing 7806fb5, not 736bb2a, and list the harness as affected."
+   }
+  ],
+  "disposition": "SOURCE ACCEPT WITH LIMITS for 736bb2a84fa5b704eabdd8b069bc3ef89b084979 (tree 920691093dc8; records e5ca41d).\n\nReasons:\n- There is no P0 or P1.\n- The production mount stays disabled (ProductPage.tsx:88).\n- Every directive 94485a6 S5 source item is met in inspected source at component and page-unit level, and the fixes over e6d7dd1 are real:\n  - a stale refusal can no longer release the guard;\n  - commerceEnabled is part of the key;\n  - a rejected promise becomes uncertain;\n  - same-render masking;\n  - layout-effect liveness.\n- The scope is exactly four files, and all hashes match.\n- No accepted doc 35 test breaks at this commit alone, by hand simulation.\n\nThe one P2 (WC-P2-1) is a pre-existing, latent overclaim in the records and a comment, not a source defect in the disabled slice. Its correction is records-only. The P3s may travel as limits.\n\nBefore release qualification:\n1. A records-only correction of WC-P2-1 (handoff, the PSC.tsx:74 wording, the intent doc :22), naming product-subscribe.test.tsx and the 17-file and 36-file sets as affected, the handoff-pointer fix, and the FILE_OWNERSHIP reconciliation.\n2. The coordinator assigns doc 56 D-1 to one owner, then composes the four 736bb2a blobs together onto the integration line.\n3. Under fresh authority, at the exact integrated tree: the four lane tests, the 17-file and 36-file sets, the MPDE tests, typecheck, the no-em-dash gate, build, and browser evidence that replaces the October 5 snapshots.\n4. Before any offer is enabled: backend ticket 1 (durable idempotency) plus the refusal-classification ticket.\n\nEverything is NOT RUN. The window expired 2026-10-06T21:43:37Z. Nothing here is Samuel's approval of execution, push, release, offers, prices, payment or activation."
+ }
+}

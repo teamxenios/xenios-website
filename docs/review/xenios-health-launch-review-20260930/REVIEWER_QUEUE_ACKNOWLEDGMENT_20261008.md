@@ -55,6 +55,6 @@ instruction above supersedes that for routine reviews.
 
 | Item | State |
 | --- | --- |
-| Workstream C subscription behaviour `736bb2a84fa5b704eabdd8b069bc3ef89b084979` (tree `92069109…`), records `e5ca41d` | ACKNOWLEDGED and IN REVIEW (board task `WORKSTREAM_C_BEHAVIOR_REVIEW_20261008` r1), against the PS-R4 wording accepted in doc 54. Disposition will be doc 57 |
+| Workstream C subscription behaviour `736bb2a84fa5b704eabdd8b069bc3ef89b084979` (tree `92069109…`), records `e5ca41d` | COMPLETE: doc 57, SOURCE ACCEPT WITH LIMITS; one records-only P2 (the in-memory guard does not survive token refresh, sign-out or route exit in the composed app) |
 | Doc 53 verifier and records correction `2d2d958`, records `0d417a9` | QUEUED after Workstream C, per the board |
 | Doc 55 supervisor repair `defe073` | seen on the builder branch; not yet on the board for review |
