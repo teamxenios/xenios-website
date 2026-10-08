@@ -3,8 +3,8 @@
   "tool": "OpenAI Codex desktop",
   "lane": "accepted-source-integration",
   "branch": "codex/accepted-source-integration-20261005",
-  "state": "handoff_ready",
+  "state": "active",
   "startedAt": "2026-10-05T18:18:45.097Z",
-  "heartbeatAt": "2026-10-08T19:20:00Z",
-  "note": "Doc56 correction authored locally at8f080a08af06aa16e7aaf80add1a1b25e0cfae41/tree7ff4d6a5059466e716d9b81f66a696cf69bc53d3. D-1 title restored; D-2 claims narrowed with copy held; D-9 records completed. All findings and Doc35 holds carried. C transfer and inventory preserved. NOT_RUN, NOT_PUSHED, NOT_ACCEPTED. Existing coordinator handoff only; no Claude interruption or schedule change."
+  "heartbeatAt": "2026-10-08T20:28:01Z",
+  "note": "Same integrator received explicit four-path C return ce5e58f after records 937c913. CUSTOMER-ACCEPTED-ASSEMBLY-20261008 r1 copies accepted 736bb2a blobs onto catalog 8f080a0 only. Original Doc57/60 accepted with limits; all execution and push held. No foreign records import, source glue, reviewer interruption or schedule change."
 }
