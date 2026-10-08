@@ -1,0 +1,324 @@
+{
+ "schemaVersion": 1,
+ "review": {
+  "verdict": "COMPOSED IDENTITY AND COMPATIBILITY CONFIRMED BY GIT-BYTE INSPECTION AND HAND-SIMULATION. NOTHING WAS RUN. The Doc 57 records correction (937c913) covers WC-P2-1, WC-P3-7 and WC-P3-10. For WC-P3-10 the second-registry part is disclosed and covered by a coordinator ruling; the registry itself is unchanged. Transfer ce5e58f moves exactly the four C paths to integrator lease d0897045, and the integration-side receipt at 9c2dd1c matches it. The f175f3c records recompute exactly: 11 blob/SHA-256 bindings, a 3,278-row other-source inventory, a 5,984-row preservation inventory, and foreign registry rows. The holds from docs 35, 56, 57 and 60 are carried. No P0, P1 or P2. Only P3 limits remain. cad2c4d (tree e90de4206f9698f00bc1ee8a9905978db8c960ce) has no reviewer disposition of its own yet. If it, or records tip f175f3c (tree c21fa4452a6e53979f0d675d3430dc957b98a015), is chosen as snapshot S, label it PROPOSED SNAPSHOT, REVIEW PENDING. Status: LOCAL ONLY / NOT RUN. This lens is evidence for the reviewer. It is not acceptance and not Samuel's approval.",
+  "checklist": [
+   {
+    "item": "Composed identity and lineage",
+    "status": "PASS",
+    "evidence": "cat-file cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055: tree e90de4206f9698f00bc1ee8a9905978db8c960ce, parent 9c2dd1cb1d49 (receipt), then 37f2d9648916 (Doc56 records), then 8f080a08af06 (catalog correction). f175f3c1bdfed6dc2d0f71733cc5dff63298b160 (tree c21fa445) is the direct child and the branch head of codex/accepted-source-integration-20261005. It changes only 8 records paths (5 .xenios plus 3 docs/health-launch/accepted-source-integration-20261005 files)."
+   },
+   {
+    "item": "(1) Path confinement 756a906..cad2c4d",
+    "status": "PASS",
+    "evidence": "git diff --name-status 756a906 cad2c4d: every path outside .xenios/** and docs/** is one of the eight accepted presentation files. Those are ProductSubscriptionCreate.tsx/.test.tsx, pages/member/ProductPage.tsx and ProductPage.subscription.test.tsx, and products-diagnostics/MemberCatalogExperience.tsx/.test.tsx and MemberProductDetailExperience.tsx/.test.tsx. 8f080a0..cad2c4d leaves only the four C paths. 9c2dd1c..cad2c4d is exactly those 4 files, 298 insertions and 51 deletions, matching the record."
+   },
+   {
+    "item": "(1) Blob equality, modes and product-subscribe.test.tsx",
+    "status": "PASS",
+    "evidence": "At cad2c4d and f175f3c the C blobs are b4046a7, d094bab, d50b467 and ce94ff4, all equal to 736bb2a. The B blobs are c54db89, 5a9e65b, f1db3fa and 78f2353, all equal to 8f080a0. All are mode 100644 at 736bb2a, 8f080a0 and cad2c4d. client/src/research/pages/member/product-subscribe.test.tsx is f389110e89d5 at 756a906, 736bb2a, 8f080a0, cad2c4d and f175f3c."
+   },
+   {
+    "item": "(2) Imports of the four C files: 736bb2a vs cad2c4d blob comparison",
+    "status": "PASS",
+    "evidence": "Same blob at both commits: shared/research/commerce.ts, commerce-api.ts, persistent-cart.ts, adapters/commerce.ts, adapters/memberCatalogApi.ts, lib/routes.ts, lib/api.ts, core.tsx, ui/kit.tsx, ui/shells.tsx, content/productEducation*.ts and product-request-sources.ts. Different blob: shared/research/member-catalog.ts (type-only import, f87d79f vs 83694ac), adapters/memberCatalog.ts (b480f5b vs 8a4b412), MemberProductDetailExperience.tsx (9e4ab80 vs f1db3fa) and MemberCatalogExperience.tsx (type-only import, bcf036f vs c54db89). The member-catalog and adapter blobs at cad2c4d equal those at 756a906 (historical executed source). MemberCatalogSurfaceState still has the same five members. MemberProductDetail still has slug and researchOnlyBoundary. adaptMemberProductDetail still returns ok/product/code with not_found. The detail component's props are unchanged (product, state?, errorMessage?, onRetry?)."
+   },
+   {
+    "item": "(2) ProductPage runtime import graph vs historical executed tree",
+    "status": "PASS",
+    "evidence": "I walked runtime imports from git show bytes, skipping 'import type'. The graph at cad2c4d and at 756a906 is the same 39 modules. Only 3 blobs differ: ProductPage.tsx and ProductSubscriptionCreate.tsx (C, Doc 57) and MemberProductDetailExperience.tsx (B, Doc 60). The other 36 modules, including ProductMedia.tsx, product-media.css, product-media.ts, product-admin.ts and price-quantity-tiers.ts, are byte-identical to the tree that produced the 17/401 and 36/626 receipts. adapters/commerce is imported only by ProductSubscriptionCreate, so the factory vi.mock('../../adapters/commerce', () => ({ createSubscription })) in ce94ff4 and d094bab is complete."
+   },
+   {
+    "item": "(2) Hand-simulation of ProductPage.subscription.test.tsx ce94ff4 against f1db3fa and adapter 8a4b412",
+    "status": "PASS",
+    "evidence": "I traced all nine cases. The fixture (displayState 'unavailable', media/price/readiness null, variants []) passes DISPLAY_STATES and FORBIDDEN_KEYS; the extra offer-like keys are not forbidden. In state ok, f1db3fa renders PageHeader h1 = displayName. ProductSubscriptionCreate returns null when visible=false. On scope change, displayed product and state go null/loading, so CommitCapture never sees the previous name. Generation guards drop late responses. Neither f1db3fa nor any imported module contains the strings 'recurring deliver', 'Product subscription', 'Unit price' or 'Choose your schedule'. ProductMedia with media null renders only the fallback and makes no fetch, so the every-call-is-GET assertion holds. The ProductMedia call is identical to 756a906 (media, productId, variantId, loading='eager')."
+   },
+   {
+    "item": "(2) Hand-simulation of product-subscribe.test.tsx f389110 against ProductPage d50b467 and f1db3fa",
+    "status": "PASS",
+    "evidence": "503 member_catalog_unavailable and a slug mismatch both reach state 'unavailable'. f1db3fa:162 then renders unavailableTitle 'This product is not available.' (lines 117/183). The substituted name is never set (line 184). There are no ra-purchase-panel or ra-subscribe-now nodes. The always-mounted hidden wrapper div is empty when not visible. The late-slug case is guarded by generation and scope. Consistent with Doc 60 section 2."
+   },
+   {
+    "item": "(2) Other tests that render ProductPage",
+    "status": "PASS",
+    "evidence": "git grep at cad2c4d: ProductPage is imported only by ProductPage.subscription.test.tsx, product-subscribe.test.tsx and section.tsx (lazy). catalog-routes.test.tsx and layout-referral.test.tsx have the same blob at 736bb2a, 756a906 and cad2c4d, and neither renders ProductPage. ProductSubscriptionCreate.test.tsx imports only same-blob modules."
+   },
+   {
+    "item": "Execution of the composed tests",
+    "status": "NOT_PROVEN",
+    "evidence": "Nothing was run, by me or by the records. ce94ff4 has never executed on any tree; 756a906 ran its predecessor f3bb317. Compatibility rests on inspection only."
+   },
+   {
+    "item": "(3) WC-P2-1 records correction",
+    "status": "PASS",
+    "evidence": "937c913 doc57-records-20261008.md and PRODUCT_SUBSCRIPTION_INTENT_20261005.md now name new-session sign-in, token refresh, forced USER_UPDATED verification, sign-out, route exit, reload and cross-tab, and bind them to backend ticket 1. Anchors were checked at cad2c4d, where all of these files have the same blob as at 736bb2a. section.tsx:208 is RequireMember. MemberArea.tsx:15-44 replaces children while checking or without a member. core.tsx:279-309 clears member/token and sets checking. core.tsx:413-435 handles SIGNED_OUT and SIGNED_IN/TOKEN_REFRESHED/USER_UPDATED. subscriptions.ts:242/353/380-384/391/409, production-deps.ts:947-948/1403, routes.ts:971-984 and index.ts:1472 are all accurate. One residual is in F-2."
+   },
+   {
+    "item": "(3) WC-P3-7 affected tests named",
+    "status": "PASS",
+    "evidence": "Parsed command arrays from 38c7239 integration-subscription17-run1-start.json and integration-affected-run1-start.json. They give 17 and 36 files in exactly the order the record lists, an intersection of 4 lane tests, and a union of 49 that equals focused-source-bindings.json. Log SHA-256s recompute to 83473aa9… and eec4390c…, with summaries 17/401 and 36/626. The lane-test blobs (e19dd0a/27c216f, f3bb317/ce94ff4, c6cff1e/d094bab, d5dddf1 at both) and product-subscribe f389110 are correct."
+   },
+   {
+    "item": "(3) WC-P3-10 handoff pointer and second ownership registry",
+    "status": "PARTIAL",
+    "evidence": "The ACTIVE_TASKS handoff pointer moved from the Oct 5 handoff (03b72f8) to the Oct 8 records handoff, and then to the transfer handoff at ce5e58f. The session and registry currentHandoff fields were updated. docs/coordination/FILE_OWNERSHIP.json (blob 89984029, the same at 736bb2a, ce5e58f, cad2c4d and coordinator HEAD) still has OWNER-W2-PR85-INTEGRATION as Website 2, mode write, state reserved, over ProductPage.tsx and product-subscribe.test.tsx. That row is only disclosed, together with a coordinator precedence ruling (COORDINATION_STATE.json ownershipDisposition, lines 4514/4686). See F-3."
+   },
+   {
+    "item": "(3) Other claimed dispositions (WC-P3-1..6, 8, 9, 11)",
+    "status": "PASS",
+    "evidence": "All twelve Doc 57 IDs appear with matching obligations. WC-P3-8 is resolved by Doc 60 (dc34f6a lines 5-6 and 27-29). WC-P3-9 anchors were verified as above. WC-P3-11: the intent document marks the Oct 5 browser evidence as historical. Open items stay open."
+   },
+   {
+    "item": "(3) Correction and transfer touch records only",
+    "status": "PASS",
+    "evidence": "736bb2a..ce5e58f changes only .xenios rows/handoffs/session, the intent doc and new doc57-records-* files. The prior handoff e5ca41d is unchanged. A semantic JSON comparison of e5ca41d to 937c913 to ce5e58f shows every foreign row and top-level field in ACTIVE_TASKS, CODE_OWNERSHIP and SESSION_REGISTRY unchanged."
+   },
+   {
+    "item": "(3) Transfer ce5e58f is clean",
+    "status": "PASS",
+    "evidence": "Lease d9ff89ea now holds records-only paths, plus excludedSourcePaths (the 4 C paths) and workstreamCAssemblyTransfer to session codex-accepted-source-integration-20261005 / lease d0897045 / observed head 37f2d96. product-subscribe, the adapter test and the service test are listed as neverTransferred. All 8 frozen-records gitBlob and raw SHA-256 values recompute from 937c913 bytes. Receipt 9c2dd1c cites ce5e58f, 937c913 and fromLease d9ff89ea, and claims exactly the 4 C paths. The authority-citation mismatch is disclosed and corrected (F-5)."
+   },
+   {
+    "item": "Coordinator copies match the source branches",
+    "status": "PASS",
+    "evidence": "At coordinator HEAD b705b66, the four DOC57_OWNER_* files and the CUSTOMER_ASSEMBLY bindings, preservation, packet and handoff copies have blob IDs identical to their 937c913, ce5e58f and f175f3c originals."
+   },
+   {
+    "item": "(4) f175f3c bindings recompute",
+    "status": "PASS",
+    "evidence": "All 11 git blobs and raw cat-file SHA-256 values match customer-accepted-assembly-bindings-20261008.json, e.g. e20b1c55… for ProductSubscriptionCreate.tsx and c0fbcc69… for the protection manifest. The other-source inventory (ls-tree -r rows excluding docs/, .xenios/ and the 4 C paths) gives 3,278 rows, 347,963 bytes and d6a1e886f7f9…, identical at 8f080a0, 37f2d96, cad2c4d and f175f3c."
+   },
+   {
+    "item": "(4) f175f3c preservation recompute",
+    "status": "PASS",
+    "evidence": "Baseline 37f2d96 rows minus the 4 C paths and 4 own continuity JSONs give 5,984 rows, 707,428 bytes and ccde33d9771856e8…. The same set of baseline paths hashes identically at cad2c4d and f175f3c. f175f3c adds only the handoff and the 3 assembly records. In all three registries the foreign rows and top fields are equal between 37f2d96 and both cad2c4d and f175f3c."
+   },
+   {
+    "item": "(4) Holds carried from docs 35, 56, 57 and 60",
+    "status": "PASS",
+    "evidence": "CUSTOMER_ACCEPTED_ASSEMBLY_20261008.md carries: every Doc 35 hold category (Founder, Subscription six gaps, PS-R2/R3, MC-01, D/E, Finance, Qualification) and its P3-1 to P3-4; Doc 56 D-2 (held) and D-3 to D-8 and D-10 (open), plus D-9; all 12 Doc 57 IDs; and Doc 60 D56C-1 to D56C-6, with Samuel named as copy owner and productEducation.ts lines 279/295 quoted verbatim, matching cad2c4d."
+   },
+   {
+    "item": "(4) No execution claimed",
+    "status": "PASS",
+    "evidence": "The assembly record, bindings (LOCAL_ONLY_NOT_RUN_NOT_ACCEPTED), preservation (execution NOT_RUN), handoff lines 66-68 and session note all claim no run and no push. The record says commits used -c core.hooksPath=NUL. The tree's .githooks/post-commit would auto-sync to GitHub, so disabling hooks is consistent with no push. Whether any hook was actually installed is NOT PROVEN."
+   },
+   {
+    "item": "Composed checkpoint acceptance and snapshot-S labeling",
+    "status": "NOT_PROVEN",
+    "evidence": "No reviewer disposition exists for cad2c4d. Its own records say 'COMPOSED CHECKPOINT NOT YET ACCEPTED'. A snapshot S built on cad2c4d or f175f3c must be labeled PROPOSED SNAPSHOT, REVIEW PENDING."
+   },
+   {
+    "item": "Read-only discipline of this lens",
+    "status": "PASS",
+    "evidence": "Only git object reads on the three named worktrees and the shared object store, plus hashing of git show bytes into the session scratchpad. Disclosure: one read-only sha256sum of the on-disk health-review Doc 57 file showed it equals git object 23600f7:57_… (88ef4a0a…). All Doc 57 content was read from git. No checkout, write, test, build or contact with another session."
+   }
+  ],
+  "findings": [
+   {
+    "id": "F-1",
+    "severity": "P3",
+    "file": "client/src/research/pages/member/ProductPage.subscription.test.tsx",
+    "claim": "Composed compatibility is proven only by inspection. The page test ce94ff4 has never executed on any tree, and here it runs against detail component f1db3fa, which differs from both the base it was authored on (9e4ab80) and the historical executed tree (73d2abe).",
+    "evidence": "The ProductPage runtime graph is the same 39 modules as 756a906, and only ProductPage d50b467, ProductSubscriptionCreate b4046a7 and MemberProductDetailExperience f1db3fa differ. I hand-simulated all 9 ce94ff4 cases and all 3 f389110 cases against f1db3fa:133-163 (h1 title, unavailableTitle) and ProductSubscriptionCreate.tsx:93 (visible=false returns null); they hold. The 17/401 and 36/626 receipts belong to 756a906 with f3bb317, not this tree.",
+    "fix": "No action at this checkpoint. Under fresh exact-tree authority, run the carried qualification: the four lane tests, the 17- and 36-file sets, the detail, Products and ProductPage route tests, typecheck, no-em-dash and build at cad2c4d. Until then report this as NOT RUN."
+   },
+   {
+    "id": "F-2",
+    "severity": "P3",
+    "file": "client/src/research/product-subscriptions/ProductSubscriptionCreate.tsx",
+    "claim": "The source comment at lines 74-78 still says 'The retry guard survives token rotation and offer refresh.' The WC-P2-1 correction is records-only and reinterprets the comment as describing a retained owner, so the composed source still carries wording Doc 57 called an overstatement for the composed route.",
+    "evidence": "cad2c4d:ProductSubscriptionCreate.tsx:74 is unchanged (blob b4046a7 = 736bb2a). 937c913 doc57-records says 'No source comments… were edited' and 'Existing source comments have only that retained-owner meaning.' Lines 76-78 of the same comment do say a full owner unmount needs server idempotency, so the overstatement is mild.",
+    "fix": "Carry as a disclosed limit. When the existing source owner next has authorized source scope, narrow the comment to 'while this owner stays mounted'. No edit now, because A, B and C are frozen."
+   },
+   {
+    "id": "F-3",
+    "severity": "P3",
+    "file": "docs/coordination/FILE_OWNERSHIP.json",
+    "claim": "WC-P3-10's second-registry half is disclosed, not reconciled. The legacy Website 2 write reservation over ProductPage.tsx and product-subscribe.test.tsx is still in place while cad2c4d writes ProductPage.tsx.",
+    "evidence": "Blob 899840292dca, the same at 736bb2a, ce5e58f, cad2c4d and coordinator HEAD. Lines 393-411: id OWNER-W2-PR85-INTEGRATION, owner Website 2, mode write, state reserved. The coordinator's COORDINATION_STATE.json ownershipDisposition (lines 4514/4686) rules that the human four-path scope 94485a6, transfers 20a2305 and ce5e58f, and the full-completion assignment govern only the four paths.",
+    "fix": "Keep as a disclosed P3 limit, with the coordinator ruling as binding provenance. When that registry's owner has authority, mark the legacy row superseded for ProductPage.tsx. Do not take product-subscribe.test.tsx."
+   },
+   {
+    "id": "F-4",
+    "severity": "P3",
+    "file": ".xenios/CODE_OWNERSHIP.json",
+    "claim": "The handover and the B freeze live only in branch-local registries and prose. Each side's registry lacks the other's row. The integrator row at 9c2dd1c/f175f3c dropped the four B catalog paths, which are now covered only by old foreign handoff-state leases. 'Preserve B at 8f080a0' is therefore not a registry freeze.",
+    "evidence": "At f175f3c, lease d0897045 paths are 4 C plus own records. The B paths match only 99c3b715 and c2cc19b7 (codex-care-research-postlaunch-20260831, state handoff). The subscription branch at ce5e58f has 136 leases and no integrator row; the integration branch at f175f3c has 134 and no subscription-lane row. The B blobs are protected only by the bindings JSON and inventory hashes, which do recompute.",
+    "fix": "Treat the coordinator-held byte-identical copies plus the f175f3c bindings as the binding record for snapshot S. On the next authorized records turn, optionally add an immutableAcceptedSourcePaths entry for the four B paths to the integrator row. No source change."
+   },
+   {
+    "id": "F-5",
+    "severity": "P3",
+    "file": "docs/health-launch/evidence/product-subscription-intent-20261005/doc57-records-20261008-transfer.json",
+    "claim": "The transfer's authority field pairs additive directive 1b165b15 with full-completion sections 6 and 7 step 5. Those sections belong to attachment 96001a74.",
+    "evidence": "At ce5e58f, authority.humanDirective is 1b165b15bfd6… and section says '6 preserves existing integration owner; 7 step 5…'. f175f3c CUSTOMER_ACCEPTED_ASSEMBLY_20261008.md ('The outgoing transfer incorrectly attaches…') and coordinator CUSTOMER_ACCEPTED_ASSEMBLY_ASSIGNMENT_20261008.md line 7 correct the citation and preserve the original bytes.",
+    "fix": "No action. Already disclosed and corrected without rewriting the transfer bytes. Cite the corrected attribution in the snapshot-S packet."
+   }
+  ]
+ },
+ "subject": "cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055",
+ "tree": "e90de4206f9698f00bc1ee8a9905978db8c960ce",
+ "records": "f175f3c1bdfed6dc2d0f71733cc5dff63298b160",
+ "inputs": {
+  "catalog": "8f080a08af06aa16e7aaf80add1a1b25e0cfae41",
+  "workstreamC": "736bb2a84fa5b704eabdd8b069bc3ef89b084979"
+ },
+ "workflowRun": "wf_da8c8ca4-524",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Lens and adversarial-verifier outputs, verbatim. Reviewer dispositions are in doc 62.",
+ "verify": {
+  "verdicts": [
+   {
+    "id": "F-1",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed. The runtime graph of ProductPage at cad2c4d is the same 39 modules as at 756a906. Only ProductPage d50b467, ProductSubscriptionCreate b4046a7 and MemberProductDetailExperience f1db3fa differ. The fixture product() is byte-unchanged between f3bb317 and ce94ff4 (the diff touches only harness and cases), and f3bb317 passed in the 17/401 receipt at 756a906 against adapter 8a4b412, which cad2c4d still has. I re-traced all 9 ce94ff4 cases and all 3 f389110 cases against f1db3fa:133-163 and ProductSubscriptionCreate:93/155. They hold. One wording fix: 'ce94ff4 has never executed on any tree' is an unprovable negative. It should read 'no execution record exists'."
+   },
+   {
+    "id": "F-2",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed. cad2c4d:ProductSubscriptionCreate.tsx:74 still says the guard 'survives token rotation and offer refresh' (blob b4046a7, the same as at 736bb2a). The 937c913 record states that no source comment was edited and reinterprets the comment as meaning a retained owner. Doc 57 WC-P2-1 named 'a source comment' among the overstatements, but it asked for a records-only correction, so carrying this as a limit is within scope. Lines 76-78 already disclose that a full unmount needs server idempotency."
+   },
+   {
+    "id": "F-3",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed. docs/coordination/FILE_OWNERSHIP.json is blob 899840292dca at 736bb2a, ce5e58f, cad2c4d and coordinator HEAD b705b66. Lines 393-411 hold OWNER-W2-PR85-INTEGRATION (Website 2, write, reserved), which covers ProductPage.tsx and product-subscribe.test.tsx. The coordinator ruling is real: COORDINATION_STATE.json:4514 ownershipDisposition and :4686 legacyOwnership, with the same text."
+   },
+   {
+    "id": "F-4",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed. At f175f3c, lease d0897045 lists only the 4 C paths and its own records. The 4 B paths match only 99c3b715 and c2cc19b7 (codex-care-research-postlaunch-20260831, state handoff). ce5e58f has 136 leases with d9ff89ea and no d0897045; f175f3c has 134 leases with d0897045 and no d9ff89ea. The B blobs are pinned only by the bindings JSON, which recomputes."
+   },
+   {
+    "id": "F-5",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed. In ce5e58f doc57-records-20261008-transfer.json, authority.humanDirective is 1b165b15 with section '6 preserves existing integration owner; 7 step 5...'. The f175f3c CUSTOMER_ACCEPTED_ASSEMBLY_20261008.md ('The outgoing transfer incorrectly attaches...') and coordinator COORDINATION_STATE.json:4685 'precision' both correct the attribution to attachment 96001a74. The original bytes are preserved."
+   }
+  ],
+  "checklistOpinion": [
+   {
+    "item": "Composed identity and lineage",
+    "status": "PASS",
+    "note": "cad2c4d1b1dd: tree e90de4206f96, parent 9c2dd1cb, then 37f2d96, then 8f080a0. f175f3c (tree c21fa4452a6e) is its only child and is the branch head. cad2c4d..f175f3c changes exactly 8 records paths (5 .xenios and 3 docs). 8f080a0..37f2d96 and 37f2d96..9c2dd1c are records-only."
+   },
+   {
+    "item": "(1) Path confinement 756a906..cad2c4d and blob equality",
+    "status": "PASS",
+    "note": "Using --no-renames, the only non-docs and non-.xenios paths are the 8 accepted files. 8f080a0..cad2c4d leaves only the 4 C paths. 9c2dd1c..cad2c4d is 4 files, +298/-51. C blobs b4046a7, d094bab, d50b467 and ce94ff4 equal 736bb2a. B blobs c54db89, 5a9e65b, f1db3fa and 78f2353 equal 8f080a0. All 8 are mode 100644. product-subscribe.test.tsx is f389110 at 756a906, 736bb2a, 8f080a0, 9c2dd1c, cad2c4d and f175f3c. The 756a906..cad2c4d docs changes are all additions under docs/health-launch. The no-em-dash gate scans only client/src, client/public, server and shared, and CORE_SITE_PROTECTION_MANIFEST (241fc344, unchanged since 756a906) names no composed path."
+   },
+   {
+    "item": "(2) Imports of the four C files, 736bb2a vs cad2c4d",
+    "status": "PARTIAL",
+    "note": "The conclusion holds, but the lens's enumeration is incomplete. My transitive walk over git-show bytes also finds these differences: adapters/cartProductSelection.ts (528df16 to 826c73b) and shared/research/cart-product-selection.ts (9fb02aa to 7faa442), both reached through adapters/memberCatalog; type-level shared/research/product-admin.ts (e7c1613 to fcf43de); and five modules that do not exist on the C base at all (ui/ProductMedia.tsx 00f1e2e, ui/product-media.css 518120b, product-media.ts fee4b32, product-admin.ts and price-quantity-tiers.ts c06c102). Relative to 756a906, 736bb2a deletes the whole media composition, so the C blobs were authored on a tree without it. Every one of these modules equals the executed 756a906 blob. ProductSubscriptionCreate.test's own graph (13 modules runtime, 15 with types, with commerce mocked) is identical at both commits. See M-2."
+   },
+   {
+    "item": "(2) ProductPage runtime graph vs historical executed tree",
+    "status": "PASS",
+    "note": "39 modules at both 756a906 and cad2c4d. Only d50b467, b4046a7 and f1db3fa differ. adapters/commerce is reached only through ProductSubscriptionCreate, so the factory mock is complete."
+   },
+   {
+    "item": "(2) Hand-simulation of ce94ff4 and f389110 against f1db3fa and 8a4b412",
+    "status": "PASS",
+    "note": "The fixture is unchanged from the executed f3bb317. On a scope change, displayedProduct and state are null/loading in the same render. ProductSubscriptionCreate returns null while hidden. Generation guards drop late reads. ProductMedia with media null renders the fallback and makes no fetch. I grepped every rendered module at cad2c4d for 'recurring deliver', 'Unit price', 'Choose your schedule', 'Product subscription' and 'A subscription offer' and found none outside ProductSubscriptionCreate. The 503 and slug-mismatch paths reach f1db3fa:162 'This product is not available.'. NOT RUN."
+   },
+   {
+    "item": "(2) Every test that renders ProductPage, ProductSubscriptionCreate or MemberProductDetailExperience",
+    "status": "PASS",
+    "note": "ProductPage is imported by ProductPage.subscription.test, product-subscribe.test and section.tsx (lazy). ProductSubscriptionCreate is imported by ProductPage and its own test. MemberProductDetailExperience is imported by ProductPage, its own test and product-media-surfaces.test.tsx; that last test is B-scope, is in the Doc 56 and 36-file sets, and does not import C. Section-importing tests (protected-composition, legacy-member-welcome, care) and layout-referral.test.tsx (RequireMember over a placeholder child) do not render ProductPage. No test or script reads the C files by path."
+   },
+   {
+    "item": "Execution of composed tests",
+    "status": "NOT_PROVEN",
+    "note": "Nothing was run. The 17/401 and 36/626 receipts (log sha256 83473aa9… and eec4390c…, both recomputed) bind 756a906, tree 787432948d94, only. The 17∩36 intersection is 4 files and the union is 49, equal to focused-source-bindings.json."
+   },
+   {
+    "item": "(3) WC-P2-1 records correction",
+    "status": "PASS",
+    "note": "937c913 doc57-records-20261008.md and the intent document name new-session sign-in, token refresh, forced USER_UPDATED, sign-out, route exit, reload and cross-tab, and bind them to backend ticket 1. Anchors verified at 736bb2a, where the blobs equal cad2c4d: section.tsx:208, MemberArea.tsx:15-44, core.tsx:279-309 and :413-435, subscriptions.ts:242/353/380-384/391/409, commerce/production-deps.ts:947-948 and :1403. The comment residual is F-2."
+   },
+   {
+    "item": "(3) WC-P3-7 affected tests named",
+    "status": "PASS",
+    "note": "The exact 17 and 36 lists, the 4 lane-test blob pairs and foreign f389110 match the 38c7239 command arrays and focused-source-bindings."
+   },
+   {
+    "item": "(3) WC-P3-10 handoff pointer and second registry",
+    "status": "PARTIAL",
+    "note": "The task's handoff, the SESSION_REGISTRY currentHandoff and the session JSON now point to the 2026-10-08 DOC57 transfer handoff. Two residuals remain: the second registry is unchanged (F-3), and the same task row's localSuccessorHandoff still advertises e6d7dd1 (PS-R4 wording) with a stale reviewQueue (M-3)."
+   },
+   {
+    "item": "(3) Other dispositions WC-P3-1..6, 8, 9, 11",
+    "status": "PASS",
+    "note": "All 12 IDs are present. WC-P3-9 includes 'production refuses before save' (subscriptions.ts:380-384). WC-P3-8 is resolved by Doc 60 dc34f6a:3-6/27-29."
+   },
+   {
+    "item": "(3) Correction and transfer are records-only; transfer clean",
+    "status": "PASS",
+    "note": "736bb2a..ce5e58f touches only .xenios rows, handoffs, the session JSON, the intent doc and doc57-records-*. e5ca41d's WORKSTREAM-C handoff is unchanged. A semantic registry comparison shows only the owner's row changing at each step, with top-level fields equal. All 8 frozenRecords gitBlob and raw SHA-256 values recompute from 937c913. Lease d9ff89ea at ce5e58f is records-only, with excludedSourcePaths equal to the 4 C paths. Receipt 9c2dd1c claims exactly those 4 C paths from ce5e58f, 937c913 and d9ff89ea."
+   },
+   {
+    "item": "Coordinator copies",
+    "status": "PASS",
+    "note": "At b705b66, all 8 DOC57_OWNER_* and CUSTOMER_ASSEMBLY_* copies have blob IDs identical to their 937c913, ce5e58f and f175f3c originals."
+   },
+   {
+    "item": "(4) f175f3c bindings recompute",
+    "status": "PARTIAL",
+    "note": "All 11 blobs and raw SHA-256 values match (e20b1c55…, e81747bf…, 77fd8156…, bd90e658…, 318d972b…, 2de8f721…, 10830464…, f2a02557…, 819725cc…, c2411c79…, c0fbcc69…). The other-source inventory reproduces 3,278 rows, 347,963 bytes and d6a1e886… at 8f080a0, 37f2d96, cad2c4d and f175f3c, but only from default C-quoted ls-tree output. One docs/ row (the quoted docs/legal/.../Final Legal Approval and Release Letter .docx) survives the 'excluding docs/' filter. Applying the stated definition literally gives 3,277 rows, 347,782 bytes and 1204f550a8ba…. See M-1."
+   },
+   {
+    "item": "(4) f175f3c preservation recompute",
+    "status": "PASS",
+    "note": "Baseline 37f2d96 minus the 4 C paths and 4 own continuity JSONs gives 5,984 rows, 707,428 bytes and ccde33d97718…. The same paths hash identically at cad2c4d and f175f3c. f175f3c adds only its handoff and the 3 assembly records. Foreign registry rows and top-level fields are equal from 37f2d96 to f175f3c."
+   },
+   {
+    "item": "(4) Holds from Docs 35, 56, 57 and 60 carried; no execution claimed",
+    "status": "PASS",
+    "note": "All 12 Doc 57 IDs, Doc 60 D56C-1..6 (Samuel named as copy-decision owner), Doc 56 D-2 held and D-3..D-8 and D-10 open, the Doc 35 categories, and productEducation.ts:279/295 verbatim (matching cad2c4d). The record, bindings, preservation and handoff:66-68 all say NOT RUN. hooksPath=NUL is consistent with .githooks/post-commit auto-sync. Locally, no remote-tracking ref contains cad2c4d or f175f3c (origin is at 38c7239). The remote itself was not checked."
+   },
+   {
+    "item": "Composed checkpoint acceptance and snapshot-S labeling",
+    "status": "NOT_PROVEN",
+    "note": "The review branch 1fb30a7 REVIEWER_QUEUE_ACKNOWLEDGMENT_20261008.md lists this subject (B, cad2c4d / f175f3c) as ACKNOWLEDGED and IN REVIEW, with disposition to be Doc 62. No disposition exists yet. An S built on cad2c4d or f175f3c must be labeled PROPOSED SNAPSHOT, REVIEW PENDING."
+   },
+   {
+    "item": "Read-only discipline of this verifier",
+    "status": "PARTIAL",
+    "note": "Git object reads only, on the three named worktrees and the shared store. Nothing was checked out, written, run or sent to another session. Disclosure: one inventory command wrote four 0-byte untracked files (inv_*.txt) into my own cwd, C:\\xenios-wt\\general-platform, which is not one of the reviewed worktrees. I removed them immediately with PowerShell. Later hashing used scratchpad scripts over git bytes."
+   }
+  ],
+  "missed": [
+   {
+    "id": "M-1",
+    "severity": "P3",
+    "file": "docs/health-launch/accepted-source-integration-20261005/customer-accepted-assembly-bindings-20261008.json",
+    "claim": "The other-source inventory digest does not match its stated definition. 'excluding ... docs/** and .xenios/**' is applied to Git's C-quoted path field, so one docs/ row is included. The digest d6a1e886… reproduces only under default core.quotePath=true output.",
+    "evidence": "git ls-tree -r cad2c4d prints the row as 100644 blob 9733c548… \"docs/legal/xenios-research/v1.0.0/approval_records/Xenios Research \\342\\200\\224 Final Legal Approval and Release Letter .docx\". The leading quote defeats the docs/ prefix filter. Quoted output gives 3,278 rows, 347,963 bytes and d6a1e886… (matching the record). Unquoted output (core.quotePath=false), which is the literal definition, gives 3,277 rows, 347,782 bytes and 1204f550a8ba06f8a8aa4d750ef0f09658da311acbbb50f3986e0435c9f9d18e. The definition text appears in otherInventoryDefinition and in CUSTOMER_ACCEPTED_ASSEMBLY_20261008.md. The result is identical at 8f080a0, 37f2d96, cad2c4d and f175f3c, so there is no source risk; the extra row is over-inclusion. The lens's '(ls-tree -r rows excluding docs/...) gives 3,278 rows' repeats the imprecision.",
+    "fix": "Do not rewrite f175f3c. Wherever this digest is cited, including the snapshot-S packet and any external expected-digest record, state the derivation exactly: default `git ls-tree -r <commit>` (core.quotePath=true), with the prefix filter applied to the printed and possibly quoted path field. Alternatively, record the literal-definition digest 1204f550… alongside it, so a -z or unquoted verifier can reproduce one of them."
+   },
+   {
+    "id": "M-2",
+    "severity": "P3",
+    "file": "client/src/research/adapters/memberCatalog.ts",
+    "claim": "The required 736bb2a-vs-cad2c4d comparison of every transitive dependency of the four C files is incomplete in the lens. Two differing runtime modules, one differing type module and five modules absent from the C base are not named. The C blobs were authored and reviewed in Doc 57 on a 3eaa017-based tree with no ProductMedia composition.",
+    "evidence": "The transitive walk from ProductPage at 736bb2a vs cad2c4d gives DIFF for adapters/cartProductSelection.ts 528df16→826c73b, shared/research/cart-product-selection.ts 9fb02aa→7faa442 and product-admin.ts (type graph e7c1613→fcf43de). Absent at 736bb2a: ui/ProductMedia.tsx 00f1e2e, ui/product-media.css 518120b, shared/research/product-media.ts fee4b32, product-admin.ts (runtime) and price-quantity-tiers.ts c06c102. The 756a906..736bb2a diff deletes ProductMedia.tsx, product-media.css, product-media.ts and their tests. Every one of these blobs equals the executed 756a906 tree, and the f3bb317 fixture is byte-identical to ce94ff4's, so the compatibility conclusion stands. Only the evidence enumeration was short.",
+    "fix": "In the Doc 62 record, list the full transitive delta and state that compatibility rests on (a) equality with the executed 756a906 graph except 3 files and (b) hand-simulation. Keep ProductMedia.test.tsx and product-media-surfaces.test.tsx in the carried exact-tree qualification set (both are already in the 36 set)."
+   },
+   {
+    "id": "M-3",
+    "severity": "P3",
+    "file": ".xenios/ACTIVE_TASKS.json",
+    "claim": "WC-P3-10 is only partly corrected inside the task row. PRODUCT-SUBSCRIPTION-INTENT-20261005.localSuccessorHandoff still advertises e6d7dd1 (PS-R4 wording, before 736bb2a) as the local successor, with reviewQueue 'After head integrity, corrected 5C, then supervisor.'. Yet 937c913 says the 'own task' now identifies the accepted local Workstream C.",
+    "evidence": "At e5ca41d, 937c913 and ce5e58f, the task row's localSuccessorHandoff is {sha: e6d7dd10045289594d91a6a086ba592348d7edb8, file: 2026-10-08-PRODUCT-SUBSCRIPTION-PS-R4-WORDING-..., reviewQueue: 'After head integrity, corrected 5C, then supervisor.'}. Only `handoff` moved: first to the DOC57 records handoff, then to the transfer handoff with sha 937c913. The 937c913 doc57-records WC-P3-10 row reads 'main current handoff, own task and both session records now identify accepted local Workstream C'.",
+    "fix": "No action while C is frozen. Carry it as a disclosed records-hygiene limit in the snapshot-S packet. On the subscription owner's next authorized records turn, mark localSuccessorHandoff historical and superseded by 736bb2a/937c913, without rewriting older bytes."
+   }
+  ],
+  "disposition": "SOURCE ACCEPT WITH LIMITS (adversarial-verifier opinion only; the original reviewer's Doc 62 is the disposition) for composed source cad2c4d1b1dd4ead798b032e6abf8b55e1c2f055, tree e90de4206f9698f00bc1ee8a9905978db8c960ce, records f175f3c1bdfed6dc2d0f71733cc5dff63298b160, tree c21fa4452a6e53979f0d675d3430dc957b98a015.\n\nBasis, re-derived from Git bytes:\n- Path confinement and blob/mode equality hold for all eight presentation files and for product-subscribe.test.tsx.\n- The ProductPage runtime graph equals the executed 756a906 graph except ProductPage, ProductSubscriptionCreate and MemberProductDetailExperience.\n- Hand-simulation of all 12 page-level cases holds.\n- The 937c913 correction covers WC-P2-1 and WC-P3-7. WC-P3-10 is partial (F-3 and M-3).\n- Transfer ce5e58f and receipt 9c2dd1c match exactly on the four C paths.\n- The bindings and preservation recompute. M-1 is a derivation caveat on the other-source inventory.\n- The Doc 35, 56, 57 and 60 holds are carried.\n\nNo P0, P1 or P2. All five lens findings are upheld at P3, and three P3s are added (M-1 inventory quoting, M-2 incomplete transitive enumeration, M-3 stale localSuccessorHandoff).\n\nEverything is NOT RUN. A snapshot S built on cad2c4d or f175f3c must be labeled PROPOSED SNAPSHOT, REVIEW PENDING until Doc 62 lands. Its acknowledgment exists at review commit 1fb30a7; a disposition does not yet exist. Any external expected digest that reuses d6a1e886… must state the quoted ls-tree derivation (M-1).\n\nThis opinion does not address the four-process vs three-process G0 cap blocker. It grants no execution, push, database or deployment authority, and it is not Samuel's approval.\n\nVerifier self-disclosure: four 0-byte scratch files were briefly created in C:\\xenios-wt\\general-platform (my own cwd, not a reviewed worktree) and were removed immediately. No reviewed worktree was touched.\n\nScratch scripts: C:\\Users\\sboad\\AppData\\Local\\Temp\\claude\\C--xenios-wt-general-platform\\6abf1edf-2b16-476e-8305-23b9a0014e06\\scratchpad\\graph.py, inv.py, pres.py and reg.py."
+ }
+}
