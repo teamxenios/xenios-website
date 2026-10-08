@@ -258,9 +258,9 @@ describe("member product detail experience", () => {
     expect(pending).not.toContain("Approved storage information is required.");
     expect(empty).toContain("Product not found.");
     expect(error).toContain("Product request failed.");
-    expect(unavailable).toContain("Product information is unavailable.");
+    expect(unavailable).toContain("This product is not available.");
     expect(unavailable).toContain("This does not confirm the product&#x27;s availability.");
-    expect(unavailable).not.toContain("This product is not available.");
+    expect(unavailable).not.toContain("Product information is unavailable.");
 
     for (const state of [
       "loading",
