@@ -1,0 +1,733 @@
+{
+ "schemaVersion": "claude_acceptance_lenses_v1",
+ "subject": "coordinator recovery packet at local f1821b661b7f7ae792c2ce4176addb2529a4b1ce: RECOVERY_5C_RESOLUTION, RECOVERY_QUALIFICATION_PROPOSAL, RECOVERY_DECISIONS",
+ "workflowRun": "wf_9e38db6b-149",
+ "taskId": "wzctu5fky",
+ "agentCount": 4,
+ "subagentTokens": 1042612,
+ "toolCalls": 183,
+ "lenses": [
+  {
+   "lens": "lock-and-contract-design",
+   "review": {
+    "verdict": "REVISION REQUIRED (as design). Lens D1 answer on RECOVERY_5C_RESOLUTION_20261007.md sections A-F (scratch copy sha256 c1fb9d05..., read as a proposal from unpushed f1821b6): the protocol core, acquire every contended row, advisory, FK, unique-key and trigger-reached dependency before the first guarded mutation and take one install-seeded HELD head last, is sound against the writers actually installed in source at 3e82154. Interleavings 1-3 are real today and are closed by pre-locking; finalize already follows the rule and never mutates a guarded relation; readiness triggers take only try-locks and plain selects; the intake's post-head inserts and the 19 fenced triggers reach no guarded relation, so no post-head wait can cycle with a writer holding H X. Five design elements must be corrected before any guard, trigger-set, commit or helper body is drafted: (1) section D's epoch scope reinstates the doc 46 S-M2 liveness defect for the Early Access identity family (every registration/verification/acceptance/grant advances the single global epoch and refuses every in-flight intake; smallest narrowing stated in F1); (2) the SECURITY DEFINER commit requires a stated, installer-checked precondition that the sessions-table owner equals the provider-fence owner and holds UPDATE on every FOR SHARE relation, hosted state NOT PROVEN (F2); (3) the privacy prelock set must be derived from pg_constraint for both deleted parents, cascade and no-action children alike, because RI checks lock FOR KEY SHARE (F3); (4) the normalized_decision_inputs closed shape has no key list, schema version or canonical encoding, so no validator can be drafted (F4); (5) the currentness changes (seeded head, no lazy insert, three FKs, immutability and monotonic-epoch triggers, decision-inputs column) touch the enumerated 1d4f2c3 objects but fall outside the trigger-free slice that doc 42 section 5A permitted, so they need a recorded scope delta, not existing authority (F5). The packet's anchor errors, the interleaving-4 overstatement and the recipient bound are P3. No P0 or P1. No authority of any kind is created by this review; the qualification window expired 2026-10-06T21:43:37Z; everything is NOT RUN; hosted database state is NOT PROVEN.",
+    "checklist": [
+     {
+      "item": "Source anchors in sections A-D resolve at 3e82154",
+      "status": "PARTIAL",
+      "evidence": "Resolve exactly: release :773 (lot loop :879, lot FOR UPDATE :888-891, readiness advisory :895, quality read :904, lot update :924, movement insert :931); expire :1226 (:1301,:1333,:1345,:1349,:1378); readiness guards :166-373; allocations :35; movements table research-inventory-lot-coa-admin.sql:75; quality_ready :485-524, allocatable :526-544; privacy_begin 20260904...:209, advisory :228, SHARE ROW EXCLUSIVE :232, member :233, partner :235, deletes :321-333; FKs :105-168; guards :370-426, :926-941; ROLLOUT.md:98-111; research-partners.sql cascades :72,:85,:101,:118,:175,:204,:229; sessions :539,:570,:588-593; identity migration :126,:140,:450; hardening :31; express.ts:142-144; routes :223,:615,:855-871; repository :179-181,:420; register.ts:756; customerRefFor :300-301; production-deps.ts:40-41; currentness :85-121,:135,:144,:214. Do not resolve as cited: research_apply_inventory_movement is :667 not :658 and its advisory lock is :720 (:727-744 is the replay read, no lock); reserve is :375-771 with the SKU loop :522-739, not :519-715; the revoked_at allowance is :422-424 not :424-426; sessions :680 is prosecdef, the rolsuper/rolbypassrls predicate is :683."
+     },
+     {
+      "item": "1a reserve: lock complete lot set in UUID order before FEFO allocation",
+      "status": "PASS",
+      "evidence": "Feasible. Today 20260727160000...sql:522-739 loops per SKU: product/variant shared advisory :535-562, then FEFO query :567-584 'for update of l' locks EVERY candidate lot with quantity_available>0 (not only those needed), per-lot exclusive advisory :594-597, then mutates :629-712 before the next SKU. Replacement: snapshot-collect candidates for all SKUs (same predicate as :576-579), one 'select ... where id = any(...) order by id for update' (LockRows runs above Sort, so rows lock in UUID order), per-lot advisory in the same order, re-read quantities from the locked rows (READ COMMITTED returns the current version), then allocate per SKU in canonical FEFO order (:580-583) from the locked set. Lock footprint equals today's; cost is one extra snapshot query per SKU plus one union lock statement. The lot identity BEFORE trigger (:327) fires only on product_id/variant_id/sku changes, so quantity updates add no post-head lock. apply_inventory_movement :720-724 only re-acquires held locks; allocation FK targets (:37-40,:91-95) are own rows or held lots."
+     },
+     {
+      "item": "1b release and expiry: pre-lock all lots then update",
+      "status": "PASS",
+      "evidence": "Today release :879-945 and expire :1333-1399 lock lot i FOR UPDATE (:888-891/:1342-1345), take its advisory (:895/:1349), update it (:924/:1378) and only then lock lot i+1; with a head taken at the first lot update, two overlapping commands cycle (interleaving 1 confirmed; UUID order does not prevent it). Replacement is one statement: 'select ... from research_inventory_lots where id = any(lot_uuids) order by id for update' followed by advisory locks in the same order, then the existing per-lot update/movement loop; the header FOR UPDATE (:840-849/:1293-1302) and event FOR UPDATE (:854-857/:1307-1310) already precede. The movement insert FK (lot_id -> lots, coa-admin :77) hits a held row; research_lot_quality_ready (:904/:1358) is a stable select-only read."
+     },
+     {
+      "item": "1c finalize :1000-1225 lock-order classification",
+      "status": "PASS",
+      "evidence": "Order: idempotency advisory :1062; headers FOR UPDATE ordered by reservation_id :1063-1072; prior event FOR UPDATE :1077-1080; product then variant shared advisory in sorted order :1103-1126; per lot in lot_uuid order :1128-1171 lot FOR UPDATE :1139-1142, product/variant shared re-acquire, exclusive lot advisory :1157-1160, readiness checks :1161-1170; first mutation is the reservations UPDATE :1173-1178, then the event insert :1215-1221. Classification: all contended locks precede the first mutation, and finalize never writes research_inventory_lots, lots quality or any relation in section D, so under the design it never acquires H. Its lot order is lot_uuid, compatible with release/expire and inverted against reserve's SKU/FEFO order (pre-existing, see F14)."
+     },
+     {
+      "item": "1d privacy_begin, parent deletes, cascades, deferred trigger",
+      "status": "PARTIAL",
+      "evidence": "H would be taken at :321 (transfers delete, IN per table D :121); later deletes :325,:327,:329,:331 lock bindings/touches/links rows after H (interleaving 3 confirmed: intake holds B2 FOR SHARE, privacy holds H X and needs B2). Pre-locking the discovered id arrays FOR UPDATE before :321 is feasible and sufficient for the local graph. Partner delete: identity guard :465-482 refuses while any links (:469, no version filter), touches (:470), bindings (:471-473), transfers (:474-475) or events (:476) remain, so the partner's cascades (research-partners.sql :72,:85,:101,:118,:175,:204,:229) can never reach a guarded relation; member delete has no guarded FK child. But RI checks on no-action children (touches :136, conversions :153, organizations.owner_partner_id :168, candidate 20260921...:136 restrict, every members child such as research_product_requests :36/:92, persistent cart 20260727200000:9 cascade) lock FOR KEY SHARE after H; the packet enumerates cascades only (:41). Deferred constraint trigger :926-929 -> :370-378 reads only cleanup_work: no guarded lock. See F3."
+     },
+     {
+      "item": "1e readiness guards :166-373 take no blocking guarded lock after a write began",
+      "status": "PASS",
+      "evidence": "research_inventory_readiness_serialization_guard :166-291: BEFORE and AFTER row triggers on quality documents/tests (:331-351), products (:353-362), variants (:364-373). All advisory acquisitions are pg_try_advisory_xact_lock (:239-267) which refuse instead of waiting; the AFTER phase (:270-286) runs plain selects over allocations/reservations and the stable research_lot_quality_ready. Writer rows are locked by the triggering statement itself. One caveat for classification: the lot identity guard :293-322 takes BLOCKING pg_advisory_xact_lock_shared (:306-313) in a BEFORE trigger on lots INSERT or UPDATE OF product_id, variant_id, sku (:326-329); it precedes H for a single-statement writer but any multi-statement writer that rebinds lot identity after an earlier guarded write would wait after H (lot/COA admin functions must be classified, F6)."
+     },
+     {
+      "item": "1f intake order and post-head inserts",
+      "status": "PASS",
+      "evidence": "Order actor/key lock -> epoch read -> source preflight -> session FOR SHARE -> H FOR SHARE -> inserts is consistent with the rule. FK targets at 3e82154: requests have no FK (20260815150000...:95-180, only unique public_reference :97 and idempotency_key_hash :98); lines (:188), events (:246), access_tokens (:283), documents (:297) and the companion (intake.sql:111) reference only requests(id); outbox has no FK, unique event_key (research-notification-outbox.sql:10). Unique waits possible only against another intake: idempotency_key_hash = sha256(email NUL key) (service.ts:375-377), companion unique(actor_scope,key_hash) (:121), public_reference random. A waiting intake holds H S and the holder holds H S, never X, so no cycle; the loser gets 23505 as designed. No guarded SQL writer inserts requests or outbox rows with a colliding namespace (approved_customer_access :191 uses 'approved-customer-welcome:'). None of the 19 fenced trigger bodies (adp01/adp03/hl12/paid_hold) references a guarded relation (git grep over 20261001*assisted_order* and the bridge migration: empty)."
+     },
+     {
+      "item": "1g writer-versus-writer and unclassified writers",
+      "status": "PARTIAL",
+      "evidence": "Two writers each holding their complete row sets then taking H X serialise without cycle; a writer that holds H X and then waits on a row is exactly what the rule forbids, and the three named writers (release, expire, privacy_begin) plus reserve are the only installed-in-source writers at 3e82154 that violate it. Classified compatible by this lens: product control center 20260726143000 (FOR UPDATE :359/:494/:575/:687/:793 before updates; later writes are own new rows), required-input readiness (:364->:424, :569->:573/:590, :643->:677), identity persistence (five single-statement functions :281,:310,:387,:424,:492), partner lifecycle (:73,:93,:94,:101 then :105/:193), referral_v1_execute ops (advisory :669 then member/partner FOR SHARE :674,:711,:797,:857 then one guarded insert/update), member activation (fm :224, approved_customer_access :170->:182/:184, b2b claim :431 then non-guarded :438, buyer activation :82), shipping regions upsert (supplier ops :24-26), legal bindings insert (hardening :270). Still to classify in the delta: lot/COA admin set-disposition :927-:999 and quality document/test functions :1101-:1235, :1383, :1550, :1612 (multi-statement guarded writes within one family); candidates 20260905 price tiers :106 and 20261003 media/commerce decoupling :427,:444,:970,:1015 if installed; direct owner DML allowed by guard :422-424. Server TS performs no direct write on any guarded relation (all .from(...) calls are selects). Hosted installed set NOT PROVEN. See F6."
+     },
+     {
+      "item": "2 per-relation predicate table: churn, liveness, narrowing, whole-row readers",
+      "status": "FAIL",
+      "evidence": "No sign-in or heartbeat write exists: member-auth.ts:110-128 and index.ts:1324-1328 are selects; sessions have no last-seen column (:70-86). Routine advances under table D: members 'complete row' advances on every activation/billing/claim update (fm :224-229, approved :182/:184, b2b :431-434, buyer :82) including updated_at; partners 'complete row' on every lifecycle op (:193-195 always sets updated_at); customers via INSERT :293 on every registration and the upsert :322-333 rewriting 'record' on every status change; acceptances INSERT :437 per customer per pair; grants upsert :505-514; legal_bindings insert :270. One global head means each Early Access onboarding advances the epoch three to four times and refuses every in-flight intake, which is the doc 46 S-M2/B-4 defect restated as policy ('deliberately allows some unrelated actors'). Decision readers consume: members id, auth_user_id, email, status (requireActiveMember :137-155; index.ts:992-1001; member-pricing-viewer.ts:43-49), partners state, identity_verified, tax_status, payout_status, certified_at, activated_at, member_id (:541-545), customers 'record' which is the whole row by construction. Smallest narrowing in F1."
+     },
+     {
+      "item": "2 sessions OUT (row share lock) and session_bindings INSERT exclusion",
+      "status": "PASS",
+      "evidence": "research_private_early_access_sessions writers at 3e82154: exchange_nonce INSERT :511 (new row, never conflicts with a FOR SHARE on an existing row) and revoke_session UPDATE :588-593 (blocked by FOR SHARE until the intake commits, which is the proposed 'first lock wins'); the ttl-240 file :33 is an install-time delete; no touch/last-seen column or writer exists, and the shape guard :655-667 forbids other prefixed functions. session_bindings: session_id is the primary key (:127) and UPDATE/DELETE are refused by the append-only trigger (:218-231), so an INSERT can only create the row an intake would otherwise refuse for absence; excluding INSERT from the epoch is safe, and the IN UPDATE/DELETE predicate is dead code (refused before any guard fires)."
+     },
+     {
+      "item": "3 head integrity, installation boundary, currentness candidate changes, scope",
+      "status": "PARTIAL",
+      "evidence": "Installation: CREATE TRIGGER already takes SHARE ROW EXCLUSIVE per relation, which drains in-flight DML; the installer should LOCK TABLE the 22 IN relations in one fixed order under lock_timeout before creating triggers to avoid deadlocking against writers, and seed the head in the same transaction. Required candidate changes: seed 'insert into ..._authority_head(singleton) values(true)' in install_sql after :144-161; delete the lazy insert :214 and refuse when 'perform ... for update' (:215) finds no row; FKs for active_revision_id, last_published_revision_id, last_revoked_revision_id (:150-152) to revisions(revision_id) ON DELETE RESTRICT; BEFORE UPDATE/DELETE/TRUNCATE refusal triggers on revisions and BEFORE DELETE/TRUNCATE on head; BEFORE UPDATE monotonic check new.writer_epoch >= old.writer_epoch; a normalized_decision_inputs text column with a shape validator checked against the artifact entry of kind 'normalized_decision_inputs' (:109-110,:116). Scope: the object set is the 1d4f2c3 set (doc 42 :122-124) but doc 42 section 5a item 2 (:170-173) records that section 5A 'permitted exactly that trigger-free slice', the candidate says so itself (:3,:148-149), and doc 46 B-8 made FKs/triggers/monotonicity section 5C preconditions; therefore new scope delta required (F5)."
+     },
+     {
+      "item": "4 contracts: decision inputs, standing lock, session seam, definer ownership, budget, recipient",
+      "status": "PARTIAL",
+      "evidence": "Decision inputs: packet :68 names content classes only; no schemaVersion, key list or canonical encoding, so the reviewer must require the key list first (F4). Standing: acceptances are append-only (:218-231); FOR SHARE on the exact (customer_ref, kind, version) rows (unique :154-155) suffices, needs UPDATE privilege for the definer; acceptances are IN (table D :115) so the intake's FOR SHARE precedes H, consistent. Session seam: the resolver (express.ts:94-188) is the only place the stored session_hash exists (:104 readSessionId -> routes :870 hashPrivateAccessSessionToken) and the viewer stores sha256 of it (:142-144,:163-165); a WeakMap keyed by the frozen viewer, as production.ts:34-39 already does, keeps the raw hash out of every serialisation; no logger or DTO serialises the viewer (grep empty); the double hash is already persisted (service.ts:520,:774; finance.ts:56). Definer ownership: intake.sql:342-344 requires the provider-fence owner, sessions.sql:669-683 ties session functions to the sessions-table owner with rolsuper or rolbypassrls, and the packet forbids raw-session grants (:82): one function cannot satisfy both unless the owners coincide (F2). Budget: 1,500 + 500 = 2,000 ms is internally consistent; statement_timeout covers lock waits only when set at role or transport level (the candidate sets it only for install, intake.sql:5-6); lock_timeout 250 ms means an intake refuses whenever any guarded writer is mid-transaction; expected refusal, numbers not approved. Recipient: frozen notifications test uses one 34-char mailbox (:119,:297-310); packet's 254 bound is stricter than the companion CHECK 3..320 (:126-129) (F10)."
+     },
+     {
+      "item": "5 section E scope classification, server/index.ts seam, root-composition frozen",
+      "status": "PARTIAL",
+      "evidence": "(1) inventory candidates: new owner scope (inventory owner, new candidate base); (2) referral privacy_begin replacement: new owner scope (referral owner); (3) Health six paths: (ii) new scope, Health pair content reserved (iii); (4) express.ts seam: assisted-order path not listed in CORE_SITE_PROTECTION_MANIFEST (grep empty), (ii) new scope; server/index.ts wiring: protected seam (manifest :447-451) whose baseline sha256 1d6594d6... (:1255) already differs from 3e82154 (LF sha256 cc1d8d4d...; off since 3562c03 and moved by ac36e60 per doc 41 :73) with no recut, so a further change is a protected-change review (iii); (5) currentness amendments: same objects, outside the 5A slice, scope delta (F5); (6) held bodies: only after disposition plus owner scope (iii). root-composition.test.ts at 3e82154: 363 lines, LF sha256 b3a64d4ca827333efb1d196dc2bac7b7b63b04c27d39de2d94c5f7fb82cba8ed, equal to doc 48 :57, so it is hash-bound; doc 48 :38 applies the word 'frozen' to the readback and notification tests, and lists this one as accepted with limits."
+     }
+    ],
+    "findings": [
+     {
+      "id": "F1",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/RECOVERY_5C_RESOLUTION_20261007.md (section D rows research_members, research_partners, research_early_access_customers, research_early_access_agreement_acceptances, research_early_access_referral_grants, research_early_access_legal_bindings; paragraph at :126)",
+      "claim": "The single global head plus 'complete row' and INSERT-advancing predicates reinstates the doc 46 S-M2 liveness defect: every Early Access registration, verification, acceptance and grant advances the epoch and refuses every in-flight intake, and the packet accepts this without a bound or a rate.",
+      "evidence": "customer INSERT 20260804120000...:293-299 on every registration; customer_update upsert :322-333 rewrites 'record' (a table D column) on every status change; acceptance INSERT :437-439 per customer per pair; grant upsert :505-514; legal binding insert 20260809130000...:270; members complete row advances on fm-activation :224-229, approved_customer_access :182/:184, b2b claim :431-434 including updated_at; partners complete row advances on every lifecycle op :193-195. Doc 46 :95 and :124 (S-M2, B-4) required a liveness case with expected rates; doc 48 :202 kept it open. Packet :126 states the refusals are deliberate and defers narrowing. No per-sign-in writer exists (member-auth.ts:110-128 selects only), so the churn is onboarding-rate, not sign-in-rate.",
+      "fix": "Narrow in the next delta: members to {id, auth_user_id, email, status} plus the fields memberAudienceSourceVersion reads (member-pricing-viewer.ts:49); partners to {state, identity_verified, tax_status, payout_status, certified_at, activated_at, member_id} (20260904...:541-545); exclude INSERT (absence-to-presence) from epoch advancement on customers, acceptances, referral_grants and legal_bindings because the intake pre-locks its own identity rows FOR SHARE and refuses absence, so another actor's insert cannot change its decision; keep UPDATE/DELETE IN (upsert updates still advance). State the expected onboarding and intake rates and the refusal budget the measurement must meet."
+     },
+     {
+      "id": "F2",
+      "severity": "P2",
+      "file": "RECOVERY_5C_RESOLUTION_20261007.md section C :82-84; supabase/candidates/20261005_research_health_quick_order_intake.sql:342-344; supabase/research-private-early-access-sessions.sql:669-683",
+      "claim": "The SECURITY DEFINER commit 'owner equal to session-table owner' is unimplementable unless the sessions-table owner is the same role as the provider-fence owner the intake slice gates on, and the packet forbids the only alternative (grants on the sessions table); the design must state and installer-check that precondition.",
+      "evidence": "intake.sql:342-344 requires current_user = relowner of research_assisted_order_provider_fence with rolsuper or rolbypassrls; sessions.sql:264-265 force row security with no policies and :669-683 bind the four session functions to the sessions relowner; SELECT ... FOR SHARE needs UPDATE privilege on sessions and on research_early_access_agreement_acceptances; packet :82 'No raw-session grants, role provisioning'. If the two owners differ no single definer satisfies both without a grant. Hosted ownership of both relations is NOT PROVEN (no database read in this review).",
+      "fix": "Add to section C: precondition 'relowner(research_private_early_access_sessions) = relowner(research_assisted_order_provider_fence) = owner of every relation the commit locks FOR SHARE, and that role has rolsuper OR rolbypassrls'; the installer precheck refuses otherwise; record the ownership facts as a hosted precheck item, not an assumption."
+     },
+     {
+      "id": "F3",
+      "severity": "P2",
+      "file": "RECOVERY_5C_RESOLUTION_20261007.md section A :41 and :54 ('exact same-transaction partner/member cascade dependencies')",
+      "claim": "The prelock set for the privacy transaction is specified as the cascade children only; PostgreSQL's RI checks on no-action/restrict children also take FOR KEY SHARE row locks during the parent DELETE, so those children are post-head dependencies too, and the member side has no hand-enumerable list.",
+      "evidence": "Partner no-action children at 3e82154: research_attribution_touches.partner_id (research-partners.sql:136), research_attribution_conversions.partner_id (:153), research_organizations.owner_partner_id (:168), candidate 20260921...:136 (restrict). Member children with restrict/no action: research-product-requests.sql:36,:92, research-products-diagnostics.sql:27,:91,:278,:311, pack02 candidates :89,:150,:171,:99, cascade 20260727200000:9. A writer holding one of those child rows FOR UPDATE and then locking the member row (which the rule requires before H) waits behind privacy's :233 lock while privacy's member DELETE waits on the child row: a cycle that pre-exists today and that a cascade-only prelock does not close. The identity guard :465-482 and :488-518 guarantees no guarded child rows remain, so no guarded relation is reached after H; the gap is non-guarded children.",
+      "fix": "Replace 'cascade dependencies' with 'every FK child of research_partners and research_members found in pg_constraint at run time (cascade, restrict, no action)'; after the :233/:235 FOR UPDATE locks (which fence new child inserts) select those children FOR KEY SHARE (no-action) or FOR UPDATE (cascade) in a fixed relation/PK order before :321; refuse when a restrict child has rows; keep 'unknown FK/trigger topology refuses before H' as the fallback."
+     },
+     {
+      "id": "F4",
+      "severity": "P2",
+      "file": "RECOVERY_5C_RESOLUTION_20261007.md section B :68-70; supabase/candidates/20261006_research_health_quick_order_currentness.sql:81-133",
+      "claim": "The 'closed versioned shape' of normalized_decision_inputs is not specified enough to draft a validator or the digest check; the reviewer must require the key list first.",
+      "evidence": "Packet :68 lists content classes (Health pair/legal/config identity, positive product/variant eligibility, quantity/audience/destination/effectivity, catalog/lot/document/readiness selectors, relation-projection version) but no schemaVersion literal, no key names, no canonical serialisation (key order, whitespace, UTF-8 normalisation) and no rule for how the digest is computed over the stored text. The existing envelope already carries an artifact of kind 'normalized_decision_inputs' with path and sha256 (:109-110,:116) and treats the bytes as opaque (:119-121).",
+      "fix": "Before any validator body: enumerate the schemaVersion literal, the complete key list with types and bounds (reusing the 1-64 kind/version bounds of 20260804120000...:145-150), the canonical encoding (for example RFC 8785 JSON over UTF-8, no BOM, LF-free), and the rule 'sha256 of the stored text equals the envelope artifact of kind normalized_decision_inputs'; state that Samuel's reserved values populate keys, not the shape."
+     },
+     {
+      "id": "F5",
+      "severity": "P2",
+      "file": "RECOVERY_5C_RESOLUTION_20261007.md section E item 5 and section D :96; supabase/candidates/20261006_research_health_quick_order_currentness.sql:3,:144-161,:206-231",
+      "claim": "The required currentness changes are inside the 1d4f2c3 object set but outside what doc 42 section 5A approved (an explicitly trigger-free, FK-free metadata slice), so drafting them needs a recorded scope delta rather than falling under dc3329b.",
+      "evidence": "Candidate header :3 'No writer guards, triggers' and :148-149 'No FK/internal trigger is installed in this explicitly trigger-free slice'; doc 42 :170-173 (section 5a item 2) 'doc 42 section 5A permitted exactly that trigger-free slice. Any reader of the authority needs those protections first'; doc 46 :128 (B-8) carries FKs, refusal triggers and epoch monotonicity as section 5C preconditions; the lazy head insert at :214 is the S-F4 P3 doc 46 :92 asked to remove. The decision-inputs column and its validator function are new objects (the currentness_% prefix keeps them inside the fingerprint namespace :47-51 but not inside the approved list).",
+      "fix": "In the next records delta list the exact amendments (seed at install, refuse absent head at :215, three FKs ON DELETE RESTRICT, BEFORE UPDATE/DELETE/TRUNCATE refusals on revisions, BEFORE DELETE/TRUNCATE on head, monotonic epoch trigger, normalized_decision_inputs column + validator) as a scope delta on the same five candidate files and verifier, for Samuel's recorded source-only approval; do not treat them as covered by dc3329b."
+     },
+     {
+      "id": "F6",
+      "severity": "P2",
+      "file": "RECOVERY_5C_RESOLUTION_20261007.md section A :50 and :58 ('unclassified cross-family writer prevents drafting')",
+      "claim": "The packet is right that an unclassified writer prevents drafting, but it names only four writers plus helpers; the delta must carry a classification table for every installed-in-source writer of the 22 IN relations before any guard set can be enumerated.",
+      "evidence": "Census at 3e82154 (git grep DML on the 22 relations, supabase/): 20260726143000 product control center (10 admin functions, :282-:825); research-required-input-readiness.sql (:251,:340,:532,:615); 20260804120000 identity persistence (:281,:310,:387,:424,:492); research-inventory-lot-coa-admin.sql (:631,:667,:888,:1101-:1235,:1383,:1550,:1612); 20260905 partner lifecycle (:73-:198); referral V1 execute ops (:669-:881); member activation writers research-fm-activation-verify-atomic.sql:224, 20260905 approved_customer_access :182/:184, pack02 b2b_sponsored_claim :431, buyer_account_activation :82; supplier ops shipping regions 20260804122000...:448; hardening legal bindings :270; candidates 20260905 price tiers :106 and 20261003 media/commerce decoupling :427,:444,:970,:1015; direct owner DML allowed by guard 20260904...:422-424. This lens classified most as compatible (see checklist 1g); lot/COA admin multi-statement functions and the two candidates remain unclassified. Which of these are installed on the hosted database is NOT PROVEN.",
+      "fix": "Add a writer table to the delta with columns function, first guarded statement, locks acquired before it, writes after it, compatible yes/no; list the lot/COA admin functions, the two candidates and the direct-owner DML path explicitly; state that hosted installation of each is a precheck item."
+     },
+     {
+      "id": "F7",
+      "severity": "P3",
+      "file": "RECOVERY_5C_RESOLUTION_20261007.md :33 (research_apply_inventory_movement), :33 (reserve range), :48 (revoked_at), :82 (sessions predicate)",
+      "claim": "Four section A-C anchors do not resolve as cited at 3e82154.",
+      "evidence": "supabase/research-inventory-lot-coa-admin.sql: research_apply_inventory_movement begins :667 (packet :658 is the create-lot return); its advisory lock is :720 and the lot FOR UPDATE :721-724; :727-744 is the prior-movement replay read without a lock. Reserve is :375-771 with the per-SKU loop :522-739 (packet '519-715'); :519 is the replay return. The guard's narrow revoked_at allowance is 20260904...:422-424 (packet ':424-426'; :425 is the raise). sessions.sql :680 is 'p.prosecdef'; the rolsuper/rolbypassrls predicate is :683. The :228, :879, :1333 anchors doc 48 V-M1 flagged are now correct.",
+      "fix": "Correct the four anchors in the next records delta; re-bind the file hash."
+     },
+     {
+      "id": "F8",
+      "severity": "P3",
+      "file": "RECOVERY_5C_RESOLUTION_20261007.md :48 (adverse interleaving 4)",
+      "claim": "Interleaving 4 cannot occur between privacy_begin and the canonical V1 'revoke' operation because both serialise on advisory (9042026,1) before any row lock; it is reachable only through direct owner DML.",
+      "evidence": "20260904...:669 'if p_operation in (issue, revoke, capture, bind, transferBinding) then perform pg_advisory_xact_lock(9042026,1)' precedes the link FOR UPDATE :722 and the update :725; privacy_begin takes the same advisory at :228 before :233-:333. Only the guard's allowance :422-424 lets the owner update revoked_at outside execute.",
+      "fix": "Restate interleaving 4 as 'direct owner revoked_at UPDATE versus privacy'; note the canonical op is already serialised; keep the serialization test."
+     },
+     {
+      "id": "F9",
+      "severity": "P3",
+      "file": "RECOVERY_5C_RESOLUTION_20261007.md :52 (finalize 'needs compatible ordering too')",
+      "claim": "research_finalize_inventory_reservations never mutates a guarded relation, so it never takes H; its only compatibility requirement is writer-versus-writer lot order.",
+      "evidence": "First mutation :1173-1178 updates research_lot_reservations; the event insert :1215-1221 is on research_inventory_reservation_events; neither is in table D; lots are locked (:1139-1142) and advisory-locked (:1157-1160) in lot_uuid order before that, so finalize already satisfies the rule. Its order matches release/expire and conflicts with reserve's SKU/FEFO order (F14).",
+      "fix": "Record finalize as 'compatible as-is; no amendment unless reserve adopts an order other than lot_uuid'."
+     },
+     {
+      "id": "F10",
+      "severity": "P3",
+      "file": "RECOVERY_5C_RESOLUTION_20261007.md :92; supabase/candidates/20261005_research_health_quick_order_intake.sql:126-129",
+      "claim": "The recipient bound (254 characters) is stricter than the accepted companion CHECK (3..320); the design must say which governs so the adapter and inline commit are 'consistent'.",
+      "evidence": "Companion CHECK :126-129: length between 3 and 320, trimmed, no control or whitespace, one '@' with a dotted domain; the frozen notifications test (quick-order-notifications.test.ts:119,:297-310) uses one 34-char mailbox and is consistent with either bound.",
+      "fix": "State that the commit refuses above 254 while the table CHECK stays 320 (defence in depth), or amend the CHECK in the same scope delta as F5; add the missing/blank/malformed cases under their own test-path authority (doc 46 B-7)."
+     },
+     {
+      "id": "F11",
+      "severity": "P3",
+      "file": "RECOVERY_5C_RESOLUTION_20261007.md :88 (unapproved operational budget)",
+      "claim": "The budget is internally consistent as a target but two consequences must be written down before anyone measures it; numbers are not approved by this review.",
+      "evidence": "1,500 ms statement_timeout plus 500 ms rollback allowance equals the 2,000 ms hold; statement_timeout includes lock waits only when armed before the top-level statement (role or transport setting), which the packet already says; the candidates set timeouts only at install (intake.sql:5-6, currentness.sql:7-8). With lock_timeout 250 ms an intake refuses whenever any guarded writer is mid-transaction holding H X, and a writer waiting on H X behind an intake waits up to the intake's full hold unless writers get their own lock_timeout.",
+      "fix": "Add 'expected refusal under writer contention' and 'writer-side lock_timeout policy' to section C; keep the numbers as proposal only."
+     },
+     {
+      "id": "F12",
+      "severity": "P3",
+      "file": "RECOVERY_5C_RESOLUTION_20261007.md :52 ('stale/missing/insufficient facts roll back the whole operation')",
+      "claim": "Rolling back on any stale candidate fact after the lock wait is stricter than needed and would turn ordinary contention into reservation failures.",
+      "evidence": "Today a non-allocatable or zero lot is skipped (:598-606 'continue') and only an insufficient total refuses (:623-625); under the replacement, a candidate whose quantity dropped to zero between snapshot and lock is simply no longer a candidate.",
+      "fix": "Specify: re-read locked rows, drop candidates that no longer satisfy :576-579/:598-604, refuse only when the remaining total is insufficient."
+     },
+     {
+      "id": "F13",
+      "severity": "P3",
+      "file": "RECOVERY_5C_RESOLUTION_20261007.md section E item 4; docs/phase2/CORE_SITE_PROTECTION_MANIFEST.json:447-451,:1255",
+      "claim": "server/index.ts is a protected seam that is already off its recorded baseline; any further wiring is a protected-change review item, while express.ts and the health quick-order paths are not manifest-listed.",
+      "evidence": "Manifest :447-451 lists server/index.ts with 'forbidden: any successor middleware-order ... route-authority change without a new protected-change review'; seamBaselineHashes :1255 records sha256 1d6594d6...; LF sha256 of server/index.ts at 3e82154 is cc1d8d4d... (last changed by ac36e60, parent hash ba5800e6...); doc 41 :73 records the seam as off since 3562c03 with no recut; grep for assisted-order/express and health/quick-order in the manifest returns nothing.",
+      "fix": "Classify section E item 4's server/index.ts wiring as (iii) protected-change review under GATE-01, separate from the (ii) express.ts seam scope."
+     },
+     {
+      "id": "F14",
+      "severity": "P3",
+      "file": "supabase/migrations/20260727160000_research_inventory_reservation_commands.sql:567-584 versus :886, :1137, :1340",
+      "claim": "A reserve-versus-release/expire/finalize lock-order inversion exists today, independent of any guard or head; the packet's conclusion that release/expiry amendments alone are insufficient is correct and the pre-existing defect should be recorded as such.",
+      "evidence": "Reserve locks SKU A's lots in FEFO order then SKU B's (:522-739); release, expire and finalize lock all their lots in lot_uuid order (:886, :1340, :1137). With lots la (SKU A) and lb (SKU B), la > lb by UUID: release locks lb then la; reserve locks la then lb; each waits on the other. PostgreSQL resolves it by aborting one transaction today.",
+      "fix": "Record in section A that the inventory replacement fixes a pre-existing writer-versus-writer inversion, not only the head inversion; include reserve-versus-release in the F section cases (already listed) as a current-source control case."
+     }
+    ],
+    "confirmed": [
+     "Worktree C:\\xenios-wt\\closeout-review resolves 3e82154724ede74b7c5f361f280739eedd60db25 with tree 04958ec1567b74bccd84e423e179e6269faf6bee; all reads were git object reads; no checkout, SQL, script, server or database touched.",
+     "Scratch copies read: RECOVERY_5C_RESOLUTION (149 lines, sha256 c1fb9d05...), RECOVERY_QUALIFICATION_PROPOSAL (101 lines, aab7e6a3...), RECOVERY_DECISIONS (21 lines, fa713bd0...); f1821b6 and 7f8edd7 resolve locally as docs-only commits.",
+     "Interleavings 1, 2 and 3 in packet :45-47 are real at 3e82154 (release/expire loop :879-945/:1333-1399; reserve per-SKU mutation :629-712 before the next SKU; privacy_begin deletes :321-333 after its first guarded delete).",
+     "Readiness guard :166-291 uses only pg_try_advisory_xact_lock and plain selects; the deferred privacy work guard :370-378 reads only cleanup_work; partner DELETE identity guard :465-482 refuses while any link/touch/binding/transfer/event remains, so the partner cascades (research-partners.sql) never reach a guarded relation; member delete has no guarded FK child.",
+     "Sessions table has no touch/last-seen column (:70-86); its only writers are exchange_nonce INSERT :511 and revoke_session UPDATE :588-593; revoke waits behind a FOR SHARE and the intake's fresh session_active recheck (:539-568) sees the revocation after the wait.",
+     "session_bindings INSERT exclusion is safe: session_id primary key :127, UPDATE/DELETE refused by append-only trigger :218-231; acceptances likewise append-only.",
+     "Intake inserts reference only requests(id) (bridge migration :188,:246,:283,:297; intake.sql:111); outbox has no FK (research-notification-outbox.sql:8-16); no fenced trigger body references a guarded relation; unique-key waits can only be intake-versus-intake (H S versus H S).",
+     "express.ts :94-188 is the single resolver where the stored session hash exists (:104) and the viewer carries sha256 of it (:142-144,:163-165); production.ts:34-39 already keys a WeakMap on the frozen session object, the same pattern keeps a raw hash out of serialisation; no logger or DTO serialises the viewer.",
+     "Referral canonical ops all take advisory (9042026,1) at :669 before row locks and privacy_begin takes it at :228, so canonical referral writers and privacy serialise; member-before-partner-before-link order holds in lifecycle (:94,:101) and execute (:674,:711,:797,:857).",
+     "root-composition.test.ts at 3e82154: 363 lines, LF sha256 b3a64d4ca827333efb1d196dc2bac7b7b63b04c27d39de2d94c5f7fb82cba8ed, equal to doc 48 :57.",
+     "Doc 46 B-1..B-8 and S-F4, doc 48 dispositions (SQL repair and composition tests ACCEPT WITH LIMITS, 5C HELD, V-M1..M6) and doc 42 section 5A/5a were read at C:\\xenios-wt\\health-review and are consistent with the packet's statement of status."
+    ],
+    "discrepancies": [
+     "Packet :33 cites research_apply_inventory_movement at research-inventory-lot-coa-admin.sql:658 with lock :727-745; actual function :667, advisory lock :720, lot FOR UPDATE :721-724, :727-744 is the unlocked replay read.",
+     "Packet :33 cites reserve as '519-715'; the function is :375-771 and the per-SKU loop :522-739 (:519 is the replay return).",
+     "Packet :48 cites the revoked_at allowance at :424-426; actual :422-424 (:425 is the raise).",
+     "Packet :82 cites the rolsuper OR rolbypassrls predicate at sessions.sql:680; :680 is prosecdef, the predicate is :683.",
+     "Packet :48 interleaving 4 presents owner link revocation versus privacy as a head cycle; the canonical 'revoke' op is serialised with privacy by advisory (9042026,1) (:669 / :228); only direct owner DML can realise it.",
+     "Packet :52 implies finalize needs amendment for the head rule; finalize never writes a guarded relation (first mutation :1173 on reservations) and already locks everything before mutating.",
+     "Packet :41 enumerates cascade children only; RI no-action/restrict checks (touches :136, conversions :153, organizations :168, members children) also lock FOR KEY SHARE after H.",
+     "Packet :92 recipient bound 254 differs from the accepted companion CHECK 3..320 (intake.sql:126-129).",
+     "Packet section E item 5 presents the currentness amendments as extensions under existing authority; doc 42 :170-173 and doc 46 B-8 place FKs/triggers/monotonicity outside the trigger-free slice section 5A permitted.",
+     "server/index.ts at 3e82154 (LF sha256 cc1d8d4d...) differs from the manifest seam baseline (1d6594d6..., manifest :1255); doc 41 :73 records it off since 3562c03 with no recut, which section E item 4 does not mention."
+    ],
+    "notProven": [
+     "Hosted ownership of research_private_early_access_sessions, research_assisted_order_provider_fence, research_early_access_agreement_acceptances and every relation the commit would lock; whether any role has rolsuper or rolbypassrls (no database read).",
+     "Which of the census writers are installed on the hosted database (candidates 20260905 partner lifecycle, approved_customer_access, price tiers, 20261003 media/commerce decoupling, pack02 activation/claim files, referral V1 candidate itself) and the hosted FK/trigger topology for research_partners and research_members children.",
+     "Any timing claim: writer hold times, head contention, onboarding and intake rates, lock_timeout/statement_timeout behaviour through the actual transport, rollback and lock release on disconnect.",
+     "That a WeakMap-keyed private context survives the actual composition in server/index.ts (not read beyond :988-1008) without a serialising middleware elsewhere.",
+     "That the lot identity BEFORE trigger's blocking shared advisory (:306-313) is never reached after an earlier guarded write by any lot/COA admin function (bodies :888-:1235, :1383, :1550, :1612 not fully classified).",
+     "Whether 'record' consumers of research_early_access_customers read fields beyond id/status/normalizedEmail (identity.ts and the EarlyAccessCustomer contract not read).",
+     "The memberAudienceSourceVersion fields consumed for the pricing grant (member-pricing-viewer.ts:49 not followed).",
+     "Whether any Health required-agreement producer exists outside server/ (production.ts:23 has none in server/; scripts and client not searched).",
+     "The qualification proposal's host facts (node.exe size, RAM/disk capacity) and all G1-G9 execution claims: NOT RUN, window expired 2026-10-06T21:43:37Z."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "F1",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld at P2; fix corrected. Churn evidence re-derived: customer INSERT 20260804120000…:293-299@3e82154, upsert rewriting record/updated_at :322-333, acceptance INSERT :437-439, grant upsert :505-514, legal binding :270@20260809130000, members updates (approved_customer_access :182, fm :224-229, b2b :431-434, buyer :82), partners :193-195; no sign-in writer (member-auth.ts:110-128, server/index.ts:1324-1328 select). Doc 46 :95 (S-M2/B-4) and doc 48 :202@7dde166 keep the liveness case open; packet :126 defers narrowing. Decision readers: members id/auth_user_id/email/status (server/index.ts:992-1001, member-auth.ts:134-160, master-offerings/member-pricing-viewer.ts:43-49 reads email only plus memberAudienceSourceVersion); customers status/id only (early-access-customer.ts:233-235, :300-301). Correction to the lens's fix: research_early_access_referral_grants has NO decision reader in assisted-order, quick-order, catalog, commerce-ports or EA production-deps at 3e82154 (grep empty), so the relation should be OUT unless a reader is named, not 'INSERT excluded'; conversely where absence IS a decision input (affiliate bindings :120 and transfers :121, pinned via effective_binding_json 20260904…:583-598 per packet :90) INSERT must keep advancing. Excluding INSERT is safe only for customers, acceptances, legal_bindings and session_bindings, where the intake requires presence and refuses absence."
+     },
+     {
+      "id": "F2",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld. intake.sql:341-345@3e82154 gates installation on current_user = relowner(research_assisted_order_provider_fence) with rolsuper or rolbypassrls; sessions.sql:264-265 forces RLS with zero policies, :283 revokes all table privileges from public, :669-683 binds the four session functions to the sessions relowner with rolsuper/rolbypassrls; SELECT … FOR SHARE needs UPDATE privilege; packet :82 forbids raw-session grants. A single definer satisfies both only if the two owners coincide or the role is a superuser; hosted ownership NOT PROVEN. Add: the sessions install guard :653-667 refuses any other function named research_private_early_access_%, so the commit must not use that prefix (missed by lens)."
+     },
+     {
+      "id": "F3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Substance upheld, severity reduced. RI no-action children exist (research-partners.sql:136 touches, :153 conversions, :168 organizations.owner_partner_id@3e82154) and RI checks lock FOR KEY SHARE after H; the identity guard :465-482/:488-518@20260904 guarantees no guarded child rows remain, so no head cycle can form and any residual cycle is a pre-existing writer-versus-writer inversion. The packet's own rule :50 already names 'FK … dependencies' and :54 already carries 'Unknown FK/trigger topology refuses before H'; research_partners.member_id has no FK at all (research-partners.sql:23, unique only). The correction is wording: replace 'cascade dependencies' with 'every FK child of both parents from pg_constraint (cascade, restrict, no action)', which is precision, not a design defect."
+     },
+     {
+      "id": "F4",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld. Packet :68 names content classes only; currentness candidate :85-121@3e82154 already carries an opaque artifact of kind normalized_decision_inputs (:109-110, :116) with bytes 'not read or approved' by SQL (:119-121). No schemaVersion literal, key list, type bounds or canonical encoding exists, so neither a validator nor the digest rule can be drafted; the key list must precede any body. Samuel's reserved values populate keys, not the shape."
+     },
+     {
+      "id": "F5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Substance upheld (the seeded head, FKs, immutability and monotonic-epoch triggers and a decision-inputs column are outside the trigger-free slice: candidate :3 and :148-149@3e82154; doc 42 :170-173 and doc 46 :128 B-8@7dde166), severity reduced: the packet does not present them as existing authority. Section E :130 says 'Existing source approval for packet 1d4f2c3 does not release expressly held section 5C. No proposed path below is presently assigned for coding.' The correct record is a scope delta on the five currentness files for Samuel's source-only approval; that is a records classification, not a design correction."
+     },
+     {
+      "id": "F6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Reduced to P3: the packet already makes writer enumeration a drafting gate (:23, :50), so this is precision on what the census must carry. This verifier closes most of the lens's open set: lot/COA admin functions lock before their first guarded write (set_disposition :927→:989; prepare_upload :1101/:1108→:1125/:1163/:1205/:1222; cancel :1355→:1383; manage :1475→:1550/:1612; create_lot :614→:631; apply_movement :720-724→:851/:861, all @3e82154 research-inventory-lot-coa-admin.sql), activation writers are single guarded statements (approved_customer_access :180-186 is if/else; buyer :72→:82; fm :224; b2b :431), partner lifecycle :93-:101→:105/:193, product control center and readiness functions lock FOR UPDATE before their updates. research-member-billing.sql:24 and production/*.sql:46-47 are one-time install DML, not routine writers. Still unclassified: candidates 20260905 price tiers :100→:106 (compatible if installed), 20261003 :423→:427/:444 and :1008→:1015, and direct owner DML under guard :422-424. Add a 'post-H unique indexes' column (see missed)."
+     },
+     {
+      "id": "F7",
+      "upheld": true,
+      "severity": "P3",
+      "note": "All four anchor corrections verified exactly at 3e82154: research_apply_inventory_movement :667, advisory :720, lot FOR UPDATE :721-724, :727-744 unlocked replay read; reserve :375-771 with SKU loop :522-739 (:519 replay return); revoked_at allowance 20260904…:422-424 (:425 raise); sessions.sql:680 prosecdef, :683 rolsuper/rolbypassrls. Doc 48 :135 V-M1 anchors (:228, :879, :1333) are now correct in the packet."
+     },
+     {
+      "id": "F8",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. 20260904…:669@3e82154 takes pg_advisory_xact_lock(9042026,1) for issue/revoke/capture/bind/transferBinding before the link FOR UPDATE :722 and update :725; privacy_begin takes the same lock at :228 before :233-:333; only the guard's narrow owner allowance :422-424 can realise interleaving 4 through direct DML."
+     },
+     {
+      "id": "F9",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. finalize :1000-1224@20260727160000: advisory :1062, headers FOR UPDATE :1063-1072, prior event :1077-1080, product/variant shared advisory :1103-1126, per-lot FOR UPDATE :1139-1142 and exclusive advisory :1157-1160 in lot_uuid order, readiness checks :1161-1170; first mutation :1173-1178 on research_lot_reservations, event insert :1215-1221; neither relation is in table D, so finalize never takes H."
+     },
+     {
+      "id": "F10",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. intake.sql:126-129@3e82154 CHECK length 3..320, trimmed, no control/whitespace, one '@' with dotted domain; packet :92 says 254; quick-order-notifications.test.ts:119 uses a 34-char mailbox (:295-310) consistent with either. The design must say which bound governs."
+     },
+     {
+      "id": "F11",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. 1,500 + 500 = 2,000 ms is internally consistent; intake.sql:5-6 and currentness.sql:7-8@3e82154 set lock/statement timeouts only inside the install transaction; with lock_timeout 250 ms an intake refuses whenever a guarded writer is mid-transaction holding H X, and writers queue behind an intake's H S for its full hold unless given their own policy. Numbers not approved."
+     },
+     {
+      "id": "F12",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. Today reserve skips non-allocatable or zero candidates (:598-606 'continue'@20260727160000) and refuses only on insufficient total (:623-625); packet :52 'stale/missing/insufficient facts roll back the whole operation' is stricter than today's semantics and would convert ordinary contention into refusals; specifying 'drop candidates that no longer satisfy :576-579/:598-604, refuse only when insufficient' preserves current behaviour."
+     },
+     {
+      "id": "F13",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. CORE_SITE_PROTECTION_MANIFEST.json:447-451@3e82154 lists server/index.ts as a seam forbidding route-authority change without a protected-change review; seamBaselineHashes :1255 records 1d6594d6…; sha256 of server/index.ts at 3e82154 is cc1d8d4d53d7f112468914344d7b6a905e76908f31be4b46c84f86976f36e7bb (last touched by ac36e60); doc 41 :73@7dde166 records the seam off since 3562c03; the manifest names neither assisted-order/express.ts nor health/quick-order (grep empty)."
+     },
+     {
+      "id": "F14",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. reserve locks per SKU in FEFO order (:567-584 then next SKU :522-739@20260727160000) while release :879-891, expire :1333-1345 and finalize :1128-1142 lock all their lots in lot_uuid order; with la (SKU A) > lb (SKU B) by UUID the two orders invert. Pre-existing; PostgreSQL resolves it by aborting one transaction. Note the lens's 1a claim that apply_inventory_movement ':720-724 only re-acquires held locks' is imprecise: :720 acquires a NEW advisory lock on the child idempotency key after H (uncontended by construction, computable before mutation); the replacement must pre-acquire or classify it."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "Source anchors in sections A-D resolve at 3e82154",
+      "status": "PARTIAL",
+      "note": "Concur with the lens's list; every resolving anchor re-read (reserve :375-771, release :773-998, finalize :1000-1224, expire :1226-1452, readiness guards :166-373, lot identity trigger :293-329; coa-admin :75-77, :326-422, :485-544, :667-760, :888-999, :1018-1240, :1318-1395, :1430-1630; referral :105-168, :209-339, :341-432, :465-525, :540-610, :662-730, :797-884, :920-941, :1086-1097; partners :19-55, :70-232; sessions :70-86, :264-283, :500-601, :650-690; identity :126-156, :160-235, :281-335, :387-404, :424-517; hardening :31, :270; currentness :1-12, :44-56, :80-165, :206-231; intake :110-135, :341-352; express.ts :88-222; manifest :447-451, :1255). Lens-side precision: 'member-pricing-viewer.ts' is server/research/master-offerings/member-pricing-viewer.ts (:38-51); 'index.ts:992-1001/:1324-1328' is server/index.ts (server/research/index.ts has 787 lines); the worktree HEAD is ac36e60 (tree c83e7815), 3e82154 resolves as an object with tree 04958ec1."
+     },
+     {
+      "item": "1a reserve: lock complete lot set in UUID order before FEFO allocation",
+      "status": "PASS",
+      "note": "Feasible as the lens describes: the FEFO query :567-584 already locks every candidate lot with quantity_available > 0 FOR UPDATE, so a UUID-ordered union lock over all SKUs' candidates has the same footprint; readiness is rechecked under lock :598-606; first guarded mutation is the lot UPDATE inside apply_inventory_movement (:682 → coa-admin :851), the reservation insert :629 is not a table-D relation. Two precision items: apply_inventory_movement :720 takes a new child advisory lock after H (uncontended, computable pre-H: v_idempotency_hash, reservation uuid, lotUuid, seq) and must be pre-acquired or classified; a lot inserted after the snapshot is a benign refusal, since the lot identity trigger's shared advisory :305-312 does not conflict with reserve's shared locks :544-562."
+     },
+     {
+      "item": "1b release and expiry: pre-lock all lots then update",
+      "status": "PASS",
+      "note": "Confirmed: release :879-945 and expire :1333-1399 lock lot i FOR UPDATE (:888-891 / :1342-1345), advisory (:895 / :1349), update (:924 / :1378), movement insert (:931 / :1385) and only then lock lot i+1; headers :840-849 / :1293-1302 and prior event :854-857 / :1307-1310 already precede. One 'where id = any(...) order by id for update' plus advisory locks in the same order, then the existing loop, satisfies the rule; movement FK lot_id (coa-admin :77) hits a held row; research_lot_quality_ready :485-524 is a stable select."
+     },
+     {
+      "item": "1c finalize :1000-1225 lock-order classification",
+      "status": "PASS",
+      "note": "Confirmed exactly as the lens states; finalize never writes research_inventory_lots or any table-D relation (first mutation :1173-1178 on reservations, event insert :1215-1221), so it never takes H; its lot_uuid order matches release/expire and inverts reserve's SKU/FEFO order (F14)."
+     },
+     {
+      "item": "1d privacy_begin, parent deletes, cascades, deferred trigger",
+      "status": "PARTIAL",
+      "note": "Confirmed: H at :321 (transfers IN), later deletes :325/:327 (bindings IN), :329 (touches IN UPDATE/DELETE), :331 (links IN) after H; :323 events and :333 idempotency are not table-D relations. Partner cascades (research-partners.sql :72, :85, :101, :118, :175, :204, :229) cannot reach a guarded relation because the identity guard :465-482 refuses while any link (no version filter :469), touch :470, binding :471-473, transfer :474-475 or event :476 remains; legacy (referral_version null) links/touches therefore block partner deletion rather than cascading. research_partners.member_id has no FK (research-partners.sql:23), so member deletion cascades to no guarded relation; the member guard :488-518 runs plain selects. Deferred constraint trigger :926-929 → :370-378 reads only cleanup_work. RI no-action children (touches :136, conversions :153, organizations :168) take FOR KEY SHARE after H: covered by rule :50 and the refusal fallback :54; wording fix only (F3 at P3)."
+     },
+     {
+      "item": "1e readiness guards :166-373 take no blocking guarded lock after a write began",
+      "status": "PASS",
+      "note": "Confirmed: research_inventory_readiness_serialization_guard :166-291 uses only pg_try_advisory_xact_lock (:239-267) and plain selects in its AFTER phase (:270-286); AFTER ROW triggers run before any AFTER STATEMENT head guard. The lens's NOT PROVEN item is resolved: the blocking shared advisory in research_inventory_lot_identity_serialization_guard :305-312 fires only on INSERT or UPDATE OF product_id, variant_id, sku (:326-329); no installed-in-source function updates those columns (coa-admin :851 quantities, :989 disposition; census grep), and the only INSERT path research_create_inventory_lot :631 reaches it as its first guarded statement, before any head."
+     },
+     {
+      "item": "1f intake order and post-head inserts",
+      "status": "PASS",
+      "note": "Confirmed: requests have only unique public_reference :97 and idempotency_key_hash :98 (20260815150000); lines :188 (unique request_id/product/variant :211), events :246, access_tokens :283 (unique token_hash :284), documents :297 (unique object_path :298) reference only requests; companion intake.sql:111 FK requests, unique (actor_scope,key_hash) :121, and its CHECK function intake_valid reads no relation; outbox has no FK and unique event_key (research-notification-outbox.sql:10). The 20260815/20260930/20261001 assisted-order migrations reference no guarded relation (grep over all of them, not only 20261001*). Unique waits are intake-versus-intake with both holding H S, so no cycle; idempotency_key_hash = sha256(email NUL key) (service.ts:375-377). The lens's 'no logger serialises the viewer' holds: the only grep hits are catalog(viewer…) regex artifacts."
+     },
+     {
+      "item": "1g writer-versus-writer and unclassified writers",
+      "status": "PARTIAL",
+      "note": "Census re-run at 3e82154 (case-insensitive DML on the 22 IN relations under supabase/, excluding verification and tests): the only installed-in-source writers violating the rule are reserve, release, expire and privacy_begin. Lot/COA admin, product control center, readiness, identity persistence, partner lifecycle, activation writers and referral execute ops lock their rows (or are single guarded statements) before any head would be taken; approved_customer_access :180-186 is if/else (one statement). Two uncontended post-H acquisitions to classify rather than violations: reserve's child advisory (coa-admin :720) and bind's FK on the touch read unlocked at :873 then referenced by the events insert :881 (all V1 touch mutations are serialised by (9042026,1) or refused by guard :405-425). Remaining: candidates 20260905 price tiers and 20261003 if installed; direct owner DML. Hosted installed set NOT PROVEN."
+     },
+     {
+      "item": "2 per-relation predicate table: churn, liveness, narrowing, whole-row readers",
+      "status": "FAIL",
+      "note": "Concur that table D as written restates the open S-M2/B-4 liveness case (doc 46 :95, doc 48 :202@7dde166) as policy (packet :126). Corrections to the lens: (a) the dominant epoch churn under table D is research_inventory_lots 'complete row' (:109), advanced by every reserve/release/expire/adjust across all commerce flows (coa-admin :851, migration :924/:1378), not identity onboarding; (b) research_early_access_referral_grants has no Quick Order decision reader at 3e82154 (grep over assisted-order, quick-order, catalog, commerce-ports, EA production-deps empty) and should be OUT or justified, whereas affiliate bindings and transfers (absence pinned through effective_binding_json :583-598) must keep INSERT advancing; (c) customers narrow to id/status/normalized_email (mayOwnOrders :233-235, customerRefFor :300-301), members to id/auth_user_id/email/status (server/index.ts:992-1001, member-auth.ts:134-160, member-pricing-viewer.ts:43-49), partners to the :541-545 fields; (d) whether shipping regions (:119) have a decision reader is NOT PROVEN from this read (destinationEligibility source not located)."
+     },
+     {
+      "item": "2 sessions OUT (row share lock) and session_bindings INSERT exclusion",
+      "status": "PASS",
+      "note": "Confirmed: sessions table :70-86 has no last-seen column; writers are exchange_nonce INSERT :511-517 (new row, ON CONFLICT DO NOTHING) and revoke_session UPDATE :588-593 (FOR NO KEY UPDATE conflicts with FOR SHARE, so 'first lock wins' holds); research-private-early-access-session-ttl-240.sql:33 is an install-time DELETE; the shape guard :653-667 forbids other prefixed functions. session_bindings: primary key session_id :127, append-only trigger :218-231 refuses UPDATE/DELETE, so the IN UPDATE/DELETE predicate is dead and INSERT exclusion is safe."
+     },
+     {
+      "item": "3 head integrity, installation boundary, currentness candidate changes, scope",
+      "status": "PARTIAL",
+      "note": "Concur on the mechanics: CREATE TRIGGER takes SHARE ROW EXCLUSIVE; a fixed-order LOCK TABLE under lock_timeout before trigger creation avoids installer-versus-writer deadlock; seed the head in the same transaction; delete the lazy insert :214 and refuse when :215 finds no row; FKs for :150-152; refusal triggers; monotonic epoch; decision-inputs column with a currentness_% validator (namespace :45-51). publish_revision/revoke_revision themselves lock only the head (:215) so they satisfy the rule. Scope: outside the 5A trigger-free slice (candidate :3, :148-149; doc 42 :170-173; doc 46 :128), but the packet does not claim existing authority (:130), so this is a records scope delta (F5 at P3)."
+     },
+     {
+      "item": "4 contracts: decision inputs, standing lock, session seam, definer ownership, budget, recipient",
+      "status": "PARTIAL",
+      "note": "Concur: shape unspecified (F4); acceptances append-only :218-231 with unique (customer_ref, kind, version) :154-155 so FOR SHARE on exact rows suffices and precedes H (table D :115); express.ts :94-188 is the only place the stored session hash exists (:104 → routes :870 → repository :179-181) and the viewer carries sha256 of it (:142-144, :163-165); production.ts:34-39 WeakMap pattern keeps a raw value out of serialisation; definer precondition (F2) plus the research_private_early_access_% prefix prohibition :653-667 and doc 48 V-M6 bypass disclosure; budget consistent as a target, numbers not approved (F11); recipient 254 vs CHECK 3..320 (F10)."
+     },
+     {
+      "item": "5 section E scope classification, server/index.ts seam, root-composition frozen",
+      "status": "PARTIAL",
+      "note": "Concur with the lens's (i)/(ii)/(iii) classification and F13 (manifest :447-451, :1255; sha256 cc1d8d4d… at 3e82154; doc 41 :73). root-composition.test.ts at 3e82154: 363 lines, sha256 b3a64d4ca827333efb1d196dc2bac7b7b63b04c27d39de2d94c5f7fb82cba8ed, equal to doc 48 :57; doc 48 :38 applies 'now frozen' to the readback and notification tests, so packet E item 4's 'frozen root-composition.test.ts' should read 'hash-bound, accepted with limits'."
+     }
+    ],
+    "missed": [
+     "Grants relation has no reader: research_early_access_referral_grants (table D :116) is consumed by no assisted-order, quick-order, catalog, commerce-port or EA production-deps path at 3e82154; under the packet's own rule the relation should be OUT unless a decision reader is named, and the lens's proposed 'exclude INSERT' is the wrong correction there (and would be unsafe for bindings :120 / transfers :121, where absence is a decision input pinned via 20260904…:583-598).",
+     "Dominant churn is inventory, not identity: table D :109 (lots 'complete row') makes every reserve/release/expire/adjust across all commerce flows (coa-admin :851, migration :924/:1378) advance the single global epoch and refuse every in-flight intake; the liveness case and any narrowing must be stated for that family first, including whether the intake's own FOR SHARE on exact lot rows makes quantity-column advancement redundant for its correctness.",
+     "Multi-statement unique-wait cycle the rule names but the census must check: a writer holding H X that then inserts a row whose unique check waits on another transaction's in-flight insert, while that transaction's AFTER STATEMENT guard then waits for H X, deadlocks; every installed-in-source multi-statement writer read here is serialised by a prior row or advisory lock (e.g., lifecycle :93-:101, prepare_upload :1101, product control :359), so the writer table needs a 'unique indexes hit by post-H inserts' column rather than only 'rows locked'.",
+     "Two uncontended post-H acquisitions the lens classified as compatible without naming them: reserve's child advisory lock at research-inventory-lot-coa-admin.sql:720 (new key after H, computable before mutation) and bind's FK dependency on the touch read unlocked at 20260904…:873 and referenced by the events insert :881; both are serialised today (unique child keys; advisory (9042026,1) and guard :405-425) but must be pre-acquired or recorded as classified.",
+     "Sessions prefix prohibition: the sessions install guard :653-667@3e82154 raises on any function named research_private_early_access_% other than the four; the proposed SECURITY DEFINER commit must not take that prefix or the sessions reapply refuses.",
+     "research_partners.member_id has no FK (research-partners.sql:23, unique only); 'member cascade dependencies' in packet :41/:54 do not exist for partners, and the identity guard :494 is the only barrier against orphaned partners; the prelock set for the member side is whatever pg_constraint holds on the hosted database (NOT PROVEN), which the packet's refusal fallback :54 already handles.",
+     "Packet E item 4 calls root-composition.test.ts 'frozen'; doc 48 :38@7dde166 applies that word to the readback and notification tests and lists root-composition as hash-bound (:57, b3a64d4c…) and accepted with limits.",
+     "Qualification plan contradiction (outside D1's sections but inside the packet set): RECOVERY_QUALIFICATION_PROPOSAL :74 makes G1 RED 'the sole predeclared exception to the ordinary failure stop', while :78 predicts four G3 fixture failures and missing-header failures in G4/G5 at 3e82154, and :52/:59 admit G6 'only after focused green' and stop dependents on failure; on current source G6-G9 therefore cannot start unless 8392d243 and 8396609 are approved and applied first, which :9 states as a preference rather than a precondition.",
+     "Lens precision: its confirmed line says the closeout-review worktree 'resolves 3e82154 with tree 04958ec1'; HEAD is ac36e60 (tree c83e7815) and 3e82154 resolves only as an object; two of its own anchors lack the directory (server/research/master-offerings/member-pricing-viewer.ts) or the file (server/index.ts for :992-1001 and :1324-1328).",
+     "Decision-reader census is incomplete for the non-identity IN rows: whether research_early_access_shipping_regions (:119), product_media (:105) or domain_launch_controls (:108) have a Quick Order decision reader was not established by the lens or by this read (destinationEligibility source not located; media/content reach the catalog through member-catalog-projection readiness), so 'unlisted relation blocks drafting' needs a per-relation reader table before any predicate is authored."
+    ],
+    "verdictOpinion": "REVISION REQUIRED (as design) is upheld. Against the writers actually installed in source at 3e82154 the protocol core is compatible: the three interleavings in packet :45-47 are real (release/expire loops :879-945/:1333-1399, reserve's per-SKU mutation :629-712 before the next SKU, privacy_begin deletes :321-331 after :321), pre-locking closes them, finalize already satisfies the rule, readiness triggers only try-lock, no fenced assisted-order trigger or intake insert reaches a guarded relation, and this verifier additionally classifies the lot/COA admin functions and activation writers as compatible, leaving only two candidates (if installed) and direct owner DML unclassified. Three P2 corrections stand before any body is drafted: table D's epoch scope restates the open S-M2/B-4 liveness case as policy (with the lens's narrowing corrected so that grants, which have no reader, go OUT while absence-sensitive bindings and transfers keep INSERT advancing, and with inventory movement traffic named as the dominant churn); the SECURITY DEFINER commit needs a stated, installer-checked precondition that the sessions-table owner, the provider-fence owner and the locking role coincide with rolsuper or rolbypassrls, plus avoidance of the research_private_early_access_ prefix; and normalized_decision_inputs needs its schemaVersion, key list, bounds and canonical encoding before any validator. F3, F5 and F6 are reduced to P3: the rule :50 and fallback :54 already cover FK dependencies, the packet does not claim existing authority for the currentness amendments (:130), and the census is already a stated drafting gate. The remaining anchor, finalize, recipient, budget, seam and inversion items are P3. No P0 or P1. A compatible design grants no source, installation or execution authority; hosted database state (ownership, installed writers, FK topology, timing) is NOT PROVEN; the qualification window expired 2026-10-06T21:43:37Z and everything is NOT RUN; nothing here is PRODUCTION READY; Samuel's reserved decisions (Health legal pair content, product and quantity policy, revocation budget approval, protected hashes and GATE-01, database actions, the 8392d243 and 8396609 patches) are not made by this review."
+   }
+  },
+  {
+   "lens": "qualification-plan",
+   "review": {
+    "verdict": "Lens D2 (read-only; nothing executed, no host sampled, no authority created). RECOVERY_QUALIFICATION_PROPOSAL_20261007.md (blob aab7e6a3… at coordinator commit f1821b6, parent 9d13a6f = remote tip) is NOT yet sufficiently specified for an execution decision as a whole, and no group is executable today because the supervisor it makes the gate for every group is absent and unproven. By group: G1 (mandatory HTTP red/green) is the best specified, since the exact blobs, scratch config bytes, hashes and argv are frozen in docs/health-launch/quick-order-20261005/evidence/http-regression-plan-fd023e8.json@3e82154 (byte-identical, sha256 51991abd…, to the coordinator's misnamed QUICK_ORDER_HTTP_REGRESSION_PLAN_fd023e8.json@9d13a6f) and match docs 36-38; it could be decided once the supervisor exists and is self-tested (G0) and the RED expected-failure set is predeclared by test name. G2 is executable on current source once the supervisor exists. G3, G4 and G5 are executable but predicted red on current source (4 provider-fixture cases; 17 unskipped proposed-header cases in the frozen tests) unless 8396609 and 8392d243 are decided first, and the plan never says whether a predicted red counts as \"focused green\". G6 is unreachable as written because its admission condition (\"only after focused green\") cannot be met on current source. G7 is mis-specified: verify-release-manifest.ts needs a manifest argument and XENIOS_EXPECTED_* environment and may run git fetch origin, and the protection gate whose FAIL the proposal expects is verify-core-site-protection.mjs, which is not listed; the snapshot/dist/cwd mechanism is undefined while build.mjs deletes dist. G8/G9 are not executable (harnesses absent, browser route unbound, Vite dev writes to node_modules/.vite, and G7's expected FAIL blocks G9 by construction under \"exit failure stops dependent later groups\"). The DB category is specified mostly by the verifiers themselves (argv, Docker flags, 17.11 pin, exit 2 semantics all confirmed in source), but its receipts exist only at 1631323 (not at 3e82154 as the proposal says) and Docker, image and host capacity are NOT PROVEN. Preparation still required before any approval: a G0 supervisor self-test, a predicted-red policy and RED name set, a pre-window host observation at or above the floors with refusals not consuming groups, a defined snapshot directory and dependency resolution, a corrected G7 command list, Vite cache ownership for G8, a bound browser route for G9, and receipts materialized as LF bytes in a checkout at or after 1631323. The qualification window expired 2026-10-06T21:43:37Z; everything remains NOT RUN.",
+    "checklist": [
+     {
+      "item": "(1) Every target path in G1-G9 exists at 3e82154; HTTP plan located and identities compared",
+      "status": "PARTIAL",
+      "evidence": "PRESENT@3e82154 (git cat-file -e): all 6 G2 tests, all 5 G3 tests, 3 G4 tests, root-composition.test.ts, scripts/acceptance/verify-no-em-dash.mjs, script/build.mjs (rm dist :6), verify-route-uniqueness.ts, verify-migration-dag.ts, verify-release-manifest.ts, server/index.ts, server/vite.ts, run-check.mjs, scripts/evidence/lib/{chrome,cdp}.mjs, lib/page-audit.js, lib/immutable-dist.mjs, capture-browser-matrix.mjs, capture-http-evidence.mjs, build-candidate-preview.mjs, both supabase/verification verifiers. ABSENT@3e82154 and @1631323: qualification-supervisor.mjs, qualification-real-vite.mjs, qualification-built-browser.mjs, evidence/qualification-manifest-20261007.json, QUICK_ORDER_HTTP_REGRESSION_PLAN_fd023e8.json. The plan actually lives at docs/health-launch/quick-order-20261005/evidence/http-regression-plan-fd023e8.json@3e82154 (sha256 51991abd…; = g1-precheck-20261006.json planSha256lf; byte-identical to docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_REGRESSION_PLAN_fd023e8.json@9d13a6f and @f1821b6). Identities match: red runtimeSource f1e467f (:10) with fd023e8 tests (:47,:54), green fd023e8 (:102-104), name pattern (:72), -t 'refuses owned raw target|leaves unrelated raw target' (:89); doc 38:62-63 records 25 owned/11 unrelated. SQL receipts ABSENT@3e82154, PRESENT@1631323 only. Protection gate script verify-core-site-protection.mjs not listed in G7."
+     },
+     {
+      "item": "(2) run-check.mjs read; what it does and does not enforce",
+      "status": "PASS",
+      "evidence": "run-check.mjs@3e82154 (27 lines): refuses overwrite (:9); spawns process.execPath with args and NODE_OPTIONS=--max-old-space-size=1024 (:16); writes stdout AND stderr into ONE combined log fd (:17), so no separate streams; no deadline/timeout, no output cap, no kill path; records only childPid (:23), no child tree or children; source binding is sha256lf of `git ls-files` under client/src/research/quick-order and server/research/health/quick-order only (:11-12), plus HEAD/tree/porcelain dirty (:13); exit = sourcesUnchanged ? child code : 1 (:27). The proposal's 'lacks process-tree, deadline and output enforcement and complete consumed-source bindings' (proposal :17) is confirmed; it also cannot meet the 'separate stdout/stderr, 4 MiB per stream' requirement (:39)."
+     },
+     {
+      "item": "(3) capture-browser-matrix 'pre-dismisses PWA state' and 'viewport/DPR zoom equivalent'; capture-http-evidence 'normalizing fetch'; build-candidate-preview 'runs npm ci'",
+      "status": "PASS",
+      "evidence": "capture-browser-matrix.mjs@3e82154: EVIDENCE_PWA_DISMISSAL_SOURCE sets sessionStorage 'xenios-pwa-hint-dismissed'='1' (:50-52) and a controller-change counter (:55-57); header comment '200 % zoom equivalent is rendered as a 720 CSS px viewport at deviceScaleFactor 2' (:11-12); runOne uses page.setViewport({width,height,deviceScaleFactor,mobile:width<=768}) (:970) and records widthCssPx/deviceScaleFactor/zoomPercent (:1090-1093). capture-http-evidence.mjs@3e82154: new URL(rawUrl) (:50) then global fetch(current,{redirect:'manual',...}) (:62), i.e. WHATWG-normalized targets, so literal raw targets (//api, backslash, %2e%2e) cannot be sent. build-candidate-preview.mjs@3e82154: runNpm(['ci','--no-audit','--no-fund']) (:51) then npm run build (:59). All three proposal claims (proposal :26) hold."
+     },
+     {
+      "item": "(4) vitest.config.ts and package.json: argv and typecheck command resolve",
+      "status": "PASS",
+      "evidence": "package.json@3e82154: engines node 20.19.0/npm 10.8.2; vitest ^4.1.10, typescript 5.6.3, tsx ^4.20.5; package-lock resolves vitest 4.1.10, typescript 5.6.3, tsx 4.22.4, vite 7.3.5; lock blob 912f4f85 identical at d8a0d3f, fd023e8, 5fd2e4c, 3e82154. vitest.config.ts@3e82154 includes server/**, shared/**, client/src/** tests, env node, css postcss plugins [] (:25-30). The exact argv 'node_modules/vitest/vitest.mjs run <paths> --maxWorkers=1 --no-file-parallelism --cache=false --reporter=verbose' was executed with exit 0 under the same lock (evidence/adapters-diagnostic-1.json@3e82154 :8-22, node v20.19.0). Typecheck: tsconfig.json has incremental:true, tsBuildInfoFile ./node_modules/typescript/tsbuildinfo, noEmit:true, so '--incremental false' is valid and avoids the node_modules write; identical command and 2,048 MiB floor already recorded in QUALIFICATION.md:116-119@3e82154. Limit: node_modules contents are not git objects; presence of vitest.mjs/bin/tsc/tsx on the host is NOT PROVEN here."
+     },
+     {
+      "item": "(5) Internal consistency (predicted reds vs 'focused green'; G7 FAIL vs dependent groups; unproven supervisor; floors vs 1,205 MiB; refusal consumes group; 140 minutes; 4 MiB cap; DB prerequisites and exit 2)",
+      "status": "FAIL",
+      "evidence": "Predicted reds exist in the frozen tests: static-document.test.ts:166-175, vite-document.test.ts:173-182, root-composition.test.ts:352-361@3e82154 (describe 'Proposed … pending Samuel's 8392d243 disposition', unskipped); handoff@1631323 records four provider-fixture cases predicted to fail early. The proposal (:52 'only after focused green'; :80) never defines whether a predicted red satisfies 'focused green', so G6 is unreachable on current source. G7: 'Preserve protection FAIL' and 'Exit failure stops dependent later groups' (:59) with G9 bound to G7's dist (:55) blocks G9 by construction; only the G1 RED is declared 'the sole predeclared exception' (:74). Supervisor: 'no smoke or experiment during preparation' (:24) yet ceilings are 'not claims about unmeasured normal process counts' while 'Unexpected extra children stop the group' (:43). Floors 1,536/2,048/4,096 vs last sample 1,205 MiB (g1-precheck-20261006.json:11@3e82154); 'refused admission consumes its group' (:7), fixed serial order, no pre-window gate. 140 = 10+10+15+15+10+10+25+15+30 exactly. 4 MiB cap vs prior verbose logs of 2-17 KB (evidence/*.log sizes) is ample but 'ABORTED' semantics (:39) terminate rather than truncate. DB: verifiers pin 17.11 (intake ~:300, currentness :261), exit 2 on success AND on interrupt/cleanup-unresolved (intake :83,:403,:411)."
+     },
+     {
+      "item": "(6) Evidence sufficiency per group and executability matrix",
+      "status": "PARTIAL",
+      "evidence": "Artefacts named globally (:39,:99: separate streams, exit/signal, PID/children, admissions, hashes, dirty state) but not per group; no acceptance criteria per group except G1 (:74) and G9 (:63). Matrix (current source 3e82154, supervisor assumed present): G1 executable (exact blobs/argv frozen; needs snapshot materialization, RED name set); G2 executable, no predicted red; G3 executable, 4 predicted reds unless 8396609 applied; G4 executable, 16 predicted header reds unless 8392d243 applied; G5 executable at 4,096 MiB floor, 1 predicted header red, 0.0.0.0 root bind (server/index.ts:1521), known C-F4 port race (REVIEW_599_RESIDUAL_MATRIX:39@1631323); G6 command resolves but admission condition unsatisfiable until predicted-red policy defined; G7 NOT executable as written (manifest arg/env/fetch; gate script missing; snapshot undefined); G8 NOT executable (harness absent; Vite cache write; dev mode requires NODE_ENV!=production, server/index.ts:1504-1511); G9 NOT executable (harness absent; browser route unbound, chrome.mjs:53-63,83-93; depends on G7 dist); DB category executable only from a checkout at >=1631323 with LF receipts, Docker daemon and postgres:17-alpine image present (NOT PROVEN); nothing depends on implemented 5C source except the future composed exercise (:97)."
+     },
+     {
+      "item": "(7) Host safety and standing rules (one heavy job; pinned Node 20.19.0; no installs; pagefile; volumes; unrelated processes)",
+      "status": "PARTIAL",
+      "evidence": "Compliant on paper: no npm ci/install (:15; build-candidate-preview excluded :26), pinned Node path (:15), no pagefile change (:101), preserve Docker volumes (:101), verifiers assert process.version v20.19.0 (intake :122, currentness :178), --pull=never --network none --tmpfs no ports (intake :284-292; currentness :246-260). Gaps: script/build.mjs rm('dist',{recursive,force}) relative to cwd (:6) and vite build outDir absolute dist/public with emptyOutDir (vite.config.ts:33-36) while the proposal says paths are 'relative to the existing builder checkout' (:43) and an unrelated preview process was historically left running (QUALIFICATION.md:138-140); G8 setupVite (server/vite.ts:12-30) with no cacheDir/optimizeDeps config and no client/package.json means Vite's dep optimizer writes node_modules/.vite under the shared dependency junction, contrary to 'without … writing its cache' (HTTP_CORRECTION.md:102-103); verify-release-manifest.ts may run 'git fetch --no-tags --depth=1 origin <sha>' (:1341-1348), external traffic; heavy-job detection predicate not defined (prior precheck matched node.exe with vitest|vite.js|tsc|build.mjs, qualified-job-precheck.ps1:28), so Chromium and docker are uncovered."
+     }
+    ],
+    "findings": [
+     {
+      "id": "D2-F1",
+      "severity": "P1",
+      "file": "docs/coordination/launch-coordination-20261005/RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:59 (G7)",
+      "claim": "G7 cannot run as specified: verify-release-manifest.ts is listed without its mandatory manifest argument and environment, may perform a git fetch to origin, and is not the protection gate whose FAIL the proposal says to preserve.",
+      "evidence": "scripts/acceptance/verify-release-manifest.ts@3e82154: CLI requires argv[2] manifest path, otherwise prints usage and sets exitCode 2 (:1361-1365); outside PR CI requires XENIOS_EXPECTED_PRODUCTION_SHA and XENIOS_EXPECTED_HEAD_SHA (:218-237, 'TRUSTED_RELEASE_IDENTITY_REQUIRED'); resolveGitCommit falls back to execFileSync('git',['fetch','--no-tags','--depth=1','origin',sha]) (:1341-1348). The only scripts reading CORE_SITE_PROTECTION_MANIFEST are scripts/acceptance/verify-core-site-protection.mjs and capture-core-site-baseline.mjs (git grep @3e82154); the '37 hard hashes pass, static hard hash fails' FAIL in builder records (.xenios/RELEASE_STATE.json:59@1631323) and the 'seven HARD hash mismatches' (doc 41:60, at ac36e60) come from that gate, not from verify-release-manifest.ts. verify-migration-dag.ts defaults argv[2] to docs/coordination/MIGRATION_DAG.json (:358); verify-route-uniqueness.ts takes no argument.",
+      "fix": "Replace the sixth G7 command with scripts/acceptance/verify-core-site-protection.mjs (exact argv bound in the manifest) and declare its expected FAIL as a predeclared, non-blocking exception; either drop verify-release-manifest.ts or bind its manifest path and both XENIOS_EXPECTED_* values, pre-resolve both SHAs locally and forbid the fetch path (treat any fetch as unexpected external traffic)."
+     },
+     {
+      "id": "D2-F2",
+      "severity": "P1",
+      "file": "RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:52,78-80 (G6 admission rule) and :59,:55 (G7 FAIL vs G9 dependency)",
+      "claim": "The plan's stop rules make G6 unreachable and G9 blocked by construction on current source: predicted reds in G3/G4/G5 are never reconciled with 'only after focused green', and G7's expected protection FAIL triggers 'exit failure stops dependent later groups' while G9 is bound to G7's dist.",
+      "evidence": "Frozen tests at 3e82154 carry the 17 proposed header cases unskipped: static-document.test.ts:166-175 (8 parameterised), vite-document.test.ts:173-182 (8), root-composition.test.ts:352-361 (1), all under 'Proposed … pending Samuel's 8392d243 disposition'; builder's REVIEW_599_RESIDUAL_MATRIX_20261007.md:36-37@1631323 (C-F1/C-F2) records them as source-predicted absent. Handoff@1631323 (~:430-434): 'Four existing cases stub only the old admin RPC … predicts an early unexpected-RPC failure' in provider-journal-http.test.ts (7 it() cases). Proposal :74 names the G1 RED as 'the sole predeclared exception to the ordinary failure stop'; :59 'Exit failure stops dependent later groups'; :55 G9 runs 'over G7's hashed dist/index.cjs and dist/public'. Patches exist unapplied: DOCUMENT_PRIVACY_HEADERS_AMENDMENT_PROPOSED_20261006.patch sha256 8392d243… (server/static.ts only, pre-image 7fade5d = blob at 3e82154) and PROVIDER_JOURNAL_FIXTURE_AMENDMENT_PROPOSED_20261006.patch sha256 8396609… (provider-journal-http.test.ts only, 12+/5-).",
+      "fix": "Either require (not 'prefer') the 8392d243 and 8396609 decisions before the window, or define 'focused green' as: every non-predicted case passes and the failing set equals, by exact test name, a predeclared list bound in the manifest. Split G7 into artefact production (build.mjs, --build em-dash) that gates G9 and verdict commands whose expected FAIL is predeclared and non-blocking."
+     },
+     {
+      "id": "D2-F3",
+      "severity": "P2",
+      "file": "RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:7,30-37 (admission floors, refusal consumes group)",
+      "claim": "No pre-window capacity gate and fixed serial ordering: on an unchanged host every group would be refused and consumed without a single command.",
+      "evidence": "Floors: 1,536 MiB (G1-G4), 2,048 (G6), 4,096 (G5, G7 build, G8, G9) (:32-37,:51,:55); last recorded host sample availableMiB 1205.0 at 2026-10-06T17:54:58Z (evidence/g1-precheck-20261006.json:5,11@3e82154; ACTIVE_TASKS.json:87-88@1631323), which already refused G1 at 1,536. 'refused admission consumes its group. No automatic retry' (:7); 'resource refusal requires recorded material change' (:101); groups ordered G1..G9 by content, not by resource need; DB category floor 4,096 with Docker Desktop/WSL memory not addressed (:84). 'current capacity is UNKNOWN' (:3).",
+      "fix": "Require one recorded host observation at or above the maximum floor of the groups being opened before approval starts the 4-hour window; make a resource refusal not consume a group (count attempts separately, cap at nine); order admission by ascending floor where dependencies allow (G1-G4, then G6, then 4,096-MiB groups); for the DB category sample after Docker Desktop is already running."
+     },
+     {
+      "id": "D2-F4",
+      "severity": "P2",
+      "file": "RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:24,43 (supervisor preparation rule; owned-process ceilings)",
+      "claim": "An unproven supervisor with unmeasured process-count ceilings is made the gate for the mandatory G1; a counting or deadline defect would consume the one HTTP attempt.",
+      "evidence": "':24 Bind and inspect their source before the window; no smoke or experiment during preparation'; ':43 Unexpected extra children stop the group; ceilings are not claims about unmeasured normal process counts'; ceilings 3/4 (G1), 4 (G2-G4), 6 (G5), 2 (G6), 4 (G7), 4 (G8), 16/12 (G9). Vitest 4.1.10 with Vite 7.3.5 spawns an esbuild service plus a forks-pool worker; root-composition.test.ts spawns the root via process.execPath --import tsx (:203-208@3e82154); chrome.mjs launches headless Chromium with its own utility processes (:83-116). An existing in-repo supervisor, server/research/commerce/qualification/qualification-supervisor.ts@3e82154 (fork-based, discards stdout/stderr :38, no PID tree, no output cap), was not named as inspected; it does not satisfy the contract but the 'No inspected helper satisfies' claim (:17) should name it (CLAUDE.md: do not rebuild solved systems).",
+      "fix": "Add a non-heavy G0 (<=1 min, <=512 MiB, <=3 processes) that supervises trivial node -e children (exit 0, exit 1, deadline kill, stream separation and cap, child-tree capture, refusal path) and measures the baseline child count of a one-file Vitest run; record the result as the supervisor's acceptance before G1. Name the commerce supervisor as inspected-and-unsuitable."
+     },
+     {
+      "id": "D2-F5",
+      "severity": "P2",
+      "file": "RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:43,59 (snapshot mechanism; owned dist)",
+      "claim": "The snapshot mechanism is undefined while G7 deletes dist in the working directory; 'paths relative to the existing builder checkout' contradicts 'never against a pre-existing preview'.",
+      "evidence": "script/build.mjs@3e82154: rm('dist',{recursive:true,force:true}) relative to cwd (:6), then viteBuild() whose outDir is absolute path.resolve(import.meta.dirname,'dist/public') with emptyOutDir:true (vite.config.ts:33-36) and esbuild outfile 'dist/index.cjs' (:17); a cwd that differs from the config root deletes one dist and writes another. QUALIFICATION.md:138-140@3e82154 records an unrelated preview process (PID 18936, ports 5001/62976/62977) deliberately left running. The proposal relies on 'the existing dependency junction' (HTTP_CORRECTION.md:102-103) yet says a run 'uses its bound exact-source snapshot' (:43) without saying whether that is the builder checkout at a verified clean HEAD or a separate worktree (which would have no node_modules; standing rule: no node_modules junctions in removable worktrees).",
+      "fix": "Define the snapshot as one named directory with cwd fixed to its root for every command, state how node_modules is reached from it, and add a pre-G7 admission check that no process has files open under that directory's dist before build.mjs runs."
+     },
+     {
+      "id": "D2-F6",
+      "severity": "P2",
+      "file": "RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:54,61 (G8 real Vite HTTP)",
+      "claim": "G8 as specified writes into the shared dependency junction and opens two all-interface listeners; neither is disclosed or owned by the cleanup rule.",
+      "evidence": "server/index.ts@3e82154 selects setupVite only when NODE_ENV !== 'production' (:1504-1511) and listens on host '0.0.0.0' (:1518-1522); server/vite.ts createViteServer in middlewareMode with hmr on the same server (:12-30); vite.config.ts has no cacheDir or optimizeDeps and server.host '0.0.0.0', allowedHosts true (:41-43); client/package.json is ABSENT, so Vite's default cacheDir resolves to <repo>/node_modules/.vite and the dep optimizer writes there on first request. HTTP_CORRECTION.md:102-103@3e82154 requires using the junction 'without installing packages or writing its cache'; proposal :101 limits cleanup to 'run-owned children/ports/temp roots/containers'.",
+      "fix": "The real-Vite harness must set an owned cacheDir (or optimizeDeps.noDiscovery with an empty include) and bind that in the manifest; disclose the 0.0.0.0 binding of both root and Vite in the G8 risk statement as already done for the root."
+     },
+     {
+      "id": "D2-F7",
+      "severity": "P2",
+      "file": "RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:67-74 (G1 RED classification)",
+      "claim": "'RED must fail on the intended path/parser defect' has no predeclared expected-failure set by test name, so the 'Only intended RED permits GREEN' gate is a judgement made during the run.",
+      "evidence": "The frozen plan binds blobs, config bytes and argv only (http-regression-plan-fd023e8.json:7-98@3e82154; execution NOT RUN). HTTP_CORRECTION.md:114-121@3e82154: 'Red should expose the concrete predecessor dot/backslash containment failures and unrelated malformed handler interception; some positive controls and prior refusals will already pass … record every failure'. handler.test.mjs@fd023e8 (blob 4ffb196f, identical at 3e82154) has 30 top-level tests; the pattern selects seven groups; containment.test.ts@fd023e8 (blob 3684be85, identical at 3e82154) has the two it.each rows (:58,:87) the -t filter selects.",
+      "fix": "Before approval, bind in the manifest the exact RED expected-fail and expected-pass names for both commands (derived from doc 38 and the fd023e8 diff), and have the supervisor compare the observed sets to them; any other failure is 'setup/import/resource/timeout' and stops G1."
+     },
+     {
+      "id": "D2-F8",
+      "severity": "P2",
+      "file": "RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:86-91 (DB receipts 'at current source')",
+      "claim": "The two SQL receipts are not at the accepted source 3e82154; they exist only in the records commit, and both verifiers require them physically inside the checkout's evidence directory as exact LF bytes.",
+      "evidence": "docs/health-launch/quick-order-20261005/evidence/sql-intake-source-receipt-3e82154.json and sql-currentness-source-receipt-3e82154.json: ABSENT@3e82154, PRESENT@1631323 (diff --name-status 3e82154 1631323 adds both); recomputed sha256 of the 1631323 blobs = f2f343b3… and 51238583… (0 CR bytes), matching the proposal. Intake verifier@3e82154 asserts args[2] starts with docs/health-launch/quick-order-20261005/evidence/ and realpath is contained in that directory under ROOT (:110-115 region), then sha(receiptBytes)===args[4] (:137); currentness asserts path.dirname(receiptPath)===evidenceRoot (:185) and byte hash (:188). docs/.gitattributes@3e82154 marks only evidence/*.log and patches -text, so JSON receipts follow autocrlf on checkout.",
+      "fix": "State that the DB category runs from a checkout containing 1631323 (or 7f8edd7) whose source paths are identical to 3e82154 (verified: diff touches only .xenios and docs), and require a pre-admission hash check of the on-disk receipt bytes against the two digests."
+     },
+     {
+      "id": "D2-F9",
+      "severity": "P3",
+      "file": "RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:67",
+      "claim": "The HTTP plan is cited by a file name that does not exist in the builder lane.",
+      "evidence": "QUICK_ORDER_HTTP_REGRESSION_PLAN_fd023e8.json is ABSENT under docs/health-launch/quick-order-20261005/ at 3e82154, 1631323 and 7f8edd7; the builder's file is evidence/http-regression-plan-fd023e8.json@3e82154 (sha256 51991abd…, = planSha256lf in g1-precheck-20261006.json:20), byte-identical to docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_REGRESSION_PLAN_fd023e8.json@9d13a6f and @f1821b6 (evidence-index.json:428 records the same sha256). All quoted identities (RED f1e467f runtime + fd023e8 tests, GREEN fd023e8, name pattern, 36 rows 25/11 per doc 38:62-63) match.",
+      "fix": "Cite the builder path and sha256 51991abd… in the proposal; keep the coordinator copy as a mirror."
+     },
+     {
+      "id": "D2-F10",
+      "severity": "P3",
+      "file": "RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:7,45-55 (140 combined minutes)",
+      "claim": "The 140-minute aggregate equals the sum of the nine ceilings exactly, so it adds no bound and leaves no room for anything outside a group ceiling.",
+      "evidence": "10+10+15+15+10+10+25+15+30 = 140; ':7 Each group includes startup and cleanup'; the 4-hour window leaves 100 minutes unallocated but the proposal does not say whether admission observations, snapshot materialisation (G1 scratch copies per plan :59-64) and receipt writing count as execution minutes.",
+      "fix": "Either drop the aggregate or define it as the sum of per-group supervised wall time and state explicitly what falls outside it."
+     },
+     {
+      "id": "D2-F11",
+      "severity": "P3",
+      "file": "RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:39 (4 MiB per stream, ABORTED)",
+      "claim": "The cap is ample for G2-G5 but its abort semantics turn an over-verbose healthy run into an ABORTED group instead of a truncated record.",
+      "evidence": "Prior verbose Vitest logs at 3e82154: components-adapters-source-3b0048d.log 17,238 B; core-http 13,886 B; containment 1,996 B; ui-diagnostic 10,388 B. The root test models the alternative: OUTPUT_LIMIT 16*1024 with totalBytes and truncated flag (root-composition.test.ts:22,:57,:250@3e82154), which the proposal itself cites (:39).",
+      "fix": "Record truncation with total byte counts (as the root test does) and reserve ABORTED for deadline and process-ceiling breaches, or justify abort-on-overflow explicitly."
+     },
+     {
+      "id": "D2-F12",
+      "severity": "P3",
+      "file": "RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:91-93 (DB exit 2 and image pin)",
+      "claim": "Exit 2 is ambiguous in the intake verifier and the completion markers to check are unnamed; the 17.11 and Docker-flag claims are confirmed in source but image presence is unproven.",
+      "evidence": "Intake verifier@3e82154: exitCode 2 on success after 'INTAKE_READER_SUBSET_COMPLETE' (:401-403), on interrupt (:83), and on cleanup-unresolved (:411); failure exits 1 (:405). Currentness verifier: exitCode 2 after '{kind:bounded_checks_complete}' (:366-370); failure 1/130/143 (:372-376); cleanup success '{kind:cleanup,removed:true}' (:399), cleanup failure exit 1 (:401-402). Both assert show server_version matches /^17\\.11/ (intake ~:300; currentness :261), use image.Id from 'docker image inspect postgres:17-alpine' with --pull=never, --network none, --tmpfs, no PortBindings (intake :280-292; currentness :240-260), and assert process.version v20.19.0 (intake :122; currentness :178). No --memory/--pids-limit flags, confirming 'no cgroup caps' (:91).",
+      "fix": "Name the three markers per verifier in the acceptance criteria and pre-record the image Id and Docker context endpoint in the manifest; keep image availability as NOT PROVEN until the admission observation."
+     },
+     {
+      "id": "D2-F13",
+      "severity": "P3",
+      "file": "RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:55,63 (G9 browser route)",
+      "claim": "G9's 'supported available browser route' is unbound: the only primitive resolves a Playwright-installed Chromium or an environment path, neither of which is named.",
+      "evidence": "scripts/evidence/lib/chrome.mjs@3e82154: findChromium looks under %LOCALAPPDATA%\\ms-playwright or PLAYWRIGHT_BROWSERS_PATH, or XR_EVIDENCE_CHROME (:53-63); launchChromium spawns --headless=new --remote-debugging-port=0 with a mkdtemp user-data-dir (:83-116); header: 'No Playwright / Puppeteer package exists in the private node_modules' (:3). Proposal :63 'Use only a supported available browser route; unchanged failed native/cloud setup is not retried' without naming the route or its version.",
+      "fix": "Bind the exact Chromium executable path, version string and sha256 in the manifest before G9 admission, and record the temp user-data-dir as an owned temp root for cleanup."
+     },
+     {
+      "id": "D2-F14",
+      "severity": "P3",
+      "file": "RECOVERY_QUALIFICATION_PROPOSAL_20261007.md:30 (admission observation)",
+      "claim": "'No competing heavy jobs' has no detection predicate; the prior precheck's pattern would not see Chromium, docker or esbuild.",
+      "evidence": "qualified-job-precheck.ps1:28@3e82154 matched only node.exe whose CommandLine matches 'vitest|vite.js|tsc|build.mjs'; G1-G9 and the DB category add Chromium, docker CLI/daemon and esbuild children.",
+      "fix": "Define the heavy-job predicate per category (node.exe patterns, chrome.exe, docker.exe, postgres containers with the owner label) in the manifest."
+     }
+    ],
+    "confirmed": [
+     "Packet binding: the three scratchpad copies are byte-identical to the blobs at f1821b6 (sha256 c1fb9d05…, aab7e6a3…, fa713bd0…); f1821b6 ('docs(coordination): consolidate recovery design and qualification proposals') has parent 9d13a6f = origin/codex/xenios-launch-coordination-20261005; local branch codex/xenios-launch-coordination-20261005 = f1821b6 in the scratch worktree.",
+     "3e82154 (tree 04958ec1…) is an ancestor of 1631323 (tree 796f15c9…); their diff touches only .xenios/* and docs/health-launch/quick-order-20261005/* (two .md edits, four evidence additions). 7f8edd7 adds only records (doc48-acceptance-closeout-20261007.json and .md/.xenios edits).",
+     "Every G2-G5 test path, run-check.mjs, scripts/evidence/lib/{chrome,cdp}.mjs, lib/page-audit.js, lib/immutable-dist.mjs, the three capture scripts, verify-no-em-dash.mjs, script/build.mjs (rm dist :6), verify-route-uniqueness.ts, verify-migration-dag.ts, verify-release-manifest.ts, server/index.ts, server/vite.ts and both DB verifiers exist at 3e82154 and 1631323; the four proposed qualification files are absent at both.",
+     "HTTP plan identities: evidence/http-regression-plan-fd023e8.json@3e82154 (sha256 51991abd…) records red runtime f1e467f + fd023e8 tests, green fd023e8, the seven-group --test-name-pattern, --max-old-space-size=128 --test --test-concurrency=1, and the Vitest argv with --config scratch config, --maxWorkers=1 --no-file-parallelism --cache=false --reporter=verbose -t 'refuses owned raw target|leaves unrelated raw target'; execution NOT RUN with null exit/log. Test blobs 4ffb196f (handler.test.mjs) and 3684be85 (containment.test.ts) are identical at fd023e8 and 3e82154; f1e467f has different blobs (f352e45c, 6ff7a13f) and no paths.mjs. Doc 38:62-63 records 25 owned / 11 unrelated rows; doc 38:114-116 restates the plan.",
+     "Patch digests recompute exactly: DOCUMENT_PRIVACY_HEADERS_AMENDMENT_PROPOSED_20261006.patch = 8392d24308c3dc106c00317f4cd9550d94e956d008051c617c0126d610330fa9 (server/static.ts only, index 7fade5d..6caae7b, 4+/3-; pre-image equals the 3e82154 blob 7fade5dc250b); PROVIDER_JOURNAL_FIXTURE_AMENDMENT_PROPOSED_20261006.patch = 8396609b413bc93990adea937861427ec07787f6ea126e19f926b42398d01498 (provider-journal-http.test.ts only, 12+/5-); identical at 3e82154 and 1631323 with 0 CR bytes.",
+     "SQL receipts at 1631323 hash to f2f343b31a5a484c1b28b02fb0560b3d5027eee101f298f91a4574ee497fe1ca and 5123858331a46c1cb4ab7674b17449e6a7f8021fd7d5e35c8f217a343a6cc668 with 0 CR bytes, as the proposal states.",
+     "run-check.mjs lacks process-tree, deadline, output cap and complete source bindings, and merges stdout/stderr into one log (:11-:27@3e82154).",
+     "capture-browser-matrix.mjs pre-dismisses PWA state (:50-57) and renders 200 % as 720 CSS px at deviceScaleFactor 2 (:11-12, :970); capture-http-evidence.mjs uses new URL + global fetch (:50, :62); build-candidate-preview.mjs runs npm ci (:51).",
+     "Vitest argv resolves (vitest 4.1.10 locked; same lock blob 912f4f85 at d8a0d3f/fd023e8/5fd2e4c/3e82154; historical exit-0 receipts adapters-diagnostic-1.json:8-22). Typecheck command resolves against tsconfig.json (incremental:true, tsBuildInfoFile under node_modules, noEmit) and matches QUALIFICATION.md:116-119.",
+     "Root listens on 0.0.0.0 (server/index.ts:1518-1522) and serveStatic/setupVite are selected by NODE_ENV (:1504-1511); root-composition.test.ts retains 16 KiB tails with truncation flags (:22,:57,:250), spawns the root via process.execPath --import tsx (:203-208), uses synthetic credentials only (:117-144), and exports nothing.",
+     "Both DB verifiers enforce the exact 7-argument contract (--allow-disposable-intake/--allow-disposable-currentness, --receipt, --receipt-sha256, --source-commit), Node v20.19.0, local Docker endpoint only, --pull=never --network none --tmpfs, zero PortBindings, server_version 17.11, and exit 2 on successful subset completion; the currentness verifier forbids DATABASE_URL/SUPABASE_*/PG*/DOCKER_HOST (:179-181).",
+     "Prior window record: QO-FIRST-20261006-G1 refused at 1,205 MiB < 1,536, 26.0734 GiB disk, expiresAt 2026-10-06T21:43:37Z, maximumGroups 6, consumedGroups 1, expiredUnusedGroups 5, availableGroups 0 (g1-precheck-20261006.json@3e82154; ACTIVE_TASKS.json:84-98@1631323). G3's four predicted provider-fixture failures are recorded by the builder (handoff@1631323) and the 17 header cases are unskipped in the frozen tests under 'Proposed … pending Samuel's 8392d243 disposition'."
+    ],
+    "discrepancies": [
+     "Proposal :67 cites QUICK_ORDER_HTTP_REGRESSION_PLAN_fd023e8.json as if under the builder's docs folder; the builder file is evidence/http-regression-plan-fd023e8.json@3e82154 (identical bytes to the coordinator-branch copy).",
+     "Proposal :59 lists verify-release-manifest.ts and says 'Preserve protection FAIL; do not recut manifest'; the protection gate is scripts/acceptance/verify-core-site-protection.mjs (not listed), and verify-release-manifest.ts needs a manifest argument plus XENIOS_EXPECTED_* environment and can git fetch origin.",
+     "Proposal :86-89 labels the receipt paths 'Required exact inputs at current source' (3e82154); both receipts exist only from 1631323 onward.",
+     "Proposal :17 'No inspected helper satisfies the expanded contract' does not name server/research/commerce/qualification/qualification-supervisor.ts@3e82154, an existing supervisor (unsuitable: discards output, forks only).",
+     "Proposal :43 'Paths are relative to the existing builder checkout' versus :59 'run only in an owned snapshot … never against a pre-existing preview' while build.mjs deletes cwd/dist and Vite writes an absolute dist/public.",
+     "RECOVERY_DECISIONS_20261007.md row 1 names packet QUICK_ORDER_DOCUMENT_HEADER_SCOPE_20261006.md; it is absent in the builder lane at 3e82154/1631323 and exists only on the coordinator branch (docs/coordination/launch-coordination-20261005/).",
+     "The 'seven HARD mismatches' figure in the lens brief is doc 41:60's count at ac36e60 (three Core files plus successors); the count at 3e82154 is NOT PROVEN without running the gate, and the builder records show '37 hard hashes pass, static hard hash fails' from an earlier revision."
+    ],
+    "notProven": [
+     "Host capacity now (RAM, disk, competing jobs); the only sample is 1,205 MiB / 26.07 GiB at 2026-10-06T17:54:58Z.",
+     "Presence and hash of the pinned Node 20.19.0 executable; the proposal's 71,046,288-byte metadata claim is the coordinator's, not verified here.",
+     "Presence of node_modules (vitest.mjs, typescript/bin/tsc, tsx loader) in the builder checkout or any snapshot; git objects cannot show it.",
+     "Docker daemon availability, postgres:17-alpine image presence and its Id/17.11 server version on the host.",
+     "A supported Chromium route for G9 (ms-playwright install or XR_EVIDENCE_CHROME) and native 200 % zoom capability.",
+     "Whether a dist or served preview currently exists in the builder checkout (PID 18936 was left running on 2026-10-05).",
+     "Actual outcome of the predicted reds (4 provider-fixture, 17 header cases) and of the protection gate at 3e82154: all are source predictions, NOT RUN.",
+     "Real owned-process counts for Vitest 4.1.10, the root under tsx, and headless Chromium against the proposed ceilings.",
+     "Any behaviour of the absent supervisor, real-Vite and built-browser harnesses or the manifest; nothing exists to inspect.",
+     "Hosted or managed database state; nothing in this lens touched a database."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "D2-F1",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Core claim re-derived: scripts/acceptance/verify-release-manifest.ts@3e82154 prints usage and sets exitCode 2 without argv[2] (:1358-1361, lens cited :1361-1365), demands XENIOS_EXPECTED_PRODUCTION_SHA and XENIOS_EXPECTED_HEAD_SHA outside PR CI (TRUSTED_RELEASE_IDENTITY_REQUIRED :218-237) and falls back to execFileSync git fetch --no-tags --depth=1 origin <sha> (:1342-1345). Proposal :59 binds neither manifest nor environment, so the sixth G7 command fails by construction and :59 'Exit failure stops dependent later groups' then blocks G9 (:55). Over-read corrected: 'Preserve protection FAIL; do not recut manifest' (:59) does not say the gate is run; it is ambiguous, and only scripts/acceptance/verify-core-site-protection.mjs and capture-core-site-baseline.mjs read CORE_SITE_PROTECTION_MANIFEST (git grep @3e82154). verify-route-uniqueness.ts takes an optional --sha (:515-516), not 'no argument'; verify-migration-dag.ts defaults argv[2] (:358) and also needs docs/coordination/CURRENT_PRODUCTION_STATE.json (:360-362) and supabase/MIGRATIONS.md (:367); production gitSha 79414143 is an ancestor of 3e82154, so that check is satisfiable."
+     },
+     {
+      "id": "D2-F2",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Re-derived. Unskipped proposed-header blocks: static-document.test.ts:166-176, vite-document.test.ts:173-184, root-composition.test.ts:352-362@3e82154, each titled 'pending Samuel's 8392d243 disposition'; PRIVACY_CASES = 4 OWNED_TARGETS x 2 methods = 8 (static :25-33, vite :21-29) + 1 root = 17. Four provider-fixture failures predicted at .xenios/handoffs/quick-order-20261005-handoff.md:396-397@1631323 (lens cited ~:430-434). Proposal :52 'only after focused green', :74 sole exception is the G1 RED, :59 exit failure stops dependent groups, :55 G9 bound to G7 dist. Patches recompute exactly: 8392d243… (server/static.ts only, index 7fade5d..6caae7b = blob at 3e82154, 4+/3-) and 8396609… (provider-journal-http.test.ts only, index 4968404..d053609 = blob 49684049 at 3e82154, 12+/5-); both identical at 3e82154 and 1631323, 0 CR bytes. G6 unreachable and G9 blocked by construction on current source."
+     },
+     {
+      "id": "D2-F3",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Re-derived: evidence/g1-precheck-20261006.json@3e82154 :10-11 requiredMiB 1536 / availableMiB 1205.0, :13 freeDiskGiB 26.0734, :5 sampledAt 2026-10-06T17:54:58Z, :96-99 allowed:false REFUSED_RELEASED retryAuthorized:false; .xenios/ACTIVE_TASKS.json:84-99@1631323 consumedGroups 1, expiredUnusedGroups 5, availableGroups 0. Proposal :7 'refused admission consumes its group. No automatic retry', :30 G1 requires full 1,536 MiB, :32-37 floors up to 4,096, :101 'resource refusal requires recorded material change', :3 'current capacity is UNKNOWN'. Fixed G1..G9 order is by content, not resource need. Severity P2 correct."
+     },
+     {
+      "id": "D2-F4",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Re-derived: proposal :24 'no smoke or experiment during preparation', :43 'Unexpected extra children stop the group; ceilings are not claims about unmeasured normal process counts', :47-55 ceilings 3/4, 4, 4, 4, 6, 2, 4, 4, 16/12. server/research/commerce/qualification/qualification-supervisor.ts@3e82154 exists (fork :33-35, stdout/stderr resumed and discarded :37-38) and is not named at :17. root-composition.test.ts:203-209@3e82154 spawns the root with process.execPath --import tsx. Added prediction (not measured): G5's ceiling 6 equals the minimum expected set (supervisor, Vitest main, Vite's esbuild service, forks worker, root node, tsx's esbuild child), so any transient extra child aborts the group. P2 stands."
+     },
+     {
+      "id": "D2-F5",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Re-derived: script/build.mjs@3e82154 rm('dist',{recursive,force}) :6 relative to cwd, esbuild outfile 'dist/index.cjs' :17; vite.config.ts:33-36 root client/, outDir path.resolve(import.meta.dirname,'dist/public'), emptyOutDir:true; verify-no-em-dash.mjs DEFAULT_ROOT is the script's grandparent (:10-11) scanning dist/public and dist/index.cjs (:21-22); QUALIFICATION.md:137-139@3e82154 PID 18936 ports 5001/62976/62977 left running; proposal :43 vs :59 contradiction confirmed. Sharpened: 'owned output directory' (:59) is unattainable with unmodified scripts because dist is hardcoded in build.mjs and vite.config.ts; the only owned-directory route is a full checkout copy, which collides with the standing no-node_modules-junction rule. P2 stands."
+     },
+     {
+      "id": "D2-F6",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Re-derived: server/index.ts@3e82154 :1504-1511 selects serveStatic only when NODE_ENV==='production', else await import('./vite') and setupVite; :1517-1521 listens on host '0.0.0.0'; server/vite.ts:13-15,19-31 middlewareMode with hmr on the same server, configFile:false spreading vite.config.ts, which has server.host '0.0.0.0' and allowedHosts true (:41-43) and no cacheDir/optimizeDeps; client/package.json ABSENT at 3e82154 and 1631323; HTTP_CORRECTION.md:102-103 forbids writing the junction's cache; proposal :101 cleanup scope. The node_modules/.vite write is a source prediction of Vite's default cacheDir, not an observation. Scoping confirmed: vite-document.test.ts:12-15,45-49@3e82154 mocks vite.createServer, so G4 does not start a real Vite server; only G8 does."
+     },
+     {
+      "id": "D2-F7",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Re-derived: evidence/http-regression-plan-fd023e8.json@3e82154 binds blobs, scratch config bytes (:60-64, :166-170) and argv (:65-91, :171-197) with execution NOT RUN (:93-98, :199-204); HTTP_CORRECTION.md:113-121 'record every failure'; doc 38:117-118 'Red must fail for the intended defect, not for an import or setup error'. Corrections: tests/handler.test.mjs@fd023e8 (blob 4ffb196f, identical at 3e82154) has 40 top-level test() calls (doc 38:65 '33 to 40'), not 30; the seven-group pattern selects exactly the tests at :392, :405, :420, :432, :450, :464, :478. containment.test.ts@fd023e8 rows: 25 owned (:59-74) and 11 unrelated (:88-93), matching proposal :72 and doc 38:62-63. Added verification: the RED import graph is closed (handler.mjs@f1e467f exports createQuickOrderHandler :121 and createQuickOrderErrorHandler :213; containment.ts@f1e467f exports createQuickOrderContainment() :7; fixtures.mjs blob a67bb5ce identical; no test imports paths.mjs), so the RED cannot fail at import; the undeclared set concerns assertion-level failures. P2 stands."
+     },
+     {
+      "id": "D2-F8",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Re-derived: git diff --name-status 3e82154 1631323 adds both receipts; blobs at 1631323 hash f2f343b3… and 51238583… with 0 CR bytes; intake verifier@3e82154 asserts args[2] under docs/health-launch/quick-order-20261005/evidence/ (:133), realpath containment (:134-135), sha(receiptBytes)===args[4] (:137); currentness asserts path.dirname(receiptPath)===evidenceRoot (:183-185) and byte hash (:188). Correction: the attributes file is docs/health-launch/quick-order-20261005/.gitattributes@3e82154 (not docs/.gitattributes): 'evidence/*.log -text', 'MOUNT_PROPOSAL.patch -text', 'history/*.patch -text'; JSON receipts and the two amendment patches are not covered. Added verification by hash recomputation: each receipt pins 66 paths whose sha256lf all match 3e82154 blobs (0 mismatches), both include evidence/review-599-repair-bindings-20261007.json, and none of the 66 paths changed in 3e82154..7f8edd7, so a checkout at 1631323 or 7f8edd7 satisfies the pins and the lens fix holds."
+     },
+     {
+      "id": "D2-F9",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: QUICK_ORDER_HTTP_REGRESSION_PLAN_fd023e8.json ABSENT under docs/health-launch/quick-order-20261005/ at 3e82154 and 1631323; evidence/http-regression-plan-fd023e8.json@3e82154 sha256 51991abd… equals docs/coordination/launch-coordination-20261005/QUICK_ORDER_HTTP_REGRESSION_PLAN_fd023e8.json at 9d13a6f and f1821b6 (same digest) and g1-precheck-20261006.json:19 planSha256lf; the coordinator's evidence-index.json records it at :430 (lens said :428). Identities match: red runtime f1e467f (:6, :10) with fd023e8 tests (:47, :54), green fd023e8 (:102-104), seven-group pattern (:72), -t filter (:88-89)."
+     },
+     {
+      "id": "D2-F10",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Arithmetic re-derived from proposal :47-55: 10+10+15+15+10+10+25+15+30 = 140 = the :7 aggregate; :7 'Each group includes startup and cleanup'; nothing allocates admission observations or scratch materialisation (plan :59, :165 scratch paths) outside group ceilings."
+     },
+     {
+      "id": "D2-F11",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: git ls-tree -l @3e82154 evidence logs 1,996 to 17,238 bytes (containment-source-4abd2c5.log 1996; components-adapters-source-3b0048d.log 17238); root-composition.test.ts OUTPUT_LIMIT 16*1024 (:22), tail capture (:54-58), truncated flag receipt (:249-250); proposal :39 'Exceeding bounds records ABORTED'."
+     },
+     {
+      "id": "D2-F12",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: intake verifier@3e82154 exitCode 2 on interrupt (:83), after INTAKE_READER_SUBSET_COMPLETE (:401-403), failure 1 unless interrupted (:405), cleanup-unresolved 2 (:411); process.version v20.19.0 at :125 (lens :122); docker --host npipe endpoint (:187-188), image inspect postgres:17-alpine (:280), run --rm --pull=never --network none --tmpfs (:284-285), PortBindings 0 (:292), server_version /^17\\.11/ (:300). Currentness: v20.19.0 (:178), forbidden env keys (:179), local endpoint only (:237-239), run flags (:246-247), PortBindings (:260), 17.11 (:261), bounded_checks_complete then exitCode 2 (:366-370), 130/143/1 (:375), cleanup removed:true (:399) or exit 1 (:401-402). No --memory/--pids-limit flags in either."
+     },
+     {
+      "id": "D2-F13",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: scripts/evidence/lib/chrome.mjs@3e82154 header :3-6 (no Playwright/Puppeteer package; browsers under ms-playwright), findChromium XR_EVIDENCE_CHROME or ms-playwright root (:53-64), launchChromium --headless=new, --remote-debugging-port=0, mkdtemp user-data-dir (:83-116), including --proxy-server=http://127.0.0.1:9 (:107); scripts/evidence/lib/cdp.mjs continues allowed-origin requests (:540-544) and blocks others (:546-558), so reaching a loopback origin relies on Chromium's implicit loopback proxy bypass (prediction, not verified). Proposal :63 names no route or version."
+     },
+     {
+      "id": "D2-F14",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived: docs/health-launch/quick-order-20261005/qualified-job-precheck.ps1:28@3e82154 matches only Win32_Process Name 'node.exe' with CommandLine matching 'vitest|vite.js|tsc|build.mjs'; proposal :30 'no competing heavy jobs' defines no predicate for chrome.exe, docker CLI/daemon or esbuild children."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "(1) Every target path in G1-G9 exists at 3e82154; HTTP plan located and identities compared",
+      "status": "PARTIAL",
+      "note": "Agree. Independently confirmed with git cat-file -e at 3e82154 and 1631323: all 15 G2-G5 tests, verify-no-em-dash.mjs, script/build.mjs, verify-route-uniqueness.ts, verify-migration-dag.ts, verify-release-manifest.ts, verify-core-site-protection.mjs, server/index.ts, server/vite.ts, run-check.mjs, lib/{chrome,cdp}.mjs, lib/page-audit.js, lib/immutable-dist.mjs, the three capture scripts, both supabase/verification verifiers present; the four proposed qualification files and QUICK_ORDER_HTTP_REGRESSION_PLAN_fd023e8.json absent at both; receipts absent at 3e82154, present at 1631323. Plan at evidence/http-regression-plan-fd023e8.json@3e82154 sha256 51991abd… identical at 9d13a6f/f1821b6; identities match doc 38:62-66 and :113-118. 3e82154 (tree 04958ec1…) is an ancestor of 1631323 (tree 796f15c9…); the diff touches only .xenios/* and docs/health-launch/quick-order-20261005/*."
+     },
+     {
+      "item": "(2) run-check.mjs read; what it does and does not enforce",
+      "status": "PASS",
+      "note": "Agree. run-check.mjs@3e82154: refuses overwrite (:9); git ls-files over two directories only (:11); sha256lf of those files plus HEAD/tree/porcelain (:12-13); spawn with NODE_OPTIONS=--max-old-space-size=1024 (:16); stdout and stderr into one fd (:17); no deadline, no output cap, no kill path; childPid only (:23); exit = sourcesUnchanged ? code : 1 (:27). Proposal :17 'lacks' claim verified; it also cannot meet :39 separate streams."
+     },
+     {
+      "item": "(3) capture-browser-matrix 'pre-dismisses PWA state' and 'viewport/DPR zoom equivalent'; capture-http-evidence 'normalizing fetch'; build-candidate-preview 'runs npm ci'",
+      "status": "PASS",
+      "note": "Agree. capture-browser-matrix.mjs@3e82154 :11-12 header, EVIDENCE_PWA_DISMISSAL_SOURCE sessionStorage 'xenios-pwa-hint-dismissed'='1' (:50-53), setViewport with deviceScaleFactor (:970), zoomMethod '720 CSS px viewport at deviceScaleFactor 2' (:1094). capture-http-evidence.mjs new URL(rawUrl) (:50) and global fetch (:62). build-candidate-preview.mjs runNpm(['ci','--no-audit','--no-fund']) (:51) then npm run build (:59)."
+     },
+     {
+      "item": "(4) vitest.config.ts and package.json: argv and typecheck command resolve",
+      "status": "PARTIAL",
+      "note": "Downgraded from PASS. Resolution confirmed: package.json@3e82154 engines node 20.19.0/npm 10.8.2, vitest ^4.1.10, typescript 5.6.3, tsx ^4.20.5; lock resolves vitest 4.1.10, typescript 5.6.3, tsx 4.22.4, vite 7.3.5, esbuild 0.25.12; lock blob 912f4f85 identical at d8a0d3f, fd023e8, 5fd2e4c, 3e82154 and 1631323; vitest.config.ts :25-30 and tsconfig.json incremental/tsBuildInfoFile/noEmit (:11-13) as stated. '--incremental false' validity: a plain read of installed typescript 5.6.3 lib/tsc.js shows the only tsBuildInfoFile reference is the option declaration (:36174) and diagnostic 5069 is raised only for isolatedDeclarations/mapRoot/declarationDir/declarationMap/emitDeclarationOnly (:122114-122269), so no option error is predicted. Two corrections: (a) adapters-diagnostic-1.json:7-17@3e82154 is not 'the exact argv' (heap flag came via run-check's NODE_OPTIONS, different test paths, worktree 389a at d8a0d3f); (b) the proposal's node-flag form does not bound the Vitest forks worker, see missed item 1. node_modules presence on the builder host remains NOT PROVEN (my reads were of another worktree's installed text)."
+     },
+     {
+      "item": "(5) Internal consistency (predicted reds vs 'focused green'; G7 FAIL vs dependent groups; unproven supervisor; floors vs 1,205 MiB; refusal consumes group; 140 minutes; 4 MiB cap; DB prerequisites and exit 2)",
+      "status": "FAIL",
+      "note": "Agree. All anchors re-derived (see D2-F2, F3, F4, F10, F11, F12). Additional inconsistency: proposal :22 'evidence folder for each approved run is unique' versus the frozen plan's fixed scratchPathProposed http-red-fd023e8/http-green-fd023e8 (:59, :165) that :67 says must stay unchanged."
+     },
+     {
+      "item": "(6) Evidence sufficiency per group and executability matrix",
+      "status": "PARTIAL",
+      "note": "Agree with the matrix with two refinements. G1: RED import graph verified closed (handler.mjs@f1e467f :121/:213, containment.ts@f1e467f :7, fixtures blob a67bb5ce shared), so G1 is well-formed once the supervisor exists and the expected-fail names are bound. G7: not executable as written (sixth command) and 'owned output directory' unattainable without script changes. DB category: receipts verified to bind 3e82154 (66 pinned paths each, 0 mismatches, none changed through 7f8edd7), intake verifier also requires evidence/review-599-repair-bindings-20261007.json (:17, :160-167; review 59940dcc, inventory 55, base 18bfbcd present) which exists at 3e82154; Docker daemon, image and host capacity NOT PROVEN."
+     },
+     {
+      "item": "(7) Host safety and standing rules (one heavy job; pinned Node 20.19.0; no installs; pagefile; volumes; unrelated processes)",
+      "status": "PARTIAL",
+      "note": "Agree, with one addition: the proposal's memory setting for Vitest ('old-space 1024', :35, :57) does not reach the forks worker under the stated argv (missed item 1), so the only effective host protection for G2-G5 is the admission floor. Compliance on paper confirmed: no npm ci (:15, :26), pinned Node (:15), no pagefile change and volume preservation (:101), verifiers assert v20.19.0 and --pull=never --network none --tmpfs with zero PortBindings. Gaps confirmed: cwd-relative dist deletion, G8 cache write and 0.0.0.0 listeners, possible git fetch in verify-release-manifest.ts, undefined heavy-job predicate."
+     }
+    ],
+    "missed": [
+     "P2 (host safety / plan precision): the proposed Vitest argv 'node --max-old-space-size=1024 node_modules/vitest/vitest.mjs run …' (proposal :57; frozen plan :79-80) bounds only the Vitest main process. Plain read of installed vitest 4.1.10 (dist/chunks/cli-api.*.js :3651 env = {...process.env,…}; :3734 forks execArgv = process.execArgv filtered to --cpu-prof/--heap-prof/--diagnostic-dir plus --experimental-import-meta-resolve; :3660-3667 adds only options.execArgv, conditions and project.config.execArgv) shows the worker that runs the tests inherits NODE_OPTIONS but not the parent's heap flag. run-check.mjs:16@3e82154 used NODE_OPTIONS, which does propagate. The manifest must state NODE_OPTIONS (or poolOptions.forks.execArgv) if 'old-space 1024' is meant as a bound on the test worker; otherwise the table at :35 overstates the bound. Installed text read outside Git objects; builder host NOT PROVEN.",
+     "P2 (merged into F5): 'owned dist only' / 'owned output directory' (proposal :53, :59) cannot be achieved with the unmodified scripts: script/build.mjs:6,:17 and vite.config.ts:35-36@3e82154 hardcode dist under cwd and under the config directory; the only owned-directory option is a full checkout copy, which conflicts with the no-node_modules-junction rule and the 'existing dependency junction' reliance (HTTP_CORRECTION.md:102-103).",
+     "P3: G9 'JSON API containment' (proposal :63) can only observe browser-normalized targets (the browser's URL parser and the CDP Fetch boundary at cdp.mjs:488-544 sit in front of every request); literal raw-target containment remains G1's domain. The proposal already excludes capture-http-evidence for that reason (:26) but does not say the same of a browser route.",
+     "P3: verify-migration-dag.ts@3e82154 consumes docs/coordination/CURRENT_PRODUCTION_STATE.json (:360-362) and supabase/MIGRATIONS.md (:367) and runs git merge-base --is-ancestor <production gitSha> HEAD (:74); production gitSha 79414143 is an ancestor of 3e82154, so the check is satisfiable, but these inputs are not named in G7.",
+     "P3: the intake verifier's hidden inputs beyond the receipt: evidence/review-599-repair-bindings-20261007.json (:17) must be receipt-pinned and present (:160-161), carry review 59940dcc… (:162), 55 inventory items (:164) and a base commit 18bfbcd… whose blobs are read with git show (:167); all exist at 3e82154, 1631323 and 7f8edd7. Positive verification, but the proposal (:86-89) lists only the four arguments.",
+     "P3: docs/health-launch/quick-order-20261005/.gitattributes@3e82154 covers evidence/*.log, MOUNT_PROPOSAL.patch and history/*.patch only; the two amendment patches whose digests 8392d243… and 8396609… the Decisions document approves by hash are not covered, so on an autocrlf checkout their on-disk bytes may not reproduce those digests; approval should name the Git blob, not the working-tree file.",
+     "P3: RECOVERY_DECISIONS_20261007.md rows 1-2 'scope commit' 6e661f91… and 95858ba6… are coordinator-branch records commits (docs/coordination only: 6e661f9 adds the privacy patch, QUICK_ORDER_DOCUMENT_HEADER_SCOPE_20261006.md and a json; 95858ba adds the fixture patch and relays) and are not ancestors of 3e82154; the wording could be misread as builder source scope.",
+     "P3: proposal :22 'evidence folder for each approved run is unique' conflicts with :67 keeping the frozen plan's fixed scratch paths (http-red-fd023e8, http-green-fd023e8 at plan :59, :165) unchanged; a single-attempt rule hides but does not resolve this.",
+     "P3 (correction to lens F7): tests/handler.test.mjs@fd023e8 has 40 top-level test() calls (doc 38:65 '33 to 40'), not 30; the seven-group pattern selects exactly seven (:392-:478).",
+     "P3 (correction to lens F1): 'Preserve protection FAIL' (:59) is ambiguous and does not state that verify-core-site-protection.mjs is run in G7; the P1 rests on the sixth command's missing manifest/environment, not on the gate reading.",
+     "Positive verification the lens did not perform: the RED snapshot's import graph is closed (no paths.mjs import in either test; both handler exports and createQuickOrderContainment present at f1e467f), so RED cannot fail at import; and both SQL receipts bind 3e82154 exactly (66/66 pinned sha256lf match, 0 pinned paths changed through 7f8edd7)."
+    ],
+    "verdictOpinion": "Agree with the lens's disposition after re-deriving every anchor from Git objects: RECOVERY_QUALIFICATION_PROPOSAL_20261007.md (blob 3e49450e at the coordinator's local, unpushed f1821b6, parent 9d13a6f = origin/codex/xenios-launch-coordination-20261005; scratchpad copies byte-identical) is a PROPOSAL and is not yet sufficiently specified for an execution decision as a whole, because every group is gated on an absent, unproven supervisor and the plan's own stop rules make G6 unreachable and G9 blocked by construction on current source. By group: G1 is the best specified (frozen blobs, scratch config bytes and argv at evidence/http-regression-plan-fd023e8.json@3e82154, sha256 51991abd…, identities matching doc 38; RED import graph verified closed) and could be decided once a G0 self-test exists, the expected RED failure names are bound, and the Vitest heap bound is expressed as NODE_OPTIONS rather than a parent-only flag; G2 is executable on current source under the same conditions; G3-G5 are executable but source-predicted red (4 provider-fixture cases; 8/8/1 unskipped header cases) unless 8396609 and 8392d243 are decided first, and the plan never defines whether a predicted red is 'focused green'; G6 resolves (installed typescript 5.6.3 raises no error for tsBuildInfoFile with --incremental false) but its admission condition cannot be met; G7 cannot run as specified (verify-release-manifest.ts needs a manifest argument and XENIOS_EXPECTED_* environment and may fetch origin; 'owned output directory' is unattainable with unmodified build.mjs/vite.config.ts); G8 and G9 are not executable (harnesses absent, Vite cache write into the shared junction, 0.0.0.0 listeners, browser route unbound). The DB category is specified mostly by the verifiers themselves (7-argument contract, v20.19.0, local Docker endpoint, --pull=never --network none --tmpfs, zero PortBindings, 17.11, exit 2 on completion), its receipts verifiably bind 3e82154 (66/66 pins) but exist only from 1631323 onward, and Docker, image and host capacity are NOT PROVEN. A compatible design grants no source, installation or execution authority; the qualification window expired 2026-10-06T21:43:37Z; everything is NOT RUN; hosted database state is NOT PROVEN; nothing here is PRODUCTION READY; Samuel's reserved decisions (legal pair content, product and quantity policy, revocation budget, protected hashes, GATE-01, database actions, the 8392d243/8396609 patches) are not made by this review. Severities: all fourteen lens findings upheld at their stated levels (two P1, six P2, six P3) with the line-anchor and count corrections noted; checklist item (4) downgraded from PASS to PARTIAL."
+   }
+  }
+ ]
+}
