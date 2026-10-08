@@ -1,0 +1,806 @@
+{
+ "schemaVersion": "claude_acceptance_lenses_v1",
+ "subject": "DOC49_5C_CORRECTION_20261008.md at coordinator 462cf796f662770cf2bbb317bcd6d08d827bcf68 against doc 49 5C-1..5C-3",
+ "workflowRun": "wf_027495ae-ceb",
+ "taskId": "wf8itmu21",
+ "agentCount": 4,
+ "subagentTokens": 899187,
+ "toolCalls": 214,
+ "lenses": [
+  {
+   "lens": "epoch-liveness-and-census",
+   "review": {
+    "verdict": "REVISION REQUIRED (narrow), lens E1, correction 5C-1. Does 5C-1 now resolve doc 49's P2? Mostly, but not fully. The structural defect is fixed in design, and the projections match the source readers. Lot quantity, version and updated_at churn is out of global invalidation, and quantity is now protected by exact lot FOR SHARE plus a fresh re-read. Allocatability and lot INSERT stay covered. Members and partners are narrowed to the columns their readers consume. Grants are OUT, and no QO reader exists for them. Binding and transfer INSERTs still advance the epoch. Shipping, media and launch-control readers are now listed. The preserved core is unchanged. One P2 remains, introduced by the correction's exact-lock alternative: the legal-binding reader also matches on alias_refs and refuses when the match is ambiguous, so whether another binding exists is a decision input. FOR SHARE cannot block a phantom INSERT of such a binding, and INSERT is now excluded. Rates and the refusal budget are honestly labelled unmeasured and reserved, but not stated. The census is not fully closed: it omits the founder checkout relation. It is also unclear whether statements that change no protected column still take the head. No reserved decision is made.",
+    "checklist": [
+     {
+      "item": "Inventory liveness stated first; quantity uses the intake's exact lot FOR SHARE instead of epoch advancement",
+      "status": "PASS",
+      "evidence": "packet:13-17: the intake locks the complete product/variant/SKU lot set in the agreed order before the head and keeps FOR SHARE through commit. It re-reads quantity and allocatability after waits, and quantity becomes a live transactional decision. Reserve uses plain FOR UPDATE with no SKIP LOCKED (reservation migration :584@3e82154), so writers wait for the intake rather than skip its lots."
+     },
+     {
+      "item": "Lot UPDATEs change version/updated_at; corrected projection excludes them",
+      "status": "PASS",
+      "evidence": "apply_inventory_movement sets the five quantity buckets plus version+1 and updated_at (research-inventory-lot-coa-admin.sql:851-860@3e82154). Release (:924-930) and expiry (:1378-1384) of 20260727160000 do the same, and none of them changes disposition. The lot projection is an explicit include list (packet:23) without quantity_*, version, updated_at, storage_location, supplier_reference or reviewed_*. Packet:17 refuses to reuse the version/updatedAt inventory hash (member-catalog-service.ts:283-293) as a global invalidator."
+     },
+     {
+      "item": "Allocatability (disposition, quality readiness, expiry) still protected",
+      "status": "PASS",
+      "evidence": "research_lot_is_allocatable reads disposition='available' and quantity_available>0 (coa-admin :526-543). research_lot_quality_ready reads product_id, variant_id, sku, recalled, excursion, expiry_date, retest_date and shelf_life_source (:485-524), and product_variant_ready reads products and variants (:427-447). All lot columns are in packet:23, the document columns in :24 (reader :498-521), the tests plus count in :25 (:453-475), and products/variants carry complete rows (:55-56). Expiry by time is handled by the fresh database-time re-read (:15). set_disposition changes disposition, so it still advances (:989-997)."
+     },
+     {
+      "item": "Lot INSERT / scope-change phantoms still invalidate",
+      "status": "PASS",
+      "evidence": "packet:15 says matching lot INSERT and scope changes still invalidate because row locks do not protect phantoms. Packet:11 requires OLD/NEW membership, including entry, exit and matching INSERT/DELETE."
+     },
+     {
+      "item": "Members narrowed to reader-consumed columns",
+      "status": "PASS",
+      "evidence": "packet:26: id, auth_user_id, email, status, billing_state, updated_at, created_at. These match memberAudienceSourceVersion (member-catalog-service.ts:79-86), masterOfferingViewerForMember (member-pricing-viewer.ts:38-50) and server/index.ts:988-1001. auth_user_id is unique (research-members.sql:10), so an INSERT cannot create a second match."
+     },
+     {
+      "item": "Customers / session bindings / acceptances exact-lock alternative sound against INSERT, DELETE, TRUNCATE",
+      "status": "PASS",
+      "evidence": "Customers are found by PK id with status APPROVED (identity-verification.ts:405-406, mayOwnOrders early-access-customer.ts:233-235), and normalized_email is unique (identity migration :94-108). Session bindings (PK session_id) and acceptances (unique customer_ref/kind/version) are append-only via a BEFORE UPDATE OR DELETE trigger (:187-231). These are positive-only proofs, so FOR SHARE blocks DELETE/UPDATE/TRUNCATE and the fresh re-read catches earlier changes."
+     },
+     {
+      "item": "Legal bindings exact-lock alternative sound against INSERT",
+      "status": "FAIL",
+      "evidence": "The reader matches customer_ref = p OR p = any(alias_refs) and raises ambiguous (21000) when it finds more than one row (20260809130000:280-298@3e82154). The writer checks conflicts only on the new row's own customer_ref (:249-277). So an INSERT of another binding that aliases the actor's handle flips the decision to refuse, and no row lock blocks it. See E1-F1."
+     },
+     {
+      "item": "Partners narrowed to availability/self-referral inputs",
+      "status": "PASS",
+      "evidence": "packet:32 lists id, member_id, state, identity_verified, tax_status, payout_status, certified_at, activated_at. This matches research_referral_v1_partner_availability (20260904 candidate :537-547@3e82154), which locks the partner FOR SHARE (:541) and does the self-referral read on research_members (:545)."
+     },
+     {
+      "item": "Grants OUT unless a reader is named",
+      "status": "PASS",
+      "evidence": "packet:31 and :69. Grants are read only by the Early Access cart attribution adapter and commerce-ports.ts:274 (research_early_access_referral_for_customer). No assisted-order or quick-order path reads them (git grep @3e82154)."
+     },
+     {
+      "item": "INSERT advancing kept where absence is a decision input (affiliate bindings, transfer events; first/latest-transfer races)",
+      "status": "PASS",
+      "evidence": "packet:34-35 and :73-74 keep absence-to-binding INSERT and first/latest-transfer INSERT. FOR SHARE on an existing binding does not stop a transfer INSERT, whose FK takes only FOR KEY SHARE. What stops the race is the writer's guard needing H X while the intake holds H S, plus the epoch check for INSERTs committed before H S. Reader: binding_at_json, binding select :609-610 and latest transfer ordering :611-613 (referral V1 @3e82154)."
+     },
+     {
+      "item": "Both referral generations covered",
+      "status": "PASS",
+      "evidence": "The 11-column binding union equals the legacy decoder's 8 columns (customer-attribution-binding.ts:149-158, :210) plus the V1 columns (20260904 :128-136). The 9-column touch union equals legacy partners-store.ts:269-275, :356 plus V1 20260914:93-104. Legacy rows are invisible to the V1 member reader (referral_version=1 filter), so including them is conservative."
+     },
+     {
+      "item": "Partner links / transfers projections consistent",
+      "status": "PARTIAL",
+      "evidence": "packet:33 and :35 promise selected link projections and transfer provenance 'below', but census rows :74 and :76 carry complete canonical rows and :45-51 defines only binding and touch projections. See E1-F4."
+     },
+     {
+      "item": "Reader census: shipping regions",
+      "status": "PASS",
+      "evidence": "research_early_access_shipping_serves reads active, country and region, with null region meaning whole country (20260804122000:419-433@3e82154). Unique index on country plus coalesce(region,'*') at :173-174. The upsert changes only active and added_by (:448-452). Packet:39 matches and labels this a proposal; QO's destinationEligibility callback (quick-order/catalog.ts:45-50, :201-207) is not wired to it today."
+     },
+     {
+      "item": "Reader census: media OUT",
+      "status": "PASS",
+      "evidence": "product-control-reader.ts:132-134 keeps media out of stability, and the QO projection (catalog.ts:99-125) has no media. Packet:41 keeps the legacy cart SQL media dependency (20260727200000:242, :261-264) conditional on the QO commit not calling it."
+     },
+     {
+      "item": "Reader census: launch controls / required inputs",
+      "status": "PASS",
+      "evidence": "research_domain_readiness reads domain, launch_status, software_complete, manifest_hash, expected_input_count and version (research-required-input-readiness.sql:474-517@3e82154). The manifest hash reads 13 columns where current_state<>'superseded' (:208-245). These match packet:43; required inputs carry complete rows (:60)."
+     },
+     {
+      "item": "Census closed (no unlisted relation consumed by a decision reader)",
+      "status": "FAIL",
+      "evidence": "For admin_attested bindings, the legal-binding directory reads research_early_access_cart_checkouts (supabase-legal-binding-directory.ts:221-224, :320-347; RPC 20260807193000:174-184). That relation is not in the all23 list (packet:53-77). See E1-F2."
+     },
+     {
+      "item": "Rates and refusal budget stated",
+      "status": "PARTIAL",
+      "evidence": "packet:79-81 labels every rate unmeasured and the 2s/250ms/1500ms/500ms figures an unapproved proposal, with Samuel's policy reserved. Nothing is invented. But there are no assumed rates, no list of the refusal sources that remain after narrowing, and no budget target, which doc 49:117 asked for."
+     },
+     {
+      "item": "Head acquisition and writer queueing for statements that change no protected column",
+      "status": "PARTIAL",
+      "evidence": "Unspecified. Packet:11 keeps 'writer ordering independently' and :5 keeps the reserve/release/expiry replacements, whose rationale assumes the guard takes H on lot updates. Doc 49:129-131 P3 (intake refuses while a writer holds H; writers queue behind H S) is not carried. See E1-F3."
+     },
+     {
+      "item": "Doc 49 P3: writer table with unique-index column; :720 advisory and :873 touch read classified",
+      "status": "FAIL",
+      "evidence": "Not addressed in the packet (:150 carries only the section E families). See E1-F5."
+     },
+     {
+      "item": "Preserved core unchanged",
+      "status": "PASS",
+      "evidence": "packet:5 keeps the complete writer/source lock set before the head, head last, consistent lot UUID order, replacements for reserve/release/expiry and privacy_begin, and finalize unchanged if the UUID order holds. This matches doc 49:85-90."
+     },
+     {
+      "item": "New decision readers / objects needing scope",
+      "status": "PARTIAL",
+      "evidence": "5C-1 adds no new SQL object. It adds new intake FOR SHARE locks on members, customers, acceptances, legal bindings, partners, touches and lots. These need UPDATE privilege (covered by 5C-2, packet:87) and a writer-versus-intake ordering review, which packet:19 acknowledges but does not supply. The founder checkout relation is a reader dependency that is not listed."
+     },
+     {
+      "item": "Source unchanged at f581b6b for 5C-1 anchors",
+      "status": "PASS",
+      "evidence": "git diff --stat 3e82154..f581b6b over supabase and server touches only the five currentness files. The inventory, referral, identity and server readers cited are byte-unchanged."
+     }
+    ],
+    "findings": [
+     {
+      "id": "E1-F1",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/DOC49_5C_CORRECTION_20261008.md:30 (also :19, :71)",
+      "claim": "The exact-row-lock alternative for research_early_access_legal_bindings is unsound. The QO member-path reader's decision depends on no other binding naming the actor's handle as an alias. The correction removes INSERT protection, so a concurrent alias-bearing INSERT is a phantom that no row lock blocks.",
+      "evidence": "20260809130000:290@3e82154: where customer_ref=p_customer_ref OR p_customer_ref=any(alias_refs); :295-296 raises 'ambiguous legal binding' (21000) when more than one row matches. The writer checks conflicts only by the new row's own customer_ref (:259-260); the table constrains only customer_ref<>all(alias_refs) (:31-47). Reader path: express.ts:120-128 -> directory forCustomer :208-214 -> production-deps.ts:525-526. A second binding naming C1 as an alias (an ordinary multi-handle verification) inserted after revalidation and before commit is not blocked by FOR SHARE on R1. Packet:15 itself says row locks miss phantoms; doc 49's verifier note called INSERT exclusion safe here.",
+      "fix": "Keep legal_bindings INSERT with cardinality(alias_refs)>0 advancing the global epoch (the table is append-only and the writer is verification-rate). Alternatively, record_legal_binding and the intake take one advisory key per handle, covering customer_ref and each alias (intake shared, before the head). Add an evidence case: an alias insert after intake revalidation refuses."
+     },
+     {
+      "id": "E1-F2",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/DOC49_5C_CORRECTION_20261008.md:45-77",
+      "claim": "The 'closed reader census' is not closed. The legal-binding directory consumes research_early_access_cart_checkouts for admin_attested bindings. The required QO visibility callback also has no censused source.",
+      "evidence": "supabase-legal-binding-directory.ts:221-224@3e82154: an admin_attested binding calls attestationIsPermitted (:343-347) -> checkoutCustomerRef (:320-334) -> research_early_access_cart_checkout_for_number, which selects record from research_early_access_cart_checkouts by checkout_number (20260807193000:174-184). The writer also reads checkouts.disposition (hardening :249-256). Checkouts are absent from all23 (packet:53-77), and packet:11 says an unlisted relation blocks drafting. quick-order/catalog.ts:42-43, :134-139: visibility is required (null throws) and its source is not stated.",
+      "fix": "Add the founder checkout row (checkout_number, record.customerRef, disposition) as an exact FOR SHARE proof for admin_attested bindings, or state that the QO commit refuses admin_attested. State that visibility and destination derive only from published offerRules (5C-3), or list their relations."
+     },
+     {
+      "id": "E1-F3",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/DOC49_5C_CORRECTION_20261008.md:11,15,17",
+      "claim": "Excluding quantity from invalidation fixes epoch refusals, but the correction does not say whether a statement that changes no protected column still takes the head. It also does not state the queueing that its lot FOR SHARE imposes, and it leaves open whether the commit keeps the exact-unit version/updatedAt check.",
+      "evidence": "packet:11 keeps 'writer ordering independently' and :5 keeps the reserve/release/expiry replacements, whose rationale (prior proposal :29-31) assumes an AFTER-statement guard takes H on lot updates. If quantity-only statements (coa-admin :851-860, release :924-930, expiry :1378-1384) take H X, every reserve/release/expiry still serializes with every intake; doc 49:129-131 P3 is not carried. FOR SHARE until commit (:15) makes same-SKU reserve (plain FOR UPDATE, :584) wait. Packet:17 'may retain' the exact-unit version/updatedAt hash (member-catalog-service.ts:283-293), which would refuse QO on any movement of the same variant.",
+      "fix": "State that a statement whose protected columns are unchanged neither advances the epoch nor takes the head, and re-derive which writer replacements are still needed. State the same-SKU writer wait and its timeout policy. Decide whether the QO commit compares the exact-unit inventory sourceVersion."
+     },
+     {
+      "id": "E1-F4",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/DOC49_5C_CORRECTION_20261008.md:26-37,74,76",
+      "claim": "The links and transfers text is internally inconsistent, and epoch membership (IN or OUT) is only implied for the identity relations.",
+      "evidence": "packet:33 says final link projections are 'specified below' and :35 says transfer provenance is 'bound below', but rows :74 and :76 carry complete canonical rows and :45-51 defines only binding and touch projections. Links stay global with INSERT advancing, although the member-path reader binding_at_json (referral V1 :604-618 via bindingAt :831-855) reads no link row and the guest path already locks the selected link FOR SHARE (:552-555). Members, customers, acceptances, legal bindings and partners (:26-32) never say 'OUT of epoch'; only :19 implies it, while :31 and :37 say OUT explicitly.",
+      "fix": "Mark IN or OUT of the epoch for every relation. For links, either keep the complete-row global scope deliberately (issue/revoke rate UNKNOWN) or move to an exact selected-link lock outside the epoch. Reconcile the transfer projection text with row 20."
+     },
+     {
+      "id": "E1-F5",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/DOC49_5C_CORRECTION_20261008.md:150",
+      "claim": "Doc 49's P3 carry-forwards that bear on 5C-1 are not addressed.",
+      "evidence": "There is no writer table and no column for unique indexes hit by inserts after the head. Neither late lock acquisition is classified: apply_inventory_movement's child advisory lock (coa-admin :720@3e82154) and bind's unlocked touch read (:873) followed by the events insert (:881). Reserve's 'drop non-qualifying candidates, refuse only when insufficient' semantics (reservation migration :598-606, :623-625) are not stated. Doc 49:121-131 asked for all of these in the next records delta; packet:150 carries only the section E families.",
+      "fix": "Carry the writer table with its unique-index column, the classification or pre-acquisition of the :720 and :873/:881 acquisitions, and the reserve semantics into the records delta."
+     },
+     {
+      "id": "E1-F6",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/DOC49_5C_CORRECTION_20261008.md:79-81",
+      "claim": "Rates and budget are honestly UNKNOWN and unapproved, but the refusal sources that remain after narrowing are not listed, so no measurement target can be set.",
+      "evidence": "packet:81 labels every rate unmeasured and the old figures unapproved, and reserves policy to Samuel. Doc 49:117 asked for expected rates and the budget the measurement must meet. Remaining sources include: Product Control complete rows (:55-60), lot disposition and quality (set_disposition coa-admin :989-997), lot inserts, binding INSERTs across all accounts (V1 bind :879; legacy putBindingIfAbsent customer-attribution-binding.ts:207-230), transfers, link issue/revoke, and shipping/launch changes. Early Access intakes never read bindings (referral-v1-attribution.ts:51-61 member-only).",
+      "fix": "List the remaining refusal sources with rate UNKNOWN, name the Samuel decision ID that owns the refusal budget, and optionally scope binding/transfer invalidation per account key."
+     },
+     {
+      "id": "E1-F7",
+      "severity": "P3",
+      "file": "docs/coordination/launch-coordination-20261005/DOC49_5C_CORRECTION_20261008.md:17,35,47,49",
+      "claim": "Anchor drift, and the QO referral reader is misnamed.",
+      "evidence": "The release update cited at :900 is at 20260727160000:924-930 (version :928, updated_at :929); :900 is a local assignment. The latest-transfer ordering cited at :589 is at :591 (:589 selects the binding). The QO member reader is bindingAt -> binding_at_json (referral V1 :831-855, :604-618; referral-v1-attribution.ts:56-61), not effective_binding_json :583. The legacy decoders (customer-attribution-binding.ts:149, :210; partners-store.ts:270, :356) are not assisted-order or QO readers: server/index.ts:1081-1088 wires only createReferralV1AttributionResolver.",
+      "fix": "Correct the anchors, name binding_at_json at occurredAt=now as the reader, and label the legacy decoders as generation-preservation scope rather than QO decision readers."
+     }
+    ],
+    "confirmed": [
+     "Scratch copies match their committed blobs: DOC49_5C_CORRECTION sha256 3e61866d… equals 462cf796:docs/coordination/launch-coordination-20261005/DOC49_5C_CORRECTION_20261008.md; RECOVERY_5C_RESOLUTION sha256 c1fb9d05… equals f1821b6.",
+     "The lot projection (packet:23) is exactly the lot columns read by research_lot_quality_ready / research_lot_is_allocatable / research_inventory_product_variant_ready (research-inventory-lot-coa-admin.sql:427-543@3e82154).",
+     "Quantity writers change only the quantity buckets, version and updated_at: apply_inventory_movement :851-860; release 20260727160000:924-930; expiry :1378-1384.",
+     "The quality document projection matches the reader at :497-521, and the tests projection plus count matches :453-475.",
+     "The member projection matches memberAudienceSourceVersion (member-catalog-service.ts:79-86), member-pricing-viewer.ts:38-50 and server/index.ts:988-1001; auth_user_id is unique (research-members.sql:10).",
+     "The customer projection is backed by the PK, unique normalized_email and the record-agrees CHECK (identity migration :94-108); the directory requires APPROVED (identity-verification.ts:405-406).",
+     "Session bindings and acceptances are append-only (identity migration :187-231), so they are positive-only proofs.",
+     "Grants have no assisted-order or QO reader at 3e82154; only the Early Access cart attribution adapter and commerce-ports.ts:274 read them.",
+     "The partner projection matches partner_availability (referral V1 :537-547).",
+     "The binding union matches the 11 non-created_at columns (referral V1 :116-136; legacy decoder customer-attribution-binding.ts:149-158, :210).",
+     "The touch union matches legacy partners-store.ts:269-275, :356 and V1 touch_attribution 20260914:93-104.",
+     "The transfer reader consumes id, account_key, effective_at, next_partner_id and next_link_id (referral V1 :591-597, :611-617).",
+     "The shipping reader consumes active, country and region with null region meaning whole country (20260804122000:419-433); added_by/added_at are not consumed.",
+     "The launch readiness reader consumes the six control fields and the 13 manifest fields plus current_state (research-required-input-readiness.sql:208-245, :474-517).",
+     "Media is excluded from TS catalog stability (product-control-reader.ts:132-134), and the QO projection has no media (catalog.ts:99-125); legacy cart SQL consumes media (20260727200000:242-264), which the packet acknowledges.",
+     "Reserve FEFO uses plain FOR UPDATE with no SKIP LOCKED (20260727160000:584), so writers wait for the intake's lot FOR SHARE rather than skip those lots.",
+     "The preserved core is restated unchanged (packet:5).",
+     "f581b6b changes only the five currentness files relative to 3e82154 under supabase/ and server/."
+    ],
+    "discrepancies": [
+     "Doc 49's lens verifier note on F1 (hl12/49_recovery_packet_lens_findings.json, lenses[0].verify.verdicts[0]) said excluding INSERT is safe for legal_bindings. Source contradicts this: the reader also matches on alias_refs and refuses ambiguity (20260809130000:290, :295-296@3e82154).",
+     "Packet:45 claims a 'closed reader census', but the legal-binding directory reads research_early_access_cart_checkouts, which is not among the 23 relations.",
+     "Packet:17 cites :900 for the release lot update; the UPDATE is at :924-930.",
+     "Packet:35 cites :589 for latest-transfer ordering; that is at :591.",
+     "Packet:33 and :35 promise selected link and transfer projections 'below', but census rows 20 and 22 carry complete rows.",
+     "Packet:49 cites legacy decoders as if they were QO readers; at 3e82154 assisted-order uses only createReferralV1AttributionResolver (server/index.ts:1081-1088)."
+    ],
+    "notProven": [
+     "Whether guard triggers take the head for statements that change no protected column; the design does not specify it.",
+     "Actual onboarding, inventory, binding, link and intake rates; epoch invalidation, refusal and lock-wait distributions (unmeasured, as the packet states).",
+     "Hosted installation of referral V1, 20260914 touch attribution, 20260905 approved_customer_access and the price tier / media decoupling candidates.",
+     "Hosted ownership and UPDATE privilege for the new FOR SHARE targets (members, customers, acceptances, legal bindings, partners, touches, lots); this belongs to 5C-2.",
+     "The intake's cross-relation lock order against identity and privacy writers; the writer-versus-intake ordering review is acknowledged but not supplied.",
+     "Whether the future QO commit will call the legacy cart reader (which would bring media back in) or use shipping_serves as its destination reader.",
+     "The source of the QO visibility callback.",
+     "Whether the founder checkout's record.customerRef can change in hosted data."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "E1-F1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Mechanism confirmed, severity lowered from P2. The reader matches customer_ref=p OR p=any(alias_refs) and raises 21000 when more than one row matches (20260809130000:280-298@3e82154). The writer checks conflicts only by its own customer_ref (:259-260), and the table only enforces customer_ref<>all(alias_refs) (:45-48). QO reaches this reader through viewers.customer (express.ts:121-129; server/index.ts:1005-1006; production.ts:44). So FOR SHARE on R1 does not stop an alias-bearing INSERT, which contradicts packet:9/:15. Why P3: the race is serializable with the intake first, because the writer reads neither intake rows nor anything the intake writes, and the reader has no as-of time predicate. The writer has no production server constructor (SupabaseEarlyAccessLegalBindingWriter appears only at :385 and in tests). Doc 49's verifier used the same reasoning to lower F3 ('no head cycle can form'). The fix stays: keep legal-binding INSERT advancing."
+     },
+     {
+      "id": "E1-F2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed: for admin_attested bindings, forCustomer -> attestationIsPermitted -> checkoutCustomerRef reads research_early_access_cart_checkout_for_number, which selects record (supabase-legal-binding-directory.ts:221-225, :320-347; 20260807193000:174-183@3e82154). Checkouts are not among the 23 relations (packet:53-77), and packet:11 makes that a drafting blocker. Precision fix: the reader consumes only record->>'customerRef'. disposition is a writer input (hardening :249-256). The record is mutated by paymentState jsonb_set (20260808100000:618-620), so the fix should lock the founder row exactly, projected on customerRef, not as a complete row. The visibility-source gap is confirmed: visibility is required and null throws (quick-order/catalog.ts:43-44, :134-139)."
+     },
+     {
+      "id": "E1-F3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed unspecified. Prior D:98 says only 'advances once per statement if its projection changes', and packet:11 and :17 never say whether the head is taken. Strengthened: under the narrowed lot projection, release (:924-930), expiry (:1378-1384) and apply_inventory_movement (coa-admin :851-859) change only quantity, version and updated_at, and reserve's other writes (:629 onward) are not among the 23 relations. If an unchanged projection takes no head, none of them takes the head. The head-inversion rationale for their replacement (prior :31-33) then disappears. What remains is ordering against the intake's lot FOR SHARE: FEFO 'for update of l' (:580-584) versus UUID order ends in a deadlock or lock-timeout refusal. Packet:5 still asserts the replacements without re-deriving why."
+     },
+     {
+      "id": "E1-F4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. Packet:33 and :35 promise link and transfer projections 'below', but rows 20 and 22 (:74, :76) carry complete canonical rows, and :47-49 define only bindings and touches. The relations at :26-32 are never labelled IN or OUT of the epoch; packet:19 only implies OUT. Session bindings (:28/:67) are IN for UPDATE/DELETE on an append-only table (identity migration :214-234), which is harmless but unlabelled."
+     },
+     {
+      "id": "E1-F5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed not carried: there is no writer table with a unique-index column, and the :720 and :873/:881 acquisitions are not classified (coa-admin :720@3e82154; referral V1 :873-881). Reserve's 'skip non-qualifying candidates, refuse only when insufficient' behaviour (:598-606, :623-625) is not stated. Mitigation: doc 49:121 assigned these to 'the next records delta', and this packet is scoped to the three P2s (it carries only the recipient P3, :148). Under the narrowed projection, :720 may become moot if quantity-only statements take no head (see E1-F3). bind's :879 insert still hits the PK and referral_v1_touch_binding_unique (:117, :139) after advancing."
+     },
+     {
+      "id": "E1-F6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. Packet:79-81 marks every rate unmeasured and the 2s/250ms/1500ms/500ms figures unapproved, and reserves policy to Samuel; nothing is fabricated. That conforms to the standing rule (budget approval is reserved, missing evidence is NOT PROVEN), so it is not a design defect. The residual gap is that the remaining refusal sources are not listed. Doc 49:117 asked for expected rates and a budget. Packet:83 also drops prior :126's 'writer-versus-writer with H held and no intake' measurement from the future-evidence list."
+     },
+     {
+      "id": "E1-F7",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Partly upheld. Anchor drift confirmed: :900 is a local assignment and the release UPDATE is at :924-930; latest-transfer ordering is at :591, not :589; packet:49 ':865' refusal is at :867. Refuted: 'the QO member reader is bindingAt -> binding_at_json'. At 3e82154 the Quick Order path consumes no Referral V1 reader. createReferralV1AttributionResolver is wired only into the assisted-order route table (server/index.ts:1076-1088). QO ports and handler carry only customer-declared attribution (production.ts:33-99; handler.mjs:157-164; ports.ts:28-42). Packet:589 follows prior :90's design choice of effective_binding_json. Upheld: the legacy decoders are not QO readers."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "Packet copies and source scope",
+      "status": "PASS",
+      "note": "The scratch copy sha256 3e61866d… equals 462cf796:docs/coordination/.../DOC49_5C_CORRECTION_20261008.md. The 3e82154..f581b6b diff under supabase/server/shared touches only the five currentness files (280+/36-)."
+     },
+     {
+      "item": "Inventory liveness first; quantity via exact lot FOR SHARE and fresh re-read",
+      "status": "PASS",
+      "note": "packet:15-17. Reserve uses plain 'for update of l' with no SKIP LOCKED (20260727160000:584@3e82154). Caveat: the full-set lock is broader than the >0 existence predicate (see missed)."
+     },
+     {
+      "item": "Lot quantity/version/updated_at churn excluded from the projection",
+      "status": "PASS",
+      "note": "Writers change only buckets, version and updated_at (coa-admin :851-859; release :924-930; expiry :1378-1384). packet:23 is an include list without them."
+     },
+     {
+      "item": "Allocatability (disposition, quality, expiry) still protected",
+      "status": "PASS",
+      "note": "Reader columns at coa-admin :427-543 match packet:23-25. Tests count=9 (:463-467) makes test INSERT an absence input; packet:25 'exact count' plus :11 matching INSERT covers it."
+     },
+     {
+      "item": "Lot INSERT and scope-change phantoms",
+      "status": "PASS",
+      "note": "packet:15, :11."
+     },
+     {
+      "item": "Members narrowed",
+      "status": "PASS",
+      "note": "member-catalog-service.ts:79-86; member-pricing-viewer.ts:38-50; server/index.ts:988-1001; auth_user_id and email are unique (research-members.sql:10-11)."
+     },
+     {
+      "item": "Customers, session bindings, acceptances: exact lock vs INSERT/DELETE/TRUNCATE",
+      "status": "PASS",
+      "note": "PK lookup and APPROVED check (identity-verification.ts:405-406); append-only triggers (identity migration :204-234); the acceptance predicate is positive-only (:450-484). FOR SHARE conflicts with TRUNCATE."
+     },
+     {
+      "item": "Legal bindings: exact lock vs alias INSERT",
+      "status": "FAIL",
+      "note": "Multiplicity on alias_refs is an absence input (20260809130000:290, :295-296). Severity P3, not P2: serializable with the intake first, writer is service-role only. See E1-F1."
+     },
+     {
+      "item": "Partners narrowed to their reader",
+      "status": "PARTIAL",
+      "note": "The projection matches partner_availability (V1 :537-547). No QO path consumes it at 3e82154. bindingAt (:831-854) and effective_binding_json (:583-598) read no partner row; partners are read only by guest touch_attribution (20260914:106) and binding_availability (:640-647)."
+     },
+     {
+      "item": "Grants OUT unless a reader is named",
+      "status": "PASS",
+      "note": "Only commerce-ports.ts:274 and the EA cart attribution adapter read grants."
+     },
+     {
+      "item": "INSERT advancing kept for bindings and transfers",
+      "status": "PARTIAL",
+      "note": "The design keeps it, as doc 49 directed (packet:34-35, :73-74). No QO decision reader or output exists at 3e82154: the attribution receipt allows only direct_no_referrer/captured_unmatched and not_authorized (intake candidate :36, :62-64, :73; ports.ts:28-42)."
+     },
+     {
+      "item": "Both referral generations",
+      "status": "PASS",
+      "note": "Conservative. Legacy rows are invisible to the V1 readers' referral_version=1 filter (:589, :608-609)."
+     },
+     {
+      "item": "Links and transfers projections consistent",
+      "status": "PARTIAL",
+      "note": "Internal inconsistency at :33/:35 versus :74/:76 (E1-F4)."
+     },
+     {
+      "item": "Census: shipping, media, launch controls",
+      "status": "PASS",
+      "note": "20260804122000:419-433; product-control-reader.ts:132-134; research-required-input-readiness.sql:208-249, :474-528. All are labelled proposals; destination approval is reserved."
+     },
+     {
+      "item": "Census closed",
+      "status": "FAIL",
+      "note": "Founder checkouts relation is missing (E1-F2). The visibility source is unstated. The referral reader output has no QO destination."
+     },
+     {
+      "item": "Rates and refusal budget",
+      "status": "NOT_PROVEN",
+      "note": "Honestly UNKNOWN and reserved to Samuel (packet:79-81); the remaining refusal sources are not listed."
+     },
+     {
+      "item": "Head acquisition for statements with an unchanged projection; writer queueing",
+      "status": "PARTIAL",
+      "note": "Unstated (E1-F3); doc 49:131-132 P3 not carried."
+     },
+     {
+      "item": "Doc 49 P3 carry-forwards (writer unique-index column, :720, :873, reserve semantics)",
+      "status": "FAIL",
+      "note": "Not carried. Severity P3; doc 49 assigned them to the next records delta (E1-F5)."
+     },
+     {
+      "item": "Preserved core unchanged",
+      "status": "PASS",
+      "note": "packet:5 matches doc 49:85-95. The replacement rationale needs re-derivation (E1-F3)."
+     },
+     {
+      "item": "No reserved decision made; no authority granted",
+      "status": "PASS",
+      "note": "packet:9, :39, :81, :152 disclaim. Legal pair, offer/destination, budget and writer scope are left to Samuel."
+     }
+    ],
+    "missed": [
+     "P3 [referral reader has no Quick Order destination]: At 3e82154, Quick Order attribution is self-declared only (core.mjs:164-165; handler.mjs:157-164). Receipt and companion are fixed to direct_no_referrer/captured_unmatched with commissionState not_authorized (ports.ts:28-42; intake candidate :36, :62-64, :73). production.ts:33-99 composes no Referral V1 resolver. Census rows 19-23 therefore have no QO consumer, so no binding, transfer, link, touch or partner churn can change a QO outcome. Smallest fix: name the field the held commit's referral reader would populate (for example the request's affiliate_attribution_ref), with its owner scope and the reserved commission/attribution policy. Otherwise, apply doc 49's grants rule and put the referral family OUT. That would remove the largest remaining global refusal source: binding INSERT on every account bind (V1 :879).",
+     "P3 [inventory predicate undefined, lot lock over-broad]: packet:15 says 'insufficient facts refuse', but packet:17 says canonical allocatability proves only quantity_available>0 (coa-admin :526-543@3e82154). The 5C-3 DecisionInputs/OfferRule shape (packet:97-123) has no inventory or lot selector, although prior :68 listed lot/document/readiness selectors. The QO catalog source (assisted-order/production-catalog.ts) has no inventory reader at 3e82154. For an existence predicate one locked allocatable witness lot is enough, yet the complete-SKU-set FOR SHARE (packet:15) makes every same-SKU reserve, release, expiry or movement queue behind each intake, with no budget. Smallest fix: define the predicate (>0 versus requested quantity, which is reserved quantity policy) and size the lock set to it.",
+     "P3 [replacement rationale changes]: with quantity, version and updated_at excluded, reserve, release, expiry and apply_inventory_movement never change a protected column. If unchanged projections take no head, they never take H, which makes doc 49's :720 concern moot and removes the prior :31-33 head-inversion rationale. What remains is UUID versus FEFO ordering against the intake's lot FOR SHARE (:580-584), plus the pre-existing writer-versus-writer inversion. This should be re-derived, not asserted (packet:5).",
+     "P3 [single-row head serialization]: every epoch-advancing writer (bindings and transfers on any account, link issue/revoke, product and lot-disposition admin, shipping) must update the one head row. They serialize with each other for their full transactions and queue behind every intake's H S. Prior :126's 'writer-versus-writer with H held and no intake' measurement is missing from packet:83's future evidence. NOT PROVEN.",
+     "P3 [census digest encoding]: readerCensusSha256 and relationProjectionVersion (packet:108-110, :138) bind a census document with no defined canonical byte form, so a validator cannot recompute the digest. This overlaps with the 5C-3 lens.",
+     "Calibration note: E1-F1's lowering to P3 follows the doc 49 verifier's own precedent (hl12/49_recovery_packet_lens_findings.json lenses[0].verify.verdicts[2], F3 lowered because 'no head cycle can form'). The legal-binding race leaves the history serializable and has no as-of reader."
+    ],
+    "verdictOpinion": "The lens's verdict (REVISION REQUIRED, narrow, one P2) overstates E1-F1. The mechanism is real: an alias-bearing legal-binding INSERT is a phantom that the exact row lock does not block, which contradicts packet:9/:15. But it leaves the history serializable with the intake first, the reader has no as-of predicate, and the writer is service-role only. By doc 49's own calibration that is P3. With every finding at P3, correction 5C-1 resolves doc 49's P2 in structure. Lot quantity, version and updated_at churn is out of global invalidation, and quantity is protected by exact FOR SHARE plus a fresh re-read. Allocatability and phantoms stay covered. Members and partners are narrowed to the columns their readers consume. Grants are OUT. Binding and transfer INSERTs advance. Shipping, media and launch controls are censused. The preserved core is restated. The rate and budget sub-item becomes an honestly UNKNOWN, Samuel-reserved prerequisite: NOT PROVEN, not a design defect. Before any guard body is drafted, these P3s must be carried:\n- Legal-binding INSERT advances.\n- The founder checkout row is locked, projected on customerRef.\n- The visibility source is stated.\n- Every relation is labelled IN or OUT of the epoch.\n- The design states whether unchanged projections take the head, and re-derives the writer replacements.\n- Doc 49's P3 writer-table items are carried.\n- The inventory predicate and lock-set size are defined.\n- The design names where the referral reader's output lands in Quick Order, or puts the referral family OUT. At 3e82154 Quick Order has no referral consumer, which is the most consequential miss.\nMy recommended disposition is COMPATIBLE AS DESIGN for 5C-1 with these P3 carry-forwards. A reviewer who applies doc 49's literal rule ('keep INSERT advancing where absence is a decision input') may keep F1 at P2, which needs a one-line fix. Either way, compatibility grants no source, installation or execution authority. No reserved decision is made: Health legal pair, offer/quantity/destination, commission attribution, budget, writer scope and GATE-01 all stay with Samuel."
+   }
+  },
+  {
+   "lens": "definer-and-decision-inputs",
+   "review": {
+    "verdict": "COMPATIBLE AS DESIGN for lens E2 (5C-2 and 5C-3 only). Both doc 49 P2s are resolved. 5C-2 now requires the same role OID for the sessions owner, nonce owner, provider-fence owner and the commit owner (the role that takes the locks), with rolsuper or rolbypassrls. It also requires effective privileges on every touched relation, including UPDATE for FOR SHARE. Precheck, reapply, postcheck and runtime checks must refuse when the precondition fails or drifts. No grant, role or RLS change may be used to repair it, the sessions prefix is not used, and hosted ownership is stated as NOT PROVEN. 5C-3 now has a schemaVersion literal and a closed key list with types, bounds and nullability. It defines the canonical bytes exactly (display key order, no whitespace/BOM/newline, NFC, escaping, integers, byte-order sorting, re-encode equality, never jsonb::text). The digest rule is: exactly one normalized_decision_inputs artifact whose digest is the SHA-256 of the stored text, with no circular bundleSha256. Samuel's values fill the keys, and the browser chooses nothing. No P0, P1 or P2 remains. Eleven P3s should go into the next delta before the validator or installer is drafted. Two doc 49 P3s: the recipient P3 is addressed; the budget-consequence P3 is not. Missing: commit and helper names that keep the new function out of the existing fingerprint namespaces, the validator object, uniqueness of artifact kinds, a few undecidable validator rules, and the census bytes. This lens grants no source, installation or execution authority and makes none of the reserved decisions.",
+    "checklist": [
+     {
+      "item": "5C-2: same role OID for sessions owner, nonce owner, fence owner and commit/locking role",
+      "status": "PASS",
+      "evidence": "Packet :87 requires all four to resolve to the same role OID. sessions.sql:642-651@3e82154 already forces nonce owner = sessions owner. The intake gate intake.sql:341-345@3e82154 requires current_user = relowner(provider_fence)."
+     },
+     {
+      "item": "5C-2: rolsuper OR rolbypassrls, and UPDATE privilege for FOR SHARE",
+      "status": "PASS",
+      "evidence": "Packet :87: 'Require rolsuper OR rolbypassrls and effective privileges for each operation on every touched relation, explicitly SELECT and UPDATE on sessions. FOR SHARE needs UPDATE privilege; forced RLS is not bypassed by ordinary ownership.' This matches sessions.sql:683 and intake.sql:342."
+     },
+     {
+      "item": "5C-2: owner of every relation the commit locks FOR SHARE or writes",
+      "status": "PARTIAL",
+      "evidence": "Packet :87 replaces owner equality with effective privileges plus bypass. That is equivalent in practice, because identity tables force RLS and revoke everything, including from service_role (identity mig :240-249, :253-273), and :89 forbids grants. However, the authority head/revisions owner is not in the same-OID list, although currentness_integrity requires current_user = head owner exactly (currentness.sql:171-173@3e82154)."
+     },
+     {
+      "item": "5C-2: installer precheck refuses otherwise, and where it lives",
+      "status": "PARTIAL",
+      "evidence": "Packet :89 says future precheck, reapply/postcheck and runtime integrity refuse. Packet :150 says 'Definer condition belongs to the held intake installer/commit contract', which is ambiguous between a new commit candidate and an amended intake. The intake outer block (intake.sql:355-358) refuses when research_health_quick_order_commit exists, so intake reapply after the commit is installed is not addressed."
+     },
+     {
+      "item": "5C-2: no grants added to sessions/acceptance tables; no repair by ownership/grant/role/RLS change",
+      "status": "PASS",
+      "evidence": "Packet :89: 'Preserve forced RLS, zero policies, no raw table/column application grants ... No ownership/grant/role/RLS changes repair a failed precondition.'"
+     },
+     {
+      "item": "5C-2: no function under research_private_early_access_ prefix",
+      "status": "PASS",
+      "evidence": "Packet :89 keeps exactly the four existing functions, and :91 says 'Do not use the reserved sessions prefix'. The install guard is sessions.sql:653-667@3e82154."
+     },
+     {
+      "item": "5C-2: bypass consequence stated, and compensating controls (qualified names, search_path, no dynamic SQL)",
+      "status": "PARTIAL",
+      "evidence": "Packet :91 says only 'Prefer qualified objects/search_path=pg_catalog'. It does not state that the body becomes the only row-access barrier on every touched relation. It also omits a no-dynamic-SQL rule and an EXECUTE ACL rule."
+     },
+     {
+      "item": "5C-2: hosted ownership NOT PROVEN, with precheck items",
+      "status": "PASS",
+      "evidence": "Packet :89: 'Hosted facts remain NOT PROVEN ... Future precheck, reapply/postcheck and runtime integrity must all refuse missing/drifted ownership before request writes.'"
+     },
+     {
+      "item": "5C-2: search_path conflict with the intake '' convention and the sessions guard",
+      "status": "PASS",
+      "evidence": "No checker conflict. The sessions guard checks proconfig only for its four functions (sessions.sql:669-683). The intake verifier checks search_path='' only for its own namespace (intake.sql:413-416, :457-460). Currentness checks only ACLs for its own functions (:178-189). The choice itself is left open ('Prefer'), while both Quick Order slices use '' (intake :415, currentness :82)."
+     },
+     {
+      "item": "5C-3: schemaVersion literal",
+      "status": "PASS",
+      "evidence": "Packet :99 'quick-order-decision-inputs-v1', distinct from the envelope 'quick-order-authority-v1' (currentness.sql:90@3e82154)."
+     },
+     {
+      "item": "5C-3: complete key list with types, bounds and nullability; nested objects closed",
+      "status": "PARTIAL",
+      "evidence": "Packet :95 says all keys are required and unknown keys refuse. Lines :97-136 give types and bounds; only effectiveUntil is nullable. Not stated: minimum cardinality and distinctness for workflowModes and price.audiences; the USRegion code form; what configurationVersion must equal."
+     },
+     {
+      "item": "5C-3: canonical encoding exact",
+      "status": "PASS",
+      "evidence": "Packet :140: UTF-8 with no BOM or newline; keys in displayed order; no insignificant whitespace; NFC; no controls or unpaired surrogates; direct non-ASCII; escape only quote and backslash; plain integers; set arrays sorted by UTF-8 bytes; offer rules sorted by tuple; re-encode with byte equality; never jsonb::text. Residual: 'controls' and 'outer whitespace' are undefined for Text64."
+     },
+     {
+      "item": "5C-3: digest rule linking stored text to the envelope artifact (3e82154 :85-121; f581b6b)",
+      "status": "PASS",
+      "evidence": "Packet :142: exactly one normalized_decision_inputs artifact, whose digest is the lowercase SHA-256 of the stored text. bundleSha256 is excluded to avoid circularity, and changed bytes conflict. At f581b6b the validator is unchanged (:83-131), and new triggers make revisions immutable. publish_revision still compares only the jsonb envelope (:302@f581b6b)."
+     },
+     {
+      "item": "5C-3: bounds reuse the canonical 1-64 kind/version limits",
+      "status": "PASS",
+      "evidence": "Text64 (packet :128) allows 1-64 code points and ≤64 UTF-16 units. This is a subset of the CHECK length 1..64 at identity migration 20260804120000:145-150@3e82154."
+     },
+     {
+      "item": "5C-3: Samuel's reserved values fill the keys, not the shape",
+      "status": "PASS",
+      "evidence": "Packet :95: 'No actual legal pair, approved quantity, offer, destination or audience value is supplied'. Packet :152: 'Samuel supplies actual legal applicability, positive offer/quantity/audience/destination...'"
+     },
+     {
+      "item": "5C-3: content classes represented",
+      "status": "PARTIAL",
+      "evidence": "Represented: Health pair (healthAgreement), legal and configuration artifacts, product/variant eligibility (offerRules), quantity, audience, destination, effectivity, and the relation-projection literal. Catalog, lot, document, readiness and domain selectors appear only through readerCensusSha256 (:110, :138), and the bytes it covers are undefined."
+     },
+     {
+      "item": "5C-3: browser chooses no value",
+      "status": "PASS",
+      "evidence": "Decision inputs are publication data. Price viewer authority is server-derived (:134), and canonical workflow exclusions win (:132). The prior :70 says browser selections cannot choose the pair."
+     },
+     {
+      "item": "5C-3: validator is a currentness_% function inside the fingerprint namespace",
+      "status": "FAIL",
+      "evidence": "Not stated. Packet :150 says only 'proposed currentness/publication modules cover decision content' and 'No extra helper ... silently added'. Doc 49 eligibility (:212) expects a column, a validator and a digest rule. The fingerprint namespace is currentness.sql:47-51@3e82154."
+     },
+     {
+      "item": "5C-3: validator draftable from the text alone",
+      "status": "PARTIAL",
+      "evidence": "Mostly draftable in plpgsql: closed key order, C-collation byte sort, IS NFC NORMALIZED, and jsonb parse then re-encode (which also rejects duplicate keys). Undecidable points: the controls/whitespace class; whether `unbound:` is a validator rule; workflow/audience cardinality; USRegion form; configurationVersion linkage; artifact matching when an envelope kind repeats; census bytes."
+     },
+     {
+      "item": "Doc 49 P3: recipient bound 254 vs CHECK 3..320",
+      "status": "PASS",
+      "evidence": "Packet :148 keeps CHECK 3-320 unchanged and adds one adapter/commit admission predicate of 3-254 ASCII bytes. intake.sql:126-129@3e82154. Residual: the dot-atom/label rules and 'normalized' are not exact, and nothing requires a domain dot (the CHECK requires '[.]')."
+     },
+     {
+      "item": "Doc 49 P3: budget wording consequences",
+      "status": "FAIL",
+      "evidence": "Packet :81 says only that rates are unmeasured and that 2s/250/1500/500 is unapproved. It does not carry doc 49's two consequences: an intake refuses whenever a guarded writer holds the head exclusively mid-transaction, and writers queue behind an intake's share lock for its full hold unless they have their own lock_timeout policy."
+     },
+     {
+      "item": "Do 5C-2 and 5C-3 resolve doc 49's P2s",
+      "status": "PASS",
+      "evidence": "Every 'smallest correction' in doc 49 §3 for 5C-2 (precondition, installer refusal, hosted precheck, prefix) and 5C-3 (enumerated shape before any body; values versus shape) is present. Residuals are P3."
+     }
+    ],
+    "findings": [
+     {
+      "id": "E2-1",
+      "severity": "P3",
+      "file": "DOC49_5C_CORRECTION_20261008.md:87 (462cf79)",
+      "claim": "The same-OID set omits the currentness authority head/revisions owner, and the companion owner is not named. The commit must lock the head, and currentness integrity requires an exact owner match.",
+      "evidence": "Packet :87 lists sessions, nonce, provider-fence and commit owner. currentness.sql:171-173@3e82154 raises unless current_user = relowner(authority_head). The head has RLS enabled and privileges revoked from public/anon/authenticated/service_role (:162-165), so only the owner or a superuser can lock it without the grants that :89 forbids. The currentness installer requires installer = fence owner (:353-355@f581b6b), and the intake requires companion relowner = current_user (intake.sql:402), so the two coincide at install time but can drift afterwards.",
+      "fix": "Add relowner(research_health_quick_order_authority_head), relowner(authority_revisions) and relowner(research_health_quick_order_intakes) to the same-OID precondition. Check them in precheck, postcheck and the commit's runtime integrity."
+     },
+     {
+      "id": "E2-2",
+      "severity": "P3",
+      "file": "DOC49_5C_CORRECTION_20261008.md:91",
+      "claim": "The compensating controls for a SECURITY DEFINER with RLS bypass are only preferred, not required, and the bypass consequence is not stated.",
+      "evidence": "Packet :91: 'Prefer qualified objects/search_path=pg_catalog'. With search_path pg_catalog or '', pg_temp is still searched first for relation names, so unqualified names are unsafe. There is no rule against dynamic SQL and no EXECUTE ACL rule (PostgreSQL grants EXECUTE to PUBLIC by default). The Quick Order family pins search_path='' (intake.sql:415, :459; currentness.sql:82). The sessions guard pins pg_catalog only for its four functions (sessions.sql:681). Neither guard checks the commit's setting, so there is no conflict, only an undecided choice.",
+      "fix": "Replace 'Prefer' with 'Require': fully qualified names; one pinned proconfig (recommend search_path='' to match the Quick Order family); no dynamic SQL; EXECUTE revoked from PUBLIC, anon and authenticated and granted only as approved; all pinned in the commit's own fingerprint. State that the body is the only row-access barrier on every touched relation."
+     },
+     {
+      "id": "E2-3",
+      "severity": "P3",
+      "file": "DOC49_5C_CORRECTION_20261008.md:89-91,:150; supabase/candidates/20261005_research_health_quick_order_intake.sql:355-358@3e82154",
+      "claim": "The installer location is ambiguous, and the accepted intake candidate refuses whenever the commit function exists. The helper namespace also overlaps the existing fingerprint namespaces.",
+      "evidence": "Packet :150 says the definer condition belongs to 'the held intake installer/commit contract'. intake.sql:355-358 raises 'Held Quick Order write surface unexpectedly exists' if research_health_quick_order_commit exists, so intake reapply and postcheck refuse after the commit is installed. That check sits in the outer block, outside install_sql, so it is not covered by definition_hash (:393). Packet :91 allows 'research_health_quick_order_* helpers'. The intake count requires exactly 4 functions under the intake_ prefix plus replay and admin_detail (:395, :399, :443), and currentness_% is inside the currentness fingerprint (:47-51). The packet cites 'intake candidate:340', which is `begin`; the gate is :341-345.",
+      "fix": "State that the commit gets its own candidate gate, reusing the :341-345 predicate, the sessions :683 predicate and the full same-OID set. Amend the intake's outer-block held-surface refusal so it accepts a fingerprint-matched commit; the seal is unchanged. Name the excluded helper prefixes: intake_, currentness_, authority_, replay, admin_detail, publish/revoke/read_current_authority, guard_source_write. Correct the anchor to :341-345."
+     },
+     {
+      "id": "E2-4",
+      "severity": "P3",
+      "file": "DOC49_5C_CORRECTION_20261008.md:142; supabase/candidates/20261006_research_health_quick_order_currentness.sql:105,:116-118@3e82154 (:118-120@f581b6b)",
+      "claim": "Uniqueness is proposed only for the normalized_decision_inputs kind. The envelope still allows 6-32 artifacts and repeated catalog/bindings/reconciliation/health_legal/configuration kinds, so matching against 'the corresponding kind/path/hash' is ambiguous.",
+      "evidence": "The validator checks that kinds are present (kinds @> six) and that paths are distinct, not that kinds are unique, and it allows up to 32 artifacts. The decision inputs carry exactly one ArtifactRef per kind (packet :102-103). With two health_legal artifacts in the envelope, an existence match passes and leaves one legal artifact unbound, so the server reader's choice is unspecified.",
+      "fix": "Require exactly one envelope artifact per kind for all six kinds (array length 6), or state that the decision-input reference selects the only authoritative artifact and that any other artifact of the same kind refuses."
+     },
+     {
+      "id": "E2-5",
+      "severity": "P3",
+      "file": "DOC49_5C_CORRECTION_20261008.md:142,:150",
+      "claim": "The validator object, the storage column, the publish signature and the bypass protection are not named, so placement in the fingerprint namespace is undecided.",
+      "evidence": "Doc 49 :212 holds 'normalized_decision_inputs (column, validator, digest rule)'. Packet :150 says only 'proposed currentness/publication modules' and 'No extra helper ... silently added'. At f581b6b the revisions table blocks UPDATE/DELETE/TRUNCATE with triggers. An INSERT by ordinary owner DML is constrained only by the CHECK (:140-142@3e82154). publish_revision(jsonb) compares only the jsonb envelope (:302@f581b6b).",
+      "fix": "Name the function research_health_quick_order_currentness_valid_decision_inputs(text,jsonb), which falls inside currentness.sql:47-51. Add a text column on revisions with a CHECK calling it. Change publish to (jsonb,text), and conflict on any byte difference in the text. State that this is the validator doc 49 anticipated, not an unlisted helper."
+     },
+     {
+      "id": "E2-6",
+      "severity": "P3",
+      "file": "DOC49_5C_CORRECTION_20261008.md:113-136",
+      "claim": "A few validator rules cannot be decided from the text, so the TypeScript publisher and the SQL validator could disagree.",
+      "evidence": "(a) 'controls' and 'outer whitespace' are undefined for Text64 (Cc only? DEL/C1? Cf? Unicode White_Space?). NFC for unassigned code points can differ between the Node and PostgreSQL Unicode versions. (b) It is unclear whether '`unbound:` cannot become positive authorization' is a validator prefix refusal. (c) workflowModes and price.audiences have no stated minimum count or distinctness, and the 'set arrays' are not listed. (d) The USRegion form is unanchored; catalog.ts:10@3e82154 has two-letter 50+DC. (e) Nothing says what configurationVersion must equal. (f) No consistency rule links workflowModes to price.unpriced. (g) Composition of offer quantity with the canonical catalog min/max/increment (catalog.ts:86-88) is not stated.",
+      "fix": "Add one line for each: controls = Unicode Cc plus Cf, whitespace = Unicode White_Space, assigned code points only. `unbound:` prefix refuses. Arrays are 1..N, distinct and sorted (list them). USRegion uses the catalog.ts:10 two-letter set. configurationVersion equals a named envelope ref. Define the request_pricing/unpriced pairing. Admitted quantity must satisfy both rules."
+     },
+     {
+      "id": "E2-7",
+      "severity": "P3",
+      "file": "DOC49_5C_CORRECTION_20261008.md:110,:138; RECOVERY_5C_RESOLUTION_20261007.md:64,:70",
+      "claim": "The bytes behind readerCensusSha256 are undefined, and the configuration artifact could create the same circular-digest problem the packet avoids for bundleSha256.",
+      "evidence": "Packet :138 says 'Do not populate that digest before the census is closed'. No census artifact path, encoding or verifier is named, and it is not one of the six envelope kinds. The prior :64 has the server descriptor carry configuration identity, and :70 says server config must 'agree on revision, bundle/decision-input digests'. If the configuration artifact's bytes include the decision-input digest, while the decision text embeds artifacts.configuration.sha256 (:103), the publication cannot be constructed.",
+      "fix": "Name the census document, its canonical bytes and the party that compares readerCensusSha256 (a server code constant). State that the configuration artifact excludes the revision, bundle and decision-input digests; agreement on those happens at runtime, outside the artifact."
+     },
+     {
+      "id": "E2-8",
+      "severity": "P3",
+      "file": "DOC49_5C_CORRECTION_20261008.md:105-106; server/research/health/quick-order/legal.ts:14,:20@3e82154",
+      "claim": "healthAgreement is a single object, which fixes the reserved legal decision at exactly one Health agreement. The current reader accepts arrays.",
+      "evidence": "quickOrderAgreements takes approvedHealthPairs as an array and loops config.requiredAgreements (legal.ts:14, :20-26). The decision shape has one {kind, version}. Doc 49 reserves the Health legal kind, version, content and applicability to Samuel, and the rule that values fill keys, not shape, implies the shape should not decide cardinality.",
+      "fix": "Either make healthAgreements a 1..N distinct sorted array, or state that more than one required Health agreement needs a new schemaVersion."
+     },
+     {
+      "id": "E2-9",
+      "severity": "P3",
+      "file": "DOC49_5C_CORRECTION_20261008.md:148; intake.sql:126-129@3e82154",
+      "claim": "The recipient P3 is resolved on which bound governs, but the 'identical' admission predicate is not exact and is not guaranteed to be a subset of the CHECK.",
+      "evidence": "Packet :148 keeps CHECK 3-320 and adds a 3-254 ASCII admission rule with a 'valid dot-atom local part/domain labels' predicate. The atext set, label length or LDH rules, the local-part limit and the meaning of 'normalized' (case?) are unstated. The CHECK requires '^[^@]+@[^@]+[.][^@]+$'. A dot-atom domain without a dot would pass admission and then fail the CHECK at insert.",
+      "fix": "Spell the predicate out as one regex shared by adapter and commit: RFC 5322 atext dot-atom local part ≤64; LDH labels 1-63; at least two labels; no case folding (refuse instead). State that it is a strict subset of the CHECK. Add tests for missing, blank and malformed values under their own test-path authority."
+     },
+     {
+      "id": "E2-10",
+      "severity": "P3",
+      "file": "DOC49_5C_CORRECTION_20261008.md:81",
+      "claim": "Doc 49's budget P3 is not carried: the two contention consequences are still unstated.",
+      "evidence": "Doc 49 §3 P3 asks the packet to state that an intake refuses whenever a guarded writer holds the head exclusively mid-transaction, and that writers queue behind an intake's share lock for its full hold unless given their own policy. Packet :81 says only that rates are unmeasured and the figures unapproved.",
+      "fix": "Add both sentences, plus a 'writer-side lock_timeout policy' item reserved for Samuel. Keep the numbers as an unapproved proposal."
+     },
+     {
+      "id": "E2-11",
+      "severity": "P3",
+      "file": "DOC49_5C_CORRECTION_20261008.md:89,:142",
+      "claim": "Two anchors drift.",
+      "evidence": "'intake candidate:340' is `begin`; the gate is intake.sql:341-345@3e82154. 'currentness.sql:85' is the top-level key check; the kind-presence check cited for 'not uniqueness' is :116-118@3e82154, which is :118-120 at f581b6b, where the validator starts at :83.",
+      "fix": "Correct the two anchors and cite the f581b6b lines for the current candidate."
+     }
+    ],
+    "confirmed": [
+     "Copy matches the original: sha256 3e61866d725841c4c307430b1396763e9919f24088e024e4a3559ebdd5af30c6 equals the 462cf79 blob docs/coordination/launch-coordination-20261005/DOC49_5C_CORRECTION_20261008.md (152 lines).",
+     "sessions.sql@3e82154: RLS enabled and forced (:264-267); zero-policy guard (:269-281); revoke from public (:283-284) and from anon/authenticated/service_role (:286+); nonce owner = sessions owner (:642-651); prefix guard refuses any other research_private_early_access_% function (:653-667); the four functions must be prosecdef, search_path=pg_catalog, owned by the table owner, with rolsuper or rolbypassrls (:669-686). No other function's proconfig is checked.",
+     "intake.sql@3e82154: gate requires read committed, rolsuper or rolbypassrls, and current_user = relowner(provider_fence) (:341-345); refuses an existing commit or guard_source_write (:355-358); verifier pins search_path='' and definer flags only for its own namespace (:413-416, :457-460); companion recipient CHECK 3..320 (:126-129).",
+     "currentness@3e82154: envelope validator :81-133 with artifacts 6-32; kind presence only (:116-118); refs 1-160 (:126); path 1-240 with no traversal (:111-112); refs and paths opaque (:119-121); integrity requires current_user = head owner (:171-173).",
+     "currentness@f581b6b: validator unchanged (:83-131); three FKs ON DELETE RESTRICT; statement triggers refuse revision UPDATE/DELETE/TRUNCATE and head DELETE/TRUNCATE; monotonic epoch trigger; install-seeded HELD head; installer = fence owner (:353-355); publish conflict compares only the jsonb envelope (:302).",
+     "Identity migration@3e82154: kind and version CHECK length 1..64 (:145-150); RLS forced on customers, consumed tokens, bindings, acceptances and grants (:240-249); all table privileges revoked, including service_role (:253-273). So the no-grant rule means the commit role must be owner or superuser for these tables.",
+     "pricing.ts:20-29@3e82154 audiences are exactly retail, member, professional, wholesale, private_early_access; catalog.ts:10 US_REGIONS is 50 states + DC as two-letter codes; production-deps.ts:40-41 and :217-218 read the recipient from RESEARCH_ASSISTED_ORDER_ADMIN_EMAIL.",
+     "Doc 49 §3 5C-2 and 5C-3 smallest corrections, and lens findings F2 and F4 with verifier notes (hl12/49_recovery_packet_lens_findings.json lens 0), are each matched by packet :85-91 and :93-144."
+    ],
+    "discrepancies": [
+     "Packet :89 cites 'intake candidate:340'; :340 is `begin`, and the gate is intake.sql:341-345@3e82154.",
+     "Packet :142 cites 'currentness.sql:85' for the kind-presence check; that check is at :116-118@3e82154 (:118-120@f581b6b).",
+     "Packet :91 prefers search_path=pg_catalog for the commit, while every function in both Quick Order slices pins search_path='' (intake :415, :459; currentness :82, :168). This is not a checker conflict, but no choice has been made.",
+     "Packet :87 omits the authority head owner from the same-OID set, although currentness_integrity (:171-173@3e82154) requires current_user = head owner exactly.",
+     "Packet :91 allows any research_health_quick_order_* helper, but the intake_ and currentness_ sub-prefixes are counted and fingerprinted by the accepted candidates (intake.sql:395, :399; currentness.sql:47-51)."
+    ],
+    "notProven": [
+     "Hosted relowner of research_private_early_access_sessions, its nonces, research_assisted_order_provider_fence, the authority head/revisions and the identity tables, and whether they are one role: no database read.",
+     "Whether the hosted owner role has rolsuper or rolbypassrls.",
+     "Whether the hosted server encoding is UTF8 and the PostgreSQL version supports IS NFC NORMALIZED (PG13+), which the SQL NFC check needs.",
+     "Whether the Node/ICU and PostgreSQL Unicode versions agree on NFC for the code points Text64 would admit.",
+     "Whether any Quick Order or currentness candidate is installed anywhere: source-only, never executed."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "E2-1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. Packet :87 names only the sessions, nonce, fence and commit owners. currentness.sql:171-173@3e82154 raises unless current_user = relowner(authority_head). Its table-ACL drift check (:190-196) refuses any grantee other than the owner on authority_% tables. So a grant cannot be the fix, and a superuser that is not the owner still fails :171. Intakes forces RLS (intake.sql:135), and the verifier allows an owner-only ACL (:406-412). Both owners equal the fence owner only at install time: intake :343-345 and :402, currentness :353-355@f581b6b. Drift after install is possible. The fix is correct."
+     },
+     {
+      "id": "E2-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. Packet :91 says only 'Prefer qualified objects/search_path=pg_catalog'. In PostgreSQL, when pg_temp is not listed it is searched first for relations, under either '' or pg_catalog, so qualified names have to be required. CREATE FUNCTION gives EXECUTE to PUBLIC by default. No existing guard checks the commit's proconfig or ACL: the sessions guard covers its four functions (sessions.sql:669-725), the intake guard its namespace (:413-427), and currentness the currentness_% functions (:178-189). P3 is right at design stage because the commit's own fingerprint would pin whatever ACL it gets. The rule must be written down before drafting."
+     },
+     {
+      "id": "E2-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, and wider than the lens says. intake.sql:355-358@3e82154 refuses an existing research_health_quick_order_commit, and so do intake.precheck.sql:131 and intake.postcheck.sql:131, so the fix must cover all three files. The check sits outside install_sql, so definition_hash (:393) does not cover it. The lens fix needs authority it does not mention: amending the accepted, receipt-bound intake family is an owner-scope item. Doc 49 :160-165 does not list it, and packet :150 does not raise it. The :340 anchor drift is confirmed; the gate is :341-345."
+     },
+     {
+      "id": "E2-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. The validator at currentness.sql:105@3e82154 allows 6-32 artifacts. :116-118 checks that the kinds are present and the paths distinct, not that each kind appears once; this is unchanged at :118-120@f581b6b. The decision text carries one ArtifactRef per kind (packet :102-103). Envelope artifacts of a repeated kind that the decision does not reference stay unbound."
+     },
+     {
+      "id": "E2-5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld as P3, but the related checklist FAIL is overstated. Packet :5 supersedes only the parts it names. Prior :68 still puts the parse and digest checks in 'the existing publisher', and publish_revision is fingerprinted by name (currentness.sql:49-50@3e82154), so placement is implied. What is missing: the column, a CHECK against ordinary owner INSERT (the revisions INSERT is limited only by :140-142), the publish signature, and a reconciliation of prior :68's 'No ... standalone helper' with the validator doc 49 :212 expects."
+     },
+     {
+      "id": "E2-6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. Points (a), (b), (c), (e), (f) and (g) cannot be decided from packet :113-136. Point (d) is weak: :135 says 'existing 50 states+DC', which points to the set at catalog.ts:10@3e82154 (51 codes, verified). The NFC version skew between Node and PostgreSQL belongs in NOT PROVEN, not here."
+     },
+     {
+      "id": "E2-7",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, as a conditional finding. Packet :110 and :138 make readerCensusSha256 required but name no census bytes, encoding or comparator. Prior :70 requires the server config to agree on the bundle and decision-input digests. If the configuration artifact's bytes contain the decision digest, the decision text cannot embed artifacts.configuration.sha256 (:103) without a cycle."
+     },
+     {
+      "id": "E2-8",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld and corroborated. legal.ts:14,20-26@3e82154 loops over arrays. core.mjs:96-116 accepts 1-30 agreements and requires distinct kinds. production.ts:23 declares approvedHealthAgreementPairs as an array. A single healthAgreement object (packet :105-106) fixes the cardinality of a reserved legal decision in the shape. That conflicts with packet :95/:152 and doc 49's 'values populate keys, not the shape'."
+     },
+     {
+      "id": "E2-9",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. The CHECK at intake.sql:126-129@3e82154 requires '^[^@]+@[^@]+[.][^@]+$', so the domain needs a dot. Packet :148's 'valid dot-atom local part/domain labels' is not exact and does not require two labels, so admission can pass a value the CHECK rejects. The question of which bound governs is answered: CHECK 3-320 stays and admission is 3-254."
+     },
+     {
+      "id": "E2-10",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. Doc 49 :130-133 asks for two consequences: intakes refuse while a guarded writer holds the head, and writers queue behind an intake's share lock. Packet :81 says only that rates are unmeasured and the figures unapproved."
+     },
+     {
+      "id": "E2-11",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. intake.sql:340@3e82154 is `begin`; the gate is :341-345. currentness.sql:85@3e82154 is the top-level key check (and the declare line at f581b6b). The kind-presence check is :116-118@3e82154, :118-120@f581b6b."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "5C-2: same role OID for sessions/nonce/fence/commit owner",
+      "status": "PASS",
+      "note": "Agree. Packet :87. Nonce owner equals sessions owner per sessions.sql:642-651@3e82154. The fence-owner gate is intake.sql:341-345."
+     },
+     {
+      "item": "5C-2: rolsuper OR rolbypassrls, plus UPDATE for FOR SHARE",
+      "status": "PASS",
+      "note": "Agree. Packet :87. The sessions table ACL guard (sessions.sql:299-340) allows grants only to the owner, so UPDATE on sessions comes from ownership or superuser."
+     },
+     {
+      "item": "5C-2: owner of every relation locked or written",
+      "status": "PARTIAL",
+      "note": "Agree, plus a gap. The head, revisions and intakes owners are missing (E2-1). EXECUTE on the existing functions the commit calls is also missing (see missed), and the touched-relation list for the precheck is not enumerated."
+     },
+     {
+      "item": "5C-2: installer precheck refuses, and where it lives",
+      "status": "PARTIAL",
+      "note": "Agree. Packet :150 is ambiguous. The intake .sql :355-358 and precheck/postcheck :131 all refuse once a commit exists, and amending them needs owner scope."
+     },
+     {
+      "item": "5C-2: no grants; no repair by ownership, grant, role or RLS change",
+      "status": "PASS",
+      "note": "Agree. Packet :89."
+     },
+     {
+      "item": "5C-2: no research_private_early_access_ prefix",
+      "status": "PASS",
+      "note": "Agree. Packet :91; guard at sessions.sql:653-667."
+     },
+     {
+      "item": "5C-2: bypass consequence and compensating controls",
+      "status": "PARTIAL",
+      "note": "Agree. 'Prefer' only; no dynamic-SQL rule, no EXECUTE ACL rule, and no statement that the body is the only row barrier (E2-2)."
+     },
+     {
+      "item": "5C-2: hosted ownership NOT PROVEN, as precheck items",
+      "status": "PASS",
+      "note": "Agree. Packet :89."
+     },
+     {
+      "item": "5C-2: search_path conflict",
+      "status": "PASS",
+      "note": "Agree. No checker conflict: the sessions guard covers its four functions (:669-683), the intake guard its namespace (:413-416), and currentness checks ACLs only. The setting itself is still undecided."
+     },
+     {
+      "item": "5C-3: schemaVersion literal",
+      "status": "PASS",
+      "note": "Agree. Packet :99."
+     },
+     {
+      "item": "5C-3: complete key list, types, bounds, nullability",
+      "status": "PARTIAL",
+      "note": "Agree. Minimum counts for workflowModes and audiences, the configurationVersion linkage and the audience mapping are undefined."
+     },
+     {
+      "item": "5C-3: canonical encoding exact",
+      "status": "PARTIAL",
+      "note": "The lens said PASS; I correct it. Packet :140 says 'Sort set arrays' without listing them, and 'controls' is undefined. The lens's own E2-6(a) and E2-6(c) say this, which contradicts its PASS. Either ambiguity can change the canonical bytes."
+     },
+     {
+      "item": "5C-3: digest rule linking stored text to the envelope artifact",
+      "status": "PASS",
+      "note": "Agree, with a residual: it does not say which commit artifact paths resolve against, and sourceCommit refers to itself (see missed)."
+     },
+     {
+      "item": "5C-3: bounds reuse the 1-64 kind/version limits",
+      "status": "PASS",
+      "note": "Agree. Text64 is a subset of identity migration :145-150@3e82154."
+     },
+     {
+      "item": "5C-3: Samuel's values fill keys, not shape",
+      "status": "PARTIAL",
+      "note": "The lens said PASS; I correct it. :95 and :152 state the rule, but the shape fixes a single Health agreement (E2-8) and a per-offer US shipping-state destination form, against catalog.ts:45-49 (see missed)."
+     },
+     {
+      "item": "5C-3: content classes represented",
+      "status": "PARTIAL",
+      "note": "Agree. Lot, document, readiness and domain selectors appear only through an undefined census digest."
+     },
+     {
+      "item": "5C-3: browser chooses no value",
+      "status": "PASS",
+      "note": "Agree. Shipping region, quantity and the agreement echo are browser inputs checked against server policy (catalog.ts:198-207, core.mjs:110-116)."
+     },
+     {
+      "item": "5C-3: validator inside the currentness fingerprint namespace",
+      "status": "PARTIAL",
+      "note": "The lens said FAIL; I correct it. Prior :68, not superseded, puts the checks in publish_revision, which is fingerprinted by name (:49-50). Not named: the column, the CHECK helper and the signature."
+     },
+     {
+      "item": "5C-3: validator draftable from the text",
+      "status": "PARTIAL",
+      "note": "Agree. Further undecidable points: the audience mapping and the artifact-path commit (see missed)."
+     },
+     {
+      "item": "Doc 49 P3: recipient bound",
+      "status": "PASS",
+      "note": "Agree. Which bound governs is answered. The predicate's precision is E2-9."
+     },
+     {
+      "item": "Doc 49 P3: budget consequences",
+      "status": "FAIL",
+      "note": "Agree. Packet :81 omits both consequences."
+     },
+     {
+      "item": "Do 5C-2/5C-3 resolve doc 49's P2s",
+      "status": "PASS",
+      "note": "Agree. Each smallest correction in doc 49 §3 is present. All residuals are P3, and the design grants no authority."
+     }
+    ],
+    "missed": [
+     "P3, 5C-2: EXECUTE on the existing functions the commit calls is not in the precondition. research_early_access_agreements_accepted is SECURITY DEFINER and its EXECUTE goes only to service_role (identity mig 20260804120000:450-457, :544-575@3e82154). research_referral_v1_effective_binding_json and the availability functions are revoked from everyone but the owner (referral cand :1086-1095). session_active allows only owner and service_role (sessions :688-725). Packet :89 forbids grants, so the commit owner must own these functions or be superuser, and the precheck must check has_function_privilege for an enumerated set of calls. The touched-relation list is not enumerated either.",
+     "P3, 5C-3: the destination shape conflicts with the source contract. catalog.ts:45-49@3e82154 says destination policy is 'never a US-state allowlist masquerading as serviceability. Shipping region is not encounter location.' Packet :119-120 and :135 encode destination only as a per-offer US shipping-state set, which fixes the form of a reserved destination decision. The packet should say that this key is shipping-destination eligibility only and that any serviceability or encounter policy needs a new schemaVersion.",
+     "P3, 5C-3: the price-audience match cannot be decided. The viewer audience is member or admin (contract.ts:370; member-pricing-viewer.ts:44-45). Early Access viewers are priced as 'member' (early-access-retail-pricing.ts:50, :74-76). price.audiences uses the five CustomerPriceAudience values (packet :117, :134), so private_early_access never comes from this path and admin cannot be expressed. The packet does not say whether the commit compares the viewer audience, the price-row audience or the actor class.",
+     "P3, 5C-3: the commit that artifact paths resolve against is undefined. The decision text embeds sourceCommit (packet :100) and five artifact digests. If the normalized_decision_inputs file must exist at sourceCommit, which is the repo pattern (currentness_local.mjs:213@3e82154 uses `git show sourceCommit:path`), the file cannot contain its own commit's hash. The packet should exclude the decision-input bytes from sourceCommit resolution or define the commit relation.",
+     "P3, scope: putting the commit in place requires amending the accepted, receipt-bound intake family: intake.sql:355-358 and precheck/postcheck :131@3e82154. That is an owner-scope item not listed in doc 49 :160-165, and neither packet :150 nor lens E2-3 flags it.",
+     "P3, 5C-3: prior :68 ('No second authority table or standalone helper'), which is still in force, conflicts with doc 49 :212's expected validator and with lens E2-5's named function. The packet must say whether a CHECK-called validator like currentness_valid_publication is allowed.",
+     "Lens consistency: its PASS on canonical encoding contradicts E2-6(a) and E2-6(c), and its PASS on 'values fill keys, not shape' contradicts E2-8."
+    ],
+    "verdictOpinion": "I uphold the lens verdict: compatible as design for 5C-2 and 5C-3. Both doc 49 P2s are resolved at the level of their smallest corrections. I find no P0, P1 or P2. All eleven lens findings stand at P3, and the anchors match the Git objects at 3e82154 and f581b6b. The packet copies match their blobs at 462cf79 and f1821b6.\n\nCorrections to the lens:\n- Canonical encoding moves from PASS to PARTIAL: the set arrays and 'controls' are undefined.\n- 'Values fill keys, not shape' moves from PASS to PARTIAL, because of the single Health agreement and the shipping-state destination form.\n- Validator placement moves from FAIL to PARTIAL: prior :68 still applies.\n- E2-3 must also name the intake precheck and postcheck :131, and must flag that amending the intake family needs owner scope.\n\nSix further P3s were missed, listed under missed. The next delta must carry all of them before any validator, precheck or commit body is drafted.\n\nStanding rules hold. This compatible design grants no source, installation or execution authority. The reserved decisions stay with Samuel and are not made here: Health pair content and cardinality, offer, quantity, audience and destination policy, revocation ordering and budget, and writer-side lock policy. Hosted ownership, bypass rights, encoding and NFC support remain NOT PROVEN. Nothing was executed."
+   }
+  }
+ ]
+}
