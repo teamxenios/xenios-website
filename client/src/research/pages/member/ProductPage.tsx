@@ -13,6 +13,8 @@ import { ProductSubscriptionCreate } from "../../product-subscriptions/ProductSu
 export default function ProductPage() {
   const { slug = "" } = useParams<{ slug: string }>();
   const { memberToken } = useResearch();
+  const scope = JSON.stringify([memberToken, slug]);
+  const [loadedScope, setLoadedScope] = useState<string | null>(null);
   const [product, setProduct] = useState<MemberProductDetail | null>(null);
   const [state, setState] = useState<MemberCatalogSurfaceState>("loading");
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -20,6 +22,7 @@ export default function ProductPage() {
 
   const load = useCallback(async () => {
     const generation = ++requestGeneration.current;
+    setLoadedScope(scope);
     setState("loading");
     setProduct(null);
     setErrorMessage(undefined);
@@ -54,7 +57,7 @@ export default function ProductPage() {
     }
     setErrorMessage(result.message);
     setState("error");
-  }, [memberToken, slug]);
+  }, [memberToken, slug, scope]);
 
   useEffect(() => {
     void load();
@@ -63,22 +66,28 @@ export default function ProductPage() {
     };
   }, [load]);
 
+  // Hide the previous account/product immediately on a new render, before
+  // the loading effect runs. Generation checks discard late read responses.
+  const current = loadedScope === scope;
+  const displayedProduct = current ? product : null;
+  const displayedState = current ? state : "loading";
+
   return (
     <>
-    <MemberProductDetailExperience
-      product={product}
-      state={state}
-      errorMessage={errorMessage}
-      onRetry={() => void load()}
-    />
-    {state === "ok" && product?.researchOnlyBoundary && (
-      <div className="research-app container-x pb-8">
+      <MemberProductDetailExperience
+        product={displayedProduct}
+        state={displayedState}
+        errorMessage={current ? errorMessage : undefined}
+        onRetry={() => void load()}
+      />
+      <div className="research-app container-x pb-8" hidden={displayedState !== "ok" || !displayedProduct?.researchOnlyBoundary}>
         {/* MemberProductDetail has no subscription offer/current price-version
             projection. A cart selection or visible price cannot supply it.
-            Keep the mount unavailable until canonical offer authority exists. */}
-        <ProductSubscriptionCreate memberToken={memberToken} product={null} commerceEnabled={false} />
+            Keep the mount unavailable until canonical offer authority exists.
+            Its attempt owner stays mounted across detail loading and retries. */}
+        <ProductSubscriptionCreate memberToken={memberToken} product={null} commerceEnabled={false}
+          visible={displayedState === "ok" && displayedProduct?.researchOnlyBoundary === true} />
       </div>
-    )}
     </>
   );
 }

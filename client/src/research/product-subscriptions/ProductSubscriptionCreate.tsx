@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type FormEvent } from "react";
+import { useId, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { SUBSCRIPTION_FREQUENCIES, type SubscriptionFrequencyDays } from "@shared/research/commerce";
 import { PERSISTENT_CART_QUANTITY_MAX } from "@shared/research/persistent-cart";
 import { createSubscription, type MemberToken } from "../adapters/commerce";
@@ -27,6 +27,8 @@ export interface ProductSubscriptionCreateProps {
   /** Current canonical product_commerce capability for this member. */
   commerceEnabled: boolean;
   product: SubscriptionProductForReview | null;
+  /** Hide the view during detail loading without discarding its attempt guard. */
+  visible?: boolean;
 }
 
 type Outcome =
@@ -40,7 +42,7 @@ function denialMessage(code: string): string {
   switch (code) {
     case "commerce_disabled":
     case "capability_disabled":
-      return "Product subscription requests are not available yet. Your selections remain here; no subscription was created by this attempt.";
+      return "Product subscription requests are not available. Your selections remain here; no subscription was created by this attempt.";
     case "payment_disabled":
     case "payment_method_required":
       return "Payment setup is unavailable. Your selections remain here; this attempt did not complete a purchase.";
@@ -71,9 +73,10 @@ function canReview(product: SubscriptionProductForReview | null): product is Sub
 export function ProductSubscriptionCreate(props: ProductSubscriptionCreateProps) {
   // The retry guard survives token rotation and offer refresh. Only the review
   // and private receipt remount; losing a response must never unlock a second
-  // create on this non-idempotent endpoint. Reload/cross-tab protection still
-  // requires a durable server-side create idempotency contract.
-  const scope = JSON.stringify([props.memberToken, props.product]);
+  // create on this non-idempotent endpoint. Keep this owner mounted when its
+  // view is hidden. A full owner unmount/reload/cross-tab still requires durable
+  // server-side create idempotency; no private state is stored outside React.
+  const scope = JSON.stringify([props.memberToken, props.product, props.commerceEnabled]);
   const attempt = useRef<string | null>(null);
   const [blockedFormId, setBlockedFormId] = useState<string | null>(null);
   function beginAttempt(formId: string) {
@@ -82,17 +85,19 @@ export function ProductSubscriptionCreate(props: ProductSubscriptionCreateProps)
     setBlockedFormId(formId);
     return true;
   }
-  function refusedAttempt() {
+  function refusedAttempt(formId: string) {
+    if (attempt.current !== formId) return;
     attempt.current = null;
     setBlockedFormId(null);
   }
+  if (props.visible === false) return null;
   return <SubscriptionForm key={scope} {...props}
     blockedFormId={blockedFormId}
     beginAttempt={beginAttempt} refusedAttempt={refusedAttempt} />;
 }
 
 function SubscriptionForm({ memberToken, commerceEnabled, product, blockedFormId, beginAttempt, refusedAttempt }:
-  ProductSubscriptionCreateProps & { blockedFormId: string | null; beginAttempt(formId: string): boolean; refusedAttempt(): void }) {
+  ProductSubscriptionCreateProps & { blockedFormId: string | null; beginAttempt(formId: string): boolean; refusedAttempt(formId: string): void }) {
   const id = useId();
   const blockedByEarlierAttempt = blockedFormId !== null && blockedFormId !== id;
   const [quantity, setQuantity] = useState("1");
@@ -101,7 +106,7 @@ function SubscriptionForm({ memberToken, commerceEnabled, product, blockedFormId
   const [outcome, setOutcome] = useState<Outcome>({ phase: "idle" });
   const alive = useRef(true);
   const submitted = useRef(false);
-  useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
+  useLayoutEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
   const ready = canReview(product);
   const units = Number(quantity);
   const validQuantity = quantity.trim().length > 0 && Number.isInteger(units)
@@ -116,14 +121,23 @@ function SubscriptionForm({ memberToken, commerceEnabled, product, blockedFormId
     if (!enabled || !ready || !validQuantity || !subtotal || !reviewed || locked || submitted.current || !beginAttempt(id)) return;
     submitted.current = true;
     setOutcome({ phase: "busy" });
-    const result = await createSubscription(memberToken, {
-      sku: product.sku, quantity: units, frequencyDays: frequency, priceVersion: product.priceVersion,
-    });
-    if (result.kind === "denied" || result.kind === "unauthorized" || result.kind === "forbidden") refusedAttempt();
+    let result: Awaited<ReturnType<typeof createSubscription>>;
+    try {
+      result = await createSubscription(memberToken, {
+        sku: product.sku, quantity: units, frequencyDays: frequency, priceVersion: product.priceVersion,
+      });
+    } catch {
+      // A rejected transport promise also cannot prove that no write occurred.
+      if (alive.current) setOutcome({ phase: "uncertain" });
+      return;
+    }
+    // A hidden/unmounted or replaced form must neither display its private
+    // receipt nor unlock a newer view. Only this live attempt can be refused.
     if (!alive.current) return;
     if (result.kind === "ok") {
       setOutcome({ phase: "saved", subscriptionId: result.data.subscription.subscriptionId });
     } else if (result.kind === "denied" || result.kind === "unauthorized" || result.kind === "forbidden") {
+      refusedAttempt(id);
       submitted.current = false;
       setOutcome({ phase: "denied", message: result.kind === "unauthorized"
         ? "Sign in again before submitting. Your selections remain here."
@@ -137,11 +151,11 @@ function SubscriptionForm({ memberToken, commerceEnabled, product, blockedFormId
 
   return <section className="card" aria-labelledby={`${id}-title`}>
     <h2 id={`${id}-title`} className="heading-s">Product subscription</h2>
-    <p className="body-s mt-2">Request recurring deliveries of this exact product. This is separate from account access.</p>
-    {!memberToken ? <p role="status">Sign in to review a product subscription.</p>
-      : !ready ? <p role="status">A subscription offer is not available for this product yet.</p>
-      : !commerceEnabled ? <p role="status">Product subscription requests are not open yet.</p> : null}
-    {ready && <form onSubmit={submit} className="grid gap-4 mt-4">
+    {enabled && <p className="body-s mt-2">Review a request for recurring deliveries of this exact product. This is separate from account access.</p>}
+    {!ready ? <p role="status">A subscription offer is not available for this product.</p>
+      : !memberToken ? <p role="status">Sign in to review a product subscription.</p>
+      : !commerceEnabled ? <p role="status">Product subscription requests are not open.</p> : null}
+    {enabled && ready && <form onSubmit={submit} className="grid gap-4 mt-4">
       <div>
         <p className="font-700">{product.displayName}</p>
         <p>{product.variantLabel}</p>
