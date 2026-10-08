@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-08T17:07:19Z",
+  "source": "e0a7d4787071140a25a984edc4c0a49f0d7c22ab",
+  "tree": "340248360ac85f50f10ed5890624401616f792fd",
+  "parent": "20a23057f99529241ef1f593175670e13ab86f67",
+  "reviewedRuntimePredecessor": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+  "status": "LOCAL_ONLY_NOT_EXECUTED_NOT_PUSHED_NOT_ACCEPTED",
+  "hashScope": "gitBlob is the committed Git blob SHA-1. workingFileSha256 is SHA-256 of the on-disk file, potentially with different line endings; not a Git blob SHA-256 claim.",
+  "files": [
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "classification": "presentation_source",
+      "gitBlob": "c54db8933eb9654f55b98f163c68e5ae1d51cc3a",
+      "workingFileSha256": "50e4030330542b868e804ff7ce0e7ff958527eb82098f6fda4c0e02f218c5ee9"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "classification": "test_source_not_run",
+      "gitBlob": "5a9e65bed522d2687b28b5c624ea01379d1048f9",
+      "workingFileSha256": "e1994fdfc2075d200d52a5b7c47c5d6cc5a8f3980289bf4ffa5039a279b37228"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "classification": "presentation_source",
+      "gitBlob": "dbaa8e16e1d866eb9620da6572d318e33355e653",
+      "workingFileSha256": "ce45f5170b3f052e02c2fe749163c28ae5a1ec89f7142972199ef1884c9df52f"
+    },
+    {
+      "path": "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+      "classification": "test_source_not_run",
+      "gitBlob": "d0546fa3031ed3040d75e6fdc2a4b8c297d6b390",
+      "workingFileSha256": "e1ed149f6a47536ac7050dfdd3968c3bc38d695ef1ab63ba6fbcf89c3a5e47ed"
+    }
+  ]
+}

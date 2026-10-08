@@ -3,8 +3,8 @@
   "tool": "OpenAI Codex desktop",
   "lane": "accepted-source-integration",
   "branch": "codex/accepted-source-integration-20261005",
-  "state": "active",
+  "state": "handoff_ready",
   "startedAt": "2026-10-05T18:18:45.097Z",
-  "heartbeatAt": "2026-10-08T16:57:27Z",
-  "note": "RUNNING Workstream B under verified human/coordinator94485a6 authority. Same owner/task, four catalog/detail files only. C transfer recorded. No execution or push. Actual model/effort not exposed in current tool context; requested gpt-6-astra/ultra, no switch attempted."
+  "heartbeatAt": "2026-10-08T17:08:00Z",
+  "note": "Workstream B local source/test handoff e0a7d4787071140a25a984edc4c0a49f0d7c22ab, tree340248360ac85f50f10ed5890624401616f792fd, verified human/coordinator94485a6 scope. Four files only, C transfer preserved. NOT RUN, NOT PUSHED, NOT ACCEPTED. Existing coordinator owns review queue. Actual model/effort not exposed; requested gpt-6-astra/ultra, no switch attempted."
 }

@@ -6,7 +6,7 @@
       "id": "ACCEPTED-SOURCE-INTEGRATION-20261005",
       "title": "Bounded catalog/detail presentation successor (Workstream B); accepted integration preserved",
       "priority": "P1",
-      "state": "claimed",
+      "state": "qa",
       "owner": "codex-accepted-source-integration-20261005",
       "baseSha": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
       "paths": [
@@ -23,14 +23,18 @@
       "claimedAt": "2026-10-05T18:20:33.600Z",
       "handoff": {
         "session": "codex-accepted-source-integration-20261005",
-        "sha": "756a906877dbc174b7e228a259d2faa9c3af48ca",
-        "file": ".xenios/handoffs/2026-10-05T19-00-54-458Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md",
-        "at": "2026-10-05T19:00:54.465Z"
+        "sha": "e0a7d4787071140a25a984edc4c0a49f0d7c22ab",
+        "tree": "340248360ac85f50f10ed5890624401616f792fd",
+        "file": ".xenios/handoffs/2026-10-08T17-08-00Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md",
+        "at": "2026-10-08T17:08:00Z",
+        "publication": "LOCAL_ONLY_NOT_PUSHED",
+        "execution": "NOT_RUN; source review queued through existing coordinator; no acceptance claimed"
       },
       "historicalAcceptedScope": {
         "source": "756a906877dbc174b7e228a259d2faa9c3af48ca",
         "tree": "787432948d9464880df1dcfc5dff58eec7d889aa",
         "records": "38c723964358c18b8c5090f2f9a0aa92f74601b0",
+        "handoff": ".xenios/handoffs/2026-10-05T19-00-54-458Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md",
         "paths": [
           "client/src/clarity/brand.ts",
           "client/src/clarity/pages.tsx",
