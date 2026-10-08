@@ -1,0 +1,289 @@
+{
+ "schemaVersion": 1,
+ "review": {
+  "verdict": "LENS RESULT: no P0, P1 or P2 found. This supports SOURCE ACCEPT WITH LIMITS for source 8f080a08af06aa16e7aaf80add1a1b25e0cfae41 (tree 7ff4d6a5059466e716d9b81f66a696cf69bc53d3) with records 37f2d9648916b50fae2fd99b3c5ee46174893fae. The decision belongs to the reviewer. This lens accepts nothing and approves nothing.\n\nD-1 is corrected at source. The title is restored as unavailableTitle=\"This product is not available.\" at MemberProductDetailExperience.tsx:162@8f080a0. Its blob f1db3fa carries the same title literal as accepted 756a906 (blob 73d2abe, which differs only by the e0a7d47 changes). I hand-simulated the unchanged product-subscribe.test.tsx (blob f389110, the same on both branches):\n- :117 holds. The 503 response maps to kind 'unavailable' at api.ts:110-124, ProductPage sets state 'unavailable' at :51-53, and kit.tsx:686 renders ResearchEmptyState with the restored title.\n- :183 holds. The slug mismatch hits ProductPage:31-36, or the adapter rejection hits :42-43; both lead to 'unavailable'. Line :184 also holds, because the product is null and the shell shows the generic title.\n- Both lines also hold when 736bb2a's four blobs are composed in, using ProductPage d50b467 with this detail component. The displayed scope becomes current after load, displayedState is 'unavailable', and ProductSubscriptionCreate (visible=false) returns null at :93.\n\nThe flipped assertions at MemberProductDetailExperience.test.tsx:261 and :263 match the restored title, and they discriminate against the e0a7d47 title. The body assertion at :262 is unchanged and still holds. 'Product information is unavailable.' is asserted only negatively, at :263@8f080a0. No test asserts it at 736bb2a or at e5ca41d.\n\nScope:\n- `git diff --name-status e0a7d47 8f080a0 -- client server shared supabase package.json package-lock.json scripts` lists exactly the two detail files.\n- 0dbfaf5, 9c597b2 and 37f2d96 touch only docs/ and .xenios/, and only this owner's rows.\n- The four B paths were re-leased to this owner at 9c597b2 (state active), immediately before the source commit, and are still listed at 37f2d96 (state handoff).\n\nRecords:\n- **D-2:** claims (6) and (7) are withdrawn or narrowed in the README and in the packet at :95-100. The three inherited strings are listed literally as HELD, with correct line anchors, and none is claimed fixed.\n- **D-9:** the records now carry a literal before/after copy ledger, which I verified against the 756a906..e0a7d47 diff. They carry the 17-file and 36-file sets with the 4-file overlap and 49-file union, verified path-for-path and in order against the start receipts at 38c7239. They carry doc 35's carried holds in full, plus its P3-1..P3-4 and evidence limits.\n- **D-3..D-8 and D-10:** each is recorded as OPEN or carried. None is claimed closed.\n\nHashes: blob ids and raw SHA-256 over the git cat-file bytes recompute equal to doc56-source-bindings.json for all four B files and the foreign test. The historical source-bindings.json (blob c7093f2, unchanged since 0dbfaf5) still binds the e0a7d47 blobs dbaa8e1 and d0546fa. The workingFileSha256 values for the four B files are NOT PROVEN.\n\nEverything is NOT RUN: no test, typecheck, build, gate or browser was run. Nothing here is Samuel's approval.",
+  "checklist": [
+   {
+    "item": "D-1: product-subscribe.test.tsx:117 'This product is not available.' holds at 8f080a0",
+    "status": "PASS",
+    "evidence": "Hand-simulated, NOT RUN. Test 503 mock with no body -> api.ts:110,123-124@8f080a0 releaseUnusedBody returns early (no response.body) -> {kind:'unavailable'} -> ProductPage.tsx:51-53@8f080a0 setState('unavailable') -> MemberProductDetailExperience.tsx:158-163 ResearchRouteBoundary -> kit.tsx:686 ResearchEmptyState title rendered as text (kit.tsx:45). Title literal at :162 equals 756a906's (same title line; 756a906 blob 73d2abe was accepted with this test passing, 17-file 401/0/0 at 38c7239). Lines 118-119 also hold: ProductSubscriptionCreate is mounted only when state==='ok' (ProductPage.tsx:74)."
+   },
+   {
+    "item": "D-1: product-subscribe.test.tsx:183 holds at 8f080a0 (slug-mismatch path), with :184 no 'Substituted Product'",
+    "status": "PASS",
+    "evidence": "Hand-simulated. 200 JSON detail('product-a') on route product-b -> api.ts:145 kind ok -> adaptMemberProductDetail (memberCatalog.ts:684-703@8f080a0) returns ok or invalid_projection; not_found only when value.ok===false (:687) -> ProductPage.tsx:31-36 or :42-43 setState('unavailable') with product never set. Shell title is 'Product information' when showProductIdentity is false (MemberProductDetailExperience.tsx:133,139), so 'Substituted Product' is absent."
+   },
+   {
+    "item": "D-1: lines 117 and 183 still hold when composed with Workstream C's four 736bb2a blobs (ProductPage d50b467, ProductPage.subscription.test ce94ff4, ProductSubscriptionCreate b4046a7, its test d094bab) plus detail f1db3fa",
+    "status": "PASS",
+    "evidence": "Hand-simulated composition, NOT RUN. In d50b467, load() calls setLoadedScope(scope) before the await, so after the act flush current===true and displayedState===state==='unavailable'. The detail component renders the restored title. The always-mounted wrapper div has the hidden attribute, and ProductSubscriptionCreate returns null when visible===false (736bb2a ProductSubscriptionCreate.tsx:93), so no text or testids are added. The slug-mismatch path is unchanged in d50b467, and displayedProduct stays null. product-subscribe.test.tsx is the same blob f389110 at 8f080a0 and 736bb2a. ProductPage at 8f080a0 is 4c9075a, the same as WC parent 95283ce, so the WC ProductPage diff applies cleanly."
+   },
+   {
+    "item": "Flipped assertions in MemberProductDetailExperience.test.tsx agree with the restored title; body assertion still holds",
+    "status": "PASS",
+    "evidence": "8f080a0 test :261 toContain('This product is not available.') and :263 not.toContain('Product information is unavailable.') match tsx :162. Both would fail on the e0a7d47 blob dbaa8e1, so they discriminate. The body assertion at :262 ('...product&#x27;s availability.') is unchanged and matches tsx :163 after renderToStaticMarkup escaping. Shell h1 'Product information' cannot form the negated sentence. The loop at :265-288 and the retry test at :416-419 do not depend on the title."
+   },
+   {
+    "item": "No other test on either branch asserts 'Product information is unavailable.'",
+    "status": "PASS",
+    "evidence": "git grep at 8f080a0 and 37f2d96 finds only the negative assertion at MemberProductDetailExperience.test.tsx:263, plus the records ledger at DOC56_CORRECTION_PACKET:75. git grep at 736bb2a and at WC head e5ca41d finds nothing. The positive title assertions are only product-subscribe.test.tsx:117,:183 and detail test :261@8f080a0 (:233@736bb2a)."
+   },
+   {
+    "item": "git diff --name-status e0a7d47 8f080a0 -- client server shared supabase package.json package-lock.json scripts is exactly the two detail files",
+    "status": "PASS",
+    "evidence": "Output: M MemberProductDetailExperience.test.tsx and M MemberProductDetailExperience.tsx. The 8f080a0 diff is 3 insertions and 3 deletions and is byte-identical to scratchpad d56c/source.diff (diff returned no differences). The cumulative 756a906..8f080a0 code delta is still the four B files."
+   },
+   {
+    "item": "9c597b2 and 37f2d96 (and intervening 0dbfaf5) are records-only",
+    "status": "PASS",
+    "evidence": "`git diff --name-status <parent> <commit> -- . ':!docs' ':!.xenios'` is empty for e0a7d47..0dbfaf5, 0dbfaf5..9c597b2 and 8f080a0..37f2d96. In 9c597b2 and 37f2d96, the hunks in ACTIVE_TASKS, CODE_OWNERSHIP and SESSION_REGISTRY touch only the owner's own row (tasks[0], leases[0], own session entry)."
+   },
+   {
+    "item": "D-9: four B paths re-leased to this owner before the source edit and still held at 37f2d96",
+    "status": "PASS",
+    "evidence": "9c597b2 (parent of 8f080a0) adds the four paths to ACTIVE_TASKS tasks[0].paths and CODE_OWNERSHIP leases[0].paths, with state active and correctionAssignment DOC56-CATALOG-CORRECTION-20261008 r1. At 37f2d96 the paths are retained ('Same four B paths retained for narrow follow-up') with state handoff/qa. The only other leases naming these paths are stale August CARE-RESEARCH-POSTLAUNCH entries in handoff state."
+   },
+   {
+    "item": "D-2: claims (6)/(7) narrowed and nontransactional copy recorded as held, not claimed fixed",
+    "status": "PASS",
+    "evidence": "In the README @37f2d96, rows :50-51 drop 'distinct accessible names', 'Clinical copy no longer presumes...', 'Unavailable information no longer asserts...' and 'Program/clinical copy does not promise eventual purchasing'. In DOC56_CORRECTION_PACKET: :54 reads 'CLAIMS NARROWED; COPY/POLICY HELD BEFORE RELEASE QUALIFICATION', :87-93 is the held-strings table, and :95-100 states the supersession. The held anchors are correct at 8f080a0: catalog :87,:90; detail :26,:29,:221,:225; catalog test :376; detail test :323; kit.tsx:69. Small gaps are in finding F3."
+   },
+   {
+    "item": "D-9: doc 35 holds listed in full",
+    "status": "PASS",
+    "evidence": "Packet :122-169 covers doc 35's carried holds:\n- Founder: three hash pairs, GATE-01/Access Hub, SKU/plan, cap 50, product plan.\n- Subscription: six gaps, PS-R2/PS-R3, test-only seam.\n- MC-01 chain and cart-history adoption.\n- D/E.\n- Finance: F1, refund/dispute, ADP-G2-G4, LENS, ADP-G1 PARTIAL.\n- Qualification: aggregate deferral, red gate, exact 768, native zoom, CLS, forced colors, seam findings.\nIt also covers doc 35's P3-1 (summary-only logs), P3-2 (ENOSPC b13c29e receipt and hash), P3-3 (304 MiB vs 805/1,452 MiB), P3-4 (admin unchanged / MC01-R1), the browser limits and the PS-R5 mocked-fetch limit."
+   },
+   {
+    "item": "D-9: literal before/after copy table",
+    "status": "PASS",
+    "evidence": "Packet :70-85, checked line by line against `git diff 756a906 e0a7d47` of both tsx files. It covers every changed customer-visible string:\n- catalog: summary, count, aria-label;\n- detail: title, body, Catalog status, missing-variant body, Selected variant, Strength/Form/Size/Presentation/Not provided, Variant availability, the three lane paragraphs (before: 'Ordering appears only after...'), related aria-label.\nThe current-correction column marks only the title as restored."
+   },
+   {
+    "item": "D-9: affected test set recorded (17-file, 36-file, overlap)",
+    "status": "PASS",
+    "evidence": "DOC56_AFFECTED_TEST_SETS:44-121 @37f2d96 matches, in order, the test paths in the command arrays of integration-subscription17-run1-start.json and integration-affected-run1-start.json at 38c7239 (17 and 36 paths). The overlap is exactly the 4 listed files and the union is 49. logSha256 83473aa9... and eec4390c... equal the result receipts. All are bound to 756a906 only."
+   },
+   {
+    "item": "D-3..D-8 and D-10 carried as limits, not claimed closed",
+    "status": "PASS",
+    "evidence": "Packet :55-62 records D-3 OPEN CARRIED, D-4 OPEN CLAIM NARROWED, D-5 OPEN CARRIED (the title/body conflict is disclosed), D-6 and D-7 OPEN CARRIED, D-8 OPEN CLAIMS LIMITED, and D-10 OPEN OUTSIDE FOUR-PATH SCOPE. The handoff at :32 says 'carried OPEN', and the README at :14-15 says the D-5 semantics are unresolved."
+   },
+   {
+    "item": "Recompute blob ids and raw SHA-256 for the two changed files against the bindings at 37f2d96",
+    "status": "PASS",
+    "evidence": "Detail tsx at 8f080a0 = blob f1db3fa817be2e89a9bb9273301204333f274fae, raw sha256 1083046402cb666676f21f5039e33b0a172daea06806c50af85bb28c1f1c4f36. Detail test = blob 78f23534fddf90a66cf2589ca323a69105e260ed, raw f2a0255798b2bee752bf10ef53986e7b9971e15e57767d576452377b4ee0d3be. Both equal doc56-source-bindings.json and the coordinator checkpoint at 32ab80f. The unchanged catalog files (c54db89 / 318d972b..., 5a9e65b / 2de8f721...) and the foreign test (f389110 / c2411c79...) also match. source-bindings.json @37f2d96 (blob c7093f2, unchanged since 0dbfaf5) still lists the e0a7d47 blobs dbaa8e1 and d0546fa, which match e0a7d47. It is historical and was correctly not rewritten."
+   },
+   {
+    "item": "workingFileSha256 values in the bindings",
+    "status": "NOT_PROVEN",
+    "evidence": "The foreign test's working hash dd81854c... equals the CRLF form of its blob. The four B files' working hashes (50e40303, e1994fdf, 132d98f1, b62843ba) match none of the LF, CRLF, BOM or no-trailing-newline variants of their blobs. Under the lens rules I did not read working-tree files."
+   },
+   {
+    "item": "Records file hashes in the handoff (:51-58) and coordinator copies",
+    "status": "PASS",
+    "evidence": "Raw SHA-256 of the blobs at 37f2d96 equals the handoff table: README 4ca8a84c, PACKET a7272d53, TEST_SETS aff5e94d, doc56-source-bindings 58441b1e, inventory md b6ff1f8c, inventory json 719fddee. The coordinator copy of the packet at 32ab80f is the same blob 15b53b38. The 37f2d96 tree is 9c880901, matching checkpoint recordsTree."
+   },
+   {
+    "item": "Other composed-tree tests (ProductPage.subscription.test.tsx at 736bb2a run against 8f080a0 detail/adapter)",
+    "status": "NOT_PROVEN",
+    "evidence": "Outside D-1. A scan shows none of its assertions reference either unavailable title. Its fixture shape matches product-subscribe's (media null, variants []). A full composed hand-simulation was not done, and doc 57 already requires composed execution at the exact integrated tree."
+   },
+   {
+    "item": "Runtime outcomes (tests, typecheck, no-em-dash, build, browser)",
+    "status": "NOT_PROVEN",
+    "evidence": "Everything NOT RUN. Historical 401 and 626 receipts bind 756a906 only."
+   }
+  ],
+  "findings": [
+   {
+    "id": "D56C-P3-1",
+    "severity": "P3",
+    "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+    "claim": "The restored title and the e0a7d47 body now form a self-contradictory pair that neither 756a906 nor e0a7d47 rendered. The title asserts unavailability, and the body then says this does not confirm availability. The pair also renders for a definitive product_not_found and for denials.",
+    "evidence": "MemberProductDetailExperience.tsx:162-163@8f080a0: 'This product is not available.' followed by 'Approved product information could not be loaded. This does not confirm the product's availability.' 756a906 paired the title with 'Only an exact published and public Product Control record can appear here.'; e0a7d47 paired the body with 'Product information is unavailable.'. Disclosed at DOC56_CORRECTION_PACKET:57@37f2d96 ('its uncertainty can conflict with the title').",
+    "fix": "Carry under D-5 as a limit (already disclosed). Resolve with the ProductPage/product-subscribe owner's title decision and Samuel's copy decision before release qualification. A body that does not contradict the title fits inside the four paths without touching the foreign test."
+   },
+   {
+    "id": "D56C-P3-2",
+    "severity": "P3",
+    "file": "docs/health-launch/catalog-detail-presentation-20261008/doc56-source-bindings.json",
+    "claim": "The workingFileSha256 values for the four B files cannot be reproduced from Git bytes, so they cannot be checked independently. The binding identity rests on gitBlob and gitRawSha256, which do recompute.",
+    "evidence": "From the f1db3fa, 78f2353, c54db89 and 5a9e65b blobs, none of the LF, CRLF, BOM+LF, BOM+CRLF or no-trailing-newline variants yields 132d98f1, b62843ba, 50e40303 or e1994fdf. The foreign test's dd81854c does equal its CRLF form, and the records' working hashes equal their LF bytes.",
+    "fix": "Records-only follow-up: state how the working bytes were produced (encoding and line endings). Otherwise mark the working hashes as informational and not part of the binding."
+   },
+   {
+    "id": "D56C-P3-3",
+    "severity": "P3",
+    "file": "docs/health-launch/catalog-detail-presentation-20261008/DOC56_CORRECTION_PACKET_20261008.md",
+    "claim": "The held-copy record satisfies doc 56's D-2 remedy but does not name the decision owner (Samuel). It also omits carried productEducation strings that doc 56's lens cited against claim (6).",
+    "evidence": "Packet :54 says 'COPY/POLICY HELD BEFORE RELEASE QUALIFICATION', and :169 says 'Copy decisions and every hold above remain prerequisites', with no owner. Held table :87-93 lists only the three D-2 strings. Still rendered: productEducation.ts:279@8f080a0 ('...current pharmacy serviceability') and :295 ('Availability depends on ... pricing rule ...'), which are outside the four-path lease.",
+    "fix": "Records-only: name Samuel's copy disposition as the gate for the held strings. List the productEducation strings as held under a ticket to that file's owner. No source change is needed."
+   },
+   {
+    "id": "D56C-P3-4",
+    "severity": "P3",
+    "file": ".xenios/sessions/codex-accepted-source-integration-20261005.json",
+    "claim": "Several record lines run identifiers into adjacent words, which hurts readability and exact-SHA grep tooling.",
+    "evidence": "In the session note (same text in SESSION_REGISTRY.json @37f2d96), 'authored locally at8f080a08af06aa16e7aaf80add1a1b25e0cfae41/tree7ff4d6a5059466e716d9b81f66a696cf69bc53d3'. In handoff 2026-10-08T19-20-00Z: :26 'assertions117/183', :36 'exact17/36' and 'and49-file', :37 'and626' and 'source756a906'.",
+    "fix": "Optional hygiene in the next records-only commit: separate the tokens. There is no semantic effect."
+   }
+  ]
+ },
+ "subject": "8f080a08af06aa16e7aaf80add1a1b25e0cfae41",
+ "tree": "7ff4d6a5059466e716d9b81f66a696cf69bc53d3",
+ "records": "37f2d9648916b50fae2fd99b3c5ee46174893fae",
+ "predecessor": "e0a7d4787071140a25a984edc4c0a49f0d7c22ab",
+ "workflowRun": "wf_f23c347a-702",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Lens and adversarial-verifier outputs, verbatim. Reviewer dispositions are in doc 60.",
+ "verify": {
+  "verdicts": [
+   {
+    "id": "D56C-P3-1",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Re-derived. MemberProductDetailExperience.tsx:162-163@8f080a0 now pairs the 756a906 title with the e0a7d47 body. Neither predecessor rendered this pair: 756a906's body was 'Only an exact published and public Product Control record can appear here.' (diff 756a906..8f080a0 shows the title line as unchanged context and only the body changed). The pair also renders for the server's definitive 404 product_not_found (member-catalog-routes.ts:96 -> api.ts:110,123-124 with no knownNotFoundDenials -> ProductPage.tsx:51-53) and for coded 403 denials (api.ts:107). Disclosed at DOC56_CORRECTION_PACKET:57@37f2d96. It follows directly from the remedy doc 56 recommended (keep the route-level title) and from the coordinator assignment at acbba2c ('Carry D-5 ... explicitly'). P3 is correct: Samuel's copy decisions are already release-qualification prerequisites (packet :169), and D-5 resolution should cover this pair."
+   },
+   {
+    "id": "D56C-P3-2",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed. The CRLF transform of blobs f1db3fa, 78f2353, c54db89 and 5a9e65b yields 4f1e67ff, 6ab17821, 7de21214 and 6a7957da, which do not equal the recorded 132d98f1, b62843ba, 50e40303 and e1994fdf. The foreign test's dd81854c does equal the CRLF form of f389110. The catalog working hash 50e40303 is identical in source-bindings.json (e0a7d47) and doc56-source-bindings.json, which is consistent for an unchanged file. Mixed line endings on disk are a likely cause, but working-tree files were out of scope, so this is NOT PROVEN. Mitigation: the records already disclaim these values (README:110-111, handoff:56, the bindings hashMethod), and identity rests on gitBlob/gitRawSha256, which recompute. This is informational records hygiene only."
+   },
+   {
+    "id": "D56C-P3-3",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed. Packet :54 says 'COPY/POLICY HELD BEFORE RELEASE QUALIFICATION' and :169 says 'Copy decisions ... remain prerequisites', but neither names Samuel as the decision owner. The held table at :87-93 lists only the three strings in published doc 56 D-2. The doc 56 lens archive (hl12/56_catalog_detail_lens_findings.json) cites productEducation.ts:279 ('...current pharmacy serviceability') and :295 ('...pricing rule, and operational status') against claim (6), and says 'Ticket the productEducation owner'. Both strings are still present at 8f080a0. The published doc 56 D-2 remedy does not list them, and no record still affirms claim (6), so this is a records gap and not an overclaim. P3."
+   },
+   {
+    "id": "D56C-P3-4",
+    "upheld": true,
+    "severity": "P3",
+    "note": "Confirmed. Run-on identifiers appear in the session note and SESSION_REGISTRY note @37f2d96 ('at8f080a08.../tree7ff4d6a5...') and in handoff :26 ('assertions117/183'), :36 ('exact17/36', 'and49-file') and :37 ('and626', 'source756a906'). The same pattern is in the 9c597b2 scopeNote ('directives94485a6/1b165b1') and in the coordinator assignment at acbba2c ('lines117/183', 'tree340248360...'), so it is a fleet-wide authoring artifact, not specific to this owner. Cosmetic. Minor lens anchor correction: the narrowed catalog README row is :49, not :50. The detail row :51 is correct."
+   }
+  ],
+  "checklistOpinion": [
+   {
+    "item": "Identities",
+    "status": "PASS",
+    "note": "8f080a0 has tree 7ff4d6a5 and parent 9c597b2. 37f2d96 has parent 8f080a0 and tree 9c880901, which equals recordsTree in the coordinator checkpoint at 32ab80f. b22f HEAD is 37f2d96. WC worktree 5b21 HEAD is e5ca41d, whose parent 736bb2a has parent 95283ce."
+   },
+   {
+    "item": "D-1: product-subscribe.test.tsx:117 holds at 8f080a0 (hand-simulated, NOT RUN)",
+    "status": "PASS",
+    "note": "f389110 is the same blob at 756a906, 8f080a0 and 736bb2a. Trace:\n- The 503 mock has no body. lib/api.ts:110 -> releaseUnusedBody returns at :54 (no response.body) -> :124 {kind:'unavailable'}.\n- ProductPage.tsx(4c9075a):51-53 sets 'unavailable'.\n- Detail :158-163 -> kit.tsx:686 ResearchEmptyState -> :45 renders the title 'This product is not available.'\n- :118-119 hold because ProductSubscriptionCreate mounts only when state==='ok' (ProductPage:74).\n- api.ts, kit.tsx, shells.tsx, ProductPage and memberCatalog.ts are byte-identical to 756a906, where this test passed (401/0/0). Async timing is unchanged."
+   },
+   {
+    "item": "D-1: product-subscribe.test.tsx:183-184 holds at 8f080a0",
+    "status": "PASS",
+    "note": "The fixture has ok:true, so adaptMemberProductDetail (memberCatalog.ts:684-703) cannot return not_found (:687 requires ok===false). The result is either ok with a slug mismatch (ProductPage:31-36) or invalid_projection (:42-43). Both lead to 'unavailable' with product never set, so the shell title is 'Product information' (detail :133,:139) and 'Substituted Product' is absent."
+   },
+   {
+    "item": "D-1: :117/:183 hold with 736bb2a's four blobs composed onto 8f080a0",
+    "status": "PASS",
+    "note": "ProductPage at 95283ce equals 4c9075a at 8f080a0, so the d50b467 patch applies exactly. In d50b467, load() calls setLoadedScope(scope) before the await. After the flush, current is true, displayedState is 'unavailable' and the restored title renders. The always-mounted wrapper is hidden. ProductSubscriptionCreate b4046a7:93 returns null when visible===false, so it adds no text or testids. textContent ignores hidden, but nothing is rendered. On the slug-mismatch path displayedProduct stays null.\n\nBlob-substitution coherence:\n- 8f080a0's ProductSubscriptionCreate (3d938f0) and ProductPage.subscription.test (f3bb317) differ from WC base 7834fd4/29c60d8 only by the doc 54 'yet' wording.\n- b4046a7's imports (shared/research/commerce, persistent-cart, adapters/commerce, lib/routes) are identical blobs on both lines.\n- No catalog-branch test outside the four WC files pins the 'yet' wording."
+   },
+   {
+    "item": "Flipped detail-test assertions match the restored title; body assertion holds",
+    "status": "PASS",
+    "note": "78f2353 :261 toContain('This product is not available.') and :263 not.toContain('Product information is unavailable.') match tsx :162. Both fail on e0a7d47 (dbaa8e1), so they discriminate. :262 '...product&#x27;s availability.' matches :163 under renderToStaticMarkup apostrophe escaping. The :265-288 loop needs only the shell 'Product information', which is still present. The :416-419 retry loop is title-independent."
+   },
+   {
+    "item": "No test on either branch asserts 'Product information is unavailable.' positively",
+    "status": "PASS",
+    "note": "git grep over the whole tree:\n- 8f080a0 and 37f2d96: only detail test :263 (negative) plus the records ledger (packet :75).\n- 736bb2a and e5ca41d: none.\n\nThe positive 'This product is not available.' assertions are product-subscribe :117,:183 on all heads, detail test :261@8f080a0 and :233@736bb2a. No test anywhere asserts the old 756a906 body. product-media-surfaces.test and ProductPage.subscription.test (f3bb317 and ce94ff4) assert neither title."
+   },
+   {
+    "item": "Source scope: diff e0a7d47..8f080a0 over client/server/shared/supabase/package*/scripts",
+    "status": "PASS",
+    "note": "The diff lists exactly M MemberProductDetailExperience.test.tsx and M MemberProductDetailExperience.tsx, with 3 insertions and 3 deletions. It is byte-identical to scratchpad d56c/source.diff. The cumulative 756a906..8f080a0 code delta is the four B files only."
+   },
+   {
+    "item": "9c597b2, 37f2d96 (and 0dbfaf5) are records-only, own rows only",
+    "status": "PASS",
+    "note": "name-status shows only .xenios/ and docs/. The registry hunks sit at the top rows (@@ -4/-6/-14/-27/-42), which are the owner's task, lease and session entries. No top-level fields changed."
+   },
+   {
+    "item": "D-9: four B paths re-leased to this owner",
+    "status": "PASS",
+    "note": "At 9c597b2, tasks[0].paths and leases[0] (d0897045) add the four paths plus the report-root glob, state 'active', with the correctionAssignment at coordinator acbba2c. At 37f2d96 they are retained (handoff/qa). The only other rows naming them are CARE-RESEARCH-POSTLAUNCH (qa/handoff) and an inventory history list. Limit: Git proves only commit order. 9c597b2 is at 14:15:27 and 8f080a0 at 14:15:28 -0500. 'Reclaimed before edits' rests on the 19:14:34Z heartbeat."
+   },
+   {
+    "item": "D-2: claims (6)/(7) narrowed, copy held, nothing claimed fixed",
+    "status": "PASS",
+    "note": "README :49 and :51 @37f2d96 drop four claims: 'distinct accessible names', 'Clinical copy no longer presumes...', 'Unavailable information no longer asserts...' and 'Program/clinical copy does not promise eventual purchasing'. Those strings now appear only in the supersession paragraph at packet :95-100. Packet :54 says HELD, and :87-93 lists literal strings with correct anchors at 8f080a0: catalog :87,:90; detail :26,:29,:221,:225; catalog test :376; detail test :323; kit.tsx:69. Gaps: Samuel is not named as the decision owner, and the productEducation strings are missing (D56C-P3-3)."
+   },
+   {
+    "item": "D-9: literal before/after copy table",
+    "status": "PASS",
+    "note": "Packet :70-85 was checked against git diff 756a906..e0a7d47 of both tsx files. It covers every changed customer-visible string:\n- catalog: clinical summary, count expression, aria-label;\n- detail: title, body, 'Catalog status', missing-variant body, 'Selected variant', Strength/Form/Size/Presentation/'Not provided', 'Variant availability', the three lane paragraphs, related aria-label.\n\nThe current-correction column changes only the title. This satisfies directive 94485a6 section 4's 'explicit customer-visible before/after description'."
+   },
+   {
+    "item": "D-9: doc 35 holds in full",
+    "status": "PASS",
+    "note": "Packet :127-145 maps doc 35's 'Carried release holds' one for one: Founder, Subscription, MC-01, D/E, Finance, Qualification. :146-169 carries P3-1 (:111), P3-2 (:159-163, receipt sha bc5d395c and counts exact), P3-3 (:157-158), P3-4 (:164-165), browser/preview/provenance limits and PS-R5 mocked-fetch limit (:110). The only omission is doc 35's stdout sha d6837b2f..., which is immaterial."
+   },
+   {
+    "item": "D-9: affected test sets",
+    "status": "PASS",
+    "note": "DOC56_AFFECTED_TEST_SETS :45-61 and :72-107 match the command arrays in integration-{subscription17,affected}-run1 receipts at 38c7239 path for path and in order. Overlap is exactly 4 files, union 49. head and finalHead are 756a906, tree 78743294, exit 0, logSha256 83473aa9... and eec4390c.... All are bound to 756a906 only (:11-12)."
+   },
+   {
+    "item": "D-3..D-8, D-10 carried, not closed",
+    "status": "PASS",
+    "note": "Packet :55-62 records D-3, D-5, D-6 and D-7 as OPEN CARRIED; D-4 as OPEN CLAIM NARROWED; D-8 as OPEN CLAIMS LIMITED; D-10 as OPEN OUTSIDE SCOPE. D-1 and D-9 are 'reviewer verification pending'. Handoff :29-32 and README :12-15 agree. Nothing is self-accepted."
+   },
+   {
+    "item": "Hash recomputation vs doc56-source-bindings.json @37f2d96",
+    "status": "PASS",
+    "note": "Each blob id and raw sha256 over git cat-file bytes equals the bindings:\n- detail tsx: f1db3fa / 10830464...\n- detail test: 78f2353 / f2a02557...\n- catalog: c54db89 / 318d972b... and 5a9e65b / 2de8f721...\n- foreign test: f389110 / c2411c79...\n- preserved inventory: bba3890 / b6ff1f8c... and 4477282 / 719fddee...\n\nThe historical source-bindings.json is the same blob c7093f2 at 9737db7, 0dbfaf5 and 37f2d96, so it was not rewritten. The coordinator checkpoint at 32ab80f carries identical values, and its three copies are the same blobs (15b53b3, b64a7b6, 9459df1)."
+   },
+   {
+    "item": "Records hashes in handoff :51-58",
+    "status": "PASS",
+    "note": "README 4ca8a84c, PACKET a7272d53, TEST_SETS aff5e94d and bindings 58441b1e equal the raw sha256 of the blobs at 37f2d96. The scratchpad README copy is byte-identical. The doc 56 copy hash 63f3d236 equals both cb41382's blob and the on-disk file."
+   },
+   {
+    "item": "workingFileSha256 for the four B files",
+    "status": "NOT_PROVEN",
+    "note": "These values are not reproducible from Git bytes (LF and CRLF variants were tried). Working-tree files are out of scope. The records disclaim them (D56C-P3-2)."
+   },
+   {
+    "item": "Em-dash scan of changed source and records",
+    "status": "PASS",
+    "note": "A byte-exact U+2014 scan (with a control) finds 0 in both detail files and in the README, packet, test-sets and bindings files and the handoff at 37f2d96. This is static only; the no-em-dash gate is NOT RUN."
+   },
+   {
+    "item": "Other composed-tree tests (ProductPage.subscription.test ce94ff4 etc.) against 8f080a0 detail/adapter",
+    "status": "NOT_PROVEN",
+    "note": "None of their assertions reference either unavailable title. The fixture (media null, variants [], extra offer-like keys) matches the f3bb317 shape that passed at 756a906 with the same adapter blob 8a4b412. A full composed simulation is out of D-1 scope. Doc 57 requires composed execution at the exact integrated tree."
+   },
+   {
+    "item": "Runtime: tests, typecheck, build, gates, browser",
+    "status": "NOT_PROVEN",
+    "note": "None of these were run. Historical 401 and 626 bind 756a906 only. Nothing here is Samuel's approval."
+   }
+  ],
+  "missed": [
+   {
+    "id": "D56V-M1",
+    "severity": "P3",
+    "file": "docs/health-launch/catalog-detail-presentation-20261008/DOC56_CORRECTION_PACKET_20261008.md",
+    "claim": "D-5 is recorded only as needing 'an appropriately owned state/copy decision' (packet :57). It cannot be fixed by copy inside the four B paths, and no owner or ticket is named for the routing part.",
+    "evidence": "The component's 'Product not found.' state with 'Return to products' (detail :165-174@8f080a0) is unreachable from the live route, for two reasons:\n- member-catalog-routes.ts:96 returns 404 {ok:false, code:'product_not_found'}. getMemberProductDetail (memberCatalogApi.ts:19) passes no knownNotFoundDenials, so lib/api.ts:110,123-124 maps it to 'unavailable'.\n- Any 200 {ok:false, code} becomes 'denied' at api.ts:139-140 before the adapter sees it, which makes ProductPage.tsx:40-41 (adapted.code==='not_found') dead in practice.\n\nProductPage is owned by Workstream C (transfer 20a2305), and api.ts is outside both leases. Doc 56's lens archive already identified the mechanism, but the 37f2d96 records do not route it.",
+    "fix": "Records-only. Ticket D-5's routing half to the ProductPage (Workstream C) owner and the lib/api owner: opt the detail read into knownNotFoundDenials ['product_not_found'] and map it to the not-found state. Keep the copy half under Samuel's copy disposition. No change is needed in 8f080a0."
+   },
+   {
+    "id": "D56V-M2",
+    "severity": "P3",
+    "file": ".xenios/handoffs/2026-10-08T19-20-00Z-ACCEPTED-SOURCE-INTEGRATION-20261005-codex-accepted-source-integration-20261005.md",
+    "claim": "The 'reclaimed before source edits' claims (handoff :64, packet :29, :61) can be evidenced from Git only as commit order, not edit order.",
+    "evidence": "9c597b2 is committed at 2026-10-08T14:15:27-05:00 and 8f080a0 at 14:15:28-05:00, one second apart. The only earlier timestamp is the self-reported heartbeat 19:14:34Z in the lease rows. There is no conflicting active claim on the four paths at either commit, so no harm is shown.",
+    "fix": "None required for acceptance. Optionally reword to 'lease commit 9c597b2 precedes source commit 8f080a0', which is what Git proves."
+   }
+  ],
+  "disposition": "My opinion is SOURCE ACCEPT WITH LIMITS for 8f080a08af06aa16e7aaf80add1a1b25e0cfae41 (tree 7ff4d6a5059466e716d9b81f66a696cf69bc53d3), with records 37f2d9648916b50fae2fd99b3c5ee46174893fae, as the doc 56 correction. The decision is the reviewer's. Nothing here approves anything; everything is NOT RUN.\n\n**D-1 is corrected at source (hand-simulated).**\n- The only code change from e0a7d47 restores the 756a906 title literal at MemberProductDetailExperience.tsx:162 and flips the two matching expectations at test :261 and :263. The body assertion at :262 is retained.\n- The unchanged foreign product-subscribe.test.tsx (f389110) holds at :117 and :183-184 against 8f080a0.\n- It also holds when Workstream C's four 736bb2a blobs are composed in, since ProductPage 4c9075a is the WC base.\n- No test on either branch asserts 'Product information is unavailable.' positively.\n\n**D-2 is narrowed and held, not claimed fixed.** D-9's lease, literal copy ledger, 17-file and 36-file sets (overlap 4, union 49) and doc 35 holds are complete and anchored. D-3 to D-8 and D-10 are carried open.\n\n**Hashes:** every gitBlob and gitRawSha256 recomputes, and so do the records hashes. The workingFileSha256 values are NOT PROVEN, and the records disclaim them.\n\nThere is no P0, P1 or P2. I upheld all four lens P3s (D56C-P3-1 to P3-4) and added two P3s, D56V-M1 and D56V-M2.\n\n**Limits to carry:**\n- The title and body now contradict each other. This belongs to D-5 and Samuel's copy decision.\n- D-5's routing half sits with the ProductPage and lib/api owners.\n- The held clinical, supplier and program copy is pending Samuel's disposition, plus the productEducation strings.\n- Records hygiene.\n- Before release qualification, the following must run at the exact integrated tree under fresh authority: the two changed tests, the 17-file and 36-file sets, the Products and ProductPage route tests, the typecheck, the no-em-dash gate, the build and browser qualification. Every doc 35 hold must also be cleared."
+ }
+}
