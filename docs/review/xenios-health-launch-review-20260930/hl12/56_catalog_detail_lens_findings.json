@@ -1,0 +1,1376 @@
+{
+ "schemaVersion": 1,
+ "review": "56_CATALOG_DETAIL_PRESENTATION_e0a7d47_2026-10-08.md",
+ "subject": "e0a7d4787071140a25a984edc4c0a49f0d7c22ab",
+ "tree": "340248360ac85f50f10ed5890624401616f792fd",
+ "records": "9737db71014d1073ec5ffe9a78b2a1c491220813",
+ "predecessor": "756a906877dbc174b7e228a259d2faa9c3af48ca",
+ "workflowRun": "wf_eeb84cc2-e1d",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Lens, adversarial-verifier and completeness-critic outputs, verbatim. Reviewer dispositions are in doc 56.",
+ "lenses": [
+  {
+   "lens": "catalog-component",
+   "review": {
+    "verdict": "K1 (MemberCatalogExperience.tsx, 756a906..e0a7d47): SOURCE-INSPECTED, no P0/P1/P2 found in the delta. The changes are bounded to presentation, add no price, availability, eligibility or purchase claim, and add no network call, mutation or retry. They preserve what doc 35 accepted. Hand simulation supports claims (1) to (5). Claim (6) is PARTIAL: the shrink markup is present but layout is unproven, and link names are not distinct when the server forces identical display names. Claim (7) is PARTIAL: the summary is fixed, but the carried price-cell copy still implies a clinical-review path and a new test pins it. There are 4 P3 findings. Every test, typecheck, the no-em-dash gate and all browser behaviour are NOT RUN, so runtime outcomes are NOT PROVEN. The window expired 2026-10-06T21:43:37Z. None of this is approval to execute, push, release, set prices, change availability or set clinical policy.",
+    "checklist": [
+     {
+      "item": "Identity and four-path scope",
+      "status": "PASS",
+      "evidence": "Verified retained evidence + recomputation: rev-parse e0a7d47^{tree}=340248360ac8..., parent 20a23057. git diff 20a2305..e0a7d47 = exactly 4 files under products-diagnostics/. 756a906..20a2305 touches no client/ path. 756a906..e0a7d47 -- client server shared supabase package.json package-lock.json scripts render.yaml = the same 4 paths. 9737db7 (parent e0a7d47) changes 0 paths in client/server/shared. Blob c54db893... and sha256(git show)=318d972b... for MemberCatalogExperience.tsx, and 5a9e65be... / 2de8f721... for the test, all match checkpoint.json. File is all ASCII; CRLF count 0."
+     },
+     {
+      "item": "(1) Facets, counts and cards derive from one supplied collection",
+      "status": "PASS",
+      "evidence": "Inspected MemberCatalogExperience.tsx:173-181,190-221,316-318@e0a7d47: facets come from catalog.items, and catalog.categories/lanes are no longer read. Hand sim A: items A(cat Peptides, name Alpha) and B(cat Vitamins). Search 'alpha' gives [A]; Vitamins stays listed (no per-facet counts are shown); choosing it gives the empty state and '0 of 2 products'. Hand sim B: server categories ['Peptides'], but item B has 'Novel'. Old code offered no Novel option, so B could not be reached by filter; new options are [all,Novel,Peptides]. Unknown lanes cannot arrive: adapter memberCatalog.ts:316,620-621@e0a7d47 rejects them. The server builds facets from the same projected set (member-catalog-projection.ts:692-696), and the client sends no query (memberCatalogApi.ts:9-13)."
+     },
+     {
+      "item": "(2) Invalid facets reset only on successful reads",
+      "status": "PASS",
+      "evidence": "Inspected :183-188 (effect returns early unless state==='ok'). Products.tsx:29-55@e0a7d47 keeps the previous catalog on loading/error/unavailable and sets catalog+ok together (React ^19.2.0 batches them). Hand sim: category X selected; refresh goes loading then error with the old catalog kept, so the guard blocks any reset and X persists. Retry succeeds without X: the render derives currentCategory 'all' with no flash, then the effect calls setCategory('all'). The next render is equal, so there is no loop. A later success with X does not bring it back. Test :290-311 discriminates both the guard and the no-resurrection rule."
+     },
+     {
+      "item": "(3) Query and sort survive transient read failures",
+      "status": "PASS",
+      "evidence": "Inspected :168-171,183-188. The effect never touches query or sort. The state lives above ResearchRouteBoundary (kit.tsx:684-695@e0a7d47), which only swaps children, and Products.tsx:64-71 renders the component without a key, so it is never remounted. Test :313-326 (error, Try again, ok) restores 'A-1' and Research. Test :290-311 checks that sort name_descending and query 'a' survive the reset. Pre-existing and unchanged: focus in the search box is lost while the boundary shows loading."
+     },
+     {
+      "item": "(4) Deterministic, locale-pinned sort ties",
+      "status": "PASS",
+      "evidence": "Inspected :209-220. Every comparison uses localeCompare(...,'en'), so order no longer depends on the browser's default locale (756a906 passed no locale). Name ties fall back to slug, then id. name_descending uses -nameOrder||identityOrder, so -0 falls to ascending identity. Ties on updatedAt fall back to name, then identity. The adapter makes id and slug unique (memberCatalog.ts:629-630) and makes updatedAt fixed-width canonical ISO (:64-77), so a slug tie always decides. Order follows ICU 'en' collation, not code points (see P3-2). Test :328-336 discriminates against the old input-order behaviour."
+     },
+     {
+      "item": "(5) Clear filters includes sort-only state",
+      "status": "PASS",
+      "evidence": "Inspected :320 (button shows when sort!=='name_ascending'; uses currentLane/currentCategory) and :223-228 (clearFilters resets query, lane, category and sort). Test :271-288 asserts the button appears after a sort-only change, which 756a906 would fail, and that all four controls reset. Minor wording point: a sort-only reset is labelled 'Clear filters', which is harmless."
+     },
+     {
+      "item": "(6a) Long control containers can shrink",
+      "status": "PARTIAL",
+      "evidence": "Inspected :249,252,256,263,267,279,283,295,299: min-w-0 is on the section, every label grid item and every control, and max-w-full is on each control. Tailwind v4 utilities are layered (index.css:8-10@e0a7d47). .input-field (index.css:349-364) sets width:100% but no min/max width, so no unlayered rule overrides them. By grid sizing rules, min-w-0 on the label stops a long-option select from forcing the implicit auto column wider on mobile. Test :338-357 only checks that the class strings are present. No browser, zoom or 320px evidence exists for this commit (the packet says so). Layout is NOT PROVEN."
+     },
+     {
+      "item": "(6b) Product links have distinct accessible names",
+      "status": "PARTIAL",
+      "evidence": "Inspected :148: aria-label 'View product: {displayName}' starts with the visible text, so label-in-name is satisfied, and it beats 756a906, where every card read 'View product'. But the server forces identical names: every non_product_program item is 'Research program' and unsafe future_clinical names become 'Research pathway' (member-catalog-projection.ts:551-559; adapter memberCatalog.ts:651-662). Two or more such published items give identical link names with different hrefs. The test checks one card only (:355). See P3-1."
+     },
+     {
+      "item": "(7) Clinical copy no longer presumes provider/pharmacy availability",
+      "status": "PARTIAL",
+      "evidence": "Inspected :97. 'Clinical information requires independent licensed review. This listing does not confirm provider or pharmacy availability, clinical suitability, or a prescription.' replaces the 756a906 wording 'available only through ... current pharmacy fulfillment'. That fixes the summary. The carried price cell :87 'Pricing shown after clinical review' still shows on every future_clinical card (the adapter forces price null, memberCatalog.ts:651), and the new test :376 pins it. See P3-3."
+     },
+     {
+      "item": "No invented price, availability, eligibility or purchase affordance",
+      "status": "PASS",
+      "evidence": "Inspected diff: pricePresentation :76-93, STATE_COPY :26-55, the request link :235-238 and the secure notice :374-380 are unchanged. The only new customer strings are the clinical summary :97, the aria-label :148 and 'N of M product(s)' :317. Price and the 'Available' badge are shown only as the server and adapter supplied them; the adapter requires a price, readiness and selection for 'available' (memberCatalog.ts:330-336). No purchase control was added; test :378 checks for none."
+     },
+     {
+      "item": "No new network call, mutation or retry",
+      "status": "PASS",
+      "evidence": "Inspected diff: the only additions are useEffect calling setLane/setCategory, useMemo facets, sort tie-breaks, classNames, the aria-label and status text. No fetch, adapter call or new callback. Retry is still the supplied onRetry passed to ResearchRouteBoundary (:241-247 → kit.tsx:685)."
+     },
+     {
+      "item": "Stale data suppressed on non-ok reads",
+      "status": "PASS",
+      "evidence": "Inspected kit.tsx:684-695@e0a7d47: loading, error, unavailable and unauthorized each return before children, so cards, counts, facets and prices from the retained catalog never render. Products.tsx keeps the old catalog in memory only. Test :359-365 checks this for all four states (it is a preservation test; 756a906 would also pass)."
+     },
+     {
+      "item": "No em dash or 'not ... yet' timing promise in new strings",
+      "status": "PASS",
+      "evidence": "Recomputed: the 194 added lines in the catalog source and test diff contain no U+2014/U+2013 and no 'not...yet' pattern. The full file at e0a7d47 has none of the gate's forbidden forms (scripts/acceptance/verify-no-em-dash.mjs:36-42) and is entirely ASCII. Carried and unchanged: 'No products are published yet.' at :334, pinned by Products.integration.test.ts:103,110; not introduced here. The gate itself is NOT RUN."
+     },
+     {
+      "item": "Keys stable; hook order; no effect loop or setState in render",
+      "status": "PASS",
+      "evidence": "Inspected :168-221: useState x4, useMemo, useEffect, useMemo, all unconditional. Effect deps [state,lane,category,currentLane,currentCategory] are complete. It only sets values toward the derived current value, so it settles after one extra render. No setState in render. Option keys are Set-unique facet values; card key is product.id, which the adapter makes unique (memberCatalog.ts:629)."
+     },
+     {
+      "item": "Doc 35 accepted behaviour preserved",
+      "status": "PASS",
+      "evidence": "Inspected: the ProductMedia slot (:117, D/E IC-3 fallback-first; ProductMedia.tsx is outside the 4-path delta), the boundary and retry, the one-main composition, the price and state copy, the request-product link and the secure notice are all byte-unchanged in the diff. The original tests :126-256 are kept; only the name of :247 was made more honest. Doc 35 accepted the composition (areas 1 and 3) and carries the D/E and qualification holds. Nothing here resolves or waives them."
+     },
+     {
+      "item": "Discriminating authored tests",
+      "status": "PARTIAL",
+      "evidence": "Inspected test@e0a7d47. These fail on 756a906 or on a weakened variant: :258 (server facets ignored), :271 (sort-only Clear), :290 (no early reset, no resurrection), :313 (guard), :328 (tie order), :367 (new clinical string). Gaps: :328 sets id===slug, so slug-before-id order and the 'en' pin are untested. :355 checks one card's aria-label, not distinctness. :375 'Clinical / provider review' is also satisfied by the lane option text. :346-347 checks class strings only. By hand simulation the assertions should hold; all NOT RUN."
+     },
+     {
+      "item": "Execution evidence (tests, typecheck, gate, browser)",
+      "status": "NOT_PROVEN",
+      "evidence": "Producer-reported in the packet: component tests, typecheck, the no-em-dash gate, build, browser, zoom and keyboard checks were all NOT RUN for e0a7d47. No retained receipt binds e0a7d47. The 756a906 receipts (17/401, 36/626) belong to the predecessor."
+     },
+     {
+      "item": "Directive section 4 (Workstream B) bounds",
+      "status": "PASS",
+      "evidence": "Read PARALLEL_IMPLEMENTATION_DIRECTIVE_20261008.txt:191-269@94485a6. Only the four allowed paths changed. No server, price, contract, global index.css or protected file changed. Only existing utility classes are used. Read retry uses the existing callback. Filter state is not erased by a failed read. Tests avoid claiming browser or zoom proof (renamed :247)."
+     }
+    ],
+    "findings": [
+     {
+      "id": "K1-P3-1",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "claim": "The packet says product links have distinct accessible names. That is false whenever the server sends identical display names, which it does by design for nontransactional lanes.",
+      "evidence": "Inspected MemberCatalogExperience.tsx:122-124,148@e0a7d47: both links are named from product.displayName. member-catalog-projection.ts:551-559@e0a7d47 gives every non_product_program item 'Research program' and every unsafe future_clinical name 'Research pathway'; the adapter enforces this (memberCatalog.ts:651-662). catalog.ts:42 says four legacy program records exist; whether two or more are published is NOT PROVEN. If they are, cards with different hrefs share the name 'View product: Research program'. Still better than 756a906. Test :355 checks a single card.",
+      "fix": "Narrow the claim to 'distinct when display names differ', or add a non-sensitive disambiguator that does not unmask the server's safe name (e.g. a 1-based position from the visible list). Add a two-card test with the same displayName."
+     },
+     {
+      "id": "K1-P3-2",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "claim": "The tie-break test cannot tell slug-before-id order or the 'en' pin apart. Sort order follows ICU 'en' collation, not a code-point canonical order.",
+      "evidence": "Inspected test :328-336@e0a7d47: items set id===slug ('zeta','alpha'), so swapping slug and id, or dropping the id fallback, still passes. Removing 'en' would also pass under a jsdom en-US runtime. Source :210-212 uses localeCompare(...,'en'). It is deterministic and independent of the default locale, but tied to the engine's ICU data, not byte order. The id fallback is unreachable in practice because the adapter makes slugs unique (memberCatalog.ts:630). Also, :375 'Clinical / provider review' is satisfied by the lane <option> text, so it does not discriminate the card label.",
+      "fix": "Use differing id and slug orders in the tie test, and add a non-ASCII or case-variant name pair. Optionally compare slug/id by code unit (a<b?-1:a>b?1:0) for a truly canonical order. Scope the :375 assertion to a card element."
+     },
+     {
+      "id": "K1-P3-3",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "claim": "Carried, not introduced: catalog price-cell copy on nontransactional lanes still implies a future pricing or request path. The new test pins one of these strings, in tension with claim (7) and the directive's no-promise rule.",
+      "evidence": "Inspected :86-91@e0a7d47. Every future_clinical card shows 'Pricing shown after clinical review', because the adapter forces price null (memberCatalog.ts:651). Every non_product_program card reaches 'Price on request', because the adapter forces catalog_only. Both lanes are non-transacting (catalog.ts:56-59). New test :376 asserts the first string. The detail slice removed 'Ordering appears only after' for the same reason (detail test :442-449), so the two surfaces are inconsistent. Unchanged since 756a906; documented as a runtime rule in docs/research-launch/XENIOS_CARE_RESEARCH_POSTLAUNCH_IMPLEMENTATION_2026-08-31.md:61.",
+      "fix": "Get a copy disposition before release qualification, e.g. 'Pricing not offered for this listing' or 'No price is offered'. Do not pin the sequencing string in new tests until that disposition exists."
+     },
+     {
+      "id": "K1-P3-4",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "claim": "Narrow-layout and announcement improvements are proven only by markup class and attribute strings. Runtime layout and screen-reader behaviour are unproven.",
+      "evidence": "Inspected test :338-357 (className contains 'min-w-0 max-w-full'; style.overflowWrap readback), :247-256 and :268 (aria-atomic). jsdom has no layout. No browser receipt exists at e0a7d47 for 320/375/767/768, native zoom, forced colors or a screen reader. The packet discloses all of this.",
+      "fix": "Include e0a7d47 catalog routes at 320/375/exact 768/native 200-400% in the next authorized browser qualification, with overflow measurements. Until then keep claim (6) labelled markup-only."
+     }
+    ],
+    "confirmed": [
+     "Identity: e0a7d47 tree 340248360ac8..., parent 20a23057; records commit 9737db7 touches no client/server/shared path; the catalog source and test blobs and their raw sha256 match checkpoint.json (recomputed).",
+     "The delta is exactly 4 paths. The catalog source changes only: the useEffect import, the clinical summary :97, the aria-label :148, facets and the reconciliation effect :173-188, the derived filter and sort :190-221, min-w-0/max-w-full classes, the 'N of M' status with aria-atomic :316-318, and the Clear-filters condition :320.",
+     "Facets come only from catalog.items; server catalog.categories and catalog.lanes are ignored. That matches the server, which builds facets from the same projected set (member-catalog-projection.ts:692-696), and the client sends no query.",
+     "The reset effect runs only when state==='ok'. Products.tsx keeps the previous catalog on non-ok reads and sets catalog and ok together, so a failed refresh never clears the selection and a successful refresh without X resets it once, with no flash and no loop.",
+     "Query and sort persist through loading and error because their state lives above ResearchRouteBoundary and the component is never remounted.",
+     "Sorting uses the pinned 'en' locale throughout, falls back from name to slug to id, and stays deterministic when the input order is reversed.",
+     "Clear filters appears for sort-only state and resets all four controls.",
+     "No new network call, mutation, retry, price, availability, eligibility or purchase affordance. No em dash or other forbidden dash forms in the file; it is all ASCII.",
+     "Hook order is unconditional, effect deps are complete, there is no setState during render, and keys are stable and unique.",
+     "Doc 35-accepted catalog behaviour is unchanged: the ProductMedia fallback slot, the route boundary and retry, one-main composition, the price and state copy, the request link and the secure notice. Doc 35 holds are carried, not resolved."
+    ],
+    "discrepancies": [
+     "The packet claims 'product links have distinct accessible names'. That holds only when display names differ; server projection forces identical names for non_product_program and unsafe future_clinical items (K1-P3-1).",
+     "The packet claims 'Clinical copy no longer presumes provider/pharmacy availability'. The summary is fixed, but the carried price cell 'Pricing shown after clinical review' still implies a clinical-review-to-pricing path, and new test :376 pins it (K1-P3-3).",
+     "The packet calls the sort tie-break 'canonical slug/ID'. In practice it is ICU 'en' collation order, not code-point order, and the authored test cannot distinguish slug-first from id-first (K1-P3-2)."
+    ],
+    "notProven": [
+     "Whether the authored catalog tests pass: NOT RUN. Hand simulation suggests every assertion holds, including the jsdom style.overflowWrap readback at :353, which carries small cssstyle uncertainty.",
+     "Typecheck, lint, build and the no-em-dash gate at e0a7d47: NOT RUN. Source inspection found no forbidden dash forms.",
+     "Narrow-layout shrinking of the controls at 320/375/767/exact 768, native zoom and forced colors: no browser evidence at e0a7d47.",
+     "Screen-reader announcements of the 'N of M products' status and the aria-label link names: untested behaviour.",
+     "Whether production has two or more published non_product_program or masked future_clinical items, which would trigger duplicate link names.",
+     "Live catalog behaviour, live Auth and any purchasing, payment, fulfilment or clinical capability: not in scope and not proven. Nothing here approves execution, push, release, price, availability or clinical policy."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "K1-P3-1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Re-derived. MemberCatalogExperience.tsx:122-124,148@e0a7d47 name both card links from product.displayName. member-catalog-projection.ts:551-559@e0a7d47 sets every non_product_program name to 'Research program' and every unsafe future_clinical name to 'Research pathway'. The adapter enforces this (memberCatalog.ts:655-666@e0a7d47). Two such published items would give identical link names with different hrefs. Whether production has two or more is NOT PROVEN (catalog.ts:42 says four legacy program records exist). The cards themselves are visibly identical, so the client cannot disambiguate without unmasking. The new label also says 'View product: Research program' on a lane literally named non_product_program. Still better than 756a906. The test (:355) checks one card only."
+     },
+     {
+      "id": "K1-P3-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. In test :329@e0a7d47 id===slug ('zeta','alpha'), so swapping slug and id, or dropping the id fallback, still passes. Dropping 'en' passes on an en-default runtime. Source :210-212 uses ICU 'en' collation, not code-unit order. One correction: the id fallback is reachable in principle when two distinct slugs compare equal under collation (canonically equivalent Unicode or ignorable code points), even though the adapter enforces exact uniqueness (memberCatalog.ts:630). The server only dedupes slugs case-insensitively (member-catalog-projection.ts:645-657). Practically unlikely. Confirmed too: :375 'Clinical / provider review' is satisfied by the lane <option> text (:272-275), so it does not discriminate the card label."
+     },
+     {
+      "id": "K1-P3-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Core claim upheld: on every future_clinical card, :86-87@e0a7d47 shows 'Pricing shown after clinical review', and new test :376 pins it, in tension with directive :252-253 ('Never promise ... payment capability'). Evidence correction: the two surfaces are NOT inconsistent on this string. Detail still renders it at MemberProductDetailExperience.tsx:26,225@e0a7d47, and the detail test already pinned it at 756a906 (:296). It is also a documented runtime rule (XENIOS_CARE_RESEARCH_POSTLAUNCH_IMPLEMENTATION_2026-08-31.md:61). The detail slice removed only the separate 'Ordering appears only after' sentence. So this is carried, documented and not a regression: P3, with copy disposition owned by Samuel."
+     },
+     {
+      "id": "K1-P3-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. Test :338-357@e0a7d47 checks class strings ('min-w-0 max-w-full'), a label class and a style.overflowWrap readback. :258-268 checks aria-atomic. jsdom has no layout. Doc 35's browser evidence (area 6) is for 756a906 and already left exact 768 and native zoom unproved. No receipt binds e0a7d47. The packet discloses this. It is effectively a NOT PROVEN disclosure, and P3 is the right severity."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "Identity and four-path scope",
+      "status": "PASS",
+      "note": "Recomputed: e0a7d47^{tree}=340248360ac8..., parent 20a23057, 9737db7^=e0a7d47. Blob c54db893/sha256 318d972b (source) and 5a9e65be/2de8f721 (test) match checkpoint.json. git diff --name-only 756a906 e0a7d47, excluding .xenios/ and docs/, gives exactly the 4 products-diagnostics paths. 756a906..20a2305 touches only .xenios/ and docs/. 9737db7 touches 7 records paths and no client path. Both catalog files: 0 non-ASCII bytes, 0 CR. numstat: source +45/-24, test +147/-3 (192 added lines, not the lens's 194; immaterial)."
+     },
+     {
+      "item": "(1) Facets, counts and cards from one supplied collection",
+      "status": "PASS",
+      "note": "MemberCatalogExperience.tsx:174-181,190-221,317@e0a7d47: facets come from catalog.items only, and catalog.categories/lanes are no longer read (git grep finds them only in the adapter). The 'M' in 'N of M' is catalog.items.length. The server builds facets from the same unfiltered projected set (member-catalog-projection.ts:692-695), and the client sends no query (memberCatalogApi.ts:9-13), so the two sets match and only the sort order differs (server: code-unit; client: 'en'). I re-ran sims A and B and they agree. A category facet with zero matches after search stays listed; choosing it shows the honest empty state."
+     },
+     {
+      "item": "(2) Invalid facets reset only on successful reads",
+      "status": "PASS",
+      "note": "Effect at :183-188 returns unless state==='ok'. Sim using the real page: Products.tsx:29-55@e0a7d47 keeps the previous catalog on loading/error/unavailable and sets catalog and 'ok' together after the await (React ^19.2 batching). With the retained catalog, X is still in the facets, so nothing would reset even without the guard. The lens's wording 'the guard blocks any reset' is imprecise: the guard is only decisive for callers that pass a different collection while not ok, as tests :300/:318 do. On retry success without X, the render shows 'all' (no flash), then the effect sets 'all' once and the state settles. A later success with X does not bring it back (:309-310)."
+     },
+     {
+      "item": "(3) Query and sort survive transient read failures",
+      "status": "PASS",
+      "note": "State lives in MemberCatalogExperience (:168-171). ResearchRouteBoundary (kit.tsx:684-695@e0a7d47) only swaps children, and Products.tsx:64-71 renders without a key, so there is no remount. The effect never touches query or sort. Tests :313-326 and :307-308 assert this. Pre-existing: focus and controls unmount during loading."
+     },
+     {
+      "item": "(4) Deterministic, locale-pinned sort ties",
+      "status": "PASS",
+      "note": ":209-220 uses localeCompare(..,'en') throughout, with fallbacks name -> slug -> id. name_descending is -nameOrder||identityOrder (-0 is falsy, so ascending identity). recently_updated is updatedAt -> name -> identity, on fixed-width canonical ISO (memberCatalog.ts:64-76,323). Deterministic for the realistic slug domain. The order is ICU collation, not code-unit (see K1-P3-2)."
+     },
+     {
+      "item": "(5) Clear filters includes sort-only state",
+      "status": "PASS",
+      "note": ":320 adds sort!=='name_ascending' and uses the derived currentLane/currentCategory. clearFilters :223-228 resets all four controls. Test :271-288 fails on 756a906, where the condition lacked sort. See missed K1V-M1: the button removes itself on activation."
+     },
+     {
+      "item": "(6a) Long control containers can shrink",
+      "status": "PARTIAL",
+      "note": "min-w-0 is on the section :249, the labels :252,263,279,295 and the controls :256,267,283,299, with max-w-full on each control. index.css:8-10 puts the utilities in a layer. The unlayered .input-field (:349-364) sets width:100% but no min/max-width, so it does not conflict. By grid sizing rules, min-w-0 on the label stops the implicit auto column taking a long option's min-content width. Layout is NOT PROVEN: no browser receipt at e0a7d47."
+     },
+     {
+      "item": "(6b) Product links have distinct accessible names",
+      "status": "PARTIAL",
+      "note": ":148 aria-label 'View product: {displayName}' contains the visible text (label-in-name is met). The names are distinct only when display names differ; the server forces identical masked names (K1-P3-1). The heading links (:122-124) duplicate in the same way."
+     },
+     {
+      "item": "(7) Clinical copy no longer presumes provider/pharmacy availability",
+      "status": "PARTIAL",
+      "note": "The :97 summary is fixed and the carried lead :234 does not presume availability. The carried price cell :87 still implies a path from clinical review to pricing (K1-P3-3). The new :97 string is client-authored and replaces the server's canonical nontransactional summary (K1V-M2)."
+     },
+     {
+      "item": "No invented price, availability, eligibility or purchase affordance",
+      "status": "PASS",
+      "note": "The only new customer strings are :97, :148 and :317. pricePresentation :76-93 and STATE_COPY :26-55 are byte-unchanged. 'Available' needs an adapter-validated price, readiness and selection (memberCatalog.ts:339-346; the lens's :330-336 cite is slightly off). No purchase control (:378). Carried edge, not introduced: K1V-M4."
+     },
+     {
+      "item": "No new network call, mutation or retry",
+      "status": "PASS",
+      "note": "The only new import is useEffect. No fetch, adapter call or callback was added. Retry is still the supplied onRetry passed through ResearchRouteBoundary (:241-247 -> kit.tsx:685). Products' generation guard (Products.tsx:30,34,60) is unchanged."
+     },
+     {
+      "item": "Stale data suppressed on non-ok reads",
+      "status": "PASS",
+      "note": "kit.tsx:684-694@e0a7d47 returns before children for loading, error, unavailable and unauthorized, so no cards, counts, facets or prices from the retained catalog render. Test :359-365 covers this (a preservation test; it passes on 756a906 too)."
+     },
+     {
+      "item": "No em dash or 'not ... yet' timing promise in new strings",
+      "status": "PASS",
+      "note": "Both files are pure ASCII (0 bytes >127), so U+2014 is impossible. Added lines contain no &mdash;, &#8212; or — (gate forms at verify-no-em-dash.mjs:37-43) and no 'not...yet'. Carried: 'No products are published yet.' :334. The gate itself is NOT RUN."
+     },
+     {
+      "item": "Keys stable; hook order; no effect loop or setState in render",
+      "status": "PASS",
+      "note": "Hooks at :168-221 are unconditional. Effect deps are complete, and it only moves state toward the derived value; after the set, lane===currentLane, so there is no loop. It is idempotent under StrictMode. Option keys come from a Set. Card key is product.id, unique by the adapter (:629). ProductMedia keys its slot by descriptor JSON (ProductMedia.tsx:50-51), so a refreshed href never shows a stale image or failure."
+     },
+     {
+      "item": "Doc 35 accepted behaviour preserved",
+      "status": "PASS",
+      "note": "The diff leaves the ProductMedia slot :117 (IC-3 fallback-first), the boundary and retry, one-main composition, price and state copy, request links and the secure notice untouched. No test assertion was removed: the only '-' lines are the mount signature, one render line and the :247 rename. product-media-surfaces.test.tsx invariance is unaffected, since the new markup does not depend on media. Doc 35 holds (D/E, qualification, 768/zoom) are carried, not resolved."
+     },
+     {
+      "item": "Discriminating authored tests",
+      "status": "PARTIAL",
+      "note": "These fail on 756a906: :258, :271, :290 (resurrection) and :367 (new summary). :313 passes on 756a906 and fails only on a variant without the guard. :328 fails on 756a906 but cannot tell slug from id or detect the 'en' pin. :375 is non-discriminating. :338-357 checks class strings only. The guard tests supply an empty collection, a shape the real page never produces (K1V-M3). By hand simulation all assertions should hold; NOT RUN."
+     },
+     {
+      "item": "Execution evidence (tests, typecheck, gate, browser)",
+      "status": "NOT_PROVEN",
+      "note": "The packet says component tests, typecheck, build, the no-em-dash gate, browser, zoom and keyboard were all NOT RUN for e0a7d47. No receipt binds e0a7d47. The 756a906 receipts belong to the predecessor. The window expired 2026-10-06T21:43:37Z."
+     },
+     {
+      "item": "Directive section 4 (Workstream B) bounds",
+      "status": "PARTIAL",
+      "note": "Directive :191-267@94485a6: the path bounds, no server/price/contract/index.css change, the existing retry callback, no mutation retry, filter state kept and no browser claims all PASS. Tension: :252-253 'Never promise availability, fulfillment or payment capability' versus the carried 'Pricing shown after clinical review', now pinned by new test :376 (K1-P3-3). And :245 'keyboard order ... usable' versus Clear filters dropping focus (K1V-M1). The lens's PASS is too generous."
+     },
+     {
+      "item": "Own sim: rapid switches (filters, double retry, token change)",
+      "status": "PASS",
+      "note": "Filter and sort onChange calls are synchronous setState, and visible is recomputed by memo, so nothing is stale. Retry: the error UI (with its button) unmounts as soon as state becomes loading, so a second click on that button is impossible. If a second load does start (for example a token change), the generation counter drops the first response (Products.tsx:30,34) and the cleanup bumps it (:60). Controls are not rendered during loading, so no filter input can race a read."
+     },
+     {
+      "item": "Own sim: refresh that reorders and reprices",
+      "status": "PASS",
+      "note": "v1: A $149 (t1), B (t0), sort recently_updated gives [A,B]. Error, retry, then v2: A $159 (t0'), B (t2>t0'). One batched render with the v2 catalog and 'ok' gives [B,A]. A shows '$159.00' from product.price (:77-84), and cards are keyed by id with no internal state. The media slot remounts on a new descriptor. Status '2 of 2 products'. No $149 is ever shown after the refresh."
+     },
+     {
+      "item": "Own sim: empty and all-unavailable collections",
+      "status": "PASS",
+      "note": "ok with items [] gives empty facets, so the effect resets lane and category to 'all'. Shows '0 of 0 products' and 'No products are published yet.' (carried). The header Clear filters still shows if query or sort is non-default; harmless. All-unavailable: each card shows the 'Unavailable' badge and note, and price only as supplied ('Member price $X' if the server sent one). No invented availability."
+     },
+     {
+      "item": "Own sim: unknown enum values",
+      "status": "PARTIAL",
+      "note": "An unknown lane or displayState makes card() return null (memberCatalog.ts:316,320), so the whole projection is invalid and Products shows 'unavailable'. That page offers no retry button, which is carried (kit.tsx:686). A category literally 'all' would collide with the sentinel; carried, since 756a906 behaved the same. Malformed currency is a carried crash path (K1V-M4). Unknown sort values cannot come from the select."
+     },
+     {
+      "item": "Own sim: zero or empty fact value",
+      "status": "PARTIAL",
+      "note": "Empty category, name or slug are rejected by the adapter (text(), :311-319). A whitespace-only query shows Clear filters without filtering (carried). A $0 price: the client adapter accepts amountCents 0 (memberCatalog.ts:191, cartProductSelection.ts:80), so an 'available' card would show 'Available' next to 'Price not currently available'. The server price resolver rejects <=0 (product-control-price-resolver.ts:266,318), so this is client-defence only (K1V-M4)."
+     },
+     {
+      "item": "Own sim: failed read after a successful one",
+      "status": "PASS",
+      "note": "ok(v1) with category X, query q and sort desc. A token change reloads: loading, then error with v1 retained but hidden, and the effect is guarded. Try again goes through loading to ok(v2 without X). The first render shows 'All categories' with the query-filtered cards, then the effect sets 'all'. q and desc are kept. No v1 price or card is visible during error. An 'unauthorized' result shows the sign-in state only."
+     },
+     {
+      "item": "Own sim: very long labels",
+      "status": "PASS",
+      "note": "500-char name and 420-char category: the li has minWidth 0 and overflowWrap anywhere (:115). The aria-label is 'View product: '+500 chars (verbose but correct). The option text is shown verbatim. The status text stays short. Layout and truncation inside the native select are NOT PROVEN without a browser."
+     }
+    ],
+    "missed": [
+     {
+      "id": "K1V-M1",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "claim": "The header Clear filters button unmounts itself on activation, so keyboard focus falls to <body>. The new sort-only condition widens this to a state that previously had no such button.",
+      "evidence": "MemberCatalogExperience.tsx:320-328@e0a7d47 renders the button only while query, currentLane, currentCategory or sort is non-default. clearFilters :223-228 resets all four, so the next render drops the focused button. The empty-state Clear button :352-358 also unmounts once visible.length>0. The pattern existed at 756a906 for query, lane and category; e0a7d47 adds the sort-only path (:320). Directive :245 asks to keep keyboard order usable. No test checks focus after Clear (:281-287 checks values only). Untested behaviour.",
+      "fix": "After clearFilters, move focus to a stable target, such as the search input or the results heading (tabIndex=-1). Or keep the button rendered but disabled. Add a jsdom test asserting document.activeElement after Clear."
+     },
+     {
+      "id": "K1V-M2",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "claim": "The future_clinical card shows new client-authored clinical copy in place of the server's canonical nontransactional summary. The same item therefore reads differently on the catalog card and on its detail page.",
+      "evidence": "The adapter requires a future_clinical summary to equal MEMBER_CATALOG_NONTRANSACTIONAL_SUMMARY, 'Research pathway information is being prepared. This catalog state does not offer prescribing...' (memberCatalog.ts:650; shared/research/member-catalog.ts:44-45@e0a7d47). catalogSummary :95-97 ignores it and renders the new string 'Clinical information requires independent licensed review...'. The detail lead shows the server summary (MemberProductDetailExperience.tsx:140-143). The server masks these items as 'Research pathways' (projection :568-570), while the card eyebrow says 'Clinical / provider review' (:60). The override is carried; the wording is new in this commit and has no server or contract source.",
+      "fix": "Get a copy disposition from the content owner (Samuel for clinical policy). Either render the server summary plus a fixed boundary line, or record the client string as approved copy. Do not treat it as accepted clinical copy by default."
+     },
+     {
+      "id": "K1V-M3",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "claim": "The guard and reconciliation tests model a caller the real page never is. The real Products page is never tested through ok, then error or retry, then ok with a changed collection, so claim (2) rests on hand simulation at page level.",
+      "evidence": "Tests :300 and :318@e0a7d47 pass items:[] while loading or in error. Products.tsx:24-55 keeps the previous catalog in those states and sets catalog and 'ok' together, so in production the guard at :185 is never decisive. The page-level test (Products.integration.test.ts:58-112) covers only a stale signed-out response and an empty catalog. Nothing drives Products through retry with facets removed, so the composed behaviour (no flash, a single reset, query and sort kept) is untested.",
+      "fix": "Add a Products-level jsdom test with a mocked fetch: ok with category X, then a 5xx error, Try again, then ok without X. Assert the category select reads 'all', the query and sort are kept, and no v1 card or price is shown during the error."
+     },
+     {
+      "id": "K1V-M4",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "claim": "Carried, not introduced. pricePresentation has two untested edges: a $0 price on an 'available' card gives a contradictory display, and a malformed currency the adapter accepts would throw during render.",
+      "evidence": "memberCatalog.ts:191 and cartProductSelection.ts:80@e0a7d47 accept amountCents 0, and :339-346 allows 'available' with that price. Then :77 fails and :92 shows 'Price not currently available' under an 'Available' badge (:30-33). The server resolver rejects <=0 (product-control-price-resolver.ts:266,318), so this is client defence only. The adapter checks currency only as uppercase non-empty text (memberCatalog.ts:614-615,635). A code like 'US' passes and Intl.NumberFormat(...currency) at :80-83 would throw RangeError (ECMA-402 well-formedness), crashing the card list. Server config is NOT PROVEN to exclude this. Unchanged since 756a906.",
+      "fix": "In the adapter, reject an 'available' card whose amountCents<=0 and require /^[A-Z]{3}$/ for currency, so bad input reaches the 'unavailable' state instead of a crash. Out of the four-path scope, so record it for the adapter owner."
+     }
+    ],
+    "verdictOpinion": "The lens is substantially correct, and I confirm its core result. Between 756a906 and e0a7d47, MemberCatalogExperience.tsx has no P0, P1 or P2 issue. The change is presentation-only. It adds no price, availability, eligibility or purchase claim, no network call, mutation or retry, and no hook-order or effect-loop bug. Both files are pure ASCII. Everything doc 35 accepted is preserved and its holds are carried. Identity and four-path scope recompute exactly.\n\nAll four lens P3s are upheld. K1-P3-3 keeps P3, but its evidence is corrected: detail still shows 'Pricing shown after clinical review' (:26,225), and the detail test pinned it at 756a906, so the surfaces are consistent. It is a documented, carried rule. Two smaller corrections: the lens's claim (2) wording overstates the guard (with the real page's retained catalog it is never decisive), and directive bounds is PARTIAL, not PASS, because of the no-promise rule and keyboard usability.\n\nI add four P3s the lens missed:\n- Clear filters drops focus when it unmounts.\n- The client-authored clinical summary overrides the server's canonical summary.\n- The guard tests use a caller shape the page never produces.\n- Carried price and currency edges in the adapter.\n\nCustomer-visible behaviour (tests, typecheck, the no-em-dash gate, browser, zoom, screen reader) is NOT RUN and NOT PROVEN. This is source inspection only, after the 2026-10-06T21:43:37Z window expired. It is not qualification and not Samuel's approval of execution, push, release, price, availability or clinical policy."
+   }
+  },
+  {
+   "lens": "detail-component",
+   "review": {
+    "verdict": "LENS K2 (MemberProductDetailExperience.tsx, 756a906..e0a7d47): HOLD. Do not accept as-is. Everything here is NOT RUN; this is source reading and hand-simulation only. The detail changes stay within presentation. Selection scoping, the variant facts, the split between catalog status and variant availability, the unavailable-state copy and reprice/reorder handling are correct when hand-simulated against the unchanged adapter, server projection and ProductPage. No price, availability, eligibility, purchase, mutation or network behaviour is introduced, and price formatting is unchanged. However, the changed unavailable title deterministically breaks two assertions in an existing accepted test outside the four leased paths (P1). Claim (6) is overstated, because the clinical and program detail page still shows pricing-after-review, supplier-pending and pharmacy-availability copy (P2, carried from 756a906, not introduced here). Nothing here is Samuel's approval of execution, push, release, price, availability or clinical policy.",
+    "checklist": [
+     {
+      "item": "Identity and hashes",
+      "status": "PASS",
+      "evidence": "Recomputed from git objects in the b22f checkout. e0a7d47 has tree 34024836 and parent 20a2305. The records commit 9737db7 has parent e0a7d47 and tree 01f1cff3, and it changes only the 7 records paths. Detail .tsx: blob dbaa8e16, sha256 a28eaa90...473a6d. Detail .test.tsx: blob d0546fa3, sha256 6f8e6a08...7e787. Both equal the checkpoint's gitBlob and gitRawSha256."
+     },
+     {
+      "item": "Scope: only four presentation paths, with dependencies unchanged",
+      "status": "PASS",
+      "evidence": "Running git diff --name-only 756a906 e0a7d47 over client, server, shared, supabase, package files, scripts and render.yaml returns exactly the 4 products-diagnostics paths. The diff --stat for adapters, pages, ui, content, shared and server is empty. That means memberCatalog.ts, ProductPage.tsx, kit.tsx, ProductMedia.tsx, productEducation.ts and member-catalog.ts are byte-unchanged (inspected source)."
+     },
+     {
+      "item": "(1) Selection belongs to the current product; no A SKU, price or media on B",
+      "status": "PASS",
+      "evidence": "MemberProductDetailExperience.tsx:99-118@e0a7d47 keys the selection by {productId, variantId}. The memo falls back to variants[0] when selection.productId differs from product.id. Hand-simulation of ProductPage.tsx:21-38: from A (a2 selected), load B, which passes through loading/null and then B with state ok. The first render with B computes B.variants[0]. The effect then writes {B, b1}. ProductMedia gets B.media, B.id and b1. No render shows A's data. Test :382-398 discriminates: the variant ids are equal across the two products, so the old id-only state would have shown SKU-B."
+     },
+     {
+      "item": "(1b) Removed variant does not silently reappear",
+      "status": "PASS",
+      "evidence": "Hand-simulation: A(a1,a2,a3) with a2 selected, refreshed to A'(a1,a3) with state ok. find(a2) misses, so a1 is shown, and the effect at :112-118 writes {A, a1}. A later A''(a1,a2,a3) keeps a1. Refreshing to an empty variant list writes {A, null}. Test :362-380 discriminates: the old code would have shown SKU-B at :372. Noted, untested: going A(a2), then B in a non-ok state, then back to A restores a2. That is the intended preservation across transient states, and a2 still exists in A."
+     },
+     {
+      "item": "(2) Strength, form, size and presentation visible; absent facts say Not provided",
+      "status": "PASS",
+      "evidence": ":237-247 maps selected.strength, format, size and presentation using value?.trim() ? value : 'Not provided'. The adapter memberCatalog.ts:385-388 and :60-62 only admits string or null, so a numeric 0 cannot occur. The string '0' is truthy after trim and is shown, which is correct. Empty and whitespace-only strings show Not provided. Test :342-360 covers supplied values and null; empty and whitespace strings are not discriminated."
+     },
+     {
+      "item": "(3) Full selected label wraps outside the native select",
+      "status": "PARTIAL",
+      "evidence": "In markup: :230-234 renders 'Selected variant: {label}' in a role=status paragraph outside the select. The root wrapper at :136 sets overflow-wrap:anywhere. The select at :207 gets min-w-0 max-w-full. The SKU stays in the dl at :260-263. Test :425-440 checks this at markup level only. Actual wrapping, zoom and narrow layout were NOT RUN in a browser."
+     },
+     {
+      "item": "(4) Catalog status and variant availability are separate and correctly mapped",
+      "status": "PASS",
+      "evidence": "Catalog status at :184-200 maps displayState. Any unknown value falls through to 'Unavailable' with pending tone, never Available. The adapter memberCatalog.ts:30-36 and :320 rejects unknown displayState before render. Variant availability at :252-259 shows 'Available' only for 'available'. The adapter at :390 admits only available or unavailable, and the server at member-catalog-projection.ts:428-435 derives it from exact inventory eligibility. The status values come from member-catalog-projection.ts:465-498."
+     },
+     {
+      "item": "(5) Unavailable copy no longer asserts unavailable merchandise",
+      "status": "PASS",
+      "evidence": ":162-163 reads 'Product information is unavailable.' and 'Approved product information could not be loaded. This does not confirm the product's availability.' This replaces 'This product is not available.' from 756a906:151. kit.tsx:686 renders it only for state 'unavailable'. Test :261-263 discriminates. The resulting break in another test is covered under K2-1."
+     },
+     {
+      "item": "(6) Program/clinical copy does not promise eventual purchasing",
+      "status": "PARTIAL",
+      "evidence": "The new note at :272-278 contains no promise. The same view still renders the following, all carried unchanged from 756a906. :224-226 shows 'Pricing shown after clinical review' for future_clinical, and the GLP test at :323 pins it. :219-223 uses the supplier_pending kind for both nontransactional lanes, which renders the 'Supplier confirmation pending' eyebrow and the 'Awaiting documentation' badge from kit.tsx:69. Education at productEducation.ts:279 says 'Available only through independent review ... current pharmacy serviceability'. The new test at :442-450 asserts none of these are absent."
+     },
+     {
+      "item": "(7) Reprice/reorder refresh shows the new price and order",
+      "status": "PASS",
+      "evidence": "selected is derived from the current product.variants object, and pricePresentation at :20-40 is recomputed on every render. Options map product.variants in server order at :211-215. Test :362-368 shows $219.00 and SKU-B after the reprice and reorder. Option order and the absence of the stale $199.00 are not asserted."
+     },
+     {
+      "item": "No invented price, availability, eligibility or purchase affordance",
+      "status": "PASS",
+      "evidence": "The added nodes are text only: Catalog status label, Selected variant, the four facts, Not provided, Variant availability, the lane notes, and an aria-label on the existing related link. No button, form or cart control is added. Request an alternative is still hidden for the nontransactional lanes at :145-156. The research note at :277 says availability is 'not purchase approval'."
+     },
+     {
+      "item": "Price formatting unchanged",
+      "status": "PASS",
+      "evidence": "pricePresentation at :20-40 is byte-identical to 756a906. The first diff hunk after the import is @@ -96."
+     },
+     {
+      "item": "No new mutation or network",
+      "status": "PASS",
+      "evidence": "Scanning the added lines for fetch, onClick, post, navigate, window. or localStorage finds nothing. The only new handler is onChange at :209, which sets local state. The useEffect at :112-118 only calls setSelection."
+     },
+     {
+      "item": "Stale SKU, price, media, education and related links suppressed in non-ok states",
+      "status": "PASS",
+      "evidence": "kit.tsx:684-697 renders children only when state is ok. Shell identity is gated by showProductIdentity at :133. The added assertions at test :283-287 check that SKU-A, $149.00, the media URL, the education heading and the related link are absent for the loading, error, unavailable and unauthorized states."
+     },
+     {
+      "item": "No em dash and no 'not ... yet' timing promise in new strings",
+      "status": "PASS",
+      "evidence": "A node scan of the full detail file at e0a7d47 finds 0 non-ASCII characters and no 'yet', 'soon', 'will', 'eventual' or 'coming'. The timing phrase 'Pricing shown after clinical review' at :26 and :225 is pre-existing; see K2-2."
+     },
+     {
+      "item": "Hooks and effects correct",
+      "status": "PASS",
+      "evidence": "All hooks run unconditionally before the return. The effect deps [state, product?.id, selected?.id] match its reads. The functional update returns the current value when it is unchanged, so there is no loop. Under TS 5.6.3 (package-lock), narrowing is preserved for the parameter closure at :209. The memo deps [product, selection] are complete."
+     },
+     {
+      "item": "Behaviour doc 35 accepted is preserved",
+      "status": "FAIL",
+      "evidence": "Media, IC-3 fallback and DE-R1 are preserved: ProductMedia.tsx is unchanged, and :179-180 passes the same props. ProductPage product={null} is unchanged. However, product-subscribe.test.tsx is in the 17-file PS-R1 set that doc 35 recorded as 401/0 at 756a906 (integration-subscription17-run1-start.json@38c7239). It asserts 'This product is not available.' at :117 and :183, and the subject removed that string. See K2-1."
+     },
+     {
+      "item": "GLP and Research education nontransactional boundaries preserved",
+      "status": "PASS",
+      "evidence": "The ResearchSecureNotice at :282-290, the education sections at :292-368 and the lane gating of Request an alternative are unchanged. The adapter at memberCatalog.ts:537-553 still forces nontransactional lanes to have 0 variants and null price and selection. The GLP test at :291-328 is unchanged."
+     },
+     {
+      "item": "Accessibility as claimed in markup",
+      "status": "PARTIAL",
+      "evidence": "The select keeps its label/htmlFor. The related links get aria-label 'View product: {name}', which contains the visible text. The status line at :231 uses role=status and aria-live=polite. The 'Catalog status' label at :185 is a <p class=form-label> with no programmatic link to the badge. A fallback after refresh remounts the status line after loading, so it is not announced. Screen reader behaviour NOT RUN."
+     },
+     {
+      "item": "Discriminating authored tests",
+      "status": "PARTIAL",
+      "evidence": "The selection scoping, removed-variant and unavailable-copy tests discriminate against 756a906. Gaps: empty and whitespace facts, option order after reorder, and absence of the stale price are untested. Nontransactional copy absence is not asserted. The shared fixture at test :25 sets displayState 'available' with every variant selection null, which the adapter rejects at memberCatalog.ts:524-525. Not executed."
+     },
+     {
+      "item": "Execution evidence for e0a7d47",
+      "status": "NOT_PROVEN",
+      "evidence": "The packet and checkpoint state that tests, typecheck, build, browser and gates were NOT RUN. The qualification window expired 2026-10-06T21:43:37Z. No receipt for e0a7d47 exists."
+     }
+    ],
+    "findings": [
+     {
+      "id": "K2-1",
+      "severity": "P1",
+      "file": "client/src/research/pages/member/product-subscribe.test.tsx",
+      "claim": "This change will make an existing accepted test fail. Its two assertions check for the unavailable title the subject removed. The test is outside the four leased paths and is missing from the packet's execution and preservation scope.",
+      "evidence": "product-subscribe.test.tsx:117 and :183@e0a7d47 (blob unchanged since 756a906) expect 'This product is not available.'. Hand-simulation: a 503 response maps to kind 'unavailable' (lib/api.ts:110-124), and ProductPage.tsx:51-53 then sets state 'unavailable'. A slug mismatch also sets 'unavailable' (ProductPage.tsx:31-36). Both cases render MemberProductDetailExperience.tsx:162 'Product information is unavailable.', so both assertions fail. At 756a906 this file ran in the PS-R1 17-file set (integration-subscription17-run1-start.json@38c7239; doc 35: 401/0). The packet's proposed execution covers only 'this successor and its two changed tests'. No .xenios lease at 9737db7 names this file.",
+      "fix": "Under a proper lease, update both assertions to 'Product information is unavailable.' and assert the old string is absent. Alternatively, bring this file into the successor's scope. Add it to the execution proposal, and re-run the full 17-file PS-R1 set plus the detail tests when execution is authorised."
+     },
+     {
+      "id": "K2-2",
+      "severity": "P2",
+      "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "claim": "Packet claim (6), that program and clinical copy does not promise eventual purchasing, is overstated. The nontransactional detail page still implies future pricing, supplier sourcing and pharmacy availability. The copy is carried from 756a906, not introduced here.",
+      "evidence": "Several strings remain. :224-226 shows 'Pricing shown after clinical review' for future_clinical (also 756a906:211), and the GLP test at :323 asserts it is present. :219-223 uses kind supplier_pending for future_clinical and non_product_program, which renders 'Supplier confirmation pending' and 'Awaiting documentation' (kit.tsx:69). That sits beside the :276 note 'does not offer enrollment or purchasing'. The future_clinical education at productEducation.ts:279 reads 'Available only through independent review ... current pharmacy serviceability'. The catalog half of this commit removed similar wording as presumptive, but the catalog card itself still shows 'Pricing shown after clinical review' (MemberCatalogExperience.tsx:87, K1). The test at :442-450 asserts none of these are absent. Directive section 4 requires that it 'Never promise availability, fulfillment or payment capability'.",
+      "fix": "Needs a copy decision from Samuel or the copy owner. Inside the B paths: drop line :224-226, use a neutral non-supplier panel for nontransactional lanes, update the GLP test, and assert these strings are absent. Ask the productEducation owner to align careAvailability. Until then, narrow the packet claim to the new note only."
+     },
+     {
+      "id": "K2-3",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "claim": "The new clinical note presumes there is provider and pharmacy availability to confirm. That is inconsistent with the catalog wording this same commit adopted.",
+      "evidence": ":274 says 'Provider and pharmacy availability require separate confirmation.' MemberCatalogExperience.tsx:97@e0a7d47 says 'This listing does not confirm provider or pharmacy availability, clinical suitability, or a prescription.' The packet describes the catalog change as 'no longer presumes provider/pharmacy availability'. The detail wording implies a confirmation path exists.",
+      "fix": "Use the catalog's non-presumptive wording on the detail page too, for example 'This listing does not confirm provider or pharmacy availability, clinical suitability, or a prescription.' Assert it in the nontransactional test."
+     },
+     {
+      "id": "K2-4",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+      "claim": "Some of the new tests do not discriminate the packet's claims, and the shared fixture is a projection the adapter would reject.",
+      "evidence": "Facts test :342-360: only null is tested, so a value ?? 'Not provided' implementation would also pass. Reprice/reorder test :362-368: option order and absence of the stale $199.00 are not asserted. :356 only checks that the text 'Catalog status' exists, not the badge mapping. The fixture at :25 and :59-105 has displayState 'available' with every variant selection null. memberCatalog.ts:524-525 rejects that combination, so the status pairing is exercised on an impossible state.",
+      "fix": "Add cases for empty and whitespace-only facts, and assert option order and absence of the old price after a reorder. Assert the badge label for each displayState. Make the base fixture adapter-valid, for example displayState 'unavailable', or add one variant selection."
+     },
+     {
+      "id": "K2-5",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "claim": "The catalog status label is not programmatically linked to its value, and a fallback after refresh is not announced.",
+      "evidence": ":185 renders <p class='form-label'>Catalog status</p> followed by a badge span, with no dt/dd or aria-labelledby. Variant availability uses dt/dd at :253-258. ProductPage refresh unmounts the content through loading, so the role=status line at :231 remounts. Live regions generally do not announce on mount, so a user whose variant was removed gets no notice of the switch to variants[0]. Screen reader behaviour NOT RUN.",
+      "fix": "Render Catalog status as a dt/dd pair or label the badge with aria-labelledby. Optionally show a short visible note when a previously selected variant is no longer listed."
+     }
+    ],
+    "confirmed": [
+     "Identity verified from git objects. e0a7d47 has tree 340248360ac85f50f10ed5890624401616f792fd and parent 20a2305. The records commit 9737db7 has parent e0a7d47 and tree 01f1cff3, and it adds only records paths. Detail blobs and sha256 values match checkpoint.json.",
+     "The subject changes only the four products-diagnostics paths. The adapter (memberCatalog.ts), shared types, server projection, ProductPage.tsx, kit.tsx, ProductMedia.tsx and productEducation.ts are byte-unchanged from 756a906.",
+     "Hand-simulation: navigating A(a2) to B shows B.variants[0] on the first render with B. A's SKU, price, media and education never appear on B (MemberProductDetailExperience.tsx:99-118, 179-180).",
+     "Hand-simulation: a refresh that removes the selected variant falls back to variants[0]. The effect records the fallback, so the removed variant does not reappear when it returns.",
+     "Facts use value?.trim(). Null, empty and whitespace-only values render 'Not provided'. The string '0' renders as supplied. The adapter admits only string or null for these fields.",
+     "Unknown displayState is rejected by the adapter (memberCatalog.ts:320). The component's fall-through label is 'Unavailable', never Available. Variant availability shows Available only for 'available'.",
+     "The unavailable title and body no longer assert that merchandise is unavailable (:162-163).",
+     "pricePresentation is byte-identical to 756a906. There is no new mutation, fetch or navigation. The only new handler sets local state.",
+     "ResearchRouteBoundary suppresses all product content for non-ok states. The new assertions cover SKU, price, media URL, education and related links.",
+     "There are no non-ASCII characters (so no em dash) and no 'yet', 'soon' or 'will' timing words anywhere in the detail file at e0a7d47.",
+     "The GLP and Research boundaries are unchanged. There is no purchase affordance, Request an alternative stays hidden for nontransactional lanes, and ResearchSecureNotice is unchanged.",
+     "Doc 35 media invariants are preserved: ProductMedia receives the same props, and the IC-3 fallback and DE-R1 are unchanged. ProductPage product={null} is unchanged."
+    ],
+    "discrepancies": [
+     "The packet says existing behaviour is preserved and proposes executing only 'this successor and its two changed tests'. product-subscribe.test.tsx:117 and :183, part of doc 35's PS-R1 17-file set, assert the removed 'This product is not available.' and will fail.",
+     "Packet claim (6) says program and clinical copy does not promise eventual purchasing. The detail page still renders 'Pricing shown after clinical review' (:225), a supplier_pending 'Supplier confirmation pending/Awaiting documentation' panel (:219-223) and 'Available only through ... current pharmacy serviceability' (productEducation.ts:279). The existing GLP test at :323 asserts the first string is present.",
+     "The packet describes the catalog clinical copy as no longer presuming provider or pharmacy availability. The new detail note at :274, 'Provider and pharmacy availability require separate confirmation', and the unchanged education copy still presume it.",
+     "The packet lists 'refresh/reprice/reorder' coverage. The authored test does not assert option order or the absence of the stale price."
+    ],
+    "notProven": [
+     "All test, typecheck, build, lint and gate results for e0a7d47 are NOT RUN. No receipt exists, and the qualification window expired 2026-10-06T21:43:37Z.",
+     "Browser wrapping of the long selected label, SKU and title under the root overflow-wrap:anywhere wrapper is untested at 320/375/768, at native 200% and 400% zoom, and in forced colours. The wrapper now also covers the member sub-navigation and header actions, and its effect there is untested.",
+     "Screen reader announcement behaviour of the new role=status 'Selected variant' line, including duplicate announcement with the native select, is untested.",
+     "Live-catalog behaviour with real server projections is untested, including how often catalog status and variant availability diverge (for example Unavailable beside Available when lot COA is required).",
+     "Whether 'Pricing shown after clinical review' and the supplier_pending framing were ever founder-approved copy: no approval record was found in the review docs."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "K2-1",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Confirmed from source. product-subscribe.test.tsx:117 and :183 (blob f389110e, the same at 756a906 and e0a7d47) expect 'This product is not available.'. Test 1 is a 503, which api.ts:110-124 maps to {kind:'unavailable'}; releaseUnusedBody returns early when there is no body. Test 3 is a slug mismatch at ProductPage.tsx:31-36. In both, ProductPage sets state 'unavailable', so kit.tsx:686 renders detail :162 'Product information is unavailable.'. The file is in integration-subscription17-run1-start.json:18@38c7239, which is the PS-R1 set (401/0) that doc 35 relies on. No lease at 9737db7 or 0dbfaf5 names it. The packet's execution scope ('this successor and its two changed tests') omits it. Result: two deterministic failures in an accepted set (NOT RUN)."
+     },
+     {
+      "id": "K2-2",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Confirmed. :224-226 renders 'Pricing shown after clinical review' for future_clinical, and the leased GLP test at :323 pins it. Its origin is cea8c84; no approval record was found in the review docs. :220-223 uses supplier_pending, which renders 'Supplier confirmation pending/Awaiting documentation' (kit.tsx:69) on both nontransactional lanes. Added evidence the lens missed: non_product_program falls to the default branch at productEducation.ts:294-296, so the page shows 'Availability depends on ... pricing rule, and operational status.' directly under the new note 'It does not offer enrollment or purchasing.' (:276, rendered through :313-316). The new note itself is clean, but claim (6) does not hold for the rendered page. This is carried copy, not introduced here, but the subject claims the issue is resolved and the copy is in its leased paths."
+     },
+     {
+      "id": "K2-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. :274 reads 'Provider and pharmacy availability require separate confirmation.', which presumes a confirmation path. MemberCatalogExperience.tsx:97@e0a7d47 instead says 'does not confirm provider or pharmacy availability'. The unchanged education copy (productEducation.ts:279, :373) also presumes a provider path, so the detail page is internally consistent with that older copy but not with the catalog wording this commit adopted. Low customer harm; P3 stands."
+     },
+     {
+      "id": "K2-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. The facts test :356-359 uses null only, so a 'value ?? \"Not provided\"' version would pass. The reorder at :366 does not assert option order. A stale $199 cannot appear in the single 'Member price' dd, so that part is lower risk than stated. :348 checks only the 'Catalog status' text. The base fixture (:25 displayState 'available', all variant selections null at :80 and :103) is rejected by memberCatalog.ts:524-525. The nontransactional fixtures at :443-445 are also adapter-invalid: their displayName and summary differ and overview is non-null, against :537-567."
+     },
+     {
+      "id": "K2-5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Confirmed. :185 renders a <p class='form-label'> with no association to the badge, while the variant facts use dt/dd. A ProductPage refresh goes through 'loading' (ProductPage.tsx:23-24), which unmounts children, so the role=status line at :231 remounts already holding the fallback label and is unlikely to be announced. role=status already implies polite and atomic, so those attributes are redundant but harmless. Screen reader behaviour NOT RUN."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "Identity and hashes",
+      "status": "PASS",
+      "note": "Recomputed. e0a7d47 has tree 34024836 and parent 20a2305; 9737db7 has tree 01f1cff3. Detail blobs dbaa8e16 and d0546fa3 have raw sha256 a28eaa90...3a6d and 6f8e6a08...7787, matching checkpoint.json. The on-disk workingFileSha256 values (ce45f517, e1ed149f) match source-bindings.json. Note: the owner HEAD is now 0dbfaf5 (child of 9737db7, records-only: .xenios and the docs inventory). The identity line 'records 9737db7 (owner HEAD)' is therefore stale. This is not a source change."
+     },
+     {
+      "item": "Scope: only four presentation paths, with dependencies unchanged",
+      "status": "PASS",
+      "note": "git diff --stat 20a2305 e0a7d47 shows exactly the 4 products-diagnostics files (+401/-62). Running 756a906..e0a7d47 over client/src/research/{pages,ui,adapters,content,lib}, shared and server returns empty. The other non-docs paths are .xenios records only."
+     },
+     {
+      "item": "(1) Selection belongs to the current product; no A SKU, price or media on B",
+      "status": "PASS",
+      "note": "Re-simulated through ProductPage. A(a2) goes to loading (product null; selected null; effect returns early at :113), then B ok. selection.productId is A, not B, so B.variants[0] is used and the effect writes {B,b1}. Rapid A to B to C with B late: the generation guard at ProductPage.tsx:22-27 drops B, and C gets c1. Test :390 and :392 discriminate the colliding-id case and the A to B to A round trip."
+     },
+     {
+      "item": "(1b) Removed variant does not silently reappear",
+      "status": "PASS",
+      "note": "A(a1,a2,a3) with a2 selected, refreshed to A'(a1,a3): a1 is shown and the effect writes {A,a1}; a later A'' with a2 back keeps a1. Empty variants write {A,null}. Test :372 discriminates against 756a906. A round trip through a failed B restores a2, which is the intended preservation."
+     },
+     {
+      "item": "(2) Strength, form, size and presentation visible; absent facts say Not provided",
+      "status": "PASS",
+      "note": ":238-245 uses value?.trim(). '0' is shown; '' and whitespace show Not provided. Numeric values are impossible because the adapter at memberCatalog.ts:60-62 and :385-388 admits only string or null. A price of amountCents 0 still goes to pricePresentation's fallback (:24, unchanged). The empty-string case is untested (K2-4)."
+     },
+     {
+      "item": "(3) Full selected label wraps outside the native select",
+      "status": "PARTIAL",
+      "note": "In markup only. The wrapper at :136 is inherited, but .btn (index.css:298), .ra-badge (:1224) and the sub-nav links (shells.tsx:45 flexShrink 0; index.css:1236 nowrap at <=640px) are unaffected by overflow-wrap:anywhere. Rendering, zoom and narrow widths NOT RUN. The preview harness is pinned to 756a906 (preview.mjs:20)."
+     },
+     {
+      "item": "(4) Catalog status and variant availability are separate and correctly mapped",
+      "status": "PASS",
+      "note": "The mapping is correct: memberCatalog.ts:30-36 and :320; :390; projection :428-435 and :465-498. However, the live sync projection never builds a selection (projection :410-414; cart-product-selection.ts:248-249). displayState is therefore never 'available', and 'Unavailable' beside 'Variant availability: Available' is the normal state for an in-stock item. See MISS-2."
+     },
+     {
+      "item": "(5) Unavailable copy no longer asserts unavailable merchandise",
+      "status": "PARTIAL",
+      "note": "The assertion is removed (:162-163; test :261-263). But the same copy now appears for a definitive server 404 'product_not_found' and for machine-code denials, framed as 'could not be loaded' with no route back (see MISS-1). It also breaks product-subscribe.test.tsx (K2-1)."
+     },
+     {
+      "item": "(6) Program/clinical copy does not promise eventual purchasing",
+      "status": "FAIL",
+      "note": "The new notes are clean. The rendered page still shows 'Pricing shown after clinical review' (:225, pinned by test :323) and the supplier_pending eyebrow and badge (kit.tsx:69). The program page also shows the default 'Availability depends on ... pricing rule' (productEducation.ts:295). The claim as written is not met (K2-2)."
+     },
+     {
+      "item": "(7) Reprice/reorder refresh shows the new price and order",
+      "status": "PASS",
+      "note": "selected and pricePresentation are derived each render from the current variants, and the options map in server order (:211). Test :366-368 shows $219.00 and SKU-B. Option order is not asserted."
+     },
+     {
+      "item": "No invented price, availability, eligibility or purchase affordance",
+      "status": "PASS",
+      "note": "The added nodes are text, the label, the status line and an aria-label. There is no control, form or handler other than local onChange (:209). Request an alternative stays gated (:145-148). The 'Variant availability: Available' value is server-supplied (MISS-2 is a presentation-policy concern)."
+     },
+     {
+      "item": "Price formatting unchanged",
+      "status": "PASS",
+      "note": "pricePresentation :20-40 is byte-identical. The first hunk after the import is @@ -96."
+     },
+     {
+      "item": "No new mutation or network",
+      "status": "PASS",
+      "note": "The added lines contain no fetch, navigate, storage or onClick. The effect only calls setSelection with a functional no-op guard (:116-117)."
+     },
+     {
+      "item": "Stale SKU, price, media, education and related links suppressed in non-ok states",
+      "status": "PASS",
+      "note": "kit.tsx:684-695 gates children and showProductIdentity gates the shell (:133). Test :283-287 asserts this for all four non-ok states."
+     },
+     {
+      "item": "No em dash and no 'not ... yet' timing promise in new strings",
+      "status": "PASS",
+      "note": "Node scan: 0 non-ASCII characters in both detail files. The added lines contain no yet, soon, will, eventual, coming or 'after'. The carried 'after clinical review' is K2-2."
+     },
+     {
+      "item": "Hooks and effects correct",
+      "status": "PASS",
+      "note": "Hooks are unconditional and the deps are complete. Selection is reconciled whenever state is ok, with no loop. Narrowing of product in the :209 closure relies on TS 5.6.3 (package-lock:8085) preserving narrowing for a parameter that is not reassigned. Typecheck NOT RUN."
+     },
+     {
+      "item": "Behaviour doc 35 accepted is preserved",
+      "status": "FAIL",
+      "note": "The IC-3 and DE-R1 media invariants hold (ProductMedia.tsx unchanged, same props :179-180), as does ProductPage product={null}. product-media-surfaces invariance is unaffected because no new markup depends on media. However, the PS-R1 17-file closure (401/0) no longer holds: product-subscribe.test.tsx:117 and :183 (K2-1)."
+     },
+     {
+      "item": "GLP and Research education nontransactional boundaries preserved",
+      "status": "PASS",
+      "note": "The boundary is unchanged: ResearchSecureNotice :282-290, the adapter zero-variant rule at :537-553, and the GLP test. The pre-existing copy defects are K2-2."
+     },
+     {
+      "item": "Accessibility as claimed in markup",
+      "status": "PARTIAL",
+      "note": "Label/htmlFor kept. The aria-label starts with the visible text. The status line is a live region. The 'Catalog status' label is unassociated, and a fallback that remounts after refresh is unlikely to be announced (K2-5). NOT RUN."
+     },
+     {
+      "item": "Discriminating authored tests",
+      "status": "PARTIAL",
+      "note": "The selection, round-trip, removal and unavailable-copy tests discriminate. Gaps: the facts test uses null only, option order is unasserted, there is no adapter-valid fixture, there is no absence assertion for the clinical pricing or supplier copy, and the 404 not-found path is not covered."
+     },
+     {
+      "item": "Execution evidence for e0a7d47",
+      "status": "NOT_PROVEN",
+      "note": "The packet, checkpoint and scopeNote (ACTIVE_TASKS@20a2305) all say NOT RUN. The window expired 2026-10-06T21:43:37Z. No receipt exists."
+     }
+    ],
+    "missed": [
+     {
+      "id": "MISS-1",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "claim": "The new unavailable copy now shows when the server says the product does not exist (404 'product_not_found') and on machine-code denials. It calls these 'could not be loaded' and gives no way back. The component's own 'Product not found.' state, which has a Return to products action, cannot be reached from the live API.",
+      "evidence": "member-catalog-routes.ts:95-97@e0a7d47 returns 404 {ok:false,code:'product_not_found'}. getMemberProductDetail calls apiGet without knownNotFoundDenials, so api.ts:110-124 returns {kind:'unavailable'} without reading the body. A 403 with a code becomes 'denied' (api.ts:107). ProductPage.tsx:51-53 sets 'unavailable' for both. The adapter's not_found branch expects code 'not_found' (memberCatalog.ts:687) and is never reached. kit.tsx:686 renders only the title and body, with no action. Result: a stale link shows 'Product information is unavailable. Approved product information could not be loaded.', which reads as a transient failure. Untested.",
+      "fix": "Inside the leased file, use wording that also fits not-found, for example 'This product page is not available. The product may not be published, or its information could not be loaded.', and author a test for that path. Ticket the api/ProductPage owner (Workstream C) for the 404 to not_found wiring so 'Product not found.' and its Return to products action become reachable."
+     },
+     {
+      "id": "MISS-2",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "claim": "In the live projection the catalog never reports 'Available', but an in-stock variant does. So the normal live detail page for a stocked item shows 'Catalog status: Unavailable' (or Documentation pending), 'Variant availability: Available' and a Member price. The subject's relabelling makes this contradiction explicit, and no adapter-valid test covers it.",
+      "evidence": "member-catalog-projection.ts:388-415@e0a7d47 calls selectCartProduct with a null activation reader. cart-product-selection.ts:248-249 then always returns blocked('activation_authority_missing'), so the selection is null and displayState is never 'available' (:465-498, :479). Variant availability comes from inventory alone (:428-435). The detail renders both values at :184-200 and :252-259. The live service uses this sync projection (member-catalog-service.ts:565-572). This is carried from 756a906, where the label was 'Availability'. It is server-supplied, not invented. The lens listed this as an unproven frequency question, but the source shows it is the default live state. Directive section 4 says to never promise availability from a presentation state.",
+      "fix": "This is a copy and policy decision. Options: render variant availability as an inventory fact with a qualifier (for example 'In stock; not purchase approval'), or suppress the 'Available' wording unless the catalog status is available. Add an adapter-valid test fixture (displayState 'unavailable' with variant availability 'available') that asserts the chosen pairing."
+     }
+    ],
+    "verdictOpinion": "HOLD stands. Everything here is NOT RUN; this is source reading and hand-simulation only. Nothing here is Samuel's approval of execution, push, release, price, availability or clinical policy.\n\nWhat holds up: every anchor the lens cited checked out. The four-path scope, the identity and blob hashes, product-scoped selection, no reappearance of a removed variant, the facts handling, the reprice and reorder handling, the unchanged price formatting, no new mutation or network, and stale-data suppression in non-ok states are all confirmed from Git objects.\n\nMy own hand-simulations agree:\n- Rapid switches (A to B to C with B arriving late) show no stale values.\n- A refresh that reorders and reprices shows the new price and order.\n- An empty variant list falls back explicitly, and all-unavailable variants show 'Not currently available'.\n- Unknown enum values are rejected by the adapter.\n- Very long labels wrap in markup, and the wrapper does not affect nowrap buttons, badges or the sub-nav.\n- A fact of '0' is shown, while empty or whitespace-only facts show 'Not provided'.\n- A failed read after a successful one shows the error without stale data, then restores the selection.\n\nFindings:\n- K2-1 is P1, confirmed: two deterministic failures in doc 35's PS-R1 set. The file is outside every lease and missing from the packet's execution scope.\n- K2-2 is P2, and broader than the lens said: the program page also renders the default education line 'Availability depends on ... pricing rule'.\n- K2-3, K2-4 and K2-5 are P3.\n- New: MISS-1 (P3). The unavailable copy now covers the server's definitive 404 not-found, and the 'Product not found.' state cannot be reached from the live API.\n- New: MISS-2 (P3, carried). In the live projection, 'Unavailable' beside 'Variant availability: Available' is the default state for a stocked item.\n\nThe owner HEAD has moved to records-only commit 0dbfaf5. Accepting this source does not qualify it."
+   }
+  },
+  {
+   "lens": "tests-scope-records",
+   "review": {
+    "verdict": "K3: HOLD, one P1. Scope, identities, hashes and records all check out. The subject e0a7d47 changes only the four Workstream B files (401+/62-). 20a2305 and the e0a7d47..9737db7 records commit touch only records. The four transferred subscription paths and every protected, server, shared and package path are unchanged. Blob ids and raw sha256 match the checkpoint and source-bindings.json. Foreign registry rows are preserved, and no record claims execution. Most new tests would fail on 756a906, so they genuinely test the new behaviour. The P1: the detail page's unavailable title changed, and the unchanged client/src/research/pages/member/product-subscribe.test.tsx still asserts the old copy at lines 117 and 183. Hand-simulation says both assertions fail at e0a7d47. That file is outside the lease, was not in any predecessor receipt, and the packet does not mention it. Six P3s cover coverage gaps, a page-wide wrapper, facet derivation, partial carry-forward of holds, and a stale 'clean' claim. Nothing was run, and nothing here is approval.",
+    "checklist": [
+     {
+      "item": "Identity: subject, tree, parent, records commit and records tree",
+      "status": "PASS",
+      "evidence": "Inspected source: cat-file e0a7d47 gives tree 340248360ac85f50f10ed5890624401616f792fd and parent 20a23057f99529241ef1f593175670e13ab86f67. 9737db7 has parent e0a7d47 and tree 01f1cff351658f2bef645fedaa8a93f779af62a2, matching checkpoint.recordsTree. History is 756a906 -> fc53751 -> 38c7239 -> 20a2305 -> e0a7d47 -> 9737db7, linear."
+     },
+     {
+      "item": "Subject commit changes exactly the four presentation files",
+      "status": "PASS",
+      "evidence": "Inspected source: git show --name-status e0a7d47 lists only MemberCatalogExperience.tsx/.test.tsx and MemberProductDetailExperience.tsx/.test.tsx under client/src/research/products-diagnostics/. diff --stat 20a2305..e0a7d47 gives 4 files, 401 insertions, 62 deletions."
+     },
+     {
+      "item": "git diff --name-status 756a906 e0a7d47 (all paths) shows only the four files",
+      "status": "PARTIAL",
+      "evidence": "Inspected source: taken literally this is false. The diff lists 59 paths: the 4 client files plus 55 docs/.xenios paths from the records-only commits fc53751 and 38c7239 (doc 35 already verified these) and 20a2305. Excluding docs/ and .xenios/, the diff 756a906..9737db7 is exactly the four files. The packet's narrower claim, a pathspec-limited diff, is true."
+     },
+     {
+      "item": "20a2305 is records-only lease narrowing; e0a7d47..9737db7 is records-only",
+      "status": "PASS",
+      "evidence": "Inspected source: 20a2305 changes only .xenios/ACTIVE_TASKS.json, CODE_OWNERSHIP.json, SESSION_REGISTRY.json and the owner's session json. 9737db7 changes those same four, adds the 2026-10-08T17-08-00Z handoff, and adds docs/health-launch/catalog-detail-presentation-20261008/README.md and source-bindings.json. No runtime paths in either commit."
+     },
+     {
+      "item": "Four transferred subscription paths unchanged 756a906..9737db7",
+      "status": "PASS",
+      "evidence": "Inspected source: blob ids are identical at both commits: ProductSubscriptionCreate.tsx 3d938f05, ProductSubscriptionCreate.test.tsx c6cff1e5, ProductPage.tsx 4c9075ad, ProductPage.subscription.test.tsx f3bb3175. diff --stat over these paths (plus product-subscribe.test.tsx) is empty."
+     },
+     {
+      "item": "No server/shared/price/availability/media/style/auth/payment/SQL/manifest/package/protected path changed",
+      "status": "PASS",
+      "evidence": "Inspected source: diff --name-only 756a906 9737db7 over client/src/index.css, client/src/components, server, shared, supabase, scripts, package*.json, render.yaml, App.tsx and client/src/research/ui is empty. CORE_SITE_PROTECTION_MANIFEST.json:225@e0a7d47 exempts client/src/research/**. ProductMedia, kit.tsx and price formatting are byte-unchanged. The only style additions are inline, inside the two components."
+     },
+     {
+      "item": "Each change falls inside directive section 4 (Workstream B) at 94485a6",
+      "status": "PARTIAL",
+      "evidence": "Inspected source: section 4 (directive lines 191-269@94485a6) names exactly the four paths and the outcomes: states, same-collection search and counts, reset, deterministic sort, refresh reconciliation, exact variant facts, no guessing, wrapping, read-only retry, no availability promise. Every hunk maps to one of these. The directive's sha256 is 6f63042d...d16c, equal to the packet's attachment hash. Caveat: the unavailableTitle copy also changes ProductPage's route-level output and breaks an unowned test outside the four paths (see the P1)."
+     },
+     {
+      "item": "Git blob ids and raw sha256 recomputed vs checkpoint and source-bindings.json",
+      "status": "PASS",
+      "evidence": "Recomputed with rev-parse and sha256sum over git show bytes at e0a7d47 (identical at 9737db7). Catalog.tsx c54db893/318d972b..., catalog test 5a9e65be/2de8f721..., Detail.tsx dbaa8e16/a28eaa90..., detail test d0546fa3/6f8e6a08.... All match the checkpoint's gitBlob and gitRawSha256 values and the gitBlob values in source-bindings.json. The blobs are LF-only (0 CR)."
+     },
+     {
+      "item": "workingFileSha256 values",
+      "status": "PASS",
+      "evidence": "Verified retained evidence (read-only file reads): current working files hash to 50e40303..., e1994fdf..., ce45f517..., e1ed149f..., equal to the records. They differ from the blobs because the working files have mixed line endings: CR on 315/384, 213/380, 286/375 and 274/451 lines. core.autocrlf is true, which normalizes them to the LF blobs. This is disclosed in the source-bindings.json hashScope."
+     },
+     {
+      "item": "Foreign registry rows and top-level fields preserved 38c7239..9737db7",
+      "status": "PASS",
+      "evidence": "Computed with node over git show bytes. ACTIVE_TASKS: 91 rows at 38c7239, 20a2305 and 9737db7. CODE_OWNERSHIP: 134 rows. SESSION_REGISTRY: 57 rows. Exactly one own row changed in each file (task ACCEPTED-SOURCE-INTEGRATION-20261005, lease d0897045, session codex-accepted-source-integration-20261005). 0 foreign rows differ, and the non-array top-level fields are identical."
+     },
+     {
+      "item": "Checkpoint claim clean:true",
+      "status": "NOT_PROVEN",
+      "evidence": "The checkpoint time (17:10:44Z) cannot be verified now. Current read-only observation: the owner checkout HEAD is 9737db7, with uncommitted edits to 4 .xenios files (heartbeat 2026-10-08T18:32:29Z, new SOURCE-INTEGRATION-INVENTORY-20261008 r1 assignment) and one untracked docs/.../source-integration-inventory-20261008.json. The edits are records-only and came after the checkpoint. The subject's Git objects are unaffected."
+     },
+     {
+      "item": "No record claims execution",
+      "status": "PASS",
+      "evidence": "Inspected: README (identical to the packet, sha256 2cc90f10...), the handoff, and the ACTIVE_TASKS handoff.execution all say NOT RUN / NOT PUSHED / NOT ACCEPTED. No receipts or logs were added under catalog-detail-presentation-20261008/. Prior 17/401 and 36/626 receipts are attributed to the predecessor and called non-additive, consistent with doc 35 as corrected at fffa33a."
+     },
+     {
+      "item": "Doc 35 holds carried forward",
+      "status": "PARTIAL",
+      "evidence": "The README names: aggregate deferral, failed protection gates, protected-hash approval/manifest re-cut, GATE-01, MC-01/D/E DB and media qualification, subscription buying gaps, Finance/provider, managed release. It cites the corrected verdict fffa33a6 (verified: this commit holds doc 35, sha256 84dffa54..., equal to the on-disk file). It does not name PS-R2/PS-R3, founder SKU/plan/quantity policy, exact 768/CLS/native forced-colors, or inherited seam findings. These are covered only by the catch-all 'No hold was waived'."
+     },
+     {
+      "item": "Catalog test diff: new/changed tests discriminate against 756a906",
+      "status": "PASS",
+      "evidence": "Hand-simulated against 756a906. These FAIL on the old code: :258 (options came from catalog.categories with 'Stale category'; old count text '2 products'); :271 (no Clear filters for a sort-only change); :290 (no future_clinical option, so select.value is ''); :328 x3 (stable sort keeps zeta,alpha); :338 (options[1]='Diagnostics', no min-w-0, no aria-label); :367 (new clinical copy only). These PASS on both, so they only guard the new reset effect: :313 and :359 x4. :247 is a rename only."
+     },
+     {
+      "item": "Detail test diff: new/changed tests discriminate against 756a906",
+      "status": "PASS",
+      "evidence": "Hand-simulated against 756a906. These FAIL on the old code: :342 (no Strength/Variant availability dt); :362 (old id-only state resurrects variant-b to SKU-B); :382 (same variant ids on another product yield SKU-B); :425 (no role=status, related aria-label or max-w-full); :442 x2 (old 'Ordering appears only after'); :261-263 (copy); :338-339 (no overflow-wrap or new classes). These PASS on both, guards only: :400 and the stale asserts at :283-287."
+     },
+     {
+      "item": "Markup-only layout test names avoid browser/zoom claims",
+      "status": "PASS",
+      "evidence": "Inspected source: catalog test :247@e0a7d47 was renamed from 'uses reflow-safe responsive structures for 720/375/320 and 200% zoom'. Detail test :330 was renamed from 'uses reflow-safe structures at desktop/720/375/320 and 200% zoom'. Both bodies only assert markup substrings. Two older names still say 'keyboard', which overclaims; they are unchanged from the predecessor."
+     },
+     {
+      "item": "Tests syntactically plausible; imports exist at e0a7d47",
+      "status": "PASS",
+      "evidence": "Inspected, NOT RUN. The catalog test imports React/act, createRoot, renderToStaticMarkup and vitest including vi (:2-7). The detail test adds vi (:5). The shared constants exist (member-catalog.ts:44-48). PRODUCT_MEDIA_FALLBACK is the expected text (product-media.ts:5). vitest.config.ts:29 includes client tsx. Variant fact fields are string|null (member-catalog.ts:96-99). React 19 escapes ' as &#x27;, matching :262. jsdom style.overflowWrap readback (:350) is plausible but untested."
+     },
+     {
+      "item": "Packet-claimed cases have tests",
+      "status": "PARTIAL",
+      "evidence": "Untested: an id tiebreak when slugs are equal (fixtures use id===slug, :329); the recently_updated name tiebreak (all names identical); accessible-name distinctness across more than one card (only one card at :338); whitespace-only facts rendering 'Not provided' (only null, :356-358); the route-level copy via ProductPage. Layout and wrapping is asserted by class strings only."
+     },
+     {
+      "item": "Existing unchanged tests preserved",
+      "status": "FAIL",
+      "evidence": "Hand-simulated: client/src/research/pages/member/product-subscribe.test.tsx:117 and :183@e0a7d47 assert 'This product is not available.'. ProductPage renders state unavailable for a 503 (lib/api.ts:110-124, ProductPage.tsx:51-53) and for a slug mismatch (ProductPage.tsx:31-36). The boundary now shows 'Product information is unavailable.' (Detail.tsx:162). Not affected by inspection: ProductPage.subscription.test, Products.integration and product-media-surfaces."
+     },
+     {
+      "item": "Customer-visible copy free of invented price/availability/clinical/purchase claims",
+      "status": "PASS",
+      "evidence": "Inspected source: catalog :97 clinical summary denies provider/pharmacy confirmation. Detail :222 pending panel, :162-163 unavailable copy, and :273-277 lane-specific copy (clinical: 'not an offer of treatment or medication'; program: no enrollment/purchasing; research: 'not purchase approval'). 'Not provided' is shown for null facts (:245). Price formatting and availability ternaries are unchanged. The adapter forces variantCount 0 for clinical/program lanes (memberCatalog.ts:645-665), so no dose facts reach those lanes."
+     },
+     {
+      "item": "Consistent with server-supplied data and contracts",
+      "status": "PASS",
+      "evidence": "Inspected source: facets are now derived from catalog.items (:174-179) instead of catalog.lanes/categories. The server computes those from the unfiltered projection (member-catalog-projection.ts:692-695). The client sends no query (memberCatalogApi.ts:9-13), so the sets are equal; only the ordering differs (localeCompare en vs .sort()). Selection is scoped to product.id, and variants and facts come only from the supplied variant. See P3-3."
+     },
+     {
+      "item": "Accessibility as claimed in markup",
+      "status": "PASS",
+      "evidence": "Inspected markup only: count role=status, aria-live polite, aria-atomic (:316). Card links get aria-label 'View product: <name>' (:148, detail :348); this keeps the visible label inside the accessible name. Selected-variant live region at detail :231-233. Labels keep htmlFor. Screen-reader, keyboard and zoom behaviour is NOT PROVEN."
+     },
+     {
+      "item": "Execution evidence for this successor",
+      "status": "NOT_PROVEN",
+      "evidence": "Nothing was run, by policy and per the records: no tests, tsc, build, gates, browser, zoom, a11y or live catalog. Hooks were suppressed with a per-command core.hooksPath=NUL. There are no em/en dashes or non-ASCII characters in the four files (node scan of the blobs). The qualification window expired 2026-10-06T21:43:37Z."
+     }
+    ],
+    "findings": [
+     {
+      "id": "K3-P1-1",
+      "severity": "P1",
+      "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "claim": "Changing unavailableTitle to 'Product information is unavailable.' (line 162@e0a7d47) removes the only source of 'This product is not available.'. The unchanged client/src/research/pages/member/product-subscribe.test.tsx asserts that string at lines 117 and 183, for ProductPage's 503 and slug-mismatch states. Both assertions fail by hand-simulation. The packet does not mention this. The test file is outside the four leased paths and exercises the transferred ProductPage. No predecessor receipt covers it.",
+      "evidence": "product-subscribe.test.tsx:80-120 stubs a 503 'member_catalog_unavailable' response, and :161-185 a slug mismatch. lib/api.ts:110-124@e0a7d47 maps 503 to kind 'unavailable'. ProductPage.tsx:31-36 and :51-53 then set state 'unavailable'. kit.tsx ResearchRouteBoundary renders ResearchEmptyState with title=unavailableTitle. git grep at e0a7d47 finds the old string only in tests. vitest.config.ts:29 includes client tsx tests, so the full aggregate would turn red. integration-affected-run1-start.json and the 17-file set omit this test (doc 35's 49-file union).",
+      "fix": "Either keep the predecessor title in this successor, or get recorded coordinator authority to add product-subscribe.test.tsx to the successor's lease. In that case update :117 and :183 to the new copy while still asserting no substituted product, include the file in any execution proposal, and record the literal before/after copy."
+     },
+     {
+      "id": "K3-P3-1",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "claim": "Several new tests pass on the predecessor too, so they only guard the new reset logic. Several claimed behaviours have no test.",
+      "evidence": "Pass on both versions (guards only): catalog :313 (old state survives error naturally) and :359 x4 (the boundary hides children in both); detail :400 and the stale asserts at :283-287. Untested: an id tiebreak when slugs are equal (fixtures use id===slug, :329); the recently_updated name tiebreak (identical names); aria-label distinctness across more than one card (:338 checks a single card); whitespace-only facts showing 'Not provided' (detail :356-358 use null). Some assertions test implementation class strings rather than behaviour: min-w-0 max-w-full, labels className, overflow-wrap.",
+      "fix": "Add cases for: equal slug with different id; equal updatedAt with different names; two cards with distinct accessible names; a whitespace-only strength/format value. Keep the guard tests but label them as guards."
+     },
+     {
+      "id": "K3-P3-2",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "claim": "The new wrapper (overflowWrap 'anywhere', min-w-0) encloses the whole ResearchMemberShell, including SubNav and PageHeader, but only on the detail route. 'anywhere' also changes min-content sizing for the shell's header and actions.",
+      "evidence": "Detail.tsx:136-137 and :373@e0a7d47 wrap the shell. The catalog shell is not wrapped (MemberCatalogExperience.tsx:231). shells.tsx PageHeader uses a flex-wrap row of h1 plus actions (:38-49 of the shells excerpt). There is no browser evidence. The packet admits the new wrapping utilities need browser qualification. The test at :338 only asserts the substring.",
+      "fix": "Scope the wrapper to the product content sections, or qualify both routes in a browser at 320/375/768 and native 200/400% zoom before acceptance."
+     },
+     {
+      "id": "K3-P3-3",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+      "claim": "The catalog now derives its facets from items and ignores the server-supplied catalog.lanes and catalog.categories. The sets are equivalent today, but the server fields are now unused on this surface and the ordering diverges.",
+      "evidence": "MemberCatalogExperience.tsx:174-179 and :272/:288@e0a7d47. member-catalog-projection.ts:692-695 computes categories and lanes from the unfiltered projection using code-unit .sort(). memberCatalogApi.ts:9-13 sends no query, so the items are unfiltered. The client sorts with localeCompare 'en', so mixed-case categories may reorder. The adapter copies the server fields (memberCatalog.ts:678-679).",
+      "fix": "Record this as an explicit presentation-contract decision, or assert in the test that the facets equal the server lists whenever items are unfiltered."
+     },
+     {
+      "id": "K3-P3-4",
+      "severity": "P3",
+      "file": "docs/health-launch/catalog-detail-presentation-20261008/README.md",
+      "claim": "Doc 35 holds are carried forward only partly by name. The required customer-visible before/after description lacks the literal copy pairs, which is how the P1 copy impact went unnoticed.",
+      "evidence": "README@9737db7 names the aggregate, protection, protected-hash/manifest, GATE-01, MC-01/D/E, subscription, Finance and managed-release holds. It never mentions PS-R2, PS-R3, the founder SKU/plan/quantity policy, 768, CLS, forced-colors or seam findings (grep count 0). The packet table describes the after-state only. It does not list the unavailable title/body, the pending-panel body, '2 products' becoming '2 of 2 products', 'Availability' becoming 'Variant availability', or the removed 'Ordering appears only after...' text.",
+      "fix": "Enumerate the doc 35 holds verbatim, and add a before/after copy table with every surface that renders each string, including ProductPage."
+     },
+     {
+      "id": "K3-P3-5",
+      "severity": "P3",
+      "file": ".xenios/CODE_OWNERSHIP.json",
+      "claim": "The checkpoint's clean:true is stale. The owner checkout now carries uncommitted records edits from a new assignment, and the uncommitted lease no longer lists the four source paths.",
+      "evidence": "Read-only observation at review time: HEAD 9737db7. diff HEAD shows ACTIVE_TASKS, CODE_OWNERSHIP, SESSION_REGISTRY and the session json changed (heartbeat 2026-10-08T18:32:29Z, SOURCE-INTEGRATION-INVENTORY-20261008 r1, coordinator 1b165b15). There is one untracked inventory JSON. The uncommitted paths list contains only inventory docs and continuity files. The committed subject objects are unaffected.",
+      "fix": "Before any P1 fix, re-lease the four source paths, and product-subscribe.test.tsx if authorized, in a recorded records-only commit. Do not reuse the stale clean claim."
+     },
+     {
+      "id": "K3-P3-6",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "claim": "Two predecessor test names still claim keyboard behaviour that their bodies do not exercise. Not new; residual overclaim.",
+      "evidence": "Catalog :149 'supports labeled search, filter, sort, status updates, and keyboard controls' only checks tabindex. Detail :192 'updates the displayed approved variant using a labeled keyboard control' dispatches a change event, not keyboard input. Both are unchanged from 756a906.",
+      "fix": "Rename these to markup or programmatic-event wording, or add real keyboard interaction once execution is authorized."
+     }
+    ],
+    "confirmed": [
+     "Subject e0a7d4787071140a25a984edc4c0a49f0d7c22ab has tree 340248360ac85f50f10ed5890624401616f792fd and parent 20a2305. Records 9737db7 has tree 01f1cff351658f2bef645fedaa8a93f779af62a2. The history is linear.",
+     "e0a7d47 changes exactly the four products-diagnostics files (401 insertions, 62 deletions). Between 756a906 and 9737db7, nothing outside docs/ and .xenios/ changes except those four.",
+     "20a2305 (lease narrowing and C transfer) and 9737db7 are records-only. fc53751 and 38c7239 are records-only, as doc 35 states.",
+     "The four transferred subscription paths have identical blob ids at 756a906 and 9737db7.",
+     "The directive file at coordinator 94485a6 has sha256 6f63042d83c3d608aa8b1587668aba7adfaa05f8dd171a0bef9779dde099d16c, equal to the packet's attachment hash. Its section 4 lists exactly the four paths.",
+     "Blob ids and raw sha256 of all four files match the checkpoint. Blob ids match source-bindings.json. Working-file sha256 values match the current files, which have mixed CRLF/LF endings, while the blobs are LF-only.",
+     "Committed README.md is byte-identical to the packet copy (sha256 2cc90f109f1f5bdc65cb7db39d0ff2b88227d7650ab215b9658fb92301f92913).",
+     "Foreign registry rows are unchanged from 38c7239 to 9737db7: ACTIVE_TASKS 91, CODE_OWNERSHIP 134, SESSION_REGISTRY 57 rows, with 0 foreign differences. Top-level fields are identical.",
+     "fffa33a6 in the review repo is the corrected doc 35. Its blob equals the on-disk doc 35 (sha256 84dffa548db13b41e59578630147d9c8b4f9ca4dd2c4a4ad12a8b2ec242b9a18).",
+     "No server, shared, SQL, manifest, package, style, auth, payment, media-authority or protected path changed. client/src/research/** is an exempt subtree in CORE_SITE_PROTECTION_MANIFEST.json:225.",
+     "The four files contain no em or en dashes and no non-ASCII characters.",
+     "These new tests would FAIL on 756a906: catalog :258, :271, :290, :328 x3, :338, :367; detail :342, :362, :382, :425, :442 x2, :261-263, :338-339.",
+     "Both markup-only layout tests were renamed to avoid browser and zoom claims (catalog :247, detail :330).",
+     "The kit ResearchRouteBoundary hides children in loading, error, unavailable and unauthorized states. Try again appears only when onRetry is supplied, and no mutation retry was added.",
+     "Selection is scoped to product.id. The reconcile effect runs only when state is ok, so loading and error preserve the selection and removed variants are not resurrected (hand-simulated).",
+     "Clinical and program lanes reach the detail page with variants=[], enforced by adapter memberCatalog.ts:645-665, so no strength or dose facts are shown for them."
+    ],
+    "discrepancies": [
+     "The reviewer brief asked to confirm that git diff --name-status 756a906 e0a7d47 over all paths shows only the four files. It actually lists 59 paths: the 4 client files plus 55 records/docs paths from fc53751, 38c7239 and 20a2305. The packet's pathspec-limited claim is accurate.",
+     "The packet says ProductPage's slug-mismatch rejection is preserved, but it does not mention that the test proving it (product-subscribe.test.tsx:161-185) now asserts copy that the subject removed.",
+     "Checkpoint says clean:true. At review time the owner checkout is dirty, with post-checkpoint records-only edits for a new inventory assignment.",
+     "The packet describes the customer-visible changes as after-state only. Section 4 asked for an explicit before/after description."
+    ],
+    "notProven": [
+     "Any test, typecheck, lint, build, no-em-dash hook, route or protection gate result for e0a7d47. Everything is NOT RUN.",
+     "The product-subscribe.test.tsx failure is established by hand-simulation only. Not executed.",
+     "jsdom readback of style.overflowWrap 'anywhere' (catalog test :350) and the escaping of &#x27; under the installed React 19.",
+     "Browser layout, reflow, native zoom, 768/CLS, forced-colors, keyboard order and screen-reader announcement of the new live regions and wrappers.",
+     "Live catalog behaviour, and server facet/item agreement under real data.",
+     "Whether the owner checkout was clean at checkpoint time 17:10:44Z.",
+     "The human-message authority chain beyond the directive file hash (message and chat ids are producer-reported)."
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "K3-P1-1",
+      "upheld": true,
+      "severity": "P1",
+      "note": "Upheld after re-simulation, but part of the lens's evidence is wrong. The lens said the 17-file set omits this test and that no predecessor receipt covers it. It is in fact in doc 35's PS-R1 closing set: integration-subscription17-run1-start.json:18@38c7239 and focused-source-bindings.json:84-88@38c7239 (blob f389110e, the same at 756a906 and e0a7d47). That set passed 401/0/0 at 756a906 (doc 35:41-43). So e0a7d47 breaks a receipt that doc 35 accepted. 503 maps to unavailable (api.ts:110-124), and so does a slug mismatch (ProductPage.tsx:31-36). Detail.tsx:162 no longer renders the expected copy. product-subscribe.test.tsx :117 and :183 would fail, which is 2 of its 3 tests (hand-simulated, NOT RUN). The file is reserved to Website 2 (FILE_OWNERSHIP.json:399-404@e0a7d47) and is not in any .xenios lease. Workstream C commits 736bb2a and e6d7dd1 still carry the old assertions."
+     },
+     {
+      "id": "K3-P3-1",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld with refinements. The missing equal-slug/different-id case cannot happen in real data, because the adapter rejects duplicate ids and slugs (memberCatalog.ts:629-630@e0a7d47), so that gap matters little. Whitespace-only facts can happen: nullableText (memberCatalog.ts:60-62) accepts any string, and no test covers it. Also, catalog :352 (style.overflowWrap) passes on 756a906 too, because the card style at :115 is unchanged."
+     },
+     {
+      "id": "K3-P3-2",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. Detail.tsx:136 and :373 wrap the whole shell, and only on the detail route. Exposure is narrower than the lens implies: .btn has white-space:nowrap (index.css:298) and member SubNav links have flexShrink 0 (shells.tsx:38-45). The h1, eyebrow, lead and dd text are what change. Browser behaviour is NOT PROVEN, and doc 35's detail-route browser observations no longer bind to this markup."
+     },
+     {
+      "id": "K3-P3-3",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. The server computes categories and lanes from `projected` before any query filter (member-catalog-projection.ts:691-694@e0a7d47). The client sends no query (memberCatalogApi.ts:9-13), so the sets are equal and only the ordering differs (code-unit .sort() vs localeCompare 'en'). The adapter still validates catalog.lanes and categories (memberCatalog.ts:618-621), but this surface no longer displays them."
+     },
+     {
+      "id": "K3-P3-4",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. README:105-107@9737db7 names a subset of the holds. A grep for PS-R2, PS-R3, 768, CLS, forced-colors, SKU/plan, quantity and seam returns 0. Directive section 4 at 94485a6 requires an 'explicit customer-visible before/after description', but README:35-40 describes only the after-state."
+     },
+     {
+      "id": "K3-P3-5",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, with the evidence superseded. At my read the owner checkout is clean and HEAD is 0dbfaf5 (records-only 'inventory frozen source dependencies'), which comes after 9737db7. The edits the lens saw as uncommitted are now committed. The CODE_OWNERSHIP diff 9737db7..0dbfaf5 drops the four source paths from lease d0897045. Foreign rows are preserved through 0dbfaf5 (91/134/57; only the owner's own row changed). Nothing outside docs/.xenios changes. The checkpoint's clean:true at 17:10:44Z remains unverifiable."
+     },
+     {
+      "id": "K3-P3-6",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. Catalog :149 checks only tabindex. Detail :192 dispatches a change event, not keyboard input. Both are unchanged from 756a906, so this is a residual issue, not new."
+     }
+    ],
+    "checklistOpinion": [
+     {
+      "item": "Identity: subject, tree, parent, records commit, records tree",
+      "status": "PASS",
+      "note": "e0a7d47 has tree 34024836 and parent 20a2305. 9737db7 has tree 01f1cff3 and parent e0a7d47. The history is linear. The owner HEAD has since moved to records-only 0dbfaf5."
+     },
+     {
+      "item": "Subject changes exactly the four files (401+/62-)",
+      "status": "PASS",
+      "note": "Diff --stat 756a906..e0a7d47 over client/server/shared shows 4 files, 401 insertions, 62 deletions. Non-records diff 756a906..0dbfaf5 is the same four paths."
+     },
+     {
+      "item": "All-paths diff 756a906 e0a7d47 is only four files",
+      "status": "PARTIAL",
+      "note": "Literally, 59 paths. The other 55 are docs/.xenios paths from fc53751, 38c7239 and 20a2305. Excluding docs/ and .xenios/, the diff is exactly the four."
+     },
+     {
+      "item": "20a2305, e0a7d47..9737db7 (and 0dbfaf5) records-only",
+      "status": "PASS",
+      "note": "These commits touch only .xenios plus docs/health-launch/catalog-detail-presentation-20261008."
+     },
+     {
+      "item": "Transferred C paths unchanged",
+      "status": "PASS",
+      "note": "The 4 C paths and product-subscribe.test.tsx show an empty diff 756a906..0dbfaf5."
+     },
+     {
+      "item": "No server/shared/protected/package/style path changed",
+      "status": "PASS",
+      "note": "Diff --name-only over client, server, shared, supabase, scripts, package*.json and render.yaml gives only the four files."
+     },
+     {
+      "item": "Inside directive section 4 at 94485a6",
+      "status": "PARTIAL",
+      "note": "The directive's sha256 6f63042d...d16c matches. The four paths are named. Two gaps: the unavailable copy reaches ProductPage and breaks an unowned route test, and no explicit before/after description is given."
+     },
+     {
+      "item": "Blob ids and raw sha256 vs checkpoint and source-bindings",
+      "status": "PASS",
+      "note": "Recomputed: c54db893/318d972b, 5a9e65be/2de8f721, dbaa8e16/a28eaa90, d0546fa3/6f8e6a08. 0 CR bytes. Working-file sha256 values match too. 0 non-ASCII bytes."
+     },
+     {
+      "item": "Foreign registry rows preserved",
+      "status": "PASS",
+      "note": "Checked with node over git show bytes for 38c7239->9737db7 and 9737db7->0dbfaf5. In each, only the owner's own row changed. Top-level fields are equal."
+     },
+     {
+      "item": "Checkpoint clean:true",
+      "status": "NOT_PROVEN",
+      "note": "Its state at 17:10:44Z cannot be verified. Now clean at 0dbfaf5, not at 9737db7."
+     },
+     {
+      "item": "No record claims execution",
+      "status": "PASS",
+      "note": "README:3 and :78-86, and the handoff line 31, say NOT RUN."
+     },
+     {
+      "item": "Doc 35 holds carried forward",
+      "status": "PARTIAL",
+      "note": "Named only partly (README:105-107). The rest is covered by 'No hold was waived'."
+     },
+     {
+      "item": "Catalog tests discriminate vs 756a906",
+      "status": "PASS",
+      "note": "Re-simulated. :258, :271, :290, :328x3, :338 and :367 fail on 756a906. :313 and :359x4 are guards. :352 and the :375 substring are not discriminating."
+     },
+     {
+      "item": "Detail tests discriminate vs 756a906",
+      "status": "PASS",
+      "note": "Re-simulated. :342, :362 (fails at :372), :382 (fails at :390), :425, :442x2 and :261-263 fail on 756a906, and :339 does too. :400 and :283-287 are guards."
+     },
+     {
+      "item": "Layout test names avoid browser/zoom claims",
+      "status": "PASS",
+      "note": "Catalog :247 and detail :330 were renamed."
+     },
+     {
+      "item": "Tests syntactically plausible, imports exist",
+      "status": "PASS",
+      "note": "Inspected, NOT RUN. The vi import was added to the detail test. Types are contextually narrowed. ResearchStatusBadge has no role (kit.tsx:199-201), so [role=status] resolves to the intended nodes."
+     },
+     {
+      "item": "Existing unchanged tests preserved",
+      "status": "FAIL",
+      "note": "product-subscribe.test.tsx :117 and :183 fail by hand-simulation. This file is in doc 35's 17-file PS-R1 set."
+     },
+     {
+      "item": "Copy free of invented price/availability/clinical/purchase claims",
+      "status": "PARTIAL",
+      "note": "There are no price or purchase claims. The future_clinical detail calls itself 'clinical pathway information', while the server supplies 'Research catalog pathway' and the same page says 'This is Research catalog information' (see missed V-M1)."
+     },
+     {
+      "item": "Consistent with server data and contracts",
+      "status": "PARTIAL",
+      "note": "Facets, facts and selection come from supplied data. The clinical framing diverges from the server's classification and summary."
+     },
+     {
+      "item": "Accessibility as claimed in markup",
+      "status": "PASS",
+      "note": "Markup only: aria-atomic, aria-label containing the visible text, the variant status region. Announcement behaviour is NOT PROVEN."
+     },
+     {
+      "item": "HS rapid product switch",
+      "status": "PASS",
+      "note": "Sequence: A with vB, then B, then A (ProductPage.tsx:21-25 nulls the product on load). B ok gives B.variants[0]. A ok gives A.variants[0], so vB is not resurrected. If B never reaches ok, returning to A restores vB, which is valid for the same id."
+     },
+     {
+      "item": "HS refresh reorders and reprices",
+      "status": "PASS",
+      "note": "Products.tsx keeps the catalog during loading. The comparator (name, then slug, then id) gives the same order for any input order. Prices come from the new objects, and keys are product.id. Detail is covered by :362."
+     },
+     {
+      "item": "HS empty or all-unavailable collection",
+      "status": "PASS",
+      "note": "items [] while ok: the effect resets lane and category, the count reads '0 of 0 products', the empty state shows, and query and sort are kept. All-unavailable: Unavailable badge, and 'Not currently available' per variant."
+     },
+     {
+      "item": "HS unknown enums, zero/empty facts, read failure after success",
+      "status": "PASS",
+      "note": "The adapter rejects unknown lane, state, availability and COA values (memberCatalog.ts:316-320, 390-393). A '0' fact shows as 0; '' and whitespace show Not provided. Error after ok keeps the selection (:313, :400)."
+     },
+     {
+      "item": "Execution evidence for successor",
+      "status": "NOT_PROVEN",
+      "note": "Everything is NOT RUN. The window expired 2026-10-06T21:43:37Z."
+     }
+    ],
+    "missed": [
+     {
+      "id": "V-M1",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "claim": "New client copy calls future_clinical entries 'clinical pathway information' and mentions provider and pharmacy availability. The server classifies these entries as Research pathways, and the same page tells the customer 'This is Research catalog information'. The customer therefore sees a self-contradictory description of the Care/Research boundary.",
+      "evidence": "Detail.tsx:273-274@e0a7d47 says 'This is clinical pathway information... Provider and pharmacy availability require separate confirmation.' Detail.tsx:282-288 renders the Research notice. The adapter forces researchOnlyBoundary true, category 'Research pathways', classification 'Research catalog pathway' and NONTRANSACTIONAL_SUMMARY for future_clinical (memberCatalog.ts:537-556; member-catalog.ts:44-49). The catalog card also replaces the server summary with client copy (Catalog.tsx:95-98). Directive section 4 requires 'Care and Research boundaries remain accurate.'",
+      "fix": "Use wording consistent with the server classification (Research pathway, no offer of treatment), or get recorded founder/clinical-copy approval for the clinical framing. Add a test that the clinical and Research descriptions do not contradict each other."
+     },
+     {
+      "id": "V-M2",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+      "claim": "Nontransactional lanes still render the supplier_pending panel. Its eyebrow and badge read 'Supplier confirmation pending' and 'Awaiting documentation', which suggests supply is pending for a program the new copy says offers no enrollment or purchasing. The subject edited this panel's body but kept that kind.",
+      "evidence": "Detail.tsx:219-223@e0a7d47 renders kind supplier_pending whenever variants are empty. future_clinical and non_product_program details always have empty variants (memberCatalog.ts:537-544). The presentation comes from kit.tsx:69. Test :442 does not assert the absence of 'Supplier confirmation pending'. The predecessor had the same eyebrow, so this is a missed fix, not a regression.",
+      "fix": "For nontransactional lanes, use a neutral kind or no pending panel, and add a negative assertion to the :442 test."
+     },
+     {
+      "id": "V-M3",
+      "severity": "P3",
+      "file": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+      "claim": "Some substring assertions the lens did not flag cannot detect the behaviour they name.",
+      "evidence": "Catalog :375 toContain('Clinical / provider review') is now also satisfied by the lane facet <option> (Catalog.tsx:272-276), so removing the card label would go unnoticed. Catalog :352 overflowWrap readback passes on 756a906 (card style :115 unchanged). Detail :278 toContain('Product information') matches both the shell title and the new unavailable title 'Product information is unavailable.' (Detail.tsx:139, :162).",
+      "fix": "Scope the assertions to the card or header element (for example querySelector on the card's lane label and the h1), and treat :352 as a guard."
+     },
+     {
+      "id": "V-M4",
+      "severity": "P3",
+      "file": "docs/health-launch/catalog-detail-presentation-20261008/README.md",
+      "claim": "The records send future execution toward the wrong set. They do not disclose that the subject invalidates a member of the predecessor 17-file PS-R1 set.",
+      "evidence": "README:103-104@9737db7 assigns the 17-file/401 receipt to the predecessor only. README:113 asks an execution proposal to include 'this successor and its two changed tests'. README:52 says ProductPage was inspected and its behaviour preserved. None of these mention that product-subscribe.test.tsx (in integration-subscription17-run1-start.json:18@38c7239) now asserts removed copy, and the 0dbfaf5 inventory does not either.",
+      "fix": "Amend the records in a records-only commit: list product-subscribe.test.tsx as affected, name the owner/authority for its update, and require that the 17-file set be rerun with the successor."
+     }
+    ],
+    "verdictOpinion": "K3 verified: HOLD stands, with one P1 and the lens's six P3s upheld. I re-derived from Git objects that scope, identities, blob and sha256 values, foreign-row preservation, records-only commits and transferred C paths are as the lens reported. The owner HEAD has since moved to 0dbfaf5, a clean, records-only commit whose lease drops the four source paths. The P1 is confirmed by hand-simulation, and its evidence needs correcting: product-subscribe.test.tsx is in doc 35's PS-R1 17-file closing set (401/0/0 at 756a906), not outside it. e0a7d47 therefore breaks a doc-35-accepted receipt: :117 and :183 fail, and that file is owned by neither B nor C. The new tests do discriminate, apart from the guards noted. My eight hand-simulations found no hook bugs and no stale values after a switch. I added four P3s: clinical-versus-Research framing contradicts the server classification, nontransactional lanes still show a supplier-pending panel, some substring assertions cannot fail, and the records leave out the affected route test. Nothing was run. Source acceptance is not qualification, and nothing here is Samuel's approval."
+   }
+  }
+ ],
+ "critic": {
+  "coverage": [
+   {
+    "item": "Catalog claim 1: facets, counts and cards come from one supplied collection",
+    "status": "COVERED",
+    "evidence": "Inspected source: MemberCatalogExperience.tsx:173-181,190-221,317@e0a7d47. Facets come only from catalog.items. The server builds lanes and categories from the same unfiltered projection (member-catalog-projection.ts:692-695), and the client sends no query (memberCatalogApi.ts:9-13), so only the facet ordering differs (K3-P3-3). Test :258 discriminates against 756a906. All three lenses and verifiers agree. NOT RUN."
+   },
+   {
+    "item": "Catalog claim 2: invalid facets reset only on successful reads",
+    "status": "COVERED",
+    "evidence": "Inspected source: :183-188 (returns unless state==='ok'). Products.tsx:24-55@e0a7d47 keeps the previous catalog on non-ok results and sets catalog and ok together, so the guard is never decisive in the real page. I agree with the verifier's correction. Test :290 discriminates the no-resurrection rule. Tests :300 and :318 use a caller shape the page never produces, and there is no page-level retry test (P3, tests). Hand-simulated; NOT RUN."
+   },
+   {
+    "item": "Catalog claim 3: query and sort survive transient read failures",
+    "status": "COVERED",
+    "evidence": "Inspected source: state lives at :168-171. ResearchRouteBoundary (kit.tsx:684-695@e0a7d47) swaps only its children, and Products.tsx:64-71 renders the component without a key, so it is never remounted. Tests :313 and :307-308 cover this. Focus is lost while loading; that is carried."
+   },
+   {
+    "item": "Catalog claim 4: deterministic sort ties by canonical slug/ID",
+    "status": "COVERED",
+    "evidence": "Inspected source: :209-220 uses localeCompare(...,'en') throughout, falling back name -> slug -> id. It is deterministic, but the order is ICU 'en' collation, not code-unit 'canonical' order. Test :328-336 sets id===slug, so it cannot tell slug-first from id-first and does not pin 'en' (P3, tests)."
+   },
+   {
+    "item": "Catalog claim 5: Clear filters covers sort-only state",
+    "status": "COVERED",
+    "evidence": "Inspected source: :320 adds sort!=='name_ascending', and clearFilters :223-228 resets all four controls. Test :271-288 fails on 756a906. The button removes itself when activated, so focus drops to body. That was already true for query/lane/category at 756a906; this commit adds the sort-only path (P3, focus)."
+   },
+   {
+    "item": "Catalog claim 6: controls shrink; product links have distinct accessible names",
+    "status": "PARTIAL",
+    "evidence": "Inspected source: min-w-0 and max-w-full at :249-299. The aria-label at :148 contains the visible text. Names are not distinct for program items, because the adapter forces every non_product_program displayName to 'Research program' (memberCatalog.ts:561-563,661-662@e0a7d47), and masked future_clinical names are also forced. Layout is markup-only, with no browser receipt at e0a7d47. Test :355 checks one card."
+   },
+   {
+    "item": "Catalog claim 7: clinical copy no longer presumes provider/pharmacy availability",
+    "status": "PARTIAL",
+    "evidence": "Inspected source: summary :97 is fixed (756a906:97 said 'available only through ... current pharmacy fulfillment'). The carried price cell :86-87 still shows 'Pricing shown after clinical review' on every future_clinical card, and new test :376 pins it. non_product_program cards get 'Price on request' (:89-90, because displayState is catalog_only per projection :470-474). The new :97 string replaces the server's canonical summary (shared member-catalog.ts:44-45)."
+   },
+   {
+    "item": "Detail claim 1: selection belongs to the current product; removed variants do not reappear",
+    "status": "COVERED",
+    "evidence": "Inspected source: MemberProductDetailExperience.tsx:99-118@e0a7d47. I re-simulated test :382 (shared variant ids across products: A(b) -> other -> SKU-A -> A -> SKU-A -> null ok -> A -> SKU-A) and :362 (removal, then return, keeps a1). ProductPage.tsx:21-27 nulls the product on load and drops stale generations. Fails on 756a906 at :372 and :390. NOT RUN."
+   },
+   {
+    "item": "Detail claim 2: supplied strength, form, size and presentation; absent facts say Not provided",
+    "status": "COVERED",
+    "evidence": "Inspected source: :237-247 renders value?.trim() ? value : 'Not provided'. The adapter admits only string or null. Test :342-360 covers supplied and null values. Empty and whitespace-only strings are untested, so a '??' implementation would also pass (P3, tests)."
+   },
+   {
+    "item": "Detail claim 3: full selected label wraps outside the native select",
+    "status": "PARTIAL",
+    "evidence": "Inspected source: role=status line :230-234 sits outside the select, and the select has min-w-0 max-w-full (:207). The root wrapper :136/:373 applies overflow-wrap:anywhere to the whole ResearchMemberShell, but only on the detail route. Test :425-440 checks markup only. No browser, zoom or 768 evidence at e0a7d47; doc 35 area 6 bound 756a906 markup."
+   },
+   {
+    "item": "Detail claim 4: catalog status and variant availability are separate",
+    "status": "COVERED",
+    "evidence": "Inspected source: :184-200 (unknown values fall through to 'Unavailable') and :252-259. The mapping is correct. However, the live sync projection passes null activation (projection :410-414), selectCartProduct then blocks (cart-product-selection.ts:248-249), so displayState is never 'available' (:479). A stocked item therefore shows 'Catalog status: Unavailable' beside 'Variant availability: Available'. Carried; a policy P3."
+   },
+   {
+    "item": "Detail claim 5: unavailable copy no longer asserts unavailable merchandise",
+    "status": "PARTIAL",
+    "evidence": "Inspected source: :162-163 has the new title and body. That removed the only source of 'This product is not available.', which product-subscribe.test.tsx:117,183@e0a7d47 still asserts (P1). The same copy now also renders for the server's definitive 404 'product_not_found' (member-catalog-routes.ts:95-97 -> api.ts:110-124 -> ProductPage.tsx:51-53) and for the membership_inactive 403 denial, saying 'could not be loaded' with no way back (P3)."
+   },
+   {
+    "item": "Detail claim 6: program/clinical copy does not promise eventual purchasing",
+    "status": "PARTIAL",
+    "evidence": "Inspected source: the new notes at :272-277 are clean. The rendered nontransactional page still shows 'Pricing shown after clinical review' (:26,:224-226, pinned by GLP test :323) and the supplier_pending panel 'Supplier confirmation pending/Awaiting documentation' (:219-223; kit.tsx:69). The education section adds 'Available only through ... current pharmacy serviceability' (productEducation.ts:279) and, for programs, '...pricing rule, and operational status' (:295). Test :442 asserts none of these are absent."
+   },
+   {
+    "item": "Preservation of doc 35 accepted behaviour",
+    "status": "PARTIAL",
+    "evidence": "Inspected: the ProductMedia slot and props, IC-3/DE-R1, the route boundary, retry, one-main composition, price formatting and ProductPage product={null} are unchanged. ProductMedia/kit/adapters/ProductPage show an empty diff 756a906..e0a7d47. Broken: doc 35 PS-R1 'CLOSED' rests on the 17-file run that includes product-subscribe.test.tsx (integration-subscription17-run1-start.json command[5]@38c7239, exit 0; doc 35:41-42). Two of its three cases now fail by hand simulation."
+   },
+   {
+    "item": "No invented price, availability, clinical or purchase claim",
+    "status": "PARTIAL",
+    "evidence": "Inspected diff: there is no new price, purchase control, mutation, fetch or eligibility logic. pricePresentation is byte-unchanged in both files. The new customer strings are client-authored clinical copy (catalog :97; detail :274), which frames items that the server classifies as 'Research catalog pathway' as clinical (shared member-catalog.ts:44-49) and, on detail, presumes a confirmation path. Carried promise-like copy remains in the leased paths (P2)."
+   },
+   {
+    "item": "Accessibility claims as far as markup can show",
+    "status": "PARTIAL",
+    "evidence": "Inspected markup: labels/htmlFor are kept; the aria-label at catalog :148 and detail :348 starts with the visible text; the count at :316 is role=status, aria-atomic; the selected-variant status is at :231. Gaps: identical names for program items; focus lost on Clear; the 'Catalog status' <p> at :185 is not associated with its badge; the remounted live region is unlikely to be announced. SR, keyboard and zoom are NOT PROVEN."
+   },
+   {
+    "item": "Test discrimination per claimed case",
+    "status": "PARTIAL",
+    "evidence": "Hand-simulated against 756a906. Catalog :258, :271, :290, :328, :338 and :367 fail on 756a906, as do detail :261-263, :342, :362, :382, :425 and :442. These pass on both (guards only): catalog :313, :352, :359 and detail :283-287, :400. Non-discriminating: catalog :375 (also matched by the option text), detail :278. Fixtures are adapter-invalid (detail :25 vs memberCatalog.ts:524-525; nontransactional fixtures vs :537-567). There is no route-level test."
+   },
+   {
+    "item": "Four-path confinement, identities and hashes",
+    "status": "COVERED",
+    "evidence": "Recomputed: e0a7d47^{tree}=340248360ac8, parent 20a2305, 9737db7^=e0a7d47, owner HEAD now 0dbfaf5 (records-only). diff 756a906..e0a7d47 over client/server/shared/supabase/scripts/package*/render.yaml gives exactly the 4 files; 20a2305..e0a7d47 is +401/-62. Blobs c54db893/dbaa8e16/5a9e65be/d0546fa3 with raw sha256 318d972b/a28eaa90/2de8f721/6f8e6a08 match checkpoint.json. 0 CR and 0 non-ASCII bytes. Lease d0897045 at e0a7d47 lists exactly these 4 source paths."
+   },
+   {
+    "item": "Records accuracy and disclosure",
+    "status": "PARTIAL",
+    "evidence": "Inspected: 9737db7 and 0dbfaf5 touch only .xenios plus docs/health-launch/catalog-detail-presentation-20261008. Both NOT RUN and NOT PUSHED are stated. Gaps: packet:112-113 scopes execution to 'this successor and its two changed tests' and omits the broken PS-R1 member. The packet table (:35-40) gives the after-state only. checkpoint clean:true at 17:10:44Z cannot be verified; the checkout is clean now at 0dbfaf5, whose lease drops all four source paths."
+   },
+   {
+    "item": "Authority: directive 94485a6 section 4",
+    "status": "PARTIAL",
+    "evidence": "Read PARALLEL_IMPLEMENTATION_DIRECTIVE_20261008.txt:191-267@94485a6. These hold: the paths (:204-207), no server/price/contract/global-style change (:209-210), the existing retry (:249-250), filter state kept (:251), and no browser claims (:260). These do not: :252-253 'Never promise availability, fulfillment or payment capability' (P2 copy), :245 keyboard usability (Clear focus), :238 'Care and Research boundaries remain accurate' (clinical framing), and :265-266 'explicit customer-visible before/after description' (after-state only)."
+   },
+   {
+    "item": "Carried holds",
+    "status": "PARTIAL",
+    "evidence": "Packet:101-107 (identical to README) names the aggregate, protection, hash/manifest, GATE-01, MC-01/D/E, subscription buying gaps, Finance and managed release. It does not name PS-R2/PS-R3, founder SKU/plan/quantity policy, exact 768/native zoom/CLS/native forced-colors, or the inherited seam findings, all of which doc 35:79-93 carries. Nothing is waived or resolved ('No hold was waived'). The successor also reopens the PS-R1 closure."
+   },
+   {
+    "item": "Execution evidence for e0a7d47",
+    "status": "COVERED",
+    "evidence": "Producer-reported and consistent with the records: tests, typecheck, build, the no-em-dash gate, route/protection gates, browser, zoom, keyboard and live catalog are all NOT RUN (packet:78-86). No receipt binds e0a7d47. The 756a906 receipts (17/401, 36/626) belong to the predecessor. The window expired 2026-10-06T21:43:37Z. Every runtime outcome is NOT PROVEN."
+   }
+  ],
+  "ownChecks": [
+   {
+    "question": "Is product-subscribe.test.tsx in doc 35's PS-R1 17-file closing set? (Lens K3 said no; its verifier said yes.)",
+    "answer": "Yes; the verifier is correct. integration-subscription17-run1-start.json@38c7239 lists client/src/research/pages/member/product-subscribe.test.tsx in its vitest command array. The result has exitCode 0, head 756a906, clean. Doc 35:41-42 records PS-R1 CLOSED at 401/0/0 on that set."
+   },
+   {
+    "question": "Do product-subscribe.test.tsx:117 and :183 fail at e0a7d47?",
+    "answer": "Yes, by hand simulation (NOT RUN). Case 1 returns 503 -> api.ts:110-124 {kind:'unavailable'} -> ProductPage.tsx:51-53 'unavailable'. Case 3 is a slug mismatch -> ProductPage.tsx:31-36 'unavailable'. kit.tsx:686 then renders MemberProductDetailExperience.tsx:162 'Product information is unavailable.'. git grep at e0a7d47 finds 'This product is not available.' only in product-subscribe.test.tsx:117,183 and as a negative assertion at detail test :263."
+   },
+   {
+    "question": "Does any other test outside the four paths assert a string this commit changed?",
+    "answer": "No. I grepped e0a7d47 for 'Ordering appears only after', 'Only an exact published...', 'An exact approved Product Control variant...', the old clinical summary, the 'Availability' dt and the old link names. The only hit outside the four files is ProductCatalogExperience.tsx:249 (a different component). Products.integration.test.ts asserts only the carried 'No products are published yet.'. product-media-surfaces.test.tsx compares media-invariant markup, which is unaffected."
+   },
+   {
+    "question": "Is the product-subscribe test inside any lease of this owner?",
+    "answer": "No. Lease d0897045 at e0a7d47 lists exactly the four products-diagnostics paths plus records. At 0dbfaf5 it lists only the inventory docs and continuity files. docs/coordination/FILE_OWNERSHIP.json:404@e0a7d47 reserves product-subscribe.test.tsx to the Website 2 member-catalog set. ProductPage.tsx went to codex-product-subscription-intent-20261005 at 20a2305. The older leases 99c3b715 and c2cc19b7 on the four paths are in state 'handoff'."
+   },
+   {
+    "question": "Does the detail page still show 'Pricing shown after clinical review'? (K1 said the surfaces are inconsistent; its verifier said they are not.)",
+    "answer": "Yes; the verifier is correct. MemberProductDetailExperience.tsx:26 and :224-226@e0a7d47 render it, and GLP test :323 pins it. Catalog :86-87 renders it too, and new test :376 pins it. Both surfaces agree. The string comes from cea8c84 (2026-08-31). No approval record was found."
+   },
+   {
+    "question": "Severity of the carried nontransactional copy (K1 said P3, K2-2 said P2)?",
+    "answer": "P2, consolidated. It is carried copy, not a regression. But it sits in the leased paths, contradicts directive :252-253, and the subject edits the same panel (:222). It also claims outcomes (6) and (7) as delivered and adds a test that pins the promise-like string. The minimum remedy is to narrow the claim and get a recorded copy disposition from Samuel. The preferred remedy is an in-path copy fix with negative assertions."
+   },
+   {
+    "question": "Do non_product_program items necessarily share a link name?",
+    "answer": "Yes. The adapter rejects any non_product_program card or detail whose displayName is not 'Research program' (memberCatalog.ts:561-563, 661-662@e0a7d47). Two or more published program items therefore always give 'View product: Research program' with different hrefs. catalog.ts:42 notes four legacy program records; how many are published in production is NOT PROVEN."
+   },
+   {
+    "question": "Can live catalog status ever be 'Available'?",
+    "answer": "Not from the sync projection the service uses (member-catalog-service.ts:565-575 -> projection). The projection passes null activation (:410-414); cart-product-selection.ts:248-249 then blocks with activation_authority_missing, and displayState reaches 'unavailable' at :497. Variant availability comes from inventory alone (:428-435). A stocked item therefore shows 'Catalog status: Unavailable' with 'Variant availability: Available'."
+   },
+   {
+    "question": "Is the guard in the catalog reset effect decisive in the real page?",
+    "answer": "No. Products.tsx:24-55@e0a7d47 keeps the retained catalog during loading/error/unavailable and sets catalog and state together on success. The facets are therefore unchanged during non-ok states. The guard only matters for callers like tests :300 and :318 that pass empty items while not ok. The behaviour is still correct."
+   },
+   {
+    "question": "What is the current owner HEAD and checkout state?",
+    "answer": "HEAD is 0dbfaf57 (records-only: .xenios plus the two inventory docs; diff 9737db7..0dbfaf5 touches no runtime path). git status --porcelain (no-optional-locks) is empty right now. The checkpoint's clean:true at 17:10:44Z is still unverifiable."
+   },
+   {
+    "question": "Do the new clinical strings match the server classification?",
+    "answer": "No. Shared member-catalog.ts:44-49 fixes future_clinical as category 'Research pathways', classification 'Research catalog pathway', and the summary 'Research pathway information is being prepared...'. Catalog :95-97 replaces that summary with client clinical copy. Detail :274 says 'This is clinical pathway information... Provider and pharmacy availability require separate confirmation.', while :284-288 on the same page says 'This is Research catalog information'."
+   },
+   {
+    "question": "Hashes and confinement recomputed?",
+    "answer": "Yes. Blob ids and the sha256 of git show bytes match checkpoint.json for all four files; there are 0 CR and 0 bytes >127. git diff --name-only e0a7d47 9737db7 equals checkpoint.recordsPaths (7 paths)."
+   }
+  ],
+  "upheld": [
+   {
+    "id": "C-P1-1 (K2-1 = K3-P1-1, with V-M4 folded in)",
+    "severity": "P1",
+    "file": "client/src/research/pages/member/product-subscribe.test.tsx",
+    "claim": "e0a7d47 changes unavailableTitle (MemberProductDetailExperience.tsx:162). The unchanged product-subscribe.test.tsx:117 and :183 assert the removed 'This product is not available.', for ProductPage's 503 path (api.ts:110-124 -> ProductPage.tsx:51-53) and its slug-mismatch path (:31-36). Two of its three cases fail by hand simulation. The file is in doc 35's PS-R1 17-file closing set (integration-subscription17-run1-start.json@38c7239; 401/0/0), so a doc-35-accepted receipt is invalidated. The file is outside every lease of this owner (FILE_OWNERSHIP.json:404 reserves it to Website 2). The packet (:52, :112-113) and the records do not disclose this.",
+    "fix": "Choose one: (a) keep the route-level title unchanged in this slice and defer the copy change to the ProductPage/Workstream C owner; or (b) under recorded authority from the file's owner, update :117/:183 to the chosen copy while keeping the not-substituted assertions. Preferably the wording also fits the 404 not-found case (see C-P3-3). Amend the records to list this file as affected, and require the full 17-file PS-R1 set (plus the 36-file affected set) in any execution proposal."
+   },
+   {
+    "id": "C-P2-1 (K2-2 + K1-P3-3 + V-M2)",
+    "severity": "P2",
+    "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+    "claim": "Packet claims (6) and (7) are not true of the rendered nontransactional surfaces. Still rendered: 'Pricing shown after clinical review' (detail :26, :225; catalog :86-87); the supplier_pending panel 'Supplier confirmation pending/Awaiting documentation' (detail :219-223; kit.tsx:69) on lanes that cannot have variants; and 'Price on request' on every non_product_program card (catalog :89-90; the projection forces catalog_only). New catalog test :376 and GLP test :323 pin the pricing string, against directive :252-253. Carried from 756a906 (origin cea8c84), not introduced. Out of path: education text in productEducation.ts:279 and :295.",
+    "fix": "Get a recorded copy disposition from Samuel for nontransactional and clinical lanes. Then, inside the four paths: replace the pricing line and price cell with neutral non-offer text, use a non-supplier panel kind (or none) for these lanes, update :323 and :376 to negative assertions, and add absence checks to detail :442. Until then, narrow claims (6) and (7) to the new note and summary only. Ticket the productEducation owner."
+   },
+   {
+    "id": "C-P3-1 (K1V-M2 + K2-3 + V-M1)",
+    "severity": "P3",
+    "file": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+    "claim": "The new client-authored clinical copy replaces or contradicts the server's canonical framing. Catalog :97 overrides MEMBER_CATALOG_NONTRANSACTIONAL_SUMMARY. Detail :274 calls the item 'clinical pathway information' and says provider/pharmacy availability 'require separate confirmation', which presumes such a path and conflicts with catalog :97. The server classifies the item as 'Research catalog pathway' (shared member-catalog.ts:44-49), and the same page's notice at :284-288 says 'Research catalog information'. This touches directive :238.",
+    "fix": "Render the server summary plus one fixed boundary line, or record approved copy from the clinical-copy owner (Samuel). Align detail :274 with catalog :97's non-presumptive wording, and add a test that the clinical and Research descriptions do not contradict each other."
+   },
+   {
+    "id": "C-P3-2 (K1-P3-1)",
+    "severity": "P3",
+    "file": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+    "claim": "The claim that 'Product links have distinct accessible names' fails by construction. The adapter forces every non_product_program displayName to 'Research program' (memberCatalog.ts:561-563, 661-662), and masked future_clinical names are also forced. Two published program items would therefore share 'View product: Research program' with different hrefs (:122-124, :148). This is still better than 756a906. Test :355 checks a single card.",
+    "fix": "Narrow the claim, or add a non-unmasking disambiguator. Add a test with two cards that share a displayName."
+   },
+   {
+    "id": "C-P3-3 (MISS-1)",
+    "severity": "P3",
+    "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+    "claim": "The new unavailable copy ('Approved product information could not be loaded.') now also renders for the server's definitive 404 'product_not_found' (member-catalog-routes.ts:95-97; api.ts:110-124 has no knownNotFoundDenials) and for the 403 membership_inactive denial (api.ts:107 -> ProductPage.tsx:51-53). It reads as a transient failure but offers no retry and no route back. The component's 'Product not found.' state with 'Return to products' cannot be reached from the live API.",
+    "fix": "Use wording that also fits not-found and denial cases, and test that path. Ticket the API/ProductPage owner to map 404 product_not_found to the not_found branch."
+   },
+   {
+    "id": "C-P3-4 (MISS-2)",
+    "severity": "P3",
+    "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+    "claim": "In the live sync projection, displayState is never 'available' (projection :410-414, :479; cart-product-selection.ts:248-249). A stocked item therefore renders 'Catalog status: Unavailable' beside 'Variant availability: Available' and a Member price. Carried from 756a906; the relabel improves it but makes the pairing explicit. No adapter-valid test covers it.",
+    "fix": "Get a presentation-policy decision (for example, qualify variant availability as an inventory fact that is not purchase approval). Add an adapter-valid fixture (displayState 'unavailable' with variant availability 'available') that asserts the chosen pairing."
+   },
+   {
+    "id": "C-P3-5 (K1V-M1)",
+    "severity": "P3",
+    "file": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+    "claim": "Header Clear filters (:320-328) unmounts itself when activated, so focus falls to body. The empty-state Clear (:352-358) does the same once results return. This was already true for query/lane/category; e0a7d47 adds the sort-only path. It touches directive :245. Untested.",
+    "fix": "After clearFilters, move focus to a stable target (the search input or the results heading with tabIndex=-1). Add an activeElement assertion."
+   },
+   {
+    "id": "C-P3-6 (K1-P3-2 + K2-4 + K3-P3-1 + V-M3 + K1V-M3 + K3-P3-6)",
+    "severity": "P3",
+    "file": "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+    "claim": "Several claimed cases are not discriminated. Catalog: tie test :329 uses id===slug and does not pin 'en'; :375 is also satisfied by the lane option text; :352 passes on 756a906; guard tests :300/:318 use a caller shape the page never produces, with no Products-level retry test. Detail: :278 matches both titles; facts are tested with null only; option order after reorder is unasserted; fixtures violate the adapter (detail :25 vs memberCatalog.ts:524-525; nontransactional fixtures vs :537-567). Two test names still claim 'keyboard'.",
+    "fix": "Add cases for distinct slug/id order, case and non-ASCII names, whitespace facts, and option order. Scope substring assertions to the card or h1. Make fixtures adapter-valid. Add Products- and ProductPage-level retry tests. Rename the keyboard tests or exercise real keys."
+   },
+   {
+    "id": "C-P3-7 (K1-P3-4 + K3-P3-2 + K2-5)",
+    "severity": "P3",
+    "file": "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+    "claim": "The layout and announcement claims are markup-only. The detail wrapper (:136, :373) applies overflow-wrap:anywhere and min-w-0 to the whole ResearchMemberShell, but only on the detail route, so doc 35's browser observations no longer bind to this markup. The 'Catalog status' <p> at :185 is not associated with its badge. The status line remounts after a refresh, so it is unlikely to be announced. There is no browser, zoom, forced-colors or SR receipt at e0a7d47.",
+    "fix": "Scope the wrapper to the product content, or qualify both routes at 320/375/767/exact 768 and native 200/400% zoom. Use dt/dd or aria-labelledby for catalog status."
+   },
+   {
+    "id": "C-P3-8 (K3-P3-3)",
+    "severity": "P3",
+    "file": "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+    "claim": "Facets now ignore the server's catalog.lanes and categories (:174-179). The sets are equal today because the client sends no query, but the order differs: server code-unit .sort() versus client 'en' collation. The server fields go unused on this surface.",
+    "fix": "Record this as a presentation-contract decision, or assert facet equality with the server lists for an unfiltered collection."
+   },
+   {
+    "id": "C-P3-9 (K3-P3-4 + K3-P3-5)",
+    "severity": "P3",
+    "file": "docs/health-launch/catalog-detail-presentation-20261008/README.md",
+    "claim": "The records name the doc 35 holds only in part (missing PS-R2/PS-R3, SKU/plan/quantity policy, 768/zoom/CLS/forced-colors, seam). There is no before/after copy table, which directive :265-266 requires. The checkpoint's clean:true is unverifiable. The owner HEAD has moved to 0dbfaf5, whose lease no longer covers the four source paths.",
+    "fix": "In a records-only commit: list the holds verbatim, add a literal before/after copy table covering every surface (including ProductPage), and re-lease the four paths (and, with authority, product-subscribe.test.tsx) before any revision."
+   },
+   {
+    "id": "C-P3-10 (K1V-M4)",
+    "severity": "P3",
+    "file": "client/src/research/adapters/memberCatalog.ts",
+    "claim": "Carried and outside the four paths. The catalog price cell shows 'Price not currently available' under an 'Available' badge when amountCents is 0 (the adapter accepts 0; catalog :77, :92). A malformed currency that the adapter accepts would make Intl.NumberFormat throw during render (:80-83). The server resolver rejects prices <= 0.",
+    "fix": "Have the adapter owner reject 'available' with amountCents<=0 and require /^[A-Z]{3}$/ for currency."
+   }
+  ],
+  "disposition": "SOURCE REVISION REQUIRED. Everything here is source inspection and hand simulation over Git objects; it is NOT RUN and NOT PROVEN. The qualification window expired 2026-10-06T21:43:37Z. Nothing here is Samuel's approval of execution, push, release, price, availability or clinical policy.\n\n**What holds.** The successor e0a7d47 (tree 340248360ac8) is confined to the four leased presentation paths. It adds no price, purchase, mutation, network or eligibility behaviour. Price formatting, media, boundary and retry are unchanged. Most of what it claims for the catalog and detail selection hand-simulates correctly, and most of the new tests fail on 756a906, so they genuinely test the change.\n\n**Why revision is required.**\n- **P1.** Changing the unavailable title deterministically breaks product-subscribe.test.tsx:117 and :183. That file belongs to doc 35's closed PS-R1 17-file set (401/0/0). It is outside this owner's lease and is not disclosed. Accepting e0a7d47 as-is would reopen an accepted closure.\n- **P2.** Packet claims (6) and (7) are false for the rendered nontransactional surfaces. Promise-like pricing and supplier copy remains in the leased paths, and a new test pins it, against directive 94485a6 :252-253.\n\n**Minimum to reach SOURCE ACCEPT WITH LIMITS:**\n1. Re-lease the four paths, because 0dbfaf5 dropped them.\n2. Resolve the P1 one of two ways:\n   - keep the route-level title and leave the change to the ProductPage/Workstream C owner; or\n   - with recorded authority from that test's owner, update it, preferably with wording that also fits 404 not-found.\n3. Narrow claims (6) and (7). Either fix the nontransactional copy after Samuel's copy disposition, or record that the copy is held pending that disposition.\n4. Amend the records: affected test set, literal before/after copy table, and the doc 35 holds listed verbatim.\n\nThe P3s may be carried as limits.\n\n**What remains before release qualification:**\n- Fresh execution authority, then:\n  - the two changed tests;\n  - the full 17-file PS-R1 and 36-file affected sets;\n  - Products and ProductPage route tests;\n  - typecheck, the no-em-dash gate and the build.\n- Browser, keyboard, focus and screen-reader qualification of both routes at 320/375/767/exact 768, native 200/400% zoom and native forced-colors.\n- Copy and policy decisions on the clinical framing and on 'Catalog status: Unavailable' alongside variant availability.\n- Every doc 35 hold: protected-hash approval and manifest re-cut, GATE-01, MC-01, D/E, the subscription buying gaps and PS-R2/PS-R3, Finance/provider, the full aggregate, and managed release."
+ }
+}
