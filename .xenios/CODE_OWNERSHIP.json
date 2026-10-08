@@ -6,15 +6,18 @@
       "task": "ACCEPTED-SOURCE-INTEGRATION-20261005",
       "session": "codex-accepted-source-integration-20261005",
       "paths": [
-        "docs/health-launch/catalog-detail-presentation-20261008/SOURCE_INTEGRATION_INVENTORY_20261008.md",
-        "docs/health-launch/catalog-detail-presentation-20261008/source-integration-inventory-20261008.json",
+        "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+        "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+        "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+        "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+        "docs/health-launch/catalog-detail-presentation-20261008/**",
         ".xenios/sessions/codex-accepted-source-integration-20261005.json",
         ".xenios/handoffs/*ACCEPTED-SOURCE-INTEGRATION-20261005*"
       ],
-      "state": "handoff",
+      "state": "active",
       "claimedAt": "2026-10-05T18:20:33.611Z",
-      "heartbeatAt": "2026-10-08T18:41:22Z",
-      "activeScope": "SOURCE-INTEGRATION-INVENTORY-20261008:r1 records only; source writes excluded, C transfer preserved",
+      "heartbeatAt": "2026-10-08T19:14:34Z",
+      "activeScope": "DOC56-CATALOG-CORRECTION-20261008:r1; same four B source/test paths reclaimed after active-lease check; own records only; completed inventory and C transfer preserved. No execution or push.",
       "handoffSource": "e0a7d4787071140a25a984edc4c0a49f0d7c22ab; LOCAL_ONLY_NOT_EXECUTED_NOT_PUSHED_NOT_ACCEPTED",
       "historicalScopeRef": "38c723964358c18b8c5090f2f9a0aa92f74601b0:.xenios/CODE_OWNERSHIP.json#d0897045-efd3-425b-a8b4-02385e855153",
       "workstreamCTransfer": {

@@ -4,19 +4,31 @@
   "tasks": [
     {
       "id": "ACCEPTED-SOURCE-INTEGRATION-20261005",
-      "title": "Source-integration inventory r1; frozen catalog/detail source preserved",
+      "title": "Doc56 bounded catalog/detail correction r1; same owner and four paths",
       "priority": "P1",
-      "state": "qa",
+      "state": "active",
       "owner": "codex-accepted-source-integration-20261005",
       "baseSha": "3eaa017fcbd28989c65ffc4bb439a554aa1f3f59",
       "paths": [
-        "docs/health-launch/catalog-detail-presentation-20261008/SOURCE_INTEGRATION_INVENTORY_20261008.md",
-        "docs/health-launch/catalog-detail-presentation-20261008/source-integration-inventory-20261008.json",
+        "client/src/research/products-diagnostics/MemberCatalogExperience.tsx",
+        "client/src/research/products-diagnostics/MemberCatalogExperience.test.tsx",
+        "client/src/research/products-diagnostics/MemberProductDetailExperience.tsx",
+        "client/src/research/products-diagnostics/MemberProductDetailExperience.test.tsx",
+        "docs/health-launch/catalog-detail-presentation-20261008/**",
         ".xenios/sessions/codex-accepted-source-integration-20261005.json",
         ".xenios/handoffs/*ACCEPTED-SOURCE-INTEGRATION-20261005*"
       ],
       "dependsOn": [],
-      "scopeNote": "SOURCE-INTEGRATION-INVENTORY-20261008:r1 under independently verified human message01a11cc4-c1a0-74a0-bec9-fd3cd033f86d, coordinator1b165b15bfd6b575c25d66be7c9c15cce8ee94fa. Same owner/task/lease, two named inventory records and own continuity only. Catalog e0a7d47 and C transfer frozen. No source edits, execution, merge, push, installation, hosted changes or schedule changes.",
+      "scopeNote": "DOC56-CATALOG-CORRECTION-20261008:r1 at coordinator acbba2cc5a759455bdb16be50cce2ea00dc5fbab, under prior independently verified human directives94485a6/1b165b1. Same owner/task/lease; reclaim exactly four B paths and own records. Restore route title, narrow claims and complete records only. Preserve completed inventory and C transfer. No execution, merge, push, installation, hosted or schedule changes.",
+      "correctionAssignment": {
+        "id": "DOC56-CATALOG-CORRECTION-20261008",
+        "revision": 1,
+        "baselineRecords": "0dbfaf57fe51d70d9b9a7de8cc7136a7604b3d7f",
+        "sourceTarget": "e0a7d4787071140a25a984edc4c0a49f0d7c22ab",
+        "review": "cb41382df985cc03a2833523a14e829ddd47eb47",
+        "claimedAt": "2026-10-08T19:14:34Z",
+        "status": "AUTHORING; NOT_RUN; LOCAL_ONLY"
+      },
       "inventoryAssignment": {
         "id": "SOURCE-INTEGRATION-INVENTORY-20261008",
         "revision": 1,
