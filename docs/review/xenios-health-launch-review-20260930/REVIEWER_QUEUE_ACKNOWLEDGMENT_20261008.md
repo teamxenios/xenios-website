@@ -50,3 +50,11 @@ instruction above supersedes that for routine reviews.
 | PS-R4 wording `e6d7dd10045289594d91a6a086ba592348d7edb8`, records `95283ce` | COMPLETE: doc 54 at `63fdb0a`, SOURCE ACCEPT WITH LIMITS as a partial PS-R4 correction |
 | Supervisor successor `1e808bab28fac90437de93628a15a7fb0322d53e` (tree `0fd769d8…`), records `8e462da` | COMPLETE: doc 55, SOURCE REVISION REQUIRED on CR-01 to CR-03 (Vitest environment key refused, five names with escaped line breaks, SV-6 residue); no execution proposal is supportable yet |
 | Catalog detail presentation `e0a7d4787071140a25a984edc4c0a49f0d7c22ab` (tree `34024836…`), records `9737db7` | COMPLETE: doc 56, SOURCE REVISION REQUIRED on D-1 (the changed unavailable title breaks two assertions in `product-subscribe.test.tsx`, a member of doc 35's accepted 17-file set, undisclosed) |
+
+## Queue state update (2026-10-08, after doc 56)
+
+| Item | State |
+| --- | --- |
+| Workstream C subscription behaviour `736bb2a84fa5b704eabdd8b069bc3ef89b084979` (tree `92069109…`), records `e5ca41d` | ACKNOWLEDGED and IN REVIEW (board task `WORKSTREAM_C_BEHAVIOR_REVIEW_20261008` r1), against the PS-R4 wording accepted in doc 54. Disposition will be doc 57 |
+| Doc 53 verifier and records correction `2d2d958`, records `0d417a9` | QUEUED after Workstream C, per the board |
+| Doc 55 supervisor repair `defe073` | seen on the builder branch; not yet on the board for review |
