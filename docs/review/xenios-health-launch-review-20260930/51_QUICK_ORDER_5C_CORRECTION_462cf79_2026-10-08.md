@@ -10,7 +10,7 @@
 - **Decision inputs (5C-3).** A closed decision-input contract now has a version literal, keys, types, bounds,
   canonical bytes and a digest rule.
 
-No P0, P1 or P2 remains after verification. Twenty-six P3 items must be carried into the next records delta before
+No P0, P1 or P2 remains after verification. Twenty-four P3 items must be carried into the next records delta before
 any guard, commit, validator or installer body is drafted; three of them change what owner scope is needed. A
 compatible design grants no source, installation or execution authority, and no reserved decision is made here.
 Lens output archived as `hl12/51_5c_correction_lens_findings.json`.
