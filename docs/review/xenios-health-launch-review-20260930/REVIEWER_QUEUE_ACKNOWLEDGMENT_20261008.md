@@ -136,3 +136,15 @@ Nothing was executed.
 | D. Native qualification proposal | 72 | INSUFFICIENT AS PACKAGED for a source decision; execution insufficient |
 
 Doc 71 section 5 holds the consolidated outstanding decisions. Nothing was executed.
+
+## Queue state update (2026-10-09, design and native deltas)
+
+Samuel delivered the coordinator's recorded continuation directly. Both registered tasks are ACKNOWLEDGED and IN REVIEW,
+at their registered targets, all recomputed:
+
+| Board task | Target | Raw SHA-256 | Doc |
+| --- | --- | --- | --- |
+| `DOC71-TRANSACTION-DESIGN-DELTA-REVIEW-20261009` r1 | builder `32643e3974f37a18ecb8768d97ec2fc0253248d3` (tree `c1ec92da…`): `DOC71_TRANSACTION_DESIGN_DELTA_20261009.md`, `evidence/doc71-transaction-design-delta-20261009.json`, `evidence/doc71-transaction-design-bindings-20261009.json` | `72ec44ad…`, `9946b938…`, `0bc0d65d…` | 73 (published first) |
+| `DOC72-CONDITIONAL-NATIVE-PROPOSAL-DELTA-REVIEW-20261009` r1 | coordinator `2ec266ff1203fbb5e9603cf16e01c7bfd3cb3f53`: `DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md` and `.json` | `bc766b92…`, `30b34b8e…` | 74 |
+
+The builder's handoff is `45a30bd`; the coordinator checkpoint `6630c51` is records-only. Nothing was executed.
