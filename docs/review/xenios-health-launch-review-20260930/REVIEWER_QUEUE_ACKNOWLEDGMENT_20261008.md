@@ -77,3 +77,15 @@ Samuel's message reached this session, so the board's three queued items are ack
 | `DOC59-SUPERVISOR-CORRECTION-DELTA-20261008` r1 (A) | source `f98c41617f7216353b316510cca6c615f3c79a87` (tree `e64f3989…`), records `6c3a883` | COMPLETE: doc 64, SOURCE REVISION REQUIRED on F-01 (a zero-launch admission miss strands G0 and the window); CC-02, CC-03 and CC-04 closed; G0 process count still held |
 
 The three touch disjoint files and are reviewed in parallel. Nothing was executed.
+
+## Queue state update (2026-10-09, after doc 64)
+
+Samuel's message reached this session; the board's three ready items are acknowledged here.
+
+| Board task | Exact target | State |
+| --- | --- | --- |
+| `DOC63-VERIFIER-FORMAT-DELTA-20261008` r1 | source `935aaf1a679aa67d013133521dd7110f66db74a3` (tree `3a7b5d11…`), records `a828501` | ACKNOWLEDGED and IN REVIEW against doc 63; disposition will be doc 65 |
+| `DOC62-RECORDS-FOLLOWUP-20261008` r1 | integrator records `3df14c2`, subscription records `c6893f6`, composed source `cad2c4d` unchanged | ACKNOWLEDGED and IN REVIEW against doc 62; disposition will be doc 66 |
+| `DOC64-SUPERVISOR-REPAIR-DELTA-20261009` r1 | source `cc584f971d1342acf05a9dd43f97916e38f8072c` (tree `a52060a6…`), records `866ed38` | ACKNOWLEDGED and IN REVIEW against doc 64; disposition will be doc 67, separating source correctness from execution eligibility |
+
+The three touch disjoint material and are reviewed in parallel. Nothing was executed.
