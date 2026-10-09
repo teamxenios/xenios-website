@@ -1,0 +1,869 @@
+{
+ "schemaVersion": 1,
+ "review": "74_DOC72_CONDITIONAL_NATIVE_DELTA_2ec266f_2026-10-09.md",
+ "task": "DOC72-CONDITIONAL-NATIVE-PROPOSAL-DELTA-REVIEW-20261009 r1",
+ "subject": "2ec266ff1203fbb5e9603cf16e01c7bfd3cb3f53",
+ "controllingReview": "9baeebc376646244498511392f1bb0c32b234dc0",
+ "workflowRun": "wf_b9a26593-ff0",
+ "reviewerModel": "claude-opus-5-5",
+ "execution": "NOT_RUN",
+ "note": "Lens and adversarial-verifier outputs, verbatim. Reviewer dispositions are in doc 74. One lens wrote a git-show copy into the reviewer scratch folder only.",
+ "lenses": [
+  {
+   "lens": "conditions-interface-accounting",
+   "review": {
+    "verdict": "LENS N1 (the four conditions and the accounting): all four doc 72 conditions are supplied in proposal form. There is no P0 or P1, but three P2 residuals should be written into the conditions before a conditional source decision.\n\nIdentity: the target was recomputed equal at coordinator 2ec266f (md bc766b92, json 30b34b8e). The supervisor at 25858ad is 2a68b06c (tree c5565bcd) and its anchors match.\n\nC1: CLOSED for the path set. There are exactly three paths: supervisor.mjs, manifest-20261008.json and the new native/qualification-win32.cc. This supersedes the packet's six paths (d0071628) and restates the specialist's three (2bac0c8). The grammar is PARTIAL: G0 keeps two entry grammars, and the scope of the new anchor is open (P2).\n\nC2: CLOSED. The grant becomes effective only after a separately authorised read-only inventory. A missing or unusable toolchain is recorded as BLOCKED_NO_COMPILER_WITHOUT_INSTALL, and no host check was done.\n\nC3: exports, the async model, error mapping and stdio are specified. For bridge launches, the native CreateProcess anchor keeps U-01: the wall starts once, earlier than spawn, and is never reset. The barrier acks are left implicit.\n\nC4: the tracer is Reflection.Emit-only with no Add-Type, and its gaps are disclosed. But the proposed kernel-process trace provider sits outside the feasibility gate and the observer-death accounting (P2), and the console-host consequences are not drawn (P2).\n\nAccounting: D-2, D-9, U-15 and no-fit are CLOSED. D-1, D-3 and ambient Job membership are PARTIAL.\n\nEverything is NOT RUN, and nothing here is Samuel's approval.\n\nRule deviations: I ran one python parse of the hl12 JSON, which failed on encoding. I also wrote a git-show copy of the manifest to the scratchpad (n1_manifest_25858ad.json), which breaks the brief's \"never write anywhere\" rule. No repository code was executed.",
+    "closure": [
+     {
+      "item": "Condition 1a: one superseding path set (supersedes packet 2+4 and specialist 2+1)",
+      "status": "CLOSED",
+      "evidence": "DOC72_NATIVE.md:13-19 names exactly qualification-supervisor.mjs, evidence/qualification-manifest-20261008.json and NEW native/qualification-win32.cc. It says this 'supersedes the competing six-path scope in packet d0071628 and the three-path scope/argument forms in the old specialist proposal at coordinator 2bac0c8', and retires build-qualification-win32.ps1, fixtures.mjs and profiles.json. json exactConditionalSourcePaths has 3 entries, with baselineRawSha256 2a68b06c equal to git show 25858ad. The set equals the specialist's 2+1, restated as the single record that doc72:51-52, 106 asks for. Residuals: N1-05 (baseline pins vs the two-file lane) and N1-08 (the --action-plan family)."
+     },
+     {
+      "item": "Condition 1b: one argument grammar",
+      "status": "PARTIAL",
+      "evidence": "md:29-45: a single --native-action grammar; json retiredArgumentForms lists --prerequisites, --prerequisite-action and --prerequisite-campaign. But md:45 keeps 'Existing qualification flags ... unchanged' (parseOptions --group/--window at supervisor:451-460@25858ad) and adds a native G0 action (md:151), so G0 has two entry grammars with different authority arguments (--window vs --authority). The retired list also omits --prerequisite-window (packet md:183@d0071628) and --prerequisite-authority (SPECIALIST md:139@2bac0c8). See N1-01 and N1-08."
+     },
+     {
+      "item": "Condition 2: grant conditional on a separately authorised read-only toolchain inventory; BLOCKED without install; no host check now",
+      "status": "CLOSED",
+      "evidence": "md:21: 'only AFTER a separately and expressly authorized read-only toolchain inventory identifies an existing usable compiler, Node-API headers, Windows headers/import libraries, linker and required runtime dependencies'. Missing means BLOCKED_NO_COMPILER_WITHOUT_INSTALL and unknown means CONDITIONAL_NOT_EFFECTIVE. md:23 forbids a compiler, --version, build or native load. md:21 and md:196 say no host inventory was performed; json sourceConditionAnnex[1].actualInventory null and authority.hostToolchainInventory false. This matches doc72:107-108. This lens did no host check either. Gaps in the gate are the trace provider (N1-03) and the Add-Type compiler identity (N1-10)."
+     },
+     {
+      "item": "Condition 3a: interface annex covering exports, async model, error-to-refusal mapping and stdio",
+      "status": "CLOSED",
+      "evidence": "md:55-66: eight promise-returning exports with opaque tokens; no arbitrary exec, DLL load or termination. md:74: native worker threads with bounded thread-safe callbacks, no blocking event-loop wait, and overflow refuses. md:86 error classes: non-consuming refusal before creation; conclusive failure is zero-launch only with evidence; LAUNCH_UNCERTAIN is sticky; any creation consumes. md:88: native pumps from creation, the 64 KiB helper cap is kept, and a failed capture is consumed and held. Mirrored in json interface.*. Implementation is ABSENT (SC3), so it is a proposal only. Residual: N1-06."
+     },
+     {
+      "item": "Condition 3b: barrier protocol between helper and controller",
+      "status": "PARTIAL",
+      "evidence": "md:76-84 and json interface.barrierOrder give 11 ordered steps: COMPILE_ENTER/EXIT, HELPER_ASSIGNED, SUBJECT_ASSIGNED, with sequence numbers and nonces (md:74). Node alone holds the outer Job (md:78), so Node must set and restore the compile limit (md:82). The helper's blocking acks before Add-Type and before subject creation are implicit, there are no per-step timeouts, and the channel schema is unstated (the hl12 D2-05 fix asked for these). See N1-06."
+     },
+     {
+      "item": "Condition 3c: new CreateProcess clock anchor preserves doc 68 U-01",
+      "status": "PARTIAL",
+      "evidence": "md:80: the first successful native CreateProcess is captured before assignment and resume, and the group wall starts ONCE; 'no later callback, Job assignment, receipt write or resume may postpone/reset it'. Start failures are classed at md:86 and output capture is at md:88. The trusted host clock is kept, and cold BUILD keeps the spawn anchor (md:96). The anchor is earlier than Node's spawn observation (supervisor:1367-1373, 1521-1543), so it does not stretch the wall, consistent with doc68:6-8, 46-52. Its scope is open: md:166 says '(or the explicitly reviewed native-success boundary in a future successor)', and md:45 and md:96 do not say whether G0 via --group, or G1-G7, use it. See N1-01."
+     },
+     {
+      "item": "Condition 4a: first-build tracer is Reflection.Emit-only with no Add-Type",
+      "status": "CLOSED",
+      "evidence": "md:94: the BUILD branch 'must not call Add-Type at all'. It uses Reflection.Emit-only P/Invoke, fixed 64-bit layouts and delegates, and starts the outer Job completion port and the trace BEFORE the first compiler. It uses no bridge, compiled C#, build script or external tracer. The anchors are correct at 25858ad: Reflection.Emit 707-720 binds only four Job APIs (716-719), and 837 is the only executable Add-Type (the grep shows only 706 as a comment). json compileAndBootstrap.firstBuildBranch agrees."
+     },
+     {
+      "item": "Condition 4b: uncontained pre-tracer interval and observer-death gaps",
+      "status": "PARTIAL",
+      "evidence": "md:105 and md:112 disclose the initial trace gap and the loss of the helper's cleanup witness. CONSTRUCTED_UNQUALIFIED is the best possible result, and the route is inadmissible if strict first-instant proof is required (json compileAndBootstrap.coldConstruction). However, the kernel-process event provider session proposed at md:98 is host-global and can outlive the helper or observer, and neither md:112 nor the cleanup receipts (md:138) account for stopping or orphaning it. See N1-03."
+     },
+     {
+      "item": "Condition 4c: compiler-phase accounting for the first build",
+      "status": "PARTIAL",
+      "evidence": "md:106 counts the helper and every compiler, linker, child, server and console-host process 'inside that Job or explicitly classified as a refusal outside it'; md:108 covers per-command Add-Type. But md:105 puts the cold helper's own console host before self-assignment (cf. 733@25858ad), so it stays outside the self-created Job for the whole build, and md:106's rule would then refuse every cold BUILD. See N1-02."
+     },
+     {
+      "item": "Accounting D-1: console hosts counted",
+      "status": "PARTIAL",
+      "evidence": "Console hosts are counted at md:79 ('A no-window flag is not evidence of zero console-host processes') and in md:104-110 and json processPhases. The consequence doc72:40-42 names is never drawn: at N=3 the outer limit is 2 including the helper (md:114), so helper plus host fill it before any compiler or subject. See N1-02."
+     },
+     {
+      "item": "Accounting D-2: a compile limit above N-1 is a separate stage-count decision for Samuel",
+      "status": "CLOSED",
+      "evidence": "md:114: 'A requested compile limit ABOVE N−1 raises that phase's total budget and needs a separate exact owner stage-count permission. Never silently set 3/4/8 to absorb compilation.' Null means NOT_REACHED. Also in json compileAndBootstrap.ceilingDecision and actualRemainingDecisions[3]. Presentation residual (it is bundled with other caps and not cross-referenced to U-15): N1-05."
+     },
+     {
+      "item": "Accounting D-3: per-command Add-Type compile and its budget inside each command wall",
+      "status": "PARTIAL",
+      "evidence": "md:108, md:143 and json compileAndBootstrap.normalHelpers state seven cold compiles per G0 with no extrapolation from one run, require each 5 s or 15 s row to fit, and refuse on exhaustion. There is still no allocation rule: the subject timeout is fixed before spawn (supervisor:1326-1334@25858ad). md:143 also puts the pre-launch parser-self-test inside the started wall, against D68-3. See N1-04."
+     },
+     {
+      "item": "Accounting D-9: compiler handle edge",
+      "status": "CLOSED",
+      "evidence": "md:100 withdraws the old promise: 'Add-Type owns its compiler launch: STARTUPINFOEX ... does NOT govern that compiler'. Job and control handles are created non-inheritable and verified, no subject pipes or duplicates exist until compilation ends, and the subject Job is created only after compile (md:83). md:146 and json handleConstraint require actual compiler-specific proof. Residual on the inherited protocol and stdio handles: N1-07."
+     },
+     {
+      "item": "Accounting: ambient Job membership",
+      "status": "PARTIAL",
+      "evidence": "md:68: SessionSpec records 'controller ambient Job membership and applicable known limits; failed nesting ... refuses. No breakaway'. That covers bridge sessions only. The cold BUILD has no bridge (md:96) and no membership query in its API list (md:94). md:104 and json processPhases[0] leave ambient constraints unknown; doc72:59. See N1-09."
+     },
+     {
+      "item": "Accounting D-16: U-15 stage-count change included, or kept in the separate two-file lane",
+      "status": "CLOSED",
+      "evidence": "md:164 keeps 'U15 + D68-1/2/4/5 on the existing supervisor/manifest paths independent of native feasibility', and says 'U15 must replace the unconditional exactly-three assertion with the actually chosen per-stage rule'. json independentTwoFileAmendment.items[0] has nativeFeasibilityDependency false, and the G0 row requires the reviewed U15/D68 successor (md:151). This matches doc72:98-99 and 120-121. Ordering residual: N1-05."
+     },
+     {
+      "item": "No measured fit claimed",
+      "status": "CLOSED",
+      "evidence": "md:7: 'Everything proposed here is NOT IMPLEMENTED / NOT RUN'. md:114: 'No measured value or arbitrary replacement cap is selected here'. md:154: 'no promise that these proof actions fit existing 3/4/8'. json measuredResults is NOT_RUN, and compilerPhaseCeiling, actualLatency and peak are null or unknown. md:143's 45 s + 6 s figure is a static wall sum, not a fit claim (it misplaces one row; see N1-04)."
+     }
+    ],
+    "findings": [
+     {
+      "id": "N1-01",
+      "severity": "P2",
+      "file": "DOC72_NATIVE.md (coordinator 2ec266f)",
+      "claim": "G0 keeps two entry grammars, and which launches use the new native CreateProcess clock anchor is undefined. Condition 1 (one grammar) and condition 3 (the new wall anchor) are therefore only partly met.",
+      "evidence": "md:45: 'Existing qualification flags remain unchanged; a proposed G0 action must delegate to exactly the same qualification checks'. md:151 adds a native G0 row. The existing parser takes --group/--window/... (qualification-supervisor.mjs:451-460@25858ad), while the native grammar (md:32-42) has no --group/--window and adds --authority/--action-plan. md:166 keeps G0's wall after the helper-launch boundary '(or the explicitly reviewed native-success boundary in a future successor)'. md:96 says only 'Later bridge-owned actions' use the new anchor, yet md:88 replaces the Node-spawn output path. So it is open whether G0 via --group, and G1-G7 (which share U-01, doc68:6-8, 55-57), launch through the bridge, which authority record a G0 grant binds, and which anchor applies.",
+      "fix": "Name one entry per group in the native successor: either retire --native-action G0, or make it the only G0 entry. State which launch vehicle and clock anchor each group and PREPARE uses after the successor, that the same-original U-01/U-02 re-review covers all of them, and how --authority maps to --window for G0."
+     },
+     {
+      "id": "N1-02",
+      "severity": "P2",
+      "file": "DOC72_NATIVE.md (coordinator 2ec266f)",
+      "claim": "Console hosts are counted, but D-1's consequence is not drawn for Samuel's stage-count and compile-limit decisions. The record's own cold-BUILD containment rule would refuse the helper's pre-existing console host.",
+      "evidence": "doc72:40-42 (D-1): a suspended launch puts the helper's host in the outer Job, and at a count of three that fills the outer limit. md:79 counts hosts, and md:114 says 'At current N=3 the existing outer limit is2, including helper'. Helper plus host would equal 2 before any compiler or subject, but this is never stated. The subject is created with CREATE_NO_WINDOW (supervisor:804@25858ad) under inner N-2=1 (1331), so a subject host would also exceed its limit (hl12 verify D1-01). Cold BUILD: md:105 has the helper's host before self-assignment, so it is outside the self-created Job, yet md:106 requires every console host to be 'inside that Job or explicitly classified as a refusal outside it'. Whether hosts exist and count is NOT PROVEN (NOT RUN).",
+      "fix": "State the N=3 arithmetic consequence alongside the U-15 and compile-limit decisions. Freeze the console-creation flags per launch edge: Node to helper, helper to Add-Type compiler, helper to subject. Classify the cold helper's pre-assignment host as a disclosed gap rather than a refusal, so the BUILD rule does not defeat itself."
+     },
+     {
+      "id": "N1-03",
+      "severity": "P2",
+      "file": "DOC72_NATIVE.md (coordinator 2ec266f)",
+      "claim": "The first-build tracer relies on a proposed kernel-process event-provider session. Its access is outside the condition-2 feasibility gate, so D-5's ordering problem returns for a second prerequisite. The session's lifetime is missing from the observer-death and cleanup accounting. The record also extends the tracer to every per-command helper without a time budget.",
+      "evidence": "md:98: 'proposed Windows kernel-process event provider' and 'unavailable access refuses, never elevation'. md:100 extends 'that tracer' to the normal helper before each Add-Type (seven per G0, md:108). The gate (md:21) covers only the compiler, headers, import libs, linker and runtime dependencies. So the grant can become effective while BUILD still refuses, the same pattern as doc72:64-66 (P1 there). The earlier proposal said 'do not silently authorize ETW, privileges, another observer' (SPECIALIST md:59@2bac0c8), and the record does not flag the reversal. A real-time session is host-global and can outlive the helper, yet md:112 and the cleanup receipt schema (md:138) have no stop or orphan evidence. Session setup is unbudgeted inside the 5 s rows. Access rights on this host are NOT PROVEN.",
+      "fix": "Put provider and session access (identity, required rights, session name and quota) in the pre-effective read-only inventory, or in a named gate before the grant takes effect. Record the move to ETW as an explicit scope change from 2bac0c8. Add session stop and orphan detection to the cleanup and observer-death gaps. State whether per-command helpers use the session, and budget its setup in each row."
+     },
+     {
+      "id": "N1-04",
+      "severity": "P3",
+      "file": "DOC72_NATIVE.md (coordinator 2ec266f)",
+      "claim": "D-3 is only partly closed. All seven compiles must fit, but no rule budgets compile time inside each command wall, and md:143 puts the pre-launch parser-self-test inside the 60 s started wall, against D68-3.",
+      "evidence": "doc72:48-50. md:143: 'All compile/start/subject/drain work must fit EACH row'. Today the subject timeout is fixed before spawn as wallMs minus min(10000, wallMs/4) (supervisor:1326-1334@25858ad), while Node's kill timer runs from spawn (1362). If a subject uses its full timeout, compilation gets about 1250 ms on 5000 ms rows and 3750 ms on the vitest row (hl12 M-01). md:143 counts '6s in-process rows within the current 60s started-group framework', but parser-self-test (5000 ms) is G0's first row in manifest@25858ad, before any helper launch, and doc68:73-77 puts it outside the started wall.",
+      "fix": "Derive the subject timeout after COMPILE_EXIT, or name a per-row compile allowance. Correct md:143 so parser-self-test is counted as pre-launch (D68-3/D68-6)."
+     },
+     {
+      "id": "N1-05",
+      "severity": "P3",
+      "file": "DOC72_NATIVE.json (coordinator 2ec266f)",
+      "claim": "The two lanes are not ordered. The native grant pins 25858ad baseline blobs for the same two files that the recommended-first U-15/D68 amendment will change. The compile-phase raise above N-1 is not tied to U-15's per-stage rule.",
+      "evidence": "json exactConditionalSourcePaths pins baselineBlob a9ba8356 (supervisor) and 30fbf71b (manifest) at 25858ad. independentTwoFileAmendment.paths are the same two files, and G0 requires the 'reviewed U15/D68 successor' (md:151). doc72:120-121 has that amendment proceed first, and no rebase rule exists. The raise above N-1 is a G0 stage-count change (doc72:43-47, md:114), yet actualRemainingDecisions[3] bundles it with build/fixture/campaign caps, and md:194 lets one action message choose them, with no cross-reference to U-15 (md:164).",
+      "fix": "Add an ordering and rebase clause for the native grant on top of the accepted two-file successor. List the compile-phase raise above N-1 as its own stage-count item, consistent with U-15's per-stage rule."
+     },
+     {
+      "id": "N1-06",
+      "severity": "P3",
+      "file": "DOC72_NATIVE.md (coordinator 2ec266f)",
+      "claim": "The barrier protocol leaves the helper's blocking acknowledgements, per-step timeouts and message schema implicit. The 'supporting evidence' for a zero-launch CreateProcess failure is undefined, so D68-4's over-caution may persist on the native route.",
+      "evidence": "md:78 makes control handles non-inheritable, so only Node can set or restore the compile limit. md:82 says only 'Node records the barrier', that the limit is 'set/read back before compile' and restored 'before any subject creation'. No helper wait on Node's acknowledgement at COMPILE_ENTER or after COMPILE_EXIT is stated, and there are no per-step timeouts or schema (requested by the hl12 D2-05 fix). md:86 and json interface.errors.CreateProcessFailure allow zero-launch 'only after supporting evidence' without saying what that evidence is, so every failure may default to sticky LAUNCH_UNCERTAIN, which doc68:50-52 (D68-4) flags.",
+      "fix": "State the helper's blocking acknowledgements, per-step timeouts and failure dispositions, and the channel schema. Name the concrete evidence that makes a CreateProcess failure zero-launch."
+     },
+     {
+      "id": "N1-07",
+      "severity": "P3",
+      "file": "DOC72_NATIVE.md (coordinator 2ec266f)",
+      "claim": "The residual compiler handle edge is not closed. The protocol and stdio handles reach the helper by STARTUPINFOEX inheritance and stay inheritable there. The record does not require the helper to clear them before Add-Type, so the compiler can inherit the protocol channel.",
+      "evidence": "md:79: the helper gets 'only the selected standard-I/O and protocol handles' through a STARTUPINFOEX list, which needs those handles to be inheritable, and they remain inheritable in the child. md:100 requires Job/control handles to be 'created non-inheritable' with 'no inheritable duplicate' before compilation, and concedes no control over Add-Type's handle list. It never requires SetHandleInformation on the received protocol handles before Add-Type, which the hl12 D2-07 fix asked for. Whether the compiler inherits them is general Windows behaviour, NOT PROVEN here.",
+      "fix": "Require the helper to clear inheritance on every received non-stdio handle before Add-Type, and to read that back. Add the protocol channel to the HANDLE_ALLOWLIST compiler-phase assertion (md:146)."
+     },
+     {
+      "id": "N1-08",
+      "severity": "P3",
+      "file": "DOC72_NATIVE.json (coordinator 2ec266f)",
+      "claim": "The list of retired argument forms is incomplete. The new --action-plan input belongs to no stated artifact family.",
+      "evidence": "json supersedesOnlyProposal.retiredArgumentForms lists --prerequisites, --prerequisite-action and --prerequisite-campaign. Packet md:183@d0071628 also uses --prerequisite-window, and SPECIALIST md:139@2bac0c8 uses --prerequisite-authority; neither is named. md:33 adds --action-plan, and md:136 says the plan 'expands its template'. But md:19 lists only generated copies, receipts and the .node binary as run artifacts, and md:162 puts action tables in the manifest. So the plan is neither one of the three paths nor stated to be an authority record.",
+      "fix": "Name every retired form. State whether the action plan is manifest content, an authority record or a run artifact, and who authors and reviews it."
+     },
+     {
+      "id": "N1-09",
+      "severity": "P3",
+      "file": "DOC72_NATIVE.md (coordinator 2ec266f)",
+      "claim": "Ambient Job membership is recorded only through the bridge's SessionSpec. The cold BUILD, which has no bridge, has no stated membership query.",
+      "evidence": "md:68 records the controller's ambient Job membership in SessionSpec. Cold BUILD uses the existing spawn and no bridge (md:96), and its Reflection.Emit API list (md:94) names no membership query. At 25858ad, IsProcessInJob exists only in the Add-Type C# (supervisor:775, 782), and Reflection.Emit binds four Job APIs (716-719). md:104 and json processPhases[0] leave ambient constraints unknown. doc72:59 raised this at P3.",
+      "fix": "Require the cold BUILD helper to record its own IsProcessInJob result (inherited from Node) and any ambient limits before self-assignment, refusing when they overlap the owned budgets."
+     },
+     {
+      "id": "N1-10",
+      "severity": "P3",
+      "file": "DOC72_NATIVE.md (coordinator 2ec266f)",
+      "claim": "The compiler that Add-Type launches is neither inventoried nor pinned, although seven per-command compiles remain in G0.",
+      "evidence": "md:108 and json compileAndBootstrap.normalHelpers keep seven cold Add-Type compiles. The pre-effective inventory (md:21) and the COLD_COMPILE_SERIES inputs (md:143, 'exact Add-Type source/raw hash') pin no compiler binary. A grep finds no csc pin in manifest@25858ad (only PowerShell is pinned, under toolchain.windowsHelper), and the target never names csc.exe or cvtres.exe. The hl12 D2-01 fix asked for their identities.",
+      "fix": "Add the Add-Type compiler executables and expected descendants to the read-only inventory, and pin their hashes for the compile series and G0."
+     }
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "N1-01",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld. The existing parser accepts only --manifest/--group/--window/--reservation/--admission/--approval-verification/--window-review/--pre-window-observation/--policy-observation/--resume (qualification-supervisor.mjs:451-460@25858ad). The native grammar (DOC72_NATIVE.md:32-42) has --native-action, --action-plan and --authority, and no --group or --window. md:45 keeps the existing flags while md:151 adds a native G0 row, so G0 has two entries. The anchor scope is open: md:80 says 'For qualification', md:96 says 'Later bridge-owned actions', md:166 says '(or the explicitly reviewed native-success boundary in a future successor)', and md:88 replaces the spawn output path. None of these says whether --group launches (G0, and G1-G7, which share U-01 per doc68:6-8, 55-57) use the bridge. The lens omits that md:49 keeps the R1-R4 G0 chain, which still conflicts with --authority."
+     },
+     {
+      "id": "N1-02",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld at P2. md:79 counts hosts, and md:114 says the outer limit is 2 at N=3 including the helper. The consequence is never drawn: helper plus host fill that limit, and the helper-only active==1 check (qualification-supervisor.mjs:794@25858ad) would refuse if kept. The md:105 vs md:106 tension is real but rests on interpretation: md:106 governs the build phase, and a pre-assignment host from md:105 persists into it. Two additions. md:107's 'where assignment permits' leaves a bridge-path host outside the Job unclassified, neither a refusal nor a disclosed gap. md:104 counts the Git metadata children (supervisor:54-73, windowsHide at 67) but not their hosts. Whether hosts exist and are in the Job is general Windows behaviour, NOT PROVEN and NOT RUN."
+     },
+     {
+      "id": "N1-03",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld at P2. md:98 proposes a kernel-process event provider, with 'unavailable access refuses, never elevation'. md:21's gate lists only the compiler, headers, import libs, linker and runtime dependencies. SPECIALIST md:59@2bac0c8 said 'do not silently authorize ETW, privileges, another observer or a raised cap'. Not raised to P1: md:112 already discloses that cold construction may be inadmissible after source, so no post-grant gate is hidden. By doc72:64-66's logic, though, provider access belongs in the condition-2 gate. The lens also misses scope: md:79 requires bridge launches to trace helper creation 'including any console host' before assignment, which a Job port cannot see. The same access may therefore gate every bridge launch, not just BUILD. The session-control rights (admin or Performance Log Users) are general Windows rules, NOT PROVEN here."
+     },
+     {
+      "id": "N1-04",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, with a precision fix. The subject timeout is fixed before spawn (qualification-supervisor.mjs:1326-1336@25858ad), and Node's kill timer runs from the spawn call (1362). The ~1250 ms compile allowance applies only to exit-zero and exit-one, which have no childWallMs. deadline-kill (250), stdout/stderr-cap (1000) and real-child-tree (500) leave more. vitest-baseline (15000, no childWallMs) leaves ~3750 ms. parser-self-test is G0's first row (manifest:2482@25858ad) and runs in-process before the first helper launch, so per doc68:73-77 it sits outside the started wall. Only refusal-path (1000 ms) is in-process inside the wall. md:143 therefore states 51 s inside the wall where the figure is 46 s, repeating the prose D68-3 asked to correct."
+     },
+     {
+      "id": "N1-05",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld in part. The rebase gap holds. json exactConditionalSourcePaths pins the 25858ad blobs a9ba8356 and 30fbf71b (verified by rev-parse) for the same two files that independentTwoFileAmendment.paths amends. md:151 makes the U15/D68 successor a G0 prerequisite, yet no clause says the native grant applies on top of that successor. The 'bundled' half is weak: json actualRemainingDecisions[3] already reads 'any compiler phase above N−1 is a separately disclosed stage-count decision', and md:114 demands a 'separate exact owner stage-count permission'. Minor overstatement: doc72:120-121 says the amendment can proceed without waiting, not that it must go first, although md:151 makes it first in practice."
+     },
+     {
+      "id": "N1-06",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. md:82 has the helper 'emit' COMPILE_ENTER and Node 'record' it. It does not say the helper waits for Node's ackBarrier (md:60) before Add-Type, and it must, because only Node holds the outer Job (md:78, 81) and must set any compile limit first. There are no per-step timeouts and no channel schema (the hl12 D2-05 fix asked for both). md:86 and json interface.errors.CreateProcessFailure leave 'supporting evidence' undefined. The D68-4 link is reasonable but loose: D68-4 (doc68:67-68) concerns labels, and the native rule fails closed. Also missed: the duplication direction at md:83 (X-03)."
+     },
+     {
+      "id": "N1-07",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. md:79 hands protocol handles to the helper through STARTUPINFOEX inheritance, so they stay inheritable in the helper. md:100 requires Job/control handles to be 'created non-inheritable', which an inherited handle cannot meet without SetHandleInformation, and the record never requires that call (the hl12 D2-07 fix asked for it). The same exposure reaches the subject edge. Today's subject launch inherits every inheritable helper handle (bInheritHandles true with STARTF_USESTDHANDLES, qualification-supervisor.mjs:803-804@25858ad), and the record has no normative helper-to-subject list (X-04). Inheritance semantics are general Windows behaviour, NOT PROVEN."
+     },
+     {
+      "id": "N1-08",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. Verified --prerequisite-window at QUICK_ORDER_SUBMISSION_DECISION_PACKET_20261009.md:183@d0071628 and --prerequisite-authority at SPECIALIST_NATIVE_PREREQUISITE_PROPOSAL_20261009.md:139@2bac0c8. Neither appears in json supersedesOnlyProposal.retiredArgumentForms. md:33, md:49 and md:136 make the action plan a raw-hashed input, but md:19 and md:162 never assign it to a source path, a run-artifact family or an authority record."
+     },
+     {
+      "id": "N1-09",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. IsProcessInJob exists only in the Add-Type C# (qualification-supervisor.mjs:775, 782@25858ad), and Reflection.Emit binds four Job APIs (716-719). md:68 records ambient membership in SessionSpec, which covers the bridge only. Cold BUILD (md:94, 96) names no membership query, and json processPhases[0] says 'actual ambient constraints unknown'. Carried from doc72:59 at P3."
+     },
+     {
+      "id": "N1-10",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. A grep of manifest@25858ad finds no csc or cvtres pin; the only hits are false matches inside '%5cschedule'. toolchain.windowsHelper pins powershell.exe only (manifest:175-176@25858ad). md:21's inventory list and md:143's COLD_COMPILE_SERIES inputs ('exact Add-Type source/raw hash') pin no compiler binary, while md:108 keeps seven cold compiles per G0."
+     }
+    ],
+    "closureOpinion": [
+     {
+      "item": "Condition 1a: one superseding path set (supersedes packet 2+4 and specialist 2+1)",
+      "status": "CLOSED",
+      "note": "md:13-19 names exactly supervisor.mjs, manifest-20261008.json and NEW native/qualification-win32.cc. It supersedes packet d0071628's six paths (the three now retired are at packet md:157-159) and the specialist scope at 2bac0c8, whose md:67 already named the same .cc. json baselineBlob a9ba8356/30fbf71b and raw 2a68b06c recomputed equal at 25858ad (tree c5565bcd). Target identity recomputed: md bc766b92 and json 30b34b8e at coordinator 2ec266f. Residuals: N1-05 (rebase) and N1-08 (action-plan family)."
+     },
+     {
+      "item": "Condition 1b: one argument grammar",
+      "status": "PARTIAL",
+      "note": "md:29-45 gives one grammar for NEW native actions. But md:45 keeps the existing --group/--window grammar (qualification-supervisor.mjs:451-460@25858ad), and md:151 adds a native G0 action, so G0 has two entries with different authority arguments. The retired forms omit --prerequisite-window (packet md:183@d0071628) and --prerequisite-authority (specialist md:139@2bac0c8). See N1-01 and N1-08."
+     },
+     {
+      "item": "Condition 2: grant expressly conditional on a separately authorised read-only toolchain inventory; BLOCKED without install; no host check now",
+      "status": "CLOSED",
+      "note": "Met literally. md:21 makes the grant effective only after a separately authorised read-only inventory, and gives BLOCKED_NO_COMPILER_WITHOUT_INSTALL and CONDITIONAL_NOT_EFFECTIVE. md:23 forbids running a compiler or --version. md:21, md:196 and json authority.hostToolchainInventory false say no host check was done, matching doc72:107-108. Residuals outside the literal condition: tracer-provider access (N1-03), the Add-Type compiler identity (N1-10), and no read-only 'usable' criterion or named acceptor (X-01). This verifier did no host check."
+     },
+     {
+      "item": "Condition 3a: interface annex (exports, async model, error-to-refusal mapping, stdio)",
+      "status": "CLOSED",
+      "note": "Supplied as a proposal. md:55-74 and json interface give eight promise-returning exports with opaque tokens, plus native worker threads with bounded thread-safe callbacks, no blocking event-loop wait and overflow refusal. md:86 maps pre-creation refusal, zero-launch, sticky LAUNCH_UNCERTAIN and consumed launch, consistent with U-02 (doc68:9-11). md:88 keeps the 64 KiB helper cap, with native pumps from creation. Implementation is ABSENT (json SC3)."
+     },
+     {
+      "item": "Condition 3b: barrier protocol between helper and controller",
+      "status": "PARTIAL",
+      "note": "md:76-84 and json interface.barrierOrder give 11 ordered steps, with sequence numbers and nonces (md:74). Not stated: the helper's blocking wait for Node's ack before Add-Type and before subject creation, per-step timeouts and the channel schema (N1-06); the duplication direction of the subject-Job reference (X-03); and the helper-to-subject handle list (X-04)."
+     },
+     {
+      "item": "Condition 3c: CreateProcess clock anchor preserves doc 68 U-01 (start once, never reset; start-failure classification; output capture)",
+      "status": "PARTIAL",
+      "note": "md:80 captures the first successful native CreateProcess before assignment and resume, and starts the group wall once with no postponement or reset. That is earlier than Node's spawn observation (qualification-supervisor.mjs:1367-1373 and 1521-1528@25858ad; 1523 already forbids a reset), so it shortens the wall rather than stretching it, consistent with doc68:6-8, 46-52. Start failure (md:86) and capture (md:88) are re-anchored, and md:80 concedes the change needs original review. Still open: which entries and groups use the anchor (md:96, 166; N1-01)."
+     },
+     {
+      "item": "Condition 4a: first-build tracer is Reflection.Emit-only with no Add-Type",
+      "status": "CLOSED",
+      "note": "Specified. md:94 forbids Add-Type in BUILD, uses Reflection.Emit-only P/Invoke, and starts the outer Job port and the trace before the first compiler. Anchors verified at 25858ad: Reflection.Emit at 707-720 binds four Job APIs (716-719), and the only executable Add-Type is at 837 (706 is a comment). Feasibility of the IL-only callback and draining model is unspecified (X-02)."
+     },
+     {
+      "item": "Condition 4b: uncontained pre-tracer interval and observer-death gaps",
+      "status": "PARTIAL",
+      "note": "md:105, md:112 and json coldConstruction disclose the pre-tracer and helper-loss gaps, cap the result at CONSTRUCTED_UNQUALIFIED, and admit the route is inadmissible if strict first-instant proof is required. Missing: the trace session's own lifetime and orphaning, absent from md:112 and the cleanup receipt (md:138), and its access gate (N1-03)."
+     },
+     {
+      "item": "Condition 4c: compiler-phase accounting for the first build",
+      "status": "PARTIAL",
+      "note": "md:106-108 count the helper, compilers, linkers, servers, console hosts and the seven per-command compiles, and md:114-116 cover ceilings and servers. But md:105's pre-assignment helper host persists into md:106's phase, whose rule would class it as a refusal (N1-02), and compile time has no allocation inside each row (N1-04)."
+     },
+     {
+      "item": "Accounting D-1: console hosts counted",
+      "status": "PARTIAL",
+      "note": "Hosts are counted (md:79, md:104-110, json processPhases). Three gaps remain: the N=3 consequence named at doc72:40-42 is not drawn (md:114); md:107's 'where assignment permits' leaves a pre-assignment host unclassified; and md:104 omits the hosts of Git metadata children (supervisor:54-73@25858ad). See N1-02."
+     },
+     {
+      "item": "Accounting D-2: compile limit above N-1 listed as a separate stage-count decision for Samuel",
+      "status": "CLOSED",
+      "note": "md:114: 'A requested compile limit ABOVE N−1 ... needs a separate exact owner stage-count permission. Never silently set 3/4/8'. json ceilingDecision and actualRemainingDecisions[3] repeat it, and null means NOT_REACHED. This satisfies doc72:43-47 and 112."
+     },
+     {
+      "item": "Accounting D-3: per-command Add-Type compile and its budget inside each command wall",
+      "status": "PARTIAL",
+      "note": "md:108, md:143 and json normalHelpers keep seven cold compiles per G0, forbid extrapolation and require each 5 s or 15 s row to fit. There is still no compile allocation inside each row: the timeout is fixed before spawn (supervisor:1326-1336@25858ad). md:143 also misplaces parser-self-test inside the started wall. See N1-04."
+     },
+     {
+      "item": "Accounting D-9: compiler handle edge",
+      "status": "CLOSED",
+      "note": "md:100 withdraws the unsupported promise ('not a claim of control over Add-Type's handle list'). It requires non-inheritable Job/control handles verified before compile, no subject pipes until compile ends, and compiler-specific proof (md:146, json handleConstraint). The doc 72 defect is closed. P3 residuals remain on inherited protocol handles (N1-07, X-04)."
+     },
+     {
+      "item": "Accounting: ambient Job membership",
+      "status": "PARTIAL",
+      "note": "md:68 records the controller's ambient membership and refuses failed nesting without breakaway, but only for bridge sessions. Cold BUILD (md:94, 96) has no membership query, and the only IsProcessInJob call is in the Add-Type C# (supervisor:775@25858ad). See N1-09."
+     },
+     {
+      "item": "Accounting D-16: U-15 stage-count change included or kept in the separate two-file lane",
+      "status": "CLOSED",
+      "note": "md:164 keeps U15 and D68-1/2/4/5 on the two existing paths, independent of native feasibility, and requires replacing the exactly-three assertion (supervisor:1243-1245@25858ad) with the chosen per-stage rule. json independentTwoFileAmendment has nativeFeasibilityDependency false. This matches doc72:98-99 and 120-121. Ordering residual: N1-05."
+     },
+     {
+      "item": "No measured fit claimed",
+      "status": "CLOSED",
+      "note": "md:7 says NOT IMPLEMENTED/NOT RUN; md:114 says 'No measured value ... is selected here'; md:154 says 'no promise that these proof actions fit existing 3/4/8'; md:166 says 'do not advertise a universal two-minute ceiling'. json measuredResults is NOT_RUN and every ceiling is null. md:143's sum is a static wall sum, not a fit claim, though it is misstated (N1-04)."
+     },
+     {
+      "item": "Verifier rule compliance (this session)",
+      "status": "NOT_APPLICABLE",
+      "note": "Method: Git object reads plus Read, grep, awk and sha256sum only. No repository code was executed, no host or toolchain inventory was done, and no other session was contacted. Deviation: one shell redirect accidentally wrote a git-show copy of manifest@25858ad to C:\\Users\\sboad\\AppData\\Local\\nul_unused (1,501,610 bytes). It was left in place for the orchestrator or user to remove."
+     }
+    ],
+    "missed": [
+     {
+      "id": "X-01",
+      "severity": "P3",
+      "file": "DOC72_NATIVE.md (coordinator 2ec266f)",
+      "claim": "Condition 2 has no read-only definition of 'usable' and no named acceptor of the inventory result. Read strictly, it is circular: only a build can establish usability, and a build needs an effective grant.",
+      "evidence": "md:21: the grant is effective 'only AFTER ... inventory identifies an existing usable compiler, Node-API headers, Windows headers/import libraries, linker and required runtime dependencies'; unknown feasibility yields CONDITIONAL_NOT_EFFECTIVE. md:23 forbids running a compiler, linker or --version: 'If usability cannot be established by the authorized read-only scope, record unknown and obtain the particular missing permission; do not turn inventory into a compile experiment', and 'An unproved build is separately admitted only as a construction experiment'. But BUILD needs authored source, which needs the grant to be effective. json sourceConditionAnnex[1] has no acceptor or effectiveness-record field.",
+      "fix": "Define 'usable' as a fixed read-only checklist: paths, raw hashes, versions and architecture, the Node-API version in the headers matching Node 20.19.0, import-lib presence and the CRT linkage choice. Name who accepts the inventory receipt (the original reviewer) and where effectiveness is recorded, with a SHA, before any authoring."
+     },
+     {
+      "id": "X-02",
+      "severity": "P3",
+      "file": "DOC72_NATIVE.md (coordinator 2ec266f)",
+      "claim": "The concurrency and callback model of the Reflection.Emit-only BUILD branch is unspecified, so the condition-4 tracer is stated but not shown to be implementable without compiled C#.",
+      "evidence": "md:94 calls for 'managed delegate callbacks' and says the helper 'drains pipes/completion events in its own loop while the compiler runs'. md:98: 'Reflection.Emit interop/delegates drive it'. At 25858ad, concurrent draining exists only in the Add-Type C# (Pump with Task.Run at qualification-supervisor.mjs:785, DrainEvents at 788), and Reflection.Emit binds only four Job APIs (716-719). A real-time trace consumer blocks its thread and calls back on it. A PowerShell scriptblock delegate invoked on a thread with no runspace cannot run, and a single loop doing blocking reads on two compiler pipes can deadlock when the other pipe fills. This is general .NET, PowerShell and Win32 behaviour, NOT PROVEN here.",
+      "fix": "Require IL-emitted callback and thread-procedure methods (no scriptblock delegates), and non-blocking or per-pipe-thread draining. State both in the BUILD contract, and record the threading model in the BUILD receipt."
+     },
+     {
+      "id": "X-03",
+      "severity": "P3",
+      "file": "DOC72_NATIVE.md (coordinator 2ec266f)",
+      "claim": "The direction of the subject-Job handle duplication is unstated. If the helper pushes the handle into Node, it must hold a dup-capable handle to Node, which gives it reach to the outer Job that the record reserves to Node.",
+      "evidence": "md:83: 'Transfer a non-inheritable query/terminate reference to Node using an explicit target-controller duplication, not child inheritance.' A helper-side DuplicateHandle into Node needs a Node process handle with PROCESS_DUP_HANDLE. Microsoft documents that such a handle can be used to obtain a maximum-access handle to that process, and so to Node's outer Job handle, which md:78 and md:81 make Node's alone. Node already holds the helper's process handle from its own CreateProcess (md:79-80), so a Node-pull is available. The hl12 D2-05 fix asked for the duplication direction.",
+      "fix": "Specify Node-pull duplication: the helper reports the handle value over the protocol channel, and Node calls DuplicateHandle from the helper process. State that the helper never opens Node's process."
+     },
+     {
+      "id": "X-04",
+      "severity": "P3",
+      "file": "DOC72_NATIVE.md (coordinator 2ec266f)",
+      "claim": "The helper-to-subject handle list is no longer normative. The old proposal required it, but the record states only the controller-to-helper list, so the subject could inherit the protocol channel.",
+      "evidence": "SPECIALIST_NATIVE_PREREQUISITE_PROPOSAL_20261009.md:78@2bac0c8 required 'STARTUPINFOEX exact handle lists for both controller→helper and helper→subject'. The record's md:79 covers only controller-to-helper, and md:83 and json interface.barrierOrder are silent on it. md:100's 'STARTUPINFOEX in our subject launcher' and md:146's 'per-role handle list' merely presume it. Today the subject inherits every inheritable helper handle (bInheritHandles true with STARTF_USESTDHANDLES, qualification-supervisor.mjs:803-804@25858ad). Under md:79 that would include the received protocol handle.",
+      "fix": "State a helper-to-subject STARTUPINFOEX handle list (the subject's own stdio only) in the §3 barrier contract and in json barrierOrder, and add the protocol handle to HANDLE_ALLOWLIST's excluded sentinels."
+     }
+    ],
+    "sourceDecisionSufficiency": "Sufficient for a conditional, bounded source decision, but only once the decision text adds the items below. All four doc 72 conditions are now supplied as proposal text (md:13-25, 29-49, 55-88, 94-114). Identity was recomputed: md bc766b92 and json 30b34b8e at 2ec266f; supervisor 2a68b06c, tree c5565bcd at 25858ad. No P0 or P1 is sustained. The decision should add:\n(a) one G0 entry, with the clock anchor named for each group and launch vehicle, plus the original reviewer's re-review of U-01 under the native anchor (N1-01);\n(b) tracer-provider and session access, the Add-Type compiler identity, a read-only 'usable' checklist and a named inventory acceptor, all inside the pre-effective gate (N1-03, N1-10, X-01);\n(c) the N=3 console-host consequence, stated beside the U-15 and compile-limit decisions (N1-02);\n(d) a rebase clause onto the two-file successor (N1-05).\nThe P3 items can be carried as conditions. Nothing here is Samuel's approval or the original reviewer's acceptance.",
+    "executionDecisionSufficiency": "Insufficient. Nothing is implemented or run (md:7; json measuredResults NOT_RUN). No toolchain inventory exists or is authorised (json sourceConditionAnnex[1].actualInventory null), and tracer-provider access is unknown. Every compiler, build, memory and campaign cap is null (json compileAndBootstrap, actions). The action plan, authority, window, reservation and successor SHA are all absent (md:45; json actionDefaults null). The two-file U-15/D68 successor is unauthored, and the admission and resume latencies are unmeasured. Console-host topology, compile time and the fit of seven cold compiles inside the 5 s and 15 s rows are NOT PROVEN. Every action needs its own explicit authority from Samuel."
+   }
+  },
+  {
+   "lens": "admission-vehicles-separation",
+   "review": {
+    "verdict": "LENS N2 (execution-side sufficiency and separation) on DOC72_NATIVE.md/.json, coordinator 2ec266f (sha256 bc766b92…/30b34b8e…, identical to scratch copies), against doc 72 at 9baeebc and doc 68 at 36debe0. Everything is NOT RUN, and nothing here is Samuel's approval.\n\nCONDITIONAL SOURCE DECISION: SUFFICIENT from this lens, with carries. No P0 or P1.\n- Doc 72's four conditions are written in: md:13-29, md:21-23, md:53-88, md:90-118. The compile limit above N-1 is a separate decision (md:114), and U-15 is included (md:164).\n- Separation is clean:\n  - the two-file U-15/D68 lane is independent (md:164, independentTwoFileAmendment);\n  - R1-R4 are unchanged (md:49);\n  - N1/N2/N3 are distinct (authorityChains);\n  - the database is excluded (md:49).\n- D-13 is no longer circular: a Reflection.Emit-only first build, no Add-Type, no use of the absent bridge, and the cold gap is disclosed.\n- Two P2s should be written into the decision text:\n  - N2-01: the new kernel-process trace-provider dependency sits outside the pre-effective inventory gate.\n  - N2-02: native receipts have no acceptance step before G0.\n\nEXECUTION DECISION: INSUFFICIENT. Eligibility NONE.\n- No action has a concrete vehicle: BUILD, CAMPAIGN, COLD_COMPILE_SERIES, ADMISSION_FIT and G0 are all affected.\n- Every argv, inventory, cap, ceiling, provider binding, authority and sample count is null. BUILD has no admission producer.\n- D-6 is no longer generic at the criterion level. The predicate list, exclusion fields and per-slice criterion are now defined, and pauses are declared not qualified. But it is still proof-needed for:\n  - the observer authority record;\n  - provider observability;\n  - feasibility on a shared host.\n- All latency, peak, fit and correspondence evidence is NOT PROVEN.\n\nMethod disclosure: I used Git object reads (cat-file, log, show, ls-tree), sha256sum and file reads. I also ran two `python -I` one-liners that parsed JSON data. One of them parsed a copy of the manifest blob, which I had written with `git show` into my session scratchpad (n2_manifest_25858ad.json). That write is a deviation from the no-write rule and is disclosed here. No repository code was executed, imported or compiled. Nothing was checked out, committed or edited, and no other session was contacted.",
+    "closure": [
+     {
+      "item": "D-6 predicate coverage (heavy census incl. Docker/VM, Chromium, other agents' Node)",
+      "status": "PARTIAL",
+      "evidence": "DOC72_NATIVE.md:124 lists non-owned Node/Vitest/tsx/tsc/build/test/server, esbuild/compiler, active Chromium, Docker container/build/verifier, VM-equivalent, unknown=>UNKNOWN/REFUSE; matches manifest admission.heavyJobPredicate QO-HEAVY-CENSUS-V1@25858ad. Inputs/permissions generic (md:128). But json admission.providerBindings null (json:287); md:124 concedes OS snapshots cannot prove Docker/VM/Chromium inactivity. G7 ownedDistNoOpenHandles (supervisor.mjs:1110@25858ad; manifest handshake.response) not named (N2-06). Enumerated, not observable."
+     },
+     {
+      "item": "D-6 exclusion identity authority and refresh",
+      "status": "PARTIAL",
+      "evidence": "md:126: exclusions only from authority/reservation's coordinator-verified list (PID+creation time, image path/raw hash, role, owner, validity interval); other agents' Node not implicitly excluded; stale/mismatch refuses. Missing: issuer and issuance time vs window opening, any refresh rule for processes born mid-window (no 'refresh' in md), any quiescence precondition (no 'quiesc'). Only 'OS/Codex infrastructure' identities excludable (md:126; manifest 'Codex/OS hosts'), so other agents' Node refuses every sample (N2-04)."
+     },
+     {
+      "item": "D-6 allocated 428/367 ms latency criterion",
+      "status": "CLOSED",
+      "evidence": "md:128, md:130 and json admission.passCriterion (json:285) define the criterion. Each complete observation must be captured, validated and durably accepted before that request's actual allocatedWaitMs, computed by the formula at supervisor.mjs:1167-1168@25858ad. No average or percentile may substitute. All seven slices [428,428,428,429,429,429,429] (json:273-281) must fit the unchanged 3000 ms total, and snapshot and receipt-write time count against it. Residual P3: the retry floor is given only as 'about 367ms', not derived as a minimum (N2-07). json actualLatency is null (json:286), so latency is NOT PROVEN."
+     },
+     {
+      "item": "D-6 observer authority model",
+      "status": "PARTIAL",
+      "evidence": "md:122: responder = same supervisor with permission to observe, bound to nonce/request hash/command; 'No observation permission currently exists'. json admission.authority null (json:288). Undefined: authority record form; issuance before nonces exist (minted at request, supervisor.mjs:1172@25858ad); per-request verification (1101-1102 checks only a non-empty string); reconciliation with one-shot HUMAN_USER contract (377 maximumObservations===1). Reverses manifest handshake.mechanism 'No source assignment supplies that responder, resource sampling or polling loop' without naming it a decision (N2-03)."
+     },
+     {
+      "item": "Pause resumption declared not qualified",
+      "status": "CLOSED",
+      "evidence": "md:132: 'No practical resumer is qualified here'. RESUME_FIT must prove start and validation within 30 s (G1/2/5/6), 45 s (G3/4) and 75 s (G7), with no G0 resume. Without that proof, pauses are NOT PRACTICALLY RESUMABLE and stop terminally, with no auto-resume and no reset. json admission.resumption (json:289-303) agrees: candidate 'launch coordinator; unqualified until measured and authorized', G0Resume false, actualLatency null. This matches the alternative in doc 68 §4 item 5 (68_…md:107-109@36debe0)."
+     },
+     {
+      "item": "D-6 still a generic proof-needed item?",
+      "status": "PARTIAL",
+      "evidence": "No longer generic at the criterion level: md:120-132 now writes the coverage list, exclusion fields, UNKNOWN/REFUSE semantics, per-slice criterion and resumer role. It is still proof-needed for execution: providers are null, the authority record is undefined, ADMISSION_FIT sampleCount is null (json:415), and shared-host feasibility is unresolved. Doc 72's execution requirement of 'a latency criterion and a defined observer authority' (72_…md:117-118@9baeebc) is half met: the criterion is defined, the authority is not."
+     },
+     {
+      "item": "D-11 bootstrap interruption vehicle",
+      "status": "PARTIAL",
+      "evidence": "md:144 defines four action IDs. Fault points are native/helper barrier IDs, not guessed sleeps. Node injects a one-shot stop of the exact owned process, and controller-retained handles prove termination, active-zero and drain. A pre-assignment launch is consumed. Missing: a rule for when the manifested barrier is never reached after launch; for INTERRUPT_COMPILE, any assertion that a compiler process is alive when the stop lands (COMPILE_ENTER precedes Add-Type, md:82); and finite caps ('same finite action limits', all null) (N2-08). These proofs need the built bridge."
+     },
+     {
+      "item": "D-11 handle allowlist vehicle",
+      "status": "PARTIAL",
+      "evidence": "md:146: a generated child fixture on the built bridge, with a finite sentinel inventory, a per-role list, an explicit stdin rule and a compiler-phase inspection; access denied => UNKNOWN. There is still no method to enumerate the child's or compiler's full handle table. PASS means approved handles are usable and sentinels/control handles are absent (json HANDLE_ALLOWLIST pass), which cannot establish an exact allowlist. The json refusal cites an undefined 'handle census' (N2-09)."
+     },
+     {
+      "item": "D-11 memory-detection vehicle",
+      "status": "PARTIAL",
+      "evidence": "md:147 now defines:\n- the fixture: an isolated Node process calling the bridge's runMemoryFixture in a counted subject;\n- the evidence channel: a controller-created, nonce-bound named pipe;\n- the sizes: control 16 MiB, single 536936448 bytes;\n- the edge cases: a lost channel is UNKNOWN, and a caught denial that exits 0 is still recorded.\nIncremental chunk, count and timeout are null (json MEMORY row), so MEMORY_INCREMENTAL_DENIAL is NOT_REACHED. The evidence comes from the bridge under test (N2-12)."
+     },
+     {
+      "item": "D-11 controller death inventoried",
+      "status": "PARTIAL",
+      "evidence": "md:145 and json CONTROLLER_DEATH now inventory five base processes plus console and compiler processes. The fixture needs a separate explicit budget (null), the surviving outer supervisor observes, and the nested Job handle is not duplicated into the survivor. Death of the real top controller gets no self-issued PASS: absent a later separately authorized observation, recovery 'remains held' (md:154). No recovery vehicle exists for HELD reservations."
+     },
+     {
+      "item": "D-12 compile ceiling",
+      "status": "PARTIAL",
+      "evidence": "The rule is written (md:114; json compileAndBootstrap.compilerPhaseCeiling null, ceilingDecision):\n- every compiler-phase ceiling is a finite action input, currently NULL;\n- a value above N-1 (2/3/7 at N=3/4/8) needs a separate owner stage-count permission;\n- reaching the ceiling refuses and yields only a bound;\n- a NULL ceiling means NOT_REACHED.\nNo value is proposed (md:114). The rule suffices for a conditional source decision; execution needs the owner's values."
+     },
+     {
+      "item": "Per-action vehicle: BUILD (BUILD_BRIDGE_A/B)",
+      "status": "NOT_CLOSED",
+      "evidence": "md:142 and json BUILD_BRIDGE_A/B give: the grammar template, a Reflection.Emit-only helper, inventoried argv arrays, separate output roots, caps 'currently null', and cold-gap permission. The best result is CONSTRUCTED_UNQUALIFIED; missing inputs => NOT_REACHED; an interruption, trace or cleanup gap => HELD. Not supplied: the argv, inventory, caps and wait budget, and a producer for the grammar's --admission/--policy-observation/--pre-window-observation before any bridge exists (N2-05). Trace-provider permission is outside the effective gate (N2-01)."
+     },
+     {
+      "item": "Per-action vehicle: CAMPAIGN",
+      "status": "NOT_CLOSED",
+      "evidence": "md:47, md:152 and json CAMPAIGN define an in-process ordered sequencer with per-row authorization IDs. It runs nothing in parallel, never retries, cannot add actions, and stops at the first unresolved dependency or failed proof. The outer campaign caps are null. Its pass, 'All selected scoped receipts accepted under exact own authorities' (json:453), names no acceptor. G0 is a listed ACTION_ID that is not expressly excluded from campaign membership; only an implicit G0 is excluded (N2-02)."
+     },
+     {
+      "item": "Per-action vehicle: compile measurement (COLD_COMPILE_SERIES)",
+      "status": "NOT_CLOSED",
+      "evidence": "md:143 and json bind seven roles with walls of 6x5000 ms plus 15000 ms: 45 s of helper walls plus 6 s in-process, inside the 60 s framework. No extrapolation from one run is allowed, and a compile that exhausts its row must refuse. The compile-phase ceilings are null, the Add-Type source hash is not yet bound, and the action depends on the built bridge. The records suffice; the action is not executable."
+     },
+     {
+      "item": "Per-action vehicle: admission measurement (ADMISSION_FIT)",
+      "status": "NOT_CLOSED",
+      "evidence": "md:148 and json require the complete predicate on every sample within the actual 428/429/~367 ms allowance, and refuse on a missing category, a slow response or an unknown identity. sampleCount, providers and authority are null (json:415, :287, :288), and no exclusion table is supplied. The action needs the bridge's observeAdmission. It is not executable (N2-03, N2-04)."
+     },
+     {
+      "item": "Per-action vehicle: G0",
+      "status": "NOT_CLOSED",
+      "evidence": "md:151 and json G0: G0 delegates to the existing engine. It needs the reviewed U15/D68 successor, completed native/fit/admission evidence, a fresh R chain, and R4 before dependent groups. json G0_FIT reads bindingsStatus NOT_SUPPLIED_BY_THIS_RECORD (json:436). The native evidence must be 'completed', not accepted (N2-02). At 25858ad G0 is still refused by supervisor.mjs:1243-1245, and the manifest's responderEligibility.currentG0Runnable is false."
+     },
+     {
+      "item": "Common receipt schema and NOT_REACHED/REFUSED/PASS semantics",
+      "status": "CLOSED",
+      "evidence": "md:136-138 and json actionDefaults.receiptFields define one receipt schema: hashes, identities, clock anchor, limit readback, trace loss, raw streams, lower bound versus peak, and cleanup. Unknown input or permission is NOT_REACHED with zero execution; an observed limit is REFUSED; PASS is scoped. Uncertain cleanup retains the reservation, there is no retry, and deletion defaults to retain. This is schema-level only."
+     },
+     {
+      "item": "D-10 follow-on edits",
+      "status": "PARTIAL",
+      "evidence": "md:162 and json correspondence.followOnManifest: every actual substitution of a pin, ceiling, memory value, action table or binary is a new frozen source revision with new raw hashes and an original delta review, and nothing re-pins itself at runtime. An earlier grant covers field authorship 'only when explicitly so written'. But the proposed decision wording (md:21) is silent on held-field authorship, and the expected source cycles are not enumerated (N2-11)."
+     },
+     {
+      "item": "D-15 two-file U-15/D68 lane kept separate",
+      "status": "CLOSED",
+      "evidence": "md:164 and json independentTwoFileAmendment (json:467-488): U15 plus D68-1/2/4/5 on the existing supervisor and manifest, with nativeFeasibilityDependency false and sourceGrantByThisRecord false. Prerequisites are Samuel's G0 choice, D68-3, and a same-owner source authorization. This matches doc 72's recommendation (72_…md:120-121@9baeebc) and doc 68 §5. Residual: both lanes edit the same two paths, the native lane is pinned to the 25858ad blobs (json:61-80), and no ordering or rebase rule is stated (N2-10)."
+     },
+     {
+      "item": "D-16 U-15 stage-count change included",
+      "status": "CLOSED",
+      "evidence": "md:164 says 'U15 must replace the unconditional exactly-three assertion with the actually chosen per-stage rule/scope, not merely relabel the rows'. The G0 row requires a 'reviewed U15/D68 successor' (md:151). The assertion at supervisor.mjs:1243-1245@25858ad stays until then."
+     },
+     {
+      "item": "Old qualification approvals R1-R4 unchanged",
+      "status": "CLOSED",
+      "evidence": "md:49 and json grammar.authorityChains.existingG0Unchanged (json:123-128) keep the chain: R1 original source disposition, R2 original window comparison, R3 coordinator verification and pointer to R2, R4 original disposition of the actual G0 receipt. G0 still needs a fresh window, observations, reservation and admission, and R4 before dependent groups. json actualRemainingDecisions[7] preserves the chain unchanged."
+     },
+     {
+      "item": "Proposed native N1/N2/N3 separate",
+      "status": "CLOSED",
+      "evidence": "md:49 and json authorityChains.proposedNativeActions (json:118-122) keep N1/N2/N3 distinct from the R chain. A prerequisite cannot require successful G0 as its own entry ticket, and 'N/R labels grant nothing' (json:129). Gap: there is no native receipt-disposition stage (N2-02)."
+     },
+     {
+      "item": "Database qualification separate",
+      "status": "CLOSED",
+      "evidence": "md:49 says 'No DB qualification, SQL, application intake or release authority is bundled'. json grammar.databaseQualification is EXCLUDED (json:116) and preserved.databaseRoute is NONE. md:152 rules out an implicit DB grant from campaign selection. The manifest's database.status at 25858ad is SEPARATE_CATEGORY_NOT_AUTHORIZED_NOT_READY."
+     },
+     {
+      "item": "D-17 binary correspondence",
+      "status": "PARTIAL",
+      "evidence": "md:158-160 and json correspondence (json:457-466) require two independent owned-root builds with raw binary equality and no normalization; a mismatch leaves correspondence unresolved. They also pin dependent-DLL paths and hashes, revalidate at every load, action and resume, and allow reuse only for the same tuple. Not required: deterministic or path-mapping build flags, even though builds in different roots with the 'same flags' can embed differing paths and timestamps (toolchain-dependent, NOT PROVEN). A safe cross-run copy and load is left to be authored (N2-12)."
+     },
+     {
+      "item": "D-13 first build not using the unbuilt bridge as its own proof",
+      "status": "CLOSED",
+      "evidence": "md:94-96, md:112 and json compileAndBootstrap (json:193, 207-214) define a Reflection.Emit-only BUILD branch in the supervisor-generated helper. It uses no Add-Type, no absent bridge, no compiled C# tracer, no build script and no external tracer binary. Cold BUILD keeps the Node spawn anchor, consistent with doc 68 U-01 (68_…md:6-8, 46-49@36debe0). The best result is CONSTRUCTED_UNQUALIFIED, and if strict first-instant proof is required the route is inadmissible. Residuals: the trace-provider gate (N2-01) and the tracer's threading model (N2-13)."
+     },
+     {
+      "item": "Doc 72 §3 conditions for a conditional source decision (lens N2 view)",
+      "status": "CLOSED",
+      "evidence": "Every doc 72 condition is written in:\n- (1) one path set and grammar: md:13-19, md:29-45;\n- (2) inventory before the grant takes effect, BLOCKED_NO_COMPILER_WITHOUT_INSTALL and CONDITIONAL_NOT_EFFECTIVE: md:21-23;\n- (3) interface, barriers, errors and the new anchor: md:53-88;\n- (4) first-build tracer and phase accounting with console hosts: md:90-118;\n- a compile limit above N-1 as a separate decision: md:114;\n- U-15 included: md:164.\nThese are written as proposals, pending original review, and are NOT RUN."
+     }
+    ],
+    "findings": [
+     {
+      "id": "N2-01",
+      "severity": "P2",
+      "file": "docs/coordination/launch-coordination-20261005/DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:98,100,21; json sourceConditionAnnex SC2, compileAndBootstrap)",
+      "claim": "The D-13 tracer now depends on a permitted kernel-process trace provider (proposed ETW). The predecessor had excluded that, and its access-without-elevation feasibility sits outside the pre-effective gate, so BUILD and every compile-phase proof can be unreachable after the grant takes effect. This repeats the D-5 inversion for a second prerequisite.",
+      "evidence": "md:98 proposes the Windows kernel-process event provider, and md:100 uses it in every normal helper before Add-Type. md:98 says 'unavailable access refuses, never elevation', and md:142 says 'Missing trace/cleanup stays held'. The predecessor's 2bac0c8 md:59 said 'do not silently authorize ETW, privileges, another observer'. The SC2 gate (md:21; json:88-95) covers only the compiler, headers, libraries, linker and runtime. json firstBuildBranch (json:193) and the cold-build observer (json:233) omit the provider. NOT PROVEN either way.",
+      "fix": "Add the provider's identity, fields and access without elevation to the pre-effective inventory gate, or to a named second gate that yields BLOCKED. List it as an explicit owner decision that reverses the predecessor's ETW exclusion, and index it in the JSON."
+     },
+     {
+      "id": "N2-02",
+      "severity": "P2",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:49,136,151,152; json CAMPAIGN, G0)",
+      "claim": "The native chain has no step in which a native-action receipt is accepted. G0 is gated on 'completed' native evidence, and G0 is itself a native ACTION_ID that a campaign may sequence. Native proofs could therefore feed G0 in one in-process run with no original disposition.",
+      "evidence": "md:49 defines N1 as source disposition, N2 as window comparison and N3 as coordinator verification. None of them disposes of a receipt. The manifest at 25858ad (prerequisiteVehicles.authorizationLoad) counts originalReviewerReceiptDispositions 18 alongside the other three steps. md:151 has G0 needing 'completed required native/fit/admission evidence'. json CAMPAIGN pass (json:453) says 'accepted under exact own authorities' and names no acceptor. md:136 makes every row an ACTION_ID, and md:152 excludes only an implicit G0.",
+      "fix": "Add N4, the original disposition of each native receipt, before any dependent action and before G0 entry. Require native evidence to be 'accepted', not 'completed'. Either expressly exclude G0 from CAMPAIGN, or require the R2 window comparison to cite the dispositioned native receipts."
+     },
+     {
+      "id": "N2-03",
+      "severity": "P2",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:122,128; json admission.authority)",
+      "claim": "The admission observer's authority model is still undefined. Its record form, when it is issued and how it is verified are not stated, nor how it reconciles with the existing one-shot contract. Making the supervisor its own sampler also reverses the manifest's separate-responder, no-probe mechanism without naming that as a decision.",
+      "evidence": "md:122 binds the observation to nonce, request hash and command plus a 'valid authority', and adds 'No observation permission currently exists'. md:128 allows 'one separately authorized observation' per request. json authority is null (json:288). At 25858ad:\n- supervisor.mjs:377 requires maximumObservations===1 on HUMAN_USER records;\n- supervisor.mjs:1101-1102 checks only a non-empty reference;\n- the nonce is minted at request time (supervisor.mjs:1172);\n- the manifest's handshake.mechanism says 'No source assignment supplies that responder, resource sampling or polling loop';\n- the request action reads NO_AUTOMATIC_PROBE_OR_RETRY (supervisor.mjs:1180).",
+      "fix": "Define one pre-issued grant bound to the run, window, group and command IDs, with a count no larger than the remaining handshakes. Verify it once before the window, with no Git read per request. Alternatively, amend maximumObservations===1 under a same-original review. List the self-observer reversal as an explicit owner decision."
+     },
+     {
+      "id": "N2-04",
+      "severity": "P2",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:126,128; json admission.exclusionProvenance)",
+      "claim": "On a host shared with other agents, admission likely refuses every time, so ADMISSION_FIT could only time refusals. Exclusions cover only OS/Codex infrastructure, and the record states no quiescence precondition, issuance time or refresh rule.",
+      "evidence": "md:126: only 'specifically authorized OS/Codex infrastructure identities and the exact owned action tree' may be excluded, and 'An arbitrary other agent's Node process is NOT implicitly excluded'. The manifest predicate at 25858ad says 'Any non-owned Node... Codex/OS hosts are excluded only by exact owner/start identity'. Neither 'refresh' nor 'quiesc' appears in md. md:128 requires accepted observations for PASS. Doc 72's D-6 had already raised this (72_…md:69-71@9baeebc).",
+      "fix": "Name who issues the exclusion list and when it is issued relative to the window, and give a refresh and invalidation rule. Alternatively, make host quiescence (no non-owned candidate) an explicit window precondition owned by the coordinator, with its own observation. Require ADMISSION_FIT to contain accepted samples under that condition."
+     },
+     {
+      "id": "N2-05",
+      "severity": "P2",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:31-45,96,142)",
+      "claim": "BUILD must carry --admission, --policy-observation and --pre-window-observation, yet nothing is named to produce them before the bridge exists, and BUILD has no admission wait budget. Execution of the first action is therefore unspecified.",
+      "evidence": "md:29 says all new native actions use the §2 grammar, and md:142 says BUILD uses 'Grammar§2'. observeAdmission is a bridge export (md:63), which BUILD lacks (md:96). The manifest at 25858ad has responderEligibility.namedResponder null. No line in md pairs BUILD with an admission producer. This is the D2-03 residual in hl12/72_packet_D_native_lens_findings.json (verifier: it blocks the BUILD execution decision, not the source decision).",
+      "fix": "Name BUILD's opening and admission observer, for example committed one-shot HUMAN_USER records under supervisor.mjs:360-384, or record an exception accepted by the original reviewer. Give BUILD a finite admission wait budget separate from G0."
+     },
+     {
+      "id": "N2-06",
+      "severity": "P3",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:124-130; json admission.requiredCoverage)",
+      "claim": "The in-process admission predicate omits G7's ownedDistNoOpenHandles field, which the supervisor requires.",
+      "evidence": "supervisor.mjs:1110-1111@25858ad checks ownedDistNoOpenHandles===true for G7 commands, and the manifest's handshake.response lists 'G7ownedDistNoOpenHandles'. md:124-130 and json requiredCoverage (json:263-270) never mention it; a grep of md for 'open handle' finds nothing.",
+      "fix": "Add it to the §5 predicate and to ObservationReceipt, or expressly exclude G7 from the in-process route and name its observer."
+     },
+     {
+      "id": "N2-07",
+      "severity": "P3",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:128,148; json documentedRetryApproxMs)",
+      "claim": "The retry slice is stated only as 'about 367ms'. The minimum allocatedWaitMs reachable in a permitted retry state is never derived, so ADMISSION_FIT samples on fast initial slices may not qualify the worst case.",
+      "evidence": "supervisor.mjs:1167-1168@25858ad sets allocatedWait = min(30000, floor(remaining/childrenRemaining)), which adapts to how much of the budget earlier handshakes spent. md:128 says 'a documented retry can allow about367ms', and json documentedRetryApproxMs is 367 (json:282). md:148 says 'within actual428/429/about367ms allowance'.",
+      "fix": "Derive the floor slice for each permitted restart or retry state from the formula, state it exactly, and require ADMISSION_FIT samples at that floor."
+     },
+     {
+      "id": "N2-08",
+      "severity": "P3",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:82,144)",
+      "claim": "The interruption vehicles lack a rule for a barrier that is never reached after launch. INTERRUPT_COMPILE also does not assert that a compiler process is alive when the stop lands, so a fast compile could pass as 'compile interrupted'.",
+      "evidence": "md:144: 'fault points are native/helper barrier IDs' and 'The existing Node controller injects a one-shot stop... at the manifested barrier'. md:82 emits COMPILE_ENTER before Add-Type, and Node receives it asynchronously. md:138's NOT_REACHED covers only an unknown input or permission before launch. The caps 'Same finite action limits' are all null.",
+      "fix": "For each fault action, define the outcome when its barrier is not reached: consumed, with a named result. For INTERRUPT_COMPILE, require trace evidence that at least one compiler descendant was live at the stop."
+     },
+     {
+      "id": "N2-09",
+      "severity": "P3",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:146; json HANDLE_ALLOWLIST)",
+      "claim": "HANDLE_ALLOWLIST still has no way to enumerate a full handle table. Its sentinel-based pass cannot establish an exact allowlist, and the 'handle census' named in its refusal rule is undefined.",
+      "evidence": "md:146: 'exact finite sentinel-handle inventory' with pass 'only approved stdio/protocol handles usable; unlisted sentinels and outer/inner control handles unavailable'. json pass says 'Allowed handles usable, excluded controls/sentinels absent', and json refusal cites an 'incomplete identity/handle census'. Doc 72 D-11 (72_…md:84-86) and lens D2-09 asked for the enumeration method.",
+      "fix": "Specify the enumeration (for example a parent-side snapshot of the suspended child's handle table, and the equivalent for the compiler), or scope the claim to sentinel and control-handle absence."
+     },
+     {
+      "id": "N2-10",
+      "severity": "P3",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.json@2ec266f (exactConditionalSourcePaths; independentTwoFileAmendment)",
+      "claim": "The independent two-file lane and the native lane edit the same two paths, and no ordering or rebase rule is stated, yet G0 needs both. The native lane's baseline pins go stale as soon as the two-file successor lands.",
+      "evidence": "json:61-80 pins the native baseline to supervisor blob a9ba8356 and manifest blob 30fbf71b at 25858ad. json:467-470 puts the two-file lane on the same paths. md:164 says independent. md:151 says G0 needs the 'reviewed U15/D68 successor plus completed required native' evidence. A grep of md finds no ordering or rebase text. Lens M-05's fix 'Order the two amendments explicitly' is still open.",
+      "fix": "State the ordering. For example: the two-file lane lands first, and the native lane is re-baselined to that successor's SHA and blobs, with the conditional decision text naming the baseline it applies to."
+     },
+     {
+      "id": "N2-11",
+      "severity": "P3",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:21,162)",
+      "claim": "Under D-10, the proposed decision wording does not say whether it covers later authorship of held fields, and the expected follow-on source cycles are not enumerated.",
+      "evidence": "md:162: an earlier grant covers named data-field authorship 'only when explicitly so written'. The proposed wording at md:21 ('author only those three paths, with all executable modes held') does not write it. Lens D2-08's fix asked for cycles S1 (vehicle with null pins), S2 (toolchain/BUILD parameters) and S3 (binary hash and campaign table); none is enumerated.",
+      "fix": "In the conditional decision, state whether held-field substitution needs a new owner grant or only an original delta review, and list the expected cycles."
+     },
+     {
+      "id": "N2-12",
+      "severity": "P3",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:142,147,158-160)",
+      "claim": "D-17 requires raw equality between builds in different owned roots, but no deterministic or path-mapping flags, so correspondence may well stay unresolved. That would refuse every bridge-owned action, and the bridge also self-attests its memory and handle proofs.",
+      "evidence": "md:158 says equal raw hashes 'under the same frozen toolchain/flags' are needed, with 'no ad-hoc binary normalization'. md:142 has B rebuild 'in another owned root'. md:160 says 'lost correspondence refuses'. md:147 has the bridge itself report the allocation evidence. Whether embedded timestamps or paths differ depends on the toolchain and is NOT PROVEN. Lens D2-15's fix asked for deterministic flags.",
+      "fix": "Where the inventoried toolchain supports them, require deterministic and path-normalizing flags in the frozen BUILD argv. Otherwise, record in advance that correspondence is receipt-trusted, and name what that means for the bridge-attested proofs."
+     },
+     {
+      "id": "N2-13",
+      "severity": "P3",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:74,94,98,100)",
+      "claim": "The threading model of the Reflection.Emit-only helper tracer is unspecified. It has to consume trace events, drain a completion port and pump pipes while the compiler runs, but only the built bridge's threading is defined.",
+      "evidence": "md:94: 'drains pipes/completion events in its own loop while the compiler runs' using 'managed delegate callbacks'. md:98: a trace session driven 'inside the helper'. md:74's native worker threads and bounded queues apply only to the bridge. Nothing addresses a blocking trace consumer, callbacks on threads without a PowerShell runspace, or queue bounds and overflow in the helper. Feasibility is NOT PROVEN.",
+      "fix": "Under condition 4, state the helper prefix's thread model (dedicated threads with emitted IL callbacks), queue bounds, loss and overflow refusal, and the order of shutdown and drain."
+     }
+    ]
+   },
+   "verify": {
+    "verdicts": [
+     {
+      "id": "N2-01",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld. md:98 makes a permitted kernel-process trace provider mandatory: 'unavailable access refuses, never elevation'. md:100 extends it to normal helpers. The SC2 pre-effective gate (md:21; json:88-95) lists only the compiler, Node-API headers, Windows headers/import libraries, linker and runtime dependencies. The predecessor at 2bac0c8 md:59 (verified, sha c10fdf85) said 'do not silently authorize ETW, privileges, another observer'. The proposal names the provider explicitly, so 'silent' does not apply, but its feasibility is still decided after the grant. Static inventory cannot prove session access without starting one, so the fix should be a named BLOCKED outcome or static prerequisites in the gate. Access rights are host-dependent and NOT PROVEN. This should be written into the decision text."
+     },
+     {
+      "id": "N2-02",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld and broadened. The manifest at 25858ad requires 'exact original receipt dispositions' (prerequisiteVehicles.orderedGates step 3) and counts originalReviewerReceiptDispositions 18 (authorizationLoad). md:49's N1-N3 have no receipt-disposition stage. md:151 gates G0 on 'completed' evidence, not 'accepted'. CAMPAIGN pass (json:453) says 'accepted' but names no acceptor. md:47 allows any explicitly listed ACTION_ID with its own authorization ID, and md:152 bars only an implicit G0. R2 precedes the window, so receipts produced in the same campaign would never be dispositioned. The same gap covers the 'built-artifact review' at md:112, which is not placed in any chain."
+     },
+     {
+      "id": "N2-03",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld with two corrections. The core claim holds:\n- md:122 says 'No observation permission currently exists', and json:288 authority is null;\n- the record form, issuance and verification are undefined;\n- the nonce is minted at request time (supervisor.mjs:1172@25858ad);\n- per-command admission checks only a non-empty string (1101-1102);\n- manifest admission.observations 'The supervisor never samples' and handshake.mechanism are reversed by md:122 without the reversal being flagged.\nCorrections: maximumObservations===1 at :377 governs only the HOST_PRE_WINDOW and EFFECTIVE_POLICY authorities (:361-363), so it is a design choice, not a conflict. NO_AUTOMATIC_PROBE_OR_RETRY is at :1181, not :1180. This blocks execution, not the conditional source decision."
+     },
+     {
+      "id": "N2-04",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld with corrections. 'ADMISSION_FIT could only time refusals' overstates it: md:128 requires every observation to be validated and accepted, so a run of refusals cannot PASS, and md:148 counts a refusal as failure. The issuer and window are partly stated: md:126 takes exclusions from the authority/reservation's coordinator-verified list, with PID, creation time, image hash, role, owner and validity interval, and stale entries refuse.\nThe real gap: the excludable class is closed to 'OS/Codex infrastructure' and the owned tree. So other agents' Node processes can never be excluded, even by authority, and no quiescence precondition or owner exists (no 'quiesc' or 'refresh' in md). There is no route to PASS on a shared host. This blocks execution, and the predicted refusals are NOT PROVEN."
+     },
+     {
+      "id": "N2-05",
+      "upheld": true,
+      "severity": "P2",
+      "note": "Upheld. md:29 says all new native actions use the md:31-43 grammar, which needs --admission, --policy-observation and --pre-window-observation. BUILD has no bridge (md:96), and observeAdmission is a bridge export (md:63). The manifest's responderEligibility.namedResponder is null at 25858ad, and BUILD's caps (md:142) carry no admission wait budget. This matches the doc 72 verifier's D2-03 verdict (hl12 archive :601): it blocks the BUILD execution decision, not the source decision. The same gap applies beyond BUILD; see missed N2V-02."
+     },
+     {
+      "id": "N2-06",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. supervisor.mjs:1110-1111@25858ad requires ownedDistNoOpenHandles for G7 commands, and manifest handshake.response and admission.preG7 list it. md:128 and json:263-270 omit it, and a grep of md for 'ownedDist' or 'open handle' finds nothing. G7 is outside the 428/367 ms question but inside the proposed same-process responder route, which md:122 does not limit to G0."
+     },
+     {
+      "id": "N2-07",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld, and stronger than the lens stated. A zero-launch restart carries the maximum prior handshakeWaitSpentMs (supervisor.mjs:1918@25858ad). Capacity only needs at least 1 ms per remaining child (:1156). So each fully spent prelaunch refusal shrinks later slices: about 367 ms after one, and about 315 ms after two ((3000-428-367)/7). 'About 367ms' (md:128, json:282) is therefore one case, not a floor. Runtime enforcement per actual slice stays fail-closed, but a slow observer after launch would consume a G0 invocation."
+     },
+     {
+      "id": "N2-08",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. md:144 has no outcome for a barrier that is never reached after launch. md:138's NOT_REACHED covers only an unknown input or permission before launch, and md:86 covers fixture failure only. COMPILE_ENTER precedes Add-Type (md:82), and nothing requires a live compiler descendant when the stop lands. The 'Same finite action limits' are all null."
+     },
+     {
+      "id": "N2-09",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. md:146 and the json pass criterion are scoped to sentinel and control-handle absence, which is largely the lens fix's alternative. Still missing: a method to enumerate the child's or compiler's full handle table; a definition of the 'handle census' in the json refusal; and detection of non-sentinel inherited handles introduced by the PowerShell or Add-Type runtime."
+     },
+     {
+      "id": "N2-10",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. json:61-80 pins the native lane to the 25858ad blobs a9ba8356 and 30fbf71b (verified by rev-parse), and json:467-470 puts the two-file lane on the same paths. md:151 needs both lanes for G0, and md has no ordering or re-baselining text. Doc 72 lens M-05 asked for the ordering. The outcome is fail-safe, since a stale baseline needs a fresh decision, but the conditional decision's wording should name the baseline it applies to."
+     },
+     {
+      "id": "N2-11",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. md:162 makes held-field authorship covered 'only when explicitly so written', and md:21's wording does not write it. By the proposal's own rule, every substitution therefore needs a new grant plus an original delta review. That should be stated, and the S1/S2/S3 cycles enumerated (doc 72 lens D2-08)."
+     },
+     {
+      "id": "N2-12",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld; the consequence is overstated. md:158 requires raw equality with no normalization and no deterministic or path-map flag requirement. Whether toolchain-dependent embedding differs is NOT PROVEN. The claim that this 'would refuse every bridge-owned action' is not supported. md:160 refuses on 'lost' correspondence, while md:158 leaves 'unresolved' correspondence blocking only the claim of correspondence. Whether actions may run under unresolved correspondence is ambiguous, and that ambiguity is the real gap. Bridge-reported memory evidence (md:147) is an inherent, disclosed fixture limit."
+     },
+     {
+      "id": "N2-13",
+      "upheld": true,
+      "severity": "P3",
+      "note": "Upheld. md:94 has one helper loop draining pipes and completion events, and md:98 has the trace session driven inside the helper. md:74's thread and queue rules cover only the built bridge. A blocking trace consumer and callback threads without a runspace need a stated threading model, queue bounds and an overflow-refusal rule. Feasibility is NOT PROVEN."
+     }
+    ],
+    "closureOpinion": [
+     {
+      "item": "D-6 predicate coverage (heavy census incl. Docker/VM, Chromium, other agents' Node)",
+      "status": "PARTIAL",
+      "note": "md:124 and json:263-270 enumerate:\n- non-owned Node, Vitest, tsx, tsc, build, test and server processes;\n- esbuild/compiler;\n- active Chromium;\n- Docker container, build and verifier workloads;\n- VM-equivalent workloads;\n- unknown => UNKNOWN/REFUSE.\nThis matches manifest admission.heavyJobPredicate@25858ad. md:124 concedes that snapshots cannot prove Docker, VM or Chromium inactivity, and providerBindings is null (json:287). The G7 ownedDistNoOpenHandles field is omitted (N2-06). The categories are enumerated but not shown to be observable."
+     },
+     {
+      "item": "D-6 exclusion identity authority and refresh",
+      "status": "PARTIAL",
+      "note": "md:126 gives:\n- the source: the authority/reservation's coordinator-verified list;\n- the fields: PID+creation time, image path/raw hash, role, owner and validity interval;\n- stale or mismatched entries refuse;\n- other agents' Node is not implicitly excluded.\nThe excludable class is closed to OS/Codex infrastructure plus the owned tree. There is no quiescence precondition or owner, and no refresh rule; the gap fails closed. See N2-04."
+     },
+     {
+      "item": "D-6 allocated 428/367 ms latency criterion",
+      "status": "CLOSED",
+      "note": "At criterion level: md:128 and json:285 require each complete observation to be validated and durably accepted before its actual allocatedWaitMs (supervisor.mjs:1167-1168@25858ad). No average or percentile may substitute, all seven slices must fit the unchanged 3000 ms total, and capture and write time count against it. Residual: about 367 ms is not the floor, because slices shrink further after each carried zero-launch refusal (supervisor.mjs:1918, :1156; N2-07). Actual latency is null (json:286), so latency is NOT_PROVEN."
+     },
+     {
+      "item": "D-6 observer authority model",
+      "status": "PARTIAL",
+      "note": "md:122 defines the role: the same supervisor, which observes but does not approve, bound to the nonce, request hash, command and a valid authority. It also says 'No observation permission currently exists', and json:288 authority is null. Undefined: the record form, its issuance before nonces exist (supervisor.mjs:1172), and per-request verification (:1101-1102). The self-sampler reversal of manifest admission.observations is not flagged (N2-03). Doc 72's execution requirement (72_…md:117-118@9baeebc) is half met."
+     },
+     {
+      "item": "Pause resumption declared not qualified",
+      "status": "CLOSED",
+      "note": "md:132: 'No practical resumer is qualified here'. RESUME_FIT must prove start and validation within 30 s (G1/2/5/6), 45 s (G3/4) and 75 s (G7). There is no G0 resume. Otherwise pauses are NOT PRACTICALLY RESUMABLE and stop terminally, with no auto-resume or reset. json:289-303 agrees. This is the alternative in doc 68 §4 item 5 (68_…md:107-109)."
+     },
+     {
+      "item": "D-6 still a generic proof-needed item",
+      "status": "PARTIAL",
+      "note": "It is no longer generic at criterion level. Coverage, exclusion fields, UNKNOWN/REFUSE, the per-slice criterion and the resumer role are written (md:120-132). For execution it is still proof-needed:\n- providers are null (json:287);\n- the authority is null (json:288);\n- sampleCount is null (json:415);\n- there is no route to PASS on a shared host (N2-04);\n- no admission producer exists before ADMISSION_FIT (N2V-02)."
+     },
+     {
+      "item": "D-11 bootstrap interruption vehicle",
+      "status": "PARTIAL",
+      "note": "md:144 defines four action IDs at native/helper barrier IDs, with Node injecting a one-shot exact stop, retained-handle proof of termination, active-zero and drain, and a pre-assignment launch counted as consumed. Missing:\n- a rule for a barrier that is never reached;\n- a live-compiler assertion for INTERRUPT_COMPILE;\n- finite caps, which are null (N2-08).\nAll of it depends on the built bridge."
+     },
+     {
+      "item": "D-11 handle allowlist vehicle",
+      "status": "PARTIAL",
+      "note": "md:146 has a fixture on the pinned bridge, a finite sentinel inventory, a per-role list, an explicit stdin rule, and compiler inspection with denied access as UNKNOWN. Pass is scoped to sentinel and control absence. There is no method to enumerate the full handle table, and the 'handle census' is undefined (N2-09)."
+     },
+     {
+      "item": "D-11 memory-detection vehicle",
+      "status": "PARTIAL",
+      "note": "md:147 and json:396-408 define a counted Node fixture calling runMemoryFixture over a controller-created, nonce-bound named pipe. Values: control 16777216 bytes, single request 536936448 (512 MiB+64 KiB). A caught denial that exits 0 is still recorded, and a lost channel is UNKNOWN. The incremental chunk, count and timeout are null, so MEMORY_INCREMENTAL_DENIAL is NOT_REACHED."
+     },
+     {
+      "item": "D-11 controller death inventoried",
+      "status": "PARTIAL",
+      "note": "md:145 and json:369-385 give five base processes plus console and compiler processes, a separate explicit budget (null), and the surviving outer supervisor observing without duplicating the nested Job handle. Death of the real top controller gets no self-issued PASS (md:154). No recovery vehicle exists for HELD reservations (missed N2V-04)."
+     },
+     {
+      "item": "D-12 compile ceiling",
+      "status": "PARTIAL",
+      "note": "The rule is written (md:114; json:198-203): every finite ceiling is an action input, currently NULL; a ceiling above N-1 (2/3/7) is a separate owner stage-count permission; hitting it refuses and gives a bound only; NULL means NOT_REACHED. This is CLOSED for a conditional source decision. Execution needs owner values, and none is proposed."
+     },
+     {
+      "item": "Per-action vehicle: BUILD_BRIDGE_A/B",
+      "status": "NOT_CLOSED",
+      "note": "md:142 and json:331-340 give:\n- a Grammar§2 template;\n- a Reflection.Emit-only helper;\n- inventoried argv arrays, which are not supplied;\n- separate roots;\n- caps that are null;\n- a best result of CONSTRUCTED_UNQUALIFIED.\nThere is no producer for the three observation inputs and no admission wait budget (N2-05). The trace provider sits outside the effective gate (N2-01)."
+     },
+     {
+      "item": "Per-action vehicle: CAMPAIGN",
+      "status": "NOT_CLOSED",
+      "note": "md:47 and md:152 define an in-process ordered sequencer with a per-row authorization ID, no parallelism, no retry and no additions. Outer caps are null (json:452). The pass rule 'accepted under exact own authorities' (json:453) names no acceptor, and an explicitly listed G0 is not excluded (N2-02)."
+     },
+     {
+      "item": "Per-action vehicle: COLD_COMPILE_SERIES",
+      "status": "NOT_CLOSED",
+      "note": "md:143 and json:341-358 bind seven rows with walls of 6x5000+15000 ms, and allow no extrapolation from one compile. Missing:\n- the compile ceilings (null);\n- the Add-Type source hash (unbound);\n- the built bridge it depends on;\n- the snapshot input: the real G0 rows need the 'absolute snapshot root' cwd and node_modules/vitest (manifest:672, 2684-2698@25858ad), and no native action produces that snapshot (missed N2V-01)."
+     },
+     {
+      "item": "Per-action vehicle: ADMISSION_FIT",
+      "status": "NOT_CLOSED",
+      "note": "md:148 requires the complete predicate on every sample within the actual allowance, and treats a missing category, slow response or unknown identity as refusal. sampleCount, providers and authority are null (json:415, 287, 288), and no exclusion table is supplied. The action needs observeAdmission, which is the thing under test, and no producer is named for its own --admission (N2V-02)."
+     },
+     {
+      "item": "Per-action vehicle: G0",
+      "status": "NOT_CLOSED",
+      "note": "md:151 and json:439-446 delegate to the existing engine and need:\n- the reviewed U15/D68 successor;\n- 'completed' native evidence (N2-02);\n- a fresh R chain;\n- R4 before dependent groups.\nG0_FIT bindingsStatus is NOT_SUPPLIED_BY_THIS_RECORD (json:436). The R-chain versus N-chain slot mapping for --native-action G0 is unstated (N2V-03). The exactly-three assertion still refuses at supervisor.mjs:1243-1245@25858ad, and currentG0Runnable is false."
+     },
+     {
+      "item": "Common receipt schema and NOT_REACHED/REFUSED/PASS semantics",
+      "status": "CLOSED",
+      "note": "At schema level: md:136-138 and json:305-328 define the hashes, identities, clock anchor, limit readback, trace loss, raw streams, lower bound versus peak, cleanup and next eligibility. Null => NOT_REACHED with zero execution; an observed limit => REFUSED; PASS is scoped. Uncertain cleanup retains the reservation, and deletion defaults to retain."
+     },
+     {
+      "item": "D-10 follow-on edits",
+      "status": "PARTIAL",
+      "note": "md:162 and json:465: every pin, ceiling, memory, table or binary substitution is a new frozen revision with new raw hashes and an original delta review, and nothing re-pins itself at runtime. The decision wording (md:21) is silent on held-field authorship, and the cycles are not enumerated (N2-11)."
+     },
+     {
+      "item": "D-15 two-file U-15/D68 lane kept separate",
+      "status": "CLOSED",
+      "note": "md:164 and json:467-488 keep U15+D68-1/2/4/5 independent, with nativeFeasibilityDependency and sourceGrantByThisRecord both false. Prerequisites are Samuel's G0 stage choice, D68-3 and a same-owner source authorization. This matches doc 72 (72_…md:120-121) and doc 68 §5. Residual: both lanes edit the same two paths, and no order is stated (N2-10)."
+     },
+     {
+      "item": "D-16 U-15 stage-count change included",
+      "status": "CLOSED",
+      "note": "md:164 says U15 'must replace the unconditional exactly-three assertion with the actually chosen per-stage rule/scope, not merely relabel'. G0 requires the reviewed U15/D68 successor (md:151). The assertion stays at supervisor.mjs:1243-1245@25858ad."
+     },
+     {
+      "item": "Old qualification approvals R1-R4 unchanged",
+      "status": "CLOSED",
+      "note": "md:49 and json:123-128: R1 is the original source disposition, R2 the original window comparison, R3 the coordinator verification and pointer to R2, and R4 the original G0 receipt disposition. This is consistent with manifest@25858ad:32585 (R3 points to R2) and :33008/:33293 (R4 gates dependent groups in the same window). json:518 preserves the chain."
+     },
+     {
+      "item": "Proposed native N1/N2/N3 separate",
+      "status": "CLOSED",
+      "note": "md:49 and json:118-122,129 keep the N chain distinct, ban circularity through G0 and say 'N/R labels grant nothing'. Gaps: there is no native receipt-disposition stage (N2-02), and the grammar's single authority slots are not mapped to R versus N for --native-action G0 (N2V-03)."
+     },
+     {
+      "item": "Database qualification separate",
+      "status": "CLOSED",
+      "note": "md:49: 'No DB qualification, SQL, application intake or release authority is bundled'. json:116 marks it EXCLUDED, and json:507 sets databaseRoute NONE. md:152 says campaign selection grants no implicit DB authority. Manifest database.status is SEPARATE_CATEGORY_NOT_AUTHORIZED_NOT_READY (manifest:19817@25858ad)."
+     },
+     {
+      "item": "D-17 binary correspondence",
+      "status": "PARTIAL",
+      "note": "md:158-160 and json:457-466 require:\n- two independent owned-root builds;\n- raw equality, with no normalization;\n- dependent DLL paths and hashes;\n- revalidation at every load, action and resume;\n- reuse only for the same tuple.\nNo deterministic or path-map flags are required, and whether actions may run under 'unresolved' rather than 'lost' correspondence is ambiguous (N2-12)."
+     },
+     {
+      "item": "D-13 first build not using the unbuilt bridge as its own proof",
+      "status": "CLOSED",
+      "note": "md:94-96, md:112 and json:193,207-214 define a Reflection.Emit-only BUILD branch with no Add-Type, no absent bridge, no compiled C# tracer and no external tracer. Cold BUILD keeps the Node spawn anchor, consistent with doc 68 U-01 (68_…md:6-8, 46-49). The best result is CONSTRUCTED_UNQUALIFIED, and strict first-instant proof is declared inadmissible. Residuals: the provider gate (N2-01) and the helper threading model (N2-13)."
+     },
+     {
+      "item": "Doc 72 four conditions for a conditional source decision (lens N2 view)",
+      "status": "CLOSED",
+      "note": "All four are written:\n- (1) one path set and grammar: md:13-19, 29-45;\n- (2) inventory before the grant takes effect, with BLOCKED_NO_COMPILER_WITHOUT_INSTALL and CONDITIONAL_NOT_EFFECTIVE: md:21-23;\n- (3) interface, barriers, errors and the new anchor: md:53-88;\n- (4) first-build tracer and phase accounting with console hosts: md:90-118.\nA compile limit above N-1 is a separate decision (md:114), and U-15 is included (md:164). These are proposals: NOT RUN and pending original review."
+     },
+     {
+      "item": "Measured latency, peak, fit, correspondence and toolchain feasibility",
+      "status": "NOT_PROVEN",
+      "note": "json:9 measuredResults NOT_RUN. actualInventory, actualLatency, providerBindings, authority, every cap, sampleCount and bindings are null (json:94, 286-288, 198-202, 415, 436). No host evidence exists, and none was gathered by this verifier."
+     }
+    ],
+    "missed": [
+     {
+      "id": "N2V-01",
+      "severity": "P3",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:143,150,152)",
+      "claim": "COLD_COMPILE_SERIES and G0_FIT need a snapshot that no native action produces. Both run the real G0 command rows ('No subject test substituted'), and those rows execute in the prepared snapshot root, including node_modules/vitest. The only snapshot producer is PREPARE, which belongs to the qualification window, so these vehicles have an unbound frozen input, and reusing PREPARE would cross into the R-chain lane.",
+      "evidence": "md:143 requires 'all seven original G0 command walls/streams... No subject test substituted'. Manifest@25858ad:672 says '\"cwd\": \"absolute snapshot root for every command\"'. The vitest-baseline row (manifest:2684-2698) runs node_modules/vitest/vitest.mjs with the supervisor-g0 config. The manifest ties PREPARE to the one approved qualification window (:33008, :33293). A grep of md for 'PREPARE' or 'snapshot' finds no native snapshot provisioning. md:152 bars only implicit BUILD, observation, G0 and DB grants.",
+      "fix": "Bind a snapshot input for each such action. Either define a separately authorized native snapshot action with its own caps and receipt, or a frozen read-only input. State that native actions never consume or reuse a qualification PREPARE snapshot, and add PREPARE to md:152's list of no implicit grants."
+     },
+     {
+      "id": "N2V-02",
+      "severity": "P3",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:29-43,63,122,148)",
+      "claim": "N2-05's gap is not limited to BUILD. Every native action carries three observation inputs with no named producer: --admission, --policy-observation and --pre-window-observation. The only proposed in-process producer, observeAdmission, is what ADMISSION_FIT qualifies, and ADMISSION_FIT itself needs an --admission. Using the unqualified observer to admit actions that run before ADMISSION_FIT would make it vouch for itself.",
+      "evidence": "md:29 says all new native actions use the md:31-43 grammar. md:63 lists observeAdmission as a bridge export. md:122 says 'No observation permission currently exists'. md:148 has ADMISSION_FIT as a Grammar§2 action. The manifest's responderEligibility.namedResponder is null@25858ad. The existing one-shot committed HUMAN_USER contract (supervisor.mjs:360-384) is not named for any native action.",
+      "fix": "For each action, state which producer supplies each observation input. Non-G0 actions could use committed one-shot records, which have no sub-second constraint. observeAdmission output should never admit an action before its ADMISSION_FIT receipt has been dispositioned."
+     },
+     {
+      "id": "N2V-03",
+      "severity": "P3",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:36-38,45,49,151)",
+      "claim": "G0 gets two entrypoints: the unchanged existing qualification flags and `--native-action G0`. The grammar's single --authority, --approval-verification and --window-review slots are not mapped to R-chain versus N-chain records when the action is G0. So whether native-action authority could stand in for R1-R3 is unstated.",
+      "evidence": "md:45 says 'Existing qualification flags remain unchanged; a proposed G0 action must delegate to exactly the same qualification checks'. md:151 has G0 use 'Grammar§2'. md:49 binds the native-action authority vehicle to N1-N3 and keeps G0 on R1-R4. json:445 G0 authority is 'Separate G0 action, never granted by build/campaign approval'. No text says that --native-action G0 refuses N-chain records.",
+      "fix": "State that `--native-action G0` accepts only R1, R3 and the pointer to R2, and refuses N-chain records. Alternatively, retire the native-action G0 alias so G0 has exactly one entrypoint."
+     },
+     {
+      "id": "N2V-04",
+      "severity": "P3",
+      "file": "DOC72_CONDITIONAL_NATIVE_SOURCE_PROPOSAL_20261009.md@2ec266f (md:74,81,112,154)",
+      "claim": "No recovery-observation vehicle exists for a HELD reservation. Only one action may be active per reservation, and any uncertain launch or cleanup keeps it held. A single uncertain outcome, which the disclosed cold-BUILD interruption gap makes likely, therefore stalls the native lane with no named way out.",
+      "evidence": "md:74 says 'Only one action is active per reservation'. md:81 says 'Uncertain launch/cleanup keeps the reservation'. md:112 says cold-build uncertainty means 'retain the reservation and artifacts'. md:154 says 'absent a later separately authorized observation, recovery remains held'. No recovery ACTION_ID appears in md:142-152 or json actions. The doc 72 lens D2-09 fix (hl12 archive :515) asked to 'Name a recovery-observation vehicle for HELD reservations'.",
+      "fix": "Add a RECOVERY_OBSERVATION action ID with its own authority, read-only scope, exact identity inputs, caps and outcomes (RELEASED / STILL_HELD). It must never terminate foreign processes."
+     }
+    ],
+    "sourceDecisionSufficiency": "SUFFICIENT FOR A CONDITIONAL SOURCE DECISION from this lens, with carries. No P0 or P1 is sustained.\n\nIdentity is verified: the md and json at coordinator 2ec266f hash to bc766b92 and 30b34b8e and equal the scratch copies. Baseline 25858ad holds supervisor blob a9ba8356 and manifest blob 30fbf71b, as json:65/72 state.\n\nAll four doc 72 conditions are written:\n- one path set and grammar: md:13-45;\n- inventory before the grant takes effect, with BLOCKED_NO_COMPILER_WITHOUT_INSTALL and CONDITIONAL_NOT_EFFECTIVE: md:21-23;\n- interface, barriers, errors and the new anchor: md:53-88;\n- first-build tracer and phase accounting with console hosts: md:90-118.\nA compile limit above N-1 is a separate owner decision (md:114), and U-15 is included (md:164).\n\nSeparation holds:\n- the two-file U-15/D68 lane is independent (json:467-488);\n- R1-R4 are unchanged and consistent with the manifest's R-chain;\n- N1-N3 are distinct;\n- the database is excluded.\nD-13 is non-circular.\n\nWrite these into the decision text:\n- N2-01: the trace provider's feasibility, either inside the pre-effective gate or as a named BLOCKED gate.\n- N2-02: an N-stage that dispositions native receipts, with 'accepted' replacing 'completed'.\n- N2-10: the order of the two lanes and the baseline the grant applies to.\n- N2-11: whether held-field authorship is covered.\n\nEverything is NOT RUN. Nothing here is Samuel's approval.\n\nMethod disclosure (this verifier):\n- Git reads: cat-file, show, rev-parse and log on the builder and coordinator worktrees, plus one read-only git log on C:/xenios-wt/health-review, a repository outside the two listed. That is a deviation, disclosed here.\n- sha256sum, grep and sed over git-show output, and file reads.\n- One `python -I -c` that parsed the hl12 lens-archive JSON and printed its top-level keys: data only, no write, no repository code. This is disclosed as a deviation from the strict no-execution rule.\n- The lens disclosed writing n2_manifest_25858ad.json into the scratchpad and running python. That deviation is noted, and it does not change these conclusions.",
+    "executionDecisionSufficiency": "INSUFFICIENT. EXECUTION ELIGIBILITY: NONE.\n\nNo action has an executable vehicle. Across BUILD_BRIDGE_A/B, COLD_COMPILE_SERIES, the INTERRUPT_*, CONTROLLER_DEATH, HANDLE_ALLOWLIST, MEMORY_*, ADMISSION_FIT, RESUME_FIT, G0_FIT, G0 and CAMPAIGN, every argv, inventory, cap, ceiling, provider binding, authority, sample count and binding is null. That is NOT_REACHED by the proposal's own rule (md:136).\n\nSpecific blockers:\n- No producer is named for the three observation inputs of BUILD or any other native action (N2-05, N2V-02).\n- The admission observer's authority record is undefined (N2-03).\n- There is no route to PASS on a shared host, because the exclusion class is closed to OS/Codex and has no quiescence owner (N2-04).\n- No native receipt-disposition stage exists before G0 (N2-02).\n- The trace provider's access is unproven (N2-01).\n- No snapshot input exists for COLD_COMPILE_SERIES or G0_FIT (N2V-01).\n- No recovery vehicle exists for HELD reservations (N2V-04).\n- The incremental memory values are null.\n- G0 still refuses at supervisor.mjs:1243-1245@25858ad until U15 lands.\n\nD-6 is closed at criterion level: the per-slice allocatedWaitMs criterion is defined, and pauses are declared NOT PRACTICALLY RESUMABLE. But the observer authority, provider observability, retry-slice coverage below about 367 ms (N2-07) and feasibility remain proof-needed.\n\nAll latency, peak, fit, toolchain and correspondence evidence is NOT PROVEN."
+   }
+  }
+ ]
+}
